@@ -2,11 +2,13 @@
 sap.ui.define([
 	"sap/m/VariantItem",
 	"sap/m/VariantManagement",
+	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/m/Page",
 	"sap/m/App",
 	'sap/ui/qunit/QUnitUtils',
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(VariantItem, VariantManagement, Page, App, QUnitUtils, createAndAppendDiv) {
+], function(VariantItem, VariantManagement, FeaturesAPI, ContextSharingAPI, Page, App, QUnitUtils, createAndAppendDiv) {
 	"use strict";
 
 	// prepare DOM
@@ -20,6 +22,62 @@ sap.ui.define([
 		initialPage: "myPage"
 	});
 	app.addPage(page).placeAt("content");
+
+	var fChangeApplyAutomatic = function(oManagementTable, iRow, vValue) {
+		var aItems = oManagementTable.getItems();
+		var aCells = aItems[iRow].getCells();
+
+		var oExec = aCells[4].getFocusDomRef();
+		QUnitUtils.triggerTouchEvent("tap", oExec, {
+			srcControl: null
+		});
+		sap.ui.getCore().applyChanges();
+	};
+
+	var fChangeDefault = function(oManagementTable, iRow, vValue) {
+		var aItems = oManagementTable.getItems();
+		var aCells = aItems[iRow].getCells();
+
+		var oDefault = aCells[3].getFocusDomRef();
+		QUnitUtils.triggerTouchEvent("tap", oDefault, {
+			srcControl: null
+		});
+		sap.ui.getCore().applyChanges();
+	};
+
+	var fChangeDelete = function(oManagementTable, iRow, vValue) {
+		var aItems = oManagementTable.getItems();
+		var aCells = aItems[iRow].getCells();
+
+		var oDelete = aCells[7].getFocusDomRef();
+		QUnitUtils.triggerTouchEvent("tap", oDelete, {
+			srcControl: null
+		});
+		sap.ui.getCore().applyChanges();
+	};
+
+	var fChangeFavorite = function(oManagementTable, iRow, vValue) {
+		var aItems = oManagementTable.getItems();
+		var aCells = aItems[iRow].getCells();
+
+		var oFavorite = aCells[0].getFocusDomRef();
+		QUnitUtils.triggerTouchEvent("click", oFavorite, {
+			srcControl: null
+		});
+		sap.ui.getCore().applyChanges();
+	};
+
+	var fChangeTitle = function(oManagementTable, iRow, vValue) {
+		var aItems = oManagementTable.getItems();
+		var aCells = aItems[iRow].getCells();
+
+		var oInput = aCells[1].$("inner");
+		oInput.focus();
+		oInput.val(vValue);
+		QUnitUtils.triggerEvent("input", oInput);
+		sap.ui.getCore().applyChanges();
+	};
+
 
 	QUnit.module("VariantManagement tests", {
 		beforeEach: function() {
@@ -489,10 +547,13 @@ sap.ui.define([
 			this.oVM.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			page.addContent(this.oVM);
+
+			this.clock = sinon.useFakeTimers();
 		},
 		afterEach: function() {
 			page.removeContent(this.oVM);
 			this.oVM.destroy();
+			this.clock.restore();
 		}
 	});
 	QUnit.test("check opens", function(assert) {
@@ -510,6 +571,7 @@ sap.ui.define([
 
 			fOriginalSaveAsCall(oEvent);
 			sap.ui.getCore().applyChanges();
+			this.clock.tick(600);
 
 			assert.ok(this.oVM.oInputName, "should exists");
 			assert.ok(this.oVM.oInputName.getValue(), "Two", "default entry");
@@ -569,6 +631,7 @@ sap.ui.define([
 
 			fOriginalSaveAsCall(oEvent);
 			sap.ui.getCore().applyChanges();
+			this.clock.tick(600);
 
 			assert.ok(this.oVM.oDefault, "should exists");
 			assert.ok(!this.oVM.oDefault.getVisible(), "should not be visible");
@@ -623,6 +686,8 @@ sap.ui.define([
 
 			fOriginalSaveAsCall(oEvent);
 			sap.ui.getCore().applyChanges();
+			this.clock.tick(600);
+
 			assert.ok(this.oVM.oDefault, "should exists");
 			assert.ok(this.oVM.oDefault.getVisible(), "should be visible");
 
@@ -679,16 +744,21 @@ sap.ui.define([
 			assert.ok(mParameters.public, "public flag expected");
 			assert.ok(!mParameters.overwrite, "overwrite should be false");
 			assert.equal(mParameters.name, "New", "name expected");
-
-			done();
 		});
 
+		this.oVM._createSaveAsDialog();
+		assert.ok(this.oVM.oSaveAsDialog);
+
+		this.oVM.oSaveAsDialog.attachAfterClose(function(oEvent) {
+			done();
+		});
 
 		var fOriginalSaveAsCall = this.oVM._openSaveAsDialog.bind(this.oVM);
 		sinon.stub(this.oVM, "_openSaveAsDialog").callsFake(function (oEvent) {
 
 			fOriginalSaveAsCall(oEvent);
 			sap.ui.getCore().applyChanges();
+			this.clock.tick(600);
 
 			assert.ok(this.oVM.oInputName, "should exists");
 			this.oVM.oInputName.setValue("New");
@@ -712,6 +782,7 @@ sap.ui.define([
 			});
 
 			sap.ui.getCore().applyChanges();
+			this.clock.tick(600);
 
 		}.bind(this));
 
@@ -743,13 +814,10 @@ sap.ui.define([
 			this.oVM.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			page.addContent(this.oVM);
-
-			this.oClock = sinon.useFakeTimers();
 		},
 		afterEach: function() {
 			page.removeContent(this.oVM);
 			this.oVM.destroy();
-			this.oClock.restore();
 		}
 	});
 	QUnit.test("check opens", function(assert) {
@@ -967,7 +1035,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 	});
 
-	QUnit.skip("check opens check event 'cancel'", function(assert) {
+	QUnit.test("check opens check event 'cancel'", function(assert) {
 		this.oVM.addItem(new VariantItem({key: "1", title:"One", originalTitle: "One", rename: false, sharing: "public", executeOnSelect: true, originalExecuteOnSelect: true, author: "A"}));
 		this.oVM.addItem(new VariantItem({key: "2", title:"Two", originalTitle: "Two", remove: true, sharing: "private", author: "B"}));
 		this.oVM.addItem(new VariantItem({key: "3", title:"Three", originalTitle: "Three", favorite: true, remove: true, sharing: "private", executeOnSelect: true, originalExecuteOnSelect: true, author: "A"}));
@@ -1018,130 +1086,109 @@ sap.ui.define([
 			}
 		}.bind(this));
 
-		var fOriginalManageCall = this.oVM._openManagementDialog.bind(this.oVM);
-		sinon.stub(this.oVM, "_openManagementDialog").callsFake(function (oEvent) {
-			var aItems, aCells, oInput, oDelete, oFavorite, oExec;
 
-			fOriginalManageCall(oEvent);
-			sap.ui.getCore().applyChanges();
+		this.oVM._createManagementDialog();
+		assert.ok(this.oVM.oManagementDialog, "manage dialog should exists.");
 
-			assert.ok(this.oVM.oManagementDialog, "mamage dialog should exists.");
-			this.oVM.oManagementDialog.attachAfterClose(function() {
-				//debugger;
-				done();
-			});
+		this.oVM.oManagementDialog.attachAfterClose(function() {
+			done();
+		});
 
-			assert.ok(this.oVM.oManagementTable, "management table exists");
+		this.oVM.oManagementDialog.attachAfterOpen(function() {
 
-			aItems = this.oVM.oManagementTable.getItems();
+			var aItems = this.oVM.oManagementTable.getItems();
 			assert.ok(aItems, "items in the management table exists");
 			assert.equal(aItems.length, 4,  "expected count of items in the management table exists");
 
 			// 1st row
-			aCells = aItems[0].getCells();
-			aCells[4].setSelected(true);
-			oExec = aCells[4].getFocusDomRef();
-			assert.ok(oExec);
-			QUnitUtils.triggerTouchEvent("tap", oExec, {
+			fChangeApplyAutomatic(this.oVM.oManagementTable, 0);
+			this.clock.tick(100);
+
+			// 2nd row
+			fChangeTitle(this.oVM.oManagementTable, 1, "newName");
+			this.clock.tick(100);
+
+			fChangeDefault(this.oVM.oManagementTable, 1);
+			this.clock.tick(100);
+
+			// 4th row
+			fChangeFavorite(this.oVM.oManagementTable, 3);
+			this.clock.tick(100);
+
+			// 3nd row
+			fChangeTitle(this.oVM.oManagementTable, 2, "newName2");
+			this.clock.tick(100);
+
+			fChangeDelete(this.oVM.oManagementTable, 2);
+			this.clock.tick(100);
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(600);
+
+			aItems = this.oVM.oManagementTable.getItems();
+			assert.ok(aItems, "items in the management table exists");
+			assert.equal(aItems.length, 3,  "expected count of items in the management table exists");
+
+
+			aItems = this.oVM.getItems();
+			assert.ok(aItems, "aggregation items exists");
+			assert.equal(aItems.length, 4, "aggregation items count");
+
+			var oOrigItem;
+			for (var i = 0; i < aItems.length; i++) {
+				oOrigItem = this.oVM._getItemByKey(aItems[i].getKey());
+				assert.ok(oOrigItem, "expected aggregation item found");
+
+				if (oOrigItem.getKey() === "1") {
+					assert.equal(oOrigItem.getTitle(), "One", "expected title. Key=1");
+					assert.equal(oOrigItem.getTitle(), aItems[i].getOriginalTitle(), "expected title. Key=1");
+
+					assert.equal(oOrigItem.getExecuteOnSelect(), false, "expected execute on select. Key=1");
+					assert.ok(oOrigItem.getExecuteOnSelect() !== oOrigItem.getOriginalExecuteOnSelect(), "expected execute on select. Key=1");
+				} else if (oOrigItem.getKey() === "2") {
+					assert.equal(oOrigItem.getTitle(), "newName", "expected title. Key=2");
+					assert.ok(oOrigItem.getTitle() !== oOrigItem.getOriginalTitle(), "expected title. Key=2");
+
+				} else if (oOrigItem.getKey() === "3") {
+					assert.equal(oOrigItem.getTitle(), "Three", "expected title. Key=3");
+					assert.equal(oOrigItem.getTitle(), oOrigItem.getOriginalTitle(), "expected title. Key=3");
+
+					assert.equal(oOrigItem.getVisible(), false, "item is not active. Key=3");
+				} else {
+					assert.equal(oOrigItem.getTitle(), "Four", "expected title. Key=4");
+					assert.equal(oOrigItem.getTitle(), oOrigItem.getOriginalTitle(), "expected title. Key=4");
+
+					assert.equal(oOrigItem.getFavorite(), true, "expected favorite. Key=4");
+					assert.ok(oOrigItem.getFavorite() !== oOrigItem.getOriginalFavorite(), "expected favorite. Key=4");
+				}
+			}
+
+
+			var oTarget = this.oVM.oManagementCancel.getFocusDomRef();
+			assert.ok(oTarget);
+			QUnitUtils.triggerTouchEvent("tap", oTarget, {
 				srcControl: null
 			});
 			sap.ui.getCore().applyChanges();
 
-			// 2nd row
-			aCells = aItems[1].getCells();
-			oInput = aCells[1].$("inner");
-			oInput.focus();
-			oInput.val("newName");
-			QUnitUtils.triggerEvent("input", oInput);
-			sap.ui.getCore().applyChanges();
-
-//			var oDefault = aCells[3].getFocusDomRef();
-//			assert.ok(oDefault);
-//
-//			QUnitUtils.triggerTouchEvent("tap", oDefault, {
-//				srcControl: null
-//			});
-//			sap.ui.getCore().applyChanges();
+		}.bind(this));
 
 
-				// 4th row
-				aCells = aItems[3].getCells();
-				oFavorite = aCells[0].getFocusDomRef();
-				assert.ok(oFavorite);
-				QUnitUtils.triggerTouchEvent("click", oFavorite, {
-					srcControl: null
-				});
-				sap.ui.getCore().applyChanges();
+		var fOriginalManageCall = this.oVM._openManagementDialog.bind(this.oVM);
+		sinon.stub(this.oVM, "_openManagementDialog").callsFake(function (oEvent) {
+
+			fOriginalManageCall(oEvent);
+			this.clock.tick(600);
 
 
-				// 3nd row
-				aCells = aItems[2].getCells();
-				oInput = aCells[1].$("inner");
-				oInput.focus();
-				oInput.val("newName2");
-				QUnitUtils.triggerEvent("input", oInput);
-				sap.ui.getCore().applyChanges();
+			assert.ok(this.oVM.oManagementTable, "management table exists");
 
-				oDelete = aCells[7].getFocusDomRef();
-				assert.ok(oDelete);
-				QUnitUtils.triggerTouchEvent("tap", oDelete, {
-					srcControl: null
-				});
-				sap.ui.getCore().applyChanges();
-
-				//trigger model update
-				if (this.oVM._oManagedObjectModel) {
-					this.oVM._oManagedObjectModel.checkUpdate();
-				}
-				sap.ui.getCore().applyChanges();
-
-				aItems = this.oVM.oManagementTable.getItems();
-				assert.ok(aItems, "items in the management table exists");
-				assert.equal(aItems.length, 3,  "expected count of items in the management table exists");
-
-
-				aItems = this.oVM.getItems();
-				assert.ok(aItems, "aggregation items exists");
-				assert.equal(aItems.length, 4, "aggregation items count");
-
-//				var oOrigItem;
-//				for (var i = 0; i < aItems.length; i++) {
-//					oOrigItem = this.oVM._getItemByKey(aItems[i].getKey());
-//					assert.ok(oOrigItem, "expected aggregation item found");
-//
-//					if (oOrigItem.getKey() === "1") {
-//						assert.equal(oOrigItem.getTitle(), "One", "expected title. Key=1");
-//						assert.equal(oOrigItem.getTitle(), aItems[i].getOriginalTitle(), "expected title. Key=1");
-//
-//						assert.equal(oOrigItem.getExecuteOnSelect(), false, "expected execute on select. Key=1");
-//						assert.ok(oOrigItem.getExecuteOnSelect() !== oOrigItem.getOriginalExecuteOnSelect(), "expected execute on select. Key=1");
-//					} else if (oOrigItem.getKey() === "2") {
-//						assert.equal(oOrigItem.getTitle(), "newName", "expected title. Key=2");
-//						assert.ok(oOrigItem.getTitle() !== oOrigItem.getOriginalTitle(), "expected title. Key=2");
-//
-//					} else if (oOrigItem.getKey() === "3") {
-//						assert.equal(oOrigItem.getTitle(), "Three", "expected title. Key=3");
-//						assert.equal(oOrigItem.getTitle(), oOrigItem.getOriginalTitle(), "expected title. Key=3");
-//
-//						assert.equal(oOrigItem.getVisible(), false, "item is not active. Key=3");
-//					} else {
-//						assert.equal(oOrigItem.getTitle(), "Four", "expected title. Key=4");
-//						assert.equal(oOrigItem.getTitle(), oOrigItem.getOriginalTitle(), "expected title. Key=4");
-//
-//						assert.equal(oOrigItem.getFavorite(), true, "expected favorite. Key=4");
-//						assert.ok(oOrigItem.getFavorite() !== oOrigItem.getOriginalFavorite(), "expected favorite. Key=4");
-//					}
-//				}
-
-
-				var oTarget = this.oVM.oManagementCancel.getFocusDomRef();
-				assert.ok(oTarget);
-				QUnitUtils.triggerTouchEvent("tap", oTarget, {
-					srcControl: null
-				});
-				sap.ui.getCore().applyChanges();
+			var aItems = this.oVM.oManagementTable.getItems();
+			assert.ok(aItems, "items in the management table exists");
+			assert.equal(aItems.length, 3,  "expected count of items in the management table exists");
 
 		}.bind(this));
+
 
 		var fOriginalCall = this.oVM._openVariantList.bind(this.oVM);
 		sinon.stub(this.oVM, "_openVariantList").callsFake(function (oEvent) {
@@ -1163,4 +1210,483 @@ sap.ui.define([
 
 		sap.ui.getCore().applyChanges();
 	});
+
+	QUnit.test("check opens check event 'manage'", function(assert) {
+		this.oVM.addItem(new VariantItem({key: "1", title:"One", originalTitle: "One", rename: false, sharing: "public", executeOnSelect: true, originalExecuteOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "2", title:"Two", originalTitle: "Two", remove: true, sharing: "private", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "3", title:"Three", originalTitle: "Three", favorite: true, remove: true, sharing: "private", executeOnSelect: true, originalExecuteOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "4", title:"Four", originalTitle: "Four", favorite: false, originalFavorite: false, rename: false, sharing: "public", author: "B"}));
+
+		this.oVM.setDefaultKey("3");
+
+		sap.ui.getCore().applyChanges();
+
+		var done = assert.async();
+
+
+		this.oVM.attachManage(function(oEvent) {
+			var mParameters = oEvent.getParameters();
+			assert.ok(mParameters);
+
+			// unittest issue
+//			assert.equal(mParameters.def, "2");
+//			assert.equal(this.oVM.getDefaultKey(), "2", "expected default");
+
+			assert.ok(mParameters.exe);
+			assert.equal(mParameters.exe.length, 1, "expected event data about apply automatically.");
+			assert.equal(mParameters.exe[0].key, "1", "expected event data about apply automatically key.");
+			assert.equal(mParameters.exe[0].exe, false, "expected event data about apply automatically value");
+
+			assert.ok(mParameters.fav);
+			assert.equal(mParameters.fav.length, 1, "expected event data about favorite.");
+			assert.equal(mParameters.fav[0].key, "4", "expected event data about favorite key.");
+			assert.equal(mParameters.fav[0].visible, true, "expected event data about favorite value");
+
+			assert.ok(mParameters.deleted);
+			assert.equal(mParameters.deleted.length, 1, "expected event data about deleted.");
+			assert.equal(mParameters.deleted[0], '3', "expected event data about deleted.");
+
+
+			var aItems = this.oVM.getItems();
+			assert.ok(aItems, "items exists");
+			assert.equal(aItems.length, 4,  "expected count of items in the management table exists");
+
+			for (var i = 0; i < aItems.length; i++) {
+
+				if (i === 0) {
+					assert.equal(aItems[i].getTitle(), "One", "expected title. Row=0");
+					assert.equal(aItems[i].getOriginalTitle(), "One", "expected original title. Row=0");
+
+					assert.equal(aItems[i].getExecuteOnSelect(), false, "expected execute on select. Row=0");
+					assert.equal(aItems[i].getOriginalExecuteOnSelect(), true, "expected original execute on select. Row=0");
+				} else if (i === 1) {
+					assert.equal(aItems[i].getTitle(), "newName", "expected title. Row=1");
+					assert.equal(aItems[i].getOriginalTitle(), "Two", "expected original title. Row=1");
+				} else if (i === 2) {
+					assert.equal(aItems[i].getTitle(), "Three", "expected title. Row=2");
+					assert.equal(aItems[i].getOriginalTitle(), "Three", "expected original title. Row=2");
+
+					assert.equal(aItems[i].getExecuteOnSelect(), true, "expected execute on select. Row=2");
+					assert.equal(aItems[i].getOriginalExecuteOnSelect(), true, "expected original execute on select. Row=2");
+
+					assert.equal(aItems[i].getVisible(), false, "item is not active. Row=2");
+				} else {
+					assert.equal(aItems[i].getTitle(), "Four", "expected title. Row=3");
+					assert.equal(aItems[i].getOriginalTitle(), "Four", "expected original title. Row=3");
+
+					assert.equal(aItems[i].getFavorite(), true, "expected favorite. Row=3");
+					assert.equal(aItems[i].getOriginalFavorite(), false, "expected original favorite. Row=3");
+				}
+			}
+		}.bind(this));
+
+
+		this.oVM._createManagementDialog();
+		assert.ok(this.oVM.oManagementDialog, "manage dialog should exists.");
+
+		this.oVM.oManagementDialog.attachAfterClose(function() {
+			done();
+		});
+
+		this.oVM.oManagementDialog.attachAfterOpen(function() {
+
+			var aItems = this.oVM.oManagementTable.getItems();
+			assert.ok(aItems, "items in the management table exists");
+			assert.equal(aItems.length, 4,  "expected count of items in the management table exists");
+
+			// 1st row
+			fChangeApplyAutomatic(this.oVM.oManagementTable, 0);
+			this.clock.tick(100);
+
+			// 2nd row
+			fChangeTitle(this.oVM.oManagementTable, 1, "newName");
+			this.clock.tick(100);
+
+			fChangeDefault(this.oVM.oManagementTable, 1);
+			this.clock.tick(100);
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(100);
+
+
+			// 4th row
+			fChangeFavorite(this.oVM.oManagementTable, 3);
+			this.clock.tick(100);
+
+			// 3nd row
+			fChangeTitle(this.oVM.oManagementTable, 2, "newName2");
+			this.clock.tick(100);
+
+			fChangeDelete(this.oVM.oManagementTable, 2);
+			this.clock.tick(100);
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(600);
+
+			aItems = this.oVM.oManagementTable.getItems();
+			assert.ok(aItems, "items in the management table exists");
+			assert.equal(aItems.length, 3,  "expected count of items in the management table exists");
+
+
+			aItems = this.oVM.getItems();
+			assert.ok(aItems, "aggregation items exists");
+			assert.equal(aItems.length, 4, "aggregation items count");
+
+
+			var oTarget = this.oVM.oManagementSave.getFocusDomRef();
+			assert.ok(oTarget);
+			QUnitUtils.triggerTouchEvent("tap", oTarget, {
+				srcControl: null
+			});
+			sap.ui.getCore().applyChanges();
+
+		}.bind(this));
+
+
+		var fOriginalManageCall = this.oVM._openManagementDialog.bind(this.oVM);
+		sinon.stub(this.oVM, "_openManagementDialog").callsFake(function (oEvent) {
+
+			fOriginalManageCall(oEvent);
+			this.clock.tick(600);
+
+
+			assert.ok(this.oVM.oManagementTable, "management table exists");
+
+			var aItems = this.oVM.oManagementTable.getItems();
+			assert.ok(aItems, "items in the management table exists");
+			assert.equal(aItems.length, 3,  "expected count of items in the management table exists");
+
+		}.bind(this));
+
+
+		var fOriginalCall = this.oVM._openVariantList.bind(this.oVM);
+		sinon.stub(this.oVM, "_openVariantList").callsFake(function (oEvent) {
+
+			fOriginalCall(oEvent);
+			sap.ui.getCore().applyChanges();
+
+			var oTarget = this.oVM.oVariantManageBtn.getFocusDomRef();
+			assert.ok(oTarget);
+			QUnitUtils.triggerTouchEvent("tap", oTarget, {
+				srcControl: null
+			});
+
+			sap.ui.getCore().applyChanges();
+
+		}.bind(this));
+
+		this.oVM.onclick();
+
+		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.test("check omanage dialog with dublicate entries", function(assert) {
+		this.oVM.addItem(new VariantItem({key: "1", title:"One", originalTitle: "One", rename: false, sharing: "public", executeOnSelect: true, originalExecuteOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "2", title:"Two", originalTitle: "Two", remove: true, sharing: "private", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "3", title:"Three", originalTitle: "Three", favorite: true, remove: true, sharing: "private", executeOnSelect: true, originalExecuteOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "4", title:"Four", originalTitle: "Four", favorite: false, originalFavorite: false, rename: false, sharing: "public", author: "B"}));
+
+		this.oVM.setDefaultKey("3");
+
+		sap.ui.getCore().applyChanges();
+
+		var done = assert.async();
+
+
+		this.oVM._createManagementDialog();
+		assert.ok(this.oVM.oManagementDialog, "manage dialog should exists.");
+
+		var fOriginalSaveHandler = this.oVM._handleManageSavePressed.bind(this.oVM);
+		sinon.stub(this.oVM, "_handleManageSavePressed").callsFake(function (oEvent) {
+			fOriginalSaveHandler();
+
+			assert.ok(true, "expected handler called");
+
+			var oTarget = this.oVM.oManagementCancel.getFocusDomRef();
+			assert.ok(oTarget);
+			QUnitUtils.triggerTouchEvent("tap", oTarget, {
+				srcControl: null
+			});
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(100);
+		}.bind(this));
+
+		this.oVM.oManagementDialog.attachAfterClose(function() {
+			done();
+		});
+
+		this.oVM.oManagementDialog.attachAfterOpen(function() {
+
+			// 2nd row
+			fChangeTitle(this.oVM.oManagementTable, 1, "One");
+			this.clock.tick(100);
+
+
+			var oTarget = this.oVM.oManagementSave.getFocusDomRef();
+			assert.ok(oTarget);
+			QUnitUtils.triggerTouchEvent("tap", oTarget, {
+				srcControl: null
+			});
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(100);
+
+		}.bind(this));
+
+		var fOriginalManageCall = this.oVM._openManagementDialog.bind(this.oVM);
+		sinon.stub(this.oVM, "_openManagementDialog").callsFake(function (oEvent) {
+
+			fOriginalManageCall(oEvent);
+			this.clock.tick(600);
+
+			assert.ok(this.oVM.oManagementTable, "management table exists");
+			var aItems = this.oVM.oManagementTable.getItems();
+			var aCells = aItems[1].getCells();
+
+			var oInput = aCells[1];
+			assert.ok(oInput, "expected input field");
+
+			assert.equal(oInput.getValueState(), "Error", "expected error state");
+		}.bind(this));
+
+
+		var fOriginalCall = this.oVM._openVariantList.bind(this.oVM);
+		sinon.stub(this.oVM, "_openVariantList").callsFake(function (oEvent) {
+
+			fOriginalCall(oEvent);
+			sap.ui.getCore().applyChanges();
+
+			var oTarget = this.oVM.oVariantManageBtn.getFocusDomRef();
+			assert.ok(oTarget);
+			QUnitUtils.triggerTouchEvent("tap", oTarget, {
+				srcControl: null
+			});
+
+			sap.ui.getCore().applyChanges();
+
+		}.bind(this));
+
+		this.oVM.onclick();
+
+		sap.ui.getCore().applyChanges();
+	});
+
+
+	QUnit.module("VariantManagement Roles handling", {
+		beforeEach: function() {
+			this.oVM = new VariantManagement();
+			this.oVM.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			page.addContent(this.oVM);
+
+			this.clock = sinon.useFakeTimers();
+		},
+		afterEach: function() {
+			page.removeContent(this.oVM);
+
+			if (this.oCompContainer) {
+				var oComponent = this.oCompContainer.getComponentInstance();
+				oComponent.destroy();
+
+				this.oCompContainer.destroy();
+				this.oCompContainer = undefined;
+			}
+
+			this.oVM.destroy();
+
+			this.clock.restore();
+		}
+	});
+
+	QUnit.test("check roles inside managed views", function (assert) {
+		this.oVM.addItem(new VariantItem({key: "1", title:"One", originalTitle: "One", rename: false, sharing: "public", executeOnSelect: true, originalExecuteOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "2", title:"Two", originalTitle: "Two", contexts: {role: ["test"]}, originalContexts: {role: ["test"]}, remove: true, sharing: "private", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "3", title:"Three", originalTitle: "Three", favorite: true, remove: true, sharing: "private", executeOnSelect: true, originalExecuteOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "4", title:"Four", originalTitle: "Four", contexts: {role: []}, originalContexts: {role: []}, favorite: false, originalFavorite: false, rename: false, sharing: "public", author: "B"}));
+
+		this.oVM.setDefaultKey("3");
+
+		sap.ui.getCore().applyChanges();
+
+		var done = assert.async();
+
+		this.oVM.attachManage(function(oEvent) {
+			var mParameters = oEvent.getParameters();
+			assert.ok(mParameters);
+
+			FeaturesAPI.isContextSharingEnabled.restore();
+
+			assert.ok(this.oCompContainer, "context sharing component exists");
+
+			done();
+		}.bind(this));
+
+
+		this.oVM._sStyleClass = "STYLECLASS";
+		this.oVM._createManagementDialog();
+		assert.ok(this.oVM.oManagementDialog, "manage dialog should exists.");
+
+		this.oVM.oManagementDialog.attachAfterOpen(function() {
+			var oIcon = null;
+			var oRb = this.oVM._oRb;
+
+			var aItems = this.oVM.oManagementTable.getItems();
+			assert.ok(aItems, "items in the management table exists");
+			assert.equal(aItems.length, 4,  "expected count of items in the management table exists");
+
+			for (var i = 0; i < aItems.length; i++) {
+				var oRolesCell = aItems[i].getCells()[5];
+				assert.ok(oRolesCell, "expected contexts element");
+
+				if (i === 0) {
+					 assert.ok(oRolesCell.isA("sap.m.Text"), "standard has no contexts");
+				} else {
+					 assert.ok(oRolesCell.isA("sap.m.HBox"), "item with contexts");
+
+					 var oText = oRolesCell.getItems()[0];
+					 if (i === 1) {
+						 assert.equal(oText.getText(), oRb.getText("VARIANT_MANAGEMENT_VISIBILITY_RESTRICTED"), "restricted expected");
+						 oIcon = oRolesCell.getItems()[1];
+					 } else {
+						 assert.equal(oText.getText(), oRb.getText("VARIANT_MANAGEMENT_VISIBILITY_NON_RESTRICTED"), "non restricted expected");
+					 }
+				}
+			}
+
+			assert.ok(oIcon, "restricted icon");
+			var oTarget = oIcon.getFocusDomRef();
+			assert.ok(oTarget);
+			QUnitUtils.triggerTouchEvent("click", oTarget, {
+				srcControl: null
+			});
+			sap.ui.getCore().applyChanges();
+
+		}.bind(this));
+
+
+		var fOriginalManageCall = this.oVM._openManagementDialog.bind(this.oVM);
+		sinon.stub(this.oVM, "_openManagementDialog").callsFake(function () {
+
+			fOriginalManageCall();
+			this.clock.tick(600);
+
+			assert.ok(this.oVM.oManagementTable, "management table exists");
+
+		}.bind(this));
+
+
+		this.oVM._createRolesDialog();
+		assert.ok(this.oVM._oRolesDialog, "roles dialog exisis");
+
+		this.oVM._oRolesDialog.attachAfterClose(function() {
+
+			var oTarget = this.oVM.oManagementSave.getFocusDomRef();
+			assert.ok(oTarget, "dom ref of save button of manage dialog ob tained");
+			QUnitUtils.triggerTouchEvent("tap", oTarget, {
+				srcControl: null
+			});
+			sap.ui.getCore().applyChanges();
+
+		}.bind(this));
+
+		this.oVM._oRolesDialog.attachAfterOpen(function() {
+
+			var oCancelButton = sap.ui.getCore().byId(this.oVM.getId() + "-rolecancel");
+			assert.ok(oCancelButton, "cancel button of roles dialog existst");
+
+			var oTarget = oCancelButton.getFocusDomRef();
+			assert.ok(oTarget, "dom ref of cancel button of roles dialog ob tained");
+			QUnitUtils.triggerTouchEvent("tap", oTarget, {
+				srcControl: null
+			});
+			sap.ui.getCore().applyChanges();
+
+		}.bind(this));
+
+		var fOriginalRolesCall = this.oVM._openRolesDialog.bind(this.oVM);
+		sinon.stub(this.oVM, "_openRolesDialog").callsFake(function (oItem, oTextControl) {
+
+			fOriginalRolesCall(oItem, oTextControl);
+			this.clock.tick(600);
+
+		}.bind(this));
+
+		sinon.stub(FeaturesAPI, "isContextSharingEnabled").returns(Promise.resolve(true));
+
+		var oContextSharing = ContextSharingAPI.createComponent({ layer: "CUSTOMER" });
+		oContextSharing.then(function(oCompContainer) {
+			this.oCompContainer = oCompContainer;
+			//oCompContainer.getComponentInstance().getRootControl().loaded().then(function() {
+				this.oVM.openManagementDialog(false, "STYLECLASS", oContextSharing);
+			//}.bind(this));
+		}.bind(this));
+
+	});
+
+	QUnit.test("check roles inside SaveAs dialog", function(assert) {
+		this.oVM.addItem(new VariantItem({key: "1", title:"One"}));
+		this.oVM.addItem(new VariantItem({key: "2", title:"Two"}));
+
+		this.oVM.setSelectedKey("2");
+
+		var done = assert.async();
+
+
+		this.oVM.attachSave(function(oEvent) {
+			var mParameters = oEvent.getParameters();
+
+			assert.ok(mParameters);
+			assert.ok(!mParameters.def, "default flag not expected");
+			assert.ok(!mParameters.execute, "execute flag not expected");
+			assert.ok(!mParameters.public, "public flag not expected");
+			assert.ok(!mParameters.overwrite, "overwrite should be false");
+			assert.equal(mParameters.name, "New", "name expected");
+			assert.deepEqual(mParameters.contexts, {role: []}, "non restricted context expected");
+		});
+
+		this.oVM._createSaveAsDialog();
+		assert.ok(this.oVM.oSaveAsDialog, "saveas dialog exists");
+
+		this.oVM.oSaveAsDialog.attachAfterClose(function() {
+			FeaturesAPI.isContextSharingEnabled.restore();
+
+			assert.ok(this.oCompContainer, "context sharing component exists");
+			done();
+		}.bind(this));
+
+		this.oVM.oSaveAsDialog.attachAfterOpen(function() {
+
+			var oTarget = this.oVM.oSaveSave.getFocusDomRef();
+			assert.ok(oTarget, "dom ref of the save button inside SaveAs dialog exists");
+			QUnitUtils.triggerTouchEvent("tap", oTarget, {
+				srcControl: null
+			});
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(600);
+		}.bind(this));
+
+
+		var fOpenCall = this.oVM.oSaveAsDialog.open.bind(this.oVM.oSaveAsDialog);
+		sinon.stub(this.oVM.oSaveAsDialog, "open").callsFake(function (sClass, oContext) {
+
+			assert.ok(this.oVM.oInputName, "input entry should exists");
+			this.oVM.oInputName.setValue("New");
+
+			fOpenCall(sClass, oContext);
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(6000);
+		}.bind(this));
+
+		sinon.stub(FeaturesAPI, "isContextSharingEnabled").returns(Promise.resolve(true));
+
+		var oContextSharing = ContextSharingAPI.createComponent({ layer: "CUSTOMER" });
+		oContextSharing.then(function(oCompContainer) {
+			this.oCompContainer = oCompContainer;
+			//oCompContainer.getComponentInstance().getRootControl().loaded().then(function() {
+				this.oVM.openSaveAsDialog("STYLECLASS", oContextSharing);
+				sap.ui.getCore().applyChanges();
+			//}.bind(this));
+		}.bind(this));
+
+	});
+
 });
