@@ -56,7 +56,8 @@ sap.ui.define([],
 			{
 				"id": "liveEditor",
 				"text": "Live Editor",
-				"href": "liveEditor"
+				"href": "liveEditor",
+				"hideOnPhone": true
 			},
 			{
 				"id": "fioriTools",
@@ -66,12 +67,15 @@ sap.ui.define([],
 			{
 				"id": "flexibleProgrammingModelExplorer",
 				"text": "Flexible Programming Model Explorer",
-				"href": "https://sapui5.hana.ondemand.com/test-resources/sap/fe/core/fpmExplorer/index.html#/overview/introduction"
+				"href": "test-resources/sap/fe/core/fpmExplorer/index.html#/overview/introduction",
+				"isDistributionScope": true,
+				"hideOnPhone": true
 			},
 			{
 				"id": "accessibilityGuide",
 				"text": "Accessibility Guide",
-				"href": "test-resources/sap/m/demokit/accessibilityGuide/webapp/index.html"
+				"href": "test-resources/sap/m/demokit/accessibilityGuide/webapp/index.html",
+				"hideOnPhone": true
 			}
 		];
 

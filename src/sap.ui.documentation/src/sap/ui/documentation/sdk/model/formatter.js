@@ -277,6 +277,31 @@ sap.ui.define([
 		formatImportantMessage: function (sMsg, sParam) {
 			var sParam = this._getUI5Distribution();
 			return formatMessage(sMsg, sParam);
+		},
+
+		/**
+		 * Formats the value of the <code>visibile</code> property of the cards in the Tools section
+		 *
+		 * @param {object} oData the model data
+		 * @returns {boolean}
+		 * @protected
+		 */
+		formatToolCardVisibility: function (oData) {
+			if (!oData) {
+				return false;
+			}
+
+			if (oData.hideOnPhone
+				&& this.getOwnerComponent().getModel("device").getProperty("/system/phone")) {
+				return false;
+			}
+
+			if (oData.isDistributionScope
+				&& this.getOwnerComponent().getModel("versionData").getProperty("/isOpenUI5")) {
+				return false;
+			}
+
+			return true;
 		}
 	};
 	return merge(oFormatter, oStaticAPI);
