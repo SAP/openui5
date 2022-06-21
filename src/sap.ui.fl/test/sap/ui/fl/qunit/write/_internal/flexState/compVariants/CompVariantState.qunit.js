@@ -235,7 +235,9 @@ sap.ui.define([
 				layer: "CUSTOMER",
 				namespace: "apps/the.app.component/changes/",
 				originalLanguage: "EN",
-				persistencyKey: "persistency.key",
+				selector: {
+					persistencyKey: sPersistencyKey
+				},
 				projectId: "the.app.component",
 				reference: "the.app.component",
 				standardVariant: false,
@@ -299,7 +301,9 @@ sap.ui.define([
 				layer: "CUSTOMER",
 				namespace: "apps/the.app.component/changes/",
 				originalLanguage: "EN",
-				persistencyKey: "persistency.key",
+				selector: {
+					persistencyKey: sPersistencyKey
+				},
 				projectId: "the.app.component",
 				reference: "the.app.component",
 				standardVariant: false,
