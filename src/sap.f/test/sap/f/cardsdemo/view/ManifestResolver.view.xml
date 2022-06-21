@@ -29,6 +29,10 @@
 							<core:Item text="List Card No Data" key="listCardNoData" />
 							<core:Item text="List Card with Bullet Graph and Actions" key="listCardBulletGraphActions" />
 							<core:Item text="List Card with Stacked Bar Chart" key="stackedBar" />
+							<core:Item text="Table Card 1" key="tableCard1" />
+							<core:Item text="Table Card 2" key="tableCard2" />
+							<core:Item text="Table Card with Grouping" key="tableCardGroups" />
+							<core:Item text="Table Card No Data" key="tableCardNoData" />
 						</items>
 					</Select>
 				</HBox>

@@ -953,6 +953,252 @@ sap.ui.define([
 			});
 	});
 
+	QUnit.test("Table item template", function (assert) {
+		var oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Table",
+				"content": {
+					"data": {
+						"json": [
+							{
+								"FirstName": "Donna",
+								"LastName": "Moore"
+							},
+							{
+								"FirstName": "John",
+								"LastName": "Miller"
+							}
+						]
+					},
+					"row": {
+						"columns": [
+							{
+								"title": "First Name",
+								"value": "{FirstName}",
+								"width": "18%",
+								"hAlign": "Center",
+								"identifier": true
+							},
+							{
+								"title": "Last Name",
+								"value": "{LastName}",
+								"visible": false
+							}
+						]
+					}
+				}
+			}
+		};
+
+		var oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(JSON.parse)
+			.then(function (oRes) {
+				var oExpectedResult = {
+					"headers": [
+						{
+							"title": "First Name",
+							"width": "18%",
+							"hAlign": "Center",
+							"identifier": true
+						},
+						{
+							"title": "Last Name",
+							"visible": false
+						}
+					],
+					"rows": [
+						{
+							"columns": [
+								{
+									"value": "Donna"
+								},
+								{
+									"value": "Moore"
+								}
+							]
+						},
+						{
+							"columns": [
+								{
+									"value": "John"
+								},
+								{
+									"value": "Miller"
+								}
+							]
+						}
+					]
+				};
+
+				// Assert
+				assert.deepEqual(oRes["sap.card"].content, oExpectedResult, "table template is resolved correctly");
+
+				oCard.destroy();
+			});
+	});
+
+	QUnit.test("Table item template - 'no data' ", function (assert) {
+		var oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Table",
+				"content": {
+					"data": {
+						"json": []
+					},
+					"row": {
+						"columns": [
+							{
+								"value": "{{value}}",
+								"title": "Title"
+							}
+						]
+					}
+				}
+			}
+		};
+
+		var oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(JSON.parse)
+			.then(function (oRes) {
+				var oExpectedResult = {
+					"headers": [{
+						"title": "Title"
+					}],
+					"rows": []
+				};
+
+				// Assert
+				assert.deepEqual(oRes["sap.card"].content, oExpectedResult, "table template is resolved correctly");
+
+				oCard.destroy();
+			});
+	});
+
+	QUnit.test("Table item template with groups", function (assert) {
+		var oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Table",
+				"content": {
+					"data": {
+						"json": [
+							{
+								"FirstName": "Donna",
+								"LastName": "Moore",
+								"deliveryProgress": 1
+							},
+							{
+								"FirstName": "John",
+								"LastName": "Miller",
+								"deliveryProgress": 51
+							}
+						]
+					},
+					"row": {
+						"columns": [
+							{
+								"title": "First Name",
+								"value": "{FirstName}"
+							},
+							{
+								"title": "Last Name",
+								"value": "{LastName}"
+							}
+						]
+					},
+					"group": {
+						"title": "{= ${deliveryProgress} > 10 ? 'In Delivery' : 'Not in Delivery'}",
+						"order": {
+							"path": "statusState",
+							"dir": "ASC"
+						}
+					}
+				}
+			}
+		};
+
+		var oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(JSON.parse)
+			.then(function (oRes) {
+				var oExpectedResult = {
+					"headers": [
+						{
+							"title": "First Name"
+						},
+						{
+							"title": "Last Name"
+						}
+					],
+					"groups": [
+						{
+							"title": "Not in Delivery",
+							"rows": [
+								{
+									"columns": [
+										{
+											"value": "Donna"
+										},
+										{
+											"value": "Moore"
+										}
+									]
+								}
+							]
+						},
+						{
+							"title": "In Delivery",
+							"rows": [
+								{
+									"columns": [
+										{
+											"value": "John"
+										},
+										{
+											"value": "Miller"
+										}
+									]
+								}
+							]
+						}
+					]
+				};
+
+				// Assert
+				assert.deepEqual(oRes["sap.card"].content, oExpectedResult, "list template is resolved correctly");
+
+				oCard.destroy();
+			});
+	});
+
 	QUnit.test("Filter item template", function (assert) {
 		var oManifest = {
 			"sap.app": {
