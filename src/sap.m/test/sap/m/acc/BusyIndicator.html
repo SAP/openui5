@@ -1,61 +1,24 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="utf-8">
 		<title>sap.m.BusyIndicator - Accessibility</title>
 
+		<link href="BusyIndicator.css" rel="stylesheet">
 		<script src="../shared-config.js"></script>
-		<script src="../../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-resourceroots='{
-				"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
-			}'>
-		</script>
-
-		<style>
-			#content .sapMBusyIndicator {
-				display: block;
-				margin: 3rem;
-			}
-		</style>
-
-		<script>
-			var app = new sap.m.App("myApp", {
-				initialPage: "page1"
-			}),
-				busyImage = new sap.m.BusyIndicator({
-					text: 'Busy indicator with a custom icon',
-					customIcon: '../images/synchronise_48.png',
-					customIconRotationSpeed: 5000
-				}),
-				busyCSSText = new sap.m.BusyIndicator({
-					text: 'Medium sized busy indicator',
-				}),
-				bCompactMode = new sap.m.CheckBox("compactMode", {
-					text: "Compact Mode",
-					selected : false,
-					select : function() {
-						$("body").toggleClass("sapUiSizeCompact");
-					}
-				}),
-				oPage = new sap.m.Page("page1", {
-					title: "BusyIndicator Accessibility Test Page",
-					content:[
-						busyImage,
-						busyCSSText
-					],
-					footer: new sap.m.Toolbar({
-							content: [
-								new sap.m.ToolbarSpacer(),
-								bCompactMode
-							]
-					})
-				});
-
-			app.addPage(oPage).placeAt("content");
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-onInit="module:local/BusyIndicator"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
+					"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
 		</script>
 	</head>
-	<body class="sapUiBody" style="overflow: hidden">
+	<body class="sapUiBody">
 		<div id="content"></div>
 	</body>
 </html>

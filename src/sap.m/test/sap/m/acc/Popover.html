@@ -1,73 +1,23 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-<head>
-	<title>sap.m.Popover - Accessibility</title>
+	<head>
+		<meta charset="utf-8">
+		<title>sap.m.Popover - Accessibility</title>
 
-	<script src="../shared-config.js"></script>
-	<script src="../../../../resources/sap-ui-core.js"
-		id="sap-ui-bootstrap"
-		data-sap-ui-libs="sap.m"
-		data-sap-ui-resourceroots='{
-			"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
-		}'>
-	</script>
-
-	<script>
-		var oApp = new sap.m.App("myApp", {
-			initialPage: "page"
-		}),
-
-			oInvisibleText = new sap.ui.core.InvisibleText({text: "Items to buy from the supermarket"}),
-
-			oCompactMode = new sap.m.CheckBox("compactMode", {
-					text: "Compact Mode",
-					selected : false,
-					select : function() {
-						$("body").toggleClass("sapUiSizeCompact");
-					}
-				}),
-
-			oPopover = new sap.m.Popover({
-				title: "Grocery List",
-				placement: "Bottom",
-				content: [
-						new sap.m.List({
-							items: [
-									new sap.m.StandardListItem({ title: "1 kg Tomatos", wrapping: true }),
-									new sap.m.StandardListItem({ title: "1 kg Potatos", wrapping: true }),
-									new sap.m.StandardListItem({ title: "Salt", wrapping: true })
-							]
-						})
-				],
-				ariaLabelledBy: oInvisibleText.getId()
-			}),
-
-			oButton = new sap.m.Button("popoverButton", {
-				text: "Open Grocery List in Popover ",
-				ariaHasPopup: sap.ui.core.aria.HasPopup.ListBox,
-				press: function () {
-					oPopover.openBy(this);
-				}
-			}),
-
-			oPage = new sap.m.Page("page", {
-				title: "Popover Accessibility Test Page",
-				content: [
-					oButton,
-					oInvisibleText
-				],
-				footer: new sap.m.Toolbar({
-							content: [
-								new sap.m.ToolbarSpacer(),
-								oCompactMode
-							]
-					})
-			});
-
-		oApp.addPage(oPage).placeAt("content");
-	</script>
-</head>
-<body class="sapUiBody">
-	<div id="content"></div>
-</body>
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-onInit="module:local/Popover"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
+					"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
+		</script>
+	</head>
+	<body class="sapUiBody">
+		<div id="content"></div>
+	</body>
 </html>

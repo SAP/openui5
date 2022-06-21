@@ -1,0 +1,9 @@
+.label {
+	font-weight:bold;
+	padding: 3rem 1rem 1rem;
+	width: auto;
+	white-space: normal;
+}
+.ITBContainer{
+	border: 1px solid #0F5D94;
+}

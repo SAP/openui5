@@ -15,6 +15,8 @@ sap.ui.define([
 		}
 	}
 
+	document.body.firstElementChild.style.height = "2000px";
+
 	new Button({
 		text : "Open BusyIndicator for four seconds (default delay, which is 1 second)",
 		press : function() {

@@ -1,166 +1,23 @@
-<!DOCTYPE HTML>
-
+<!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="utf-8">
 		<title>RadioButton - sap.m</title>
 
-		<script src="shared-config.js"></script>
-		<script src="../../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m, sap.ui.layout"
-			data-sap-ui-resourceroots='{
-				"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
-			}'>
+		<link href="RadioButton.css" rel="stylesheet">
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m, sap.ui.layout"
+				data-sap-ui-onInit="module:local/RadioButton"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
+					"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
 		</script>
-
-        <style>
-            #vboxStates {
-                padding: 2rem;
-            }
-
-            #vboxStates .sapMVBox {
-                padding-right: 6rem;
-            }
-        </style>
-
-		<script>
-			jQuery.sap.initMobile();
-
-			var oCompactMode = new sap.m.CheckBox("compactMode", {
-					text: "Compact Mode",
-					selected : false,
-					select : function() {
-						$("body").toggleClass("sapUiSizeCompact");
-					}
-				}),
-
-				radioBtnPage = new sap.m.Page("radioBtnPage", {
-					title : "RadioButton Accessibility Test Page",
-					footer : new sap.m.Toolbar({
-								content: [
-									new sap.m.ToolbarSpacer(),
-									oCompactMode
-								]
-						})
-				}),
-
-            	hBoxStatesFirstLine = new sap.m.HBox({
-					wrap: sap.m.FlexWrap.Wrap,
-					items:[
-						new sap.m.VBox("regular-vbox", {
-							items: [
-								new sap.m.Label({text: "Regular", labelFor: "v01"}),
-								new sap.m.RadioButtonGroup("v01", {
-									buttons: [
-										new sap.m.RadioButton({selected: true, text: 'Selected'}),
-										new sap.m.RadioButton("regular-vbox-button-notselected", {selected: false, text: 'Not Selected'})
-									]
-								})
-
-							]
-						}),
-
-						new sap.m.VBox("disabled-vbox", {
-							items: [
-								new sap.m.Label({text: 'Disabled', labelFor: "v06"}),
-								new sap.m.RadioButtonGroup("v06", {
-									enabled: false,
-									buttons: [
-										new sap.m.RadioButton({ selected: true, text: 'Selected'}),
-										new sap.m.RadioButton("disabled-vbox-button-notselected",{ selected: false, text: 'Not Selected'})
-									]
-								})
-							]
-						}),
-
-						new sap.m.VBox("readonly-vbox", {
-							items: [
-								new sap.m.Label({text: 'Group 3', labelFor: "v03"}),
-								new sap.m.RadioButtonGroup("v03", {
-									editable: false,
-									buttons: [
-										new sap.m.RadioButton({selected: true, text: 'Selected'}),
-										new sap.m.RadioButton("readonly-vbox-button-notselected", {selected: false, text: 'Not Selected'})
-									]
-								})
-							]
-						}),
-
-						new sap.m.VBox("readonly-disabled-vbox", {
-							items: [
-								new sap.m.Label({text: 'Read Only Disabled', labelFor: "v08"}),
-								new sap.m.RadioButtonGroup("v08", {
-									enabled: false,
-									editable: false,
-									buttons: [
-										new sap.m.RadioButton({selected: true, text: 'Selected'}),
-										new sap.m.RadioButton({selected: false, text: 'Not Selected'})
-									]
-								})
-							]
-						}),
-
-						new sap.m.VBox("error-vbox", {
-							items: [
-								new sap.m.Label({text: 'Invalid/Error', labelFor: "v04"}),
-								new sap.m.RadioButtonGroup("v04", {
-									valueState: sap.ui.core.ValueState.Error,
-									buttons: [
-										new sap.m.RadioButton({selected: true, text: 'Selected'}),
-										new sap.m.RadioButton("error-vbox-button-notselected", {selected: false, text: 'Not Selected'})
-									]
-								})
-							]
-						}),
-						new sap.m.VBox("warning-vbox", {
-							items: [
-								new sap.m.Label({text: 'Warning', labelFor: "v05"}),
-								new sap.m.RadioButtonGroup("v05", {
-									valueState: sap.ui.core.ValueState.Warning,
-									buttons: [
-										new sap.m.RadioButton({selected: true, text: 'Selected'}),
-										new sap.m.RadioButton("warning-vbox-button-notselected", {selected: false, text: 'Not Selected'})
-									]
-								})
-							]
-						}),
-						new sap.m.VBox("success-vbox", {
-							items: [
-								new sap.m.Label({text: 'Success', labelFor: "successGroup"}),
-								new sap.m.RadioButtonGroup("successGroup", {
-									valueState: sap.ui.core.ValueState.Success,
-									buttons: [
-										new sap.m.RadioButton({selected: true, text: 'Selected'}),
-										new sap.m.RadioButton("success-vbox-button-notselected", {selected: false, text: 'Not Selected'})
-									]
-								})
-							]
-						}),
-						new sap.m.VBox("information-vbox", {
-							items: [
-								new sap.m.Label({text: 'Information', labelFor: "informationGroup"}),
-								new sap.m.RadioButtonGroup("informationGroup", {
-									valueState: sap.ui.core.ValueState.Information,
-									buttons: [
-										new sap.m.RadioButton({selected: true, text: 'Selected'}),
-										new sap.m.RadioButton("information-vbox-button-notselected", {selected: false, text: 'Not Selected'})
-									]
-								})
-							]
-						})
-					]
-            }),
-
-            vboxStates = new sap.m.VBox("vboxStates", {
-                items: [hBoxStatesFirstLine]
-            });
-
-            radioBtnPage.addContent(vboxStates);
-			radioBtnPage.placeAt('body');
-		</script>
-
 	</head>
-
 	<body id="body" class="sapUiBody">
 	</body>
 </html>

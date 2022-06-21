@@ -1,15 +1,20 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>sap.m.ExpandableText</title>
 		<script src="shared-config.js"></script>
-		<script src="../../../resources/sap-ui-core.js"
-				data-sap-ui-resourceroots='{
+		<script id="sap-ui-bootstrap"
+				src="../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m, sap.ui.layout"
+				data-sap-ui-onInit="module:local/ExpandableText"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
 					"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
-				}'
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m, sap.ui.layout">
+				}'>
 		</script>
 		<script id="myXml" type="text/xmldata">
 			<mvc:View xmlns:mvc="sap.ui.core.mvc"
@@ -123,22 +128,7 @@
 				</App>
 			</mvc:View>
 		</script>
-		<script>
-			sap.ui.controller("myController", {
-				onInit: function() {
-					var model = new sap.ui.model.json.JSONModel();
-					model.setData({
-						buttonText: "Click Me!"
-					});
-					this.getView().setModel(model);
-				},
-				doSomething: function() {
-					alert("Hello World!");
-				}
-			});
-			sap.ui.xmlview({ viewContent: jQuery('#myXml').html() }).placeAt("content");
-		</script>
 	</head>
-	<body id='content' class='sapUiBody'>
+	<body id="content" class="sapUiBody">
 	</body>
 </html>

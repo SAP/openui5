@@ -1,0 +1,14 @@
+.sample {
+	display:inline-block;
+}
+
+.event {
+	display:inline-block;
+	vertical-align: top;
+}
+
+#event1 {
+	width: 60%;
+	min-width: 350px;
+	max-width: 600px;
+}

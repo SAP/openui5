@@ -1,0 +1,8 @@
+body {
+	overflow: hidden;
+}
+
+#content .sapMBusyIndicator {
+	display: block;
+	margin: 3rem;
+}

@@ -3,20 +3,22 @@
 	<head>
 		<meta charset="utf-8">
 		<title>BusyIndicator - sap.ui.core</title>
+		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-async="true"
 				data-sap-ui-compatVersion="edge"
 				data-sap-ui-libs="sap.m"
 				data-sap-ui-onInit="module:local/BusyIndicator"
 				data-sap-ui-resourceRoots='{
-					"local": "./"
+					"local": "./",
+					"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
 				}'
 				data-sap-ui-theme="sap_horizon"
 				src="../../../../resources/sap-ui-core.js">
 		</script>
 	</head>
 	<body class="sapUiBody">
-		<div id="div" style="height:2000px">
+		<div id="div">
 			<h1>Test Page for sap.ui.core.BusyIndicator</h1>
 			Click the button to simulate an action that takes some time:
 			<div id="uiArea1"></div>
