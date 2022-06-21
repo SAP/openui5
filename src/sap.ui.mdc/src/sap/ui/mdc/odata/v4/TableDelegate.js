@@ -129,24 +129,33 @@ sap.ui.define([
 					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
 				};
 			}
-		} else if (sKey == "Group" && oState.aggregations) {
-			var aAggregateProperties = Object.keys(oState.aggregations);
-			var aAggregateGroupableProperties = [];
-			var oListFormat = ListFormat.getInstance();
-			aAggregateProperties.forEach(function(sProperty) {
-				var oProperty = oTable.getPropertyHelper().getProperty(sProperty);
-				if (oProperty && oProperty.groupable) {
-					aAggregateGroupableProperties.push(sProperty);
-				}
-			});
+		} else if (sKey == "Group") {
+			if (oState.aggregations) {
+				var aAggregateProperties = Object.keys(oState.aggregations);
+				var aAggregateGroupableProperties = [];
+				var oListFormat = ListFormat.getInstance();
+				aAggregateProperties.forEach(function(sProperty) {
+					var oProperty = oTable.getPropertyHelper().getProperty(sProperty);
+					if (oProperty && oProperty.groupable) {
+						aAggregateGroupableProperties.push(sProperty);
+					}
+				});
 
-			if (aAggregateGroupableProperties.length) {
-				oValidation = {
-					validation: coreLibrary.MessageType.Information,
-					message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION", [oListFormat.format(aAggregateGroupableProperties)])
-				};
+				if (aAggregateGroupableProperties.length) {
+					oValidation = {
+						validation: coreLibrary.MessageType.Information,
+						message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_TOTALS", [oListFormat.format(aAggregateGroupableProperties)])
+					};
+				}
+			} else if (oTable._bMobileTable) {
+				if (!checkForValidity(oTable, oState.items, oState.groupLevels)) {
+					oValidation = {
+						validation: coreLibrary.MessageType.Information,
+						message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_GROUP_RESTRICTION_VISIBLE")
+					};
+				}
 			}
-		} else if (sKey == "Column" ) {
+		} else if (sKey == "Column") {
 			var sMessage;
 			var aAggregateProperties = oState.aggregations && Object.keys(oState.aggregations);
 
@@ -298,6 +307,26 @@ sap.ui.define([
 		}
 
 		return aSupportedModes;
+	};
+
+	/**
+	 * Provides a hook especially for V4 to suppress the grouping by non visible column.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {string} sPropertyName Property to group
+	 * @return {undefined|*} Undefined or continue on parent
+	 * @protected
+	 */
+	Delegate.getGroupSorter = function(oTable, sPropertyName) {
+		var bPropertyVisible = oTable._getVisibleProperties().find(function(oProperty) {
+			return oProperty.name === sPropertyName;
+		});
+
+		if (!bPropertyVisible) {
+			return undefined;
+		}
+
+		return TableDelegate.getGroupSorter.apply(this, arguments);
 	};
 
 	function createGroupPopoverItem(aGroupProperties, oMDCColumn) {

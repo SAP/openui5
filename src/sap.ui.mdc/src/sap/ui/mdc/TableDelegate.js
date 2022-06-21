@@ -59,15 +59,11 @@ sap.ui.define([
 			var oGroupedProperty = oTable._getGroupedProperties()[0];
 
 			if (oGroupedProperty) {
-				var oSortedProperty = oTable._getSortedProperties().find(function(oProperty) {
-					return oProperty.name === oGroupedProperty.name;
-				});
-				var sPath = oTable.getPropertyHelper().getProperty(oGroupedProperty.name).path;
-				var bDescending = oSortedProperty ? oSortedProperty.descending : false;
+				var oSorter = this.getGroupSorter(oTable, oGroupedProperty.name);
 
-				oBindingInfo.sorter.push(new Sorter(sPath, bDescending, function(oContext) {
-					return this.formatGroupHeader(oTable, oContext, oGroupedProperty.name);
-				}.bind(this)));
+				if (oSorter) {
+					oBindingInfo.sorter.push(oSorter);
+				}
 			}
 		}
 
@@ -78,6 +74,26 @@ sap.ui.define([
 				})
 				: oTable._getSorters()
 		);
+	};
+
+	/**
+	 * Creates a new sorter for the grouping functionality.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {string} sPropertyName Property to group
+	 * @returns {sap.ui.model.Sorter} New sorter
+	 * @protected
+	 */
+	TableDelegate.getGroupSorter = function(oTable, sPropertyName){
+		var oSortedProperty = oTable._getSortedProperties().find(function(oProperty) {
+			return oProperty.name === sPropertyName;
+		});
+		var sPath = oTable.getPropertyHelper().getProperty(sPropertyName).path;
+		var bDescending = oSortedProperty ? oSortedProperty.descending : false;
+
+		return new Sorter(sPath, bDescending, function(oContext) {
+			return this.formatGroupHeader(oTable, oContext, sPropertyName);
+		}.bind(this));
 	};
 
 	/**
