@@ -59,7 +59,7 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		ControlSnippetProvider.getSnippet({
-			controlSelector: { selector: this.mSelector }
+			controlSelector: {selector: this.mSelector}
 		}).then(function (sResult) {
 			assert.ok(sResult.startsWith("await browser.asControl("), "Should include waitFor call");
 			assert.ok(!sResult.match(".press()"), "Should not include empty action");
