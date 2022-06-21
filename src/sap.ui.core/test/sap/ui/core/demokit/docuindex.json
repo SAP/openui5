@@ -8,7 +8,7 @@
 				"desc": "This app is an employee directory and shows the final result of the 'Navigation Tutorial'",
 				"ref": "test-resources/sap/ui/core/demokit/tutorial/navigation/17/webapp/index.html",
 				"links": {
-					"View Tutorial": "#/topic/1b6dcd39a6a74f528b27ddb22f15af0d"
+					"View Tutorial": "topic/1b6dcd39a6a74f528b27ddb22f15af0d"
 				},
 				"category": "Tutorial",
 				"config": "test-resources/sap/ui/core/demokit/tutorial/navigation/demoapp.json"
@@ -327,7 +327,7 @@
 				"since": "1.30",
 				"formFactors": "-",
 				"description": "This tutorial illustrates the major features of navigation and routing inside SAPUI5 apps.",
-				"docuLink": "#/topic/1b6dcd39a6a74f528b27ddb22f15af0d",
+				"docuLink": "topic/1b6dcd39a6a74f528b27ddb22f15af0d",
 				"samplesAsSteps": [
 					"Set Up the Initial App",
 					"Enable Routing",
@@ -355,7 +355,7 @@
 				"since": "1.48",
 				"formFactors": "-",
 				"description": "In this tutorial, we will show you some tools that will help you when you run into problems with your SAPUI5 app.",
-				"docuLink": "#/topic/5661952e72df471b932eddc10350c081",
+				"docuLink": "topic/5661952e72df471b932eddc10350c081",
 				"samplesAsSteps": [
 					"Heap of Shards"
 				]
@@ -367,7 +367,7 @@
 				"since": "1.30",
 				"formFactors": "-",
 				"description": "In this tutorial, we will explain the concepts of data binding in SAPUI5.",
-				"docuLink": "#/topic/e5310932a71f42daa41f3a6143efca9c",
+				"docuLink": "topic/e5310932a71f42daa41f3a6143efca9c",
 				"samplesAsSteps": [
 					"No Data Binding",
 					"Creating a Model",
@@ -393,7 +393,7 @@
 				"since": "1.34",
 				"formFactors": "-",
 				"description": "In this tutorial, we will explore some advanced features of the OData V2 mock server.",
-				"docuLink": "#/topic/3a9728ec31f94ca18a7d543ce419d85d",
+				"docuLink": "topic/3a9728ec31f94ca18a7d543ce419d85d",
 				"samplesAsSteps": [
 				  "Initial App Without Data",
 				  "Creating a Mock Server to Simulate Data",
@@ -408,7 +408,7 @@
 				"since": "1.54",
 				"formFactors": "-",
 				"description": "In this tutorial, we will show you how to build a simple application using an OData V4 service.",
-				"docuLink": "#/topic/bcdbde6911bd4fc68fd435cf8e306ed0",
+				"docuLink": "topic/bcdbde6911bd4fc68fd435cf8e306ed0",
 				"samplesAsSteps": [
 					"Set Up the Initial App",
 					"Data Access and Client-Server Communication",

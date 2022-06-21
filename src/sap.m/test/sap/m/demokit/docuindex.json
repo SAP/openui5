@@ -22,7 +22,7 @@
 				"desc": "Your very simple first app",
 				"ref": "test-resources/sap/m/demokit/tutorial/quickstart/03/webapp/index.html",
 				"links": {
-					"View Tutorial": "#/topic/592f36fd077b45349a67dcb3efb46ab1"
+					"View Tutorial": "topic/592f36fd077b45349a67dcb3efb46ab1"
 				},
 				"category": "Tutorial",
 				"config": "test-resources/sap/m/demokit/tutorial/quickstart/demoapp.json"
@@ -33,7 +33,7 @@
 				"desc": "Worklist app created with the 'Testing' tutorial" ,
 				"ref": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/mockServer.html",
 				"links": {
-					"View Tutorial": "#/topic/291c9121e6044ab381e0b51716f97f52",
+					"View Tutorial": "topic/291c9121e6044ab381e0b51716f97f52",
 					"Run Unit Tests": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/unit/unitTests.qunit.html",
 					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/integration/opaTests.qunit.html"
 				},
@@ -47,7 +47,7 @@
 				"desc": "Created with the 'Worklist App' tutorial",
 				"ref": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/mockServer.html",
 				"links": {
-					"View Tutorial": "#/topic/6a6a621c978145ad9eef2b221d2cf21d",
+					"View Tutorial": "topic/6a6a621c978145ad9eef2b221d2cf21d",
 					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/integration/opaTests.qunit.html",
 					"Run Unit Tests": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/unit/unitTests.qunit.html"
 				},
@@ -60,7 +60,7 @@
 				"desc": "Created with the 'Walkthrough' tutorial, showing all major development paradigms",
 				"ref" : "test-resources/sap/m/demokit/tutorial/walkthrough/37/webapp/test/mockServer.html",
 				"links": {
-					"View Tutorial": "#/topic/3da5f4be63264db99f2e5b04c5e853db",
+					"View Tutorial": "topic/3da5f4be63264db99f2e5b04c5e853db",
 					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/37/webapp/test/integration/opaTests.qunit.html",
 					"Run Unit Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/37/webapp/test/unit/unitTests.qunit.html"
 				},
@@ -96,7 +96,7 @@
 				"desc": "All our icons at your fingertips",
 				"ref": "test-resources/sap/m/demokit/iconExplorer/webapp/index.html",
 				"links": {
-					"View Documentation": "#/topic/21ea0ea94614480d9a910b2e93431291",
+					"View Documentation": "topic/21ea0ea94614480d9a910b2e93431291",
 					"Run Integration Tests": "test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests1.qunit.html",
 					"Run Unit Tests": "test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"
 				},
@@ -1562,7 +1562,7 @@
 			  "since": "1.61",
 			  "formFactors": "-",
 			  "description": "Unleash your SAPUI5 skills with this simple three step tutorial.",
-			  "docuLink": "#/topic/592f36fd077b45349a67dcb3efb46ab1",
+			  "docuLink": "topic/592f36fd077b45349a67dcb3efb46ab1",
 			  "samplesAsSteps": [
 				  "Ready",
 				  "Steady",
@@ -1576,7 +1576,7 @@
 		  "since": "1.30",
 		  "formFactors": "-",
 		  "description": "In this tutorial we are introducing you to all major development paradigms of SAPUI5.",
-		  "docuLink": "#/topic/3da5f4be63264db99f2e5b04c5e853db",
+		  "docuLink": "topic/3da5f4be63264db99f2e5b04c5e853db",
 		  "samplesAsSteps": [
 			"Hello World!",
 			"Bootstrap",
@@ -1624,7 +1624,7 @@
 		  "since": "1.30",
 		  "formFactors": "-",
 		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server.",
-		  "docuLink": "#/topic/291c9121e6044ab381e0b51716f97f52",
+		  "docuLink": "topic/291c9121e6044ab381e0b51716f97f52",
 		  "samplesAsSteps": [
 			"Overview and Testing Strategy",
 			"A First Unit Test",
@@ -1651,7 +1651,7 @@
 		  "since": "1.32",
 		  "formFactors": "-",
 		  "description": "In this tutorial we implement typical features of a full-screen worklist app, a typical SAP Fiori design pattern.",
-		  "docuLink": "#/topic/6a6a621c978145ad9eef2b221d2cf21d",
+		  "docuLink": "topic/6a6a621c978145ad9eef2b221d2cf21d",
 		  "samplesAsSteps": [
 			"Creating the Initial App",
 			"Custom Mock Data",
