@@ -2266,8 +2266,7 @@ function(
 				type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"),
 				description: [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim(),
 				autocomplete: "none",
-				haspopup: true,
-				owns: this.getId() + "-clocks"
+				haspopup: true
 			});
 
 			return oInfo;

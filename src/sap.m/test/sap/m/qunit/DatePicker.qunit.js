@@ -2067,13 +2067,6 @@ sap.ui.define([
 		assert.ok(!oDP.$("inner").attr("aria-owns"), "DP input does not have 'aria-owns' until the picker gets open");
 		assert.notOk(oDP.$("inner").attr("aria-expanded"),  "DP input doesn't have 'aria-expanded' attrubyte set");
 
-		// open DatePicker
-		oDP.focus();
-		qutils.triggerEvent("click", "DP-icon");
-
-		//after opening popup
-		assert.equal(oDP.$("inner").attr("aria-owns"), "DP-cal", "DP input has correct 'aria-owns' when the picker is open");
-
 		oDP.destroy();
 	});
 
