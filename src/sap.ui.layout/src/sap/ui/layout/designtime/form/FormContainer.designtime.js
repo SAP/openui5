@@ -109,6 +109,9 @@ sap.ui.define([
 							return null;
 						}
 					},
+					remove : {
+						removeLastElement: true
+					},
 					add: {
 						delegate: function (oFormContainer) {
 							if (fnIsLayoutSupported(oFormContainer)) {

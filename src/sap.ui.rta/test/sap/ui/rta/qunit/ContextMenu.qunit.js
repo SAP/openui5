@@ -353,7 +353,7 @@ sap.ui.define([
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "rename is available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getEnabled(), true, "and rename is enabled");
 					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_REMOVE", "remove field is available");
-					assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), false, "we cannot remove the field");
+					assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), true, "we can remove the field");
 				} else {
 					assert.ok(false, sText);
 				}
