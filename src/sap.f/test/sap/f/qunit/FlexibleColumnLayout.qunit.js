@@ -1134,7 +1134,40 @@ function (
 		assert.strictEqual(fnGetLabelText("endColumn"), sTestLastColumnLabel, "End column has its label changed by the Landmark Info");
 	});
 
-	QUnit.test("Navigation buttons have correct tooltips", function (assert) {
+	QUnit.test("Each arrow is labeled correctly when there is Landmark Info", function (assert) {
+		// Arrange
+		var sTestFirstColBackArrowLabel = "Custom Label For First Column Back Arrow",
+			sTestMidColForwardArrowLabel = "Custom Label For Middle Column Forward Arrow",
+			sTestMidColBackArrowLabel = "Custom Label For Middle Column Back Arrow",
+			sTestEndColForwardArrowLabel = "Custom Label For Middle Column Back Arrow",
+			oLandmarkInfo = new FlexibleColumnLayoutAccessibleLandmarkInfo({
+				firstColumnBackArrowLabel: sTestFirstColBackArrowLabel,
+				middleColumnForwardArrowLabel: sTestMidColForwardArrowLabel,
+				middleColumnBackArrowLabel: sTestMidColBackArrowLabel,
+				lastColumnForwardArrowLabel: sTestEndColForwardArrowLabel
+			});
+
+		// Act
+		this.oFCL.setLandmarkInfo(oLandmarkInfo);
+		Core.applyChanges();
+
+		// Helper function
+		var fnGetButtonTooltip = function (sAggregationName) {
+			return this.oFCL.getAggregation(sAggregationName).getTooltip();
+		}.bind(this);
+
+		// Assert
+		assert.strictEqual(fnGetButtonTooltip("_beginColumnBackArrow"),
+			sTestFirstColBackArrowLabel, "Begin column back arrow has correct tooltip");
+		assert.strictEqual(fnGetButtonTooltip("_midColumnForwardArrow"),
+			sTestMidColForwardArrowLabel, "Mid column back arrow has correct tooltip");
+		assert.strictEqual(fnGetButtonTooltip("_midColumnBackArrow"),
+			sTestMidColBackArrowLabel, "Mid column forward arrow has correct tooltip");
+		assert.strictEqual(fnGetButtonTooltip("_endColumnForwardArrow"),
+			sTestEndColForwardArrowLabel, "End column forward arrow has correct tooltip");
+	});
+
+	QUnit.test("Navigation buttons have correct default tooltips", function (assert) {
 		var fnGetButtonTooltip = function (sAggregationName) {
 			return this.oFCL.getAggregation(sAggregationName).getTooltip();
 		}.bind(this);
