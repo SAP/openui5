@@ -1492,6 +1492,23 @@ sap.ui.define([
 										key: 'ShowMessageExtension.js'
 									}
 								]
+							},
+							{
+								title: 'Shared Extension',
+								key: 'sharedExtension',
+								experimental: true,
+								files: [
+									{
+										url: '/samples/extension/sharedExtension/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/extension/myLib/SharedExtension.js',
+										name: 'SharedExtension.js',
+										key: 'SharedExtension.js'
+									}
+								]
 							}
 						]
 					},

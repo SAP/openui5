@@ -97,8 +97,33 @@
 						target="_blank">sap.ui.integration.Extension</a> class.</li>
 				<li>For optimal loading performance it is recommended to avoid any dependencies to non-ui5 modules.</li>
 			</ul>
-			<b>Note</b>: The relation between the extension and the card is one-to-one, which means that one card can
-			have only one extension.
+			<b>Note:</b> Each card can have only one extension.
+
+			<h2 id="sharing">
+				Using a Shared Extension
+			</h2>
+			<p>
+				Shared extensions allow one extension to be reused by multiple cards.
+				</br>
+				</br>
+				<b>Prerequisite:</b> The extension must be part of a UI5 library and this library has to be registered by the host developers. This library may also include other modules which are used in the extension if needed.
+
+				To use an extension from a shared library first define this library as dependency of the card:
+
+				<pre class="lang-json">
+"dependencies": {
+	"libs": {
+		"my.lib.cards": {}
+	}
+}</pre>
+
+				Then you can refer to the extension from this library with the following syntax:
+				<pre class="lang-json">"sap.card"/"extension": "module:my/lib/cards/CommonExtension"</pre>
+
+			<a class="try-button sapUiSmallMarginTop" href="../../../index.html#/explore/extension/sharedExtension" target="_parent">Try
+				it Out</a>
+
+			</p>
 
 			<h2 id="examples">
 				Examples
@@ -154,6 +179,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 			<div><a href="#manifestProperties">Manifest Properties</a></div>
 			<div><a href="#extensionApi">Extension API</a></div>
 			<div><a href="#extensionRequirements">Extension Requirements</a></div>
+			<div><a href="#sharing">Sharing Extensions</a></div>
 			<div><a href="#examples">Examples</a></div>
 		</div>
 	</div>
