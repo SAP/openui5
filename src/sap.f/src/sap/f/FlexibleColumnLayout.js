@@ -655,6 +655,20 @@ sap.ui.define([
 		"LastColumn" : "FCL_END_COLUMN_REGION_TEXT"
 	};
 
+	FlexibleColumnLayout.DEFAULT_ARROW_LABELS = {
+		"FirstColumnBackArrow" : "FCL_BEGIN_COLUMN_BACK_ARROW",
+		"MiddleColumnForwardArrow" : "FCL_MID_COLUMN_FORWARD_ARROW",
+		"MiddleColumnBackArrow" : "FCL_MID_COLUMN_BACK_ARROW",
+		"LastColumnForwardArrow" : "FCL_END_COLUMN_FORWARD_ARROW"
+	};
+
+	FlexibleColumnLayout.ARROW_AGGREGATION_TO_LABEL_MAP = {
+		"_beginColumnBackArrow" : "FirstColumnBackArrow",
+		"_midColumnForwardArrow" : "MiddleColumnForwardArrow",
+		"_midColumnBackArrow" : "MiddleColumnBackArrow",
+		"_endColumnForwardArrow" : "LastColumnForwardArrow"
+	};
+
 	FlexibleColumnLayout.COLUMN_RESIZING_ANIMATION_DURATION = 560; // ms
 	FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME = "sapFFCLPinnedColumn";
 	FlexibleColumnLayout.COLUMN_ORDER = ["begin", "mid", "end"]; // natural order of the columns in FCL
@@ -759,7 +773,7 @@ sap.ui.define([
 	 * @returns {sap.f.FlexibleColumnLayoutAccessibleLandmarkInfo} The formatted landmark info
 	 * @private
 	 */
-	 FlexibleColumnLayout.prototype._formatLandmarkInfo = function (oLandmarkInfo, sColumnName) {
+	 FlexibleColumnLayout.prototype._formatColumnLandmarkInfo = function (oLandmarkInfo, sColumnName) {
 		var sLabel = null;
 		if (oLandmarkInfo) {
 			sLabel = oLandmarkInfo["get" + sColumnName + "Label"]();
@@ -769,6 +783,27 @@ sap.ui.define([
 			role: "region",
 			label: sLabel || FlexibleColumnLayout._getResourceBundle().getText(FlexibleColumnLayout.DEFAULT_COLUMN_LABELS[sColumnName])
 		};
+	};
+
+	/**
+	 * Formats <code>FlexibleColumnLayoutAccessibleLandmarkInfo</code> label/tooltip of the provided <code>FlexibleColumnLayout</code> arrow.
+	 *
+	 * @param {sap.f.FlexibleColumnLayoutAccessibleLandmarkInfo} oLandmarkInfo FlexibleColumnLayout LandmarkInfo
+	 * @param {string} sArrowAggregationName arrow aggregation name of the layout
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._formatArrowLandmarkInfo = function (oLandmarkInfo, sArrowAggregationName) {
+		var sLabel = null,
+			sArrowName = FlexibleColumnLayout.ARROW_AGGREGATION_TO_LABEL_MAP[sArrowAggregationName];
+
+		if (oLandmarkInfo) {
+			sLabel = oLandmarkInfo["get" + sArrowName + "Label"]();
+		}
+
+		this.getAggregation(sArrowAggregationName).setTooltip(
+			sLabel ||
+			FlexibleColumnLayout._getResourceBundle().getText(FlexibleColumnLayout.DEFAULT_ARROW_LABELS[sArrowName]
+		));
 	};
 
 	/**
@@ -1035,7 +1070,6 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._initButtons = function () {
 		var oBeginColumnBackArrow = new Button(this.getId() + "-beginBack", {
 			icon: "sap-icon://slim-arrow-left",
-			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_BEGIN_COLUMN_BACK_ARROW"),
 			type: "Transparent",
 			press: function () {
 				this._onArrowClick("left");
@@ -1046,7 +1080,6 @@ sap.ui.define([
 
 		var oMidColumnForwardArrow = new Button(this.getId() + "-midForward", {
 			icon: "sap-icon://slim-arrow-right",
-			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_MID_COLUMN_FORWARD_ARROW"),
 			type: "Transparent",
 			press: function () {
 				this._onArrowClick("right");
@@ -1057,7 +1090,6 @@ sap.ui.define([
 
 		var oMidColumnBackArrow = new Button(this.getId() + "-midBack", {
 			icon: "sap-icon://slim-arrow-left",
-			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_MID_COLUMN_BACK_ARROW"),
 			type: "Transparent",
 			press: function () {
 				this._onArrowClick("left");
@@ -1068,7 +1100,6 @@ sap.ui.define([
 
 		var oEndColumnForwardArrow = new Button(this.getId() + "-endForward", {
 			icon: "sap-icon://slim-arrow-right",
-			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_END_COLUMN_FORWARD_ARROW"),
 			type: "Transparent",
 			press: function () {
 				this._onArrowClick("right");
