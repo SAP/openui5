@@ -96,12 +96,6 @@
 		white-space: nowrap;
 	}
 
-	.sapMBreadcrumbsItem:last-child {
-		flex-basis: 2.5rem;
-		flex-grow: 1;
-		overflow: hidden;
-	}
-
 	.sapMBreadcrumbsSeparator {
 		padding: 0 0.25rem;
 		font-size: @sapMFontMediumSize;
@@ -125,6 +119,12 @@
 .sapMOTB .sapMBreadcrumbs {
 	min-width: 1px; /* needed for width calculations on initial render */
 	max-width: 100%;
+}
+
+.sapMOTB .sapMBreadcrumbs .sapMBreadcrumbsItem:last-child {
+	flex-basis: 2.5rem;
+	flex-grow: 1;
+	overflow: hidden;
 }
 
 /* prevent Breadcrumbs with long text from causing a horizontal scrollbar in OTB Menu */
