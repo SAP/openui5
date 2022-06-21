@@ -38,7 +38,7 @@ sap.ui.define([
 	 * @class
 	 * A <code>Link</code> control can be used to handle navigation scenarios with one or more targets through direct navigation or by opening a <code>Panel</code>.<br>
 	 * It can also be used to display additional content, such as <code>ContactDetails</code> on the <code>Panel</code>.
-	 * <b>Note:</b> Navigation targets are determined by the implementation of a {@link sap.ui.mdc.LinkDelegate}.
+	 * <b>Note:</b> Navigation targets are determined by the implementation of a {@link module:sap/ui/mdc/LinkDelegate LinkDelegate}.
 	 *
 	 * @extends sap.ui.mdc.field.FieldInfoBase
 	 *
