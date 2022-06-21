@@ -169,7 +169,11 @@ sap.ui.define([
 
 		QUnit.test("when 'getMappingInfo' is called", function(assert) {
 			var oCompVariant = FlexObjectFactory.createCompVariant({});
-			assert.ok(oCompVariant.getMappingInfo().persistencyKey, "then mapping info is returned");
+			assert.strictEqual(
+				oCompVariant.getMappingInfo().persistencyKey,
+				"selector.persistencyKey",
+				"the persistencyKey is returned inside the 'selector' structure"
+			);
 		});
 
 		QUnit.test("when 'getPackage' is called", function(assert) {

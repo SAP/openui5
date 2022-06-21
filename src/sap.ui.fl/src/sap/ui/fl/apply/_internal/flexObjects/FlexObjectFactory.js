@@ -130,7 +130,7 @@ sap.ui.define([
 			supportInformation: {
 				service: oFileContent.ODataService,
 				command: oFileContent.command,
-				generator: "FlexObjectFactory.createCompVariant",
+				generator: oFileContent.generator || "FlexObjectFactory.createCompVariant",
 				user: ObjectPath.get("support.user", oFileContent),
 				sapui5Version: Core.getConfiguration().getVersion().toString(),
 				sourceSystem: oFileContent.sourceSystem,
