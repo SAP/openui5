@@ -302,6 +302,7 @@ sap.ui.define([
 				var oCardEditor = new CardEditor({id: "conf_card_editor"});
 				oCardEditor.setJson({ baseUrl: baseUrl, manifest: sJson, manifestChanges: oManifestSettings });
 				oCardEditor.setMode(selectedMode);
+				oCardEditor.setHost(this._oHost.getId());
 				oCardEditor.attachReady(function() {
 					oPanel.addContent(oCardEditor);
 					editorPage.addContent(oPanel);
@@ -334,6 +335,7 @@ sap.ui.define([
 				oCardEditor.setJson({ baseUrl: baseUrl, manifest: sJson });
 				oCardEditor.setLanguage(selectedLanguage);
 				oCardEditor.setMode(sMode);
+				oCardEditor.setHost(this._oHost.getId());
 				oCardEditor.attachReady(function() {
 					oPanel.addContent(oCardEditor);
 					editorPage.addContent(oPanel);
@@ -633,13 +635,14 @@ sap.ui.define([
 
 			if (sMode === "AdminContent") {
 				sMode = "admin";
+			} else if (sMode === "Translation") {
+				sMode = "translation";
 			}
 			this._loadConfigurationEditor().then(this._cancelIfSampleChanged(function () {
 				return this._oFileEditor.getCardManifestContent();
 			})).then(this._cancelIfSampleChanged(function (oManifestContent) {
 				var adminChanges,
 				contentChanges,
-				translationChanges,
 				oManifestSettings = [];
 				if (sMode === "admin") {
 					// aChanges = JSON.parse(oConfigurationCardMFChangesforAdmin || "{}");
@@ -647,16 +650,11 @@ sap.ui.define([
 				} else if (sMode === "content") {
 					// aChanges = JSON.parse(oConfigurationCardMFChangesforContent || "{}");
 					contentChanges = oConfigurationCardMFChangesforContent || "{}";
-				} else if (sMode === "translation") {
-					// aChanges = JSON.parse(oConfigurationCardMFChangesforTranslation || "{}");
-					translationChanges = oConfigurationCardMFChangesforTranslation || "{}";
 				}
 				if (sMode === "admin") {
 					oManifestSettings.push(adminChanges);
 				} else if (sMode === "content") {
 					oManifestSettings.push(adminChanges, contentChanges);
-				} else if (sMode === "translation") {
-					oManifestSettings.push(adminChanges, contentChanges, translationChanges);
 				}
 
 				sJson = JSON.parse(oManifestContent);
@@ -664,8 +662,10 @@ sap.ui.define([
 				var oCardEditor = new CardEditor({id: "conf_card_editor"});
 				oCardEditor.setJson({ baseUrl: baseUrl, manifest: sJson, manifestChanges: oManifestSettings});
 				oCardEditor.setMode(sMode);
+				oCardEditor.setHost(this._oHost.getId());
+				oPanel.addContent(oCardEditor);
+				editorPage.addContent(oPanel);
 				oCardEditor.attachReady(function() {
-					oPanel.addContent(oCardEditor);
 					var isManifestChanged = false;
 					if (oManifestSettings.length > 0) {
 						if (typeof (oManifestSettings[0]) === "object" && JSON.stringify(oManifestSettings[0]) !== '{}') {
@@ -683,7 +683,6 @@ sap.ui.define([
 						});
 						oPanel.insertContent(oMessageStrip, -1);
 					}
-					editorPage.addContent(oPanel);
 				});
 			})).catch(function (oErr) {
 				if (oErr.message !== SAMPLE_CHANGED_ERROR) {
@@ -1270,6 +1269,7 @@ sap.ui.define([
 				oCardEditor = new CardEditor({id: "conf_card_editor"});
 				oCardEditor.setJson({ baseUrl: baseUrl, manifest: sJson });
 				oCardEditor.setMode(sMode);
+				oCardEditor.setHost(this._oHost.getId());
 				oCardEditor.attachReady(function() {
 					oPanel.addContent(oCardEditor);
 					editorPage.addContent(oPanel);
