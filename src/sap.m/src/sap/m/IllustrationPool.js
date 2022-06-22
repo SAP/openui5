@@ -209,6 +209,7 @@ sap.ui.define([
 			if (oDOMPool === null) {
 				oDOMPool = document.createElement("div");
 				oDOMPool.id = SAP_ILLUSTRATION_POOL_ID;
+				oDOMPool.ariaHidden = true;
 
 				Core.getStaticAreaRef().appendChild(oDOMPool);
 
