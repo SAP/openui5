@@ -78,9 +78,7 @@ sap.ui.define([
 			}
 		},
 		init: function () {
-
 			this._bMobileMode = Device.system.phone;
-
 			// Initialize the BasePanel
 			BasePanel.prototype.init.apply(this, arguments);
 
@@ -256,6 +254,12 @@ sap.ui.define([
 
 	ChartItemPanel.prototype._getTemplateComboBox = function(sKind){
 		var oVisibleFilter = new Filter("visible", FilterOperator.EQ, false);
+		var oCollator = new window.Intl.Collator();
+		var fnSorter = function(a,b) {
+			return oCollator.compare(a,b);
+		};
+
+		var oSorter = new Sorter("label", false, false, fnSorter);
 
 		var oComboBox = new ComboBox({
 			id: "p13nPanel-templateComboBox-" + sKind,
@@ -268,7 +272,8 @@ sap.ui.define([
 					text: "{" + this.P13N_MODEL + ">label}"
 				}),
 				templateShareable : false,
-				filters: [oVisibleFilter, new Filter("kind", FilterOperator.EQ, sKind)]
+				filters: [oVisibleFilter, new Filter("kind", FilterOperator.EQ, sKind)],
+				sorter: oSorter
 			},
 			change: [this.onChangeOfTemplateName, this]
 		});
@@ -312,6 +317,13 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._getNameComboBox = function(sKind, sName) {
+		var oCollator = new window.Intl.Collator();
+		var fnSorter = function(a,b) {
+			return oCollator.compare(a,b);
+		};
+
+		var oSorter = new Sorter("label", false, false, fnSorter);
+
 		var oNameFilterPersistent = new Filter({
 			filters: [
 				new Filter("visible", FilterOperator.EQ, false),
@@ -329,7 +341,8 @@ sap.ui.define([
 					text: "{" + this.P13N_MODEL + ">label}"
 				}),
 				templateShareable : false,
-				filters: [oNameFilterPersistent, new Filter("kind", FilterOperator.EQ, sKind)]
+				filters: [oNameFilterPersistent, new Filter("kind", FilterOperator.EQ, sKind)],
+				sorter: oSorter
 			},
 			change: [this.onChangeOfItemName, this],
 			selectedKey: "{" + this.P13N_MODEL + ">tempName}",
@@ -1232,6 +1245,15 @@ sap.ui.define([
 	ChartItemPanel.prototype._getResourceTextMDC = function(sText, vValue) {
 		this.oResourceBundleMDC = this.oResourceBundleMDC ? this.oResourceBundleMDC : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		return sText ? this.oResourceBundleMDC.getText(sText, vValue) : this.oResourceBundleMDC;
+	};
+
+	ChartItemPanel.prototype.exit = function() {
+
+		this._fnSort = null;
+		this.oResourceBundleMDC = null;
+		this._bMobileMode = null;
+
+		return BasePanel.prototype.exit.apply(this, arguments);
 	};
 
 	return ChartItemPanel;
