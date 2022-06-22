@@ -146,26 +146,37 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oButton = new Button();
 			this.oButton.placeAt("content");
+			this.oButton1 = new Button();
+			this.oButton1.placeAt("content");
 			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();
 			this.oButton.destroy();
+			this.oButton1.destroy();
 		}
 	});
 
-	QUnit.test("Open popover by a control", function (assert) {
+	QUnit.test("Open popover by a control/Close when another control is clicked", function (assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
 		assert.ok(this.oColumnMenu._oPopover.isOpen());
 		assert.notOk(this.oColumnMenu._oPopover.getShowHeader());
+
+		QUnitUtils.triggerEvent("mousedown", this.oButton1.getId());
+		this.clock.tick(1000);
+		assert.notOk(this.oColumnMenu._oPopover.isOpen());
 	});
 
-	QUnit.test("Open popover by an HTMLElement", function (assert) {
+	QUnit.test("Open popover by an HTMLElement/Close when another element is clicked", function (assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton.getDomRef());
 		assert.ok(this.oColumnMenu._oPopover.isOpen());
 		assert.notOk(this.oColumnMenu._oPopover.getShowHeader());
+
+		QUnitUtils.triggerEvent("mousedown", "content");
+		this.clock.tick(1000);
+		assert.notOk(this.oColumnMenu._oPopover.isOpen());
 	});
 
 	QUnit.test("Open popup on mobile", function (assert) {

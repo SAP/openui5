@@ -125,6 +125,26 @@ sap.ui.define([
 		}
 	};
 
+	QuickGroup.prototype._updateContent = function() {
+		var aItems = this.getItems();
+		var aContent = this.getContent();
+		var oItem, oButton;
+
+		for (var i = 0; i < aItems.length; i++) {
+			oItem = aItems[i];
+			oButton = aContent[i];
+			if (!oButton) {
+				oButton = new ToggleButton({press: [oItem, this.onChange, this]});
+			}
+			oButton.setText(oItem.getLabel());
+			oButton.setPressed(oItem.getGrouped());
+		}
+
+		for (var i = aItems.length; i < aContent.length; i++) {
+			aContent[i].destroy();
+		}
+	};
+
 	QuickGroup.prototype.onChange = function(oEvent, oItem) {
 		oItem.setProperty("grouped", oEvent.getParameters().pressed, true);
 		this.fireChange({item: oItem});

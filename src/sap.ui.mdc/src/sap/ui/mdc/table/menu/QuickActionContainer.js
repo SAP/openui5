@@ -133,6 +133,40 @@ sap.ui.define([
 		return pCreateContent;
 	};
 
+	QuickActionContainer.prototype.updateQuickActions = function(aKeys) {
+		var oTable = this.getTable();
+		var aSortedProperties = oTable._getSortedProperties();
+		var aGroupedProperties = oTable._getGroupedProperties();
+		var oAggregatedProperty = oTable._getAggregatedProperties();
+
+		this.getQuickActions().forEach(function(oQuickAction) {
+			if ((!aKeys || aKeys.includes("Sort")) && oQuickAction.isA("sap.m.table.columnmenu.QuickSort")) {
+				oQuickAction.getItems().forEach(function(oItem) {
+					var mSortCondition = aSortedProperties.find(function(oSortedProperty) {
+						return oSortedProperty.name === oItem.getProperty("key");
+					});
+					if (mSortCondition) {
+						oItem.setSortOrder(mSortCondition.descending ? CoreLibrary.SortOrder.Descending : CoreLibrary.SortOrder.Ascending);
+					} else {
+						oItem.setSortOrder(CoreLibrary.SortOrder.None);
+					}
+				});
+			} else if ((!aKeys || aKeys.includes("Group")) && oQuickAction.isA("sap.m.table.columnmenu.QuickGroup")) {
+				oQuickAction.getItems().forEach(function(oItem) {
+					var bGrouped = aGroupedProperties.some(function (oGroupedProperty) {
+						return oGroupedProperty.name === oItem.getProperty("key");
+					});
+					oItem.setGrouped(bGrouped);
+				});
+			} else if ((!aKeys || aKeys.includes("Aggregate")) && oQuickAction.isA("sap.m.table.columnmenu.QuickTotal")) {
+				oQuickAction.getItems().forEach(function(oItem) {
+					var bTotaled = oAggregatedProperty.hasOwnProperty(oItem.getProperty("key"));
+					oItem.setTotaled(bTotaled);
+				});
+			}
+		});
+	};
+
 	QuickActionContainer.prototype.hasQuickActions = function() {
 		return this.getEffectiveQuickActions().length > 0;
 	};

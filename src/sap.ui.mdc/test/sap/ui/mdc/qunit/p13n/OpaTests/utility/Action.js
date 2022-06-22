@@ -18,6 +18,25 @@ sap.ui.define([
 ], function (Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, waitForPanelInP13n, PressKey, MessageBox, oCore) {
 	"use strict";
 
+	function iPressResetInControl(sControl) {
+		return this.waitFor({
+			searchOpenDialogs: true,
+			controlType: "sap.m.Button",
+			matchers: {
+				properties: {
+					text: oCore.getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.RESET")
+				},
+				ancestor: {
+					controlType: sControl
+				}
+			},
+			success:function(aBtn) {
+				Opa5.assert.equal(aBtn.length, 1, sControl + " with 'Reset' Button found");
+			},
+			actions: new Press()
+		});
+	}
+
 	/**
 	 * The Action can be used to...
 	 *
@@ -34,22 +53,11 @@ sap.ui.define([
 		},
 
 		iPressResetInDialog: function() {
-			return this.waitFor({
-				searchOpenDialogs: true,
-				controlType: "sap.m.Button",
-				matchers: {
-					properties: {
-						text: oCore.getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.RESET")
-					},
-					ancestor: {
-						controlType: "sap.m.Dialog"
-					}
-				},
-				success:function(aBtn) {
-					Opa5.assert.equal(aBtn.length, 1, "Dialog with 'Reset' Button found");
-				},
-				actions: new Press()
-			});
+			return iPressResetInControl.call(this, "sap.m.Dialog");
+		},
+
+		iPressResetInColumnMenu: function() {
+			return iPressResetInControl.call(this, "sap.m.table.columnmenu.Menu");
 		},
 
 		iConfirmResetWarning: function() {

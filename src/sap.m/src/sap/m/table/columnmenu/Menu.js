@@ -279,6 +279,9 @@ sap.ui.define([
 	};
 
 	function isInControlTree(oParent, oChild) {
+		if (!oParent || !oChild) {
+			return false;
+		}
 		var temp = oChild.getParent();
 		if (!temp) {
 			return false;
