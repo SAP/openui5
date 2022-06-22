@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Locale",
+	"sap/base/strings/formatMessage",
 	'sap/base/util/isPlainObject',
 	"sap/base/Log"
 ], function (
 	Core,
 	Locale,
+	formatMessage,
 	isPlainObject,
 	Log
 ) {
@@ -227,6 +229,45 @@ sap.ui.define([
 			return iRandom.toString(16);
 		});
 		return sUuid;
+	};
+
+	/**
+	 * Creates binding info for the property statusText in a header if the provided configuration object is correct.
+	 *
+	 * @public
+	 * @param {object} mFormat The formatting configuration.
+	 * @returns {object} Binding info
+	 */
+	Utils.getStatusTextBindingInfo = function (mFormat) {
+		var oBindingInfo;
+
+		if (mFormat.parts && mFormat.translationKey && mFormat.parts.length === 2) {
+			oBindingInfo = {
+				parts: [
+					mFormat.translationKey,
+					mFormat.parts[0].toString(),
+					mFormat.parts[1].toString()
+				],
+				formatter: function (sText, vParam1, vParam2) {
+					var sParam1 = vParam1 || mFormat.parts[0];
+					var sParam2 = vParam2 || mFormat.parts[1];
+
+					if (Array.isArray(vParam1)) {
+						sParam1 = vParam1.length;
+					}
+					if (Array.isArray(vParam2)) {
+						sParam2 = vParam2.length;
+					}
+
+					var iParam1 = parseFloat(sParam1) || 0;
+					var iParam2 = parseFloat(sParam2) || 0;
+
+					return formatMessage(sText, [iParam1, iParam2]);
+				}
+			};
+		}
+
+		return oBindingInfo;
 	};
 
 	return Utils;

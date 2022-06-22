@@ -27,6 +27,7 @@
 							<core:Item text="List Card" key="listCard" />
 							<core:Item text="List Card with Grouping" key="listCardGrouping" />
 							<core:Item text="List Card No Data" key="listCardNoData" />
+							<core:Item text="Card with Dynamic Status Text" key="dynamicStatusText" />
 							<core:Item text="List Card with Bullet Graph and Actions" key="listCardBulletGraphActions" />
 							<core:Item text="List Card with Stacked Bar Chart" key="stackedBar" />
 							<core:Item text="Table Card 1" key="tableCard1" />

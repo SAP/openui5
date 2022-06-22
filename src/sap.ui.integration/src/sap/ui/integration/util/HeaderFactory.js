@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/integration/cards/NumericHeader",
 	"sap/ui/integration/cards/Header",
-	"sap/base/strings/formatMessage",
+	"sap/ui/integration/util/Utils",
 	"sap/m/Button"
 ], function (
 	Core,
@@ -19,7 +19,7 @@ sap.ui.define([
 	mLibrary,
 	NumericHeader,
 	Header,
-	formatMessage,
+	Utils,
 	Button
 ) {
 	"use strict";
@@ -29,44 +29,6 @@ sap.ui.define([
 	var ButtonType = mLibrary.ButtonType;
 
 	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-
-	/**
-	 * Binds the statusText of a header to the provided format configuration.
-	 *
-	 * @private
-	 * @param {Object} mFormat The formatting configuration.
-	 * @param {sap.f.cards.IHeader} oHeader The header instance.
-	 */
-	function bindStatusText(mFormat, oHeader) {
-
-		if (mFormat.parts && mFormat.translationKey && mFormat.parts.length === 2) {
-			var oBindingInfo = {
-				parts: [
-					mFormat.translationKey,
-					mFormat.parts[0].toString(),
-					mFormat.parts[1].toString()
-				],
-				formatter: function (sText, vParam1, vParam2) {
-					var sParam1 = vParam1 || mFormat.parts[0];
-					var sParam2 = vParam2 || mFormat.parts[1];
-
-					if (Array.isArray(vParam1)) {
-						sParam1 = vParam1.length;
-					}
-					if (Array.isArray(vParam2)) {
-						sParam2 = vParam2.length;
-					}
-
-					var iParam1 = parseFloat(sParam1) || 0;
-					var iParam2 = parseFloat(sParam2) || 0;
-
-					return formatMessage(sText, [iParam1, iParam2]);
-				}
-			};
-
-			oHeader.bindProperty("statusText", oBindingInfo);
-		}
-	}
 
 	/**
 	 * Constructor for a new <code>HeaderFactory</code>.
@@ -87,6 +49,7 @@ sap.ui.define([
 	HeaderFactory.prototype.create = function (mConfiguration, oToolbar) {
 		var oCard = this._oCard,
 			bIsInDialog = oCard.getOpener(),
+			oBindingInfo,
 			oHeader;
 
 		mConfiguration = this.createBindingInfos(mConfiguration, oCard.getBindingNamespaces());
@@ -109,7 +72,11 @@ sap.ui.define([
 		if (mConfiguration.status &&
 			mConfiguration.status.text &&
 			mConfiguration.status.text.format) {
-			bindStatusText(mConfiguration.status.text.format, oHeader);
+
+			oBindingInfo = Utils.getStatusTextBindingInfo(mConfiguration.status.text.format, oHeader);
+			if (oBindingInfo) {
+				oHeader.bindProperty("statusText", oBindingInfo);
+			}
 		}
 
 		oHeader.setServiceManager(oCard._oServiceManager);
