@@ -175,17 +175,9 @@ sap.ui.define([
 				var aButtons = this.getButtons();
 				var bEditable = this.getEditable();
 
-				if (this.isPropertyInitial("selectedIndex")) {
-					this.setSelectedIndex(this._getInitialSelectedIndex());
-				}
-
-				aButtons.forEach(function (oRadioButton, i) {
+				aButtons.forEach(function (oRadioButton) {
 					oRadioButton._setEditableParent(bEditable);
-
-					if (i === this.getSelectedIndex()) {
-						oRadioButton.setSelected(true);
-					}
-				}, this);
+				});
 
 				if (this.aRBs){
 					var oValueState = this.getValueState();
@@ -337,13 +329,18 @@ sap.ui.define([
 			 * @returns {this} Pointer to the control instance for chaining.
 			 */
 			RadioButtonGroup.prototype.addButton = function(oButton) {
+				if (!this._bUpdateButtons && this.getSelectedIndex() === undefined) {
+					// if not defined -> select first one
+					this.setSelectedIndex(0);
+				}
+
 				if (!this.aRBs) {
 					this.aRBs = [];
 				}
 
 				var iIndex = this.aRBs.length;
 
-				this.aRBs[iIndex] = this._createRadioButton(oButton);
+				this.aRBs[iIndex] = this._createRadioButton(oButton, iIndex);
 
 				this.addAggregation("buttons",  this.aRBs[iIndex]);
 				return this;
@@ -378,13 +375,13 @@ sap.ui.define([
 				}
 
 				if (iIndex >= iLength) {
-					this.aRBs[iIndex] = this._createRadioButton(oButton);
+					this.aRBs[iIndex] = this._createRadioButton(oButton, iIndex);
 				} else {
 					// Insert RadioButton: loop backwards over Array and shift everything
 					for (var i = (iLength); i > iIndex; i--) {
 						this.aRBs[i] = this.aRBs[i - 1];
 						if ((i - 1) == iIndex) {
-							this.aRBs[i - 1] = this._createRadioButton(oButton);
+							this.aRBs[i - 1] = this._createRadioButton(oButton, iIndex);
 						}
 					}
 				}
@@ -395,13 +392,15 @@ sap.ui.define([
 			};
 
 			/**
-			 * Creates a copy of the sap.m.RadioButton passed as a first argument
+			 * Creates a copy of the sap.m.RadioButton passed as a first argument and
+			 * adds it to the RadioButtonGroup at the index specified in the second argument.
 			 *
 			 * @private
 			 * @param {sap.m.RadioButton} oButton The button from which a radio button will be created.
+			 * @param {number} iIndex The index in the group at which the radio button will be placed.
 			 * @returns {sap.m.RadioButton} The created radio button.
 			 */
-			RadioButtonGroup.prototype._createRadioButton = function(oButton) {
+			RadioButtonGroup.prototype._createRadioButton = function(oButton, iIndex) {
 
 				if (this.iIDCount == undefined) {
 					this.iIDCount = 0;
@@ -411,6 +410,11 @@ sap.ui.define([
 
 				oButton.setValueState(this.getValueState());
 				oButton.setGroupName(this.getId());
+
+				if (iIndex == this.getSelectedIndex()) {
+					oButton.setSelected(true);
+				}
+
 				oButton.attachEvent("select", this._handleRBSelect, this);
 
 				return oButton;
@@ -627,18 +631,6 @@ sap.ui.define([
 				}
 
 				return -1;
-			};
-
-			RadioButtonGroup.prototype._getInitialSelectedIndex = function () {
-				var iInitialSelectedIndex = this.getButtons().findIndex(function (oButton) {
-					return oButton._isLastSelectedInGroup(this.getId());
-				}.bind(this));
-
-				if (iInitialSelectedIndex < 0) {
-					iInitialSelectedIndex = 0;
-				}
-
-				return iInitialSelectedIndex;
 			};
 
 			return RadioButtonGroup;
