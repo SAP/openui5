@@ -67,7 +67,7 @@ sap.ui.define([
 		this.sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
 		this.sCurrentVariant = this.oModel.getCurrentVariantReference(this.sVariantManagementReference);
 
-		var sCurrentTitle = this.oModel.getVariantProperty(this.sCurrentVariant, "title");
+		var sCurrentTitle = this.oModel.getVariantTitle(this.sCurrentVariant, this.sVariantManagementReference);
 		this.setOldText(sCurrentTitle);
 
 		var mPropertyBag = {

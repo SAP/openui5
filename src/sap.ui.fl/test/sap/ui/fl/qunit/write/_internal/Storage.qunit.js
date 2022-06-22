@@ -1,41 +1,41 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/Change",
-	"sap/ui/fl/Variant",
-	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/fl/initial/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
-	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
-	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
-	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
+	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
+	"sap/ui/fl/initial/_internal/connectors/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
+	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
+	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
+	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/PersonalizationConnector",
-	"sap/ui/core/Core"
+	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/Change",
+	"sap/ui/fl/Layer",
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	sinon,
-	Layer,
-	Change,
-	Variant,
-	Storage,
 	StorageUtils,
-	InitialUtils,
-	WriteUtils,
-	FeaturesAPI,
-	InitialLrepConnector,
-	WriteLrepConnector,
 	InitialKeyUserConnector,
-	WriteKeyUserConnector,
-	JsObjectConnector,
+	InitialLrepConnector,
 	InitialPersonalizationConnector,
+	InitialUtils,
+	FlVariant,
+	WriteUtils,
+	JsObjectConnector,
+	WriteKeyUserConnector,
+	WriteLrepConnector,
 	WritePersonalizationConnector,
-	oCore
+	Storage,
+	FeaturesAPI,
+	Change,
+	Layer,
+	oCore,
+	sinon
 ) {
 	"use strict";
 
@@ -745,14 +745,16 @@ sap.ui.define([
 				}
 			});
 			oChange3.setState(Change.states.PERSISTED);
-			var oVariant = new Variant({
-				content: {
-					layer: Layer.CUSTOMER,
-					fileName: "newVariant",
-					fileType: "ctrl_variant",
+			var oVariant = new FlVariant({
+				layer: Layer.CUSTOMER,
+				id: "newVariant",
+				variantReference: "variant_0",
+				flexObjectMetadata: {
 					namespace: "a.name.space",
-					variantReference: "variant_0",
-					content: "some Variant Content"
+					reference: "myReference"
+				},
+				content: {
+					title: "foo"
 				}
 			});
 

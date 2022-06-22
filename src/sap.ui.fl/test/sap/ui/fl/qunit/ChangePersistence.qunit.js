@@ -6,7 +6,6 @@ QUnit.dump.maxDepth = 10;
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/UriParameters",
-	"sap/base/Log",
 	"sap/ui/core/Component",
 	"sap/ui/core/Control",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
@@ -24,13 +23,11 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/Variant",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	merge,
 	UriParameters,
-	Log,
 	Component,
 	Control,
 	DependencyHandler,
@@ -48,7 +45,6 @@ sap.ui.define([
 	LayerUtils,
 	Layer,
 	Utils,
-	Variant,
 	jQuery,
 	sinon
 ) {

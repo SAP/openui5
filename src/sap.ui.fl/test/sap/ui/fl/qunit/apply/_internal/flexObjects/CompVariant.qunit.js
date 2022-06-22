@@ -238,6 +238,14 @@ sap.ui.define([
 			assert.strictEqual(oCompVariant.getContexts().test, "test", "then after setter is called, getContexts returns contexts");
 			assert.strictEqual(oCompVariant.getState(), States.DIRTY, "then the comp variant state is 'dirty'");
 		});
+
+		QUnit.test("when new variant is initialized including both name and variant id parameters", function(assert) {
+			this.mFileContent = {
+				variantId: "variant-id"
+			};
+			var oBaseVariant = FlexObjectFactory.createFromFileContent(this.mFileContent, CompVariant);
+			assert.strictEqual(oBaseVariant.getVariantId(), "variant-id", "then the variant id is set correctly");
+		});
 	});
 
 	var aScenarios = [{

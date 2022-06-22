@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"sap/ui/mdc/FilterBar",
-	"sap/ui/model/type/String",
 	"sap/ui/core/Manifest",
 	"sap/base/Log",
 	"sap/ui/fl/Utils",
@@ -12,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
+	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -19,7 +19,6 @@ sap.ui.define([
 	"sap/ui/mdc/util/TypeUtil"
 ], function (
 	FilterBar,
-	ModelString,
 	Manifest,
 	Log,
 	FlUtils,
@@ -27,6 +26,7 @@ sap.ui.define([
 	VariantManagement,
 	VariantModel,
 	ControlVariantApplyAPI,
+	FlVariant,
 	VariantManagementState,
 	URLHandler,
 	FlexState,
@@ -157,19 +157,14 @@ var oVariantMap = {
 				},
 				"variants": [
 				  {
-					"content": {
-					  "fileName": "VMId",
-					  "variantManagementReference": "VMId",
-					  "content": {
-						"title": "Standard",
-						"favorite": true,
-						"visible": true,
-						"executeOnSelect": true
-					  },
-					  "support": {
-						"user": "SAP"
-					  }
-					},
+					"instance": new FlVariant({
+						"id": "VMId",
+						"variantManagementReference": "VMId",
+						"content": {
+							"title": "Standard"
+						},
+						"executeOnSelection": true
+					}),
 					"variantChanges": {
 					  "setExecuteOnSelect": [
 						{
@@ -215,34 +210,20 @@ var oVariantMap = {
 					"controlChanges": []
 				  },
 				  {
-					"content": {
-					  "fileName": "id_1589358930278_29",
-					  "fileType": "ctrl_variant",
-					  "variantManagementReference": "VMId",
-					  "variantReference": "VMId",
-					  "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-					  "packageName": "$TMP",
-					  "content": {
-						"title": "Standard.1",
-						"favorite": true,
-						"visible": true,
-						"executeOnSelect": true
-					  },
-					  "self": "apps/sap.ui.mdc.sample.filterbar.sample1/variants/id_1589358930278_29.ctrl_variant",
-					  "layer": "USER",
-					  "texts": {},
-					  "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/variants/",
-					  "creation": "2020-05-13T08:35:30.309Z",
-					  "originalLanguage": "EN",
-					  "conditions": {},
-					  "support": {
-						"generator": "Change.createInitialFileContent",
-						"service": "",
-						"user": "",
-						"sapui5Version": "1.78.0-SNAPSHOT"
-					  },
-					  "validAppVersions": {}
-					},
+					"instance": new FlVariant({
+						"id": "id_1589358930278_29",
+						"fileType": "ctrl_variant",
+						"variantManagementReference": "VMId",
+						"variantReference": "VMId",
+						"flexObjectMetadata": {
+							"reference": "sap.ui.mdc.sample.filterbar.sample1.Component"
+						},
+						"executeOnSelection": true,
+						"content": {
+							"title": "Standard.1"
+						},
+						"layer": "USER"
+					}),
 					"controlChanges": [
 					  new Change({
 							"fileName": "id_1589436772046_35_addCondition",
@@ -379,34 +360,19 @@ var oVariantMap = {
 					}
 				  },
 				  {
-					"content": {
-					  "fileName": "id_1589359343056_37",
-					  "fileType": "ctrl_variant",
-					  "variantManagementReference": "VMId",
-					  "variantReference": "VMId",
-					  "reference": "sap.ui.mdc.sample.filterbar.sample1.Component",
-					  "packageName": "$TMP",
-					  "content": {
-						"title": "Standard.1.1",
-						"favorite": true,
-						"visible": true,
-						"executeOnSelect": false
-					  },
-					  "self": "apps/sap.ui.mdc.sample.filterbar.sample1/variants/id_1589359343056_37.ctrl_variant",
-					  "layer": "USER",
-					  "texts": {},
-					  "namespace": "apps/sap.ui.mdc.sample.filterbar.sample1/variants/",
-					  "creation": "2020-05-13T08:42:23.102Z",
-					  "originalLanguage": "EN",
-					  "conditions": {},
-					  "support": {
-						"generator": "Change.createInitialFileContent",
-						"service": "",
-						"user": "",
-						"sapui5Version": "1.78.0-SNAPSHOT"
-					  },
-					  "validAppVersions": {}
-					},
+					"instance": new FlVariant({
+						"id": "id_1589359343056_37",
+						"fileType": "ctrl_variant",
+						"variantManagementReference": "VMId",
+						"variantReference": "VMId",
+						"flexObjectMetadata": {
+							"reference": "sap.ui.mdc.sample.filterbar.sample1.Component"
+						},
+						"content": {
+							"title": "Standard.1.1"
+						},
+						"layer": "USER"
+					}),
 					"controlChanges": [
 					  new Change({
 							"fileName": "id_1589359343056_38_addCondition",

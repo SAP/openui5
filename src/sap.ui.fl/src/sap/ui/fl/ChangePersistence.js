@@ -25,7 +25,6 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/Variant",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement"
 ], function(
@@ -51,7 +50,6 @@ sap.ui.define([
 	LayerUtils,
 	Layer,
 	Utils,
-	Variant,
 	JSONModel,
 	Measurement
 ) {
@@ -238,7 +236,10 @@ sap.ui.define([
 
 	function getLayerFromChangeOrChangeContent(oChangeOrChangeContent) {
 		var sChangeLayer;
-		if (oChangeOrChangeContent instanceof Variant || oChangeOrChangeContent instanceof Change) {
+		if (
+			typeof oChangeOrChangeContent.isA === "function"
+			&& (oChangeOrChangeContent.isA("sap.ui.fl.apply._internal.flexObjects.FlVariant") || oChangeOrChangeContent.isA("sap.ui.fl.Change"))
+		) {
 			sChangeLayer = oChangeOrChangeContent.getLayer();
 		} else {
 			sChangeLayer = oChangeOrChangeContent.layer;
@@ -499,7 +500,10 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.addDirtyChange = function(vChange) {
 		var oNewChange;
-		if (vChange instanceof Change || vChange instanceof Variant) {
+		if (
+			typeof vChange.isA === "function"
+			&& (vChange.isA("sap.ui.fl.Change") || vChange.isA("sap.ui.fl.apply._internal.flexObjects.FlexObject"))
+		) {
 			oNewChange = vChange;
 		} else {
 			oNewChange = new Change(vChange);
@@ -648,7 +652,7 @@ sap.ui.define([
 			}
 			return oCondensedChangesPromise.then(function(aCondensedChanges) {
 				var sRequest = aRequests[0];
-				var sLayer = aDirtyChanges[0].getDefinition().layer;
+				var sLayer = aDirtyChanges[0].getLayer();
 				if (bIsCondensingEnabled) {
 					return Storage.condense({
 						allChanges: aAllChanges,
@@ -809,7 +813,7 @@ sap.ui.define([
 		var aChanges = [];
 
 		aDirtyChanges.forEach(function(oChange) {
-			aChanges.push(oChange.getDefinition());
+			aChanges.push(oChange.convertToFileContent());
 		});
 
 		return aChanges;

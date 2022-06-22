@@ -15,8 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/Variant"
+	"sap/ui/fl/Utils"
 ], function(
 	_omit,
 	_pick,
@@ -30,8 +29,7 @@ sap.ui.define([
 	FlexState,
 	Change,
 	LayerUtils,
-	Utils,
-	Variant
+	Utils
 ) {
 	"use strict";
 
@@ -51,13 +49,13 @@ sap.ui.define([
 
 	function getReferencedChanges(mPropertyBag) {
 		var aReferencedVariantChanges = [];
-		if (mPropertyBag.variantData.content.variantReference) {
+		if (mPropertyBag.variantData.instance.getVariantReference()) {
 			aReferencedVariantChanges = VariantManagementState.getControlChangesForVariant(Object.assign(
 				mPropertyBag, {
-					vReference: mPropertyBag.variantData.content.variantReference
+					vReference: mPropertyBag.variantData.instance.getVariantReference()
 				}));
 			return aReferencedVariantChanges.filter(function(oReferencedChange) {
-				return LayerUtils.compareAgainstCurrentLayer(oReferencedChange.getDefinition().layer, mPropertyBag.variantData.content.layer) === -1; /* Referenced change layer below current layer*/
+				return LayerUtils.compareAgainstCurrentLayer(oReferencedChange.getLayer(), mPropertyBag.variantData.instance.getLayer()) === -1; /* Referenced change layer below current layer*/
 			});
 		}
 		return aReferencedVariantChanges;
@@ -222,7 +220,7 @@ sap.ui.define([
 		mPropertyBag.vReference = mPropertyBag.vReference || oVariantsMap[mPropertyBag.vmReference].defaultVariant;
 		var aVariants = getVariants(mPropertyBag);
 		aVariants.some(function(oCurrentVariant) {
-			if (oCurrentVariant.content.fileName === mPropertyBag.vReference) {
+			if (oCurrentVariant.instance.getId() === mPropertyBag.vReference) {
 				oVariant = oCurrentVariant;
 				return true;
 			}
@@ -273,7 +271,7 @@ sap.ui.define([
 		var iIndex = VariantsApplyUtil.getIndexToSortVariant(aVariants, mPropertyBag.variantData);
 
 		//Set the whole list of changes to the variant
-		if (mPropertyBag.variantData.content.variantReference) {
+		if (mPropertyBag.variantData.instance.getVariantReference()) {
 			var aReferencedVariantChanges = getReferencedChanges(mPropertyBag);
 			mPropertyBag.variantData.controlChanges = aReferencedVariantChanges.concat(mPropertyBag.variantData.controlChanges);
 		}
@@ -300,8 +298,7 @@ sap.ui.define([
 		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
 		var bFound = oVariantsMap[mPropertyBag.vmReference].variants.some(
 			function(oCurrentVariantContent, index) {
-				var oCurrentVariant = new Variant(oCurrentVariantContent); //why?
-				if (oCurrentVariant.getId() === mPropertyBag.variant.getId()) {
+				if (oCurrentVariantContent.instance.getId() === mPropertyBag.variant.getId()) {
 					iIndex = index;
 					return true;
 				}
@@ -316,7 +313,6 @@ sap.ui.define([
 	 * Sorts and re-orders the passed variant object in the variants map
 	 *
 	 * @param {object} mPropertyBag - Object with the necessary properties
-	 * @param {object} mPropertyBag.variantData - Variant data
 	 * @param {string} mPropertyBag.vmReference - Variant management reference
 	 * @param {string} mPropertyBag.reference - Component reference
 	 * @param {int} mPropertyBag.previousIndex - Previous index of variant object
@@ -329,14 +325,9 @@ sap.ui.define([
 		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
 		var aVariants = oVariantsMap[mPropertyBag.vmReference].variants;
 		var oVariantData = aVariants[mPropertyBag.previousIndex];
-		Object.keys(mPropertyBag.variantData).forEach(function(sProperty) {
-			if (oVariantData.content.content[sProperty]) {
-				oVariantData.content.content[sProperty] = mPropertyBag.variantData[sProperty];
-			}
-		});
 
 		//Standard variant should always be at the first position, all others are sorted alphabetically
-		if (oVariantData.content.fileName !== mPropertyBag.vmReference) {
+		if (oVariantData.instance.getId() !== mPropertyBag.vmReference) {
 			//remove element
 			aVariants.splice(mPropertyBag.previousIndex, 1);
 
@@ -469,19 +460,20 @@ sap.ui.define([
 					oVariantData[sVMReference].currentVariant = oVariantsMap[sVMReference].currentVariant;
 				}
 				getVariants(Object.assign(mPropertyBag, {vmReference: sVMReference}))
-					.forEach(function(oVariant, index) {
+					.forEach(function(oVariantEntry, index) {
+						var oVariant = oVariantEntry.instance;
 						oVariantData[sVMReference].variants[index] =
 							//JSON.parse(JSON.stringify()) used to remove undefined properties e.g. standard variant layer
 							JSON.parse(
 								JSON.stringify({
-									key: oVariant.content.fileName,
-									title: oVariant.content.content.title,
-									layer: oVariant.content.layer,
-									favorite: oVariant.content.content.favorite,
-									executeOnSelect: oVariant.content.content.executeOnSelect,
-									visible: oVariant.content.content.visible,
-									author: ObjectPath.get("content.support.user", oVariant),
-									contexts: oVariant.content.contexts
+									key: oVariant.getId(),
+									title: oVariant.getName(),
+									layer: oVariant.getLayer(),
+									favorite: oVariant.getFavorite(),
+									executeOnSelect: oVariant.getExecuteOnSelection(),
+									visible: oVariant.getVisible(),
+									author: oVariant.getSupportInformation().user,
+									contexts: oVariant.getContexts()
 								})
 							);
 					});
@@ -505,9 +497,9 @@ sap.ui.define([
 		var oVariantsMap = VariantManagementState.getContent(mPropertyBag.reference);
 		var oVariantManagement = oVariantsMap[mPropertyBag.vmReference];
 		if (mPropertyBag.changeContent.fileType === "ctrl_variant_change") {
-			oVariantManagement.variants.some(function(oVariant) {
-				if (oVariant.content.fileName === mPropertyBag.changeContent.selector.id) {
-					addChangeContentToVariantMap(oVariant.variantChanges, mPropertyBag.changeContent, mPropertyBag.add);
+			oVariantManagement.variants.some(function(oVariantData) {
+				if (oVariantData.instance.getId() === mPropertyBag.changeContent.selector.id) {
+					addChangeContentToVariantMap(oVariantData.variantChanges, mPropertyBag.changeContent, mPropertyBag.add);
 				}
 			});
 		} else if (mPropertyBag.changeContent.fileType === "ctrl_variant_management_change") {
@@ -560,10 +552,10 @@ sap.ui.define([
 		if (mPropertyBag.changeToBeAddedOrDeleted) {
 			switch (mPropertyBag.changeToBeAddedOrDeleted.getState()) {
 				case States.NEW:
-					addChange(mPropertyBag.changeToBeAddedOrDeleted.getDefinition(), oFlexObjects);
+					addChange(mPropertyBag.changeToBeAddedOrDeleted.convertToFileContent(), oFlexObjects);
 					break;
 				case States.DELETE:
-					deleteChange(mPropertyBag.changeToBeAddedOrDeleted.getDefinition(), oFlexObjects);
+					deleteChange(mPropertyBag.changeToBeAddedOrDeleted.convertToFileContent(), oFlexObjects);
 					break;
 				default:
 			}

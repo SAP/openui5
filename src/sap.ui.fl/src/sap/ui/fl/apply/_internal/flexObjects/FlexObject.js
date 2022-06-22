@@ -135,17 +135,14 @@ sap.ui.define([
 		constructor: function() {
 			ManagedObject.apply(this, arguments);
 			var oFlexObjectMetadata = this.getFlexObjectMetadata();
-			if (oFlexObjectMetadata.reference) {
-				oFlexObjectMetadata.namespace = (
-					oFlexObjectMetadata.namespace
-					|| Utils.createNamespace(
-						{ reference: oFlexObjectMetadata.reference },
-						this.getFileType()
-					)
-				);
+			var sReference = oFlexObjectMetadata.reference;
+			if (sReference) {
+				if (!oFlexObjectMetadata.namespace) {
+					oFlexObjectMetadata.namespace = Utils.createNamespace({ reference: sReference }, this.getFileType());
+				}
 
 				if (!oFlexObjectMetadata.projectId) {
-					oFlexObjectMetadata.projectId = oFlexObjectMetadata.reference.replace(".Component", "");
+					oFlexObjectMetadata.projectId = sReference.replace(".Component", "");
 				}
 			}
 			this.setFlexObjectMetadata(oFlexObjectMetadata);
@@ -351,6 +348,28 @@ sap.ui.define([
 		return this;
 	};
 
+	// ----------------- legacy functions -----------------
+
+	/**
+	 * Sets the transport request.
+	 * Also used by the SmartVariantManagement control.
+	 * @param {string} sRequest Transport request
+	 */
+	FlexObject.prototype.setRequest = function (sRequest) {
+		this._sRequest = sRequest;
+	};
+
+	/**
+	 * Gets the transport request.
+	 * Also used by the SmartVariantManagement control.
+	 * @returns {string} Transport request
+	 */
+	FlexObject.prototype.getRequest = function () {
+		return this._sRequest || "";
+	};
+
+	// ----------------------------------------------------
+
 	function capitalize(sKey) {
 		return sKey.length ? sKey.charAt(0).toUpperCase() + sKey.slice(1) : sKey;
 	}
@@ -434,8 +453,6 @@ sap.ui.define([
 				Object.entries(vValue).forEach(function(aEntry) {
 					fnMapProperty(aEntry[0], aEntry[1], sNewPath);
 				});
-			} else {
-				Log.error("Missing mapping info for property " + sNewPath);
 			}
 		};
 

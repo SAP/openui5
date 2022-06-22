@@ -1,39 +1,33 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/dt/DesignTimeMetadata",
-	"sap/ui/rta/command/LREPSerializer",
-	"sap/ui/rta/command/Stack",
 	"qunit/RtaQunitUtils",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/variants/VariantManagement",
-	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/m/Input",
 	"sap/m/Panel",
+	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/Layer",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/command/LREPSerializer",
+	"sap/ui/rta/command/Stack",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
-	CommandFactory,
-	DesignTimeMetadata,
-	CommandSerializer,
-	CommandStack,
 	RtaQunitUtils,
-	Layer,
-	flUtils,
-	VariantManagement,
-	FlexTestAPI,
 	Input,
 	Panel,
+	DesignTimeMetadata,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
-	VariantManagementState,
+	Layer,
+	CommandFactory,
+	CommandSerializer,
+	CommandStack,
 	jQuery,
-	sinon
+	sinon,
+	FlexTestAPI
 ) {
 	"use strict";
 
@@ -62,23 +56,6 @@ sap.ui.define([
 		}
 	};
 
-	var oVariant = {
-		content: {
-			fileName: "variant0",
-			fileType: "ctrl_variant",
-			variantManagementReference: "variantMgmtId1",
-			variantReference: "variantMgmtId1",
-			content: {
-				title: "variant A"
-			},
-			selector: {},
-			layer: Layer.CUSTOMER,
-			namespace: "Dummy.Component"
-		},
-		controlChanges: [],
-		variantChanges: {}
-	};
-
 	QUnit.module("Given a command serializer loaded with an RTA command stack", {
 		before: function() {
 			return FlexTestAPI.createVariantModel({
@@ -91,7 +68,6 @@ sap.ui.define([
 		beforeEach: function() {
 			return RtaQunitUtils.clear(oMockedAppComponent)
 			.then(function() {
-				sandbox.stub(oMockedAppComponent, "getModel").returns(this.oModel);
 				sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 				this.oCommandStack = new CommandStack();
 				this.oInput1 = new Input("input1");
@@ -526,7 +502,7 @@ sap.ui.define([
 				}.bind(this))
 
 				.then(function() {
-					// clean up dirty canges
+					// clean up dirty changes
 					oSaveChangesStub.restore();
 					this.oSerializer.saveCommands();
 				}.bind(this));
@@ -707,7 +683,6 @@ sap.ui.define([
 					oRemoveCommand2 = oCommand;
 					sandbox.stub(oRemoveCommand1.getPreparedChange(), "getVariantReference").returns("test-variant");
 					sandbox.stub(oRemoveCommand2.getPreparedChange(), "getVariantReference").returns("test-variant");
-					oMockedAppComponent.getModel.restore();
 					sandbox.stub(oMockedAppComponent, "getModel").returns({
 						removeChange: function() {},
 						addChange: function() {},
@@ -790,171 +765,6 @@ sap.ui.define([
 					assert.ok(true, "then the promise for LREPSerializer.clearCommandStack() gets resolved");
 					assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
 					fnAssertWrite(2);
-				}.bind(this));
-		});
-	});
-
-	QUnit.module("Given a command serializer loaded with an RTA command stack and ctrl variant commands", {
-		before: function() {
-			return FlexTestAPI.createVariantModel({
-				data: oData,
-				appComponent: oMockedAppComponent
-			}).then(function(oInitializedModel) {
-				this.oModel = oInitializedModel;
-			}.bind(this));
-		},
-		beforeEach: function() {
-			this.oCommandStack = new CommandStack();
-
-			this.oVariantManagement = new VariantManagement("variantMgmtId1");
-			this.oVariantManagement.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
-			this.oDesignTimeMetadata = new DesignTimeMetadata({data: {}});
-			this.oModel._bDesignTimeMode = true;
-
-			sandbox.stub(oMockedAppComponent, "getModel").returns(this.oModel);
-
-			this.oSerializer = new CommandSerializer({
-				commandStack: this.oCommandStack,
-				rootControl: this.oVariantManagement
-			});
-
-			var oVariant = {
-				content: {
-					fileName: "variant0",
-					content: {
-						title: "variant A"
-					},
-					layer: Layer.CUSTOMER,
-					variantReference: "variant00",
-					reference: "Dummy.Component"
-				},
-				controlChanges: []
-			};
-			sandbox.stub(this.oModel, "getVariant").returns(oVariant);
-			sandbox.stub(VariantManagementState, "setVariantData").returns(1);
-			sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap");
-			sandbox.stub(VariantManagementState, "addVariantToVariantManagement");
-			sandbox.stub(VariantManagementState, "removeVariantFromVariantManagement");
-
-			return RtaQunitUtils.clear(oMockedAppComponent);
-		},
-		afterEach: function() {
-			this.oCommandStack.destroy();
-			this.oSerializer.destroy();
-			this.oVariantManagement.destroy();
-			this.oDesignTimeMetadata.destroy();
-			sandbox.restore();
-			return RtaQunitUtils.clear(oMockedAppComponent);
-		},
-		after: function() {
-			this.oModel.destroy();
-		}
-	}, function() {
-		QUnit.test("when the LREPSerializer.clearCommandStack gets called with 4 different ctrl variant commands created containing one or more changes and this is booked for a new app variant with different id", function(assert) {
-			sandbox.stub(VariantManagementState, "getVariant").returns(oVariant);
-			this.oVariantManagement._createSaveAsDialog();
-
-			this.oVariantManagement._getEmbeddedVM().oSaveAsDialog.attachEventOnce("afterOpen", function() {
-				this.oVariantManagement._handleVariantSaveAs("newVariant");
-			}.bind(this));
-
-			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
-			var oControlVariantConfigureCommand;
-			var oControlVariantSwitchCommand;
-			var oControlVariantSaveAsCommand;
-			var oControlVariantSetTitleCommand;
-
-			var oTitleChange = {
-				appComponent: oMockedAppComponent,
-				changeType: "setTitle",
-				layer: Layer.CUSTOMER,
-				originalTitle: "variant A",
-				title: "test",
-				variantReference: "variant0"
-			};
-			var oFavoriteChange = {
-				appComponent: oMockedAppComponent,
-				changeType: "setFavorite",
-				favorite: false,
-				layer: Layer.CUSTOMER,
-				originalFavorite: true,
-				variantReference: "variant0"
-			};
-			var oVisibleChange = {
-				appComponent: oMockedAppComponent,
-				changeType: "setVisible",
-				layer: Layer.CUSTOMER,
-				variantReference: "variant0",
-				visible: false
-			};
-			var aChanges = [oTitleChange, oFavoriteChange, oVisibleChange];
-
-			return CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
-				control: this.oVariantManagement,
-				changes: aChanges
-			}, this.oDesignTimeMetadata, {layer: Layer.CUSTOMER})
-
-				.then(function(oCommand) {
-					oControlVariantConfigureCommand = oCommand;
-					return CommandFactory.getCommandFor(this.oVariantManagement, "switch", {
-						targetVariantReference: "newVariantReference",
-						sourceVariantReference: "oldVariantReference"
-					});
-				}.bind(this))
-
-				.then(function(oCommand) {
-					oControlVariantSwitchCommand = oCommand;
-					return CommandFactory.getCommandFor(this.oVariantManagement, "saveAs", {
-						sourceVariantReference: "variant0",
-						model: this.oModel
-					}, this.oDesignTimeMetadata, {layer: Layer.CUSTOMER});
-				}.bind(this))
-
-				.then(function(oCommand) {
-					oControlVariantSaveAsCommand = oCommand;
-					return CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
-						newText: "newText"
-					}, this.oDesignTimeMetadata, {layer: Layer.CUSTOMER});
-				}.bind(this))
-
-				.then(function(oCommand) {
-					oControlVariantSetTitleCommand = oCommand;
-					this.oCommandStack.attachCommandExecuted(function(oEvent) {
-						if (oEvent.getParameters().command === oControlVariantSetTitleCommand) {
-							var aUIChanges = oControlVariantConfigureCommand.getPreparedChange()
-								.concat(oControlVariantSaveAsCommand.getPreparedChange())
-								.concat([oControlVariantSetTitleCommand.getPreparedChange()]);
-							aUIChanges.forEach(function(oChange) {
-								// Change the reference of UI changes
-								oChange.setNamespace("APP_VARIANT_NAMESPACE");
-								oChange.setComponent("APP_VARIANT_REFERENCE");
-							});
-
-							return PersistenceWriteAPI.save({selector: oMockedAppComponent, skipUpdateCache: true})
-								.then(function() {
-									return this.oSerializer.clearCommandStack()
-										.then(function() {
-											assert.ok(true, "then the promise for LREPSerializer.clearCommandStack() gets resolved");
-											assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
-											fnAssertWrite(5);
-										}.bind(this));
-								}.bind(this));
-						}
-					}.bind(this));
-
-					return this.oCommandStack.pushAndExecute(oControlVariantConfigureCommand);
-				}.bind(this))
-
-				.then(function() {
-					return this.oCommandStack.pushAndExecute(oControlVariantSwitchCommand);
-				}.bind(this))
-
-				.then(function() {
-					return this.oCommandStack.pushAndExecute(oControlVariantSaveAsCommand);
-				}.bind(this))
-
-				.then(function() {
-					return this.oCommandStack.pushAndExecute(oControlVariantSetTitleCommand);
 				}.bind(this));
 		});
 	});

@@ -1,10 +1,10 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Variant",
 	"sap/ui/fl/Scenario",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
@@ -19,10 +19,10 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	FlVariant,
 	Utils,
 	Change,
 	Layer,
-	Variant,
 	Scenario,
 	VerticalLayout,
 	HorizontalLayout,
@@ -421,12 +421,8 @@ sap.ui.define([
 
 		QUnit.test("when isChangeRelatedToVariants is called with a control variant change", function(assert) {
 			[
-				new Variant({
-					content: {
-						fileType: "ctrl_variant",
-						fileName: "variant0",
-						content: {}
-					}
+				new FlVariant({
+					fileName: "variant0"
 				}),
 				new Change({
 					fileType: "ctrl_variant_change",

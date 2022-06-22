@@ -24,6 +24,16 @@ sap.ui.define([
 				oVariant.controlChanges = oVariant.controlChanges.map(function(oChange) {
 					return oChange.getDefinition();
 				});
+				delete oVariant.instance;
+			});
+		});
+		return mVariantsMap;
+	}
+
+	function removeVariants(mVariantsMap) {
+		values(mVariantsMap).forEach(function(oVariantManagementReference) {
+			oVariantManagementReference.variants.forEach(function(oVariant) {
+				delete oVariant.instance;
 			});
 		});
 		return mVariantsMap;
@@ -54,7 +64,8 @@ sap.ui.define([
 					componentId: this.sComponentId,
 					componentData: {
 						technicalParameters: {}
-					}
+					},
+					reference: "sap.ui.rta.test.Demo.md.Component"
 				};
 			}.bind(this));
 		},
@@ -69,7 +80,30 @@ sap.ui.define([
 
 		QUnit.test("when calling with required parameters without variant technical parameters", function(assert) {
 			var oVariantsMap = prepareVariantsMap(this.mPropertyBag);
-			assert.deepEqual(replaceInstancesOfCtrlChanges(oVariantsMap), this.oVariantsMap, "then the variants map was returned correctly");
+
+			assert.strictEqual(oVariantsMap["vmReference1"].variants[0].instance.getId(), "vmReference1", "the correct variant was created");
+			assert.strictEqual(oVariantsMap["vmReference1"].variants[1].instance.getId(), "variant0", "the correct variant was created");
+			assert.strictEqual(oVariantsMap["vmReference1"].variants[2].instance.getId(), "variant2", "the correct variant was created");
+			assert.strictEqual(oVariantsMap["vmReference2"].variants[0].instance.getId(), "vmReference2", "the correct variant was created");
+			assert.strictEqual(oVariantsMap["vmReference2"].variants[1].instance.getId(), "variant00", "the correct variant was created");
+			assert.strictEqual(oVariantsMap["vmReference2"].variants[2].instance.getId(), "variant11", "the correct variant was created");
+			assert.strictEqual(oVariantsMap["vmReference3"].variants[0].instance.getId(), "vmReference3", "the correct variant was created");
+			assert.strictEqual(oVariantsMap["vmReference3"].variants[1].instance.getId(), "variant31", "the correct variant was created");
+			assert.strictEqual(oVariantsMap["vmReference4"].variants[0].instance.getId(), "vmReference4", "the correct variant was created");
+			assert.strictEqual(oVariantsMap["nonExistingVariant1"].variants[0].instance.getId(), "nonExistingVariant1", "the correct variant was created");
+			assert.strictEqual(oVariantsMap["nonExistingVariant2"].variants[0].instance.getId(), "nonExistingVariant2", "the correct variant was created");
+			assert.strictEqual(oVariantsMap["vmReference1"].variants[0].instance.getFlexObjectMetadata().reference, "sap.ui.rta.test.Demo.md.Component", "the correct reference is set");
+			assert.strictEqual(oVariantsMap["vmReference1"].variants[1].instance.getFlexObjectMetadata().reference, "sap.ui.rta.test.Demo.md.Component", "the correct reference is set");
+			assert.strictEqual(oVariantsMap["vmReference1"].variants[2].instance.getFlexObjectMetadata().reference, "sap.ui.rta.test.Demo.md.Component", "the correct reference is set");
+			assert.strictEqual(oVariantsMap["vmReference2"].variants[0].instance.getFlexObjectMetadata().reference, "sap.ui.rta.test.Demo.md.Component", "the correct reference is set");
+			assert.strictEqual(oVariantsMap["vmReference2"].variants[1].instance.getFlexObjectMetadata().reference, "sap.ui.rta.test.Demo.md.Component", "the correct reference is set");
+			assert.strictEqual(oVariantsMap["vmReference2"].variants[2].instance.getFlexObjectMetadata().reference, "sap.ui.rta.test.Demo.md.Component", "the correct reference is set");
+			assert.strictEqual(oVariantsMap["vmReference3"].variants[0].instance.getFlexObjectMetadata().reference, "sap.ui.rta.test.Demo.md.Component", "the correct reference is set");
+			assert.strictEqual(oVariantsMap["vmReference3"].variants[1].instance.getFlexObjectMetadata().reference, "sap.ui.rta.test.Demo.md.Component", "the correct reference is set");
+			assert.strictEqual(oVariantsMap["vmReference4"].variants[0].instance.getFlexObjectMetadata().reference, "sap.ui.rta.test.Demo.md.Component", "the correct reference is set");
+			assert.strictEqual(oVariantsMap["nonExistingVariant1"].variants[0].instance.getFlexObjectMetadata().reference, "sap.ui.rta.test.Demo.md.Component", "the correct reference is set");
+			assert.strictEqual(oVariantsMap["nonExistingVariant2"].variants[0].instance.getFlexObjectMetadata().reference, "sap.ui.rta.test.Demo.md.Component", "the correct reference is set");
+			assert.deepEqual(replaceInstancesOfCtrlChanges(oVariantsMap), removeVariants(this.oVariantsMap), "then the variants map was returned correctly");
 		});
 
 		QUnit.test("when calling with required parameters with variant technical parameters set for a single variant management reference", function(assert) {
@@ -79,7 +113,7 @@ sap.ui.define([
 
 			// mocking properties in response for technical parameters
 			this.oVariantsMap["vmReference1"].currentVariant = "vmReference1";
-			assert.deepEqual(replaceInstancesOfCtrlChanges(oVariantsMap), this.oVariantsMap, "then the variants map was returned correctly");
+			assert.deepEqual(replaceInstancesOfCtrlChanges(oVariantsMap), removeVariants(this.oVariantsMap), "then the variants map was returned correctly");
 		});
 
 		QUnit.test("when calling with required parameters with variant technical parameters set for multiple variant management references", function(assert) {
@@ -90,7 +124,7 @@ sap.ui.define([
 			// mocking properties in response for technical parameters
 			this.oVariantsMap["vmReference1"].currentVariant = "vmReference1";
 			this.oVariantsMap["vmReference2"].currentVariant = "variant11";
-			assert.deepEqual(replaceInstancesOfCtrlChanges(oVariantsMap), this.oVariantsMap, "then the variants map was returned correctly");
+			assert.deepEqual(replaceInstancesOfCtrlChanges(oVariantsMap), removeVariants(this.oVariantsMap), "then the variants map was returned correctly");
 		});
 	});
 

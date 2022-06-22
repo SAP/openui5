@@ -55,16 +55,6 @@ sap.ui.define([
 				variantId: {
 					type: "string"
 				}
-			},
-			aggregations: {
-				/**
-				 * Changes belonging to the variant
-				 */
-				changes: {
-					type: "sap.ui.fl.Change",
-					multiple: true,
-					defaultValue: []
-				}
 			}
 		},
 		constructor: function() {
@@ -86,8 +76,7 @@ sap.ui.define([
 			favorite: "favorite",
 			executeOnSelection: "executeOnSelection",
 			standardVariant: "standardVariant",
-			contexts: "contexts",
-			variantId: "variantId"
+			contexts: "contexts"
 		});
 	};
 
