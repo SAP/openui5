@@ -81,7 +81,7 @@
 				<l:BlockLayoutRow class="sapUiContentPadding">
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeA">
 						<l:VerticalLayout width="100%">
 						<custom:TitleLink
@@ -96,7 +96,7 @@
 
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeB">
 						<l:VerticalLayout width="100%">
 						<custom:TitleLink
@@ -112,8 +112,8 @@
 					<l:BlockLayoutCell
 							width="2"
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeD">
+							backgroundColorSet="ColorSet10"
+							backgroundColorShade="ShadeC">
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
@@ -129,8 +129,8 @@
 					<l:BlockLayoutCell
 							width="2"
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeC">
+							backgroundColorSet="ColorSet10"
+							backgroundColorShade="ShadeA">
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
@@ -142,7 +142,7 @@
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeB">
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
@@ -157,7 +157,7 @@
 
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeA">
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
@@ -191,7 +191,7 @@
 
 					<l:BlockLayoutCell
 							class="largeCell demokitInitialPagesColorPatternC"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeB"
 							visible="{=!${versionData>/isOpenUI5}}">
 						<l:VerticalLayout width="100%">
@@ -206,8 +206,8 @@
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeD">
+							backgroundColorSet="ColorSet10"
+							backgroundColorShade="ShadeB">
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
@@ -220,7 +220,7 @@
 
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeC">
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink

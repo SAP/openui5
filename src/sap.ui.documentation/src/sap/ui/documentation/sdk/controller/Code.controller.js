@@ -217,7 +217,7 @@ sap.ui.define([
 					sEditorTheme = "github";
 				} else if (sTheme === "sap_fiori_3") {
 					sEditorTheme = "crimson_editor";
-				} else if (sTheme === "sap_fiori_3_dark") {
+				} else if (sTheme === "sap_fiori_3_dark" || sTheme === "sap_horizon_dark") {
 					sEditorTheme = "clouds_midnight";
 				}
 				this._getCodeEditor().setColorTheme(sEditorTheme);

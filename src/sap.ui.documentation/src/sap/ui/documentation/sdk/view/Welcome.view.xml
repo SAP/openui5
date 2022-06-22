@@ -77,7 +77,7 @@
 			<l:BlockLayout>
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeA">
 						<l:Grid
 								defaultSpan="L6 M12 S12"
@@ -105,8 +105,8 @@
 					</l:BlockLayoutCell>
 
 					<l:BlockLayoutCell
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeD">
+							backgroundColorSet="ColorSet10"
+							backgroundColorShade="ShadeB">
 						<l:VerticalLayout
 								width="100%">
 							<custom:TitleLink
@@ -171,7 +171,7 @@
 
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeB">
 						<l:VerticalLayout
 								width="100%">
@@ -243,7 +243,7 @@
 					</l:BlockLayoutCell>
 
 					<l:BlockLayoutCell
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeA">
 						<l:Grid
 								defaultSpan="L6 M12 S12"
@@ -281,7 +281,7 @@
 <!-- This block layout row will be commented until BGSOFUIPIRIN-5473 is completely finished-->
 <!--				<l:BlockLayoutRow>-->
 <!--					<l:BlockLayoutCell-->
-<!--							backgroundColorSet="ColorSet11"-->
+<!--							backgroundColorSet="ColorSet10"-->
 <!--							backgroundColorShade="ShadeA">-->
 <!--						<HBox alignItems="Center" justifyContent="Center" width="100%" height="100%">-->
 <!--							<core:HTML sanitizeContent="true" content='-->
@@ -296,7 +296,7 @@
 <!--						</HBox>-->
 <!--					</l:BlockLayoutCell>-->
 <!--					<l:BlockLayoutCell-->
-<!--							backgroundColorSet="ColorSet11"-->
+<!--							backgroundColorSet="ColorSet10"-->
 <!--							backgroundColorShade="ShadeD">-->
 <!--						<l:VerticalLayout-->
 <!--								width="100%">-->
@@ -395,7 +395,7 @@
 			<l:BlockLayout>
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeA">
 						<l:VerticalLayout
 								width="100%">
@@ -412,7 +412,7 @@
 					</l:BlockLayoutCell>
 
 					<l:BlockLayoutCell
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeA">
 							<HBox alignItems="Center" justifyContent="Center" width="100%" height="100%">
 								<Image
@@ -446,8 +446,8 @@
 			<l:BlockLayout>
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeD">
+							backgroundColorSet="ColorSet10"
+							backgroundColorShade="ShadeA">
 						<l:VerticalLayout
 								width="100%">
 							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
@@ -485,7 +485,7 @@
 					</l:BlockLayoutCell>
 
 					<l:BlockLayoutCell
-							backgroundColorSet="ColorSet11"
+							backgroundColorSet="ColorSet10"
 							backgroundColorShade="ShadeB">
 						<l:VerticalLayout
 								width="100%">
@@ -526,8 +526,8 @@
 					</l:BlockLayoutCell>
 
 					<l:BlockLayoutCell
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeA">
+							backgroundColorSet="ColorSet10"
+							backgroundColorShade="ShadeC">
 						<l:VerticalLayout
 								width="100%">
 							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
@@ -567,8 +567,8 @@
 					</l:BlockLayoutCell>
 
 					<l:BlockLayoutCell
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeC">
+							backgroundColorSet="ColorSet10"
+							backgroundColorShade="ShadeA">
 						<l:VerticalLayout
 								width="100%">
 							<custom:TitleLink
@@ -621,8 +621,8 @@
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
 							class="sapUiBlockCenteredCell communityLinkCell"
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeD">
+							backgroundColorSet="ColorSet10"
+							backgroundColorShade="ShadeA">
 						<l:HorizontalLayout>
 							<core:Icon
 									src="sap-icon://collaborate"
@@ -646,8 +646,8 @@
 
 					<l:BlockLayoutCell
 							class="sapUiBlockCenteredCell communityLinkCell"
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeA">
+							backgroundColorSet="ColorSet10"
+							backgroundColorShade="ShadeB">
 						<l:HorizontalLayout>
 							<Image
 									src="./resources/sap/ui/documentation/sdk/images/logo_stackoverflow.png"
@@ -672,8 +672,8 @@
 
 					<l:BlockLayoutCell
 							class="sapUiBlockCenteredCell communityLinkCell"
-							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeC">
+							backgroundColorSet="ColorSet10"
+							backgroundColorShade="ShadeA">
 						<l:HorizontalLayout>
 							<Image
 									src="./resources/sap/ui/documentation/sdk/images/logo_youtube.png"
@@ -699,8 +699,8 @@
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
 						class="sapUiBlockCenteredCell communityLinkCell"
-						backgroundColorSet="ColorSet11"
-						backgroundColorShade="ShadeB">
+						backgroundColorSet="ColorSet10"
+						backgroundColorShade="ShadeC">
 						<l:HorizontalLayout>
 							<Image
 									src="./resources/sap/ui/documentation/sdk/images/logo_twitter.png"
@@ -724,8 +724,8 @@
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
 						class="sapUiBlockCenteredCell communityLinkCell"
-						backgroundColorSet="ColorSet11"
-						backgroundColorShade="ShadeA">
+						backgroundColorSet="ColorSet10"
+						backgroundColorShade="ShadeB">
 						<l:HorizontalLayout>
 							<core:Icon
 									src="sap-icon://email"

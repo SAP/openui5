@@ -100,9 +100,9 @@ sap.ui.define([
 			DEMOKIT_CONFIGURATION_APPEARANCE = "appearance",
 			SITEMAP = "sitemap";
 
-		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_LIGHT] = "sap_fiori_3";
-		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_DARK] = "sap_fiori_3_dark";
-		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_AUTO] = "sap_fiori_3"; // fallback if window.matchMedia is not supported
+		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_LIGHT] = "sap_horizon";
+		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_DARK] = "sap_horizon_dark";
+		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_AUTO] = "sap_horizon"; // fallback if window.matchMedia is not supported
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			formatter: globalFormatter,
