@@ -1,13 +1,13 @@
 {
 	"sap.app": {
-		"id": "sap.m.sample.IllustratedMessageInCardNoActivities",
+		"id": "sap.m.sample.IllustratedMessageEVR",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.IllustratedMessageInCardNoActivities.view.Main",
+			"viewName": "sap.m.sample.IllustratedMessageEVR.view.Main",
 			"type": "XML",
 			"async": true
 		},
@@ -15,7 +15,7 @@
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},
-				"sap.f": {}
+				"sap.ui.layout": {}
 			}
 		},
 		"config": {

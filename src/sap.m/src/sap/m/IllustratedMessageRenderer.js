@@ -21,26 +21,30 @@ sap.ui.define([], function () {
 	 */
 	IllustratedMessageRenderer.render = function (oRm, oIllustratedMessage) {
 		var oIllustratedMessageIllustration = oIllustratedMessage._getIllustration(),
-			oIllustratedMessageTitle = oIllustratedMessage._getTitle(),
-			oIllustratedMessageDescription = oIllustratedMessage._getDescription(),
-			oIllustratedMessageAdditionalContent = oIllustratedMessage.getAdditionalContent();
+			sIllustratedMessageTitle = oIllustratedMessage._getTitle(),
+			sIllustratedMessageDescription = oIllustratedMessage._getDescription(),
+			aIllustratedMessageAdditionalContent = oIllustratedMessage.getAdditionalContent(),
+			bIllustratedMessageEnableVerticalResponsiveness = oIllustratedMessage.getEnableVerticalResponsiveness();
 
 		// IllustratedMessage's Root DOM Element.
 		oRm.openStart("figure", oIllustratedMessage);
 		oRm.class("sapMIllustratedMessage");
+		if (bIllustratedMessageEnableVerticalResponsiveness) {
+			oRm.class("sapMIllustratedMessageScalable");
+		}
 		oRm.openEnd();
 
 			oRm.renderControl(oIllustratedMessageIllustration);
 
 			oRm.openStart("figcaption").openEnd();
-				oRm.renderControl(oIllustratedMessageTitle);
-				oRm.renderControl(oIllustratedMessageDescription.addStyleClass("sapMIllustratedMessageDescription"));
+				oRm.renderControl(sIllustratedMessageTitle);
+				oRm.renderControl(sIllustratedMessageDescription.addStyleClass("sapMIllustratedMessageDescription"));
 			oRm.close("figcaption");
 
 			oRm.openStart("div");
 			oRm.class("sapMIllustratedMessageAdditionalContent"); // helper class in order to hide the additional content when on Base breakpoint
 			oRm.openEnd();
-				oIllustratedMessageAdditionalContent.forEach(function (oControl) {
+				aIllustratedMessageAdditionalContent.forEach(function (oControl) {
 					oRm.renderControl(oControl);
 				});
 			oRm.close("div");

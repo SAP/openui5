@@ -595,6 +595,7 @@
 			"category": "Display",
 			"since": "1.98",
 			"samples": [
+			"sap.m.sample.IllustratedMessageEVR",
 			"sap.m.sample.IllustratedMessageInCardNoActivities",
 			"sap.m.sample.IllustratedMessageInCardNoEmail",
 			"sap.m.sample.IllustratedMessageInDialog",
@@ -2133,6 +2134,11 @@
 		  "id": "sap.m.sample.BusyIndicator",
 		  "name": "Busy Indicator",
 		  "description": "The Busy Indicator signals that some operation is going on and that the user must wait. It does not block the current UI screen so other operations could be triggered in parallel."
+		},
+		{
+			"id": "sap.m.sample.IllustratedMessageEVR",
+			"name": "Illustrated Message Enable Vertical Responsiveness",
+			"description": "Demonstrates the IllustratedMessage's 'enableVerticalResponsiveness' property."
 		},
 		{
 			"id": "sap.m.sample.IllustratedMessageInCardNoActivities",
