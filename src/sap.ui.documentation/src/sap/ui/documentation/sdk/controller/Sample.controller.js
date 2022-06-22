@@ -234,7 +234,7 @@ sap.ui.define([
 				// Assigning allowed query parameters from Demo Kit URL
 				ALLOWLIST_SAMPLES_SEARCH_PARAMS.forEach(function (oParam, index) {
 					if (new URL(document.location.href).searchParams.get(oParam)) {
-						sSampleSearchParams += (sSampleSearchParams === "_sId" ? "?" : "&") + oParam + "=" + new URL(document.location.href).searchParams.get(oParam);
+						sSampleSearchParams += (sSampleSearchParams === "" ? "?" : "&") + oParam + "=" + new URL(document.location.href).searchParams.get(oParam);
 					}
 				});
 
