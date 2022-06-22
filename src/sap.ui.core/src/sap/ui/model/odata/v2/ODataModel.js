@@ -1575,10 +1575,6 @@ sap.ui.define([
 					oEntry[sName] = oProperty;
 				}
 			});
-			// if we got new data we have to update changed entities
-			var oMap = {};
-			oMap[sKey] = oEntry;
-
 			//if we detect a preliminary context we need to set preliminary false and flag for update
 			if (this.hasContext("/" + sKey) && this.getContext("/" + sKey).isPreliminary()) {
 				var oExistingContext = this.getContext("/" + sKey);
@@ -1588,8 +1584,7 @@ sap.ui.define([
 				});
 				oExistingContext.setPreliminary(false);
 			}
-
-			this._updateChangedEntities(oMap);
+			this._updateChangedEntity(sKey, oEntry);
 			mChangedEntities[sKey] = true;
 
 			// if no path information available use the key. This should be the case for create/callFunction
@@ -4280,7 +4275,8 @@ sap.ui.define([
 			}
 
 			oEntity = this._getEntity(oRequest.key);
-			if (mLocalGetEntities && oEntity && oEntity.__metadata.created && oEntity.__metadata.created.functionImport) {
+			if (oEntity && oEntity.__metadata.created
+					&& oEntity.__metadata.created.functionImport) {
 				var aResults = [];
 				var oResult = oEntity["$result"];
 				if (oResult && oResult.__list) {
@@ -4302,9 +4298,7 @@ sap.ui.define([
 				if (aParts[1]) {
 					mLocalChangeEntities[aParts[1]] = oRequest;
 					//cleanup of this.mChangedEntities; use only the actual response key
-					var oMap = {};
-					oMap[aParts[1]] = oRequest.data;
-					this._updateChangedEntities(oMap);
+					this._updateChangedEntity(aParts[1], oRequest.data);
 				}
 				//for delete requests delete data in model (exclude $links)
 				if (oRequest.method === "DELETE" && aParts[2] !== "$links") {
@@ -4390,7 +4384,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._keepChangesAfterCreate = function (oRequest, oEntity, sKey) {
-		var oKey2Entity, aNavProps, sProperty,
+		var aNavProps, sProperty,
 			oChangedEntity = this.mChangedEntities[oRequest.key];
 
 		if (oChangedEntity) {
@@ -4406,9 +4400,7 @@ sap.ui.define([
 				}
 			}
 			this.mChangedEntities[sKey] = oChangedEntity;
-			oKey2Entity = {};
-			oKey2Entity[sKey] = oEntity;
-			this._updateChangedEntities(oKey2Entity);
+			this._updateChangedEntity(sKey, oEntity);
 			// cleanup also further POST request for the just created entity
 			this.abortInternalRequest(this._resolveGroup(oRequest.key).groupId,
 				{requestKey: oRequest.key});
@@ -6174,13 +6166,19 @@ sap.ui.define([
 		return oRequestHandle;
 	};
 
-	/*
-	 * updateChangedEntities
+	/**
+	 * Updates the object in the shadow cache containing the pending user input and the object in
+	 * the model cache with the given data for the entity with the given key. If all changes for
+	 * that entity are processed the object is removed from the shadow cache.
+	 *
+	 * @param {string} [sEntityKey] The key for the entity to be updated
+	 * @param {object} [oData] The new data for the entity
+	 *
 	 * @private
-	 * @param {map} mChangedEntities Map of changedEntities
 	 */
-	ODataModel.prototype._updateChangedEntities = function(mChangedEntities) {
-		var that = this, sRootPath, oEntityType, oNavPropRefInfo;
+	ODataModel.prototype._updateChangedEntity = function(sEntityKey, oData) {
+		var oChangedEntry, sDeepPath, oEntityType, oEntry, oNavPropRefInfo, sRootPath,
+			that = this;
 
 		function updateChangedEntities(oOriginalObject, oChangedObject, sCurPath) {
 			each(oChangedObject,function(sKey) {
@@ -6194,44 +6192,40 @@ sap.ui.define([
 						|| deepEqual(oChangedObject[sKey], oOriginalObject[sKey])
 							&& !that.isLaundering(sActPath)) {
 					delete oChangedObject[sKey];
-					// When current object is the entity itself check for matching navigation property in changed
-					// entity data and take care of it as well
+					// When current object is the entity itself check for matching navigation
+					// property in changed entity data and take care of it as well
 					if (sCurPath === sRootPath) {
 						oEntityType = that.oMetadata._getEntityTypeByPath(sRootPath);
-						oNavPropRefInfo = oEntityType && that.oMetadata._getNavPropertyRefInfo(oEntityType, sKey);
+						oNavPropRefInfo = oEntityType &&
+							that.oMetadata._getNavPropertyRefInfo(oEntityType, sKey);
 						if (oNavPropRefInfo && oChangedObject[oNavPropRefInfo.name]) {
-							// if the nav prop related to the matching property is also set, set it on original
-							// entry and remove from changed entity
-							oOriginalObject[oNavPropRefInfo.name] = oChangedObject[oNavPropRefInfo.name];
+							// if the nav prop related to the matching property is also set, set it
+							// on original entry and remove it from changed entity
+							oOriginalObject[oNavPropRefInfo.name] =
+								oChangedObject[oNavPropRefInfo.name];
 							delete oChangedObject[oNavPropRefInfo.name];
 						}
 					}
 				}
 			});
 		}
-
-		each(mChangedEntities, function(sKey, oData) {
-			if (sKey in that.mChangedEntities) {
-				var oEntry = that._getObject('/' + sKey, null, true);
-				var oChangedEntry = that._getObject('/' + sKey);
-
-				merge(oEntry, oData);
-
-				sRootPath = '/' + sKey;
-
-				var sDeepPath = that.removeInternalMetadata(oChangedEntry).deepPath;
-				updateChangedEntities(oEntry, oChangedEntry, sRootPath);
-
-				if (isEmptyObject(oChangedEntry)) {
-					delete that.mChangedEntities[sKey];
-					that.abortInternalRequest(that._resolveGroup(sKey).groupId, {requestKey: sKey});
-				} else {
-					that.mChangedEntities[sKey] = oChangedEntry;
-					oChangedEntry.__metadata = {deepPath: sDeepPath};
-					extend(oChangedEntry.__metadata, oEntry.__metadata);
-				}
+		if (sEntityKey in that.mChangedEntities) {
+			oEntry = that._getObject('/' + sEntityKey, null, true);
+			oChangedEntry = that._getObject('/' + sEntityKey);
+			merge(oEntry, oData);
+			sRootPath = '/' + sEntityKey;
+			sDeepPath = that.removeInternalMetadata(oChangedEntry).deepPath;
+			updateChangedEntities(oEntry, oChangedEntry, sRootPath);
+			if (isEmptyObject(oChangedEntry)) {
+				delete that.mChangedEntities[sEntityKey];
+				that.abortInternalRequest(that._resolveGroup(sEntityKey).groupId,
+					{requestKey: sEntityKey});
+			} else {
+				that.mChangedEntities[sEntityKey] = oChangedEntry;
+				oChangedEntry.__metadata = {deepPath: sDeepPath};
+				extend(oChangedEntry.__metadata, oEntry.__metadata);
 			}
-		});
+		}
 	};
 
 	/**
