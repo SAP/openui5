@@ -1363,14 +1363,7 @@ sap.ui.define([
 
 	QUnit.module("Versioning is enabled", {
 		beforeEach: function() {
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVersioningEnabled: function() {
-					return true;
-				},
-				isPublicLayerAvailable: function() {
-					return true;
-				}
-			});
+			sandbox.stub(Versions, "hasVersionsModel").returns(true);
 			this.sPersistencyKey = "persistency.key";
 			var oVariantData = {
 				changeSpecificData: {

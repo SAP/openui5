@@ -220,7 +220,7 @@ sap.ui.define([
 		var sReference = mPropertyBag.reference;
 		var sLayer = mPropertyBag.layer;
 
-		if (!_mInstances[sReference] || !_mInstances[sReference][sLayer]) {
+		if (!Versions.hasVersionsModel(mPropertyBag)) {
 			throw Error("Versions Model for reference '" + sReference + "' and layer '" + sLayer + "' were not initialized.");
 		}
 
@@ -229,6 +229,12 @@ sap.ui.define([
 			_mInstances[sReference][sLayer].updateDraftVersion(mPropertyBag);
 		}
 		return _mInstances[sReference][sLayer];
+	};
+
+	Versions.hasVersionsModel = function(mPropertyBag) {
+		var sReference = mPropertyBag.reference;
+		var sLayer = mPropertyBag.layer;
+		return _mInstances[sReference] && _mInstances[sReference][sLayer];
 	};
 
 	Versions.clearInstances = function() {
