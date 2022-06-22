@@ -460,7 +460,7 @@ sap.ui.define([
 
 			// 1. Collect XML views in analyzed scope
 			var aSyncXMLViews = oScope.getElementsByClassName(XMLView).filter(function(oXMLView) {
-				return oXMLView.oAsyncState === undefined;
+				return oXMLView.oAsyncState === undefined && !oXMLView.isSubView();
 			});
 
 			Object.keys(mComponents).forEach(function(sComponentId) {
