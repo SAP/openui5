@@ -618,7 +618,7 @@ sap.ui.define([
 
 	Panel.prototype._updateContentTitle = function() {
 		var oModel = this._getInternalModel();
-		var aAdditionalContent = this.getAdditionalContent();
+		var aAdditionalContent = this.getAggregation("_content").getContent()[0].getItems();
 		var oContentTitle = this._getPersonalizationButton().getId();
 
 		if (aAdditionalContent.length > 0) {
