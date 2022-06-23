@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Integration Cards</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script data-require-ui5-init src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody sapUiSizeCompact topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Separate the Configuration file</h1>
+			<p>
+				Sometimes there are too many fields in the configuration, and hard to management.
+				We may want to separate them into several json files, then load them into the configuration file.
+				<br>Also, we may need to load some js files in configuration file too.
+				<br>Then we can separate the Configuration file.
+			</p>
+			<h2 id="separateFields">Separate the fields into several json files</h2>
+			<p>
+				First, separate the fields into sevaral json files as wanted.
+			</p>
+			<pre class="lang-js">
+{
+	"generalGroup": {
+		"type": "group",
+		"label": "All Data Type",
+		"expanded": false,
+		"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+	},
+	"cardTitle": {
+		"manifestpath": "/sap.card/configuration/parameters/cardTitle/value",
+		"type": "string",
+		"translatable": true,
+		"required": true,
+		"label": "cardTitle",
+		"allowDynamicValues": true,
+		"editableToUser": false,
+		"visibleToUser": true,
+		"description": "Card Title",
+		"cols": 1,
+		// js file
+		"testJS": "sap/ui5/test/editor/listcard/dt/TestJs1",
+		"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+	},
+	"stringWithTextArea": {
+		"manifestpath": "/sap.card/configuration/parameters/stringWithTextArea/value",
+		"type": "string",
+		"label": "Use TextArea for a string field",
+		// js file
+		"testJS": "sap/ui5/test/editor/listcard/dt/TestJs2",
+		"visualization": {
+			"type": "TextArea",
+			"settings": {
+				"value": "{currentSettings>value}",
+				"width": "100%",
+				"editable": "{config/editable}",
+				"placeholder": "{currentSettings>placeholder}",
+				"rows": 7
+			}
+		}
+	},
+	"stringLabelTrans": {
+		"manifestpath": "/sap.card/configuration/parameters/stringLabelTrans/value",
+		"type": "string",
+		"label": "{i18n>TRANSLATED_STRING_LABEL}",
+		// js file
+		"testJS": "sap/ui5/test/editor/listcard/dt/TestJs3",
+		"cols": 2,
+		"translatable": true,
+		"allowDynamicValues": false
+	},
+	"stringLabelTrans2": {
+		"manifestpath": "/sap.card/configuration/parameters/stringLabelTrans2/value",
+		"type": "string",
+		"label": "{{TRANSLATED_STRING_LABEL}}",
+		"translatable": true,
+		"allowDynamicValues": false,
+		"description": "A very long description text that should wrap into the next line"
+	},
+	"stringWithTranslatedValue": {
+		"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValue/value",
+		"type": "string",
+		"label": "String with translated value",
+		"translatable": true
+	},
+	"stringWithTranslatedValueIni18nFormat": {
+		"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValueIni18nFormat/value",
+		"type": "string",
+		"label": "String with translated value in i18n format"
+	}
+}
+</pre>
+			<h2 id="prepareJSFiles">Prepare the JS files loaded by Configuration file</h2>
+			<p>
+				Prepare the JS files which will be loaded by Configuration file. You can define it in the above json file.
+			</p>
+			<pre class="lang-js">
+sap.ui.define([
+	"sap/ui/integration/Designtime",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/merge"
+], function (
+	Designtime,
+	jQuery,
+	merge
+) {
+	"use strict";
+	return function (sTestName) {
+		return sTestName + " value 1";
+	};
+});
+</pre>
+			<h2 id="create">Create the configuration</h2>
+			<p>
+				Create the configuration as below:
+			</p>
+			<pre class="lang-js">
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
+	"use strict";
+	return function () {
+		var oDesigntime = new Designtime({
+			"form": {
+				"items": {
+				}
+			},
+			"preview": {
+				"modes": "Abstract"
+			}
+		});
+		oDesigntime._readyPromise = function (oCardInterface, oInternalCard) {
+			this.onCardReady(oCardInterface, oInternalCard);
+			//this promise can be used to later on to load the editors and create ui, before we tell the consumer
+			//to continue after the loadDesigntime.
+			return Promise.resolve();
+		};
+		return oDesigntime;
+	};
+});
+</pre>
+			<h2 id="override">Override the function _readyPromise of Configuration</h2>
+			<p>
+				Override the function _readyPromise of Configuration, loading the json files in it, then save the fields as settings.form.items of the Configuration.
+				Also loading the js files as wanted.
+			</p>
+<pre class="lang-js">
+oDesigntime._readyPromise = function (oCardInterface, oInternalCard) {
+	var that = this;
+	that.onCardReady(oCardInterface, oInternalCard);
+	var aJsonFiles = [
+		"dt/items1.json",
+		"dt/items2.json",
+		"dt/items3.json"
+	];
+	var aPromises = [];
+	aJsonFiles.forEach(function (sFileName) {
+		// the prefix of the json files should match the id in manifest.json
+		// "id": "sap.ui5.test.editor.listcard"
+		var sItemsPath = sap.ui.require.toUrl("sap/ui5/test/editor/listcard/" + sFileName);
+		aPromises.push(
+			new Promise(function (resolve, reject) {
+				jQuery.ajax(sItemsPath, {
+					dataType: "json"
+				}).done(function (oItems) {
+					resolve(oItems);
+				}).fail(function (jqXHR, sTextStatus, sError) {
+					reject();
+				});
+			})
+		);
+	});
+	var createPromise = function(oItem, n) {
+		return new Promise(function (res) {
+			sap.ui.require([oItem.testJS], function(n, testJS) {
+				// process with the js file after loading it
+				var newValue = testJS(n);
+				this.testValue = newValue;
+				res();
+			}.bind(oItem, n));
+		});
+	};
+	// load json files
+	return Promise.all(aPromises).then(function (aItems) {
+		var items1 = aItems[0],
+			items2 = aItems[1],
+			items3 = aItems[2];
+		var oItems = merge(items1, items2, items3);
+		that.settings.form.items = oItems;
+	}).then(function () {
+		aPromises = [];
+		// create promises for loading js files
+		for (var n in that.settings.form.items) {
+			var oItem = that.settings.form.items[n];
+			if (oItem.testJS && oItem.testJS !== "") {
+				aPromises.push(
+					createPromise(oItem, n)
+				);
+			}
+		}
+		if (aPromises.length > 0) {
+			// loading js files
+			return Promise.all(aPromises);
+		} else {
+			return Promise.resolve();
+		}
+	});
+};
+</pre>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#separateFields">Separate fields</a></div>
+			<div><a href="#prepareJSFiles">Prepare JS files</a></div>
+			<div><a href="#create">Create Configuration</a></div>
+			<div><a href="#override">Override</a></div>
+		</div>
+	</div>
+</body>
+
+</html>
