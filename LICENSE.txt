@@ -507,7 +507,7 @@ License: MIT License
 <copyright holders> = Bjarke Walling
 <year> = 2014
 
-Component: URI.js 1.19.10
+Component: URI.js 1.19.11
 Licensor: Rodney Rehm
 Website: http://github.com/medialize/URI.js/
 License: MIT License
