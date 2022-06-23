@@ -71,20 +71,20 @@ sap.ui.define([
 					aConditions = mConditionsData[oChangeContent.name];
 				}
 
+				if (!bIsRevert) {
+					// Set revert data on the change
+					oChange.setRevertData({
+						name: oChangeContent.name,
+						condition: oChangeContent.condition
+					});
+				}
+
 				var nConditionIdx = FilterOperatorUtil.indexOfCondition(oChangeContent.condition, aConditions);
 				if (nConditionIdx < 0) {
 					aConditions.push(oChangeContent.condition);
 
 					// 'filterConditions' property needs to be updated for change selector
 					oModifier.setProperty(oControl, "filterConditions", mConditionsData);
-
-					if (!bIsRevert) {
-						// Set revert data on the change
-						oChange.setRevertData({
-							name: oChangeContent.name,
-							condition: oChangeContent.condition
-						});
-					}
 
 					return oModifier.getProperty(oControl, "delegate")
 					.then(function(oDelegate){
@@ -134,6 +134,14 @@ sap.ui.define([
 						}
 					}
 
+					if (!bIsRevert) {
+						// Set revert data on the change
+						oChange.setRevertData({
+							name: oChangeContent.name,
+							condition: oChangeContent.condition
+						});
+					}
+
 					if (aConditions && (aConditions.length > 0)) {
 
 						nDelIndex = FilterOperatorUtil.indexOfCondition(oChangeContent.condition, aConditions);
@@ -144,14 +152,6 @@ sap.ui.define([
 							//					}
 							// 'filterConditions' property needs to be updated for change selector
 							oModifier.setProperty(oControl, "filterConditions", mConditionsData);
-
-							if (!bIsRevert) {
-								// Set revert data on the change
-								oChange.setRevertData({
-									name: oChangeContent.name,
-									condition: oChangeContent.condition
-								});
-							}
 
 							return oModifier.getProperty(oControl, "delegate")
 							.then(function(oDelegate){

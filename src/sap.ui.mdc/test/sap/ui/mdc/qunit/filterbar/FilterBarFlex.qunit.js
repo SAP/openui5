@@ -544,4 +544,51 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test('check revert for addCondition & removeCondition', function(assert) {
+		//create a change with a non existing operator to check failures during preprocessing
+		var oContent1 = createAddConditionChangeDefinition("EQ");
+		var oContent2 = createAddConditionChangeDefinition("EQ");
+		oContent2.changeType = "removeCondition";
+
+		var pAddChange1 = ChangesWriteAPI.create({
+			changeSpecificData: oContent1,
+			selector: this.oFilterBar
+		});
+		var pAddChange2 = ChangesWriteAPI.create({
+			changeSpecificData: oContent1,
+			selector: this.oFilterBar
+		});
+
+		sinon.stub(this.oFilterBar, "addCondition");
+		sinon.stub(this.oFilterBar, "removeCondition");
+
+		var oAddChangeHandler = FilterBarFlexHandler["addCondition"].changeHandler;
+		var oRemoveChangeHandler = FilterBarFlexHandler["removeCondition"].changeHandler;
+
+		return Promise.all([pAddChange1, pAddChange2])
+		.then(function(aChanges){
+
+			assert.ok(!aChanges[0].getRevertData(), "no revert information for addCondition yet available");
+			assert.ok(!aChanges[1].getRevertData(), "no revert information for removeCondition yet available");
+
+			var pAppliance1 = oAddChangeHandler.applyChange(aChanges[0], this.oFilterBar, {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			});
+
+			var pAppliance2 = oRemoveChangeHandler.applyChange(aChanges[1], this.oFilterBar, {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			});
+
+			return Promise.all([pAppliance1, pAppliance2, aChanges[0], aChanges[1]])
+			.then(function(aPassedValues){
+				assert.ok(aPassedValues[2].getRevertData(), "revert information for addCondition available");
+				assert.ok(aPassedValues[3].getRevertData(), "revert information for removeCondition available");
+			});
+		}.bind(this));
+	});
+
 });
