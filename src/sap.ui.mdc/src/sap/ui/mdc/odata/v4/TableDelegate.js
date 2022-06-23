@@ -318,11 +318,15 @@ sap.ui.define([
 	 * @protected
 	 */
 	Delegate.getGroupSorter = function(oTable, sPropertyName) {
-		var bPropertyVisible = oTable._getVisibleProperties().find(function(oProperty) {
-			return oProperty.name === sPropertyName;
+		var oPropertyHelper = oTable.getPropertyHelper();
+		var oVisibleProperty = oTable._getVisibleProperties().find(function(oProperty) {
+			var oCurrentProperty = oPropertyHelper.getProperty(oProperty.name);
+			return oCurrentProperty.getSimpleProperties().find(function(oSimpleProperty) {
+				return oSimpleProperty.name === sPropertyName;
+			});
 		});
 
-		if (!bPropertyVisible) {
+		if (!oVisibleProperty) {
 			return undefined;
 		}
 
