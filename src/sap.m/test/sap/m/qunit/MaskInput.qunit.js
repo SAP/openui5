@@ -1390,6 +1390,50 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	QUnit.module("liveChange event", {
+		beforeEach: function () {
+			this.oMaskInput = new MaskInput({
+				mask: "99",
+				placeholderSymbol: "_"
+			});
+			this.oMaskInput.placeAt("content");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			if (!bSkipDestroy) {
+				this.oMaskInput.destroy();
+			}
+		}
+	});
+
+	QUnit.test("liveChange fires on direct typing", function (assert){
+		var spyLiveChange = this.spy(this.oMaskInput, "_fireLiveChange");
+
+		// Act
+		this.oMaskInput.focus();
+		this.clock.tick(100);
+
+		// Act
+		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "1");
+
+		// Assert
+		assert.equal(spyLiveChange.callCount, 1, "liveChange fired");
+
+		// Act
+		qutils.triggerKeypress(this.oMaskInput.getDomRef(), "2");
+
+		// Assert
+		assert.equal(spyLiveChange.callCount, 2, "liveChange fired");
+
+		// Act
+		qutils.triggerKeydown(this.oMaskInput.getDomRef(), KeyCodes.BACKSPACE);
+
+		// Assert
+		assert.equal(spyLiveChange.callCount, 3, "liveChange fired");
+
+		spyLiveChange = null;
+	});
+
 
 	// Helper functions
 

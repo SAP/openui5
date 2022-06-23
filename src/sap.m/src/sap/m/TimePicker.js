@@ -286,8 +286,27 @@ function(
 					 * Fired when <code>value help</code> dialog closes.
 					 * @since 1.102.0
 					 */
-					afterValueHelpClose: {}
+					afterValueHelpClose: {},
 
+					/**
+					 * Fired when the value of the <code>TimePicker</code> is changed by user interaction - each keystroke, delete, paste, etc.
+					 *
+					 * <b>Note:</b> Browsing autocomplete suggestions doesn't fire the event.
+					 * @since 1.104.0
+					 */
+					liveChange: {
+						parameters : {
+							/**
+							 * The current value of the input, after a live change event.
+							 */
+							value: {type : "string"},
+
+							/**
+						 	 * The previous value of the input, before the last user interaction.
+							 */
+							previousValue: {type : "string"}
+						}
+					}
 				},
 
 				dnd: { draggable: false, droppable: true }
@@ -1611,7 +1630,13 @@ function(
 				],
 
 				ariaLabelledBy: InvisibleText.getStaticId("sap.m", "TIMEPICKER_SET_TIME"),
-				beforeOpen: this.onBeforeNumericOpen.bind(this)
+				beforeOpen: this.onBeforeNumericOpen.bind(this),
+				afterOpen: function() {
+					this.fireAfterValueHelpOpen();
+				}.bind(this),
+				afterClose: function() {
+					this.fireAfterValueHelpClose();
+				}.bind(this)
 			});
 
 			oPicker.open = function() {
@@ -2310,6 +2335,7 @@ function(
 			}
 
 			this._resetTempValue(iBegin, iEnd);
+			this._bCheckForLiveChange = true;
 			this.updateDomValue(this._oTempValue.toString());
 			this._setCursorPosition(Math.max(this._iUserInputStartPosition, iStart));
 		};

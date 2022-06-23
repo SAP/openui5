@@ -3391,6 +3391,39 @@ sap.ui.define([
 		tp.destroy();
 	});
 
+	QUnit.test("liveChange fires on direct typing", function (assert){
+		var oTP = new TimePicker(),
+			spyLiveChange = this.spy(oTP, "fireLiveChange");
+
+		oTP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		oTP.focus();
+		this.clock.tick(100);
+
+		// Act
+		qutils.triggerKeypress(oTP.getDomRef(), "1");
+
+		// Assert
+		assert.equal(spyLiveChange.callCount, 1, "liveChange fired");
+
+		// Act
+		qutils.triggerKeypress(oTP.getDomRef(), "2");
+
+		// Assert
+		assert.equal(spyLiveChange.callCount, 2, "liveChange fired");
+
+		// Act
+		qutils.triggerKeydown(oTP.getDomRef(), KeyCodes.BACKSPACE);
+
+		// Assert
+		assert.equal(spyLiveChange.callCount, 3, "liveChange fired on Backspace");
+
+		spyLiveChange = null;
+		oTP.destroy();
+	});
+
 	QUnit.module("Private methods", {
 		beforeEach: function () {
 			this.oTP = new TimePicker();

@@ -106,6 +106,28 @@ sap.ui.define([
 				 * @since 1.54
 				 */
 				initialFocusedDateValue: {type: "object", group: "Data", defaultValue: null}
+			},
+			events : {
+
+				/**
+				 * Fired when the value of the <code>DateTimeField</code> is changed by user interaction - each keystroke, delete, paste, etc.
+				 *
+				 * <b>Note:</b> Browsing autocomplete suggestions doesn't fire the event.
+				 * @since 1.104.0
+				 */
+				liveChange: {
+					parameters : {
+						/**
+						 * The current value of the input, after a live change event.
+						 */
+						value: {type : "string"},
+
+						/**
+						 * The previous value of the input, before the last user interaction.
+						 */
+						previousValue: {type : "string"}
+					}
+				}
 			}
 		}
 	});
@@ -277,6 +299,40 @@ sap.ui.define([
 				.setVisible(this.getValueState() !== ValueState.None);
 		}
 
+		this._sPreviousValue = this.getDOMValue();
+	};
+
+	/**
+	 * Event handler for user input.
+	 *
+	 * @public
+	 * @param {jQuery.Event} oEvent User input.
+	 */
+	 DateTimeField.prototype.oninput = function(oEvent) {
+		InputBase.prototype.oninput.call(this, oEvent);
+		if (oEvent.isMarked("invalid")) {
+			return;
+		}
+
+		var sValue = this.getDOMValue();
+
+		if (sValue !== this._sPreviousValue) {
+			this.fireLiveChange({
+				value: sValue,
+				previousValue : this._sPreviousValue
+			});
+			this._sPreviousValue = sValue;
+		}
+	 };
+
+	/**
+	 * Gets the inner input DOM value.
+	 *
+	 * @protected
+	 * @returns {any} The value of the input.
+	 */
+	 DateTimeField.prototype.getDOMValue = function() {
+		return this._$input.val();
 	};
 
 	DateTimeField.prototype._getValueStateHeader = function () {

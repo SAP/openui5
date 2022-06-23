@@ -162,6 +162,12 @@ sap.ui.define([
 				this._applyMask();
 				this._positionCaret(false);
 			}
+
+			var sValue = this.getDOMValue();
+			if (!this._isMaskEnabled() && sValue !== this._sPreviousValue) {
+				this._fireLiveChange(sValue, this._sPreviousValue);
+				this._sPreviousValue = sValue;
+			}
 		};
 
 		/**
@@ -229,6 +235,7 @@ sap.ui.define([
 			if (this._oTempValue._aContent.join("") !== this._oTempValue._aInitial.join("")) {
 				InputBase.prototype.onsapescape.call(this, oEvent);
 			}
+			this._bCheckForLiveChange = true;
 		};
 
 		/**
@@ -609,6 +616,28 @@ sap.ui.define([
 			return this._aRules[iIndex].test(sChar);
 		};
 
+		this.updateDomValue = function(sValue) {
+			InputBase.prototype.updateDomValue.call(this, sValue);
+
+			if (this._bCheckForLiveChange && sValue !== this._sPreviousValue) {
+				this._fireLiveChange(sValue, this._sPreviousValue);
+				this._sPreviousValue = sValue;
+			}
+
+			this._bCheckForLiveChange = false;
+		};
+
+		/**
+		 * Fires liveChange event.
+		 * @private
+		 */
+		 this._fireLiveChange = function(sNewValue, sPreviousValue) {
+			this.fireLiveChange && this.fireLiveChange({
+				value: sNewValue,
+				previousValue: sPreviousValue
+			});
+		};
+
 		/**
 		 * Sets up default mask rules.
 		 * @private
@@ -857,6 +886,13 @@ sap.ui.define([
 		 * @private
 		 */
 		this._applyAndUpdate = function (sMaskInputValue) {
+			if (this._oTempValue && (this._sPreviousValue === undefined || this._sPreviousValue === "")) {
+				this._sPreviousValue = this._oTempValue.toString();
+				this._bCheckForLiveChange = false;
+			} else if (!this._bCutInProgress) {
+				this._bCheckForLiveChange = true;
+			}
+
 			this._applyRules(sMaskInputValue);
 			this.updateDomValue(this._oTempValue.toString());
 		};
@@ -982,6 +1018,8 @@ sap.ui.define([
 			iEnd = iEnd - 1;
 			this._resetTempValue(iBegin, iEnd);
 
+			this._bCutInProgress = true;
+
 			//oncut happens before the input event fires (before oninput)
 			//we want to use the values from this point of time
 			//but set them after the input event is handled (after oninput)
@@ -992,6 +1030,8 @@ sap.ui.define([
 				//update the temp value back
 				//because oninput breaks it
 				this._oTempValue._aContent = aOldTempValueContent;
+				this._bCheckForLiveChange = true;
+				this._bCutInProgress = false;
 				this.updateDomValue(sValue);
 
 				//we want that shortly after updateDomValue
@@ -1004,6 +1044,14 @@ sap.ui.define([
 				Math.max(this._iUserInputStartPosition, iBegin),
 				this._oTempValue._aContent.slice(0)
 			), iMinBrowserDelay);
+		};
+
+		/**
+		 * Handle paste event.
+		 * @private
+		 */
+		 this.onpaste = function() {
+			this._bCheckForLiveChange = true;
 		};
 
 		/**
@@ -1026,7 +1074,6 @@ sap.ui.define([
 			if (!oKey.bShift && (oKey.bArrowRight || oKey.bArrowLeft)) {
 				iCursorPos = this._getCursorPosition();
 				oSelection = this._getTextSelection();
-
 
 				// Determine the correct direction based on RTL mode, input characters and selection state
 				sDirection = this._determineArrowKeyDirection(oKey, oSelection);
@@ -1093,6 +1140,7 @@ sap.ui.define([
 			}
 
 			this._resetTempValue(iBegin, iEnd);
+			this._bCheckForLiveChange = true;
 			this.updateDomValue(this._oTempValue.toString());
 			this._setCursorPosition(Math.max(this._iUserInputStartPosition, iBegin));
 		};
@@ -1118,6 +1166,7 @@ sap.ui.define([
 
 			if (bAtLeastOneSuccessfulCharPlacement) {
 				iNextPos = iPos; //because the cycle above already found the next pos
+				this._bCheckForLiveChange = true;
 				this.updateDomValue(this._oTempValue.toString());
 				this._setCursorPosition(iNextPos);
 			}
@@ -1512,6 +1561,7 @@ sap.ui.define([
 			 */
 			// Should be called from within the input handler(not in a delayed call), otherwise a flickering between
 			// the old and new value will be observed
+
 			this.updateDomValue(this._oKeyDownStateAndroid.sValue);
 
 			setTimeout(function(oInputEvent, oKeyDownState, oKey) {

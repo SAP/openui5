@@ -1323,5 +1323,48 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
+	QUnit.test("liveChange event", function(assert) {
+		var oDTP = new DateTimePicker(),
+			spyLiveChange = this.spy(oDTP, "fireLiveChange");
+
+		oDTP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// act
+		oDTP._$input.val("1");
+		oCore.applyChanges();
+		qutils.triggerEvent("input", oDTP.getFocusDomRef());
+
+		// assert
+		assert.equal(spyLiveChange.callCount, 1, "1 character added - liveChange event fired 1 time");
+
+		// act
+		oDTP._$input.val("12");
+		oCore.applyChanges();
+		qutils.triggerEvent("input", oDTP.getFocusDomRef());
+
+		// assert
+		assert.equal(spyLiveChange.callCount, 2, "2 characters added - liveChange event fired 2 times");
+
+		// act
+		oDTP._$input.val("123");
+		oCore.applyChanges();
+		qutils.triggerEvent("input", oDTP.getFocusDomRef());
+
+		// assert
+		assert.equal(spyLiveChange.callCount, 3, "3 characters added - liveChange event fired 3 times");
+
+		// act
+		oDTP._$input.val("123"); // no change since last time
+		oCore.applyChanges();
+		qutils.triggerEvent("input", oDTP.getFocusDomRef());
+
+		// assert
+		assert.equal(spyLiveChange.callCount, 3, "no change since last time - liveChange event fired 3 times (no new firing)");
+
+		spyLiveChange = null;
+		oDTP.destroy();
+	});
+
 
 });
