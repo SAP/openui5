@@ -15,7 +15,7 @@
 
 	<groupId>com.sap.openui5</groupId>
 	<artifactId>reactor</artifactId>
-	<version>1.102.2</version><!--MainVersion-->
+	<version>1.102.3-SNAPSHOT</version><!--MainVersion-->
 	<packaging>pom</packaging>
 
 
