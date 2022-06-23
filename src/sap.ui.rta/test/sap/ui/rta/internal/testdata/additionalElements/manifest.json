@@ -29,6 +29,18 @@
 	},
 
 	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.rta.test.additionalElements.ComplexTest",
+			"type": "XML",
+			"async": true,
+			"id": "app",
+			"cache": {
+				"keys": [
+					"sap.ui.rta.test.additionalElements"
+				]
+			}
+		},
+		"handleValidation": true,
 		"dependencies": {
 			"minUI5Version": "${project.version}",
 			"libs": {

@@ -18,7 +18,7 @@
 	<!--The view is is bound to EntityType01 in the controller -->
 	<Page title="{i18n>appTitle}">
 		<headerContent>
-			<Button text="{i18n>btnAdapt}" visible="{view>/showAdaptButton}" press=".switchToAdaptionMode" />
+			<Button text="{i18n>btnAdapt}" visible="{view>/showAdaptButton}" press=".switchToAdaptationMode" />
 		</headerContent>
 		<content>
 			<uxap:ObjectPageLayout id="ObjectPageLayout">

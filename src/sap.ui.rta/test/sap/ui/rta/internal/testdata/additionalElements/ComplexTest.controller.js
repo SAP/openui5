@@ -131,7 +131,7 @@ sap.ui.define([
 			return sReturn;
 		},
 
-		switchToAdaptionMode: function () {
+		switchToAdaptationMode: function () {
 			sap.ui.require([
 				"sap/ui/rta/api/startKeyUserAdaptation"
 			], function(startKeyUserAdaptation) {

@@ -71,25 +71,14 @@ sap.ui.define([
 			};
 
 			ABAPExtensibilityVariant.prototype.getNavigationUri = function() {
-				return Promise.resolve("./testdata/additionalElements/extensibilityTool.html");
+				return Promise.resolve("./extensibilityTool.html");
 			};
 
-			ABAPAccess.isExtensibilityEnabled = function() {
-				return Promise.resolve(true);
-			};
-
-			sap.ushell = Object.assign({}, sap.ushell, {
-				Container: {
-					getServiceAsync: function() {
-						return Promise.resolve({
-							hrefForExternal: function() {},
-							parseShellHash: function() {},
-							registerNavigationFilter: function() {},
-							unregisterNavigationFilter: function() {},
-							getUser: function() {},
-							toExternal: function() {}
-						});
-					},
+			if (sap.ushell) {
+				ABAPAccess.isExtensibilityEnabled = function() {
+					return Promise.resolve(true);
+				};
+				sap.ushell.Container = Object.assign({}, sap.ushell.Container, {
 					getLogonSystem: function() {
 						return {
 							getName: function() {
@@ -102,12 +91,9 @@ sap.ui.define([
 								return false;
 							}
 						};
-					},
-					setDirtyFlag: function() {
-						return true;
 					}
-				}
-			});
+				});
+			}
 
 			oCore.getEventBus().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
 				MessageBox.warning("Service Outdated, Please restart the UI - In real world other dialog will come up, that can restart the UI");

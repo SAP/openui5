@@ -44,13 +44,13 @@
 				},
 				applications: {
 					"masterDetail-display": {
-						"additionalInformation": "SAPUI5.Component=sap.ui.rta.test.variantManagement",
+						"additionalInformation": "SAPUI5.Component=sap.ui.rta.test.rta",
 						"applicationType": "URL",
-						"url": "../",
-						"description": "Variant Management Test App",
+						"url": "./",
+						"description": "Runtime Authoring Test App",
 						"title": "UI Flexibility",
 						"applicationDependencies": {
-							"self": { name: "sap.ui.rta.test.variantManagement" },
+							"self": { name: "sap.ui.rta.test.rta" },
 							"manifest": true,
 							"asyncHints": {
 								"libs": [
@@ -59,8 +59,7 @@
 									{ "name": "sap.ui.dt" },
 									{ "name": "sap.ui.rta" },
 									{ "name": "sap.ui.layout" },
-									{ "name": "sap.ui.comp" },
-									{ "name": "sap.uxap" }
+									{ "name": "sap.ui.comp" }
 								]
 							}
 						}
@@ -98,6 +97,7 @@
 					data-sap-ui-async="true" \
 					data-sap-ui-libs="sap.m, sap.ushell, sap.ui.rta" \
 					data-sap-ui-xx-bindingSyntax="complex" \
+					data-sap-ui-resourceroots=\'{"sap.ui.rta.test": ""}\'\
 					data-sap-ui-flexibilityServices=\'[{"connector": "LocalStorageConnector"}]\' \
 					src="' +
 				document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
@@ -112,18 +112,6 @@
 				});
 			});
 		</script>
-        <style>
-            .sapUxAPObjectPageHeader .sapMBarRight {
-                overflow: visible;
-                margin: 0.375rem;
-            }
-            .sapUxAPObjectPageHeader .sapMBarRight > .sapMBarChild{
-                padding: 0.125rem;
-            }
-           	.sapMIBar .sapUiFlVarMngmt .sapUiFlVarMngmtTitle {
-				padding-top: 0.625rem;
-			}
-        </style>
 	</head>
 
 	<!-- UI Content -->
