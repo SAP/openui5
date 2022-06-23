@@ -870,8 +870,6 @@ sap.ui.define([
 			this.mock(oRequestor).expects("convertResourcePath")
 				.withExactArgs("Employees?custom=value")
 				.returns("~Employees~?custom=value");
-			this.mock(JSON).expects("stringify").withExactArgs(sinon.match.same(oPayload))
-				.returns("~payload~");
 			this.mock(oRequestor).expects("sendRequest")
 				.withExactArgs("METHOD",
 					vStatistics
@@ -880,7 +878,7 @@ sap.ui.define([
 					{
 						header : "value",
 						"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
-					}, "~payload~", "~Employees~?custom=value")
+					}, JSON.stringify(oPayload), "~Employees~?custom=value")
 				.resolves(oResponse);
 			this.mock(oRequestor).expects("reportHeaderMessages")
 				.withExactArgs(oResponse.resourcePath, sinon.match.same(oResponse.messages));

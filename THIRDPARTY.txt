@@ -76,6 +76,12 @@ License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit-2.*
 
+Component: QUnit 2.18, version: 2.18.0
+Copyright: jQuery Foundation and other contributors
+License: MIT
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+Contained in: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/qunit-2.18.*
+
 Component: jQuery-Migrate, version: 3.3.1
 Copyright: OpenJS Foundation and other contributors
 License: MIT
@@ -190,6 +196,12 @@ Copyright: 2010-2017, Christian Johansen, christian@cjohansen.no
 License: BSD-3-Clause
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/sinon-4.js
+
+Component: SinonJS 14, version: 14.0.0
+Copyright: 2010-2022, Christian Johansen, christian@cjohansen.no
+License: BSD-3-Clause
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
+Contained in: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/sinon-14.0.*
 
 Component: Sinon-qunit, version: 2.0.0
 Copyright: 2010-2011, Christian Johansen

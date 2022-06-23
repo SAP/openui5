@@ -4,3 +4,4 @@ target
 
 src/sap/ui/thirdparty
 src/sap/base/util/restricted/_
+test/sap/ui/core/qunit/thirdparty

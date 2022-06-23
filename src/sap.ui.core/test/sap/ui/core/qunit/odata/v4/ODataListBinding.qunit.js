@@ -4740,11 +4740,11 @@ sap.ui.define([
 					sinon.match(function (bAtEndOfCreated) {
 						return bAtEndOfCreated === (oBinding.bFirstCreateAtEnd !== !!aAtEnd[0]);
 					}), sinon.match.func, sinon.match.func)
-				.returns(Promise.resolve({}));
+				.returns(SyncPromise.resolve(Promise.resolve({})));
 			oContextMock.expects("create")
 				.withExactArgs(sinon.match.same(oBinding.oModel),
 					sinon.match.same(oBinding), sinon.match.string, -oBinding.iCreatedContexts - 1,
-					Promise.resolve({}), undefined)
+					sinon.match.instanceOf(SyncPromise), undefined)
 				.returns(oNewContext0);
 			this.mock(oNewContext0).expects("fetchValue").withExactArgs().resolves(oElement0);
 			oHelperMock.expects("setPrivateAnnotation")
@@ -4782,11 +4782,12 @@ sap.ui.define([
 							return bAtEndOfCreated
 								=== (oBinding.bFirstCreateAtEnd !== !!aAtEnd[1]);
 						}), sinon.match.func, sinon.match.func)
-					.returns(Promise.resolve({}));
+					.returns(SyncPromise.resolve(Promise.resolve({})));
 				oContextMock.expects("create")
 					.withExactArgs(sinon.match.same(oBinding.oModel),
 						sinon.match.same(oBinding), sinon.match.string,
-						-oBinding.iCreatedContexts - 1, Promise.resolve({}), undefined)
+						-oBinding.iCreatedContexts - 1, sinon.match.instanceOf(SyncPromise),
+						undefined)
 					.returns(oNewContext1);
 				this.mock(oNewContext1).expects("fetchValue").withExactArgs().resolves(oElement1);
 				oHelperMock.expects("setPrivateAnnotation")
@@ -4852,11 +4853,11 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oGroupLock), oCreatePathMatcher, "/EMPLOYEES",
 				sinon.match(rTransientPredicate), undefined,
 				false, sinon.match.func, sinon.match.func)
-			.returns(Promise.resolve({}));
+			.returns(SyncPromise.resolve(Promise.resolve({})));
 		this.mock(Context).expects("create")
 			.withExactArgs(sinon.match.same(oBinding.oModel),
 				sinon.match.same(oBinding), sinon.match.string, -oBinding.iCreatedContexts - 1,
-				Promise.resolve({}), undefined)
+				sinon.match.instanceOf(SyncPromise), undefined)
 			.returns(oNewContext);
 		this.mock(oNewContext).expects("fetchValue").withExactArgs().resolves(undefined);
 		this.mock(_Helper).expects("setPrivateAnnotation").never();
@@ -5061,19 +5062,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getEntryData", function (assert) {
-		var oValue = {},
+		var oValue = {key : "value"},
 			oContext = {
 				getValue : function () {
 					return oValue;
 				}
 			};
 
-		this.mock(JSON).expects("stringify").withExactArgs(sinon.match.same(oValue))
-			.returns("~json~");
-
 		// code under test
 		// Note: not really an instance method
-		assert.strictEqual(ODataListBinding.prototype.getEntryData(oContext), "~json~");
+		assert.strictEqual(ODataListBinding.prototype.getEntryData(oContext),
+			JSON.stringify(oValue));
 	});
 
 	//*********************************************************************************************

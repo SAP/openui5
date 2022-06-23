@@ -2817,6 +2817,8 @@ sap.ui.define([
 
 			// code under test
 			oExpectation.callArg(0);
+
+			oPromiseMock.restore();
 		});
 	});
 
@@ -2854,6 +2856,8 @@ sap.ui.define([
 		oExpectation.callArg(0);
 
 		assert.strictEqual(oBinding.oReadGroupLock, oGroupLock2);
+
+		oPromiseMock.restore();
 	});
 
 	//*********************************************************************************************
