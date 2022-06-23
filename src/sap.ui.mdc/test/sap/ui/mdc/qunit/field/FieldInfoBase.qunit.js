@@ -107,15 +107,18 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		oPromise.then(function() {
-			assert.ok(!!oFieldInfoBase._oPopover);
-			assert.ok(oFieldInfoBase._oPopover.isOpen(), "Popover open");
+			var oPopover = oFieldInfoBase.getDependents().find(function(oDependent) {
+				return oDependent.isA("sap.m.ResponsivePopover");
+			});
+			assert.ok(!!oPopover);
+			assert.ok(oPopover.isOpen(), "Popover open");
 			assert.ok(oContent.getDomRef(), "content rendered");
-			oFieldInfoBase._oPopover.attachAfterClose(function() {
-				assert.ok(oFieldInfoBase._oPopover.bIsDestroyed, "Popover destroyed");
+			oPopover.attachAfterClose(function() {
+				assert.ok(oPopover.bIsDestroyed, "Popover destroyed");
 				oContent.destroy();
 				fnDone();
 			});
-			oFieldInfoBase._oPopover.close(); // simulate autoclose
+			oPopover.close(); // simulate autoclose
 		});
 
 	});
@@ -180,7 +183,10 @@ sap.ui.define([
 
 		var fnDone3 = assert.async();
 		oFieldInfoBase.open().then(function() {
-			assert.ok(!!oFieldInfoBase._oPopover);
+			var oPopover = oFieldInfoBase.getDependents().find(function(oDependent) {
+				return oDependent.isA("sap.m.ResponsivePopover");
+			});
+			assert.ok(!!oPopover);
 			fnDone3();
 		});
 
@@ -207,8 +213,11 @@ sap.ui.define([
 
 		var fnDone3 = assert.async();
 		oFieldInfoBase.open().then(function() {
-			assert.ok(!!oFieldInfoBase._oPopover);
-			assert.ok(oFieldInfoBase._oPopover.isOpen(), "Popover open");
+			var oPopover = oFieldInfoBase.getDependents().find(function(oDependent) {
+				return oDependent.isA("sap.m.ResponsivePopover");
+			});
+			assert.ok(!!oPopover);
+			assert.ok(oPopover.isOpen(), "Popover open");
 			assert.ok(oContent.getDomRef(), "content rendered");
 			oContent.destroy();
 			fnDone3();

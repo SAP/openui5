@@ -52,7 +52,7 @@ sap.ui.define([
 	 * @experimental As of version 1.74
 	 * @private
 	 * @ui5-restricted sap.fe
-     * @MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	var Link = FieldInfoBase.extend("sap.ui.mdc.Link", /** @lends sap.ui.mdc.Link.prototype */ {
 		metadata: {
@@ -237,7 +237,6 @@ sap.ui.define([
 					var sPanelId = this._createPanelId(Utils, FlexRuntimeInfoAPI);
 					var oExistingPanel = sap.ui.getCore().byId(sPanelId);
 					if (oExistingPanel) {
-						SapBaseLog.warning("Duplicate ID '" + sPanelId + "'. The instance of sap.ui.mdc.link.Panel should be destroyed first in order to avoid duplicate creation of sap.ui.mdc.link.Panel with stable ID.");
 						// close Popover if existing
 						if (oExistingPanel.getParent() && oExistingPanel.getParent().close) {
 							oExistingPanel.getParent().close();

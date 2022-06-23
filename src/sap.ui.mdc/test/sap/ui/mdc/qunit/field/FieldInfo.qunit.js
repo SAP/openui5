@@ -261,7 +261,10 @@ sap.ui.define([
 				}
 			},
 			popoverAfterOpen: function (oEvent) {
-				assert.equal(oEvent.getSource()._oPopover.$().find(".mdcbaseinfoPanelDefaultAdditionalContent").length, 1);
+				var oPopover = oEvent.getSource().getDependents().find(function(oDependent) {
+					return oDependent.isA("sap.m.ResponsivePopover");
+				});
+				assert.equal(oPopover.$().find(".mdcbaseinfoPanelDefaultAdditionalContent").length, 1);
 				done();
 			}
 		}));
