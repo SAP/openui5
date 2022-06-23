@@ -16,6 +16,14 @@ describe("sap.ui.integration.CalendarCardVisualTests", function () {
 	});
 
 	// start tabbing
+	it('Tab should move from header to calendar and selected date in it', function() {
+		// Act
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		// Assert
+		expect(takeScreenshot()).toLookAs("CalCard_tab_to_calendar");
+	});
+
 	it('Tab should move from header to left arrow', function() {
 		// Act
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
