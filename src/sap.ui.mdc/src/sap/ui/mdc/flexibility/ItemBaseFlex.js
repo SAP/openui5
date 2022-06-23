@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/p13n/Engine", "sap/base/Log", "sap/ui/mdc/flexibility/Util"
-], function(Engine, Log, Util) {
+	"sap/ui/mdc/p13n/Engine", "sap/base/Log", "sap/ui/mdc/flexibility/Util", "sap/ui/fl/changeHandler/Base"
+], function(Engine, Log, Util, FLChangeHandlerBase) {
 	"use strict";
 
 	var ItemBaseFlex = {
@@ -207,7 +207,7 @@ sap.ui.define([
 					oModifier.insertAggregation(oControl, oAggregation.name, oControlAggregationItem, iIndex);
 				} else {
 					// In case the specified change is already existing we need to react gracefully --> no error
-					Log.warning("The specified change is already existing - change appliance ignored");
+					return FLChangeHandlerBase.markAsNotApplicable("The specified change is already existing - change appliance ignored", true);
 				}
 
 				return oControlAggregationItem;
@@ -257,16 +257,12 @@ sap.ui.define([
 			.then(function(oRetrievedControlAggregationItem){
 				oControlAggregationItem = oRetrievedControlAggregationItem;
 				if (!oControlAggregationItem) {
-					if (bIsRevert) {
-						throw new Error("No item found in " + oAggregation.name + ". Change to " + this._getChangeTypeText(bIsRevert) + "cannot be " + this._getOperationText(bIsRevert) + "at this moment");
-					} else {
-						// In case the specified change is already existing we need to react gracefully --> no error
-						Log.warning("The specified change is already existing - change appliance ignored");
-					}
-					return -1;
+					// In case the specified change is already existing we need to react gracefully --> no error
+					return FLChangeHandlerBase.markAsNotApplicable("The specified change is already existing - change appliance ignored", true);
+				} else {
+					return oModifier.findIndexInParentAggregation(oControlAggregationItem);
 				}
-				return oModifier.findIndexInParentAggregation(oControlAggregationItem);
-			}.bind(this))
+			})
 
 			// 3) Remove the item from the aggregation (no destroy yet)
 			.then(function(iFoundIndex) {
@@ -276,7 +272,9 @@ sap.ui.define([
 
 			// 4) Execute the AggregationBaseDelegate#removeItem hook which decides whether the item should be kept or destroyed
 			.then(function(){
-
+				//Due to the appliance of deeper layers, it might happen that a column that has priorly column has not been added
+				//due to "deeper" layer changes --> hence the column "add" can also not properly be "reverted" --> we need to
+				//gracefully skip the appliance in these cases.
 				return oModifier.getProperty(oControl, "delegate")
 				.then(function(oDelegate){
 					return this._getDelegate(oDelegate.name);
@@ -337,16 +335,20 @@ sap.ui.define([
 			// 2) Throw error if for some reason no item could be found (should not happen for a move operation)
 			.then(function() {
 				if (!oControlAggregationItem) {
-					throw new Error("No corresponding item in " + oAggregation.name + " found. Change to move item cannot be " + this._getOperationText(bIsRevert) + "at this moment");
+					//Due to the appliance of deeper layers, it might happen that the a column that has priorly been moved,
+					//is after a later "deeper" layer change no longer present (for example EU: move, KU: remove) --> we need to
+					//react gracefully and continue the appliance without errors by just skipping the handling
+					return FLChangeHandlerBase.markAsNotApplicable("The specified change is already existing - change appliance ignored", true);
+				} else {
+					return oModifier.findIndexInParentAggregation(oControlAggregationItem);
 				}
-				return oModifier.findIndexInParentAggregation(oControlAggregationItem);
-			}.bind(this))
+			})
 
 			// 3) Trigger the move (remove&insert)
 			.then(function(iRetrievedIndex) {
 				iOldIndex = iRetrievedIndex;
-				// Call optimized JS API for runtime changes
 				if (oControl.moveColumn) {
+					// Call optimized JS API for runtime changes
 					return oControl.moveColumn(oControlAggregationItem, oChangeContent.index);
 				} else {
 					return oModifier.removeAggregation(oControl, oAggregation.name, oControlAggregationItem)

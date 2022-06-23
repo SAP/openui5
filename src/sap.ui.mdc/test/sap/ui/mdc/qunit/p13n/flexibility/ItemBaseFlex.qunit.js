@@ -1,7 +1,7 @@
 /* global QUnit, sinon*/
 sap.ui.define([
-	"sap/ui/core/Core", "sap/ui/mdc/Control", "test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "./TestChangeHandler", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/mdc/AggregationBaseDelegate"
-], function(Core, MDCControl, createAppEnvironment, TestChangeHandler, JsControlTreeModifier, AggregationBaseDelegate) {
+	"sap/ui/core/Core", "sap/ui/mdc/Control", "test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "./TestChangeHandler", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/mdc/AggregationBaseDelegate", "sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
+], function(Core, MDCControl, createAppEnvironment, TestChangeHandler, JsControlTreeModifier, AggregationBaseDelegate, ControlPersonalizationWriteAPI) {
 	"use strict";
 
 	/**
@@ -142,7 +142,7 @@ sap.ui.define([
 			modifier: JsControlTreeModifier,
 			appComponent: this.oUiComponent,
 			view: this.oView
-		}).then(function(){
+		}).finally(function(){
 
 			assert.equal(this.oFlexTestControl.getItems().length, 2, "The changehandler rejects and no additional item has been added");
 			done();
@@ -203,7 +203,7 @@ sap.ui.define([
 			modifier: JsControlTreeModifier,
 			appComponent: this.oUiComponent,
 			view: this.oView
-		}).then(function(){
+		}).finally(function(){
 
 			assert.equal(this.oFlexTestControl.getItems().length, 1, "The changehandler resolves even though the item was already removed");
 			this.oFlexTestControl.addItem(oItem);
@@ -241,6 +241,139 @@ sap.ui.define([
 			done();
 
 		}.bind(this));
+
+	});
+
+	QUnit.test("Check duplicate add appliance --> react gracefully on second add", function(assert) {
+		var done = assert.async();
+
+		//Note: better use ChangesWriteAPI.create, but we can not register change handlers programatically
+		var oChange = {
+			getChangeType: function() {
+				return "add";
+			},
+			getContent: function() {
+				return {
+					name: "testAggregationControl4"
+				};
+			},
+			setRevertData: function() {}
+		};
+
+		this.fApplyAdd(oChange, this.oFlexTestControl, {
+			modifier: JsControlTreeModifier,
+			appComponent: this.oUiComponent,
+			view: this.oView
+		}).then(function(){
+
+			this.fApplyAdd(oChange, this.oFlexTestControl, {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+
+				//explicitly check the reject case! --> In case a change handler rejects, the revert is not going to be triggered.
+			}).then(undefined, function(){
+
+				assert.equal(this.oFlexTestControl.getItems().length, 3, "The item has only been added once");
+				done();
+
+			}.bind(this));
+
+		}.bind(this));
+	});
+
+	QUnit.test("Check duplicate remove appliance --> the second appliance should be skipped", function(assert){
+
+		var done = assert.async();
+
+		//Note: better use ChangesWriteAPI.create, but we can not register change handlers programatically
+		var oChange = {
+			getChangeType: function() {
+				return "remove";
+			},
+			getContent: function() {
+				return {
+					name: "testAggregationControl2"
+				};
+			},
+			setRevertData: function() {}
+		};
+
+		//the first remove should be properly executed
+		this.fApplyRemove(oChange, this.oFlexTestControl, {
+			modifier: JsControlTreeModifier,
+			appComponent: this.oUiComponent,
+			view: this.oView
+		}).then(function(){
+
+			//the second remove should reject --> no revert should be triggered afterwards
+			this.fApplyRemove(oChange, this.oFlexTestControl, {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+
+				//explicitly check the reject case! --> In case a change handler rejects, the revert is not going to be triggered.
+			}).then(undefined, function(){
+
+				assert.equal(this.oFlexTestControl.getItems().length, 1, "The changehandler resolves even though the item was already removed");
+				done();
+
+			}.bind(this));
+
+		}.bind(this));
+
+	});
+
+	QUnit.test("Check _applyMove on removed item --> do nothing and reject to prevent reverts", function(assert){
+
+		var done = assert.async();
+
+		var oRemoveChange = {
+			getChangeType: function() {
+				return "move";
+			},
+			getContent: function() {
+				return {
+					name: "testAggregationControl1"
+				};
+			},
+			setRevertData: function() {}
+		};
+
+		var oMoveChange = {
+			getChangeType: function() {
+				return "move";
+			},
+			getContent: function() {
+				return {
+					name: "testAggregationControl1",
+					index: 1
+				};
+			},
+			setRevertData: function() {}
+		};
+
+		//the first remove should be properly executed
+		this.fApplyRemove(oRemoveChange, this.oFlexTestControl, {
+			modifier: JsControlTreeModifier,
+			appComponent: this.oUiComponent,
+			view: this.oView
+		}).then(function(){
+
+
+			this.fApplyMove(oMoveChange, this.oFlexTestControl, {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			}).then(undefined, function(){
+
+				assert.equal(this.oFlexTestControl.getItems().length, 1, "The item has not been moved - change rejected to not be reverted");
+				done();
+
+			}.bind(this));
+
+		}.bind(this));
+
 
 	});
 
