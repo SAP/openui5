@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
@@ -28,6 +29,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	Control,
 	OverlayRegistry,
+	OverlayUtil,
 	ElementUtil,
 	ChangesUtils,
 	ChangesWriteAPI,
@@ -481,14 +483,26 @@ sap.ui.define([
 		var aVisualizedChanges = [];
 		Object.keys(oSelectors)
 			.forEach(function(sSelectorId) {
-				var aChanges = oSelectors[sSelectorId];
+				var aRelevantChanges = this._filterRelevantChanges(oSelectors[sSelectorId]);
 				var oOverlay = OverlayRegistry.getOverlay(sSelectorId);
+				if (!oOverlay) {
+					// When the selector has no Overlay, check if there is a relevant container Overlay
+					// e.g. when a SmartForm group is removed
+					aRelevantChanges.some(function(oChange) {
+						var oElementOverlay = OverlayRegistry.getOverlay(oChange.affectedElementId);
+						var oRelevantContainer = oElementOverlay && oElementOverlay.getRelevantContainer();
+						if (oRelevantContainer) {
+							oOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+							return true;
+						}
+						return false;
+					});
+				}
 				if (!oOverlay || !oOverlay.getDomRef() || !oOverlay.isVisible()) {
 					// Change is not visible
 					return undefined;
 				}
 				var oOverlayPosition = oOverlay.getDomRef().getClientRects()[0] || { left: 0, top: 0 };
-				var aRelevantChanges = this._filterRelevantChanges(aChanges);
 				aRelevantChanges.forEach(function (oChange) {
 					aVisualizedChanges.push(oChange);
 				});

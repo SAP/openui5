@@ -670,6 +670,38 @@ sap.ui.define([
 				}.bind(this));
 		});
 
+		QUnit.test("when a change is done on a control whose parent is different from its relevant container", function(assert) {
+			var sElementId = "Comp1---idMain1--Dates";
+			var oRelevantContainer = OverlayRegistry.getOverlay(sElementId).getRelevantContainer();
+			var oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
+			var oParent = oCore.byId(sElementId).getParent();
+
+			// The selector for the change is the parent element
+			prepareChanges(
+				[
+					createMockChange("testRemove", "remove", oParent.getId())
+				],
+				undefined,
+				{
+					getChangeVisualizationInfo: function() {
+						return {
+							affectedControls: [sElementId],
+							displayControls: [oParent.getId()]
+						};
+					}
+				}
+			);
+
+			return startVisualization(this.oRta)
+				.then(function() {
+					assert.strictEqual(
+						this.oChangeVisualization._oChangeIndicatorRegistry.getChangeIndicator(oParent.getId()).getOverlayId(),
+						oRelevantContainerOverlay.getId(),
+						"then the indicator is created on the relevant container's overlay"
+					);
+				}.bind(this));
+		});
+
 		QUnit.test("when the popover menu with dirty changes is opened and closed multiple times", function(assert) {
 			prepareChanges(this.aMockChanges);
 			return startVisualization(this.oRta)
