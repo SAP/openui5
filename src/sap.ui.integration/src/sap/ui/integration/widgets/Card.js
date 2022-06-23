@@ -189,6 +189,15 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Optional property which can be used by the host to reference the card.
+				 * Does not affect the card behavior.
+				 */
+				referenceId : {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * The URL of the manifest or an object.
 				 */
 				manifest: {
