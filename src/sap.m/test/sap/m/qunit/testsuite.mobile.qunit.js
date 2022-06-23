@@ -1595,6 +1595,9 @@ sap.ui.define([
 			},
 			VariantManagement: {
 				title: "Test Page for sap.m.VariantManagement",
+				sinon: {
+					useFakeTimers: true
+				},
 				coverage: {
 					only: ["sap/m/VariantManagement"]
 				}
