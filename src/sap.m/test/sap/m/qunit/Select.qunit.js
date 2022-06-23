@@ -10480,7 +10480,7 @@ sap.ui.define([
 			oSelect.destroy();
 		});
 
-		QUnit.test("valueState change is postponed when the picker is closing", function (assert) {
+		QUnit.test("_updatePickerAriaLabelledBy call is postponed when the picker is closing", function (assert) {
 
 			// system under test,
 			var oItem,
@@ -10497,11 +10497,11 @@ sap.ui.define([
 				oPicker = oSelect.getPicker(),
 				oPickerCloseSpy = this.spy(oSelect.getPicker(), "fireAfterClose"),
 				fnDone = assert.async(),
-				oFinishSettingValueStateStub = this.stub(oSelect, "_finishSettingValueState").callsFake(function() {
-					oFinishSettingValueStateStub.restore(); // avoid endless recursion
+				oUpdatePickerAriaLabelledByStub = this.stub(oSelect, "_updatePickerAriaLabelledBy").callsFake(function() {
+					oUpdatePickerAriaLabelledByStub.restore(); // avoid endless recursion
 					// assert
 					assert.ok(oPickerCloseSpy.calledOnce, "after close event is fired once");
-					assert.ok(true, "_finishSettingValueState is called after the picker closing animation is done");
+					assert.ok(true, "_updatePickerAriaLabelledBy is called after the picker closing animation is done");
 
 					// cleanup
 					oPickerCloseSpy.restore();
@@ -10512,6 +10512,7 @@ sap.ui.define([
 			oSelect.attachEventOnce("change", function(oEvent) {
 				// act
 				// change value state on change / while closing picker
+				// _updatePickerAriaLabelledBy call will follow the setValueState method
 				oSelect.setValueState(ValueState.Error);
 
 			}, this);
@@ -10525,8 +10526,8 @@ sap.ui.define([
 
 			oPicker.attachEventOnce("beforeClose", function(oEvent) {
 				// assert
-				assert.strictEqual(oFinishSettingValueStateStub.callCount, 0,
-					"_finishSettingValueState isn't called before the picker closing animation is finished.");
+				assert.strictEqual(oUpdatePickerAriaLabelledByStub.callCount, 0,
+					"_updatePickerAriaLabelledBy isn't called before the picker closing animation is finished.");
 			}, this);
 
 			// act
