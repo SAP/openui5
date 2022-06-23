@@ -8,8 +8,10 @@ sap.ui.define([
     "sap/m/Title",
     "sap/base/util/merge",
     "sap/m/MessageBox",
-    "sap/ui/Device"
-], function(P13nPropertyHelper, Button, Bar, Title, merge, MessageBox, Device) {
+    "sap/ui/Device",
+    "sap/ui/fl/write/api/FieldExtensibility",
+    "sap/ui/rta/Utils"
+], function(P13nPropertyHelper, Button, Bar, Title, merge, MessageBox, Device, FieldExtensibility, Utils) {
     "use strict";
 
     var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -308,6 +310,69 @@ sap.ui.define([
                 mMap[oProp.name].position = iIndex;
                 return mMap;
             }, {});
+        },
+
+        /**
+         *
+         * @param {object} oDialog AdaptFiltersDialog
+         *
+         * @returns {Promise} Promise resolving in the Dialog instance
+         */
+        addRTACustomFieldButton: function (oDialog) {
+
+            var bExtensibilityEnabled = false,
+                oDialogParent = oDialog.getParent();
+
+            var oHandleExtensibility = Promise.all([
+                Utils.isServiceUpToDate(oDialogParent),
+                FieldExtensibility.isExtensibilityEnabled(oDialogParent)
+            ]);
+
+            return oHandleExtensibility.then(function (aResult) {
+                bExtensibilityEnabled = !!aResult[1];
+            })
+            .then(function() {
+                var oCustomHeader = oDialog.getCustomHeader(),
+                    sId = oDialogParent && oDialogParent.getId ? oDialogParent.getId() : undefined,
+                    oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+
+                if (!oCustomHeader) {
+                    var oBar = new Bar({
+                        contentLeft: [
+                            new Title({
+                                text: oDialog.getTitle()
+                            })
+                        ]
+                    });
+                    oDialog.setCustomHeader(oBar);
+                    oCustomHeader = oDialog.getCustomHeader();
+                }
+
+                if (bExtensibilityEnabled) {
+                    oCustomHeader.addContentRight(new Button( sId + "-addCustomField", {
+                        icon: "sap-icon://add",
+                        enabled: bExtensibilityEnabled,
+                        tooltip: oResourceBundle.getText("p13nDialog.rtaAddTooltip"),
+                        press: function (oEvt) {
+                            var sRtaStyleClassName = Utils.getRtaStyleClassName(),
+                                oAdaptDialog =  oEvt.getSource().getParent().getParent(),
+                                oControl = oAdaptDialog.getParent();
+
+                            FieldExtensibility.onControlSelected(oControl).then(function (oRetVal) {
+                                FieldExtensibility.getExtensionData().then(function (oExtensibilityInfo) {
+                                    FieldExtensibility.onTriggerCreateExtensionData(oExtensibilityInfo, sRtaStyleClassName);
+                                    oAdaptDialog.close(); // close as if there is newly created custom field, next time user tries to open it - it checks for service outdated and shows correct information
+                                });
+                            });
+
+                        }
+                    }));
+
+                    oDialog.setCustomHeader(oCustomHeader);
+                    return oDialog;
+                }
+
+            });
         }
 
     };

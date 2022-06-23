@@ -1,11 +1,13 @@
-/* global QUnit */
+/* global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/mdc/p13n/P13nBuilder",
 	"sap/m/p13n/BasePanel",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Element",
-	"sap/ui/core/Core"
-], function(P13nBuilder, BasePanel, JSONModel, Element, oCore) {
+	"sap/ui/core/Core",
+    "sap/ui/fl/write/api/FieldExtensibility",
+    "sap/ui/rta/Utils"
+], function(P13nBuilder, BasePanel, JSONModel, Element, oCore, FieldExtensibility, Utils) {
 	"use strict";
 
 	var aVisible = ["key1", "key2", "key3"];
@@ -229,5 +231,56 @@ sap.ui.define([
 		});
 
 	});
+
+    QUnit.test("Test addRTACustomFieldButton with reset included", function(assert){
+
+        var done = assert.async(), oAddCustomFieldButton;
+
+        // Arrange
+        sinon.stub(FieldExtensibility, "isExtensibilityEnabled").returns(Promise.resolve(true));
+        sinon.stub(Utils, "isServiceUpToDate").returns(Promise.resolve(false));
+        var oLibraryResourceBundleStub = sinon.stub(sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc"), "getText");
+        oLibraryResourceBundleStub.withArgs("p13nDialog.rtaAddTooltip").returns("OK");
+
+        var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+        var oPanel = new BasePanel();
+        oPanel.setP13nData(oP13nData.items);
+
+        P13nBuilder.createP13nDialog(oPanel, {
+            title: "Test",
+            reset: {
+                onExecute: function() {
+                    //Control specific reset handling
+                }
+            },
+            id: "myTestDialog"
+        }).then(function(oDialog){
+            // Assert
+            assert.ok(oDialog.getCustomHeader(), "Custom Header provided.");
+            assert.equal(oDialog.getCustomHeader().getContentLeft()[0].getText(), "Test", "Title provided.");
+            assert.ok(oDialog.getCustomHeader().getContentRight()[0].isA("sap.m.Button"), "Reset Button provided.");
+
+            // Arrange
+            P13nBuilder.addRTACustomFieldButton(oDialog)
+                .then(function(oDialogEnhanced) {
+                    oAddCustomFieldButton = oDialogEnhanced.getCustomHeader().getContentRight()[1];
+                    // Assert
+                    assert.ok(oAddCustomFieldButton.isA("sap.m.Button"), "Custom Field Add Button provided.");
+                    assert.equal(oAddCustomFieldButton.getTooltip(), "OK", "Custom Field Add Button tooltip is correct.");
+                })
+                .catch(function () {
+
+                })
+                .finally(function () {
+                    // Cleanup
+                    oDialog.destroy();
+                    FieldExtensibility.isExtensibilityEnabled.restore();
+                    Utils.isServiceUpToDate.restore();
+                    done();
+                });
+
+        });
+
+    });
 
 });
