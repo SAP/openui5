@@ -221,8 +221,13 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 		var bIsFirst = true;
 		var oContent = this.getContent();
 		var oParent = this.getParent();
-
-		if (oContent) {
+		var sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY");
+		var sPriorityText = this.getPriorityText();
+		if (sPriorityText && this.getPriority() !== Priority.None){
+			sAltText += sPriorityText + " " + sPriority;
+			bIsFirst = false;
+		}
+		if (oContent && oContent.getVisible()) {
 			var oContentDom = oContent.getDomRef();
 			if (oContent.getAltText) {
 				sAltText += oContent.getAltText();
@@ -231,12 +236,6 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 				sAltText += oContent.getTooltip_AsString();
 				bIsFirst = false;
 			} else if (oParent && oParent.isA("sap.m.GenericTile") && oParent.getMode() === GenericTileMode.ActionMode) {
-				var sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY"),
-					sPriorityText = this.getPriorityText();
-				if (sPriorityText && this.getPriority()){
-					sAltText += sPriorityText + " " + sPriority;
-					bIsFirst = false;
-				}
 				if (oContent.isA("sap.m.Text")){
 					sAltText += (bIsFirst ? "" : "\n") + oContent.getText();
 					bIsFirst = false;
