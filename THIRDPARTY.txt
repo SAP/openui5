@@ -197,7 +197,7 @@ License: BSD-3-Clause
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/sinon-qunit.js
 
-Component: URI.js, version: 1.19.10
+Component: URI.js, version: 1.19.11
 Copyright: Rodney Rehm
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
