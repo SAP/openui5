@@ -656,6 +656,10 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._overridePreserveHeaderStateOnScroll = function () {
+		if (this.$().width() === 0 || this.$().height() === 0) {
+			return;
+		}
+
 		var bOldValue = this._headerBiggerThanAllowedHeight, bChange;
 
 		this._headerBiggerThanAllowedHeight = this._headerBiggerThanAllowedToBeFixed();

@@ -1,5 +1,6 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"./DynamicPageUtil",
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
@@ -23,6 +24,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ],
 function (
+	$,
 	DynamicPageUtil,
 	DynamicPage,
 	DynamicPageTitle,
@@ -2408,6 +2410,39 @@ function (
 		//check
 		assert.equal(oSpy.callCount, 1, "update is triggered");
 	});
+
+	QUnit.test("DynamicPage _toggleHeaderOnScroll when DynamicPage is out of view", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			$domPlace = $("#qunit-fixture"),
+			iSnappingHeight = oDynamicPage._getSnappingHeight(),
+			oStub = this.stub(oDynamicPage, "_getEntireHeaderHeight").returns(200);
+
+		oDynamicPage.setPreserveHeaderStateOnScroll(true);
+		oDynamicPage.setHeaderExpanded(true);
+		Core.applyChanges();
+		oDynamicPage.getScrollDelegate().scrollTo(0, iSnappingHeight + 100);
+
+		//act
+		$domPlace.hide();
+		oDynamicPage._onResize({
+			size: {
+				height: 0,
+				width: 0
+			},
+			oldSize: {
+				height: 900
+			}
+		});
+		oDynamicPage._toggleHeaderOnScroll();
+
+		//check
+		assert.equal(oDynamicPage.getHeaderExpanded(), true, "header is still expanded");
+
+		// clean up
+		$domPlace.show();
+		oStub.restore();
+	});
+
 
 	QUnit.module("DynamicPage - Header initially collapsed", {
 		beforeEach: function () {
