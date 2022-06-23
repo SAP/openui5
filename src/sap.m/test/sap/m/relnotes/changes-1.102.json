@@ -852,5 +852,58 @@
         ]
       }
     ]
+  },
+  "1.102.2": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "7e69761fb5941c3da0302d6d7be32f55c44c5142",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: accepts only years in range (1-9999)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270092118"
+          }
+        ]
+      },
+      {
+        "id": "3b50adff53db94e622bf549734ee3fdf42afc610",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: Remove specified width for grouped steps",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270077250"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280102728"
+          }
+        ]
+      },
+      {
+        "id": "ec10b741358f1ed1ddfa49ae3fce8fb4fdc4544d",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Now supports UTC formatter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270091756"
+          }
+        ]
+      },
+      {
+        "id": "70bec49c834baec45188ec96df485b6f0dd933a8",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Date is correct with DateTime data binding and different application timezone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270101337"
+          }
+        ]
+      }
+    ]
   }
 }

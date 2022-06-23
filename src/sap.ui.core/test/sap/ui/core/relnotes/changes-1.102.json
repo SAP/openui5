@@ -179,5 +179,47 @@
         "text": " XMLTemplateProcessor: Enable ExtensionPoint rendering on top-level"
       }
     ]
+  },
+  "1.102.2": {
+    "date": "June 2022",
+    "notes": [
+      {
+        "id": "10b7f3ff6c818c9061d7929433a7c0083ba1843c",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Cache#update: fire patchReceived event when merged PATCHes fail",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280103069"
+          }
+        ]
+      },
+      {
+        "id": "deb315588bf3bd9100a1681f0afe2cef2886b454",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: strictGroupingValidation formatOption",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006986122021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180381028"
+          }
+        ]
+      },
+      {
+        "id": "6b39312e390e6f067241eaeb81ed2a14a755ec26",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel#resetChanges: restore changes correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270079668"
+          }
+        ]
+      }
+    ]
   }
 }
