@@ -74,6 +74,12 @@ sap.ui.define([], function() {
 			},
 			"Generic Testsuite": {
 				page: "test-resources/sap/ui/documentation/sdk/qunit/testsuite.generic.qunit.html"
+			},
+
+			"URLUtil": {
+				coverage: {
+					only : ["sap/ui/documentation/sdk/util/URLUtil"]
+				}
 			}
 
 			// "Forwarding": {
