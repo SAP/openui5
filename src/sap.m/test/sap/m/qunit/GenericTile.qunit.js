@@ -1937,6 +1937,28 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Generation of text for ARIA-label when the tile content is not visible", function(assert) {
+		//Arrange
+		this.oGenericTile.setState(LoadState.Loaded);
+		this.oGenericTile.getTileContent()[0].setVisible(false);
+		var sLoadedText = "Comparative Annual Totals\nExpenses By Region\n";
+		//Act
+		var sAriaLabel = this.oGenericTile._getAriaAndTooltipText();
+		//Assert
+		assert.equal(sAriaLabel, sLoadedText, "Text for ARIA-label has been generated for Loaded state");
+	});
+
+	QUnit.test("Generation of text for ARIA-label when the content inside the tile content is not visible", function(assert) {
+		//Arrange
+		this.oGenericTile.setState(LoadState.Loaded);
+		this.oGenericTile.getTileContent()[0].getContent().setVisible(false);
+		var sLoadedText = "Comparative Annual Totals\nExpenses By Region\nEUR\nCurrent Quarter";
+		//Act
+		var sAriaLabel = this.oGenericTile._getAriaAndTooltipText();
+		//Assert
+		assert.equal(sAriaLabel, sLoadedText, "Text for ARIA-label has been generated for Loaded state");
+	});
+
 	QUnit.test("Generation of text for ARIA-label, Loaded state", function(assert) {
 		//Arrange
 		this.oGenericTile.setState(LoadState.Loaded);

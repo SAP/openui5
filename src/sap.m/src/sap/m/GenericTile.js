@@ -1306,12 +1306,14 @@ sap.ui.define([
 
 		if (!this._isInActionScope() && (this.getMode() === GenericTileMode.ContentMode || this.getMode() === GenericTileMode.ArticleMode || this.getMode() === GenericTileMode.ActionMode)) {
 			for (var i = 0; i < aContent.length; i++) {
-				if (typeof aContent[i]._getAriaAndTooltipText === "function") {
-					sText += (bIsFirst ? "" : "\n") + aContent[i]._getAriaAndTooltipText();
-				} else if (aContent[i].getTooltip_AsString()) {
-					sText += (bIsFirst ? "" : "\n") + aContent[i].getTooltip_AsString();
+				if (aContent[i].getVisible()){
+					if (typeof aContent[i]._getAriaAndTooltipText === "function") {
+						sText += (bIsFirst ? "" : "\n") + aContent[i]._getAriaAndTooltipText();
+					} else if (aContent[i].getTooltip_AsString()) {
+						sText += (bIsFirst ? "" : "\n") + aContent[i].getTooltip_AsString();
+					}
+					bIsFirst = false;
 				}
-				bIsFirst = false;
 			}
 		}
 
