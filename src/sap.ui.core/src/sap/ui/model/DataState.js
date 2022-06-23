@@ -177,7 +177,7 @@ sap.ui.define([
 			aModelMessages = mProperties.modelMessages;
 
 		if (aModelMessages || aControlMessages) {
-			aMessages = aMessages.concat(aModelMessages || [], aControlMessages || []);
+			aMessages = aMessages.concat(aControlMessages || [], aModelMessages || []);
 			aMessages.sort(Message.compare);
 		}
 		return aMessages;

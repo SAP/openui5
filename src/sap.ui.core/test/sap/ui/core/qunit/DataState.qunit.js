@@ -124,7 +124,7 @@ sap.ui.define([
 		aMessages = DataState.getMessagesForProperties(mProperties);
 
 		aConcatCalls = oConcatSpy.getCalls().filter(function (oCall) {
-			return oCall.calledWithExactly(aModelMessages || [], aControlMessages || [])
+			return oCall.calledWithExactly(aControlMessages || [], aModelMessages || [])
 				&& deepEqual(oCall.thisValue, []);
 		});
 		assert.strictEqual(aConcatCalls.length, 1, "[].concat(aModelMessages, aControlMessages)");
