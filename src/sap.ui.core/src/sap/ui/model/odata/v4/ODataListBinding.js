@@ -2012,6 +2012,7 @@ sap.ui.define([
 				}
 				if (!that.isRootBindingSuspended()) {
 					// request data (before removing virtual context), but avoid E.C.D.
+					// (see BCP: 2270085692 for some interesting discussions)
 					that.bUseExtendedChangeDetection = false;
 					that.getContexts(iStart, iLength, iMaximumPrefetchSize);
 					that.bUseExtendedChangeDetection = bOld;
