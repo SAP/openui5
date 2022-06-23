@@ -2,12 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/library",
-	"sap/base/Log",
-	"sap/ui/base/ManagedObject"
-], function (library,
-			 Log,
-			 ManagedObject) {
+	"sap/ui/integration/Extension",
+	"sap/base/Log"
+], function (BaseExtension,
+			 Log) {
 	"use strict";
 
 	/**
@@ -19,7 +17,7 @@ sap.ui.define([
 	 * @class
 	 * Brings JavaScript capabilities for an {@link sap.ui.integration.editor.Editor} where custom logic can be implemented.
 	 *
-	 * @extends sap.ui.base.ManagedObject
+	 * @extends sap.ui.integration.Extension
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -30,27 +28,16 @@ sap.ui.define([
 	 * @alias sap.ui.integration.editor.Extension
 	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Extension = ManagedObject.extend("sap.ui.integration.editor.Extension", {
-		metadata: {
-			library: "sap.ui.integration",
-			properties: {
-				/**
-				 * The formatters, which can be used in the manifest.
-				 * @experimental since 1.94
-				 */
-				formatters: {
-					type: "object"
-				}
-			}
-		}
-	});
+	var Extension = BaseExtension.extend("sap.ui.integration.editor.Extension");
 
 	Extension.prototype.init = function () {
+		BaseExtension.prototype.init.apply(this, arguments);
 		this._oEditorInterface = null;
 		this._oEditor = null;
 	};
 
 	Extension.prototype.exit = function () {
+		BaseExtension.prototype.exit.apply(this, arguments);
 		this._oEditorInterface = null;
 		this._oEditor = null;
 	};
@@ -59,8 +46,7 @@ sap.ui.define([
 	 * See generated JSDoc
 	 */
 	Extension.prototype.setFormatters = function (aFormatters) {
-		this.setProperty("formatters", aFormatters);
-
+		BaseExtension.prototype.setFormatters.apply(this, arguments);
 		if (!this._oEditor) {
 			return;
 		}
