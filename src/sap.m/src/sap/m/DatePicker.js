@@ -1613,8 +1613,6 @@ sap.ui.define([
 		this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 		this._renderedDays = this._getCalendar().$("-Month0-days").find(".sapUiCalItem").length;
 
-		this.$("inner").attr("aria-owns", this.getId() + "-cal");
-
 		InstanceManager.addPopoverInstance(this._oPopup);
 
 		this._oCalendar.focus();
