@@ -159,13 +159,15 @@ sap.ui.define([
 	{dataStateSet : true, dataStateChanged : true},
 	{dataStateSet : false}
 ].forEach(function (oFixture) {
-	var sTitle = "destroy - data state set: " + oFixture.dataStateSet + "; data state changed: "
-			+ oFixture.dataStateChanged;
+	[true, false].forEach(function (bHasModel) {
+	var sTitle = "destroy: data state set: " + oFixture.dataStateSet + "; data state changed: "
+			+ oFixture.dataStateChanged + "; " + (bHasModel ? "with" : "without") + " a model";
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
 				oDataState : null,
 				mEventRegistry : oFixture.eventRegistry,
+				oModel : bHasModel ? {removeBinding : function () {}} : null,
 				_checkDataStateMessages : function () {},
 				destroy : function () {},
 				fireEvent : function () {},
@@ -203,7 +205,11 @@ sap.ui.define([
 				oBindingMock.expects("fireEvent").never();
 			}
 
-			this.mock(EventProvider.prototype).expects("destroy").on(oBinding).withExactArgs();
+		}
+		this.mock(EventProvider.prototype).expects("destroy").on(oBinding).withExactArgs();
+		if (bHasModel) {
+			this.mock(oBinding.oModel).expects("removeBinding")
+				.withExactArgs(sinon.match.same(oBinding));
 		}
 
 		assert.strictEqual(oBinding.bIsBeingDestroyed, undefined);
@@ -213,6 +219,7 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.bIsBeingDestroyed, true);
 		assert.strictEqual(oBinding.oDataState, oFixture.dataStateSet ? undefined : null);
+	});
 	});
 });
 
