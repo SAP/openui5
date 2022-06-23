@@ -1700,7 +1700,9 @@ sap.ui.define([
 				press: function() {
 					this._resumeManagementTableBinding();
 					this._handleManageCancelPressed();
-					this.oManagementDialog.close();
+					if (this.oManagementDialog) { // can be deleted during manageCancel event
+						this.oManagementDialog.close();
+					}
 				}.bind(this)
 			});
 
@@ -2435,7 +2437,7 @@ sap.ui.define([
 	VariantManagement.prototype._checkIsDuplicate = function(sValue, sKey) {
 		if (this.oManagementDialog && this.oManagementDialog.isOpen()) {
 			var bResult = this._checkIsDuplicateInManageTable(sValue, sKey);
-			if (this._oSearchFieldOnMgmtDialog.getValue() && bResult) {
+			if (this._oSearchFieldOnMgmtDialog && this._oSearchFieldOnMgmtDialog.getValue() && bResult) {
 				return bResult;
 			}
 		}
