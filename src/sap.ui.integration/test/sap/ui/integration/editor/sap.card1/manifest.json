@@ -16,7 +16,7 @@
 			"icon": "sap-icon://accept"
 		}
 	},
-	"sap.card": {
+	"sap.card1": {
 		"extension": "DataExtensionImpl",
 		"type": "List",
 		"configuration": {
@@ -24,11 +24,6 @@
 			"parameters": {
 				"parameterSyntaxInValue": {
 					"value": "New title: {{parameters.stringWithTranslatedValueIni18nFormat}}"
-				},
-				"checkItemWithTabNotEditable": {
-					"value": {
-						"text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "editable": true
-					}
 				},
 				"contextModelSyntax": {
 					"value": []
@@ -46,9 +41,6 @@
 					"value": "StringValue"
 				},
 				"stringLabelTrans": {
-					"value": "StringValue"
-				},
-				"stringLabelTrans2": {
 					"value": "StringValue"
 				},
 				"stringWithDescription": {
@@ -133,21 +125,6 @@
 					"value": "2020-09-02T11:21:51.470Z"
 				},
 				"enum": {
-					"value": ""
-				},
-				"string1inSubtab": {
-					"value": "abc"
-				},
-				"string2inSubtab": {
-					"value": "abc"
-				},
-				"string3inSubtab": {
-					"value": "abc"
-				},
-				"string4inSubtab": {
-					"value": "abc"
-				},
-				"stringWithTextArea": {
 					"value": ""
 				},
 				"stringWithStaticList": {
@@ -297,19 +274,7 @@
 				},
 				"color2": {
 					"value": ""
-				},
-				"object": {},
-				"objectWithPropertiesDefined": {},
-				"objectWithPropertiesDefinedAndValueFromJsonList": {},
-				"objectWithPropertiesDefinedAndValueFromRequestedFile": {},
-				"objectWithPropertiesDefinedAndValueFromODataRequest": {},
-				"objectWithMetadataDefinedAndValueFromODataRequest": {},
-				"objects": {},
-				"objectsWithPropertiesDefined": {},
-				"objectsWithPropertiesDefinedAndValueFromJsonList": {},
-				"objectsWithPropertiesDefinedAndValueFromRequestedFile": {},
-				"objectsWithPropertiesDefinedAndValueFromODataRequest": {},
-				"objectsWithMetadataDefinedAndValueFromODataRequest": {}
+				}
 			},
 			"destinations": {
 				"string": {
@@ -335,8 +300,8 @@
 			}
 		},
 		"header": {
-			"title": "{{parameters.objectWithPropertiesDefined.text}}",
-			"subTitle": "{{parameters.objectsWithPropertiesDefinedAndValueFromJsonList.0.text}}",
+			"title": "{{parameters.cardTitle}}",
+			"subTitle": "Card Sub Title",
 			"icon": {
 				"src": "sap-icon://accept",
 				"shape": "Circle",

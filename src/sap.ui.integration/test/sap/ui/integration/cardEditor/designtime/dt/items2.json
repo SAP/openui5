@@ -161,7 +161,7 @@
 		"values": {
 			"data": {
 				"request": {
-					"url": "./stringWithRequestList.json"
+					"url": "./../stringWithRequestList.json"
 				},
 				"path": "/"
 			},
@@ -211,7 +211,7 @@
 		"values": {
 			"data": {
 				"request": {
-					"url": "{{destinations.local}}/stringWithRequestList.json"
+					"url": "{{destinations.local}}/../stringWithRequestList.json"
 				},
 				"path": "/"
 			},

@@ -331,7 +331,7 @@
 		"values": {
 			"data": {
 				"request": {
-					"url": "./objectWithRequestList.json"
+					"url": "./../objectWithRequestList.json"
 				},
 				"path": "/values"
 			},
@@ -660,7 +660,7 @@
 		"values": {
 			"data": {
 				"request": {
-					"url": "./objectWithRequestList.json"
+					"url": "./../objectWithRequestList.json"
 				},
 				"path": "/values"
 			}
