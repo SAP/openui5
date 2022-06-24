@@ -729,10 +729,10 @@
 						</mdc:selectionDetailsActions>
 						<mdc:actions>
 							<mdcat:ActionToolbarAction id="chartAction1">
-								<Button type="Emphasized" text="Dummy Action 1" />
+								<Button type="Emphasized" text="Dummy Action 1" id="chartButton1" />
 							</mdcat:ActionToolbarAction>
 							<mdcat:ActionToolbarAction id="chartAction2">
-								<Button type="Emphasized" text="Dummy Action 2" />
+								<Button type="Emphasized" text="Dummy Action 2" id="chartButton2" />
 							</mdcat:ActionToolbarAction>
 						</mdc:actions>
 						<mdc:items>
@@ -744,10 +744,10 @@
 					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'sap/ui/v4demo/delegate/Books.Table.delegate', payload: {collectionName: 'Books'}}" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" enableAutoColumnWidth="true">
 						<mdc:actions>
 							<mdcat:ActionToolbarAction id="tableAction1">
-								<Button type="Emphasized" text="Dummy Action" />
+								<Button type="Emphasized" text="Dummy Action" id="tableButton1" />
 							</mdcat:ActionToolbarAction>
 							<mdcat:ActionToolbarAction id="tableAction2">
-								<Button type="Emphasized" text="Add Book" press="onAddButtonPress" />
+								<Button type="Emphasized" text="Add Book" press="onAddButtonPress" id="tableButton2" />
 							</mdcat:ActionToolbarAction>
 						</mdc:actions>
 						<mdc:columns>

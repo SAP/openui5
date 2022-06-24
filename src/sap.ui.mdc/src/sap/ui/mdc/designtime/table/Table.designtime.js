@@ -26,14 +26,14 @@ sap.ui.define([
 		aggregations: {
 			_content: {
 				propagateMetadata: function(oElement) {
-					if (oElement.isA("sap.ui.mdc.ActionToolbar")
-						|| (oElement.getParent() && oElement.getParent().isA("sap.ui.mdc.actiontoolbar.ActionToolbarAction"))
-						|| oElement.isA("sap.ui.fl.variants.VariantManagement")) {
-						return {
-							actions: {
-								settings: {}
-							}
-						};
+					if (oElement.isA("sap.ui.fl.variants.VariantManagement") ||
+						oElement.isA("sap.ui.mdc.ActionToolbar") ||
+						oElement.isA("sap.ui.mdc.actiontoolbar.ActionToolbarAction") ||
+						oElement.isA("sap.ui.mdc.Field") ||
+						(oElement.getParent() &&
+							(oElement.getParent().isA("sap.ui.mdc.actiontoolbar.ActionToolbarAction") ||
+							oElement.getParent().isA("sap.ui.mdc.Field")))) {
+						return null;
 					}
 
 					return {
