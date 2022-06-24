@@ -3,9 +3,17 @@
 /* Horizon theme                    */
 /* ================================ */
 
-html.sap-desktop .sapMST:focus .sapMSTFocusDiv,
-html.sap-desktop .sapMST:active .sapMSTFocusDiv {
-	border: 1px solid @sapUiTileBackground;
+html.sap-desktop .sapMST:focus .sapMSTFocusDiv {
+	border: 1px solid @sapUiTileBackground
+}
+
+html.sap-desktop .sapMST:active{
+	background-color: @sapTile_Active_Background;
+	.sapMSTFocusDiv{
+		border: 1px solid @sapTile_Interactive_BorderColor;
+		border-radius:  @sapTile_BorderCornerRadius;
+		inset: 0;
+	}
 }
 
 .sapMST.sapMSTScopeActions.sapMSTDarkBackground .sapMSTMoreIcon {
@@ -46,6 +54,7 @@ html.sap-desktop .sapMST:active .sapMSTFocusDiv:after {
 	border-color: @sapTile_BorderColor;
 	box-shadow: @sapContent_Shadow0;
 	background: @sapTile_Background;
+	overflow: hidden;
 }
 
 .sapMST.TwoByOne {

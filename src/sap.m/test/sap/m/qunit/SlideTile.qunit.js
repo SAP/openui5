@@ -1138,6 +1138,17 @@ sap.ui.define([
 		this.oSlideTile = null;
 	});
 
+	QUnit.test("Border-Radius for the focus div when pressed", function(assert){
+		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
+		oCore.applyTheme("sap_horizon");
+		oCore.applyChanges();
+		var done = assert.async();
+		setTimeout(function() {
+			assert.equal(getComputedStyle(document.querySelector(".sapMST")).overflow,"hidden","Overflow property should be set as hidden");
+			done();
+		}, 100);
+	});
+
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
 		for (var i = 0; i < aContainers.length; i++) {
