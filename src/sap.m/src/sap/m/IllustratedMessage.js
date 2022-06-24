@@ -554,24 +554,35 @@ sap.ui.define([
 			this._updateMediaStyle(sNewMedia);
 			this._sLastKnownMedia = sNewMedia;
 		}
+
+		this._updateSymbol(this._sLastKnownMedia);
 	};
 
 	/**
-	 * It puts the appropriate classes on the control and updates illustration's symbol based on the current media size.
+	 * It puts the appropriate classes on the control based on the current media size.
 	 * @param {string} sCurrentMedia
 	 * @private
 	 */
 	IllustratedMessage.prototype._updateMediaStyle = function (sCurrentMedia) {
 		Object.keys(IllustratedMessage.MEDIA).forEach(function (sMedia) {
-			var bEnable = sCurrentMedia === IllustratedMessage.MEDIA[sMedia],
-				sIdMedia = sMedia.charAt(0) + sMedia.slice(1).toLowerCase();
+			var bEnable = sCurrentMedia === IllustratedMessage.MEDIA[sMedia];
 			this.toggleStyleClass(IllustratedMessage.MEDIA[sMedia], bEnable);
-			if (bEnable && sCurrentMedia !== IllustratedMessage.MEDIA.BASE) { // No need to require a resource for BASE illustrationSize, since there is none
-				this._getIllustration().setSet(this._sIllustrationSet, true)
-					.setMedia(sIdMedia, true)
-					.setType(this._sIllustrationType);
-			}
 		}, this);
+	};
+
+	/**
+	 * Updates illustration's symbol based on the current media size.
+	 * @param {string} sCurrentMedia
+	 * @private
+	 */
+	IllustratedMessage.prototype._updateSymbol = function (sCurrentMedia) {
+		var sIdMedia = sCurrentMedia.substring(sCurrentMedia.indexOf('-') + 1);
+
+		if (sCurrentMedia !== IllustratedMessage.MEDIA.BASE) { // No need to require a resource for BASE illustrationSize, since there is none
+			this._getIllustration().setSet(this._sIllustrationSet, true)
+				.setMedia(sIdMedia, true)
+				.setType(this._sIllustrationType);
+		}
 	};
 
 	/**
