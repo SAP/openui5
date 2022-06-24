@@ -312,16 +312,25 @@ sap.ui.define([
 			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone") || this.getForcePhoneView()) {
 				oSwitcher.setVisible(true);
 				oSwitcher.setSelectedKey("Cal");
-				var oOnAfterRenderingDelegate = {
+				this.getCalendar().attachSelect(function () {
+					this._addCalendarDelegate();
+				}.bind(this));
+				this._addCalendarDelegate();
+			} else {
+				oSwitcher.setVisible(false);
+			}
+		},
+
+		_addCalendarDelegate: function () {
+			var oSwitcher = this.getAggregation("_switcher"),
+				oOnAfterRenderingDelegate = {
 					onAfterRendering: function() {
 						this._switchVisibility(oSwitcher.getSelectedKey());
 						this.getCalendar().removeDelegate(oOnAfterRenderingDelegate);
 					}.bind(this)
 				};
-				this.getCalendar().addDelegate(oOnAfterRenderingDelegate);
-			} else {
-				oSwitcher.setVisible(false);
-			}
+
+			this.getCalendar().addDelegate(oOnAfterRenderingDelegate);
 		},
 
 		_handleSelect: function(oEvent) {
