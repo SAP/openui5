@@ -23,11 +23,12 @@ sap.ui.define([
 	"sap/f/GridContainerSettings",
 	"sap/f/GridContainer",
 	"sap/m/FormattedText",
+	"sap/m/NewsContent",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
 			Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, coreLibrary, isEmptyObject, KeyCodes, oCore,GridContainerItemLayoutData,
-			GridContainerSettings,GridContainer,FormattedText) {
+			GridContainerSettings,GridContainer,FormattedText,NewsContent) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -3674,6 +3675,14 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		//Act
 		assert.equal(this.oSituation.getDomRef().getAttribute("aria-label"),"Comparative Annual Totals\nExpenses By Region\nThis would be a situation long text description. it would have 3 lines of space,as a maximum.\nEUR\nCurrent Quarter","Aria-Label has been rendered Successfully");
 	});
+	QUnit.test("Max Lines property for situation card", function(assert) {
+		//Act
+		assert.equal(this.oSituation.getTileContent()[0].getContent().getMaxLines(),3,"Initially maxLines set correctly");
+		//Arrange
+		this.oSituation.getTileContent()[0].setPriorityText("medium");
+		//Act
+		assert.equal(this.oSituation.getTileContent()[0].getContent().getMaxLines(),3,"max lines has been set correct after setting priorityText property alone");
+	});
 
 	QUnit.module("GenericTile IconMode", {
 		beforeEach: function() {
@@ -4322,6 +4331,38 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 	QUnit.test("GenericTile - Failed/Stretch", function(assert) {
 		this.fnCreateGenericTile(LoadState.Failed, LoadState.Loaded, FrameType.Stretch);
 		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
+	});
+
+	QUnit.module("NewsContent Tests", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile("generic-tile", {
+				mode: GenericTileMode.ArticleMode,
+				subheader: "Expenses By Region",
+				frameType: FrameType.TwoByOne,
+				header: "Comparative Annual Totals",
+				url: "#",
+				enableNavigationButton: true,
+				headerImage: IMAGE_PATH + "female_BaySu.jpg",
+				tileContent: new TileContent("tile-cont", {
+					unit: "EUR",
+					footer: "Current Quarter",
+					content: new NewsContent("numeric-cnt", {
+						contentText: "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
+						subheader: "August 21, 2013"
+					})
+				})
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("Checking if the  sapMGTNewsContent class has been applied", function (assert) {
+		// Assert
+		assert.ok(this.oGenericTile.getDomRef().classList.contains("sapMGTNewsContent"),"sapMGTNewsContent class is applied");
 	});
 
 	QUnit.module("Width Getting Increased when the Gap is 1rem only for TwoByOne and TwoByHalf tiles in the Grid container", {

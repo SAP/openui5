@@ -413,6 +413,13 @@ html.sap-desktop .sapFGridContainer .sapFGridContainerItemWrapperNoVisualFocus:f
 html.sap-desktop .sapMGT:active{
 	background-color: @sapTile_Active_Background;
 	border: 0.0625rem solid @sapTile_Interactive_BorderColor;
+	&.sapMGTIconMode{
+		outline: 0.0625rem solid @sapTile_Interactive_BorderColor;
+		border: none;
+	}
+	&.sapMGTNewsContent{
+		overflow: hidden;
+	}
 	.sapMGTFocusDiv{
 		box-shadow: none;
 		border: none !important;
@@ -424,6 +431,10 @@ html.sap-desktop .sapMGT:focus .sapMGTFocusDiv{
 	border-radius:  @sapTile_BorderCornerRadius;
 	box-shadow: none;
 	inset: -1px;
+}
+
+html.sap-desktop .sapMGT.sapMGTOneByOne:focus .sapMGTFocusDiv{
+	inset: 0;
 }
 
 .sapMGT.sapMGTScopeActions, .sapMGT.sapMGTScopeSingleAction{
@@ -486,5 +497,12 @@ html.sap-desktop .sapMGT.sapMGTBackgroundImage:focus .sapMGTFocusDiv:after, html
 	border-radius: 1.25rem;
 	.sapMGTFocusDiv {
 		border-radius: 1.25rem !important;
+	}
+}
+
+.sapMGT.OneByOne,.sapMGT.TwoByOne{
+	.sapMTileCnt.News {
+		border-bottom-left-radius: 0.87rem;
+		border-bottom-right-radius: 0.87rem;
 	}
 }
