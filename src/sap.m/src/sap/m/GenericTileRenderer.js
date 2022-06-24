@@ -152,9 +152,12 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		if (oControl.getMode() === GenericTileMode.HeaderMode) {
 			oRm.class("sapMGTHeaderMode");
 		}
-		oRm.openEnd();
 		var aTileContent = oControl.getTileContent();
 		var iLength = aTileContent.length;
+		if (this._isNewsContentPresent(aTileContent,iLength)){
+			oRm.class("sapMGTNewsContent");
+		}
+		oRm.openEnd();
 		var isFooterPresent = false;
 		var isContentPresent = false;
 		function renderLoadingShimmerIconMode(oRm, bIsLoading) {
@@ -555,6 +558,18 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 	 */
 	GenericTileRenderer._isThemeHighContrast = function() {
 		return /(hcw|hcb)/g.test(sap.ui.getCore().getConfiguration().getTheme());
+	};
+
+	GenericTileRenderer._isNewsContentPresent = function(aTileContent,iLength) {
+		var bIsPresent = false;
+		for (var i = 0; i < iLength; i++) {
+			var oAggregationContent = aTileContent[i].getContent();
+			if (oAggregationContent && oAggregationContent.isA("sap.m.NewsContent")) {
+				bIsPresent = true;
+				break;
+			}
+		}
+		return bIsPresent;
 	};
 
 	return GenericTileRenderer;
