@@ -1,10 +1,7 @@
-sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
+sap.ui.define(["sap/ui/integration/editor/Extension"], function (Extension) {
 	"use strict";
 
-	var DataExtension = Extension.extend("card.test.editor.extension.getData.DataExtension");
-
-	DataExtension.prototype.init = function () {
-	};
+	var DataExtension = Extension.extend("integration.test.editor.extension.getData.DataExtension");
 
 	// should return a promise
 	DataExtension.prototype.getData = function () {
@@ -49,10 +46,10 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 
 	// Gets the trainers names.
 	DataExtension.prototype.getTrainers = function () {
-		var oCard = this.getCard(),
-			oParameters = oCard.getCombinedParameters();
+		var oEditor = this.getEditor(),
+			oParameters = oEditor.getParameters();
 
-		return oCard.request({
+		return oEditor.request({
 			"url": "{{destinations.northwind}}/Employees",
 			"parameters": {
 				"$format": "json",
@@ -69,7 +66,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 
 	// Requests XML data, then serializes it to an Object
 	DataExtension.prototype.getTrainingLocations = function () {
-		return this.getCard().request({
+		return this.getEditor().request({
 			"url": "../locations.xml",
 			"dataType": "xml"
 		}).then(function (oXMLDocument) {
