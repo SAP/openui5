@@ -1448,9 +1448,6 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.requestSideEffects = function (sGroupId, aPaths, oContext) {
 		var oModel = this.oModel,
-			// Hash set of collection-valued navigation property meta paths (relative to the cache's
-			// root) which need to be refreshed, maps string to <code>true</code>
-			mNavigationPropertyPaths = {},
 			aPromises = [],
 			that = this;
 
@@ -1474,10 +1471,9 @@ sap.ui.define([
 			try {
 				aPromises.push(
 					this.oCache.requestSideEffects(this.lockGroup(sGroupId), aPaths,
-						mNavigationPropertyPaths, oContext && oContext.getPath().slice(1)));
+						oContext && oContext.getPath().slice(1)));
 
-				this.visitSideEffects(sGroupId, aPaths, oContext, mNavigationPropertyPaths,
-					aPromises);
+				this.visitSideEffects(sGroupId, aPaths, oContext, aPromises);
 
 				return SyncPromise.all(aPromises.map(reportError)).then(function () {
 					return that.refreshDependentListBindingsWithoutCache();

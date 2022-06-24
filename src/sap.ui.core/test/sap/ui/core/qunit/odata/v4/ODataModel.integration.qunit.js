@@ -30030,6 +30030,85 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: List binding without own cache, parent cache is a single cache. Create a new row
+	// at top and request a side-effects refresh for the collection. Server returns a different
+	// order with the newly persisted row at bottom.
+	QUnit.test("BCP: 2280105633", function (assert) {
+		var oListBinding,
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			oNewContext,
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}">\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<Text id="note" text="{Note}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+				SalesOrderID : "1",
+				SO_2_SOITEM : [{
+					ItemPosition : "10",
+					Note : "Foo",
+					SalesOrderID : "1"
+				}, {
+					ItemPosition : "20",
+					Note : "Bar",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("note", ["Foo", "Bar"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oListBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectChange("note", ["New", "Foo", "Bar"])
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('1')/SO_2_SOITEM",
+					payload : {Note : "New"}
+				}, {
+					ItemPosition : "30",
+					Note : "New",
+					SalesOrderID : "1"
+				})
+				.expectRequest("SalesOrderList('1')?$select=SO_2_SOITEM"
+					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+					SO_2_SOITEM : [{
+						ItemPosition : "10",
+						Note : "Foo",
+						SalesOrderID : "1"
+					}, {
+						ItemPosition : "20",
+						Note : "Bar",
+						SalesOrderID : "1"
+					}, {
+						ItemPosition : "30",
+						Note : "New",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("note", ["Foo", "Bar", "New"]);
+
+			oNewContext = oListBinding.create({Note : "New"}, true);
+
+			return Promise.all([
+				// code under test
+				oListBinding.getContext().requestSideEffects(["SO_2_SOITEM"]),
+				oNewContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.deepEqual(oListBinding.getAllCurrentContexts().map(getPath), [
+				"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')",
+				"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')",
+				"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='30')"
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: requestSideEffects must not refresh a dependent list binding in case it is a
 	// "creation row" which means it only contains transient contexts and never read data.
 	// JIRA: CPOUI5UISERVICESV3-1943
@@ -30057,7 +30136,7 @@ sap.ui.define([
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oNewContext,
 			oTableBinding,
-			// image we had a $filter : \'NoteLanguage ne null\' or similar for the table
+			// imagine we had a $filter : \'NoteLanguage ne null\' or similar for the table
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Input id="soCurrencyCode" value="{CurrencyCode}"/>\
@@ -30528,7 +30607,15 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("id", ["44", "43"])
-			.expectChange("note", ["Unrealistic", "Side", "Effect"]);
+			// Context#getIndex returns a negative number because the ODLB has been reset and thus
+			// this.iCreatedContexts = 0;
+			// #create triggers Context#refreshDependentBindings before #rsE triggers
+			// ODPaB#refreshDependentListBindingsWithoutCache, which seems natural (1st response is
+			// processed 1st). Not sure how JIRA: CPOUI5ODATAV4-288 could help here.
+			.expectChange("note", "Side", -1)
+			.expectChange("note", "Unrealistic", -2)
+			.expectChange("note", [,, "Effect"]);
+			//TODO .expectChange("note", ["Unrealistic", "Side", "Effect"]);
 	},
 	text : "Repeated POST succeeds"
 }, {

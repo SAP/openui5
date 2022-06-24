@@ -2694,7 +2694,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("fetchCache").never();
 		this.mock(oBinding).expects("createRefreshPromise").never();
 		this.mock(oBinding).expects("reset")
-			.withExactArgs(ChangeReason.Refresh, /*bDrop*/undefined, "myGroup");
+			.withExactArgs(ChangeReason.Refresh, /*bDrop*/true, "myGroup");
 
 		// code under test (as called from #requestRefresh)
 		assert.ok(oBinding.refreshInternal("", "myGroup", /*_bCheckUpdate*/true).isFulfilled());
@@ -7119,12 +7119,11 @@ sap.ui.define([
 			oResult,
 			that = this;
 
-		function expectVisitAndRefresh(vNavigationPropertyPaths, aPromises) {
+		function expectVisitAndRefresh(aPromises) {
 			that.mock(oBinding).expects("visitSideEffects").withExactArgs(sGroupId,
 					sinon.match.same(aPaths), bHeader ? undefined : sinon.match.same(oContext),
-					vNavigationPropertyPaths, aPromises)
-				.callsFake(function (_sGroupId, _aPaths, _oContext, _mNavigationPropertyPaths,
-						aPromises) {
+					aPromises)
+				.callsFake(function (_sGroupId, _aPaths, _oContext, aPromises) {
 					aPromises.push(Promise.resolve());
 					aPromises.push(Promise.reject(oCanceledError));
 					if (bRecursionRejects) {
@@ -7153,17 +7152,16 @@ sap.ui.define([
 		this.mock(oPreviousContext8).expects("isKeepAlive").exactly(bHeader ? 1 : 0)
 			.returns(true);
 		oCacheMock.expects("requestSideEffects").exactly(bHasCache ? 1 : 0)
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
-				bHeader ? ["('3')", "('4')", "('6')", "('8')"] : ["('foo')"],
-				!bHeader)
-			.callsFake(function (_oGroupLock, _aPaths, mNavigationPropertyPaths) {
-				expectVisitAndRefresh(sinon.match.same(mNavigationPropertyPaths), [oPromise]);
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths),
+				bHeader ? ["('3')", "('4')", "('6')", "('8')"] : ["('foo')"], !bHeader)
+			.callsFake(function (_oGroupLock, _aPaths) {
+				expectVisitAndRefresh([oPromise]);
 
 				return oPromise;
 			});
 		if (!bHasCache) {
 			oBinding.oCache = undefined; // not yet there
-			expectVisitAndRefresh({}, []);
+			expectVisitAndRefresh([]);
 		}
 		oModelMock.expects("reportError")
 			.withExactArgs("Failed to request side effects", sClassName,
@@ -7210,12 +7208,11 @@ sap.ui.define([
 		this.mock(oBinding.aContexts[0]).expects("isTransient").withExactArgs().returns(true);
 		this.mock(oBinding.aContexts[1]).expects("isTransient").withExactArgs().returns(false);
 		oCacheMock.expects("requestSideEffects")
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
-				["('0')"], undefined)
-			.callsFake(function (_oGroupLock, aPaths, mNavigationPropertyPaths) {
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), ["('0')"],
+				undefined)
+			.callsFake(function (_oGroupLock, aPaths) {
 				that.mock(oBinding).expects("visitSideEffects").withExactArgs(sGroupId,
-						sinon.match.same(aPaths), undefined,
-						sinon.match.same(mNavigationPropertyPaths), [oPromise]);
+						sinon.match.same(aPaths), undefined, [oPromise]);
 				that.mock(oBinding).expects("refreshDependentListBindingsWithoutCache")
 					.withExactArgs().resolves("~");
 
