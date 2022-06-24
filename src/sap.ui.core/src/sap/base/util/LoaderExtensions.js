@@ -3,15 +3,17 @@
  */
 
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
+	'sap/ui/util/XMLHelper',
 	'sap/base/Log',
 	'sap/base/assert',
-	'sap/base/util/extend'
+	'sap/base/util/extend',
+	'sap/base/util/mixedFetch'
 ], function(
-	jQuery,
+	XMLHelper,
 	Log,
 	assert,
-	extend
+	extend,
+	mixedFetch
 ) {
 	"use strict";
 
@@ -244,9 +246,7 @@ sap.ui.define([
 		var sType,
 			oData,
 			sUrl,
-			oError,
-			oDeferred,
-			fnDone,
+			fnDone = function() {},
 			iSyncCallBehavior;
 
 		if (LoaderExtensions.notifyResourceLoading) {
@@ -269,44 +269,30 @@ sap.ui.define([
 
 		assert(/^(xml|html|json|text)$/.test(sType), "type must be one of xml, html, json or text");
 
-		oDeferred = mOptions.async ? new jQuery.Deferred() : null;
-
-		function handleData(d, e) {
-			if (d == null && mOptions.failOnError) {
-				oError = e || new Error("no data returned for " + sResourceName);
-				if (mOptions.async) {
-					oDeferred.reject(oError);
-					Log.error(oError);
-				}
-				if (fnDone) {
-					fnDone();
-				}
-				return null;
-			}
-
-			if (mOptions.async) {
-				oDeferred.resolve(d);
-			}
-			if (fnDone) {
-				fnDone();
-			}
-			return d;
-		}
-
 		function convertData(d) {
-			var vConverter = jQuery.ajaxSettings.converters["text " + sType];
-			if (typeof vConverter === "function") {
-				d = vConverter(d);
-			}
-			return handleData(d);
+		    switch (sType) {
+				case "json":
+					return JSON.parse(d);
+				case "xml":
+					return XMLHelper.parse(d);
+				default:
+					return d;
+		    }
 		}
 
 		oData = sap.ui.loader._.getModuleContent(sResourceName, mOptions.url);
 
 		if (oData != undefined) {
+			// data available
 			oData = convertData(oData);
-		} else {
 
+			if (mOptions.async) {
+				return Promise.resolve(oData);
+			} else {
+				return oData;
+			}
+		} else {
+			// load data
 			iSyncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
 			if (!mOptions.async && iSyncCallBehavior) {
 				if (iSyncCallBehavior >= 1) { // temp. raise a warning only
@@ -316,34 +302,56 @@ sap.ui.define([
 				}
 			}
 
-			jQuery.ajax({
-				url: sUrl = mOptions.url || sap.ui.loader._.getResourcePath(sResourceName),
-				async: mOptions.async,
-				dataType: sType,
-				headers: mOptions.headers,
-				success: function(data, textStatus, xhr) {
-					oData = handleData(data);
-				},
-				error: function(xhr, textStatus, error) {
-					oError = new Error("resource " + sResourceName + " could not be loaded from " + sUrl + ". Check for 'file not found' or parse errors. Reason: " + error);
-					oError.status = textStatus;
-					oError.error = error;
-					oError.statusCode = xhr.status;
-					oData = handleData(null, oError);
+			var oHeaders = {};
+			if (sType) {
+				oHeaders["Accept"] = mixedFetch.ContentTypes[sType.toUpperCase()];
+			}
+
+			sUrl = mOptions.url || sap.ui.loader._.getResourcePath(sResourceName);
+
+			var pResponse = mixedFetch(sUrl, {
+				headers: Object.assign(oHeaders, mOptions.headers)
+			}, !mOptions.async)
+			.then(function(response) {
+				if (response.ok) {
+					return response.text().then(function(responseText) {
+						return {
+							data: convertData(responseText)
+						};
+					});
+				} else {
+					var oError = new Error("resource " + sResourceName + " could not be loaded from " + sUrl +
+						". Check for 'file not found' or parse errors. Reason: " + response.statusText || response.status);
+					oError.status = response.statusText;
+					oError.statusCode = response.status;
+					throw oError;
+				}
+			})
+			.catch(function(error) {
+				return {
+					data: null,
+					error: error
+				};
+			})
+			.then(function(oInfo) {
+				fnDone();
+
+				if (oInfo.data !== null) {
+					return oInfo.data;
+				} else if (mOptions.failOnError) {
+					Log.error(oInfo.error);
+					throw oInfo.error;
+				} else {
+					return null;
 				}
 			});
 
+			if (mOptions.async) {
+				return pResponse;
+			} else {
+				return pResponse.unwrap();
+			}
 		}
-
-		if (mOptions.async) {
-			return Promise.resolve(oDeferred);
-		}
-
-		if (oError != null && mOptions.failOnError) {
-			throw oError;
-		}
-
-		return oData;
 	};
 
 	/**

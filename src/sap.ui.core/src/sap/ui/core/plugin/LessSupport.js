@@ -19,9 +19,10 @@
 			'sap/ui/thirdparty/jquery',
 			'sap/ui/core/ThemeCheck',
 			'sap/base/Log',
+			'sap/base/util/syncFetch',
 			'sap/base/util/UriParameters',
 			'sap/ui/core/Core' // provides sap.ui.getCore()
-		], function(jQuery, ThemeCheck, Log, UriParameters) {
+		], function(jQuery, ThemeCheck, Log, syncFetch, UriParameters) {
 
 			var LESS_FILENAME = "library.source";
 			var CSS_FILENAME = "library";
@@ -279,21 +280,22 @@
 			 * @private
 			 */
 			LessSupport.prototype.getLastModified = function(sUrl) {
-
 				// HEAD request to retrieve the last modified header
 				var iLastModified;
-				jQuery.ajax({
-					url: sUrl,
-					type: "HEAD",
-					async: false,
-					success : function(data, textStatus, xhr) {
-						var sLastModified = xhr.getResponseHeader("Last-Modified");
-						iLastModified = sLastModified ? Date.parse(sLastModified) : 0;
-					},
-					error : function(xhr, textStatus, error) {
-						iLastModified = -1;
+				try {
+					var response = syncFetch(sUrl, {
+						method: "HEAD"
+					});
+
+					if (response.ok) {
+						var sLastModified = response.headers.get("Last-Modified");
+							iLastModified = sLastModified ? Date.parse(sLastModified) : 0;
+					} else {
+						throw Error("HTTP status error: " + response.status);
 					}
-				});
+				} catch (error) {
+					iLastModified = -1;
+				}
 				// convert the string into a timestamp or return the -1 value
 				Log.debug("CSS/LESS head-check: " + sUrl + "; last-modified: " + iLastModified);
 				return iLastModified;

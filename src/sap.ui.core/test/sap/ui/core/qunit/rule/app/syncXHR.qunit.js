@@ -65,7 +65,7 @@ sap.ui.define([
 
 	QUnit.module("IconPool.getIconInfo", {
 		beforeEach: function() {
-			this.jQueryAjaxStub = sinon.stub(jQuery, "ajax").returns();
+			this.xhrOpenSpy = this.spy(XMLHttpRequest.prototype, "open");
 			var oTNTConfig = {
 				fontFamily: "SAP-icons-TNT",
 				fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts/")
@@ -76,8 +76,7 @@ sap.ui.define([
 			IconPool.getIconInfo("sap-icon://SAP-icons-TNT/technicalsystem");
 		},
 		afterEach: function(assert) {
-			assert.equal(this.jQueryAjaxStub.callCount, 2, "1 for IconPool.registerFont, 1 for IconPool.getIconInfo");
-			this.jQueryAjaxStub.restore();
+			assert.equal(this.xhrOpenSpy.callCount, 2, "1 for IconPool.registerFont, 1 for IconPool.getIconInfo");
 		}
 	});
 
@@ -90,13 +89,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("Manifest.load", {
-		beforeEach: function() {
-			this.jQueryAjaxStub = sinon.stub(jQuery, "ajax").returns();
-			Manifest.load({manifestUrl: "my/manifest.json"});
+		beforeEach: function(assert) {
+			this.xhrOpenSpy = this.spy(XMLHttpRequest.prototype, "open");
+			try {
+				Manifest.load({manifestUrl: "my/manifest.json"});
+			} catch (error) {
+				assert.ok(error, "Manifest does not exist, but it's okay - Move on.");
+			}
 		},
 		afterEach: function(assert) {
-			assert.equal(this.jQueryAjaxStub.callCount, 1);
-			this.jQueryAjaxStub.restore();
+			assert.equal(this.xhrOpenSpy.callCount, 1);
 		}
 	});
 

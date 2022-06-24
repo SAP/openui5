@@ -67,6 +67,9 @@ sap.ui.define(function() {
 			"base/util/extend": {
 				title: "QUnit Page for extend"
 			},
+			"base/util/fetch": {
+				title: "QUnit Page for fetch"
+			},
 			"base/util/includes": {
 				title: "QUnit Page for includes",
 				sinon: {

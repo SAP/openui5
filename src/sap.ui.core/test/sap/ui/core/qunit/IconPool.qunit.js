@@ -5,9 +5,12 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/m/Image",
 	"sap/base/Log",
+	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/jquery"
-], function(IconPool, Icon, Image, Log, jQuery) {
+], function(IconPool, Icon, Image, Log, TestUtils, jQuery) {
 	"use strict";
+
+	QUnit.config.reorder = false;
 
 	QUnit.module("Basic");
 
@@ -353,59 +356,44 @@ sap.ui.define([
 
 
 	QUnit.test("registerFont (lazy loading)", function(assert) {
-		// stub the ajax method
-		var stub = this.stub(jQuery, 'ajax');
-		stub.yieldsTo('success', {
-			"technicalsystem": "0xe000"
-		});
-
+		var oFetchSpy = TestUtils.spyFetch(this);
 		// register TNT icon font
 		IconPool.registerFont({
 			fontFamily: "SAP-icons-TNT",
 			collectionName: "tntlazy",
-			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
+			fontURI: sap.ui.require.toUrl("testdata/iconfonts"),
 			lazy: true
 		});
 
-		assert.ok(stub.notCalled, "The font metadata is not loaded before an icon is queried");
+		assert.ok(oFetchSpy.notCalled, "The font metadata is not loaded before an icon is queried");
 
 		IconPool.getIconInfo("sap-icon://tntlazy/technicalsystem");
-		assert.ok(stub.calledOnce, "The font metadata is loaded once");
+		assert.ok(oFetchSpy.calledOnce, "The font metadata is loaded once");
 
 		IconPool.getIconInfo("sap-icon://tntlazy/technicalsystem");
-		assert.ok(stub.calledOnce, "The font metadata is loaded only once");
+		assert.ok(oFetchSpy.calledOnce, "The font metadata is loaded only once");
 	});
 
 	QUnit.test("registerFont (no lazy loading)", function(assert) {
-		// stub the ajax method
-		var stub = this.stub(jQuery, 'ajax');
-		stub.yieldsTo('success', {
-			"technicalsystem": "0xe000"
-		});
-
+		var oFetchSpy = TestUtils.spyFetch(this);
 		// register TNT icon font
 		IconPool.registerFont({
 			fontFamily: "SAP-icons-TNT",
 			collectionName: "tntnolazy",
-			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts")
+			fontURI: sap.ui.require.toUrl("testdata/iconfonts")
 		});
 
-		assert.ok(stub.calledOnce, "The font metadata is loaded right away");
+		assert.ok(oFetchSpy.calledOnce, "The font metadata is loaded right away");
 
-		IconPool.getIconInfo("sap-icon://tntnolazy/technicalsystem");
-		assert.ok(stub.calledOnce, "The font metadata is loaded only once");
+		return IconPool.fontLoaded("tntnolazy").then(function() {
+			IconPool.getIconInfo("sap-icon://tntnolazy/technicalsystem");
+			assert.ok(oFetchSpy.calledOnce, "The font metadata is loaded only once");
+		});
+
 	});
 
 	QUnit.test("registerFont (no metadataURI)", function(assert) {
-		var done = assert.async();
-		var stub = this.stub(jQuery, "ajax").callsFake(function(sURL, oOptions) {
-			// check that metadataURL is composed correctly
-			if (sURL.indexOf("sap/METADATA.json") >= 0) {
-				assert.ok(true, "The metadataURI parameter has been composed correctly");
-				stub.restore(); // restore explicitly to avoid further asserts
-				done();
-			}
-		});
+		var oFetchSpy = TestUtils.spyFetch(this);
 		// register TNT icon font
 		IconPool.registerFont({
 			fontFamily: "METADATA",
@@ -414,6 +402,7 @@ sap.ui.define([
 		});
 
 		IconPool.getIconInfo("sap-icon://tntmetadata/foo");
+		assert.ok(oFetchSpy.calledWithUrl(0).indexOf("sap/METADATA.json") > -1, "the metadataURI parameter has been composed correctly");
 	});
 
 	QUnit.test("fontLoaded returns a promise", function(assert) {
@@ -453,18 +442,12 @@ sap.ui.define([
 		assert.equal(oIconInfo.content, String.fromCharCode(0xe044), "Icon content has been resolved properly when not giving the iconCollection parameter");
 	});
 
-	QUnit.test("Calling getIconInfo with 'sync' mode on a separate icon font returns the result immediately", function(assert) {
-		// stub the ajax method
-		var stub = this.stub(jQuery, 'ajax');
-		stub.yieldsTo('success', {
-			"customicon": "0xe001"
-		});
-
+	QUnit.test("Calling getIconInfo with 'sync' mode on a separate icon font returns the result immediately", function(assert) {		// stub the ajax method
 		// register an additional icon font
 		IconPool.registerFont({
 			fontFamily: "some-font-family",
 			collectionName: "somefont",
-			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
+			fontURI: sap.ui.require.toUrl("testdata/iconfonts"),
 			lazy: true
 		});
 
@@ -475,17 +458,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Calling getIconInfo with 'sync' mode on a separate icon font and without an iconCollection parameter returns the result immediately", function(assert) {
-		// stub the ajax method
-		var stub = this.stub(jQuery, 'ajax');
-		stub.yieldsTo('success', {
-			"customicon": "0xe001"
-		});
-
 		// register an additional icon font
 		IconPool.registerFont({
 			fontFamily: "some-font-family1",
 			collectionName: "somefont1",
-			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
+			fontURI: sap.ui.require.toUrl("testdata/iconfonts"),
 			lazy: true
 		});
 
@@ -522,43 +499,31 @@ sap.ui.define([
 	});
 
 	QUnit.test("Calling getIconInfo with 'async' is successfully handled in all cases (load, pending, success)", function(assert) {
-		var done = assert.async();
-		// stub the ajax method
-		var fontLoaded = function() {
+		return new Promise(function(resolve, reject) {
+			// register TNT icon font
+			IconPool.registerFont({
+				fontFamily: "SAP-icons-TNT",
+				collectionName: "tntfakeasync",
+				fontURI: sap.ui.require.toUrl("testdata/iconfonts"),
+				lazy: true
+			});
+
+			var oIconInfo = IconPool.getIconInfo("sap-icon://tntfakeasync/technicalsystem", undefined, "async");
+			assert.ok(oIconInfo.then, "On first load a promise is returned");
+
+			var oIconInfo = IconPool.getIconInfo("sap-icon://tntfakeasync/python", undefined, "async");
+			assert.ok(oIconInfo.then, "While loading still a promise is returned");
+
+			resolve(oIconInfo);
+		}).then(function(oIconInfo) {
 			var oIconInfo = IconPool.getIconInfo("sap-icon://tntfakeasync/python", undefined, "async");
 			oIconInfo.then(function(oIconInfo) {
 				assert.ok(oIconInfo, "After loading the promise is resolved with the icon info");
 				assert.equal(oIconInfo.collection, "tntfakeasync", "Icon collection is correct");
 				assert.equal(oIconInfo.fontFamily, "SAP-icons-TNT", "Icon font family is correct");
 				assert.equal(oIconInfo.content, String.fromCharCode(0xe00f), "Icon content has been resolved properly");
-				done();
 			});
-		};
-
-		this.stub(jQuery, "ajax").callsFake(function(sURL, oOptions) {
-			// introduce the least amount of delay for this test
-			setTimeout(function() {
-				oOptions.success({
-					"technicalsystem": "0xe000",
-					"python": "0xe00f"
-				});
-				fontLoaded();
-			}, 0);
 		});
-
-		// register TNT icon font
-		IconPool.registerFont({
-			fontFamily: "SAP-icons-TNT",
-			collectionName: "tntfakeasync",
-			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
-			lazy: true
-		});
-
-		var oIconInfo = IconPool.getIconInfo("sap-icon://tntfakeasync/technicalsystem", undefined, "async");
-		assert.ok(oIconInfo.then, "On first load a promise is returned");
-
-		var oIconInfo = IconPool.getIconInfo("sap-icon://tntfakeasync/python", undefined, "async");
-		assert.ok(oIconInfo.then, "While loading still a promise is returned");
 	});
 
 	QUnit.test("Calling getIconInfo on a separate font first with 'async' and immediately with 'sync' afterwards returns correct results for both", function(assert) {
@@ -603,42 +568,29 @@ sap.ui.define([
 	});
 
 	QUnit.test("Calling getIconInfo with 'mixed' is successfully handled in all cases (load, pending, success)", function(assert) {
-		var done = assert.async();
-		// stub the ajax method
-		 var fontLoaded = function() {
+		return new Promise(function(resolve, reject) {
+			// register TNT icon font
+			IconPool.registerFont({
+				fontFamily: "SAP-icons-TNT",
+				collectionName: "tntfakemixed",
+				fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
+				lazy: true
+			});
+
+			var oIconInfo = IconPool.getIconInfo("sap-icon://tntfakemixed/technicalsystem", undefined, "mixed");
+			assert.ok(oIconInfo.then, "On first load a promise is returned");
+
+			oIconInfo = IconPool.getIconInfo("sap-icon://tntfakemixed/python", undefined, "mixed");
+			assert.ok(oIconInfo.then, "While loading still a promise is returned");
+
+			resolve(oIconInfo);
+		}).then(function(oIconInfo) {
 			var oIconInfo = IconPool.getIconInfo("sap-icon://tntfakemixed/python", undefined, "mixed");
 			assert.ok(oIconInfo.content, "After loading the icon information is returned immediately");
 			assert.equal(oIconInfo.collection, "tntfakemixed", "Icon collection is correct");
 			assert.equal(oIconInfo.fontFamily, "SAP-icons-TNT", "Icon font family is correct");
 			assert.equal(oIconInfo.content, String.fromCharCode(0xe00f), "Icon content has been resolved properly");
-
-			done();
-		};
-
-		this.stub(jQuery, "ajax").callsFake(function(sURL, oOptions) {
-			// introduce the least amount of delay for this test
-			setTimeout(function() {
-				oOptions.success({
-					"technicalsystem": "0xe000",
-					"python": "0xe00f"
-				});
-				fontLoaded();
-			}, 0);
 		});
-
-		// register TNT icon font
-		IconPool.registerFont({
-			fontFamily: "SAP-icons-TNT",
-			collectionName: "tntfakemixed",
-			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
-			lazy: true
-		});
-
-		var oIconInfo = IconPool.getIconInfo("sap-icon://tntfakemixed/technicalsystem", undefined, "mixed");
-		assert.ok(oIconInfo.then, "On first load a promise is returned");
-
-		oIconInfo = IconPool.getIconInfo("sap-icon://tntfakemixed/python", undefined, "mixed");
-		assert.ok(oIconInfo.then, "While loading still a promise is returned");
 	});
 
 });

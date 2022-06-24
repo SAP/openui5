@@ -31,7 +31,7 @@ sap.ui.define(['sap/ui/Device'], function(Device) {
 		var oParseError;
 		var DomHelper = new DOMParser();
 
-		oXMLDocument = DomHelper.parseFromString(sXMLText, "text/xml");
+		oXMLDocument = DomHelper.parseFromString(sXMLText, "application/xml");
 
 		oParseError = Helper.getParseError(oXMLDocument);
 		if (oParseError) {

@@ -961,6 +961,29 @@ sap.ui.define([
 			});
 			TestUtils.useFakeServer(oSandbox, sSourceBase || "sap/ui/core/qunit/odata/v4/data",
 				mResultingFixture, aRegExps, sFilterBase !== "/" ? sFilterBase : undefined);
+		},
+
+		/**
+		 * Creates and returns a spy for <code>XMLHttpRequest.prototype.open</code> which is
+		 * used in {@link sap.base.util.fetch}.
+		 *
+		 * @param {object} oSandbox
+		 *   a Sinon sandbox as created using <code>sinon.sandbox.create()</code>
+		 * @return {object} Returns the spy
+		 */
+		spyFetch : function(oSandbox) {
+			var spy = oSandbox.spy(XMLHttpRequest.prototype, "open");
+
+			/**
+			 * Returns the request URL
+			 * @param  {number} iCall The 'nth' call
+			 * @return {string} Returns the request URL
+			 */
+			spy.calledWithUrl = function(iCall) {
+				return spy.getCall(iCall).args[1];
+			};
+
+			return spy;
 		}
 	};
 

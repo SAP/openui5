@@ -8,6 +8,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/Element',
 	'sap/ui/core/ElementMetadata',
+	'sap/base/util/fetch',
 	'sap/base/util/isEmptyObject',
 	'sap/base/security/encodeXML',
 	'sap/ui/thirdparty/jquery',
@@ -18,6 +19,7 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 		EventProvider,
 		Element,
 		ElementMetadata,
+		fetch,
 		isEmptyObject,
 		encodeXML,
 		jQuery
@@ -289,15 +291,23 @@ sap.ui.define('sap/ui/debug/PropertyList', [
 				}
 				var sUrl = this.oWindow.jQuery.sap.getModulePath(this.sCurrentHelpDoc, ".control");
 				var that = this;
-				jQuery.ajax({
-					url : sUrl,
-					dataType : 'xml',
-					error : function(xhr,status) {
-						that.receiveQuickHelp(undefined);
-					},
-					success : function(data) {
-						that.receiveQuickHelp(data);
+
+				fetch(sUrl, {
+					headers: {
+						Accept: fetch.ContentTypes.XML
 					}
+				}).then(function(response) {
+					if (response.ok) {
+						return response.text().then(function(responseText) {
+							var parser = new DOMParser();
+							var data = parser.parseFromString(responseText, "application/xml");
+							that.receiveQuickHelp(data);
+						});
+					} else {
+						throw new Error(response.statusText || response.status);
+					}
+				}).catch(function() {
+					that.receiveQuickHelp(undefined);
 				});
 				this.oQuickHelpTimer = setTimeout(function () {
 					that.hideQuickHelp();
