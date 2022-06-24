@@ -254,13 +254,13 @@ sap.ui.define([
 	/**
 	 * This method can be used to retrieve the current view by using the related <code>ContainerItem</code> key.
 	 *
-  	 * @param {string} sKey The key of the ContainerItem which is retrieved
+  	 * @param {string|sap.ui.core.Control} vView The key or the content of the ContainerItem which is retrieved
 	 *
 	 * @returns {sap.m.p13n.AbstractContainerItem} The matching ContainerItem
 	 */
-	AbstractContainer.prototype.getView = function(sKey) {
+	 AbstractContainer.prototype.getView = function(vView) {
 		return this.getViews().find(function(oView){
-			if (oView.getKey() === sKey) {
+			if (oView.getKey() === vView || oView.getContent() === vView) {
 				return oView;
 			}
 		});

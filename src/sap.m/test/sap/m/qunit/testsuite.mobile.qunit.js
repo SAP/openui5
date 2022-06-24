@@ -845,6 +845,69 @@ sap.ui.define([
 					}
 				}
 			},
+			"p13n.modules.StateHandlerRegistry": {
+				title: "Test Page for sap.m.p13n.modules.StateHandlerRegistry",
+				module: "test-resources/sap/m/qunit/p13n/StateHandlerRegistry.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+			"p13n.modules.DefaultProviderRegistry": {
+				title: "Test Page for sap.m.p13n.modules.DefaultProviderRegistry",
+				module: "test-resources/sap/m/qunit/p13n/DefaultProviderRegistry.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+			"p13n.modification.FlexModificationHandler": {
+				title: "Test Page for sap.m.p13n.modification.FlexModificationHandler",
+				module: "test-resources/sap/m/qunit/p13n/FlexModificationHandler.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+			"p13n.modification.LocalStorageModificationHandler": {
+				title: "Test Page for sap.m.p13n.modification.LocalStorageModificationHandler",
+				module: "test-resources/sap/m/qunit/p13n/LocalStorageModificationHandler.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+			"p13n.FlexUtil": {
+				title: "Test Page for sap.m.p13n.FlexUtil",
+				module: "test-resources/sap/m/qunit/p13n/FlexUtil.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+			"p13n.modules.xConfigAPI": {
+				title: "Test Page for sap.m.p13n.modules.xConfigAPI",
+				module: "test-resources/sap/m/qunit/p13n/xConfigAPI.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
+			"p13n.modules.PersistenceProvider": {
+				title: "Test Page for sap.m.p13n.modules.PersistenceProvider",
+				module: "test-resources/sap/m/qunit/p13n/PersistenceProvider.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
 			"p13n.BasePanel": {
 				title: "Test Page for sap.m.p13n.BasePanel",
 				module: "test-resources/sap/m/qunit/p13n/BasePanel.qunit",
@@ -861,6 +924,19 @@ sap.ui.define([
 					paths: {
 						resourceroot: "test-resources/sap/m/qunit/p13n"
 					}
+				}
+			},
+			"p13n.Engine": {
+				title: "Test Page for sap.m.p13n.Engine",
+				module: "test-resources/sap/m/qunit/p13n/Engine.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				},
+				ui5: {
+					language: "en-US",
+					libs: ["sap.m", "sap.ui.mdc"]
 				}
 			},
 			"p13n.SelectionPanel": {

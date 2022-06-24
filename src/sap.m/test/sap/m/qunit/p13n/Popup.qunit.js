@@ -134,6 +134,43 @@ sap.ui.define([
 		assert.equal(this.oPopup._oPopup.getButtons()[3].getText(), "Custom 2");
 	});
 
+	QUnit.module("p13n.Popup check events & parameters", {
+		beforeEach: function() {
+			var oPopup = new P13nPopup();
+			this.oPopup = oPopup;
+			this.oPopup.placeAt("qunit-fixture");
+			this.oSource = new Button();
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oPopup.destroy();
+		}
+	});
+
+	QUnit.test("Check close in 'Dialog' mode by clicking 'Ok'", function(assert){
+
+		this.oPopup.attachClose(function(oEvt){
+			assert.equal(oEvt.getParameter("reason"), "Ok");
+		});
+
+		this.oPopup.open(this.oSource);
+
+		//Press 'OK'
+		this.oPopup._oPopup.getButtons()[0].firePress();
+	});
+
+	QUnit.test("Check close in 'Dialog' mode by clicking 'Ok'", function(assert){
+
+		this.oPopup.attachClose(function(oEvt){
+			assert.equal(oEvt.getParameter("reason"), "Cancel");
+		});
+
+		this.oPopup.open(this.oSource);
+
+		//Press 'Cancel'
+		this.oPopup._oPopup.getButtons()[1].firePress();
+	});
+
 	QUnit.module("p13n.Popup Reset tests", {
 		beforeEach: function() {
 			var oPopup = new P13nPopup({
@@ -149,6 +186,14 @@ sap.ui.define([
 		afterEach: function() {
 			this.oPopup.destroy();
 		}
+	});
+
+	QUnit.test("Check focus handling after reset", function(assert){
+
+		this.oPopup.open(this.oSource);
+		var oResetBtn = this.oPopup._oPopup.getCustomHeader().getContentRight()[0];
+		assert.ok(oResetBtn, "Reset button has been created");
+
 	});
 
 	QUnit.test("Check focus handling after reset", function(assert){

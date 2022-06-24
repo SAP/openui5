@@ -29,6 +29,16 @@ sap.ui.define([
 
 	var SortPanel = QueryPanel.extend("sap.m.p13n.SortPanel", {
 		metadata: {
+			properties: {
+				/**
+				 * A short text describing the panel.
+				 * <b>Note:</b> This text will only be displayed if the panel is being used in a <code>sap.m.p13n.Popup</code>.
+				 */
+				 title: {
+					type: "string",
+					defaultValue: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.DEFAULT_TITLE_SORT")
+				}
+			},
 			library: "sap.m"
 		},
 		renderer: {

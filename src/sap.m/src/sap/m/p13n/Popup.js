@@ -148,6 +148,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Set the reset functionality callback
+	 * <b>Note:</b> The Reset button will only be shown in case this callback is provided.
+	 *
+	 * @param {function} fnReset callback that will be executed once a reset has been triggered.
+	 * @returns {sap.m.p13n.Popup} The <code>Popup</code> instance
+	 */
+	Popup.prototype.setReset = function(fnReset) {
+		if (this._oPopup) {
+			this._oPopup.setCustomHeader(this._createTitle());
+			this._oPopup.invalidate();
+		}
+		this.setProperty("reset", fnReset);
+		return this;
+	};
+
+	/**
 	 * Opens the <code>Popup</code> control.
 	 *
 	 * @public
@@ -182,9 +198,10 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {sap.m.p13n.IContent} oPanel The panel instance
+	 * @param {string} [sKey] Optional key to be used for the panel registration instead of using the id
 	 * @returns {sap.m.p13n.Popup} The popup instance
 	 */
-	Popup.prototype.addPanel = function(oPanel) {
+	Popup.prototype.addPanel = function(oPanel, sKey) {
 		var oPanelTitleBindingInfo = oPanel.getBindingInfo("title"), oBindingInfo;
 		if (oPanelTitleBindingInfo && oPanelTitleBindingInfo.parts) {
 			oBindingInfo = {
@@ -192,8 +209,8 @@ sap.ui.define([
 			};
 		}
 		this._getContainer().addView(new AbstractContainerItem({
-			key: oPanel.getId(),
-			text: oBindingInfo || oPanel.getTitle(), //oBindinfInfo is undefined in case no binding is provided
+			key: sKey || oPanel.getId(),
+			text: oBindingInfo || (oPanel.getTitle instanceof Function ? oPanel.getTitle() : undefined), //oBindinfInfo is undefined in case no binding is provided
 			content: oPanel
 		}));
 		this._aPanels.push(oPanel);
@@ -209,8 +226,17 @@ sap.ui.define([
 	 */
 	Popup.prototype.removePanel = function(oPanel) {
 		this._aPanels.splice(this._aPanels.indexOf(oPanel), 1);
-		this._getContainer().removeView(this._getContainer().getView(oPanel.getId()));
+		this._getContainer().removeView(this._getContainer().getView(oPanel));
 		return this;
+	};
+
+	/**
+	 * Removes all panels from the <code>panels</code> aggregation
+	 */
+	Popup.prototype.removeAllPanels = function() {
+		this.getPanels().forEach(function(oPanel){
+			this.removePanel(oPanel);
+		}.bind(this));
 	};
 
 	/**
@@ -224,7 +250,12 @@ sap.ui.define([
 
 	Popup.prototype._createContainer = function(mDialogSettings) {
 		mDialogSettings = mDialogSettings ? mDialogSettings : {};
-		return this["_create" + this.getMode()].call(this, mDialogSettings);
+		var oPopup = this["_create" + this.getMode()].call(this, mDialogSettings);
+		oPopup.addStyleClass("sapMP13nPopup");
+		oPopup.isPopupAdaptationAllowed = function () {
+			return false;
+		};
+		return oPopup;
 	};
 
 	Popup.prototype._createResponsivePopover = function(mDialogSettings) {
@@ -237,7 +268,10 @@ sap.ui.define([
 			resizable: mDialogSettings.hasOwnProperty("resizable") ? mDialogSettings.resizable : true,
 			contentHeight: mDialogSettings.contentHeight ? mDialogSettings.contentHeight : "35rem",
 			placement: mDialogSettings.placement ? mDialogSettings.placement : "Bottom",
-			content: this._getContainer()
+			content: this.getPanels().length > 1 ? this._getContainer() : this.getPanels()[0],
+			afterClose: function() {
+				this._onClose(oPopover, "AutoClose");
+			}.bind(this)
 		});
 
 		oPopover.setCustomHeader(this._createTitle());
@@ -258,7 +292,10 @@ sap.ui.define([
 			draggable: true,
 			resizable: true,
 			stretch: Device.system.phone,
-			content: this._getContainer(),
+			content: this.getPanels().length > 1 ? this._getContainer() : this.getPanels()[0],
+			escapeHandler: function() {
+				this._onClose(oContainer, "Escape");
+			},
 			buttons: [
 				new Button(this.getId() + "-confirmBtn", {
 					text:  mDialogSettings.confirm && mDialogSettings.confirm.text ?  mDialogSettings.confirm.text : oResourceBundle.getText("p13n.POPUP_OK"),
@@ -293,7 +330,7 @@ sap.ui.define([
 
 		var oBar;
 
-		if (fnReset) {
+		if (fnReset instanceof Function) {
 
 			oBar = new Bar({
 				contentLeft: [

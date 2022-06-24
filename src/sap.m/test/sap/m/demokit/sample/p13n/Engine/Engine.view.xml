@@ -1,0 +1,63 @@
+<mvc:View 
+    height="100%"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:p13n="sap.m.p13n"
+    xmlns:ce="sap.ui.codeeditor"
+    xmlns:sap.ui.fl="sap.ui.fl"
+    xmlns:sap.ui.dt="sap.ui.dt"
+    xmlns:vm="sap.ui.fl.variants"
+    class="sapUiContentPadding"
+    controllerName="sap.m.sample.p13n.Engine.Engine">
+
+    <VBox class="sapUiSmallMargin">
+
+        <vm:VariantManagement for="persoTable"/>
+
+        <Table id="persoTable" items="{path: '/items'}" sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex">
+
+            <headerToolbar>
+                <Toolbar>
+                    <content>
+                        <ToolbarSpacer/>
+                        <Button icon="sap-icon://action-settings" press="openPersoDialog"/>
+                    </content>
+                </Toolbar>
+            </headerToolbar>
+
+            <columns>
+                <Column visible="true" id="firstName">
+                    <header>
+                        <Text text="First Name"/>
+                    </header>
+                </Column>
+                <Column id="lastName">
+                    <header>
+                        <Text text="Last Name"/>
+                    </header>
+                </Column>
+                <Column id="city">
+                    <header>
+                        <Text text="City"/>
+                    </header>
+                </Column>
+                <Column id="size" visible="false">
+                    <header>
+                        <Text text="Size"/>
+                    </header>
+                </Column>
+            </columns>
+
+            <items>
+                <ColumnListItem>
+                    <Text text="{firstName}"/>
+                    <Text text="{lastName}"/>
+                    <Text text="{city}"/>
+                    <Text text="{size}"/>
+                </ColumnListItem>
+            </items>
+        </Table>
+
+    </VBox>
+
+</mvc:View>
