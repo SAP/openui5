@@ -23,7 +23,7 @@ sap.ui.define([
 					frameHeight: oSettings.height,
 					updateMode: true
 				};
-				return oAddIFrameDialog.open(oIFrame, mDialogSettings);
+				return oAddIFrameDialog.open(mDialogSettings);
 			})
 			.then(function (mSettings) {
 				if (!mSettings) {

@@ -55,7 +55,6 @@ sap.ui.define([
 
 		var oOPSection;
 		var oOPSubSection;
-		var oIFrame;
 		return Promise.resolve()
 			.then(oModifier.createControl.bind(oModifier, "sap.uxap.ObjectPageSection", oComponent, oView, oBaseSelector, {
 					title: sDefaultTitle
@@ -78,8 +77,7 @@ sap.ui.define([
 				oIFrameSelector.id += "-iframe";
 				return createIFrame(oChange, mPropertyBag, oIFrameSelector);
 			})
-			.then(function(oNewIFrame) {
-				oIFrame = oNewIFrame;
+			.then(function(oIFrame) {
 				return oModifier.insertAggregation(oOPSubSection, "blocks", oIFrame, 0, oView);
 			})
 			.then(getTargetAggregationIndex.bind(null, oChange, oControl, mPropertyBag))
@@ -87,10 +85,6 @@ sap.ui.define([
 				return oModifier.insertAggregation(oControl, "sections", oOPSection, iIndex, oView);
 			})
 			.then(function () {
-				// the URL needs to be set after the IFrame is inserted to prevent the automatic resolving of potential binding in the URL
-				oModifier.setProperty(oIFrame, "url", oChange.getContent().url);
-			})
-			.then(function() {
 				oChange.setRevertData([oModifier.getId(oOPSection)]);
 			});
 	};

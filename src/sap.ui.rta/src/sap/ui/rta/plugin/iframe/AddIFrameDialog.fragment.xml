@@ -5,7 +5,7 @@
 		xmlns:util="sap.ui.fl.util"
 		xmlns:layout="sap.ui.layout">
 	<Dialog id="sapUiRtaAddIFrameDialog"
-			title="{dialogModel>/text/dialogTitle}"
+			title="{/text/dialogTitle}"
 			verticalScrolling="true"
 			resizable="false"
 			class="sapUiRtaAddIFrameDialog"
@@ -21,7 +21,7 @@
 					id="sapUiRtaAddIFrameDialog_VL"
 					width="100%"
 					class="sapUiRtaAddIFrameDialogVlWrapper">
-				<Label id="sapUiRtaAddIFrameDialog_SizeTitle" text="{dialogModel>/text/sizeTitle}" class="sapUiRtaAddIFrameDialogSizeTitle" design="Bold"/>
+				<Label id="sapUiRtaAddIFrameDialog_SizeTitle" text="{/text/sizeTitle}" class="sapUiRtaAddIFrameDialogSizeTitle" design="Bold"/>
 				<layout:Grid
 						id="sapUiRtaAddIFrameDialog_SizeGrid"
 						containerQuery="true" position="Center"
@@ -35,15 +35,15 @@
 					>
 						<form:content>
 							<Label id="sapUiRtaAddIFrameDialog_WidthLabel" class="sapUiRtaAddIFrameDialogWidthLabel" labelFor="sapUiRtaAddIFrameDialog_WidthInput"
-								   text="{dialogModel>/text/widthLabel}">
+								   text="{/text/widthLabel}">
 							</Label>
 							<Input id="sapUiRtaAddIFrameDialog_WidthInput" class="sapUiRtaAddIFrameDialogWidthInput"
-								   value="{path: 'dialogModel>/frameWidth/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 1}}"
-								   valueState="{dialogModel>/frameWidth/valueState}"/>
+								   value="{path: '/frameWidth/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 1}}"
+								   valueState="{/frameWidth/valueState}"/>
 							<Select id="sapUiRtaAddIFrameDialog_WidthUnit" class="sapUiRtaAddIFrameDialogWidthUnit"
 									ariaLabelledBy="sapUiRtaAddIFrameDialog_WidthUnitLabel" change="onSizeUnitChange"
-									selectedKey="{dialogModel>/frameWidthUnit/value}" items="{dialogModel>/unitsOfMeasure}">
-								<core:Item key="{dialogModel>name}" text="{dialogModel>name}" />
+									selectedKey="{/frameWidthUnit/value}" items="{/unitsOfMeasure}">
+								<core:Item key="{name}" text="{name}" />
 							</Select>
 						</form:content>
 					</form:SimpleForm>
@@ -55,14 +55,14 @@
 					>
 						<form:content>
 							<Label id="sapUiRtaAddIFrameDialog_HeightLabel" class="sapUiRtaAddIFrameDialogHeightLabel" labelFor="sapUiRtaAddIFrameDialog_HeightInput"
-								   text="{dialogModel>/text/heightLabel}"/>
+								   text="{/text/heightLabel}"/>
 							<Input id="sapUiRtaAddIFrameDialog_HeightInput" class="sapUiRtaAddIFrameDialogHeightInput"
-								   value="{path: 'dialogModel>/frameHeight/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 1}}"
-								   valueState="{dialogModel>/frameHeight/valueState}"/>
+								   value="{path: '/frameHeight/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 1}}"
+								   valueState="{/frameHeight/valueState}"/>
 							<Select id="sapUiRtaAddIFrameDialog_HeightUnit" class="sapUiRtaAddIFrameDialogHeightUnit"
 									ariaLabelledBy="sapUiRtaAddIFrameDialog_HeightUnitLabel" change="onSizeUnitChange"
-									selectedKey="{dialogModel>/frameHeightUnit/value}" items="{dialogModel>/unitsOfMeasure}">
-								<core:Item key="{dialogModel>name}" text="{dialogModel>name}" />
+									selectedKey="{/frameHeightUnit/value}" items="{/unitsOfMeasure}">
+								<core:Item key="{name}" text="{name}" />
 							</Select>
 						</form:content>
 					</form:SimpleForm>
@@ -73,7 +73,7 @@
 						containerQuery="true"
 						position="Right"
 						defaultSpan="XL12 L12 M12 S12">
-					<Text id="sapUiRtaAddIFrameDialog_PercentText" text="{dialogModel>/text/percentUseLabel}" class="sapUiRtaAddIFrameDialogPercentText"/>
+					<Text id="sapUiRtaAddIFrameDialog_PercentText" text="{/text/percentUseLabel}" class="sapUiRtaAddIFrameDialogPercentText"/>
 				</layout:Grid>
 				<layout:Grid
 						id="sapUiRtaAddIFrameDialog_EditGrid"
@@ -82,30 +82,30 @@
 						defaultSpan="XL6 L6 M6 S12">
 					<VBox id="sapUiRtaAddIFrameDialog_Parameters" class="sapUiRtaAddIFrameDialogParameters" renderType="Bare">
 						<items>
-							<Label id="sapUiRtaAddIFrameDialog_ParametersLabel" text="{dialogModel>/text/parametersLabel}" labelFor="sapUiRtaAddIFrameDialog_ParameterTable"
+							<Label id="sapUiRtaAddIFrameDialog_ParametersLabel" text="{/text/parametersLabel}" labelFor="sapUiRtaAddIFrameDialog_ParameterTable"
 								   class="sapUiRtaAddIFrameDialogParametersLabel" design="Bold"/>
 							<SearchField id="sapUiRtaAddIFrameDialog_ParametersSearch" ariaLabelledBy="sapUiRtaAddIFrameDialog_ParameterSearchLabel"
 										 class="sapUiRtaAddIFrameDialogParametersSearch" search="onSearch" />
 							<ScrollContainer height="12rem" vertical="true" >
-								<Table id="sapUiRtaAddIFrameDialog_ParameterTable" items="{dialogModel>/parameters/value}" ariaLabelledBy="sapUiRtaAddIFrameDialog_ParametersLabel"
+								<Table id="sapUiRtaAddIFrameDialog_ParameterTable" items="{/parameters/value}" ariaLabelledBy="sapUiRtaAddIFrameDialog_ParametersLabel"
 									   class="sapUiSizeCompact sapUiRtaAddIFrameDialogParameterTable" sticky="ColumnHeaders">
 									<columns>
 										<Column>
 											<header>
-												<Label id="sapUiRtaAddIFrameDialog_ParameterLabel" class="sapUiRtaAddIFrameDialogParameterLabel" text="{dialogModel>/text/columnParameterLabel}"/>
+												<Label id="sapUiRtaAddIFrameDialog_ParameterLabel" class="sapUiRtaAddIFrameDialogParameterLabel" text="{/text/columnParameterLabel}"/>
 											</header>
 										</Column>
 										<Column>
 											<header>
-												<Label id="sapUiRtaAddIFrameDialog_ValueLabel" class="sapUiRtaAddIFrameDialog_ValueLabel" text="{dialogModel>/text/columnUiValueLabel}"/>
+												<Label id="sapUiRtaAddIFrameDialog_ValueLabel" class="sapUiRtaAddIFrameDialog_ValueLabel" text="{/text/columnUiValueLabel}"/>
 											</header>
 										</Column>
 									</columns>
 									<items>
 										<ColumnListItem type="Active" press="onParameterPress">
 											<cells>
-												<Text text="{dialogModel>label}"/>
-												<Text text="{dialogModel>value}" wrapping="false"/>
+												<Text text="{label}"/>
+												<Text text="{value}" wrapping="false"/>
 											</cells>
 										</ColumnListItem>
 									</items>
@@ -116,10 +116,10 @@
 					<VBox id="sapUiRtaAddIFrameDialog_EditUrl" class="sapUiRtaAddIFrameDialogEditUrl" renderType="Bare">
 						<items>
 							<Label id="sapUiRtaAddIFrameDialog_EditUrlLabel" labelFor="sapUiRtaAddIFrameDialog_EditUrlTA"
-								   class="sapUiRtaAddIFrameDialogEditUrlLabel" text="{dialogModel>/text/editUrlLabel}" design="Bold" />
+								   class="sapUiRtaAddIFrameDialogEditUrlLabel" text="{/text/editUrlLabel}" design="Bold" />
 							<TextArea id="sapUiRtaAddIFrameDialog_EditUrlTA" ariaLabelledBy="sapUiRtaAddIFrameDialog_EditUrlLabel"
 									  class="sapUiRtaAddIFrameDialog_EditUrlTA"
-									  valueLiveUpdate="true" value="{dialogModel>/frameUrl/value}" liveChange="onUrlChange" rows="11" width="100%" />
+									  valueLiveUpdate="true" value="{/frameUrl/value}" liveChange="onUrlChange" rows="11" width="100%" />
 						</items>
 					</VBox>
 				</layout:Grid>
@@ -130,7 +130,7 @@
 						defaultSpan="XL12 L12 M12 S12">
 					<FormattedText
 							id="sapUiRtaAddIFrameDialog_DocumentationLink"
-							htmlText="{dialogModel>/documentationLink/HTML}" class="sapUiRtaAddIFrameDialogDocumentationLink"/>
+							htmlText="{/documentationLink/HTML}" class="sapUiRtaAddIFrameDialogDocumentationLink"/>
 				</layout:Grid>
 				<layout:Grid
 					id="sapUiRtaAddIFrameDialog_PreviewLinkGrid"
@@ -147,12 +147,10 @@
 								<Title
 									id="sapUiRtaAddIFrameDialog_PreviewLinkTitle"
 									class="sapUiRtaAddIFrameDialogPreviewLinkTitle"
-									text="{dialogModel>/text/previewUrlLabel}" />
+									text="{/text/previewUrlLabel}" />
 								<ToolbarSpacer />
-								<Button
-										id="sapUiRtaAddIFrameDialog_PreviewButton"
-										enabled="{=${dialogModel>/previewUrl/value} !== ${dialogModel>/resolvedUrl/url} &amp;&amp; ${dialogModel>/resolvedUrl/errorCode} &lt; 2}"
-										text="{=${dialogModel>/previewUrl/value} === '' ? ${dialogModel>/text/showPreviewButton} : ${dialogModel>/text/updatePreviewButton} }" press="onShowPreview"
+								<Button id="sapUiRtaAddIFrameDialog_PreviewButton" enabled="{=${/previewUrl/value} !== ${/frameUrl/value} }"
+										text="{=${/previewUrl/value} === '' ? ${/text/showPreviewButton} : ${/text/updatePreviewButton} }" press="onShowPreview"
 										class="sapUiTinyMarginTop sapUiRtaAddIFrameDialogPreviewButton" />
 							</OverflowToolbar>
 						</headerToolbar>
@@ -160,7 +158,7 @@
 							<Link
 								id="sapUiRtaAddIFrameDialog_PreviewLink"
 								class="sapUiRtaAddIFrameDialogPreviewLink"
-								href="{dialogModel>/previewUrl/value}" text="{dialogModel>/previewUrl/value}" wrapping="true" visible="{= !!${dialogModel>/previewUrl/value} }" />
+								href="{/previewUrl/value}" text="{/previewUrl/value}" wrapping="true" visible="{= !!${/previewUrl/value} }" />
 						</content>
 					</Panel>
 				</layout:Grid>
@@ -180,22 +178,21 @@
 							<Label
 								id="sapUiRtaAddIFrameDialog_NoPreviewLabel"
 								class="sapUiRtaAddIFrameDialogNoPreviewLabel" wrapping="true"
-								text="{dialogModel>/text/previewUrlMessage}" textAlign="Center" visible="{= !${dialogModel>/previewUrl/value} }" />
+								text="{/text/previewUrlMessage}" textAlign="Center" visible="{= !${/previewUrl/value} }" />
 							<util:IFrame
 									id="sapUiRtaAddIFrameDialog_PreviewFrame"
-									title="{dialogModel>/text/previewFrameLabel}"
+									title="{/text/previewFrameLabel}"
 									class="sapUiRtaAddIFrameDialogPreviewFrame"
-									url="{dialogModel>/previewUrl/value}"
-									visible="{= !!${dialogModel>/previewUrl/value} }"/>
+									visible="{= !!${/previewUrl/value} }"/>
 						</items>
 					</VBox>
 				</layout:Grid>
 			</layout:VerticalLayout>
 
 			<!-- Invisible Texts for ARIA -->
-			<core:InvisibleText id="sapUiRtaAddIFrameDialog_WidthUnitLabel" text="{dialogModel>/text/widthUnitLabel}"/>
-			<core:InvisibleText id="sapUiRtaAddIFrameDialog_HeightUnitLabel" text="{dialogModel>/text/heightUnitLabel}"/>
-			<core:InvisibleText id="sapUiRtaAddIFrameDialog_ParameterSearchLabel" text="{dialogModel>/text/parameterSearchLabel}"/>
+			<core:InvisibleText id="sapUiRtaAddIFrameDialog_WidthUnitLabel" text="{/text/widthUnitLabel}"/>
+			<core:InvisibleText id="sapUiRtaAddIFrameDialog_HeightUnitLabel" text="{/text/heightUnitLabel}"/>
+			<core:InvisibleText id="sapUiRtaAddIFrameDialog_ParameterSearchLabel" text="{/text/parameterSearchLabel}"/>
 		</content>
 
 		<beginButton>
@@ -203,9 +200,9 @@
 				id="sapUiRtaAddIFrameDialogSaveButton"
 				class="sapUiRtaAddIFrameDialogSaveButton"
 				type="Emphasized"
-				text="{dialogModel>/text/saveText}"
+				text="{/text/saveText}"
 				press="onSavePress"
-				enabled="{= !!${dialogModel>/resolvedUrl/url} &amp;&amp; ${dialogModel>/resolvedUrl/errorCode} &lt; 2 }"
+				enabled="{= !!${/frameUrl/value} }"
 			/>
 		</beginButton>
 		<endButton>
@@ -213,7 +210,7 @@
 				id="sapUiRtaAddIFrameDialogCancelButton"
 				class="sapUiRtaAddIFrameDialogCancelButton"
 				type="Transparent"
-				text="{dialogModel>/text/cancelText}"
+				text="{/text/cancelText}"
 				press="onCancelPress"
 			/>
 		</endButton>
