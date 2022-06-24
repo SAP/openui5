@@ -58,8 +58,6 @@ sap.ui.define([
 				return oModifier.insertAggregation(oControl, sAggregationName, oIFrame, iIndex, oView);
 			})
 			.then(function() {
-				// the URL needs to be set after the IFrame is inserted to prevent the automatic resolving of potential binding in the URL
-				oModifier.setProperty(oIFrame, "url", oChange.getContent().url);
 				oChange.setRevertData([oModifier.getId(oIFrame)]);
 			});
 	};

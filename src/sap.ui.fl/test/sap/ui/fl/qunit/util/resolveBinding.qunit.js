@@ -146,22 +146,6 @@ sap.ui.define([
 				"then the formatter is executed"
 			);
 		});
-
-		QUnit.test("when a string contains invalid bindings with nested brackets", function(assert) {
-			assert.throws(
-				function() { resolveBinding("{Test{Hi}}", this.oView); },
-				/Binding could not be resolved/,
-				"then an error is raised"
-			);
-		});
-
-		QUnit.test("when a string contains an invalid JSON object", function(assert) {
-			assert.throws(
-				function() { resolveBinding("{'Product':'{Product}'}", this.oView); },
-				/Binding could not be resolved/,
-				"then an error is raised"
-			);
-		});
 	});
 
 	QUnit.done(function () {
