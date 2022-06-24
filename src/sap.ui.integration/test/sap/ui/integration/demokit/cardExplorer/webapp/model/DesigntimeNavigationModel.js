@@ -16,7 +16,14 @@ sap.ui.define([
 				title: 'Create a Configuration',
 				icon: 'sap-icon://create-form',
 				target: 'designtime',
-				key: 'create'
+				key: 'create',
+				items: [
+					{
+						title: 'Separate the Configuration',
+						target: 'designtime',
+						key: 'separate'
+					}
+				]
 			},
 			{
 				title: 'Configurations and API',

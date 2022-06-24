@@ -1,0 +1,184 @@
+{
+	"generalGroup": {
+		"type": "group",
+		"label": "All Data Type",
+		"expanded": false,
+		"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+	},
+	"cardTitle": {
+		"manifestpath": "/sap.card/configuration/parameters/cardTitle/value",
+		"type": "string",
+		"translatable": true,
+		"required": true,
+		"label": "cardTitle",
+		"allowDynamicValues": true,
+		"editableToUser": false,
+		"visibleToUser": true,
+		"description": "Card Title",
+		"cols": 1,
+		"testJS": "sap/ui5/test/editor/listcard/dt/TestJs1",
+		"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+	},
+	"stringWithTextArea": {
+		"manifestpath": "/sap.card/configuration/parameters/stringWithTextArea/value",
+		"type": "string",
+		"label": "Use TextArea for a string field",
+		"testJS": "sap/ui5/test/editor/listcard/dt/TestJs2",
+		"visualization": {
+			"type": "TextArea",
+			"settings": {
+				"value": "{currentSettings>value}",
+				"width": "100%",
+				"editable": "{config/editable}",
+				"placeholder": "{currentSettings>placeholder}",
+				"rows": 7
+			}
+		}
+	},
+	"stringLabelTrans": {
+		"manifestpath": "/sap.card/configuration/parameters/stringLabelTrans/value",
+		"type": "string",
+		"label": "{i18n>TRANSLATED_STRING_LABEL}",
+		"testJS": "sap/ui5/test/editor/listcard/dt/TestJs3",
+		"cols": 2,
+		"translatable": true,
+		"allowDynamicValues": false
+	},
+	"stringLabelTrans2": {
+		"manifestpath": "/sap.card/configuration/parameters/stringLabelTrans2/value",
+		"type": "string",
+		"label": "{{TRANSLATED_STRING_LABEL}}",
+		"translatable": true,
+		"allowDynamicValues": false,
+		"description": "A very long description text that should wrap into the next line"
+	},
+	"stringWithTranslatedValue": {
+		"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValue/value",
+		"type": "string",
+		"label": "String with translated value",
+		"translatable": true
+	},
+	"stringWithTranslatedValueIni18nFormat": {
+		"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedValueIni18nFormat/value",
+		"type": "string",
+		"label": "String with translated value in i18n format"
+	},
+	"parameterSyntaxInValue": {
+		"manifestpath": "/sap.card/configuration/parameters/parameterSyntaxInValue/value",
+		"type": "string",
+		"translatable": true,
+		"required": true,
+		"label": "Parameter syntax in value"
+	},
+	"integer": {
+		"manifestpath": "/sap.card/configuration/parameters/integer/value",
+		"type": "integer",
+		"label": "Integer Type",
+		"visualization": {
+			"type": "Slider",
+			"settings": {
+				"value": "{currentSettings>value}",
+				"min": 0,
+				"max": 10,
+				"width": "100%",
+				"showAdvancedTooltip": true,
+				"showHandleTooltip": false,
+				"inputsAsTooltips": true,
+				"enabled": "{currentSettings>editable}"
+			}
+		}
+	},
+	"number": {
+		"manifestpath": "/sap.card/configuration/parameters/number/value",
+		"type": "number",
+		"label": "{i18n>TRANSLATED_NUMBER_LABEL}"
+	},
+	"boolean": {
+		"manifestpath": "/sap.card/configuration/parameters/boolean/value",
+		"description": "Description",
+		"label": "long long long long long long long long long long label",
+		"type": "boolean",
+		"visualization": {
+			"type": "Switch",
+			"settings": {
+				"state": "{currentSettings>value}",
+				"customTextOn": "Yes",
+				"customTextOff": "No",
+				"enabled": "{currentSettings>editable}"
+			}
+		}
+	},
+	"booleanLabelTrans": {
+		"manifestpath": "/sap.card/configuration/parameters/booleanLabelTrans/value",
+		"type": "boolean",
+		"label": "{i18n>TRANSLATED_BOOLEAN_LABEL}"
+	},
+	"dateLabelTrans": {
+		"manifestpath": "/sap.card/configuration/parameters/dateLabelTrans/value",
+		"type": "date",
+		"label": "{i18n>TRANSLATED_DATE_LABEL}"
+	},
+	"dateTimeLabelTrans": {
+		"manifestpath": "/sap.card/configuration/parameters/dateTimeLabelTrans/value",
+		"type": "datetime",
+		"label": "{i18n>TRANSLATED_DATETIME_LABEL}"
+	},
+	"enum": {
+		"manifestpath": "/sap.card/configuration/parameters/enum/value",
+		"label": "Enumerations",
+		"type": "enum",
+		"description": "teat test",
+		"required": true,
+		"enum": [
+			"Option A",
+			"Option B",
+			"Option C"
+		]
+	},
+	"stringArray": {
+		"manifestpath": "/sap.card/configuration/parameters/stringArray/value",
+		"label": "String Array",
+		"type": "string[]",
+		"editable": true,
+		"values": {
+			"data": {
+				"json": [
+					{ "text": 0.3, "key": "key1", "additionalText": 1293883200000, "icon": "sap-icon://accept" },
+					{ "text": 0.6, "key": "key2", "additionalText": 1293883200000, "icon": "sap-icon://cart" },
+					{ "text": 0.8, "key": "key3", "additionalText": 1293883200000, "icon": "sap-icon://zoom-in" }
+				],
+				"path": "/"
+			},
+			"item": {
+				"text": "Percent: {= format.percent(${text}) }",
+				"key": "{key}",
+				"additionalText": "datetime: {= format.dateTime(${additionalText}, {style: 'long'}) }",
+				"icon": "{icon}"
+			}
+		}
+	},
+	"contextModelSyntax": {
+		"manifestpath": "/sap.card/configuration/parameters/contextModelSyntax/value",
+		"type": "string[]",
+		"values": {
+			"data": {
+				"request": {
+					"url": "{{destinations.northwind}}/Customers",
+					"parameters": {
+						"$select": "CustomerID, CompanyName, Country, City, Address"
+					},
+					"headers": {
+						"test1": "{context>sap.successfactors/currentUser/id/value}",
+						"test2": "{context>sap.successfactors/currentUser/id/label}"
+					}
+				},
+				"path": "/value"
+			},
+			"item": {
+				"text": "{CompanyName}",
+				"key": "{CustomerID}",
+				"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+			}
+		}
+	}
+}
