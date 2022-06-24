@@ -1462,6 +1462,7 @@ sap.ui.define([
 	 * @param {object} oData Data that should be imported
 	 * @param {map} mChangedEntities Map of changed entities
 	 * @param {object} oResponse Response where the data came from
+	 * @param {object} oRequest The request object
 	 * @param {string} [sPath] The path to the data
 	 * @param {string} [sDeepPath] The deep path to the data
 	 * @param {string} [sKey] The cache key to the data if known
@@ -1476,7 +1477,7 @@ sap.ui.define([
 	 * @return {string|string[]} Key of imported data or array of keys in case of nested entries
 	 * @private
 	 */
-	ODataModel.prototype._importData = function(oData, mChangedEntities, oResponse, sPath,
+	ODataModel.prototype._importData = function(oData, mChangedEntities, oResponse, oRequest, sPath,
 			sDeepPath, sKey, bFunctionImport, sPathFromCanonicalParent, bSideEffects) {
 		var that = this,
 			aList, oResult, oEntry, oCurrentEntry;
@@ -1487,7 +1488,7 @@ sap.ui.define([
 			aList = [];
 			each(oData.results, function(i, entry) {
 				var sKey = that._getKey(entry);
-				sKey = that._importData(entry, mChangedEntities, oResponse,
+				sKey = that._importData(entry, mChangedEntities, oResponse, /*oRequest*/undefined,
 					sPath.substr(0, sPath.lastIndexOf("/")), sDeepPath, sKey,
 					/*bFunctionImport*/undefined, /*sPathFromCanonicalParent*/undefined,
 					bSideEffects);
@@ -1543,8 +1544,9 @@ sap.ui.define([
 					var sNewPath = sPath + "/" + sName;
 					var sNewDeepPath = sDeepPath + "/" + sName;
 
-					oResult = that._importData(oProperty, mChangedEntities, oResponse, sNewPath,
-						sNewDeepPath, undefined, false, "/" + sKey + "/" + sName, bSideEffects);
+					oResult = that._importData(oProperty, mChangedEntities, oResponse,
+						/*oRequest*/undefined, sNewPath, sNewDeepPath, undefined, false,
+						"/" + sKey + "/" + sName, bSideEffects);
 					if (Array.isArray(oResult)) {
 						oEntry[sName] = {__list: oResult};
 						if (bSideEffects) {
@@ -1557,7 +1559,6 @@ sap.ui.define([
 									// ODataModel#requestSideEffects; see BLI CPOUI5MODELS-656
 									delete oEntry[sName];
 								});
-
 						}
 					} else {
 						if (oCurrentEntry[sName] && oCurrentEntry[sName].__ref) {
@@ -1583,6 +1584,9 @@ sap.ui.define([
 					oExistingContext.setUpdated(false);
 				});
 				oExistingContext.setPreliminary(false);
+			}
+			if (oRequest && oRequest.created) {
+				this._cleanupAfterCreate(oRequest, sKey);
 			}
 			this._updateChangedEntity(sKey, oEntry);
 			mChangedEntities[sKey] = true;
@@ -4264,10 +4268,10 @@ sap.ui.define([
 				if (oRequest.key || oRequest.created) {
 					// no need to pass sideEffects because side-effects requests don't have a key or
 					// a created property attached to the request
-					that._importData(oImportData, mLocalGetEntities, oResponse, /*sPath*/undefined,
-						/*sDeepPath*/undefined, /*sKey*/undefined, bIsFunction);
+					that._importData(oImportData, mLocalGetEntities, oResponse, oRequest,
+						/*sPath*/undefined, /*sDeepPath*/undefined, /*sKey*/undefined, bIsFunction);
 				} else {
-					that._importData(oImportData, mLocalGetEntities, oResponse, sPath,
+					that._importData(oImportData, mLocalGetEntities, oResponse, oRequest, sPath,
 						oRequest.deepPath, /*sKey*/undefined, bIsFunction,
 						/*sPathFromCanonicalParent*/undefined, oRequest.sideEffects);
 				}
@@ -4311,29 +4315,7 @@ sap.ui.define([
 					mEntityTypes[oEntityType.entityType] = true;
 				}
 				if (oRequest.key) {
-					// for createEntry entities change context path to new one
 					if (oRequest.created) {
-						var sKey = this._getKey(oResultData);
-						// rewrite context for new path
-						var oContext = this.getContext("/" + oRequest.key);
-						sDeepPath = oRequest.deepPath;
-						if (oContext.isTransient() && sDeepPath.endsWith(")")) {
-							oRequest.deepPath = sDeepPath.slice(0, sDeepPath.lastIndexOf("("))
-								+ sKey.slice(sKey.indexOf("("));
-						}
-						this._updateContext(oContext, '/' + sKey, oRequest.deepPath);
-						oContext.setUpdated(true);
-						// register function to reset updated flag call as callAfterUpdate
-						this.callAfterUpdate(function() {
-							oContext.setUpdated(false);
-						});
-						//delete created flag after successful creation
-						oEntity = this._getEntity(sKey);
-						if (oEntity) {
-							delete oEntity.__metadata.created;
-							// before deleting the old entity copy and update the changes
-							this._keepChangesAfterCreate(oRequest, oEntity, sKey);
-						}
 						this._removeEntity(oRequest.key);
 					} else {
 						// do not call _removeEntity after successful function import call as
@@ -4376,17 +4358,29 @@ sap.ui.define([
 	 *
 	 * @param {object} oRequest
 	 *   The request object for a created entity
-	 * @param {object} oEntity
-	 *   The persisted and retrieved entity object
 	 * @param {string} sKey
 	 *   The key of the created entity
 	 *
 	 * @private
 	 */
-	ODataModel.prototype._keepChangesAfterCreate = function (oRequest, oEntity, sKey) {
-		var aNavProps, sProperty,
-			oChangedEntity = this.mChangedEntities[oRequest.key];
+	ODataModel.prototype._cleanupAfterCreate = function (oRequest, sKey) {
+		var oChangedEntity, aNavProps, sProperty,
+			oContext = this.getContext("/" + oRequest.key),
+			sDeepPath = oRequest.deepPath,
+			oEntity = this._getEntity(sKey);
 
+		if (oContext.isTransient() && sDeepPath.endsWith(")")) {
+			oRequest.deepPath = sDeepPath.slice(0, sDeepPath.lastIndexOf("("))
+				+ sKey.slice(sKey.indexOf("("));
+		}
+		this._updateContext(oContext, '/' + sKey, oRequest.deepPath);
+		oContext.setUpdated(true);
+		this.callAfterUpdate(function() {
+			oContext.setUpdated(false);
+		});
+		delete oEntity.__metadata.created;
+		// before deleting the old entity copy and update the changes
+		oChangedEntity = this.mChangedEntities[oRequest.key];
 		if (oChangedEntity) {
 			aNavProps = this.oMetadata._getNavigationPropertyNames(
 				this.oMetadata._getEntityTypeByPath(sKey));
@@ -4400,11 +4394,10 @@ sap.ui.define([
 				}
 			}
 			this.mChangedEntities[sKey] = oChangedEntity;
-			this._updateChangedEntity(sKey, oEntity);
 			// cleanup also further POST request for the just created entity
 			this.abortInternalRequest(this._resolveGroup(oRequest.key).groupId,
 				{requestKey: oRequest.key});
-		}
+		} // else case may happen if ODataModel#create is called which does not use the cache
 	};
 
 	/**
