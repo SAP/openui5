@@ -2878,35 +2878,29 @@ function(
 
 		Select.prototype.setValueState = function(sValueState) {
 			var sOldValueState = this.getValueState(),
+				oDomRef,
 				oPicker;
 
 			if (sValueState === sOldValueState) {
 				return this;
 			}
-
 			oPicker = this.getPicker();
 
 			if (oPicker && oPicker.isA("sap.m.Popover") && oPicker.isOpen() && oPicker.oPopup.getOpenState() === OpenState.CLOSING) {
 				oPicker.attachEventOnce("afterClose", function(oEvent) {
-					return this._finishSettingValueState(sValueState);
+					this._updatePickerAriaLabelledBy(sValueState);
 				}, this);
 			} else {
-				return this._finishSettingValueState(sValueState);
+				this._updatePickerAriaLabelledBy(sValueState);
 			}
 
-		};
-
-		Select.prototype._finishSettingValueState = function(sValueState) {
-
 			this.setProperty("valueState", sValueState);
-
-			this._updatePickerAriaLabelledBy(sValueState);
 
 			if (this._isFocused()) {
 				this._announceValueStateText();
 			}
 
-			var oDomRef = this.getDomRefForValueState();
+			oDomRef = this.getDomRefForValueState();
 
 			if (!oDomRef) {
 				return this;
