@@ -3441,36 +3441,27 @@ sap.ui.define([
 					getPath : function () { return "baz(3)"; },
 					requestSideEffects : function () {}
 				},
-				oChild4 = {
-					oCache : null, // no own cache
-					getPath : function () { return "refresh(4)/toN"; },
-					refreshInternal : function () {}
-				},
 				sGroupId = "group",
 				oHelperMock = this.mock(_Helper),
 				oModel = {
 					getDependentBindings : function () {}
 				},
-				mNavigationPropertyPaths = oFixture.bPrefix
-					? {"~/refresh/toN" : true}
-					: {"refresh/toN" : true},
 				aPaths = [],
 				aPaths0 = ["A"],
 				aPaths1 = [/*empty!*/],
 				aPaths3 = ["A"],
 				oPromise0 = {index : 0}, // give deepEqual a chance
 				oPromise3 = {index : 3},
-				oPromise4 = {index : 4},
 				aPromises = [];
 
 			if (oFixture.oContext) {
 				oBinding.oModel = oModel;
 				this.mock(oModel).expects("getDependentBindings")
 					.withExactArgs(sinon.match.same(oFixture.oContext))
-					.returns([oChild0, oChild1, oChild2, oChild3, oChild4]);
+					.returns([oChild0, oChild1, oChild2, oChild3]);
 			} else {
 				this.mock(oBinding).expects("getDependentBindings").withExactArgs()
-					.returns([oChild0, oChild1, oChild2, oChild3, oChild4]);
+					.returns([oChild0, oChild1, oChild2, oChild3]);
 			}
 			oHelperMock.expects("stripPathPrefix")
 				.withExactArgs(oFixture.bPrefix ? "~/foo" : "foo", sinon.match.same(aPaths))
@@ -3483,7 +3474,7 @@ sap.ui.define([
 				.returns(aPaths1);
 			this.mock(oChild2).expects("visitSideEffects")
 				.withExactArgs(sGroupId, sinon.match.same(aPaths), null,
-					sinon.match.same(mNavigationPropertyPaths), sinon.match.same(aPromises),
+					sinon.match.same(aPromises),
 					oFixture.bPrefix ? "~/n/a/toN" : "n/a/toN");
 			oHelperMock.expects("stripPathPrefix")
 				.withExactArgs(oFixture.bPrefix ? "~/baz" : "baz", sinon.match.same(aPaths))
@@ -3491,14 +3482,12 @@ sap.ui.define([
 			this.mock(oChild3).expects("requestSideEffects")
 				.withExactArgs(sGroupId, sinon.match.same(aPaths3))
 				.returns(oPromise3);
-			this.mock(oChild4).expects("refreshInternal").withExactArgs("", sGroupId)
-				.returns(oPromise4);
 
 			// code under test
-			oBinding.visitSideEffects(sGroupId, aPaths, oFixture.oContext, mNavigationPropertyPaths,
-				aPromises, oFixture.bPrefix ? "~" : undefined);
+			oBinding.visitSideEffects(sGroupId, aPaths, oFixture.oContext, aPromises,
+				oFixture.bPrefix ? "~" : undefined);
 
-			assert.deepEqual(aPromises, [oPromise0, oPromise3, oPromise4]);
+			assert.deepEqual(aPromises, [oPromise0, oPromise3]);
 		});
 	});
 

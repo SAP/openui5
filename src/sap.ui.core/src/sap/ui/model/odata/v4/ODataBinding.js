@@ -1283,8 +1283,7 @@ sap.ui.define([
 
 	/**
 	 * Recursively visits all dependent bindings of (the given context of) this binding. Bindings
-	 * with an own cache will request side effects themselves as applicable. Bindings mentioned
-	 * in <code>mNavigationPropertyPaths</code> will refresh themselves.
+	 * with an own cache will request side effects themselves as applicable.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID to be used for requesting side effects
@@ -1294,9 +1293,6 @@ sap.ui.define([
 	 *   because they may have changed due to side effects of a previous update
 	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The context for which to request side effects; if missing, the whole binding is affected
-	 * @param {object} mNavigationPropertyPaths
-	 *   Hash set of collection-valued navigation property meta paths (relative to this binding's
-	 *   cache root) which need to be refreshed, maps string to <code>true</code>; read-only
 	 * @param {Promise[]} aPromises
 	 *   List of (sync) promises which is extended for each call to
 	 *   {@link sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects} or

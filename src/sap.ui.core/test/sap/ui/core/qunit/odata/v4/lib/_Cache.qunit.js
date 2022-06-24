@@ -4000,7 +4000,7 @@ sap.ui.define([
 		oHelperMock.expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(mQueryOptionsForPath), [sRequestedPropertyPath],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				"~metaPath~", {})
+				"~metaPath~")
 			.returns(mQueryOptions);
 		oHelperMock.expects("buildPath").withExactArgs("~metaPath~", undefined).returns("~2~");
 		this.oRequestorMock.expects("fetchType").never();
@@ -4078,7 +4078,7 @@ sap.ui.define([
 		oHelperMock.expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(mQueryOptionsForPath), [sRequestedPropertyPath],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				"/Employees/entity/path", {})
+				"/Employees/entity/path")
 			.returns(mQueryOptions);
 		oHelperMock.expects("buildPath").withExactArgs("/Employees", "entity/path")
 			.returns("/Employees/entity/path");
@@ -4196,7 +4196,7 @@ sap.ui.define([
 		oHelperMock.expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(mQueryOptionsForPath), ["foo/bar/baz/qux"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				oCache.sMetaPath + "/entity/path", {})
+				oCache.sMetaPath + "/entity/path")
 			.returns(mQueryOptions);
 		this.oRequestorMock.expects("fetchType").never();
 		oHelperMock.expects("buildPath").withExactArgs(oCache.sMetaPath + "/entity/path", undefined)
@@ -4295,12 +4295,12 @@ sap.ui.define([
 		oHelperMock.expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(mQueryOptionsForPath), ["property/foo"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				oCache.sMetaPath, {})
+				oCache.sMetaPath)
 			.returns(mQueryOptionsFoo);
 		oHelperMock.expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(mQueryOptionsForPath), ["property/bar"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				oCache.sMetaPath, {})
+				oCache.sMetaPath)
 			.returns(mQueryOptionsBar);
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptionsFoo), false, true)
@@ -4365,7 +4365,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(mQueryOptionsForPath), ["property"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				oCache.sMetaPath, {})
+				oCache.sMetaPath)
 			.returns(mQueryOptions);
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptions), false, true)
@@ -4436,7 +4436,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(mQueryOptionsForPath), ["property"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				oCache.sMetaPath, {})
+				oCache.sMetaPath)
 			.returns(mQueryOptions);
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, sinon.match.same(mQueryOptions), false, true)
@@ -4493,7 +4493,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(mQueryOptionsForPath), ["property"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				oCache.sMetaPath, {})
+				oCache.sMetaPath)
 			.returns(undefined);
 		this.oRequestorMock.expects("request").never();
 		this.mock(_Helper).expects("updateSelected").never();
@@ -8552,7 +8552,6 @@ sap.ui.define([
 							foo : "bar",
 							"sap-client" : "123"
 						},
-						mNavigationPropertyPaths = {},
 						aPaths = ["ROOM_ID"],
 						sPredicate,
 						aPredicates,
@@ -8633,7 +8632,7 @@ sap.ui.define([
 					that.mock(_Helper).expects("intersectQueryOptions")
 						.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 							sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
-							"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths), "", true)
+							"/TEAMS/Foo", "", true)
 						.returns(mMergedQueryOptions);
 					// Note: fetchTypes() would have been triggered by read() already
 					that.mock(oCache).expects("fetchTypes").withExactArgs()
@@ -8678,8 +8677,7 @@ sap.ui.define([
 					}
 
 					// code under test
-					return oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths,
-							aPredicates, bSingle)
+					return oCache.requestSideEffects(oGroupLock, aPaths, aPredicates, bSingle)
 						.then(function () {
 							var oElement,
 								sKeys = "",
@@ -8749,7 +8747,6 @@ sap.ui.define([
 				key : "b"
 			}],
 			sElementsJSON = JSON.stringify(aElements),
-			mNavigationPropertyPaths = {},
 			aPaths = [],
 			oPromise,
 			mQueryOptions = {},
@@ -8772,7 +8769,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths), "", true)
+				"/TEAMS/Foo", "", true)
 			.returns(null); // "nothing to do"
 		this.mock(_Helper).expects("getKeyFilter").never();
 		this.mock(_Helper).expects("selectKeyProperties").never();
@@ -8780,7 +8777,7 @@ sap.ui.define([
 		this.oRequestorMock.expects("request").never();
 
 		// code under test
-		oPromise = oCache.requestSideEffects(null, aPaths, mNavigationPropertyPaths, 0, 1);
+		oPromise = oCache.requestSideEffects(null, aPaths, 0, 1);
 
 		assert.ok(oPromise instanceof SyncPromise);
 		assert.strictEqual(oPromise.getResult(), undefined);
@@ -8810,7 +8807,7 @@ sap.ui.define([
 				that.oRequestorMock.expects("request").never();
 
 				// code under test
-				assert.strictEqual(oCache.requestSideEffects(null, null, {}, [], false),
+				assert.strictEqual(oCache.requestSideEffects(null, null, [], false),
 					SyncPromise.resolve());
 
 				assert.deepEqual(oCache.aElements, [], "all elements discarded");
@@ -8831,7 +8828,6 @@ sap.ui.define([
 			oHelperMock = this.mock(_Helper),
 			mMergeableQueryOptions = {},
 			mMergedQueryOptions = {},
-			mNavigationPropertyPaths = {},
 			oNewValue = {
 				"@$ui5._" : {predicate : "('c')"},
 				Bar : {
@@ -8861,7 +8857,7 @@ sap.ui.define([
 				oHelperMock.expects("intersectQueryOptions")
 					.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 						sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
-						"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths), "", true)
+						"/TEAMS/Foo", "", true)
 					.returns(mMergedQueryOptions);
 				oHelperMock.expects("getKeyFilter")
 					.withExactArgs(sinon.match.same(oCache.aElements[2]), "/TEAMS/Foo",
@@ -8891,7 +8887,7 @@ sap.ui.define([
 
 				// code under test
 				return oCache
-					.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths, ["('c')"])
+					.requestSideEffects(oGroupLock, aPaths, ["('c')"])
 					.then(function () {
 						assert.notOk(oFixture.error);
 					}, function (oResult) {
@@ -8910,7 +8906,6 @@ sap.ui.define([
 			var oGroupLock = {},
 				mMergeableQueryOptions = {},
 				mMergedQueryOptions = {},
-				mNavigationPropertyPaths = {},
 				aPaths = [],
 				mQueryOptions = {},
 				sResourcePath = "TEAMS('42')/Foo",
@@ -8932,7 +8927,7 @@ sap.ui.define([
 					that.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 							sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 							sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
-							"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths), "", true)
+							"/TEAMS/Foo", "", true)
 						.returns(mMergedQueryOptions);
 					that.mock(_Helper).expects("getKeyFilter")
 						.withExactArgs(sinon.match.same(oCache.aElements[2]), "/TEAMS/Foo",
@@ -8953,7 +8948,7 @@ sap.ui.define([
 
 					// code under test
 					return oCache
-						.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths, ["('c')"])
+						.requestSideEffects(oGroupLock, aPaths, ["('c')"])
 						.then(function () {
 							assert.ok(false);
 						}, function (oError) {
@@ -8983,7 +8978,6 @@ sap.ui.define([
 					$select : ["Name"]
 				},
 				mMergeableQueryOptions = {},
-				mNavigationPropertyPaths = {},
 				oNewValue = {value : [{"@$ui5._" : {predicate : "('c')"}}]},
 				aPaths = ["EMPLOYEE"],
 				mQueryOptions = {},
@@ -9008,7 +9002,7 @@ sap.ui.define([
 			this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 					sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 					sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-					"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths), "", true)
+					"/TEAMS/Foo", "", true)
 				.returns(mIntersectedQueryOptions);
 			this.mock(_Helper).expects("getKeyFilter")
 				.withExactArgs(sinon.match.same(oCache.aElements[0]), "/TEAMS/Foo",
@@ -9060,7 +9054,7 @@ sap.ui.define([
 
 			// code under test
 			return oCache
-				.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths, ["('c')"])
+				.requestSideEffects(oGroupLock, aPaths, ["('c')"])
 				.then(function () {
 					if (bSkip === false) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [["", "EMPLOYEE"]]);
@@ -9081,7 +9075,6 @@ sap.ui.define([
 			function (assert) {
 		var oCache = this.createCache("Employees"),
 			oGroupLock = {},
-			mNavigationPropertyPaths = {},
 			aPaths = [],
 			fnResolve,
 			oPromise;
@@ -9102,13 +9095,12 @@ sap.ui.define([
 		this.mock(_Helper).expects("updateExisting").never();
 
 		// code under test
-		oPromise = oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths, 2, 1);
+		oPromise = oCache.requestSideEffects(oGroupLock, aPaths, 2, 1);
 
 		assert.strictEqual(oPromise.isPending(), true);
 
 		this.mock(oCache).expects("requestSideEffects")
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths),
-				sinon.match.same(mNavigationPropertyPaths), 2, 1)
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), 2, 1)
 			.returns(42);
 
 		// code under test
@@ -10049,7 +10041,6 @@ sap.ui.define([
 					$expand : {expand : null},
 					$select : ["ROOM_ID"]
 				},
-				mNavigationPropertyPaths = {},
 				oNewValue = {},
 				oOldValue = {"@$ui5._" : {predicate : "(~)"}},
 				aPaths = ["ROOM_ID"],
@@ -10069,7 +10060,7 @@ sap.ui.define([
 					sinon.match.same(mQueryOptions),
 					sinon.match.same(aPaths),
 					sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-					"/Employees", sinon.match.same(mNavigationPropertyPaths))
+					"/Employees")
 				.returns(mMergedQueryOptions);
 			this.mock(_Helper).expects("extractMergeableQueryOptions")
 				.withExactArgs(sinon.match.same(mMergedQueryOptions))
@@ -10125,8 +10116,7 @@ sap.ui.define([
 			}
 
 			// code under test
-			oPromise = oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths,
-					sReadPath)
+			oPromise = oCache.requestSideEffects(oGroupLock, aPaths, sReadPath)
 				.then(function () {
 					if (bSkip === false) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [["", "ROOM_ID"]]);
@@ -10173,7 +10163,6 @@ sap.ui.define([
 			oGroupLock = {},
 			mMergeableQueryOptions = {},
 			mMergedQueryOptions = {},
-			mNavigationPropertyPaths = {},
 			oNewValue = {
 				Bar : {
 					"@$ui5._" : {predicate : "('new')"}
@@ -10196,8 +10185,7 @@ sap.ui.define([
 			.returns(mQueryOptions);
 		this.mock(_Helper).expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
-				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				"/Employees", sinon.match.same(mNavigationPropertyPaths))
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata), "/Employees")
 			.returns(mMergedQueryOptions);
 		this.mock(_Helper).expects("extractMergeableQueryOptions")
 			.withExactArgs(sinon.match.same(mMergedQueryOptions)).returns(mMergeableQueryOptions);
@@ -10228,7 +10216,7 @@ sap.ui.define([
 			});
 
 		// code under test
-		return oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths, "~path~")
+		return oCache.requestSideEffects(oGroupLock, aPaths, "~path~")
 			.then(function () {
 				assert.notOk(oFixture.error);
 			}, function (oResult) {
@@ -10258,7 +10246,6 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("SingleCache#requestSideEffects: no need to GET anything", function (assert) {
 		var oCache = this.createSingle("Employees('42')"),
-			mNavigationPropertyPaths = {},
 			aPaths = ["ROOM_ID"],
 			mQueryOptions = {};
 
@@ -10271,8 +10258,7 @@ sap.ui.define([
 			.returns(mQueryOptions);
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
-				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				"/Employees", sinon.match.same(mNavigationPropertyPaths))
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata), "/Employees")
 			.returns(null);
 		this.mock(oCache).expects("fetchValue").never();
 		this.oRequestorMock.expects("buildQueryString").never();
@@ -10282,7 +10268,7 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(
-			oCache.requestSideEffects({/*group lock*/}, aPaths, mNavigationPropertyPaths),
+			oCache.requestSideEffects({/*group lock*/}, aPaths),
 			SyncPromise.resolve()
 		);
 	});
@@ -10295,7 +10281,6 @@ sap.ui.define([
 			oGroupLock = {},
 			mMergeableQueryOptions = {},
 			mMergedQueryOptions = {},
-			mNavigationPropertyPaths = {},
 			oOldValue = {},
 			aPaths = ["ROOM_ID"],
 			oPromise,
@@ -10308,8 +10293,7 @@ sap.ui.define([
 			.returns(mQueryOptions);
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
-				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				"/Employees", sinon.match.same(mNavigationPropertyPaths))
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata), "/Employees")
 			.returns(mMergedQueryOptions);
 		this.mock(_Helper).expects("extractMergeableQueryOptions")
 			.withExactArgs(sinon.match.same(mMergedQueryOptions)).returns(mMergeableQueryOptions);
@@ -10330,7 +10314,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("updateExisting").never(); // ==> #patch also not called
 
 		// code under test
-		oPromise = oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths)
+		oPromise = oCache.requestSideEffects(oGroupLock, aPaths)
 			.then(function () {
 				assert.ok(false, "unexpected success");
 			}, function (oError0) {
@@ -10355,7 +10339,6 @@ sap.ui.define([
 	QUnit.test("SingleCache#requestSideEffects: $expand in intersection", function (assert) {
 		var oCache = this.createSingle("Me"),
 			oError = new Error("Unsupported collection-valued navigation property /Me/B/C"),
-			mNavigationPropertyPaths = {},
 			aPaths = ["B/C"],
 			mQueryOptions = {};
 
@@ -10366,14 +10349,13 @@ sap.ui.define([
 			.returns(mQueryOptions);
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
-				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata), "/Me",
-				sinon.match.same(mNavigationPropertyPaths))
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata), "/Me")
 			.throws(oError);
 		this.mock(oCache).expects("fetchValue").never();
 
 		assert.throws(function () {
 			// code under test
-			oCache.requestSideEffects({/*group lock*/}, aPaths, mNavigationPropertyPaths);
+			oCache.requestSideEffects({/*group lock*/}, aPaths);
 		}, oError);
 	});
 
@@ -10382,7 +10364,6 @@ sap.ui.define([
 		var oCache = this.createSingle("Employees('42')"),
 			oGroupLock = {},
 			mMergedQueryOptions = {},
-			mNavigationPropertyPaths = {},
 			aPaths = ["ROOM_ID"],
 			mQueryOptions = {},
 			oReadError = new Error("read failure");
@@ -10395,8 +10376,7 @@ sap.ui.define([
 			.returns(mQueryOptions);
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
-				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				"/Employees", sinon.match.same(mNavigationPropertyPaths))
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata), "/Employees")
 			.returns(mMergedQueryOptions);
 		this.mock(oCache).expects("fetchValue").never();
 		this.oRequestorMock.expects("buildQueryString").never();
@@ -10406,7 +10386,7 @@ sap.ui.define([
 
 		// code under test
 		assert.throws(function () {
-			oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths);
+			oCache.requestSideEffects(oGroupLock, aPaths);
 		}, new Error("/~/Employees('42'): Cannot call requestSideEffects, cache is broken:"
 			+ " read failure"));
 	});

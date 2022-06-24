@@ -2752,8 +2752,8 @@ sap.ui.define([
 			}
 			// Note: after reset the dependent bindings cannot be found any more
 			aDependentBindings = that.getDependentBindings();
-			// this may reset that.oRefreshPromise
-			that.reset(ChangeReason.Refresh, bKeepCacheOnError ? false : undefined, sGroupId);
+			that.reset(ChangeReason.Refresh, !oCache || (bKeepCacheOnError ? false : undefined),
+				sGroupId); // this may reset that.oRefreshPromise
 			return SyncPromise.all(
 				refreshAll(aDependentBindings).concat(oPromise, oKeptElementsPromise)
 			).then(function () {
@@ -3085,9 +3085,6 @@ sap.ui.define([
 		var aContexts,
 			bMissingPredicate,
 			oModel = this.oModel,
-			// Hash set of collection-valued navigation property meta paths (relative to the cache's
-			// root) which need to be refreshed, maps string to <code>true</code>
-			mNavigationPropertyPaths = {},
 			aPredicates,
 			aPromises,
 			// since this is called from a context or a parent binding, the binding is resolved
@@ -3149,11 +3146,10 @@ sap.ui.define([
 			});
 			if (!bMissingPredicate) {
 				aPromises = this.oCache
-					? [this.oCache.requestSideEffects(this.lockGroup(sGroupId),
-						aPaths, mNavigationPropertyPaths, aPredicates, bSingle)]
+					? [this.oCache.requestSideEffects(this.lockGroup(sGroupId), aPaths, aPredicates,
+						bSingle)]
 					: []; // can happen if invoked via absolute side effect
-				this.visitSideEffects(sGroupId, aPaths, bSingle ? oContext : undefined,
-					mNavigationPropertyPaths, aPromises);
+				this.visitSideEffects(sGroupId, aPaths, bSingle ? oContext : undefined, aPromises);
 
 				return SyncPromise.all(aPromises.map(reportError)).then(function () {
 					return that.refreshDependentListBindingsWithoutCache();

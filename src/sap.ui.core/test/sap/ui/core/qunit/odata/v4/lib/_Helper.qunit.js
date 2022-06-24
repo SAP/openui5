@@ -2266,7 +2266,6 @@ sap.ui.define([
 				"/Me/to1" : "1"
 			}),
 			oHelperMock = this.mock(_Helper),
-			mNavigationPropertyPaths = {},
 			aPaths = [/*"to1", "A/a", "B"*/];
 
 		oHelperMock.expects("addChildrenWithAncestor")
@@ -2292,12 +2291,10 @@ sap.ui.define([
 
 		assert.deepEqual(
 			// code under test
-			_Helper.intersectQueryOptions(mCacheQueryOptions, aPaths, fnFetchMetadata, "/Me",
-				mNavigationPropertyPaths),
+			_Helper.intersectQueryOptions(mCacheQueryOptions, aPaths, fnFetchMetadata, "/Me"),
 			mExpectedResult);
 
 		assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions, "unmodified");
-		assert.deepEqual(mNavigationPropertyPaths, {});
 	});
 });
 
@@ -2352,19 +2349,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[{
-		sPrefix : undefined,
-		mExpectedNavigationPropertyPaths : {"A/toN" : true, toN : true}
-	}, {
-		sPrefix : "~",
-		mExpectedNavigationPropertyPaths : {"~/A/toN" : true, "~/toN" : true}
-	}].forEach(function (oFixture) {
+	[undefined, "~"].forEach(function (sPrefix) {
 		var sTitle = "intersectQueryOptions: collection-valued navigation property"
-				+ "; prefix = " + oFixture.sPrefix;
+				+ "; prefix = " + sPrefix;
 
 		QUnit.test(sTitle, function (assert) {
-			var mNavigationPropertyPaths = {}, // a map w/o values is a set ;-)
-				mCacheQueryOptions = {
+			var mCacheQueryOptions = {
 					$expand : {
 						"A/toN" : null,
 						toN : null
@@ -2385,11 +2375,10 @@ sap.ui.define([
 			// code under test
 			assert.deepEqual(
 				_Helper.intersectQueryOptions(mCacheQueryOptions, ["A", "toN"],
-					fnFetchMetadata, "/Me", mNavigationPropertyPaths, oFixture.sPrefix),
+					fnFetchMetadata, "/Me", sPrefix),
 				mExpectedResult
 			);
 
-			assert.deepEqual(mNavigationPropertyPaths, oFixture.mExpectedNavigationPropertyPaths);
 			assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions,
 				"unmodified");
 		});
@@ -2562,7 +2551,6 @@ sap.ui.define([
 				},
 				fnFetchMetadata = getFetchMetadata(mMetaPath2Type),
 				oHelperMock = this.mock(_Helper),
-				mNavigationPropertyPaths = {},
 				mResult;
 
 			if (o.mSelectKeyProperties) {
@@ -2574,7 +2562,7 @@ sap.ui.define([
 			}
 			// code under test
 			mResult = _Helper.intersectQueryOptions(mCacheQueryOptions, o.aPaths, fnFetchMetadata,
-				"/Me", mNavigationPropertyPaths);
+				"/Me");
 
 			assert.deepEqual(mResult, o.mResult);
 			if (mResult) {
@@ -2582,7 +2570,6 @@ sap.ui.define([
 			}
 			assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions,
 				"unmodified");
-			assert.deepEqual(mNavigationPropertyPaths, {});
 		});
 	});
 
@@ -2599,13 +2586,12 @@ sap.ui.define([
 			fnFetchMetadata = getFetchMetadata({
 				"/Me" : {},
 				"/Me/toA" : "1"
-			}),
-			mNavigationPropertyPaths = {};
+			});
 
 		assert.deepEqual(
 			// code under test
 			_Helper.intersectQueryOptions(mCacheQueryOptions, ["toA"], fnFetchMetadata, "/Me",
-				mNavigationPropertyPaths, "", true),
+				"", true),
 			{
 				$expand : {
 					toA : null
@@ -2616,7 +2602,6 @@ sap.ui.define([
 
 		assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions,
 			"unmodified");
-		assert.deepEqual(mNavigationPropertyPaths, {});
 	});
 
 	//*********************************************************************************************
@@ -2650,15 +2635,13 @@ sap.ui.define([
 					"/Me/toC" : "1"
 				}),
 				oHelperMock = this.mock(_Helper),
-				mNavigationPropertyPaths = {},
 				aPaths = ["toC/d", "D/E/toD/d"],
 				aStrippedPaths0 = ["d"],
 				aStrippedPaths1 = ["d"];
 
 			oHelperMock.expects("intersectQueryOptions")
 				.withExactArgs(sinon.match.same(mCacheQueryOptions),
-					sinon.match.same(aPaths), sinon.match.same(fnFetchMetadata), "/Me",
-					sinon.match.same(mNavigationPropertyPaths), sPrefix)
+					sinon.match.same(aPaths), sinon.match.same(fnFetchMetadata), "/Me", sPrefix)
 				.callThrough(); // for code under test
 			// intersect for $select tested already above - no sinon.match.same tests
 			oHelperMock.expects("addChildrenWithAncestor").withExactArgs(aPaths, [], {});
@@ -2670,8 +2653,7 @@ sap.ui.define([
 				.returns(aStrippedPaths0);
 			oHelperMock.expects("intersectQueryOptions")
 				.withExactArgs({}, sinon.match.same(aStrippedPaths0),
-					sinon.match.same(fnFetchMetadata), "/Me/toC",
-					sinon.match.same(mNavigationPropertyPaths), bPrefix ? "~/toC" : "toC")
+					sinon.match.same(fnFetchMetadata), "/Me/toC", bPrefix ? "~/toC" : "toC")
 				.returns(mCacheQueryOptions0);
 			// second navigation property
 			oHelperMock.expects("addChildrenWithAncestor")
@@ -2682,16 +2664,14 @@ sap.ui.define([
 			oHelperMock.expects("intersectQueryOptions")
 				.withExactArgs(sinon.match.same(mCacheQueryOptions.$expand["D/E/toD"]),
 					sinon.match.same(aStrippedPaths1), sinon.match.same(fnFetchMetadata),
-					"/Me/D/E/toD", sinon.match.same(mNavigationPropertyPaths),
-					bPrefix ? "~/D/E/toD" : "D/E/toD")
+					"/Me/D/E/toD", bPrefix ? "~/D/E/toD" : "D/E/toD")
 				.returns(mCacheQueryOptions1);
 
 			assert.deepEqual(
 				// code under test
 				_Helper.intersectQueryOptions(mCacheQueryOptions, aPaths, fnFetchMetadata, "/Me",
-					mNavigationPropertyPaths, sPrefix),
+					sPrefix),
 				mExpectedResult);
-			assert.deepEqual(mNavigationPropertyPaths, {});
 		});
 	});
 
@@ -2724,18 +2704,16 @@ sap.ui.define([
 			});
 
 		function test(mExpectedResult) {
-			var sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
-				mNavigationPropertyPaths = {};
+			var sCacheQueryOptions = JSON.stringify(mCacheQueryOptions);
 
 			// code under test
 			assert.deepEqual(
 				_Helper.intersectQueryOptions(mCacheQueryOptions, ["B/C", "D", "B/toN", "toN"],
-					fnFetchMetadata, "/Me", mNavigationPropertyPaths),
+					fnFetchMetadata, "/Me"),
 				mExpectedResult);
 
 			assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions,
 				"unmodified");
-			assert.deepEqual(mNavigationPropertyPaths, {});
 		}
 
 		test({$select : ["B/C", "D"], "sap-client" : "123"});
