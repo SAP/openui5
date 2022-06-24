@@ -1603,13 +1603,20 @@ sap.ui.define([
 		/**
 		 * Determines whether the given property path is selected in the given query options.
 		 *
-		* A property path is selected if $select in the query options or the matching $expand
-		* <ul>
-		*   <li> is missing
-		*   <li> contains "*"
-		*   <li> contains the property or its surrounding complex type
-		* </ul>.
-		*
+		 * A property path is selected if $select in the query options or the matching $expand
+		 * <ul>
+		 *   <li> is missing
+		 *   <li> contains "*"
+		 *   <li> contains the property or its surrounding complex type.
+		 * </ul>
+		 *
+		 * Note: The function works w/o metadata, this means that not for all combinations of the
+		 * given arguments the function might return the right result.
+		 * Example: Assuming SO_2_BP is a navigation property, then
+		 * <code>_Helper.isSelected("SO_2_BP/Picture", {$select : ["*"]})</code>
+		 * will return true, because SO_2_BP would be taken as a structural property. So far this is
+		 * ok, because within all known scenarios such combinations do not happen.
+		 *
 		 * @param {string} sPropertyPath The path to the structural property as meta path
 		 * @param {object} [mQueryOptions] The query options to be analyzed
 		 * @returns {boolean} Whether the property for the given path was already selected
