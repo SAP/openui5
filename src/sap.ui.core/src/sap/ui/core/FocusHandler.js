@@ -159,14 +159,13 @@ sap.ui.define([
 		 * @private
 		 */
 		FocusHandler.prototype.restoreFocus = function(oControlFocusInfo){
-			var oInfo = oControlFocusInfo || this.oLastFocusedControlInfo,
-				oControl;
+			var oInfo = oControlFocusInfo || this.oLastFocusedControlInfo;
 
 			if (!oInfo) {
 				return;
 			}
 
-			oControl = getControlById(oInfo.id);
+			var oControl = getControlById(oInfo.id);
 
 			var oFocusRef = oInfo.focusref;
 			if (oControl
@@ -250,9 +249,7 @@ sap.ui.define([
 		 * @private
 		 */
 		FocusHandler.prototype.onfocusEvent = function(sControlId){
-			var oControl;
-
-			oControl = getControlById(sControlId);
+			var oControl = getControlById(sControlId);
 
 			if (oControl) {
 				this.oLastFocusedControlInfo = this.getControlFocusInfo(sControlId);
@@ -334,17 +331,14 @@ sap.ui.define([
 		 * @private
 		 */
 		var triggerFocusleave = function(sControlId, sRelatedControlId){
-			var oControl,
-				oRelatedControl;
-
-			oControl = getControlById(sControlId);
+			var oControl = getControlById(sControlId);
 			if (oControl) {
 				var oEvent = jQuery.Event("sapfocusleave");
 				oEvent.target = oControl.getDomRef();
-				oRelatedControl = getControlById(sRelatedControlId);
+				var oRelatedControl = getControlById(sRelatedControlId);
 				oEvent.relatedControlId = oRelatedControl ? oRelatedControl.getId() : null;
 				oEvent.relatedControlFocusInfo = oRelatedControl ? oRelatedControl.getFocusInfo() : null;
-				//TODO: Cleanup the popup! The following is shit
+				// TODO: Recheck how focus handling works together with the Popup and different UIAreas
 				// soft dependency to Core to prevent cyclic dependencies
 				Core = Core || sap.ui.require("sap/ui/core/Core");
 				if (Core) {
@@ -359,7 +353,8 @@ sap.ui.define([
 						}
 					}
 					if (oUiArea) {
-						//if rendering moves to UIArea and UIArea will be a ManagedObjectRegistry _handleElement must not go public
+						// if rendering moves to the UIArea and the UIArea will have a ManagedObjectRegistry
+						// the _handleElement does not need to be "public" on the UIArea's interface
 						oUiArea._handleEvent(oEvent);
 					}
 				}
