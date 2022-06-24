@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Descendant",
-	"sap/ui/fl/variants/VariantManagement"
+	"sap/m/VariantManagement"
 ], function(
 	Opa5,
 	Press,
@@ -79,7 +79,7 @@ sap.ui.define([
 		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 		 */
 		iOpenMyView: function (sFlVMId) {
-			return this.iPressButtonWithID(sFlVMId + "-trigger");
+			return this.iPressButtonWithID(sFlVMId + "-vm-trigger");
 		},
 
 		/**
@@ -89,7 +89,7 @@ sap.ui.define([
 		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 		 */
 		iOpenSaveView: function (sFlVMId) {
-			return this.iPressButtonWithID(sFlVMId + "-saveas");
+			return this.iPressButtonWithID(sFlVMId + "-vm-saveas");
 		},
 
 		/**
@@ -99,7 +99,7 @@ sap.ui.define([
 		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 		 */
 		iOpenManageViews: function (sFlVMId) {
-			return this.iPressButtonWithID(sFlVMId + "-manage");
+			return this.iPressButtonWithID(sFlVMId + "-vm-manage");
 		},
 
 		/**
@@ -109,7 +109,7 @@ sap.ui.define([
 		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
 		 */
 		iPressTheManageViewsSave: function (sFlVMId) {
-			return this.iPressButtonWithID(sFlVMId + "-managementsave");
+			return this.iPressButtonWithID(sFlVMId + "-vm-managementsave");
 		},
 
 		/**
@@ -252,7 +252,7 @@ sap.ui.define([
 		 */
 		iCreateNewVariant: function (sFlVMId, sVariantTitle, bDefault, bApplyAuto) {
 			return this.waitFor({
-				id: sFlVMId + "-name",
+				id: sFlVMId + "-vm-name",
 				success: function (oInput) {
 					new EnterText({
 						text: sVariantTitle
@@ -260,20 +260,20 @@ sap.ui.define([
 
 					if (bDefault) {
 						this.waitFor({
-							id: sFlVMId + "-default",
+							id: sFlVMId + "-vm-default",
 							actions: new Press()
 						});
 					}
 
 					if (bApplyAuto) {
 						this.waitFor({
-							id: sFlVMId + "-execute",
+							id: sFlVMId + "-vm-execute",
 							actions: new Press()
 						});
 					}
 
 					return this.waitFor({
-						id: sFlVMId + "-variantsave",
+						id: sFlVMId + "-vm-variantsave",
 						actions: new Press()
 					});
 				},

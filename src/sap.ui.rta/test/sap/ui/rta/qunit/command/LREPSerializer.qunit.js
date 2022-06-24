@@ -852,13 +852,12 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when the LREPSerializer.clearCommandStack gets called with 4 different ctrl variant commands created containing one or more changes and this is booked for a new app variant with different id", function(assert) {
 			sandbox.stub(VariantManagementState, "getVariant").returns(oVariant);
-			var fnCreateSaveAsDialog = this.oVariantManagement._createSaveAsDialog;
-			sandbox.stub(this.oVariantManagement, "_createSaveAsDialog").callsFake(function() {
-				fnCreateSaveAsDialog.call(this.oVariantManagement);
-				this.oVariantManagement.oSaveAsDialog.attachEventOnce("afterOpen", function() {
-					this.oVariantManagement._handleVariantSaveAs("newVariant");
-				}.bind(this));
+			this.oVariantManagement._createSaveAsDialog();
+
+			this.oVariantManagement._getEmbeddedVM().oSaveAsDialog.attachEventOnce("afterOpen", function() {
+				this.oVariantManagement._handleVariantSaveAs("newVariant");
 			}.bind(this));
+
 			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 			var oControlVariantConfigureCommand;
 			var oControlVariantSwitchCommand;

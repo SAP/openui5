@@ -131,7 +131,7 @@ sap.ui.define([
 			}).then(function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
-				sandbox.stub(VariantManagement.prototype, "_updateInnerModelWithSettingsInfo").resolves(true);
+				sandbox.stub(VariantManagement.prototype, "_updateWithSettingsInfo").resolves(true);
 				this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
 				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 				this.oObjectPageLayout = new ObjectPageLayout("objPage", {
@@ -355,14 +355,13 @@ sap.ui.define([
 		QUnit.test("when createSaveAsCommand is called and the key user presses the save button", function(assert) {
 			var done = assert.async();
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			var fnCreateSaveAsDialog = this.oVariantManagementControl._createSaveAsDialog;
-			sandbox.stub(this.oVariantManagementControl, "_createSaveAsDialog").callsFake(function() {
-				fnCreateSaveAsDialog.call(this.oVariantManagementControl);
-				this.oVariantManagementControl.oSaveAsDialog.attachEventOnce("afterOpen", function() {
-					this.oVariantManagementControl._handleVariantSaveAs("myNewVariant");
-				}.bind(this));
+			this.oVariantManagementControl._createSaveAsDialog();
+
+			this.oVariantManagementControl._getEmbeddedVM().oSaveAsDialog.attachEventOnce("afterOpen", function() {
+				this.oVariantManagementControl._handleVariantSaveAs("myNewVariant");
 			}.bind(this));
-			var oOpenSaveAsDialogSpy = sandbox.spy(this.oVariantManagementControl, "_openSaveAsDialog");
+
+			var oOpenSaveAsDialogSpy = sandbox.spy(this.oVariantManagementControl._getEmbeddedVM(), "_openSaveAsDialog");
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent, "then fireElementModified is called once");
@@ -377,14 +376,13 @@ sap.ui.define([
 		QUnit.test("when createSaveAsCommand is called and the key user presses the cancel button", function(assert) {
 			var done = assert.async();
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			var fnCreateSaveAsDialog = this.oVariantManagementControl._createSaveAsDialog;
-			sandbox.stub(this.oVariantManagementControl, "_createSaveAsDialog").callsFake(function() {
-				fnCreateSaveAsDialog.call(this.oVariantManagementControl);
-				this.oVariantManagementControl.oSaveAsDialog.attachEventOnce("afterOpen", function() {
-					this.oVariantManagementControl._cancelPressed();
-				}.bind(this));
+			this.oVariantManagementControl._createSaveAsDialog();
+
+			this.oVariantManagementControl._getEmbeddedVM().oSaveAsDialog.attachEventOnce("afterOpen", function() {
+				this.oVariantManagementControl._getEmbeddedVM()._cancelPressed();
 			}.bind(this));
-			var oOpenSaveAsDialogSpy = sandbox.spy(this.oVariantManagementControl, "_openSaveAsDialog");
+
+			var oOpenSaveAsDialogSpy = sandbox.spy(this.oVariantManagementControl._getEmbeddedVM(), "_openSaveAsDialog");
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent, "then fireElementModified is called once");

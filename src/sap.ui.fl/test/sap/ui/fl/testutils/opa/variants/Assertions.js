@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	'sap/base/Log',
-	"sap/ui/fl/variants/VariantManagement"
+	"sap/m/VariantManagement"
 ], function(
 	Opa5,
 	Log,
@@ -42,16 +42,16 @@ sap.ui.define([
 		 */
 		theMyViewShouldContain: function (sFlVMId, aVariantNames) {
 			return this.waitFor({
-				id: sFlVMId + "-popover-popover",
+				id: sFlVMId + "-vm-popover-popover",
 				success: function () {
 					return this.waitFor({
 						controlType: "sap.m.SelectList",
-						id: sFlVMId + "-list",
+						id: sFlVMId + "-vm-list",
 						success: function() {
 							return this.waitFor({
 								controlType: "sap.ui.core.Item",
 								matchers: function(oItem) {
-									return oItem.getId().indexOf(sFlVMId + "-list-") >= 0;
+									return oItem.getId().indexOf(sFlVMId + "-vm-list-") >= 0;
 								},
 								success: function(aItems) {
 									var aIsVariantTitle = [];
@@ -75,7 +75,7 @@ sap.ui.define([
 		 */
 		theOpenSaveViewDialog: function (sFlVMId) {
 			return this.waitFor({
-				id: sFlVMId + "-savedialog",
+				id: sFlVMId + "-vm-savedialog",
 				success: function (oSaveViewDialog) {
 					Opa5.assert.ok(oSaveViewDialog);
 				}
@@ -90,7 +90,7 @@ sap.ui.define([
 		 */
 		theOpenManageViewsDialog: function (sFlVMId) {
 			return this.waitFor({
-				id: sFlVMId + "-managementdialog",
+				id: sFlVMId + "-vm-managementdialog",
 				success: function (oManageDialog) {
 					Opa5.assert.ok(oManageDialog);
 				}
