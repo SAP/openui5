@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'./Element',
 	'./RenderManager',
+	'./FocusHandler',
 	'sap/ui/performance/trace/Interaction',
 	"sap/ui/util/ActivityDetection",
 	"sap/ui/events/KeyCodes",
@@ -23,6 +24,7 @@ sap.ui.define([
 		ManagedObject,
 		Element,
 		RenderManager,
+		FocusHandler,
 		Interaction,
 		ActivityDetection,
 		KeyCodes,
@@ -213,7 +215,7 @@ sap.ui.define([
 		},
 		metadata: {
 			// ---- object ----
-			publicMethods : ["setRootNode", "getRootNode", "setRootControl", "getRootControl", "lock","unlock", "isLocked"],
+			publicMethods : ["setRootNode", "getRootNode", "setRootControl", "getRootControl", "lock","unlock", "isLocked", "_handleEvent"],
 			aggregations : {
 				/**
 				 * Content that is displayed in the UIArea.
@@ -624,7 +626,7 @@ sap.ui.define([
 				};
 
 				var oFocusRef_Initial = document.activeElement;
-				var oStoredFocusInfo = this.oCore.oFocusHandler.getControlFocusInfo();
+				var oStoredFocusInfo = FocusHandler.getControlFocusInfo();
 
 				//First remove the old Dom nodes and then render the controls again
 				cleanUpDom(aContentToRemove);
@@ -644,7 +646,7 @@ sap.ui.define([
 				/* Try restoring focus when focus ref is changed due to cleanup operations and not changed anymore by the rendering logic */
 				if (oFocusRef_Initial && oFocusRef_Initial != oFocusRef_AfterCleanup && oFocusRef_AfterCleanup === document.activeElement) {
 					try {
-						this.oCore.oFocusHandler.restoreFocus(oStoredFocusInfo);
+						FocusHandler.restoreFocus(oStoredFocusInfo);
 					} catch (e) {
 						Log.warning("Problems while restoring the focus after full UIArea rendering: " + e, null, this);
 					}

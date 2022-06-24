@@ -1661,6 +1661,14 @@ sap.ui.define([
 		}
 	};
 
+	var FocusHandler;
+	Element._updateFocusInfo = function(oElement) {
+		FocusHandler = FocusHandler || sap.ui.require("sap/ui/core/FocusHandler");
+		if (FocusHandler) {
+			FocusHandler.updateControlFocusInfo(oElement);
+		}
+	};
+
 	/**
 	 * Registry of all <code>sap.ui.core.Element</code>s that currently exist.
 	 *

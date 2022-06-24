@@ -615,6 +615,10 @@ sap.ui.define([
 			.withExactArgs("sap/ui/core/ResizeHandler")
 			.atLeast(0)
 			.callThrough();
+		oSapUiMock.expects("require")
+			.withExactArgs("sap/ui/core/FocusHandler")
+			.atLeast(0)
+			.callThrough();
 
 		// code under test
 		check(assert, "{=odata.compare(2,3)}", "-1");
@@ -642,6 +646,10 @@ sap.ui.define([
 		// While destroying the control used in the check function, require is sometimes called
 		oSapUiMock.expects("require")
 			.withExactArgs("sap/ui/core/ResizeHandler")
+			.atLeast(0)
+			.callThrough();
+		oSapUiMock.expects("require")
+			.withExactArgs("sap/ui/core/FocusHandler")
 			.atLeast(0)
 			.callThrough();
 
@@ -674,6 +682,10 @@ sap.ui.define([
 		// While destroying the control used in the check function, require is sometimes called
 		oSapUiMock.expects("require")
 			.withExactArgs("sap/ui/core/ResizeHandler")
+			.atLeast(0)
+			.callThrough();
+		oSapUiMock.expects("require")
+			.withExactArgs("sap/ui/core/FocusHandler")
 			.atLeast(0)
 			.callThrough();
 

@@ -18,7 +18,6 @@ sap.ui.define([
 	'./Configuration',
 	'./Element',
 	'./ElementMetadata',
-	'./FocusHandler',
 	'./RenderManager',
 	'./ThemeCheck',
 	'./UIArea',
@@ -57,7 +56,6 @@ sap.ui.define([
 		Configuration,
 		Element,
 		ElementMetadata,
-		FocusHandler,
 		RenderManager,
 		ThemeCheck,
 		UIArea,
@@ -90,6 +88,11 @@ sap.ui.define([
 	if (sap.ui.getCore && sap.ui.getCore()) {
 		return sap.ui.getCore();
 	}
+
+	/**
+	 * FocusHandler module reference, lazily probed via public "getCurrentFocusedControlId" API.
+	 */
+	var FocusHandler;
 
 	// Initialize SAP Passport or FESR
 	initTraces();
@@ -749,13 +752,6 @@ sap.ui.define([
 		ElementMetadata.prototype.register = function(oMetadata) {
 			that.registerElementClass(oMetadata);
 		};
-
-		// grant Element "friend" access to Core / FocusHandler to update the given elements focus info
-		Element._updateFocusInfo = function(oElement) {
-			if (that.oFocusHandler) {
-				that.oFocusHandler.updateControlFocusInfo(oElement);
-			}
-		};
 	};
 
 	/**
@@ -1247,8 +1243,6 @@ sap.ui.define([
 
 		Log.info("Initializing",null,METHOD);
 
-		this.oFocusHandler = new FocusHandler(document.body, this);
-		this.oRenderManager._setFocusHandler(this.oFocusHandler); //Let the RenderManager know the FocusHandler
 		this.oThemeCheck = new ThemeCheck(this);
 
 		Log.info("Initialized",null,METHOD);
@@ -1583,7 +1577,6 @@ sap.ui.define([
 	Core.prototype.createRenderManager = function() {
 		assert(this.isInitialized(), "A RenderManager should be created only after the Core has been initialized");
 		var oRm = new RenderManager();
-		oRm._setFocusHandler(this.oFocusHandler); //Let the RenderManager know the FocusHandler
 		return oRm.getInterface();
 	};
 
@@ -1596,7 +1589,8 @@ sap.ui.define([
 		if (!this.isInitialized()) {
 			throw new Error("Core must be initialized");
 		}
-		return this.oFocusHandler.getCurrentFocusedControlId();
+		FocusHandler = FocusHandler || sap.ui.require("sap/ui/core/FocusHandler");
+		return FocusHandler ? FocusHandler.getCurrentFocusedControlId() : null;
 	};
 
 	/**
@@ -4307,7 +4301,6 @@ sap.ui.define([
 
 	Core.prototype.destroy = function() {
 		RenderManager.detachPreserveContent(this._preserveHandler);
-		this.oFocusHandler.destroy();
 		_oEventProvider.destroy();
 		BaseObject.prototype.destroy.call(this);
 	};

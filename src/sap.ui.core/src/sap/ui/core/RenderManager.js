@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/extend",
 	"./InvisibleRenderer",
-	"./Patcher"
+	"./Patcher",
+	"./FocusHandler"
 ], function(
 	LabelEnablement,
 	BaseObject,
@@ -32,7 +33,8 @@ sap.ui.define([
 	Log,
 	extend,
 	InvisibleRenderer,
-	Patcher
+	Patcher,
+	FocusHandler
 ) {
 
 	"use strict";
@@ -187,7 +189,6 @@ sap.ui.define([
 	function RenderManager() {
 
 		var that = this,
-			oFocusHandler,
 			aBuffer,
 			aRenderedControls,
 			aStyleStack,
@@ -203,17 +204,6 @@ sap.ui.define([
 			oPatcher = new Patcher(),      // the Patcher instance to handle in-place DOM patching
 			sLastStyleMethod,
 			sLastClassMethod;
-
-		/**
-		 * Sets the focus handler to be used by the RenderManager.
-		 *
-		 * @param {sap.ui.core.FocusHandler} oNewFocusHandler the focus handler to be used.
-		 * @private
-		 */
-		this._setFocusHandler = function(oNewFocusHandler) {
-			assert(oNewFocusHandler && BaseObject.isA(oNewFocusHandler, 'sap.ui.core.FocusHandler'), "oFocusHandler must be an sap.ui.core.FocusHandler");
-			oFocusHandler = oNewFocusHandler;
-		};
 
 		/**
 		 * Reset all rendering related buffers.
@@ -1126,8 +1116,8 @@ sap.ui.define([
 							bDomInterface = false;
 						} else {
 							// patching will happen during the control renderer calls therefore we need to get the focus info before the patching
-							if (oDomRef && oFocusHandler) {
-								oFocusHandler.storePatchingControlFocusInfo(oDomRef);
+							if (oDomRef) {
+								FocusHandler.storePatchingControlFocusInfo(oDomRef);
 							}
 
 							// set the starting point of the Patcher
@@ -1295,7 +1285,7 @@ sap.ui.define([
 
 			//finally restore focus
 			try {
-				oFocusHandler.restoreFocus(oStoredFocusInfo);
+				FocusHandler.restoreFocus(oStoredFocusInfo);
 			} catch (e) {
 				Log.warning("Problems while restoring the focus after rendering: " + e, null);
 			}
@@ -1322,7 +1312,7 @@ sap.ui.define([
 			var oStoredFocusInfo;
 			if (!bDomInterface) {
 				// DOM-based rendering was not possible we are in the string-based initial rendering or re-rendering phase
-				oStoredFocusInfo = oFocusHandler && oFocusHandler.getControlFocusInfo();
+				oStoredFocusInfo = FocusHandler.getControlFocusInfo();
 				var sHtml = aBuffer.join("");
 				if (sHtml && aRenderingStyles.length) {
 					// During the string-based rendering, RM#writeStyles method is not writing the styles into the HTML buffer due to possible CSP restrictions.
@@ -1350,7 +1340,7 @@ sap.ui.define([
 				if (oRootNode.nodeType == 11 /* Node.DOCUMENT_FRAGMENT_NODE */) {
 					// even though we are in the initial rendering phase a control within the control tree might has been already rendered before
 					// therefore we need to store the currectly focused control info before we inject the DocumentFragment into the real DOM tree
-					oStoredFocusInfo = oFocusHandler && oFocusHandler.getControlFocusInfo();
+					oStoredFocusInfo = FocusHandler.getControlFocusInfo();
 
 					// controls are not necessarily need to produce output during their rendering
 					// in case of output is produced, let the callback injects the DocumentFragment
@@ -1358,7 +1348,7 @@ sap.ui.define([
 				} else {
 					// in case of DOM-based re-rendering, the root node of the Patcher must be an existing HTMLElement
 					// since the re-rendering happens during the control renderer APIs are executed here we get the stored focus info before the patching
-					oStoredFocusInfo = oFocusHandler && oFocusHandler.getPatchingControlFocusInfo();
+					oStoredFocusInfo = FocusHandler.getPatchingControlFocusInfo();
 				}
 
 				// make the Patcher ready for the next patching
