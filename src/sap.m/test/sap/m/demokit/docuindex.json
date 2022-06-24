@@ -1195,7 +1195,7 @@
 		},
 		{
 		"id": "sap.m.p13n.Popup",
-			"name": "p13n Popup",
+			"name": "Personalization Popup",
 			"category": "Popup",
 			"since": "1.96",
 			"samples": [
@@ -1204,7 +1204,7 @@
 		},
 		{
 		"id": "sap.m.p13n.SelectionPanel",
-			"name": "p13n Popup",
+			"name": "SelectionPanel",
 			"category": "Popup",
 			"since": "1.96",
 			"samples": [
@@ -1213,7 +1213,7 @@
 		},
 		{
 		"id": "sap.m.p13n.SortPanel",
-			"name": "p13n Popup",
+			"name": "SortPanel",
 			"category": "Popup",
 			"since": "1.96",
 			"samples": [
@@ -1222,7 +1222,7 @@
 		},
 		{
 		"id": "sap.m.p13n.GroupPanel",
-			"name": "p13n Popup",
+			"name": "GroupPanel",
 			"category": "Popup",
 			"since": "1.96",
 			"samples": [
