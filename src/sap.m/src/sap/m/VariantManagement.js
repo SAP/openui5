@@ -873,10 +873,18 @@ sap.ui.define([
 					path: '$mVariants>/creationAllowed'
 				},{
 					path: '$mVariants>/modified'
-				}],
-				formatter: function(bCreationAllowed, bModified) {
-					return bCreationAllowed && bModified;
+				},{
+					path: '$mVariants>/selectedKey'
 				}
+				],
+				formatter: function(bCreationAllowed, bModified, sSelectedKey) {
+					var bItemChangeable = false;
+					var oItem = this._getItemByKey(sSelectedKey);
+					if (oItem) {
+						bItemChangeable = oItem.getChangeable();
+					}
+					return bCreationAllowed && bModified && bItemChangeable;
+				}.bind(this)
 			},
 			type: ButtonType.Emphasized,
 			layoutData: new OverflowToolbarLayoutData({
