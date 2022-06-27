@@ -25,6 +25,10 @@ sap.ui.define([
 			path: "sap/f/cardsdemo/cardcontent/listContent/bulletGraphAndActions.json",
 			baseUrl: "sap/f/cardsdemo/cardcontent/listContent/"
 		},
+		"dynamicStatusText": {
+			path: "sap/f/cardsdemo/bundles/dynamicStatusTextBundle/manifest.json",
+			baseUrl: "sap/f/cardsdemo/bundles/dynamicStatusTextBundle/"
+		},
 		"stackedBar": {
 			path: "sap/f/cardsdemo/cardcontent/listContent/stackedBar.json",
 			baseUrl: "sap/f/cardsdemo/cardcontent/listContent/"

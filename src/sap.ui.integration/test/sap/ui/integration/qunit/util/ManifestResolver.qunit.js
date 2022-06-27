@@ -177,6 +177,74 @@ sap.ui.define([
 			});
 	});
 
+	QUnit.test("Resolve predefined translations", function (assert) {
+		var oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card",
+				"type": "card",
+				"i18n": {
+					"bundleUrl": "i18n/i18n.properties",
+					"supportedLocales": [""],
+					"fallbackLocale": ""
+				}
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./products.json"
+					}
+				},
+				"type": "List",
+				"header": {
+					"title": "Products",
+					"subTitle": "{= format.text(${i18n>subtitle_data_count}, [${uniqueCategories}, ${count}]) }",
+					"status": {
+						"text": {
+							"format": {
+								"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+								"parts": [
+									"parameters>/visibleItems",
+									"/count"
+								]
+							}
+						}
+					}
+				},
+				"content": {
+					"data": {
+						"path": "/items"
+					},
+					"maxItems": 1,
+					"item": {
+						"title": "{Name}",
+						"description": "{Description}"
+					}
+				}
+			}
+		};
+
+		var oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(JSON.parse)
+			.then(function (oRes) {
+				// Assert
+
+				var sResolvedStatusText = oRes["sap.card"].header.status.text;
+				assert.strictEqual(sResolvedStatusText, "1 of 3", "Predefined translation key is correctly resolved");
+
+				var sResolvedFormattedTranslation = oRes["sap.card"].header.subTitle;
+				assert.strictEqual(sResolvedFormattedTranslation , "2 categories, 3 items", "Formatted translation from i18n file is correctly resolved");
+
+				oCard.destroy();
+			});
+
+	});
+
 	QUnit.test("Resolve manifest with empty sections", function (assert) {
 		// Arrange
 		var oManifest = {

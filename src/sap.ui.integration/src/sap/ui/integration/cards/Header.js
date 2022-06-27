@@ -3,22 +3,26 @@
  */
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/model/json/JSONModel",
 	"sap/base/util/isEmptyObject",
+	"sap/base/util/merge",
 	"sap/f/cards/Header",
 	"sap/f/cards/HeaderRenderer",
 	"sap/m/library",
 	"sap/ui/integration/util/BindingHelper",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/integration/util/LoadingProvider"
+	"sap/ui/integration/util/LoadingProvider",
+	"sap/ui/integration/util/Utils"
 ], function (
 	Core,
+	JSONModel,
 	isEmptyObject,
+	merge,
 	FHeader,
 	FHeaderRenderer,
 	mLibrary,
 	BindingHelper,
-	JSONModel,
-	LoadingProvider
+	LoadingProvider,
+	Utils
 ) {
 	"use strict";
 
@@ -85,6 +89,8 @@ sap.ui.define([
 			if (oActionsToolbar && oActionsToolbar.isA("sap.ui.integration.controls.ActionsToolbar")) {
 				oActionsToolbar.attachVisibilityChange(this._handleToolbarVisibilityChange.bind(this));
 			}
+
+			this._oConfiguration = mConfiguration;
 		},
 
 		metadata: {
@@ -193,7 +199,6 @@ sap.ui.define([
 		}.bind(this)));
 	};
 
-
 	Header.prototype.setServiceManager = function (oServiceManager) {
 		this._oServiceManager = oServiceManager;
 		return this;
@@ -202,6 +207,25 @@ sap.ui.define([
 	Header.prototype.setDataProviderFactory = function (oDataProviderFactory) {
 		this._oDataProviderFactory = oDataProviderFactory;
 		return this;
+	};
+
+	/**
+	 * @returns {object} Header configuration with static values.
+	 */
+	Header.prototype.getStaticConfiguration = function () {
+		var oConfiguration = merge({}, this._oConfiguration),
+			mFormat = Utils.getNestedPropertyValue(oConfiguration, "/status/text/format"),
+			oBindingInfo;
+
+		if (mFormat) {
+			oBindingInfo = Utils.getStatusTextBindingInfo(mFormat);
+		}
+
+		if (oBindingInfo) {
+			oConfiguration.status.text = oBindingInfo;
+		}
+
+		return oConfiguration;
 	};
 
 	/**

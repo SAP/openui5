@@ -1,0 +1,39 @@
+{
+	"sap.app": {
+		"id": "card.bundle.dynamicstatustext",
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"type": "List",
+		"data": {
+			"request": {
+				"url": "./mockdata/products.json"
+			}
+		},
+		"header": {
+			"title": "Products",
+			"subTitle": "{= format.text(${i18n>subtitle_data_count}, [${uniqueCategories}, ${count}]) }",
+			"status": {
+				"text": {
+					"format": {
+						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"parts": [
+							"parameters>/visibleItems",
+							"/count"
+						]
+					}
+				}
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"item": {
+				"title": "{Title}",
+				"description": "{Category}"
+			}
+		}
+	}
+}
