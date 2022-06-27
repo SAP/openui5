@@ -102,7 +102,7 @@ sap.ui.define([
 		When.waitFor({
 			controlType: "sap.ui.mdc.Table",
 			success: function(aTables) {
-				When.onTable.iPersonalizeSort(aTables[0].getId(), [
+				When.onTheMDCTable.iPersonalizeSort(aTables[0].getId(), [
 					{key: "Title", descending: false}
 				]);
 				Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books["...So They Baked a Cake"]);
@@ -113,7 +113,7 @@ sap.ui.define([
 		When.waitFor({
 			controlType: "sap.ui.mdc.Table",
 			success: function(aTables) {
-				When.onTable.iPersonalizeSort(aTables[0].getId(), [
+				When.onTheMDCTable.iPersonalizeSort(aTables[0].getId(), [
 					{key: "Title", descending: true}
 				]);
 				Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books["Youth"]);
@@ -124,7 +124,7 @@ sap.ui.define([
 		When.waitFor({
 			controlType: "sap.ui.mdc.Table",
 			success: function(aTables) {
-				When.onTable.iPersonalizeSort(aTables[0].getId(), [
+				When.onTheMDCTable.iPersonalizeSort(aTables[0].getId(), [
 					{key: "Author ID", descending: false},
 					{key: "Title", descending: true}
 				]);
@@ -241,7 +241,7 @@ sap.ui.define([
 		Given.iStartMyUIComponentInViewMode();
 		var oFilterBar = "__component" + iComponent + "---books--booksFilterBar";
 		var aLabelNames = ["Author", "Title", "Stock range", "CreatedAt", "Language"];
-		Then.onFilterBar.iShouldSeeFilters(oFilterBar, aLabelNames);
+		Then.onTheMDCFilterBar.iShouldSeeFilters(oFilterBar, aLabelNames);
 
 		// cleanup
 		Then.iTeardownMyUIComponent();
@@ -260,17 +260,17 @@ sap.ui.define([
 
 		var oFilterBar = "__component" + iComponent + "---books--booksFilterBar";
 
-		When.onFilterBar.iPersonalizeFilter(oFilterBar, {
+		When.onTheMDCFilterBar.iPersonalizeFilter(oFilterBar, {
 			Books: [
 				"Author ID", "Title", "Stock", "Created On", "Language", "Book ID"
 			]
 		});
 
-		Then.onFilterBar.iShouldSeeFilters(oFilterBar, [
+		Then.onTheMDCFilterBar.iShouldSeeFilters(oFilterBar, [
 			"Author", "Title", "Stock range", "CreatedAt", "Language", "Book ID"
 		]);
 
-		When.onFilterBar.iPersonalizeFilter(oFilterBar, {
+		When.onTheMDCFilterBar.iPersonalizeFilter(oFilterBar, {
 			Books: [
 				"Author ID", "Title", "Stock", "Created On", "Language", "Book ID"
 			],
@@ -279,7 +279,7 @@ sap.ui.define([
 			]
 		});
 
-		Then.onFilterBar.iShouldSeeFilters(oFilterBar, [
+		Then.onTheMDCFilterBar.iShouldSeeFilters(oFilterBar, [
 			"Author", "Title", "Stock range", "CreatedAt", "Language", "Book ID", "Date of Birth"
 		]);
 
@@ -292,14 +292,14 @@ sap.ui.define([
 
 		var oFilterBar = "__component" + iComponent + "---books--booksFilterBar";
 
-		When.onFilterBar.iPersonalizeFilter(oFilterBar, {
+		When.onTheMDCFilterBar.iPersonalizeFilter(oFilterBar, {
 			Books: [
 				"Author ID", "Title", "Created On", "Language"
 			]
 		});
 
 		var aLabelNames = ["Author", "Title", "CreatedAt", "Language"];
-		Then.onFilterBar.iShouldSeeFilters(oFilterBar, aLabelNames);
+		Then.onTheMDCFilterBar.iShouldSeeFilters(oFilterBar, aLabelNames);
 
 		// cleanup
 		Then.iTeardownMyUIComponent();
@@ -350,13 +350,13 @@ sap.ui.define([
 			sVariantNewName = "Standard2";
 
 		// make a change
-		When.onFilterBar.iEnterFilterValue(oFilterBar, {
+		When.onTheMDCFilterBar.iEnterFilterValue(oFilterBar, {
 			Books: {
 				label: "Author ID",
 				values: [ "101", "102" ]
 			}
 		});
-		Then.onFilterBar.iShouldSeeFilters(oFilterBar, {
+		Then.onTheMDCFilterBar.iShouldSeeFilters(oFilterBar, {
 			"Author": [
 				{
 					operator: "EQ",
@@ -377,7 +377,7 @@ sap.ui.define([
 		// change variant
 		When.onTheBooksListReportPage.iPressOnTheVariantManagerButton(sVariantNewName);
 		When.onTheBooksListReportPage.iSelectVariant(sVariantDefaultName);
-		Then.onFilterBar.iShouldSeeFilters(oFilterBar, {
+		Then.onTheMDCFilterBar.iShouldSeeFilters(oFilterBar, {
 			"Author": []
 		});
 
@@ -404,7 +404,7 @@ sap.ui.define([
 		When.onTheBooksListReportPage.iSelectTheValueHelpCondition(aValues);
 		When.onTheBooksListReportPage.iPressOnTheValueHelpOKButton();
 
-		Then.onFilterBar.iShouldSeeFilters(oFilterBar, {
+		Then.onTheMDCFilterBar.iShouldSeeFilters(oFilterBar, {
 			"Author": [
 				{
 					operator: "EQ",
@@ -412,7 +412,7 @@ sap.ui.define([
 				}
 			]
 		});
-		When.onFilterBar.iExpectSearch(oFilterBar);
+		When.onTheMDCFilterBar.iExpectSearch(oFilterBar);
 
 		Then.onTheBooksListReportPage.iShouldSeeRowsWithData(2);
 		Then.onTheBooksListReportPage.iShouldSeeARowWithData(0, ListReport.books["The Yellow Wallpaper"]);
