@@ -1004,6 +1004,151 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Fields customization", {
+		beforeEach: function () {
+			sap.ui.loader.config({
+				paths: {
+					"sap/ui/integration/editor/test/customfield": "../test-resources/sap/ui/integration/qunit/editor/jsons/withDesigntime/sap.card/designtime"
+				}
+			});
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oEditor = new Editor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.style.position = "absolute";
+				oContent.style.top = "200px";
+
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Extends VizBase", function (assert) {
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/fieldExtendsVizBase",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"dateRange": {
+									"value": ""
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oLabel = this.oEditor.getAggregation("_formContent")[1];
+					var oField = this.oEditor.getAggregation("_formContent")[2];
+					wait().then(function () {
+						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
+						assert.ok(oLabel.getText() === "Date Range", "Label: Has label text");
+						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+						assert.ok(oField.getModel("currentSettings"), "Field: model currentSettings");
+						assert.ok(oField.getModel("items"), "Field: model items");
+						assert.ok(oField.getModel("i18n"), "Field: model i18n");
+						assert.ok(oField.getModel("context"), "Field: model context");
+						assert.ok(oField.getModel("contextflat"), "Field: contextflat context");
+						var oControl = oField.getAggregation("_field").getAggregation("_control");
+						assert.ok(oControl.isA("sap.m.DateRangeSelection"), "Field: DateRangeSelection control");
+						assert.ok(oControl.getModel("currentSettings"), "DateRangeSelection: model currentSettings");
+						assert.ok(oControl.getModel("items"), "DateRangeSelection: model items");
+						assert.ok(oControl.getModel("i18n"), "DateRangeSelection: model i18n");
+						assert.ok(oControl.getModel("context"), "DateRangeSelection: model context");
+						assert.ok(oControl.getModel("contextflat"), "DateRangeSelection: contextflat context");
+						oControl._getValueHelpIcon().firePress();
+						wait().then(function () {
+							assert.ok(oControl._oPopup.isOpen(), "DateRangeSelection: date popup open");
+							resolve();
+						});
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Fragment", function (assert) {
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/fieldWithFragment",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"cardTitle": {
+									"value": "Card Title Default"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oLabel = this.oEditor.getAggregation("_formContent")[1];
+					var oField = this.oEditor.getAggregation("_formContent")[2];
+					wait().then(function () {
+						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
+						assert.ok(oLabel.getText() === "Card Title", "Label: Has label text");
+						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+						assert.ok(oField.getModel("currentSettings"), "Field: model currentSettings");
+						assert.ok(oField.getModel("items"), "Field: model items");
+						assert.ok(oField.getModel("i18n"), "Field: model i18n");
+						assert.ok(oField.getModel("context"), "Field: model context");
+						assert.ok(oField.getModel("contextflat"), "Field: contextflat context");
+						var oControl = oField.getAggregation("_field");
+						assert.ok(oControl.isA("sap.m.Input"), "Field: Input control");
+						assert.ok(oControl.getModel("currentSettings"), "Input: model currentSettings");
+						assert.ok(oControl.getModel("items"), "Input: model items");
+						assert.ok(oControl.getModel("i18n"), "Input: model i18n");
+						assert.ok(oControl.getModel("context"), "Input: model context");
+						assert.ok(oControl.getModel("contextflat"), "Input: contextflat context");
+						assert.ok(oControl.getValue() === "Card Title Default", "Input: Value");
+						oControl.setValue("Card Title New");
+						wait().then(function () {
+							assert.ok(oControl.getValue() === "Card Title New", "Input: Value changed");
+							var oSettings = oControl.getModel("currentSettings");
+							assert.ok(oSettings.getProperty("/form/items/cardTitle/value") === "Card Title New", "Settings: Value changed");
+							resolve();
+						});
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
 	QUnit.done(function () {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});

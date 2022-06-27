@@ -728,7 +728,7 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
-					var oSelect = oField.getAggregation("_field").getAggregation("_select");
+					var oSelect = oField.getAggregation("_field").getAggregation("_control");
 					setTimeout(function () {
 						oSelect.setSelectedIndex(10);
 						oSelect.open();
@@ -747,7 +747,7 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
-					var oSelect = oField.getAggregation("_field").getAggregation("_select");
+					var oSelect = oField.getAggregation("_field").getAggregation("_control");
 					setTimeout(function () {
 						assert.ok(oSelect.getItemByKey("").getEnabled(), "Icon: item none is enabled");
 						assert.ok(!oSelect.getItemByKey("file").getEnabled(), "Icon: item file is disabled");
@@ -767,7 +767,7 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
-					var oSelect = oField.getAggregation("_field").getAggregation("_select");
+					var oSelect = oField.getAggregation("_field").getAggregation("_control");
 					setTimeout(function () {
 						assert.ok(!oSelect.getItemByKey("").getEnabled(), "Icon: item none is disabled");
 						assert.ok(oSelect.getItemByKey("file").getEnabled(), "Icon: item file is enabled");
@@ -787,7 +787,7 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
-					var oSelect = oField.getAggregation("_field").getAggregation("_select");
+					var oSelect = oField.getAggregation("_field").getAggregation("_control");
 					setTimeout(function () {
 						assert.ok(!oSelect.getItemByKey("").getEnabled(), "Icon: item none is disabled");
 						assert.ok(!oSelect.getItemByKey("file").getEnabled(), "Icon: item file is disabled");
@@ -808,7 +808,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
-						var oSelect = oField.getAggregation("_field").getAggregation("_select");
+						var oSelect = oField.getAggregation("_field").getAggregation("_control");
 						oSelect.setSelectedIndex(10);
 						oSelect.open();
 						resolve();
@@ -827,7 +827,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
-						var oSelect = oField.getAggregation("_field").getAggregation("_select");
+						var oSelect = oField.getAggregation("_field").getAggregation("_control");
 						oSelect.open();
 						oSelect.setSelectedIndex(10);
 						oSelect.fireChange({ selectedItem: oSelect.getItems()[10] });
@@ -847,7 +847,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
-						var oSelect = oField.getAggregation("_field").getAggregation("_select");
+						var oSelect = oField.getAggregation("_field").getAggregation("_control");
 						oSelect.open();
 						oSelect.setSelectedItem(oSelect.getItems()[2]);
 						oSelect.fireChange({ selectedItem: oSelect.getItems()[2] });
@@ -867,7 +867,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
-						var oSelect = oField.getAggregation("_field").getAggregation("_select");
+						var oSelect = oField.getAggregation("_field").getAggregation("_control");
 						oSelect.setSelectedIndex(10);
 						oSelect.fireChange({ selectedItem: oSelect.getItems()[10] });
 						oSelect.focus();
@@ -938,7 +938,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
-						var oSelect = oField.getAggregation("_field").getAggregation("_select");
+						var oSelect = oField.getAggregation("_field").getAggregation("_control");
 						oSelect.setSelectedIndex(10);
 						oSelect.fireChange({ selectedItem: oSelect.getItems()[10] });
 						oSelect.focus();
@@ -1001,7 +1001,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
-						var oSelect = oField.getAggregation("_field").getAggregation("_select");
+						var oSelect = oField.getAggregation("_field").getAggregation("_control");
 						oSelect.setSelectedIndex(10);
 						oSelect.fireChange({ selectedItem: oSelect.getItems()[10] });
 						oSelect.focus();
@@ -1060,7 +1060,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
-						var oSelect = oField.getAggregation("_field").getAggregation("_select");
+						var oSelect = oField.getAggregation("_field").getAggregation("_control");
 						oSelect.setSelectedIndex(10);
 						oSelect.fireChange({ selectedItem: oSelect.getItems()[10] });
 						oSelect.focus();
@@ -1121,7 +1121,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
-						var oSelect = oField.getAggregation("_field").getAggregation("_select");
+						var oSelect = oField.getAggregation("_field").getAggregation("_control");
 						assert.ok(oSelect.getSelectedIndex() === 2, "Field: selected index is 2");
 						oSelect.focus();
 						oSelect.open();
@@ -1197,7 +1197,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
-						var oSelect = oField.getAggregation("_field").getAggregation("_select");
+						var oSelect = oField.getAggregation("_field").getAggregation("_control");
 						assert.ok(oSelect.getSelectedIndex() === 2, "Field: selected index is 2");
 						oSelect.focus();
 						oSelect.open();

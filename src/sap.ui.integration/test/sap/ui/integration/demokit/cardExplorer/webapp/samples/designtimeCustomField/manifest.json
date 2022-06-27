@@ -1,0 +1,56 @@
+{
+	"sap.app": {
+		"type": "card",
+		"id": "card.explorer.designtime.customfield"
+	},
+	"sap.card": {
+		"configuration": {
+			"editor": "dt/Configuration",
+			"destinations": {
+				"northwind": {
+					"name": "Northwind_V4",
+					"label": "Northwind V4 Service URL",
+					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
+				}
+			},
+			"parameters": {
+				"cardTitle": {
+					"value": "Card Title Default"
+				},
+				"dateRange": {
+					"value": ""
+				},
+				"OrderID": {
+					"value": 10329
+				}
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "Products",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.northwind}}/Order_Details",
+				"parameters": {
+					"$expand": "Product",
+					"$filter": "OrderID eq {parameters>/OrderID/value}"
+				}
+			},
+			"path": "/value"
+		},
+		"content": {
+			"item": {
+				"title": "{Product/ProductName}",
+				"description": "Category ID: {Product/CategoryID}",
+				"info": {
+					"value": "Units In Stock: {Product/UnitsInStock}"
+				}
+			},
+			"maxItems": 4
+		}
+	}
+}

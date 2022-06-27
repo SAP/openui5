@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Integration Cards</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script data-require-ui5-init src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody sapUiSizeCompact topicBody">
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Custom the Field</h1>
+			<p>
+				Custom the field(parameter) to use other UI5 controls following below 2 ways:
+			</p>
+			<h2 id="extends">Extends class sap.ui.integration.editor.fields.viz.VizBase</h2>
+			<p>
+				VizBase is the base class of ColorSelect, IconSelect and ShapeSelect supplied by Editor. Eextends it to use the UI5 Control.
+			</p>
+			<ol>
+				<li>Extends class VizBase
+					<pre class="lang-js">
+sap.ui.define([
+	"sap/ui/integration/editor/fields/viz/VizBase",
+	"sap/m/DateRangeSelection",
+	"sap/base/util/merge"
+], function (
+	VizBase, DateRangeSelection, merge
+) {
+	"use strict";
+
+	var CustomDateRangeSelection = VizBase.extend("sap.ui5.test.cardeditor.listcard.viz.CustomDateRangeSelection", {
+		metadata: {
+			library: "sap.ui5.test.cardeditor.listcard",
+			properties: {
+				displayFormat: {
+					type: "string",
+					defaultValue: ""
+				}
+			}
+		},
+		renderer: VizBase.getMetadata().getRenderer()
+	});
+
+	return CustomDateRangeSelection;
+});
+</pre>
+					<p>
+						VizBase has 2 default properties: "value" and "editable". Customer can add new properties, here is "dispalyFormat".
+					</p>
+				</li>
+				<li>Implement the onInit function
+					<pre class="lang-js">
+// create this._oControl and set up it
+CustomDateRangeSelection.prototype.onInit = function () {
+	this._oControl = new DateRangeSelection();
+};
+</pre>
+					<p>
+						In the onInit function, set this._oControl to the UI5 control.
+					</p>
+				</li>
+				<li>Add the set function of new properties
+					<pre class="lang-js">
+CustomDateRangeSelection.prototype.setDisplayFormat = function (sValue) {
+	this.setProperty("displayFormat", sValue, true);
+	sValue = this.getDisplayFormat();
+	this._oControl.setProperty("displayFormat", sValue);
+	return this;
+};
+</pre>
+				</li>
+				<li>Bind the properties to the UI5 control
+					<pre class="lang-js">
+// bind propeties to this._oControl
+CustomDateRangeSelection.prototype.bindPropertyToControl = function (sProperty, oBindingInfo) {
+	VizBase.prototype.bindPropertyToControl.apply(this, arguments);
+	if (sProperty === "displayFormat") {
+		var oControlBindingInfo = merge({}, oBindingInfo);
+		this._oControl.bindProperty("displayFormat", oControlBindingInfo);
+	}
+};
+</pre>
+					<p>
+						If customer want to bind value or editable to other property of the UI5 control, please not call the bindPropertyToControl of VizBase.
+					<pre class="lang-js">
+ShapeSelect.prototype.bindPropertyToControl = function (sProperty, oBindingInfo) {
+	if (sProperty === "editable") {
+		var oControlBindingInfo = merge({}, oBindingInfo);
+		this._oControl.bindProperty("enabled", oControlBindingInfo);
+	}
+	if (sProperty === "value") {
+		var oControlBindingInfo = merge({}, oBindingInfo);
+		this._oControl.bindProperty("selectedKey", oControlBindingInfo);
+	}
+};
+</pre>
+					</p>
+				</li>
+				<li>Use the new class as visualization type of the property in Configuration
+					<pre class="lang-js">
+"dateRange": {
+	"manifestpath": "/sap.card/configuration/parameters/dateRange/value",
+	"type": "string",
+	"label": "Date Range",
+	"displayFormat": "yyyy/MM/dd",
+	"visualization": {
+		"type": "sap/ui5/test/cardeditor/listcard/viz/CustomDateRangeSelection",
+		"settings": {
+			"value": "{currentSettings>value}",
+			"editable": "{currentSettings>editable}",
+			"displayFormat": "{currentSettings>displayFormat}"
+		}
+	}
+},
+</pre>
+				</li>
+			</ol>
+			<a class="try-button" href="../../../index.html#/explore/playground/designtimeCustomField" target="_parent">Try it Out</a>
+			<h2 id="fragment">Create fragment xml and controller files</h2>
+			<p>
+				Another way to implement this is using fragment.
+			</p>
+			<ol>
+				<li>Create fragment xml view file
+					<p>
+						<img src="../img/fragmentXMLFile.PNG" alt="" style="margin:2px;width:800px;border:1px solid #f5f5f5">
+					</p>
+					<p>
+						Use the UI5 Controls in the xml file, and the data models: "currentSettings", "items", "i18n", "context", "contextflat" and undefined.
+					</p>
+				</li>
+				<li>Create controller.js File which extends sap.ui.integration.editor.fields.fragment.Controller
+					<pre class="lang-js">
+sap.ui.define([
+	"sap/ui/integration/editor/fields/fragment/Controller"
+], function(Controller) {
+	"use strict";
+
+	var InputController = Controller.extend("sap.ui5.test.cardeditor.listcard.viz.Input", {
+	});
+
+	return InputController;
+});
+</pre>
+				</li>
+				<li>Implement the init function and the event handlers
+					<pre class="lang-js">
+InputController.prototype.init = function () {
+	this._aa = "aa";
+};
+
+InputController.prototype.handleChange = function (oEvent) {
+	//add current change into translation texts
+	var oControl = oEvent.getSource();
+	var sValue = oControl.getValue();
+	this.saveValue(sValue);
+};
+</pre>
+					<p>In the init function, please define the needed properties.</p>
+					<p>In the event handlers, if want to save the value, please call the saveValue function</p>
+				</li>
+				<li>Use the fragment as visualization.fragment in Configuration
+					<pre class="lang-js">
+"cardTitle": {
+	"manifestpath": "/sap.card/configuration/parameters/cardTitle/value",
+	"type": "string",
+	"translatable": true,
+	"required": true,
+	"label": "Card Title",
+	"allowDynamicValues": true,
+	"editableToUser": false,
+	"visibleToUser": true,
+	"description": "Card Title",
+	"cols": 1,
+	"visualization": {
+		"fragment": "sap/ui5/test/cardeditor/listcard/viz/Input"
+	}
+}
+</pre>
+				</li>
+			</ol>
+			<a class="try-button" href="../../../index.html#/explore/playground/designtimeCustomField" target="_parent">Try it Out</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#extends">Extends VizBase</a></div>
+			<div><a href="#fragment">Use Fragment</a></div>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -2734,6 +2734,42 @@ sap.ui.define([
 										key: 'Functions.js'
 									}
 								]
+							},
+							{
+								title: 'Custom Field',
+								key: 'designtimeCustomField',
+								files: [
+									{
+										url: '/samples/designtimeCustomField/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimeCustomField/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimeCustomField/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									},
+									{
+										url: '/samples/designtimeCustomField/viz/CustomDateRangeSelection.js',
+										name: 'viz/CustomDateRangeSelection.js',
+										key: 'CustomDateRangeSelection.js'
+									},
+									{
+										url: '/samples/designtimeCustomField/viz/Input.fragment.xml',
+										name: 'viz/Input.fragment.xml',
+										key: 'Input.fragment.xml'
+									},
+									{
+										url: '/samples/designtimeCustomField/viz/Input.controller.js',
+										name: 'viz/Input.controller.js',
+										key: 'Input.controller.js'
+									}
+								]
 							}
 						]
 					}

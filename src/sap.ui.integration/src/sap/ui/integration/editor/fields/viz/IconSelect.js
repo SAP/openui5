@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control",
+	"sap/ui/integration/editor/fields/viz/VizBase",
 	"sap/m/Select",
 	"sap/ui/core/ListItem",
 	"sap/ui/model/json/JSONModel",
@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone"
 ], function (
-	Control, Select, ListItem, JSONModel, IconPool, merge, Core, deepClone
+	VizBase, Select, ListItem, JSONModel, IconPool, merge, Core, deepClone
 ) {
 	"use strict";
 
@@ -20,7 +20,7 @@ sap.ui.define([
 
 	/**
 	 * @class
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.integration.editor.fields.viz.VizBase
 	 * @alias sap.ui.integration.editor.fields.viz.IconSelect
 	 * @author SAP SE
 	 * @since 1.84.0
@@ -29,17 +29,13 @@ sap.ui.define([
 	 * @experimental since 1.84.0
 	 * @ui5-restricted
 	 */
-	var IconSelect = Control.extend("sap.ui.integration.editor.fields.viz.IconSelect", {
+	var IconSelect = VizBase.extend("sap.ui.integration.editor.fields.viz.IconSelect", {
 		metadata: {
 			library: "sap.ui.integration",
 			properties: {
 				value: {
 					type: "string",
 					defaultValue: "sap-icon://accept"
-				},
-				editable: {
-					type: "boolean",
-					defaultValue: true
 				},
 				allowFile: {
 					type: "boolean",
@@ -49,27 +45,9 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: true
 				}
-			},
-			aggregations: {
-				_select: {
-					type: "sap.m.Select",
-					multiple: false,
-					visibility: "hidden"
-				}
 			}
 		},
-		renderer: function (oRm, oControl) {
-			var oSelect = oControl.getAggregation("_select");
-			oRm.openStart("div");
-			oRm.addClass("sapUiIntegrationIconSelect");
-			if (oSelect && oControl.getWidth) {
-				oRm.addStyle("width", oSelect.getWidth());
-			}
-			oRm.writeElementData(oControl);
-			oRm.openEnd();
-			oRm.renderControl(oSelect);
-			oRm.close("div");
-		}
+		renderer: VizBase.getMetadata().getRenderer()
 	});
 
 	IconSelect.prototype._initIconModel = function () {
@@ -118,7 +96,7 @@ sap.ui.define([
 		this._oIconModel.setSizeLimit(aIcons.length);
 	};
 
-	IconSelect.prototype.init = function () {
+	IconSelect.prototype.onInit = function () {
 		if (oResourceBundle && oResourceBundle.sLocale !== Core.getConfiguration().getLanguage()) {
 			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 		}
@@ -139,7 +117,7 @@ sap.ui.define([
 		this._boundFileUploadChange = this._fileUploadChange.bind(this);
 		this._oFileUpload.addEventListener("change", this._boundFileUploadChange);
 
-		this._oSelect = new Select({
+		this._oControl = new Select({
 			width: "100%",
 			items: {
 				path: "iconlist>/",
@@ -159,22 +137,22 @@ sap.ui.define([
 				}
 			}.bind(this)
 		});
-		this._oSelect.setModel(this._oIconModel, "iconlist");
+		this._oControl.setModel(this._oIconModel, "iconlist");
 
 		//add style class and height on open
-		var fnOpen = this._oSelect.open;
-		this._oSelect.open = function () {
+		var fnOpen = this._oControl.open;
+		this._oControl.open = function () {
 			fnOpen && fnOpen.apply(this, arguments);
 			this.getPicker().addStyleClass("sapUiIntegrationIconSelectList");
 			this.getPicker().setContentHeight("400px");
 		};
 
 		//show file image before the label
-		this._oSelect.addDelegate({
+		this._oControl.addDelegate({
 			onAfterRendering: function () {
-				var oIconDomRef = this._oSelect.getDomRef("labelIcon");
+				var oIconDomRef = this._oControl.getDomRef("labelIcon");
 				if (oIconDomRef) {
-					var sCustomImage = this._oSelect._customImage;
+					var sCustomImage = this._oControl._customImage;
 					if (sCustomImage) {
 						oIconDomRef.style.backgroundImage = "url('" + sCustomImage + "')";
 						oIconDomRef.classList.add("sapMSelectListItemIconCustom");
@@ -187,63 +165,70 @@ sap.ui.define([
 		});
 
 		//keyboard handling only if the list is open
-		this._oSelect.addDelegate({
+		this._oControl.addDelegate({
 			onsappageup: function () {
-				if (this._oSelect.isOpen()) {
-					var iSelected = this._oSelect.getSelectedIndex();
-					this._oSelect.setSelectedIndex(iSelected - 50); //select will do -10
+				if (this._oControl.isOpen()) {
+					var iSelected = this._oControl.getSelectedIndex();
+					this._oControl.setSelectedIndex(iSelected - 50); //select will do -10
 				}
 			}.bind(this),
 			onsappagedown: function () {
-				if (this._oSelect.isOpen()) {
-					var iSelected = this._oSelect.getSelectedIndex();
+				if (this._oControl.isOpen()) {
+					var iSelected = this._oControl.getSelectedIndex();
 					if (iSelected < 3) {
-						this._oSelect.setSelectedIndex(29);
+						this._oControl.setSelectedIndex(29);
 					} else {
-						this._oSelect.setSelectedIndex(iSelected + 50); //select will do +10
+						this._oControl.setSelectedIndex(iSelected + 50); //select will do +10
 					}
 				}
 			}.bind(this),
 			onsapup: function () {
-				if (this._oSelect.isOpen()) {
+				if (this._oControl.isOpen()) {
 					var bAllowFile = this.getAllowFile();
 					var bAllowNone = this.getAllowNone();
 					var bFileSelected = this._oIconModel.getProperty("/2/enabled");
-					var iSelected = this._oSelect.getSelectedIndex();
+					var iSelected = this._oControl.getSelectedIndex();
 					if (iSelected > 11 + 2) {
-						this._oSelect.setSelectedIndex(iSelected - 11);//select will do -1
+						this._oControl.setSelectedIndex(iSelected - 11);//select will do -1
 					} else if (iSelected >= 3) {
 						if (bAllowNone && !bAllowFile) {
-							this._oSelect.setSelectedIndex(0);
+							this._oControl.setSelectedIndex(0);
 						} else if (bFileSelected) {
-							this._oSelect.setSelectedIndex(2);
+							this._oControl.setSelectedIndex(2);
 						} else {
-							this._oSelect.setSelectedIndex(3);
+							this._oControl.setSelectedIndex(3);
 						}
 					}
 				}
 			}.bind(this),
 			onsapdown: function () {
-				if (this._oSelect.isOpen()) {
-					var iSelected = this._oSelect.getSelectedIndex();
+				if (this._oControl.isOpen()) {
+					var iSelected = this._oControl.getSelectedIndex();
 					if (iSelected > 1) {
-						this._oSelect.setSelectedIndex(iSelected + 11); //select will do +1
+						this._oControl.setSelectedIndex(iSelected + 11); //select will do +1
 					}
 				}
 			}.bind(this),
 			onsapleft: function () {
-				if (this._oSelect.isOpen()) { //just do up
-					this._oSelect.onsapup.apply(this._oSelect, arguments);
+				if (this._oControl.isOpen()) { //just do up
+					this._oControl.onsapup.apply(this._oControl, arguments);
 				}
 			}.bind(this),
 			onsapright: function () {
-				if (this._oSelect.isOpen()) { //just do up
-					this._oSelect.onsapdown.apply(this._oSelect, arguments);
+				if (this._oControl.isOpen()) { //just do up
+					this._oControl.onsapdown.apply(this._oControl, arguments);
 				}
 			}.bind(this)
 
 		}, true);
-		this.setAggregation("_select", this._oSelect);
+	};
+
+	// add style class to the render manager
+	IconSelect.prototype.applyStyle = function (oRm) {
+		oRm.addClass("sapUiIntegrationIconSelect");
+		if (this._oControl && this._oControl.getWidth) {
+			oRm.addStyle("width", this._oControl.getWidth());
+		}
 	};
 
 	IconSelect.prototype._fileUploadChange = function () {
@@ -251,7 +236,7 @@ sap.ui.define([
 		fileReader.onload = function () {
 			//file is uploaded
 			this.setValue(fileReader.result);
-			this._oSelect.invalidate();
+			this._oControl.invalidate();
 		}.bind(this);
 		if (this._oFileUpload.files.length === 1) {
 			fileReader.readAsDataURL(this._oFileUpload.files[0]);
@@ -260,34 +245,32 @@ sap.ui.define([
 
 	//focus is back after a file upload dialog
 	IconSelect.prototype._focusBack = function () {
-		this._oSelect.getDomRef("hiddenSelect").removeEventListener("focus", this._boundFocusBack);
+		this._oControl.getDomRef("hiddenSelect").removeEventListener("focus", this._boundFocusBack);
 		setTimeout(function () {
 			this.setValue(this.getValue());
 		}.bind(this), 150);
 	};
 
 
-	IconSelect.prototype.bindProperty = function (sProperty, oBindingInfo) {
-		Control.prototype.bindProperty.apply(this, arguments);
+	IconSelect.prototype.bindPropertyToControl = function (sProperty, oBindingInfo) {
 		if (sProperty === "editable") {
-			var oSelectBindingInfo = merge({}, oBindingInfo);
-			this._oSelect.bindProperty("editable", oSelectBindingInfo);
+			var oControlBindingInfo = merge({}, oBindingInfo);
+			this._oControl.bindProperty("editable", oControlBindingInfo);
 		}
-		return this;
 	};
 
 	IconSelect.prototype.setValue = function (sValue) {
 		this.setProperty("value", sValue, true);
 		if (sValue && sValue.indexOf("data:image/") === 0) {
-			this._oSelect._customImage = sValue;
+			this._oControl._customImage = sValue;
 			this._oIconModel.setProperty("/2/enabled", true);
-			this._oSelect.setSelectedKey("selected");
+			this._oControl.setSelectedKey("selected");
 		} else {
-			this._oSelect._customImage = null;
+			this._oControl._customImage = null;
 			this._oIconModel.setProperty("/2/enabled", false);
-			this._oSelect.setSelectedKey(sValue);
+			this._oControl.setSelectedKey(sValue);
 		}
-		this._oSelect.invalidate();
+		this._oControl.invalidate();
 		return this;
 	};
 

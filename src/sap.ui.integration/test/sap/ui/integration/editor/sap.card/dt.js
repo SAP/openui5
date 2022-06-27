@@ -19,12 +19,15 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "string",
 						"translatable": true,
 						"required": true,
-						"label": "cardTitle cardTitle cardTitle",
+						"label": "cardTitle",
 						"allowDynamicValues": true,
 						"editableToUser": false,
 						"visibleToUser": false,
 						"description": "test",
-						"cols": 1
+						"cols": 1,
+						"visualization": {
+							"fragment": "sap/ui5/test/editor/listcard/viz/Input"
+						}
 					},
 					"contextModelSyntax": {
 						"manifestpath": "/sap.card/configuration/parameters/contextModelSyntax/value",
@@ -211,6 +214,21 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/booleanLabelTrans/value",
 						"type": "boolean",
 						"label": "{i18n>TRANSLATED_BOOLEAN_LABEL}"
+					},
+					"dateRange": {
+						"manifestpath": "/sap.card/configuration/parameters/dateRange/value",
+						"type": "string",
+						"label": "Date Range",
+						"displayFormat": "yyyy/MM/dd",
+						"visualization": {
+							"type": "sap/ui5/test/editor/listcard/viz/CustomDateRangeSelection",
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}",
+								//"displayFormat": "{currentSettings>displayFormat}"
+								"displayFormat": "yyyy/MM/dd"
+							}
+						}
 					},
 					"date": {
 						"manifestpath": "/sap.card/configuration/parameters/date/value",

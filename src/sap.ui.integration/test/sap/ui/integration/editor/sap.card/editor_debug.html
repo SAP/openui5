@@ -45,52 +45,6 @@
 			Delete Values (Admin Mode)
 		</button>
 	</div>
-	<h2>Content Mode (only)</h2>
-	<ui-integration-editor id="editorContent" mode="content" allow-dynamic-values="true"
-		allow-settings="true">
-	</ui-integration-editor>
-	<div class="buttons">
-		<button onclick="showCurrentValues('editorContent')">
-			Show Current Values (Content Mode)
-		</button>
-		<button onclick="saveCurrentValues('editorContent')">
-			Save Current Values (Content Mode)
-		</button>
-		<button onclick="loadCurrentValues('editorContent')">
-			Load Values (Content Mode)
-		</button>
-		<button onclick="deleteCurrentValues('editorContent')">
-			Delete Values (Content Mode)
-		</button>
-	</div>
-	<h2>Translation Mode (only)</h2>
-	<label>Translation Language:</label>
-	<select id="translationLanguageSelectForOnlyMode" onchange="switchTranslationLanguageForOnlyMode(this)">
-	</select>
-	<ui-integration-editor id="editorTranslation" json='{
-		}' mode="translation" allow-dynamic-values="true" allow-settings="true">
-	</ui-integration-editor>
-	<div class="buttons">
-		<button onclick="showCurrentValues('editorTranslation')">
-			Show Current Values (Translation Mode)
-		</button>
-		<button onclick="saveCurrentValues('editorTranslation')">
-			Save Current Values (Translation Mode)
-		</button>
-		<button onclick="loadCurrentValues('editorTranslation')">
-			Load Values (Translation Mode)
-		</button>
-		<button onclick="deleteCurrentValues('editorTranslation')">
-			Delete Values (Translation Mode)
-		</button>
-	</div>
-	<h2>Translation Mode (with admin + content layer)</h2>
-	<label>Translation Language:</label>
-	<select id="translationLanguageSelectForAllMode" onchange="switchTranslationLanguageForAllMode(this)">
-	</select>
-	<div id="admincontenttranslation">
-
-	</div>
 </body>
 
 </html>

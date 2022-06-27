@@ -1,7 +1,7 @@
 {
 	"_version": "1.18.0",
 	"sap.app": {
-		"id": "sap.ui5.test.editor.listcard",
+		"id": "sap.ui5.test.cardeditor.listcard",
 		"type": "card",
 		"i18n": "../i18n/i18n.properties",
 		"title": "Test Card for Parameters",
@@ -343,7 +343,7 @@
 			}
 		},
 		"header": {
-			"title": "{{parameters.objectWithPropertiesDefined.text}}",
+			"title": "{{parameters.cardTitle}}",
 			"subTitle": "{{parameters.objectsWithPropertiesDefinedAndValueFromJsonList.0.text}}",
 			"icon": {
 				"src": "sap-icon://add-document",

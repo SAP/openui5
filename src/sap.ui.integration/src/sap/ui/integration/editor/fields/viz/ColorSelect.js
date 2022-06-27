@@ -2,20 +2,20 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control",
+	"sap/ui/integration/editor/fields/viz/VizBase",
 	"sap/m/ColorPalettePopover",
 	"sap/m/Button",
 	"sap/ui/core/Core",
 	"sap/base/util/merge",
 	"sap/ui/core/theming/Parameters"
 ], function (
-	Control, ColorPalettePopover, Button, Core, merge, Parameters
+	VizBase, ColorPalettePopover, Button, Core, merge, Parameters
 ) {
 	"use strict";
 
 	/**
 	 * @class
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.integration.editor.fields.viz.VizBase
 	 * @alias sap.ui.integration.editor.fields.viz.ColorSelect
 	 * @author SAP SE
 	 * @since 1.84.0
@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @experimental since 1.84.0
 	 * @ui5-restricted
 	 */
-	var ColorSelect = Control.extend("sap.ui.integration.editor.fields.viz.ColorSelect", {
+	var ColorSelect = VizBase.extend("sap.ui.integration.editor.fields.viz.ColorSelect", {
 		metadata: {
 			library: "sap.ui.integration",
 			properties: {
@@ -35,10 +35,6 @@ sap.ui.define([
 				colorValue: {
 					type: "string",
 					defaultValue: ""
-				},
-				editable: {
-					type: "boolean",
-					defaultValue: true
 				},
 				colorEnum: {
 					type: "string",
@@ -58,31 +54,10 @@ sap.ui.define([
 					type: "sap.m.ColorPalettePopover",
 					multiple: false,
 					visibility: "hidden"
-				},
-				_button: {
-					type: "sap.m.Button",
-					multiple: false,
-					visibility: "hidden"
 				}
 			}
 		},
-		renderer: function (oRm, oControl) {
-			var oButton = oControl.getAggregation("_button");
-			oRm.openStart("div");
-			oRm.addClass("sapUiIntegrationColorSelect");
-			if (!oControl._colorValue || oControl._colorValue === "transparent") {
-				oRm.addClass("noColorValueOrTransparentValue");
-			} else {
-				oRm.addClass("hasColorValue");
-			}
-			if (oControl._colorValue) {
-				oRm.addStyle("--colorValue", oControl._colorValue);
-			}
-			oRm.writeElementData(oControl);
-			oRm.openEnd();
-			oRm.renderControl(oButton);
-			oRm.close("div");
-		}
+		renderer: VizBase.getMetadata().getRenderer()
 	});
 
 	var mEnumColors = {};
@@ -142,15 +117,28 @@ sap.ui.define([
 			}
 		});
 
-	ColorSelect.prototype.init = function () {
-		this._oButton = new Button({
+	// create this._oControl and set up it
+	ColorSelect.prototype.onInit = function () {
+		this._oControl = new Button({
 			icon: "sap-icon://color-fill",
 			press: function () {
 				this._openPalette();
 			}.bind(this)
 		});
 		this._colorValue = "transparent";
-		this.setAggregation("_button", this._oButton);
+	};
+
+	// add style class to the render manager
+	ColorSelect.prototype.applyStyle = function (oRm) {
+		oRm.addClass("sapUiIntegrationColorSelect");
+		if (!this._colorValue || this._colorValue === "transparent") {
+			oRm.addClass("noColorValueOrTransparentValue");
+		} else {
+			oRm.addClass("hasColorValue");
+		}
+		if (this._colorValue) {
+			oRm.addStyle("--colorValue", this._colorValue);
+		}
 	};
 
 	ColorSelect.prototype._openPalette = function () {
@@ -166,7 +154,7 @@ sap.ui.define([
 			}
 			oColorPalette.setColors(aColors);
 		}
-		oColorPalette.openBy(this._oButton);
+		oColorPalette.openBy(this._oControl);
 	};
 
 	ColorSelect.prototype.setEnumValue = function (sValue) {
@@ -175,13 +163,12 @@ sap.ui.define([
 		this.rerender();
 	};
 
-	ColorSelect.prototype.bindProperty = function (sProperty, oBindingInfo) {
-		Control.prototype.bindProperty.apply(this, arguments);
+	// bind propeties to this._oControl
+	ColorSelect.prototype.bindPropertyToControl = function (sProperty, oBindingInfo) {
 		if (sProperty === "editable") {
 			var oButtonBindingInfo = merge({}, oBindingInfo);
-			this._oButton.bindProperty("enabled", oButtonBindingInfo);
+			this._oControl.bindProperty("enabled", oButtonBindingInfo);
 		}
-		return this;
 	};
 
 	return ColorSelect;

@@ -2,18 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control",
+	"sap/ui/integration/editor/fields/viz/VizBase",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
 	"sap/base/util/merge"
 ], function (
-	Control, SegmentedButton, SegmentedButtonItem, merge
+	VizBase, SegmentedButton, SegmentedButtonItem, merge
 ) {
 	"use strict";
 
 	/**
 	 * @class
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.integration.editor.fields.viz.VizBase
 	 * @alias sap.ui.integration.editor.fields.viz.ShapeSelect
 	 * @author SAP SE
 	 * @since 1.84.0
@@ -22,40 +22,22 @@ sap.ui.define([
 	 * @experimental since 1.84.0
 	 * @ui5-restricted
 	 */
-	var ShapeSelect = Control.extend("sap.ui.integration.editor.fields.viz.ShapeSelect", {
+	var ShapeSelect = VizBase.extend("sap.ui.integration.editor.fields.viz.ShapeSelect", {
 		metadata: {
 			library: "sap.ui.integration",
 			properties: {
 				value: {
 					type: "string",
 					defaultValue: "Circle"
-				},
-				editable: {
-					type: "boolean",
-					defaultValue: true
-				}
-			},
-			aggregations: {
-				_segmentedbutton: {
-					type: "sap.m.SegmentedButton",
-					multiple: false,
-					visibility: "hidden"
 				}
 			}
 		},
-		renderer: function (oRm, oControl) {
-			var oSegmentedButton = oControl.getAggregation("_segmentedbutton");
-			oRm.openStart("div");
-			oRm.addClass("sapUiIntegrationShapeSelect");
-			oRm.writeElementData(oControl);
-			oRm.openEnd();
-			oRm.renderControl(oSegmentedButton);
-			oRm.close("div");
-		}
+		renderer: VizBase.getMetadata().getRenderer()
 	});
 
-	ShapeSelect.prototype.init = function () {
-		this._oSegmentedButton = new SegmentedButton({
+	// create this._oControl and set up it
+	ShapeSelect.prototype.onInit = function () {
+		this._oControl = new SegmentedButton({
 			items: [
 				new SegmentedButtonItem({
 					icon: "sap-icon://circle-task",
@@ -67,20 +49,23 @@ sap.ui.define([
 				})
 			]
 		});
-		this.setAggregation("_segmentedbutton", this._oSegmentedButton);
 	};
 
-	ShapeSelect.prototype.bindProperty = function (sProperty, oBindingInfo) {
-		Control.prototype.bindProperty.apply(this, arguments);
+	// add style class to the render manager
+	ShapeSelect.prototype.applyStyle = function (oRm) {
+		oRm.addClass("sapUiIntegrationShapeSelect");
+	};
+
+	// bind propeties to this._oControl
+	ShapeSelect.prototype.bindPropertyToControl = function (sProperty, oBindingInfo) {
 		if (sProperty === "editable") {
-			var oSegmentedButtonBindingInfo = merge({}, oBindingInfo);
-			this._oSegmentedButton.bindProperty("enabled", oSegmentedButtonBindingInfo);
+			var oControlBindingInfo = merge({}, oBindingInfo);
+			this._oControl.bindProperty("enabled", oControlBindingInfo);
 		}
 		if (sProperty === "value") {
-			var oSegmentedButtonBindingInfo = merge({}, oBindingInfo);
-			this._oSegmentedButton.bindProperty("selectedKey", oSegmentedButtonBindingInfo);
+			var oControlBindingInfo = merge({}, oBindingInfo);
+			this._oControl.bindProperty("selectedKey", oControlBindingInfo);
 		}
-		return this;
 	};
 
 	return ShapeSelect;

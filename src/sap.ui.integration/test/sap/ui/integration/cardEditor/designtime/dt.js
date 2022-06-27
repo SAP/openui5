@@ -31,8 +31,8 @@ sap.ui.define([
 			var aPromises = [];
 			aJsonFiles.forEach(function (sFileName) {
 				// the prefix of the json files should match the id in manifest.json
-				// "id": "sap.ui5.test.editor.listcard"
-				var sItemsPath = sap.ui.require.toUrl("sap/ui5/test/editor/listcard/" + sFileName);
+				// "id": "sap.ui5.test.cardeditor.listcard"
+				var sItemsPath = sap.ui.require.toUrl("sap/ui5/test/cardeditor/listcard/" + sFileName);
 				aPromises.push(
 					new Promise(function (resolve, reject) {
 						jQuery.ajax(sItemsPath, {

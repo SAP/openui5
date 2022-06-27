@@ -822,7 +822,7 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
-					var oSelect = oField.getAggregation("_field").getAggregation("_select");
+					var oSelect = oField.getAggregation("_field").getAggregation("_control");
 					setTimeout(function () {
 						oSelect.setSelectedIndex(10);
 						oSelect.open();
@@ -842,7 +842,7 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
-					var oSelect = oField.getAggregation("_field").getAggregation("_select");
+					var oSelect = oField.getAggregation("_field").getAggregation("_control");
 					setTimeout(function () {
 						assert.ok(oSelect.getItemByKey("").getEnabled(), "Icon: item none is enabled");
 						assert.ok(!oSelect.getItemByKey("file").getEnabled(), "Icon: item file is disabled");
@@ -863,7 +863,7 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
-					var oSelect = oField.getAggregation("_field").getAggregation("_select");
+					var oSelect = oField.getAggregation("_field").getAggregation("_control");
 					setTimeout(function () {
 						assert.ok(!oSelect.getItemByKey("").getEnabled(), "Icon: item none is disabled");
 						assert.ok(oSelect.getItemByKey("file").getEnabled(), "Icon: item file is enabled");

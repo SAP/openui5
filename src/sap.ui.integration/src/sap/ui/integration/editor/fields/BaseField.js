@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/ListItem",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/deepEqual",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"sap/ui/core/Fragment"
 ], function (
 	Control,
 	MultiInput,
@@ -20,7 +21,8 @@ sap.ui.define([
 	ListItem,
 	ObjectPath,
 	deepEqual,
-	deepClone
+	deepClone,
+	Fragment
 ) {
 	"use strict";
 
@@ -659,6 +661,37 @@ sap.ui.define([
 				return;
 			}
 			oControl = new this._visualization.type(this._visualization.settings || {});
+		} else if (this._visualization.fragment) {
+			if (typeof this._visualization.fragment === "string") {
+				if (!this._visualization.controller) {
+					this._visualization.controller = this._visualization.fragment + ".controller";
+				}
+				if (typeof this._visualization.controller === "string") {
+					sap.ui.require([this._visualization.controller], function (f) {
+						this._visualization.controller = new f();
+						this._visualization.controller.init();
+						this._visualization.controller.setField(this);
+						this.initEditor(oConfig);
+					}.bind(this));
+				} else if (typeof this._visualization.controller === "object") {
+					Fragment.load({
+						name: this._visualization.fragment,
+						controller: this._visualization.controller
+					}).then(function (oFragment) {
+						this._visualization.fragment = oFragment;
+						this.initEditor(oConfig);
+					}.bind(this));
+				} else {
+					Fragment.load({
+						name: this._visualization.fragment
+					}).then(function (oFragment) {
+						this._visualization.fragment = oFragment;
+						this.initEditor(oConfig);
+					}.bind(this));
+				}
+				return;
+			}
+			oControl = this._visualization.fragment;
 		}
 		if (oControl instanceof Control) {
 			this.setAggregation("_field", oControl);

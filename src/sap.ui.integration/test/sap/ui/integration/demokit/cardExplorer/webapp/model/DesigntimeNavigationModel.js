@@ -58,6 +58,11 @@ sap.ui.define([
 						title: 'Separate the Configuration',
 						target: 'designtime',
 						key: 'separate'
+					},
+					{
+						title: 'Custom the Field',
+						target: 'designtime',
+						key: 'customField'
 					}
 				]
 			}*/
