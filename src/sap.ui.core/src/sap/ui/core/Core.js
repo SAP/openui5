@@ -7,7 +7,6 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/Device',
 	'sap/ui/Global',
-	'sap/ui/base/BindingParser',
 	'sap/ui/base/DataType',
 	'sap/ui/base/EventProvider',
 	'sap/ui/base/Interface',
@@ -45,7 +44,6 @@ sap.ui.define([
 		jQuery,
 		Device,
 		Global,
-		BindingParser,
 		DataType,
 		EventProvider,
 		Interface,
@@ -367,15 +365,6 @@ sap.ui.define([
 			oFrameOptionsConfig.mode = this.oConfiguration.getFrameOptions();
 			oFrameOptionsConfig.allowlistService = this.oConfiguration.getAllowlistService();
 			this.oFrameOptions = new FrameOptions(oFrameOptionsConfig);
-
-			// enable complex bindings if configured
-			if ( this.oConfiguration["bindingSyntax"] === "complex" ) {
-				ManagedObject.bindingParser = BindingParser.complexParser;
-			}
-			// switch bindingParser to designTime mode if configured
-			if (this.oConfiguration["xx-designMode"] == true ) {
-				BindingParser._keepBindingStrings = true;
-			}
 
 			// let Element and Component get friend access to the respective register/deregister methods
 			this._grantFriendAccess();
