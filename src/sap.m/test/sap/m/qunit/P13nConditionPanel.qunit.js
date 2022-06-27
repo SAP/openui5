@@ -322,7 +322,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("change KeyField, Operation and Value test", function(assert) {
-
 			// system under test
 			var oP13nConditionPanel = new P13nConditionPanel({
 				maxConditions: -1
@@ -357,6 +356,34 @@ sap.ui.define([
 			var sValue1 = "foo";
 			assert.strictEqual(oP13nConditionPanel.getConditions()[1].value1, sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
 
+
+			// cleanup
+			oP13nConditionPanel.destroy();
+		});
+
+		QUnit.test("change KeyField from non upperCase field to upperCase field", function(assert) {
+			var oP13nConditionPanel = new P13nConditionPanel({});
+
+			fillConditionPanel(oP13nConditionPanel);
+
+			// Arrange
+			oP13nConditionPanel.placeAt("content");
+
+			// Act
+			var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[1];
+			oConditionGrid.keyField.setSelectedKey("CompanyName");
+			oP13nConditionPanel._handleSelectionChangeOnKeyField(oP13nConditionPanel._oConditionsGrid, oConditionGrid);
+
+			var sValue = "foo";
+			oConditionGrid.value1.setValue(sValue);
+
+			oConditionGrid.keyField.setSelectedKey("CompanyCode");
+			sinon.stub(oP13nConditionPanel, "getDisplayFormat").returns("UpperCase");
+			oP13nConditionPanel._handleSelectionChangeOnKeyField(oP13nConditionPanel._oConditionsGrid, oConditionGrid);
+			oP13nConditionPanel._changeField(oConditionGrid);
+
+			// Assert
+			assert.strictEqual(oP13nConditionPanel.getConditions()[1].value1, sValue.toUpperCase(), "Value1 of first condition is UpperCase and must be '" + sValue.toUpperCase() + "'.");
 
 			// cleanup
 			oP13nConditionPanel.destroy();
