@@ -257,7 +257,7 @@ sap.ui.define([
 			aItems = this.oVariantManagement.getVariants();
 			assert.ok(aItems);
 			assert.equal(aItems.length, 5);
-			assert.equal(aItems[0].getKey(), this._oVM.getStandardVariantKey());
+			assert.equal(aItems[0].getKey(), this.oVariantManagement.getStandardVariantKey());
 			assert.equal(aItems[1].getKey(), "1");
 			assert.equal(aItems[1].getVisible(), true);
 			assert.equal(aItems[1].getOriginalTitle(), aItems[1].getTitle());
@@ -333,7 +333,7 @@ sap.ui.define([
 
 			assert.ok(this._oVM.oVariantPopOver);
 
-			assert.equal(this.oVariantManagement.getCurrentVariantKey(), this._oVM.getStandardVariantKey());
+			assert.equal(this.oVariantManagement.getCurrentVariantKey(), this.oVariantManagement.getStandardVariantKey());
 
 			assert.equal(this._oVM.oVariantSaveBtn.getVisible(), false);
 			assert.equal(this._oVM.oVariantSaveAsBtn.getVisible(), true);
@@ -371,7 +371,7 @@ sap.ui.define([
 			assert.ok(this._oVM.oVariantPopOver);
 			sinon.stub(this._oVM.oVariantPopOver, "openBy");
 
-			assert.equal(this.oVariantManagement.getCurrentVariantKey(), this._oVM.getStandardVariantKey());
+			assert.equal(this.oVariantManagement.getCurrentVariantKey(), this.oVariantManagement.getStandardVariantKey());
 
 			this._oVM._openVariantList();
 
@@ -394,7 +394,7 @@ sap.ui.define([
 			assert.ok(this._oVM.oVariantPopOver);
 			sinon.stub(this._oVM.oVariantPopOver, "openBy");
 
-			assert.equal(this.oVariantManagement.getCurrentVariantKey(), this._oVM.getStandardVariantKey());
+			assert.equal(this.oVariantManagement.getCurrentVariantKey(), this.oVariantManagement.getStandardVariantKey());
 
 			this._oVM._openVariantList();
 
@@ -948,7 +948,7 @@ sap.ui.define([
 
 			this._oVM._handleManageSavePressed();
 
-			assert.equal(this.oVariantManagement.getCurrentVariantKey(), this._oVM.getStandardVariantKey());
+			assert.equal(this.oVariantManagement.getCurrentVariantKey(), this.oVariantManagement.getStandardVariantKey());
 		});
 
 		QUnit.test("Checking _triggerSearch", function(assert) {

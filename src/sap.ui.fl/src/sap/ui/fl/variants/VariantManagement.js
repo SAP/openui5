@@ -703,6 +703,10 @@ sap.ui.define([
 	VariantManagement.prototype.setModified = function(bFlag) {
 		this._oVM.setModified(bFlag);
 	};
+
+	VariantManagement.prototype.getStandardVariantKey = function() {
+		return this._oVM.getStandardVariantKey();
+	};
 	/// </OVERWRITES>
 
 	VariantManagement.prototype._getEmbeddedVM = function() {
