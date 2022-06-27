@@ -3,8 +3,9 @@
  */
 sap.ui.define([
 	"./WaiterBase",
+	"./_utils",
 	"sap/ui/thirdparty/jquery"
-], function (WaiterBase, jQueryDOM) {
+], function (WaiterBase, _utils, jQueryDOM) {
 	"use strict";
 
 	var STATE = {
@@ -43,7 +44,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 
-			this._onElementAvailable("body", function (oElement) {
+			_utils.onElementAvailable("body", function (oElement) {
 				observer.observe(oElement, {
 					attributes: true,
 					attributeFilter: ["src"],
@@ -101,16 +102,6 @@ sap.ui.define([
 					mNewResource.state = STATE.ERROR;
 					this._oLogger.trace("Image with src '" + oElement.src + "' failed to load");
 				}.bind(this));
-			}
-		},
-		_onElementAvailable: function (sSelector, fnOnAvailable) {
-			var aElements = jQueryDOM(sSelector);
-			if (aElements.length) {
-				fnOnAvailable(aElements[0]);
-			} else {
-				setTimeout(function () {
-					this._onElementAvailable(sSelector, fnOnAvailable);
-				}.bind(this), 100);
 			}
 		}
 	});

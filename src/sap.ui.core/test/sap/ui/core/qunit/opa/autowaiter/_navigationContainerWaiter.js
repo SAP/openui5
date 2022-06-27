@@ -5,13 +5,16 @@ sap.ui.define([
 	"sap/ui/test/autowaiter/_timeoutWaiter",
 	"sap/ui/test/autowaiter/_XHRWaiter",
 	"sap/ui/test/autowaiter/_promiseWaiter",
+	"sap/ui/test/autowaiter/_cssTransitionWaiter",
+	"sap/ui/test/autowaiter/_cssAnimationWaiter",
 	"sap/m/NavContainer",
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5"
-], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
+], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter,
+		_promiseWaiter, _cssTransitionWaiter, _cssAnimationWaiter,
 		NavContainer, App, Page, Button, opaTest, Opa5) {
 	"use strict";
 
@@ -23,9 +26,13 @@ sap.ui.define([
 				this.oTimeoutWaiterStub = sinon.stub(_timeoutWaiter, "hasPending");
 				this.oXHRWaiterStub = sinon.stub(_XHRWaiter, "hasPending");
 				this.oPromiseWaiterStub = sinon.stub(_promiseWaiter, "hasPending");
+				this.oCssTransitionWaiterStub = sinon.stub(_cssTransitionWaiter, "hasPending");
+				this.oCssAnimationWaiterStub = sinon.stub(_cssAnimationWaiter, "hasPending");
 				this.oTimeoutWaiterStub.returns(false);
 				this.oXHRWaiterStub.returns(false);
 				this.oPromiseWaiterStub.returns(false);
+				this.oCssTransitionWaiterStub.returns(false);
+				this.oCssAnimationWaiterStub.returns(false);
 
 				this.oInitialPageButton = new Button();
 				this.oSecondPageButton = new Button();
@@ -46,6 +53,8 @@ sap.ui.define([
 				this.oTimeoutWaiterStub.restore();
 				this.oXHRWaiterStub.restore();
 				this.oPromiseWaiterStub.restore();
+				this.oCssTransitionWaiterStub.restore();
+				this.oCssAnimationWaiterStub.restore();
 				this.oNavContainer.destroy();
 				sap.ui.getCore().applyChanges();
 			}
