@@ -106,6 +106,7 @@ sap.ui.define([
 							title: "One",
 							author: "A",
 							layer: Layer.USER,
+							change: true,
 							favorite: true,
 							originalFavorite: true,
 							visible: true,
@@ -134,7 +135,8 @@ sap.ui.define([
 							key: "4",
 							title: "Four",
 							author: "Z",
-							layer: Layer.PARTNER,
+							layer: Layer.USER,
+							change: true,
 							favorite: true,
 							originalFavorite: true,
 							visible: true
@@ -342,7 +344,7 @@ sap.ui.define([
 
 			this.oVariantManagement.setModified(true);
 			assert.equal(this.oVariantManagement.getModified(), true);
-			assert.equal(this._oVM.oVariantSaveBtn.getVisible(), true);
+			assert.equal(this._oVM.oVariantSaveBtn.getVisible(), false);
 			assert.equal(this._oVM.oVariantSaveAsBtn.getVisible(), true);
 
 			this.oVariantManagement.setCurrentVariantKey("4");

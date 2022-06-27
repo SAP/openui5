@@ -267,8 +267,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("check event 'save'", function(assert) {
-		this.oVM.addItem(new VariantItem({key: "1", title:"One"}));
-		this.oVM.addItem(new VariantItem({key: "2", title:"Two"}));
+		this.oVM.addItem(new VariantItem({key: "1", title: "One"}));
+		this.oVM.addItem(new VariantItem({key: "2", title: "Two", changeable: true}));
 
 		this.oVM.setSelectedKey("2");
 		this.oVM.setModified(true);
@@ -370,8 +370,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("check buttons with modified=false", function(assert) {
-		this.oVM.addItem(new VariantItem({key: "1", title:"One"}));
-		this.oVM.addItem(new VariantItem({key: "2", title:"Two"}));
+		this.oVM.addItem(new VariantItem({key: "1", title: "One"}));
+		this.oVM.addItem(new VariantItem({key: "2", title: "Two", changeable: true}));
 		this.oVM.setSelectedKey("2");
 
 		sap.ui.getCore().applyChanges();
@@ -405,8 +405,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("check buttons with modified = true", function(assert) {
-		this.oVM.addItem(new VariantItem({key: "1", title:"One"}));
-		this.oVM.addItem(new VariantItem({key: "2", title:"Two"}));
+		this.oVM.addItem(new VariantItem({key: "1", title: "One"}));
+		this.oVM.addItem(new VariantItem({key: "2", title: "Two", changeable: true}));
 		this.oVM.setSelectedKey("2");
 		this.oVM.setModified(true);
 
