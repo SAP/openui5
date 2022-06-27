@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/base/Object",
-	"sap/ui/mdc/p13n/PersistenceProvider"
-], function (BaseObject, PersistenceProvider) {
+	"sap/ui/mdc/p13n/PersistenceProvider",
+	"sap/ui/fl/Utils"
+], function (BaseObject, PersistenceProvider, FLUtils) {
 	"use strict";
 
 	var ERROR_INSTANCING = "DefaultProviderRegistry: This class is a singleton and should not be used without an AdaptationProvider. Please use 'sap.ui.mdc.p13n.Engine.getInstance().defaultProviderRegistry' instead";
@@ -72,9 +73,11 @@ sap.ui.define([
 		if (this._oEngine.isRegisteredForModification(vElement)) { // Modification settings for a registered element are only determined once in the Engine
 			throw new Error("DefaultProviderRegistry: You must not change the modificationSettings for an already registered element");
 		}
-		var oDefaultProvider = this._retrieveDefaultProvider(sPersistenceMode);
-		var sControlId = typeof vElement === "string" ? vElement : vElement.getId();
-		if (oDefaultProvider.getFor().indexOf(sControlId) === -1) {
+
+		var oElement = typeof vElement === "string" ? sap.ui.getCore().byId(vElement) : vElement, sElementId = typeof vElement === "string" ? vElement : vElement.getId();
+		var oDefaultProvider = this._retrieveDefaultProvider(oElement, sPersistenceMode);
+
+		if (oDefaultProvider.getFor().indexOf(sElementId) === -1) {
 			oDefaultProvider.addFor(vElement);
 		}
 
@@ -101,12 +104,29 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc
 	 *
 	 * Returns a promise resolving a default persistence provider for the given <code>Control</code> and <code>PersistenceMode</code>.
-	 *
+	 * @param {sap.ui.core.Element} oElement The element instance.
 	 * @param {sap.ui.mdc.enum.PersistenceMode} sPersistenceMode Desired persistence mode for the retrieved persistence provider
 	 * @returns {Promise} Returns a <code>Promise</code> returning a persistence provider instance, if possible
 	 */
-	DefaultProviderRegistry.prototype._retrieveDefaultProvider = function (sPersistenceMode) {
-		this._mDefaultProviders[sPersistenceMode] = this._mDefaultProviders[sPersistenceMode] || new PersistenceProvider({mode: sPersistenceMode});
+	DefaultProviderRegistry.prototype._retrieveDefaultProvider = function (oElement, sPersistenceMode) {
+
+		if (!this._mDefaultProviders[sPersistenceMode]) {
+			var oProvider = new PersistenceProvider("defaultProviderRegistry" + sPersistenceMode, {
+				mode: sPersistenceMode
+			});
+
+			var fnAttachVariantModel = function(){
+				var oModel = oElement.getModel(FLUtils.VARIANT_MODEL_NAME);
+				if (oModel) {
+					oProvider.setModel(oModel, FLUtils.VARIANT_MODEL_NAME);
+					oElement.detachEvent("modelContextChange", fnAttachVariantModel);
+				}
+			};
+
+			oElement.attachEvent("modelContextChange", fnAttachVariantModel);
+			this._mDefaultProviders[sPersistenceMode] = oProvider;
+		}
+
 		return this._mDefaultProviders[sPersistenceMode];
 	};
 

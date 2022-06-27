@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/mdc/p13n/PersistenceProvider",
 	"sap/ui/mdc/enum/PersistenceMode",
-	"sap/ui/core/Core"
-], function (PersistenceProvider, mode, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Control"
+], function (PersistenceProvider, mode, oCore, Control) {
 	"use strict";
 
 	QUnit.module("PersistenceProvider tests (generic)", {
@@ -49,7 +50,7 @@ sap.ui.define([
 		var aStaticAreaContent = oCore.getUIArea(oCore.getStaticAreaRef()).getContent();
 
 		this.oPP.onAfterRendering = function() {
-			assert.notOk(aStaticAreaContent[0].getDomRef(), "accWrapper will not render in the dom");
+			assert.ok(aStaticAreaContent[0].getDomRef(), "accWrapper WILL render in the dom");
 			done();
 		};
 
@@ -62,6 +63,26 @@ sap.ui.define([
 	QUnit.test("inner VM cleanup", function(assert){
 		this.oPP.destroy();
 		assert.ok(!this.oPP._oVM, "Inner VM cleaned up");
+	});
+
+	QUnit.test("When the type s set to transient, the for association needs to be propagated to the inner VM", function(assert){
+
+		var oInnerVM = this.oPP._oWrapper.getContent()[0];
+
+		//Check empty for association in beginning
+		assert.deepEqual(this.oPP.getFor(), [], "The for association has not yet been proivided");
+		assert.deepEqual(oInnerVM.getFor(), [], "The for association has not yet been provdided (propagation to VM)");
+
+		//Check propagation after adding it on the outer PersistenceProvider
+		var oMyTestControl = new Control("myTestControl");
+		this.oPP.addFor(oMyTestControl);
+		assert.deepEqual(this.oPP.getFor(), ["myTestControl"], "The for association has been proivided");
+		assert.deepEqual(oInnerVM.getFor(), ["myTestControl"], "The for association has not yet been propagated to the inner VM");
+
+		//Check propagation after removing it on the outer PersistenceProvider
+		this.oPP.removeFor(oMyTestControl);
+		assert.deepEqual(this.oPP.getFor(), [], "The for association has been proivided");
+		assert.deepEqual(oInnerVM.getFor(), [], "The for association has not yet been propagated to the inner VM");
 	});
 
 	QUnit.module("PersistenceProvider tests (global)", {
