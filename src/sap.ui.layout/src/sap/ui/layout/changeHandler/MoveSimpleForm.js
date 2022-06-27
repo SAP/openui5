@@ -467,12 +467,10 @@ sap.ui.define([
 		var oGroupSelector = oMovedElement.source.groupSelector;
 		var oAffectedControlSelector = JsControlTreeModifier.bySelector(oMovedElement.elementSelector, oAppComponent).getParent().getId();
 		if (oChange.getChangeType() === MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD) {
-			var mPropertyBag = {
-				modifier: JsControlTreeModifier,
-				appComponent: oAppComponent
-			};
-			oSourceParentContainer = oChange.getDependentControl("sourceParent", mPropertyBag).getParent().getId();
-			oTargetParentContainer = oChange.getDependentControl("targetParent", mPropertyBag).getParent().getId();
+			var oSourceParentTitleElement = JsControlTreeModifier.bySelector(oMovedElement.source.groupSelector, oAppComponent);
+			var oTargetParentTitleElement = JsControlTreeModifier.bySelector(oMovedElement.target.groupSelector, oAppComponent);
+			oSourceParentContainer = oSourceParentTitleElement ? oSourceParentTitleElement.getParent().getId() : null;
+			oTargetParentContainer = oTargetParentTitleElement ? oTargetParentTitleElement.getParent().getId() : null;
 			oGroupSelector = {
 				id: oSourceParentContainer
 			};

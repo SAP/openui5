@@ -58,6 +58,21 @@ sap.ui.define([
 				"then the button text is returned"
 			);
 		});
+		QUnit.test("when an element was moved outside its parent that has no source id", function (assert) {
+			var oPayloadOutsideGroup = {
+				sourceParentContainer: { id: null },
+				targetParentContainer: { id: "Group2" }
+			};
+			assert.strictEqual(
+				MoveVisualization.getDescription(oPayloadOutsideGroup, "label", this.mPropertyBag).descriptionText,
+				oResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE", ["label"]),
+				"then the description text outside its group is returned"
+			);
+			assert.notOk(
+				MoveVisualization.getDescription(oPayloadOutsideGroup, "label", this.mPropertyBag).buttonText,
+				"then the button text is not returned"
+			);
+		});
 	});
 
 	QUnit.done(function() {
