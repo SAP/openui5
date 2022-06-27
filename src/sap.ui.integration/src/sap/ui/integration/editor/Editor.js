@@ -3489,7 +3489,7 @@ sap.ui.define([
 			var oItems = oSettings.form.items,
 				oHost = this.getHostInstance();
 			Object.keys(oConfiguration.destinations).forEach(function (n) {
-				oItems[n + ".destinaton"] = merge({
+				oItems[n + ".destination"] = merge({
 					manifestpath: sBasePath + "/" + n + "/name", //destination points to name not value
 					visible: true,
 					type: "destination",
@@ -3498,15 +3498,15 @@ sap.ui.define([
 					allowSettings: false,
 					value: oConfiguration.destinations[n].name,
 					defaultValue: oConfiguration.destinations[n].defaultUrl,
-					_settingspath: "/form/items/" + [n + ".destinaton"],
+					_settingspath: "/form/items/" + [n + ".destination"],
 					_values: [],
 					_destinationName: n
 				}, oConfiguration.destinations[n]);
-				if (typeof oItems[n + ".destinaton"].label === "undefined") {
-					oItems[n + ".destinaton"].label = n;
+				if (typeof oItems[n + ".destination"].label === "undefined") {
+					oItems[n + ".destination"].label = n;
 				}
 				if (oHost) {
-					oItems[n + ".destinaton"]._loading = true;
+					oItems[n + ".destination"]._loading = true;
 				}
 			});
 			var getDestinationsDone = false;
@@ -3514,8 +3514,8 @@ sap.ui.define([
 				this.getHostInstance().getDestinations().then(function (a) {
 					getDestinationsDone = true;
 					Object.keys(oConfiguration.destinations).forEach(function (n) {
-						oItems[n + ".destinaton"]._values = a;
-						oItems[n + ".destinaton"]._loading = false;
+						oItems[n + ".destination"]._values = a;
+						oItems[n + ".destination"]._loading = false;
 						this._settingsModel.checkUpdate(true);
 					}.bind(this));
 				}.bind(this)).catch(function () {
@@ -3526,13 +3526,13 @@ sap.ui.define([
 						return;
 					}
 					Object.keys(oConfiguration.destinations).forEach(function (n) {
-						oItems[n + ".destinaton"]._values = b;
-						oItems[n + ".destinaton"]._loading = false;
+						oItems[n + ".destination"]._values = b;
+						oItems[n + ".destination"]._loading = false;
 						this._settingsModel.checkUpdate(true);
 					}.bind(this));
 				}.bind(this)).catch(function (e) {
 					Object.keys(oConfiguration.destinations).forEach(function (n) {
-						oItems[n + ".destinaton"]._loading = false;
+						oItems[n + ".destination"]._loading = false;
 						this._settingsModel.checkUpdate(true);
 					}.bind(this));
 					Log.error("Can not get destinations list from '" + oHost.getId() + "'.");

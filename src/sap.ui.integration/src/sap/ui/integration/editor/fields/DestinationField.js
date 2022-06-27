@@ -44,7 +44,6 @@ sap.ui.define([
 							text: "{currentSettings>name}",
 							key: "{currentSettings>name}"
 						})
-
 					}
 				}
 			};
