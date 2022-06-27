@@ -61,6 +61,15 @@
 				"samples": ["sap.ui.webc.main.sample.Button"]
 			},
 			{
+				"id": "sap.ui.webc.main.Calendar",
+				"name": "Calendar",
+				"category": "Web Components",
+				"since": "1.101.0",
+				"samples": [
+					"sap.ui.webc.main.sample.Calendar"
+				]
+			},
+			{
 				"id": "sap.ui.webc.main.Card",
 				"name": "Card",
 				"category": "Web Components",
@@ -379,6 +388,11 @@
 				"id": "sap.ui.webc.main.sample.Button",
 				"name": "Button Freestyle Example",
 				"description": "Demonstrates the basic usage of Button"
+			},
+			{
+				"id": "sap.ui.webc.main.sample.Calendar",
+				"name": "Calendar",
+				"description": "Demonstrates the basic usage of Calendar"
 			},
 			{
 				"id": "sap.ui.webc.main.sample.Card",
