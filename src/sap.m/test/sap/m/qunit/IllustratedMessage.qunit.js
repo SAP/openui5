@@ -419,12 +419,10 @@ function (
 			"_updateMedia is called with the oMockEvent's new width size");
 	});
 
-	QUnit.test("_updateMedia (horizontal)", function (assert) {
-		// Assert
-		assert.expect(9);
-
+	QUnit.test("_updateMedia (with invalid input)", function (assert) {
 		// Arrange
 		var fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle");
+		var fnUpdateSymbolSpy = this.spy(this.oIllustratedMessage, "_updateSymbol");
 
 		// Act
 		this.oIllustratedMessage._updateMedia(0);
@@ -432,6 +430,21 @@ function (
 		// Assert
 		assert.strictEqual(fnUpdateMediaStyleSpy.callCount, 0,
 			"_updateMediaStyle is not called inside the _updateMedia call when an invalid argument is passed");
+		assert.strictEqual(fnUpdateSymbolSpy.callCount, 0,
+			"_updateSymbol is not called inside the _updateMedia call when an invalid argument is passed");
+
+		// Clear
+		fnUpdateMediaStyleSpy.resetHistory();
+		fnUpdateSymbolSpy.resetHistory();
+	});
+
+	QUnit.test("_updateMedia (horizontal)", function (assert) {
+		// Assert
+		assert.expect(16);
+
+		// Arrange
+		var fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle");
+		var fnUpdateSymbolSpy = this.spy(this.oIllustratedMessage, "_updateSymbol");
 
 		Object.keys(jQuery.extend(IllustratedMessage.BREAK_POINTS, {SCENE: 800})).forEach(function (sBreakPoint) {
 			// Act
@@ -442,18 +455,24 @@ function (
 				"_updateMediaStyle is called once inside the _updateMedia call when a valid argument/width is passed");
 			assert.ok(fnUpdateMediaStyleSpy.calledWithExactly(IllustratedMessage.MEDIA[sBreakPoint]),
 				"_updateMediaStyle called with the correct class ( " + IllustratedMessage.MEDIA[sBreakPoint] + " ) for breakpoint: " + sBreakPoint);
+			assert.ok(fnUpdateSymbolSpy.calledOnce,
+				"_updateSymbol is called once inside the _updateMedia call when a valid arguments width and height are passed");
+			assert.ok(fnUpdateSymbolSpy.calledWithExactly(IllustratedMessage.MEDIA[sBreakPoint]),
+				"_updateSymbol called with the correct class ( " + IllustratedMessage.MEDIA[sBreakPoint] + " ) for breakpoint: " + sBreakPoint);
 
 			// Clear
 			fnUpdateMediaStyleSpy.resetHistory();
+			fnUpdateSymbolSpy.resetHistory();
 		}, this);
 	});
 
 	QUnit.test("_updateMedia (vertical) with enableVerticalResponsiveness property", function (assert) {
 		// Assert
-		assert.expect(11);
+		assert.expect(20);
 
 		// Arrange
 		var fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle");
+		var fnUpdateSymbolSpy = this.spy(this.oIllustratedMessage, "_updateSymbol");
 		var sScalableClass = 'sapMIllustratedMessageScalable';
 
 		// Act
@@ -462,6 +481,8 @@ function (
 		// Assert
 		assert.strictEqual(fnUpdateMediaStyleSpy.callCount, 0,
 			"_updateMediaStyle is not called inside the _updateMedia call when a valid arguments width and height are passed, but enableVerticalResponsiveness is 'false'");
+		assert.ok(fnUpdateSymbolSpy.calledOnce,
+			"_updateSymbol is called once inside the _updateMedia call even if enableVerticalResponsiveness is 'false'");
 		assert.notOk(this.oIllustratedMessage.$().hasClass(sScalableClass),
 			"IllustratedMessage doesn't have the scalable class which allows scalable SVG when EVS property is false");
 
@@ -473,6 +494,9 @@ function (
 		assert.ok(this.oIllustratedMessage.$().hasClass(sScalableClass),
 			"IllustratedMessage has the scalable class which allows scalable SVG when EVS property is true");
 
+		// Act Reset the _updateSymbol call count due to few calls up to this point
+		fnUpdateSymbolSpy.resetHistory();
+
 		Object.keys(jQuery.extend(IllustratedMessage.BREAK_POINTS_HEIGHT, {SCENE: 999})).forEach(function (sBreakPoint) {
 			// Act
 			this.oIllustratedMessage._updateMedia(9999, IllustratedMessage.BREAK_POINTS_HEIGHT[sBreakPoint]);
@@ -482,18 +506,23 @@ function (
 				"_updateMediaStyle is called once inside the _updateMedia call when a valid arguments width and height are passed");
 			assert.ok(fnUpdateMediaStyleSpy.calledWithExactly(IllustratedMessage.MEDIA[sBreakPoint]),
 				"_updateMediaStyle called with the correct class ( " + IllustratedMessage.MEDIA[sBreakPoint] + " ) for breakpoint: " + sBreakPoint);
+			assert.ok(fnUpdateSymbolSpy.calledOnce,
+				"_updateSymbol is called once inside the _updateMedia call when a valid arguments width and height are passed");
+			assert.ok(fnUpdateSymbolSpy.calledWithExactly(IllustratedMessage.MEDIA[sBreakPoint]),
+				"_updateSymbol called with the correct class ( " + IllustratedMessage.MEDIA[sBreakPoint] + " ) for breakpoint: " + sBreakPoint);
 
 			// Clear
 			fnUpdateMediaStyleSpy.resetHistory();
+			fnUpdateSymbolSpy.resetHistory();
 		}, this);
 	});
 
 	QUnit.test("_updateMediaStyle", function (assert) {
 		// Assert
-		assert.expect(20);
+		assert.expect(16);
 
 		// Arrange
-		var sIdMedia, sNewSymbolId, sCurrStyleClass,
+		var sIdMedia, sCurrStyleClass,
 			aIllustratedMessageMediaKeys = Object.keys(IllustratedMessage.MEDIA);
 
 		aIllustratedMessageMediaKeys.forEach(function (sMedia, iIndex) {
@@ -503,18 +532,9 @@ function (
 			// Act
 			this.oIllustratedMessage._updateMediaStyle(IllustratedMessage.MEDIA[sMedia]);
 			Core.applyChanges();
-			sNewSymbolId = this.oIllustratedMessage._sIllustrationSet + "-" + sIdMedia + "-" + this.oIllustratedMessage._sIllustrationType;
 			sCurrStyleClass = IllustratedMessage.MEDIA[sMedia];
 
 			// Assert
-			if (sMedia === "BASE") {
-				assert.notEqual(this.oIllustratedMessage._getIllustration()._sSymbolId, sNewSymbolId,
-				"symbolId ( " + sNewSymbolId + " ) of the IllustratedMessage's illustration is untouched according to the current media (" + sIdMedia + ")");
-			} else {
-				assert.strictEqual(this.oIllustratedMessage._getIllustration()._sSymbolId, sNewSymbolId,
-				"symbolId ( " + sNewSymbolId + " ) of the IllustratedMessage's illustration is correctly set according to the current media (" + sIdMedia + ")");
-			}
-
 			assert.ok(this.oIllustratedMessage.hasStyleClass(sCurrStyleClass),
 				"IllustratedMessage has the correct style class ( " + sCurrStyleClass + " ) according to the current media (" + sIdMedia + ")");
 
@@ -525,6 +545,34 @@ function (
 						"IllustratedMessage doesn't have the style class ( " + sCurrStyleClass + " ) according to the current media (" + sIdMedia + ")");
 				}
 			}, this);
+		}, this);
+	});
+
+	QUnit.test("_updateSymbol", function (assert) {
+		// Assert
+		assert.expect(4);
+
+		// Arrange
+		var sIdMedia, sNewSymbolId,
+			aIllustratedMessageMediaKeys = Object.keys(IllustratedMessage.MEDIA);
+
+		aIllustratedMessageMediaKeys.forEach(function (sMedia) {
+			// Arrange
+			sIdMedia = sMedia.charAt(0) + sMedia.slice(1).toLowerCase();
+
+			// Act
+			this.oIllustratedMessage._updateSymbol(IllustratedMessage.MEDIA[sMedia]);
+			Core.applyChanges();
+			sNewSymbolId = this.oIllustratedMessage._sIllustrationSet + "-" + sIdMedia + "-" + this.oIllustratedMessage._sIllustrationType;
+
+			// Assert
+			if (sMedia === "BASE") {
+				assert.notEqual(this.oIllustratedMessage._getIllustration()._sSymbolId, sNewSymbolId,
+				"symbolId ( " + sNewSymbolId + " ) of the IllustratedMessage's illustration is untouched according to the current media (" + sIdMedia + ")");
+			} else {
+				assert.strictEqual(this.oIllustratedMessage._getIllustration()._sSymbolId, sNewSymbolId,
+				"symbolId ( " + sNewSymbolId + " ) of the IllustratedMessage's illustration is correctly set according to the current media (" + sIdMedia + ")");
+			}
 		}, this);
 	});
 
