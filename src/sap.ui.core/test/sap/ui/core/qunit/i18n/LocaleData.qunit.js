@@ -502,6 +502,35 @@ sap.ui.define([
 
 	var aABAPUnsupportedIDs = [
 		"Etc/GMT",
+		"Etc/GMT0",
+		"Etc/GMT+0",
+		"Etc/GMT+1",
+		"Etc/GMT+2",
+		"Etc/GMT+3",
+		"Etc/GMT+4",
+		"Etc/GMT+5",
+		"Etc/GMT+6",
+		"Etc/GMT+7",
+		"Etc/GMT+8",
+		"Etc/GMT+9",
+		"Etc/GMT+10",
+		"Etc/GMT+11",
+		"Etc/GMT+12",
+		"Etc/GMT-0",
+		"Etc/GMT-1",
+		"Etc/GMT-2",
+		"Etc/GMT-3",
+		"Etc/GMT-4",
+		"Etc/GMT-5",
+		"Etc/GMT-6",
+		"Etc/GMT-7",
+		"Etc/GMT-8",
+		"Etc/GMT-9",
+		"Etc/GMT-10",
+		"Etc/GMT-11",
+		"Etc/GMT-12",
+		"Etc/GMT-13",
+		"Etc/GMT-14",
 		"Etc/Greenwich",
 		"Etc/Zulu",
 		"Pacific/Kanton"
@@ -538,9 +567,6 @@ sap.ui.define([
 		delete oLocaleData.mTimezoneNames;
 		var oStubIsValidTimezone = this.stub(TimezoneUtil, 'isValidTimezone').returns(true);
 		var oStubGet = this.stub(oLocaleData, '_get');
-		oStubGet.withArgs("timezoneNamesFormats").returns({
-			"gmtFormat": "XYZ{0}"
-		});
 		oStubGet.withArgs("timezoneNames").returns({
 			a: {
 				_parent: "AParent",
@@ -606,36 +632,7 @@ sap.ui.define([
 			"b/b1": "BParent, B1",
 			"b/b2/b21/b211": "BParent, B2Parent, B211",
 			"b/b2/b22": "BParent, B2Parent, B22",
-			"b/b3": "BParent, B3",
-			"Etc/GMT-0": "XYZ-0",
-			"Etc/GMT-1": "XYZ-1",
-			"Etc/GMT-2": "XYZ-2",
-			"Etc/GMT-3": "XYZ-3",
-			"Etc/GMT-4": "XYZ-4",
-			"Etc/GMT-5": "XYZ-5",
-			"Etc/GMT-6": "XYZ-6",
-			"Etc/GMT-7": "XYZ-7",
-			"Etc/GMT-8": "XYZ-8",
-			"Etc/GMT-9": "XYZ-9",
-			"Etc/GMT-10": "XYZ-10",
-			"Etc/GMT-11": "XYZ-11",
-			"Etc/GMT-12": "XYZ-12",
-			"Etc/GMT-13": "XYZ-13",
-			"Etc/GMT-14": "XYZ-14",
-			"Etc/GMT0": "XYZ0",
-			"Etc/GMT+0": "XYZ+0",
-			"Etc/GMT+1": "XYZ+1",
-			"Etc/GMT+2": "XYZ+2",
-			"Etc/GMT+3": "XYZ+3",
-			"Etc/GMT+4": "XYZ+4",
-			"Etc/GMT+5": "XYZ+5",
-			"Etc/GMT+6": "XYZ+6",
-			"Etc/GMT+7": "XYZ+7",
-			"Etc/GMT+8": "XYZ+8",
-			"Etc/GMT+9": "XYZ+9",
-			"Etc/GMT+10": "XYZ+10",
-			"Etc/GMT+11": "XYZ+11",
-			"Etc/GMT+12": "XYZ+12"
+			"b/b3": "BParent, B3"
 		}, mTimezoneNames);
 
 		oStubGet.restore();

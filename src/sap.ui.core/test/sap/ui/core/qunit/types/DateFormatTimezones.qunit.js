@@ -1154,27 +1154,33 @@ sap.ui.define([
 
 		QUnit.test("Timezone translation special cases", function (assert) {
 			var oDate = new Date("2021-10-04T02:22:33Z");
-			var oLocale = new Locale("tr");
+
+			// Etc/GMT offset timezones
+			var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({style: "long"}, new Locale("de"));
+
+			var sFormatted = oDateFormat.format(oDate, "Etc/GMT+3");
+			// offset is negative (GMT-03:00) while IANA timezone ID is positive (Etc/GMT+3)
+			assert.equal(sFormatted, "3. Oktober 2021 um 23:22:33 GMT-03:00 Etc/GMT+3");
+			var oParsed = oDateFormat.parse(sFormatted, "Etc/GMT+3");
+			assert.deepEqual(oParsed, [oDate, "Etc/GMT+3"], "parsed date and timezone match for IANA timezone ID 'Etc/GMT+3'");
 
 			// dayName and timezone translation partial overlap
-			var oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({pattern: "VV E HH:mm:ss d MMM y"}, oLocale);
+			oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({pattern: "VV E HH:mm:ss d MMM y"}, new Locale("tr"));
 			// (E) Paz
 			// (VV) Amerika, La Paz
-			var sFormatted = oDateFormat.format(oDate, "America/La_Paz");
+			sFormatted = oDateFormat.format(oDate, "America/La_Paz");
 			assert.equal(sFormatted, "Amerika, La Paz Paz 22:22:33 3 Eki 2021");
-			var oParsed = oDateFormat.parse(sFormatted, "America/La_Paz");
-			assert.ok(oParsed, "can be parsed");
-			assert.deepEqual(oParsed[0], oDate, "parsed date matches");
-			assert.equal(oParsed[1], "America/La_Paz", "parsed timezone matches");
+			oParsed = oDateFormat.parse(sFormatted, "America/La_Paz");
+			assert.deepEqual(oParsed, [oDate, "America/La_Paz"], "parsed date and timezone match for IANA timezone ID 'America/La_Paz'");
 
 			// hour and timezone translation partial overlap
 			oDateFormat = DateFormat.getDateTimeWithTimezoneInstance({pattern: "VV H:mm:ss d MMM y"}, new Locale("de"));
 			// (H) 1
-			// (VV) GMT+1
+			// (VV) Etc/GMT+1
 			sFormatted = oDateFormat.format(oDate, "Etc/GMT+1");
-			assert.equal(sFormatted, "GMT+1 1:22:33 4 Okt. 2021");
+			assert.equal(sFormatted, "Etc/GMT+1 1:22:33 4 Okt. 2021");
 			oParsed = oDateFormat.parse(sFormatted, "Etc/GMT+1");
-			assert.deepEqual(oParsed, [oDate, "Etc/GMT+1"], "parsed date and timezone match for GMT+1 and Hour 1");
+			assert.deepEqual(oParsed, [oDate, "Etc/GMT+1"], "parsed date and timezone match for IANA timezone ID 'Etc/GMT+1' and hour 1");
 
 			// timezone substring contained in ID and translation
 			oDateFormat = DateFormat.getDateTimeWithTimezoneInstance(new Locale("en"));

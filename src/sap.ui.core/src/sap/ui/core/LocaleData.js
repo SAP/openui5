@@ -365,7 +365,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		 * @private
 		 */
 		getTimezoneTranslations: function() {
-			this.mTimezoneTranslations = this.mTimezoneTranslations || getTimezoneTranslationMap(this._get("timezoneNames"), this._get("timezoneNamesFormats"));
+			this.mTimezoneTranslations = this.mTimezoneTranslations || _resolveTimezoneTranslationStructure(this._get("timezoneNames"));
 
 			// retrieve a copy such that the original object won't be modified.
 			return Object.assign({}, this.mTimezoneTranslations);
@@ -2012,48 +2012,6 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 	 * @private
 	 */
 	var mLocaleDatas = {};
-
-
-	function getTimezoneTranslationMap(oTimezoneNames, oTimezoneNamesFormats) {
-		var oTimezoneTranslationMap = _resolveTimezoneTranslationStructure(oTimezoneNames);
-		var aOffsetList = [
-			"Etc/GMT0",
-			"Etc/GMT+0",
-			"Etc/GMT+1",
-			"Etc/GMT+2",
-			"Etc/GMT+3",
-			"Etc/GMT+4",
-			"Etc/GMT+5",
-			"Etc/GMT+6",
-			"Etc/GMT+7",
-			"Etc/GMT+8",
-			"Etc/GMT+9",
-			"Etc/GMT+10",
-			"Etc/GMT+11",
-			"Etc/GMT+12",
-			"Etc/GMT-0",
-			"Etc/GMT-1",
-			"Etc/GMT-2",
-			"Etc/GMT-3",
-			"Etc/GMT-4",
-			"Etc/GMT-5",
-			"Etc/GMT-6",
-			"Etc/GMT-7",
-			"Etc/GMT-8",
-			"Etc/GMT-9",
-			"Etc/GMT-10",
-			"Etc/GMT-11",
-			"Etc/GMT-12",
-			"Etc/GMT-13",
-			"Etc/GMT-14"
-		];
-
-		aOffsetList.forEach(function(sOffsetKey) {
-			oTimezoneTranslationMap[sOffsetKey] = oTimezoneNamesFormats.gmtFormat.replace("{0}", sOffsetKey.substring("Etc/GMT".length));
-		});
-
-		return oTimezoneTranslationMap;
-	}
 
 	/**
 	 * Creates a flat map from an object structure which contains a link to the parent ("_parent").
