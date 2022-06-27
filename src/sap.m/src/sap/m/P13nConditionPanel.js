@@ -1919,6 +1919,10 @@ sap.ui.define([
 					oConditionGrid.oType.validateValue(oValue);
 
 					sValue = oConditionGrid.oType.formatValue(oValue, "string");
+					if (sValue && sValue.toUpperCase && this.getDisplayFormat() === "UpperCase") {
+						sValue = sValue.toUpperCase();
+					}
+
 					oCtrl.setValue(sValue);
 				} catch (err) {
 					var sMsg = err.message;
