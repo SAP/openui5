@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/core/Icon",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
@@ -25,9 +24,13 @@ sap.ui.define([
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/core/dnd/DropInfo",
 	"sap/m/library",
-	"sap/m/upload/UploadSetToolbarPlaceholder"
-], function (Control, Icon, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar,
-			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod, DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder) {
+	"sap/m/upload/UploadSetToolbarPlaceholder",
+	"sap/m/IllustratedMessage",
+	"sap/m/IllustratedMessageType",
+	"sap/m/IllustratedMessageSize"
+], function (Control, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar,
+			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod,
+			DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder, IllustratedMessage,IllustratedMessageType, IllustratedMessageSize) {
 	"use strict";
 
 	/**
@@ -81,6 +84,14 @@ sap.ui.define([
 				 * Defines custom text for the 'No data' description label.
 				 */
 				noDataDescription: {type: "string", defaultValue: null},
+				/**
+				 * Defines custom text for the 'No data' text label.
+				 */
+				 dragDropText: {type: "string", defaultValue: null},
+				 /**
+				  * Defines custom text for the 'No data' description label.
+				  */
+				 dragDropDescription: {type: "string", defaultValue: null},
 				/**
 				 * Defines whether the upload process should be triggered as soon as the file is added.<br>
 				 * If set to <code>false</code>, no upload is triggered when a file is added.
@@ -154,7 +165,12 @@ sap.ui.define([
 				/**
 				 * Defines the uploader to be used. If not specified, the default implementation is used.
 				 */
-				uploader: {type: "sap.m.upload.Uploader", multiple: false}
+				uploader: {type: "sap.m.upload.Uploader", multiple: false},
+				/**
+			 	 * An illustrated message is displayed when no data is loaded or provided
+				 * @private
+				 */
+				 _illustratedMessage: { type: "sap.m.IllustratedMessage", multiple: false, visibility: "hidden" }
 			},
 			events: {
 				/**
@@ -460,14 +476,12 @@ sap.ui.define([
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		this._oList = null;
-		this._oNoDataIcon = new Icon(this.getId() + "-no-data-icon", {
-			src: "sap-icon://document",
-			size: "6rem",
-			noTabStop: true
-		});
 		this._oEditedItem = null;
 		this._oItemToBeDeleted = null;
 		this._mListItemIdToItemMap = {};
+		this._oUploadButton = null;
+		this._oDragIndicator = false;
+		this._bAttachEventListener = false;
 
 		// Drag&drop
 		this._$Body = null;
@@ -477,11 +491,16 @@ sap.ui.define([
 		this._aGroupHeadersAdded = [];
 		this._iFileUploaderPH = null;
 		this._oItemToUpdate = null;
+		var illustratedMessage = new IllustratedMessage({
+				illustrationType: IllustratedMessageType.NoData,
+				illustrationSize: IllustratedMessageSize.Auto,
+				title: this.getNoDataText(),
+				description: this.getNoDataDescription()
+			});
+		this.setAggregation("_illustratedMessage", illustratedMessage);
 	};
 
 	UploadSet.prototype.exit = function () {
-		this._oNoDataIcon.destroy();
-		this._oNoDataIcon = null;
 		if (this._oList) {
 			this._oList.destroy();
 			this._oList = null;
@@ -603,6 +622,18 @@ sap.ui.define([
 		var sNoDataDescription = this.getProperty("noDataDescription");
 		sNoDataDescription = sNoDataDescription || this._oRb.getText("UPLOADCOLLECTION_NO_DATA_DESCRIPTION");
 		return sNoDataDescription;
+	};
+
+	UploadSet.prototype.getDragDropText = function () {
+		var sDragDropText = this.getProperty("dragDropText");
+		sDragDropText = sDragDropText || this._oRb.getText("IllustratedMessage_TITLE_UploadCollection");
+		return sDragDropText;
+	};
+
+	UploadSet.prototype.getDragDropDescription = function () {
+		var sDragDropDescription = this.getProperty("dragDropDescription");
+		sDragDropDescription = sDragDropDescription || this._oRb.getText("IllustratedMessage_DESCRIPTION_UploadCollection");
+		return sDragDropDescription;
 	};
 
 	UploadSet.prototype.setToolbar = function (oToolbar) {
@@ -786,6 +817,42 @@ sap.ui.define([
 		return this;
 	};
 
+	UploadSet.prototype._getIllustratedMessage = function () {
+		var oAggregation = this.getAggregation("_illustratedMessage");
+		if (oAggregation) {
+			if (this._getDragIndicator()) {
+				oAggregation.setIllustrationType(IllustratedMessageType.UploadCollection);
+				oAggregation.setTitle(this.getDragDropText());
+				oAggregation.setDescription(this.getDragDropDescription());
+				oAggregation.removeAllAdditionalContent();
+			} else {
+				oAggregation.setIllustrationType(IllustratedMessageType.NoData);
+				oAggregation.setTitle(this.getNoDataText());
+				oAggregation.setDescription(this.getNoDataDescription());
+				oAggregation.addAdditionalContent(this.getUploadButtonForIllustratedMessage());
+			}
+		}
+		return oAggregation;
+	};
+
+	UploadSet.prototype.getUploadButtonForIllustratedMessage = function () {
+		if (!this._oUploadButton) {
+			this._oUploadButton = new Button({
+				id: this.getId() + "-uploadButton",
+				type: MobileLibrary.ButtonType.Standard,
+				visible: this.getUploadEnabled(),
+				text: this._oRb.getText("UPLOADCOLLECTION_UPLOAD"),
+				ariaDescribedBy: this.getAggregation("_illustratedMessage").getId(),
+				press: function () {
+					var FileUploader = this.getDefaultFileUploader();
+					FileUploader.$().find("input[type=file]").trigger("click");
+				}.bind(this)
+			});
+		}
+
+		return this._oUploadButton;
+	};
+
 	/* ============== */
 	/* Public methods */
 	/* ============== */
@@ -836,6 +903,15 @@ sap.ui.define([
 	UploadSet.prototype._onDragEnterFile = function (oEvent) {
 		var oDragSession = oEvent.getParameter("dragSession");
 		var oDraggedControl = oDragSession.getDragControl();
+		if (!this._bAttachEventListener) {
+            window.addEventListener("focus", function() {
+                this._oDragIndicator = false;
+                this._getIllustratedMessage();
+            }.bind(this), true);
+            this._bAttachEventListener = true;
+        }
+		this._oDragIndicator = true;
+        this._getIllustratedMessage();
 		if (oDraggedControl) {
 			oEvent.preventDefault();
 		}
@@ -843,6 +919,8 @@ sap.ui.define([
 
 	UploadSet.prototype._onDropFile = function (oEvent) {
 		var oFiles;
+		this._oDragIndicator = false;
+		this._getIllustratedMessage();
 		oEvent.preventDefault();
 		if (this.getUploadEnabled()) {
 			oFiles = oEvent.getParameter("browserEvent").dataTransfer.files;
@@ -855,6 +933,10 @@ sap.ui.define([
 			}
 			this._processNewFileObjects(oFiles);
 		}
+	};
+
+	UploadSet.prototype._getDragIndicator = function () {
+		return this._oDragIndicator;
 	};
 
 	/**

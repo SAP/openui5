@@ -17,9 +17,10 @@ sap.ui.define([
 	"sap/ui/core/dnd/DragAndDrop",
 	"sap/ui/base/Event",
 	"sap/m/library",
-	"sap/ui/model/Sorter"
+	"sap/ui/model/Sorter",
+	"sap/m/IllustratedMessageType"
 ], function (jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter) {
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -306,7 +307,7 @@ sap.ui.define([
 		this.oUploadSet.attachEventOnce("uploadCompleted",function(oEvent){
 			//Assert
 			assert.ok(oEvent.getParameter("item"), "item param present");
-			assert.ok(oEvent.getParameter("response"), "response param present");
+			assert.ok(oEvent.mParameters.hasOwnProperty("response"), "response param present");
 			assert.equal(oEvent.getParameter("responseXML"), null, "response xml param not present");
 			assert.ok(oEvent.getParameter("readyState"), "readystate param present");
 			assert.ok(oEvent.getParameter("status"), "status param present");
@@ -356,8 +357,17 @@ sap.ui.define([
 		//Assert
 		assert.equal(this.oUploadSet.getNoDataText(), sNoDataText, "default text is returned for getNoDataText");
 		assert.equal(this.oUploadSet.getNoDataDescription(), sNoDataDescription, "default description is returned for getNoDataDescription");
-		assert.equal(this.oUploadSet.$("no-data-text").text(), sNoDataText, "default no data text is rendered in upload set");
-		assert.equal(this.oUploadSet.$("no-data-description").text(), sNoDataDescription, "default no data description is rendered in upload set");
+		assert.equal(this.oUploadSet._getIllustratedMessage().getTitle(), sNoDataText, "default text is rendered in Upload set");
+		assert.equal(this.oUploadSet._getIllustratedMessage().getDescription(), sNoDataDescription, "default discription is rendered in Upload set");
+	});
+
+	QUnit.test("No data type illustrated message rendering", function(assert) {
+		//Arrange
+		this.oUploadSet.unbindAggregation("items");
+
+		oCore.applyChanges();
+		//Assert
+		assert.equal(this.oUploadSet._getIllustratedMessage().getIllustrationType(), IllustratedMessageType.NoData, "The no data illustrated message is rendred");
 	});
 
 	QUnit.test("No data rendering - with user specified no data text", function(assert) {
@@ -367,7 +377,7 @@ sap.ui.define([
 
 		oCore.applyChanges();
 		//Assert
-		assert.equal(this.oUploadSet.$("no-data-text").text(), "myNoDataText", "The no data text set by user is rendered");
+		assert.equal(this.oUploadSet._getIllustratedMessage().getTitle(), "myNoDataText", "The no data text set by user is rendered");
 	});
 
 	QUnit.test("No data rendering - with user specified no data description", function(assert) {
@@ -377,7 +387,7 @@ sap.ui.define([
 
 		oCore.applyChanges();
 		//Assert
-		assert.equal(this.oUploadSet.$("no-data-description").text(), "myNoDataDescription", "The no data description set by user is rendered");
+		assert.equal(this.oUploadSet._getIllustratedMessage().getDescription(), "myNoDataDescription", "The no data description set by user is rendered");
 	});
 
 	QUnit.test("Test httpRequestMethod property with XMLHttpRequest", function (assert) {
@@ -628,6 +638,19 @@ sap.ui.define([
 			assert.ok(oEvent.getParameter("dragSession"), "drag session exists");
 		});
 		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+	});
+
+
+	QUnit.test("bring Drop here illustrated message, when Dragged into target area", function(assert) {
+		var oTargetDomRef = this.oUploadSet.getList().getDomRef();
+		oTargetDomRef.focus();
+		var oDropInfo = this.oUploadSet.getList().getDragDropConfig()[1];
+		oDropInfo.attachDragEnter(function(oEvent) {
+			assert.equal(this.oUploadSet._getIllustratedMessage().getIllustrationType(), IllustratedMessageType.UploadCollection, "The Drop file here illustrated message is rendred");
+		}.bind(this));
+
+		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+
 	});
 
 	QUnit.test("Drag and drop lifecycle & drag session", function(assert) {
