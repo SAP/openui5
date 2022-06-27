@@ -1471,7 +1471,7 @@ sap.ui.define([
 			return;
 		}
 
-		this.bindObject(oDataSettings.path || "/");
+		this.bindObject(BindingResolver.resolveValue(oDataSettings.path || "/", this));
 
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();

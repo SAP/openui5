@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/f/cards/HeaderRenderer",
 	"sap/m/library",
 	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/Utils"
 ], function (
@@ -21,6 +22,7 @@ sap.ui.define([
 	FHeaderRenderer,
 	mLibrary,
 	BindingHelper,
+	BindingResolver,
 	LoadingProvider,
 	Utils
 ) {
@@ -240,7 +242,7 @@ sap.ui.define([
 			oModel;
 
 		if (oDataSettings && oDataSettings.path) {
-			sPath = oDataSettings.path;
+			sPath = BindingResolver.resolveValue(oDataSettings.path, this.getCardInstance());
 		}
 
 		this.bindObject(sPath);

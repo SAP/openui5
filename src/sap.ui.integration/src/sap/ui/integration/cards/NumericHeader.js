@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/f/cards/NumericHeaderRenderer",
 	"sap/f/cards/NumericSideIndicator",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/LoadingProvider"
 ], function (
 	Core,
@@ -18,6 +19,7 @@ sap.ui.define([
 	FNumericHeaderRenderer,
 	NumericSideIndicator,
 	JSONModel,
+	BindingResolver,
 	LoadingProvider
 ) {
 	"use strict";
@@ -210,9 +212,9 @@ sap.ui.define([
 			oModel;
 
 		if (oDataSettings && oDataSettings.path) {
-			sPath = oDataSettings.path;
-
+			sPath = BindingResolver.resolveValue(oDataSettings.path, this.getCardInstance());
 		}
+
 		this.bindObject(sPath);
 
 		if (this._oDataProvider) {
