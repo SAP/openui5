@@ -23,6 +23,8 @@ sap.ui.define([
 	"sap/m/Slider",
 	"sap/m/MenuItem",
 	"sap/m/Menu",
+	"sap/m/Popover",
+	"sap/m/OverflowToolbarAssociativePopover",
 	"sap/m/MenuButton",
 	"sap/m/FlexItemData",
 	"sap/m/Title"
@@ -47,11 +49,15 @@ sap.ui.define([
 	Slider,
 	MenuItem,
 	Menu,
+	Popover,
+	OverflowToolbarAssociativePopover,
 	MenuButton,
 	FlexItemData,
 	Title
 ) {
 	"use strict";
+
+	var PopoverPlacementType = mobileLibrary.PlacementType;
 
 	// shortcut for sap.m.OverflowToolbarPriority
 	var OverflowToolbarPriority = mobileLibrary.OverflowToolbarPriority;
@@ -3372,5 +3378,25 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(oTable.getItems()[0].getContentAnnouncement(), "Test Button More", "here");
+	});
+
+	QUnit.module("Associative popover");
+
+	QUnit.test("Popover _recalculateMargins method overwrite", function (assert) {
+		var oFakeObject = {
+				_fWindowHeight: 5,
+				_fPopoverOffsetY: 5,
+				_$parent: {
+					offset: function () {
+						return {top: 5};
+					}
+				}
+			},
+			oResultPopover = Popover.prototype._recalculateMargins(PopoverPlacementType.Top, Object.assign({}, oFakeObject)),
+			oResultAssociativePopover = OverflowToolbarAssociativePopover.prototype._recalculateMargins(PopoverPlacementType.Top, Object.assign({}, oFakeObject));
+
+		Object.keys(oResultPopover).forEach(function (sProperty) {
+			assert.notEqual(oResultAssociativePopover[sProperty], undefined, "Result object has property: " + sProperty);
+		});
 	});
 });

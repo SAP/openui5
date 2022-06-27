@@ -185,7 +185,9 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 			return Popover.prototype._recalculateMargins.apply(this, arguments);
 		}
 
-		oPosParams._fMarginBottom = oPosParams._fDocumentHeight - oPosParams._$parent.offset().top + this._arrowOffset + oPosParams._fOffsetY;
+		oPosParams._fPopoverMarginBottom = oPosParams._fWindowHeight - oPosParams._$parent.offset().top + this._arrowOffset + oPosParams._fPopoverOffset;
+
+		return oPosParams;
 	};
 
 	/**
