@@ -92,7 +92,7 @@
 	width: 100%;
 	float: left;
 	color: @sapUiContentLabelColor;
-	font-size: 0.625rem;
+	font-size: @sapMFontSmallSize;
 }
 
 .sapUiCalHead {
@@ -444,6 +444,34 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	line-height: 100%;
 }
 
+.sapUiCalMonthPicker.sapUiCalMonthSecType,
+.sapUiCalYearPicker.sapUiCalMonthSecType {
+	.sapUiCalItem {
+		line-height: 1.875rem;
+		&:focus {
+			line-height: 1.75rem;
+		}
+		& > .sapUiCalItemSecText{
+			width: 100%;
+			display: flex;
+			justify-content: center;
+		}
+	}
+}
+
+.sapUiSizeCompact .sapUiCalMonthPicker.sapUiCalMonthSecType,
+.sapUiSizeCompact .sapUiCalYearPicker.sapUiCalMonthSecType {
+	.sapUiCalItem {
+		line-height: 1rem;
+		&:focus {
+			line-height: 0.875rem;
+			.sapUiCalItemSecText {
+				line-height: 0.875rem;
+			}
+		}
+	}
+}
+
 /* Day, Month and YearPicker on popup */
 .sapUiCalMonthView[data-sap-ui-popup],
 .sapUiCalMonthPicker[data-sap-ui-popup],
@@ -663,12 +691,20 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 }
 
 .sapUiCalMonthSecType .sapUiCalItem > .sapUiCalItemSecText{
-	font-size: 0.625rem;
+	font-size: @sapMFontSmallSize;
 	height: 1rem;
-	line-height: 1rem;
+	line-height: 0.625rem;
 	padding-right: 0.313rem;
 	padding-bottom: 0.313rem;
 	box-sizing: border-box;
+}
+
+.sapUiCalMonthSecType .sapUiCalItem:focus > .sapUiCalItemSecText{
+	line-height: 0.75rem;
+}
+
+.sapUiSizeCompact .sapUiCalMonthSecType .sapUiCalItem.sapUiCalItemNow.sapUiCalItemSel > .sapUiCalItemText {
+	line-height: 1.25rem;
 }
 
 .sapUiCalMonthSecType .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemSecText{

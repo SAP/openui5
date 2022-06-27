@@ -6,8 +6,9 @@ sap.ui.define([
 		'sap/ui/unified/calendar/CalendarDate',
 		'sap/ui/unified/calendar/CalendarUtils',
 		'sap/ui/core/date/UniversalDate',
+		'sap/ui/core/format/DateFormat',
 		'sap/ui/core/InvisibleText'],
-	function(CalendarDate, CalendarUtils, UniversalDate, InvisibleText) {
+	function(CalendarDate, CalendarUtils, UniversalDate, DateFormat, InvisibleText) {
 	"use strict";
 
 	/*
@@ -34,6 +35,10 @@ sap.ui.define([
 
 		oRm.openStart("div", oYP);
 		oRm.class("sapUiCalYearPicker");
+
+		if (oYP._getSecondaryCalendarType()) {
+			oRm.class("sapUiCalMonthSecType");
+		}
 
 		if (sTooltip) {
 			oRm.attr('title', sTooltip);
@@ -68,8 +73,11 @@ sap.ui.define([
 			iYears = oYP.getYears(),
 			sId = oYP.getId(),
 			iColumns = oYP.getColumns(),
+			sSecondaryType = oYP._getSecondaryCalendarType(),
 			sWidth = "",
 			bEnabled = false,
+			oLocaleData = oYP._getLocaleData(),
+			sYear,
 			bApplySelection,
 			bApplySelectionBetween,
 			mAccProps, sYyyymmdd, i;
@@ -127,13 +135,38 @@ sap.ui.define([
 				mAccProps["disabled"] = true;
 			}
 
+			// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
+			sYear = oYP._oYearFormat.format(UniversalDate.getInstance(oFirstDate.toLocalJSDate(), oFirstDate.getCalendarType()));
+
+			mAccProps["label"] = sYear;
+			if (sSecondaryType) {
+				var oSecondaryYears = oYP._getDisplayedSecondaryDates(oFirstDate),
+					oSecondaryYearFormat = DateFormat.getDateInstance({format: "y", calendarType: oYP.getSecondaryCalendarType()}),
+					sSecondaryYearInfo, sPattern;
+				if (oSecondaryYears.start.getYear() === oSecondaryYears.end.getYear()) {
+					sSecondaryYearInfo = oSecondaryYearFormat.format(oSecondaryYears.start.toLocalJSDate());
+				} else {
+					sPattern = oLocaleData.getIntervalPattern();
+					sSecondaryYearInfo = sPattern.replace(/\{0\}/, oSecondaryYearFormat.format(oSecondaryYears.start.toLocalJSDate())).replace(/\{1\}/, oSecondaryYearFormat.format(oSecondaryYears.end.toLocalJSDate()));
+				}
+				mAccProps["label"] = mAccProps["label"] + " " + sSecondaryYearInfo;
+			}
+
 			oRm.attr("tabindex", "-1");
 			oRm.attr("data-sap-year-start", sYyyymmdd);
 			oRm.style("width", sWidth);
 			oRm.accessibilityState(null, mAccProps);
 			oRm.openEnd(); // div element
-			// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
-			oRm.text(oYP._oYearFormat.format(UniversalDate.getInstance(oFirstDate.toUTCJSDate(), oFirstDate.getCalendarType()), true)); // to render era in Japanese
+			oRm.text(sYear);
+
+			if (sSecondaryType) {
+				oRm.openStart("div", sId + "-y" + sYyyymmdd + "-secondary");
+				oRm.class("sapUiCalItemSecText");
+				oRm.openEnd();
+				oRm.text(sSecondaryYearInfo);
+				oRm.close("div");
+			}
+
 			oRm.close("div");
 
 			oFirstDate.setYear(oFirstDate.getYear() + 1);

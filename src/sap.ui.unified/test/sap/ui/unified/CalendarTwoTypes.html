@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Calendar - sap.ui.unified</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.unified.Calendar.gif">
+
+		<script src="shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-trace="false"
+				data-sap-ui-async="true"
+				src="../../../../resources/sap-ui-core.js"
+		>
+		</script>
+		<script>
+
+		sap.ui.getCore().attachInit(function() {
+			sap.ui.require([
+				"sap/ui/core/library",
+				"sap/ui/core/Core",
+				"sap/ui/unified/library",
+				"sap/m/App",
+				"sap/m/FlexBox",
+				"sap/m/Page",
+				"sap/ui/unified/Calendar"
+			], function(
+				coreLibrary,
+				Core,
+				unifiedLibrary,
+				App,
+				FlexBox,
+				Page,
+				Calendar
+			) {
+				"use strict";
+				var CalendarType = coreLibrary.CalendarType,
+					DateRange = unifiedLibrary.DateRange;
+
+				Core.getConfiguration().setLanguage("en-US");
+
+				new App("myApp", {
+					pages: new Page({
+						title: "Calendar",
+						content : [
+							new FlexBox({
+                                items: [
+									new Calendar("Cal-Gregorian-Islamic", {
+										secondaryCalendarType: CalendarType.Islamic,
+										selectedDates: [
+											new DateRange({
+												startDate: new Date(2015, 0, 2)
+											})
+										]
+									}).addStyleClass("sapUiTinyMargin"),
+									new Calendar("Cal-Persian-Japanese", {
+										primaryCalendarType: CalendarType.Persian,
+										secondaryCalendarType: CalendarType.Japanese,
+										selectedDates: [
+											new DateRange({
+												startDate: new Date(2015, 0, 2)
+											})
+										]
+									}).addStyleClass("sapUiTinyMargin"),
+									new Calendar("Cal-Gregorian-Buddhist", {
+										secondaryCalendarType: CalendarType.Buddhist,
+										months: 2,
+										selectedDates: [
+											new DateRange({
+												startDate: new Date(2015, 0, 2)
+											})
+										]
+									}).addStyleClass("sapUiTinyMargin")
+                                ]
+                            })
+						]
+					})
+                }).placeAt("body");
+
+			});
+		});
+
+		</script>
+
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

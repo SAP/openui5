@@ -60,6 +60,10 @@ html.sap-desktop .sapUiCalHead > .sapUiCalHeadB:focus:active {
 	color: @sapUiButtonLiteTextColor;
 }
 
+.sapUiCalSecType .sapUiCalHead > button .sapUiCalHeadBAddText {
+	font-family: @sapUiFontFamily;
+}
+
 html.sap-desktop .sapUiCalHead > button:hover,
 html.sap-desktop .sapUiCalCancel:hover,
 html.sap-desktop .sapUiCalHead > button:focus,
@@ -565,7 +569,10 @@ html.sap-desktop .sapUiCalItemSelBetween:focus:not(:hover){
 
 	.sapUiCalHead > button {
 		margin: 0.1875rem 0;
-		height: 1.625rem;
+		height: 2rem;
+		.sapUiIcon {
+			line-height: 2rem;
+		}
 	}
 
 	.sapUiCalItem.sapUiCalItemNow.sapUiCalItemSelBetween > .sapUiCalItemText {

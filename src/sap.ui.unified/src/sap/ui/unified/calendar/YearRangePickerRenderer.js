@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/ui/core/Renderer",
 	"./YearPickerRenderer",
 	"./CalendarDate",
+	'sap/ui/core/format/DateFormat',
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/unified/calendar/CalendarUtils"
 ],	function(
 	Renderer,
 	YearPickerRenderer,
 	CalendarDate,
+	DateFormat,
 	UniversalDate,
 	CalendarUtils
 ) {
@@ -47,9 +49,13 @@ sap.ui.define([
 			oSecondDate,
 			sFirstYear = "",
 			sSecondYear = "",
+			sResultRange = "",
 			sId = oYRP.getId(),
 			iColumns = oYRP.getColumns(),
 			iYears = oYRP.getYears(),
+			sSecondaryType = oYRP._getSecondaryCalendarType(),
+			oLocaleData = oYRP._getLocaleData(),
+			sPattern = oLocaleData.getIntervalPattern(),
 			sWidth = "",
 			mAccProps, sYyyymmdd, i;
 
@@ -92,6 +98,24 @@ sap.ui.define([
 				mAccProps["disabled"] = true;
 			}
 
+			// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
+			sFirstYear = oYRP._oYearFormat.format(UniversalDate.getInstance(oFirstDate.toLocalJSDate(), oFirstDate.getCalendarType()));
+			sSecondYear = oYRP._oYearFormat.format(UniversalDate.getInstance(oSecondDate.toLocalJSDate(), oSecondDate.getCalendarType()));
+			sResultRange = sPattern.replace(/\{0\}/, sFirstYear).replace(/\{1\}/, sSecondYear);
+
+			mAccProps["label"] = sResultRange;
+			if (sSecondaryType) {
+				var oSecondaryYears = oYRP._getDisplayedSecondaryDates(oFirstDate),
+					oSecondaryYearFormat = DateFormat.getDateInstance({format: "y", calendarType: oYRP.getSecondaryCalendarType()}),
+					sSecondaryYearInfo;
+				if (oSecondaryYears.start.getYear() === oSecondaryYears.end.getYear()) {
+					sSecondaryYearInfo = oSecondaryYearFormat.format(oSecondaryYears.start.toLocalJSDate());
+				} else {
+					sSecondaryYearInfo = sPattern.replace(/\{0\}/, oSecondaryYearFormat.format(oSecondaryYears.start.toLocalJSDate())).replace(/\{1\}/, oSecondaryYearFormat.format(oSecondaryYears.end.toLocalJSDate()));
+				}
+				mAccProps["label"] = mAccProps["label"] + " " + sSecondaryYearInfo;
+			}
+
 			oRm.attr("tabindex", "-1");
 			oRm.attr("data-sap-year-start", sYyyymmdd);
 			oRm.style("width", sWidth);
@@ -101,11 +125,17 @@ sap.ui.define([
 				// calculate in which year range is the selected year in order to focus it after rendering
 				oYRP._iSelectedIndex = i;
 			}
-			// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
-			sFirstYear = oYRP._oYearFormat.format(UniversalDate.getInstance(oFirstDate.toUTCJSDate(), oFirstDate.getCalendarType()), true);
-			sSecondYear = oYRP._oYearFormat.format(UniversalDate.getInstance(oSecondDate.toUTCJSDate(), oSecondDate.getCalendarType()), true);
 
-			oRm.text(sFirstYear + " - " + sSecondYear);
+			oRm.text(sResultRange);
+
+			if (sSecondaryType) {
+				oRm.openStart("div", sId + "-y" + sYyyymmdd + "-secondary");
+				oRm.class("sapUiCalItemSecText");
+				oRm.openEnd();
+				oRm.text(sSecondaryYearInfo);
+				oRm.close("div");
+			}
+
 			oRm.close("div");
 
 			if (iColumns > 0 && ((i + 1) % iColumns == 0)) {
