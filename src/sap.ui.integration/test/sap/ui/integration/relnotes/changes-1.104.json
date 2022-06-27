@@ -3,6 +3,11 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "77209d5b9da7825945d4907c4f45c9fe426d30c4",
+        "type": "FEATURE",
+        "text": " Integration cards: Add \"referenceId\" property"
+      },
+      {
         "id": "6d4d1827791cd0501a01a0e3cc7469e95dfabe83",
         "type": "FEATURE",
         "text": " sap.ui.integration.widgets.Card: Table card now has dedicated loading placeholder"

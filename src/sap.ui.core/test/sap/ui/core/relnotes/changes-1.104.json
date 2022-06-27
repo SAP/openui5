@@ -3,6 +3,27 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "290d6602e5e790a0852d392b1432967b34d277ea",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: no split weeks for \"en\""
+      },
+      {
+        "id": "a4fd3ec8dc8293bc70d9f50d4c1a97bf351b9a52",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#getContexts: a word of warning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270085692"
+          }
+        ]
+      },
+      {
+        "id": "50400ccf7426d964c09aab7377561036280307c7",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.02 and v4.14"
+      },
+      {
         "id": "ff9d20f20feb1389179f4897c196523538db7cde",
         "type": "FIX",
         "text": " sap.ui.model.odata.v2.ODataModel#callFunction: encode key values for function target",

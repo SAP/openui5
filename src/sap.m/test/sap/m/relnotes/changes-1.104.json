@@ -3,6 +3,43 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "72fdbf4f8ab01e16801854d8543dc4796e187bb7",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker, sap.m.DateTimePicker, sap.m.TimePicker, sap.m.MaskInput: liveChange event added"
+      },
+      {
+        "id": "1edb2fb6d35759846b4c391ea42c97ed63c0b4bb",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: (Revert) Selection in table with many radio buttons is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280111803"
+          }
+        ]
+      },
+      {
+        "id": "4e5ac92bb2895cd1661f4abdf4b18f5e2d639010",
+        "type": "FEATURE",
+        "text": " sap.m.IllustratedMessage: Height responsiveness implemented"
+      },
+      {
+        "id": "c26a9247b94bce5005a95032235dac04347482c8",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: adjust aria attributes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270064000"
+          }
+        ]
+      },
+      {
+        "id": "50400ccf7426d964c09aab7377561036280307c7",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.02 and v4.14"
+      },
+      {
         "id": "3f071ef7c174e18290eb2c015f1cfde5fa823f2f",
         "type": "FIX",
         "text": " sap.m.Bar: fixed middle content width"
@@ -38,6 +75,17 @@
         "id": "4eb4942b3768768e29978bf626073b07264e0110",
         "type": "FIX",
         "text": " sap.m.DatePicker: added missing label references in Demokit samples",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270013286"
+          }
+        ]
+      },
+      {
+        "id": "0bfb3523d37c28141c1f84bb0a93d1828dda7973",
+        "type": "FIX",
+        "text": " sap.m.StepInput: added missing label references in Demokit samples",
         "references": [
           {
             "type": "BCP",

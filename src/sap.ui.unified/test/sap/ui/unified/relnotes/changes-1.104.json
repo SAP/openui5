@@ -3,6 +3,11 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "290d6602e5e790a0852d392b1432967b34d277ea",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: no split weeks for \"en\""
+      },
+      {
         "id": "88f265ed112369b6750e60ecee1e6a6ddbb15b62",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: adjust selected date announcements",
