@@ -12,6 +12,13 @@
 	  ],
 	  "entities": [
 		{
+			"id": "sap.ui.webc.fiori.Bar",
+			"name": "Bar",
+			"category": "Web Components",
+			"since": "1.101.0",
+			"samples": ["sap.ui.webc.fiori.sample.Bar"]
+		},
+		{
 			"id": "sap.ui.webc.fiori.BarcodeScannerDialog",
 			"name": "Barcode Scanner Dialog",
 			"category": "Web Components",
@@ -98,6 +105,11 @@
 		}
 	  ],
 	  "samples": [
+		{
+			"id": "sap.ui.webc.fiori.sample.Bar",
+			"name": "Bar",
+			"description": "Demonstrates the basic usage of Bar"
+		},
 		{
 			"id": "sap.ui.webc.fiori.sample.BarcodeScannerDialog",
 			"name": "Barcode Scanner Dialog Freestyle Example",

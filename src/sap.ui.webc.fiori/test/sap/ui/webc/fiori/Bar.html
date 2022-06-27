@@ -17,9 +17,10 @@
         sap.ui.getCore().attachInit(function() {
             sap.ui.require([
                 "sap/ui/webc/fiori/Bar",
-                "sap/ui/webc/main/Button"
+                "sap/ui/webc/main/Button",
+                "sap/ui/webc/main/Title"
             ], function(
-                Bar, Button
+                Bar, Button, Title
             ) {
 
 
@@ -48,26 +49,8 @@
                         })
                     ],
                     middleContent: [
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
-                        }),
-                        new Button({
-                            icon: "employee",
-                            text: "Some text...",
-                            click: function(oEvent) {
-                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
-                            }
+                        new Title({
+                            text: "Title in the middle content of the bar",
                         })
                     ],
                     startContent: [
