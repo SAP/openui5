@@ -132,6 +132,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("calcHeaderWidth", function(assert) {
+		assert.equal(Util.calcHeaderWidth("Header"), Util.measureText("Header"), "Column header width calculation without parameters");
 		assert.equal(Util.calcHeaderWidth("Header", 11, 10), 10, "fContentWidth > iMaxWidth");
 		assert.equal(Util.calcHeaderWidth("Hea", 2, 0, 4), 4, "iMinWidth > iHeaderLength");
 		assert.equal(Util.calcHeaderWidth("He", 3, 0, 5), 5, "fContentWidth > iHeaderLength");
@@ -161,7 +162,8 @@ sap.ui.define([
 		assert.equal(ccw(new BooleanType()), "3rem", "BooleanType Type < Min width");
 
 		assert.ok(parseFloat(ccw(new SByte())) < parseFloat(ccw(new Byte(), Chars(4))), "Byte type width < 4 character column header width");
-		assert.ok(parseFloat(ccw(new SByte(), Chars(1000))) < 8, "Long column headers can only push small column widths logarithmically ");
+		assert.ok(parseFloat(ccw(new SByte(), Chars(1000))) < 8, "Long column headers can only push small column widths logarithmically");
+		assert.equal(parseFloat(ccw(new SByte(), Chars(1000), {truncateLabel: false, maxWidth: 10})), 11, "Long column headers could push up to max width");
 
 		[new BooleanType(), new Byte(), new Int16(), new Int32(), new Int64(), new Double(), new Decimal(), Str(10), new Time(), new DateType(), new Guid()].forEach(function(oType) {
 			var fWidth = parseFloat(ccw(oType, "", {padding: 0}));

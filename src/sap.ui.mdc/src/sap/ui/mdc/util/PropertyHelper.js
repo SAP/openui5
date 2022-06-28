@@ -227,6 +227,12 @@ sap.ui.define([
 								value: true
 							}
 						},
+						truncateLabel: {
+							type: "boolean",
+							"default": {
+								value: true
+							}
+						},
 						verticalArrangement: {
 							type: "boolean",
 							"default": {

@@ -224,6 +224,11 @@ sap.ui.define([
 					aProperties.push(oPropertyInfo);
 
 					if (oPropertyInfo.unit) {
+						oPropertyInfo.visualSettings = {
+							widthCalculation: {
+								truncateLabel: false
+							}
+						};
 						aProperties.push({
 							name: sKey + "_" + oPropertyInfo.unit + "_ComplexWithUnit",
 							label: oPropertyInfo.label + " + Unit",

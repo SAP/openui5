@@ -32,17 +32,19 @@ sap.ui.define([
 	 *   This object contains all relevant properties for visual adjustments.
 	 * @property {Object} [visualSettings.widthCalculation]
 	 *   This object contains all properties and their default values for the column width calculation
-	 * @property {integer} [visualSettings.widthCalculation.minWidth]
+	 * @property {integer} [visualSettings.widthCalculation.minWidth=2]
 	 *   The minimum content width in rem
-	 * @property {integer} [visualSettings.widthCalculation.maxWidth]
+	 * @property {integer} [visualSettings.widthCalculation.maxWidth=19]
 	 *   The maximum content width in rem
-	 * @property {integer} [visualSettings.widthCalculation.defaultWidth]
+	 * @property {integer} [visualSettings.widthCalculation.defaultWidth=8]
 	 *   The default column content width when type check fails
-	 * @property {float} [visualSettings.widthCalculation.gap]
+	 * @property {float} [visualSettings.widthCalculation.gap=0]
 	 *   The additional content width in rem
-	 * @property {boolean} [visualSettings.widthCalculation.includeLabel]
+	 * @property {boolean} [visualSettings.widthCalculation.includeLabel=true]
 	 *   Whether the label should be taken into account
-	 * @property {boolean} [visualSettings.widthCalculation.verticalArrangement]
+	 * @property {boolean} [visualSettings.widthCalculation.truncateLabel=true]
+	 *   Whether the label should be trucated or not
+	 * @property {boolean} [visualSettings.widthCalculation.verticalArrangement=false]
 	 *   Whether the referenced properties are arranged vertically
 	 * @property {sap.ui.mdc.util.PropertyHelper[]} [visualSettings.widthCalculation.excludeProperties]
 	 *   A list of invisible referenced property names
@@ -223,7 +225,7 @@ sap.ui.define([
 		}
 
 		var fPadding = oMDCColumn.getTable()._bMobileTable ? 1 : 1.1875; // TODO: get from theme parameters
-		return this._calcColumnWidth(oProperty, fPadding);
+		return this._calcColumnWidth(oProperty, fPadding, oMDCColumn.getHeader());
 	};
 
 	/**
@@ -231,14 +233,16 @@ sap.ui.define([
 	 *
 	 * @param {Object} oProperty The properties of <code>PropertyInfo</code> of <code>Column</code> instance for which to set the width
 	 * @param {float} [fPadding=1] The additional horizontal border and padding added to the content width calculation of the column
+	 * @param {string} [sHeader] The header in case of it is different than the PropertyInfo header
 	 * @return {string} The calculated column width
 	 * @since 1.95
 	 * @private
 	 */
-	 PropertyHelper.prototype._calcColumnWidth = function (oProperty, fPadding) {
+	 PropertyHelper.prototype._calcColumnWidth = function (oProperty, fPadding, sHeader) {
 		var mWidthCalculation = Object.assign({
 			gap: 0,
 			includeLabel: true,
+			truncateLabel: true,
 			padding: fPadding || 1,
 			excludeProperties: []
 		}, oProperty.visualSettings && oProperty.visualSettings.widthCalculation);
@@ -262,7 +266,7 @@ sap.ui.define([
 			mWidthCalculation.gap += 2.5;
 		}
 
-		var sHeader = (mWidthCalculation.includeLabel) ? oProperty.label : "";
+		sHeader = (mWidthCalculation.includeLabel) ? sHeader || oProperty.label : "";
 		return TableUtil.calcColumnWidth(aTypes, sHeader, mWidthCalculation);
 	};
 
