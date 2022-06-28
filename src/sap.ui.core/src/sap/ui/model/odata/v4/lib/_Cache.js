@@ -529,10 +529,10 @@ sap.ui.define([
 		 *   special cases.
 		 */
 		function missingValue(oValue, sSegment, iPathLength) {
-			var sPropertyPath = aSegments.slice(0, iPathLength).join("/"),
-				sPropertyName,
-				sReadLink,
-				sServiceUrl;
+			var sPropertyName,
+				sPropertyPath = aSegments.slice(0, iPathLength).join("/"),
+				sPropertyMetaPath = _Helper.getMetaPath(sPropertyPath),
+				sReadLink;
 
 			if (Array.isArray(oValue)) {
 				return invalidSegment(sSegment, sSegment === "0"); // missing key predicate or index
@@ -544,31 +544,35 @@ sap.ui.define([
 
 			if (sSegment.includes("@")) { // missing property annotation
 				sPropertyName = sSegment.split("@")[0];
+				sPropertyMetaPath = _Helper.getMetaPath(sPropertyPath.split("@")[0]);
 				if (bTransient
 						|| sPropertyName in oValue
 						|| oValue[sPropertyName + "@$ui5.noData"]
-						|| (that.mQueryOptions
-							&& that.mQueryOptions.$select.includes(sPropertyPath.split("@")[0]))) {
+						|| _Helper.isSelected(sPropertyMetaPath, that.mQueryOptions)) {
 					// no use to send late request
 					return invalidSegment(sSegment, true);
 				}
 			}
 
 			return that.oRequestor.getModelInterface()
-				.fetchMetadata(that.sMetaPath + "/"
-					+ _Helper.getMetaPath(sPropertyPath.split("@")[0]))
+				.fetchMetadata(that.sMetaPath + "/" + sPropertyMetaPath)
 				.then(function (oProperty) {
 					var vPermissions;
 
 					if (!oProperty) {
 						return invalidSegment(sSegment);
 					}
-					if (oProperty.$Type === "Edm.Stream") {
+					if (oProperty.$Type === "Edm.Stream" && !sPropertyName) {
 						sReadLink = oValue[sSegment + "@odata.mediaReadLink"]
 							|| oValue[sSegment + "@mediaReadLink"];
-						sServiceUrl = that.oRequestor.getServiceUrl();
-						return sReadLink
-							|| _Helper.buildPath(sServiceUrl + that.sResourcePath, sPropertyPath);
+						if (sReadLink) {
+							return sReadLink;
+						}
+						if (oValue[sSegment + "@$ui5.noData"]
+							|| _Helper.isSelected(sPropertyMetaPath, that.mQueryOptions)) {
+							return _Helper.buildPath(that.oRequestor.getServiceUrl()
+								+ that.sResourcePath, sPropertyPath);
+						}
 					}
 					if (!bTransient) {
 						vPermissions = oValue[

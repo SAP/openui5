@@ -13058,7 +13058,6 @@ sap.ui.define([
 					Budget : "42", // update
 					"Budget@some.annotation" : "hello, world!",
 					// BudgetCurrency missing
-					"BudgetCurrency@$ui5.noData" : true,
 					"BudgetCurrency@foo.bar" : "love & peace!",
 					MEMBER_COUNT : 0, // MUST be ignored
 					"MEMBER_COUNT@n.a" : "n/a",
@@ -13069,16 +13068,15 @@ sap.ui.define([
 				.expectChange("budget", ["42"])
 				.expectChange("instanceAnnotation", ["A & B"])
 				.expectChange("propertyAnnotation", ["love & peace!"])
-				// Note: For an Edm.Stream property, this would not happen. Other properties should
-				// not be missing. Still, we can nicely use this to check a "late property request"
-				// (because all _dependent_ bindings are refreshed due to bSkipRefresh === true)
+				// Note: Properties other than Edm.Stream should not be missing. Still, we can
+				// nicely use this to check a "late property request" (because all _dependent_
+				// bindings are refreshed due to bSkipRefresh === true)
 				.expectRequest("TEAMS('Team_00')?$select=BudgetCurrency",
 					new Promise(function (resolve) {
 						fnRespond = resolve.bind(null, {
 							"@a.b" : "A & B",
 							"@x.y.z" : "X, Y, Z",
 							// BudgetCurrency still missing
-							"BudgetCurrency@$ui5.noData" : true,
 							"BudgetCurrency@a.b" : "A/B",
 							"BudgetCurrency@foo.bar" : "peace on earth"
 						});
@@ -40165,7 +40163,15 @@ sap.ui.define([
 	// - Accessing a missing annotation does not cause a GET request
 	//
 	// JIRA: CPOUI5ODATAV4-1290
-	QUnit.test("CPOUI5ODATAV4-1290: complex type, Edm.Stream", function (assert) {
+	// JIRA: CPOUI5ODATAV4-1640
+[{
+	oProductPicture : {},
+	sResult : sTeaBusi + "Equipments('1')/EQUIPMENT_2_PRODUCT/ProductPicture/Picture"
+}, {
+	oProductPicture : {"Picture@mediaReadLink" : "/foo/bar"},
+	sResult : "/foo/bar"
+}].forEach(function (oFixture, i) {
+	QUnit.test("CPOUI5ODATAV4-1290: complex type, Edm.Stream: " + i, function (assert) {
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/Equipments(\'1\')/EQUIPMENT_2_PRODUCT}">\
@@ -40176,10 +40182,9 @@ sap.ui.define([
 		this.expectRequest("Equipments('1')/EQUIPMENT_2_PRODUCT"
 				+ "?$select=ID,ProductPicture/Picture", {
 				ID : "42",
-				ProductPicture : {}
+				ProductPicture : oFixture.oProductPicture
 			})
-			.expectChange("url", "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/"
-				+ "Equipments('1')/EQUIPMENT_2_PRODUCT/ProductPicture/Picture");
+			.expectChange("url", oFixture.sResult);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			return Promise.all([
@@ -40189,6 +40194,144 @@ sap.ui.define([
 			]);
 		}).then(function (aResults) {
 			assert.strictEqual(aResults[0], undefined);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario:
+	// - Edm.Stream property is read from a complex type, w/o autoExpandSelect but binding parameter
+	// - Accessing a missing annotation does not cause a GET request because it is already selected
+	// - Check that the special handling for a not existing Edm.Stream property takes place
+	//
+	// JIRA: CPOUI5ODATAV4-1290
+	// JIRA: CPOUI5ODATAV4-1640
+[undefined, "*", "ProductPicture/Picture", "ProductPicture"].forEach(function (sSelect) {
+	QUnit.test("CPOUI5ODATAV4-1290: Edm.Stream w/o autoExpandSelect:" + sSelect, function (assert) {
+		var oModel = this.createTeaBusiModel(),
+			sExpectedUrl = "/foo/bar",
+			sProductPath = "TEAM_2_EMPLOYEES('1')/"
+				+ "EMPLOYEE_2_EQUIPMENTS(Category='Electronics',ID=1)"
+				+ "/EQUIPMENT_2_PRODUCT/",
+			oProductPicture = {"Picture@mediaReadLink" : "/foo/bar"},
+			sView = '\
+<FlexBox id="form" binding="{path : \'/TEAMS(\\\'TEAM_01\\\')\',\
+	parameters : {\
+		$select : \'Team_Id,Name\',\
+		$expand : {\
+			TEAM_2_EMPLOYEES : {\
+				$select : \'ID,AGE\',\
+				$expand : {\
+					EMPLOYEE_2_EQUIPMENTS : {\
+						$select : \'Category,ID\',\
+						$expand : { EQUIPMENT_2_PRODUCT : '
+							 + (sSelect ? "{$select :'" + sSelect + "'}" : "true") + '\
+						}\
+					}\
+				}\
+			}\
+		}\
+	}}">\
+	<Text id="url" text="{' + sProductPath + 'ProductPicture/Picture}"/>\
+</FlexBox>',
+			that = this;
+
+		if (sSelect === "*") { // test fallback to service URL + property path
+			delete oProductPicture["Picture@mediaReadLink"];
+			sExpectedUrl = sTeaBusi + "TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')"
+				+ "/EMPLOYEE_2_EQUIPMENTS(Category='Electronics',ID=1)"
+				+ "/EQUIPMENT_2_PRODUCT/ProductPicture/Picture";
+		}
+		this.expectRequest("TEAMS('TEAM_01')?$select=Team_Id,Name&$expand=TEAM_2_EMPLOYEES("
+			+ "$select=ID,AGE;$expand=EMPLOYEE_2_EQUIPMENTS("
+			+ "$select=Category,ID;$expand=EQUIPMENT_2_PRODUCT"
+			+ (sSelect ? "($select=" + sSelect + ")" : "") + "))", {
+				Team_Id : "TEAM_01",
+				Name : "Business Suite",
+				TEAM_2_EMPLOYEES : [{
+					ID : "1",
+					AGE : 52,
+					EMPLOYEE_2_EQUIPMENTS : [{
+						Category : "Electronics",
+						ID : 1,
+						EQUIPMENT_2_PRODUCT : {
+							ID : "HT-1000",
+							ProductPicture : oProductPicture
+						}
+					}]
+				}]
+			})
+			.expectChange("url", sExpectedUrl);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("form").getBindingContext();
+
+			return Promise.all([
+				oContext.requestProperty(sProductPath
+					+ "ProductPicture/Picture@some.missing.annotation"),
+				oContext.requestProperty(sProductPath + "ProductPicture/Picture"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], undefined);
+			assert.strictEqual(aResults[1], sExpectedUrl);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: request Edm.Stream property as late property
+	// (1) request instance annotation for Edm.Stream property as late property
+	// (2) request property again and see that no request happen because property was not returned
+	//     before
+	//
+	// JIRA: CPOUI5ODATAV4-1290
+	// JIRA: CPOUI5ODATAV4-1640
+	QUnit.test("CPOUI5ODATAV4-1290: late Edm.Stream property annotation", function (assert) {
+		var oContext,
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}">\
+	<Text id="name" text="{Name}"/>\
+</FlexBox>\
+<FlexBox id="subform" binding="{}">\
+	<Text id="contentType" text="{= %{Picture@odata.mediaContentType}}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+			+ "?$select=ArtistID,IsActiveEntity,Name", {
+				ArtistID : "42",
+				Name : "The Beatles"
+			})
+			.expectChange("name", "The Beatles")
+			.expectChange("contentType");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oContext = that.oView.byId("form").getBindingContext();
+
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=Picture", {
+					ID : "42",
+					// Picture property not seen in late response -> Picture@$ui5.noData : true
+					"Picture@odata.mediaContentType" : "image/gif"
+				})
+				.expectChange("contentType", "image/gif");
+
+			that.oView.byId("subform").setBindingContext(oContext);
+
+			return that.waitForChanges(assert, "(1) stream property fetched late");
+		}).then(function () {
+			return Promise.all([
+				oContext.requestProperty("Picture@odata.mediaContentType"),
+				oContext.requestProperty("Picture@someOtherInstanceAnnotation"),
+				oContext.requestProperty("Picture"),
+				that.waitForChanges(assert, "(2) not further late request")
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], "image/gif");
+			assert.strictEqual(aResults[1], undefined);
+			assert.strictEqual(aResults[2],
+				"/special/cases/Artists(ArtistID='42',IsActiveEntity=true)/Picture");
 		});
 	});
 

@@ -1860,6 +1860,69 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[{
+	sPath : "foo/bar/baz",
+	mQueryOptions : undefined,
+	bSelected : false
+}, {
+	sPath : "foo/bar/baz",
+	mQueryOptions : {},
+	bSelected : true
+}, {
+	sPath : "foo/bar/baz",
+	mQueryOptions : {$select : ["*"]},
+	bSelected : true
+}, {
+	sPath : "foo/bar/baz",
+	mQueryOptions : {$select : ["other", "foo/bar/baz"]},
+	bSelected : true
+}, {
+	sPath : "foo/bar/baz",
+	mQueryOptions : {$select : ["foo/bar"]},
+	bSelected : true
+}, {
+	sPath : "foo/barbaz",
+	mQueryOptions : {$select : ["foo/bar"]},
+	bSelected : false
+}, {
+	sPath : "foo/barbaz/qux",
+	mQueryOptions : {
+		$expand : {
+			"foo/bar" : {
+				$select : ["other"]
+			},
+			"foo/barbaz" : {}
+		}
+	},
+	bSelected : true
+}, {
+	sPath : "foo/bar/baz",
+	mQueryOptions : {
+		$expand : {
+			"foo/bar" : {
+				$select : ["other", "*"]
+			}
+		}
+	},
+	bSelected : true
+}, {
+	sPath : "foo/bar/baz",
+	mQueryOptions : {
+		$expand : {
+			"foo/bar" : {
+				$select : ["other"]
+			}
+		}
+	},
+	bSelected : false
+}].forEach(function (oFixture, i) {
+	QUnit.test("isSelected: " + i, function (assert) {
+		assert.strictEqual(
+			_Helper.isSelected(oFixture.sPath, oFixture.mQueryOptions), oFixture.bSelected);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("makeAbsolute", function (assert) {
 		assert.strictEqual(_Helper.makeAbsolute("/foo/bar", "/baz"), "/foo/bar");
 		assert.strictEqual(_Helper.makeAbsolute("baz", "/foo/bar"), "/foo/baz");
