@@ -62,7 +62,7 @@ sap.ui.define([
 			// scenario: viewCache
 			if (bHasAppliedCustomData) {
 				// if the change was applied, set the revert data fetched from the custom data
-				oChange.setRevertData(FlexCustomData.sync.getParsedRevertDataFromCustomData(oControl, oChange));
+				oChange.setRevertData(FlexCustomData.sync.getParsedRevertDataFromCustomData(mControl.control, oChange));
 				oChange.markSuccessful();
 			} else {
 				oChange.markFailed();
