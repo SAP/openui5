@@ -2578,6 +2578,22 @@ sap.ui.define([
 			assert.equal(oDateFormat.format(this.oDate), "Jul 4, 2544 BE", "Date is formatted in Buddhist calendar");
 		});
 
+		QUnit.test("format date to Buddhist type with locale en and calendar week", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({
+				calendarType: CalendarType.Buddhist,
+				pattern: "YYYY'/'ww"
+			});
+
+			assert.equal(oDateFormat.format(this.oDate), "2544/27", "Date is formatted in Buddhist calendar");
+
+
+			oDateFormat = DateFormat.getDateInstance({
+				calendarType: CalendarType.Buddhist,
+				pattern: "yyyy"
+			});
+			assert.equal(oDateFormat.format(this.oDate), "2544", "Date is formatted in Buddhist calendar");
+		});
+
 		QUnit.test("format date to Buddhist type with relative and locale en", function (assert) {
 			doTestRelative(assert, true, { pattern: "yyyy-MM-dd", calendarType: CalendarType.Buddhist }, "en", "yyyy-MM-dd, default range, en with calendar type Buddhist");
 			doTestRelative(assert, true, { relativeRange: [-9, 0], calendarType: CalendarType.Buddhist }, "en", "default style, range [-9, 0], en with calendar type Buddhist");
@@ -2867,6 +2883,23 @@ sap.ui.define([
 			assert.equal(sResult, "May 1, 1 Heisei – May 1, 1 Reiwa");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
 
+		});
+
+		QUnit.test("format date to Japanese type with locale en and calendar week", function (assert) {
+			var oDate = new Date(2017, 3, 11);
+
+			var oDateFormat = DateFormat.getDateInstance({
+				calendarType: CalendarType.Japanese,
+				pattern: "YYYY'/'ww"
+			});
+
+			assert.equal(oDateFormat.format(oDate), "0029/15", "Date is formatted in Buddhist calendar");
+
+			oDateFormat = DateFormat.getDateInstance({
+				calendarType: CalendarType.Japanese,
+				pattern: "yyyy"
+			});
+			assert.equal(oDateFormat.format(oDate), "0029", "Date is formatted in Buddhist calendar");
 		});
 
 		QUnit.test("Interval format with Date instance, Japanese calendar, different eras, ja-JA", function (assert) {
