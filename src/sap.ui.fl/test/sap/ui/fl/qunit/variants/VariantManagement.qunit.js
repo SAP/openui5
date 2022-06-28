@@ -257,11 +257,11 @@ sap.ui.define([
 			aItems = this.oVariantManagement.getVariants();
 			assert.ok(aItems);
 			assert.equal(aItems.length, 5);
-			assert.equal(aItems[0].getKey(), this.oVariantManagement.getStandardVariantKey());
-			assert.equal(aItems[1].getKey(), "1");
-			assert.equal(aItems[1].getVisible(), true);
-			assert.equal(aItems[1].getOriginalTitle(), aItems[1].getTitle());
-			assert.equal(aItems[2].getKey(), "2");
+			assert.equal(aItems[0].key, this.oVariantManagement.getStandardVariantKey());
+			assert.equal(aItems[1].key, "1");
+			assert.equal(aItems[1].visible, true);
+			assert.equal(aItems[1].originalTitle, aItems[1].title);
+			assert.equal(aItems[2].key, "2");
 		});
 
 		QUnit.test("Check acc text", function(assert) {
