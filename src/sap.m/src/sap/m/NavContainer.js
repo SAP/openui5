@@ -5,6 +5,7 @@
 // Provides control sap.m.NavContainer.
 sap.ui.define([
 	'./library',
+	"sap/ui/core/Configuration",
 	'sap/ui/core/Control',
 	'sap/ui/core/RenderManager',
 	'sap/ui/Device',
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
 ], function(
 	library,
+	Configuration,
 	Control,
 	RenderManager,
 	Device,
@@ -255,21 +257,23 @@ sap.ui.define([
 		}
 	};
 
-	var bUseAnimations = sap.ui.getCore().getConfiguration().getAnimation(),
-		fnGetDelay = function (iDelay) {
-			return bUseAnimations ? iDelay : 0;
-		},
-		fnHasParent = function(oControl) {
-			return !!(oControl && oControl.getParent());
-		},
-		fnSetAnimationDirection = function (oPage, sDirection) {
-			if (fnHasParent(oPage)) {
-				oPage.$().css({
-					'-webkit-animation-direction': sDirection,
-					'animation-direction':  sDirection
-				});
-			}
-		};
+	var fnGetDelay = function (iDelay) {
+		var sAnimationMode = sap.ui.getCore().getConfiguration().getAnimationMode(),
+			bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+
+		return bUseAnimations ? iDelay : 0;
+	},
+	fnHasParent = function(oControl) {
+		return !!(oControl && oControl.getParent());
+	},
+	fnSetAnimationDirection = function (oPage, sDirection) {
+		if (fnHasParent(oPage)) {
+			oPage.$().css({
+				'-webkit-animation-direction': sDirection,
+				'animation-direction':  sDirection
+			});
+		}
+	};
 
 	NavContainer.TransitionDirection = {
 		BACK: "back",

@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -1914,6 +1914,40 @@ sap.ui.define([
 		localNc.to(page2.getId(), "baseSlide");
 		localNc.back();
 	});
+
+	QUnit.test("Navigation with animationMode=none", function(assert) {
+		// Arrange
+		var oPage1 = new Page("page1-animation"),
+			oPage2 = new Page("page2-animation"),
+			oNavContainer = new NavContainer({
+				initialPage: oPage1.getId(),
+				pages: [oPage1, oPage2]
+			}),
+			fnDone = assert.async(),
+			oCoreConfiguration = Core.getConfiguration(),
+			oStub = sinon.stub(oCoreConfiguration, "getAnimationMode").returns("none"),
+			oSpy = sinon.spy(window, "setTimeout");
+
+		oNavContainer.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.expect(1);
+
+		oNavContainer.attachAfterNavigate(function() {
+			// Assert
+			assert.strictEqual(oSpy.firstCall.args[1], 0, "setTimeout is called with 0");
+
+			// Clean up
+			oSpy.restore();
+			oStub.restore();
+
+			fnDone();
+		});
+
+		// Act
+		oNavContainer.to("page2-animation", "fade");
+	});
+
 
 	QUnit.module("_fadeOutAnimationEnd & _fadeInAnimationEnd");
 

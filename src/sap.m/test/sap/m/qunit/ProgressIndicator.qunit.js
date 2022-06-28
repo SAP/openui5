@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ProgressIndicator",
@@ -428,6 +428,30 @@ sap.ui.define([
 
 		// Clean up
 		oProgressIndicator.destroy();
+	});
+
+	QUnit.test("CSS animation properties are not applied when Configuration.AnimationMode is 'none'", function(assert) {
+		// Arrange
+		var oProgressIndicator = new ProgressIndicator(),
+			oCoreConfiguration = Core.getConfiguration(),
+			oStub = sinon.stub(oCoreConfiguration, "getAnimationMode").returns("none"),
+			oBarDomRef;
+
+		// Act
+		oProgressIndicator.placeAt("content");
+		Core.applyChanges();
+		oProgressIndicator.setPercentValue(100);
+
+		oBarDomRef = oProgressIndicator.getDomRef().querySelector(".sapMPIBar");
+
+		// Assert
+		assert.notOk(oBarDomRef.style.transitionProperty, "The bar's transition-property is not set");
+		assert.notOk(oBarDomRef.style.transitionDuration, "The bar's transition-duration is not set");
+		assert.notOk(oBarDomRef.style.transitionTimingFunction, "The bar's transition-timing-function is not set");
+
+		// Clean up
+		oProgressIndicator.destroy();
+		oStub.restore();
 	});
 
 	/* --------------------------- ProgressIndicator Popover -------------------------------------- */
