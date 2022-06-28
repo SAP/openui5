@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/core/UIComponent",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
@@ -37,6 +38,7 @@ sap.ui.define([
 	FlexController,
 	Layer,
 	FlUtils,
+	ChangesUtils,
 	UIComponent,
 	jQuery,
 	sinon
@@ -74,6 +76,7 @@ sap.ui.define([
 			this.oSelectorComponent = new UIComponent("mockComponent");
 			this.oSelectorComponent.runAsOwner(function() {
 				this.oControl = new Control("someId");
+				this.oAnotherControl = new Control("someOtherId");
 			}.bind(this));
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl").callsFake(function() {
@@ -84,6 +87,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oControl.destroy();
+			this.oAnotherControl.destroy();
 			this.oSelectorComponent.destroy();
 			this.oAppComponent.destroy();
 			sandbox.restore();
@@ -206,6 +210,48 @@ sap.ui.define([
 				assert.equal(oMarkFinishedSpy1.callCount, 1, "the status of the change got updated");
 				assert.ok(oChange0.isApplyProcessFinished(), "the status is APPLY_FINISHED");
 				assert.ok(oChange1.isApplyProcessFinished(), "the status is APPLY_FINISHED");
+				assert.deepEqual(oChange0.getRevertData(), oRevertData, "the revert data is saved in the change");
+				assert.deepEqual(oChange1.getRevertData(), oRevertData, "the revert data is saved in the change");
+			}.bind(this));
+		});
+
+		QUnit.test("updates change status if change was already applied (viewCache) and control template is affected", function(assert) {
+			var oRevertData = {foo: "bar"};
+			var oChange0 = new Change(getLabelChangeContent("a"));
+			var oChange1 = new Change(getLabelChangeContent("a"));
+			var fnGetChangesMap = function() {
+				return getInitialChangesMap({
+					mChanges: {
+						someId: [oChange0, oChange1]
+					}
+				});
+			};
+			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMapSync");
+			sandbox.stub(FlexCustomData.sync, "getAppliedCustomDataValue")
+				.withArgs(this.oAnotherControl)
+				.returns(true);
+			sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData")
+				.withArgs(this.oAnotherControl)
+				.returns(true);
+			sandbox.stub(FlexCustomData.sync, "getParsedRevertDataFromCustomData")
+				.withArgs(this.oAnotherControl)
+				.returns(oRevertData);
+			sandbox.stub(ChangeUtils, "getControlIfTemplateAffected").returns({
+				bTemplateAffected: true,
+				control: this.oAnotherControl,
+				originalControl: this.oControl,
+				controlType: "myControlType"
+			});
+			var oMarkFinishedSpy0 = sandbox.spy(oChange0, "markFinished");
+			var oMarkFinishedSpy1 = sandbox.spy(oChange1, "markFinished");
+
+			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, this.oControl)
+
+			.then(function() {
+				assert.equal(this.oApplyChangeOnControlStub.callCount, 0, "the changes were not applied again");
+				assert.equal(oCopyDependenciesFromInitialChangesMap.callCount, 0, "and update dependencies was not called");
+				assert.equal(oMarkFinishedSpy0.callCount, 1, "the status of the change got updated");
+				assert.equal(oMarkFinishedSpy1.callCount, 1, "the status of the change got updated");
 				assert.deepEqual(oChange0.getRevertData(), oRevertData, "the revert data is saved in the change");
 				assert.deepEqual(oChange1.getRevertData(), oRevertData, "the revert data is saved in the change");
 			}.bind(this));
