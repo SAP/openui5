@@ -13,6 +13,8 @@ sap.ui.define([], function () {
 				}
 			});
 
+			When.onAnyPage.applySupportAssistant();
+
 		// SalesOrdersTable
 			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUISalesOrdersTable");
 
@@ -33,7 +35,7 @@ sap.ui.define([], function () {
 			When.onAdaptUIDialog.applyDialog();
 			Then.onTheMainPageRTA.checkNewColumnAppears("SalesOrderList", "N", 7);
 
-			// unheck LifecycleStatus
+			// uncheck LifecycleStatus
 			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUISalesOrdersTable");
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("LifecycleStatus", true);
 			When.onAdaptUIDialog.checkCheckBox("LifecycleStatus");
@@ -72,7 +74,7 @@ sap.ui.define([], function () {
 			When.onAdaptUIDialog.applyDialog();
 			Then.onTheMainPageRTA.checkNewPropertyAppears(/RTA_BusinessPartnerRole2/);
 
-			// unheck BusinessPartnerRole
+			// uncheck BusinessPartnerRole
 			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUIBusinessPartner");
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("BusinessPartnerRole", true);
 			When.onAdaptUIDialog.checkCheckBox("BusinessPartnerRole");
@@ -80,7 +82,7 @@ sap.ui.define([], function () {
 
 		// SalesOrdersLineItem
 			When.onTheMainPageRTA.pressAdaptUIButton("AdaptUISalesOrderLineItems");
-			// uncheck SalesOrderID
+			// uncheck ProductID
 			When.onAdaptUIDialog.checkCheckBox("ProductID");
 			Then.onAdaptUIDialog.checkCheckBoxIsSelected("ProductID", false);
 

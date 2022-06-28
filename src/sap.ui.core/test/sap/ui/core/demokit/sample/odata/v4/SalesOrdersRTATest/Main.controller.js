@@ -36,7 +36,7 @@ sap.ui.define([
 				icon : "sap-icon://settings",
 				id : oView.createId("AdaptUIBusinessPartner"),
 				press : this.onAdaptBusinessPartner.bind(this),
-				tooltip : "Adapt Business Partner Table"
+				tooltip : "Adapt Business Partner Details"
 			}));
 			this.byId("lineItemsToolbar").addContent(new Button({
 				icon : "sap-icon://settings",
