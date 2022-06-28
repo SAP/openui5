@@ -5,7 +5,8 @@
 	xmlns:tnt="sap.tnt"
     xmlns:mdc="sap.ui.mdc"
     xmlns:mdcat="sap.ui.mdc.actiontoolbar"
-    xmlns:mdcc="sap.ui.mdc.chart">
+    xmlns:mdcc="sap.ui.mdc.chart"
+    xmlns:variants="sap.ui.fl.variants">
     <App id="app">
         <Page id="pageId">
 			<headerContent>
@@ -17,10 +18,10 @@
                         <Title id="idTitle" text="Test Title"/>
                     </mdc:begin>
                     <mdc:between>
-                        <Button text="Between" />
+                        <Button id="idButtonBetween" text="Between" />
                     </mdc:between>
                     <mdc:end>
-                        <Button text="Test End" />
+                        <Button id="idButtonEnd" text="Test End" />
                     </mdc:end>
                     <mdc:actions>
                         <mdcat:ActionToolbarAction id="standaloneAction1">
@@ -51,6 +52,9 @@
                 </mdc:ActionToolbar>
 
                 <mdc:Table id="actionToolbarTable" header="Dummy Table" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'delegates/TableDelegate', payload: {collectionName: 'Books'}}" showRowCount="true" threshold="50" width="100%">
+                    <mdc:variant>
+                        <variants:VariantManagement id="IDVariantManagementOfTable" for="dynamicPage"/>
+                    </mdc:variant>
                     <mdc:actions>
                         <mdcat:ActionToolbarAction id="tableAction1">
                             <Button text="Action 1" id="tableButton1" />
@@ -82,7 +86,10 @@
                     </mdc:type>
                 </mdc:Table>
 
-                <mdc:Chart id="actionToolbarChart" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type,Filter" delegate="{'name': 'delegates/ChartDelegate'}" chartType="column" header="Books Chart" height="400px" width="100%">
+                <mdc:Chart id="actionToolbarChart" autoBindOnInit="true" noDataText="This is a test noData text" delegate="{'name': 'delegates/ChartDelegate'}" chartType="column" header="Books Chart" height="400px" width="100%">
+                    <mdc:variant>
+                        <variants:VariantManagement id="IDVariantManagementOfChart" for="dynamicPage"/>
+                    </mdc:variant>
                     <mdc:selectionDetailsActions>
                         <mdcc:SelectionDetailsActions>
                             <mdcc:detailsItemActions>

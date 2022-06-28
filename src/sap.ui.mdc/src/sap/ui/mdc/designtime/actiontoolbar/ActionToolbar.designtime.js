@@ -13,7 +13,18 @@ sap.ui.define([
     var oDesignTime = {
             description: "{description}",
             name: "{name}",
-            aggregations: {},
+            aggregations: {
+                between: {
+                    propagateMetadata: function(oElement) {
+                        if (oElement.isA("sap.ui.fl.variants.VariantManagement")) {
+                            return null;
+                        }
+                        return {
+                            actions: "not-adaptable" // other controls within the conten aggregation will not be adaptable for RTA and Visual Editor
+                        };
+                    }
+                }
+            },
             properties: {},
             actions: {
                 settings: {
@@ -28,7 +39,7 @@ sap.ui.define([
             }
 	    },
         aAllowedAggregations = [
-            "actions"
+            "actions", "between"
         ],
         aAllProperties = [];
 
