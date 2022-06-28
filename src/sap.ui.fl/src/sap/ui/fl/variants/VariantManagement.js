@@ -596,7 +596,18 @@ sap.ui.define([
 	 * @returns {array} All variants. In case the model is not yet set, an empty array will be returned.
 	 */
 	VariantManagement.prototype.getVariants = function() {
-		return this._oVM.getItems();
+		var aItems = [];
+		if (this.oContext && this.oContext.getObject()) {
+			aItems = this.oContext.getObject().variants.filter(function(oItem) {
+				if (!oItem.hasOwnProperty("visible")) {
+					return true;
+				}
+
+				return oItem.visible;
+			});
+		}
+
+		return aItems;
 	};
 
 	VariantManagement.prototype.getTitle = function() {
