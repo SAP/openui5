@@ -1858,8 +1858,7 @@ sap.ui.define([
 			visible: oItem.getRemove()
 		});
 
-
-		this._assignColumnInfoForDeleteButton(oDeleteButton);
+		//this._assignColumnInfoForDeleteButton(oDeleteButton);
 
 		var oFavoriteIcon = new Icon({
 			src: {
@@ -1987,20 +1986,6 @@ sap.ui.define([
 		}
 
 		this.oManagementDialog.open();
-	};
-
-	VariantManagement.prototype._assignColumnInfoForDeleteButton = function(oDeleteButton) {
-		if (!this._oInvisibleDeleteColumnName) {
-			this._oInvisibleDeleteColumnName = new InvisibleText({
-				text: this._oRb.getText("VARIANT_MANAGEMENT_ACTION_COLUMN")
-			});
-
-			this.oManagementDialog.addContent(this._oInvisibleDeleteColumnName);
-		}
-
-		if (this._oInvisibleDeleteColumnName) {
-			oDeleteButton.addAriaLabelledBy(this._oInvisibleDeleteColumnName);
-		}
 	};
 
 	VariantManagement.prototype._toggleIconActivityState = function(oIcon, oItem, bToInActive) {
