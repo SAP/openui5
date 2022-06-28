@@ -94,7 +94,7 @@ sap.ui.define([
 
 			for (var sFieldPath in mNewConditionState) {
 				var bValidProperty = FlexUtil._hasProperty(aPropertyInfo, sFieldPath);
-				if (!bValidProperty) {
+				if (!bValidProperty && oAdaptationControl.isA("sap.ui.mdc.Control") && oAdaptationControl.isPropertyHelperFinal()) {
 					Log.warning("property '" + sFieldPath + "' not supported");
 					continue;
 				}

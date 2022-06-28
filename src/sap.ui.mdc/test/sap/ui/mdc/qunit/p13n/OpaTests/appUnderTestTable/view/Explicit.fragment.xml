@@ -16,6 +16,10 @@
 		<mdc:FilterBar id="IDFilterBar"
 			delegate='\{ "name" : "AppUnderTestTable/view/TestFilterBarDelegate", "payload" : \{ "modelName" : null, "collectionName" : "Artists" \} \}'
 			liveMode="false"
+			propertyInfo = '[\{"name": "foundingYear", "dataType":"Edm.String", "maxConditions":-1},
+			 \{"name": "name", "dataType":"Edm.String", "maxConditions":-1},
+			 \{"name": "breakupYear", "dataType":"Edm.String", "maxConditions":-1},
+			 \{"name": "artistUUID", "dataType":"Edm.Guid", "maxConditions":-1}]'
 			p13nMode="Item,Value">
 			<mdc:filterItems>
 				<mdc:FilterField
