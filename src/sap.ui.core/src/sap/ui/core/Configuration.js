@@ -923,10 +923,10 @@ sap.ui.define([
 		 * When it's explicitly set by calling <code>setCalendar</code>, the set calendar type is returned.
 		 * Otherwise, the calendar type is determined by checking the format settings and current locale.
 		 *
-		 * @return {sap.ui.core.CalendarType} the current calendar type
+		 * @return {sap.ui.core.CalendarType} the current calendar type, e.g. <code>Gregorian</code>
 		 * @since 1.28.6
 		 */
-		getCalendarType :  function() {
+		getCalendarType: function() {
 			var sName;
 
 			if (this.calendarType) {
@@ -958,9 +958,9 @@ sap.ui.define([
 					return CalendarType.Islamic;
 				case "C":
 					return CalendarType.Persian;
+				default:
+					return this.getLocale().getPreferredCalendarType();
 			}
-
-			return this.getLocale().getPreferredCalendarType();
 		},
 
 		/**
@@ -2082,10 +2082,20 @@ sap.ui.define([
 
 		/**
 		 * Returns the currently set number symbol of the given type or undefined if no symbol has been defined.
+		 *
+		 * @param {"group"|"decimal"|"plusSign"|"minusSign"} sType the type of symbol
+		 * @return {string} A non-numerical symbol used as part of a number for the given type,
+		 *   e.g. for locale de_DE:
+		 *     <ul>
+		 *       <li>"group": "." (grouping separator)</li>
+		 *       <li>"decimal": "," (decimal separator)</li>
+		 *       <li>"plusSign": "+" (plus sign)</li>
+		 *       <li>"minusSign": "-" (minus sign)</li>
+		 *     </ul>
 		 * @public
 		 */
 		getNumberSymbol : function(sType) {
-			assert(sType == "decimal" || sType == "group" || sType == "plusSign" || sType == "minusSign", "sType must be decimal, group, plusSign or minusSign");
+			assert(["group", "decimal", "plusSign", "minusSign"].includes(sType), "sType must be decimal, group, plusSign or minusSign");
 			return this.mSettings["symbols-latn-" + sType];
 		},
 
@@ -2103,13 +2113,13 @@ sap.ui.define([
 		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
 		 * for details and restrictions.
 		 *
-		 * @param {string} sType must be one of decimal, group, plusSign, minusSign.
+		 * @param {"group"|"decimal"|"plusSign"|"minusSign"} sType the type of symbol
 		 * @param {string} sSymbol will be used to represent the given symbol type
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setNumberSymbol : function(sType, sSymbol) {
-			check(sType == "decimal" || sType == "group" || sType == "plusSign" || sType == "minusSign", "sType must be decimal, group, plusSign or minusSign");
+			check(["group", "decimal", "plusSign", "minusSign"].includes(sType), "sType must be decimal, group, plusSign or minusSign");
 			this._set("symbols-latn-" + sType, sSymbol);
 			return this;
 		},
@@ -2162,7 +2172,7 @@ sap.ui.define([
 		 * so that the measure part can be distinguished from the number part.
 		 * @public
 		 * @param {object} mCurrencies currency map which is set
-		 * @returns {sap.ui.core.Configuration.FormatSettings}
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 */
 		setCustomCurrencies : function(mCurrencies) {
 			check(typeof mCurrencies === "object" || mCurrencies == null, "mCurrencyDigits must be an object");
@@ -2186,7 +2196,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @param {object} mCurrencies adds to the currency map
-		 * @returns {sap.ui.core.Configuration.FormatSettings}
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @see sap.ui.core.Configuration.FormatSettings#setCustomCurrencies
 		 */
 		addCustomCurrencies: function (mCurrencies) {
@@ -2234,6 +2244,8 @@ sap.ui.define([
 		/**
 		 * Returns the currently set legacy ABAP date format (its id) or undefined if none has been set.
 		 *
+		 * @return {"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"|"A"|"B"|"C"|undefined} ID of the ABAP date format,
+		 *   if not set or set to <code>""</code>, <code>undefined</code> will be returned
 		 * @public
 		 */
 		getLegacyDateFormat : function() {
@@ -2250,13 +2262,15 @@ sap.ui.define([
 		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
 		 * for details and restrictions.
 		 *
-		 * @param {string} sFormatId id of the ABAP data format (one of '1','2','3','4','5','6','7','8','9','A','B','C')
+		 * @param {""|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"|"A"|"B"|"C"} [sFormatId=""] ID of the ABAP date format,
+		 *   <code>""</code> will reset the date patterns for 'short' and 'medium' style to the
+		 *   locale-specific ones.
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setLegacyDateFormat : function(sFormatId) {
 			sFormatId = sFormatId ? String(sFormatId).toUpperCase() : "";
-			check(!sFormatId || M_ABAP_DATE_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['1','2','3','4','5','6','7','8','9','A','B','C'] or empty");
+			check(M_ABAP_DATE_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['1','2','3','4','5','6','7','8','9','A','B','C'] or empty");
 			var mChanges = this.oConfiguration._collect();
 			this.sLegacyDateFormat = mChanges.legacyDateFormat = sFormatId;
 			this.setDatePattern("short", M_ABAP_DATE_FORMAT_PATTERN[sFormatId].pattern);
@@ -2268,6 +2282,8 @@ sap.ui.define([
 		/**
 		 * Returns the currently set legacy ABAP time format (its id) or undefined if none has been set.
 		 *
+		 * @return {"0"|"1"|"2"|"3"|"4"|undefined} ID of the ABAP date format,
+		 *   if not set or set to <code>""</code>, <code>undefined</code> will be returned
 		 * @public
 		 */
 		getLegacyTimeFormat : function() {
@@ -2285,14 +2301,17 @@ sap.ui.define([
 		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
 		 * for details and restrictions.
 		 *
-		 * @param {string} sFormatId id of the ABAP time format (one of '0','1','2','3','4')
+		 * @param {""|"0"|"1"|"2"|"3"|"4"} [sFormatId=""] ID of the ABAP time format,
+		 *   <code>""</code> will reset the time patterns for 'short' and 'medium' style and the day
+		 *   period texts to the locale-specific ones.
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setLegacyTimeFormat : function(sFormatId) {
-			check(!sFormatId || M_ABAP_TIME_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['0','1','2','3','4'] or empty");
+			sFormatId = sFormatId || "";
+			check(M_ABAP_TIME_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['0','1','2','3','4'] or empty");
 			var mChanges = this.oConfiguration._collect();
-			this.sLegacyTimeFormat = mChanges.legacyTimeFormat = sFormatId = sFormatId || "";
+			this.sLegacyTimeFormat = mChanges.legacyTimeFormat = sFormatId;
 			this.setTimePattern("short", M_ABAP_TIME_FORMAT_PATTERN[sFormatId]["short"]);
 			this.setTimePattern("medium", M_ABAP_TIME_FORMAT_PATTERN[sFormatId]["medium"]);
 			this._setDayPeriods("abbreviated", M_ABAP_TIME_FORMAT_PATTERN[sFormatId].dayPeriods);
@@ -2303,6 +2322,8 @@ sap.ui.define([
 		/**
 		 * Returns the currently set legacy ABAP number format (its id) or undefined if none has been set.
 		 *
+		 * @return {" "|"X"|"Y"|undefined} ID of the ABAP number format,
+		 *   if not set or set to <code>""</code>, <code>undefined</code> will be returned
 		 * @public
 		 */
 		getLegacyNumberFormat : function() {
@@ -2319,13 +2340,15 @@ sap.ui.define([
 		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
 		 * for details and restrictions.
 		 *
-		 * @param {string} sFormatId id of the ABAP number format set (one of ' ','X','Y')
+		 * @param {""|" "|"X"|"Y"} [sFormatId=""] ID of the ABAP number format set,
+		 *   <code>""</code> will reset the 'group' and 'decimal' symbols to the locale-specific
+		 *   ones.
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setLegacyNumberFormat : function(sFormatId) {
 			sFormatId = sFormatId ? sFormatId.toUpperCase() : "";
-			check(!sFormatId || M_ABAP_NUMBER_FORMAT_SYMBOLS.hasOwnProperty(sFormatId), "sFormatId must be one of [' ','X','Y'] or empty");
+			check(M_ABAP_NUMBER_FORMAT_SYMBOLS.hasOwnProperty(sFormatId), "sFormatId must be one of [' ','X','Y'] or empty");
 			var mChanges = this.oConfiguration._collect();
 			this.sLegacyNumberFormat = mChanges.legacyNumberFormat = sFormatId;
 			this.setNumberSymbol("group", M_ABAP_NUMBER_FORMAT_SYMBOLS[sFormatId].groupingSeparator);
