@@ -3361,7 +3361,7 @@ sap.ui.define([
 		}
 
 		// if property is already bound, unbind it first
-		if (this.getBinding(sName)) {
+		if (this.isBound(sName)) {
 			this.unbindProperty(sName, true);
 		}
 
@@ -3836,7 +3836,7 @@ sap.ui.define([
 		}
 
 		// if aggregation is already bound, unbind it first
-		if (this.getBinding(sName)) {
+		if (this.isBound(sName)) {
 			this.unbindAggregation(sName);
 		}
 
