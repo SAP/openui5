@@ -165,15 +165,12 @@ sap.ui.define([
 	 */
 	ObjectPageSectionBase.prototype.setInvisibleTextLabelValue = function (sValue) {
 		var oAriaLabelledBy = this.getAggregation("ariaLabelledBy"),
-			sSectionText = this.getSectionText(),
 			sLabel = "";
 
-		if (sValue) {
-			sLabel = sValue + " ";
-		}
+		sLabel = sValue || this.getSectionText();
 
 		if (oAriaLabelledBy) {
-			sap.ui.getCore().byId(oAriaLabelledBy.getId()).setText(sLabel + sSectionText);
+			sap.ui.getCore().byId(oAriaLabelledBy.getId()).setText(sLabel);
 		}
 
 		return this;
@@ -186,17 +183,12 @@ sap.ui.define([
 	 */
 	ObjectPageSectionBase.prototype._getAriaLabelledBy = function () {
 		// Each section should be labelled as:
-		// 'titleName Section' - if the section has a title
+		// 'titleName' - if the section has a title
 		// 'Section' - if it does not have a title
 
-		var sLabel = "",
-			sTitle = this._getTitle();
+		var sLabel = "";
 
-		if (sTitle) {
-			sLabel += sTitle + " ";
-		}
-
-		sLabel += this.getSectionText();
+		sLabel = this._getTitle() || this.getSectionText();
 
 		return new InvisibleText({
 			text: sLabel
