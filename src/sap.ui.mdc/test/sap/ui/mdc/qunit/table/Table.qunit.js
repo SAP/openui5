@@ -3423,6 +3423,12 @@ sap.ui.define([
 			dataProperty: "stringValue_bigmaxlength"
 		}));
 
+		this.oTable.addColumn(new Column({
+			id: "stringValue_nolabeltruncate",
+			header: "stringValue_nolabeltruncate",
+			dataProperty: "stringValue_nolabeltruncate"
+		}));
+
 		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "firstName",
@@ -3523,6 +3529,17 @@ sap.ui.define([
 				typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
 					maxLength: 255
 				})
+			}, {
+				name: "stringValue_nolabeltruncate",
+				label: "stringValue_nolabeltruncate",
+				typeConfig: TypeUtil.getTypeConfig("Edm.String", null, {
+					maxLength: 5
+				}),
+				visualSettings: {
+					widthCalculation: {
+						truncateLabel: false
+					}
+				}
 			}
 		]);
 
@@ -3572,6 +3589,8 @@ sap.ui.define([
 
 			assert.equal(getInnerColumnWidth(aColumns[9]), 19 + fPadding + "rem", "String type without maxLength gets maxWidth");
 			assert.equal(getInnerColumnWidth(aColumns[10]), 19 + fPadding + "rem", "String type with big maxLength gets maxWidth");
+
+			assert.ok(check(aColumns[11].getHeader(), parseFloat(getInnerColumnWidth(aColumns[11])) - fPadding, 0), "The header is not truncated and the column width is as wide as the header");
 		}.bind(this));
 	});
 

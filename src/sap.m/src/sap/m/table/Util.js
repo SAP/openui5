@@ -145,7 +145,7 @@ sap.ui.define([
 	 * Calculates the width of the column header width according to calculated cell content and min/max width restrictions.
 	 *
 	 * @param {string} sHeader The header text
-	 * @param {float} fContentWidth The calculated width of the cell in rem
+	 * @param {float} [fContentWidth] The calculated width of the cell in rem
 	 * @param {int} [iMaxWidth=19] The maximum header width in rem
 	 * @param {int} [iMinWidth=2] The minimum header width in rem
 	 * @returns {float} The calculated header width in rem
@@ -172,6 +172,9 @@ sap.ui.define([
 			}
 			if (iMinWidth > iHeaderLength) {
 				return iMinWidth;
+			}
+			if (!fContentWidth) {
+				return Util.measureText(sHeader, fnGetHeaderFont());
 			}
 
 			fContentWidth = Math.max(fContentWidth, iMinWidth);
@@ -201,6 +204,7 @@ sap.ui.define([
 	 * @param {int} [mSettings.maxWidth=19] The maximum content width of the field in rem
 	 * @param {int} [mSettings.padding=1] The sum of column padding and border in rem
 	 * @param {float} [mSettings.gap=0] The additional content width in rem
+	 * @param {boolean} [mSettings.truncateLabel=true] Whether the header of the column can be truncated or not
 	 * @param {boolean} [mSettings.verticalArrangement=false] Whether the fields are arranged vertically
 	 * @param {int} [mSettings.defaultWidth=8] The default column content width when type check fails
 	 * @returns {string} The calculated width of the column
@@ -217,6 +221,7 @@ sap.ui.define([
 			minWidth: 2,
 			maxWidth: 19,
 			defaultWidth: 8,
+			truncateLabel: true,
 			padding: 1,
 			gap: 0,
 			verticalArrangement: false
@@ -244,7 +249,7 @@ sap.ui.define([
 		}, 0);
 
 		if (sHeader) {
-			fHeaderWidth = Util.calcHeaderWidth(sHeader, fContentWidth, iMaxWidth, iMinWidth);
+			fHeaderWidth = Util.calcHeaderWidth(sHeader, (mSettings.truncateLabel ? fContentWidth : 0), iMaxWidth, iMinWidth);
 		}
 
 		fContentWidth = Math.max(iMinWidth, fContentWidth, fHeaderWidth);

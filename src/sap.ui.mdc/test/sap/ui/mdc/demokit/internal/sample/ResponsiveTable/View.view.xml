@@ -61,20 +61,11 @@
 			<mdcTable:Column id="onlyTableView--mdcTable--SupplierName" header="Supplier" dataProperty="SupplierName" importance="Medium">
 				<Text text="{SupplierName}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Price" header="Unit Price" dataProperty="Price" hAlign="Right" importance="High">
+			<mdcTable:Column id="onlyTableView--mdcTable--Price" header="Unit Price of the Product" dataProperty="Price" hAlign="Right" importance="High">
 				<u:Currency xmlns:u="sap.ui.unified" value="{Price}" currency="{CurrencyCode}" useSymbol="false"/>
 			</mdcTable:Column>
 			<mdcTable:Column id="onlyTableView--mdcTable--WeightMeasure" header="Weight" dataProperty="WeightMeasure" hAlign="End" importance="Low">
 				<ObjectNumber number="{WeightMeasure}" emphasized="false" textAlign="End" unit="{WeightUnit}"/>
-			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Width" header="Width" dataProperty="Width" hAlign="End" importance="Low">
-				<ObjectNumber number="{Width}" emphasized="false" textAlign="End" unit="{DimUnit}"/>
-			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Depth" header="Depth" dataProperty="Depth" hAlign="End" importance="Low">
-				<ObjectNumber number="{Depth}" emphasized="false" textAlign="End" unit="{DimUnit}"/>
-			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--Height" header="Height" dataProperty="Height" hAlign="End" importance="Low">
-				<ObjectNumber number="{Height}" emphasized="false" textAlign="End" unit="cm"/>
 			</mdcTable:Column>
 		</mdc:columns>
 		<mdc:variant>
