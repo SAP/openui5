@@ -3,12 +3,13 @@
  */
 
 /* global QUnit */
-QUnit.config.autostart = false;
+// QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/ui/test/Opa5",
 	"mdc/qunit/util/V4ServerHelper",
-	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary"
+	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary",
+	"test-resources/sap/ui/mdc/testutils/opa/Util"
 ], function(
 	Opa5,
 	ODataV4ServerHelper
@@ -19,11 +20,13 @@ sap.ui.require([
 		autoWait: true,
 		async: true,
 		appParams: {
-			"sap-ui-animation": false
+			"sap-ui-animation": false,
+			"sap-ui-xx-filterQueryPanel": true,
+			"service": "tenant"
 		},
 		testLibs: {
 			mdcTestLibrary: {
-				viewName: "sap.ui.v4.demo.view.App"
+			// 	viewName: "sap.ui.mdc.sample.FieldEditMode.View"
 			}
 		}
 	});
@@ -36,7 +39,7 @@ sap.ui.require([
 		if (bServerAvailable) {
 
 			sap.ui.require([
-				"sap/ui/v4demo/test/ListReportFlVMJourney"
+				"local/test/ListReportFlVMJourney"
 			], function() {
 				QUnit.start();
 			});

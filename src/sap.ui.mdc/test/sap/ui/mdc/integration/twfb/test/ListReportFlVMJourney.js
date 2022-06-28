@@ -33,7 +33,7 @@ sap.ui.define([
 		// not have any effect on the success rate of the tests.
 		timeout: 45,
 		appParams: {
-			"sap-ui-rta-skip-flex-validation" : "true"
+			"sap-ui-rta-skip-flex-validation": true
 		},
 		arrangements: {
 			iStartMyUIComponentInViewMode: function() {
@@ -69,7 +69,7 @@ sap.ui.define([
 		actions: new Opa5({
 			iPressTheAdaptUiButton: function () {
 				return this.waitFor({
-					id: "__component0---app--btnStartRTA",
+					id: "__button0",
 					controlType: "sap.m.Button",
 					actions: new Press()
 				});
@@ -84,8 +84,9 @@ sap.ui.define([
 
 	opaTest("1. start the app in RTA", function(Given, When, Then) {
 		// Arrange
-		Given.iClearTheSessionLRep();
+		FakeLrepConnectorSessionStorage.enableFakeConnector();
 		Given.iStartMyUIComponentInViewMode();
+		Given.iClearTheSessionLRep();
 
 		// Act
 		When.iPressTheAdaptUiButton();
