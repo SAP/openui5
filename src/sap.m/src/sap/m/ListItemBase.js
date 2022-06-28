@@ -271,8 +271,15 @@ function(
 		this._bNeedsNavigated = false;
 	};
 
+	ListItemBase.prototype.onBeforeRendering = function() {
+		this._oDomRef = this.getDomRef();
+	};
+
 	ListItemBase.prototype.onAfterRendering = function() {
-		this.informList("DOMUpdate", true);
+		if (this._oDomRef !== this.getDomRef()) {
+			this.informList("DOMUpdate", true);
+		}
+		this._oDomRef = undefined;
 		this._checkHighlight();
 		this._checkNavigated();
 	};
@@ -721,6 +728,7 @@ function(
 	};
 
 	ListItemBase.prototype.exit = function() {
+		this._oDomRef = null;
 		this._oLastFocused = null;
 		this._checkHighlight(false);
 		this._checkNavigated(false);

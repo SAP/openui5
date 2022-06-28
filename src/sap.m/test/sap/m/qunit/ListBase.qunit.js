@@ -1746,7 +1746,7 @@ sap.ui.define([
 			assert.strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
 			fnSpy.resetHistory();
 
-			oListItem.setVisible(false);
+			oListItem.invalidate();
 			Core.applyChanges();
 
 			assert.strictEqual(fnSpy.callCount, 0, "Visibility did not changed and list is not informed");
