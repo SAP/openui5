@@ -4329,4 +4329,47 @@ sap.ui.define([
 		// Clean up
 		oIconTabBar.destroy();
 	});
+
+	QUnit.module("Forwarding to header");
+
+	QUnit.test("_getIconTabHeader doesn't create header after the icon tab bar is destroyed", function(assert) {
+		// Arrange
+		var oIconTabBar = new IconTabBar();
+
+		// Assert
+		assert.ok(oIconTabBar._getIconTabHeader(), "Header is created");
+
+		// Act
+		oIconTabBar.destroy();
+
+		// Assert
+		assert.notOk(oIconTabBar._getIconTabHeader(), "Header should NOT be created when the icon tab bar is destroyed");
+	});
+
+	QUnit.test("Public setters and getters don't throw error when executed on destroyed icon tab bar", function(assert) {
+		// Arrange
+		var oIconTabBar = new IconTabBar();
+		oIconTabBar.destroy();
+
+		try {
+			// Act
+			oIconTabBar.setShowSelection(true);
+			oIconTabBar.getShowSelection();
+			oIconTabBar.setSelectedKey("");
+			oIconTabBar.getSelectedKey();
+			oIconTabBar.addStyleClass("sapUiContentPadding");
+			oIconTabBar.removeStyleClass("sapUiContentPadding");
+			oIconTabBar.setAriaTexts({});
+			oIconTabBar.setEnableTabReordering(true);
+			oIconTabBar.setHeaderBackgroundDesign(BackgroundDesign.Transparent);
+			oIconTabBar.setTabDensityMode(IconTabDensityMode.Compact);
+			oIconTabBar.setHeaderMode(IconTabHeaderMode.Inline);
+
+			// Assert
+			assert.ok(true, "Header should NOT be created when the icon tab bar is destroyed");
+		} catch (e) {
+			// Assert
+			assert.ok(false, "Exception is thrown when setter is executed on destroyed icon tab bar " + e);
+		}
+	});
 });
