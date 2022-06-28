@@ -830,6 +830,53 @@ sap.ui.define([
 		this.testVirtualContext(assert, true);
 	});
 
+	QUnit.test("Growing should reset if list contains items and there is a AddVirtualContext binding change", function(assert) {
+		var done = assert.async(),
+			oMockServer = startMockServer(0),
+			oBinding,
+			oInitialLoadDeferred = jQuery.Deferred(),
+			oAfterGrowingTriggered = jQuery.Deferred(),
+			oAfterBindingChangeSimulation = jQuery.Deferred();
+
+		this.list = createList({
+			growing: true,
+			growingThreshold: 5
+		});
+
+		this.list.attachEventOnce("updateFinished", oInitialLoadDeferred.resolve);
+
+		jQuery.when(oInitialLoadDeferred).then(function() {
+			assert.strictEqual(this.list._oGrowingDelegate._iLimit, 5, "GrowingDelegate limit is 5");
+			this.list.$("trigger").trigger("focus").trigger("tap");
+			this.list.attachEventOnce("updateFinished", oAfterGrowingTriggered.resolve);
+		}.bind(this));
+
+		jQuery.when(oAfterGrowingTriggered).then(function() {
+			assert.strictEqual(this.list._oGrowingDelegate._iLimit, 10, "GrowingDelegate limit is 10 due to growing");
+			oBinding = this.list.getBinding("items");
+
+			// simulate AddVirtualContext
+			oBinding.fireEvent("change", {
+				detailedReason: "AddVirtualContext",
+				reason: "context"
+			});
+			oBinding.fireEvent("change", {
+				detailedReason: "RemoveVirtualContext",
+				reason: "change"
+			});
+			oBinding.refresh();
+
+			this.list.attachEventOnce("updateFinished", oAfterBindingChangeSimulation.resolve);
+		}.bind(this));
+
+		jQuery.when(oAfterBindingChangeSimulation).then(function() {
+			assert.strictEqual(this.list._oGrowingDelegate._iLimit, 5, "GrowingDelegate limit is 5, reset due to AddVirtualContext");
+
+			oMockServer.stop();
+			done();
+		}.bind(this));
+	});
+
 	QUnit.module("Rebind");
 	QUnit.test("List should not invalidate before update on rebind", function(assert) {
 		var oMockServer = startMockServer(0),

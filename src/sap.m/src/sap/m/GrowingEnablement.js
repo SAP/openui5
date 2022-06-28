@@ -131,8 +131,12 @@ sap.ui.define([
 		},
 
 		// reset paging on rebind
-		reset : function() {
+		reset : function(bPageSizeOnly) {
 			this._iLimit = 0;
+
+			if (bPageSizeOnly) {
+				return;
+			}
 
 			// if factory function is used we do not activate the replace option of the extended change detection
 			var oBindingInfo = this._oControl.getBindingInfo("items");

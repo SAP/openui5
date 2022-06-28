@@ -622,6 +622,9 @@ function(
 		// Special handling for "AutoExpandSelect" of the V4 ODataModel.
 		if (oEventInfo && oEventInfo.detailedReason === "AddVirtualContext") {
 			createVirtualItem(this);
+			if (this._oGrowingDelegate) {
+				this._oGrowingDelegate.reset(true);
+			}
 			return;
 		} else if (oEventInfo && oEventInfo.detailedReason === "RemoveVirtualContext") {
 			destroyVirtualItem(this);
