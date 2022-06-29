@@ -1058,19 +1058,6 @@ sap.ui.define([
 
 	};
 
-	// overwrite _getInputValue to do the conversion there
-	DatePicker.prototype._getInputValue = function(sValue) {
-
-		sValue = (typeof sValue == "undefined") ? this._$input.val() : sValue.toString();
-
-		var oDate = this._parseValue(sValue, true);
-		sValue = this._formatValue(oDate, true);
-
-		return sValue;
-
-	};
-
-	// overwrite _getInputValue to do the output conversion
 	DatePicker.prototype.updateDomValue = function(sValue) {
 
 		if (this.isActive() && this._$input.val() !== sValue) {

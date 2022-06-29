@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/DateTypeRange",
 	"sap/m/DateRangeSelection",
+	"sap/m/InputBase",
 	"sap/m/DatePicker",
 	"sap/ui/Device",
 	"sap/ui/core/library",
@@ -30,6 +31,7 @@ sap.ui.define([
 	CalendarDate,
 	DateTypeRange,
 	DateRangeSelection,
+	InputBase,
 	DatePicker,
 	Device,
 	coreLibrary,
@@ -1486,7 +1488,7 @@ sap.ui.define([
 	QUnit.test("_getInputValue", function (assert) {
 		// Prepare
 		var oDDR = new DateRangeSelection(),
-			oGetInputValueSpy = this.spy(oDDR, "_getInputValue"),
+			oGetInputValueSpy = this.spy(InputBase.prototype, "_getInputValue"),
 			oGetFocusDomRefStub = this.stub(oDDR, "getFocusDomRef").callsFake(function () {
 				return { value: undefined };
 			});
@@ -1495,7 +1497,7 @@ sap.ui.define([
 		oDDR.handleInputValueConcurrency("test");
 
 		// Assert
-		assert.ok(oGetInputValueSpy.notCalled, "Method from the sap.m.InputBase properly called");
+		assert.ok(oGetInputValueSpy.calledOnce, "sap.m.InputBase.prototype._getInputValue called");
 
 		// Clean
 		oGetFocusDomRefStub.restore();
