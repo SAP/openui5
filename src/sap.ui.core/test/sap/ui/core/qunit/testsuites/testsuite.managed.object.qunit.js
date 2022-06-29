@@ -30,6 +30,10 @@ sap.ui.define(function() {
 			ManagedObject: {
 				title: "sap.ui.base.ManagedObject"
 			},
+			ManagedObject_noBoot: {
+				title: "sap.ui.base.ManagedObject (no core boot)",
+				bootCore: false
+			},
 			ManagedObject_forwardAggregation: {
 				title: "sap.ui.base.ManagedObject (forward Aggregation)"
 			},

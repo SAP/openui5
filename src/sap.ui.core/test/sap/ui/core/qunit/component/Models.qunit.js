@@ -59,7 +59,8 @@ sap.ui.define([
 
 			this.oGetUriParametersStub = sinon.stub(UriParameters, 'fromQuery').returns({
 				get: oGetParameterStub
-			});
+			// We need a call through as UriParameters could be used by other modules and needs the full interface
+			}).callThrough();
 
 			var sSAPLanguage = sap.ui.getCore().getConfiguration().getSAPLogonLanguage();
 
