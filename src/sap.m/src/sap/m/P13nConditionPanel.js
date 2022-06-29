@@ -1374,6 +1374,9 @@ sap.ui.define([
 						var vValue = oConditionGridData[field["ID"]];
 
 						if (oControl instanceof Select) {
+							if (typeof vValue === "string") {
+								vValue = oConditionGrid.oType.parseValue(vValue, "string");
+							}
 							if (typeof vValue === "boolean") {
 								oControl.setSelectedIndex(vValue ? 2 : 1);
 							}
