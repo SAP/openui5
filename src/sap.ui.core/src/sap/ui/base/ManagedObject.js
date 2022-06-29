@@ -4,11 +4,11 @@
 
 // Provides the base class for all objects with managed properties and aggregations.
 sap.ui.define([
+	'./BindingParser',
 	'./DataType',
 	'./EventProvider',
 	'./ManagedObjectMetadata',
 	'./Object',
-	'./BindingInfo',
 	'../model/BindingMode',
 	'../model/StaticBinding',
 	'../model/CompositeBinding',
@@ -28,11 +28,11 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject"
 ], function(
+	BindingParser,
 	DataType,
 	EventProvider,
 	ManagedObjectMetadata,
 	BaseObject,
-	BindingInfo,
 	BindingMode,
 	StaticBinding,
 	CompositeBinding,
@@ -554,21 +554,8 @@ sap.ui.define([
 
 	}, /* Metadata constructor */ ManagedObjectMetadata);
 
-	// The current BindingParser implementation is exposed via "ManagedObject.bindingParser".
-	// This is used in tests for switching the BindingParser implementation on the fly.
-	// We delegate any changes to this property back to the BindingInfo.
-	Object.defineProperty(ManagedObject, "bindingParser", {
-		set: function(v) {
-			BindingInfo.parse = v;
-		},
-		get: function() {
-			return BindingInfo.parse;
-		}
-	});
-
-	function assertModelName(sModelName) {
-		assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
-	}
+	// Marker to not 'forget' ui5Objects
+	var sUI5ObjectMarker = Symbol("ui5object");
 
 	/**
 	 * Returns the metadata for the ManagedObject class.
@@ -1246,7 +1233,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.escapeSettingsValue = function(vValue) {
-		return (typeof vValue === "string") ? BindingInfo.escape(vValue) : vValue;
+		return (typeof vValue === "string") ? ManagedObject.bindingParser.escape(vValue) : vValue;
 	};
 
 	/**
@@ -2888,6 +2875,13 @@ sap.ui.define([
 		this.bIsDestroyed = true;
 	};
 
+
+	// DataBinding
+	/**
+	 * Binding parser to use.
+	 */
+	ManagedObject.bindingParser = BindingParser.simpleParser;
+
 	/**
 	 * Determines whether a given object contains binding information instead of a
 	 * value or aggregated controls. The method is used in applySettings for processing
@@ -2937,15 +2931,32 @@ sap.ui.define([
 	 * @private
 	 */
 	ManagedObject.prototype.extractBindingInfo = function(oValue, oScope, bDetectValue) {
-		var oBindingInfo = BindingInfo.extract(oValue, oScope, bDetectValue);
 		// property:{path:"path", template:oTemplate}
-		// Binding templates should only be constructed from object syntax,
-		// string representation for templates is not supported
-		if (typeof oValue === "object" && oBindingInfo && oBindingInfo.template) {
-			// allow JSON syntax for templates
-			oBindingInfo.template = ManagedObject.create(oBindingInfo.template);
+		if (oValue && typeof oValue === "object") {
+			if (oValue.Type) {
+				// if value contains the 'Type' property (capital 'T'), this is not a binding info.
+				return undefined;
+			} else if (oValue[sUI5ObjectMarker]) {
+				// no bindingInfo, delete marker
+				delete oValue[sUI5ObjectMarker];
+			} else if (oValue.ui5object) {
+				// if value contains ui5object property, this is not a binding info,
+				// remove it and not check for path or parts property
+				delete oValue.ui5object;
+			} else if (oValue.path != undefined || oValue.parts || (bDetectValue && oValue.value != undefined)) {
+				// allow JSON syntax for templates
+				if (oValue.template) {
+					oValue.template = ManagedObject.create(oValue.template);
+				}
+				return oValue;
+			}
 		}
-		return oBindingInfo;
+
+		// property:"{path}" or "\{path\}"
+		if (typeof oValue === "string") {
+			// either returns a binding info or an unescaped string or undefined - depending on binding syntax
+			return ManagedObject.bindingParser(oValue, oScope, true);
+		}
 	};
 
 	/**
@@ -2969,23 +2980,6 @@ sap.ui.define([
 		}
 
 		return this.mBindingInfos[sName];
-	};
-
-	/**
-	 * Returns the object binding info for the given model.
-	 *
-	 * The binding info contains information about path, binding object, format options, sorter, filter etc.
-	 * for the model. As the binding object is only created when the model becomes available,
-	 * the <code>binding</code> property may be undefined.
-	 *
-	 * @param {string} [sModelName=undefined] Non-empty name of the model or <code>undefined</code>
-	 *    Omitting the model name (or using the value <code>undefined</code>) is explicitly allowed and
-	 *    refers to the default model.
-	 * @returns {object} A binding info object, containing at least a <code>path</code> and additional properties
-	 * @private
-	 */
-	ManagedObject.prototype._getObjectBindingInfo = function(sModelName) {
-		return this.mObjectBindingInfos[sModelName];
 	};
 
 	/**
@@ -3042,7 +3036,8 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.bindObject = function(oBindingInfo) {
 		var sModelName,
-			sPath;
+			sPath,
+			iSeparatorPos;
 
 		// support legacy notation (sPath, mParameters)
 		if (typeof oBindingInfo == "string") {
@@ -3051,13 +3046,21 @@ sap.ui.define([
 				path: sPath,
 				parameters: arguments[1]
 			};
+		} else {
+			sPath = oBindingInfo.path;
 		}
 
-		oBindingInfo = BindingInfo.createObject(oBindingInfo);
+		// if a model separator is found in the path, extract model name and path
+		iSeparatorPos = sPath.indexOf(">");
+		if (iSeparatorPos > 0) {
+			oBindingInfo.model = sPath.substr(0, iSeparatorPos);
+			oBindingInfo.path = sPath.substr(iSeparatorPos + 1);
+		}
+
 		sModelName = oBindingInfo.model;
 
 		// if old binding exists, clean it up
-		if ( this.getObjectBinding(sModelName) ) {
+		if ( this.mObjectBindingInfos[sModelName] ) {
 			this.unbindObject(sModelName, /* _bSkipUpdateBindingContext */ true);
 			// We don't push down context changes here
 			// Either this will happen with the _bindObject call below or the model
@@ -3340,7 +3343,8 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.bindProperty = function(sName, oBindingInfo, /* undocumented, old API only: */ _vFormat, _sMode) {
-		var bAvailable = true,
+		var iSeparatorPos,
+			bAvailable = true,
 			oProperty = this.getMetadata().getPropertyLikeSetting(sName);
 
 		// check whether property or alternative type on aggregation exists
@@ -3360,26 +3364,69 @@ sap.ui.define([
 			};
 		}
 
+		// only one binding object with one binding specified
+		if (!oBindingInfo.parts) {
+			oBindingInfo.parts = [];
+			oBindingInfo.parts[0] = {
+				path: oBindingInfo.path,
+				targetType: oBindingInfo.targetType,
+				type: oBindingInfo.type,
+				suspended: oBindingInfo.suspended,
+				formatOptions: oBindingInfo.formatOptions,
+				constraints: oBindingInfo.constraints,
+				model: oBindingInfo.model,
+				mode: oBindingInfo.mode,
+				value: oBindingInfo.value
+			};
+			delete oBindingInfo.path;
+			delete oBindingInfo.targetType;
+			delete oBindingInfo.mode;
+			delete oBindingInfo.model;
+			delete oBindingInfo.value;
+		}
+
+		for ( var i = 0; i < oBindingInfo.parts.length; i++ ) {
+
+			// Plain strings as parts are taken as paths of bindings
+			var oPart = oBindingInfo.parts[i];
+			if (typeof oPart == "string") {
+				oPart = { path: oPart };
+				oBindingInfo.parts[i] = oPart;
+			}
+
+			// if a model separator is found in the path, extract model name and path
+			if (oPart.path !== undefined) {
+				iSeparatorPos = oPart.path.indexOf(">");
+				if (iSeparatorPos > 0) {
+					oPart.model = oPart.path.substr(0, iSeparatorPos);
+					oPart.path = oPart.path.substr(iSeparatorPos + 1);
+				}
+			}
+			// if a formatter exists the binding mode can be one way or one time only
+			if (oBindingInfo.formatter && oPart.mode != BindingMode.OneWay && oPart.mode != BindingMode.OneTime) {
+				oPart.mode = BindingMode.OneWay;
+			}
+
+			// Check for model availability for model bindings
+			if (oPart.value === undefined && !this.getModel(oPart.model)) {
+				bAvailable = false;
+			}
+		}
+
+		//Initialize skip properties
+		oBindingInfo.skipPropertyUpdate = 0;
+		oBindingInfo.skipModelUpdate = 0;
+
 		// if property is already bound, unbind it first
 		if (this.isBound(sName)) {
 			this.unbindProperty(sName, true);
 		}
-
-		oBindingInfo = BindingInfo.createProperty(oBindingInfo);
 
 		// store binding info to create the binding, as soon as the model is available, or when the model is changed
 		this.mBindingInfos[sName] = oBindingInfo;
 
 		if (this._observer) {
 			this._observer.bindingChange(this, sName, "prepare", oBindingInfo, "property");
-		}
-
-		// Check if all models are available before creating bindings
-		for ( var i = 0; i < oBindingInfo.parts.length; i++ ) {
-			if (oBindingInfo.parts[i].value === undefined && !this.getModel(oBindingInfo.parts[i].model)) {
-				bAvailable = false;
-				break;
-			}
 		}
 
 		// if the models are already available, create the binding
@@ -3835,11 +3882,26 @@ sap.ui.define([
 			return this;
 		}
 
+
 		// if aggregation is already bound, unbind it first
 		if (this.isBound(sName)) {
 			this.unbindAggregation(sName);
 		}
 
+		// check whether a template has been provided, which is required for proper processing of the binding
+		// If aggregation is marked correspondingly in the metadata, factory can be omitted (usually requires an updateXYZ method)
+		if (!(oBindingInfo.template || oBindingInfo.factory)) {
+			if ( oAggregationInfo._doesNotRequireFactory ) {
+				// add a dummy factory as property 'factory' is used to distinguish between property- and list-binding
+				oBindingInfo.factory = function() {
+					throw new Error("dummy factory called unexpectedly ");
+				};
+			} else {
+				throw new Error("Missing template or factory function for aggregation " + sName + " of " + this + " !");
+			}
+		}
+
+		// if we have a template we will create a factory function
 		if (oBindingInfo.template) {
 			// set default for templateShareable
 			if ( oBindingInfo.template._sapui_candidateForDestroy ) {
@@ -3854,15 +3916,20 @@ sap.ui.define([
 			if (oBindingInfo.templateShareable === undefined) {
 				oBindingInfo.templateShareable = MAYBE_SHAREABLE_OR_NOT;
 			}
+			oBindingInfo.factory = function(sId) {
+				return oBindingInfo.template.clone(sId);
+			};
 		}
-		oBindingInfo = BindingInfo.createAggregation(oBindingInfo, oAggregationInfo._doesNotRequireFactory);
+
+		// if a model separator is found in the path, extract model name and path
+		var iSeparatorPos = oBindingInfo.path.indexOf(">");
+		if (iSeparatorPos > 0) {
+			oBindingInfo.model = oBindingInfo.path.substr(0, iSeparatorPos);
+			oBindingInfo.path = oBindingInfo.path.substr(iSeparatorPos + 1);
+		}
 
 		// store binding info to create the binding, as soon as the model is available, or when the model is changed
 		this.mBindingInfos[sName] = oBindingInfo;
-
-		if (!(oBindingInfo.template || oBindingInfo.factory)) {
-			throw new Error("Missing template or factory function for aggregation " + sName + " of " + this + " !");
-		}
 
 		if (this._observer) {
 			this._observer.bindingChange(this, sName, "prepare", oBindingInfo, "aggregation");
@@ -4395,13 +4462,11 @@ sap.ui.define([
 	 * refers to the default model.
 	 *
 	 * @param {string} [sModelName=undefined] Non-empty name of the model or <code>undefined</code>
-	 * @returns {sap.ui.model.ContextBinding|undefined} Context binding for the given model name or <code>undefined</code>
+	 * @return {sap.ui.model.ContextBinding} Context binding for the given model name or <code>undefined</code>
 	 * @public
 	 */
 	ManagedObject.prototype.getObjectBinding = function(sModelName){
-		assertModelName(sModelName);
-		var oInfo = this._getObjectBindingInfo(sModelName);
-		return oInfo && oInfo.binding;
+		return this.mObjectBindingInfos[sModelName] && this.mObjectBindingInfos[sModelName].binding;
 	};
 
 	/**
@@ -4464,7 +4529,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.setBindingContext = function(oContext, sModelName){
-		assertModelName(sModelName);
+		assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
 		var oOldContext = this.oBindingContexts[sModelName];
 		if (Context.hasChanged(oOldContext, oContext)) {
 			if (oContext === undefined) {
@@ -4492,7 +4557,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ManagedObject.prototype.setElementBindingContext = function(oContext, sModelName){
-		assertModelName(sModelName);
+		assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
 		var oOldContext = this.mElementBindingContexts[sModelName];
 
 		if (Context.hasChanged(oOldContext, oContext)) {
@@ -4903,7 +4968,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.getModel = function(sModelName) {
-		assertModelName(sModelName);
+		assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
 		return this.oModels[sModelName] || this.oPropagatedProperties.oModels[sModelName];
 	};
 
@@ -5026,7 +5091,7 @@ sap.ui.define([
 			sKey,
 			sName,
 			oClone,
-			escape = BindingInfo.escape,
+			escape = ManagedObject.bindingParser.escape,
 			i,
 			oTarget;
 
@@ -5046,7 +5111,7 @@ sap.ui.define([
 					vValue = oProperty.byValue ? deepClone(mProps[sKey]) : mProps[sKey];
 					if (vValue && typeof vValue === "object" && !Object.isFrozen(vValue)) {
 						//mark objects to not interpret it as bindingInfos
-						vValue[BindingInfo.UI5ObjectMarker] = true;
+						vValue[sUI5ObjectMarker] = true;
 					}
 					mSettings[sKey] = vValue;
 				}
