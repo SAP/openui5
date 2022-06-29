@@ -1585,7 +1585,7 @@ sap.ui.define([
 				});
 				oExistingContext.setPreliminary(false);
 			}
-			if (oRequest && oRequest.created) {
+			if (oRequest && oRequest.created && oRequest.key) {
 				this._cleanupAfterCreate(oRequest, sKey);
 			}
 			this._updateChangedEntity(sKey, oEntry);
