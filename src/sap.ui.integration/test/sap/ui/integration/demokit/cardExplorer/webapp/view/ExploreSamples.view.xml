@@ -115,7 +115,7 @@
 							<OverflowToolbarButton
 								text="Show Card Configuration Editor"
 								tooltip="Show Card Configuration Editor"
-								icon="sap-icon://business-card"
+								icon="sap-icon://wrench"
 								enabled="{= ${settings>/editable} &amp;&amp; ${settings>/editorType} !== 'CARDEDITOR'}"
 								type="Transparent"
 								visible="{= ${settings>/designtimeEnabled} &amp;&amp; ${settings>/editable} &amp;&amp; ${settings>/internal} &amp;&amp; ${settings>/editorType} !== 'CARDEDITOR' }"

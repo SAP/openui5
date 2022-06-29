@@ -14,7 +14,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "separator"
 					},
 					"title": {
-						"manifestpath": "/sap.card/header/title",
+						"manifestpath": "/sap.card/configuration/parameters/title/value",
 						"type": "string",
 						"translatable": true,
 						"label": "Card Title",
@@ -22,7 +22,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"allowDynamicValues": true
 					},
 					"subtitle": {
-						"manifestpath": "/sap.card/header/subTitle",
+						"manifestpath": "/sap.card/configuration/parameters/subtitle/value",
 						"type": "string",
 						"translatable": true,
 						"label": "Card Subtitle",
@@ -30,7 +30,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"allowDynamicValues": true
 					},
 					"headericon": {
-						"manifestpath": "/sap.card/header/icon/src",
+						"manifestpath": "/sap.card/configuration/parameters/headericon/src",
 						"type": "string",
 						"label": "Card Icon",
 						"cols": 1,
@@ -48,12 +48,12 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "separator"
 					},
 					"maxItems": {
-						"manifestpath": "/sap.card/content/maxItems",
+						"manifestpath": "/sap.card/configuration/parameters/maxItems/value",
 						"type": "integer",
 						"allowDynamicValues": false,
 						"allowSettings": false,
-						"editableToUser": false,
-						"visibleToUser": false,
+						"editableToUser": true,
+						"visibleToUser": true,
 						"visualization": {
 							"type": "Slider",
 							"settings": {
@@ -71,7 +71,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 				}
 			},
 			"preview": {
-				"modes": "AbstractLive"
+				"modes": "None"
 			}
 		});
 	};

@@ -26,7 +26,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 				}
 			},
 			"preview": {
-				"modes": "Live"
+				"modes": "None"
 			}
 		});
 	};
