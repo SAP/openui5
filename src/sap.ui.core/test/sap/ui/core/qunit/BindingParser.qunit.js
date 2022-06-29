@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ExpressionParser",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/base/BindingInfo",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/model/Filter",
 	"sap/ui/model/Sorter",
@@ -14,7 +13,7 @@ sap.ui.define([
 	"sap/ui/model/type/Date",
 	"sap/ui/model/type/String",
 	"sap/base/Log"
-], function (BindingParser, ExpressionParser, ManagedObject, BindingInfo, InvisibleText, Filter,
+], function (BindingParser, ExpressionParser, ManagedObject, InvisibleText, Filter,
 	Sorter, JSONModel, Currency, Date, String, Log) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
@@ -71,7 +70,7 @@ sap.ui.define([
 				}
 			}
 		},
-		parse = BindingInfo.parse,
+		parse = ManagedObject.bindingParser,
 		TestControl = ManagedObject.extend("TestControl", {
 			metadata: {
 				properties: {

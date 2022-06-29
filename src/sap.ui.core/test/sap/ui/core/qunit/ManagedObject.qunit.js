@@ -1,7 +1,5 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/base/BindingInfo",
-	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
@@ -14,7 +12,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/base/strings/escapeRegExp",
 	"sap/base/util/isEmptyObject"
-], function(BindingInfo, BindingParser, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, Control, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject) {
+], function(ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, Control, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject) {
 	"use strict";
 	var mObjects = {};
 
@@ -259,18 +257,6 @@ sap.ui.define([
 		assert.ok(obj.getOwnModels().testModel2.isA("sap.ui.model.json.JSONModel"), "Correct model instance should be available.");
 
 		assert.deepEqual(obj1.getOwnModels(), {}, "No models are defined. Empty object is returned.");
-	});
-
-	QUnit.test("[legacy] ManagedObject.bindingParser is available/correctly set", function(assert) {
-		assert.strictEqual(ManagedObject.bindingParser, BindingParser.complexParser, "Default complex binding parser is correctly set");
-		assert.strictEqual(ManagedObject.bindingParser, BindingInfo.parse, "ManagedObject.bindingParser function is in line with the BindingInfo.parse function");
-
-		ManagedObject.bindingParser = BindingParser.simpleParser;
-
-		assert.strictEqual(ManagedObject.bindingParser, BindingParser.simpleParser, "Default complex binding parser is correctly set");
-		assert.strictEqual(ManagedObject.bindingParser, BindingInfo.parse, "ManagedObject.bindingParser function is in line with the BindingInfo.parse function");
-
-		ManagedObject.bindingParser = BindingParser.complexParser;
 	});
 
 	QUnit.module("Property Metadata", {

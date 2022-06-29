@@ -4,16 +4,16 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/JSTokenizer",
-	"sap/ui/base/BindingInfo",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ExpressionParser",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Icon",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/performance/Measurement",
 	"sap/ui/thirdparty/URI"
-], function (Log, JSTokenizer, BindingInfo, BindingParser, ExpressionParser, Icon,
+], function (Log, JSTokenizer, BindingParser, ExpressionParser, ManagedObject, Icon,
 		InvisibleText, JSONModel, ODataUtils, Measurement, URI) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
@@ -353,7 +353,7 @@ sap.ui.define([
 				}
 			};
 
-		this.mock(BindingInfo).expects("parse")
+		this.mock(ManagedObject).expects("bindingParser")
 			.withExactArgs(sInput, sinon.match.same(mLocals), true)
 			.callsFake(function (sString, oContext, bUnescape) {
 				// bStaticContext = true, just like XMLPreprocessor would do it

@@ -6,7 +6,7 @@
 
 sap.ui.define([
 	'sap/ui/base/DataType',
-	'sap/ui/base/BindingInfo',
+	'sap/ui/base/ManagedObject',
 	'sap/ui/core/CustomData',
 	'sap/ui/core/Component',
 	'./mvc/View',
@@ -27,7 +27,7 @@ sap.ui.define([
 ],
 function(
 	DataType,
-	BindingInfo,
+	ManagedObject,
 	CustomData,
 	Component,
 	View,
@@ -50,7 +50,7 @@ function(
 
 	function parseScalarType(sType, sValue, sName, oContext, oRequireModules) {
 		// check for a binding expression (string)
-		var oBindingInfo = BindingInfo.parse(sValue, oContext, /*bUnescape*/true,
+		var oBindingInfo = ManagedObject.bindingParser(sValue, oContext, /*bUnescape*/true,
 			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
 			oRequireModules);
 
@@ -78,7 +78,7 @@ function(
 		}
 
 		// Note: to avoid double resolution of binding expressions, we have to escape string values once again
-		return typeof vValue === "string" ? BindingInfo.escape(vValue) : vValue;
+		return typeof vValue === "string" ? ManagedObject.bindingParser.escape(vValue) : vValue;
 	}
 
 	function localName(xmlNode) {
@@ -1181,7 +1181,7 @@ function(
 
 						} else if ((sName === "binding" && !oInfo) || sName === 'objectBindings' ) {
 							if (!bStashedControl) {
-								var oBindingInfo = BindingInfo.parse(sValue, oView._oContainingView.oController);
+								var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
 								// TODO reject complex bindings, types, formatters; enable 'parameters'?
 								if (oBindingInfo) {
 									mSettings.objectBindings = mSettings.objectBindings || {};
@@ -1253,7 +1253,7 @@ function(
 
 						} else if (oInfo && oInfo._iKind === 2 /* MULTIPLE_AGGREGATION */ ) {
 							if (!bStashedControl) {
-								var oBindingInfo = BindingInfo.parse(sValue, oView._oContainingView.oController, false, false, false, false, oRequireModules);
+								var oBindingInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController, false, false, false, false, oRequireModules);
 								if ( oBindingInfo ) {
 									mSettings[sName] = oBindingInfo;
 								} else {
@@ -1756,7 +1756,7 @@ function(
 	XMLTemplateProcessor._calculatedModelMapping = function(sBinding, oContext, bAllowMultipleBindings) {
 		var oCtx,
 			mBinding = {},
-			oBinding = BindingInfo.parse(sBinding, oContext);
+			oBinding = ManagedObject.bindingParser(sBinding, oContext);
 
 		function checkFormatter(aFragments) {
 			// the pattern must be /d,/d,/d
