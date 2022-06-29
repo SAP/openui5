@@ -191,6 +191,15 @@
 				]
 			},
 			{
+				"id": "sap.ui.webc.main.DateRangePicker",
+				"name": "DateRangePicker",
+				"category": "Web Components",
+				"since": "1.104.0",
+				"samples": [
+					"sap.ui.webc.main.sample.DateRangePicker"
+				]
+			},
+			{
 				"id": "sap.ui.webc.main.List",
 				"name": "List",
 				"category": "Web Components",
@@ -503,8 +512,13 @@
 			},
 			{
 				"id": "sap.ui.webc.main.sample.DatePicker",
-				"name": "DatePicker",
+				"name": "Date Picker",
 				"description": "Demonstrates the basic usage of DatePicker"
+			},
+			{
+				"id": "sap.ui.webc.main.sample.DateRangePicker",
+				"name": "Date Range Picker",
+				"description": "Demonstrates the basic usage of DateRangePicker"
 			},
 			{
 				"id": "sap.ui.webc.main.sample.ListBasic",
