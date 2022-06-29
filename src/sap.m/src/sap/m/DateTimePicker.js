@@ -460,6 +460,8 @@ sap.ui.define([
 	};
 
 	DateTimePicker.prototype.onAfterRendering = function() {
+		DatePicker.prototype.onAfterRendering.apply(this, arguments);
+
 		if (this._getShowTimezone()) {
 			waitForThemeApplied().then(function() {
 				var oDummyContentDomRef = this.$().find(".sapMDummyContent"),

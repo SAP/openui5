@@ -781,23 +781,6 @@ sap.ui.define([
 
 	};
 
-	// Overwrite DatePicker's _getInputValue  to support two date range processing
-	DateRangeSelection.prototype._getInputValue = function(sValue) {
-
-		sValue = (typeof sValue == "undefined") ? this._$input.val() : sValue.toString();
-
-		if (!sValue) {
-			return "";
-		}
-
-		var aDates = this._parseValue(sValue);
-		sValue = this._formatValue(aDates[0], aDates[1]);
-
-		return sValue;
-
-	};
-
-	// overwrite _getInputValue to do the output conversion
 	DateRangeSelection.prototype.updateDomValue = function(sValue) {
 
 		// dom value updated other than value property
