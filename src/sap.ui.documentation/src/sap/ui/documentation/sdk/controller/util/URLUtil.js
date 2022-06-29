@@ -43,6 +43,10 @@ sap.ui.define(["sap/ui/thirdparty/URI"], function(URI) {
 				aSegments = oURI.segment(),
 				sVersion;
 
+			if (pathMatchesDemokitRoute(oURI.path())) {
+				return; // no version in path
+			}
+
 			for (var i = 0, l = aSegments.length; i < l; i++) {
 				if (reVersion.test(aSegments[i])) {
 					sVersion = aSegments[i];
