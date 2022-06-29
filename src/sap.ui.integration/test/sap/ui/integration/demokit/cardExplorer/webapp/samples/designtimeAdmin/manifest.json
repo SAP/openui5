@@ -20,7 +20,20 @@
 		"type": "List",
 		"configuration": {
 			"editor": "./dt/Configuration",
-			"parameters": {},
+			"parameters": {
+				"title": {
+					"value": "Card Title"
+				},
+				"subtitle": {
+					"value": "Card Sub Title"
+				},
+				"headericon": {
+					"src": "sap-icon://account"
+				},
+				"maxItems": {
+					"value": 3
+				}
+			},
 			"destinations": {
 				"dest": {
 					"name": "Northwind"
@@ -39,7 +52,7 @@
 			"title": "Card Title",
 			"subTitle": "Card Sub Title",
 			"icon": {
-				"src": "sap-icon://accept"
+				"src": "{{parameters.headericon}}"
 			}
 		},
 		"content": {
@@ -102,7 +115,7 @@
 				"title": "{Name}",
 				"description": "{Description}"
 			},
-			"maxItems": 3
+			"maxItems": "{{parameters.maxItems}}"
 		}
 	}
 }

@@ -111,7 +111,7 @@ sap.ui.define([
 				oRm.renderControl(oFileEditor._getErrorsStrip());
 				oRm.renderControl(oFileEditor._getSchemaErrorsStrip());
 				oRm.renderControl(oFileEditor._getReadOnlyWarningStrip());
-				oRm.renderControl(oFileEditor._getManifestChangeStrip());
+				// oRm.renderControl(oFileEditor._getManifestChangeStrip());
 
 				if (oFileEditor.getFiles().length > 1) {
 					oRm.renderControl(oFileEditor._getHeader());
@@ -206,8 +206,8 @@ sap.ui.define([
 		if (!oStrip) {
 			oStrip = new MessageStrip({
 				showIcon: true,
-				type: "Warning",
-				text: "There are manifest changes.",
+				type: "Information",
+				text: "There are manifest changes.\nModifications of values in this editor are not saved, neither included in the card bundle zip.",
 				visible: false
 			});
 			this.setAggregation("_manifestChangeStrip", oStrip);
@@ -263,19 +263,19 @@ sap.ui.define([
 		var sSelectedFileKey = this._getHeader().getSelectedKey(),
 			sFileExtension = sSelectedFileKey.split('.').pop(),
 			iSelectedFileIndex = this._aFiles.findIndex(function (oEl) { return oEl.key === sSelectedFileKey; }),
-			isManifestChanged = false,
+			// isManifestChanged = false,
 			oSelectedFile = this._aFiles[iSelectedFileIndex],
 			bEditable = this._isFileEditable(oSelectedFile);
 
-		this._aFiles.forEach(function (oFile) {
-			if (oFile.key === "manifestChanges.json" && oFile.content && oFile.content.length > 0) {
-				isManifestChanged = true;
-			}
-		});
+		// this._aFiles.forEach(function (oFile) {
+		// 	if (oFile.key === "manifestChanges.json" && oFile.content && oFile.content.length > 0) {
+		// 		isManifestChanged = true;
+		// 	}
+		// });
 		sFileExtension = sFileExtension === 'js' ? 'javascript' : sFileExtension;
 
 		this._getReadOnlyWarningStrip().setVisible(!bEditable);
-		this._getManifestChangeStrip().setVisible(isManifestChanged);
+		// this._getManifestChangeStrip().setVisible(isManifestChanged);
 		this._getErrorsStrip().setVisible(false);
 		this._getSchemaErrorsStrip().setVisible(false);
 
