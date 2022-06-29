@@ -3,6 +3,33 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "9bc6a5ff453966172077abc28720b3e6f3f096d1",
+        "type": "FIX",
+        "text": " sap/ui/base/ManagedObject: Check for isBound",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280118072"
+          }
+        ]
+      },
+      {
+        "id": "b4615a49cd9b5e300d7d12bf506535401577b49a",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: Do not translate Etc/GMT+-X timezones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280085236"
+          }
+        ]
+      },
+      {
+        "id": "48820c1174abb50d4ca3f4b59880175f6cc6a9d9",
+        "type": "FIX",
+        "text": " sap.ui.model.Binding#destroy: ensure that binding is removed from the model's active bindings list"
+      },
+      {
         "id": "290d6602e5e790a0852d392b1432967b34d277ea",
         "type": "FIX",
         "text": " sap.ui.core.format.DateFormat: no split weeks for \"en\""

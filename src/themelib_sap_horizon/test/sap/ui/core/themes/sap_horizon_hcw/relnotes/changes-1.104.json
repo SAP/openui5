@@ -3,6 +3,11 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "c91e9f6073875190bd79eef672be967be71ac155",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: all pickers support two calendar types"
+      },
+      {
         "id": "2b7100fe2b3d637108c69f8f377e1e2cf06eea9e",
         "type": "FIX",
         "text": " sap.m.Toolbar: Padding adjusted for Horizon theme",

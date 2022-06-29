@@ -3,6 +3,16 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "c91e9f6073875190bd79eef672be967be71ac155",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: all pickers support two calendar types"
+      },
+      {
+        "id": "e52043ea4a43daf2cb49b1808ee3ed880ca30210",
+        "type": "FEATURE",
+        "text": " sap.f.FlexibleColumnLayout: Added landmarkInfo configuration"
+      },
+      {
         "id": "ad219f8d11b40243863a5224d69f70993abdc541",
         "type": "FIX",
         "text": " sap.f.DynamicPage: Disappear of header is fixed",

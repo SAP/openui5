@@ -3,6 +3,11 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "c91e9f6073875190bd79eef672be967be71ac155",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: all pickers support two calendar types"
+      },
+      {
         "id": "290d6602e5e790a0852d392b1432967b34d277ea",
         "type": "FIX",
         "text": " sap.ui.core.format.DateFormat: no split weeks for \"en\""

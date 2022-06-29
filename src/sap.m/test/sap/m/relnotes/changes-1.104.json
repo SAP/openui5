@@ -3,6 +3,17 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "6795429e291940ebc1c30085b7de0a95286687f9",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Fixed regression caused by recent optimization",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280115965"
+          }
+        ]
+      },
+      {
         "id": "72fdbf4f8ab01e16801854d8543dc4796e187bb7",
         "type": "FEATURE",
         "text": " sap.m.DatePicker, sap.m.DateTimePicker, sap.m.TimePicker, sap.m.MaskInput: liveChange event added"

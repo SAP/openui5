@@ -3,6 +3,11 @@
     "date": "June 2022",
     "notes": [
       {
+        "id": "a946327971b5ef0369bc2249ce164d2cce715395",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Object card has custom error message and no-data support"
+      },
+      {
         "id": "77209d5b9da7825945d4907c4f45c9fe426d30c4",
         "type": "FEATURE",
         "text": " Integration cards: Add \"referenceId\" property"
