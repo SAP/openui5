@@ -136,6 +136,15 @@
 				]
 			},
 			{
+				"id": "sap.ui.webc.main.FileUploader",
+				"name": "File Uploader",
+				"category": "Web Components",
+				"since": "1.100.0",
+				"samples": [
+					"sap.ui.webc.main.sample.FileUploader"
+				]
+			},
+			{
 				"id": "sap.ui.webc.main.Icon",
 				"name": "Icon",
 				"category": "Web Components",
@@ -461,6 +470,11 @@
 				"id": "sap.ui.webc.fiori.sample.DynamicSideContent",
 				"name": "Dynamic Side Content",
 				"description": "Demonstrates the basic usage of DynamicSideContent"
+			},
+			{
+				"id": "sap.ui.webc.main.sample.FileUploader",
+				"name": "File Uploader",
+				"description": "Demonstrates the basic usage of FileUploader"
 			},
 			{
 				"id": "sap.ui.webc.main.sample.IconEvent",
