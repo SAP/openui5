@@ -104,13 +104,13 @@ sap.ui.define([
 	};
 
 	CalendarDateInterval.prototype.onBeforeRendering = function() {
-		Calendar.prototype.onBeforeRendering.apply(this, arguments);
-
-		this._bPoupupMode = this.getPickerPopup();
-
 		if (this._getSucessorsPickerPopup()) {
 			this.setProperty("_currentPicker", "month");
 		}
+
+		Calendar.prototype.onBeforeRendering.apply(this, arguments);
+
+		this._bPoupupMode = this.getPickerPopup();
 	};
 
 	CalendarDateInterval.prototype._selectYearRange = function() {
