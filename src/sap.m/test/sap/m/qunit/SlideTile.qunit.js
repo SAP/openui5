@@ -909,8 +909,35 @@ sap.ui.define([
 			if (this.initialScreenWidth && this.initialWidth) {
 				this.resetMobileView();
 			}
+			this.sStartTheme = oCore.getConfiguration().getTheme();
+			this.sRequiredTheme = null;
+
+			this.applyTheme = function(sTheme, fnCallback) {
+				this.sRequiredTheme = sTheme;
+				if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+					if (typeof fnCallback === "function") {
+						fnCallback.bind(this)();
+						fnCallback = undefined;
+					}
+				} else {
+					oCore.attachThemeChanged(fnThemeApplied.bind(this));
+					oCore.applyTheme(sTheme);
+				}
+
+				function fnThemeApplied(oEvent) {
+					oCore.detachThemeChanged(fnThemeApplied);
+					if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+						if (typeof fnCallback === "function") {
+							fnCallback.bind(this)();
+							fnCallback = undefined;
+						}
+					} else {
+						setTimeout(fnThemeApplied.bind(this, oEvent), 1500);
+					}
+				}
+			};
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			if (this.oSlideTile) {
 				this.oSlideTile.destroy();
 				this.oSlideTile = null;
@@ -923,6 +950,8 @@ sap.ui.define([
 				this.oTile2.destroy();
 				this.oTile2 = null;
 			}
+			var done = assert.async();
+			this.applyTheme(this.sStartTheme, done);
 		},
 		createTile: function() {
 			return new GenericTile({
@@ -1140,13 +1169,11 @@ sap.ui.define([
 
 	QUnit.test("Border-Radius for the focus div when pressed", function(assert){
 		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
-		oCore.applyTheme("sap_horizon");
-		oCore.applyChanges();
 		var done = assert.async();
-		setTimeout(function() {
+		this.applyTheme("sap_horizon", function() {
 			assert.equal(getComputedStyle(document.querySelector(".sapMST")).overflow,"hidden","Overflow property should be set as hidden");
 			done();
-		}, 100);
+		});
 	});
 
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
