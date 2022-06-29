@@ -37,7 +37,8 @@
         "1.25.0",
         "1.26.0",
         "1.27.0",
-        "1.28.0"
+        "1.28.0",
+        "1.29.0"
       ]
     },
     "designtime": {
@@ -1219,6 +1220,10 @@
           "items": {
             "$ref": "#/definitions/action"
           }
+        },
+        "hasData": {
+          "description": "Represents flag for no data",
+          "type": "string"
         }
       }
     },

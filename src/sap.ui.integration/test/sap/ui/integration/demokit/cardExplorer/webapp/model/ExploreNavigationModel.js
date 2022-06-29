@@ -1271,15 +1271,37 @@ sap.ui.define([
 						]
 					},
 					{
-						key: 'customErrorMessages',
+						key: 'errorMessages',
 						target: 'exploreSamples',
-						title: 'Custom Error Message',
+						title: 'Error Message',
 						experimental: true,
-						files: [
+						subSamples: [
 							{
-								url: '/samples/customErrorMessage/manifest.json',
-								name: 'manifest.json',
-								key: 'manifest.json'
+								title: 'Custom Error Message',
+								key: 'custom',
+								files: [
+									{
+										url: '/samples/errorMessages/customErrorMessage/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Object Card Error',
+								key: 'object',
+								files: [
+									{
+										url: '/samples/errorMessages/objectErrorMessage/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/errorMessages/objectErrorMessage/mockdata/employee.json',
+										name: 'employee.json',
+										key: 'employee.json'
+									}
+								]
 							}
 						]
 					},
