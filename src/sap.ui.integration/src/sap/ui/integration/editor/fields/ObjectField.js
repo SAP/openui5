@@ -1263,7 +1263,7 @@ sap.ui.define([
 		var oResourceBundle = that.getResourceBundle();
 		var oItemCloned = deepClone(oItem, 500);
 		var oModel;
-		var sPlacement = sMode === "add" && that._previewPosition !== "right" ? "Left" : "Right";
+		var sPlacement = sMode === "add" && that.getPreviewPosition() !== "right" ? "Left" : "Right";
 		if (!that._oObjectDetailsPopover) {
 			var oAddButton = new Button({
 				text: oResourceBundle.getText("EDITOR_FIELD_OBJECT_DETAILS_POPOVER_BUTTON_ADD"),
@@ -1689,7 +1689,7 @@ sap.ui.define([
 		if (!that._oTranslationPopover) {
 			var oList = that.buildTranslationsList();
 			var oTranslationsFooter = that.buildTranslationsFooter(oList, true);
-			var sPlacement = that._previewPosition === "right" ? "Right" : "Left";
+			var sPlacement = that.getPreviewPosition() === "right" ? "Right" : "Left";
 			that._oTranslationPopover = new Popover({
 				placement: sPlacement,
 				contentWidth: "300px",

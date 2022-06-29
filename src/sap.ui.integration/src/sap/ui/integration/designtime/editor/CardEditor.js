@@ -85,10 +85,13 @@ sap.ui.define([
 
 	CardEditor.prototype.hasPreview = function() {
 		var oPreview = this.getAggregation("_preview");
-		if (oPreview && oPreview.getSettings() && oPreview.getSettings().preview && oPreview.getSettings().preview.modes === "None") {
-			return false;
+		if (oPreview) {
+			if (oPreview.getSettings() && oPreview.getSettings().preview && oPreview.getSettings().preview.modes === "None") {
+				return false;
+			}
+			return true;
 		}
-		return true;
+		return false;
 	};
 
 	/**

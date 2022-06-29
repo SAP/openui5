@@ -129,7 +129,7 @@ sap.ui.define([
 			var iOffsetHeight = (!oPreview || oPreview.getDomRef() === null || oPreview.getDomRef().offsetHeight === 0) ? 350 : oPreview.getDomRef().offsetHeight;
 			oPopover.setContentWidth(iOffsetWidth + "px");
 			oPopover.setContentHeight((iOffsetHeight - 50) + "px");
-			if (oPreview && oPreview.getSettings().preview.position === "right") {
+			if (oParent.getPreviewPosition() === "right") {
 				oPopover.setPlacement("Right");
 			} else {
 				oPopover.setPlacement("Left");

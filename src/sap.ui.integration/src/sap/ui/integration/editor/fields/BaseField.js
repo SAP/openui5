@@ -695,7 +695,7 @@ sap.ui.define([
 					this._triggerValidation(value);
 				}.bind(this));
 			}*/
-			var oBinding = this.getModel("currentSettings").bindProperty("value", this.getBindingContext("currentSettings"));
+			var oBinding = this._settingsModel.bindProperty("value", this.getBindingContext("currentSettings"));
 			oBinding.attachChange(function () {
 				this._triggerValidation(oConfig.value);
 			}.bind(this));
@@ -801,12 +801,12 @@ sap.ui.define([
 	BaseField.prototype._setCurrentProperty = function (sProperty, vValue) {
 		//avoid fire binding changes in the model
 		if (this._getCurrentProperty(sProperty) !== vValue) {
-			this.getModel("currentSettings").setProperty(sProperty, vValue, this.getBindingContext("currentSettings"));
+			this._settingsModel.setProperty(sProperty, vValue, this.getBindingContext("currentSettings"));
 		}
 	};
 
 	BaseField.prototype._getCurrentProperty = function (sProperty) {
-		return this.getModel("currentSettings").getProperty(sProperty, this.getBindingContext("currentSettings"));
+		return this._settingsModel.getProperty(sProperty, this.getBindingContext("currentSettings"));
 	};
 
 	BaseField.prototype._applySettings = function (oData) {
@@ -908,6 +908,10 @@ sap.ui.define([
 			oItem.bindProperty(key, BindingHelper.createBindingInfos(vItems[key]));
 		}
 		return oItem;
+	};
+
+	BaseField.prototype.getPreviewPosition = function () {
+		return this._settingsModel.getProperty("/preview/position");
 	};
 
 	return BaseField;

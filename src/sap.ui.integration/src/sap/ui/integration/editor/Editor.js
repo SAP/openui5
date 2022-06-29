@@ -2058,7 +2058,6 @@ sap.ui.define([
 		}
 		oField._oDataProviderFactory = this._oDataProviderFactory;
 		oField.setAssociation("_messageStrip", MessageStripId);
-		oField._previewPosition = this.getPreviewPosition();
 		return oField;
 	};
 
@@ -3238,26 +3237,28 @@ sap.ui.define([
 			this._addItem(oItem);
 		}
 		// customize the size of card editor, define the size in dt.js
-		var cardHeight = this._settingsModel.getProperty("/form/height") !== undefined ? this._settingsModel.getProperty("/form/height") : "350px",
-		cardWidth = this._settingsModel.getProperty("/form/width") !== undefined ? this._settingsModel.getProperty("/form/width") : "100%";
+		var editorHeight = this._settingsModel.getProperty("/form/height") !== undefined ? this._settingsModel.getProperty("/form/height") : "350px",
+		editorWidth = this._settingsModel.getProperty("/form/width") !== undefined ? this._settingsModel.getProperty("/form/width") : "100%";
 		if (this.getProperty("height") === "") {
-			this.setProperty("height", cardHeight);
-			document.body.style.setProperty("--sapUiIntegrationEditorFormHeight", cardHeight);
+			this.setProperty("height", editorHeight);
+			document.body.style.setProperty("--sapUiIntegrationEditorFormHeight", editorHeight);
 		}
 		if (this.getProperty("width") === "") {
-			this.setProperty("width", cardWidth);
-			document.body.style.setProperty("--sapUiIntegrationEditorFormWidth", cardWidth);
+			this.setProperty("width", editorWidth);
+			document.body.style.setProperty("--sapUiIntegrationEditorFormWidth", editorWidth);
 		}
 		//add additional content
 		if (this.getMode() !== "translation") {
-			Promise.resolve(this._initPreview()).then(function() {
+			this._initPreview().then(function() {
 				Promise.all(this._aFieldReadyPromise).then(function () {
+					this.setPreviewPositionForFields();
 					this._ready = true;
 					this.fireReady();
 				}.bind(this));
 			}.bind(this));
 		} else {
 			Promise.all(this._aFieldReadyPromise).then(function () {
+				this.setPreviewPositionForFields();
 				this._ready = true;
 				this.fireReady();
 			}.bind(this));
@@ -3276,6 +3277,14 @@ sap.ui.define([
 			this.setProperty("width", sValue);
 			document.body.style.setProperty("--sapUiIntegrationEditorFormWidth", sValue);
 		}
+	};
+
+	Editor.prototype.setPreviewPositionForFields = function() {
+		var sPosition = this.hasPreview() ? this.getPreviewPosition() : "";
+		var oSettings = this._settingsModel.getData();
+		oSettings.preview = oSettings.preview || {};
+		oSettings.preview.position = sPosition;
+		this._settingsModel.setData(oSettings);
 	};
 
 	/**
