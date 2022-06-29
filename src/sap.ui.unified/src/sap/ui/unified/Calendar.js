@@ -561,13 +561,6 @@ sap.ui.define([
 			}
 			this._bInitMonth = undefined;
 		}
-
-		var oSecondMonthHeader = this.getAggregation("secondMonthHeader");
-		if (oSecondMonthHeader.getDomRef()) {
-			// Second month header buttons are unreachable via keyboard
-			oSecondMonthHeader.getDomRef("B1").setAttribute("tabindex", "-1");
-			oSecondMonthHeader.getDomRef("B2").setAttribute("tabindex", "-1");
-		}
 	};
 
 	Calendar.prototype.removeSelectedDate = function(oSelectedDate) {
