@@ -1170,7 +1170,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_importData: cleanup after create", function (assert) {
+[
+	{cleanupAfterCreateCalled : true, request : {created : true, key : "requestKey"}},
+	{cleanupAfterCreateCalled : false, request : {key : "requestKey"}},
+	{cleanupAfterCreateCalled : false, request : {created : true}}
+].forEach(function (oFixture, i) {
+	QUnit.test("_importData: cleanup after create, #" + i, function (assert) {
 		var mChangedEntities = {},
 			oData = {},
 			oModel = {
@@ -1184,13 +1189,15 @@ sap.ui.define([
 				resolveFromCache : function () {}
 			},
 			oModelMock = this.mock(oModel),
-			oRequest = {created : {}};
+			oRequest = oFixture.request;
 
 		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oData)).returns("key");
 		oModelMock.expects("_getEntity").withExactArgs("key").returns(undefined);
 		oModelMock.expects("_addEntity").withExactArgs(sinon.match.same(oData)).returns("key");
 		oModelMock.expects("hasContext").withExactArgs("/key").returns(false);
-		oModelMock.expects("_cleanupAfterCreate").withExactArgs(sinon.match.same(oRequest), "key");
+		oModelMock.expects("_cleanupAfterCreate")
+			.withExactArgs(sinon.match.same(oRequest), "key")
+			.exactly(oFixture.cleanupAfterCreateCalled ? 1 : 0);
 		oModelMock.expects("_updateChangedEntity").withExactArgs("key", sinon.match.same(oData));
 		oModelMock.expects("resolveFromCache").withExactArgs("sDeepPath").returns("canonicalPath");
 		oModelMock.expects("_writePathCache").withExactArgs("sPath", "/key", undefined);
@@ -1202,6 +1209,7 @@ sap.ui.define([
 
 		assert.strictEqual(mChangedEntities["key"], true);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_importData: recursive call", function (assert) {
