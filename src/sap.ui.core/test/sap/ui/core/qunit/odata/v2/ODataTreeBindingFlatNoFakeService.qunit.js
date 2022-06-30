@@ -475,9 +475,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_submitChanges: successful submit, restore request failed, "
-			+ "don't restore tree state, refresh instead", function (assert) {
+[false, true].forEach(function(bRefresh, i) {
+	QUnit.test("_submitChanges: successful submit but generating submit data failed, don't restore"
+			+ " tree state but refresh if not yet rereshed; #" + i, function (assert) {
 		var oBinding = {
+				bRefresh : "~bRefresh",
 				oModel : {
 					_resolveGroup : function () {},
 					submitChanges : function () {}
@@ -511,11 +513,15 @@ sap.ui.define([
 		// code under test
 		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
 
-		this.mock(oBinding).expects("_refresh").withExactArgs(true);
+		assert.strictEqual(oBinding.bRefresh, false);
+
+		oBinding.bRefresh = bRefresh;
+		this.mock(oBinding).expects("_refresh").withExactArgs(true).exactly(bRefresh ? 0 : 1);
 
 		// code under test
 		mParameters.success(oResponseData);
 	});
+});
 
 	//*********************************************************************************************
 [

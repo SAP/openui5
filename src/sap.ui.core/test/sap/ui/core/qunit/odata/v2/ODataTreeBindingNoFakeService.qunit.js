@@ -83,6 +83,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oAllKeys, null);
 		assert.strictEqual(oBinding.oAllLengths, null);
 		assert.strictEqual(oBinding.oAllFinalLengths, null);
+		assert.strictEqual(oBinding.bRefresh, false);
 
 		// parameters
 		assert.strictEqual(oBinding.iNumberOfExpandedLevels, 42);

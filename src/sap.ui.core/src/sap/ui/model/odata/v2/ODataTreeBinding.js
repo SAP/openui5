@@ -179,6 +179,9 @@ sap.ui.define([
 			this.oAllKeys = null;
 			this.oAllLengths = null;
 			this.oAllFinalLengths = null;
+
+			// Whether a refresh has been performed
+			this.bRefresh = false;
 		}
 
 	});

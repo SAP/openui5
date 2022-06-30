@@ -3179,6 +3179,7 @@ sap.ui.define([
 			return;
 		}
 
+		this.bRefresh = false;
 		this._bSubmitChangesCalled = false;
 		mParameters.success = function (oData) {
 			var bFailedChangeResponse,
@@ -3211,7 +3212,7 @@ sap.ui.define([
 						_logTreeRestoreFailed(oError);
 						that._refresh(true);
 					});
-				} else {
+				} else if (!that.bRefresh) {
 					// Trigger a refresh to reload the newly updated hierarchy
 					// This is the happy path, and only here a refresh has to be triggered.
 					that._refresh(true);
