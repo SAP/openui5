@@ -129,7 +129,12 @@ sap.ui.define([
 					);
 				}
 
-				oInputControl = this._createControl(i, aParams[i].getType(), oValue, fnControlsUpdated, valueHelpUiTypesCount);
+				var bUTC = false;
+				if (oControl && oValue) {
+					bUTC = oControl._checkFormatterUTCTimezone(oValue.operator);
+				}
+
+				oInputControl = this._createControl(i, aParams[i].getType(), oValue, fnControlsUpdated, valueHelpUiTypesCount, bUTC);
 
 				aControls.push(oInputControl);
 				oControl.aControlsByParameters[this.getKey()].push(oInputControl);
@@ -316,7 +321,7 @@ sap.ui.define([
 
 		// PRIVATE
 
-		DynamicDateOption.prototype._createControl = function(iIndex, sUIType, oValue, fnControlsUpdated, valueHelpUiTypesCount) {
+		DynamicDateOption.prototype._createControl = function(iIndex, sUIType, oValue, fnControlsUpdated, valueHelpUiTypesCount, bUTC) {
 			var oInputControl;
 
 			switch (sUIType) {
@@ -324,18 +329,18 @@ sap.ui.define([
 					oInputControl = this._createIntegerControl(oValue, iIndex, fnControlsUpdated);
 					break;
 				case "date":
-					oInputControl = this._createDateControl(oValue, iIndex, fnControlsUpdated);
+					oInputControl = this._createDateControl(oValue, iIndex, fnControlsUpdated, bUTC);
 					break;
 				case "datetime":
 					if (valueHelpUiTypesCount === 1) {
 						// Returns DateTimePicker PopupContent control (single "datetime" option)
-						oInputControl = this._createDateTimeInnerControl(oValue, iIndex, fnControlsUpdated);
+						oInputControl = this._createDateTimeInnerControl(oValue, iIndex, fnControlsUpdated, bUTC);
 					} else if (valueHelpUiTypesCount === 2) {
-						oInputControl = this._createDateTimeControl(oValue, iIndex, fnControlsUpdated);
+						oInputControl = this._createDateTimeControl(oValue, iIndex, fnControlsUpdated, bUTC);
 					}
 					break;
 				case "daterange":
-					oInputControl = this._createDateRangeControl(oValue, iIndex, fnControlsUpdated);
+					oInputControl = this._createDateRangeControl(oValue, iIndex, fnControlsUpdated, bUTC);
 					break;
 				case "month":
 					oInputControl = this._createMonthControl(oValue, iIndex, fnControlsUpdated);
@@ -384,14 +389,21 @@ sap.ui.define([
 			return oControl;
 		};
 
-		DynamicDateOption.prototype._createDateControl = function(oValue, iIndex, fnControlsUpdated) {
+		DynamicDateOption.prototype._createDateControl = function(oValue, iIndex, fnControlsUpdated, bUTC) {
 			var oControl = new Calendar({
 				width: "100%"
 			});
+			var oInputControlValue;
 
 			if (oValue && this.getKey() === oValue.operator) {
+				oInputControlValue = new Date(oValue.values[iIndex].getTime());
+
+				if (bUTC) {
+					oInputControlValue.setMinutes(oInputControlValue.getMinutes() + new Date().getTimezoneOffset());
+				}
+
 				oControl.addSelectedDate(new DateRange({
-					startDate: oValue.values[iIndex]
+					startDate: oInputControlValue
 				}));
 			}
 
@@ -407,7 +419,7 @@ sap.ui.define([
 		/**
 		 * Returns DateTimePicker PopupContent control (single "datetime" option)
 		 */
-		DynamicDateOption.prototype._createDateTimeInnerControl = function(oValue, iIndex, fnControlsUpdated) {
+		DynamicDateOption.prototype._createDateTimeInnerControl = function(oValue, iIndex, fnControlsUpdated, bUTC) {
 			var oControl = new DateTimePicker({
 					width: "100%"
 				}),
@@ -422,6 +434,11 @@ sap.ui.define([
 
 			if (oValue && this.getKey() === oValue.operator) {
 				var oValueCopy = new Date(oValue.values[iIndex]); // a copy is used to prevent time setting on pressing Cancel button
+
+				if (bUTC) {
+					oValueCopy.setMinutes(oValueCopy.getMinutes() + new Date().getTimezoneOffset());
+				}
+
 				oPopupContent.getCalendar().addSelectedDate(new DateRange({
 					startDate: oValueCopy
 				}));
@@ -451,7 +468,7 @@ sap.ui.define([
 			return oPopupContent;
 		};
 
-		DynamicDateOption.prototype._createDateRangeControl = function(oValue, iIndex, fnControlsUpdated) {
+		DynamicDateOption.prototype._createDateRangeControl = function(oValue, iIndex, fnControlsUpdated, bUTC) {
 			var oControl = new Calendar({
 				intervalSelection: true,
 				width: "100%"
@@ -459,9 +476,17 @@ sap.ui.define([
 			if (oValue && this.getKey() === oValue.operator) {
 				// a date range UI type maps to 2 consecutive date parameters from the value
 				// they also should be the last 2 parameters
+				var oInputControlStartValue = new Date(oValue.values[iIndex].getTime());
+				var oInputControlEndValue = new Date(oValue.values[iIndex + 1].getTime());
+
+				if (bUTC) {
+					oInputControlStartValue.setMinutes(oInputControlStartValue.getMinutes() + new Date().getTimezoneOffset());
+					oInputControlEndValue.setMinutes(oInputControlEndValue.getMinutes() + new Date().getTimezoneOffset());
+				}
+
 				oControl.addSelectedDate(new DateRange({
-					startDate: oValue.values[iIndex],
-					endDate: oValue.values[iIndex + 1]
+					startDate: oInputControlStartValue,
+					endDate: oInputControlEndValue
 				}));
 			}
 
