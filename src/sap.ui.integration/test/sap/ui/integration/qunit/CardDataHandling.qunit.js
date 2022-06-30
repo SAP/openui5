@@ -634,6 +634,51 @@ function (
 	testDataReady("Content", "Content _dataReady event on error", oManifest_ContentCase1, true);
 	testDataReady("Content", "Content _dataReady event when no data section", oManifest_ContentCase5);
 
+	QUnit.test("Content and Header override card level data", function (assert) {
+
+		// Arrange
+		var done = assert.async();
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			var sHeaderBindingContextPath = this.oCard.getAggregation("_header").getBindingContext().getPath();
+			var sContentBindingContextPath = this.oCard.getAggregation("_content").getBindingContext().getPath();
+
+			var oJSON = oManifest_CardCase_OverridingModel["sap.card"]["data"]["json"];
+			var oHeaderJSON = oManifest_CardCase_OverridingModel["sap.card"]["header"]["data"]["json"];
+			var oContentJSON = oManifest_CardCase_OverridingModel["sap.card"]["content"]["data"]["json"];
+			var sHeaderTitle = this.oCard.getAggregation("_header").getTitle();
+			var sItem1Title = this.oCard.getAggregation("_content").getAggregation("_content").getItems()[0].getTitle();
+			var sItem2Title = this.oCard.getAggregation("_content").getAggregation("_content").getItems()[1].getTitle();
+
+			// Assert
+			assert.deepEqual(this.oCard.getModel().getData(), oJSON, "Should set correct data on card.");
+			assert.deepEqual(this.oCard.getAggregation("_header").getModel().getData(), oHeaderJSON, "Should set correct data on header.");
+			assert.deepEqual(this.oCard.getAggregation("_content").getModel().getData(), oContentJSON, "Should set correct data on content.");
+			assert.equal(sHeaderBindingContextPath, "/information", "Should have correct binding context path for header.");
+			assert.equal(sContentBindingContextPath, "/items", "Should have correct binding context path for content.");
+			assert.equal(sHeaderTitle, "Something", "Should have correct header title.");
+			assert.equal(sItem1Title, "Product 1", "Should have correct item 1 title.");
+			assert.equal(sItem2Title, "Product 2", "Should have correct item 2 title.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest_CardCase_OverridingModel);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.module("Data path", {
+		beforeEach: function () {
+			this.oCard = new Card();
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+		}
+	});
+
 	QUnit.test("Content and Header setting binding context path", function (assert) {
 
 		// Arrange
@@ -670,42 +715,231 @@ function (
 
 		// Act
 		this.oCard.setManifest(oManifest_CardCase5);
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
-	QUnit.test("Content and Header overrides card level data", function (assert) {
-
+	QUnit.test("Card setting data path with expression binding and parameter", function (assert) {
 		// Arrange
+		var oManifest = {
+			"sap.app": {
+				"id": "test.card.dataHandling"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"parameters": {
+						"test": {
+							"value": true
+						}
+					}
+				},
+				"data": {
+					"json": {
+						"data": {
+							"content": [{
+								"title": "item 1"
+							}]
+						}
+					},
+					"path": "/data/{= ${parameters>/test/value} ? 'content' : 'wrong'}"
+				},
+				"header": {
+					"title": "{[0]/title}"
+				},
+				"content": {
+					"item": {
+						"title": "{title}"
+					}
+				}
+			}
+		};
+
 		var done = assert.async();
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
 
-			var sHeaderBindingContextPath = this.oCard.getAggregation("_header").getBindingContext().getPath();
-			var sContentBindingContextPath = this.oCard.getAggregation("_content").getBindingContext().getPath();
-
-			var oJSON = oManifest_CardCase_OverridingModel["sap.card"]["data"]["json"];
-			var oHeaderJSON = oManifest_CardCase_OverridingModel["sap.card"]["header"]["data"]["json"];
-			var oContentJSON = oManifest_CardCase_OverridingModel["sap.card"]["content"]["data"]["json"];
-			var sHeaderTitle = this.oCard.getAggregation("_header").getTitle();
+			var sCardBindingContextPath = this.oCard.getBindingContext().getPath();
+			var sContentBindingContextPath = this.oCard.getCardContent().getBindingContext().getPath();
 			var sItem1Title = this.oCard.getAggregation("_content").getAggregation("_content").getItems()[0].getTitle();
-			var sItem2Title = this.oCard.getAggregation("_content").getAggregation("_content").getItems()[1].getTitle();
 
 			// Assert
-			assert.deepEqual(this.oCard.getModel().getData(), oJSON, "Should set correct data on card.");
-			assert.deepEqual(this.oCard.getAggregation("_header").getModel().getData(), oHeaderJSON, "Should set correct data on header.");
-			assert.deepEqual(this.oCard.getAggregation("_content").getModel().getData(), oContentJSON, "Should set correct data on content.");
-			assert.equal(sHeaderBindingContextPath, "/information", "Should have correct binding context path for header.");
-			assert.equal(sContentBindingContextPath, "/items", "Should have correct binding context path for content.");
-			assert.equal(sHeaderTitle, "Something", "Should have correct header title.");
-			assert.equal(sItem1Title, "Product 1", "Should have correct item 1 title.");
-			assert.equal(sItem2Title, "Product 2", "Should have correct item 2 title.");
+			assert.strictEqual(sCardBindingContextPath, "/data/content", "Should have correct binding context path for card.");
+			assert.strictEqual(sContentBindingContextPath, "/data/content", "Should have correct binding context path for content.");
+			assert.strictEqual(sItem1Title, "item 1", "Should have correct item 1 title.");
 
 			done();
 		}.bind(this));
 
 		// Act
-		this.oCard.setManifest(oManifest_CardCase_OverridingModel);
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		this.oCard.setManifest(oManifest);
+	});
+
+	QUnit.test("Content setting data path with expression binding and parameter", function (assert) {
+		// Arrange
+		var oManifest = {
+			"sap.app": {
+				"id": "test.card.dataHandling"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"parameters": {
+						"test": {
+							"value": true
+						}
+					}
+				},
+				"data": {
+					"json": {
+						"data": {
+							"content": [{
+								"title": "item 1"
+							}]
+						}
+					}
+				},
+				"header": {
+					"title": "Title"
+				},
+				"content": {
+					"data": {
+						"path": "/data/{= ${parameters>/test/value} ? 'content' : 'wrong'}"
+					},
+					"item": {
+						"title": "{title}"
+					}
+				}
+			}
+		};
+
+		var done = assert.async();
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			var sContentBindingContextPath = this.oCard.getCardContent().getBindingContext().getPath();
+			var sItem1Title = this.oCard.getAggregation("_content").getAggregation("_content").getItems()[0].getTitle();
+
+			// Assert
+			assert.strictEqual(sContentBindingContextPath, "/data/content", "Should have correct binding context path for content.");
+			assert.strictEqual(sItem1Title, "item 1", "Should have correct item 1 title.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
+	});
+
+	QUnit.test("Header setting data path with expression binding and parameter", function (assert) {
+		// Arrange
+		var oManifest = {
+			"sap.app": {
+				"id": "test.card.dataHandling"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"parameters": {
+						"test": {
+							"value": true
+						}
+					}
+				},
+				"data": {
+					"json": {
+						"data": {
+							"header": {
+								"title": "Some Title"
+							}
+						}
+					}
+				},
+				"header": {
+					"data": {
+						"path": "/data/{= ${parameters>/test/value} ? 'header' : 'wrong'}"
+					},
+					"title": "{title}"
+				},
+				"content": {
+					"item": {
+						"title": "item 1"
+					}
+				}
+			}
+		};
+
+		var done = assert.async();
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			var sHeaderBindingContextPath = this.oCard.getCardHeader().getBindingContext().getPath();
+			var sHeaderTitle = this.oCard.getAggregation("_header").getTitle();
+
+			// Assert
+			assert.strictEqual(sHeaderBindingContextPath, "/data/header", "Should have correct binding context path for header.");
+			assert.strictEqual(sHeaderTitle, "Some Title", "Should have correct header title.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
+	});
+
+	QUnit.test("Numeric Header setting data path with expression binding and parameter", function (assert) {
+		// Arrange
+		var oManifest = {
+			"sap.app": {
+				"id": "test.card.dataHandling"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"parameters": {
+						"test": {
+							"value": true
+						}
+					}
+				},
+				"data": {
+					"json": {
+						"data": {
+							"header": {
+								"title": "Some Title"
+							}
+						}
+					}
+				},
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"path": "/data/{= ${parameters>/test/value} ? 'header' : 'wrong'}"
+					},
+					"title": "{title}"
+				},
+				"content": {
+					"item": {
+						"title": "item 1"
+					}
+				}
+			}
+		};
+
+		var done = assert.async();
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			var sHeaderBindingContextPath = this.oCard.getCardHeader().getBindingContext().getPath();
+			var sHeaderTitle = this.oCard.getAggregation("_header").getTitle();
+
+			// Assert
+			assert.strictEqual(sHeaderBindingContextPath, "/data/header", "Should have correct binding context path for header.");
+			assert.strictEqual(sHeaderTitle, "Some Title", "Should have correct header title.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
 	});
 
 	QUnit.module("Data request depending on expression binding", {

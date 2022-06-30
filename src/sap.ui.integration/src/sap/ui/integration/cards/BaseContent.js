@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/integration/util/BindingResolver",
 	"sap/base/util/merge"
 ], function (
 	BaseContentRenderer,
@@ -31,6 +32,7 @@ sap.ui.define([
 	ManagedObjectObserver,
 	LoadingProvider,
 	BindingHelper,
+	BindingResolver,
 	merge
 ) {
 	"use strict";
@@ -316,7 +318,7 @@ sap.ui.define([
 			return;
 		}
 
-		this._sContentBindingPath = oDataSettings.path || "/";
+		this._sContentBindingPath = BindingResolver.resolveValue(oDataSettings.path || "/", this.getCardInstance());
 		this.bindObject(this._sContentBindingPath);
 
 		if (this._oDataProvider) {

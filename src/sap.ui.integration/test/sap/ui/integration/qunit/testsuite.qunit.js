@@ -36,7 +36,6 @@ sap.ui.define(function () {
 				},
 				module: [
 					'./Card.qunit',
-					'./CardDataHandling.qunit',
 					'./CardDesigntime.qunit'
 				]
 			},
@@ -74,7 +73,6 @@ sap.ui.define(function () {
 				},
 				module: [
 					'./Card.qunit',
-					'./CardDataHandling.qunit',
 					'./util/CardManifest.qunit',
 					'./util/ServiceManager.qunit',
 					'./customElements/CustomElements.qunit',
@@ -129,6 +127,7 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"CardDataHandling": {},
 			"CardDataHandlingWithMock": {
 				sinon: {
 					version: "1"
