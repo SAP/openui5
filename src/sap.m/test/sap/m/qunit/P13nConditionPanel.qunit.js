@@ -664,6 +664,40 @@ sap.ui.define([
 			oP13nConditionPanel.destroy();
 		});
 
+		QUnit.test("testing Boolean type with default value", function(assert) {
+			// Arrange
+			var oConditionGrid,
+				oP13nConditionPanel = new P13nConditionPanel({
+					maxConditions: -1
+				}),
+				oCondition = { "key": "i3", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "Boolean", "value1": "Yes", "value2": ""};
+
+			fillConditionPanel(oP13nConditionPanel);
+
+			oP13nConditionPanel.placeAt("content");
+			oCore.applyChanges();
+
+			// Act
+			oP13nConditionPanel.setConditions([oCondition]);
+
+			// Assert
+			oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
+			assert.strictEqual(oConditionGrid.value1.getSelectedIndex(), 2, "The selected index of the Boolean Select dropdown must be 2 (the third one with text 'Yes'");
+
+			// Arrange
+			oCondition = { "key": "i3", "text": "", "operation": P13nConditionOperation.EQ, "keyField": "Boolean", "value1": "No", "value2": ""};
+
+			// Act
+			oP13nConditionPanel.setConditions([oCondition]);
+
+			// Assert
+			oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
+			assert.strictEqual(oConditionGrid.value1.getSelectedIndex(), 1, "The selected index of the Boolean Select dropdown must be 1 (the second one with text 'No'");
+
+			// cleanup
+			oP13nConditionPanel.destroy();
+		});
+
 		QUnit.test("testing keyField typeInstance", function(assert) {
 			// system under test
 			var oP13nConditionPanel = new P13nConditionPanel({
