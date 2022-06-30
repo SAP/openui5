@@ -283,7 +283,7 @@ sap.ui.define([
 	BaseContent.prototype.showMessage = function (sMessage, sType) {
 		var oMessagePopup = this._getMessageContainer();
 		var oMessage = new MessageStrip({
-			text: sMessage,
+			text: BindingHelper.createBindingInfos(sMessage, this.getCardInstance().getBindingNamespaces()),
 			type: sType,
 			showCloseButton: true,
 			showIcon: true,
@@ -419,7 +419,6 @@ sap.ui.define([
 			oLoadingProvider.setLoading(false);
 		}
 	};
-
 
 	/**
 	 * Called when the data for the content was changed either by the content or by the card.

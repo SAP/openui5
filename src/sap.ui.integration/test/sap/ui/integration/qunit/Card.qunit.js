@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/integration/util/DataProvider",
 	"sap/ui/integration/util/Utils",
 	"sap/ui/core/Core",
+	"sap/ui/core/library",
 	"sap/ui/core/Manifest",
 	"sap/base/Log",
 	"sap/ui/core/ComponentContainer",
@@ -32,6 +33,7 @@ sap.ui.define([
 		DataProvider,
 		Utils,
 		Core,
+		coreLibrary,
 		CoreManifest,
 		Log,
 		ComponentContainer,
@@ -53,6 +55,7 @@ sap.ui.define([
 		var DOM_RENDER_LOCATION = "qunit-fixture";
 
 		var AvatarColor = mLibrary.AvatarColor;
+		var MessageType = coreLibrary.MessageType;
 
 		var oManifest_Header = {
 			"sap.app": {
@@ -1636,7 +1639,30 @@ sap.ui.define([
 				// Act
 				this.oCard.showMessage();
 				this.oCard.showMessage();
-				this.oCard.showMessage("Last message", "Success");
+				this.oCard.showMessage("Last message", MessageType.Success);
+			}.bind(this));
+
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+		});
+
+		QUnit.test("showMessage text containing expression binding with card formatters", function (assert) {
+			var done = assert.async();
+			var showMessageStub = this.stub(BaseContent.prototype, "showMessage");
+
+			showMessageStub.callsFake(function () {
+				Core.applyChanges();
+				var oContent = this.oCard.getCardContent();
+				showMessageStub.wrappedMethod.apply(oContent, arguments); // call the original method
+				var oMessageContainer = oContent.getAggregation("_messageContainer");
+				var oMessage = oMessageContainer.getItems()[0];
+
+				assert.strictEqual(oMessage.getText(), "My inserted text", "Card formatters should be available inside showMessage");
+				done();
+			}.bind(this));
+
+			this.oCard.attachManifestApplied(function () {
+				// Act
+				this.oCard.showMessage("{= format.text('My {0} text', ['inserted'])}", MessageType.Error);
 			}.bind(this));
 
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
