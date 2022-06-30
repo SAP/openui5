@@ -4,11 +4,9 @@
 		"id": "card.explorer.extension.sharedExtension"
 	},
 	"dependencies": {
-	  "libs": {
-		"sap.ui.core": {},
-		"sap.f": {},
-		"sap.m": {}
-	  }
+		"libs": {
+			"sap.my.lib": {}
+		}
 	},
 	"sap.card": {
 		"extension": "module:sap/my/lib/SharedExtension",
