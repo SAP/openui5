@@ -10,7 +10,7 @@ sap.ui.define([
 	var mInitialState = new WeakMap();
 
 	/**
-	 * @class This class offers <code>localStorage</code> capabilities.
+	 * @class This class offers <code>localStorage</code> persistence capabilities.
      * It should be used as the persistence layer in the {@link sap.m.p13n.Engine#register Engine#register} process.
 	 *
 	 * @author SAP SE

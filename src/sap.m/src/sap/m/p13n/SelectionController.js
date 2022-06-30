@@ -17,11 +17,11 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-     * @param {sap.ui.core.Control} mSettings.control The control instance to be personalized by this controller
-     * @param {string} mSettings.targetAggregation The name of the personalized aggregation
+     * @param {sap.ui.core.Control} mSettings.control The control instance that is personalized by this controller
+     * @param {string} mSettings.targetAggregation The name of the aggregation that is now managed by this controller
 	 *
 	 * @class
-	 * The <code>SelectionController</code> serves as base class to create control specific personalization implementations.
+	 * The <code>SelectionController</code> entity serves as a base class to create control-specific personalization implementations.
 	 *
 	 * @extends sap.ui.base.Object
 	 *
