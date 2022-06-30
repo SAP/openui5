@@ -39,22 +39,22 @@
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{manifests>/paramsInManifestOnly}">
+			<w:Card id="manifestOnly" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{manifests>/paramsInManifestOnly}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{manifests>/paramsListCard}" parameters="{params>/location}">
+			<w:Card id="listCard" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{manifests>/paramsListCard}" parameters="{params>/location}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="3" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{manifests>/paramsDefaultParamFromManifest}" parameters="{params>/locationCity}">
+			<w:Card id="defaultFromManifest" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{manifests>/paramsDefaultParamFromManifest}" parameters="{params>/locationCity}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{manifests>/paramsDefaultParamFromManifestOverwrite}" parameters="{params>/locationOverwrite}">
+			<w:Card id="defaultFromManifestOverwrite" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{manifests>/paramsDefaultParamFromManifestOverwrite}" parameters="{params>/locationOverwrite}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>

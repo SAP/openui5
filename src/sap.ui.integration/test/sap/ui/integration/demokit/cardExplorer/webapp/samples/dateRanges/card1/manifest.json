@@ -72,7 +72,7 @@
 				},
 				"path": "/value/"
 			},
-			"maxItems": "{{parameters.maxItems}}",
+			"maxItems": "{parameters>/maxItems/value}",
 			"row": {
 				"columns": [{
 						"title": "Customer",

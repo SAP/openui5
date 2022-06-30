@@ -30,7 +30,7 @@
 			"status": {
 				"text": "3 of 20"
 			},
-			"dataTimestamp": "{{parameters.NOW_ISO}}"
+			"dataTimestamp": "{parameters>/NOW_ISO}"
 		},
 		"content": {
 			"data": {

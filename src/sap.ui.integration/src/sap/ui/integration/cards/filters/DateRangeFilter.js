@@ -5,12 +5,14 @@ sap.ui.define([
 	"./BaseFilter",
 	"sap/ui/core/library",
 	"sap/m/DynamicDateRange",
-	"sap/m/DynamicDateUtil"
+	"sap/m/DynamicDateUtil",
+	"sap/ui/integration/util/BindingResolver"
 ], function (
 	BaseFilter,
 	coreLibrary,
 	DynamicDateRange,
-	DynamicDateUtil
+	DynamicDateUtil,
+	BindingResolver
 ) {
 	"use strict";
 
@@ -179,6 +181,7 @@ sap.ui.define([
 		var oValue;
 
 		if (oConfig.value) {
+			oConfig.value =  BindingResolver.resolveValue(oConfig.value, this.getCardInstance());
 			var sOption = oConfig.value.option.toUpperCase();
 			var aTypes = DynamicDateUtil.getOption(sOption).getValueTypes();
 			oValue = {

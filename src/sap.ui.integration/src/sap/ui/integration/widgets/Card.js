@@ -36,6 +36,7 @@ sap.ui.define([
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustratedMessageSize",
 	"sap/ui/integration/util/Utils",
+	"sap/ui/integration/util/ParameterMap",
 	"sap/m/HBox",
 	"sap/m/library"
 ], function (
@@ -73,6 +74,7 @@ sap.ui.define([
 	IllustratedMessageType,
 	IllustratedMessageSize,
 	Utils,
+	ParameterMap,
 	HBox,
 	mLibrary
 ) {
@@ -534,6 +536,11 @@ sap.ui.define([
 					oModel = new ResourceModel({
 						bundle: this._oIntegrationRb
 					});
+				break;
+				case "parameters":
+					oModel = new JSONModel(
+						ParameterMap.getParamsForModel()
+					);
 				break;
 				default:
 					oModel = new JSONModel();
@@ -1448,7 +1455,8 @@ sap.ui.define([
 
 	Card.prototype._setParametersModelData = function () {
 
-		var oCustomParameters = {},
+		var oPredefinedParameters = ParameterMap.getParamsForModel(),
+			oCustomParameters = {},
 			oCombinedParameters = this.getCombinedParameters(),
 			sKey;
 
@@ -1459,7 +1467,7 @@ sap.ui.define([
 				oCustomParameters[sKey] = {value: oCombinedParameters[sKey]};
 			}
 		}
-		this.getModel("parameters").setData(oCustomParameters);
+		this.getModel("parameters").setData(merge(oPredefinedParameters, oCustomParameters));
 	};
 
 	Card.prototype._applyDataManifestSettings = function () {

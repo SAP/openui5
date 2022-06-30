@@ -84,7 +84,7 @@
 					"state": "{= ${AverageRatingValue} > 4 ? 'Success' : 'Warning' }"
 				}
 			},
-			"maxItems": "{{parameters.numberOfProducts}}"
+			"maxItems": "{parameters>/numberOfProducts/value}"
 		}
 	}
 }

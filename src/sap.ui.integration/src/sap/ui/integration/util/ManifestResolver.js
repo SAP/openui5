@@ -39,6 +39,10 @@ sap.ui.define([
 	};
 
 	ManifestResolver._awaitReadyEvent = function (oCard) {
+		if (oCard.isReady()) {
+			return Promise.resolve(oCard);
+		}
+
 		return new Promise(function (resolve, reject) {
 			oCard.attachEvent("_ready", function (e) {
 				resolve(oCard);

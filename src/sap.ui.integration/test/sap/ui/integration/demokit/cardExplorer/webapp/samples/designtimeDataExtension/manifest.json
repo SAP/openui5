@@ -53,7 +53,7 @@
 					"value": "Location: {location}"
 				}
 			},
-			"maxItems": "{{parameters.maxItems}}"
+			"maxItems": "{parameters>/maxItems/value}"
 		}
 	}
 }

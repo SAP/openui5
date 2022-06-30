@@ -66,7 +66,7 @@
 			"data": {
 				"path": "/value/"
 			},
-			"maxItems": "{{parameters.maxItems}}",
+			"maxItems": "{parameters>/maxItems/value}",
 			"item": {
 				"title": "{ProductName} ({context>/sample/category/title/value})",
 				"description": "Unit Price {= format.currency(${UnitPrice}, 'EUR')}"

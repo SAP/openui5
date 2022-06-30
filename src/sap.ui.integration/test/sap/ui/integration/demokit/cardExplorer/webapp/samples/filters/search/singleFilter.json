@@ -64,7 +64,7 @@
 				"title": "{CompanyName}",
 				"description": "{Relationship}, {City}"
 			},
-			"maxItems": "{{parameters.numberOfProducts}}"
+			"maxItems": "{parameters>/numberOfProducts/value}"
 		}
 	}
 }

@@ -73,6 +73,20 @@ sap.ui.define([
 		return sPlaceholder;
 	};
 
+	ParameterMap.getParamsForModel = function () {
+
+		var oParameters = {};
+
+		for (var parameter in mParameters) {
+
+			var iIndexStart = parameter.indexOf("."),
+			iIndexEnd = parameter.indexOf("}");
+			oParameters[parameter.substring(iIndexStart + 1, iIndexEnd)] = mParameters[parameter]();
+		}
+
+		return oParameters;
+	};
+
 	return ParameterMap;
 
 });
