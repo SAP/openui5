@@ -37,12 +37,19 @@ sap.ui.define([
         constructor: function(mSettings) {
             BaseObject.call(this);
 
+            this._oAdaptationControl = mSettings.control;
+
+            if (!this._oAdaptationControl) {
+                throw new Error("Always provide atleast a 'control' configuration when creating a new p13n controller!");
+            }
+
             this._sTargetAggregation = mSettings.targetAggregation;
             this._fSelector = mSettings.selector;
-            this._oAdaptationControl = mSettings.control;
+
             this._oP13nData = null;
             this._bLiveMode = false;
             this._bResetEnabled = false;
+            this._bReorderingEnabled = mSettings.hasOwnProperty("enableReorder") ? mSettings.enableReorder : true;
 
         }
     });
@@ -95,20 +102,17 @@ sap.ui.define([
      */
     SelectionController.prototype.initAdaptationUI = function(oPropertyHelper){
         var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
-        return this.retrieveUI(oAdaptationData)
-        .then(function(oSelectionPanel){
-            this._oPanel = oSelectionPanel;
-            return Promise.resolve(oSelectionPanel);
-        }.bind(this));
+        this._oPanel = this.createUI(oAdaptationData);
+        return Promise.resolve(this._oPanel);
     };
 
-    SelectionController.prototype.retrieveUI = function(oAdaptationData) {
+    SelectionController.prototype.createUI = function(oAdaptationData) {
         var oSelectionPanel = new SelectionPanel({
             showHeader: true,
             enableCount: true
         });
-        oSelectionPanel.setP13nData(oAdaptationData.items);
-        return Promise.resolve(oSelectionPanel);
+        oSelectionPanel.setEnableReorder(this._bReorderingEnabled);
+        return oSelectionPanel.setP13nData(oAdaptationData.items);
     };
 
     SelectionController.prototype.getCurrentState = function(){
@@ -129,14 +133,16 @@ sap.ui.define([
             var aStateKeys = aState.map(function(o){return o.key;});
             var iCurrentIndex = aStateKeys.indexOf(sKey);
             var iNewIndex = oItemXConfig[sKey].position;
+            var bSetVisible = oItemXConfig[sKey].visible === true;
+            var bReordered = iNewIndex !== undefined;
 
-            if (oItemXConfig[sKey].visible === true && iCurrentIndex === -1) {
+            if (bSetVisible && iCurrentIndex === -1) {
                 aState.push({
                     key: sKey
                 });
             }
 
-            if (iNewIndex !== undefined && aState.length > 0) {
+            if (bSetVisible && bReordered && aState.length > 0) {
                 var oItem = aState.splice(iCurrentIndex, 1)[0];
                 aState.splice(iNewIndex, 0, oItem);
                 iCurrentIndex = iNewIndex;
@@ -421,26 +427,6 @@ sap.ui.define([
 
 		return aNewItemsPrepared;
 	};
-
-    /**
-     *
-     * Getter for the personalization model
-     *
-     * @param {sap.ui.mdc.util.PropertyHelper} oPropertyHelper The property helper instance
-     * @returns {sap.ui.model.json.JSONModel} The personalization model.
-     *
-     */
-    SelectionController.prototype._getP13nModel = function(oPropertyHelper) {
-        if (!this._oAdaptationModel) {
-            this._oAdaptationModel = new JSONModel(this.mixInfoAndState(oPropertyHelper));
-            this._oP13nData = this._oAdaptationModel.getData();
-            this._oAdaptationModel.setSizeLimit(10000);
-        } else {
-            this.update(oPropertyHelper);
-        }
-
-        return this._oAdaptationModel;
-    };
 
     SelectionController.prototype.changesToState = function(aChanges) {
 
