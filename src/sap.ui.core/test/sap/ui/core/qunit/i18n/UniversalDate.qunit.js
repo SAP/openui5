@@ -653,6 +653,19 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("getUTCWeek with invalid weekData", function (assert) {
+		var oUniversalDateInstance = new UniversalDate(new Date());
+		assert.throws(function() {
+			oUniversalDateInstance.getUTCWeek(undefined, {firstDayOfWeek: 0});
+		}, new Error("Week config requires both firstDayOfWeek and minimalDaysInFirstWeek to be set"),
+			"only minimalDaysInFirstWeek is provided without firstDayOfWeek");
+
+		assert.throws(function() {
+			oUniversalDateInstance.getUTCWeek(undefined, {minimalDaysInFirstWeek: 1});
+		}, new Error("Week config requires both firstDayOfWeek and minimalDaysInFirstWeek to be set"),
+			"only firstDayOfWeek is provided without minimalDaysInFirstWeek");
+	});
+
 	QUnit.test("invalid date object", function (assert) {
 		this.dateSpy.restore();
 

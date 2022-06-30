@@ -220,6 +220,8 @@ sap.ui.define([
 	 * Get a date instance of the DateFormat, which can be used for formatting.
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
+	 * @param {int} [oFormatOptions.firstDayOfWeek] @since 1.105.0 specifies the first day of the week starting with <code>0</code> (which is Sunday); if not defined, the value taken from the locale is used
+	 * @param {int} [oFormatOptions.minimalDaysInFirstWeek] @since 1.105.0 minimal days at the beginning of the year which define the first calendar week; if not defined, the value taken from the locale is used
 	 * @param {string} [oFormatOptions.format] @since 1.34.0 contains pattern symbols (e.g. "yMMMd" or "Hms") which will be converted into the pattern in the used locale, which matches the wanted symbols best.
 	 *  The symbols must be in canonical order, that is: Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w), Day-Of-Week (E/e/c), Day (d), Hour (h/H/k/K/j/J), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)
 	 *  See {@link http://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems}
@@ -248,6 +250,8 @@ sap.ui.define([
 	 * Get a datetime instance of the DateFormat, which can be used for formatting.
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
+	 * @param {int} [oFormatOptions.firstDayOfWeek] @since 1.105.0 specifies the first day of the week starting with <code>0</code> (which is Sunday); if not defined, the value taken from the locale is used
+	 * @param {int} [oFormatOptions.minimalDaysInFirstWeek] @since 1.105.0 minimal days at the beginning of the year which define the first calendar week; if not defined, the value taken from the locale is used
 	 * @param {string} [oFormatOptions.format] @since 1.34.0 contains pattern symbols (e.g. "yMMMd" or "Hms") which will be converted into the pattern in the used locale, which matches the wanted symbols best.
 	 *  The symbols must be in canonical order, that is: Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w), Day-Of-Week (E/e/c), Day (d), Hour (h/H/k/K/j/J), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)
 	 *  See http://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
@@ -377,6 +381,8 @@ sap.ui.define([
 	 * Get a datetimeWithTimezone instance of the DateFormat, which can be used for formatting.
 	 *
 	 * @param {object} [oFormatOptions] An object which defines the format options
+	 * @param {int} [oFormatOptions.firstDayOfWeek] @since 1.105.0 specifies the first day of the week starting with <code>0</code> (which is Sunday); if not defined, the value taken from the locale is used
+	 * @param {int} [oFormatOptions.minimalDaysInFirstWeek] @since 1.105.0 minimal days at the beginning of the year which define the first calendar week; if not defined, the value taken from the locale is used
 	 * @param {string} [oFormatOptions.format] A string containing pattern symbols (e.g. "yMMMd" or "Hms") which will be converted into a pattern for the used locale that matches the wanted symbols best.
 	 *  The symbols must be in canonical order, that is: Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w), Day-Of-Week (E/e/c), Day (d), Hour (h/H/k/K/j/J), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)
 	 *  See http://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
@@ -433,6 +439,8 @@ sap.ui.define([
 	 * Get a time instance of the DateFormat, which can be used for formatting.
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
+	 * @param {int} [oFormatOptions.firstDayOfWeek] @since 1.105.0 specifies the first day of the week starting with <code>0</code> (which is Sunday); if not defined, the value taken from the locale is used
+	 * @param {int} [oFormatOptions.minimalDaysInFirstWeek] @since 1.105.0 minimal days at the beginning of the year which define the first calendar week; if not defined, the value taken from the locale is used
 	 * @param {string} [oFormatOptions.format] @since 1.34.0 contains pattern symbols (e.g. "yMMMd" or "Hms") which will be converted into the pattern in the used locale, which matches the wanted symbols best.
 	 *  The symbols must be in canonical order, that is: Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w), Day-Of-Week (E/e/c), Day (d), Hour (h/H/k/K/j/J), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)
 	 *  See http://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
@@ -513,6 +521,11 @@ sap.ui.define([
 
 		if (!oFormat.oFormatOptions.calendarType) {
 			oFormat.oFormatOptions.calendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+		}
+
+		if (oFormat.oFormatOptions.firstDayOfWeek === undefined && oFormat.oFormatOptions.minimalDaysInFirstWeek !== undefined
+			|| oFormat.oFormatOptions.firstDayOfWeek !== undefined && oFormat.oFormatOptions.minimalDaysInFirstWeek === undefined) {
+			throw new Error("Format options firstDayOfWeek and minimalDaysInFirstWeek need both to be set, but only one was provided.");
 		}
 
 		if (!oFormat.oFormatOptions.pattern) {
@@ -1017,7 +1030,10 @@ sap.ui.define([
 		"Y": {
 			name: "weekYear",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var oWeek = oDate.getUTCWeek();
+				var oWeek = oDate.getUTCWeek(oFormat.oLocale, {
+					firstDayOfWeek: oFormat.oFormatOptions.firstDayOfWeek,
+					minimalDaysInFirstWeek: oFormat.oFormatOptions.minimalDaysInFirstWeek
+				});
 				var iWeekYear = oWeek.year;
 				var sWeekYear = String(iWeekYear);
 				var sCalendarType = oFormat.oFormatOptions.calendarType;
@@ -1163,7 +1179,10 @@ sap.ui.define([
 		"w": {
 			name: "weekInYear",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var oWeek = oDate.getUTCWeek();
+				var oWeek = oDate.getUTCWeek(oFormat.oLocale, {
+					firstDayOfWeek: oFormat.oFormatOptions.firstDayOfWeek,
+					minimalDaysInFirstWeek: oFormat.oFormatOptions.minimalDaysInFirstWeek
+				});
 				var iWeek = oWeek.week;
 				var sWeek = String(iWeek + 1);
 				if (oField.digits < 3) {
@@ -2239,7 +2258,7 @@ sap.ui.define([
 
 	// recreate javascript date object from the given oDateValues.
 	// In case of oDateValue.valid == false, null value will be returned
-	var fnCreateDate = function(oDateValue, sCalendarType, bUTC, bStrict, sTimezone) {
+	var fnCreateDate = function(oDateValue, sCalendarType, bUTC, bStrict, sTimezone, oFormatOptions, oLocale) {
 		if (!oDateValue.valid) {
 			return null;
 		}
@@ -2265,9 +2284,12 @@ sap.ui.define([
 			oDate.setUTCWeek({
 				year: oDateValue.weekYear || oDateValue.year,
 				week: oDateValue.week
+			}, oLocale, {
+				firstDayOfWeek: oFormatOptions.firstDayOfWeek,
+				minimalDaysInFirstWeek: oFormatOptions.minimalDaysInFirstWeek
 			});
 
-			//add the dayNumberOfWeek to the current day
+			// add the dayNumberOfWeek to the current day
 			if (oDateValue.dayNumberOfWeek !== undefined) {
 				oDate.setUTCDate(oDate.getUTCDate() + oDateValue.dayNumberOfWeek - 1);
 			}
@@ -2417,7 +2439,7 @@ sap.ui.define([
 				oDateValue.valid = false;
 			}
 
-			oJSDate = fnCreateDate(oDateValue, sCalendarType, bUTC, bStrict, sTimezone);
+			oJSDate = fnCreateDate(oDateValue, sCalendarType, bUTC, bStrict, sTimezone, this.oFormatOptions, this.oLocale);
 
 			if (oJSDate) {
 				if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE) {
@@ -2441,8 +2463,8 @@ sap.ui.define([
 				var oDateValue1 = mergeWithoutOverwrite(aDateValues[0], aDateValues[1]);
 				var oDateValue2 = mergeWithoutOverwrite(aDateValues[1], aDateValues[0]);
 
-				oJSDate1 = fnCreateDate(oDateValue1, sCalendarType, bUTC, bStrict, sTimezone);
-				oJSDate2 = fnCreateDate(oDateValue2, sCalendarType, bUTC, bStrict, sTimezone);
+				oJSDate1 = fnCreateDate(oDateValue1, sCalendarType, bUTC, bStrict, sTimezone, this.oFormatOptions, this.oLocale);
+				oJSDate2 = fnCreateDate(oDateValue2, sCalendarType, bUTC, bStrict, sTimezone, this.oFormatOptions, this.oLocale);
 
 				if (oJSDate1 && oJSDate2) {
 
@@ -2860,7 +2882,7 @@ sap.ui.define([
 	DateFormat.prototype._adaptDayOfWeek = function(iDayOfWeek) {
 		// day of week depends on the format locale
 		// the DateFormat's locale is independent
-		var iFirstDayOfWeek = LocaleData.getInstance(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()).getFirstDayOfWeek();
+		var iFirstDayOfWeek = this.oFormatOptions.firstDayOfWeek !== undefined ? this.oFormatOptions.firstDayOfWeek : LocaleData.getInstance(this.oLocale).getFirstDayOfWeek();
 		var iDayNumberOfWeek = iDayOfWeek - (iFirstDayOfWeek - 1);
 
 		if (iDayNumberOfWeek <= 0) {
