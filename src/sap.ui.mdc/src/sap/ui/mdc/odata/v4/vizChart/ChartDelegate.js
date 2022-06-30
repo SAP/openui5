@@ -1384,6 +1384,13 @@ sap.ui.define([
      * @ui5-restricted Fiori Elements, sap.ui.mdc
      */
     ChartDelegate.requestToolbarUpdate = function(oMDCChart) {
+
+        //Workaround as the sap.chart.Chart doesn't call renderComplete when no dimensions/measures are set up
+        if (oMDCChart.getItems().length === 0) {
+            oMDCChart._updateToolbar();
+            return;
+        }
+
         this._getState(oMDCChart).toolbarUpdateRequested = true;
     };
 
