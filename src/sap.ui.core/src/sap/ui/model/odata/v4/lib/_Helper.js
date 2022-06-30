@@ -1445,10 +1445,6 @@ sap.ui.define([
 		 *   The meta path for the cache root's type, for example "/SalesOrderList/SO_2_BP" or
 		 *   "/Artists/foo.EditAction/@$ui5.overload/0/$ReturnType/$Type", such that an OData simple
 		 *   identifier may be appended
-		 * @param {object} mNavigationPropertyPaths
-		 *   Hash set of collection-valued navigation property meta paths (relative to the cache's
-		 *   root, that is without the root meta path prefix) which need to be refreshed, maps
-		 *   string to <code>true</code>; is modified
 		 * @param {string} [sPrefix=""]
 		 *   Optional prefix for navigation property meta paths used during recursion
 		 * @param {boolean} [bAllowEmptySelect]
@@ -1460,7 +1456,7 @@ sap.ui.define([
 		 *   collection-valued navigation property
 		 */
 		intersectQueryOptions : function (mCacheQueryOptions, aPaths, fnFetchMetadata,
-				sRootMetaPath, mNavigationPropertyPaths, sPrefix, bAllowEmptySelect) {
+				sRootMetaPath, sPrefix, bAllowEmptySelect) {
 			var aExpands = [],
 				mExpands = {},
 				mResult,
@@ -1517,9 +1513,6 @@ sap.ui.define([
 
 					_Helper.addChildrenWithAncestor([sNavigationPropertyPath], aPaths, mSet);
 					if (!isEmptyObject(mSet)) {
-						if (fnFetchMetadata(sMetaPath).getResult().$isCollection) {
-							mNavigationPropertyPaths[sPrefixedNavigationPropertyPath] = true;
-						}
 						// complete navigation property may change, same expand as initially
 						mExpands[sNavigationPropertyPath]
 							= mCacheQueryOptions.$expand[sNavigationPropertyPath];
@@ -1537,7 +1530,7 @@ sap.ui.define([
 						mChildQueryOptions = _Helper.intersectQueryOptions(
 							mCacheQueryOptions.$expand[sNavigationPropertyPath] || {},
 							aStrippedPaths, fnFetchMetadata, sMetaPath,
-							mNavigationPropertyPaths, sPrefixedNavigationPropertyPath);
+							sPrefixedNavigationPropertyPath);
 						if (mChildQueryOptions) {
 							mExpands[sNavigationPropertyPath] = mChildQueryOptions;
 						}
