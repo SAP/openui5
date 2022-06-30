@@ -4327,8 +4327,11 @@ sap.ui.define([
 				}
 			}
 
-			// Parse messages from the back-end
-			this._parseResponse(oResponse, oRequest, mLocalGetEntities, mLocalChangeEntities);
+			// Parse messages from the back-end only if not yet reported
+			if (!oResponse.$reported) {
+				this._parseResponse(oResponse, oRequest, mLocalGetEntities, mLocalChangeEntities);
+				oResponse.$reported = true;
+			}
 
 			// Add the Get and Change entities from this request to the main ones (which differ in case of batch requests)
 			extend(mGetEntities, mLocalGetEntities);
