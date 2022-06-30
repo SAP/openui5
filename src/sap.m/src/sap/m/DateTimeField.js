@@ -198,29 +198,6 @@ sap.ui.define([
 		}
 	};
 
-	DateTimeField.prototype.handleInputValueConcurrency = function(sValue) {
-		var oInnerDomRef = this.getFocusDomRef(),
-			sInputDOMValue = oInnerDomRef && InputBase.prototype._getInputValue.apply(this),
-			sInputPropertyValue = this.getProperty("value"),
-			bInputFocused = document.activeElement === oInnerDomRef,
-			bBindingUpdate = this.isBound("value") && this.getBindingInfo("value").skipModelUpdate;
-
-		// if the user is currently in the field and he has typed a value,
-		// the changes from the model should not overwrite the user input
-		if (bInputFocused && bBindingUpdate && sInputDOMValue && (sInputPropertyValue !== sInputDOMValue)) {
-			return this;
-		}
-
-		oInnerDomRef.value = sValue;
-
-		// when the user has focused on an empty input and a value update is
-		// triggered via binding, after updating, the value should be
-		// selected in order to be easily overwritten by the user
-		if (bInputFocused && bBindingUpdate && !sInputDOMValue) {
-			oInnerDomRef.select();
-		}
-	};
-
 	DateTimeField.prototype.setDateValue = function (oDate) {
 
 		if (!this._isValidDate(oDate)) {

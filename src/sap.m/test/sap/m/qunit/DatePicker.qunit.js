@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/DateFormat",
 	"sap/m/DatePicker",
+	"sap/m/InputBase",
 	"sap/m/InstanceManager",
 	"sap/m/Label",
 	"sap/m/Button",
@@ -36,6 +37,7 @@ sap.ui.define([
 	JSONModel,
 	DateFormat,
 	DatePicker,
+	InputBase,
 	InstanceManager,
 	Label,
 	Button,
@@ -2551,7 +2553,7 @@ sap.ui.define([
 
 	QUnit.test("_getInputValue", function (assert) {
 		// Prepare
-		var oGetInputValueSpy = this.spy(this.oDP, "_getInputValue"),
+		var oGetInputValueSpy = this.spy(InputBase.prototype, "_getInputValue"),
 			oGetFocusDomRefStub = this.stub(this.oDP, "getFocusDomRef").callsFake(function () {
 				return { value: undefined };
 			});
@@ -2560,7 +2562,7 @@ sap.ui.define([
 		this.oDP.handleInputValueConcurrency("test");
 
 		// Assert
-		assert.ok(oGetInputValueSpy.notCalled, "Method from the sap.m.InputBase properly called");
+		assert.ok(oGetInputValueSpy.calledOnce, "sap.m.InputBase.prototype._getInputValue called");
 
 		// Clean
 		oGetFocusDomRefStub.restore();
