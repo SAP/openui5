@@ -249,8 +249,24 @@ sap.ui.define([
 				 * Example:
 				 * <pre>
 				 * [
-				 *     {"content": {"header": {"title": "My title"}}},
-				 *     {"content": {"header": {"title": "My new title"}}}
+				 * 	{
+				 * 		"/sap.card/header/title": "My Configured Title in Default Language",
+				 * 		"/sap.card/content/maxItems": 10,
+				 * 		"texts": {
+				 * 			"en-US": {
+				 * 				"/sap.card/header/title": "My Configured Title in US-English"
+				 * 			}
+				 * 		}
+				 * 	},
+				 * 	{
+				 * 		"/sap.card/header/title": "My Configured Title in Default Language",
+				 * 		"/sap.card/content/maxItems": 10,
+				 * 		"texts": {
+				 * 			"en-US": {
+				 * 				"/sap.card/header/title": "My Configured Title in US-English"
+				 * 			}
+				 * 		}
+				 * 	}
 				 * ]
 				 * </pre>
 				 *
