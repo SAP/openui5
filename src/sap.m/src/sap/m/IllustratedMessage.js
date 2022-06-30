@@ -490,14 +490,16 @@ sap.ui.define([
 	 */
 	IllustratedMessage.prototype._updateDomSize = function () {
 		var oDomRef = this.getDomRef(),
-			sSize;
+			sSize, sCustomSize;
 
 		if (oDomRef) {
 			sSize = this.getIllustrationSize();
 			if (sSize === IllustratedMessageSize.Auto) {
 				this._updateMedia(oDomRef.getBoundingClientRect().width, oDomRef.getBoundingClientRect().height);
 			} else {
-				this._updateMediaStyle(IllustratedMessage.MEDIA[sSize.toUpperCase()]);
+				sCustomSize = IllustratedMessage.MEDIA[sSize.toUpperCase()];
+				this._updateMediaStyle(sCustomSize);
+				this._updateSymbol(sCustomSize);
 			}
 		}
 
@@ -550,12 +552,8 @@ sap.ui.define([
 			sNewMedia = IllustratedMessage.MEDIA.SCENE;
 		}
 
-		if (this._sLastKnownMedia !== sNewMedia) {
-			this._updateMediaStyle(sNewMedia);
-			this._sLastKnownMedia = sNewMedia;
-		}
-
-		this._updateSymbol(this._sLastKnownMedia);
+		this._updateMediaStyle(sNewMedia);
+		this._updateSymbol(sNewMedia);
 	};
 
 	/**
@@ -564,6 +562,11 @@ sap.ui.define([
 	 * @private
 	 */
 	IllustratedMessage.prototype._updateMediaStyle = function (sCurrentMedia) {
+		if (this._sLastKnownMedia !== sCurrentMedia) {
+			this._sLastKnownMedia = sCurrentMedia;
+		} else {
+			return; // No need to iterate over the media classes if the media is the same as the one previously used
+		}
 		Object.keys(IllustratedMessage.MEDIA).forEach(function (sMedia) {
 			var bEnable = sCurrentMedia === IllustratedMessage.MEDIA[sMedia];
 			this.toggleStyleClass(IllustratedMessage.MEDIA[sMedia], bEnable);

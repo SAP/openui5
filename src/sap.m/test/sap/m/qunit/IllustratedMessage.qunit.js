@@ -304,6 +304,7 @@ function (
 	QUnit.test("_updateDomSize", function (assert) {
 		// Arrange
 		var fnUpdateMediaSpy = this.spy(this.oIllustratedMessage, "_updateMedia"),
+			fnUpdateSymbolSpy = this.spy(this.oIllustratedMessage, "_updateSymbol"),
 			fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle"),
 			sNewSize = IllustratedMessageSize.Dialog;
 
@@ -311,8 +312,6 @@ function (
 		this.oIllustratedMessage._updateDomSize();
 
 		// Assert
-		assert.strictEqual(fnUpdateMediaStyleSpy.callCount, 0,
-			"_updateMediaStyle is not called inside the _updateMedia because the media has been already calculated to 'Scene' on initialization");
 		assert.ok(fnUpdateMediaSpy.calledOnce, "_updateMedia is called once when illustrationSize is IllustratedMessageSize.Auto");
 		assert.ok(fnUpdateMediaSpy.calledWithExactly(this.oIllustratedMessage.getDomRef().getBoundingClientRect().width,
 			this.oIllustratedMessage.getDomRef().getBoundingClientRect().height),
@@ -321,6 +320,7 @@ function (
 		// Act
 		fnUpdateMediaSpy.resetHistory();
 		fnUpdateMediaStyleSpy.resetHistory();
+		fnUpdateSymbolSpy.resetHistory();
 		this.oIllustratedMessage.setIllustrationSize(sNewSize);
 		this.oIllustratedMessage._updateDomSize();
 
@@ -329,6 +329,10 @@ function (
 			"_updateMediaStyle is called once inside the _updateDomSize call when illustrationSize is different from IllustratedMessageSize.Auto");
 		assert.ok(fnUpdateMediaStyleSpy.calledWithExactly(IllustratedMessage.MEDIA[sNewSize.toUpperCase()]),
 			"_updateMediaStyle called width the IllustratedMessage's media with new illustrationSize to upper case as key");
+		assert.ok(fnUpdateSymbolSpy.calledOnce,
+			"_updateSymbol is called once inside the _updateDomSize call when illustrationSize is different from IllustratedMessageSize.Auto");
+		assert.ok(fnUpdateSymbolSpy.calledWithExactly(IllustratedMessage.MEDIA[sNewSize.toUpperCase()]),
+			"_updateSymbol called width the IllustratedMessage's media with new illustrationSize to upper case as key");
 		assert.strictEqual(fnUpdateMediaSpy.callCount, 0, "_updateMedia is not called when illustrationSize is different from IllustratedMessageSize.Auto");
 	});
 
@@ -479,8 +483,8 @@ function (
 		this.oIllustratedMessage._updateMedia(9999, IllustratedMessage.BREAK_POINTS_HEIGHT[IllustratedMessage.BREAK_POINTS_HEIGHT.Dialog]);
 
 		// Assert
-		assert.strictEqual(fnUpdateMediaStyleSpy.callCount, 0,
-			"_updateMediaStyle is not called inside the _updateMedia call when a valid arguments width and height are passed, but enableVerticalResponsiveness is 'false'");
+		assert.ok(fnUpdateMediaStyleSpy.calledOnce,
+			"_updateMediaStyle is called once inside the _updateMedia call even if enableVerticalResponsiveness is 'false'");
 		assert.ok(fnUpdateSymbolSpy.calledOnce,
 			"_updateSymbol is called once inside the _updateMedia call even if enableVerticalResponsiveness is 'false'");
 		assert.notOk(this.oIllustratedMessage.$().hasClass(sScalableClass),
@@ -494,7 +498,8 @@ function (
 		assert.ok(this.oIllustratedMessage.$().hasClass(sScalableClass),
 			"IllustratedMessage has the scalable class which allows scalable SVG when EVS property is true");
 
-		// Act Reset the _updateSymbol call count due to few calls up to this point
+		// Act Reset the _updateSymbol and _updateMediaStyle call count due to few calls up to this point
+		fnUpdateMediaStyleSpy.resetHistory();
 		fnUpdateSymbolSpy.resetHistory();
 
 		Object.keys(jQuery.extend(IllustratedMessage.BREAK_POINTS_HEIGHT, {SCENE: 999})).forEach(function (sBreakPoint) {
@@ -519,20 +524,23 @@ function (
 
 	QUnit.test("_updateMediaStyle", function (assert) {
 		// Assert
-		assert.expect(16);
+		assert.expect(19);
 
 		// Arrange
 		var sIdMedia, sCurrStyleClass,
-			aIllustratedMessageMediaKeys = Object.keys(IllustratedMessage.MEDIA);
+			aIllustratedMessageMediaKeys = Object.keys(IllustratedMessage.MEDIA),
+			fnUpdateInternalSpy = this.spy(this.oIllustratedMessage, "toggleStyleClass"),
+			sCurrTestMedia;
 
 		aIllustratedMessageMediaKeys.forEach(function (sMedia, iIndex) {
 			// Arrange
 			sIdMedia = sMedia.charAt(0) + sMedia.slice(1).toLowerCase();
+			sCurrTestMedia = IllustratedMessage.MEDIA[sMedia];
 
 			// Act
-			this.oIllustratedMessage._updateMediaStyle(IllustratedMessage.MEDIA[sMedia]);
+			this.oIllustratedMessage._updateMediaStyle(sCurrTestMedia);
 			Core.applyChanges();
-			sCurrStyleClass = IllustratedMessage.MEDIA[sMedia];
+			sCurrStyleClass = sCurrTestMedia;
 
 			// Assert
 			assert.ok(this.oIllustratedMessage.hasStyleClass(sCurrStyleClass),
@@ -546,6 +554,17 @@ function (
 				}
 			}, this);
 		}, this);
+
+		// Assert
+		assert.strictEqual(fnUpdateInternalSpy.callCount, 16, 'toggleStyleClass method of the IM is called four times for each media');
+		assert.strictEqual(this.oIllustratedMessage._sLastKnownMedia, sCurrTestMedia, '_sLastKnownMedia private var of IM is correct');
+
+		// Act
+		fnUpdateInternalSpy.resetHistory();
+		this.oIllustratedMessage._updateMediaStyle(sCurrTestMedia); // insert the last known test media intentionally
+
+		// Assert
+		assert.strictEqual(fnUpdateInternalSpy.callCount, 0, 'toggleStyleClass is not called if we try to set the previously used media');
 	});
 
 	QUnit.test("_updateSymbol", function (assert) {
