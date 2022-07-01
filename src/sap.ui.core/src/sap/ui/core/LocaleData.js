@@ -2042,7 +2042,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 	 * @param {string} [sKey=""] the key inside the node which should be processed
 	 * @param {object} [oResult={}] the result which is passed through the recursion
 	 * @param {string[]} [aParentTranslations=[]] the list of parent translations, e.g. ["A", "A1"]
-	 * @returns {{string, string}} object map with key being the keys joined by "/" and the values joined by ", ".
+	 * @returns {Object<string, string>} object map with key being the keys joined by "/" and the values joined by ", ".
 	 * @private
 	 */
 	function _resolveTimezoneTranslationStructure (oNode, sKey, oResult, aParentTranslations) {
@@ -2060,7 +2060,6 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 				}
 				_resolveTimezoneTranslationStructure(vChildNode, sKey + sChildKey + "/", oResult, aParentTranslationForChild);
 			} else if (typeof vChildNode === "string" && sChildKey !== "_parent") {
-				// Check if the time zones are valid and collect only the time zones which are supported by the browser.
 				var sParents = aParentTranslations.length ? aParentTranslations.join(", ") + ", " : "";
 				oResult[sKey + sChildKey] = sParents + vChildNode;
 			}
