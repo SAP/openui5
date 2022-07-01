@@ -1340,6 +1340,7 @@ sap.ui.define([
 		assert.strictEqual(bSuccess, true);
 		assert.deepEqual(mEntityTypes, oEntityType ? {entityType : true} : {});
 		assert.strictEqual(oModel.mChangedEntities[sRequestKey], undefined);
+		assert.strictEqual(oResponse.$reported, true);
 	});
 		});
 	});
@@ -1348,7 +1349,15 @@ sap.ui.define([
 	// path -> object with single property 'canonicalPath'
 
 	//*********************************************************************************************
-	QUnit.test("_processSuccess: passes sideEffects to _importData", function (assert) {
+[
+	{$reported : undefined, callParseResponse : true},
+	{$reported : false, callParseResponse : true},
+	{$reported : true, callParseResponse : false}
+].forEach(function (oFixture, i) {
+	var sTitle = "_processSuccess: don't report messages twice if they are already reported; passes"
+			+ " sideEffects to _importData, #" + i;
+
+	QUnit.test(sTitle, function (assert) {
 		var oEntityType = {},
 			mEntityTypes = {},
 			oModel = {
@@ -1374,6 +1383,7 @@ sap.ui.define([
 			},
 			aRequests = [],
 			oResponse = {
+				$reported : oFixture.$reported,
 				data : {},
 				statusCode : 200
 			};
@@ -1397,7 +1407,8 @@ sap.ui.define([
 		oModelMock.expects("_getEntity").withExactArgs(undefined).returns(undefined);
 		oModelMock.expects("_parseResponse")
 			.withExactArgs(sinon.match.same(oResponse), sinon.match.same(oRequest),
-				/*mLocalGetEntities*/ {}, /*mLocalChangeEntities*/ {});
+				/*mLocalGetEntities*/ {}, /*mLocalChangeEntities*/ {})
+			.exactly(oFixture.callParseResponse ? 1 : 0);
 		oModelMock.expects("_updateETag")
 			.withExactArgs(sinon.match.same(oRequest), sinon.match.same(oResponse));
 		oModelMock.expects("_createEventInfo")
@@ -1411,6 +1422,7 @@ sap.ui.define([
 			/*fnSuccess*/ undefined, /*mGetEntities*/ {}, /*mChangeEntities*/ {}, mEntityTypes,
 			/*bBatch*/ false, aRequests);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_processSuccess: _updateChangedEntity is called correctly", function (assert) {
@@ -1672,8 +1684,12 @@ sap.ui.define([
 
 		assert.strictEqual(oRequest.deepPath, oFixture.result.deepPath);
 		assert.strictEqual(oRequest.functionTarget, oFixture.result.functionTarget);
+		assert.strictEqual(oResponse.$reported, true);
 		if (oFixture.adjustDeepPath) {
 			assert.strictEqual(mParameters.deepPath, oFixture.adjustDeepPath.inputDeepPath);
+			// $reported has been added after cloning the response
+			assert.strictEqual(mParameters.response.$reported, undefined);
+			mParameters.response.$reported = true;
 			assert.deepEqual(mParameters.response, oResponse);
 			assert.notStrictEqual(mParameters.response, oResponse);
 			// mParameters.response is a deep copy
@@ -1691,7 +1707,7 @@ sap.ui.define([
 	});
 });
 
-//*********************************************************************************************
+	//*********************************************************************************************
 	QUnit.test("_processSuccess: for createEntry", function (assert) {
 		var mEntityTypes = {},
 			oModel = {
@@ -1756,6 +1772,7 @@ sap.ui.define([
 
 		assert.strictEqual(oRequest.deepPath, "/entity(id-0-0)");
 		assert.strictEqual(oResponse._imported, true);
+		assert.strictEqual(oResponse.$reported, true);
 		assert.strictEqual(mEntityTypes.FOO, true);
 	});
 

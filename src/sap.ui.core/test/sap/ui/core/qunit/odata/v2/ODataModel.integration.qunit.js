@@ -1296,7 +1296,7 @@ sap.ui.define([
 					descriptionUrl : "",
 					fullTarget : aFullTargets,
 					message : oODataMessage.message,
-					persistent : false,
+					persistent : oODataMessage.transition || false,
 					target : aTargets,
 					technical : false,
 					type : mSeverityMap[oODataMessage.severity]
@@ -2793,6 +2793,118 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: When two bindings reference the same entity only one GET request is send and the
+	// response is processed for each binding but transient messages in response header must only be
+	// propagated once.
+	// BCP: 2280114574
+	QUnit.test("Messages: redundant bindings - no duplicate transient messages", function (assert) {
+		var oMessage = this.createResponseMessage("Note", "Foo", "error", true),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="note" value="{Note}" />\
+</FlexBox>\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="note1" value="{Note}" />\
+</FlexBox>';
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", {
+				SalesOrderID : "1",
+				Note : "NoteA"
+			}, {
+				"sap-message" : getMessageHeader(oMessage)
+			})
+			.expectValue("note", "NoteA")
+			.expectValue("note1", "NoteA")
+			.expectMessage(oMessage, "/SalesOrderSet('1')/")
+			.expectValueState("note", "Error", "Foo")
+			.expectValueState("note1", "Error", "Foo");
+
+		// code under test
+		return this.createView(assert, sView);
+	});
+
+	//*********************************************************************************************
+	// Scenario: When two bindings reference the same entity only one GET request is send and the
+	// response is processed for each binding but transient error messages must only be propagated
+	// once.
+	// BCP: 2280114574
+	QUnit.test("Messages: redundant bindings - no duplicate error messages", function (assert) {
+		var oErrorMessage = createErrorResponse({message : "Not Found", statusCode : 404}),
+			oModel = createSalesOrdersModel({persistTechnicalMessages : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="note" value="{Note}" />\
+</FlexBox>\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="note1" value="{Note}" />\
+</FlexBox>';
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", oErrorMessage)
+			.expectMessages([{
+				code : "UF0",
+				descriptionUrl : "",
+				fullTarget : "",
+				message : "Not Found",
+				persistent : true,
+				target : "",
+				technical : true,
+				type : "Error"
+			}]);
+
+		this.oLogMock.expects("error")
+			.withExactArgs("Request failed with status code 404: GET SalesOrderSet('1')",
+				/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
+
+		// code under test
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: When two bindings reference the same entity only one GET request is send and the
+	// response is processed for each binding but error message for failed $batch must only be
+	// propagated once.
+	// BCP: 2280114574
+	QUnit.test("Messages: redundant bindings - no duplicate error if $batch crashed",
+			function (assert) {
+		var oErrorMessage = createErrorResponse({
+				crashBatch : true,
+				message : "Not Found",
+				statusCode : 404
+			}),
+			oModel = createSalesOrdersModel({persistTechnicalMessages : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="note" value="{Note}" />\
+</FlexBox>\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Input id="note1" value="{Note}" />\
+</FlexBox>';
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')", oErrorMessage)
+			.expectMessages([{
+				code : "UF0",
+				descriptionUrl : "",
+				fullTarget : "",
+				message : "Not Found",
+				persistent : true,
+				target : "",
+				technical : true,
+				type : "Error"
+			}]);
+
+		this.oLogMock.expects("error")
+			.withExactArgs("Request failed with status code 404: POST"
+				+ " /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$batch",
+				/*details not relevant*/ sinon.match.string, sODataMessageParserClassName);
+
+		// code under test
+		return this.createView(assert, sView, oModel);
+	});
 
 	//*********************************************************************************************
 	// Scenario: While refreshing a model or a binding, all messages belonging to that model or
