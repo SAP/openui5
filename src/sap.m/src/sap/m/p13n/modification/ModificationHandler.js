@@ -21,6 +21,8 @@ sap.ui.define([
 	 */
 	var ModificationHandler = BaseObject.extend("sap.m.p13n.modification.ModificationHandler");
 
+	var mInitialState = new WeakMap();
+
 	/**
 	 * Should implement the appliance of changes
 	 *
@@ -100,7 +102,20 @@ sap.ui.define([
 	 * @returns {Promise} Returns a <code>Promise</code> reflecting the reset execution
 	 */
 	ModificationHandler.prototype.reset = function(mPropertyBag, oModificationPayload) {
-		return Promise.resolve();
+		var oControl = mPropertyBag.selector;
+		return sap.m.p13n.Engine.getInstance().applyState(oControl, mInitialState.get(oControl), true);
+	};
+
+	ModificationHandler.prototype.initialize = function(oControl) {
+		var pInitial, oInitialState;
+
+		pInitial = sap.m.p13n.Engine.getInstance().retrieveState(oControl)
+		.then(function(oRetrievedState){
+			oInitialState = oRetrievedState;
+			mInitialState.set(oControl, oInitialState);
+		});
+
+		return pInitial;
 	};
 
 	/**
@@ -114,10 +129,6 @@ sap.ui.define([
 	 */
 	ModificationHandler.prototype.isModificationSupported = function(mPropertyBag, oModificationPayload){
 		return false;
-	};
-
-	ModificationHandler.prototype.initialize = function(oControl) {
-		return Promise.resolve();
 	};
 
 	ModificationHandler.getInstance = function() {

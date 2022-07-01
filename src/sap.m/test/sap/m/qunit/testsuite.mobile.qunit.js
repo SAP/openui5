@@ -939,6 +939,18 @@ sap.ui.define([
 					libs: ["sap.m", "sap.ui.mdc"]
 				}
 			},
+			"p13n.SelectionController": {
+				title: "Test Page for sap.m.p13n.SelectionController",
+				module: "test-resources/sap/m/qunit/p13n/SelectionController.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				},
+				ui5: {
+					language: "en-US"
+				}
+			},
 			"p13n.SelectionPanel": {
 				title: "Test Page for sap.m.p13n.SelectionPanel",
 				module: "test-resources/sap/m/qunit/p13n/SelectionPanel.qunit",
