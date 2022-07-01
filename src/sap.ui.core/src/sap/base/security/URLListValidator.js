@@ -16,6 +16,9 @@ sap.ui.define([], function() {
 	var rCheckValidIPv6 = /^\[(((([0-9a-f]{1,4}:){6}|(::([0-9a-f]{1,4}:){5})|(([0-9a-f]{1,4})?::([0-9a-f]{1,4}:){4})|((([0-9a-f]{1,4}:){0,1}[0-9a-f]{1,4})?::([0-9a-f]{1,4}:){3})|((([0-9a-f]{1,4}:){0,2}[0-9a-f]{1,4})?::([0-9a-f]{1,4}:){2})|((([0-9a-f]{1,4}:){0,3}[0-9a-f]{1,4})?::[0-9a-f]{1,4}:)|((([0-9a-f]{1,4}:){0,4}[0-9a-f]{1,4})?::))(([0-9a-f]{1,4}:[0-9a-f]{1,4})|(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])))|((([0-9a-f]{1,4}:){0,5}[0-9a-f]{1,4})?::[0-9a-f]{1,4})|((([0-9a-f]{1,4}:){0,6}[0-9a-f]{1,4})?::))\]$/i;
 	var rCheckHostName = /^([a-z0-9]([a-z0-9\-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9\-]*[a-z0-9])?$/i;
 
+	/* eslint-disable no-control-regex */
+	var rCheckWhitespaces = /[\u0009\u000A\u000D]+/g;
+
 	/**
 	 * Registry to manage allowed URLs and validate against them.
 	 *
@@ -242,6 +245,13 @@ sap.ui.define([], function() {
 	 */
 	oURLListValidator.validate = function(sUrl) {
 
+		// Test for not allowed whitespaces
+		if (typeof sUrl === "string") {
+			if (rCheckWhitespaces.test(sUrl)) {
+				return false;
+			}
+		}
+
 		var result = rBasicUrl.exec(sUrl);
 		if (!result) {
 			return false;
@@ -329,17 +339,19 @@ sap.ui.define([], function() {
 				if (!sProtocol || !aAllowedEntries[i].protocol || sProtocol == aAllowedEntries[i].protocol) {
 					// protocol OK
 					var bOk = false;
-					if (sHost && aAllowedEntries[i].host && /^\*/.test(aAllowedEntries[i].host)) {
+					if (aAllowedEntries[i].host && /^\*/.test(aAllowedEntries[i].host)) {
 						// check for wildcard search at begin
 						if (!aAllowedEntries[i]._hostRegexp) {
 							var sHostEscaped = aAllowedEntries[i].host.slice(1).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 							aAllowedEntries[i]._hostRegexp = RegExp(sHostEscaped + "$");
 						}
 						var rFilter = aAllowedEntries[i]._hostRegexp;
-						if (rFilter.test(sHost)) {
-							bOk = true;
+						// Host can be undefined, but an empty string is needed to test it against the rFilter regex.
+						if (!sHost) {
+							sHost = "";
 						}
-					} else if (!sHost || !aAllowedEntries[i].host || sHost == aAllowedEntries[i].host) {
+						bOk = rFilter.test(sHost);
+					} else if (!aAllowedEntries[i].host || sHost == aAllowedEntries[i].host) {
 						bOk = true;
 					}
 					if (bOk) {
