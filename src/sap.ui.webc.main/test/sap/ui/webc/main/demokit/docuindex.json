@@ -295,6 +295,15 @@
 				]
 			},
 			{
+				"id": "sap.ui.webc.main.SegmentedButton",
+				"name": "SegmentedButton",
+				"category": "Web Components",
+				"since": "1.101.0",
+				"samples": [
+					"sap.ui.webc.main.sample.SegmentedButton"
+				]
+			},
+			{
 				"id": "sap.ui.webc.main.Select",
 				"name": "Select",
 				"category": "Web Components",
@@ -594,6 +603,11 @@
 				"id": "sap.ui.webc.main.sample.ResponsivePopover",
 				"name": "ResponsivePopover",
 				"description": "Demonstrates the basic usage of ResponsivePopover"
+			},
+			{
+				"id": "sap.ui.webc.main.sample.SegmentedButton",
+				"name": "SegmentedButton Freestyle Example",
+				"description": "Demonstrates the basic usage of SegmentedButton"
 			},
 			{
 				"id": "sap.ui.webc.main.sample.SelectBasic",
