@@ -370,6 +370,15 @@
 				]
 			},
 			{
+				"id": "sap.ui.webc.main.ToggleButton+",
+				"name": "ToggleButton",
+				"category": "Web Components",
+				"since": "1.100.0",
+				"samples": [
+					"sap.ui.webc.main.sample.ToggleButton"
+				]
+			},
+			{
 				"id": "sap.ui.webc.main.Tree",
 				"name": "Tree",
 				"category": "Web Components",
@@ -640,6 +649,11 @@
 				"id": "sap.ui.webc.main.sample.Toast",
 				"name": "Toast",
 				"description": "Demonstrates the basic usage of Toast"
+			},
+			{
+				"id": "sap.ui.webc.main.sample.ToggleButton",
+				"name": "ToggleButton",
+				"description": "Demonstrates the basic usage of ToggleButton"
 			},
 			{
 				"id": "sap.ui.webc.main.sample.TreeBase",
