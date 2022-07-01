@@ -2214,7 +2214,7 @@ sap.ui.define([
 
 		if (exists(oHeader) && !this._bAlreadyAttachedStickyHeaderObserver) {
 			if (!this._oStickyHeaderObserver) {
-				this._oStickyHeaderObserver = new ManagedObjectObserver(this._adjustStickyContent.bind(this));
+				this._oStickyHeaderObserver = new ManagedObjectObserver(this._onHeaderPropertyChange.bind(this));
 			}
 
 			this._oStickyHeaderObserver.observe(oHeader, {properties: ["visible"]});
@@ -2223,6 +2223,23 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Listener for property changes of the header
+	 * @private
+	 */
+	DynamicPage.prototype._onHeaderPropertyChange = function (oEvent) {
+		var oHeader = this.getHeader();
+		this._adjustStickyContent();
+
+		if (oHeader && oEvent.name === "visible" && oEvent.current === false) { // the header is given visibile = false,
+			// => the header will be removed from DOM
+			// but no afterRendering event will be fired (framework-specific behavior)
+			// so we need to reflect the removal of the header height from now
+			oHeader.rerender(); // force the DOM update
+			// update according to the latest header height
+			this._updateTitlePositioning();
+		}
+	};
 
 	/**
 	 * Attaches observer to the <code>DynamicPageHeader</code> visible property.
