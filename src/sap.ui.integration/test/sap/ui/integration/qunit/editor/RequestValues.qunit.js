@@ -6,7 +6,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"./ContextHost",
 	"sap/ui/core/Core",
-	"sap/ui/core/util/MockServer"
+	"sap/ui/core/util/MockServer",
+	"./jsons/withDesigntime/sap.card/DataExtensionImpl",
+	"./testLib/SharedExtension"
 ], function (
 	Editor,
 	Designtime,
@@ -14,7 +16,9 @@ sap.ui.define([
 	sinon,
 	ContextHost,
 	Core,
-	MockServer
+	MockServer,
+	DataExtensionImpl,
+	SharedExtension
 ) {
 	"use strict";
 
@@ -178,7 +182,7 @@ sap.ui.define([
 			}
 		},
 		"sap.card": {
-			"extension": "module:sap/ui/integration/editor/test/testLib/SharedExtensionForEditor",
+			"extension": "module:sap/ui/integration/editor/test/testLib/SharedExtension",
 			"designtime": "designtime/extension",
 			"type": "List",
 			"header": {},

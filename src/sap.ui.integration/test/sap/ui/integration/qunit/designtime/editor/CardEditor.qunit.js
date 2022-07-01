@@ -13,7 +13,9 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/base/i18n/ResourceBundle",
-	"sap/ui/core/util/MockServer"
+	"sap/ui/core/util/MockServer",
+	"./cards/DataExtensionImpl",
+	"./testLib/SharedExtension"
 ], function (
 	merge,
 	x,
@@ -28,7 +30,9 @@ sap.ui.define([
 	QUnitUtils,
 	KeyCodes,
 	ResourceBundle,
-	MockServer
+	MockServer,
+	DataExtensionImpl,
+	SharedExtension
 ) {
 	"use strict";
 
@@ -226,12 +230,12 @@ sap.ui.define([
 		"sap.ui5": {
 			"dependencies": {
 			  "libs": {
-				"sap/ui/integration/editor/test/testLib": {}
+				"sap/ui/integration/cardeditor/test/testLib": {}
 			  }
 			}
 		},
 		"sap.card": {
-			"extension": "module:sap/ui/integration/editor/test/testLib/SharedExtensionForCardEditor",
+			"extension": "module:sap/ui/integration/cardeditor/test/testLib/SharedExtension",
 			"designtime": "designtime/extension",
 			"type": "List",
 			"header": {},
@@ -447,7 +451,7 @@ sap.ui.define([
 			// Simulate library location for the shared extension
 			sap.ui.loader.config({
 				paths: {
-					"sap/ui/integration/editor/test/testLib": "../test-resources/sap/ui/integration/qunit/editor/testLib"
+					"sap/ui/integration/cardeditor/test/testLib": "../test-resources/sap/ui/integration/qunit/designtime/editor/testLib"
 				}
 			});
 			this.oMockServer = new MockServer();
