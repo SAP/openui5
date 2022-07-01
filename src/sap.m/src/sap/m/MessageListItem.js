@@ -17,6 +17,9 @@ sap.ui.define([
 		// shortcut for sap.ui.core.MessageType
 		var MessageType = coreLibrary.MessageType;
 
+		// shortcut for sap.m.ListType
+		var ListType = library.ListType;
+
 		/**
 		 * Constructor for a new MessageListItem.
 		 *
@@ -96,13 +99,14 @@ sap.ui.define([
 
 		MessageListItem.prototype.getContentAnnouncement = function(oBundle) {
 			var sAnnouncement = StandardListItem.prototype.getContentAnnouncement.apply(this, arguments),
-				sAdditionalText, sMessageType;
+				sAdditionalTextLocation, sAdditionalTextDescription, sMessageType;
 
 			if (this.getActiveTitle()) {
 				sMessageType = oBundle.getText("MESSAGEVIEW_BUTTON_TOOLTIP_" + this.getMessageType().toUpperCase());
-				sAdditionalText = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT", [sMessageType]);
+				sAdditionalTextLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION", [sMessageType]);
+				sAdditionalTextDescription = this.getType() === ListType.Navigation ? oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION") : "";
 
-				sAnnouncement += " ".concat(sAdditionalText);
+				sAnnouncement += ". ".concat(sAdditionalTextLocation, ". ", sAdditionalTextDescription);
 			}
 			return sAnnouncement;
 		};

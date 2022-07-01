@@ -799,7 +799,7 @@ sap.ui.define([
 		var oFirstMessageItem = new MessageItem({
 			type: "Error"
 		}), oBundle, sMessageAnnouncement,
-			sContentAnnouncement, sAnnouncement;
+			sContentAnnouncementLocation, sContentAnnouncementDescription, sAnnouncement;
 
 		this.oMessageView.addItem(oFirstMessageItem);
 		this.oMessageView.placeAt("qunit-fixture");
@@ -808,17 +808,29 @@ sap.ui.define([
 
 		oBundle = Core.getLibraryResourceBundle("sap.m");
 		sMessageAnnouncement = oBundle.getText("MESSAGEVIEW_BUTTON_TOOLTIP_ERROR");
-		sContentAnnouncement = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT", [sMessageAnnouncement]);
+		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION", [sMessageAnnouncement]);
+		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION", [sMessageAnnouncement]);
+
 		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
 
-		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncement), -1, "Message List Item should not include information for the navigation");
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementLocation), -1, "Message List Item should not include information for the navigation");
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
 
 		oFirstMessageItem.setActiveTitle(true);
 		Core.applyChanges();
 
 		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
 
-		assert.ok(sAnnouncement.indexOf(sContentAnnouncement) > -1 , "Message List Item should include information for the navigation");
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementLocation) > -1 , "Message List Item should include information for the navigation");
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
+
+		oFirstMessageItem.setDescription("description");
+		Core.applyChanges();
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementLocation) > -1 , "Message List Item should include information for the navigation");
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementDescription) > -1, "Message List Item should include information for description");
 	});
 
 	QUnit.test("Role and aria-label attribute should be rendered correctly", function (assert) {
