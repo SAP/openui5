@@ -114,7 +114,7 @@ sap.ui.define([
 			&& mPropertyBag.condensedChanges
 		) {
 			mCondense = {
-				namespace: mPropertyBag.allChanges[0].getDefinition().namespace,
+				namespace: mPropertyBag.allChanges[0].convertToFileContent().namespace,
 				layer: mPropertyBag.layer,
 				"delete": {
 					change: []

@@ -65,18 +65,6 @@ sap.ui.define([
 				"then the variant name from texts parameter is used as name"
 			);
 		});
-
-		QUnit.test("when new variant is initialized including both name and variant id parameters", function(assert) {
-			this.mFileContent = {
-				variantId: "variant-id"
-			};
-			var oBaseVariant = FlexObjectFactory.createFromFileContent(this.mFileContent, Variant);
-			assert.strictEqual(
-				oBaseVariant.getVariantId(),
-				"variant-id",
-				"then the variant id is set correctly"
-			);
-		});
 	});
 
 	QUnit.done(function () {

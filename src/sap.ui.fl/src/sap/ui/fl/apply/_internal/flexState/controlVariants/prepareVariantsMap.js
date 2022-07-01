@@ -3,26 +3,28 @@
  */
 
 sap.ui.define([
-	"sap/base/util/ObjectPath",
-	"sap/base/Log",
-	"sap/ui/fl/Change",
-	"sap/base/util/includes",
-	"sap/ui/fl/apply/_internal/controlVariants/Utils",
-	"sap/base/util/isEmptyObject",
 	"sap/base/util/each",
-	"sap/base/util/values",
+	"sap/base/util/includes",
+	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
+	"sap/base/util/ObjectPath",
+	"sap/base/util/values",
+	"sap/base/Log",
+	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/Change",
 	"sap/ui/fl/LayerUtils"
 ], function(
-	ObjectPath,
-	Log,
-	Change,
-	includes,
-	VariantsApplyUtil,
-	isEmptyObject,
 	each,
-	values,
+	includes,
+	isEmptyObject,
 	merge,
+	ObjectPath,
+	values,
+	Log,
+	VariantsApplyUtil,
+	FlexObjectFactory,
+	Change,
 	LayerUtils
 ) {
 	"use strict";
@@ -34,7 +36,7 @@ sap.ui.define([
 		var oVariantsMapClone = merge({}, oVariantsMap);
 		aVariants.forEach(function(oVariant) {
 			oVariantsMapClone[oVariant.fileName] = {
-				content: oVariant,
+				instance: FlexObjectFactory.createFromFileContent(oVariant),
 				controlChanges: [],
 				variantChanges: {}
 			};
@@ -43,25 +45,30 @@ sap.ui.define([
 	}
 
 	// change
-	function addVariantDependentControlChanges(oVariantsMap, aVariantDependentChanges) {
+	function addVariantDependentControlChanges(oVariantsMap, aVariantDependentChanges, sReference) {
 		var oVariantsMapClone = merge({}, oVariantsMap);
 		aVariantDependentChanges.forEach(function(oChange) {
 			var oChangeInstance = new Change(oChange);
 			oChangeInstance.setState(Change.states.PERSISTED);
-			oVariantsMapClone[oChange.variantReference] = oVariantsMapClone[oChange.variantReference] || createStandardVariant(oChange.variantReference);
-			oVariantsMapClone[oChange.variantReference].controlChanges.push(oChangeInstance);
+			var oVariantEntry = oVariantsMapClone[oChange.variantReference];
+			oVariantEntry = oVariantEntry || createStandardVariant(oChange.variantReference, sReference);
+			oVariantEntry.controlChanges.push(oChangeInstance);
+			oVariantsMapClone[oChange.variantReference] = oVariantEntry;
 		});
 		return oVariantsMapClone;
 	}
 
 	// ctrl_variant_change
-	function addVariantChanges(oVariantsMap, aVariantChanges) {
+	function addVariantChanges(oVariantsMap, aVariantChanges, sReference) {
 		var oVariantsMapClone = merge({}, oVariantsMap);
+		// TODO: create change instances
 		aVariantChanges.forEach(function(oChange) {
-			oVariantsMapClone[oChange.selector.id] = oVariantsMapClone[oChange.selector.id] || createStandardVariant(oChange.selector.id);
-			var aVariantChangesOfTheChangeType = oVariantsMapClone[oChange.selector.id].variantChanges[oChange.changeType] || [];
+			var oVariantEntry = oVariantsMapClone[oChange.selector.id];
+			oVariantEntry = oVariantEntry || createStandardVariant(oChange.selector.id, sReference);
+			var aVariantChangesOfTheChangeType = oVariantEntry.variantChanges[oChange.changeType] || [];
 			aVariantChangesOfTheChangeType.push(oChange);
-			oVariantsMapClone[oChange.selector.id].variantChanges[oChange.changeType] = aVariantChangesOfTheChangeType;
+			oVariantEntry.variantChanges[oChange.changeType] = aVariantChangesOfTheChangeType;
+			oVariantsMapClone[oChange.selector.id] = oVariantEntry;
 		});
 		return oVariantsMapClone;
 	}
@@ -69,12 +76,12 @@ sap.ui.define([
 	// filter invisible variants
 	function filterInvisibleVariants(oVariantsMap) {
 		var oVariantsMapClone = merge({}, oVariantsMap);
-		values(oVariantsMap).forEach(function(oVariant) {
-			var aSetVisibleChanges = ObjectPath.get("variantChanges.setVisible", oVariant);
+		values(oVariantsMap).forEach(function(oVariantEntry) {
+			var aSetVisibleChanges = ObjectPath.get("variantChanges.setVisible", oVariantEntry);
 			if (aSetVisibleChanges && aSetVisibleChanges.length > 0) {
 				var oSetVisibleActiveChange = getActiveChange(aSetVisibleChanges);
 				if (!oSetVisibleActiveChange.getContent().visible && oSetVisibleActiveChange.getContent().createdByReset) {
-					delete oVariantsMapClone[oVariant.content.fileName];
+					delete oVariantsMapClone[oVariantEntry.instance.getId()];
 				}
 			}
 		});
@@ -82,20 +89,20 @@ sap.ui.define([
 	}
 
 	// resolve references
-	function resolveReferences(oVariantsMap) {
+	function resolveReferences(oVariantsMap, sReference) {
 		var oVariantsMapClone = merge({}, oVariantsMap);
-		values(oVariantsMapClone).forEach(function(oVariant) {
-			var sVariantReference = oVariant.content.variantReference;
+		values(oVariantsMapClone).forEach(function(oVariantEntry) {
+			var sVariantReference = oVariantEntry.instance.getVariantReference();
 			var oReferencedVariant;
 			if (sVariantReference) {
-				oReferencedVariant = findOrCreateAndAddVariantById(oVariantsMapClone, sVariantReference, oVariant.content.variantManagementReference);
+				oReferencedVariant = findOrCreateAndAddVariantById(oVariantsMapClone, sVariantReference, oVariantEntry.instance.getVariantManagementReference(), sReference);
 			}
-			oVariant.controlChanges = getReferencedControlChange(oReferencedVariant, oVariant.content.layer).concat(oVariant.controlChanges);
+			oVariantEntry.controlChanges = getReferencedControlChanges(oReferencedVariant, oVariantEntry.instance.getLayer()).concat(oVariantEntry.controlChanges);
 		});
 		return oVariantsMapClone;
 	}
 
-	function getReferencedControlChange(oReferencedVariant, sVariantLayer) {
+	function getReferencedControlChanges(oReferencedVariant, sVariantLayer) {
 		if (!oReferencedVariant) {
 			return [];
 		}
@@ -104,11 +111,11 @@ sap.ui.define([
 		});
 	}
 
-	function findOrCreateAndAddVariantById(oVariantsMap, sVariantId, sVMReference) {
+	function findOrCreateAndAddVariantById(oVariantsMap, sVariantId, sVMReference, sReference) {
 		var oReferencedVariant = oVariantsMap[sVariantId];
 
 		if (!oReferencedVariant && sVariantId === sVMReference) {
-			oReferencedVariant = createStandardVariant(sVariantId);
+			oReferencedVariant = createStandardVariant(sVariantId, sReference);
 			oVariantsMap[sVariantId] = oReferencedVariant;
 		}
 
@@ -116,14 +123,14 @@ sap.ui.define([
 	}
 
 	// prepares initial map for variants
-	function getVariantsMap(oStorageResponse) {
+	function getVariantsMap(oStorageResponse, sReference) {
 		var oVariantsMap = {};
 
 		oVariantsMap = addVariants(oVariantsMap, oStorageResponse.variants);
-		oVariantsMap = addVariantDependentControlChanges(oVariantsMap, oStorageResponse.variantDependentControlChanges);
-		oVariantsMap = addVariantChanges(oVariantsMap, oStorageResponse.variantChanges);
+		oVariantsMap = addVariantDependentControlChanges(oVariantsMap, oStorageResponse.variantDependentControlChanges, sReference);
+		oVariantsMap = addVariantChanges(oVariantsMap, oStorageResponse.variantChanges, sReference);
 		oVariantsMap = filterInvisibleVariants(oVariantsMap);
-		oVariantsMap = resolveReferences(oVariantsMap);
+		oVariantsMap = resolveReferences(oVariantsMap, sReference);
 
 		return oVariantsMap;
 	}
@@ -140,23 +147,22 @@ sap.ui.define([
 	// add prepared variants to resultant variant section
 	function addVariantsToResult(oResult, oVariantsMap, aTechnicalParameters) {
 		var oResultClone = merge({}, oResult);
-		values(oVariantsMap).forEach(function(oVariant) {
-			var sVariantManagementId = oVariant.content.variantManagementReference;
+		values(oVariantsMap).forEach(function(oVariantEntry) {
+			var sVariantManagementId = oVariantEntry.instance.getVariantManagementReference();
 			if (!oResultClone[sVariantManagementId]) {
 				oResultClone[sVariantManagementId] = createVariantManagementSection();
 			}
-			oVariant = setDefaultProperties(oVariant);
-			oVariant = applyChangesOnVariant(oVariant);
+			oVariantEntry = applyChangesOnVariant(oVariantEntry);
 
 			// invisible variant cannot be set as current variant
-			if (!oResultClone[sVariantManagementId].currentVariant && oVariant.content.content.visible && includes(aTechnicalParameters, oVariant.content.fileName)) {
-				oResultClone[sVariantManagementId].currentVariant = oVariant.content.fileName;
+			if (!oResultClone[sVariantManagementId].currentVariant && oVariantEntry.instance.getVisible() && includes(aTechnicalParameters, oVariantEntry.instance.getId())) {
+				oResultClone[sVariantManagementId].currentVariant = oVariantEntry.instance.getId();
 			}
 
 			oResultClone[sVariantManagementId].defaultVariant = sVariantManagementId;
 
-			var iSortedIndex = VariantsApplyUtil.getIndexToSortVariant(oResultClone[sVariantManagementId].variants, oVariant);
-			oResultClone[sVariantManagementId].variants.splice(iSortedIndex, 0, oVariant);
+			var iSortedIndex = VariantsApplyUtil.getIndexToSortVariant(oResultClone[sVariantManagementId].variants, oVariantEntry);
+			oResultClone[sVariantManagementId].variants.splice(iSortedIndex, 0, oVariantEntry);
 		});
 
 		return oResultClone;
@@ -182,17 +188,17 @@ sap.ui.define([
 	}
 
 	// add missing standard variants to resultant variant section
-	function addStandardVariants(oResult) {
+	function addStandardVariants(oResult, sReference) {
 		var oResultClone = merge({}, oResult);
 		each(oResultClone, function(sVariantManagementId, oVariantManagement) {
-			var iStandardVariantIndex = oVariantManagement.variants.findIndex(function(oVariant) {
-				return oVariant.content.fileName === sVariantManagementId;
+			var iStandardVariantIndex = oVariantManagement.variants.findIndex(function(oVariantEntry) {
+				return oVariantEntry.instance.getId() === sVariantManagementId;
 			});
 
 			var oStandardVariant;
 
 			if (iStandardVariantIndex === -1) {
-				oStandardVariant = createStandardVariant(sVariantManagementId);
+				oStandardVariant = createStandardVariant(sVariantManagementId, sReference);
 			} else {
 				oStandardVariant = oVariantManagement.variants[iStandardVariantIndex];
 				oVariantManagement.variants.splice(iStandardVariantIndex, 1);
@@ -205,32 +211,26 @@ sap.ui.define([
 	}
 
 	// prepares resultant variant section
-	function assembleResult(oVariantsMap, aVariantManagementChanges, aTechnicalParameters) {
+	function assembleResult(oVariantsMap, aVariantManagementChanges, aTechnicalParameters, sReference) {
 		var oResult = {};
 
 		oResult = addVariantsToResult(oResult, oVariantsMap, aTechnicalParameters);
 		oResult = addVariantManagementChangesToResult(oResult, aVariantManagementChanges);
-		oResult = addStandardVariants(oResult);
+		oResult = addStandardVariants(oResult, sReference);
 
 		return oResult;
 	}
 
-	function createStandardVariant(sVariantId) {
+	function createStandardVariant(sVariantId, sReference) {
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 		return {
-			content: {
-				fileName: sVariantId,
+			instance: FlexObjectFactory.createFlVariant({
+				id: sVariantId,
 				variantManagementReference: sVariantId,
-				variantReference: "",
-				content: {
-					title: oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
-					favorite: true,
-					visible: true
-				},
-				support: {
-					user: VariantsApplyUtil.DEFAULT_AUTHOR
-				}
-			},
+				variantName: oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
+				user: VariantsApplyUtil.DEFAULT_AUTHOR,
+				reference: sReference
+			}),
 			variantChanges: {},
 			controlChanges: []
 		};
@@ -253,47 +253,47 @@ sap.ui.define([
 	}
 
 	// set ctrl_variant_change via map properties
-	function applyChangesOnVariant(oVariant) {
-		var oVariantClone = merge({}, oVariant);
-		var mVariantChanges = oVariantClone.variantChanges;
+	function applyChangesOnVariant(oVariantEntry) {
+		var oVariantEntryClone = merge({}, oVariantEntry);
+		var mVariantChanges = oVariantEntryClone.variantChanges;
 		var oActiveChange;
 		each(mVariantChanges, function(sChangeType, aChanges) {
 			switch (sChangeType) {
 				case "setTitle":
 					oActiveChange = getActiveChange(aChanges);
 					if (oActiveChange) {
-						oVariantClone.content.content.title = oActiveChange.getText("title");
+						oVariantEntryClone.instance.setName(oActiveChange.getText("title"), true);
 					}
 					break;
 				case "setFavorite":
 					oActiveChange = getActiveChange(aChanges);
 					if (oActiveChange) {
-						oVariantClone.content.content.favorite = oActiveChange.getContent().favorite;
+						oVariantEntryClone.instance.setFavorite(oActiveChange.getContent().favorite);
 					}
 					break;
 				case "setExecuteOnSelect":
 					oActiveChange = getActiveChange(aChanges);
 					if (oActiveChange) {
-						oVariantClone.content.content.executeOnSelect = oActiveChange.getContent().executeOnSelect;
+						oVariantEntryClone.instance.setExecuteOnSelection(oActiveChange.getContent().executeOnSelect);
 					}
 					break;
 				case "setVisible":
 					oActiveChange = getActiveChange(aChanges);
 					if (oActiveChange) {
-						oVariantClone.content.content.visible = oActiveChange.getContent().visible;
+						oVariantEntryClone.instance.setVisible(oActiveChange.getContent().visible);
 					}
 					break;
 				case "setContexts":
 					oActiveChange = getActiveChange(aChanges);
 					if (oActiveChange) {
-						oVariantClone.content.contexts = oActiveChange.getContent().contexts;
+						oVariantEntryClone.instance.setContexts(oActiveChange.getContent().contexts);
 					}
 					break;
 				default:
-					Log.error("No valid changes on variant " + oVariantClone.content.content.title + " available");
+					Log.error("No valid changes on variant " + oVariantEntryClone.content.content.title + " available");
 			}
 		});
-		return oVariantClone;
+		return oVariantEntryClone;
 	}
 
 	function getActiveChange(aChanges) {
@@ -301,41 +301,6 @@ sap.ui.define([
 			return new Change(aChanges[aChanges.length - 1]);
 		}
 		return false;
-	}
-
-	function getText(sTextKey) {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl").getText(sTextKey);
-	}
-
-	// set default map properties
-	function setDefaultProperties(oVariant) {
-		var oVariantClone = merge({}, oVariant);
-		if (oVariantClone.content.fileName === oVariantClone.content.variantManagementReference) {
-			// standard Variant should always contain the value: "SAP" in "author" / "Created by" field
-			// case when standard variant exists in the backend response
-			if (!ObjectPath.get("content.support.user", oVariantClone)) {
-				var oSupport = {
-					support: {
-						user: VariantsApplyUtil.DEFAULT_AUTHOR
-					}
-				};
-				merge(oVariantClone.content, oSupport);
-			}
-		}
-		if (!oVariantClone.content.content.favorite) {
-			oVariantClone.content.content.favorite = true;
-		}
-		if (!oVariantClone.content.content.visible) {
-			oVariantClone.content.content.visible = true;
-		}
-		if (!oVariantClone.content.content.executeOnSelect) {
-			oVariantClone.content.content.executeOnSelect = false;
-		}
-		var aTitleKeyMatch = oVariantClone.content.content.title.match(/.i18n>(\w+)./);
-		if (aTitleKeyMatch) {
-			oVariantClone.content.content.title = getText(aTitleKeyMatch[1]);
-		}
-		return oVariantClone;
 	}
 
 	/**
@@ -362,8 +327,8 @@ sap.ui.define([
 
 		var aTechnicalParameters = ObjectPath.get(["technicalParameters", VariantsApplyUtil.VARIANT_TECHNICAL_PARAMETER], mPropertyBag.componentData) || [];
 
-		var oVariantsMap = getVariantsMap(mPropertyBag.storageResponse.changes);
-		oVariantsMap = assembleResult(oVariantsMap, mPropertyBag.storageResponse.changes.variantManagementChanges, aTechnicalParameters);
+		var oVariantsMap = getVariantsMap(mPropertyBag.storageResponse.changes, mPropertyBag.reference);
+		oVariantsMap = assembleResult(oVariantsMap, mPropertyBag.storageResponse.changes.variantManagementChanges, aTechnicalParameters, mPropertyBag.reference);
 		return oVariantsMap;
 	};
 });

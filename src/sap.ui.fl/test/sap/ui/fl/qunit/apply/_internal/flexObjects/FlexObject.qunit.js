@@ -406,25 +406,6 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when trying to update unknown properties", function(assert) {
-			var oLogStub = sinon.stub(Log, "error");
-			this.oFlexObject.update({
-				someUnknownProperty: "test",
-				anotherUnknownProperty: {
-					nested: "foobar"
-				}
-			});
-			assert.strictEqual(oLogStub.callCount, 2, "then error messages are logged for both properties");
-			assert.strictEqual(
-				oLogStub.args[0][0],
-				"Missing mapping info for property someUnknownProperty"
-			);
-			assert.strictEqual(
-				oLogStub.args[1][0],
-				"Missing mapping info for property anotherUnknownProperty.nested"
-			);
-		});
-
 		QUnit.test("when exporting file content of a FlexObject", function (assert) {
 			// fileName is assigned to the id upon creation
 			var oExpectedFileContent = Object.assign({}, oFileContent);

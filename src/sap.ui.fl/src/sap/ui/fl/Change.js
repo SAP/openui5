@@ -670,6 +670,11 @@ sap.ui.define([
 		return this._oDefinition;
 	};
 
+	// temporary function
+	Change.prototype.convertToFileContent = function() {
+		return this.getDefinition();
+	};
+
 	/**
 	 * Sets the response from the back end after the change is saved.
 	 * @param {object} oResponse - Content of the change file

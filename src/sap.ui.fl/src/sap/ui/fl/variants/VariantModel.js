@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
@@ -38,6 +39,7 @@ sap.ui.define([
 	BusyIndicator,
 	Reverter,
 	URLHandler,
+	FlexObjectFactory,
 	Switcher,
 	VariantManagementState,
 	VariantUtil,
@@ -438,8 +440,22 @@ sap.ui.define([
 		});
 	};
 
-	VariantModel.prototype.getVariantProperty = function(sVariantReference, sProperty) {
-		return this.getVariant(sVariantReference).content.content[sProperty];
+	/**
+	 * Searches for the variant and returns the current title.
+	 *
+	 * @param {string} sVariantReference - Variant reference
+	 * @param {string} sVMReference - Variant management reference
+	 * @returns {string} Title of the variant
+	 */
+	VariantModel.prototype.getVariantTitle = function(sVariantReference, sVMReference) {
+		var sTitle = "";
+		this.oData[sVMReference].variants.some(function(oVariantData) {
+			if (oVariantData.key === sVariantReference) {
+				sTitle = oVariantData.title;
+				return true;
+			}
+		});
+		return sTitle;
 	};
 
 	function handleInitialLoadScenario(sVMReference, oVariantManagementControl) {
@@ -461,7 +477,7 @@ sap.ui.define([
 				vReference: sVMReference
 			});
 			// set executeOnSelect in model and State without creating a change
-			oVariant.content.content.executeOnSelect = true;
+			oVariant.instance.setExecuteOnSelection(true);
 			this.oData[sVMReference].variants[0].originalExecuteOnSelect = true;
 			this.oData[sVMReference].variants[0].executeOnSelect = true;
 			return true;
@@ -593,57 +609,56 @@ sap.ui.define([
 		}, 0);
 	};
 
+	function createNewVariant(oSourceVariant, mPropertyBag) {
+		var mProperties = {
+			id: mPropertyBag.newVariantReference,
+			variantName: mPropertyBag.title,
+			contexts: mPropertyBag.contexts,
+			layer: mPropertyBag.layer,
+			reference: oSourceVariant.getFlexObjectMetadata().reference,
+			generator: mPropertyBag.generator,
+			variantManagementReference: mPropertyBag.variantManagementReference
+		};
+		if (mPropertyBag.currentVariantComparison === 1) {
+			// in case a user variant should be saved as a PUBLIC variant, but refers to a PUBLIC variant,
+			// the references dependencies must be followed one more time
+			if (mPropertyBag.sourceVariantSource.instance.getLayer() === mPropertyBag.layer) {
+				mProperties.variantReference = mPropertyBag.sourceVariantSource.instance.getVariantReference();
+			} else {
+				mProperties.variantReference = oSourceVariant.getVariantReference();
+			}
+		} else if (mPropertyBag.currentVariantComparison === 0) {
+			mProperties.variantReference = oSourceVariant.getVariantReference();
+		} else if (mPropertyBag.currentVariantComparison === -1) {
+			mProperties.variantReference = mPropertyBag.sourceVariantReference;
+		}
+
+		return FlexObjectFactory.createFlVariant(mProperties);
+	}
+
 	VariantModel.prototype._duplicateVariant = function(mPropertyBag) {
-		var sNewVariantReference = mPropertyBag.newVariantReference;
 		var sSourceVariantReference = mPropertyBag.sourceVariantReference;
 		var sVariantManagementReference = mPropertyBag.variantManagementReference;
 		var oSourceVariant = this.getVariant(sSourceVariantReference);
 
-		var aVariantChanges =
-			VariantManagementState.getControlChangesForVariant({
-				vmReference: sVariantManagementReference,
-				vReference: sSourceVariantReference,
-				reference: this.sFlexReference
-			})
-				.map(function(oVariantChange) {
-					return oVariantChange.getDefinition();
-				});
+		var aVariantChanges = VariantManagementState.getControlChangesForVariant({
+			vmReference: sVariantManagementReference,
+			vReference: sSourceVariantReference,
+			reference: this.sFlexReference
+		})
+			.map(function(oVariantChange) {
+				return oVariantChange.getDefinition();
+			});
 
+		mPropertyBag.currentVariantComparison = LayerUtils.compareAgainstCurrentLayer(oSourceVariant.instance.getLayer(), mPropertyBag.layer);
+		if (mPropertyBag.currentVariantComparison === 1) {
+			mPropertyBag.sourceVariantSource = this.getVariant(oSourceVariant.instance.getVariantReference());
+		}
 		var oDuplicateVariant = {
-			content: {},
+			instance: createNewVariant(oSourceVariant.instance, mPropertyBag),
 			controlChanges: aVariantChanges,
 			variantChanges: {}
 		};
-
-		var iCurrentLayerComp = LayerUtils.compareAgainstCurrentLayer(oSourceVariant.content.layer, mPropertyBag.layer);
-
-		Object.keys(oSourceVariant.content).forEach(function(sKey) {
-			if (sKey === "fileName") {
-				oDuplicateVariant.content[sKey] = sNewVariantReference;
-			} else if (sKey === "variantReference") {
-				if (iCurrentLayerComp === 1) {
-					// in case a user variant should be saved as a PUBLIC variant, but refers to a PUBLIC variant,
-					// the references dependencies must be followed one more time
-					var oSourceVariantsSource = this.getVariant(oSourceVariant.content.variantReference);
-					if (oSourceVariantsSource.content.layer === mPropertyBag.layer) {
-						oDuplicateVariant.content[sKey] = oSourceVariantsSource.content.variantReference;
-					} else {
-						oDuplicateVariant.content[sKey] = oSourceVariant.content.variantReference;
-					}
-				} else if (iCurrentLayerComp === 0) {
-					oDuplicateVariant.content[sKey] = oSourceVariant.content.variantReference;
-				} else if (iCurrentLayerComp === -1) {
-					oDuplicateVariant.content[sKey] = sSourceVariantReference;
-				}
-			} else if (sKey === "content") {
-				oDuplicateVariant.content[sKey] = JSON.parse(JSON.stringify(oSourceVariant.content[sKey]));
-				oDuplicateVariant.content.content.title = mPropertyBag.title;
-			} else {
-				oDuplicateVariant.content[sKey] = oSourceVariant.content[sKey];
-			}
-		}.bind(this));
-		oDuplicateVariant.content.layer = mPropertyBag.layer;
-		oDuplicateVariant.content.contexts = mPropertyBag.contexts;
 
 		aVariantChanges = oDuplicateVariant.controlChanges.slice();
 
@@ -655,7 +670,7 @@ sap.ui.define([
 				oDuplicateChangeData = merge({}, oChange);
 				// ensure that the layer is set to the current variants (USER may becomes PUBLIC)
 				oDuplicateChangeData.layer = mPropertyBag.layer;
-				oDuplicateChangeData.variantReference = oDuplicateVariant.content.fileName;
+				oDuplicateChangeData.variantReference = oDuplicateVariant.instance.getId();
 				if (!oDuplicateChangeData.support) {
 					oDuplicateChangeData.support = {};
 				}
@@ -689,11 +704,11 @@ sap.ui.define([
 		var oDuplicateVariantData = this._duplicateVariant(mPropertyBag);
 		oDuplicateVariantData.generator = mPropertyBag.generator;
 		var oVariantModelData = {
-			key: oDuplicateVariantData.content.fileName,
+			key: oDuplicateVariantData.instance.getId(),
 			layer: mPropertyBag.layer,
-			title: oDuplicateVariantData.content.content.title,
-			originalTitle: oDuplicateVariantData.content.content.title,
-			originalExecuteOnSelect: oDuplicateVariantData.content.content.executeOnSelect,
+			title: oDuplicateVariantData.instance.getName(),
+			originalTitle: oDuplicateVariantData.instance.getName(),
+			originalExecuteOnSelect: oDuplicateVariantData.instance.getExecuteOnSelection(),
 			executeOnSelect: false,
 			favorite: true,
 			originalFavorite: true,
@@ -703,35 +718,19 @@ sap.ui.define([
 			visible: true,
 			originalVisible: true,
 			sharing: mPropertyBag.layer === Layer.USER ? this.sharing.PRIVATE : this.sharing.PUBLIC,
-			contexts: oDuplicateVariantData.content.contexts,
-			originalContexts: oDuplicateVariantData.originalContexts
+			originalContexts: oDuplicateVariantData.instance.getContexts(),
+			contexts: oDuplicateVariantData.instance.getContexts()
 		};
-
-		var oVariant = VariantUtil.createVariant({
-			model: this,
-			variantSpecificData: oDuplicateVariantData
-		});
 
 		// sets copied variant and associated changes as dirty
 		var aChanges = [];
-		[oVariant].concat(oVariant.getControlChanges()).forEach(function(oChange) {
+		[oDuplicateVariantData.instance].concat(oDuplicateVariantData.controlChanges).forEach(function(oChange) {
 			aChanges.push(this.oChangePersistence.addDirtyChange(oChange));
 		}.bind(this));
 
 		// adds variant to variants map
 		var iIndex = VariantManagementState.addVariantToVariantManagement({
-			// ensure "visible" and "favorite" properties are available inside oVariant.content.content
-			variantData: merge({}, oVariant.getDefinitionWithChanges(),
-				{
-					content: {
-						content: {
-							visible: oVariantModelData.visible,
-							favorite:
-							oVariantModelData.favorite
-						}
-					}
-				}
-			),
+			variantData: oDuplicateVariantData,
 			reference: this.sFlexReference,
 			vmReference: mPropertyBag.variantManagementReference
 		});
@@ -740,7 +739,7 @@ sap.ui.define([
 		this.oData[mPropertyBag.variantManagementReference].variants.splice(iIndex, 0, oVariantModelData);
 		return this.updateCurrentVariant({
 			variantManagementReference: mPropertyBag.variantManagementReference,
-			newVariantReference: oVariant.getId(),
+			newVariantReference: oDuplicateVariantData.instance.getId(),
 			appComponent: mPropertyBag.appComponent,
 			internallyCalled: true,
 			scenario: "saveAs"
@@ -960,6 +959,7 @@ sap.ui.define([
 		var iVariantIndex = -1;
 		var oVariant;
 		var oData = this.getData();
+		var oVariantInstance = this.getVariant(mPropertyBag.variantReference, sVariantManagementReference).instance;
 
 		if (mPropertyBag.variantReference) {
 			iVariantIndex = this.getVariantManagementReference(mPropertyBag.variantReference).variantIndex;
@@ -973,20 +973,21 @@ sap.ui.define([
 				//Update Variant Model
 				oVariant.title = mPropertyBag.title;
 				oVariant.originalTitle = oVariant.title;
+				oVariantInstance.setName(mPropertyBag.title, true);
 				break;
 			case "setFavorite":
 				mAdditionalChangeContent.favorite = mPropertyBag.favorite;
 				//Update Variant Model
 				oVariant.favorite = mPropertyBag.favorite;
 				oVariant.originalFavorite = oVariant.favorite;
+				oVariantInstance.setFavorite(mPropertyBag.favorite);
 				break;
 			case "setExecuteOnSelect":
 				mAdditionalChangeContent.executeOnSelect = mPropertyBag.executeOnSelect;
-				if (oVariant) {
-					//Update Variant Model
-					oVariant.executeOnSelect = mPropertyBag.executeOnSelect;
-					oVariant.originalExecuteOnSelect = oVariant.executeOnSelect;
-				}
+				//Update Variant Model
+				oVariant.executeOnSelect = mPropertyBag.executeOnSelect;
+				oVariant.originalExecuteOnSelect = oVariant.executeOnSelect;
+				oVariantInstance.setExecuteOnSelection(mPropertyBag.executeOnSelect);
 				break;
 			case "setVisible":
 				mAdditionalChangeContent.visible = mPropertyBag.visible;
@@ -994,12 +995,14 @@ sap.ui.define([
 				//Update Variant Model
 				oVariant.visible = mPropertyBag.visible;
 				oVariant.originalVisible = oVariant.visible;
+				oVariantInstance.setVisible(mPropertyBag.visible);
 				break;
 			case "setContexts":
 				mAdditionalChangeContent.contexts = mPropertyBag.contexts;
 				//Update Variant Model
 				oVariant.contexts = mPropertyBag.contexts;
 				oVariant.originalContexts = mPropertyBag.contexts;
+				oVariantInstance.setContexts(mPropertyBag.contexts);
 				break;
 			case "setDefault":
 				mAdditionalChangeContent.defaultVariant = mPropertyBag.defaultVariant;
@@ -1111,22 +1114,13 @@ sap.ui.define([
 				variantManagementChanges: {},
 				variants: [
 					{
-						content: {
-							fileName: sVariantManagementReference,
-							fileType: "ctrl_variant",
+						instance: FlexObjectFactory.createFlVariant({
+							id: sVariantManagementReference,
 							variantManagementReference: sVariantManagementReference,
-							variantReference: "",
-							support: {
-								user: VariantUtil.DEFAULT_AUTHOR
-							},
-							content: {
-								title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
-								favorite: true,
-								visible: true,
-								executeOnSelect: false
-							},
-							contexts: {}
-						},
+							variantName: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
+							user: VariantUtil.DEFAULT_AUTHOR,
+							reference: this.sFlexReference
+						}),
 						controlChanges: [],
 						variantChanges: {}
 					}

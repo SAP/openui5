@@ -1,38 +1,38 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/prepareVariantsMap",
-	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/base/util/LoaderExtensions",
 	"sap/base/util/values",
 	"sap/base/util/merge",
 	"sap/base/util/includes",
+	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/Variant",
+	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/prepareVariantsMap",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	VariantManagementState,
-	prepareVariantsMap,
-	VariantUtil,
 	LoaderExtensions,
 	values,
 	merge,
 	includes,
+	Log,
 	JsControlTreeModifier,
 	Change,
 	Layer,
 	Utils,
-	Variant,
+	VariantUtil,
+	FlexObjectFactory,
+	VariantManagementState,
+	prepareVariantsMap,
 	FlexState,
 	StorageUtils,
-	Log,
 	sinon
 ) {
 	"use strict";
@@ -42,13 +42,29 @@ sap.ui.define([
 	function getInitialChangesForVariant (sVReference, mVariantsMap) {
 		return values(mVariantsMap).reduce(function(aChanges, oVMData) {
 			oVMData.variants.some(function(oVariant) {
-				if (oVariant.content.fileName === sVReference) {
+				if (oVariant.instance.getId() === sVReference) {
 					aChanges = aChanges.concat(oVariant.controlChanges);
 					return true;
 				}
 			});
 			return aChanges;
 		}, []);
+	}
+
+	function createVariant(mVariantProperties) {
+		return FlexObjectFactory.createFlVariant({
+			variantName: mVariantProperties.title,
+			id: mVariantProperties.fileName,
+			reference: mVariantProperties.reference || "myReference",
+			layer: mVariantProperties.layer,
+			user: mVariantProperties.author,
+			variantReference: mVariantProperties.variantReference,
+			variantManagementReference: mVariantProperties.variantManagementReference,
+			favorite: mVariantProperties.favorite,
+			visible: mVariantProperties.visible,
+			executeOnSelection: mVariantProperties.executeOnSelect,
+			contexts: mVariantProperties.contexts
+		});
 	}
 
 	QUnit.module("Given a VariantManagementState", {
@@ -112,7 +128,8 @@ sap.ui.define([
 					componentId: this.sComponentId,
 					componentData: {
 						technicalParameters: {}
-					}
+					},
+					reference: this.sReference
 				};
 				this.oVariantsMap = {};
 				sandbox.stub(VariantManagementState, "getContent")
@@ -294,35 +311,30 @@ sap.ui.define([
 		QUnit.test("when 'setVariantData' is called with a changed title and previous index", function(assert) {
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
 
-			var mAdditionalData = {
-				title: "ZZZ"
-			};
 
 			var aVariants = this.oVariantsMap["vmReference1"].variants;
-			assert.equal(aVariants[1].content.fileName, "variant0", "then before renaming the title variant present at index 1");
-			var iSortedIndex = VariantManagementState.setVariantData({variantData: mAdditionalData, vmReference: "vmReference1", previousIndex: 1, reference: this.sReference});
+			aVariants[1].instance.setName("ZZZ");
+			assert.equal(aVariants[1].instance.getId(), "variant0", "then before renaming the title variant present at index 1");
+			var iSortedIndex = VariantManagementState.setVariantData({vmReference: "vmReference1", previousIndex: 1, reference: this.sReference});
 			assert.equal(iSortedIndex, 2, "then the correct sorted index was returned");
-			assert.equal(aVariants[2].content.fileName, "variant0", "then the renamed variant was placed at the correct index");
+			assert.equal(aVariants[2].instance.getId(), "variant0", "then the renamed variant was placed at the correct index");
 		});
 
 		QUnit.test("when 'setVariantData' is called with a changed title and previous index for standard variant", function(assert) {
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
 
-			var mAdditionalData = {
-				title: "ZZZ"
-			};
-
 			var aVariants = this.oVariantsMap["vmReference1"].variants;
-			assert.equal(aVariants[0].content.fileName, "vmReference1", "then before renaming the title variant present at index 0");
-			var iSortedIndex = VariantManagementState.setVariantData({variantData: mAdditionalData, vmReference: "vmReference1", previousIndex: 0, reference: this.sReference});
+			aVariants[1].instance.setName("ZZZ");
+			assert.equal(aVariants[0].instance.getId(), "vmReference1", "then before renaming the title variant present at index 0");
+			var iSortedIndex = VariantManagementState.setVariantData({vmReference: "vmReference1", previousIndex: 0, reference: this.sReference});
 			assert.equal(iSortedIndex, 0, "then the correct sorted index was returned");
-			assert.equal(aVariants[0].content.fileName, "vmReference1", "then the renamed variant was placed at the correct index\"");
+			assert.equal(aVariants[0].instance.getId(), "vmReference1", "then the renamed variant was placed at the correct index\"");
 		});
 
 		QUnit.test("when 'getVariant' is called", function(assert) {
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
 			var oExpectedVariant = this.oVariantsMap["vmReference1"].variants[0];
-			var oVariant = VariantManagementState.getVariant({vmReference: "vmReference1", vReference: oExpectedVariant.content.fileName, reference: this.sReference});
+			var oVariant = VariantManagementState.getVariant({vmReference: "vmReference1", vReference: oExpectedVariant.instance.getId(), reference: this.sReference});
 			assert.deepEqual(oExpectedVariant, oVariant, "then the correct variant object is returned");
 		});
 
@@ -386,9 +398,11 @@ sap.ui.define([
 		QUnit.test("when 'getVariantManagementReferences'  is called", function(assert) {
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
 			var aVMReferences = VariantManagementState.getVariantManagementReferences(this.sReference);
-			assert.equal(aVMReferences.length, 4, "there are 4 references");
+			assert.equal(aVMReferences.length, 6, "there are 6 references");
 			assert.ok(includes(aVMReferences, "vmReference1"));
 			assert.ok(includes(aVMReferences, "vmReference2"));
+			assert.ok(includes(aVMReferences, "vmReference3"));
+			assert.ok(includes(aVMReferences, "vmReference4"));
 			assert.ok(includes(aVMReferences, "nonExistingVariant1"));
 			assert.ok(includes(aVMReferences, "nonExistingVariant2"));
 		});
@@ -457,22 +471,18 @@ sap.ui.define([
 				vmReference1: {
 					variants: [
 						{
-							content: {
+							instance: createVariant({
 								fileName: "vmReference1",
-								content: {
-									title: "Standard"
-								}
-							},
+								title: "Standard"
+							}),
 							variantChanges: {},
 							controlChanges: []
 						},
 						{
-							content: {
+							instance: createVariant({
 								fileName: "variant0",
-								content: {
-									title: "Existing"
-								}
-							},
+								title: "existing"
+							}),
 							variantChanges: {
 								setTitle: [
 									{
@@ -531,7 +541,7 @@ sap.ui.define([
 			VariantManagementState.updateChangesForVariantManagementInMap(mArguments);
 			var oTargetVariant = this.oVariantsMap[this.sVMReference].variants[1];
 			var oLastVariantChange = oTargetVariant.variantChanges[mArguments.changeContent.changeType].pop();
-			assert.equal(oTargetVariant.content.fileName, mArguments.changeContent.selector.id, "then it is the target variant");
+			assert.equal(oTargetVariant.instance.getId(), mArguments.changeContent.selector.id, "then it is the target variant");
 			assert.equal(oLastVariantChange.fileName, mArguments.changeContent.fileName, "then the new variant change was added to the map");
 		});
 
@@ -552,7 +562,7 @@ sap.ui.define([
 			VariantManagementState.updateChangesForVariantManagementInMap(mArguments);
 			var oTargetVariant = this.oVariantsMap[this.sVMReference].variants[1];
 			var iLength = oTargetVariant.variantChanges[mArguments.changeContent.changeType].length;
-			assert.equal(oTargetVariant.content.fileName, mArguments.changeContent.selector.id, "then it is the target variant");
+			assert.equal(oTargetVariant.instance.getId(), mArguments.changeContent.selector.id, "then it is the target variant");
 			assert.equal(iLength, 1, "then the variant changes have the correct length");
 			assert.notEqual(oTargetVariant.variantChanges[mArguments.changeContent.changeType][0].fileName, mArguments.changeContent.fileName, "then the variant change was removed from the map");
 		});
@@ -629,22 +639,18 @@ sap.ui.define([
 			var oChangeContent1 = {fileName: "change1"};
 
 			var oFakeVariantData1 = {
-				content: {
-					content: {
-						title: "AA"
-					},
+				instance: createVariant({
+					title: "AA",
 					fileName: "newVariant1"
-				},
+				}),
 				controlChanges: [oChangeContent0]
 			};
 
 			var oFakeVariantData2 = {
-				content: {
-					content: {
-						title: "ZZ"
-					},
+				instance: createVariant({
+					title: "ZZ",
 					fileName: "newVariant2"
-				},
+				}),
 				controlChanges: [oChangeContent1]
 			};
 
@@ -653,8 +659,8 @@ sap.ui.define([
 
 			var aVariants = this.oVariantsMap[this.sVMReference].variants;
 
-			assert.equal(aVariants[iIndex1].content.fileName, oFakeVariantData1.content.fileName, "then the first variant was added to the correct index");
-			assert.equal(aVariants[iIndex2].content.fileName, oFakeVariantData2.content.fileName, "then the second variant was added to the correct index");
+			assert.equal(aVariants[iIndex1].instance.getId(), oFakeVariantData1.instance.getId(), "then the first variant was added to the correct index");
+			assert.equal(aVariants[iIndex2].instance.getId(), oFakeVariantData2.instance.getId(), "then the second variant was added to the correct index");
 		});
 
 		QUnit.test("when 'addVariantToVariantManagement' is called on CUSTOMER layer and a variant reference from a VENDOR layer variant, with 2 VENDOR and one CUSTOMER change", function(assert) {
@@ -662,21 +668,19 @@ sap.ui.define([
 			VariantManagementState.getControlChangesForVariant({vReference: "variant0", vmReference: this.sVMReference, reference: this.sReference});
 
 			var oFakeVariantData = {
-				content: {
+				instance: createVariant({
 					fileName: "newVariant1",
 					variantReference: "variant0",
 					layer: Layer.CUSTOMER,
-					content: {
-						title: "AA"
-					}
-				},
+					title: "AA"
+				}),
 				controlChanges: [oChangeContent0]
 			};
 
 			var iIndex = VariantManagementState.addVariantToVariantManagement({variantData: oFakeVariantData, vmReference: this.sVMReference, reference: this.sReference});
 			var aVariants = this.oVariantsMap[this.sVMReference].variants;
 
-			assert.equal(aVariants[iIndex].content.fileName, oFakeVariantData.content.fileName, "then the variant was added to the correct index");
+			assert.equal(aVariants[iIndex].instance.getId(), oFakeVariantData.instance.getId(), "then the variant was added to the correct index");
 
 			var aChangeFileNames = aVariants[iIndex].controlChanges.map(function (oChange) {
 				return oChange.getId();
@@ -692,21 +696,19 @@ sap.ui.define([
 			VariantManagementState.getControlChangesForVariant({vReference: "variant0", vmReference: "vmReference1", reference: this.sReference});
 
 			var oFakeVariantData = {
-				content: {
+				instance: createVariant({
 					fileName: "newVariant1",
 					variantReference: "variant0",
 					layer: Layer.USER,
-					content: {
-						title: "AA"
-					}
-				},
+					title: "AA"
+				}),
 				controlChanges: [oChangeContent0]
 			};
 
 			var iIndex = VariantManagementState.addVariantToVariantManagement({variantData: oFakeVariantData, vmReference: "vmReference1", reference: this.sReference});
 			var aVariants = this.oVariantsMap["vmReference1"].variants;
 
-			assert.equal(aVariants[iIndex].content.fileName, oFakeVariantData.content.fileName, "then the variant was added to the correct index");
+			assert.equal(aVariants[iIndex].instance.getId(), oFakeVariantData.instance.getId(), "then the variant was added to the correct index");
 
 			var aChangeFileNames = aVariants[iIndex].controlChanges.map(function (oChange) {
 				return oChange.getId();
@@ -720,13 +722,13 @@ sap.ui.define([
 
 		QUnit.test("when 'removeVariantFromVariantManagement' is called with a variant", function(assert) {
 			var oVariantDataToBeRemoved = this.oVariantsMap["vmReference1"].variants[1];
-			var oVariantToBeRemoved = new Variant(oVariantDataToBeRemoved);
+			var oVariantToBeRemoved = oVariantDataToBeRemoved.instance;
 
 			VariantManagementState.removeVariantFromVariantManagement({variant: oVariantToBeRemoved, vmReference: "vmReference1", reference: this.sReference});
 
 			var aVariants = this.oVariantsMap["vmReference1"].variants;
 			var bPresent = aVariants.some(function(oVariant) {
-				return oVariant.content.fileName === oVariantDataToBeRemoved.content.fileName;
+				return oVariant.instance.getId() === oVariantDataToBeRemoved.instance.getId();
 			});
 			assert.notOk(bPresent, "then the variant was removed");
 		});
@@ -766,6 +768,9 @@ sap.ui.define([
 				getState: function() {return Change.states.NEW;},
 				getDefinition: function() {
 					return {fileType: "change"};
+				},
+				convertToFileContent: function() {
+					return this.getDefinition();
 				}
 			};
 			VariantManagementState.updateVariantsState({
@@ -781,6 +786,9 @@ sap.ui.define([
 				getState: function() {return Change.states.NEW;},
 				getDefinition: function() {
 					return {fileType: "ctrl_variant"};
+				},
+				convertToFileContent: function() {
+					return this.getDefinition();
 				}
 			};
 			VariantManagementState.updateVariantsState({
@@ -796,6 +804,9 @@ sap.ui.define([
 				getState: function() {return Change.states.NEW;},
 				getDefinition: function() {
 					return {fileType: "ctrl_variant_management_change"};
+				},
+				convertToFileContent: function() {
+					return this.getDefinition();
 				}
 			};
 			VariantManagementState.updateVariantsState({
@@ -811,6 +822,9 @@ sap.ui.define([
 				getState: function() {return Change.states.NEW;},
 				getDefinition: function() {
 					return {fileType: "ctrl_variant_change"};
+				},
+				convertToFileContent: function() {
+					return this.getDefinition();
 				}
 			};
 			VariantManagementState.updateVariantsState({
@@ -827,6 +841,9 @@ sap.ui.define([
 				getState: function() {return Change.states.NEW;},
 				getDefinition: function() {
 					return {fileType: "change"};
+				},
+				convertToFileContent: function() {
+					return this.getDefinition();
 				}
 			};
 			VariantManagementState.updateVariantsState({
@@ -847,6 +864,9 @@ sap.ui.define([
 						fileType: "change",
 						fileName: "variantDependentControlChange"
 					};
+				},
+				convertToFileContent: function() {
+					return this.getDefinition();
 				}
 			};
 			this.oResponse.variantDependentControlChanges.push(oVariantDependentControlChange.getDefinition());
@@ -864,6 +884,9 @@ sap.ui.define([
 						fileType: "ctrl_variant",
 						fileName: "variant"
 					};
+				},
+				convertToFileContent: function() {
+					return this.getDefinition();
 				}
 			};
 			this.oResponse.variants.push(oVariant.getDefinition());
@@ -881,6 +904,9 @@ sap.ui.define([
 						fileType: "ctrl_variant_management_change",
 						fileName: "variantManagementChange"
 					};
+				},
+				convertToFileContent: function() {
+					return this.getDefinition();
 				}
 			};
 			this.oResponse.variantManagementChanges.push(oVariantManagementChange.getDefinition());
@@ -898,6 +924,9 @@ sap.ui.define([
 						fileType: "ctrl_variant_change",
 						fileName: "variantChange"
 					};
+				},
+				convertToFileContent: function() {
+					return this.getDefinition();
 				}
 			};
 			this.oResponse.variantChanges.push(oVariantChange.getDefinition());

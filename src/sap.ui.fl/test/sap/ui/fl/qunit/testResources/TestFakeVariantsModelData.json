@@ -9,12 +9,10 @@
 				"executeOnSelect": false,
 				"visible": true,
 				"author": "SAP",
-				"contexts": { 
-					"role": ["ROLE1", "ROLE2"],
-					"country": ["DE", "IT"] 
-				}
+				"contexts": {}
 			},
 			{
+				"contexts": {},
 				"key": "variant0",
 				"title": "New Variant Title",
 				"layer": "VENDOR",
@@ -31,9 +29,9 @@
 				"executeOnSelect": false,
 				"visible": false,
 				"author": "",
-				"contexts": { 
+				"contexts": {
 					"role": ["ROLE1"],
-					"country": ["DE"] 
+					"country": ["DE"]
 				}
 			}
 		]
@@ -42,6 +40,7 @@
 		"defaultVariant": "variant00",
 		"variants": [
 			{
+				"contexts": {},
 				"key": "vmReference2",
 				"title": "variant C",
 				"layer": "CUSTOMER",
@@ -51,6 +50,7 @@
 				"author": "SAP"
 			},
 			{
+				"contexts": {},
 				"key": "variant00",
 				"title": "variant A",
 				"layer": "CUSTOMER",
@@ -60,6 +60,7 @@
 				"author": ""
 			},
 			{
+				"contexts": {},
 				"key": "variant11",
 				"title": "variant B",
 				"layer": "USER",
@@ -75,6 +76,7 @@
 		"variants": [
 			{
 				"author": "SAP",
+				"contexts": {},
 				"favorite": false,
 				"executeOnSelect": false,
 				"key": "nonExistingVariant1",
@@ -87,10 +89,49 @@
 		"defaultVariant": "nonExistingVariant2",
 		"variants": [
 			{
+				"contexts": {},
 				"author": "SAP",
 				"favorite": true,
 				"executeOnSelect": false,
 				"key": "nonExistingVariant2",
+				"title": "Standard",
+				"visible": true
+			}
+		]
+	},
+	"vmReference3": {
+		"defaultVariant": "vmReference3",
+		"variants": [
+			{
+				"author": "SAP",
+				"contexts": {},
+				"executeOnSelect": false,
+				"favorite": true,
+				"key": "vmReference3",
+				"title": "Standard",
+				"visible": true
+			},
+			{
+				"author": "",
+				"contexts": {},
+				"executeOnSelect": false,
+				"favorite": true,
+				"key": "variant31",
+				"layer": "CUSTOMER",
+				"title": "variant AB",
+				"visible": true
+			}
+		]
+	},
+	"vmReference4": {
+		"defaultVariant": "foo",
+		"variants": [
+			{
+				"author": "SAP",
+				"contexts": {},
+				"executeOnSelect": false,
+				"favorite": true,
+				"key": "vmReference4",
 				"title": "Standard",
 				"visible": true
 			}

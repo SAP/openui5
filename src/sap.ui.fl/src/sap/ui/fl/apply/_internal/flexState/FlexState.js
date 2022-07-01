@@ -131,7 +131,8 @@ sap.ui.define([
 				unfilteredStorageResponse: _mInstances[sReference].unfilteredStorageResponse,
 				storageResponse: _mInstances[sReference].storageResponse,
 				componentId: _mInstances[sReference].componentId,
-				componentData: _mInstances[sReference].componentData
+				componentData: _mInstances[sReference].componentData,
+				reference: sReference
 			};
 			_mInstances[sReference].preparedMaps[sMapName] = FlexState.callPrepareFunction(sMapName, mPropertyBag);
 		}

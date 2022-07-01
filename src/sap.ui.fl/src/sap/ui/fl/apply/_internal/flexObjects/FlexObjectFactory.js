@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
+	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
 ], function(
@@ -15,8 +16,9 @@ sap.ui.define([
 	Core,
 	CompVariant,
 	FlexObject,
+	FlVariant,
 	Layer,
-	flUtils
+	Utils
 ) {
 	"use strict";
 
@@ -29,12 +31,15 @@ sap.ui.define([
 	 */
 	var FLEX_OBJECT_TYPES = {
 		BASE_FLEX_OBJECT: FlexObject,
-		COMP_VARIANT_OBJECT: CompVariant
+		COMP_VARIANT_OBJECT: CompVariant,
+		FL_VARIANT_OBJECT: FlVariant
 	};
 
 	function getFlexObjectClass(oNewFileContent) {
 		if (oNewFileContent.fileType === "variant") {
 			return FLEX_OBJECT_TYPES.COMP_VARIANT_OBJECT;
+		} else if (oNewFileContent.fileType === "ctrl_variant") {
+			return FLEX_OBJECT_TYPES.FL_VARIANT_OBJECT;
 		}
 		return FLEX_OBJECT_TYPES.BASE_FLEX_OBJECT;
 	}
@@ -81,6 +86,46 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a new <code>sap.ui.fl.apply._internal.flexObjects.FlVariant</code>.
+	 *
+	 * @param {object} mPropertyBag - Properties for the variant
+	 * @param {string} mPropertyBag.id - ID of the new variant
+	 * @param {string} mPropertyBag.variantName - Name of the new variant
+	 * @param {string} mPropertyBag.variantManagementReference - Reference to the variant management control
+	 * @param {string} [mPropertyBag.variantReference] - Reference to another variant that is the basis for the new variant
+	 * @param {string} [mPropertyBag.user] - Author of the variant
+	 * @param {object} [mPropertyBag.contexts] - See {@link sap.ui.fl.apply._internal.flexObjects.Variant}
+	 * @param {object} [mPropertyBag.layer] - See {@link sap.ui.fl.apply._internal.flexObjects.FlexObject}
+	 * @param {string} [mPropertyBag.reference] - See {@link sap.ui.fl.apply._internal.flexObjects.FlexObject.FlexObjectMetadata}
+	 * @param {string} [mPropertyBag.generator] - See {@link sap.ui.fl.apply._internal.flexObjects.FlexObject.SupportInformation}
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlVariant} Variant instance
+	 */
+	FlexObjectFactory.createFlVariant = function(mPropertyBag) {
+		var mProperties = {
+			id: mPropertyBag.id,
+			contexts: mPropertyBag.contexts,
+			layer: mPropertyBag.layer,
+			texts: {
+				variantName: {
+					value: mPropertyBag.variantName,
+					type: "XFLD"
+				}
+			},
+			variantManagementReference: mPropertyBag.variantManagementReference,
+			variantReference: mPropertyBag.variantReference,
+			supportInformation: {
+				generator: mPropertyBag.generator || "FlexObjectFactory.createFlVariant",
+				sapui5Version: Core.getConfiguration().getVersion().toString(),
+				user: mPropertyBag.user
+			},
+			flexObjectMetadata: {
+				reference: mPropertyBag.reference
+			}
+		};
+		return new FlVariant(mProperties);
+	};
+
+	/**
 	 * Creates a new flex object of type <code>CompVariant</code>.
 	 *
 	 * @param {object} oFileContent - File content
@@ -114,7 +159,7 @@ sap.ui.define([
 	FlexObjectFactory.createCompVariant = function (oFileContent) {
 		var sFileName = oFileContent.fileName
 			|| oFileContent.id
-			|| flUtils.createDefaultFileName(oFileContent.fileType);
+			|| Utils.createDefaultFileName(oFileContent.fileType);
 
 		var mCompVariantContent = {
 			id: sFileName,

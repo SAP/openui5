@@ -2,7 +2,7 @@
 	"vmReference1": {
 		"variants": [
 			{
-				"content": {
+				"instance": {
 					"fileName": "vmReference1",
 					"fileType": "ctrl_variant",
 					"variantManagementReference": "vmReference1",
@@ -14,10 +14,7 @@
 						"user": "SAP"
 					},
 					"content": {
-						"title": "Standard",
-						"favorite": true,
-						"visible": true,
-						"executeOnSelect": false
+						"title": "Standard"
 					},
 					"contexts": {
 						"country": [
@@ -81,18 +78,14 @@
 				"variantChanges": {}
 			},
 			{
-				"content": {
+				"instance": {
 					"fileName": "variant0",
 					"fileType": "ctrl_variant",
 					"variantManagementReference": "vmReference1",
 					"variantReference": "",
 					"reference": "sap.ui.rta.test.Demo.md.Component",
-					"packageName": "$TMP",
 					"content": {
-						"title": "New Variant Title",
-						"favorite": false,
-						"visible": true,
-						"executeOnSelect": true
+						"title": "New Variant Title"
 					},
 					"layer": "VENDOR",
 					"texts": {
@@ -264,18 +257,14 @@
 				}
 			},
 			{
-				"content": {
+				"instance": {
 					"fileName": "variant2",
 					"fileType": "ctrl_variant",
 					"variantManagementReference": "vmReference1",
 					"variantReference": "variant0",
 					"reference": "sap.ui.rta.test.Demo.md.Component",
-					"packageName": "$TMP",
 					"content": {
-						"title": "variant AA",
-						"favorite": true,
-						"visible": false,
-						"executeOnSelect": false
+						"title": "variant AA"
 					},
 					"contexts": {
 						"country": [
@@ -482,7 +471,7 @@
 	"vmReference2": {
 		"variants": [
 			{
-				"content": {
+				"instance": {
 					"fileName": "vmReference2",
 					"fileType": "ctrl_variant",
 					"variantManagementReference": "vmReference2",
@@ -490,10 +479,7 @@
 					"reference": "sap.ui.rta.test.Demo.md.Component",
 					"packageName": "$TMP",
 					"content": {
-						"title": "variant C",
-						"favorite": true,
-						"visible": true,
-						"executeOnSelect": false
+						"title": "variant C"
 					},
 					"layer": "CUSTOMER",
 					"texts": {},
@@ -511,7 +497,7 @@
 				"controlChanges": []
 			},
 			{
-				"content": {
+				"instance": {
 					"fileName": "variant00",
 					"fileType": "ctrl_variant",
 					"variantManagementReference": "vmReference2",
@@ -519,10 +505,7 @@
 					"reference": "sap.ui.rta.test.Demo.md.Component",
 					"packageName": "$TMP",
 					"content": {
-						"title": "variant A",
-						"favorite": true,
-						"visible": true,
-						"executeOnSelect": false
+						"title": "variant A"
 					},
 					"layer": "CUSTOMER",
 					"texts": {},
@@ -587,7 +570,7 @@
 				"variantChanges": {}
 			},
 			{
-				"content": {
+				"instance": {
 					"fileName": "variant11",
 					"fileType": "ctrl_variant",
 					"variantManagementReference": "vmReference2",
@@ -595,10 +578,7 @@
 					"reference": "sap.ui.rta.test.Demo.md.Component",
 					"packageName": "$TMP",
 					"content": {
-						"title": "variant B",
-						"favorite": true,
-						"visible": true,
-						"executeOnSelect": false
+						"title": "variant B"
 					},
 					"layer": "USER",
 					"texts": {},
@@ -726,17 +706,98 @@
 			]
 		}
 	},
+	"vmReference3": {
+		"defaultVariant": "vmReference3",
+		"variantManagementChanges": {},
+		"variants": [
+			{
+				"instance": {
+					"fileName":"vmReference3",
+					"fileType":"ctrl_variant",
+					"variantManagementReference":"vmReference3",
+					"variantReference":"vmReference3",
+					"reference":"sap.ui.rta.test.Demo.md.Component",
+					"packageName":"$TMP",
+					"layer":"CUSTOMER",
+					"texts":{},
+					"namespace":"sap.ui.rta.test.Demo.md.Component",
+					"creation":"",
+					"originalLanguage":"EN",
+					"conditions":{},
+					"support":{
+						"generator":"Change.createInitialFileContent",
+						"service":"",
+						"user":""
+					}
+				},
+				"controlChanges": [],
+				"variantChanges": {}
+			},
+			{
+				"instance": {
+					"fileName":"variant31",
+					"fileType":"ctrl_variant",
+					"variantManagementReference":"vmReference3",
+					"variantReference":"vmReference3",
+					"reference":"sap.ui.rta.test.Demo.md.Component",
+					"packageName":"$TMP",
+					"content":{
+						"title":"variant AB"
+					},
+					"layer":"CUSTOMER",
+					"texts":{},
+					"namespace":"sap.ui.rta.test.Demo.md.Component",
+					"creation":"",
+					"originalLanguage":"EN",
+					"conditions":{},
+					"support":{
+						"generator":"Change.createInitialFileContent",
+						"service":"",
+						"user":""
+					}
+				},
+				"controlChanges": [],
+				"variantChanges": {}
+			}
+		]
+	},
+	"vmReference4": {
+		"defaultVariant": "foo",
+		"variantManagementChanges": {
+			"setDefault": [
+				{
+					"changeType": "setDefault",
+					"content": {
+						"defaultVariant": "foo"
+					},
+					"fileName": "id_1510920910626_30_setDefault",
+					"fileType": "ctrl_variant_management_change",
+					"selector": {
+						"id": "vmReference4"
+					}
+				}
+			]
+		},
+		"variants": [
+			{
+				"instance": {
+					"fileName": "vmReference4",
+					"fileType":"ctrl_variant",
+					"variantManagementReference":"vmReference4"
+				},
+				"controlChanges": [],
+				"variantChanges": {}
+			}
+		]
+	},
 	"nonExistingVariant1": {
 		"defaultVariant": "nonExistingVariant1",
 		"variantManagementChanges": {},
 		"variants": [
 			{
-				"content": {
+				"instance": {
 					"content": {
-						"favorite": false,
-						"title": "Standard",
-						"visible": false,
-						"executeOnSelect": false
+						"title": "Standard"
 					},
 					"fileName": "nonExistingVariant1",
 					"support": {
@@ -789,12 +850,9 @@
 		"variantManagementChanges": {},
 		"variants": [
 			{
-				"content": {
+				"instance": {
 					"content": {
-						"favorite": true,
-						"title": "Standard",
-						"visible": true,
-						"executeOnSelect": false
+						"title": "Standard"
 					},
 					"fileName": "nonExistingVariant2",
 					"support": {

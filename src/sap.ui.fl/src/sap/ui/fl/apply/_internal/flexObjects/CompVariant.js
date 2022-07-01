@@ -61,6 +61,14 @@ sap.ui.define([
 					multiple: true,
 					singularName: "revertData",
 					defaultValue: []
+				},
+				/**
+				 * Changes belonging to the variant
+				 */
+				changes: {
+					type: "sap.ui.fl.Change",
+					multiple: true,
+					defaultValue: []
 				}
 			}
 		},
@@ -87,7 +95,8 @@ sap.ui.define([
 	 */
 	 CompVariant.getMappingInfo = function () {
 		return Object.assign(Variant.getMappingInfo(), {
-			persistencyKey: "selector.persistencyKey"
+			persistencyKey: "selector.persistencyKey",
+			variantId: "variantId"
 		});
 	};
 

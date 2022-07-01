@@ -1,41 +1,41 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/thirdparty/sinon-4",
+	"sap/base/util/merge",
+	"sap/ui/core/Core",
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
+	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
+	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
+	"sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
+	"sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
+	"sap/ui/fl/initial/_internal/Storage",
+	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
+	"sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
+	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Variant",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/initial/_internal/Storage",
-	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
-	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
-	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
-	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
-	"sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
-	"sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
-	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
-	"sap/base/util/merge",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	sinon,
+	merge,
+	Core,
+	ObjectStorageUtils,
+	KeyUserConnector,
+	LrepConnector,
+	PersonalizationConnector,
+	StaticFileConnector,
+	Storage,
+	StorageUtils,
+	JsObjectConnector,
+	ObjectPathConnector,
+	FlVariant,
 	Version,
 	Change,
 	Layer,
-	Variant,
 	Utils,
-	Storage,
-	StorageUtils,
-	StaticFileConnector,
-	LrepConnector,
-	JsObjectConnector,
-	KeyUserConnector,
-	PersonalizationConnector,
-	ObjectPathConnector,
-	ObjectStorageUtils,
-	merge,
-	Core
+	sinon
 ) {
 	"use strict";
 
@@ -106,19 +106,15 @@ sap.ui.define([
 		QUnit.test("Given some connector provides multiple layers", function (assert) {
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
 			var sVariant1 = "variant1";
-			var oVariant1 = Variant.createInitialFileContent({
-				content: {
-					fileName: sVariant1,
-					fileType: "ctrl_variant",
-					layer: Layer.VENDOR,
-					title: "title",
-					reference: "app.id",
-					variantReference: "",
-					content: {},
-					variantManagementReference: "someVarManagementControlId"
-				}
-			});
-			var mVariant1 = oVariant1.content;
+			var mVariant1 = {
+				fileName: sVariant1,
+				fileType: "ctrl_variant",
+				layer: Layer.VENDOR,
+				title: "title",
+				reference: "app.id",
+				variantReference: "",
+				variantManagementReference: "someVarManagementControlId"
+			};
 			JsObjectConnector.storage.setItem(ObjectStorageUtils.createFlexObjectKey(mVariant1), mVariant1);
 
 			var sChangeId1 = "change1";
@@ -184,7 +180,7 @@ sap.ui.define([
 			var oStaticFileConnectorResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {variantSection: {}});
 			var sVariantManagementKey = "management1";
 
-			var oVariant = Variant.createInitialFileContent({
+			var oVariant = {
 				content: {
 					fileName: "variant1",
 					fileType: "ctrl_variant",
@@ -192,10 +188,11 @@ sap.ui.define([
 					title: "title",
 					reference: "app.id",
 					variantReference: "",
-					content: {},
 					variantManagementReference: sVariantManagementKey
-				}
-			});
+				},
+				controlChanges: [],
+				variantChanges: {}
+			};
 
 			oStaticFileConnectorResponse.variantSection[sVariantManagementKey] = {
 				variants: [oVariant],
@@ -414,7 +411,7 @@ sap.ui.define([
 			var oLrepConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
 			var sVariantManagementKey = "management1";
 
-			var oVariant1 = Variant.createInitialFileContent({
+			var oVariant1 = {
 				content: {
 					fileName: "variant1",
 					fileType: "ctrl_variant",
@@ -422,13 +419,12 @@ sap.ui.define([
 					title: "title",
 					reference: "app.id",
 					variantReference: "",
-					content: {},
 					variantManagementReference: sVariantManagementKey
 				}
-			});
+			};
 			oStaticFileConnectorResponse.variants = [oVariant1.content];
 
-			var oVariant2 = Variant.createInitialFileContent({
+			var oVariant2 = {
 				content: {
 					fileName: "variant2",
 					fileType: "ctrl_variant",
@@ -436,10 +432,9 @@ sap.ui.define([
 					title: "title",
 					reference: "app.id",
 					variantReference: "",
-					content: {},
 					variantManagementReference: sVariantManagementKey
 				}
-			});
+			};
 			oLrepConnectorResponse.variants = [oVariant2.content];
 
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oStaticFileConnectorResponse);

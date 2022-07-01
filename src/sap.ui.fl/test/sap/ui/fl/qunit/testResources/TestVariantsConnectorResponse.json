@@ -101,24 +101,6 @@
 			}
 		},
 		{
-			"fileName":"vmReference1",
-			"fileType":"ctrl_variant",
-			"variantManagementReference":"vmReference1",
-			"variantReference":"",
-			"reference":"sap.ui.rta.test.Demo.md.Component",
-			"support":{
-				"generator":"Change.createInitialFileContent",
-				"service":""
-			},
-			"content": {
-				"title":"{i18n>STANDARD_VARIANT_TITLE}"
-			},
-			"contexts": {
-				"role": ["ROLE1", "ROLE2"],
-				"country": ["DE", "IT"]
-			}
-		},
-		{
 			"fileName":"variant2",
 			"fileType":"ctrl_variant",
 			"variantManagementReference":"vmReference1",
@@ -215,6 +197,28 @@
 			"packageName":"$TMP",
 			"content":{
 				"title":"variant A"
+			},
+			"layer":"CUSTOMER",
+			"texts":{},
+			"namespace":"sap.ui.rta.test.Demo.md.Component",
+			"creation":"",
+			"originalLanguage":"EN",
+			"conditions":{},
+			"support":{
+				"generator":"Change.createInitialFileContent",
+				"service":"",
+				"user":""
+			}
+		},
+		{
+			"fileName":"variant31",
+			"fileType":"ctrl_variant",
+			"variantManagementReference":"vmReference3",
+			"variantReference":"vmReference3",
+			"reference":"sap.ui.rta.test.Demo.md.Component",
+			"packageName":"$TMP",
+			"content":{
+				"title":"variant AB"
 			},
 			"layer":"CUSTOMER",
 			"texts":{},
@@ -700,6 +704,17 @@
 			},
 			"selector": {
 				"id": "vmReference2"
+			}
+		},
+		{
+			"fileName": "id_1510920910626_30_setDefault",
+			"fileType": "ctrl_variant_management_change",
+			"changeType": "setDefault",
+			"content": {
+				"defaultVariant": "foo"
+			},
+			"selector": {
+				"id": "vmReference4"
 			}
 		}
 	]

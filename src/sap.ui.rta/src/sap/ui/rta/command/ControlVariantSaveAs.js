@@ -110,7 +110,7 @@ sap.ui.define([
 			.then(function(aDirtyChanges) {
 				this._aPreparedChanges = aDirtyChanges;
 				this._oVariantChange = aDirtyChanges[0];
-				this.sNewVariantReference = this._oVariantChange.getDefinition().fileName;
+				this.sNewVariantReference = this._oVariantChange.getId();
 				this._aPreparedChanges.forEach(function(oChange) {
 					if (oChange.getFileType() === "change") {
 						oChange.assignedToVariant = true;

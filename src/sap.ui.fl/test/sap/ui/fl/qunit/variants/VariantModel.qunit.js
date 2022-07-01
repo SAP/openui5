@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -26,7 +27,6 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/Variant",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
@@ -43,6 +43,7 @@ sap.ui.define([
 	Reverter,
 	URLHandler,
 	VariantUtil,
+	FlexObjectFactory,
 	Switcher,
 	VariantManagementState,
 	FlexState,
@@ -56,7 +57,6 @@ sap.ui.define([
 	LayerUtils,
 	Layer,
 	Utils,
-	Variant,
 	jQuery,
 	sinon,
 	oCore
@@ -64,6 +64,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 	sinon.stub(LayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 	sinon.stub(BusyIndicator, "show");
 	sinon.stub(BusyIndicator, "hide");
@@ -72,6 +73,22 @@ sap.ui.define([
 		detachManage: sandbox.stub(),
 		openManagementDialog: sandbox.stub()
 	};
+
+	function createVariant(mVariantProperties) {
+		return FlexObjectFactory.createFlVariant({
+			id: mVariantProperties.fileName || mVariantProperties.key,
+			reference: mVariantProperties.reference || "myReference",
+			layer: mVariantProperties.layer,
+			user: mVariantProperties.author,
+			variantReference: mVariantProperties.variantReference,
+			variantManagementReference: mVariantProperties.variantManagementReference,
+			variantName: mVariantProperties.title,
+			favorite: mVariantProperties.favorite,
+			visible: mVariantProperties.visible,
+			executeOnSelection: mVariantProperties.executeOnSelect,
+			contexts: mVariantProperties.contexts
+		});
+	}
 
 	QUnit.module("Given an instance of VariantModel", {
 		before: function() {
@@ -205,7 +222,7 @@ sap.ui.define([
 			var oCheckStub = sandbox.stub(this.oModel, "checkDirtyStateForControlModels");
 			var oChange = {
 				getState: function() {return Change.states.NEW;},
-				getDefinition: function() {
+				convertToFileContent: function() {
 					return {fileType: "change"};
 				}
 			};
@@ -420,18 +437,8 @@ sap.ui.define([
 			}, "then the correct variant management reference is returned");
 		});
 
-		QUnit.test("when calling 'getVariantProperty' with title as property", function(assert) {
-			sandbox.stub(VariantManagementState, "getVariant").returns(
-				{
-					content:
-					{
-						content: {
-							title: this.oData["variantMgmtId1"].variants[2].title
-						}
-					}
-				}
-			);
-			var sPropertyValue = this.oModel.getVariantProperty("variant1", "title");
+		QUnit.test("when calling 'getVariantTitle'", function(assert) {
+			var sPropertyValue = this.oModel.getVariantTitle("variant1", "variantMgmtId1");
 			assert.equal(sPropertyValue, this.oData["variantMgmtId1"].variants[2].title, "then the correct title value is returned");
 		});
 
@@ -439,6 +446,7 @@ sap.ui.define([
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var mPropertyBag = {
 				changeType: "setTitle",
 				title: "New Title",
@@ -458,6 +466,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'deleteVariantChange' for 'setTitle' to delete a change", function(assert) {
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
@@ -479,6 +488,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'addVariantChange' for 'setFavorite' to add a change", function(assert) {
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
@@ -501,6 +511,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'deleteVariantChange' for 'setFavorite' to delete a change", function(assert) {
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
@@ -522,6 +533,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'addVariantChange' for 'setVisible' to add a change", function(assert) {
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
@@ -544,6 +556,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'deleteVariantChange' for 'setVisible' to delete a change", function(assert) {
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
@@ -565,6 +578,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'addVariantChange' for 'setExecuteOnSelect' to add a change", function(assert) {
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(1);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
@@ -587,6 +601,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'deleteVariantChange' for 'setExecuteOnSelect' to delete a change", function(assert) {
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(1);
 			var fnChangeStub = sandbox.stub().returns({
@@ -608,6 +623,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'addVariantChange' for 'setDefault' to add a change", function(assert) {
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnAddDirtyChangeStub = sandbox.stub(this.oModel.oChangePersistence, "addDirtyChange");
 			var mPropertyBag = {
@@ -628,6 +644,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'deleteVariantChange' for 'setDefault' to delete a change", function(assert) {
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
 				getDefinition: function() {}
@@ -647,6 +664,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'deleteVariantChange' for 'setDefault' to delete a change while current variant is not the default variant", function(assert) {
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
 				getDefinition: function() {}
@@ -668,6 +686,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'setVariantProperties' for 'setDefault' with different current and default variants, in UI adaptation mode", function(assert) {
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var mPropertyBag = {
 				changeType: "setDefault",
 				defaultVariant: "variant1",
@@ -699,6 +718,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'setVariantProperties' for 'setDefault' with same current and default variants, in personalization mode", function(assert) {
+			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var mPropertyBag = {
 				changeType: "setDefault",
 				defaultVariant: "variant1",
@@ -869,545 +889,24 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when calling '_duplicateVariant' on the same layer", function(assert) {
-			var oSourceVariant = {
-				content: {
-					fileName: "variant0",
-					fileType: "ctrl_variant",
-					variantManagementReference: "variantMgmtId1",
-					variantReference: "variant2",
-					content: {
-						title: "variant A"
-					},
-					contexts: {
-						role: ["testRole"]
-					},
-					selector: {},
-					layer: Layer.CUSTOMER,
-					namespace: "Dummy.Component"
-				},
-				controlChanges: [],
-				variantChanges: {}
-			};
-
-			var mPropertyBag = {
-				newVariantReference: "newVariant",
-				sourceVariantReference: "variant0",
-				variantManagementReference: "variantMgmtId1",
-				layer: Layer.CUSTOMER,
-				title: "variant A Copy",
-				contexts: {
-					role: ["testRole"]
-				}
-			};
-
-			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
-			oSourceVariantCopy.content.fileName = "newVariant";
-			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([]);
-			sandbox.stub(LayerUtils, "compareAgainstCurrentLayer").returns(0);
-			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
-			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
-			assert.deepEqual(oDuplicateVariant, oSourceVariantCopy);
-		});
-
-		QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer referencing variant on VENDOR layer", function(assert) {
-			var oSourceVariant = {
-				content: {
-					fileName: "variant0",
-					fileType: "ctrl_variant",
-					variantManagementReference: "variantMgmtId1",
-					variantReference: "variant2",
-					content: {
-						title: "variant A"
-					},
-					contexts: {},
-					selector: {},
-					layer: Layer.VENDOR,
-					namespace: "Dummy.Component"
-				},
-				controlChanges: [],
-				variantChanges: {}
-			};
-
-			var mPropertyBag = {
-				newVariantReference: "newVariant",
-				sourceVariantReference: "variant0",
-				variantManagementReference: "variantMgmtId1",
-				layer: Layer.CUSTOMER,
-				title: "variant A Copy",
-				contexts: {}
-			};
-
-			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
-			oSourceVariantCopy.content.fileName = "newVariant";
-			oSourceVariantCopy.content.variantReference = "variant0";
-			oSourceVariantCopy.content.layer = Layer.CUSTOMER;
-			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([]);
-			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
-			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
-			assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
-		});
-
-		QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant on VENDOR layer with one CUSTOMER and one VENDOR change", function(assert) {
-			// non-personalization mode
-			this.oModel._bDesignTimeMode = true;
-			var oChange0 = new Change({
-				fileName: "change0",
-				selector: {id: "abc123"},
-				variantReference: "variant0",
-				layer: Layer.CUSTOMER,
-				support: {},
-				reference: "test.Component",
-				packageName: "MockPackageName"
-			});
-			var oChange1 = new Change({
-				fileName: "change1",
-				selector: {id: "abc123"},
-				variantReference: "variant0",
-				layer: Layer.VENDOR,
-				support: {},
-				reference: "test.Component"
-			});
-
-			var oSourceVariant = {
-				content: {
-					fileName: "variant0",
-					fileType: "ctrl_variant",
-					variantManagementReference: "variantMgmtId1",
-					variantReference: "variant2",
-					content: {
-						title: "variant A"
-					},
-					contexts: {},
-					selector: {},
-					layer: Layer.VENDOR,
-					namespace: "Dummy.Component"
-				},
-				controlChanges: [oChange0, oChange1],
-				variantChanges: {}
-			};
-
-			var mPropertyBag = {
-				newVariantReference: "newVariant",
-				sourceVariantReference: "variant0",
-				variantManagementReference: "variantMgmtId1",
-				layer: Layer.CUSTOMER,
-				title: "variant A Copy",
-				contexts: {}
-			};
-
-			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
-			oSourceVariantCopy.content.fileName = "newVariant";
-			oSourceVariantCopy.content.variantReference = "variant0";
-			oSourceVariantCopy.content.layer = Layer.CUSTOMER;
-
-			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
-			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns(oSourceVariant.controlChanges);
-			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
-
-			assert.deepEqual(oDuplicateVariant.content, oSourceVariantCopy.content, "then the duplicate variant returned with customized properties");
-			assert.equal(oDuplicateVariant.controlChanges.length, 1, "then only one change duplicated");
-			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
-			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oSourceVariant.controlChanges[0].getDefinition().fileName, "then the fileName of the origin change is written to support object");
-			assert.equal(oDuplicateVariant.controlChanges[0].getLayer(), LayerUtils.getCurrentLayer(), "then only the change with the same layer is duplicated");
-			assert.equal(oDuplicateVariant.controlChanges[0].getPackage(), "$TMP", "then the package name of the duplicate change was set to $TMP");
-			assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.fileName, "then the duplicate variant has reference to the source variant from VENDOR layer");
-		});
-
-		QUnit.test("when calling '_duplicateVariant' from USER layer with reference to a variant on VENDOR layer with one USER, one CUSTOMER, one VENDOR change", function(assert) {
-			LayerUtils.getCurrentLayer.restore();
-			var oChange0 = new Change({
-				fileName: "change0",
-				selector: {id: "abc123"},
-				variantReference: "variant0",
-				layer: Layer.USER,
-				support: {},
-				reference: "test.Component"
-			});
-			var oChange1 = new Change({
-				fileName: "change1",
-				selector: {id: "abc123"},
-				variantReference: "variant0",
-				layer: Layer.CUSTOMER,
-				support: {},
-				reference: "test.Component"
-			});
-			var oChange2 = new Change({
-				fileName: "change2",
-				selector: {id: "abc123"},
-				variantReference: "variant0",
-				layer: Layer.VENDOR,
-				support: {},
-				reference: "test.Component"
-			});
-
-			var oSourceVariant = {
-				content: {
-					fileName: "variant0",
-					fileType: "ctrl_variant",
-					variantManagementReference: "variantMgmtId1",
-					variantReference: "variant2",
-					content: {
-						title: "variant A"
-					},
-					contexts: {},
-					selector: {},
-					layer: Layer.VENDOR,
-					namespace: "Dummy.Component"
-				},
-				controlChanges: [oChange0, oChange1, oChange2],
-				variantChanges: {}
-			};
-
-			var mPropertyBag = {
-				newVariantReference: "newVariant",
-				sourceVariantReference: "variant0",
-				variantManagementReference: "variantMgmtId1",
-				title: "variant A Copy",
-				layer: Layer.USER,
-				contexts: {}
-			};
-
-			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
-			oSourceVariantCopy.content.fileName = "newVariant";
-			oSourceVariantCopy.content.variantReference = "variant0";
-			oSourceVariantCopy.content.layer = Layer.USER;
-
-			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
-			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns(oSourceVariant.controlChanges);
-			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
-
-			assert.deepEqual(oDuplicateVariant.content, oSourceVariantCopy.content, "then the duplicate variant returned with customized properties");
-			assert.equal(oDuplicateVariant.controlChanges.length, 1, "then only one change duplicated");
-			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
-			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oSourceVariant.controlChanges[0].getDefinition().fileName, "then the fileName of the origin change is written to support object");
-			assert.equal(oDuplicateVariant.controlChanges[0].getLayer(), Layer.USER, "then only the change with the same layer is duplicated");
-			assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.fileName, "then the duplicate variant has reference to the source variant from VENDOR layer");
-		});
-
-		QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant with no layer", function(assert) {
-			var oSourceVariant = {
-				content: {
-					fileName: "variant0",
-					fileType: "ctrl_variant",
-					variantManagementReference: "variantMgmtId1",
-					variantReference: "variant0",
-					content: {
-						title: "variant A"
-					},
-					contexts: {},
-					selector: {},
-					namespace: "Dummy.Component"
-				},
-				controlChanges: [],
-				variantChanges: {}
-			};
-
-			var mPropertyBag = {
-				newVariantReference: "newVariant",
-				sourceVariantReference: "variant0",
-				variantManagementReference: "variantMgmtId1",
-				layer: Layer.CUSTOMER,
-				title: "variant A Copy",
-				contexts: {}
-			};
-
-			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([]);
-			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
-
-			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
-			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
-			oSourceVariantCopy.content.fileName = "newVariant";
-			oSourceVariantCopy.content.layer = Layer.CUSTOMER;
-
-			assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
-		});
-
-		QUnit.test("when calling '_duplicateVariant' from USER layer with reference to a variant with no layer", function(assert) {
-			var oSourceVariant = {
-				content: {
-					fileName: "variant0",
-					fileType: "ctrl_variant",
-					variantManagementReference: "variantMgmtId1",
-					variantReference: "variant0",
-					content: {
-						title: "variant A"
-					},
-					selector: {},
-					contexts: {},
-					namespace: "Dummy.Component"
-				},
-				controlChanges: [],
-				variantChanges: {}
-			};
-
-			var mPropertyBag = {
-				newVariantReference: "newVariant",
-				sourceVariantReference: "variant0",
-				variantManagementReference: "variantMgmtId1",
-				layer: Layer.USER,
-				title: "variant A Copy",
-				contexts: {}
-			};
-
-			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([]);
-			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
-
-			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
-			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
-			oSourceVariantCopy.content.fileName = "newVariant";
-			oSourceVariantCopy.content.layer = Layer.USER;
-
-			assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
-		});
-
-		QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant on the same layer", function(assert) {
-			// non-personalization mode
-			this.oModel._bDesignTimeMode = true;
-			var oChange0 = new Change({
-				fileName: "change0",
-				selector: {id: "abc123"},
-				variantReference: "variant0",
-				layer: Layer.CUSTOMER,
-				support: {},
-				reference: "test.Component"
-			});
-			var oChange1 = new Change({
-				fileName: "change1",
-				selector: {id: "abc123"},
-				variantReference: "variant0",
-				layer: Layer.CUSTOMER,
-				support: {},
-				reference: "test.Component"
-			});
-
-			var oSourceVariant = {
-				content: {
-					fileName: "variant0",
-					fileType: "ctrl_variant",
-					variantManagementReference: "variantMgmtId1",
-					variantReference: "variant2",
-					content: {
-						title: "variant A"
-					},
-					contexts: {},
-					selector: {},
-					layer: Layer.CUSTOMER,
-					namespace: "Dummy.Component"
-				},
-				controlChanges: [oChange0, oChange1],
-				variantChanges: {}
-			};
-
-			var mPropertyBag = {
-				newVariantReference: "newVariant",
-				sourceVariantReference: "variant0",
-				variantManagementReference: "variantMgmtId1",
-				layer: Layer.CUSTOMER,
-				title: "variant A Copy",
-				contexts: {}
-			};
-
-			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
-			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns(oSourceVariant.controlChanges);
-
-			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
-			oSourceVariantCopy.content.fileName = "newVariant";
-			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
-
-			assert.deepEqual(oDuplicateVariant.content, oSourceVariantCopy.content, "then the duplicate variant returned with customized properties");
-			assert.equal(oDuplicateVariant.controlChanges.length, 2, "then both changes duplicated");
-			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
-			assert.equal(oDuplicateVariant.controlChanges[1].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
-			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oChange0.getDefinition().fileName, "then first duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
-			assert.equal(oDuplicateVariant.controlChanges[1].getDefinition().support.sourceChangeFileName, oChange1.getDefinition().fileName, "then second duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
-			assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.variantReference, "then the duplicate variant references to the reference of the source variant");
-		});
-
-		QUnit.test("when calling '_duplicateVariant' from PUBLIC layer with reference to a variant on the same layer", function(assert) {
-			// non-personalization mode
-			this.oModel._bDesignTimeMode = true;
-			var oChange0 = new Change({
-				fileName: "change0",
-				selector: {id: "abc123"},
-				variantReference: "variant0",
-				layer: Layer.PUBLIC,
-				support: {},
-				reference: "test.Component"
-			});
-			var oChange1 = new Change({
-				fileName: "change1",
-				selector: {id: "abc123"},
-				variantReference: "variant0",
-				layer: Layer.PUBLIC,
-				support: {},
-				reference: "test.Component"
-			});
-
-			var oSourceVariant = {
-				content: {
-					fileName: "variant0",
-					fileType: "ctrl_variant",
-					variantManagementReference: "variantMgmtId1",
-					variantReference: "variant2",
-					content: {
-						title: "variant A"
-					},
-					contexts: {},
-					selector: {},
-					layer: Layer.PUBLIC,
-					namespace: "Dummy.Component"
-				},
-				controlChanges: [oChange0, oChange1],
-				variantChanges: {}
-			};
-
-			var mPropertyBag = {
-				newVariantReference: "newVariant",
-				sourceVariantReference: "variant0",
-				variantManagementReference: "variantMgmtId1",
-				layer: Layer.PUBLIC,
-				title: "variant A Copy",
-				contexts: {}
-			};
-
-			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
-			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns(oSourceVariant.controlChanges);
-
-			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
-			oSourceVariantCopy.content.fileName = "newVariant";
-			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
-
-			assert.deepEqual(oDuplicateVariant.content, oSourceVariantCopy.content, "then the duplicate variant returned with customized properties");
-			assert.equal(oDuplicateVariant.controlChanges.length, 2, "then both changes duplicated");
-			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
-			assert.equal(oDuplicateVariant.controlChanges[1].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
-			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oChange0.getDefinition().fileName, "then first duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
-			assert.equal(oDuplicateVariant.controlChanges[1].getDefinition().support.sourceChangeFileName, oChange1.getDefinition().fileName, "then second duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
-			assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.variantReference, "then the duplicate variant references to the reference of the source variant");
-		});
-
-		QUnit.test("when calling '_duplicateVariant' from PUBLIC layer with reference to a variant on the USER layer", function(assert) {
-			// non-personalization mode
-			this.oModel._bDesignTimeMode = true;
-			var oChange0 = new Change({
-				fileName: "change0",
-				selector: {id: "abc123"},
-				variantReference: "variant0",
-				layer: Layer.PUBLIC,
-				support: {},
-				reference: "test.Component"
-			});
-			var oChange1 = new Change({
-				fileName: "change1",
-				selector: {id: "abc123"},
-				variantReference: "variant0",
-				layer: Layer.USER,
-				support: {},
-				reference: "test.Component"
-			});
-
-			var oSourceVariant = {
-				content: {
-					fileName: "variant0",
-					fileType: "ctrl_variant",
-					variantManagementReference: "variantMgmtId1",
-					variantReference: "variant2",
-					content: {
-						title: "variant A"
-					},
-					contexts: {},
-					selector: {},
-					layer: Layer.USER,
-					namespace: "Dummy.Component"
-				},
-				controlChanges: [oChange0, oChange1],
-				variantChanges: {}
-			};
-
-			var oSourceVariant2 = {
-				content: {
-					fileName: "variant3",
-					fileType: "ctrl_variant",
-					variantManagementReference: "variantMgmtId1",
-					variantReference: "variantMgmtId1",
-					content: {
-						title: "variant B"
-					},
-					selector: {},
-					layer: Layer.PUBLIC,
-					namespace: "Dummy.Component"
-				},
-				controlChanges: [],
-				variantChanges: {}
-			};
-
-			var mPropertyBag = {
-				newVariantReference: "newVariant",
-				sourceVariantReference: "variant0",
-				variantManagementReference: "variantMgmtId1",
-				layer: Layer.PUBLIC,
-				title: "variant A Copy",
-				contexts: {}
-			};
-
-			sandbox.stub(this.oModel, "getVariant").callsFake(function (sId) {
-				return {
-					variant0: oSourceVariant,
-					variant2: oSourceVariant2
-				}[sId];
-			});
-			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns(oSourceVariant.controlChanges);
-
-			var oSourceVariantCopy = JSON.parse(JSON.stringify(oSourceVariant));
-			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
-			oSourceVariantCopy.content.fileName = "newVariant";
-			oSourceVariantCopy.content.layer = Layer.PUBLIC;
-			oSourceVariantCopy.content.variantReference = "variantMgmtId1";
-			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
-
-			assert.deepEqual(oDuplicateVariant.content, oSourceVariantCopy.content, "then the duplicate variant returned with customized properties");
-			assert.equal(oDuplicateVariant.controlChanges.length, 2, "then both changes duplicated");
-			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
-			assert.equal(oDuplicateVariant.controlChanges[1].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
-			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oChange0.getDefinition().fileName, "then first duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
-			assert.equal(oDuplicateVariant.controlChanges[1].getDefinition().support.sourceChangeFileName, oChange1.getDefinition().fileName, "then second duplicate variant change's support.sourceChangeFileName property set to source change's fileName");
-			assert.equal(oDuplicateVariant.content.variantReference, oSourceVariantCopy.content.variantReference, "then the duplicate variant references to the reference of the source variant");
-		});
-
 		QUnit.test("when calling '_ensureStandardVariantExists'", function(assert) {
-			var oVariantsMapContent = {
-				variants: [{
-					content: {
-						fileName: "mockVariantManagement",
-						fileType: "ctrl_variant",
-						variantManagementReference: "mockVariantManagement",
-						variantReference: "",
-						content: {
-							title: "Standard",
-							favorite: true,
-							visible: true,
-							executeOnSelect: false
-						},
-						contexts: {},
-						support: {
-							user: VariantUtil.DEFAULT_AUTHOR
-						}
-					},
-					controlChanges: [],
-					variantChanges: {}
+			var oExpectedProperties = {
+				mockVariantManagement: {
+					defaultVariant: "mockVariantManagement",
+					variants: [{
+						instance: "variant",
+						controlChanges: [],
+						variantChanges: {}
+					}],
+					variantManagementChanges: {}
 				}
-				],
-				defaultVariant: "mockVariantManagement",
-				variantManagementChanges: {}
+			};
+			var oExpectedVariant = {
+				id: "mockVariantManagement",
+				reference: "MyComponent",
+				user: VariantUtil.DEFAULT_AUTHOR,
+				variantManagementReference: "mockVariantManagement",
+				variantName: oResourceBundle.getText("STANDARD_VARIANT_TITLE")
 			};
 
 			var oVariantModelResponse = {
@@ -1431,6 +930,8 @@ sap.ui.define([
 				}]
 			};
 
+			var oAddFakeVariantStub = sandbox.stub(VariantManagementState, "addFakeStandardVariant");
+			var oCreateVariantStub = sandbox.stub(FlexObjectFactory, "createFlVariant").returns("variant");
 			this.oModel.setData({});
 			var oVariantsMap = {};
 			FlexState.getVariantsState.restore();
@@ -1438,40 +939,24 @@ sap.ui.define([
 			this.oModel._ensureStandardVariantExists("mockVariantManagement");
 
 			assert.deepEqual(this.oModel.oData["mockVariantManagement"], oVariantModelResponse, "then standard variant entry created for variant model");
-			assert.deepEqual(oVariantsMap["mockVariantManagement"], oVariantsMapContent, "then standard variant entry created for variants map");
+			assert.strictEqual(oAddFakeVariantStub.callCount, 1, "a variant was added");
+			assert.deepEqual(oAddFakeVariantStub.firstCall.args[2], oExpectedProperties, "the standard variant was added correctly");
+			assert.strictEqual(oCreateVariantStub.callCount, 1, "a variant was created");
+			assert.deepEqual(oCreateVariantStub.firstCall.args[0], oExpectedVariant, "the standard variant was created correctly");
 		});
 
 		QUnit.test("when calling 'copyVariant'", function(assert) {
 			var oAddVariantStub = sandbox.stub(VariantManagementState, "addVariantToVariantManagement").returns(3);
 			var oVariantData = {
-				content: {
+				instance: createVariant({
 					fileName: "variant0",
-					fileType: "ctrl_variant",
 					variantManagementReference: "variantMgmtId1",
 					variantReference: "",
 					reference: "Dummy.Component",
-					packageName: "$TMP",
-					content: {
-						title: "variant A"
-					},
 					layer: Layer.CUSTOMER,
-					texts: {
-						TextDemo: {
-							value: "Text for TextDemo",
-							type: "myTextType"
-						}
-					},
-					namespace: "Dummy.Component",
-					creation: "",
-					originalLanguage: "EN",
-					conditions: {},
-					contexts: {},
-					support: {
-						generator: "myFancyGenerator",
-						service: "",
-						user: ""
-					}
-				},
+					title: "Text for TextDemo",
+					author: ""
+				}),
 				controlChanges: [],
 				variantChanges: {}
 			};
@@ -1485,27 +970,15 @@ sap.ui.define([
 				generator: "myFancyGenerator"
 			};
 			return this.oModel.copyVariant(mPropertyBag).then(function(aChanges) {
-				var oVariantDefinition = aChanges[0].getDefinitionWithChanges();
-
 				assert.ok(oAddVariantStub.calledOnce, "then function to add variant to variants map was called");
-
-				//Mocking properties set inside Variant.createInitialFileContent
-				oVariantData.content.support.sapui5Version = sap.ui.version;
-				oVariantData.content.self = oVariantData.content.namespace + oVariantData.content.fileName + "." + "ctrl_variant";
-
-				assert.deepEqual(oVariantDefinition.content, oVariantData.content, "then ctrl_variant change prepared with the correct content");
-
-				// mocking "visible" and "favorite" property only required in variants map
-				oVariantDefinition.content.content.visible = true;
-				oVariantDefinition.content.content.favorite = true;
 
 				assert.ok(oAddVariantStub.calledWith({
 					reference: this.oModel.sFlexReference,
 					vmReference: "variantMgmtId1",
-					variantData: oVariantDefinition
+					variantData: oVariantData
 				}), "then function to add variant to variants map was called");
-				assert.equal(this.oModel.oData["variantMgmtId1"].variants[3].key, oVariantData.content.fileName, "then variant added to VariantModel");
-				assert.equal(aChanges[0].getId(), oVariantData.content.fileName, "then the returned variant is the duplicate variant");
+				assert.equal(this.oModel.oData["variantMgmtId1"].variants[3].key, oVariantData.instance.getId(), "then variant added to VariantModel");
+				assert.equal(aChanges[0].getId(), oVariantData.instance.getId(), "then the returned variant is the duplicate variant");
 			}.bind(this));
 		});
 
@@ -1541,20 +1014,19 @@ sap.ui.define([
 				variantManagementReference: "variantMgmtId1",
 				component: this.oModel.oAppComponent
 			};
-			return this.oModel.removeVariant(mPropertyBag)
-				.then(function() {
-					assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 4, "then one variant removed from VariantModel");
-					assert.ok(oRemoveVariantStub.calledOnce, "then function to remove variant from variants map was called");
-					assert.deepEqual(fnUpdateCurrentVariantSpy.getCall(0).args[0], {
-						variantManagementReference: mPropertyBag.variantManagementReference,
-						newVariantReference: mPropertyBag.sourceVariantReference,
-						appComponent: mPropertyBag.component
-					}, "then updateCurrentVariant() called with the correct parameters");
-					assert.ok(fnDeleteChangeStub.calledTwice, "then ChangePersistence.deleteChange called twice");
-					assert.ok(fnDeleteChangeStub.calledWith(oChangeInVariant), "then ChangePersistence.deleteChange called for change in variant");
-					assert.ok(fnDeleteChangeStub.calledWith(oVariant), "then ChangePersistence.deleteChange called for variant");
-					assert.ok(fnUpdateCurrentVariantSpy.calledBefore(oRemoveVariantStub), "then previous variant is reverted before removing the current variant");
-				}.bind(this));
+			return this.oModel.removeVariant(mPropertyBag).then(function() {
+				assert.equal(this.oModel.oData["variantMgmtId1"].variants.length, 4, "then one variant removed from VariantModel");
+				assert.ok(oRemoveVariantStub.calledOnce, "then function to remove variant from variants map was called");
+				assert.deepEqual(fnUpdateCurrentVariantSpy.getCall(0).args[0], {
+					variantManagementReference: mPropertyBag.variantManagementReference,
+					newVariantReference: mPropertyBag.sourceVariantReference,
+					appComponent: mPropertyBag.component
+				}, "then updateCurrentVariant() called with the correct parameters");
+				assert.ok(fnDeleteChangeStub.calledTwice, "then ChangePersistence.deleteChange called twice");
+				assert.ok(fnDeleteChangeStub.calledWith(oChangeInVariant), "then ChangePersistence.deleteChange called for change in variant");
+				assert.ok(fnDeleteChangeStub.calledWith(oVariant), "then ChangePersistence.deleteChange called for variant");
+				assert.ok(fnUpdateCurrentVariantSpy.calledBefore(oRemoveVariantStub), "then previous variant is reverted before removing the current variant");
+			}.bind(this));
 		});
 
 		QUnit.test("when calling 'addChange'", function(assert) {
@@ -1625,6 +1097,8 @@ sap.ui.define([
 			var oOpenManagementDialogStub = sandbox.stub(oVariantManagement, "openManagementDialog").callsFake(oVariantManagement.fireManage);
 			sandbox.stub(VariantManagementState, "setVariantData");
 			sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap");
+			var oVariantInstance = createVariant(this.oModel.getData()[sVariantManagementReference].variants[1]);
+			sandbox.stub(this.oModel, "getVariant").returns({instance: oVariantInstance});
 
 			this.oModel.setModelPropertiesForControl(sVariantManagementReference, true, oVariantManagement);
 
@@ -1636,6 +1110,9 @@ sap.ui.define([
 			return this.oModel.manageVariants(oVariantManagement, sVariantManagementReference, sLayer, sDummyClass, oFakeComponentContainerPromise).then(function(aChanges) {
 				assert.equal(aChanges.length, 4, "then 4 changes were returned since changes were made in the manage dialog");
 				aChanges.forEach(this.oModel.setVariantProperties.bind(this.oModel, sVariantManagementReference));
+				assert.strictEqual(oVariantInstance.getName(), "test", "the title was changed");
+				assert.strictEqual(oVariantInstance.getFavorite(), false, "the favorite was changed");
+				assert.strictEqual(oVariantInstance.getVisible(), false, "the visible was changed");
 				return this.oModel.manageVariants(oVariantManagement, sVariantManagementReference, sLayer).then(function(aChanges) {
 					assert.equal(aChanges.length, 0, "then no changes were returned the since no changes were made in the manage dialog");
 					assert.ok(oOpenManagementDialogStub.calledWith(true, sDummyClass, oFakeComponentContainerPromise), "then openManagementControl is called with the right parameters");
@@ -1650,6 +1127,8 @@ sap.ui.define([
 			oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
 			sandbox.stub(VariantManagementState, "setVariantData");
 			sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap");
+			var oVariantInstance = createVariant(this.oModel.getData()[sVariantManagementReference].variants[1]);
+			sandbox.stub(this.oModel, "getVariant").returns({instance: oVariantInstance});
 
 			this.oModel.getData()[sVariantManagementReference].variants[1].title = "test";
 			this.oModel.getData()[sVariantManagementReference].variants[1].favorite = false;
@@ -1666,6 +1145,9 @@ sap.ui.define([
 			aArgs[2].forEach(function(oChange) {
 				assert.ok(oChange instanceof Change);
 			});
+			assert.strictEqual(oVariantInstance.getName(), "test", "the title was changed");
+			assert.strictEqual(oVariantInstance.getFavorite(), false, "the favorite was changed");
+			assert.strictEqual(oVariantInstance.getVisible(), false, "the visible was changed");
 			oVariantManagement.destroy();
 		});
 
@@ -1732,17 +1214,15 @@ sap.ui.define([
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
 			var oCopiedVariantContent = {
-				content: {
-					title: "Personalization Test Variant",
-					variantManagementReference: sVMReference,
-					variantReference: sCopyVariantName,
-					layer: Layer.USER,
-					contexts: {
-						role: ["testRole"]
-					}
+				title: "Personalization Test Variant",
+				variantManagementReference: sVMReference,
+				variantReference: sCopyVariantName,
+				layer: Layer.USER,
+				contexts: {
+					role: ["testRole"]
 				}
 			};
-			var oCopiedVariant = new Variant(oCopiedVariantContent);
+			var oCopiedVariant = createVariant(oCopiedVariantContent);
 			var oEvent = {
 				getParameters: function() {
 					return {
@@ -1810,8 +1290,8 @@ sap.ui.define([
 					[oChange1, oChange2, oChange3].forEach(function(oDirtyChange) {
 						assert.ok(VariantManagementState.removeChangeFromVariant.calledWith({
 							change: oDirtyChange,
-							vmReference: oCopiedVariantContent.content.variantManagementReference,
-							vReference: oCopiedVariantContent.content.variantReference,
+							vmReference: oCopiedVariantContent.variantManagementReference,
+							vReference: oCopiedVariantContent.variantReference,
 							reference: this.oModel.sFlexReference
 						}), "then dirty changes were removed from the source variant");
 						assert.ok(this.oModel.oFlexController.deleteChange.calledWith(oDirtyChange, this.oComponent), "then dirty changes from source variant were deleted from the persistence");
@@ -1829,13 +1309,11 @@ sap.ui.define([
 		QUnit.test("when calling '_handleSaveEvent' on a USER variant with setDefault, executeOnSelect and public boxes checked", function(assert) {
 			var sVMReference = "variantMgmtId1";
 			var oVariantManagement = new VariantManagement(sVMReference);
-			var oCopiedVariant = new Variant({
-				content: {
-					title: "Personalization Test Variant",
-					variantManagementReference: sVMReference,
-					variantReference: "variant1",
-					layer: Layer.USER
-				}
+			var oCopiedVariant = createVariant({
+				title: "Personalization Test Variant",
+				variantManagementReference: sVMReference,
+				variantReference: "variant1",
+				layer: Layer.USER
 			});
 			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves();
 			var oCopyVariantStub = sandbox.stub(this.oModel, "copyVariant").resolves([oCopiedVariant]);
@@ -1904,17 +1382,15 @@ sap.ui.define([
 
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var oCopiedVariantContent = {
-				content: {
-					title: "Personalization Test Variant",
-					variantManagementReference: sVMReference,
-					variantReference: "variant1",
-					layer: Layer.USER,
-					contexts: {
-						role: ["testRole"]
-					}
+				title: "Personalization Test Variant",
+				variantManagementReference: sVMReference,
+				variantReference: "variant1",
+				layer: Layer.USER,
+				contexts: {
+					role: ["testRole"]
 				}
 			};
-			var oCopiedVariant = new Variant(oCopiedVariantContent);
+			var oCopiedVariant = createVariant(oCopiedVariantContent);
 			var oEvent = {
 				getParameters: function() {
 					return {
@@ -1958,8 +1434,8 @@ sap.ui.define([
 				[oChange1, oChange2, oChange3].forEach(function(oDirtyChange) {
 					assert.ok(VariantManagementState.removeChangeFromVariant.calledWith({
 						change: oDirtyChange,
-						vmReference: oCopiedVariantContent.content.variantManagementReference,
-						vReference: oCopiedVariantContent.content.variantReference,
+						vmReference: oCopiedVariantContent.variantManagementReference,
+						vReference: oCopiedVariantContent.variantReference,
 						reference: this.oModel.sFlexReference
 					}), "then dirty changes were removed from the source variant");
 					assert.ok(this.oModel.oFlexController.deleteChange.calledWith(oDirtyChange, this.oComponent), "then dirty changes from source variant were deleted from the persistence");
@@ -2097,14 +1573,12 @@ sap.ui.define([
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
 			var oCopiedVariantContent = {
-				content: {
-					title: "Key User Test Variant",
-					variantManagementReference: sVMReference,
-					variantReference: sCopyVariantName,
-					layer: Layer.CUSTOMER
-				}
+				title: "Key User Test Variant",
+				variantManagementReference: sVMReference,
+				variantReference: sCopyVariantName,
+				layer: Layer.CUSTOMER
 			};
-			var oCopiedVariant = new Variant(oCopiedVariantContent);
+			var oCopiedVariant = createVariant(oCopiedVariantContent);
 			var mParameters = {
 				overwrite: false,
 				name: "Key User Test Variant",
@@ -2164,8 +1638,8 @@ sap.ui.define([
 					[oChange1, oChange2, oChange3].forEach(function(oDirtyChange) {
 						assert.ok(VariantManagementState.removeChangeFromVariant.calledWith({
 							change: oDirtyChange,
-							vmReference: oCopiedVariantContent.content.variantManagementReference,
-							vReference: oCopiedVariantContent.content.variantReference,
+							vmReference: oCopiedVariantContent.variantManagementReference,
+							vReference: oCopiedVariantContent.variantReference,
 							reference: this.oModel.sFlexReference
 						}), "then dirty changes were removed from the source variant");
 						assert.ok(this.oModel.oFlexController.deleteChange.calledWith(oDirtyChange, this.oComponent), "then dirty changes from source variant were deleted from the persistence");
@@ -2237,6 +1711,187 @@ sap.ui.define([
 		QUnit.test("when 'getCurrentControlVariantIds' is called with no variant model data", function(assert) {
 			this.oModel.setData({});
 			assert.deepEqual(this.oModel.getCurrentControlVariantIds(), [], "then the function returns an empty array");
+		});
+	});
+
+	QUnit.module("_duplicateVariant", {
+		beforeEach: function() {
+			sandbox.stub(VariantManagementState, "fillVariantModel").returns({});
+			this.oModel = new VariantModel({}, {flexController: {_oChangePersistence: {getComponentName: function() {}}}, appComponent: {getId: function() {}}});
+
+			var oChange0 = new Change({
+				fileName: "change0",
+				selector: {id: "abc123"},
+				variantReference: "variant0",
+				layer: Layer.CUSTOMER,
+				support: {},
+				reference: "test.Component",
+				packageName: "MockPackageName"
+			});
+			var oChange1 = new Change({
+				fileName: "change1",
+				selector: {id: "abc123"},
+				variantReference: "variant0",
+				layer: Layer.USER,
+				reference: "test.Component"
+			});
+			this.oSourceVariant = {
+				instance: createVariant({
+					fileName: "variant0",
+					title: "foo",
+					variantManagementReference: "variantMgmtId1",
+					variantReference: "variantReference",
+					contexts: {
+						role: ["testRole"]
+					},
+					layer: Layer.CUSTOMER
+				}),
+				controlChanges: [oChange0, oChange1],
+				variantChanges: {}
+			};
+
+			sandbox.stub(this.oModel, "getVariant").returns(this.oSourceVariant);
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant").returns([oChange0, oChange1]);
+			sandbox.stub(VariantManagementState, "removeUpdateStateListener");
+			sandbox.stub(VariantManagementState, "clearFakedStandardVariants");
+
+			return this.oModel.initialize();
+		},
+		afterEach: function() {
+			this.oModel.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when calling '_duplicateVariant' on the same layer", function(assert) {
+			var mPropertyBag = {
+				newVariantReference: "newVariant",
+				sourceVariantReference: "variant0",
+				variantManagementReference: "variantMgmtId1",
+				layer: Layer.CUSTOMER,
+				reference: "myReference",
+				title: "variant A Copy",
+				contexts: {
+					role: ["testRole2"]
+				}
+			};
+
+			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
+			assert.strictEqual(oDuplicateVariant.instance.getName(), "variant A Copy", "the name is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getId(), "newVariant", "the id is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getLayer(), Layer.CUSTOMER, "the layer is correct");
+			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variantReference", "the variantReference is correct");
+			assert.strictEqual(oDuplicateVariant.controlChanges.length, 2, "both changes were copied");
+			assert.strictEqual(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, "change0", "the sourceChangeFileName is correct");
+			assert.strictEqual(oDuplicateVariant.controlChanges[1].getDefinition().support.sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+		});
+
+		QUnit.test("when calling '_duplicateVariant' from USER layer referencing a CUSTOMER layer variant", function(assert) {
+			var mPropertyBag = {
+				newVariantReference: "newVariant",
+				sourceVariantReference: "variant0",
+				variantManagementReference: "variantMgmtId1",
+				layer: Layer.USER,
+				reference: "myReference",
+				title: "variant A Copy",
+				contexts: {
+					role: ["testRole2"]
+				}
+			};
+
+			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
+			assert.strictEqual(oDuplicateVariant.instance.getName(), "variant A Copy", "the name is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getId(), "newVariant", "the id is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getLayer(), Layer.USER, "the layer is correct");
+			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variant0", "the variantReference is correct");
+			assert.strictEqual(oDuplicateVariant.controlChanges.length, 1, "one change was copied");
+			assert.strictEqual(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+		});
+
+		QUnit.test("when calling '_duplicateVariant' from PUBLIC layer referencing a USER layer variant", function(assert) {
+			var mPropertyBag = {
+				newVariantReference: "newVariant",
+				sourceVariantReference: "variant0",
+				variantManagementReference: "variantMgmtId1",
+				layer: Layer.PUBLIC,
+				reference: "myReference",
+				title: "variant A Copy",
+				contexts: {
+					role: ["testRole2"]
+				}
+			};
+			this.oSourceVariant.instance.setLayer(Layer.USER);
+
+			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
+			assert.strictEqual(oDuplicateVariant.instance.getName(), "variant A Copy", "the name is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getId(), "newVariant", "the id is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getLayer(), Layer.PUBLIC, "the layer is correct");
+			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variantReference", "the variantReference is correct");
+			assert.strictEqual(oDuplicateVariant.controlChanges.length, 1, "one change was copied");
+			assert.strictEqual(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+			assert.strictEqual(oDuplicateVariant.controlChanges[0].getLayer(), Layer.PUBLIC, "the layer is correct");
+		});
+
+		QUnit.test("when calling '_duplicateVariant' from USER layer referencing a PUBLIC layer variant", function(assert) {
+			var mPropertyBag = {
+				newVariantReference: "newVariant",
+				sourceVariantReference: "variant0",
+				variantManagementReference: "variantMgmtId1",
+				layer: Layer.USER,
+				reference: "myReference",
+				title: "variant A Copy",
+				contexts: {
+					role: ["testRole2"]
+				}
+			};
+			this.oSourceVariant.instance.setLayer(Layer.PUBLIC);
+
+			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
+			assert.strictEqual(oDuplicateVariant.instance.getName(), "variant A Copy", "the name is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getId(), "newVariant", "the id is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getLayer(), Layer.USER, "the layer is correct");
+			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variant0", "the variantReference is correct");
+			assert.strictEqual(oDuplicateVariant.controlChanges.length, 1, "one change was copied");
+			assert.strictEqual(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+		});
+
+		QUnit.test("when calling '_duplicateVariant' from PUBLIC layer referencing a USER layer variant, that references a PUBLIC layer variant", function(assert) {
+			var mPropertyBag = {
+				newVariantReference: "newVariant",
+				sourceVariantReference: "variant0",
+				variantManagementReference: "variantMgmtId1",
+				layer: Layer.PUBLIC,
+				reference: "myReference",
+				title: "variant A Copy",
+				contexts: {
+					role: ["testRole2"]
+				}
+			};
+			this.oSourceVariant.instance.setLayer(Layer.USER);
+			this.oModel.getVariant.restore();
+			sandbox.stub(this.oModel, "getVariant").callsFake(function(sSourceVariantReference) {
+				if (sSourceVariantReference === "variant0") {
+					return this.oSourceVariant;
+				}
+				return {
+					instance: {
+						getLayer: function() {return Layer.PUBLIC;},
+						getVariantReference: function() {return "publicVariantReference";}
+					}
+				};
+			}.bind(this));
+
+			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
+			assert.strictEqual(oDuplicateVariant.instance.getName(), "variant A Copy", "the name is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getId(), "newVariant", "the id is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getLayer(), Layer.PUBLIC, "the layer is correct");
+			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
+			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "publicVariantReference", "the variantReference is correct");
+			assert.strictEqual(oDuplicateVariant.controlChanges.length, 1, "one change was copied");
+			assert.strictEqual(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
 		});
 	});
 
@@ -2452,7 +2107,7 @@ sap.ui.define([
 				this.oModel._oVariantSwitchPromise.then(function() {
 					// resolved when variant model is not busy anymore
 					assert.ok(fnSwitchPromiseStub.calledOnce, "then first the previous variant switch was performed completely");
-					assert.ok(this.oFlexController.saveSequenceOfDirtyChanges.getCall(0).args[0][0].getTitle(), "variant created title", "then the required variant change was saved");
+					assert.ok(this.oFlexController.saveSequenceOfDirtyChanges.getCall(0).args[0][0].getName(), "variant created title", "then the required variant change was saved");
 					done();
 				}.bind(this));
 			}.bind(this));
@@ -2539,7 +2194,7 @@ sap.ui.define([
 			Reverter.revertMultipleChanges.onSecondCall().callsFake(function() {
 				assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, true, "then 'variantBusy' property is set");
 				// on second call check if the first call was completed successfully
-				assert.ok(this.oFlexController.saveSequenceOfDirtyChanges.getCall(0).args[0][0].getTitle(), "variant created title", "then a variant change was saved before the second update call was executed");
+				assert.ok(this.oFlexController.saveSequenceOfDirtyChanges.getCall(0).args[0][0].getName(), "variant created title", "then a variant change was saved before the second update call was executed");
 				return Promise.resolve();
 			}.bind(this));
 

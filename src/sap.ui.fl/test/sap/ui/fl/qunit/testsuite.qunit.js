@@ -271,12 +271,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/util/DescriptorChangeCheck"]
 				}
 			},
-			"apply/_internal/controlVariants/URLHandler": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/controlVariants/URLHandler"]
-				}
-			},
 			"apply/_internal/connectors/ObjectStorageConnector": {
 				group: "Apply Internal",
 				coverage: {
@@ -296,6 +290,13 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"]
 				}
 			},
+
+			"apply/_internal/controlVariants/URLHandler": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/controlVariants/URLHandler"]
+				}
+			},
 			"apply/_internal/controlVariants/Utils": {
 				group: "Apply Internal",
 				coverage: {
@@ -304,6 +305,18 @@ sap.ui.define([
 				ui5: {
 					resourceroots: {
 						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+					}
+				}
+			},
+
+			"apply/_internal/flexObjects/CompVariant": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexObjects/CompVariant"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap/ui/fl/qunit": "test-resources/sap/ui/fl/qunit/"
 					}
 				}
 			},
@@ -319,6 +332,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory"]
 				}
 			},
+			"apply/_internal/flexObjects/FlVariant": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexObjects/FlVariant"]
+				}
+			},
 			"apply/_internal/flexObjects/Variant": {
 				group: "Apply Internal",
 				coverage: {
@@ -330,17 +349,7 @@ sap.ui.define([
 					}
 				}
 			},
-			"apply/_internal/flexObjects/CompVariant": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexObjects/CompVariant"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/ui/fl/qunit": "test-resources/sap/ui/fl/qunit/"
-					}
-				}
-			},
+
 			"apply/_internal/flexState/changes/DependencyHandler": {
 				group: "Apply Internal",
 				coverage: {
@@ -808,16 +817,6 @@ sap.ui.define([
 			FlexControllerFactory: {
 				coverage: {
 					only: ["sap/ui/fl/FlexControllerFactory"]
-				}
-			},
-			Variant: {
-				coverage: {
-					only: ["sap/ui/fl/Variant"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap.ui.fl.qunit": "test-resources/sap/ui/fl/qunit/"
-					}
 				}
 			},
 			"util/ManagedObjectModel": {
