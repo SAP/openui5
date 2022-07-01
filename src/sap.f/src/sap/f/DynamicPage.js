@@ -794,6 +794,7 @@ sap.ui.define([
 		}
 
 		this.setProperty("headerExpanded", false, true);
+		this._adjustStickyContent();
 		if (this._hasVisibleTitleAndHeader()) {
 			this.$titleArea.addClass(Device.system.phone && oDynamicPageTitle.getSnappedTitleOnMobile() ?
 					"sapFDynamicPageTitleSnappedTitleOnMobile" : "sapFDynamicPageTitleSnapped");
@@ -833,6 +834,7 @@ sap.ui.define([
 		}
 
 		this.setProperty("headerExpanded", true, true);
+		this._adjustStickyContent();
 		if (this._hasVisibleTitleAndHeader()) {
 			this.$titleArea.removeClass(Device.system.phone && oDynamicPageTitle.getSnappedTitleOnMobile() ?
 					"sapFDynamicPageTitleSnappedTitleOnMobile" : "sapFDynamicPageTitleSnapped");
@@ -1157,19 +1159,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._shouldStickStickyContent = function () {
-		var bIsInSnappingHeight,
-			bShouldNotStick,
-			iScrollPosition;
-
-		iScrollPosition = this._getScrollPosition();
-		bIsInSnappingHeight = iScrollPosition < this._getSnappingHeight() && !this._bPinned && !this.getPreserveHeaderStateOnScroll();
-
-		// If the scroll position is 0, the sticky content should be always in the DOM of content provider.
-		// If the scroll position is <= header height and at all we can use the snapping height (bIsInSnappingHeight)
-		// the the sticky content should be in the DOM of content provider.
-		bShouldNotStick = iScrollPosition === 0 || bIsInSnappingHeight && this._hasVisibleHeader();
-
-		return !bShouldNotStick;
+		return !this.getHeaderExpanded() || this._preserveHeaderStateOnScroll() || this._bHeaderInTitleArea;
 	};
 
 	/**
@@ -1899,8 +1889,6 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._toggleHeaderOnScroll = function () {
-		this._adjustStickyContent();
-
 		if (this._bSuppressToggleHeaderOnce) {
 			this._bSuppressToggleHeaderOnce = false;
 			return;
@@ -1923,6 +1911,7 @@ sap.ui.define([
 		} else if (!this._bPinned && this._bHeaderInTitleArea) {
 			var bDoOffsetContent = (this._getScrollPosition() >= this._getSnappingHeight()); // do not offset if the scroll is transferring between expanded-header-in-title to expanded-header-in-content
 			this._moveHeaderToContentArea(bDoOffsetContent);
+			this._adjustStickyContent();
 			this._updateTitlePositioning();
 		}
 	};
