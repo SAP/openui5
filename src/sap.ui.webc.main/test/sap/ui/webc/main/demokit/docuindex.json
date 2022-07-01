@@ -324,6 +324,15 @@
 				]
 			},
 			{
+				"id": "sap.ui.webc.main.Switch",
+				"name": "Switch",
+				"category": "Web Components",
+				"since": "1.101.0",
+				"samples": [
+					"sap.ui.webc.main.sample.Switch"
+				]
+			},
+			{
 				"id": "sap.ui.webc.main.TabContainer",
 				"name": "Tab Container",
 				"category": "Web Components",
@@ -610,6 +619,11 @@
 				"id": "sap.ui.webc.main.sample.StepInput",
 				"name": "Step Input",
 				"description": "Demonstrates the basic usage of Step Input"
+			},
+			{
+				"id": "sap.ui.webc.main.sample.Switch",
+				"name": "Switch",
+				"description": "Some say it is only a switch, I say it is one of the most stylish controls in the universe of mobile UI controls."
 			},
 			{
 				"id": "sap.ui.webc.main.sample.TabContainer",
