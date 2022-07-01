@@ -488,20 +488,7 @@ sap.ui.define([
 			this.$().find(".sapUiTableColReorderFade").removeClass("sapUiTableColReorderFade");
 
 			this._enableTextSelection();
-
-			// Perform Reordering
 			TableUtils.Column.moveColumnTo(this.getColumns()[iOldIndex], iNewIndex);
-
-			// Re-apply focus
-			if (this._mTimeouts.reApplyFocusTimerId) {
-				window.clearTimeout(this._mTimeouts.reApplyFocusTimerId);
-			}
-			var that = this;
-			this._mTimeouts.reApplyFocusTimerId = window.setTimeout(function() {
-				var iOldFocusedIndex = TableUtils.getFocusedItemInfo(that).cell;
-				TableUtils.focusItem(that, 0, oEvent);
-				TableUtils.focusItem(that, iOldFocusedIndex, oEvent);
-			}, 0);
 		},
 
 		/*
