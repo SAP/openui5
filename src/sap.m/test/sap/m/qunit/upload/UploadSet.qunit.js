@@ -483,10 +483,22 @@ sap.ui.define([
 		return {
 			items: [
 				{
-					fileName: "Alice.mp4"
+					fileName: "Alice.mp4",
+					"markers": [
+						{
+							"type": "Locked",
+							"visibility": "IconAndText"
+						}
+					]
 				},
 				{
-					fileName: "Test.mp4"
+					fileName: "Test.mp4",
+					"markers": [
+						{
+							"type": "Locked",
+							"visibility": "IconAndText"
+						}
+					]
 				},
 				{
 					fileName: "Brenda.mp4",
@@ -553,6 +565,20 @@ sap.ui.define([
 
 		oItem._getConfirmRenameButton().firePress();
 		oCore.applyChanges();
+	});
+
+	QUnit.test("Marker is not displayed when the item is in edit mode", function(assert) {
+		//Arrange
+		var oItem = this.oUploadSet.getItems()[0];
+		var oMarkerItem = oItem.getMarkers()[0];
+		oItem._getEditButton().firePress();
+		this.oUploadSet.rerender();
+		//Act
+		var oMarkerContainerItem = oMarkerItem.getDomRef().parentNode;
+		var sMarkerItemStyle = oMarkerContainerItem.getAttribute("style");
+
+		//Assert
+		assert.ok(sMarkerItemStyle.indexOf("display: none") >= 0, "Item in edit mode: Marker not displayed");
 	});
 
 	QUnit.module("Rendering of UploadSet with hideUploadButton = true", {

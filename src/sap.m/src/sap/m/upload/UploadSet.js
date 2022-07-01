@@ -539,6 +539,12 @@ sap.ui.define([
 				});
 				oInput.trigger("focus");
 			}
+			if (this._oEditedItem && this._oEditedItem.getEditState()) {
+				var oMarkerContainer = this._oEditedItem.getListItem().getDomRef().querySelector(".sapMUSObjectMarkerContainer");
+				if (oMarkerContainer) {
+					oMarkerContainer.setAttribute("style", "display: none");
+				}
+			}
 		}
 	};
 
