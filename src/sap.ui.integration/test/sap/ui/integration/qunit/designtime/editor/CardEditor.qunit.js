@@ -451,7 +451,7 @@ sap.ui.define([
 			// Simulate library location for the shared extension
 			sap.ui.loader.config({
 				paths: {
-					"sap/ui/integration/cardeditor/test/testLib": "../test-resources/sap/ui/integration/qunit/designtime/editor/testLib"
+					"sap/ui/integration/cardeditor/test/testLib": "test-resources/sap/ui/integration/qunit/designtime/editor/testLib"
 				}
 			});
 			this.oMockServer = new MockServer();
