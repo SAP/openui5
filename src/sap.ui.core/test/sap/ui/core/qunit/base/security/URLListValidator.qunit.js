@@ -68,6 +68,71 @@ sap.ui.define(["sap/base/security/URLListValidator"], function(URLListValidator)
 		assert.ok(URLListValidator.validate(/asd/), "regex is a valid URL");
 	});
 
+	QUnit.test("Invalid protocol slashes", function(assert) {
+		URLListValidator.add("http", "sap.com");
+		assert.notOk(URLListValidator.validate("http:/\\evil.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http:/\\/evil.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http:/\\//evil.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http:\\\\evil.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http:/evil.com"), "URL is not valid");
+	});
+
+	QUnit.test("Whitespaces in URL with allow-list", function(assert) {
+		URLListValidator.add("http", "sap.com");
+
+		// URL not in allow-list
+		assert.notOk(URLListValidator.validate("\rhttp://example.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("\nhttp://example.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("\thttp://example.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("\r\nhttp://example.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("\r\n\thttp://example.com"), "URL is not valid");
+
+		assert.notOk(URLListValidator.validate("ht\rtp://example.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("ht\ntp://example.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("ht\ttp://example.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("ht\r\ntp://example.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("ht\r\n\ttp://example.com"), "URL is not valid");
+
+		assert.notOk(URLListValidator.validate("http://exa\rmple.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http://exa\nmple.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http://exa\tmple.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http://exa\r\nmple.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http://exa\r\n\tmple.com"), "URL is not valid");
+
+		assert.notOk(URLListValidator.validate("http://example.com?some=ab\ncd"), "URL is not valid.");
+		assert.notOk(URLListValidator.validate("http://example.com?some=ab" + encodeURIComponent("\n") + "cd"), "URL is not valid.");
+
+		// URL is in allow-list
+		assert.notOk(URLListValidator.validate("ht\rtp://sap.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("ht\ntp://sap.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("ht\ttp://sap.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("ht\r\ntp://sap.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("ht\r\n\ttp://sap.com"), "URL is not valid");
+
+		assert.notOk(URLListValidator.validate("http://sa\rp.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http://sa\np.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http://sa\tp.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http://sa\r\np.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http://sa\r\n\tp.com"), "URL is not valid");
+
+		assert.notOk(URLListValidator.validate("http://sap.com?some=ab\ncd"), "URL is not valid.");
+		assert.ok(URLListValidator.validate("http://sap.com?some=ab" + encodeURIComponent("\n") + "cd"), "URL is valid because it is on the allow-list.");
+	});
+
+	QUnit.test("Whitespaces in URL without allow-list", function(assert) {
+		assert.notOk(URLListValidator.validate("ht\rtp://example.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("ht\ntp://example.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("ht\ttp://example.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("ht\r\ntp://example.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("ht\r\n\ttp://example.com"), "URL is not valid");
+
+		assert.notOk(URLListValidator.validate("http://exa\rmple.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http://exa\nmple.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http://exa\tmple.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http://exa\r\nmple.com"), "URL is not valid");
+		assert.notOk(URLListValidator.validate("http://exa\r\n\tmple.com"), "URL is not valid");
+	});
+
 	QUnit.test("object as url", function(assert) {
 		assert.notOk(URLListValidator.validate({}), "object is not a valid URL");
 	});
