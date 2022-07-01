@@ -539,11 +539,6 @@ function (
 	QUnit.module("DynamicPage - Rendering - Invisible Header", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPage();
-			this.oDynamicPage.getHeader().setVisible(false);
-
-			this.oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
-
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oDynamicPage.destroy();
@@ -552,7 +547,30 @@ function (
 	});
 
 	QUnit.test("DynamicPage Invisible Header", function (assert) {
+		this.oDynamicPage.getHeader().setVisible(false);
+		this.oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
+		Core.applyChanges();
 		assert.ok(this.oDynamicPage.getTitle()._getExpandButton().$().hasClass("sapUiHidden"), "Title expand button is hidden");
+	});
+
+	QUnit.test("DynamicPage update of Header visibility", function (assert) {
+		var oSpy = this.spy(this.oDynamicPage, "_updateTitlePositioning"),
+			iAllocatedSpaceForTitleHeight,
+			iActualTitleHeight;
+		this.oDynamicPage.placeAt(TESTS_DOM_CONTAINER);
+		Core.applyChanges();
+		oSpy.resetHistory();
+
+		// Act: hide the header
+		this.oDynamicPage.getHeader().setVisible(false);
+		this.oDynamicPage._onHeaderPropertyChange({current: false, name: "visible"}); // call the listener synchronously to speed up the test
+
+		// Check
+		iAllocatedSpaceForTitleHeight = parseInt(this.oDynamicPage.$().find(".sapFDynamicPageContentWrapper").css("paddingTop"));
+		iActualTitleHeight = this.oDynamicPage._getTitleAreaHeight();
+
+		assert.strictEqual(oSpy.callCount, 1, "Title positioning is updated");
+		assert.strictEqual(iAllocatedSpaceForTitleHeight, iActualTitleHeight, "Title positioning is correct");
 	});
 
 
