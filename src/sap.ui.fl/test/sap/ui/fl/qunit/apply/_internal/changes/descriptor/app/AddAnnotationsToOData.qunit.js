@@ -3,13 +3,11 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/app/AddAnnotationsToOData",
 	"sap/ui/fl/Change",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/Layer"
 ],
 function (
 	AddAnnotationsToOData,
 	Change,
-	jQuery,
 	Layer
 ) {
 	"use strict";
@@ -794,6 +792,6 @@ function (
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

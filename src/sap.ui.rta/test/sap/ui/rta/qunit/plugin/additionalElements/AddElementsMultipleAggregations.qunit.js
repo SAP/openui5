@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
 	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core"
@@ -36,7 +35,6 @@ sap.ui.define([
 	AdditionalElementsAnalyzer,
 	AddElementsDialog,
 	RTAPlugin,
-	jQuery,
 	sinon,
 	RtaQunitUtils,
 	oCore
@@ -357,6 +355,6 @@ sap.ui.define([
 
 	QUnit.done(function () {
 		oMockedAppComponent.destroy();
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

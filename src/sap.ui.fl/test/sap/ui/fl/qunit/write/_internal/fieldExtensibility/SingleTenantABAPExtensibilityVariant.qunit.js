@@ -3,12 +3,10 @@
 sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/Utils",
 	"sap/ui/fl/write/_internal/fieldExtensibility/SingleTenantABAPExtensibilityVariant",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Utils,
 	SingleTenantABAPExtensibilityVariant,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -685,6 +683,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

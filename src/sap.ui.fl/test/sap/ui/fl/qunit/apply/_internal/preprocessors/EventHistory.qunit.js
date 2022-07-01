@@ -3,9 +3,8 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/preprocessors/EventHistory",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-], function(oCore, EventHistory, jQuery, sinon) {
+], function(oCore, EventHistory, sinon) {
 	"use strict";
 
 	var oSubscribeStub;
@@ -186,6 +185,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery('#qunit-fixture').hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
 	"sap/ui/fl/write/_internal/fieldExtensibility/cap/CAPAccess",
 	"sap/ui/fl/write/api/FieldExtensibility",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/util/UriParameters",
 	"sap/ui/base/ManagedObject"
@@ -12,7 +11,6 @@ sap.ui.define([
 	ABAPAccess,
 	CAPAccess,
 	FieldExtensibility,
-	jQuery,
 	sinon,
 	UriParameters,
 	ManagedObject
@@ -96,6 +94,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

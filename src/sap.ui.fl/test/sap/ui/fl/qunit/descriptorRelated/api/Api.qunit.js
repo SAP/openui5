@@ -1,7 +1,6 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
@@ -13,7 +12,6 @@ sap.ui.define([
 	"sap/ui/fl/Cache",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	jQuery,
 	DescriptorInlineChangeFactory,
 	DescriptorVariantFactory,
 	DescriptorChangeFactory,
@@ -2452,6 +2450,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

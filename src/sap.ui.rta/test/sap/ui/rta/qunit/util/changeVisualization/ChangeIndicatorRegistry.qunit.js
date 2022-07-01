@@ -1,12 +1,10 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry"
 ],
 function(
-	jQuery,
 	sinon,
 	ChangeIndicatorRegistry
 ) {
@@ -180,6 +178,6 @@ function(
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

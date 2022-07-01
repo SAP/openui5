@@ -2,12 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Core"
 ], function(
 	sinon,
-	jQuery,
 	Utils,
 	oCore
 ) {
@@ -30,6 +28,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery('#qunit-fixture').hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

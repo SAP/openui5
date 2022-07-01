@@ -16,8 +16,7 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Manifest",
 	"sap/base/util/restricted/_omit",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FlVariant,
 	Utils,
@@ -34,8 +33,7 @@ sap.ui.define([
 	UriParameters,
 	Manifest,
 	_omit,
-	sinon,
-	jQuery
+	sinon
 ) {
 	"use strict";
 
@@ -1270,6 +1268,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery('#qunit-fixture').hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

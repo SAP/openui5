@@ -3,13 +3,11 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Control,
 	CommandFactory,
-	sinon,
-	jQuery
+	sinon
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -117,6 +115,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

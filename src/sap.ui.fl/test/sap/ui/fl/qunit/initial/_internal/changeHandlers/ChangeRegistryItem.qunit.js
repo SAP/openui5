@@ -2,13 +2,11 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/changeHandler/MoveControls",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeRegistryItem",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
-	jQuery,
 	MoveControls,
 	ChangeRegistryItem,
 	sinon
@@ -132,6 +130,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

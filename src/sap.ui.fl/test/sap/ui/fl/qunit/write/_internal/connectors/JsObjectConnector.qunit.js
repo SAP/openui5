@@ -2,12 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
-	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/fl/initial/_internal/StorageUtils"
 ], function(
 	JsObjectConnector,
-	StorageUtils,
-	jQuery
+	StorageUtils
 ) {
 	"use strict";
 
@@ -66,6 +64,6 @@ sap.ui.define([
 	parameterizedTest(JsObjectConnector.storage, "WriteConnector");
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

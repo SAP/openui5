@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/LocalResetAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/m/MessageToast",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core"
@@ -24,7 +23,6 @@ sap.ui.define([
 	LocalResetAPI,
 	JsControlTreeModifier,
 	MessageToast,
-	jQuery,
 	sinon,
 	RtaQunitUtils,
 	oCore
@@ -225,6 +223,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/base/i18n/ResourceBundle",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	AppVariantOverviewUtils,
@@ -16,7 +15,6 @@ sap.ui.define([
 	Settings,
 	AppVariantWriteAPI,
 	ResourceBundle,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -745,6 +743,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

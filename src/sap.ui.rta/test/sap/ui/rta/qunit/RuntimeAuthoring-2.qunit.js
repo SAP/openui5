@@ -705,6 +705,6 @@ sap.ui.define([
 		cleanInfoSessionStorage();
 		oComp._restoreGetAppComponentStub();
 		oComp.destroy();
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

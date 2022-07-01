@@ -1,7 +1,6 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/plugin/ControlDragDrop",
 	"sap/ui/dt/plugin/CutPaste",
 	"sap/ui/dt/OverlayRegistry",
@@ -17,7 +16,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function (
-	jQuery,
 	ControlDragDrop,
 	CutPaste,
 	OverlayRegistry,
@@ -499,6 +497,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

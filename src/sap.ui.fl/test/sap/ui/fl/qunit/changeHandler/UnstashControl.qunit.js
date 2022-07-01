@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/changeHandler/UnstashControl",
 	"sap/ui/fl/Change",
-	"sap/ui/thirdparty/jquery",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/ui/core/Core"
@@ -18,7 +17,6 @@ sap.ui.define([
 	UIComponent,
 	UnstashControlChangeHandler,
 	Change,
-	jQuery,
 	ObjectPageLayout,
 	ObjectPageSection,
 	oCore
@@ -217,6 +215,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

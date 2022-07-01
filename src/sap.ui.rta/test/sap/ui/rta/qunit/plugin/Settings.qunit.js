@@ -1,7 +1,6 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
@@ -21,7 +20,6 @@ sap.ui.define([
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core"
 ], function(
-	jQuery,
 	sinon,
 	Button,
 	VerticalLayout,
@@ -927,6 +925,6 @@ sap.ui.define([
 		oCompleteChangeContentStub.restore();
 		oMockedAppComponent._restoreGetAppComponentStub();
 		oMockedAppComponent.destroy();
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

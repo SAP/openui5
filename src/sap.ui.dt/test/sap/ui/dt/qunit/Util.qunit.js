@@ -3,12 +3,10 @@
 sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Util,
 	ManagedObject,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -389,6 +387,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

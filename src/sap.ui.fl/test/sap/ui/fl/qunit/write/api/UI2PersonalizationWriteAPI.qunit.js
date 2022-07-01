@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ManifestUtils,
@@ -18,12 +17,11 @@ sap.ui.define([
 	Manifest,
 	FlexUtils,
 	FlexState,
-	jQuery,
 	sinon
 ) {
 	"use strict";
 
-	jQuery("#qunit-fixture").hide();
+	document.getElementById("qunit-fixture").style.display = "none";
 	var sandbox = sinon.createSandbox();
 
 	function createAppComponent() {

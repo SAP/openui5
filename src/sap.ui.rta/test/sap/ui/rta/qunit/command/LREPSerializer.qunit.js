@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/LREPSerializer",
 	"sap/ui/rta/command/Stack",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
@@ -25,7 +24,6 @@ sap.ui.define([
 	CommandFactory,
 	CommandSerializer,
 	CommandStack,
-	jQuery,
 	sinon,
 	FlexTestAPI
 ) {
@@ -771,6 +769,6 @@ sap.ui.define([
 
 	QUnit.done(function() {
 		oMockedAppComponent.destroy();
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

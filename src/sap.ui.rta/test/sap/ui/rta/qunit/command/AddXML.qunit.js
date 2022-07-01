@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/CustomListItem",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -33,7 +32,6 @@ sap.ui.define([
 	List,
 	CustomListItem,
 	RtaQunitUtils,
-	jQuery,
 	sinon,
 	oCore
 ) {
@@ -289,6 +287,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

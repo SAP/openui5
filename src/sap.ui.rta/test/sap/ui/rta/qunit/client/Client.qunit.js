@@ -3,13 +3,11 @@
 sap.ui.define([
 	"sap/ui/rta/Client",
 	"sap/ui/core/postmessage/Bus",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	RTAClient,
 	PostMessageBus,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -1445,6 +1443,6 @@ function (
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

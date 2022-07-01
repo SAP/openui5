@@ -1,13 +1,11 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/write/_internal/extensionPoint/Registry",
 	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
 	"sap/m/Panel",
 	"sap/m/HBox",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	jQuery,
 	ExtensionPointRegistry,
 	ExtensionPointRegistryAPI,
 	Panel,
@@ -131,7 +129,7 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 		sandbox.restore();
 	});
 });

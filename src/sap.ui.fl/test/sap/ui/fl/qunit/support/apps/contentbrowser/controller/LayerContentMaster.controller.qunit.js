@@ -5,14 +5,12 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/routing/Router",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	LayerContentMaster,
 	Layer,
 	UIComponent,
 	Router,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -170,6 +168,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/base/Log",
 	"sap/base/util/restricted/_omit",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ChangesController,
@@ -20,12 +19,11 @@ sap.ui.define([
 	InitialUtils,
 	Log,
 	_omit,
-	jQuery,
 	sinon
 ) {
 	"use strict";
 
-	jQuery("#qunit-fixture").hide();
+	document.getElementById("qunit-fixture").style.display = "none";
 	var sandbox = sinon.createSandbox();
 
 	function simulateSystemConfig(bIsCloudSystem) {

@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/m/Input",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/FlexControllerFactory",
@@ -10,7 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/Layer"
 ], function(
 	Input,
-	jQuery,
 	Component,
 	ManifestUtils,
 	FlexControllerFactory,
@@ -91,6 +89,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -5,14 +5,12 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	merge,
 	UI2PersonalizationState,
 	FlexState,
 	LrepConnector,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -244,6 +242,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

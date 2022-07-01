@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Panel",
 	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function (
 	ElementOverlay,
@@ -15,6 +16,7 @@ sap.ui.define([
 	Button,
 	Panel,
 	Device,
+	jQuery,
 	oCore
 ) {
 	"use strict";
@@ -129,6 +131,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

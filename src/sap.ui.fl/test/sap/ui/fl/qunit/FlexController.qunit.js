@@ -25,7 +25,6 @@ sap.ui.define([
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
 	"sap/m/Label",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ChangeHandlerStorage,
@@ -52,7 +51,6 @@ sap.ui.define([
 	Manifest,
 	UIComponent,
 	Label,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -1359,6 +1357,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

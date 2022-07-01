@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	IFrame,
@@ -13,6 +14,7 @@ sap.ui.define([
 	JSONModel,
 	Core,
 	XMLView,
+	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -390,6 +392,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

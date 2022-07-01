@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/core/routing/Router",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Layers,
@@ -14,7 +13,6 @@ sap.ui.define([
 	Router,
 	UIComponent,
 	ErrorUtils,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -85,6 +83,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

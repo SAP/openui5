@@ -20,7 +20,6 @@ sap.ui.define([
 	"sap/m/Bar",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -43,7 +42,6 @@ sap.ui.define([
 	Bar,
 	ComponentContainer,
 	JSONModel,
-	jQuery,
 	sinon,
 	oCore
 ) {
@@ -914,6 +912,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

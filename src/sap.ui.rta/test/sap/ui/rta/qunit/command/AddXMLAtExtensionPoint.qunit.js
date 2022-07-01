@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
@@ -24,7 +23,6 @@ sap.ui.define([
 	ElementDesignTimeMetadata,
 	RtaQunitUtils,
 	XMLView,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -181,6 +179,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

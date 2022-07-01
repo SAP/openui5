@@ -1,7 +1,6 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/layout/form/SimpleForm",
@@ -11,7 +10,6 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/ui/core/Core"
 ], function(
-	jQuery,
 	sinon,
 	DesignTimeMetadata,
 	SimpleForm,
@@ -493,6 +491,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

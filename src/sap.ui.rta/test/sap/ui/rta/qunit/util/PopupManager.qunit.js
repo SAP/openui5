@@ -920,6 +920,6 @@ sap.ui.define([
 	QUnit.done(function() {
 		PersistenceWriteAPI.save.restore();
 		jQuery("body").removeClass("sapUiRtaMode");
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

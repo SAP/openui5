@@ -19,8 +19,7 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/m/Button",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/core/Core"
 ], function(
 	XMLView,
 	Utils,
@@ -40,8 +39,7 @@ sap.ui.define([
 	uid,
 	Button,
 	RtaQunitUtils,
-	oCore,
-	jQuery
+	oCore
 ) {
 	"use strict";
 
@@ -550,6 +548,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
-	"sap/ui/thirdparty/jquery",
 	"./TestUtils",
 	"sap/ui/core/Core"
 ], function(
@@ -13,7 +12,6 @@ sap.ui.define([
 	BindingsExtractor,
 	DesignTime,
 	DelegateMediatorAPI,
-	jQuery,
 	TestUtils,
 	oCore
 ) {
@@ -782,6 +780,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

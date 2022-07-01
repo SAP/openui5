@@ -17,8 +17,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_merge",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/core/Core"
 ], function(
 	RtaQunitUtils,
 	sinon,
@@ -36,8 +35,7 @@ sap.ui.define([
 	merge,
 	RuntimeAuthoring,
 	OverlayRegistry,
-	oCore,
-	jQuery
+	oCore
 ) {
 	"use strict";
 
@@ -1085,6 +1083,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

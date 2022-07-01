@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/CreateContainer",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core"
@@ -36,7 +35,6 @@ sap.ui.define([
 	VerticalLayout,
 	CommandFactory,
 	CreateContainerPlugin,
-	jQuery,
 	sinon,
 	RtaQunitUtils,
 	oCore
@@ -490,6 +488,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

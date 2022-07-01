@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/DragDrop",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Layer,
@@ -20,7 +19,6 @@ sap.ui.define([
 	OverlayRegistry,
 	CommandFactory,
 	DragDropPlugin,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -140,6 +138,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

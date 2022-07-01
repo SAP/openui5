@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/m/Page",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ],
@@ -24,7 +23,6 @@ function(
 	OverlayRegistry,
 	DesignTime,
 	Page,
-	jQuery,
 	sinon,
 	oCore
 ) {
@@ -280,6 +278,6 @@ function(
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

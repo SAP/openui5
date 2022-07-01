@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
@@ -15,7 +14,6 @@ sap.ui.define([
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	Layer,
-	jQuery,
 	sinon,
 	RtaQunitUtils
 ) {
@@ -48,6 +46,6 @@ sap.ui.define([
 
 	QUnit.done(function() {
 		oAppComponent.destroy();
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

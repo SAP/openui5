@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core"
@@ -28,7 +27,6 @@ sap.ui.define([
 	QUnitUtils,
 	RemovePlugin,
 	Utils,
-	jQuery,
 	sinon,
 	RtaQunitUtils,
 	oCore
@@ -486,6 +484,6 @@ sap.ui.define([
 
 	QUnit.done(function () {
 		oMockedAppComponent.destroy();
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

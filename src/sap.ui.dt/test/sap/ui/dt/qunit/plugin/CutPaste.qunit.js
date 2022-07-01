@@ -1,7 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ],
 function(
-	jQuery,
 	Button,
 	VerticalLayout,
 	DesignTime,
@@ -181,6 +179,6 @@ function(
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

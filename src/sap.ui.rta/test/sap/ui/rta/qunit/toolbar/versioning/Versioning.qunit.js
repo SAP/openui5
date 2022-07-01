@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Popover,
@@ -24,7 +23,6 @@ sap.ui.define([
 	JSONModel,
 	Adaptation,
 	Utils,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -375,6 +373,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

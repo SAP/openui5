@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ],
@@ -20,7 +19,6 @@ function (
 	Page,
 	Button,
 	OverlayRegistry,
-	jQuery,
 	sinon,
 	oCore
 ) {
@@ -136,6 +134,6 @@ function (
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

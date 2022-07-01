@@ -1,7 +1,6 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/command/CommandFactory",
@@ -16,7 +15,6 @@ sap.ui.define([
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core"
 ], function(
-	jQuery,
 	QUnitUtils,
 	DesignTime,
 	CommandFactory,
@@ -169,6 +167,6 @@ sap.ui.define([
 
 	QUnit.done(function () {
 		oMockedAppComponent.destroy();
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

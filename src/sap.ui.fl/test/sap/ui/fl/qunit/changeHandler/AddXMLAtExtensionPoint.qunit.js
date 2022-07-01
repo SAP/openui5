@@ -1,7 +1,6 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
@@ -11,7 +10,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
-	jQuery,
 	XMLHelper,
 	XMLView,
 	AddXMLAtExtensionPoint,
@@ -443,6 +441,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });
