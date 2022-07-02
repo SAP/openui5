@@ -843,7 +843,11 @@ sap.ui.define([
 			jQuery("html").removeClass("sapUiMedia-Std-Phone sapUiMedia-StdExt-Phone");
 		},
 		_createCalendar: function (oStartDate) {
+			this._iRenderingCount = 0;
 			this._oPC = createPlanningCalendar("_oPC", new SearchField(), new Button(), (oStartDate || this.o14Sep2016MidOfMonth), CalendarIntervalType.OneMonth);
+			this._oPC.addEventDelegate({
+				onAfterRendering: function() { this._iRenderingCount++; }
+			}, this);
 			this._oPC.placeAt("smallUiArea");
 			this._oPCOneMonthsRow = this._oPC.getAggregation('table').getAggregation('infoToolbar').getContent()[1];
 			oCore.applyChanges();
@@ -974,7 +978,8 @@ sap.ui.define([
 
 		this._createCalendar();
 		//assert
-		assert.strictEqual(oTimelineRendererSpy.callCount, 4, "'renderSingleDayInterval()' is called as expected"); //Two rows
+		// the rendering count calculation below can be removed after the invalidation issue during the rendering is fixed in the core
+		assert.strictEqual(oTimelineRendererSpy.callCount / this._iRenderingCount, this._oPC.getRows().length, "'renderSingleDayInterval()' is called as expected per calendar row"); //Two rows
 
 		//clean
 		oPC.destroy();

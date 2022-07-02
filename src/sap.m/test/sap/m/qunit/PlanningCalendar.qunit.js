@@ -2061,7 +2061,10 @@ sap.ui.define([
 
 	QUnit.test("when a function is set to setCustomAppointmentsSorterCallback, it's called", function (assert) {
 		//arrange
-		var oPC = createPlanningCalendar("PC5"),
+		var iRenderingCount = 0,
+			oPC = createPlanningCalendar("PC5").addEventDelegate({
+				onAfterRendering: function() { iRenderingCount++; }
+			}),
 			oSortSpy = this.spy(),
 			iAppointments = _getAppointmentsCount(oPC);
 
@@ -2071,8 +2074,10 @@ sap.ui.define([
 		Core.applyChanges();
 
 		//assert
-		assert.ok(oSortSpy.callCount > iAppointments, "the custom sort function is called, appointments: " +
-			iAppointments + ", setCustomAppointmentsSorterCallback is called " + oSortSpy.callCount + " times");
+		assert.equal(iAppointments, 5, "there are totally 5  appointments exists");
+		// for the 1st row's 4 sorted appointments the sort method is called 3 times, for the 2nd row there is only 1 appointment
+		// the rendering count calculation below can be removed after the invalidation issue during the rendering is fixed in the core
+		assert.ok(oSortSpy.callCount / iRenderingCount, 3, "setCustomAppointmentsSorterCallback is called 3 times per rendering");
 
 		//cleanup
 		oPC.destroy();
