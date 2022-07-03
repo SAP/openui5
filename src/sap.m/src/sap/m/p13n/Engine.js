@@ -30,11 +30,11 @@ sap.ui.define([
 
 	/**
 	 *
-	 * The <code>Engine</code> offers personalization capabilites by registering a control instance for modification such as:
+	 * The <code>Engine</code> offers personalization capabilities by registering a control instance for modification such as:
 	 *
 	 * <ul>
 	 * <li><code>sap.m.p13n.Popup</code> initialization</li>
-	 * <li>Storing personalization states by chosing the desired persistence layer</li>
+	 * <li>Storing personalization states by choosing the desired persistence layer</li>
 	 * <li>State appliance considering the persistence layer</li>
 	 * </ul>
 	 *
@@ -50,7 +50,7 @@ sap.ui.define([
 	 * The following persistence layers can be chosen for personalization services:
 	 *
 	 * <ul>
-	 * <li>{@link sap.m.p13n.modification.FlexModificationHandler FlexModificationHandler}: Can be used in combination with <code>sap.ui.fl.variants.VariantManagement</code> to persist state in variant using <code>sap.ui.fl</code> capabilites.</li>
+	 * <li>{@link sap.m.p13n.modification.FlexModificationHandler FlexModificationHandler}: Can be used in combination with <code>sap.ui.fl.variants.VariantManagement</code> to persist state in variant using <code>sap.ui.fl</code> capabilities.</li>
 	 * <li>{@link sap.m.p13n.modification.LocalStorageModificationHandler LocalStorageModificationHandler}: can be used to store personalization state in the local storage</li>
 	 * <li>{@link sap.m.p13n.modification.ModificationHandler ModificationHandler}: will be used by default - this handler will not persist state.</li>
 	 * </ul>
@@ -95,7 +95,7 @@ sap.ui.define([
 	 * @public
 	 * @experimental Since 1.104. Please note that the API of this control is not yet finalized!
 	 *
-	 * @param {sap.m.Control} oControl The control insance to be registered for adaptation
+	 * @param {sap.ui.core.Control} oControl The control instance to be registered for adaptation
 	 * @param {Object} oConfig The config object providing key value pairs of keys and
 	 * <code>sap.m.p13n.*Controller</code> classes.
 	 *
@@ -123,11 +123,11 @@ sap.ui.define([
 	 Engine.prototype.register = function(oControl, oConfig) {
 
 		if (!oConfig.hasOwnProperty("controller") || Object.keys(oConfig.controller).length < 1) {
-			throw new Error("Please provide atleast a configuration 'controller' containing a map of key-value pairs (key + Controller class) in order to register adaptation.");
+			throw new Error("Please provide at least a configuration 'controller' containing a map of key-value pairs (key + Controller class) in order to register adaptation.");
 		}
 
 		if (!oConfig.hasOwnProperty("helper") || !(oConfig.helper.getProperties instanceof Function)) {
-			throw new Error("Please provide atleast a configuration 'helper' containing a metadata helper instance implementing a #getProperties function.");
+			throw new Error("Please provide at least a configuration 'helper' containing a metadata helper instance implementing a #getProperties function.");
 		}
 
 		var oRegistryEntry = this._getRegistryEntry(oControl);
@@ -167,7 +167,7 @@ sap.ui.define([
 	 * @public
 	 * @experimental Since 1.104. Please note that the API of this control is not yet finalized!
 	 *
-	 * @param {sap.m.Control} oControl The registered control instance
+	 * @param {sap.ui.core.Control} oControl The registered control instance
 	 */
 	Engine.prototype.deregister = function(oControl) {
 		var oRegistryEntry = this._getRegistryEntry(oControl);
@@ -199,7 +199,7 @@ sap.ui.define([
 	 * @param {string|string[]} vPanelKeys The affected panels that should be added to the <code>sap.m.p13n.Popup</code>
 	 * @param {object} mSettings The settings object for the personalization
 	 * @param {string} [mSettings.title] The title for the <code>sap.m.p13n.Popup</code> control
-	 * @param {object} [mSettings.source] The source control to be used by the <code>sap.m.p13n.Popup</code> control (only necessary in case the mode is set to <code>ResponsivePopover</code>)
+	 * @param {sap.ui.core.Control} [mSettings.source] The source control to be used by the <code>sap.m.p13n.Popup</code> control (only necessary in case the mode is set to <code>ResponsivePopover</code>)
 	 * @param {object} [mSettings.mode] The mode to be used by the <code>sap.m.p13n.Popup</code> control
 	 * @param {object} [mSettings.contentHeight] Height configuration for the related popup container
 	 * @param {object} [mSettings.contentWidth] Width configuration for the related popup container
@@ -244,7 +244,7 @@ sap.ui.define([
 	 * @public
 	 * @experimental Since 1.104. Please note that the API of this control is not yet finalized!
 	 *
-	 * @param {sap.m.Control} oControl The according control instance.
+	 * @param {sap.ui.core.Control} oControl The according control instance.
 	 * @param {string} aKeys The key for the affected config.
 	 *
 	 * @returns {Promise} A Promise resolving once the reset is completed.
@@ -288,7 +288,7 @@ sap.ui.define([
 	 * 		ControllerKey: [{<someState>}, {...}]
 	 * }
 	 *
-	 * @param {sap.m.Control} oControl The registered control instance
+	 * @param {sap.ui.core.Control} oControl The registered control instance
 	 * @param {object} oState The state object
 	 * @param {boolean} bApplyAbsolute Defines whether the state should be an additional delta on the current control state
 	 *
@@ -385,7 +385,7 @@ sap.ui.define([
 	 * This method can be used to set the modification handling for a control instance.
 	 * @private
 	 *
-	 * @param {sap.m.Control} vControl The registered control instance
+	 * @param {sap.ui.core.Control} vControl The registered control instance
 	 * @param {sap.m.p13n.modification.ModificationHandler} oModificationHandler The modification handler object
 	 */
 	Engine.prototype._setModificationHandler = function(vControl, oModificationHandler) {
@@ -417,7 +417,7 @@ sap.ui.define([
 	 * @ui5-restricted
 	 *
 	 * @param {object} mDiffParameters A map defining the configuration to create the changes.
-	 * @param {sap.m.Control} mDiffParameters.control The control instance tht should be adapted.
+	 * @param {sap.ui.core.Control} mDiffParameters.control The control instance tht should be adapted.
 	 * @param {string} mDiffParameters.key The key used to retrieve the corresponding Controller.
 	 * @param {object} mDiffParameters.state The state which should be applied on the provided control instance
 	 * @param {boolean} [mDiffParameters.applyAbsolute] Decides whether unmentioned entries should be affected,
@@ -491,7 +491,7 @@ sap.ui.define([
 	 *
 	 * @ui5-restricted
 	 *
-	 * @param {sap.m.Control} oControl The according control instance.
+	 * @param {sap.ui.core.Control} oControl The according control instance.
 	 * @returns {Promise} A Promise resolving after all pending modifications have been applied.
 	 */
 	Engine.prototype.waitForChanges = function(oControl) {
@@ -505,7 +505,7 @@ sap.ui.define([
 	 * Determines whether the environment is suitable for the desired modification of the provided control instance.
 	 *
 	 * @ui5-restricted
-	 * @param {sap.m.Control} oControl The according control instance.
+	 * @param {sap.ui.core.Control} oControl The according control instance.
 	 *
 	 * @returns {Promise} A Promise resolving in a boolean whether the requirements for the persistence layer are met.
 	 */
@@ -526,7 +526,7 @@ sap.ui.define([
 	 * This method can be used to process an array of changes.
 	 * @ui5-restricted
 	 *
-	 * @param {sap.m.Control} vControl The registered control instance
+	 * @param {sap.ui.core.Control} vControl The registered control instance
 	 * @param {object} mChanges A map of keys and arrays, every controller will provide an array of changes
 	 * @returns {Promise} The change appliance promise.
 	 */
@@ -555,7 +555,7 @@ sap.ui.define([
 	 *
 	 * @ui5-restricted
 	 *
-	 * @param {sap.m.Control} oControl The registered control instance.
+	 * @param {sap.ui.core.Control} oControl The registered control instance.
 	 * @param {object} mPropertyBag The propertybag provided in the settings action.
 	 * @param {string} aKeys The keys to be used to display in the corresponding Controller
 	 *
@@ -612,7 +612,7 @@ sap.ui.define([
 	 *
 	 * @ui5-restricted
 	 *
-	 * @param {sap.m.Control} vControl The registered control instance.
+	 * @param {sap.ui.core.Control} vControl The registered control instance.
 	 * @param {object} mEnhanceConfig An object providing the information about the xConfig enhancement
 	 * @param {object} mEnhanceConfig.key The affected property name
 	 * @param {object} mEnhanceConfig.controlMeta Object describing which config is affected
@@ -659,7 +659,7 @@ sap.ui.define([
 	 * <b>Note:</b> This will only replace the keys to the external StateUtil representation, but not transform the state content itself.
 	 *
 	 * @private
-	 * @param {string|sap.m.Control} vControl The registered control instance
+	 * @param {string|sap.ui.core.Control} vControl The registered control instance
 	 * @param {object} oInternalState The internal state
 	 * @returns {object} The externalized state
 	 */
@@ -680,7 +680,7 @@ sap.ui.define([
 	 * <b>Note:</b> This will only replace the keys to the internal Engine registry, but not transform the state content itself.
 	 *
 	 * @private
-	 * @param {string|sap.m.Control} vControl The registered control instance
+	 * @param {string|sap.ui.core.Control} vControl The registered control instance
 	 * @param {object} oExternalState The external state
 	 * @returns {object} The internalized state
 	 */
@@ -743,7 +743,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 *
-	 * @param {sap.m.Control} vControl The registered control instance
+	 * @param {sap.ui.core.Control} vControl The registered control instance
 	 * @param {string|string[]} aKeys The key for the according Controller
 	 * @param {Object[]} aCustomInfo A custom set of propertyinfos as base to create the UI
 	 *
@@ -787,7 +787,7 @@ sap.ui.define([
 	 * This method can be used to get a controller instance.
 	 * @private
 	 *
-	 * @param {sap.m.Control} vControl The registered Control instance.
+	 * @param {sap.ui.core.Control} vControl The registered Control instance.
 	 * @param {string} sKey The key for which the controller has been registered.
 	 *
 	 * @returns {sap.m.p13n.SelectionController} The controller instance
@@ -803,7 +803,7 @@ sap.ui.define([
 	/**
 	 * Verifies the existence of a set of subcontrollers registered for a provided control instance.
 	 *
-	 * @param {sap.m.Control} vControl The registered Control instance.
+	 * @param {sap.ui.core.Control} vControl The registered Control instance.
 	 * @param {string|array} vKey A key as string or an array of keys
 	 */
 	Engine.prototype.verifyController = function(vControl, vKey) {
@@ -822,8 +822,8 @@ sap.ui.define([
 	 * Retrieves the subcontroller UI settings for a provided control instance
 	 * and the set of provided registered keys.
 	 *
-	 * @param {sap.m.Control} vControl The registered Control instance.
-	 * @param {string|array} vKeys A key as string or an array of keys
+	 * @param {sap.ui.core.Control} vControl The registered Control instance.
+	 * @param {string|string[]} vKeys A key as string or an array of keys
 	 *
 	 * @returns {object} The requested UI settings of the control instance and provided keys
 	 */
@@ -860,7 +860,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 *
-	 * @param {sap.m.Control} vControl The registered Control instance
+	 * @param {sap.ui.core.Control} vControl The registered Control instance
  	 * @returns {boolean} true if modification settings were already determined
 	 */
 	Engine.prototype.isRegisteredForModification = function(vControl) {
@@ -869,9 +869,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retruns an array of all registered controllers
+	 * Returns an array of all registered controllers
 	 *
-	 * @param {string|sap.m.Control} vControl The control id or instance
+	 * @param {string|sap.ui.core.Control} vControl The control ID or instance
 	 * @returns {array} An array of all registered controller instances
 	 */
 	Engine.prototype.getRegisteredControllers = function(vControl){
@@ -883,7 +883,7 @@ sap.ui.define([
 	 * This method can be used to get the registry entry for a control instance
 	 *
 	 * @private
-	 * @param {string|sap.m.Control} vControl The control id or instance
+	 * @param {string|sap.ui.core.Control} vControl The control id or instance
 	 *
 	 * @returns {object} The according registry entry
 	 */
@@ -900,7 +900,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.m
 	 *
-	 * @param {string|sap.m.Control} vControl The control id or instance
+	 * @param {string|sap.ui.core.Control} vControl The control id or instance
 	 * @returns {object} The according ModificationHandler.
 	 */
 	Engine.prototype.getModificationHandler = function(vControl) {
@@ -915,7 +915,7 @@ sap.ui.define([
 	 * This method can be used to create the registry entry for a control instance
 	 *
 	 * @private
-	 * @param {string|sap.m.Control} vControl The control id or instance
+	 * @param {string|sap.ui.core.Control} vControl The control id or instance
 	 * @param {object} oPreConfig A predefined configuration
 	 * @returns {object} The according registry entry
 	 */
@@ -946,10 +946,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines and registeres the ModificationHandler per control instance
+	 * Determines and registers the ModificationHandler per control instance
 	 *
 	 * @private
-	 * @param {string|sap.m.Control} vControl The control id or instance
+	 * @param {string|sap.ui.core.Control} vControl The control id or instance
 	 * @returns {object} The according modification registry entry
 	 */
 	Engine.prototype._determineModification = function (vControl) {
@@ -1051,11 +1051,11 @@ sap.ui.define([
 
 	/**
 	 * This method can be used to get a control instance by passing either the control
-	 * or the Control's Id.
+	 * or the Control's ID.
 	 *
 	 * @private
 	 *
-	 * @param {string|sap.m.Control} vControl The control id or instance
+	 * @param {string|sap.ui.core.Control} vControl The control ID or instance
 	 * @returns {sap.ui.core.Control} The control instance
 	 */
 	Engine.getControlInstance = function(vControl) {
@@ -1068,7 +1068,7 @@ sap.ui.define([
 	 * used to display a p13n UI.
 	 *
 	 * @private
-	 * @param {string|sap.m.Control} vControl The control id or instance
+	 * @param {string|sap.ui.core.Control} vControl The control ID or instance
 	 *
 	 * @returns {boolean} The according flag is the Control has an open P13n container
 	 */
@@ -1083,8 +1083,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 *
-	 * @param {sap.m.Control} vControl The registered control instance.
-	 * @param {string} sKey The registerd key to get the corresponding Controller.
+	 * @param {sap.ui.core.Control} vControl The registered control instance.
+	 * @param {string} sKey The registered key to get the corresponding Controller.
 	 */
 	Engine.prototype.setActiveP13n = function(vControl, sKey) {
 		this._getRegistryEntry(vControl).activeP13n = sKey;
@@ -1097,8 +1097,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 *
-	 * @param {sap.m.Control} vControl The registered control instance.
-	 * @param {string} sKey The registerd key to get the corresponding Controller.
+	 * @param {sap.ui.core.Control} vControl The registered control instance.
+	 * @param {string} sKey The registered key to get the corresponding Controller.
 	 * @param {sap.ui.core.Control} oP13nUI The adaptation UI displayed in the container (e.g. BasePanel derivation).
 	 */
 	Engine.prototype.validateP13n = function(vControl, sKey, oP13nUI) {
@@ -1113,7 +1113,7 @@ sap.ui.define([
 			oTheoreticalState[sControllerKey] = mControllers[sControllerKey].getCurrentState();
 		});
 
-		//Only execeute validation for controllers that support 'model2State'
+		//Only execute validation for controllers that support 'model2State'
 		if (oController && oController.model2State instanceof Function) {
 			oTheoreticalState[sKey] = oController.model2State();
 
@@ -1146,8 +1146,8 @@ sap.ui.define([
 	/**
 	 * Reads the current state of the subcontrollers and triggers a state appliance
 	 *
-	 * @param {sap.m.Control} oControl The registered Control instance.
-	 * @param {array} aKeys An array of keys
+	 * @param {sap.ui.core.Control} oControl The registered Control instance.
+	 * @param {string[]} aKeys An array of keys
 	 * @returns {Promise} A Promise resolving after all p13n changes have been calculated and processed
 	 */
 	Engine.prototype.handleP13n = function(oControl, aKeys) {

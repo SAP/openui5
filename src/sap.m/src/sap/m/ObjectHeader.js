@@ -570,7 +570,7 @@ sap.ui.define([
 
 	/**
 	 * Every time a control is inserted in the ObjectHeader, it must be monitored for size/visibility changes
-	 * @param {sap.m.Control} oControl The inserted control
+	 * @param {sap.ui.core.Control} oControl The inserted control
 	 * @private
 	 */
 	ObjectHeader.prototype._registerControlListener = function (oControl) {
@@ -581,7 +581,7 @@ sap.ui.define([
 
 	/**
 	 * Each time a control is removed from the ObjectHeader, detach listeners
-	 * @param {sap.m.Control} oControl The removed control
+	 * @param {sap.ui.core.Control} oControl The removed control
 	 * @private
 	 */
 	ObjectHeader.prototype._deregisterControlListener = function (oControl) {

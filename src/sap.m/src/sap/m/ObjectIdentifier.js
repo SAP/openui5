@@ -263,7 +263,7 @@ function(
 
 	/**
 	 * Gets the proper control for the title.
-	 * @returns {sap.m.Control} The control for the title
+	 * @returns {sap.ui.core.Control} The control for the title
 	 * @private
 	 */
 	ObjectIdentifier.prototype._getTitleControl = function() {
@@ -295,7 +295,7 @@ function(
 
 	/**
 	 * Lazy loads _textControl aggregation.
-	 * @returns {sap.m.Control} The control for the text
+	 * @returns {sap.ui.core.Control} The control for the text
 	 * @private
 	 */
 	ObjectIdentifier.prototype._getTextControl = function() {

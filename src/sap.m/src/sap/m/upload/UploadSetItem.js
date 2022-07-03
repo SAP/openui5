@@ -450,7 +450,7 @@ sap.ui.define([
 	 * Validates if the item is restricted, which means that it is restricted for the file type, media type, maximum file name length and maximum file size limit.
 	 *
 	 * @public
-         * @since 1.98
+	 * @since 1.98
 	 * @returns {boolean} <code>true</code> if item is restricted, <code>false</code> otherwise.
 	 *
 	 */
@@ -462,7 +462,7 @@ sap.ui.define([
 	 * Returns edit state of the item.
 	 *
 	 * @public
-         * @since 1.104.0
+	 * @since 1.104.0
 	 * @returns {boolean} edit state of uploadSetItem
 	 *
 	 */
@@ -709,7 +709,7 @@ sap.ui.define([
 	 * Retrieves the sap.m.ListItem from the internal sap.m.List based on the ID
 	 * @param {string} listItemId The item ID used for finding the UploadSetItem
 	 * @param {sap.m.ListItemBase[]} listItems The array of list items to search in
-	 * @returns {sap.m.UploadSetItem|null} The matching UploadSetItem or null if none is found
+	 * @returns {sap.m.upload.UploadSetItem|null} The matching UploadSetItem or null if none is found
 	 * @private
 	 */
 	UploadSetItem._findById = function(listItemId, listItems) {

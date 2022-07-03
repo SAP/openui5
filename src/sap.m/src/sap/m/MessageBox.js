@@ -514,7 +514,7 @@ sap.ui.define([
 			var i = 0;
 			var oInitialFocusControl = null;
 			if (mOptions.initialFocus) {
-				if (mOptions.initialFocus instanceof Control) {//covers sap.m.Control cases
+				if (mOptions.initialFocus instanceof Control) {//covers sap.ui.core.Control cases
 					oInitialFocusControl = mOptions.initialFocus;
 				}
 
