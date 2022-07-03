@@ -133,16 +133,16 @@ sap.ui.define([
             var aStateKeys = aState.map(function(o){return o.key;});
             var iCurrentIndex = aStateKeys.indexOf(sKey);
             var iNewIndex = oItemXConfig[sKey].position;
-            var bSetVisible = oItemXConfig[sKey].visible === true;
+            var bVisible = oItemXConfig[sKey].visible !== false;
             var bReordered = iNewIndex !== undefined;
 
-            if (bSetVisible && iCurrentIndex === -1) {
+            if (bVisible && iCurrentIndex === -1) {
                 aState.push({
                     key: sKey
                 });
             }
 
-            if (bSetVisible && bReordered && aState.length > 0) {
+            if (bVisible && bReordered && aState.length > 0) {
                 var oItem = aState.splice(iCurrentIndex, 1)[0];
                 aState.splice(iNewIndex, 0, oItem);
                 iCurrentIndex = iNewIndex;
