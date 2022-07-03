@@ -186,7 +186,7 @@ sap.ui.define([
 	/**
 	 * Adds flex content.
 	 *
-	 * @param {sap.m.Control} oControl Control to be added
+	 * @param {sap.ui.core.Control} oControl Control to be added
 	 * @protected
 	 */
 	SuggestionsPopover.prototype.addContent = function(oControl) {

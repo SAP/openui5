@@ -1096,7 +1096,7 @@ sap.ui.define([
 
 	/**
 	 * Opens the FileUploader dialog. When an UploadSetItem is provided, this method can be used to update a file with a new version.
-	 * @param {sap.m.UploadSetItem} item The UploadSetItem to update with a new version. This parameter is mandatory.
+	 * @param {sap.m.upload.UploadSetItem} item The UploadSetItem to update with a new version. This parameter is mandatory.
 	 * @returns {this} this to allow method chaining
 	 * @since 1.103.0
 	 * @public
@@ -1240,7 +1240,7 @@ sap.ui.define([
 	 * Removes the error state from the list item. Used when the name of the file has been corrected.
 	 * @private
 	 * @param {object} oContext The UploadSet instance on which an attempt was made to save a new name of an existing List item.
-	 * @param {sap.m.UploadSetItem} oItem The List item on which the event was triggered.
+	 * @param {sap.m.upload.UploadSetItem} oItem The List item on which the event was triggered.
 	 */
 	UploadSet.prototype._removeErrorStateFromItem = function(oContext, oItem) {
 		oItem.errorState = null;
@@ -1605,7 +1605,7 @@ sap.ui.define([
 	/**
 	 * Returns UploadSetItem based on the items aggregation
 	 * @param {string} uploadSetItemId used for finding the UploadSetItem
-	 * @returns {sap.m.UploadSetItem} The matching UploadSetItem
+	 * @returns {sap.m.upload.UploadSetItem} The matching UploadSetItem
 	 * @private
 	 */
 	 UploadSet.prototype._getUploadSetItemById = function(uploadSetItemId) {
@@ -1621,7 +1621,7 @@ sap.ui.define([
 	/**
 	 * Returns an array of UploadSet items based on the items aggregation
 	 * @param {sap.m.ListItemBase[]} listItems The list items used for finding the UploadSetItems
-	 * @returns {sap.m.UploadSetItem[]} The matching UploadSetItems
+	 * @returns {sap.m.upload.UploadSetItem[]} The matching UploadSetItems
 	 * @private
 	 */
 	 UploadSet.prototype._getUploadSetItemsByListItems = function(listItems) {
@@ -1656,7 +1656,7 @@ sap.ui.define([
 
 	/**
 	 * Map group for item.
-	 * @param {sap.m.UploadSetItem} item The UploadSetItem to map group
+	 * @param {sap.m.upload.UploadSetItem} item The UploadSetItem to map group
 	 * @private
 	 */
 	 UploadSet.prototype._mapGroupForItem = function(item) {
@@ -1685,7 +1685,7 @@ sap.ui.define([
 
 	/**
 	 * Fills list with uploadSet items.
-	 * @param {sap.m.UploadSetItem[]} aItems The UploadSetItems the internal list is to be filled with
+	 * @param {sap.m.upload.UploadSetItem[]} aItems The UploadSetItems the internal list is to be filled with
 	 * @private
 	 */
 	UploadSet.prototype._fillListWithUploadSetItems = function (aItems){

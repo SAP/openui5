@@ -70,7 +70,7 @@ sap.ui.define([
 	 *
 	 * Fires an {@link sap.ui.base.Event event} with the given settings and notifies all attached event handlers.
 	 *
-	 * @param {sap.m.Control} oControl The control instance
+	 * @param {sap.ui.core.Control} oControl The control instance
 	 * @param {object} oState The updated state
 	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 */

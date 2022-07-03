@@ -1203,7 +1203,7 @@ sap.ui.define([
 	/**
 	 *
 	 * @param {sap.m.Popover} oPopover the Popover to be opened
-	 * @param {sap.m.Control} oControl The control the popover will be opened "by"
+	 * @param {sap.ui.core.Control} oControl The control the popover will be opened "by"
 	 * @returns {this} <code>this</code> to allow method chaining
 	 * @private
 	 */

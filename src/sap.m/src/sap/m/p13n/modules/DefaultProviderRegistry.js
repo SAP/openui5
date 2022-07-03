@@ -59,7 +59,7 @@ sap.ui.define([
 	 *
 	 * Attaches a control to a default persistence provider held inside the DefaultProviderRegistry for the given <code>PersistenceMode</code>
 	 *
-	 * @param {sap.m.Control|string} vControl The control instance or a control id.
+	 * @param {sap.ui.core.Control|string} vControl The control instance or a control id.
 	 * @param {sap.m.enum.PersistenceMode} sPersistenceMode Desired persistence mode for the retrieved persistence provider
 	 * @returns {sap.m.p13n.PersistenceProvider} Returns a persistence provider instance, if possible
 	 */
@@ -82,7 +82,7 @@ sap.ui.define([
 	 *
 	 * Detaches a control from any existing default persistence provider
 	 *
-	 * @param {sap.m.Control|string} vControl The control instance or a control id.
+	 * @param {sap.ui.core.Control|string} vControl The control instance or a control id.
 	 */
 	DefaultProviderRegistry.prototype.detach = function (vControl) {
 		Object.keys(this._mDefaultProviders).forEach(function (sMode) {
