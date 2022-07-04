@@ -9,7 +9,7 @@ sap.ui.define([
 
 	QUnit.module("CodeSnippetProvider", {
 		beforeEach: function () {
-			// default is UIVeri5
+			// default is OPA5
 			this.initialDialect = DialectRegistry.getActiveDialect();
 			this.mSelector = {
 				id: "container-cart---homeView--searchField1"
@@ -21,6 +21,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should get UIVeri5 snippet", function (assert) {
+		DialectRegistry.setActiveDialect(Dialects.UIVERI5);
+
 		var fnDone = assert.async();
 		ControlSnippetProvider.getSnippet({
 			controlSelector: this.mSelector
@@ -37,8 +39,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should get OPA5 snippet", function (assert) {
-		DialectRegistry.setActiveDialect(Dialects.OPA5);
-
 		var fnDone = assert.async();
 		ControlSnippetProvider.getSnippet({
 			controlSelector: this.mSelector
@@ -51,6 +51,24 @@ sap.ui.define([
 			});
 		}.bind(this)).then(function (sResult) {
 			assert.ok(sResult.match("actions: new Press()"), "Should include action");
+		}).finally(fnDone);
+	});
+
+	QUnit.test("Should get WDI5 snippet", function (assert) {
+		DialectRegistry.setActiveDialect(Dialects.WDI5);
+
+		var fnDone = assert.async();
+		ControlSnippetProvider.getSnippet({
+			controlSelector: {selector: this.mSelector}
+		}).then(function (sResult) {
+			assert.ok(sResult.startsWith("await browser.asControl("), "Should include waitFor call");
+			assert.ok(!sResult.match(".press()"), "Should not include empty action");
+			return ControlSnippetProvider.getSnippet({
+				controlSelector: this.mSelector,
+				action: "PRESS"
+			});
+		}.bind(this)).then(function (sResult) {
+			assert.ok(sResult.match(".press()"), "Should include action");
 		}).finally(fnDone);
 	});
 
@@ -80,7 +98,6 @@ sap.ui.define([
 			propertyType: "string"
 		};
 
-		DialectRegistry.setActiveDialect(Dialects.OPA5);
 		ControlSnippetProvider.getSnippet({
 			controlSelector: this.mSelector,
 			assertion: mAssertion
@@ -96,6 +113,15 @@ sap.ui.define([
 		}.bind(this)).then(function (sResult) {
 			assert.ok(sResult.startsWith("expect(element(by.control("), "Should include element call");
 			assert.ok(sResult.match('expect(element.*.asControl().getProperty("text").*toEqual("value")'), "Should include assertion");
+
+			DialectRegistry.setActiveDialect(Dialects.WDI5);
+			return ControlSnippetProvider.getSnippet({
+				controlSelector: this.mSelector,
+				assertion: mAssertion
+			});
+		}.bind(this)).then(function (sResult) {
+			assert.ok(sResult.startsWith("const text = await browser.asControl({"), "Should include asControl call");
+			assert.ok(sResult.match('const text = await browser.*.getText().*.expect(text).*toEqual("value")'), "Should include assertion");
 		}).finally(fnDone);
 	});
 });

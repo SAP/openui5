@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/Descendant",
 	"sap/ui/test/actions/Press",
 	"sap/ui/testrecorder/Dialects"
-], function(Opa5, Common, testTreeAPI, AggregationLengthEquals, Properties, Ancestor, Descendant, Press, Dialects) {
+], function (Opa5, Common, testTreeAPI, AggregationLengthEquals, Properties, Ancestor, Descendant, Press, Dialects) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -162,7 +162,7 @@ sap.ui.define([
 			},
 			assertions: {
 				iShouldSeeItemCodeSnippet: function (sId, sDialect, sAction) {
-					sDialect = sDialect || Dialects.UIVERI5;
+					sDialect = sDialect || Dialects.OPA5;
 					sAction = sAction || "Highlight";
 					var mData = testTreeAPI.getMockData(sId);
 					this.waitFor({

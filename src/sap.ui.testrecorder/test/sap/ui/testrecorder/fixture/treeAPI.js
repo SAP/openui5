@@ -60,13 +60,13 @@ sap.ui.define([
 			aggregations: [{
 				aggregation: "items",
 				relativePath: "ProductItems",
-				absolutePath:  "/ProductCategories('FS')/ProductItems",
+				absolutePath: "/ProductCategories('FS')/ProductItems",
 				model: "default"
 			}]
 		}
 	};
 
-	function _asPOMethod (sSnippet, sAction, bMulti) {
+	function _asPOMethod(sSnippet, sAction, bAsync, bMulti) {
 		sSnippet = sSnippet.split("\n\n").map(function (sPart) {
 			return sPart.replace(/^/gm, "    ");
 		}).join("\n\n");
@@ -86,8 +86,11 @@ sap.ui.define([
 				default: sMethodName = "";
 			}
 		}
-
-		return sMethodName + ": function () {\n" + sSnippet + "\n}";
+		if (bAsync) {
+			return sMethodName + ": async () => {\n" + sSnippet + "\n}";
+		} else {
+			return sMethodName + ": function () {\n" + sSnippet + "\n}";
+		}
 	}
 
 	return {
@@ -96,6 +99,7 @@ sap.ui.define([
 		getMockData: function (vInput) {
 			var sRawJson;
 			var sRaw;
+			var sWDI5Raw;
 			switch (vInput) {
 				case "__button4-container-cart---welcomeView--row-1-img":
 					// completely mocked
@@ -106,17 +110,28 @@ sap.ui.define([
 						'		src: "sap-icon://action"\n' +
 						'	}';
 					sRawJson = '{\n' +
-					'	"controlType": "sap.ui.core.Icon",\n' +
-					'	"viewName": "sap.ui.demo.cart.view.Welcome",\n' +
-					'	"properties": {\n' +
-					'		"src": "sap-icon://action"\n' +
-					'	}';
+						'	"controlType": "sap.ui.core.Icon",\n' +
+						'	"viewName": "sap.ui.demo.cart.view.Welcome",\n' +
+						'	"properties": {\n' +
+						'		"src": "sap-icon://action"\n' +
+						'	}';
+					sWDI5Raw = '{\n' +
+						'        controlType: "sap.ui.core.Icon",\n' +
+						'        viewName: "sap.ui.demo.cart.view.Welcome",\n' +
+						'        properties: {\n' +
+						'                src: "sap-icon://action"\n' +
+						'        }';
 					return {
 						snippet: {
 							UIVERI5: {
 								Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));", "assert"),
 								Press: _asPOMethod("element(by.control(" + sRaw + "\n})).click();", "press"),
 								"Enter Text": _asPOMethod('element(by.control(" + sRaw + "\n})).sendKeys("test");', "enterText")
+							},
+							WDI5: {
+								Highlight: _asPOMethod("await browser.asControl({\n\tselector: " + sWDI5Raw + "\n}});", "assert", true),
+								Press: _asPOMethod("await browser.asControl({\n\tselector: " + sWDI5Raw + "\n}}).press();", "press", true),
+								"Enter Text": _asPOMethod('await browser.asControl({\n\tselector: ' + sWDI5Raw + '\n}}).enterText("test");', "enterText", true)
 							},
 							RAW: {
 								Highlight: sRawJson + "\n}",
@@ -126,11 +141,11 @@ sap.ui.define([
 							OPA5: {
 								Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});", "assert"),
 								Press: _asPOMethod("this.waitFor(" + sRaw + ",\n" +
-								"	actions: new Press()" + "\n});", "press", "press"),
+									"	actions: new Press()" + "\n});", "press", "press"),
 								"Enter Text": _asPOMethod("this.waitFor(" + sRaw + ",\n" +
-								"	actions: new EnterText({\n" +
-								'		text: "test"\n' +
-								"	})\n" + "\n});", "enterText", "enterText")
+									"	actions: new EnterText({\n" +
+									'		text: "test"\n' +
+									"	})\n" + "\n});", "enterText", "enterText")
 							}
 						},
 						properties: {
@@ -168,6 +183,12 @@ sap.ui.define([
 						'    "properties": {\n' +
 						'        "text": "Button One"\n' +
 						'    }';
+					sWDI5Raw = '{\n' +
+						'        controlType: "sap.m.Button",\n' +
+						'        viewId: "container-myComponent---main",\n' +
+						'        properties: {\n' +
+						'                text: "Button One"\n' +
+						'        }';
 					return {
 						snippet: {
 							UIVERI5: {
@@ -175,6 +196,12 @@ sap.ui.define([
 								Press: _asPOMethod("element(by.control(" + sRaw + "\n})).click();", "press"),
 								"Enter Text": _asPOMethod('element(by.control(' + sRaw + '\n})).sendKeys("test");', "enterText"),
 								Assert: _asPOMethod('expect(element(by.control(' + sRaw + '\n})).asControl().getProperty("text")).toEqual("Button One");', "assert")
+							},
+							WDI5: {
+								Highlight: _asPOMethod("await browser.asControl({\n\tselector: " + sWDI5Raw + "\n}});", "assert", true),
+								Press: _asPOMethod("await browser.asControl({\n\tselector: " + sWDI5Raw + "\n}}).press();", "press", true),
+								"Enter Text": _asPOMethod('await browser.asControl({\n\tselector: ' + sWDI5Raw + '\n}}).enterText("test");', "enterText", true),
+								Assert: _asPOMethod('const text = await browser.asControl({\n\tselector: ' + sWDI5Raw + '\n}}).getText();\nexpect(text).toEqual("Button One");', "assert", true)
 							},
 							RAW: {
 								Highlight: sRawJson + "\n}",
@@ -184,11 +211,11 @@ sap.ui.define([
 							OPA5: {
 								Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});", "assert"),
 								Press: _asPOMethod("this.waitFor(" + sRaw + ",\n" +
-								"    actions: new Press()" + "\n});", "press"),
+									"    actions: new Press()" + "\n});", "press"),
 								"Enter Text": _asPOMethod("this.waitFor(" + sRaw + ",\n" +
-								"    actions: new EnterText({\n" +
-								'        text: "test"\n' +
-								"    })" + "\n});", "enterText"),
+									"    actions: new EnterText({\n" +
+									'        text: "test"\n' +
+									"    })" + "\n});", "enterText"),
 								Assert: _asPOMethod("this.waitFor(" + sRaw + ",\n" +
 									'    success: function (vControls) {\n        var oControl = vControls[0] || vControls;' +
 									'\n        Opa5.assert.strictEqual(oControl.getText(), "Button One");\n    }' +
@@ -217,35 +244,44 @@ sap.ui.define([
 					};
 				case "Button With ID -- viewId":
 					var sRaw = '{\n' +
-					'    id: "stableId",\n' +
-					'    viewId: "container-myComponent---main"';
+						'    id: "stableId",\n' +
+						'    viewId: "container-myComponent---main"';
 					return {
 						snippet: {
 							UIVERI5: {
 								Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));", "assert")
+							},
+							OPA5: {
+								Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});", "assert")
 							}
 						}
 					};
 				case "Button With ID -- globalId":
-						var sRaw = '{\n' +
+					var sRaw = '{\n' +
 						'    id: "container-myComponent---main--stableId"';
-						return {
-							snippet: {
-								UIVERI5: {
-									Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));", "assert")
-								}
+					return {
+						snippet: {
+							UIVERI5: {
+								Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));", "assert")
+							},
+							OPA5: {
+								Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});", "assert")
 							}
-						};
+						}
+					};
 				case "Button With ID -- noPOMethod":
-							var sRaw = '{\n' +
-							'    id: "container-myComponent---main--stableId"';
-							return {
-								snippet: {
-									UIVERI5: {
-										Highlight: "element(by.control(" + sRaw + "\n}));"
-									}
-								}
-							};
+					var sRaw = '{\n' +
+						'    id: "container-myComponent---main--stableId"';
+					return {
+						snippet: {
+							UIVERI5: {
+								Highlight: "element(by.control(" + sRaw + "\n}));"
+							},
+							OPA5: {
+								Highlight: "this.waitFor(" + sRaw + "\n});"
+							}
+						}
+					};
 				case "multi":
 					return {
 						snippet: {
@@ -260,22 +296,35 @@ sap.ui.define([
 									'}));\n\n' +
 									'element(by.control({\n' +
 									'    id: "container-myComponent---main--stableId"\n' +
-									'}));', "assert", true)
+									'}));', "assert", false, true)
+							},
+							OPA5: {
+								Highlight: _asPOMethod(
+									'this.waitFor({\n' +
+									'    controlType: "sap.m.Button",\n' +
+									'    viewId: "container-myComponent---main",\n' +
+									'    properties: {\n' +
+									'        text: "Button One"\n' +
+									'    }\n' +
+									'});\n\n' +
+									'this.waitFor({\n' +
+									'    id: "container-myComponent---main--stableId"\n' +
+									'});', "assert", false, true)
 							}
 						}
 					};
-					case "DatePicker":
-						var sRaw = '{\n' +
+				case "DatePicker":
+					var sRaw = '{\n' +
 						'    id: "container-myComponent---main--DatePickerOne-RP-popover",\n' +
 						'    searchOpenDialogs: true';
-						return {
-							snippet: {
-								OPA5: {
-									Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});", "assert")
-								}
+					return {
+						snippet: {
+							OPA5: {
+								Highlight: _asPOMethod("this.waitFor(" + sRaw + "\n});", "assert")
 							}
-						};
-					default:
+						}
+					};
+				default:
 					return DEFAULT_OUTPUT;
 			}
 		}

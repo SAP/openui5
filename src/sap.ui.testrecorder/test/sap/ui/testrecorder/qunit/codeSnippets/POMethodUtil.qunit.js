@@ -9,15 +9,15 @@ sap.ui.define([
 
 	QUnit.module("POMethodUtil", {
 		beforeEach: function () {
-			// default is UIVeri5
+			// default is OPA5
 			this.initialDialect = DialectRegistry.getActiveDialect();
 			this.aSnippets = [
-				"element(by.control({\n" +
+				"this.waitFor({\n" +
 				"    id: \"container-cart---homeView--searchField1\"\n" +
-				"}));\n" +
-				"element(by.control({\n" +
+				"});\n" +
+				"this.waitFor({\n" +
 				"    id: \"container-cart---homeView--searchField2\"\n" +
-				"}));"
+				"});"
 			];
 		},
 		afterEach: function () {
@@ -58,12 +58,27 @@ sap.ui.define([
 			formatAsPOMethod: false,
 			multipleSnippets: true
 		});
-		assert.ok(sResultMulti.startsWith("element(by.control({\n"), "Should not include method call - multiple snippets");
+		assert.ok(sResultMulti.startsWith("this.waitFor({\n"), "Should not include method call - multiple snippets");
 
 		var sResultSingle = POMethodUtil.getPOMethod(this.aSnippets, {
 			formatAsPOMethod: false
 		});
-		assert.ok(sResultSingle.startsWith("element(by.control({\n"), "Should not include method call - single snippet");
+		assert.ok(sResultSingle.startsWith("this.waitFor({\n"), "Should not include method call - single snippet");
 
+	});
+
+	QUnit.test("Should return PO with async function", function (assert) {
+		DialectRegistry.setActiveDialect(Dialects.WDI5); // WDI5 requires an async function
+		var sWdi5Snippet = [
+			"await browser.asControl({\n" +
+			"    selector: {\n" +
+			"	 id: \"container-cart---homeView--searchField2\"\n" +
+			"	 }\n" +
+			"}));"
+		];
+		var sResultSingle = POMethodUtil.getPOMethod(sWdi5Snippet, {
+			formatAsPOMethod: true
+		}, true);
+		assert.ok(sResultSingle.startsWith("iAssertTheControlState: async () => {\n"), "Should return async function");
 	});
 });
