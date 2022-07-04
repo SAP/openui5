@@ -1,0 +1,54 @@
+{
+  "1.105.0": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "a5bf97e8359576317b924153b5b3260b0ace1a37",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Resolve parameters as binding"
+      },
+      {
+        "id": "a946327971b5ef0369bc2249ce164d2cce715395",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Object card has custom error message and no-data support"
+      },
+      {
+        "id": "e3b11992b4ee090932ce94841292bdecde718634",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Data path now can be bound to parameter value in the manifest",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280086499"
+          }
+        ]
+      },
+      {
+        "id": "77209d5b9da7825945d4907c4f45c9fe426d30c4",
+        "type": "FEATURE",
+        "text": " Integration cards: Add \"referenceId\" property"
+      },
+      {
+        "id": "6d4d1827791cd0501a01a0e3cc7469e95dfabe83",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Table card now has dedicated loading placeholder"
+      },
+      {
+        "id": "284b33863089afd2c96d11650a3e3944dde52a7c",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Expression binding in enabled property of header actions now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270092850"
+          }
+        ]
+      },
+      {
+        "id": "55ba4b2615cdab25ab1f486613624ddcd9cc6798",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Object card now has dedicated loading placeholder"
+      }
+    ]
+  }
+}

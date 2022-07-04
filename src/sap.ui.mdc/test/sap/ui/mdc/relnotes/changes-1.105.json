@@ -1,0 +1,29 @@
+{
+  "1.105.0": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "ef095ae7dde894ac9bd17dbe199c545f16417724",
+        "type": "FIX",
+        "text": " MDC Chart & SmartChart: Item panel field sorting",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004353342022"
+          }
+        ]
+      },
+      {
+        "id": "fd49d7955e20cc8c583697dd220b0971455f661e",
+        "type": "FIX",
+        "text": " FilterField: SearchField clear don't work",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280085536"
+          }
+        ]
+      }
+    ]
+  }
+}

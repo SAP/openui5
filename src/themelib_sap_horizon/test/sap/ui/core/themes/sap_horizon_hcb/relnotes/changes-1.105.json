@@ -1,0 +1,60 @@
+{
+  "1.105.0": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "c91e9f6073875190bd79eef672be967be71ac155",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: all pickers support two calendar types"
+      },
+      {
+        "id": "2b7100fe2b3d637108c69f8f377e1e2cf06eea9e",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Padding adjusted for Horizon theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280101796"
+          }
+        ]
+      },
+      {
+        "id": "50400ccf7426d964c09aab7377561036280307c7",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.02 and v4.14"
+      },
+      {
+        "id": "f9d3a068f29a6d5c3670b10e58ecb2834d5e7c37",
+        "type": "FEATURE",
+        "text": " 72-SemiboldDuplex font for Horizon flavors"
+      },
+      {
+        "id": "e8f3ece2af428d584095360669dbdb12129f2ae2",
+        "type": "FEATURE",
+        "text": " 72Blackfull font for Horizon flavors"
+      },
+      {
+        "id": "3ad2eabfd231a1635e0606f226e656c9867f9f8f",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Align labels on morning horizon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270106046"
+          }
+        ]
+      },
+      {
+        "id": "6e5f2021832f56bbc18b3bda000f2976cf0cee90",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Fix cutting of items in a table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280084642"
+          }
+        ]
+      }
+    ]
+  }
+}
