@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/Button",
 	"sap/m/ButtonRenderer",
+	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/library",
 	"sap/ui/Device",
@@ -21,6 +22,7 @@ sap.ui.define([
 	mobileLibrary,
 	Button,
 	ButtonRenderer,
+	Control,
 	IconPool,
 	coreLibrary,
 	Device,
@@ -1117,6 +1119,41 @@ sap.ui.define([
 		this.oLabel.setLabelFor(this.oButton);
 
 		assert.strictEqual(this.oButton._determineAccessibilityType(), ButtonAccessibilityType.Labelled);
+	});
+
+	QUnit.test("Labelled (via enhanceAccessibilityState)", function (assert) {
+		// prepare
+		var ButtonContainer = Control.extend("test.lib.ButtonContainer", {
+			metadata: {
+				aggregations: {
+					button: { type: 'sap.m.Button', multiple: false }
+				}
+			},
+			renderer: {
+				apiVersion: 2,
+				render: function(oRm, oControl) {
+					oRm.openStart("div", oControl).openEnd();
+					oRm.renderControl(oControl.getButton());
+					oRm.close("div");
+				}
+			}
+		});
+
+		ButtonContainer.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
+			mAriaProps["labelledby"] = "test";
+		};
+
+		var oContainer = new ButtonContainer({
+			button: new Button({ text: "test" })
+		});
+		oContainer.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(oContainer.getButton()._determineAccessibilityType(), ButtonAccessibilityType.Labelled);
+
+		// clean
+		oContainer.destroy();
 	});
 
 	QUnit.test("Combined (via associations)", function (assert) {
