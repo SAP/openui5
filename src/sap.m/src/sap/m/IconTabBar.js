@@ -372,10 +372,14 @@ sap.ui.define([
 	 * @return {this} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setHeaderMode = function (mode) {
+		var oIconTabHeader = this._getIconTabHeader();
+
 		// set internal property
 		this.setProperty("headerMode", mode, true);
 
-		this._getIconTabHeader().setMode(mode);
+		if (oIconTabHeader) {
+			oIconTabHeader.setMode(mode);
+		}
 
 		return this;
 	};
@@ -388,10 +392,14 @@ sap.ui.define([
 	 * @return {this} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setTabDensityMode = function (mode) {
+		var oIconTabHeader = this._getIconTabHeader();
+
 		// set internal property
 		this.setProperty("tabDensityMode", mode);
 
-		this._getIconTabHeader().setTabDensityMode(mode);
+		if (oIconTabHeader) {
+			oIconTabHeader.setTabDensityMode(mode);
+		}
 
 		return this;
 	};
@@ -405,10 +413,14 @@ sap.ui.define([
 	 * @return {this} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setHeaderBackgroundDesign = function (headerBackgroundDesign) {
+		var oIconTabHeader = this._getIconTabHeader();
+
 		// set internal property
 		this.setProperty("headerBackgroundDesign", headerBackgroundDesign, true);
 
-		this._getIconTabHeader().setBackgroundDesign(headerBackgroundDesign);
+		if (oIconTabHeader) {
+			oIconTabHeader.setBackgroundDesign(headerBackgroundDesign);
+		}
 
 		return this;
 	};
@@ -421,10 +433,14 @@ sap.ui.define([
 	 * @return {this} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setEnableTabReordering = function (value) {
+		var oIconTabHeader = this._getIconTabHeader();
+
 		// set internal property
 		this.setProperty("enableTabReordering", value, true);
 
-		this._getIconTabHeader().setEnableTabReordering(value);
+		if (oIconTabHeader) {
+			oIconTabHeader.setEnableTabReordering(value);
+		}
 
 		return this;
 	};
@@ -437,10 +453,14 @@ sap.ui.define([
 	 * @returns {this} this Reference to this in order to allow method chaining
 	 */
 	IconTabBar.prototype.setAriaTexts = function (oAriaTexts) {
+		var oIconTabHeader = this._getIconTabHeader();
+
 		// set internal property
 		this.setProperty("ariaTexts", oAriaTexts, true);
 
-		this._getIconTabHeader().setAriaTexts(oAriaTexts);
+		if (oIconTabHeader) {
+			oIconTabHeader.setAriaTexts(oAriaTexts);
+		}
 
 		return this;
 	};
@@ -448,7 +468,7 @@ sap.ui.define([
 	IconTabBar.prototype.addStyleClass = function (sClass, bSuppressRerendering) {
 		var oIconTabHeader = this._getIconTabHeader();
 
-		if (IconTabBar._CLASSES_TO_COPY.indexOf(sClass) !== -1) {
+		if (oIconTabHeader && IconTabBar._CLASSES_TO_COPY.indexOf(sClass) !== -1) {
 			oIconTabHeader.addStyleClass(sClass, true);
 		}
 
@@ -458,7 +478,7 @@ sap.ui.define([
 	IconTabBar.prototype.removeStyleClass = function (sClass, bSuppressRerendering) {
 		var oIconTabHeader = this._getIconTabHeader();
 
-		if (IconTabBar._CLASSES_TO_COPY.indexOf(sClass) !== -1) {
+		if (oIconTabHeader && IconTabBar._CLASSES_TO_COPY.indexOf(sClass) !== -1) {
 			oIconTabHeader.removeStyleClass(sClass, true);
 		}
 
@@ -586,9 +606,13 @@ sap.ui.define([
 	 * Lazy initializes the iconTabHeader aggregation.
 	 *
 	 * @private
-	 * @returns {sap.m.IconTabBar} Aggregation for the IconTabBar.
+	 * @returns {sap.m.IconTabBar|null} Aggregation for the IconTabBar.
 	 */
 	IconTabBar.prototype._getIconTabHeader = function () {
+		if (this.isDestroyed()) {
+			return null;
+		}
+
 		var oControl = this.getAggregation("_header");
 
 		if (!oControl) {
@@ -644,18 +668,15 @@ sap.ui.define([
 	 * @returns {this} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setShowSelection = function (bValue) {
-		this._getIconTabHeader().setShowSelection(bValue);
-		return this;
-	};
+		var oIconTabHeader = this._getIconTabHeader();
 
-	/**
-	 * Reflector for the internal header's showSelection property.
-	 *
-	 * @public
-	 * @returns {boolean} The current property value.
-	 */
-	IconTabBar.prototype.getShowSelection = function () {
-		return this._getIconTabHeader().getShowSelection();
+		if (oIconTabHeader) {
+			oIconTabHeader.setShowSelection(bValue);
+		}
+
+		this.setProperty("showSelection", bValue, true);
+
+		return this;
 	};
 
 	/**
@@ -666,7 +687,12 @@ sap.ui.define([
 	 * @returns {this} this Pointer for chaining.
 	 */
 	IconTabBar.prototype.setSelectedKey = function (sValue) {
-		this._getIconTabHeader().setSelectedKey(sValue);
+		var oIconTabHeader = this._getIconTabHeader();
+
+		if (oIconTabHeader) {
+			oIconTabHeader.setSelectedKey(sValue);
+		}
+
 		return this;
 	};
 
@@ -677,7 +703,13 @@ sap.ui.define([
 	 * @returns {string} The current property value.
 	 */
 	IconTabBar.prototype.getSelectedKey = function () {
-		return this._getIconTabHeader().getSelectedKey();
+		var oIconTabHeader = this._getIconTabHeader();
+
+		if (oIconTabHeader) {
+			return oIconTabHeader.getSelectedKey();
+		}
+
+		return this.getMetadata().getProperty("selectedKey").getDefaultValue();
 	};
 
 	/**
