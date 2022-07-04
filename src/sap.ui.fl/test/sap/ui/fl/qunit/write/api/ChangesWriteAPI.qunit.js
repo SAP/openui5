@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/registry/Settings",
@@ -29,6 +30,7 @@ sap.ui.define([
 	DescriptorChangeTypes,
 	Applier,
 	Reverter,
+	FlexObjectFactory,
 	ChangesController,
 	DescriptorChangeFactory,
 	Settings,
@@ -130,6 +132,19 @@ sap.ui.define([
 				.then(function (oChange) {
 					assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
 				});
+		});
+
+		QUnit.test("when create is called for a ControllerExtensionChange", function(assert) {
+			var oCreateCEStub = sandbox.stub(FlexObjectFactory, "createControllerExtensionChange").returns("foobar");
+			var mPropertyBag = {
+				changeSpecificData: {
+					changeType: "codeExt",
+					foo: "bar"
+				}
+			};
+			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), "foobar", "the function returns the result of createControllerExtensionChange");
+			assert.strictEqual(oCreateCEStub.callCount, 1, "the factory function was called");
+			assert.deepEqual(oCreateCEStub.lastCall.args[0], mPropertyBag.changeSpecificData, "the changeSpecificData were passed");
 		});
 
 		QUnit.test("when create is called with a control or selector object", function(assert) {

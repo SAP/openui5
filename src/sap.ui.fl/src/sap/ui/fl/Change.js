@@ -147,7 +147,7 @@ sap.ui.define([
 
 	Change.prototype.isValidForDependencyMap = function() {
 		//Change without id in selector should be skipped from adding dependencies process
-		return this._oDefinition.selector && this._oDefinition.selector.id;
+		return this.getSelector() && this.getSelector().id;
 	};
 
 	Change.prototype.startApplying = function() {

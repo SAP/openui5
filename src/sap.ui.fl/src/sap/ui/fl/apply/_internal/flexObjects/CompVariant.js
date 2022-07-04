@@ -176,24 +176,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the transport request.
-	 * Used by the SmartVariantManagement control.
-	 * @param {string} sRequest Transport request
-	 */
-	CompVariant.prototype.setRequest = function (sRequest) {
-		this._sRequest = sRequest;
-	};
-
-	/**
-	 * Gets the transport request.
-	 * Used by the SmartVariantManagement control.
-	 * @returns {string} Transport request
-	 */
-	CompVariant.prototype.getRequest = function () {
-		return this._sRequest;
-	};
-
-	/**
 	 * Checks if the object is a variant from smart variant management.
 	 * Used by the SmartVariantManagement control.
 	 * @returns {boolean} <code>true</code> if object is a variant

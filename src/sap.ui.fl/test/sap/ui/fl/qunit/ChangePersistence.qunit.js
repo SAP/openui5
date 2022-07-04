@@ -399,9 +399,9 @@ sap.ui.define([
 
 			return this.oChangePersistence.getChangesForComponent().then(function(changes) {
 				assert.strictEqual(changes.length, 2, "only standard UI changes were returned, smart variants were excluded");
-				assert.ok(changes[0]._oDefinition.fileType === "change", "first change has file type change");
+				assert.ok(changes[0].getFileType() === "change", "first change has file type change");
 				assert.ok(changes[0].getChangeType() === "renameGroup", "and change type renameGroup");
-				assert.ok(changes[1]._oDefinition.fileType === "change", "second change has file type change");
+				assert.ok(changes[1].getFileType() === "change", "second change has file type change");
 				assert.ok(changes[1].getChangeType() === "codeExt", "and change type codeExt");
 			});
 		});

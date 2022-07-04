@@ -84,7 +84,7 @@ sap.ui.define([
 				this.iCreateChangeCounter++;
 				this.oCreateChangeParameter = mPropertyBag.changeSpecificData;
 				return {
-					getDefinition: function () {
+					convertToFileContent: function () {
 						return {definition: "definition"};
 					}
 				};
@@ -119,20 +119,22 @@ sap.ui.define([
 					};
 				}
 			});
-			sandbox.stub(FlexUtils, "buildLrepRootNamespace");
+			sandbox.stub(FlexUtils, "buildLrepRootNamespace").returns("my/namespace/");
 			this.oRta.setFlexSettings({
 				developerMode: true,
 				scenario: "scenario"
 			});
-
 			return this.oControllerExtension.add("coding/foo.js", this.oView.getId()).then(function (oDefinition) {
 				assert.deepEqual(oDefinition, {definition: "definition"}, "the function returns the definition of the change");
-				assert.equal(this.iCreateChangeCounter, 1, "and ChangesWriteAPI.create was called once");
-				assert.equal(this.iAddChangeCounter, 1, "and PersistenceWriteAPI.add was called once");
-				assert.equal(this.oCreateChangeParameter.changeType, "codeExt", "the changeType was set correctly");
-				assert.equal(this.oCreateChangeParameter.selector.controllerName, "controllerName", "the controllerName was set correctly");
-				assert.equal(this.oCreateChangeParameter.content.codeRef, "coding/foo.js", "the codeRef was set correctly");
-				assert.equal(this.oCreateChangeParameter.moduleName, "sap/ui/rta/service/controllerExtension/changes/coding/foo", "the moduleName was set correctly");
+				assert.strictEqual(this.iCreateChangeCounter, 1, "and ChangesWriteAPI.create was called once");
+				assert.strictEqual(this.iAddChangeCounter, 1, "and PersistenceWriteAPI.add was called once");
+				assert.strictEqual(this.oCreateChangeParameter.changeType, "codeExt", "the changeType was set correctly");
+				assert.strictEqual(this.oCreateChangeParameter.controllerName, "controllerName", "the controllerName was set correctly");
+				assert.strictEqual(this.oCreateChangeParameter.codeRef, "coding/foo.js", "the codeRef was set correctly");
+				assert.strictEqual(this.oCreateChangeParameter.moduleName, "sap/ui/rta/service/controllerExtension/changes/coding/foo", "the moduleName was set correctly");
+				assert.strictEqual(this.oCreateChangeParameter.namespace, "my/namespace/changes/", "the namespace was set correctly");
+				assert.strictEqual(this.oCreateChangeParameter.reference, "sap.ui.rta.service.controllerExtension.Component", "the reference was set correctly");
+				assert.strictEqual(this.oCreateChangeParameter.generator, "rta.service.ControllerExtension", "the generator was set correctly");
 			}.bind(this));
 		});
 
