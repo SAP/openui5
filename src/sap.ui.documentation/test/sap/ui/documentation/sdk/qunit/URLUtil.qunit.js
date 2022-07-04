@@ -83,8 +83,8 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/URLUtil"], function (UR
 	});
 
 	QUnit.test("convertToNonSEOFormat apiref section", function (assert) {
-		/* assert.strictEqual(URLUtil.convertToNonSEOFormat(URLS.APIREF_SECTION.SEO_FORMAT.NON_VERSIONED_V1),
-			URLS.APIREF_SECTION.NON_SEO_FORMAT.NON_VERSIONED_V1); */
+		assert.strictEqual(URLUtil.convertToNonSEOFormat(URLS.APIREF_SECTION.SEO_FORMAT.NON_VERSIONED_V1),
+			URLS.APIREF_SECTION.NON_SEO_FORMAT.NON_VERSIONED_V1);
 
 		assert.strictEqual(URLUtil.convertToNonSEOFormat(URLS.APIREF_SECTION.SEO_FORMAT.NON_VERSIONED_V2),
 			URLS.APIREF_SECTION.NON_SEO_FORMAT.NON_VERSIONED_V2);
