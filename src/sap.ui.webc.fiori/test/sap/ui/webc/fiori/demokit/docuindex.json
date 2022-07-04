@@ -97,6 +97,15 @@
 			]
 		},
 		{
+			"id": "sap.ui.webc.fiori.ViewSettingsDialog",
+			"name": "View Settings Dialog",
+			"category": "Web Components",
+			"since": "1.101.0",
+			"samples": [
+				"sap.ui.webc.fiori.sample.ViewSettingsDialog"
+			]
+		},
+		{
 		  "id": "sap.ui.webc.fiori.Wizard",
 		  "name": "Wizard",
 		  "category": "Web Components",
@@ -139,6 +148,11 @@
 		  "id": "sap.ui.webc.fiori.sample.UploadCollection",
 		  "name": "Upload Collection",
 		  "description": "Demonstrates the basic usage of UploadCollection"
+		},
+		{
+			"id": "sap.ui.webc.fiori.sample.ViewSettingsDialog",
+			"name": "View Settings Dialog",
+			"description": "Demonstrates the basic usage of ViewSettingsDialog"
 		},
 		{
 			"id": "sap.ui.webc.fiori.sample.FlexibleColumnLayout",

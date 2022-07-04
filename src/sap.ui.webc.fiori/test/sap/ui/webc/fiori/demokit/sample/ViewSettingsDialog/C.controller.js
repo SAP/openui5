@@ -11,15 +11,24 @@ sap.ui.define([
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 		},
-		handleCancel: function(oEvent) {
+		onAfterRendering: function() {
+			this.getView().byId("vsdButton").setAccessibilityAttributes({
+				hasPopup: "true"
+			});
+		},
+		handleCancel: function() {
 			var demoToast = this.getView().byId("demoToast");
 			demoToast.setText("Event cancel fired.");
 			demoToast.show();
 		},
-		handleConfirm: function(oEvent) {
+		handleConfirm: function() {
 			var demoToast = this.getView().byId("demoToast");
 			demoToast.setText("Event confirm fired.");
 			demoToast.show();
+		},
+		handleOpenButtonClick: function() {
+			var oVSD = this.getView().byId("viewSettingsDialogExample");
+			oVSD.show();
 		}
 
 	});
