@@ -101,7 +101,7 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0];
 						var oLabel1 = oHBox1.getItems()[0].getItems()[0];
 						var oField1 = oHBox1.getItems()[1].getItems()[0];
@@ -200,7 +200,7 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0].getItems()[0];
 						var oLabel1 = oHBox1.getItems()[0].getItems()[0];
 						var oField1 = oHBox1.getItems()[1].getItems()[0];
@@ -299,7 +299,7 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0];
 						var oField1 = oHBox1.getItems()[0];
 						var oLabel1 = oHBox1.getItems()[1].getItems()[0].getItems()[0];
@@ -398,7 +398,7 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0].getItems()[0];
 						var oField1 = oHBox1.getItems()[0];
 						var oLabel1 = oHBox1.getItems()[1].getItems()[0].getItems()[0];
@@ -497,7 +497,7 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0];
 						var oLabel1 = oHBox1.getItems()[0].getItems()[0];
 						var oField1 = oHBox1.getItems()[1].getItems()[0];
@@ -612,7 +612,7 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0].getItems()[0];
 						var oLabel1 = oHBox1.getItems()[0].getItems()[0];
 						var oField1 = oHBox1.getItems()[1].getItems()[0];
@@ -727,7 +727,7 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0];
 						var oLabel1 = oHBox1.getItems()[0].getItems()[0];
 						var oField1 = oHBox1.getItems()[1].getItems()[0];
@@ -842,7 +842,7 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						var oHBox1 = oPanel.getContent()[0].getItems()[0];
 						var oLabel1 = oHBox1.getItems()[0].getItems()[0];
 						var oField1 = oHBox1.getItems()[1].getItems()[0];
@@ -988,8 +988,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubPanel = oPanel.getContent()[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
 						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(oSubPanel.getExpanded(), "Group collapsed by default");
 						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
@@ -1091,8 +1091,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubPanel = oPanel.getContent()[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
 						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(oSubPanel.getExpanded(), "Group collapsed by default");
 						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
@@ -1194,8 +1194,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubPanel = oPanel.getContent()[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
 						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(oSubPanel.getExpanded(), "Group collapsed by default");
 						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
@@ -1297,8 +1297,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubPanel = oPanel.getContent()[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
 						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(oSubPanel.getExpanded(), "Group collapsed by default");
 						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
@@ -1400,8 +1400,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubPanel = oPanel.getContent()[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
 						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(oSubPanel.getExpanded(), "Group collapsed by default");
 						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
@@ -1519,8 +1519,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubPanel = oPanel.getContent()[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
 						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(oSubPanel.getExpanded(), "Group collapsed by default");
 						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
@@ -1638,8 +1638,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubPanel = oPanel.getContent()[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
 						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(oSubPanel.getExpanded(), "Group collapsed by default");
 						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
@@ -1757,8 +1757,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubPanel = oPanel.getContent()[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
 						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(oSubPanel.getExpanded(), "Group collapsed by default");
 						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
@@ -1907,8 +1907,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubTab = oPanel.getContent()[1];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
 						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub tab");
 						assert.ok(oSubTab.getExpanded(), "Tab expanded by setting");
 						var oSubTabFilter = oSubTab.getItems()[0];
@@ -2010,8 +2010,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubTab = oPanel.getContent()[1];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
 						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub tab");
 						assert.ok(oSubTab.getExpanded(), "Tab expanded by setting");
 						var oSubTabFilter = oSubTab.getItems()[0];
@@ -2113,8 +2113,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubTab = oPanel.getContent()[1];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
 						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub tab");
 						assert.ok(oSubTab.getExpanded(), "Tab expanded by setting");
 						var oSubTabFilter = oSubTab.getItems()[0];
@@ -2216,8 +2216,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubTab = oPanel.getContent()[1];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
 						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub tab");
 						assert.ok(oSubTab.getExpanded(), "Tab expanded by setting");
 						var oSubTabFilter = oSubTab.getItems()[0];
@@ -2319,8 +2319,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubTab = oPanel.getContent()[1];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
 						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub tab");
 						assert.ok(oSubTab.getExpanded(), "Tab expanded by setting");
 						var oSubTabFilter = oSubTab.getItems()[0];
@@ -2438,8 +2438,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubTab = oPanel.getContent()[1];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
 						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub tab");
 						assert.ok(oSubTab.getExpanded(), "Tab expanded by setting");
 						var oSubTabFilter = oSubTab.getItems()[0];
@@ -2557,8 +2557,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubTab = oPanel.getContent()[1];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
 						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub tab");
 						assert.ok(oSubTab.getExpanded(), "Tab expanded by setting");
 						var oSubTabFilter = oSubTab.getItems()[0];
@@ -2676,8 +2676,8 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait(1000).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
-						var oSubTab = oPanel.getContent()[1];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
 						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub tab");
 						assert.ok(oSubTab.getExpanded(), "Tab expanded by setting");
 						var oSubTabFilter = oSubTab.getItems()[0];

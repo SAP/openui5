@@ -76,7 +76,6 @@ sap.ui.define([
 			oContent.innerHTML = "";
 			document.body.style.zIndex = "unset";
 		}
-
 	}
 	function getDefaultContextModel(oResourceBundle) {
 		return {
@@ -359,7 +358,7 @@ sap.ui.define([
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
 					var oField = this.oCardEditor.getAggregation("_formContent")[2];
-					var oGeneralPanel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oGeneralPanel = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.equal(oGeneralPanel.getHeaderText(), "General Settings", "The header text of General group is correct, the resource bundle in the card editor is loaded correctly.");
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text, the resource bundle in the user's card is loaded.");
@@ -684,7 +683,7 @@ sap.ui.define([
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					return new Promise(function (resolve) {
 						wait(100).then(function () {
-							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(iWaitTimeout).then(function () {
@@ -842,7 +841,7 @@ sap.ui.define([
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					return new Promise(function (resolve) {
 						wait(iWaitTimeout).then(function () {
-							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oCheckBox = oField1.getAggregation("_field");
 							assert.ok(!oCheckBox.getSelected(), "Selected is false");
 							oField1.attachEventOnce("validateFailed", function() {
@@ -935,7 +934,7 @@ sap.ui.define([
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					return new Promise(function (resolve) {
 						wait(iWaitTimeout).then(function () {
-							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oSwitch = oField1.getAggregation("_field");
 							assert.ok(!oSwitch.getState(), "State is false");
 							oField1.attachEventOnce("validateFailed", function() {
