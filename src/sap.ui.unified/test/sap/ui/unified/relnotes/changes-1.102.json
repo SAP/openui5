@@ -116,5 +116,21 @@
         ]
       }
     ]
+  },
+  "1.102.3": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "77974f312f8d199f4b8c5570da89c7457287984e",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust second header buttons tabindex",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280102841"
+          }
+        ]
+      }
+    ]
   }
 }

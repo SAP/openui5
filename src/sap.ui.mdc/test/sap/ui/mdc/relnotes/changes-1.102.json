@@ -40,5 +40,21 @@
         ]
       }
     ]
+  },
+  "1.102.3": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "68d7e135b361bbae37c88cf28d24e91a98649299",
+        "type": "FIX",
+        "text": " mdc.ConditionFlex: moving revert determination before the check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003913842022"
+          }
+        ]
+      }
+    ]
   }
 }

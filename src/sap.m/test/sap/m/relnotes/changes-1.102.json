@@ -905,5 +905,47 @@
         ]
       }
     ]
+  },
+  "1.102.3": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "b3e50deb979e0f63e30c1295d83b52a2e5505351",
+        "type": "FIX",
+        "text": " P13nConditionPanel now respects upperCase format on field switch",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002594982022"
+          }
+        ]
+      },
+      {
+        "id": "832015c62c234257d3546d0822d6a04f9e189e96",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: user interaction is taken with priority",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270083721"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280102763"
+          }
+        ]
+      },
+      {
+        "id": "585796be46942e2e7aa13ad28f092f07fd530879",
+        "type": "FEATURE",
+        "text": " sap.m.Link: new property 'accessibleRole' introduced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
