@@ -280,8 +280,16 @@
 												<m:Text text="{defaultValue}"/>
 												<layout:VerticalLayout width="100%">
 													<custom:JSDocText sanitizeContent="false" text="{description}"/>
-													<m:ObjectStatus text="Visibility: {parts : [{path : 'visibility'}, {path : 'allowedFor'}], formatter : 'sap.ui.documentation.sdk.model.formatter.formatVisibility'}"
-														state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
+													<layout:HorizontalLayout width="100%">
+														<m:ObjectStatus text="Visibility: {parts : [{path : 'visibility'}, {path : 'allowedFor'}], formatter : 'sap.ui.documentation.sdk.model.formatter.formatVisibility'}"
+															state="{= ${visibility} === 'public' ? 'Success' : 'Warning'}"/>
+														<core:Icon
+															src="sap-icon://sys-help-2"
+															color="#286eb4"
+															class="sapUiDocumentationVisibilityInformationIcon"
+															press="onVisibilityInformationClick">
+														</core:Icon>
+													</layout:HorizontalLayout>
 													<m:MessageStrip
 														visible="{=${deprecatedText} !== undefined}"
 														text="{deprecatedText}"
@@ -474,9 +482,16 @@
 
 												<custom:JSDocText sanitizeContent="false" text="{path: 'event>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 
-												<m:ObjectStatus text="Visibility: {parts : [{path : 'event>visibility'}, {path : 'event>allowedFor'}], formatter : 'sap.ui.documentation.sdk.model.formatter.formatVisibility'}"
+												<layout:HorizontalLayout width="100%">
+													<m:ObjectStatus text="Visibility: {parts : [{path : 'event>visibility'}, {path : 'event>allowedFor'}], formatter : 'sap.ui.documentation.sdk.model.formatter.formatVisibility'}"
 													state="{= ${event>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
-
+													<core:Icon
+														src="sap-icon://sys-help-2"
+														color="#286eb4"
+														class="sapUiDocumentationVisibilityInformationIcon"
+														press="onVisibilityInformationClick">
+													</core:Icon>
+												</layout:HorizontalLayout>
 												<template:if test="{=${event>deprecated} !== undefined}">
 													<m:MessageStrip
 														text="{event>deprecatedText}"
@@ -584,9 +599,17 @@
 													</layout:VerticalLayout>
 
 													<m:FlexBox class="sapUiTinyMarginBottom">
+														<layout:HorizontalLayout width="100%">
 														<m:ObjectStatus text="Visibility: {parts : [{path : 'method>visibility'}, {path : 'method>allowedFor'}], formatter : 'sap.ui.documentation.sdk.model.formatter.formatVisibility'}"
-														state="{= ${method>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiTinyMarginEnd"/>
+														state="{= ${method>visibility} === 'public' ? 'Success' : 'Warning'}"/>
+														<core:Icon
+															src="sap-icon://sys-help-2"
+															color="#286eb4"
+															class="sapUiDocumentationVisibilityInformationIcon sapUiTinyMarginEnd"
+															press="onVisibilityInformationClick">
+														</core:Icon>
 														<m:ObjectStatus visible="{=${method>since} !== undefined}" text="Since: {method>since}"/>
+													</layout:HorizontalLayout>
 													</m:FlexBox>
 													<template:if test="{=${method>deprecated} !== undefined}">
 														<m:MessageStrip

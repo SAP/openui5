@@ -1,0 +1,12 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:layout="sap.ui.layout">
+	<Popover
+		id="visibilityInformationPopover"
+		placement="Right"
+		showHeader="false">
+		<FormattedText class="sapUiDocumentationVisibilityInformationText"
+			htmlText="For more information about different API types click &lt;a href='topic/b0d5fe2f1b0b497cbd67cd5a1d35fa4c'&gt;here&lt;/a&gt;" />
+	</Popover>
+</core:FragmentDefinition>
