@@ -364,6 +364,11 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 	outline-color: @sapUiContentContrastFocusColor;
 }
 
+// Allows truncation of text within children of a flex item.
+.sapMColumnHeaderContent {
+	min-width: 0;
+}
+
 .sapMColumnHeaderActive:active > .sapMColumnHeaderContent {
 	color: @sapUiListActiveTextColor;
 }
@@ -386,6 +391,7 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 	align-self: center;
 	padding-left: 0.5rem;
 	padding-right: 0.5rem;
+	box-sizing: border-box;
 }
 
 [aria-sort=ascending] > .sapMColumnHeader::after {
