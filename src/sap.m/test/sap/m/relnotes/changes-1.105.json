@@ -1,0 +1,309 @@
+{
+  "1.105.0": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "563fe3a1ce62fc653847a451f51ed7f96ef9fc81",
+        "type": "FIX",
+        "text": " sap.m.StepInput: qunit test adaptation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280121694"
+          }
+        ]
+      },
+      {
+        "id": "2351e9eee34bb31f483013306cca999712f8ac22",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Fixed Illustration not loading initially",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280118931"
+          }
+        ]
+      },
+      {
+        "id": "6b4ddbc593ae4915882f092cbe2f03695168ceda",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Default boolean values can now be set in xml view",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280108611"
+          }
+        ]
+      },
+      {
+        "id": "4dae11d4b362fc3cb8979f9982707586faf7f414",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Header is no longer created after IconTabBar is destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280084554"
+          }
+        ]
+      },
+      {
+        "id": "3183b3cf7248e07a2ede274579c170dd6bf4a7e2",
+        "type": "FIX",
+        "text": " P13nConditionPanel now respects upperCase format on field switch",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002594982022"
+          }
+        ]
+      },
+      {
+        "id": "f2afbe270453d7b89ff39d19af6f55acfaab97cc",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: adjust control invalidation behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280102763"
+          }
+        ]
+      },
+      {
+        "id": "7ad927ac4f23e9bdc20cb682b66fd2f8987ccf31",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection in table with many radio buttons is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003326492022"
+          }
+        ]
+      },
+      {
+        "id": "6795429e291940ebc1c30085b7de0a95286687f9",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Fixed regression caused by recent optimization",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280115965"
+          }
+        ]
+      },
+      {
+        "id": "72fdbf4f8ab01e16801854d8543dc4796e187bb7",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker, sap.m.DateTimePicker, sap.m.TimePicker, sap.m.MaskInput: liveChange event added"
+      },
+      {
+        "id": "1edb2fb6d35759846b4c391ea42c97ed63c0b4bb",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: (Revert) Selection in table with many radio buttons is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280111803"
+          }
+        ]
+      },
+      {
+        "id": "4e5ac92bb2895cd1661f4abdf4b18f5e2d639010",
+        "type": "FEATURE",
+        "text": " sap.m.IllustratedMessage: Height responsiveness implemented"
+      },
+      {
+        "id": "c26a9247b94bce5005a95032235dac04347482c8",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: adjust aria attributes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270064000"
+          }
+        ]
+      },
+      {
+        "id": "50400ccf7426d964c09aab7377561036280307c7",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.02 and v4.14"
+      },
+      {
+        "id": "3f071ef7c174e18290eb2c015f1cfde5fa823f2f",
+        "type": "FIX",
+        "text": " sap.m.Bar: fixed middle content width"
+      },
+      {
+        "id": "74d59aa477973d72dd024eb9ee6e6d64b9a5dd12",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection in table with many radio buttons is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003326492022"
+          }
+        ]
+      },
+      {
+        "id": "a3ca1a2fa72e8d3957a346292bf0f831b7a0dab5",
+        "type": "FEATURE",
+        "text": " sap.m.Link: new property 'accessibleRole' introduced"
+      },
+      {
+        "id": "416a1f31b2a839f2885c39d98d373aac6e22c4ce",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Button icon width in Popover fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280088353"
+          }
+        ]
+      },
+      {
+        "id": "4eb4942b3768768e29978bf626073b07264e0110",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: added missing label references in Demokit samples",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270013286"
+          }
+        ]
+      },
+      {
+        "id": "0bfb3523d37c28141c1f84bb0a93d1828dda7973",
+        "type": "FIX",
+        "text": " sap.m.StepInput: added missing label references in Demokit samples",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270013286"
+          }
+        ]
+      },
+      {
+        "id": "fdd524371bdc962b4c90be3022435a7885004f9e",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: added missing label references in Demokit samples",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270013286"
+          }
+        ]
+      },
+      {
+        "id": "040b8420a9685188499cc51c8c756ab56a817e0a",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Initial focus is correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280102376"
+          }
+        ]
+      },
+      {
+        "id": "dbb7d290cf020a59bcc1bdfed2097548fb43e128",
+        "type": "FIX",
+        "text": " sap.m.Popover: Prevent closing of Popover after lazy loading content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270033712"
+          }
+        ]
+      },
+      {
+        "id": "191f950015533861418a5fb2b9ef327715d45ccd",
+        "type": "FIX",
+        "text": " sap.m.Input: Keep typeaheaded text on item navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280088528"
+          }
+        ]
+      },
+      {
+        "id": "0fde5cb025aadd6a773cfca40b92818129244dcb",
+        "type": "FEATURE",
+        "text": " Edit state of UploadSetItems and handling the renaming or cancellation of operations is now exposed"
+      },
+      {
+        "id": "3050332d4c0965f68c75d16b479303a3a4b7654e",
+        "type": "FIX",
+        "text": " sap.m.Bar: now resizing occurs whenever there is middleContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280083747"
+          }
+        ]
+      },
+      {
+        "id": "e0b3db5dff3d80b97a34f497b5f8574ab2a0b98f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: selectedKey property is now correctly updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280098933"
+          }
+        ]
+      },
+      {
+        "id": "e6fc78850429dfac1cf34053b61bc3cd5f7140ce",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: value help now opens on tablet",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280097708"
+          }
+        ]
+      },
+      {
+        "id": "b31dde8f95ff1ecd1f54793339ac14d5bf482783",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: DateTimeRangeSelection now works with timezone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280090355"
+          }
+        ]
+      },
+      {
+        "id": "ebabc98db639665db3d322918466e21fe433d739",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: fixed word wrapping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270100806"
+          }
+        ]
+      },
+      {
+        "id": "b21550ef007b60ca058fad5d82878c3302dbf581",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust type announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180399466"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270100219"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280073378"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "1.105.0": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "77241effc7a3089029384b6aba3aab4b892e2df1",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Generic section label restricted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2240323326"
+          }
+        ]
+      },
+      {
+        "id": "45e02d8f85476b76da89c7417f4f53de3f55baae",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageState: Unstable test fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280096626"
+          }
+        ]
+      },
+      {
+        "id": "54d6ce22b590320acf6e8f120a8a843c6401bcc6",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Deregester title-area resize listener on exit"
+      }
+    ]
+  }
+}

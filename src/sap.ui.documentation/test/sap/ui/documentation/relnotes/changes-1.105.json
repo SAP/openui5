@@ -1,0 +1,23 @@
+{
+  "1.105.0": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "1b8e2e27ada446ed017c626f7e2ab42f16302605",
+        "type": "FEATURE",
+        "text": " Demo Kit: SAP Horizon theme applied"
+      },
+      {
+        "id": "2e5438d4d0bf55e4b396e64b851e1ed509bca669",
+        "type": "FIX",
+        "text": " Demo Kit: Sample open in new tab fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280097317"
+          }
+        ]
+      }
+    ]
+  }
+}
