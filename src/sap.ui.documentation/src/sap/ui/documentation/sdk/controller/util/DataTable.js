@@ -371,14 +371,19 @@ sap.ui.define([
 					oOption = null;
 				}
 
-				if (oOption && oOption.length > 0) {
+				if (oOption && oOption.is("p")) {
+					var sText = oOption.text();
+					if (aOptions.indexOf(sText) < 0) {
+						aOptions.push(sText);
+					}
+				} else if (oOption && oOption.length > 0) {
 					oOption.find('li').each(function (i, sOption) {
 						if (aOptions.indexOf(sOption.textContent) < 0) {
 							aOptions.push(sOption.textContent);
 						}
 					});
 				} else {
-					aOptions.push(sOption);
+					sOption && aOptions.push(sOption);
 				}
 
 			});
