@@ -494,7 +494,7 @@ sap.ui.define([
 		}
 
 		assert.ok(oException, "exception fired");
-		assert.equal(oException && oException.message, "Enter a date after 01.01.2000", "Pattern of original date used in message");
+		assert.ok(oException && oException.message.startsWith("Enter a date after 01.01.2000"), "Pattern of original date used in message");
 		assert.ok(oValueType.validateValue.calledWith(new Date(1900, 0, 1)), "validateValue of ValueType called with currentValue");
 		assert.ok(oOriginalType.validateValue.calledWith(new Date(1900, 0, 1)), "validateValue of originalDateType called with currentValue");
 
