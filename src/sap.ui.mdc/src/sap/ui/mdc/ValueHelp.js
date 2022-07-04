@@ -556,7 +556,7 @@ sap.ui.define([
 
 	/**
 	 * Calls initialization of the <code>ValueHelp</code> element before the value help is really opened.
-	 * This is called in Typeahead on first letter before the value help is opened with a delay. So the
+	 * This is called during type-ahead on first letter before the value help is opened with a delay. This way the
 	 * content can be determined in the delegate coding early.
 	 *
 	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
@@ -714,9 +714,9 @@ sap.ui.define([
 	 * @param {any} oConfig.value Value as entered by user
 	 * @param {any} [oConfig.parsedValue] Value parsed by type to fit the data type of the key
 	 * @param {object} [oConfig.context] Contextual information provided by condition payload or inParameters/outParameters. This is only filled if the description needs to be determined for an existing condition.
-	 * @param {object} [oConfig.context.inParameter] inParameters of the current condition
-	 * @param {object} [oConfig.context.ouParameter] outParameters of the current condition
-	 * @param {object} [oConfig.context.payload] payload of the current condition
+	 * @param {object} [oConfig.context.inParameter] In parameters of the current condition
+	 * @param {object} [oConfig.context.ouParameter] Out parameters of the current condition
+	 * @param {object} [oConfig.context.payload] Payload of the current condition
 	 * @param {sap.ui.model.Context} [oConfig.bindingContext] <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
 	 * @param {boolean} [oConfig.checkKeyFirst] If set, the value help checks first if the value fits a key // TODO: not longer needed?
 	 * @param {boolean} oConfig.checkKey If set, the value help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
