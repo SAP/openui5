@@ -16,6 +16,12 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/URLUtil"], function (UR
 					"VERSIONED": BASE_URL + "1.71.0/topic/99ac68a5b1c3416ab5c84c99fefa250d"
 				}
 			},
+			"DOCUMENTATION_SECTION_LEGACY_FORMAT": {
+				"SEO_FORMAT": {
+					"NON_VERSIONED": BASE_URL + "docs/guide/99ac68a5b1c3416ab5c84c99fefa250d.html",
+					"VERSIONED": BASE_URL + "1.71.0/docs/guide/99ac68a5b1c3416ab5c84c99fefa250d.html"
+				}
+			},
 			"APIREF_SECTION": {
 				"NON_SEO_FORMAT": {
 					"NON_VERSIONED_V1": BASE_URL  + "#/api/sap.ui.core.routing.Targets/methods/display",
@@ -32,6 +38,8 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/URLUtil"], function (UR
 	QUnit.test("parseVersion", function (assert) {
 		assert.strictEqual(URLUtil.parseVersion(URLS.DOCUMENTATION_SECTION.NON_SEO_FORMAT.VERSIONED), "1.71.0");
 		assert.strictEqual(URLUtil.parseVersion(URLS.DOCUMENTATION_SECTION.SEO_FORMAT.VERSIONED), "1.71.0");
+		assert.strictEqual(URLUtil.parseVersion(URLS.DOCUMENTATION_SECTION_LEGACY_FORMAT.SEO_FORMAT.VERSIONED), "1.71.0");
+		assert.strictEqual(URLUtil.parseVersion(URLS.DOCUMENTATION_SECTION_LEGACY_FORMAT.SEO_FORMAT.NON_VERSIONED), undefined);
 	});
 
 	QUnit.test("removeVersion", function (assert) {
