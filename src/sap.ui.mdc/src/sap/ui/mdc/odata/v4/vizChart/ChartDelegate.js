@@ -16,7 +16,7 @@ sap.ui.define([
     "sap/ui/mdc/chart/ChartTypeButton",
     "sap/ui/mdc/chart/Item",
     "sap/ui/model/Sorter",
-    "sap/m/VBox",
+    "sap/ui/mdc/chart/ChartImplementationContainer",
     "sap/ui/base/ManagedObjectObserver",
     "sap/ui/core/ResizeHandler",
     "sap/ui/mdc/p13n/panels/ChartItemPanel",
@@ -40,7 +40,7 @@ sap.ui.define([
     ChartTypeButton,
     MDCChartItem,
     Sorter,
-    VBox,
+    ChartImplementationContainer,
     ManagedObjectObserver,
     ResizeHandler,
     ChartItemPanel,
@@ -63,9 +63,6 @@ sap.ui.define([
      * @alias sap.ui.mdc.odata.v4.vizChart.ChartDelegate
      */
     var ChartDelegate = Object.assign({}, V4ChartDelegate);
-
-	var FlexJustifyContent = mobileLibrary.FlexJustifyContent;
-	var FlexAlignItems = mobileLibrary.FlexAlignItems;
 
     var mStateMap = new window.WeakMap();
     //var ChartLibrary;
@@ -681,18 +678,16 @@ sap.ui.define([
 
             this._loadChart().then(function (aModules) {
 
-                var sVBoxHeight = this._calculateInnerChartHeight(oMDCChart);
+                this._setInnerStructure(oMDCChart, new ChartImplementationContainer(oMDCChart.getId() + "--implementationContainer", {}));
 
-                this._setInnerStructure(oMDCChart, new VBox({
-                    justifyContent: "Center",
-				    alignItems: "Center",
-                    height: sVBoxHeight,
-                    width: "100%"
-                }));
                 var oText = new Text();
                 oText.setText(oMDCChart.getNoDataText());
 
-                this._getInnerStructure(oMDCChart).addItem(oText);
+                oMDCChart.addStyleClass("sapUiMDCChartTempTextOuter");
+                this._getInnerStructure(oMDCChart).addStyleClass("sapUiMDCChartTempText");
+                this._getInnerStructure(oMDCChart).setContent(oText);
+
+                //oMDCChart.addStyleClass("sapUiMDCChartGrid");
 
                 this._setUpChartObserver(oMDCChart);
 
@@ -1251,6 +1246,7 @@ sap.ui.define([
             this._setChart(oMDCChart, new Chart({
                 id: oMDCChart.getId() + "--innerChart",
                 chartType: "column",
+                height: "100%",
                 width: "100%",
                 isAnalytical: true//,
             }));
@@ -1262,14 +1258,9 @@ sap.ui.define([
             //Initialize empty; will get filled later on
             this._getState(oMDCChart).inResultDimensions = [];
 
-            if (oMDCChart.getHeight()){
-                this._getChart(oMDCChart).setHeight(this._calculateInnerChartHeight(oMDCChart));
-            }
-
-            //Set height correctly again if chart changes
-            ResizeHandler.register(oMDCChart, function(){
-                this.adjustChartHeight(oMDCChart);
-            }.bind(this));
+            this._getInnerStructure(oMDCChart).removeStyleClass("sapUiMDCChartTempInnerText");
+            oMDCChart.removeStyleClass("sapUiMDCChartTempTextOuter");
+            oMDCChart.addStyleClass("sapUiMDCChartGrid");
 
             var oState = this._getState(oMDCChart);
             oState.aColMeasures = [];
@@ -1287,10 +1278,10 @@ sap.ui.define([
                     }
                 }.bind(this));
 
-                this._getInnerStructure(oMDCChart).removeAllItems();
-                this._getInnerStructure(oMDCChart).setJustifyContent(FlexJustifyContent.Start);
-                this._getInnerStructure(oMDCChart).setAlignItems(FlexAlignItems.Stretch);
-                this._getInnerStructure(oMDCChart).addItem(this._getChart(oMDCChart));
+                //this._getInnerStructure(oMDCChart).removeAllContent();
+                //this._getInnerStructure(oMDCChart).setJustifyContent(FlexJustifyContent.Start);
+                //this._getInnerStructure(oMDCChart).setAlignItems(FlexAlignItems.Stretch);
+                this._getInnerStructure(oMDCChart).setContent(this._getChart(oMDCChart));
 
                 oState.dataLoadedCallback = fnCallbackDataLoaded;
 
@@ -1360,21 +1351,7 @@ sap.ui.define([
         return iTotalHeight - iSubHeight +  "px";
     };
 
-    /**
-     * Adjusts the chart height to changed content strucutre, if needed.
-     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
-     * @experimental
-     * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
-     */
-    ChartDelegate.adjustChartHeight = function(oMDCChart){
-        if (oMDCChart.getHeight() && this._getChart(oMDCChart)){
-            var sHeight = this._calculateInnerChartHeight(oMDCChart);
 
-            this._getInnerStructure(oMDCChart).setHeight(sHeight);
-            this._getChart(oMDCChart).setHeight(sHeight);
-        }
-    };
 
     /**
      * Requests a toolbar update once the inner chart is ready.

@@ -2,7 +2,23 @@
     background: @sapUiChartBackgroundColor;
     border-radius: @sapUiElementBorderCornerRadius;
     padding-bottom: 1rem;
+    display: grid;
 }
+
+.sapUiMDCChartTempTextOuter{
+    grid-template-rows: auto 1fr;
+}
+
+.sapUiMDCChartTempText {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sapUiMDCChartGrid{
+    grid-template-rows: auto auto 1fr; //To test in FE voter set the height to 300px; otherwise use 1fr
+}
+
 
 .sapUiMDCChart .sapUiMDCChartBreadcrumbs {
     margin-left: 1rem;
@@ -11,4 +27,9 @@
 .sapUiMDCChart .sapMIBar.sapMTBHeader-CTX {
     border-top-right-radius: @sapUiElementBorderCornerRadius;
     border-top-left-radius: @sapUiElementBorderCornerRadius;
+}
+
+.sapUiMDCChart .sapUiMDCChartTempInnerText {
+    justify-content: center;
+    align-content: center;
 }
