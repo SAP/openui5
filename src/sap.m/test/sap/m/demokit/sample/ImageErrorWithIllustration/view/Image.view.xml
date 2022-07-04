@@ -1,0 +1,35 @@
+<mvc:View controllerName="sap.m.sample.ImageErrorWithIllustration.controller.Image"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns="sap.m">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<l:content>
+			<l:Grid defaultSpan="XL3 L3 M6 S12">
+				<l:content>
+					<VBox alignItems="Center">
+						<Button text="Set wrong src" press=".onPressSetSrc"/>
+
+						<Image
+							error=".onError"
+							visible="{= !${/hasError} }"
+							src="{img>/products/pic1}"
+							height="{/imageHeight}"
+							width="{/imageWidth}">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Image>
+
+						<IllustratedMessage
+							description="Image was not found"
+							title="Not Found"
+							illustrationType="sapIllus-ErrorScreen"
+							visible="{= ${/hasError} }">
+						</IllustratedMessage>
+					</VBox>
+				</l:content>
+			</l:Grid>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>
