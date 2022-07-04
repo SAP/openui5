@@ -444,7 +444,7 @@ sap.ui.define([
 		Core.applyChanges();
 		this.clock.tick(1);
 		var oColumnDomRef = oColumn.getDomRef();
-		assert.strictEqual(oColumn.getWidth(), "300px", "Column width is set to 100px initially (bigger than necessary");
+		assert.strictEqual(oColumn.getWidth(), "300px", "Column width is set to 300px initially (bigger than necessary)");
 
 		var iClientX = oColumnDomRef.getBoundingClientRect()[this.sEndDirection],
 			oEvent = {
@@ -459,6 +459,33 @@ sap.ui.define([
 		Core.applyChanges();
 		assert.ok(oColumn.getWidth() !== "300px", "Column width changed due to auto column resize");
 		assert.ok(parseInt(oColumn.getWidth()) < 300, "Column is made bigger");
+	});
+
+	QUnit.test("Mouse event double click to auto resize column should consider sort indicator icon", function(assert) {
+		var oColumn = this.oTable.getColumns()[2];
+
+		oColumn.setWidth("300px");
+		oColumn.setSortIndicator("Descending");
+		Core.applyChanges();
+
+		var oColumnDomRef = oColumn.getDomRef();
+		assert.strictEqual(oColumn.getWidth(), "300px", "Column width is set to 300px initially (bigger than necessary)");
+		assert.strictEqual(oColumnDomRef.getAttribute("aria-sort"), "descending", "sort indicator applied");
+
+		var fnGetComputedStyleSpy = sinon.spy(window, "getComputedStyle");
+
+		var iClientX = oColumnDomRef.getBoundingClientRect()[this.sEndDirection],
+			oEvent = {
+				clientX: iClientX
+			};
+
+		QUtils.triggerEvent("mousemove", oColumnDomRef, {
+			clientX: iClientX
+		});
+
+		this.oColumnResizer.ondblclick(oEvent);
+		assert.ok(fnGetComputedStyleSpy.calledWith(oColumnDomRef.firstChild, ":after"), ":after pseudo element was called");
+		Core.applyChanges();
 	});
 
 	QUnit.module("Keyboard events", {
