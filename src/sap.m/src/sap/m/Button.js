@@ -920,7 +920,7 @@ sap.ui.define([
 			bAllowEnhancingByParent = !!(oParent && oParent.enhanceAccessibilityState);
 
 		return !bAlreadyHasSelfReference && this._getText() &&
-			(aAriaLabelledBy.length > 0 || bHasReferencingLabels || bAllowEnhancingByParent);
+			(aAriaLabelledBy.length > 0 || bHasReferencingLabels || bAllowEnhancingByParent || this._isBadgeButton());
 	};
 
 	/*
@@ -935,7 +935,7 @@ sap.ui.define([
 			bHasReferencingLabels = LabelEnablement.getReferencingLabels(this).length > 0,
 			bHasSemanticType = this.getType() !== ButtonType.Default,
 			bHasLabelling = bHasAriaLabelledBy || bHasReferencingLabels,
-			bHasDescription = bHasAriaDescribedBy || bHasSemanticType || (this._oBadgeData && this._oBadgeData.value !== "" && this._oBadgeData.State !== BadgeState.Disappear),
+			bHasDescription = bHasAriaDescribedBy || bHasSemanticType || this._isBadgeButton(),
 			sAccType;
 
 		// Conditions are separated instead of grouped to improve readability afterwards.
@@ -950,6 +950,10 @@ sap.ui.define([
 		}
 
 		return sAccType;
+	};
+
+	Button.prototype._isBadgeButton = function() {
+		return (this._oBadgeData && this._oBadgeData.value !== "" && this._oBadgeData.State !== BadgeState.Disappear);
 	};
 
 	//gets the title attribute for the given dom node id
