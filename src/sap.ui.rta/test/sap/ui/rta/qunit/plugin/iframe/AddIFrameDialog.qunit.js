@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/core/Core"
 
 ], function (
 	AddIFrameDialog,
@@ -17,8 +16,7 @@ sap.ui.define([
 	coreLibrary,
 	AddIFrameDialogController,
 	QUnitUtils,
-	oCore,
-	jQuery
+	oCore
 ) {
 	"use strict";
 
@@ -427,6 +425,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

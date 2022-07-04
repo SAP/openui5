@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/m/InstanceManager",
 	"sap/m/Popover",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core"
@@ -46,7 +45,6 @@ sap.ui.define([
 	Utils,
 	InstanceManager,
 	Popover,
-	jQuery,
 	sinon,
 	RtaQunitUtils,
 	oCore
@@ -537,6 +535,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

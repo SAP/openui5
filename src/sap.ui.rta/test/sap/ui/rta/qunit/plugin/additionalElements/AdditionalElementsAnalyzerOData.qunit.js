@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/layout/form/FormElement",
 	"sap/m/Input",
 	"sap/ui/rta/util/BindingsExtractor",
-	"sap/ui/thirdparty/jquery",
 	"./TestUtils"
 ],
 function(
@@ -23,7 +22,6 @@ function(
 	FormElement,
 	Input,
 	BindingsExtractor,
-	jQuery,
 	TestUtils
 ) {
 	"use strict";
@@ -408,6 +406,6 @@ function(
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

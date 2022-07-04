@@ -1,7 +1,6 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/fl/changeHandler/UnhideControl",
@@ -10,7 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/XmlTreeModifier"
 ],
 function(
-	jQuery,
 	Control,
 	Element,
 	UnhideControlChangeHandler,
@@ -88,6 +86,6 @@ function(
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

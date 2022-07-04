@@ -2,11 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/apply/_internal/preprocessors/RegistrationDelegator"
 ], function(
 	sinon,
-	jQuery,
 	RegistrationDelegator
 ) {
 	"use strict";
@@ -31,6 +29,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery('#qunit-fixture').hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

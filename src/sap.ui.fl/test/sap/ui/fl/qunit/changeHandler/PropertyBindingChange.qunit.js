@@ -1,7 +1,6 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/changeHandler/PropertyBindingChange",
 	"sap/ui/fl/Change",
@@ -13,7 +12,6 @@ sap.ui.define([
 	"sap/ui/model/type/Integer",
 	"sap/base/Log"
 ], function(
-	jQuery,
 	sinon,
 	PropertyBindingChange,
 	Change,
@@ -289,6 +287,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

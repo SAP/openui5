@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/fl/apply/_internal/DelegateMediator",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -25,7 +24,6 @@ sap.ui.define([
 	ChangeHandlerRegistration,
 	DelegateMediatorAPI,
 	DelegateMediator,
-	jQuery,
 	sinon,
 	oCore
 ) {
@@ -106,6 +104,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

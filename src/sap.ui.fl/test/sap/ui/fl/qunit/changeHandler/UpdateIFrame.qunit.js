@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/fl/util/IFrame",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -19,7 +18,6 @@ sap.ui.define([
 	IFrame,
 	VerticalLayout,
 	JSONModel,
-	jQuery,
 	sinon,
 	oCore
 ) {
@@ -248,6 +246,6 @@ sap.ui.define([
 	//TODO: Negative test to check if the error is properly raised when change is incomplete
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

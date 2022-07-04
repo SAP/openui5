@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/dt/Plugin",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -15,7 +14,6 @@ sap.ui.define([
 	Plugin,
 	Button,
 	VerticalLayout,
-	jQuery,
 	sinon,
 	oCore
 ) {
@@ -506,6 +504,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

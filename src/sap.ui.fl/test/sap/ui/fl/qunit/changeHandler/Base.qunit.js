@@ -1,13 +1,11 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	jQuery,
 	Base,
 	Change,
 	JsControlTreeModifier,
@@ -204,6 +202,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

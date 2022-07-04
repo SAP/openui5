@@ -2,12 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"
 ], function (
 	Layer,
-	ObjectStorageUtils,
-	jQuery
+	ObjectStorageUtils
 ) {
 	"use strict";
 
@@ -105,6 +103,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

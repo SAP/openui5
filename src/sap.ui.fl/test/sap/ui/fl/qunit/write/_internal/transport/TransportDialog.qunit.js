@@ -3,12 +3,10 @@
 sap.ui.define([
 	"sap/ui/fl/write/_internal/transport/TransportDialog",
 	"sap/ui/fl/write/_internal/transport/Transports",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	TransportDialog,
 	Transports,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -359,6 +357,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

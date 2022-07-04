@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
@@ -29,7 +28,6 @@ sap.ui.define([
 	Change,
 	Layer,
 	VerticalLayout,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -222,6 +220,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

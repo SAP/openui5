@@ -1556,6 +1556,6 @@ sap.ui.define([
 
 	QUnit.done(function() {
 		oComponent.destroy();
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

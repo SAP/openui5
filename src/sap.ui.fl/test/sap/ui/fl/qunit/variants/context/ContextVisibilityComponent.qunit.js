@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/base/util/restricted/_merge",
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ContextVisibilityController,
@@ -20,7 +19,6 @@ sap.ui.define([
 	_merge,
 	oCore,
 	JSONModel,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -51,6 +49,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

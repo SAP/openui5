@@ -1,12 +1,10 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/controller/Root.controller",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/controller/Root.controller"
 ], function (
 	Layer,
-	RootController,
-	jQuery
+	RootController
 ) {
 	"use strict";
 
@@ -223,6 +221,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

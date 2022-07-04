@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/dt/plugin/MouseSelection",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/layout/library",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
@@ -21,7 +20,6 @@ sap.ui.define([
 	MouseSelectionPlugin,
 	RemovePlugin,
 	CommandFactory,
-	jQuery,
 	sinon,
 	layoutLibrary,
 	RtaQunitUtils,
@@ -173,6 +171,6 @@ sap.ui.define([
 	fnParamerizedTest(SimpleFormLayout.ResponsiveGridLayout);
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -4,13 +4,11 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Core,
 	ChangeHandlerRegistration,
 	ChangeHandlerStorage,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -211,6 +209,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

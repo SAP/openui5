@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FlexRuntimeInfoAPI,
@@ -18,7 +17,6 @@ sap.ui.define([
 	FlUtils,
 	ReloadManager,
 	Utils,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -473,6 +471,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

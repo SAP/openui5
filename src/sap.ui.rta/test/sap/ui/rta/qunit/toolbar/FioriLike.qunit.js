@@ -1,12 +1,10 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/toolbar/FioriLike",
 	"sap/ui/core/Core"
 ],
 function(
-	jQuery,
 	FioriLike,
 	oCore
 ) {
@@ -36,6 +34,6 @@ function(
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

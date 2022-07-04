@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/dt/DOMUtil",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
 ],
 function(
 	DOMUtil,
+	jQuery,
 	Device
 ) {
 	"use strict";
@@ -84,6 +86,6 @@ function(
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

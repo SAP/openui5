@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/rta/api/startKeyUserAdaptation",
 	"sap/base/Log",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Component,
@@ -26,7 +25,6 @@ sap.ui.define([
 	startKeyUserAdaptation,
 	Log,
 	StorageUtils,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -529,7 +527,7 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });
 

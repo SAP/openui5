@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
@@ -28,7 +27,6 @@ sap.ui.define([
 	ReloadManager,
 	RuntimeAuthoring,
 	Utils,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -652,6 +650,6 @@ sap.ui.define([
 
 	QUnit.done(function() {
 		oComp.destroy();
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

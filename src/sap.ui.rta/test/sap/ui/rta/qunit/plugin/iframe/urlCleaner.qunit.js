@@ -1,9 +1,8 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/plugin/iframe/urlCleaner",
-	"sap/ui/thirdparty/jquery"
-], function (urlCleaner, jQuery) {
+	"sap/ui/rta/plugin/iframe/urlCleaner"
+], function (urlCleaner) {
 	"use strict";
 
 	QUnit.module("Given the URL entered by the user ", {
@@ -28,6 +27,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

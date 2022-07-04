@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/base/Log",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ActionExtractor,
@@ -28,7 +27,6 @@ sap.ui.define([
 	VerticalLayout,
 	Log,
 	Core,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -170,6 +168,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

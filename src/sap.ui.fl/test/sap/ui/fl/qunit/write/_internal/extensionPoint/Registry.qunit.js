@@ -1,6 +1,5 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Component",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
@@ -12,7 +11,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
-	jQuery,
 	Component,
 	JsControlTreeModifier,
 	Processor,
@@ -361,6 +359,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

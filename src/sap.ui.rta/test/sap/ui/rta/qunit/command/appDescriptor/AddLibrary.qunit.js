@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/m/Button",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
@@ -17,7 +16,6 @@ sap.ui.define([
 	CommandFactory,
 	Button,
 	oCore,
-	jQuery,
 	sinon,
 	RtaQunitUtils
 ) {
@@ -127,6 +125,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

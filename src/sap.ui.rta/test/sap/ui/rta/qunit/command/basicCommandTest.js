@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
@@ -19,7 +18,6 @@ sap.ui.define([
 	Layer,
 	FlUtils,
 	CommandFactory,
-	jQuery,
 	sinon,
 	RtaQunitUtils
 ) {

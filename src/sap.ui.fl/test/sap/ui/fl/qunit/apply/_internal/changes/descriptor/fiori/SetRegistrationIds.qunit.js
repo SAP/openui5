@@ -3,12 +3,10 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetRegistrationIds",
 	"sap/ui/fl/Change",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	SetRegistrationIds,
 	Change,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -46,6 +44,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

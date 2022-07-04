@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -27,7 +26,6 @@ sap.ui.define([
 	OverlayRegistry,
 	DesignTime,
 	XMLView,
-	jQuery,
 	sinon,
 	oCore
 ) {
@@ -304,6 +302,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

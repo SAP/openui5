@@ -1,10 +1,12 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/ScrollbarSynchronizer"
+	"sap/ui/dt/ScrollbarSynchronizer",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
-	ScrollbarSynchronizer
+	ScrollbarSynchronizer,
+	jQuery
 ) {
 	"use strict";
 
@@ -236,6 +238,6 @@ function(
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

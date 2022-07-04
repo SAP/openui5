@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/routing/Router",
 	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/m/Dialog"
 ], function(
@@ -17,7 +16,6 @@ sap.ui.define([
 	UIComponent,
 	Router,
 	DataUtils,
-	jQuery,
 	sinon,
 	Dialog
 ) {
@@ -300,6 +298,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

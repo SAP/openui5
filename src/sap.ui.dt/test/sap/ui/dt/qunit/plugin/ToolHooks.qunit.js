@@ -4,14 +4,12 @@ sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/m/Button",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ],
 function(
 	ElementOverlay,
 	ToolHooks,
 	Button,
-	jQuery,
 	oCore
 ) {
 	"use strict";
@@ -74,6 +72,6 @@ function(
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

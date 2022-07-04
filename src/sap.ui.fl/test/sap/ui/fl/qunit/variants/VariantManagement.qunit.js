@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/RadioButton",
 	"sap/ui/core/Icon",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -27,7 +26,6 @@ sap.ui.define([
 	Text,
 	RadioButton,
 	Icon,
-	jQuery,
 	sinon,
 	oCore
 ) {
@@ -1423,6 +1421,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

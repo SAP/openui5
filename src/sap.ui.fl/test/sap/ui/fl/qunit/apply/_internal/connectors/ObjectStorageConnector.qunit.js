@@ -5,15 +5,13 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/fl/Layer",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/fl/Layer"
 ], function(
 	ObjectStorageUtils,
 	JsObjectConnector,
 	SessionStorageConnector,
 	StorageUtils,
-	Layer,
-	jQuery
+	Layer
 ) {
 	"use strict";
 
@@ -352,6 +350,6 @@ sap.ui.define([
 	//parameterizedTest(LocalStorageConnector, LocalStorageWriteConnector, "LocalStorage");
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -4,13 +4,11 @@ sap.ui.define([
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Manifest,
 	ManifestUtils,
 	Utils,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -365,6 +363,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

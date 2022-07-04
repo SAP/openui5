@@ -1,7 +1,6 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
@@ -11,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier"
 ], function(
-	jQuery,
 	sinon,
 	Button,
 	JSONModel,
@@ -248,6 +246,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

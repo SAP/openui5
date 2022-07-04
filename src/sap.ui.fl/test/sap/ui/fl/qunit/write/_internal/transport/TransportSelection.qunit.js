@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Control",
 	"sap/ui/core/BusyIndicator",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Storage,
@@ -24,7 +23,6 @@ sap.ui.define([
 	FlUtils,
 	Control,
 	BusyIndicator,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -570,6 +568,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

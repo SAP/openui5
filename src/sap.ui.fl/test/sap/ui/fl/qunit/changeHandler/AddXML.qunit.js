@@ -1,7 +1,6 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/fl/changeHandler/AddXML",
 	"sap/ui/fl/Change",
@@ -11,7 +10,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Core"
 ], function(
-	jQuery,
 	XMLHelper,
 	AddXML,
 	Change,
@@ -286,6 +284,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

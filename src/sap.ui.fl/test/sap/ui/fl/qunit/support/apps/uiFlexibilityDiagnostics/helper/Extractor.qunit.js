@@ -1,11 +1,9 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor"
 ], function (
-	Extractor,
-	jQuery
+	Extractor
 ) {
 	"use strict";
 
@@ -315,6 +313,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

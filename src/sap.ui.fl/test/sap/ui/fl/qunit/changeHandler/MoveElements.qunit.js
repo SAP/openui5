@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -23,7 +22,6 @@ sap.ui.define([
 	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	jQuery,
 	sinon,
 	oCore
 ) {
@@ -433,6 +431,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

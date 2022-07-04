@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/hasher",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
@@ -24,11 +23,10 @@ sap.ui.define([
 	Layer,
 	Utils,
 	hasher,
-	jQuery,
 	sinon
 ) {
 	"use strict";
-	jQuery("#qunit-fixture").hide();
+	document.getElementById("qunit-fixture").style.display = "none";
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an instance of VariantModel", {

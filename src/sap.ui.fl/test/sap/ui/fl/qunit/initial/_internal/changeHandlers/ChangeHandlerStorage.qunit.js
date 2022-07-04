@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/Layer",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
@@ -14,7 +13,6 @@ sap.ui.define([
 	Control,
 	ChangeHandlerStorage,
 	Layer,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -321,6 +319,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

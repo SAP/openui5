@@ -4,14 +4,12 @@ sap.ui.define([
 	"sap/ui/fl/DefaultVariant",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	DefaultVariant,
 	Change,
 	States,
-	sinon,
-	jQuery
+	sinon
 ) {
 	"use strict";
 
@@ -244,6 +242,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery('#qunit-fixture').hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

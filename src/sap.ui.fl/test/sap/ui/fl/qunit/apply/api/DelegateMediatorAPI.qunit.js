@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Button",
 	"sap/ui/rta/enablement/TestDelegate",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	DelegateMediator,
@@ -21,6 +22,7 @@ sap.ui.define([
 	Panel,
 	Button,
 	TestDelegate,
+	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -386,6 +388,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

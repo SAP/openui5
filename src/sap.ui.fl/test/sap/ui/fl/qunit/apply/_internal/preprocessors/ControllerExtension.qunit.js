@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
 	ManagedObject,
@@ -28,8 +27,7 @@ sap.ui.define([
 	Cache,
 	Layer,
 	Utils,
-	sinon,
-	jQuery
+	sinon
 ) {
 	"use strict";
 
@@ -359,6 +357,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

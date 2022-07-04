@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ContextSharingAPI,
@@ -13,7 +12,6 @@ sap.ui.define([
 	WriteStorage,
 	FeaturesAPI,
 	oCore,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -66,6 +64,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

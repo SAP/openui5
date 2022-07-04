@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/base/util/includes",
 	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(
 	MutationObserver,
@@ -21,6 +22,7 @@ sap.ui.define([
 	DOMUtil,
 	includes,
 	sinon,
+	jQuery,
 	oCore
 ) {
 	"use strict";
@@ -479,6 +481,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

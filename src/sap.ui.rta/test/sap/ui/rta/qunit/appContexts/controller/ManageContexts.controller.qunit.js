@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/ColumnListItem",
 	"sap/base/util/restricted/_merge",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	ManageContexts,
@@ -24,7 +23,6 @@ sap.ui.define([
 	mobileLibrary,
 	ColumnListItem,
 	_merge,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -164,6 +162,6 @@ sap.ui.define([
 		});
 	});
 	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

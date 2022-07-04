@@ -301,6 +301,6 @@ sap.ui.define([
 
 	QUnit.done(function () {
 		jQuery("body").removeClass("sapUiRtaMode");
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

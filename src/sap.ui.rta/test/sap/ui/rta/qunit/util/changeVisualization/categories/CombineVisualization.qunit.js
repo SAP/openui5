@@ -1,14 +1,12 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/rta/util/changeVisualization/categories/CombineVisualization",
 	"sap/ui/core/Core",
 	"sap/ui/dt/ElementUtil",
 	"sap/m/Button"
 ], function(
-	jQuery,
 	sinon,
 	CombineVisualization,
 	oCore,
@@ -135,6 +133,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

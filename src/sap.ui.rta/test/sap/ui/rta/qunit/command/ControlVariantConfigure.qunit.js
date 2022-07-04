@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/library",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
@@ -16,7 +15,6 @@ sap.ui.define([
 	Layer,
 	CommandFactory,
 	rtaLibrary,
-	jQuery,
 	sinon,
 	FlexTestAPI,
 	RtaQunitUtils
@@ -122,6 +120,6 @@ sap.ui.define([
 
 	QUnit.done(function() {
 		oMockedAppComponent.destroy();
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

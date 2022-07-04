@@ -2,12 +2,10 @@
 
 sap.ui.define([
 	"rta/test/qunit/command/basicCommandTest",
-	"sap/ui/core/Control",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/core/Control"
 ], function(
 	basicCommandTest,
-	Control,
-	jQuery
+	Control
 ) {
 	"use strict";
 
@@ -52,6 +50,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

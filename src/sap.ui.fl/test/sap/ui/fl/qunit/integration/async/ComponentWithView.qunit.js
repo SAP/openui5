@@ -3,7 +3,6 @@
 QUnit.config.autostart = false;
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
@@ -17,7 +16,6 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/Device"
 ], function(
-	jQuery,
 	XMLHelper,
 	XmlTreeModifier,
 	Component,
@@ -422,6 +420,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

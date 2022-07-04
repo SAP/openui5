@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Combine",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/mvc/View",
@@ -29,7 +28,6 @@ sap.ui.define([
 	CommandFactory,
 	CombinePlugin,
 	Utils,
-	jQuery,
 	sinon,
 	RtaQunitUtils,
 	View,
@@ -457,6 +455,6 @@ sap.ui.define([
 
 	QUnit.done(function() {
 		oMockedAppComponent.destroy();
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

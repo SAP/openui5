@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/LREPSerializer",
 	"sap/ui/rta/command/Stack",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/m/Input",
 	"sap/m/Panel",
@@ -21,7 +20,6 @@ sap.ui.define([
 	CommandFactory,
 	CommandSerializer,
 	CommandStack,
-	jQuery,
 	sinon,
 	Input,
 	Panel,
@@ -286,6 +284,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

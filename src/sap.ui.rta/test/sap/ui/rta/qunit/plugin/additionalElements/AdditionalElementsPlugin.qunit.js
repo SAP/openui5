@@ -26,7 +26,6 @@ sap.ui.define([
 	"sap/ui/rta/plugin/additionalElements/ActionExtractor",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/Utils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core"
@@ -56,7 +55,6 @@ sap.ui.define([
 	AdditionalElementsActionExtractor,
 	RTAPlugin,
 	RTAUtils,
-	jQuery,
 	sinon,
 	RtaQunitUtils,
 	oCore
@@ -2102,6 +2100,6 @@ sap.ui.define([
 	}
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

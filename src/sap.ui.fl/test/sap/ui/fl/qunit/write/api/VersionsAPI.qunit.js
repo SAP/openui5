@@ -29,7 +29,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	jQuery("#qunit-fixture").hide();
+	document.getElementById("qunit-fixture").style.display = "none";
 	var sandbox = sinon.createSandbox();
 
 	function stubSettings(sandbox) {

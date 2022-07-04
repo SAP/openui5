@@ -1,7 +1,6 @@
 /* global QUnit  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
@@ -15,7 +14,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function (
-	jQuery,
 	AppVariantUtils,
 	Settings,
 	Layer,
@@ -944,6 +942,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

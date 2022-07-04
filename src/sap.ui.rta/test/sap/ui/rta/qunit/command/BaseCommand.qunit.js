@@ -28,7 +28,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Core"
@@ -60,7 +59,6 @@ sap.ui.define([
 	JSONModel,
 	flUtils,
 	flLayerUtils,
-	jQuery,
 	sinon,
 	RtaQunitUtils,
 	oCore
@@ -1571,6 +1569,6 @@ sap.ui.define([
 
 	QUnit.done(function () {
 		oMockedAppComponent.destroy();
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/apply/_internal/flexObjects/Variant",
 	"sap/ui/fl/qunit/apply/_internal/flexObjects/getFlexObjectFileContent",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	merge,
@@ -14,7 +13,6 @@ sap.ui.define([
 	FlexObject,
 	Variant,
 	getFlexObjectFileContent,
-	jQuery,
 	sinon
 ) {
 	"use strict";
@@ -68,6 +66,6 @@ sap.ui.define([
 	});
 
 	QUnit.done(function () {
-		jQuery("#qunit-fixture").hide();
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });
