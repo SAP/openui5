@@ -309,6 +309,12 @@ sap.ui.define([
 				}
 			},
 
+			"apply/_internal/flexObjects/AppDescriptorChange": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange"]
+				}
+			},
 			"apply/_internal/flexObjects/CompVariant": {
 				group: "Apply Internal",
 				coverage: {

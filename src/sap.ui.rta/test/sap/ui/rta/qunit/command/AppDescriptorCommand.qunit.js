@@ -85,18 +85,19 @@ sap.ui.define([
 			};
 
 			this.createDescriptorInlineChangeStub = sinon.stub(AppVariantInlineChangeFactory, "createDescriptorInlineChange").callsFake(function(mPropertyBag) {
-				assert.equal(mPropertyBag.changeType, this.sChangeType, "change type is properly passed to the 'createDescriptorInlineChange' function");
-				assert.equal(mPropertyBag.content, this.mParameters, "parameters are properly passed to the 'createDescriptorInlineChange' function");
-				assert.equal(mPropertyBag.texts, this.mTexts, "texts are properly passed to the 'createDescriptorInlineChange' function");
+				assert.strictEqual(mPropertyBag.changeType, this.sChangeType, "change type is properly passed to the 'createDescriptorInlineChange' function");
+				assert.strictEqual(mPropertyBag.content, this.mParameters, "parameters are properly passed to the 'createDescriptorInlineChange' function");
+				assert.strictEqual(mPropertyBag.texts, this.mTexts, "texts are properly passed to the 'createDescriptorInlineChange' function");
 				this.createDescriptorInlineChangeStub.restore();
 				return Promise.resolve(oMockDescriptorInlineChange);
 			}.bind(this));
 
-			this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew").callsFake(function (sReference, oInlineChange, sLayer, oAppComponent) {
-				assert.equal(sReference, this.sReference, "reference is properly passed to createNew function");
-				assert.equal(oInlineChange.mockName, oMockDescriptorInlineChange.mockName, "Inline Change is properly passed to createNew function");
-				assert.equal(sLayer, this.sLayer, "layer is properly passed to createNew function");
-				assert.equal(oAppComponent, this.oMockedAppComponent, "App Component is properly passed to createNew function");
+			this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew").callsFake(function (sReference, oInlineChange, sLayer, oAppComponent, sGenerator) {
+				assert.strictEqual(sReference, this.sReference, "reference is properly passed to createNew function");
+				assert.strictEqual(oInlineChange.mockName, oMockDescriptorInlineChange.mockName, "Inline Change is properly passed to createNew function");
+				assert.strictEqual(sLayer, this.sLayer, "layer is properly passed to createNew function");
+				assert.strictEqual(oAppComponent, this.oMockedAppComponent, "App Component is properly passed to createNew function");
+				assert.strictEqual(sGenerator, "sap.ui.rta.AppDescriptorCommand", "the generator is properly passed to createNew function");
 
 				this.createNewChangeStub.restore();
 
@@ -139,7 +140,7 @@ sap.ui.define([
 					return oAppDescriptorCommand.createAndStoreChange()
 						.then(function () {
 							var oStoredChange = oAppDescriptorCommand.getPreparedChange();
-							assert.strictEqual(oStoredChange.getDefinition().support.compositeCommand, sCompositeCommandId, "then composite command id is attached to the change definition");
+							assert.strictEqual(oStoredChange.getSupportInformation().compositeCommand, sCompositeCommandId, "then composite command id is attached to the change definition");
 						});
 				})
 				.catch(function (oError) {

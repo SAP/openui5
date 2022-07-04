@@ -1959,7 +1959,7 @@ sap.ui.define([
 			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 			}).then(function(oDescriptorChange) {
-				assert.equal(oDescriptorChange._getChangeToSubmit().getPackage(), "");
+				assert.equal(oDescriptorChange._getChangeToSubmit().getFlexObjectMetadata().packageName, "");
 			});
 		});
 
@@ -2056,9 +2056,7 @@ sap.ui.define([
 					var mJsonResult = oDescriptorChange.getJson();
 					assert.ok(mJsonResult);
 					assert.equal(mJsonResult.reference, mExpectedPartJson.reference);
-					assert.equal(mJsonResult.fileType, mExpectedPartJson.fileType);
 					assert.equal(mJsonResult.layer, mExpectedPartJson.layer);
-					assert.equal(mJsonResult.namespace, mExpectedPartJson.namespace);
 					assert.equal(mJsonResult.packageName, mExpectedPartJson.packageName);
 					assert.equal(mJsonResult.changeType, mExpectedPartJson.changeType);
 					assert.deepEqual(mJsonResult.content, mExpectedPartJson.content);
@@ -2100,7 +2098,7 @@ sap.ui.define([
 				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange, 'VENDOR', undefined, 'RTA');
 			}).then(function(oDescriptorChange) {
 				assert.equal(oDescriptorChange._mChangeFile.layer, Layer.VENDOR);
-				assert.equal(oDescriptorChange._mChangeFile.support.generator, 'RTA');
+				assert.equal(oDescriptorChange._mChangeFile.generator, 'RTA');
 			});
 		});
 	});

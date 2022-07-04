@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_pick",
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/Core",
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/ControllerExtensionChange",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
@@ -15,6 +16,7 @@ sap.ui.define([
 	_pick,
 	ObjectPath,
 	Core,
+	AppDescriptorChange,
 	CompVariant,
 	ControllerExtensionChange,
 	FlexObject,
@@ -35,7 +37,8 @@ sap.ui.define([
 		BASE_FLEX_OBJECT: FlexObject,
 		COMP_VARIANT_OBJECT: CompVariant,
 		FL_VARIANT_OBJECT: FlVariant,
-		CONTROLLER_EXTENSION: ControllerExtensionChange
+		CONTROLLER_EXTENSION: ControllerExtensionChange,
+		APP_DESCRIPTOR_CHANGE: AppDescriptorChange
 	};
 
 	function getFlexObjectClass(oNewFileContent) {
@@ -45,8 +48,37 @@ sap.ui.define([
 			return FLEX_OBJECT_TYPES.FL_VARIANT_OBJECT;
 		} else if (oNewFileContent.changeType === "codeExt") {
 			return FLEX_OBJECT_TYPES.CONTROLLER_EXTENSION;
+		} else if (oNewFileContent.appDescriptorChange) {
+			return FLEX_OBJECT_TYPES.APP_DESCRIPTOR_CHANGE;
 		}
 		return FLEX_OBJECT_TYPES.BASE_FLEX_OBJECT;
+	}
+
+	function createBasePropertyBag(mProperties) {
+		var sChangeType = mProperties.type || mProperties.changeType;
+		var sFileName = mProperties.fileName || mProperties.id || Utils.createDefaultFileName(sChangeType);
+		return {
+			id: sFileName,
+			layer: mProperties.layer,
+			content: mProperties.content,
+			texts: mProperties.texts,
+			supportInformation: {
+				service: mProperties.ODataService,
+				command: mProperties.command,
+				compositeCommand: mProperties.compositeCommand,
+				generator: mProperties.generator,
+				sapui5Version: Core.getConfiguration().getVersion().toString(),
+				sourceSystem: mProperties.sourceSystem,
+				sourceClient: mProperties.sourceClient,
+				originalLanguage: mProperties.originalLanguage,
+				user: mProperties.user
+			},
+			flexObjectMetadata: {
+				changeType: sChangeType,
+				reference: mProperties.reference,
+				packageName: mProperties.packageName
+			}
+		};
 	}
 
 	/**
@@ -90,6 +122,12 @@ sap.ui.define([
 		return oFlexObject;
 	};
 
+	FlexObjectFactory.createAppDescriptorChange = function(mPropertyBag) {
+		mPropertyBag.compositeCommand = mPropertyBag.compositeCommand || mPropertyBag.support && mPropertyBag.support.compositeCommand;
+		var mProperties = createBasePropertyBag(mPropertyBag);
+		return new AppDescriptorChange(mProperties);
+	};
+
 	/**
 	 * Creates a new ControllerExtensionChange.
 	 *
@@ -103,24 +141,15 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.ControllerExtensionChange} Created ControllerExtensionChange instance
 	 */
 	FlexObjectFactory.createControllerExtensionChange = function(mPropertyBag) {
-		var mProperties = {
-			id: Utils.createDefaultFileName(mPropertyBag.changeType),
-			content: {
-				codeRef: mPropertyBag.codeRef
-			},
-			layer: mPropertyBag.layer,
-			controllerName: mPropertyBag.controllerName,
-			supportInformation: {
-				generator: mPropertyBag.generator || "FlexObjectFactory.createControllerExtensionChange",
-				sapui5Version: Core.getConfiguration().getVersion().toString()
-			},
-			flexObjectMetadata: {
-				moduleName: mPropertyBag.moduleName,
-				reference: mPropertyBag.reference,
-				namespace: mPropertyBag.namespace,
-				changeType: "codeExt"
-			}
+		mPropertyBag.generator = mPropertyBag.generator || "FlexObjectFactory.createControllerExtensionChange";
+		mPropertyBag.changeType = "codeExt";
+		mPropertyBag.content = {
+			codeRef: mPropertyBag.codeRef
 		};
+
+		var mProperties = createBasePropertyBag(mPropertyBag);
+		mProperties.flexObjectMetadata.moduleName = mPropertyBag.moduleName;
+		mProperties.controllerName = mPropertyBag.controllerName;
 		return new ControllerExtensionChange(mProperties);
 	};
 
@@ -140,25 +169,15 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlVariant} Variant instance
 	 */
 	FlexObjectFactory.createFlVariant = function(mPropertyBag) {
-		var mProperties = {
-			id: mPropertyBag.id,
-			contexts: mPropertyBag.contexts,
-			layer: mPropertyBag.layer,
-			texts: {
-				variantName: {
-					value: mPropertyBag.variantName,
-					type: "XFLD"
-				}
-			},
-			variantManagementReference: mPropertyBag.variantManagementReference,
-			variantReference: mPropertyBag.variantReference,
-			supportInformation: {
-				generator: mPropertyBag.generator || "FlexObjectFactory.createFlVariant",
-				sapui5Version: Core.getConfiguration().getVersion().toString(),
-				user: mPropertyBag.user
-			},
-			flexObjectMetadata: {
-				reference: mPropertyBag.reference
+		mPropertyBag.generator = mPropertyBag.generator || "FlexObjectFactory.createFlVariant";
+		var mProperties = createBasePropertyBag(mPropertyBag);
+		mProperties.variantManagementReference = mPropertyBag.variantManagementReference;
+		mProperties.variantReference = mPropertyBag.variantReference;
+		mProperties.contexts = mPropertyBag.contexts;
+		mProperties.texts = {
+			variantName: {
+				value: mPropertyBag.variantName,
+				type: "XFLD"
 			}
 		};
 		return new FlVariant(mProperties);
@@ -196,38 +215,15 @@ sap.ui.define([
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} Created comp variant object
 	 */
 	FlexObjectFactory.createCompVariant = function (oFileContent) {
-		var sFileName = oFileContent.fileName
-			|| oFileContent.id
-			|| Utils.createDefaultFileName(oFileContent.fileType);
+		oFileContent.generator = oFileContent.generator || "FlexObjectFactory.createCompVariant";
+		oFileContent.user = ObjectPath.get("support.user", oFileContent);
+		var mCompVariantContent = createBasePropertyBag(oFileContent);
 
-		var mCompVariantContent = {
-			id: sFileName,
-			variantId: oFileContent.variantId || sFileName,
-			content: oFileContent.content || {},
-			contexts: oFileContent.contexts || {},
-			layer: oFileContent.layer,
-			favorite: oFileContent.favorite,
-			texts: oFileContent.texts,
-			persistencyKey: oFileContent.persistencyKey
-				|| ObjectPath.get("selector.persistencyKey", oFileContent),
-			persisted: oFileContent.persisted,
-			supportInformation: {
-				service: oFileContent.ODataService,
-				command: oFileContent.command,
-				generator: oFileContent.generator || "FlexObjectFactory.createCompVariant",
-				user: ObjectPath.get("support.user", oFileContent),
-				sapui5Version: Core.getConfiguration().getVersion().toString(),
-				sourceSystem: oFileContent.sourceSystem,
-				sourceClient: oFileContent.sourceClient,
-				originalLanguage: oFileContent.originalLanguage
-			},
-			flexObjectMetadata: {
-				changeType: oFileContent.type,
-				reference: oFileContent.reference,
-				packageName: oFileContent.packageName,
-				creation: oFileContent.creation
-			}
-		};
+		mCompVariantContent.variantId = oFileContent.variantId || mCompVariantContent.id;
+		mCompVariantContent.contexts = oFileContent.contexts;
+		mCompVariantContent.favorite = oFileContent.favorite;
+		mCompVariantContent.persisted = oFileContent.persisted;
+		mCompVariantContent.persistencyKey = oFileContent.persistencyKey || ObjectPath.get("selector.persistencyKey", oFileContent);
 
 		if (oFileContent.layer === Layer.VENDOR || oFileContent.layer === Layer.CUSTOMER_BASE) {
 			mCompVariantContent.favorite = true;

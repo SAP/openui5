@@ -35,7 +35,7 @@ function(
 		if (oChange.fileType === "variant") {
 			return mStorageResponse.comp.variants;
 		}
-		if (oChange.selector.persistencyKey) {
+		if (oChange.selector && oChange.selector.persistencyKey) {
 			return mStorageResponse.comp.changes;
 		}
 		return mStorageResponse.changes;
