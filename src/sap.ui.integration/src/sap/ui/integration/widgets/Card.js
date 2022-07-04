@@ -1307,7 +1307,7 @@ sap.ui.define([
 	 * @param {string} sMessage The message.
 	 * @param {sap.ui.core.MessageType} sType Type of the message.
 	 */
-	 Card.prototype.showMessage = function (sMessage, sType) {
+	Card.prototype.showMessage = function (sMessage, sType) {
 		if (this._createContentPromise) {
 			this._createContentPromise.then(function (oContent) {
 				oContent.showMessage(sMessage, sType);
