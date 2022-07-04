@@ -45,6 +45,7 @@
 			"sap.f.sample.FlexibleColumnLayoutWithFullscreenPage",
 			"sap.f.sample.FlexibleColumnLayoutColumnResize",
 			"sap.f.sample.FlexibleColumnLayoutLandmarkInfo",
+			"sap.f.sample.FlexibleColumnLayoutLandmarkInfoArrow",
 			"sap.f.sample.FlexibleColumnLayoutSimple",
 			"sap.f.sample.ShellBarWithFlexibleColumnLayout"
 		  ]
@@ -184,9 +185,14 @@
 		},
 		{
 			"id": "sap.f.sample.FlexibleColumnLayoutLandmarkInfo",
-			"name": "Flexible Column Layout Landmark Info",
+			"name": "Flexible Column Layout Landmark Info For Columns",
 			"description": "Flexible Column Layout where the first and the last columns have custom Landmark Info"
-		  },
+		},
+		{
+			"id": "sap.f.sample.FlexibleColumnLayoutLandmarkInfoArrow",
+			"name": "Flexible Column Layout Landmark Info For Arrows",
+			"description": "Flexible Column Layout where the all the arrows have custom Landmark Info"
+		},
 		{
 		  "id": "sap.f.sample.FlexibleColumnLayoutSimple",
 		  "name": "Flexible Column Layout (with Event Bus)",

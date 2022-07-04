@@ -51,8 +51,35 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 			 *
 			 * If not set, a predefined text is used.
 			 */
-			lastColumnLabel : {type : "string", defaultValue : null}
+			lastColumnLabel : {type : "string", defaultValue : null},
 
+			/**
+			 * Text that describes the landmark of the back arrow of the first column in the corresponding <code>sap.f.FlexibleColumnLayout</code> control.
+			 *
+			 * If not set, a predefined text is used.
+			 */
+			firstColumnBackArrowLabel : {type : "string", defaultValue : null},
+
+			/**
+			 * Text that describes the landmark of forward arrow of the middle column in the corresponding <code>sap.f.FlexibleColumnLayout</code> control.
+			 *
+			 * If not set, a predefined text is used.
+			 */
+			middleColumnForwardArrowLabel : {type : "string", defaultValue : null},
+
+			/**
+			 * Text that describes the landmark of back arrow of the middle column in the corresponding <code>sap.f.FlexibleColumnLayout</code> control.
+			 *
+			 * If not set, a predefined text is used.
+			 */
+			middleColumnBackArrowLabel : {type : "string", defaultValue : null},
+
+			/**
+			 * Text that describes the landmark of forward arrow of the last column in the corresponding <code>sap.f.FlexibleColumnLayout</code> control.
+			 *
+			 * If not set, a predefined text is used.
+			 */
+			lastColumnForwardArrowLabel : {type : "string", defaultValue : null}
 		}
 	}});
 

@@ -1,0 +1,14 @@
+<mvc:View xmlns="sap.f" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" controllerName="sap.f.sample.FlexibleColumnLayoutLandmarkInfoArrow.controller.FlexibleColumnLayout" height="100%">
+	<FlexibleColumnLayout id="fcl">
+		<landmarkInfo>
+			<FlexibleColumnLayoutAccessibleLandmarkInfo
+				firstColumnBackArrowLabel="Custom Label For First Column Back Arrow"
+				middleColumnForwardArrowLabel="Custom Label For Middle Column Forward Arrow"
+				middleColumnBackArrowLabel="Custom Label For Middle Column Back Arrow"
+				lastColumnForwardArrowLabel="Custom Label For Last Column Forward Arrow"/>
+		</landmarkInfo>
+		<beginColumnPages>
+			<mvc:XMLView id="beginView" async="true" viewName="sap.f.sample.FlexibleColumnLayoutLandmarkInfoArrow.view.Master"/>
+		</beginColumnPages>
+	</FlexibleColumnLayout>
+</mvc:View>

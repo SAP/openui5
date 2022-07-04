@@ -1,0 +1,5 @@
+<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" controllerName="sap.f.sample.FlexibleColumnLayoutLandmarkInfoArrow.controller.DetailDetail" height="100%">
+	<Page id="detailDetailPage" title="Last Column" backgroundDesign="Transparent">
+		<Button class="sapUiTinyMargin" text="Navigate to Middle Column" press="handleNavigateToMidColumnPress"/>
+	</Page>
+</mvc:View>
