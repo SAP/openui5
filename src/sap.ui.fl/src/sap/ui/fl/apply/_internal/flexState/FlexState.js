@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/_internal/FlexInfoSession"
 ], function(
 	_omit,
 	each,
@@ -33,7 +34,8 @@ sap.ui.define([
 	ManifestUtils,
 	StorageUtils,
 	LayerUtils,
-	Utils
+	Utils,
+	FlexInfoSession
 ) {
 	"use strict";
 
@@ -202,6 +204,7 @@ sap.ui.define([
 				// TODO remove as soon as both with and without '.Component' are harmonized
 				createSecondInstanceIfNecessary(mPropertyBag);
 				registerMaxLayerHandler(mPropertyBag.reference);
+				storeAllContextsProvided(mPropertyBag.reference, mResponse);
 
 				// no further changes to storageResponse properties allowed
 				// TODO enable the Object.freeze as soon as its possible
@@ -211,6 +214,18 @@ sap.ui.define([
 			});
 
 		return _mInitPromises[mPropertyBag.reference];
+	}
+
+	function storeAllContextsProvided(sReference, mResponse) {
+		var oResponse = mResponse && mResponse.changes || {};
+		if (oResponse.info !== undefined) {
+			var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
+			if (oFlexInfoSession === null) {
+				oFlexInfoSession = {};
+			}
+			oFlexInfoSession.allContextsProvided = oResponse.info.allContextsProvided;
+			FlexInfoSession.setByReference(oFlexInfoSession, sReference);
+		}
 	}
 
 	function registerMaxLayerHandler(sReference) {

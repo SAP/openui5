@@ -75,6 +75,23 @@ sap.ui.define([
 	}
 
 	/**
+	 * Concatenates all allContextsProvided from a list of flex data request responses headers into a passed result string.
+	 *
+	 * @param {object[]} aResponses List of responses containing allContextsProvided header to be concatenated
+	 * @param {string} [aResponses.allContextsProvided] allContextsProvided value
+	 * @returns {boolean | undefined} Returns allContextsProvided value if response has allContextsProvided true or false, otherwise returns undefined
+	 * @private
+	 * @ui5-restricted sap.ui.fl.Cache
+	 */
+	function isAllContextsProvided(aResponses) {
+		for (var i = 0; i < aResponses.length; i++) {
+			if (aResponses[i].info) {
+				return aResponses[i].info.allContextsProvided;
+			}
+		}
+	}
+
+	/**
 	 * Merges the results from all involved connectors.
 	 *
 	 * @param {object[]} aResponses All responses provided by the different connectors
@@ -84,7 +101,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.initial._internal.Storage
 	 */
 	oStorageResultMerger.merge = function(aResponses) {
-		return {
+		var oResult = {
 			appDescriptorChanges: concatFlexObjects(aResponses, "appDescriptorChanges"),
 			changes: concatFlexObjects(aResponses, "changes"),
 			ui2personalization: concatUi2personalization(aResponses),
@@ -100,6 +117,13 @@ sap.ui.define([
 			variantManagementChanges: concatFlexObjects(aResponses, "variantManagementChanges"),
 			cacheKey: _concatEtag(aResponses)
 		};
+		var bAllContextsProvided = isAllContextsProvided(aResponses);
+		if (bAllContextsProvided !== undefined) {
+			oResult.info = {
+				allContextsProvided: bAllContextsProvided
+			};
+		}
+		return oResult;
 	};
 
 	return oStorageResultMerger;

@@ -33,7 +33,7 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
 		loadFlexData: function(mPropertyBag) {
-			var mParameters = _pick(mPropertyBag, ["version"]);
+			var mParameters = _pick(mPropertyBag, ["version", "allContexts"]);
 
 			if (this.isLanguageInfoRequired) {
 				InitialUtils.addLanguageInfo(mParameters);
