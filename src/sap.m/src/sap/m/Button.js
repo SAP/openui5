@@ -934,7 +934,7 @@ sap.ui.define([
 			bHasAriaDescribedBy = this.getAriaDescribedBy().length > 0,
 			bHasReferencingLabels = LabelEnablement.getReferencingLabels(this).length > 0,
 			bHasSemanticType = this.getType() !== ButtonType.Default,
-			bHasLabelling = bHasAriaLabelledBy || bHasReferencingLabels,
+			bHasLabelling = bHasAriaLabelledBy || bHasReferencingLabels || this._determineSelfReferencePresence(),
 			bHasDescription = bHasAriaDescribedBy || bHasSemanticType || this._isBadgeButton(),
 			sAccType;
 
