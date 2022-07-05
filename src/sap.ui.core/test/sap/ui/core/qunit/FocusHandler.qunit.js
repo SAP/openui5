@@ -142,4 +142,47 @@ sap.ui.define([
 		assert.ok(bOk, "Changes successfully reverted");
 	});
 
+	QUnit.module("Extending Focus Info");
+
+	QUnit.test("add/remove extender for focus info", function(assert) {
+		var oDomRef;
+		var oSpy = this.spy(function(oEvent, oData) {
+			oDomRef = oEvent.getParameter("domRef");
+			// extend the focus info
+			oData.info.abc = "true";
+		});
+		var oApplyFocusInfoSpy = this.spy(oControls.oControl1, "applyFocusInfo");
+
+		oFocusHandler.addFocusInfoExtender(oSpy);
+
+		oControls.oControl1.focus();
+
+		oControls.oControl1.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oSpy.calledOnce, "focus info extender is called");
+		assert.equal(oDomRef, oControls.oControl1.getDomRef(), "DOM element is given to the registered focus info extender");
+
+		assert.ok(oApplyFocusInfoSpy.calledOnce, "Control gets focused");
+		assert.ok(oApplyFocusInfoSpy.getCall(0).args[0].hasOwnProperty("abc"), "The extended information can reach the focused control");
+
+		// trigger the focus info extender again
+		oControls.oControl1.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oSpy.callCount, 2, "focus info extender is called, again");
+		assert.equal(oDomRef, oControls.oControl1.getDomRef(), "DOM element is given to the registered focus info extender");
+
+		assert.equal(oApplyFocusInfoSpy.callCount, 2, "applyFocusInfo is called again");
+		assert.ok(oApplyFocusInfoSpy.getCall(1).args[0].hasOwnProperty("abc"), "The extended information can reach the focused control");
+
+		oSpy.resetHistory();
+		oFocusHandler.removeFocusInfoExtender(oSpy);
+
+		oControls.oControl1.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oSpy.notCalled, "Focus info extender isn't called anymore after it's removed");
+	});
+
 });
