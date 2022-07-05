@@ -130,7 +130,8 @@ sap.ui.define([
 			if (oReloadInfo.isDraftAvailable) {
 				VersionsAPI.loadDraftForApplication({
 					control: oReloadInfo.selector,
-					layer: oReloadInfo.layer
+					layer: oReloadInfo.layer,
+					allContexts: oReloadInfo.allContexts
 				});
 			} else {
 				VersionsAPI.loadVersionForApplication({
