@@ -62,6 +62,9 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.Bar",
 				sinon: {
 					useFakeTimers: true
+				},
+				ui5: {
+					theme: "sap_belize"
 				}
 			},
 			"Bar (RTL)": {
