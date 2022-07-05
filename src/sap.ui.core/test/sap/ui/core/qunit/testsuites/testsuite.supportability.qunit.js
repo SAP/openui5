@@ -8,6 +8,20 @@ sap.ui.define([], function() {
 		},
 		tests: {
 			"util/jQuery.sap.measure": {
+				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					}
+				},
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
 				title: "jQuery.sap.measure"
 			},
 			"util/jquery.sap.trace": {
@@ -51,6 +65,20 @@ sap.ui.define([], function() {
 				title: "sap.ui.performance.trace.FESR: Activation of FESR via url-param"
 			},
 			"performance/trace/Interaction": {
+				loader: {
+					map: {
+						"*": {
+							"sap/ui/thirdparty/sinon": "sap/ui/thirdparty/sinon-4",
+							"sap/ui/thirdparty/sinon-qunit": "sap/ui/qunit/sinon-qunit-bridge"
+						}
+					}
+				},
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				},
 				title: "sap.ui.performance.Interaction"
 			},
 			"performance/trace/Passport": {

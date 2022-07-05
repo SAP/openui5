@@ -47,14 +47,14 @@ sap.ui.define([
 		assert.ok(jQuery.sap.interaction.getActive(), "Implicit interaction activation successful");
 		jQuery.sap.interaction.notifyStepStart(null, null, true);
 		var oReq = new XMLHttpRequest();
-		// first request without FESR header
+		// first request with FESR header of startup interaction
 		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 		oReq.send();
 		jQuery.sap.interaction.notifyStepEnd();
 		jQuery.sap.interaction.notifyStepStart(null, null, true);
 		spy = this.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
 		oReq = new XMLHttpRequest();
-		// second request with FESR header belonging to first interaction
+		// second request with FESR header belonging to first interaction after startup
 		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 		oReq.send();
 		jQuery.sap.interaction.notifyStepEnd();
@@ -84,7 +84,7 @@ sap.ui.define([
 		assert.ok(jQuery.sap.interaction.getActive(), "Activation successful");
 		jQuery.sap.interaction.notifyStepStart(null, null, true);
 		var oReq = new XMLHttpRequest();
-		// first request without FESR header
+		// first request with FESR header of startup interaction
 		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 		oReq.setRequestHeader("test","test");
 		oReq.send();
@@ -118,38 +118,35 @@ sap.ui.define([
 	QUnit.module("FESR Header", {
 		beforeEach: function() {
 			this.spy = sinon.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
-			this.stub = sinon.stub(window.performance, "getEntriesByType");
-			this.aRequests = [{
-				startTime: 1,
-				requestStart: 2,
-				responseEnd: 3,
-				initiatorType: "xmlhttprequest"
-			}, {
-				startTime: 4,
-				requestStart: 5,
-				responseEnd: 6,
-				initiatorType: "xmlhttprequest"
-			}, {
-				startTime: 7,
-				requestStart: 8,
-				responseEnd: 9,
-				initiatorType: "xmlhttprequest"
-			}];
-			this.start = function() {
-				this.stub.returns(this.aRequests);
-				jQuery.sap.fesr.setActive(true);
-				jQuery.sap.interaction.notifyStepStart(null, null, true);
-				this.oReq = new XMLHttpRequest();
-				// first request without FESR header
-				this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
-				this.oReq.send();
-				jQuery.sap.interaction.notifyStepEnd();
-				jQuery.sap.interaction.notifyStepStart(null, null, true);
-				this.oReq = new XMLHttpRequest();
-				// second request with FESR header belonging to first interaction
-				this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
-				this.oReq.send();
-				jQuery.sap.interaction.notifyStepEnd();
+			this.stub = sinon.stub(window.performance, "getEntriesByType").returns([]);
+			this.start = function(aRequests) {
+				return new Promise(function (resolve) {
+					var iEndtimeOfLastRequest = 0;
+					jQuery.sap.fesr.setActive(true);
+					jQuery.sap.interaction.notifyStepStart(null, null, true);
+					// Save performance.now() timestamp after interaction was started and before it was ended
+					var iNow = performance.now();
+					aRequests.forEach(function(oRequest) {
+						iEndtimeOfLastRequest = oRequest.responseEnd > iEndtimeOfLastRequest ? oRequest.responseEnd : iEndtimeOfLastRequest;
+						// Add performance.now() timestamp to the start- and end-times if available
+						oRequest.startTime = oRequest.startTime ? oRequest.startTime + iNow : undefined;
+						oRequest.requestStart = oRequest.requestStart ? oRequest.requestStart + iNow : undefined;
+						oRequest.responseEnd = oRequest.responseEnd ? oRequest.responseEnd + iNow : undefined;
+					});
+					this.stub.returns(aRequests);
+					setTimeout(function () {
+						// Trigger request within setTimeout to set the preliminary end of startup interaction after the last request was ended
+						this.oReq = new XMLHttpRequest();
+						this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
+						this.oReq.send();
+						jQuery.sap.interaction.notifyStepEnd();
+						// Second request to send FESR header via piggyback
+						this.oReq = new XMLHttpRequest();
+						this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
+						this.oReq.send();
+						resolve();
+					}, iEndtimeOfLastRequest + 1 /*Wait for the last finished request before ending the interaction*/);
+				}.bind(this));
 			};
 		},
 		afterEach: function() {
@@ -162,48 +159,80 @@ sap.ui.define([
 	});
 
 	QUnit.test("mandatory header properties", function(assert) {
-		this.start();
-		var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
-		assert.ok(sFESR, "mandatory header present");
-		var aFESR = sFESR.split(",");
-		assert.strictEqual(aFESR[0].length, 32, "root_context_id - length");
-		assert.strictEqual(aFESR[1].length, 32, "transaction_id - length");
-		assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
-		assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
-		assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
-		assert.ok(aFESR[6].length <= 40, "epp-action");
-		assert.strictEqual(parseInt(aFESR[7]), 0, "network_time");
-		assert.strictEqual(parseInt(aFESR[8]), 6, "request_time");
-		assert.strictEqual(aFESR[9], Device.os.name + "_" + Device.os.version, "client_os");
-		assert.strictEqual(aFESR[10], "SAP_UI5", "client_type");
+		return this.start([{
+			startTime: 1,
+			requestStart: 2,
+			responseEnd: 3,
+			initiatorType: "xmlhttprequest"
+		}, {
+			startTime: 4,
+			requestStart: 5,
+			responseEnd: 6,
+			initiatorType: "xmlhttprequest"
+		}, {
+			startTime: 7,
+			requestStart: 8,
+			responseEnd: 9,
+			initiatorType: "xmlhttprequest"
+		}]).then(function () {
+			var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
+			assert.ok(sFESR, "mandatory header present");
+			var aFESR = sFESR.split(",");
+			assert.strictEqual(aFESR[0].length, 32, "root_context_id - length");
+			assert.strictEqual(aFESR[1].length, 32, "transaction_id - length");
+			assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
+			assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
+			assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
+			assert.ok(aFESR[6].length <= 40, "epp-action");
+			assert.strictEqual(parseInt(aFESR[7]), 0, "network_time");
+			assert.strictEqual(parseInt(aFESR[8]), 6, "request_time");
+			assert.strictEqual(aFESR[9], Device.os.name + "_" + Device.os.version, "client_os");
+			assert.strictEqual(aFESR[10], "SAP_UI5", "client_type");
+		}.bind(this));
 	});
 
 	QUnit.test("optional header properties", function(assert) {
-		this.start();
-		var sFESRopt = getHeaderContent(this.spy.args, "SAP-Perf-FESRec-opt");
-		assert.ok(sFESRopt, "optional header present");
-		var aFESRopt = sFESRopt.split(",");
-		assert.ok(aFESRopt[0].length <= 20, "application_name - length");
-		assert.ok(aFESRopt[1].length <= 20, "step_name - length");
-		assert.ok(aFESRopt[3].length <= 20, "client_model - length");
-		assert.ok(aFESRopt[4].length <= 16, "client_data_sent - length");
-		assert.ok(!isNaN(aFESRopt[4]), "client_data_sent is a number");
-		assert.ok(aFESRopt[5].length <= 16, "client_data_received - length");
-		assert.ok(!isNaN(aFESRopt[5]), "client_data_received is a number");
-		assert.ok(aFESRopt[8].length <= 16, "client_processing_time - length");
-		assert.ok(!isNaN(aFESRopt[8]), "client_processing_time is a number");
-		assert.ok(aFESRopt[9] === "X" || !aFESRopt[9], "compressed");
-		assert.ok(!isNaN(aFESRopt[14]), "global busy indicator duration is a number");
-		assert.ok(parseInt(aFESRopt[16]) >= 0 && parseInt(aFESRopt[16]) <= 4, "extension_3 (client device) between 0 and 4");
-		assert.ok(aFESRopt[18].length >= 14 && aFESRopt[18].length <= 20, "extension_5 (interaction start time) between 1 and 20 chars - length");
-		assert.ok(aFESRopt[19].length >= 1 && aFESRopt[19].length <= 70, "application_name between 1 and 70 chars - length");
+		return this.start([{
+			startTime: 1,
+			requestStart: 2,
+			responseEnd: 3,
+			initiatorType: "xmlhttprequest"
+		}, {
+			startTime: 4,
+			requestStart: 5,
+			responseEnd: 6,
+			initiatorType: "xmlhttprequest"
+		}, {
+			startTime: 7,
+			requestStart: 8,
+			responseEnd: 9,
+			initiatorType: "xmlhttprequest"
+		}]).then(function () {
+			var sFESRopt = getHeaderContent(this.spy.args, "SAP-Perf-FESRec-opt");
+			assert.ok(sFESRopt, "optional header present");
+			var aFESRopt = sFESRopt.split(",");
+			assert.ok(aFESRopt[0].length <= 20, "application_name - length");
+			assert.ok(aFESRopt[1].length <= 20, "step_name - length");
+			assert.ok(aFESRopt[3].length <= 20, "client_model - length");
+			assert.ok(aFESRopt[4].length <= 16, "client_data_sent - length");
+			assert.ok(!isNaN(aFESRopt[4]), "client_data_sent is a number");
+			assert.ok(aFESRopt[5].length <= 16, "client_data_received - length");
+			assert.ok(!isNaN(aFESRopt[5]), "client_data_received is a number");
+			assert.ok(aFESRopt[8].length <= 16, "client_processing_time - length");
+			assert.ok(!isNaN(aFESRopt[8]), "client_processing_time is a number");
+			assert.ok(aFESRopt[9] === "X" || !aFESRopt[9], "compressed");
+			assert.ok(!isNaN(aFESRopt[14]), "global busy indicator duration is a number");
+			assert.ok(parseInt(aFESRopt[16]) >= 0 && parseInt(aFESRopt[16]) <= 4, "extension_3 (client device) between 0 and 4");
+			assert.ok(aFESRopt[18].length >= 14 && aFESRopt[18].length <= 20, "extension_5 (interaction start time) between 1 and 20 chars - length");
+			assert.ok(aFESRopt[19].length >= 1 && aFESRopt[19].length <= 70, "application_name between 1 and 70 chars - length");
+		}.bind(this));
 	});
 
 
 	// Negative durations which are logged during the following tests are caused
 	// by the very simple mock of request timings.
 	QUnit.test("request timings with gap", function(assert) {
-		this.aRequests = [{
+		return this.start([{
 			startTime: 1,
 			requestStart: 2,
 			responseEnd: 3,
@@ -218,20 +247,19 @@ sap.ui.define([
 			requestStart: 11,
 			responseEnd: 12,
 			initiatorType: "xmlhttprequest"
-		}];
-		this.start();
-
-		var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
-		assert.ok(sFESR, "mandatory header present");
-		var aFESR = sFESR.split(",");
-		assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
-		assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
-		assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
-		assert.strictEqual(parseInt(aFESR[8]), 6, "request_time");
+		}]).then(function () {
+			var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
+			assert.ok(sFESR, "mandatory header present");
+			var aFESR = sFESR.split(",");
+			assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
+			assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
+			assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
+			assert.strictEqual(parseInt(aFESR[8]), 6, "request_time");
+		}.bind(this));
 	});
 
 	QUnit.test("request timings with overlap", function(assert) {
-		this.aRequests = [{
+		return this.start([{
 			startTime: 1,
 			requestStart: 2,
 			responseEnd: 3,
@@ -246,21 +274,19 @@ sap.ui.define([
 			requestStart: 4,
 			responseEnd: 5,
 			initiatorType: "xmlhttprequest"
-		}];
-		this.start();
-
-		var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
-		assert.ok(sFESR, "mandatory header present");
-		var aFESR = sFESR.split(",");
-		assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
-		assert.strictEqual(parseInt(aFESR[3]), 4, "client_round_trip_time");
-		assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
-		assert.strictEqual(parseInt(aFESR[8]), 6, "request_time");
-
+		}]).then(function () {
+			var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
+			assert.ok(sFESR, "mandatory header present");
+			var aFESR = sFESR.split(",");
+			assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
+			assert.strictEqual(parseInt(aFESR[3]), 4, "client_round_trip_time");
+			assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
+			assert.strictEqual(parseInt(aFESR[8]), 6, "request_time");
+		}.bind(this));
 	});
 
 	QUnit.test("request timings with gaps and overlap", function(assert) {
-		this.aRequests = [{
+		return this.start([{
 			startTime: 1,
 			requestStart: 2,
 			responseEnd: 3,
@@ -275,45 +301,56 @@ sap.ui.define([
 			requestStart: 8,
 			responseEnd: 9,
 			initiatorType: "xmlhttprequest"
-		}];
-		this.start();
-
-		var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
-		assert.ok(sFESR, "mandatory header present");
-		var aFESR = sFESR.split(",");
-		assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
-		assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
-		assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
-		assert.strictEqual(parseInt(aFESR[8]), 8, "request_time");
-
+		}]).then(function () {
+			var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
+			assert.ok(sFESR, "mandatory header present");
+			var aFESR = sFESR.split(",");
+			assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
+			assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
+			assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
+			assert.strictEqual(parseInt(aFESR[8]), 8, "request_time");
+		}.bind(this));
 	});
 
 	QUnit.test("ignore incomplete request", function(assert) {
 		// mock an incomplete request
-		this.aRequests.push({
+		return this.start([{
+			startTime: 1,
+			requestStart: 2,
+			responseEnd: 3,
+			initiatorType: "xmlhttprequest"
+		}, {
+			startTime: 4,
+			requestStart: 5,
+			responseEnd: 6,
+			initiatorType: "xmlhttprequest"
+		}, {
+			startTime: 7,
+			requestStart: 8,
+			responseEnd: 9,
+			initiatorType: "xmlhttprequest"
+		}, {
 			startTime: 10,
 			requestStart: 11,
 			initiatorType: "xmlhttprequest"
 			// no responseEnd
-		});
+		}]).then(function () {
+			// catch the interaction measurement
+			var aInteractions = jQuery.sap.measure.getAllInteractionMeasurements();
+			this.oInteraction = aInteractions[aInteractions.length - 1];
 
-		this.start();
+			// sixth call of setRequestHeader
+			var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
+			assert.ok(sFESR, "mandatory header present");
+			var aFESR = sFESR.split(",");
+			assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
+			assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
+			assert.strictEqual(parseInt(aFESR[5]), 3, "completed network_round_trips");
+			assert.strictEqual(parseInt(aFESR[7]), 0, "network_time");
+			assert.strictEqual(parseInt(aFESR[8]), 6, "request_time");
 
-		// catch the interaction measurement
-		var aInteractions = jQuery.sap.measure.getAllInteractionMeasurements();
-		this.oInteraction = aInteractions[aInteractions.length - 1];
-
-		// sixth call of setRequestHeader
-		var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
-		assert.ok(sFESR, "mandatory header present");
-		var aFESR = sFESR.split(",");
-		assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
-		assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
-		assert.strictEqual(parseInt(aFESR[5]), 3, "completed network_round_trips");
-		assert.strictEqual(parseInt(aFESR[7]), 0, "network_time");
-		assert.strictEqual(parseInt(aFESR[8]), 6, "request_time");
-
-		assert.strictEqual(this.oInteraction.completeRoundtrips, 3, "complete request counted");
+			assert.strictEqual(this.oInteraction.completeRoundtrips, 3, "complete request counted");
+		}.bind(this));
 	});
 
 	QUnit.module("Global busy duration measurement",{
@@ -321,13 +358,13 @@ sap.ui.define([
 			jQuery.sap.fesr.setActive(true);
 			jQuery.sap.interaction.notifyStepStart(null, null, true);
 			this.oReq = new XMLHttpRequest();
-			// first request without FESR header
+			// first request with FESR header of startup interaction
 			this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 			this.oReq.send();
 			jQuery.sap.interaction.notifyStepEnd();
 			jQuery.sap.interaction.notifyStepStart(null, null, true);
 			this.oReq = new XMLHttpRequest();
-			// second request with FESR header belonging to first interaction
+			// second request with FESR header belonging to first interaction after startup
 			this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 			this.oReq.send();
 		}, afterEach: function() {
@@ -387,13 +424,13 @@ sap.ui.define([
 			jQuery.sap.fesr.setActive(true);
 			jQuery.sap.interaction.notifyStepStart(null, null, true);
 			this.oReq = new XMLHttpRequest();
-			// first request without FESR header
+			// first request with FESR header of startup interaction
 			this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 			this.oReq.send();
 			jQuery.sap.interaction.notifyStepEnd();
 			jQuery.sap.interaction.notifyStepStart(null, null, true);
 			this.oReq = new XMLHttpRequest();
-			// second request with FESR header belonging to first interaction
+			// second request with FESR header belonging to first interaction after startup
 			this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 			this.oReq.send();
 			jQuery.sap.interaction.notifyStepEnd();

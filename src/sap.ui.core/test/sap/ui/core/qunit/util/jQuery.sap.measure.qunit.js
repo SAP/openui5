@@ -20,7 +20,7 @@ sap.ui.define([
 		var notifyAsyncStepCallback;
 
 		notifyAsyncStepCallback = Interaction.notifyAsyncStep();
-		this.clock.tick(1);
+		this.clock.tick(2);
 		notifyAsyncStepCallback();
 	};
 
@@ -412,17 +412,22 @@ sap.ui.define([
 	QUnit.test("endInteraction", function(assert) {
 		this.clock = sinon.useFakeTimers();
 		window.performance.getEntriesByType = function() { return []; };
+
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		addFakeProcessingTime.apply(this);
 		jQuery.sap.measure.endInteraction(true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 		assert.ok(oMeasurement, "Measurement has been created");
+
+		this.clock.runAll();
+		delete window.performance.getEntriesByType;
 		this.clock.restore();
 	});
 
 	QUnit.test("getAllInteractionMeasurements", function(assert) {
 		this.clock = sinon.useFakeTimers();
 		window.performance.getEntriesByType = function() { return []; };
+
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		var aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
 		assert.ok(Array.isArray(aMeasurements), "An array was returned");
@@ -440,12 +445,16 @@ sap.ui.define([
 		addFakeProcessingTime.apply(this);
 		aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements(/*bFinalize =*/true);
 		assert.strictEqual(aMeasurements.length, 3, "Measurements count is correct - pending interaction has been added");
+
+		this.clock.runAll();
+		delete window.performance.getEntriesByType;
 		this.clock.restore();
 	});
 
 	QUnit.test("filterInteractionMeasurements", function(assert) {
 		this.clock = sinon.useFakeTimers();
 		window.performance.getEntriesByType = function() { return []; };
+
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		addFakeProcessingTime.apply(this);
 		jQuery.sap.measure.endInteraction(true);
@@ -466,6 +475,9 @@ sap.ui.define([
 			return oMeasurement.event === "flick";
 		});
 		assert.equal(aFilteredMeasurements.length, 1, "Filter applied correctly");
+
+		this.clock.runAll();
+		delete window.performance.getEntriesByType;
 		this.clock.restore();
 	});
 
@@ -479,6 +491,7 @@ sap.ui.define([
 	QUnit.test("Interaction properties", function(assert) {
 		this.clock = sinon.useFakeTimers();
 		window.performance.getEntriesByType = function() { return []; };
+
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		addFakeProcessingTime.apply(this);
 		jQuery.sap.measure.endInteraction(true);
@@ -500,6 +513,9 @@ sap.ui.define([
 		assert.ok(oMeasurement.networkTime === 0, "No processing");
 		assert.ok(oMeasurement.bytesSent === 0, "No round trip");
 		assert.ok(oMeasurement.bytesReceived === 0, "No processing");
+
+		this.clock.runAll();
+		delete window.performance.getEntriesByType;
 		this.clock.restore();
 	});
 
@@ -572,6 +588,7 @@ sap.ui.define([
 
 	QUnit.test("Component determination", function(assert) {
 		// setup
+		var done = assert.async();
 		var oButton = this.oButton;
 		var sComponentName = "MyComponent";
 		var Comp = UIComponent.extend("my.Component", {
@@ -597,15 +614,17 @@ sap.ui.define([
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		// Tests synchronous time intensive API which makes use of measurement API
 		jQuery.sap.require("sap.m.List");
-		waitASecond();
-		jQuery.sap.measure.endInteraction();
-		jQuery.sap.measure.startInteraction("click", this.oButton);
-		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
+		setTimeout(function () {
+			jQuery.sap.measure.endInteraction();
+			jQuery.sap.measure.startInteraction("click", this.oButton);
+			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 
-		// assert
-		assert.ok(oMeasurement.component === sComponentName, "Component name could be determined");
+			// assert
+			assert.ok(oMeasurement.component === sComponentName, "Component name could be determined");
 
-		// cleanup
-		oComp.destroy();
+			// cleanup
+			oComp.destroy();
+			done();
+		}, 2); // Wait at least 2 ms to make interaction "relevant"
 	});
 });

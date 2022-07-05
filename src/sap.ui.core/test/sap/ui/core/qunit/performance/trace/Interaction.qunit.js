@@ -3,8 +3,9 @@ sap.ui.define([
 	'sap/ui/performance/trace/Interaction',
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/performance/trace/FESRHelper',
-	"sap/ui/test/actions/Press"
-], function(Interaction, XMLView, FESRHelper, Press) {
+	"sap/ui/test/actions/Press",
+	"sap/m/Button"
+], function(Interaction, XMLView, FESRHelper, Press, Button) {
 	"use strict";
 
 	QUnit.module("Interaction API", {
@@ -99,7 +100,7 @@ sap.ui.define([
 				oBtn1.attachPress(function () {
 					oInteraction = Interaction.getPending();
 					assert.strictEqual(oInteraction.semanticStepName, "create", "Semantic step name declared in XMLView is correct");
-					this.clock.tick(1);
+					this.clock.tick(301); // 301ms in order to trigger the notifyStepEnd timeout
 					oPress.executeOn(oBtn2);
 				}.bind(this));
 
@@ -113,10 +114,67 @@ sap.ui.define([
 			}.bind(this)).then(function () {
 				// cleanup
 				oView.destroy();
+
+				// Run all pending setTimeout and restore the timer
+				this.clock.runAll();
 				delete window.performance.getEntriesByType;
 				this.clock.restore();
 			}.bind(this));
 		}.bind(this));
 	});
 
+	QUnit.test("Pending interaction should be finalized even if the handler does not trigger any timing relevant action.", function (assert) {
+		assert.expect(3);
+		this.clock = sinon.useFakeTimers();
+		window.performance.getEntriesByType = function() { return []; };
+
+		//Create and render button
+		var oButton = new Button({
+			press: function () {
+				// event handler without timing relevant action
+				var oPendingInteraction = Interaction.getPending();
+				assert.strictEqual(oPendingInteraction.trigger, oButton.getId(), "Pending Interaction for button '" + oButton.getId() + "' exist.");
+				assert.strictEqual(oPendingInteraction.event, "press", "Pending Interaction has the correct event");
+			}
+		});
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Press button and check that a new interaction is created and that the interaction is also finalized after 300ms
+		var oPress = new Press();
+		oPress.executeOn(oButton);
+		this.clock.tick(301);
+		assert.notOk(Interaction.getPending(), "There is no pending interaction anymore.");
+
+		// Run all pending setTimeout and restore the timer
+		this.clock.runAll();
+		delete window.performance.getEntriesByType;
+		this.clock.restore();
+	});
+
+	QUnit.test("Cleanup browser events in case they don't lead to an interaction.", function (assert) {
+		assert.expect(5);
+		var notifyEventStartSpy = sinon.spy(Interaction, "notifyEventStart");
+		var notifyEventEndSpy = sinon.spy(Interaction, "notifyEventEnd");
+		this.clock = sinon.useFakeTimers();
+		assert.notOk(Interaction.eventEndTimer, "There shouldn't be an eventEndTimer and therefore also no oCurrentBrowserEvent");
+
+		//Create and render button
+		var oButton = new Button(); // Button without press handler to simulate controls which should not result in interactions
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Press button and check that browser events are triggered
+		var oPress = new Press();
+		oPress.executeOn(oButton);
+		assert.strictEqual(notifyEventStartSpy.callCount, 4, "There should be 4 browser events started after pressing the button.");
+		assert.strictEqual(notifyEventEndSpy.callCount, 4, "There should be 4 browser events ended after pressing the button.");
+		assert.ok(Interaction.eventEndTimer, "There should be an eventEndTimer to cleanup oCurrentBrowserEvent at the end.");
+		this.clock.tick(10);
+		assert.notOk(Interaction.eventEndTimer, "There shouldn't be an eventEndTimer at the end after the oCurrentBrowserEvent was reset.");
+
+		// Run all pending setTimeout and restore the timer
+		this.clock.runAll();
+		this.clock.restore();
+	});
 });

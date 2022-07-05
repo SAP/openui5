@@ -242,7 +242,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			var notifyAsyncStepCallback;
 
 			notifyAsyncStepCallback = Interaction.notifyAsyncStep();
-			this.clock.tick(1);
+			this.clock.tick(2);
 			notifyAsyncStepCallback();
 		}.bind(this);
 
@@ -289,7 +289,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			var notifyAsyncStepCallback;
 
 			notifyAsyncStepCallback = Interaction.notifyAsyncStep();
-			this.clock.tick(1);
+			this.clock.tick(2);
 			notifyAsyncStepCallback();
 		}.bind(this);
 
