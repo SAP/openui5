@@ -4,17 +4,22 @@
 
 // Provides class sap.ui.core.FocusHandler
 sap.ui.define([
+	"../base/EventProvider",
 	"../base/Object",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/_ready"
 ],
-	function(BaseObject, Log, jQuery, _ready) {
+	function(EventProvider, BaseObject, Log, jQuery, _ready) {
 	"use strict";
 
 		// Element, Core module references, lazily probed when needed
 		var Element;
 		var Core;
+
+		var oFocusInfoEventProvider = new EventProvider();
+		var FOCUS_INFO_EVENT = "focusInfo";
+		var oEventData = {};
 
 		/**
 		 * Constructs an instance of an sap.ui.core.FocusHandler.
@@ -153,6 +158,36 @@ sap.ui.define([
 		};
 
 		/**
+		 * Adds the given function as an extender of the focus info. The given function will be called within the
+		 * <code>restoreFocus</code> function before the focus info is forwarded to the corresponding control.
+		 *
+		 * @see sap.ui.core.FocusHandler#restoreFocus
+		 * @param {function} fnFunction The function that will be called to extend the focus info
+		 * @param {object} oListener An object which is set as "this" context when callin the "fnFunction"
+		 * @return {sap.ui.core.FocusHandler} The object itself to allow function chaining
+		 * @private
+		 */
+		FocusHandler.prototype.addFocusInfoExtender = function(fnFunction, oListener) {
+			oFocusInfoEventProvider.attachEvent(FOCUS_INFO_EVENT, oEventData, fnFunction, oListener);
+			return this;
+		};
+
+		/**
+		 * Removes the given function from being an extender of the focus info.
+		 *
+		 * @param {function} fnFunction The function that will be removed
+		 * @param {object} oListener An object which is set as "this" context when callin the "fnFunction". Only when
+		 *  the same "oListener" is given as the one that is used to call <code>addFocusInfoExtender</code>, the function
+		 *  can be removed correctly.
+		 * @return {sap.ui.core.FocusHandler} The object itself to allow function chaining
+		 * @private
+		 */
+		FocusHandler.prototype.removeFocusInfoExtender = function(fnFunction, oListener) {
+			oFocusInfoEventProvider.detachEvent(FOCUS_INFO_EVENT, fnFunction, oListener);
+			return this;
+		};
+
+		/**
 		 * Restores the focus to the last known focused control or to the given focusInfo, if possible.
 		 *
 		 * @see sap.ui.core.FocusHandler#getControlFocusInfo
@@ -180,7 +215,15 @@ sap.ui.define([
 				this.oLastFocusedControlInfo = oInfo;
 				// Do not store dom patch info in the last focused control info
 				delete this.oLastFocusedControlInfo.patching;
-				oControl.applyFocusInfo(oInfo.info);
+
+				// expose focus info into the oEventData which is forwarded to the focus info extender
+				oEventData.info = oInfo.info;
+				oFocusInfoEventProvider.fireEvent(FOCUS_INFO_EVENT, {
+					domRef: oControl.getDomRef()
+				});
+
+				oControl.applyFocusInfo(oEventData.info);
+				oEventData = {};
 			} else {
 				Log.debug("Apply focus info of control " + oInfo.id + " not possible", null, "sap.ui.core.FocusHandler");
 			}

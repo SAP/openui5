@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/Popup",
 	"sap/base/Log",
+	"sap/base/util/Deferred",
 	"sap/ui/events/isMouseEventDelayed",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Button",
 	"sap/m/Text",
+	"sap/ui/core/FocusHandler",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
@@ -20,6 +22,7 @@ sap.ui.define([
 ], function(
 	Popup,
 	Log,
+	Deferred,
 	isMouseEventDelayed,
 	Device,
 	jQuery,
@@ -30,6 +33,7 @@ sap.ui.define([
 	Panel,
 	Button,
 	Text,
+	FocusHandler,
 	ResizeHandler,
 	containsOrEquals,
 	KeyCodes,
@@ -488,6 +492,91 @@ sap.ui.define([
 		} else {
 			assert.notEqual(document.activeElement.id, "focusableElement2", "The previous DOM element should be blurred after calling open method");
 		}
+	});
+
+	QUnit.test("Restore focus in modal popup", function(assert) {
+		function createPopup(sId) {
+			var oPopup = new Popup();
+			var oButton = new Button(sId + "-button", {text: sId});
+
+			oPopup.setContent(oButton);
+
+			var oOpenDeferred = new Deferred();
+			var oCloseDeferred = new Deferred();
+
+			var oRes = {
+				instance: oPopup,
+				open: function() {
+					oPopup.open();
+					return oOpenDeferred.promise;
+				},
+				close: function() {
+					oPopup.close();
+					return oCloseDeferred.promise;
+				}
+			};
+
+			var fnOpened = function() {
+				oPopup.detachOpened(fnOpened, this);
+				oOpenDeferred.resolve(oRes);
+			};
+			var fnClosed = function() {
+				oPopup.detachClosed(fnClosed, this);
+				oCloseDeferred.resolve(oRes);
+			};
+
+			oPopup.attachOpened(fnOpened, this);
+			oPopup.attachClosed(fnClosed, this);
+			oPopup.setModal(true);
+
+			return oRes;
+		}
+
+		var oPopupWrap = createPopup("focusPopup");
+
+		return oPopupWrap
+			.open()
+			.then(function() {
+				var oPopup = oPopupWrap.instance;
+				var oButton = oPopup.getContent();
+				var oApplyFocusInfoSpy = this.spy(oButton, "applyFocusInfo");
+
+				assert.equal(oPopup.isOpen(), true, "Popup should be open after opening");
+				oButton.focus();
+
+				oButton.setText("Changed");
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(oApplyFocusInfoSpy.calledOnce, "focus info applied");
+				assert.strictEqual(oApplyFocusInfoSpy.getCall(0).args[0].preventScroll, true, "preventScrolling flag is set");
+			}.bind(this))
+			.then(function() {
+				// create and open another modal popup
+				var oPopupWrap1 = createPopup("focusPopup1");
+				var oPopup = oPopupWrap1.instance;
+				var oButton = oPopup.getContent();
+				var oApplyFocusInfoSpy = this.spy(oButton, "applyFocusInfo");
+
+				return oPopupWrap1.open().then(function() {
+					assert.equal(oPopup.isOpen(), true, "Popup should be open after opening");
+					oButton.focus();
+
+					oButton.setText("Changed");
+					sap.ui.getCore().applyChanges();
+
+					assert.ok(oApplyFocusInfoSpy.calledOnce, "focus info applied");
+					assert.strictEqual(oApplyFocusInfoSpy.getCall(0).args[0].preventScroll, true, "preventScrolling flag is set");
+
+					return oPopupWrap1.close();
+				});
+			}.bind(this))
+			.then(function(oPopupWrap1) {
+				oPopupWrap1.instance.destroy();
+
+				return oPopupWrap.close().then(function() {
+					oPopupWrap.instance.destroy();
+				});
+			});
 	});
 
 	QUnit.test("Check if focus is inside the Popup", function(assert) {
