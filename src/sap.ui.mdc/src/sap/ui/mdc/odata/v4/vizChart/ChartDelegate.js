@@ -80,7 +80,9 @@ sap.ui.define([
             return mStateMap.get(oMDCChart);
         }
 
-        Log.info("Couldn't get state for " + oMDCChart.getId());
+        if (oMDCChart){
+            Log.info("Couldn't get state for " + oMDCChart.getId());
+        }
     };
 
     ChartDelegate._setState = function(oMDCChart, oState) {
@@ -135,13 +137,15 @@ sap.ui.define([
 
     ChartDelegate._deleteState = function(oMDCChart) {
 
-        if (this._getState(oMDCChart).vizTooltip) {
-            this._getState(oMDCChart).vizTooltip.destroy();
-        }
+        if (this._getState(oMDCChart)){
+            if (this._getState(oMDCChart).vizTooltip) {
+                this._getState(oMDCChart).vizTooltip.destroy();
+            }
 
-        if (this._getState(oMDCChart).observer) {
-            this._getState(oMDCChart).observer.disconnect();
-            this._getState(oMDCChart).observer = null;
+            if (this._getState(oMDCChart).observer) {
+                this._getState(oMDCChart).observer.disconnect();
+                this._getState(oMDCChart).observer = null;
+            }
         }
 
         return mStateMap.delete(oMDCChart);
@@ -154,7 +158,9 @@ sap.ui.define([
             return mStateMap.get(oMDCChart).innerChart;
         }
 
-        Log.info("Couldn't get state for " + oMDCChart.getId());
+        if (oMDCChart){
+            Log.info("Couldn't get state for " + oMDCChart.getId());
+        }
 
         return undefined;
 
@@ -173,7 +179,9 @@ sap.ui.define([
             return mStateMap.get(oMDCChart).innerStructure;
         }
 
-        Log.info("Couldn't get state for " + oMDCChart.getId());
+        if (oMDCChart){
+            Log.info("Couldn't get state for " + oMDCChart.getId());
+        }
 
         return undefined;
     };
@@ -191,7 +199,9 @@ sap.ui.define([
             return mStateMap.get(oMDCChart).bindingInfo;
         }
 
-        Log.info("Couldn't get state for " + oMDCChart.getId());
+        if (oMDCChart){
+            Log.info("Couldn't get state for " + oMDCChart.getId());
+        }
 
         return undefined;
     };
@@ -249,7 +259,11 @@ sap.ui.define([
      * @ui5-restricted Fiori Elements, sap.ui.mdc
      */
     ChartDelegate.zoomIn = function (oMDCChart, iValue) {
-        this._getChart(oMDCChart).zoom({direction: "in"});
+        var oInnerChart = this._getChart(oMDCChart);
+
+        if (oInnerChart) {
+            oInnerChart.zoom({direction: "in"});
+        }
     };
 
     /**
@@ -262,7 +276,11 @@ sap.ui.define([
      * @ui5-restricted Fiori Elements, sap.ui.mdc
      */
     ChartDelegate.zoomOut = function (oMDCChart, iValue) {
-        this._getChart(oMDCChart).zoom({direction: "out"});
+        var oInnerChart = this._getChart(oMDCChart);
+
+        if (oInnerChart) {
+            oInnerChart.zoom({direction: "out"});
+        }
     };
 
 
@@ -1318,40 +1336,6 @@ sap.ui.define([
             oState.innerChartBound = true;
         }
     };
-
-    /**
-     * Calculates the height of the inner chart in accoredance with the outer container.
-     * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
-     * @returns {string} New height for the chart
-     * @experimental
-     * @private
-     * @ui5-restricted Fiori Elements, sap.ui.mdc
-     */
-    ChartDelegate._calculateInnerChartHeight = function(oMDCChart) {
-        var iTotalHeight = jQuery(oMDCChart.getDomRef()).height();
-        var iToolbarHeight = 0;
-        var oToolbar = oMDCChart.getAggregation("_toolbar");
-        var iBreadcrumbsHeight = 0;
-        var oBreadcrumbs = oMDCChart.getAggregation("_breadcrumbs");
-
-        if (oToolbar){
-            iToolbarHeight = jQuery(oToolbar.getDomRef()).outerHeight(true);
-        }
-
-        if (oBreadcrumbs){
-            iBreadcrumbsHeight = jQuery(oBreadcrumbs.getDomRef()).outerHeight(true);
-        }
-
-        var iSubHeight = iBreadcrumbsHeight + iToolbarHeight;
-
-        if (!iTotalHeight){
-            return "480px";
-        }
-
-        return iTotalHeight - iSubHeight +  "px";
-    };
-
-
 
     /**
      * Requests a toolbar update once the inner chart is ready.

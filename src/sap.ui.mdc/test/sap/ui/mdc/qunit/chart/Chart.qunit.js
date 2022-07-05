@@ -92,7 +92,7 @@ function(
 		assert.ok(this.oMDCChart.isPropertyHelperFinal() == false);
     });
 
-	QUnit.test("MDC Chart init", function(assert) {
+	QUnit.test("Init", function(assert) {
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function() {
@@ -103,7 +103,7 @@ function(
 
 	});
 
-	QUnit.test("MDC Chart _loadDelegate", function(assert) {
+	QUnit.test("_loadDelegate", function(assert) {
 		var done = assert.async();
 
 		this.oMDCChart._loadDelegate().then(function(oDelegate){
@@ -134,7 +134,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart _createToolbar", function(assert){
+	QUnit.test("_getToolbar", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -151,7 +151,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart _updateToolbar", function(assert){
+	QUnit.test("_updateToolbar", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -165,7 +165,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart _getInnerChart", function(assert){
+	QUnit.test("_getInnerChart", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -179,7 +179,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart zoomIn", function(assert){
+	QUnit.test("zoomIn", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -191,7 +191,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart zoomOut", function(assert){
+	QUnit.test("zoomOut", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -203,7 +203,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart getZoomState", function(assert){
+	QUnit.test("getZoomState", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -215,7 +215,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart setLegendVisible", function(assert){
+	QUnit.test("setLegendVisible", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -230,7 +230,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart showChartTooltip", function(assert){
+	QUnit.test("setShowChartTooltip", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -262,7 +262,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart getChartTypeInfo", function(assert){
+	QUnit.test("getChartTypeInfo", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -276,7 +276,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart getAvailableChartTypes", function(assert){
+	QUnit.test("getAvailableChartTypes", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -288,7 +288,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart setChartType", function(assert){
+	QUnit.test("setChartType", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -300,7 +300,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart getCurrentState", function(assert){
+	QUnit.test("getCurrentState", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -321,7 +321,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart _getVisibleProperties", function(assert){
+	QUnit.test("_getVisibleProperties", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -337,7 +337,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart _getPropertyData", function(assert){
+	QUnit.test("_getPropertyData", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -352,7 +352,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart _renderOverlay", function(assert){
+	QUnit.test("_renderOverlay", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -369,7 +369,7 @@ function(
 	});
 
 
-	QUnit.test("MDC Chart _propagateItemChangeToInnerChart", function(assert){
+	QUnit.test("_propagateItemChangeToInnerChart", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -395,7 +395,7 @@ function(
 
 	});
 
-		QUnit.test("MDC Chart setNoDataText", function(assert){
+		QUnit.test("setNoDataText", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -409,6 +409,120 @@ function(
 		}.bind(this));
 	});
 
+    /**
+     * Not implemented yet
+     */
+    QUnit.test("setP13nMode", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("_updateAdaption", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("isFilteringEnabled", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("setFilterConditions", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("getConditions", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("_registerInnerFilter", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("applySettings", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("_initInnerControls", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("_createContentFromPropertyInfos", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("_createBreadcrumbs", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("getAdaptionUI", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("_rebind", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("_addItems", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("getCollectionModel", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("initialized", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("innerChartBound", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("getSelectionHandler", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("getChartTypeLayoutConfig", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("getAllowedRolesForKinds", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("destroy", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("_showDrillDown", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("getManagedObjectModel", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("_innerChartDataLoadComplete", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("_getSortedProperties", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("_getTypeBtnActive", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("_onFiltersChanged", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("setVariant", function(assert){
+        assert.ok(true);
+    });
+
+    QUnit.test("addAction", function(assert){
+        assert.ok(true);
+    });
 
 	QUnit.module("sap.ui.mdc.Chart: Toolbar Actions", {
 
@@ -465,7 +579,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("MDC Chart setHeaderLevel function calls toolbar", function(assert) {
+	QUnit.test("setHeight", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
