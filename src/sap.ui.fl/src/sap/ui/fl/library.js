@@ -138,13 +138,16 @@ sap.ui.define([
 	 */
 
 	/**
-	 * SAPUI5 Library for SAPUI5 Flexibility and Descriptor Changes, App Variants, Control Variants (Views) and Personalization.
+	 * This is the library for SAPUI5 flexibility.
+	 * It includes the handling of changes made on applications, such as descriptor changes, app variants,
+	 * UI changes, control variants (a.k.a. views), and personalization, as well as APIs for consumers.
+	 * In addition, it provides the VariantManagement control, which enables applications to use control variants (views).
+	 *
 	 * @namespace
 	 * @alias sap.ui.fl
 	 * @author SAP SE
+	 * @public
 	 * @version ${version}
-	 * @private
-	 * @ui5-restricted UI5 controls, tools creating flexibility changes
 	 */
 	var thisLib = sap.ui.getCore().initLibrary({
 		name: "sap.ui.fl",
