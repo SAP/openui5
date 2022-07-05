@@ -37,9 +37,10 @@ sap.ui.define([
 		});
 	}
 
-	function createEditor(oDesigtime) {
+	function createEditor(sLanguage, oDesigntime) {
+		Core.getConfiguration().setLanguage(sLanguage);
 		var oEditor = new Editor({
-			designtime: oDesigtime
+			designtime: oDesigntime
 		});
 		var oContent = document.getElementById("content");
 		if (!oContent) {
@@ -104,10 +105,7 @@ sap.ui.define([
 
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor();
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("de-DE");
-				assert.ok(true, "Set language to de-DE, which does not exists, 'en' will be used");
+				this.oEditor = createEditor("de-DE");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -163,9 +161,7 @@ sap.ui.define([
 				//en_US language
 				assert.ok(true, "Set language to en-US, which exists");
 				return new Promise(function (resolve, reject) {
-					this.oEditor = createEditor();
-					//set language to en_US the language does not exist we expect US english to be shown from i18n_en_US.properties
-					Core.getConfiguration().setLanguage("en-US");
+					this.oEditor = createEditor("en-US");
 					this.oEditor.setMode("admin");
 					this.oEditor.setAllowSettings(true);
 					this.oEditor.setAllowDynamicValues(true);
@@ -247,10 +243,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor();
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("de-DE");
-				assert.ok(true, "Set language to de-DE, which does not exists, 'en' will be used");
+				this.oEditor = createEditor("de-DE");
 				this.oEditor.setMode("content");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -306,9 +299,7 @@ sap.ui.define([
 				//en_US language
 				assert.ok(true, "Set language to en-US, which exists");
 				return new Promise(function (resolve, reject) {
-					this.oEditor = createEditor();
-					//set language to en_US the language does not exist we expect US english to be shown from i18n_en_US.properties
-					Core.getConfiguration().setLanguage("en-US");
+					this.oEditor = createEditor("en-US");
 					this.oEditor.setMode("content");
 					this.oEditor.setAllowSettings(true);
 					this.oEditor.setAllowDynamicValues(true);
@@ -393,8 +384,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor();
-				Core.getConfiguration().setLanguage("en");
+				this.oEditor = createEditor("en");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr");
 				this.oEditor.setAllowSettings(true);
@@ -478,10 +468,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor();
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("de-DE");
-				assert.ok(true, "Set language to de-DE, which does not exists, 'en' will be used");
+				this.oEditor = createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr");
 				this.oEditor.setAllowSettings(true);
@@ -563,10 +550,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor();
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("de-DE");
-				assert.ok(true, "Set language to de-DE, which does not exists, 'en' will be used");
+				this.oEditor = createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr");
 				this.oEditor.setAllowSettings(true);
@@ -649,10 +633,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor();
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("de-DE");
-				assert.ok(true, "Set language to de-DE, which does not exists, 'en' will be used");
+				this.oEditor = createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr");
 				this.oEditor.setAllowSettings(true);
@@ -740,10 +721,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor();
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("de-DE");
-				assert.ok(true, "Set language to de-DE, which does not exists, 'en' will be used");
+				this.oEditor = createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr");
 				this.oEditor.setAllowSettings(true);
@@ -837,10 +815,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor();
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("de-DE");
-				assert.ok(true, "Set language to de-DE, which does not exists, 'en' will be used");
+				this.oEditor = createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr");
 				this.oEditor.setAllowSettings(true);
@@ -924,10 +899,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor();
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("de-DE");
-				assert.ok(true, "Set language to de-DE, which does not exists, 'en' will be used");
+				this.oEditor = createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr");
 				this.oEditor.setAllowSettings(true);
@@ -1011,10 +983,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor();
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("de-DE");
-				assert.ok(true, "Set language to de-DE, which does not exists, 'en' will be used");
+				this.oEditor = createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr-CA");
 				this.oEditor.setAllowSettings(true);
@@ -1100,10 +1069,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor();
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("de-DE");
-				assert.ok(true, "Set language to de-DE, which does not exists, 'en' will be used");
+				this.oEditor = createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("es-MX");
 				this.oEditor.setAllowSettings(true);
@@ -1196,7 +1162,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("de-DE", {
 					"form": {
 						"items": {
 							"string1": {
@@ -1221,9 +1187,6 @@ sap.ui.define([
 						"src": "./img/preview.png"
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("de-DE");
-				assert.ok(true, "Set language to de-DE, which does not exists, 'en' will be used");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("es-MX");
 				this.oEditor.setAllowSettings(true);

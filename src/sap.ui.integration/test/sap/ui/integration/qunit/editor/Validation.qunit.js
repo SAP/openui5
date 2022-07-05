@@ -36,7 +36,8 @@ sap.ui.define([
 		});
 	}
 
-	function createEditor(oDesigntime) {
+	function createEditor(sLanguage, oDesigntime) {
+		Core.getConfiguration().setLanguage(sLanguage);
 		var oEditor = new Editor({
 			designtime: oDesigntime
 		});
@@ -94,7 +95,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					form: {
 						items: {
 							string1: {
@@ -133,9 +134,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -228,7 +226,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					form: {
 						items: {
 							int1: {
@@ -282,9 +280,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -418,7 +413,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					form: {
 						items: {
 							string1: {
@@ -431,9 +426,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -491,7 +483,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					form: {
 						items: {
 							string1: {
@@ -520,9 +512,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -580,7 +569,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					form: {
 						items: {
 							integer: {
@@ -593,9 +582,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -655,7 +641,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					form: {
 						items: {
 							number: {
@@ -668,9 +654,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -741,7 +724,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -769,9 +752,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -829,7 +809,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -864,9 +844,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -931,7 +908,7 @@ sap.ui.define([
 			};
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -966,9 +943,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -1088,7 +1062,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("boolean check", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1137,9 +1111,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -1197,7 +1168,7 @@ sap.ui.define([
 						}
 					}
 				};
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1246,9 +1217,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -1284,7 +1252,7 @@ sap.ui.define([
 
 		QUnit.test("min length check", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1338,9 +1306,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -1389,7 +1354,7 @@ sap.ui.define([
 
 		QUnit.test("max length check", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1443,9 +1408,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -1492,7 +1454,7 @@ sap.ui.define([
 
 		QUnit.test("value range check 1", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1554,9 +1516,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -1605,7 +1564,7 @@ sap.ui.define([
 
 		QUnit.test("value range check 2", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1667,9 +1626,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -1716,7 +1672,7 @@ sap.ui.define([
 
 		QUnit.test("value range check 3", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -1778,9 +1734,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -1897,7 +1850,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("checkbox", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"boolean": {
@@ -1927,9 +1880,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -1983,7 +1933,7 @@ sap.ui.define([
 				}
 			};
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"boolean": {
@@ -2013,9 +1963,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -2047,7 +1994,7 @@ sap.ui.define([
 
 		QUnit.test("switch", function (assert) {
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"boolean": {
@@ -2087,9 +2034,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -2143,7 +2087,7 @@ sap.ui.define([
 				}
 			};
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor({
+				this.oEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"boolean": {
@@ -2183,9 +2127,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
