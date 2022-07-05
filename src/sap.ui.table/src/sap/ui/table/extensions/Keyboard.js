@@ -124,7 +124,7 @@ sap.ui.define([
 				if (bRenderedRows) {
 					this.applyFocusInfo(this._oStoredFocusInfo);
 				} else {
-					this._getKeyboardExtension().initItemNavigation();
+					ExtensionHelper.initItemNavigation(this._getKeyboardExtension(), true);
 				}
 			}
 			delete this._oStoredFocusInfo;
@@ -133,7 +133,7 @@ sap.ui.define([
 			var oExtension = this._getKeyboardExtension();
 
 			if (!oExtension._bIgnoreFocusIn) {
-				oExtension.initItemNavigation();
+				ExtensionHelper.initItemNavigation(this._getKeyboardExtension());
 			} else {
 				oEvent.setMarked("sapUiTableIgnoreFocusIn");
 			}
@@ -151,11 +151,17 @@ sap.ui.define([
 	 * Provides utility functions used this extension
 	 */
 	var ExtensionHelper = {
+		initItemNavigation: function(oExtension, bSkipInitFocusedIndex) {
+			if (ExtensionHelper.isItemNavigationInvalid(oExtension)) {
+				ExtensionHelper._initItemNavigation(oExtension, bSkipInitFocusedIndex);
+			}
+		},
+
 		/*
 		 * Initialize ItemNavigations (content and header) and transfer relevant dom elements.
 		 * TabIndexes are set by the ItemNavigation.
 		 */
-		_initItemNavigation: function(oExtension) {
+		_initItemNavigation: function(oExtension, bSkipInitFocusedIndex) {
 			var oTable = oExtension.getTable();
 
 			if (!oTable) {
@@ -266,7 +272,10 @@ sap.ui.define([
 			oExtension._itemNavigation.setColumns(iColumnCount);
 			oExtension._itemNavigation.setRootDomRef($Table.find(".sapUiTableCnt").get(0));
 			oExtension._itemNavigation.setItemDomRefs(aItemDomRefs);
-			oExtension._itemNavigation.setFocusedIndex(ExtensionHelper.getInitialItemNavigationIndex(oExtension));
+
+			if (!bSkipInitFocusedIndex) {
+				oExtension._itemNavigation.setFocusedIndex(ExtensionHelper.getInitialItemNavigationIndex(oExtension));
+			}
 
 			// revert invalidation flag
 			oExtension._itemNavigationInvalidated = false;
@@ -371,9 +380,7 @@ sap.ui.define([
 	 * @public
 	 */
 	KeyboardExtension.prototype.initItemNavigation = function() {
-		if (ExtensionHelper.isItemNavigationInvalid(this)) {
-			ExtensionHelper._initItemNavigation(this);
-		}
+		ExtensionHelper.initItemNavigation(this);
 	};
 
 	/**

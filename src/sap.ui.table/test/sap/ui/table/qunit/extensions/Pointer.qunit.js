@@ -948,11 +948,14 @@ sap.ui.define([
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
-					setTimeout(function() {
-						sap.ui.getCore().applyChanges();
-						assert.equal(oTable.indexOfColumn(oColumn), 3, "Index of column changed");
-						done();
-					}, 100);
+
+					assert.equal(oTable.indexOfColumn(oColumn), 3, "Index of column changed");
+
+					sap.ui.getCore().applyChanges();
+					assert.strictEqual(document.activeElement, oColumn.getDomRef(), "Focused element");
+					assert.strictEqual(oTable._getKeyboardExtension()._itemNavigation.getFocusedDomRef(), oColumn.getDomRef(),
+						"Focused element in item navigation");
+					done();
 				}, 250);
 
 			}, 100);
@@ -981,11 +984,14 @@ sap.ui.define([
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
-					setTimeout(function() {
-						sap.ui.getCore().applyChanges();
-						assert.equal(oTable.indexOfColumn(oColumn), 1, "Index of column changed");
-						done();
-					}, 100);
+
+					assert.equal(oTable.indexOfColumn(oColumn), 1, "Index of column changed");
+
+					sap.ui.getCore().applyChanges();
+					assert.strictEqual(document.activeElement, oColumn.getDomRef(), "Focused element");
+					assert.strictEqual(oTable._getKeyboardExtension()._itemNavigation.getFocusedDomRef(), oColumn.getDomRef(),
+						"Focused element in item navigation");
+					done();
 				}, 250);
 
 			}, 100);
