@@ -162,6 +162,7 @@ sap.ui.define([
 	};
 
 	function createEditor(sLanguage, oDesigntime) {
+		sLanguage = sLanguage || "en";
 		Core.getConfiguration().setLanguage(sLanguage);
 		var oEditor = new Editor({
 			designtime: oDesigntime

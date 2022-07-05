@@ -49,7 +49,9 @@ sap.ui.define([
 			}, ms || iWaitTimeout);
 		});
 	}
-	function createEditor(oDesigntime) {
+	function createEditor(sLanguage, oDesigntime) {
+		sLanguage = sLanguage || "en";
+		Core.getConfiguration().setLanguage(sLanguage);
 		var oCardEditor = new CardEditor({
 			designtime: oDesigntime
 		});
@@ -620,7 +622,7 @@ sap.ui.define([
 						}
 					}
 				};
-				this.oCardEditor = createEditor({
+				this.oCardEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"stringArrayParameter": {
@@ -669,9 +671,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oCardEditor.setMode("admin");
 				this.oCardEditor.setAllowSettings(true);
 				this.oCardEditor.setAllowDynamicValues(true);
@@ -798,7 +797,7 @@ sap.ui.define([
 				}
 			};
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor = createEditor({
+				this.oCardEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"boolean": {
@@ -828,9 +827,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oCardEditor.setMode("admin");
 				this.oCardEditor.setAllowSettings(true);
 				this.oCardEditor.setAllowDynamicValues(true);
@@ -884,7 +880,7 @@ sap.ui.define([
 				}
 			};
 			return new Promise(function (resolve, reject) {
-				this.oCardEditor = createEditor({
+				this.oCardEditor = createEditor("en", {
 					"form": {
 						"items": {
 							"boolean": {
@@ -924,9 +920,6 @@ sap.ui.define([
 						}
 					}
 				});
-				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
-				Core.getConfiguration().setLanguage("en");
-				assert.ok(true, "Set language to en");
 				this.oCardEditor.setMode("admin");
 				this.oCardEditor.setAllowSettings(true);
 				this.oCardEditor.setAllowDynamicValues(true);
