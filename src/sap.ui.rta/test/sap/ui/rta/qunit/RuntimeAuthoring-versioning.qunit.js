@@ -169,6 +169,25 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("and a reload is needed on start with allContexts=true", function(assert) {
+			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+
+			whenUserConfirmsMessage.call(this, "MSG_DRAFT_EXISTS", assert);
+
+			var oReloadInfo = {
+				isDraftAvailable: true,
+				hasHigherLayerChanges: false,
+				URLParsingService: this.oURLParsingService,
+				allContexts: true
+			};
+			return this.oRta._triggerReloadOnStart(oReloadInfo).then(function(bReloadResult) {
+				assert.ok(bReloadResult, "then the reload is successful");
+				assert.equal(this.oLoadDraftForApplication.callCount, 1, "then loadDraftForApplication is called once");
+				assert.equal(this.oLoadDraftForApplication.getCall(0).args[0].allContexts, true, "with allContexts=true");
+				assert.equal(this.oLoadVersionForApplication.callCount, 0, "then loadVersionForApplication is not called");
+			}.bind(this));
+		});
+
 		QUnit.test("and a reload is needed on start because of personalization changes", function(assert) {
 			var oConfirmMessageStub = whenUserConfirmsMessage.call(this, "MSG_HIGHER_LAYER_CHANGES_EXIST", assert);
 
