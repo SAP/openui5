@@ -13,13 +13,14 @@ sap.ui.define([
 
 	/**
 	 * Provides utility functions for tables.
+	 *
 	 * @namespace
 	 * @alias module:sap/m/table/Util
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.96.0
 	 * @private
-	 * @experimental Since 1.96.0. This class is experimental and the API might be changed in future.
+	 * @ui5-restricted sap.fe, sap.ui.mdc, sap.ui.comp
 	 */
 	var Util = {};
 
