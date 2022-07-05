@@ -729,7 +729,7 @@ sap.ui.define([
 		mQueryOptions = _Helper.intersectQueryOptions(
 			_Helper.getQueryOptionsForPath(this.mLateQueryOptions, sResourcePath),
 			[sRequestedPropertyPath], this.oRequestor.getModelInterface().fetchMetadata,
-			sFullResourceMetaPath, {});
+			sFullResourceMetaPath);
 		if (!mQueryOptions) {
 			return undefined;
 		}
@@ -2830,9 +2830,6 @@ sap.ui.define([
 	 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
 	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
 	 *   because they may have changed due to side effects of a previous update
-	 * @param {object} mNavigationPropertyPaths
-	 *   Hash set of collection-valued navigation property meta paths (relative to this cache's
-	 *   root) which need to be refreshed, maps string to <code>true</code>; is modified
 	 * @param {string[]} aPredicates
 	 *   The key predicates of the root elements to request side effects for
 	 * @param {boolean} bSingle
@@ -2847,8 +2844,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_CollectionCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
-			mNavigationPropertyPaths, aPredicates, bSingle) {
+	_CollectionCache.prototype.requestSideEffects = function (oGroupLock, aPaths, aPredicates,
+			bSingle) {
 		var aElements,
 			iMaxIndex = -1,
 			mMergeableQueryOptions,
@@ -2863,15 +2860,13 @@ sap.ui.define([
 
 		if (this.oPendingRequestsPromise) {
 			return this.oPendingRequestsPromise.then(function () {
-				return that.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths,
-					aPredicates, bSingle);
+				return that.requestSideEffects(oGroupLock, aPaths, aPredicates, bSingle);
 			});
 		}
 
 		mQueryOptions = _Helper.intersectQueryOptions(
 			Object.assign({}, this.mQueryOptions, this.mLateQueryOptions), aPaths,
-			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath,
-			mNavigationPropertyPaths, "", true);
+			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath, "", true);
 		if (!mQueryOptions) {
 			return SyncPromise.resolve(); // micro optimization: use *sync.* promise which is cached
 		}
@@ -3411,9 +3406,6 @@ sap.ui.define([
 	 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
 	 *   "14.5.13 Expression edm:PropertyPath" strings describing which properties need to be loaded
 	 *   because they may have changed due to side effects of a previous update
-	 * @param {object} mNavigationPropertyPaths
-	 *   Hash set of collection-valued navigation property meta paths (relative to this cache's
-	 *   root) which need to be refreshed, maps string to <code>true</code>; is modified
 	 * @param {string} [sResourcePath=this.sResourcePath]
 	 *   A resource path relative to the service URL; it must not contain a query string
 	 * @returns {Promise|sap.ui.base.SyncPromise}
@@ -3424,8 +3416,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_SingleCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
-			mNavigationPropertyPaths, sResourcePath) {
+	_SingleCache.prototype.requestSideEffects = function (oGroupLock, aPaths, sResourcePath) {
 		var mMergeableQueryOptions,
 			mQueryOptions,
 			oResult,
@@ -3436,8 +3427,7 @@ sap.ui.define([
 
 		mQueryOptions = this.oPromise && _Helper.intersectQueryOptions(
 			Object.assign({}, this.mQueryOptions, this.mLateQueryOptions), aPaths,
-			this.oRequestor.getModelInterface().fetchMetadata,
-			this.sMetaPath, mNavigationPropertyPaths);
+			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath);
 		if (!mQueryOptions) {
 			return SyncPromise.resolve();
 		}

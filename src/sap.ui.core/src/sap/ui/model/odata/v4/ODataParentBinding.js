@@ -1386,8 +1386,8 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#visitSideEffects
 	 */
-	ODataParentBinding.prototype.visitSideEffects = function (sGroupId, aPaths, oContext,
-			mNavigationPropertyPaths, aPromises, sPrefix) {
+	ODataParentBinding.prototype.visitSideEffects = function (sGroupId, aPaths, oContext, aPromises,
+			sPrefix) {
 		var aDependentBindings = oContext
 				? this.oModel.getDependentBindings(oContext)
 				: this.getDependentBindings();
@@ -1404,11 +1404,8 @@ sap.ui.define([
 					aPromises.push(
 						oDependentBinding.requestSideEffects(sGroupId, aStrippedPaths));
 				}
-			} else if (mNavigationPropertyPaths[sPath]) {
-				aPromises.push(oDependentBinding.refreshInternal("", sGroupId));
 			} else {
-				oDependentBinding.visitSideEffects(sGroupId, aPaths, null,
-					mNavigationPropertyPaths, aPromises, sPath);
+				oDependentBinding.visitSideEffects(sGroupId, aPaths, null, aPromises, sPath);
 			}
 		});
 	};
