@@ -14,12 +14,10 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/registry/Settings"
 ], function(
 	includes,
 	_omit,
@@ -32,12 +30,10 @@ sap.ui.define([
 	FlexObjectState,
 	Storage,
 	ManifestUtils,
-	VariantManagementState,
 	FeaturesAPI,
 	Layer,
 	LayerUtils,
-	Settings,
-	FlUtils
+	Settings
 ) {
 	"use strict";
 
@@ -80,37 +76,6 @@ sap.ui.define([
 			.then(function(aChanges) {
 				return aChanges.length > 0;
 			});
-	}
-
-	/**
-	 * Removes variant-dependent changes belonging to variants which are currently not selected
-	 *
-	 * @param {array} aChanges - List of changes to check
-	 * @param {sap.ui.fl.Control} oControl - Control for which the changes are being checked
-	 * @returns {sap.ui.fl.Change[]} List of variant-dependent changes belonging to the currently selected variants
-	 */
-	function filterChangesByCurrentVariants(aChanges, oControl) {
-		// 1. Get current variant references
-		var oComponent = FlUtils.getAppComponentForControl(oControl);
-		var oModel = oComponent.getModel(FlUtils.VARIANT_MODEL_NAME);
-		var sFlexReference = oModel && oModel.sFlexReference;
-		var aVariantManagementReferences = VariantManagementState.getVariantManagementReferences(sFlexReference);
-
-		if (aVariantManagementReferences.length === 0) {
-			return aChanges;
-		}
-
-		var aCurrentVariantReferences = aVariantManagementReferences.map(function(sVMReference) {
-			return oModel.getCurrentVariantReference(sVMReference);
-		});
-
-		// 2. Remove variant-dependent changes not assigned to a current variant reference
-		return aChanges.filter(function(oChange) {
-			return aCurrentVariantReferences.some(function(sCurrentVariantReference) {
-				return oChange.getVariantReference() === sCurrentVariantReference
-					|| !oChange.getVariantReference();
-			});
-		});
 	}
 
 	/**
@@ -412,13 +377,7 @@ sap.ui.define([
 		}
 
 		//TODO: Check the mPropertyBag.selector parameter name - the methods called on FlexObjectState expect a control
-		return FlexObjectState.getFlexObjects(mPropertyBag)
-			.then(function(aChanges) {
-				if (mPropertyBag.onlyCurrentVariants) {
-					return filterChangesByCurrentVariants(aChanges, mPropertyBag.selector);
-				}
-				return aChanges;
-			});
+		return FlexObjectState.getFlexObjects(mPropertyBag);
 	};
 
 	return PersistenceWriteAPI;

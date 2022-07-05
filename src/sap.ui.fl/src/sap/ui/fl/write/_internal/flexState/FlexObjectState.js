@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
@@ -22,6 +23,7 @@ sap.ui.define([
 	ChangesController,
 	CompVariantState,
 	CompVariantMerger,
+	VariantManagementState,
 	ChangePersistenceFactory,
 	LayerUtils,
 	CompVariantsUtils,
@@ -85,17 +87,52 @@ sap.ui.define([
 		return ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
 	}
 
+	/**
+	 * Removes variant-dependent changes belonging to variants which are currently not selected
+	 *
+	 * @param {array} aChanges - List of changes to check
+	 * @param {sap.ui.fl.Control} oControl - Control for which the changes are being checked
+	 * @returns {sap.ui.fl.Change[]} List of variant-dependent changes belonging to the currently selected variants
+	 */
+	 function filterChangesByCurrentVariants(aChanges, oControl) {
+		// 1. Get current variant references
+		var oComponent = Utils.getAppComponentForControl(oControl);
+		var oModel = oComponent.getModel(Utils.VARIANT_MODEL_NAME);
+		var sFlexReference = oModel && oModel.sFlexReference;
+		var aVariantManagementReferences = VariantManagementState.getVariantManagementReferences(sFlexReference);
+
+		if (aVariantManagementReferences.length === 0) {
+			return aChanges;
+		}
+
+		var aCurrentVariantReferences = aVariantManagementReferences.map(function(sVMReference) {
+			return oModel.getCurrentVariantReference(sVMReference);
+		});
+
+		// 2. Remove variant-dependent changes not assigned to a current variant reference
+		return aChanges.filter(function(oChange) {
+			return aCurrentVariantReferences.some(function(sCurrentVariantReference) {
+				return oChange.getVariantReference() === sCurrentVariantReference
+					|| !oChange.getVariantReference();
+			});
+		});
+	}
+
 	function getChangePersistenceEntities(mPropertyBag) {
 		var oChangePersistence = getChangePersistence(mPropertyBag);
 
 		return oChangePersistence.getChangesForComponent(_omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache)
-		.then(function(aPersistedChanges) {
-			var aDirtyChanges = [];
-			if (mPropertyBag.includeDirtyChanges) {
-				aDirtyChanges = oChangePersistence.getDirtyChanges();
-			}
-			return aPersistedChanges.concat(aDirtyChanges);
-		});
+			.then(function(aPersistedChanges) {
+				var aDirtyChanges = [];
+				if (mPropertyBag.includeDirtyChanges) {
+					aDirtyChanges = oChangePersistence.getDirtyChanges();
+				}
+				var aChanges = aPersistedChanges.concat(aDirtyChanges);
+				if (mPropertyBag.onlyCurrentVariants) {
+					return filterChangesByCurrentVariants(aChanges, mPropertyBag.selector);
+				}
+				return aChanges;
+			});
 	}
 
 	function saveChangePersistenceEntities(mPropertyBag, oAppComponent) {
