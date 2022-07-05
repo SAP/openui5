@@ -409,6 +409,10 @@ sap.ui.define([
 				}
 
 				var oInputControl;
+				var bUTC = false;
+				if (oControl && oValue) {
+					bUTC = oControl._checkFormatterUTCTimezone(oValue.operator);
+				}
 
 				switch (aParams[iIndex].getType()) {
 					case "int":
@@ -420,18 +424,18 @@ sap.ui.define([
 						}
 						break;
 					case "date":
-						oInputControl = this._createDateControl(oValue, iIndex, fnControlsUpdated);
+						oInputControl = this._createDateControl(oValue, iIndex, fnControlsUpdated, bUTC);
 						break;
 					case "datetime":
 						if (aParams.length === 1) {
 							// creates "single" DateTime option (embedded in the DynamicDateRange popup)
-							oInputControl = this._createDateTimeInnerControl(oValue, iIndex, fnControlsUpdated);
+							oInputControl = this._createDateTimeInnerControl(oValue, iIndex, fnControlsUpdated, bUTC);
 						} else if (aParams.length === 2) {
-							oInputControl = this._createDateTimeControl(oValue, iIndex, fnControlsUpdated);
+							oInputControl = this._createDateTimeControl(oValue, iIndex, fnControlsUpdated, bUTC);
 						}
 						break;
 					case "daterange":
-						oInputControl = this._createDateRangeControl(oValue, iIndex, fnControlsUpdated);
+						oInputControl = this._createDateRangeControl(oValue, iIndex, fnControlsUpdated, bUTC);
 					break;
 					case "month":
 						oInputControl = this._createMonthControl(oValue, iIndex, fnControlsUpdated);

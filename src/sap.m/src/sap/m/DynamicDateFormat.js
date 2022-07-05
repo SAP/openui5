@@ -330,7 +330,7 @@ sap.ui.define([
 		DynamicDateFormat.prototype._checkFormatterUTCTimezone = function(sOption) {
 			var sType = "";
 			if (aParameterTypesByStandardOptionKey[sOption]) {
-				sType = aParameterTypesByStandardOptionKey[sOption];
+				sType = aParameterTypesByStandardOptionKey[sOption][0];
 			}
 
 			// ensure that in options like last/next days or +/- days we still use correct timezone when formatting the dates.
