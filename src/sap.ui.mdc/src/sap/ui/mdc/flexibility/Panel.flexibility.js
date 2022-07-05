@@ -145,10 +145,9 @@ sap.ui.define([
 				completeChangeContent: function(oChange, mSpecificChangeInfo, mPropertyBag) {
 					if (mSpecificChangeInfo.content) {
 						var oSelector = mPropertyBag.modifier.getSelector(mSpecificChangeInfo.content.selector, mPropertyBag.appComponent);
-						var mChangeData = oChange.getDefinition();
-						mChangeData.content = {
+						oChange.setContent({
 							selector: oSelector
-						};
+						});
 					}
 				}
 			}

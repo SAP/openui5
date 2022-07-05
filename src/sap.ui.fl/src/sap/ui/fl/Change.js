@@ -523,23 +523,30 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the new text for the given text ID.
+	 * Sets the new text for the given text ID or creates new text with the given ID.
 	 *
 	 * @param {string} sTextId - Text ID which was used as part of the <code>oTexts</code> object
 	 * @param {string} sNewText - New text for the given text ID
+	 * @param {string} sType - Translation text type
 	 *
 	 * @public
 	 */
-	Change.prototype.setText = function (sTextId, sNewText) {
+	Change.prototype.setText = function (sTextId, sNewText, sType) {
 		if (typeof (sTextId) !== "string") {
 			Log.error("sap.ui.fl.Change.setTexts : sTextId is not defined");
 			return;
 		}
+		this._oDefinition.texts = this._oDefinition.texts || {};
 		if (this._oDefinition.texts) {
 			if (this._oDefinition.texts[sTextId]) {
 				this._oDefinition.texts[sTextId].value = sNewText;
-				this.setState(Change.states.DIRTY);
+			} else {
+				this._oDefinition.texts[sTextId] = {
+					value: sNewText,
+					type: sType
+				};
 			}
+			this.setState(Change.states.DIRTY);
 		}
 	};
 

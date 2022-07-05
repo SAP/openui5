@@ -4,12 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/base/Log"
+	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function (
 	Base,
-	JsControlTreeModifier,
-	Log
+	JsControlTreeModifier
 ) {
 	"use strict";
 
@@ -92,11 +90,14 @@ sap.ui.define([
 		var oAppComponent = mPropertyBag.appComponent;
 		var iInsertIndex;
 
-		var oChange = oChangeWrapper.getDefinition();
-		if (oChange.texts && oChange.texts.groupLabel && oChange.texts.groupLabel.value &&
-			oChange.content && oChange.content.group &&
-			(oChange.content.group.selector || oChange.content.group.id)) {
-			var oGroupSelector = oChange.content.group.selector;
+		var oTexts = oChangeWrapper.getTexts();
+		var oContent = oChangeWrapper.getContent();
+		if (
+			oTexts && oTexts.groupLabel && oTexts.groupLabel.value
+			&& oContent && oContent.group &&
+			(oContent.group.selector || oContent.group.id)
+		) {
+			var oGroupSelector = oContent.group.selector;
 			var sGroupId;
 			if (oGroupSelector) {
 				if (oGroupSelector.idIsLocal) {
@@ -105,21 +106,21 @@ sap.ui.define([
 					sGroupId = oGroupSelector.id;
 				}
 			} else {
-				sGroupId = oChange.content.group.id;
+				sGroupId = oContent.group.id;
 			}
 			oChangeWrapper.setRevertData({groupId: sGroupId});
-			var sLabelText = oChange.texts.groupLabel.value;
+			var sLabelText = oTexts.groupLabel.value;
 			var iRelativeIndex;
 			return Promise.resolve()
 				.then(function(){
 					return oModifier.getAggregation(oForm, AddSimpleFormGroup.CONTENT_AGGREGATION);
 				})
 				.then(function(aContent){
-					if (typeof oChange.content.group.index === "number") {
+					if (typeof oContent.group.index === "number") {
 						// The old code support
-						return oChange.content.group.index;
+						return oContent.group.index;
 					} else {
-						iRelativeIndex = oChange.content.group.relativeIndex;
+						iRelativeIndex = oContent.group.relativeIndex;
 						return fnMapGroupIndexToContentAggregationIndex(oModifier,
 							["sap.ui.core.Title", "sap.m.Title", "sap.m.Toolbar", "sap.m.OverflowToolbar"],
 							aContent, iRelativeIndex);
@@ -137,17 +138,13 @@ sap.ui.define([
 					oModifier.setProperty(oTitle, "text", sLabelText);
 					return oModifier.insertAggregation(oForm, "content", oTitle, iInsertIndex, oView);
 				});
-
-		} else {
-			Log.error("Change does not contain sufficient information to be applied: [" + oChange.layer + "]" + oChange.namespace + "/" + oChange.fileName + "." + oChange.fileType);
-			//however subsequent changes should be applied
 		}
 	};
 
 	/**
 	 * Completes the change by adding change handler specific content
 	 *
-	 * @param {sap.ui.fl.Change} oChangeWrapper Change wrapper object to be completed
+	 * @param {sap.ui.fl.Change} oChange Change wrapper object to be completed
 	 * @param {object} oSpecificChangeInfo with attributes "groupLabel", the group label to be included in the change and "newControlId", the control ID for the control to be added
 	 * @param {object} mPropertyBag Property bag containing the modifier, the appComponent and the view
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
@@ -155,23 +152,19 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.view Application view
 	 * @public
 	 */
-	AddSimpleFormGroup.completeChangeContent = function (oChangeWrapper, oSpecificChangeInfo, mPropertyBag) {
-		var oChange = oChangeWrapper.getDefinition();
+	AddSimpleFormGroup.completeChangeContent = function (oChange, oSpecificChangeInfo, mPropertyBag) {
 		var oAppComponent = mPropertyBag.appComponent;
+		var oContent = {
+			group: {}
+		};
 
 		if (oSpecificChangeInfo.newLabel) {
-			Base.setTextInChange(oChange, "groupLabel", oSpecificChangeInfo.newLabel, "XFLD");
+			oChange.setText("groupLabel", oSpecificChangeInfo.newLabel, "XFLD");
 		} else {
 			throw new Error("oSpecificChangeInfo.newLabel attribute required");
 		}
-		if (!oChange.content) {
-			oChange.content = {};
-		}
-		if (!oChange.content.group) {
-			oChange.content.group = {};
-		}
 		if (oSpecificChangeInfo.newControlId) {
-			oChange.content.group.selector = JsControlTreeModifier.getSelector(oSpecificChangeInfo.newControlId, oAppComponent);
+			oContent.group.selector = JsControlTreeModifier.getSelector(oSpecificChangeInfo.newControlId, oAppComponent);
 		} else {
 			throw new Error("oSpecificChangeInfo.newControlId attribute required");
 		}
@@ -179,8 +172,10 @@ sap.ui.define([
 		if (oSpecificChangeInfo.index === undefined) {
 			throw new Error("oSpecificChangeInfo.index attribute required");
 		} else {
-			oChange.content.group.relativeIndex = oSpecificChangeInfo.index;
+			oContent.group.relativeIndex = oSpecificChangeInfo.index;
 		}
+
+		oChange.setContent(oContent);
 	};
 
 	/**
@@ -231,7 +226,7 @@ sap.ui.define([
 	};
 
 	AddSimpleFormGroup.getChangeVisualizationInfo = function(oChange, oAppComponent) {
-		var oSelector = oChange.getDefinition().content.group.selector;
+		var oSelector = oChange.getContent().group.selector;
 		var oAffectedGroup = JsControlTreeModifier.bySelector(oSelector, oAppComponent).getParent().getId();
 		return {
 			affectedControls: [oAffectedGroup]

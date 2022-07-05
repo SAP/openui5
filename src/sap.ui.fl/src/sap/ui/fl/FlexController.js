@@ -173,6 +173,8 @@ sap.ui.define([
 				throw new Error("Change handler could not be retrieved for change " + JSON.stringify(oChangeSpecificData) + ".");
 			})
 			.then(function () {
+				// completeChangeContent changes the content and might make it dirty
+				oChange.setState(Change.states.NEW);
 				return oChange;
 			})
 			.catch(function(oError) {

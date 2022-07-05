@@ -19,7 +19,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
-	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
@@ -43,7 +42,6 @@ sap.ui.define([
 	Switcher,
 	VariantManagementState,
 	VariantUtil,
-	BaseChangeHandler,
 	Change,
 	Layer,
 	LayerUtils,
@@ -895,9 +893,6 @@ sap.ui.define([
 			mNewChangeData.fileType = "ctrl_variant_management_change";
 			mNewChangeData.selector = JsControlTreeModifier.getSelector(sVariantManagementReference, mPropertyBag.appComponent);
 		} else {
-			if (mPropertyBag.changeType === "setTitle") {
-				BaseChangeHandler.setTextInChange(mNewChangeData, "title", mPropertyBag.title, "XFLD");
-			}
 			mNewChangeData.fileType = "ctrl_variant_change";
 			mNewChangeData.selector = JsControlTreeModifier.getSelector(mPropertyBag.variantReference, mPropertyBag.appComponent);
 		}
@@ -905,6 +900,9 @@ sap.ui.define([
 		var oChange = this.oFlexController.createBaseChange(mNewChangeData, mPropertyBag.appComponent);
 		//update change with additional content
 		oChange.setContent(mAdditionalChangeContent);
+		if (mPropertyBag.changeType === "setTitle") {
+			oChange.setText("title", mPropertyBag.title, "XFLD");
+		}
 
 		mUpdateVariantsStateParams.changeContent = oChange.getDefinition();
 		//update variants state and write change to ChangePersistence

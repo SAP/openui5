@@ -56,7 +56,6 @@ sap.ui.define([
 		var oView = mPropertyBag.view;
 		var oAppComponent = mPropertyBag.appComponent;
 
-		var oChangeDefinition = oChange.getDefinition();
 
 		// in case of custom fields the application needs to be on JS.
 		// In the other case the visuality of the hidden control will be overriden by the custom field binding afterwards
@@ -64,8 +63,9 @@ sap.ui.define([
 			return Promise.reject(Error("Change cannot be applied in XML. Retrying in JS."));
 		}
 
+		var oContent = oChange.getContent();
 		// !important : sHideId was used in 1.40, do not remove for compatibility!
-		var oRemovedElement = oModifier.bySelector(oChangeDefinition.content.elementSelector || oChangeDefinition.content.sHideId, oAppComponent, oView);
+		var oRemovedElement = oModifier.bySelector(oContent.elementSelector || oContent.sHideId, oAppComponent, oView);
 		var aContent;
 
 		return this._getState(oControl, oModifier, oAppComponent)
@@ -86,7 +86,8 @@ sap.ui.define([
 			})
 			.then(function() {
 				var iStart = -1;
-				if (oChangeDefinition.changeType === "hideSimpleFormField") {
+				var sChangeType = oChange.getChangeType();
+				if (sChangeType === "hideSimpleFormField") {
 					aContent.some(function (oField, index) {
 						if (oField === oRemovedElement) {
 							iStart = index;
@@ -102,7 +103,7 @@ sap.ui.define([
 							}
 						}
 					});
-				} else if (oChangeDefinition.changeType === "removeSimpleFormGroup") {
+				} else if (sChangeType === "removeSimpleFormGroup") {
 					var aPromises = [];
 					var oTitleOrToolbar = fnGetFirstToolbarOrTitle(aContent, oModifier);
 					var bFirstContainerWithoutTitle = oTitleOrToolbar && !oRemovedElement;
@@ -159,7 +160,7 @@ sap.ui.define([
 				}
 				return Promise.resolve();
 			})
-			. catch(function(oError) {
+			.catch(function(oError) {
 				oChange.resetRevertData();
 				Log.error(oError.message || oError.name);
 			});
@@ -190,10 +191,11 @@ sap.ui.define([
 	 * @public
 	 */
 	HideForm.completeChangeContent = function(oChangeWrapper, oSpecificChangeInfo, mPropertyBag) {
-		var oChange = oChangeWrapper.getDefinition();
 		if (oSpecificChangeInfo.removedElement && oSpecificChangeInfo.removedElement.id) {
 			var oStableElement = this._getStableElement(sap.ui.getCore().byId(oSpecificChangeInfo.removedElement.id));
-			oChange.content.elementSelector = JsControlTreeModifier.getSelector(oStableElement, mPropertyBag.appComponent);
+			oChangeWrapper.setContent({
+				elementSelector: JsControlTreeModifier.getSelector(oStableElement, mPropertyBag.appComponent)
+			});
 			oChangeWrapper.addDependentControl(oStableElement, "elementSelector", mPropertyBag);
 		} else {
 			throw new Error("oSpecificChangeInfo.removedElement.id attribute required");
@@ -266,7 +268,7 @@ sap.ui.define([
 	};
 
 	HideForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {
-		var oSelector = oChange.getDefinition().content.elementSelector;
+		var oSelector = oChange.getContent().elementSelector;
 		var oElement = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
 		var oDisplaySelector = oChange.getChangeType() === "removeSimpleFormGroup"
 			? oElement.getParent().getId()

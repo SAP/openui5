@@ -4,14 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	Base,
-	JsControlTreeModifier,
-	Log,
-	jQuery
+	JsControlTreeModifier
 ) {
 	"use strict";
 
@@ -40,18 +36,21 @@ sap.ui.define([
 		var oModifier = mPropertyBag.modifier;
 		var oAppComponent = mPropertyBag.appComponent;
 		var oView = mPropertyBag.view;
-		var oChangeDefinition = oChange.getDefinition();
+		var oContent = oChange.getContent();
+		var oTexts = oChange.getTexts();
 
-		if (oChangeDefinition.texts
-			&& oChangeDefinition.texts.groupLabel
-			&& oChangeDefinition.texts.groupLabel.value
-			&& oChangeDefinition.content
-			&& oChangeDefinition.content.group
-			&& (oChangeDefinition.content.group.selector || oChangeDefinition.content.group.id)) {
-			var sTitleText = oChangeDefinition.texts.groupLabel.value;
-			var iInsertIndex = oChangeDefinition.content.group.index;
-			var mNewGroupSelector = oChangeDefinition.content.group.selector || { id : oChangeDefinition.content.group.id };
-			var mNewTitleSelector = jQuery.extend({}, mNewGroupSelector);
+		if (
+			oTexts
+			&& oTexts.groupLabel
+			&& oTexts.groupLabel.value
+			&& oContent
+			&& oContent.group
+			&& (oContent.group.selector || oContent.group.id)
+		) {
+			var sTitleText = oTexts.groupLabel.value;
+			var iInsertIndex = oContent.group.index;
+			var mNewGroupSelector = oContent.group.selector || { id : oContent.group.id };
+			var mNewTitleSelector = Object.assign({}, mNewGroupSelector);
 
 			mNewTitleSelector.id = mNewTitleSelector.id + "--title"; //same as FormRenderer does it
 			oChange.setRevertData({newGroupSelector: mNewGroupSelector});
@@ -79,12 +78,6 @@ sap.ui.define([
 						.then(oModifier.insertAggregation.bind(oModifier, oForm, "formContainers", oGroup, iInsertIndex, oView));
 				});
 		} else {
-			Log.error("Change does not contain sufficient information to be applied: ["
-				+ oChangeDefinition.layer + "]"
-				+ oChangeDefinition.namespace + "/"
-				+ oChangeDefinition.fileName + "."
-				+ oChangeDefinition.fileType);
-			//however subsequent changes should be applied
 			return Promise.resolve();
 		}
 	};
@@ -101,32 +94,29 @@ sap.ui.define([
 	 * @public
 	 */
 	AddGroup.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {
-		var oChangeDefinition = oChange.getDefinition();
 		var	oAppComponent = mPropertyBag.appComponent;
 
 		if (oSpecificChangeInfo.newLabel) {
-			Base.setTextInChange(oChangeDefinition, "groupLabel", oSpecificChangeInfo.newLabel, "XFLD");
+			oChange.setText("groupLabel", oSpecificChangeInfo.newLabel, "XFLD");
 		} else {
 			throw new Error("Cannot create a new group: oSpecificChangeInfo.groupLabel attribute required");
 		}
-		if (!oChangeDefinition.content) {
-			oChangeDefinition.content = {};
-		}
-		if (!oChangeDefinition.content.group) {
-			oChangeDefinition.content.group = {};
-		}
+		var oContent = {
+			group: {}
+		};
 
 		if (oSpecificChangeInfo.index === undefined) {
 			throw new Error("Cannot create a new group: oSpecificChangeInfo.index attribute required");
 		} else {
-			oChangeDefinition.content.group.index = oSpecificChangeInfo.index;
+			oContent.group.index = oSpecificChangeInfo.index;
 		}
 
 		if ( oSpecificChangeInfo.newControlId ){
-			oChangeDefinition.content.group.selector = JsControlTreeModifier.getSelector(oSpecificChangeInfo.newControlId, oAppComponent);
+			oContent.group.selector = JsControlTreeModifier.getSelector(oSpecificChangeInfo.newControlId, oAppComponent);
 		} else {
 			throw new Error("Cannot create a new group: oSpecificChangeInfo.newControlId attribute required");
 		}
+		oChange.setContent(oContent);
 	};
 
 	/**

@@ -35,7 +35,7 @@ sap.ui.define([
 			var oModifier = mPropertyBag.modifier;
 			var oView = mPropertyBag.view;
 			var oAppComponent = mPropertyBag.appComponent;
-			var oMovedElementInfo = oChange.getDefinition().content.movedElements[0];
+			var oMovedElementInfo = oChange.getContent().movedElements[0];
 			var iTargetIndex = oMovedElementInfo.targetIndex;
 			var oMovedElement;
 			var iOriginalIndex;
@@ -83,7 +83,7 @@ sap.ui.define([
 			var oModifier = mPropertyBag.modifier;
 			var oView = mPropertyBag.view;
 			var oAppComponent = mPropertyBag.appComponent;
-			var oMovedElementInfo = oChange.getDefinition().content.movedElements[0];
+			var oMovedElementInfo = oChange.getContent().movedElements[0];
 			var oRevertData = oChange.getRevertData();
 			var oMovedElement;
 			var iTargetIndex;
@@ -110,11 +110,10 @@ sap.ui.define([
 		 */
 		MoveActions.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {
 			var oModifier = mPropertyBag.modifier,
-				oAppComponent = mPropertyBag.appComponent,
-				oChangeData = oChange.getDefinition();
+				oAppComponent = mPropertyBag.appComponent;
 
 			// We need to add the information about the movedElements together with the source and target index
-			oChangeData.content = {
+			var oContent = {
 				movedElements: [],
 				targetAggregation: oSpecificChangeInfo.target.aggregation,
 				targetContainer: oSpecificChangeInfo.selector
@@ -122,12 +121,13 @@ sap.ui.define([
 
 			oSpecificChangeInfo.movedElements.forEach(function (mElement) {
 				var oElement = mElement.element || oModifier.bySelector(mElement.id, oAppComponent);
-				oChangeData.content.movedElements.push({
+				oContent.movedElements.push({
 					selector: oModifier.getSelector(oElement, oAppComponent),
 					sourceIndex: mElement.sourceIndex,
 					targetIndex: mElement.targetIndex
 				});
 			});
+			oChange.setContent(oContent);
 		};
 
 		MoveActions.getCondenserInfo = function(oChange) {

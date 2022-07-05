@@ -35,16 +35,15 @@ sap.ui.define([
 		var oView = mPropertyBag.view;
 		var oAppComponent = mPropertyBag.appComponent;
 
-		var oChangeDefinition = oChangeWrapper.getDefinition();
-
+		var oContent = oChangeWrapper.getContent();
 		// in case of custom fields the application needs to be on JS.
-		// In the other case the visuality of the control will be overriden by the custom field binding afterwards
+		// In the other case the visibility of the control will be overridden by the custom field binding afterwards
 		if (_isXmlModifier(mPropertyBag)) {
 			return Promise.reject(Error("Change cannot be applied in XML. Retrying in JS."));
 		}
 
 		// !important : sUnhideId was used in 1.40, do not remove for compatibility reasons!
-		var oControlToUnhide = oModifier.bySelector(oChangeDefinition.content.elementSelector || oChangeDefinition.content.sUnhideId, oAppComponent, oView);
+		var oControlToUnhide = oModifier.bySelector(oContent.elementSelector || oContent.sUnhideId, oAppComponent, oView);
 		return Promise.resolve()
 			.then(function() {
 				return oModifier.getAggregation(oControl, "content");
@@ -52,7 +51,7 @@ sap.ui.define([
 			.then(function(aContent) {
 				var iStart = -1;
 
-				if (oChangeDefinition.changeType === "unhideSimpleFormField") {
+				if (oChangeWrapper.getChangeType() === "unhideSimpleFormField") {
 					oChangeWrapper.setRevertData(true);
 					aContent.some(function (oField, index) {
 						if (oField === oControlToUnhide) {
@@ -84,21 +83,22 @@ sap.ui.define([
 	 * @public
 	 */
 	UnhideForm.completeChangeContent = function(oChangeWrapper, oSpecificChangeInfo, mPropertyBag) {
-		var oChangeDefinition = oChangeWrapper.getDefinition();
 		//TODO remove sUnhideId when rta is switched to new logic to create reveal changes
+		var oContent = {};
 		if (oSpecificChangeInfo.sUnhideId) {
 			var oUnhideElement = sap.ui.getCore().byId(oSpecificChangeInfo.sUnhideId);
-			oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oUnhideElement, mPropertyBag.appComponent);
+			oContent.elementSelector = JsControlTreeModifier.getSelector(oUnhideElement, mPropertyBag.appComponent);
 			oChangeWrapper.addDependentControl(oUnhideElement, "elementSelector", mPropertyBag);
 		} else if (oSpecificChangeInfo.revealedElementId ) {
 			//translate from FormElement (unstable id) to the label control (stable id and in public aggregation)
 			var oFormElement = sap.ui.getCore().byId(oSpecificChangeInfo.revealedElementId || oSpecificChangeInfo.sUnhideId);
 			var oLabel = oFormElement.getLabel();
-			oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oLabel, mPropertyBag.appComponent);
+			oContent.elementSelector = JsControlTreeModifier.getSelector(oLabel, mPropertyBag.appComponent);
 			oChangeWrapper.addDependentControl(oLabel, "elementSelector", mPropertyBag);
 		} else {
 			throw new Error("oSpecificChangeInfo.revealedElementId attribute required");
 		}
+		oChangeWrapper.setContent(oContent);
 	};
 
 	/**
@@ -118,10 +118,10 @@ sap.ui.define([
 		var oView = mPropertyBag.view;
 		var oAppComponent = mPropertyBag.appComponent;
 
-		var oChangeDefinition = oChangeWrapper.getDefinition();
+		var oChangeContent = oChangeWrapper.getContent();
 
 		// !important : sUnhideId was used in 1.40, do not remove for compatibility reasons!
-		var oControlToRevertUnhide = oModifier.bySelector(oChangeDefinition.content.elementSelector || oChangeDefinition.content.sUnhideId, oAppComponent, oView);
+		var oControlToRevertUnhide = oModifier.bySelector(oChangeContent.elementSelector || oChangeContent.sUnhideId, oAppComponent, oView);
 		return Promise.resolve()
 			.then(function() {
 				return oModifier.getAggregation(oControl, "content");
@@ -129,7 +129,7 @@ sap.ui.define([
 			.then(function(aContent) {
 				var iStart = -1;
 
-				if (oChangeDefinition.changeType === "unhideSimpleFormField") {
+				if (oChangeWrapper.getChangeType() === "unhideSimpleFormField") {
 					aContent.some(function (oField, index) {
 						if (oField === oControlToRevertUnhide) {
 							iStart = index;
@@ -155,7 +155,7 @@ sap.ui.define([
 
 	UnhideForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {
 		return {
-			affectedControls: [JsControlTreeModifier.bySelector(oChange.getDefinition().content.elementSelector, oAppComponent).getParent().getId()]
+			affectedControls: [JsControlTreeModifier.bySelector(oChange.getContent().elementSelector, oAppComponent).getParent().getId()]
 		};
 	};
 

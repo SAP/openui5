@@ -39,9 +39,9 @@ sap.ui.define([
 	 * @name sap.ui.fl.changeHandler.PropertyBindingChange#applyChange
 	 */
 	PropertyBindingChange.applyChange = function(oChange, oControl, mPropertyBag) {
-		var oDef = oChange.getDefinition();
-		var sPropertyName = oDef.content.property;
-		var vPropertyValue = oDef.content.newBinding;
+		var oContent = oChange.getContent();
+		var sPropertyName = oContent.property;
+		var vPropertyValue = oContent.newBinding;
 		var oModifier = mPropertyBag.modifier;
 
 		// TODO: enable again when apps have adapted
@@ -71,8 +71,8 @@ sap.ui.define([
 		var mRevertData = oChange.getRevertData();
 
 		if (mRevertData) {
-			var oDef = oChange.getDefinition();
-			var sPropertyName = oDef.content.property;
+			var oContent = oChange.getContent();
+			var sPropertyName = oContent.property;
 			var vPropertyValue = mRevertData.originalValue;
 			var oModifier = mPropertyBag.modifier;
 
@@ -93,8 +93,6 @@ sap.ui.define([
 	 * @name sap.ui.fl.changeHandler.PropertyBindingChange#completeChangeContent
 	 */
 	PropertyBindingChange.completeChangeContent = function(oChange, oSpecificChangeInfo) {
-		var oChangeJson = oChange.getDefinition();
-
 		if (!oSpecificChangeInfo.content) {
 			throw new Error("oSpecificChangeInfo attribute required");
 		}
@@ -103,7 +101,7 @@ sap.ui.define([
 		// 	throw new Error(sNoBindingError);
 		// }
 
-		oChangeJson.content = oSpecificChangeInfo.content;
+		oChange.setContent(oSpecificChangeInfo.content);
 	};
 
 	/**

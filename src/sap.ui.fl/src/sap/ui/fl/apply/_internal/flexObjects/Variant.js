@@ -98,12 +98,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the variant name on the correponding <code>texts</code> FlexObject property
+	 * Sets the variant name on the corresponding <code>texts</code> FlexObject property
 	 * @param {string} sName - Variant name
 	 * @param {boolean} [bSkipStateChange] - If set to <code>true</code>, doesn't set the state to dirty
 	 */
 	Variant.prototype.setName = function(sName, bSkipStateChange) {
-		this.setText("variantName", sName, bSkipStateChange);
+		this.setText("variantName", sName, "XFLD", bSkipStateChange);
 	};
 
 	return Variant;

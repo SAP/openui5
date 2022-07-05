@@ -242,7 +242,7 @@ sap.ui.define([
 					aggregation: "content"
 				}
 			};
-			var oChange = new Change({selector: JsControlTreeModifier.getSelector(mSpecificChangeInfo.target.id, oComponent)});
+			var oChange = new Change({selector: JsControlTreeModifier.getSelector(mSpecificChangeInfo.target.id, oComponent), content: {}});
 
 			return MoveControlsHandler.completeChangeContent(oChange, mSpecificChangeInfo, {modifier: JsControlTreeModifier, appComponent: oComponent})
 				.then(function() {

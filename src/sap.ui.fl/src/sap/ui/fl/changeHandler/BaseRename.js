@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/changeHandler/Base",
 	"sap/base/Log",
 	"sap/ui/fl/changeHandler/condenser/Classification"
 ], function(
-	Base,
 	Log,
 	CondenserClassification
 ) {
@@ -48,22 +46,17 @@ sap.ui.define([
 				applyChange: function(oChange, oControl, mPropertyBag) {
 					var oModifier = mPropertyBag.modifier;
 					var sPropertyName = mRenameSettings.propertyName;
-					var oChangeDefinition = oChange.getDefinition();
-					var sText = oChangeDefinition.texts[mRenameSettings.changePropertyName];
-					var sValue = sText.value;
+					var sValue = oChange.getText(mRenameSettings.changePropertyName);
 
 					return Promise.resolve()
 						.then(function() {
-							if (oChangeDefinition.texts && sText && typeof (sValue) === "string") {
+							if (sValue) {
 								return oModifier.getPropertyBindingOrProperty(oControl, sPropertyName)
 									.then(function (vPropertyValue) {
 										oChange.setRevertData(vPropertyValue);
 										return oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, sValue);
 									});
 							}
-							Log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
-							//however subsequent changes should be applied
-
 							return undefined;
 						});
 				},
@@ -102,7 +95,6 @@ sap.ui.define([
 				 * @public
 				 */
 				completeChangeContent: function(oChange, mSpecificChangeInfo, mPropertyBag) {
-					var oChangeDefinition = oChange.getDefinition();
 					var sChangePropertyName = mRenameSettings.changePropertyName;
 					var sTranslationTextType = mRenameSettings.translationTextType;
 
@@ -111,10 +103,12 @@ sap.ui.define([
 							return mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
 						})
 						.then(function(oControlToBeRenamed) {
-							oChangeDefinition.content.originalControlType = mPropertyBag.modifier.getControlType(oControlToBeRenamed);
+							oChange.setContent({
+								originalControlType: mPropertyBag.modifier.getControlType(oControlToBeRenamed)
+							});
 
 							if (typeof (mSpecificChangeInfo.value) === "string") {
-								Base.setTextInChange(oChangeDefinition, sChangePropertyName, mSpecificChangeInfo.value, sTranslationTextType);
+								oChange.setText(sChangePropertyName, mSpecificChangeInfo.value, sTranslationTextType);
 							} else {
 								return Promise.reject(new Error("oSpecificChangeInfo.value attribute required"));
 							}
@@ -145,8 +139,8 @@ sap.ui.define([
 				 */
 				getChangeVisualizationInfo: function(oChange) {
 					var oNewLabel = (
-						oChange.getDefinition().texts
-						&& oChange.getDefinition().texts[mRenameSettings.changePropertyName]
+						oChange.getTexts()
+						&& oChange.getTexts()[mRenameSettings.changePropertyName]
 					);
 					return {
 						payload: {

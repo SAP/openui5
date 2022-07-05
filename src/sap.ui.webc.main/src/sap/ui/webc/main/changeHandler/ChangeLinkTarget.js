@@ -27,8 +27,8 @@ sap.ui.define(function () {
 	 */
 	ChangeLinkTarget.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
-		var oChangeDefinition = oChange.getDefinition();
-		var sTarget = oChangeDefinition.content;
+		var oChangeContent = oChange.getContent();
+		var sTarget = oChangeContent;
 		return Promise.resolve()
 			.then(oModifier.getProperty.bind(oModifier, oControl, "target"))
 			.then(function(oProperty) {

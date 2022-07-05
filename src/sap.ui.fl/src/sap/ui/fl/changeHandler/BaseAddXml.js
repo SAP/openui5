@@ -146,27 +146,23 @@ sap.ui.define([
 	 *
 	 * @param {object} oChange Change object to be completed
 	 * @param {object} oSpecificChangeInfo Additional information needed to complete the change
-	 * @param {object} [oChangeDefinition] Already prepared definition of the change
+	 * @param {object} [oContent] Already prepared definition of the change
 	 * @public
 	 * @name sap.ui.fl.changeHandler.BaseAddXml#completeChangeContent
 	 */
-	BaseAddXml.completeChangeContent = function(oChange, oSpecificChangeInfo, oChangeDefinition) {
-		if (!oChangeDefinition) {
-			oChangeDefinition = oChange.getDefinition();
-			if (!oChangeDefinition.content) {
-				oChangeDefinition.content = {};
-			}
-		}
+	BaseAddXml.completeChangeContent = function(oChange, oSpecificChangeInfo, oContent) {
+		oContent = oContent || {};
 		if (oSpecificChangeInfo.fragmentPath) {
-			oChangeDefinition.content.fragmentPath = oSpecificChangeInfo.fragmentPath;
+			oContent.fragmentPath = oSpecificChangeInfo.fragmentPath;
 		} else {
 			BaseAddXml._throwMissingAttributeError("fragmentPath");
 		}
+		oChange.setContent(oContent);
 
 		//Calculate the moduleName for the fragment
-		var sModuleName = oChangeDefinition.reference.replace(/\.Component/g, "").replace(/\./g, "/");
+		var sModuleName = oChange.getDefinition().reference.replace(/\.Component/g, "").replace(/\./g, "/");
 		sModuleName += "/changes/";
-		sModuleName += oChangeDefinition.content.fragmentPath;
+		sModuleName += oContent.fragmentPath;
 		oChange.setModuleName(sModuleName);
 	};
 

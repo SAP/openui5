@@ -376,7 +376,9 @@ sap.ui.define([
 		},
 
 		_removeIndexFromChange: function(oChange) {
-			delete oChange.getContent().index;
+			var oContent = oChange.getContent();
+			delete oContent.index;
+			oChange.setContent(oContent);
 		},
 
 		/******************************* Public methods *************************************/
