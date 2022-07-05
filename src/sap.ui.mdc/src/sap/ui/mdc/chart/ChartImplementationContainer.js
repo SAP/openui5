@@ -20,11 +20,11 @@ function (Control, Renderer
      * @author SAP SE
      * @version ${version}
      * @constructor
-     * @experimental As of version 1.104
+     * @experimental As of version 1.105
      * @private
      * @ui5-restricted sap.fe
      * @MDC_PUBLIC_CANDIDATE
-     * @since 1.104
+     * @since 1.105
      * @alias sap.ui.mdc.chart.ChartImplementationContainer
      */
     var Chart = Control.extend("sap.ui.mdc.chart.ChartImplementationContainer", /** @lends sap.ui.mdc.chart.ChartImplementationContainer.prototype */ {

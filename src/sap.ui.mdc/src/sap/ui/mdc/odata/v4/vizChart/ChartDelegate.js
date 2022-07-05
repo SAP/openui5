@@ -1258,7 +1258,7 @@ sap.ui.define([
             //Initialize empty; will get filled later on
             this._getState(oMDCChart).inResultDimensions = [];
 
-            this._getInnerStructure(oMDCChart).removeStyleClass("sapUiMDCChartTempInnerText");
+            this._getInnerStructure(oMDCChart).removeStyleClass("sapUiMDCChartTempText");
             oMDCChart.removeStyleClass("sapUiMDCChartTempTextOuter");
             oMDCChart.addStyleClass("sapUiMDCChartGrid");
 
