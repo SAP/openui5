@@ -13,10 +13,9 @@ sap.ui.define([
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Interactable",
-	"sap/ui/test/matchers/Properties",
-	"sap/ui/test/matchers/PropertyStrictEquals"
-], function (Helper, Filter, FilterOperator, ODataUtils, Opa, Opa5, TestUtils,
-		EnterText, Press, Ancestor, Interactable, Properties, PropertyStrictEquals) {
+	"sap/ui/test/matchers/Properties"
+], function (Helper, Filter, FilterOperator, ODataUtils, Opa, Opa5, TestUtils, EnterText, Press,
+		Ancestor, Interactable, Properties) {
 	"use strict";
 	var COMPANY_NAME_COLUMN_INDEX = 1,
 		GROSS_AMOUNT_COLUMN_INDEX = 2,
@@ -32,6 +31,10 @@ sap.ui.define([
 	 * count and optional expected overall count.
 	 */
 	function checkCount(oOpa, iExpectedCount, sTitleId, iExpectedOverallCount) {
+		if (TestUtils.isRealOData()) {
+			return; // checkCount not possible with realOData=true
+		}
+
 		oOpa.waitFor({
 			id : sTitleId,
 			success : function (oTitle) {
@@ -972,17 +975,6 @@ sap.ui.define([
 				checkSalesOrdersCount : function (iExpectedCount, iExpectedOverallCount) {
 					checkCount(this, iExpectedCount, "salesOrderListTitle", iExpectedOverallCount);
 				},
-				checkSalesOrdersSelectionMode : function (sMode) {
-					this.waitFor({
-						controlType : "sap.m.Table",
-						id : "SalesOrderList",
-						matchers : new PropertyStrictEquals({name : "mode", value : sMode}),
-						success : function () {
-							Opa5.assert.ok(true, "SelectionMode is: " + sMode);
-						},
-						viewName : sViewName
-					});
-				},
 				checkSalesOrderSelected : function (iRow) {
 					this.waitFor({
 						controlType : "sap.m.Table",
@@ -1027,48 +1019,6 @@ sap.ui.define([
 				},
 				confirm : function () {
 					handleMessageBox(this, "Refresh", true, "Confirm 'pending changes'");
-				}
-			},
-			assertions : {}
-		},
-		/*
-		 * Actions and assertions for the "Sales Order Deletion" confirmation dialog
-		 */
-		onTheSalesOrderDeletionConfirmation : {
-			actions : {
-				cancel : function () {
-					handleMessageBox(this, "Sales Order Deletion", false);
-				},
-				confirm : function () {
-					this.waitFor({
-						controlType : "sap.m.Dialog",
-						matchers : new Properties({title : "Sales Order Deletion"}),
-						success : function (aControls) {
-							new Press().executeOn(aControls[0].getButtons()[0]); // confirm deletion
-							Opa5.assert.ok(true, "Confirm Delete Sales Order");
-						}
-					});
-				}
-			},
-			assertions : {}
-		},
-		/*
-		 * Actions and assertions for the "Sales Order Deletion" confirmation dialog
-		 */
-		onTheSalesOrderLineItemDeletionConfirmation : {
-			actions : {
-				cancel : function () {
-					handleMessageBox(this, "Sales Order Line Item Deletion", false);
-				},
-				confirm : function () {
-					this.waitFor({
-						controlType : "sap.m.Dialog",
-						matchers : new Properties({title : "Sales Order Line Item Deletion"}),
-						success : function (aControls) {
-							new Press().executeOn(aControls[0].getButtons()[0]); // confirm deletion
-							Opa5.assert.ok(true, "Confirm Delete Sales Line Item Order");
-						}
-					});
 				}
 			},
 			assertions : {}

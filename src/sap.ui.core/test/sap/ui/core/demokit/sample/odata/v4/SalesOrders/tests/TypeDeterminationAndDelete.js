@@ -70,8 +70,7 @@ sap.ui.define([
 				});
 			}
 
-			// Click on deleteSalesOrder button, confirm the deletion and the successful deletion
-			// dialog
+			// Click on deleteSalesOrder button and the saveSalesOrders button
 			function deleteSelectedSalesOrder() {
 				When.waitFor({
 					actions : new Press(),
@@ -80,21 +79,11 @@ sap.ui.define([
 					viewName : sViewName
 				});
 
-				When.waitFor({
-					controlType : "sap.m.Dialog",
-					matchers : new Properties({title : "Sales Order Deletion"}),
-					success : function (aControls) {
-						new Press().executeOn(aControls[0].getButtons()[0]); // confirm deletion
-					}
-				});
-
 				Then.waitFor({
-					controlType : "sap.m.Dialog",
-					matchers : new Properties({icon : "sap-icon://sys-enter-2"}),
-					success : function (aControls) {
-						new Press().executeOn(aControls[0].getButtons()[0]); // confirm success
-						Opa5.assert.ok(true, "Selected Sales Order deleted");
-					}
+					actions : new Press(),
+					controlType : "sap.m.Button",
+					id : "saveSalesOrders",
+					viewName : sViewName
 				});
 			}
 

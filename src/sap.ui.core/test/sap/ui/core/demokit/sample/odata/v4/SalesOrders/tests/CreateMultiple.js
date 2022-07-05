@@ -53,19 +53,52 @@ sap.ui.define([
 
 			// Test scenario:
 			// Create one entity, save and create second entity, save, create third entity, create
-			// fourth entity, delete third entity, reset changes (removes fourth entity), save
+			// fourth entity, delete third entity, reset changes (removes fourth entity)
 
 			// Create and save two entities
 			createTwice(true);
 			// Create two entities without saving
 			createTwice(false);
-			// Delete third entity
+			// Delete third entity (which is still transient)
 			When.onTheMainPage.selectSalesOrder(1);
 			When.onTheMainPage.deleteSelectedSalesOrder();
-			When.onTheSalesOrderDeletionConfirmation.confirm();
-			When.onTheSuccessInfo.confirm();
-			// Reset changes (removes fourth entity) and press "save"
+			// Press "cancel" to reset changes (removes fourth entity)
 			When.onTheMainPage.pressCancelSalesOrderListChangesButton();
+
+			// Test scenario:
+			// Create two new sales orders, save them, delete them, reset (so that they reappear),
+			// delete them again and save
+
+			iCreated = 2; // in order to reuse mock data for #3+#4 which are deleted in between
+			createTwice(true);
+			Then.onTheMainPage.checkNote(0, "new 4");
+			Then.onTheMainPage.checkNote(1, "new 3");
+			Then.onTheMainPage.checkSalesOrdersCount(14);
+
+			When.onTheMainPage.selectSalesOrder(0);
+			When.onTheMainPage.deleteSelectedSalesOrder();
+			Then.onTheMainPage.checkSalesOrdersCount(13);
+			When.onTheMainPage.selectSalesOrder(0);
+			When.onTheMainPage.deleteSelectedSalesOrder();
+			Then.onTheMainPage.checkSalesOrdersCount(12);
+			Then.onTheMainPage.checkNote(0, "new 2");
+			Then.onTheMainPage.checkNote(1, "new 1");
+
+			When.onTheMainPage.pressCancelSalesOrderListChangesButton();
+			Then.onTheMainPage.checkSalesOrdersCount(14);
+			Then.onTheMainPage.checkNote(0, "new 4");
+			Then.onTheMainPage.checkNote(1, "new 3");
+			Then.onTheMainPage.checkNote(2, "new 2");
+			Then.onTheMainPage.checkNote(3, "new 1");
+
+			When.onTheMainPage.selectSalesOrder(0);
+			When.onTheMainPage.deleteSelectedSalesOrder();
+			When.onTheMainPage.selectSalesOrder(0);
+			When.onTheMainPage.deleteSelectedSalesOrder();
+			Then.onTheMainPage.checkNote(0, "new 2");
+			Then.onTheMainPage.checkNote(1, "new 1");
+			When.onTheMainPage.pressSaveSalesOrdersButton();
+			Then.onTheMainPage.checkSalesOrdersCount(12);
 
 			// Test scenario:
 			// Partial POST failure: Create two new entities without save in between, save, second
@@ -99,7 +132,6 @@ sap.ui.define([
 			Then.onTheMainPage.checkDifferentID(0, "");
 
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
-			Then.onTheMainPage.checkSalesOrdersSelectionMode("None");
 			Then.onTheMainPage.checkSalesOrderLineItemNote(0, "");
 			When.onTheMainPage.changeNoteInLineItem(0, "new 10");
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
@@ -108,11 +140,10 @@ sap.ui.define([
 			When.onTheMainPage.pressSaveSalesOrderButton();
 			When.onTheSuccessInfo.confirm();
 			When.onTheSuccessInfo.confirm();
-			Then.onTheMainPage.checkSalesOrdersSelectionMode("SingleSelectMaster");
 
 			if (TestUtils.isRealOData()) {
 				// For each line item the server implicitely creates a schedule. Check that
-				// 1. these schedules becomes visible via requestSideEffects
+				// 1. these schedules become visible via requestSideEffects
 				// 2. they can be deleted from within the sales order schedules dialog
 				// 3. they are also deleted from the sales order line items table
 				When.onTheMainPage.pressShowSalesOrderSchedules();
@@ -124,6 +155,24 @@ sap.ui.define([
 				When.onTheSalesOrderSchedulesDialog.close();
 				Then.onTheMainPage.checkTableLength(0, "SO_2_SOITEM");
 			}
+
+			if (!TestUtils.isRealOData()) {
+				// Test scenario: Delete the first line item, cancel changes, delete again and save.
+				When.onTheMainPage.selectSalesOrderItemWithPosition("10");
+				When.onTheMainPage.deleteSelectedSalesOrderLineItem();
+				Then.onTheMainPage.checkSalesOrderItemsCount(1);
+				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "new 20");
+				When.onTheMainPage.pressCancelSalesOrderChangesButton();
+				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "new 10");
+				Then.onTheMainPage.checkSalesOrderLineItemNote(1, "new 20");
+				Then.onTheMainPage.checkSalesOrderItemsCount(2);
+				When.onTheMainPage.selectSalesOrderItemWithPosition("10");
+				When.onTheMainPage.deleteSelectedSalesOrderLineItem();
+				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "new 20");
+				When.onTheMainPage.pressSaveSalesOrderButton();
+				Then.onTheMainPage.checkSalesOrderItemsCount(1);
+			}
+
 			// delete created sales orders
 			When.onAnyPage.cleanUp("SalesOrderList");
 			Then.onAnyPage.checkLog([oExpectedLog, oExpectedLog]);

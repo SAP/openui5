@@ -1,7 +1,7 @@
 {
 	"@odata.metadataEtag" : "W/\"20190521151559\"",
 	"SalesOrderID" : "NEW3",
-	"ItemPosition" : "0000000020",
+	"ItemPosition" : "20",
 	"Note" : "new 20",
 	"GrossAmount" : "7",
 	"DeliveryDate" : "2020-05-31T06:36:11Z",

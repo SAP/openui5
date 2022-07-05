@@ -53,18 +53,36 @@
 				with the <code>Note</code>: "new 4".</li>
 			<li>Select the sales order created in step 11 (with <code>Note</code> "new 3").</li>
 			<li>Click on <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
-			<li>Click on the <code>OK</code> button in the <code>Sales Order Deletion</code> dialog.
-			</li>
-			<li><b>Check:</b>You get a success message for the deleted sales order.</li>
-			<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
 			<li><b>Check:</b> The selected sales order is removed from the <code>Sales Orders</code>
 				table.</li>
 			<li>Click on <code>Cancel sales order list changes</code> button in the
 				<code>Sales Orders</code> table.</li>
 			<li><b>Check:</b> The not yet saved new sales order created in step 12 is gone.</li>
 		</ol>
+		<h3>Multiple Create and Deferred Delete</h3>
+		<ol start="18">
+			<li>Create and save a sales order by repeating Steps 1 - 9 with the <code>Note</code>
+				"new 3".</li>
+			<li>Create and save a sales order by repeating Steps 1 - 9 with the <code>Note</code>
+				"new 4".</li>
+			<li>Select the sales order in the first row (with <code>Note</code> "new 4").</li>
+			<li>Click on the <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> The selected sales order is removed from the <code>Sales Orders</code>
+				table and the count in the title is decreased by one.</li>
+			<li>Select the sales order in the first row (with <code>Note</code> "new 3").</li>
+			<li>Click on the <code>Delete</code> button in the <code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> The selected sales order is removed from the <code>Sales Orders</code>
+				table and the count in the title is decreased by one.</li>
+			<li>Click on the <code>Cancel sales order list changes</code> button in the
+				<code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> The two deleted rows reappear and the count in the title is increased
+				by two.</li>
+			<li>Repeat Steps 20 - 25.</li>
+			<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+		</ol>
+
 		<h3>Multiple create, POST with back-end error, restart after fix works fine</h3>
-		<ol start="21">
+		<ol start="30">
 			<li>Create 2 new sales orders by repeating steps 11 and 12.</li>
 			<li>Change the <code>Note</code> of a not yet saved new sales order (for example with
 				the <code>Note</code> "new 4") to "RAISE_ERROR" (without quotation marks).</li>
@@ -82,7 +100,7 @@
 				<code>Sales Order ID</code>).</li>
 		</ol>
 		<h3>Multiple create, relative</h3>
-		<ol start="31">
+		<ol start="40">
 			<li>Create a new sales order: Repeat steps 1 - 9 for example with the <code>Note
 			  </code>: "new 3".</li>
 			<li>Click on the <code>Create</code> button in the <code>Sales Order Line Items</code>
@@ -116,6 +134,21 @@
 				</ul>
 			<li><b>Check:</b> You now can select a different sales order in the <code>Sales Orders
 				</code> table.</li>
+		</ol>
+		<h3>Deferred Deletion of a Line Item</h3>
+		If <code>realOData=false</code>:
+		<ol start="52">
+			<li>Select the line item with <code>Item Position</code> "10".</li>
+			<li>Click on the <code>Delete sales order line item</code>.</li>
+			<li><b>Check:</b> The line item is removed from the table and the count in the title is
+				decreased by one.</li>
+			<li>Click on the <code>Cancel</code> button in the <code>Sales Order Details</code>
+				section.</li>
+			<li><b>Check:</b> The line item reappears and the count in the title is increased by
+				one.</li>
+			<li>Repeat Steps 52 - 54</li>
+			<li>Click on the <code>Save</code> button in the <code>Sales Order Details</code>
+				section.</li>
 		</ol>
 	</body>
 </html>

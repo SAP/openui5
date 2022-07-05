@@ -90,8 +90,6 @@ sap.ui.define([
 			When.onTheMainPage.pressCreateSalesOrderItemButton();
 			When.onTheMainPage.selectSalesOrderItemWithPosition("");
 			When.onTheMainPage.deleteSelectedSalesOrderLineItem();
-			When.onTheSalesOrderLineItemDeletionConfirmation.confirm();
-			When.onTheSuccessInfo.confirm();
 			Then.onTheMainPage.checkTableLength(0, "SO_2_SOITEM");
 
 			// Create a sales order line item; save, update and delete it
@@ -166,8 +164,7 @@ sap.ui.define([
 
 				// delete persisted sales order item
 				When.onTheMainPage.deleteSelectedSalesOrderLineItem();
-				When.onTheSalesOrderLineItemDeletionConfirmation.confirm();
-				When.onTheSuccessInfo.confirm();
+				When.onTheMainPage.pressSaveSalesOrderButton();
 				Then.onTheMainPage.checkTableLength(0, "SO_2_SOITEM");
 
 				// Confirmation of new created sales order, non-transient but still having -1 path

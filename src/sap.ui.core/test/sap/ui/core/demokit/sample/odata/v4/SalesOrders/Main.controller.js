@@ -174,7 +174,6 @@ sap.ui.define([
 			// select the newly created one
 			oTable.setSelectedItem(oTable.getItems()[oContext.getIndex()]);
 			this.setSalesOrderLineItemBindingContext(oContext);
-			this.setSelectionMode(oContext);
 			oTable.getItems()[0].focus();
 
 			// Note: this promise fails only if the transient entity is delete or canceled
@@ -189,8 +188,6 @@ sap.ui.define([
 				if (!oError.canceled) {
 					throw oError; // unexpected error
 				}
-			}).finally(function () {
-				that.setSelectionMode(oContext);
 			});
 		},
 
@@ -263,43 +260,6 @@ sap.ui.define([
 		},
 
 		onDeleteSalesOrder : function () {
-				// Use "$auto" or "$direct" just like selected when creating the model
-			var sGroupId = this.getView().getModel().getGroupId(),
-				sMessage,
-				sOrderID,
-				oTable = this.byId("SalesOrderList"),
-				oSalesOrderContext = oTable.getSelectedItem().getBindingContext();
-
-			function onConfirm(sCode) {
-				if (sCode !== "OK") {
-					return;
-				}
-				Promise.all([
-					oSalesOrderContext.delete(sGroupId),
-					oSalesOrderContext.isTransient()
-						|| oTable.getBinding("items").getHeaderContext()
-							.requestSideEffects([
-								"/com.sap.gateway.default.zui5_epm_sample.v0002.Container"
-									+ "/SalesOrderList/$count"
-							], sGroupId)
-				]).then(function () {
-					MessageBox.success("Deleted Sales Order " + sOrderID);
-				}).catch(function (oError) {
-					if (!oError.canceled) {
-						MessageBox.error("" + oError);
-						throw oError; // unexpected error
-					}
-				});
-			}
-
-			sOrderID = oSalesOrderContext.getProperty("SalesOrderID", true);
-			sMessage = "Do you really want to delete: " + sOrderID
-				+ ", Gross Amount: " + oSalesOrderContext.getProperty("GrossAmount", true)
-				+ " " + oSalesOrderContext.getProperty("CurrencyCode", true) + "?";
-			MessageBox.confirm(sMessage, onConfirm, "Sales Order Deletion");
-		},
-
-		onDeleteSalesOrderDeferred : function () {
 			var oContext = this.byId("SalesOrderList").getSelectedItem().getBindingContext();
 
 			oContext.delete().catch(function (oError) {
@@ -312,40 +272,6 @@ sap.ui.define([
 		},
 
 		onDeleteSalesOrderLineItem : function () {
-			var sGroupId = this.getView().getModel().getGroupId(),
-				sMessage,
-				sSalesOrderLineItem,
-				oSOLineItemContext = this.byId("SO_2_SOITEM").getSelectedItem().getBindingContext(),
-				that = this;
-
-			if (!oSOLineItemContext.isTransient() && oSOLineItemContext.hasPendingChanges()) {
-				MessageBox.information("Cannot delete sales order line item due to unsaved "
-					+ "changes");
-				return;
-			}
-
-			function onConfirm(sCode) {
-				if (sCode !== "OK") {
-					return;
-				}
-
-				// Use "$auto" or "$direct" just like selected when creating the model
-				oSOLineItemContext.delete(sGroupId)
-					.then(function () {
-						MessageBox.success("Deleted Sales Order " + sSalesOrderLineItem);
-						// item removed, remove context of dependent bindings and hide details
-						that.setSalesOrderLineItemBindingContext();
-					});
-				that.requestSideEffects(sGroupId, "SO_2_SCHDL");
-			}
-
-			sSalesOrderLineItem = oSOLineItemContext.getProperty("SalesOrderID", true)
-				+ "/" + oSOLineItemContext.getProperty("ItemPosition", true);
-			sMessage = "Do you really want to delete: " + sSalesOrderLineItem + "?";
-			MessageBox.confirm(sMessage, onConfirm, "Sales Order Line Item Deletion");
-		},
-
-		onDeleteSalesOrderLineItemDeferred : function () {
 			var oContext = this.byId("SO_2_SOITEM").getSelectedItem().getBindingContext();
 
 			oContext.delete().catch(function (oError) {
@@ -785,30 +711,6 @@ sap.ui.define([
 			}
 			this.byId("BP_2_CONTACT").setBindingContext(oSalesOrderLineItemContext);
 			this.byId("PRODUCT_2_BP").setBindingContext(oSalesOrderLineItemContext);
-		},
-
-		/**
-		 * Sets the selection mode for the sales orders table. The selection has to be set to
-		 * <code>None</code> in order to prevent changing the context for the relative list binding
-		 * for the line items as long as transient line items exist.
-		 *
-		 * @param {sap.ui.model.odata.v4.Context} oContext
-		 *   The context of the created sales order line item
-		 */
-		setSelectionMode : function (oContext) {
-			var oTable = this.byId("SalesOrderList"),
-				oSelectedItem = oTable.getSelectedItem(),
-				oUIModel = this.getView().getModel("ui");
-
-			this.iTransientItems += oContext.isTransient() ? 1 : -1;
-			oUIModel.setProperty("/bCreateItemPending", this.iTransientItems > 0);
-
-			if (oSelectedItem) {
-				this.iSelectedSalesOrder = oSelectedItem.getBindingContext().getIndex();
-			} else if (this.iTransientItems === 0) {
-				oTable.setSelectedItem(oTable.getItems()[this.iSelectedSalesOrder]);
-				this.iSelectedSalesOrder = undefined;
-			}
 		},
 
 		/**

@@ -41,9 +41,7 @@ sap.ui.define([
 			When.onTheMainPage.pressSaveSalesOrderButton();
 
 			// Create, modify and delete of an unsaved sales order
-			if (!bRealOData) {
-				Then.onTheMainPage.checkSalesOrdersCount(10, 23);
-			}
+			Then.onTheMainPage.checkSalesOrdersCount(10, 23);
 
 			// check value helps within sales order line items
 			When.onTheMainPage.selectFirstSalesOrder();
@@ -67,22 +65,15 @@ sap.ui.define([
 			Then.onTheCreateNewSalesOrderDialog.checkNewNote(sModifiedNote);
 			Then.onTheMainPage.checkNote(0, sModifiedNote);
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
-			if (!bRealOData) {
-				Then.onTheMainPage.checkSalesOrdersCount(11);
-			}
+			Then.onTheMainPage.checkSalesOrdersCount(11);
 			Then.onTheMainPage.checkID(0, "");
 			Then.onTheMainPage.checkSalesOrderSelected(0);
 			When.onTheMainPage.changeNoteInSalesOrders(0, sModifiedNote + "_2");
 			Then.onTheMainPage.checkNote(0, sModifiedNote + "_2");
 			When.onTheMainPage.deleteSelectedSalesOrder();
-			When.onTheSalesOrderDeletionConfirmation.cancel();
-			Then.onTheMainPage.checkID(0, "");
-			When.onTheMainPage.deleteSelectedSalesOrder();
-			When.onTheSalesOrderDeletionConfirmation.confirm();
-			When.onTheSuccessInfo.confirm();
-			if (!bRealOData) {
-				Then.onTheMainPage.checkSalesOrdersCount(10);
-			}
+			Then.onTheMainPage.checkSalesOrdersCount(10);
+			Then.onTheMainPage.checkID(0);
+			When.onTheMainPage.pressSaveSalesOrdersButton();
 			Then.onTheMainPage.checkID(0);
 
 			// Create a sales order, save, modify again, save and delete
@@ -100,8 +91,7 @@ sap.ui.define([
 				When.onTheMainPage.pressSaveSalesOrdersButton();
 			}
 			When.onTheMainPage.deleteSelectedSalesOrder();
-			When.onTheSalesOrderDeletionConfirmation.confirm();
-			When.onTheSuccessInfo.confirm();
+			When.onTheMainPage.pressSaveSalesOrdersButton();
 			Then.onTheMainPage.checkID(0);
 
 			// Create a sales order, save and refresh the sales orders
@@ -112,9 +102,7 @@ sap.ui.define([
 			When.onTheMainPage.pressSaveSalesOrdersButton();
 			Then.onTheSuccessInfo.checkMessage(/SalesOrder created: \w+, SAP/);
 			When.onTheSuccessInfo.confirm();
-			if (!bRealOData) {
-				Then.onTheMainPage.checkSalesOrdersCount(11);
-			}
+			Then.onTheMainPage.checkSalesOrdersCount(11);
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
 			Then.onTheMainPage.checkID(0);
 
@@ -145,9 +133,7 @@ sap.ui.define([
 			When.onTheCreateNewSalesOrderDialog.confirmDialog();
 			When.onTheMainPage.pressCancelSalesOrderListChangesButton();
 			When.onTheMainPage.firstSalesOrderIsAtPos0();
-			if (!bRealOData) {
-				Then.onTheMainPage.checkSalesOrdersCount(10);
-			}
+			Then.onTheMainPage.checkSalesOrdersCount(10);
 			Then.onTheMainPage.checkID(0);
 
 			if (bRealOData) {
@@ -177,8 +163,7 @@ sap.ui.define([
 				Then.onTheMainPage.checkDifferentID(0, "");
 				// cleanup
 				When.onTheMainPage.deleteSelectedSalesOrder();
-				When.onTheSalesOrderDeletionConfirmation.confirm();
-				When.onTheSuccessInfo.confirm();
+				When.onTheMainPage.pressSaveSalesOrdersButton();
 				Then.onTheMainPage.checkID(0);
 			}
 
@@ -249,6 +234,7 @@ sap.ui.define([
 			if (bRealOData) {
 				// primitive sorter and filter tasks,
 				// -> probably not dependent on current sales orders in the back end
+				When.onTheMainPage.selectFirstSalesOrder();
 				When.onTheMainPage.sortBySalesOrderID(); // sort via ID ascending (initial order)
 				When.onTheMainPage.firstSalesOrderIsVisible(); //-> we expect first order on POS 0
 				When.onTheMainPage.sortBySalesOrderID(); // sort via ID descending
