@@ -75,7 +75,7 @@ sap.ui.define([
 
 				rm.openStart("div").class("sapUISupportLabel").openEnd().text("Boot application with different UI5 version on next reload:").close("div");
 				rm.openStart("select", this.getId() + "-RebootSelect").class("sapUiSupportSelect").openEnd();
-				rm.openStart("option").attr("value", "none").openEnd().text("Disabled (no custom reboot URL").close("option");
+				rm.openStart("option").attr("value", "none").openEnd().text("Disabled (no custom reboot URL)").close("option");
 				rm.openStart("option", this.getId() + "-RebootOther").attr("value", "other").openEnd().text("Other (enter URL to sap-ui-core.js below)...:").close("option");
 				rm.close("select");
 				rm.voidStart("input", this.getId() + "-RebootInput").attr("type", "text").attr("disabled", "disabled").voidEnd();
