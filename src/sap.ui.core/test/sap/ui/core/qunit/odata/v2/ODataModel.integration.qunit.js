@@ -9022,44 +9022,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
-	// Scenario: If a binding gets destroyed, ensure that it is also removed from the list of
-	// "acitve" bindings at the model, even if a "change" event handler isn't properly detached
-	// before.
-	QUnit.test("Model: cleanup active bindings when destroying a binding", function (assert) {
-		var checkActiveBindings = function (oModel) {
-				var oPropertyBinding;
-
-				assert.strictEqual(oModel.getBindings().length, 0,
-					"Use a " + oModel.getMetadata().getName());
-
-				// code under test - new binding is not automatically added to the list of
-				// "active" bindings
-				oPropertyBinding = oModel.bindProperty("/Foo");
-
-				assert.strictEqual(oModel.getBindings().length, 0);
-
-				// code under test - when attaching a "change" event handler binding gets "active"
-				oPropertyBinding.attachChange(function () {});
-
-				assert.strictEqual(oModel.getBindings().length, 1, "change event handler attached");
-
-				// code under test - even if the "change" event handler is not detached the binding
-				// is removed from the list of active bindings if the binding gets destroyed
-				oPropertyBinding.destroy();
-
-				assert.strictEqual(oModel.getBindings().length, 0, "cleand up");
-			},
-			oODataModel = createSalesOrdersModel(),
-			oJSONModel = new JSONModel({});
-
-		checkActiveBindings(oJSONModel);
-
-		return this.createView(assert, "", oODataModel).then(function () {
-			checkActiveBindings(oODataModel);
-		});
-	});
-
-	//*********************************************************************************************
 	// Scenario: If the OData service has no customizing for units, the OData Unit type uses the
 	// UI5 built-in CLDR information for formatting and parsing.
 	// JIRA: CPOUI5MODELS-423

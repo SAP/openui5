@@ -760,7 +760,7 @@ sap.ui.define([
 
 	/**
 	 * Removes all control messages for this binding from the MessageManager in addition to the
-	 * standard clean-up tasks. Removes the binding also from the model's "active" bindings list.
+	 * standard clean-up tasks.
 	 * @see sap.ui.base.EventProvider#destroy
 	 *
 	 * @public
@@ -785,12 +785,6 @@ sap.ui.define([
 			delete this.oDataState;
 		}
 		EventProvider.prototype.destroy.apply(this, arguments);
-		// after the event handler map is cleared ensure to remove the binding also from the model's
-		// list of "acitve" bindings even if not all "change" event handlers have been properly
-		// detached; composite bindings do not have a model
-		if (this.oModel) {
-			this.oModel.removeBinding(this);
-		}
 	};
 
 	/**
