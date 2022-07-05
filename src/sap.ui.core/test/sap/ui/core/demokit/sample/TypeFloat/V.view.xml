@@ -32,7 +32,7 @@
 		emptySpanM="4"
 		columnsL="1"
 		columnsM="1"
-		title="Min Integer Digits (minimal number of non-fraction digits)">
+		title="Minimal Number of Non-Fraction Digits (minIntegerDigits)">
 		<form:content>
 			<Label text="3 digits" />
 			<Text text="{
@@ -64,7 +64,7 @@
 		emptySpanM="4"
 		columnsL="1"
 		columnsM="1"
-		title="Max Integer Digits (maximal number of non-fraction digits)">
+		title="Maximal Number of Non-Fraction Digits (maxIntegerDigits)">
 		<form:content>
 			<Label text="2 digits" />
 			<Text text="{
@@ -96,7 +96,7 @@
 		emptySpanM="4"
 		columnsL="1"
 		columnsM="1"
-		title="Min Fraction Digits (minimal number of fraction digits)">
+		title="Minimal Number of Fraction Digits (minFractionDigits)">
 		<form:content>
 			<Label text="2 digits" />
 			<Text text="{
@@ -128,9 +128,9 @@
 		emptySpanM="4"
 		columnsL="1"
 		columnsM="1"
-		title="Max Fraction Digits (maximal number of fraction digits)">
+		title="Maximal Number of Fraction Digits (maxFractionDigits, overruled by default by preserveDecimals)">
 		<form:content>
-			<Label text="2 digits" />
+			<Label text="2 digits, default preserveDecimals (true)" />
 			<Text text="{
 				path: '/number',
 				type: 'sap.ui.model.type.Float',
@@ -139,12 +139,31 @@
 				}
 			}" />
 
-			<Label text="5 digits" />
+			<Label text="5 digits, default preserveDecimals (true)" />
 			<Text text="{
 				path: '/number',
 				type: 'sap.ui.model.type.Float',
 				formatOptions: {
 					maxFractionDigits: 5
+				}
+			}" />
+			<Label text="2 digits, preserveDecimals=false" />
+			<Text text="{
+				path: '/number',
+				type: 'sap.ui.model.type.Float',
+				formatOptions: {
+					maxFractionDigits: 2,
+					preserveDecimals: false
+				}
+			}" />
+
+			<Label text="5 digits, preserveDecimals=false" />
+			<Text text="{
+				path: '/number',
+				type: 'sap.ui.model.type.Float',
+				formatOptions: {
+					maxFractionDigits: 5,
+					preserveDecimals: false
 				}
 			}" />
 		</form:content>
