@@ -1581,6 +1581,10 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Check badge button self reference", function (assert) {
+		assert.ok(this.oButton._determineSelfReferencePresence(), "Self reference properly applied");
+	});
+
 	QUnit.test("Check badge visibility and value", function (assert) {
 		var $oBadgeIndicator = this.oButton.$().find(".sapMBadgeIndicator").first();
 
