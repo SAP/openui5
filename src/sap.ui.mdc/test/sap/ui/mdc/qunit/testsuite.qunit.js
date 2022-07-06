@@ -386,6 +386,15 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 						]
 					}
 				},
+				"ChartV4Delegate": {
+					group: "Chart",
+					module: "./chart/ChartV4Delegate.qunit",
+					ui5: {
+						libs: [
+							"sap.ui.fl", "sap.ui.mdc"
+						]
+					}
+				},
 				"ChartBreadcrumbs": {
 					group: "Chart",
 					module: "./chart/ChartBreadcrumbs.qunit",
