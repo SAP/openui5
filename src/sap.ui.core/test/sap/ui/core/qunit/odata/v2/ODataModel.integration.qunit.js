@@ -16744,13 +16744,13 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
-	// Scenario: ODataModel#hasPendingChanges works also if there is a table using
-	// ODataTreeBindingFlat. This test case covers scenarios with added and removed nodes and also
-	// the special case of a cancelled creation.
+	// Scenario: ODataModel#hasPendingChanges and ODataModel#getPendingChanges works also if there
+	// is a table using ODataTreeBindingFlat. This test case covers scenarios with added and removed
+	// nodes and also the special case of a cancelled creation.
 	// JIRA: CPOUI5MODELS-977
-	QUnit.test("ODataTreeBindingFlat#hasPendingChanges: added, removed, cancelled creation",
-			function (assert) {
-		var oBinding, oCreatedContext, oTable,
+	QUnit.test("ODataModel#hasPendingChanges|#getPendingChanges: works also if ODataTreeBindingFlat"
+			+ " is used (added, removed, cancelled creation)", function (assert) {
+		var oBinding, oCreatedContext, sKey, oPendingChanges, oTable,
 			oModel = createHierarchyMaintenanceModel(),
 			oNode100 = {
 				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='100')"},
@@ -16836,7 +16836,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			var oExpectedEntry;
+
 			assert.strictEqual(oModel.hasPendingChanges(), false);
+			assert.deepEqual(oModel.getPendingChanges(), {});
 
 			that.expectValue("itemName", ["qux", "bar", "baz"], 1);
 
@@ -16845,6 +16848,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oBinding.addContexts(oTable.getContextByIndex(0), [oCreatedContext]);
 
 			assert.strictEqual(oModel.hasPendingChanges(), true);
+			oPendingChanges = oModel.getPendingChanges();
+			assert.notDeepEqual(oPendingChanges, {});
+			for (sKey in oPendingChanges) {
+				assert.strictEqual("/" + sKey, oCreatedContext.getPath());
+				oExpectedEntry = oCreatedContext.getObject();
+				oExpectedEntry.HierarchyParentNode = "100";
+				assert.deepEqual(oPendingChanges[sKey], oExpectedEntry);
+			}
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -16854,28 +16865,38 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oBinding.removeContext(oCreatedContext);
 
 			assert.strictEqual(oModel.hasPendingChanges(), false);
+			assert.deepEqual(oModel.getPendingChanges(), {});
 
 			// code under test: no request as created entry has been removed again
 			oModel.submitChanges();
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			var oRemovedContext = oTable.getContextByIndex(2);
+
 			that.expectValue("itemName", "", 2);
 
 			// code under test: remove node
-			oBinding.removeContext(oTable.getContextByIndex(2));
+			oBinding.removeContext(oRemovedContext);
 
 			assert.strictEqual(oModel.hasPendingChanges(), true);
+			oPendingChanges = oModel.getPendingChanges();
+			assert.notDeepEqual(oPendingChanges, {});
+			for (sKey in oPendingChanges) {
+				assert.strictEqual("/" + sKey, oRemovedContext.getPath());
+				assert.deepEqual(oPendingChanges[sKey], {});
+			}
 
 			return that.waitForChanges(assert);
 		});
 	});
 
 	//*********************************************************************************************
-	// Scenario: ODataModel#hasPendingChanges works also if there is a table using
-	// ODataTreeBindingFlat. This test case covers scenarios with moved nodes.
+	// Scenario: ODataModel#hasPendingChanges and ODataModel#getPendingChanges works also if there
+	// is a table using ODataTreeBindingFlat. This test case covers scenarios with moved nodes.
 	// JIRA: CPOUI5MODELS-977
-	QUnit.test("ODataTreeBindingFlat#hasPendingChanges: moved", function (assert) {
+	QUnit.test("ODataModel#hasPendingChanges|#getPendingChanges: works also if ODataTreeBindingFlat"
+			+ " is used (moved)", function (assert) {
 		var oBinding, oTable,
 			oModel = createHierarchyMaintenanceModel(),
 			oNode100 = {
@@ -16962,9 +16983,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oContext = oTable.getContextByIndex(2);
+			var sKey, oPendingChanges,
+				oContext = oTable.getContextByIndex(2);
 
 			assert.strictEqual(oModel.hasPendingChanges(), false);
+			assert.deepEqual(oModel.getPendingChanges(), {});
 
 			that.expectValue("itemName", "", 2);
 
@@ -16973,6 +16996,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oBinding.addContexts(oTable.getContextByIndex(1), [oContext]);
 
 			assert.strictEqual(oModel.hasPendingChanges(), true);
+			oPendingChanges = oModel.getPendingChanges();
+			assert.notDeepEqual(oPendingChanges, {});
+			for (sKey in oPendingChanges) {
+				assert.strictEqual("/" + sKey, oContext.getPath());
+				assert.deepEqual(oPendingChanges[sKey], {HierarchyParentNode : "200"});
+			}
 
 			return that.waitForChanges(assert);
 		});

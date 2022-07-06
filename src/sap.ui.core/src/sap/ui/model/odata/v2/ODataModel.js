@@ -6671,8 +6671,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the changed properties of all changed entities in a map which are still pending.
-	 * The key is the string name of the entity and the value is an object which contains the changed properties.
+	 * Returns the changed properties of all changed entities in a map which are still pending. The
+	 * key is the string name of the entity and the value is an object which contains the changed
+	 * properties. The tree hierarchy changes for removed nodes are represented via an empty object.
 	 *
 	 * In contrast to the two related functions {@link #hasPendingChanges} and {@link #resetChanges}, only
 	 * client data changes are supported.
@@ -6681,7 +6682,21 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.getPendingChanges = function() {
-		return merge({}, this.mChangedEntities);
+		var sChangedEntityKey,
+			mChangedEntities = _Helper.merge({}, this.mChangedEntities);
+
+		this.getBindings().forEach(function (oBinding) {
+			if (oBinding._getPendingChanges) {
+				_Helper.merge(mChangedEntities, oBinding._getPendingChanges());
+			}
+		});
+		for (sChangedEntityKey in mChangedEntities) {
+			if (!mChangedEntities[sChangedEntityKey]) {
+				delete mChangedEntities[sChangedEntityKey];
+			}
+		}
+
+		return mChangedEntities;
 	};
 
 	/**

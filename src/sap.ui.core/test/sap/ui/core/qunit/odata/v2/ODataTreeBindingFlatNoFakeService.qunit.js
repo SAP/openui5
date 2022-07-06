@@ -854,4 +854,64 @@ sap.ui.define([
 
 		assert.deepEqual(aChangedEntityKeys, ["baz"]);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_getPendingChanges: unresolved binding", function (assert) {
+		var oBinding = {isResolved : function () {}};
+
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(false);
+
+		// code under test
+		assert.deepEqual(ODataTreeBindingFlat.prototype._getPendingChanges.call(oBinding), {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getPendingChanges", function (assert) {
+		var oBinding = {
+				oTreeProperties : {
+					"hierarchy-node-for" : "keyPropertyName",
+					"hierarchy-parent-node-for" : "parentKeyPropertyName"
+				},
+				_optimizeChanges : function () {},
+				isResolved : function () {}
+			},
+			oNode0 = {key : "node0", parent : {context : {getProperty : function () {}}}},
+			oNode1 = {key : "node1", parent : {context : {getProperty : function () {}}}},
+			oNode2 = {key : "node2", parent : {context : {getProperty : function () {}}}},
+			oNode3 = {key : "node3", parent : {context : {getProperty : function () {}}}};
+
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_optimizeChanges")
+			.withExactArgs()
+			.returns({
+				added : [oNode0, oNode1],
+				moved : [oNode2, oNode3],
+				removed : [{key : "node4"}, {key : "node5"}],
+				creationCancelled : [{key : "node6"}, {key : "node7"}]
+			});
+		this.mock(oNode0.parent.context).expects("getProperty")
+			.withExactArgs("keyPropertyName")
+			.returns("parentNode0");
+		this.mock(oNode1.parent.context).expects("getProperty")
+			.withExactArgs("keyPropertyName")
+			.returns("parentNode1");
+		this.mock(oNode2.parent.context).expects("getProperty")
+			.withExactArgs("keyPropertyName")
+			.returns("parentNode2");
+		this.mock(oNode3.parent.context).expects("getProperty")
+			.withExactArgs("keyPropertyName")
+			.returns("parentNode3");
+
+		// code under test
+		assert.deepEqual(ODataTreeBindingFlat.prototype._getPendingChanges.call(oBinding), {
+			node0 : {parentKeyPropertyName : "parentNode0"},
+			node1 : {parentKeyPropertyName : "parentNode1"},
+			node2 : {parentKeyPropertyName : "parentNode2"},
+			node3 : {parentKeyPropertyName : "parentNode3"},
+			node4 : {},
+			node5 : {},
+			node6 : null,
+			node7 : null
+		});
+	});
 });

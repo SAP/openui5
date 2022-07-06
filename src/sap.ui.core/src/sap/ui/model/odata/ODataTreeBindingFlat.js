@@ -2196,6 +2196,42 @@ sap.ui.define([
 		return false;
 	};
 
+	/**
+	 * Returns a map of node keys to changed properties that are still pending. In case of a removed
+	 * node the value is an empty object and in case of a cancelled creation the value is
+	 * <code>null</code>.
+	 *
+	 * @returns {object}
+	 *   The map of changed entities or an empty object if there are no pending changes
+	 *
+	 * @private
+	 */
+	ODataTreeBindingFlat.prototype._getPendingChanges = function () {
+		var aChangedNodes, sKeyProperty, oOptimizedChanges, sParentKeyProperty,
+			mChangedEntities = {};
+
+		if (this.isResolved()) {
+			oOptimizedChanges = this._optimizeChanges();
+			aChangedNodes = oOptimizedChanges.added.concat(oOptimizedChanges.moved);
+			sKeyProperty = this.oTreeProperties["hierarchy-node-for"];
+			sParentKeyProperty = this.oTreeProperties["hierarchy-parent-node-for"];
+
+			aChangedNodes.forEach(function (oNode) {
+				mChangedEntities[oNode.key] = {};
+				mChangedEntities[oNode.key][sParentKeyProperty] =
+					oNode.parent.context.getProperty(sKeyProperty);
+			});
+			oOptimizedChanges.removed.forEach(function (oNode) {
+				mChangedEntities[oNode.key] = {}; // indicator for delete
+			});
+			oOptimizedChanges.creationCancelled.forEach(function (oNode) {
+				mChangedEntities[oNode.key] = null; // indicator for change reverted
+			});
+		}
+
+		return mChangedEntities;
+	};
+
 	//*************************************************
 	//*               Selection-Handling              *
 	//************************************************/
