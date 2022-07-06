@@ -226,7 +226,7 @@ sap.ui.define([
 
 	/**
 	 * Removes a previously attached state change event handler from the <code>StateHandlerRegistry</code> class.
-	 * The passed parameters must match those used for registration with {@link Engine#attachStateChange} beforehand.
+	 * The passed parameters must match those used for registration with {@link sap.m.p13n.Engine#attachStateChange} beforehand.
 	 *
 	 * @public
 	 * @experimental Since 1.104. Please note that the API of this control is not yet finalized!
@@ -356,6 +356,7 @@ sap.ui.define([
 	 *  state object of the control.
 	 *
 	 * @public
+	 * @experimental Since 1.104. Please note that the API of this control is not yet finalized!
 	 * @param {object} oControl The control instance implementing IxState to retrieve the externalized state
 	 *
 	 * @returns {Promise} a Promise resolving in the current control state.
