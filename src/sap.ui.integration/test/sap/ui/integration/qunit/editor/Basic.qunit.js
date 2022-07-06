@@ -748,7 +748,7 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					var oSelect = oField.getAggregation("_field").getAggregation("_select");
 					setTimeout(function () {
-						assert.ok(oSelect.getItemByKey("empty").getEnabled(), "Icon: item none is enabled");
+						assert.ok(oSelect.getItemByKey("").getEnabled(), "Icon: item none is enabled");
 						assert.ok(!oSelect.getItemByKey("file").getEnabled(), "Icon: item file is disabled");
 						assert.ok(!oSelect.getItemByKey("selected").getEnabled(), "Icon: item selected is disabled");
 						resolve();
@@ -768,7 +768,7 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					var oSelect = oField.getAggregation("_field").getAggregation("_select");
 					setTimeout(function () {
-						assert.ok(!oSelect.getItemByKey("empty").getEnabled(), "Icon: item none is disabled");
+						assert.ok(!oSelect.getItemByKey("").getEnabled(), "Icon: item none is disabled");
 						assert.ok(oSelect.getItemByKey("file").getEnabled(), "Icon: item file is enabled");
 						assert.ok(!oSelect.getItemByKey("selected").getEnabled(), "Icon: item selected is disabled");
 						resolve();
@@ -788,7 +788,7 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					var oSelect = oField.getAggregation("_field").getAggregation("_select");
 					setTimeout(function () {
-						assert.ok(!oSelect.getItemByKey("empty").getEnabled(), "Icon: item none is disabled");
+						assert.ok(!oSelect.getItemByKey("").getEnabled(), "Icon: item none is disabled");
 						assert.ok(!oSelect.getItemByKey("file").getEnabled(), "Icon: item file is disabled");
 						assert.ok(!oSelect.getItemByKey("selected").getEnabled(), "Icon: item selected git sis disabled");
 						resolve();

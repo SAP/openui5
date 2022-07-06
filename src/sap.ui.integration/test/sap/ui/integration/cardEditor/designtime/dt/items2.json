@@ -254,6 +254,18 @@
 		"type": "separator",
 		"line": true
 	},
+	"iconForHeader": {
+		"manifestpath": "/sap.card/header/icon/src",
+		"type": "string",
+		"label": "Card header icon",
+		"visualization": {
+			"type": "IconSelect",
+			"settings": {
+				"value": "{currentSettings>value}",
+				"editable": "{currentSettings>editable}"
+			}
+		}
+	},
 	"iconNotAllowFile": {
 		"manifestpath": "/sap.card/configuration/parameters/iconNotAllowFile/src",
 		"type": "string",

@@ -99,7 +99,7 @@ sap.ui.define([
 			icon: "",
 			text: oResourceBundle.getText("EDITOR_ICON_NONE"),
 			tooltip: "",
-			key: "empty",
+			key: "",
 			enabled: true
 		}, {
 			icon: "sap-icon://upload",

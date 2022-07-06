@@ -346,7 +346,7 @@
 			"title": "{{parameters.objectWithPropertiesDefined.text}}",
 			"subTitle": "{{parameters.objectsWithPropertiesDefinedAndValueFromJsonList.0.text}}",
 			"icon": {
-				"src": "sap-icon://accept",
+				"src": "sap-icon://add-document",
 				"shape": "Circle",
 				"backgroundColor": ""
 			},
