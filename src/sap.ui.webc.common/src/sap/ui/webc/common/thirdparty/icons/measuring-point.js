@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/measuring-point', './v4/measuring-point'], function (Theme, measuringPoint$2, measuringPoint$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/measuring-point', './v4/measuring-point'], function (exports, Theme, measuringPoint$1, measuringPoint$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? measuringPoint$1 : measuringPoint$2;
-	var measuringPoint = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? measuringPoint$1.pathData : measuringPoint$2.pathData;
+	var measuringPoint = "measuring-point";
 
-	return measuringPoint;
+	exports.accData = measuringPoint$1.accData;
+	exports.ltr = measuringPoint$1.ltr;
+	exports.default = measuringPoint;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

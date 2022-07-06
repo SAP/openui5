@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/main/thirdparty/types/Priority', 'sap/ui/webc/main/thirdparty/Button', 'sap/ui/webc/main/thirdparty/BusyIndicator', 'sap/ui/webc/main/thirdparty/Link', 'sap/ui/webc/main/thirdparty/Icon', 'sap/ui/webc/main/thirdparty/Popover', 'sap/ui/webc/main/thirdparty/types/WrappingType', './NotificationListItemBase', './generated/i18n/i18n-defaults', './generated/templates/NotificationListItemTemplate.lit', './generated/themes/NotificationListItem.css'], function (Keys, ResizeHandler, Device, Priority, Button, BusyIndicator, Link, Icon, Popover, WrappingType, NotificationListItemBase, i18nDefaults, NotificationListItemTemplate_lit, NotificationListItem_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/main/thirdparty/types/Priority', 'sap/ui/webc/main/thirdparty/Button', 'sap/ui/webc/main/thirdparty/BusyIndicator', 'sap/ui/webc/main/thirdparty/Link', 'sap/ui/webc/main/thirdparty/Icon', 'sap/ui/webc/main/thirdparty/Popover', 'sap/ui/webc/main/thirdparty/types/WrappingType', './NotificationListItemBase', './generated/i18n/i18n-defaults', './generated/templates/NotificationListItemTemplate.lit', './generated/themes/NotificationListItem.css'], function (Keys, ResizeHandler, Priority, Button, BusyIndicator, Link, Icon, Popover, WrappingType, NotificationListItemBase, i18nDefaults, NotificationListItemTemplate_lit, NotificationListItem_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -11,7 +11,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 	var Popover__default = /*#__PURE__*/_interopDefaultLegacy(Popover);
 	var WrappingType__default = /*#__PURE__*/_interopDefaultLegacy(WrappingType);
 
-	const MAX_WRAP_HEIGHT = 32;
 	const metadata = {
 		tag: "ui5-li-notification",
 		languageAware: true,
@@ -117,18 +116,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 			if (!titleText) {
 				return false;
 			}
-			if (Device.isIE()) {
-				return titleText.scrollHeight > MAX_WRAP_HEIGHT;
-			}
 			return titleText.offsetHeight < titleText.scrollHeight;
 		}
 		get descriptionOverflows() {
 			const description = this.descriptionDOM;
 			if (!description) {
 				return false;
-			}
-			if (Device.isIE()) {
-				return description.scrollHeight > MAX_WRAP_HEIGHT;
 			}
 			return description.offsetHeight < description.scrollHeight;
 		}
@@ -172,13 +165,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 			const readText = this.read ? NotificationListItem.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_ITEM_READ) : NotificationListItem.i18nFioriBundle.getText(i18nDefaults.NOTIFICATION_LIST_ITEM_UNREAD);
 			const priorityText = this.priorityText;
 			return `${notificationText} ${readText} ${priorityText}`;
-		}
-		get classes() {
-			return {
-				content: {
-					"ui5-nli-content--ie": Device.isIE(),
-				},
-			};
 		}
 		_onclick(event) {
 			this.fireItemPress(event);

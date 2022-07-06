@@ -21,7 +21,20 @@
             ], function(
                 Calendar, CalendarDate
             ) {
+
+
                 var oCalendar = new Calendar({
+                    dates: [
+                        new CalendarDate({
+                            value: "Control value"
+                        }),
+                        new CalendarDate({
+                            value: "Control value"
+                        }),
+                        new CalendarDate({
+                            value: "Control value"
+                        })
+                    ],
                     selectedDatesChange: function(oEvent) {
                         console.log("Event selectedDatesChange fired for Calendar with parameters: ", oEvent.getParameters());
                     }

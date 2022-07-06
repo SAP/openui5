@@ -261,7 +261,7 @@ sap.ui.define([
 				/**
 				 * Fired when the <code>Close</code> button of any item is clicked <br>
 				 * <br>
-				 * <b>Note:</b> This event is applicable to <code>sap.ui.webc.fiori.NotificationListItem</code> items only, not to be confused with <code>item-delete</code>.
+				 * <b>Note:</b> This event is only applicable to list items that can be closed (such as notification list items), not to be confused with <code>item-delete</code>.
 				 */
 				itemClose: {
 					parameters: {
@@ -293,7 +293,7 @@ sap.ui.define([
 				/**
 				 * Fired when the <code>Toggle</code> button of any item is clicked. <br>
 				 * <br>
-				 * <b>Note:</b> This event is applicable to <code>sap.ui.webc.fiori.NotificationListGroupItem</code> items only.
+				 * <b>Note:</b> This event is only applicable to list items that can be toggled (such as notification group list items).
 				 */
 				itemToggle: {
 					parameters: {

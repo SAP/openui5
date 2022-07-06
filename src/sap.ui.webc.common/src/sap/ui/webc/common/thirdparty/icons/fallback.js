@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/fallback', './v4/fallback'], function (Theme, fallback$2, fallback$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/fallback', './v4/fallback'], function (exports, Theme, fallback$1, fallback$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? fallback$1 : fallback$2;
-	var fallback = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? fallback$1.pathData : fallback$2.pathData;
+	var fallback = "fallback";
 
-	return fallback;
+	exports.accData = fallback$1.accData;
+	exports.ltr = fallback$1.ltr;
+	exports.default = fallback;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

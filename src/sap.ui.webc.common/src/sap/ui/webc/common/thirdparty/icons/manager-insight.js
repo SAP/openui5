@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/manager-insight', './v4/manager-insight'], function (Theme, managerInsight$2, managerInsight$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/manager-insight', './v4/manager-insight'], function (exports, Theme, managerInsight$1, managerInsight$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? managerInsight$1 : managerInsight$2;
-	var managerInsight = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? managerInsight$1.pathData : managerInsight$2.pathData;
+	var managerInsight = "manager-insight";
 
-	return managerInsight;
+	exports.accData = managerInsight$1.accData;
+	exports.ltr = managerInsight$1.ltr;
+	exports.default = managerInsight;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

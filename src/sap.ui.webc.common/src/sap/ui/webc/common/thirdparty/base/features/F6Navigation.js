@@ -11,12 +11,12 @@ sap.ui.define(['../FeaturesRegistry', '../Keys', '../util/FocusableElements'], f
 			document.addEventListener("keydown", this.keydownHandler);
 		}
 		async _keydownHandler(event) {
-			event.preventDefault();
 			if (Keys.isF6Next(event)) {
 				this.updateGroups();
 				if (this.groups.length < 1) {
 					return;
 				}
+				event.preventDefault();
 				const nextIndex = this.groups.indexOf(this.selectedGroup);
 				let nextElement = null;
 				if (nextIndex > -1) {
@@ -36,6 +36,7 @@ sap.ui.define(['../FeaturesRegistry', '../Keys', '../util/FocusableElements'], f
 				if (this.groups.length < 1) {
 					return;
 				}
+				event.preventDefault();
 				const nextIndex = this.groups.indexOf(this.selectedGroup);
 				let nextElement = null;
 				if (nextIndex > -1) {

@@ -1,13 +1,19 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (exports, Icons) { 'use strict';
 
 	const name = "heater-treater";
 	const pathData = "M37.44 162.867H0V79.56q0-29.016 21.06-50.077t50.077-21.06h369.726q28.08 0 49.609 21.06T512 79.561v83.306h-37.44V79.56q0-14.04-9.829-23.868t-23.868-9.828H71.137q-14.04 0-23.868 9.828T37.44 79.56v83.306zm237.748 173.162q-14.976 4.68-32.76 7.488-19.657 0-34.633-7.488t-26.208-18.72q-9.36-13.104-16.848-25.272-6.553-15.913-6.553-32.76t6.553-29.017q8.424-14.977 16.848-29.017 2.808-6.552 6.552-13.104t8.424-15.912l7.488-14.977 6.552-14.976q7.488-15.912 11.232-27.144 4.68-11.232 4.68-19.657 14.977 6.553 25.273 19.657 5.616 7.488 12.168 15.444t12.168 18.252q6.552 10.296 11.7 19.657t10.765 20.592q6.552 9.36 11.7 20.124t9.828 21.06q.936 3.745 3.744 13.105 2.808 10.296 2.808 15.912 0 17.784-7.488 32.76-6.552 14.977-17.784 25.273-12.168 11.232-26.209 18.72zm29.953-85.177q-6.552-20.592-12.168-30.889-2.808-6.552-7.02-11.232t-9.829-11.232q-9.36-11.232-20.592-21.528-11.232-9.36-20.592-13.104 7.488 22.464 7.488 42.12 0 7.488-.936 14.976-.936 27.145-14.976 33.697 0-23.4-22.465-53.353-24.336 49.609-24.336 58.97-1.872 7.487-1.872 14.04 0 53.352 64.585 68.328h1.872l11.232-1.872q13.104-5.616 22.464-14.04 12.169-10.296 20.593-26.208 6.552-14.977 6.552-37.44v-11.233zm169.418 48.673H512v83.305q0 29.016-21.528 50.077t-49.61 21.06H71.138q-29.016 0-50.077-21.06T0 382.83v-83.305h37.44v83.305q0 14.04 9.829 23.868t23.868 9.829h369.726q14.04 0 23.868-9.829t9.828-23.868v-83.305z";
 	const ltr = false;
+	const accData = null;
 	const collection = "business-suite";
 	const packageName = "@ui5/webcomponents-icons-business-suite";
 	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
-	var heaterTreater = { pathData };
+	var heaterTreater = "heater-treater";
 
-	return heaterTreater;
+	exports.accData = accData;
+	exports.default = heaterTreater;
+	exports.ltr = ltr;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

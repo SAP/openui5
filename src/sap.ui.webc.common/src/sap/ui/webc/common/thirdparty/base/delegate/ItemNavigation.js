@@ -50,14 +50,19 @@ sap.ui.define(['../Keys', '../util/getActiveElement', '../types/NavigationMode',
 			}
 			const horizontalNavigationOn = this._navigationMode === NavigationMode.Horizontal || this._navigationMode === NavigationMode.Auto;
 			const verticalNavigationOn = this._navigationMode === NavigationMode.Vertical || this._navigationMode === NavigationMode.Auto;
-			if (Keys.isUp(event) && verticalNavigationOn) {
-				this._handleUp();
-			} else if (Keys.isDown(event) && verticalNavigationOn) {
-				this._handleDown();
+			const isRTL = this.rootWebComponent.effectiveDir === "rtl";
+			if (isRTL && Keys.isLeft(event) && horizontalNavigationOn) {
+				this._handleRight();
+			} else if (isRTL && Keys.isRight(event) && horizontalNavigationOn) {
+				this._handleLeft();
 			} else if (Keys.isLeft(event) && horizontalNavigationOn) {
 				this._handleLeft();
 			} else if (Keys.isRight(event) && horizontalNavigationOn) {
 				this._handleRight();
+			} else if (Keys.isUp(event) && verticalNavigationOn) {
+				this._handleUp();
+			} else if (Keys.isDown(event) && verticalNavigationOn) {
+				this._handleDown();
 			} else if (Keys.isHome(event)) {
 				this._handleHome();
 			} else if (Keys.isEnd(event)) {

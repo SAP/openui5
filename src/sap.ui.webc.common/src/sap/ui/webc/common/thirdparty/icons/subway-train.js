@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/subway-train', './v4/subway-train'], function (Theme, subwayTrain$2, subwayTrain$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/subway-train', './v4/subway-train'], function (exports, Theme, subwayTrain$1, subwayTrain$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? subwayTrain$1 : subwayTrain$2;
-	var subwayTrain = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? subwayTrain$1.pathData : subwayTrain$2.pathData;
+	var subwayTrain = "subway-train";
 
-	return subwayTrain;
+	exports.accData = subwayTrain$1.accData;
+	exports.ltr = subwayTrain$1.ltr;
+	exports.default = subwayTrain;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

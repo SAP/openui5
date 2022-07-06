@@ -247,7 +247,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const currentIndex = this._selectedIndex;
 			const itemToSelect = this._searchNextItemByText(text);
 			if (itemToSelect) {
-				const nextIndex = this._getSelectedItemIndex(itemToSelect);
+				const nextIndex = this._filteredItems.indexOf(itemToSelect);
 				this._changeSelectedItem(this._selectedIndex, nextIndex);
 				if (currentIndex !== this._selectedIndex) {
 					this.itemSelectionAnnounce();
@@ -280,7 +280,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 		}
 		_getSelectedItemIndex(item) {
-			return [].indexOf.call(item.parentElement.children, item);
+			return this._filteredItems.findIndex(option => `${option._id}-li` === item.id);
 		}
 		_select(index) {
 			this._filteredItems[this._selectedIndex].selected = false;
@@ -426,6 +426,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				responsivePopoverHeader: {
 					"display": this._filteredItems.length && this._listWidth === 0 ? "none" : "inline-block",
 					"width": `${this._filteredItems.length ? this._listWidth : this.offsetWidth}px`,
+				},
+				responsivePopover: {
+					"min-width": `${this.offsetWidth}px`,
 				},
 			};
 		}

@@ -629,30 +629,24 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get correctSearchFieldStyles() {
 			if (this.showSearchField) {
-				if (this._fullWidthSearch) {
-					return "flex";
-				}
-				return "block";
+				return "flex";
 			}
 			return "none";
 		}
 		get customItemsInfo() {
 			return this._itemsInfo.filter(itemInfo => !!itemInfo.custom);
 		}
-		get nonFocusableLogo() {
-			return this.breakpointSize === "S" && this.hasMenuItems;
-		}
-		get hasFocusableLogo() {
-			return this.hasLogo && !this.nonFocusableLogo;
-		}
-		get hasNonFocusableLogo() {
-			return this.hasLogo && this.nonFocusableLogo;
-		}
 		get hasLogo() {
 			return !!this.logo.length;
 		}
-		get showArrowDown() {
-			return this.primaryTitle || this.hasInteractvieLogo;
+		get showLogoInMenuButton() {
+			return this.hasLogo && this.breakpointSize === "S";
+		}
+		get showTitleInMenuButton() {
+			return this.primaryTitle && !(this.showLogoInMenuButton);
+		}
+		get showMenuButton() {
+			return this.primaryTitle || this.showLogoInMenuButton;
 		}
 		get popoverHorizontalAlign() {
 			return this.effectiveDir === "rtl" ? "Left" : "Right";
@@ -665,15 +659,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get hasMenuItems() {
 			return this.menuItems.length > 0;
-		}
-		get menuBtnHasPopup() {
-			return this.hasMenuItems ? HasPopup__default.Menu : undefined;
-		}
-		get menuBtnTabindex() {
-			return this.hasMenuItems ? "0" : "-1";
-		}
-		get menuPopoverExpanded() {
-			return this.hasMenuItems ? this._menuPopoverExpanded : undefined;
 		}
 		get _shellbarText() {
 			return ShellBar.i18nBundle.getText(i18nDefaults.SHELLBAR_LABEL);

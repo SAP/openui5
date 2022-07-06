@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/status-completed', './v4/status-completed'], function (Theme, statusCompleted$2, statusCompleted$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/status-completed', './v4/status-completed'], function (exports, Theme, statusCompleted$1, statusCompleted$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? statusCompleted$1 : statusCompleted$2;
-	var statusCompleted = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? statusCompleted$1.pathData : statusCompleted$2.pathData;
+	var statusCompleted = "status-completed";
 
-	return statusCompleted;
+	exports.accData = statusCompleted$1.accData;
+	exports.ltr = statusCompleted$1.ltr;
+	exports.default = statusCompleted;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

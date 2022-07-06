@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/shipping-status', './v4/shipping-status'], function (Theme, shippingStatus$2, shippingStatus$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/shipping-status', './v4/shipping-status'], function (exports, Theme, shippingStatus$1, shippingStatus$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? shippingStatus$1 : shippingStatus$2;
-	var shippingStatus = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? shippingStatus$1.pathData : shippingStatus$2.pathData;
+	var shippingStatus = "shipping-status";
 
-	return shippingStatus;
+	exports.accData = shippingStatus$1.accData;
+	exports.ltr = shippingStatus$1.ltr;
+	exports.default = shippingStatus;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

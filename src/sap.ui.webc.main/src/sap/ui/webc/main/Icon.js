@@ -21,23 +21,60 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * The <code>sap.ui.webc.main.Icon</code> component represents an SVG icon. There are two main scenarios how the <code>sap.ui.webc.main.Icon</code> component is used: as a purely decorative element; or as a visually appealing clickable area in the form of an icon button. <br>
+	 * The <code>sap.ui.webc.main.Icon</code> component represents an SVG icon. There are two main scenarios how the <code>sap.ui.webc.main.Icon</code> component is used: as a purely decorative element, <br>
+	 * or as an interactive element that can be focused and clicked.
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * 1. <b>Get familiar with the icons collections.</b> <br>
+	 * Before displaying an icon, you need to explore the icons collections to find and import the desired icon. <br>
+	 * Currently there are 3 icons collection, available as 3 npm packages: <br>
+	 *
+	 *
+	 *
+	 * <ul>
+	 *     <li>
+	 *         <ui5-link target="_blank" href="https://www.npmjs.com/package/@ui5/webcomponents-icons" class="api-table-content-cell-link">@ui5/webcomponents-icons</ui5-link> represents the "SAP-icons" collection and includes the following <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons" class="api-table-content-cell-link">icons</ui5-link>.
+	 *     </li>
+	 *     <li>
+	 *         <ui5-link target="_blank" href="https://www.npmjs.com/package/@ui5/webcomponents-icons-tnt" class="api-table-content-cell-link">@ui5/webcomponents-icons-tnt</ui5-link> represents the "tnt" collection and includes the following <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons-TNT" class="api-table-content-cell-link">icons</ui5-link>.
+	 *     </li>
+	 *     <li>
+	 *         <ui5-link target="_blank" href="https://www.npmjs.com/package/@ui5/webcomponents-icons-business-suite" class="api-table-content-cell-link">@ui5/webcomponents-icons-icons-business-suite</ui5-link> represents the "business-suite" collection and includes the following <ui5-link target="_blank" href="https://sapui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/BusinessSuiteInAppSymbols" class="api-table-content-cell-link">icons</ui5-link>.
+	 *     </li>
+	 * </ul>
+	 *
+	 * 2. <b>After exploring the icons collections, add one or more of the packages as dependencies to your project.</b> <br>
+	 * <code>npm i @ui5/webcomponents-icons</code><br>
+	 * <code>npm i @ui5/webcomponents-icons-tnt</code><br>
+	 * <code>npm i @ui5/webcomponents-icons-business-suite</code> <br>
 	 * <br>
-	 * A large set of built-in icons is available and they can be used by setting the <code>name</code> property on the <code>sap.ui.webc.main.Icon</code>. But before using an icon, you need to import the desired icon. <br>
+	 *
+	 *
+	 *
+	 * <b>For Example</b>: <br>
 	 *
 	 *
 	 *
 	 *
+	 *
+	 * 4. <b>Display the icon using the <code>sap.ui.webc.main.Icon</code> web component.</b><br>
+	 * Set the icon collection ("SAP-icons", "tnt" or "business-suite" - "SAP-icons" is the default icon collection and can be skipped)<br>
+	 * and the icon name to the <code>name</code> property. <br>
 	 * <br>
-	 * <br>
+	 *
+	 *
+	 * <code>&lt;ui5-icon name="employee">&lt;/ui5-icon></code><br>
+	 * <code>&lt;ui5-icon name="tnt/antenna">&lt;/ui5-icon></code><br>
+	 * <code>&lt;ui5-icon name="business-suite/ab-testing">&lt;/ui5-icon></code>
+	 *
 	 * <h3>Keyboard Handling</h3>
 	 *
 	 *
 	 * <ul>
 	 *     <li>[SPACE, ENTER, RETURN] - Fires the <code>click</code> event if the <code>interactive</code> property is set to true.</li>
 	 *     <li>[SHIFT] - If [SPACE] or [ENTER],[RETURN] is pressed, pressing [SHIFT] releases the ui5-icon without triggering the click event.</li>
-	 * </ul> <br>
-	 * <br>
+	 * </ul>
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -113,7 +150,7 @@ sap.ui.define([
 				 * Defines the unique identifier (icon name) of the component. <br>
 				 *
 				 *
-				 * To browse all available icons, see the <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" class="api-table-content-cell-link">Icon Explorer</ui5-link>. <br>
+				 * To browse all available icons, see the <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" class="api-table-content-cell-link">SAP Icons</ui5-link>, <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html#/overview/SAP-icons-TNT" class="api-table-content-cell-link">SAP Fiori Tools</ui5-link> and <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" class="api-table-content-cell-link">SAP Business Suite</ui5-link> collections. <br>
 				 *
 				 *
 				 * Example: <br>
@@ -125,7 +162,15 @@ sap.ui.define([
 				 *
 				 *
 				 * Example: <br>
-				 * <code>name='tnt/antenna'</code>, <code>name='tnt/actor'</code>, <code>name='tnt/api'</code>.
+				 * <code>name='tnt/antenna'</code>, <code>name='tnt/actor'</code>, <code>name='tnt/api'</code>. <br>
+				 * <br>
+				 *
+				 *
+				 * <b>Note:</b> To use the SAP Business Suite icons, you need to set the <code>business-suite</code> prefix in front of the icon's name. <br>
+				 *
+				 *
+				 * Example: <br>
+				 * <code>name='business-suite/3d'</code>, <code>name='business-suite/1x2-grid-layout'</code>, <code>name='business-suite/4x4-grid-layout'</code>.
 				 */
 				name: {
 					type: "string",

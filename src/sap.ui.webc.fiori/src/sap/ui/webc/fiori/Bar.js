@@ -59,7 +59,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the <code>sap.ui.webc.fiori.Bar</code> design.
+				 * Defines the component's design.
 				 *
 				 * <br>
 				 * <br>

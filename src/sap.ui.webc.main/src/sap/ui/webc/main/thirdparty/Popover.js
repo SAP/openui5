@@ -433,7 +433,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 			return this.hideBackdrop;
 		}
 		get _ariaLabelledBy() {
-			return this._ariaLabel ? undefined : "ui5-popup-header";
+			if (!this._ariaLabel && this._displayHeader) {
+				return "ui5-popup-header";
+			}
+			return undefined;
 		}
 		get _ariaModal() {
 			return true;

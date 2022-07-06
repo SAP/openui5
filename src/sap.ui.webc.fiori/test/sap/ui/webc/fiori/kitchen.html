@@ -1212,6 +1212,18 @@
 
 
                 var oViewSettingsDialog0Button = new Button({
+                    text: "setConfirmedSettings",
+                    click: function(oEvent) {
+                        console.log("Calling setConfirmedSettings...");
+                        var result = oViewSettingsDialog.setConfirmedSettings();
+                        console.log("... setConfirmedSettings returned: ", result);
+                    }
+                });
+                oViewSettingsDialog0Button.placeAt("methodsViewSettingsDialog");
+
+
+
+                var oViewSettingsDialog1Button = new Button({
                     text: "show",
                     click: function(oEvent) {
                         console.log("Calling show...");
@@ -1219,7 +1231,7 @@
                         console.log("... show returned: ", result);
                     }
                 });
-                oViewSettingsDialog0Button.placeAt("methodsViewSettingsDialog");
+                oViewSettingsDialog1Button.placeAt("methodsViewSettingsDialog");
 
                 var oViewSettingsDialog = new ViewSettingsDialog({
                     filterItems: [
@@ -1277,6 +1289,9 @@
                             text: "Some text..."
                         })
                     ],
+                    beforeOpen: function(oEvent) {
+                        console.log("Event beforeOpen fired for ViewSettingsDialog with parameters: ", oEvent.getParameters());
+                    },
                     cancel: function(oEvent) {
                         console.log("Event cancel fired for ViewSettingsDialog with parameters: ", oEvent.getParameters());
                     },

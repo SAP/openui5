@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/icons/source-code', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/config/Theme', './generated/themes/SliderBase.css'], function (UI5Element, litRender, Float, Integer, ResizeHandler, Device, sourceCode, Keys, Theme, SliderBase_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/icons/source-code', 'sap/ui/webc/common/thirdparty/base/Keys', './generated/themes/SliderBase.css'], function (UI5Element, litRender, Float, Integer, ResizeHandler, Device, sourceCode, Keys, SliderBase_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -35,6 +35,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			disabled: {
 				type: Boolean,
 			},
+			 accessibleName: {
+				type: String,
+			},
 			_tooltipVisibility: {
 				type: String,
 				defaultValue: "hidden",
@@ -63,10 +66,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				max: null,
 				labelInterval: null,
 			};
+			const handleTouchStartEvent = event => {
+				this._onmousedown(event);
+			};
 			this._ontouchstart = {
-				handleEvent(event) {
-					this._onmousedown(event);
-				},
+				handleEvent: handleTouchStartEvent,
 				passive: true,
 			};
 		}
@@ -78,18 +82,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		static get styles() {
 			return SliderBase_css;
-		}
-		static get TICKMARK_COLOR_MAP() {
-			return {
-				sap_fiori_3: "#89919a",
-				sap_fiori_3_dark: "#89919a",
-				sap_fiori_3_hcw: "#000000",
-				sap_fiori_3_hcb: "#ffffff",
-				sap_belize: "#bfbfbf",
-				sap_belize_hcw: "#000000",
-				sap_belize_hcb: "#ffffff",
-				sap_horizon: "#89919a",
-			};
 		}
 		static get UP_EVENTS() {
 			return ["mouseup", "touchend"];
@@ -323,25 +315,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get directionStart() {
 			return this.effectiveDir === "rtl" ? "right" : "left";
 		}
-		get _tickmarks() {
-			const currentTheme = Theme.getTheme();
-			const currentColor = SliderBase.TICKMARK_COLOR_MAP[currentTheme];
-			if (!this.showTickmarks || !this._effectiveStep) {
-				return;
-			}
-			if (this._hiddenTickmarks) {
-				return `linear-gradient(to right, ${currentColor} 1px, transparent 0) 0 center / calc(100% - 1px) 100% repeat-x`;
-			}
-			const maxStr = String(this._effectiveMax);
-			const minStr = String(this._effectiveMin);
-			const stepStr = String(this._effectiveStep);
-			const tickmarkWidth = "1px";
-			this._tickmarksAmount = `${maxStr - minStr} / ${stepStr}`;
-			this._hiddenTickmarks = false;
-			const tickmarksGradientBase = `linear-gradient(to right, ${currentColor} ${tickmarkWidth}, transparent 0) `;
-			const tickmarksGradientdPattern = `0 center / calc((100% - ${tickmarkWidth}) / (${this._tickmarksAmount})) 100% repeat-x`;
-			return `${tickmarksGradientBase + tickmarksGradientdPattern}`;
-		}
 		_createLabels() {
 			if (!this.labelInterval || !this.showTickmarks) {
 				return;
@@ -386,10 +359,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		static _isBigStepAction(event) {
 			return Keys.isDownCtrl(event) || Keys.isUpCtrl(event) || Keys.isLeftCtrl(event) || Keys.isRightCtrl(event) || Keys.isPageUp(event) || Keys.isPageDown(event);
 		}
+		get _tickmarksCount() {
+			return (this._effectiveMax - this._effectiveMin) / this._effectiveStep;
+		}
 		_spaceBetweenTickmarks() {
-			const tickmarksAmountStrCalc = this._tickmarksAmount.split("/");
-			const tickmarksAmount = tickmarksAmountStrCalc[0] / tickmarksAmountStrCalc[1];
-			return this.getBoundingClientRect().width / tickmarksAmount;
+			return this.getBoundingClientRect().width / this._tickmarksCount;
 		}
 		_validateStep(step) {
 			if (step === 0) {
@@ -423,6 +397,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get tabIndex() {
 			return this.disabled ? "-1" : "0";
+		}
+		get _ariaLabelledByHandleRefs() {
+			return [`${this._id}-accName`, `${this._id}-sliderDesc`].join(" ").trim();
 		}
 	}
 

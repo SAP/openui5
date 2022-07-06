@@ -1,13 +1,19 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (exports, Icons) { 'use strict';
 
 	const name = "pixelate";
 	const pathData = "M96 352H32v-64h64v-64H32V64q0-13 9-22.5T64 32h384q14 0 23 9.5t9 22.5v160h-64v64h64v64h-64v64h64v32q0 14-9 23t-23 9h-32v-64h-64v64h-64v-64h-64v64h-64v-64H96v64H64q-14 0-23-9t-9-23v-32h64v-64zm256-128h64v-64h-64v64zM160 352v64h64v-64h64v64h64v-64h-64v-64h-64v64h-64v-64h64v-64h64v64h64v64h64v-64h-64v-64h-64v-64h-64v64h-64v-64H96v64h64v64H96v64h64z";
 	const ltr = false;
+	const accData = null;
 	const collection = "SAP-icons";
 	const packageName = "@ui5/webcomponents-icons";
 	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
-	var pathDataV5 = { pathData };
+	var pixelate = "pixelate";
 
-	return pathDataV5;
+	exports.accData = accData;
+	exports.default = pixelate;
+	exports.ltr = ltr;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

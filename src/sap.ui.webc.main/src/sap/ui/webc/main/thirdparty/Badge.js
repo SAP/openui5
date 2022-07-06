@@ -1,9 +1,10 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', './generated/templates/BadgeTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/Badge.css'], function (UI5Element, litRender, i18nBundle, BadgeTemplate_lit, i18nDefaults, Badge_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/isDefaultSlotProvided', './generated/templates/BadgeTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/Badge.css'], function (UI5Element, litRender, i18nBundle, isDefaultSlotProvided, BadgeTemplate_lit, i18nDefaults, Badge_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
 	var UI5Element__default = /*#__PURE__*/_interopDefaultLegacy(UI5Element);
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
+	var isDefaultSlotProvided__default = /*#__PURE__*/_interopDefaultLegacy(isDefaultSlotProvided);
 
 	const metadata = {
 		tag: "ui5-badge",
@@ -51,7 +52,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._iconOnly = this.iconOnly;
 		}
 		get hasText() {
-			return !!this.textContent.trim().length;
+			return isDefaultSlotProvided__default(this);
 		}
 		get hasIcon() {
 			return !!this.icon.length;

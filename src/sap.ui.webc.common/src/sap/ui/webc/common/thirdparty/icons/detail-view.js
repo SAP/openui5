@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/detail-view', './v4/detail-view'], function (Theme, detailView$2, detailView$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/detail-view', './v4/detail-view'], function (exports, Theme, detailView$1, detailView$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? detailView$1 : detailView$2;
-	var detailView = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? detailView$1.pathData : detailView$2.pathData;
+	var detailView = "detail-view";
 
-	return detailView;
+	exports.accData = detailView$1.accData;
+	exports.ltr = detailView$1.ltr;
+	exports.default = detailView;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

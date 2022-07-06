@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sys-back', './v4/sys-back'], function (Theme, sysBack$2, sysBack$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sys-back', './v4/sys-back'], function (exports, Theme, sysBack$1, sysBack$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? sysBack$1 : sysBack$2;
-	var sysBack = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? sysBack$1.pathData : sysBack$2.pathData;
+	var sysBack = "sys-back";
 
-	return sysBack;
+	exports.accData = sysBack$1.accData;
+	exports.ltr = sysBack$1.ltr;
+	exports.default = sysBack;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

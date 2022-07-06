@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/show', './v4/show'], function (Theme, show$2, show$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/show', './v4/show'], function (exports, Theme, show$1, show$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? show$1 : show$2;
-	var show = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? show$1.pathData : show$2.pathData;
+	var show = "show";
 
-	return show;
+	exports.accData = show$1.accData;
+	exports.ltr = show$1.ltr;
+	exports.default = show;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

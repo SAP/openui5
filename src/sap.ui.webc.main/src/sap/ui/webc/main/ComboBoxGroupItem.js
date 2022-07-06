@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @extends sap.ui.webc.common.WebComponent
 	 * @class
 	 *
-	 * The <code>ui5-combobox-group-item</code> is type of suggestion item, that can be used to split the <code>sap.ui.webc.main.ComboBox</code> suggestions into groups.
+	 * The <code>sap.ui.webc.main.ComboBoxGroupItem</code> is type of suggestion item, that can be used to split the <code>sap.ui.webc.main.ComboBox</code> suggestions into groups.
 	 *
 	 * @author SAP SE
 	 * @version ${version}

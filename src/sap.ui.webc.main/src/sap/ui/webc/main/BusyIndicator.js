@@ -33,7 +33,7 @@ sap.ui.define([
 	 * <h4>When to use:</h4>
 	 * <ul>
 	 *     <li>The user needs to be able to cancel the operation.</li>
-	 *     <li>Only part of the application or a particular control is affected.</li>
+	 *     <li>Only part of the application or a particular component is affected.</li>
 	 * </ul>
 	 *
 	 * <h4>When not to use:</h4>

@@ -92,7 +92,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * Sets the maximum number of characters available in the input field.
+				 * Sets the maximum number of characters available in the input field. <br>
+				 * <br>
+				 * <b>Note:</b> This property is not compatible with the ui5-input type InputType.Number. If the ui5-input type is set to Number, the maxlength value is ignored.
 				 */
 				maxlength: {
 					type: "int"
@@ -109,6 +111,14 @@ sap.ui.define([
 				name: {
 					type: "string",
 					defaultValue: ""
+				},
+
+				/**
+				 * Defines whether the value will be autcompleted to match an item
+				 */
+				noTypeahead: {
+					type: "boolean",
+					defaultValue: false
 				},
 
 				/**

@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/web-cam', './v4/web-cam'], function (Theme, webCam$2, webCam$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/web-cam', './v4/web-cam'], function (exports, Theme, webCam$1, webCam$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? webCam$1 : webCam$2;
-	var webCam = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? webCam$1.pathData : webCam$2.pathData;
+	var webCam = "web-cam";
 
-	return webCam;
+	exports.accData = webCam$1.accData;
+	exports.ltr = webCam$1.ltr;
+	exports.default = webCam;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

@@ -65,10 +65,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 					this.active = false;
 				}
 			};
+			const handleTouchStartEvent = event => {
+				this._onmousedown(event);
+			};
 			this._ontouchstart = {
-				handleEvent(event) {
-					this._onmousedown(event);
-				},
+				handleEvent: handleTouchStartEvent,
 				passive: true,
 			};
 		}
@@ -214,6 +215,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/th
 		}
 		get deleteText() {
 			return ListItem.i18nBundle.getText(i18nDefaults.DELETE);
+		}
+		get _accessibleNameRef() {
+			if (this.accessibleName) {
+				return `${this._id}-invisibleText`;
+			}
+			return `${this._id}-content ${this._id}-invisibleText`;
 		}
 		get _accInfo() {
 			return {

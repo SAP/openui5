@@ -166,13 +166,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap
 		_submitClick() {
 			const selectedDate = this.getSelectedDateTime();
 			const value = this.getFormat().format(selectedDate);
-			const valid = this.isValid(value);
 			if (this.value !== value) {
-				this.value = value;
-				this.fireEvent("change", { value: this.value, valid });
-				this.fireEvent("value-changed", { value: this.value, valid });
+				this._updateValueAndFireEvents(value, true, ["change", "value-changed"]);
 			}
-			this._updateValueState();
 			this.closePicker();
 		}
 		_cancelClick() {
@@ -203,9 +199,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap
 		getSelectedDateTime() {
 			const selectedDate = this.getFormat().parse(this._calendarSelectedDates[0]);
 			const selectedTime = this.getFormat().parse(this._timeSelectionValue);
-			selectedDate.setHours(selectedTime.getHours());
-			selectedDate.setMinutes(selectedTime.getMinutes());
-			selectedDate.setSeconds(selectedTime.getSeconds());
+			if (selectedTime) {
+				selectedDate.setHours(selectedTime.getHours());
+				selectedDate.setMinutes(selectedTime.getMinutes());
+				selectedDate.setSeconds(selectedTime.getSeconds());
+			}
 			return selectedDate;
 		}
 	}

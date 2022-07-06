@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/navigation-right-arrow', './v4/navigation-right-arrow'], function (Theme, navigationRightArrow$2, navigationRightArrow$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/navigation-right-arrow', './v4/navigation-right-arrow'], function (exports, Theme, navigationRightArrow$1, navigationRightArrow$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? navigationRightArrow$1 : navigationRightArrow$2;
-	var navigationRightArrow = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? navigationRightArrow$1.pathData : navigationRightArrow$2.pathData;
+	var navigationRightArrow = "navigation-right-arrow";
 
-	return navigationRightArrow;
+	exports.accData = navigationRightArrow$1.accData;
+	exports.ltr = navigationRightArrow$1.ltr;
+	exports.default = navigationRightArrow;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

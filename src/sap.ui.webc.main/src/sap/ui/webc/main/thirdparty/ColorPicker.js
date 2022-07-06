@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/CSSColor', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/common/thirdparty/base/util/ColorConversion', './generated/templates/ColorPickerTemplate.lit', './Input', './Slider', './Label', './generated/themes/ColorPicker.css'], function (UI5Element, Keys, CSSColor, Device, Render, litRender, Integer, Float, ColorConversion, ColorPickerTemplate_lit, Input, Slider, Label, ColorPicker_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/CSSColor', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/ColorConversion', './generated/templates/ColorPickerTemplate.lit', './Input', './Slider', './Label', './generated/i18n/i18n-defaults', './generated/themes/ColorPicker.css'], function (UI5Element, Keys, CSSColor, litRender, Integer, Float, i18nBundle, ColorConversion, ColorPickerTemplate_lit, Input, Slider, Label, i18nDefaults, ColorPicker_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -73,6 +73,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				Label,
 			];
 		}
+		static async onDefine() {
+			ColorPicker.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
+		}
 		constructor() {
 			super();
 			this._selectedCoordinates = {
@@ -93,12 +96,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._setHex();
 			this._setValues();
 			this.style.setProperty("--ui5_Color_Picker_Progress_Container_Color", tempColor);
-		}
-		async onAfterRendering() {
-			if (Device.isIE()) {
-				await Render.renderFinished();
-				this._applySliderStyles();
-			}
 		}
 		_applySliderStyles() {
 			const hueSlider = this.getDomRef().querySelector(".ui5-color-picker-hue-slider").shadowRoot,
@@ -350,6 +347,27 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this._hue = Math.round(hslColours.h * 4.25);
 			}
 			this._setMainColor(this._hue);
+		}
+		get hueSliderLabel() {
+			return ColorPicker.i18nBundle.getText(i18nDefaults.COLORPICKER_HUE_SLIDER);
+		}
+		get alphaSliderLabel() {
+			return ColorPicker.i18nBundle.getText(i18nDefaults.COLORPICKER_ALPHA_SLIDER);
+		}
+		get hexInputLabel() {
+			return ColorPicker.i18nBundle.getText(i18nDefaults.COLORPICKER_HEX);
+		}
+		get redInputLabel() {
+			return ColorPicker.i18nBundle.getText(i18nDefaults.COLORPICKER_RED);
+		}
+		get greenInputLabel() {
+			return ColorPicker.i18nBundle.getText(i18nDefaults.COLORPICKER_GREEN);
+		}
+		get blueInputLabel() {
+			return ColorPicker.i18nBundle.getText(i18nDefaults.COLORPICKER_BLUE);
+		}
+		get alphaInputLabel() {
+			return ColorPicker.i18nBundle.getText(i18nDefaults.COLORPICKER_ALPHA);
 		}
 		get inputsDisabled() {
 			return this._wrongHEX ? true : undefined;

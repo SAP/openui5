@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', './generated/templates/CardHeaderTemplate.lit', './Icon', './generated/i18n/i18n-defaults', './generated/themes/CardHeader.css'], function (UI5Element, litRender, i18nBundle, Keys, Integer, CardHeaderTemplate_lit, Icon, i18nDefaults, CardHeader_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', './generated/templates/CardHeaderTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/CardHeader.css'], function (UI5Element, litRender, i18nBundle, Keys, Integer, CardHeaderTemplate_lit, i18nDefaults, CardHeader_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -64,22 +64,19 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				"ui5-card-header--active": this.interactive && this._headerActive,
 			};
 		}
-		get ariaHeaderRole() {
-			return this.interactive ? "button" : "heading";
+		get _root() {
+			return this.shadowRoot.querySelector(".ui5-card-header");
 		}
-		get _ariaLevel() {
-			if (this.interactive) {
-				return undefined;
-			}
-			return this.ariaLevel;
-		}
-		get ariaCardHeaderRoleDescription() {
+		get ariaRoleDescription() {
 			return this.interactive ? CardHeader.i18nBundle.getText(i18nDefaults.ARIA_ROLEDESCRIPTION_INTERACTIVE_CARD_HEADER) : CardHeader.i18nBundle.getText(i18nDefaults.ARIA_ROLEDESCRIPTION_CARD_HEADER);
+		}
+		get ariaRoleFocusableElement() {
+			return this.interactive ? "button" : null;
 		}
 		get ariaCardAvatarLabel() {
 			return CardHeader.i18nBundle.getText(i18nDefaults.AVATAR_TOOLTIP);
 		}
-		get ariaLabelledByHeader() {
+		get ariaLabelledBy() {
 			const labels = [];
 			if (this.titleText) {
 				labels.push(`${this._id}-title`);
@@ -101,20 +98,23 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get hasAction() {
 			return !!this.action.length;
 		}
-		static get dependencies() {
-			return [Icon];
-		}
 		static async onDefine() {
 			CardHeader.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
-		_headerClick(event) {
+		_actionsFocusin() {
+			this._root.classList.add("ui5-card-header-hide-focus");
+		}
+		_actionsFocusout() {
+			this._root.classList.remove("ui5-card-header-hide-focus");
+		}
+		_click(event) {
 			event.stopImmediatePropagation();
-			if (this.interactive && event.target === event.currentTarget) {
+			if (this.interactive && this._root.contains(event.target)) {
 				this.fireEvent("click");
 			}
 		}
-		_headerKeydown(event) {
-			if (!this.interactive || event.target !== event.currentTarget) {
+		_keydown(event) {
+			if (!this.interactive || !this._root.contains(event.target)) {
 				return;
 			}
 			const enter = Keys.isEnter(event);
@@ -128,8 +128,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				event.preventDefault();
 			}
 		}
-		_headerKeyup(event) {
-			if (!this.interactive || event.target !== event.currentTarget) {
+		_keyup(event) {
+			if (!this.interactive || !this._root.contains(event.target)) {
 				return;
 			}
 			const space = Keys.isSpace(event);

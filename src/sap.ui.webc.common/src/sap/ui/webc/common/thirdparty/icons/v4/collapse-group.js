@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons', '../generated/i18n/i18n-defaults'], function (Icons, i18nDefaults) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons', '../generated/i18n/i18n-defaults'], function (exports, Icons, i18nDefaults) { 'use strict';
 
 	const name = "collapse-group";
 	const pathData = "M267.5 120q-6-6-12-6-5 0-11 6l-159 157q-10 10-23 10t-22-10q-10-9-10-22t10-23l193-191q9-9 22.5-9t22.5 9l192 192q10 10 10 23t-10 23q-9 9-22.5 9t-22.5-9zm0 193q-6-6-12-6-5 0-11 6l-159 157q-10 10-23 10t-22-10q-10-9-10-22t10-23l193-191q9-9 22.5-9t22.5 9l192 192q10 10 10 23t-10 23q-9 9-22.5 9t-22.5-9z";
@@ -7,8 +7,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons', '../
 	const collection = "SAP-icons";
 	const packageName = "@ui5/webcomponents-icons";
 	Icons.registerIcon(name, { pathData, ltr, accData, collection, packageName });
-	var pathDataV5 = { pathData, accData };
+	var collapseGroup = "collapse-group";
 
-	return pathDataV5;
+	exports.accData = accData;
+	exports.default = collapseGroup;
+	exports.ltr = ltr;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

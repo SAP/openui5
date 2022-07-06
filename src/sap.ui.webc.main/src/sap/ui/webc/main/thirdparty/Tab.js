@@ -121,7 +121,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this._realTab === this || this.tabs.some(subTab => subTab.isOnSelectedTabPath);
 		}
 		get _effectiveSlotName() {
-			return this.isOnSelectedTabPath ? this._individualSlot : "disabled-slot";
+			return this.isOnSelectedTabPath ? this._individualSlot : `disabled-${this._individualSlot}`;
 		}
 		get _defaultSlotName() {
 			return this._realTab === this ? "" : "disabled-slot";
@@ -230,7 +230,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this.design !== SemanticColor.Default && this.design !== SemanticColor.Neutral) {
 				classes.push(`ui5-tab-overflow-item--${this.design.toLowerCase()}`);
 			}
-			if (this.disabled) {
+			if (this.effectiveDisabled) {
 				classes.push("ui5-tab-overflow-item--disabled");
 			}
 			if (this.selected) {

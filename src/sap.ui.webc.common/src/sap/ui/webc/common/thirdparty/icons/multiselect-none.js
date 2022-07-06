@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/multiselect-none', './v4/multiselect-none'], function (Theme, multiselectNone$2, multiselectNone$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/multiselect-none', './v4/multiselect-none'], function (exports, Theme, multiselectNone$1, multiselectNone$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? multiselectNone$1 : multiselectNone$2;
-	var multiselectNone = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? multiselectNone$1.pathData : multiselectNone$2.pathData;
+	var multiselectNone = "multiselect-none";
 
-	return multiselectNone;
+	exports.accData = multiselectNone$1.accData;
+	exports.ltr = multiselectNone$1.ltr;
+	exports.default = multiselectNone;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

@@ -10,6 +10,7 @@ sap.ui.define([
 ], function(WebComponent, library) {
 	"use strict";
 
+	var IllustrationMessageSize = library.IllustrationMessageSize;
 	var IllustrationMessageType = library.IllustrationMessageType;
 
 	/**
@@ -59,6 +60,25 @@ sap.ui.define([
 				name: {
 					type: "sap.ui.webc.fiori.IllustrationMessageType",
 					defaultValue: IllustrationMessageType.BeforeSearch
+				},
+
+				/**
+				 * Determines which illustration breakpoint variant is used. <br>
+				 * <br>
+				 * Available options are:
+				 * <ul>
+				 *     <li><code>Auto</code></li>
+				 *     <li><code>Base</code></li>
+				 *     <li><code>Spot</code></li>
+				 *     <li><code>Dialog</code></li>
+				 *     <li><code>Scene</code></li>
+				 * </ul>
+				 *
+				 * As <code>IllustratedMessage</code> adapts itself around the <code>Illustration</code>, the other elements of the component are displayed differently on the different breakpoints/illustration sizes.
+				 */
+				size: {
+					type: "sap.ui.webc.fiori.IllustrationMessageSize",
+					defaultValue: IllustrationMessageSize.Auto
 				},
 
 				/**

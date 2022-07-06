@@ -2,12 +2,7 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 
 	const getCaretPosition = field => {
 		let caretPos = 0;
-		if (document.selection) {
-			field.focus();
-			const selection = document.selection.createRange();
-			selection.moveStart("character", -field.value.length);
-			caretPos = selection.text.length;
-		} else if (field.selectionStart || field.selectionStart === "0") {
+		if (field.selectionStart || field.selectionStart === "0") {
 			caretPos = field.selectionDirection === "backward" ? field.selectionStart : field.selectionEnd;
 		}
 		return caretPos;

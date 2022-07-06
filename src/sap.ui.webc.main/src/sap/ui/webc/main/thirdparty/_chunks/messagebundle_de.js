@@ -31,6 +31,13 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		COLOR_PALETTE_DIALOG_OK_BUTTON: "OK",
 		COLOR_PALETTE_DIALOG_TITLE: "Farbe ändern",
 		COLOR_PALETTE_MORE_COLORS_TEXT: "Mehr Farben...",
+		COLORPICKER_ALPHA_SLIDER: "Alpha-Regler",
+		COLORPICKER_HUE_SLIDER: "Farbtonregler",
+		COLORPICKER_HEX: "Hexadezimal",
+		COLORPICKER_RED: "Rot",
+		COLORPICKER_GREEN: "Grün",
+		COLORPICKER_BLUE: "Blau",
+		COLORPICKER_ALPHA: "Alpha",
 		DATEPICKER_OPEN_ICON_TITLE: "Auswahl öffnen",
 		DATEPICKER_DATE_DESCRIPTION: "Datumseingabe",
 		DATETIME_DESCRIPTION: "Datums-/Zeit-Eingabe",
@@ -77,8 +84,6 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		SEGMENTEDBUTTON_ARIA_DESCRIBEDBY: "Leertaste oder Eingabetaste drücken, um ein Element auszuwählen",
 		SEGMENTEDBUTTONITEM_ARIA_DESCRIPTION: "Drucktaste mit Unterteilung",
 		SLIDER_ARIA_DESCRIPTION: "Griff des Schiebereglers",
-		SWITCH_ON: "Ein",
-		SWITCH_OFF: "Aus",
 		LOAD_MORE_TEXT: "Mehr",
 		TABLE_HEADER_ROW_TEXT: "Kopfzeile",
 		TABLE_ROW_POSITION: "{0} von {1}",
@@ -124,8 +129,8 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_INC_ICON_TITLE: "Vergrößern",
 		SPLIT_BUTTON_DESCRIPTION: "Zweigeteilte Drucktaste",
 		SPLIT_BUTTON_KEYBOARD_HINT: "Für Standardaktion Leertaste oder Eingabetaste drücken; für Pfeilaktion Alt + Pfeil nach unten oder F4 drücken",
-		MENU_BACK_BUTTON_ARIA_LABEL: "Back",
-		MENU_CLOSE_BUTTON_ARIA_LABEL: "Decline"
+		MENU_BACK_BUTTON_ARIA_LABEL: "Zurück",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "Schließen"
 	};
 
 	exports.default = messagebundle_de;

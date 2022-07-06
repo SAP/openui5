@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/message-success', './v4/message-success'], function (Theme, messageSuccess$2, messageSuccess$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/message-success', './v4/message-success'], function (exports, Theme, messageSuccess$1, messageSuccess$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? messageSuccess$1 : messageSuccess$2;
-	var messageSuccess = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? messageSuccess$1.pathData : messageSuccess$2.pathData;
+	var messageSuccess = "message-success";
 
-	return messageSuccess;
+	exports.accData = messageSuccess$1.accData;
+	exports.ltr = messageSuccess$1.ltr;
+	exports.default = messageSuccess;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

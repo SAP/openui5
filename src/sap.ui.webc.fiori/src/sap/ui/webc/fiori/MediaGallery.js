@@ -25,7 +25,7 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * The <code>ui-media-gallery</code> component allows the user to browse through multimedia items. Currently, the supported items are images and videos. The items should be defined using the <code>sap.ui.webc.fiori.MediaGalleryItem</code> component.
+	 * The <code>sap.ui.webc.fiori.MediaGallery</code> component allows the user to browse through multimedia items. Currently, the supported items are images and videos. The items should be defined using the <code>sap.ui.webc.fiori.MediaGalleryItem</code> component.
 	 *
 	 * The items are initially displayed as thumbnails. When the user selects a thumbnail, the corresponding item is displayed in larger size. <br>
 	 * The component is responsive by default and adjusts the position of the menu with respect to viewport size, but the application is able to further customize the layout via the provided API.

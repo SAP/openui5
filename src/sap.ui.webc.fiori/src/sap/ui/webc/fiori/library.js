@@ -51,6 +51,7 @@ sap.ui.define([
 			types: [
 				"sap.ui.webc.fiori.BarDesign",
 				"sap.ui.webc.fiori.FCLLayout",
+				"sap.ui.webc.fiori.IllustrationMessageSize",
 				"sap.ui.webc.fiori.IllustrationMessageType",
 				"sap.ui.webc.fiori.MediaGalleryItemLayout",
 				"sap.ui.webc.fiori.MediaGalleryLayout",
@@ -347,7 +348,7 @@ Use to display a detail page only, when the user should focus entirely on it.
 			/**
 				 * Desktop: 25/25/50 Start, Mid and End (expanded) columns are displayed Tablet: 0/33/67 Mid and End (expanded) columns are displayed, Start is accessible by layout arrows Phone: -/-/100 (only the End column is displayed)
 
-Use to display all three pages (master, detail, detail-detail) when the user should focus on the detail-detail.
+Use to display all three pages (list, detail, detail-detail) when the user should focus on the detail-detail.
 				 * @public
 				 */
 			ThreeColumnsEndExpanded: "ThreeColumnsEndExpanded",
@@ -355,7 +356,7 @@ Use to display all three pages (master, detail, detail-detail) when the user sho
 			/**
 				 * Desktop: 25/50/25 Start, Mid (expanded) and End columns are displayed Tablet: 0/67/33 Mid (expanded) and End columns are displayed, Start is accessible by a layout arrow Phone: -/-/100 only the End column is displayed
 
-Use to display all three pages (master, detail, detail-detail) when the user should focus on the detail.
+Use to display all three pages (list, detail, detail-detail) when the user should focus on the detail.
 				 * @public
 				 */
 			ThreeColumnsMidExpanded: "ThreeColumnsMidExpanded",
@@ -363,7 +364,7 @@ Use to display all three pages (master, detail, detail-detail) when the user sho
 			/**
 				 * Desktop: 33/67/0 Start and Mid (expanded) columns are displayed, End is accessible by a layout arrow Tablet: 33/67/0 Start and Mid (expanded) columns are displayed, End is accessible by a layout arrow Phone: -/-/100 only the End column is displayed
 
-Use to display the master and detail pages when the user should focus on the detail. The detail-detail is still loaded and easily accessible with a layout arrow.
+Use to display the list and detail pages when the user should focus on the detail. The detail-detail is still loaded and easily accessible with a layout arrow.
 				 * @public
 				 */
 			ThreeColumnsMidExpandedEndHidden: "ThreeColumnsMidExpandedEndHidden",
@@ -371,7 +372,7 @@ Use to display the master and detail pages when the user should focus on the det
 			/**
 				 * Desktop: 67/33/0 Start (expanded) and Mid columns are displayed, End is accessible by layout arrows Tablet: 67/33/0 Start (expanded) and Mid columns are displayed, End is accessible by layout arrows Phone: -/-/100 only the End column is displayed
 
-Use to display the master and detail pages when the user should focus on the master. The detail-detail is still loaded and easily accessible with layout arrows.
+Use to display the list and detail pages when the user should focus on the list. The detail-detail is still loaded and easily accessible with layout arrows.
 				 * @public
 				 */
 			ThreeColumnsStartExpandedEndHidden: "ThreeColumnsStartExpandedEndHidden",
@@ -379,7 +380,7 @@ Use to display the master and detail pages when the user should focus on the mas
 			/**
 				 * Desktop: 33/67/- Start and Mid (expanded) columns are displayed Tablet: 33/67/- Start and Mid (expanded) columns are displayed Phone: -/100/- only the Mid column is displayed
 
-Use to display both a master and a detail page when the user should focus on the detail page.
+Use to display both a list and a detail page when the user should focus on the detail page.
 				 * @public
 				 */
 			TwoColumnsMidExpanded: "TwoColumnsMidExpanded",
@@ -387,10 +388,57 @@ Use to display both a master and a detail page when the user should focus on the
 			/**
 				 * Desktop: 67/33/- Start (expanded) and Mid columns are displayed Tablet: 67/33/- Start (expanded) and Mid columns are displayed Phone: -/100/- only the Mid column is displayed
 
-Use to display both a master and a detail page when the user should focus on the master page.
+Use to display both a list and a detail page when the user should focus on the list page.
 				 * @public
 				 */
 			TwoColumnsStartExpanded: "TwoColumnsStartExpanded"
+		};
+
+
+		/**
+		 * Different types of IllustrationMessageSize.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.106.0
+		 * @experimental Since 1.106.0 This API is experimental and might change significantly.
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		thisLib.IllustrationMessageSize = {
+
+			/**
+				 * Automatically decides the <code>Illustration</code> size (<code>Base</code>, <code>Spot</code>, <code>Dialog</code>, or <code>Scene</code>) depending on the <code>IllustratedMessage</code> container width.
+
+<b>Note:</b> <code>Auto</code> is the only option where the illustration size is changed according to the available container width. If any other <code>IllustratedMessageSize</code> is chosen, it remains until changed by the app developer.
+				 * @public
+				 */
+			Auto: "Auto",
+
+			/**
+				 * Base <code>Illustration</code> size (XS breakpoint). Suitable for cards (two columns).
+
+<b>Note:</b> When <code>Base</code> is in use, no illustration is displayed.
+				 * @public
+				 */
+			Base: "Base",
+
+			/**
+			 * Dialog <code>Illustration</code> size (M breakpoint). Suitable for dialogs.
+			 * @public
+			 */
+			Dialog: "Dialog",
+
+			/**
+			 * Scene <code>Illustration</code> size (L breakpoint). Suitable for a <code>Page</code> or a table.
+			 * @public
+			 */
+			Scene: "Scene",
+
+			/**
+			 * Spot <code>Illustration</code> size (S breakpoint). Suitable for cards (four columns).
+			 * @public
+			 */
+			Spot: "Spot"
 		};
 
 

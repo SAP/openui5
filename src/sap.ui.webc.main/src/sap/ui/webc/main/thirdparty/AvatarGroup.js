@@ -158,7 +158,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				if (!item || item.hidden) {
 					item = button;
 				}
-				return this.effectiveDir === "rtl" ? this._getWidthToItem(item) : item.offsetLeft;
+				return this.effectiveDir === "rtl" ? this._getWidthToItem(item) : item.offsetLeft - this.offsetLeft;
 			}
 			return button.offsetWidth;
 		}
@@ -254,7 +254,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (isRTL) {
 				return item.offsetParent.offsetWidth - item.offsetLeft - item.offsetWidth;
 			}
-			return item.offsetLeft;
+			return item.offsetLeft - this.offsetLeft;
 		}
 		_overflowItems() {
 			if (this.items.length < 2) {

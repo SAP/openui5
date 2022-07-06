@@ -1,9 +1,8 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/util/clamp', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Keys', './Popup', 'sap/ui/webc/common/thirdparty/icons/resize-corner', './Icon', './generated/templates/DialogTemplate.lit', './generated/themes/BrowserScrollbar.css', './generated/themes/PopupsCommon.css', './generated/themes/Dialog.css'], function (Device, clamp, ResizeHandler, Keys, Popup, resizeCorner, Icon, DialogTemplate_lit, BrowserScrollbar_css, PopupsCommon_css, Dialog_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/util/clamp', 'sap/ui/webc/common/thirdparty/base/Keys', './Popup', 'sap/ui/webc/common/thirdparty/icons/resize-corner', './Icon', './generated/templates/DialogTemplate.lit', './generated/themes/BrowserScrollbar.css', './generated/themes/PopupsCommon.css', './generated/themes/Dialog.css'], function (Device, clamp, Keys, Popup, resizeCorner, Icon, DialogTemplate_lit, BrowserScrollbar_css, PopupsCommon_css, Dialog_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
 	var clamp__default = /*#__PURE__*/_interopDefaultLegacy(clamp);
-	var ResizeHandler__default = /*#__PURE__*/_interopDefaultLegacy(ResizeHandler);
 
 	const STEP_SIZE = 16;
 	const metadata = {
@@ -97,6 +96,18 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		get _showResizeHandle() {
 			return this.resizable && this.onDesktop;
 		}
+		get _minHeight() {
+			let minHeight = Number.parseInt(window.getComputedStyle(this.contentDOM).minHeight);
+			const header = this._root.querySelector(".ui5-popup-header-root");
+			if (header) {
+				minHeight += header.offsetHeight;
+			}
+			const footer = this._root.querySelector(".ui5-popup-footer-root");
+			if (footer) {
+				minHeight += footer.offsetHeight;
+			}
+			return minHeight;
+		}
 		_show() {
 			super._show();
 			this._center();
@@ -115,28 +126,28 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 		}
 		onEnterDOM() {
 			super.onEnterDOM();
-			this._attachResizeHandlers();
+			this._attachScreenResizeHandler();
 		}
 		onExitDOM() {
 			super.onExitDOM();
-			this._detachResizeHandlers();
+			this._detachScreenResizeHandler();
 		}
 		_resize() {
 			super._resize();
-			if (this._resizeHandlersAttached) {
+			if (this._screenResizeHandlerAttached) {
 				this._center();
 			}
 		}
-		_attachResizeHandlers() {
-			if (!this._resizeHandlersAttached) {
-				ResizeHandler__default.register(document.body, this._screenResizeHandler);
-				this._resizeHandlersAttached = true;
+		_attachScreenResizeHandler() {
+			if (!this._screenResizeHandlerAttached) {
+				window.addEventListener("resize", this._screenResizeHandler);
+				this._screenResizeHandlerAttached = true;
 			}
 		}
-		_detachResizeHandlers() {
-			if (this._resizeHandlersAttached) {
-				ResizeHandler__default.deregister(document.body, this._screenResizeHandler);
-				this._resizeHandlersAttached = false;
+		_detachScreenResizeHandler() {
+			if (this._screenResizeHandlerAttached) {
+				window.removeEventListener("resize", this._screenResizeHandler);
+				this._screenResizeHandlerAttached = false;
 			}
 		}
 		_center() {
@@ -246,12 +257,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			this.style[posDirection] = `${newPos}px`;
 		}
 		_resizeWithEvent(event) {
-			this._detachResizeHandlers();
+			this._detachScreenResizeHandler();
 			this.addEventListener("ui5-before-close", this._revertSize);
 			const { top, left } = this.getBoundingClientRect(),
 				style = window.getComputedStyle(this),
 				minWidth = Number.parseFloat(style.minWidth),
-				minHeight = Number.parseFloat(style.minHeight),
 				maxWidth = window.innerWidth - left,
 				maxHeight = window.innerHeight - top;
 			let width = Number.parseFloat(style.width),
@@ -271,14 +281,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 				break;
 			}
 			width = clamp__default(width, minWidth, maxWidth);
-			height = clamp__default(height, minHeight, maxHeight);
+			height = clamp__default(height, this._minHeight, maxHeight);
 			Object.assign(this.style, {
 				width: `${width}px`,
 				height: `${height}px`,
 			});
 		}
 		_attachMouseDragHandlers() {
-			this._detachResizeHandlers();
+			this._detachScreenResizeHandler();
 			window.addEventListener("mousemove", this._dragMouseMoveHandler);
 			window.addEventListener("mouseup", this._dragMouseUpHandler);
 		}
@@ -299,7 +309,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 				width,
 				height,
 				minWidth,
-				minHeight,
 			} = window.getComputedStyle(this);
 			this._initialX = event.clientX;
 			this._initialY = event.clientY;
@@ -308,7 +317,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			this._initialTop = top;
 			this._initialLeft = left;
 			this._minWidth = Number.parseFloat(minWidth);
-			this._minHeight = Number.parseFloat(minHeight);
+			this._cachedMinHeight = this._minHeight;
 			Object.assign(this.style, {
 				top: `${top}px`,
 				left: `${left}px`,
@@ -339,7 +348,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			}
 			const newHeight = clamp__default(
 				this._initialHeight + (clientY - this._initialY),
-				this._minHeight,
+				this._cachedMinHeight,
 				window.innerHeight - this._initialTop,
 			);
 			Object.assign(this.style, {
@@ -349,18 +358,18 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/
 			});
 		}
 		_onResizeMouseUp() {
-			this._initialX = null;
-			this._initialY = null;
-			this._initialWidth = null;
-			this._initialHeight = null;
-			this._initialTop = null;
-			this._initialLeft = null;
-			this._minWidth = null;
-			this._minHeight = null;
+			delete this._initialX;
+			delete this._initialY;
+			delete this._initialWidth;
+			delete this._initialHeight;
+			delete this._initialTop;
+			delete this._initialLeft;
+			delete this._minWidth;
+			delete this._cachedMinHeight;
 			this._detachMouseResizeHandlers();
 		}
 		_attachMouseResizeHandlers() {
-			this._detachResizeHandlers();
+			this._detachScreenResizeHandler();
 			window.addEventListener("mousemove", this._resizeMouseMoveHandler);
 			window.addEventListener("mouseup", this._resizeMouseUpHandler);
 			this.addEventListener("ui5-before-close", this._revertSize);

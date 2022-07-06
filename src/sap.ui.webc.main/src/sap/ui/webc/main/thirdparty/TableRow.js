@@ -73,10 +73,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		constructor() {
 			super();
+			const handleToushStartEvent = event => {
+				this.activate();
+			};
 			this._ontouchstart = {
-				handleEvent(event) {
-					this.activate();
-				},
+				handleEvent: handleToushStartEvent,
 				passive: true,
 			};
 		}

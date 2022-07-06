@@ -31,6 +31,13 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		COLOR_PALETTE_DIALOG_OK_BUTTON: "موافق",
 		COLOR_PALETTE_DIALOG_TITLE: "تغيير اللون",
 		COLOR_PALETTE_MORE_COLORS_TEXT: "مزيد من الألوان...",
+		COLORPICKER_ALPHA_SLIDER: "عنصر تحكم ألفا",
+		COLORPICKER_HUE_SLIDER: "عنصر تحكم تدرج اللون",
+		COLORPICKER_HEX: "ست عشري",
+		COLORPICKER_RED: "أحمر",
+		COLORPICKER_GREEN: "أخضر",
+		COLORPICKER_BLUE: "أزرق",
+		COLORPICKER_ALPHA: "ألفا",
 		DATEPICKER_OPEN_ICON_TITLE: "فتح أداة الانتقاء",
 		DATEPICKER_DATE_DESCRIPTION: "إدخال التاريخ",
 		DATETIME_DESCRIPTION: "إدخال التاريخ/الوقت",
@@ -77,8 +84,6 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		SEGMENTEDBUTTON_ARIA_DESCRIBEDBY: "اضغط على SPACE أو ENTER لتحديد أحد البنود",
 		SEGMENTEDBUTTONITEM_ARIA_DESCRIPTION: "الزر المقسَّم",
 		SLIDER_ARIA_DESCRIPTION: "مؤشر مربع التمرير",
-		SWITCH_ON: "تشغيل",
-		SWITCH_OFF: "غلق",
 		LOAD_MORE_TEXT: "المزيد",
 		TABLE_HEADER_ROW_TEXT: "صف المقدمة",
 		TABLE_ROW_POSITION: "{0} من {1}",
@@ -124,8 +129,8 @@ sap.ui.define(['exports'], function (exports) { 'use strict';
 		STEPINPUT_INC_ICON_TITLE: "زيادة",
 		SPLIT_BUTTON_DESCRIPTION: "زر التقسيم",
 		SPLIT_BUTTON_KEYBOARD_HINT: "اضغط على Space أو Enter لبدء تشغيل الإجراء الافتراضي وAlt + Arrow Down أو F4 لبدء تشغيل إجراء السهم",
-		MENU_BACK_BUTTON_ARIA_LABEL: "Back",
-		MENU_CLOSE_BUTTON_ARIA_LABEL: "Decline"
+		MENU_BACK_BUTTON_ARIA_LABEL: "الخلف",
+		MENU_CLOSE_BUTTON_ARIA_LABEL: "رفض"
 	};
 
 	exports.default = messagebundle_ar;

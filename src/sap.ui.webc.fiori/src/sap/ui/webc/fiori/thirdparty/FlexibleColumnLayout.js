@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/AnimationMode', 'sap/ui/webc/common/thirdparty/base/config/AnimationMode', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/main/thirdparty/Button', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-left', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-right', './types/FCLLayout', './fcl-utils/FCLLayout', './generated/i18n/i18n-defaults', './generated/templates/FlexibleColumnLayoutTemplate.lit', './generated/themes/FlexibleColumnLayout.css'], function (UI5Element, litRender, ResizeHandler, Float, Integer, i18nBundle, AnimationMode$1, AnimationMode, Device, Button, slimArrowLeft, slimArrowRight, FCLLayout, FCLLayout$1, i18nDefaults, FlexibleColumnLayoutTemplate_lit, FlexibleColumnLayout_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/AnimationMode', 'sap/ui/webc/common/thirdparty/base/config/AnimationMode', 'sap/ui/webc/main/thirdparty/Button', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-left', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-right', './types/FCLLayout', './fcl-utils/FCLLayout', './generated/i18n/i18n-defaults', './generated/templates/FlexibleColumnLayoutTemplate.lit', './generated/themes/FlexibleColumnLayout.css'], function (UI5Element, litRender, ResizeHandler, Float, Integer, i18nBundle, AnimationMode$1, AnimationMode, Button, slimArrowLeft, slimArrowRight, FCLLayout, FCLLayout$1, i18nDefaults, FlexibleColumnLayoutTemplate_lit, FlexibleColumnLayout_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -250,7 +250,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return {
 				root: {
 					"ui5-fcl-root": true,
-					"ui5-fcl--ie": Device.isIE(),
 				},
 				columns: {
 					start: {

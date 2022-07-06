@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-down', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/multiselect-all', 'sap/ui/webc/common/thirdparty/icons/not-editable', 'sap/ui/webc/common/thirdparty/icons/error', 'sap/ui/webc/common/thirdparty/icons/alert', 'sap/ui/webc/common/thirdparty/icons/sys-enter-2', 'sap/ui/webc/common/thirdparty/icons/information', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', './MultiComboBoxItem', './Tokenizer', './Token', './Icon', './Popover', './ResponsivePopover', './List', './StandardListItem', './ToggleButton', './_chunks/ComboBoxFilters', './Button', './generated/i18n/i18n-defaults', './generated/templates/MultiComboBoxTemplate.lit', './generated/templates/MultiComboBoxPopoverTemplate.lit', './generated/themes/MultiComboBox.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css', './generated/themes/Suggestions.css'], function (UI5Element, litRender, ResizeHandler, ValueState, Keys, Integer, slimArrowDown, Device, i18nBundle, decline, multiselectAll, notEditable, error, alert, sysEnter2, information, FeaturesRegistry, MultiComboBoxItem, Tokenizer, Token, Icon, Popover, ResponsivePopover, List, StandardListItem, ToggleButton, ComboBoxFilters, Button, i18nDefaults, MultiComboBoxTemplate_lit, MultiComboBoxPopoverTemplate_lit, MultiComboBox_css, ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-down', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/multiselect-all', 'sap/ui/webc/common/thirdparty/icons/not-editable', 'sap/ui/webc/common/thirdparty/icons/error', 'sap/ui/webc/common/thirdparty/icons/alert', 'sap/ui/webc/common/thirdparty/icons/sys-enter-2', 'sap/ui/webc/common/thirdparty/icons/information', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', './MultiComboBoxItem', './MultiComboBoxGroupItem', './Tokenizer', './Token', './Icon', './Popover', './ResponsivePopover', './List', './StandardListItem', './ToggleButton', './_chunks/Filters', './Button', './generated/i18n/i18n-defaults', './generated/templates/MultiComboBoxTemplate.lit', './generated/templates/MultiComboBoxPopoverTemplate.lit', './generated/themes/MultiComboBox.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css', './generated/themes/Suggestions.css', './generated/themes/MultiComboBoxPopover.css'], function (UI5Element, litRender, ResizeHandler, ValueState, Keys, Integer, slimArrowDown, Device, i18nBundle, decline, multiselectAll, notEditable, error, alert, sysEnter2, information, FeaturesRegistry, AriaLabelHelper, MultiComboBoxItem, MultiComboBoxGroupItem, Tokenizer, Token, Icon, Popover, ResponsivePopover, List, StandardListItem, ToggleButton, Filters, Button, i18nDefaults, MultiComboBoxTemplate_lit, MultiComboBoxPopoverTemplate_lit, MultiComboBox_css, ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css, MultiComboBoxPopover_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -30,6 +30,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: String,
 				defaultValue: "",
 			},
+			 noTypeahead: {
+				type: Boolean,
+			},
 			placeholder: {
 				type: String,
 				defaultValue: "",
@@ -56,6 +59,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			},
 			open: {
 				type: Boolean,
+			},
+			accessibleName: {
+				type: String,
+				defaultValue: undefined,
+			},
+			accessibleNameRef: {
+				type: String,
+				defaultValue: "",
 			},
 			_filteredItems: {
 				type: Object,
@@ -114,11 +125,12 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return MultiComboBox_css;
 		}
 		static get staticAreaStyles() {
-			return [ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css];
+			return [ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css, MultiComboBoxPopover_css];
 		}
 		static get dependencies() {
 			return [
 				MultiComboBoxItem,
+				MultiComboBoxGroupItem,
 				Tokenizer,
 				Token,
 				Icon,
@@ -139,6 +151,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._deleting = false;
 			this._validationTimeout = null;
 			this._handleResizeBound = this._handleResize.bind(this);
+			this.valueBeforeAutoComplete = "";
 			this.currentItemIdx = -1;
 			this.FormSupport = undefined;
 		}
@@ -168,7 +181,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		filterSelectedItems(event) {
 			this.filterSelected = event.target.pressed;
-			this.selectedItems = this._filteredItems.filter(item => item.selected);
+			const selectedItems = this._filteredItems.filter(item => item.selected);
+			this.selectedItems = this.items.filter((item, idx, allItems) => MultiComboBox._groupItemFilter(item, ++idx, allItems, selectedItems) || selectedItems.indexOf(item) !== -1);
 		}
 		get _showAllItemsButtonPressed() {
 			return this.filterSelected;
@@ -185,18 +199,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this.filterSelected) {
 				this.filterSelected = false;
 			}
-			const skipFiring = (this._inputDom.value === this.value) && Device.isIE() && !this._keyDown && !!this.placeholder;
-			if (skipFiring) {
-				event.preventDefault();
-				return;
-			}
 			if (this._validationTimeout) {
 				input.value = this._inputLastValue;
 				return;
 			}
 			if (!filteredItems.length && value && !this.allowCustomValues) {
-				input.value = this._inputLastValue;
+				input.value = this.valueBeforeAutoComplete || this._inputLastValue;
 				this.valueState = "Error";
+				this._shouldAutocomplete = false;
 				this._resetValueState(oldValueState);
 				return;
 			}
@@ -255,9 +265,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this._tokenizerFocused = true;
 			this.focused = false;
 		}
-		_onkeyup() {
-			this._keyDown = false;
-		}
 		async _onkeydown(event) {
 			const isArrowDownCtrl = Keys.isDownCtrl(event);
 			if (Keys.isShow(event) && !this.disabled) {
@@ -286,8 +293,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (Keys.isSpaceShift(event)) {
 				event.preventDefault();
 			}
-			this._keyDown = true;
 			this[`_handle${event.key}`] && this[`_handle${event.key}`](event);
+			this._shouldAutocomplete = !this.noTypeahead && !(Keys.isBackSpace(event) || Keys.isDelete(event) || Keys.isEscape(event) || Keys.isEnter(event));
 		}
 		async _handlePaste(event) {
 			const pastedText = await navigator.clipboard.readText();
@@ -346,6 +353,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 		}
 		_handleEscape(event) {
+			const innerInput = this._innerInput;
+			const isAutoCompleted = innerInput.selectionEnd - innerInput.selectionStart > 0;
+			if (isAutoCompleted) {
+				this.value = this.valueBeforeAutoComplete;
+			}
 			if (!this.allowCustomValues || (!this.open && this.allowCustomValues)) {
 				this.value = this._lastValue;
 			}
@@ -389,6 +401,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this._handleArrowDown(event);
 			}
 			if (isArrowUp || Keys.isUpCtrl(event)) {
+				this._shouldAutocomplete = true;
 				this._inputDom.focus();
 			}
 		}
@@ -435,6 +448,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			if (!this.valueStateHeader && isFirstItem && isArrowUp) {
 				this._inputDom.focus();
+				this._shouldAutocomplete = true;
 			}
 		}
 		_handleArrowCtrl(event) {
@@ -460,6 +474,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				await this._setValueStateHeader();
 			}
 			if (isArrowDown && isOpen && this.valueStateHeader) {
+				this.value = this.valueBeforeAutoComplete || this.value;
 				this.valueStateHeader.focus();
 				return;
 			}
@@ -475,6 +490,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const firstListItem = this.list.items[0];
 			if (isOpen) {
 				this.list._itemNavigation.setCurrentItem(firstListItem);
+				this.value = this.valueBeforeAutoComplete || this.value;
 				firstListItem.focus();
 			} else if (!this.readonly) {
 				this._navigateToNextItem();
@@ -507,10 +523,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				return;
 			}
 			let currentItem = this.items[++this.currentItemIdx];
-			while (this.currentItemIdx < itemsCount - 1 && currentItem.selected) {
+			while ((this.currentItemIdx < itemsCount - 1 && currentItem.selected) || currentItem.isGroupItem) {
 				currentItem = this.items[++this.currentItemIdx];
 			}
-			if (currentItem.selected === true) {
+			if (currentItem.selected === true || currentItem.isGroupItem) {
 				this.currentItemIdx = previousItemIdx;
 				return;
 			}
@@ -532,13 +548,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				return;
 			}
 			let currentItem = this.items[--this.currentItemIdx];
-			while (currentItem && currentItem.selected && this.currentItemIdx > 0) {
+			while ((currentItem && this.currentItemIdx > 0) && (currentItem.selected || currentItem.isGroupItem)) {
 				currentItem = this.items[--this.currentItemIdx];
 			}
 			if (!currentItem) {
 				return;
 			}
-			if (currentItem.selected) {
+			if (currentItem.selected || currentItem.isGroupItem) {
 				this.currentItemIdx = previousItemIdx;
 				return;
 			}
@@ -550,6 +566,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const lowerCaseValue = this.value.toLowerCase();
 			const matchingItem = this.items.find(item => item.text.toLowerCase() === lowerCaseValue);
 			const oldValueState = this.valueState;
+			const innerInput = this._innerInput;
 			if (this.FormSupport) {
 				this.FormSupport.triggerFormSubmit(this);
 			}
@@ -568,6 +585,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					this.value = "";
 					this.fireSelectionChange();
 				}
+				innerInput.setSelectionRange(matchingItem.text.length, matchingItem.text.length);
 				this.allItemsPopover.close();
 			}
 		}
@@ -616,7 +634,19 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 		}
 		_filterItems(str) {
-			return (ComboBoxFilters.Filters[this.filter] || ComboBoxFilters.StartsWithPerTerm)(str, this.items);
+			const itemsToFilter = this.items.filter(item => !item.isGroupItem);
+			const filteredItems = (Filters.Filters[this.filter] || Filters.StartsWithPerTerm)(str, itemsToFilter, "text");
+			return this.items.filter((item, idx, allItems) => MultiComboBox._groupItemFilter(item, ++idx, allItems, filteredItems) || filteredItems.indexOf(item) !== -1);
+		}
+		 static _groupItemFilter(item, idx, allItems, filteredItems) {
+			if (item.isGroupItem) {
+				let groupHasFilteredItems;
+				while (allItems[idx] && !allItems[idx].isGroupItem && !groupHasFilteredItems) {
+					groupHasFilteredItems = filteredItems.indexOf(allItems[idx]) !== -1;
+					idx++;
+				}
+				return groupHasFilteredItems;
+			}
 		}
 		_afterOpenPicker() {
 			this._toggle();
@@ -650,6 +680,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				}
 				this.fireEvent("input");
 			}
+			this.value = this.valueBeforeAutoComplete || "";
 		}
 		syncItems(listItems) {
 			listItems.forEach(item => {
@@ -695,21 +726,57 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			});
 			this._valueBeforeOpen = this.value;
 			if (this.filterSelected) {
-				this.selectedItems = this._filteredItems.filter(item => item.selected);
+				const selectedItems = this._filteredItems.filter(item => item.selected);
+				this.selectedItems = this.items.filter((item, idx, allItems) => MultiComboBox._groupItemFilter(item, ++idx, allItems, selectedItems) || selectedItems.indexOf(item) !== -1);
 			}
 		}
+		_handleTypeAhead(item, filterValue) {
+			if (!item) {
+				return;
+			}
+			const value = item.text;
+			const innerInput = this._innerInput;
+			filterValue = filterValue || "";
+			this.value = value;
+			innerInput.value = value;
+			innerInput.setSelectionRange(filterValue.length, value.length);
+			this._shouldAutocomplete = false;
+		}
+		_getFirstMatchingItem(current) {
+			if (!this.items.length) {
+				return;
+			}
+			const matchingItems = this._startsWithMatchingItems(current).filter(item => !item.isGroupItem && !item.selected);
+			if (matchingItems.length) {
+				return matchingItems[0];
+			}
+		}
+		_startsWithMatchingItems(str) {
+			return Filters.StartsWith(str, this.items, "text");
+		}
 		onBeforeRendering() {
-			const input = this.shadowRoot.querySelector("input");
+			const input = this._innerInput;
+			const autoCompletedChars = input && input.selectionEnd - input.selectionStart;
+			const value = input && input.value;
 			this.FormSupport = FeaturesRegistry.getFeature("FormSupport");
-			this._inputLastValue = this.value;
+			this._inputLastValue = value;
 			if (input && !input.value) {
+				this.valueBeforeAutoComplete = "";
 				this._filteredItems = this.items;
 			}
 			this.items.forEach(item => {
 				item._getRealDomRef = () => this.allItemsPopover.querySelector(`*[data-ui5-stable=${item.stableDomRef}]`);
 			});
+			if (!input || !value) {
+				return;
+			}
+			if (this._shouldAutocomplete && !Device.isAndroid() && !autoCompletedChars) {
+				const item = this._getFirstMatchingItem(value);
+				this.valueBeforeAutoComplete = value;
+				this._handleTypeAhead(item, value);
+			}
 			if (this._shouldFilterItems) {
-				this._filteredItems = this._filterItems(this.value);
+				this._filteredItems = this._filterItems(this._shouldAutocomplete || !!autoCompletedChars ? this.valueBeforeAutoComplete : value);
 			} else {
 				this._filteredItems = this.items;
 			}
@@ -780,14 +847,17 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get _tokenizer() {
 			return this.shadowRoot.querySelector("[ui5-tokenizer]");
 		}
-		inputFocusIn() {
+		inputFocusIn(event) {
 			if (!Device.isPhone() || this.readonly) {
 				this.focused = true;
 			} else {
 				this._innerInput.blur();
 			}
-			!Device.isPhone() && this._innerInput.setSelectionRange(0, this.value.length);
+			if (!Device.isPhone() && ((event.relatedTarget && event.relatedTarget.tagName !== "UI5-STATIC-AREA-ITEM") || !event.relatedTarget)) {
+				this._innerInput.setSelectionRange(0, this.value.length);
+			}
 			this._lastValue = this.value;
+			this.valueBeforeAutoComplete = "";
 		}
 		inputFocusOut(event) {
 			if (!this.shadowRoot.contains(event.relatedTarget) && !this._deleting) {
@@ -827,6 +897,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get valueStateMessageText() {
 			return this.getSlottedNodes("valueStateMessage").map(el => el.cloneNode(true));
+		}
+		get ariaLabelText() {
+			return AriaLabelHelper.getEffectiveAriaLabelText(this);
 		}
 		 get _valueStateMessageIcon() {
 			const iconPerValueState = {
@@ -869,11 +942,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get _innerInput() {
 			if (Device.isPhone()) {
-				if (this.allItemsPopover.opened) {
+				if (this.allItemsPopover && this.allItemsPopover.opened) {
 					return this.allItemsPopover.querySelector("input");
 				}
 			}
-			return this.getDomRef().querySelector("#ui5-multi-combobox-input");
+			return this.getDomRef() ? this.getDomRef().querySelector("#ui5-multi-combobox-input") : null;
 		}
 		get _headerTitleText() {
 			return MultiComboBox.i18nBundle.getText(i18nDefaults.INPUT_SUGGESTIONS_TITLE);
@@ -908,6 +981,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			};
 		}
 		get styles() {
+			const remSizeIxPx = parseInt(getComputedStyle(document.documentElement).fontSize);
 			return {
 				popoverValueStateMessage: {
 					"width": `${this._listWidth}px`,
@@ -915,6 +989,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				},
 				popoverHeader: {
 					"max-width": Device.isPhone() ? "100%" : `${this._inputWidth}px`,
+				},
+				suggestionsPopover: {
+					"min-width": `${this._inputWidth}px`,
+					"max-width": (this._inputWidth / remSizeIxPx) > 40 ? `${this._inputWidth}px` : "40rem",
 				},
 			};
 		}

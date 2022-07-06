@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/journey-arrive', './v4/journey-arrive'], function (Theme, journeyArrive$2, journeyArrive$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/journey-arrive', './v4/journey-arrive'], function (exports, Theme, journeyArrive$1, journeyArrive$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? journeyArrive$1 : journeyArrive$2;
-	var journeyArrive = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? journeyArrive$1.pathData : journeyArrive$2.pathData;
+	var journeyArrive = "journey-arrive";
 
-	return journeyArrive;
+	exports.accData = journeyArrive$1.accData;
+	exports.ltr = journeyArrive$1.ltr;
+	exports.default = journeyArrive;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

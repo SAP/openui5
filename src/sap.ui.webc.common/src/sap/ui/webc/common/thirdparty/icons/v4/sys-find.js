@@ -1,13 +1,19 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (exports, Icons) { 'use strict';
 
 	const name = "sys-find";
 	const pathData = "M506 301q6 17 6 35 0 23-9 43.5T479 415t-35.5 24-43.5 9-43.5-9-35.5-24-24-35.5-9-43.5q0-1-.5-5t-3.5-8-9.5-7.5T256 312t-18.5 3.5-9.5 7.5-3.5 8-.5 5q0 23-9 43.5T191 415t-35.5 24-43.5 9-43.5-9T33 415 9 379.5 0 336q0-9 2-18t5-18l-1 1q0-1 .5-1.5T7 298q4-10 10-20 10-21 23-46.5t25.5-51T90 132t20-40q13-28 47-28 13 0 24 4 22 8 31.5 21t11.5 25.5 2 22.5q0 6-1 16.5t-1 22.5v16h64v-33q-1-13-1.5-21t-.5-10q0-12 4-24t13-22 28-15q10-3 21-3 18 0 33 9t25 28q7 16 17.5 37.5t22 45.5 23 47.5T494 275q7 12 11 23 0 1 .5 1.5t.5 1.5zM112 416q33 0 56.5-23.5T192 336t-23.5-56.5T112 256q-7 0-14.5 2T82 262q-22 9-36 29t-14 45q0 33 23.5 56.5T112 416zm288 0q33 0 56.5-23.5T480 336t-23.5-56.5T400 256t-56.5 23.5T320 336t23.5 56.5T400 416z";
 	const ltr = false;
+	const accData = null;
 	const collection = "SAP-icons";
 	const packageName = "@ui5/webcomponents-icons";
 	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
-	var pathDataV5 = { pathData };
+	var sysFind = "sys-find";
 
-	return pathDataV5;
+	exports.accData = accData;
+	exports.default = sysFind;
+	exports.ltr = ltr;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

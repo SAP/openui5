@@ -64,7 +64,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		},
 		events:  {
 			"layout-change": {
-				details: {
+				detail: {
 					currentBreakpoint: {
 						type: String,
 					},

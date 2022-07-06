@@ -1,13 +1,19 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (exports, Icons) { 'use strict';
 
 	const name = "wallet";
 	const pathData = "M32 128h32V64q0-13 9-22.5T96 32h128q13 0 22.5 9.5T256 64h96q13 0 22.5 9.5T384 96v32h32q13 0 22.5 9.5T448 160v64q26 0 45 19t19 45v32q0 26-19 45t-45 19v64q0 14-9.5 23t-22.5 9H32q-14 0-23-9t-9-23V160q0-13 9-22.5t23-9.5zm192 0V64H96v64h128zm128 0V96h-96v32h96zM32 448h384v-64h-64q-27 0-45.5-19T288 320v-32q0-26 18.5-45t45.5-19h64v-64H32v288zm288-128q0 14 9 23t23 9h96q13 0 22.5-9t9.5-23v-32q0-13-9.5-22.5T448 256h-96q-14 0-23 9.5t-9 22.5v32zm32-16q0-16 16-16 6 0 11 4.5t5 11.5-5 11.5-11 4.5q-16 0-16-16z";
 	const ltr = false;
+	const accData = null;
 	const collection = "SAP-icons";
 	const packageName = "@ui5/webcomponents-icons";
 	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
-	var pathDataV5 = { pathData };
+	var wallet = "wallet";
 
-	return pathDataV5;
+	exports.accData = accData;
+	exports.default = wallet;
+	exports.ltr = ltr;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

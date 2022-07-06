@@ -39,6 +39,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 			"item-click": {
 				detail: {
 					item: { type: HTMLElement },
+					altKey: { type: Boolean	},
+					ctrlKey: { type: Boolean },
+					metaKey: { type: Boolean },
+					shiftKey: { type: Boolean },
 				},
 			},
 		},
@@ -207,14 +211,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sa
 			const link = event.target,
 				items = this.getSlottedNodes("items"),
 				item = items.find(x => `${x._id}-link` === link.id);
-			if (!this.fireEvent("item-click", { item }, true)) {
+			if (!this.fireEvent("item-click", { item, ...event.detail }, true)) {
 				event.preventDefault();
 			}
 		}
-		_onLabelPress() {
+		_onLabelPress(event) {
 			const items = this.getSlottedNodes("items"),
 				item = items[items.length - 1];
-			this.fireEvent("item-click", { item });
+			this.fireEvent("item-click", { item, ...event.detail });
 		}
 		_onOverflowListItemSelect(event) {
 			const listItem = event.detail.selectedItems[0],

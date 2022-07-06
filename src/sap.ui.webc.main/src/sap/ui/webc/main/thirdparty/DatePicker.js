@@ -68,7 +68,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 		},
 		events:  {
 			change: {
-				details: {
+				detail: {
 					value: {
 						type: String,
 					},
@@ -78,7 +78,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 				},
 			},
 			input: {
-				details: {
+				detail: {
 					value: {
 						type: String,
 					},
@@ -288,9 +288,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 		}
 		get showFooter() {
 			return this.phone;
-		}
-		get _isIE() {
-			return Device.isIE();
 		}
 		get accInfo() {
 			return {

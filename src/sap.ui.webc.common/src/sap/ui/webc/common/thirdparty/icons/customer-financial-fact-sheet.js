@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/customer-financial-fact-sheet', './v4/customer-financial-fact-sheet'], function (Theme, customerFinancialFactSheet$2, customerFinancialFactSheet$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/customer-financial-fact-sheet', './v4/customer-financial-fact-sheet'], function (exports, Theme, customerFinancialFactSheet$1, customerFinancialFactSheet$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? customerFinancialFactSheet$1 : customerFinancialFactSheet$2;
-	var customerFinancialFactSheet = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? customerFinancialFactSheet$1.pathData : customerFinancialFactSheet$2.pathData;
+	var customerFinancialFactSheet = "customer-financial-fact-sheet";
 
-	return customerFinancialFactSheet;
+	exports.accData = customerFinancialFactSheet$1.accData;
+	exports.ltr = customerFinancialFactSheet$1.ltr;
+	exports.default = customerFinancialFactSheet;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });
