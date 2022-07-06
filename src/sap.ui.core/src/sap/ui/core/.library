@@ -398,7 +398,7 @@
             <copyright>2010-2011, Christian Johansen</copyright>
             <pattern>sap/ui/thirdparty/sinon-qunit.js</pattern>
         </lib>
-        <lib name="urijs" displayName="URI.js" version="1.19.10" homepage="http://medialize.github.com/URI.js/">
+        <lib name="urijs" displayName="URI.js" version="1.19.11" homepage="http://medialize.github.com/URI.js/">
             <license url="http://opensource.org/licenses/mit-license" type="MIT" />
             <copyright>Rodney Rehm</copyright>
             <pattern>sap/ui/thirdparty/URI.js</pattern>
