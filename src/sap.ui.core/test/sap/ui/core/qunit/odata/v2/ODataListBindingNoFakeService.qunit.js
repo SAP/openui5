@@ -1207,7 +1207,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getDownloadUrl: no resolved path", function (assert) {
-		var oBinding = {getResolvedPath : function () {}};
+		var oBinding = {
+				aSorters : [],
+				getResolvedPath : function () {}
+			};
 
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
 
@@ -1216,20 +1219,120 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getDownloadUrl: with resolved path", function (assert) {
+	QUnit.test("getDownloadUrl: sorters are added in client mode", function (assert) {
 		var oBinding = {
 				oModel : {_createRequestUrl : function () {}},
-				getResolvedPath : function () {}
+				aSorters : [{/*any sorter*/}],
+				getResolvedPath : function () {},
+				useClientMode : function () {}
 			};
 
+		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
+		this.mock(ODataUtils).expects("createSortParams")
+			.withExactArgs(sinon.match.same(oBinding.aSorters))
+			.returns("~$orderby");
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
 		this.mock(oBinding.oModel).expects("_createRequestUrl")
-			.withExactArgs("~resolvedPath", null, [])
-			.returns("~requestUrl");
+			.withExactArgs("~resolvedPath", null, ["~$orderby"])
+			.returns("~URL");
 
 		// code under test
-		assert.strictEqual(ODataListBinding.prototype.getDownloadUrl.call(oBinding), "~requestUrl");
+		assert.strictEqual(ODataListBinding.prototype.getDownloadUrl.call(oBinding), "~URL");
 	});
+
+	//*********************************************************************************************
+[{
+	sSortParams : "~sortParams"
+}, {
+	aSorters : []
+}, {
+	aSorters : [{/*any sorter*/}],
+	bUseClientMode : false
+}].forEach(function (oFixture, i) {
+	QUnit.test("getDownloadUrl: sorters are not added: #" + i, function (assert) {
+		var oBinding = {
+				oModel : {_createRequestUrl : function () {}},
+				aSorters : oFixture.aSorters,
+				sSortParams : oFixture.sSortParams,
+				getResolvedPath : function () {},
+				useClientMode : function () {}
+			};
+
+		this.mock(oBinding).expects("useClientMode")
+			.withExactArgs()
+			.exactly(oFixture.bUseClientMode === false ? 1 : 0)
+			.returns(oFixture.bUseClientMode);
+		this.mock(ODataUtils).expects("createSortParams").never();
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding.oModel).expects("_createRequestUrl")
+			.withExactArgs("~resolvedPath", null, oFixture.sSortParams ? ["~sortParams"] : [])
+			.returns("~URL");
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.getDownloadUrl.call(oBinding), "~URL");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getDownloadUrl: filters are added in client mode", function (assert) {
+		var oBinding = {
+				oCombinedFilter : "~CombinedFilter",
+				oEntityType : "~EntityType",
+				oModel : {
+					oMetadata : "~Metadata",
+					_createRequestUrl : function () {}
+				},
+				aSorters : [],
+				getResolvedPath : function () {},
+				useClientMode : function () {}
+			};
+
+		this.mock(oBinding).expects("useClientMode").withExactArgs().returns(true);
+		this.mock(ODataUtils).expects("createFilterParams")
+			.withExactArgs("~CombinedFilter", "~Metadata", "~EntityType")
+			.returns("~$filter");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding.oModel).expects("_createRequestUrl")
+			.withExactArgs("~resolvedPath", null, ["~$filter"])
+			.returns("~URL");
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.getDownloadUrl.call(oBinding), "~URL");
+	});
+
+	//*********************************************************************************************
+[{
+	sFilterParams : "~filterParams"
+}, {
+	oCombinedFilter : undefined
+}, {
+	oCombinedFilter : {},
+	bUseClientMode : false
+}].forEach(function (oFixture, i) {
+	QUnit.test("getDownloadUrl: filters are not added: #" + i, function (assert) {
+		var oBinding = {
+				oCombinedFilter : oFixture.oCombinedFilter,
+				sFilterParams : oFixture.sFilterParams,
+				oModel : {_createRequestUrl : function () {}},
+				aSorters : [],
+				getResolvedPath : function () {},
+				useClientMode : function () {}
+			};
+
+		this.mock(oBinding).expects("useClientMode")
+			.withExactArgs()
+			.exactly(oFixture.bUseClientMode === false ? 1 : 0)
+			.returns(oFixture.bUseClientMode);
+		this.mock(ODataUtils).expects("createFilterParams").never();
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding.oModel).expects("_createRequestUrl")
+			.withExactArgs("~resolvedPath", null, oFixture.sFilterParams ? ["~filterParams"] : [])
+			.returns("~URL");
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.getDownloadUrl.call(oBinding), "~URL");
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_initSortersFilters: getResolvedPath is called", function (assert) {
