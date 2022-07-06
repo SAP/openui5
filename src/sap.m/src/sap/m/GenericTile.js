@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/base/strings/camelize",
 	"sap/base/util/deepEqual",
 	"sap/ui/events/PseudoEvents",
+	"sap/ui/core/theming/Parameters",
 	"sap/ui/thirdparty/jquery"
 ], function (
 	library,
@@ -35,6 +36,7 @@ sap.ui.define([
 	camelize,
 	deepEqual,
 	PseudoEvents,
+	Parameters,
 	jQuery
 ) {
 	"use strict";
@@ -1685,6 +1687,9 @@ sap.ui.define([
 	GenericTile.prototype._isIconMode = function () {
 		if (this.getMode() === GenericTileMode.IconMode
 			&& (this.getFrameType() === FrameType.OneByOne || this.getFrameType() === FrameType.TwoByHalf)){
+				if (!this.getBackgroundColor() && this.getFrameType() === FrameType.TwoByHalf) {
+					this._setDefaultBackgroundColor();
+				}
 				if (this.getTileIcon() && this.getBackgroundColor()) {
 					return true;
 				} else {
@@ -1697,6 +1702,14 @@ sap.ui.define([
 		} else {
 			return false;
 		}
+	};
+
+	/**
+	 * Sets the default background color when the tile is in iconmode.
+	 */
+	GenericTile.prototype._setDefaultBackgroundColor = function() {
+		var sColor = Parameters.get("sapUiContentPlaceholderloadingBackground");
+		this.setProperty("backgroundColor" , sColor, true);
 	};
 
 	/**
