@@ -24,11 +24,12 @@ sap.ui.define([
 	"sap/f/GridContainer",
 	"sap/m/FormattedText",
 	"sap/m/NewsContent",
+	"sap/ui/core/theming/Parameters",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
 			Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, coreLibrary, isEmptyObject, KeyCodes, oCore,GridContainerItemLayoutData,
-			GridContainerSettings,GridContainer,FormattedText,NewsContent) {
+			GridContainerSettings,GridContainer,FormattedText,NewsContent,Parameters) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -3787,7 +3788,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 			assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
 			assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByHalf, "Current FrameType is " + FrameType.TwoByHalf);
 			assert.equal(this.oGenericTile.getTileIcon(), undefined, "No Tile Icon.");
-			assert.equal(this.oGenericTile.getBackgroundColor(), undefined, "No Tile Background Color");
+			assert.equal(this.oGenericTile.getBackgroundColor(), Parameters.get("sapUiContentPlaceholderloadingBackground"), "Default Background Color has been set");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 0, "SubHeader Text is created.");
