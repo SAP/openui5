@@ -4,8 +4,9 @@
 sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/util/extend",
+	"sap/base/util/isPlainObject",
 	"sap/base/util/merge"
-], function (deepEqual, extend, merge) {
+], function (deepEqual, extend, isPlainObject, merge) {
 	"use strict";
 
 	/**
@@ -17,6 +18,7 @@ sap.ui.define([
 		// @see sap.base.util.*
 		deepEqual : deepEqual,
 		extend : extend,
+		isPlainObject : isPlainObject,
 		merge : merge
 	};
 
