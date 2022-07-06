@@ -6943,4 +6943,86 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+[{
+	bAll : false,
+	mChangedEntities : {},
+	iPendingDeferredRequests : 42,
+	bResult : false
+}, {
+	bAll : false,
+	mChangedEntities : {foo : "bar"},
+	iPendingDeferredRequests : undefined, // not relevant
+	bResult : true
+}, {
+	bAll : true,
+	mChangedEntities : {},
+	iPendingDeferredRequests : 0,
+	bResult : false
+}, {
+	bAll : true,
+	mChangedEntities : {},
+	iPendingDeferredRequests : 1,
+	bResult : true
+}, {
+	bAll : true,
+	mChangedEntities : {foo : "bar"},
+	iPendingDeferredRequests : 0,
+	bResult : true
+}].forEach(function (oFixture, i) {
+	QUnit.test("hasPendingChanges: #" + i, function (assert) {
+		var oModel = {
+				mChangedEntities : oFixture.mChangedEntities,
+				iPendingDeferredRequests : oFixture.iPendingDeferredRequests,
+				getBindings : function () {}
+			};
+
+		this.mock(oModel).expects("getBindings").withExactArgs().returns([]);
+
+		// code under test
+		assert.deepEqual(
+			ODataModel.prototype.hasPendingChanges.call(oModel, oFixture.bAll),
+			oFixture.bResult);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChanges: oBinding._hasPendingChanges returns true", function (assert) {
+		var oBinding1 = {_hasPendingChanges : function () {}},
+			oBinding2 = {_hasPendingChanges : function () {}},
+			aBindings = [{/*oBinding0*/}, oBinding1, oBinding2],
+			oModel = {
+				mChangedEntities : {},
+				getBindings : function () {}
+			};
+
+		this.mock(oModel).expects("getBindings").withExactArgs().returns(aBindings);
+		this.mock(oBinding1).expects("_hasPendingChanges").withExactArgs([]).returns(true);
+		this.mock(oBinding2).expects("_hasPendingChanges").never();
+
+		// code under test
+		assert.deepEqual(ODataModel.prototype.hasPendingChanges.call(oModel), true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChanges: oBinding._hasPendingChanges returns false", function (assert) {
+		var oBinding = {_hasPendingChanges : function () {}},
+			oModel = {
+				mChangedEntities : {foo : {}},
+				getBindings : function () {}
+			};
+
+		this.mock(oModel).expects("getBindings").withExactArgs().returns([oBinding]);
+		this.mock(oBinding).expects("_hasPendingChanges")
+			.withExactArgs(["foo"])
+			.callsFake(function (aChangedEntityKeys) {
+				aChangedEntityKeys.pop();
+
+				return false;
+			});
+
+		// code under test
+		assert.deepEqual(ODataModel.prototype.hasPendingChanges.call(oModel), false);
+	});
 });

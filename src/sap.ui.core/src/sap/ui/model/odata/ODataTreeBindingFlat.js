@@ -2159,6 +2159,43 @@ sap.ui.define([
 		);
 	};
 
+	/**
+	 * Whether there are pending changes for this tree binding.
+	 *
+	 * @param {array} aChangedEntityKeys
+	 *   The array of changed entity keys of the model. Keys of cancelled creations are removed from
+	 *   the array.
+	 * @returns {boolean} Whether there are pending changes for this binding.
+	 *
+	 * @private
+	 */
+	ODataTreeBindingFlat.prototype._hasPendingChanges = function (aChangedEntityKeys) {
+		var oOptimizedChanges;
+
+		if (!this.isResolved() || !this._aAllChangedNodes.length) {
+			return false;
+		}
+
+		oOptimizedChanges = this._optimizeChanges();
+		if (oOptimizedChanges.added.length || oOptimizedChanges.moved.length
+				|| oOptimizedChanges.removed.length) {
+			return true;
+		}
+
+		// remove cancelled creations from changed entity keys to avoid that this creation
+		// causes a pending change, cancelled creations are ignored in #_submitChanges and do not
+		// represent a change
+		oOptimizedChanges.creationCancelled.forEach(function (oNode) {
+			var iIndex = aChangedEntityKeys.indexOf(oNode.key);
+
+			if (iIndex > -1) {
+				aChangedEntityKeys.splice(iIndex, 1);
+			}
+		});
+
+		return false;
+	};
+
 	//*************************************************
 	//*               Selection-Handling              *
 	//************************************************/
@@ -3181,7 +3218,7 @@ sap.ui.define([
 
 		this.bRefresh = false;
 		this._bSubmitChangesCalled = false;
-		mParameters.success = function (oData) {
+		mParameters.success = function (oData, oResponse) {
 			var bFailedChangeResponse,
 				aChangeResponses = oData.__batchResponses && oData.__batchResponses[0]
 					&& oData.__batchResponses[0].__changeResponses;
@@ -3217,7 +3254,9 @@ sap.ui.define([
 					// This is the happy path, and only here a refresh has to be triggered.
 					that._refresh(true);
 				}
-			} else {
+			} else if (oResponse) {
+				// oResponse is undefined if submitChanges has been called but there is no request
+				// to send
 				Log.warning("#submitChanges: no change response in batch response", sResolvedPath,
 					sClassName);
 			}

@@ -6635,27 +6635,29 @@ sap.ui.define([
 	/**
 	 * Checks if there exist pending changes in the model.
 	 *
-	 * By default, only client data changes triggered through:
-	 * {@link #createEntry}
-	 * {@link #setProperty}
-	 * are taken into account.
+	 * By default, only client data changes triggered through {@link #createEntry},
+	 * {@link #setProperty} and tree hierarchy changes are taken into account.
 	 *
-	 * If <code>bAll</code> is set to <code>true</code>, also deferred requests triggered through:
-	 * {@link #create}
-	 * {@link #update}
-	 * {@link #remove}
-	 * are taken into account.
+	 * If <code>bAll</code> is set to <code>true</code>, also deferred requests triggered through
+	 * {@link #create}, {@link #update} and {@link #remove} are taken into account.
 	 *
 	 * @param {boolean}[bAll=false] If set to true, deferred requests are also taken into account.
 	 * @return {boolean} <code>true</code> if there are pending changes, <code>false</code> otherwise.
 	 * @public
 	 */
 	ODataModel.prototype.hasPendingChanges = function(bAll) {
-		var bChangedEntities = !isEmptyObject(this.mChangedEntities);
+		var bChangedEntities,
+			aChangedEntityKeys = Object.keys(this.mChangedEntities);
 
-		if (bAll){
-			bChangedEntities = bChangedEntities || this.iPendingDeferredRequests > 0;
+		bChangedEntities = this.getBindings().some(function (oBinding) {
+			return oBinding._hasPendingChanges && oBinding._hasPendingChanges(aChangedEntityKeys);
+		});
+		bChangedEntities = bChangedEntities || aChangedEntityKeys.length > 0;
+
+		if (!bChangedEntities && bAll) {
+			bChangedEntities = this.iPendingDeferredRequests > 0;
 		}
+
 		return bChangedEntities;
 	};
 
