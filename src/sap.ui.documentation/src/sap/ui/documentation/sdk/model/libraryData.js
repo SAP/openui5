@@ -16,8 +16,19 @@ sap.ui.define([
 
 	// function to compute the app objects for a demo object
 	function createDemoAppData(oDemoAppMetadata, sLibUrl, sLibNamespace) {
+
+		//Define the default Demo Kit theme
+		var DEFAULT_THEME = sap.ui.getCore().getConfiguration().getTheme();
+
 		// transform simple demo app link to a configuration object
-		var aLinks = [];
+		var aLinks = [],
+			sRef = oDemoAppMetadata.ref;
+		//Attach theme parameter to Demo app link
+		if (sRef.indexOf("#") > 0) {
+			sRef = sRef.slice(0, sRef.indexOf("#")) + "?sap-ui-theme=" + DEFAULT_THEME + sRef.slice(sRef.indexOf("#"));
+		} else {
+			sRef = sRef + "?sap-ui-theme=" + DEFAULT_THEME;
+		}
 		// transform link object to a bindable array of objects
 		if (isPlainObject(oDemoAppMetadata.links)) {
 			aLinks = Object.keys(oDemoAppMetadata.links).map(function (sKey) {
@@ -36,7 +47,7 @@ sap.ui.define([
 			config : oDemoAppMetadata.config,
 			teaser : oDemoAppMetadata.teaser,
 			category : oDemoAppMetadata.category,
-			ref : (oDemoAppMetadata.resolve === "lib" ? sLibUrl : "") + oDemoAppMetadata.ref + "?sap-ui-theme=sap_fiori_3",
+			ref : (oDemoAppMetadata.resolve === "lib" ? sLibUrl : "") + sRef,
 			links : aLinks
 		};
 
