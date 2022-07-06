@@ -22,14 +22,14 @@ sap.ui.define(function () {
          */
          ControlChange: "ControlChange",
         /**
-         * Triggered by valuehelp itself on selection
+         * Triggered by <code>ValueHelp</code> itself on selection
          *
          * @private
          * @ui5-restricted sap.fe
          */
          Select: "Select",
         /**
-         * Triggered by valuehelp itself on <code>getItemForValue</code>
+         * Triggered by <code>ValueHelp</code> itself on <code>getItemForValue</code>
          *
          * @private
          * @ui5-restricted sap.fe
