@@ -52,7 +52,10 @@ sap.ui.define([
 		assert.ok(sData === '{"conditions":{},"fieldPath":{}}', "Default Data exist");
 	});
 
-		QUnit.test("ConditionModel.createCondition", function(assert) {
+	/**
+	 * @deprecated use the sap.ui.mdc.condition.Condition.createItemCondition or sap.ui.mdc.condition.Condition.createCondition
+	 */
+	QUnit.test("ConditionModel.createCondition", function(assert) {
 		var oCondition = oConditionModel.createCondition("fieldPath1", "EQ", ["foo"]); // test deprecated function for compatibility reasons
 		assert.equal(oCondition.operator, "EQ", "condition.operator must be 'EQ'");
 		assert.equal(oCondition.values.length, 1, "condition.values.length must be 1");
