@@ -349,6 +349,14 @@ html.sap-phone .sapUiDocumentationTopicTitle {
 	font-size: 1.25rem !important;
 }
 
+.sapUiDocumentationVisibilityInformationText {
+	margin: 0.375rem;
+}
+
+.sapUiDocumentationVisibilityInformationIcon {
+	margin-left: 0.375rem;
+}
+
 .sapUiBody#content {
 	padding-left: 0; /* overrides the padding of documentation */
 }

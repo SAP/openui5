@@ -4,6 +4,7 @@
 
 sap.ui.define([
 		"sap/ui/thirdparty/jquery",
+		"sap/ui/core/Fragment",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/ui/documentation/sdk/model/formatter",
@@ -21,7 +22,7 @@ sap.ui.define([
 		"sap/m/List",
 		"sap/ui/dom/includeStylesheet",
 		"sap/ui/dom/includeScript"
-	], function (jQuery, BaseController, ToggleFullScreenHandler,
+	], function (jQuery, Fragment, BaseController, ToggleFullScreenHandler,
 			formatter, Image, Label, Link, Text, HBox, ObjectAttribute, ObjectStatus, Popover,
 			library, coreLibrary, CustomListItem, List, includeStylesheet, includeScript) {
 		"use strict";
@@ -249,6 +250,24 @@ sap.ui.define([
 					this.onDisclaimerLinkPress(oEvent);
 					return;
 				}
+			},
+
+			onVisibilityInformationClick: function (oEvent) {
+				var oIcon = oEvent.getSource(),
+					oView = this.getView();
+
+				if (!this._oPopover) {
+					this._oPopover = Fragment.load({
+						name: "sap.ui.documentation.sdk.view.VisibilityInformation",
+						controller: this
+					}).then(function(oPopover) {
+						oView.addDependent(oPopover);
+						return oPopover;
+					});
+				}
+				this._oPopover.then(function(oPopover) {
+					oPopover.openBy(oIcon);
+				});
 			},
 
 			/* =========================================================== */
