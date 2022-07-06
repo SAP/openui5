@@ -238,6 +238,15 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("with versioning and a draft and all context not provided and with a reload reason", function(assert) {
+			this.oGetReloadReasonsStub.resolves({isDraftAvailable: true, allContexts: true});
+			return ReloadManager.handleReloadOnStart({versioningEnabled: true}).then(function() {
+				assert.strictEqual(this.oLoadDraftStub.callCount, 1, "the draft was loaded");
+				assert.strictEqual(this.oLoadDraftStub.getCall(0).args[0].allContexts, true, "with allContext=true parameter");
+				assert.strictEqual(this.oLoadVersionStub.callCount, 0, "the version was not loaded");
+			}.bind(this));
+		});
+
 		[
 			{
 				oReloadInfo: {
