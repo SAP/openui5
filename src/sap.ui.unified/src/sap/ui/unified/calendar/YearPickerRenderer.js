@@ -136,18 +136,18 @@ sap.ui.define([
 			}
 
 			// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
-			sYear = oYP._oYearFormat.format(UniversalDate.getInstance(oFirstDate.toLocalJSDate(), oFirstDate.getCalendarType()));
-
+			sYear = oYP._oYearFormat.format(UniversalDate.getInstance(oFirstDate.toUTCJSDate(), oFirstDate.getCalendarType()), true);
 			mAccProps["label"] = sYear;
 			if (sSecondaryType) {
 				var oSecondaryYears = oYP._getDisplayedSecondaryDates(oFirstDate),
 					oSecondaryYearFormat = DateFormat.getDateInstance({format: "y", calendarType: oYP.getSecondaryCalendarType()}),
 					sSecondaryYearInfo, sPattern;
 				if (oSecondaryYears.start.getYear() === oSecondaryYears.end.getYear()) {
-					sSecondaryYearInfo = oSecondaryYearFormat.format(oSecondaryYears.start.toLocalJSDate());
+					sSecondaryYearInfo = oSecondaryYearFormat.format(oSecondaryYears.start.toUTCJSDate(), true);
 				} else {
 					sPattern = oLocaleData.getIntervalPattern();
-					sSecondaryYearInfo = sPattern.replace(/\{0\}/, oSecondaryYearFormat.format(oSecondaryYears.start.toLocalJSDate())).replace(/\{1\}/, oSecondaryYearFormat.format(oSecondaryYears.end.toLocalJSDate()));
+					sSecondaryYearInfo = sPattern.replace(/\{0\}/, oSecondaryYearFormat.format(oSecondaryYears.start.toUTCJSDate()),true)
+						.replace(/\{1\}/, oSecondaryYearFormat.format(oSecondaryYears.end.toUTCJSDate(), true));
 				}
 				mAccProps["label"] = mAccProps["label"] + " " + sSecondaryYearInfo;
 			}
