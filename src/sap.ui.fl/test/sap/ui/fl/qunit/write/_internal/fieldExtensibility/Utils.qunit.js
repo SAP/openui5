@@ -87,7 +87,7 @@ sap.ui.define([
 			this.oLogStub.calledWithMatch(["Control not bound to a path"]);
 		});
 
-		QUnit.test("Prerequisites met", function(assert) {
+		QUnit.test("Prerequisites met (binding path)", function(assert) {
 			var oControl = {
 				getBindingContext: function() {
 					return {
@@ -105,7 +105,31 @@ sap.ui.define([
 					};
 				}
 			};
-			assert.equal(Utils.checkControlPrerequisites(oControl), true, "Prerequisites met");
+			assert.equal(Utils.checkControlPrerequisites(oControl), true, "Prerequisites met (binding path)");
+		});
+
+		QUnit.test("Prerequisites met (entity set)", function(assert) {
+			var oControl = {
+				getBindingContext: function() {
+					return {
+						getPath: function() {
+							return "/someService/someEntity";
+						}
+					};
+				},
+				getEntitySet: function() {
+					return "someEntity";
+				},
+				getModel: function() {
+					return {
+						sServiceUrl: "/someService",
+						isA: function() {
+							return true;
+						}
+					};
+				}
+			};
+			assert.equal(Utils.checkControlPrerequisites(oControl), true, "Prerequisites met (entity set)");
 		});
 	});
 
