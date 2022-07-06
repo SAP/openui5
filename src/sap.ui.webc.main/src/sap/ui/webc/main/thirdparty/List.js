@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/util/TabbableElements', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/debounce', 'sap/ui/webc/common/thirdparty/base/util/isElementInView', './types/ListMode', './types/ListGrowingMode', './types/ListSeparators', './BusyIndicator', './generated/templates/ListTemplate.lit', './generated/themes/List.css', './generated/themes/BrowserScrollbar.css', './generated/i18n/i18n-defaults'], function (UI5Element, litRender, ResizeHandler, ItemNavigation, Device, Render, TabbableElements, Keys, Integer, NavigationMode, AriaLabelHelper, i18nBundle, debounce, isElementInView, ListMode, ListGrowingMode, ListSeparators, BusyIndicator, ListTemplate_lit, List_css, BrowserScrollbar_css, i18nDefaults) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/util/TabbableElements', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/debounce', 'sap/ui/webc/common/thirdparty/base/util/isElementInView', './types/ListMode', './types/ListGrowingMode', './types/ListSeparators', './BusyIndicator', './generated/templates/ListTemplate.lit', './generated/themes/List.css', './generated/themes/BrowserScrollbar.css', './generated/i18n/i18n-defaults'], function (UI5Element, litRender, ResizeHandler, ItemNavigation, Render, TabbableElements, Keys, Integer, NavigationMode, AriaLabelHelper, i18nBundle, debounce, isElementInView, ListMode, ListGrowingMode, ListSeparators, BusyIndicator, ListTemplate_lit, List_css, BrowserScrollbar_css, i18nDefaults) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -234,19 +234,16 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.growing !== ListGrowingMode.None;
 		}
 		get growsOnScroll() {
-			return this.growing === ListGrowingMode.Scroll && !Device.isIE();
+			return this.growing === ListGrowingMode.Scroll;
 		}
 		get growsWithButton() {
-			if (Device.isIE()) {
-				return this.grows;
-			}
 			return this.growing === ListGrowingMode.Button;
 		}
 		get _growingButtonText() {
 			return List.i18nBundle.getText(i18nDefaults.LOAD_MORE_TEXT);
 		}
 		get busyIndPosition() {
-			if (Device.isIE() || !this.grows) {
+			if (!this.grows) {
 				return "absolute";
 			}
 			return this._inViewport ? "absolute" : "sticky";

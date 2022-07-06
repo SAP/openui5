@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/insurance-life', './v4/insurance-life'], function (Theme, insuranceLife$2, insuranceLife$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/insurance-life', './v4/insurance-life'], function (exports, Theme, insuranceLife$1, insuranceLife$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? insuranceLife$1 : insuranceLife$2;
-	var insuranceLife = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? insuranceLife$1.pathData : insuranceLife$2.pathData;
+	var insuranceLife = "insurance-life";
 
-	return insuranceLife;
+	exports.accData = insuranceLife$1.accData;
+	exports.ltr = insuranceLife$1.ltr;
+	exports.default = insuranceLife;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

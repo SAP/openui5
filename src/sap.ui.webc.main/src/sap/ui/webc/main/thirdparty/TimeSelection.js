@@ -314,9 +314,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get periodSliderTitle() {
 			return TimeSelection.i18nBundle.getText(i18nDefaults.TIMEPICKER_PERIODS_LABEL);
 		}
-		get _isCyclic() {
-			return !Device.isIE();
-		}
 		get classes() {
 			return {
 				root: {

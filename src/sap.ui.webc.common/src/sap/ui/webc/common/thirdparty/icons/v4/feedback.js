@@ -1,13 +1,19 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (exports, Icons) { 'use strict';
 
 	const name = "feedback";
 	const pathData = "M368 32q30 0 56 11.5t45.5 31 31 45.5 11.5 56-11.5 56-31 45.5-45.5 31-56 11.5-56-11.5-45.5-31-31-45.5-11.5-56 11.5-56 31-45.5 45.5-31T368 32zM254 176q0 24 9 44.5t24.5 36 36 24.5 44.5 9 44.5-9 36-24.5 24.5-36 9-44.5-9-44.5-24.5-36-36-24.5-44.5-9-44.5 9-36 24.5-24.5 36-9 44.5zM0 160q0-26 19-45t45-19h147q-7 13-12 32H64q-14 0-23 10-9 9-9 22v192q0 14 9 23t23 9h64v80l64-79 224-1q14 0 23-9t9-23v-19q10-6 18-11t14-10v40q0 27-18.5 45.5T416 416H208l-78 92q-4 4-13 4-8 0-14.5-5.5T96 492v-76H64q-27 0-45.5-18.5T0 352V160zm387-30q0-10 6.5-15t14.5-5 14 5 6 15-6 15-14 5-14.5-5-6.5-15zm-59-20q8 0 14 5t6 15-6 15-14 5-14.5-5-6.5-15 6.5-15 14.5-5zm-35 88l2-2q3-3 7-3 5 0 8 4 27 30 58 30 33 0 58-30 3-3 8-3 4 0 7 3h1q0 1 .5 1t.5 1q4 4 4 7 0 4-3 7-16 20-35.5 29.5T369 252t-40-9.5-37-29.5q-3-3-3-6 0-1 .5-3.5t3.5-5.5z";
 	const ltr = false;
+	const accData = null;
 	const collection = "SAP-icons";
 	const packageName = "@ui5/webcomponents-icons";
 	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
-	var pathDataV5 = { pathData };
+	var feedback = "feedback";
 
-	return pathDataV5;
+	exports.accData = accData;
+	exports.default = feedback;
+	exports.ltr = ltr;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

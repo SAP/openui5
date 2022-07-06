@@ -59,6 +59,10 @@
 	--ui5_web_components_busy_indicator_display: none;
 }
 
+.busy-indicator-wrapper [ui5-busy-indicator] {
+    display: none;
+}
+
 @keyframes grow {
     0%, 50%, 100% {
         -webkit-transform: scale(0.5);

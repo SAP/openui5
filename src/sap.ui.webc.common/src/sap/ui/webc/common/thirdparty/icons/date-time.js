@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/date-time', './v4/date-time'], function (Theme, dateTime$2, dateTime$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/date-time', './v4/date-time'], function (exports, Theme, dateTime$1, dateTime$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? dateTime$1 : dateTime$2;
-	var dateTime = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? dateTime$1.pathData : dateTime$2.pathData;
+	var dateTime = "date-time";
 
-	return dateTime;
+	exports.accData = dateTime$1.accData;
+	exports.ltr = dateTime$1.ltr;
+	exports.default = dateTime;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

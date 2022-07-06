@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/paint-bucket', './v4/paint-bucket'], function (Theme, paintBucket$2, paintBucket$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/paint-bucket', './v4/paint-bucket'], function (exports, Theme, paintBucket$1, paintBucket$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? paintBucket$1 : paintBucket$2;
-	var paintBucket = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? paintBucket$1.pathData : paintBucket$2.pathData;
+	var paintBucket = "paint-bucket";
 
-	return paintBucket;
+	exports.accData = paintBucket$1.accData;
+	exports.ltr = paintBucket$1.ltr;
+	exports.default = paintBucket;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

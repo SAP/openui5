@@ -1,13 +1,19 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (exports, Icons) { 'use strict';
 
 	const name = "immunization";
 	const pathData = "M5.977 479.128l113.556-113.556v-2.988q0-6.973 3.985-9.961l35.86-36.856-17.93-16.934q-12.95-13.946-12.95-30.88v-2.988q0-16.934 11.953-27.891L303.813 73.712 286.88 56.778q-4.98-5.976-4.98-11.953t4.98-11.953q4.98-4.98 11.954-4.98 7.969 0 11.953 4.98l33.868 33.867 32.871-33.867-5.976-5.977q-5.977-5.977-5.977-11.953t5.977-11.954q4.98-4.98 11.953-4.98 7.969 0 11.953 4.98l110.568 110.568Q512 119.533 512 125.51t-5.977 11.953q-4.98 4.98-11.953 4.98t-11.953-4.98l-5.977-5.977-33.868 32.872 33.868 33.868q5.977 5.976 5.977 11.953t-5.977 11.953q-4.98 4.98-11.953 4.98t-11.954-4.98L435.3 205.198 271.938 368.56q-11.954 11.954-28.887 11.954-19.923 0-32.872-12.95l-16.934-17.93-36.856 35.86q-2.988 3.985-8.965 3.985h-3.984L29.883 503.035q-4.98 4.98-11.953 4.98t-11.953-4.98Q0 497.058 0 491.082t5.977-11.954zM368.56 90.646l49.806 49.805 33.867-32.871-50.801-50.802zM161.37 266.957q.996 1.992 1.494 3.985t2.49 3.984l43.829 43.829 20.918-20.918-17.93-17.93q-5.976-5.977-5.976-11.954T212.17 256q4.98-4.98 11.954-4.98 7.968 0 11.953 4.98l17.93 17.93 13.945-13.946-17.93-17.93q-4.98-5.976-4.98-11.953t4.98-11.953q5.977-5.977 11.954-5.977t11.953 5.977l17.93 17.93 13.945-14.942-16.933-17.93q-5.977-5.976-5.977-11.953t5.977-11.953q4.98-4.98 11.953-4.98t10.957 4.98l17.93 17.93 14.942-13.946-17.93-17.93q-5.977-5.977-5.977-11.953t5.977-11.954 11.953-5.976 11.953 5.976l17.93 17.93 10.958-10.957L327.72 97.62 164.358 260.98q-2.988.996-2.988 5.976z";
 	const ltr = false;
+	const accData = null;
 	const collection = "business-suite";
 	const packageName = "@ui5/webcomponents-icons-business-suite";
 	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
-	var immunization = { pathData };
+	var immunization = "immunization";
 
-	return immunization;
+	exports.accData = accData;
+	exports.default = immunization;
+	exports.ltr = ltr;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

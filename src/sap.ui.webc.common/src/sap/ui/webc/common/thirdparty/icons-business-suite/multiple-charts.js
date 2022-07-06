@@ -1,13 +1,19 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (exports, Icons) { 'use strict';
 
 	const name = "multiple-charts";
 	const pathData = "M1.466 165.192V59.894L105.798 0l103.366 59.894v106.264l-103.366 60.86zm384.483-19.32V0h34.777v145.872H385.95zM23.685 72.452V153.6l82.113 49.268 81.147-49.268V72.453L105.798 24.15zm433.75 73.42V36.709h36.71v109.163h-36.71zM100.969 40.574l52.166 54.098-15.457 8.694-57.962-27.049zM312.53 72.453h36.71v73.419h-36.71v-73.42zm-176.785 50.234l-21.253 62.792-75.35-109.162zm-85.011 4.83l6.762 8.694-18.354 9.66zM312.53 204.8v-23.185h181.615V204.8H312.53zm181.615 137.177l-104.332 45.404V273.39q34.778 1.932 62.31 20.77t42.022 47.818zM1.466 494.611V282.083h29.947v181.615h182.581v30.913H1.466zm41.54-194.173q0-11.593 10.626-11.593 4.83 0 10.626 5.797l23.185 40.573-19.32 10.627-23.185-39.608q0-1.932-.483-2.898t-.483-1.932q-.966 0-.966-.966zM266.16 401.872q0-23.185 8.212-42.506t21.253-33.811 29.464-23.185 32.845-10.627V404.77l53.132 98.536Q393.677 512 375.323 512q-22.22 0-42.023-8.694t-34.777-23.668-23.668-34.778-8.695-42.988zM43.972 371.925q0-7.729 5.796-10.627l76.317-38.641 77.283 56.996q3.864 3.864 3.864 9.66 0 10.627-11.592 10.627l-6.763-1.932-64.724-50.234-64.725 32.845-5.796 1.932q-5.796 0-8.694-6.762-.966-.966-.966-3.864zm142.973-43.472q2.898-3.864 8.695-3.864l1.932.966q3.864 0 5.796.966 2.898 2.898 2.898 8.694 0 1.932-1.932 7.728l-15.457 19.321-18.354-13.524zm-102.4 45.404l19.321-9.66 22.219 39.607 24.15-28.981 17.39 13.524-44.438 54.098zm309.132 43.471l91.774-39.607q5.796 15.456 5.796 34.777 0 8.694-3.381 20.287t-10.143 23.185-16.906 21.736-22.702 16.905z";
 	const ltr = false;
+	const accData = null;
 	const collection = "business-suite";
 	const packageName = "@ui5/webcomponents-icons-business-suite";
 	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
-	var multipleCharts = { pathData };
+	var multipleCharts = "multiple-charts";
 
-	return multipleCharts;
+	exports.accData = accData;
+	exports.default = multipleCharts;
+	exports.ltr = ltr;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

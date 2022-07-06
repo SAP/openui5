@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/curriculum', './v4/curriculum'], function (Theme, curriculum$2, curriculum$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/curriculum', './v4/curriculum'], function (exports, Theme, curriculum$1, curriculum$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? curriculum$1 : curriculum$2;
-	var curriculum = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? curriculum$1.pathData : curriculum$2.pathData;
+	var curriculum = "curriculum";
 
-	return curriculum;
+	exports.accData = curriculum$1.accData;
+	exports.ltr = curriculum$1.ltr;
+	exports.default = curriculum;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

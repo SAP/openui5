@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/desktop-mobile', './v4/desktop-mobile'], function (Theme, desktopMobile$2, desktopMobile$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/desktop-mobile', './v4/desktop-mobile'], function (exports, Theme, desktopMobile$1, desktopMobile$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? desktopMobile$1 : desktopMobile$2;
-	var desktopMobile = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? desktopMobile$1.pathData : desktopMobile$2.pathData;
+	var desktopMobile = "desktop-mobile";
 
-	return desktopMobile;
+	exports.accData = desktopMobile$1.accData;
+	exports.ltr = desktopMobile$1.ltr;
+	exports.default = desktopMobile;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

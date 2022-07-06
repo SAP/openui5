@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/zoom-in', './v4/zoom-in'], function (Theme, zoomIn$2, zoomIn$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/zoom-in', './v4/zoom-in'], function (exports, Theme, zoomIn$1, zoomIn$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? zoomIn$1 : zoomIn$2;
-	var zoomIn = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? zoomIn$1.pathData : zoomIn$2.pathData;
+	var zoomIn = "zoom-in";
 
-	return zoomIn;
+	exports.accData = zoomIn$1.accData;
+	exports.ltr = zoomIn$1.ltr;
+	exports.default = zoomIn;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

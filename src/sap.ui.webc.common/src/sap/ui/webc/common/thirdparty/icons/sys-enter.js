@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sys-enter', './v4/sys-enter'], function (Theme, sysEnter$2, sysEnter$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sys-enter', './v4/sys-enter'], function (exports, Theme, sysEnter$1, sysEnter$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? sysEnter$1 : sysEnter$2;
-	var sysEnter = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? sysEnter$1.pathData : sysEnter$2.pathData;
+	var sysEnter = "sys-enter";
 
-	return sysEnter;
+	exports.accData = sysEnter$1.accData;
+	exports.ltr = sysEnter$1.ltr;
+	exports.default = sysEnter;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/util/InvisibleMessage', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-down', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/not-editable', 'sap/ui/webc/common/thirdparty/icons/error', 'sap/ui/webc/common/thirdparty/icons/alert', 'sap/ui/webc/common/thirdparty/icons/sys-enter-2', 'sap/ui/webc/common/thirdparty/icons/information', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/Keys', './_chunks/ComboBoxFilters', './generated/i18n/i18n-defaults', './generated/templates/ComboBoxTemplate.lit', './generated/templates/ComboBoxPopoverTemplate.lit', './generated/themes/ComboBox.css', './generated/themes/ComboBoxPopover.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css', './generated/themes/Suggestions.css', './ComboBoxItem', './Icon', './Popover', './ResponsivePopover', './List', './BusyIndicator', './Button', './StandardListItem', './ComboBoxGroupItem', './GroupHeaderListItem'], function (UI5Element, litRender, ValueState, Device, Integer, AriaLabelHelper, announce, slimArrowDown, decline, notEditable, error, alert, sysEnter2, information, i18nBundle, FeaturesRegistry, Keys, ComboBoxFilters, i18nDefaults, ComboBoxTemplate_lit, ComboBoxPopoverTemplate_lit, ComboBox_css, ComboBoxPopover_css, ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css, ComboBoxItem, Icon, Popover, ResponsivePopover, List, BusyIndicator, Button, StandardListItem, ComboBoxGroupItem, GroupHeaderListItem) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/util/InvisibleMessage', 'sap/ui/webc/common/thirdparty/icons/slim-arrow-down', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/not-editable', 'sap/ui/webc/common/thirdparty/icons/error', 'sap/ui/webc/common/thirdparty/icons/alert', 'sap/ui/webc/common/thirdparty/icons/sys-enter-2', 'sap/ui/webc/common/thirdparty/icons/information', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/Keys', './_chunks/Filters', './generated/i18n/i18n-defaults', './generated/templates/ComboBoxTemplate.lit', './generated/templates/ComboBoxPopoverTemplate.lit', './generated/themes/ComboBox.css', './generated/themes/ComboBoxPopover.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css', './generated/themes/Suggestions.css', './ComboBoxItem', './Icon', './Popover', './ResponsivePopover', './List', './BusyIndicator', './Button', './StandardListItem', './ComboBoxGroupItem', './GroupHeaderListItem'], function (UI5Element, litRender, ValueState, Device, Integer, AriaLabelHelper, announce, slimArrowDown, decline, notEditable, error, alert, sysEnter2, information, i18nBundle, FeaturesRegistry, Keys, Filters, i18nDefaults, ComboBoxTemplate_lit, ComboBoxPopoverTemplate_lit, ComboBox_css, ComboBoxPopover_css, ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css, ComboBoxItem, Icon, Popover, ResponsivePopover, List, BusyIndicator, Button, StandardListItem, ComboBoxGroupItem, GroupHeaderListItem) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -261,7 +261,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 		}
 		_startsWithMatchingItems(str) {
-			return ComboBoxFilters.StartsWith(str, this._filteredItems);
+			return Filters.StartsWith(str, this._filteredItems, "text");
 		}
 		_clearFocus() {
 			this._filteredItems.map(item => {
@@ -399,8 +399,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.handleNavKeyPress(event);
 			}
 			if (Keys.isEnter(event)) {
+				this._fireChangeEvent();
 				if (this.responsivePopover.opened) {
-					this._fireChangeEvent();
 					this._closeRespPopover();
 					this.focused = true;
 				} else if (this.FormSupport) {
@@ -452,7 +452,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		_filterItems(str) {
 			const itemsToFilter = this.items.filter(item => !item.isGroupItem);
-			const filteredItems = (ComboBoxFilters.Filters[this.filter] || ComboBoxFilters.StartsWithPerTerm)(str, itemsToFilter);
+			const filteredItems = (Filters.Filters[this.filter] || Filters.StartsWithPerTerm)(str, itemsToFilter, "text");
 			return this.items.filter((item, idx, allItems) => ComboBox._groupItemFilter(item, ++idx, allItems, filteredItems) || filteredItems.indexOf(item) !== -1);
 		}
 		static _groupItemFilter(item, idx, allItems, filteredItems) {
@@ -515,6 +515,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			const sameItemSelected = this.value === this._selectedItemText;
 			const sameSelectionPerformed = this.value.toLowerCase() === this.filterValue.toLowerCase();
 			if (sameItemSelected && sameSelectionPerformed) {
+				this._fireChangeEvent();
 				return this._closeRespPopover();
 			}
 			this.value = this._selectedItemText;
@@ -629,6 +630,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			ComboBox.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		get styles() {
+			const remSizeInPx = parseInt(getComputedStyle(document.documentElement).fontSize);
 			return {
 				popoverHeader: {
 					"width": `${this.offsetWidth}px`,
@@ -636,6 +638,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				suggestionPopoverHeader: {
 					"display": this._listWidth === 0 ? "none" : "inline-block",
 					"width": `${this._listWidth}px`,
+				},
+				suggestionsPopover: {
+					"min-width": `${this.offsetWidth}px`,
+					"max-width": (this.offsetWidth / remSizeInPx) > 40 ? `${this.offsetWidth}px` : "40rem",
 				},
 			};
 		}

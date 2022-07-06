@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/menu', './v4/menu'], function (Theme, menu$2, menu$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/menu', './v4/menu'], function (exports, Theme, menu$1, menu$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? menu$1 : menu$2;
-	var menu = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? menu$1.pathData : menu$2.pathData;
+	var menu = "menu";
 
-	return menu;
+	exports.accData = menu$1.accData;
+	exports.ltr = menu$1.ltr;
+	exports.default = menu;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

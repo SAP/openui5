@@ -238,6 +238,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.fireEvent("navigate", { selectedIndex: this._selectedIndex });
 			}
 		}
+		_navButtonClick(event) {
+			if (event.target.hasAttribute("arrow-forward")) {
+				this.navigateRight();
+			} else {
+				this.navigateLeft();
+			}
+			this.focus();
+		}
 		navigateTo(itemIndex) {
 			this._resizing = false;
 			this._selectedIndex = itemIndex;

@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/util/getNormalizedTarget', 'sap/ui/webc/common/thirdparty/base/util/getActiveElement', 'sap/ui/webc/common/thirdparty/base/util/TabbableElements', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/debounce', 'sap/ui/webc/common/thirdparty/base/util/isElementInView', './types/TableGrowingMode', './BusyIndicator', './types/TableMode', './CheckBox', './generated/i18n/i18n-defaults', './generated/templates/TableTemplate.lit', './generated/themes/Table.css'], function (UI5Element, litRender, ResizeHandler, ItemNavigation, Integer, NavigationMode, Device, Keys, getNormalizedTarget, getActiveElement, TabbableElements, AriaLabelHelper, i18nBundle, debounce, isElementInView, TableGrowingMode, BusyIndicator, TableMode, CheckBox, i18nDefaults, TableTemplate_lit, Table_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/NavigationMode', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/util/getNormalizedTarget', 'sap/ui/webc/common/thirdparty/base/util/getActiveElement', 'sap/ui/webc/common/thirdparty/base/util/TabbableElements', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/debounce', 'sap/ui/webc/common/thirdparty/base/util/isElementInView', './types/TableGrowingMode', './BusyIndicator', './types/TableMode', './CheckBox', './generated/i18n/i18n-defaults', './generated/templates/TableTemplate.lit', './generated/themes/Table.css'], function (UI5Element, litRender, ResizeHandler, ItemNavigation, Integer, NavigationMode, Keys, getNormalizedTarget, getActiveElement, TabbableElements, AriaLabelHelper, i18nBundle, debounce, isElementInView, TableGrowingMode, BusyIndicator, TableMode, CheckBox, i18nDefaults, TableTemplate_lit, Table_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -179,6 +179,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			});
 			this._noDataDisplayed = !this.rows.length && !this.hideNoData;
 			this.visibleColumnsCount = this.visibleColumns.length;
+			if (this.isMultiSelect) {
+				this.visibleColumnsCount += 1;
+			}
 			this._allRowsSelected = selectedRows.length === this.rows.length;
 			this._prevFocusedRow = this._prevFocusedRow || this.rows[0];
 		}
@@ -189,19 +192,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.checkTableInViewport();
 		}
 		onEnterDOM() {
-			if (!Device.isIE()) {
-				this.growingIntersectionObserver = this.getIntersectionObserver();
-			}
+			this.growingIntersectionObserver = this.getIntersectionObserver();
 			ResizeHandler__default.register(this.getDomRef(), this._handleResize);
 			this._itemNavigation.setCurrentItem(this.rows.length ? this.rows[0] : this._columnHeader);
 		}
 		onExitDOM() {
 			ResizeHandler__default.deregister(this.getDomRef(), this._handleResize);
-			if (!Device.isIE()) {
-				this.growingIntersectionObserver.disconnect();
-				this.growingIntersectionObserver = null;
-				this.tableEndObserved = false;
-			}
+			this.growingIntersectionObserver.disconnect();
+			this.growingIntersectionObserver = null;
+			this.tableEndObserved = false;
 		}
 		_onkeydown(event) {
 			if (Keys.isTabNext(event) || Keys.isTabPrevious(event)) {
@@ -623,13 +622,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			};
 		}
 		get growsWithButton() {
-			if (Device.isIE()) {
-				return this.growing === TableGrowingMode.Button || this.growing === TableGrowingMode.Scroll;
-			}
 			return this.growing === TableGrowingMode.Button;
 		}
 		get growsOnScroll() {
-			return !Device.isIE() && this.growing === TableGrowingMode.Scroll;
+			return this.growing === TableGrowingMode.Scroll;
 		}
 		get _growingButtonText() {
 			return this.growingButtonText || Table.i18nBundle.getText(i18nDefaults.LOAD_MORE_TEXT);
@@ -657,9 +653,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.shadowRoot.querySelector(".ui5-table-end-marker");
 		}
 		get busyIndPosition() {
-			if (Device.isIE()) {
-				return "absolute";
-			}
 			return this._inViewport ? "absolute" : "sticky";
 		}
 		get isMultiSelect() {

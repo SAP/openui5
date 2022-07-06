@@ -37,7 +37,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/
 				type: String,
 				defaultValue: "",
 			},
-			 mediaRange: {
+			mediaRange: {
 				type: String,
 			},
 			_disableInitialFocus: {

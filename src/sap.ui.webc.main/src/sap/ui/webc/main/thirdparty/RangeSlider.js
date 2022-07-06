@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', './SliderBase', './Icon', './generated/templates/RangeSliderTemplate.lit', './generated/i18n/i18n-defaults'], function (Float, i18nBundle, Keys, SliderBase, Icon, RangeSliderTemplate_lit, i18nDefaults) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', './SliderBase', './Icon', './generated/templates/RangeSliderTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/RangeSlider.css'], function (Float, i18nBundle, Keys, SliderBase, Icon, RangeSliderTemplate_lit, i18nDefaults, RangeSlider_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -17,6 +17,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/co
 				type: Float__default,
 				defaultValue: 100,
 			},
+			rangePressed: {
+				type: Boolean,
+			},
 		},
 	};
 	class RangeSlider extends SliderBase {
@@ -34,6 +37,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/co
 		}
 		static get dependencies() {
 			return [Icon];
+		}
+		static get styles() {
+			return [SliderBase.styles, RangeSlider_css];
 		}
 		constructor() {
 			super();
@@ -162,6 +168,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/co
 			}
 			const newValue = this.handleDownBase(event);
 			this._saveInteractionStartData(event, newValue);
+			this.rangePressed = this._isPressInCurrentRange;
 			if (this._isPressInCurrentRange || this._handeIsPressed) {
 				this._handeIsPressed = false;
 				return;
@@ -208,6 +215,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/co
 			this._endValueAtBeginningOfAction = null;
 			this._setIsPressInCurrentRange(false);
 			this.handleUpBase();
+			this.rangePressed = false;
 		}
 		_pressTargetAndAffectedValue(clientX, value) {
 			const startHandle = this.shadowRoot.querySelector(".ui5-slider-handle--start");
@@ -323,6 +331,19 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/co
 		 _areValuesReversed() {
 			return this._reversedValues;
 		}
+		get tickmarksObject() {
+			const count = this._tickmarksCount;
+			const arr = [];
+			if (this._hiddenTickmarks) {
+				return [false, false];
+			}
+			for (let i = 0; i <= count; i++) {
+				const isBiggerThanStartValue = this._effectiveMin + (i * this.step) >= this.startValue;
+				const isBiggerThanEndValue = this._effectiveMin + (i * this.step) <= this.endValue;
+				arr.push(isBiggerThanStartValue && isBiggerThanEndValue);
+			}
+			return arr;
+		}
 		get _startHandle() {
 			return this.shadowRoot.querySelector(".ui5-slider-handle--start");
 		}
@@ -331,6 +352,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Float', 'sap/ui/webc/co
 		}
 		get _progressBar() {
 			return this.shadowRoot.querySelector(".ui5-slider-progress");
+		}
+		get _ariaLabelledByStartHandleRefs() {
+			return [`${this._id}-accName`, `${this._id}-startHandleDesc`].join(" ").trim();
+		}
+		get _ariaLabelledByEndHandleRefs() {
+			return [`${this._id}-accName`, `${this._id}-endHandleDesc`].join(" ").trim();
+		}
+		get _ariaLabelledByProgressBarRefs() {
+			return [`${this._id}-accName`, `${this._id}-sliderDesc`].join(" ").trim();
 		}
 		get styles() {
 			return {

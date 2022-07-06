@@ -414,6 +414,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/we
 			this.component.focused = false;
 			this.component.hasSuggestionItemSelected = false;
 			this.selectedItemIndex = null;
+			this.component.value = this.component.valueBeforeAutoComplete;
 			items && this._scrollItemIntoView(items[0]);
 			this._deselectItems();
 		}

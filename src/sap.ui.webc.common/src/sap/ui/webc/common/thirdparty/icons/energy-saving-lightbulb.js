@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/energy-saving-lightbulb', './v4/energy-saving-lightbulb'], function (Theme, energySavingLightbulb$2, energySavingLightbulb$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/energy-saving-lightbulb', './v4/energy-saving-lightbulb'], function (exports, Theme, energySavingLightbulb$1, energySavingLightbulb$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? energySavingLightbulb$1 : energySavingLightbulb$2;
-	var energySavingLightbulb = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? energySavingLightbulb$1.pathData : energySavingLightbulb$2.pathData;
+	var energySavingLightbulb = "energy-saving-lightbulb";
 
-	return energySavingLightbulb;
+	exports.accData = energySavingLightbulb$1.accData;
+	exports.ltr = energySavingLightbulb$1.ltr;
+	exports.default = energySavingLightbulb;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

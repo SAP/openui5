@@ -1,11 +1,9 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons', 'sap/ui/webc/common/thirdparty/base/util/createStyleInHead', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/isLegacyBrowser', './generated/templates/IconTemplate.lit', './generated/themes/Icon.css'], function (UI5Element, litRender, Icons, createStyleInHead, i18nBundle, Keys, isLegacyBrowser, IconTemplate_lit, Icon_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Keys', './generated/templates/IconTemplate.lit', './generated/themes/Icon.css'], function (UI5Element, litRender, Icons, i18nBundle, Keys, IconTemplate_lit, Icon_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
 	var UI5Element__default = /*#__PURE__*/_interopDefaultLegacy(UI5Element);
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
-	var createStyleInHead__default = /*#__PURE__*/_interopDefaultLegacy(createStyleInHead);
-	var isLegacyBrowser__default = /*#__PURE__*/_interopDefaultLegacy(isLegacyBrowser);
 
 	const ICON_NOT_FOUND = "ICON_NOT_FOUND";
 	const PRESENTATION_ROLE = "presentation";
@@ -69,9 +67,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		static get styles() {
 			return Icon_css;
 		}
-		static async onDefine() {
-			this.createGlobalStyle();
-		}
 		_onFocusInHandler(event) {
 			if (this.interactive) {
 				this.focused = true;
@@ -127,22 +122,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			return this.effectiveAccessibleName ? "img" : PRESENTATION_ROLE;
 		}
-		static createGlobalStyle() {
-			if (isLegacyBrowser__default()) {
-				const styleElement = document.head.querySelector(`style[data-ui5-icon-global]`);
-				if (!styleElement) {
-					createStyleInHead__default(`ui5-icon { display: none !important; }`, { "data-ui5-icon-global": "" });
-				}
-			}
-		}
-		static removeGlobalStyle() {
-			if (isLegacyBrowser__default()) {
-				const styleElement = document.head.querySelector(`style[data-ui5-icon-global]`);
-				if (styleElement) {
-					document.head.removeChild(styleElement);
-				}
-			}
-		}
 		async onBeforeRendering() {
 			const name = this.name;
 			if (!name) {
@@ -177,11 +156,6 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		get hasIconTooltip() {
 			return this.showTooltip && this.effectiveAccessibleName;
-		}
-		async onEnterDOM() {
-			setTimeout(() => {
-				this.constructor.removeGlobalStyle();
-			}, 0);
 		}
 	}
 	Icon.define();

@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/attachment-video', './v4/attachment-video'], function (Theme, attachmentVideo$2, attachmentVideo$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/attachment-video', './v4/attachment-video'], function (exports, Theme, attachmentVideo$1, attachmentVideo$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? attachmentVideo$1 : attachmentVideo$2;
-	var attachmentVideo = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? attachmentVideo$1.pathData : attachmentVideo$2.pathData;
+	var attachmentVideo = "attachment-video";
 
-	return attachmentVideo;
+	exports.accData = attachmentVideo$1.accData;
+	exports.ltr = attachmentVideo$1.ltr;
+	exports.default = attachmentVideo;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

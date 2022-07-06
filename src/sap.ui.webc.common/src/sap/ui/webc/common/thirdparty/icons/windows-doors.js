@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/windows-doors', './v4/windows-doors'], function (Theme, windowsDoors$2, windowsDoors$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/windows-doors', './v4/windows-doors'], function (exports, Theme, windowsDoors$1, windowsDoors$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? windowsDoors$1 : windowsDoors$2;
-	var windowsDoors = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? windowsDoors$1.pathData : windowsDoors$2.pathData;
+	var windowsDoors = "windows-doors";
 
-	return windowsDoors;
+	exports.accData = windowsDoors$1.accData;
+	exports.ltr = windowsDoors$1.ltr;
+	exports.default = windowsDoors;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

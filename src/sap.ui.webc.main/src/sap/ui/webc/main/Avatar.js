@@ -25,7 +25,7 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * An image-like control that has different display options for representing images and icons in different shapes and sizes, depending on the use case.
+	 * An image-like component that has different display options for representing images and icons in different shapes and sizes, depending on the use case.
 	 *
 	 * The shape can be circular or square. There are several predefined sizes, as well as an option to set a custom size.
 	 *
@@ -92,8 +92,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the name of the UI5 Icon, that would be displayed. <br>
-				 * <b>Note:</b> If <code>image</code> slot is provided, the property would be ignored. <br>
+				 * Defines the name of the UI5 Icon, that will be displayed. <br>
+				 * <b>Note:</b> If <code>image</code> slot is provided, the property will be ignored. <br>
 				 * <b>Note:</b> You should import the desired icon first, then use its name as "icon". <br>
 				 * <br>
 				 * import "@ui5/webcomponents-icons/dist/{icon_name}.js" <br>
@@ -116,7 +116,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines if the avatar is interactive (focusable and pressable)
+				 * Defines if the avatar is interactive (focusable and pressable).
 				 */
 				interactive: {
 					type: "boolean",

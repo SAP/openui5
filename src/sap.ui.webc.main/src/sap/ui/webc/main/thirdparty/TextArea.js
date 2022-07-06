@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/ValueState', './Popover', './Icon', 'sap/ui/webc/common/thirdparty/icons/error', 'sap/ui/webc/common/thirdparty/icons/alert', 'sap/ui/webc/common/thirdparty/icons/sys-enter-2', 'sap/ui/webc/common/thirdparty/icons/information', './generated/templates/TextAreaTemplate.lit', './generated/templates/TextAreaPopoverTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/TextArea.css', './generated/themes/ValueStateMessage.css', './generated/themes/BrowserScrollbar.css'], function (UI5Element, litRender, ResizeHandler, Integer, AriaLabelHelper, i18nBundle, FeaturesRegistry, Device, Keys, ValueState, Popover, Icon, error, alert, sysEnter2, information, TextAreaTemplate_lit, TextAreaPopoverTemplate_lit, i18nDefaults, TextArea_css, ValueStateMessage_css, BrowserScrollbar_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/ValueState', './Popover', './Icon', 'sap/ui/webc/common/thirdparty/icons/error', 'sap/ui/webc/common/thirdparty/icons/alert', 'sap/ui/webc/common/thirdparty/icons/sys-enter-2', 'sap/ui/webc/common/thirdparty/icons/information', './generated/templates/TextAreaTemplate.lit', './generated/templates/TextAreaPopoverTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/TextArea.css', './generated/themes/ValueStateMessage.css', './generated/themes/BrowserScrollbar.css'], function (UI5Element, litRender, ResizeHandler, Integer, AriaLabelHelper, i18nBundle, FeaturesRegistry, Keys, ValueState, Popover, Icon, error, alert, sysEnter2, information, TextAreaTemplate_lit, TextAreaPopoverTemplate_lit, i18nDefaults, TextArea_css, ValueStateMessage_css, BrowserScrollbar_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -172,12 +172,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		_oninput(event) {
 			const nativeTextArea = this.getInputDomRef();
-			const skipFiring = (nativeTextArea.value === this.value) && Device.isIE() && !this._keyDown && !!this.placeholder;
 			if (event.target === nativeTextArea) {
 				event.stopImmediatePropagation();
-			}
-			if (skipFiring) {
-				return;
 			}
 			this.value = nativeTextArea.value;
 			this.fireEvent("input", {});
@@ -249,7 +245,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return {
 				valueStateMsg: {
 					"ui5-valuestatemessage--error": this.valueState === ValueState__default.Error,
-					"ui5-valuestatemessage--warning": this.valueState === ValueState__default.Warning || this.exceeding,
+					"ui5-valuestatemessage--warning": this.valueState === ValueState__default.Warning,
 					"ui5-valuestatemessage--information": this.valueState === ValueState__default.Information,
 				},
 			};
@@ -306,7 +302,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return !this._firstRendering && this._openValueStateMsgPopover && this.displayValueStateMessagePopover;
 		}
 		get displayValueStateMessagePopover() {
-			return !this.readonly && (this.hasCustomValueState || this.hasValueState || this.exceeding);
+			return !this.readonly && (this.hasCustomValueState || this.hasValueState);
 		}
 		get hasCustomValueState() {
 			return !!this.valueStateMessage.length && this.hasValueState;
@@ -318,7 +314,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.valueStateMessage.map(x => x.cloneNode(true));
 		}
 		get valueStateText() {
-			if (this.valueState !== ValueState__default.Error && this.exceeding) {
+			if (this.valueState !== ValueState__default.Error) {
 				return this.valueStateTextMappings()[ValueState__default.Warning];
 			}
 			return this.valueStateTextMappings()[this.valueState];

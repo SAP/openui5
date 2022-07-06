@@ -52,6 +52,7 @@ sap.ui.define([
 	 * <ui5-link target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part">CSS Shadow Parts</ui5-link> allow developers to style elements inside the Shadow DOM. <br>
 	 * The <code>sap.ui.webc.main.Panel</code> exposes the following CSS Shadow Parts:
 	 * <ul>
+	 *     <li>header - Used to style the wrapper of the header</li>
 	 *     <li>content - Used to style the wrapper of the content</li>
 	 * </ul>
 	 *
@@ -153,7 +154,7 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * Determines the content of the component. The content is visible only when the component is expanded.
+				 * Defines the content of the component. The content is visible only when the component is expanded.
 				 */
 				content: {
 					type: "sap.ui.core.Control",

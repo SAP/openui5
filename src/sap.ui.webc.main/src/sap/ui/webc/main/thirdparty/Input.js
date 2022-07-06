@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/util/Caret', 'sap/ui/webc/common/thirdparty/base/util/getActiveElement', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/not-editable', 'sap/ui/webc/common/thirdparty/icons/error', 'sap/ui/webc/common/thirdparty/icons/alert', 'sap/ui/webc/common/thirdparty/icons/sys-enter-2', 'sap/ui/webc/common/thirdparty/icons/information', './types/InputType', './Popover', './Icon', './generated/templates/InputTemplate.lit', './generated/templates/InputPopoverTemplate.lit', './generated/i18n/i18n-defaults', './generated/themes/Input.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css', './generated/themes/Suggestions.css'], function (UI5Element, litRender, ResizeHandler, Device, ValueState, FeaturesRegistry, Keys, Integer, i18nBundle, AriaLabelHelper, Caret, getActiveElement, decline, notEditable, error, alert, sysEnter2, information, InputType, Popover, Icon, InputTemplate_lit, InputPopoverTemplate_lit, i18nDefaults, Input_css, ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/util/Caret', 'sap/ui/webc/common/thirdparty/base/util/getActiveElement', 'sap/ui/webc/common/thirdparty/icons/decline', 'sap/ui/webc/common/thirdparty/icons/not-editable', 'sap/ui/webc/common/thirdparty/icons/error', 'sap/ui/webc/common/thirdparty/icons/alert', 'sap/ui/webc/common/thirdparty/icons/sys-enter-2', 'sap/ui/webc/common/thirdparty/icons/information', './types/InputType', './Popover', './Icon', './generated/templates/InputTemplate.lit', './generated/templates/InputPopoverTemplate.lit', './_chunks/Filters', './generated/i18n/i18n-defaults', './generated/themes/Input.css', './generated/themes/ResponsivePopoverCommon.css', './generated/themes/ValueStateMessage.css', './generated/themes/Suggestions.css'], function (UI5Element, litRender, ResizeHandler, Device, ValueState, FeaturesRegistry, Keys, Integer, i18nBundle, AriaLabelHelper, Caret, getActiveElement, decline, notEditable, error, alert, sysEnter2, information, InputType, Popover, Icon, InputTemplate_lit, InputPopoverTemplate_lit, Filters, i18nDefaults, Input_css, ResponsivePopoverCommon_css, ValueStateMessage_css, Suggestions_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -43,6 +43,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				type: Boolean,
 			},
 			required: {
+				type: Boolean,
+			},
+			noTypeahead: {
 				type: Boolean,
 			},
 			type: {
@@ -169,6 +172,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.firstRendering = true;
 			this.highlightValue = "";
 			this.lastConfirmedValue = "";
+			this.valueBeforeAutoComplete = "";
 			this._backspaceKeyDown = false;
 			this.isTyping = false;
 			this.EVENT_CHANGE = "change";
@@ -207,9 +211,20 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			} else if (this.name) {
 				console.warn(`In order for the "name" property to have effect, you should also: import "@ui5/webcomponents/dist/features/InputElementsFormSupport.js";`);
 			}
+			const value = this.value;
+			const innerInput = this.getInputDOMRefSync();
+			if (!innerInput || !value) {
+				return;
+			}
+			const autoCompletedChars = innerInput.selectionEnd - innerInput.selectionStart;
+			if (this._shouldAutocomplete && !Device.isAndroid() && !autoCompletedChars && !this._isKeyNavigation) {
+				const item = this._getFirstMatchingItem(value);
+				this.valueBeforeAutoComplete += value.slice(this.valueBeforeAutoComplete.length, value.length);
+				this._handleTypeAhead(item, value);
+			}
 		}
 		async onAfterRendering() {
-			if (this.Suggestions) {
+			if (this.Suggestions && this.showSuggestions) {
 				this.Suggestions.toggle(this.open, {
 					preventFocusRestore: true,
 				});
@@ -222,6 +237,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 		}
 		_onkeydown(event) {
+			this._isKeyNavigation = true;
+			this._shouldAutocomplete = !this.noTypeahead && !(Keys.isBackSpace(event) || Keys.isDelete(event) || Keys.isEscape(event));
 			if (Keys.isUp(event)) {
 				return this._handleUp(event);
 			}
@@ -260,11 +277,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this._clearPopoverFocusAndSelection();
 			}
 			this._keyDown = true;
+			this._isKeyNavigation = false;
 		}
 		_onkeyup(event) {
-			if (Keys.isDelete(event)) {
-				this.value = event.target.value;
-			}
 			this._keyDown = false;
 			this._backspaceKeyDown = false;
 		}
@@ -290,8 +305,23 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		_handleEnter(event) {
 			const itemPressed = !!(this.Suggestions && this.Suggestions.onEnter(event));
+			const innerInput = this.getInputDOMRefSync();
+			const matchingItem = this.suggestionItems.find(item => {
+				return (item.text && item.text === this.value) || (item.textContent === this.value);
+			});
+			if (matchingItem) {
+				const itemText = matchingItem.text ? matchingItem.text : matchingItem.textContent;
+				this.getInputDOMRefSync().setSelectionRange(itemText.length, itemText.length);
+				if (!itemPressed) {
+					this.selectSuggestion(matchingItem, true);
+					this.open = false;
+				}
+			}
+			if (this._isPhone && !this.suggestionItems.length) {
+				innerInput.setSelectionRange(this.value.length, this.value.length);
+			}
 			if (!itemPressed) {
-				this.fireEventByAction(this.ACTION_ENTER);
+				this.fireEventByAction(this.ACTION_ENTER, event);
 				this.lastConfirmedValue = this.value;
 				if (this.FormSupport) {
 					this.FormSupport.triggerFormSubmit(this);
@@ -327,14 +357,20 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_handleEscape() {
 			const hasSuggestions = this.showSuggestions && !!this.Suggestions;
 			const isOpen = hasSuggestions && this.open;
+			const innerInput = this.getInputDOMRefSync();
+			const isAutoCompleted = innerInput.selectionEnd - innerInput.selectionStart > 0;
 			if (!isOpen) {
 				this.value = this.lastConfirmedValue ? this.lastConfirmedValue : this.previousValue;
 				return;
 			}
 			if (hasSuggestions && isOpen && this.Suggestions._isItemOnTarget()) {
-				this.value = this.valueBeforeItemPreview;
+				this.value = this.valueBeforeAutoComplete || this.valueBeforeItemPreview;
 				this.suggestionSelectionCanceled = true;
 				this.focused = true;
+				return;
+			}
+			if (isAutoCompleted) {
+				this.value = this.valueBeforeAutoComplete;
 			}
 			if (this._isValueStateFocused) {
 				this._isValueStateFocused = false;
@@ -343,6 +379,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		async _onfocusin(event) {
 			await this.getInputDOMRef();
+			this.valueBeforeAutoComplete = "";
 			this.focused = true;
 			this.previousValue = this.value;
 			this.valueBeforeItemPreview = this.value;
@@ -351,7 +388,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_onfocusout(event) {
 			const focusedOutToSuggestions = this.Suggestions && event.relatedTarget && event.relatedTarget.shadowRoot && event.relatedTarget.shadowRoot.contains(this.Suggestions.responsivePopover);
 			const focusedOutToValueStateMessage = event.relatedTarget && event.relatedTarget.shadowRoot && event.relatedTarget.shadowRoot.querySelector(".ui5-valuestatemessage-root");
-			this._preventNextChange = this.effectiveShowClearIcon && this.shadowRoot.contains(event.relatedTarget);
+			if (this.showClearIcon && !this.effectiveShowClearIcon) {
+				this._clearIconClicked = false;
+				this._handleChange();
+			}
 			if (focusedOutToSuggestions || focusedOutToValueStateMessage) {
 				event.stopImmediatePropagation();
 				return;
@@ -383,27 +423,25 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.openOnMobile = true;
 			}
 		}
-		_handleNativeInputChange() {
-			clearTimeout(this._nativeChangeDebounce);
-			this._nativeChangeDebounce = setTimeout(() => this._handleChange(), 100);
-		}
 		_handleChange() {
-			if (this._preventNextChange) {
-				this._preventNextChange = false;
+			if (this._clearIconClicked) {
+				this._clearIconClicked = false;
 				return;
 			}
-			if (this._changeFiredValue !== this.value) {
-				this._changeFiredValue = this.value;
+			if (this._changeFiredValue !== this.getInputDOMRefSync().value) {
+				this._changeFiredValue = this.getInputDOMRefSync().value;
 				this.fireEvent(this.EVENT_CHANGE);
 			}
 		}
 		_clear() {
 			this.value = "";
 			this.fireEvent(this.EVENT_INPUT);
-			this._handleChange();
 			if (!this._isPhone) {
 				this.focus();
 			}
+		}
+		_iconMouseDown() {
+			this._clearIconClicked = true;
 		}
 		_scroll(event) {
 			const detail = event.detail;
@@ -415,6 +453,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		_handleInput(event) {
 			const inputDomRef = this.getInputDOMRefSync();
 			const emptyValueFiredOnNumberInput = this.value && this.isTypeNumber && !inputDomRef.value;
+			const eventType = event.inputType || event.detail.inputType;
+			this._shouldAutocomplete = eventType !== "deleteContentBackward" && !this.noTypeahead;
 			this.suggestionSelectionCanceled = false;
 			if (emptyValueFiredOnNumberInput && !this._backspaceKeyDown) {
 				return;
@@ -428,7 +468,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 					this.value = newValue;
 					this.highlightValue = newValue;
 					this.valueBeforeItemPreview = newValue;
-					this.fireEvent(this.EVENT_INPUT);
+					this.fireEvent(this.EVENT_INPUT, { inputType: event.inputType });
 					this.fireEvent("value-changed");
 					return;
 				}
@@ -437,14 +477,40 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				this.focused = true;
 				event.stopImmediatePropagation();
 			}
-			const skipFiring = (inputDomRef.value === this.value) && Device.isIE() && !this._keyDown && !!this.placeholder;
-			!skipFiring && this.fireEventByAction(this.ACTION_USER_INPUT);
+			this.fireEventByAction(this.ACTION_USER_INPUT, event);
 			this.hasSuggestionItemSelected = false;
 			this._isValueStateFocused = false;
 			if (this.Suggestions) {
 				this.Suggestions.updateSelectedItemPosition(null);
 			}
 			this.isTyping = true;
+		}
+		_startsWithMatchingItems(str) {
+			const textProp = this.suggestionItems[0].text ? "text" : "textContent";
+			return Filters.StartsWith(str, this.suggestionItems, textProp);
+		}
+		_getFirstMatchingItem(current) {
+			if (!this.suggestionItems.length) {
+				return;
+			}
+			const matchingItems = this._startsWithMatchingItems(current).filter(item => !item.groupItem);
+			if (matchingItems.length) {
+				return matchingItems[0];
+			}
+		}
+		_handleTypeAhead(item, filterValue) {
+			if (!item) {
+				return;
+			}
+			const value = item.text ? item.text : item.textContent || "";
+			const innerInput = this.getInputDOMRefSync();
+			filterValue = filterValue || "";
+			this.value = value;
+			innerInput.value = value;
+			setTimeout(() => {
+				innerInput.setSelectionRange(filterValue.length, value.length);
+			}, 0);
+			this._shouldAutocomplete = false;
 		}
 		_handleResize() {
 			this._inputWidth = this.offsetWidth;
@@ -509,12 +575,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			const itemText = item.text || item.textContent;
 			const fireInput = keyboardUsed
-				? this.valueBeforeItemSelection !== itemText : this.value !== itemText;
+				? this.valueBeforeItemSelection !== itemText : this.valueBeforeAutoComplete !== itemText;
 			this.hasSuggestionItemSelected = true;
 			if (fireInput) {
 				this.value = itemText;
 				this.valueBeforeItemSelection = itemText;
 				this.lastConfirmedValue = itemText;
+				this.getInputDOMRefSync().value = itemText;
 				this.fireEvent(this.EVENT_INPUT);
 				this._handleChange();
 			}
@@ -533,8 +600,11 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		updateValueOnPreview(item) {
 			const noPreview = item.type === "Inactive" || item.group;
+			const innerInput = this.getInputDOMRefSync();
 			const itemValue = noPreview ? this.valueBeforeItemPreview : (item.effectiveTitle || item.textContent);
 			this.value = itemValue;
+			innerInput.value = itemValue;
+			innerInput.setSelectionRange(this.valueBeforeAutoComplete.length, this.value.length);
 		}
 		get previewItem() {
 			if (!this._previewItem) {
@@ -542,7 +612,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			}
 			return this.getSuggestionByListItem(this._previewItem);
 		}
-		async fireEventByAction(action) {
+		async fireEventByAction(action, event) {
 			await this.getInputDOMRef();
 			if (this.disabled || this.readonly) {
 				return;
@@ -561,13 +631,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				}, 0);
 			}
 			if (isUserInput) {
-				this.fireEvent(this.EVENT_INPUT);
+				this.fireEvent(this.EVENT_INPUT, { inputType: event.inputType });
 				this.fireEvent("value-changed");
-				return;
-			}
-			const valueChanged = (this.previousValue !== undefined) && (this.previousValue !== this.value);
-			if (Device.isIE() && action === this.ACTION_ENTER && valueChanged) {
-				this._handleChange();
 			}
 		}
 		async getInputValue() {
@@ -585,8 +650,8 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return this.nativeInput;
 		}
 		getInputDOMRefSync() {
-			if (Device.isPhone() && this.Suggestions) {
-				return this.Suggestions && this.Suggestions.responsivePopover.querySelector(".ui5-input-inner-phone");
+			if (Device.isPhone() && this.Suggestions && this.Suggestions.responsivePopover) {
+				return this.Suggestions.responsivePopover.querySelector(".ui5-input-inner-phone").shadowRoot.querySelector("input");
 			}
 			return this.nativeInput;
 		}

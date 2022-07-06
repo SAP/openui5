@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/ValueState', 'sap/ui/webc/common/thirdparty/base/Device', './ListItem', './Icon', 'sap/ui/webc/common/thirdparty/icons/navigation-right-arrow', 'sap/ui/webc/common/thirdparty/icons/navigation-down-arrow', './generated/i18n/i18n-defaults', './generated/templates/TreeListItemTemplate.lit', './generated/themes/TreeListItem.css'], function (Integer, Keys, i18nBundle, ValueState, Device, ListItem, Icon, navigationRightArrow, navigationDownArrow, i18nDefaults, TreeListItemTemplate_lit, TreeListItem_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/ValueState', './ListItem', './Icon', 'sap/ui/webc/common/thirdparty/icons/navigation-right-arrow', 'sap/ui/webc/common/thirdparty/icons/navigation-down-arrow', './generated/i18n/i18n-defaults', './generated/templates/TreeListItemTemplate.lit', './generated/themes/TreeListItem.css'], function (Integer, Keys, i18nBundle, ValueState, ListItem, Icon, navigationRightArrow, navigationDownArrow, i18nDefaults, TreeListItemTemplate_lit, TreeListItem_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -99,7 +99,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/
 		get styles() {
 			return {
 				preContent: {
-					"padding-left": Device.isIE() ? `${this.effectiveLevel}rem` : `calc(var(--_ui5-tree-indent-step) * ${this.effectiveLevel})`,
+					"padding-left": `calc(var(--_ui5-tree-indent-step) * ${this.effectiveLevel})`,
 				},
 			};
 		}

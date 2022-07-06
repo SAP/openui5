@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/ValueState', './ListItem', './Icon', './Avatar', './generated/templates/StandardListItemTemplate.lit'], function (ValueState, ListItem, Icon, Avatar, StandardListItemTemplate_lit) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/ValueState', './ListItem', './Icon', './Avatar', './types/WrappingType', './generated/templates/StandardListItemTemplate.lit'], function (ValueState, ListItem, Icon, Avatar, WrappingType, StandardListItemTemplate_lit) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -28,6 +28,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/ValueState', './ListIte
 			},
 			accessibleName: {
 				type: String,
+			},
+			 wrappingType: {
+				type: WrappingType,
+				defaultValue: WrappingType.None,
 			},
 			hasTitle: {
 				type: Boolean,

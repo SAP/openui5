@@ -97,7 +97,7 @@ sap.ui.define(['exports', '../locale/languageChange', '../locale/getLocale', '..
 		loaders.set(localeId, loader);
 	};
 	registerLocaleDataLoader("en", async runtimeLocaleId => {
-		return (await fetch(`https://ui5.sap.com/1.60.2/resources/sap/ui/core/cldr/en.json`)).json();
+		return (await fetch(`https://ui5.sap.com/1.103.0/resources/sap/ui/core/cldr/en.json`)).json();
 	});
 	languageChange.attachLanguageChange(() => {
 		const locale = getLocale();

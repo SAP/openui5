@@ -90,12 +90,13 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		constructor() {
 			super();
+			const handleTouchStartEvent = event => {
+				this._textButtonActive = true;
+				this.focused = false;
+				this._setTabIndexValue();
+			};
 			this._textButtonPress = {
-				handleEvent(event) {
-					this._textButtonActive = true;
-					this.focused = false;
-					this._setTabIndexValue();
-				},
+				handleEvent: handleTouchStartEvent,
 				passive: true,
 			};
 		}

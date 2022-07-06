@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/performance', './v4/performance'], function (Theme, performance$2, performance$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/performance', './v4/performance'], function (exports, Theme, performance$1, performance$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? performance$1 : performance$2;
-	var performance = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? performance$1.pathData : performance$2.pathData;
+	var performance = "performance";
 
-	return performance;
+	exports.accData = performance$1.accData;
+	exports.ltr = performance$1.ltr;
+	exports.default = performance;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

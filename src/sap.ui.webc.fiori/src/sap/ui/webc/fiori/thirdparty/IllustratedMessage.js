@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/main/thirdparty/Title', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', './generated/templates/IllustratedMessageTemplate.lit', './types/IllustrationMessageType', './illustrations/BeforeSearch', './generated/themes/IllustratedMessage.css'], function (UI5Element, ResizeHandler, Illustrations, i18nBundle, Title, litRender, IllustratedMessageTemplate_lit, IllustrationMessageType, BeforeSearch, IllustratedMessage_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/main/thirdparty/Title', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', './generated/templates/IllustratedMessageTemplate.lit', './types/IllustrationMessageSize', './types/IllustrationMessageType', './illustrations/BeforeSearch', './generated/themes/IllustratedMessage.css'], function (UI5Element, ResizeHandler, Illustrations, i18nBundle, Title, litRender, IllustratedMessageTemplate_lit, IllustrationMessageSize, IllustrationMessageType, BeforeSearch, IllustratedMessage_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -10,6 +10,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 	const ILLUSTRATION_NOT_FOUND = "ILLUSTRATION_NOT_FOUND";
 	const metadata = {
 		tag: "ui5-illustrated-message",
+		languageAware: true,
 		managedSlots: true,
 		properties:  {
 			titleText: {
@@ -27,6 +28,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			name: {
 				type: IllustrationMessageType,
 				defaultValue: IllustrationMessageType.BeforeSearch,
+			},
+			size: {
+				type: IllustrationMessageSize,
+				defaultValue: IllustrationMessageSize.Auto,
 			},
 		},
 		slots:  {
@@ -92,6 +97,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			this.sceneSvg = illustrationData.sceneSvg;
 			this.illustrationTitle = IllustratedMessage.i18nBundle.getText(illustrationData.title);
 			this.illustrationSubtitle = IllustratedMessage.i18nBundle.getText(illustrationData.subtitle);
+			if (this.size !== IllustrationMessageSize.Auto) {
+				this._handleCustomSize();
+			}
 		}
 		onEnterDOM() {
 			ResizeHandler__default.register(this, this._handleResize);
@@ -100,6 +108,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			ResizeHandler__default.deregister(this, this._handleResize);
 		}
 		handleResize() {
+			if (this.size !== IllustrationMessageSize.Auto) {
+				return;
+			}
 			if (this.offsetWidth <= IllustratedMessage.BREAKPOINTS.BASE) {
 				this.media = IllustratedMessage.MEDIA.BASE;
 			} else if (this.offsetWidth <= IllustratedMessage.BREAKPOINTS.SPOT) {
@@ -107,6 +118,21 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			} else if (this.offsetWidth <= IllustratedMessage.BREAKPOINTS.DIALOG) {
 				this.media = IllustratedMessage.MEDIA.DIALOG;
 			} else {
+				this.media = IllustratedMessage.MEDIA.SCENE;
+			}
+		}
+		_handleCustomSize() {
+			switch (this.size) {
+			case IllustrationMessageSize.Base:
+				this.media = IllustratedMessage.MEDIA.BASE;
+				return;
+			case IllustrationMessageSize.Spot:
+				this.media = IllustratedMessage.MEDIA.SPOT;
+				return;
+			case IllustrationMessageSize.Dialog:
+				this.media = IllustratedMessage.MEDIA.DIALOG;
+				return;
+			default:
 				this.media = IllustratedMessage.MEDIA.SCENE;
 			}
 		}

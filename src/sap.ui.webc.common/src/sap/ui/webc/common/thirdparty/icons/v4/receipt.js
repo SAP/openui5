@@ -1,13 +1,19 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (Icons) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (exports, Icons) { 'use strict';
 
 	const name = "receipt";
 	const pathData = "M63.938 32.936q0-13.973 8.982-23.455T95.875 0h319.376q13.973 0 22.956 9.481t8.982 23.455V384.25h-31.938V32.936H95.875V384.25H63.938V32.936zm63.875 78.846q0-6.987 4.99-11.478t10.979-4.491h94.814q15.97 0 15.97 15.969 0 5.988-4.492 10.978t-11.478 4.99h-94.814q-5.989 0-10.979-4.99t-4.99-10.978zm15.969 47.906h94.814q15.97 0 15.97 15.969 0 5.988-4.492 10.978t-11.478 4.99h-94.814q-5.989 0-10.979-4.99t-4.99-10.978q0-6.986 4.99-11.478t10.979-4.49zm175.657 15.969q0-6.986 4.99-11.478t10.978-4.49h31.938q15.969 0 15.969 15.968 0 5.988-4.491 10.978t-11.478 4.99h-31.938q-5.988 0-10.978-4.99t-4.99-10.978zm15.968 47.906h31.938q15.969 0 15.969 15.97 0 5.987-4.491 10.978t-11.478 4.99h-31.938q-5.988 0-10.978-4.99t-4.99-10.979q0-6.986 4.99-11.477t10.978-4.492zm0 63.876h31.938q15.969 0 15.969 15.968 0 5.989-4.491 10.979t-11.478 4.99h-31.938q-5.988 0-10.978-4.99t-4.99-10.979q0-6.986 4.99-11.477t10.978-4.491zM32 512v-42.916l89.825-58.885 70.861 50.9 75.852-54.892 37.926 54.892 103.797-50.9 68.866 54.893V512l-73.856-58.885-110.784 54.893-33.933-50.9-67.868 49.902-71.86-53.895z";
 	const ltr = false;
+	const accData = null;
 	const collection = "SAP-icons";
 	const packageName = "@ui5/webcomponents-icons";
 	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
-	var pathDataV5 = { pathData };
+	var receipt = "receipt";
 
-	return pathDataV5;
+	exports.accData = accData;
+	exports.default = receipt;
+	exports.ltr = ltr;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

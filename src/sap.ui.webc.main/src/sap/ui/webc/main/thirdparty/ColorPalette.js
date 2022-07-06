@@ -41,7 +41,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		},
 		events:  {
 			"item-click": {
-				details: {
+				detail: {
 					color: {
 						type: String,
 					},

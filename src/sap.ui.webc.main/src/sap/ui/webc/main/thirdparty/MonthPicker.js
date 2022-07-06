@@ -49,7 +49,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/localization/getCachedLocaleDataIn
 				return;
 			}
 			const localeData = getCachedLocaleDataInstance__default(getLocale__default());
-			const monthsNames = localeData.getMonths("wide", this._primaryCalendarType);
+			const monthsNames = localeData.getMonthsStandAlone("wide", this._primaryCalendarType);
 			const months = [];
 			const calendarDate = this._calendarDate;
 			const minDate = this._minDate;

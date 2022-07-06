@@ -1,10 +1,10 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/isLegacyBrowser', 'sap/ui/webc/common/thirdparty/base/Device', './types/ButtonDesign', './generated/templates/ButtonTemplate.lit', './Icon', './generated/i18n/i18n-defaults', './generated/themes/Button.css', './generated/themes/Button.ie11.css'], function (UI5Element, litRender, Keys, AriaLabelHelper, FeaturesRegistry, i18nBundle, isLegacyBrowser, Device, ButtonDesign, ButtonTemplate_lit, Icon, i18nDefaults, Button_css, Button_ie11_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper', 'sap/ui/webc/common/thirdparty/base/FeaturesRegistry', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/util/isDefaultSlotProvided', './types/ButtonDesign', './generated/templates/ButtonTemplate.lit', './Icon', './generated/i18n/i18n-defaults', './generated/themes/Button.css'], function (UI5Element, litRender, Keys, AriaLabelHelper, FeaturesRegistry, i18nBundle, Device, isDefaultSlotProvided, ButtonDesign, ButtonTemplate_lit, Icon, i18nDefaults, Button_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
 	var UI5Element__default = /*#__PURE__*/_interopDefaultLegacy(UI5Element);
 	var litRender__default = /*#__PURE__*/_interopDefaultLegacy(litRender);
-	var isLegacyBrowser__default = /*#__PURE__*/_interopDefaultLegacy(isLegacyBrowser);
+	var isDefaultSlotProvided__default = /*#__PURE__*/_interopDefaultLegacy(isDefaultSlotProvided);
 
 	let isGlobalHandlerAttached = false;
 	let activeButton = null;
@@ -84,7 +84,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			return metadata;
 		}
 		static get styles() {
-			return [Button_css, isLegacyBrowser__default() && Button_ie11_css];
+			return Button_css;
 		}
 		static get render() {
 			return litRender__default;
@@ -106,14 +106,15 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				document.addEventListener("mouseup", this._deactivate);
 				isGlobalHandlerAttached = true;
 			}
+			const handleTouchStartEvent = event => {
+				event.isMarked = "button";
+				if (this.nonInteractive) {
+					return;
+				}
+				this.active = true;
+			};
 			this._ontouchstart = {
-				handleEvent(event) {
-					event.isMarked = "button";
-					if (this.nonInteractive) {
-						return;
-					}
-					this.active = true;
-				},
+				handleEvent: handleTouchStartEvent,
 				passive: true,
 			};
 		}
@@ -190,11 +191,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		get hasButtonType() {
 			return this.design !== ButtonDesign.Default && this.design !== ButtonDesign.Transparent;
 		}
+		get iconRole() {
+			if (!this.icon) {
+				return "";
+			}
+			return this.isIconOnly ? "img" : "presentation";
+		}
 		get isIconOnly() {
-			return !Array.from(this.childNodes).filter(node => {
-				return node.nodeType !== Node.COMMENT_NODE
-				&& (node.nodeType !== Node.TEXT_NODE || node.nodeValue.trim().length !== 0);
-			}).length;
+			return !isDefaultSlotProvided__default(this);
 		}
 		static typeTextMappings() {
 			return {

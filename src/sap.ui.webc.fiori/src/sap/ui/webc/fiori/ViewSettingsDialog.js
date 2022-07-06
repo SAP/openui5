@@ -74,6 +74,13 @@ sap.ui.define([
 			events: {
 
 				/**
+				 * Fired before the component is opened. <b>This event does not bubble.</b>
+				 */
+				beforeOpen: {
+					parameters: {}
+				},
+
+				/**
 				 * Fired when cancel button is activated.
 				 */
 				cancel: {
@@ -157,9 +164,17 @@ sap.ui.define([
 					}
 				}
 			},
-			methods: ["show"]
+			methods: ["setConfirmedSettings", "show"]
 		}
 	});
+
+	/**
+	 * Sets a JavaScript object, as settings to the <code>sap.ui.webc.fiori.ViewSettingsDialog</code>. This method can be used after the dialog is initially open, as the dialog need to set its initial settings. The <code>sap.ui.webc.fiori.ViewSettingsDialog</code> throws an event called "before-open", this can be used as trigger point. The object should have the following format: <code>{ { "sortOrder" : "Ascending", "sortBy" : "Name", "filters" : [{"Filter 1": ["Some filter 1", "Some filter 2"]}, {"Filter 2": ["Some filter 4"]}]} }</code>
+	 * @param {string} settings A value to be set as predefined settings.
+	 * @public
+	 * @name sap.ui.webc.fiori.ViewSettingsDialog#setConfirmedSettings
+	 * @function
+	 */
 
 	/**
 	 * Shows the dialog.

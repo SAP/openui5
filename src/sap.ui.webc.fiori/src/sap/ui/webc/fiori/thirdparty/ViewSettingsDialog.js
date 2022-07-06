@@ -69,6 +69,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 					filters: { type: Array },
 				},
 			},
+			"before-open": {},
 		},
 	};
 	class ViewSettingsDialog extends UI5Element__default {
@@ -282,6 +283,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 			} else {
 				this._restoreSettings(this._confirmedSettings);
 			}
+			this.fireEvent("before-open", {}, true, false);
 			this._dialog.show(true);
 			this._dialog.querySelector("[ui5-list]").focusFirstItem();
 		}
@@ -401,6 +403,45 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/com
 				return item;
 			});
 			this._currentSettings = JSON.parse(JSON.stringify(this._currentSettings));
+		}
+		setConfirmedSettings(settings) {
+			if (settings && this._dialog && !this._dialog.isOpen()) {
+				const tempSettings = JSON.parse(JSON.stringify(this._confirmedSettings));
+				if (settings.sortOrder) {
+					for (let i = 0; i < tempSettings.sortOrder.length; i++) {
+						if (tempSettings.sortOrder[i].text === settings.sortOrder) {
+							tempSettings.sortOrder[i].selected = true;
+						} else {
+							tempSettings.sortOrder[i].selected = false;
+						}
+					}
+				}
+				if (settings.sortBy) {
+					for (let i = 0; i < tempSettings.sortBy.length; i++) {
+						if (tempSettings.sortBy[i].text === settings.sortBy) {
+							tempSettings.sortBy[i].selected = true;
+						} else {
+							tempSettings.sortBy[i].selected = false;
+						}
+					}
+				}
+				if (settings.filters) {
+					const inputFilters = {};
+					for (let i = 0; i < settings.filters.length; i++) {
+						inputFilters[Object.keys(settings.filters[i])[0]] = settings.filters[i][Object.keys(settings.filters[i])[0]];
+					}
+					for (let i = 0; i < tempSettings.filters.length; i++) {
+						for (let j = 0; j < tempSettings.filters[i].filterOptions.length; j++) {
+							if (inputFilters[tempSettings.filters[i].text] && inputFilters[tempSettings.filters[i].text].indexOf(tempSettings.filters[i].filterOptions[j].text) > -1) {
+								tempSettings.filters[i].filterOptions[j].selected = true;
+							} else {
+								tempSettings.filters[i].filterOptions[j].selected = false;
+							}
+						}
+					}
+				}
+				this._confirmedSettings = JSON.parse(JSON.stringify(tempSettings));
+			}
 		}
 	}
 	ViewSettingsDialog.define();

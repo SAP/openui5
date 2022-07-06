@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/primary-key', './v4/primary-key'], function (Theme, primaryKey$2, primaryKey$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/primary-key', './v4/primary-key'], function (exports, Theme, primaryKey$1, primaryKey$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? primaryKey$1 : primaryKey$2;
-	var primaryKey = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? primaryKey$1.pathData : primaryKey$2.pathData;
+	var primaryKey = "primary-key";
 
-	return primaryKey;
+	exports.accData = primaryKey$1.accData;
+	exports.ltr = primaryKey$1.ltr;
+	exports.default = primaryKey;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

@@ -77,6 +77,13 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Defines the accessible aria name of the component.
+				 */
+				accessibleName: {
+					type: "string"
+				},
+
+				/**
 				 * Defines if the user input will be prevented, if no matching item has been found
 				 */
 				allowCustomValues: {
@@ -103,6 +110,14 @@ sap.ui.define([
 				filter: {
 					type: "string",
 					defaultValue: "StartsWithPerTerm"
+				},
+
+				/**
+				 * Defines whether the value will be autcompleted to match an item
+				 */
+				noTypeahead: {
+					type: "boolean",
+					defaultValue: false
 				},
 
 				/**
@@ -201,6 +216,21 @@ sap.ui.define([
 				items: {
 					type: "sap.ui.webc.main.IMultiComboBoxItem",
 					multiple: true
+				}
+			},
+			associations: {
+
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						type: "property",
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			},
 			events: {

@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/cart-5', './v4/cart-5'], function (Theme, cart5$2, cart5$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/cart-5', './v4/cart-5'], function (exports, Theme, cart5$1, cart5$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? cart5$1 : cart5$2;
-	var cart5 = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? cart5$1.pathData : cart5$2.pathData;
+	var cart5 = "cart-5";
 
-	return cart5;
+	exports.accData = cart5$1.accData;
+	exports.ltr = cart5$1.ltr;
+	exports.default = cart5;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

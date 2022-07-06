@@ -56,7 +56,14 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			},
 		},
 		events:  {
-			click: {},
+			click: {
+				detail: {
+					altKey: { type: Boolean	},
+					ctrlKey: { type: Boolean },
+					metaKey: { type: Boolean },
+					shiftKey: { type: Boolean },
+				},
+			},
 		},
 	};
 	class Link extends UI5Element__default {
@@ -120,7 +127,22 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			Link.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
 		_onclick(event) {
+			const {
+				altKey,
+				ctrlKey,
+				metaKey,
+				shiftKey,
+			} = event;
 			event.isMarked = "link";
+			const executeEvent = this.fireEvent("click", {
+				altKey,
+				ctrlKey,
+				metaKey,
+				shiftKey,
+			}, true);
+			if (!executeEvent) {
+				event.preventDefault();
+			}
 		}
 		_onfocusin(event) {
 			event.isMarked = "link";
@@ -131,11 +153,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		}
 		_onkeydown(event) {
 			if (Keys.isEnter(event)) {
-				event.preventDefault();
-				const executeEvent = this.fireEvent("click", null, true);
-				if (executeEvent) {
-					this.href && window.open(this.href, this.target);
-				}
+				this._onclick(event);
 			} else if (Keys.isSpace(event)) {
 				event.preventDefault();
 			}
@@ -146,10 +164,10 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 				event.isMarked = "link";
 				return;
 			}
-			event.preventDefault();
-			const executeEvent = this.fireEvent("click", null, true);
-			if (executeEvent) {
-				this.href && window.open(this.href, this.target);
+			this._onclick(event);
+			if (this.href && !event.defaultPrevented) {
+				const customEvent = new MouseEvent("click");
+				this.getDomRef().dispatchEvent(customEvent);
 			}
 		}
 	}

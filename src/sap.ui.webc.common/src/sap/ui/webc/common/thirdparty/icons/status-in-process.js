@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/status-in-process', './v4/status-in-process'], function (Theme, statusInProcess$2, statusInProcess$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/status-in-process', './v4/status-in-process'], function (exports, Theme, statusInProcess$1, statusInProcess$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? statusInProcess$1 : statusInProcess$2;
-	var statusInProcess = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? statusInProcess$1.pathData : statusInProcess$2.pathData;
+	var statusInProcess = "status-in-process";
 
-	return statusInProcess;
+	exports.accData = statusInProcess$1.accData;
+	exports.ltr = statusInProcess$1.ltr;
+	exports.default = statusInProcess;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

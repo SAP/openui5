@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/source-code', './v4/source-code'], function (Theme, sourceCode$2, sourceCode$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/source-code', './v4/source-code'], function (exports, Theme, sourceCode$1, sourceCode$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? sourceCode$1 : sourceCode$2;
-	var sourceCode = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? sourceCode$1.pathData : sourceCode$2.pathData;
+	var sourceCode = "source-code";
 
-	return sourceCode;
+	exports.accData = sourceCode$1.accData;
+	exports.ltr = sourceCode$1.ltr;
+	exports.default = sourceCode;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

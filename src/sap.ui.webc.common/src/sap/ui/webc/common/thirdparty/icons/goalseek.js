@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/goalseek', './v4/goalseek'], function (Theme, goalseek$2, goalseek$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/goalseek', './v4/goalseek'], function (exports, Theme, goalseek$1, goalseek$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? goalseek$1 : goalseek$2;
-	var goalseek = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? goalseek$1.pathData : goalseek$2.pathData;
+	var goalseek = "goalseek";
 
-	return goalseek;
+	exports.accData = goalseek$1.accData;
+	exports.ltr = goalseek$1.ltr;
+	exports.default = goalseek;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

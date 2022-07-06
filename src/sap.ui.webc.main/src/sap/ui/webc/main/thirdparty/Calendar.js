@@ -88,7 +88,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/localization/dates/CalendarDate', 
 			this._nextButtonDisabled = !this._currentPickerDOM._hasNextPage();
 			const yearFormat = DateFormat__default.getDateInstance({ format: "y", calendarType: this.primaryCalendarType });
 			const localeData = getCachedLocaleDataInstance__default(getLocale__default());
-			this._headerMonthButtonText = localeData.getMonths("wide", this.primaryCalendarType)[this._calendarDate.getMonth()];
+			this._headerMonthButtonText = localeData.getMonthsStandAlone("wide", this.primaryCalendarType)[this._calendarDate.getMonth()];
 			if (this._currentPicker === "year") {
 				const rangeStart = new CalendarDate__default(this._calendarDate, this._primaryCalendarType);
 				const rangeEnd = new CalendarDate__default(this._calendarDate, this._primaryCalendarType);

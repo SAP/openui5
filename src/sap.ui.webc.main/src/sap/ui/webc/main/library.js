@@ -127,6 +127,7 @@ sap.ui.define([
 				"sap.ui.webc.main.MenuItem",
 				"sap.ui.webc.main.MessageStrip",
 				"sap.ui.webc.main.MultiComboBox",
+				"sap.ui.webc.main.MultiComboBoxGroupItem",
 				"sap.ui.webc.main.MultiComboBoxItem",
 				"sap.ui.webc.main.MultiInput",
 				"sap.ui.webc.main.Option",
@@ -189,8 +190,8 @@ sap.ui.define([
 					"sap.ui.webc.main.CheckBox": "sap/ui/webc/main/flexibility/CheckBox",
 					"sap.ui.webc.main.CustomListItem": {
 						"hideControl": "default",
-						"moveControls": "default",
-						"unhideControl": "default"
+						"unhideControl": "default",
+						"moveControls": "default"
 					},
 					"sap.ui.webc.main.DatePicker": {
 						"hideControl": "default",

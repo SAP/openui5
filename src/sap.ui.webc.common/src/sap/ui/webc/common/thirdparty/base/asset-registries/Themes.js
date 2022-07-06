@@ -19,9 +19,12 @@ sap.ui.define(['exports', '../generated/AssetParameters'], function (exports, As
 		}
 		if (!registeredThemes.has(themeName)) {
 			const regThemesStr = [...registeredThemes.values()].join(", ");
-			console.warn(`You have requested a non-registered theme - falling back to ${AssetParameters.DEFAULT_THEME}. Registered themes are: ${regThemesStr}`);
-			return themeStyles.get(`${packageName}_${AssetParameters.DEFAULT_THEME}`);
+			console.warn(`You have requested a non-registered theme ${themeName} - falling back to ${AssetParameters.DEFAULT_THEME}. Registered themes are: ${regThemesStr}`);
+			return _getThemeProperties(packageName, AssetParameters.DEFAULT_THEME);
 		}
+		return _getThemeProperties(packageName, themeName);
+	};
+	const _getThemeProperties = async (packageName, themeName) => {
 		const loader = loaders.get(`${packageName}/${themeName}`);
 		if (!loader) {
 			console.error(`Theme [${themeName}] not registered for package [${packageName}]`);

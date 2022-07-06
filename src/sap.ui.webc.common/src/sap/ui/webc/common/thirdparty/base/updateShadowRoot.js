@@ -1,4 +1,4 @@
-sap.ui.define(['./renderer/executeTemplate', './theming/getConstructableStyle', './theming/getEffectiveStyle', './theming/getEffectiveLinksHrefs', './isLegacyBrowser', './CSP'], function (executeTemplate, getConstructableStyle, getEffectiveStyle, getEffectiveLinksHrefs, isLegacyBrowser, CSP) { 'use strict';
+sap.ui.define(['./renderer/executeTemplate', './theming/getConstructableStyle', './theming/getEffectiveStyle', './theming/getEffectiveLinksHrefs', './CSP'], function (executeTemplate, getConstructableStyle, getEffectiveStyle, getEffectiveLinksHrefs, CSP) { 'use strict';
 
 	const updateShadowRoot = (element, forStaticArea = false) => {
 		let styleStrOrHrefsArr;
@@ -9,7 +9,7 @@ sap.ui.define(['./renderer/executeTemplate', './theming/getConstructableStyle', 
 			styleStrOrHrefsArr = getEffectiveLinksHrefs(element.constructor, forStaticArea);
 		} else if (document.adoptedStyleSheets) {
 			shadowRoot.adoptedStyleSheets = getConstructableStyle(element.constructor, forStaticArea);
-		} else if (!isLegacyBrowser()) {
+		} else {
 			styleStrOrHrefsArr = getEffectiveStyle(element.constructor, forStaticArea);
 		}
 		element.constructor.render(renderResult, shadowRoot, styleStrOrHrefsArr, forStaticArea, { host: element });

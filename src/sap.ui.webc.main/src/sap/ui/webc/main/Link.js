@@ -186,7 +186,36 @@ sap.ui.define([
 				 * Fired when the component is triggered either with a mouse/tap or by using the Enter key.
 				 */
 				click: {
-					parameters: {}
+					allowPreventDefault: true,
+					parameters: {
+						/**
+						 * Returns whether the "ALT" key was pressed when the event was triggered.
+						 */
+						altKey: {
+							type: "boolean"
+						},
+
+						/**
+						 * Returns whether the "CTRL" key was pressed when the event was triggered.
+						 */
+						ctrlKey: {
+							type: "boolean"
+						},
+
+						/**
+						 * Returns whether the "META" key was pressed when the event was triggered.
+						 */
+						metaKey: {
+							type: "boolean"
+						},
+
+						/**
+						 * Returns whether the "SHIFT" key was pressed when the event was triggered.
+						 */
+						shiftKey: {
+							type: "boolean"
+						}
+					}
 				}
 			},
 			designtime: "sap/ui/webc/main/designtime/Link.designtime"

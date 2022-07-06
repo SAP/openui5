@@ -1,8 +1,13 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/config/Theme', './v5/lead', './v4/lead'], function (Theme, lead$2, lead$1) { 'use strict';
+sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/lead', './v4/lead'], function (exports, Theme, lead$1, lead$2) { 'use strict';
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? lead$1 : lead$2;
-	var lead = { pathData };
+	const pathData = Theme.isThemeFamily("sap_horizon") ? lead$1.pathData : lead$2.pathData;
+	var lead = "lead";
 
-	return lead;
+	exports.accData = lead$1.accData;
+	exports.ltr = lead$1.ltr;
+	exports.default = lead;
+	exports.pathData = pathData;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 });

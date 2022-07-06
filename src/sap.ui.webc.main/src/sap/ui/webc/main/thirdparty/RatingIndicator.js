@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/Float', './generated/i18n/i18n-defaults', './generated/templates/RatingIndicatorTemplate.lit', './generated/themes/RatingIndicator.css'], function (UI5Element, litRender, Keys, i18nBundle, Integer, Float, i18nDefaults, RatingIndicatorTemplate_lit, RatingIndicator_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/Keys', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/types/Integer', 'sap/ui/webc/common/thirdparty/base/types/Float', './generated/i18n/i18n-defaults', './generated/templates/RatingIndicatorTemplate.lit', './Icon', 'sap/ui/webc/common/thirdparty/icons/favorite', 'sap/ui/webc/common/thirdparty/icons/unfavorite', './generated/themes/RatingIndicator.css'], function (UI5Element, litRender, Keys, i18nBundle, Integer, Float, i18nDefaults, RatingIndicatorTemplate_lit, Icon, favorite, unfavorite, RatingIndicator_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -59,6 +59,9 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 		static async onDefine() {
 			RatingIndicator.i18nBundle = await i18nBundle.getI18nBundle("@ui5/webcomponents");
 		}
+		static get dependencies() {
+			return [Icon];
+		}
 		constructor() {
 			super();
 			this._liveValue = null;
@@ -90,7 +93,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			if (this.disabled || this.readonly) {
 				return;
 			}
-			this.value = parseInt(event.target.getAttribute("data-value"));
+			this.value = parseInt(event.target.getAttribute("data-ui5-value"));
 			if (this.value === 1 && this._liveValue === 1) {
 				this.value = 0;
 			}

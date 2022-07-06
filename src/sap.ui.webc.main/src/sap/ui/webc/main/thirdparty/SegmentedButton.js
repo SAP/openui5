@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/Device', 'sap/ui/webc/common/thirdparty/base/Keys', './generated/i18n/i18n-defaults', './SegmentedButtonItem', './generated/templates/SegmentedButtonTemplate.lit', './generated/themes/SegmentedButton.css'], function (UI5Element, ItemNavigation, litRender, i18nBundle, ResizeHandler, Render, Device, Keys, i18nDefaults, SegmentedButtonItem, SegmentedButtonTemplate_lit, SegmentedButton_css) { 'use strict';
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation', 'sap/ui/webc/common/thirdparty/base/renderer/LitRenderer', 'sap/ui/webc/common/thirdparty/base/i18nBundle', 'sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler', 'sap/ui/webc/common/thirdparty/base/Render', 'sap/ui/webc/common/thirdparty/base/Keys', './generated/i18n/i18n-defaults', './SegmentedButtonItem', './generated/templates/SegmentedButtonTemplate.lit', './generated/themes/SegmentedButton.css'], function (UI5Element, ItemNavigation, litRender, i18nBundle, ResizeHandler, Render, Keys, i18nDefaults, SegmentedButtonItem, SegmentedButtonTemplate_lit, SegmentedButton_css) { 'use strict';
 
 	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
 
@@ -90,11 +90,7 @@ sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element', 'sap/ui/webc/com
 			await Render.renderFinished();
 			this.prepareToMeasureItems();
 			this.widths = this.items.map(item => {
-				let width = item.offsetWidth + 1;
-				if (Device.isIE()) {
-					width += 1;
-				}
-				return width;
+				return item.offsetWidth + 1;
 			});
 		}
 		normalizeSelection() {
