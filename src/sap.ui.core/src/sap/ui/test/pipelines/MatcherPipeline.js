@@ -5,9 +5,8 @@
 sap.ui.define([
 	"sap/ui/test/_OpaLogger",
 	"sap/ui/base/Object",
-	"sap/ui/test/pipelines/PipelineFactory",
-	"sap/ui/thirdparty/jquery"
-], function(_OpaLogger, UI5Object, PipelineFactory, jQueryDOM) {
+	"sap/ui/test/pipelines/PipelineFactory"
+], function(_OpaLogger, UI5Object, PipelineFactory) {
 		"use strict";
 		var oPipelineFactory = new PipelineFactory({
 				name: "Matcher",

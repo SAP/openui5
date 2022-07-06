@@ -4,12 +4,10 @@
 
 sap.ui.define([
 	"sap/m/semantic/SemanticButton",
-	"sap/ui/events/KeyCodes",
 	"sap/m/ToggleButton",
 	"sap/m/semantic/SemanticOverflowToolbarToggleButton"
 ], function(
 	SemanticButton,
-	KeyCodes,
 	ToggleButton,
 	SemanticOverflowToolbarToggleButton
 ) {

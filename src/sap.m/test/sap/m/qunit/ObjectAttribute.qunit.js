@@ -28,18 +28,17 @@ sap.ui.define([
 	KeyCodes,
 	Link,
 	Text,
-	Core,
+	oCore,
 	coreLibrary
 ) {
 	"use strict";
 
 	// shortcut for sap.m.EmptyIndicatorMode and sap.ui.core.TextDirection
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode,
-		TextDirection = coreLibrary.TextDirection,
-		oCore = sap.ui.getCore();
+		TextDirection = coreLibrary.TextDirection;
 
 	// shortcut for library resource bundle
-	var oRb = Core.getLibraryResourceBundle("sap.m");
+	var oRb = oCore.getLibraryResourceBundle("sap.m");
 
 	createAndAppendDiv("objectAttributes");
 	createAndAppendDiv("objectAttributesWrap");

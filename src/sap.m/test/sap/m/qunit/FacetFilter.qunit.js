@@ -14,13 +14,8 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/m/Page",
 	"sap/m/ListItemBase",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/events/jquery/EventSimulation",
-	"sap/ui/model/Sorter",
-	"sap/m/HBox",
-	"sap/ui/core/InvisibleText",
 	"sap/ui/base/EventProvider",
-	"sap/m/GroupHeaderListItem",
 	"sap/ui/core/Core"
 ], function(
 	qutils,
@@ -37,13 +32,8 @@ sap.ui.define([
 	IconPool,
 	Page,
 	ListItemBase,
-	EventExtension,
 	EventSimulation,
-	Sorter,
-	HBox,
-	InvisibleText,
 	EventProvider,
-	GroupHeaderListItem,
 	oCore
 ) {
 	"use strict";
@@ -117,7 +107,7 @@ sap.ui.define([
 
 	QUnit.test("Aggregations", function(assert) {
 
-		// The aggregations below are created programatically by FacetFilter when it is initialized, so make sure they are created.
+		// The aggregations below are created programmatically by FacetFilter when it is initialized, so make sure they are created.
 		var oFF = new FacetFilter("someid");
 		oFF.setShowPersonalization(true);
 		oFF.addList(new FacetFilterList("list1"));

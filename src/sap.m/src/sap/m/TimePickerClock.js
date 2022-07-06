@@ -7,10 +7,9 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"./TimePickerClockRenderer",
 	"sap/ui/Device",
-	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, Configuration, TimePickerClockRenderer, Device, KeyCodes, jQuery) {
+	function(Control, Configuration, TimePickerClockRenderer, Device, jQuery) {
 		"use strict";
 
 		/**

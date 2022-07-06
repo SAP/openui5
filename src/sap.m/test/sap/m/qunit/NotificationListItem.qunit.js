@@ -1,8 +1,6 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
-	"sap/m/NotificationListBase",
 	"sap/m/NotificationListItem",
 	"sap/m/NotificationListGroup",
 	"sap/m/OverflowToolbar",
@@ -10,13 +8,10 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/ui/core/Core",
-	'sap/ui/Device',
 	"sap/m/Button",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel"
 ], function(
-	qutils,
-	NotificationListBase,
 	NotificationListItem,
 	NotificationListGroup,
 	OverflowToolbar,
@@ -24,7 +19,6 @@ sap.ui.define([
 	coreLibrary,
 	mLibrary,
 	Core,
-	Device,
 	Button,
 	KeyCodes,
 	JSONModel

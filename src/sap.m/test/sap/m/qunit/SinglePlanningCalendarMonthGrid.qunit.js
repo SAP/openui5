@@ -1,6 +1,5 @@
 /*global QUnit*/
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/m/SinglePlanningCalendar",
 	"sap/m/SinglePlanningCalendarMonthView",
 	"sap/m/SinglePlanningCalendarMonthGrid",
@@ -9,7 +8,6 @@ sap.ui.define([
 	'sap/ui/unified/library',
 	"sap/ui/core/Core"
 ], function(
-	qutils,
 	SinglePlanningCalendar,
 	SinglePlanningCalendarMonthView,
 	SinglePlanningCalendarMonthGrid,

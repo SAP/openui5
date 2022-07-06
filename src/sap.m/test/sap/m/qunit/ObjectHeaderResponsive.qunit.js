@@ -43,8 +43,7 @@ sap.ui.define([
 	createAndAppendDiv("content");
 
 
-	var sControlId = "ROHId",
-		oCore = sap.ui.getCore();
+	var sControlId = "ROHId";
 
 	// Creates a ResponsiveObjectHeader with generic properties
 	// Config object can be passed as argument. If some property already exist it will be overridden

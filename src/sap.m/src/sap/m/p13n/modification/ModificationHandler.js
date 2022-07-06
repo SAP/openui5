@@ -3,9 +3,8 @@
 */
 sap.ui.define([
 	"sap/ui/base/Object",
-	"sap/base/util/merge",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
-], function(BaseObject, merge, JsControlTreeModifier) {
+], function(BaseObject, JsControlTreeModifier) {
 	"use strict";
 
 	var oModificationHandler;

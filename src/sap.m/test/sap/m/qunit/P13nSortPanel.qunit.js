@@ -1,6 +1,5 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/P13nSortPanel",
 	"sap/ui/model/json/JSONModel",
@@ -9,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/base/util/deepExtend"
 ], function(
-	qutils,
 	createAndAppendDiv,
 	P13nSortPanel,
 	JSONModel,

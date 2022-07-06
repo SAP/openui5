@@ -3,12 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/base/util/restricted/_isNil",
-	"sap/base/util/isPlainObject"
+	"sap/base/util/restricted/_isNil"
 ], function (
 	BasePropertyEditor,
-	_isNil,
-	isPlainObject
+	_isNil
 ) {
 	"use strict";
 

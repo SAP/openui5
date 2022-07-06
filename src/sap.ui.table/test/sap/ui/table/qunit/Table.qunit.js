@@ -4235,7 +4235,6 @@ sap.ui.define([
 	QUnit.test("Render when theme not applied", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
-		var oCore = sap.ui.getCore();
 		var oIsThemeApplied = sinon.stub(oCore, "isThemeApplied").returns(false);
 		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Auto);
 

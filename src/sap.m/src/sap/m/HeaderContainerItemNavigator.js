@@ -3,11 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/delegate/ItemNavigation",
-	"sap/base/assert",
-	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes"
-], function (ItemNavigation, assert, containsOrEquals, KeyCodes) {
+	"sap/ui/core/delegate/ItemNavigation"
+], function (ItemNavigation) {
 	"use strict";
 
 	/**

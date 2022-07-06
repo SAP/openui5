@@ -1,7 +1,7 @@
 /*global QUnit */
 sap.ui.define(
-	["sap/ui/qunit/QUnitUtils", "sap/m/MessageItem", "sap/ui/core/library"],
-	function(QUnitUtils, MessageItem, coreLibrary) {
+	["sap/m/MessageItem", "sap/ui/core/library"],
+	function(MessageItem, coreLibrary) {
 		"use strict";
 
 		// shortcut for sap.ui.core.MessageType

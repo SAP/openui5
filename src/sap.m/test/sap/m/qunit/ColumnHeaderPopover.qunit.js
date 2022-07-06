@@ -11,9 +11,7 @@ sap.ui.define([
 	"sap/m/ColumnPopoverSortItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Button",
-	"sap/m/library",
 	"sap/m/Input",
-	"sap/m/Label",
 	"sap/m/MessageToast",
 	"sap/ui/core/Item"
 ], function(
@@ -27,9 +25,7 @@ sap.ui.define([
 	ColumnPopoverSortItem,
 	JSONModel,
 	Button,
-	library,
 	Input,
-	Label,
 	MessageToast,
 	Item) {
 	"use strict";

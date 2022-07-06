@@ -3,8 +3,8 @@
  */
 
 // Provides the default renderer for control sap.m.SliderTooltip
-sap.ui.define(['sap/ui/core/Renderer', "sap/ui/core/Core"],
-	function(Renderer, Core) {
+sap.ui.define(["sap/ui/core/Core"],
+	function(Core) {
 	"use strict";
 
 	/**

@@ -2,7 +2,6 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/json/JSONModel",
@@ -27,7 +26,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/ListItemBase",
 	"sap/base/Log"
-], function(jQuery, Core, EventExtension, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, ListItemBase, Log) {
+], function(jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, ListItemBase, Log) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 

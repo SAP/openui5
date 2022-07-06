@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupport', 'sap/ui/core/InvisibleText', 'sap/ui/core/library', './library', 'sap/ui/core/Core'],
-	function(ValueStateSupport, IndicationColorSupport, InvisibleText, coreLibrary, library, oCore) {
+sap.ui.define(['sap/ui/core/library', './library', 'sap/ui/core/Core'],
+	function(coreLibrary, library, oCore) {
 	"use strict";
 
 

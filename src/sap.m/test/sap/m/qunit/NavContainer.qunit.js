@@ -1,6 +1,5 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Popup",
@@ -16,10 +15,8 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/base/Log",
 	"sap/ui/util/Mobile",
-	"sap/ui/core/Core",
-	"sap/ui/Device"
+	"sap/ui/core/Core"
 ], function(
-	qutils,
 	createAndAppendDiv,
 	jQuery,
 	Popup,
@@ -35,8 +32,7 @@ sap.ui.define([
 	Dialog,
 	Log,
 	Mobile,
-	Core,
-	Device
+	Core
 ) {
 	"use strict";
 

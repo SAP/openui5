@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer", "sap/ui/core/IconPool", "sap/ui/Device", "./library", "./ListItemBaseRenderer"],
-	function(coreLibrary, Core, Renderer, IconPool, Device, library, ListItemBaseRenderer ) {
+sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer", "sap/ui/core/IconPool", "./library", "./ListItemBaseRenderer"],
+	function(coreLibrary, Core, Renderer, IconPool, library, ListItemBaseRenderer ) {
 	"use strict";
 
 

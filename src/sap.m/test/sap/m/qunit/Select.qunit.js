@@ -20,16 +20,14 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/ComboBoxTextField",
 	"sap/m/SelectList",
-	"sap/m/Dialog",
 	"sap/m/OverflowToolbar",
 	"sap/ui/core/Element",
-	"sap/ui/core/InvisibleText",
 	"sap/m/library",
 	"sap/ui/core/IconPool",
 	"sap/ui/Device",
 	"sap/ui/core/SeparatorItem",
-	"sap/ui/events/jquery/EventExtension",
-	"sap/ui/core/ValueStateSupport"
+	"sap/ui/core/ValueStateSupport",
+	"sap/ui/events/jquery/EventExtension" // side effect: provides jQuery.Event.prototype.isMarked
 ],
 	function(
 		jQuery,
@@ -52,15 +50,12 @@ sap.ui.define([
 		Label,
 		ComboBoxTextField,
 		SelectList,
-		Dialog,
 		OverflowToolbar,
 		Element,
-		InvisibleText,
 		mobileLibrary,
 		IconPool,
 		Device,
 		SeparatorItem,
-		EventExtension,
 		ValueStateSupport
 	) {
 		"use strict";

@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	'sap/ui/core/Control',
 	'sap/ui/core/RenderManager',
-	'sap/ui/Device',
 	'./NavContainerRenderer',
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
@@ -18,7 +17,6 @@ sap.ui.define([
 	Configuration,
 	Control,
 	RenderManager,
-	Device,
 	NavContainerRenderer,
 	jQuery,
 	Log

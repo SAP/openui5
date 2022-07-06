@@ -1,6 +1,5 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ObjectNumber",
 	"sap/ui/thirdparty/jquery",
@@ -12,7 +11,7 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Text",
 	"sap/m/library"
-], function(QUnitUtils, createAndAppendDiv, ObjectNumber, jQuery, coreLibrary, Core, Device, Version, Label, Panel, Text, mobileLibrary) {
+], function(createAndAppendDiv, ObjectNumber, jQuery, coreLibrary, Core, Device, Version, Label, Panel, Text, mobileLibrary) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -301,12 +300,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("ObjectNumber with state (different than 'None')", function (assert) {
-		var oCore = sap.ui.getCore(),
-			sErrorText = oCore.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
+		var sErrorText = Core.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
 			oStateElement;
 
 		this.oON.setState(ValueState.Error);
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		oStateElement = document.getElementById(this.oONStateId);
 		assert.ok(oStateElement, "A SPAN with the state is created");
@@ -316,12 +314,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("ObjectNumber's Emphasized information", function (assert) {
-		var oCore = sap.ui.getCore(),
-			sEmphasizedText = oCore.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_EMPHASIZED"),
+		var sEmphasizedText = Core.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_EMPHASIZED"),
 			oEmphasizedInfoElement;
 
 		this.oON.setEmphasized(true);
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		oEmphasizedInfoElement = document.getElementById(this.oONEmphasizedInfoId);
 		assert.ok(oEmphasizedInfoElement, "A SPAN with the emphasized information is created");

@@ -1,25 +1,21 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/m/MessageToast",
 	"sap/m/InstanceManager",
 	"sap/ui/core/HTML",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/base/Log",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	qutils,
 	createAndAppendDiv,
 	App,
 	Page,
 	MessageToast,
 	InstanceManager,
 	HTML,
-	EventExtension,
 	Log,
 	oCore,
 	jQuery

@@ -5,14 +5,12 @@ sap.ui.define([
 	"./BaseHeader",
 	"./NumericIndicators",
 	"sap/m/Text",
-	"sap/f/cards/NumericHeaderRenderer",
-	"sap/ui/core/Core"
+	"sap/f/cards/NumericHeaderRenderer"
 ], function (
 	BaseHeader,
 	NumericIndicators,
 	Text,
-	NumericHeaderRenderer,
-	Core
+	NumericHeaderRenderer
 ) {
 	"use strict";
 

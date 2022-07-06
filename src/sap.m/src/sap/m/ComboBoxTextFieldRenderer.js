@@ -3,11 +3,9 @@
  */
 sap.ui.define([
 	'./InputBaseRenderer',
-	'sap/ui/core/Renderer',
-	'sap/ui/core/LabelEnablement',
-	'sap/ui/Device'
+	'sap/ui/core/Renderer'
 ],
-	function(InputBaseRenderer, Renderer, LabelEnablement, Device) {
+	function(InputBaseRenderer, Renderer) {
 		"use strict";
 
 		/**

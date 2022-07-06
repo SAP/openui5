@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/core/library",
 	"sap/ui/Device",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
@@ -27,7 +26,6 @@ sap.ui.define([
 	Label,
 	coreLibrary,
 	Device,
-	EventExtension,
 	JSONModel,
 	Form,
 	FormContainer,
@@ -53,7 +51,6 @@ sap.ui.define([
 
 
 
-	var oCore = sap.ui.getCore();
 	var bSkipDestroy = new URLSearchParams(window.location.search).has("testId");
 
 	QUnit.module("API", {

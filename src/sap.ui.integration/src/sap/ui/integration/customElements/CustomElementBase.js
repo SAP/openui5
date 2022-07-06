@@ -5,12 +5,10 @@
 /* global Reflect, HTMLElement, CustomEvent */
 
 sap.ui.define([
-	"sap/base/Log",
 	"sap/ui/integration/util/Utils",
 	"sap/base/strings/hyphenate",
 	"sap/base/strings/camelize"
 ], function (
-	Log,
 	Utils,
 	hyphenate,
 	camelize

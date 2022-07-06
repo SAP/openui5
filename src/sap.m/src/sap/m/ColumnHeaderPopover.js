@@ -6,15 +6,13 @@ sap.ui.define([
 	'sap/m/Toolbar',
 	'sap/m/Button',
 	'sap/m/ResponsivePopover',
-	'sap/m/ToolbarSpacer',
-	'sap/ui/dom/containsOrEquals'
+	'sap/m/ToolbarSpacer'
 ], function(
 	Control,
 	Toolbar,
 	Button,
 	ResponsivePopover,
-	ToolbarSpacer,
-	containsOrEquals
+	ToolbarSpacer
 ) {
 	"use strict";
 

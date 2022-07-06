@@ -222,7 +222,6 @@ sap.ui.define([
 			}),
 			new Button({
 				text: "Scroll", press: function () {
-					var oCore = sap.ui.getCore();
 					var x = parseInt(oCore.byId("xIn").getValue());
 					var t = parseInt(oCore.byId("tIn").getValue());
 					oCore.byId("oScrollContainer2").scrollTo(x, 0, t);

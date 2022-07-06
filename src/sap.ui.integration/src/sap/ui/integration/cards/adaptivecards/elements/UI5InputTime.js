@@ -3,12 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/integration/thirdparty/adaptivecards",
-	"sap/ui/core/format/DateFormat",
 	"sap/ui/integration/cards/adaptivecards/overwrites/inputsGeneralOverwrites"
 ],
 	function (
 		AdaptiveCards,
-		DateFormat,
 		InputsOverwrites
 	) {
 		"use strict";

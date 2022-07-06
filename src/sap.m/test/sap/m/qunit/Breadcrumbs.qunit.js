@@ -1,6 +1,5 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/dom/units/Rem",
 	"sap/ui/core/theming/Parameters",
 	"sap/m/Breadcrumbs",
@@ -11,13 +10,12 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
 ],
-function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCore, jQuery, Device) {
+function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCore, jQuery, Device) {
 	"use strict";
-	var core, oFactory, helpers;
+	var oFactory, helpers;
 
 
 
-	core = sap.ui.getCore();
 	oFactory = {
 		getLink: function (sText, sHref) {
 			return new Link({
@@ -53,14 +51,14 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCor
 
 	helpers = {
 		waitForUIUpdates: function (){
-			core.applyChanges();
+			oCore.applyChanges();
 		},
 		countChildren: function (oControl){
 			return oControl.$().find("li").length;
 		},
 		renderObject: function (oSapUiObject) {
 			oSapUiObject.placeAt("qunit-fixture");
-			core.applyChanges();
+			oCore.applyChanges();
 			return oSapUiObject;
 		},
 		controlIsInTheDom: function (oControl){
@@ -683,7 +681,7 @@ function(qutils, DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCor
 		});
 
 		oBreadcrumbsControl.placeAt("qunit-fixture");
-		core.applyChanges();
+		oCore.applyChanges();
 
 		assert.strictEqual(oBreadcrumbsControl.getAriaLabelledBy().join(""), "id1", "aria-labelledby is set correctly");
 

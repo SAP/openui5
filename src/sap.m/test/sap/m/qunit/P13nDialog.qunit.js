@@ -1,6 +1,5 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/P13nDialog",
 	"sap/m/P13nGroupPanel",
@@ -17,7 +16,6 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	qutils,
 	createAndAppendDiv,
 	P13nDialog,
 	P13nGroupPanel,

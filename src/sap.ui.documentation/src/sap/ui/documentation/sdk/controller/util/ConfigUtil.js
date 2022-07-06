@@ -5,9 +5,8 @@
 /* Utility class that facilitates route configuration handling */
 sap.ui.define([
 	"sap/ui/base/Object",
-	"sap/base/strings/capitalize",
-	"sap/base/util/merge"
-], function (BaseObject, capitalize, merge) {
+	"sap/base/strings/capitalize"
+], function (BaseObject, capitalize) {
 	"use strict";
 
 	return BaseObject.extend("sap.ui.documentation.sdk.controller.util.ConfigUtil", {

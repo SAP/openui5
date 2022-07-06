@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/model/type/DateTime",
 	"sap/base/util/deepEqual",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function(
@@ -24,7 +23,6 @@ sap.ui.define([
 	DateTime,
 	deepEqual,
 	jQuery,
-	coreLibrary,
 	KeyCodes,
 	oCore
 ) {

@@ -11,7 +11,6 @@ sap.ui.define([
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/library',
-	'sap/ui/core/InvisibleText',
 	'./SplitButtonRenderer',
 	"sap/ui/events/KeyCodes"
 ],
@@ -23,7 +22,6 @@ function(
 	EnabledPropagator,
 	IconPool,
 	coreLibrary,
-	InvisibleText,
 	SplitButtonRenderer,
 	KeyCodes
 	) {

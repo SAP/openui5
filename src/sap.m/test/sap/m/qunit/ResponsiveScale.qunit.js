@@ -1,9 +1,8 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ResponsiveScale"
-], function(QUnitUtils, createAndAppendDiv, ResponsiveScale) {
+], function(createAndAppendDiv, ResponsiveScale) {
 	"use strict";
 
 	createAndAppendDiv("content");

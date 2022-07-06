@@ -5,18 +5,12 @@
 sap.ui.define([
 	'./InputBase',
 	'./library',
-	'sap/ui/core/InvisibleText',
-	'sap/ui/core/library',
-	'sap/ui/Device',
 	'sap/ui/core/LabelEnablement',
 	"./ComboBoxTextFieldRenderer"
 ],
 	function(
 		InputBase,
 		library,
-		InvisibleText,
-		coreLibrary,
-		Device,
 		LabelEnablement,
 		ComboBoxTextFieldRenderer
 	) {

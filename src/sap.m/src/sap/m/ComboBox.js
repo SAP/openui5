@@ -21,8 +21,7 @@ sap.ui.define([
 	"sap/m/inputUtils/calculateSelectionStart",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/base/Log",
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	"sap/base/Log"
 ],
 	function(
 		ComboBoxTextField,
@@ -43,8 +42,7 @@ sap.ui.define([
 		calculateSelectionStart,
 		KeyCodes,
 		core,
-		Log,
-		jQuery
+		Log
 	) {
 		"use strict";
 

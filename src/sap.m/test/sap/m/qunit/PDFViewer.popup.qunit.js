@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/PDFViewerRenderer",
-	"sap/ui/Device",
 	"sap/ui/core/Core"
-], function (TestUtils, library, $, PDFViewerRenderer, Device, oCore) {
+], function (TestUtils, library, $, PDFViewerRenderer, oCore) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType

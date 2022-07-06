@@ -5,9 +5,8 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/test/matchers/Matcher",
-	"sap/base/strings/capitalize",
-	"sap/ui/thirdparty/jquery"
-], function (ManagedObject, Matcher, capitalize, jQueryDOM) {
+	"sap/base/strings/capitalize"
+], function (ManagedObject, Matcher, capitalize) {
 	"use strict";
 
 	/**

@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/IntervalTrigger",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/date/UniversalDate",
-	"sap/ui/core/InvisibleText",
 	"sap/m/Text"
 ], function (
 	Control,
@@ -15,7 +14,6 @@ sap.ui.define([
 	IntervalTrigger,
 	DateFormat,
 	UniversalDate,
-	InvisibleText,
 	Text
 ) {
 	"use strict";

@@ -6,10 +6,9 @@ sap.ui.define([
 	"./library",
 	"sap/ui/core/Item",
 	"sap/ui/core/library",
-	"sap/base/Log",
-	"sap/base/security/sanitizeHTML"
+	"sap/base/Log"
 ],
-	function(library, Item, coreLibrary, Log, sanitizeHTML) {
+	function(library, Item, coreLibrary, Log) {
 		"use strict";
 
 		// shortcut for sap.ui.core.MessageType

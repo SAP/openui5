@@ -5,11 +5,9 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
-	"sap/ui/core/Core",
-	"sap/base/util/merge",
-	"sap/ui/core/theming/Parameters"
+	"sap/base/util/merge"
 ], function (
-	Control, SegmentedButton, SegmentedButtonItem, Core, merge, Parameters
+	Control, SegmentedButton, SegmentedButtonItem, merge
 ) {
 	"use strict";
 

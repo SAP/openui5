@@ -5,12 +5,10 @@
 // Provides control sap.m.SplitContainer.
 sap.ui.define([
 	'./library',
-	'sap/ui/base/DataType',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/Device',
-	'sap/ui/base/ManagedObject',
 	'sap/m/NavContainer',
 	'sap/m/Popover',
 	'sap/m/Button',
@@ -21,12 +19,10 @@ sap.ui.define([
 ],
 function(
 	library,
-	DataType,
 	Control,
 	IconPool,
 	InvisibleText,
 	Device,
-	ManagedObject,
 	NavContainer,
 	Popover,
 	Button,

@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"./WizardRenderer",
 	"sap/ui/core/CustomData",
-	"sap/ui/dom/containsOrEquals",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/jquery/Focusable"
@@ -26,7 +25,6 @@ sap.ui.define([
 	Device,
 	WizardRenderer,
 	CustomData,
-	containsOrEquals,
 	Log,
 	jQuery
 ) {

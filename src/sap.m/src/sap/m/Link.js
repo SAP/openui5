@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"./LinkRenderer",
 	"sap/ui/events/KeyCodes",
-	"sap/base/Log",
 	"sap/base/security/URLListValidator"
 ],
 function(
@@ -26,7 +25,6 @@ function(
 	Device,
 	LinkRenderer,
 	KeyCodes,
-	Log,
 	URLListValidator
 ) {
 	"use strict";

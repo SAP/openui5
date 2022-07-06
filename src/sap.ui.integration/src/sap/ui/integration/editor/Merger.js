@@ -4,13 +4,11 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
-	"sap/base/util/deepClone"
+	"sap/ui/core/Core"
 ], function (
 	merge,
 	JSONModel,
-	Core,
-	deepClone
+	Core
 ) {
 	"use strict";
 

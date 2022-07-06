@@ -1,15 +1,12 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/m/SimpleFixFlex",
-	"sap/m/SimpleFixFlexRenderer",
 	"sap/m/Button",
 	"sap/m/Text",
 	"sap/base/Log",
 	"sap/ui/core/Core"
-], function(SimpleFixFlex, SimpleFixFlexRenderer, Button, Text, Log, oCore) {
+], function(SimpleFixFlex, Button, Text, Log, oCore) {
 	"use strict";
-
-	var oCore = sap.ui.getCore();
 
 	/* --------------------------- SimpleFixFlex API ---------------------------------- */
 	QUnit.module("SimpleFixFlex: Default properties values",{

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile", "sap/ui/core/library"],
-	function(library, encodeCSS, GenericTile, Core) {
+sap.ui.define(["./library", "sap/base/security/encodeCSS", "sap/m/GenericTile"],
+	function(library, encodeCSS, GenericTile) {
 	"use strict";
 
 	var GenericTileMode = library.GenericTileMode,

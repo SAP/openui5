@@ -2,7 +2,6 @@
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/m/ListBase",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
@@ -21,7 +20,6 @@ sap.ui.define([
 ], function(
 	MockServer,
 	ODataModel,
-	ListBase,
 	jQuery,
 	FilterOperator,
 	JSONModel,

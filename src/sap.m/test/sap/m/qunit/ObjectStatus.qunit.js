@@ -7,11 +7,11 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/ui/core/ValueStateSupport",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/m/Panel",
 	"sap/m/library",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/events/jquery/EventExtension" // side effect: provides jQuery.event.prototype.getMark
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -20,7 +20,6 @@ sap.ui.define([
 	jQuery,
 	coreLibrary,
 	ValueStateSupport,
-	EventExtension,
 	Panel,
 	mobileLibrary,
 	KeyCodes,
@@ -477,8 +476,7 @@ sap.ui.define([
 
 	QUnit.test("General ARIA attributes", function (assert) {
 		//Arrange
-		var oObjectStatus = new ObjectStatus({text: "Success object status", state: ValueState.Success}),
-			oCore = sap.ui.getCore();
+		var oObjectStatus = new ObjectStatus({text: "Success object status", state: ValueState.Success});
 
 		oObjectStatus.placeAt("qunit-fixture");
 		oCore.applyChanges();

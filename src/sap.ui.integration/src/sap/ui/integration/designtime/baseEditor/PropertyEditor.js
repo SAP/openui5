@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/PropertyEditorFactory",
 	"sap/base/util/restricted/_merge",
 	"sap/base/util/restricted/_omit",
-	"sap/base/util/deepEqual",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepEqual"
 ], function (
 	Control,
 	findClosestInstance,
@@ -19,8 +18,7 @@ sap.ui.define([
 	PropertyEditorFactory,
 	_merge,
 	_omit,
-	deepEqual,
-	deepClone
+	deepEqual
 ) {
 	"use strict";
 

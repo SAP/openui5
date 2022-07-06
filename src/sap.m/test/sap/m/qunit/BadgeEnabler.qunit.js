@@ -4,13 +4,11 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/m/BadgeEnabler",
-	"sap/base/Log",
 	"sap/m/BadgeCustomData"
 ], function(
 	Control,
 	Core,
 	BadgeEnabler,
-	Log,
 	BadgeCustomData
 ){
 	"use strict";
@@ -22,12 +20,7 @@ sap.ui.define([
 		},
 		renderer: {
 			render: function(oRm, oControl) {
-				oRm.write("<div");
-				oRm.writeClasses();
-				oRm.writeControlData(oControl);
-				oRm.writeStyles();
-				oRm.write(">");
-				oRm.write("</div>");
+				oRm.openStart("div", oControl).openEnd().close("div");
 			}
 		}
 	});

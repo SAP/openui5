@@ -9,7 +9,6 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/Icon',
 	'./TokenRenderer',
-	'sap/ui/core/InvisibleText',
 	'sap/ui/events/KeyCodes',
 	'sap/ui/core/Core'
 ],
@@ -19,7 +18,6 @@ sap.ui.define([
 		coreLibrary,
 		Icon,
 		TokenRenderer,
-		InvisibleText,
 		KeyCodes,
 		Core
 	) {

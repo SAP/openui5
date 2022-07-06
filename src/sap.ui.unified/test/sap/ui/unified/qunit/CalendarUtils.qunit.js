@@ -125,7 +125,6 @@ sap.ui.define([
 
 	QUnit.module("getNumberOfWeeksForAYear()", {
 		beforeEach: function () {
-			this._oUI5Core = sap.ui.getCore();
 			this._oBigYears = {"en-US": [1972, 1977, 1983, 1988, 1994, 2000, 2005, 2011, 2016], "en-GB": [1970, 1976, 1981, 1987, 1992, 1998, 2004, 2009, 2015]};
 			this._oRegularYears = {"en-US": [1970, 1975, 1980, 1985, 1992, 1998, 2003, 2008, 2013], "en-GB": [1972, 1977, 1983, 1988, 1994, 2000, 2005, 2011, 2016]};
 		},
@@ -144,8 +143,8 @@ sap.ui.define([
 
 	QUnit.test("en-US locale", function (assert) {
 		//prepare
-		this._oUI5Core.getConfiguration().setFormatLocale('en-US');
-		this._oUI5Core.applyChanges();
+		oCore.getConfiguration().setFormatLocale('en-US');
+		oCore.applyChanges();
 		//act
 		this._oBigYears["en-US"].forEach(function (iYear) {
 			this._fnBigYearTest(iYear, assert);
@@ -157,8 +156,8 @@ sap.ui.define([
 
 	QUnit.test("en-GB locale", function (assert) {
 		//prepare
-		this._oUI5Core.getConfiguration().setFormatLocale('en-GB');
-		this._oUI5Core.applyChanges();
+		oCore.getConfiguration().setFormatLocale('en-GB');
+		oCore.applyChanges();
 		//act
 		this._oBigYears["en-GB"].forEach(function (iYear) {
 			this._fnBigYearTest(iYear, assert);

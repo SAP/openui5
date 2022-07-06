@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/base/Log",
 	"sap/base/util/each",
-	"sap/base/util/isEmptyObject",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/isEmptyObject"
 ], function(
 	BindingMode,
 	Context,
@@ -18,8 +17,7 @@ sap.ui.define([
 	Controller,
 	Log,
 	each,
-	isEmptyObject,
-	ObjectPath
+	isEmptyObject
 ) {
 	"use strict";
 

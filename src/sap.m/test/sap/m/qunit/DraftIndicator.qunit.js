@@ -1,10 +1,9 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/DraftIndicator",
 	"sap/ui/core/Core"
-], function(QUnitUtils, createAndAppendDiv, DraftIndicator, oCore) {
+], function(createAndAppendDiv, DraftIndicator, oCore) {
 	"use strict";
 
 	// prepare DOM
@@ -13,7 +12,6 @@ sap.ui.define([
 
 
 	var oBundle = oCore.getLibraryResourceBundle("sap.m");
-	var oCore = sap.ui.getCore();
 
 	QUnit.module("id");
 

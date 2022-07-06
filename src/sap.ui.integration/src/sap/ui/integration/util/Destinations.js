@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/base/Log",
-	"sap/base/util/deepExtend",
 	"sap/base/util/isPlainObject",
 	"sap/ui/integration/util/Utils"
 ], function (
 	BaseObject,
 	Log,
-	deepExtend,
 	isPlainObject,
 	Utils
 ) {

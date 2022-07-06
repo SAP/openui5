@@ -5,10 +5,9 @@
 sap.ui.define([
 	'sap/ui/core/Renderer',
 	'./InputBaseRenderer',
-	'sap/ui/Device',
 	'sap/ui/core/library'
 ],
-	function(Renderer, InputBaseRenderer, Device, coreLibrary) {
+	function(Renderer, InputBaseRenderer, coreLibrary) {
 	"use strict";
 
 

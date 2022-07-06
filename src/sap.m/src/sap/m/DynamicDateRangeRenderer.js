@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/m/InputBaseRenderer", 'sap/ui/core/Renderer'],
-	function(InputBaseRenderer, Renderer) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 	/**

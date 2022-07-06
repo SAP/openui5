@@ -18,7 +18,6 @@ sap.ui.define([
 	"sap/f/DynamicPageHeader",
 	"./DynamicPageRenderer",
 	"sap/base/Log",
-	"sap/ui/core/theming/Parameters",
 	'sap/ui/dom/units/Rem',
 	"sap/ui/core/library"
 ], function(
@@ -36,7 +35,6 @@ sap.ui.define([
 	DynamicPageHeader,
 	DynamicPageRenderer,
 	Log,
-	Parameters,
 	DomUnitsRem,
 	coreLibrary
 ) {

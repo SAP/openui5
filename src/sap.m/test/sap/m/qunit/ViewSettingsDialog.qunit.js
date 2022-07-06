@@ -560,8 +560,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("set dialog state via API", function (assert) {
-		var oCore = sap.ui.getCore();
-
 		/* set dialog state (solely by API instead of selected flag) */
 		this.oVSD.setTitle("TestTitle");
 		this.oVSD.setSelectedSortItem(this.oSelectedSortItem);

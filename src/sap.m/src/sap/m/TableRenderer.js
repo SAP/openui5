@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/InvisibleText", "./library", "./ListBaseRenderer", "./ColumnListItemRenderer", "sap/m/table/Util"],
-	function(Renderer, Core, InvisibleText, library, ListBaseRenderer, ColumnListItemRenderer, Util) {
+sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/InvisibleText", "./library", "./ListBaseRenderer", "./ColumnListItemRenderer"],
+	function(Renderer, Core, InvisibleText, library, ListBaseRenderer, ColumnListItemRenderer) {
 	"use strict";
 
 

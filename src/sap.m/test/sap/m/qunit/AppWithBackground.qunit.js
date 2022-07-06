@@ -1,12 +1,11 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/App",
 	"sap/m/Page",
 	"sap/ui/dom/includeStylesheet",
 	"require"
-], function(QUnitUtils, createAndAppendDiv, App, Page, includeStylesheet, require) {
+], function(createAndAppendDiv, App, Page, includeStylesheet, require) {
 	"use strict";
 
 	createAndAppendDiv("content");

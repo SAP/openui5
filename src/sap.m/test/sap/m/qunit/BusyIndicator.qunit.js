@@ -3,9 +3,8 @@
 sap.ui.define([
 	"sap/m/BusyIndicator",
 	"sap/ui/core/Core",
-	"sap/ui/core/Configuration",
-	"sap/ui/Device"
-], function (BusyIndicator, Core, Configuration, Device) {
+	"sap/ui/core/Configuration"
+], function (BusyIndicator, Core, Configuration) {
 	"use strict";
 
 	QUnit.module("sap.m.BusyIndicator API", {

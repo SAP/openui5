@@ -2,7 +2,6 @@
 sap.ui.define([
 	'sap/ui/qunit/QUnitUtils',
 	'sap/ui/qunit/utils/createAndAppendDiv',
-	'sap/ui/events/jquery/EventExtension',
 	'sap/m/App',
 	'sap/m/Page',
 	'sap/m/RatingIndicator',
@@ -13,7 +12,7 @@ sap.ui.define([
 	'sap/ui/dom/includeStylesheet',
 	'sap/ui/thirdparty/jquery',
 	'require'
-], function(qutils, createAndAppendDiv, EventExtension, App, Page, RatingIndicator, Core, IconPool, mobileLibrary,  KeyCodes, includeStylesheet, jQuery, require) {
+], function(qutils, createAndAppendDiv, App, Page, RatingIndicator, Core, IconPool, mobileLibrary,  KeyCodes, includeStylesheet, jQuery, require) {
 	"use strict";
 
 	createAndAppendDiv("content");

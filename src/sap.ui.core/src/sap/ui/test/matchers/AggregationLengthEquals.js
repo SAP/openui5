@@ -4,9 +4,8 @@
 
 sap.ui.define([
 	"sap/ui/test/matchers/Matcher",
-	"sap/base/strings/capitalize",
-	"sap/ui/thirdparty/jquery"
-], function (Matcher, capitalize, jQueryDOM) {
+	"sap/base/strings/capitalize"
+], function (Matcher, capitalize) {
 	"use strict";
 
 	/**

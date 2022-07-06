@@ -6,8 +6,7 @@
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
 sap.ui.define([
-	'sap/ui/Device'
-	], function (Device) {
+	], function () {
 	"use strict";
 
 	/**

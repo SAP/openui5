@@ -10,8 +10,6 @@ sap.ui.define([
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
-	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
@@ -26,8 +24,6 @@ sap.ui.define([
 	ItemNavigation,
 	coreLibrary,
 	Control,
-	containsOrEquals,
-	EventExtension,
 	KeyCodes,
 	oCore,
 	jQuery

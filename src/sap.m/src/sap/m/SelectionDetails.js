@@ -292,7 +292,7 @@ function(
 	 * @param {function} Button The constructor for sap.m.Button.
 	 * @private
 	 */
-	SelectionDetails.prototype._handleNavLazy = function(pageTitle, content, Page, Toolbar, ToolbarSpacer, Title, Button) {
+	SelectionDetails.prototype._handleNavLazy = function(pageTitle, content, Page, Toolbar, ToolbarSpacer, Title) {
 		var sPageId = this.getId() + "-page-for-" + content.getId() + "-uid-" + uid();
 
 		this._setPopoverHeight(SelectionDetails._POPOVER_MAX_HEIGHT);

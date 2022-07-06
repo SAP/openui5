@@ -30,7 +30,6 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dom/getFirstEditableInput",
-	"sap/ui/core/theming/Parameters",
 	'sap/ui/dom/units/Rem'
 ], function(
 	jQuery,
@@ -59,7 +58,6 @@ sap.ui.define([
 	merge,
 	KeyCodes,
 	getFirstEditableInput,
-	Parameters,
 	DomUnitsRem
 ) {
 	"use strict";

@@ -1,6 +1,5 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/base/util/merge",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
@@ -12,12 +11,10 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/m/Label",
 	"sap/ui/core/Item",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/m/MenuListItem",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/Core"
 ], function(
-	qutils,
 	merge,
 	Device,
 	jQuery,
@@ -29,7 +26,6 @@ sap.ui.define([
 	FilterOperator,
 	Label,
 	Item,
-	EventExtension,
 	MenuListItem,
 	CustomData,
 	oCore

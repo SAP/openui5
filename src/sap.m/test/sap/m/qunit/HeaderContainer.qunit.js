@@ -210,8 +210,6 @@ sap.ui.define([
 
 	QUnit.module("Scrolling", {
 		beforeEach: function () {
-			var oCore = sap.ui.getCore();
-
 			this.OFFSET = 10;
 			this.oItem1 = new FlexBox({
 				height: "120px",

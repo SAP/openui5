@@ -4,14 +4,10 @@
 
 sap.ui.define([
 	'./InputBase',
-	'./ComboBoxTextField',
 	'./ComboBoxBase',
 	'./Tokenizer',
 	'./Token',
-	'./List',
-	'./StandardListItem',
 	'./Popover',
-	'./GroupHeaderListItem',
 	'./CheckBox',
 	'./Toolbar',
 	'./library',
@@ -20,7 +16,6 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/ui/core/Item',
-	'sap/ui/core/SeparatorItem',
 	'sap/ui/core/ResizeHandler',
 	'./MultiComboBoxRenderer',
 	"sap/ui/dom/containsOrEquals",
@@ -30,8 +25,6 @@ sap.ui.define([
 	"sap/m/inputUtils/ListHelpers",
 	"sap/m/inputUtils/filterItems",
 	"sap/m/inputUtils/itemsVisibilityHandler",
-	"sap/m/inputUtils/selectionRange",
-	"sap/m/inputUtils/calculateSelectionStart",
 	"sap/m/inputUtils/forwardItemPropertiesToToken",
 	"sap/m/inputUtils/getTokenByItem",
 	"sap/ui/events/KeyCodes",
@@ -48,14 +41,10 @@ sap.ui.define([
 ],
 function(
 	InputBase,
-	ComboBoxTextField,
 	ComboBoxBase,
 	Tokenizer,
 	Token,
-	List,
-	StandardListItem,
 	Popover,
-	GroupHeaderListItem,
 	CheckBox,
 	Toolbar,
 	library,
@@ -64,7 +53,6 @@ function(
 	coreLibrary,
 	Device,
 	Item,
-	SeparatorItem,
 	ResizeHandler,
 	MultiComboBoxRenderer,
 	containsOrEquals,
@@ -74,8 +62,6 @@ function(
 	ListHelpers,
 	filterItems,
 	itemsVisibilityHandler,
-	selectionRange,
-	calculateSelectionStart,
 	forwardItemPropertiesToToken,
 	getTokenByItem,
 	KeyCodes,
@@ -3043,7 +3029,7 @@ function(
 	 * Map an item type of sap.ui.core.Item to an item type of sap.m.StandardListItem.
 	 *
 	 * @param {sap.ui.core.Item} oItem The item to be matched
-	 * @returns {sap.m.StandardListItem | GroupHeaderListItem | null} The matched StandardListItem
+	 * @returns {sap.m.StandardListItem | sap.m.GroupHeaderListItem | null} The matched StandardListItem
 	 * @private
 	 */
 	MultiComboBox.prototype._mapItemToListItem = function (oItem) {

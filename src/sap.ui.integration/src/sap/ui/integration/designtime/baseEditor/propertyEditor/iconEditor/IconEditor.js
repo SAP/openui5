@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/IconPool",
 	"sap/ui/base/BindingParser",
-	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString",
 	"./IsInIconPool.validator"
 ], function (
 	BasePropertyEditor,
@@ -21,7 +20,6 @@ sap.ui.define([
 	FilterOperator,
 	IconPool,
 	BindingParser,
-	isValidBindingString,
 	IsInIconPoolValidator
 ) {
 	"use strict";

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/LabelEnablement', 'sap/ui/Device'],
-	function(Renderer, Core, coreLibrary, ValueStateSupport, LabelEnablement, Device) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/Device'],
+	function(Renderer, Core, coreLibrary, ValueStateSupport, Device) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection

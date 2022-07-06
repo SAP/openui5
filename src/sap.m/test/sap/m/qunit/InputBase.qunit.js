@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/m/InputBaseRenderer",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Icon",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
@@ -39,7 +38,6 @@ sap.ui.define([
 	InputBaseRenderer,
 	Device,
 	ManagedObject,
-	Icon,
 	KeyCodes,
 	oCore
 ) {

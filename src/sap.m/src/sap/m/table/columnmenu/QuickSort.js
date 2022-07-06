@@ -3,10 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element",
 	"sap/m/table/columnmenu/QuickActionBase"
 ], function (
-	Element,
 	QuickActionBase
 ) {
 	"use strict";

@@ -1,13 +1,12 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/FormattedText",
 	"sap/m/Link",
 	"sap/base/Log",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
-], function(QUnitUtils, createAndAppendDiv, FormattedText, Link, Log, oCore, jQuery) {
+], function(createAndAppendDiv, FormattedText, Link, Log, oCore, jQuery) {
 	"use strict";
 
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);

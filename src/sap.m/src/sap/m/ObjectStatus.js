@@ -10,10 +10,9 @@ sap.ui.define([
 	'sap/ui/core/IndicationColorSupport',
 	'sap/ui/core/library',
 	'sap/ui/base/DataType',
-	'sap/ui/core/InvisibleText',
 	'./ObjectStatusRenderer'
 ],
-	function(library, Control, ValueStateSupport, IndicationColorSupport, coreLibrary, DataType, InvisibleText, ObjectStatusRenderer) {
+	function(library, Control, ValueStateSupport, IndicationColorSupport, coreLibrary, DataType, ObjectStatusRenderer) {
 	"use strict";
 
 

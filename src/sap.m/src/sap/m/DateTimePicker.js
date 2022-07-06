@@ -8,7 +8,6 @@ sap.ui.define([
 	'./InputBase',
 	'./DatePicker',
 	'sap/ui/model/type/Date',
-	'sap/ui/unified/DateRange',
 	'./library',
 	'sap/ui/core/library',
 	'sap/ui/core/Control',
@@ -23,7 +22,6 @@ sap.ui.define([
 	'./SegmentedButtonItem',
 	'./ResponsivePopover',
 	'./Button',
-	"sap/ui/events/KeyCodes",
 	"sap/ui/core/IconPool",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
@@ -32,7 +30,6 @@ sap.ui.define([
 	InputBase,
 	DatePicker,
 	Date1,
-	DateRange,
 	library,
 	coreLibrary,
 	Control,
@@ -47,7 +44,6 @@ sap.ui.define([
 	SegmentedButtonItem,
 	ResponsivePopover,
 	Button,
-	KeyCodes,
 	IconPool,
 	waitForThemeApplied
 ) {

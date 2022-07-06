@@ -9,9 +9,8 @@ sap.ui.define([
 	'sap/ui/core/support/controls/ObjectViewer',
 	'sap/ui/Device',
 	'sap/base/Log',
-	'sap/base/security/encodeXML',
 	'sap/ui/thirdparty/jquery'
-], function(Plugin, TreeViewer, ObjectViewer, Device, Log, encodeXML, $) {
+], function(Plugin, TreeViewer, ObjectViewer, Device, Log, $) {
 	"use strict";
 
 		/**

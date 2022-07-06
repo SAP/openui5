@@ -4,16 +4,12 @@
 
 sap.ui.define([
 	'sap/ui/base/EventProvider',
-	'sap/ui/core/date/UniversalDate',
 	'sap/ui/unified/calendar/CalendarUtils',
-	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/library'
 ],
 	function(
 		EventProvider,
-		UniversalDate,
 		CalendarUtils,
-		CalendarDate,
 		unifiedLibrary
 	) {
 		"use strict";

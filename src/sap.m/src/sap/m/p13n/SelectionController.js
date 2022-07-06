@@ -7,10 +7,9 @@ sap.ui.define([
     'sap/ui/base/Object',
     'sap/base/util/merge',
     'sap/base/util/deepEqual',
-    'sap/ui/model/json/JSONModel',
     'sap/m/p13n/SelectionPanel',
     'sap/m/p13n/modules/xConfigAPI'
-], function (diff, BaseObject, merge, deepEqual, JSONModel, SelectionPanel, xConfigAPI) {
+], function (diff, BaseObject, merge, deepEqual, SelectionPanel, xConfigAPI) {
 	"use strict";
 
     /**

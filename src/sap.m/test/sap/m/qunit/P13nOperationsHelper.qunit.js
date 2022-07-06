@@ -1,9 +1,7 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/m/P13nOperationsHelper"
 ], function(
-	qutils,
 	P13nOperationsHelper
 ) {
 	"use strict";

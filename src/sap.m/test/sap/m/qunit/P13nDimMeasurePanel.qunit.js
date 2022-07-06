@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/m/P13nItem",
 	"sap/m/P13nDimMeasureItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/core/Core",
 	"sap/base/util/deepExtend",
 	"sap/ui/thirdparty/jquery"
@@ -19,7 +18,6 @@ sap.ui.define([
 	P13nItem,
 	P13nDimMeasureItem,
 	JSONModel,
-	EventExtension,
 	oCore,
 	deepExtend,
 	jQuery

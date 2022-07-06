@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/ManagedObjectMetadata",
-	"sap/base/util/ObjectPath",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/core/util/XMLPreprocessor",
@@ -14,7 +13,6 @@ sap.ui.define([
 ], function(
 	ManagedObject,
 	ManagedObjectMetadata,
-	ObjectPath,
 	XMLHelper,
 	XMLTemplateProcessor,
 	XMLPreprocessor,

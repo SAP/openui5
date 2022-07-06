@@ -2,11 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/ui/integration/designtime/baseEditor/util/isValidBindingString"
+	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor"
 ], function (
-	BasePropertyEditor,
-	isValidBindingString
+	BasePropertyEditor
 ) {
 	"use strict";
 

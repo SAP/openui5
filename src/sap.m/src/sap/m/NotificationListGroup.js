@@ -7,26 +7,22 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'./NotificationListBase',
 	'sap/ui/core/InvisibleText',
-	'./ListItemBase',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/m/Button',
-	'./NotificationListGroupRenderer',
-	"sap/ui/events/KeyCodes"
+	'./NotificationListGroupRenderer'
 ],
 function(
 	library,
 	Core,
 	NotificationListBase,
 	InvisibleText,
-	ListItemBase,
 	IconPool,
 	coreLibrary,
 	Device,
 	Button,
-	NotificationListGroupRenderer,
-	KeyCodes
+	NotificationListGroupRenderer
 ) {
 	'use strict';
 

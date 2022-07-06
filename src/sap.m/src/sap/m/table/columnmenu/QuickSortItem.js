@@ -5,13 +5,11 @@
 sap.ui.define([
 	"./QuickActionItem",
 	"./QuickAction",
-	"sap/m/HBox",
 	"sap/m/ToggleButton",
 	"sap/ui/core/library"
 ], function (
 	QuickActionItem,
 	QuickAction,
-	HBox,
 	ToggleButton,
 	library
 ) {

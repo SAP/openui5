@@ -1,13 +1,11 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/f/routing/Router",
-	"sap/f/routing/TargetHandler",
 	"sap/m/NavContainer",
 	"sap/m/Page"
 ],
 function (
 	Router,
-	TargetHandler,
 	NavContainer,
 	Page
 ) {

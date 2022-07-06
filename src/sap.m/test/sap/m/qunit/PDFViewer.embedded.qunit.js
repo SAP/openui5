@@ -5,9 +5,8 @@ sap.ui.define([
 	"./PDFViewerTestUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/PDFViewerRenderer",
-	"sap/m/library",
-	"sap/ui/Device"
-], function (jQuery, TestUtils, JSONModel, PDFViewerRenderer, library, Device) {
+	"sap/m/library"
+], function (jQuery, TestUtils, JSONModel, PDFViewerRenderer, library) {
 	"use strict";
 
 	// shortcut for sap.m.PDFViewerDisplayType

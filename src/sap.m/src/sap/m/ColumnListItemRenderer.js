@@ -6,12 +6,11 @@ sap.ui.define([
 	"sap/ui/core/Renderer",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
-	"sap/ui/Device",
 	"sap/base/Log",
 	"./library",
 	"./ListItemBaseRenderer"
 ],
-	function(Renderer, coreLibrary, Core, Device, Log, library, ListItemBaseRenderer) {
+	function(Renderer, coreLibrary, Core, Log, library, ListItemBaseRenderer) {
 	"use strict";
 
 	// shortcut for sap.m.PopinDisplay

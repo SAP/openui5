@@ -5,17 +5,14 @@
 // Provides control sap.m.Table.
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/Device",
 	"./library",
 	"./ListBase",
 	"./ListItemBase",
 	"./CheckBox",
 	"./TableRenderer",
-	"sap/base/Log",
 	"sap/ui/base/Object",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/util/PasteHelper",
-	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ListBaseRenderer",
 	"sap/ui/core/Icon",
@@ -23,7 +20,7 @@ sap.ui.define([
 	// jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Selectors"
 ],
-	function(Core, Device, library, ListBase, ListItemBase, CheckBox, TableRenderer, Log, BaseObject, ResizeHandler, PasteHelper, KeyCodes, jQuery, ListBaseRenderer, Icon, Util) {
+	function(Core, library, ListBase, ListItemBase, CheckBox, TableRenderer, BaseObject, ResizeHandler, PasteHelper, jQuery, ListBaseRenderer, Icon, Util) {
 	"use strict";
 
 

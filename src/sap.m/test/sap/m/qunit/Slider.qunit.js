@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/m/SliderTooltipBase",
 	"sap/m/SliderTooltipBaseRenderer",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/InvisibleText",
 	"sap/ui/dom/includeStylesheet",
 	"sap/ui/thirdparty/jquery",
 	"require"
@@ -33,7 +32,6 @@ sap.ui.define([
 	SliderTooltipBase,
 	SliderTooltipBaseRenderer,
 	KeyCodes,
-	InvisibleText,
 	includeStylesheet,
 	jQuery,
 	require

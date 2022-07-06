@@ -7,12 +7,11 @@ sap.ui.define([
 	'./NavContainer',
 	'./library',
 	'./AppRenderer',
-	'sap/ui/base/DataType',
 	"sap/ui/util/Mobile",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(NavContainer, library, AppRenderer, DataType, Mobile, Log, jQuery) {
+	function(NavContainer, library, AppRenderer, Mobile, Log, jQuery) {
 
 	"use strict";
 

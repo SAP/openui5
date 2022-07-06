@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/Device",
 	"sap/ui/core/library",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
@@ -27,7 +26,6 @@ sap.ui.define([
 	Button,
 	Device,
 	coreLibrary,
-	EventExtension,
 	KeyCodes,
 	oCore
 ) {

@@ -2,12 +2,10 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Image",
-	"sap/m/FlexBox",
 	"sap/m/HBox"
 ], function (
 	createAndAppendDiv,
 	Image,
-	FlexBox,
 	HBox
 ) {
 	"use strict";

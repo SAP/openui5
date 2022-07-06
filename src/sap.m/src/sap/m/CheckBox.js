@@ -6,7 +6,6 @@
 sap.ui.define([
 	'./Label',
 	'./library',
-	'sap/ui/Device',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/library',
@@ -18,7 +17,6 @@ sap.ui.define([
 	function(
 		Label,
 		library,
-		Device,
 		Control,
 		EnabledPropagator,
 		coreLibrary,

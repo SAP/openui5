@@ -4,11 +4,9 @@
 
 sap.ui.define([
 	"sap/m/table/columnmenu/QuickActionBase",
-	"sap/m/HBox",
 	"sap/m/ToggleButton"
 ], function (
 	QuickActionBase,
-	HBox,
 	ToggleButton
 ) {
 	"use strict";

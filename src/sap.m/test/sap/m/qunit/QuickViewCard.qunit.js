@@ -1,7 +1,6 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/library",
 	"sap/m/App",
@@ -12,7 +11,6 @@ sap.ui.define([
 	"sap/m/QuickViewGroupElement",
 	"sap/ui/core/Core"
 ], function(
-	qutils,
 	JSONModel,
 	mobileLibrary,
 	App,

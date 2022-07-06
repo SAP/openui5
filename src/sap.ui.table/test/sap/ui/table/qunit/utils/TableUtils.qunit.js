@@ -1500,7 +1500,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("getContentDensity", function(assert) {
-		var oCore = sap.ui.getCore();
 		var oSecondLevel = new this.TableUtilsDummyControl({content: [this.oTable]});
 		var oFirstLevel = new this.TableUtilsDummyControl({content: [oSecondLevel]});
 		var $Body = jQuery(document.body);
@@ -1581,7 +1580,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("getContentDensity table in UI Area", function(assert) {
-		var oCore = sap.ui.getCore();
 		this.oTable.placeAt("__table-outer", 0);
 		oCore.applyChanges();
 		var $Body = jQuery(document.body);

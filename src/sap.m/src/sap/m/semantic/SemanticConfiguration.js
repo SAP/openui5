@@ -14,9 +14,8 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/m/library",
 	"sap/m/OverflowToolbarLayoutData",
-	"sap/ui/core/IconPool",
-	"sap/ui/core/InvisibleText"
-], function(BaseObject, library, OverflowToolbarLayoutData, IconPool, InvisibleText) {
+	"sap/ui/core/IconPool"
+], function(BaseObject, library, OverflowToolbarLayoutData, IconPool) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType

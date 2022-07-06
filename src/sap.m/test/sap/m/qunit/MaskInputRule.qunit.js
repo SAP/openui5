@@ -1,12 +1,11 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/MaskInputRule",
 	"sap/m/MaskInput",
 	"sap/base/Log",
 	"sap/ui/core/Core"
-], function(QUnitUtils, createAndAppendDiv, MaskInputRule, MaskInput, Log, oCore) {
+], function(createAndAppendDiv, MaskInputRule, MaskInput, Log, oCore) {
 	"use strict";
 
 	createAndAppendDiv("content");

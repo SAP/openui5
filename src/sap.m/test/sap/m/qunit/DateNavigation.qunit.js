@@ -1,12 +1,10 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	'sap/ui/unified/library',
 	"sap/m/delegate/DateNavigation",
 	"sap/ui/core/Core"
 ], function(
-	qutils,
 	unifiedLibrary,
 	DateNavigation,
 	oCore

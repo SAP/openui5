@@ -101,7 +101,6 @@ sap.ui.define([
 	// =========
 
 	QUnit.module("Properties");
-	var oCore = sap.ui.getCore();
 	var oDom;
 
 	QUnit.test("Default Values", function(assert) {
@@ -127,7 +126,7 @@ sap.ui.define([
 		assert.equal(oDom.textContent,"This is a simple Text.", "Displayed Text");
 		// test if text is escaped
 		t1.setText("~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>");
-		oCore.applyChanges();
+		Core.applyChanges();
 		oDom = document.getElementById('Text1');
 		assert.equal(jQuery(oDom).text(),"~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>", "Escaping HTML-Text");
 	});
@@ -141,7 +140,7 @@ sap.ui.define([
 		assert.equal(iLineHeight2, iLineHeight1 * 5, "Wrapping on => 5 Lines (lineheight: " + iLineHeight1 +")");
 		// test line height with wrapping off
 		t2.setWrapping(false);
-		oCore.applyChanges();
+		Core.applyChanges();
 		oDom = document.getElementById('Text2');
 		iLineHeight2 = oDom.clientHeight;
 		assert.equal(iLineHeight2, iLineHeight1 * 3, "Wrapping off => 3 Lines (lineheight: " + iLineHeight1 +")");
@@ -154,29 +153,29 @@ sap.ui.define([
 
 	QUnit.test("Text Align & RTL", function(assert) {
 		// default
-		oCore.applyChanges();
+		Core.applyChanges();
 		oDom = document.getElementById('Text1');
 		assert.equal(jQuery(oDom).css("text-align"),"left","Default (Begin) Text Align");
 		// right
 		t1.setTextAlign(TextAlign.Right);
-		oCore.applyChanges();
+		Core.applyChanges();
 		oDom = document.getElementById('Text1');
 		assert.equal(jQuery(oDom).css("text-align"),"right","Text Align Right");
 		// end
 		t1.setTextAlign(TextAlign.End);
-		oCore.applyChanges();
+		Core.applyChanges();
 		oDom = document.getElementById('Text1');
 		assert.equal(jQuery(oDom).css("text-align"),"right","Text Align End");
 		// RTL end
 		t1.setTextDirection(TextDirection.RTL);
-		oCore.applyChanges();
+		Core.applyChanges();
 		oDom = document.getElementById('Text1');
 		assert.equal(jQuery(oDom).css("text-align"),"left","Text Align End in RTL");
 		assert.equal(jQuery(oDom).attr("dir"),"rtl","Attribute 'dir' for Text Direction is set to RTL");
 
 		// RTL left
 		t1.setTextAlign(TextAlign.Left);
-		oCore.applyChanges();
+		Core.applyChanges();
 		oDom = document.getElementById('Text1');
 		assert.equal(jQuery(oDom).css("text-align"),"left","Text Align Left in RTL");
 		// reset
@@ -188,14 +187,14 @@ sap.ui.define([
 		assert.expect(2);
 		t1.setText(null);
 		try {
-			oCore.applyChanges();
+			Core.applyChanges();
 			oDom = document.getElementById('Text1');
 			assert.equal(oDom.textContent,"", "Null Text");
 		} catch (e) {
 			// do nothing but let "expect" raise an error
 		}
 		t1.setText("Hello World!");
-		oCore.applyChanges();
+		Core.applyChanges();
 		oDom = document.getElementById('Text1');
 		assert.equal(oDom.textContent,"Hello World!", "Text entered again");
 	});
@@ -237,7 +236,7 @@ sap.ui.define([
 
 		var t65 = new Text("Text65", {text: "{/text}", renderWhitespace: true}).setModel(oModel);
 		t65.placeAt("content65");
-		oCore.applyChanges();
+		Core.applyChanges();
 		assert.equal(countLines(t65), 2, "Text should be in 2 lines");
 	});
 
@@ -246,28 +245,28 @@ sap.ui.define([
 		var txt66 = "test\r\ntest\rtest\n\rtest";
 		var t66 = new Text("Text66", {text: txt66});
 		t66.placeAt("content66");
-		oCore.applyChanges();
+		Core.applyChanges();
 		assert.equal(countLines(t66), 4, "Text should be in 4 lines");
 
 		//test \n
 		var txt67 = "C:\Temp\next.exe";
 		var t67 = new Text("Text67", {text: txt67});
 		t67.placeAt("content67");
-		oCore.applyChanges();
+		Core.applyChanges();
 		assert.equal(countLines(t67), 2, "Text should be in 2 lines");
 
 		//test \\n
 		var txt68 = "C:\\Temp\\next.exe";
 		var t68 = new Text("Text68", {text: txt68});
 		t68.placeAt("content68");
-		oCore.applyChanges();
+		Core.applyChanges();
 		assert.equal(countLines(t68), 1, "Text should be in 1 line");
 
 		//test \n\n\n
 		var txt69 = "test\n\n\ntest";
 		var t69 = new Text("Text69", {text: txt69});
 		t69.placeAt("content69");
-		oCore.applyChanges();
+		Core.applyChanges();
 		assert.equal(countLines(t69), 4, "Text should be in 4 lines");
 	});
 
@@ -303,7 +302,7 @@ sap.ui.define([
 		}, t5);
 
 		t5.rerender();
-		oCore.applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(t5.$("inner").hasClass("sapMTextMaxLine"), true, "Text has correct class for synthetic MaxLine");
 
@@ -313,7 +312,7 @@ sap.ui.define([
 			assert.ok(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis) > -1, "Text includes ellipsis(" + t5.ellipsis + ")");
 
 			t5.setWidth(Math.pow(10, 5) + "px");
-			oCore.applyChanges();
+			Core.applyChanges();
 			assert.strictEqual(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis), -1, "Text does not include ellipsis.");
 
 			t5.$("inner").width("400px");	// change dom width
@@ -323,7 +322,7 @@ sap.ui.define([
 				assert.ok(t5.getDomRef("inner").textContent.indexOf(t5.ellipsis) > -1, "Text includes ellipsis (" + t5.ellipsis + ") after dom changed");
 
 				t5.setMaxLines(1);	// should use native textoverflow ellipsis
-				oCore.applyChanges();
+				Core.applyChanges();
 
 				assert.strictEqual(t5.$().hasClass("sapMTextMaxLine"), false, "For 1 MaxLine we do not have sapMTextMaxLine class");
 				assert.strictEqual(t5.$().hasClass("sapMTextNoWrap"), true, "For 1 MaxLine we have sapMTextNoWrap class");

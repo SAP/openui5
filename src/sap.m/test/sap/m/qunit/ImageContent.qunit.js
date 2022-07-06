@@ -2,9 +2,8 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ImageContent",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/core/Core"
-], function(jQuery, ImageContent, EventExtension, oCore) {
+], function(jQuery, ImageContent, oCore) {
 	"use strict";
 
 

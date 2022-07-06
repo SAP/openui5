@@ -2,10 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control",
 	"sap/f/cards/loading/ListPlaceholder",
 	"sap/ui/core/Core"
-], function (Control, ListPlaceholder, Core) {
+], function (ListPlaceholder, Core) {
 	"use strict";
 
 	/**

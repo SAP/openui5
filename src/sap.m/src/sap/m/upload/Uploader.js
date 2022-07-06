@@ -8,10 +8,9 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/util/File",
 	"sap/ui/Device",
-	"sap/ui/core/Item",
 	"sap/m/upload/UploadSetItem",
 	"sap/m/upload/UploaderHttpRequestMethod"
-], function (Log, MobileLibrary, Element, FileUtil, Device, HeaderField, UploadSetItem, UploaderHttpRequestMethod) {
+], function (Log, MobileLibrary, Element, FileUtil, Device, UploadSetItem, UploaderHttpRequestMethod) {
 	"use strict";
 
 	/**

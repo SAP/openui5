@@ -9,16 +9,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
-	"sap/m/Popover",
 	"sap/m/FacetFilterItem",
-	"sap/ui/core/IconPool",
-	"sap/m/Page",
-	"sap/m/ListItemBase",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/model/Sorter",
 	"sap/m/HBox",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/base/EventProvider",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
@@ -34,16 +28,10 @@ sap.ui.define([
 	JSONModel,
 	jQuery,
 	Device,
-	Popover,
 	FacetFilterItem,
-	IconPool,
-	Page,
-	ListItemBase,
-	EventExtension,
 	Sorter,
 	HBox,
 	InvisibleText,
-	EventProvider,
 	GroupHeaderListItem,
 	KeyCodes,
 	oCore,
@@ -807,7 +795,7 @@ sap.ui.define([
 	QUnit.test("Keyboard", function(assert) {
 
 		var oFF = createFF(oFF);
-		assert.ok(oFF.$().find(":sapTabbable").length == 4, "Total 4 tabble fields");
+		assert.ok(oFF.$().find(":sapTabbable").length == 4, "Total 4 tabbable fields");
 		var oEvent = new jQuery.Event();
 
 //home

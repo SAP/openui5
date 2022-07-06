@@ -1,6 +1,6 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitchItem", "sap/ui/qunit/QUnitUtils", "sap/ui/events/KeyCodes"],
-	function (Core, ProductSwitchItem, QUnitUtils, KeyCodes) {
+sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitchItem"],
+	function (Core, ProductSwitchItem) {
 		"use strict";
 
 		var TESTS_DOM_CONTAINER = "qunit-fixture",

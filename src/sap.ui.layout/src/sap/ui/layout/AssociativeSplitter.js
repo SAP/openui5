@@ -5,9 +5,8 @@
 sap.ui.define([
 	'./Splitter',
 	'./SplitterRenderer',
-	"sap/base/Log",
-	"sap/ui/layout/SplitterLayoutData"
-], function(Splitter, SplitterRenderer, Log, SplitterLayoutData) {
+	"sap/base/Log"
+], function(Splitter, SplitterRenderer, Log) {
 	"use strict";
 
 	/**

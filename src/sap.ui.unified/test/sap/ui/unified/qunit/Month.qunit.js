@@ -621,8 +621,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("Dummy cell has an accessible name", function (assert) {
-			var oCore = sap.ui.getCore();
-
 			this.oSut.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
@@ -632,8 +630,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("Selected state announcement", function (assert) {
-			var oCore = sap.ui.getCore();
-
 			this.oSut.placeAt("qunit-fixture");
 			oCore.applyChanges();
 			var oInvisibleMessageSpy = this.spy(this.oSut._oInvisibleMessage, "announce");

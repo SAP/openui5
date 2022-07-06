@@ -5,11 +5,10 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/FormattedText",
 	"sap/ui/core/Core",
-	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/jquery"
-], function(KeyCodes, MessageStrip, Link, FormattedText, Core, Device, JSONModel, qutils, jQuery) {
+], function(KeyCodes, MessageStrip, Link, FormattedText, Core, JSONModel, qutils, jQuery) {
 	"use strict";
 
 
@@ -496,9 +495,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("When we have a close button it should indicate that it closes a message strip", function (assert) {
-		var oCore = sap.ui.getCore();
 		assert.strictEqual(jQuery(CLASS_CLOSE_BUTTON).attr('title'),
-			oCore.getLibraryResourceBundle("sap.m").getText("MESSAGE_STRIP_TITLE"),
+			Core.getLibraryResourceBundle("sap.m").getText("MESSAGE_STRIP_TITLE"),
 			"the title of the close button should be set to 'Close'");
 	});
 

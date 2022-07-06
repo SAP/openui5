@@ -1,10 +1,9 @@
 /*global QUnit */
 sap.ui.define(
-	["sap/ui/qunit/QUnitUtils", "sap/m/CustomTile", "sap/m/TileContainer", "sap/m/library"],
-	function(QUnitUtils, CustomTile, TileContainer, mobileLibrary) {
+	["sap/ui/core/Core", "sap/m/CustomTile", "sap/m/TileContainer"],
+	function(oCore, CustomTile, TileContainer) {
 		"use strict";
 
-		var core = sap.ui.getCore();
 		QUnit.module("Dimensions");
 
 		QUnit.test('ShouldHaveAccessibilityAttributes', function (assert) {
@@ -15,7 +14,7 @@ sap.ui.define(
 
 			cnt.placeAt("qunit-fixture");
 			// Act
-			core.applyChanges();
+			oCore.applyChanges();
 			// Assert
 			assert.equal(sut.$().attr('role'), 'option', 'option, option; equal success');
 			assert.equal(sut.$().attr('aria-posinset'), 1, '1, 1; equal success');

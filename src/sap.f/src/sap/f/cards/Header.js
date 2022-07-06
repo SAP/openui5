@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Avatar",
 	"sap/f/cards/HeaderRenderer",
-	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleText"
 ], function (
 	BaseHeader,
@@ -17,7 +16,6 @@ sap.ui.define([
 	Text,
 	Avatar,
 	HeaderRenderer,
-	Core,
 	InvisibleText
 ) {
 	"use strict";

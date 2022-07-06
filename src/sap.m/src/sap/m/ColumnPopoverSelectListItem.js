@@ -2,14 +2,12 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/Core',
 	'./ColumnPopoverItem',
 	'sap/m/ToggleButton',
 	'sap/m/Button',
 	'sap/m/StandardListItem',
 	'sap/m/List'],
 	function(
-		Core,
 		ColumnPopoverItem,
 		ToggleButton,
 		Button,

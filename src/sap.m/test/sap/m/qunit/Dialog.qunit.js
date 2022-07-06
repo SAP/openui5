@@ -1,7 +1,6 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/base/Log",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/Device",
@@ -34,7 +33,6 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/ui/dom/units/Rem"
 ], function(
-	Log,
 	qutils,
 	createAndAppendDiv,
 	Device,

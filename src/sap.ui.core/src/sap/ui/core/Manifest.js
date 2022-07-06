@@ -14,8 +14,7 @@ sap.ui.define([
 	'sap/base/util/uid',
 	'sap/base/util/merge',
 	'sap/base/util/isPlainObject',
-	'sap/base/util/LoaderExtensions',
-	"sap/base/util/isEmptyObject"
+	'sap/base/util/LoaderExtensions'
 ],
 	function(
 		BaseObject,
@@ -28,8 +27,7 @@ sap.ui.define([
 		uid,
 		merge,
 		isPlainObject,
-		LoaderExtensions,
-		isEmptyObject
+		LoaderExtensions
 	) {
 	"use strict";
 

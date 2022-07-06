@@ -21,10 +21,9 @@ sap.ui.define([
 	"./library",
 	"sap/uxap/AnchorBarRenderer",
 	"sap/base/Log",
-	"sap/ui/events/KeyCodes",
 	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function (jQuery, Button, MenuButton, mobileLibrary, Toolbar, IconPool, Item, ResizeHandler,	ScrollEnablement,
-		HorizontalLayout, Device, CustomData, Control, HierarchicalSelect, library, AnchorBarRenderer, Log, KeyCodes) {
+		HorizontalLayout, Device, CustomData, Control, HierarchicalSelect, library, AnchorBarRenderer, Log) {
 	"use strict";
 
 	// shortcut for sap.m.SelectType

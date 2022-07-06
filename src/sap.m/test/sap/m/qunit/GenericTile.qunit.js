@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/m/FlexBox",
 	"sap/m/GenericTileRenderer",
 	"sap/m/library",
-	"sap/ui/core/library",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
@@ -28,8 +27,8 @@ sap.ui.define([
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
-			Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, coreLibrary, isEmptyObject, KeyCodes, oCore,GridContainerItemLayoutData,
-			GridContainerSettings,GridContainer,FormattedText,NewsContent,Parameters) {
+			Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes, oCore, GridContainerItemLayoutData,
+			GridContainerSettings, GridContainer, FormattedText, NewsContent, Parameters) {
 	"use strict";
 
 	// shortcut for sap.m.Size

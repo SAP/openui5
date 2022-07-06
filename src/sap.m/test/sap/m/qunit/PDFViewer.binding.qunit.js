@@ -3,9 +3,8 @@
 sap.ui.define([
 	"./PDFViewerTestUtils",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/PDFViewerRenderer",
-	"sap/ui/Device"
-], function (TestUtils, JSONModel, PDFViewerRenderer, Device) {
+	"sap/m/PDFViewerRenderer"
+], function (TestUtils, JSONModel, PDFViewerRenderer) {
 	"use strict";
 
 	var oPdfViewer = null;

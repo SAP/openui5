@@ -2,9 +2,8 @@
 sap.ui.define([
 	"./PDFViewerTestUtils",
 	"sap/m/PDFViewerRenderer",
-	"sap/ui/Device",
 	"sap/ui/core/Core"
-], function (TestUtils, PDFViewerRenderer, Device, oCore) {
+], function (TestUtils, PDFViewerRenderer, oCore) {
 	"use strict";
 
 	var oPDFViewer;

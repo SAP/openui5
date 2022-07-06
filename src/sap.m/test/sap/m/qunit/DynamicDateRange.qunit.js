@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/DynamicDateValueHelpUIType",
 	"sap/m/DynamicDateUtil",
 	"sap/ui/unified/DateRange",
+	"sap/ui/core/Core",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Icon",
 	"sap/m/Label",
@@ -17,14 +18,13 @@ sap.ui.define([
 	DynamicDateValueHelpUIType,
 	DynamicDateUtil,
 	DateRange,
+	oCore,
 	DateFormat,
 	Icon,
 	Label,
 	Device
 ) {
 	"use strict";
-
-	var oCore = sap.ui.getCore();
 
 	// shortcut for library resource bundle
 	var oRb = oCore.getLibraryResourceBundle("sap.m");

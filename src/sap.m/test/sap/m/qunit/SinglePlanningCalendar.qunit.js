@@ -2,7 +2,6 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/jquery",
-	"sap/m/library",
 	"sap/m/SinglePlanningCalendar",
 	"sap/m/SinglePlanningCalendarGrid",
 	"sap/m/SinglePlanningCalendarDayView",
@@ -20,12 +19,10 @@ sap.ui.define([
 	'sap/ui/events/KeyCodes',
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
-	"sap/ui/core/library",
 	"sap/ui/core/Core"
 ], function(
 	qutils,
 	jQuery,
-	mobileLibrary,
 	SinglePlanningCalendar,
 	SinglePlanningCalendarGrid,
 	SinglePlanningCalendarDayView,
@@ -43,7 +40,6 @@ sap.ui.define([
 	KeyCodes,
 	JSONModel,
 	Log,
-	coreLibrary,
 	oCore
 ) {
 	"use strict";

@@ -1,8 +1,7 @@
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/Controller",
 	'sap/f/library'
-], function (JSONModel, Controller, fioriLibrary) {
+], function (Controller, fioriLibrary) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.fiori2.controller.DetailDetail", {

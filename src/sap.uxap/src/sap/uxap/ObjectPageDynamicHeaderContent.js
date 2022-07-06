@@ -6,10 +6,9 @@
 sap.ui.define([
 	'./library',
 	"./ObjectPageDynamicHeaderContentRenderer",
-	"sap/base/Log",
 	"sap/f/DynamicPageHeader"
 ],
-	function(library, ObjectPageDynamicHeaderContentRenderer, Log, DynamicPageHeader) {
+	function(library, ObjectPageDynamicHeaderContentRenderer, DynamicPageHeader) {
 		"use strict";
 
 		/**

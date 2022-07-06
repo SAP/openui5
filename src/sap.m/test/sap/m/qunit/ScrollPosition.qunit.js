@@ -1,6 +1,5 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/base/Log",
 	"sap/ui/Device",
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Button"
 ], function(
-	qutils,
 	createAndAppendDiv,
 	Log,
 	Device,

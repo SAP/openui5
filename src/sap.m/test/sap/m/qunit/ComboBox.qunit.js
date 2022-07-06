@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/m/ComboBox",
 	"sap/m/ComboBoxTextField",
-	"sap/m/ComboBoxBase",
 	"sap/m/Label",
 	"sap/m/Select",
 	"sap/m/Link",
@@ -29,7 +28,6 @@ sap.ui.define([
 	"sap/m/InputBase",
 	'sap/ui/core/ValueStateSupport',
 	"sap/ui/core/library",
-	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/jquery/getSelectedText", // provides jQuery.fn.getSelectedText
@@ -39,7 +37,6 @@ sap.ui.define([
 	CustomData,
 	ComboBox,
 	ComboBoxTextField,
-	ComboBoxBase,
 	Label,
 	Select,
 	Link,
@@ -64,7 +61,6 @@ sap.ui.define([
 	InputBase,
 	ValueStateSupport,
 	coreLibrary,
-	ManagedObject,
 	oCore,
 	jQuery
 ) {

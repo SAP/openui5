@@ -3,14 +3,13 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/library",
 	"sap/m/Shell",
 	"sap/m/SplitApp",
 	"sap/m/Page",
 	"sap/ui/util/Mobile",
 	"sap/ui/core/Core"
-], function(qutils, createAndAppendDiv, jQuery, Parameters, coreLibrary, Shell, SplitApp, Page, Mobile, oCore) {
+], function(qutils, createAndAppendDiv, jQuery, coreLibrary, Shell, SplitApp, Page, Mobile, oCore) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel

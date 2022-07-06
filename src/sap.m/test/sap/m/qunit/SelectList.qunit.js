@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Select",
 	"sap/ui/model/Filter",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	qutils,
@@ -29,7 +28,6 @@ sap.ui.define([
 	JSONModel,
 	Select,
 	Filter,
-	EventExtension,
 	jQuery
 ) {
 	"use strict";

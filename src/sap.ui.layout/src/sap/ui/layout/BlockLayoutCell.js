@@ -7,10 +7,9 @@ sap.ui.define([
 	'./library',
 	"./BlockLayoutCellRenderer",
 	"sap/base/Log",
-	"./BlockLayoutCellData",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, library, BlockLayoutCellRenderer, Log, BlockLayoutCellData, jQuery) {
+	function(Control, library, BlockLayoutCellRenderer, Log, jQuery) {
 		"use strict";
 
 		/**

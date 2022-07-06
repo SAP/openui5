@@ -1,12 +1,11 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Page",
 	"sap/m/App",
 	"sap/m/Bar",
 	"sap/ui/core/Core"
-], function(QUnitUtils, createAndAppendDiv, Page, App, Bar, oCore) {
+], function(createAndAppendDiv, Page, App, Bar, oCore) {
 	"use strict";
 
 	createAndAppendDiv("page-content");

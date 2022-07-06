@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/m/P13nColumnsItem",
 	"sap/m/P13nItem",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -16,7 +15,6 @@ sap.ui.define([
 	P13nColumnsItem,
 	P13nItem,
 	JSONModel,
-	EventExtension,
 	oCore,
 	jQuery
 ) {

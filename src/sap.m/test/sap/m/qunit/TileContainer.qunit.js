@@ -26,7 +26,7 @@ sap.ui.define([
 	Tile,
 	includeStylesheet,
 	require,
-	oCore
+	core
 ) {
 	"use strict";
 
@@ -36,7 +36,6 @@ sap.ui.define([
 		url: require.toUrl("./TileContainer.qunit.css")
 	});
 
-	var core = sap.ui.getCore();
 	var delay = 500;
 
 	QUnit.test("ShouldRenderNiceHtml", function(assert) {
@@ -460,7 +459,7 @@ sap.ui.define([
 		this.sut.placeAt("qunit-fixture");
 
 		setTimeout(function() {
-			oCore.byId("third").focus();
+			core.byId("third").focus();
 			assert.equal(this.sut._iCurrentFocusIndex, 1, "currentFocusIndex is correct");
 			this.sut.destroy();
 			done();
@@ -479,7 +478,7 @@ sap.ui.define([
 			this.clean();
 		},
 		prepare : function() {
-			this.sOriginalTheme = oCore.getConfiguration().getTheme();
+			this.sOriginalTheme = core.getConfiguration().getTheme();
 			// SUT
 			this.sut = new TileContainer('testOrder', {
 				tiles: [
@@ -492,7 +491,7 @@ sap.ui.define([
 			this.sut.destroy();
 
 			return new Promise(function(resolve /*, reject*/) {
-				oCore.applyTheme(this.sOriginalTheme);
+				core.applyTheme(this.sOriginalTheme);
 				if (core.isThemeApplied()) {
 					resolve();
 				} else {
@@ -595,7 +594,7 @@ sap.ui.define([
 
 	QUnit.test('Tile dimension gets updated upon real theme change', function (assert) {
 		var done = assert.async();
-		this.callAndTest(oCore.applyTheme, ["sap_hcb"], assert).then(function() {
+		this.callAndTest(core.applyTheme, ["sap_hcb"], assert).then(function() {
 			done();
 		});
 	});
@@ -727,7 +726,7 @@ sap.ui.define([
 
 	QUnit.module("Data Binding", {
 		beforeEach: function () {
-			oCore.setModel(new JSONModel({
+			core.setModel(new JSONModel({
 				"TileCollection" : [
 					{
 						"icon" : "hint",
@@ -791,7 +790,7 @@ sap.ui.define([
 				]
 			});
 
-		oCore.setModel(newDataModel);
+		core.setModel(newDataModel);
 		//Assert
 		assert.strictEqual(fnDestroyTilesSpy.callCount, 1, "Tiles are destroyed when data model was updated");
 	});
@@ -804,7 +803,7 @@ sap.ui.define([
 
 			var newDataModel = new JSONModel({});
 
-			oCore.setModel(newDataModel);
+			core.setModel(newDataModel);
 
 			assert.strictEqual(this.oTileContainer._oPagesInfo.getCount(), 0, "There are no pages after the model was updated with empty data");
 
@@ -1003,7 +1002,7 @@ sap.ui.define([
 		jQuery("#uiArea2").css("height", "0px");
 
 		oSut.placeAt('uiArea2');
-		oCore.applyChanges();
+		core.applyChanges();
 
 		setTimeout(function () {
 			//Pre-assert
@@ -1015,7 +1014,7 @@ sap.ui.define([
 			});
 			jQuery("#uiArea2").width("515px"); //2 x 210px (12 rem + 2x8 margins + 2x1 borders. If changed in less, should be reflected here)
 			jQuery("#uiArea2").height("15rem"); //1 standard tile x 14 rem (if changed in less, should be reflected here)
-			oCore.applyChanges();
+			core.applyChanges();
 
 			//Assert
 			setTimeout(function () {
@@ -1043,7 +1042,7 @@ sap.ui.define([
 						new StandardTile("id4", {title: "fifth"}), new StandardTile("id5", {title: "sixth"})];
 			this.oSut = new TileContainer("TCPerformanceRocket", {tiles: aTiles});
 			this.oSut.placeAt('uiArea2');
-			oCore.applyChanges();
+			core.applyChanges();
 		},
 		afterEach: function() {
 			this.oSut.destroy();
@@ -1123,7 +1122,7 @@ sap.ui.define([
 
 
 		//Act
-		this.oSut.deleteTile(oCore.byId('id5')); //delete the six tile, now we have only 4 left
+		this.oSut.deleteTile(core.byId('id5')); //delete the six tile, now we have only 4 left
 		//Assert
 		assert.equal(this.oSut.$("cnt").children().length, 2, "Removing the last tile at the inactive page does not change the rendered tiles");
 		assert.equal(document.getElementById('id5'), null, "The last tile should not be part of the DOM");

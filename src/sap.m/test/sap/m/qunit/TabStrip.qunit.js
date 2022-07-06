@@ -37,8 +37,6 @@ sap.ui.define([
 
 
 
-	var oCore = sap.ui.getCore();
-
 	QUnit.module("API", {
 		beforeEach: function () {
 			this.sut = new TabStrip({

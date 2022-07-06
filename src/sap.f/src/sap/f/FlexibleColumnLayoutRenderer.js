@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/InvisibleText", "sap/ui/Device", "sap/m/library"],
-	function (InvisibleText, Device, mobileLibrary) {
+sap.ui.define(["sap/ui/Device", "sap/m/library"],
+	function (Device, mobileLibrary) {
 		"use strict";
 
 		var FCLRenderer = {

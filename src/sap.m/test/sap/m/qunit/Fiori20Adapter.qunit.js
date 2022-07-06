@@ -1,6 +1,5 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Fiori20Adapter",
 	"sap/m/Page",
@@ -22,7 +21,6 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Core"
 ], function(
-	qutils,
 	createAndAppendDiv,
 	Fiori20Adapter,
 	Page,

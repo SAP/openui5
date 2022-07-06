@@ -9,9 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/HTML",
-	"sap/ui/core/util/File",
 	"sap/m/library",
-	"sap/m/BusyIndicator",
 	"sap/m/Button",
 	"sap/m/CustomListItem",
 	"sap/m/Image",
@@ -21,8 +19,8 @@ sap.ui.define([
 	"sap/m/ProgressIndicator",
 	"sap/m/VBox",
 	"sap/m/HBox"
-], function (Log, CoreLibrary, Element, Icon, IconPool, HTML, FileUtil,
-			 MobileLibrary, BusyIndicator, Button, CustomListItem, Image, Input, Label, Link, ProgressIndicator, VBox,
+], function (Log, CoreLibrary, Element, Icon, IconPool, HTML,
+			 MobileLibrary, Button, CustomListItem, Image, Input, Label, Link, ProgressIndicator, VBox,
 			 HBox) {
 	"use strict";
 

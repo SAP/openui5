@@ -8,13 +8,12 @@ sap.ui.define([
 	'sap/ui/model/type/Date',
 	'sap/ui/model/odata/type/ODataType',
 	'sap/ui/core/format/DateFormat',
-	'./TimePickerSlidersRenderer',
 	'./TimePickerSlider',
+	'./TimePickerSlidersRenderer',
 	'./VisibleItem',
 	'sap/ui/core/LocaleData',
 	'sap/ui/Device',
 	'sap/ui/core/Locale',
-	'./TimePickerSlidersRenderer',
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
@@ -23,13 +22,12 @@ sap.ui.define([
 		SimpleDateType,
 		ODataType,
 		DateFormat,
-		SlidersRenderer,
 		TimePickerSlider,
+		TimePickerSlidersRenderer,
 		VisibleItem,
 		LocaleData,
 		Device,
 		Locale,
-		TimePickerSlidersRenderer,
 		jQuery
 	) {
 		"use strict";

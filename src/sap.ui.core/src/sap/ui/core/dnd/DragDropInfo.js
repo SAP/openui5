@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./DragInfo", "./DropInfo", "sap/ui/Device", "sap/base/Log"],
-	function(DragInfo, DropInfo, Device, Log) {
+sap.ui.define(["./DragInfo", "./DropInfo", "sap/base/Log"],
+	function(DragInfo, DropInfo, Log) {
 	"use strict";
 
 	/**

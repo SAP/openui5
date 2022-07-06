@@ -6,16 +6,12 @@ sap.ui.define([
 	"sap/ui/integration/cards/BaseContent",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/library",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
 	"sap/base/Log",
 	"sap/ui/model/Sorter"
 ], function (
 	BaseContent,
 	BindingResolver,
 	library,
-	Filter,
-	FilterOperator,
 	Log,
 	Sorter
 ) {

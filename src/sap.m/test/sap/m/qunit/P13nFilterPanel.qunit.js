@@ -1,6 +1,5 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/P13nFilterPanel",
 	"sap/ui/core/format/DateFormat",
@@ -8,12 +7,10 @@ sap.ui.define([
 	"sap/m/P13nItem",
 	"sap/m/P13nFilterItem",
 	"sap/m/library",
-	"sap/m/P13nOperationsHelper",
 	"sap/m/MessageStrip",
 	"sap/ui/core/Core",
 	"sap/base/util/deepExtend"
 ], function(
-	qutils,
 	createAndAppendDiv,
 	P13nFilterPanel,
 	DateFormat,
@@ -21,7 +18,6 @@ sap.ui.define([
 	P13nItem,
 	P13nFilterItem,
 	mobileLibrary,
-	P13nOperationsHelper,
 	MessageStrip,
 	oCore,
 	deepExtend

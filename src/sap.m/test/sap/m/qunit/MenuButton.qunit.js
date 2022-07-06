@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/m/Button",
 	"sap/m/Label",
-	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function(
@@ -36,7 +35,6 @@ sap.ui.define([
 	Popover,
 	Button,
 	Label,
-	Log,
 	KeyCodes,
 	oCore
 ) {

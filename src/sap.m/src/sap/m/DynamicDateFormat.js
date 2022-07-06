@@ -8,14 +8,11 @@ sap.ui.define([
 	'sap/ui/core/format/NumberFormat',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	"sap/base/Log",
 	"sap/base/util/deepExtend",
-	"sap/base/util/isEmptyObject",
-	"sap/ui/core/date/UniversalDateUtils",
 	"sap/ui/unified/calendar/CalendarUtils",
 	"./library"
 ],
-	function(DateFormat, NumberFormat, Locale, LocaleData, Log, deepExtend, isEmptyObject, UniversalDateUtils, CalendarUtils, library) {
+	function(DateFormat, NumberFormat, Locale, LocaleData, deepExtend, CalendarUtils, library) {
 		"use strict";
 
 		/**

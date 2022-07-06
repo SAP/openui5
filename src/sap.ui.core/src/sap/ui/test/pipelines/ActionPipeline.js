@@ -4,9 +4,8 @@
 
 sap.ui.define([
 	'sap/ui/base/Object',
-	'sap/ui/test/pipelines/PipelineFactory',
-	"sap/ui/thirdparty/jquery"
-], function(UI5Object, PipelineFactory, jQueryDOM) {
+	'sap/ui/test/pipelines/PipelineFactory'
+], function(UI5Object, PipelineFactory) {
 		"use strict";
 		var oPipelineFactory = new PipelineFactory({
 			name: "Action",

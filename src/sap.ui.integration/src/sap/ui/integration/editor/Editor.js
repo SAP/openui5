@@ -3,10 +3,8 @@
  */
 
 sap.ui.define([
-	"ui5loader",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
-	"sap/ui/core/Manifest",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
 	"sap/base/util/merge",
@@ -30,7 +28,6 @@ sap.ui.define([
 	"sap/ui/core/Popup",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/integration/editor/EditorResourceBundles",
-	"sap/ui/thirdparty/URI",
 	"sap/ui/dom/includeStylesheet",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/theming/Parameters",
@@ -50,10 +47,8 @@ sap.ui.define([
 	"sap/m/IconTabBar",
 	"sap/m/IconTabFilter"
 ], function (
-	ui5loader,
 	Control,
 	Core,
-	Manifest,
 	deepClone,
 	deepEqual,
 	merge,
@@ -77,7 +72,6 @@ sap.ui.define([
 	Popup,
 	ResourceBundle,
 	EditorResourceBundles,
-	URI,
 	includeStylesheet,
 	LoaderExtensions,
 	Parameters,
