@@ -1279,4 +1279,48 @@ function (
 		oSemanticPage.destroy();
 	});
 
+	QUnit.test("Share menu action button has correct tooltip", function(assert) {
+		// Arrange
+		var oSemanticPage = oFactory.getSemanticPage(),
+			oShareMenuButton = oSemanticPage._getShareMenu()._getShareMenuButton();
+
+		// Act
+		oUtil.renderObject(oSemanticPage);
+
+		// Assert
+		assert.strictEqual(oShareMenuButton._getTooltip(), "Share", "Share menu button has correct tooltip");
+
+		// Clean
+		oSemanticPage.destroy();
+	});
+
+	QUnit.test("Ctrl+Shift+S to open share action sheet", function(assert) {
+		var done = assert.async(),
+			oSemanticPageTitle,
+			oActionSheet;
+
+		// Arrange
+		this.oSemanticPage = oFactory.getSemanticPage();
+		oUtil.renderObject(this.oSemanticPage);
+		oSemanticPageTitle = this.oSemanticPage._getTitle();
+		oActionSheet = this.oSemanticPage._getActionSheet();
+
+		// Act
+		this.oSemanticPage.setPrintAction(new PrintAction());
+		this.oSemanticPage.setDiscussInJamAction(new DiscussInJamAction());
+
+		this.oSemanticPage.addDelegate({"onAfterRendering": function () {
+			// Act - QUtils.triggerKeyEvent does not dispatch this
+			oSemanticPageTitle.getDomRef().dispatchEvent(new KeyboardEvent("keydown", {
+				bubbles: true, key: "S", shiftKey: true, ctrlKey: true
+			}));
+
+			// Assert
+			assert.strictEqual(oActionSheet.isOpen(), true, "Share menu is shown");
+
+			// Clean up
+			this.oSemanticPage.destroy();
+			done();
+		}.bind(this)});
+	});
 });

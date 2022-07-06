@@ -3,6 +3,7 @@
  */
 sap.ui.define([
     "sap/ui/core/Control",
+    "sap/ui/core/Shortcut",
     "sap/f/library",
     "sap/f/DynamicPage",
     "sap/f/DynamicPageTitle",
@@ -16,6 +17,7 @@ sap.ui.define([
     "./SemanticPageRenderer"
 ], function(
     Control,
+	Shortcut,
 	library,
 	DynamicPage,
 	DynamicPageTitle,
@@ -1079,6 +1081,8 @@ sap.ui.define([
 	SemanticPage.prototype._getTitle = function () {
 		if (!this._oDynamicPageTitle) {
 			this._oDynamicPageTitle = this._getSemanticTitle()._getContainer();
+
+			Shortcut.register(this._oDynamicPageTitle, "Ctrl+Shift+S", this._openShareMenu.bind(this));
 		}
 
 		return this._oDynamicPageTitle;
@@ -1191,6 +1195,20 @@ sap.ui.define([
 
 			this._onAddAggregation(this._oSingleVisibleAction, sPlacement);
 			this._oSingleVisibleAction = null;
+		}
+	};
+
+	/**
+	* Opens the <code>sap.m.ActionSheet</code> container of <code>sap.m.SemanticShareMenu</code>.
+	*
+	* @private
+	*/
+	SemanticPage.prototype._openShareMenu = function () {
+		var oShareMenuButton = this._getShareMenu()._getShareMenuButton(),
+			oOverflowButton = this._getTitle().getAggregation("_actionsToolbar")._getOverflowButton();
+
+		if (oShareMenuButton.getVisible()) {
+			this._getActionSheet().openBy(!oShareMenuButton._bInOverflow ? oShareMenuButton : oOverflowButton);
 		}
 	};
 
