@@ -763,9 +763,6 @@ sap.ui.define([
 				// Assert
 				assert.equal(anchorBarStub.callCount, 1, "AnchorBar is scrolled");
 				assert.equal(anchorBarStub.args[0][0], sectionId, "AnchorBar scrolled to correct section");
-
-				// Clean up
-				done();
 			},
 			fnOnDomReady = function() {
 				oAnchorBar = oPage.getAggregation("_anchorBar");
@@ -774,6 +771,12 @@ sap.ui.define([
 				//act
 				oPage.scrollToSection(sectionId, 0, null, true);
 				oPage.getDomRef().style.width = 772	 + "px";
+				anchorBarStub.reset();
+				// synchronously call the resize listener to spped up the test
+				oAnchorBar._adjustSize({size: {width: 772}, oldSize: {width: 1000}});
+
+				// Clean up
+				done();
 			};
 
 		assert.expect(2);
