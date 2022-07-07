@@ -5,6 +5,8 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 	var oHost = new Host({
 		resolveDestination: function (sName) {
 			switch (sName) {
+				case "local":
+					return "./";
 				case "Northwind_V2":
 					return Promise.resolve("https://services.odata.org/V2/Northwind/Northwind.svc");
 				case "Northwind_V3":

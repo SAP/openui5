@@ -28,7 +28,7 @@
 					"value": "Card Sub Title"
 				},
 				"headericon": {
-					"src": "sap-icon://account"
+					"value": "sap-icon://account"
 				},
 				"maxItems": {
 					"value": 3

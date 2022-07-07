@@ -1,7 +1,7 @@
 {
 	"sap.app": {
 		"type": "card",
-		"id": "card.explorer.extension.getData"
+		"id": "card.explorer.designtime.validation"
 	},
 	"sap.card": {
 		"configuration": {

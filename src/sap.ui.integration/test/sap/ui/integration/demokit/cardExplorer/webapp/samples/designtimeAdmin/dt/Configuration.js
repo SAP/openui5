@@ -30,7 +30,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"allowDynamicValues": true
 					},
 					"headericon": {
-						"manifestpath": "/sap.card/configuration/parameters/headericon/src",
+						"manifestpath": "/sap.card/configuration/parameters/headericon/value",
 						"type": "string",
 						"label": "Card Icon",
 						"cols": 1,
