@@ -368,6 +368,7 @@ sap.ui.define([
 					assert.equal(oSerializeAndSaveSpy.callCount, 1, "serializeAndSave is called once");
 					assert.equal(oActivateStub.callCount, 1, "activate() method is called once");
 					assert.equal(oSerializeAndSaveSpy.calledBefore(oActivateStub), true, "serialize was called before activating the verison");
+					assert.equal(oSerializeAndSaveSpy.getCall(0).args[0], true, "serialize was called with bActivateVersion=true");
 					var oActivationCallPropertyBag = oActivateStub.getCall(0).args[0];
 					assert.equal(oActivationCallPropertyBag.control, this.oRta.getRootControlInstance(), "with the correct control");
 					assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
@@ -435,6 +436,26 @@ sap.ui.define([
 				}.bind(this));
 		});
 
+		QUnit.test("when save is called with bActivateVersion=true", function(assert) {
+			var oSaveStub = sandbox.stub().resolves();
+			this.oRta._oSerializer = {
+				saveCommands: oSaveStub
+			};
+			this.oRta._oToolbarControlsModel = new JSONModel({
+				translationEnabled: false
+			});
+			this.oRta._oVersionsModel = new JSONModel({
+				versioningEnabled: true,
+				displayedVersion: Version.Number.Draft
+			});
+
+			return this.oRta._serializeAndSave(true).then(function() {
+				assert.strictEqual(oSaveStub.callCount, 1, "save was triggered");
+				assert.strictEqual(oSaveStub.lastCall.args[0].saveAsDraft, true, "the draft flag is set to true");
+				assert.strictEqual(oSaveStub.lastCall.args[0].version, Version.Number.Draft, "the version is set correct");
+			});
+		});
+
 		QUnit.test("when save is called and layer is not customer", function(assert) {
 			var oSaveStub = sandbox.stub().resolves();
 			this.oRta._oSerializer = {
@@ -450,7 +471,7 @@ sap.ui.define([
 
 			return this.oRta._serializeAndSave().then(function() {
 				assert.strictEqual(oSaveStub.callCount, 1, "save was triggered");
-				assert.strictEqual(oSaveStub.lastCall.args[0], false, "the draft flag is set to false");
+				assert.strictEqual(oSaveStub.lastCall.args[0].saveAsDraft, false, "the draft flag is set to false");
 			});
 		});
 	});

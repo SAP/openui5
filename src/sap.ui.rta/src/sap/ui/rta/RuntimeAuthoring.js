@@ -907,13 +907,19 @@ sap.ui.define([
 			.then(fnCallback);
 	};
 
-	RuntimeAuthoring.prototype._serializeAndSave = function() {
+	RuntimeAuthoring.prototype._serializeAndSave = function(bActivateVersion) {
 		if (this.getShowToolbars()) {
 			this.bPersistedDataTranslatable = this._oToolbarControlsModel.getProperty("/translationEnabled");
 		}
-		// Save changes on the current layer and discard dirty changes on other layers
-		var bSaveAsDraft = this._oVersionsModel.getProperty("/versioningEnabled") && this.getLayer() === Layer.CUSTOMER;
-		return this._oSerializer.saveCommands(bSaveAsDraft, this.getLayer(), true);
+		var mPropertyBag = {
+			// Save changes on the current layer and discard dirty changes on other layers
+			saveAsDraft: this._oVersionsModel.getProperty("/versioningEnabled") && this.getLayer() === Layer.CUSTOMER,
+			layer: this.getLayer(),
+			removeOtherLayerChanges: true,
+			version: bActivateVersion ? this._oVersionsModel.getProperty("/displayedVersion") : undefined
+		};
+
+		return this._oSerializer.saveCommands(mPropertyBag);
 	};
 
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
@@ -959,7 +965,7 @@ sap.ui.define([
 		var sLayer = this.getLayer();
 		var oSelector = this.getRootControlInstance();
 		var sDisplayedVersion = this._oVersionsModel.getProperty("/displayedVersion");
-		return this._serializeAndSave()
+		return this._serializeAndSave(true)
 		.then(function () {
 			return VersionsAPI.activate({
 				layer: sLayer,
