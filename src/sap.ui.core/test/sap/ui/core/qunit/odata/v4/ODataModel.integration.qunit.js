@@ -1995,7 +1995,7 @@ sap.ui.define([
 		 */
 		setInvalidBudgetCurrency : function (assert, sModelBudgetCurrency) {
 			var oInput = this.oView.byId("budgetCurrency"),
-				sMessage = "Enter a text with a maximum of 5 characters and spaces";
+				sMessage = "EnterTextMaxLength 5";
 
 			this.expectMessages([{
 					message : sMessage,
@@ -2005,9 +2005,11 @@ sap.ui.define([
 					type : "Error"
 				}]);
 
-			// Note: Because the invalid value has to be set via control, changes for that control
-			// cannot be observed via expectChange
-			oInput.setValue("INVALID");
+			TestUtils.withNormalizedMessages(function () {
+				// Note: Because the invalid value has to be set via control, changes for that
+				// control cannot be observed via expectChange
+				oInput.setValue("INVALID");
+			});
 
 			assert.strictEqual(oInput.getValue(), "INVALID");
 			assert.strictEqual(oInput.getBinding("value").getValue(),
@@ -22894,7 +22896,7 @@ sap.ui.define([
 			return that.waitForChanges(assert, "items for draft");
 		}).then(function () {
 			var oActivationAction,
-				sMessage = "Enter a text with a maximum of 255 characters and spaces",
+				sMessage = "EnterTextMaxLength 255",
 				sValue = "*".repeat(256);
 
 			if (!bCancel) {
@@ -23039,9 +23041,11 @@ sap.ui.define([
 					type : "Error"
 				}]);
 
-			// Note: Because the invalid value has to be set via control, changes for that
-			// control cannot be observed via expectChange
-			oInput.setValue(sValue);
+			TestUtils.withNormalizedMessages(function () {
+				// Note: Because the invalid value has to be set via control, changes for that
+				// control cannot be observed via expectChange
+				oInput.setValue(sValue);
+			});
 
 			assert.strictEqual(oInput.getValue(), sValue);
 			assert.strictEqual(oInput.getBinding("value").getValue(), "Missy Eliot");
@@ -28070,18 +28074,19 @@ sap.ui.define([
 			assert.strictEqual(oControl.getValue(), "0.00000 KG");
 
 			that.expectMessages([{
-					message : "Enter a number with a maximum of 5 decimal places",
+					message : "EnterNumberFraction 5",
 					target : oControl.getId() + "/value",
 					type : "Error"
 				}]);
 
-			// code under test
-			oControl.setValue("12.123456 KG");
+			TestUtils.withNormalizedMessages(function () {
+				// code under test
+				oControl.setValue("12.123456 KG");
+			});
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			return that.checkValueState(assert, oControl, "Error",
-				"Enter a number with a maximum of 5 decimal places");
+			return that.checkValueState(assert, oControl, "Error", "EnterNumberFraction 5");
 		});
 	});
 
@@ -39560,14 +39565,16 @@ sap.ui.define([
 			oInput = oTable.getRows()[0].getCells()[1];
 
 			that.expectMessages([{
-					message : "Enter a number",
+					message : "EnterNumber",
 					targets : [
 						oInput.getId() + "/value"
 					],
 					type : "Error"
 				}]);
 
-			oInput.setValue("INVALID");
+			TestUtils.withNormalizedMessages(function () {
+				oInput.setValue("INVALID");
+			});
 
 			// code under test
 			assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
@@ -39584,7 +39591,7 @@ sap.ui.define([
 			]);
 
 			return Promise.all([
-				that.checkValueState(assert, oInput, "Error", "Enter a number"),
+				that.checkValueState(assert, oInput, "Error", "EnterNumber"),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
