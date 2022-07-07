@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -24,6 +25,7 @@ sap.ui.define([
 	ManifestUtils,
 	ChangesController,
 	CompVariantState,
+	VariantManagementState,
 	FlexObjectState,
 	SessionStorageConnector,
 	ChangePersistenceFactory,
@@ -305,6 +307,65 @@ sap.ui.define([
 			.then(function (aFlexObjects) {
 				assert.equal(aFlexObjects.length, 3, "an array with three entries is returned");
 			});
+		});
+
+		QUnit.test("when flex objects for the current variant are requested", function(assert) {
+			var sPersistencyKey = "persistency.key";
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+			var oChangeOnVariant1 = new Change({
+				selector: {},
+				changeType: "renameField",
+				layer: Layer.USER,
+				variantReference: "variant1"
+			});
+			var oChangeOnVariant2 = new Change({
+				selector: {},
+				changeType: "addGroup",
+				layer: Layer.USER,
+				variantReference: "variant2"
+			});
+			var oVariantIndependentChange = new Change({
+				selector: {},
+				changeType: "addGroup",
+				layer: Layer.USER,
+				variantReference: ""
+			});
+			sandbox.stub(oChangePersistence, "getChangesForComponent").resolves([oChangeOnVariant1, oChangeOnVariant2, oVariantIndependentChange]);
+			FlexState.setInitialNonFlCompVariantData(sReference, sPersistencyKey,
+				{
+					executeOnSelection: false,
+					id: "*standard*",
+					name: "Standard"
+				},
+				[{
+					favorite: true,
+					id: "#PS1",
+					name: "EntityType"
+				}]
+			);
+			sandbox.stub(VariantManagementState, "getVariantManagementReferences").returns(["variantReference1"]);
+			sandbox.stub(this.appComponent, "getModel").returns({
+				getCurrentVariantReference: function(sVariantManagementReference) {
+					if (sVariantManagementReference === "variantReference1") {
+						return "variant1";
+					}
+					if (sVariantManagementReference === "variantReference2") {
+						return "variant2";
+					}
+					return undefined;
+				}
+			});
+
+			return FlexObjectState.getFlexObjects({
+				selector: this.appComponent,
+				invalidateCache: true,
+				onlyCurrentVariants: true
+			})
+				.then(function (aFlexObjects) {
+					assert.notOk(aFlexObjects.includes(oChangeOnVariant2), "then flex objects with different variant references are filtered");
+					assert.ok(aFlexObjects.includes(oVariantIndependentChange), "then variant independent flex objects are not filtered");
+					assert.strictEqual(aFlexObjects.length, 4, "then comp variants are not filtered");
+				});
 		});
 
 		[true, false].forEach(function(bIncludeDirtyChanges) {
