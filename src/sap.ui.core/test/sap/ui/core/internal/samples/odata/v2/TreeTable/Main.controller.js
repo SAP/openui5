@@ -39,9 +39,18 @@ sap.ui.define([
 				oModel = oView.getModel(),
 				oUiModel = oView.getModel("ui"),
 				iExpandedLevels = oUiModel.getProperty("/expandedLevels"),
-				oTable = oView.byId("treetable");
+				oTable = oView.byId("treetable"),
+				oRowsBinding = oTable.getBinding("rows");
 
 			oTable.unbindRows();
+			if (oRowsBinding) {
+				// workaround: change listener should be removed before unbindRows, but not all
+				// change listeners are automatically removed, that means the binding stays in the
+				// list of active bindings in the model. Detaching the change handler at this point,
+				// when the event listener map is already cleared, also removes the binding from the
+				// models list of active bindings
+				oRowsBinding.detachChange(this.onCheckPendingChanges, this);
+			}
 
 			oModel.setRefreshAfterChange(oUiModel.getProperty("/refreshAfterChange"));
 
@@ -62,11 +71,20 @@ sap.ui.define([
 					treeAnnotationProperties : undefined
 				}
 			});
+			oTable.getBinding("rows").attachChange(this.onCheckPendingChanges, this);
 			oUiModel.setProperty("/tableBound", true);
 		},
 
 		onCancelCreateItem : function () {
 			this.getView().byId("createItem").close();
+		},
+
+		onCheckPendingChanges : function () {
+			var oView = this.getView(),
+				oModel = oView.getModel(),
+				oUiModel = oView.getModel("ui");
+
+			oUiModel.setProperty("/pendingChanges", oModel.hasPendingChanges());
 		},
 
 		onCloseMessageDetails : function (oEvent) {
@@ -163,6 +181,10 @@ sap.ui.define([
 				: [], FilterType.Application);
 		},
 
+		onInit : function () {
+			this.getView().getModel().attachPropertyChange(this.onCheckPendingChanges.bind(this));
+		},
+
 		onInsertFromClipboard : function (oEvent) {
 			var oNewParentContext,
 				oClipboardEntry = oEvent.getParameter("selectedContexts")[0].getProperty(""),
@@ -195,6 +217,10 @@ sap.ui.define([
 
 		onRefresh : function () {
 			this.getView().byId("treetable").getBinding("rows").refresh();
+		},
+
+		onReset : function () {
+			this.getView().getModel().resetChanges();
 		},
 
 		onRowSelection : function () {

@@ -6278,6 +6278,9 @@ sap.ui.define([
 	 * taken into account. If <code>bAll</code> is set, also deferred requests triggered through
 	 * {@link #create}, {@link #update} or {@link #remove} are taken into account.
 	 *
+	 * With a given <code>aPath</code> only specified entities are reset. Note that tree hierarchy
+	 * changes are only affected if a given path is equal to its resolved binding path.
+	 *
 	 * If <code>bDeleteCreatedEntities</code> is set, the entity is completely removed, provided it
 	 * has been created
 	 * <ul>
@@ -6353,6 +6356,11 @@ sap.ui.define([
 					oChangedEntity.__metadata.created && bDeleteCreatedEntities);
 			});
 		}
+		this.getBindings().forEach(function (oBinding) {
+			if (oBinding._resetChanges) {
+				oBinding._resetChanges(aPath);
+			}
+		});
 		this.checkUpdate(true);
 
 		return pMetaDataLoaded;

@@ -3,10 +3,11 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/model/ChangeReason",
 	"sap/ui/model/TreeBinding",
 	"sap/ui/model/odata/ODataTreeBindingFlat",
 	"sap/ui/test/TestUtils"
-], function (Log, TreeBinding, ODataTreeBindingFlat, TestUtils) {
+], function (Log, ChangeReason, TreeBinding, ODataTreeBindingFlat, TestUtils) {
 	/*global QUnit,sinon*/
 	"use strict";
 
@@ -914,4 +915,265 @@ sap.ui.define([
 			node7 : null
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_resetChanges: unresolved binding", function (assert) {
+		var oBinding = {getResolvedPath : function () {}};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+
+		// code under test
+		ODataTreeBindingFlat.prototype._resetChanges.call(oBinding);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_resetChanges: binding has no changes", function (assert) {
+		var oBinding = {
+				_aAllChangedNodes : [],
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~path");
+
+		// code under test
+		ODataTreeBindingFlat.prototype._resetChanges.call(oBinding);
+	});
+
+	//*********************************************************************************************
+["~someBindingPath", "~path/to/entity", "entity/to/~path"].forEach(function (sPath, i) {
+	QUnit.test("_resetChanges: aPaths doesn't match binding #" + i, function (assert) {
+		var oBinding = {
+				_aAllChangedNodes : ["~change"],
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~path");
+
+		// code under test
+		ODataTreeBindingFlat.prototype._resetChanges.call(oBinding, [sPath]);
+	});
+});
+
+	//*********************************************************************************************
+[undefined, ["foo", "~path", "bar"]].forEach(function (aPaths) {
+	QUnit.test("_resetChanges: " + (aPaths ? "with" : "without") + " aPaths", function (assert) {
+		var oBinding = {
+				_aAdded : ["~change0", "~change1"],
+				_aAllChangedNodes : ["~change0", "~change1", "~change2", "~change3"],
+				_aRemoved : ["~change2", "~change3"],
+				_cleanTreeStateMaps : function () {},
+				_fireChange : function () {},
+				getResolvedPath : function () {}
+			},
+			oTreeBindingFlatMock = this.mock(ODataTreeBindingFlat);
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~path");
+		oTreeBindingFlatMock.expects("_resetMovedOrRemovedNode").withExactArgs("~change2");
+		oTreeBindingFlatMock.expects("_resetMovedOrRemovedNode").withExactArgs("~change3");
+		oTreeBindingFlatMock.expects("_resetParentState").withExactArgs("~change0");
+		oTreeBindingFlatMock.expects("_resetParentState").withExactArgs("~change1");
+		this.mock(oBinding).expects("_cleanTreeStateMaps").withExactArgs();
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Change});
+
+		// code under test
+		ODataTreeBindingFlat.prototype._resetChanges.call(oBinding, aPaths);
+
+		assert.deepEqual(oBinding._mSubtreeHandles, {});
+		assert.deepEqual(oBinding._aAdded, []);
+		assert.deepEqual(oBinding._aRemoved, []);
+		assert.deepEqual(oBinding._aAllChangedNodes, []);
+		assert.deepEqual(oBinding._aNodeCache, []);
+	});
+});
+
+	//*********************************************************************************************
+[{
+	inputNode : {foo : "bar", parent : null},
+	expectedResult : {foo : "bar", parent : null}
+}, {
+	inputNode : {foo : "bar", parent : {initiallyIsLeaf : false}},
+	expectedResult : {foo : "bar", parent : {initiallyIsLeaf : false, addedSubtrees : []}}
+}, {
+	inputNode : {foo : "bar", parent : {initiallyIsLeaf : true, nodeState : {}}},
+	expectedResult : {
+		foo : "bar",
+		parent : {
+			initiallyIsLeaf : true,
+			addedSubtrees : [],
+			nodeState : {collapsed : false, expanded : false, isLeaf : true}
+		}
+	}
+}].forEach(function (oFixture, i) {
+	QUnit.test("_resetParentState: #" + i, function (assert) {
+		// code under test
+		ODataTreeBindingFlat._resetParentState(oFixture.inputNode);
+
+		assert.deepEqual(oFixture.inputNode, oFixture.expectedResult);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_resetMovedOrRemovedNode", function (assert) {
+		var oNode = {
+				containingSubtreeHandle : "~containingSubtreeHandle",
+				level : "~level",
+				nodeState : {reinserted : "~reinserted", removed : "~removed"},
+				originalLevel : "~originalLevel",
+				originalParent : "~originalParent",
+				parent : "~parent"
+			};
+
+		this.mock(ODataTreeBindingFlat).expects("_resetParentState")
+			.withExactArgs(sinon.match.same(oNode));
+
+		// code under test
+		ODataTreeBindingFlat._resetMovedOrRemovedNode(oNode);
+
+		assert.deepEqual(oNode, {
+			level : "~originalLevel",
+			nodeState : {},
+			originalLevel : "~originalLevel",
+			originalParent : "~originalParent",
+			parent : "~originalParent"
+		});
+	});
+
+	//*********************************************************************************************
+["leaf", "collapsed"].forEach(function (sDrillState) {
+	var sTitle = "_addServerIndexNodes: node has initiallyIsLeaf (drill state = " + sDrillState
+			+ ")";
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = {
+				_iLowestServerLevel : null,
+				_aNodes : [],
+				_mSelected : {},
+				oModel : {
+					getContext : function () {},
+					getKey : function () {}
+				},
+				oTreeProperties : {
+					"hierarchy-drill-state-for" : "drillStateFor",
+					"hierarchy-level-for" : "levelFor",
+					"hierarchy-node-descendant-count-for" : "nodeDescendantCountFor"
+				}
+			},
+			oData = {
+				__count : "1",
+				results : [{
+					drillStateFor : sDrillState,
+					levelFor : "~level",
+					nodeDescendantCountFor : "~magnitude"
+				}]
+			},
+			oExpectedNode = {
+				addedSubtrees : [],
+				children : [],
+				context : "~context",
+				initiallyCollapsed : false,
+				initiallyIsLeaf : false,
+				isDeepOne : false,
+				key : "~key",
+				level : "~level",
+				magnitude : "~magnitude",
+				nodeState : {
+					collapsed : false,
+					expanded : false,
+					isLeaf : false,
+					selected : false
+				},
+				originalLevel : "~level",
+				originalParent  : null,
+				parent : null,
+				serverIndex : 0
+			};
+
+		if (sDrillState === "leaf") {
+			oExpectedNode.initiallyIsLeaf = true;
+			oExpectedNode.nodeState.isLeaf = true;
+		} else if (sDrillState === "collapsed") {
+			oExpectedNode.initiallyCollapsed = true;
+			oExpectedNode.nodeState.collapsed = true;
+		}
+
+		this.mock(oBinding.oModel).expects("getKey")
+			.withExactArgs(sinon.match.same(oData.results[0]))
+			.returns("~key");
+		this.mock(oBinding.oModel).expects("getContext").withExactArgs("/~key").returns("~context");
+
+		// code under test
+		ODataTreeBindingFlat.prototype._addServerIndexNodes.call(oBinding, oData, 0);
+
+		assert.strictEqual(oBinding._bLengthFinal, true);
+		assert.deepEqual(oBinding._aNodes, [oExpectedNode]);
+		assert.strictEqual(oBinding._iLowestServerLevel, "~level");
+	});
+});
+
+	//*********************************************************************************************
+["leaf", "collapsed"].forEach(function (sDrillState) {
+	var sTitle = "_createChildNode: node has initiallyIsLeaf (drill state = " + sDrillState + ")";
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding = {
+				_mSelected : {},
+				oModel : {
+					getContext : function () {},
+					getKey : function () {}
+				},
+				oTreeProperties : {
+					"hierarchy-drill-state-for" : "drillStateFor"
+				}
+			},
+			oEntry = {drillStateFor : sDrillState},
+			oParent = {
+				children : [],
+				level : 3,
+				serverIndex : "~serverIndex"
+			},
+			oExpectedNode = {
+				addedSubtrees : [],
+				children : [],
+				containingServerIndex : "~serverIndex",
+				context : "~context",
+				initiallyCollapsed : false,
+				initiallyIsLeaf : false,
+				isDeepOne : true,
+				key : "~key",
+				level : 4,
+				magnitude : 0,
+				nodeState : {
+					collapsed : false,
+					expanded : false,
+					isLeaf : false,
+					selected : false
+				},
+				originalLevel : 4,
+				originalParent : oParent,
+				parent : oParent,
+				positionInParent : 42
+			},
+			oResult;
+
+		if (sDrillState === "leaf") {
+			oExpectedNode.initiallyIsLeaf = true;
+			oExpectedNode.nodeState.isLeaf = true;
+		} else if (sDrillState === "collapsed") {
+			oExpectedNode.initiallyCollapsed = true;
+			oExpectedNode.nodeState.collapsed = true;
+		}
+
+		this.mock(oBinding.oModel).expects("getKey")
+			.withExactArgs(sinon.match.same(oEntry))
+			.returns("~key");
+		this.mock(oBinding.oModel).expects("getContext").withExactArgs("/~key").returns("~context");
+
+		// code under test
+		oResult = ODataTreeBindingFlat.prototype._createChildNode.call(oBinding, oEntry, oParent,
+			42);
+
+		assert.deepEqual(oResult, oExpectedNode);
+		assert.strictEqual(oResult, oParent.children[42]);
+	});
+});
 });

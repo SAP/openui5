@@ -16744,13 +16744,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
-	// Scenario: ODataModel#hasPendingChanges and ODataModel#getPendingChanges works also if there
-	// is a table using ODataTreeBindingFlat. This test case covers scenarios with added and removed
-	// nodes and also the special case of a cancelled creation.
+	// Scenario: ODataModel#hasPendingChanges, ODataModel#getPendingChanges and
+	// ODataModel#resetChanges work also if there is a table using ODataTreeBindingFlat. These APIs
+	// properly handle added, moved and removed nodes and also the special case of a cancelled
+	// creation.
 	// JIRA: CPOUI5MODELS-977
-	QUnit.test("ODataModel#hasPendingChanges|#getPendingChanges: works also if ODataTreeBindingFlat"
-			+ " is used (added, removed, cancelled creation)", function (assert) {
-		var oBinding, oCreatedContext, sKey, oPendingChanges, oTable,
+	QUnit.test("ODataModel#hasPendingChanges|#getPendingChanges|#resetChanges: works also if "
+			+ "ODataTreeBindingFlat is used", function (assert) {
+		var oBinding, oCancelledContext, sKey, oPendingChanges, oTable,
 			oModel = createHierarchyMaintenanceModel(),
 			oNode100 = {
 				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='100')"},
@@ -16836,14 +16837,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oExpectedEntry;
+			var oCreatedContext, oExpectedEntry;
 
 			assert.strictEqual(oModel.hasPendingChanges(), false);
 			assert.deepEqual(oModel.getPendingChanges(), {});
 
 			that.expectValue("itemName", ["qux", "bar", "baz"], 1);
 
-			// code under test: added node
+			// code under test: add node
 			oCreatedContext = oBinding.createEntry({properties : {ErhaOrderItemName : "qux"}});
 			oBinding.addContexts(oTable.getContextByIndex(0), [oCreatedContext]);
 
@@ -16861,14 +16862,39 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		}).then(function () {
 			that.expectValue("itemName", ["bar", "baz", ""], 1);
 
-			// code under test: cancelled creation
-			oBinding.removeContext(oCreatedContext);
+			// code under test: reset added node
+			oModel.resetChanges();
 
 			assert.strictEqual(oModel.hasPendingChanges(), false);
 			assert.deepEqual(oModel.getPendingChanges(), {});
 
-			// code under test: no request as created entry has been removed again
-			oModel.submitChanges();
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oMovedContext = oTable.getContextByIndex(2);
+
+			that.expectValue("itemName", "", 2);
+
+			// code under test: move node
+			oBinding.removeContext(oMovedContext);
+			oBinding.addContexts(oTable.getContextByIndex(1), [oMovedContext]);
+
+			assert.strictEqual(oModel.hasPendingChanges(), true);
+			oPendingChanges = oModel.getPendingChanges();
+			assert.notDeepEqual(oPendingChanges, {});
+			for (sKey in oPendingChanges) {
+				assert.strictEqual("/" + sKey, oMovedContext.getPath());
+				assert.deepEqual(oPendingChanges[sKey], {HierarchyParentNode : "200"});
+			}
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("itemName", "baz", 2);
+
+			// code under test: reset moved node
+			oModel.resetChanges();
+
+			assert.strictEqual(oModel.hasPendingChanges(), false);
+			assert.deepEqual(oModel.getPendingChanges(), {});
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -16888,120 +16914,37 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}
 
 			return that.waitForChanges(assert);
-		});
-	});
-
-	//*********************************************************************************************
-	// Scenario: ODataModel#hasPendingChanges and ODataModel#getPendingChanges works also if there
-	// is a table using ODataTreeBindingFlat. This test case covers scenarios with moved nodes.
-	// JIRA: CPOUI5MODELS-977
-	QUnit.test("ODataModel#hasPendingChanges|#getPendingChanges: works also if ODataTreeBindingFlat"
-			+ " is used (moved)", function (assert) {
-		var oBinding, oTable,
-			oModel = createHierarchyMaintenanceModel(),
-			oNode100 = {
-				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='100')"},
-				ErhaOrder : "1",
-				ErhaOrderItem : "100",
-				ErhaOrderItemName : "foo",
-				HierarchyNode : "100",
-				HierarchyParentNode : "",
-				HierarchyDescendantCount : 0,
-				HierarchyDistanceFromRoot : 0,
-				HierarchyDrillState : "collapsed",
-				HierarchyPreorderRank : 0,
-				HierarchySiblingRank : 0
-			},
-			oNode200 = {
-				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
-				ErhaOrder : "1",
-				ErhaOrderItem : "200",
-				ErhaOrderItemName : "bar",
-				HierarchyNode : "200",
-				HierarchyParentNode : "100",
-				HierarchyDescendantCount : 0,
-				HierarchyDistanceFromRoot : 1,
-				HierarchyDrillState : "leaf",
-				HierarchyPreorderRank : 0,
-				HierarchySiblingRank : 0
-			},
-			oNode300 = {
-				__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"},
-				ErhaOrder : "1",
-				ErhaOrderItem : "300",
-				ErhaOrderItemName : "baz",
-				HierarchyNode : "300",
-				HierarchyParentNode : "100",
-				HierarchyDescendantCount : 0,
-				HierarchyDistanceFromRoot : 1,
-				HierarchyDrillState : "leaf",
-				HierarchyPreorderRank : 1,
-				HierarchySiblingRank : 1
-			},
-			sView = '\
-<t:TreeTable id="table"\
-		rows="{\
-			parameters : {\
-				countMode : \'Inline\',\
-				numberOfExpandedLevels : 0,\
-				restoreTreeStateAfterChange : true\
-			},\
-			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
-		}"\
-		visibleRowCount="4"\
-		visibleRowCountMode="Fixed">\
-	<Text id="itemName" text="{ErhaOrderItemName}" />\
-</t:TreeTable>',
-			that = this;
-
-		this.expectHeadRequest()
-			.expectRequest({
-				batchNo : 1,
-				requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
-					+ "&$filter=HierarchyDistanceFromRoot%20le%200"
-			}, {
-				__count : "1",
-				results : [oNode100]
-			})
-			.expectValue("itemName", ["foo", "", "", ""]);
-
-		return this.createView(assert, sView, oModel).then(function () {
-			oTable = that.oView.byId("table");
-			oBinding = oTable.getBinding("rows");
-
-			that.expectRequest({
-					batchNo : 2,
-					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
-						+ "&$filter=HierarchyParentNode%20eq%20%27100%27"
-				}, {
-					__count : "2",
-					results : [oNode200, oNode300]
-				})
-				.expectValue("itemName", ["bar", "baz"], 1);
-
-			oTable.expand(0);
-
-			return that.waitForChanges(assert);
 		}).then(function () {
-			var sKey, oPendingChanges,
-				oContext = oTable.getContextByIndex(2);
+			that.expectValue("itemName", "baz", 2);
+
+			// code under test: reset removed node
+			oModel.resetChanges();
 
 			assert.strictEqual(oModel.hasPendingChanges(), false);
 			assert.deepEqual(oModel.getPendingChanges(), {});
 
-			that.expectValue("itemName", "", 2);
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("itemName", ["qux2", "bar", "baz"], 1);
 
-			// code under test: move node
-			oBinding.removeContext(oContext);
-			oBinding.addContexts(oTable.getContextByIndex(1), [oContext]);
+			// code under test: cancelled creation (add)
+			oCancelledContext = oBinding.createEntry({properties : {ErhaOrderItemName : "qux2"}});
+			oBinding.addContexts(oTable.getContextByIndex(0), [oCancelledContext]);
 
-			assert.strictEqual(oModel.hasPendingChanges(), true);
-			oPendingChanges = oModel.getPendingChanges();
-			assert.notDeepEqual(oPendingChanges, {});
-			for (sKey in oPendingChanges) {
-				assert.strictEqual("/" + sKey, oContext.getPath());
-				assert.deepEqual(oPendingChanges[sKey], {HierarchyParentNode : "200"});
-			}
+			// #hasPendingChanges and #getPendingChanges tested in "added case"
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("itemName", ["bar", "baz", ""], 1);
+
+			// code under test: cancelled creation (remove)
+			oBinding.removeContext(oCancelledContext);
+
+			assert.strictEqual(oModel.hasPendingChanges(), false);
+			assert.deepEqual(oModel.getPendingChanges(), {});
+
+			// code under test: no request as created entry has been removed again
+			oModel.submitChanges();
 
 			return that.waitForChanges(assert);
 		});
