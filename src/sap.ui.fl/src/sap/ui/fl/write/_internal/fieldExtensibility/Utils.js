@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @param {object} oXHR - request object
 	 * @returns {array} errorMessages
 	 */
-	 function _getMessagesFromXHR(oXHR) {
+	function _getMessagesFromXHR(oXHR) {
 		var aMessages = [];
 
 		try {
@@ -52,12 +52,23 @@ sap.ui.define([
 		return aMessages;
 	}
 
+	/**
+	 * Get binding path of a given control. In case of SmartTable or SmartFilterBar the target entity set is relevant.
+	 *
+	 * @private
+	 * @param {sap.ui.base.ManagedObject} oControl - Control to add extensions
+	 * @param {string} sBindingPath - binding path of control resp. target entity set
+	 * @returns {string} sBindingPath - binding path resp. target entity set of control or <code>null</code>
+	 */
 	function _getBindingPath(oControl) {
-		var sBindingPath = null;
-		var oBindingContext = oControl.getBindingContext ? oControl.getBindingContext() : null;
+		var sBindingPath = oControl.getEntitySet ? oControl.getEntitySet() : null;
 
-		if (oBindingContext && oBindingContext.getPath) {
-			sBindingPath = oBindingContext.getPath();
+		if (!sBindingPath) {
+			var oBindingContext = oControl.getBindingContext ? oControl.getBindingContext() : null;
+
+			if (oBindingContext && oBindingContext.getPath) {
+				sBindingPath = oBindingContext.getPath();
+			}
 		}
 
 		if (!sBindingPath) {
@@ -90,7 +101,7 @@ sap.ui.define([
 	 * @param {string} sBindingPath - binding path of control
 	 * @returns {Promise<string>} Resolves with the entity set name to which the control is bound or <code>null</code>
 	 */
-	 function _getBoundEntitySetFromV4Model(oModel, sBindingPath) {
+	function _getBoundEntitySetFromV4Model(oModel, sBindingPath) {
 		var oMetaModel = oModel.getMetaModel();
 		var sMetaPath = oMetaModel.getMetaPath(sBindingPath);
 
@@ -128,7 +139,7 @@ sap.ui.define([
 	 * @param {string} sBindingPath - binding path of control
 	 * @returns {Promise<string>} Resolves with the entity type name to which the control is bound or <code>null</code>
 	 */
-	 function _getBoundEntityTypeFromV4Model(oModel, sBindingPath) {
+	function _getBoundEntityTypeFromV4Model(oModel, sBindingPath) {
 		var oMetaModel = oModel.getMetaModel();
 		var sMetaPath = oMetaModel.getMetaPath(sBindingPath);
 
