@@ -2642,6 +2642,98 @@ sap.ui.define([
 										key: 'i18n.properties'
 									}
 								]
+							},
+							/*{
+								title: 'Separate Config to JSON',
+								key: 'designtimeSepareteConfigToJSON',
+								files: [
+									{
+										url: '/samples/designtimeSepareteConfigToJSON/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimeSepareteConfigToJSON/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimeSepareteConfigToJSON/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									},
+									{
+										url: '/samples/designtimeSepareteConfigToJSON/DataExtensionImpl.js',
+										name: 'DataExtensionImpl.js',
+										key: 'DataExtensionImpl.js'
+									},
+									{
+										url: '/samples/designtimeSepareteConfigToJSON/locations.xml',
+										name: 'locations.xml',
+										key: 'locations.xml'
+									},
+									{
+										url: '/samples/designtimeSepareteConfigToJSON/dt/items1.json',
+										name: 'dt/items1.json',
+										key: 'items1.json'
+									},
+									{
+										url: '/samples/designtimeSepareteConfigToJSON/dt/items2.json',
+										name: 'dt/items2.json',
+										key: 'items2.json'
+									},
+									{
+										url: '/samples/designtimeSepareteConfigToJSON/dt/Functions.js',
+										name: 'dt/Functions.js',
+										key: 'Functions.js'
+									}
+								]
+							},*/
+							{
+								title: 'Separate Configuration',
+								key: 'designtimeSepareteConfigToJS',
+								files: [
+									{
+										url: '/samples/designtimeSepareteConfigToJS/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimeSepareteConfigToJS/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimeSepareteConfigToJS/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									},
+									{
+										url: '/samples/designtimeSepareteConfigToJS/DataExtensionImpl.js',
+										name: 'DataExtensionImpl.js',
+										key: 'DataExtensionImpl.js'
+									},
+									{
+										url: '/samples/designtimeSepareteConfigToJS/locations.xml',
+										name: 'locations.xml',
+										key: 'locations.xml'
+									},
+									{
+										url: '/samples/designtimeSepareteConfigToJS/dt/Items1.js',
+										name: 'dt/Items1.js',
+										key: 'Items1.js'
+									},
+									{
+										url: '/samples/designtimeSepareteConfigToJS/dt/Items2.js',
+										name: 'dt/Items2.js',
+										key: 'Items2.js'
+									},
+									{
+										url: '/samples/designtimeSepareteConfigToJS/dt/Functions.js',
+										name: 'dt/Functions.js',
+										key: 'Functions.js'
+									}
+								]
 							}
 						]
 					}

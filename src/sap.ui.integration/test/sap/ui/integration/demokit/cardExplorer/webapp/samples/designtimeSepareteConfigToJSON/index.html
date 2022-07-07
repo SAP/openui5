@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Layout in Card Editor</title>
+	<script src="../../../../../../../../../resources/sap-ui-integration.js" id="sap-ui-bootstrap"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-theme="sap_fiori_3" data-sap-ui-oninit="init" data-sap-ui-resourceroots='{"testjs":"../"}'></script>
+	<script src="../editorOutput.js"></script>
+	<script>
+		function init() {
+			sap.ui.require(["testjs/genericHost", "sap-ui-integration-editor"], function () {
+				customElements.whenDefined("ui-integration-card").then(function () {
+					document.getElementById("card").setAttribute("host", "host");
+				});
+
+				sap.ui.require(["sap/m/Button", "sap/m/Dialog", "sap/ui/integration/designtime/editor/CardEditor"], function (Button, Dialog, CardEditor) {
+					var oButton = new Button({
+						text: "Layout Samples in Designtime",
+						press: function () {
+							var oDialog = new Dialog({
+								title: "Layout Samples",
+								horizontalScrolling: false,
+								beginButton: new Button({
+									type: "Emphasized",
+									text: "OK",
+									press: function () {
+										sap.m.MessageToast.show("Apply settings");
+										document.getElementById("card")._getControl().setManifestChanges([oEditor.getCurrentSettings()]);
+										oDialog.close();
+									}
+								}),
+								endButton: new Button({
+									text: "Close",
+									press: function () {
+										oDialog.close();
+									}
+								})
+							});
+							var oEditor = new CardEditor({
+								card: document.getElementById("card")._getControl(),
+								mode: "admin"
+							});
+							oDialog.addContent(oEditor);
+							oDialog.open();
+						}
+					});
+					oButton.placeAt("buttons");
+				});
+			});
+		}
+
+	</script>
+</head>
+
+<body class="sapUiBody sapUiSizeCompact" style="margin:3rem;width:calc(100% - 6rem)">
+	<div id="content">
+		<ui-integration-card id="card" manifest="./manifest.json">
+		</ui-integration-card>
+
+	</div>
+	<div id="buttons" style="margin:1rem">
+
+	</div>
+</body>
+
+
+</html>

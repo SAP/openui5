@@ -16,14 +16,7 @@ sap.ui.define([
 				title: 'Create a Configuration',
 				icon: 'sap-icon://create-form',
 				target: 'designtime',
-				key: 'create',
-				items: [
-					{
-						title: 'Separate the Configuration',
-						target: 'designtime',
-						key: 'separate'
-					}
-				]
+				key: 'create'
 			},
 			{
 				title: 'Configurations and API',
@@ -54,7 +47,20 @@ sap.ui.define([
 				icon: 'sap-icon://popup-window',
 				target: 'designtime',
 				key: 'playground'
-			}
+			}/*,
+			{
+				title: 'Advanced',
+				icon: 'sap-icon://create-form',
+				target: 'designtime',
+				key: 'advanced',
+				items: [
+					{
+						title: 'Separate the Configuration',
+						target: 'designtime',
+						key: 'separate'
+					}
+				]
+			}*/
 		]
 	});
 });

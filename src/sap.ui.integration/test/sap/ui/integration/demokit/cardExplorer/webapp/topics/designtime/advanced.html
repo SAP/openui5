@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Advanced Usage</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1>Advanced Usage</h1>
+			<h2 id="overview">
+				Overview
+			</h2>
+			<p>
+				A new configuration module will be used to configure and implement functionality used in the <strong>Configuration
+					Editor</strong>. The Configuration Editor is launched by the host environment for the different personas and
+				uses your configuration module to create the user interface.
+			</p>
+
+			<h2 id="dest">Add Destinations for Data Sources in the Card Manifest</h2>
+			<p>
+				Administrators using your card, should be able to influence the runtime URL for data sources. This can
+				be achieved by adding a destination to the configuration section of the manifest. This destination can be
+				connected by the Administrator using the Configuration
+				Editor of the card.<br> Add a label that is translatable to the setting for better usability.
+			</p>
+			<pre class="lang-json">
+"sap.card": {
+	"configuration": {
+		"destinations": {
+			"destinationName": {
+				"defaultUrl": "https://testurl.test",
+				"label": "{{TRANSLATABLE_LABEL}}"
+			}
+		}
+	}
+}</pre>
+
+			<h2 id="createfile">Create a Configuration Module and Register it in the Card Manifest</h2>
+			<p>
+				Advanced design-time configuration and implementation should happen outside the manifest of the card.
+				With that, design-time code will not harm or influence the runtime or the card instance for the end-user.
+
+				<br> Create a folder "dt" besides the manifest.json to store all configuration related artifacts. Create
+				a designtime.js file in this new folder.<br> Add the following initial module setup into the js file.
+			</p>
+			<pre class="lang-js">
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
+	"use strict";
+	return function () {
+		return new Designtime({
+			"form": {
+				"items": {
+					// here goes the configuration
+				}
+			},
+			"preview": {
+				"modes": "Abstract"
+			}
+		});
+	};
+});
+</pre>
+			<p>
+				Similar to a Card Extension, the configuration module is registered in the manifest. As soon as the Configuration
+				Editor is launched.
+			</p>
+
+			<pre class="lang-json">
+"sap.card": {
+	"configuration": {​​​​​
+		"editor": "dt/configuration"
+	}​​​​​​​​​​​​​​​​​​​
+}
+</pre>
+			<p>
+				The Configuration Editor configuration that is returned in the object 
+			<code>form.items</code> of your configuration file will contain the field definitions
+			that should be shown in the editor. Those are described in detail in the
+			<a href="../../index.html#/designtime/api" target="_parent">API section</a>.
+			</p>
+		</div>
+
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#dest">Add destinations</a></div>
+			<div><a href="#createfile">Create a Configuration File</a></div>
+		</div>
+	</div>
+</body>
+
+</html>
