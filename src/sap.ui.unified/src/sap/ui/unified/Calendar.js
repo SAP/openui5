@@ -1511,11 +1511,12 @@ sap.ui.define([
 		}
 		var oSecondaryYears = this._getDisplayedSecondaryYears();
 		if (oSecondaryYears.start.getYear() === oSecondaryYears.end.getYear()) {
-			this._updateHeadersYearAdditionalText(this._oYearFormatSecondary.format(oSecondaryYears.start.toLocalJSDate()));
+			this._updateHeadersYearAdditionalText(this._oYearFormatSecondary.format(oSecondaryYears.start.toUTCJSDate(), true));
 		} else {
 			var oLocaleData = this._getLocaleData();
 			var sPattern = oLocaleData.getIntervalPattern();
-			var sSecondaryMonthInfo = sPattern.replace(/\{0\}/, this._oYearFormatSecondary.format(oSecondaryYears.start.toLocalJSDate())).replace(/\{1\}/, this._oYearFormatSecondary.format(oSecondaryYears.end.toLocalJSDate()));
+			var sSecondaryMonthInfo = sPattern.replace(/\{0\}/, this._oYearFormatSecondary.format(oSecondaryYears.start.toUTCJSDate(), true))
+				.replace(/\{1\}/, this._oYearFormatSecondary.format(oSecondaryYears.end.toUTCJSDate(), true));
 			this._updateHeadersYearAdditionalText(sSecondaryMonthInfo);
 		}
 	};

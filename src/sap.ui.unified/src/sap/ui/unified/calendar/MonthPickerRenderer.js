@@ -37,7 +37,7 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate", 'sap/ui/core/format/DateF
 			sSecondaryType = oMP._getSecondaryCalendarType(),
 			oPrimaryYearFormat = DateFormat.getDateInstance({format: "y", calendarType: oMP.getPrimaryCalendarType()}),
 			iYear = oMP._iYear ? oMP._iYear : new Date().getFullYear(),
-			sPrimaryCalTypeFormattedYear = oPrimaryYearFormat.format(new Date(iYear, 0, 1)),
+			sPrimaryCalTypeFormattedYear = oPrimaryYearFormat.format(new Date(Date.UTC(iYear, 0, 1)), true),
 			i,
 			bApplySelection,
 			bApplySelectionBetween;
@@ -141,11 +141,12 @@ sap.ui.define(["sap/ui/unified/calendar/CalendarDate", 'sap/ui/core/format/DateF
 
 				if (oSecondaryMonths.start.getMonth() === oSecondaryMonths.end.getMonth()) {
 					sSecondaryMonthInfo = aMonthNamesSecondary[oSecondaryMonths.start.getMonth()];
-					sSecondaryYearInfo = oSecondaryYearFormat.format(oSecondaryMonths.start.toLocalJSDate());
+					sSecondaryYearInfo = oSecondaryYearFormat.format(oSecondaryMonths.start.toUTCJSDate(), true);
 				} else {
 					sPattern = oLocaleData.getIntervalPattern();
 					sSecondaryMonthInfo = sPattern.replace(/\{0\}/, aMonthNamesSecondary[oSecondaryMonths.start.getMonth()]).replace(/\{1\}/, aMonthNamesSecondary[oSecondaryMonths.end.getMonth()]);
-					sSecondaryYearInfo = sPattern.replace(/\{0\}/, oSecondaryYearFormat.format(oSecondaryMonths.start.toLocalJSDate())).replace(/\{1\}/, oSecondaryYearFormat.format(oSecondaryMonths.end.toLocalJSDate()));
+					sSecondaryYearInfo = sPattern.replace(/\{0\}/, oSecondaryYearFormat.format(oSecondaryMonths.start.toUTCJSDate(), true))
+						.replace(/\{1\}/, oSecondaryYearFormat.format(oSecondaryMonths.end.toUTCJSDate(), true));
 				}
 				mAccProps["label"] = mAccProps["label"] + " " + sSecondaryMonthInfo + " " + sSecondaryYearInfo;
 			}
