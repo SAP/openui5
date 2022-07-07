@@ -11,8 +11,9 @@ sap.ui.define([
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/UIComponent',
-	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(isPlainObject, Input, Model, Integer, Message, MessageManager, library, Component, ComponentContainer, JSONModel, UIComponent, createAndAppendDiv){
+	'sap/ui/qunit/utils/createAndAppendDiv',
+	"sap/ui/test/TestUtils"
+], function(isPlainObject, Input, Model, Integer, Message, MessageManager, library, Component, ComponentContainer, JSONModel, UIComponent, createAndAppendDiv, TestUtils){
 	"use strict";
 
 	// create content div
@@ -92,16 +93,19 @@ sap.ui.define([
 
 		var oCompZip = sap.ui.getCore().byId("zip_enabled");
 
-		this.spyDataState(oCompZip, function (sName, oDataState) {
-			assert.ok(oDataState.getMessages().length == 1, 'Format Message created');
-			assert.ok(oCompZip.getValueState() === library.ValueState.Error, 'Input: ValueState set correctly');
-			assert.ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly');
-		});
 		var oCoreValHandler = function (oEvent) {
 			assert.ok(false, "should never be called");
 		};
-		sap.ui.getCore().attachValidationError(oCoreValHandler);
-		oCompZip.setValue('123456');
+
+		TestUtils.withNormalizedMessages(function() {
+			this.spyDataState(oCompZip, function (sName, oDataState) {
+				assert.ok(oDataState.getMessages().length == 1, 'Format Message created');
+				assert.ok(oCompZip.getValueState() === library.ValueState.Error, 'Input: ValueState set correctly');
+				assert.equal(oCompZip.getValueStateText(), "String.MaxLength 5", 'Input: ValueStateText set correctly');
+			});
+			sap.ui.getCore().attachValidationError(oCoreValHandler);
+			oCompZip.setValue('123456');
+		}.bind(this));
 
 		setTimeout(function () {
 			this.spyDataState(oCompZip, function (sName, oDataState) {
