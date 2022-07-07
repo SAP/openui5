@@ -1254,21 +1254,24 @@ sap.ui.define([
 			}
 			//display a message strip
 			if (oConfigurationCardMFChangesforAdmin || oConfigurationCardMFChangesforContent) {
-				var oPanel = Core.byId("conf_card_panel");
-				var oMessageStrip = new sap.m.MessageStrip({
-					id: "msgstrip_manifest_change",
-					showIcon: true,
-					type: "Information",
-					text: "Modifications of values in this editor are not saved, neither included in the card bundle zip."
-				});
-				// var oLink = new sap.m.Link({
-				// 	text: "Check it.",
-				// 	press: function(oEvent) {
-				// 		this.onShowManifestChanges(oEvent);
-				// 	}
-				// });
-				// oMessageStrip.addAggregation(oLink);
-				oPanel.insertContent(oMessageStrip, -1);
+				var oMessageStrip = Core.byId("msgstrip_manifest_change");
+				if (!oMessageStrip) {
+					var oPanel = Core.byId("conf_card_panel");
+					oMessageStrip = new sap.m.MessageStrip({
+						id: "msgstrip_manifest_change",
+						showIcon: true,
+						type: "Information",
+						text: "Modifications of values in this editor are not saved, neither included in the card bundle zip."
+					});
+					// var oLink = new sap.m.Link({
+					// 	text: "Check it.",
+					// 	press: function(oEvent) {
+					// 		this.onShowManifestChanges(oEvent);
+					// 	}
+					// });
+					// oMessageStrip.addAggregation(oLink);
+					oPanel.insertContent(oMessageStrip, -1);
+				}
 			}
 		},
 

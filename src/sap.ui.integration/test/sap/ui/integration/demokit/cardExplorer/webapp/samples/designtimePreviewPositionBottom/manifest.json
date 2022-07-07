@@ -1,7 +1,7 @@
 {
 	"_version": "1.18.0",
 	"sap.app": {
-		"id": "sap.ui5.test.editor.listcard.preview",
+		"id": "sap.ui5.test.editor.listcard.preview.bottom",
 		"type": "card",
 		"i18n": "i18n/i18n.properties",
 		"title": "Test Card for Parameters",
