@@ -850,7 +850,7 @@
 @sapUiChartLabelHoverColor: @sapUiButtonHoverBackground;            // #ebebeb
 @sapUiChartLabelPressedColor: darken(@sapUiButtonBackground, 17);   // #cccccc
 @sapUiChartCategoryAxisLabelFontColor: @sapUiContentForegroundTextColor;    // #333333
-@sapUiChartValueAxisLabelFontColor: lighten(@sapUiContentForegroundTextColor, 24);  // #707070
+@sapUiChartValueAxisLabelFontColor: @sapUiContentLabelColor;
 @sapUiChartCategoryAxisLabelFontSize: @sapMFontSmallSize;           // 12px
 @sapUiChartValueAxisLabelFontSize: @sapMFontSmallSize;              // 12px
 @sapUiChartCategoryAxisLineColor: darken(@sapUiChartGridlineColor, 10);  // #cccccc
@@ -883,7 +883,7 @@
 @sapUiChartAxisTitleFontSize: @sapMFontSmallSize;                   // 12px
 @sapUiChartTitleFontWeight: bold;
 @sapUiChartAxisTitleFontWeight: regular;
-@sapUiChartLightText: lighten(@sapUiContentForegroundTextColor, 24);  // #707070
+@sapUiChartLightText: @sapUiContentLabelColor;
 @sapUiChartZeroAxisColor: darken(@sapUiChartGridlineColor, 50);     // #666666
 
 @sapUiChartDataPointBorderColor: lighten(@sapUiGroupContentBackground, 2);  // #ffffff
