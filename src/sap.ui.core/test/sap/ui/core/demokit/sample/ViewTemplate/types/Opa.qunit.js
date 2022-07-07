@@ -29,6 +29,8 @@ sap.ui.getCore().attachInit(function () {
 
 		//*****************************************************************************
 		opaTest("OData Types", function (Given, When, Then) {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+
 			When.onAnyPage.applySupportAssistant();
 
 			Given.iStartMyUIComponent({
@@ -56,13 +58,13 @@ sap.ui.getCore().attachInit(function () {
 
 			When.onTheMainPage.enterInputValue("decimalInput", "100");
 			Then.onTheMainPage.checkInputValueState("decimalInput", ValueState.Error,
-				"Enter a number greater than 100.000");
+				oBundle.getText("EnterNumberMinExclusive", ["100.000"]));
 			When.onTheMainPage.enterInputValue("decimalInput", "101");
 			Then.onTheMainPage.checkInputValueState("decimalInput", ValueState.None, "");
 
 			When.onTheMainPage.enterStepInputValue("stepInput", "102");
 			Then.onTheMainPage.checkStepInputValueState("stepInput", ValueState.Error,
-				"Enter a number with a maximum value of 99");
+				oBundle.getText("EnterNumberMax", ["99"]));
 			When.onTheMainPage.enterStepInputValue("stepInput", "1.234", "1");
 			Then.onTheMainPage.checkStepInputValueState("stepInput", ValueState.None, "");
 			When.onTheMainPage.enterStepInputValue("stepInput", "0");

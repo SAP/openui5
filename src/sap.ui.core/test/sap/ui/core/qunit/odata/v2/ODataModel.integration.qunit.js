@@ -3349,7 +3349,7 @@ usePreliminaryContext : false}}">\
 					code : undefined,
 					descriptionUrl : undefined,
 					fullTarget : "",
-					message : "Enter a text with a maximum of 3 characters and spaces",
+					message : "EnterTextMaxLength 3",
 					persistent : false,
 					target : oNoteInput.getId() + "/value",
 					technical : false,
@@ -3357,8 +3357,10 @@ usePreliminaryContext : false}}">\
 				}])
 				.expectValue("note", "abcd");
 
-			// code under test - produce a validation error
-			oNoteInput.setValue("abcd");
+			TestUtils.withNormalizedMessages(function () {
+				// code under test - produce a validation error
+				oNoteInput.setValue("abcd");
+			});
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -3369,8 +3371,7 @@ usePreliminaryContext : false}}">\
 					Note : "Bar",
 					SalesOrderID : "1"
 				})
-				.expectValueState(oNoteInput, "Error",
-					"Enter a text with a maximum of 3 characters and spaces");
+				.expectValueState(oNoteInput, "Error", "EnterTextMaxLength 3");
 
 			// code under test
 			oModel.invalidateEntry(oElementBinding.getBoundContext());
