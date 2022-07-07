@@ -291,6 +291,11 @@
 					"pattern": "showCard",
 					"name": "showCard",
 					"target": "showCard"
+				},
+				{
+					"pattern": "measurements",
+					"name": "measurements",
+					"target": "measurements"
 				}
 			],
 			"targets": {
@@ -511,6 +516,11 @@
 				"showCard": {
 					"id": "showCard",
 					"name": "ShowCard",
+					"level": 1
+				},
+				"measurements": {
+					"id": "measurements",
+					"name": "CardMeasurements",
 					"level": 1
 				}
 			}

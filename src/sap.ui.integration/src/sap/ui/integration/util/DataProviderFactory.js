@@ -138,14 +138,10 @@ sap.ui.define([
 
 		if (oDataSettings.request && bUseExperimentalCaching) {
 			oDataProvider = new CacheAndRequestDataProvider(oConfig);
-			oDataProvider.setCard(oCard);
 			oDataProvider.setHost(oHost);
 		} else if (oDataSettings.request) {
 			oDataProvider = new RequestDataProvider(oConfig);
 
-			if (oCard) {
-				oDataProvider.setCard(oCard);
-			}
 			if (oHost) {
 				oDataProvider.setHost(oHost);
 			}
@@ -160,6 +156,7 @@ sap.ui.define([
 		}
 
 		if (oCard) {
+			oDataProvider.setCard(oCard);
 			BindingHelper.propagateModels(oCard, oDataProvider);
 		} else if (oEditor) {
 			BindingHelper.propagateModels(oEditor, oDataProvider);

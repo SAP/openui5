@@ -247,5 +247,11 @@
 		"description": "Card without background and border",
 		"route": "transparent",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "Performance Measurements",
+		"description": "Get an overview of which card lifecycle events are measured.\nNote: this page is not optimized and the results should not be taken into account",
+		"route": "measurements",
+		"group": "Other Card Examples"
 	}
 ]

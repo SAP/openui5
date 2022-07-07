@@ -45,6 +45,8 @@ sap.ui.define([
 	 * @override
 	 */
 	CacheAndRequestDataProvider.prototype.init = function () {
+		RequestDataProvider.prototype.init.apply(this, arguments);
+
 		this._oRefreshWithoutCacheBound = this.refreshWithoutCache.bind(this);
 	};
 

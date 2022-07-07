@@ -1,8 +1,13 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/base/ManagedObject"],
-	function (ManagedObject) {
+sap.ui.define([
+	"sap/ui/base/ManagedObject",
+	"sap/ui/performance/Measurement"
+], function (
+	ManagedObject,
+	Measurement
+) {
 	"use strict";
 
 	/**
@@ -85,9 +90,19 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 						message : { type : "string" }
 					}
 				}
+			},
+			associations: {
+				card: {
+					type : "sap.ui.integration.widgets.Card",
+					multiple: false
+				}
 			}
 		}
 	});
+
+	DataProvider.prototype.init = function () {
+		this._iCurrentRequestNumber = 0;
+	};
 
 	/**
 	 * Sets the destinations resolver
@@ -189,13 +204,27 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 
 	DataProvider.prototype._triggerDataUpdate = function () {
 		this._bActive = true;
+		this._iCurrentRequestNumber++;
+		var oGetDataMeasurement;
+
+		if (this.getCard()) {
+			oGetDataMeasurement = Measurement.start("UI5 Integration Cards - " + this.getCard() +  "-" + this.getId() + "---getData#" + this._iCurrentRequestNumber);
+		}
 
 		return this.getData()
 			.then(function (oData) {
+				if (oGetDataMeasurement) {
+					Measurement.end(oGetDataMeasurement.id);
+				}
+
 				this.fireDataChanged({data: oData});
 				this.onDataRequestComplete();
 			}.bind(this))
 			.catch(function (oResult) {
+				if (oGetDataMeasurement) {
+					Measurement.end(oGetDataMeasurement.id);
+				}
+
 				if (Array.isArray(oResult) && oResult.length > 0) {
 					this.fireError({message: oResult[0], jqXHR: oResult[1]});
 				} else {
@@ -242,7 +271,6 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 	};
 
 	DataProvider.prototype.onDataRequestComplete = function () {
-
 		var iInterval;
 
 		if (!this._oSettings || !this._oSettings.updateInterval) {

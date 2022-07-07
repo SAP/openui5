@@ -19,7 +19,8 @@
 			},
 			"destinations": {
 				"myDestination": {
-					"name": "Northwind"
+					"name": "Northwind",
+					"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
 				}
 			}
 		},
@@ -32,8 +33,7 @@
 		"type": "List",
 		"header": {
 			"title": "List Card",
-			"subTitle": "City {parameters>/city/value}",
-			"status": "100 of 200"
+			"subTitle": "City {parameters>/city/value}"
 		},
 		"content": {
 			"item": {

@@ -37,6 +37,7 @@ sap.ui.define([
 	"sap/m/IllustratedMessageSize",
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/util/ParameterMap",
+	"sap/ui/performance/Measurement",
 	"sap/m/HBox",
 	"sap/m/library"
 ], function (
@@ -75,6 +76,7 @@ sap.ui.define([
 	IllustratedMessageSize,
 	Utils,
 	ParameterMap,
+	Measurement,
 	HBox,
 	mLibrary
 ) {
@@ -119,6 +121,13 @@ sap.ui.define([
 
 	var MODULE_PREFIX = "module:";
 
+	function measurementStartTime() {
+		if (performance && performance.now) {
+			return "Start since page load: " + performance.now();
+		}
+
+		return "";
+	}
 
 	/**
 	 * Constructor for a new <code>Card</code>.
@@ -453,7 +462,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.init = function () {
-
 		CardBase.prototype.init.call(this);
 
 		this.setAggregation("_loadingProvider", new LoadingProvider());
@@ -466,6 +474,10 @@ sap.ui.define([
 		this._oCardObserver = new CardObserver(this);
 		this._bFirstRendering = true;
 		this._aFundamentalErrors = [];
+		this._sPerformanceId = "UI5 Integration Cards - " + this.getId() + "---";
+		this._fnOnCardReady = function () {
+			this._bCardReady = true;
+		}.bind(this);
 
 		/**
 		 * Facade of the {@link sap.ui.integration.widgets.Card} control.
@@ -595,6 +607,8 @@ sap.ui.define([
 			this._bReady = true;
 			this.fireEvent("_ready");
 		}.bind(this));
+
+		this.attachEventOnce("_cardReady", this._fnOnCardReady);
 	};
 
 	/**
@@ -604,7 +618,9 @@ sap.ui.define([
 	 */
 	Card.prototype._clearReadyState = function () {
 		this._bReady = false;
+		this._bCardReady = false;
 		this._aReadyPromises = [];
+		this.detachEvent("_cardReady", this._fnOnCardReady);
 	};
 
 	/**
@@ -625,6 +641,16 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.onAfterRendering = function () {
+		if (Measurement.getActive() && this._isManifestReady) {
+			if (!Measurement.getMeasurement(this._sPerformanceId + "firstRenderingWithStaticData").end) {
+				Measurement.end(this._sPerformanceId + "firstRenderingWithStaticData");
+			}
+
+			if (this._bCardReady && !Measurement.getMeasurement(this._sPerformanceId + "firstRenderingWithDynamicData").end) {
+				Measurement.end(this._sPerformanceId + "firstRenderingWithDynamicData");
+			}
+		}
+
 		var oCardDomRef = this.getDomRef();
 
 		if (this.getDataMode() === CardDataMode.Auto && this._bFirstRendering) {
@@ -663,7 +689,6 @@ sap.ui.define([
 
 		if (!this._bApplyManifest && this._bApplyParameters) {
 			this._oCardManifest.processParameters(this._getContextAndRuntimeParams());
-
 			this._applyManifestSettings();
 		}
 
@@ -767,6 +792,10 @@ sap.ui.define([
 			this._oCardManifest.destroy();
 		}
 
+		Measurement.start(this._sPerformanceId + "initManifest", "Load and initialize manifest. " + measurementStartTime());
+		Measurement.start(this._sPerformanceId + "firstRenderingWithStaticData", "First rendering with static data. " + measurementStartTime());
+		Measurement.start(this._sPerformanceId + "firstRenderingWithDynamicData", "First rendering with dynamic data. " + measurementStartTime());
+
 		this._oCardManifest = new CardManifest("sap.card", vManifest, sBaseUrl, this.getManifestChanges());
 
 		this._oCardManifest
@@ -776,6 +805,7 @@ sap.ui.define([
 					throw new Error(CARD_DESTROYED_ERROR);
 				}
 
+				Measurement.end(this._sPerformanceId + "initManifest");
 				this._registerManifestModulePath();
 				this._isManifestReady = true;
 				this.fireManifestReady();
@@ -1456,7 +1486,6 @@ sap.ui.define([
 		this._applyFooterManifestSettings();
 
 		this.fireManifestApplied();
-
 	};
 
 	/**

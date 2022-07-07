@@ -57,14 +57,6 @@ sap.ui.define([
 				host: {
 					type : "sap.ui.integration.Host",
 					multiple: false
-				},
-
-				/**
-				 * Optionally the card which will be used as reference for the requests and for visual representation of cache timestamp and refresh.
-				 */
-				card: {
-					type : "sap.ui.integration.widgets.Card",
-					multiple: false
 				}
 			}
 
