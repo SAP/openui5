@@ -362,15 +362,20 @@ sap.ui.define([
 	QUnit.test("Parse/Format emptyString values", function (assert) {
 		// default: "" --> NaN
 		var oCurrencyType = new CurrencyType(/* emptyString is NaN by default */);
+
 		assert.throws(function () {
-			oCurrencyType.parseValue("", "string");
-		}, new ParseException("Enter a valid currency amount"));
+			TestUtils.withNormalizedMessages(function () {
+				oCurrencyType.parseValue("", "string");
+			});
+		}, new ParseException("Currency.Invalid"));
 
 		// "" --> NaN
 		var oCurrencyType2 = new CurrencyType({emptyString: NaN});
 		assert.throws(function () {
-			oCurrencyType2.parseValue("", "string");
-		}, new ParseException("Enter a valid currency amount"));
+			TestUtils.withNormalizedMessages(function () {
+				oCurrencyType2.parseValue("", "string");
+			});
+		}, new ParseException("Currency.Invalid"));
 
 		// "" --> ""
 		var oCurrencyType3 = new CurrencyType({emptyString: ""});
@@ -387,16 +392,23 @@ sap.ui.define([
 
 	QUnit.test("Parse/Format emptyString values (parseAsString)", function (assert) {
 		// default: "" --> "NaN"
-		var oCurrencyType = new CurrencyType({parseAsString: true /* emptyString is NaN by default */});
+		var oCurrencyType = new CurrencyType({
+				parseAsString: true // emptyString is NaN by default
+			});
+
 		assert.throws(function () {
-			oCurrencyType.parseValue("", "string");
-		}, new ParseException("Enter a valid currency amount"));
+			TestUtils.withNormalizedMessages(function () {
+				oCurrencyType.parseValue("", "string");
+			});
+		}, new ParseException("Currency.Invalid"));
 
 		// "" --> "NaN"
 		var oCurrencyType2 = new CurrencyType({emptyString: NaN, parseAsString: true});
 		assert.throws(function () {
-			oCurrencyType2.parseValue("", "string");
-		}, new ParseException("Enter a valid currency amount"));
+			TestUtils.withNormalizedMessages(function () {
+				oCurrencyType2.parseValue("", "string");
+			});
+		}, new ParseException("Currency.Invalid"));
 
 		// "" --> ""
 		var oCurrencyType3 = new CurrencyType({emptyString: "", parseAsString: true});
@@ -810,9 +822,11 @@ sap.ui.define([
 		dateValue = new Date(2017, 0, 1);
 
 		try {
-			dateType.validateValue(dateValue);
+			TestUtils.withNormalizedMessages(function () {
+				dateType.validateValue(dateValue);
+			});
 		} catch (error) {
-			assert.equal(error.message, "Enter a date after 2018-01-01", "Correct error message shown");
+			assert.equal(error.message, "Date.Minimum 2018-01-01", "Correct error message shown");
 		}
 
 		assert.throws(function () { dateType.validateValue(dateValue); }, checkValidateException, "validate test");
@@ -2437,12 +2451,14 @@ sap.ui.define([
 		assert.equal(oMeterTypeInstanceSpy.callCount, 6, "6 instances because 6 different decimal options are provided");
 
 		try {
-			oMeterType.validateValue([123.100000000001, "length-meter"]);
+			TestUtils.withNormalizedMessages(function () {
+				oMeterType.validateValue([123.100000000001, "length-meter"]);
+			});
 			assert.ok(false, "validation should fail as too many digits");
 		} catch (e) {
 			assert.ok(e);
 			assert.equal(e.name, "ValidateException");
-			assert.equal(e.message, "Enter an amount with less decimals than 6");
+			assert.equal(e.message, "Unit.Decimals 6");
 		}
 	});
 
@@ -2602,15 +2618,20 @@ sap.ui.define([
 	QUnit.test("Parse/Format emptyString values", function (assert) {
 		// default: "" --> NaN
 		var oUnitType = new UnitType(/* emptyString is NaN by default */);
+
 		assert.throws(function () {
-			oUnitType.parseValue("", "string");
-		}, new ParseException("Enter a valid unit amount"));
+			TestUtils.withNormalizedMessages(function () {
+				oUnitType.parseValue("", "string");
+			});
+		}, new ParseException("Unit.Invalid"));
 
 		// "" --> NaN
 		var oUnitType2 = new UnitType({emptyString: NaN});
 		assert.throws(function () {
-			oUnitType2.parseValue("", "string");
-		}, new ParseException("Enter a valid unit amount"));
+			TestUtils.withNormalizedMessages(function () {
+				oUnitType2.parseValue("", "string");
+			});
+		}, new ParseException("Unit.Invalid"));
 
 		// "" --> ""
 		var oUnitType3 = new UnitType({emptyString: ""});
@@ -2628,15 +2649,20 @@ sap.ui.define([
 	QUnit.test("Parse/Format emptyString values (parseAsString)", function (assert) {
 		// default: "" --> "NaN"
 		var oUnitType = new UnitType({parseAsString: true /* emptyString is NaN by default */});
+
 		assert.throws(function () {
-			oUnitType.parseValue("", "string");
-		}, new ParseException("Enter a valid unit amount"));
+			TestUtils.withNormalizedMessages(function () {
+				oUnitType.parseValue("", "string");
+			});
+		}, new ParseException("Unit.Invalid"));
 
 		// "" --> "NaN"
 		var oUnitType2 = new UnitType({emptyString: NaN, parseAsString: true});
 		assert.throws(function () {
-			oUnitType2.parseValue("", "string");
-		}, new ParseException("Enter a valid unit amount"));
+			TestUtils.withNormalizedMessages(function () {
+				oUnitType2.parseValue("", "string");
+			});
+		}, new ParseException("Unit.Invalid"));
 
 		// "" --> ""
 		var oUnitType3 = new UnitType({emptyString: "", parseAsString: true});
