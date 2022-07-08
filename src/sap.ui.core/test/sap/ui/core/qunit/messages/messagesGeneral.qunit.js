@@ -269,13 +269,14 @@ sap.ui.define([
 
 	QUnit.test("validationError", function(assert) {
 		var done = assert.async();
-
-		spyDataState(oStreet, function(sName, oDataState) {
-			assert.ok(oDataState.getMessages().length == 1, 'Validation Message propagated to control');
-			assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
-			assert.ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly');
+		TestUtils.withNormalizedMessages(function() {
+			spyDataState(oStreet, function(sName, oDataState) {
+				assert.ok(oDataState.getMessages().length == 1, 'Validation Message propagated to control');
+				assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
+				assert.equal(oStreet.getValueStateText(), "String.MaxLength 5", 'Input: ValueStateText set correctly');
+			});
+			oStreet.setValue('am Busche');
 		});
-		oStreet.setValue('am Busche');
 		setTimeout(function() {
 			spyDataState(oStreet, function(sName, oDataState) {
 				assert.ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
@@ -290,11 +291,13 @@ sap.ui.define([
 	QUnit.test("validationError - multiple input", function(assert) {
 		var done = assert.async();
 
-		spyDataState(oStreet, function(sName, oDataState) {
-			assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
-			assert.ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly');
+		TestUtils.withNormalizedMessages(function() {
+			spyDataState(oStreet, function(sName, oDataState) {
+				assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
+				assert.equal(oStreet.getValueStateText(), "String.MaxLength 5", 'Input: ValueStateText set correctly');
+			});
+			oStreet.setValue('am Busche');
 		});
-		oStreet.setValue('am Busche');
 
 		setTimeout(function() {
 			spyDataState(oStreet, function(sName, oDataState) {
@@ -302,12 +305,16 @@ sap.ui.define([
 				assert.ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly');
 			});
 			oStreet.setValue('Busch');
+
 			setTimeout(function() {
-				spyDataState(oStreet, function(sName, oDataState) {
-					assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
-					assert.ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters', 'Input: ValueStateText set correctly');
+				TestUtils.withNormalizedMessages(function() {
+					spyDataState(oStreet, function(sName, oDataState) {
+						assert.ok(oStreet.getValueState() === ValueState.Error, 'Input: ValueState set correctly');
+						assert.equal(oStreet.getValueStateText(), "String.MaxLength 5", 'Input: ValueStateText set correctly');
+					});
+					oStreet.setValue('am Busche');
 				});
-				oStreet.setValue('am Busche');
+
 				setTimeout(function() {
 					spyDataState(oStreet, function(sName, oDataState) {
 						assert.ok(oStreet.getValueState() === ValueState.None, 'Input: ValueState set correctly');
