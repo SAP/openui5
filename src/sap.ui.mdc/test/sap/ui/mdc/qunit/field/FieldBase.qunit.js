@@ -3952,12 +3952,12 @@ sap.ui.define([
 												fnDone();
 											}).catch(function(oException) {
 												assert.ok(true, "Promise must be rejected");
-												assert.equal(oException.message, "Enter a valid value");
+												assert.ok(oException.message.startsWith("Enter a valid value"));
 												assert.notOk(oFieldHelp.onFieldChange.called, "onFieldChange not called on FieldHelp");
 												setTimeout(function() { // for model update
 													setTimeout(function() { // for ManagedObjectModel update
 														assert.equal(oContent.getValueState(), "Error", "ValueState set");
-														assert.equal(oContent.getValueStateText(), "Enter a valid value", "ValueStateText");
+														assert.ok(oContent.getValueStateText().startsWith("Enter a valid value"), "ValueStateText");
 														aConditions = oCM.getConditions("Name");
 														assert.equal(aConditions.length, 3, "three conditions in Codition model");
 														aConditions = oFieldHelp.getConditions();
@@ -4087,12 +4087,12 @@ sap.ui.define([
 									fnDone();
 								}).catch(function(oException) {
 									assert.ok(true, "Promise must be rejected");
-									assert.equal(oException.message, "Enter a valid value");
+									assert.ok(oException.message.startsWith("Enter a valid value"));
 									assert.notOk(oFieldHelp.onFieldChange.called, "onFieldChange not called on FieldHelp");
 									setTimeout(function() { // for model update
 										setTimeout(function() { // for ManagedObjectModel update
 											assert.equal(oContent.getValueState(), "Error", "ValueState set");
-											assert.equal(oContent.getValueStateText(), "Enter a valid value", "ValueStateText");
+											assert.ok(oContent.getValueStateText().startsWith("Enter a valid value"), "ValueStateText");
 											aConditions = oCM.getConditions("Name");
 											assert.equal(aConditions.length, 1, "one condition in Codition model");
 											assert.equal(aConditions[0] && aConditions[0].values[0], "Unknown", "condition value");
