@@ -539,6 +539,7 @@ sap.ui.define([
 
 	QUnit.test("'selectedIndex' should NOT be modified onBeforeRendering", function (assert) {
 		// arrange
+
 		var oRBGroup =  new RadioButtonGroup({
 			buttons: [
 				new RadioButton(),
@@ -549,6 +550,8 @@ sap.ui.define([
 		oRBGroup.placeAt("qunit-fixture");
 		Core.applyChanges();
 
+		// assert
+		assert.ok(oRBGroup.getButtons()[0].getSelected(), "First radio button of the group should be selected");
 		// act
 		oRBGroup.setSelectedIndex(100);
 
