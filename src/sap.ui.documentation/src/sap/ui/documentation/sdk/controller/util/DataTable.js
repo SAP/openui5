@@ -447,7 +447,7 @@ sap.ui.define([
 								control: oFilter.control
 							});
 						});
-						oFilter.control.placeAt(oFilterHeader);
+						oFilter.control.placeAt(oFilterHeader[0]);
 					}
 
 					oNewTableRow.append(oFilterHeader);
