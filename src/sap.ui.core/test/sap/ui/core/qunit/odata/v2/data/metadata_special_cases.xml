@@ -51,6 +51,13 @@
 					FromRole="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"
 					ToRole="ToRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
 			</EntityType>
+			<EntityType Name="Employee" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ID" />
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="12" />
+				<Property Name="Time" Type="Edm.Time" Precision="0" />
+			</EntityType>
 			<Association Name="assoc_C_RSHMaintSchedSmltdOrdAndOps">
 				<End Type="special.cases.DummyType" Multiplicity="1"
 					Role="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
@@ -79,6 +86,7 @@
 					sap:addressable="false"/>
 				<EntitySet Name="UserAssignments" EntityType="special.cases.UserAssignment"/>
 				<EntitySet Name="DummySet" EntityType="special.cases.DummyType"/>
+				<EntitySet Name="Employees" EntityType="special.cases.Employee" />
 				<AssociationSet Name="assoc_C_RSHMaintSchedSmltdOrdAndOps"
 					Association="special.cases.assoc_C_RSHMaintSchedSmltdOrdAndOps">
 					<End EntitySet="DummySet"
