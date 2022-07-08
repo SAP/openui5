@@ -188,6 +188,10 @@ sap.ui.define([
 					}
 				});
 
+				if (iCurrentSelectedButtonSelectionNumber === -1 && this._iSelectionNumber === -1) {
+					this._iSelectionNumber = RadioButton.getNextSelectionNumber();
+				}
+
 				aButtons.forEach(function (oRadioButton, i) {
 					oRadioButton._setEditableParent(bEditable);
 
