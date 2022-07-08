@@ -3814,4 +3814,109 @@ sap.ui.define([
 				return undefined;
 			});
 	});
+
+	//*********************************************************************************************
+[{
+	vChangedValue : {ms : 60000, __edmType : "Edm.Time"},
+	bMergeRequired : true,
+	vNewValue : {ms : 0, __edmType : "Edm.Time"},
+	vNewValueClone : {ms : 0, __edmType : "Edm.Time"},
+	vOriginalValue : {ms : 0, __edmType : "Edm.Time"}
+}, {
+	vChangedValue : new Date(120000),
+	bMergeRequired : false,
+	vNewValue : new Date(60000),
+	vNewValueClone : new Date(60000),
+	vOriginalValue : new Date(60000)
+}, {
+	vChangedValue : 13,
+	bMergeRequired : false,
+	vNewValue : 42,
+	vNewValueClone : 42,
+	vOriginalValue : 42
+}].forEach(function (oFixture, i) {
+	QUnit.test("setProperty: revert pending change; #" + i, function (assert) {
+		var oClonedChangedEntry = {
+				__metadata : {}
+			},
+			oMetadataLoadedPromise = Promise.resolve(),
+			oModel = {
+				mChangedEntities : {
+					"~entityKey" : {
+						__metadata : "~changedEntityMetadata",
+						"~propertyPath" : oFixture.vChangedValue
+					}
+				},
+				sDefaultUpdateMethod : "~sDefaultUpdateMethod",
+				mDeferredGroups : {"~groupId" : "~groupId"},
+				oMetadata : {
+					_getEntityTypeByPath : function () {},
+					_getNavPropertyRefInfo : function () {},
+					loaded : function () {}
+				},
+				_getObject : function () {},
+				_resolveGroup : function () {},
+				abortInternalRequest : function () {},
+				checkUpdate : function () {},
+				getEntityByPath : function () {},
+				isLaundering : function () {},
+				resolve : function () {},
+				resolveDeep : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oOriginalEntry = {
+				__metadata : {},
+				"~propertyPath" : oFixture.vOriginalValue
+			};
+
+		oModelMock.expects("resolve")
+			.withExactArgs("~sPath", "~oContext")
+			.returns("/resolved/~propertyPath");
+		oModelMock.expects("resolveDeep")
+			.withExactArgs("~sPath", "~oContext")
+			.returns("/deepPath/~propertyPath");
+		oModelMock.expects("getEntityByPath")
+			.withExactArgs("/resolved/~propertyPath", null, /*by ref oEntityInfo*/{})
+			.callsFake(function (sResolvedPath, oContext, oEntityInfo) { // fill reference parameter
+				oEntityInfo.key = "~entityKey";
+				oEntityInfo.propertyPath = "~propertyPath";
+
+				return oClonedChangedEntry;
+			});
+		oModelMock.expects("_getObject")
+			.withExactArgs("/~entityKey", null, true)
+			.returns(oOriginalEntry);
+		oModelMock.expects("_getObject")
+			.withExactArgs("~sPath", "~oContext", true)
+			.returns(oFixture.vOriginalValue);
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("~entityKey")
+			.returns("~oEntityType");
+		this.mock(oModel.oMetadata).expects("_getNavPropertyRefInfo")
+			.withExactArgs("~oEntityType", "~propertyPath")
+			.returns(/*oNavPropRefInfo*/null);
+		oModelMock.expects("isLaundering").withExactArgs("/~entityKey").returns(false);
+		oModelMock.expects("checkUpdate")
+			.withExactArgs(false, "~bAsyncUpdate", {"~entityKey" : true});
+		this.mock(oModel.oMetadata).expects("loaded")
+			.withExactArgs()
+			.returns(oMetadataLoadedPromise);
+		oModelMock.expects("_resolveGroup")
+			.withExactArgs("~entityKey")
+			.returns({changeSetId : "~changeSetId", groupId : "~groupId"});
+		oModelMock.expects("abortInternalRequest")
+			.withExactArgs("~groupId", {requestKey : "~entityKey"});
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.setProperty.call(oModel, "~sPath", oFixture.vNewValue, "~oContext",
+				"~bAsyncUpdate"),
+			true);
+
+		assert.deepEqual(oModel.mChangedEntities, {});
+		assert.deepEqual(oFixture.vNewValue, oFixture.vNewValueClone, "new value not modified");
+
+		return oMetadataLoadedPromise.then(function () {/*wait for aborted requests*/});
+	});
+});
 });
