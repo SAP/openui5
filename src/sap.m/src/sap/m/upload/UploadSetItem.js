@@ -491,6 +491,7 @@ sap.ui.define([
 				]
 			});
 			this._oListItem.addStyleClass("sapMUCItem");
+			this._oListItem.setTooltip(this.getTooltip_Text());
 		}
 
 		return this._oListItem;
