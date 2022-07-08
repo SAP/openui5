@@ -15,16 +15,18 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/m/upload/Uploader",
 	"sap/ui/core/Item",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function (KeyCodes, UploadSet, UploadSetItem, UploadSetRenderer, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool, Uploader, Item, oCore) {
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, IconPool, Uploader, Item, oCore, Element) {
 	"use strict";
 
 	function getData() {
 		return {
 			items: [
 				{
-					fileName: "Alice.mp4"
+					fileName: "Alice.mp4",
+					tooltip: "Alice"
 				},
 				{
 					fileName: "Brenda.mp4",
@@ -426,6 +428,31 @@ sap.ui.define([
 		oItem._setInEditMode(true);
 
 		assert.equal(oItem.getEditState(), true, "New edit state of the item returned sucessfully.");
+	});
+
+	QUnit.module("UploadSetItem Accessibility Tests", {
+		beforeEach: function () {
+			this.fnSpy = this.spy(Element.prototype, "setTooltip");
+			this.oUploadSet = new UploadSet("uploadSet", {
+				items: {
+					path: "/items",
+					template: TestUtils.createItemTemplate(),
+					templateShareable: false
+				}
+			}).setModel(new JSONModel(getData()));
+			this.oUploadSet.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oUploadSet.destroy();
+			this.oUploadSet = null;
+		}
+	});
+
+	QUnit.test("Test for uploadSetItem tooltip", function (assert) {
+		//Assert
+		assert.ok(this.fnSpy.called, "Method setTooltip called");
+		assert.ok(this.fnSpy.calledWith("Alice"), "Method setTooltip called with the correct text");
 	});
 
 });
