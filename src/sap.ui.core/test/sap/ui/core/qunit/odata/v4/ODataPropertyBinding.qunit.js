@@ -340,7 +340,7 @@ sap.ui.define([
 				this.mock(oBinding).expects("checkUpdateInternal")
 					.withExactArgs(/*bInitial*/true, "context").returns(SyncPromise.resolve());
 			}
-			this.mock(oBinding).expects("deregisterChange").withExactArgs();
+			this.mock(oBinding).expects("deregisterChangeListener").withExactArgs();
 			this.mock(oBinding).expects("checkSuspended").withExactArgs(true);
 
 			//code under test
@@ -350,7 +350,8 @@ sap.ui.define([
 				oFixture.sTarget === "base" ? oCache : null);
 
 			// code under test
-			// #deregisterChange is not called again, if #setContext is called with the same context
+			// #deregisterChangeListener is not called again if #setContext is called with the same
+			// context
 			oBinding.setContext(oTargetContext);
 		});
 	});
@@ -485,7 +486,7 @@ sap.ui.define([
 		// code under test
 		oBinding = this.oModel.bindProperty("relative");
 
-		this.mock(oBinding).expects("deregisterChange");
+		this.mock(oBinding).expects("deregisterChangeListener");
 		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext))
 			.returns(oPromise); // this would actually set sReducedPath later
 
@@ -728,7 +729,7 @@ sap.ui.define([
 			that = this;
 
 		this.createTextBinding(assert).then(function (oBinding) {
-			that.mock(oBinding).expects("deregisterChange").withExactArgs();
+			that.mock(oBinding).expects("deregisterChangeListener").withExactArgs();
 			that.mock(oBinding).expects("checkUpdateInternal")
 				.withExactArgs(undefined, ChangeReason.Context)
 				.callThrough();
@@ -1064,7 +1065,7 @@ sap.ui.define([
 			oContext = {};
 
 		oBinding.sResumeChangeReason = ChangeReason.Change; // simulate initially suspended binding
-		this.mock(oBinding).expects("deregisterChange").never();
+		this.mock(oBinding).expects("deregisterChangeListener").never();
 		this.mock(oBinding).expects("fetchCache").never();
 		this.mock(oBinding).expects("checkUpdateInternal").never();
 
@@ -2073,7 +2074,7 @@ sap.ui.define([
 
 		oPropertyBinding.oCheckUpdateCallToken = {};
 		oPropertyBinding.vValue = "foo";
-		this.mock(oPropertyBinding).expects("deregisterChange").withExactArgs();
+		this.mock(oPropertyBinding).expects("deregisterChangeListener").withExactArgs();
 		this.mock(this.oModel).expects("bindingDestroyed")
 			.withExactArgs(sinon.match.same(oPropertyBinding));
 		this.mock(asODataBinding.prototype).expects("destroy").on(oPropertyBinding).withExactArgs();
@@ -2192,7 +2193,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("deregisterChange", function () {
+	QUnit.test("deregisterChangeListener", function () {
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
 			oMock,
 			oOtherBinding = {
@@ -2205,7 +2206,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve());
 
 		// code under test
-		oBinding.deregisterChange();
+		oBinding.deregisterChangeListener();
 
 		this.mock(oOtherBinding).expects("doDeregisterChangeListener")
 			.withExactArgs(sPath, sinon.match.same(oBinding));
@@ -2215,7 +2216,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("deregisterChange: withCache rejects sync", function () {
+	QUnit.test("deregisterChangeListener: withCache rejects sync", function () {
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
 			oError = new Error("fail intentionally"),
 			fnReporter = sinon.spy();
@@ -2224,7 +2225,7 @@ sap.ui.define([
 		this.mock(this.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 
 		// code under test
-		oBinding.deregisterChange();
+		oBinding.deregisterChangeListener();
 
 		sinon.assert.calledOnce(fnReporter);
 		sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));

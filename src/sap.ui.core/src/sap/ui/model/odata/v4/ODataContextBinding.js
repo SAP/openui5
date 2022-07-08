@@ -233,7 +233,10 @@ sap.ui.define([
 		// the context(s) in that uppermost binding. Note that no data may be available in the
 		// uppermost context binding and hence the deletion would not work there, BCP 1980308439.
 		var oEmptyPathParentContext = this._findEmptyPathParentContext(this.oElementContext),
-			oEmptyPathParentBinding = oEmptyPathParentContext.getBinding();
+			oEmptyPathParentBinding = oEmptyPathParentContext.getBinding(),
+			oDeleteParentContext = oEmptyPathParentBinding.getContext(),
+			oReturnValueContext = oEmptyPathParentBinding.oReturnValueContext,
+			that = this;
 
 		// In case the uppermost parent reached with empty paths is a list binding, delete there.
 		if (!oEmptyPathParentBinding.execute) {
@@ -247,27 +250,27 @@ sap.ui.define([
 			// deleteFromCache call below. In Context#delete the error is reported.
 		}
 
-		return this.deleteFromCache(oGroupLock, sEditUrl, "", null, bDoNotRequestCount,
-			function () {
-				oEmptyPathParentBinding._destroyContextAfterDelete();
-			});
-	};
-
-	/**
-	 * Destroys the element context and, if available, the return value context, and fires a
-	 * change. The method is called by #_delete, possibly at another context binding for the same
-	 * entity, after the successful deletion in the back end.
-	 *
-	 * @private
-	 */
-	ODataContextBinding.prototype._destroyContextAfterDelete = function () {
-		this.oElementContext.destroy();
-		this.oElementContext = null;
-		if (this.oReturnValueContext) {
-			this.oReturnValueContext.destroy();
-			this.oReturnValueContext = null;
+		oEmptyPathParentBinding.oElementContext = null;
+		if (oReturnValueContext) {
+			oEmptyPathParentBinding.oReturnValueContext = null;
 		}
 		this._fireChange({reason : ChangeReason.Remove});
+		return this.deleteFromCache(oGroupLock, sEditUrl, "", null).then(function () {
+			oEmptyPathParentContext.destroy();
+			if (oReturnValueContext) {
+				oReturnValueContext.destroy();
+			}
+		}, function (oError) {
+			if (!oEmptyPathParentBinding.isRelative()
+					|| oDeleteParentContext === oEmptyPathParentBinding.getContext()) {
+				oEmptyPathParentBinding.oElementContext = oEmptyPathParentContext;
+				if (oReturnValueContext) {
+					oEmptyPathParentBinding.oReturnValueContext = oReturnValueContext;
+				}
+				that._fireChange({reason : ChangeReason.Insert});
+			}
+			throw oError;
+		});
 	};
 
 	/**

@@ -106,11 +106,11 @@ sap.ui.define([
 		// creates the cache does not call #setActive)
 		this.iActiveUsages = 1;
 		this.mChangeListeners = {}; // map from path to an array of change listeners
+		this.mChangeRequests = {}; // map from path to an array of DELETE or PATCH promises
 		this.fnGetOriginalResourcePath = fnGetOriginalResourcePath;
 		// the point in time when the cache became inactive; active caches have Infinity so that
 		// they are always "newer"
 		this.iInactiveSince = Infinity;
-		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
 		this.mEditUrl2PatchPromise = {}; // map from edit URL to a PATCH promise for retry
 		// a promise with attached properties $count, $resolve existing while DELETEs or POSTs are
 		// being sent
@@ -145,11 +145,12 @@ sap.ui.define([
 	 * @param {boolean} [bDoNotRequestCount]
 	 *   Whether not to request the new count from the server; useful in case of
 	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
-	 *   unchanged; w/o a lock this should be true
-	 * @param {function} fnCallback
-	 *   A function which is called after a transient entity has been deleted from the cache or
-	 *   after the entity has been deleted from the server and from the cache; the index of the
-	 *   entity and the entity list are both passed as parameter, or none of them
+	 *   unchanged; only used when deleting from an entity collection
+	 * @param {function} [fnCallback]
+	 *   A function which is called immediately when an entity has been deleted from the cache, or
+	 *   when it was re-inserted due to an error; only used when deleting from an entity collection,
+	 *   the index of the entity and an offset (-1 for deletion, 1 for re-insertion) are passed as
+	 *   parameter
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
@@ -161,12 +162,10 @@ sap.ui.define([
 			bDoNotRequestCount, fnCallback) {
 		var aSegments = sPath.split("/"),
 			vDeleteProperty = aSegments.pop(),
-			iIndex = rNumber.test(vDeleteProperty) ? Number(vDeleteProperty) : undefined,
 			sParentPath = aSegments.join("/"),
 			that = this;
 
 		this.checkSharedRequest();
-		this.addPendingRequest();
 
 		return this.fetchValue(_GroupLock.$cached, sParentPath).then(function (vCacheData) {
 			var vCachePath = _Cache.from$skip(vDeleteProperty, vCacheData),
@@ -174,10 +173,13 @@ sap.ui.define([
 					? vCacheData[vCachePath] || vCacheData.$byPredicate[vCachePath]
 					: vCacheData, // deleting at root level
 				mHeaders,
+				iIndex = typeof vCachePath === "number" ? vCachePath : undefined,
 				sKeyPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
 				sEntityPath = _Helper.buildPath(sParentPath,
 					Array.isArray(vCacheData) ? sKeyPredicate : vDeleteProperty),
-				sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient");
+				oRequestPromise,
+				sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient"),
+				sTransientPredicate = _Helper.getPrivateAnnotation(oEntity, "transientPredicate");
 
 			if (sTransientGroup) {
 				if (typeof sTransientGroup !== "string") {
@@ -186,47 +188,73 @@ sap.ui.define([
 				that.oRequestor.removePost(sTransientGroup, oEntity);
 				return undefined;
 			}
-			if (oEntity["$ui5.deleting"]) {
+			if (oEntity["@$ui5.context.isDeleted"]) {
 				throw new Error("Must not delete twice: " + sEditUrl);
 			}
-			oEntity["$ui5.deleting"] = true;
+			oEntity["@$ui5.context.isDeleted"] = true;
+			if (Array.isArray(vCacheData)) {
+				iIndex = that.removeElement(vCacheData, iIndex, sKeyPredicate, sParentPath);
+				vCacheData.$deleted = vCacheData.$deleted || {};
+				vCacheData.$deleted[sKeyPredicate] = {
+					created : !!sTransientPredicate,
+					groupId : oGroupLock && oGroupLock.getGroupId(),
+					index : iIndex
+				};
+				fnCallback(iIndex, -1);
+			}
 			mHeaders = {"If-Match" : oETagEntity || oEntity};
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
+			// the existence of an onCancel callback causes a pending change in the requestor
+			oRequestPromise = oGroupLock
+				? that.oRequestor.request("DELETE", sEditUrl, oGroupLock.getUnlockedCopy(),
+					mHeaders, undefined, undefined, /*onCancel*/function () {}, undefined,
+					_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath))
+				: SyncPromise.resolve();
+			_Helper.addByPath(that.mChangeRequests, sEntityPath, oRequestPromise);
 			return SyncPromise.all([
-				oGroupLock
-					&& that.oRequestor.request("DELETE", sEditUrl, oGroupLock.getUnlockedCopy(),
-							mHeaders, undefined, undefined, undefined, undefined,
-							_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath))
-						.catch(function (oError) {
-							if (oError.status !== 404) {
-								delete oEntity["$ui5.deleting"];
-								throw oError;
-							} // else: map 404 to 200
-						}),
+				oRequestPromise.catch(function (oError) {
+					if (oError.status !== 404) {
+						throw oError;
+					} // else: map 404 to 200
+				}),
 				iIndex === undefined // single element or kept-alive not in list
 					&& !bDoNotRequestCount
 					&& that.requestCount(oGroupLock || that.oRequestor.lockGroup("$auto", that)),
 				oGroupLock && oGroupLock.unlock() // unlock when all requests have been queued
 			]).then(function () {
 				if (Array.isArray(vCacheData)) {
-					fnCallback(
-						that.removeElement(vCacheData, iIndex, sKeyPredicate, sParentPath),
-						vCacheData);
-				} else {
-					if (vDeleteProperty) {
-						// set to null and notify listeners
-						_Helper.updateExisting(that.mChangeListeners, sParentPath,
-							vCacheData, _Cache.makeUpdateData([vDeleteProperty], null));
-					} else { // deleting at root level
-						oEntity["$ui5.deleted"] = true;
-					}
-					fnCallback();
+					delete vCacheData.$deleted[sKeyPredicate];
+					delete vCacheData.$byPredicate[sKeyPredicate];
+					delete vCacheData.$byPredicate[sTransientPredicate];
+				} else if (vDeleteProperty) {
+					// set to null and notify listeners
+					_Helper.updateExisting(that.mChangeListeners, sParentPath,
+						vCacheData, _Cache.makeUpdateData([vDeleteProperty], null));
+				} else { // deleting at root level
+					oEntity["$ui5.deleted"] = true;
 				}
 				that.oRequestor.getModelInterface().reportStateMessages(that.sResourcePath,
 					{}, [sEntityPath]);
+			}, function (oError) {
+				delete oEntity["@$ui5.context.isDeleted"];
+				if (Array.isArray(vCacheData)) {
+					addToCount(that.mChangeListeners, sParentPath, vCacheData, 1);
+					iIndex = vCacheData.$deleted[sKeyPredicate].index;
+					vCacheData.splice(iIndex, 0, oEntity);
+					that.adjustIndexes(sParentPath, vCacheData, iIndex, 1);
+					delete vCacheData.$deleted[sKeyPredicate];
+					if (sTransientPredicate) {
+						vCacheData.$created += 1;
+						if (!sParentPath) {
+							that.iActiveElements += 1;
+						}
+					}
+					fnCallback(iIndex, 1);
+				}
+				throw oError;
+			}).finally(function () {
+				_Helper.removeByPath(that.mChangeRequests, sEntityPath, oRequestPromise);
 			});
-		}).finally(function () {
-			that.removePendingRequest();
 		});
 	};
 
@@ -246,6 +274,39 @@ sap.ui.define([
 			this.oPendingRequestsPromise.$resolve = fnResolve;
 		}
 		this.oPendingRequestsPromise.$count += 1;
+	};
+
+	/**
+	 * Adjusts the indexes in the collection.
+	 *
+	 * @param {string} sPath The path of the collection in the cache
+	 * @param {object[]} aElements The collection
+	 * @param {number} iIndex The index at which an element has been inserted or removed
+	 * @param {number} iOffset The offset (1 = insert, -1 = remove)
+	 * @param {boolean} bCreate Whether the insert is a create (and not reverting a delete)
+	 *
+	 * @private
+	 */
+	_Cache.prototype.adjustIndexes = function (sPath, aElements, iIndex, iOffset, bCreate) {
+		if (!sPath) {
+			// If the path is empty, we are in a _CollectionCache and aReadRequest exists
+			this.aReadRequests.forEach(function (oReadRequest) {
+				if (oReadRequest.iStart >= iIndex) {
+					oReadRequest.iStart += iOffset;
+					oReadRequest.iEnd += iOffset;
+				} // Note: no changes can happen inside *gaps*
+			});
+		}
+		Object.keys(aElements.$deleted || {}).forEach(function (sKey) {
+			var oDeleted = aElements.$deleted[sKey];
+
+			if (oDeleted.index > iIndex // definitely before the deleted one
+					|| bCreate && oDeleted.index === iIndex // creating at delete position
+						&& (iIndex === 0 // create at start
+							|| !oDeleted.created)) { // the deleted one was not created
+				oDeleted.index += iOffset;
+			}
+		});
 	};
 
 	/**
@@ -333,19 +394,17 @@ sap.ui.define([
 
 		// Clean-up when the create has been canceled.
 		function cleanUp() {
+			var iIndex = aCollection.indexOf(oEntityData);
+
 			_Helper.removeByPath(that.mPostRequests, sPath, oEntityData);
-			aCollection.splice(aCollection.indexOf(oEntityData), 1);
+			aCollection.splice(iIndex, 1);
 			aCollection.$created -= 1;
 			if (!oEntityData["@$ui5.context.isInactive"]) {
 				that.iActiveElements -= 1;
 				addToCount(that.mChangeListeners, sPath, aCollection, -1);
 			}
 			delete aCollection.$byPredicate[sTransientPredicate];
-			if (!sPath) {
-				// Note: sPath is empty only in a CollectionCache, so we may call adjustReadRequests
-				// Note: index 0 is OK here (see "Must not request created element")
-				that.adjustReadRequests(0, -1);
-			}
+			that.adjustIndexes(sPath, aCollection, iIndex, -1);
 			oGroupLock.cancel();
 		}
 
@@ -455,10 +514,7 @@ sap.ui.define([
 		// if the nested collection is empty $byPredicate is not available, create it on demand
 		aCollection.$byPredicate = aCollection.$byPredicate || {};
 		aCollection.$byPredicate[sTransientPredicate] = oEntityData;
-		if (!sPath) {
-			// Note: sPath is empty only in a CollectionCache, so we may call adjustReadRequests
-			that.adjustReadRequests(0, 1);
-		}
+		that.adjustIndexes(sPath, aCollection, 0, 1, true);
 
 		return oPostPathPromise.then(function (sPostPath) {
 			sPostPath += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
@@ -476,7 +532,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_Cache.prototype.deregisterChange = function (sPath, oListener) {
+	_Cache.prototype.deregisterChangeListener = function (sPath, oListener) {
 		if (!this.bSharedRequest) {
 			_Helper.removeByPath(this.mChangeListeners, sPath, oListener);
 		}
@@ -1042,8 +1098,8 @@ sap.ui.define([
 	 *   Whether there are any registered change listeners
 	 *
 	 * @public
-	 * @see #deregisterChange
-	 * @see #registerChange
+	 * @see #deregisterChangeListener
+	 * @see #registerChangeListener
 	 */
 	_Cache.prototype.hasChangeListeners = function () {
 		return !isEmptyObject(this.mChangeListeners);
@@ -1070,16 +1126,16 @@ sap.ui.define([
 			bIgnoreTransient) {
 		var that = this;
 
-		return Object.keys(this.mPatchRequests).some(function (sRequestPath) {
-			return isSubPath(sRequestPath, sPath)
+		return Object.keys(this.mChangeRequests).some(function (sRequestPath) {
+			return _Helper.hasPathPrefix(sRequestPath, sPath)
 				&& !(bIgnoreKeptAlive
-					&& that.mPatchRequests[sRequestPath].every(function (oPatchPromise) {
+					&& that.mChangeRequests[sRequestPath].every(function (oPatchPromise) {
 						return oPatchPromise.$isKeepAlive();
 					}));
 		}) || Object.keys(this.mPostRequests).some(function (sRequestPath) {
 			return bIgnoreTransient && !sRequestPath
 				? false // ignore transient elements on top level
-				: isSubPath(sRequestPath, sPath)
+				: _Helper.hasPathPrefix(sRequestPath, sPath)
 					&& that.mPostRequests[sRequestPath].some(function (oEntityData) {
 						return !oEntityData["@$ui5.context.isInactive"];
 					});
@@ -1329,7 +1385,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	_Cache.prototype.registerChange = function (sPath, oListener) {
+	_Cache.prototype.registerChangeListener = function (sPath, oListener) {
 		if (!this.bSharedRequest) {
 			_Helper.addByPath(this.mChangeListeners, sPath, oListener);
 		}
@@ -1356,32 +1412,33 @@ sap.ui.define([
 	 * @private
 	 */
 	_Cache.prototype.removeElement = function (aElements, iIndex, sPredicate, sPath) {
-		var oElement,
-			sTransientPredicate;
+		var oElement = aElements.$byPredicate[sPredicate],
+			bDeleted = oElement["@$ui5.context.isDeleted"],
+			sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
 
-		oElement = aElements.$byPredicate[sPredicate];
 		if (iIndex !== undefined) {
 			// the element might have moved due to parallel insert/delete
 			iIndex = _Cache.getElementIndex(aElements, sPredicate, iIndex);
 			aElements.splice(iIndex, 1);
 			addToCount(this.mChangeListeners, sPath, aElements, -1);
 		}
-		delete aElements.$byPredicate[sPredicate];
-		sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate");
+		if (!bDeleted) {
+			delete aElements.$byPredicate[sPredicate];
+		}
 		if (sTransientPredicate) {
 			aElements.$created -= 1;
 			if (!sPath) {
 				this.iActiveElements -= 1;
 			}
-			delete aElements.$byPredicate[sTransientPredicate];
+			if (!bDeleted) {
+				delete aElements.$byPredicate[sTransientPredicate];
+			}
 		}
-		if (!sPath && iIndex !== undefined) {
-			// Note: sPath is empty only in a CollectionCache, so we may use iLimit and
-			// adjustReadRequests
-			if (!sTransientPredicate) {
+		if (iIndex !== undefined) {
+			this.adjustIndexes(sPath, aElements, iIndex, -1);
+			if (!sPath && !sTransientPredicate) {
 				this.iLimit -= 1; // this doesn't change Infinity
 			}
-			this.adjustReadRequests(iIndex, -1);
 		}
 		return iIndex;
 	};
@@ -1522,15 +1579,15 @@ sap.ui.define([
 	_Cache.prototype.resetChangesForPath = function (sPath) {
 		var that = this;
 
-		Object.keys(this.mPatchRequests).forEach(function (sRequestPath) {
+		Object.keys(this.mChangeRequests).reverse().forEach(function (sRequestPath) {
 			var aPromises, i;
 
-			if (isSubPath(sRequestPath, sPath)) {
-				aPromises = that.mPatchRequests[sRequestPath];
+			if (_Helper.hasPathPrefix(sRequestPath, sPath)) {
+				aPromises = that.mChangeRequests[sRequestPath];
 				for (i = aPromises.length - 1; i >= 0; i -= 1) {
-					that.oRequestor.removePatch(aPromises[i]);
+					that.oRequestor.removeChangeRequest(aPromises[i]);
 				}
-				delete that.mPatchRequests[sRequestPath];
+				delete that.mChangeRequests[sRequestPath];
 			}
 		});
 
@@ -1760,7 +1817,7 @@ sap.ui.define([
 			 * resetChangesForPath has been called on the binding or model.
 			 */
 			function onCancel() {
-				_Helper.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+				_Helper.removeByPath(that.mChangeRequests, sFullPath, oPatchPromise);
 				// write the previous value into the cache
 				_Helper.updateExisting(that.mChangeListeners, sEntityPath, oEntity, oOldData);
 			}
@@ -1810,14 +1867,14 @@ sap.ui.define([
 					bAtFront, /*mQueryOptions*/ undefined, /*vOwner*/ undefined,
 					mergePatchRequests);
 				oPatchPromise.$isKeepAlive = fnIsKeepAlive;
-				_Helper.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+				_Helper.addByPath(that.mChangeRequests, sFullPath, oPatchPromise);
 				return SyncPromise.all([
 					oPatchPromise,
 					that.fetchTypes()
 				]).then(function (aResult) {
 					var oPatchResult = aResult[0];
 
-					_Helper.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+					_Helper.removeByPath(that.mChangeRequests, sFullPath, oPatchPromise);
 					if (bSkip) {
 						// if a PATCH is skipped, because it is merged into another, nothing to do!
 						return;
@@ -1841,7 +1898,7 @@ sap.ui.define([
 						onCancel();
 						throw oError;
 					}
-					_Helper.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+					_Helper.removeByPath(that.mChangeRequests, sFullPath, oPatchPromise);
 					if (oError.canceled) {
 						throw oError;
 					}
@@ -2201,23 +2258,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adjusts the indices for read requests.
-	 *
-	 * @param {number} iIndex The index at which an element has been added or removed
-	 * @param {number} iOffset The offset to add to the indices
-	 *
-	 * @private
-	 */
-	_CollectionCache.prototype.adjustReadRequests = function (iIndex, iOffset) {
-		this.aReadRequests.forEach(function (oReadRequest) {
-			if (oReadRequest.iStart >= iIndex) {
-				oReadRequest.iStart += iOffset;
-				oReadRequest.iEnd += iOffset;
-			} // Note: no changes can happen inside *gaps*
-		});
-	};
-
-	/**
 	 * Creates an empty element for the given predicate to the cache, adds it to the cache and
 	 * returns it.
 	 *
@@ -2303,7 +2343,7 @@ sap.ui.define([
 		return oSyncPromise.then(function () {
 			// register afterwards to avoid that updateExisting fires updates before the first
 			// response
-			that.registerChange(sPath, oListener);
+			that.registerChangeListener(sPath, oListener);
 			return that.drillDown(that.aElements, sPath, oGroupLock, bCreateOnDemand);
 		});
 	};
@@ -2341,7 +2381,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a filter that excludes all created entities in this cache's collection.
+	 * Returns a filter that excludes all created entities in this cache's collection (including
+	 * those that have been deleted on the client again).
 	 *
 	 * @returns {string|undefined}
 	 *   The filter or <code>undefined</code> if there is no created entity.
@@ -2350,22 +2391,33 @@ sap.ui.define([
 	 */
 	_CollectionCache.prototype.getFilterExcludingCreated = function () {
 		var oElement,
-			sKeyFilter,
 			aKeyFilters = [],
 			mTypeForMetaPath,
-			i;
+			i,
+			that = this;
+
+		function addKeyFilter(oElement) {
+			var sKeyFilter;
+
+			mTypeForMetaPath = mTypeForMetaPath
+				|| that.fetchTypes().getResult(); // Note: $metadata already read
+			sKeyFilter = _Helper.getKeyFilter(oElement, that.sMetaPath, mTypeForMetaPath);
+			if (sKeyFilter) {
+				aKeyFilters.push(sKeyFilter);
+			}
+		}
 
 		for (i = 0; i < this.aElements.$created; i += 1) {
 			oElement = this.aElements[i];
 			if (!oElement["@$ui5.context.isTransient"]) {
-				mTypeForMetaPath = mTypeForMetaPath
-					|| this.fetchTypes().getResult(); // Note: $metadata already read
-				sKeyFilter = _Helper.getKeyFilter(oElement, this.sMetaPath, mTypeForMetaPath);
-				if (sKeyFilter) {
-					aKeyFilters.push(sKeyFilter);
-				}
+				addKeyFilter(oElement);
 			}
 		}
+		Object.keys(this.aElements.$deleted || {}).forEach(function (sPredicate) {
+			if (that.aElements.$deleted[sPredicate].created) {
+				addKeyFilter(that.aElements.$byPredicate[sPredicate]);
+			}
+		});
 
 		return aKeyFilters.length ? "not (" + aKeyFilters.sort().join(" or ") + ")" : undefined;
 	};
@@ -2397,6 +2449,30 @@ sap.ui.define([
 		}
 
 		return sQueryString;
+	};
+
+	/**
+	 * Determines the offset to <code>$skip</code> due to deleted elements in other groups.
+	 *
+	 * @param {string} sGroupId - The group ID for the read request
+	 * @param {number} iStart - The start index for the read
+	 * @returns {number} The offset
+	 */
+	_CollectionCache.prototype.getReadOffset = function (sGroupId, iStart) {
+		var iOffset = 0;
+
+		if (this.aElements.$deleted) {
+			Object.values(this.aElements.$deleted).forEach(function (oDeleteInfo) {
+				// if deleting in the same group, the entity is gone when the server reads
+				// created-persisted entities are excluded via filter
+				if (oDeleteInfo.groupId !== sGroupId && !oDeleteInfo.created
+						&& oDeleteInfo.index <= iStart) {
+					iOffset += 1;
+				}
+			});
+		}
+
+		return iOffset;
 	};
 
 	/**
@@ -2814,6 +2890,9 @@ sap.ui.define([
 	 *   The number of transient elements within the given group
 	 * @param {function} [fnDataRequested]
 	 *   The function is called when the back-end requests have been sent.
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result when the request is finished and rejecting in
+	 *   case of error
 	 * @throws {Error}
 	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
@@ -2821,7 +2900,8 @@ sap.ui.define([
 	 */
 	_CollectionCache.prototype.requestElements = function (iStart, iEnd, oGroupLock,
 			iTransientElements, fnDataRequested) {
-		var oPromise,
+		var iOffset = this.getReadOffset(oGroupLock.getGroupId(), iStart),
+			oPromise,
 			oReadRequest = {
 				iEnd : iEnd,
 				iStart : iStart
@@ -2831,8 +2911,9 @@ sap.ui.define([
 		this.aReadRequests.push(oReadRequest);
 		this.bSentRequest = true;
 		oPromise = SyncPromise.all([
-			this.oRequestor.request("GET", this.getResourcePathWithQuery(iStart, iEnd), oGroupLock,
-				undefined, undefined, fnDataRequested),
+			this.oRequestor.request("GET",
+				this.getResourcePathWithQuery(iStart + iOffset, iEnd + iOffset),
+				oGroupLock, undefined, undefined, fnDataRequested),
 			this.fetchTypes()
 		]).then(function (aResult) {
 			var iFiltered;
@@ -2853,6 +2934,8 @@ sap.ui.define([
 
 		// Note: oPromise MUST be a SyncPromise for performance reasons, see SyncPromise#all
 		this.fill(oPromise, iStart, iEnd);
+
+		return oPromise;
 	};
 
 	/**
@@ -3186,7 +3269,7 @@ sap.ui.define([
 				fnDataRequested, undefined, this.sMetaPath));
 		}
 		return this.oPromise.then(function (oResult) {
-			that.registerChange("", oListener);
+			that.registerChangeListener("", oListener);
 			// Note: For a null value, null is returned due to "204 No Content". For $count,
 			// "a simple primitive integer value with media type text/plain" is returned.
 			return oResult && typeof oResult === "object" ? oResult.value : oResult;
@@ -3312,7 +3395,7 @@ sap.ui.define([
 			if (oResult && oResult["$ui5.deleted"]) {
 				throw new Error("Cannot read a deleted entity");
 			}
-			that.registerChange(sPath, oListener);
+			that.registerChangeListener(sPath, oListener);
 			return that.drillDown(oResult, sPath, oGroupLock, bCreateOnDemand);
 		});
 	};

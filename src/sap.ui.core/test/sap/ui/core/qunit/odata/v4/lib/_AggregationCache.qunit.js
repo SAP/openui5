@@ -676,7 +676,7 @@ sap.ui.define([
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {});
 
-		this.mock(oCache).expects("registerChange").withExactArgs("~path~", "~oListener~");
+		this.mock(oCache).expects("registerChangeListener").withExactArgs("~path~", "~oListener~");
 		this.mock(oCache).expects("drillDown")
 			.withExactArgs(sinon.match.same(oCache.aElements), "~path~", "~oGroupLock~")
 			.returns("~promise~");
@@ -697,7 +697,7 @@ sap.ui.define([
 			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {});
 
 		this.mock(oCache.oFirstLevel).expects("fetchValue").never();
-		this.mock(oCache).expects("registerChange").never();
+		this.mock(oCache).expects("registerChangeListener").never();
 		this.mock(oCache).expects("drillDown").never();
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to drill-down into $count, invalid segment: $count",
@@ -725,7 +725,7 @@ sap.ui.define([
 		this.mock(oCache.oFirstLevel).expects("fetchValue")
 			.withExactArgs("~oGroupLock~", "$count", "~fnDataRequested~", "~oListener~")
 			.returns("~promise~");
-		this.mock(oCache).expects("registerChange").never();
+		this.mock(oCache).expects("registerChangeListener").never();
 		this.mock(oCache).expects("drillDown").never();
 
 		assert.strictEqual(

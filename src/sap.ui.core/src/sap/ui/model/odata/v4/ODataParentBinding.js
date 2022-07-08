@@ -597,11 +597,11 @@ sap.ui.define([
 	 * @param {boolean} [bDoNotRequestCount]
 	 *   Whether not to request the new count from the server; useful in case of
 	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
-	 *   unchanged; w/o a lock this should be true
-	 * @param {function} fnCallback
-	 *   A function which is called after a transient entity has been deleted from the cache or
-	 *   after the entity has been deleted from the server and from the cache; the index of the
-	 *   entity and the entity list are both passed as parameter, or none of them
+	 *   unchanged; only relevant for the list binding
+	 * @param {function} [fnCallback]
+	 *  A function which is called immediately when an entity has been deleted from the cache, or
+	 *   when it was re-inserted due to an error; only used in the list binding; the index of the
+	 *   entity and an offset (-1 for deletion, 1 for re-insertion) are passed as parameter
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure; returns <code>undefined</code> if the
