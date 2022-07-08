@@ -747,10 +747,6 @@ sap.ui.define([
 		_adjustTable.call(this);
 	};
 
-	MTable.prototype._handleSearch = function (oEvent) {
-		return this.applyFilters(this.getFilterValue());
-	};
-
 	MTable.prototype._observeChanges = function (oChanges) {
 
 		if (oChanges.name === "config") {

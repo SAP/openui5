@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/mdc/util/Common',
 	'sap/ui/mdc/enum/PersistenceMode',
 	'sap/ui/mdc/p13n/Engine',
-	'sap/base/util/merge'
+	'sap/base/util/merge',
+	'sap/ui/mdc/p13n/StateUtil'
 ], function(
 	loadModules,
 	ListContent,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Common,
 	PersistenceMode,
 	Engine,
-	merge
+	merge,
+	StateUtil
 ) {
 	"use strict";
 
@@ -115,23 +117,20 @@ sap.ui.define([
 	});
 
 	FilterableListContent.prototype.init = function() {
-
 		ListContent.prototype.init.apply(this, arguments);
-
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-
 		this._oObserver.observe(this, {
 			properties: ["filterFields"],
 			aggregations: ["_defaultFilterBar", "filterBar"]
 		});
 
 		Engine.getInstance().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
+
 	};
 
 	FilterableListContent.prototype._handleFilterValueUpdate = function (oChanges) {
-		_addFilterValueToFilterBar.call(this, this._getPriorityFilterBar(), oChanges.current);
 		if (this.isContainerOpen()) { // TODO: only visible content if multiple contens on dialog
-			this.applyFilters(oChanges.current);
+			this.applyFilters(this._getPriorityFilterValue());
 		}
 	};
 
@@ -142,7 +141,7 @@ sap.ui.define([
 	};
 
 	FilterableListContent.prototype.applyFilters = function (sSearch) {
-		this.applyFilterConditions();
+
 	};
 
 
@@ -240,7 +239,10 @@ sap.ui.define([
 	};
 
 	FilterableListContent.prototype._handleSearch = function (oEvent) {
-		// to be implemented by MTable and MDCTable
+		var oFilterBar = oEvent.getSource();
+		this._setLocalFilterValue(oFilterBar.getSearch());
+		this.applyFilters(this._getPriorityFilterValue());
+
 	};
 
 	function _setBasicSearch(oFilterBar) {
@@ -275,33 +277,8 @@ sap.ui.define([
 		}
 	}
 
-	FilterableListContent.prototype.onContainerOpen = function () {
-		this._bInitialConditionsApplied = false;
-	};
-
-	FilterableListContent.prototype.onShow = function () {
-		ListContent.prototype.onShow.apply(this, arguments);
-
-
-		if (!this._bInitialConditionsApplied) {
-			this._applyInitialConditions(this._getPriorityFilterBar()); // to set incomming condition on FilterBar
-			this._bInitialConditionsApplied = true;
-
-			var oListBinding = this.getListBinding();
-			var oListBindingInfo = this._getListBindingInfo();
-			var bBindingSuspended = oListBinding && oListBinding.isSuspended();
-			var bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
-
-			if ((bBindingSuspended || bBindingWillBeSuspended) && !this.isTypeahead()) {
-				return; // in dialog case do not resume suspended table on opening
-			}
-
-			this.applyFilters(this.getFilterValue());
-		}
-	};
-
-	FilterableListContent.prototype.onHide = function () {
-		ListContent.prototype.onHide.apply(this, arguments);
+	FilterableListContent.prototype.onContainerClose = function () {
+		this._setLocalFilterValue(undefined);
 	};
 
 	FilterableListContent.prototype._getPriorityFilterBar = function () {
@@ -345,7 +322,6 @@ sap.ui.define([
 						}
 					}
 				}
-				_addFilterValueToFilterBar.call(this, this._getPriorityFilterBar(), this.getFilterValue()); // as might set before a FilterBar exist
 			} else if (oChanges.name === "filterFields") {
 				// check if search fields needs to be removed or added
 				oFilterBar = this._getPriorityFilterBar();
@@ -374,20 +350,6 @@ sap.ui.define([
 		var oDelegatePayload = this._getValueHelpDelegatePayload();
 		return oDelegate ? oDelegate.getTypesForConditions(oDelegatePayload, this, oConditions) : {};
 	};
-
-	function _addFilterValueToFilterBar(oFilterBar, sFilterValue) {
-		var sFilterFields = this.getFilterFields();
-
-		if (oFilterBar && sFilterFields) {
-			var oConditions = oFilterBar.getInternalConditions();
-			if (!oConditions[sFilterFields] || oConditions[sFilterFields].length !== 1 || oConditions[sFilterFields][0].values[0] !== sFilterValue) {
-				var oCondition = Condition.createCondition("Contains", [sFilterValue], undefined, undefined, ConditionValidated.NotValidated);
-				oConditions[sFilterFields] = [oCondition];
-				oFilterBar.setInternalConditions(oConditions);
-			}
-		}
-
-	}
 
 	FilterableListContent.prototype.getFormattedTitle = function(iCount) {
 		var sTitle = ListContent.prototype.getFormattedTitle.apply(this, arguments);
@@ -447,22 +409,45 @@ sap.ui.define([
 		}
 	};
 
-	FilterableListContent.prototype.onBeforeShow = function() {
-		var oDelegate = this._getValueHelpDelegate();
-		return Promise.resolve(oDelegate && oDelegate.getInitialFilterConditions(this._getValueHelpDelegatePayload(), this, this._getControl())).then(function (oConditions) {
-			this._oInitialFilterConditions = oConditions;
-		}.bind(this));
+	FilterableListContent.prototype.onBeforeShow = function(bInitial) {
+		if (bInitial) {
+			var oDelegate = this._getValueHelpDelegate();
+			return Promise.resolve(oDelegate && oDelegate.getInitialFilterConditions(this._getValueHelpDelegatePayload(), this, this._getControl())).then(function (oConditions) {
+				this._oInitialFilterConditions = oConditions;
+
+				var oFilterBar = this._getPriorityFilterBar();
+				if (oFilterBar) {
+					var sFilterFields =  this.getFilterFields();
+					var oNewConditions = merge({}, this._oInitialFilterConditions);
+
+					return Promise.resolve(!oNewConditions[sFilterFields] && StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
+						_addSearchConditionToConditionMap(oNewConditions, sFilterFields, this._getPriorityFilterValue(), oState.filter);
+						if (bInitial) {
+							_addEmptyConditionPathsToConditionMap(oNewConditions, oState.filter);
+						}
+					}.bind(this))).then(function () {
+						return StateUtil.applyExternalState(oFilterBar, {filter: oNewConditions});
+					});
+				}
+			}.bind(this));
+		}
+		return undefined;
 	};
 
-	FilterableListContent.prototype._applyInitialConditions = function (oFilterBar) {
-		if (oFilterBar) {
-			var sFilterFields =  this.getFilterFields();
-			var oNewConditions = merge({}, this._oInitialFilterConditions);
-			oFilterBar.setInternalConditions(oNewConditions);
-			if (!oNewConditions[sFilterFields]) { // not set from Delegate
-				// add current FilterValue as search
-				_addFilterValueToFilterBar.call(this, oFilterBar, this.getFilterValue()); // as might set before a FilterBar exist
+	FilterableListContent.prototype.onShow = function (bInitial) {
+		ListContent.prototype.onShow.apply(this, arguments);
+
+		if (bInitial) {
+			var oListBinding = this.getListBinding();
+			var oListBindingInfo = this._getListBindingInfo();
+			var bBindingSuspended = oListBinding && oListBinding.isSuspended();
+			var bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
+
+			if ((bBindingSuspended || bBindingWillBeSuspended) && !this.isTypeahead()) {
+				return; // in dialog case do not resume suspended table on opening
 			}
+
+			this.applyFilters(this._getPriorityFilterValue());
 		}
 	};
 
@@ -480,7 +465,7 @@ sap.ui.define([
 		Engine.getInstance().defaultProviderRegistry.detach(this);
 
 		Common.cleanup(this, [
-			"_oCollectiveSearchSelect", "_oInitialFilterConditions", "_bInitialConditionsApplied"
+			"_oCollectiveSearchSelect", "_oInitialFilterConditions"
 		]);
 
 		if (this._oSearchField && !this._oSearchField.getParent()) {
@@ -497,6 +482,65 @@ sap.ui.define([
 		var oDelegatePayload = oDelegate && this._getValueHelpDelegatePayload();
 		return oDelegate && oDelegate.getCount ? oDelegate.getCount(oDelegatePayload, this, aConditions, sGroup) : ListContent.prototype.getCount.apply(this, arguments);
 	};
+
+	FilterableListContent.prototype._getLocalFilterValue = function() {
+		var oContainer = this.getParent();
+		return oContainer && oContainer.getLocalFilterValue();
+	};
+
+	FilterableListContent.prototype._setLocalFilterValue = function(sValue) {
+		var oContainer = this.getParent();
+		return oContainer && oContainer.setLocalFilterValue(sValue);
+	};
+
+	FilterableListContent.prototype._getPriorityFilterValue = function() {
+		var oContainer = this.getParent();
+		var sLocalFilterValue = oContainer && oContainer.getLocalFilterValue();
+
+		if (typeof sLocalFilterValue !== 'undefined') {
+			return sLocalFilterValue;
+		}
+
+		return this.getFilterValue();
+	};
+
+	function _getSearchCondition (sFilterValue) {
+		return Condition.createCondition("Contains", [sFilterValue], undefined, undefined, ConditionValidated.NotValidated);
+	}
+
+	function _addSearchConditionToConditionMap(oConditions, sFilterFields, sFilterValue, oCurrentConditions) {
+		if (sFilterFields) {
+			oCurrentConditions = oCurrentConditions || oConditions;
+			var aCurrentSearchConditions = oCurrentConditions[sFilterFields];
+
+			if (!aCurrentSearchConditions) {
+				if (sFilterValue) {
+					oConditions[sFilterFields] = [_getSearchCondition(sFilterValue)];
+				}
+				return;
+			}
+
+			if (aCurrentSearchConditions.length === 1  && aCurrentSearchConditions[0].values[0] !== sFilterValue) {
+				oConditions[sFilterFields] = [_getSearchCondition(sFilterValue)];
+				return;
+			}
+
+			if (aCurrentSearchConditions.length === 0) {
+				oConditions[sFilterFields] = sFilterValue ? [_getSearchCondition(sFilterValue)] : [];
+				return;
+			}
+		}
+		return;
+	}
+
+	function _addEmptyConditionPathsToConditionMap (oConditions, oCurrentConditions) {
+		var aCurrentKeys = Object.keys(oCurrentConditions).filter(function (sKey) {
+			return sKey !== "$search";
+		});
+		aCurrentKeys.forEach(function (sCurrentKey) {
+			oConditions[sCurrentKey] = oConditions[sCurrentKey] || [];
+		});
+	}
 
 	return FilterableListContent;
 

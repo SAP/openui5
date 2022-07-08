@@ -205,11 +205,10 @@ sap.ui.define([
 
 		var oContent = this._getContent();
 		var oContentPromise = oContent && oContent.getContent();
-		var oBeforeShowPromise = oContent && oContent.onBeforeShow();
 		var oContainerConfig = this._getContainerConfig(oContent);
 		var oFooterContentPromise = oContainerConfig && oContainerConfig.getFooter && oContainerConfig.getFooter();
 
-		return Promise.all([oContentPromise, oFooterContentPromise, oBeforeShowPromise]).then(function (aContents) {
+		return Promise.all([oContentPromise, oFooterContentPromise]).then(function (aContents) {
 			this._oCurrentContent = aContents[0];
 			var oFooterContent = aContents[1];
 
@@ -246,16 +245,19 @@ sap.ui.define([
 
 		Container.prototype._open.apply(this, arguments);
 
-		var oControl = this._getControl();
-		var oTarget = oControl && oControl.getFocusElementForValueHelp ? oControl.getFocusElementForValueHelp(this.isTypeahead()) : oControl;
+		var oContent = this._getContent();
+		Promise.resolve(oContent && oContent.onBeforeShow(true)).then(function () {
+			var oControl = this._getControl();
+			var oTarget = oControl && oControl.getFocusElementForValueHelp ? oControl.getFocusElementForValueHelp(this.isTypeahead()) : oControl;
 
-		if (oTarget && oTarget.getDomRef()) {
-			oPopover.setContentMinWidth(jQuery(oTarget.getDomRef()).outerWidth() + "px");
-			if (!this.isFocusInHelp()) {
-				oPopover.setInitialFocus(oTarget);
+			if (oTarget && oTarget.getDomRef()) {
+				oPopover.setContentMinWidth(jQuery(oTarget.getDomRef()).outerWidth() + "px");
+				if (!this.isFocusInHelp()) {
+					oPopover.setInitialFocus(oTarget);
+				}
+				oPopover.openBy(oTarget);
 			}
-			oPopover.openBy(oTarget);
-		}
+		}.bind(this));
 	};
 
 	Popover.prototype._close = function () {
@@ -277,7 +279,7 @@ sap.ui.define([
 
 		if (oContent) {
 			oContent.onContainerOpen();
-			oContent.onShow();
+			oContent.onShow(true);
 		}
 
 	};

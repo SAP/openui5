@@ -267,12 +267,32 @@ sap.ui.define([
 
 		if (bTypaheadSupportsSalesOrganizationConditions || bFilterBarHasCountryFilter) {
 
-			var oCountry = Core.byId("FB0-SO");
-			var aCountryConditions = oCountry && oCountry.getConditions();
-			if (aCountryConditions && aCountryConditions.length) {
-				oConditions["salesOrganization"] = aCountryConditions;
+			// Example field extraction:
+			/*
+			var TypeUtil = ODataV4ValueHelpDelegate.getTypeUtil();
+			var oField = Core.byId("FB0-SO");
+			var aSalesOrganizationConditions = oField.getConditions();
+			if (aSalesOrganizationConditions && aSalesOrganizationConditions.length) {
+				oConditions["salesOrganization"] = aSalesOrganizationConditions.map(function (oCondition) {
+					var vInternalValue = oCondition.values[0];
+					if (vInternalValue) {
+						oCondition.values = [TypeUtil.externalizeValue(vInternalValue, oField.getDataType(), oField.getDataTypeFormatOptions(), oField.getDataTypeConstraints())];
+					}
+					return oCondition;
+				});
 				return oConditions;
-			}
+			} */
+
+			// Example filterbar extraction:
+			var oSourceFilterBar = Core.byId("FB0");
+			return StateUtil.retrieveExternalState(oSourceFilterBar).then(function (oExternalFilterBarState) {
+
+				var aSalesOrganizationConditions = oExternalFilterBarState.filter && oExternalFilterBarState.filter["salesOrganization"];
+				if (aSalesOrganizationConditions && aSalesOrganizationConditions.length) {
+					oConditions["salesOrganization"] = aSalesOrganizationConditions;
+					return oConditions;
+				}
+			});
 		}
 
 		return oConditions;

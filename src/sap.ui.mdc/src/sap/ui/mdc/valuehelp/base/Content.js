@@ -256,21 +256,22 @@ sap.ui.define([
 
 	/**
 	 * Finalize content before it is shown
-	 *
+	 * @param {boolean} bInitial Indicates, if the content is to be shown for the first time since it's container opened.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
-	Content.prototype.onBeforeShow = function () {
+	Content.prototype.onBeforeShow = function (bInitial) {
 
 	};
 
 	/**
 	 * Called if the content will be shown.
 	 *
+	 * @param {boolean} bInitial Indicates, if the content is shown for the first time since it's container opened.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
-	Content.prototype.onShow = function () {
+	Content.prototype.onShow = function (bInitial) {
 		this._bVisible = true;
 		this._handleConditionsUpdate();
 		//this._handleFilterValueUpdate();
@@ -698,7 +699,6 @@ sap.ui.define([
 	Content.prototype.onContainerOpen = function() {
 
 	};
-
 
 	PromiseMixin.call(Content.prototype);
 

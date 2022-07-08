@@ -246,7 +246,7 @@
 							</mdcvc:filterBar>
 
 								<!-- type="ResponsiveTable" -->
-							<mdc:Table autoBindOnInit="true"
+							<mdc:Table autoBindOnInit="false"
 								id="mdcTable1"
 								width="100%"
 								height="100%"
@@ -290,7 +290,7 @@
 							</mdcvc:filterBar>
 
 								<!-- type="ResponsiveTable" -->
-							<mdc:Table autoBindOnInit="true"
+							<mdc:Table autoBindOnInit="false"
 								id="mdcTable2"
 								width="100%"
 								height="100%"
@@ -376,7 +376,7 @@
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
 
-								<mdc:Table autoBindOnInit="true"
+								<mdc:Table autoBindOnInit="false"
 									id="mdcTable-listcollection-1"
 									width="100%"
 									height="100%"
@@ -417,7 +417,7 @@
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
 
-								<mdc:Table autoBindOnInit="true"
+								<mdc:Table autoBindOnInit="false"
 									id="mdcTable-listcollection-2"
 									width="100%"
 									height="100%"
@@ -461,7 +461,7 @@
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
 
-								<mdc:Table autoBindOnInit="true"
+								<mdc:Table autoBindOnInit="false"
 									id="mdcTable-listcollection-3"
 									width="100%"
 									height="100%"
@@ -726,7 +726,7 @@
 									</vhfb:filterItems>
 								</vhfb:FilterBar>
 							</mdcvc:filterBar>
-							<mdc:Table autoBindOnInit="true"
+							<mdc:Table autoBindOnInit="false"
 								id="mdcTable-city"
 								width="100%"
 								height="100%"
@@ -805,7 +805,7 @@
 								</vhfb:FilterBar>
 							</mdcvc:filterBar>
 							<mdc:Table id="FH_Books1-MDCTable-table"
-								autoBindOnInit="true"
+								autoBindOnInit="false"
 								width="100%"
 								height="100%"
 								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
@@ -923,7 +923,7 @@
 								</vhfb:FilterBar>
 							</mdcvc:filterBar>
 							<mdc:Table id="FH_Books2-MDCTable-table"
-								autoBindOnInit="true"
+								autoBindOnInit="false"
 								width="100%"
 								height="100%"
 								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
@@ -1041,7 +1041,7 @@
 								</vhfb:FilterBar>
 							</mdcvc:filterBar>
 							<mdc:Table id="FH_Books3-MDCTable-table"
-								autoBindOnInit="true"
+								autoBindOnInit="false"
 								width="100%"
 								height="100%"
 								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
