@@ -17,8 +17,7 @@ sap.ui.define([
 	'sap/ui/events/jquery/EventExtension',
 	"sap/ui/events/ControlEvents",
 	"sap/ui/events/F6Navigation",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		ManagedObject,
@@ -851,7 +850,7 @@ sap.ui.define([
 
 		// TODO: this should be the 'lowest' SAPUI5 Control of this very
 		// UIArea instance's scope -> nesting scenario
-		oTargetElement = oElement = jQuery(oEvent.target).control(0);
+		oTargetElement = oElement = Element.closestTo(oEvent.target);
 
 		ActivityDetection.refresh();
 
@@ -983,7 +982,7 @@ sap.ui.define([
 			// ensure we do not bubble the control tree higher than our rootNode
 			while (oDomRef && oDomRef !== this.getRootNode()) {
 				if (oDomRef.id) {
-					oElement = jQuery(oDomRef).control(0);
+					oElement = Element.closestTo(oDomRef);
 					if (oElement) {
 						break;
 					}
@@ -1137,7 +1136,7 @@ sap.ui.define([
 		var oKey = UIArea._oFieldGroupValidationKey;
 		if (oEvent.type === "focusin" || oEvent.type === "focusout") {
 			if (oEvent.type === "focusout") {
-				oElement = jQuery(document.activeElement).control(0);
+				oElement = Element.closestTo(document.activeElement);
 			}
 			// delay the check for a field group change to allow focus forwarding and resetting focus after selection
 			if (UIArea._iFieldGroupDelayTimer) {
