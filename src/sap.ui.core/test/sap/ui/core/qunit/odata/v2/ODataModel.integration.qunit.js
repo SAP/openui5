@@ -435,6 +435,11 @@ sap.ui.define([
 			this.aRequests = [];
 			// The temporary key for a created entity; can be referenced in deep paths by ~key~
 			this.sTemporaryKey = undefined;
+			// A list of expected value states; each entry has following properties:
+			// {string|sap.m.InputBase} vControl with the control ID or an instance of InputBase,
+			// {sap.ui.core.ValueState} sState with she expected value state, and
+			// {string} sText with the expected text
+			this.aValueStates = [];
 
 			// If the "VisibleRowCountMode" of the sap.ui.table.* is "Auto", the table uses the
 			// screen height (Device.resize.height) to compute the amount of contexts it requests
@@ -577,27 +582,6 @@ sap.ui.define([
 				}
 			}
 			this.checkFinish(assert);
-		},
-
-		/**
-		 * Checks the control's value state after waiting some time for the control to set it.
-		 *
-		 * @param {object} assert The QUnit assert object
-		 * @param {string|sap.m.InputBase} vControl The control ID or an instance of InputBase
-		 * @param {sap.ui.core.ValueState} sState The expected value state
-		 * @param {string} sText The expected text
-		 *
-		 * @returns {Promise} A promise resolving when the check is done
-		 */
-		checkValueState : function (assert, vControl, sState, sText) {
-			var oControl = typeof vControl === "string" ? this.oView.byId(vControl) : vControl;
-
-			return resolveLater(function () {
-				assert.strictEqual(oControl.getValueState(), sState,
-					oControl.getId() + ": value state: " + oControl.getValueState());
-				assert.strictEqual(oControl.getValueStateText(), sText,
-					oControl.getId() + ": value state text: " + oControl.getValueStateText());
-			});
 		},
 
 		/**
@@ -1324,6 +1308,20 @@ sap.ui.define([
 		},
 
 		/**
+		 * Expects that the given value state is set after all changes have been processed.
+		 *
+		 * @param {string|sap.m.InputBase} vControl The control ID or an instance of InputBase
+		 * @param {sap.ui.core.ValueState} sState The expected value state
+		 * @param {string} sText The expected text
+		 * @returns {object} The test instance for chaining
+		 */
+		 expectValueState : function (vControl, sState, sText) {
+			this.aValueStates.push({vControl : vControl, sState : sState, sText : sText});
+
+			return this;
+		},
+
+		/**
 		 * Returns whether expected changes for the control are only optional null values.
 		 *
 		 * @param {string} sControlId The control ID
@@ -1452,13 +1450,16 @@ sap.ui.define([
 		},
 
 		/**
-		 * Waits for the expected requests and changes.
+		 * Waits for the expected requests and changes, checks the expected messages and value
+		 * states.
 		 *
 		 * @param {object} assert The QUnit assert object
 		 * @param {boolean} [bNullOptional] Whether a non-list change to a null value is optional
 		 * @param {number} [iTimeout=3000] The timeout time in milliseconds
-		 * @returns {Promise} A promise that is resolved when all requests have been responded and
-		 *   all expected values for controls have been set
+		 * @returns {Promise}
+		 *   A promise that is resolved when all requests have been responded, all expected values
+		 *   for controls have been set, all expected messages and all value states have been
+		 *   checked
 		 */
 		waitForChanges : function (assert, bNullOptional, iTimeout) {
 			var oPromise,
@@ -1506,6 +1507,24 @@ sap.ui.define([
 					}
 				}
 				that.checkMessages(assert);
+				return that.aValueStates.length === 0
+					? undefined
+					// Checks the controls' value state after waiting some time for the control to
+					// set it.
+					: resolveLater(function () {
+						that.aValueStates.forEach(function (oValueStateInfo) {
+							var oControl = typeof oValueStateInfo.vControl === "string"
+									? that.oView.byId(oValueStateInfo.vControl)
+									: oValueStateInfo.vControl;
+
+							assert.strictEqual(oControl.getValueState(), oValueStateInfo.sState,
+								oControl.getId() + ": value state: " + oControl.getValueState());
+							assert.strictEqual(oControl.getValueStateText(), oValueStateInfo.sText,
+								oControl.getId() + ": value state text: "
+									+ oControl.getValueStateText());
+						});
+						that.aValueStates = [];
+					});
 			});
 
 			return oPromise;
@@ -2352,8 +2371,7 @@ sap.ui.define([
 <FlexBox binding="{/BusinessPartnerSet(\'1\')}">\
 	<Text id="CompanyName" text="{CompanyName}" />\
 	<Input id="City" value="{Address/City}" />\
-</FlexBox>',
-			that = this;
+</FlexBox>';
 
 		this.expectRequest("BusinessPartnerSet('1')", {
 				CompanyName : "SAP SE",
@@ -2365,12 +2383,11 @@ sap.ui.define([
 			.expectChange("CompanyName", "SAP SE")
 			.expectChange("City", null)
 			.expectChange("City", "Walldorf")
-			.expectMessage(oResponseMessage,"/BusinessPartnerSet('1')/");
+			.expectMessage(oResponseMessage,"/BusinessPartnerSet('1')/")
+			.expectValueState("City", "Error", "Foo");
 
 		// code under test
-		return this.createView(assert, sView, oModel).then(function () {
-			return that.checkValueState(assert, "City", "Error", "Foo");
-		});
+		return this.createView(assert, sView, oModel);
 	});
 
 	//*********************************************************************************************
@@ -2517,7 +2534,9 @@ sap.ui.define([
 				.expectChange("supplierAddress", "Walldorf")
 				.expectMessage(oMsgSupplierAddress, "/BusinessPartnerSet('BP1')/",
 					"/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')"
-					+ "/ToProduct/ToSupplier/");
+					+ "/ToProduct/ToSupplier/")
+				.expectValueState("productName", "Error", "Foo")
+				.expectValueState("supplierAddress", "Warning", "Bar");
 
 			// code under test
 			that.oView.byId("detailSupplier").setBindingContext(
@@ -2525,11 +2544,6 @@ sap.ui.define([
 			);
 
 			return that.waitForChanges(assert);
-		}).then(function () {
-			return Promise.all([
-				that.checkValueState(assert, "productName", "Error", "Foo"),
-				that.checkValueState(assert, "supplierAddress", "Warning", "Bar")
-			]);
 		});
 	});
 
@@ -2560,24 +2574,19 @@ sap.ui.define([
 			.expectChange("LifecycleStatusDescription", null)
 			.expectChange("LifecycleStatusDescription", "LifecycleStatusDescription A")
 			.expectMessage(oMsgNote, "/SalesOrderSet('1')/")
-			.expectMessage(oMsgGrossAmount, "/SalesOrderSet('1')/");
+			.expectMessage(oMsgGrossAmount, "/SalesOrderSet('1')/")
+			.expectValueState("Note", "Error", "Bar")
+			.expectValueState("GrossAmount", "Warning", "Foo")
+			.expectValueState("LifecycleStatusDescription", "None", "");
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
-			return Promise.all([
-				that.checkValueState(assert, "Note", "Error", "Bar"),
-				that.checkValueState(assert, "GrossAmount", "Warning", "Foo"),
-				that.checkValueState(assert, "LifecycleStatusDescription", "None", ""),
-				that.waitForChanges(assert)
-			]);
-		}).then(function () {
+			that.expectValueState("Note", "None", "");
+
 			// code under test
 			that.oView.byId("Note").unbindProperty("value");
 
-			return Promise.all([
-				that.checkValueState(assert, "Note", "None", ""),
-				that.waitForChanges(assert)
-			]);
+			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.strictEqual(that.oView.byId("Note").getValue(), "");
 		});
@@ -2639,27 +2648,24 @@ sap.ui.define([
 			})
 			.expectChange("note", null)
 			.expectChange("note", "NoteA")
-			.expectMessages([oExpectedMessage]);
+			.expectMessages([oExpectedMessage])
+			.expectValueState("note", "Error", "Foo");
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
-			return that.checkValueState(assert, "note", "Error", "Foo");
-		}).then(function () {
 			that.expectRequest("SalesOrderSet('1')", {
 					SalesOrderID : "1",
 					Note : "NoteB"
 				})
 				.expectChange("note", "NoteB")
-				.expectMessages(oFixture.bIsPersistent ? [oExpectedMessage] : []);
+				.expectMessages(oFixture.bIsPersistent ? [oExpectedMessage] : [])
+				.expectValueState("note", oFixture.bIsPersistent ? "Error" : "None",
+					oFixture.bIsPersistent ? "Foo" : "");
 
 			// code under test
 			that.oModel.refresh();
 
 			return that.waitForChanges(assert);
-		}).then(function () {
-			return oFixture.bIsPersistent
-				? that.checkValueState(assert, "note", "Error", "Foo")
-				: that.checkValueState(assert, "note", "None", "");
 		});
 	});
 });
@@ -3214,15 +3220,17 @@ usePreliminaryContext : false}}">\
 					code : undefined,
 					descriptionUrl : undefined,
 					fullTarget : "",
-					message : "Enter a text with a maximum of 3 characters and spaces",
+					message : "EnterTextMaxLength 3",
 					persistent : false,
 					target : oNoteInput.getId() + "/value",
 					technical : false,
 					type : "Error"
 				}]);
 
-			// code under test - produce a validation error
-			oNoteInput.setValue("abcd");
+			TestUtils.withNormalizedMessages(function () {
+				// code under test - produce a validation error
+				oNoteInput.setValue("abcd");
+			});
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -3232,7 +3240,8 @@ usePreliminaryContext : false}}">\
 					__metadata : {uri : "SalesOrderSet('1')"},
 					Note : "Bar",
 					SalesOrderID : "1"
-				});
+				})
+				.expectValueState(oNoteInput, "Error", "EnterTextMaxLength 3");
 
 			// code under test
 			oModel.invalidateEntry(oElementBinding.getBoundContext());
@@ -3240,13 +3249,8 @@ usePreliminaryContext : false}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			// check validation error and current value on the UI
-			that.checkValueState(assert, oNoteInput, "Error",
-				"Enter a text with a maximum of 3 characters and spaces");
 			assert.strictEqual(oNoteInput.getValue(), "abcd");
 
-			return that.waitForChanges(assert);
-		}).then(function () {
 			that.expectRequest("SalesOrderSet('2')", {
 					__metadata : {uri : "SalesOrderSet('2')"},
 					// model value is not changed -> no change event is triggered for that property
@@ -3254,7 +3258,8 @@ usePreliminaryContext : false}}">\
 					SalesOrderID : "2"
 				})
 				.expectChange("salesOrderID", "2")
-				.expectMessages([]);
+				.expectMessages([])
+				.expectValueState(oNoteInput, "None", "");
 
 			// code under test - rebinding the form causes cleanup of the validation error and the
 			// user input
@@ -3262,8 +3267,6 @@ usePreliminaryContext : false}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			// code under test - check validation error and current value on the UI reverted
-			that.checkValueState(assert, oNoteInput, "None", "");
 			assert.strictEqual(oNoteInput.getValue(), "Bar");
 
 			return that.waitForChanges(assert);
@@ -5296,7 +5299,8 @@ usePreliminaryContext : false}}">\
 					"sap-message" : getMessageHeader(oNoteError)
 				})
 				.expectMessage(oNoteError,
-					"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/");
+					"/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/")
+				.expectValueState("note", "Error", oNoteError.message);
 
 			// code under test
 			that.oView.byId("page").setBindingContext(
@@ -5307,7 +5311,6 @@ usePreliminaryContext : false}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.strictEqual(that.oView.byId("note").getValue(), "foo");
-			that.checkValueState(assert, "note", "Error", oNoteError.message);
 		});
 	});
 
@@ -5376,7 +5379,8 @@ usePreliminaryContext : false}}">\
 					"sap-message" : getMessageHeader(oNoteError)
 				})
 				.expectMessage(oNoteErrorCopy, "/SalesOrderLineItemSet",
-					"/SalesOrderSet('1')/ToLineItems");
+					"/SalesOrderSet('1')/ToLineItems")
+				.expectValueState("noteLineItem", "Error", oNoteError.message);
 
 			// code under test
 			that.oView.byId("details").setBindingContext(
@@ -5390,7 +5394,6 @@ usePreliminaryContext : false}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.strictEqual(that.oView.byId("noteLineItem").getValue(), "bar");
-			that.checkValueState(assert, "noteLineItem", "Error", oNoteError.message);
 		});
 	});
 
@@ -5828,35 +5831,28 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectChange("GrossAmount", "GrossAmount A")
 			.expectChange("LifecycleStatusDescription", null)
 			.expectChange("LifecycleStatusDescription", "LifecycleStatusDescription A")
-			.expectMessage(oMsgNoteAndGrossAmount, "/SalesOrderSet('1')/");
+			.expectMessage(oMsgNoteAndGrossAmount, "/SalesOrderSet('1')/")
+			.expectValueState("Note", "Warning", "Foo")
+			.expectValueState("GrossAmount", "Warning", "Foo")
+			.expectValueState("LifecycleStatusDescription", "None", "");
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
-			return Promise.all([
-				that.checkValueState(assert, "Note", "Warning", "Foo"),
-				that.checkValueState(assert, "GrossAmount", "Warning", "Foo"),
-				that.checkValueState(assert, "LifecycleStatusDescription", "None", ""),
-				that.waitForChanges(assert)
-			]);
-		}).then(function () {
 			that.expectRequest("SalesOrderSet('1')", {
 					GrossAmount : "GrossAmount A",
 					LifecycleStatusDescription : "LifecycleStatusDescription A",
 					Note : "Note A"
 				}, {"sap-message" : getMessageHeader(oMsgGrossAmountAndLifecycleStatus)})
 				.expectMessage(oMsgGrossAmountAndLifecycleStatus, "/SalesOrderSet('1')/",
-					undefined, /*bResetMessages*/ true);
+					undefined, /*bResetMessages*/ true)
+				.expectValueState("Note", "Error", "Bar")
+				.expectValueState("GrossAmount", "None", "")
+				.expectValueState("LifecycleStatusDescription", "Error", "Bar");
 
 			// code under test: refresh => new multi-target message removes old one
 			that.oView.byId("objectPage").getObjectBinding().refresh();
 
 			return that.waitForChanges(assert);
-		}).then(function () {
-			return Promise.all([
-				that.checkValueState(assert, "Note", "Error", "Bar"),
-				that.checkValueState(assert, "GrossAmount", "None", ""),
-				that.checkValueState(assert, "LifecycleStatusDescription", "Error", "Bar")
-			]);
 		});
 	});
 
@@ -6878,7 +6874,15 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectChange("Note1", "Note")
 			.expectChange("Note2", null)
 			.expectChange("Note2", "Note")
-			.expectMessage(oNoteWarning, "/SalesOrderSet('1')/");
+			.expectMessage(oNoteWarning, "/SalesOrderSet('1')/")
+			.expectValueState("Note0", "Warning", "Foo")
+			.expectValueState("Note1", "Warning", "Foo")
+			.expectValueState("Note2", "None", "")
+			.expectValueState("Composite0", "Warning", "Foo")
+			.expectValueState("Composite1", "Warning", "Foo")
+			.expectValueState("Composite2", "None", "")
+			.expectValueState("Composite3", "Warning", "Foo")
+			.expectValueState("Composite4", "None", "");
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
@@ -6887,17 +6891,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(that.oView.byId("Composite2").getValue(), "1 - Note");
 			assert.strictEqual(that.oView.byId("Composite3").getValue(), "1 - Note");
 			assert.strictEqual(that.oView.byId("Composite4").getValue(), "1 - Note");
-			return Promise.all([
-				that.checkValueState(assert, "Note0", "Warning", "Foo"),
-				that.checkValueState(assert, "Note1", "Warning", "Foo"),
-				that.checkValueState(assert, "Note2", "None", ""),
-				that.checkValueState(assert, "Composite0", "Warning", "Foo"),
-				that.checkValueState(assert, "Composite1", "Warning", "Foo"),
-				that.checkValueState(assert, "Composite2", "None", ""),
-				that.checkValueState(assert, "Composite3", "Warning", "Foo"),
-				that.checkValueState(assert, "Composite4", "None", ""),
-				that.waitForChanges(assert)
-			]);
 		});
 	});
 
@@ -6957,8 +6950,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}],\
 			type : \'sap.ui.model.type.Currency\'\
 		}" />\
-</FlexBox>',
-			that = this;
+</FlexBox>';
 
 		this.expectRequest("SalesOrderSet('1')", {
 				CurrencyCode : "JPY",
@@ -6972,17 +6964,13 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectChange("Amount1", "12,345")
 			.expectChange("Amount2", "12,345.00")
 			.expectChange("Amount2", "12,345")
-			.expectMessage(oCurrencyCodeWarning, "/SalesOrderSet('1')/");
+			.expectMessage(oCurrencyCodeWarning, "/SalesOrderSet('1')/")
+			.expectValueState("Amount0", "None", "")
+			.expectValueState("Amount1", "Warning", "Foo")
+			.expectValueState("Amount2", "None", "");
 
 		// code under test
-		return this.createView(assert, sView, oModel).then(function () {
-			return Promise.all([
-				that.checkValueState(assert, "Amount0", "None", ""),
-				that.checkValueState(assert, "Amount1", "Warning", "Foo"),
-				that.checkValueState(assert, "Amount2", "None", ""),
-				that.waitForChanges(assert)
-			]);
-		});
+		return this.createView(assert, sView, oModel);
 	});
 
 	//**********************************************************************************************
@@ -7875,29 +7863,29 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oCurrency0.getBinding("value").setFormatter(undefined);
 
 			that.expectMessages([{
-				descriptionUrl : undefined,
-				message : "Enter a valid currency amount",
-				target : oAmount0.getId() + "/value",
-				type : "Error"
-			}, {
-				descriptionUrl : undefined,
-				message : "Enter a text with a maximum of 3 characters and spaces",
-				target : oCurrency0.getId() + "/value",
-				type : "Error"
-			}]);
+					descriptionUrl : undefined,
+					message : "Enter a valid currency amount",
+					target : oAmount0.getId() + "/value",
+					type : "Error"
+				}, {
+					descriptionUrl : undefined,
+					message : "Enter a text with a maximum of 3 characters and spaces",
+					target : oCurrency0.getId() + "/value",
+					type : "Error"
+				}])
+				.expectValueState(oAmount0, "Error", "Enter a valid currency amount")
+				.expectValueState(oCurrency0, "Error",
+					"Enter a text with a maximum of 3 characters and spaces");
 
 			// code under test
 			oAmount0.setValue("invalid amount");
 			oCurrency0.setValue("invalid currency");
 
-			return Promise.all([
-				that.checkValueState(assert, oAmount0, "Error", "Enter a valid currency amount"),
-				that.checkValueState(assert, oCurrency0, "Error",
-					"Enter a text with a maximum of 3 characters and spaces"),
-				that.waitForChanges(assert)
-			]);
+			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectMessages([]);
+			that.expectMessages([])
+				.expectValueState(oAmount0, "None", "")
+				.expectValueState(oCurrency0, "None", "");
 
 			// code under test
 			oAmount0.setBindingContext(that.oView.byId("Amount1").getBindingContext());
@@ -7908,11 +7896,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(oCurrency0.getValue(), "USD");
 			assert.strictEqual(oCurrency0.getBindingContext().getPath(), "/SalesOrderSet('2')");
 
-			return Promise.all([
-				that.checkValueState(assert, oAmount0, "None", ""),
-				that.checkValueState(assert, oCurrency0, "None", ""),
-				that.waitForChanges(assert)
-			]);
+			return that.waitForChanges(assert);
 		});
 	});
 });
@@ -7988,7 +7972,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					message : "Some message",
 					target : "/Note",
 					type : "Error"
-				}]);
+				}])
+				.expectValueState("note", "Error", "Some message");
 
 			sap.ui.getCore().getMessageManager().addMessages(new Message({
 				message: "Some message",
@@ -7997,18 +7982,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				type: "Error"
 			}));
 
-			return Promise.all([
-				that.checkValueState(assert, "note", "Error", "Some message"),
-				that.waitForChanges(assert)
-			]);
+			return that.waitForChanges(assert);
 		}).then(function () {
+			that.expectValueState("note", "None", "");
+
 			// code under test
 			that.oView.byId("note").unbindProperty("value");
 
-			return Promise.all([
-				that.checkValueState(assert, "note", "None", ""),
-				that.waitForChanges(assert)
-			]);
+			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.strictEqual(that.oView.byId("note").getValue("value"), "");
 		});
@@ -8030,7 +8011,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					message : "Some message",
 					target : "/Note",
 					type : "Error"
-				}]);
+				}])
+				.expectValueState("note", "Error", "Some message");
 
 			sap.ui.getCore().getMessageManager().addMessages(new Message({
 				message: "Some message",
@@ -8039,18 +8021,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				type: "Error"
 			}));
 
-			return Promise.all([
-				that.checkValueState(assert, "note", "Error", "Some message"),
-				that.waitForChanges(assert)
-			]);
+			return that.waitForChanges(assert);
 		}).then(function () {
+			that.expectValueState("note", "None", "");
+
 			// code under test
 			that.oView.setModel(new JSONModel({Note : "Bar"}));
 
-			return Promise.all([
-				that.checkValueState(assert, "note", "None", ""),
-				that.waitForChanges(assert)
-			]);
+			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.strictEqual(that.oView.byId("note").getValue("value"), "Bar");
 		});
@@ -8344,11 +8322,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(oControl.getValue(), "0.000 KG");
 
 			that.expectMessages([{
-				descriptionUrl: undefined,
-				message : "EnterNumberFraction 3",
-				target : oControl.getId() + "/value",
-				type : "Error"
-			}]);
+					descriptionUrl: undefined,
+					message : "EnterNumberFraction 3",
+					target : oControl.getId() + "/value",
+					type : "Error"
+				}])
+				.expectValueState("weight", "Error", "EnterNumberFraction 3");
 
 			TestUtils.withNormalizedMessages(function () {
 				// code under test
@@ -8356,9 +8335,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			});
 
 			return that.waitForChanges(assert);
-		}).then(function () {
-			return that.checkValueState(assert, that.oView.byId("weight"), "Error",
-				"EnterNumberFraction 3");
 		});
 	});
 
@@ -8434,11 +8410,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(oControl.getValue(), "0.00000\u00a0USDN");
 
 			that.expectMessages([{
-				descriptionUrl: undefined,
-				message : "EnterNumberFraction 2",
-				target : oControl.getId() + "/value",
-				type : "Error"
-			}]);
+					descriptionUrl: undefined,
+					message : "EnterNumberFraction 2",
+					target : oControl.getId() + "/value",
+					type : "Error"
+				}])
+				.expectValueState("price", "Error", "EnterNumberFraction 2");
 
 			TestUtils.withNormalizedMessages(function () {
 				// code under test
@@ -8446,9 +8423,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			});
 
 			return that.waitForChanges(assert);
-		}).then(function () {
-			return that.checkValueState(assert, that.oView.byId("price"), "Error",
-				"EnterNumberFraction 2");
 		});
 	});
 
@@ -8542,54 +8516,46 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oCurrencyControl = that.oView.byId("currency");
 
 			that.expectValue("amount", "")
-				.expectValue("price", "");
+				.expectValue("price", "")
+				.expectValueState(oAmountControl, "None", "")
+				.expectValueState(oCurrencyControl, "None", "");
 
 			// code under test
 			oAmountControl.setValue("");
 
-			return Promise.all([
-				that.waitForChanges(assert),
-				that.checkValueState(assert, oAmountControl, "None", ""),
-				that.checkValueState(assert, oCurrencyControl, "None", "")
-			]);
+			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectValue("amount", "12.00")
 				.expectValue("amount", "12.00") //TODO why twice?
-				.expectValue("price", "12.00\u00a0EUR");
+				.expectValue("price", "12.00\u00a0EUR")
+				.expectValueState(oAmountControl, "None", "")
+				.expectValueState(oCurrencyControl, "None", "");
 
 			// code under test
 			oAmountControl.setValue("12");
 
-			return Promise.all([
-				that.waitForChanges(assert),
-				that.checkValueState(assert, oAmountControl, "None", ""),
-				that.checkValueState(assert, oCurrencyControl, "None", "")
-			]);
+			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectValue("currency", "")
-				.expectValue("price", "12.00");
+				.expectValue("price", "12.00")
+				.expectValueState(oAmountControl, "None", "")
+				.expectValueState(oCurrencyControl, "None", "");
 
 			// code under test
 			oCurrencyControl.setValue("");
 
-			return Promise.all([
-				that.waitForChanges(assert),
-				that.checkValueState(assert, oAmountControl, "None", ""),
-				that.checkValueState(assert, oCurrencyControl, "None", "")
-			]);
+			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectValue("amount", "98.70")
 				.expectValue("amount", "98.70") //TODO why twice?
-				.expectValue("price", "98.70");
+				.expectValue("price", "98.70")
+				.expectValueState(oAmountControl, "None", "")
+				.expectValueState(oCurrencyControl, "None", "");
 
 			// code under test - as currency code is still missing no value should be displayed
 			oAmountControl.setValue("98.7");
 
-			return Promise.all([
-				that.waitForChanges(assert),
-				that.checkValueState(assert, oAmountControl, "None", ""),
-				that.checkValueState(assert, oCurrencyControl, "None", "")
-			]);
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -8683,54 +8649,46 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oUnitControl = that.oView.byId("unit");
 
 			that.expectValue("measure", "")
-				.expectValue("weight", "");
+				.expectValue("weight", "")
+				.expectValueState(oMeasureControl, "None", "")
+				.expectValueState(oUnitControl, "None", "");
 
 			// code under test - empty measure leads to 0??
 			oMeasureControl.setValue("");
 
-			return Promise.all([
-				that.waitForChanges(assert),
-				that.checkValueState(assert, oMeasureControl, "None", ""),
-				that.checkValueState(assert, oUnitControl, "None", "")
-			]);
+			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectValue("measure", "12.000")
 				.expectValue("measure", "12.000") //TODO why twice?
-				.expectValue("weight", "12.000 KG");
+				.expectValue("weight", "12.000 KG")
+				.expectValueState(oMeasureControl, "None", "")
+				.expectValueState(oUnitControl, "None", "");
 
 			// code under test
 			oMeasureControl.setValue("12");
 
-			return Promise.all([
-				that.waitForChanges(assert),
-				that.checkValueState(assert, oMeasureControl, "None", ""),
-				that.checkValueState(assert, oUnitControl, "None", "")
-			]);
+			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectValue("measure", "12")
 				.expectValue("unit", "")
-				.expectValue("weight", "12");
+				.expectValue("weight", "12")
+				.expectValueState(oMeasureControl, "None", "")
+				.expectValueState(oUnitControl, "None", "");
 
 			// code under test
 			oUnitControl.setValue("");
 
-			return Promise.all([
-				that.waitForChanges(assert),
-				that.checkValueState(assert, oMeasureControl, "None", ""),
-				that.checkValueState(assert, oUnitControl, "None", "")
-			]);
+			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectValue("measure", "98.7")
-				.expectValue("weight", "98.7");
+				.expectValue("weight", "98.7")
+				.expectValueState(oMeasureControl, "None", "")
+				.expectValueState(oUnitControl, "None", "");
 
 			// code under test
 			oMeasureControl.setValue("98.7");
 
-			return Promise.all([
-				that.waitForChanges(assert),
-				that.checkValueState(assert, oMeasureControl, "None", ""),
-				that.checkValueState(assert, oUnitControl, "None", "")
-			]);
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -8773,14 +8731,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		return this.createView(assert, sView, oModel).then(function () {
 			oControl = that.oView.byId("currency");
 
-			that.expectValue("currency", "EUR");
+			that.expectValue("currency", "EUR")
+				.expectValueState("currency", "None", "");
 
 			oControl.setValue("EUR");
 
-			return Promise.all([
-				that.checkValueState(assert, "currency", "None", ""),
-				that.waitForChanges(assert)
-			]);
+			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectValue("currency", "foo")
 				.expectMessages([{
@@ -8788,27 +8744,23 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					message : "Currency.Invalid",
 					target : oControl.getId() + "/value",
 					type : "Error"
-				}]);
+				}])
+				.expectValueState("currency", "Error", "Currency.Invalid");
 
 			TestUtils.withNormalizedMessages(function () {
 				// code under test
 				oControl.setValue("foo");
 			});
 
-			return Promise.all([
-				that.checkValueState(assert, "currency", "Error", "Currency.Invalid"),
-				that.waitForChanges(assert)
-			]);
+			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectValue("currency", "EUR")
-				.expectMessages([]);
+				.expectMessages([])
+				.expectValueState("currency", "None", "");
 
 			oControl.setValue("EUR");
 
-			return Promise.all([
-				that.checkValueState(assert, "currency", "None", ""),
-				that.waitForChanges(assert)
-			]);
+			return that.waitForChanges(assert);
 		});
 	});
 });
