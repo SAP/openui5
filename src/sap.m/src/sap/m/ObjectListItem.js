@@ -588,6 +588,12 @@ function(
 			return ListItemBase.prototype.destroyAggregation.call(this, "markers");
 		};
 
+		/**
+		 * @override
+		 */
+		ObjectListItem.prototype.getContentAnnouncement = function() {
+		};
+
 		ObjectListItem.prototype._observerObjectItemChanges = function (oChanges) {
 			if (oChanges.current !== oChanges.old) {
 				this.invalidate();

@@ -519,6 +519,20 @@ sap.ui.define([
 		assert.strictEqual(imageSrc, imageOLI1.getIcon(), "The icon should be inactive");
 	});
 
+	/******************************************************************/
+
+	QUnit.module("Selected state");
+
+	QUnit.test("getContentAnnouncement", function(assert) {
+		// Arrange
+		var bGetContentAnnouncement = ObjectListItem.prototype.getContentAnnouncement && (typeof ObjectListItem.prototype.getContentAnnouncement === "function");
+
+		// Assert
+		assert.ok(bGetContentAnnouncement, "getContentAnnouncement should exist as override");
+	});
+
+	/******************************************************************/
+
 	QUnit.module("Icon / Image ratio");
 
 	QUnit.test("Icon has equal width and height", function(assert) {
