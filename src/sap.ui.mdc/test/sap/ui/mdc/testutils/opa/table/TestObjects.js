@@ -38,7 +38,7 @@ sap.ui.define([
 				 * @method iPersonalizeFilter
 				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is filtered
 				 * @param {FilterPersonalizationConfiguration[]} aSettings Array containing the filter personalization configuration objects
-				 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the given control
+				 * @param {function} fnOpenThePersonalizationDialog A function that opens the personalization dialog of the given control
 				 * @returns {Promise} OPA waitFor
 				 * @public
 				 */
@@ -48,7 +48,7 @@ sap.ui.define([
 				/**
 				 * @typedef {object} GroupPersonalizationConfiguration
 				 * @property {string} key of the item that is the result of the personalization
-				 * @property {boolean} showFieldAsColumn Determines if the "Show Field as Column" checkbox is to be checked
+				 * @property {boolean} showFieldAsColumn Determines if the Show Field as Column checkbox is checked
 				 */
 				/**
 				 * Opa5 test action:
@@ -57,9 +57,9 @@ sap.ui.define([
 				 * 3. Closes the personalization dialog.
 				 * @memberof onTheMDCTable
 				 * @method iPersonalizeGroup
-				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control which is to be reset
-				 * @param {GroupPersonalizationConfiguration[]} aSettings an array containing the group personalization configuration objects
-				 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the given control
+				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control that is reset
+				 * @param {GroupPersonalizationConfiguration[]} aSettings An array containing the group personalization configuration objects
+				 * @param {function} fnOpenThePersonalizationDialog A function that opens the personalization dialog of the given control
 				 * @returns {Promise} Opa waitFor
 				 * @public
 				 */
@@ -73,9 +73,9 @@ sap.ui.define([
 				 * 3. Closes the personalization dialog.
 				 * @memberof onTheMDCTable
 				 * @method iPersonalizeColumns
-				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control which is to be personalized
+				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the control that is personalized
 				 * @param {string[]} aItems Array containing the labels of the columns that are the result of the personalization
-				 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the given control
+				 * @param {function} fnOpenThePersonalizationDialog A function that opens the personalization dialog of the given control
 				 * @returns {Promise} Opa waitFor
 				 * @public
 				 */
@@ -96,7 +96,7 @@ sap.ui.define([
 				 * @method iPersonalizeSort
 				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is sorted
 				 * @param {SortPersonalizationConfiguration[]} aSettings Array containing the sort personalization configuration objects
-				 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the given control
+				 * @param {function} fnOpenThePersonalizationDialog A function that opens the personalization dialog of the given control
 				 * @returns {Promise} OPA waitFor
 				 * @public
 				 */
@@ -106,13 +106,13 @@ sap.ui.define([
 				/**
 				 * Opa5 test action
 				 * 1. Opens the personalization dialog of a given table.
-				 * 2. Presses the reset personalization button.
-				 * 3. Confirms the reset dialog.
+				 * 2. Presses the Reset personalization button.
+				 * 3. Confirms the Reset dialog.
 				 * 4. Closes the personalization dialog.
 				 * @memberof onTheMDCTable
 				 * @method iResetThePersonalization
 				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is reset
-				 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the <code>mdc.Link</code>
+				 * @param {function} fnOpenThePersonalizationDialog A function that opens the personalization dialog of the <code>mdc.Link</code>
 				 * @returns {Promise} OPA waitFor
 				 * @public
 				 */
@@ -137,10 +137,10 @@ sap.ui.define([
 				/**
 				 * Opa5 test assertion
 				 * 1. Asserts that there is a <code>sap.ui.mdc.Table</code>.
-				 * 2. Asserts that the table is parent of a defined amount of <code>sap.m.ColumnListItem</code>.
+				 * 2. Asserts that the table is parent of a defined number of <code>sap.m.ColumnListItem</code> controls.
 				 * @memberof onTheMDCTable
 				 * @method iShouldSeeRowsWithData
-				 * @param {integer} iAmountOfRows amount of <code>sap.m.ColumnListItem</code> which the table is a parent of
+				 * @param {integer} iAmountOfRows Number of <code>sap.m.ColumnListItem</code> controls which the table is a parent of
 				 * @returns {Promise} OPA waitFor
 				 * @public
 				 */
@@ -151,11 +151,11 @@ sap.ui.define([
 				 * Opa5 test assertion
 				 * 1. Asserts that there is a <code>sap.ui.mdc.Table</code>.
 				 * 2. Asserts that the table is parent of a <code>sap.m.ColumnListItem</code>.
-				 * 3. Checks if the value of all cells inside the <code>sap.m.ColumnListItem</code> are equal to the expected data.
+				 * 3. Checks if the value of all cells inside the <code>sap.m.ColumnListItem</code> equals the expected data.
 				 * @memberof onTheMDCTable
 				 * @method iShouldSeeARowWithData
-				 * @param {integer} iIndexOfRow index of the <code>sap.m.ColumnListItem</code> in question
-				 * @param {Object[]} aExpectedData array containing the values of the cells inside the <code>sap.m.ColumnListItem</code>
+				 * @param {integer} iIndexOfRow Index of the <code>sap.m.ColumnListItem</code> in question
+				 * @param {Object[]} aExpectedData Array containing the values of the cells inside the <code>sap.m.ColumnListItem</code>
 				 * @returns {Promise} OPA waitFor
 				 * @public
 				 */
