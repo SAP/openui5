@@ -5523,7 +5523,7 @@ sap.ui.define([
 		bFunction = oOriginalEntry.__metadata.created && oOriginalEntry.__metadata.created.functionImport;
 
 		// Update property value on change object
-		oChangeObject[sPropertyPath] = oValue;
+		oChangeObject[sPropertyPath] = isPlainObject(oValue) ? merge({}, oValue) : oValue;
 
 		// If property is key property of ReferentialConstraint, also update the corresponding
 		// navigation property
