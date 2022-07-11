@@ -1,7 +1,40 @@
 {
   "1.104.0": {
-    "date": "June 2022",
+    "date": "July 2022",
     "notes": [
+      {
+        "id": "8826e4f77e8f37eea8961439ca21749adeff6d0c",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Fixed Illustration not loading initially",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280118931"
+          }
+        ]
+      },
+      {
+        "id": "90ae30deff40d1697d68307d5979b714683667d6",
+        "type": "FIX",
+        "text": " sap.m.StepInput: qunit test adaptation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280121694"
+          }
+        ]
+      },
+      {
+        "id": "339e63cfc1d421d13b9d90d8f716e85059cf02d0",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: adjust control invalidation behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280102763"
+          }
+        ]
+      },
       {
         "id": "6795429e291940ebc1c30085b7de0a95286687f9",
         "type": "FIX",

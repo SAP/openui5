@@ -1,7 +1,18 @@
 {
   "1.104.0": {
-    "date": "June 2022",
+    "date": "July 2022",
     "notes": [
+      {
+        "id": "7f05759791f6d2c02649581842c660ec07ad9cfa",
+        "type": "FIX",
+        "text": " sap.ui.model.Binding#destroy: revert fix to ensure that binding is removed from the model's active bindings list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280121518"
+          }
+        ]
+      },
       {
         "id": "9bc6a5ff453966172077abc28720b3e6f3f096d1",
         "type": "FIX",

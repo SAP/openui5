@@ -1,7 +1,29 @@
 {
   "1.104.0": {
-    "date": "June 2022",
+    "date": "July 2022",
     "notes": [
+      {
+        "id": "02396028acb021b329a4c7a7f6c303ac6e3b3333",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: now select correct year",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280125046"
+          }
+        ]
+      },
+      {
+        "id": "f2ec557535b83d77fb793046e68b4ed9fd22fc4d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust second header buttons tabindex",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280102841"
+          }
+        ]
+      },
       {
         "id": "c91e9f6073875190bd79eef672be967be71ac155",
         "type": "FEATURE",
