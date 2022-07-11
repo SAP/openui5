@@ -68,6 +68,9 @@ function(
 		// shortcut for sap.ui.core.OpenState
 		var OpenState = coreLibrary.OpenState;
 
+		// shortcut for sap.m.ButtonType
+		var ButtonType = library.ButtonType;
+
 		// shortcut for sap.m.DialogType
 		var DialogType = library.DialogType;
 
@@ -925,8 +928,40 @@ function(
 				this._isSpaceOrEnterPressed = true;
 			}
 
+			var iKeyCode = oEvent.which || oEvent.keyCode;
+
+			if ((oEvent.ctrlKey || oEvent.metaKey) && iKeyCode === KeyCodes.ENTER) {
+
+				var oPositiveButton = this._findFirstPositiveButton();
+
+				if (oPositiveButton) {
+
+					oPositiveButton.firePress();
+					oEvent.stopPropagation();
+					oEvent.preventDefault();
+					return;
+				}
+			}
+
 			this._handleKeyboardDragResize(oEvent);
 		};
+
+		/**
+		 * Finds first positive button
+		 * We call positive the buttons with type "Accept" or "Emphasized"
+		 *
+		 * @private
+		 */
+		 Dialog.prototype._findFirstPositiveButton = function () {
+			var aButtons = this.getButtons();
+
+			for (var i = 0; i < aButtons.length; i++) {
+				var oButton = aButtons[i];
+				if (oButton.getType() === ButtonType.Accept || oButton.getType() === ButtonType.Emphasized) {
+					return oButton;
+				}
+			}
+		 };
 
 		/**
 		 * Handles the keyboard drag/resize functionality
