@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/Core", "sap/ui/mdc/Table", "sap/ui/mdc/table/Column", "sap/m/Text"
-], function(Core, Table, Column, Text) {
+	"sap/ui/core/Core", "sap/ui/mdc/Table", "sap/ui/mdc/table/Column", "sap/m/Text", "sap/ui/core/TooltipBase"
+], function(Core, Table, Column, Text, TooltipBase) {
 	"use strict";
 
 	QUnit.module("sap.ui.mdc.table.Column", {
@@ -81,10 +81,17 @@ sap.ui.define([
 	QUnit.test("Column Header Settings - ResponsiveTable", function(assert) {
 		assert.ok(!this.oColumn._oColumnHeaderLabel, "No Column Header Label defined so far.");
 		assert.ok(!this.oColumn.getHeader(), "Default header property");
+		assert.ok(!this.oColumn.getTooltip(), "Default tooltip property");
 		assert.ok(this.oColumn.getHeaderVisible(), "Default headerVisible property");
 		assert.strictEqual(this.oColumn.getHAlign(), "Begin", "Default hAlign property");
 
 		this.oColumn.setHeader("Text1");
+
+		var oTooltip = new TooltipBase();
+		this.oColumn.setTooltip(oTooltip);
+		assert.ok(!this.oColumn.getTooltip(), "TooltipBase tooltips are not supported");
+		this.oColumn.setTooltip("Tooltip1");
+		oTooltip.destroy();
 
 		assert.ok(!this.oColumn._oColumnHeaderLabel, "Still no Column Header Label defined so far.");
 		assert.strictEqual(this.oColumn._getColumnHeaderLabel(), undefined, "No column header label created if not a child of a table");
@@ -99,8 +106,10 @@ sap.ui.define([
 			assert.strictEqual(oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
 			assert.strictEqual(oColumnHeaderLabel.getWrapping(), true, "wrapping set on label control according to headerVisible");
 			assert.ok(!oColumnHeaderLabel.getWidth(), "width set on label control according to headerVisible");
+			assert.strictEqual(this.oColumn.getInnerColumn().getTooltip(), "Tooltip1", "tooltip forwarded to inner column control");
 
 			this.oColumn.setHeader("Text2");
+			this.oColumn.setTooltip("Tooltip2");
 			this.oColumn.setHeaderVisible(false);
 			this.oColumn.setHAlign("End");
 
@@ -108,6 +117,7 @@ sap.ui.define([
 			assert.strictEqual(oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
 			assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "wrapping set on label control according to headerVisible");
 			assert.strictEqual(oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to headerVisible");
+			assert.strictEqual(this.oColumn.getInnerColumn().getTooltip(), "Tooltip2", "tooltip forwarded to inner column control");
 
 			this.oColumn.setHeaderVisible(true);
 			oTable.setEnableColumnResize(true);
@@ -122,10 +132,17 @@ sap.ui.define([
 	QUnit.test("Column Header Settings - GridTable", function(assert) {
 		assert.ok(!this.oColumn._oColumnHeaderLabel, "No Column Header Label defined so far.");
 		assert.ok(!this.oColumn.getHeader(), "Default header property");
+		assert.ok(!this.oColumn.getTooltip(), "Default tooltip property");
 		assert.ok(this.oColumn.getHeaderVisible(), "Default headerVisible property");
 		assert.strictEqual(this.oColumn.getHAlign(), "Begin", "Default hAlign property");
 
 		this.oColumn.setHeader("Text1");
+
+		var oTooltip = new TooltipBase();
+		this.oColumn.setTooltip(oTooltip);
+		assert.ok(!this.oColumn.getTooltip(), "TooltipBase tooltips are not supported");
+		this.oColumn.setTooltip("Tooltip1");
+		oTooltip.destroy();
 
 		assert.ok(!this.oColumn._oColumnHeaderLabel, "Still no Column Header Label defined so far.");
 		assert.strictEqual(this.oColumn._getColumnHeaderLabel(), undefined, "No column header label created if not a child of a table");
@@ -140,8 +157,10 @@ sap.ui.define([
 			assert.strictEqual(oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
 			assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "no wrapping set on label control");
 			assert.ok(!oColumnHeaderLabel.getWidth(), "width set on label control according to headerVisible");
+			assert.strictEqual(this.oColumn.getInnerColumn().getTooltip(), "Tooltip1", "tooltip forwarded to inner column control");
 
 			this.oColumn.setHeader("Text2");
+			this.oColumn.setTooltip("Tooltip2");
 			this.oColumn.setHeaderVisible(false);
 			this.oColumn.setHAlign("End");
 
@@ -149,6 +168,7 @@ sap.ui.define([
 			assert.strictEqual(oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
 			assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "no wrapping set on label control");
 			assert.strictEqual(oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to headerVisible");
+			assert.strictEqual(this.oColumn.getInnerColumn().getTooltip(), "Tooltip2", "tooltip forwarded to inner column control");
 
 			this.oColumn.setHeaderVisible(true);
 			oTable.setEnableColumnResize(false);

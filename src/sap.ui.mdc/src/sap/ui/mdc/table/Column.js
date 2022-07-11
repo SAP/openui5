@@ -5,6 +5,7 @@
 sap.ui.define([
 	"./GridTableType",
 	"./ResponsiveTableType",
+	"sap/base/Log",
 	"sap/m/library",
 	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",
@@ -14,6 +15,7 @@ sap.ui.define([
 ], function(
 	GridTableType,
 	ResponsiveTableType,
+	Log,
 	MLibrary,
 	Label,
 	JSONModel,
@@ -186,7 +188,8 @@ sap.ui.define([
 				hAlign: "{$this>/hAlign}",
 				header: this._getColumnHeaderLabel(),
 				importance: "{$this>/importance}",
-				popinDisplay: "Inline"
+				popinDisplay: "Inline",
+				tooltip: "{$this>/tooltip}"
 			});
 		} else {
 			oColumn = GridTableType.createColumn(this.getId() + "-innerColumn", {
@@ -201,6 +204,7 @@ sap.ui.define([
 				label: this._getColumnHeaderLabel(),
 				resizable: "{$columnSettings>/resizable}",
 				autoResizable: "{$columnSettings>/resizable}",
+				tooltip: "{$this>/tooltip}",
 				template: this.getTemplateClone()
 			});
 			oColumn.setCreationTemplate(this.getCreationTemplateClone());
@@ -325,6 +329,27 @@ sap.ui.define([
 		}
 
 		return this;
+	};
+
+	/**
+	 * Sets a new tooltip for this object.
+	 *
+	 * The tooltip can only be a simple string. An instance of {@link sap.ui.core.TooltipBase}
+	 * is not supported.
+	 *
+	 * If a new tooltip is set, any previously set tooltip is deactivated.
+	 *
+	 * @param {string} vTooltip New tooltip
+	 * @returns {this} Returns <code>this</code> to allow method chaining
+	 * @public
+	 */
+	Column.prototype.setTooltip = function(vTooltip) {
+		if (vTooltip && vTooltip.isA && vTooltip.isA("sap.ui.core.TooltipBase")) {
+			Log.error("The control sap.ui.mdc.table.Column allows only strings as tooltip, but given is " + vTooltip);
+			return this;
+		}
+
+		return Control.prototype.setTooltip.apply(this, arguments);
 	};
 
 	Column.prototype._onTableChange = function(oEvent) {

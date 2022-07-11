@@ -46,10 +46,10 @@
 			<plugins:DataStateIndicator id="dataStatePlugin" filter=".dataStateFilter" />
 		</mdc:dataStateIndicator>
 		<mdc:columns>
-			<mdcTable:Column id="create" header="Created On" initialIndex="3" dataProperty="CreatedAt" importance="Low">
+			<mdcTable:Column id="create" header="Created On" tooltip="Created On" initialIndex="3" dataProperty="CreatedAt" importance="Low">
 				<Text text="{CreatedAt}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" dataProperty="ProductID" importance="High">
+			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" tooltip="Product ID" dataProperty="ProductID" importance="High">
 				<ObjectIdentifier title="{ProductID}"/>
 			</mdcTable:Column>
 			<mdcTable:Column id="onlyTableView--mdcTable--Category" header="Category" dataProperty="Category" importance="Low">

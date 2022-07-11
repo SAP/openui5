@@ -31,10 +31,10 @@
 			<variants:VariantManagement id="onlyTableView" for="mdcTable"/>
 		</mdc:variant>
 		<mdc:columns>
-			<mdcTable:Column id="create" header="Created On" initialIndex="3" dataProperty="CreatedAt" importance="Low">
+			<mdcTable:Column id="create" header="Created On" tooltip="Created On" initialIndex="3" dataProperty="CreatedAt" importance="Low">
 				<Text text="{CreatedAt}"/>
 			</mdcTable:Column>
-			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" dataProperty="ProductID" importance="High">
+			<mdcTable:Column id="onlyTableView--mdcTable--ProductID" header="Product ID" tooltip="Product ID" dataProperty="ProductID" importance="High">
 				<Text text="{Name} ({ProductID})"/>
 			</mdcTable:Column>
 			<mdcTable:Column id="onlyTableView--mdcTable--Category" header="Category" dataProperty="Category" importance="Low">
