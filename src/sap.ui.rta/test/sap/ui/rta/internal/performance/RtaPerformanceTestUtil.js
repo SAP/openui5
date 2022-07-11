@@ -1,10 +1,12 @@
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/base/Log"
 ], function(
 	RuntimeAuthoring,
 	Plugin,
+	OverlayRegistry,
 	Log
 ) {
 	"use strict";
@@ -31,10 +33,10 @@ sap.ui.define([
 				//will result in custom timer in webPageTest
 				window.performance.mark("rta.start.ends");
 				window.performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
-				sap.ui.rta.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
-				Log.info(sMeasureName, sap.ui.rta.startTime + "ms");
+				window.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
+				Log.info(sMeasureName, window.startTime + "ms");
 				//visual change at the end
-				var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oHorizontalLayout);
+				var oOverlay = OverlayRegistry.getOverlay(oHorizontalLayout);
 				oOverlay.setSelected(true);
 			});
 		},
@@ -57,10 +59,10 @@ sap.ui.define([
 				//will result in custom timer in webPageTest
 				window.performance.mark("rta.start.ends");
 				window.performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
-				sap.ui.rta.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
-				Log.info(sMeasureName, sap.ui.rta.startTime + "ms");
+				window.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
+				Log.info(sMeasureName, window.startTime + "ms");
 				//visual change at the end
-				var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oRootControl);
+				var oOverlay = OverlayRegistry.getOverlay(oRootControl);
 				oOverlay.setSelected(true);
 			});
 		},
@@ -83,8 +85,8 @@ sap.ui.define([
 			//will result in custom timer in webPageTest
 			window.performance.mark("rta.init.ends");
 			window.performance.measure(sMeasureName, "rta.init.starts", "rta.init.ends");
-			sap.ui.rta.creationTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
-			Log.info(sMeasureName, sap.ui.rta.creationTime + "ms");
+			window.creationTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
+			Log.info(sMeasureName, window.creationTime + "ms");
 		}
 	};
 

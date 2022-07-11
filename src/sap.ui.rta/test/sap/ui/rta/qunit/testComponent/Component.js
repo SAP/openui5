@@ -5,8 +5,12 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/ViewType",
-	"sap/ui/core/mvc/View" // provides sap.ui.view
-], function(UIComponent, ViewType) {
+	"sap/ui/core/mvc/View"
+], function(
+	UIComponent,
+	ViewType,
+	View
+) {
 	"use strict";
 	return UIComponent.extend("testComponent.Component", {
 		init: function() {
@@ -14,7 +18,7 @@ sap.ui.define([
 		},
 
 		createContent: function() {
-			var view = sap.ui.view({
+			var view = new View({
 				id: this.createId("myView"),
 				viewName: "testComponent.View",
 				type: ViewType.XML,

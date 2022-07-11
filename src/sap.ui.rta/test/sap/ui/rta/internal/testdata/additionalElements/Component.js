@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/MessageBox",
 	"sap/ui/core/mvc/XMLView",
+	"sap/base/util/ObjectPath",
 	"sap/ui/core/Core"
 ], function(
 	UIComponent,
@@ -15,6 +16,7 @@ sap.ui.define([
 	App,
 	MessageBox,
 	XMLView,
+	ObjectPath,
 	oCore
 ) {
 	"use strict";
@@ -74,7 +76,8 @@ sap.ui.define([
 				return Promise.resolve("./extensibilityTool.html");
 			};
 
-			if (sap.ushell) {
+			var oUshellContainer = ObjectPath.get("sap.ushell.Container");
+			if (oUshellContainer) {
 				ABAPAccess.isExtensibilityEnabled = function() {
 					return Promise.resolve(true);
 				};

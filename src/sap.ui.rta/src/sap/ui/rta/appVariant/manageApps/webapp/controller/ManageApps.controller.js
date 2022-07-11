@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/core/BusyIndicator",
 	"sap/base/i18n/ResourceBundle",
-	"sap/m/MessageToast"
+	"sap/m/MessageToast",
+	"sap/m/MenuItem"
 ], function(
 	Controller,
 	Layer,
@@ -28,7 +29,8 @@ sap.ui.define([
 	RuntimeAuthoring,
 	BusyIndicator,
 	ResourceBundle,
-	MessageToast
+	MessageToast,
+	MenuItem
 ) {
 	"use strict";
 
@@ -210,7 +212,7 @@ sap.ui.define([
 			var oItem = oEvent.getParameter("item");
 			var sItemPath = "";
 
-			while (oItem instanceof sap.m.MenuItem) {
+			while (oItem instanceof MenuItem) {
 				sItemPath = oItem.getText() + " > " + sItemPath;
 				oItem = oItem.getParent();
 			}

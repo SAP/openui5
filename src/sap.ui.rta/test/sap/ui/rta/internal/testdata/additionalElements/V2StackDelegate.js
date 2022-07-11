@@ -1,5 +1,7 @@
 sap.ui.define([
+	"sap/ui/model/ListBinding"
 ], function(
+	ListBinding
 ) {
 	"use strict";
 
@@ -79,7 +81,7 @@ sap.ui.define([
 				var sFieldControlPath = mFieldControlAnnotation && mFieldControlAnnotation.Path;
 				if (sFieldControlPath) {
 					// if the binding is a listbinding, we skip the check for field control
-					var bListBinding = oElement.getBinding(sAggregationName) instanceof sap.ui.model.ListBinding;
+					var bListBinding = oElement.getBinding(sAggregationName) instanceof ListBinding;
 					if (!bListBinding) {
 						var iFieldControlValue = oElement.getBindingContext().getProperty(sFieldControlPath);
 						mProp.hideFromReveal = iFieldControlValue === 0;
