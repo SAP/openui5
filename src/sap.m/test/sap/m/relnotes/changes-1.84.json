@@ -1411,5 +1411,54 @@
         ]
       }
     ]
+  },
+  "1.84.26": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "5e4f23a1dc46e2c2d08b51446386b7d916142c69",
+        "type": "FIX",
+        "text": " sap.m.NumericContent : Neutral class for value color none",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004746092022"
+          }
+        ]
+      },
+      {
+        "id": "57ff350fcc2371706fefedcb92d78837302bbfe0",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: (Revert) Selection in table with many radio buttons is now correct\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280111803"
+          }
+        ]
+      },
+      {
+        "id": "74bc633d0271010d6df48f41936c72d84896d112",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection in table with many radio buttons is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003326492022"
+          }
+        ]
+      },
+      {
+        "id": "46b4f0c0e718b75b9d7f825413fda8417f96d2a7",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: No longer overflows when used standalone or in Groups with 1 column",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080199747"
+          }
+        ]
+      }
+    ]
   }
 }

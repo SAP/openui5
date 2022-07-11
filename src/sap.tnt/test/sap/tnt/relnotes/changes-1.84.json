@@ -62,5 +62,21 @@
         "text": " sap.tnt.SideNavigation: new ariaLabel property added"
       }
     ]
+  },
+  "1.84.26": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "6432faf2cbb85f43518077554c9776f17c409a68",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: Position of collapsed items is no longer read twice",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080355933"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -152,5 +152,40 @@
         ]
       }
     ]
+  },
+  "1.84.26": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "85ce9afb34802a0f2fd42a0c76184f5c3314e45a",
+        "type": "FIX",
+        "text": " \"72\" font: redirect tall letters with caron to full version font",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000373262021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180021749"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280117902"
+          }
+        ]
+      },
+      {
+        "id": "46b4f0c0e718b75b9d7f825413fda8417f96d2a7",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: No longer overflows when used standalone or in Groups with 1 column",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080199747"
+          }
+        ]
+      }
+    ]
   }
 }

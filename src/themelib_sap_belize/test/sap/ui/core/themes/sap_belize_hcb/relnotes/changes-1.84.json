@@ -81,5 +81,29 @@
         ]
       }
     ]
+  },
+  "1.84.26": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "85ce9afb34802a0f2fd42a0c76184f5c3314e45a",
+        "type": "FIX",
+        "text": " \"72\" font: redirect tall letters with caron to full version font",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000373262021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180021749"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280117902"
+          }
+        ]
+      }
+    ]
   }
 }

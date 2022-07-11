@@ -616,5 +616,32 @@
         ]
       }
     ]
+  },
+  "1.84.26": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "b0dff3f3d0c32353dfefe3d8ecbad2b841167302",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#setProperty: reverting a time property does not fail",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002233972022"
+          }
+        ]
+      },
+      {
+        "id": "eec3a27a934055491309958f13040e45ab2cc00a",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataContextBinding#_fireChange: Reset context's updated flag to initial value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002462642022"
+          }
+        ]
+      }
+    ]
   }
 }
