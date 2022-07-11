@@ -5,6 +5,7 @@
 // Provides control sap.m.OverflowToolbar.
 sap.ui.define([
 	"sap/ui/core/library",
+	"sap/ui/core/Core",
 	"./library",
 	"sap/ui/core/Control",
 	"sap/m/ToggleButton",
@@ -25,6 +26,7 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "lastFocusableDomRef"
 ], function(
 	coreLibrary,
+	oCore,
 	library,
 	Control,
 	ToggleButton,
@@ -166,6 +168,7 @@ sap.ui.define([
 	 * STATIC MEMBERS
 	 */
 	OverflowToolbar.ARIA_ROLE_DESCRIPTION = "OVERFLOW_TOOLBAR_ROLE_DESCRIPTION";
+	OverflowToolbar.TOGGLE_BUTTON_TOOLTIP = "OVERFLOW_TOOLBAR_TOGGLE_BUTTON_TOOLTIP";
 
 	OverflowToolbar.CONTENT_SIZE_TOLERANCE = 1;
 
@@ -963,7 +966,7 @@ sap.ui.define([
 				id: this.getId() + sIdPrefix,
 				icon: IconPool.getIconURI("overflow"),
 				press: this._overflowButtonPressed.bind(this),
-				ariaLabelledBy: InvisibleText.getStaticId("sap.ui.core", "Icon.overflow"),
+				tooltip: oCore.getLibraryResourceBundle("sap.m").getText(OverflowToolbar.TOGGLE_BUTTON_TOOLTIP),
 				type: ButtonType.Transparent
 		});
 	};
