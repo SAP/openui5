@@ -186,6 +186,8 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 				}
 			}, "9_Transparent_Card_" + sId);
 		});
+
+		utils.navigateBack();
 	});
 
 	it("Parameters", function () {
