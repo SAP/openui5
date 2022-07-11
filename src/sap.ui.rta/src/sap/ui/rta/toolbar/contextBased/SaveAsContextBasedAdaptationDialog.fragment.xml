@@ -1,0 +1,79 @@
+<core:FragmentDefinition xmlns:richtexteditor="sap.ui.richtexteditor"
+	xmlns:form="sap.ui.layout.form"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Dialog id="selectContextsDialog"
+		resizable="true"
+		draggable="true"
+		title="{i18n>SAC_DIALOG_HEADER}">
+		<Panel id="saveContextBasedAdaptation-information-panel">
+			<Toolbar id="toolbar">
+				<Label id="label"
+					text="Information"
+					design="Bold">
+				</Label>
+			</Toolbar>
+			<form:Form id="saveContextBasedAdaptation-form"
+				editable="true">
+				<form:layout>
+					<form:ResponsiveGridLayout labelSpanXL="3"
+						labelSpanL="3"
+						labelSpanM="3"
+						labelSpanS="12"
+						adjustLabelSpan="false"
+						emptySpanXL="4"
+						emptySpanL="4"
+						emptySpanM="4"
+						emptySpanS="0"
+						columnsXL="1"
+						columnsL="1"
+						columnsM="1"
+						singleContainerFullSize="false"/>
+				</form:layout>
+				<form:FormContainer>
+					<form:formElements>
+						<form:FormElement >
+							<form:label>
+								<Label id="saveContextBasedAdaptation-title-label"
+									text="{i18n>APP_DIALOG_TITLE_TEXT}"
+									textAlign="Left"
+									required="true">
+								</Label>
+							</form:label>
+							<Input id="saveContextBasedAdaptation-title-input"
+								value="{/title}"
+								valueLiveUpdate="true"
+								liveChange=".onAdaptationTitleChange"
+								placeholder="{i18n>SAVE_AS_DIALOG_PLACEHOLDER_TITLE_TEXT}">
+							</Input>
+						</form:FormElement>
+						<form:FormElement >
+							<form:label>
+								<Label id="saveContextBasedAdaptation-rank-label"
+									text="{i18n>CLM_HEADER_PRIORITY}"
+									textAlign="Left"
+									required="true">
+								</Label>
+							</form:label>
+							<Select id="saveContextBasedAdaptation-rank-select"
+								selectedKey="{/selected}">
+							</Select>
+						</form:FormElement>
+					</form:formElements>
+				</form:FormContainer>
+			</form:Form>
+		</Panel>
+		<beginButton>
+			<Button id="saveContextBasedAdaptation-saveButton"
+				type="Emphasized"
+				text="{i18n>APP_VARIANT_DIALOG_SAVE}"
+				press=".onSaveAsContextBasedAdaptation"/>
+		</beginButton>
+		<endButton>
+			<Button id="saveContextBasedAdaptation-cancelButton"
+				type="Emphasized"
+				text="{i18n>SAVE_AS_APP_VARIANT_DIALOG_CANCEL}"
+				press=".onCancelContextBasedAdaptationDialog"/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>
