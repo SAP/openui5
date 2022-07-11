@@ -196,7 +196,7 @@ sap.ui.define([
 							this.getView().byId("apiRefButton").setVisible(bHasAPIReference);
 						}.bind(this));
 
-						this.oModel.setData(oModelData);
+						this.oModel.setData(oModelData, true);
 						this.appendPageTitle(this.getModel().getProperty("/name"));
 					}.bind(this))
 					.catch(function (oError) {
@@ -227,7 +227,7 @@ sap.ui.define([
 			 * @private
 			 */
 			_initIframeURL : function () {
-				var sSampleOrigin = (window['sap-ui-documentation-config'] && window['sap-ui-documentation-config'].demoKitResourceOrigin) || "",
+				var sSampleOrigin = ResourcesUtil.getConfig(),
 					sSampleVersion = ResourcesUtil.getResourcesVersion(),
 					sSampleSearchParams = "";
 
@@ -339,7 +339,7 @@ sap.ui.define([
 
 			_saveLocalSettings: function(sTheme, sDensityMode, bRTL) {
 				var sDensityMode = this._presetDensity(sDensityMode);
-				this.getView().getModel().setData({
+				this.oModel.setData({
 					theme: sTheme,
 					rtl: bRTL,
 					density: sDensityMode
@@ -405,7 +405,7 @@ sap.ui.define([
 					URLHelper.redirect(this.sIFrameUrl, true);
 					return;
 				}
-				// this._applySearchParamValueToIframeURL('sap-ui-theme', this._sDefaultSampleTheme);
+
 				this.loadSampleSettings(function(eMessage){
 					this._applySearchParamValueToIframeURL('sap-ui-theme', eMessage.data.data.theme);
 					this._applySearchParamValueToIframeURL('sap-ui-rtl', eMessage.data.data.RTL);
@@ -474,14 +474,6 @@ sap.ui.define([
 
 			_createIframe : function () {
 				return new Promise(function (resolve, reject) {
-					var sSampleId,
-					sIframePath = "",
-					rExtractFilename = /\/([^\/]*)$/,// extracts everything after the last slash (e.g. some/path/index.html -> index.html)
-					rStripUI5Ending = /\..+$/,// removes everything after the first dot in the filename (e.g. someFile.qunit.html -> .qunit.html)
-					aFileNameMatches,
-					sFileName,
-					sFileEnding,
-					vIframe;
 
 					this.fResolve = resolve;
 					this.fReject = reject;
@@ -492,61 +484,90 @@ sap.ui.define([
 						this._oHtmlControl.destroy();
 					}
 
-					var fnMessage =  function (eMessage) {
-						var oSettingsData = this.getView().getModel().getData();
-						if (eMessage.data.type === "INIT") {
-							if (eMessage.data.config && eMessage.data.config.sample && eMessage.data.config.sample.iframe) {
-								sSampleId = this._sId;
-								vIframe = eMessage.data.config.sample.iframe;
-								sIframePath = this._resolveIframePath(sSampleId, vIframe);
-
-								//vlaid only for samples that contains own index.html
-								// strip the file extension to be able to use jQuery.sap.getModulePath
-								aFileNameMatches = rExtractFilename.exec(vIframe);
-								sFileName = (aFileNameMatches && aFileNameMatches.length > 1 ? aFileNameMatches[1] : vIframe);
-								sFileEnding = rStripUI5Ending.exec(sFileName)[0];
-								var sIframeWithoutUI5Ending = sFileName.replace(rStripUI5Ending, "");
-
-								// combine namespace with the file name again
-								this.sIFrameUrl = (sap.ui.require.toUrl((sIframePath + "/" + sIframeWithoutUI5Ending).replace(/\./g, "/")) + sFileEnding || ".html")
-								+ "?sap-ui-theme=" + sap.ui.getCore().getConfiguration().getTheme();
-								this._oHtmlControl.getDomRef().src = this.sIFrameUrl;
-							}
-							this._oHtmlControl.getDomRef().contentWindow.postMessage({
-								type: "SETTINGS",
-								reason: "set",
-								data: {
-									"density": oSettingsData.density,
-									"RTL": oSettingsData.rtl,
-									"theme": oSettingsData.theme
-								}
-							}, this.getOwnerComponent()._sSampleIframeOrigin);
-							this.fResolve(eMessage.data.config.sample);
-						} else if (eMessage.data.type === "ERR") {
-							this.fReject(eMessage.data.data.msg);
-						} else if (eMessage.data.type === "RTA") {
-							this._loadRTA.call(this);
-						}
-					}.bind(this);
-
 					this._oHtmlControl = new HTML({
 						id : "sampleFrame",
 						content : '<iframe src="' + this.sIFrameUrl + '" id="sampleFrame" frameBorder="0"></iframe>'
 					}).addEventDelegate({
 						onBeforeRendering: function () {
-							window.removeEventListener("message", fnMessage);
-						}
+							window.removeEventListener("message", this.onMessage.bind(this));
+						}.bind(this)
 					})
 					.addEventDelegate({
 						onAfterRendering: function () {
-							window.addEventListener("message", fnMessage);
-						}
+							window.addEventListener("message",this.onMessage.bind(this));
+						}.bind(this)
 					});
 
 					this.byId("page").removeAllContent();
 					this.byId("page").addContent(this._oHtmlControl);
 
 				}.bind(this));
+			},
+
+			onMessage: function(eMessage) {
+				if (eMessage.origin !== this.getOwnerComponent()._sSampleIframeOrigin) {
+					return;
+				}
+				if (eMessage.source !== this._oHtmlControl.getDomRef().contentWindow) {
+					return;
+				}
+
+				if (eMessage.data.type === "INIT") {
+					this.fnMessageInit(eMessage);
+				} else if (eMessage.data.type === "ERR") {
+					this.fnMessageLoad(eMessage);
+				} else if (eMessage.data.type === "LOAD") {
+					this.fnMessageLoad(eMessage);
+				} else if (eMessage.data.type === "RTA") {
+					this._loadRTA.call(this);
+				}
+			},
+
+			fnMessageInit: function(eMessage) {
+				var sSampleId,
+					sIframePath = "",
+					rExtractFilename = /\/([^\/]*)$/,// extracts everything after the last slash (e.g. some/path/index.html -> index.html)
+					rStripUI5Ending = /\..+$/,// removes everything after the first dot in the filename (e.g. someFile.qunit.html -> .qunit.html)
+					aFileNameMatches,
+					sFileName,
+					sFileEnding,
+					vIframe,
+					oSettingsData = this.oModel.getData();
+
+				if (eMessage.data.config && eMessage.data.config.sample && eMessage.data.config.sample.iframe) {
+					sSampleId = this._sId;
+					vIframe = eMessage.data.config.sample.iframe;
+					sIframePath = this._resolveIframePath(sSampleId, vIframe);
+
+					//vlaid only for samples that contains own index.html
+					// strip the file extension to be able to use jQuery.sap.getModulePath
+					aFileNameMatches = rExtractFilename.exec(vIframe);
+					sFileName = (aFileNameMatches && aFileNameMatches.length > 1 ? aFileNameMatches[1] : vIframe);
+					sFileEnding = rStripUI5Ending.exec(sFileName)[0];
+					var sIframeWithoutUI5Ending = sFileName.replace(rStripUI5Ending, "");
+
+					// combine namespace with the file name again
+					this.sIFrameUrl = (sap.ui.require.toUrl((sIframePath + "/" + sIframeWithoutUI5Ending).replace(/\./g, "/")) + sFileEnding || ".html")
+					+ "?sap-ui-theme=" + sap.ui.getCore().getConfiguration().getTheme();
+					this._oHtmlControl.getDomRef().src = this.sIFrameUrl;
+				}
+				this._oHtmlControl.getDomRef().contentWindow.postMessage({
+					type: "SETTINGS",
+					reason: "set",
+					data: {
+						"density": oSettingsData.density,
+						"RTL": oSettingsData.rtl,
+						"theme": oSettingsData.theme
+					}
+				}, this.getOwnerComponent()._sSampleIframeOrigin);
+				this.fResolve(eMessage.data.config.sample);
+			},
+			fnMessageLoad: function() {
+				Log.info("Sample Iframe for sample " + this._sId + " is loaded");
+			},
+
+			fnMessageError: function(eMessage) {
+				this.fReject(eMessage.data.data.msg);
 			},
 
 			_createComponent : function () {
@@ -625,7 +646,7 @@ sap.ui.define([
 
 					oModelData.rtaLoaded = true;
 
-					this.oModel.setData(oModelData);
+					this.oModel.setData(oModelData, true);
 
 					this.getRouter().attachRouteMatched(function () {
 						if (this._oRTA) {
