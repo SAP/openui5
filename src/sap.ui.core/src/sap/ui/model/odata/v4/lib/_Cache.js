@@ -646,7 +646,7 @@ sap.ui.define([
 						return oEntity
 							&& that.fetchLateProperty(oGroupLock, oEntity,
 								aSegments.slice(0, iEntityPathLength).join("/"),
-								aSegments.slice(iEntityPathLength).join("/").split("@")[0],
+								aSegments.slice(iEntityPathLength).join("/"),
 								aSegments.slice(iEntityPathLength, iPathLength).join("/"))
 							|| invalidSegment(sSegment);
 					}
@@ -742,7 +742,8 @@ sap.ui.define([
 	 *   The path of oResource relative to the cache
 	 * @param {string} sRequestedPropertyPath
 	 *   The path of the requested property relative to oResource; this property is requested from
-	 *   the server
+	 *   the server. For annotations, except client annotations, the annotated property is requested
+	 *   from the server.
 	 * @param {string} sMissingPropertyPath
 	 *   The path of the missing property relative to oResource; this property is returned so that
 	 *   drillDown can proceed
@@ -758,13 +759,14 @@ sap.ui.define([
 		var sFullResourceMetaPath,
 			sFullResourcePath,
 			sGroupId,
+			iIndexOfAt = sRequestedPropertyPath.indexOf("@"),
 			sMergeBasePath, // full resource path plus custom query options
 			oPromise,
 			mQueryOptions,
 			sRequestPath,
 			sResourceMetaPath = _Helper.getMetaPath(sResourcePath),
 			mTypeForMetaPath = this.fetchTypes().getResult(),
-			aUpdateProperties = [sRequestedPropertyPath],
+			aUpdateProperties,
 			that = this;
 
 		/*
@@ -786,9 +788,9 @@ sap.ui.define([
 				oEntityType = that.oRequestor.fetchType(mTypeForMetaPath, sMetaPath).getResult();
 			}
 			if (sBasePath) {
-				// Key properties and predicate must only be copied from the result for nested
-				// properties. The root property is already loaded and has them already. We check
-				// that they are unchanged in this case.
+				// The key properties must only be copied from the result for nested entities. The
+				// root entity is already loaded and has them already. We check that they are
+				// unchanged in this case.
 				(oEntityType.$Key || []).forEach(function (vKey) {
 					if (typeof vKey === "object") {
 						vKey = vKey[Object.keys(vKey)[0]]; // the path for the alias
@@ -806,8 +808,16 @@ sap.ui.define([
 		}
 
 		if (!this.mLateQueryOptions) {
-			return undefined;
+			return undefined; // no autoExpandSelect
 		}
+
+		if (iIndexOfAt >= 0) {
+			if (sRequestedPropertyPath.startsWith("@$ui5.", iIndexOfAt)) {
+				return undefined; // do not request for a client annotation
+			}
+			sRequestedPropertyPath = sRequestedPropertyPath.slice(0, iIndexOfAt);
+		}
+		aUpdateProperties = [sRequestedPropertyPath];
 
 		sFullResourceMetaPath = _Helper.buildPath(this.sMetaPath, sResourceMetaPath);
 		// sRequestedPropertyPath is also a metapath because the binding does not accept a path with

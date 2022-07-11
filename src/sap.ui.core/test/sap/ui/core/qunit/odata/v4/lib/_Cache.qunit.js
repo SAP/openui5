@@ -1777,8 +1777,8 @@ sap.ui.define([
 			.withExactArgs("PostAddress", undefined)
 			.returns(false);
 		this.mock(oCache).expects("fetchLateProperty")
-			.withExactArgs("~oGroupLock~", sinon.match.same(oData), "", "PostAddress",
-				"PostAddress@some.Annotation")
+			.withExactArgs("~oGroupLock~", sinon.match.same(oData), "",
+				"PostAddress@some.Annotation", "PostAddress@some.Annotation")
 			.returns("annotationValue");
 
 		// code under test
@@ -1806,8 +1806,8 @@ sap.ui.define([
 			.withExactArgs("/Products/~PictureMetaPath~")
 			.returns(SyncPromise.resolve({$Type : "Edm.Stream"}));
 		this.mock(oCache).expects("fetchLateProperty")
-			.withExactArgs("~oGroupLock~", sinon.match.same(oData), "", "Picture",
-				"Picture@odata.mediaContentType")
+			.withExactArgs("~oGroupLock~", sinon.match.same(oData), "",
+				"Picture@odata.mediaContentType", "Picture@odata.mediaContentType")
 			.returns("image/jpg");
 
 		// code under test
@@ -4302,6 +4302,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+["", "@property.annotation"].forEach(function (sAnnotation) {
 	QUnit.test("Cache#fetchLateProperty: $select, nested entity", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Employees", {}),
 			oData = {
@@ -4381,12 +4382,13 @@ sap.ui.define([
 
 		// code under test
 		oPromise = oCache.fetchLateProperty(oGroupLock, oEntity, "('31')/entity/path",
-			sRequestedPropertyPath, sMissingPropertyPath);
+			sRequestedPropertyPath + sAnnotation, sMissingPropertyPath);
 
 		return oPromise.then(function (oResult) {
 			assert.strictEqual(oResult, "baz");
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("Cache#fetchLateProperty: $expand", function (assert) {
@@ -4747,6 +4749,25 @@ sap.ui.define([
 			undefined
 		);
 	});
+
+	//*********************************************************************************************
+["@$ui5.foo/bar", "foo@$ui5.bar"].forEach(function (sAnnotation) {
+	QUnit.test("Cache#fetchLateProperty: do not fetch client annotations", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Employees");
+
+		oCache.mLateQueryOptions = {};
+		this.mock(_Helper).expects("intersectQueryOptions").never();
+		this.oRequestorMock.expects("request").never();
+		this.mock(_Helper).expects("updateSelected").never();
+
+		assert.strictEqual(
+			// code under test
+			oCache.fetchLateProperty({/*oGroupLock*/}, {/*oCacheData*/}, "('1')", sAnnotation,
+				sAnnotation),
+			undefined
+		);
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("Cache#fetchLateProperty: not a late property", function (assert) {

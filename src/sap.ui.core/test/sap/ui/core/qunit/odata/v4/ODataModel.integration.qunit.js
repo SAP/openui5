@@ -40822,6 +40822,37 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: Request a client annotation of a missing instance late. See that no request happens
+	// and a drill-down error is logged.
+	// BCP: 2280122602
+	QUnit.test("BCP 2280122602: client instance annotation late", function (assert) {
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form0" binding="{/EMPLOYEES(\'1\')}">\
+	<Text id="id" text="{ID}"/>\
+</FlexBox>\
+<FlexBox id="form1" binding="{EMPLOYEE_2_TEAM}">\
+	<Text id="isTransient" text="{= %{@$ui5.context.isTransient}}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID", {ID : "1"})
+			.expectChange("id", "1")
+			.expectChange("isTransient");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error").withArgs("Failed to drill-down into EMPLOYEE_2_TEAM"
+				+ "/@$ui5.context.isTransient, invalid segment: EMPLOYEE_2_TEAM");
+			that.expectChange("isTransient", undefined);
+
+			that.oView.byId("form1")
+				.setBindingContext(that.oView.byId("form0").getBindingContext());
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario:
 	// - Edm.Stream property is read from a complex type, w/o autoExpandSelect but binding parameter
 	// - Accessing a missing annotation does not cause a GET request because it is already selected
