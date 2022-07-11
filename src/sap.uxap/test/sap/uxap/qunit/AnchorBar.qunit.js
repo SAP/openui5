@@ -110,19 +110,19 @@ sap.ui.define([
 		this.clock.tick(iRenderingDelay);
 
 		assert.strictEqual(oLastSectionButton.$().hasClass("sapUxAPAnchorBarButtonSelected"), true, "select button programmatically");
-		checkButtonAriaAttribute(assert, oLastSectionButton, "aria-selected", "true", "ARIA selected state should be true for the selected button");
-		checkButtonAriaAttribute(assert, oFirstSectionButton, "aria-selected", "false", "ARIA selected state should be false for the unselected button");
-		checkButtonAriaAttribute(assert, oMenuButton, "aria-selected", "false", "ARIA selected state should be false for the unselected split button");
+		checkButtonAriaAttribute(assert, oLastSectionButton, "aria-checked", "true", "ARIA selected state should be true for the selected button");
+		checkButtonAriaAttribute(assert, oFirstSectionButton, "aria-checked", "false", "ARIA selected state should be false for the unselected button");
+		checkButtonAriaAttribute(assert, oMenuButton, "aria-checked", "false", "ARIA selected state should be false for the unselected split button");
 
 		oAnchorBar.setSelectedButton(oMenuButton);
 
 		// allow for scrolling
 		this.clock.tick(iRenderingDelay);
 
-		checkButtonAriaAttribute(assert, oMenuButton, "aria-selected", "true", "ARIA selected state should be true for the selected split button");
+		checkButtonAriaAttribute(assert, oMenuButton, "aria-checked", "true", "ARIA selected state should be true for the selected split button");
 	});
 
-	QUnit.test("aria-selected is set correctly in _computeNextSectionInfo", function (assert) {
+	QUnit.test("aria-checked is set correctly in _computeNextSectionInfo", function (assert) {
 		//select button programmatically
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			aAnchorBarContent = oAnchorBar.getContent(),
@@ -133,8 +133,8 @@ sap.ui.define([
 		oAnchorBar.setSelectedButton(oLastSectionButton);
 		oAnchorBar._computeBarSectionsInfo();
 
-		checkButtonAriaAttribute(assert, oFirstSectionButton, "aria-selected", "false", "ARIA selected state should be false for the unselected button");
-		checkButtonAriaAttribute(assert, oLastSectionButton, "aria-selected", "true", "ARIA selected state should be true for the selected button");
+		checkButtonAriaAttribute(assert, oFirstSectionButton, "aria-checked", "false", "ARIA selected state should be false for the unselected button");
+		checkButtonAriaAttribute(assert, oLastSectionButton, "aria-checked", "true", "ARIA selected state should be true for the selected button");
 	});
 
 	QUnit.test("Selected button always set correctly", function (assert) {
