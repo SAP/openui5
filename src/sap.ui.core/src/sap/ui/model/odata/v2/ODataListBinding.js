@@ -1379,9 +1379,14 @@ sap.ui.define([
 		}
 		if (this.sSortParams) {
 			aParams.push(this.sSortParams);
+		} else if (this.aSorters.length && this.useClientMode()) {
+			aParams.push(ODataUtils.createSortParams(this.aSorters));
 		}
 		if (this.sFilterParams) {
 			aParams.push(this.sFilterParams);
+		} else if (this.oCombinedFilter && this.useClientMode()) {
+			aParams.push(ODataUtils.createFilterParams(this.oCombinedFilter, this.oModel.oMetadata,
+				this.oEntityType));
 		}
 		if (this.sCustomParams) {
 			aParams.push(this.sCustomParams);
