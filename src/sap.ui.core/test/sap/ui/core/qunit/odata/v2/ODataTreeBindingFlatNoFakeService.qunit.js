@@ -555,9 +555,32 @@ sap.ui.define([
 				sClassName);
 
 		// code under test
-		mParameters.success(oResponseData);
+		mParameters.success(oResponseData, "~oResponse");
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_submitChanges: success handler logs no warning if no request was sent",
+			function (assert) {
+		var oBinding = {
+				_generateSubmitData : function () {},
+				_optimizeChanges : function () {},
+				getResolvedPath : function () {}
+			},
+			oOptimizedChanges = {foo : [], bar : ["baz"]},
+			mParameters = {};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo");
+		this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(oOptimizedChanges);
+		this.mock(oBinding).expects("_generateSubmitData")
+			.withExactArgs(sinon.match.same(oOptimizedChanges), sinon.match.func);
+
+		// code under test
+		ODataTreeBindingFlat.prototype._submitChanges.call(oBinding, mParameters);
+
+		// code under test
+		mParameters.success({}, /*no request*/undefined);
+	});
 
 	//*********************************************************************************************
 ["~sNewlyGeneratedId", undefined].forEach(function (sNewlyGeneratedId) {
@@ -759,5 +782,76 @@ sap.ui.define([
 		assert.strictEqual(
 			ODataTreeBindingFlat.prototype._generateDeleteRequest.call(oBinding, oNode),
 			"~requestHandle");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_hasPendingChanges: unresolved binding", function (assert) {
+		var oBinding = {isResolved : function () {}};
+
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(false);
+
+		// code under test
+		assert.strictEqual(ODataTreeBindingFlat.prototype._hasPendingChanges.call(oBinding), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_hasPendingChanges: w/o changed nodes", function (assert) {
+		var oBinding = {_aAllChangedNodes : [], isResolved : function () {}};
+
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+
+		// code under test
+		assert.strictEqual(ODataTreeBindingFlat.prototype._hasPendingChanges.call(oBinding), false);
+	});
+
+	//*********************************************************************************************
+[
+	{added : [{/*node*/}], creationCancelled : [], moved : [], removed : []},
+	{added : [], creationCancelled : [], moved : [{/*node*/}], removed : []},
+	{added : [], creationCancelled : [], moved : [], removed : [{/*node*/}]}
+].forEach(function (oOptimizedChanges, i) {
+	QUnit.test("_hasPendingChanges: with changed nodes: " + i, function (assert) {
+		var oBinding = {
+				_aAllChangedNodes : [{/*node*/}],
+				_optimizeChanges : function () {},
+				isResolved : function () {}
+			};
+
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_optimizeChanges")
+			.withExactArgs()
+			.returns(oOptimizedChanges);
+
+		// code under test
+		assert.strictEqual(ODataTreeBindingFlat.prototype._hasPendingChanges.call(oBinding),
+			true);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_hasPendingChanges: cancelled creations", function (assert) {
+		var oBinding = {
+				_aAllChangedNodes : [{/*node*/}],
+				_optimizeChanges : function () {},
+				isResolved : function () {}
+			},
+			aChangedEntityKeys = ["foo", "baz"];
+
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
+		this.mock(oBinding).expects("_optimizeChanges")
+			.withExactArgs()
+			.returns({
+				added : [],
+				moved : [],
+				removed : [],
+				creationCancelled : [{key : "foo"}, {key : "bar"}]
+			});
+
+		// code under test
+		assert.strictEqual(
+			ODataTreeBindingFlat.prototype._hasPendingChanges.call(oBinding, aChangedEntityKeys),
+			false);
+
+		assert.deepEqual(aChangedEntityKeys, ["baz"]);
 	});
 });
