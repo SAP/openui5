@@ -152,10 +152,6 @@ sap.ui.define(function () {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/Sticky/Opa.qunit"],
 				realOData : false // requires stable test data
-			},
-			"OPA.ViewTemplate.Types" : {
-				autostart : false,
-				module : ["sap/ui/core/sample/ViewTemplate/types/Opa.qunit"]
 			}
 		}
 	};

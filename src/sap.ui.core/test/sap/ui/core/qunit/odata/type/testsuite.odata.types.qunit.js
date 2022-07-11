@@ -63,6 +63,18 @@ sap.ui.define(function () {
 				ui5 : {
 					language : "en-US"
 				}
+			},
+			// *************************************************************************
+			// OPA Test for OData Types
+			// *************************************************************************
+			"OPA.ViewTemplate.Types" : {
+				autostart : false,
+				loader : {
+					paths : {
+						"sap/ui/core/sample" : "test-resources/sap/ui/core/demokit/sample"
+					}
+				},
+				module : ["sap/ui/core/sample/ViewTemplate/types/Opa.qunit"]
 			}
 		}
 	};
