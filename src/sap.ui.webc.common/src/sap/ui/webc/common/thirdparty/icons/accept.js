@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/accept', './v4/accept'], function (exports, Theme, accept$1, accept$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/accept", "./v4/accept"], function (_exports, _Theme, _accept, _accept2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? accept$1.pathData : accept$2.pathData;
-	var accept = "accept";
-
-	exports.accData = accept$1.accData;
-	exports.ltr = accept$1.ltr;
-	exports.default = accept;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _accept.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _accept.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _accept.pathData : _accept2.pathData;
+  _exports.pathData = pathData;
+  var _default = "accept";
+  _exports.default = _default;
 });

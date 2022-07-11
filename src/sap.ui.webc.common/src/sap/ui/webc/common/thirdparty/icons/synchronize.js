@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/synchronize', './v4/synchronize'], function (exports, Theme, synchronize$1, synchronize$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/synchronize", "./v4/synchronize"], function (_exports, _Theme, _synchronize, _synchronize2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? synchronize$1.pathData : synchronize$2.pathData;
-	var synchronize = "synchronize";
-
-	exports.accData = synchronize$1.accData;
-	exports.ltr = synchronize$1.ltr;
-	exports.default = synchronize;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _synchronize.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _synchronize.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _synchronize.pathData : _synchronize2.pathData;
+  _exports.pathData = pathData;
+  var _default = "synchronize";
+  _exports.default = _default;
 });

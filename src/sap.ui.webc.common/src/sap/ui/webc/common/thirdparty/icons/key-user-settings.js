@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/key-user-settings', './v4/key-user-settings'], function (exports, Theme, keyUserSettings$1, keyUserSettings$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/key-user-settings", "./v4/key-user-settings"], function (_exports, _Theme, _keyUserSettings, _keyUserSettings2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? keyUserSettings$1.pathData : keyUserSettings$2.pathData;
-	var keyUserSettings = "key-user-settings";
-
-	exports.accData = keyUserSettings$1.accData;
-	exports.ltr = keyUserSettings$1.ltr;
-	exports.default = keyUserSettings;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _keyUserSettings.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _keyUserSettings.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _keyUserSettings.pathData : _keyUserSettings2.pathData;
+  _exports.pathData = pathData;
+  var _default = "key-user-settings";
+  _exports.default = _default;
 });

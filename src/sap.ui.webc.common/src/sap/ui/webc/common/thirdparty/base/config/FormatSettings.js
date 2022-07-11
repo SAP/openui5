@@ -1,15 +1,20 @@
-sap.ui.define(['exports', '../InitialConfiguration'], function (exports, InitialConfiguration) { 'use strict';
+sap.ui.define(["exports", "../InitialConfiguration"], function (_exports, _InitialConfiguration) {
+  "use strict";
 
-	let formatSettings;
-	const getFirstDayOfWeek = () => {
-		if (formatSettings === undefined) {
-			formatSettings = InitialConfiguration.getFormatSettings();
-		}
-		return formatSettings.firstDayOfWeek;
-	};
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.getFirstDayOfWeek = void 0;
+  let formatSettings;
 
-	exports.getFirstDayOfWeek = getFirstDayOfWeek;
+  const getFirstDayOfWeek = () => {
+    if (formatSettings === undefined) {
+      formatSettings = (0, _InitialConfiguration.getFormatSettings)();
+    }
 
-	Object.defineProperty(exports, '__esModule', { value: true });
+    return formatSettings.firstDayOfWeek;
+  }; // eslint-disable-line
 
+
+  _exports.getFirstDayOfWeek = getFirstDayOfWeek;
 });

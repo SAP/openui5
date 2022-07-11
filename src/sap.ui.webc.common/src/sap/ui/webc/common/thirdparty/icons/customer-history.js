@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/customer-history', './v4/customer-history'], function (exports, Theme, customerHistory$1, customerHistory$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/customer-history", "./v4/customer-history"], function (_exports, _Theme, _customerHistory, _customerHistory2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? customerHistory$1.pathData : customerHistory$2.pathData;
-	var customerHistory = "customer-history";
-
-	exports.accData = customerHistory$1.accData;
-	exports.ltr = customerHistory$1.ltr;
-	exports.default = customerHistory;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _customerHistory.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _customerHistory.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _customerHistory.pathData : _customerHistory2.pathData;
+  _exports.pathData = pathData;
+  var _default = "customer-history";
+  _exports.default = _default;
 });

@@ -7,11 +7,10 @@
  */
 sap.ui.define([
 		"sap/ui/webc/common/library",
-		"sap/ui/webc/common/thirdparty/base/CSP",
 		"./thirdparty/Assets",
 		"./library.config"
 	], // library dependency
-	function(commonLibrary, CSP) {
+	function(commonLibrary) {
 
 		"use strict";
 
@@ -1705,8 +1704,6 @@ sap.ui.define([
 			 */
 			Normal: "Normal"
 		};
-
-		CSP.setPackageCSSRoot("@ui5/webcomponents", sap.ui.require.toUrl("sap/ui/webc/main/thirdparty/css/"));
 
 		return thisLib;
 

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/vertical-bar-chart-2', './v4/vertical-bar-chart-2'], function (exports, Theme, verticalBarChart2$1, verticalBarChart2$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/vertical-bar-chart-2", "./v4/vertical-bar-chart-2"], function (_exports, _Theme, _verticalBarChart, _verticalBarChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? verticalBarChart2$1.pathData : verticalBarChart2$2.pathData;
-	var verticalBarChart2 = "vertical-bar-chart-2";
-
-	exports.accData = verticalBarChart2$1.accData;
-	exports.ltr = verticalBarChart2$1.ltr;
-	exports.default = verticalBarChart2;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _verticalBarChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _verticalBarChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _verticalBarChart.pathData : _verticalBarChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "vertical-bar-chart-2";
+  _exports.default = _default;
 });

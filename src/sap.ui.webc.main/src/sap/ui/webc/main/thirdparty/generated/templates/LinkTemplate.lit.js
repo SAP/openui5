@@ -1,8 +1,16 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (litRender) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer"], function (_exports, _LitRenderer) {
+  "use strict";
 
-	const block0 = (context, tags, suffix) => litRender.html`<a class="ui5-link-root" role="${litRender.ifDefined(context.effectiveAccRole)}" href="${litRender.ifDefined(context.parsedRef)}" target="${litRender.ifDefined(context.target)}" rel="${litRender.ifDefined(context._rel)}" tabindex="${litRender.ifDefined(context.tabIndex)}" ?disabled="${context.disabled}" aria-label="${litRender.ifDefined(context.ariaLabelText)}" aria-haspopup="${litRender.ifDefined(context.accessibilityAttributes.hasPopup)}" aria-expanded="${litRender.ifDefined(context.accessibilityAttributes.expanded)}" @focusin=${context._onfocusin} @focusout=${context._onfocusout} @click=${context._onclick} @keydown=${context._onkeydown} @keyup=${context._onkeyup}><slot></slot>${ context.hasLinkType ? block1(context) : undefined }</a>`;
-	const block1 = (context, tags, suffix) => litRender.html`<span class="ui5-hidden-text">${litRender.ifDefined(context.linkTypeText)}</span>`;
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
 
-	return block0;
+  /* eslint no-unused-vars: 0 */
+  const block0 = (context, tags, suffix) => (0, _LitRenderer.html)`<a class="ui5-link-root" role="${(0, _LitRenderer.ifDefined)(context.effectiveAccRole)}" href="${(0, _LitRenderer.ifDefined)(context.parsedRef)}" target="${(0, _LitRenderer.ifDefined)(context.target)}" rel="${(0, _LitRenderer.ifDefined)(context._rel)}" tabindex="${(0, _LitRenderer.ifDefined)(context.tabIndex)}" ?disabled="${context.disabled}" aria-label="${(0, _LitRenderer.ifDefined)(context.ariaLabelText)}" aria-haspopup="${(0, _LitRenderer.ifDefined)(context.accessibilityAttributes.hasPopup)}" aria-expanded="${(0, _LitRenderer.ifDefined)(context.accessibilityAttributes.expanded)}" @focusin=${context._onfocusin} @focusout=${context._onfocusout} @click=${context._onclick} @keydown=${context._onkeydown} @keyup=${context._onkeyup}><slot></slot>${context.hasLinkType ? block1(context, tags, suffix) : undefined}</a>`;
 
+  const block1 = (context, tags, suffix) => (0, _LitRenderer.html)`<span class="ui5-hidden-text">${(0, _LitRenderer.ifDefined)(context.linkTypeText)}</span>`;
+
+  var _default = block0;
+  _exports.default = _default;
 });

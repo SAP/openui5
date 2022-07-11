@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var dialogSvg = `<svg width="160" height="156" viewBox="0 0 160 156" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-ResizeColumn">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="160" height="156" viewBox="0 0 160 156" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-ResizeColumn">
 <mask id="mask0_1663_6341" class="sapIllus_MaskTypeAlpha" maskUnits="userSpaceOnUse" x="0" y="0" width="156" height="156">
 <path d="M77.9331 155.866C120.974 155.866 155.866 120.974 155.866 77.9331C155.866 34.8918 120.974 0 77.9331 0C34.8918 0 0 34.8918 0 77.9331C0 120.974 34.8918 155.866 77.9331 155.866Z" fill="var(--sapContent_Illustrative_Color7)"/>
 </mask>
@@ -42,7 +47,5 @@ sap.ui.define(function () { 'use strict';
 <path d="M157.055 53.7265C157.055 53.1625 155.418 52.711 153.23 52.6085C153.105 50.4236 152.624 48.799 152.06 48.8003C151.495 48.8015 151.026 50.4386 150.906 52.6347C148.712 52.7848 147.081 53.2751 147.089 53.8403C147.096 54.4056 148.726 54.8571 150.914 54.9584C151.045 57.1433 151.52 58.7678 152.083 58.7666C152.646 58.7653 153.118 57.1283 153.238 54.9322C155.432 54.7821 157.061 54.2918 157.055 53.7265Z" fill="var(--sapContent_Illustrative_Color3)"/>
 </svg>
 `;
-
-	return dialogSvg;
-
+  _exports.default = _default;
 });

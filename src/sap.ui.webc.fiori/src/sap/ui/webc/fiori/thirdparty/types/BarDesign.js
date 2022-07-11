@@ -1,22 +1,65 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/DataType'], function (DataType) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+  "use strict";
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  _DataType = _interopRequireDefault(_DataType);
 
-	var DataType__default = /*#__PURE__*/_interopDefaultLegacy(DataType);
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	const BarTypes = {
-		Header: "Header",
-		Subheader: "Subheader",
-		Footer: "Footer",
-		FloatingFooter: "FloatingFooter",
-	};
-	class BarDesign extends DataType__default {
-		static isValid(value) {
-			return !!BarTypes[value];
-		}
-	}
-	BarDesign.generateTypeAccessors(BarTypes);
+  /**
+   * @lends sap.ui.webcomponents.fiori.types.BarDesign.prototype
+   * @public
+   */
+  const BarTypes = {
+    /**
+     * Default type
+     * @public
+     * @type {Header}
+     */
+    Header: "Header",
 
-	return BarDesign;
+    /**
+     * Subheader type
+     * @public
+     * @type {Subheader}
+     */
+    Subheader: "Subheader",
 
+    /**
+     * Footer type
+     * @public
+     * @type {Footer}
+     */
+    Footer: "Footer",
+
+    /**
+     * Floating Footer type - there is visible border on all sides
+     * @public
+     * @type {FloatingFooter}
+     */
+    FloatingFooter: "FloatingFooter"
+  };
+  /**
+   * @class
+   * Different types of Bar.
+   * @constructor
+   * @author SAP SE
+   * @alias sap.ui.webcomponents.fiori.types.BarDesign
+   * @public
+   * @enum {string}
+   */
+
+  class BarDesign extends _DataType.default {
+    static isValid(value) {
+      return !!BarTypes[value];
+    }
+
+  }
+
+  BarDesign.generateTypeAccessors(BarTypes);
+  var _default = BarDesign;
+  _exports.default = _default;
 });

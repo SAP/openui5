@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/attachment-html', './v4/attachment-html'], function (exports, Theme, attachmentHtml$1, attachmentHtml$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/attachment-html", "./v4/attachment-html"], function (_exports, _Theme, _attachmentHtml, _attachmentHtml2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? attachmentHtml$1.pathData : attachmentHtml$2.pathData;
-	var attachmentHtml = "attachment-html";
-
-	exports.accData = attachmentHtml$1.accData;
-	exports.ltr = attachmentHtml$1.ltr;
-	exports.default = attachmentHtml;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _attachmentHtml.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _attachmentHtml.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _attachmentHtml.pathData : _attachmentHtml2.pathData;
+  _exports.pathData = pathData;
+  var _default = "attachment-html";
+  _exports.default = _default;
 });

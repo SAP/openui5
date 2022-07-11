@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/copy', './v4/copy'], function (exports, Theme, copy$1, copy$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/copy", "./v4/copy"], function (_exports, _Theme, _copy, _copy2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? copy$1.pathData : copy$2.pathData;
-	var copy = "copy";
-
-	exports.accData = copy$1.accData;
-	exports.ltr = copy$1.ltr;
-	exports.default = copy;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _copy.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _copy.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _copy.pathData : _copy2.pathData;
+  _exports.pathData = pathData;
+  var _default = "copy";
+  _exports.default = _default;
 });

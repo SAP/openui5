@@ -1,21 +1,37 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/LocaleData', 'sap/ui/webc/common/thirdparty/base/locale/getLocale', 'sap/ui/core/LocaleData'], function (LocaleData, getLocale, LocaleData$1) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/LocaleData", "sap/ui/webc/common/thirdparty/base/locale/getLocale", "sap/ui/core/LocaleData"], function (_exports, _LocaleData, _getLocale, _LocaleData2) {
+  "use strict";
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  _getLocale = _interopRequireDefault(_getLocale);
+  _LocaleData2 = _interopRequireDefault(_LocaleData2);
 
-	var getLocale__default = /*#__PURE__*/_interopDefaultLegacy(getLocale);
-	var LocaleData__default = /*#__PURE__*/_interopDefaultLegacy(LocaleData$1);
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	const instances = new Map();
-	const getLocaleData = async lang => {
-		const locale = getLocale__default(lang);
-		const localeLang = locale.getLanguage();
-		if (!instances.has(localeLang)) {
-			await LocaleData.fetchCldr(locale.getLanguage(), locale.getRegion(), locale.getScript());
-			instances.set(localeLang, LocaleData__default.getInstance(locale));
-		}
-		return instances.get(localeLang);
-	};
+  const instances = new Map();
+  /**
+   * Fetches and returns а LocaleData object for the required locale
+   * For more information on this object's API, please see:
+   * https://ui5.sap.com/#/api/sap.ui.core.LocaleData
+   *
+   * @param lang - if left empty, will use the configured/current locale
+   * @returns {LocaleData}
+   */
 
-	return getLocaleData;
+  const getLocaleData = async lang => {
+    const locale = (0, _getLocale.default)(lang);
+    const localeLang = locale.getLanguage();
 
+    if (!instances.has(localeLang)) {
+      await (0, _LocaleData.fetchCldr)(locale.getLanguage(), locale.getRegion(), locale.getScript());
+      instances.set(localeLang, _LocaleData2.default.getInstance(locale));
+    }
+
+    return instances.get(localeLang);
+  };
+
+  var _default = getLocaleData;
+  _exports.default = _default;
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/full-stacked-column-chart', './v4/full-stacked-column-chart'], function (exports, Theme, fullStackedColumnChart$1, fullStackedColumnChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/full-stacked-column-chart", "./v4/full-stacked-column-chart"], function (_exports, _Theme, _fullStackedColumnChart, _fullStackedColumnChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? fullStackedColumnChart$1.pathData : fullStackedColumnChart$2.pathData;
-	var fullStackedColumnChart = "full-stacked-column-chart";
-
-	exports.accData = fullStackedColumnChart$1.accData;
-	exports.ltr = fullStackedColumnChart$1.ltr;
-	exports.default = fullStackedColumnChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _fullStackedColumnChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _fullStackedColumnChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _fullStackedColumnChart.pathData : _fullStackedColumnChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "full-stacked-column-chart";
+  _exports.default = _default;
 });

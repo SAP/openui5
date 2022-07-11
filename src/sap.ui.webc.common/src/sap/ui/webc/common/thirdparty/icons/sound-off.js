@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sound-off', './v4/sound-off'], function (exports, Theme, soundOff$1, soundOff$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sound-off", "./v4/sound-off"], function (_exports, _Theme, _soundOff, _soundOff2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? soundOff$1.pathData : soundOff$2.pathData;
-	var soundOff = "sound-off";
-
-	exports.accData = soundOff$1.accData;
-	exports.ltr = soundOff$1.ltr;
-	exports.default = soundOff;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _soundOff.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _soundOff.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _soundOff.pathData : _soundOff2.pathData;
+  _exports.pathData = pathData;
+  var _default = "sound-off";
+  _exports.default = _default;
 });

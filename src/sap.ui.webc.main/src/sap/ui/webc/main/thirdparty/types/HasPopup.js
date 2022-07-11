@@ -1,23 +1,73 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/DataType'], function (DataType) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+  "use strict";
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  _DataType = _interopRequireDefault(_DataType);
 
-	var DataType__default = /*#__PURE__*/_interopDefaultLegacy(DataType);
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	const PopupTypes = {
-		Dialog: "Dialog",
-		Grid: "Grid",
-		ListBox: "ListBox",
-		Menu: "Menu",
-		Tree: "Tree",
-	};
-	class HasPopup extends DataType__default {
-		static isValid(value) {
-			return !!PopupTypes[value];
-		}
-	}
-	HasPopup.generateTypeAccessors(PopupTypes);
+  /**
+   * Different types of HasPopup.
+   * @lends sap.ui.webcomponents.main.types.HasPopup.prototype
+   * @public
+   */
+  const PopupTypes = {
+    /**
+     * Dialog popup type.
+     * @public
+     * @type {Dialog}
+     */
+    Dialog: "Dialog",
 
-	return HasPopup;
+    /**
+     * Grid popup type.
+     * @public
+     * @type {Grid}
+     */
+    Grid: "Grid",
 
+    /**
+     * ListBox popup type.
+     * @public
+     * @type {ListBox}
+     */
+    ListBox: "ListBox",
+
+    /**
+     * Menu popup type.
+     * @public
+     * @type {Menu}
+     */
+    Menu: "Menu",
+
+    /**
+     * Tree popup type.
+     * @public
+     * @type {Tree}
+     */
+    Tree: "Tree"
+  };
+  /**
+   * @class
+   * Different types of HasPopup.
+   * @constructor
+   * @author SAP SE
+   * @alias sap.ui.webcomponents.main.types.HasPopup
+   * @public
+   * @enum {string}
+   */
+
+  class HasPopup extends _DataType.default {
+    static isValid(value) {
+      return !!PopupTypes[value];
+    }
+
+  }
+
+  HasPopup.generateTypeAccessors(PopupTypes);
+  var _default = HasPopup;
+  _exports.default = _default;
 });

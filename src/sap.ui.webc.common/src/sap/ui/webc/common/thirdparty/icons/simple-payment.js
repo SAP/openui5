@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/simple-payment', './v4/simple-payment'], function (exports, Theme, simplePayment$1, simplePayment$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/simple-payment", "./v4/simple-payment"], function (_exports, _Theme, _simplePayment, _simplePayment2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? simplePayment$1.pathData : simplePayment$2.pathData;
-	var simplePayment = "simple-payment";
-
-	exports.accData = simplePayment$1.accData;
-	exports.ltr = simplePayment$1.ltr;
-	exports.default = simplePayment;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _simplePayment.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _simplePayment.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _simplePayment.pathData : _simplePayment2.pathData;
+  _exports.pathData = pathData;
+  var _default = "simple-payment";
+  _exports.default = _default;
 });

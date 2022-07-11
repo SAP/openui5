@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/resize', './v4/resize'], function (exports, Theme, resize$1, resize$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/resize", "./v4/resize"], function (_exports, _Theme, _resize, _resize2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? resize$1.pathData : resize$2.pathData;
-	var resize = "resize";
-
-	exports.accData = resize$1.accData;
-	exports.ltr = resize$1.ltr;
-	exports.default = resize;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _resize.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _resize.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _resize.pathData : _resize2.pathData;
+  _exports.pathData = pathData;
+  var _default = "resize";
+  _exports.default = _default;
 });

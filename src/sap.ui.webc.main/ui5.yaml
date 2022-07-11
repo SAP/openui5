@@ -1,12 +1,16 @@
 ---
-specVersion: "2.0"
+specVersion: "2.1"
 type: library
 metadata:
   name: sap.ui.webc.main
   copyright: |-
-   OpenUI5
-    * (c) Copyright 2009-${currentYear} SAP SE or an SAP affiliate company.
-    * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+    OpenUI5
+     * (c) Copyright 2009-${currentYear} SAP SE or an SAP affiliate company.
+     * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+resources:
+  configuration:
+    paths:
+      src: "src/"
 builder:
   jsdoc:
     excludes:
@@ -35,3 +39,303 @@ builder:
             resolve: false
             resolveConditional: false
             renderer: true
+customConfiguration:
+  ui5-tooling-webc:
+    packages:
+      # main
+      '@ui5/webcomponents':
+        aliases: # used to convert ES6 imports to UI5 module paths
+          "^@ui5\/webcomponents\/dist\/(.*?).js$": "sap/ui/webc/main/thirdparty/$1"
+        reverseAliases: # used by the middleware to serve third-party files as UI5 modules
+          "^/resources/sap/ui/webc/main/thirdparty/(.*?)$": "@ui5/webcomponents/dist/$1"
+        inputPath: "../../node_modules/@ui5/webcomponents/dist/" # where to find the web components
+        inputPathFilters: # relative to the inputPath, can be inclusive or exclusive(!) filters
+          - "**/*{.js,.json,.css}"
+          - "!assets/"
+          - "!test/"
+          - "!**/*-static.js"
+          - "!**/api.json"
+        outputPath: "src/sap/ui/webc/main/thirdparty/" # where to create the UI5 controls
+        generation: # if set, control wrappers will be generated
+          suffix: "-ui5"
+          replaceJSDocNamespaces: # replace namespaces in api.json
+            sap.ui.webcomponents.main.types: sap.ui.webc.main
+            sap.ui.webcomponents.main: sap.ui.webc.main
+          noControl: # do not generate wrappers at all
+            - sap.ui.webc.main.CalendarHeader
+            - sap.ui.webc.main.CalendarPart
+            - sap.ui.webc.main.DateComponentBase
+            - sap.ui.webc.main.DayPicker
+            - sap.ui.webc.main.ListItem
+            - sap.ui.webc.main.ListItemBase
+            - sap.ui.webc.main.MonthPicker
+            - sap.ui.webc.main.Popup
+            - sap.ui.webc.main.SliderBase
+            - sap.ui.webc.main.SuggestionListItem
+            - sap.ui.webc.main.TimePickerBase
+            - sap.ui.webc.main.TimeSelection
+            - sap.ui.webc.main.Tokenizer
+            - sap.ui.webc.main.TreeListItem
+            - sap.ui.webc.main.WheelSlider
+            - sap.ui.webc.main.YearPicker
+          noTestPage: # do not generate test pages for these controls
+            - sap.ui.webc.main.Avatar
+            - sap.ui.webc.main.AvatarGroup
+            - sap.ui.webc.main.Badge
+            - sap.ui.webc.main.Breadcrumbs
+            - sap.ui.webc.main.BreadcrumbsItem
+            - sap.ui.webc.main.BusyIndicator
+            - sap.ui.webc.main.CalendarDate
+            - sap.ui.webc.main.Card
+            - sap.ui.webc.main.Carousel
+            - sap.ui.webc.main.CheckBox
+            - sap.ui.webc.main.ColorPaletteItem
+            - sap.ui.webc.main.ComboBox
+            - sap.ui.webc.main.ComboBoxGroupItem
+            - sap.ui.webc.main.ComboBoxItem
+            - sap.ui.webc.main.CustomListItem
+            - sap.ui.webc.main.Dialog
+            - sap.ui.webc.main.GroupHeaderListItem
+            - sap.ui.webc.main.Icon
+            - sap.ui.webc.main.Input
+            - sap.ui.webc.main.Label
+            - sap.ui.webc.main.Link
+            - sap.ui.webc.main.List
+            - sap.ui.webc.main.MenuItem
+            - sap.ui.webc.main.MessageStrip
+            - sap.ui.webc.main.MultiComboBox
+            - sap.ui.webc.main.MultiComboBoxGroupItem
+            - sap.ui.webc.main.MultiComboBoxItem
+            - sap.ui.webc.main.MultiInput
+            - sap.ui.webc.main.Option
+            - sap.ui.webc.main.Panel
+            - sap.ui.webc.main.Popover
+            - sap.ui.webc.main.ProgressIndicator
+            - sap.ui.webc.main.RadioButton
+            - sap.ui.webc.main.RangeSlider
+            - sap.ui.webc.main.RatingIndicator
+            - sap.ui.webc.main.ResponsivePopover
+            - sap.ui.webc.main.SegmentedButtonItem
+            - sap.ui.webc.main.StandardListItem
+            - sap.ui.webc.main.Select
+            - sap.ui.webc.main.Slider
+            - sap.ui.webc.main.StepInput
+            - sap.ui.webc.main.SuggestionGroupItem
+            - sap.ui.webc.main.SuggestionItem
+            - sap.ui.webc.main.Tab
+            - sap.ui.webc.main.TabContainer
+            - sap.ui.webc.main.Table
+            - sap.ui.webc.main.TableCell
+            - sap.ui.webc.main.TableColumn
+            - sap.ui.webc.main.TableGroupRow
+            - sap.ui.webc.main.TableRow
+            - sap.ui.webc.main.TabSeparator
+            - sap.ui.webc.main.TextArea
+            - sap.ui.webc.main.Title
+            - sap.ui.webc.main.Toast
+            - sap.ui.webc.main.Token
+            - sap.ui.webc.main.Tree
+            - sap.ui.webc.main.TreeItem
+          noQUnit: # do not generate QUnit tests for these controls
+            - sap.ui.webc.main.BreadcrumbsItem
+            - sap.ui.webc.main.CalendarDate
+            - sap.ui.webc.main.ColorPaletteItem
+            - sap.ui.webc.main.ComboBoxGroupItem
+            - sap.ui.webc.main.ComboBoxItem
+            - sap.ui.webc.main.CustomListItem
+            - sap.ui.webc.main.GroupHeaderListItem
+            - sap.ui.webc.main.MenuItem
+            - sap.ui.webc.main.MultiComboBox
+            - sap.ui.webc.main.MultiComboBoxGroupItem
+            - sap.ui.webc.main.MultiComboBoxItem
+            - sap.ui.webc.main.Option
+            - sap.ui.webc.main.SegmentedButtonItem
+            - sap.ui.webc.main.StandardListItem
+            - sap.ui.webc.main.SuggestionGroupItem
+            - sap.ui.webc.main.SuggestionItem
+            - sap.ui.webc.main.Tab
+            - sap.ui.webc.main.TableCell
+            - sap.ui.webc.main.TableColumn
+            - sap.ui.webc.main.TableGroupRow
+            - sap.ui.webc.main.TableRow
+            - sap.ui.webc.main.TabSeparator
+            - sap.ui.webc.main.Token
+            - sap.ui.webc.main.TreeItem
+          additionalProperties:
+            width:
+              - sap.ui.webc.main.Button
+              - sap.ui.webc.main.BusyIndicator
+              - sap.ui.webc.main.Card
+              - sap.ui.webc.main.CheckBox
+              - sap.ui.webc.main.ComboBox
+              - sap.ui.webc.main.DatePicker
+              - sap.ui.webc.main.DateRangePicker
+              - sap.ui.webc.main.DateTimePicker
+              - sap.ui.webc.main.Dialog
+              - sap.ui.webc.main.FileUploader
+              - sap.ui.webc.main.Icon
+              - sap.ui.webc.main.Input
+              - sap.ui.webc.main.Label
+              - sap.ui.webc.main.List
+              - sap.ui.webc.main.MessageStrip
+              - sap.ui.webc.main.MultiComboBox
+              - sap.ui.webc.main.MultiInput
+              - sap.ui.webc.main.Panel
+              - sap.ui.webc.main.Popover
+              - sap.ui.webc.main.ProgressIndicator
+              - sap.ui.webc.main.RadioButton
+              - sap.ui.webc.main.RatingIndicator
+              - sap.ui.webc.main.RangeSlider
+              - sap.ui.webc.main.Select
+              - sap.ui.webc.main.SegmentedButton
+              - sap.ui.webc.main.Slider
+              - sap.ui.webc.main.StepInput
+              - sap.ui.webc.main.Switch
+              - sap.ui.webc.main.TabContainer
+              - sap.ui.webc.main.Table
+              - sap.ui.webc.main.TextArea
+              - sap.ui.webc.main.TimePicker
+              - sap.ui.webc.main.Title
+              - sap.ui.webc.main.Toast
+              - sap.ui.webc.main.ToggleButton
+              - sap.ui.webc.main.Tree
+            height:
+              - sap.ui.webc.main.Card
+              - sap.ui.webc.main.Dialog
+              - sap.ui.webc.main.Icon
+              - sap.ui.webc.main.List
+              - sap.ui.webc.main.MessageStrip
+              - sap.ui.webc.main.Panel
+              - sap.ui.webc.main.Popover
+              - sap.ui.webc.main.TabContainer
+              - sap.ui.webc.main.Table
+              - sap.ui.webc.main.TextArea
+              - sap.ui.webc.main.Toast
+              - sap.ui.webc.main.Tree
+            display:
+              - sap.ui.webc.main.BusyIndicator
+            textDirection:
+              - sap.ui.webc.main.Button
+            color:
+              - sap.ui.webc.main.Icon
+            backgroundColor:
+              - sap.ui.webc.main.Icon
+          additionalEvents:
+            click:
+              - sap.ui.webc.main.Button
+              - sap.ui.webc.main.Icon
+              - sap.ui.webc.main.Avatar
+              - sap.ui.webc.main.AvatarGroup
+              - sap.ui.webc.main.Link
+          includeLabelEnablement:
+            - sap.ui.webc.main.Label
+          includeFormSupport:
+            - sap.ui.webc.main.Button
+            - sap.ui.webc.main.CheckBox
+            - sap.ui.webc.main.ComboBox
+            - sap.ui.webc.main.DatePicker
+            - sap.ui.webc.main.DateRangePicker
+            - sap.ui.webc.main.DateTimePicker
+            - sap.ui.webc.main.FileUploader
+            - sap.ui.webc.main.Input
+            - sap.ui.webc.main.MultiInput
+            - sap.ui.webc.main.MultiComboBox
+            - sap.ui.webc.main.ProgressIndicator
+            - sap.ui.webc.main.RadioButton
+            - sap.ui.webc.main.RatingIndicator
+            - sap.ui.webc.main.SegmentedButton
+            - sap.ui.webc.main.Select
+            - sap.ui.webc.main.Slider
+            - sap.ui.webc.main.StepInput
+            - sap.ui.webc.main.Switch
+            - sap.ui.webc.main.TextArea
+            - sap.ui.webc.main.TimePicker
+          includeSemanticFormSupport:
+            - sap.ui.webc.main.MultiInput
+          features:
+            sap.ui.webc.main.Input:
+              - InputSuggestions
+            sap.ui.webc.main.MultiInput:
+              - InputSuggestions
+            sap.ui.webc.main.ColorPalette:
+              - ColorPaletteMoreColors
+            sap.ui.webc.main.ColorPalettePopover:
+              - ColorPaletteMoreColors
+          versions:
+            sap.ui.webc.main.Breadcrumbs: 1.95.0
+            sap.ui.webc.main.BreadcrumbsItem: 1.95.0
+            sap.ui.webc.main.CardHeader: 1.95.0
+            sap.ui.webc.main.ColorPalettePopover: 1.97.0
+            sap.ui.webc.main.ComboBoxGroupItem: 1.95.0
+            sap.ui.webc.main.SegmentedButtonItem: 1.95.0
+            sap.ui.webc.main.InputSuggestionItem: 1.95.0
+            sap.ui.webc.main.SuggestionGroupItem: 1.95.0
+            sap.ui.webc.main.TableGroupRow: 1.95.0
+            sap.ui.webc.main.IBreadcrumbsItem: 1.95.0
+            sap.ui.webc.main.ISegmentedButtonItem: 1.95.0
+            sap.ui.webc.main.BreadcrumbsDesign: 1.95.0
+            sap.ui.webc.main.BreadcrumbsSeparatorStyle: 1.95.0
+            sap.ui.webc.main.SplitButton: 1.99.0
+            sap.ui.webc.main.Menu: 1.102.0
+            sap.ui.webc.main.MenuItem: 1.102.0
+            sap.ui.webc.main.IMenuItem: 1.102.0
+            sap.ui.webc.main.HasPopup: 1.99.0
+            sap.ui.webc.main.TabsOverflowMode: 1.99.0
+          designtime:
+            sap.ui.webc.main.Avatar:
+              - hide
+              - unhide
+            sap.ui.webc.main.Badge: sap/ui/webc/main/flexibility/Badge
+            sap.ui.webc.main.BreadcrumbsItem: sap/ui/webc/main/flexibility/BreadcrumbsItem
+            sap.ui.webc.main.BusyIndicator:
+              - hide
+              - unhide
+            sap.ui.webc.main.Button: sap/ui/webc/main/flexibility/Button
+            sap.ui.webc.main.Card:
+              - hide
+              - unhide
+            sap.ui.webc.main.Carousel:
+              - hide
+              - unhide
+            sap.ui.webc.main.CheckBox: sap/ui/webc/main/flexibility/CheckBox
+            sap.ui.webc.main.CustomListItem:
+              - hide
+              - unhide
+              - move
+            sap.ui.webc.main.DatePicker:
+              - hide
+              - unhide
+            sap.ui.webc.main.DateTimePicker:
+              - hide
+              - unhide
+            sap.ui.webc.main.Dialog: sap/ui/webc/main/flexibility/Dialog
+            sap.ui.webc.main.Input:
+              - hide
+              - unhide
+            sap.ui.webc.main.Label: sap/ui/webc/main/flexibility/Label
+            sap.ui.webc.main.Link: sap/ui/webc/main/flexibility/Link
+            sap.ui.webc.main.List: sap/ui/webc/main/flexibility/List
+            sap.ui.webc.main.MultiInput:
+              - hide
+              - unhide
+            sap.ui.webc.main.Panel: sap/ui/webc/main/flexibility/Panel
+            sap.ui.webc.main.Popover: sap/ui/webc/main/flexibility/Popover
+            sap.ui.webc.main.RadioButton: sap/ui/webc/main/flexibility/RadioButton
+            sap.ui.webc.main.RangeSlider:
+              - hide
+              - unhide
+            sap.ui.webc.main.RatingIndicator:
+              - hide
+              - unhide
+            sap.ui.webc.main.ResponsivePopover: sap/ui/webc/main/flexibility/ResponsivePopover
+            sap.ui.webc.main.Slider:
+              - hide
+              - unhide
+            sap.ui.webc.main.StandardListItem: sap/ui/webc/main/flexibility/StandardListItem
+            sap.ui.webc.main.Tab: sap/ui/webc/main/flexibility/Tab
+            sap.ui.webc.main.TabContainer: sap/ui/webc/main/flexibility/TabContainer
+            sap.ui.webc.main.Table:
+              - hide
+              - unhide
+            sap.ui.webc.main.TableColumn:
+            sap.ui.webc.main.Title: sap/ui/webc/main/flexibility/Title

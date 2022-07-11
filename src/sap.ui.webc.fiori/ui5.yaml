@@ -1,16 +1,21 @@
 ---
-specVersion: "2.0"
+specVersion: "2.1"
 type: library
 metadata:
   name: sap.ui.webc.fiori
   copyright: |-
-   OpenUI5
-    * (c) Copyright 2009-${currentYear} SAP SE or an SAP affiliate company.
-    * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+    OpenUI5
+     * (c) Copyright 2009-${currentYear} SAP SE or an SAP affiliate company.
+     * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+resources:
+  configuration:
+    paths:
+      src: "src/"
 builder:
   jsdoc:
     excludes:
       - "sap/ui/webc/fiori/thirdparty/**"
+      - "sap/ui/webc/fiori/lib/**"
   bundles:
     - bundleDefinition:
         name: "sap/ui/webc/fiori/library-preload.js"
@@ -35,3 +40,135 @@ builder:
             resolve: false
             resolveConditional: false
             renderer: true
+customConfiguration:
+  ui5-tooling-webc:
+    packages:
+      # fiori
+      '@ui5/webcomponents-fiori':
+        aliases: # used to convert ES6 imports to UI5 module paths
+          "^@ui5\/webcomponents-fiori\/dist\/(.*?).js$": "sap/ui/webc/fiori/thirdparty/$1"
+          "^@zxing\/library$": "sap/ui/webc/fiori/lib/zxing"
+        reverseAliases: # used by the middleware to serve third-party files as UI5 modules
+          "^/resources/sap/ui/webc/fiori/thirdparty/(.*?)$": "@ui5/webcomponents-fiori/dist/$1"
+        inputPath: "../../node_modules/@ui5/webcomponents-fiori/dist/" # where to find the web components
+        inputPathFilters: # relative to the inputPath, can be inclusive or exclusive(!) filters
+          - "**/*{.js,.json,.css}"
+          - "!assets/"
+          - "!test/"
+          - "!**/*-static.js"
+          - "!**/api.json"
+        outputPath: "src/sap/ui/webc/fiori/thirdparty/" # where to create the UI5 controls
+        generation: # if set, control wrappers will be generated
+          suffix: "-ui5"
+          replaceJSDocNamespaces: # replace namespaces in api.json
+            sap.ui.webcomponents.fiori.types: sap.ui.webc.fiori
+            sap.ui.webcomponents.fiori: sap.ui.webc.fiori
+          noControl: # do not generate wrappers at all
+            - sap.ui.webc.fiori.NotificationListItemBase
+          noTestPage: # do not generate test pages for these controls
+            - sap.ui.webc.fiori.Bar
+            - sap.ui.webc.fiori.BarcodeScannerDialog
+            - sap.ui.webc.fiori.DynamicSideContent
+            - sap.ui.webc.fiori.FilterItem
+            - sap.ui.webc.fiori.FilterItemOption
+            - sap.ui.webc.fiori.FlexibleColumnLayout
+            - sap.ui.webc.fiori.IllustratedMessage
+            - sap.ui.webc.fiori.MediaGallery
+            - sap.ui.webc.fiori.MediaGalleryItem
+            - sap.ui.webc.fiori.NotificationAction
+            - sap.ui.webc.fiori.NotificationListGroupItem
+            - sap.ui.webc.fiori.NotificationListItem
+            - sap.ui.webc.fiori.Page
+            - sap.ui.webc.fiori.Panel
+            - sap.ui.webc.fiori.ProductSwitch
+            - sap.ui.webc.fiori.ProductSwitchItem
+            - sap.ui.webc.fiori.ShellBar
+            - sap.ui.webc.fiori.ShellBarItem
+            - sap.ui.webc.fiori.SideNavigation
+            - sap.ui.webc.fiori.SideNavigationItem
+            - sap.ui.webc.fiori.SideNavigationSubItem
+            - sap.ui.webc.fiori.SortItem
+            - sap.ui.webc.fiori.TimelineItem
+            - sap.ui.webc.fiori.UploadCollection
+            - sap.ui.webc.fiori.UploadCollectionItem
+            - sap.ui.webc.fiori.Wizard
+            - sap.ui.webc.fiori.WizardStep
+          noQUnit: # do not generate QUnit tests for these controls
+            - sap.ui.webc.fiori.FilterItem
+            - sap.ui.webc.fiori.FilterItemOption
+            - sap.ui.webc.fiori.MediaGalleryItem
+            - sap.ui.webc.fiori.NotificationAction
+            - sap.ui.webc.fiori.NotificationListGroupItem
+            - sap.ui.webc.fiori.ProductSwitchItem
+            - sap.ui.webc.fiori.ShellBarItem
+            - sap.ui.webc.fiori.SideNavigationItem
+            - sap.ui.webc.fiori.SideNavigationSubItem
+            - sap.ui.webc.fiori.SortItem
+            - sap.ui.webc.fiori.TimelineItem
+            - sap.ui.webc.fiori.UploadCollectionItem
+            - sap.ui.webc.fiori.ViewSettingsDialog
+            - sap.ui.webc.fiori.WizardStep
+          additionalProperties:
+            width:
+              - sap.ui.webc.fiori.Bar
+              - sap.ui.webc.fiori.FlexibleColumnLayout
+              - sap.ui.webc.fiori.Page
+              - sap.ui.webc.fiori.Timeline
+              - sap.ui.webc.fiori.UploadCollection
+            height:
+              - sap.ui.webc.fiori.FlexibleColumnLayout
+              - sap.ui.webc.fiori.Page
+              - sap.ui.webc.fiori.Timeline
+              - sap.ui.webc.fiori.UploadCollection
+              - sap.ui.webc.fiori.Wizard
+            display:
+            textDirection:
+            color:
+            backgroundColor:
+          additionalEvents:
+            click:
+          includeLabelEnablement:
+          includeFormSupport:
+          includeSemanticFormSupport:
+          features:
+          versions:
+            sap.ui.webc.fiori.BarcodeScannerDialog: 1.95.0
+            sap.ui.webc.fiori.FilterItem: 1.97.0
+            sap.ui.webc.fiori.IFilterItem: 1.97.0
+            sap.ui.webc.fiori.FilterItemOption: 1.97.0
+            sap.ui.webc.fiori.IFilterItemOption: 1.97.0
+            sap.ui.webc.fiori.SortItem: 1.97.0
+            sap.ui.webc.fiori.ISortItem: 1.97.0
+            sap.ui.webc.fiori.IllustratedMessage: 1.95.0
+            sap.ui.webc.fiori.IllustrationMessageType: 1.95.0
+            sap.ui.webc.fiori.IllustrationMessageSize: 1.106.0
+            sap.ui.webc.fiori.ViewSettingsDialog: 1.95.0
+            sap.ui.webc.fiori.DynamicSideContent: 1.99.0
+            sap.ui.webc.fiori.MediaGallery: 1.99.0
+            sap.ui.webc.fiori.MediaGalleryItem: 1.99.0
+            sap.ui.webc.fiori.IBar: 1.99.0
+            sap.ui.webc.fiori.IMediaGalleryItem: 1.99.0
+            sap.ui.webc.fiori.MediaGalleryItemLayout: 1.99.0
+            sap.ui.webc.fiori.MediaGalleryLayout: 1.99.0
+            sap.ui.webc.fiori.MediaGalleryMenuHorizontalAlign: 1.99.0
+            sap.ui.webc.fiori.MediaGalleryMenuVerticalAlign: 1.99.0
+            sap.ui.webc.fiori.SideContentFallDown: 1.99.0
+            sap.ui.webc.fiori.SideContentPosition: 1.99.0
+            sap.ui.webc.fiori.SideContentVisibility: 1.99.0
+          designtime:
+            sap.ui.webc.fiori.NotificationListItem:
+              - hide
+              - unhide
+              - move
+            sap.ui.webc.fiori.Page:
+              - move
+            sap.ui.webc.fiori.SideNavigation:
+              - hide
+              - unhide
+            sap.ui.webc.fiori.SideNavigationItem: sap/ui/webc/fiori/flexibility/SideNavigationItem
+            sap.ui.webc.fiori.SideNavigationSubItem: sap/ui/webc/fiori/flexibility/SideNavigationSubItem
+            sap.ui.webc.fiori.UploadCollection:
+              - hide
+              - unhide
+              - move
+            sap.ui.webc.fiori.UploadCollectionItem: sap/ui/webc/fiori/flexibility/UploadCollectionItem

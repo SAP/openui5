@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/multi-select', './v4/multi-select'], function (exports, Theme, multiSelect$1, multiSelect$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/multi-select", "./v4/multi-select"], function (_exports, _Theme, _multiSelect, _multiSelect2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? multiSelect$1.pathData : multiSelect$2.pathData;
-	var multiSelect = "multi-select";
-
-	exports.accData = multiSelect$1.accData;
-	exports.ltr = multiSelect$1.ltr;
-	exports.default = multiSelect;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _multiSelect.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _multiSelect.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _multiSelect.pathData : _multiSelect2.pathData;
+  _exports.pathData = pathData;
+  var _default = "multi-select";
+  _exports.default = _default;
 });

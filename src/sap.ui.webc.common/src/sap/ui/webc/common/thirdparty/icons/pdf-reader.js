@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/pdf-reader', './v4/pdf-reader'], function (exports, Theme, pdfReader$1, pdfReader$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/pdf-reader", "./v4/pdf-reader"], function (_exports, _Theme, _pdfReader, _pdfReader2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? pdfReader$1.pathData : pdfReader$2.pathData;
-	var pdfReader = "pdf-reader";
-
-	exports.accData = pdfReader$1.accData;
-	exports.ltr = pdfReader$1.ltr;
-	exports.default = pdfReader;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _pdfReader.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _pdfReader.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _pdfReader.pathData : _pdfReader2.pathData;
+  _exports.pathData = pathData;
+  var _default = "pdf-reader";
+  _exports.default = _default;
 });

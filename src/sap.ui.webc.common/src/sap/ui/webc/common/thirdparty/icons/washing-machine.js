@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/washing-machine', './v4/washing-machine'], function (exports, Theme, washingMachine$1, washingMachine$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/washing-machine", "./v4/washing-machine"], function (_exports, _Theme, _washingMachine, _washingMachine2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? washingMachine$1.pathData : washingMachine$2.pathData;
-	var washingMachine = "washing-machine";
-
-	exports.accData = washingMachine$1.accData;
-	exports.ltr = washingMachine$1.ltr;
-	exports.default = washingMachine;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _washingMachine.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _washingMachine.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _washingMachine.pathData : _washingMachine2.pathData;
+  _exports.pathData = pathData;
+  var _default = "washing-machine";
+  _exports.default = _default;
 });

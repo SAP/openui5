@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/bo-strategy-management', './v4/bo-strategy-management'], function (exports, Theme, boStrategyManagement$1, boStrategyManagement$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/bo-strategy-management", "./v4/bo-strategy-management"], function (_exports, _Theme, _boStrategyManagement, _boStrategyManagement2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? boStrategyManagement$1.pathData : boStrategyManagement$2.pathData;
-	var boStrategyManagement = "bo-strategy-management";
-
-	exports.accData = boStrategyManagement$1.accData;
-	exports.ltr = boStrategyManagement$1.ltr;
-	exports.default = boStrategyManagement;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _boStrategyManagement.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _boStrategyManagement.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _boStrategyManagement.pathData : _boStrategyManagement2.pathData;
+  _exports.pathData = pathData;
+  var _default = "bo-strategy-management";
+  _exports.default = _default;
 });

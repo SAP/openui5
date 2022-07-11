@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/video', './v4/video'], function (exports, Theme, video$1, video$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/video", "./v4/video"], function (_exports, _Theme, _video, _video2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? video$1.pathData : video$2.pathData;
-	var video = "video";
-
-	exports.accData = video$1.accData;
-	exports.ltr = video$1.ltr;
-	exports.default = video;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _video.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _video.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _video.pathData : _video2.pathData;
+  _exports.pathData = pathData;
+  var _default = "video";
+  _exports.default = _default;
 });

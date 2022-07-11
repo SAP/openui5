@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var sceneSvg = `<svg width="320" height="240" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Scene-Connection">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="320" height="240" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Scene-Connection">
 <mask id="mask0_396_6119" class="sapIllus_MaskTypeAlpha" maskUnits="userSpaceOnUse" x="0" y="20" width="320" height="200">
 <path d="M305.547 20H14.4533C12.5559 19.9983 10.6768 20.3705 8.92329 21.0954C7.16981 21.8203 5.57638 22.8836 4.23409 24.2247C2.8918 25.5657 1.82697 27.1582 1.10045 28.911C0.373942 30.6638 -8.08861e-07 32.5426 0 34.44V205.547C0 209.38 1.52275 213.056 4.23328 215.767C6.9438 218.477 10.6201 220 14.4533 220H305.547C309.38 220 313.056 218.477 315.767 215.767C318.477 213.056 320 209.38 320 205.547V34.44C320 32.5426 319.626 30.6638 318.9 28.911C318.173 27.1582 317.108 25.5657 315.766 24.2247C314.424 22.8836 312.83 21.8203 311.077 21.0954C309.323 20.3705 307.444 19.9983 305.547 20Z" fill="var(--sapContent_Illustrative_Color7)"/>
 </mask>
@@ -32,7 +37,5 @@ sap.ui.define(function () { 'use strict';
 </g>
 </svg>
 `;
-
-	return sceneSvg;
-
+  _exports.default = _default;
 });

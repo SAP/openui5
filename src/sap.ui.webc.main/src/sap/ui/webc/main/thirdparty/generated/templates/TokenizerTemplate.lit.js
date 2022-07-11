@@ -1,9 +1,18 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (litRender) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer"], function (_exports, _LitRenderer) {
+  "use strict";
 
-	const block0 = (context, tags, suffix) => litRender.html`<div class="${litRender.classMap(context.classes.wrapper)}"><span id="${litRender.ifDefined(context._id)}-hiddenText" class="ui5-hidden-text">${litRender.ifDefined(context.tokenizerLabel)}</span><div class="${litRender.classMap(context.classes.content)}" @ui5-delete="${litRender.ifDefined(context._delete)}" @click="${context._click}" @mousedown="${context._onmousedown}" @keydown="${context._onkeydown}" role="listbox" aria-labelledby="${litRender.ifDefined(context._id)}-hiddenText">${ litRender.repeat(context.tokens, (item, index) => item._id || index, (item, index) => block1(item)) }</div>${ context.showNMore ? block2(context) : undefined }</div>`;
-	const block1 = (item, index, context, tags, suffix) => litRender.html`<slot name="${litRender.ifDefined(item._individualSlot)}"></slot>`;
-	const block2 = (context, tags, suffix) => litRender.html`<span @click="${context._openOverflowPopover}" class="ui5-tokenizer-more-text" part="n-more-text">${litRender.ifDefined(context._nMoreText)}</span>`;
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
 
-	return block0;
+  /* eslint no-unused-vars: 0 */
+  const block0 = (context, tags, suffix) => (0, _LitRenderer.html)`<div class="${(0, _LitRenderer.classMap)(context.classes.wrapper)}"><span id="${(0, _LitRenderer.ifDefined)(context._id)}-hiddenText" class="ui5-hidden-text">${(0, _LitRenderer.ifDefined)(context.tokenizerLabel)}</span><div class="${(0, _LitRenderer.classMap)(context.classes.content)}" @ui5-delete="${(0, _LitRenderer.ifDefined)(context._delete)}" @click="${context._click}" @mousedown="${context._onmousedown}" @keydown="${context._onkeydown}" role="listbox" aria-labelledby="${(0, _LitRenderer.ifDefined)(context._id)}-hiddenText">${(0, _LitRenderer.repeat)(context.tokens, (item, index) => item._id || index, (item, index) => block1(item, index, context, tags, suffix))}</div>${context.showNMore ? block2(context, tags, suffix) : undefined}</div>`;
 
+  const block1 = (item, index, context, tags, suffix) => (0, _LitRenderer.html)`<slot name="${(0, _LitRenderer.ifDefined)(item._individualSlot)}"></slot>`;
+
+  const block2 = (context, tags, suffix) => (0, _LitRenderer.html)`<span @click="${context._openOverflowPopover}" class="ui5-tokenizer-more-text" part="n-more-text">${(0, _LitRenderer.ifDefined)(context._nMoreText)}</span>`;
+
+  var _default = block0;
+  _exports.default = _default;
 });

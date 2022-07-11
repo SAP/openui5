@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/warning2', './v4/warning2'], function (exports, Theme, warning2$1, warning2$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/warning2", "./v4/warning2"], function (_exports, _Theme, _warning, _warning2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? warning2$1.pathData : warning2$2.pathData;
-	var warning2 = "warning2";
-
-	exports.accData = warning2$1.accData;
-	exports.ltr = warning2$1.ltr;
-	exports.default = warning2;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _warning.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _warning.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _warning.pathData : _warning2.pathData;
+  _exports.pathData = pathData;
+  var _default = "warning2";
+  _exports.default = _default;
 });

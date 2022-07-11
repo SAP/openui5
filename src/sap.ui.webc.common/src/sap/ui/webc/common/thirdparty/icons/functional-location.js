@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/functional-location', './v4/functional-location'], function (exports, Theme, functionalLocation$1, functionalLocation$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/functional-location", "./v4/functional-location"], function (_exports, _Theme, _functionalLocation, _functionalLocation2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? functionalLocation$1.pathData : functionalLocation$2.pathData;
-	var functionalLocation = "functional-location";
-
-	exports.accData = functionalLocation$1.accData;
-	exports.ltr = functionalLocation$1.ltr;
-	exports.default = functionalLocation;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _functionalLocation.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _functionalLocation.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _functionalLocation.pathData : _functionalLocation2.pathData;
+  _exports.pathData = pathData;
+  var _default = "functional-location";
+  _exports.default = _default;
 });

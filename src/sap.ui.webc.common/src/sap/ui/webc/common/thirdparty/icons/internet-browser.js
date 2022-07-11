@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/internet-browser', './v4/internet-browser'], function (exports, Theme, internetBrowser$1, internetBrowser$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/internet-browser", "./v4/internet-browser"], function (_exports, _Theme, _internetBrowser, _internetBrowser2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? internetBrowser$1.pathData : internetBrowser$2.pathData;
-	var internetBrowser = "internet-browser";
-
-	exports.accData = internetBrowser$1.accData;
-	exports.ltr = internetBrowser$1.ltr;
-	exports.default = internetBrowser;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _internetBrowser.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _internetBrowser.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _internetBrowser.pathData : _internetBrowser2.pathData;
+  _exports.pathData = pathData;
+  var _default = "internet-browser";
+  _exports.default = _default;
 });

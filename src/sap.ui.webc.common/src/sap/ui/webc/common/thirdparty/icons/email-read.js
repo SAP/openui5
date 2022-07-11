@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/email-read', './v4/email-read'], function (exports, Theme, emailRead$1, emailRead$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/email-read", "./v4/email-read"], function (_exports, _Theme, _emailRead, _emailRead2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? emailRead$1.pathData : emailRead$2.pathData;
-	var emailRead = "email-read";
-
-	exports.accData = emailRead$1.accData;
-	exports.ltr = emailRead$1.ltr;
-	exports.default = emailRead;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _emailRead.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _emailRead.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _emailRead.pathData : _emailRead2.pathData;
+  _exports.pathData = pathData;
+  var _default = "email-read";
+  _exports.default = _default;
 });

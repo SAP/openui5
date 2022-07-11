@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/workflow-tasks', './v4/workflow-tasks'], function (exports, Theme, workflowTasks$1, workflowTasks$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/workflow-tasks", "./v4/workflow-tasks"], function (_exports, _Theme, _workflowTasks, _workflowTasks2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? workflowTasks$1.pathData : workflowTasks$2.pathData;
-	var workflowTasks = "workflow-tasks";
-
-	exports.accData = workflowTasks$1.accData;
-	exports.ltr = workflowTasks$1.ltr;
-	exports.default = workflowTasks;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _workflowTasks.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _workflowTasks.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _workflowTasks.pathData : _workflowTasks2.pathData;
+  _exports.pathData = pathData;
+  var _default = "workflow-tasks";
+  _exports.default = _default;
 });

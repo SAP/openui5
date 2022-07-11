@@ -1,20 +1,53 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/DataType'], function (DataType) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+  "use strict";
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  _DataType = _interopRequireDefault(_DataType);
 
-	var DataType__default = /*#__PURE__*/_interopDefaultLegacy(DataType);
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	const Layout = {
-		Vertical: "Vertical",
-		Horizontal: "Horizontal",
-	};
-	class TimeLineLayout extends DataType__default {
-		static isValid(value) {
-			return !!Layout[value];
-		}
-	}
-	TimeLineLayout.generateTypeAccessors(Layout);
+  /**
+   * Available Timeline layout orientation
+   * @lends sap.ui.webcomponents.fiori.types.TimelineLayout.prototype
+   * @public
+   */
+  const Layout = {
+    /**
+     * Vertical layout
+     * Default type
+     * @public
+     * @type {Vertical}
+     */
+    Vertical: "Vertical",
 
-	return TimeLineLayout;
+    /**
+     * Horizontal layout
+     * @public
+     * @type {Horizontal}
+     */
+    Horizontal: "Horizontal"
+  };
+  /**
+   * @class
+   * Different types of Timeline.
+   * @constructor
+   * @author SAP SE
+   * @alias sap.ui.webcomponents.fiori.types.TimelineLayout
+   * @public
+   * @enum {string}
+   */
 
+  class TimeLineLayout extends _DataType.default {
+    static isValid(value) {
+      return !!Layout[value];
+    }
+
+  }
+
+  TimeLineLayout.generateTypeAccessors(Layout);
+  var _default = TimeLineLayout;
+  _exports.default = _default;
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/rhombus-milestone', './v4/rhombus-milestone'], function (exports, Theme, rhombusMilestone$1, rhombusMilestone$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/rhombus-milestone", "./v4/rhombus-milestone"], function (_exports, _Theme, _rhombusMilestone, _rhombusMilestone2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? rhombusMilestone$1.pathData : rhombusMilestone$2.pathData;
-	var rhombusMilestone = "rhombus-milestone";
-
-	exports.accData = rhombusMilestone$1.accData;
-	exports.ltr = rhombusMilestone$1.ltr;
-	exports.default = rhombusMilestone;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _rhombusMilestone.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _rhombusMilestone.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _rhombusMilestone.pathData : _rhombusMilestone2.pathData;
+  _exports.pathData = pathData;
+  var _default = "rhombus-milestone";
+  _exports.default = _default;
 });

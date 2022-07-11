@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/tri-state', './v4/tri-state'], function (exports, Theme, triState$1, triState$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/tri-state", "./v4/tri-state"], function (_exports, _Theme, _triState, _triState2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? triState$1.pathData : triState$2.pathData;
-	var triState = "tri-state";
-
-	exports.accData = triState$1.accData;
-	exports.ltr = triState$1.ltr;
-	exports.default = triState;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _triState.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _triState.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _triState.pathData : _triState2.pathData;
+  _exports.pathData = pathData;
+  var _default = "tri-state";
+  _exports.default = _default;
 });

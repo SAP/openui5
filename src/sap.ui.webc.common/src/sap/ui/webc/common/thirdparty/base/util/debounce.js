@@ -1,14 +1,26 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	let debounceInterval = null;
-	const debounce = (fn, delay) => {
-		clearTimeout(debounceInterval);
-		debounceInterval = setTimeout(() => {
-			debounceInterval = null;
-			fn();
-		}, delay);
-	};
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
 
-	return debounce;
+  /**
+   * Delays function execution by given threshold.
+   * @param fn {Function}
+   * @param delay {Integer}
+   */
+  let debounceInterval = null;
 
+  const debounce = (fn, delay) => {
+    clearTimeout(debounceInterval);
+    debounceInterval = setTimeout(() => {
+      debounceInterval = null;
+      fn();
+    }, delay);
+  };
+
+  var _default = debounce;
+  _exports.default = _default;
 });

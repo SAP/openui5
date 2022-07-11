@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/crossed-line-chart', './v4/crossed-line-chart'], function (exports, Theme, crossedLineChart$1, crossedLineChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/crossed-line-chart", "./v4/crossed-line-chart"], function (_exports, _Theme, _crossedLineChart, _crossedLineChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? crossedLineChart$1.pathData : crossedLineChart$2.pathData;
-	var crossedLineChart = "crossed-line-chart";
-
-	exports.accData = crossedLineChart$1.accData;
-	exports.ltr = crossedLineChart$1.ltr;
-	exports.default = crossedLineChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _crossedLineChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _crossedLineChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _crossedLineChart.pathData : _crossedLineChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "crossed-line-chart";
+  _exports.default = _default;
 });

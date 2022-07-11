@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/calendar', './v4/calendar'], function (exports, Theme, calendar$1, calendar$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/calendar", "./v4/calendar"], function (_exports, _Theme, _calendar, _calendar2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? calendar$1.pathData : calendar$2.pathData;
-	var calendar = "calendar";
-
-	exports.accData = calendar$1.accData;
-	exports.ltr = calendar$1.ltr;
-	exports.default = calendar;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _calendar.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _calendar.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _calendar.pathData : _calendar2.pathData;
+  _exports.pathData = pathData;
+  var _default = "calendar";
+  _exports.default = _default;
 });

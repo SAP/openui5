@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/it-host', './v4/it-host'], function (exports, Theme, itHost$1, itHost$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/it-host", "./v4/it-host"], function (_exports, _Theme, _itHost, _itHost2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? itHost$1.pathData : itHost$2.pathData;
-	var itHost = "it-host";
-
-	exports.accData = itHost$1.accData;
-	exports.ltr = itHost$1.ltr;
-	exports.default = itHost;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _itHost.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _itHost.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _itHost.pathData : _itHost2.pathData;
+  _exports.pathData = pathData;
+  var _default = "it-host";
+  _exports.default = _default;
 });

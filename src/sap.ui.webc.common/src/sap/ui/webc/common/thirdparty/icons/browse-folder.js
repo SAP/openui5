@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/browse-folder', './v4/browse-folder'], function (exports, Theme, browseFolder$1, browseFolder$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/browse-folder", "./v4/browse-folder"], function (_exports, _Theme, _browseFolder, _browseFolder2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? browseFolder$1.pathData : browseFolder$2.pathData;
-	var browseFolder = "browse-folder";
-
-	exports.accData = browseFolder$1.accData;
-	exports.ltr = browseFolder$1.ltr;
-	exports.default = browseFolder;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _browseFolder.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _browseFolder.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _browseFolder.pathData : _browseFolder2.pathData;
+  _exports.pathData = pathData;
+  var _default = "browse-folder";
+  _exports.default = _default;
 });

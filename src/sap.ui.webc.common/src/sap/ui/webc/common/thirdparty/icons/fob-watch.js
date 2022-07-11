@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/fob-watch', './v4/fob-watch'], function (exports, Theme, fobWatch$1, fobWatch$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/fob-watch", "./v4/fob-watch"], function (_exports, _Theme, _fobWatch, _fobWatch2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? fobWatch$1.pathData : fobWatch$2.pathData;
-	var fobWatch = "fob-watch";
-
-	exports.accData = fobWatch$1.accData;
-	exports.ltr = fobWatch$1.ltr;
-	exports.default = fobWatch;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _fobWatch.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _fobWatch.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _fobWatch.pathData : _fobWatch2.pathData;
+  _exports.pathData = pathData;
+  var _default = "fob-watch";
+  _exports.default = _default;
 });

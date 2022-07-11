@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/target-group', './v4/target-group'], function (exports, Theme, targetGroup$1, targetGroup$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/target-group", "./v4/target-group"], function (_exports, _Theme, _targetGroup, _targetGroup2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? targetGroup$1.pathData : targetGroup$2.pathData;
-	var targetGroup = "target-group";
-
-	exports.accData = targetGroup$1.accData;
-	exports.ltr = targetGroup$1.ltr;
-	exports.default = targetGroup;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _targetGroup.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _targetGroup.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _targetGroup.pathData : _targetGroup2.pathData;
+  _exports.pathData = pathData;
+  var _default = "target-group";
+  _exports.default = _default;
 });

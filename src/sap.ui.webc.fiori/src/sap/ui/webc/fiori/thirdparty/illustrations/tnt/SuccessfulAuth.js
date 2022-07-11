@@ -1,18 +1,39 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations', './tnt-Dialog-SuccessfulAuth', './tnt-Scene-SuccessfulAuth', './tnt-Spot-SuccessfulAuth'], function (exports, Illustrations, tntDialogSuccessfulAuth, tntSceneSuccessfulAuth, tntSpotSuccessfulAuth) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations", "./tnt-Dialog-SuccessfulAuth", "./tnt-Scene-SuccessfulAuth", "./tnt-Spot-SuccessfulAuth"], function (_exports, _Illustrations, _tntDialogSuccessfulAuth, _tntSceneSuccessfulAuth, _tntSpotSuccessfulAuth) {
+  "use strict";
 
-	const name = "SuccessfulAuth";
-	const set = "tnt";
-	Illustrations.registerIllustration(name, {
-		dialogSvg: tntDialogSuccessfulAuth,
-		sceneSvg: tntSceneSuccessfulAuth,
-		spotSvg: tntSpotSuccessfulAuth,
-		set,
-	});
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "dialogSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntDialogSuccessfulAuth.default;
+    }
+  });
+  Object.defineProperty(_exports, "sceneSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntSceneSuccessfulAuth.default;
+    }
+  });
+  Object.defineProperty(_exports, "spotSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntSpotSuccessfulAuth.default;
+    }
+  });
+  _tntDialogSuccessfulAuth = _interopRequireDefault(_tntDialogSuccessfulAuth);
+  _tntSceneSuccessfulAuth = _interopRequireDefault(_tntSceneSuccessfulAuth);
+  _tntSpotSuccessfulAuth = _interopRequireDefault(_tntSpotSuccessfulAuth);
 
-	exports.dialogSvg = tntDialogSuccessfulAuth;
-	exports.sceneSvg = tntSceneSuccessfulAuth;
-	exports.spotSvg = tntSpotSuccessfulAuth;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  const name = "SuccessfulAuth";
+  const set = "tnt";
+  (0, _Illustrations.registerIllustration)(name, {
+    dialogSvg: _tntDialogSuccessfulAuth.default,
+    sceneSvg: _tntSceneSuccessfulAuth.default,
+    spotSvg: _tntSpotSuccessfulAuth.default,
+    set
+  });
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/split', './v4/split'], function (exports, Theme, split$1, split$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/split", "./v4/split"], function (_exports, _Theme, _split, _split2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? split$1.pathData : split$2.pathData;
-	var split = "split";
-
-	exports.accData = split$1.accData;
-	exports.ltr = split$1.ltr;
-	exports.default = split;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _split.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _split.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _split.pathData : _split2.pathData;
+  _exports.pathData = pathData;
+  var _default = "split";
+  _exports.default = _default;
 });

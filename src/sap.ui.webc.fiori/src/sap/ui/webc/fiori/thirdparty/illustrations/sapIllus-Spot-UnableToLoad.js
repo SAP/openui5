@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-    var spotSvg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" viewBox="0 0 128 128" id="sapIllus-Spot-UnableToLoad">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" viewBox="0 0 128 128" id="sapIllus-Spot-UnableToLoad">
     <circle class="sapIllus_ObjectFillColor" cx="63.767" cy="65.2108" r="40.5032"/>
       <path class="sapIllus_Layering1" d="M46.84,16.3352a.999.999,0,0,1-.9981-.9624L45.59,8.6408a1.0005,1.0005,0,0,1,.9619-1.0371,1.017,1.017,0,0,1,1.0361.9619l.252,6.732a1.0006,1.0006,0,0,1-.9619,1.0371Z"/>
       <path class="sapIllus_Layering1" d="M22.1078,35.071a.9864.9864,0,0,1-.3066-.0488l-6.4121-2.0654a1,1,0,1,1,.6133-1.9034l6.4121,2.0655a1,1,0,0,1-.3067,1.9521Z"/>
@@ -11,7 +16,5 @@ sap.ui.define(function () { 'use strict';
     <path class="sapIllus_ObjectFillColor" d="M67.867,65.9654l9.5671-9.5672a1.1849,1.1849,0,0,0,0-1.6758l-2.425-2.425a1.1849,1.1849,0,0,0-1.6758,0l-9.5671,9.5671L54.199,52.2974a1.1849,1.1849,0,0,0-1.6758,0l-2.425,2.425a1.1849,1.1849,0,0,0,0,1.6758l9.5671,9.5672-9.5671,9.5671a1.1849,1.1849,0,0,0,0,1.6758l2.425,2.425a1.1849,1.1849,0,0,0,1.6758,0l9.5672-9.5671,9.5671,9.5671a1.1849,1.1849,0,0,0,1.6758,0l2.425-2.425a1.1849,1.1849,0,0,0,0-1.6758Z"/>
 </svg>
 `;
-
-    return spotSvg;
-
+  _exports.default = _default;
 });

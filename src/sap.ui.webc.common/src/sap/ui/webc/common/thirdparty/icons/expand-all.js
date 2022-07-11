@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/expand-all', './v4/expand-all'], function (exports, Theme, expandAll$1, expandAll$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/expand-all", "./v4/expand-all"], function (_exports, _Theme, _expandAll, _expandAll2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? expandAll$1.pathData : expandAll$2.pathData;
-	var expandAll = "expand-all";
-
-	exports.accData = expandAll$1.accData;
-	exports.ltr = expandAll$1.ltr;
-	exports.default = expandAll;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _expandAll.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _expandAll.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _expandAll.pathData : _expandAll2.pathData;
+  _exports.pathData = pathData;
+  var _default = "expand-all";
+  _exports.default = _default;
 });

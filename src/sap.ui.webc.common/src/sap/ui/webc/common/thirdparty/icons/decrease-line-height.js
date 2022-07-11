@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/decrease-line-height', './v4/decrease-line-height'], function (exports, Theme, decreaseLineHeight$1, decreaseLineHeight$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/decrease-line-height", "./v4/decrease-line-height"], function (_exports, _Theme, _decreaseLineHeight, _decreaseLineHeight2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? decreaseLineHeight$1.pathData : decreaseLineHeight$2.pathData;
-	var decreaseLineHeight = "decrease-line-height";
-
-	exports.accData = decreaseLineHeight$1.accData;
-	exports.ltr = decreaseLineHeight$1.ltr;
-	exports.default = decreaseLineHeight;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _decreaseLineHeight.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _decreaseLineHeight.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _decreaseLineHeight.pathData : _decreaseLineHeight2.pathData;
+  _exports.pathData = pathData;
+  var _default = "decrease-line-height";
+  _exports.default = _default;
 });

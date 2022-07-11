@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/bbyd-dashboard', './v4/bbyd-dashboard'], function (exports, Theme, bbydDashboard$1, bbydDashboard$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/bbyd-dashboard", "./v4/bbyd-dashboard"], function (_exports, _Theme, _bbydDashboard, _bbydDashboard2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? bbydDashboard$1.pathData : bbydDashboard$2.pathData;
-	var bbydDashboard = "bbyd-dashboard";
-
-	exports.accData = bbydDashboard$1.accData;
-	exports.ltr = bbydDashboard$1.ltr;
-	exports.default = bbydDashboard;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _bbydDashboard.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _bbydDashboard.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _bbydDashboard.pathData : _bbydDashboard2.pathData;
+  _exports.pathData = pathData;
+  var _default = "bbyd-dashboard";
+  _exports.default = _default;
 });

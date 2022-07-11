@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/customer-and-supplier', './v4/customer-and-supplier'], function (exports, Theme, customerAndSupplier$1, customerAndSupplier$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/customer-and-supplier", "./v4/customer-and-supplier"], function (_exports, _Theme, _customerAndSupplier, _customerAndSupplier2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? customerAndSupplier$1.pathData : customerAndSupplier$2.pathData;
-	var customerAndSupplier = "customer-and-supplier";
-
-	exports.accData = customerAndSupplier$1.accData;
-	exports.ltr = customerAndSupplier$1.ltr;
-	exports.default = customerAndSupplier;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _customerAndSupplier.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _customerAndSupplier.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _customerAndSupplier.pathData : _customerAndSupplier2.pathData;
+  _exports.pathData = pathData;
+  var _default = "customer-and-supplier";
+  _exports.default = _default;
 });

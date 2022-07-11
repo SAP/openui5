@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/unwired', './v4/unwired'], function (exports, Theme, unwired$1, unwired$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/unwired", "./v4/unwired"], function (_exports, _Theme, _unwired, _unwired2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? unwired$1.pathData : unwired$2.pathData;
-	var unwired = "unwired";
-
-	exports.accData = unwired$1.accData;
-	exports.ltr = unwired$1.ltr;
-	exports.default = unwired;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _unwired.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _unwired.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _unwired.pathData : _unwired2.pathData;
+  _exports.pathData = pathData;
+  var _default = "unwired";
+  _exports.default = _default;
 });

@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var spotSvg = `<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Spot-SimpleCalendar">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Spot-SimpleCalendar">
 <g clip-path="url(#clip0_101_5527)">
 <path d="M117.816 28.5175H14.1669C13.4138 28.5175 12.8032 29.1281 12.8032 29.8812V110.191C12.8032 110.944 13.4138 111.555 14.1669 111.555H117.816C118.569 111.555 119.18 110.944 119.18 110.191V29.8812C119.18 29.1281 118.569 28.5175 117.816 28.5175Z" fill="var(--sapContent_Illustrative_Color6)"/>
 <path d="M113.013 24.0356H9.36369C8.61054 24.0356 8 24.6461 8 25.3993V105.709C8 106.462 8.61054 107.073 9.36369 107.073H113.013C113.766 107.073 114.376 106.462 114.376 105.709V25.3993C114.376 24.6461 113.766 24.0356 113.013 24.0356Z" fill="var(--sapContent_Illustrative_Color2)"/>
@@ -45,7 +50,5 @@ sap.ui.define(function () { 'use strict';
 </defs>
 </svg>
 `;
-
-	return spotSvg;
-
+  _exports.default = _default;
 });

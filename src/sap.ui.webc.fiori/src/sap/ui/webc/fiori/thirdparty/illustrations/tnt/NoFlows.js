@@ -1,18 +1,39 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations', './tnt-Dialog-NoFlows', './tnt-Scene-NoFlows', './tnt-Spot-NoFlows'], function (exports, Illustrations, tntDialogNoFlows, tntSceneNoFlows, tntSpotNoFlows) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations", "./tnt-Dialog-NoFlows", "./tnt-Scene-NoFlows", "./tnt-Spot-NoFlows"], function (_exports, _Illustrations, _tntDialogNoFlows, _tntSceneNoFlows, _tntSpotNoFlows) {
+  "use strict";
 
-	const name = "NoFlows";
-	const set = "tnt";
-	Illustrations.registerIllustration(name, {
-		dialogSvg: tntDialogNoFlows,
-		sceneSvg: tntSceneNoFlows,
-		spotSvg: tntSpotNoFlows,
-		set,
-	});
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "dialogSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntDialogNoFlows.default;
+    }
+  });
+  Object.defineProperty(_exports, "sceneSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntSceneNoFlows.default;
+    }
+  });
+  Object.defineProperty(_exports, "spotSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntSpotNoFlows.default;
+    }
+  });
+  _tntDialogNoFlows = _interopRequireDefault(_tntDialogNoFlows);
+  _tntSceneNoFlows = _interopRequireDefault(_tntSceneNoFlows);
+  _tntSpotNoFlows = _interopRequireDefault(_tntSpotNoFlows);
 
-	exports.dialogSvg = tntDialogNoFlows;
-	exports.sceneSvg = tntSceneNoFlows;
-	exports.spotSvg = tntSpotNoFlows;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  const name = "NoFlows";
+  const set = "tnt";
+  (0, _Illustrations.registerIllustration)(name, {
+    dialogSvg: _tntDialogNoFlows.default,
+    sceneSvg: _tntSceneNoFlows.default,
+    spotSvg: _tntSpotNoFlows.default,
+    set
+  });
 });

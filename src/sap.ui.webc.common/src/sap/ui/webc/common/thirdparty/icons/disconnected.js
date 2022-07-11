@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/disconnected', './v4/disconnected'], function (exports, Theme, disconnected$1, disconnected$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/disconnected", "./v4/disconnected"], function (_exports, _Theme, _disconnected, _disconnected2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? disconnected$1.pathData : disconnected$2.pathData;
-	var disconnected = "disconnected";
-
-	exports.accData = disconnected$1.accData;
-	exports.ltr = disconnected$1.ltr;
-	exports.default = disconnected;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _disconnected.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _disconnected.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _disconnected.pathData : _disconnected2.pathData;
+  _exports.pathData = pathData;
+  var _default = "disconnected";
+  _exports.default = _default;
 });

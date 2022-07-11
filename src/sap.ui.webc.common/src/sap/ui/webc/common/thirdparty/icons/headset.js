@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/headset', './v4/headset'], function (exports, Theme, headset$1, headset$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/headset", "./v4/headset"], function (_exports, _Theme, _headset, _headset2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? headset$1.pathData : headset$2.pathData;
-	var headset = "headset";
-
-	exports.accData = headset$1.accData;
-	exports.ltr = headset$1.ltr;
-	exports.default = headset;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _headset.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _headset.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _headset.pathData : _headset2.pathData;
+  _exports.pathData = pathData;
+  var _default = "headset";
+  _exports.default = _default;
 });

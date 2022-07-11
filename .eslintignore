@@ -25,3 +25,4 @@ src/testsuite-utils
 src/sap.ui.webc.main/src/sap/ui/webc/main/thirdparty
 src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty
 src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/thirdparty
+src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/lib

@@ -448,6 +448,11 @@ Copyright: SAP
 License: Apache-2.0
 Comment: these files belong to: UI5 Web Components
 
+Files: src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/lib/zxing.js
+Copyright: 2005 Sun Microsystems, Inc.; 2010-2014 University of Manchester; 2010-2015 Stian Soiland-Reyes; 2015 Peter Hull
+License: Apache-2.0
+Comment: these files belong to: ZXing
+
 
 # Library: sap.ui.webc.main:
 

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/pixelate', './v4/pixelate'], function (exports, Theme, pixelate$1, pixelate$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/pixelate", "./v4/pixelate"], function (_exports, _Theme, _pixelate, _pixelate2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? pixelate$1.pathData : pixelate$2.pathData;
-	var pixelate = "pixelate";
-
-	exports.accData = pixelate$1.accData;
-	exports.ltr = pixelate$1.ltr;
-	exports.default = pixelate;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _pixelate.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _pixelate.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _pixelate.pathData : _pixelate2.pathData;
+  _exports.pathData = pathData;
+  var _default = "pixelate";
+  _exports.default = _default;
 });

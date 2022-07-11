@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/pull-down', './v4/pull-down'], function (exports, Theme, pullDown$1, pullDown$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/pull-down", "./v4/pull-down"], function (_exports, _Theme, _pullDown, _pullDown2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? pullDown$1.pathData : pullDown$2.pathData;
-	var pullDown = "pull-down";
-
-	exports.accData = pullDown$1.accData;
-	exports.ltr = pullDown$1.ltr;
-	exports.default = pullDown;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _pullDown.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _pullDown.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _pullDown.pathData : _pullDown2.pathData;
+  _exports.pathData = pathData;
+  var _default = "pull-down";
+  _exports.default = _default;
 });

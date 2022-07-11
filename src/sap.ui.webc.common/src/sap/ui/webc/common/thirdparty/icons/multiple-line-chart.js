@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/multiple-line-chart', './v4/multiple-line-chart'], function (exports, Theme, multipleLineChart$1, multipleLineChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/multiple-line-chart", "./v4/multiple-line-chart"], function (_exports, _Theme, _multipleLineChart, _multipleLineChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? multipleLineChart$1.pathData : multipleLineChart$2.pathData;
-	var multipleLineChart = "multiple-line-chart";
-
-	exports.accData = multipleLineChart$1.accData;
-	exports.ltr = multipleLineChart$1.ltr;
-	exports.default = multipleLineChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _multipleLineChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _multipleLineChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _multipleLineChart.pathData : _multipleLineChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "multiple-line-chart";
+  _exports.default = _default;
 });

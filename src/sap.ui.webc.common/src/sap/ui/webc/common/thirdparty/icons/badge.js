@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/badge', './v4/badge'], function (exports, Theme, badge$1, badge$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/badge", "./v4/badge"], function (_exports, _Theme, _badge, _badge2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? badge$1.pathData : badge$2.pathData;
-	var badge = "badge";
-
-	exports.accData = badge$1.accData;
-	exports.ltr = badge$1.ltr;
-	exports.default = badge;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _badge.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _badge.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _badge.pathData : _badge2.pathData;
+  _exports.pathData = pathData;
+  var _default = "badge";
+  _exports.default = _default;
 });

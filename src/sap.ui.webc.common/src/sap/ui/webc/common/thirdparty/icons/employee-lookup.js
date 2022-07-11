@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/employee-lookup', './v4/employee-lookup'], function (exports, Theme, employeeLookup$1, employeeLookup$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/employee-lookup", "./v4/employee-lookup"], function (_exports, _Theme, _employeeLookup, _employeeLookup2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? employeeLookup$1.pathData : employeeLookup$2.pathData;
-	var employeeLookup = "employee-lookup";
-
-	exports.accData = employeeLookup$1.accData;
-	exports.ltr = employeeLookup$1.ltr;
-	exports.default = employeeLookup;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _employeeLookup.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _employeeLookup.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _employeeLookup.pathData : _employeeLookup2.pathData;
+  _exports.pathData = pathData;
+  var _default = "employee-lookup";
+  _exports.default = _default;
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/border', './v4/border'], function (exports, Theme, border$1, border$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/border", "./v4/border"], function (_exports, _Theme, _border, _border2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? border$1.pathData : border$2.pathData;
-	var border = "border";
-
-	exports.accData = border$1.accData;
-	exports.ltr = border$1.ltr;
-	exports.default = border;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _border.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _border.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _border.pathData : _border2.pathData;
+  _exports.pathData = pathData;
+  var _default = "border";
+  _exports.default = _default;
 });

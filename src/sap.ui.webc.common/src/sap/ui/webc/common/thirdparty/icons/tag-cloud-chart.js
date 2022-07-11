@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/tag-cloud-chart', './v4/tag-cloud-chart'], function (exports, Theme, tagCloudChart$1, tagCloudChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/tag-cloud-chart", "./v4/tag-cloud-chart"], function (_exports, _Theme, _tagCloudChart, _tagCloudChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? tagCloudChart$1.pathData : tagCloudChart$2.pathData;
-	var tagCloudChart = "tag-cloud-chart";
-
-	exports.accData = tagCloudChart$1.accData;
-	exports.ltr = tagCloudChart$1.ltr;
-	exports.default = tagCloudChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _tagCloudChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _tagCloudChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _tagCloudChart.pathData : _tagCloudChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "tag-cloud-chart";
+  _exports.default = _default;
 });

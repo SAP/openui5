@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/undo', './v4/undo'], function (exports, Theme, undo$1, undo$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/undo", "./v4/undo"], function (_exports, _Theme, _undo, _undo2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? undo$1.pathData : undo$2.pathData;
-	var undo = "undo";
-
-	exports.accData = undo$1.accData;
-	exports.ltr = undo$1.ltr;
-	exports.default = undo;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _undo.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _undo.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _undo.pathData : _undo2.pathData;
+  _exports.pathData = pathData;
+  var _default = "undo";
+  _exports.default = _default;
 });

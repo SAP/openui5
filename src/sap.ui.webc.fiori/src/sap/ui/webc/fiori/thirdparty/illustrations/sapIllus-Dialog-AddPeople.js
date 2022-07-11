@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var dialogSvg = `<svg width="161" height="153" viewBox="0 0 161 153" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-AddPeople">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="161" height="153" viewBox="0 0 161 153" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-AddPeople">
 <circle cx="84.186" cy="76.1691" r="76.1691" fill="var(--sapContent_Illustrative_Color7)"/>
 <mask id="mask0_1663_6845" class="sapIllus_MaskTypeAlpha" maskUnits="userSpaceOnUse" x="8" y="0" width="153" height="153">
 <circle cx="84.186" cy="76.1691" r="76.1691" fill="var(--sapContent_Illustrative_Color7)"/>
@@ -32,7 +37,5 @@ sap.ui.define(function () { 'use strict';
 <path d="M44.3116 109.651V110.363C44.3116 111.906 45.563 113.158 47.1066 113.158H65.8223C67.3659 113.158 68.6172 111.906 68.6172 110.363V109.651C68.6172 108.108 67.3659 106.856 65.8223 106.856H47.1066C45.563 106.856 44.3116 108.108 44.3116 109.651Z" fill="var(--sapContent_Illustrative_Color8)"/>
 </svg>
 `;
-
-	return dialogSvg;
-
+  _exports.default = _default;
 });

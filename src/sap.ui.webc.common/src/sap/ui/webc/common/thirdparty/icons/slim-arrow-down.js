@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/slim-arrow-down', './v4/slim-arrow-down'], function (exports, Theme, slimArrowDown$1, slimArrowDown$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/slim-arrow-down", "./v4/slim-arrow-down"], function (_exports, _Theme, _slimArrowDown, _slimArrowDown2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? slimArrowDown$1.pathData : slimArrowDown$2.pathData;
-	var slimArrowDown = "slim-arrow-down";
-
-	exports.accData = slimArrowDown$1.accData;
-	exports.ltr = slimArrowDown$1.ltr;
-	exports.default = slimArrowDown;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _slimArrowDown.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _slimArrowDown.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _slimArrowDown.pathData : _slimArrowDown2.pathData;
+  _exports.pathData = pathData;
+  var _default = "slim-arrow-down";
+  _exports.default = _default;
 });

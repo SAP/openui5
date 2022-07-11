@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/notification', './v4/notification'], function (exports, Theme, notification$1, notification$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/notification", "./v4/notification"], function (_exports, _Theme, _notification, _notification2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? notification$1.pathData : notification$2.pathData;
-	var notification = "notification";
-
-	exports.accData = notification$1.accData;
-	exports.ltr = notification$1.ltr;
-	exports.default = notification;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _notification.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _notification.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _notification.pathData : _notification2.pathData;
+  _exports.pathData = pathData;
+  var _default = "notification";
+  _exports.default = _default;
 });

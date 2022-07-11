@@ -1,113 +1,177 @@
-sap.ui.define(['exports', '../locale/languageChange', '../locale/getLocale', '../generated/AssetParameters', '../FeaturesRegistry'], function (exports, languageChange, getLocale, AssetParameters, FeaturesRegistry) { 'use strict';
+sap.ui.define(["exports", "../locale/languageChange", "../locale/getLocale", "../generated/AssetParameters", "../FeaturesRegistry"], function (_exports, _languageChange, _getLocale, _AssetParameters, _FeaturesRegistry) {
+  "use strict";
 
-	const localeDataMap = new Map();
-	const loaders = new Map();
-	const cldrPromises = new Map();
-	const reportedErrors = new Set();
-	let warningShown = false;
-	const M_ISO639_OLD_TO_NEW = {
-		"iw": "he",
-		"ji": "yi",
-		"in": "id",
-	};
-	const _showAssetsWarningOnce = localeId => {
-		if (warningShown) {
-			return;
-		}
-		{
-			console.warn(`[LocaleData] Supported locale "${localeId}" not configured, import the "Assets.js" module from the webcomponents package you are using.`);
-		}
-		warningShown = true;
-	};
-	const calcLocale = (language, region, script) => {
-		language = (language && M_ISO639_OLD_TO_NEW[language]) || language;
-		if (language === "no") {
-			language = "nb";
-		}
-		if (language === "zh" && !region) {
-			if (script === "Hans") {
-				region = "CN";
-			} else if (script === "Hant") {
-				region = "TW";
-			}
-		}
-		if (language === "sh" || (language === "sr" && script === "Latn")) {
-			language = "sr";
-			region = "Latn";
-		}
-		let localeId = `${language}_${region}`;
-		if (AssetParameters.SUPPORTED_LOCALES.includes(localeId)) {
-			if (loaders.has(localeId)) {
-				return localeId;
-			}
-			_showAssetsWarningOnce(localeId);
-			return AssetParameters.DEFAULT_LOCALE;
-		}
-		localeId = language;
-		if (AssetParameters.SUPPORTED_LOCALES.includes(localeId)) {
-			if (loaders.has(localeId)) {
-				return localeId;
-			}
-			_showAssetsWarningOnce(localeId);
-			return AssetParameters.DEFAULT_LOCALE;
-		}
-		return AssetParameters.DEFAULT_LOCALE;
-	};
-	const setLocaleData = (localeId, content) => {
-		localeDataMap.set(localeId, content);
-	};
-	const getLocaleData = localeId => {
-		if (!loaders.has(localeId)) {
-			localeId = AssetParameters.DEFAULT_LOCALE;
-		}
-		const content = localeDataMap.get(localeId);
-		if (!content) {
-			throw new Error(`CLDR data for locale ${localeId} is not loaded!`);
-		}
-		return content;
-	};
-	const _loadCldrOnce = localeId => {
-		const loadCldr = loaders.get(localeId);
-		if (!cldrPromises.get(localeId)) {
-			cldrPromises.set(localeId, loadCldr(localeId));
-		}
-		return cldrPromises.get(localeId);
-	};
-	const fetchCldr = async (language, region, script) => {
-		const localeId = calcLocale(language, region, script);
-		const OpenUI5Support = FeaturesRegistry.getFeature("OpenUI5Support");
-		if (OpenUI5Support) {
-			const cldrContent = OpenUI5Support.getLocaleDataObject();
-			if (cldrContent) {
-				setLocaleData(localeId, cldrContent);
-				return;
-			}
-		}
-		try {
-			const cldrContent = await _loadCldrOnce(localeId);
-			setLocaleData(localeId, cldrContent);
-		} catch (e) {
-			if (!reportedErrors.has(e.message)) {
-				reportedErrors.add(e.message);
-				console.error(e.message);
-			}
-		}
-	};
-	const registerLocaleDataLoader = (localeId, loader) => {
-		loaders.set(localeId, loader);
-	};
-	registerLocaleDataLoader("en", async runtimeLocaleId => {
-		return (await fetch(`https://ui5.sap.com/1.103.0/resources/sap/ui/core/cldr/en.json`)).json();
-	});
-	languageChange.attachLanguageChange(() => {
-		const locale = getLocale();
-		return fetchCldr(locale.getLanguage(), locale.getRegion(), locale.getScript());
-	});
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.registerLocaleDataLoader = _exports.getLocaleData = _exports.fetchCldr = void 0;
+  _getLocale = _interopRequireDefault(_getLocale);
 
-	exports.fetchCldr = fetchCldr;
-	exports.getLocaleData = getLocaleData;
-	exports.registerLocaleDataLoader = registerLocaleDataLoader;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	Object.defineProperty(exports, '__esModule', { value: true });
+  const localeDataMap = new Map();
+  const loaders = new Map();
+  const cldrPromises = new Map();
+  const reportedErrors = new Set();
+  let warningShown = false;
+  const M_ISO639_OLD_TO_NEW = {
+    "iw": "he",
+    "ji": "yi",
+    "in": "id"
+  };
+  const DEV_MODE = false;
 
+  const _showAssetsWarningOnce = localeId => {
+    if (warningShown) {
+      return;
+    }
+
+    if (!DEV_MODE) {
+      console.warn(`[LocaleData] Supported locale "${localeId}" not configured, import the "Assets.js" module from the webcomponents package you are using.`);
+      /* eslint-disable-line */
+    } else {
+      console.warn(`[LocaleData] Note: in dev mode, CLDR assets might be disabled for performance reasons. Try running "ENABLE_CLDR=1 yarn start" to test CLDR assets.`);
+      /* eslint-disable-line */
+    }
+
+    warningShown = true;
+  };
+
+  const calcLocale = (language, region, script) => {
+    // normalize language and handle special cases
+    language = language && M_ISO639_OLD_TO_NEW[language] || language; // Special case 1: in an SAP context, the inclusive language code "no" always means Norwegian Bokmal ("nb")
+
+    if (language === "no") {
+      language = "nb";
+    } // Special case 2: for Chinese, derive a default region from the script (this behavior is inherited from Java)
+
+
+    if (language === "zh" && !region) {
+      if (script === "Hans") {
+        region = "CN";
+      } else if (script === "Hant") {
+        region = "TW";
+      }
+    } // Special case 3: for Serbian, there are cyrillic and latin scripts, "sh" and "sr-latn" map to "latin", "sr" maps to cyrillic.
+
+
+    if (language === "sh" || language === "sr" && script === "Latn") {
+      language = "sr";
+      region = "Latn";
+    } // try language + region
+
+
+    let localeId = `${language}_${region}`;
+
+    if (_AssetParameters.SUPPORTED_LOCALES.includes(localeId)) {
+      if (loaders.has(localeId)) {
+        // supported and has loader
+        return localeId;
+      } // supported, no loader - fallback to default and warn
+
+
+      _showAssetsWarningOnce(localeId);
+
+      return _AssetParameters.DEFAULT_LOCALE;
+    } // not supported, try language only
+
+
+    localeId = language;
+
+    if (_AssetParameters.SUPPORTED_LOCALES.includes(localeId)) {
+      if (loaders.has(localeId)) {
+        // supported and has loader
+        return localeId;
+      } // supported, no loader - fallback to default and warn
+
+
+      _showAssetsWarningOnce(localeId);
+
+      return _AssetParameters.DEFAULT_LOCALE;
+    } // not supported - fallback to default locale
+
+
+    return _AssetParameters.DEFAULT_LOCALE;
+  }; // internal set data
+
+
+  const setLocaleData = (localeId, content) => {
+    localeDataMap.set(localeId, content);
+  }; // external getSync
+
+
+  const getLocaleData = localeId => {
+    // if there is no loader, the default fallback was fetched and a warning was given - use default locale instead
+    if (!loaders.has(localeId)) {
+      localeId = _AssetParameters.DEFAULT_LOCALE;
+    }
+
+    const content = localeDataMap.get(localeId);
+
+    if (!content) {
+      throw new Error(`CLDR data for locale ${localeId} is not loaded!`);
+    }
+
+    return content;
+  }; // load bundle over the network once
+
+
+  _exports.getLocaleData = getLocaleData;
+
+  const _loadCldrOnce = localeId => {
+    const loadCldr = loaders.get(localeId);
+
+    if (!cldrPromises.get(localeId)) {
+      cldrPromises.set(localeId, loadCldr(localeId));
+    }
+
+    return cldrPromises.get(localeId);
+  }; // external getAsync
+
+
+  const fetchCldr = async (language, region, script) => {
+    const localeId = calcLocale(language, region, script); // reuse OpenUI5 CLDR if present
+
+    const OpenUI5Support = (0, _FeaturesRegistry.getFeature)("OpenUI5Support");
+
+    if (OpenUI5Support) {
+      const cldrContent = OpenUI5Support.getLocaleDataObject();
+
+      if (cldrContent) {
+        // only if openui5 actually returned valid content
+        setLocaleData(localeId, cldrContent);
+        return;
+      }
+    } // fetch it
+
+
+    try {
+      const cldrContent = await _loadCldrOnce(localeId);
+      setLocaleData(localeId, cldrContent);
+    } catch (e) {
+      if (!reportedErrors.has(e.message)) {
+        reportedErrors.add(e.message);
+        console.error(e.message);
+        /* eslint-disable-line */
+      }
+    }
+  };
+
+  _exports.fetchCldr = fetchCldr;
+
+  const registerLocaleDataLoader = (localeId, loader) => {
+    loaders.set(localeId, loader);
+  }; // register default loader for "en" from ui5 CDN (dev workflow without assets)
+
+
+  _exports.registerLocaleDataLoader = registerLocaleDataLoader;
+  registerLocaleDataLoader("en", async runtimeLocaleId => {
+    return (await fetch(`https://ui5.sap.com/1.103.0/resources/sap/ui/core/cldr/en.json`)).json();
+  }); // When the language changes dynamically (the user calls setLanguage),
+  // re-fetch the required CDRD data.
+
+  (0, _languageChange.attachLanguageChange)(() => {
+    const locale = (0, _getLocale.default)();
+    return fetchCldr(locale.getLanguage(), locale.getRegion(), locale.getScript());
+  });
 });

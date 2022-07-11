@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-    var spotSvg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" viewBox="0 0 128 128" id="sapIllus-Spot-NoSearchResults">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" viewBox="0 0 128 128" id="sapIllus-Spot-NoSearchResults">
     <path class="sapIllus_PatternShadow" d="M60.8153,74.1426a24.9615,24.9615,0,0,0,2.8621-44.4551,29.0493,29.0493,0,0,1,.7671,3.0185A29.5414,29.5414,0,0,1,40.8483,67.1824a34.2246,34.2246,0,0,1-8.5941.3437c-.06-.006-.1125-.0161-.172-.0224A24.9771,24.9771,0,0,0,60.8153,74.1426Z"/>
       <path class="sapIllus_StrokeDetailColor" d="M34.75,40.686a.5.5,0,0,1-.4141-.78,20.1877,20.1877,0,0,1,1.5508-2.0112.5.5,0,1,1,.752.6592,19.261,19.261,0,0,0-1.4746,1.9116A.4987.4987,0,0,1,34.75,40.686Z"/>
       <path class="sapIllus_StrokeDetailColor" d="M34.75,40.686a.5.5,0,0,1-.4141-.78,20.1877,20.1877,0,0,1,1.5508-2.0112.5.5,0,1,1,.752.6592,19.261,19.261,0,0,0-1.4746,1.9116A.4987.4987,0,0,1,34.75,40.686Z"/>
@@ -14,7 +19,5 @@ sap.ui.define(function () { 'use strict';
     <path class="sapIllus_StrokeDetailColor" d="M77.3741,77.0319l-3.0527-3.957.0091-.01-.3829.366A41.0351,41.0351,0,0,1,65.9835,79.35l-1.5818.8825.7027.9109.2914.3732S74.0141,81.9732,77.3741,77.0319Z"/>
 </svg>
 `;
-
-    return spotSvg;
-
+  _exports.default = _default;
 });

@@ -1,19 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (exports, Icons) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+  "use strict";
 
-	const name = "communication-path";
-	const pathData = "M453 37q5-5 11-5t11 5 5 11-5 11L59 475q-5 5-11 5t-11-5-5-11 5-11z";
-	const ltr = false;
-	const accData = null;
-	const collection = "tnt";
-	const packageName = "@ui5/webcomponents-icons-tnt";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
-	var communicationPath = "communication-path";
-
-	exports.accData = accData;
-	exports.default = communicationPath;
-	exports.ltr = ltr;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
+  const name = "communication-path";
+  const pathData = "M453 37q5-5 11-5t11 5 5 11-5 11L59 475q-5 5-11 5t-11-5-5-11 5-11z";
+  _exports.pathData = pathData;
+  const ltr = false;
+  _exports.ltr = ltr;
+  const accData = null;
+  _exports.accData = accData;
+  const collection = "tnt";
+  const packageName = "@ui5/webcomponents-icons-tnt";
+  (0, _Icons.registerIcon)(name, {
+    pathData,
+    ltr,
+    collection,
+    packageName
+  });
+  var _default = "communication-path";
+  _exports.default = _default;
 });

@@ -1,5 +1,3 @@
-sap.ui.define(['./generated/json-imports/Themes'], function (Themes) { 'use strict';
-
-
-
+sap.ui.define(["./generated/json-imports/Themes"], function (_Themes) {
+  "use strict";
 });

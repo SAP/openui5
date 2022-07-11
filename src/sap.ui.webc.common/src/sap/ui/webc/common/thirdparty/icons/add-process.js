@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/add-process', './v4/add-process'], function (exports, Theme, addProcess$1, addProcess$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/add-process", "./v4/add-process"], function (_exports, _Theme, _addProcess, _addProcess2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? addProcess$1.pathData : addProcess$2.pathData;
-	var addProcess = "add-process";
-
-	exports.accData = addProcess$1.accData;
-	exports.ltr = addProcess$1.ltr;
-	exports.default = addProcess;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _addProcess.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _addProcess.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _addProcess.pathData : _addProcess2.pathData;
+  _exports.pathData = pathData;
+  var _default = "add-process";
+  _exports.default = _default;
 });

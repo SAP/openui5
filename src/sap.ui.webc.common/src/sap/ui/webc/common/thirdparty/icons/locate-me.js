@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/locate-me', './v4/locate-me'], function (exports, Theme, locateMe$1, locateMe$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/locate-me", "./v4/locate-me"], function (_exports, _Theme, _locateMe, _locateMe2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? locateMe$1.pathData : locateMe$2.pathData;
-	var locateMe = "locate-me";
-
-	exports.accData = locateMe$1.accData;
-	exports.ltr = locateMe$1.ltr;
-	exports.default = locateMe;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _locateMe.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _locateMe.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _locateMe.pathData : _locateMe2.pathData;
+  _exports.pathData = pathData;
+  var _default = "locate-me";
+  _exports.default = _default;
 });

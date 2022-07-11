@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/soccer', './v4/soccer'], function (exports, Theme, soccer$1, soccer$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/soccer", "./v4/soccer"], function (_exports, _Theme, _soccer, _soccer2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? soccer$1.pathData : soccer$2.pathData;
-	var soccer = "soccer";
-
-	exports.accData = soccer$1.accData;
-	exports.ltr = soccer$1.ltr;
-	exports.default = soccer;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _soccer.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _soccer.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _soccer.pathData : _soccer2.pathData;
+  _exports.pathData = pathData;
+  var _default = "soccer";
+  _exports.default = _default;
 });

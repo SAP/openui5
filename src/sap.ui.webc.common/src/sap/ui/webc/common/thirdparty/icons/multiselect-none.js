@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/multiselect-none', './v4/multiselect-none'], function (exports, Theme, multiselectNone$1, multiselectNone$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/multiselect-none", "./v4/multiselect-none"], function (_exports, _Theme, _multiselectNone, _multiselectNone2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? multiselectNone$1.pathData : multiselectNone$2.pathData;
-	var multiselectNone = "multiselect-none";
-
-	exports.accData = multiselectNone$1.accData;
-	exports.ltr = multiselectNone$1.ltr;
-	exports.default = multiselectNone;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _multiselectNone.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _multiselectNone.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _multiselectNone.pathData : _multiselectNone2.pathData;
+  _exports.pathData = pathData;
+  var _default = "multiselect-none";
+  _exports.default = _default;
 });

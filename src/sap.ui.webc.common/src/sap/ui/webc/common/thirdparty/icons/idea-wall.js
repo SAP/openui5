@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/idea-wall', './v4/idea-wall'], function (exports, Theme, ideaWall$1, ideaWall$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/idea-wall", "./v4/idea-wall"], function (_exports, _Theme, _ideaWall, _ideaWall2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? ideaWall$1.pathData : ideaWall$2.pathData;
-	var ideaWall = "idea-wall";
-
-	exports.accData = ideaWall$1.accData;
-	exports.ltr = ideaWall$1.ltr;
-	exports.default = ideaWall;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _ideaWall.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _ideaWall.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _ideaWall.pathData : _ideaWall2.pathData;
+  _exports.pathData = pathData;
+  var _default = "idea-wall";
+  _exports.default = _default;
 });

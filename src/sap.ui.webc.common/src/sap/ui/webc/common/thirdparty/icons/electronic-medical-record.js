@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/electronic-medical-record', './v4/electronic-medical-record'], function (exports, Theme, electronicMedicalRecord$1, electronicMedicalRecord$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/electronic-medical-record", "./v4/electronic-medical-record"], function (_exports, _Theme, _electronicMedicalRecord, _electronicMedicalRecord2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? electronicMedicalRecord$1.pathData : electronicMedicalRecord$2.pathData;
-	var electronicMedicalRecord = "electronic-medical-record";
-
-	exports.accData = electronicMedicalRecord$1.accData;
-	exports.ltr = electronicMedicalRecord$1.ltr;
-	exports.default = electronicMedicalRecord;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _electronicMedicalRecord.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _electronicMedicalRecord.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _electronicMedicalRecord.pathData : _electronicMedicalRecord2.pathData;
+  _exports.pathData = pathData;
+  var _default = "electronic-medical-record";
+  _exports.default = _default;
 });

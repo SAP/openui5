@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/add-product', './v4/add-product'], function (exports, Theme, addProduct$1, addProduct$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/add-product", "./v4/add-product"], function (_exports, _Theme, _addProduct, _addProduct2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? addProduct$1.pathData : addProduct$2.pathData;
-	var addProduct = "add-product";
-
-	exports.accData = addProduct$1.accData;
-	exports.ltr = addProduct$1.ltr;
-	exports.default = addProduct;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _addProduct.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _addProduct.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _addProduct.pathData : _addProduct2.pathData;
+  _exports.pathData = pathData;
+  var _default = "add-product";
+  _exports.default = _default;
 });

@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var dialogSvg = `<svg width="124" height="160" viewBox="0 0 124 160" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-SimpleEmptyDoc">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="124" height="160" viewBox="0 0 124 160" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-SimpleEmptyDoc">
 <path d="M50.5486 160C72.3765 160 90.0714 158.928 90.0714 157.606C90.0714 156.283 72.3765 155.211 50.5486 155.211C28.7208 155.211 11.0259 156.283 11.0259 157.606C11.0259 158.928 28.7208 160 50.5486 160Z" fill="var(--sapContent_Illustrative_Color6)"/>
 <g clip-path="url(#clip0_101_5439)">
 <path d="M17.832 18.7069L1.6243 116.398C1.00633 120.122 3.52489 123.643 7.24965 124.261L75.7715 135.629C79.4963 136.247 83.0168 133.729 83.6347 130.004L99.8424 32.313C100.46 28.5882 97.9418 25.0678 94.217 24.4498L25.6952 13.0815C21.9704 12.4635 18.4499 14.9821 17.832 18.7069Z" fill="var(--sapContent_Illustrative_Color3)"/>
@@ -18,7 +23,5 @@ sap.ui.define(function () { 'use strict';
 </defs>
 </svg>
 `;
-
-	return dialogSvg;
-
+  _exports.default = _default;
 });

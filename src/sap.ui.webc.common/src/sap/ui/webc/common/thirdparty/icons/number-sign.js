@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/number-sign', './v4/number-sign'], function (exports, Theme, numberSign$1, numberSign$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/number-sign", "./v4/number-sign"], function (_exports, _Theme, _numberSign, _numberSign2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? numberSign$1.pathData : numberSign$2.pathData;
-	var numberSign = "number-sign";
-
-	exports.accData = numberSign$1.accData;
-	exports.ltr = numberSign$1.ltr;
-	exports.default = numberSign;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _numberSign.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _numberSign.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _numberSign.pathData : _numberSign2.pathData;
+  _exports.pathData = pathData;
+  var _default = "number-sign";
+  _exports.default = _default;
 });

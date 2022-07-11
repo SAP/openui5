@@ -1,19 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (exports, Icons) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+  "use strict";
 
-	const name = "resize-corner";
-	const pathData = "M384 224v32q0 12-10 22L182 470q-10 10-22 10h-32zM224 480l160-160v32q0 12-10 22l-96 96q-10 10-22 10h-32zm160-64v32q0 12-10 22t-22 10h-32z";
-	const ltr = false;
-	const accData = null;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
-	var resizeCorner = "resize-corner";
-
-	exports.accData = accData;
-	exports.default = resizeCorner;
-	exports.ltr = ltr;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
+  const name = "resize-corner";
+  const pathData = "M384 224v32q0 12-10 22L182 470q-10 10-22 10h-32zM224 480l160-160v32q0 12-10 22l-96 96q-10 10-22 10h-32zm160-64v32q0 12-10 22t-22 10h-32z";
+  _exports.pathData = pathData;
+  const ltr = false;
+  _exports.ltr = ltr;
+  const accData = null;
+  _exports.accData = accData;
+  const collection = "SAP-icons";
+  const packageName = "@ui5/webcomponents-icons";
+  (0, _Icons.registerIcon)(name, {
+    pathData,
+    ltr,
+    collection,
+    packageName
+  });
+  var _default = "resize-corner";
+  _exports.default = _default;
 });

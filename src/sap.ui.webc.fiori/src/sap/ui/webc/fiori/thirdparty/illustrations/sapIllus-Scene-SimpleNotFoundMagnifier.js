@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var sceneSvg = `<svg width="321" height="214" viewBox="0 0 321 214" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Scene-SimpleNotFoundMagnifier">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="321" height="214" viewBox="0 0 321 214" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Scene-SimpleNotFoundMagnifier">
 <path d="M130.576 118.733H33.9622C18.1963 118.733 5.41553 131.514 5.41553 147.28C5.41553 163.046 18.1963 175.827 33.9622 175.827H130.576C146.341 175.827 159.122 163.046 159.122 147.28C159.122 131.514 146.341 118.733 130.576 118.733Z" fill="var(--sapContent_Illustrative_Color7)"/>
 <path d="M165.749 147.067H69.1355C53.3696 147.067 40.5889 159.848 40.5889 175.613C40.5889 191.379 53.3696 204.16 69.1355 204.16H165.749C181.515 204.16 194.296 191.379 194.296 175.613C194.296 159.848 181.515 147.067 165.749 147.067Z" fill="var(--sapContent_Illustrative_Color7)"/>
 <path d="M291.455 68.1201H194.842C179.076 68.1201 166.295 80.9009 166.295 96.6668C166.295 112.433 179.076 125.213 194.842 125.213H291.455C307.221 125.213 320.002 112.433 320.002 96.6668C320.002 80.9009 307.221 68.1201 291.455 68.1201Z" fill="var(--sapContent_Illustrative_Color7)"/>
@@ -25,7 +30,5 @@ sap.ui.define(function () { 'use strict';
 </defs>
 </svg>
 `;
-
-	return sceneSvg;
-
+  _exports.default = _default;
 });

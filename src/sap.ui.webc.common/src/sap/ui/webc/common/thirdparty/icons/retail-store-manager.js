@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/retail-store-manager', './v4/retail-store-manager'], function (exports, Theme, retailStoreManager$1, retailStoreManager$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/retail-store-manager", "./v4/retail-store-manager"], function (_exports, _Theme, _retailStoreManager, _retailStoreManager2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? retailStoreManager$1.pathData : retailStoreManager$2.pathData;
-	var retailStoreManager = "retail-store-manager";
-
-	exports.accData = retailStoreManager$1.accData;
-	exports.ltr = retailStoreManager$1.ltr;
-	exports.default = retailStoreManager;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _retailStoreManager.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _retailStoreManager.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _retailStoreManager.pathData : _retailStoreManager2.pathData;
+  _exports.pathData = pathData;
+  var _default = "retail-store-manager";
+  _exports.default = _default;
 });

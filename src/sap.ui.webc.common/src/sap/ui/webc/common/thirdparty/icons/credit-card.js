@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/credit-card', './v4/credit-card'], function (exports, Theme, creditCard$1, creditCard$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/credit-card", "./v4/credit-card"], function (_exports, _Theme, _creditCard, _creditCard2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? creditCard$1.pathData : creditCard$2.pathData;
-	var creditCard = "credit-card";
-
-	exports.accData = creditCard$1.accData;
-	exports.ltr = creditCard$1.ltr;
-	exports.default = creditCard;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _creditCard.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _creditCard.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _creditCard.pathData : _creditCard2.pathData;
+  _exports.pathData = pathData;
+  var _default = "credit-card";
+  _exports.default = _default;
 });

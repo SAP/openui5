@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/grid', './v4/grid'], function (exports, Theme, grid$1, grid$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/grid", "./v4/grid"], function (_exports, _Theme, _grid, _grid2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? grid$1.pathData : grid$2.pathData;
-	var grid = "grid";
-
-	exports.accData = grid$1.accData;
-	exports.ltr = grid$1.ltr;
-	exports.default = grid;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _grid.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _grid.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _grid.pathData : _grid2.pathData;
+  _exports.pathData = pathData;
+  var _default = "grid";
+  _exports.default = _default;
 });

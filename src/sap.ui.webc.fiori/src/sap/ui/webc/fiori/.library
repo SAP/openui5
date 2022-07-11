@@ -24,17 +24,24 @@
 		<!-- excludes for the JSDoc -->
 		<jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc">
 			<exclude name="sap.ui.webc.fiori.thirdparty."/>
+			<exclude name="sap.ui.webc.fiori.lib."/>
 		</jsdoc>
 		<!-- excludes for the JSCoverage -->
 		<jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage">
 			<exclude name="sap.ui.webc.fiori.thirdparty."/>
+			<exclude name="sap.ui.webc.fiori.lib."/>
 		</jscoverage>
 		<!-- Thirdparty references -->
 		<thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-			<lib name="ui5-web-components" displayName="UI5 Web Components" version="1.1.2" homepage="https://sap.github.io/ui5-webcomponents/">
+			<lib name="ui5-web-components" displayName="UI5 Web Components" version="1.5.0" homepage="https://sap.github.io/ui5-webcomponents/">
 				<license url="https://github.com/SAP/ui5-webcomponents/blob/master/LICENSE.txt" type="Apache-2.0"></license>
 				<copyright>SAP</copyright>
 				<pattern>sap/ui/webc/fiori/thirdparty/*.*</pattern>
+			</lib>
+			<lib name="ZXing" displayName="ZXing" version="0.19.1" homepage="https://zxing-js.github.io/library/">
+				<license url="https://github.com/zxing-js/library/blob/master/LICENSE" type="Apache-2.0"></license>
+				<copyright>2005 Sun Microsystems, Inc.; 2010-2014 University of Manchester; 2010-2015 Stian Soiland-Reyes; 2015 Peter Hull</copyright>
+				<pattern>sap/ui/webc/fiori/lib/zxing.js</pattern>
 			</lib>
 		</thirdparty>
 

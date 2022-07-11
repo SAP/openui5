@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/bubble-chart', './v4/bubble-chart'], function (exports, Theme, bubbleChart$1, bubbleChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/bubble-chart", "./v4/bubble-chart"], function (_exports, _Theme, _bubbleChart, _bubbleChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? bubbleChart$1.pathData : bubbleChart$2.pathData;
-	var bubbleChart = "bubble-chart";
-
-	exports.accData = bubbleChart$1.accData;
-	exports.ltr = bubbleChart$1.ltr;
-	exports.default = bubbleChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _bubbleChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _bubbleChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _bubbleChart.pathData : _bubbleChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "bubble-chart";
+  _exports.default = _default;
 });

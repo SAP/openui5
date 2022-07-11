@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/pause', './v4/pause'], function (exports, Theme, pause$1, pause$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/pause", "./v4/pause"], function (_exports, _Theme, _pause, _pause2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? pause$1.pathData : pause$2.pathData;
-	var pause = "pause";
-
-	exports.accData = pause$1.accData;
-	exports.ltr = pause$1.ltr;
-	exports.default = pause;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _pause.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _pause.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _pause.pathData : _pause2.pathData;
+  _exports.pathData = pathData;
+  var _default = "pause";
+  _exports.default = _default;
 });

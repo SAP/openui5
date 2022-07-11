@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/subway-train', './v4/subway-train'], function (exports, Theme, subwayTrain$1, subwayTrain$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/subway-train", "./v4/subway-train"], function (_exports, _Theme, _subwayTrain, _subwayTrain2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? subwayTrain$1.pathData : subwayTrain$2.pathData;
-	var subwayTrain = "subway-train";
-
-	exports.accData = subwayTrain$1.accData;
-	exports.ltr = subwayTrain$1.ltr;
-	exports.default = subwayTrain;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _subwayTrain.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _subwayTrain.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _subwayTrain.pathData : _subwayTrain2.pathData;
+  _exports.pathData = pathData;
+  var _default = "subway-train";
+  _exports.default = _default;
 });

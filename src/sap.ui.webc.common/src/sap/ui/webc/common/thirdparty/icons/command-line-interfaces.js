@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/command-line-interfaces', './v4/command-line-interfaces'], function (exports, Theme, commandLineInterfaces$1, commandLineInterfaces$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/command-line-interfaces", "./v4/command-line-interfaces"], function (_exports, _Theme, _commandLineInterfaces, _commandLineInterfaces2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? commandLineInterfaces$1.pathData : commandLineInterfaces$2.pathData;
-	var commandLineInterfaces = "command-line-interfaces";
-
-	exports.accData = commandLineInterfaces$1.accData;
-	exports.ltr = commandLineInterfaces$1.ltr;
-	exports.default = commandLineInterfaces;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _commandLineInterfaces.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _commandLineInterfaces.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _commandLineInterfaces.pathData : _commandLineInterfaces2.pathData;
+  _exports.pathData = pathData;
+  var _default = "command-line-interfaces";
+  _exports.default = _default;
 });

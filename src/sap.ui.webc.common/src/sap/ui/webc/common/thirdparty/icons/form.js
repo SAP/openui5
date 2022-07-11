@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/form', './v4/form'], function (exports, Theme, form$1, form$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/form", "./v4/form"], function (_exports, _Theme, _form, _form2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? form$1.pathData : form$2.pathData;
-	var form = "form";
-
-	exports.accData = form$1.accData;
-	exports.ltr = form$1.ltr;
-	exports.default = form;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _form.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _form.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _form.pathData : _form2.pathData;
+  _exports.pathData = pathData;
+  var _default = "form";
+  _exports.default = _default;
 });

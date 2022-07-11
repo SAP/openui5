@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sys-next-page', './v4/sys-next-page'], function (exports, Theme, sysNextPage$1, sysNextPage$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sys-next-page", "./v4/sys-next-page"], function (_exports, _Theme, _sysNextPage, _sysNextPage2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? sysNextPage$1.pathData : sysNextPage$2.pathData;
-	var sysNextPage = "sys-next-page";
-
-	exports.accData = sysNextPage$1.accData;
-	exports.ltr = sysNextPage$1.ltr;
-	exports.default = sysNextPage;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _sysNextPage.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _sysNextPage.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _sysNextPage.pathData : _sysNextPage2.pathData;
+  _exports.pathData = pathData;
+  var _default = "sys-next-page";
+  _exports.default = _default;
 });

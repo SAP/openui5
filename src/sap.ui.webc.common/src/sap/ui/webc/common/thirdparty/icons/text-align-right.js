@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/text-align-right', './v4/text-align-right'], function (exports, Theme, textAlignRight$1, textAlignRight$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/text-align-right", "./v4/text-align-right"], function (_exports, _Theme, _textAlignRight, _textAlignRight2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? textAlignRight$1.pathData : textAlignRight$2.pathData;
-	var textAlignRight = "text-align-right";
-
-	exports.accData = textAlignRight$1.accData;
-	exports.ltr = textAlignRight$1.ltr;
-	exports.default = textAlignRight;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _textAlignRight.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _textAlignRight.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _textAlignRight.pathData : _textAlignRight2.pathData;
+  _exports.pathData = pathData;
+  var _default = "text-align-right";
+  _exports.default = _default;
 });

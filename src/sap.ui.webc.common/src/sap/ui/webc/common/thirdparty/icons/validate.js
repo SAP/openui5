@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/validate', './v4/validate'], function (exports, Theme, validate$1, validate$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/validate", "./v4/validate"], function (_exports, _Theme, _validate, _validate2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? validate$1.pathData : validate$2.pathData;
-	var validate = "validate";
-
-	exports.accData = validate$1.accData;
-	exports.ltr = validate$1.ltr;
-	exports.default = validate;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _validate.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _validate.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _validate.pathData : _validate2.pathData;
+  _exports.pathData = pathData;
+  var _default = "validate";
+  _exports.default = _default;
 });

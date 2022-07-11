@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/wallet', './v4/wallet'], function (exports, Theme, wallet$1, wallet$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/wallet", "./v4/wallet"], function (_exports, _Theme, _wallet, _wallet2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? wallet$1.pathData : wallet$2.pathData;
-	var wallet = "wallet";
-
-	exports.accData = wallet$1.accData;
-	exports.ltr = wallet$1.ltr;
-	exports.default = wallet;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _wallet.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _wallet.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _wallet.pathData : _wallet2.pathData;
+  _exports.pathData = pathData;
+  var _default = "wallet";
+  _exports.default = _default;
 });

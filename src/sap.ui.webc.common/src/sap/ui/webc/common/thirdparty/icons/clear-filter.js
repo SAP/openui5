@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/clear-filter', './v4/clear-filter'], function (exports, Theme, clearFilter$1, clearFilter$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/clear-filter", "./v4/clear-filter"], function (_exports, _Theme, _clearFilter, _clearFilter2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? clearFilter$1.pathData : clearFilter$2.pathData;
-	var clearFilter = "clear-filter";
-
-	exports.accData = clearFilter$1.accData;
-	exports.ltr = clearFilter$1.ltr;
-	exports.default = clearFilter;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _clearFilter.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _clearFilter.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _clearFilter.pathData : _clearFilter2.pathData;
+  _exports.pathData = pathData;
+  var _default = "clear-filter";
+  _exports.default = _default;
 });

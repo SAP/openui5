@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/wrench', './v4/wrench'], function (exports, Theme, wrench$1, wrench$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/wrench", "./v4/wrench"], function (_exports, _Theme, _wrench, _wrench2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? wrench$1.pathData : wrench$2.pathData;
-	var wrench = "wrench";
-
-	exports.accData = wrench$1.accData;
-	exports.ltr = wrench$1.ltr;
-	exports.default = wrench;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _wrench.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _wrench.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _wrench.pathData : _wrench2.pathData;
+  _exports.pathData = pathData;
+  var _default = "wrench";
+  _exports.default = _default;
 });

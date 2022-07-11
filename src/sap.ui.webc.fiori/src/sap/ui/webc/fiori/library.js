@@ -7,11 +7,10 @@
  */
 sap.ui.define([
 		"sap/ui/webc/common/library",
-		"sap/ui/webc/common/thirdparty/base/CSP",
 		"./thirdparty/Assets",
 		"./library.config"
 	], // library dependency
-	function(commonLibrary, CSP) {
+	function(commonLibrary) {
 
 		"use strict";
 
@@ -1285,8 +1284,6 @@ Use to display both a list and a detail page when the user should focus on the l
 			 */
 			Uploading: "Uploading"
 		};
-
-		CSP.setPackageCSSRoot("@ui5/webcomponents-fiori", sap.ui.require.toUrl("sap/ui/webc/fiori/thirdparty/css/"));
 
 		return thisLib;
 

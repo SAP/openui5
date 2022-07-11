@@ -418,7 +418,7 @@ Contained in: src/sap.ui.mdc/test/sap/ui/mdc/sample/field/filterfieldwithoperato
 
 Library: sap.ui.webc.common:
 
-Component: UI5 Web Components, version: 1.1.2
+Component: UI5 Web Components, version: 1.5.0
 Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
@@ -429,7 +429,7 @@ Contained in: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/base/*.*
 	src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons-tnt/*.*
 	src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/icons-business-suite/*.*
 
-Component: lit-html, version: 2.0.1
+Component: lit-html, version: 2.2.2
 Copyright: Google LLC
 License: BSD-3-Clause
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
@@ -438,16 +438,22 @@ Contained in: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/lit-html/
 
 Library: sap.ui.webc.fiori:
 
-Component: UI5 Web Components, version: 1.1.2
+Component: UI5 Web Components, version: 1.5.0
 Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/thirdparty/*.*
 
+Component: ZXing, version: 0.19.1
+Copyright: 2005 Sun Microsystems, Inc.; 2010-2014 University of Manchester; 2010-2015 Stian Soiland-Reyes; 2015 Peter Hull
+License: Apache-2.0
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+Contained in: src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/lib/zxing.js
+
 
 Library: sap.ui.webc.main:
 
-Component: UI5 Web Components, version: 1.1.2
+Component: UI5 Web Components, version: 1.5.0
 Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt

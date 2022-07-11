@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-    var dialogSvg = `<svg width="160" height="160" viewBox="0 0 160 160" id="tnt-Dialog-ChartFlow">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="160" height="160" viewBox="0 0 160 160" id="tnt-Dialog-ChartFlow">
     <path fill="var(--sapIllus_PatternShadow)" d="M131,45.8608 C131,43.7288 129.271,41.9998 127.139,41.9998 L127.086,41.9998 L44.914,41.9998 L44.856,41.9998 C42.726,41.9998 41,43.7278 41,45.8578 L41.058,128.1418 C41.058,130.2728 42.785,131.9998 44.914,131.9998 L127.139,131.9998 C129.271,131.9998 131,130.2718 131,128.1388 L131,45.8608 Z" class="sapIllus_PatternShadow"/>
     <path fill="var(--sapIllus_ObjectFillColor)" d="M121.1418,125 L38.8578,125 C36.7278,125 34.9998,123.273 34.9998,121.142 L34.9998,38.858 C34.9998,36.727 36.7278,35 38.8578,35 L121.1418,35 C123.2728,35 124.9998,36.727 124.9998,38.858 L124.9998,121.142 C124.9998,123.273 123.2728,125 121.1418,125" class="sapIllus_ObjectFillColor"/>
     <path fill="var(--sapIllus_BrandColorSecondary)" d="M125,52 L35,52 L35,38.997 C35,36.79 36.79,35 38.997,35 L121.981,35 C123.648,35 125,36.352 125,38.019 L125,52 Z" class="sapIllus_BrandColorSecondary"/>
@@ -13,7 +18,5 @@ sap.ui.define(function () { 'use strict';
     <path fill="var(--sapIllus_BackgroundColor)" d="M66.9475,95.7387 L53.7105,95.8087129 C53.0625,95.8117 52.5355,95.2897 52.5315,94.6417 L52.4864772,86.0367 C52.4825,85.3897 53.0055,84.8617 53.6525,84.8587 L66.8895,84.7886871 C67.5375,84.7857 68.0655,85.3077 68.0685,85.9547 L68.1135228,94.5607 C68.1175,95.2077 67.5945,95.7357 66.9475,95.7387" class="sapIllus_BackgroundColor"/>
     <path fill="var(--sapIllus_AccentColor)" d="M114.368877,90.0143 C114.3528,86.9263 111.8358,84.4363 108.7478,84.4522233 C105.6598,84.4683 103.1698,86.9853 103.185723,90.0733 C103.2028,93.1613 105.7188,95.6513 108.8068,95.6353767 C111.8948,95.6183 114.3848,93.1023 114.368877,90.0143" class="sapIllus_AccentColor"/>
 </svg>`;
-
-    return dialogSvg;
-
+  _exports.default = _default;
 });

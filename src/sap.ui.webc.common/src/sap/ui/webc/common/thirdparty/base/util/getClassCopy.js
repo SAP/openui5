@@ -1,14 +1,21 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	const getClassCopy = (klass, constructorCallback) => {
-		return class classCopy extends klass {
-			constructor() {
-				super();
-				constructorCallback && constructorCallback();
-			}
-		};
-	};
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
 
-	return getClassCopy;
+  const getClassCopy = (klass, constructorCallback) => {
+    return class classCopy extends klass {
+      constructor() {
+        super();
+        constructorCallback && constructorCallback();
+      }
 
+    };
+  };
+
+  var _default = getClassCopy;
+  _exports.default = _default;
 });

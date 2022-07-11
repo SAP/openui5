@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/drill-down', './v4/drill-down'], function (exports, Theme, drillDown$1, drillDown$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/drill-down", "./v4/drill-down"], function (_exports, _Theme, _drillDown, _drillDown2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? drillDown$1.pathData : drillDown$2.pathData;
-	var drillDown = "drill-down";
-
-	exports.accData = drillDown$1.accData;
-	exports.ltr = drillDown$1.ltr;
-	exports.default = drillDown;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _drillDown.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _drillDown.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _drillDown.pathData : _drillDown2.pathData;
+  _exports.pathData = pathData;
+  var _default = "drill-down";
+  _exports.default = _default;
 });

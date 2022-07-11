@@ -1,18 +1,39 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations', './tnt-Dialog-UnableToLoad', './tnt-Scene-UnableToLoad', './tnt-Spot-UnableToLoad'], function (exports, Illustrations, tntDialogUnableToLoad, tntSceneUnableToLoad, tntSpotUnableToLoad) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations", "./tnt-Dialog-UnableToLoad", "./tnt-Scene-UnableToLoad", "./tnt-Spot-UnableToLoad"], function (_exports, _Illustrations, _tntDialogUnableToLoad, _tntSceneUnableToLoad, _tntSpotUnableToLoad) {
+  "use strict";
 
-	const name = "UnableToLoad";
-	const set = "tnt";
-	Illustrations.registerIllustration(name, {
-		dialogSvg: tntDialogUnableToLoad,
-		sceneSvg: tntSceneUnableToLoad,
-		spotSvg: tntSpotUnableToLoad,
-		set,
-	});
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "dialogSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntDialogUnableToLoad.default;
+    }
+  });
+  Object.defineProperty(_exports, "sceneSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntSceneUnableToLoad.default;
+    }
+  });
+  Object.defineProperty(_exports, "spotSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntSpotUnableToLoad.default;
+    }
+  });
+  _tntDialogUnableToLoad = _interopRequireDefault(_tntDialogUnableToLoad);
+  _tntSceneUnableToLoad = _interopRequireDefault(_tntSceneUnableToLoad);
+  _tntSpotUnableToLoad = _interopRequireDefault(_tntSpotUnableToLoad);
 
-	exports.dialogSvg = tntDialogUnableToLoad;
-	exports.sceneSvg = tntSceneUnableToLoad;
-	exports.spotSvg = tntSpotUnableToLoad;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  const name = "UnableToLoad";
+  const set = "tnt";
+  (0, _Illustrations.registerIllustration)(name, {
+    dialogSvg: _tntDialogUnableToLoad.default,
+    sceneSvg: _tntSceneUnableToLoad.default,
+    spotSvg: _tntSpotUnableToLoad.default,
+    set
+  });
 });

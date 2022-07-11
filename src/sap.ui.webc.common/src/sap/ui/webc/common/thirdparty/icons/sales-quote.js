@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sales-quote', './v4/sales-quote'], function (exports, Theme, salesQuote$1, salesQuote$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sales-quote", "./v4/sales-quote"], function (_exports, _Theme, _salesQuote, _salesQuote2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? salesQuote$1.pathData : salesQuote$2.pathData;
-	var salesQuote = "sales-quote";
-
-	exports.accData = salesQuote$1.accData;
-	exports.ltr = salesQuote$1.ltr;
-	exports.default = salesQuote;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _salesQuote.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _salesQuote.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _salesQuote.pathData : _salesQuote2.pathData;
+  _exports.pathData = pathData;
+  var _default = "sales-quote";
+  _exports.default = _default;
 });

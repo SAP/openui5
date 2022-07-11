@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/project-definition-triangle', './v4/project-definition-triangle'], function (exports, Theme, projectDefinitionTriangle$1, projectDefinitionTriangle$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/project-definition-triangle", "./v4/project-definition-triangle"], function (_exports, _Theme, _projectDefinitionTriangle, _projectDefinitionTriangle2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? projectDefinitionTriangle$1.pathData : projectDefinitionTriangle$2.pathData;
-	var projectDefinitionTriangle = "project-definition-triangle";
-
-	exports.accData = projectDefinitionTriangle$1.accData;
-	exports.ltr = projectDefinitionTriangle$1.ltr;
-	exports.default = projectDefinitionTriangle;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _projectDefinitionTriangle.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _projectDefinitionTriangle.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _projectDefinitionTriangle.pathData : _projectDefinitionTriangle2.pathData;
+  _exports.pathData = pathData;
+  var _default = "project-definition-triangle";
+  _exports.default = _default;
 });

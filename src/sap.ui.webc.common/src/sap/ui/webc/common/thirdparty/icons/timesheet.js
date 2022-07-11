@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/timesheet', './v4/timesheet'], function (exports, Theme, timesheet$1, timesheet$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/timesheet", "./v4/timesheet"], function (_exports, _Theme, _timesheet, _timesheet2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? timesheet$1.pathData : timesheet$2.pathData;
-	var timesheet = "timesheet";
-
-	exports.accData = timesheet$1.accData;
-	exports.ltr = timesheet$1.ltr;
-	exports.default = timesheet;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _timesheet.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _timesheet.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _timesheet.pathData : _timesheet2.pathData;
+  _exports.pathData = pathData;
+  var _default = "timesheet";
+  _exports.default = _default;
 });

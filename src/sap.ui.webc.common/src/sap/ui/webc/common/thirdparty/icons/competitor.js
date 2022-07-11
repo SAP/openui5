@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/competitor', './v4/competitor'], function (exports, Theme, competitor$1, competitor$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/competitor", "./v4/competitor"], function (_exports, _Theme, _competitor, _competitor2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? competitor$1.pathData : competitor$2.pathData;
-	var competitor = "competitor";
-
-	exports.accData = competitor$1.accData;
-	exports.ltr = competitor$1.ltr;
-	exports.default = competitor;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _competitor.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _competitor.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _competitor.pathData : _competitor2.pathData;
+  _exports.pathData = pathData;
+  var _default = "competitor";
+  _exports.default = _default;
 });

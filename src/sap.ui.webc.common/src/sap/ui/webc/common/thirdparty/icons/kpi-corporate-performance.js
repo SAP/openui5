@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/kpi-corporate-performance', './v4/kpi-corporate-performance'], function (exports, Theme, kpiCorporatePerformance$1, kpiCorporatePerformance$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/kpi-corporate-performance", "./v4/kpi-corporate-performance"], function (_exports, _Theme, _kpiCorporatePerformance, _kpiCorporatePerformance2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? kpiCorporatePerformance$1.pathData : kpiCorporatePerformance$2.pathData;
-	var kpiCorporatePerformance = "kpi-corporate-performance";
-
-	exports.accData = kpiCorporatePerformance$1.accData;
-	exports.ltr = kpiCorporatePerformance$1.ltr;
-	exports.default = kpiCorporatePerformance;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _kpiCorporatePerformance.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _kpiCorporatePerformance.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _kpiCorporatePerformance.pathData : _kpiCorporatePerformance2.pathData;
+  _exports.pathData = pathData;
+  var _default = "kpi-corporate-performance";
+  _exports.default = _default;
 });

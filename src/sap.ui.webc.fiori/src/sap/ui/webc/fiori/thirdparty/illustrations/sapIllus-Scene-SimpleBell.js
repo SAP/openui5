@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var sceneSvg = `<svg width="320" height="240" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Scene-SimpleBell">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="320" height="240" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Scene-SimpleBell">
 <path d="M130.573 148.696H33.96C18.1941 148.696 5.41333 161.477 5.41333 177.243C5.41333 193.009 18.1941 205.79 33.96 205.79H130.573C146.339 205.79 159.12 193.009 159.12 177.243C159.12 161.477 146.339 148.696 130.573 148.696Z" fill="var(--sapContent_Illustrative_Color7)"/>
 <path d="M165.747 177.03H69.1333C53.3674 177.03 40.5867 189.81 40.5867 205.576C40.5867 221.342 53.3674 234.123 69.1333 234.123H165.747C181.513 234.123 194.293 221.342 194.293 205.576C194.293 189.81 181.513 177.03 165.747 177.03Z" fill="var(--sapContent_Illustrative_Color7)"/>
 <path d="M291.453 98.083H194.84C179.074 98.083 166.293 110.864 166.293 126.63C166.293 142.396 179.074 155.176 194.84 155.176H291.453C307.219 155.176 320 142.396 320 126.63C320 110.864 307.219 98.083 291.453 98.083Z" fill="var(--sapContent_Illustrative_Color7)"/>
@@ -17,7 +22,5 @@ sap.ui.define(function () { 'use strict';
 <circle cx="87.5001" cy="82.7" r="4.14" fill="var(--sapContent_Illustrative_Color4)"/>
 </svg>
 `;
-
-	return sceneSvg;
-
+  _exports.default = _default;
 });

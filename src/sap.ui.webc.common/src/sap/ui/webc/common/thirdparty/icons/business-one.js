@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/business-one', './v4/business-one'], function (exports, Theme, businessOne$1, businessOne$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/business-one", "./v4/business-one"], function (_exports, _Theme, _businessOne, _businessOne2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? businessOne$1.pathData : businessOne$2.pathData;
-	var businessOne = "business-one";
-
-	exports.accData = businessOne$1.accData;
-	exports.ltr = businessOne$1.ltr;
-	exports.default = businessOne;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _businessOne.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _businessOne.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _businessOne.pathData : _businessOne2.pathData;
+  _exports.pathData = pathData;
+  var _default = "business-one";
+  _exports.default = _default;
 });

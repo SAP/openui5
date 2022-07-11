@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/bus-public-transport', './v4/bus-public-transport'], function (exports, Theme, busPublicTransport$1, busPublicTransport$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/bus-public-transport", "./v4/bus-public-transport"], function (_exports, _Theme, _busPublicTransport, _busPublicTransport2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? busPublicTransport$1.pathData : busPublicTransport$2.pathData;
-	var busPublicTransport = "bus-public-transport";
-
-	exports.accData = busPublicTransport$1.accData;
-	exports.ltr = busPublicTransport$1.ltr;
-	exports.default = busPublicTransport;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _busPublicTransport.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _busPublicTransport.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _busPublicTransport.pathData : _busPublicTransport2.pathData;
+  _exports.pathData = pathData;
+  var _default = "bus-public-transport";
+  _exports.default = _default;
 });

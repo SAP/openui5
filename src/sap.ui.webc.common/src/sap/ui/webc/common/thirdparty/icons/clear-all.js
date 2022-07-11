@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/clear-all', './v4/clear-all'], function (exports, Theme, clearAll$1, clearAll$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/clear-all", "./v4/clear-all"], function (_exports, _Theme, _clearAll, _clearAll2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? clearAll$1.pathData : clearAll$2.pathData;
-	var clearAll = "clear-all";
-
-	exports.accData = clearAll$1.accData;
-	exports.ltr = clearAll$1.ltr;
-	exports.default = clearAll;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _clearAll.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _clearAll.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _clearAll.pathData : _clearAll2.pathData;
+  _exports.pathData = pathData;
+  var _default = "clear-all";
+  _exports.default = _default;
 });

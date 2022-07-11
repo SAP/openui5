@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/line-chart', './v4/line-chart'], function (exports, Theme, lineChart$1, lineChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/line-chart", "./v4/line-chart"], function (_exports, _Theme, _lineChart, _lineChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? lineChart$1.pathData : lineChart$2.pathData;
-	var lineChart = "line-chart";
-
-	exports.accData = lineChart$1.accData;
-	exports.ltr = lineChart$1.ltr;
-	exports.default = lineChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _lineChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _lineChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _lineChart.pathData : _lineChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "line-chart";
+  _exports.default = _default;
 });

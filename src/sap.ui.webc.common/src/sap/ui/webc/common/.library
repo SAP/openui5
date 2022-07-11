@@ -25,7 +25,7 @@
 		</jscoverage>
 		<!-- Thirdparty references -->
 		<thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-			<lib name="ui5-web-components" displayName="UI5 Web Components" version="1.1.2" homepage="https://sap.github.io/ui5-webcomponents/">
+			<lib name="ui5-web-components" displayName="UI5 Web Components" version="1.5.0" homepage="https://sap.github.io/ui5-webcomponents/">
 				<license url="https://github.com/SAP/ui5-webcomponents/blob/master/LICENSE.txt" type="Apache-2.0"></license>
 				<copyright>SAP</copyright>
 				<pattern>sap/ui/webc/common/thirdparty/base/*.*</pattern>
@@ -35,7 +35,7 @@
 				<pattern>sap/ui/webc/common/thirdparty/icons-tnt/*.*</pattern>
 				<pattern>sap/ui/webc/common/thirdparty/icons-business-suite/*.*</pattern>
 			</lib>
-			<lib name="lit-html" displayName="lit-html" version="2.0.1" homepage="https://lit-html.polymer-project.org">
+			<lib name="lit-html" displayName="lit-html" version="2.2.2" homepage="https://lit-html.polymer-project.org">
 				<license url="https://github.com/lit/lit/blob/main/LICENSE" type="BSD-3-Clause"></license>
 				<copyright>Google LLC</copyright>
 				<pattern>sap/ui/webc/common/thirdparty/lit-html/*.*</pattern>

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/text-align-center', './v4/text-align-center'], function (exports, Theme, textAlignCenter$1, textAlignCenter$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/text-align-center", "./v4/text-align-center"], function (_exports, _Theme, _textAlignCenter, _textAlignCenter2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? textAlignCenter$1.pathData : textAlignCenter$2.pathData;
-	var textAlignCenter = "text-align-center";
-
-	exports.accData = textAlignCenter$1.accData;
-	exports.ltr = textAlignCenter$1.ltr;
-	exports.default = textAlignCenter;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _textAlignCenter.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _textAlignCenter.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _textAlignCenter.pathData : _textAlignCenter2.pathData;
+  _exports.pathData = pathData;
+  var _default = "text-align-center";
+  _exports.default = _default;
 });

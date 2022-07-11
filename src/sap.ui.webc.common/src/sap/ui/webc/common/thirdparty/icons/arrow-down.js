@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/arrow-down', './v4/arrow-down'], function (exports, Theme, arrowDown$1, arrowDown$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/arrow-down", "./v4/arrow-down"], function (_exports, _Theme, _arrowDown, _arrowDown2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? arrowDown$1.pathData : arrowDown$2.pathData;
-	var arrowDown = "arrow-down";
-
-	exports.accData = arrowDown$1.accData;
-	exports.ltr = arrowDown$1.ltr;
-	exports.default = arrowDown;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _arrowDown.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _arrowDown.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _arrowDown.pathData : _arrowDown2.pathData;
+  _exports.pathData = pathData;
+  var _default = "arrow-down";
+  _exports.default = _default;
 });

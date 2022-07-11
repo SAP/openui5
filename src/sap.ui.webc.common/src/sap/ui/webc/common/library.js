@@ -69,7 +69,7 @@ sap.ui.define([
 	CSP.setPackageCSSRoot("@ui5/webcomponents-base", sap.ui.require.toUrl("sap/ui/webc/common/thirdparty/base/css/"));
 	CSP.setPackageCSSRoot("@ui5/webcomponents-theming", sap.ui.require.toUrl("sap/ui/webc/common/thirdparty/theming/css/"));
 
-	OpenUI5Enablement.enrichBusyIndicatorSettings(UI5Element);
+	OpenUI5Enablement.default.enrichBusyIndicatorSettings(UI5Element.default);
 
 	return thisLib;
 });

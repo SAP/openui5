@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sum', './v4/sum'], function (exports, Theme, sum$1, sum$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sum", "./v4/sum"], function (_exports, _Theme, _sum, _sum2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? sum$1.pathData : sum$2.pathData;
-	var sum = "sum";
-
-	exports.accData = sum$1.accData;
-	exports.ltr = sum$1.ltr;
-	exports.default = sum;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _sum.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _sum.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _sum.pathData : _sum2.pathData;
+  _exports.pathData = pathData;
+  var _default = "sum";
+  _exports.default = _default;
 });

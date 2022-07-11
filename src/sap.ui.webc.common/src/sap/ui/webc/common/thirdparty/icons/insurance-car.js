@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/insurance-car', './v4/insurance-car'], function (exports, Theme, insuranceCar$1, insuranceCar$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/insurance-car", "./v4/insurance-car"], function (_exports, _Theme, _insuranceCar, _insuranceCar2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? insuranceCar$1.pathData : insuranceCar$2.pathData;
-	var insuranceCar = "insurance-car";
-
-	exports.accData = insuranceCar$1.accData;
-	exports.ltr = insuranceCar$1.ltr;
-	exports.default = insuranceCar;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _insuranceCar.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _insuranceCar.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _insuranceCar.pathData : _insuranceCar2.pathData;
+  _exports.pathData = pathData;
+  var _default = "insurance-car";
+  _exports.default = _default;
 });

@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var sceneSvg = `<svg width="320" height="240" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Scene-EmptyList">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="320" height="240" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Scene-EmptyList">
 <path d="M305.547 20H14.4533C12.5559 19.9983 10.6768 20.3705 8.92329 21.0954C7.16981 21.8203 5.57638 22.8836 4.23409 24.2247C2.8918 25.5657 1.82697 27.1582 1.10045 28.911C0.373942 30.6638 -8.08861e-07 32.5426 0 34.44V205.547C0 209.38 1.52275 213.056 4.23328 215.767C6.9438 218.477 10.6201 220 14.4533 220H305.547C309.38 220 313.056 218.477 315.767 215.767C318.477 213.056 320 209.38 320 205.547V34.44C320 32.5426 319.626 30.6638 318.9 28.911C318.173 27.1582 317.108 25.5657 315.766 24.2247C314.424 22.8836 312.83 21.8203 311.077 21.0954C309.323 20.3705 307.444 19.9983 305.547 20V20Z" fill="var(--sapContent_Illustrative_Color7)"/>
 <rect x="13" y="206" width="94" height="14" rx="4" fill="var(--sapContent_Illustrative_Color18)"/>
 <rect x="99" y="206" width="208" height="14" rx="4" fill="var(--sapContent_Illustrative_Color19)"/>
@@ -44,7 +49,5 @@ sap.ui.define(function () { 'use strict';
 <path d="M269.481 53.898C269.284 53.7469 269.059 53.6376 268.818 53.5768C268.578 53.5159 268.327 53.5048 268.082 53.544L257.074 55.1928C256.581 55.2695 256.136 55.534 255.833 55.9308C255.53 56.3277 255.393 56.8263 255.449 57.3223C255.503 57.7822 255.728 58.2049 256.079 58.5068C256.282 58.6804 256.52 58.8083 256.776 58.8817C257.033 58.9552 257.302 58.9725 257.566 58.9324L268.574 57.2836C269.071 57.2068 269.518 56.9407 269.822 56.5413C270.126 56.1418 270.263 55.64 270.205 55.1414C270.174 54.8961 270.094 54.6596 269.97 54.4459C269.846 54.2322 269.679 54.0458 269.481 53.898V53.898Z" fill="var(--sapContent_Illustrative_Color19)"/>
 </svg>
 `;
-
-	return sceneSvg;
-
+  _exports.default = _default;
 });

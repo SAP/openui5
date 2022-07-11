@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/alphabetical-order', './v4/alphabetical-order'], function (exports, Theme, alphabeticalOrder$1, alphabeticalOrder$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/alphabetical-order", "./v4/alphabetical-order"], function (_exports, _Theme, _alphabeticalOrder, _alphabeticalOrder2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? alphabeticalOrder$1.pathData : alphabeticalOrder$2.pathData;
-	var alphabeticalOrder = "alphabetical-order";
-
-	exports.accData = alphabeticalOrder$1.accData;
-	exports.ltr = alphabeticalOrder$1.ltr;
-	exports.default = alphabeticalOrder;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _alphabeticalOrder.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _alphabeticalOrder.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _alphabeticalOrder.pathData : _alphabeticalOrder2.pathData;
+  _exports.pathData = pathData;
+  var _default = "alphabetical-order";
+  _exports.default = _default;
 });

@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-  var dialogSvg = `<svg width="160" height="160" viewBox="0 0 160 160" id="tnt-Dialog-NoFlows">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="160" height="160" viewBox="0 0 160 160" id="tnt-Dialog-NoFlows">
   <path fill="var(--sapIllus_ObjectFillColor)" d="M122.7803,125.5 L38.2193,125.5 C36.7173,125.5 35.5003,124.282 35.5003,122.78 L35.5003,38.22 C35.5003,36.718 36.7173,35.5 38.2193,35.5 L122.7803,35.5 C124.2823,35.5 125.5003,36.718 125.5003,38.22 L125.5003,122.78 C125.5003,124.282 124.2823,125.5 122.7803,125.5" class="sapIllus_ObjectFillColor"/>
   <path fill="var(--sapIllus_BrandColorSecondary)" d="M126,52 L36,52 L36,38.884 C36,36.738 37.739,35 39.884,35 L122.116,35 C124.261,35 126,36.738 126,38.884 L126,52 Z" class="sapIllus_BrandColorSecondary"/>
   <path fill="var(--sapIllus_BrandColorSecondary)" d="M125,52 L35,52 L35,38.997 C35,36.789 36.79,35 38.997,35 L121.981,35 C123.648,35 125,36.352 125,38.019 L125,52 Z" class="sapIllus_BrandColorSecondary"/>
@@ -11,7 +16,5 @@ sap.ui.define(function () { 'use strict';
   <path fill="var(--sapIllus_PatternShadow)" d="M127.1388,42.0002 L127.0858,42.0002 L125.9998,42.0002 L125.9998,122.5002 C125.9998,124.4302 124.4298,126.0002 122.4998,126.0002 L41.0568,126.0002 L41.0578,128.1422 C41.0578,130.2722 42.7848,132.0002 44.9138,132.0002 L127.1388,132.0002 C129.2718,132.0002 130.9998,130.2712 130.9998,128.1392 L130.9998,45.8602 C130.9998,43.7292 129.2718,42.0002 127.1388,42.0002" class="sapIllus_PatternShadow"/>
   <path fill="var(--sapIllus_BackgroundColor)" d="M131,146.5 C131,148.985 108.391,151 80.5,151 C52.609,151 30,148.985 30,146.5 C30,144.015 52.609,142 80.5,142 C108.391,142 131,144.015 131,146.5" class="sapIllus_BackgroundColor"/>
 </svg>`;
-
-  return dialogSvg;
-
+  _exports.default = _default;
 });

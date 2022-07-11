@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/enter-more', './v4/enter-more'], function (exports, Theme, enterMore$1, enterMore$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/enter-more", "./v4/enter-more"], function (_exports, _Theme, _enterMore, _enterMore2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? enterMore$1.pathData : enterMore$2.pathData;
-	var enterMore = "enter-more";
-
-	exports.accData = enterMore$1.accData;
-	exports.ltr = enterMore$1.ltr;
-	exports.default = enterMore;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _enterMore.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _enterMore.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _enterMore.pathData : _enterMore2.pathData;
+  _exports.pathData = pathData;
+  var _default = "enter-more";
+  _exports.default = _default;
 });

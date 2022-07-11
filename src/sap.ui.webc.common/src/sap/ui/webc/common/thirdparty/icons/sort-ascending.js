@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sort-ascending', './v4/sort-ascending'], function (exports, Theme, sortAscending$1, sortAscending$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sort-ascending", "./v4/sort-ascending"], function (_exports, _Theme, _sortAscending, _sortAscending2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? sortAscending$1.pathData : sortAscending$2.pathData;
-	var sortAscending = "sort-ascending";
-
-	exports.accData = sortAscending$1.accData;
-	exports.ltr = sortAscending$1.ltr;
-	exports.default = sortAscending;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _sortAscending.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _sortAscending.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _sortAscending.pathData : _sortAscending2.pathData;
+  _exports.pathData = pathData;
+  var _default = "sort-ascending";
+  _exports.default = _default;
 });

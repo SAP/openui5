@@ -1,31 +1,84 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/UI5Element'], function (UI5Element) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element"], function (_exports, _UI5Element) {
+  "use strict";
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  _UI5Element = _interopRequireDefault(_UI5Element);
 
-	var UI5Element__default = /*#__PURE__*/_interopDefaultLegacy(UI5Element);
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	const metadata = {
-		tag: "ui5-filter-item-option",
-		properties:  {
-			text: {
-				type: String,
-			},
-			selected: {
-				type: Boolean,
-			},
-		},
-		slots:  {
-		},
-		events:  {
-		},
-	};
-	class FilterItemOption extends UI5Element__default {
-		static get metadata() {
-			return metadata;
-		}
-	}
-	FilterItemOption.define();
+  /**
+   * @public
+   */
+  const metadata = {
+    tag: "ui5-filter-item-option",
+    properties:
+    /** @lends sap.ui.webcomponents.fiori.FilterItemOption.prototype */
+    {
+      /**
+       * Defines the text of the component.
+       *
+       * @public
+       * @type {string}
+       * @defaultvalue ""
+       */
+      text: {
+        type: String
+      },
 
-	return FilterItemOption;
+      /**
+       * Defines whether the option is selected
+       *
+       * @public
+       * @type {boolean}
+       * @defaultvalue false
+       */
+      selected: {
+        type: Boolean
+      }
+    },
+    slots:
+    /** @lends sap.ui.webcomponents.fiori.FilterItemOption.prototype */
+    {//
+    },
+    events:
+    /** @lends sap.ui.webcomponents.fiori.FilterItemOption.prototype */
+    {//
+    }
+  };
+  /**
+   * @class
+   *
+   * <h3 class="comment-api-title">Overview</h3>
+   *
+   *
+   * <h3>Usage</h3>
+   *
+   * For the <code>ui5-filter-item-option</code>
+   * <h3>ES6 Module Import</h3>
+   *
+   * <code>import @ui5/webcomponents-fiori/dist/FilterItemOption.js";</code>
+   *
+   * @constructor
+   * @author SAP SE
+   * @alias sap.ui.webcomponents.fiori.FilterItemOption
+   * @extends UI5Element
+   * @since 1.0.0-rc.16
+   * @tagname ui5-filter-item-option
+   * @implements sap.ui.webcomponents.fiori.IFilterItemOption
+   * @public
+   */
 
+  class FilterItemOption extends _UI5Element.default {
+    static get metadata() {
+      return metadata;
+    }
+
+  }
+
+  FilterItemOption.define();
+  var _default = FilterItemOption;
+  _exports.default = _default;
 });

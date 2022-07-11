@@ -1,18 +1,39 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations', './tnt-Dialog-SessionExpired', './tnt-Scene-SessionExpired', './tnt-Spot-SessionExpired'], function (exports, Illustrations, tntDialogSessionExpired, tntSceneSessionExpired, tntSpotSessionExpired) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations", "./tnt-Dialog-SessionExpired", "./tnt-Scene-SessionExpired", "./tnt-Spot-SessionExpired"], function (_exports, _Illustrations, _tntDialogSessionExpired, _tntSceneSessionExpired, _tntSpotSessionExpired) {
+  "use strict";
 
-	const name = "SessionExpired";
-	const set = "tnt";
-	Illustrations.registerIllustration(name, {
-		dialogSvg: tntDialogSessionExpired,
-		sceneSvg: tntSceneSessionExpired,
-		spotSvg: tntSpotSessionExpired,
-		set,
-	});
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "dialogSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntDialogSessionExpired.default;
+    }
+  });
+  Object.defineProperty(_exports, "sceneSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntSceneSessionExpired.default;
+    }
+  });
+  Object.defineProperty(_exports, "spotSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntSpotSessionExpired.default;
+    }
+  });
+  _tntDialogSessionExpired = _interopRequireDefault(_tntDialogSessionExpired);
+  _tntSceneSessionExpired = _interopRequireDefault(_tntSceneSessionExpired);
+  _tntSpotSessionExpired = _interopRequireDefault(_tntSpotSessionExpired);
 
-	exports.dialogSvg = tntDialogSessionExpired;
-	exports.sceneSvg = tntSceneSessionExpired;
-	exports.spotSvg = tntSpotSessionExpired;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  const name = "SessionExpired";
+  const set = "tnt";
+  (0, _Illustrations.registerIllustration)(name, {
+    dialogSvg: _tntDialogSessionExpired.default,
+    sceneSvg: _tntSceneSessionExpired.default,
+    spotSvg: _tntSpotSessionExpired.default,
+    set
+  });
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/show-edit', './v4/show-edit'], function (exports, Theme, showEdit$1, showEdit$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/show-edit", "./v4/show-edit"], function (_exports, _Theme, _showEdit, _showEdit2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? showEdit$1.pathData : showEdit$2.pathData;
-	var showEdit = "show-edit";
-
-	exports.accData = showEdit$1.accData;
-	exports.ltr = showEdit$1.ltr;
-	exports.default = showEdit;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _showEdit.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _showEdit.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _showEdit.pathData : _showEdit2.pathData;
+  _exports.pathData = pathData;
+  var _default = "show-edit";
+  _exports.default = _default;
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/write-new-document', './v4/write-new-document'], function (exports, Theme, writeNewDocument$1, writeNewDocument$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/write-new-document", "./v4/write-new-document"], function (_exports, _Theme, _writeNewDocument, _writeNewDocument2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? writeNewDocument$1.pathData : writeNewDocument$2.pathData;
-	var writeNewDocument = "write-new-document";
-
-	exports.accData = writeNewDocument$1.accData;
-	exports.ltr = writeNewDocument$1.ltr;
-	exports.default = writeNewDocument;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _writeNewDocument.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _writeNewDocument.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _writeNewDocument.pathData : _writeNewDocument2.pathData;
+  _exports.pathData = pathData;
+  var _default = "write-new-document";
+  _exports.default = _default;
 });

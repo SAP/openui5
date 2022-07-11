@@ -1,18 +1,39 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations', './tnt-Dialog-ChartArea2', './tnt-Scene-ChartArea2', './tnt-Spot-ChartArea2'], function (exports, Illustrations, tntDialogChartArea2, tntSceneChartArea2, tntSpotChartArea2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations", "./tnt-Dialog-ChartArea2", "./tnt-Scene-ChartArea2", "./tnt-Spot-ChartArea2"], function (_exports, _Illustrations, _tntDialogChartArea, _tntSceneChartArea, _tntSpotChartArea) {
+  "use strict";
 
-	const name = "ChartArea2";
-	const set = "tnt";
-	Illustrations.registerIllustration(name, {
-		dialogSvg: tntDialogChartArea2,
-		sceneSvg: tntSceneChartArea2,
-		spotSvg: tntSpotChartArea2,
-		set,
-	});
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "dialogSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntDialogChartArea.default;
+    }
+  });
+  Object.defineProperty(_exports, "sceneSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntSceneChartArea.default;
+    }
+  });
+  Object.defineProperty(_exports, "spotSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntSpotChartArea.default;
+    }
+  });
+  _tntDialogChartArea = _interopRequireDefault(_tntDialogChartArea);
+  _tntSceneChartArea = _interopRequireDefault(_tntSceneChartArea);
+  _tntSpotChartArea = _interopRequireDefault(_tntSpotChartArea);
 
-	exports.dialogSvg = tntDialogChartArea2;
-	exports.sceneSvg = tntSceneChartArea2;
-	exports.spotSvg = tntSpotChartArea2;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  const name = "ChartArea2";
+  const set = "tnt";
+  (0, _Illustrations.registerIllustration)(name, {
+    dialogSvg: _tntDialogChartArea.default,
+    sceneSvg: _tntSceneChartArea.default,
+    spotSvg: _tntSpotChartArea.default,
+    set
+  });
 });

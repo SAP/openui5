@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/course-book', './v4/course-book'], function (exports, Theme, courseBook$1, courseBook$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/course-book", "./v4/course-book"], function (_exports, _Theme, _courseBook, _courseBook2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? courseBook$1.pathData : courseBook$2.pathData;
-	var courseBook = "course-book";
-
-	exports.accData = courseBook$1.accData;
-	exports.ltr = courseBook$1.ltr;
-	exports.default = courseBook;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _courseBook.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _courseBook.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _courseBook.pathData : _courseBook2.pathData;
+  _exports.pathData = pathData;
+  var _default = "course-book";
+  _exports.default = _default;
 });

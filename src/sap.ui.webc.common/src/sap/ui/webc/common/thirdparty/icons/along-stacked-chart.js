@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/along-stacked-chart', './v4/along-stacked-chart'], function (exports, Theme, alongStackedChart$1, alongStackedChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/along-stacked-chart", "./v4/along-stacked-chart"], function (_exports, _Theme, _alongStackedChart, _alongStackedChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? alongStackedChart$1.pathData : alongStackedChart$2.pathData;
-	var alongStackedChart = "along-stacked-chart";
-
-	exports.accData = alongStackedChart$1.accData;
-	exports.ltr = alongStackedChart$1.ltr;
-	exports.default = alongStackedChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _alongStackedChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _alongStackedChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _alongStackedChart.pathData : _alongStackedChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "along-stacked-chart";
+  _exports.default = _default;
 });

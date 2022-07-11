@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/donut-chart', './v4/donut-chart'], function (exports, Theme, donutChart$1, donutChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/donut-chart", "./v4/donut-chart"], function (_exports, _Theme, _donutChart, _donutChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? donutChart$1.pathData : donutChart$2.pathData;
-	var donutChart = "donut-chart";
-
-	exports.accData = donutChart$1.accData;
-	exports.ltr = donutChart$1.ltr;
-	exports.default = donutChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _donutChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _donutChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _donutChart.pathData : _donutChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "donut-chart";
+  _exports.default = _default;
 });

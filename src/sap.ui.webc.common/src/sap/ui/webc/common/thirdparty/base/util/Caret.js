@@ -1,28 +1,41 @@
-sap.ui.define(['exports'], function (exports) { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	const getCaretPosition = field => {
-		let caretPos = 0;
-		if (field.selectionStart || field.selectionStart === "0") {
-			caretPos = field.selectionDirection === "backward" ? field.selectionStart : field.selectionEnd;
-		}
-		return caretPos;
-	};
-	const setCaretPosition = (field, caretPos) => {
-		if (field.createTextRange) {
-			const range = field.createTextRange();
-			range.move("character", caretPos);
-			range.select();
-		} else if (field.selectionStart) {
-			field.focus();
-			field.setSelectionRange(caretPos, caretPos);
-		} else {
-			field.focus();
-		}
-	};
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.setCaretPosition = _exports.getCaretPosition = void 0;
 
-	exports.getCaretPosition = getCaretPosition;
-	exports.setCaretPosition = setCaretPosition;
+  /**
+   * Returns the caret (cursor) position of the specified text field (field).
+   * Return value range is 0-field.value.length.
+   */
+  const getCaretPosition = field => {
+    // Initialize
+    let caretPos = 0;
 
-	Object.defineProperty(exports, '__esModule', { value: true });
+    if (field.selectionStart || field.selectionStart === "0") {
+      // Firefox support
+      caretPos = field.selectionDirection === "backward" ? field.selectionStart : field.selectionEnd;
+    }
 
+    return caretPos;
+  };
+
+  _exports.getCaretPosition = getCaretPosition;
+
+  const setCaretPosition = (field, caretPos) => {
+    if (field.createTextRange) {
+      const range = field.createTextRange();
+      range.move("character", caretPos);
+      range.select();
+    } else if (field.selectionStart) {
+      field.focus();
+      field.setSelectionRange(caretPos, caretPos);
+    } else {
+      field.focus();
+    }
+  };
+
+  _exports.setCaretPosition = setCaretPosition;
 });
