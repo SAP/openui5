@@ -133,6 +133,16 @@ sap.ui.define([
 		_onContentMetadataReceived: function (oModelData, oPage, oMetadata) {
 			oModelData.metadata = oMetadata;
 			this.oSelectedContentModel.setData(oModelData);
+			oModelData.metadata.some(function (oMetadata) {
+				if (oMetadata.name === "layer") {
+					if (oMetadata.value === "CUSTOMER") {
+						this.getView().byId("activeVersionCheckBox").setVisible(true);
+					} else {
+						this.getView().byId("activeVersionCheckBox").setVisible(false);
+					}
+					return true;
+				}
+			}.bind(this));
 			var oCore = sap.ui.getCore();
 			var sIconTabBarId = this.getView().createId("contentDetailsIconTabBar");
 			var oIconTabBar = oCore.byId(sIconTabBarId);
@@ -205,6 +215,7 @@ sap.ui.define([
 		_selectTransportAndDeleteFile: function () {
 			var that = this;
 			var oSelectedContentModel = this.getView().getModel("selectedContent");
+			var bOnActivatedVersion = this.getView().byId("activeVersionCheckBox").getSelected();
 			var oContentData = oSelectedContentModel.getData();
 			var sSelectedLayer = oContentData.layer;
 			var sContentLayer = "";
@@ -240,11 +251,11 @@ sap.ui.define([
 				(!sTransportIdFromContent && (!sPackageFromContent || sPackageFromContent === "$TMP"))) {
 				//USER, LOAD (and VENDOR_LOAD) layers together with non-ABAP and local ABAP content do not need transport
 				sTransportId = undefined;
-				that._deleteFile(sContentLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer);
+				that._deleteFile(sContentLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer, bOnActivatedVersion);
 			} else if (sTransportIdFromContent === "ATO_NOTIFICATION") {
 				//ATO_NOTIFICATION content
 				sTransportId = sTransportIdFromContent;
-				that._deleteFile(sContentLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer);
+				that._deleteFile(sContentLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer, bOnActivatedVersion);
 			} else {
 				//Bring up an simple transport input dialog
 				var oTransportInput = new Input({placeholder: "Transport ID or ATO_NOTIFICATION" });
@@ -283,8 +294,8 @@ sap.ui.define([
 		 * @returns {Promise} <code>LRepConnector</code> "deleteFile" promise
 		 * @private
 		 */
-		_deleteFile: function (sLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer) {
-			return LRepConnector.deleteFile(sLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer).then(function () {
+		_deleteFile: function (sLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer, bSupport) {
+			return LRepConnector.deleteFile(sLayer, sNamespace, sFileName, sFileType, sTransportId, bSupport).then(function () {
 				var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 				oRouter.navTo("LayerContentMaster", {
 					layer: sSelectedLayer,

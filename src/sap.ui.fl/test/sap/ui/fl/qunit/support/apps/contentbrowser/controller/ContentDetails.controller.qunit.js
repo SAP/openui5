@@ -160,6 +160,13 @@ sap.ui.define([
 							};
 						}
 					};
+				},
+				byId: function() {
+					return {
+						getSelected: function() {
+							return false;
+						}
+					};
 				}
 			});
 			var oStubbedDeleteFile = sandbox.stub(oController, "_deleteFile").returns(Promise.resolve());
@@ -187,6 +194,13 @@ sap.ui.define([
 									value: "LOAD"
 								}]
 							};
+						}
+					};
+				},
+				byId: function() {
+					return {
+						getSelected: function() {
+							return false;
 						}
 					};
 				}
@@ -222,6 +236,13 @@ sap.ui.define([
 							};
 						}
 					};
+				},
+				byId: function() {
+					return {
+						getSelected: function() {
+							return false;
+						}
+					};
 				}
 			});
 			var oStubbedDeleteFile = sandbox.stub(oController, "_deleteFile").returns(Promise.resolve());
@@ -250,6 +271,13 @@ sap.ui.define([
 									value: Layer.VENDOR
 								}]
 							};
+						}
+					};
+				},
+				byId: function() {
+					return {
+						getSelected: function() {
+							return false;
 						}
 					};
 				}
@@ -286,13 +314,20 @@ sap.ui.define([
 						}
 					};
 				},
-				addDependent: function() {}
+				addDependent: function() {},
+				byId: function() {
+					return {
+						getSelected: function() {
+							return false;
+						}
+					};
+				}
 			});
 			var oStubbedOpenDialog = sandbox.stub(Dialog.prototype, 'open').returns("dummy");
 
 			oController._selectTransportAndDeleteFile();
 
-			assert.equal(oStubbedGetView.callCount, 2, "then getView is called twice, first to get selected data, second to attach transport dialog");
+			assert.equal(oStubbedGetView.callCount, 3, "then getView is called twice, first to get selected data, second to attach transport dialog");
 			assert.ok(oStubbedOpenDialog.calledOnce, "The transport Dialog is opened");
 		});
 	});

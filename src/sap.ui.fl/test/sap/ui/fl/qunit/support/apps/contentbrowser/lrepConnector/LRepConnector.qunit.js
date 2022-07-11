@@ -107,6 +107,28 @@ sap.ui.define([
 			assert.equal(oStubbedResolve.callCount, 0, "the promise rejection was never called");
 		});
 
+		QUnit.test("sending a PUT request with correct url, no support", function(assert) {
+			var oData = {some: "data"};
+			sandbox.stub(jQuery, "ajax").yieldsTo("success", oData);
+			var oStubbedSendPutRequest = sandbox.stub(LRepConnector, "_getTokenAndSendPutRequest");
+
+			LRepConnector.saveFile("CUSTOMER", "/namespace/", "file1", "change", "somecontent", "transport1", "package1");
+
+			assert.ok(oStubbedSendPutRequest.calledOnce, "the delete request was called once");
+			assert.equal(oStubbedSendPutRequest.getCall(0).args[0], "/sap/bc/lrep/content/namespace/file1.change?layer=CUSTOMER&changelist=transport1&package=package1", "with correct url");
+		});
+
+		QUnit.test("sending a PUT request with correct url, with support", function(assert) {
+			var oData = {some: "data"};
+			sandbox.stub(jQuery, "ajax").yieldsTo("success", oData);
+			var oStubbedSendPutRequest = sandbox.stub(LRepConnector, "_getTokenAndSendPutRequest");
+
+			LRepConnector.saveFile("CUSTOMER", "/namespace/", "file1", "change", "somecontent", "transport1", "package1", true);
+
+			assert.ok(oStubbedSendPutRequest.calledOnce, "the delete request was called once");
+			assert.equal(oStubbedSendPutRequest.getCall(0).args[0], "/sap/bc/lrep/content/namespace/file1.change?layer=CUSTOMER&changelist=transport1&package=package1&support=true", "with correct url");
+		});
+
 		QUnit.test("sending a DELETE request and getting a success answer leads to the resolving of the promise", function(assert) {
 			var oData = {some: "data"};
 			sandbox.stub(jQuery, "ajax").yieldsTo("success", oData);
@@ -131,6 +153,28 @@ sap.ui.define([
 			assert.ok(ostubbedReject.calledOnce, "the promise resolve was called once");
 			assert.ok(oErrorReportingStub.calledOnce, "the error will be displayed (passed to the ErrorUtils");
 			assert.equal(oStubbedResolve.callCount, 0, "the promise rejection was never called");
+		});
+
+		QUnit.test("sending a DELETE request with correct url, without support", function(assert) {
+			var oData = {some: "data"};
+			sandbox.stub(jQuery, "ajax").yieldsTo("success", oData);
+			var oStubbedSendDeleteRequest = sandbox.stub(LRepConnector, "_getTokenAndSendDeletionRequest");
+
+			LRepConnector.deleteFile("CUSTOMER", "/namespace/", "file1", "change", "transport1");
+
+			assert.ok(oStubbedSendDeleteRequest.calledOnce, "the delete request was called once");
+			assert.equal(oStubbedSendDeleteRequest.getCall(0).args[0], "/sap/bc/lrep/content/namespace/file1.change?layer=CUSTOMER&changelist=transport1", "with correct url");
+		});
+
+		QUnit.test("sending a DELETE request with correct url, with support", function(assert) {
+			var oData = {some: "data"};
+			sandbox.stub(jQuery, "ajax").yieldsTo("success", oData);
+			var oStubbedSendDeleteRequest = sandbox.stub(LRepConnector, "_getTokenAndSendDeletionRequest");
+
+			LRepConnector.deleteFile("CUSTOMER", "/namespace/", "file1", "change", "transport1", true);
+
+			assert.ok(oStubbedSendDeleteRequest.calledOnce, "the delete request was called once");
+			assert.equal(oStubbedSendDeleteRequest.getCall(0).args[0], "/sap/bc/lrep/content/namespace/file1.change?layer=CUSTOMER&changelist=transport1&support=true", "with correct url");
 		});
 	});
 
