@@ -25,8 +25,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Control",
 	"sap/m/ListItemBase",
-	"sap/base/Log"
-], function(jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, ListItemBase, Log) {
+	"sap/base/Log",
+	"sap/ui/model/Sorter"
+], function(jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, KeyCodes, Control, ListItemBase, Log, Sorter) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
@@ -2457,4 +2458,182 @@ sap.ui.define([
 		assert.strictEqual(oALIDomRef.getAttribute("role"), "option", "role='option' applied to list items");
 	});
 
+	QUnit.test("Grouping behavior role='listbox'", function(assert) {
+		// apply role listbox to the list control
+		this.oList.applyAriaRole("listbox");
+
+		var oData = { // 10 items
+			items : [ {
+				Key: "Key1",
+				Title : "Title1",
+				Description: "Description1"
+			}, {
+				Key: "Key2",
+				Title : "",
+				Description: "Description2"
+			}, {
+				Key: "Key3",
+				Title : "Title3",
+				Description: "Description3"
+			}, {
+				Key: "Key1",
+				Title : "Title4",
+				Description: "Description4"
+			}, {
+				Key: "Key3",
+				Title : "Title5",
+				Description: "Description5"
+			}, {
+				Key: "Key3",
+				Title : "Title6",
+				Description: "Description6"
+			}, {
+				Key: "Key1",
+				Title : "Title7",
+				Description: "Description7"
+			}, {
+				Key: "Key2",
+				Title : "Title8",
+				Description: "Description8"
+			}, {
+				Key: "Key2",
+				Title : "Title9",
+				Description: "Description9"
+			}, {
+				Key: "Key3",
+				Title : "Title10",
+				Description: "Description10"
+			} ]
+		};
+		var oModel = new JSONModel(oData);
+		this.oList.setModel(oModel);
+		var oSorter = new Sorter({
+			path: "Key",
+			descending: false,
+			group: function(oContext) {
+				return oContext.getProperty("Key");
+			}
+		});
+		this.oList.bindItems({
+			path: "/items",
+			template: new StandardListItem({
+				title: "{Title}",
+				description: "{Description}"
+			}),
+			sorter: oSorter,
+			groupHeaderFactory: function(oGroupInfo) {
+				return new CustomListItem({
+					content: [
+						new Text({
+							text: oGroupInfo.key
+						})
+					]
+				});
+			}
+		});
+
+		this.oList.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
+			return oItem.isGroupHeader();
+		});
+
+		aGroupHeaderListItems.forEach(function(oGroupItem) {
+			assert.ok(oGroupItem.isA("sap.m.CustomListItem"), "GroupHeader is the sap.m.CustomListItem, since groupHeaderFactory is defined");
+			var $GroupItem = oGroupItem.$();
+			assert.strictEqual($GroupItem.attr("role"), "option", "role=option assigned to CustomListItem, since its groupHeader and parent's role=listbox");
+			assert.notOk($GroupItem.attr("aria-posinset"), "aria-posinset not added, since its groupHeader");
+			assert.notOk($GroupItem.attr("aria-setsize"), "aria-setsize not added, since its groupHeader");
+			assert.notOk($GroupItem.attr("aria-owns"), "aria-owns not added");
+		});
+	});
+
+	QUnit.test("Grouping behavior role='list'", function(assert) {
+		var oData = { // 10 items
+			items : [ {
+				Key: "Key1",
+				Title : "Title1",
+				Description: "Description1"
+			}, {
+				Key: "Key2",
+				Title : "",
+				Description: "Description2"
+			}, {
+				Key: "Key3",
+				Title : "Title3",
+				Description: "Description3"
+			}, {
+				Key: "Key1",
+				Title : "Title4",
+				Description: "Description4"
+			}, {
+				Key: "Key3",
+				Title : "Title5",
+				Description: "Description5"
+			}, {
+				Key: "Key3",
+				Title : "Title6",
+				Description: "Description6"
+			}, {
+				Key: "Key1",
+				Title : "Title7",
+				Description: "Description7"
+			}, {
+				Key: "Key2",
+				Title : "Title8",
+				Description: "Description8"
+			}, {
+				Key: "Key2",
+				Title : "Title9",
+				Description: "Description9"
+			}, {
+				Key: "Key3",
+				Title : "Title10",
+				Description: "Description10"
+			} ]
+		};
+		var oModel = new JSONModel(oData);
+		this.oList.setModel(oModel);
+		var oSorter = new Sorter({
+			path: "Key",
+			descending: false,
+			group: function(oContext) {
+				return oContext.getProperty("Key");
+			}
+		});
+		this.oList.bindItems({
+			path: "/items",
+			template: new StandardListItem({
+				title: "{Title}",
+				description: "{Description}"
+			}),
+			sorter: oSorter,
+			groupHeaderFactory: function(oGroupInfo) {
+				return new CustomListItem({
+					content: [
+						new Text({
+							text: oGroupInfo.key
+						})
+					]
+				});
+			}
+		});
+
+		this.oList.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		var aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
+			return oItem.isGroupHeader();
+		});
+
+		aGroupHeaderListItems.forEach(function(oGroupItem) {
+			assert.ok(oGroupItem.isA("sap.m.CustomListItem"), "GroupHeader is the sap.m.CustomListItem, since groupHeaderFactory is defined");
+			var $GroupItem = oGroupItem.$();
+			assert.strictEqual($GroupItem.attr("role"), "group", "role=group assigned to CustomListItem, since its groupHeader and parent's role=list");
+			assert.notOk($GroupItem.attr("aria-posinset"), "aria-posinset not added, since its groupHeader");
+			assert.notOk($GroupItem.attr("aria-setsize"), "aria-setsize not added, since its groupHeader");
+			assert.ok($GroupItem.attr("aria-owns"), "aria-owns added");
+		});
+	});
 });

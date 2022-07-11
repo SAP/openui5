@@ -109,6 +109,7 @@ sap.ui.define([
 			assert.ok(jQuery(".sapMSLITitle").is("span"), "More button rendered with span tag");
 			assert.strictEqual(oTrigger.$().attr("role"), "button", "role=button");
 			assert.strictEqual(oTrigger.$().attr("aria-selected"), undefined, "aria-selected attribute removed as role=button");
+			assert.notOk(oTrigger.$().attr("aria-roledescription"), "aria-roledescription remove from the growing trigger");
 
 			// act + assert growingScrollToLoad=true
 			oList.setGrowingScrollToLoad(false);
@@ -707,4 +708,155 @@ sap.ui.define([
 		assert.equal(oTableDomRef.clientWidth, oTriggerDomRef.clientWidth, "Table width === Trigger button width");
 	});
 
+	QUnit.module("Group item mapping", {
+		beforeEach: function() {
+			this.clock = sinon.useFakeTimers();
+			var oData = { // 10 items
+				items : [ {
+					Key: "Key1",
+					Title : "Title1",
+					Description: "Description1"
+				}, {
+					Key: "Key2",
+					Title : "",
+					Description: "Description2"
+				}, {
+					Key: "Key3",
+					Title : "Title3",
+					Description: "Description3"
+				}, {
+					Key: "Key1",
+					Title : "Title4",
+					Description: "Description4"
+				}, {
+					Key: "Key3",
+					Title : "Title5",
+					Description: "Description5"
+				}, {
+					Key: "Key3",
+					Title : "Title6",
+					Description: "Description6"
+				}, {
+					Key: "Key1",
+					Title : "Title7",
+					Description: "Description7"
+				}, {
+					Key: "Key2",
+					Title : "Title8",
+					Description: "Description8"
+				}, {
+					Key: "Key2",
+					Title : "Title9",
+					Description: "Description9"
+				}, {
+					Key: "Key3",
+					Title : "Title10",
+					Description: "Description10"
+				} ]
+			};
+			var oModel = new JSONModel(oData);
+			this.oList = new List({
+				growing: true,
+				growingThreshold: 5
+			});
+			this.oList.setModel(oModel);
+			this.oList.bindItems({
+				path: "/items",
+				template: new StandardListItem({
+					title: "{Title}",
+					description: "{Description}"
+				})
+			});
+			this.oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oList.destroy();
+			this.clock.restore();
+		}
+	});
+
+	QUnit.test("GrowingDirection - Downwards", function(assert) {
+		var fnSetLastGroupHeaderSpy = sinon.spy(this.oList, "getGroupHeaderTemplate");
+		var oBinding = this.oList.getBinding("items");
+		var oSorter = new Sorter({
+			path: "Key",
+			descending: false,
+			group: function(oContext) {
+				return oContext.getProperty("Key");
+			}
+		});
+		oBinding.sort(oSorter);
+		Core.applyChanges();
+
+		var aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
+			return oItem.isGroupHeader();
+		});
+
+		assert.strictEqual(fnSetLastGroupHeaderSpy.callCount, aGroupHeaderListItems.length, "default groupHeaderListItem template called twice");
+
+		aGroupHeaderListItems.forEach(function(oGroupItem) {
+			var $GroupItem = oGroupItem.$();
+			oGroupItem.getGroupedItems().forEach(function(sId) {
+				assert.ok($GroupItem.attr("aria-owns").indexOf(sId) > -1, "mapped items are set to aria-owns attribute");
+			});
+		});
+
+		var oSecondGroupItem = aGroupHeaderListItems[1];
+		assert.strictEqual(oSecondGroupItem.getGroupedItems().length, 2, "2 items mapped to group");
+		this.oList.$("trigger").trigger("tap");
+		this.clock.tick(10);
+		assert.strictEqual(oSecondGroupItem.getGroupedItems().length, 3, "3 items mapped to group, due to growing");
+		var aAriaOwns = oSecondGroupItem.$().attr("aria-owns").split(" ");
+		assert.strictEqual(aAriaOwns.length, 3, "GroupHeader DOM updated");
+
+		aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
+			return oItem.isGroupHeader();
+		});
+
+		aGroupHeaderListItems.forEach(function(oGroupItem) {
+			assert.strictEqual(oGroupItem.getGroupedItems().indexOf(this.oList._oGrowingDelegate._oTrigger.getId()), -1, "Growing Trigger is not mapped to the groupHeader");
+		}, this);
+	});
+
+	QUnit.test("GrowingDirection - Upwards", function(assert) {
+		this.oList.setGrowingDirection("Upwards");
+		var oBinding = this.oList.getBinding("items");
+		var oSorter = new Sorter({
+			path: "Key",
+			descending: false,
+			group: function(oContext) {
+				return oContext.getProperty("Key");
+			}
+		});
+		oBinding.sort(oSorter);
+		Core.applyChanges();
+
+		var aVisibleItems = this.oList.getVisibleItems();
+		var aGroupHeaderListItems = aVisibleItems.filter(function(oItem) {
+			return oItem.isGroupHeader();
+		});
+		aGroupHeaderListItems.forEach(function(oGroupItem) {
+			var $GroupItem = oGroupItem.$();
+			oGroupItem.getGroupedItems().forEach(function(sId) {
+				assert.ok($GroupItem.attr("aria-owns").indexOf(sId) > -1, "mapped items are set to aria-owns attribute");
+			});
+		});
+
+		var oSecondGroupItem = aGroupHeaderListItems[1];
+		assert.strictEqual(oSecondGroupItem.getGroupedItems().length, 2, "2 items mapped to group");
+		this.oList.$("trigger").trigger("tap");
+		this.clock.tick(10);
+		assert.strictEqual(oSecondGroupItem.getGroupedItems().length, 3, "3 items mapped to group, due to growing");
+		var aAriaOwns = oSecondGroupItem.$().attr("aria-owns").split(" ");
+		assert.strictEqual(aAriaOwns.length, 3, "GroupHeader DOM updated");
+
+		aGroupHeaderListItems = this.oList.getVisibleItems().filter(function(oItem) {
+			return oItem.isGroupHeader();
+		});
+
+		aGroupHeaderListItems.forEach(function(oGroupItem) {
+			assert.strictEqual(oGroupItem.getGroupedItems().indexOf(this.oList._oGrowingDelegate._oTrigger.getId()), -1, "Growing Trigger is not mapped to the groupHeader");
+		}, this);
+	});
 });

@@ -307,6 +307,13 @@ sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/Device", "sap/ui/core/In
 
 		if (sRole === "listitem") {
 			mAccessibilityState.selected = null;
+			if (oLI.isGroupHeader()) {
+				mAccessibilityState.role = "group";
+				var aGroupedItems = oLI.getGroupedItems();
+				if (aGroupedItems && aGroupedItems.length) {
+					mAccessibilityState.owns = aGroupedItems.join(" ");
+				}
+			}
 		} else if (oLI.isSelectable()) {
 			mAccessibilityState.selected = oLI.getSelected();
 		}

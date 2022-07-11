@@ -132,7 +132,50 @@ sap.ui.define([
 						Title : "Flower",
 						Description: "This is a flower"
 					} ]
-			};
+			},
+			data5 = { // 10 items
+				items : [ {
+					Key: "Key1",
+					Title : "Title1",
+					Description: "Description1"
+				}, {
+					Key: "Key2",
+					Title : "",
+					Description: "Description2"
+				}, {
+					Key: "Key3",
+					Title : "Title3",
+					Description: "Description3"
+				}, {
+					Key: "Key1",
+					Title : "Title4",
+					Description: "Description4"
+				}, {
+					Key: "Key3",
+					Title : "Title5",
+					Description: "Description5"
+				}, {
+					Key: "Key3",
+					Title : "Title6",
+					Description: "Description6"
+				}, {
+					Key: "Key1",
+					Title : "Title7",
+					Description: "Description7"
+				}, {
+					Key: "Key2",
+					Title : "Title8",
+					Description: "Description8"
+				}, {
+					Key: "Key2",
+					Title : "Title9",
+					Description: "Description9"
+				}, {
+					Key: "Key3",
+					Title : "Title10",
+					Description: "Description10"
+				} ]
+		};
 
 
 		// create a static list item
@@ -2913,6 +2956,45 @@ sap.ui.define([
 			var oCustomAnnouncement = document.getElementById($SLI.attr("aria-labelledby")),
 				aTexts = oCustomAnnouncement.innerText.split(" . ");
 			assert.ok(aTexts.indexOf(oRb.getText("ACC_CTR_TYPE_OPTION")) > -1, "Type info is added to custom announcement");
+		});
+
+		QUnit.test("Grouping behavior with role='list'", function(assert) {
+			var oList = new List();
+			bindListData(oList, data5, "/items", createListItem);
+			var oSorter = new Sorter({
+				path: "Key",
+				descending: false,
+				group: function(oContext) {
+					return oContext.getProperty("Key");
+				}
+			});
+			oList.placeAt("qunit-fixture");
+
+			var oBinding = oList.getBinding("items");
+			oBinding.sort(oSorter);
+			Core.applyChanges();
+			assert.ok(oBinding.isGrouped(), "list is grouped");
+
+			var aGroupHeaderListItems = oList.getVisibleItems().filter(function(oItem) {
+				return oItem.isGroupHeader();
+			});
+
+			var oRb = Core.getLibraryResourceBundle("sap.m");
+
+			aGroupHeaderListItems.forEach(function(oGroupItem) {
+				var $GroupItem = oGroupItem.$();
+				assert.strictEqual($GroupItem.attr("role"), "group", "Group header has role='group'");
+				assert.strictEqual($GroupItem.attr("aria-roledescription"), oRb.getText("LIST_ITEM_GROUP_HEADER") + " " + oRb.getText("ACC_CTR_TYPE_OPTION"), "correct aria-roledescription assigned");
+				assert.notOk($GroupItem.attr("aria-posinset"), "aria-posinset attribute not added to groupHeader");
+				assert.notOk($GroupItem.attr("aria-setsize"), "aria-setsize attribute not added to groupHeader");
+				assert.ok($GroupItem.attr("aria-owns"), "aria-owns attribute added to Group Headers");
+				assert.ok(oGroupItem.getGroupedItems().length, "GroupHeader contains the mapped list items");
+				oGroupItem.getGroupedItems().forEach(function(sId) {
+					assert.ok($GroupItem.attr("aria-owns").indexOf(sId) > -1, "mapped items are set to aria-owns attribute");
+				});
+			});
+
+			oList.destroy();
 		});
 
 		QUnit.module("Context Menu", {

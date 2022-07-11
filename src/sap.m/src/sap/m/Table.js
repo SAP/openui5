@@ -1400,6 +1400,9 @@ sap.ui.define([
 		return "";
 	};
 
+	// items and groupHeader mapping is not required for the table control
+	Table.prototype.setLastGroupHeader = function() {};
+
 	return Table;
 
 });

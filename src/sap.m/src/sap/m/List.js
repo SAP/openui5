@@ -78,6 +78,7 @@ sap.ui.define(["./library", "./ListBase", "./ListRenderer"],
 		if (this.getAriaRole() === "listbox" && oElement.isA("sap.m.ListItemBase")) {
 			mAriaProps.roledescription = null;
 			mAriaProps.role = "option";
+			mAriaProps.owns = null;
 
 			if (oElement.isSelectable()) {
 				mAriaProps.selected = oElement.getSelected();

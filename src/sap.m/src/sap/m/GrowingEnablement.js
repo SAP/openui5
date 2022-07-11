@@ -278,7 +278,16 @@ sap.ui.define([
 									'<div class="sapUiInvisibleText" id="' + sTriggerID + 'Message"></div>' +
 								'</div>'
 				})
-			}).setParent(this._oControl, null, true).attachPress(this.requestNewPage, this).addDelegate({
+			});
+
+			// stop the eventing between item and the list
+			this._oTrigger.getList = function() {};
+			// defines the tag name
+			this._oTrigger.TagName = "div";
+			// trigger should not be mapped to groupHeader when setParent is called, hence overwrite this method
+			this._oTrigger.setGroupedItem = function() {};
+
+			this._oTrigger.setParent(this._oControl, null, true).attachPress(this.requestNewPage, this).addDelegate({
 				onsapenter : function(oEvent) {
 					this.requestNewPage();
 					oEvent.preventDefault();
@@ -292,6 +301,8 @@ sap.ui.define([
 					// aria-selected is added as the CustomListItem type="Active"
 					// aria-selected should be removed as it is not allowed with role="button"
 					$oTrigger.removeAttr("aria-selected");
+					// aria-roledescription not required for growing trigger
+					$oTrigger.removeAttr("aria-roledescription");
 					$oTrigger.attr({
 						"tabindex": 0,
 						"role": "button",
@@ -300,11 +311,6 @@ sap.ui.define([
 					});
 				}
 			}, this);
-
-			// stop the eventing between item and the list
-			this._oTrigger.getList = function() {};
-			// defines the tag name
-			this._oTrigger.TagName = "div";
 
 			return this._oTrigger;
 		},
@@ -379,18 +385,29 @@ sap.ui.define([
 
 				if (oLastItem && oLastItem.isGroupHeader()) {
 					oControl.removeAggregation("items", oLastItem, true);
+					oControl.setLastGroupHeader(oLastItem);
 					this._fnAppendGroupItem = this.appendGroupItem.bind(this, oGroupInfo, oLastItem, bSuppressInvalidate);
 					oLastItem = aItems[aItems.length - 1];
 				}
 
 				if (!oLastItem || oGroupInfo.key !== oBinding.getGroup(oLastItem.getBindingContext(sModelName)).key) {
-					var oGroupHeader = (oBindingInfo.groupHeaderFactory) ? oBindingInfo.groupHeaderFactory(oGroupInfo) : null;
+					// get the groupHeader control groupHeaderFactory or create an sap.m.GroupHeaderListItem instance with the oGroupInfo
+					// required for setLastGroupHeader to correctly set the _oLastGroupHeader. The created groupHeader is later reused
+					var oGroupHeader = oBindingInfo.groupHeaderFactory ? oBindingInfo.groupHeaderFactory(oGroupInfo) : oControl.getGroupHeaderTemplate(oGroupInfo);
+
 					if (oControl.getGrowingDirection() == ListGrowingDirection.Upwards) {
 						this.applyPendingGroupItem();
+						oControl.setLastGroupHeader(oGroupHeader);
 						this._fnAppendGroupItem = this.appendGroupItem.bind(this, oGroupInfo, oGroupHeader, bSuppressInvalidate);
 					} else {
 						this.appendGroupItem(oGroupInfo, oGroupHeader, bSuppressInvalidate);
 					}
+				}
+
+				var oLastGroupHeader = oControl.getLastGroupHeader();
+				if (oLastGroupHeader) {
+					// required to update the group header aria-owns attribute
+					oLastGroupHeader.invalidate();
 				}
 			}
 
