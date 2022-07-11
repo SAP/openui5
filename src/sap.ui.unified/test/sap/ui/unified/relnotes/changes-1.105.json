@@ -3,6 +3,17 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "436bdaabc893e05f78ff1c2993f38e502cb7eb89",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: now select correct year",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280125046"
+          }
+        ]
+      },
+      {
         "id": "84b7ffad71ed8dd5c7ee29232c573e5585ceb030",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: adjust second header buttons tabindex",

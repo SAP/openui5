@@ -3,6 +3,17 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "4e450d4966dfb2142b9d0519ba28d0744830922a",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: showMessage method now correctly handles expression binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280120270"
+          }
+        ]
+      },
+      {
         "id": "a5bf97e8359576317b924153b5b3260b0ace1a37",
         "type": "FIX",
         "text": " sap.ui.integration.widgets.Card: Resolve parameters as binding"

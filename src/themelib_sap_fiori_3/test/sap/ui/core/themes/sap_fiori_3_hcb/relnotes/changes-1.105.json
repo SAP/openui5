@@ -3,6 +3,11 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "2aa851b94107c936e5a8f3fc8963b8c3a8817e27",
+        "type": "FIX",
+        "text": " Improve contrast ratios for chart labels"
+      },
+      {
         "id": "c91e9f6073875190bd79eef672be967be71ac155",
         "type": "FEATURE",
         "text": " sap.ui.unified.Calendar: all pickers support two calendar types"

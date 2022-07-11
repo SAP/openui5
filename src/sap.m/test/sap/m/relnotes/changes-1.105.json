@@ -3,6 +3,55 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "8f4f7b5f247547a838ace4de3f74ac322b969073",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Selected button is now correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280128023"
+          }
+        ]
+      },
+      {
+        "id": "ef5f0d60fab9c0af7bba175122b7cbd74ed85335",
+        "type": "FIX",
+        "text": " sap.m.Bar: make unit tests run on Belize theme"
+      },
+      {
+        "id": "067e4ba5d26e5736471ea709067cb2188cf48a1f",
+        "type": "FIX",
+        "text": " sap.m.Button: adjusting self reference",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270101986"
+          }
+        ]
+      },
+      {
+        "id": "e6a2afe7e43e27255a1574dd0caa2922432e54de",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Correct dates are now set to the calendar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280121072"
+          }
+        ]
+      },
+      {
+        "id": "d99985caa2de9b0adca1a670227edce5640ce0d0",
+        "type": "FIX",
+        "text": " sap.m.Button: adjust self reference",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270088701"
+          }
+        ]
+      },
+      {
         "id": "563fe3a1ce62fc653847a451f51ed7f96ef9fc81",
         "type": "FIX",
         "text": " sap.m.StepInput: qunit test adaptation",

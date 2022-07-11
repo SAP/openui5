@@ -3,6 +3,38 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "4ebdb057792d3108e2300dd4709f2b790051b9be",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#setProperty: reverting a time property does not fail",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002233972022"
+          }
+        ]
+      },
+      {
+        "id": "48feffd67c6439c3ab54a0e25340307663bc9ace",
+        "type": "FIX",
+        "text": " sap.ui.model.Binding#destroy: revert fix to ensure that binding is removed from the model's active bindings list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280121518"
+          }
+        ]
+      },
+      {
+        "id": "cd2c47ffc18063519fd0aabf3748ce8c88542f9d",
+        "type": "FIX",
+        "text": " sap.ui.performance: End pending Interactions"
+      },
+      {
+        "id": "48cb6db5f175849acc072abc036e2d5d75a1c06b",
+        "type": "FIX",
+        "text": " sap.ui.core.demokit.sample.TypeFloat: usage of preserveDecimals"
+      },
+      {
         "id": "1e701e10eb0ac957e6659a89ec489ccdd36e70fb",
         "type": "FIX",
         "text": " sap.ui.model.odata.v2.ODataModel: process transition message only once",
@@ -17,6 +49,11 @@
         "id": "a51bf68240731fc07c8b6076c0cdcfe38563f326",
         "type": "FEATURE",
         "text": " sap.ui.core.format.DateFormat: formatOptions for week calculation"
+      },
+      {
+        "id": "22e2d1bce1653d5814a3837a1c81fc8751b5ba73",
+        "type": "FEATURE",
+        "text": " TestRecorder: Add wdi5 dialect"
       },
       {
         "id": "9bc6a5ff453966172077abc28720b3e6f3f096d1",

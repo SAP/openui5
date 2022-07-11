@@ -3,6 +3,16 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "b9384d2cdf65c5b346ae61b68f8c1438df05183b",
+        "type": "FIX",
+        "text": " Demo Kit: Enable qunit assertion"
+      },
+      {
+        "id": "5073b5d58666ab6b4edd4fdf0ecc74734f9a8716",
+        "type": "FIX",
+        "text": " DemoKit: Correct version parsing"
+      },
+      {
         "id": "1b8e2e27ada446ed017c626f7e2ab42f16302605",
         "type": "FEATURE",
         "text": " Demo Kit: SAP Horizon theme applied"
