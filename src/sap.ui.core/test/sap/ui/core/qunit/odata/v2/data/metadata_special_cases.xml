@@ -59,6 +59,13 @@
 				<Property Name="DateTime" Type="Edm.DateTime" Precision="0" />
 				<Property Name="TimezoneID" Type="Edm.String" MaxLength="120"/>
 			</EntityType>
+			<EntityType Name="Employee" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ID" />
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="12" />
+				<Property Name="Time" Type="Edm.Time" Precision="0" />
+			</EntityType>
 			<Association Name="assoc_C_RSHMaintSchedSmltdOrdAndOps">
 				<End Type="special.cases.DummyType" Multiplicity="1"
 					Role="FromRole_assoc_C_RSHMaintSchedSmltdOrdAndOps"/>
@@ -89,6 +96,7 @@
 				<EntitySet Name="DummySet" EntityType="special.cases.DummyType"/>
 				<EntitySet Name="DateTimeWithTimezoneSet"
 					EntityType="special.cases.DateTimeWithTimezone"/>
+				<EntitySet Name="Employees" EntityType="special.cases.Employee" />
 				<AssociationSet Name="assoc_C_RSHMaintSchedSmltdOrdAndOps"
 					Association="special.cases.assoc_C_RSHMaintSchedSmltdOrdAndOps">
 					<End EntitySet="DummySet"

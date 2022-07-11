@@ -16029,4 +16029,80 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: It has to be possible to change a property with Edm.Time type to a different value
+	// and after that back again to the value returned by the server.
+	// Case: 223397/2022 (002075129500002233972022)
+	QUnit.test("Reverting Edm.Time value is possible", function (assert) {
+		var oModel = createSpecialCasesModel({defaultBindingMode : BindingMode.TwoWay}),
+			sView = '\
+<FlexBox id="objectPage" binding="{/Employees(\'Foo\')}">\
+	<TimePicker id="time" value="{\
+		formatOptions : {pattern: \'HH:mm\'},\
+		path : \'Time\',\
+		type : \'sap.ui.model.odata.type.Time\'\
+	}" maskMode="On"/>\
+</FlexBox>',
+		that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("Employees('Foo')", {
+				ID : "Foo",
+				Time : { // parse from "PT00H01M00S"
+					ms : 60000,
+					__edmType : "Edm.Time"
+				}
+			})
+			.expectValue("time", "00:01");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectValue("time", "00:02");
+
+			// code under test
+			that.oView.byId("time").setValue("00:02");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(oModel.getProperty("/Employees('Foo')/Time"),
+				{ms : 120000, __edmType : "Edm.Time"}, "PT00H02M00S");
+
+			that.expectValue("time", "00:01");
+
+			// code under test
+			that.oView.byId("time").setValue("00:01");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(oModel.getProperty("/Employees('Foo')/Time"),
+				{ms : 60000, __edmType : "Edm.Time"}, "PT00H01M00S");
+
+			that.expectValue("time", "00:03");
+
+			// code under test
+			that.oView.byId("time").setValue("00:03");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(oModel.getProperty("/Employees('Foo')/Time"),
+				{ms : 180000, __edmType : "Edm.Time"}, "PT00H03M00S");
+
+			that.expectRequest("Employees('Foo')", {
+					ID : "Foo",
+					Time : { // parsed value for "PT00H03M00S"
+						ms : 180000,
+						__edmType : "Edm.Time"
+					}
+				});
+
+			// code under test - reading the same value as locally set from the server
+			that.oView.byId("objectPage").getElementBinding().refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(oModel.getProperty("/Employees('Foo')/Time"),
+				{ms : 180000, __edmType : "Edm.Time"}, "PT00H03M00S");
+			assert.strictEqual(oModel.hasPendingChanges(), false);
+		});
+	});
 });
