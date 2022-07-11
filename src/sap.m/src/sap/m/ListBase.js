@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/base/strings/capitalize",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
+	"sap/ui/core/InvisibleMessage",
 	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
 	"sap/ui/dom/jquery/Selectors", // jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Aria" // jQuery Plugin "addAriaLabelledBy", "removeAriaLabelledBy"
@@ -40,7 +41,8 @@ function(
 	ListBaseRenderer,
 	capitalize,
 	jQuery,
-	Log
+	Log,
+	InvisibleMessage
 ) {
 	"use strict";
 
@@ -1524,10 +1526,15 @@ function(
 			return;
 		}
 
-		if (sMode === ListMode.MultiSelect) {
+		if (sMode === ListMode.MultiSelect || (this._bSelectionMode && bSelected)) {
 			this._fireSelectionChangeEvent([oListItem]);
-		} else if (this._bSelectionMode && bSelected) {
-			this._fireSelectionChangeEvent([oListItem]);
+
+			// announce the selection state changes
+			// but only announce if the document.activeElement is the listItem control, else selection control should announce the selection change
+			if (this.getAriaRole() === "list" && document.activeElement === oListItem.getDomRef()) {
+				var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+				InvisibleMessage.getInstance().announce(bSelected ? oResourceBundle.getText("LIST_ITEM_SELECTED") : oResourceBundle.getText("LIST_ITEM_NOT_SELECTED"), "Assertive");
+			}
 		}
 	};
 
@@ -2022,25 +2029,26 @@ function(
 			return;
 		}
 
-		var oItemDomRef = oItem.getDomRef(),
-			mPosition = this.getAccessbilityPosition(oItem);
+		var oItemDomRef = oItem.getDomRef();
 
 		if (!oItem.getContentAnnouncement) {
 			// let the screen reader announce the whole content
 			this.getNavigationRoot().setAttribute("aria-activedescendant", oItemDomRef.id);
-			oItemDomRef.setAttribute("aria-posinset", mPosition.posInset);
-			oItemDomRef.setAttribute("aria-setsize", mPosition.setSize);
 		} else {
 			// prepare the announcement for the screen reader
 			var oAccInfo = oItem.getAccessibilityInfo(),
 				oBundle = Core.getLibraryResourceBundle("sap.m"),
-				sDescription = oAccInfo.type + " . ";
+				sDescription = "";
 
-			if (!Device.browser.chrome || this.isA("sap.m.Table")) {
+			// when items have the role="listitem", aria-roledescription attribute containing the "type" info is already added to DOM,
+			// hence there is no need to add this information again to the custom announcement
+			if (this.getAriaRole() === "listbox") {
+				sDescription += oAccInfo.type + " . ";
+			}
+
+			if (this.isA("sap.m.Table")) {
+				var mPosition = this.getAccessbilityPosition(oItem);
 				sDescription += oBundle.getText("LIST_ITEM_POSITION", [mPosition.posInset, mPosition.setSize]) + " . ";
-			} else {
-				oItemDomRef.setAttribute("aria-posinset", mPosition.posInset);
-				oItemDomRef.setAttribute("aria-setsize", mPosition.setSize);
 			}
 
 			sDescription += oAccInfo.description;
@@ -2859,6 +2867,38 @@ function(
 				aClassList.toggle("sapMSticky" + iNewStickyValue, !!iNewStickyValue);
 			}
 		}
+	};
+
+	/**
+	 * Return the <code>role</code> attribute of the control.
+	 * @returns {string} the <code>role</code> attribute of the control
+	 * @protected
+	 * @ui5-restricted
+	 * @since 1.105
+	 */
+	ListBase.prototype.getAriaRole = function() {
+		return "list";
+	};
+
+	/**
+	 * This method is a hook for the RenderManager that gets called
+	 * during the rendering of child Controls. It allows to add,
+	 * remove and update existing accessibility attributes (ARIA) of
+	 * those controls.
+	 *
+	 * @param {sap.ui.core.Control} oElement - The Control that gets rendered by the RenderManager
+	 * @param {object} mAriaProps - The mapping of "aria-" prefixed attributes
+	 * @protected
+	 */
+	ListBase.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
+		if (!oElement.isA("sap.m.ListItemBase") || oElement.isGroupHeader()) {
+			return;
+		}
+
+		// add aria-posinset & aria-setsize attributes to listitem DOM (not for group headers)
+		var mPosition = this.getAccessbilityPosition(oElement);
+		mAriaProps.posinset = mPosition.posInset;
+		mAriaProps.setsize = mPosition.setSize;
 	};
 
 	return ListBase;

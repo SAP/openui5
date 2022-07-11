@@ -1136,6 +1136,9 @@ sap.ui.define([
 		sut.placeAt("qunit-fixture");
 		Core.applyChanges();
 
+		assert.strictEqual(sut.getAriaRole(), "", "No role attribute returned for table control");
+		assert.notOk(sut.$("listUl").attr("role"), "role attribute not applied in DOM");
+
 		assert.ok(sut.$().length > 0, "Table in DOM tree");
 
 		assert.equal(sut.$().attr("role"), "application", "Container has correct ARIA role");

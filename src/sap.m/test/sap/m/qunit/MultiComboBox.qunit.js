@@ -5494,6 +5494,16 @@ sap.ui.define([
 		oMultiComboBox.setSelectedKeys(["Item1", "Item2"]);
 		oInfo = oMultiComboBox.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, "Item1 Item2", "Description");
+
+		oMultiComboBox.open();
+		this.clock.tick(10);
+
+		var oList = oMultiComboBox._getList();
+		assert.ok(oList, "List control available");
+		assert.strictEqual(oList.$("listUl").attr("role"), "listbox", "role='listbox' applied to the list");
+
+		oMultiComboBox.close();
+		this.clock.restore();
 		oMultiComboBox.destroy();
 	});
 

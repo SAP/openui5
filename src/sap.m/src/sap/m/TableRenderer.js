@@ -300,13 +300,6 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 	};
 
 	/**
-	 * returns aria accessibility role
-	 */
-	TableRenderer.getAriaRole = function(oControl) {
-		return "";
-	};
-
-	/**
 	 * generate table columns
 	 */
 	TableRenderer.renderListHeadAttributes = function(rm, oControl) {

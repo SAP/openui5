@@ -4610,6 +4610,38 @@ sap.ui.define([
 		oInputWithValueState.destroy();
 	});
 
+	QUnit.test("Check list control - 'role' attribute", function(assert) {
+		var aNames = ["abcTom", "abcPhilips", "abcAnna", "abcJames"],
+			aDescription = ["Heidelberg", "Mannheim", "Paris", "London"],
+			aEnabled = [true, false, true, false],
+			aItemAdded = [],
+			i;
+
+		oInput = new Input("input", {
+			showSuggestion: true
+		});
+		oInput.placeAt("content");
+		oCore.applyChanges();
+
+		oInput.attachSuggest(function(){
+			for (i = 0; i < aNames.length; i++){
+				if (!aItemAdded.includes(aNames[i])){
+					oInput.addSuggestionItem(new ListItem({text: aNames[i], additionalText: aDescription[i], enabled: aEnabled[i]}));
+					aItemAdded.push(aNames[i]);
+				}
+			}
+		});
+
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.trigger("focus").val("abc").trigger("input");
+
+		this.clock.tick(300);
+		var oList = oInput._getSuggestionsPopover().getItemsContainer();
+		assert.strictEqual(oList.$("listUl").attr("role"), "listbox", "role='listbox' applied to the List control DOM");
+
+		oInput.destroy();
+	});
+
 	QUnit.module("Cloning", {
 		beforeEach: function () {
 			this.oTabularInputToClone = createInputWithTabularSuggestions();

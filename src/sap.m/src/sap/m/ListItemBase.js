@@ -263,6 +263,9 @@ function(
 	// defines the root tag name for rendering purposes
 	ListItemBase.prototype.TagName = "li";
 
+	// enable the ACC announcement for "not selected"
+	ListItemBase.prototype._bAnnounceNotSelected = true;
+
 	// internal active state of the listitem
 	ListItemBase.prototype.init = function() {
 		this._active = false;
@@ -814,7 +817,10 @@ function(
 	// Updates the selected state of the DOM
 	ListItemBase.prototype.updateSelectedDOM = function(bSelected, $This) {
 		$This.toggleClass("sapMLIBSelected", bSelected);
-		$This.attr("aria-selected", bSelected);
+
+		if ($This.attr("role") !== "listitem") {
+			$This.attr("aria-selected", bSelected);
+		}
 	};
 
 	ListItemBase.prototype.setParent = function(oParent) {

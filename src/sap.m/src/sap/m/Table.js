@@ -917,11 +917,9 @@ sap.ui.define([
 	 */
 	Table.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
 		if (oElement == this._clearAllButton) {
-			var oBundle = Core.getLibraryResourceBundle("sap.m");
-			mAriaProps.label = oBundle.getText("TABLE_ICON_DESELECT_ALL");
+			mAriaProps.label = Core.getLibraryResourceBundle("sap.m").getText("TABLE_ICON_DESELECT_ALL");
 		} else if (oElement == this._selectAllCheckBox) {
-			var oBundle = Core.getLibraryResourceBundle("sap.m");
-			mAriaProps.label = oBundle.getText("TABLE_CHECKBOX_SELECT_ALL");
+			mAriaProps.label = Core.getLibraryResourceBundle("sap.m").getText("TABLE_CHECKBOX_SELECT_ALL");
 		}
 	};
 
@@ -1396,6 +1394,10 @@ sap.ui.define([
 		for (var oLast = oDomRef.lastChild.previousSibling; oLast && !oLast.clientWidth; oLast = oLast.previousSibling) {/* empty */}
 		jQuery(oFirst).addClass("sapMTblFirstVisibleCell");
 		jQuery(oLast).addClass("sapMTblLastVisibleCell");
+	};
+
+	Table.prototype.getAriaRole = function() {
+		return "";
 	};
 
 	return Table;

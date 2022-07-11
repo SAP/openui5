@@ -475,6 +475,10 @@ function(
 		return false;
 	};
 
+	Tree.prototype.getAriaRole = function() {
+		return "tree";
+	};
+
 	return Tree;
 
 });

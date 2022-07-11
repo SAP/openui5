@@ -1452,6 +1452,9 @@ sap.ui.define([
 				return;
 			}
 
+			// apply aria role="listbox" to List control
+			oList.applyAriaRole("listbox");
+
 			// configure the list
 			oList.setMode(ListMode.SingleSelectMaster)
 				.addStyleClass(oRenderer.CSS_CLASS_COMBOBOXBASE + "List")

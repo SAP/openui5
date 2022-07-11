@@ -1169,7 +1169,7 @@ sap.ui.define([
 		app.back();
 		assert.ok(document.getElementById("sapMList011-listUl"), "noDataList should be rendered");
 		assert.ok(document.getElementById("sapMList011-nodata-text").textContent == "Forgot something???", "noDataList custom text should be rendered");
-		assert.ok(jQuery("#sapMList011-nodata").attr("role") == "option", "ARIA role of No Data Entry");
+		assert.ok(jQuery("#sapMList011-nodata").attr("role") == "listitem", "ARIA role of No Data Entry");
 		app.to("selectionList", "show");
 		Core.applyChanges();
 	});
@@ -2249,7 +2249,7 @@ sap.ui.define([
 			assert.equal(sAccText, aState.join(" . "), sDescription + ": '" + sAccText + "'");
 		}
 
-		aState = [sContent];
+		aState = [sContent, oRb.getText("LIST_ITEM_NOT_SELECTED")];
 		check("Content only");
 
 		oItem.setHighlightText("<HIGHLIGHT>");
@@ -2264,6 +2264,7 @@ sap.ui.define([
 		check("Highlight + Content");
 
 		oItem.setSelected(true);
+		aState.pop();
 		aState.splice(0, 0, oRb.getText("LIST_ITEM_SELECTED"));
 		check("Selected + Highlight + Content");
 
@@ -2306,16 +2307,12 @@ sap.ui.define([
 		oItem.setUnread(false);
 		sGroup = "";
 		bShowUnread = false;
-		aState = [sContent];
+		aState = [sContent, oRb.getText("LIST_ITEM_NOT_SELECTED")];
 		check("Content only");
 
 		oItem.setTooltip("<TOOLTIP>");
 		aState.splice(1, 0, "<TOOLTIP>");
 		check("Content + Tooltip");
-
-		oItem._bAnnounceNotSelected = true;
-		aState.splice(3, 0, oRb.getText("LIST_ITEM_NOT_SELECTED"));
-		check("Enhanced Selection (Item Selectable, Not Selected): Content + Tooltip + Not Selected");
 
 		oItem.setSelected(true);
 		oItem.setTooltip(null);
@@ -2337,6 +2334,127 @@ sap.ui.define([
 		check("Enhanced Selection (Item Selectable, Not Selected): Content + Not Selected");
 
 		oItem.destroy();
+	});
+
+	QUnit.module("ARIA role", {
+		beforeEach: function() {
+			this.oSLI = new StandardListItem();
+			this.oSelectedSLI = new StandardListItem();
+			this.oCLI = new CustomListItem();
+			this.oDLI = new DisplayListItem();
+			this.oILI = new InputListItem();
+			this.oALI = new ActionListItem();
+
+			this.oList = new List({
+				mode: "MultiSelect",
+				items: [
+					this.oSLI,
+					this.oSelectedSLI,
+					this.oCLI,
+					this.oDLI,
+					this.oILI,
+					this.oALI
+				]
+			});
+		},
+		afterEach: function() {
+			this.oList.destroy();
+		}
+	});
+
+	QUnit.test("getAriaRole", function(assert) {
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		assert.strictEqual(this.oList.getAriaRole(), "list", "'list' is the default role");
+		this.oList.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// list check
+		var oListDomRef = this.oList.getDomRef("listUl");
+		assert.strictEqual(oListDomRef.getAttribute("role"), this.oList.getAriaRole(), "role='list' applied in DOM");
+		assert.notOk(oListDomRef.hasAttribute("aria-multiselectable"), "aria-multiselectable attribute not added to DOM, since role='list'");
+
+		// StandardListItem check
+		var oSLIDomRef = this.oSLI.getDomRef();
+		assert.strictEqual(oSLIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
+		assert.strictEqual(oSLIDomRef.getAttribute("aria-roledescription"), oResourceBundle.getText("ACC_CTR_TYPE_OPTION"), "correct aria-roledescription added");
+		assert.strictEqual(oSLIDomRef.getAttribute("aria-posinset"), "1", "correct aria-posinset. Added by default");
+		assert.strictEqual(oSLIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
+		assert.notOk(oSLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
+		this.oSLI.setSelected(true);
+		Core.applyChanges();
+		assert.notOk(oSLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
+		var oSelectedSLIDomRef = this.oSelectedSLI.getDomRef();
+		assert.notOk(oSelectedSLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added although the item is selected, since role='listitem'");
+
+		// CustomListItem check
+		var oCLIDomRef = this.oCLI.getDomRef();
+		assert.strictEqual(oCLIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
+		assert.strictEqual(oCLIDomRef.getAttribute("aria-roledescription"), oResourceBundle.getText("ACC_CTR_TYPE_OPTION"), "correct aria-roledescription added");
+		assert.strictEqual(oCLIDomRef.getAttribute("aria-posinset"), "3", "correct aria-posinset. Added by default");
+		assert.strictEqual(oCLIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
+		assert.notOk(oCLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
+
+		// DisplayListItem check
+		var oDLIDomRef = this.oDLI.getDomRef();
+		assert.strictEqual(oDLIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
+		assert.strictEqual(oDLIDomRef.getAttribute("aria-roledescription"), oResourceBundle.getText("ACC_CTR_TYPE_OPTION"), "correct aria-roledescription added");
+		assert.strictEqual(oDLIDomRef.getAttribute("aria-posinset"), "4", "correct aria-posinset. Added by default");
+		assert.strictEqual(oDLIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
+		assert.notOk(oDLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
+
+		// InputListItem check
+		var oILIDomRef = this.oILI.getDomRef();
+		assert.strictEqual(oILIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
+		assert.strictEqual(oILIDomRef.getAttribute("aria-roledescription"), oResourceBundle.getText("ACC_CTR_TYPE_OPTION"), "correct aria-roledescription added");
+		assert.strictEqual(oILIDomRef.getAttribute("aria-posinset"), "5", "correct aria-posinset. Added by default");
+		assert.strictEqual(oILIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
+		assert.notOk(oILIDomRef.hasAttribute("aria-selected"), "aria-selected attribute not added, since role='listitem'");
+
+		// ActionListItem check
+		var oALIDomRef = this.oALI.getDomRef();
+		assert.strictEqual(oALIDomRef.getAttribute("role"), "listitem", "role='listitem' applied to list items");
+		assert.strictEqual(oALIDomRef.getAttribute("aria-roledescription"), oResourceBundle.getText("ACC_CTR_TYPE_OPTION"), "correct aria-roledescription added");
+		assert.strictEqual(oALIDomRef.getAttribute("aria-posinset"), "6", "correct aria-posinset. Added by default");
+		assert.strictEqual(oALIDomRef.getAttribute("aria-setsize"), "6", "correct aria-setsize. Added by default");
+	});
+
+	QUnit.test("applyAriaRole", function(assert) {
+		// apply role listbox to the list control
+		this.oList.applyAriaRole("listbox");
+		this.oList.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// list check
+		var oListDomRef = this.oList.getDomRef("listUl");
+		assert.strictEqual(this.oList.getAriaRole(), "listbox", "'listbox' is the default role");
+		assert.strictEqual(oListDomRef.getAttribute("role"), this.oList.getAriaRole(), "role='listbox' applied in DOM");
+		assert.ok(oListDomRef.hasAttribute("aria-multiselectable"), "aria-multiselectable attribute added to DOM, since role='listbox'");
+
+		// StandardListItem check
+		var oSLIDomRef = this.oSLI.getDomRef();
+		assert.strictEqual(oSLIDomRef.getAttribute("role"), "option", "role='option' applied to list items");
+		assert.ok(oSLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute added, since role='option'");
+		var oSelectedSLIDomRef = this.oSelectedSLI.getDomRef();
+		assert.ok(oSelectedSLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute, since role='option'");
+
+		// CustomListItem check
+		var oCLIDomRef = this.oCLI.getDomRef();
+		assert.strictEqual(oCLIDomRef.getAttribute("role"), "option", "role='option' applied to list items");
+		assert.ok(oCLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute added, since role='option'");
+
+		// DisplayListItem check
+		var oDLIDomRef = this.oDLI.getDomRef();
+		assert.strictEqual(oDLIDomRef.getAttribute("role"), "option", "role='option' applied to list items");
+		assert.ok(oDLIDomRef.hasAttribute("aria-selected"), "aria-selected attribute added, since role='option'");
+
+		// InputListItem check
+		var oILIDomRef = this.oILI.getDomRef();
+		assert.strictEqual(oILIDomRef.getAttribute("role"), "option", "role='option' applied to list items");
+		assert.ok(oILIDomRef.hasAttribute("aria-selected"), "aria-selected attribute added, since role='option'");
+
+		// ActionListItem check
+		var oALIDomRef = this.oALI.getDomRef();
+		assert.strictEqual(oALIDomRef.getAttribute("role"), "option", "role='option' applied to list items");
 	});
 
 });

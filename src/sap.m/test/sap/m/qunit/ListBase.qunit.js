@@ -35,11 +35,12 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/plugins/DataStateIndicator",
 	"sap/ui/layout/VerticalLayout",
-	"sap/m/IllustratedMessage"
+	"sap/m/IllustratedMessage",
+	"sap/ui/core/InvisibleMessage"
 ], function(Core, createAndAppendDiv, jQuery,
 			qutils, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, ThemeParameters, library, StandardListItem, App, Page, ListBase, List, Toolbar,
 			ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator,
-			VerticalLayout, IllustratedMessage) {
+			VerticalLayout, IllustratedMessage, InvisibleMessage) {
 		"use strict";
 		jQuery("#qunit-fixture").attr("data-sap-ui-fastnavgroup", "true");
 
@@ -2716,7 +2717,7 @@ sap.ui.define([
 			assert.strictEqual(oList.isGrouped(), true, "Grouping enabled");
 			assert.strictEqual(oList.getAccessibilityStates(), oBundle.getText("LIST_MULTISELECTABLE") + " . " + oBundle.getText("LIST_GROUPED") + " . ", "Punctuation added to Multi SelectMode");
 
-			assert.strictEqual(oListItem.getAccessibilityInfo().description,"Title . Description",  "Content annoucement for Standard List Item with Punctuation" );
+			assert.strictEqual(oListItem.getAccessibilityInfo().description, "Title . Description . Not Selected",  "Content annoucement for Standard List Item with Punctuation" );
 			oListItem.setSelected(true);
 			oListItem.setHighlight("Information");
 			oListItem.setNavigated(true);
@@ -2739,6 +2740,43 @@ sap.ui.define([
 			oInputListItem.setNavigated(true);
 			oInputListItem.setType("Active");
 			assert.strictEqual(oInputListItem.getAccessibilityInfo().description,oBundle.getText("LIST_ITEM_SELECTED") + " . " + oInputListItem.getHighlight() + " . " + oBundle.getText("LIST_ITEM_ACTIVE") + " . " + "Label . Input Content",  "Content announcement for Standard List Item with Punctuation" );
+		});
+
+		QUnit.test("test content announcement update after selection changes", function(assert) {
+			var oList = new List({
+				mode: "MultiSelect",
+				items: [
+					new StandardListItem({
+						title: "Title",
+						description: "Description"
+					})
+				]
+			});
+
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			var oItem = oList.getItems()[0],
+				oRb = Core.getLibraryResourceBundle("sap.m"),
+				fnInvisibleMessageAnnounce = sinon.spy(InvisibleMessage.prototype, "announce");
+
+			// item is focused
+			oItem.focus();
+			assert.ok(document.getElementById(document.activeElement.getAttribute("aria-labelledby")).innerHTML.indexOf(oRb.getText("LIST_ITEM_NOT_SELECTED")) > -1, "'Not Selected', is added to the acc text");
+			qutils.triggerKeydown(document.activeElement, KeyCodes.SPACE);
+			Core.applyChanges();
+			assert.ok(fnInvisibleMessageAnnounce.calledWith(oRb.getText("LIST_ITEM_SELECTED"), "Assertive"), "InvisibleMessage#announce method called with 'Selected' & 'Assertive'");
+
+			fnInvisibleMessageAnnounce.resetHistory();
+
+			// selection control is focused
+			oItem._oMultiSelectControl.focus();
+			qutils.triggerKeydown(document.activeElement, KeyCodes.SPACE);
+			Core.applyChanges();
+			assert.ok(fnInvisibleMessageAnnounce.notCalled, "InvisibleMessage#announce method not called, since focused element is the selection control");
+
+			fnInvisibleMessageAnnounce.restore();
+			oList.destroy();
 		});
 
 		QUnit.test("InputListItem: inner control should have ariaLabelledBy association", function(assert) {
@@ -2838,6 +2876,43 @@ sap.ui.define([
 			assert.notOk(oList.getSelectedItems().length, "multiSelectMode: ClearAll, Items are deselected when 'ctrl+shift+A' is pressed");
 			oList.selectAll();
 			assert.notOk(oList.getSelectedItems().length, "multiSelectMode: ClearAll, selectAll API is disabled");
+		});
+
+		QUnit.test("Accessibility announcement for role='list'", function(assert) {
+			var oSLI = new StandardListItem({
+				title: "Title",
+				description: "Description"
+			});
+			oList.addItem(oSLI);
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			oSLI.focus();
+			var $SLI = oSLI.$();
+			var oRb = Core.getLibraryResourceBundle("sap.m");
+			assert.strictEqual($SLI.attr("aria-roledescription"), oRb.getText("ACC_CTR_TYPE_OPTION"), "aria-roledescription contains the expected type info");
+			var oCustomAnnouncement = document.getElementById($SLI.attr("aria-labelledby")),
+				aTexts = oCustomAnnouncement.innerText.split(" . ");
+			assert.ok(aTexts.indexOf(oRb.getText("ACC_CTR_TYPE_OPTION")) === -1, "Type info is not added to custom announcement");
+		});
+
+		QUnit.test("Accessibility announcement for role='listbox'", function(assert) {
+			var oSLI = new StandardListItem({
+				title: "Title",
+				description: "Description"
+			});
+			oList.addItem(oSLI);
+			oList.applyAriaRole("listbox");
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			oSLI.focus();
+			var $SLI = oSLI.$();
+			var oRb = Core.getLibraryResourceBundle("sap.m");
+			assert.notOk($SLI.attr("aria-roledescription"), "aria-roledescription not added to the list item DOM");
+			var oCustomAnnouncement = document.getElementById($SLI.attr("aria-labelledby")),
+				aTexts = oCustomAnnouncement.innerText.split(" . ");
+			assert.ok(aTexts.indexOf(oRb.getText("ACC_CTR_TYPE_OPTION")) > -1, "Type info is added to custom announcement");
 		});
 
 		QUnit.module("Context Menu", {

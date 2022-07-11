@@ -263,6 +263,42 @@ sap.ui.define([
 		assert.equal(oTreeItem.getAccessibilityInfo().description, sSelected + " . " + "Node2", "Custom announcement is added with current state");
 	});
 
+	QUnit.test("applyAriaRole should not have effect on Tree control", function(assert) {
+		var oMyTree = new Tree(),
+			oTemplate = new StandardTreeItem({
+				title: "{title}"
+			}),
+			aTreeData = [{
+				"title": "C",
+				"titles": [
+					{"title": "Subtitle C"}
+				]
+			}, {
+				"title": "B",
+				"titles": [
+					{"title": "SubTitle B"}
+				]
+			}, {
+				"title": "A"
+			}];
+
+		var oModel = new JSONModel();
+		oModel.setData(aTreeData);
+		oMyTree.setModel(oModel);
+
+		oMyTree.bindItems({
+			path: "/",
+			template: oTemplate
+		});
+
+		assert.strictEqual(oMyTree.getAriaRole(), "tree", "role='tree' returned");
+
+		oMyTree.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		assert.strictEqual(oMyTree.getDomRef("listUl").getAttribute("role"), oMyTree.getAriaRole(), "role='tree' not affected in DOM");
+		assert.strictEqual(oMyTree.getItems()[0].getDomRef().getAttribute("role"), "treeitem", "role='treeitem', tree item is also not affected in DOM");
+	});
+
 	QUnit.module("Expand/Collapse");
 
 	QUnit.test("Expand", function(assert){

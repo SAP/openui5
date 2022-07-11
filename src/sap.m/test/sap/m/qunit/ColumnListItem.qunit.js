@@ -360,6 +360,26 @@ sap.ui.define([
 		table.destroy();
 	});
 
+	QUnit.test("test getAriaRole", function(assert) {
+		var sut = new ColumnListItem({
+			cells : [new Text({
+				text: "Cell1"
+			})]
+		});
+
+		var table = new Table({
+			mode: "MultiSelect",
+			items: [sut]
+		});
+
+		table.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.notOk(sut.$().attr("role"), "role attribute not added");
+
+		table.destroy();
+	});
+
 	QUnit.module("Dummy Column", {
 		beforeEach: function() {
 			this.sut = new ColumnListItem({
