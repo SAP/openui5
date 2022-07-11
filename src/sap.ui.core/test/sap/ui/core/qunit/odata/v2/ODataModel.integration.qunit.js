@@ -8622,7 +8622,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			rows="{path : \'to_AllwncReqToFe\', parameters : \
 				{countMode : \'Inline\', groupId : \'myGroup\', usePreliminaryContext : true}}"\
 			visibleRowCount="1"\
-			visibleRowCountMode="Fixed" \>\
+			visibleRowCountMode="Fixed">\
 		<Text id="orgID" text="{ForceElementOrgID}" />\
 	</t:TreeTable>\
 </FlexBox>';
@@ -8685,7 +8685,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
 		}"\
 		visibleRowCount="1"\
-		visibleRowCountMode="Fixed" \>\
+		visibleRowCountMode="Fixed">\
 	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
 </t:TreeTable>',
 			that = this;
@@ -8759,7 +8759,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				path : \'to_C_RSHMaintSchedSmltdOrdAndOp\'\
 			}"\
 			visibleRowCount="1"\
-			visibleRowCountMode="Fixed" \>\
+			visibleRowCountMode="Fixed">\
 		<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
 	</t:TreeTable>\
 </FlexBox>',
@@ -9152,7 +9152,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		}"\
 		threshold="0"\
 		visibleRowCount="2"\
-		visibleRowCountMode="Fixed" \>\
+		visibleRowCountMode="Fixed">\
 	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
 </t:TreeTable>',
 			that = this;
@@ -9267,7 +9267,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
 		}"\
 		visibleRowCount="2"\
-		visibleRowCountMode="Fixed" \>\
+		visibleRowCountMode="Fixed">\
 	<Text text="{MaintenanceOrder}" />\
 </t:TreeTable>';
 
@@ -16185,7 +16185,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
 		visibleRowCount="3"\
-		visibleRowCountMode="Fixed" \>\
+		visibleRowCountMode="Fixed">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -16359,7 +16359,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
 		visibleRowCount="3"\
-		visibleRowCountMode="Fixed" \>\
+		visibleRowCountMode="Fixed">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
@@ -16533,7 +16533,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
 		visibleRowCount="3"\
-		visibleRowCountMode="Fixed" \>\
+		visibleRowCountMode="Fixed">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
 </t:TreeTable>',
 			that = this;
