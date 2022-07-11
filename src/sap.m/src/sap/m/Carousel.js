@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/ui/events/F6Navigation",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/mobify-carousel",
-	"sap/ui/core/IconPool"
+	"sap/ui/core/IconPool",
+	"./CarouselLayout"
 ], function (
 	library,
 	Core,
