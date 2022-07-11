@@ -7025,4 +7025,34 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(ODataModel.prototype.hasPendingChanges.call(oModel), false);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getPendingChanges", function (assert) {
+		var oBinding1 = {_getPendingChanges : function () {}},
+			mChangedEntitiesCopy = {},
+			oHelperMock = this.mock(_Helper),
+			oModel = {
+				mChangedEntities : "~changedEntities",
+				getBindings : function () {}
+			};
+
+		oHelperMock.expects("merge")
+			.withExactArgs({}, "~changedEntities")
+			.returns(mChangedEntitiesCopy);
+		this.mock(oModel).expects("getBindings")
+			.withExactArgs()
+			.returns([{/*oBinding0*/}, oBinding1]);
+		this.mock(oBinding1).expects("_getPendingChanges")
+			.withExactArgs()
+			.returns("~changedTreeEntities");
+		oHelperMock.expects("merge")
+			.withExactArgs(sinon.match.same(mChangedEntitiesCopy), "~changedTreeEntities")
+			.callsFake(function (mChangedEntitiesCopy0) {
+				mChangedEntitiesCopy0.foo = "bar";
+				mChangedEntitiesCopy0.baz = null;
+			});
+
+		// code under test
+		assert.deepEqual(ODataModel.prototype.getPendingChanges.call(oModel), {foo : "bar"});
+	});
 });
