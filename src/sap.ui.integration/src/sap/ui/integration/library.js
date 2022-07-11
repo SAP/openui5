@@ -27,7 +27,13 @@ sap.ui.define([
 	var thisLib = sap.ui.getCore().initLibrary({
 		name: "sap.ui.integration",
 		version: "${version}",
-		dependencies: ["sap.ui.core", "sap.f", "sap.m"],
+		dependencies: [
+			"sap.ui.core",
+			"sap.f",
+			"sap.m",
+			"sap.ui.unified",
+			"sap.ui.layout"
+		],
 		types: [
 			"sap.ui.integration.CardActionType",
 			"sap.ui.integration.CardDataMode",
