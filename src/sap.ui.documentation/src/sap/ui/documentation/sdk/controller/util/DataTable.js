@@ -396,7 +396,7 @@ sap.ui.define([
 				that.API = this.api();
 
 				// Create new table row to append filters
-				var oTableHeader = $('#' + sId + ' thead'),
+				var oTableHeader = $('#' + sId + ' > thead'),
 					oNewTableRow = $('<tr/>'),
 					oFilterHeader,
 					oHighlighter,
