@@ -134,6 +134,9 @@ sap.ui.define([
 		 *    }
 		 * </pre>
 		 *
+		 * <b>Note:</b> {@link topic:b11d853a8e784db6b2d210ef57b0f7d7 Requiring modules in XML} will result in side effects that might cause the XMLComposite to not work properly.
+		 * We suggest you require the needed modules inside the JavaScript coding of the class extending the XMLComposite.
+		 *
 		 * @see sap.ui.core.Control
 		 * @see sap.ui.core.Fragment
 		 *
