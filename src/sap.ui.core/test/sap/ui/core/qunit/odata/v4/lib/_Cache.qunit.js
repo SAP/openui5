@@ -9946,6 +9946,7 @@ sap.ui.define([
 			oCache = _Cache.create(this.oRequestor, "Employees", {}),
 			oCacheMock = this.mock(oCache),
 			oGroupLock = {},
+			bHasLateQueryOptions = "iTop" in oFixture, // just to have some variance
 			oHelperMock = this.mock(_Helper),
 			mLateQueryOptions = {},
 			mQueryOptionsCopy = {
@@ -9959,7 +9960,7 @@ sap.ui.define([
 			},
 			mTypes = {};
 
-		oCache.mLateQueryOptions = mLateQueryOptions;
+		oCache.mLateQueryOptions = bHasLateQueryOptions ? mLateQueryOptions : undefined;
 		Object.keys(oFixture.mKeptAliveElementsByPredicate).forEach(function (sPredicate) {
 			var oElement = oFixture.mKeptAliveElementsByPredicate[sPredicate];
 
@@ -9984,7 +9985,7 @@ sap.ui.define([
 		// calculateKeptElementQuery
 		oHelperMock.expects("merge").withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
 			.returns(mQueryOptionsCopy);
-		oHelperMock.expects("aggregateExpandSelect")
+		oHelperMock.expects("aggregateExpandSelect").exactly(bHasLateQueryOptions ? 1 : 0)
 			.withExactArgs(sinon.match.same(mQueryOptionsCopy),
 				sinon.match.same(oCache.mLateQueryOptions));
 		this.mock(oCache.oRequestor).expects("buildQueryString")

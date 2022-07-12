@@ -2454,7 +2454,9 @@ sap.ui.define([
 			var aKeyFilters,
 				mQueryOptions = _Helper.merge({}, that.mQueryOptions);
 
-			_Helper.aggregateExpandSelect(mQueryOptions, that.mLateQueryOptions);
+			if (that.mLateQueryOptions) {
+				_Helper.aggregateExpandSelect(mQueryOptions, that.mLateQueryOptions);
+			}
 			delete mQueryOptions.$count;
 			delete mQueryOptions.$orderby;
 			delete mQueryOptions.$search;
