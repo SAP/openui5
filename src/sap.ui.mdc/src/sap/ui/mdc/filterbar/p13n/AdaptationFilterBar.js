@@ -218,7 +218,7 @@ sap.ui.define([
 	 * @returns {Promise} A Promise which resolves once all FilterFields are ready and added to the <code>filterItems</code> aggregation
 	 */
 	AdaptationFilterBar.prototype.createFilterFields = function(){
-		return this.initialized().then(function(){
+		return this.initializedWithMetadata().then(function(){
 			var mConditions = this._bPersistValues ? this._getAdaptationControlInstance().getFilterConditions() : this._getAdaptationControlInstance()._getXConditions();
 
 			this.setFilterConditions(mConditions);

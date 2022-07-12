@@ -12,7 +12,8 @@ sap.ui.define([
 				return {
 					name: "filterbar.ADAPT_TITLE",
 					handler: function (oControl, mPropertyBag) {
-						return oControl.initialized().then(function() {
+						//CHECK: move metadata finalizing to Engine?
+						return oControl.initializedWithMetadata().then(function() {
 							return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "Item");
 						});
 					}

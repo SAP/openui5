@@ -1023,7 +1023,7 @@ sap.ui.define([
 
 		oFB.setModel(oMyModel, "Model");
 
-		oFB.initialized().then(function () {
+		oFB.initializedWithMetadata().then(function () {
 			var aProperties = oFB.getPropertyInfoSet();
 			assert.ok(aProperties);
 			assert.equal(aProperties.length, 2);

@@ -1146,13 +1146,26 @@ sap.ui.define([
 
 	/**
 	 * Returns the state of initialization.
-	 * This method triggers the retrieval of the metadata.
+	 * This method does not trigger the retrieval of the metadata.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @returns {Promise} Resolves after the initial filters have been applied and the metadata has been obtained
 	 */
 	FilterBarBase.prototype.initialized = function() {
+		return this.waitForInitialization();
+	};
+
+
+	/**
+	 * Returns the state of initialization.
+	 * This method triggers the retrieval of the metadata.
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @returns {Promise} Resolves after the initial filters have been applied and the metadata has been obtained
+	 */
+	FilterBarBase.prototype.initializedWithMetadata = function() {
 
 		if (!this._oMetadataAppliedPromise) {
 			this._retrieveMetadata();

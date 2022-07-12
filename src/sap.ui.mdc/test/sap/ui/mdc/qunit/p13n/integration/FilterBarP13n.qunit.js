@@ -62,7 +62,7 @@ sap.ui.define([
 				}));
 			});
 
-			return this.oFilterBar.initialized();
+			return this.oFilterBar.initializedWithMetadata();
 		},
 		destroyTestObjects: function() {
 			this.oFilterBar.destroy();
