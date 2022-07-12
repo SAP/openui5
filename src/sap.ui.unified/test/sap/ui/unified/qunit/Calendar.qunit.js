@@ -301,11 +301,11 @@ sap.ui.define([
 
 		assert.ok(jQuery("#Cal2--Month0-20110101").hasClass("sapUiCalItemType01"), "20110101 is special day of Type01");
 		assert.equal(jQuery("#Cal2--Month0-20110101").attr("title"), "Text", "20110101 has special days tooltip");
-		assert.equal(jQuery("#Cal2--Month0-20110101").attr("aria-label"), "1. Januar 2011; My Type 1", "20110101 aria label");
+		assert.equal(jQuery("#Cal2--Month0-20110101").attr("aria-label"), "Non-Working Day 1. Januar 2011; My Type 1", "20110101 aria label");
 
 		assert.ok(jQuery("#Cal2--Month0-20110102").hasClass("sapUiCalItemType02"), "20110102 is special day of Type02");
 		assert.equal(jQuery("#Cal2--Month0-20110102").attr("title"), "Text", "20110102 has special days tooltip");
-		assert.equal(jQuery("#Cal2--Month0-20110102").attr("aria-label"), "2. Januar 2011; My Type 2", "20110102 aria label");
+		assert.equal(jQuery("#Cal2--Month0-20110102").attr("aria-label"), "Non-Working Day 2. Januar 2011; My Type 2", "20110102 aria label");
 
 		assert.ok(jQuery("#Cal2--Month0-20110103").hasClass("sapUiCalItemType02"), "20110103 is special day of Type02");
 		assert.equal(jQuery("#Cal2--Month0-20110103").attr("title"), "Text", "20110103 has special days tooltip");
@@ -319,6 +319,7 @@ sap.ui.define([
 		sDescribingDomTextId = sap.ui.unified.CalendarLegendRenderer.typeARIATexts["Type04"].getId();
 		assert.ok(jQuery("#Cal2--Month0-20110105").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a static label");
 
+		assert.equal(jQuery("#Cal2--Month0-20110106").attr("aria-label"), "Non-Working Day 6. Januar 2011; My Type 1", "20110106 aria label");
 		assert.ok(jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemWeekEnd"),
 				"20110106 is date of type 'NonWorking' as part of a date range");
 		assert.ok(jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemType01") && jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemWeekEnd"),
