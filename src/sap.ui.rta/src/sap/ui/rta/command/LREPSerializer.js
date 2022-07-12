@@ -151,13 +151,15 @@ sap.ui.define([
 	 * Serializes and saves all changes to LREP
 	 * In case of Base Applications (no App Variants) the App Descriptor Changes and UI Changes are saved in different Flex Persistence instances,
 	 * so we have to call save twice. For App Variants all the changes are saved in one place.
-	 * @param {boolean} bSaveAsDraft - save the changes as a draft
-	 * @param {string} [sLayer] - Layer for which the changes should be saved
-	 * @param {boolean} [bRemoveOtherLayerChanges=false] - Whether to remove changes on other layers before saving
+	 * @param {object} mPropertyBag - Property bag
+	 * @param {boolean} mPropertyBag.saveAsDraft - save the changes as a draft
+	 * @param {string} [mPropertyBag.layer] - Layer for which the changes should be saved
+	 * @param {boolean} [mPropertyBag.removeOtherLayerChanges=false] - Whether to remove changes on other layers before saving
+	 * @param {string} [mPropertyBag.version] - Layer for which the changes should be saved
 	 * @returns {Promise} return empty promise
 	 * @public
 	 */
-	LREPSerializer.prototype.saveCommands = function(bSaveAsDraft, sLayer, bRemoveOtherLayerChanges) {
+	LREPSerializer.prototype.saveCommands = function(mPropertyBag) {
 		this._lastPromise = this._lastPromise.catch(function(oError) {
 			Log.error(oError);
 			// _lastPromise chain must not be interrupted
@@ -169,9 +171,10 @@ sap.ui.define([
 			return PersistenceWriteAPI.save({
 				selector: oRootControl,
 				skipUpdateCache: false,
-				draft: !!bSaveAsDraft,
-				layer: sLayer,
-				removeOtherLayerChanges: !!bRemoveOtherLayerChanges
+				draft: !!mPropertyBag.saveAsDraft,
+				layer: mPropertyBag.layer,
+				removeOtherLayerChanges: !!mPropertyBag.removeOtherLayerChanges,
+				version: mPropertyBag.version
 			});
 		}.bind(this))
 		.then(function() {
