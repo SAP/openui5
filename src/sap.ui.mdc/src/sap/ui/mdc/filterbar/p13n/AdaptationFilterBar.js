@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/p13n/subcontroller/FilterController", "sap/ui/mdc/p13n/subcontroller/AdaptFiltersController", "sap/ui/mdc/filterbar/p13n/GroupContainer", "sap/ui/mdc/filterbar/p13n/FilterColumnLayout", "sap/ui/mdc/filterbar/p13n/FilterGroupLayout","sap/ui/mdc/filterbar/p13n/TableContainer", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", "sap/base/util/merge", "sap/base/util/UriParameters", "sap/ui/core/Core", "sap/ui/mdc/enum/PersistenceMode"
-], function(FilterController, AdaptFiltersController, GroupContainer, FilterColumnLayout, FilterGroupLayout, TableContainer, FilterBarBase, FilterBarBaseRenderer, merge, SAPUriParameters, Core, PersistenceMode) {
+	"sap/ui/mdc/p13n/subcontroller/FilterController", "sap/ui/mdc/p13n/subcontroller/AdaptFiltersController", "sap/ui/mdc/filterbar/p13n/GroupContainer", "sap/ui/mdc/filterbar/p13n/FilterColumnLayout", "sap/ui/mdc/filterbar/p13n/FilterGroupLayout","sap/ui/mdc/filterbar/p13n/TableContainer", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", "sap/base/util/merge", "sap/ui/core/Core", "sap/ui/mdc/enum/PersistenceMode"
+], function(FilterController, AdaptFiltersController, GroupContainer, FilterColumnLayout, FilterGroupLayout, TableContainer, FilterBarBase, FilterBarBaseRenderer, merge, Core, PersistenceMode) {
 	"use strict";
 
 	/**
@@ -49,7 +49,6 @@ sap.ui.define([
 		FilterBarBase.prototype.init.apply(this,arguments);
 		this.addStyleClass("sapUIAdaptationFilterBar");
 		this._bPersistValues = true;
-		this._bUseQueryPanel = new SAPUriParameters(window.location.search).getAll("sap-ui-xx-filterQueryPanel")[0] === "true";
 
 		this.getEngine().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
 		this._fnResolveAdaptationControlPromise = null;
@@ -416,8 +415,7 @@ sap.ui.define([
 
 		this.setAssociation("adaptationControl", oControl, bSuppressInvalidate);
 
-		//FIXME: remove once the UI has been decided
-		this._cLayoutItem = this._bUseQueryPanel || this._checkAdvancedParent(oControl) ? FilterGroupLayout : FilterColumnLayout; //Note: once the URL parameter is removed, FilterColumnLayout can be deleted
+		this._cLayoutItem = FilterGroupLayout;
 		this._oFilterBarLayout = this._checkAdvancedParent(oControl) ? new GroupContainer() : new TableContainer();
 
 		this._oFilterBarLayout.getInner().setParent(this);
@@ -429,7 +427,8 @@ sap.ui.define([
 					var oItem = oEvt.getParameter("item");
 					var mConditions = this._bPersistValues ? merge({}, this.getFilterConditions()) : this._getAdaptationControlInstance()._getXConditions();
 					mConditions[this.mFilterFields[oItem.name].getFieldPath()] = [];
-					this._setXConditions(mConditions);
+					this._setXConditions(mConditions, true);
+					this.setFilterConditions(mConditions);
 				}
 				this.fireChange();
 			}.bind(this));
@@ -454,7 +453,6 @@ sap.ui.define([
 		for (var sKey in this._mOriginalsForClone) {
 			this._mOriginalsForClone[sKey].destroy();
 		}
-		this._bUseQueryPanel = null;
 		this._mOriginalsForClone = null;
 		this.oAdaptationData = null;
 		this.mFilterFields = null;

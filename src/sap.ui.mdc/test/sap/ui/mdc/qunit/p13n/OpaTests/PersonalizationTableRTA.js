@@ -6,8 +6,9 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
 	'sap/ui/Device',
-	'test-resources/sap/ui/rta/internal/integration/pages/Adaptation'
-], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device) {
+	'test-resources/sap/ui/rta/internal/integration/pages/Adaptation',
+	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
+], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device, TestLibrary) {
 	'use strict';
 
 	if (window.blanket) {
@@ -38,19 +39,7 @@ sap.ui.define([
 		{p13nItem: "regionOfOrigin_code", selected: false}
 	];
 
-	var aFilterItems = [
-		{p13nItem: "artistUUID", value: null},
-		{p13nItem: "Breakout Year", value: null},
-		{p13nItem: "Changed By", value: null},
-		{p13nItem: "Changed On", value: null},
-		{p13nItem: "City of Origin", value: null},
-		{p13nItem: "Country", value: null},
-		{p13nItem: "Created By", value: null},
-		{p13nItem: "Created On", value: null},
-		{p13nItem: "Founding Year", value: null},
-		{p13nItem: "Name", value: null},
-		{p13nItem: "regionOfOrigin_code", value: null}
-	];
+	var sTableID = "FlexTestComponent---IDViewTableOpaTest--FlexTestApp";
 
 	// ----------------------------------------------------------------
 	// initialize application
@@ -126,17 +115,23 @@ sap.ui.define([
 		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2);
 		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 
-		When.iSwitchToP13nTab("Filter");
+		//Add two filters --> PRESS CANCEL
+		When.onTheMDCTable.iPersonalizeFilter(sTableID, [
+			{key : "Founding Year", values: ["1989"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
+			{key : "Country", values: ["DE"], inputControl: "IDTableOfInternalSampleApp_01--filter--countryOfOrigin_code"}
+		], function(sControl, oSettings) {
+			//the third parameter can optionally be used to open the perso dialog in a different way than the standard settings icon
+			//--> since the above call already opened the settings dialog via RTA actions, just return the open dialog in RTA
+			return this.waitFor({
+				controlType: "sap.m.Dialog",
+				searchOpenDialogs: true,
+				success: function(aDialogs) {
+					oSettings.success.call(this, aDialogs[0]);
+				}
+			});
+		}, true /** This flag will trigger cancel instead of "OK" */);
 
-		When.iEnterTextInFilterDialog("Founding Year", "1989");
-		When.iEnterTextInFilterDialog("Country", "DE");
-
-		Then.iShouldSeeP13nFilterItems(aFilterItems);
-
-		//discard the changes
-		When.iPressDialogCancel();
-
-		//there should not be any changes stored by the KeyUser
+		//The dialog has been cancelled --> no changes
 		Then.theVariantManagementIsDirty(false);
 	});
 
@@ -152,35 +147,25 @@ sap.ui.define([
 		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2);
 		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
 
-		When.iSwitchToP13nTab("Filter");
-
-		When.iEnterTextInFilterDialog("Founding Year", "1989");
-		When.iEnterTextInFilterDialog("Country", "DE");
-
-		Then.iShouldSeeP13nFilterItems(aFilterItems);
-
-		When.iPressDialogOk();
+		//Add two filters & confirm
+		When.onTheMDCTable.iPersonalizeFilter(sTableID, [
+			{key : "Founding Year", values: ["1989"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
+			{key : "Country", values: ["DE"], inputControl: "IDTableOfInternalSampleApp_01--filter--countryOfOrigin_code"}
+		], function(sControl, oSettings) {
+			//the third parameter can optionally be used to open the perso dialog in a different way than the standard settings icon
+			//--> since the above call already opened the settings dialog via RTA actions, just return the open dialog in RTA
+			return this.waitFor({
+				controlType: "sap.m.Dialog",
+				searchOpenDialogs: true,
+				success: function(aDialogs) {
+					oSettings.success.call(this, aDialogs[0]);
+				}
+			});
+		});
 
 		//The dialog has been confirmed --> the variant should be dirty
 		Then.theVariantManagementIsDirty(true);
 
-		//Reopen the dialog
-		//as the Table overlay is still marked as selected, we need to click it twice..
-		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
-		When.iClickOnOverlayForControl("sap.ui.mdc.Table");
-		Then.onPageWithRTA.iShouldSeetheContextMenu();
-		Then.onPageWithRTA.iShouldSeetheNumberOfContextMenuActions(2);
-		When.onPageWithRTA.iClickOnAContextMenuEntryWithIcon("sap-icon://key-user-settings");
-
-		aFilterItems[5].value = ["DE"];
-		aFilterItems[8].value = ["1989"];
-
-		When.iSwitchToP13nTab("Filter");
-
-		//Check the filter values in the dialog
-		Then.iShouldSeeP13nFilterItems(aFilterItems);
-
-		When.iPressDialogOk();
 	});
 
 	// ----------------------------------------------------------------

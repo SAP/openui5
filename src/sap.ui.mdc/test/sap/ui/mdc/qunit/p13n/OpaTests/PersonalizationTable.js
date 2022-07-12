@@ -5,8 +5,8 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
-	'sap/ui/Device'
-], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device) {
+	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
+], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, TestLibrary) {
 	'use strict';
 
 	if (window.blanket) {
@@ -51,19 +51,8 @@ sap.ui.define([
 		{p13nItem: "regionOfOrigin_code", descending: false}
 	];
 
-	var aFilterItems = [
-		{p13nItem: "artistUUID", value: null},
-		{p13nItem: "Breakout Year", value: null},
-		{p13nItem: "Changed By", value: null},
-		{p13nItem: "Changed On", value: null},
-		{p13nItem: "City of Origin", value: null},
-		{p13nItem: "Country", value: null},
-		{p13nItem: "Created By", value: null},
-		{p13nItem: "Created On", value: null},
-		{p13nItem: "Founding Year", value: null},
-		{p13nItem: "Name", value: null},
-		{p13nItem: "regionOfOrigin_code", value: null}
-	];
+	var aAvailableFilters = ["artistUUID", "Breakout Year", "Changed By", "Changed On", "City of Origin", "Country", "Created By", "Created On", "Founding Year", "Name", "regionOfOrigin_code"];
+	var sTableID = "IDTableOfInternalSampleApp_01";
 
 	var sViewSettings = Arrangement.P13nDialog.Titles.settings;
 
@@ -116,19 +105,12 @@ sap.ui.define([
 	});
 
 	opaTest("Open the filter personalization dialog", function (Given, When, Then) {
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-
-		When.iSwitchToP13nTab("Filter");
-
-		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
-
-		Then.iShouldSeeP13nFilterItems(aFilterItems);
+		//Intially, all filters are available and no filters are set in Standard variant
+		Then.onTheMDCTable.iCheckAvailableFilters(sTableID, aAvailableFilters);
+		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, []);
 	});
 
 	opaTest("When I close the 'View Settings' dialog without doing changes, the table has not been changed", function (Given, When, Then) {
-		When.iPressDialogOk();
-
 		//check initially visible columns
 		Then.iShouldSeeVisibleColumnsInOrder("sap.ui.mdc.table.Column", [
 			"name", "foundingYear", "modifiedBy", "createdAt"

@@ -229,7 +229,7 @@ sap.ui.define([
 
 							aConfigurations.forEach(function(oConfig, iConfigIndex){
 								this.waitFor({
-									controlType: "sap.m.Text",
+									controlType: "sap.m.Label",
 									matchers: {
 										ancestor: oFilterPanel,
 										properties: {

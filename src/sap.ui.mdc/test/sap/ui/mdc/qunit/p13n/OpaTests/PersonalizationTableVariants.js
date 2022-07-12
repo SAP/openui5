@@ -4,8 +4,9 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Arrangement",
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util",
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action",
-	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion"
-], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion) {
+	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion",
+	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
+], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, TestLibrary) {
 	"use strict";
 
 	Opa5.extendConfig({
@@ -45,19 +46,7 @@ sap.ui.define([
 		{p13nItem: "regionOfOrigin_code", descending: false}
 	];
 
-	var aFilterItems = [
-		{p13nItem: "artistUUID", value: null},
-		{p13nItem: "Breakout Year", value: null},
-		{p13nItem: "Changed By", value: null},
-		{p13nItem: "Changed On", value: null},
-		{p13nItem: "City of Origin", value: null},
-		{p13nItem: "Country", value: null},
-		{p13nItem: "Created By", value: null},
-		{p13nItem: "Created On", value: null},
-		{p13nItem: "Founding Year", value: null},
-		{p13nItem: "Name", value: null},
-		{p13nItem: "regionOfOrigin_code", value: null}
-	];
+	var sTableID = "IDTableOfInternalSampleApp_01";
 
 	// ----------------------------------------------------------------
 	// Check if the application is running normaly
@@ -237,22 +226,11 @@ sap.ui.define([
 	};
 
 	opaTest("Open the filter personalization dialog and save some conditions as variant 'FilterVariantTest'", function (Given, When, Then) {
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Filter");
-
-		Then.thePersonalizationDialogOpens();
-
-		//check filter field creation
-		Then.iShouldSeeP13nFilterItems(aFilterItems);
-
-		//enter some filter values
-		When.iEnterTextInFilterDialog("Founding Year", "1989");
-		When.iEnterTextInFilterDialog("Founding Year", "1904");
-		When.iEnterTextInFilterDialog("Name", "*S*");
-
-		When.iPressDialogOk();
+		//open Dialog & add two new filter values
+		When.onTheMDCTable.iPersonalizeFilter(sTableID, [
+			{key : "Founding Year", values: ["1989", "1904"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
+			{key : "Name", values: ["*S*"], inputControl: "IDTableOfInternalSampleApp_01--filter--name"}
+		]);
 
 		Then.iShouldSeeVisibleItemsInTable(2);
 
@@ -306,26 +284,11 @@ sap.ui.define([
 	});
 
 	opaTest("Reopen the filter personalization dialog to validate 'FilterVariantTest'", function (Given, When, Then) {
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Filter");
-
-		Then.thePersonalizationDialogOpens();
-
-		//check values from variant
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Founding Year",
-			index: 8,
-			values: ["1989", "1904"]
-		});
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Name",
-			index: 9,
-			values: ["S"]
-		});
-
-		When.iPressDialogOk();
+		//open Dialog & add two new filter values
+		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, [
+			{key : "Founding Year", values: ["1989", "1904"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
+			{key : "Name", values: ["S"], inputControl: "IDTableOfInternalSampleApp_01--filter--name"}
+		]);
 
 		Then.iShouldSeeVisibleItemsInTable(2);
 
@@ -347,25 +310,8 @@ sap.ui.define([
 		//no filters on standard
 		Then.iShouldSeeConditons("sap.ui.mdc.Table",{filter: {}});
 
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Filter");
-
-		//check values from variant
-
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Founding Year",
-			index: 8,
-			values: [undefined]
-		});
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Name",
-			index: 9,
-			values: [undefined]
-		});
-
-		When.iPressDialogOk();
+		//check empty filter values from standard variant
+		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, []);
 
 		Then.iShouldSeeVisibleItemsInTable(100);
 
@@ -377,27 +323,11 @@ sap.ui.define([
 		//Switch back to check condition appliance in filter dialog
 		When.iSelectVariant("FilterVariantTest");
 
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Filter");
-
-		Then.thePersonalizationDialogOpens();
-
-		//check values persisted in variant --> values should be present again
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Founding Year",
-			index: 8,
-			values: ["1989", "1904"]
-		});
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Name",
-			index: 9,
-			values: ["S"]
-		});
-
-		//close dialogs
-		When.iPressDialogOk();
+		//open Dialog & add two new filter values
+		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, [
+			{key : "Founding Year", values: ["1989", "1904"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
+			{key : "Name", values: ["S"], inputControl: "IDTableOfInternalSampleApp_01--filter--name"}
+		]);
 
 		Then.iShouldSeeVisibleItemsInTable(2);
 

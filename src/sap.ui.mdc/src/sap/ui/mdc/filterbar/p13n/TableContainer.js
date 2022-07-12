@@ -41,53 +41,27 @@ sap.ui.define([
 			]
 		});
 
-		var oURLParams = new SAPUriParameters(window.location.search);
-		this._bUseQueryPanel = oURLParams.getAll("sap-ui-xx-filterQueryPanel")[0] === "true";
+		this.oLayout = new FilterPanel({
+			enableReorder: false,
+			itemFactory: function(oItem){
+				var sKey = oItem.name;
+				var oFilterItem = this.mFilterItems[sKey];
+				return oFilterItem;
+			}.bind(this)
+		});
 
-		//FIXME: remove check once the UI has been decided
-		if (this._bUseQueryPanel) {
-			this.oLayout = new FilterPanel({
-				enableReorder: false,
-				itemFactory: function(oItem){
-					var sKey = oItem.name;
-					var oFilterItem = this.mFilterItems[sKey];
-					return oFilterItem;
-				}.bind(this)
-			});
-
-			this.mFilterItems = {};
-
-		} else {
-			this._oMessageStripContainer = new VBox(this.getId() + "-messageStripContainer");
-
-			this.oLayout = new VBox({
-				items: [
-					this._oMessageStripContainer,
-					this._oTable
-				]
-			});
-		}
+		this.mFilterItems = {};
 
 	};
 
 	TableContainer.prototype.insertFilterField = function(oControl, iIndex) {
-
-		//FIXME: remove check once the UI has been decided
-		if (this._bUseQueryPanel) {
-			var oFilterBar = oControl._oFilterField.getParent();
-			var sKey = oFilterBar._getPropertyByName(oControl._getFieldPath()).name;
-			this.mFilterItems[sKey] = oControl;
-		} else {
-			this._oTable.insertItem(oControl, iIndex);
-		}
-
+		var oFilterBar = oControl._oFilterField.getParent();
+		var sKey = oFilterBar._getPropertyByName(oControl._getFieldPath()).name;
+		this.mFilterItems[sKey] = oControl;
 	};
 
 	TableContainer.prototype.setP13nData = function(oAdaptationData) {
-		//FIXME: remove check once the UI has been decided
-		if (this._bUseQueryPanel) {
-			this.oLayout.setP13nData(oAdaptationData.items);
-		}
+		this.oLayout.setP13nData(oAdaptationData.items);
 	};
 
 	TableContainer.prototype.removeFilterField = function(oControl) {
@@ -95,13 +69,7 @@ sap.ui.define([
 	};
 
 	TableContainer.prototype.setMessageStrip = function(oStrip) {
-		//FIXME: remove check once the UI has been decided
-		if (this._bUseQueryPanel) {
-			this.oLayout.setMessageStrip(oStrip);
-		} else {
-			this._oMessageStripContainer.removeAllItems();
-			this._oMessageStripContainer.addItem(oStrip);
-		}
+		this.oLayout.setMessageStrip(oStrip);
 	};
 
 	TableContainer.prototype.getFilterFields = function() {
@@ -114,7 +82,6 @@ sap.ui.define([
 
 	TableContainer.prototype.exit = function() {
 		this._oTable = null;
-		this._oMessageStripContainer = null;
 	};
 
 	return TableContainer;
