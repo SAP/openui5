@@ -102,6 +102,8 @@ sap.ui.define([
 	// shortcut for sap.m.ScreenSize
 	var ScreenSize = mobileLibrary.ScreenSize;
 
+	var ListKeyboardMode = mobileLibrary.ListKeyboardMode;
+
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
@@ -1615,6 +1617,7 @@ sap.ui.define([
 				contextualWidth: "Auto",
 				fixedLayout: false,
 				growing: true,
+				keyboardMode: ListKeyboardMode.Edit,
 				columns: [
 					new Column({
 						width: "3rem",
@@ -1875,7 +1878,8 @@ sap.ui.define([
 					return this._oRb.getText(bFlagged ? "VARIANT_MANAGEMENT_FAV_DEL_TOOLTIP" : "VARIANT_MANAGEMENT_FAV_ADD_TOOLTIP");
 				}.bind(this)
 			},
-			press: fSelectFav
+			press: fSelectFav,
+			decorative: false
 		});
 
 		if ((this.getStandardVariantKey() === oItem.getKey()) || (this.getDefaultKey() === oItem.getKey())) {
@@ -2022,7 +2026,17 @@ sap.ui.define([
 			if (bSelected) {
 				if (this.getSupportFavorites() && !oItem.getFavorite()) {
 					oItem.setFavorite(true);
-					this._setFavoriteIcon(oIcon, true);
+
+					var oRow = this._getRowForKey(oItem.getKey());
+					if (oRow) {
+						var aCells = oRow.getCells();
+						if (aCells) {
+							oIcon = aCells[VariantManagement.COLUMN_FAV_IDX];
+							this._setFavoriteIcon(oIcon, true);
+
+							aCells[VariantManagement.COLUMN_FAV_IDX + 3].focus();  // focus on default
+						}
+					}
 				}
 
 				this.setDefaultKey(sKey);
@@ -2085,7 +2099,10 @@ sap.ui.define([
 		}
 
 		oItem.setFavorite(!oItem.getFavorite());
-		this._setFavoriteIcon(oIcon, oItem.getFavorite);
+		var oRow = this._getRowForKey(oItem.getKey());
+		if (oRow) {
+			oRow.getCells()[VariantManagement.COLUMN_FAV_IDX].focus();
+		}
 	};
 
 	VariantManagement.prototype._getRowForKey = function(sKey) {
