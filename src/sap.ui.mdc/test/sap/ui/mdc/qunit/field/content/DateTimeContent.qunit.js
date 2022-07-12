@@ -89,7 +89,7 @@ sap.ui.define([
 
 	QUnit.module("Content creation", {
 		beforeEach: function() {
-			this.oField = new Field("F1", {dataType: "sap.ui.model.type.DateTime", dataTypeFormatOptions: {style: "long", calendarType: "Gregorian", UTC: true}});
+			this.oField = new Field("F1", {dataType: "sap.ui.model.type.DateTime", dataTypeFormatOptions: {style: "long", calendarType: "Gregorian", secondaryCalendarType: "Islamic", UTC: true}});
 			this.aControls = [];
 		},
 		afterEach: function() {
@@ -183,11 +183,13 @@ sap.ui.define([
 
 	QUnit.test("_createDatePickerControl", function(assert) {
 		var done = assert.async();
-		var oContentFactory = this.oField._oContentFactory;
-		this.oField.awaitControlDelegate().then(function() {
+		var oField = this.oField;
+		var oContentFactory = oField._oContentFactory;
+		oField.awaitControlDelegate().then(function() {
 			var aControls = DateTimeContent._createDatePickerControl(oContentFactory, [DateTimePicker], "createDatePickerControl");
 
 			assert.ok(aControls[0] instanceof DateTimePicker, "Correct control created in '_createDatePickerControl'.");
+			assert.equal(aControls[0].getSecondaryCalendarType(), oField.getDataTypeFormatOptions().secondaryCalendarType, "secondaryCalendarType property forwarded.");
 			assert.notOk(aControls[0].getShowTimezone(), "No Timezone shown");
 			assert.notOk(aControls[0].getBindingInfo("timezone"), "Timezone not bound");
 			assert.notOk(oContentFactory.getUnitType(), "No ConditionsType for Timezone");

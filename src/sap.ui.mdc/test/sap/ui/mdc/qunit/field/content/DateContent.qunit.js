@@ -134,7 +134,7 @@ sap.ui.define([
 
 	QUnit.module("Content creation", {
 		beforeEach: function() {
-			this.oField = new Field("F1", {dataType: "sap.ui.model.type.Date", dataTypeFormatOptions: {style: "long", calendarType: "Gregorian", UTC: true}});
+			this.oField = new Field("F1", {dataType: "sap.ui.model.type.Date", dataTypeFormatOptions: {style: "long", calendarType: "Gregorian", secondaryCalendarType: "Islamic", UTC: true}});
 			this.aControls = [];
 		},
 		afterEach: function() {
@@ -256,8 +256,9 @@ sap.ui.define([
 			var aControls = DateContent._createDatePickerControl(oContentFactory, [DatePicker], "createDatePickerControl");
 
 			assert.ok(aControls[0] instanceof DatePicker, "Correct control created in '_createDatePickerControl'.");
+			assert.equal(aControls[0].getSecondaryCalendarType(), this.oField.getDataTypeFormatOptions().secondaryCalendarType, "secondaryCalendarType property forwarded.");
 			done();
-		});
+		}.bind(this));
 	});
 
 	QUnit.test("_createDateRangePickerControl", function(assert) {
@@ -267,8 +268,9 @@ sap.ui.define([
 			var aControls = DateContent._createDateRangePickerControl(oContentFactory, [DateRangeSelection], "createDateRangePickerControl");
 
 			assert.ok(aControls[0] instanceof DateRangeSelection, "Correct control created in '_createDateRangePickerControl'.");
+			assert.equal(aControls[0].getSecondaryCalendarType(), this.oField.getDataTypeFormatOptions().secondaryCalendarType, "secondaryCalendarType property forwarded.");
 			done();
-		});
+		}.bind(this));
 	});
 
 	QUnit.test("createEditMultiLine", function(assert) {
