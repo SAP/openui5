@@ -3,11 +3,13 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/m/ResponsivePopover",
+	"sap/m/Popover",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Button",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
+	"sap/m/OverflowToolbar",
+	"sap/m/ToolbarSpacer",
 	"sap/m/VBox",
 	"sap/m/HBox",
 	"sap/m/Select",
@@ -35,6 +37,8 @@ sap.ui.define([
 	Button,
 	SegmentedButton,
 	SegmentedButtonItem,
+	OverflowToolbar,
+	ToolbarSpacer,
 	VBox,
 	HBox,
 	Select,
@@ -178,36 +182,42 @@ sap.ui.define([
 			horizontalScrolling: false,
 			verticalScrolling: false,
 			modal: false,
-			endButton: new Button({
-				text: oResourceBundle.getText("EDITOR_MORE_CANCEL"),
-				press: function () {
-					oPopover.close();
-				}
-			}),
-			beginButton: new Button({
-				text: oResourceBundle.getText("EDITOR_MORE_OK"),
-				type: "Emphasized",
-				press: function () {
-					//handle page admin values
-					if (oData.values) {
-						var oTable = Core.byId("settings_pav_table"),
-						selectedContexts = oTable.getSelectedContexts(),
-						selectedKeys = [];
-						if (oCurrentModel.getProperty("/selectedValues") === "Partion") {
-							for (var i = 0; i < selectedContexts.length; i++) {
-								var selectedKey = oCurrentInstance.getKeyFromItem(selectedContexts[i].getObject());
-								selectedKeys.push(selectedKey);
+			footer: new OverflowToolbar({
+				content: [
+					oResetToDefaultButton,
+					new ToolbarSpacer(),
+					new Button({
+						text: oResourceBundle.getText("EDITOR_MORE_OK"),
+						type: "Emphasized",
+						press: function () {
+							//handle page admin values
+							if (oData.values) {
+								var oTable = Core.byId("settings_pav_table"),
+								selectedContexts = oTable.getSelectedContexts(),
+								selectedKeys = [];
+								if (oCurrentModel.getProperty("/selectedValues") === "Partion") {
+									for (var i = 0; i < selectedContexts.length; i++) {
+										var selectedKey = oCurrentInstance.getKeyFromItem(selectedContexts[i].getObject());
+										selectedKeys.push(selectedKey);
+									}
+									setNextSetting("pageAdminValues", selectedKeys);
+								} else {
+									setNextSetting("pageAdminValues", []);
+								}
 							}
-							setNextSetting("pageAdminValues", selectedKeys);
-						} else {
-							setNextSetting("pageAdminValues", []);
-						}
-					}
 
-					oCurrentInstance._applyCurrentSettings();
-					bCancel = false;
-					oPopover.close();
-				}
+							oCurrentInstance._applyCurrentSettings();
+							bCancel = false;
+							oPopover.close();
+						}
+					}),
+					new Button({
+						text: oResourceBundle.getText("EDITOR_MORE_CANCEL"),
+						press: function () {
+							oPopover.close();
+						}
+					})
+				]
 			}),
 			afterClose: function () {
 				if (bCancel) {
@@ -217,14 +227,6 @@ sap.ui.define([
 				oPopover.destroy();
 			},
 			afterOpen: function () {
-				var oFooter = this.getDomRef().querySelector("footer");
-
-				var oResetToDefaultButtonDom = oResetToDefaultButton.getDomRef(),
-					oInsert = oFooter.querySelector("button").parentNode;
-				if (oResetToDefaultButtonDom) {
-					oInsert.insertBefore(oResetToDefaultButtonDom, oInsert.firstChild);
-				}
-
 				window.requestAnimationFrame(function () {
 					oPopover.getDomRef() && (oPopover.getDomRef().style.opacity = "1");
 				});
@@ -255,7 +257,6 @@ sap.ui.define([
 			}
 		});
 		oPopover.setCustomHeader(oHeader);
-		oPopover.addContent(oResetToDefaultButton);
 		oPopover.addContent(oDynamicPanel);
 		oPopover.addContent(oCurrentValue);
 		oPopover.addContent(oSettingsPanel);
@@ -268,6 +269,7 @@ sap.ui.define([
 	function createSettingsButton() {
 		oSettingsButton = new SegmentedButtonItem({
 			text: oResourceBundle.getText("EDITOR_MORE_SETTINGS"),
+			tooltip: oResourceBundle.getText("EDITOR_MORE_SETTINGS"),
 			key: "settings",
 			icon: "sap-icon://action-settings",
 			width: "50%",
@@ -285,6 +287,7 @@ sap.ui.define([
 			items: [
 				new SegmentedButtonItem({
 					text: oResourceBundle.getText("EDITOR_MORE_DYNAMICVALUES"),
+					tooltip: oResourceBundle.getText("EDITOR_MORE_DYNAMICVALUES"),
 					key: "dynamic",
 					icon: "{= ${currentSettings>_hasDynamicValue} ? 'sap-icon://display-more' : 'sap-icon://enter-more'}",
 					width: "50%",
@@ -309,11 +312,13 @@ sap.ui.define([
 			visible: "{= !${currentSettings>allowDynamicValues} && ${currentSettings>allowSettings}}"
 		}).addStyleClass("sapUiTinyMagin");
 
-		var oTitle = new HBox({
-			width: "100%",
-			items: [oSegmentedButton, oDynamicValueText, oSettingsText]
+		var oTitle = new OverflowToolbar({
+			content: [
+				oSegmentedButton,
+				oDynamicValueText,
+				oSettingsText
+			]
 		}).addStyleClass("headertitle");
-
 		return oTitle;
 	}
 
@@ -367,7 +372,7 @@ sap.ui.define([
 					}
 				}
 
-				oPopover.getBeginButton().firePress();
+				oPopover.getFooter().getContent()[2].firePress();
 			}
 		}).addStyleClass("resetbutton");
 		return oResetToDefaultButton;

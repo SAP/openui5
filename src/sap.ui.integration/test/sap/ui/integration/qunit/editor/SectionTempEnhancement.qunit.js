@@ -353,7 +353,7 @@ sap.ui.define([
 						var settingsClass = oCustomerField._oSettingsPanel.getMetadata().getClass();
 						var testInterface = settingsClass._private();
 						assert.ok(testInterface.oCurrentInstance === oCustomerField._oSettingsPanel, "Settings: Points to right settings panel");
-						assert.ok(testInterface.oPopover.isA("sap.m.ResponsivePopover"), "Settings: Has a Popover instance");
+						assert.ok(testInterface.oPopover.isA("sap.m.Popover"), "Settings: Has a Popover instance");
 						assert.ok(testInterface.oSegmentedButton.getVisible() === true, "Settings: Allows to edit settings and dynamic values");
 						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel initially visible");
 						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel initially not visible");
@@ -367,7 +367,7 @@ sap.ui.define([
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems().length === 5, "Settings: Settings Panel has 5 items");
 						var oItem = testInterface.getMenuItems()[3].getItems()[2];
 						testInterface.getMenu().fireItemSelected({ item: oItem });
-						testInterface.oPopover.getBeginButton().firePress();
+						testInterface.oPopover.getFooter().getContent()[2].firePress();
 						setTimeout(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
@@ -634,7 +634,7 @@ sap.ui.define([
 						var settingsClass = oCustomersField._oSettingsPanel.getMetadata().getClass();
 						var testInterface = settingsClass._private();
 						assert.ok(testInterface.oCurrentInstance === oCustomersField._oSettingsPanel, "Settings: Points to right settings panel");
-						assert.ok(testInterface.oPopover.isA("sap.m.ResponsivePopover"), "Settings: Has a Popover instance");
+						assert.ok(testInterface.oPopover.isA("sap.m.Popover"), "Settings: Has a Popover instance");
 						assert.ok(testInterface.oSegmentedButton.getVisible() === true, "Settings: Allows to edit settings and dynamic values");
 						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel initially visible");
 						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel initially not visible");
@@ -648,7 +648,7 @@ sap.ui.define([
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems().length === 5, "Settings: Settings Panel has 5 items");
 						var oItem = testInterface.getMenuItems()[3].getItems()[2];
 						testInterface.getMenu().fireItemSelected({ item: oItem });
-						testInterface.oPopover.getBeginButton().firePress();
+						testInterface.oPopover.getFooter().getContent()[2].firePress();
 						setTimeout(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
@@ -915,7 +915,7 @@ sap.ui.define([
 						var settingsClass = oCustomersField._oSettingsPanel.getMetadata().getClass();
 						var testInterface = settingsClass._private();
 						assert.ok(testInterface.oCurrentInstance === oCustomersField._oSettingsPanel, "Settings: Points to right settings panel");
-						assert.ok(testInterface.oPopover.isA("sap.m.ResponsivePopover"), "Settings: Has a Popover instance");
+						assert.ok(testInterface.oPopover.isA("sap.m.Popover"), "Settings: Has a Popover instance");
 						assert.ok(testInterface.oSegmentedButton.getVisible() === true, "Settings: Allows to edit settings and dynamic values");
 						assert.ok(testInterface.oDynamicPanel.getVisible() === true, "Settings: Dynamic Values Panel initially visible");
 						assert.ok(testInterface.oSettingsPanel.getVisible() === false, "Settings: Settings Panel initially not visible");
@@ -929,7 +929,7 @@ sap.ui.define([
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems().length === 5, "Settings: Settings Panel has 5 items");
 						var oItem = testInterface.getMenuItems()[3].getItems()[2];
 						testInterface.getMenu().fireItemSelected({ item: oItem });
-						testInterface.oPopover.getBeginButton().firePress();
+						testInterface.oPopover.getFooter().getContent()[2].firePress();
 						setTimeout(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.ok(oButton.getIcon() === "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");

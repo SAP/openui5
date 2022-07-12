@@ -40,7 +40,7 @@
 		"type": "string",
 		"label": "{i18n>TRANSLATED_STRING_LABEL}",
 		"testJS": "sap/ui5/test/editor/listcard/dt/TestJs3",
-		"cols": 2,
+		"cols": 1,
 		"translatable": true,
 		"allowDynamicValues": false
 	},
