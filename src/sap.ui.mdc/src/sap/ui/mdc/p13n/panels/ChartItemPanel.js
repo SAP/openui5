@@ -339,10 +339,12 @@ sap.ui.define([
 			width: "100%",
 			items: {
 				path: this.P13N_MODEL + ">/items",
-				template: new Item({
-					key: "{" + this.P13N_MODEL + ">name}",
-					text: "{" + this.P13N_MODEL + ">label}"
-				}),
+				factory: function(sId, oObject) {
+					return new Item({
+						key: oObject.getObject().name,
+						text: oObject.getObject().label
+					});
+				},
 				templateShareable : false,
 				filters: [oNameFilterPersistent, new Filter("kind", FilterOperator.EQ, sKind)],
 				sorter: oSorter
