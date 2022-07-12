@@ -3805,7 +3805,7 @@ sap.ui.define([
 
 		if (bViaClone) {
 			$Clone = this._appendTitleCloneToDOM(false /* disable snapped mode */);
-			iHeight = $Clone.is(":visible") ? $Clone.height() - this.iAnchorBarHeight : 0;
+			iHeight = $Clone.is(":visible") ? $Clone.height() : 0;
 			$Clone.remove(); //clean dom
 		} else if (oTitle.unSnap) {
 			iHeight = this._obtainTitleHeightViaStateChange(false /* do not snap */);

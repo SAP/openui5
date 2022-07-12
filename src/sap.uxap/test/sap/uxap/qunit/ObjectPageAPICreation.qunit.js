@@ -527,7 +527,7 @@ function (
 						done();
 					}, 100);
 				});
-			}, 500);
+			}, 1000);
 		});
 		helpers.renderObject(oObjectPage);
 	});
@@ -2509,6 +2509,34 @@ function (
 			iStickyAreaHeight = this.oObjectPageLayout._getStickyAreaHeight(true /*snapped header*/);
 			this.oObjectPageLayout._expandHeader(true);
 			assert.strictEqual(this.oObjectPageLayout._getStickyAreaHeight(true /*snapped header*/), iStickyAreaHeight, "sticky area correctly calculated while header expanded");
+			done();
+		}.bind(this));
+		helpers.renderObject(this.oObjectPageLayout);
+	});
+
+	QUnit.test("_obtainExpandedTitleHeight using clone", function (assert) {
+		var iExpandedTitleHeight,
+			iClonedExpandedTitleHeight,
+			done = assert.async();
+		this.oObjectPageLayout.setHeaderTitle(oFactory.getHeaderTitle());
+		this.oObjectPageLayout.addHeaderContent(oFactory.getHeaderContent());
+		// add two sections
+		for (var i = 0; i < 2; i++) {
+			this.oObjectPageLayout.addSection(oFactory.getSection(i, null, [
+				oFactory.getSubSection(1, [oFactory.getBlocks(), oFactory.getBlocks()], null)
+			]));
+		}
+
+		this.oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// save the actual title height in expanded mode
+			iExpandedTitleHeight = this.oObjectPageLayout.getHeaderTitle().$().height();
+			// scroll to switch to snapped mode
+			this.oObjectPageLayout._scrollTo(this.oObjectPageLayout._getSnapPosition() + 1, 0);
+
+			// Act
+			iClonedExpandedTitleHeight = this.oObjectPageLayout._obtainExpandedTitleHeight(true /* use clone */);
+			// Check
+			assert.strictEqual(iClonedExpandedTitleHeight, iExpandedTitleHeight, "height is correct");
 			done();
 		}.bind(this));
 		helpers.renderObject(this.oObjectPageLayout);
