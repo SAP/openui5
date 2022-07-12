@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.SidePanel",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.SidePanel.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.f": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Page.view.xml",
+					"Page.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}
