@@ -264,7 +264,9 @@ sap.ui.define([
 					}
 				}.bind(this));
 
-			oComponent.getCookiesManagement().enable(oComponent.getRootControl());
+				oComponent.getCookiesManagement().then(function(oCookieMgmtComponent) {
+					oCookieMgmtComponent.enable(oComponent.getRootControl());
+				});
 
 			},
 
@@ -462,7 +464,9 @@ sap.ui.define([
 				} else if (sTargetText === CHANGE_SETTINGS_TEXT) {
 					this.settingsDialogOpen();
 				} else if (sTargetText === CHANGE_COOKIE_PREFERENCES_TEXT) {
-					this.getOwnerComponent().getCookiesManagement().cookieSettingsDialogOpen({ showCookieDetails: true }, this.getView());
+					this.getOwnerComponent().getCookiesManagement().then(function(oCookieMgmtComponent) {
+						oCookieMgmtComponent.cookieSettingsDialogOpen({ showCookieDetails: true }, this.getView());
+					}.bind(this));
 				} else if (sTargetText === CHANGE_VERSION_TEXT) {
 					this.onChangeVersionButtonPress();
 				} else if (DEMOKIT_APPEARANCE[sTargetText]) {

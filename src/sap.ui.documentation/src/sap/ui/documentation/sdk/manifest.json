@@ -526,6 +526,11 @@
 					"controlAggregation": "detailPages"
 				}
 			}
+		},
+		"componentUsages": {
+			"cookieSettingsDialog": {
+				"name": "sap.ui.documentation.sdk.cookieSettingsDialog"
+			}
 		}
 	}
 }

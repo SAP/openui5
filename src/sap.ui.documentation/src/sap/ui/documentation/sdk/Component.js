@@ -74,18 +74,14 @@ sap.ui.define([
 			getCookiesManagement: function() {
 				var sId = "sap.ui.documentation.sdk.cookieSettingsDialog";
 
-				if (!this._oCookiesComponent) {
-					this._oCookiesComponent = this.runAsOwner(function() {
-						this._oCookiesComponent = sap.ui.getCore().createComponent({
-							id: 'cookiesComp-' + sId,
-							name: sId
-						});
-
-						return this._oCookiesComponent;
-					}.bind(this));
+				if (!this._pCookiesComponent) {
+					this._pCookiesComponent = this.createComponent({
+						usage: "cookieSettingsDialog",
+						id: 'cookiesComp-' + sId
+					});
 				}
 
-				return this._oCookiesComponent;
+				return this._pCookiesComponent;
 			},
 
 			/**
@@ -98,7 +94,9 @@ sap.ui.define([
 				this._oErrorHandler.destroy();
 				this._oConfigUtil.destroy();
 				this._oConfigUtil = null;
-				this._oCookiesComponent && this._oCookiesComponent.destroy();
+				this._pCookiesComponent && this._pCookiesComponent.then(function(oCookiesMgmtComponent) {
+					oCookiesMgmtComponent.destroy();
+				});
 				// call the base component's destroy function
 				UIComponent.prototype.destroy.apply(this, arguments);
 			},
