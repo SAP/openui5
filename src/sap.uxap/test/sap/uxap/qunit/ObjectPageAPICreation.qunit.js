@@ -493,16 +493,22 @@ function (
 				oSelectedSection: this.oSecondSection,
 				sSelectedTitle: this.oSecondSection.getSubSections()[0].getTitle()
 			},
-			done = assert.async();
+			done = assert.async(),
+			_pxToNumber = function (sSizeToConvert) {
+				return (sSizeToConvert.substring(0, (sSizeToConvert.length - 2)) ) * 1;
+			};
 
 		oObjectPage.setUseIconTabBar(false);
 		oObjectPage.addHeaderContent(oHeaderContent);
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			setTimeout(function() {
+				var oHeaderContentDOM = document.querySelector('.sapUxAPObjectPageHeaderContent'),
+				sPaddingTop = _pxToNumber(window.getComputedStyle(oHeaderContentDOM, null).getPropertyValue('padding-top')),
+				sPaddingBottom = _pxToNumber(window.getComputedStyle(oHeaderContentDOM, null).getPropertyValue('padding-bottom'));
 
 				// assert that the page internally rounds (ceils) the header content heights
 				assert.notEqual(oObjectPage.iHeaderContentHeight, iNonIntegerHeaderContentHeight, "cached headerContent height is rounded");
-				assert.strictEqual(oObjectPage.iHeaderContentHeight, 100, "cached headerContent height is ceiled");
+				assert.strictEqual(oObjectPage.iHeaderContentHeight, 100 + sPaddingTop + sPaddingBottom, "cached headerContent height is ceiled");
 
 				// Act: make an action that causes the page to have (1) first visible section selected but (2) header snapped
 				oObjectPage.removeSection(0);
@@ -515,7 +521,7 @@ function (
 						assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is snapped");
 						assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is snapped");
 
-						oObjectPage._onScroll({target: {scrollTop: iNonIntegerHeaderContentHeight}}); // scrollEnablement kicks in to restore last saved Y position, which is not rounded (ceiled)
+						oObjectPage._onScroll({target: {scrollTop: iNonIntegerHeaderContentHeight + sPaddingTop + sPaddingBottom}}); // scrollEnablement kicks in to restore last saved Y position, which is not rounded (ceiled)
 						assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is still snapped");
 						assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is still snapped");
 						done();
