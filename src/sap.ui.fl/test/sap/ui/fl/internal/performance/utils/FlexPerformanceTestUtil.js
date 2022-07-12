@@ -4,6 +4,8 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/Change",
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/DatePicker",
@@ -19,6 +21,8 @@ sap.ui.define([
 	FlexControllerFactory,
 	Layer,
 	FlUtils,
+	ChangePersistenceFactory,
+	Change,
 	Button,
 	Label,
 	DatePicker,
@@ -34,6 +38,15 @@ sap.ui.define([
 	var sIdForStatus = "__duration";
 
 	var FlexPerformanceTestUtil = {};
+
+	function _areAllChangesApplied () {
+		var oInstanceCache = ChangePersistenceFactory._instanceCache;
+		var sComponent = Object.keys(oInstanceCache)[0];
+		var aChanges = oInstanceCache[sComponent]._mChanges.aChanges;
+		return !aChanges.some(function(oChange) {
+			return oChange.getApplyState() !== Change.applyState.APPLY_SUCCESSFUL;
+		});
+	}
 
 	function _writeData (sControlId) {
 		sControlId = sControlId || sIdForStatus;
@@ -54,10 +67,15 @@ sap.ui.define([
 
 	function _startApplyScenario(sControlId, fnAddControls) {
 		FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
-		var oControlToBeChanged = fnAddControls(sControlId);
-		return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged})
+		var aControlsToBeChanged = fnAddControls(sControlId);
+		return FlexRuntimeInfoAPI.waitForChanges({ selectors: aControlsToBeChanged })
 		.then(function() {
 			FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
+			if (!_areAllChangesApplied()) {
+				var oLayout = oCore.byId("idMain1--Layout");
+				_addLabel(oLayout, "_error", "Error: not all changes were applied");
+				throw new Error("Not all changes were applied");
+			}
 			_writeData();
 			oCore.applyChanges();
 		})
@@ -94,23 +112,39 @@ sap.ui.define([
 	 */
 	function _createControlsForDiverse(sControlId) {
 		var oLayout = oCore.byId("idMain1--Layout");
+		var oTitleLabel = new Label(sControlId + ".title", {text: sControlId + ".title"});
+		var oInnerLabel = new Label(sControlId + ".label", {text: sControlId + ".label"});
+		var oDatePicker = new DatePicker(sControlId + ".datePicker");
+		var oSlider = new Slider(sControlId + ".slider");
+		var oRatingIndicator = new RatingIndicator(sControlId + ".ratingIndicator");
+		var oButton = new Button(sControlId + ".button", {text: sControlId + ".button"});
+		var oVBox = new VBox(sControlId + ".vbox", {
+			items: [
+				oInnerLabel,
+				oDatePicker,
+				oSlider,
+				oRatingIndicator,
+				oButton
+			]
+		});
 		var oInnerLayout = new VerticalLayout({
 			id: sControlId + ".layout",
 			content: [
-				new Label(sControlId + ".title", {text: sControlId + ".title"}),
-				new VBox(sControlId + ".vbox", {
-					items: [
-						new Label(sControlId + ".label", {text: sControlId + ".label"}),
-						new DatePicker(sControlId + ".datePicker"),
-						new Slider(sControlId + ".slider"),
-						new RatingIndicator(sControlId + ".ratingIndicator"),
-						new Button(sControlId + ".button", {text: sControlId + ".button"})
-					]
-				})
+				oTitleLabel,
+				oVBox
 			]
 		});
 		oLayout.addContent(oInnerLayout);
-		return oLayout;
+		return [
+			oInnerLayout,
+			oTitleLabel,
+			oInnerLabel,
+			oDatePicker,
+			oSlider,
+			oRatingIndicator,
+			oButton,
+			oVBox
+		];
 	}
 
 	function _startRenameScenario() {
