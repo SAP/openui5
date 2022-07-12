@@ -278,7 +278,23 @@ sap.ui.define([
 							"NEXTYEAR",
 							"DATETIME"
 						]
-					}
+					},
+
+					/**
+					 * Determines whether the input field of the control is hidden or visible.
+					 * When set to <code>true</code>, the input field becomes invisible and there is no way to open the value help popover.
+					 * In that case it can be opened by another control through calling of control's <code>openBy</code> method, and
+					 * the opening control's DOM reference must be provided as parameter.
+					 *
+					 * Note: Since the Dynamic Date Range is not responsible for accessibility attributes of the control which opens its popover,
+					 * those attributes should be added by the application developer. The following is recommended to be added to the
+					 * opening control: a text or tooltip that describes the action (example: "Open Dynamic Date Range"), and also aria-haspopup
+					 * attribute with value of <code>true</code>.
+					 *
+					 * @since 1.105
+					 */
+					 hideInput: { type: "boolean", group: "Misc", defaultValue: false }
+
 				},
 				aggregations: {
 					_input: { type: "sap.m.Input", multiple: false, visibility: "hidden" },
@@ -411,11 +427,12 @@ sap.ui.define([
 		/**
 		 * Opens the value help dialog.
 		 *
+		 * @param {HTMLElement} oDomRef DOM reference of the opening control. On tablet or desktop, the popover is positioned relatively to this control.
 		 * @returns {void}
 		 * @since 1.92
 		 * @public
 		 */
-		DynamicDateRange.prototype.open = function() {
+		DynamicDateRange.prototype.open = function(oDomRef) {
 			if (this.getEditable() && this.getEnabled()) {
 				this._createPopup();
 				this._createPopupContent();
@@ -454,7 +471,7 @@ sap.ui.define([
 				//reset value help page
 				this._oNavContainer.to(this._oNavContainer.getPages()[0]);
 
-				this._openPopup();
+				this._openPopup(oDomRef);
 			}
 		};
 
@@ -1175,13 +1192,37 @@ sap.ui.define([
 				oControl.isA("sap.ui.unified.calendar.Month");
 		};
 
-		DynamicDateRange.prototype._openPopup = function() {
+		/**
+		 * Opens the value help popover. The popover is positioned relatively to the control given as <code>oDomRef</code> parameter on tablet or desktop
+		 * and is full screen on phone. Therefore the control parameter is only used on tablet or desktop and is ignored on phone.
+		 *
+		 * Note: use this method to open the value help popover only when the <code>hideInput</code> property is set to <code>true</code>. Please consider
+		 * opening of the value help popover by another control only in scenarios that comply with Fiori guidelines. For example, opening the value help
+		 * popover by another popover is not recommended.
+		 * The application developer should implement the following accessibility attributes to the opening control: a text or tooltip that describes
+		 * the action (example: "Open Dynamic Date Range"), and aria-haspopup attribute with value of <code>true</code>.
+		 *
+		 * @since 1.105
+		 * @param {HTMLElement} oDomRef DOM reference of the opening control. On tablet or desktop, the popover is positioned relatively to this control.
+		 * @public
+		 */
+		DynamicDateRange.prototype.openBy = function(oDomRef) {
+			this.open(oDomRef);
+		};
+
+		/**
+		 * Opens the value help popup.
+		 *
+		 * @param {HTMLElement} oDomRef DOM reference of the opening control. On tablet or desktop, the value help popover is positioned relative to this control.
+		 * @private
+		 */
+		 DynamicDateRange.prototype._openPopup = function(oDomRef) {
 			if (!this._oPopup) {
 				return;
 			}
 
 			this._oPopup._getPopup().setExtraContent([this._oInput.getDomRef()]);
-			this._oPopup.openBy(this._oInput);
+			this._oPopup.openBy(oDomRef || this._oInput);
 		};
 
 		DynamicDateRange.prototype._applyValue = function() {
