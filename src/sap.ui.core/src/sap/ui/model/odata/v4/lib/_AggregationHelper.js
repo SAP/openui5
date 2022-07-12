@@ -741,9 +741,9 @@ sap.ui.define([
 		 *
 		 * @param {object} oElement
 		 *   Any node or leaf element
-		 * @param {boolean} bIsExpanded
+		 * @param {boolean|undefined} [bIsExpanded]
 		 *   The new value of "@$ui5.node.isExpanded"
-		 * @param {boolean} bIsTotal
+		 * @param {boolean|undefined} [bIsTotal]
 		 *   The new value of "@$ui5.node.isTotal"
 		 * @param {number} iLevel
 		 *   The new value of "@$ui5.node.level"
@@ -754,8 +754,8 @@ sap.ui.define([
 		 * @public
 		 */
 		setAnnotations : function (oElement, bIsExpanded, bIsTotal, iLevel, aAllProperties) {
-			oElement["@$ui5.node.isExpanded"] = bIsExpanded;
-			oElement["@$ui5.node.isTotal"] = bIsTotal;
+			_Helper.setAnnotation(oElement, "@$ui5.node.isExpanded", bIsExpanded);
+			_Helper.setAnnotation(oElement, "@$ui5.node.isTotal", bIsTotal);
 			oElement["@$ui5.node.level"] = iLevel;
 			if (aAllProperties) {
 				// avoid "Failed to drill-down" for missing properties

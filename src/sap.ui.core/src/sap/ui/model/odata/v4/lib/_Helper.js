@@ -1859,6 +1859,22 @@ sap.ui.define([
 		},
 
 		/**
+		 * Sets the new value of the annotation with the given name at the given object; removes it
+		 * in case of an <code>undefined</code> value.
+		 *
+		 * @param {object} oObject - Any object
+		 * @param {string} sAnnotation - The annotation's name
+		 * @param {any} [vValue] - The annotation's new value
+		 */
+		setAnnotation : function (oObject, sAnnotation, vValue) {
+			if (vValue !== undefined) {
+				oObject[sAnnotation] = vValue;
+			} else {
+				delete oObject[sAnnotation];
+			}
+		},
+
+		/**
 		 * Sets the new value of the private client-side instance annotation with the given
 		 * unqualified name at the given object.
 		 *

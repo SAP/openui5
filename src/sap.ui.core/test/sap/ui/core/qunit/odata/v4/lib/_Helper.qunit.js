@@ -2107,6 +2107,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("setAnnotation", function (assert) {
+		var oObject = {};
+
+		// code under test
+		_Helper.setAnnotation(oObject, "@$ui5.foo", "go");
+
+		assert.strictEqual(oObject["@$ui5.foo"], "go");
+
+		// code under test
+		_Helper.setAnnotation(oObject, "@$ui5.foo", "went");
+
+		assert.strictEqual(oObject["@$ui5.foo"], "went");
+
+		// code under test
+		_Helper.setAnnotation(oObject, "@$ui5.foo");
+
+		assert.deepEqual(oObject, {}, "gone");
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bClientSide) {
 	QUnit.test("publicClone: bClientSide=" + bClientSide, function (assert) {
 		var oCloneMock = this.mock(_Helper).expects("clone")
