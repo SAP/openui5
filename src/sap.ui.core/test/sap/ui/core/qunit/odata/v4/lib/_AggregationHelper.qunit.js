@@ -1405,20 +1405,28 @@ sap.ui.define([
 		var oElement = {
 				group : "~group~",
 				measure : "~measure~"
-			};
+			},
+			oHelperMock = this.mock(_Helper);
+
+		oHelperMock.expects("setAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "@$ui5.node.isExpanded", "~bIsExpanded~");
+		oHelperMock.expects("setAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "@$ui5.node.isTotal", "~bIsTotal~");
 
 		// code under test
 		_AggregationHelper.setAnnotations(oElement, "~bIsExpanded~", "~bIsTotal~", "~iLevel~");
 
 		assert.deepEqual(oElement, {
-			"@$ui5.node.isExpanded" : "~bIsExpanded~",
-			"@$ui5.node.isTotal" : "~bIsTotal~",
 			"@$ui5.node.level" : "~iLevel~",
 			group : "~group~",
 			measure : "~measure~"
 		});
 
-		this.mock(_Helper).expects("createMissing")
+		oHelperMock.expects("setAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "@$ui5.node.isExpanded", "~bIsExpanded~");
+		oHelperMock.expects("setAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "@$ui5.node.isTotal", "~bIsTotal~");
+		oHelperMock.expects("createMissing")
 			.withExactArgs(sinon.match.same(oElement), ["Texts", "A"]);
 
 		// code under test
@@ -1426,8 +1434,6 @@ sap.ui.define([
 			["foo", "bar", "group", "measure", ["Texts", "A"]]);
 
 		assert.deepEqual(oElement, {
-			"@$ui5.node.isExpanded" : "~bIsExpanded~",
-			"@$ui5.node.isTotal" : "~bIsTotal~",
 			"@$ui5.node.level" : "~iLevel~",
 			bar : null,
 			foo : null,
