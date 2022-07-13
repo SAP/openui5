@@ -1714,7 +1714,8 @@ sap.ui.define([
 				// clears FlexState and triggers reloading of the flex data without blocking
 				VersionsAPI.loadDraftForApplication({
 					control: oReloadInfo.selector,
-					layer: oReloadInfo.layer
+					layer: oReloadInfo.layer,
+					allContexts: oReloadInfo.allContexts
 				});
 			} else {
 				VersionsAPI.loadVersionForApplication({
