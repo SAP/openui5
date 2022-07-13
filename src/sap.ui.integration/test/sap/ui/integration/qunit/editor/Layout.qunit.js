@@ -31,6 +31,7 @@ sap.ui.define([
 
 	var sBaseUrl = "test-resources/sap/ui/integration/qunit/editor/jsons/withDesigntime/sap.card/";
 
+	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
 	function wait(ms) {

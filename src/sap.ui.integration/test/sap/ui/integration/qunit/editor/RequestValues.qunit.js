@@ -293,6 +293,7 @@ sap.ui.define([
 		}
 	};
 
+	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
 	QUnit.module("Linked Dropdown list", {

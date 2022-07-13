@@ -199,6 +199,7 @@ sap.ui.define([
 		}
 	};
 
+	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
 	QUnit.module("Filter in Backend by input for string (ComboBox)", {
