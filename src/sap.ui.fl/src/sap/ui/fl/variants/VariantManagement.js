@@ -5,6 +5,8 @@
 // Provides control sap.ui.fl.variants.VariantManagement.
 sap.ui.define([
 	"sap/ui/model/Context",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/m/VariantItem",
 	"sap/m/VariantManagement",
 	"sap/ui/fl/Utils",
@@ -14,6 +16,8 @@ sap.ui.define([
 	'sap/base/Log'
 ], function(
 	Context,
+	Filter,
+	FilterOperator,
 	VariantItem,
 	MVariantManagement,
 	flUtils,
@@ -565,9 +569,6 @@ sap.ui.define([
 
 	///<OVERWRITES>
 
-	VariantManagement.prototype.onclick = function(oEvent) {
-		this._oVM.onclick(oEvent);
-	};
 	VariantManagement.prototype._createSaveAsDialog = function() {
 		this._oVM._createSaveAsDialog();
 	};
@@ -842,7 +843,12 @@ sap.ui.define([
 		this._oVM.bindAggregation("items", {
 			path: this.oContext + "/variants",
 			model: sModelName,
-			template: oItemsTemplate
+			template: oItemsTemplate,
+			filters: new Filter({
+				path: "visible",
+				operator: FilterOperator.EQ,
+				value1: true
+			})
 		});
 	};
 
