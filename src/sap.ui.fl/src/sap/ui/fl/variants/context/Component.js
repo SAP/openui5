@@ -58,6 +58,9 @@ sap.ui.define([
 			var oSelectedContextsModel = this.getModel("selectedContexts");
 			oSelectedContextsModel.setProperty("/selected", aSelectedRoles);
 			oSelectedContextsModel.refresh(true);
+			if (this.getRootControl().getController()) {
+				this.getRootControl().getController().showErrorMessage(false);
+			}
 		},
 
 		/**
