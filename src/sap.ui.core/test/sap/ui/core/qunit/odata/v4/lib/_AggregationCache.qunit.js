@@ -872,7 +872,7 @@ sap.ui.define([
 			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {});
 
 		this.mock(oCache.oFirstLevel).expects("fetchValue").never();
-		this.mock(oCache).expects("registerChange").never();
+		this.mock(oCache).expects("registerChangeListener").never();
 		this.mock(oCache).expects("drillDown").never();
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to drill-down into $count, invalid segment: $count",
