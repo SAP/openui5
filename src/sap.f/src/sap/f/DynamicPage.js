@@ -1145,9 +1145,11 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._shouldExpandOnScroll = function () {
-		var bIsScrollable = this._needsVerticalScrollBar();
+		var bIsScrollable = this._needsVerticalScrollBar(),
+			iScrollPosition = this._getScrollPosition(),
+			bIsBelowSnappingHeight = iScrollPosition === 0 || iScrollPosition < this._getSnappingHeight();
 
-		return !this._preserveHeaderStateOnScroll() && this._getScrollPosition() < this._getSnappingHeight()
+		return !this._preserveHeaderStateOnScroll() && bIsBelowSnappingHeight
 			&& !this.getHeaderExpanded() && !this._bPinned && bIsScrollable;
 	};
 

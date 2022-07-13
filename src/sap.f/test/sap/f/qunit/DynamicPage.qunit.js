@@ -1272,6 +1272,32 @@ function (
 		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), false, "header is still snapped");
 	});
 
+	QUnit.test("DynamicPage toggles expand state on scroll when header is hidden", function (assert) {
+		var iSnapBreakpoint;
+		oUtil.renderObject(this.oDynamicPage);
+
+		// Arrange
+		iSnapBreakpoint = this.oDynamicPage._getSnappingHeight();
+		this.oDynamicPage.getHeader().setVisible(false);
+		Core.applyChanges();
+
+		// Arrange: scroll to snap
+		this.oDynamicPage._setScrollPosition(iSnapBreakpoint + 10);
+		// synchronously call the scroll listener to speed up the test
+		this.oDynamicPage._toggleHeaderOnScroll();
+
+		// Assert state arranged as expected:
+		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), false, "header is snapped");
+
+		// Act: scroll to expand
+		this.oDynamicPage._setScrollPosition(0);
+		// synchronously call the scroll listener to speed up the test
+		this.oDynamicPage._toggleHeaderOnScroll();
+
+		// Assert
+		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), true, "header is expanded");
+	});
+
 	QUnit.test("DynamicPage On Collapse Button MouseOver", function (assert) {
 		var oCollapseButtonMouseOverSpy = this.spy(DynamicPage.prototype, "_onVisualIndicatorMouseOver"),
 			oCollapseButtonMouseOverSpy2 = this.spy(DynamicPageHeader.prototype, "_onCollapseButtonMouseOver"),
