@@ -94,20 +94,19 @@ sap.ui.define([
 					sModuleName += "/changes/";
 					sModuleName += sCodeRef.replace(/\.js/g, "");
 					var oChangeSpecificData = {
-						content: {
-							codeRef: sCodeRef
-						},
-						selector: {
-							controllerName: sControllerName
-						},
+						codeRef: sCodeRef,
+						controllerName: sControllerName,
 						changeType: "codeExt",
+						layer: oFlexSettings.layer,
 						namespace: oFlexSettings.namespace,
-						moduleName: sModuleName
+						reference: sReference,
+						moduleName: sModuleName,
+						generator: "rta.service.ControllerExtension"
 					};
 
 					var oPreparedChange = ChangesWriteAPI.create({changeSpecificData: oChangeSpecificData, selector: oAppComponent});
 					PersistenceWriteAPI.add({change: oPreparedChange, selector: oAppComponent});
-					return oPreparedChange.getDefinition();
+					return oPreparedChange.convertToFileContent();
 				},
 
 				/**

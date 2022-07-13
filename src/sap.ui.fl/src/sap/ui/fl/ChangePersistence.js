@@ -12,6 +12,8 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -37,6 +39,8 @@ sap.ui.define([
 	Component,
 	Applier,
 	ChangesUtils,
+	FlexObject,
+	FlexObjectFactory,
 	DependencyHandler,
 	VariantManagementState,
 	FlexState,
@@ -88,12 +92,16 @@ sap.ui.define([
 
 	function getChangeInstance(oFileContent, oChangeOrChangeContent) {
 		var oChange;
-		if (oChangeOrChangeContent instanceof Change) {
+		if (oChangeOrChangeContent instanceof Change || oChangeOrChangeContent instanceof FlexObject) {
 			oChange = oChangeOrChangeContent; // can have other states
 			this._mChangesEntries[oChange.getFileName()] = oChange;
 		} else {
 			if (!this._mChangesEntries[oChangeOrChangeContent.fileName]) {
-				this._mChangesEntries[oChangeOrChangeContent.fileName] = new Change(oChangeOrChangeContent);
+				if (oChangeOrChangeContent.changeType === "codeExt") {
+					this._mChangesEntries[oChangeOrChangeContent.fileName] = FlexObjectFactory.createFromFileContent(oChangeOrChangeContent);
+				} else {
+					this._mChangesEntries[oChangeOrChangeContent.fileName] = new Change(oChangeOrChangeContent);
+				}
 			}
 			oChange = this._mChangesEntries[oChangeOrChangeContent.fileName];
 			oChange.setState(Change.states.PERSISTED);
@@ -486,7 +494,7 @@ sap.ui.define([
 	ChangePersistence.prototype.addChange = function(vChange, oAppComponent) {
 		var oChange = this.addDirtyChange(vChange);
 		this._addRunTimeCreatedChangeAndUpdateDependencies(oAppComponent, oChange);
-		this._mChangesEntries[oChange.getFileName()] = oChange;
+		this._mChangesEntries[oChange.getId()] = oChange;
 		this._addPropagationListener(oAppComponent);
 		return oChange;
 	};

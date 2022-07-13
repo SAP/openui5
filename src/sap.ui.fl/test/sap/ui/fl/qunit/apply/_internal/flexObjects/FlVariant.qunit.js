@@ -137,9 +137,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("FlexObjectFactory - createFlVariant", {
-		beforeEach: function() {
-
-		},
 		afterEach: function() {
 			sandbox.restore();
 		}

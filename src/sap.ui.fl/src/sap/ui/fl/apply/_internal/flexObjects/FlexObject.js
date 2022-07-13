@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/Log",
 	"sap/base/util/deepClone",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/isPlainObject",
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils"
 ], function(
-	Log,
 	deepClone,
 	isEmptyObject,
 	isPlainObject,

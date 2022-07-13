@@ -3,33 +3,35 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/changes/Applier",
-	"sap/ui/fl/apply/_internal/changes/Reverter",
-	"sap/ui/fl/apply/_internal/ChangesController",
-	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
-	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
-	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
-	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
+	"sap/base/util/includes",
+	"sap/base/util/restricted/_omit",
 	"sap/base/Log",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
 	"sap/ui/core/Element",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/base/util/includes",
-	"sap/base/util/restricted/_omit"
+	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+	"sap/ui/fl/apply/_internal/changes/Applier",
+	"sap/ui/fl/apply/_internal/changes/Reverter",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
+	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory"
 ], function(
-	Applier,
-	Reverter,
-	ChangesController,
-	DescriptorChangeTypes,
-	DescriptorChangeFactory,
-	ChangeHandlerStorage,
-	AppVariantInlineChangeFactory,
+	includes,
+	_omit,
 	Log,
+	JsControlTreeModifier,
 	Component,
 	Element,
-	JsControlTreeModifier,
-	includes,
-	_omit
+	DescriptorChangeTypes,
+	Applier,
+	Reverter,
+	FlexObjectFactory,
+	ChangesController,
+	DescriptorChangeFactory,
+	ChangeHandlerStorage,
+	AppVariantInlineChangeFactory
 ) {
 	"use strict";
 
@@ -89,6 +91,10 @@ sap.ui.define([
 						Log.error("the change could not be created.", oError.message);
 						throw oError;
 					});
+			}
+
+			if (mPropertyBag.changeSpecificData.changeType === "codeExt") {
+				return FlexObjectFactory.createControllerExtensionChange(mPropertyBag.changeSpecificData);
 			}
 
 			// flex change

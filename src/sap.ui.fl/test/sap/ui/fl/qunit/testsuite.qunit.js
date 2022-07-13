@@ -320,6 +320,12 @@ sap.ui.define([
 					}
 				}
 			},
+			"apply/_internal/flexObjects/ControllerExtensionChange": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexObjects/ControllerExtensionChange"]
+				}
+			},
 			"apply/_internal/flexObjects/FlexObject": {
 				group: "Apply Internal",
 				coverage: {

@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
+	"sap/ui/fl/apply/_internal/flexObjects/ControllerExtensionChange",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
 	"sap/ui/fl/Layer",
@@ -15,6 +16,7 @@ sap.ui.define([
 	ObjectPath,
 	Core,
 	CompVariant,
+	ControllerExtensionChange,
 	FlexObject,
 	FlVariant,
 	Layer,
@@ -32,7 +34,8 @@ sap.ui.define([
 	var FLEX_OBJECT_TYPES = {
 		BASE_FLEX_OBJECT: FlexObject,
 		COMP_VARIANT_OBJECT: CompVariant,
-		FL_VARIANT_OBJECT: FlVariant
+		FL_VARIANT_OBJECT: FlVariant,
+		CONTROLLER_EXTENSION: ControllerExtensionChange
 	};
 
 	function getFlexObjectClass(oNewFileContent) {
@@ -40,6 +43,8 @@ sap.ui.define([
 			return FLEX_OBJECT_TYPES.COMP_VARIANT_OBJECT;
 		} else if (oNewFileContent.fileType === "ctrl_variant") {
 			return FLEX_OBJECT_TYPES.FL_VARIANT_OBJECT;
+		} else if (oNewFileContent.changeType === "codeExt") {
+			return FLEX_OBJECT_TYPES.CONTROLLER_EXTENSION;
 		}
 		return FLEX_OBJECT_TYPES.BASE_FLEX_OBJECT;
 	}
@@ -83,6 +88,40 @@ sap.ui.define([
 		}, {});
 		var oFlexObject = new FlexObjectClass(mProperties);
 		return oFlexObject;
+	};
+
+	/**
+	 * Creates a new ControllerExtensionChange.
+	 *
+	 * @param {object} mPropertyBag - File content
+	 * @param {string} mPropertyBag.codeRef - Name of the extension file
+	 * @param {string} mPropertyBag.controllerName - Name of the Controller
+	 * @param {string} mPropertyBag.namespace - See {@link sap.ui.fl.apply._internal.flexObjects.FlexObject.FlexObjectMetadata}
+	 * @param {string} mPropertyBag.reference - See {@link sap.ui.fl.apply._internal.flexObjects.FlexObject.FlexObjectMetadata}
+	 * @param {string} mPropertyBag.moduleName - Location of the extension file
+	 * @param {string} mPropertyBag.generator - See {@link sap.ui.fl.apply._internal.flexObjects.FlexObject.SupportInformation}
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.ControllerExtensionChange} Created ControllerExtensionChange instance
+	 */
+	FlexObjectFactory.createControllerExtensionChange = function(mPropertyBag) {
+		var mProperties = {
+			id: Utils.createDefaultFileName(mPropertyBag.changeType),
+			content: {
+				codeRef: mPropertyBag.codeRef
+			},
+			layer: mPropertyBag.layer,
+			controllerName: mPropertyBag.controllerName,
+			supportInformation: {
+				generator: mPropertyBag.generator || "FlexObjectFactory.createControllerExtensionChange",
+				sapui5Version: Core.getConfiguration().getVersion().toString()
+			},
+			flexObjectMetadata: {
+				moduleName: mPropertyBag.moduleName,
+				reference: mPropertyBag.reference,
+				namespace: mPropertyBag.namespace,
+				changeType: "codeExt"
+			}
+		};
+		return new ControllerExtensionChange(mProperties);
 	};
 
 	/**
