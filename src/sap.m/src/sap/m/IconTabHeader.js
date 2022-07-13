@@ -482,6 +482,10 @@ sap.ui.define([
 	 */
 	IconTabHeader.prototype.setSelectedKey = function (sKey) {
 		if (sKey === this.getSelectedKey()) {
+			if (this._isInsideIconTabBar()) {
+				this.getParent().setProperty("selectedKey", sKey, true);
+			}
+
 			return this;
 		}
 
@@ -1485,12 +1489,7 @@ sap.ui.define([
 			return;
 		}
 
-		sSelectedKey = this.oSelectedItem._getNonEmptyKey();
-		this.setProperty("selectedKey", sSelectedKey, true);
-		if (bIsParentIconTabBar) {
-			this.getParent().setProperty("selectedKey", sSelectedKey, true);
-		}
-
+		this.setProperty("selectedKey", this.oSelectedItem._getNonEmptyKey(), true);
 	};
 
 	/**

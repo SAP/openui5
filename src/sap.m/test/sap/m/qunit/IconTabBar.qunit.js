@@ -1932,6 +1932,14 @@ sap.ui.define([
 		oIconTabBar.placeAt("qunit-fixture");
 		Core.applyChanges();
 
+		assert.strictEqual(oIconTabBar.getSelectedKey(), "key1", "getSelectedKey() = key1");
+		assert.notOk(oIconTabBar.getProperty("selectedKey"), "selectedKey property is initially empty");
+
+		oIconTabBar.setSelectedKey("key1");
+		Core.applyChanges();
+
+		assert.strictEqual(oIconTabBar.getProperty("selectedKey"), "key1", "selectedKey property is set");
+
 		// wait 500ms
 		this.clock.tick(500);
 
