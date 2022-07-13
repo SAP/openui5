@@ -1537,30 +1537,30 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchIfChildCanUseCache: $$aggregation", function (assert) {
-		var oBinding = new ODataParentBinding({
+		var mParameters = {/*$$aggregation : {.../}*/},
+			oBinding = new ODataParentBinding({
 				oContext : {},
 				oModel : {
 					getMetaModel : function () { return {}; },
 					resolve : function () {}
 				},
-				mParameters : {
-					$$aggregation : {/*irrelevant*/}
-				},
+				mParameters : mParameters,
 				sPath : "path"
 			}),
 			oContext = {
 				getIndex : function () {},
 				getPath : function () { return "/foo/bar/path"; }
-			},
-			oModelMock = this.mock(oBinding.oModel);
+			};
 
 		this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs().returns("n/a");
-		oModelMock.expects("resolve")
+		this.mock(oBinding.oModel).expects("resolve")
 			.withExactArgs("childPath", sinon.match.same(oContext))
 			.returns("/resolved/child/path");
+		this.mock(_Helper).expects("isDataAggregation").withExactArgs(sinon.match.same(mParameters))
+			.returns(true);
 
-		// code under test
 		assert.strictEqual(
+			// code under test
 			oBinding.fetchIfChildCanUseCache(oContext, "childPath", null, "~bIsProperty~")
 				.getResult(),
 			"/resolved/child/path");

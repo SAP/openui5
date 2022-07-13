@@ -681,9 +681,10 @@ sap.ui.define([
 				aChildCanUseCachePromises : [],
 				oModel : {bAutoExpandSelect : true},
 				mParameters : {$$aggregation : {/*irrelevant*/}},
-				sPath : "relativeWithAggregation",
+				sPath : "relativeWithDataAggregation",
 				bRelative : true
-			}
+			},
+			isDataAggregation : true
 		}, {
 			oContext : Context.create({}, {}, "/v4Context"),
 			bIgnoreParentCache : true,
@@ -709,6 +710,9 @@ sap.ui.define([
 				oBindingMock.expects("doFetchQueryOptions")
 					.withExactArgs(sinon.match.same(oFixture.oContext))
 					.returns(SyncPromise.resolve(mQueryOptions));
+				this.mock(_Helper).expects("isDataAggregation")
+					.exactly(oFixture.isDataAggregation ? 1 : 0)
+					.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(true);
 
 				// code under test
 				oResult = oBinding.fetchQueryOptionsForOwnCache(oFixture.oContext,
@@ -835,6 +839,8 @@ sap.ui.define([
 			this.mock(oBinding).expects("doFetchQueryOptions")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(SyncPromise.resolve(mCurrentBindingQueryOptions));
+			this.mock(_Helper).expects("isDataAggregation")
+				.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 			this.mock(oBinding).expects("updateAggregatedQueryOptions")
 				.withExactArgs(sinon.match.same(mCurrentBindingQueryOptions));
 			oExpectation = this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
@@ -891,6 +897,8 @@ sap.ui.define([
 			this.mock(oBinding).expects("doFetchQueryOptions")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns(SyncPromise.resolve(mCurrentBindingQueryOptions));
+			this.mock(_Helper).expects("isDataAggregation")
+				.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 			this.mock(oBinding).expects("updateAggregatedQueryOptions")
 				.withExactArgs(sinon.match.same(mCurrentBindingQueryOptions));
 			this.mock(oParentBinding).expects("fetchIfChildCanUseCache")

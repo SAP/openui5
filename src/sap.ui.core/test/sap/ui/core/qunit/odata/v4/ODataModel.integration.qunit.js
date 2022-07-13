@@ -52,12 +52,9 @@ sap.ui.define([
 	 * Asserts that the given contexts have the expected indices, both internally and from a view
 	 * perspective.
 	 *
-	 * @param {object} assert
-	 *   The QUnit assert object
-	 * @param {sap.ui.model.odata.v4.Context[]} aContexts
-	 *   Some contexts
-	 * @param {number[]} aExpectedIndices
-	 *   Expected internal <code>iIndex</code> values per context
+	 * @param {object} assert - The QUnit assert object
+	 * @param {sap.ui.model.odata.v4.Context[]} aContexts - Some contexts
+	 * @param {number[]} aExpectedIndices - Expected internal <code>iIndex</code> values per context
 	 */
 	function assertIndices(assert, aContexts, aExpectedIndices) {
 		aContexts.forEach(function (oContext, i) {
@@ -69,14 +66,46 @@ sap.ui.define([
 	/**
 	 * Checks that the given promise is rejected with a cancellation error.
 	 *
-	 * @param {object} assert The QUnit assert object
-	 * @param {Promise} oPromise The promise to be checked
+	 * @param {object} assert - The QUnit assert object
+	 * @param {Promise} oPromise - The promise to be checked
 	 * @returns {Promise} A promise that resolves after the check is done
 	 */
 	function checkCanceled(assert, oPromise) {
 		return oPromise.then(mustFail(assert), function (oError) {
 			assert.ok(oError instanceof Error && oError.canceled, "canceled error expected");
 		});
+	}
+
+	/**
+	 * Checks that the given table has the expected state w.r.t. contexts and content.
+	 *
+	 * @param {string} sTitle - A test title
+	 * @param {object} assert - The QUnit assert object
+	 * @param {sap.m.Table|sap.ui.table.Table} oTable - A table
+	 * @param {string[]} aExpectedPaths - List of all expected current conntext paths
+	 * @param {any[][]} aExpectedContent - "Table" of expected cell contents
+	 * @param {number} [iExpectedLength=aExpectedPaths.length] - Expected length
+	 */
+	// eslint-disable-next-line valid-jsdoc -- [][] is unsupported
+	function checkTable(sTitle, assert, oTable, aExpectedPaths, aExpectedContent, iExpectedLength) {
+		var oListBinding = oTable.getBinding("items") || oTable.getBinding("rows"),
+			aRows = oTable.getItems ? oTable.getItems() : oTable.getRows();
+
+		assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+		assert.strictEqual(oListBinding.getLength(), iExpectedLength || aExpectedPaths.length,
+			sTitle);
+		assert.deepEqual(oListBinding.getAllCurrentContexts().map(getPath), aExpectedPaths);
+
+		aExpectedContent = aExpectedContent.map(function (aTexts) {
+			return aTexts.map(function (vText) {
+				return vText !== undefined ? String(vText) : "";
+			});
+		});
+		assert.deepEqual(aRows.map(function (oRow) {
+			return oRow.getCells().map(function (oCell) {
+				return oCell.getText();
+			});
+		}), aExpectedContent, sTitle);
 	}
 
 	/**
@@ -18603,23 +18632,6 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		function checkTable(sTitle, aExpectedPaths, aExpectedContent) {
-			assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
-			assert.strictEqual(oListBinding.getLength(), aExpectedPaths.length, sTitle);
-			assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), aExpectedPaths);
-
-			aExpectedContent = aExpectedContent.map(function (aTexts) {
-				return aTexts.map(function (vText) {
-					return vText !== undefined ? String(vText) : "";
-				});
-			});
-			assert.deepEqual(oTable.getItems().map(function (oItem) {
-				return oItem.getCells().map(function (oCell) {
-					return oCell.getText();
-				});
-			}), aExpectedContent, sTitle);
-		}
-
 		function subtotalAtTop(sText) {
 			return bSubtotalsAtBottomOnly ? "" : sText;
 		}
@@ -18646,7 +18658,7 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 			oListBinding = oTable.getBinding("items");
 
-			checkTable("initial state", [
+			checkTable("initial state", assert, oTable, [
 				"/BusinessPartners()",
 				"/BusinessPartners(Country='A')",
 				"/BusinessPartners($isTotal=true)"
@@ -18672,7 +18684,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "expand node 'A'");
 		}).then(function () {
-			checkTable("node 'A' expanded", [
+			checkTable("node 'A' expanded", assert, oTable, [
 				"/BusinessPartners()",
 				"/BusinessPartners(Country='A')",
 				"/BusinessPartners(Country='A',LocalCurrency='EUR')",
@@ -18712,7 +18724,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "expand node 'A/EUR'");
 		}).then(function () {
-			checkTable("node 'A/EUR' expanded", [
+			checkTable("node 'A/EUR' expanded", assert, oTable, [
 				"/BusinessPartners()",
 				"/BusinessPartners(Country='A')",
 				"/BusinessPartners(Country='A',LocalCurrency='EUR')",
@@ -18743,7 +18755,7 @@ sap.ui.define([
 			// Note: table's content is NOT updated synchronously
 			return that.waitForChanges(assert, "collapse node 'A'");
 		}).then(function () {
-			checkTable("node 'A' collapsed", [
+			checkTable("node 'A' collapsed", assert, oTable, [
 				"/BusinessPartners()",
 				"/BusinessPartners(Country='A')",
 				"/BusinessPartners($isTotal=true)"
@@ -18794,23 +18806,6 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		function checkTable(sTitle, aExpectedPaths, aExpectedContent) {
-			assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
-			assert.strictEqual(oListBinding.getLength(), aExpectedPaths.length, sTitle);
-			assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), aExpectedPaths);
-
-			aExpectedContent = aExpectedContent.map(function (aTexts) {
-				return aTexts.map(function (vText) {
-					return vText !== undefined ? String(vText) : "";
-				});
-			});
-			assert.deepEqual(oTable.getItems().map(function (oItem) {
-				return oItem.getCells().map(function (oCell) {
-					return oCell.getText();
-				});
-			}), aExpectedContent, sTitle);
-		}
-
 		this.expectRequest("BusinessPartners?$apply="
 				+ "concat(aggregate(SalesAmountLocalCurrency,LocalCurrency),groupby((Country))"
 				+ "/concat(aggregate($count as UI5__count),top(99)))", {
@@ -18830,7 +18825,7 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 			oListBinding = oTable.getBinding("items");
 
-			checkTable("initial state", [
+			checkTable("initial state", assert, oTable, [
 				"/BusinessPartners()",
 				"/BusinessPartners(Country='A')",
 				"/BusinessPartners($isTotal=true)"
@@ -18854,7 +18849,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "expand node 'A'");
 		}).then(function () {
-			checkTable("node 'A' expanded", [
+			checkTable("node 'A' expanded", assert, oTable, [
 				"/BusinessPartners()",
 				"/BusinessPartners(Country='A')",
 				"/BusinessPartners(Country='A',LocalCurrency='EUR')",
@@ -18885,7 +18880,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "expand node 'A/EUR'");
 		}).then(function () {
-			checkTable("node 'A/EUR' expanded", [
+			checkTable("node 'A/EUR' expanded", assert, oTable, [
 				"/BusinessPartners()",
 				"/BusinessPartners(Country='A')",
 				"/BusinessPartners(Country='A',LocalCurrency='EUR')",
@@ -18911,7 +18906,7 @@ sap.ui.define([
 			// Note: table's content is NOT updated synchronously
 			return that.waitForChanges(assert, "collapse node 'A'");
 		}).then(function () {
-			checkTable("node 'A' collapsed", [
+			checkTable("node 'A' collapsed", assert, oTable, [
 				"/BusinessPartners()",
 				"/BusinessPartners(Country='A')",
 				"/BusinessPartners($isTotal=true)"
@@ -21029,6 +21024,278 @@ sap.ui.define([
 					assert.strictEqual(oError.message, "Must not request side effects for a context"
 						+ " of a binding with $$aggregation");
 				});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show the single root node of a recursive hierarchy, which happens to be a leaf.
+	// Show that auto-$expand/$select and late property requests work.
+	// JIRA: CPOUI5ODATAV4-1643
+	QUnit.test("Recursive Hierarchy: root is leaf", function (assert) {
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			oRoot,
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{path : \'/EMPLOYEES\',\
+		parameters : {\
+			$$aggregation : {\
+				hierarchyQualifier : \'OrgChart\'\
+			}\
+		}}" threshold="0" visibleRowCount="3">\
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text text="{= %{@$ui5.node.level} }"/>\
+	<Text text="{ID}"/>\
+	<Text text="{MANAGER_ID}"/>\
+	<Text text="{EMPLOYEE_2_TEAM/Name}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$select=ID,MANAGER_ID"
+				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "1",
+				value : [{
+					// DescendantCount : 0, // not needed w/o expandTo
+					DistanceFromRoot : 0,
+					// DrillState : "leaf", // not needed w/o expandTo
+					EMPLOYEE_2_TEAM : {
+						Name : "Team #01",
+						Team_Id : "01"
+					},
+					ID : "0",
+					MANAGER_ID : null
+				}]
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oRoot = oTable.getRows()[0].getBindingContext();
+
+			checkTable("root is leaf", assert, oTable, [
+				"/EMPLOYEES('0')"
+			], [
+				[undefined, 1, "0", "", "Team #01"],
+				["", "", "", "", ""],
+				["", "", "", "", ""]
+			]);
+
+			that.expectRequest("EMPLOYEES('0')?$select=AGE", {AGE : 60});
+
+			return Promise.all([
+				// code under test
+				oRoot.requestProperty("AGE"),
+				that.waitForChanges(assert, "late property")
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], 60);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2. Collapse and
+	// expand the root node. Expand an initially collapsed node. Scroll to the end and collapse the
+	// root node again.
+	// JIRA: CPOUI5ODATAV4-1643
+	QUnit.test("Recursive Hierarchy: expand to 2, collapse & expand root etc.", function (assert) {
+		var oCollapsed,
+			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			oRoot,
+			oTable,
+			sView = '\
+<t:Table id="table" rows="{path : \'/EMPLOYEES\',\
+		parameters : {\
+			$$aggregation : {\
+				expandTo : 2,\
+				hierarchyQualifier : \'OrgChart\'\
+			}\
+		}}" threshold="0" visibleRowCount="3">\
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text text="{= %{@$ui5.node.level} }"/>\
+	<Text text="{ID}"/>\
+	<Text text="{MANAGER_ID}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$select=ID,MANAGER_ID&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "6",
+				value : [{
+					DescendantCount : 5,
+					DistanceFromRoot : 0,
+					DrillState : "expanded",
+					ID : "0",
+					MANAGER_ID : null
+				}, {
+					DescendantCount : 0,
+					DistanceFromRoot : 1,
+					DrillState : "collapsed",
+					ID : "1",
+					MANAGER_ID : "0"
+				}, {
+					DescendantCount : 0,
+					DistanceFromRoot : 1,
+					DrillState : "leaf",
+					ID : "2",
+					MANAGER_ID : "0"
+				}]
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oRoot = oTable.getRows()[0].getBindingContext();
+
+			checkTable("initial page", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')"
+			], [
+				[true, 1, "0", ""],
+				[false, 2, "1", "0"],
+				[undefined, 2, "2", "0"]
+			], 6);
+			assert.deepEqual(oRoot.getObject(), {
+					"@$ui5.node.isExpanded" : true,
+					"@$ui5.node.level" : 1,
+					ID : "0",
+					MANAGER_ID : null
+				}, "technical properties have been removed");
+			assert.deepEqual(oTable.getRows()[2].getBindingContext().getObject(), {
+					// "@$ui5.node.isExpanded" : undefined, // lost by _Helper.publicClone?!
+					"@$ui5.node.level" : 2,
+					ID : "2",
+					MANAGER_ID : "0"
+				}, "technical properties have been removed");
+
+			// code under test
+			oRoot.collapse();
+
+			return that.waitForChanges(assert, "collapse root");
+		}).then(function () {
+			checkTable("root collapsed", assert, oTable, [
+				"/EMPLOYEES('0')"
+			], [
+				[false, 1, "0", ""],
+				["", "", "", ""],
+				["", "", "", ""]
+			]);
+
+			that.oLogMock.expects("error").withExactArgs(
+				"Failed to drill-down into $count, invalid segment: $count",
+				sTeaBusi + "EMPLOYEES?$select=ID,MANAGER_ID", "sap.ui.model.odata.v4.lib._Cache");
+
+			// code under test -- will log an error because $count is not available
+			assert.strictEqual(oTable.getBinding("rows").getCount(), undefined);
+
+			// code under test
+			oRoot.expand();
+
+			return that.waitForChanges(assert, "expand root");
+		}).then(function () {
+			checkTable("root expanded", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')"
+			], [
+				[true, 1, "0", ""],
+				[false, 2, "1", "0"],
+				[undefined, 2, "2", "0"]
+			], 6);
+		}).then(function () {
+			oCollapsed = oTable.getRows()[1].getBindingContext();
+
+			that.expectRequest("EMPLOYEES?$select=ID,MANAGER_ID&$apply=filter(ID%20eq%20'1')/"
+					+ "&$count=true&$skip=0&$top=3", {
+					"@odata.count" : "2",
+					value : [{
+						DrillState : "collapsed",
+						ID : "1.1",
+						MANAGER_ID : "1"
+					}, {
+						DrillState : "collapsed",
+						ID : "1.2",
+						MANAGER_ID : "1"
+					}]
+				});
+
+			// code under test
+			oCollapsed.expand();
+
+			return that.waitForChanges(assert, "expand initially collapsed node");
+		}).then(function () {
+			checkTable("initially collapsed node expanded", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('1.1')",
+				"/EMPLOYEES('1.2')",
+				"/EMPLOYEES('2')"
+			], [
+				[true, 1, "0", ""],
+				[true, 2, "1", "0"],
+				[false, 3, "1.1", "1"]
+			], 8);
+			assert.deepEqual(oCollapsed.getObject(), {
+					"@$ui5.node.groupLevelCount" : 2,
+					"@$ui5.node.isExpanded" : true,
+					"@$ui5.node.level" : 2,
+					ID : "1",
+					MANAGER_ID : "0"
+				}, "technical properties have been removed");
+
+			that.expectRequest("EMPLOYEES?$select=ID,MANAGER_ID&$skip=3&$top=3", {
+					value : [{
+						DescendantCount : 0,
+						DistanceFromRoot : 1,
+						DrillState : "leaf",
+						ID : "3",
+						MANAGER_ID : "0"
+					}, {
+						DescendantCount : 1,
+						DistanceFromRoot : 1,
+						DrillState : "collapsed",
+						ID : "4",
+						MANAGER_ID : "0"
+					}, {
+						DescendantCount : 1,
+						DistanceFromRoot : 1,
+						DrillState : "collapsed",
+						ID : "5",
+						MANAGER_ID : "0"
+					}]
+				});
+
+			// code under test
+			oTable.setFirstVisibleRow(5);
+
+			return that.waitForChanges(assert, "scroll to the end");
+		}).then(function () {
+			checkTable("scroll to the end", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('1.1')",
+				"/EMPLOYEES('1.2')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')",
+				"/EMPLOYEES('4')",
+				"/EMPLOYEES('5')"
+			], [
+				[undefined, 2, "3", "0"],
+				[false, 2, "4", "0"],
+				[false, 2, "5", "0"]
+			]);
+
+			// code under test
+			oRoot.collapse();
+
+			return Promise.all([
+				resolveLater(undefined, 0), // table update takes a moment
+				that.waitForChanges(assert, "collapse root again")
+			]);
+		}).then(function () {
+			checkTable("root collapsed", assert, oTable, [
+				"/EMPLOYEES('0')"
+			], [
+				[false, 1, "0", ""],
+				["", "", "", ""],
+				["", "", "", ""]
+			]);
 		});
 	});
 
@@ -41189,20 +41456,20 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1603
 	// BCP: 2270079668, 2280103069
 	QUnit.test("BCP: 2270079668 - #resetChanges after failed PATCH", function (assert) {
-	var oBinding,
-		oContext,
-		oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
-		iPatchCompleted = 0,
-		aPatchPromises = [],
-		iPatchSent = 0,
-		sView = '\
+		var oBinding,
+			oContext,
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			iPatchCompleted = 0,
+			aPatchPromises = [],
+			iPatchSent = 0,
+			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Input id="grossAmount" value="{GrossAmount}"/>\
 	<Input id="note" value="{Note}"/>\
 	<Input id="city" value="{SO_2_BP/Address/City}"/>\
 	<Input id="postalCode" value="{SO_2_BP/Address/PostalCode}"/>\
 </FlexBox>',
-		that = this;
+			that = this;
 
 		this.expectRequest("SalesOrderList('1')?$select=GrossAmount,Note,SalesOrderID"
 				+ "&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID)", {
