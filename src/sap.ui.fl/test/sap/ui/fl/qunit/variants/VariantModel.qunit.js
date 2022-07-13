@@ -2298,7 +2298,7 @@ sap.ui.define([
 	}, function() {
 		function clickOnVMControl(oVMControl) {
 			// to create variant list control - inside variant management control's popover
-			oVMControl.getDomRef().click();
+			oVMControl._getEmbeddedVM().getDomRef().click();
 		}
 
 		function makeSelection(oVMControl, iIndex) {

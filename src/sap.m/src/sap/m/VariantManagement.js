@@ -1970,7 +1970,6 @@ sap.ui.define([
 		this._sOriginalDefaultKey = this._sDefaultKey;
 
 
-		//this.oManagementSave.setEnabled(false);
 		this._oSearchFieldOnMgmtDialog.setValue("");
 
 		// Ideally, this should be done only once in <code>_createManagementDialog</code>. However, the binding does not recognize a change if filtering is involved.
@@ -1981,12 +1980,7 @@ sap.ui.define([
 		if (this._bDeleteOccured) {
 			this._bDeleteOccured = false;
 
-			this.oManagementTable.bindAggregation("items", {
-				path: "/items",
-				model: "$mVariants",
-				factory: this._templateFactoryManagementDialog.bind(this),
-				filters: this._getVisibleFilter()
-			});
+			this.oManagementTable.getBinding("items").filter(this._getVisibleFilter());
 		}
 
 		this.oManagementDialog.open();
@@ -2047,13 +2041,17 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._handleManageCancelPressed = function() {
-		var sDefaultKey = this._sDefaultKey;
-//		this._getDeletedItems().forEach(function(sKey) {
-//			var oItem = this._getItemByKey(sKey);
-//			if (oItem) {
-//				oItem.setVisible(true);
-//			}
-//		});
+
+		if (this._getDeletedItems().length > 0) {
+			this._bDeleteOccured = true;
+
+			this._getDeletedItems().forEach(function(sKey) {
+				var oItem = this._getItemByKey(sKey);
+				if (oItem) {
+					oItem.setVisible(true);
+				}
+			}.bind(this));
+		}
 
 		this.getItems().forEach(function(oItem) {
 			if (oItem.getVisible()) {
@@ -2061,26 +2059,23 @@ sap.ui.define([
 				oItem.setFavorite(oItem.getOriginalFavorite());
 				oItem.setExecuteOnSelect(oItem.getOriginalExecuteOnSelect());
 				oItem.setContexts(oItem.getOriginalContexts());
-			} else {
-				oItem.setVisible(true);
 			}
 		});
 
-		sDefaultKey = this._sOriginalDefaultKey;
-		if (sDefaultKey !== this.getDefaultKey()) {
-			this.setDefaultKey(sDefaultKey);
+		if (this._sOriginalDefaultKey !== this.getDefaultKey()) {
+			this.setDefaultKey(this._sOriginalDefaultKey);
 		}
 
 		this._clearRenamedItems();
 		this._clearDeletedItems();
 
-//		if (this._oManagedObjectModel) {
-//			this._oManagedObjectModel.checkUpdate();
-//		}
+		if (this._oManagedObjectModel) {
+			this._oManagedObjectModel.checkUpdate();
+		}
 
 		this.fireManageCancel();
 
-		//fireCancel may have deleted the ManageViews dialog
+		//fireManageCancel may have deleted the ManageViews dialog
 //		if (this.oManagementDialog) {
 //			this.oManagementTable.getBinding("items").filter(this._getVisibleFilter());
 //		}

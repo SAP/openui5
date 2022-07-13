@@ -1379,7 +1379,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 	});
 
-	QUnit.test("check omanage dialog with dublicate entries", function(assert) {
+	QUnit.test("check manage dialog with dublicate entries", function(assert) {
 		this.oVM.addItem(new VariantItem({key: "1", title:"One", originalTitle: "One", rename: false, sharing: "public", executeOnSelect: true, originalExecuteOnSelect: true, author: "A"}));
 		this.oVM.addItem(new VariantItem({key: "2", title:"Two", originalTitle: "Two", remove: true, sharing: "private", author: "B"}));
 		this.oVM.addItem(new VariantItem({key: "3", title:"Three", originalTitle: "Three", favorite: true, remove: true, sharing: "private", executeOnSelect: true, originalExecuteOnSelect: true, author: "A"}));
@@ -1399,7 +1399,14 @@ sap.ui.define([
 		sinon.stub(this.oVM, "_handleManageSavePressed").callsFake(function (oEvent) {
 			fOriginalSaveHandler();
 
-			assert.ok(true, "expected handler called");
+			assert.ok(this.oVM.oManagementTable, "management table exists");
+			var aItems = this.oVM.oManagementTable.getItems();
+			var aCells = aItems[1].getCells();
+
+			var oInput = aCells[1];
+			assert.ok(oInput, "expected input field");
+
+			assert.equal(oInput.getValueState(), "Error", "expected error state");
 
 			var oTarget = this.oVM.oManagementCancel.getFocusDomRef();
 			assert.ok(oTarget);
@@ -1438,13 +1445,6 @@ sap.ui.define([
 			this.clock.tick(600);
 
 			assert.ok(this.oVM.oManagementTable, "management table exists");
-			var aItems = this.oVM.oManagementTable.getItems();
-			var aCells = aItems[1].getCells();
-
-			var oInput = aCells[1];
-			assert.ok(oInput, "expected input field");
-
-			assert.equal(oInput.getValueState(), "Error", "expected error state");
 		}.bind(this));
 
 

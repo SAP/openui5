@@ -1243,27 +1243,15 @@ sap.ui.define([
 
 			oConfiguration.setLanguage(sLanguage);
 		});
+
 		QUnit.test("Checking the apply automatic text for standard", function(assert) {
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 
-			this._oVM._openManagementDialog();
-			var aRows = this._oVM.oManagementTable.getItems();
-			assert.ok(aRows);
-			assert.equal(aRows.length, 5);
-
-			var aCells = aRows[0].getCells();
-			assert.ok(aCells);
-			assert.equal(aCells.length, 9);
-
-			assert.ok(aCells[4].isA("sap.m.CheckBox"));
-
-			////
-			this._oVM._bDeleteOccured = true;
 			this.oVariantManagement.setDisplayTextForExecuteOnSelectionForStandardVariant("TEST");
 
 			this._oVM._openManagementDialog();
-			aRows = this._oVM.oManagementTable.getItems();
-			aCells = aRows[0].getCells();
+			var aRows = this._oVM.oManagementTable.getItems();
+			var aCells = aRows[0].getCells();
 			assert.ok(aCells);
 			assert.equal(aCells.length, 9);
 
