@@ -3526,7 +3526,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		//Assert
-		assert.equal(oTable.getItems()[0].getContentAnnouncement(), "Button Test Button Button More", "here");
+		assert.equal(oTable.getItems()[0].getContentAnnouncement(), "Button Test Button Button Additional options", "here");
 	});
 
 	QUnit.module("Associative popover");
