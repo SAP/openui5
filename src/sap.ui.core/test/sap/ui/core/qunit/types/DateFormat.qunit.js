@@ -119,6 +119,23 @@ sap.ui.define([
 			assert.equal(DateFormat.getTimeInstance({ pattern: "hh:mm:ss a" }, oLocale).format(oDateTime), "08:46:13 AM", "datetime with custom pattern for given locale");
 		});
 
+		QUnit.test("Parse out-of-normal-range seconds value to minutes and seconds", function (assert) {
+			var sPattern = "mm:ss";
+			var sSourcePattern = "ssss";
+
+			var oParseDateFormat = DateFormat.getDateTimeInstance({ pattern: sSourcePattern });
+			var sDateString = "1199"; // 1199 seconds equal 19 minutes and 59 seconds
+
+			var oParsed = oParseDateFormat.parse(sDateString);
+			assert.ok(oParsed instanceof Date, "should be a date");
+			assert.equal(oParsed.getTime(), -2401000, // 31 Dec 1969 23:19:59 _UTC_
+				"should parse to correct date");
+
+			var oDateFormat = DateFormat.getDateTimeInstance({ pattern: sPattern });
+			var sResult = oDateFormat.format(oParsed);
+			assert.equal(sResult, "19:59", "Should return correct value");
+		});
+
 		QUnit.module("format relative with timezone America/Los_Angeles", {
 			beforeEach: function () {
 				sap.ui.getCore().getConfiguration().setTimezone("America/Los_Angeles");
@@ -200,6 +217,7 @@ sap.ui.define([
 			var oParsed = oCustomDateFormat.parse(sDateString);
 			assert.ok(!oParsed, "result is not a date");
 		});
+
 
 		QUnit.test("Parse with case insensitivity", function (assert) {
 			[
