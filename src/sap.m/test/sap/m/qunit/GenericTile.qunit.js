@@ -24,11 +24,12 @@ sap.ui.define([
 	"sap/m/FormattedText",
 	"sap/m/NewsContent",
 	"sap/ui/core/theming/Parameters",
+	"sap/ui/qunit/QUnitUtils",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
 			Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes, oCore, GridContainerItemLayoutData,
-			GridContainerSettings, GridContainer, FormattedText, NewsContent, Parameters) {
+			GridContainerSettings, GridContainer, FormattedText, NewsContent, Parameters,qutils) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -738,6 +739,30 @@ sap.ui.define([
 		assert.strictEqual(this.oGenericTile.$("action-more").length, 1, "More icon has been rendered");
 		assert.strictEqual(this.oGenericTile.$("action-remove").length, 0, "Remove button has not been rendered");
 	});
+
+	QUnit.test("Tab navigation check in action more", function(assert) {
+        var bForward = true;
+        //Arrange
+        var done = assert.async();
+        //Act
+        this.oGenericTile.setFrameType("TwoByHalf");
+        this.oGenericTile.setMode("IconMode");
+        this.oGenericTile.setTileIcon("sap-icon://key");
+        this.oGenericTile.setBackgroundColor("teal");
+        this.oGenericTile.setScope(GenericTileScope.ActionMore);
+        oCore.applyChanges();
+        setTimeout(function() {
+                qutils.triggerKeydown(this.oGenericTile.getDomRef(), KeyCodes.TAB);
+                var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+                if ($Tabbables.length) {
+                    $Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+                }
+                //Assert
+                assert.equal(this.oGenericTile.$("action-more").hasClass("sapMGTVisible"), true, "The Action More button is visible on focus of Generic Tile");
+                done();
+				qutils.triggerKeyup(this.oGenericTile.getDomRef(), KeyCodes.TAB);
+        }.bind(this), 100);
+    });
 
 	QUnit.test("ActionRemove scope in loaded regular GenericTile", function(assert) {
 		//Arrange
@@ -4823,4 +4848,31 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.equal(getComputedStyle(document.querySelector(".sapMGTContentShimmerPlaceholderItemText")).width,"94px","Sub Header Shimmer Width Set Correctly");
 		assert.equal(getComputedStyle(document.querySelector(".sapMTileCntContentShimmerPlaceholderItemTextFooter")).width,"94px","Footer Shimmer Width Set Correctly");
 	});
+	// Checks whether the given DomRef is contained or equals (in) one of the given container
+	function isContained(aContainers, oRef) {
+		for (var i = 0; i < aContainers.length; i++) {
+			if (aContainers[i] === oRef || jQuery.contains(aContainers[i], oRef)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	// Returns a jQuery object which contains all next/previous (bNext) tabbable DOM elements of the given starting point (oRef) within the given scopes (DOMRefs)
+	function findTabbables(oRef, aScopes, bNext) {
+		var $Ref = jQuery(oRef),
+			$All, $Tabbables;
+
+		if (bNext) {
+			$All = jQuery.merge($Ref.find("*"), jQuery.merge($Ref.nextAll(), $Ref.parents().nextAll()));
+			$Tabbables = $All.find(':sapTabbable').addBack(':sapTabbable');
+		} else {
+			$All = jQuery.merge($Ref.prevAll(), $Ref.parents().prevAll());
+			$Tabbables = jQuery.merge($Ref.parents(':sapTabbable'), $All.find(':sapTabbable').addBack(':sapTabbable'));
+		}
+
+		$Tabbables = jQuery.uniqueSort($Tabbables);
+		return $Tabbables.filter(function() {
+			return isContained(aScopes, this);
+		});
+	}
 });
