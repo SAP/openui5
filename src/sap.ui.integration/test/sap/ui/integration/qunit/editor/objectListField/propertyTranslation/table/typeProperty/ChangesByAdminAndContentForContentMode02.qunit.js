@@ -288,6 +288,7 @@ sap.ui.define([
 		}
 	}
 
+	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
 	function wait(ms) {

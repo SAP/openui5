@@ -87,6 +87,7 @@ sap.ui.define([
 			"fr-CA": "String 4 French CA"
 		}
 	};
+	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
 	function wait(ms) {

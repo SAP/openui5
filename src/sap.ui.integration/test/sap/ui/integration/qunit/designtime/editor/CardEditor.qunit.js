@@ -278,6 +278,7 @@ sap.ui.define([
 		}
 	};
 
+	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
 	QUnit.module("Create an editor based on a card instance", {
