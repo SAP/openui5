@@ -673,6 +673,7 @@ sap.ui.define([
 					level: oEntry[this.oTreeProperties["hierarchy-level-for"]],
 					originalLevel: oEntry[this.oTreeProperties["hierarchy-level-for"]],
 					initiallyCollapsed: oEntry[this.oTreeProperties["hierarchy-drill-state-for"]] === "collapsed",
+					initiallyIsLeaf : oEntry[this.oTreeProperties["hierarchy-drill-state-for"]] === "leaf",
 					nodeState: {
 						isLeaf: oEntry[this.oTreeProperties["hierarchy-drill-state-for"]] === "leaf",
 						expanded: oEntry[this.oTreeProperties["hierarchy-drill-state-for"]] === "expanded",
@@ -685,6 +686,7 @@ sap.ui.define([
 					serverIndex: iIndex,
 					// a server indexed node is not attributed with a parent, in contrast to the manually expanded nodes
 					parent: null,
+					originalParent : null,
 					isDeepOne: false
 				};
 
@@ -985,6 +987,7 @@ sap.ui.define([
 			level: oParentNode.level + 1,
 			originalLevel: oParentNode.level + 1,
 			initiallyCollapsed: oEntry[this.oTreeProperties["hierarchy-drill-state-for"]] === "collapsed",
+			initiallyIsLeaf : oEntry[this.oTreeProperties["hierarchy-drill-state-for"]] === "leaf",
 			//node state is also given by the back-end
 			nodeState: {
 				isLeaf: oEntry[this.oTreeProperties["hierarchy-drill-state-for"]] === "leaf",
@@ -2230,6 +2233,49 @@ sap.ui.define([
 		}
 
 		return mChangedEntities;
+	};
+
+	/**
+	 * Resets all pending changes of this tree binding. If an array of binding paths is given,
+	 * pending changes are only reset, if one of the given paths is equal to this bindings resolved
+	 * path.
+	 *
+	 * @param {string[]} [aPaths]
+	 *   An array of binding paths
+	 *
+	 * @private
+	 */
+	ODataTreeBindingFlat.prototype._resetChanges = function (aPaths) {
+		var bPathMatchesBinding,
+			sResolvedPath = this.getResolvedPath();
+
+		if (!sResolvedPath || !this._aAllChangedNodes.length) {
+			return;
+		}
+
+		if (aPaths) {
+			bPathMatchesBinding = aPaths.some(function (sPath) {
+				return sPath === sResolvedPath;
+			});
+			if (!bPathMatchesBinding) {
+				return;
+			}
+		}
+
+		this._aRemoved.forEach(function (oNode) {
+			ODataTreeBindingFlat._resetMovedOrRemovedNode(oNode);
+		});
+		this._aAdded.forEach(function (oNode) {
+			ODataTreeBindingFlat._resetParentState(oNode);
+		});
+		this._mSubtreeHandles = {};
+		this._aAdded = [];
+		this._aRemoved = [];
+		this._aAllChangedNodes = [];
+		this._aNodeCache = [];
+
+		this._cleanTreeStateMaps();
+		this._fireChange({reason: ChangeReason.Change});
 	};
 
 	//*************************************************
@@ -4966,6 +5012,45 @@ sap.ui.define([
 	// @override
 	// @see sap.ui.model.odata.v2.ODataTreeBinding#getNodeContexts
 	ODataTreeBindingFlat.prototype.getNodeContexts = function () {};
+
+	//*********************************************
+	//              Static Functions              *
+	//*********************************************
+
+	/**
+	 * Resets the change information of a moved or removed node to its initial values.
+	 *
+	 * @param {object} oNode
+	 *   The node
+	 */
+	ODataTreeBindingFlat._resetMovedOrRemovedNode = function (oNode) {
+		ODataTreeBindingFlat._resetParentState(oNode);
+		oNode.level = oNode.originalLevel;
+		oNode.parent = oNode.originalParent;
+		delete oNode.containingSubtreeHandle;
+		delete oNode.nodeState.removed;
+		delete oNode.nodeState.reinserted;
+	};
+
+	/**
+	 * Resets the change information of the parent of a changed node.
+	 *
+	 * @param {object} oNode
+	 *   The node
+	 */
+	ODataTreeBindingFlat._resetParentState = function (oNode) {
+		var oParentNode = oNode.parent;
+
+		// a removed server-index node has no parent
+		if (oParentNode) {
+			oParentNode.addedSubtrees = [];
+			if (oParentNode.initiallyIsLeaf) {
+				oParentNode.nodeState.isLeaf = true;
+				oParentNode.nodeState.expanded = false;
+				oParentNode.nodeState.collapsed = false;
+			}
+		}
+	};
 
 	return ODataTreeBindingFlat;
 

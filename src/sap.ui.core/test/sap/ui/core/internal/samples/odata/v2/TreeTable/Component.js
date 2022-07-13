@@ -25,6 +25,7 @@ sap.ui.define([
 				createdByFilter : "",
 				expandedLevels : 2,
 				messageCount : 0,
+				pendingChanges : false,
 				refreshAfterChange : false,
 				restoreState : true,
 				rowSelected : false,

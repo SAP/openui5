@@ -5589,7 +5589,8 @@ sap.ui.define([
 				},
 				_discardEntityChanges : function () {},
 				abortInternalRequest : function () {},
-				checkUpdate : function () {}
+				checkUpdate : function () {},
+				getBindings : function () {}
 			},
 			oModelMock = this.mock(oModel),
 			fnResolve,
@@ -5602,6 +5603,7 @@ sap.ui.define([
 			.withExactArgs("key('Bar')", undefined);
 		oModelMock.expects("_discardEntityChanges")
 			.withExactArgs("key('Foo')", bDeleteCreatedEntities);
+		oModelMock.expects("getBindings").withExactArgs().returns([]);
 		oModelMock.expects("checkUpdate").withExactArgs(true);
 
 		// code under test
@@ -5652,6 +5654,7 @@ sap.ui.define([
 				_discardEntityChanges : function () {},
 				abortInternalRequest : function () {},
 				checkUpdate : function () {},
+				getBindings : function () {},
 				getEntityByPath : function () {}
 			},
 			oModelMock = this.mock(oModel),
@@ -5721,6 +5724,7 @@ sap.ui.define([
 			.returns(true);
 		oModelMock.expects("_discardEntityChanges")
 			.withExactArgs("key('Foo')", undefined);
+		oModelMock.expects("getBindings").withExactArgs().returns([]);
 		oModelMock.expects("checkUpdate").withExactArgs(true);
 
 		// code under test
@@ -5763,6 +5767,30 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("resetChanges: calls oBinding._resetChanges", function (assert) {
+		var oBinding1 = {_resetChanges : function () {}},
+			oBinding2 = {_resetChanges : function () {}},
+			oModel = {
+				oMetadata : {loaded : function () {}},
+				checkUpdate : function () {},
+				getBindings : function () {}
+			},
+			aPath = [];
+
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns("~pMetaDataLoaded");
+		this.mock(oModel).expects("getBindings")
+			.withExactArgs()
+			.returns([{/*oBinding0*/}, oBinding1, oBinding2]);
+		this.mock(oBinding1).expects("_resetChanges").withExactArgs(sinon.match.same(aPath));
+		this.mock(oBinding2).expects("_resetChanges").withExactArgs(sinon.match.same(aPath));
+		this.mock(oModel).expects("checkUpdate").withExactArgs(true);
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.resetChanges.call(oModel, aPath),
+			"~pMetaDataLoaded");
+	});
 
 	//*********************************************************************************************
 [true, false].forEach(function (bDeleteEntity) {

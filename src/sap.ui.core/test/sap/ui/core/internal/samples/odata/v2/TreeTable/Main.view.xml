@@ -63,6 +63,10 @@
 							tooltip="Save" />
 						<Button enabled="{ui>/tableBound}" icon="sap-icon://refresh"
 							press=".onRefresh" tooltip="Refresh" />
+						<Button enabled="{ui>/tableBound}" icon="sap-icon://reset"
+							press=".onReset" tooltip="Reset Changes" />
+						<CheckBox editable="false" selected="{ui>/pendingChanges}"
+							text="Pending Changes" />
 						<ToolbarSpacer />
 						<Button text="Go" press=".onBindTable" type="Emphasized" />
 					</Toolbar>
