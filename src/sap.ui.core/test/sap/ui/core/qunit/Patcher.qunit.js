@@ -781,4 +781,43 @@ sap.ui.define([
 		});
 	});
 
+
+	QUnit.test("Patching - SVG Partial", function(assert) {
+
+		this.html(
+			"<svg viewBox='0 0 220 100' xmlns='http://www.w3.org/2000/svg'>" +
+				"<rect width='100' height='100' />" +
+			"</svg>"
+		).patch(function() {
+			Patcher.
+			openStart("svg").attr("viewBox", "0 0 220 100").attr("xmlns", "http://www.w3.org/2000/svg").openEnd().
+				openStart("rect").attr("width", "100").attr("height", "100").openEnd().close("rect").
+				openStart("rect").attr("x", 120).attr("width", "100").attr("height", "100").openEnd().close("rect").
+			close("svg");
+		}, function(aMutations, oSVG) {
+			assert.equal(aMutations.length, 1, "Single change - new rect element is added");
+			assert.equal(oSVG.lastChild.namespaceURI, oSVG.namespaceURI, "Namespace is set on the new rect element");
+		});
+
+		this.html(
+			"<svg viewBox='0 0 220 100' xmlns='http://www.w3.org/2000/svg'>" +
+				"<rect width='100' height='100' />" +
+			"</svg>"
+		).patch(function() {
+			Patcher.
+			openStart("svg").attr("viewBox", "0 0 220 100").attr("xmlns", "http://www.w3.org/2000/svg").openEnd().
+				openStart("rect").attr("width", "100").attr("height", "100").openEnd().close("rect").
+				openStart("foreignObject").attr("x", "20").attr("y", "20").openEnd().
+					openStart("p").openEnd().text("Text").close("p").
+				close("foreignObject").
+			close("svg");
+		}, function(aMutations, oSVG) {
+			assert.equal(aMutations.length, 1, "Single change - new foreignObject element is added");
+			assert.equal(oSVG.textContent, "Text", "Text is set for the SVG with foreignObject");
+			assert.equal(oSVG.lastChild.namespaceURI, oSVG.namespaceURI, "Namespace is set on the new foreignObject element");
+			assert.equal(oSVG.lastChild.firstChild.namespaceURI, oSVG.parentNode.namespaceURI, "Namespace of the p tag is valid");
+		});
+
+	});
+
 });
