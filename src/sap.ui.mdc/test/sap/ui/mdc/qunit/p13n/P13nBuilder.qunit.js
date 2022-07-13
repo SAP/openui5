@@ -105,7 +105,7 @@ sap.ui.define([
 		var oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
 
 		for (var i = 0; i <= 4; i++) {
-			assert.strictEqual(oP13nData.items[i].tooltip, undefined, "No explicit tooltip provided --> no fallback");
+			assert.strictEqual(oP13nData.items[i].tooltip, "", "No explicit tooltip provided --> no fallback");
 		}
 
 		assert.strictEqual(oP13nData.items[5].tooltip, "Some Tooltip", "Explicit tooltip taken over");

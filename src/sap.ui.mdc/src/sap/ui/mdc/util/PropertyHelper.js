@@ -29,6 +29,8 @@ sap.ui.define([
 	 *   The technical path for a data source property.
 	 * @property {string} label
 	 *   Translatable text that labels the property.
+	 * @property {string} [tooltip]
+	 *   Translatable text that can optionally be offered as tooltip (For example in a personalization dialog).
 	 * @property {boolean} [visible=true]
 	 *   Whether the property is or can be visible to a user.
 	 * @property {int} [maxConditions]
@@ -98,6 +100,10 @@ sap.ui.define([
 		label: { // Translatable text describing the property.
 			type: "string",
 			mandatory: true,
+			allowedForComplexProperty: true
+		},
+		tooltip: { // Translatable text describing additional information in the property to be displayed in a tooltip.
+			type: "string",
 			allowedForComplexProperty: true
 		},
 		visible: { // Whether the property is visible in the "Items" personalization.
@@ -337,7 +343,7 @@ sap.ui.define([
 		}
 	};
 
-	var aCommonAttributes = ["name", "label", "visible", "path", "typeConfig", "maxConditions", "group", "groupLabel", "caseSensitive"];
+	var aCommonAttributes = ["name", "label", "tooltip", "visible", "path", "typeConfig", "maxConditions", "group", "groupLabel", "caseSensitive"];
 	var _private = new WeakMap();
 
 	function stringifyPlainObject(oObject) {
@@ -645,7 +651,7 @@ sap.ui.define([
      * @param {string[]} [aAllowedAttributes]
 	 *     List of attributes that the <code>PropertyInfo</code> may contain.
 	 *     The following common attributes are always allowed:
-	 *     name, label, visible, path, typeConfig, maxConditions, group, groupLabel
+	 *     name, label, tooltip, visible, path, typeConfig, maxConditions, group, groupLabel
 	 * @param {object} [mExtensionAttributeMetadata]
 	 *     The attribute metadata for the model-specific property extension
 	 *

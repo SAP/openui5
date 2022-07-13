@@ -799,6 +799,7 @@ sap.ui.define([
 				unit: "",
 				group: "",
 				groupLabel: "",
+				tooltip: "",
 				exportSettings: {},
 				caseSensitive: true,
 				maxConditions: -1,
@@ -815,6 +816,7 @@ sap.ui.define([
 				path: null,
 				group: "",
 				groupLabel: "",
+				tooltip: "",
 				exportSettings: {},
 				maxConditions: null,
 				typeConfig: null
@@ -838,6 +840,7 @@ sap.ui.define([
 		}, {
 			name: "complexProperty",
 			label: "Complex property",
+			tooltip: "Complex custom tooltip",
 			propertyInfos: ["prop"]
 		}];
 		var oPropertyHelper = new PropertyHelper(aPropertyInfos);
@@ -848,6 +851,7 @@ sap.ui.define([
 		}, {
 			name: "complexProperty",
 			label: "Complex property",
+			tooltip: "Complex custom tooltip",
 			propertyInfos: ["prop"]
 		}]);
 
