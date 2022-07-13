@@ -9,7 +9,6 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/message/MessageMixin',
-	'sap/m/RadioButtonGroup',
 	'sap/m/Label',
 	'sap/ui/core/library',
 	'sap/base/strings/capitalize',
@@ -21,7 +20,6 @@ function(
 	Core,
 	EnabledPropagator,
 	MessageMixin,
-	RadioButtonGroup,
 	Label,
 	coreLibrary,
 	capitalize,
@@ -37,6 +35,13 @@ function(
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
+
+	var getNextSelectionNumber = (function () {
+		var i = 0;
+		return function () {
+			return i++;
+		};
+	}());
 
 	/**
 	 * Constructor for a new RadioButton.
@@ -206,6 +211,8 @@ function(
 	// and have valueState property of the RadioButton set to the message type.
 	MessageMixin.call(RadioButton.prototype);
 
+	RadioButton.getNextSelectionNumber = getNextSelectionNumber;
+
 	RadioButton.prototype._groupNames = {};
 
 	// Keyboard navigation variants
@@ -216,10 +223,20 @@ function(
 		PREV: "prev"
 	};
 
+	RadioButton.prototype.init = function () {
+		this._iSelectionNumber = -1;
+	};
+
 	RadioButton.prototype.onBeforeRendering = function() {
-		this._updateGroupName(this.getGroupName());
+		var sGroupName = this.getGroupName();
+
+		this._updateGroupName(sGroupName);
 		this._updateLabelProperties();
 
+		// If this radio button is selected, explicitly deselect the other radio buttons in the same group
+		if (this.getSelected() && sGroupName !== "" && this._isLastSelectedInGroup(sGroupName)) {
+			this._deselectOthersInGroup(sGroupName);
+		}
 	};
 
 	/**
@@ -256,7 +273,7 @@ function(
 		var oParent = this.getParent();
 
 		// check if the RadioButton is part of a RadioButtonGroup which is disabled/readonly
-		if (oParent instanceof RadioButtonGroup && (!oParent.getEnabled() || !oParent.getEditable())) {
+		if (oParent && oParent.isA("sap.m.RadioButtonGroup") && (!oParent.getEnabled() || !oParent.getEditable())) {
 			return;
 		}
 
@@ -295,22 +312,10 @@ function(
 	 * @public
 	 */
 	RadioButton.prototype.setSelected = function(bSelected) {
-		var sGroupName = this.getGroupName(),
-			aControlsInGroup = this._groupNames[sGroupName],
-			iLength = aControlsInGroup && aControlsInGroup.length;
-
 		this.setProperty("selected", bSelected);
-		this._updateGroupName(sGroupName);
 
-		if (!!bSelected && sGroupName && sGroupName !== "") { // If this radio button is selected and groupName is set, explicitly deselect the other radio buttons of the same group
-			for (var i = 0; i < iLength; i++) {
-				var oControl = aControlsInGroup[i];
-
-				if (oControl instanceof RadioButton && oControl !== this && oControl.getSelected()) {
-					oControl.fireSelect({ selected: false });
-					oControl.setSelected(false);
-				}
-			}
+		if (this.getSelected()) {
+			this._iSelectionNumber = getNextSelectionNumber();
 		}
 
 		return this;
@@ -412,7 +417,7 @@ function(
 	 * @private
 	 */
 	RadioButton.prototype._keyboardHandler = function(sPosition, bSelect) {
-		if (this.getParent() instanceof RadioButtonGroup) {
+		if (this.getParent() && this.getParent().isA("sap.m.RadioButtonGroup")) {
 			return;
 		}
 
@@ -585,6 +590,28 @@ function(
 
 		if (aNewGroup.indexOf(this) === -1) {
 			aNewGroup.push(this);
+		}
+	};
+
+	RadioButton.prototype._isLastSelectedInGroup = function (sGroupName) {
+		var aControlsInGroup = this._groupNames[sGroupName];
+
+		return aControlsInGroup.every(function (aButton) {
+			return aButton._iSelectionNumber <= this._iSelectionNumber;
+		}.bind(this));
+	};
+
+	RadioButton.prototype._deselectOthersInGroup = function (sGroupName) {
+		var aControlsInGroup = this._groupNames[sGroupName],
+			iLength = aControlsInGroup && aControlsInGroup.length;
+
+		for (var i = 0; i < iLength; i++) {
+			var oControl = aControlsInGroup[i];
+
+			if (oControl instanceof RadioButton && oControl !== this && oControl.getSelected()) {
+				oControl.fireSelect({ selected: false });
+				oControl.setSelected(false);
+			}
 		}
 	};
 
