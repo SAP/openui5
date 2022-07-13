@@ -154,13 +154,16 @@ sap.ui.define([
 
 			// restricted visibility without selected roles => ERROR
 			assert.equal(this.oComp.hasErrorsAndShowErrorMessage(), true, "component has errors");
+			oCore.applyChanges();
 			assert.equal(oCore.byId(sCompName + "noSelectedRolesError").getVisible(), true, "error message is visible");
 
 			assert.equal(this.oComp.hasErrorsAndShowErrorMessage(), true, "component has errors still errors");
+			oCore.applyChanges();
 			assert.equal(oCore.byId(sCompName + "noSelectedRolesError").getVisible(), true, "error message is visible, no duplicate id error");
 
 			// public visibility without selected roles => PASS
 			this.oComp.setSelectedContexts({role: []});
+			oCore.applyChanges();
 			assert.equal(oCore.byId(sCompName + "noSelectedRolesError"), undefined, "error message is not visible");
 
 			assert.equal(this.oComp.hasErrorsAndShowErrorMessage(), false, "component has no errors");
