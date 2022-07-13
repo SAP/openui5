@@ -6,9 +6,11 @@
 sap.ui.define([
 	"./StandardDynamicDateOption",
 	"sap/base/Log",
-	"./library"
+	"./library",
+	'sap/ui/core/format/TimezoneUtil',
+	'sap/ui/core/Core'
 ], function(
-	StandardDynamicDateOption, Log, library) {
+	StandardDynamicDateOption, Log, library, TimezoneUtil, Core) {
 	"use strict";
 
 	var STANDARD_KEYS_ARRAY = [
@@ -238,6 +240,25 @@ sap.ui.define([
 	DynamicDateUtil.toDates = function(oValue) {
 		var sKey = oValue.operator;
 		return DynamicDateUtil._options[sKey].toDates(oValue);
+	};
+
+
+	/**
+	 * Returns a date in machine timezone setting, removing the offset added by the application configuration.
+	 *
+	 * @param {Object} oDate A local JS date with added offset
+	 * @returns {Object} A local JS date with removed offset
+	 * @static
+	 * @public
+	 */
+	DynamicDateUtil.removeTimezoneOffset = function(oDate) {
+		var oNewDate = new Date(oDate);
+		var sTimezone = Core.getConfiguration().getTimezone();
+		var iOffsetInSeconds = TimezoneUtil.calculateOffset(oNewDate, sTimezone) - oNewDate.getTimezoneOffset() * 60;
+
+		oNewDate.setSeconds(oNewDate.getSeconds() - iOffsetInSeconds);
+
+		return oNewDate;
 	};
 
 	return DynamicDateUtil;

@@ -641,6 +641,19 @@ sap.ui.define([
 		assert.equal(this.ddr._oInput.getValue().indexOf("Today"), 0, "the formatted value is correct");
 	});
 
+	QUnit.test("DynamicDateUtil - removeTimezoneOffset", function(assert) {
+		// arrange
+		var oDateFormatter = DateFormat.getDateTimeInstance(),
+			aResultRange;
+
+		//act
+		aResultRange = DynamicDateUtil.toDates({ operator: "DATE", values: [ DynamicDateUtil.removeTimezoneOffset(new Date(2021, 8, 23))] });
+
+		// assert
+		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00 AM", "correct start date");
+		assert.equal(oDateFormatter.format(aResultRange[1]), "Sep 23, 2021, 11:59:59 PM", "correct end date");
+	});
+
 	QUnit.test("toDates - DATE", function(assert) {
 		// arrange
 		var oDateFormatter = DateFormat.getDateTimeInstance(),
