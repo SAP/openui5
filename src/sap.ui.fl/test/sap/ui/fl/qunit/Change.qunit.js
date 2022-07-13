@@ -3,8 +3,6 @@
 sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/base/EventProvider",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -14,8 +12,6 @@ sap.ui.define([
 ], function(
 	Change,
 	Layer,
-	Utils,
-	LayerUtils,
 	Settings,
 	EventProvider,
 	JsControlTreeModifier,
@@ -29,7 +25,6 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.fl.Change", {
 		beforeEach: function() {
-			this.ushellStore = sap.ushell; // removes the lib for a pure OpenUI5 testing
 			this.oControl = {};
 			this.sUserId = "cookieMonster";
 			this.oChangeDef = {
@@ -76,7 +71,6 @@ sap.ui.define([
 			};
 		},
 		afterEach: function() {
-			sap.ushell = this.ushellStore;
 			sandbox.restore();
 		}
 	}, function() {

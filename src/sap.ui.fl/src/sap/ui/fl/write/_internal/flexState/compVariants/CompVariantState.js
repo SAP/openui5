@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/restricted/_pick",
 	"sap/base/util/UriParameters",
+	"sap/ui/core/Core",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -25,6 +26,7 @@ sap.ui.define([
 	_omit,
 	_pick,
 	UriParameters,
+	Core,
 	Change,
 	Layer,
 	Utils,
@@ -302,8 +304,7 @@ sap.ui.define([
 				support: mPropertyBag.support || {}
 			};
 			oChangeParameter.support.generator = oChangeParameter.support.generator || "CompVariantState." + sChangeType;
-			oChangeParameter.support.sapui5Version = sap.ui.version;
-
+			oChangeParameter.support.sapui5Version = Core.getConfiguration().getVersion().toString();
 			oChange = new UpdatableChange(oChangeParameter);
 			mCompVariantsMap.defaultVariants.push(oChange);
 			mCompVariantsMap.byId[oChange.getId()] = oChange;

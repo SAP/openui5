@@ -61,7 +61,7 @@ sap.ui.define([
 					}
 				});
 
-				sap["ushell_abap"] = Object.assign({}, sap.ushell_abap, {
+				sap["ushell_abap"] = Object.assign({}, sap.ushell_abap, { /* gravity todo */
 					someKey: "someValue"
 				});
 

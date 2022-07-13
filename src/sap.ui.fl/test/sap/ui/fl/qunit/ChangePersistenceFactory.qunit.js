@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Component"
 ], function(
 	FlexState,
 	ManifestUtils,
@@ -15,7 +16,8 @@ sap.ui.define([
 	Control,
 	Manifest,
 	Applier,
-	sinon
+	sinon,
+	Component
 ) {
 	"use strict";
 
@@ -24,7 +26,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.fl.ChangePersistenceFactory", {
 		afterEach: function() {
 			sandbox.restore();
-			sap.ui.core.Component._fnManifestLoadCallback = null;
+			Component._fnManifestLoadCallback = null;
 		}
 	}, function() {
 		QUnit.test("shall provide an API to create a ChangePersistence for a component", function(assert) {
@@ -203,7 +205,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			sandbox.restore();
-			sap.ui.core.Component._fnManifestLoadCallback = null;
+			Component._fnManifestLoadCallback = null;
 		}
 	}, function() {
 		QUnit.test("with client side app descriptor changes", function (assert) {

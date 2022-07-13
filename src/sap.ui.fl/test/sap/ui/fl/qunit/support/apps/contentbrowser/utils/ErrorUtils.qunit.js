@@ -2,10 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Component"
 ], function(
 	ErrorUtils,
-	sinon
+	sinon,
+	JSONModel,
+	Component
 ) {
 	"use strict";
 
@@ -22,8 +26,8 @@ sap.ui.define([
 			assert.equal(ErrorUtils._masterComponent, undefined, "component is initial not set");
 			assert.equal(ErrorUtils._messagesModel, undefined, "model is initial not set");
 
-			var oComponent = new sap.ui.core.Component();
-			var oModel = new sap.ui.model.json.JSONModel([]);
+			var oComponent = new Component();
+			var oModel = new JSONModel([]);
 
 			ErrorUtils.setMessagesModel(oComponent, oModel);
 
@@ -33,8 +37,8 @@ sap.ui.define([
 
 		QUnit.test("displays errors", function(assert) {
 			// prepare test (only with a set model errors can be stored)
-			var oComponent = new sap.ui.core.Component();
-			var oModel = new sap.ui.model.json.JSONModel([]);
+			var oComponent = new Component();
+			var oModel = new JSONModel([]);
 			ErrorUtils.setMessagesModel(oComponent, oModel);
 
 			var sType = "Error";
@@ -53,8 +57,8 @@ sap.ui.define([
 
 		QUnit.test("opens the error popover", function(assert) {
 			// prepare test (only with a set model errors can be stored)
-			var oComponent = new sap.ui.core.Component();
-			var oModel = new sap.ui.model.json.JSONModel([]);
+			var oComponent = new Component();
+			var oModel = new JSONModel([]);
 			ErrorUtils.setMessagesModel(oComponent, oModel);
 			var openByStub = sinon.stub(ErrorUtils._messagePopover, "openBy");
 

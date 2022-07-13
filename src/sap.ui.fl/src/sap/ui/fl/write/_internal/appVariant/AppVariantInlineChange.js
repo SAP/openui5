@@ -3,15 +3,15 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/isPlainObject"
 ], function (
-	jQuery,
 	ManagedObject,
 	Utils,
-	Log
+	Log,
+	isPlainObject
 ) {
 	"use strict";
 
@@ -36,7 +36,7 @@ sap.ui.define([
 		},
 		constructor: function(mPropertyBag) {
 			ManagedObject.apply(this);
-			if (!jQuery.isPlainObject(mPropertyBag)) {
+			if (!isPlainObject(mPropertyBag)) {
 				Log.error("Constructor : sap.ui.fl.write._internal.appVariant.AppVariantInlineChange: mPropertyBag is not defined");
 			}
 			Utils.checkTexts(mPropertyBag.texts);

@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Core",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
@@ -16,6 +17,7 @@ sap.ui.define([
 ], function (
 	isPlainObject,
 	ManagedObject,
+	Core,
 	Layer,
 	Utils,
 	LayerUtils,
@@ -1064,7 +1066,7 @@ sap.ui.define([
 				generator: oPropertyBag.generator || "Change.createInitialFileContent",
 				service: oPropertyBag.service || "",
 				user: "",
-				sapui5Version: sap.ui.version,
+				sapui5Version: Core.getConfiguration().getVersion().toString(),
 				sourceChangeFileName: oPropertyBag.support && oPropertyBag.support.sourceChangeFileName || "",
 				compositeCommand: oPropertyBag.support && oPropertyBag.support.compositeCommand || "",
 				command: oPropertyBag.command || oPropertyBag.support && oPropertyBag.support.command || ""

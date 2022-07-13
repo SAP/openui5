@@ -60,7 +60,7 @@ sap.ui.define([
 				if (
 					oSettings.isAppVariantSaveAsEnabled()
 					&& sLayer === Layer.CUSTOMER
-					&& sap.ushell_abap // Not a standalone app
+					&& sap.ushell_abap /* gravity todo*/ // Not a standalone app
 				) {
 					return true;
 				}

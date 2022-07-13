@@ -10,24 +10,23 @@
 			type="text/javascript"
 			data-sap-ui-libs="sap.ui.comp, sap.m"
 			data-sap-ui-theme="sap_belize"
-			data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'			
+			data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'
 			data-sap-ui-xx-bindingSyntax="complex"
-			src="../../../../../../../resources/sap-ui-core.js"
->
+			src="../../../../../../../resources/sap-ui-core.js">
 	</script>
 
 	<script>
 
-		sap.ui.require(["sap/ui/core/Component"], function(Component) {
+		sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function(Component, ComponentContainer) {
 			return Component.create({
 				name: "sap.ui.fl.sample.variantmanagement",
 				url: "./",
 				id: "Comp1"
 			}).then(function(oComponent){
-				var oCompCont = new sap.ui.core.ComponentContainer("CompCont1", {
+				var oCompCont = new ComponentContainer("CompCont1", {
 					component: oComponent
 				});
-				oCompCont.placeAt("target1");	
+				oCompCont.placeAt("target1");
 			})
 		})
 

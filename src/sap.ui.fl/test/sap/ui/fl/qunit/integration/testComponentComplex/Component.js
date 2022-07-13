@@ -15,7 +15,7 @@ sap.ui.define([
 			manifest: "json"
 		},
 		init: function() {
-			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+			UIComponent.prototype.init.apply(this, arguments);
 		},
 		createContent: function () {
 			var oEmbedded = this.createComponent({

@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/fl/Utils"
 ], function(
 	UpdateIFrame,
 	Change,
@@ -19,12 +20,13 @@ sap.ui.define([
 	VerticalLayout,
 	JSONModel,
 	sinon,
-	oCore
+	Core,
+	Utils
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oComponent = oCore.createComponent({
+	var oComponent = Core.createComponent({
 		name: "testComponent",
 		id: "testComponent"
 	});
@@ -55,7 +57,7 @@ sap.ui.define([
 			});
 			this.oIFrame.setModel(this.oModel, "model");
 
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
 			var oChangeJson = {
 				selector: JsControlTreeModifier.getSelector(this.oIFrame, oComponent)

@@ -3,15 +3,15 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/changeHandler/condenser/Classification",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/isPlainObject"
 ], function(
-	jQuery,
 	FlexUtils,
 	CondenserClassification,
-	Log
+	Log,
+	isPlainObject
 ) {
 	"use strict";
 
@@ -30,7 +30,7 @@ sap.ui.define([
 	// var sBindingError = "Please use 'PropertyBindingChange' to set a binding";
 
 	function isBinding(vPropertyValue) {
-		return FlexUtils.isBinding(vPropertyValue) || jQuery.isPlainObject(vPropertyValue);
+		return FlexUtils.isBinding(vPropertyValue) || isPlainObject(vPropertyValue);
 	}
 
 	function changeProperty(oControl, sPropertyName, vPropertyValue, oModifier) {

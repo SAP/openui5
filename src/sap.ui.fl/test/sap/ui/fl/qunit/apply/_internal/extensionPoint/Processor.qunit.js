@@ -48,7 +48,7 @@ sap.ui.define([
 
 		if (bSync) {
 			sandbox.stub(Loader, "loadFlexData").resolves({changes: {changes: createChanges("sap.ui.fl.qunit.extensionPoint.testApp")}});
-			oComponent = sap.ui.component({
+			oComponent = sap.ui.component({ // legacy-relevant: Sync creation of component
 				name: "sap.ui.fl.qunit.extensionPoint.testApp",
 				id: "sap.ui.fl.qunit.extensionPoint.testApp",
 				async: false

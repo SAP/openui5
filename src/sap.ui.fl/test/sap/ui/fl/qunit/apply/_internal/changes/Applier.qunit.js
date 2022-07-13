@@ -17,10 +17,10 @@ sap.ui.define([
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/core/UIComponent",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/m/Toolbar",
+	"sap/m/HBox"
 ], function(
 	merge,
 	Log,
@@ -38,10 +38,10 @@ sap.ui.define([
 	FlexController,
 	Layer,
 	FlUtils,
-	ChangesUtils,
 	UIComponent,
-	jQuery,
-	sinon
+	sinon,
+	Toolbar,
+	HBox
 ) {
 	"use strict";
 
@@ -520,7 +520,7 @@ sap.ui.define([
 				return oDependencySetup;
 			};
 
-			this.oFlexController._oChangePersistence._mChangesInitial = jQuery.extend(true, {}, oDependencySetup);
+			this.oFlexController._oChangePersistence._mChangesInitial = merge({}, oDependencySetup);
 			this.oFlexController._oChangePersistence._mChanges = oDependencySetup;
 			sandbox.stub(FlexCustomData.sync, "hasChangeApplyFinishedCustomData").returns(false);
 
@@ -882,18 +882,18 @@ sap.ui.define([
 
 		QUnit.test("applyAllChangesForControl with to be adjusted template changes - 2", function(assert) {
 			var oOriginalControlInTemplate = new Control("originalTemplate");
-			var oOrigInnerToolbar = new sap.m.Toolbar("origInnerToolbar", {
+			var oOrigInnerToolbar = new Toolbar("origInnerToolbar", {
 				content: [new Control(), oOriginalControlInTemplate, new Control()]
 			});
-			var oOriginalTemplate = new sap.m.HBox("origOuterHBox", {
+			var oOriginalTemplate = new HBox("origOuterHBox", {
 				items: [new Control(), new Control(), oOrigInnerToolbar, new Control()]
 			});
 
 			var oActualControlInTemplate = new Control("actualTemplate");
-			var oActualInnerToolbar = new sap.m.Toolbar("actualInnerToolbar", {
+			var oActualInnerToolbar = new Toolbar("actualInnerToolbar", {
 				content: [new Control(), oActualControlInTemplate, new Control()]
 			});
-			var oActualTemplate = new sap.m.HBox("actualOuterHBox", {
+			var oActualTemplate = new HBox("actualOuterHBox", {
 				items: [new Control(), new Control(), oActualInnerToolbar, new Control()]
 			});
 

@@ -4,18 +4,18 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/appVariant/AppVariant",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/util/isPlainObject"
 ], function(
 	AppVariant,
-	jQuery,
 	Layer,
 	Utils,
 	LrepConnector,
-	merge
+	merge,
+	isPlainObject
 ) {
 	"use strict";
 
@@ -60,7 +60,7 @@ sap.ui.define([
 			reference: mPropertyBag.id
 		}).then(function(oResult) {
 			var oAppVariantConfig = oResult.response;
-			if (!jQuery.isPlainObject(oAppVariantConfig)) {
+			if (!isPlainObject(oAppVariantConfig)) {
 				//Parse if needed. Happens if backend sends wrong content type
 				oAppVariantConfig = JSON.parse(oAppVariantConfig);
 			}

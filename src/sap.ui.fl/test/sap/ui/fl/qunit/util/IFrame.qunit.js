@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/util/IFrame",
+	"sap/ui/fl/Utils",
 	"sap/base/security/URLListValidator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	IFrame,
+	Utils,
 	URLListValidator,
 	JSONModel,
 	Core,
@@ -164,53 +166,11 @@ sap.ui.define([
 		});
 	});
 
-	function mockUserInfoService (bEnabled, bNoEmail) {
-		var oFormerUShell = sap.ushell;
-		var fnGetService;
-		if (bEnabled) {
-			var vUserEmail;
-			if (!bNoEmail) {
-				vUserEmail = sUserEmail;
-			}
-			fnGetService = function (sServiceName) {
-				if (sServiceName === "UserInfo") {
-					return Promise.resolve({
-						getUser: function () {
-							return {
-								getEmail: function () { return vUserEmail; },
-								getFullName: function () { return sUserFullName; },
-								getFirstName: function () { return sUserFirstName; },
-								getLastName: function () { return sUserLastName; }
-							};
-						}
-					});
-				}
-				return Promise.resolve();
-			};
-		} else {
-			fnGetService = function () {
-				return Promise.resolve();
-			};
-		}
-		sap.ushell = {
-			Container: {
-				getServiceAsync: fnGetService
-			}
-		};
-		return {
-			restore: function () {
-				if (oFormerUShell) {
-					sap.ushell = oFormerUShell;
-				} else {
-					delete sap.ushell;
-				}
-			}
-		};
-	}
 
 	QUnit.module("UserInfo binding (UserInfo service available)", {
 		beforeEach: function() {
-			this.oUShellMock = mockUserInfoService(true);
+			sandbox.stub(Utils, "getUshellContainer").returns(true);
+			stubGetUShellService(sUserEmail, sUserFullName, sUserFirstName, sUserLastName);
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
@@ -222,7 +182,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oIFrame.destroy();
-			this.oUShellMock.restore();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("URL should contain user information", function(assert) {
@@ -232,7 +192,8 @@ sap.ui.define([
 
 	QUnit.module("UserInfo binding (UserInfo service available but no email)", {
 		beforeEach: function() {
-			this.oUShellMock = mockUserInfoService(true, /*bNoEmail*/ true);
+			sandbox.stub(Utils, "getUshellContainer").returns(true);
+			stubGetUShellService(undefined, sUserFullName, sUserFirstName, sUserLastName);
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
@@ -244,7 +205,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oIFrame.destroy();
-			this.oUShellMock.restore();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("URL should contain user information", function(assert) {
@@ -254,7 +215,7 @@ sap.ui.define([
 
 	QUnit.module("UserInfo binding (UserInfo service not available)", {
 		beforeEach: function() {
-			this.oUShellMock = mockUserInfoService(false);
+			sandbox.stub(Utils, "getUshellContainer").returns(false);
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
@@ -266,7 +227,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oIFrame.destroy();
-			this.oUShellMock.restore();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("URL should not contain user information", function(assert) {
@@ -276,7 +237,8 @@ sap.ui.define([
 
 	QUnit.module("URL binding in XML view", {
 		beforeEach: function () {
-			this.oUShellMock = mockUserInfoService(true);
+			sandbox.stub(Utils, "getUshellContainer").returns(true);
+			stubGetUShellService(sUserEmail, sUserFullName, sUserFirstName, sUserLastName);
 			return XMLView.create({
 				definition: '<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.fl.util">' +
 					'<IFrame id="iframe1" url="' + sOpenUI5Url + '" />' +
@@ -295,7 +257,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.myView.destroy();
-			this.oUShellMock.restore();
+			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("Non bound URL should be kept as is", function(assert) {
@@ -363,4 +325,17 @@ sap.ui.define([
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
+
+	function stubGetUShellService(sEmail, sFullName, sFirstName, sLastName) {
+		sandbox.stub(Utils, "getUShellService").resolves({
+			getUser: function () {
+				return {
+					getEmail: function () { return sEmail; },
+					getFullName: function () { return sFullName; },
+					getFirstName: function () { return sFirstName; },
+					getLastName: function () { return sLastName; }
+				};
+			}
+		});
+	}
 });
