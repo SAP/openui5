@@ -193,6 +193,11 @@ sap.ui.define([
 
 	GridTableType.updateSelection = function(oTable) {
 		var sSelectionMode = TableTypeBase.getSelectionMode(oTable);
+		if (oTable.getSelectionMode() === library.SelectionMode.SingleMaster) {
+			oTable._oTable.setSelectionBehavior("RowOnly");
+		} else {
+			oTable._oTable.resetProperty("selectionBehavior");
+		}
 		oTable._oTable.getPlugins()[0].setSelectionMode(sSelectionMode);
 	};
 

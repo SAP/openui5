@@ -71,6 +71,9 @@ sap.ui.define([
 			case "Single":
 				sSelectionMode = oTable._bMobileTable ? "SingleSelectLeft" : "Single";
 				break;
+			case "SingleMaster":
+				sSelectionMode = oTable._bMobileTable ? "SingleSelectMaster" : "Single";
+				break;
 			case "Multi":
 				sSelectionMode = oTable._bMobileTable ? "MultiSelect" : "MultiToggle";
 				break;

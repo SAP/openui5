@@ -1578,9 +1578,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection - GridTable", function(assert) {
-		function selectItem(oRow, bUser) {
+		function selectItem(oRow, bUser, bNoRowSelector) {
 			if (bUser) {
-				jQuery(oRow.getDomRefs().rowSelector).trigger("click");
+				if (bNoRowSelector) {
+					jQuery(oRow.getCells()[0].getDomRef()).trigger("click");
+				} else {
+					jQuery(oRow.getDomRefs().rowSelector).trigger("click");
+				}
 				return;
 			}
 			oRow.getParent().getPlugins()[0].setSelectedIndex(oRow.getIndex(), true);
@@ -1619,9 +1623,15 @@ sap.ui.define([
 				var that = this;
 				var oSelectionPlugin = this.oTable._oTable.getPlugins()[0];
 				var iSelectionCount = -1;
+				var bRowPressFired = false;
+
 				this.oTable.attachSelectionChange(function() {
 					iSelectionCount = this.oTable.getSelectedContexts().length;
 				}.bind(this));
+
+				that.oTable.attachRowPress(function() {
+					bRowPressFired = true;
+				});
 
 				assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
 				assert.ok(this.oTable._oTable.isBound("rows"));
@@ -1651,6 +1661,7 @@ sap.ui.define([
 						assert.ok(that.oTable._oTable.getPlugins()[0].isA("sap.ui.table.plugins.MultiSelectionPlugin"), "Plugin is a MultiSelectionPlugin");
 						assert.equal(that.oTable.getSelectionMode(), "Single", "Selection Mode Single - MDCTable");
 						assert.equal(that.oTable._oTable.getPlugins()[0].getSelectionMode(), "Single", "Selection Mode Single - MultiSelectionPlugin");
+						assert.equal(that.oTable._oTable.getSelectionBehavior(), "RowSelector", "Selection Behavior RowSelector");
 						Core.applyChanges();
 
 						selectItem(that.oTable._oTable.getRows()[0], true);
@@ -1681,9 +1692,45 @@ sap.ui.define([
 							resolve();
 						});
 
+						that.oTable.setSelectionMode("SingleMaster");
+						assert.equal(that.oTable.getSelectionMode(), "SingleMaster", "Selection Mode Single - MDCTable");
+						assert.equal(that.oTable._oTable.getPlugins()[0].getSelectionMode(), "Single", "Selection Mode Single - MultiSelectionPlugin");
+						assert.equal(that.oTable._oTable.getSelectionBehavior(), "RowOnly", "Selection Behavior RowOnly");
+						Core.applyChanges();
+
+						selectItem(that.oTable._oTable.getRows()[0], true, true);
+					});
+				}).then(function() {
+					return new Promise(function(resolve) {
+						oSelectionPlugin.attachEventOnce("selectionChange", function() {
+							assert.equal(iSelectionCount, 1, "Selection change event");
+							assert.ok(!bRowPressFired, "rowPress event not fired");
+							resolve();
+						});
+						selectItem(that.oTable._oTable.getRows()[1], true, true);
+					});
+				}).then(function() {
+					return new Promise(function(resolve) {
+						iSelectionCount = -1;
+						that.oTable.clearSelection();
+						Core.applyChanges();
+
+						assert.equal(iSelectionCount, -1, "No selection change event");
+						assert.equal(that.oTable.getSelectedContexts().length, 0, "No Items selected");
+						resolve();
+					});
+				}).then(function() {
+					return new Promise(function(resolve) {
+						oSelectionPlugin.attachEventOnce("selectionChange", function() {
+							assert.equal(that.oTable.getSelectedContexts().length, 1, "Item selected");
+							assert.equal(iSelectionCount, 1, "Selection change event");
+							resolve();
+						});
+
 						that.oTable.setSelectionMode("Multi");
 						assert.equal(that.oTable.getSelectionMode(), "Multi", "Selection Mode Multi - MDCTable");
 						assert.equal(that.oTable._oTable.getSelectionMode(), "MultiToggle", "Selection Mode Multi - Inner Table");
+						assert.equal(that.oTable._oTable.getSelectionBehavior(), "RowSelector", "Selection Behavior RowSelector");
 						Core.applyChanges();
 						assert.equal(that.oTable._oTable.getPlugins().length, 1, "Plugin available");
 						assert.ok(that.oTable._oTable.getPlugins()[0].isA("sap.ui.table.plugins.MultiSelectionPlugin"), "Plugin is a MultiSelectionPlugin");
@@ -1839,25 +1886,56 @@ sap.ui.define([
 			assert.equal(iSelectionCount, -1, "No selection change event");
 			assert.equal(this.oTable.getSelectedContexts().length, 0, "No Items selected");
 
+			this.oTable.setSelectionMode("SingleMaster");
+			assert.equal(this.oTable.getSelectionMode(), "SingleMaster", "Selection Mode SingleMaster - MDCTable");
+			assert.equal(this.oTable._oTable.getMode(), "SingleSelectMaster", "Selection Mode SingleSelectMaster - Inner Table");
+			Core.applyChanges();
+			checkSelectionMethods(this.oTable);
+			selectItem(this.oTable._oTable.getItems()[0], false);
+			assert.equal(this.oTable.getSelectedContexts().length, 1, "Item selected");
+			assert.equal(iSelectionCount, -1, "No selection change event");
+			selectItem(this.oTable._oTable.getItems()[1], true);
+			assert.equal(iSelectionCount, 1, "Selection change event");
+
+			iSelectionCount = -1;
+			this.oTable.clearSelection();
+			assert.equal(iSelectionCount, -1, "No selection change event");
+			assert.equal(this.oTable.getSelectedContexts().length, 0, "No Items selected");
+
 			return new Promise(function(resolve) {
-				// Simulate message scenario via SelectAll
-				sap.ui.require([
-					"sap/m/MessageToast"
-				], function(MessageToast) {
-					var fMessageSpy = sinon.stub(MessageToast, "show");
-					assert.ok(fMessageSpy.notCalled);
+				var bRowPressFired = false;
+				this.oTable.attachRowPress(function() {
+					bRowPressFired = true;
+				});
 
-					this.oTable.setSelectionMode("Multi");
-					this.oTable._oTable.selectAll(true);
+				this.oTable._oTable.attachItemPress(function() {
+					assert.ok(!bRowPressFired, "rowPress event not fired");
+					return resolve();
+				});
 
-					assert.equal(iSelectionCount, 20, "Selection change event");
-					assert.equal(this.oTable.getSelectedContexts().length, 20, "Items selected");
-					// message is shown delayed due to a require
-					fMessageSpy.callsFake(function() {
-						assert.ok(fMessageSpy.calledOnce);
-						fMessageSpy.restore();
-					});
-					resolve();
+				this.oTable._oTable.getItems()[1].setType("Active");
+				jQuery(this.oTable._oTable.getItems()[1]).trigger("tap");
+			}.bind(this)).then(function() {
+				return new Promise(function(resolve) {
+					// Simulate message scenario via SelectAll
+					sap.ui.require([
+						"sap/m/MessageToast"
+					], function(MessageToast) {
+						var fMessageSpy = sinon.stub(MessageToast, "show");
+						assert.ok(fMessageSpy.notCalled);
+
+						this.oTable.setSelectionMode("Multi");
+						this.oTable._oTable.selectAll(true);
+
+						assert.equal(iSelectionCount, 20, "Selection change event");
+						assert.equal(this.oTable.getSelectedContexts().length, 20, "Items selected");
+						// message is shown delayed due to a require
+						fMessageSpy.callsFake(function() {
+							assert.ok(fMessageSpy.calledOnce);
+							fMessageSpy.restore();
+						});
+						resolve();
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));

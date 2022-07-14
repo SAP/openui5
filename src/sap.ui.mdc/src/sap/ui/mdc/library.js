@@ -995,6 +995,11 @@
 		 */
 		Single: "Single",
 		/**
+		 * Only one row/item can be selected at a time. Should be used for navigation scenarios to indicate the navigated row/item. If this selection
+		 * mode is used, no <code>rowPress</code> event is fired.
+		 */
+		SingleMaster: "SingleMaster",
+		/**
 		 * Multiple rows/items can be selected at a time.
 		 * @public
 		 */

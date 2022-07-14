@@ -2321,9 +2321,11 @@ sap.ui.define([
 	}
 
 	Table.prototype._onItemPress = function(oEvent) {
-		this.fireRowPress({
-			bindingContext: oEvent.getParameter("listItem").getBindingContext()
-		});
+		if (this.getSelectionMode() !== library.SelectionMode.SingleMaster) {
+			this.fireRowPress({
+				bindingContext: oEvent.getParameter("listItem").getBindingContext()
+			});
+		}
 		ResponsiveTableType._onRowActionPress.apply(this, [oEvent]);
 	};
 
@@ -2359,6 +2361,10 @@ sap.ui.define([
 
 	// GridTable
 	Table.prototype._onCellClick = function(oEvent) {
+		if (this.getSelectionMode() === library.SelectionMode.SingleMaster) {
+			return;
+		}
+
 		this.fireRowPress({
 			bindingContext: oEvent.getParameter("rowBindingContext")
 		});
