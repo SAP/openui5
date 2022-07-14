@@ -302,19 +302,18 @@ sap.ui.define([
 	QUnit.test("Test multiple property - setter", function (assert) {
 		//prepare
 		var done = assert.async(),
-			oFileUploader = new FileUploader({
-				multiple: false
-			}),
-			sInputName;
+			oFileUploader = new FileUploader(),
+			oInput;
 
-		oFileUploader.placeAt("content");
+		oFileUploader.placeAt("qunit-fixture");
 		oCore.applyChanges();
-		sInputName = document.querySelector("[type='file']").getAttribute("name");
 
 		var oAfterRenderingDelegate = {
 			onAfterRendering: function() {
+				oInput = document.querySelector("[type='file']");
+
 				//assert
-				assert.strictEqual(document.querySelector("[type='file']").getAttribute("name"), sInputName + "[]", "multiple files can be uploaded");
+				assert.strictEqual(oInput.getAttribute("name"), oFileUploader.getId() + "[]", "multiple files expected");
 
 				//clean
 				oFileUploader.removeDelegate(oAfterRenderingDelegate);
@@ -327,6 +326,36 @@ sap.ui.define([
 
 		//act
 		oFileUploader.setMultiple(true);
+	});
+
+	QUnit.test("Test directory property - setter", function (assert) {
+		//prepare
+		var done = assert.async(),
+			oFileUploader = new FileUploader(),
+			oInput;
+
+		oFileUploader.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		var oAfterRenderingDelegate = {
+			onAfterRendering: function() {
+				oInput = document.querySelector("[type='file']");
+
+				//assert
+				assert.strictEqual(oInput.getAttribute("name"), oFileUploader.getId() + "[]", "multiple files expected");
+				assert.ok(oInput.hasAttribute("webkitdirectory"), "attribute properly set");
+
+				//clean
+				oFileUploader.removeDelegate(oAfterRenderingDelegate);
+				oFileUploader.destroy();
+				done();
+			}
+		};
+
+		oFileUploader.addDelegate(oAfterRenderingDelegate);
+
+		//act
+		oFileUploader.setDirectory(true);
 	});
 
 	QUnit.test("Setters used on after rendering, don't create additional input field type file", function (assert) {
