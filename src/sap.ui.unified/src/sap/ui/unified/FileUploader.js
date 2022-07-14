@@ -270,7 +270,16 @@ sap.ui.define([
 			 * If set to true, the button is displayed without any text.
 			 * @since 1.26.0
 			 */
-			iconOnly : {type : "boolean", group : "Appearance", defaultValue : false}
+			iconOnly : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Allows users to upload all files from a given directory and its corresponding subdirectories.
+			 * @since 1.105.0
+			 *
+			 * <b>Note:</b> This feature is supported on all WebKit-based browsers as well as Microsoft Edge and Firefox after version 50.
+			 * <b>Note:</b> Multiple directory selection is not supported.
+			 */
+			directory : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		aggregations : {
 
@@ -697,6 +706,12 @@ sap.ui.define([
 
 	FileUploader.prototype.setMultiple = function(bMultiple) {
 		this.setProperty("multiple", bMultiple, false);
+		this._rerenderInputField();
+		return this;
+	};
+
+	FileUploader.prototype.setDirectory = function(bDirectory) {
+		this.setProperty("directory", bDirectory, false);
 		this._rerenderInputField();
 		return this;
 	};
@@ -1579,7 +1594,7 @@ sap.ui.define([
 				sValue = sValue.substring(iIndex + 1);
 			}
 
-			if (this.getMultiple()) {
+			if (this.getMultiple() || this.getDirectory()) {
 				sValue = sFileString;
 			}
 
@@ -1928,13 +1943,13 @@ sap.ui.define([
 			aFileUpload.push('type="file" ');
 			aFileUpload.push('aria-hidden="true" ');
 			if (this.getName()) {
-				if (this.getMultiple()) {
+				if (this.getMultiple() || this.getDirectory()) {
 					aFileUpload.push('name="' + encodeXML(this.getName()) + '[]" ');
 				} else {
 					aFileUpload.push('name="' + encodeXML(this.getName()) + '" ');
 				}
 			} else {
-				if (this.getMultiple()) {
+				if (this.getMultiple() || this.getDirectory()) {
 					aFileUpload.push('name="' + this.getId() + '[]" ');
 				} else {
 					aFileUpload.push('name="' + this.getId() + '" ');
@@ -1958,6 +1973,10 @@ sap.ui.define([
 
 			if (!this.getEnabled()) {
 				aFileUpload.push('disabled="disabled" ');
+			}
+
+			if (this.getDirectory()) {
+				aFileUpload.push('webkitdirectory ');
 			}
 
 			if (this.getMultiple()) {
