@@ -219,10 +219,7 @@ sap.ui.define([
 		oRadioButton2.destroy();
 	});
 
-
-	QUnit.test("RadioButton selection in same groupName should be changed after setSelected", function(assert) {
-
-
+	QUnit.test("RadioButton selection in same groupName should be changed after setSelected before rendering", function(assert) {
 		// arrange
 		var oRadioButton1 = new RadioButton({
 			groupName: "R1",
@@ -243,6 +240,35 @@ sap.ui.define([
 		// assertions
 		assert.equal(oRadioButton1.getSelected(),true, "The Radio Button should not be selected");
 		assert.equal(oRadioButton2.getSelected(),false, "The Radio Button should be selected");
+
+		// cleanup
+		oRadioButton1.destroy();
+		oRadioButton2.destroy();
+	});
+
+	QUnit.test("RadioButton selection in same groupName should NOT be changed too early (before setGroupName has passed)", function(assert) {
+		// arrange
+		var oRadioButton1 = new RadioButton({
+			groupName: "R1",
+			text:'Hello World2'
+		});
+		oRadioButton1.placeAt(DOM_RENDER_LOCATION);
+		var oRadioButton2 = new RadioButton({
+			groupName: "R1",
+			text:'Hello World2',
+			selected: true
+		});
+		oRadioButton2.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// act
+		oRadioButton1.setSelected(true);
+		oRadioButton1.setGroupName("AnotherGroup");
+		Core.applyChanges();
+
+		// assertions
+		assert.ok(oRadioButton1.getSelected(), "Alone Radio Button in group 'R1' should be selected");
+		assert.ok(oRadioButton2.getSelected(), "Alone The Radio Button in group 'AnotherGroup' should be selected");
 
 		// cleanup
 		oRadioButton1.destroy();

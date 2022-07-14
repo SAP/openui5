@@ -544,6 +544,8 @@ sap.ui.define([
 		oRBGroup.placeAt("qunit-fixture");
 		Core.applyChanges();
 
+		// assert
+		assert.ok(oRBGroup.getButtons()[0].getSelected(), "First radio button of the group should be selected");
 		// act
 		oRBGroup.setSelectedIndex(100);
 
@@ -559,4 +561,90 @@ sap.ui.define([
 		// cleanup
 		oRBGroup.destroy();
 	});
+
+	QUnit.test("Initially selected button in the group should be the last whose setSelected(true) was called", function (assert) {
+		// arrange
+		var oButton1 = new RadioButton("RB1"),
+			oButton2 = new RadioButton("RB2"),
+			oButton3 = new RadioButton("RB3");
+		var oRBGroup =  new RadioButtonGroup({
+			buttons: [
+				oButton1,
+				oButton2,
+				oButton3
+			]
+		});
+
+		// act before rendering of the group
+		oButton1.setSelected(true);
+		oButton3.setSelected(true);
+		oButton2.setSelected(true);
+		oRBGroup.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// assert
+		assert.notOk(oButton1.getSelected(), "'RB1' shouldn't be selected");
+		assert.notOk(oButton3.getSelected(), "'RB3' shouldn't be selected");
+		assert.ok(oButton2.getSelected(), "'RB2' should be selected");
+
+		// cleanup
+		oRBGroup.destroy();
+	});
+
+	QUnit.test("Selected button in the group should be the last whose setSelected(true) was called", function (assert) {
+		// arrange
+		var oButton1 = new RadioButton("RB1"),
+			oButton2 = new RadioButton("RB2"),
+			oButton3 = new RadioButton("RB3");
+		var oRBGroup =  new RadioButtonGroup({
+			buttons: [
+				oButton1,
+				oButton2,
+				oButton3
+			]
+		});
+
+		oRBGroup.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// act - after rendering of the group
+		oButton1.setSelected(true);
+		oButton3.setSelected(true);
+		oButton2.setSelected(true);
+		oButton1.setSelected(false);
+		Core.applyChanges();
+
+		// assert
+		assert.notOk(oButton1.getSelected(), "'RB1' shouldn't be selected");
+		assert.notOk(oButton3.getSelected(), "'RB3' shouldn't be selected");
+		assert.ok(oButton2.getSelected(), "'RB2' should be selected");
+
+		// cleanup
+		oRBGroup.destroy();
+	});
+
+	QUnit.test("Selected button and selectedIndex combination", function (assert) {
+		// arrange
+		var oRBGroup =  new RadioButtonGroup({
+			selectedIndex: 2
+		});
+
+		oRBGroup.addButton(new RadioButton("RB1"));
+		oRBGroup.addButton(new RadioButton("RB2", {
+			selected: true
+		}));
+		oRBGroup.addButton(new RadioButton("RB3"));
+
+		oRBGroup.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// assert
+		assert.notOk(oRBGroup.getButtons()[0].getSelected(), "'RB1' shouldn't be selected");
+		assert.notOk(oRBGroup.getButtons()[2].getSelected(), "'RB3' shouldn't be selected");
+		assert.ok(oRBGroup.getButtons()[1].getSelected(), "'RB2' should be selected");
+
+		// cleanup
+		oRBGroup.destroy();
+	});
+
 });
