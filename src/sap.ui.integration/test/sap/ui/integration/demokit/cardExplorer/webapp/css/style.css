@@ -78,3 +78,12 @@ html.sap-phone .sapFGridContainer { /* in "Explore" section */
 .styleCardEditorLanguageSelect {
 	margin-left: 0.5rem;
 }
+
+.styleManifestChangesTextArea {
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+}
+
+.manifestChangesTextArea .sapMInputBaseContentWrapper {
+	border: none !important;
+}

@@ -113,10 +113,10 @@
 								</layoutData>
 							</OverflowToolbarButton>
 							<OverflowToolbarButton
-								text="Show Card Configuration Editor"
-								tooltip="Show Card Configuration Editor"
+								text="{= ${settings>/editorType} === 'TEXT' ? 'Switch to Card Configuration Editor' : 'Switch to Text Editor'}"
+								tooltip="{= ${settings>/editorType} === 'TEXT' ? 'Switch to Card Configuration Editor' : 'Switch to Text Editor'}"
 								icon="sap-icon://wrench"
-								enabled="{= ${settings>/editable} &amp;&amp; ${settings>/editorType} !== 'CARDEDITOR'}"
+								enabled="{= ${settings>/editable}}"
 								type="Transparent"
 								visible="{= ${settings>/designtimeEnabled} &amp;&amp; ${settings>/editable} &amp;&amp; ${settings>/internal} &amp;&amp; ${settings>/editorType} !== 'CARDEDITOR' }"
 								press=".onChangeCardEditor"
@@ -145,7 +145,7 @@
 							<ToolbarSpacer/>
 							<Button text="Apply" press=".onApplyCardEditorChanges" />
 							<Button text="Reset" press=".onResetCardEditor" />
-							<Button text="Show Manifest Changes" enabled="{settings>/manifestChanged}" press=".onShowManifestChanges"/>
+							<Button text="{= ${settings>/manifestChangesShowed} ? 'Hide Manifest Changes' : 'Show Manifest Changes'}" enabled="{settings>/manifestChanged}" press=".onShowManifestChanges"/>
 						</OverflowToolbar>
 					</footer>
 				</Page>
