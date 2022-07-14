@@ -26,7 +26,7 @@ function(
 
     var sDelegatePath = "test-resources/sap/ui/mdc/delegates/ChartDelegate";
 
-	QUnit.module("sap.ui.mdc.Chart: Simple Properties", {
+	QUnit.module("sap.ui.mdc.chart.ChartToolbar: Simple Properties", {
 
 		beforeEach: function() {
 			var TestComponent = UIComponent.extend("test", {
@@ -102,6 +102,17 @@ function(
 		}.bind(this));
 	});
 
+	QUnit.test("Details button should be created", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+            var oToolbar = this.oMDCChart._getToolbar();
+            assert.ok(oToolbar._oChartSelectionDetails, "Details button was created");
+			assert.equal(oToolbar.getEnd()[0].getMetadata().getName(), "sap.ui.mdc.chart.ChartSelectionDetails", "Selection Details button was added to toolbar");
+            done();
+		}.bind(this));
+	});
+
 
     QUnit.test("updateToolbar function", function(assert){
 		var done = assert.async();
@@ -111,10 +122,12 @@ function(
             assert.ok(oToolbar.getEnabled(), "Toolbar is enabled intially");
 			assert.ok(oToolbar.getContent().length === 9, "Correct amount of toolbar items were added");
 			var zoomSpy = sinon.spy(oToolbar, "toggleZoomButtons");
+			var updateDetailsSpy = sinon.spy(oToolbar._oChartSelectionDetails, "attachSelectionHandler");
 
             oToolbar.updateToolbar(this.oMDCChart);
 			assert.ok(zoomSpy.calledOnce, "toggleZoomButtons was called");
             assert.ok(oToolbar.getEnabled(), "Toolbar is enabled");
+			assert.ok(updateDetailsSpy.called, "attachSelectionHandler was called");
             done();
 		}.bind(this));
 	});
@@ -179,5 +192,103 @@ function(
             done();
 		}.bind(this));
 	});
+
+	QUnit.test("_updateSelectionDetailsActions when details button is active", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+            var oToolbar = this.oMDCChart._getToolbar();
+            assert.ok(oToolbar.__oChartSelectionDetails === undefined, "Details button was not created");
+			var oDetailsActionsSpy = sinon.spy(this.oMDCChart, "getSelectionDetailsActions");
+
+			oToolbar._updateSelectionDetailsActions(this.oMDCChart);
+			assert.ok(oDetailsActionsSpy.calledOnce, "Details actions spy should not be called");
+
+            done();
+		}.bind(this));
+	});
+
+
+	QUnit.module("sap.ui.mdc.chart.ChartToolbar: No Details button", {
+
+		beforeEach: function() {
+			var TestComponent = UIComponent.extend("test", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							"id": "",
+							"type": "application"
+						}
+					}
+				},
+				createContent: function() {
+					return new Chart("IDChart", {delegate: {
+                        name: sDelegatePath,
+					    payload: {
+						collectionPath: "/testPath"
+					}},
+					showSelectionDetails: false
+				});
+				}
+			});
+			this.oUiComponent = new TestComponent("IDComponent");
+			this.oUiComponentContainer = new ComponentContainer({
+				component: this.oUiComponent,
+				async: false
+			});
+            this.oMDCChart = this.oUiComponent.getRootControl();
+
+			this.oUiComponentContainer.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oUiComponentContainer.destroy();
+			this.oUiComponent.destroy();
+		}
+    });
+
+	QUnit.test("No Details button should be created", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+            var oToolbar = this.oMDCChart._getToolbar();
+            assert.ok(oToolbar.__oChartSelectionDetails === undefined, "Details button was not created");
+            done();
+		}.bind(this));
+	});
+
+	QUnit.test("updateToolbar function when no details btn is shown", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+            var oToolbar = this.oMDCChart._getToolbar();
+            assert.ok(oToolbar.getEnabled(), "Toolbar is enabled intially");
+			assert.ok(oToolbar.getContent().length === 8, "Correct amount of toolbar items were added");
+			var zoomSpy = sinon.spy(oToolbar, "toggleZoomButtons");
+
+            oToolbar.updateToolbar(this.oMDCChart);
+			assert.ok(zoomSpy.calledOnce, "toggleZoomButtons was called");
+            assert.ok(oToolbar.getEnabled(), "Toolbar is enabled");
+			assert.ok(oToolbar._oChartSelectionDetails === undefined, "No _oChartSelectionDetails exists");
+            done();
+		}.bind(this));
+	});
+
+	QUnit.test("_updateSelectionDetailsActions when no details button is active", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+            var oToolbar = this.oMDCChart._getToolbar();
+            assert.ok(oToolbar.__oChartSelectionDetails === undefined, "Details button was not created");
+			var oDetailsActionsSpy = sinon.spy(this.oMDCChart, "getSelectionDetailsActions");
+
+			oToolbar._updateSelectionDetailsActions(this.oMDCChart);
+			assert.ok(!oDetailsActionsSpy.called, "Details actions spy should not be called");
+
+            done();
+		}.bind(this));
+	});
+
+
 
 });

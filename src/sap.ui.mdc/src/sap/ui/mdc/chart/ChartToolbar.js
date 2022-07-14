@@ -98,12 +98,14 @@ sap.ui.define([
             }
 
             /**add end **/
-            this._oChartSelectionDetails = new ChartSelectionDetails(oMDCChart.getId() + "-selectionDetails", {});
-            this._oChartSelectionDetails.attachBeforeOpen(function (oEvent) {
-                this._updateSelectionDetailsActions(oMDCChart);
-            }.bind(this));
+            if (oMDCChart.getShowSelectionDetails()){
+                this._oChartSelectionDetails = new ChartSelectionDetails(oMDCChart.getId() + "-selectionDetails", {});
+                this._oChartSelectionDetails.attachBeforeOpen(function (oEvent) {
+                    this._updateSelectionDetailsActions(oMDCChart);
+                }.bind(this));
 
-            this.addEnd(this._oChartSelectionDetails);
+                this.addEnd(this._oChartSelectionDetails);
+            }
 
             //Check p13n mode property on the chart and enable only desired buttons
 			var aP13nMode = oMDCChart.getP13nMode() || [];
@@ -263,7 +265,7 @@ sap.ui.define([
             }
 
             var oSelectionHandler = oMDCChart.getSelectionHandler();
-            if (oSelectionHandler) {
+            if (oSelectionHandler && oMDCChart.getShowSelectionDetails()) {
                 this._oChartSelectionDetails.attachSelectionHandler(oSelectionHandler.eventId, oSelectionHandler.listener);
             }
         };
@@ -292,6 +294,12 @@ sap.ui.define([
         };
 
         ChartToolbar.prototype._updateSelectionDetailsActions = function (oMDCChart) {
+
+            //In case details button is disabled
+            if (!oMDCChart.getShowSelectionDetails()) {
+                return;
+            }
+
             var oSelectionDetailsActions = oMDCChart.getSelectionDetailsActions(), oClone;
 
             if (oSelectionDetailsActions) {
