@@ -697,6 +697,8 @@ sap.ui.define([
 				sQueryOptionsJSON = JSON.stringify(oFixture.mQueryOptions),
 				mResult;
 
+			this.mock(_AggregationHelper).expects("checkTypeof").never();
+
 			// code under test
 			mResult = _AggregationHelper.buildApply(oFixture.oAggregation, oFixture.mQueryOptions,
 				iLevel, false, mAlias2MeasureAndMethod);
@@ -803,7 +805,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("buildApply: checkTypeof for data aggregation", function (assert) {
+	QUnit.test("buildApply: recursive hierarchy", function (assert) {
+		var oAggregation = {hierarchyQualifier : "X"};
+
+		this.mock(_AggregationHelper).expects("checkTypeof").never();
+
+		// code under test
+		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, {}), {});
+
+		// code under test
+		assert.deepEqual(
+			_AggregationHelper.buildApply(oAggregation, {$$filterBeforeAggregate : "foo"}),
+			{$apply : "filter(foo)/"}
+		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("validateAggregation: checkTypeof for data aggregation", function (assert) {
 		var oAggregation = {},
 			oError = new Error();
 
@@ -835,12 +853,12 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.buildApply(oAggregation);
+			_AggregationHelper.validateAggregation(oAggregation);
 		}, oError);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("buildApply: checkTypeof for recursive hierarchy", function (assert) {
+	QUnit.test("validateAggregation: checkTypeof for recursive hierarchy", function (assert) {
 		var oAggregation = {hierarchyQualifier : "X"},
 			oError = new Error();
 
@@ -853,56 +871,36 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.buildApply(oAggregation);
+			_AggregationHelper.validateAggregation(oAggregation);
 		}, oError);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("buildApply: recursive hierarchy", function (assert) {
-		var oAggregation = {hierarchyQualifier : "X"};
-
-		this.mock(_AggregationHelper).expects("checkTypeof").twice()
-			.withExactArgs(sinon.match.same(oAggregation), {
-				expandTo : /^[1-9]\d*$/,
-				hierarchyQualifier : "string"
-			}, "$$aggregation");
-
-		// code under test
-		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, {}), {});
-
-		// code under test
-		assert.deepEqual(
-			_AggregationHelper.buildApply(oAggregation, {$$filterBeforeAggregate : "foo"}),
-			{$apply : "filter(foo)/"}
-		);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("buildApply: checkTypeof - examples", function (assert) {
+	QUnit.test("validateAggregation: checkTypeof - examples", function (assert) {
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.buildApply({
+			_AggregationHelper.validateAggregation({
 				subTotalsAtBottomOnly : true
 			});
 		}, new Error("Unsupported property: '$$aggregation/subTotalsAtBottomOnly'"));
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.buildApply({
+			_AggregationHelper.validateAggregation({
 				grandTotalAtBottomOnly : "top"
 			});
 		}, new Error("Not a boolean value for '$$aggregation/grandTotalAtBottomOnly'"));
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.buildApply({
+			_AggregationHelper.validateAggregation({
 				groupLevels : "The1"
 			});
 		}, new Error("Not an array value for '$$aggregation/groupLevels'"));
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.buildApply({
+			_AggregationHelper.validateAggregation({
 				group : {
 					The1 : {additional : ["TheOther"]}
 				}
@@ -911,7 +909,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.buildApply({
+			_AggregationHelper.validateAggregation({
 				group : {
 					The1 : {additionally : "TheOther"}
 				}
@@ -920,7 +918,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.buildApply({
+			_AggregationHelper.validateAggregation({
 				aggregate : {
 					foo : {
 						subtotals : "top"
@@ -931,7 +929,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.buildApply({
+			_AggregationHelper.validateAggregation({
 				aggregate : {
 					foo : {
 						unit : ["A", "B"]
@@ -942,14 +940,14 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.buildApply({
+			_AggregationHelper.validateAggregation({
 				"grandTotal like 1.84" : "1.84"
 			});
 		}, new Error("Not a boolean value for '$$aggregation/grandTotal like 1.84'"));
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.buildApply({
+			_AggregationHelper.validateAggregation({
 				expandTo : 0,
 				hierarchyQualifier : "X"
 			});
@@ -957,7 +955,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.buildApply({
+			_AggregationHelper.validateAggregation({
 				expandTo : -1,
 				hierarchyQualifier : "X"
 			});

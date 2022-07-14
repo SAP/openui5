@@ -418,7 +418,7 @@ sap.ui.define([
 			if ("$apply" in mParameters) {
 				throw new Error("Cannot combine $$aggregation and $apply");
 			}
-			// Note: this validates mParameters.$$aggregation!
+			_AggregationHelper.validateAggregation(mParameters.$$aggregation);
 			sApply = _AggregationHelper.buildApply(mParameters.$$aggregation).$apply;
 		}
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
