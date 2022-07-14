@@ -809,15 +809,88 @@ sap.ui.define([
 		var oAggregation = {hierarchyQualifier : "X"};
 
 		this.mock(_AggregationHelper).expects("checkTypeof").never();
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy")
+			.withExactArgs(sinon.match.same(oAggregation), "~mQueryOptions~").returns("~result~");
+
+		assert.strictEqual(
+			// code under test
+			_AggregationHelper.buildApply(oAggregation, "~mQueryOptions~"),
+			"~result~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildApply4Hierarchy: top levels of nodes", function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X",
+				$path : "/Foo"
+			},
+			mQueryOptions = {
+				foo : "bar"
+			},
+			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
 		// code under test
-		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, {}), {});
+		assert.deepEqual(_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions), {
+				$apply : "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
+					+ ",HierarchyQualifier='X',NodeProperty='ID',Levels=1)",
+				foo : "bar"
+			});
+
+		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
+	});
+
+	//*********************************************************************************************
+[undefined, 1, 2, 3].forEach(function (iExpandTo) {
+	var sTitle = "buildApply4Hierarchy: top levels of nodes, $select, expandTo : " + iExpandTo;
+
+	QUnit.test(sTitle, function (assert) {
+		var oAggregation = {
+				expandTo : iExpandTo,
+				hierarchyQualifier : "X",
+				$path : "/Foo"
+			},
+			mQueryOptions = {
+				$select : ["ID"],
+				foo : "bar"
+			},
+			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
 		// code under test
-		assert.deepEqual(
-			_AggregationHelper.buildApply(oAggregation, {$$filterBeforeAggregate : "foo"}),
-			{$apply : "filter(foo)/"}
-		);
+		assert.deepEqual(_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions), {
+				$apply : "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
+					+ ",HierarchyQualifier='X',NodeProperty='ID',Levels=" + (iExpandTo || 1)
+					+ ")",
+				$select : iExpandTo > 1
+					? ["ID", "DescendantCount", "DistanceFromRoot", "DrillState"]
+					: ["ID", "DrillState"],
+				foo : "bar"
+			});
+
+		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("buildApply4Hierarchy: children of a given parent", function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X",
+				$path : "/Foo"
+			},
+			mQueryOptions = {
+				$$filterBeforeAggregate : "foo",
+				$select : ["ID"], // by now, auto-$expand/$select must have finished
+				foo : "bar"
+			},
+			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
+
+		// code under test
+		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, mQueryOptions), {
+				$apply : "descendants($root/Foo,X,ID,filter(foo),1)",
+				$select : ["ID", "DrillState"],
+				foo : "bar"
+			});
+
+		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
 	});
 
 	//*********************************************************************************************
@@ -873,6 +946,23 @@ sap.ui.define([
 			// code under test
 			_AggregationHelper.validateAggregation(oAggregation);
 		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("validateAggregation: sPath", function (assert) {
+		var oAggregation = {hierarchyQualifier : "X"};
+
+		this.mock(_AggregationHelper).expects("checkTypeof").twice();
+
+		// code under test
+		_AggregationHelper.validateAggregation(oAggregation);
+
+		assert.deepEqual(oAggregation, {hierarchyQualifier : "X"}, "unchanged");
+
+		// code under test
+		_AggregationHelper.validateAggregation(oAggregation, "/some/path");
+
+		assert.deepEqual(oAggregation, {hierarchyQualifier : "X", $path : "/some/path"});
 	});
 
 	//*********************************************************************************************

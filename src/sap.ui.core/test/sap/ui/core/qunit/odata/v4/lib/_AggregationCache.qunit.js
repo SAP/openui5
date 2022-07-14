@@ -635,8 +635,8 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[undefined, {}].forEach(function (oParentGroupNode) {
-	QUnit.test("createGroupLevelCache: recursive hierarchy", function (assert) {
+[undefined, {}].forEach(function (oParentGroupNode, i) {
+	QUnit.test("createGroupLevelCache: recursive hierarchy, #" + i, function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
@@ -646,7 +646,7 @@ sap.ui.define([
 			mQueryOptions = {
 				$expand : "~expand~",
 				// $orderby : "~orderby~"
-				$select : "~select~"
+				$select : ["~select~"]
 			},
 			oAggregationCache
 				= _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
@@ -769,7 +769,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[0, 7].forEach(function (iDistanceFromRoot) {
+[undefined, 0, 7].forEach(function (iDistanceFromRoot) {
 	["collapsed", "expanded", "leaf"].forEach(function (sDrillState) {
 		[undefined, {"@$ui5.node.level" : 41}].forEach(function (oGroupNode) {
 	var sTitle = "calculateKeyPredicateRH: DistanceFromRoot : " + iDistanceFromRoot
@@ -777,12 +777,11 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oElement = {
-				DescendantCount : "~descendants~",
-				DistanceFromRoot : iDistanceFromRoot,
 				DrillState : sDrillState,
 				Foo : "bar",
 				XYZ : 42
 			},
+			iExpectedLevel = 1,
 			oHelperMock = this.mock(_Helper),
 			bIsExpanded = {
 				collapsed : false,
@@ -790,6 +789,15 @@ sap.ui.define([
 				leaf : undefined
 			}[sDrillState],
 			mTypeForMetaPath = {"/meta/path" : {}};
+
+		if (iDistanceFromRoot !== undefined) {
+			oElement.DescendantCount = "~descendants~";
+			oElement.DistanceFromRoot = iDistanceFromRoot;
+			iExpectedLevel = iDistanceFromRoot + 1;
+		}
+		if (oGroupNode) {
+			iExpectedLevel = 42;
+		}
 
 		oHelperMock.expects("getKeyPredicate")
 			.withExactArgs(sinon.match.same(oElement), "/meta/path",
@@ -811,8 +819,8 @@ sap.ui.define([
 		}
 		this.mock(_AggregationHelper).expects("setAnnotations")
 			.withExactArgs(sinon.match.same(oElement), bIsExpanded, /*bIsTotal*/undefined,
-				oGroupNode ? 42 : iDistanceFromRoot + 1);
-		oHelperMock.expects("setPrivateAnnotation")
+				iExpectedLevel);
+		oHelperMock.expects("setPrivateAnnotation").exactly(iDistanceFromRoot !== undefined ? 1 : 0)
 			.withExactArgs(sinon.match.same(oElement), "descendants", "~descendants~");
 
 		assert.strictEqual(

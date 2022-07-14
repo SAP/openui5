@@ -27,8 +27,8 @@
 		</ul>
 
 		<h2>REALIZE and CHECK</h2>
-		<h3>0. First Page</h3>
-		<ol>
+		<h3>First Page</h3>
+		<ul>
 			<li><b>Check:</b> The table should have the following content:
 				<table border="1px" cellspacing="0" >
 					<tr>
@@ -56,9 +56,9 @@
 					</tr>
 				</table>
 			</li>
-		</ol>
-		<h3>1. Collapse And Expand 0 (Alpha)</h3>
-		<ol>
+		</ul>
+		<h3>Collapse And Expand 0 (Alpha)</h3>
+		<ul>
 			<li>Click on the collapse button in the row 0 (Alpha).</li></li>
 			<li><b>Check:</b> The table should have the following content:
 				<table border="1px" cellspacing="0" >
@@ -89,10 +89,99 @@
 			<li>Click on the expand button in the row 0 (Alpha).</li></li>
 			<li><b>Check:</b> The table should have the same content as initially (see above).
 			</li>
-		</ol>
-		<h3>2. Collapse 4 (Mu)</h3>
-		<ol>
-			<li>Scroll down row by row until 4 (Mu) just becomes visible, but no further.</li>
+		</ul>
+		<h3>Expand 1.1 (Gamma) and 1.2 (Zeta)</h3>
+		<ul>
+			<li>Click on the expand buttons in the rows 1.2 (Zeta) and 1.1 (Gamma).</li></li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha</td><td>60</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>1</td><td>0</td><td>Beta</td><td>55</td>
+					</tr>
+					<tr>
+						<td>3</td><td>Collapse</td><td>1.1</td><td>1</td><td>Gamma</td><td>41</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.1.1</td><td>1.1</td><td>Delta</td><td>38</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.1.2</td><td>1.1</td><td>Epsilon</td><td>39</td>
+					</tr>
+				</table>
+			<li>Scroll down row by row until 1.2 (Zeta) is at the top.</li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>3</td><td>Collapse</td><td>1.2</td><td>1</td><td>Zeta</td><td>42</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.2.1</td><td>1.2</td><td>Eta</td><td>31</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.2.2</td><td>1.2</td><td>Theta</td><td>32</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.2.3</td><td>1.2</td><td>Ioata</td><td>33</td>
+					</tr>
+					<tr>
+						<td>4</td><td>Leaf</td><td>1.2.4</td><td>1.2</td><td>Kappa</td><td>34</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Collapse 1 (Beta)</h3>
+		<ul>
+			<li>Scroll to the top.</li>
+			<li>Click on the collapse button in the row 1 (Beta).</li></li>
+			<li><b>Check:</b> The table should have the following content:
+				<table border="1px" cellspacing="0" >
+					<tr>
+						<th>Level</th>
+						<th>(Icon's Tooltip)</th>
+						<th>ID</th>
+						<th>Manager's ID</th>
+						<th>Name</th>
+						<th>Age</th>
+					</tr>
+					<tr>
+						<td>1</td><td>Collapse</td><td>0</td><td></td><td>Alpha</td><td>60</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Expand</td><td>1</td><td>0</td><td>Beta</td><td>55</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>2</td><td>0</td><td>Kappa</td><td>56</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Leaf</td><td>3</td><td>0</td><td>Lambda</td><td>57</td>
+					</tr>
+					<tr>
+						<td>2</td><td>Collapse</td><td>4</td><td>0</td><td>Mu</td><td>58</td>
+					</tr>
+				</table>
+			</li>
+		</ul>
+		<h3>Collapse 4 (Mu)</h3>
+		<ul>
 			<li>Click on the collapse button in the row 4 (Mu).</li></li>
 			<li><b>Check:</b> The table should have the following content:
 				<table border="1px" cellspacing="0" >
@@ -121,10 +210,10 @@
 					</tr>
 				</table>
 			</li>
-		</ol>
-		<h3>3. Scroll to the end of the table</h3>
-		<ol>
-			<li>Scroll down row by row to the end of the table.</li>
+		</ul>
+		<h3>Scroll to the bottom</h3>
+		<ul>
+			<li>Scroll down row by row to the bottom.</li>
 			<li><b>Check:</b> The table should have the following content:
 				<table border="1px" cellspacing="0" >
 					<tr>
@@ -152,9 +241,9 @@
 					</tr>
 				</table>
 			</li>
-		</ol>
-		<h3>4. Expand 4 (Mu)</h3>
-		<ol>
+		</ul>
+		<h3>Expand 4 (Mu)</h3>
+		<ul>
 			<li>Click on the expand button in the row 4 (Mu).</li></li>
 			<li><b>Check:</b> The table should have the following content:
 				<table border="1px" cellspacing="0" >
@@ -184,9 +273,9 @@
 					</tr>
 				</table>
 			</li>
-		</ol>
-		<h3>5. Expand 5.1 (Omicron)</h3>
-		<ol>
+		</ul>
+		<h3>Expand 5.1 (Omicron)</h3>
+		<ul>
 			<li>Scroll down, then click on the expand button in the row 5.1 (Omicron) and PAGE DOWN
 				once to show the first page of children.</li>
 			<li><b>Check:</b> The table should have the following content:
@@ -216,10 +305,10 @@
 					</tr>
 				</table>
 			</li>
-		</ol>
-		<h3>6. Scroll to the end of the table</h3>
-		<ol>
-			<li>PAGE DOWN to scroll to the end of the table.</li>
+		</ul>
+		<h3>Scroll to the bottom</h3>
+		<ul>
+			<li>Scroll to the bottom.</li>
 			<li><b>Check:</b> The table should have the following content:
 				<table border="1px" cellspacing="0" >
 					<tr>
@@ -247,10 +336,10 @@
 					</tr>
 				</table>
 			</li>
-		</ol>
-		<h3>7. Collapse 0 (Alpha)</h3>
-		<ol>
-			<li>Scroll to the start of the table and click on the collapse button in the row
+		</ul>
+		<h3>Collapse 0 (Alpha)</h3>
+		<ul>
+			<li>Scroll to the top and click on the collapse button in the row
 				0 (Alpha).</li>
 			<li><b>Check:</b> The table should have the following content:
 				<table border="1px" cellspacing="0" >
@@ -279,6 +368,6 @@
 					</tr>
 				</table>
 			</li>
-		</ol>
+		</ul>
 	</body>
 </html>

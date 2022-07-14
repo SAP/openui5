@@ -555,7 +555,7 @@ sap.ui.define([
 		};
 		oBinding.oHeaderContext = undefined; // not yet...
 		this.mock(_AggregationHelper).expects("validateAggregation")
-			.withExactArgs(sinon.match.same(oAggregation));
+			.withExactArgs(sinon.match.same(oAggregation), "/EMPLOYEES");
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
 		oModelMock.expects("buildQueryOptions").withExactArgs(sinon.match.same(mParameters), true)
@@ -613,7 +613,7 @@ sap.ui.define([
 		oBinding.mParameters.$$aggregation = oAggregation;
 		oBinding.mQueryOptions = {$apply : "A.P.P.L.E."};
 		this.mock(_AggregationHelper).expects("validateAggregation")
-			.withExactArgs({"n/a" : "unsupported content here"}).throws(oError);
+			.withExactArgs({"n/a" : "unsupported content here"}, "/EMPLOYEES").throws(oError);
 		this.mock(_AggregationHelper).expects("buildApply").never();
 
 		assert.throws(function () {
@@ -646,17 +646,28 @@ sap.ui.define([
 	var iCallCount = bSuspended ? 0 : 1;
 
 	//*********************************************************************************************
-	QUnit.test("applyParameters: call from changeParameters, " + bSuspended, function (assert) {
-		var oBinding = this.bindList("TEAM_2_EMPLOYEES", Context.create(this.oModel, oParentBinding,
-				"/TEAMS")),
+[false, true].forEach(function (bAggregation) {
+	var sTitle = "applyParameters: call from changeParameters, " + bSuspended
+			+ ", w/ $$aggregation: " + bAggregation;
+
+	QUnit.test(sTitle, function (assert) {
+		var oAggregation = {},
+			sApply = "A.P.P.L.E.",
+			oBinding = this.bindList("TEAM_2_EMPLOYEES",
+				Context.create(this.oModel, oParentBinding, "/TEAMS")),
 			oModelMock = this.mock(this.oModel),
 			mParameters = {
 				$$operationMode : OperationMode.Server,
 				$filter : "bar"
 			};
 
+		if (bAggregation) {
+			mParameters.$$aggregation = oAggregation;
+		}
+
 		this.mock(_AggregationHelper).expects("validateAggregation").never();
-		this.mock(_AggregationHelper).expects("buildApply").never();
+		this.mock(_AggregationHelper).expects("buildApply").exactly(bAggregation ? 1 : 0)
+			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns({$filter : "bar"});
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
@@ -673,9 +684,14 @@ sap.ui.define([
 		// code under test
 		oBinding.applyParameters(mParameters, ChangeReason.Change);
 
-		assert.deepEqual(oBinding.mQueryOptions, {$filter : "bar"});
+		assert.deepEqual(oBinding.mQueryOptions, bAggregation
+			? {$apply : sApply, $filter : "bar"}
+			: {$filter : "bar"});
 		assert.deepEqual(oBinding.mParameters, mParameters);
+		assert.strictEqual(oBinding.mParameters.$$aggregation,
+			bAggregation ? oAggregation : undefined, "$$aggregation");
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("applyParameters: with change in $apply, " + bSuspended, function (assert) {
@@ -689,7 +705,7 @@ sap.ui.define([
 
 		oBinding.mQueryOptions.$apply = "old $apply";
 		this.mock(_AggregationHelper).expects("validateAggregation")
-			.withExactArgs(sinon.match.same(oAggregation));
+			.withExactArgs(sinon.match.same(oAggregation), "/EMPLOYEES");
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
 		this.mock(this.oModel).expects("buildQueryOptions")
@@ -763,7 +779,7 @@ sap.ui.define([
 			// groupLevels : ["LifecycleStatus"]
 		};
 		this.mock(_AggregationHelper).expects("validateAggregation")
-			.withExactArgs(sinon.match.same(oAggregation));
+			.withExactArgs(sinon.match.same(oAggregation), "/EMPLOYEES");
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
 		this.mock(this.oModel).expects("buildQueryOptions")
@@ -806,7 +822,7 @@ sap.ui.define([
 
 		oBinding.bHasAnalyticalInfo = true;
 		this.mock(_AggregationHelper).expects("validateAggregation")
-			.withExactArgs(sinon.match.same(oAggregation));
+			.withExactArgs(sinon.match.same(oAggregation), "/EMPLOYEES");
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation)).returns({$apply : sApply});
 		this.mock(this.oModel).expects("buildQueryOptions")
@@ -860,7 +876,7 @@ sap.ui.define([
 		oBinding.mParameters.$$aggregation = oFixture.oOldAggregation;
 		oBinding.mQueryOptions.$apply = sApply;
 		this.mock(_AggregationHelper).expects("validateAggregation")
-			.withExactArgs(sinon.match.same(oFixture.oNewAggregation));
+			.withExactArgs(sinon.match.same(oFixture.oNewAggregation), "/EMPLOYEES");
 		this.mock(_AggregationHelper).expects("buildApply")
 			.withExactArgs(sinon.match.same(oFixture.oNewAggregation)).returns({$apply : sApply});
 		this.mock(this.oModel).expects("buildQueryOptions")

@@ -142,6 +142,9 @@ sap.ui.define([
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for data aggregation; see
 		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
+		* @param {string} [oAggregation.hierarchyQualifier]
+		*   If present, a recursive hierarchy w/o data aggregation is defined and
+		*   {@link _AggregationHelper.buildApply4Hierarchy} is invoked instead.
 		 * @param {object} [mQueryOptions={}]
 		 *   A map of key-value pairs representing the query string; it is not modified
 		 * @param {boolean} [mQueryOptions.$count]
@@ -221,20 +224,11 @@ sap.ui.define([
 				}
 			}
 
-			mQueryOptions = Object.assign({}, mQueryOptions);
-
 			if (oAggregation.hierarchyQualifier) {
-				if (mQueryOptions.$$filterBeforeAggregate) {
-					sApply = "filter(" + mQueryOptions.$$filterBeforeAggregate + ")/" + sApply;
-					delete mQueryOptions.$$filterBeforeAggregate;
-				}
-				if (sApply) {
-					mQueryOptions.$apply = sApply;
-				}
-
-				return mQueryOptions;
+				return _AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions);
 			}
 
+			mQueryOptions = Object.assign({}, mQueryOptions);
 			oAggregation.groupLevels = oAggregation.groupLevels || [];
 			bIsLeafLevel = !iLevel || iLevel > oAggregation.groupLevels.length;
 
@@ -340,6 +334,61 @@ sap.ui.define([
 			if (sApply) {
 				mQueryOptions.$apply = sApply;
 			}
+
+			return mQueryOptions;
+		},
+
+		/**
+		 * Builds the value for a "$apply" system query option based on the given data aggregation
+		 * information for a recursive hierarchy.
+		 *
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for a recursive hierarchy; see
+		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
+		 * @param {object} [mQueryOptions={}]
+		 *   A map of key-value pairs representing the query string; it is not modified
+		 * @param {number} [mQueryOptions.$select]
+		 *   The value for a "$select" system query option; additional technical properties are
+		 *   added to the returned copy
+		 * @returns {object}
+		 *   A map of key-value pairs representing the query string, including a value for the
+		 *   "$apply" system query option; it is a modified copy of <code>mQueryOptions</code>, with
+		 *   values changed as described above
+		 *
+		 * @public
+		 */
+		buildApply4Hierarchy : function (oAggregation, mQueryOptions) {
+			var sApply;
+
+			function select(sProperty) {
+				if (mQueryOptions.$select) {
+					mQueryOptions.$select.push(sProperty);
+				}
+			}
+
+			mQueryOptions = Object.assign({}, mQueryOptions); // shallow clone
+			if (mQueryOptions.$select) {
+				mQueryOptions.$select = mQueryOptions.$select.slice();
+			}
+
+			if (mQueryOptions.$$filterBeforeAggregate) { // children of a given parent
+				sApply = "descendants($root" + oAggregation.$path
+					+ "," + oAggregation.hierarchyQualifier
+					+ ",ID,filter(" + mQueryOptions.$$filterBeforeAggregate + "),1)";
+				delete mQueryOptions.$$filterBeforeAggregate;
+			} else { // top levels of nodes
+				sApply = "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root"
+					+ oAggregation.$path
+					+ ",HierarchyQualifier='" + oAggregation.hierarchyQualifier
+					+ "',NodeProperty='ID',Levels=" + (oAggregation.expandTo || 1)
+					+ ")";
+				if (oAggregation.expandTo > 1) {
+					select("DescendantCount");
+					select("DistanceFromRoot");
+				}
+			}
+			select("DrillState");
+			mQueryOptions.$apply = sApply;
 
 			return mQueryOptions;
 		},
@@ -861,20 +910,28 @@ sap.ui.define([
 		},
 
 		/**
-		 * Validates the given data aggregation information.
+		 * Validates the given data aggregation information. If successful, the given path is stored
+		 * inside as <code>$path</code>.
+		 *
 		 *
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for data aggregation; see
 		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
+		 * @param {string} [sPath]
+		 *   The list binding's absolute path
 		 * @throws {Error}
 		 *   If the given data aggregation object is unsupported
 		 *
 		 * @public
 		 */
-		validateAggregation : function (oAggregation) {
+		validateAggregation : function (oAggregation, sPath) {
 			_AggregationHelper.checkTypeof(oAggregation,
 				oAggregation.hierarchyQualifier ? mRecursiveHierarchyType : mDataAggregationType,
 				"$$aggregation");
+
+			if (sPath) {
+				oAggregation.$path = sPath;
+			}
 		}
 	};
 
