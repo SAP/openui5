@@ -13,10 +13,12 @@
 
 .sapUiIntegrationDTPreviewMarginForAlignTopAndBottom {
 	margin-left: calc(50% - 135px);
+	position: relative;
 }
 
 .sapUiIntegrationDTPreviewMarginForAlignTopAndBottomSpec {
 	margin-right: calc(50% - 135px);
+	position: relative;
 }
 
 .sapUiIntegrationDTPreview>.before {
