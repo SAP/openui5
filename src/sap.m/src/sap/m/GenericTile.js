@@ -1088,6 +1088,15 @@ sap.ui.define([
 		return bIsAriaUpd;
 	};
 
+	GenericTile.prototype.onsaptabnext = function(oEvt) {
+		if (this._isIconMode() && this.getFrameType() === FrameType.TwoByHalf && oEvt && oEvt.keyCode) {
+			if (oEvt.keyCode === 9 && oEvt.srcControl.getId() == this._oMoreIcon.getId()) {
+					this._oMoreIcon.removeStyleClass("sapMGTVisible");
+			} else if (oEvt.keyCode === 9) {
+				this._oMoreIcon.addStyleClass("sapMGTVisible");
+			}
+		}
+    };
 	GenericTile.prototype.onkeyup = function (event) {
 		if (!_isInnerTileButtonPressed(event, this)) {
 			var currentKey = keyPressed[event.keyCode];    //disable navigation to other tiles when one tile is selected
@@ -1125,7 +1134,7 @@ sap.ui.define([
 				event.preventDefault();
 			}
 
-			this._updateAriaLabel();  // To update the Aria Label for Generic Tile on change.
+			this._updateAriaLabel(); // To update the Aria Label for Generic Tile on change.
 		}
 	};
 
