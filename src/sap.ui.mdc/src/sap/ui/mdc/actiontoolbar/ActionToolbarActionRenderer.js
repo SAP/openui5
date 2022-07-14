@@ -6,7 +6,6 @@ sap.ui.define([], function() {
     "use strict";
 
 	/**
-	 * Form renderer.
 	 * @namespace
 	 */
 	var ActionToolbarActionRenderer = {
@@ -20,7 +19,7 @@ sap.ui.define([], function() {
 	 * @param {sap.ui.mdc.actiontoolbar.ActionToolbarAction} oActionToolbarAction an object representation of the control that should be rendered
 	 */
     ActionToolbarActionRenderer.render = function(rm, oActionToolbarAction) {
-        var mAriaProps = { role: "form" };
+        var mAriaProps = { role: "action" };
 
         rm.openStart("div", oActionToolbarAction);
 
