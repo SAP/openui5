@@ -26,6 +26,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
+	var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 	function createMockChange(sId, sAffectedElementId, sCommandName, sCommandCategory, mPayload) {
 		var oCreationDate = new Date();
@@ -90,7 +91,6 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when a change indicator with a single change is created", function(assert) {
-			var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(DateFormat, "getDateTimeInstance")
 				.callThrough()
 				.withArgs({ relative: "true" })
@@ -159,7 +159,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a change indicator with a single change is created and the Text or ID of the element is too long", function(assert) {
-			var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 			sandbox.stub(DateFormat, "getDateTimeInstance")
 				.callThrough()
 				.withArgs({ relative: "true" })
@@ -234,7 +233,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a change was created within the session", function(assert) {
-			var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 			this.oChangeIndicator.getModel().setData({
 				changes: [Object.assign(
 					createMockChange("someChangeId", this.oButton.getId(), "remove"),
@@ -283,9 +281,9 @@ sap.ui.define([
 
 			this.oChangeIndicator.getModel().setData({
 				changes: [
-					createMockChange("changeId1", this.oButton.getId(), "move", {}, oPayloadInsideGroup),
-					createMockChange("changeId2", this.oButton.getId(), "move", {}, oPayloadOutsideGroup),
-					createMockChange("changeId3", this.oButton.getId(), "move", {}, oPayloadWithoutSourceParentId)
+					createMockChange("changeId1", this.oButton.getId(), "move", "", oPayloadInsideGroup),
+					createMockChange("changeId2", this.oButton.getId(), "move", "", oPayloadOutsideGroup),
+					createMockChange("changeId3", this.oButton.getId(), "move", "", oPayloadWithoutSourceParentId)
 				]
 			});
 			oCore.applyChanges();
@@ -309,6 +307,45 @@ sap.ui.define([
 						"then the show details button is not visible if the element has no source parent id"
 					);
 				}.bind(this));
+		});
+
+		QUnit.test("when a change indicator is created for a settings command change", function(assert) {
+			var oPayload1 = {
+				description: "myFancyDescription1",
+				descriptionTooltip: "myVeryLengthyTooltip"
+			};
+			var oPayload2 = {
+				description: "myFancyDescription2"
+			};
+			var oPayloadOutsideGroup = {
+				description: "moveDescription",
+				descriptionTooltip: "myVeryLengthyTooltip2",
+				sourceParentContainer: { id: "Group1" },
+				targetParentContainer: { id: "Group2" }
+			};
+			var aChanges = [
+				createMockChange("id0", this.oButton.getId(), "move", "move", oPayloadOutsideGroup),
+				createMockChange("id1", this.oButton.getId(), "settings", "move", oPayloadOutsideGroup),
+				createMockChange("id2", this.oButton.getId(), "settings", "remove", oPayload1),
+				createMockChange("id3", this.oButton.getId(), "settings", "add", oPayload2)
+			];
+			this.oChangeIndicator.setChanges(aChanges);
+
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[0].description, "myFancyDescription2", "the description is correct");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[0].descriptionTooltip, "", "the tooltip is correct");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[0].detailButtonText, undefined, "the button text is correct");
+
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[1].description, "myFancyDescription1", "the description is correct");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[1].descriptionTooltip, "myVeryLengthyTooltip", "the tooltip is correct");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[1].detailButtonText, undefined, "the button text is correct");
+
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[2].description, "moveDescription", "the description is correct");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[2].descriptionTooltip, "myVeryLengthyTooltip2", "the tooltip is correct");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[2].detailButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_SHOW_DEPENDENT_CONTAINER_MOVE"), "the button text is correct");
+
+			assert.notStrictEqual(this.oChangeIndicator._oDetailModel.getData()[3].description, "moveDescription", "the description from the change handler is not considered");
+			assert.notStrictEqual(this.oChangeIndicator._oDetailModel.getData()[3].descriptionTooltip, "myVeryLengthyTooltip", "the tooltip from the change handler is not considered");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[3].detailButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_SHOW_DEPENDENT_CONTAINER_MOVE"), "the button text is correct");
 		});
 
 		QUnit.test("when a change indicator with two changes is created", function(assert) {
@@ -402,7 +439,7 @@ sap.ui.define([
 			sandbox.stub(RenameVisualization, "getDescription").callsFake(function(mPayloadParameter, sElementLabel) {
 				assert.deepEqual(mPayload, mPayloadParameter, "getDescription is called with the right payload");
 				assert.strictEqual(sElementLabel, "TestButton", "getDescription is called with the right element label");
-				return { descriptionText: "Test Description" };
+				return { descriptionText: "Test Description", descriptionTooltip: "tooltip"};
 			});
 
 			this.oChangeIndicator.getModel().setData({
@@ -436,7 +473,7 @@ sap.ui.define([
 				assert.strictEqual(mPayloadParameter.originalLabel, "BeforeValue", "getDescription is called with the right original label");
 				assert.strictEqual(mPayloadParameter.newLabel, "AfterValue", "getDescription is called with the right new label");
 				assert.strictEqual(sElementLabel, "TestButton", "getDescription is called with the right element label");
-				return { descriptionText: "Test Description" };
+				return { descriptionText: "Test Description", descriptionTooltip: "tooltip" };
 			});
 
 			this.oChangeIndicator.getModel().setData({
@@ -471,7 +508,7 @@ sap.ui.define([
 				assert.strictEqual(mPayloadParameter.originalLabel, "BeforeValue", "getDescription is called with the right original label");
 				assert.strictEqual(mPayloadParameter.newLabel, "AfterValue", "getDescription is called with the right new label");
 				assert.strictEqual(sElementLabel, "TestButton", "getDescription is called with the right element label");
-				return { descriptionText: "Test Description" };
+				return { descriptionText: "Test Description", descriptionTooltip: "tooltip" };
 			});
 
 			this.oChangeIndicator.getModel().setData({
@@ -494,8 +531,6 @@ sap.ui.define([
 				originalLabel: "BeforeValue",
 				newLabel: "Aftervalue"
 			};
-
-			var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
 			this.oChangeIndicator.getModel().setData({
 				changes: [

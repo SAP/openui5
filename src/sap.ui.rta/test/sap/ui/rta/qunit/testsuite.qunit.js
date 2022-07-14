@@ -957,7 +957,8 @@ sap.ui.define([
 					coverage: {
 						only: [
 							"sap/ui/rta/util/changeVisualization/ChangeVisualization",
-							"sap/ui/rta/util/changeVisualization/ChangeIndicator"
+							"sap/ui/rta/util/changeVisualization/ChangeIndicator",
+							"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry"
 						]
 					},
 					ui5: {

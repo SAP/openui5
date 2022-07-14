@@ -22,7 +22,12 @@ sap.ui.define([
 		split: SplitVisualization
 	};
 
-	return function(sCategoryName) {
+	return function(mIndicatorInformation) {
+		var sCategoryName = mIndicatorInformation.commandName;
+		// to enable e.g. move changes in settings commands to show the 'Show Source' button
+		if (sCategoryName === "settings") {
+			sCategoryName = mIndicatorInformation.commandCategory;
+		}
 		return mCategories[sCategoryName];
 	};
 });
