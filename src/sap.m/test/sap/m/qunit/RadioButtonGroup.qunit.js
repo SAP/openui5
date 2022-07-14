@@ -476,4 +476,147 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(fnSpy.callCount, 1, "Click on a radio button should fire 'select'.");
 	});
+
+	QUnit.module("Buttons selection");
+
+	QUnit.test("setSelected should check RadioButton and uncheck all other RadioButtons from the same group", function (assert) {
+
+		// arrange
+		var oRBGroup =  new RadioButtonGroup("RBG1"),
+			oRadioButton1 = new RadioButton(),
+			oRadioButton2 = new RadioButton();
+
+		oRBGroup.addButton(oRadioButton1);
+		oRBGroup.addButton(oRadioButton2);
+
+		oRadioButton2.setSelected(true);
+
+		oRBGroup.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(!oRadioButton1.getSelected(), "RadioButton should not be selected");
+		assert.ok(oRadioButton2.getSelected(), "RadioButton should be selected");
+
+		// cleanup
+		oRadioButton1.destroy();
+		oRadioButton2.destroy();
+		oRBGroup.destroy();
+	});
+
+	QUnit.test("'selectedIndex' should NOT be modified onBeforeRendering", function (assert) {
+		// arrange
+		var oRBGroup =  new RadioButtonGroup({
+			buttons: [
+				new RadioButton(),
+				new RadioButton()
+			]
+		});
+
+		oRBGroup.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oRBGroup.getButtons()[0].getSelected(), "First radio button of the group should be selected");
+		// act
+		oRBGroup.setSelectedIndex(100);
+
+		// assert
+		assert.strictEqual(oRBGroup.getSelectedIndex(), 100, "'selectedIndex' is set on the group");
+
+		// act
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oRBGroup.getSelectedIndex(), 100, "'selectedIndex' is kept after rendering");
+
+		// cleanup
+		oRBGroup.destroy();
+	});
+
+	QUnit.test("Initially selected button in the group should be the last whose setSelected(true) was called", function (assert) {
+		// arrange
+		var oButton1 = new RadioButton("RB1"),
+			oButton2 = new RadioButton("RB2"),
+			oButton3 = new RadioButton("RB3");
+		var oRBGroup =  new RadioButtonGroup({
+			buttons: [
+				oButton1,
+				oButton2,
+				oButton3
+			]
+		});
+
+		// act before rendering of the group
+		oButton1.setSelected(true);
+		oButton3.setSelected(true);
+		oButton2.setSelected(true);
+		oRBGroup.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oButton1.getSelected(), "'RB1' shouldn't be selected");
+		assert.notOk(oButton3.getSelected(), "'RB3' shouldn't be selected");
+		assert.ok(oButton2.getSelected(), "'RB2' should be selected");
+
+		// cleanup
+		oRBGroup.destroy();
+	});
+
+	QUnit.test("Selected button in the group should be the last whose setSelected(true) was called", function (assert) {
+		// arrange
+		var oButton1 = new RadioButton("RB1"),
+			oButton2 = new RadioButton("RB2"),
+			oButton3 = new RadioButton("RB3");
+		var oRBGroup =  new RadioButtonGroup({
+			buttons: [
+				oButton1,
+				oButton2,
+				oButton3
+			]
+		});
+
+		oRBGroup.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act - after rendering of the group
+		oButton1.setSelected(true);
+		oButton3.setSelected(true);
+		oButton2.setSelected(true);
+		oButton1.setSelected(false);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oButton1.getSelected(), "'RB1' shouldn't be selected");
+		assert.notOk(oButton3.getSelected(), "'RB3' shouldn't be selected");
+		assert.ok(oButton2.getSelected(), "'RB2' should be selected");
+
+		// cleanup
+		oRBGroup.destroy();
+	});
+
+	QUnit.test("Selected button and selectedIndex combination", function (assert) {
+		// arrange
+		var oRBGroup =  new RadioButtonGroup({
+			selectedIndex: 2
+		});
+
+		oRBGroup.addButton(new RadioButton("RB1"));
+		oRBGroup.addButton(new RadioButton("RB2", {
+			selected: true
+		}));
+		oRBGroup.addButton(new RadioButton("RB3"));
+
+		oRBGroup.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(oRBGroup.getButtons()[0].getSelected(), "'RB1' shouldn't be selected");
+		assert.notOk(oRBGroup.getButtons()[2].getSelected(), "'RB3' shouldn't be selected");
+		assert.ok(oRBGroup.getButtons()[1].getSelected(), "'RB2' should be selected");
+
+		// cleanup
+		oRBGroup.destroy();
+	});
+
 });

@@ -8,6 +8,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/library',
+	'./RadioButton',
 	'./RadioButtonGroupRenderer',
 	"sap/base/Log"
 ],
@@ -16,6 +17,7 @@ sap.ui.define([
 		Control,
 		ItemNavigation,
 		coreLibrary,
+		RadioButton,
 		RadioButtonGroupRenderer,
 		Log
 		) {
@@ -150,6 +152,10 @@ sap.ui.define([
 				}
 			}});
 
+			RadioButtonGroup.prototype.init = function() {
+				this._iSelectionNumber = -1;
+			};
+
 			/**
 			 * Exits the radio button group.
 			 *
@@ -175,15 +181,30 @@ sap.ui.define([
 				var aButtons = this.getButtons();
 				var iButtonCount = aButtons.length;
 				var bEditable = this.getEditable();
+				var iCurrentSelectedButtonSelectionNumber = -1;
 
 				aButtons.forEach(function (oRadioButton) {
-					oRadioButton._setEditableParent(bEditable);
+					if (oRadioButton.getSelected()) {
+						iCurrentSelectedButtonSelectionNumber = Math.max(iCurrentSelectedButtonSelectionNumber, oRadioButton._iSelectionNumber);
+					}
 				});
+
+				if (iCurrentSelectedButtonSelectionNumber === -1 && this._iSelectionNumber === -1) {
+					this._iSelectionNumber = RadioButton.getNextSelectionNumber();
+				}
 
 				if (this.getSelectedIndex() > iButtonCount) {
 					Log.warning("Invalid index, set to 0");
 					this.setSelectedIndex(0);
 				}
+
+				aButtons.forEach(function (oRadioButton, i) {
+					oRadioButton._setEditableParent(bEditable);
+
+					if (i === this.getSelectedIndex() && this._iSelectionNumber > iCurrentSelectedButtonSelectionNumber) {
+						oRadioButton.setSelected(true);
+					}
+				}, this);
 
 				if (this.aRBs){
 					var oValueState = this.getValueState();
@@ -270,6 +291,7 @@ sap.ui.define([
 				}
 
 				this.setProperty("selectedIndex", iSelectedIndex, true); // no re-rendering
+				this._iSelectionNumber = RadioButton.getNextSelectionNumber();
 
 				// deselect old RadioButton
 				if (!isNaN(iIndexOld) && this.aRBs && this.aRBs[iIndexOld]) {
@@ -334,18 +356,13 @@ sap.ui.define([
 			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining.
 			 */
 			RadioButtonGroup.prototype.addButton = function(oButton) {
-				if (!this._bUpdateButtons && this.getSelectedIndex() === undefined) {
-					// if not defined -> select first one
-					this.setSelectedIndex(0);
-				}
-
 				if (!this.aRBs) {
 					this.aRBs = [];
 				}
 
 				var iIndex = this.aRBs.length;
 
-				this.aRBs[iIndex] = this._createRadioButton(oButton, iIndex);
+				this.aRBs[iIndex] = this._createRadioButton(oButton);
 
 				this.addAggregation("buttons",  this.aRBs[iIndex]);
 				return this;
@@ -380,13 +397,13 @@ sap.ui.define([
 				}
 
 				if (iIndex >= iLength) {
-					this.aRBs[iIndex] = this._createRadioButton(oButton, iIndex);
+					this.aRBs[iIndex] = this._createRadioButton(oButton);
 				} else {
 					// Insert RadioButton: loop backwards over Array and shift everything
 					for (var i = (iLength); i > iIndex; i--) {
 						this.aRBs[i] = this.aRBs[i - 1];
 						if ((i - 1) == iIndex) {
-							this.aRBs[i - 1] = this._createRadioButton(oButton, iIndex);
+							this.aRBs[i - 1] = this._createRadioButton(oButton);
 						}
 					}
 				}
@@ -397,15 +414,13 @@ sap.ui.define([
 			};
 
 			/**
-			 * Creates a copy of the sap.m.RadioButton passed as a first argument and
-			 * adds it to the RadioButtonGroup at the index specified in the second argument.
+			 * Creates a copy of the sap.m.RadioButton passed as a first argument
 			 *
 			 * @private
 			 * @param {sap.m.RadioButton} oButton The button from which a radio button will be created.
-			 * @param {number} iIndex The index in the group at which the radio button will be placed.
 			 * @returns {sap.m.RadioButton} The created radio button.
 			 */
-			RadioButtonGroup.prototype._createRadioButton = function(oButton, iIndex) {
+			RadioButtonGroup.prototype._createRadioButton = function(oButton) {
 
 				if (this.iIDCount == undefined) {
 					this.iIDCount = 0;
@@ -415,11 +430,6 @@ sap.ui.define([
 
 				oButton.setValueState(this.getValueState());
 				oButton.setGroupName(this.getId());
-
-				if (iIndex == this.getSelectedIndex()) {
-					oButton.setSelected(true);
-				}
-
 				oButton.attachEvent("select", this._handleRBSelect, this);
 
 				return oButton;
