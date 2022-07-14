@@ -34,6 +34,9 @@
 				"position": "Sales Executive",
 				"phone": "+1 202 555 5555",
 				"email": "my@mymail.com",
+				"phoneTooltip": "Make a call",
+				"emailTooltip": "Write an e-mail",
+				"agendaTooltip": "Open a calendar",
 				"photo": "./DonnaMoore.png",
 				"agendaUrl": "/agenda",
 				"manager": {
@@ -45,6 +48,8 @@
 					"name": "Robert Brown Entertainment",
 					"address": "481 West Street, Anytown OH 45066, USA",
 					"email": "mail@mycompany.com",
+					"emailTooltip": "Write an e-mail",
+					"websiteTooltip": "Visit website",
 					"emailSubject": "Subject",
 					"website": "www.company_a.example.com",
 					"url": "https://www.company_a.example.com"
@@ -74,6 +79,7 @@
 						{
 							"label": "Phone",
 							"value": "{phone}",
+							"tooltip":  "{phoneTooltip}",
 							"actions": [
 								{
 									"type": "Navigation",
@@ -86,6 +92,7 @@
 						{
 							"label": "Email",
 							"value": "{email}",
+							"tooltip":  "{emailTooltip}",
 							"actions": [
 								{
 									"type": "Navigation",
@@ -98,6 +105,7 @@
 						{
 							"label": "Agenda",
 							"value": "Book a meeting",
+							"tooltip":  "{agendaTooltip}",
 							"actions": [
 								{
 									"type": "Navigation",
@@ -124,6 +132,7 @@
 						{
 							"label": "Email",
 							"value": "{company/email}",
+							"tooltip":  "{company/emailTooltip}",
 							"actions": [
 								{
 									"type": "Navigation",
@@ -136,6 +145,7 @@
 						{
 							"label": "Website",
 							"value": "{company/website}",
+							"tooltip": "{company/websiteTooltip}",
 							"actions": [
 								{
 									"type": "Navigation",

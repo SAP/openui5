@@ -1366,6 +1366,77 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Email, link and phone fields should have tooltip set correctly", function (assert) {
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+			var oGroup = this.getCardContent().getAggregation("_content").getItems()[0].getContent()[0],
+				oPhone = oGroup.getItems()[1],
+				oEmail = oGroup.getItems()[3],
+				oLink = oGroup.getItems()[5];
+
+			assert.strictEqual(oPhone.getDomRef().getAttribute("title"), "Make a call", "The tooltip of the phone is correct");
+			assert.strictEqual(oEmail.getDomRef().getAttribute("title"), "Write an e-mail", "The tooltip of the email is correct");
+			assert.strictEqual(oLink.getDomRef().getAttribute("title"),  "Visit website", "The tooltip of the link is correct (binding used)");
+			done();
+		});
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"json": {
+						"websiteTooltip": "Visit website",
+						"website": "www.company_a.example.com"
+					}
+				},
+				"content": {
+					"groups": [{
+						"items": [{
+								"label": "Phone",
+								"value": "+1 202 555 5555",
+								"tooltip": "Make a call",
+								"actions": [{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel: +1 202 555 5555"
+									}
+								}]
+							},
+							{
+								"label": "Email",
+								"value": "my@mymail.com",
+								"tooltip": "Write an e-mail",
+								"actions": [{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto: my@mymail.com"
+									}
+								}]
+							},
+							{
+								"label": "Website",
+								"value": "{website}",
+								"tooltip": "{websiteTooltip}",
+								"actions": [{
+									"type": "Navigation",
+									"parameters": {
+										"url": "www.company_a.example.com"
+									}
+								}]
+							}
+						]
+					}]
+				}
+			}
+		});
+	});
+
 	QUnit.module("Layout", {
 		beforeEach: function () {
 			this.oCard = new Card({
