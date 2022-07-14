@@ -36705,6 +36705,42 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Refresh a table with a kept-alive context, but no late properties.
+	QUnit.test("BCP: 476620/2022 (002075129500004766202022)", function (assert) {
+		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<Text id="grossAmount" text="{GrossAmount}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&$skip=0&$top=100", {
+				value : [{GrossAmount : "123", SalesOrderID : "1"}]
+			})
+			.expectChange("grossAmount", ["123.00"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+			oContext.setKeepAlive(true);
+
+			that.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID"
+					+ "&$filter=SalesOrderID eq '1'", {
+					value : [{GrossAmount : "321", SalesOrderID : "1"}]
+				})
+				.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&$skip=0&$top=100", {
+					value : [{GrossAmount : "n/a", SalesOrderID : "1"}]
+				})
+				.expectChange("grossAmount", ["321.00"]);
+
+			// code under test
+			oContext.getBinding().refresh();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: A binding drills down via key predicate into a missing element. Depending on
 	// whether or not the collection itself is empty, drill-down fails or just logs.
 	// BCP: 2070374495
