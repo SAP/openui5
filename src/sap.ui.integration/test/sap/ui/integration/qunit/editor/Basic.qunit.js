@@ -133,11 +133,11 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "string Parameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "string Parameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value", "Field: String Value");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value", "Field: String Value");
 					var oCurrentSettings = this.oEditor.getCurrentSettings();
-					assert.ok(oCurrentSettings["/sap.card/configuration/parameters/stringParameter/value"] === "stringParameter Value", "Field: manifestpath Value");
+					assert.equal(oCurrentSettings["/sap.card/configuration/parameters/stringParameter/value"], "stringParameter Value", "Field: manifestpath Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -177,7 +177,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -188,7 +188,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -199,7 +199,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -210,7 +210,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -221,7 +221,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -232,7 +232,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -243,7 +243,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -254,7 +254,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -265,7 +265,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -276,7 +276,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -309,9 +309,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value", "Field: String Value");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value", "Field: String Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -345,12 +345,12 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					var oControl = oField.getAggregation("_field");
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Use TextArea for a string field", "Label: Has label text");
+					assert.equal(oLabel.getText(), "Use TextArea for a string field", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oControl.isA("sap.m.TextArea"), "Content of Form contains: TextArea ");
-					assert.ok(oControl.getValue() === "stringWithTextArea Value", "Field: String Value");
+					assert.equal(oControl.getValue(), "stringWithTextArea Value", "Field: String Value");
 					oControl.setValue("stringWithTextArea new Value");
-					assert.ok(oField._getCurrentProperty("value") === "stringWithTextArea new Value", "Field: String Value updated");
+					assert.equal(oField._getCurrentProperty("value"), "stringWithTextArea new Value", "Field: String Value updated");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -380,7 +380,7 @@ sap.ui.define([
 				assert.ok(this.oEditor.isReady(), "Editor is ready");
 				var oHint = this.oEditor.getAggregation("_formContent")[1];
 				assert.ok(oHint.isA("sap.m.FormattedText"), "Hint: Form content contains a Hint");
-				assert.ok(oHint.getHtmlText() === 'Please refer to the <a target="blank" href="https://www.sap.com" class="sapMLnk">documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a target="blank" href="https://www.sap.com" class="sapMLnk">two links</a>. good?', "Hint: Has html hint text");
+				assert.equal(oHint.getHtmlText(), 'Please refer to the <a target="blank" href="https://www.sap.com" class="sapMLnk">documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a target="blank" href="https://www.sap.com" class="sapMLnk">two links</a>. good?', "Hint: Has html hint text");
 				resolve();
 			}.bind(this));
 		}.bind(this));
@@ -410,7 +410,7 @@ sap.ui.define([
 				assert.ok(this.oEditor.isReady(), "Editor is ready");
 				var oHint = this.oEditor.getAggregation("_formContent")[4];
 				assert.ok(oHint.isA("sap.m.FormattedText"), "Hint: Form content contains a Hint");
-				assert.ok(oHint.getHtmlText() === 'Please refer to the <a target="blank" href="https://www.sap.com" class="sapMLnk">documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a target="blank" href="https://www.sap.com" class="sapMLnk">two links</a>. good?', "Hint: Has html hint text");
+				assert.equal(oHint.getHtmlText(), 'Please refer to the <a target="blank" href="https://www.sap.com" class="sapMLnk">documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a target="blank" href="https://www.sap.com" class="sapMLnk">two links</a>. good?', "Hint: Has html hint text");
 				resolve();
 			}.bind(this));
 		}.bind(this));
@@ -425,17 +425,17 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					setTimeout(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-						assert.ok(oLabel.getText() === "stringParameterWithValues", "Label: Has static label text");
+						assert.equal(oLabel.getText(), "stringParameterWithValues", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Editor is ComboBox");
 						var aItems = oField.getAggregation("_field").getItems();
-						assert.ok(aItems.length === 3, "Field: Select items lenght is OK");
-						assert.ok(aItems[0].getKey() === "key1", "Field: Select item 0 Key is OK");
-						assert.ok(aItems[0].getText() === "text1", "Field: Select item 0 Text is OK");
-						assert.ok(aItems[1].getKey() === "key2", "Field: Select item 1 Key is OK");
-						assert.ok(aItems[1].getText() === "text2", "Field: Select item 1 Text is OK");
-						assert.ok(aItems[2].getKey() === "key3", "Field: Select item 1 Key is OK");
-						assert.ok(aItems[2].getText() === "text3", "Field: Select item 1 Text is OK");
+						assert.equal(aItems.length, 3, "Field: Select items lenght is OK");
+						assert.equal(aItems[0].getKey(), "key1", "Field: Select item 0 Key is OK");
+						assert.equal(aItems[0].getText(), "text1", "Field: Select item 0 Text is OK");
+						assert.equal(aItems[1].getKey(), "key2", "Field: Select item 1 Key is OK");
+						assert.equal(aItems[1].getText(), "text2", "Field: Select item 1 Text is OK");
+						assert.equal(aItems[2].getKey(), "key3", "Field: Select item 1 Key is OK");
+						assert.equal(aItems[2].getText(), "text3", "Field: Select item 1 Text is OK");
 						resolve();
 					}, 500);
 				}.bind(this));
@@ -470,19 +470,19 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					setTimeout(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-						assert.ok(oLabel.getText() === "stringParameterWithValues", "Label: Has static label text");
+						assert.equal(oLabel.getText(), "stringParameterWithValues", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Editor is ComboBox");
 						var aItems = oField.getAggregation("_field").getItems();
-						assert.ok(aItems.length === 4, "Field: Select items lenght is OK");
-						assert.ok(aItems[0].getKey() === "key1", "Field: Select item 0 Key is OK");
-						assert.ok(aItems[0].getText() === "text1req", "Field: Select item 0 Text is OK");
-						assert.ok(aItems[1].getKey() === "key2", "Field: Select item 1 Key is OK");
-						assert.ok(aItems[1].getText() === "text2req", "Field: Select item 1 Text is OK");
-						assert.ok(aItems[2].getKey() === "key3", "Field: Select item 2 Key is OK");
-						assert.ok(aItems[2].getText() === "text3req", "Field: Select item 2 Text is OK");
-						assert.ok(aItems[3].getKey() === "key4", "Field: Select item 3 Key is OK");
-						assert.ok(aItems[3].getText() === "text4req", "Field: Select item 3 Text is OK");
+						assert.equal(aItems.length, 4, "Field: Select items lenght is OK");
+						assert.equal(aItems[0].getKey(), "key1", "Field: Select item 0 Key is OK");
+						assert.equal(aItems[0].getText(), "text1req", "Field: Select item 0 Text is OK");
+						assert.equal(aItems[1].getKey(), "key2", "Field: Select item 1 Key is OK");
+						assert.equal(aItems[1].getText(), "text2req", "Field: Select item 1 Text is OK");
+						assert.equal(aItems[2].getKey(), "key3", "Field: Select item 2 Key is OK");
+						assert.equal(aItems[2].getText(), "text3req", "Field: Select item 2 Text is OK");
+						assert.equal(aItems[3].getKey(), "key4", "Field: Select item 3 Key is OK");
+						assert.equal(aItems[3].getText(), "text4req", "Field: Select item 3 Text is OK");
 						resolve();
 					}, 500);
 				}.bind(this));
@@ -517,10 +517,10 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					setTimeout(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-						assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
+						assert.equal(oLabel.getText(), "stringArrayParameter", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
-						assert.ok(oField.getAggregation("_field").getItems().length === 5, "Field: MultiComboBox items lenght is OK");
+						assert.equal(oField.getAggregation("_field").getItems().length, 5, "Field: MultiComboBox items lenght is OK");
 						resolve();
 					}, 500);
 				}.bind(this));
@@ -555,16 +555,16 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					setTimeout(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-						assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
+						assert.equal(oLabel.getText(), "stringArrayParameter", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
 						var oMultiComboBox = oField.getAggregation("_field");
 						assert.ok(oMultiComboBox.isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
-						assert.ok(oMultiComboBox.getItems().length === 5, "Field: MultiComboBox items lenght is OK");
-						assert.ok(oMultiComboBox.getSelectedKeys().length === 1, "Field: Selected Keys length correct");
-						assert.ok(oMultiComboBox.getSelectedKeys()[0] === "key1", "Field: Selected Keys correct");
+						assert.equal(oMultiComboBox.getItems().length, 5, "Field: MultiComboBox items lenght is OK");
+						assert.equal(oMultiComboBox.getSelectedKeys().length, 1, "Field: Selected Keys length correct");
+						assert.equal(oMultiComboBox.getSelectedKeys()[0], "key1", "Field: Selected Keys correct");
 						var aValue = this.oEditor.getCurrentSettings()["/sap.card/configuration/parameters/stringArrayParameter/value"];
-						assert.ok(aValue.length === 1, "Field: value length correct");
-						assert.ok(aValue[0] === "key1", "Field: value correct");
+						assert.equal(aValue.length, 1, "Field: value length correct");
+						assert.equal(aValue[0], "key1", "Field: value correct");
 						resolve();
 					}.bind(this), 500);
 				}.bind(this));
@@ -597,17 +597,17 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringArrayParameterNoValues", "Label: Has static label text");
+					assert.equal(oLabel.getText(), "stringArrayParameterNoValues", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editor is Input");
-					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Input value is OK");
+					assert.equal(oField.getAggregation("_field").getValue(), "", "Field: Input value is OK");
 					oLabel = this.oEditor.getAggregation("_formContent")[3];
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringArrayParameterNoValuesNotEditable", "Label: Has static label text");
+					assert.equal(oLabel.getText(), "stringArrayParameterNoValuesNotEditable", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editor is Input");
-					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Input value is OK");
+					assert.equal(oField.getAggregation("_field").getValue(), "", "Field: Input value is OK");
 					assert.ok(!oField.getAggregation("_field").getEditable(), "Field: Input editable is OK");
 					resolve();
 				}.bind(this));
@@ -642,10 +642,10 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					setTimeout(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-						assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
+						assert.equal(oLabel.getText(), "stringArrayParameter", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: List Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
-						assert.ok(oField.getAggregation("_field").getItems().length === 6, "Field: MultiComboBox items lenght is OK");
+						assert.equal(oField.getAggregation("_field").getItems().length, 6, "Field: MultiComboBox items lenght is OK");
 						resolve();
 					}, 500);
 				}.bind(this));
@@ -679,9 +679,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StaticLabel", "Label: Has static label text");
+					assert.equal(oLabel.getText(), "StaticLabel", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "StaticLabel Value", "Field: String Value");
+					assert.equal(oField.getAggregation("_field").getValue(), "StaticLabel Value", "Field: String Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -695,9 +695,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value", "Field: String Value");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value", "Field: String Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -711,9 +711,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StaticLabel", "Label: Has static label text");
+					assert.equal(oLabel.getText(), "StaticLabel", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "StaticLabel Value", "Field: String Value");
+					assert.equal(oField.getAggregation("_field").getValue(), "StaticLabel Value", "Field: String Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -874,53 +874,53 @@ sap.ui.define([
 						oSelect.open();
 						setTimeout(function () {
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for 3 < index < 14");
+							assert.equal(oSelect.getSelectedIndex(), 1, "Field: Arrow Up navigation correct for 3 < index < 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for index = 1");
+							assert.equal(oSelect.getSelectedIndex(), 0, "Field: Arrow Up navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for index = 0");
+							assert.equal(oSelect.getSelectedIndex(), 0, "Field: Arrow Up navigation correct for index = 0");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 39, "Field: Page DOWN navigation correct for index = 0");
+							assert.equal(oSelect.getSelectedIndex(), 39, "Field: Page DOWN navigation correct for index = 0");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_UP);
-							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Page Up navigation correct for index = 39");
+							assert.equal(oSelect.getSelectedIndex(), 0, "Field: Page Up navigation correct for index = 39");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Down navigation correct for index = 0");
+							assert.equal(oSelect.getSelectedIndex(), 1, "Field: Arrow Down navigation correct for index = 0");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Down navigation correct for index = 1");
+							assert.equal(oSelect.getSelectedIndex(), 3, "Field: Arrow Down navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Down navigation correct for index = 3");
+							assert.equal(oSelect.getSelectedIndex(), 15, "Field: Arrow Down navigation correct for index = 3");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Arrow Right navigation correct for index = 15");
+							assert.equal(oSelect.getSelectedIndex(), 16, "Field: Arrow Right navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 76, "Field: Page DOWN navigation correct for index = 16");
+							assert.equal(oSelect.getSelectedIndex(), 76, "Field: Page DOWN navigation correct for index = 16");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_UP);
-							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Page Up navigation correct for index = 76");
+							assert.equal(oSelect.getSelectedIndex(), 16, "Field: Page Up navigation correct for index = 76");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Left navigation correct for index = 16");
+							assert.equal(oSelect.getSelectedIndex(), 15, "Field: Arrow Left navigation correct for index = 16");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Left navigation correct for index = 15");
+							assert.equal(oSelect.getSelectedIndex(), 14, "Field: Arrow Left navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Right navigation correct for index = 14");
+							assert.equal(oSelect.getSelectedIndex(), 15, "Field: Arrow Right navigation correct for index = 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Arrow Right navigation correct for index = 15");
+							assert.equal(oSelect.getSelectedIndex(), 16, "Field: Arrow Right navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 17, "Field: Arrow Right navigation correct for index = 16");
+							assert.equal(oSelect.getSelectedIndex(), 17, "Field: Arrow Right navigation correct for index = 16");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 29, "Field: Arrow Down navigation correct for index = 17");
+							assert.equal(oSelect.getSelectedIndex(), 29, "Field: Arrow Down navigation correct for index = 17");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 30, "Field: Arrow Right navigation correct for index = 29");
+							assert.equal(oSelect.getSelectedIndex(), 30, "Field: Arrow Right navigation correct for index = 29");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 31, "Field: Arrow Right navigation correct for index = 30");
+							assert.equal(oSelect.getSelectedIndex(), 31, "Field: Arrow Right navigation correct for index = 30");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 43, "Field: Arrow Down navigation correct for index = 31");
+							assert.equal(oSelect.getSelectedIndex(), 43, "Field: Arrow Down navigation correct for index = 31");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 31, "Field: Arrow Up navigation correct for index = 43");
+							assert.equal(oSelect.getSelectedIndex(), 31, "Field: Arrow Up navigation correct for index = 43");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 19, "Field: Arrow Up navigation correct for index = 31");
+							assert.equal(oSelect.getSelectedIndex(), 19, "Field: Arrow Up navigation correct for index = 31");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 7, "Field: Arrow Up navigation correct for index = 19");
+							assert.equal(oSelect.getSelectedIndex(), 7, "Field: Arrow Up navigation correct for index = 19");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 7");
+							assert.equal(oSelect.getSelectedIndex(), 1, "Field: Arrow Up navigation correct for index = 7");
 							resolve();
 						}, 1000);
 					}, 500);
@@ -945,45 +945,45 @@ sap.ui.define([
 						oSelect.open();
 						setTimeout(function () {
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for 3 < index < 14");
+							assert.equal(oSelect.getSelectedIndex(), 1, "Field: Arrow Up navigation correct for 3 < index < 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 1");
+							assert.equal(oSelect.getSelectedIndex(), 1, "Field: Arrow Up navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 1");
+							assert.equal(oSelect.getSelectedIndex(), 1, "Field: Arrow Up navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Down navigation correct for index = 1");
+							assert.equal(oSelect.getSelectedIndex(), 3, "Field: Arrow Down navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Down navigation correct for index = 3");
+							assert.equal(oSelect.getSelectedIndex(), 15, "Field: Arrow Down navigation correct for index = 3");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Left navigation correct for index = 15");
+							assert.equal(oSelect.getSelectedIndex(), 14, "Field: Arrow Left navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 13, "Field: Arrow Left navigation correct for index = 14");
+							assert.equal(oSelect.getSelectedIndex(), 13, "Field: Arrow Left navigation correct for index = 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 12, "Field: Arrow Left navigation correct for index = 13");
+							assert.equal(oSelect.getSelectedIndex(), 12, "Field: Arrow Left navigation correct for index = 13");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 11, "Field: Arrow Left navigation correct for index = 12");
+							assert.equal(oSelect.getSelectedIndex(), 11, "Field: Arrow Left navigation correct for index = 12");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 12, "Field: Arrow Right navigation correct for index = 11");
+							assert.equal(oSelect.getSelectedIndex(), 12, "Field: Arrow Right navigation correct for index = 11");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 13, "Field: Arrow Right navigation correct for index = 12");
+							assert.equal(oSelect.getSelectedIndex(), 13, "Field: Arrow Right navigation correct for index = 12");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Right navigation correct for index = 13");
+							assert.equal(oSelect.getSelectedIndex(), 14, "Field: Arrow Right navigation correct for index = 13");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 26, "Field: Arrow Down navigation correct for index = 14");
+							assert.equal(oSelect.getSelectedIndex(), 26, "Field: Arrow Down navigation correct for index = 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 27, "Field: Arrow Right navigation correct for index = 26");
+							assert.equal(oSelect.getSelectedIndex(), 27, "Field: Arrow Right navigation correct for index = 26");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 28, "Field: Arrow Right navigation correct for index = 27");
+							assert.equal(oSelect.getSelectedIndex(), 28, "Field: Arrow Right navigation correct for index = 27");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 40, "Field: Arrow Down navigation correct for index = 28");
+							assert.equal(oSelect.getSelectedIndex(), 40, "Field: Arrow Down navigation correct for index = 28");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 28, "Field: Arrow Up navigation correct for index = 40");
+							assert.equal(oSelect.getSelectedIndex(), 28, "Field: Arrow Up navigation correct for index = 40");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Arrow Up navigation correct for index = 28");
+							assert.equal(oSelect.getSelectedIndex(), 16, "Field: Arrow Up navigation correct for index = 28");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 4, "Field: Arrow Up navigation correct for index = 16");
+							assert.equal(oSelect.getSelectedIndex(), 4, "Field: Arrow Up navigation correct for index = 16");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 4");
+							assert.equal(oSelect.getSelectedIndex(), 1, "Field: Arrow Up navigation correct for index = 4");
 							resolve();
 						}, 1000);
 					}, 500);
@@ -1008,41 +1008,41 @@ sap.ui.define([
 						oSelect.open();
 						setTimeout(function () {
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for 3 < index < 14");
+							assert.equal(oSelect.getSelectedIndex(), 0, "Field: Arrow Up navigation correct for 3 < index < 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for index = 0");
+							assert.equal(oSelect.getSelectedIndex(), 0, "Field: Arrow Up navigation correct for index = 0");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Down navigation correct for index = 0");
+							assert.equal(oSelect.getSelectedIndex(), 3, "Field: Arrow Down navigation correct for index = 0");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Down navigation correct for index = 3");
+							assert.equal(oSelect.getSelectedIndex(), 15, "Field: Arrow Down navigation correct for index = 3");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Left navigation correct for index = 15");
+							assert.equal(oSelect.getSelectedIndex(), 14, "Field: Arrow Left navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 13, "Field: Arrow Left navigation correct for index = 14");
+							assert.equal(oSelect.getSelectedIndex(), 13, "Field: Arrow Left navigation correct for index = 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 12, "Field: Arrow Left navigation correct for index = 13");
+							assert.equal(oSelect.getSelectedIndex(), 12, "Field: Arrow Left navigation correct for index = 13");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 13, "Field: Arrow Right navigation correct for index = 12");
+							assert.equal(oSelect.getSelectedIndex(), 13, "Field: Arrow Right navigation correct for index = 12");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Right navigation correct for index = 13");
+							assert.equal(oSelect.getSelectedIndex(), 14, "Field: Arrow Right navigation correct for index = 13");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Right navigation correct for index = 14");
+							assert.equal(oSelect.getSelectedIndex(), 15, "Field: Arrow Right navigation correct for index = 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 27, "Field: Arrow Down navigation correct for index = 15");
+							assert.equal(oSelect.getSelectedIndex(), 27, "Field: Arrow Down navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 28, "Field: Arrow Right navigation correct for index = 27");
+							assert.equal(oSelect.getSelectedIndex(), 28, "Field: Arrow Right navigation correct for index = 27");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 29, "Field: Arrow Right navigation correct for index = 28");
+							assert.equal(oSelect.getSelectedIndex(), 29, "Field: Arrow Right navigation correct for index = 28");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 41, "Field: Arrow Down navigation correct for index = 29");
+							assert.equal(oSelect.getSelectedIndex(), 41, "Field: Arrow Down navigation correct for index = 29");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 29, "Field: Arrow Up navigation correct for index = 41");
+							assert.equal(oSelect.getSelectedIndex(), 29, "Field: Arrow Up navigation correct for index = 41");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 17, "Field: Arrow Up navigation correct for index = 29");
+							assert.equal(oSelect.getSelectedIndex(), 17, "Field: Arrow Up navigation correct for index = 29");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 5, "Field: Arrow Up navigation correct for index = 17");
+							assert.equal(oSelect.getSelectedIndex(), 5, "Field: Arrow Up navigation correct for index = 17");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for index = 5");
+							assert.equal(oSelect.getSelectedIndex(), 0, "Field: Arrow Up navigation correct for index = 5");
 							resolve();
 						}, 1000);
 					}, 500);
@@ -1067,43 +1067,43 @@ sap.ui.define([
 						oSelect.open();
 						setTimeout(function () {
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Up navigation correct for 3 < index < 14");
+							assert.equal(oSelect.getSelectedIndex(), 3, "Field: Arrow Up navigation correct for 3 < index < 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Up navigation correct for index = 3");
+							assert.equal(oSelect.getSelectedIndex(), 3, "Field: Arrow Up navigation correct for index = 3");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Down navigation correct for index = 3");
+							assert.equal(oSelect.getSelectedIndex(), 15, "Field: Arrow Down navigation correct for index = 3");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 27, "Field: Arrow Down navigation correct for index = 15");
+							assert.equal(oSelect.getSelectedIndex(), 27, "Field: Arrow Down navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 26, "Field: Arrow Left navigation correct for index = 27");
+							assert.equal(oSelect.getSelectedIndex(), 26, "Field: Arrow Left navigation correct for index = 27");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 25, "Field: Arrow Left navigation correct for index = 26");
+							assert.equal(oSelect.getSelectedIndex(), 25, "Field: Arrow Left navigation correct for index = 26");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 24, "Field: Arrow Left navigation correct for index = 25");
+							assert.equal(oSelect.getSelectedIndex(), 24, "Field: Arrow Left navigation correct for index = 25");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 25, "Field: Arrow Right navigation correct for index = 24");
+							assert.equal(oSelect.getSelectedIndex(), 25, "Field: Arrow Right navigation correct for index = 24");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 26, "Field: Arrow Right navigation correct for index = 25");
+							assert.equal(oSelect.getSelectedIndex(), 26, "Field: Arrow Right navigation correct for index = 25");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 27, "Field: Arrow Right navigation correct for index = 26");
+							assert.equal(oSelect.getSelectedIndex(), 27, "Field: Arrow Right navigation correct for index = 26");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 39, "Field: Arrow Down navigation correct for index = 27");
+							assert.equal(oSelect.getSelectedIndex(), 39, "Field: Arrow Down navigation correct for index = 27");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 40, "Field: Arrow Right navigation correct for index = 39");
+							assert.equal(oSelect.getSelectedIndex(), 40, "Field: Arrow Right navigation correct for index = 39");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 41, "Field: Arrow Right navigation correct for index = 40");
+							assert.equal(oSelect.getSelectedIndex(), 41, "Field: Arrow Right navigation correct for index = 40");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 53, "Field: Arrow Down navigation correct for index = 41");
+							assert.equal(oSelect.getSelectedIndex(), 53, "Field: Arrow Down navigation correct for index = 41");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 41, "Field: Arrow Up navigation correct for index = 53");
+							assert.equal(oSelect.getSelectedIndex(), 41, "Field: Arrow Up navigation correct for index = 53");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 29, "Field: Arrow Up navigation correct for index = 41");
+							assert.equal(oSelect.getSelectedIndex(), 29, "Field: Arrow Up navigation correct for index = 41");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 17, "Field: Arrow Up navigation correct for index = 29");
+							assert.equal(oSelect.getSelectedIndex(), 17, "Field: Arrow Up navigation correct for index = 29");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 5, "Field: Arrow Up navigation correct for index = 17");
+							assert.equal(oSelect.getSelectedIndex(), 5, "Field: Arrow Up navigation correct for index = 17");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Up navigation correct for index = 5");
+							assert.equal(oSelect.getSelectedIndex(), 3, "Field: Arrow Up navigation correct for index = 5");
 							resolve();
 						}, 1000);
 					}, 500);
@@ -1122,64 +1122,64 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
 						var oSelect = oField.getAggregation("_field").getAggregation("_control");
-						assert.ok(oSelect.getSelectedIndex() === 2, "Field: selected index is 2");
+						assert.equal(oSelect.getSelectedIndex(), 2, "Field: selected index is 2");
 						oSelect.focus();
 						oSelect.open();
 						setTimeout(function () {
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 2");
+							assert.equal(oSelect.getSelectedIndex(), 1, "Field: Arrow Up navigation correct for index = 2");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for index = 1");
+							assert.equal(oSelect.getSelectedIndex(), 0, "Field: Arrow Up navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Arrow Up navigation correct for index = 0");
+							assert.equal(oSelect.getSelectedIndex(), 0, "Field: Arrow Up navigation correct for index = 0");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 39, "Field: Page DOWN navigation correct for index = 0");
+							assert.equal(oSelect.getSelectedIndex(), 39, "Field: Page DOWN navigation correct for index = 0");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_UP);
-							assert.ok(oSelect.getSelectedIndex() === 0, "Field: Page Up navigation correct for index = 39");
+							assert.equal(oSelect.getSelectedIndex(), 0, "Field: Page Up navigation correct for index = 39");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Down navigation correct for index = 0");
+							assert.equal(oSelect.getSelectedIndex(), 1, "Field: Arrow Down navigation correct for index = 0");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 2, "Field: Arrow Down navigation correct for index = 1");
+							assert.equal(oSelect.getSelectedIndex(), 2, "Field: Arrow Down navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Down navigation correct for index = 2");
+							assert.equal(oSelect.getSelectedIndex(), 14, "Field: Arrow Down navigation correct for index = 2");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 2, "Field: Arrow Up navigation correct for index = 14");
+							assert.equal(oSelect.getSelectedIndex(), 2, "Field: Arrow Up navigation correct for index = 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Right navigation correct for index = 2");
+							assert.equal(oSelect.getSelectedIndex(), 3, "Field: Arrow Right navigation correct for index = 2");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Down navigation correct for index = 3");
+							assert.equal(oSelect.getSelectedIndex(), 15, "Field: Arrow Down navigation correct for index = 3");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Arrow Right navigation correct for index = 15");
+							assert.equal(oSelect.getSelectedIndex(), 16, "Field: Arrow Right navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 76, "Field: Page DOWN navigation correct for index = 16");
+							assert.equal(oSelect.getSelectedIndex(), 76, "Field: Page DOWN navigation correct for index = 16");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_UP);
-							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Page Up navigation correct for index = 76");
+							assert.equal(oSelect.getSelectedIndex(), 16, "Field: Page Up navigation correct for index = 76");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Left navigation correct for index = 16");
+							assert.equal(oSelect.getSelectedIndex(), 15, "Field: Arrow Left navigation correct for index = 16");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Left navigation correct for index = 15");
+							assert.equal(oSelect.getSelectedIndex(), 14, "Field: Arrow Left navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Right navigation correct for index = 14");
+							assert.equal(oSelect.getSelectedIndex(), 15, "Field: Arrow Right navigation correct for index = 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Arrow Right navigation correct for index = 15");
+							assert.equal(oSelect.getSelectedIndex(), 16, "Field: Arrow Right navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 17, "Field: Arrow Right navigation correct for index = 16");
+							assert.equal(oSelect.getSelectedIndex(), 17, "Field: Arrow Right navigation correct for index = 16");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 29, "Field: Arrow Down navigation correct for index = 17");
+							assert.equal(oSelect.getSelectedIndex(), 29, "Field: Arrow Down navigation correct for index = 17");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 30, "Field: Arrow Right navigation correct for index = 29");
+							assert.equal(oSelect.getSelectedIndex(), 30, "Field: Arrow Right navigation correct for index = 29");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 31, "Field: Arrow Right navigation correct for index = 30");
+							assert.equal(oSelect.getSelectedIndex(), 31, "Field: Arrow Right navigation correct for index = 30");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 43, "Field: Arrow Down navigation correct for index = 31");
+							assert.equal(oSelect.getSelectedIndex(), 43, "Field: Arrow Down navigation correct for index = 31");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 31, "Field: Arrow Up navigation correct for index = 43");
+							assert.equal(oSelect.getSelectedIndex(), 31, "Field: Arrow Up navigation correct for index = 43");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 19, "Field: Arrow Up navigation correct for index = 31");
+							assert.equal(oSelect.getSelectedIndex(), 19, "Field: Arrow Up navigation correct for index = 31");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 7, "Field: Arrow Up navigation correct for index = 19");
+							assert.equal(oSelect.getSelectedIndex(), 7, "Field: Arrow Up navigation correct for index = 19");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 7");
+							assert.equal(oSelect.getSelectedIndex(), 1, "Field: Arrow Up navigation correct for index = 7");
 							resolve();
 						}, 1000);
 					}, 500);
@@ -1198,60 +1198,60 @@ sap.ui.define([
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
 						var oSelect = oField.getAggregation("_field").getAggregation("_control");
-						assert.ok(oSelect.getSelectedIndex() === 2, "Field: selected index is 2");
+						assert.equal(oSelect.getSelectedIndex(), 2, "Field: selected index is 2");
 						oSelect.focus();
 						oSelect.open();
 						setTimeout(function () {
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 2");
+							assert.equal(oSelect.getSelectedIndex(), 1, "Field: Arrow Up navigation correct for index = 2");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 1");
+							assert.equal(oSelect.getSelectedIndex(), 1, "Field: Arrow Up navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 39, "Field: Page DOWN navigation correct for index = 1");
+							assert.equal(oSelect.getSelectedIndex(), 39, "Field: Page DOWN navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_UP);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Page Up navigation correct for index = 39");
+							assert.equal(oSelect.getSelectedIndex(), 1, "Field: Page Up navigation correct for index = 39");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 2, "Field: Arrow Down navigation correct for index = 1");
+							assert.equal(oSelect.getSelectedIndex(), 2, "Field: Arrow Down navigation correct for index = 1");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Down navigation correct for index = 2");
+							assert.equal(oSelect.getSelectedIndex(), 14, "Field: Arrow Down navigation correct for index = 2");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 2, "Field: Arrow Up navigation correct for index = 14");
+							assert.equal(oSelect.getSelectedIndex(), 2, "Field: Arrow Up navigation correct for index = 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 3, "Field: Arrow Right navigation correct for index = 2");
+							assert.equal(oSelect.getSelectedIndex(), 3, "Field: Arrow Right navigation correct for index = 2");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Down navigation correct for index = 3");
+							assert.equal(oSelect.getSelectedIndex(), 15, "Field: Arrow Down navigation correct for index = 3");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Arrow Right navigation correct for index = 15");
+							assert.equal(oSelect.getSelectedIndex(), 16, "Field: Arrow Right navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 76, "Field: Page DOWN navigation correct for index = 16");
+							assert.equal(oSelect.getSelectedIndex(), 76, "Field: Page DOWN navigation correct for index = 16");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.PAGE_UP);
-							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Page Up navigation correct for index = 76");
+							assert.equal(oSelect.getSelectedIndex(), 16, "Field: Page Up navigation correct for index = 76");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Left navigation correct for index = 16");
+							assert.equal(oSelect.getSelectedIndex(), 15, "Field: Arrow Left navigation correct for index = 16");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_LEFT);
-							assert.ok(oSelect.getSelectedIndex() === 14, "Field: Arrow Left navigation correct for index = 15");
+							assert.equal(oSelect.getSelectedIndex(), 14, "Field: Arrow Left navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 15, "Field: Arrow Right navigation correct for index = 14");
+							assert.equal(oSelect.getSelectedIndex(), 15, "Field: Arrow Right navigation correct for index = 14");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 16, "Field: Arrow Right navigation correct for index = 15");
+							assert.equal(oSelect.getSelectedIndex(), 16, "Field: Arrow Right navigation correct for index = 15");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 17, "Field: Arrow Right navigation correct for index = 16");
+							assert.equal(oSelect.getSelectedIndex(), 17, "Field: Arrow Right navigation correct for index = 16");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 29, "Field: Arrow Down navigation correct for index = 17");
+							assert.equal(oSelect.getSelectedIndex(), 29, "Field: Arrow Down navigation correct for index = 17");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 30, "Field: Arrow Right navigation correct for index = 29");
+							assert.equal(oSelect.getSelectedIndex(), 30, "Field: Arrow Right navigation correct for index = 29");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_RIGHT);
-							assert.ok(oSelect.getSelectedIndex() === 31, "Field: Arrow Right navigation correct for index = 30");
+							assert.equal(oSelect.getSelectedIndex(), 31, "Field: Arrow Right navigation correct for index = 30");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_DOWN);
-							assert.ok(oSelect.getSelectedIndex() === 43, "Field: Arrow Down navigation correct for index = 31");
+							assert.equal(oSelect.getSelectedIndex(), 43, "Field: Arrow Down navigation correct for index = 31");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 31, "Field: Arrow Up navigation correct for index = 43");
+							assert.equal(oSelect.getSelectedIndex(), 31, "Field: Arrow Up navigation correct for index = 43");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 19, "Field: Arrow Up navigation correct for index = 31");
+							assert.equal(oSelect.getSelectedIndex(), 19, "Field: Arrow Up navigation correct for index = 31");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 7, "Field: Arrow Up navigation correct for index = 19");
+							assert.equal(oSelect.getSelectedIndex(), 7, "Field: Arrow Up navigation correct for index = 19");
 							QUnitUtils.triggerKeydown(oSelect.getDomRef(), KeyCodes.ARROW_UP);
-							assert.ok(oSelect.getSelectedIndex() === 1, "Field: Arrow Up navigation correct for index = 7");
+							assert.equal(oSelect.getSelectedIndex(), 1, "Field: Arrow Up navigation correct for index = 7");
 							resolve();
 						}, 1000);
 					}, 500);
@@ -1286,9 +1286,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "StringParameter Value Trans in i18n", "Field: Value from Translate change");
+					assert.equal(oField.getAggregation("_field").getValue(), "StringParameter Value Trans in i18n", "Field: Value from Translate change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1321,9 +1321,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "StringParameter Value Trans in i18n", "Field: Value from Translate change");
+					assert.equal(oField.getAggregation("_field").getValue(), "StringParameter Value Trans in i18n", "Field: Value from Translate change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1356,9 +1356,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "StringLabelTrans Value", "Field: String Value");
+					assert.equal(oField.getAggregation("_field").getValue(), "StringLabelTrans Value", "Field: String Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1372,9 +1372,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "StringLabelTrans Value", "Field: String Value");
+					assert.equal(oField.getAggregation("_field").getValue(), "StringLabelTrans Value", "Field: String Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1389,9 +1389,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "integerParameter", "Label: Has integerParameter label from parameter name");
+					assert.equal(oLabel.getText(), "integerParameter", "Label: Has integerParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.IntegerField"), "Field: Integer Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "0", "Field: Value 0 since No Value");
+					assert.equal(oField.getAggregation("_field").getValue(), "0", "Field: Value 0 since No Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1405,9 +1405,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "integerParameterLabel", "Label: Has integerParameter label from label");
+					assert.equal(oLabel.getText(), "integerParameterLabel", "Label: Has integerParameter label from label");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.IntegerField"), "Field: Integer Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "0", "Field: Value 0 since No Value");
+					assert.equal(oField.getAggregation("_field").getValue(), "0", "Field: Value 0 since No Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1421,9 +1421,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "numberParameter", "Label: Has numberParameter label from parameter name");
+					assert.equal(oLabel.getText(), "numberParameter", "Label: Has numberParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.NumberField"), "Field: Number Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "0", "Field: Value 0 since No Value");
+					assert.equal(oField.getAggregation("_field").getValue(), "0", "Field: Value 0 since No Value");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1437,17 +1437,17 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "dateParameter", "Label: Has dateParameter label from parameter name");
+					assert.equal(oLabel.getText(), "dateParameter", "Label: Has dateParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.DateField"), "Field: Date Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: No Value");
+					assert.equal(oField.getAggregation("_field").getValue(), "", "Field: No Value");
 					//force rendering
 					Core.applyChanges();
 					//check the change event handling of the field
 					oField.getAggregation("_field").setValue(new Date());
 					// oField.getAggregation("_field").fireChange({ valid: true });
-					// assert.ok(oField.getAggregation("_field").getBinding("value").getValue() === oField.getAggregation("_field").getValue(), "Field: Date Field binding raw value '" + oField.getAggregation("_field").getValue() + "' ");
+					// assert.equal(oField.getAggregation("_field").getBinding("value").getValue(), oField.getAggregation("_field").getValue(), "Field: Date Field binding raw value '" + oField.getAggregation("_field").getValue() + "' ");
 					oField.getAggregation("_field").fireChange({ valid: false });
-					assert.ok(oField.getAggregation("_field").getBinding("value").getValue() === "", "Field: Date Field binding raw value '' ");
+					assert.equal(oField.getAggregation("_field").getBinding("value").getValue(), "", "Field: Date Field binding raw value '' ");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1461,17 +1461,17 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "datetimeParameter", "Label: Has datetimeParameter label from parameter name");
+					assert.equal(oLabel.getText(), "datetimeParameter", "Label: Has datetimeParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.DateTimeField"), "Field: DateTime Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: No Value");
+					assert.equal(oField.getAggregation("_field").getValue(), "", "Field: No Value");
 					//force rendering
 					Core.applyChanges();
 					//check the change event handling of the field
 					oField.getAggregation("_field").setValue(new Date());
 					// oField.getAggregation("_field").fireChange({ valid: true });
-					// assert.ok(oField.getAggregation("_field").getBinding("value").getValue() === oField.getAggregation("_field").getValue().toISOString(), "Field: DateTime Field binding raw value '" + oField.getAggregation("_field").getDateValue().toISOString() + "' ");
+					// assert.equal(oField.getAggregation("_field").getBinding("value").getValue(), oField.getAggregation("_field").getValue().toISOString(), "Field: DateTime Field binding raw value '" + oField.getAggregation("_field").getDateValue().toISOString() + "' ");
 					oField.getAggregation("_field").fireChange({ valid: false });
-					assert.ok(oField.getAggregation("_field").getBinding("value").getValue() === "", "Field: DateTime Field binding raw value '' ");
+					assert.equal(oField.getAggregation("_field").getBinding("value").getValue(), "", "Field: DateTime Field binding raw value '' ");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1485,7 +1485,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "booleanParameter", "Label: Has booleanParameter label from parameter name");
+					assert.equal(oLabel.getText(), "booleanParameter", "Label: Has booleanParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField.getAggregation("_field").getSelected() === false, "Field: No value");
 					resolve();
@@ -1503,7 +1503,7 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "dest1", "Label: Has dest1 label from destination settings name");
+					assert.equal(oLabel.getText(), "dest1", "Label: Has dest1 label from destination settings name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.DestinationField"), "Field: Destination Field");
 					resolve();
 				}.bind(this));
@@ -1522,11 +1522,11 @@ sap.ui.define([
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[4];
 					var oField1 = this.oEditor.getAggregation("_formContent")[5];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StaticLabel", "Label: Has static label text");
+					assert.equal(oLabel.getText(), "StaticLabel", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 					assert.ok(oLabel1.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel1.getText() === "dest1", "Label: Has dest1 label from destination settings name");
+					assert.equal(oLabel1.getText(), "dest1", "Label: Has dest1 label from destination settings name");
 					assert.ok(oField1.isA("sap.ui.integration.editor.fields.DestinationField"), "Field: Destination Field");
 					resolve();
 				}.bind(this));
@@ -1542,7 +1542,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StaticLabel", "Label: Has static label text");
+					assert.equal(oLabel.getText(), "StaticLabel", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					resolve();
 				}.bind(this));
@@ -1568,7 +1568,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[2];
 					var oField = this.oEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -1621,14 +1621,14 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[2];
 					var oField = this.oEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringNotEditableParameter", "Label: Has translated label text");
+					assert.equal(oLabel.getText(), "stringNotEditableParameter", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getEditable(), "Field: String Field editable");
 
-					assert.ok(this.oEditor.getAggregation("_formContent").length === 5, "Field: stringNotVisibleParameter Field not exist");
+					assert.equal(this.oEditor.getAggregation("_formContent").length, 5, "Field: stringNotVisibleParameter Field not exist");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1641,7 +1641,7 @@ sap.ui.define([
 					var oModel = this.oEditor.getModel("context");
 					assert.ok(oModel !== null, "Editor has a context model");
 					assert.deepEqual(oModel.getData(), getDefaultContextModel(this.oEditor._oResourceBundle), "Editor has a default context model");
-					assert.ok(oModel.getProperty("/sap.workzone/currentUser/id") === undefined, "Editor context /sap.workzone/currentUser/id is undefned");
+					assert.equal(oModel.getProperty("/sap.workzone/currentUser/id"), undefined, "Editor context /sap.workzone/currentUser/id is undefned");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1674,12 +1674,12 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					oField._descriptionIcon.onmouseover();
 					var oDescriptionText = this.oEditor._getPopover().getContent()[0];
 					assert.ok(oDescriptionText.isA("sap.m.Text"), "Text: Text Field");
-					assert.ok(oDescriptionText.getText() === "Description", "Text: Description OK");
+					assert.equal(oDescriptionText.getText(), "Description", "Text: Description OK");
 					oField._descriptionIcon.onmouseout();
 					resolve();
 				}.bind(this));
@@ -1750,9 +1750,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Admin", "Field: Value from admin change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: Value from admin change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1797,9 +1797,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Admin", "Field: Value from content change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: Value from content change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1848,9 +1848,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Admin", "Field: Value from content change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: Value from content change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1893,9 +1893,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Admin", "Field: Value from Admin change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: Value from Admin change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1941,9 +1941,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Content", "Field: Value from Content change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: Value from Content change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1993,9 +1993,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Content", "Field: Value from Content change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: Value from Content change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2044,16 +2044,16 @@ sap.ui.define([
                     assert.ok(this.oEditor.isReady(), "Editor is ready");
                     var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.ok(oPanel1.getHeaderText() === this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
                     var oLabel = this.oEditor.getAggregation("_formContent")[2];
                     var oField = this.oEditor.getAggregation("_formContent")[3];
                     assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-                    assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+                    assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
                     assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-                    assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Admin", "Field: Value from Admin change");
+                    assert.equal(oField.getAggregation("_field").getText(), "stringParameter Value Admin", "Field: Value from Admin change");
 
                     oField = this.oEditor.getAggregation("_formContent")[4];
                     assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
@@ -2108,16 +2108,16 @@ sap.ui.define([
                     assert.ok(this.oEditor.isReady(), "Editor is ready");
                     var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.ok(oPanel1.getHeaderText() === this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
                     var oLabel = this.oEditor.getAggregation("_formContent")[2];
                     var oField = this.oEditor.getAggregation("_formContent")[3];
                     assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-                    assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+                    assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
                     assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-                    assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Content", "Field: Value from Content change");
+                    assert.equal(oField.getAggregation("_field").getText(), "stringParameter Value Content", "Field: Value from Content change");
 
                     oField = this.oEditor.getAggregation("_formContent")[4];
                     assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
@@ -2175,20 +2175,20 @@ sap.ui.define([
                     assert.ok(this.oEditor.isReady(), "Editor is ready");
                     var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.ok(oPanel1.getHeaderText() === this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
                     var oLabel = this.oEditor.getAggregation("_formContent")[2];
                     var oField = this.oEditor.getAggregation("_formContent")[3];
                     assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-                    assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+                    assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
                     assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-                    assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Content", "Field: Value from Content change");
+                    assert.equal(oField.getAggregation("_field").getText(), "stringParameter Value Content", "Field: Value from Content change");
 
                     oField = this.oEditor.getAggregation("_formContent")[4];
                     assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-                    assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value from Translate change");
+                    assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translate", "Field: Value from Translate change");
                     resolve();
                 }.bind(this));
             }.bind(this));
@@ -2231,9 +2231,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Admin", "Field: Value from Admin change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: Value from Admin change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2279,9 +2279,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Content", "Field: Value from Content change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: Value from Content change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2331,9 +2331,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has label text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value from Translate change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translate", "Field: Value from Translate change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2377,9 +2377,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value from Translate change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translate", "Field: Value from Translate change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2422,7 +2422,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getVisible(), "Field: Visible not changed from admin change");
 					resolve();
@@ -2466,7 +2466,7 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oFormContent = this.oEditor.getAggregation("_formContent");
-					assert.ok(oFormContent === null, "Visible: visible change from Admin");
+					assert.equal(oFormContent,null, "Visible: visible change from Admin");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2512,7 +2512,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
                     var oPanel = this.oEditor.getAggregation("_formContent")[0];
                     assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
-					assert.ok(this.oEditor.getAggregation("_formContent").length === 1, "Field: No field since change from Admin");
+					assert.equal(this.oEditor.getAggregation("_formContent").length, 1, "Field: No field since change from Admin");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2554,7 +2554,7 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oFormContent = this.oEditor.getAggregation("_formContent");
-					assert.ok(oFormContent === null, "Visible: visible change from Admin");
+					assert.equal(oFormContent,null, "Visible: visible change from Admin");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2597,7 +2597,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable not changed from admin change");
 					resolve();
@@ -2643,7 +2643,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
 					assert.ok(oField.getAggregation("_field").getEditable() === false, "Field: Editable changed from admin change");
@@ -2690,14 +2690,14 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.ok(oPanel1.getHeaderText() === this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
 					var oLabel = this.oEditor.getAggregation("_formContent")[2];
 					var oField = this.oEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 
 					oField = this.oEditor.getAggregation("_formContent")[4];
@@ -2745,7 +2745,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editable changed from admin change");
 					assert.ok(oField.getAggregation("_field").getEditable() === false, "Field: Editable changed from admin change");
@@ -2791,9 +2791,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Admin", "Field: Value from Admin change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: Value from Admin change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2837,9 +2837,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Admin", "Field: Value from Admin change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: Value from Admin change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2883,9 +2883,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Content", "Field: Value from Content change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: Value from Content change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2932,9 +2932,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Content", "Field: Value from Content change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: Value from Content change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -2983,21 +2983,21 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.ok(oPanel1.getHeaderText() === this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
 					var oLabel = this.oEditor.getAggregation("_formContent")[2];
 					var oField = this.oEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 
-					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Admin", "Field: Value from Admin change");
+					assert.equal(oField.getAggregation("_field").getText(), "stringParameter Value Admin", "Field: Value from Admin change");
 
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Admin", "Field: Value in Translate input");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: Value in Translate input");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3046,21 +3046,21 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.ok(oPanel1.getHeaderText() === this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
 					var oLabel = this.oEditor.getAggregation("_formContent")[2];
 					var oField = this.oEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 
-					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Content", "Field: Value from Content change");
+					assert.equal(oField.getAggregation("_field").getText(), "stringParameter Value Content", "Field: Value from Content change");
 
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Content", "Field: Value in Translate input");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: Value in Translate input");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3112,21 +3112,21 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.ok(oPanel1.getHeaderText() === this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
 					var oLabel = this.oEditor.getAggregation("_formContent")[2];
 					var oField = this.oEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 
-					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Content", "Field: Value from Content change");
+					assert.equal(oField.getAggregation("_field").getText(), "stringParameter Value Content", "Field: Value from Content change");
 
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Content", "Field: Value in Translate input");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: Value in Translate input");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3175,20 +3175,20 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.ok(oPanel1.getHeaderText() === this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
 					var oLabel = this.oEditor.getAggregation("_formContent")[2];
 					var oField = this.oEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getText() === "StringParameter Value Trans in i18n", "Field: Value from Translate change");
+					assert.equal(oField.getAggregation("_field").getText(), "StringParameter Value Trans in i18n", "Field: Value from Translate change");
 
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value in Translate input");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translate", "Field: Value in Translate input");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3240,21 +3240,21 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.ok(oPanel1.getHeaderText() === this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
 					var oLabel = this.oEditor.getAggregation("_formContent")[2];
 					var oField = this.oEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 
-					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Admin", "Field: Value from Admin change");
+					assert.equal(oField.getAggregation("_field").getText(), "stringParameter Value Admin", "Field: Value from Admin change");
 
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value in Translate input");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translate", "Field: Value in Translate input");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3309,21 +3309,21 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
                     assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
-                    assert.ok(oPanel1.getHeaderText() === this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
+                    assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._languages[this.oEditor.getLanguage()], "Panel: has the correct text EDITOR_ORIGINALLANG");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
 					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
 					var oLabel = this.oEditor.getAggregation("_formContent")[2];
 					var oField = this.oEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 
-					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Content", "Field: Value from Content change");
+					assert.equal(oField.getAggregation("_field").getText(), "stringParameter Value Content", "Field: Value from Content change");
 
 					oField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value in Translate input");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translate", "Field: Value in Translate input");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3367,9 +3367,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Admin", "Field: Value from Admin change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Admin", "Field: Value from Admin change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3416,9 +3416,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Content", "Field: Value from Content change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Content", "Field: Value from Content change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3468,9 +3468,9 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
+					assert.equal(oLabel.getText(), "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value from Translate change");
+					assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value Translate", "Field: Value from Translate change");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3617,7 +3617,7 @@ sap.ui.define([
 					var oControl = oField.getAggregation("_field");
 					assert.ok(oControl.isA("sap.m.TextArea"), "Content of Form contains: TextArea ");
 					oControl.setValue("stringWithTextArea new Value");
-					assert.ok(oField._getCurrentProperty("value") === "stringWithTextArea new Value", "Field: String Value updated");
+					assert.equal(oField._getCurrentProperty("value"), "stringWithTextArea new Value", "Field: String Value updated");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -3743,10 +3743,10 @@ sap.ui.define([
 					setTimeout(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationSelect.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
-						assert.ok(DestinationSelect.getItems().length === 4, "Content of Form contains: Destination Field items lengh OK");
-						assert.ok(DestinationSelect.getSelectedIndex() === 3, "Content of Form contains: Destination Field selectedItem: Index OK");
-						assert.ok(DestinationSelect.getSelectedItem().getKey() === "Northwind", "Content of Form contains: Destination Field selectedItem: Key OK");
-						assert.ok(DestinationSelect.getSelectedItem().getText() === "Northwind", "Content of Form contains: Destination Field selectedItem: Text OK");
+						assert.equal(DestinationSelect.getItems().length, 4, "Content of Form contains: Destination Field items lengh OK");
+						assert.equal(DestinationSelect.getSelectedIndex(), 3, "Content of Form contains: Destination Field selectedItem: Index OK");
+						assert.equal(DestinationSelect.getSelectedItem().getKey(), "Northwind", "Content of Form contains: Destination Field selectedItem: Key OK");
+						assert.equal(DestinationSelect.getSelectedItem().getText(), "Northwind", "Content of Form contains: Destination Field selectedItem: Text OK");
 						resolve();
 					}, 1500);
 				}.bind(this));
@@ -3799,7 +3799,7 @@ sap.ui.define([
 					setTimeout(function () {
 						//should resolve the destination within 6000ms
 						assert.ok(oField.getAggregation("_field").getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
-						assert.ok(oField.getAggregation("_field").getItems().length === 0, "Content of Form contains: Destination Field items lengh OK");
+						assert.equal(oField.getAggregation("_field").getItems().length, 0, "Content of Form contains: Destination Field items lengh OK");
 						resolve();
 					}, 8000);
 				}.bind(this));

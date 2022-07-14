@@ -435,49 +435,49 @@ sap.ui.define([
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
+					assert.equal(oCustomerLabel.getText(), "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Customers is ComboBox");
 
 					var oEmployeeLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oEditor.getAggregation("_formContent")[4];
-					assert.ok(oEmployeeLabel.getText() === "Employee", "Label: Has static label text");
+					assert.equal(oEmployeeLabel.getText(), "Employee", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
 
 					var oOrderLabel = this.oEditor.getAggregation("_formContent")[5];
 					var oOrderField = this.oEditor.getAggregation("_formContent")[6];
-					assert.ok(oOrderLabel.getText() === "Order", "Label: Has static label text");
+					assert.equal(oOrderLabel.getText(), "Order", "Label: Has static label text");
 					assert.ok(oOrderField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oOrderField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
 
 					var oProductLabel = this.oEditor.getAggregation("_formContent")[7];
 					var oProductField = this.oEditor.getAggregation("_formContent")[8];
-					assert.ok(oProductLabel.getText() === "Product", "Label: Has static label text");
+					assert.equal(oProductLabel.getText(), "Product", "Label: Has static label text");
 					assert.ok(oProductField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oProductField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
 
 					var oCustomerLimitLabel = this.oEditor.getAggregation("_formContent")[9];
 					var oCustomerLimitField = this.oEditor.getAggregation("_formContent")[10];
-					assert.ok(oCustomerLimitLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
+					assert.equal(oCustomerLimitLabel.getText(), "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					setTimeout(function () {
-						assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: Customer lenght is OK");
-						assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 6, "Field: Employee lenght is OK");
-						assert.ok(oOrderField.getAggregation("_field").getItems().length === 0, "Field: Order lenght is OK");
+						assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
+						assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
+						assert.equal(oOrderField.getAggregation("_field").getItems().length, 0, "Field: Order lenght is OK");
 						oOrderField.getAggregation("_field").focus();
 						var sMsgStripId = oOrderField.getAssociation("_messageStrip");
 						var oMsgStrip = Core.byId(sMsgStripId);
-						assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
-						assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
-						assert.ok(oMsgStrip.getText() === "400: Please select a cutomer and an employee first", "Order Error Text");
-						assert.ok(oProductField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
+						assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
+						assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
+						assert.equal(oMsgStrip.getText(), "400: Please select a cutomer and an employee first", "Order Error Text");
+						assert.equal(oProductField.getAggregation("_field").getItems().length, 0, "Field: Product lenght is OK");
 						oProductField.getAggregation("_field").focus();
-						assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
-						assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
-						assert.ok(oMsgStrip.getText() === "400: Please select an order first", "Product Error Text");
-						assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
+						assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
+						assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
+						assert.equal(oMsgStrip.getText(), "400: Please select an order first", "Product Error Text");
+						assert.equal(oCustomerLimitField.getAggregation("_field").getItems().length, 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 						resolve();
 					}, iWaitTimeout);
 				}.bind(this));
@@ -495,54 +495,54 @@ sap.ui.define([
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
+					assert.equal(oCustomerLabel.getText(), "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Customers is ComboBox");
 
 					var oEmployeeLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oEditor.getAggregation("_formContent")[4];
-					assert.ok(oEmployeeLabel.getText() === "Employee", "Label: Has static label text");
+					assert.equal(oEmployeeLabel.getText(), "Employee", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
 
 					var oOrderLabel = this.oEditor.getAggregation("_formContent")[5];
 					var oOrderField = this.oEditor.getAggregation("_formContent")[6];
-					assert.ok(oOrderLabel.getText() === "Order", "Label: Has static label text");
+					assert.equal(oOrderLabel.getText(), "Order", "Label: Has static label text");
 					assert.ok(oOrderField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oOrderField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
 
 					var oProductLabel = this.oEditor.getAggregation("_formContent")[7];
 					var oProductField = this.oEditor.getAggregation("_formContent")[8];
-					assert.ok(oProductLabel.getText() === "Product", "Label: Has static label text");
+					assert.equal(oProductLabel.getText(), "Product", "Label: Has static label text");
 					assert.ok(oProductField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oProductField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
 
 					var oCustomerLimitLabel = this.oEditor.getAggregation("_formContent")[9];
 					var oCustomerLimitField = this.oEditor.getAggregation("_formContent")[10];
-					assert.ok(oCustomerLimitLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
+					assert.equal(oCustomerLimitLabel.getText(), "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					setTimeout(function () {
 						var oComboBox = oCustomerField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 4, "Field: Customer lenght is OK");
+						assert.equal(oComboBox.getItems().length, 4, "Field: Customer lenght is OK");
 						oComboBox.setSelectedIndex(0);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
 						setTimeout(function () {
-							assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: Customer lenght is OK");
-							assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 6, "Field: Employee lenght is OK");
-							assert.ok(oOrderField.getAggregation("_field").getItems().length === 0, "Field: Order lenght is OK");
+							assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
+							assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
+							assert.equal(oOrderField.getAggregation("_field").getItems().length, 0, "Field: Order lenght is OK");
 							oOrderField.getAggregation("_field").focus();
 							var sMsgStripId = oOrderField.getAssociation("_messageStrip");
 							var oMsgStrip = Core.byId(sMsgStripId);
-							assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
-							assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
-							assert.ok(oMsgStrip.getText() === "400: Please select a cutomer and an employee first", "Order Error Text");
-							assert.ok(oProductField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
+							assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
+							assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
+							assert.equal(oMsgStrip.getText(), "400: Please select a cutomer and an employee first", "Order Error Text");
+							assert.equal(oProductField.getAggregation("_field").getItems().length, 0, "Field: Product lenght is OK");
 							oProductField.getAggregation("_field").focus();
-							assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
-							assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
-							assert.ok(oMsgStrip.getText() === "400: Please select an order first", "Product Error Text");
-							assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
+							assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
+							assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
+							assert.equal(oMsgStrip.getText(), "400: Please select an order first", "Product Error Text");
+							assert.equal(oCustomerLimitField.getAggregation("_field").getItems().length, 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 							resolve();
 						}, iWaitTimeout);
 					}, iWaitTimeout);
@@ -562,54 +562,54 @@ sap.ui.define([
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
+					assert.equal(oCustomerLabel.getText(), "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Customers is ComboBox");
 
 					var oEmployeeLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oEditor.getAggregation("_formContent")[4];
-					assert.ok(oEmployeeLabel.getText() === "Employee", "Label: Has static label text");
+					assert.equal(oEmployeeLabel.getText(), "Employee", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
 
 					var oOrderLabel = this.oEditor.getAggregation("_formContent")[5];
 					var oOrderField = this.oEditor.getAggregation("_formContent")[6];
-					assert.ok(oOrderLabel.getText() === "Order", "Label: Has static label text");
+					assert.equal(oOrderLabel.getText(), "Order", "Label: Has static label text");
 					assert.ok(oOrderField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oOrderField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
 
 					var oProductLabel = this.oEditor.getAggregation("_formContent")[7];
 					var oProductField = this.oEditor.getAggregation("_formContent")[8];
-					assert.ok(oProductLabel.getText() === "Product", "Label: Has static label text");
+					assert.equal(oProductLabel.getText(), "Product", "Label: Has static label text");
 					assert.ok(oProductField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oProductField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
 
 					var oCustomerLimitLabel = this.oEditor.getAggregation("_formContent")[9];
 					var oCustomerLimitField = this.oEditor.getAggregation("_formContent")[10];
-					assert.ok(oCustomerLimitLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
+					assert.equal(oCustomerLimitLabel.getText(), "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					setTimeout(function () {
 						var oComboBox = oEmployeeField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 6, "Field: Employee lenght is OK");
+						assert.equal(oComboBox.getItems().length, 6, "Field: Employee lenght is OK");
 						oComboBox.setSelectedIndex(0);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
 						setTimeout(function () {
-							assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: Customer lenght is OK");
-							assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 6, "Field: Employee lenght is OK");
-							assert.ok(oOrderField.getAggregation("_field").getItems().length === 0, "Field: Order lenght is OK");
+							assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
+							assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
+							assert.equal(oOrderField.getAggregation("_field").getItems().length, 0, "Field: Order lenght is OK");
 							oOrderField.getAggregation("_field").focus();
 							var sMsgStripId = oOrderField.getAssociation("_messageStrip");
 							var oMsgStrip = Core.byId(sMsgStripId);
-							assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
-							assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
-							assert.ok(oMsgStrip.getText() === "400: Please select a cutomer and an employee first", "Order Error Text");
-							assert.ok(oProductField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
+							assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
+							assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
+							assert.equal(oMsgStrip.getText(), "400: Please select a cutomer and an employee first", "Order Error Text");
+							assert.equal(oProductField.getAggregation("_field").getItems().length, 0, "Field: Product lenght is OK");
 							oProductField.getAggregation("_field").focus();
-							assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
-							assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
-							assert.ok(oMsgStrip.getText() === "400: Please select an order first", "Product Error Text");
-							assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
+							assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
+							assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
+							assert.equal(oMsgStrip.getText(), "400: Please select an order first", "Product Error Text");
+							assert.equal(oCustomerLimitField.getAggregation("_field").getItems().length, 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 							resolve();
 						}, iWaitTimeout);
 					}, iWaitTimeout);
@@ -629,59 +629,59 @@ sap.ui.define([
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
+					assert.equal(oCustomerLabel.getText(), "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Customers is ComboBox");
 
 					var oEmployeeLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oEditor.getAggregation("_formContent")[4];
-					assert.ok(oEmployeeLabel.getText() === "Employee", "Label: Has static label text");
+					assert.equal(oEmployeeLabel.getText(), "Employee", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
 
 					var oOrderLabel = this.oEditor.getAggregation("_formContent")[5];
 					var oOrderField = this.oEditor.getAggregation("_formContent")[6];
-					assert.ok(oOrderLabel.getText() === "Order", "Label: Has static label text");
+					assert.equal(oOrderLabel.getText(), "Order", "Label: Has static label text");
 					assert.ok(oOrderField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oOrderField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
 
 					var oProductLabel = this.oEditor.getAggregation("_formContent")[7];
 					var oProductField = this.oEditor.getAggregation("_formContent")[8];
-					assert.ok(oProductLabel.getText() === "Product", "Label: Has static label text");
+					assert.equal(oProductLabel.getText(), "Product", "Label: Has static label text");
 					assert.ok(oProductField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oProductField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
 
 					var oCustomerLimitLabel = this.oEditor.getAggregation("_formContent")[9];
 					var oCustomerLimitField = this.oEditor.getAggregation("_formContent")[10];
-					assert.ok(oCustomerLimitLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
+					assert.equal(oCustomerLimitLabel.getText(), "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					setTimeout(function () {
 						var oComboBox = oCustomerField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 4, "Field: Customer lenght is OK");
+						assert.equal(oComboBox.getItems().length, 4, "Field: Customer lenght is OK");
 						oComboBox.setSelectedIndex(0);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
 						oComboBox = oEmployeeField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 6, "Field: Employee lenght is OK");
+						assert.equal(oComboBox.getItems().length, 6, "Field: Employee lenght is OK");
 						oComboBox.setSelectedIndex(0);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
 						setTimeout(function () {
-							assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: Customer lenght is OK");
-							assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 6, "Field: Employee lenght is OK");
-							assert.ok(oOrderField.getAggregation("_field").getItems().length === 1, "Field: Order lenght is OK");
+							assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
+							assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
+							assert.equal(oOrderField.getAggregation("_field").getItems().length, 1, "Field: Order lenght is OK");
 							oOrderField.getAggregation("_field").focus();
 							var sMsgStripId = oOrderField.getAssociation("_messageStrip");
 							var oMsgStrip = Core.byId(sMsgStripId);
 							var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-							assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
-							assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
-							assert.ok(oDefaultBundle.getText("EDITOR_VAL_TEXTREQ") === oMsgStrip.getText(), "Order Error Text : required");
-							assert.ok(oProductField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
+							assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
+							assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
+							assert.equal(oDefaultBundle.getText("EDITOR_VAL_TEXTREQ"), oMsgStrip.getText(), "Order Error Text : required");
+							assert.equal(oProductField.getAggregation("_field").getItems().length, 0, "Field: Product lenght is OK");
 							oProductField.getAggregation("_field").focus();
-							assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
-							assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
-							assert.ok(oMsgStrip.getText() === "400: Please select an order first", "Product Error Text");
-							assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
+							assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
+							assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
+							assert.equal(oMsgStrip.getText(), "400: Please select an order first", "Product Error Text");
+							assert.equal(oCustomerLimitField.getAggregation("_field").getItems().length, 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 							resolve();
 						}, iWaitTimeout);
 					}, iWaitTimeout);
@@ -701,59 +701,59 @@ sap.ui.define([
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
+					assert.equal(oCustomerLabel.getText(), "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Customers is ComboBox");
 
 					var oEmployeeLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oEditor.getAggregation("_formContent")[4];
-					assert.ok(oEmployeeLabel.getText() === "Employee", "Label: Has static label text");
+					assert.equal(oEmployeeLabel.getText(), "Employee", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
 
 					var oOrderLabel = this.oEditor.getAggregation("_formContent")[5];
 					var oOrderField = this.oEditor.getAggregation("_formContent")[6];
-					assert.ok(oOrderLabel.getText() === "Order", "Label: Has static label text");
+					assert.equal(oOrderLabel.getText(), "Order", "Label: Has static label text");
 					assert.ok(oOrderField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oOrderField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
 
 					var oProductLabel = this.oEditor.getAggregation("_formContent")[7];
 					var oProductField = this.oEditor.getAggregation("_formContent")[8];
-					assert.ok(oProductLabel.getText() === "Product", "Label: Has static label text");
+					assert.equal(oProductLabel.getText(), "Product", "Label: Has static label text");
 					assert.ok(oProductField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oProductField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
 
 					var oCustomerLimitLabel = this.oEditor.getAggregation("_formContent")[9];
 					var oCustomerLimitField = this.oEditor.getAggregation("_formContent")[10];
-					assert.ok(oCustomerLimitLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
+					assert.equal(oCustomerLimitLabel.getText(), "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					setTimeout(function () {
 						var oComboBox = oCustomerField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 4, "Field: Customer lenght is OK");
+						assert.equal(oComboBox.getItems().length, 4, "Field: Customer lenght is OK");
 						oComboBox.setSelectedIndex(0);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
 						oComboBox = oEmployeeField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 6, "Field: Employee lenght is OK");
+						assert.equal(oComboBox.getItems().length, 6, "Field: Employee lenght is OK");
 						oComboBox.setSelectedIndex(0);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
 						setTimeout(function () {
 							oComboBox = oOrderField.getAggregation("_field");
-							assert.ok(oComboBox.getItems().length === 1, "Field: Order lenght is OK");
+							assert.equal(oComboBox.getItems().length, 1, "Field: Order lenght is OK");
 							oComboBox.setSelectedIndex(0);
 							oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
 							setTimeout(function () {
-								assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: Customer lenght is OK");
-								assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 6, "Field: Employee lenght is OK");
-								assert.ok(oOrderField.getAggregation("_field").getItems().length === 1, "Field: Order lenght is OK");
+								assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
+								assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
+								assert.equal(oOrderField.getAggregation("_field").getItems().length, 1, "Field: Order lenght is OK");
 								oOrderField.getAggregation("_field").focus();
 								var sMsgStripId = oOrderField.getAssociation("_messageStrip");
 								var oMsgStrip = Core.byId(sMsgStripId);
-								assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
-								assert.ok(oProductField.getAggregation("_field").getItems().length === 2, "Field: Product lenght is OK");
+								assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
+								assert.equal(oProductField.getAggregation("_field").getItems().length, 2, "Field: Product lenght is OK");
 								oProductField.getAggregation("_field").focus();
-								assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
-								assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
+								assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
+								assert.equal(oCustomerLimitField.getAggregation("_field").getItems().length, 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 								resolve();
 							}, iWaitTimeout);
 						}, iWaitTimeout);
@@ -774,59 +774,59 @@ sap.ui.define([
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
+					assert.equal(oCustomerLabel.getText(), "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Customers is ComboBox");
 
 					var oEmployeeLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oEditor.getAggregation("_formContent")[4];
-					assert.ok(oEmployeeLabel.getText() === "Employee", "Label: Has static label text");
+					assert.equal(oEmployeeLabel.getText(), "Employee", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
 
 					var oOrderLabel = this.oEditor.getAggregation("_formContent")[5];
 					var oOrderField = this.oEditor.getAggregation("_formContent")[6];
-					assert.ok(oOrderLabel.getText() === "Order", "Label: Has static label text");
+					assert.equal(oOrderLabel.getText(), "Order", "Label: Has static label text");
 					assert.ok(oOrderField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oOrderField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
 
 					var oProductLabel = this.oEditor.getAggregation("_formContent")[7];
 					var oProductField = this.oEditor.getAggregation("_formContent")[8];
-					assert.ok(oProductLabel.getText() === "Product", "Label: Has static label text");
+					assert.equal(oProductLabel.getText(), "Product", "Label: Has static label text");
 					assert.ok(oProductField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oProductField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
 
 					var oCustomerLimitLabel = this.oEditor.getAggregation("_formContent")[9];
 					var oCustomerLimitField = this.oEditor.getAggregation("_formContent")[10];
-					assert.ok(oCustomerLimitLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
+					assert.equal(oCustomerLimitLabel.getText(), "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					setTimeout(function () {
 						var oComboBox = oCustomerField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 4, "Field: Customer lenght is OK");
+						assert.equal(oComboBox.getItems().length, 4, "Field: Customer lenght is OK");
 						oComboBox.setSelectedIndex(1);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
 						oComboBox = oEmployeeField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 6, "Field: Employee lenght is OK");
+						assert.equal(oComboBox.getItems().length, 6, "Field: Employee lenght is OK");
 						oComboBox.setSelectedIndex(1);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
 						setTimeout(function () {
 							oComboBox = oOrderField.getAggregation("_field");
-							assert.ok(oComboBox.getItems().length === 2, "Field: Order lenght is OK");
+							assert.equal(oComboBox.getItems().length, 2, "Field: Order lenght is OK");
 							oComboBox.setSelectedIndex(0);
 							oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
 							setTimeout(function () {
-								assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: Customer lenght is OK");
-								assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 6, "Field: Employee lenght is OK");
-								assert.ok(oOrderField.getAggregation("_field").getItems().length === 2, "Field: Order lenght is OK");
+								assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: Customer lenght is OK");
+								assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
+								assert.equal(oOrderField.getAggregation("_field").getItems().length, 2, "Field: Order lenght is OK");
 								oOrderField.getAggregation("_field").focus();
 								var sMsgStripId = oOrderField.getAssociation("_messageStrip");
 								var oMsgStrip = Core.byId(sMsgStripId);
-								assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
-								assert.ok(oProductField.getAggregation("_field").getItems().length === 1, "Field: Product lenght is OK");
+								assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
+								assert.equal(oProductField.getAggregation("_field").getItems().length, 1, "Field: Product lenght is OK");
 								oProductField.getAggregation("_field").focus();
-								assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
-								assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
+								assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
+								assert.equal(oCustomerLimitField.getAggregation("_field").getItems().length, 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 								resolve();
 							}, iWaitTimeout);
 						}, iWaitTimeout);
@@ -890,19 +890,19 @@ sap.ui.define([
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomerLabel.getText() === "DataGotFromExtensionRequest", "Label: Has static label text");
+					assert.equal(oCustomerLabel.getText(), "DataGotFromExtensionRequest", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromExtensionRequest is ComboBox");
 
 					var oEmployeeLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oEditor.getAggregation("_formContent")[4];
-					assert.ok(oEmployeeLabel.getText() === "DataGotFromEditorExtension", "Label: Has static label text");
+					assert.equal(oEmployeeLabel.getText(), "DataGotFromEditorExtension", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromEditorExtension is ComboBox");
 
 					setTimeout(function () {
-						assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: DataGotFromExtensionRequest lenght is OK");
-						assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 4, "Field: DataGotFromEditorExtension lenght is OK");
+						assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromExtensionRequest lenght is OK");
+						assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromEditorExtension lenght is OK");
 						resolve();
 					}, 2 * iWaitTimeout);
 				}.bind(this));
@@ -970,19 +970,19 @@ sap.ui.define([
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomerLabel.getText() === "DataGotFromExtensionRequest", "Label: Has static label text");
+					assert.equal(oCustomerLabel.getText(), "DataGotFromExtensionRequest", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromExtensionRequest is ComboBox");
 
 					var oEmployeeLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oEditor.getAggregation("_formContent")[4];
-					assert.ok(oEmployeeLabel.getText() === "DataGotFromEditorExtension", "Label: Has static label text");
+					assert.equal(oEmployeeLabel.getText(), "DataGotFromEditorExtension", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromEditorExtension is ComboBox");
 
 					setTimeout(function () {
-						assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: DataGotFromExtensionRequest lenght is OK");
-						assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 4, "Field: DataGotFromEditorExtension lenght is OK");
+						assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromExtensionRequest lenght is OK");
+						assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromEditorExtension lenght is OK");
 						resolve();
 					}, 2 * iWaitTimeout);
 				}.bind(this));
@@ -1091,7 +1091,7 @@ sap.ui.define([
 					var oCustomerWithEditableDependentLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oCustomerWithEditableDependentField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oCustomerWithEditableDependentLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomerWithEditableDependentLabel.getText() === "CustomerWithEditableDependent", "Label: Has static label text");
+					assert.equal(oCustomerWithEditableDependentLabel.getText(), "CustomerWithEditableDependent", "Label: Has static label text");
 					assert.ok(oCustomerWithEditableDependentField.isA("sap.ui.integration.editor.fields.StringField"), "Field: Customer Editable String Field");
 					var oCustomerWithEditableDependentComboBox = oCustomerWithEditableDependentField.getAggregation("_field");
 					assert.ok(oCustomerWithEditableDependentComboBox.isA("sap.m.ComboBox"), "Field: Customer Editable is ComboBox");
@@ -1100,7 +1100,7 @@ sap.ui.define([
 					var oCustomersWithEditableDependentLabel = this.oEditor.getAggregation("_formContent")[5];
 					var oCustomersWithEditableDependenteField = this.oEditor.getAggregation("_formContent")[6];
 					assert.ok(oCustomersWithEditableDependentLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomersWithEditableDependentLabel.getText() === "CustomersWithEditableDependent", "Label: Has static label text");
+					assert.equal(oCustomersWithEditableDependentLabel.getText(), "CustomersWithEditableDependent", "Label: Has static label text");
 					assert.ok(oCustomersWithEditableDependenteField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: Customers Editable List Field");
 					var oCustomersWithEditableDependentMultiComboBox = oCustomersWithEditableDependenteField.getAggregation("_field");
 					assert.ok(oCustomersWithEditableDependentMultiComboBox.isA("sap.m.MultiComboBox"), "Field: Customers Editable is MultiComboBox");
@@ -1109,22 +1109,22 @@ sap.ui.define([
 					var oCustomersInMultiInputWithEditableDependentLabel = this.oEditor.getAggregation("_formContent")[7];
 					var oCustomersInMultiInputWithEditableDependenteField = this.oEditor.getAggregation("_formContent")[8];
 					assert.ok(oCustomersInMultiInputWithEditableDependentLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomersInMultiInputWithEditableDependentLabel.getText() === "CustomersInMultiInputWithEditableDependent", "Label: Has static label text");
+					assert.equal(oCustomersInMultiInputWithEditableDependentLabel.getText(), "CustomersInMultiInputWithEditableDependent", "Label: Has static label text");
 					assert.ok(oCustomersInMultiInputWithEditableDependenteField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: Customers Editable List Field");
 					var oCustomersWithEditableDependentMultiInput = oCustomersInMultiInputWithEditableDependenteField.getAggregation("_field");
 					assert.ok(oCustomersWithEditableDependentMultiInput.isA("sap.m.MultiInput"), "Field: Customers Editable is MultiInput");
 					assert.ok(!oCustomersWithEditableDependentMultiInput.getEditable(), "Field: Customers Editable is Not Editable");
 
 					setTimeout(function () {
-						assert.ok(oCustomerWithEditableDependentComboBox.getItems().length === 4, "Field: Customer Editable data lenght is OK");
-						assert.ok(oCustomersWithEditableDependentMultiComboBox.getItems().length === 5, "Field: Customers Editable data lenght is OK");
+						assert.equal(oCustomerWithEditableDependentComboBox.getItems().length, 4, "Field: Customer Editable data lenght is OK");
+						assert.equal(oCustomersWithEditableDependentMultiComboBox.getItems().length, 5, "Field: Customers Editable data lenght is OK");
 
 						oBooleanSwitch.setState(true);
 						setTimeout(function () {
 							assert.ok(oCustomerWithEditableDependentComboBox.getEditable(), "Field: Customer Editable is now Editable");
-							assert.ok(oCustomerWithEditableDependentComboBox.getItems().length === 4, "Field: Customer Editable data lenght is OK");
+							assert.equal(oCustomerWithEditableDependentComboBox.getItems().length, 4, "Field: Customer Editable data lenght is OK");
 							assert.ok(oCustomersWithEditableDependentMultiComboBox.getEditable(), "Field: Customers Editable is now Editable");
-							assert.ok(oCustomersWithEditableDependentMultiComboBox.getItems().length === 5, "Field: Customers Editable data lenght is OK");
+							assert.equal(oCustomersWithEditableDependentMultiComboBox.getItems().length, 5, "Field: Customers Editable data lenght is OK");
 							assert.ok(oCustomersWithEditableDependentMultiInput.getEditable(), "Field: Customers Editable is now Editable");
 							resolve();
 						}, iWaitTimeout);
@@ -1150,7 +1150,7 @@ sap.ui.define([
 					var oCustomerWithVisibleDependentLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oCustomerWithVisibleDependentField = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oCustomerWithVisibleDependentLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomerWithVisibleDependentLabel.getText() === "CustomerWithVisibleDependent", "Label: Has static label text");
+					assert.equal(oCustomerWithVisibleDependentLabel.getText(), "CustomerWithVisibleDependent", "Label: Has static label text");
 					assert.ok(oCustomerWithVisibleDependentField.isA("sap.ui.integration.editor.fields.StringField"), "Field: Customer Visible String Field");
 					var oCustomerWithVisibleDependentComboBox = oCustomerWithVisibleDependentField.getAggregation("_field");
 					assert.ok(oCustomerWithVisibleDependentComboBox.isA("sap.m.ComboBox"), "Field: Customer Visible is ComboBox");
@@ -1159,7 +1159,7 @@ sap.ui.define([
 					var oCustomersWithVisibleDependentLabel = this.oEditor.getAggregation("_formContent")[5];
 					var oCustomersWithVisibleDependentField = this.oEditor.getAggregation("_formContent")[6];
 					assert.ok(oCustomersWithVisibleDependentLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomersWithVisibleDependentLabel.getText() === "CustomersWithVisibleDependent", "Label: Has static label text");
+					assert.equal(oCustomersWithVisibleDependentLabel.getText(), "CustomersWithVisibleDependent", "Label: Has static label text");
 					assert.ok(oCustomersWithVisibleDependentField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: Customers Visible List Field");
 					var oCustomersWithVisibleDependentMultiComboBox = oCustomersWithVisibleDependentField.getAggregation("_field");
 					assert.ok(oCustomersWithVisibleDependentMultiComboBox.isA("sap.m.MultiComboBox"), "Field: Customers Visible is MultiComboBox");
@@ -1168,21 +1168,21 @@ sap.ui.define([
 					var oCustomersMultiInputWithVisibleDependentLabel = this.oEditor.getAggregation("_formContent")[7];
 					var oCustomersMultiInputWithVisibleDependentField = this.oEditor.getAggregation("_formContent")[8];
 					assert.ok(oCustomersMultiInputWithVisibleDependentLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomersMultiInputWithVisibleDependentLabel.getText() === "CustomersInMultiInputWithVisibleDependent", "Label: Has static label text");
+					assert.equal(oCustomersMultiInputWithVisibleDependentLabel.getText(), "CustomersInMultiInputWithVisibleDependent", "Label: Has static label text");
 					assert.ok(oCustomersMultiInputWithVisibleDependentField.isA("sap.ui.integration.editor.fields.StringListField"), "Field: Customers Visible List Field");
 					var oCustomersWithVisibleDependentMultiInput = oCustomersMultiInputWithVisibleDependentField.getAggregation("_field");
 					assert.ok(oCustomersWithVisibleDependentMultiInput.isA("sap.m.MultiInput"), "Field: Customers Visible is MultiInput");
 					assert.ok(!oCustomersWithVisibleDependentMultiInput.getVisible(), "Field: Customers Visible is Not Visible");
 					setTimeout(function () {
-						assert.ok(oCustomerWithVisibleDependentComboBox.getItems().length === 4, "Field: Customer Visible data lenght is OK");
-						assert.ok(oCustomersWithVisibleDependentMultiComboBox.getItems().length === 5, "Field: Customers Visible data lenght is OK");
+						assert.equal(oCustomerWithVisibleDependentComboBox.getItems().length, 4, "Field: Customer Visible data lenght is OK");
+						assert.equal(oCustomersWithVisibleDependentMultiComboBox.getItems().length, 5, "Field: Customers Visible data lenght is OK");
 
 						oBooleanSwitch.setState(true);
 						setTimeout(function () {
 							assert.ok(oCustomerWithVisibleDependentComboBox.getVisible(), "Field: Customer Visible is now Visible");
-							assert.ok(oCustomerWithVisibleDependentComboBox.getItems().length === 4, "Field: Customer Visible data lenght is OK");
+							assert.equal(oCustomerWithVisibleDependentComboBox.getItems().length, 4, "Field: Customer Visible data lenght is OK");
 							assert.ok(oCustomersWithVisibleDependentMultiComboBox.getVisible(), "Field: Customers Visible is now Visible");
-							assert.ok(oCustomersWithVisibleDependentMultiComboBox.getItems().length === 5, "Field: Customers Visible data lenght is OK");
+							assert.equal(oCustomersWithVisibleDependentMultiComboBox.getItems().length, 5, "Field: Customers Visible data lenght is OK");
 							assert.ok(oCustomersWithVisibleDependentMultiInput.getEditable(), "Field: Customers Visible is now Editable");
 							resolve();
 						}, iWaitTimeout);

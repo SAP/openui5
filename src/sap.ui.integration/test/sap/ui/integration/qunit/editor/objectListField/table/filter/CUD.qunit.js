@@ -139,16 +139,16 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
 					var oClearFilterButton = oToolbar.getContent()[4];
@@ -164,7 +164,7 @@ sap.ui.define([
 					oMenu.close();
 					wait().then(function () {
 						assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
-						assert.ok(oTable.getBinding().getCount() === 5, "Table: RowCount after filtering https");
+						assert.equal(oTable.getBinding().getCount(), 5, "Table: RowCount after filtering https");
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
 
 						var oAddButton = oToolbar.getContent()[1];
@@ -174,16 +174,16 @@ sap.ui.define([
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
 							var oContents = oSimpleForm.getContent();
-							assert.ok(oContents.length === 16, "SimpleForm: length");
+							assert.equal(oContents.length, 16, "SimpleForm: length");
 							assert.ok(deepEqual(cleanUUIDAndPosition(oContents[15].getValue()), oDefaultNewObjectSelected), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[6];
 							var oFormField = oContents[7];
-							assert.ok(oFormLabel.getText() === "URL", "SimpleForm label4: Has label text");
+							assert.equal(oFormLabel.getText(), "URL", "SimpleForm label4: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label4: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field4: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field4: Editable");
-							assert.ok(oFormField.getValue() === "http://", "SimpleForm field4: Has value");
+							assert.equal(oFormField.getValue(), "http://", "SimpleForm field4: Has value");
 							oFormField.setValue("https://");
 							oFormField.fireChange({ value: "https://" });
 							oFormLabel = oContents[14];
@@ -197,14 +197,14 @@ sap.ui.define([
 								// scroll to bottom
 								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 								wait().then(function () {
-									assert.ok(oTable.getBinding().getCount() === 6, "Table: value length is 6");
+									assert.equal(oTable.getBinding().getCount(), 6, "Table: value length is 6");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[5].getObject()), {"icon": "sap-icon://add","text": "text","url": "https://","number": 0.5, "_dt": {"_selected": true}}), "Table: new row is added to the end");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1.concat([{"icon": "sap-icon://add","text": "text","url": "https://","number": 0.5}])), "Field 1: Value");
 									oTable.filter(oURLColumn, "");
 									assert.ok(!oURLColumn.getFiltered(), "Table: Column URL is not filtered anymore");
 									wait().then(function () {
 										assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-										assert.ok(oTable.getBinding().getCount() === 9, "Table: RowCount after removing filter");
+										assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing filter");
 										assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1.concat([{"icon": "sap-icon://add","text": "text","url": "https://","number": 0.5}])), "Field 1: Value");
 										// scroll to bottom
 										oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 400;
@@ -232,16 +232,16 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
 					var oClearFilterButton = oToolbar.getContent()[4];
@@ -257,7 +257,7 @@ sap.ui.define([
 					oMenu.close();
 					wait().then(function () {
 						assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
-						assert.ok(oTable.getBinding().getCount() === 5, "Table: RowCount after filtering https");
+						assert.equal(oTable.getBinding().getCount(), 5, "Table: RowCount after filtering https");
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
 
 						var oAddButton = oToolbar.getContent()[1];
@@ -267,16 +267,16 @@ sap.ui.define([
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
 							var oContents = oSimpleForm.getContent();
-							assert.ok(oContents.length === 16, "SimpleForm: length");
+							assert.equal(oContents.length, 16, "SimpleForm: length");
 							assert.ok(deepEqual(cleanUUIDAndPosition(oContents[15].getValue()), oDefaultNewObjectSelected), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[6];
 							var oFormField = oContents[7];
-							assert.ok(oFormLabel.getText() === "URL", "SimpleForm label4: Has label text");
+							assert.equal(oFormLabel.getText(), "URL", "SimpleForm label4: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label4: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field4: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field4: Editable");
-							assert.ok(oFormField.getValue() === "http://", "SimpleForm field4: Has value");
+							assert.equal(oFormField.getValue(), "http://", "SimpleForm field4: Has value");
 							oFormLabel = oContents[14];
 							oFormField = oContents[15];
 							assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
@@ -288,13 +288,13 @@ sap.ui.define([
 								// scroll to bottom
 								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 								wait().then(function () {
-									assert.ok(oTable.getBinding().getCount() === 5, "Table: value length is 5");
+									assert.equal(oTable.getBinding().getCount(), 5, "Table: value length is 5");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1.concat([oDefaultNewObject])), "Field 1: Value");
 									oTable.filter(oURLColumn, "");
 									assert.ok(!oURLColumn.getFiltered(), "Table: Column URL is not filtered anymore");
 									wait().then(function () {
 										assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-										assert.ok(oTable.getBinding().getCount() === 9, "Table: RowCount after removing filter");
+										assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing filter");
 										assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1.concat([oDefaultNewObject])), "Field 1: Value");
 										// scroll to bottom
 										oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 400;
@@ -322,16 +322,16 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
 					var oClearFilterButton = oToolbar.getContent()[4];
@@ -346,7 +346,7 @@ sap.ui.define([
 					oMenu.open();
 					oMenu.close();
 					wait().then(function () {
-						assert.ok(oTable.getBinding().getCount() === 3, "Table: RowCount after filtering http:");
+						assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after filtering http:");
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
 
 						var oSelectedRow = oTable.getRows()[0];
@@ -372,51 +372,51 @@ sap.ui.define([
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
-							assert.ok(oContents.length === 16, "SimpleForm: length");
+							assert.equal(oContents.length, 16, "SimpleForm: length");
 							assert.ok(deepEqual(cleanUUIDAndPosition(oContents[15].getValue()), Object.assign(deepClone(oValue2), {"_dt": {"_selected": true}})), "SimpleForm field textArea: Has the value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
-							assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
+							assert.equal(oFormLabel.getText(), "Key", "SimpleForm label1: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label1: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field1: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field1: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field1: Editable");
-							assert.ok(oFormField.getValue() === "key02", "SimpleForm field1: Has value");
+							assert.equal(oFormField.getValue(), "key02", "SimpleForm field1: Has value");
 							oFormField.setValue("keynew");
 							oFormField.fireChange({ value: "keynew" });
 							oFormLabel = oContents[2];
 							oFormField = oContents[3];
-							assert.ok(oFormLabel.getText() === "Icon", "SimpleForm label2: Has label text");
+							assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
-							assert.ok(oFormField.getValue() === "sap-icon://cart", "SimpleForm field2: Has value");
+							assert.equal(oFormField.getValue(), "sap-icon://cart", "SimpleForm field2: Has value");
 							oFormField.setValue("sap-icon://accept");
 							oFormField.fireChange({ value: "sap-icon://accept" });
 							oFormLabel = oContents[4];
 							oFormField = oContents[5];
-							assert.ok(oFormLabel.getText() === "Text", "SimpleForm label3: Has label text");
+							assert.equal(oFormLabel.getText(), "Text", "SimpleForm label3: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label3: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field3: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field3: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field3: Editable");
-							assert.ok(oFormField.getValue() === "text02", "SimpleForm field3: Has value");
+							assert.equal(oFormField.getValue(), "text02", "SimpleForm field3: Has value");
 							oFormField.setValue("textnew");
 							oFormField.fireChange({ value: "textnew" });
 							oFormLabel = oContents[6];
 							oFormField = oContents[7];
-							assert.ok(oFormLabel.getText() === "URL", "SimpleForm label4: Has label text");
+							assert.equal(oFormLabel.getText(), "URL", "SimpleForm label4: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label4: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field4: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field4: Editable");
-							assert.ok(oFormField.getValue() === "http://sapui5.hana.ondemand.com/05", "SimpleForm field4: Has value");
+							assert.equal(oFormField.getValue(), "http://sapui5.hana.ondemand.com/05", "SimpleForm field4: Has value");
 							oFormField.setValue("http://sapui5.hana.ondemand.com/06");
 							oFormField.fireChange({ value: "http://sapui5.hana.ondemand.com/06" });
 							oFormLabel = oContents[8];
 							oFormField = oContents[9];
-							assert.ok(oFormLabel.getText() === "Editable", "SimpleForm label5: Has label text");
+							assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label5: Visible");
 							assert.ok(oFormField.isA("sap.m.CheckBox"), "SimpleForm Field5: CheckBox Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field5: Visible");
@@ -426,27 +426,27 @@ sap.ui.define([
 							oFormField.fireSelect({ selected: true });
 							oFormLabel = oContents[10];
 							oFormField = oContents[11];
-							assert.ok(oFormLabel.getText() === "Integer", "SimpleForm label6: Has label text");
+							assert.equal(oFormLabel.getText(), "Integer", "SimpleForm label6: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label6: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field6: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field6: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field6: Editable");
-							assert.ok(oFormField.getValue() === "2", "SimpleForm field6: Has value");
+							assert.equal(oFormField.getValue(), "2", "SimpleForm field6: Has value");
 							oFormField.setValue("1");
 							oFormField.fireChange({value: "1"});
 							oFormLabel = oContents[12];
 							oFormField = oContents[13];
-							assert.ok(oFormLabel.getText() === "Number", "SimpleForm label7: Has label text");
+							assert.equal(oFormLabel.getText(), "Number", "SimpleForm label7: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label7: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field7: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field7: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field7: Editable");
-							assert.ok(oFormField.getValue() === "3.6", "SimpleForm field7: Has value");
+							assert.equal(oFormField.getValue(), "3.6", "SimpleForm field7: Has value");
 							oFormField.setValue("0.55");
 							oFormField.fireChange({ value: "0.55"});
 							oFormLabel = oContents[14];
 							oFormField = oContents[15];
-							assert.ok(oFormLabel.getText() === "", "SimpleForm label8: Has no label text");
+							assert.equal(oFormLabel.getText(), "", "SimpleForm label8: Has no label text");
 							assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
@@ -454,7 +454,7 @@ sap.ui.define([
 							assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), {"text": "textnew","key": "keynew","url": "http://sapui5.hana.ondemand.com/06","icon": "sap-icon://accept","iconcolor": "#64E4CE","int": 1,"number": 0.55,"_dt": {"_selected": true},"editable": true}), "SimpleForm field textArea: Has changed value");
 							oUpdateButtonInPopover.firePress();
 							wait().then(function () {
-								assert.ok(oTable.getBinding().getCount() === 3, "Table: RowCount after updating");
+								assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after updating");
 								var oNewValue = {"text": "textnew", "key": "keynew", "url": "http://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#64E4CE", "int": 1, "editable": true, "number": 0.55};
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [oValue1, oNewValue, oValue3, oValue4, oValue5, oValue6, oValue7, oValue8]), "Field 1: Value updated");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[0].getObject()), {"text": "textnew", "key": "keynew", "url": "http://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#64E4CE", "int": 1, "editable": true, "number": 0.55, "_dt": {"_selected": true}}), "Table: selected row updated");
@@ -463,7 +463,7 @@ sap.ui.define([
 								assert.ok(!oURLColumn.getFiltered(), "Table: Column URL is not filtered anymore");
 								wait().then(function () {
 									assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-									assert.ok(oTable.getBinding().getCount() === 8, "Table: RowCount after removing filter");
+									assert.equal(oTable.getBinding().getCount(), 8, "Table: RowCount after removing filter");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [oValue1, oNewValue, oValue3, oValue4, oValue5, oValue6, oValue7, oValue8]), "Field 1: Value updated");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[1].getObject()), {"text": "textnew", "key": "keynew", "url": "http://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#64E4CE", "int": 1, "editable": true, "number": 0.55, "_dt": {"_selected": true}}), "Table: selected row updated");
 									resolve();
@@ -486,16 +486,16 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
 					var oClearFilterButton = oToolbar.getContent()[4];
@@ -510,7 +510,7 @@ sap.ui.define([
 					oMenu.open();
 					oMenu.close();
 					wait().then(function () {
-						assert.ok(oTable.getBinding().getCount() === 3, "Table: RowCount after filtering http:");
+						assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after filtering http:");
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
 
 						var oSelectedRow = oTable.getRows()[0];
@@ -536,51 +536,51 @@ sap.ui.define([
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
-							assert.ok(oContents.length === 16, "SimpleForm: length");
+							assert.equal(oContents.length, 16, "SimpleForm: length");
 							assert.ok(deepEqual(cleanUUIDAndPosition(oContents[15].getValue()), Object.assign(deepClone(oValue2), {"_dt": {"_selected": true}})), "SimpleForm field textArea: Has the value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
-							assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
+							assert.equal(oFormLabel.getText(), "Key", "SimpleForm label1: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label1: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field1: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field1: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field1: Editable");
-							assert.ok(oFormField.getValue() === "key02", "SimpleForm field1: Has value");
+							assert.equal(oFormField.getValue(), "key02", "SimpleForm field1: Has value");
 							oFormField.setValue("keynew");
 							oFormField.fireChange({ value: "keynew" });
 							oFormLabel = oContents[2];
 							oFormField = oContents[3];
-							assert.ok(oFormLabel.getText() === "Icon", "SimpleForm label2: Has label text");
+							assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
-							assert.ok(oFormField.getValue() === "sap-icon://cart", "SimpleForm field2: Has value");
+							assert.equal(oFormField.getValue(), "sap-icon://cart", "SimpleForm field2: Has value");
 							oFormField.setValue("sap-icon://accept");
 							oFormField.fireChange({ value: "sap-icon://accept" });
 							oFormLabel = oContents[4];
 							oFormField = oContents[5];
-							assert.ok(oFormLabel.getText() === "Text", "SimpleForm label3: Has label text");
+							assert.equal(oFormLabel.getText(), "Text", "SimpleForm label3: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label3: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field3: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field3: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field3: Editable");
-							assert.ok(oFormField.getValue() === "text02", "SimpleForm field3: Has value");
+							assert.equal(oFormField.getValue(), "text02", "SimpleForm field3: Has value");
 							oFormField.setValue("textnew");
 							oFormField.fireChange({ value: "textnew" });
 							oFormLabel = oContents[6];
 							oFormField = oContents[7];
-							assert.ok(oFormLabel.getText() === "URL", "SimpleForm label4: Has label text");
+							assert.equal(oFormLabel.getText(), "URL", "SimpleForm label4: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label4: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field4: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field4: Editable");
-							assert.ok(oFormField.getValue() === "http://sapui5.hana.ondemand.com/05", "SimpleForm field4: Has value");
+							assert.equal(oFormField.getValue(), "http://sapui5.hana.ondemand.com/05", "SimpleForm field4: Has value");
 							oFormField.setValue("https://sapui5.hana.ondemand.com/06");
 							oFormField.fireChange({ value: "https://sapui5.hana.ondemand.com/06" });
 							oFormLabel = oContents[8];
 							oFormField = oContents[9];
-							assert.ok(oFormLabel.getText() === "Editable", "SimpleForm label5: Has label text");
+							assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label5: Visible");
 							assert.ok(oFormField.isA("sap.m.CheckBox"), "SimpleForm Field5: CheckBox Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field5: Visible");
@@ -590,27 +590,27 @@ sap.ui.define([
 							oFormField.fireSelect({ selected: true });
 							oFormLabel = oContents[10];
 							oFormField = oContents[11];
-							assert.ok(oFormLabel.getText() === "Integer", "SimpleForm label6: Has label text");
+							assert.equal(oFormLabel.getText(), "Integer", "SimpleForm label6: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label6: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field6: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field6: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field6: Editable");
-							assert.ok(oFormField.getValue() === "2", "SimpleForm field6: Has value");
+							assert.equal(oFormField.getValue(), "2", "SimpleForm field6: Has value");
 							oFormField.setValue("1");
 							oFormField.fireChange({value: "1"});
 							oFormLabel = oContents[12];
 							oFormField = oContents[13];
-							assert.ok(oFormLabel.getText() === "Number", "SimpleForm label7: Has label text");
+							assert.equal(oFormLabel.getText(), "Number", "SimpleForm label7: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label7: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field7: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field7: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field7: Editable");
-							assert.ok(oFormField.getValue() === "3.6", "SimpleForm field7: Has value");
+							assert.equal(oFormField.getValue(), "3.6", "SimpleForm field7: Has value");
 							oFormField.setValue("0.55");
 							oFormField.fireChange({ value: "0.55"});
 							oFormLabel = oContents[14];
 							oFormField = oContents[15];
-							assert.ok(oFormLabel.getText() === "", "SimpleForm label8: Has no label text");
+							assert.equal(oFormLabel.getText(), "", "SimpleForm label8: Has no label text");
 							assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
@@ -619,7 +619,7 @@ sap.ui.define([
 							assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), Object.assign(deepClone(oNewValue), {"_dt": {"_selected": true}})), "SimpleForm field textArea: Has changed value");
 							oUpdateButtonInPopover.firePress();
 							wait().then(function () {
-								assert.ok(oTable.getBinding().getCount() === 2, "Table: RowCount after updating");
+								assert.equal(oTable.getBinding().getCount(), 2, "Table: RowCount after updating");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [oValue1, oNewValue, oValue3, oValue4, oValue5, oValue6, oValue7, oValue8]), "Field 1: Value updated");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[0].getObject()), Object.assign(deepClone(oValue5), {"_dt": {"_selected": true}})), "Table: row 0");
 								assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
@@ -627,7 +627,7 @@ sap.ui.define([
 								assert.ok(!oURLColumn.getFiltered(), "Table: Column URL is not filtered anymore");
 								wait().then(function () {
 									assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-									assert.ok(oTable.getBinding().getCount() === 8, "Table: RowCount after removing filter");
+									assert.equal(oTable.getBinding().getCount(), 8, "Table: RowCount after removing filter");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [oValue1, oNewValue, oValue3, oValue4, oValue5, oValue6, oValue7, oValue8]), "Field 1: Value updated");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[1].getObject()), Object.assign(deepClone(oNewValue), {"_dt": {"_selected": true}})), "Table: selected row updated");
 									resolve();
@@ -650,16 +650,16 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
 					var oDeleteButton = oToolbar.getContent()[3];
@@ -677,7 +677,7 @@ sap.ui.define([
 					oMenu.close();
 					wait().then(function () {
 						assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
-						assert.ok(oTable.getBinding().getCount() === 3, "Table: RowCount after filtering http:");
+						assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after filtering http:");
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
 						oTable.setSelectedIndex(0);
 						oTable.fireRowSelectionChange({
@@ -694,13 +694,13 @@ sap.ui.define([
 							wait().then(function () {
 								assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [oValue1, oValue3, oValue4, oValue5, oValue6, oValue7, oValue8]), "Field 1: Value deleted");
-								assert.ok(oTable.getBinding().getCount() === 2, "Table: value length is 2");
+								assert.equal(oTable.getBinding().getCount(), 2, "Table: value length is 2");
 								oTable.filter(oURLColumn, "");
 								assert.ok(!oURLColumn.getFiltered(), "Table: Column Key is not filtered anymore");
 								wait().then(function () {
 									assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [oValue1, oValue3, oValue4, oValue5, oValue6, oValue7, oValue8]), "Field 1: Value deleted");
-									assert.ok(oTable.getBinding().getCount() === 7, "Table: value length is 7");
+									assert.equal(oTable.getBinding().getCount(), 7, "Table: value length is 7");
 									resolve();
 								});
 							});

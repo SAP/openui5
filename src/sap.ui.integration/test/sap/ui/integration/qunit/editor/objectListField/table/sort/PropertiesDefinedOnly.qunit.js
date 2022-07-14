@@ -149,16 +149,16 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
@@ -173,38 +173,38 @@ sap.ui.define([
 						var oRow1 = oTable.getRows()[0];
 						var oValueOfRow1 = oRow1.getBindingContext().getObject();
 						assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow1), oValue1Selected), "Table: row 1");
-						assert.ok(oValueOfRow1._dt._position === 1, "Table: row 1 position");
+						assert.equal(oValueOfRow1._dt._position, 1, "Table: row 1 position");
 						var oRow2 = oTable.getRows()[1];
 						var oValueOfRow2 = oRow2.getBindingContext().getObject();
 						assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow2), oValue2Selected), "Table: row 2");
-						assert.ok(oValueOfRow2._dt._position === 2, "Table: row 2 position");
+						assert.equal(oValueOfRow2._dt._position, 2, "Table: row 2 position");
 						var oRow3 = oTable.getRows()[2];
 						var oValueOfRow3 = oRow3.getBindingContext().getObject();
 						assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow3), oValue3Selected), "Table: row 3");
-						assert.ok(oValueOfRow3._dt._position === 3, "Table: row 3 position");
+						assert.equal(oValueOfRow3._dt._position, 3, "Table: row 3 position");
 						var oRow4 = oTable.getRows()[3];
 						var oValueOfRow4 = oRow4.getBindingContext().getObject();
 						assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow4), oValue4Selected), "Table: row 4");
-						assert.ok(oValueOfRow4._dt._position === 4, "Table: row 4 position");
+						assert.equal(oValueOfRow4._dt._position, 4, "Table: row 4 position");
 						var oRow5 = oTable.getRows()[4];
 						var oValueOfRow5 = oRow5.getBindingContext().getObject();
 						assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow5), oValue5Selected), "Table: row 5");
-						assert.ok(oValueOfRow5._dt._position === 5, "Table: row 5 position");
+						assert.equal(oValueOfRow5._dt._position, 5, "Table: row 5 position");
 						// scroll to bottom
 						oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 						wait().then(function () {
 							var oRow6 = oTable.getRows()[2];
 							var oValueOfRow6 = oRow6.getBindingContext().getObject();
 							assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow6), oValue6Selected), "Table: row 6");
-							assert.ok(oValueOfRow6._dt._position === 6, "Table: row 6 position");
+							assert.equal(oValueOfRow6._dt._position, 6, "Table: row 6 position");
 							var oRow7 = oTable.getRows()[3];
 							var oValueOfRow7 = oRow7.getBindingContext().getObject();
 							assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow7), oValue7Selected), "Table: row 7");
-							assert.ok(oValueOfRow7._dt._position === 7, "Table: row 7 position");
+							assert.equal(oValueOfRow7._dt._position, 7, "Table: row 7 position");
 							var oRow8 = oTable.getRows()[4];
 							var oValueOfRow8 = oRow8.getBindingContext().getObject();
 							assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow8), oValue8Selected), "Table: row 8");
-							assert.ok(oValueOfRow8._dt._position === 8, "Table: row 8 position");
+							assert.equal(oValueOfRow8._dt._position, 8, "Table: row 8 position");
 
 							oTable.setSelectedIndex(0);
 							oTable.fireRowSelectionChange({
@@ -253,16 +253,16 @@ sap.ui.define([
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
@@ -277,11 +277,11 @@ sap.ui.define([
 						var oRow1 = oTable.getRows()[0];
 						var oValueOfRow1 = oRow1.getBindingContext().getObject();
 						assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow1), oValue1Selected), "Table: row 1");
-						assert.ok(oValueOfRow1._dt._position === 1, "Table: row 1 position");
+						assert.equal(oValueOfRow1._dt._position, 1, "Table: row 1 position");
 						var oRow2 = oTable.getRows()[1];
 						var oValueOfRow2 = oRow2.getBindingContext().getObject();
 						assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow2), oValue2Selected), "Table: row 2");
-						assert.ok(oValueOfRow2._dt._position === 2, "Table: row 2 position");
+						assert.equal(oValueOfRow2._dt._position, 2, "Table: row 2 position");
 						oTable.setSelectedIndex(0);
 						oTable.fireRowSelectionChange({
 							rowIndex: 0,
@@ -289,11 +289,11 @@ sap.ui.define([
 						});
 						assert.ok(oMoveUpButton.getEnabled(), "Table toolbar: move up button enabled");
 						assert.ok(oMoveDownButton.getEnabled(), "Table toolbar: move down button enabled");
-						assert.ok(oTable.getSelectedIndex() === 0, "Table toolbar: selected index is 0");
+						assert.equal(oTable.getSelectedIndex(), 0, "Table toolbar: selected index is 0");
 
 						oMoveDownButton.firePress();
 						wait().then(function () {
-							assert.ok(oTable.getSelectedIndex() === 1, "Table toolbar: selected index is 1");
+							assert.equal(oTable.getSelectedIndex(), 1, "Table toolbar: selected index is 1");
 							assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value");
 							var oSettings = that.oEditor.getCurrentSettings();
 							var oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -302,20 +302,20 @@ sap.ui.define([
 							oRow1 = oTable.getRows()[0];
 							oValueOfRow1 = oRow1.getBindingContext().getObject();
 							assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow1), oValue2Selected), "Table: value 2 move up to row 1");
-							assert.ok(oValueOfRow1._dt._position === 1, "Table: row 1 position");
-							assert.ok(oField._getCurrentProperty("value")[1]._dt._position === 1, "Table: value 2 position");
-							assert.ok(oFieldSettings[0]._dt._position === 1, "Editor: Field 1 value 1 position");
+							assert.equal(oValueOfRow1._dt._position, 1, "Table: row 1 position");
+							assert.equal(oField._getCurrentProperty("value")[1]._dt._position, 1, "Table: value 2 position");
+							assert.equal(oFieldSettings[0]._dt._position, 1, "Editor: Field 1 value 1 position");
 
 							oRow2 = oTable.getRows()[1];
 							oValueOfRow2 = oRow2.getBindingContext().getObject();
 							assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow2), oValue1Selected), "Table: value 1 move down to row 2");
-							assert.ok(oValueOfRow2._dt._position === 2, "Table: row 2 position");
-							assert.ok(oField._getCurrentProperty("value")[0]._dt._position === 2, "Table: value 1 position");
-							assert.ok(oFieldSettings[1]._dt._position === 2, "Editor: Field 1 value 2 position");
+							assert.equal(oValueOfRow2._dt._position, 2, "Table: row 2 position");
+							assert.equal(oField._getCurrentProperty("value")[0]._dt._position, 2, "Table: value 1 position");
+							assert.equal(oFieldSettings[1]._dt._position, 2, "Editor: Field 1 value 2 position");
 
 							oMoveUpButton.firePress();
 							wait().then(function () {
-								assert.ok(oTable.getSelectedIndex() === 0, "Table toolbar: selected index is 0");
+								assert.equal(oTable.getSelectedIndex(), 0, "Table toolbar: selected index is 0");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value");
 								oSettings = that.oEditor.getCurrentSettings();
 								oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -324,20 +324,20 @@ sap.ui.define([
 								oRow1 = oTable.getRows()[0];
 								oValueOfRow1 = oRow1.getBindingContext().getObject();
 								assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow1), oValue1Selected), "Table: value 1 move up to row 1");
-								assert.ok(oValueOfRow1._dt._position === 1, "Table: row 1 position");
-								assert.ok(oField._getCurrentProperty("value")[0]._dt._position === 1, "Table: value 1 position");
-								assert.ok(oFieldSettings[0]._dt._position === 1, "Editor: Field 1 value 1 position");
+								assert.equal(oValueOfRow1._dt._position, 1, "Table: row 1 position");
+								assert.equal(oField._getCurrentProperty("value")[0]._dt._position, 1, "Table: value 1 position");
+								assert.equal(oFieldSettings[0]._dt._position, 1, "Editor: Field 1 value 1 position");
 
 								oRow2 = oTable.getRows()[1];
 								oValueOfRow2 = oRow2.getBindingContext().getObject();
 								assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow2), oValue2Selected), "Table: value 2 move down to row 2");
-								assert.ok(oValueOfRow2._dt._position === 2, "Table: row 2 position");
-								assert.ok(oField._getCurrentProperty("value")[1]._dt._position === 2, "Table: value 2 position");
-								assert.ok(oFieldSettings[1]._dt._position === 2, "Editor: Field 1 value 2 position");
+								assert.equal(oValueOfRow2._dt._position, 2, "Table: row 2 position");
+								assert.equal(oField._getCurrentProperty("value")[1]._dt._position, 2, "Table: value 2 position");
+								assert.equal(oFieldSettings[1]._dt._position, 2, "Editor: Field 1 value 2 position");
 
 								oMoveUpButton.firePress();
 								wait().then(function () {
-									assert.ok(oTable.getSelectedIndex() === 0, "Table toolbar: selected index is 0");
+									assert.equal(oTable.getSelectedIndex(), 0, "Table toolbar: selected index is 0");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value");
 									oSettings = that.oEditor.getCurrentSettings();
 									oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -346,16 +346,16 @@ sap.ui.define([
 									oRow1 = oTable.getRows()[0];
 									oValueOfRow1 = oRow1.getBindingContext().getObject();
 									assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow1), oValue1Selected), "Table: value 1 not change");
-									assert.ok(oValueOfRow1._dt._position === 1, "Table: row 1 position");
-									assert.ok(oField._getCurrentProperty("value")[0]._dt._position === 1, "Table: value 1 position");
-									assert.ok(oFieldSettings[0]._dt._position === 1, "Editor: Field 1 value 1 position");
+									assert.equal(oValueOfRow1._dt._position, 1, "Table: row 1 position");
+									assert.equal(oField._getCurrentProperty("value")[0]._dt._position, 1, "Table: value 1 position");
+									assert.equal(oFieldSettings[0]._dt._position, 1, "Editor: Field 1 value 1 position");
 
 									oRow2 = oTable.getRows()[1];
 									oValueOfRow2 = oRow2.getBindingContext().getObject();
 									assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow2), oValue2Selected), "Table: value 2 not change");
-									assert.ok(oValueOfRow2._dt._position === 2, "Table: row 2 position");
-									assert.ok(oField._getCurrentProperty("value")[1]._dt._position === 2, "Table: value 2 position");
-									assert.ok(oFieldSettings[1]._dt._position === 2, "Editor: Field 1 value 2 position");
+									assert.equal(oValueOfRow2._dt._position, 2, "Table: row 2 position");
+									assert.equal(oField._getCurrentProperty("value")[1]._dt._position, 2, "Table: value 2 position");
+									assert.equal(oFieldSettings[1]._dt._position, 2, "Editor: Field 1 value 2 position");
 									resolve();
 								});
 							});
@@ -378,16 +378,16 @@ sap.ui.define([
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
@@ -405,11 +405,11 @@ sap.ui.define([
 							var oRow7 = oTable.getRows()[3];
 							var oValueOfRow7 = oRow7.getBindingContext().getObject();
 							assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow7), oValue7Selected), "Table: row 7");
-							assert.ok(oValueOfRow7._dt._position === 7, "Table: row 7 position");
+							assert.equal(oValueOfRow7._dt._position, 7, "Table: row 7 position");
 							var oRow8 = oTable.getRows()[4];
 							var oValueOfRow8 = oRow8.getBindingContext().getObject();
 							assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow8), oValue8Selected), "Table: row 8");
-							assert.ok(oValueOfRow8._dt._position === 8, "Table: row 8 position");
+							assert.equal(oValueOfRow8._dt._position, 8, "Table: row 8 position");
 							oTable.setSelectedIndex(6);
 							oTable.fireRowSelectionChange({
 								rowIndex: 6,
@@ -417,11 +417,11 @@ sap.ui.define([
 							});
 							assert.ok(oMoveUpButton.getEnabled(), "Table toolbar: move up button enabled");
 							assert.ok(oMoveDownButton.getEnabled(), "Table toolbar: move down button enabled");
-							assert.ok(oTable.getSelectedIndex() === 6, "Table toolbar: selected index is 6");
+							assert.equal(oTable.getSelectedIndex(), 6, "Table toolbar: selected index is 6");
 
 							oMoveDownButton.firePress();
 							wait().then(function () {
-								assert.ok(oTable.getSelectedIndex() === 7, "Table toolbar: selected index is 7");
+								assert.equal(oTable.getSelectedIndex(), 7, "Table toolbar: selected index is 7");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value");
 								var oSettings = that.oEditor.getCurrentSettings();
 								var oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -430,20 +430,20 @@ sap.ui.define([
 								oRow7 = oTable.getRows()[3];
 								oValueOfRow7 = oRow7.getBindingContext().getObject();
 								assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow7), oValue8Selected), "Table: value 8 move up to row 7");
-								assert.ok(oValueOfRow7._dt._position === 7, "Table: row 7 position");
-								assert.ok(oField._getCurrentProperty("value")[7]._dt._position === 7, "Table: value 7 position");
-								assert.ok(oFieldSettings[6]._dt._position === 7, "Editor: Field 1 value 7 position");
+								assert.equal(oValueOfRow7._dt._position, 7, "Table: row 7 position");
+								assert.equal(oField._getCurrentProperty("value")[7]._dt._position, 7, "Table: value 7 position");
+								assert.equal(oFieldSettings[6]._dt._position, 7, "Editor: Field 1 value 7 position");
 
 								oRow8 = oTable.getRows()[4];
 								oValueOfRow8 = oRow8.getBindingContext().getObject();
 								assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow8), oValue7Selected), "Table: value 7 move down to row 8");
-								assert.ok(oValueOfRow8._dt._position === 8, "Table: row 8 position");
-								assert.ok(oField._getCurrentProperty("value")[6]._dt._position === 8, "Table: value 8 position");
-								assert.ok(oFieldSettings[7]._dt._position === 8, "Editor: Field 1 value 8 position");
+								assert.equal(oValueOfRow8._dt._position, 8, "Table: row 8 position");
+								assert.equal(oField._getCurrentProperty("value")[6]._dt._position, 8, "Table: value 8 position");
+								assert.equal(oFieldSettings[7]._dt._position, 8, "Editor: Field 1 value 8 position");
 
 								oMoveDownButton.firePress();
 								wait().then(function () {
-									assert.ok(oTable.getSelectedIndex() === 7, "Table toolbar: selected index is 7");
+									assert.equal(oTable.getSelectedIndex(), 7, "Table toolbar: selected index is 7");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value");
 									var oSettings = that.oEditor.getCurrentSettings();
 									var oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -452,20 +452,20 @@ sap.ui.define([
 									oRow7 = oTable.getRows()[3];
 									oValueOfRow7 = oRow7.getBindingContext().getObject();
 									assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow7), oValue8Selected), "Table: value 8");
-									assert.ok(oValueOfRow7._dt._position === 7, "Table: row 7 position");
-									assert.ok(oField._getCurrentProperty("value")[7]._dt._position === 7, "Table: value 7 position");
-									assert.ok(oFieldSettings[6]._dt._position === 7, "Editor: Field 1 value 7 position");
+									assert.equal(oValueOfRow7._dt._position, 7, "Table: row 7 position");
+									assert.equal(oField._getCurrentProperty("value")[7]._dt._position, 7, "Table: value 7 position");
+									assert.equal(oFieldSettings[6]._dt._position, 7, "Editor: Field 1 value 7 position");
 
 									oRow8 = oTable.getRows()[4];
 									oValueOfRow8 = oRow8.getBindingContext().getObject();
 									assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow8), oValue7Selected), "Table: value 7");
-									assert.ok(oValueOfRow8._dt._position === 8, "Table: row 8 position");
-									assert.ok(oField._getCurrentProperty("value")[6]._dt._position === 8, "Table: value 8 position");
-									assert.ok(oFieldSettings[7]._dt._position === 8, "Editor: Field 1 value 8 position");
+									assert.equal(oValueOfRow8._dt._position, 8, "Table: row 8 position");
+									assert.equal(oField._getCurrentProperty("value")[6]._dt._position, 8, "Table: value 8 position");
+									assert.equal(oFieldSettings[7]._dt._position, 8, "Editor: Field 1 value 8 position");
 
 									oMoveUpButton.firePress();
 									wait().then(function () {
-										assert.ok(oTable.getSelectedIndex() === 6, "Table toolbar: selected index is 6");
+										assert.equal(oTable.getSelectedIndex(), 6, "Table toolbar: selected index is 6");
 										assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value");
 										oSettings = that.oEditor.getCurrentSettings();
 										oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
@@ -474,16 +474,16 @@ sap.ui.define([
 										oRow7 = oTable.getRows()[3];
 										oValueOfRow7 = oRow7.getBindingContext().getObject();
 										assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow7), oValue7Selected), "Table: value 7 move up to row 7");
-										assert.ok(oValueOfRow7._dt._position === 7, "Table: row 7 position");
-										assert.ok(oField._getCurrentProperty("value")[6]._dt._position === 7, "Table: value 7 position");
-										assert.ok(oFieldSettings[6]._dt._position === 7, "Editor: Field 1 value 7 position");
+										assert.equal(oValueOfRow7._dt._position, 7, "Table: row 7 position");
+										assert.equal(oField._getCurrentProperty("value")[6]._dt._position, 7, "Table: value 7 position");
+										assert.equal(oFieldSettings[6]._dt._position, 7, "Editor: Field 1 value 7 position");
 
 										oRow8 = oTable.getRows()[4];
 										oValueOfRow8 = oRow8.getBindingContext().getObject();
 										assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow8), oValue8Selected), "Table: value 8 move down to row 8");
-										assert.ok(oValueOfRow8._dt._position === 8, "Table: row 8 position");
-										assert.ok(oField._getCurrentProperty("value")[7]._dt._position === 8, "Table: value 8 position");
-										assert.ok(oFieldSettings[7]._dt._position === 8, "Editor: Field 1 value 8 position");
+										assert.equal(oValueOfRow8._dt._position, 8, "Table: row 8 position");
+										assert.equal(oField._getCurrentProperty("value")[7]._dt._position, 8, "Table: value 8 position");
+										assert.equal(oFieldSettings[7]._dt._position, 8, "Editor: Field 1 value 8 position");
 										resolve();
 									});
 								});
@@ -507,16 +507,16 @@ sap.ui.define([
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
@@ -524,7 +524,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						var oColumns = oTable.getColumns();
-						assert.ok(oColumns.length === 8, "Table: column number is 8");
+						assert.equal(oColumns.length, 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
 						var oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
 						assert.ok(!oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column hided");
@@ -533,7 +533,7 @@ sap.ui.define([
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
-							assert.ok(oContents.length === 16, "SimpleForm: length");
+							assert.equal(oContents.length, 16, "SimpleForm: length");
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -544,14 +544,14 @@ sap.ui.define([
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oAddButtonInPopover.firePress();
 							wait().then(function () {
-								assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
+								assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[8].getObject()), oDefaultNewObjectSelected), "Table: new row data");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1.concat([oDefaultNewObject])), "Field 1: Value changed");
-								assert.ok(oField._getCurrentProperty("value")[8]._dt._position === 9, "Table: added value position");
+								assert.equal(oField._getCurrentProperty("value")[8]._dt._position, 9, "Table: added value position");
 								var oSettings = that.oEditor.getCurrentSettings();
 								var oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
 								assert.ok(deepEqual(cleanUUIDAndPosition(oFieldSettings), [oValue1, oValue2, oValue3, oValue4, oValue5, oValue6, oValue7, oValue8, oDefaultNewObject]), "Editor: Field 1 Value");
-								assert.ok(oFieldSettings[8]._dt._position === 9, "Editor: Field 1 value 9 position");
+								assert.equal(oFieldSettings[8]._dt._position, 9, "Editor: Field 1 value 9 position");
 
 								// scroll to the bottom
 								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
@@ -559,7 +559,7 @@ sap.ui.define([
 									var oNewRow = oTable.getRows()[4];
 									var oNewValue = oNewRow.getBindingContext().getObject();
 									assert.ok(deepEqual(cleanUUIDAndPosition(oNewValue), oDefaultNewObjectSelected), "Table: new row in the bottom");
-									assert.ok(oNewValue._dt._position === 9, "Table: new row position");
+									assert.equal(oNewValue._dt._position, 9, "Table: new row position");
 									resolve();
 								});
 							});
@@ -582,16 +582,16 @@ sap.ui.define([
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: DT Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue1.length, "Table: value length is " + aObjectsParameterValue1.length);
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oDeleteButton = oToolbar.getContent()[3];
 					assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button disabled");
 					var oClearFilterButton = oToolbar.getContent()[4];
@@ -614,24 +614,24 @@ sap.ui.define([
 							wait().then(function () {
 								var aFieldValue = oField._getCurrentProperty("value");
 								assert.ok(deepEqual(cleanUUIDAndPosition(aFieldValue), [oValue2, oValue3, oValue4, oValue5, oValue6, oValue7, oValue8]), "Field 1: Value updated");
-								assert.ok(aFieldValue[0]._dt._position === 2, "Field 1: value 2 position");
-								assert.ok(aFieldValue[1]._dt._position === 3, "Field 1: value 3 position");
-								assert.ok(aFieldValue[2]._dt._position === 4, "Field 1: value 4 position");
-								assert.ok(aFieldValue[3]._dt._position === 5, "Field 1: value 5 position");
-								assert.ok(aFieldValue[4]._dt._position === 6, "Field 1: value 6 position");
-								assert.ok(aFieldValue[5]._dt._position === 7, "Field 1: value 7 position");
-								assert.ok(aFieldValue[6]._dt._position === 8, "Field 1: value 8 position");
-								assert.ok(oTable.getBinding().getCount() === 7, "Table: value length is 7");
+								assert.equal(aFieldValue[0]._dt._position, 2, "Field 1: value 2 position");
+								assert.equal(aFieldValue[1]._dt._position, 3, "Field 1: value 3 position");
+								assert.equal(aFieldValue[2]._dt._position, 4, "Field 1: value 4 position");
+								assert.equal(aFieldValue[3]._dt._position, 5, "Field 1: value 5 position");
+								assert.equal(aFieldValue[4]._dt._position, 6, "Field 1: value 6 position");
+								assert.equal(aFieldValue[5]._dt._position, 7, "Field 1: value 7 position");
+								assert.equal(aFieldValue[6]._dt._position, 8, "Field 1: value 8 position");
+								assert.equal(oTable.getBinding().getCount(), 7, "Table: value length is 7");
 								var oSettings = that.oEditor.getCurrentSettings();
 								var oFieldSettings = oSettings[oField.getConfiguration().manifestpath];
 								assert.ok(deepEqual(cleanUUIDAndPosition(oFieldSettings), [oValue2, oValue3, oValue4, oValue5, oValue6, oValue7, oValue8]), "Editor: Field 1 Value");
-								assert.ok(oFieldSettings[0]._dt._position === 1, "Editor: Field 1 value 2 position");
-								assert.ok(oFieldSettings[1]._dt._position === 2, "Editor: Field 1 value 3 position");
-								assert.ok(oFieldSettings[2]._dt._position === 3, "Editor: Field 1 value 4 position");
-								assert.ok(oFieldSettings[3]._dt._position === 4, "Editor: Field 1 value 5 position");
-								assert.ok(oFieldSettings[4]._dt._position === 5, "Editor: Field 1 value 6 position");
-								assert.ok(oFieldSettings[5]._dt._position === 6, "Editor: Field 1 value 7 position");
-								assert.ok(oFieldSettings[6]._dt._position === 7, "Editor: Field 1 value 8 position");
+								assert.equal(oFieldSettings[0]._dt._position, 1, "Editor: Field 1 value 2 position");
+								assert.equal(oFieldSettings[1]._dt._position, 2, "Editor: Field 1 value 3 position");
+								assert.equal(oFieldSettings[2]._dt._position, 3, "Editor: Field 1 value 4 position");
+								assert.equal(oFieldSettings[3]._dt._position, 4, "Editor: Field 1 value 5 position");
+								assert.equal(oFieldSettings[4]._dt._position, 5, "Editor: Field 1 value 6 position");
+								assert.equal(oFieldSettings[5]._dt._position, 6, "Editor: Field 1 value 7 position");
+								assert.equal(oFieldSettings[6]._dt._position, 7, "Editor: Field 1 value 8 position");
 								resolve();
 							});
 						});

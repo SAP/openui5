@@ -95,26 +95,26 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
-					assert.ok(oLabel.getText() === "Integer Label", "Label: Has label text");
+					assert.equal(oLabel.getText(), "Integer Label", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.IntegerField"), "Field: Integer Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Default Input control");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[3];
 					var oField1 = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oLabel1.isA("sap.m.Label"), "Label: Form content contains 2 Labels");
-					assert.ok(oLabel1.getText() === "Integer Label using Slider", "Label: Has label text");
+					assert.equal(oLabel1.getText(), "Integer Label using Slider", "Label: Has label text");
 					assert.ok(oField1.isA("sap.ui.integration.editor.fields.IntegerField"), "Field: Integer Field");
 					assert.ok(oField1.getAggregation("_field").isA("sap.m.Slider"), "Field: Slider control");
-					assert.ok(oField1.getAggregation("_field").getValue() === 0, "Field: Value correct");
+					assert.equal(oField1.getAggregation("_field").getValue(), 0, "Field: Value correct");
 					var oLabel2 = this.oEditor.getAggregation("_formContent")[5];
 					var oField2 = this.oEditor.getAggregation("_formContent")[6];
 					assert.ok(oLabel2.isA("sap.m.Label"), "Label: Form content contains 3 Labels");
-					assert.ok(oLabel2.getText() === "Boolean Label", "Label: Has label text");
+					assert.equal(oLabel2.getText(), "Boolean Label", "Label: Has label text");
 					assert.ok(oField2.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField2.getAggregation("_field").isA("sap.m.CheckBox"), "Field: Default CheckBox control");
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[7];
 					var oField3 = this.oEditor.getAggregation("_formContent")[8];
 					assert.ok(oLabel3.isA("sap.m.Label"), "Label: Form content contains 4 Labels");
-					assert.ok(oLabel3.getText() === "Boolean Label using Switch", "Label: Has label text");
+					assert.equal(oLabel3.getText(), "Boolean Label using Switch", "Label: Has label text");
 					assert.ok(oField3.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField3.getAggregation("_field").isA("sap.m.Switch"), "Field: Switch control");
 					assert.ok(oField3.getAggregation("_field").getState() === false, "Field: Value correct");
@@ -160,40 +160,40 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
-					assert.ok(oLabel.getText() === "Integer Label", "Label: Has label text");
+					assert.equal(oLabel.getText(), "Integer Label", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.IntegerField"), "Field: Integer Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Default Input control");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[3];
 					var oField1 = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oLabel1.isA("sap.m.Label"), "Label: Form content contains 2 Labels");
-					assert.ok(oLabel1.getText() === "Integer Label using Slider", "Label: Has label text");
+					assert.equal(oLabel1.getText(), "Integer Label using Slider", "Label: Has label text");
 					assert.ok(oField1.isA("sap.ui.integration.editor.fields.IntegerField"), "Field: Integer Field");
 					assert.ok(oField1.getAggregation("_field").isA("sap.m.Slider"), "Field: Slider control");
-					assert.ok(oField1.getAggregation("_field").getValue() === 3, "Field: Value correct");
+					assert.equal(oField1.getAggregation("_field").getValue(), 3, "Field: Value correct");
 					var oLabel2 = this.oEditor.getAggregation("_formContent")[5];
 					var oField2 = this.oEditor.getAggregation("_formContent")[6];
 					assert.ok(oLabel2.isA("sap.m.Label"), "Label: Form content contains 3 Labels");
-					assert.ok(oLabel2.getText() === "Boolean Label", "Label: Has label text");
+					assert.equal(oLabel2.getText(), "Boolean Label", "Label: Has label text");
 					assert.ok(oField2.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField2.getAggregation("_field").isA("sap.m.CheckBox"), "Field: Default CheckBox control");
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[7];
 					var oField3 = this.oEditor.getAggregation("_formContent")[8];
 					assert.ok(oLabel3.isA("sap.m.Label"), "Label: Form content contains 4 Labels");
-					assert.ok(oLabel3.getText() === "Boolean Label using Switch", "Label: Has label text");
+					assert.equal(oLabel3.getText(), "Boolean Label using Switch", "Label: Has label text");
 					assert.ok(oField3.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField3.getAggregation("_field").isA("sap.m.Switch"), "Field: Switch control");
 					assert.ok(oField3.getAggregation("_field").getState() === true, "Field: Value correct");
 					var oLabel4 = this.oEditor.getAggregation("_formContent")[9];
 					var oField4 = this.oEditor.getAggregation("_formContent")[10];
 					assert.ok(oLabel4.isA("sap.m.Label"), "Label: Form content contains 2 Labels");
-					assert.ok(oLabel4.getText() === "Integer Label using sap/m/Slider", "Label: Has label text");
+					assert.equal(oLabel4.getText(), "Integer Label using sap/m/Slider", "Label: Has label text");
 					assert.ok(oField4.isA("sap.ui.integration.editor.fields.IntegerField"), "Field: Integer Field");
 					assert.ok(oField4.getAggregation("_field").isA("sap.m.Slider"), "Field: Slider control");
-					assert.ok(oField4.getAggregation("_field").getValue() === 4, "Field: Value correct");
+					assert.equal(oField4.getAggregation("_field").getValue(), 4, "Field: Value correct");
 					var oLabel5 = this.oEditor.getAggregation("_formContent")[11];
 					var oField5 = this.oEditor.getAggregation("_formContent")[12];
 					assert.ok(oLabel5.isA("sap.m.Label"), "Label: Form content contains 4 Labels");
-					assert.ok(oLabel5.getText() === "Boolean Label using sap/m/Switch", "Label: Has label text");
+					assert.equal(oLabel5.getText(), "Boolean Label using sap/m/Switch", "Label: Has label text");
 					assert.ok(oField5.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField5.getAggregation("_field").isA("sap.m.Switch"), "Field: Switch control");
 					assert.ok(oField5.getAggregation("_field").getState() === false, "Field: Value correct");
@@ -233,7 +233,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
-					assert.ok(oLabel.getText() === "Boolean Label using Switch", "Label: Has label text");
+					assert.equal(oLabel.getText(), "Boolean Label using Switch", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Switch"), "Field: Switch control");
 					assert.ok(oField.getAggregation("_field").getState() === false, "Field: Value correct");
@@ -242,14 +242,14 @@ sap.ui.define([
 					var oField2 = this.oEditor.getAggregation("_formContent")[6];
 					assert.ok(oField2.getVisible() === false, "Field: Value correct");
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[7];
-					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+					assert.equal(oLabel3.getText(), "dependentfield3 False", "Label: Value correct");
 
 					oField.getAggregation("_field").setState(true);
 					setTimeout(function () {
 						assert.ok(oField.getAggregation("_field").getState() === true, "Field: Value correct");
 						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
 						assert.ok(oField2.getVisible() === true, "Field: Value correct");
-						assert.ok(oLabel3.getText() === "dependentfield3 True", "Label: Value correct");
+						assert.equal(oLabel3.getText(), "dependentfield3 True", "Label: Value correct");
 						resolve();
 					}, 1000);
 				}.bind(this));
@@ -290,7 +290,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
-					assert.ok(oLabel.getText() === "Boolean Label using Switch", "Label: Has label text");
+					assert.equal(oLabel.getText(), "Boolean Label using Switch", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Switch"), "Field: Switch control");
 					assert.ok(oField.getAggregation("_field").getState() === false, "Field: Value correct");
@@ -299,14 +299,14 @@ sap.ui.define([
 					var oField2 = this.oEditor.getAggregation("_formContent")[6];
 					assert.ok(oField2.getVisible() === false, "Field: Value correct");
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[7];
-					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+					assert.equal(oLabel3.getText(), "dependentfield3 False", "Label: Value correct");
 
 					oField.getAggregation("_field").setState(true);
 					setTimeout(function () {
 						assert.ok(oField.getAggregation("_field").getState() === true, "Field: Value correct");
 						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
 						assert.ok(oField2.getVisible() === true, "Field: Value correct");
-						assert.ok(oLabel3.getText() === "dependentfield3 True", "Label: Value correct");
+						assert.equal(oLabel3.getText(), "dependentfield3 True", "Label: Value correct");
 						resolve();
 					}, 1000);
 				}.bind(this));
@@ -347,7 +347,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
-					assert.ok(oLabel.getText() === "Boolean Label using Switch", "Label: Has label text");
+					assert.equal(oLabel.getText(), "Boolean Label using Switch", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Switch"), "Field: Switch control");
 					assert.ok(oField.getAggregation("_field").getState() === true, "Field: Value correct");
@@ -356,14 +356,14 @@ sap.ui.define([
 					var oField2 = this.oEditor.getAggregation("_formContent")[6];
 					assert.ok(oField2.getVisible() === true, "Field: Value correct");
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[7];
-					assert.ok(oLabel3.getText() === "dependentfield3 True", "Label: Value correct");
+					assert.equal(oLabel3.getText(), "dependentfield3 True", "Label: Value correct");
 
 					oField.getAggregation("_field").setState(false);
 					setTimeout(function () {
 						assert.ok(oField.getAggregation("_field").getState() === false, "Field: Value correct");
 						assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
 						assert.ok(oField2.getVisible() === false, "Field: Value correct");
-						assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+						assert.equal(oLabel3.getText(), "dependentfield3 False", "Label: Value correct");
 						resolve();
 					}, 1000);
 				}.bind(this));
@@ -402,24 +402,24 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					assert.ok(oField.getAggregation("_field").getValue() === "visible", "Field: Value correct");
+					assert.equal(oField.getAggregation("_field").getValue(), "visible", "Field: Value correct");
 					var oField1 = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
 					var oField2 = this.oEditor.getAggregation("_formContent")[6];
 					assert.ok(oField2.getVisible() === true, "Field: Value correct");
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[7];
-					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+					assert.equal(oLabel3.getText(), "dependentfield3 False", "Label: Value correct");
 
 					oField.getAggregation("_field").setValue("editable");
 					setTimeout(function () {
 						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
 						assert.ok(oField2.getVisible() === false, "Field: Value correct");
-						assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+						assert.equal(oLabel3.getText(), "dependentfield3 False", "Label: Value correct");
 						oField.getAggregation("_field").setValue("label");
 						setTimeout(function () {
 							assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
 							assert.ok(oField2.getVisible() === false, "Field: Value correct");
-							assert.ok(oLabel3.getText() === "dependentfield3 True", "Label: Value correct");
+							assert.equal(oLabel3.getText(), "dependentfield3 True", "Label: Value correct");
 							resolve();
 						}, 1000);
 					}, 1000);
@@ -456,24 +456,24 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					assert.ok(oField.getAggregation("_field").getValue() === "0", "Field: Value correct");
+					assert.equal(oField.getAggregation("_field").getValue(), "0", "Field: Value correct");
 					var oField1 = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
 					var oField2 = this.oEditor.getAggregation("_formContent")[6];
 					assert.ok(oField2.getVisible() === false, "Field: Value correct");
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[7];
-					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+					assert.equal(oLabel3.getText(), "dependentfield3 False", "Label: Value correct");
 
 					oField.getAggregation("_field").setValue("3");
 					setTimeout(function () {
 						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
 						assert.ok(oField2.getVisible() === false, "Field: Value correct");
-						assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+						assert.equal(oLabel3.getText(), "dependentfield3 False", "Label: Value correct");
 						oField.getAggregation("_field").setValue("10");
 						setTimeout(function () {
 							assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
 							assert.ok(oField2.getVisible() === true, "Field: Value correct");
-							assert.ok(oLabel3.getText() === "dependentfield3 True", "Label: Value correct");
+							assert.equal(oLabel3.getText(), "dependentfield3 True", "Label: Value correct");
 							resolve();
 						}, 1000);
 					}, 1000);
@@ -513,24 +513,24 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					assert.ok(oField.getAggregation("_field").getValue() === "4", "Field: Value correct");
+					assert.equal(oField.getAggregation("_field").getValue(), "4", "Field: Value correct");
 					var oField1 = this.oEditor.getAggregation("_formContent")[4];
 					assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
 					var oField2 = this.oEditor.getAggregation("_formContent")[6];
 					assert.ok(oField2.getVisible() === false, "Field: Value correct");
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[7];
-					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+					assert.equal(oLabel3.getText(), "dependentfield3 False", "Label: Value correct");
 
 					oField.getAggregation("_field").setValue("1");
 					setTimeout(function () {
 						assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
 						assert.ok(oField2.getVisible() === false, "Field: Value correct");
-						assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
+						assert.equal(oLabel3.getText(), "dependentfield3 False", "Label: Value correct");
 						oField.getAggregation("_field").setValue("10");
 						setTimeout(function () {
 							assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
 							assert.ok(oField2.getVisible() === true, "Field: Value correct");
-							assert.ok(oLabel3.getText() === "dependentfield3 True", "Label: Value correct");
+							assert.equal(oLabel3.getText(), "dependentfield3 True", "Label: Value correct");
 							resolve();
 						}, 1000);
 					}, 1000);
@@ -577,7 +577,7 @@ sap.ui.define([
 					var oPanel = this.oEditor.getAggregation("_formContent")[0];
 					assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 					var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-					assert.ok(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS") === oPanel.getHeaderText(), "Default group text");
+					assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 					assert.ok(oPanel.getExpanded(), "Group expanded by default");
 					resolve();
 				}.bind(this));
@@ -591,7 +591,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel = this.oEditor.getAggregation("_formContent")[0];
 					assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-					assert.ok(oPanel.getHeaderText() === "no default group", "Group text");
+					assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
 					assert.ok(oPanel.getExpanded(), "Group expanded by default");
 					resolve();
 				}.bind(this));
@@ -605,7 +605,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel = this.oEditor.getAggregation("_formContent")[0];
 					assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-					assert.ok(oPanel.getHeaderText() === "no default group", "Group text");
+					assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
 					assert.ok(!oPanel.getExpanded(), "Group collapsed by setting");
 					resolve();
 				}.bind(this));
@@ -621,11 +621,11 @@ sap.ui.define([
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0];
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-						assert.ok(oPanel.getHeaderText() === "no default group", "Group text");
+						assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
 						var oSubPanel = oPanel.getContent()[0];
 						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(oSubPanel.getExpanded(), "Sub group expanded by default");
-						assert.ok(oSubPanel.getHeaderText() === "Sub group", "Sub group text");
+						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
 						var oMessageStripOfSubPanel = oPanel.getContent()[1];
 						assert.ok(!oMessageStripOfSubPanel.getVisible(), "Message strip of sub group is not visible since sub group is expanded");
 						var oField1 = oSubPanel.getContent()[1].getAggregation("_field");
@@ -633,7 +633,7 @@ sap.ui.define([
 						oSubPanel.setExpanded(false);
 						wait(500).then(function () {
 							assert.ok(oMessageStripOfSubPanel.getVisible(), "Message strip of sub group is visible since sub group is collapsed and has error");
-							assert.ok(oMessageStripOfSubPanel.getText() === oDefaultBundle.getText("EDITOR_GROUP_ERRORS"), "Message strip error text correct");
+							assert.equal(oMessageStripOfSubPanel.getText(), oDefaultBundle.getText("EDITOR_GROUP_ERRORS"), "Message strip error text correct");
 							oSubPanel.setExpanded(true);
 							wait(500).then(function () {
 								assert.ok(!oMessageStripOfSubPanel.getVisible(), "Message strip of sub group is not visible since sub group is expanded again");
@@ -643,7 +643,7 @@ sap.ui.define([
 									oSubPanel.setExpanded(false);
 									wait(500).then(function () {
 										assert.ok(oMessageStripOfSubPanel.getVisible(), "Message strip of sub group is visible since has warning");
-										assert.ok(oMessageStripOfSubPanel.getText() === oDefaultBundle.getText("EDITOR_GROUP_WARNINGS"), "Message strip warning text correct");
+										assert.equal(oMessageStripOfSubPanel.getText(), oDefaultBundle.getText("EDITOR_GROUP_WARNINGS"), "Message strip warning text correct");
 										oSubPanel.setExpanded(true);
 										oField2.setValue("aaa");
 										wait(500).then(function () {
@@ -668,7 +668,7 @@ sap.ui.define([
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0];
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-						assert.ok(oPanel.getHeaderText() === "no default group", "Group text");
+						assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
 						var oSubTab = oPanel.getContent()[1];
 						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub tab bar");
 						assert.ok(oSubTab.getExpanded(), "Sub group expanded by default");
@@ -696,19 +696,19 @@ sap.ui.define([
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0];
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-						assert.ok(oPanel.getHeaderText() === "no default group", "Group text");
+						assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
 						var oMessageStripOfPanel = oPanel._messageStrip;
 						assert.ok(!oMessageStripOfPanel.getVisible(), "Message strip of group is not visible since group is expanded");
 						var oSubPanel = oPanel.getContent()[0];
 						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(oSubPanel.getExpanded(), "Sub group expanded by default");
-						assert.ok(oSubPanel.getHeaderText() === "Sub group", "Sub group text");
+						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
 						var oField1 = oSubPanel.getContent()[1].getAggregation("_field");
 						var oField2 = oSubPanel.getContent()[3].getAggregation("_field");
 						oPanel.setExpanded(false);
 						wait().then(function () {
 							assert.ok(oMessageStripOfPanel.getVisible(), "Message strip of group is visible since group is collapsed and has error");
-							assert.ok(oMessageStripOfPanel.getText() === oDefaultBundle.getText("EDITOR_GROUP_ERRORS"), "Message strip error text correct");
+							assert.equal(oMessageStripOfPanel.getText(), oDefaultBundle.getText("EDITOR_GROUP_ERRORS"), "Message strip error text correct");
 							oPanel.setExpanded(true);
 							wait(500).then(function () {
 								assert.ok(!oMessageStripOfPanel.getVisible(), "Message strip of group is not visible since group is expanded again");
@@ -718,7 +718,7 @@ sap.ui.define([
 									oPanel.setExpanded(false);
 									wait().then(function () {
 										assert.ok(oMessageStripOfPanel.getVisible(), "Message strip of group is visible since has warning");
-										assert.ok(oMessageStripOfPanel.getText() === oDefaultBundle.getText("EDITOR_GROUP_WARNINGS"), "Message strip warning text correct");
+										assert.equal(oMessageStripOfPanel.getText(), oDefaultBundle.getText("EDITOR_GROUP_WARNINGS"), "Message strip warning text correct");
 										oPanel.setExpanded(true);
 										oField2.setValue("aaa");
 										wait(500).then(function () {
@@ -775,17 +775,17 @@ sap.ui.define([
 						var oPanel = this.oEditor.getAggregation("_formContent")[0];
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-						assert.ok(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS") === oPanel.getHeaderText(), "Default group text");
+						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
-						assert.ok(oPanel.getContent().length === 3, "Default Panel contains 3 items");
+						assert.equal(oPanel.getContent().length, 3, "Default Panel contains 3 items");
 						var oSubPanel = oPanel.getContent()[0];
 						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(!oSubPanel.getExpanded(), "Group collapsed by setting");
-						assert.ok(oSubPanel.getHeaderText() === "Sub group", "Sub group text");
-						assert.ok(oSubPanel.getContent().length === 2, "Sub group contains 2 items");
-						assert.ok(oSubPanel.getContent()[0].getItems()[0].getText() === "stringParameter", "Lable of item 1 of Sub Group correct");
+						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
+						assert.equal(oSubPanel.getContent().length, 2, "Sub group contains 2 items");
+						assert.equal(oSubPanel.getContent()[0].getItems()[0].getText(), "stringParameter", "Lable of item 1 of Sub Group correct");
 						assert.ok(oSubPanel.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Sub Group is a String field");
-						assert.ok(oSubPanel.getContent()[1].getAggregation("_field").getValue() === "stringParameter Value", "Value of item 2 of Sub Group correct");
+						assert.equal(oSubPanel.getContent()[1].getAggregation("_field").getValue(), "stringParameter Value", "Value of item 2 of Sub Group correct");
 						assert.ok(oPanel.getContent()[1].isA("sap.m.MessageStrip"), "Item 2 of Default Panel is a message strip");
 						assert.ok(oPanel.getContent()[2].isA("sap.m.MessageStrip"), "Item 3 of Default Panel is a message strip");
 						resolve();
@@ -803,26 +803,26 @@ sap.ui.define([
 						var oPanel = this.oEditor.getAggregation("_formContent")[0];
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-						assert.ok(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS") === oPanel.getHeaderText(), "Default group text");
+						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
-						assert.ok(oPanel.getContent().length === 4, "Default Panel contains 4 items");
+						assert.equal(oPanel.getContent().length, 4, "Default Panel contains 4 items");
 						var oSubPanel1 = oPanel.getContent()[0];
 						assert.ok(oSubPanel1.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(!oSubPanel1.getExpanded(), "Group collapsed by setting");
-						assert.ok(oSubPanel1.getHeaderText() === "Sub group 1", "Sub group 1 text");
-						assert.ok(oSubPanel1.getContent().length === 2, "Sub group contains 2 items");
-						assert.ok(oSubPanel1.getContent()[0].getItems()[0].getText() === "stringParameter1", "Lable of item 1 of Sub Group 1 correct");
+						assert.equal(oSubPanel1.getHeaderText(), "Sub group 1", "Sub group 1 text");
+						assert.equal(oSubPanel1.getContent().length, 2, "Sub group contains 2 items");
+						assert.equal(oSubPanel1.getContent()[0].getItems()[0].getText(), "stringParameter1", "Lable of item 1 of Sub Group 1 correct");
 						assert.ok(oSubPanel1.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Sub Group 1 is a String field");
-						assert.ok(oSubPanel1.getContent()[1].getAggregation("_field").getValue() === "stringParameter1 Value", "Value of item 2 of Sub Group 1 correct");
+						assert.equal(oSubPanel1.getContent()[1].getAggregation("_field").getValue(), "stringParameter1 Value", "Value of item 2 of Sub Group 1 correct");
 						assert.ok(oPanel.getContent()[1].isA("sap.m.MessageStrip"), "Item 2 of Default Panel is a message strip");
 						var oSubPanel2 = oPanel.getContent()[2];
 						assert.ok(oSubPanel2.isA("sap.m.Panel"), "Item 3 of Default Panel is sub panel");
 						assert.ok(oSubPanel2.getExpanded(), "Group expended by default");
-						assert.ok(oSubPanel2.getHeaderText() === "Sub group 3", "Sub group 3 text");
-						assert.ok(oSubPanel2.getContent().length === 3, "Sub group 3 contains 3 items");
-						assert.ok(oSubPanel2.getContent()[0].getItems()[0].getText() === "stringParameter2", "Lable of item 1 of Sub Group 3 correct");
+						assert.equal(oSubPanel2.getHeaderText(), "Sub group 3", "Sub group 3 text");
+						assert.equal(oSubPanel2.getContent().length, 3, "Sub group 3 contains 3 items");
+						assert.equal(oSubPanel2.getContent()[0].getItems()[0].getText(), "stringParameter2", "Lable of item 1 of Sub Group 3 correct");
 						assert.ok(oSubPanel2.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Sub Group 3 is a String field");
-						assert.ok(oSubPanel2.getContent()[1].getAggregation("_field").getValue() === "stringParameter2 Value", "Value of item 3 of Sub Group 3 correct");
+						assert.equal(oSubPanel2.getContent()[1].getAggregation("_field").getValue(), "stringParameter2 Value", "Value of item 3 of Sub Group 3 correct");
 						assert.ok(oSubPanel2.getContent()[2].isA("sap.m.MessageStrip"), "Item 3 of Sub Group 3 is a message strip");
 						assert.ok(oPanel.getContent()[3].isA("sap.m.MessageStrip"), "Item 4 of Default Panel is a message strip");
 						resolve();
@@ -840,29 +840,29 @@ sap.ui.define([
 						var oPanel = this.oEditor.getAggregation("_formContent")[0];
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-						assert.ok(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS") === oPanel.getHeaderText(), "Default group text");
+						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
-						assert.ok(oPanel.getContent().length === 6, "Default Panel contains 6 items");
-						assert.ok(oPanel.getContent()[0].getItems()[0].getText() === "stringParameter", "Lable of item 1 of Group correct");
+						assert.equal(oPanel.getContent().length, 6, "Default Panel contains 6 items");
+						assert.equal(oPanel.getContent()[0].getItems()[0].getText(), "stringParameter", "Lable of item 1 of Group correct");
 						assert.ok(oPanel.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Group is a String field");
-						assert.ok(oPanel.getContent()[1].getAggregation("_field").getValue() === "stringParameter Value", "Value of item 2 of Group correct");
+						assert.equal(oPanel.getContent()[1].getAggregation("_field").getValue(), "stringParameter Value", "Value of item 2 of Group correct");
 						var oSubPanel1 = oPanel.getContent()[2];
 						assert.ok(oSubPanel1.isA("sap.m.Panel"), "Item 3 of Default Panel is sub panel");
 						assert.ok(!oSubPanel1.getExpanded(), "Group collapsed by setting");
-						assert.ok(oSubPanel1.getHeaderText() === "Sub group 2", "Sub group 2 text");
-						assert.ok(oSubPanel1.getContent().length === 2, "Sub group contains 2 items");
-						assert.ok(oSubPanel1.getContent()[0].getItems()[0].getText() === "stringParameter1", "Lable of item 1 of Sub Group 2 correct");
+						assert.equal(oSubPanel1.getHeaderText(), "Sub group 2", "Sub group 2 text");
+						assert.equal(oSubPanel1.getContent().length, 2, "Sub group contains 2 items");
+						assert.equal(oSubPanel1.getContent()[0].getItems()[0].getText(), "stringParameter1", "Lable of item 1 of Sub Group 2 correct");
 						assert.ok(oSubPanel1.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Sub Group 2 is a String field");
-						assert.ok(oSubPanel1.getContent()[1].getAggregation("_field").getValue() === "stringParameter1 Value", "Value of item 2 of Sub Group 2 correct");
+						assert.equal(oSubPanel1.getContent()[1].getAggregation("_field").getValue(), "stringParameter1 Value", "Value of item 2 of Sub Group 2 correct");
 						assert.ok(oPanel.getContent()[3].isA("sap.m.MessageStrip"), "Item 4 of Default Panel is a message strip");
 						var oSubPanel2 = oPanel.getContent()[4];
 						assert.ok(oSubPanel2.isA("sap.m.Panel"), "Item 5 of Default Panel is sub panel");
 						assert.ok(oSubPanel2.getExpanded(), "Group expended by default");
-						assert.ok(oSubPanel2.getHeaderText() === "Sub group 3", "Sub group 3 text");
-						assert.ok(oSubPanel2.getContent().length === 3, "Sub group 3 contains 3 items");
-						assert.ok(oSubPanel2.getContent()[0].getItems()[0].getText() === "stringParameter2", "Lable of item 1 of Sub Group 3 correct");
+						assert.equal(oSubPanel2.getHeaderText(), "Sub group 3", "Sub group 3 text");
+						assert.equal(oSubPanel2.getContent().length, 3, "Sub group 3 contains 3 items");
+						assert.equal(oSubPanel2.getContent()[0].getItems()[0].getText(), "stringParameter2", "Lable of item 1 of Sub Group 3 correct");
 						assert.ok(oSubPanel2.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Sub Group 3 is a String field");
-						assert.ok(oSubPanel2.getContent()[1].getAggregation("_field").getValue() === "stringParameter2 Value", "Value of item 3 of Sub Group 3 correct");
+						assert.equal(oSubPanel2.getContent()[1].getAggregation("_field").getValue(), "stringParameter2 Value", "Value of item 3 of Sub Group 3 correct");
 						assert.ok(oSubPanel2.getContent()[2].isA("sap.m.MessageStrip"), "Item 3 of Sub Group 3 is a message strip");
 						assert.ok(oPanel.getContent()[5].isA("sap.m.MessageStrip"), "Item 6 of Default Panel is a message strip");
 						resolve();
@@ -911,18 +911,18 @@ sap.ui.define([
 						var oPanel = this.oEditor.getAggregation("_formContent")[0];
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-						assert.ok(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS") === oPanel.getHeaderText(), "Default group text");
+						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
-						assert.ok(oPanel.getContent().length === 3, "Default Panel contains 3 items");
+						assert.equal(oPanel.getContent().length, 3, "Default Panel contains 3 items");
 						var oSubGroup = oPanel.getContent()[1];
 						assert.ok(oSubGroup.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub Tab");
 						assert.ok(!oSubGroup.getExpanded(), "Group collapsed by setting");
-						assert.ok(oSubGroup.getItems().length === 1, "Icon tab bar contains 1 icon tab filter.");
-						assert.ok(oSubGroup.getItems()[0].getText() === "Sub group", "Find 'Sub group' tab filter.");
-						assert.ok(oSubGroup.getItems()[0].getContent().length === 2, "Icon tab filter contains 2 elements.");
-						assert.ok(oSubGroup.getItems()[0].getContent()[0].getItems()[0].getText() === "stringParameter", "Lable of item 1 of Sub Group correct");
+						assert.equal(oSubGroup.getItems().length, 1, "Icon tab bar contains 1 icon tab filter.");
+						assert.equal(oSubGroup.getItems()[0].getText(), "Sub group", "Find 'Sub group' tab filter.");
+						assert.equal(oSubGroup.getItems()[0].getContent().length, 2, "Icon tab filter contains 2 elements.");
+						assert.equal(oSubGroup.getItems()[0].getContent()[0].getItems()[0].getText(), "stringParameter", "Lable of item 1 of Sub Group correct");
 						assert.ok(oSubGroup.getItems()[0].getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Sub Group is a String field");
-						assert.ok(oSubGroup.getItems()[0].getContent()[1].getAggregation("_field").getValue() === "stringParameter Value", "Value of item 2 of Sub Group correct");
+						assert.equal(oSubGroup.getItems()[0].getContent()[1].getAggregation("_field").getValue(), "stringParameter Value", "Value of item 2 of Sub Group correct");
 						assert.ok(oPanel.getContent()[0].isA("sap.m.MessageStrip"), "Item 2 of Default Panel is a message strip");
 						resolve();
 					}.bind(this));
@@ -939,25 +939,25 @@ sap.ui.define([
 						var oPanel = this.oEditor.getAggregation("_formContent")[0];
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-						assert.ok(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS") === oPanel.getHeaderText(), "Default group text");
+						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
-						assert.ok(oPanel.getContent().length === 3, "Default Panel contains 4 items");
+						assert.equal(oPanel.getContent().length, 3, "Default Panel contains 4 items");
 						var oSubTab = oPanel.getContent()[1];
 						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub tab");
 						assert.ok(oSubTab.getExpanded(), "Tab expanded by setting");
-						assert.ok(oSubTab.getItems().length === 3, "Icon tab bar contains 1 icon tab filter.");
+						assert.equal(oSubTab.getItems().length, 3, "Icon tab bar contains 1 icon tab filter.");
 						var oSubTabFilter = oSubTab.getItems()[0];
-						assert.ok(oSubTabFilter.getText() === "Sub group 1", "Find 'Sub group 1' tab filter.");
-						assert.ok(oSubTabFilter.getContent().length === 2, "Icon tab filter contains 2 elements.");
-						assert.ok(oSubTabFilter.getContent()[0].getItems()[0].getText() === "stringParameter1", "Lable of item 1 of Sub Group correct");
+						assert.equal(oSubTabFilter.getText(), "Sub group 1", "Find 'Sub group 1' tab filter.");
+						assert.equal(oSubTabFilter.getContent().length, 2, "Icon tab filter contains 2 elements.");
+						assert.equal(oSubTabFilter.getContent()[0].getItems()[0].getText(), "stringParameter1", "Lable of item 1 of Sub Group correct");
 						assert.ok(oSubTabFilter.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Sub Group is a String field");
-						assert.ok(oSubTabFilter.getContent()[1].getAggregation("_field").getValue() === "stringParameter1 Value", "Value of item 2 of Sub Group correct");
+						assert.equal(oSubTabFilter.getContent()[1].getAggregation("_field").getValue(), "stringParameter1 Value", "Value of item 2 of Sub Group correct");
 						var oSubTabFilter3 = oSubTab.getItems()[2];
-						assert.ok(oSubTabFilter3.getText() === "Sub group 3", "Find 'Sub group 3' tab filter.");
-						assert.ok(oSubTabFilter3.getContent().length === 2, "Icon tab filter contains 2 elements.");
-						assert.ok(oSubTabFilter3.getContent()[0].getItems()[0].getText() === "stringParameter2", "Lable of item 1 of Sub Group correct");
+						assert.equal(oSubTabFilter3.getText(), "Sub group 3", "Find 'Sub group 3' tab filter.");
+						assert.equal(oSubTabFilter3.getContent().length, 2, "Icon tab filter contains 2 elements.");
+						assert.equal(oSubTabFilter3.getContent()[0].getItems()[0].getText(), "stringParameter2", "Lable of item 1 of Sub Group correct");
 						assert.ok(oSubTabFilter3.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Sub Group is a String field");
-						assert.ok(oSubTabFilter3.getContent()[1].getAggregation("_field").getValue() === "stringParameter2 Value", "Value of item 2 of Sub Group correct");
+						assert.equal(oSubTabFilter3.getContent()[1].getAggregation("_field").getValue(), "stringParameter2 Value", "Value of item 2 of Sub Group correct");
 						assert.ok(oPanel.getContent()[0].isA("sap.m.MessageStrip"), "Item 2 of Default Panel is a message strip");
 						resolve();
 					}.bind(this));
@@ -974,28 +974,28 @@ sap.ui.define([
 						var oPanel = this.oEditor.getAggregation("_formContent")[0];
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
-						assert.ok(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS") === oPanel.getHeaderText(), "Default group text");
+						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
-						assert.ok(oPanel.getContent().length === 5, "Default Panel contains 6 items");
-						assert.ok(oPanel.getContent()[0].getItems()[0].getText() === "stringParameter", "Lable of item 1 of Group correct");
+						assert.equal(oPanel.getContent().length, 5, "Default Panel contains 6 items");
+						assert.equal(oPanel.getContent()[0].getItems()[0].getText(), "stringParameter", "Lable of item 1 of Group correct");
 						assert.ok(oPanel.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Group is a String field");
-						assert.ok(oPanel.getContent()[1].getAggregation("_field").getValue() === "stringParameter Value", "Value of item 2 of Group correct");
+						assert.equal(oPanel.getContent()[1].getAggregation("_field").getValue(), "stringParameter Value", "Value of item 2 of Group correct");
 						var oSubTab = oPanel.getContent()[3];
 						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 3 of Default Panel is sub panel");
 						assert.ok(oSubTab.getExpanded(), "Group collapsed by setting");
-						assert.ok(oSubTab.getItems().length === 2, "Icon tab bar contains 1 icon tab filter.");
+						assert.equal(oSubTab.getItems().length, 2, "Icon tab bar contains 1 icon tab filter.");
 						var oSubTabFilter = oSubTab.getItems()[0];
-						assert.ok(oSubTabFilter.getText() === "Sub group 2", "Find 'Sub group 1' tab filter.");
-						assert.ok(oSubTabFilter.getContent().length === 2, "Icon tab filter contains 2 elements.");
-						assert.ok(oSubTabFilter.getContent()[0].getItems()[0].getText() === "stringParameter1", "Lable of item 1 of Sub Group correct");
+						assert.equal(oSubTabFilter.getText(), "Sub group 2", "Find 'Sub group 1' tab filter.");
+						assert.equal(oSubTabFilter.getContent().length, 2, "Icon tab filter contains 2 elements.");
+						assert.equal(oSubTabFilter.getContent()[0].getItems()[0].getText(), "stringParameter1", "Lable of item 1 of Sub Group correct");
 						assert.ok(oSubTabFilter.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Sub Group is a String field");
-						assert.ok(oSubTabFilter.getContent()[1].getAggregation("_field").getValue() === "stringParameter1 Value", "Value of item 2 of Sub Group correct");
+						assert.equal(oSubTabFilter.getContent()[1].getAggregation("_field").getValue(), "stringParameter1 Value", "Value of item 2 of Sub Group correct");
 						var oSubTabFilter3 = oSubTab.getItems()[1];
-						assert.ok(oSubTabFilter3.getText() === "Sub group 3", "Find 'Sub group 3' tab filter.");
-						assert.ok(oSubTabFilter3.getContent().length === 2, "Icon tab filter contains 2 elements.");
-						assert.ok(oSubTabFilter3.getContent()[0].getItems()[0].getText() === "stringParameter2", "Lable of item 1 of Sub Group correct");
+						assert.equal(oSubTabFilter3.getText(), "Sub group 3", "Find 'Sub group 3' tab filter.");
+						assert.equal(oSubTabFilter3.getContent().length, 2, "Icon tab filter contains 2 elements.");
+						assert.equal(oSubTabFilter3.getContent()[0].getItems()[0].getText(), "stringParameter2", "Lable of item 1 of Sub Group correct");
 						assert.ok(oSubTabFilter3.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Sub Group is a String field");
-						assert.ok(oSubTabFilter3.getContent()[1].getAggregation("_field").getValue() === "stringParameter2 Value", "Value of item 2 of Sub Group correct");
+						assert.equal(oSubTabFilter3.getContent()[1].getAggregation("_field").getValue(), "stringParameter2 Value", "Value of item 2 of Sub Group correct");
 						assert.ok(oPanel.getContent()[2].isA("sap.m.MessageStrip"), "Item 2 of Default Panel is a message strip");
 						resolve();
 					}.bind(this));
@@ -1068,7 +1068,7 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					wait().then(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
-						assert.ok(oLabel.getText() === "Date Range", "Label: Has label text");
+						assert.equal(oLabel.getText(), "Date Range", "Label: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 						assert.ok(oField.getModel("currentSettings"), "Field: model currentSettings");
 						assert.ok(oField.getModel("items"), "Field: model items");
@@ -1121,7 +1121,7 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					wait().then(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
-						assert.ok(oLabel.getText() === "Card Title", "Label: Has label text");
+						assert.equal(oLabel.getText(), "Card Title", "Label: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 						assert.ok(oField.getModel("currentSettings"), "Field: model currentSettings");
 						assert.ok(oField.getModel("items"), "Field: model items");
@@ -1135,12 +1135,12 @@ sap.ui.define([
 						assert.ok(oControl.getModel("i18n"), "Input: model i18n");
 						assert.ok(oControl.getModel("context"), "Input: model context");
 						assert.ok(oControl.getModel("contextflat"), "Input: contextflat context");
-						assert.ok(oControl.getValue() === "Card Title Default", "Input: Value");
+						assert.equal(oControl.getValue(), "Card Title Default", "Input: Value");
 						oControl.setValue("Card Title New");
 						wait().then(function () {
-							assert.ok(oControl.getValue() === "Card Title New", "Input: Value changed");
+							assert.equal(oControl.getValue(), "Card Title New", "Input: Value changed");
 							var oSettings = oControl.getModel("currentSettings");
-							assert.ok(oSettings.getProperty("/form/items/cardTitle/value") === "Card Title New", "Settings: Value changed");
+							assert.equal(oSettings.getProperty("/form/items/cardTitle/value"), "Card Title New", "Settings: Value changed");
 							resolve();
 						});
 					});

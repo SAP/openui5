@@ -204,7 +204,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
@@ -227,24 +227,24 @@ sap.ui.define([
 					var oSelectionColumn = oTable.getColumns()[0];
 					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
 					var oColumns = oTable.getColumns();
-					assert.ok(oColumns.length === 8, "Table: column number is 8");
-					assert.ok(oColumns[1].getLabel().getText() === "Key", "Table: column 'Key'");
-					assert.ok(oColumns[2].getLabel().getText() === "Icon", "Table: column 'Icon'");
-					assert.ok(oColumns[3].getLabel().getText() === "Text", "Table: column 'Text'");
-					assert.ok(oColumns[4].getLabel().getText() === "URL Link", "Table: column 'URL Link'");
-					assert.ok(oColumns[5].getLabel().getText() === "Editable", "Table: column 'Editable'");
-					assert.ok(oColumns[6].getLabel().getText() === "Integer", "Table: column 'Integer'");
-					assert.ok(oColumns[7].getLabel().getText() === "Number", "Table: column 'Number'");
+					assert.equal(oColumns.length, 8, "Table: column number is 8");
+					assert.equal(oColumns[1].getLabel().getText(), "Key", "Table: column 'Key'");
+					assert.equal(oColumns[2].getLabel().getText(), "Icon", "Table: column 'Icon'");
+					assert.equal(oColumns[3].getLabel().getText(), "Text", "Table: column 'Text'");
+					assert.equal(oColumns[4].getLabel().getText(), "URL Link", "Table: column 'URL Link'");
+					assert.equal(oColumns[5].getLabel().getText(), "Editable", "Table: column 'Editable'");
+					assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
+					assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
 					assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					oTable.setSelectedIndex(0);
 					oTable.fireRowSelectionChange({
 						rowIndex: 0,
 						userInteraction: true
 					});
-					assert.ok(oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndices Value after table selection change");
+					assert.equal(oTable.getSelectedIndices()[0], 0, "Table: SelectedIndices Value after table selection change");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value not change after table selection change");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
@@ -254,7 +254,7 @@ sap.ui.define([
 						rowIndex: 3,
 						userInteraction: true
 					});
-					assert.ok(oTable.getSelectedIndices()[0] === 3, "Table: SelectedIndices Value after table selection change again");
+					assert.equal(oTable.getSelectedIndices()[0], 3, "Table: SelectedIndices Value after table selection change again");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value not change after table selection change again");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
@@ -264,8 +264,8 @@ sap.ui.define([
 						rowIndex: -1,
 						userInteraction: true
 					});
-					assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value after remove table selection");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value after remove table selection");
+					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value after remove table selection");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value after remove table selection");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: Value not change after remove table selection");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
@@ -274,12 +274,12 @@ sap.ui.define([
 					oSelectAllSelectionsButton.firePress();
 					assert.ok(!oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar disabled");
 					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
-					assert.ok(oTable.getSelectedIndices().length === 8, "Table: Select All selections working");
+					assert.equal(oTable.getSelectedIndices().length, 8, "Table: Select All selections working");
 
 					oClearAllSelectionsButton.firePress();
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: Clear All selections working");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: Clear All selections working");
 
 					var oRow1 = oTable.getRows()[0];
 					var oSelectionCell1 = oRow1.getCells()[0];
@@ -290,8 +290,8 @@ sap.ui.define([
 						selected: true
 					});
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
-					assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 					oSelectionCell1.setSelected(false);
@@ -299,8 +299,8 @@ sap.ui.define([
 						selected: false
 					});
 					assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
-					assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after deselecting");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after deselecting");
+					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after deselecting");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after deselecting");
 					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
@@ -313,8 +313,8 @@ sap.ui.define([
 						selected: true
 					});
 					assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
-					assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sapui5.hana.ondemand.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 
@@ -328,13 +328,13 @@ sap.ui.define([
 					var oField3 = this.oEditor.getAggregation("_formContent")[6];
 					wait().then(function () {
 						assert.ok(oLabel2.isA("sap.m.Label"), "Label 2: Form content contains a Label");
-						assert.ok(oLabel2.getText() === "Object properties defined: value from requested file", "Label 2: Has label text");
+						assert.equal(oLabel2.getText(), "Object properties defined: value from requested file", "Label 2: Has label text");
 						assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
 						assert.ok(!oField2._getCurrentProperty("value"), "Field 2: Value");
 						oTable = oField2.getAggregation("_field");
 						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 2: Control is Table");
-						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-						assert.ok(oTable.getBinding().getCount() === 4, "Table: value length is 4");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), 4, "Table: value length is 4");
 						assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 						oSelectionColumn = oTable.getColumns()[0];
 						oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
@@ -373,8 +373,8 @@ sap.ui.define([
 							selected: true
 						});
 						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
-						assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-						assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+						assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 						assert.ok(deepEqual(cleanUUID(oField2._getCurrentProperty("value")), {"text": "text1req", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept", "_dt": {"_editable": false} }), "Field 2: DT Value changed after selecting");
 						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 						oSelectionCell1.setSelected(false);
@@ -382,8 +382,8 @@ sap.ui.define([
 							selected: false
 						});
 						assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
-						assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after deselecting");
-						assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after deselecting");
+						assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after deselecting");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
 						assert.ok(!oField2._getCurrentProperty("value"), "Field 2: DT Value removed after deselecting");
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
@@ -396,8 +396,8 @@ sap.ui.define([
 							selected: true
 						});
 						assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
-						assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-						assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+						assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 						assert.ok(deepEqual(cleanUUID(oField2._getCurrentProperty("value")), { "text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false} }), "Field 2: DT Value changed after selecting");
 						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 						oRemoveValueButton.firePress();
@@ -406,13 +406,13 @@ sap.ui.define([
 
 						wait().then(function () {
 							assert.ok(oLabel3.isA("sap.m.Label"), "Label 3: Form content contains a Label");
-							assert.ok(oLabel3.getText() === "Object properties defined: value from OData Request", "Label 3: Has label text");
+							assert.equal(oLabel3.getText(), "Object properties defined: value from OData Request", "Label 3: Has label text");
 							assert.ok(oField3.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 3: Object Field");
 							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: Value");
 							oTable = oField3.getAggregation("_field");
 							assert.ok(oTable.isA("sap.ui.table.Table"), "Field 3: Control is Table");
-							assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-							assert.ok(oTable.getBinding().getCount() === 6, "Table: value length is 6");
+							assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+							assert.equal(oTable.getBinding().getCount(), 6, "Table: value length is 6");
 							assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 							oSelectionColumn = oTable.getColumns()[0];
 							oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
@@ -451,8 +451,8 @@ sap.ui.define([
 								selected: true
 							});
 							assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
-							assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-							assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+							assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "a", "CompanyName": "A Company", "Country": "Country 1", "City": "City 1", "Address": "Address 1", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 							oSelectionCell1.setSelected(false);
@@ -460,8 +460,8 @@ sap.ui.define([
 								selected: false
 							});
 							assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
-							assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after deselecting");
-							assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after deselecting");
+							assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after deselecting");
+							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
 							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: DT Value removed after deselecting");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
@@ -474,8 +474,8 @@ sap.ui.define([
 								selected: true
 							});
 							assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
-							assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-							assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+							assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "d", "CompanyName": "C2 Company", "Country": "Country 4", "City": "City 4", "Address": "Address 4", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change again");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 							oRemoveValueButton.firePress();
@@ -532,7 +532,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
@@ -555,24 +555,24 @@ sap.ui.define([
 					var oSelectionColumn = oTable.getColumns()[0];
 					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
 					var oColumns = oTable.getColumns();
-					assert.ok(oColumns.length === 8, "Table: column number is 8");
-					assert.ok(oColumns[1].getLabel().getText() === "Key", "Table: column 'Key'");
-					assert.ok(oColumns[2].getLabel().getText() === "Icon", "Table: column 'Icon'");
-					assert.ok(oColumns[3].getLabel().getText() === "Text", "Table: column 'Text'");
-					assert.ok(oColumns[4].getLabel().getText() === "URL Link", "Table: column 'URL Link'");
-					assert.ok(oColumns[5].getLabel().getText() === "Editable", "Table: column 'Editable'");
-					assert.ok(oColumns[6].getLabel().getText() === "Integer", "Table: column 'Integer'");
-					assert.ok(oColumns[7].getLabel().getText() === "Number", "Table: column 'Number'");
+					assert.equal(oColumns.length, 8, "Table: column number is 8");
+					assert.equal(oColumns[1].getLabel().getText(), "Key", "Table: column 'Key'");
+					assert.equal(oColumns[2].getLabel().getText(), "Icon", "Table: column 'Icon'");
+					assert.equal(oColumns[3].getLabel().getText(), "Text", "Table: column 'Text'");
+					assert.equal(oColumns[4].getLabel().getText(), "URL Link", "Table: column 'URL Link'");
+					assert.equal(oColumns[5].getLabel().getText(), "Editable", "Table: column 'Editable'");
+					assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
+					assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
 					assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					oTable.setSelectedIndex(0);
 					oTable.fireRowSelectionChange({
 						rowIndex: 0,
 						userInteraction: true
 					});
-					assert.ok(oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndices Value after table selection change");
+					assert.equal(oTable.getSelectedIndices()[0], 0, "Table: SelectedIndices Value after table selection change");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: DT Value not change after table selection change");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
@@ -582,7 +582,7 @@ sap.ui.define([
 						rowIndex: 3,
 						userInteraction: true
 					});
-					assert.ok(oTable.getSelectedIndices()[0] === 3, "Table: SelectedIndices Value after table selection change again");
+					assert.equal(oTable.getSelectedIndices()[0], 3, "Table: SelectedIndices Value after table selection change again");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: DT Value not change after table selection change again");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
@@ -592,8 +592,8 @@ sap.ui.define([
 						rowIndex: -1,
 						userInteraction: true
 					});
-					assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value after remove table selection");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value after remove table selection");
+					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value after remove table selection");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value after remove table selection");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: Value not change after remove table selection");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
@@ -602,12 +602,12 @@ sap.ui.define([
 					oSelectAllSelectionsButton.firePress();
 					assert.ok(!oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar disabled");
 					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
-					assert.ok(oTable.getSelectedIndices().length === 8, "Table: Select All selections working");
+					assert.equal(oTable.getSelectedIndices().length, 8, "Table: Select All selections working");
 
 					oClearAllSelectionsButton.firePress();
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: Clear All selections working");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: Clear All selections working");
 
 					var oRow1 = oTable.getRows()[0];
 					var oSelectionCell1 = oRow1.getCells()[0];
@@ -618,8 +618,8 @@ sap.ui.define([
 						selected: true
 					});
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
-					assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 					oSelectionCell1.setSelected(false);
@@ -627,8 +627,8 @@ sap.ui.define([
 						selected: false
 					});
 					assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
-					assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after deselecting");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after deselecting");
+					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after deselecting");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after deselecting");
 					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
@@ -641,8 +641,8 @@ sap.ui.define([
 						selected: true
 					});
 					assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
-					assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sapui5.hana.ondemand.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 
@@ -656,13 +656,13 @@ sap.ui.define([
 					var oField3 = this.oEditor.getAggregation("_formContent")[6];
 					wait().then(function () {
 						assert.ok(oLabel2.isA("sap.m.Label"), "Label 2: Form content contains a Label");
-						assert.ok(oLabel2.getText() === "Object properties defined: value from requested file", "Label 2: Has label text");
+						assert.equal(oLabel2.getText(), "Object properties defined: value from requested file", "Label 2: Has label text");
 						assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
 						assert.ok(deepEqual(oField2._getCurrentProperty("value"), {}), "Field 2: Value");
 						oTable = oField2.getAggregation("_field");
 						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 2: Control is Table");
-						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-						assert.ok(oTable.getBinding().getCount() === 4, "Table: value length is 4");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), 4, "Table: value length is 4");
 						assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 						oSelectionColumn = oTable.getColumns()[0];
 						oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
@@ -701,8 +701,8 @@ sap.ui.define([
 							selected: true
 						});
 						assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
-						assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-						assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+						assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 						assert.ok(deepEqual(cleanUUID(oField2._getCurrentProperty("value")), { "text": "text1req", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept", "_dt": {"_editable": false} }), "Field 2: DT Value changed after selecting");
 						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 						oSelectionCell1.setSelected(false);
@@ -710,8 +710,8 @@ sap.ui.define([
 							selected: false
 						});
 						assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
-						assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after deselecting");
-						assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after deselecting");
+						assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after deselecting");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
 						assert.ok(!oField._getCurrentProperty("value"), "Field 2: DT Value removed after deselecting");
 						assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
@@ -724,8 +724,8 @@ sap.ui.define([
 							selected: true
 						});
 						assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
-						assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-						assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+						assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+						assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 						assert.ok(deepEqual(cleanUUID(oField2._getCurrentProperty("value")), { "text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false} }), "Field 2: DT Value changed after selecting");
 						assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 						oRemoveValueButton.firePress();
@@ -734,13 +734,13 @@ sap.ui.define([
 
 						wait().then(function () {
 							assert.ok(oLabel3.isA("sap.m.Label"), "Label 3: Form content contains a Label");
-							assert.ok(oLabel3.getText() === "Object properties defined: value from OData Request", "Label 3: Has label text");
+							assert.equal(oLabel3.getText(), "Object properties defined: value from OData Request", "Label 3: Has label text");
 							assert.ok(oField3.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 3: Object Field");
 							assert.ok(deepEqual(oField3._getCurrentProperty("value"), {}), "Field 3: Value");
 							oTable = oField3.getAggregation("_field");
 							assert.ok(oTable.isA("sap.ui.table.Table"), "Field 3: Control is Table");
-							assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-							assert.ok(oTable.getBinding().getCount() === 6, "Table: value length is 6");
+							assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+							assert.equal(oTable.getBinding().getCount(), 6, "Table: value length is 6");
 							assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 							oSelectionColumn = oTable.getColumns()[0];
 							oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
@@ -779,8 +779,8 @@ sap.ui.define([
 								selected: true
 							});
 							assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
-							assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-							assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+							assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "a", "CompanyName": "A Company", "Country": "Country 1", "City": "City 1", "Address": "Address 1", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 							oSelectionCell1.setSelected(false);
@@ -788,8 +788,8 @@ sap.ui.define([
 								selected: false
 							});
 							assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
-							assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after deselecting");
-							assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after deselecting");
+							assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after deselecting");
+							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
 							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: DT Value removed after deselecting");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
@@ -802,8 +802,8 @@ sap.ui.define([
 								selected: true
 							});
 							assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
-							assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-							assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+							assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "d", "CompanyName": "C2 Company", "Country": "Country 4", "City": "City 4", "Address": "Address 4", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change again");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 							oRemoveValueButton.firePress();
@@ -851,7 +851,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {}), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
@@ -859,10 +859,10 @@ sap.ui.define([
 					var oSelectionColumn = oTable.getColumns()[0];
 					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 7, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 7, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(!oAddButton.getVisible(), "Table toolbar: add button not visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
@@ -884,7 +884,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
@@ -907,24 +907,24 @@ sap.ui.define([
 					var oSelectionColumn = oTable.getColumns()[0];
 					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
 					var oColumns = oTable.getColumns();
-					assert.ok(oColumns.length === 8, "Table: column number is 8");
-					assert.ok(oColumns[1].getLabel().getText() === "Key", "Table: column 'Key'");
-					assert.ok(oColumns[2].getLabel().getText() === "Icon", "Table: column 'Icon'");
-					assert.ok(oColumns[3].getLabel().getText() === "Text", "Table: column 'Text'");
-					assert.ok(oColumns[4].getLabel().getText() === "URL Link", "Table: column 'URL Link'");
-					assert.ok(oColumns[5].getLabel().getText() === "Editable", "Table: column 'Editable'");
-					assert.ok(oColumns[6].getLabel().getText() === "Integer", "Table: column 'Integer'");
-					assert.ok(oColumns[7].getLabel().getText() === "Number", "Table: column 'Number'");
+					assert.equal(oColumns.length, 8, "Table: column number is 8");
+					assert.equal(oColumns[1].getLabel().getText(), "Key", "Table: column 'Key'");
+					assert.equal(oColumns[2].getLabel().getText(), "Icon", "Table: column 'Icon'");
+					assert.equal(oColumns[3].getLabel().getText(), "Text", "Table: column 'Text'");
+					assert.equal(oColumns[4].getLabel().getText(), "URL Link", "Table: column 'URL Link'");
+					assert.equal(oColumns[5].getLabel().getText(), "Editable", "Table: column 'Editable'");
+					assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
+					assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
 					assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 					oTable.setSelectedIndex(0);
 					oTable.fireRowSelectionChange({
 						rowIndex: 0,
 						userInteraction: true
 					});
-					assert.ok(oTable.getSelectedIndices()[0] === 0, "Table: SelectedIndices Value after table selection change");
+					assert.equal(oTable.getSelectedIndices()[0], 0, "Table: SelectedIndices Value after table selection change");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: DT Value not change after table selection change");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
@@ -934,7 +934,7 @@ sap.ui.define([
 						rowIndex: 3,
 						userInteraction: true
 					});
-					assert.ok(oTable.getSelectedIndices()[0] === 3, "Table: SelectedIndices Value after table selection change again");
+					assert.equal(oTable.getSelectedIndices()[0], 3, "Table: SelectedIndices Value after table selection change again");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: DT Value not change after table selection change again");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
@@ -944,8 +944,8 @@ sap.ui.define([
 						rowIndex: -1,
 						userInteraction: true
 					});
-					assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value after remove table selection");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value after remove table selection");
+					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value after remove table selection");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value after remove table selection");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value not change after remove table selection");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
@@ -954,12 +954,12 @@ sap.ui.define([
 					oSelectAllSelectionsButton.firePress();
 					assert.ok(!oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar disabled");
 					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
-					assert.ok(oTable.getSelectedIndices().length === 8, "Table: Select All selections working");
+					assert.equal(oTable.getSelectedIndices().length, 8, "Table: Select All selections working");
 
 					oClearAllSelectionsButton.firePress();
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: Clear All selections working");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: Clear All selections working");
 
 					var oRow3 = oTable.getRows()[2];
 					var oSelectionCell3 = oRow3.getCells()[0];
@@ -975,8 +975,8 @@ sap.ui.define([
 						selected: true
 					});
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
-					assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 					oSelectionCell1.setSelected(false);
@@ -984,8 +984,8 @@ sap.ui.define([
 						selected: false
 					});
 					assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
-					assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after deselecting");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after deselecting");
+					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after deselecting");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: DT Value removed after deselecting");
 					assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
@@ -998,8 +998,8 @@ sap.ui.define([
 						selected: true
 					});
 					assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
-					assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-					assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sapui5.hana.ondemand.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 
@@ -1013,13 +1013,13 @@ sap.ui.define([
 					var oField3 = this.oEditor.getAggregation("_formContent")[6];
 					wait().then(function () {
 						assert.ok(oLabel2.isA("sap.m.Label"), "Label 2: Form content contains a Label");
-						assert.ok(oLabel2.getText() === "Object properties defined: value from requested file", "Label 2: Has label text");
+						assert.equal(oLabel2.getText(), "Object properties defined: value from requested file", "Label 2: Has label text");
 						assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
 						assert.ok(deepEqual(oField2._getCurrentProperty("value"), {"text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false, "_uuid": "222771a4-0d3f-4fec-af20-6f28f1b894cb"}}), "Field 2: Value");
 						oTable = oField2.getAggregation("_field");
 						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 2: Control is Table");
-						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-						assert.ok(oTable.getBinding().getCount() === 4, "Table: value length is 4");
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), 4, "Table: value length is 4");
 						assert.ok(oTable.getSelectedIndex() === -1 && oTable.getSelectedIndices().length === 0, "Table: no selected row");
 						oSelectionColumn = oTable.getColumns()[0];
 						oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
@@ -1055,14 +1055,14 @@ sap.ui.define([
 						assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected");
 						wait().then(function () {
 							assert.ok(oLabel3.isA("sap.m.Label"), "Label 3: Form content contains a Label");
-							assert.ok(oLabel3.getText() === "Object properties defined: value from OData Request", "Label 3: Has label text");
+							assert.equal(oLabel3.getText(), "Object properties defined: value from OData Request", "Label 3: Has label text");
 							assert.ok(oField3.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 3: Object Field");
 							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "b", "CompanyName": "B Company", "Country": "Country 2", "City": "City 2", "Address": "Address 2", "_dt": {"_editable": false}}), "Field 3: Value");
 							oTable = oField3.getAggregation("_field");
 							assert.ok(oTable.isA("sap.ui.table.Table"), "Field 3: Control is Table");
-							assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-							assert.ok(oTable.getBinding().getCount() === 6, "Table: value length is 6");
-							assert.ok(oTable.getSelectedIndex() === -1, "Table: no selected row");
+							assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+							assert.equal(oTable.getBinding().getCount(), 6, "Table: value length is 6");
+							assert.equal(oTable.getSelectedIndex(), -1, "Table: no selected row");
 							oSelectionColumn = oTable.getColumns()[0];
 							oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
@@ -1105,8 +1105,8 @@ sap.ui.define([
 								selected: true
 							});
 							assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
-							assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-							assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+							assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "a", "CompanyName": "A Company", "Country": "Country 1", "City": "City 1", "Address": "Address 1", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 							oSelectionCell1.setSelected(false);
@@ -1114,8 +1114,8 @@ sap.ui.define([
 								selected: false
 							});
 							assert.ok(!oSelectionCell1.getSelected(), "Row 1: Cell 1 is not selected after deselecting");
-							assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after deselecting");
-							assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after deselecting");
+							assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after deselecting");
+							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after deselecting");
 							assert.ok(!oField3._getCurrentProperty("value"), "Field 3: DT Value removed after deselecting");
 							assert.ok(!oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column disabled after deselecting");
 
@@ -1128,8 +1128,8 @@ sap.ui.define([
 								selected: true
 							});
 							assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
-							assert.ok(oTable.getSelectedIndex() === -1, "Table: SetectedIndex Value not change after selecting");
-							assert.ok(oTable.getSelectedIndices().length === 0, "Table: SelectedIndices Value not change after selecting");
+							assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
+							assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
 							assert.ok(deepEqual(cleanUUID(oField3._getCurrentProperty("value")), {"CustomerID": "d", "CompanyName": "C2 Company", "Country": "Country 4", "City": "City 4", "Address": "Address 4", "_dt": {"_editable": false} }), "Field 3: DT Value not change after table selection change again");
 							assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 							oRemoveValueButton.firePress();
@@ -1194,11 +1194,11 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), oValue), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
+					assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
 					assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
 					var oNewRow = oTable.getRows()[0];
 					assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
@@ -1238,51 +1238,51 @@ sap.ui.define([
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
-							assert.ok(oContents.length === 16, "SimpleForm: length");
+							assert.equal(oContents.length, 16, "SimpleForm: length");
 							assert.ok(deepEqual(cleanUUID(oContents[15].getValue()), oEditObject), "SimpleForm field textArea: Has the value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
-							assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
+							assert.equal(oFormLabel.getText(), "Key", "SimpleForm label1: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label1: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field1: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field1: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field1: Editable");
-							assert.ok(oFormField.getValue() === "keynew", "SimpleForm field1: Has value");
+							assert.equal(oFormField.getValue(), "keynew", "SimpleForm field1: Has value");
 							oFormField.setValue("key01");
 							oFormField.fireChange({ value: "key01" });
 							oFormLabel = oContents[2];
 							oFormField = oContents[3];
-							assert.ok(oFormLabel.getText() === "Icon", "SimpleForm label2: Has label text");
+							assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
-							assert.ok(oFormField.getValue() === "sap-icon://zoom-in", "SimpleForm field2: Has value");
+							assert.equal(oFormField.getValue(), "sap-icon://zoom-in", "SimpleForm field2: Has value");
 							oFormField.setValue("sap-icon://accept");
 							oFormField.fireChange({ value: "sap-icon://accept" });
 							oFormLabel = oContents[4];
 							oFormField = oContents[5];
-							assert.ok(oFormLabel.getText() === "Text", "SimpleForm label3: Has label text");
+							assert.equal(oFormLabel.getText(), "Text", "SimpleForm label3: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label3: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field3: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field3: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field3: Editable");
-							assert.ok(oFormField.getValue() === "textnew", "SimpleForm field3: Has value");
+							assert.equal(oFormField.getValue(), "textnew", "SimpleForm field3: Has value");
 							oFormField.setValue("text01");
 							oFormField.fireChange({ value: "text01" });
 							oFormLabel = oContents[6];
 							oFormField = oContents[7];
-							assert.ok(oFormLabel.getText() === "URL", "SimpleForm label4: Has label text");
+							assert.equal(oFormLabel.getText(), "URL", "SimpleForm label4: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label4: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field4: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field4: Editable");
-							assert.ok(oFormField.getValue() === "https://sapui5.hana.ondemand.com/04", "SimpleForm field4: Has value");
+							assert.equal(oFormField.getValue(), "https://sapui5.hana.ondemand.com/04", "SimpleForm field4: Has value");
 							oFormField.setValue("https://sapui5.hana.ondemand.com/06");
 							oFormField.fireChange({ value: "https://sapui5.hana.ondemand.com/06" });
 							oFormLabel = oContents[8];
 							oFormField = oContents[9];
-							assert.ok(oFormLabel.getText() === "Editable", "SimpleForm label5: Has label text");
+							assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label5: Visible");
 							assert.ok(oFormField.isA("sap.m.CheckBox"), "SimpleForm Field5: CheckBox Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field5: Visible");
@@ -1292,27 +1292,27 @@ sap.ui.define([
 							oFormField.fireSelect({ selected: true });
 							oFormLabel = oContents[10];
 							oFormField = oContents[11];
-							assert.ok(oFormLabel.getText() === "Integer", "SimpleForm label6: Has label text");
+							assert.equal(oFormLabel.getText(), "Integer", "SimpleForm label6: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label6: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field6: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field6: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field6: Editable");
-							assert.ok(oFormField.getValue() === "3", "SimpleForm field6: Has value");
+							assert.equal(oFormField.getValue(), "3", "SimpleForm field6: Has value");
 							oFormField.setValue("1");
 							oFormField.fireChange({value: "1"});
 							oFormLabel = oContents[12];
 							oFormField = oContents[13];
-							assert.ok(oFormLabel.getText() === "Number", "SimpleForm label7: Has label text");
+							assert.equal(oFormLabel.getText(), "Number", "SimpleForm label7: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label7: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field7: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field7: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field7: Editable");
-							assert.ok(oFormField.getValue() === "", "SimpleForm field7: Has value");
+							assert.equal(oFormField.getValue(), "", "SimpleForm field7: Has value");
 							oFormField.setValue("0.55");
 							oFormField.fireChange({ value: "0.55"});
 							oFormLabel = oContents[14];
 							oFormField = oContents[15];
-							assert.ok(oFormLabel.getText() === "", "SimpleForm label8: Has no label text");
+							assert.equal(oFormLabel.getText(), "", "SimpleForm label8: Has no label text");
 							assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
@@ -1364,49 +1364,49 @@ sap.ui.define([
 									oFormField = oContents[1];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label1: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field1: Visible");
-									assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Label text");
-									assert.ok(oFormField.getValue() === "key01 2", "SimpleForm field1: Value changed");
+									assert.equal(oFormLabel.getText(), "Key", "SimpleForm label1: Label text");
+									assert.equal(oFormField.getValue(), "key01 2", "SimpleForm field1: Value changed");
 									oFormLabel = oContents[2];
 									oFormField = oContents[3];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
-									assert.ok(oFormLabel.getText() === "Icon", "SimpleForm label2: Label text");
-									assert.ok(oFormField.getValue() === "sap-icon://accept 2", "SimpleForm field2: Value changed");
+									assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Label text");
+									assert.equal(oFormField.getValue(), "sap-icon://accept 2", "SimpleForm field2: Value changed");
 									oFormLabel = oContents[4];
 									oFormField = oContents[5];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label3: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field3: Visible");
-									assert.ok(oFormLabel.getText() === "Text", "SimpleForm label3: Label text");
-									assert.ok(oFormField.getValue() === "text01 2", "SimpleForm field3: Value changed");
+									assert.equal(oFormLabel.getText(), "Text", "SimpleForm label3: Label text");
+									assert.equal(oFormField.getValue(), "text01 2", "SimpleForm field3: Value changed");
 									oFormLabel = oContents[6];
 									oFormField = oContents[7];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label4: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
-									assert.ok(oFormLabel.getText() === "URL", "SimpleForm label4: Label text");
-									assert.ok(oFormField.getValue() === "https://sapui5.hana.ondemand.com/06 2", "SimpleForm field4: Value changed");
+									assert.equal(oFormLabel.getText(), "URL", "SimpleForm label4: Label text");
+									assert.equal(oFormField.getValue(), "https://sapui5.hana.ondemand.com/06 2", "SimpleForm field4: Value changed");
 									oFormLabel = oContents[8];
 									oFormField = oContents[9];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label5: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field5: Visible");
-									assert.ok(oFormLabel.getText() === "Editable", "SimpleForm label5: Label text");
+									assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Label text");
 									assert.ok(!oFormField.getSelected(), "SimpleForm field5: Value changed");
 									oFormLabel = oContents[10];
 									oFormField = oContents[11];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label6: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field6: Visible");
-									assert.ok(oFormLabel.getText() === "Integer", "SimpleForm label6: Label text");
-									assert.ok(oFormField.getValue() === "3", "SimpleForm field6: Value changed");
+									assert.equal(oFormLabel.getText(), "Integer", "SimpleForm label6: Label text");
+									assert.equal(oFormField.getValue(), "3", "SimpleForm field6: Value changed");
 									oFormLabel = oContents[12];
 									oFormField = oContents[13];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label7: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field7: Visible");
-									assert.ok(oFormLabel.getText() === "Number", "SimpleForm label7: Label text");
-									assert.ok(oFormField.getValue() === "5.6", "SimpleForm field7: Value changed");
+									assert.equal(oFormLabel.getText(), "Number", "SimpleForm label7: Label text");
+									assert.equal(oFormField.getValue(), "5.6", "SimpleForm field7: Value changed");
 									oFormLabel = oContents[14];
 									oFormField = oContents[15];
 									assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 									assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
-									assert.ok(oFormField.getValue() === sNewValue, "SimpleForm field5: Value changed");
+									assert.equal(oFormField.getValue(), sNewValue, "SimpleForm field5: Value changed");
 									resolve();
 								});
 							});
@@ -1467,11 +1467,11 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
 					assert.ok(deepEqual(cleanDT(oField._getCurrentProperty("value")), oValue), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
-					assert.ok(oTable.getBinding().getCount() === 9, "Table: value length is 9");
+					assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
 					assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[0].getObject()), oValueInTable), "Table: new row");
 					var oNewRow = oTable.getRows()[0];
 					assert.ok(deepEqual(cleanUUID(oNewRow.getBindingContext().getObject()), oValueInTable), "Table: value row is at top");
@@ -1501,42 +1501,42 @@ sap.ui.define([
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
-							assert.ok(oContents.length === 16, "SimpleForm: length");
+							assert.equal(oContents.length, 16, "SimpleForm: length");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
-							assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Has label text");
+							assert.equal(oFormLabel.getText(), "Key", "SimpleForm label1: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label1: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field1: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field1: Visible");
 							assert.ok(!oFormField.getEditable(), "SimpleForm Field1: Not Editable");
-							assert.ok(oFormField.getValue() === "key01", "SimpleForm field1: Has value");
+							assert.equal(oFormField.getValue(), "key01", "SimpleForm field1: Has value");
 							oFormLabel = oContents[2];
 							oFormField = oContents[3];
-							assert.ok(oFormLabel.getText() === "Icon", "SimpleForm label2: Has label text");
+							assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 							assert.ok(!oFormField.getEditable(), "SimpleForm Field2: Not Editable");
-							assert.ok(oFormField.getValue() === "sap-icon://accept", "SimpleForm field2: Has value");
+							assert.equal(oFormField.getValue(), "sap-icon://accept", "SimpleForm field2: Has value");
 							oFormLabel = oContents[4];
 							oFormField = oContents[5];
-							assert.ok(oFormLabel.getText() === "Text", "SimpleForm label3: Has label text");
+							assert.equal(oFormLabel.getText(), "Text", "SimpleForm label3: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label3: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field3: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field3: Visible");
 							assert.ok(!oFormField.getEditable(), "SimpleForm Field3: Not Editable");
-							assert.ok(oFormField.getValue() === "text01", "SimpleForm field3: Has value");
+							assert.equal(oFormField.getValue(), "text01", "SimpleForm field3: Has value");
 							oFormLabel = oContents[6];
 							oFormField = oContents[7];
-							assert.ok(oFormLabel.getText() === "URL", "SimpleForm label4: Has label text");
+							assert.equal(oFormLabel.getText(), "URL", "SimpleForm label4: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label4: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field4: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 							assert.ok(!oFormField.getEditable(), "SimpleForm Field4: Not Editable");
-							assert.ok(oFormField.getValue() === "https://sapui5.hana.ondemand.com/06", "SimpleForm field4: Has value");
+							assert.equal(oFormField.getValue(), "https://sapui5.hana.ondemand.com/06", "SimpleForm field4: Has value");
 							oFormLabel = oContents[8];
 							oFormField = oContents[9];
-							assert.ok(oFormLabel.getText() === "Editable", "SimpleForm label5: Has label text");
+							assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label5: Visible");
 							assert.ok(oFormField.isA("sap.m.CheckBox"), "SimpleForm Field5: CheckBox Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field5: Visible");
@@ -1544,23 +1544,23 @@ sap.ui.define([
 							assert.ok(!oFormField.getSelected(), "SimpleForm field5: Has No value");
 							oFormLabel = oContents[10];
 							oFormField = oContents[11];
-							assert.ok(oFormLabel.getText() === "Integer", "SimpleForm label6: Has label text");
+							assert.equal(oFormLabel.getText(), "Integer", "SimpleForm label6: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label6: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field6: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field6: Visible");
 							assert.ok(!oFormField.getEditable(), "SimpleForm Field6: Not Editable");
-							assert.ok(oFormField.getValue() === "1", "SimpleForm field6: Has value");
+							assert.equal(oFormField.getValue(), "1", "SimpleForm field6: Has value");
 							oFormLabel = oContents[12];
 							oFormField = oContents[13];
-							assert.ok(oFormLabel.getText() === "Number", "SimpleForm label7: Has label text");
+							assert.equal(oFormLabel.getText(), "Number", "SimpleForm label7: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label7: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field7: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field7: Visible");
 							assert.ok(!oFormField.getEditable(), "SimpleForm Field7: Not Editable");
-							assert.ok(oFormField.getValue() === "", "SimpleForm field7: Has value");
+							assert.equal(oFormField.getValue(), "", "SimpleForm field7: Has value");
 							oFormLabel = oContents[14];
 							oFormField = oContents[15];
-							assert.ok(oFormLabel.getText() === "", "SimpleForm label8: Has no label text");
+							assert.equal(oFormLabel.getText(), "", "SimpleForm label8: Has no label text");
 							assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
@@ -1576,50 +1576,50 @@ sap.ui.define([
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label1: Not Visible");
 								assert.ok(!oFormField.getVisible(), "SimpleForm Field1: Not Visible");
 								assert.ok(!oFormField.getEditable(), "SimpleForm Field1: Not Editable");
-								assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Label text");
-								assert.ok(oFormField.getValue() === "key01", "SimpleForm field1: Value");
+								assert.equal(oFormLabel.getText(), "Key", "SimpleForm label1: Label text");
+								assert.equal(oFormField.getValue(), "key01", "SimpleForm field1: Value");
 								oFormLabel = oContents[2];
 								oFormField = oContents[3];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label2: Not Visible");
 								assert.ok(!oFormField.getVisible(), "SimpleForm Field2: Not Visible");
 								assert.ok(!oFormField.getEditable(), "SimpleForm Field2: Not Editable");
-								assert.ok(oFormLabel.getText() === "Icon", "SimpleForm label2: Label text");
-								assert.ok(oFormField.getValue() === "sap-icon://accept", "SimpleForm field2: Value");
+								assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Label text");
+								assert.equal(oFormField.getValue(), "sap-icon://accept", "SimpleForm field2: Value");
 								oFormLabel = oContents[4];
 								oFormField = oContents[5];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label3: Not Visible");
 								assert.ok(!oFormField.getVisible(), "SimpleForm Field3: Not Visible");
 								assert.ok(!oFormField.getEditable(), "SimpleForm Field3: Not Editable");
-								assert.ok(oFormLabel.getText() === "Text", "SimpleForm label3: Label text");
-								assert.ok(oFormField.getValue() === "text01", "SimpleForm field3: Value");
+								assert.equal(oFormLabel.getText(), "Text", "SimpleForm label3: Label text");
+								assert.equal(oFormField.getValue(), "text01", "SimpleForm field3: Value");
 								oFormLabel = oContents[6];
 								oFormField = oContents[7];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label4: Not Visible");
 								assert.ok(!oFormField.getVisible(), "SimpleForm Field4: Not Visible");
 								assert.ok(!oFormField.getEditable(), "SimpleForm Field4: Not Editable");
-								assert.ok(oFormLabel.getText() === "URL", "SimpleForm label4: Label text");
-								assert.ok(oFormField.getValue() === "https://sapui5.hana.ondemand.com/06", "SimpleForm field4: Value");
+								assert.equal(oFormLabel.getText(), "URL", "SimpleForm label4: Label text");
+								assert.equal(oFormField.getValue(), "https://sapui5.hana.ondemand.com/06", "SimpleForm field4: Value");
 								oFormLabel = oContents[8];
 								oFormField = oContents[9];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label5: Not Visible");
 								assert.ok(!oFormField.getVisible(), "SimpleForm Field5: Not Visible");
 								assert.ok(!oFormField.getEnabled(), "SimpleForm Field5: Not Enabled");
-								assert.ok(oFormLabel.getText() === "Editable", "SimpleForm label5: Label text");
+								assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Label text");
 								assert.ok(!oFormField.getSelected(), "SimpleForm field5: Value");
 								oFormLabel = oContents[10];
 								oFormField = oContents[11];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label6: Not Visible");
 								assert.ok(!oFormField.getVisible(), "SimpleForm Field6: Not Visible");
 								assert.ok(!oFormField.getEditable(), "SimpleForm Field6: Not Editable");
-								assert.ok(oFormLabel.getText() === "Integer", "SimpleForm label6: Label text");
-								assert.ok(oFormField.getValue() === "1", "SimpleForm field6: Value");
+								assert.equal(oFormLabel.getText(), "Integer", "SimpleForm label6: Label text");
+								assert.equal(oFormField.getValue(), "1", "SimpleForm field6: Value");
 								oFormLabel = oContents[12];
 								oFormField = oContents[13];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label7: Not Visible");
 								assert.ok(!oFormField.getVisible(), "SimpleForm Field7: Not Visible");
 								assert.ok(!oFormField.getEditable(), "SimpleForm Field7: Not Editable");
-								assert.ok(oFormLabel.getText() === "Number", "SimpleForm label7: Label text");
-								assert.ok(oFormField.getValue() === "", "SimpleForm field7: Value");
+								assert.equal(oFormLabel.getText(), "Number", "SimpleForm label7: Label text");
+								assert.equal(oFormField.getValue(), "", "SimpleForm field7: Value");
 								oFormLabel = oContents[14];
 								oFormField = oContents[15];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
@@ -1634,50 +1634,50 @@ sap.ui.define([
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label1: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field1: Visible");
 									assert.ok(!oFormField.getEditable(), "SimpleForm Field1: Not Editable");
-									assert.ok(oFormLabel.getText() === "Key", "SimpleForm label1: Label text");
-									assert.ok(oFormField.getValue() === "key01", "SimpleForm field1: Value");
+									assert.equal(oFormLabel.getText(), "Key", "SimpleForm label1: Label text");
+									assert.equal(oFormField.getValue(), "key01", "SimpleForm field1: Value");
 									oFormLabel = oContents[2];
 									oFormField = oContents[3];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 									assert.ok(!oFormField.getEditable(), "SimpleForm Field2: Not Editable");
-									assert.ok(oFormLabel.getText() === "Icon", "SimpleForm label2: Label text");
-									assert.ok(oFormField.getValue() === "sap-icon://accept", "SimpleForm field2: Value");
+									assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Label text");
+									assert.equal(oFormField.getValue(), "sap-icon://accept", "SimpleForm field2: Value");
 									oFormLabel = oContents[4];
 									oFormField = oContents[5];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label3: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field3: Visible");
 									assert.ok(!oFormField.getEditable(), "SimpleForm Field3: Not Editable");
-									assert.ok(oFormLabel.getText() === "Text", "SimpleForm label3: Label text");
-									assert.ok(oFormField.getValue() === "text01", "SimpleForm field3: Value");
+									assert.equal(oFormLabel.getText(), "Text", "SimpleForm label3: Label text");
+									assert.equal(oFormField.getValue(), "text01", "SimpleForm field3: Value");
 									oFormLabel = oContents[6];
 									oFormField = oContents[7];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label4: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 									assert.ok(!oFormField.getEditable(), "SimpleForm Field4: Not Editable");
-									assert.ok(oFormLabel.getText() === "URL", "SimpleForm label4: Label text");
-									assert.ok(oFormField.getValue() === "https://sapui5.hana.ondemand.com/06", "SimpleForm field4: Value");
+									assert.equal(oFormLabel.getText(), "URL", "SimpleForm label4: Label text");
+									assert.equal(oFormField.getValue(), "https://sapui5.hana.ondemand.com/06", "SimpleForm field4: Value");
 									oFormLabel = oContents[8];
 									oFormField = oContents[9];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label5: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field5: Visible");
 									assert.ok(!oFormField.getEnabled(), "SimpleForm Field5: Not Enabled");
-									assert.ok(oFormLabel.getText() === "Editable", "SimpleForm label5: Label text");
+									assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Label text");
 									assert.ok(!oFormField.getSelected(), "SimpleForm field5: Value");
 									oFormLabel = oContents[10];
 									oFormField = oContents[11];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label6: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field6: Visible");
 									assert.ok(!oFormField.getEditable(), "SimpleForm Field6: Not Editable");
-									assert.ok(oFormLabel.getText() === "Integer", "SimpleForm label6: Label text");
-									assert.ok(oFormField.getValue() === "1", "SimpleForm field6: Value");
+									assert.equal(oFormLabel.getText(), "Integer", "SimpleForm label6: Label text");
+									assert.equal(oFormField.getValue(), "1", "SimpleForm field6: Value");
 									oFormLabel = oContents[12];
 									oFormField = oContents[13];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label7: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field7: Visible");
 									assert.ok(!oFormField.getEditable(), "SimpleForm Field7: Not Editable");
-									assert.ok(oFormLabel.getText() === "Number", "SimpleForm label7: Label text");
-									assert.ok(oFormField.getValue() === "", "SimpleForm field7: Value");
+									assert.equal(oFormLabel.getText(), "Number", "SimpleForm label7: Label text");
+									assert.equal(oFormField.getValue(), "", "SimpleForm field7: Value");
 									oFormLabel = oContents[14];
 									oFormField = oContents[15];
 									assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");

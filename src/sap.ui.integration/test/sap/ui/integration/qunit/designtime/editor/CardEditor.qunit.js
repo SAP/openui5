@@ -231,9 +231,9 @@ sap.ui.define([
 		},
 		"sap.ui5": {
 			"dependencies": {
-			  "libs": {
-				"sap/ui/integration/cardeditor/test/testLib": {}
-			  }
+				"libs": {
+					"sap/ui/integration/cardeditor/test/testLib": {}
+				}
 			}
 		},
 		"sap.card": {
@@ -315,7 +315,7 @@ sap.ui.define([
 			this.oCardEditor.setCard(oCard1);
 			this.oCardEditor.setCard(oCard2);
 			this.oCardEditor.setCard("card2");
-			assert.ok(this.oCardEditor.getCard() === "card2", "Card is set correctly");
+			assert.equal(this.oCardEditor.getCard(), "card2", "Card is set correctly");
 
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
@@ -323,7 +323,7 @@ sap.ui.define([
 					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
 					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					resolve();
 				}.bind(this));
@@ -339,12 +339,12 @@ sap.ui.define([
 					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
 					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					oField._descriptionIcon.onmouseover();
 					var oDescriptionText = this.oCardEditor._getPopover().getContent()[0];
 					assert.ok(oDescriptionText.isA("sap.m.Text"), "Text: Text Field");
-					assert.ok(oDescriptionText.getText() === "Description", "Text: Description OK");
+					assert.equal(oDescriptionText.getText(), "Description", "Text: Description OK");
 					oField._descriptionIcon.onmouseout();
 					resolve();
 				}.bind(this));
@@ -360,14 +360,14 @@ sap.ui.define([
 					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
 					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					var oGeneralPanel = this.oCardEditor.getAggregation("_formContent")[0];
-					assert.ok(oGeneralPanel.getHeaderText() === "General Settings", "The header text of General group is correct, the resource bundle in the card editor is loaded correctly.");
+					assert.equal(oGeneralPanel.getHeaderText(), "General Settings", "The header text of General group is correct, the resource bundle in the card editor is loaded correctly.");
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text, the resource bundle in the user's card is loaded.");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated label text, the resource bundle in the user's card is loaded.");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					oField._descriptionIcon.onmouseover();
 					var oDescriptionText = this.oCardEditor._getPopover().getContent()[0];
 					assert.ok(oDescriptionText.isA("sap.m.Text"), "Text: Text Field");
-					assert.ok(oDescriptionText.getText() === "Description", "Text: Description OK");
+					assert.equal(oDescriptionText.getText(), "Description", "Text: Description OK");
 					oField._descriptionIcon.onmouseout();
 					resolve();
 				}.bind(this));
@@ -429,19 +429,19 @@ sap.ui.define([
 					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomerLabel.getText() === "DataGotFromExtensionRequest", "Label: Has static label text");
+					assert.equal(oCustomerLabel.getText(), "DataGotFromExtensionRequest", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromExtensionRequest is ComboBox");
 
 					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
-					assert.ok(oEmployeeLabel.getText() === "DataGotFromCardExtension", "Label: Has static label text");
+					assert.equal(oEmployeeLabel.getText(), "DataGotFromCardExtension", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromCardExtension is ComboBox");
 
 					wait(2 * iWaitTimeout).then(function () {
-						assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: DataGotFromExtensionRequest lenght is OK");
-						assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 4, "Field: DataGotFromCardExtension lenght is OK");
+						assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromExtensionRequest lenght is OK");
+						assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromCardExtension lenght is OK");
 						resolve();
 					});
 				}.bind(this));
@@ -509,19 +509,19 @@ sap.ui.define([
 					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomerLabel.getText() === "DataGotFromExtensionRequest", "Label: Has static label text");
+					assert.equal(oCustomerLabel.getText(), "DataGotFromExtensionRequest", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromExtensionRequest is ComboBox");
 
 					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
-					assert.ok(oEmployeeLabel.getText() === "DataGotFromCardExtension", "Label: Has static label text");
+					assert.equal(oEmployeeLabel.getText(), "DataGotFromCardExtension", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromCardExtension is ComboBox");
 
 					wait(2 * iWaitTimeout).then(function () {
-						assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: DataGotFromExtensionRequest lenght is OK");
-						assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 4, "Field: DataGotFromCardExtension lenght is OK");
+						assert.equal(oCustomerField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromExtensionRequest lenght is OK");
+						assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 4, "Field: DataGotFromCardExtension lenght is OK");
 						resolve();
 					});
 				}.bind(this));
@@ -691,9 +691,9 @@ sap.ui.define([
 								oMultiComboBox.focus();
 								var sMsgStripId = oField1.getAssociation("_messageStrip");
 								var oMsgStrip = Core.byId(sMsgStripId);
-								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
-								assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
-								assert.ok(oMsgStrip.getText() === "The parameter is not allowed to edit", "Message text correct");
+								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
+								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
+								assert.equal(oMsgStrip.getText(), "The parameter is not allowed to edit", "Message text correct");
 								assert.ok(!oMultiComboBox.getEditable(), "Editable is false");
 								resolve();
 							});
@@ -986,7 +986,7 @@ sap.ui.define([
 					var oModel = this.oCardEditor.getModel("context");
 					assert.ok(oModel !== null, "Card Editor has a context model");
 					assert.deepEqual(oModel.getData(), getDefaultContextModel(this.oCardEditor._oResourceBundle), "Card Editor has a default context model");
-					assert.ok(oModel.getProperty("/sap.workzone/currentUser/id") === undefined, "Card Editor context /sap.workzone/currentUser/id is undefned");
+					assert.equal(oModel.getProperty("/sap.workzone/currentUser/id"), undefined, "Card Editor context /sap.workzone/currentUser/id is undefned");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -1070,9 +1070,9 @@ sap.ui.define([
 							assert.ok(card, "Preview mode card: OK");
 							var modeToggleButton = cardPreview._getModeToggleButton();
 							assert.ok(modeToggleButton.getDomRef(), "Preview mode button: Button is OK");
-							assert.ok(modeToggleButton.getIcon() === "sap-icon://media-pause", "Preview mode button: Icon is OK");
+							assert.equal(modeToggleButton.getIcon(), "sap-icon://media-pause", "Preview mode button: Icon is OK");
 							assert.ok(modeToggleButton.getPressed(), "Preview mode button: Pressed is OK");
-							assert.ok(modeToggleButton.getTooltip() === "Sample Preview", "Preview mode button: Tooltip is OK");
+							assert.equal(modeToggleButton.getTooltip(), "Sample Preview", "Preview mode button: Tooltip is OK");
 							resolve();
 						}
 					});
@@ -1109,9 +1109,9 @@ sap.ui.define([
 							assert.ok(card, "Preview mode card: OK");
 							var modeToggleButton = cardPreview._getModeToggleButton();
 							assert.ok(modeToggleButton.getDomRef(), "Preview mode button: Button is OK");
-							assert.ok(modeToggleButton.getIcon() === "sap-icon://media-play", "Preview mode button: Icon is OK");
+							assert.equal(modeToggleButton.getIcon(), "sap-icon://media-play", "Preview mode button: Icon is OK");
 							assert.ok(!modeToggleButton.getPressed(), "Preview mode button: Pressed is OK");
-							assert.ok(modeToggleButton.getTooltip() === "Live Preview", "Preview mode button: Tooltip is OK");
+							assert.equal(modeToggleButton.getTooltip(), "Live Preview", "Preview mode button: Tooltip is OK");
 							resolve();
 						}
 					});
@@ -1144,7 +1144,7 @@ sap.ui.define([
 					setTimeout(function () {
 						var cardPreview = this.oCardEditor.getAggregation("_preview");
 						var card = cardPreview._getCardPreview();
-						assert.ok(card === null, "Preview mode card is OK");
+						assert.equal(card, null, "Preview mode card is OK");
 						resolve();
 					}.bind(this), 500);
 				}.bind(this));
@@ -1180,9 +1180,9 @@ sap.ui.define([
 							assert.ok(card, "Preview mode card: OK");
 							var modeToggleButton = cardPreview._getModeToggleButton();
 							assert.ok(modeToggleButton.getDomRef(), "Preview mode button: Button is OK");
-							assert.ok(modeToggleButton.getIcon() === "sap-icon://media-pause", "Preview mode button: Icon is OK");
+							assert.equal(modeToggleButton.getIcon(), "sap-icon://media-pause", "Preview mode button: Icon is OK");
 							assert.ok(modeToggleButton.getPressed(), "Preview mode button: Pressed is OK");
-							assert.ok(modeToggleButton.getTooltip() === "Sample Preview", "Preview mode button: Tooltip is OK");
+							assert.equal(modeToggleButton.getTooltip(), "Sample Preview", "Preview mode button: Tooltip is OK");
 							resolve();
 						}
 					});
@@ -1221,9 +1221,9 @@ sap.ui.define([
 							assert.ok(image.getSrc().endsWith("./img/preview.png"), "Preview mode image: OK");
 							var modeToggleButton = cardPreview._getModeToggleButton();
 							assert.ok(modeToggleButton.getDomRef(), "Preview mode button: Button is OK");
-							assert.ok(modeToggleButton.getIcon() === "sap-icon://media-play", "Preview mode button: Icon is OK");
+							assert.equal(modeToggleButton.getIcon(), "sap-icon://media-play", "Preview mode button: Icon is OK");
 							assert.ok(!modeToggleButton.getPressed(), "Preview mode button: Pressed is OK");
-							assert.ok(modeToggleButton.getTooltip() === "Live Preview", "Preview mode button: Tooltip is OK");
+							assert.equal(modeToggleButton.getTooltip(), "Live Preview", "Preview mode button: Tooltip is OK");
 							resolve();
 						}
 					});
@@ -1259,10 +1259,10 @@ sap.ui.define([
 							var card = cardPreview._getCardPreview();
 							assert.ok(card, "Preview mode card: OK");
 							var modeToggleButton = cardPreview._getModeToggleButton();
-							assert.ok(modeToggleButton.getDomRef() === null, "Preview mode button: Button is OK");
-							assert.ok(modeToggleButton.getIcon() === "sap-icon://media-pause", "Preview mode button: Icon is OK");
+							assert.equal(modeToggleButton.getDomRef(), null, "Preview mode button: Button is OK");
+							assert.equal(modeToggleButton.getIcon(), "sap-icon://media-pause", "Preview mode button: Icon is OK");
 							assert.ok(modeToggleButton.getPressed(), "Preview mode button: Pressed is OK");
-							assert.ok(modeToggleButton.getTooltip() === "Sample Preview", "Preview mode button: Tooltip is OK");
+							assert.equal(modeToggleButton.getTooltip(), "Sample Preview", "Preview mode button: Tooltip is OK");
 							resolve();
 						}
 					});
@@ -1298,10 +1298,10 @@ sap.ui.define([
 							var card = cardPreview._getCardPreview();
 							assert.ok(card, "Preview mode card: OK");
 							var modeToggleButton = cardPreview._getModeToggleButton();
-							assert.ok(modeToggleButton.getDomRef() === null, "Preview mode button: Button is OK");
-							assert.ok(modeToggleButton.getIcon() === "sap-icon://media-play", "Preview mode button: Icon is OK");
+							assert.equal(modeToggleButton.getDomRef(), null, "Preview mode button: Button is OK");
+							assert.equal(modeToggleButton.getIcon(), "sap-icon://media-play", "Preview mode button: Icon is OK");
 							assert.ok(!modeToggleButton.getPressed(), "Preview mode button: Pressed is OK");
-							assert.ok(modeToggleButton.getTooltip() === "Live Preview", "Preview mode button: Tooltip is OK");
+							assert.equal(modeToggleButton.getTooltip(), "Live Preview", "Preview mode button: Tooltip is OK");
 							resolve();
 						}
 					});
@@ -1322,9 +1322,9 @@ sap.ui.define([
 							assert.ok(card.mCustomStyleClassMap.sapUiIntegrationDTPreviewNoScale, "Preview mode no scale: OK");
 							var modeToggleButton = cardPreview._getModeToggleButton();
 							assert.ok(modeToggleButton.getDomRef(), "Preview mode button: Button is OK");
-							assert.ok(modeToggleButton.getIcon() === "sap-icon://media-play", "Preview mode button: Icon is OK");
+							assert.equal(modeToggleButton.getIcon(), "sap-icon://media-play", "Preview mode button: Icon is OK");
 							assert.ok(!modeToggleButton.getPressed(), "Preview mode button: Pressed is OK");
-							assert.ok(modeToggleButton.getTooltip() === "Live Preview", "Preview mode button: Tooltip is OK");
+							assert.equal(modeToggleButton.getTooltip(), "Live Preview", "Preview mode button: Tooltip is OK");
 							resolve();
 						}
 					});
@@ -1389,8 +1389,8 @@ sap.ui.define([
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
 							var oEditorDom = this.oCardEditor.getDomRef();
-							assert.ok(oEditorDom.children.length === 2, "Editor children length: OK");
-							assert.ok(oEditorDom.children[1].id === cardPreview.getId(), "Preview Position: OK");
+							assert.equal(oEditorDom.children.length, 2, "Editor children length: OK");
+							assert.equal(oEditorDom.children[1].id, cardPreview.getId(), "Preview Position: OK");
 							resolve();
 						}.bind(this)
 					});
@@ -1428,8 +1428,8 @@ sap.ui.define([
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
 							var oEditorDom = this.oCardEditor.getDomRef();
-							assert.ok(oEditorDom.children.length === 2, "Editor children length: OK");
-							assert.ok(oEditorDom.children[0].id === cardPreview.getId(), "Preview Position: OK");
+							assert.equal(oEditorDom.children.length, 2, "Editor children length: OK");
+							assert.equal(oEditorDom.children[0].id, cardPreview.getId(), "Preview Position: OK");
 							assert.ok(oEditorDom.children[0].classList.contains("sapUiIntegrationDTPreviewMarginForAlignTopAndBottom"), "Preview style class: margin OK");
 							resolve();
 						}.bind(this)
@@ -1468,8 +1468,8 @@ sap.ui.define([
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
 							var oEditorDom = this.oCardEditor.getDomRef();
-							assert.ok(oEditorDom.children.length === 2, "Editor children length: OK");
-							assert.ok(oEditorDom.children[1].id === cardPreview.getId(), "Preview Position: OK");
+							assert.equal(oEditorDom.children.length, 2, "Editor children length: OK");
+							assert.equal(oEditorDom.children[1].id, cardPreview.getId(), "Preview Position: OK");
 							assert.ok(oEditorDom.children[1].classList.contains("sapUiIntegrationDTPreviewMarginForAlignTopAndBottom"), "Preview style class: margin OK");
 							resolve();
 						}.bind(this)
@@ -1508,8 +1508,8 @@ sap.ui.define([
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
 							var oEditorDom = this.oCardEditor.getDomRef();
-							assert.ok(oEditorDom.children.length === 2, "Editor children length: OK");
-							assert.ok(oEditorDom.children[0].id === cardPreview.getId(), "Preview Position: OK");
+							assert.equal(oEditorDom.children.length, 2, "Editor children length: OK");
+							assert.equal(oEditorDom.children[0].id, cardPreview.getId(), "Preview Position: OK");
 							resolve();
 						}.bind(this)
 					});
@@ -1547,8 +1547,8 @@ sap.ui.define([
 					cardPreview.addEventDelegate({
 						onAfterRendering: function () {
 							var oEditorDom = this.oCardEditor.getDomRef();
-							assert.ok(oEditorDom.children.length === 2, "Editor children length: OK");
-							assert.ok(oEditorDom.children[1].id === cardPreview.getId(), "Preview Position: OK");
+							assert.equal(oEditorDom.children.length, 2, "Editor children length: OK");
+							assert.equal(oEditorDom.children[1].id, cardPreview.getId(), "Preview Position: OK");
 							resolve();
 						}.bind(this)
 					});

@@ -46,7 +46,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -57,7 +57,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -68,7 +68,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -79,7 +79,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -90,7 +90,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -100,7 +100,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -111,7 +111,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -122,7 +122,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -133,7 +133,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -144,7 +144,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					assert.ok(this.oEditor.getAggregation("_formContent") === null, "No Content: Form content is empty");
+					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -158,7 +158,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StaticLabel", "Label: Has static label text");
+					assert.equal(oLabel.getText(), "StaticLabel", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					resolve();
 				}.bind(this));
@@ -173,7 +173,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StaticLabel", "Label: Has static label text");
+					assert.equal(oLabel.getText(), "StaticLabel", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					resolve();
 				}.bind(this));
@@ -188,7 +188,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					resolve();
 				}.bind(this));
@@ -202,7 +202,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					resolve();
 				}.bind(this));
@@ -217,7 +217,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated text");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has translated text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
 					resolve();
 				}.bind(this));
@@ -232,7 +232,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "integerParameter", "Label: Has integerParameter label from parameter name");
+					assert.equal(oLabel.getText(), "integerParameter", "Label: Has integerParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.IntegerField"), "Field: Integer Field");
 					resolve();
 				}.bind(this));
@@ -247,7 +247,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "numberParameter", "Label: Has numberParameter label from parameter name");
+					assert.equal(oLabel.getText(), "numberParameter", "Label: Has numberParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.NumberField"), "Field: Number Field");
 					resolve();
 				}.bind(this));
@@ -262,7 +262,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "dateParameter", "Label: Has dateParameter label from parameter name");
+					assert.equal(oLabel.getText(), "dateParameter", "Label: Has dateParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.DateField"), "Field: Date Field");
 					resolve();
 				}.bind(this));
@@ -277,7 +277,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "datetimeParameter", "Label: Has datetimeParameter label from parameter name");
+					assert.equal(oLabel.getText(), "datetimeParameter", "Label: Has datetimeParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.DateTimeField"), "Field: DateTime Field");
 					resolve();
 				}.bind(this));
@@ -292,7 +292,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "booleanParameter", "Label: Has booleanParameter label from parameter name");
+					assert.equal(oLabel.getText(), "booleanParameter", "Label: Has booleanParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.BooleanField"), "Field: Boolean Field");
 					resolve();
 				}.bind(this));
@@ -309,7 +309,7 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oLabel.getText() === "dest1", "Label: Has dest1 label from destination settings name");
+					assert.equal(oLabel.getText(), "dest1", "Label: Has dest1 label from destination settings name");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.DestinationField"), "Field: Destination Field");
 					resolve();
 				}.bind(this));
@@ -323,7 +323,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.deepEqual(oField.getConfiguration().formatter, { minIntegerDigits: 3 }, "Formatter is correct");
-					assert.ok(oField.getAggregation("_field").mProperties.value === "099", "The value was formatted correctly");
+					assert.equal(oField.getAggregation("_field").mProperties.value, "099", "The value was formatted correctly");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -336,7 +336,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.deepEqual(oField.getConfiguration().formatter, { decimals: 3 }, "formatter is correct");
-					assert.ok(oField.getAggregation("_field").mProperties.value === "21.0028", "The value was formatted correctly");
+					assert.equal(oField.getAggregation("_field").mProperties.value, "21.0028", "The value was formatted correctly");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -349,7 +349,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.deepEqual(oField.getConfiguration().formatter, { style: 'long' }, "formatter is correct");
-					// assert.ok(oField.getAggregation("_field").mProperties.value === "March 5, 2021 at 5:50:06 AM GMTZ", "The value was formatted correctly");
+					// assert.equal(oField.getAggregation("_field").mProperties.value, "March 5, 2021 at 5:50:06 AM GMTZ", "The value was formatted correctly");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -362,7 +362,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.deepEqual(oField.getConfiguration().formatter, { style: 'long' }, "formatter is correct");
-					assert.ok(oField.getAggregation("_field").mProperties.value === "March 5, 2021", "The value was formatted correctly");
+					assert.equal(oField.getAggregation("_field").mProperties.value, "March 5, 2021", "The value was formatted correctly");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -376,7 +376,7 @@ sap.ui.define([
 					var items = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field").mAggregations.items;
 					for (var i = 0; i < items.length; i++) {
 						if (items[i].mProperties.additionalText) {
-							assert.ok(items[i].mProperties.additionalText === "2.67", "The value was formatted correctly");
+							assert.equal(items[i].mProperties.additionalText, "2.67", "The value was formatted correctly");
 						}
 					}
 					resolve();
@@ -392,7 +392,7 @@ sap.ui.define([
 					var items = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field").mAggregations.items;
 					for (var i = 0; i < items.length; i++) {
 						if (items[i].mProperties.additionalText) {
-							assert.ok(items[i].mProperties.additionalText === "2.67", "The value was formatted correctly");
+							assert.equal(items[i].mProperties.additionalText, "2.67", "The value was formatted correctly");
 						}
 					}
 					resolve();

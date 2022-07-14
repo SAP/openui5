@@ -158,25 +158,25 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === 0, "Table: value length is 0");
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), 0, "Table: value length is 0");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
-						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-						assert.ok(oTable.getBinding().getCount() === oResponseData.Objects.length, "Table: value length is " + oResponseData.Objects.length);
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), oResponseData.Objects.length, "Table: value length is " + oResponseData.Objects.length);
 						var oColumns = oTable.getColumns();
-						assert.ok(oColumns.length === 8, "Table: column number is 8");
+						assert.equal(oColumns.length, 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
 						var oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
 						assert.ok(oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column visible");
@@ -309,7 +309,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
 						Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
@@ -324,19 +324,19 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === 0, "Table: value length is 0");
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), 0, "Table: value length is 0");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
-						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-						assert.ok(oTable.getBinding().getCount() === oResponseData.Objects.length, "Table: value length is " + oResponseData.Objects.length);
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), oResponseData.Objects.length, "Table: value length is " + oResponseData.Objects.length);
 						var oColumns = oTable.getColumns();
-						assert.ok(oColumns.length === 8, "Table: column number is 8");
+						assert.equal(oColumns.length, 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
 						var oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
 						assert.ok(oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column visible");
@@ -458,25 +458,25 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(!oField._getCurrentProperty("value"), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === 0, "Table: value length is 0");
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), 0, "Table: value length is 0");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
-						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-						assert.ok(oTable.getBinding().getCount() === oResponseData.Objects.length, "Table: value length is " + oResponseData.Objects.length);
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), oResponseData.Objects.length, "Table: value length is " + oResponseData.Objects.length);
 						var oColumns = oTable.getColumns();
-						assert.ok(oColumns.length === 8, "Table: column number is 8");
+						assert.equal(oColumns.length, 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
 						var oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
 						assert.ok(oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column visible");
@@ -643,7 +643,7 @@ sap.ui.define([
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined: value from request", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
 						Object.assign(deepClone(oValue1Ori), {"_dt": {"_editable": false}}),
@@ -658,19 +658,19 @@ sap.ui.define([
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === 0, "Table: value length is 0");
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), 0, "Table: value length is 0");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
-						assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-						assert.ok(oTable.getBinding().getCount() === oResponseData.Objects.length, "Table: value length is " + oResponseData.Objects.length);
+						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+						assert.equal(oTable.getBinding().getCount(), oResponseData.Objects.length, "Table: value length is " + oResponseData.Objects.length);
 						var oColumns = oTable.getColumns();
-						assert.ok(oColumns.length === 8, "Table: column number is 8");
+						assert.equal(oColumns.length, 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
 						var oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
 						assert.ok(oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column visible");

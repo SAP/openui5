@@ -179,7 +179,7 @@ sap.ui.define([
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
@@ -187,17 +187,17 @@ sap.ui.define([
 					var oSelectionColumn = oTable.getColumns()[0];
 					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
 					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
 					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oKeyColumn = oTable.getColumns()[1];
-					assert.ok(oKeyColumn.getLabel().getText() === "translated key en", "Column key: key label text translated");
+					assert.equal(oKeyColumn.getLabel().getText(), "translated key en", "Column key: key label text translated");
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
@@ -205,39 +205,39 @@ sap.ui.define([
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field 2: Control is SimpleForm");
 							var oContents = oSimpleForm.getContent();
-							assert.ok(oContents.length === 16, "SimpleForm: length");
+							assert.equal(oContents.length, 16, "SimpleForm: length");
 							var oTextArea = oContents[15];
 							assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), oDefaultNewObject), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
-							assert.ok(oFormLabel.getText() === "translated key en", "SimpleForm label 1: Has label text");
+							assert.equal(oFormLabel.getText(), "translated key en", "SimpleForm label 1: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label 1: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field 1: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field 1: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field 1: Editable");
-							assert.ok(oFormField.getValue() === "", "SimpleForm field 1: Has No value");
+							assert.equal(oFormField.getValue(), "", "SimpleForm field 1: Has No value");
 							assert.ok(!oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp false");
 							assert.ok(!oFormField._oValueHelpIcon, "SimpleForm field 1: Value help icon not exist");
 							oFormField.setValue("string value 1");
 							oFormField.fireChange({ value: "string value 1"});
-							assert.ok(oFormField.getValue() === "string value 1", "SimpleForm field 1: Has new value");
+							assert.equal(oFormField.getValue(), "string value 1", "SimpleForm field 1: Has new value");
 							assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "string value 1"})), "SimpleForm: Value updated");
 							assert.ok(!oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp false");
 							assert.ok(!oFormField._oValueHelpIcon, "SimpleForm field 1: Value help icon not exist");
 							oFormField.setValue("{i18n>string1}");
 							oFormField.fireChange({ value: "{i18n>string1}"});
 							wait().then(function () {
-								assert.ok(oFormField.getValue() === "{i18n>string1}", "SimpleForm field 1: Has new value");
+								assert.equal(oFormField.getValue(), "{i18n>string1}", "SimpleForm field 1: Has new value");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
 								assert.ok(oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp true");
 								assert.ok(oFormField._oValueHelpIcon, "SimpleForm field 1: Value help icon exist");
 								assert.ok(oFormField._oValueHelpIcon.getVisible(), "SimpleForm field 1: Value help icon visible");
 								assert.ok(oFormField._oValueHelpIcon.isA("sap.ui.core.Icon"), "SimpleForm field 1: Input value help icon");
-								assert.ok(oFormField._oValueHelpIcon.getSrc() === "sap-icon://translate", "SimpleForm field 1: Input value help icon src");
+								assert.equal(oFormField._oValueHelpIcon.getSrc(), "sap-icon://translate", "SimpleForm field 1: Input value help icon src");
 								oFormField.setValue("string1");
 								oFormField.fireChange({ value: "string1"});
 								wait().then(function () {
-									assert.ok(oFormField.getValue() === "string1", "SimpleForm field 1: Has new value");
+									assert.equal(oFormField.getValue(), "string1", "SimpleForm field 1: Has new value");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "string1"})), "SimpleForm: Value updated");
 									assert.ok(!oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp false");
 									assert.ok(oFormField._oValueHelpIcon, "SimpleForm field 1: Value help icon exist");
@@ -266,7 +266,7 @@ sap.ui.define([
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
@@ -274,17 +274,17 @@ sap.ui.define([
 					var oSelectionColumn = oTable.getColumns()[0];
 					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
 					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
 					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oKeyColumn = oTable.getColumns()[1];
-					assert.ok(oKeyColumn.getLabel().getText() === "translated key en", "Column key: key label text translated");
+					assert.equal(oKeyColumn.getLabel().getText(), "translated key en", "Column key: key label text translated");
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
@@ -292,42 +292,42 @@ sap.ui.define([
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field 2: Control is SimpleForm");
 							var oContents = oSimpleForm.getContent();
-							assert.ok(oContents.length === 16, "SimpleForm: length");
+							assert.equal(oContents.length, 16, "SimpleForm: length");
 							var oTextArea = oContents[15];
 							assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), oDefaultNewObject), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
-							assert.ok(oFormLabel.getText() === "translated key en", "SimpleForm label 1: Has label text");
+							assert.equal(oFormLabel.getText(), "translated key en", "SimpleForm label 1: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label 1: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field 1: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field 1: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field 1: Editable");
-							assert.ok(oFormField.getValue() === "", "SimpleForm field 1: Has No value");
+							assert.equal(oFormField.getValue(), "", "SimpleForm field 1: Has No value");
 							assert.ok(!oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp false");
 							assert.ok(!oFormField._oValueHelpIcon, "SimpleForm field 1: Value help icon not exist");
 							oFormField.setValue("{{string1}}");
 							oFormField.fireChange({ value: "{{string1}}"});
 							wait().then(function () {
-								assert.ok(oFormField.getValue() === "{i18n>string1}", "SimpleForm field 1: Has new value");
+								assert.equal(oFormField.getValue(), "{i18n>string1}", "SimpleForm field 1: Has new value");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
 								assert.ok(oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp true");
 								var oValueHelpIcon1 = oFormField._oValueHelpIcon;
 								assert.ok(oValueHelpIcon1, "SimpleForm field 1: Value help icon exist");
 								assert.ok(oValueHelpIcon1.getVisible(), "SimpleForm field 1: Value help icon visible");
 								assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "SimpleForm field 1: Input value help icon");
-								assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "SimpleForm field 1: Input value help icon src");
+								assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "SimpleForm field 1: Input value help icon src");
 								oValueHelpIcon1.firePress();
 								wait(1500).then(function () {
 									var oTranslationListPage1 = oField._oTranslationListPage;
 									var oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
-									assert.ok(oLanguageItems1.length === 50, "oTranslationPopover1 Content: length");
+									assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
 									for (var i = 0; i < oLanguageItems1.length; i++) {
 										var oCustomData = oLanguageItems1[i].getCustomData();
 										if (oCustomData && oCustomData.length > 0) {
 											var sLanguage = oCustomData[0].getKey();
 											var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 											var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
-											assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+											assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 										}
 									}
 									destroyEditor(that.oEditor);
@@ -354,7 +354,7 @@ sap.ui.define([
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
-					assert.ok(oLabel.getText() === "Object properties defined: value from Json list", "Label 1: Has label text");
+					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(oField._getCurrentProperty("value"), [oValue03]), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
@@ -362,17 +362,17 @@ sap.ui.define([
 					var oSelectionColumn = oTable.getColumns()[0];
 					var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
-					assert.ok(oTable.getRows().length === 5, "Table: line number is 5");
-					assert.ok(oTable.getBinding().getCount() === 8, "Table: value length is 8");
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
 					var oSelectionCell1 = oTable.getRows()[0].getCells()[0];
 					assert.ok(oSelectionCell1.isA("sap.m.CheckBox"), "Row 1: Cell 1 is CheckBox");
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected");
 					var oToolbar = oTable.getToolbar();
-					assert.ok(oToolbar.getContent().length === 9, "Table toolbar: content length");
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
 					var oAddButton = oToolbar.getContent()[1];
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oKeyColumn = oTable.getColumns()[1];
-					assert.ok(oKeyColumn.getLabel().getText() === "translated key en", "Column key: key label text translated");
+					assert.equal(oKeyColumn.getLabel().getText(), "translated key en", "Column key: key label text translated");
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
@@ -380,42 +380,42 @@ sap.ui.define([
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field 2: Control is SimpleForm");
 							var oContents = oSimpleForm.getContent();
-							assert.ok(oContents.length === 16, "SimpleForm: length");
+							assert.equal(oContents.length, 16, "SimpleForm: length");
 							var oTextArea = oContents[15];
 							assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), oDefaultNewObject), "SimpleForm field textArea: Has Default value");
 							var oFormLabel = oContents[0];
 							var oFormField = oContents[1];
-							assert.ok(oFormLabel.getText() === "translated key en", "SimpleForm label 1: Has label text");
+							assert.equal(oFormLabel.getText(), "translated key en", "SimpleForm label 1: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label 1: Visible");
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field 1: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field 1: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field 1: Editable");
-							assert.ok(oFormField.getValue() === "", "SimpleForm field 1: Has No value");
+							assert.equal(oFormField.getValue(), "", "SimpleForm field 1: Has No value");
 							assert.ok(!oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp false");
 							assert.ok(!oFormField._oValueHelpIcon, "SimpleForm field 1: Value help icon not exist");
 							oFormField.setValue("{i18n>string1}");
 							oFormField.fireChange({ value: "{i18n>string1}"});
 							wait().then(function () {
-								assert.ok(oFormField.getValue() === "{i18n>string1}", "SimpleForm field 1: Has new value");
+								assert.equal(oFormField.getValue(), "{i18n>string1}", "SimpleForm field 1: Has new value");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oTextArea.getValue()), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
 								assert.ok(oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp true");
 								var oValueHelpIcon1 = oFormField._oValueHelpIcon;
 								assert.ok(oValueHelpIcon1, "SimpleForm field 1: Value help icon exist");
 								assert.ok(oValueHelpIcon1.getVisible(), "SimpleForm field 1: Value help icon visible");
 								assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "SimpleForm field 1: Input value help icon");
-								assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "SimpleForm field 1: Input value help icon src");
+								assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "SimpleForm field 1: Input value help icon src");
 								oValueHelpIcon1.firePress();
 								wait(1500).then(function () {
 									var oTranslationListPage1 = oField._oTranslationListPage;
 									var oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
-									assert.ok(oLanguageItems1.length === 50, "oTranslationPopover1 Content: length");
+									assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
 									for (var i = 0; i < oLanguageItems1.length; i++) {
 										var oCustomData = oLanguageItems1[i].getCustomData();
 										if (oCustomData && oCustomData.length > 0) {
 											var sLanguage = oCustomData[0].getKey();
 											var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 											var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
-											assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+											assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 										}
 									}
 									destroyEditor(that.oEditor);

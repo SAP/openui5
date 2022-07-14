@@ -166,28 +166,28 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					wait().then(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label 2: Form content contains a Label");
-						assert.ok(oLabel.getText() === "Object properties defined", "Label 2: Has label text");
+						assert.equal(oLabel.getText(), "Object properties defined", "Label 2: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
 						assert.ok(!oField._getCurrentProperty("value"), "Field 2: Value");
 						var oSimpleForm = oField.getAggregation("_field");
 						assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field 2: Control is SimpleForm");
 						var oContents = oSimpleForm.getContent();
-						assert.ok(oContents.length === 16, "SimpleForm: length");
+						assert.equal(oContents.length, 16, "SimpleForm: length");
 						var oTextArea = oContents[15];
-						assert.ok(oTextArea.getValue() === '', "SimpleForm field textArea: Has No value");
+						assert.equal(oTextArea.getValue(), '', "SimpleForm field textArea: Has No value");
 						var oFormLabel3 = oContents[4];
 						var oFormField3 = oContents[5];
-						assert.ok(oFormLabel3.getText() === "Text", "SimpleForm label 3: Has label text");
+						assert.equal(oFormLabel3.getText(), "Text", "SimpleForm label 3: Has label text");
 						assert.ok(oFormLabel3.getVisible(), "SimpleForm label 3: Visible");
 						assert.ok(oFormField3.isA("sap.m.Input"), "SimpleForm Field 3: Input Field");
 						assert.ok(oFormField3.getVisible(), "SimpleForm Field 3: Visible");
 						assert.ok(oFormField3.getEditable(), "SimpleForm Field 3: Editable");
-						assert.ok(oFormField3.getValue() === "", "SimpleForm field 3: Has No value");
+						assert.equal(oFormField3.getValue(), "", "SimpleForm field 3: Has No value");
 						assert.ok(oFormField3.getShowValueHelp(), "SimpleForm field 3: ShowValueHelp true");
 						assert.ok(oFormField3._oValueHelpIcon, "SimpleForm field 3: Value help icon exist");
 						assert.ok(oFormField3._oValueHelpIcon.getVisible(), "SimpleForm field 3: Value help icon visible");
 						assert.ok(oFormField3._oValueHelpIcon.isA("sap.ui.core.Icon"), "SimpleForm field 3: Input value help icon");
-						assert.ok(oFormField3._oValueHelpIcon.getSrc() === "sap-icon://translate", "SimpleForm field 3: Input value help icon src");
+						assert.equal(oFormField3._oValueHelpIcon.getSrc(), "sap-icon://translate", "SimpleForm field 3: Input value help icon src");
 						oFormField3.setValue("text value 1");
 						oFormField3.fireChange({ value: "text value 1"});
 						assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "text value 1"}), "Field 1: DT Value updated");
@@ -197,7 +197,7 @@ sap.ui.define([
 						oFormField3.setValue("{i18n>string1}");
 						oFormField3.fireChange({ value: "{i18n>string1}"});
 						wait().then(function () {
-							assert.ok(oFormField3.getValue() === "{i18n>string1}", "SimpleForm field 3: Has new value");
+							assert.equal(oFormField3.getValue(), "{i18n>string1}", "SimpleForm field 3: Has new value");
 							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "{i18n>string1}"}), "Field 1: DT Value updated");
 							assert.ok(oFormField3.getShowValueHelp(), "SimpleForm field 3: ShowValueHelp true");
 							assert.ok(oFormField3._oValueHelpIcon, "SimpleForm field 3: Value help icon exist");
@@ -205,7 +205,7 @@ sap.ui.define([
 							oFormField3.setValue("string1");
 							oFormField3.fireChange({ value: "string1"});
 							wait().then(function () {
-								assert.ok(oFormField3.getValue() === "string1", "SimpleForm field 3: Has new value");
+								assert.equal(oFormField3.getValue(), "string1", "SimpleForm field 3: Has new value");
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "string1"}), "Field 1: DT Value updated");
 								assert.ok(oFormField3.getShowValueHelp(), "SimpleForm field 3: ShowValueHelp true");
 								assert.ok(oFormField3._oValueHelpIcon, "SimpleForm field 3: Value help icon exist");
@@ -231,42 +231,42 @@ sap.ui.define([
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					wait().then(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label 2: Form content contains a Label");
-						assert.ok(oLabel.getText() === "Object properties defined", "Label 2: Has label text");
+						assert.equal(oLabel.getText(), "Object properties defined", "Label 2: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
 						assert.ok(!oField._getCurrentProperty("value"), "Field 2: Value");
 						var oSimpleForm = oField.getAggregation("_field");
 						assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field 2: Control is SimpleForm");
 						var oContents = oSimpleForm.getContent();
-						assert.ok(oContents.length === 16, "SimpleForm: length");
+						assert.equal(oContents.length, 16, "SimpleForm: length");
 						var oTextArea = oContents[15];
-						assert.ok(oTextArea.getValue() === '', "SimpleForm field textArea: Has No value");
+						assert.equal(oTextArea.getValue(), '', "SimpleForm field textArea: Has No value");
 						var oFormLabel3 = oContents[4];
 						var oFormField3 = oContents[5];
-						assert.ok(oFormLabel3.getText() === "Text", "SimpleForm label 3: Has label text");
+						assert.equal(oFormLabel3.getText(), "Text", "SimpleForm label 3: Has label text");
 						assert.ok(oFormLabel3.getVisible(), "SimpleForm label 3: Visible");
 						assert.ok(oFormField3.isA("sap.m.Input"), "SimpleForm Field 3: Input Field");
 						assert.ok(oFormField3.getVisible(), "SimpleForm Field 3: Visible");
 						assert.ok(oFormField3.getEditable(), "SimpleForm Field 3: Editable");
-						assert.ok(oFormField3.getValue() === "", "SimpleForm field 3: Has No value");
+						assert.equal(oFormField3.getValue(), "", "SimpleForm field 3: Has No value");
 						assert.ok(oFormField3.getShowValueHelp(), "SimpleForm field 3: ShowValueHelp true");
 
 						var oValueHelpIcon3 = oFormField3._oValueHelpIcon;
 						assert.ok(oValueHelpIcon3, "SimpleForm field 3: Value help icon exist");
 						assert.ok(oValueHelpIcon3.getVisible(), "SimpleForm field 3: Value help icon visible");
 						assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "SimpleForm field 3: Input value help icon");
-						assert.ok(oValueHelpIcon3.getSrc() === "sap-icon://translate", "SimpleForm field 3: Input value help icon src");
+						assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "SimpleForm field 3: Input value help icon src");
 						oValueHelpIcon3.firePress();
 						wait(1500).then(function () {
 							var oTranslationPopover3 = oField._oTranslationPopover;
 							var oLanguageItems1 = oTranslationPopover3.getContent()[0].getItems();
-							assert.ok(oLanguageItems1.length === 50, "oTranslationPopover3 Content: length");
+							assert.equal(oLanguageItems1.length, 50, "oTranslationPopover3 Content: length");
 							for (var i = 0; i < oLanguageItems1.length; i++) {
 								var oCustomData = oLanguageItems1[i].getCustomData();
 								if (oCustomData && oCustomData.length > 0) {
 									var sLanguage = oCustomData[0].getKey();
 									var sExpectedValue = "";
 									var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
-									assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+									assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 								}
 							}
 							var oSaveButton3 = oTranslationPopover3.getFooter().getContent()[1];
@@ -285,40 +285,40 @@ sap.ui.define([
 							oValueHelpIcon3.firePress();
 							wait().then(function () {
 								oLanguageItems1 = oTranslationPopover3.getContent()[0].getItems();
-								assert.ok(oLanguageItems1.length === 50, "oTranslationPopover3 Content: length");
+								assert.equal(oLanguageItems1.length, 50, "oTranslationPopover3 Content: length");
 								for (var i = 0; i < oLanguageItems1.length; i++) {
 									var oCustomData = oLanguageItems1[i].getCustomData();
 									if (oCustomData && oCustomData.length > 0) {
 										var sLanguage = oCustomData[0].getKey();
 										var sExpectedValue = "text value 1";
 										var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
-										assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+										assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 									}
 								}
 								oCancelButton3.firePress();
 								oFormField3.setValue("{i18n>string1}");
 								oFormField3.fireChange({ value: "{i18n>string1}"});
 								wait().then(function () {
-									assert.ok(oFormField3.getValue() === "{i18n>string1}", "SimpleForm field 1: Has new value");
+									assert.equal(oFormField3.getValue(), "{i18n>string1}", "SimpleForm field 1: Has new value");
 									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "{i18n>string1}"}), "Field 1: DT Value updated");
 									assert.ok(oFormField3.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp true");
 									var oValueHelpIcon1 = oFormField3._oValueHelpIcon;
 									assert.ok(oValueHelpIcon1, "SimpleForm field 1: Value help icon exist");
 									assert.ok(oValueHelpIcon1.getVisible(), "SimpleForm field 1: Value help icon visible");
 									assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "SimpleForm field 1: Input value help icon");
-									assert.ok(oValueHelpIcon1.getSrc() === "sap-icon://translate", "SimpleForm field 1: Input value help icon src");
+									assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "SimpleForm field 1: Input value help icon src");
 									oValueHelpIcon1.firePress();
 									wait().then(function () {
 										var oTranslationPopover1 = oField._oTranslationPopover;
 										var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
-										assert.ok(oLanguageItems1.length === 50, "oTranslationPopover1 Content: length");
+										assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
 										for (var i = 0; i < oLanguageItems1.length; i++) {
 											var oCustomData = oLanguageItems1[i].getCustomData();
 											if (oCustomData && oCustomData.length > 0) {
 												var sLanguage = oCustomData[0].getKey();
 												var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
 												var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
-												assert.ok(sCurrentValue === sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+												assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 											}
 										}
 										resolve();
