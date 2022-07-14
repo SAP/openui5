@@ -1583,33 +1583,38 @@ sap.ui.define([
 
 		oData.$byPredicate = {"($uid=id-1-23)" : oData[0]};
 
-		oHelperMock.expects("getMetaPath").withExactArgs("($uid=id-1-23)/Name").returns("Name");
-		this.oModelInterfaceMock.expects("fetchMetadata")
+		oHelperMock.expects("getMetaPath").twice()
+			.withExactArgs("($uid=id-1-23)/Name").returns("Name");
+		this.oModelInterfaceMock.expects("fetchMetadata").twice()
 			.withExactArgs("/Products/Name")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$Type : "Edm.String"
 			})));
-		oHelperMock.expects("getMetaPath").withExactArgs("($uid=id-1-23)/Currency")
+		oHelperMock.expects("getMetaPath").twice()
+			.withExactArgs("($uid=id-1-23)/Currency")
 			.returns("Currency");
-		this.oModelInterfaceMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata").twice()
 			.withExactArgs("/Products/Currency")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$DefaultValue : "EUR",
 				$Type : "Edm.String"
 			})));
-		oHelperMock.expects("getMetaPath").withExactArgs("($uid=id-1-23)/Price").returns("Price");
-		this.oModelInterfaceMock.expects("fetchMetadata")
+		oHelperMock.expects("getMetaPath").twice()
+			.withExactArgs("($uid=id-1-23)/Price")
+			.returns("Price");
+		this.oModelInterfaceMock.expects("fetchMetadata").twice()
 			.withExactArgs("/Products/Price")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$DefaultValue : "0.0",
 				$Type : "Edm.Double"
 			})));
-		oHelperMock.expects("parseLiteral")
+		oHelperMock.expects("parseLiteral").twice()
 			.withExactArgs("0.0", "Edm.Double", "($uid=id-1-23)/Price")
 			.returns(0);
-		oHelperMock.expects("getMetaPath").withExactArgs("($uid=id-1-23)/ProductID")
+		oHelperMock.expects("getMetaPath").twice()
+			.withExactArgs("($uid=id-1-23)/ProductID")
 			.returns("ProductID");
-		this.oModelInterfaceMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata").twice()
 			.withExactArgs("/Products/ProductID")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$DefaultValue : "",
@@ -1644,7 +1649,7 @@ sap.ui.define([
 
 		oData.$byPredicate = {"($uid=id-1-23)" : oData[0]};
 
-		this.oModelInterfaceMock.expects("fetchMetadata").thrice()
+		this.oModelInterfaceMock.expects("fetchMetadata").exactly(3 * 2/*steps*/)
 			.withExactArgs("/BusinessPartners/Address")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$Type : "name.space.Address"
@@ -1698,9 +1703,10 @@ sap.ui.define([
 
 		oData.$byPredicate = {"($uid=id-1-23)" : oData[0]};
 
-		this.mock(_Helper).expects("getMetaPath").withExactArgs("($uid=id-1-23)/SO_2_BP")
+		this.mock(_Helper).expects("getMetaPath").twice()
+			.withExactArgs("($uid=id-1-23)/SO_2_BP")
 			.returns("SO_2_BP");
-		this.oModelInterfaceMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata").twice()
 			.withExactArgs("/SalesOrders/SO_2_BP")
 			.returns(SyncPromise.resolve(Promise.resolve({
 				$kind : "NavigationProperty",
@@ -1818,30 +1824,51 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#drillDown: missing Edm.Stream property", function (assert) {
+[{
+	oResponse : {},
+	sResult : "/~/Products/Picture"
+ }, {
+	oResponse : {"Picture@odata.mediaReadLink" : "~odata.mediaReadLink~"},
+	sResult : "~odata.mediaReadLink~"
+ }, {
+	oResponse : {"Picture@mediaReadLink" : "~mediaReadLink~"},
+	sResult : "~mediaReadLink~"
+  }, {
+	oResponse : {Picture : "~somePicture~"},
+	sResult : "~somePicture~"
+}].forEach(function (oFixture) {
+	QUnit.test("_Cache#drillDown: fetch Edm.Stream property late", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Products", "~mQueryOptions~"),
+			bPictureInResponse = "Picture" in oFixture.oResponse, //missingValue is called only once
 			oData = {};
 
-		this.mock(_Helper).expects("getMetaPath")
+		this.mock(_Helper).expects("getMetaPath").exactly(bPictureInResponse ? 1 : 2)
 			.withExactArgs("Picture")
 			.returns("~PictureMetaPath~");
+		this.oModelInterfaceMock.expects("fetchMetadata").exactly(bPictureInResponse ? 1 : 2)
+			.withExactArgs("/Products/~PictureMetaPath~")
+			.returns(SyncPromise.resolve({$Type : "Edm.Stream"}));
 		this.mock(_Helper).expects("isSelected")
 			.withExactArgs("~PictureMetaPath~", "~mQueryOptions~")
 			.returns(false);
-		this.oModelInterfaceMock.expects("fetchMetadata")
-			.withExactArgs("/Products/~PictureMetaPath~")
-			.returns(SyncPromise.resolve({$Type : "Edm.Stream"}));
 
 		this.mock(oCache).expects("fetchLateProperty")
 			.withExactArgs("~oGroupLock~", sinon.match.same(oData), "", "Picture", "Picture")
-			.returns("~mediaReadLink~");
+			.callsFake(function () {
+				if (!bPictureInResponse) {
+					oData["Picture@$ui5.noData"] = true; // done by _Helper.updateSelected
+				}
+				Object.assign(oData, oFixture.oResponse);
+				return SyncPromise.resolve(Promise.resolve(/*do not resolve with the value*/));
+			});
 
 		// code under test
 		return oCache.drillDown(oData, "Picture", "~oGroupLock~")
 			.then(function (sValue) {
-				assert.strictEqual(sValue, "~mediaReadLink~");
+				assert.strictEqual(sValue, oFixture.sResult);
 			});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#drillDown: do not fetch Edm.Stream property late twice", function (assert) {
