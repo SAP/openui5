@@ -62,6 +62,7 @@ sap.ui.define([
 				var sPropertyName = oPropertyInfo.name;
 				var oColumnInfo = {
 					header: oPropertyInfo.label,
+					tooltip: oPropertyInfo.label,
 					dataProperty: sPropertyName,
 					template: oTemplate
 				};
