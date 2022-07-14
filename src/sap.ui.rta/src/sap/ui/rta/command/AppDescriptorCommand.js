@@ -97,8 +97,13 @@ sap.ui.define([
 			}
 		})
 			.then(function(oAppDescriptorChangeContent) {
-				return new DescriptorChangeFactory().createNew(this.getReference(),
-					oAppDescriptorChangeContent, this.getLayer(), this.getAppComponent());
+				return new DescriptorChangeFactory().createNew(
+					this.getReference(),
+					oAppDescriptorChangeContent,
+					this.getLayer(),
+					this.getAppComponent(),
+					"sap.ui.rta.AppDescriptorCommand"
+				);
 			}.bind(this))
 			.then(function(oAppDescriptorChange) {
 				var oChange = oAppDescriptorChange.store();

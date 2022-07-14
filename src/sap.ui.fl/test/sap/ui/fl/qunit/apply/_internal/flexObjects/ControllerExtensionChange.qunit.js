@@ -24,7 +24,7 @@ sap.ui.define([
 			controllerName: "sap.ui.rta.controller.ProductDetail"
 		},
 		layer: "VENDOR",
-		namespace: "apps/sap.ui.rta.changes/",
+		namespace: "apps/AP.controller.extension/changes/",
 		projectId: "AP.controller.extension",
 		creation: "2022-07-04T08:05:48.561Z",
 		originalLanguage: "EN",

@@ -2,14 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/Change",
-	"sap/ui/fl/Utils",
 	"sap/base/util/merge"
 ], function(
+	FlexObjectFactory,
 	ChangePersistenceFactory,
-	Change,
-	FlexUtils,
 	fnBaseMerge
 ) {
 	"use strict";
@@ -94,9 +92,7 @@ sap.ui.define([
 	};
 
 	DescriptorChange.prototype._getChangeToSubmit = function() {
-		//create Change
-		var oChange = new Change(this._getMap());
-		return oChange;
+		return FlexObjectFactory.createAppDescriptorChange(this._getMap());
 	};
 
 	DescriptorChange.prototype._getMap = function() {
@@ -148,14 +144,11 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorChangeFactory.prototype.createNew = function(sReference, oInlineChange, sLayer, oAppComponent, sTool) {
-		var fSetHostingIdForTextKey = function(_oDescriptorInlineChange, sId) {
-			//providing "hosting id" for appdescr_app_setTitle and similar
-			//"hosting id" is descriptor variant id
-			if (_oDescriptorInlineChange["setHostingIdForTextKey"]) {
-				_oDescriptorInlineChange.setHostingIdForTextKey(sId);
-			}
-		};
-		fSetHostingIdForTextKey(oInlineChange, sReference);
+		// providing "hosting id" for appdescr_app_setTitle and similar
+		// "hosting id" is descriptor variant id
+		if (oInlineChange["setHostingIdForTextKey"]) {
+			oInlineChange.setHostingIdForTextKey(sReference);
+		}
 
 		var mPropertyBag = {};
 		mPropertyBag.changeType = oInlineChange._getChangeType();
@@ -167,9 +160,7 @@ sap.ui.define([
 		//default to 'CUSTOMER'
 		mPropertyBag.layer = sLayer || 'CUSTOMER';
 
-		var mChangeFile = Change.createInitialFileContent(mPropertyBag);
-
-		return Promise.resolve(new DescriptorChange(mChangeFile, oInlineChange));
+		return Promise.resolve(new DescriptorChange(mPropertyBag, oInlineChange));
 	};
 
 	return DescriptorChangeFactory;

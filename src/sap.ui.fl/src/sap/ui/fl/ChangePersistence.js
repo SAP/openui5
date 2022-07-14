@@ -766,14 +766,14 @@ sap.ui.define([
 				switch (oDirtyChange.getState()) {
 					case Change.states.NEW:
 						oDirtyChange.setState(Change.states.PERSISTED);
-						Cache.addChange(this._mComponent, oDirtyChange.getDefinition());
+						Cache.addChange(this._mComponent, oDirtyChange.convertToFileContent());
 						break;
 					case Change.states.DELETED:
-						Cache.deleteChange(this._mComponent, oDirtyChange.getDefinition());
+						Cache.deleteChange(this._mComponent, oDirtyChange.convertToFileContent());
 						break;
 					case Change.states.DIRTY:
 						oDirtyChange.setState(Change.states.PERSISTED);
-						Cache.updateChange(this._mComponent, oDirtyChange.getDefinition());
+						Cache.updateChange(this._mComponent, oDirtyChange.convertToFileContent());
 						break;
 				}
 			}

@@ -96,16 +96,15 @@ sap.ui.define([
 		var aInlineChangesPromises = [];
 
 		aDescrChanges.forEach(function(oChange) {
-			var oChangeDefinition = oChange.getDefinition();
 			// Change contains only descriptor change information so the descriptor inline change needs to be created again
 
 			var oInlineChange = {
-				changeType: oChangeDefinition.changeType,
-				content: oChangeDefinition.content
+				changeType: oChange.getChangeType(),
+				content: oChange.getContent()
 			};
 
-			if (oChangeDefinition.texts) {
-				oInlineChange.texts = oChangeDefinition.texts;
+			if (oChange.getTexts()) {
+				oInlineChange.texts = oChange.getTexts();
 			}
 
 			aInlineChangesPromises.push(AppVariantInlineChangeFactory.createNew(oInlineChange));
@@ -165,7 +164,7 @@ sap.ui.define([
 		if (bArePersistencesEqual) {
 			_getDirtyDescrChanges(vSelector).forEach(function(oChange) {
 				// UI and Descriptor changes need to be separated here so as to perform different operations on changes
-				if (includes(DescriptorChangeTypes.getChangeTypes(), oChange.getDefinition().changeType)) {
+				if (includes(DescriptorChangeTypes.getChangeTypes(), oChange.getChangeType())) {
 					aDescrChanges.push(oChange);
 				} else {
 					_moveChangesToNewFlexReference(oChange, oAppVariant);
@@ -314,7 +313,7 @@ sap.ui.define([
 				.then(function() {
 					var aDescrChanges = [];
 					_getDirtyDescrChanges(mPropertyBag.selector).forEach(function(oChange) {
-						if (includes(DescriptorChangeTypes.getChangeTypes(), oChange.getDefinition().changeType)) {
+						if (includes(DescriptorChangeTypes.getChangeTypes(), oChange.getChangeType())) {
 							aDescrChanges.push(oChange);
 						}
 					});
