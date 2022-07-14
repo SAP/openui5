@@ -9,7 +9,7 @@ sap.ui.define([
 
 	//the default values that currently apply for UI5
 	var oDefaultsValues = {
-		theme: "sap_fiori_3",
+		theme: "sap_horizon",
 		contentDensity: "cozy",
 		rtl: false
 	};
@@ -19,31 +19,39 @@ sap.ui.define([
 		themes: [
 			{
 				key: "sap_horizon",
-				text: "Horizon"
+				text: "Morning Horizon (Light)"
+			},
+			{
+				key: "sap_horizon_dark",
+				text: "Evening Horizon (Dark)"
+			},
+			{
+				key: "sap_horizon_hcb",
+				text: "Horizon High Contrast Black"
+			},
+			{
+				key: "sap_horizon_hcw",
+				text: "Horizon High Contrast White"
 			},
 			{
 				key: "sap_fiori_3",
-				text: "Quartz Light (default)"
+				text: "Quartz Light"
 			},
 			{
 				key: "sap_fiori_3_dark",
 				text: "Quartz Dark"
 			},
 			{
-				key: "sap_belize",
-				text: "Belize"
-			},
-			{
-				key: "sap_belize_plus",
-				text: "Belize Deep"
-			},
-			{
 				key: "sap_fiori_3_hcb",
-				text: "High Contrast Black"
+				text: "Quartz High Contrast Black"
 			},
 			{
 				key: "sap_fiori_3_hcw",
-				text: "High Contrast White"
+				text: "Quartz High Contrast White"
+			},
+			{
+				key: "sap_belize",
+				text: "Belize"
 			}
 		],
 		contentDensity: "cozy",
