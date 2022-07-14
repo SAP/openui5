@@ -291,12 +291,17 @@ sap.ui.define([
 					// assertion is async, push results when ready
 					var oAssertionPromise = fnAssertion.apply(oParams.appWindow, arguments)
 						.always(function (oResult) {
-							qunitThis.push(
-								oResult.result,
-								oResult.actual,
-								oResult.expected,
-								oResult.message
-							);
+							if ( typeof qunitThis.pushResult === "function" ) {
+								qunitThis.pushResult(oResult);
+							} else {
+								// fallback for QUnit < 1.22.0
+								qunitThis.push(
+									oResult.result,
+									oResult.actual,
+									oResult.expected,
+									oResult.message
+								);
+							}
 						});
 
 					// schedule async assertion promise on waitFor flow so test waits till assertion is ready
