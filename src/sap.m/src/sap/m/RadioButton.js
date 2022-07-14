@@ -9,7 +9,7 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/message/MessageMixin',
-	'./Label',
+	'sap/m/Label',
 	'sap/ui/core/library',
 	'sap/base/strings/capitalize',
 	'./RadioButtonRenderer'
@@ -435,14 +435,14 @@ function(
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
-	 * @returns {Object} The <code>sap.m.RadioButton</code> accessibility information
+	 * @returns {object} The <code>sap.m.RadioButton</code> accessibility information
 	 */
 	RadioButton.prototype.getAccessibilityInfo = function() {
 		var oBundle = Core.getLibraryResourceBundle("sap.m");
 		return {
 			role: "radio",
 			type: oBundle.getText("ACC_CTR_TYPE_RADIO"),
-			description: (this.getText() || "") + (this.getSelected() ? (" " + oBundle.getText("ACC_CTR_STATE_CHECKED")) : ""),
+			description: (this.getText() || "") + (this.getSelected() ? (" " + oBundle.getText("ACC_CTR_STATE_CHECKED")) : (" " + oBundle.getText("ACC_CTR_STATE_NOT_CHECKED"))),
 			enabled: this.getEnabled(),
 			editable: this.getEditable()
 		};
@@ -459,7 +459,7 @@ function(
 	 * Determines next focusable item
 	 *
 	 * @param {enum} sNavigation any item from KH_NAVIGATION
-	 * @returns {RadioButton} Control instance for method chaining
+	 * @returns {sap.m.RadioButton} Next focusable radio button
 	 * @private
 	 */
 	RadioButton.prototype._getNextFocusItem = function(sNavigation) {
@@ -534,13 +534,12 @@ function(
 	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining.
 	 */
 	RadioButton.prototype.setValueStateText = function(sText) {
-		return this.setProperty("valueStateText", sText, true);
+		return this.setProperty("valueStateText", sText);
 	};
 
 	/**
 	 * Maintains the RadioButton's internal Label's text property.
 	 * @param {string} sText - The text to be set
-	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining
 	 * @public
 	 */
 	RadioButton.prototype._updateLabelProperties = function () {
@@ -576,7 +575,7 @@ function(
 	 * @param {string} sOldGroupName - Name of the old group.
 	 * @private
 	 */
-	 RadioButton.prototype._updateGroupName = function (sNewGroupName, sOldGroupName) {
+	RadioButton.prototype._updateGroupName = function (sNewGroupName, sOldGroupName) {
 		var aNewGroup = this._groupNames[sNewGroupName],
 			aOldGroup = this._groupNames[sOldGroupName];
 

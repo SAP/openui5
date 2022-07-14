@@ -1,8 +1,7 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/RadioButton",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
@@ -10,10 +9,10 @@ sap.ui.define([
 	"sap/ui/util/Mobile",
 	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/message/Message"
+	"sap/ui/core/message/Message",
+	"sap/ui/thirdparty/jquery"
 ], function (
 	qutils,
-	createAndAppendDiv,
 	RadioButton,
 	coreLibrary,
 	Core,
@@ -21,8 +20,11 @@ sap.ui.define([
 	Mobile,
 	Label,
 	JSONModel,
-	Message
+	Message,
+	jQuery
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -32,7 +34,7 @@ sap.ui.define([
 	// shortcut for sap.ui.core.message.MessageType
 	var MessageType = coreLibrary.MessageType;
 
-	createAndAppendDiv("content");
+	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	Mobile.init();
 
@@ -252,13 +254,13 @@ sap.ui.define([
 			groupName: "R1",
 			text:'Hello World2'
 		});
-		oRadioButton1.placeAt("qunit-fixture");
+		oRadioButton1.placeAt(DOM_RENDER_LOCATION);
 		var oRadioButton2 = new RadioButton({
 			groupName: "R1",
 			text:'Hello World2',
 			selected: true
 		});
-		oRadioButton2.placeAt("qunit-fixture");
+		oRadioButton2.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
 		// act
@@ -308,6 +310,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerEvent("tap", oRadioButton2.getId());
+
 		Core.applyChanges();
 
 		// assertions
@@ -325,7 +328,29 @@ sap.ui.define([
 		oRadioButton5.destroy();
 	});
 
-	QUnit.test("setSelected should check RadioButton and uncheck all other RadioButtons from the same group", function (assert) {
+	QUnit.test("after calling setSelected, group name should be updated to avoid double selection", function (assert) {
+
+		// arrange
+		var oRadioButton1 = new RadioButton();
+		var oUpdateGroupNameSpy = sinon.spy(oRadioButton1, "_updateGroupName");
+
+		oRadioButton1.placeAt("qunit-fixture");
+
+		Core.applyChanges();
+
+		// act
+		oRadioButton1.setSelected(true);
+
+		Core.applyChanges();
+
+		// assert
+		assert.ok(oUpdateGroupNameSpy.called, "_updateGroupName was called");
+
+		// cleanup
+		oRadioButton1.destroy();
+	});
+
+	QUnit.test("after calling setSelected, all other RadioButtons from the same group should be unchecked", function (assert) {
 
 		// arrange
 		var oRadioButton1 = new RadioButton(),
@@ -338,6 +363,8 @@ sap.ui.define([
 
 		// act
 		oRadioButton1.setSelected(true);
+		Core.applyChanges();
+
 		oRadioButton2.setSelected(true);
 		Core.applyChanges();
 
@@ -348,6 +375,22 @@ sap.ui.define([
 		// cleanup
 		oRadioButton1.destroy();
 		oRadioButton2.destroy();
+	});
+
+	QUnit.test("Checked RB from one group, should not uncheck RB from another group", function (assert) {
+		var oRadioButton1 = new RadioButton({ groupName: "1", selected: true }),
+			oRadioButton2 = new RadioButton({ groupName: "1" }),
+			oRadioButton3 = new RadioButton({ groupName: "2", selected: true });
+
+		var RB1SetSelectedSpy = this.spy(oRadioButton1, "setSelected");
+
+		oRadioButton1.placeAt("qunit-fixture");
+		oRadioButton2.placeAt("qunit-fixture");
+		oRadioButton3.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.strictEqual(RB1SetSelectedSpy.callCount, 0, "Before initial rendering, a radio button in one group, does not uncheck radio buttons from another group.");
+		assert.notOk(RB1SetSelectedSpy.calledWith(false), "Other radio button does not get unchecked");
 	});
 
 	/* ------------------------------ */
@@ -364,7 +407,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assertions
-		assert.strictEqual(oRadioButton1.getText(), 'Foo', "The Radion Button should have text 'Foo' ");
+		assert.strictEqual(oRadioButton1.getText(), 'Foo', "The Radio Button should have text 'Foo' ");
 		assert.strictEqual(oRadioButton1.$('label').text(), 'Foo', "The Radio Button should have text 'Foo'");
 
 		// cleanup
@@ -424,7 +467,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assertions
-		assert.strictEqual(oRadioButton1.$().width(), 50, "Width of both RadioButton and Lable should be 50");
+		assert.strictEqual(oRadioButton1.$().width(), 50, "Width of both RadioButton and Label should be 50");
 
 		// cleanup
 		oRadioButton1.destroy();
@@ -547,9 +590,11 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ENTER);
-		sap.ui.test.qunit.triggerKeydown(oRadioButton2.getDomRef(), KeyCodes.ENTER);
-		sap.ui.test.qunit.triggerKeydown(oRadioButton3.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerEvent("tap", oRadioButton1.getId());
+		Core.applyChanges();
+		qutils.triggerEvent("tap", oRadioButton2.getId());
+		Core.applyChanges();
+		qutils.triggerEvent("tap", oRadioButton3.getId());
 		Core.applyChanges();
 
 		// assert
@@ -719,7 +764,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
+		qutils.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
 
 		// assertions
 		assert.ok(oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should have class sapMRbBTouched");
@@ -737,13 +782,13 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
+		qutils.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
 
 		// assertions
 		assert.ok(oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should have class sapMRbBTouched");
 
 		// act
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oRadioButton1.getDomRef());
+		qutils.triggerTouchEvent("touchend", oRadioButton1.getDomRef());
 
 		// assertions
 		assert.ok(!oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should not have class sapMRbBTouched");
@@ -764,14 +809,14 @@ sap.ui.define([
 
 			// act
 			var fnFireSelectSpy = this.spy(oRadioButton1, "fireSelect");
-			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), oOptions.keyCode);
+			qutils.triggerKeydown(oRadioButton1.getDomRef(), oOptions.keyCode);
 			this.clock.tick(1);
 
 			// assertions
 			assert.strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired once");
 
 			// act
-			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), oOptions.keyCode);
+			qutils.triggerKeydown(oRadioButton1.getDomRef(), oOptions.keyCode);
 			this.clock.tick(1);
 
 			// assertions
@@ -803,7 +848,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			oRadioButton1.applyFocusInfo();
-			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), iKeyCode);
+			qutils.triggerKeydown(oRadioButton1.getDomRef(), iKeyCode);
 			this.clock.tick(100);
 
 			oAssert.strictEqual(oFireSelectSpy.callCount, 0, "Button 2 should not be selected");
@@ -834,8 +879,8 @@ sap.ui.define([
 		// act
 		var fnFireSelectSpy1 = this.spy(oRadioButton1, "fireSelect");
 		var fnFireSelectSpy2 = this.spy(oRadioButton2, "fireSelect");
-		sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ENTER);
-		sap.ui.test.qunit.triggerKeydown(oRadioButton2.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ENTER);
+		qutils.triggerKeydown(oRadioButton2.getDomRef(), KeyCodes.ENTER);
 		this.clock.tick(1);
 
 		// assertions
@@ -860,7 +905,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		oRadioButton1.applyFocusInfo();
-		sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(oRadioButton1.getDomRef(), KeyCodes.ARROW_RIGHT);
 		this.clock.tick(100);
 
 		assert.strictEqual(oRadioButton3.$().is(":focus"), true, "3rd RadioButton should be focussed");
@@ -887,7 +932,7 @@ sap.ui.define([
 
 
 		oRadioButton3.applyFocusInfo();
-		sap.ui.test.qunit.triggerKeydown(oRadioButton3.getDomRef(), KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown(oRadioButton3.getDomRef(), KeyCodes.ARROW_LEFT);
 
 		assert.strictEqual(oRadioButton1.$().is(":focus"), true, "3rd RadioButton should be focussed");
 
@@ -959,10 +1004,13 @@ sap.ui.define([
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oBundle = Core.getLibraryResourceBundle("sap.m"),
 				oRadioButton = new RadioButton({ text: "testLabel", selected: true }),
+				oRadioButton1 = new RadioButton({ text: "testLabel", selected: false }),
 				sExpectedType = oBundle.getText("ACC_CTR_TYPE_RADIO"),
 				sExpectedRole = 'radio',
 				sExpectedDescription = oRadioButton.getText() + " " + oBundle.getText("ACC_CTR_STATE_CHECKED"),
-				oAccInfo = oRadioButton.getAccessibilityInfo();
+				sExpectedDescription1 = oRadioButton1.getText() + " " + oBundle.getText("ACC_CTR_STATE_NOT_CHECKED"),
+				oAccInfo = oRadioButton.getAccessibilityInfo(),
+				oAccInfo1 = oRadioButton1.getAccessibilityInfo();
 
 		oRadioButton.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -970,8 +1018,11 @@ sap.ui.define([
 		assert.strictEqual(oAccInfo.type, sExpectedType, "input type set correctly");
 		assert.strictEqual(oAccInfo.role, sExpectedRole, "role set correctly");
 		assert.strictEqual(oAccInfo.description, sExpectedDescription, "description set correctly");
+		assert.strictEqual(oAccInfo1.description, sExpectedDescription1, "description set correctly");
+
 
 		oRadioButton.destroy();
+		oRadioButton1.destroy();
 	});
 
 	QUnit.test("SVG aria", function(assert) {
@@ -979,11 +1030,26 @@ sap.ui.define([
 
 		oRadioButton.placeAt("qunit-fixture");
 		Core.applyChanges();
-		oSvg = oRadioButton.getDomRef().getElementsByClassName('sapMRbSvg')[0];
+		var oSvg = oRadioButton.getDomRef().getElementsByClassName('sapMRbSvg')[0];
 
 		assert.strictEqual(oSvg.getAttribute('role'), "presentation", "The SVG icon should have a role=presentation");
 
 		oRadioButton.destroy();
+	});
+
+	QUnit.test("ValueState=Error should not result in aria-invalid attribute in DomRef", function (assert) {
+		var oRBError = new RadioButton({ text: "test", valueState: "Error" });
+		var oRBSuccess = new RadioButton({ text: "test", valueState: "Success" });
+
+		oRBError.placeAt("qunit-fixture");
+		oRBSuccess.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.strictEqual(oRBError.getDomRef().getAttribute("aria-invalid"), null, "aria-invalid is not present");
+		assert.strictEqual(oRBSuccess.getDomRef().getAttribute("aria-invalid"), null, "aria-invalid attribute is not present");
+
+		oRBError.destroy();
+		oRBSuccess.destroy();
 	});
 
 	QUnit.module("Message support", {
@@ -1030,30 +1096,13 @@ sap.ui.define([
 
 	QUnit.test("Description value when there is a Message containing error text", function (assert) {
 		// arrange
-		var done = assert.async(),
-			oModel = new JSONModel({
-				selected:true
-			}),
-			oMessageManager = sap.ui.getCore().getMessageManager(),
-			sMessage = "This error message should be shown in the tooltip instead of the default message from the Resource Bundle",
-			oMessage = new Message({
-				type: MessageType.Error,
-				target: "/selected",
-				processor: oModel,
-				message: sMessage
-			});
+		var sMessage = "This error message should be shown in the tooltip instead of the default message from the Resource Bundle";
 
 		// act
-		this.oRadioButton.setModel(oModel);
-		oMessageManager.registerObject(this.oRadioButton, true);
-		oMessageManager.addMessages([oMessage]);
 		this.oRadioButton.setValueStateText(sMessage);
 		Core.applyChanges();
 
-		setTimeout(function() {
-			// assert
-			assert.strictEqual(this.oRadioButton.$("Descr").text(), sMessage, "The error message should be shown in the tooltip");
-			done();
-		}.bind(this), 100);
+		// assert
+		assert.strictEqual(this.oRadioButton.$("Descr").text(), sMessage, "The error message should be shown in the tooltip");
 	});
 });
