@@ -435,7 +435,7 @@ function(
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
-	 * @returns {Object} The <code>sap.m.RadioButton</code> accessibility information
+	 * @returns {object} The <code>sap.m.RadioButton</code> accessibility information
 	 */
 	RadioButton.prototype.getAccessibilityInfo = function() {
 		var oBundle = Core.getLibraryResourceBundle("sap.m");
@@ -459,7 +459,7 @@ function(
 	 * Determines next focusable item
 	 *
 	 * @param {enum} sNavigation any item from KH_NAVIGATION
-	 * @returns {RadioButton} Control instance for method chaining
+	 * @returns {sap.m.RadioButton} Next focusable radio button
 	 * @private
 	 */
 	RadioButton.prototype._getNextFocusItem = function(sNavigation) {
@@ -540,7 +540,6 @@ function(
 	/**
 	 * Maintains the RadioButton's internal Label's text property.
 	 * @param {string} sText - The text to be set
-	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining
 	 * @public
 	 */
 	RadioButton.prototype._updateLabelProperties = function () {

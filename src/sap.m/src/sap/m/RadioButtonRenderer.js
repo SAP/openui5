@@ -25,7 +25,7 @@ sap.ui.define([
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oRadioButton an object representation of the control that should be rendered
+	 * @param {sap.m.RadioButton} oRadioButton an object representation of the control that should be rendered
 	 */
 	RadioButtonRenderer.render = function (oRM, oRadioButton) {
 		this.addWOuterDivStyles(oRM, oRadioButton);
@@ -68,7 +68,6 @@ sap.ui.define([
 			selected: null, // Avoid output aria-selected
 			checked: oRadioButton.getSelected(), // aria-checked must be set explicitly
 			disabled: bNonEditable ? true : undefined, // Avoid output aria-disabled=false when the button is editable
-			invalid: oValueState === ValueState.Error ? true : null,
 			labelledby: { value: sId + "-label", append: true },
 			describedby: { value: (sTooltipWithStateMessage ? sId + "-Descr" : undefined), append: true }
 		});

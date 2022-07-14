@@ -179,7 +179,6 @@ sap.ui.define([
 			 */
 			RadioButtonGroup.prototype.onBeforeRendering = function() {
 				var aButtons = this.getButtons();
-				var iButtonCount = aButtons.length;
 				var bEditable = this.getEditable();
 				var iCurrentSelectedButtonSelectionNumber = -1;
 
@@ -193,10 +192,6 @@ sap.ui.define([
 					this._iSelectionNumber = RadioButton.getNextSelectionNumber();
 				}
 
-				if (this.getSelectedIndex() > iButtonCount) {
-					Log.warning("Invalid index, set to 0");
-					this.setSelectedIndex(0);
-				}
 				aButtons.forEach(function (oRadioButton, i) {
 					oRadioButton._setEditableParent(bEditable);
 
@@ -259,8 +254,8 @@ sap.ui.define([
 				this._oItemNavigation.setItemDomRefs(aDomRefs);
 				this._oItemNavigation.setCycling(true);
 				this._oItemNavigation.setColumns(this.getColumns());
-				this._oItemNavigation.setSelectedIndex(this.getSelectedIndex());
-				this._oItemNavigation.setFocusedIndex(this.getSelectedIndex());
+				this._oItemNavigation.setSelectedIndex(this._getSelectedIndexInRange());
+				this._oItemNavigation.setFocusedIndex(this._getSelectedIndexInRange());
 				this._oItemNavigation.setDisabledModifiers({
 					sapnext : ["alt", "meta"],
 					sapprevious : ["alt", "meta"]
@@ -295,6 +290,7 @@ sap.ui.define([
 				// deselect old RadioButton
 				if (!isNaN(iIndexOld) && this.aRBs && this.aRBs[iIndexOld]) {
 					this.aRBs[iIndexOld].setSelected(false);
+					this.aRBs[iIndexOld].setTabIndex(-1);
 				}
 
 				// select new one
@@ -303,8 +299,8 @@ sap.ui.define([
 				}
 
 				if (this._oItemNavigation) {
-					this._oItemNavigation.setSelectedIndex(iSelectedIndex);
 					this._oItemNavigation.setFocusedIndex(iSelectedIndex);
+					this._oItemNavigation.setSelectedIndex(iSelectedIndex);
 				}
 
 				// if focus is in the group - focus the selected element
@@ -484,7 +480,7 @@ sap.ui.define([
 			 * Removes all radio buttons.
 			 *
 			 * @public
-			 * @returns {Array} Array of removed buttons or null.
+			 * @returns {sap.m.RadioButton[]} Array of removed buttons.
 			 */
 			RadioButtonGroup.prototype.removeAllButtons = function () {
 				if (!this._bUpdateButtons) {
@@ -505,10 +501,6 @@ sap.ui.define([
 			RadioButtonGroup.prototype.destroyButtons = function() {
 
 				this.destroyAggregation("buttons");
-
-				if (!this._bUpdateButtons) {
-					this.setSelectedIndex(-1);
-				}
 
 				if (this.aRBs) {
 					while (this.aRBs.length > 0) {
@@ -606,7 +598,6 @@ sap.ui.define([
 			 *
 			 * @private
 			 * @param {sap.ui.base.Event} oControlEvent The event that gets fired by the {@link sap.ui.core.delegate.ItemNavigation} delegate.
-			 * @returns {sap.m.RadioButtonGroup} Pointer to the control instance for chaining.
 			 */
 			RadioButtonGroup.prototype._handleAfterFocus = function(oControlEvent) {
 
@@ -627,7 +618,29 @@ sap.ui.define([
 					this.fireSelect({
 						selectedIndex : iIndex
 					});
+
+					// update tabindex values for all buttons that are part of the item navigation
+					this.aRBs
+						.filter(function (oRB) { return oRB.getEditable() && oRB.getEnabled(); })
+						.forEach(function (oRB) {
+							if (oRB === this.aRBs[iIndex]) {
+								oRB.setTabIndex(0);
+								return;
+							}
+							oRB.setTabIndex(-1);
+						}.bind(this));
 				}
+			};
+
+			RadioButtonGroup.prototype._getSelectedIndexInRange = function(oControlEvent) {
+				var iLength = this.getButtons().length,
+					iInd = this.getSelectedIndex();
+
+				if (iInd >= -1  && iInd < iLength) {
+					return iInd;
+				}
+
+				return -1;
 			};
 
 			return RadioButtonGroup;
