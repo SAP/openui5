@@ -2,7 +2,7 @@
  * ! ${copyright}
  */
 sap.ui.define([
-    "sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
+    "delegates/odata/v4/vizChart/ChartDelegate",
     "sap/ui/mdc/odata/v4/ODataMetaModelUtil",
     "sap/ui/mdc/library",
     "./Books.FB.delegate",

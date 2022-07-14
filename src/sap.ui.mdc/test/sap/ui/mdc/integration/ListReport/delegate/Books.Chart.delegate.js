@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
+	"delegates/odata/v4/vizChart/ChartDelegate",
 	"sap/ui/mdc/library",
 	"sap/ui/mdc/odata/v4/ODataMetaModelUtil"
 ], function(ChartDelegate, MDCLib, ODataMetaModelUtil) {
