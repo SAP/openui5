@@ -3470,7 +3470,7 @@
 		{
 		  "id": "sap.m.sample.OverflowToolbarFooter",
 		  "name": "Overflow Toolbar - in a table and in the footer of a page",
-		  "description": "Overflow Toolbar is useful for showing lists of action buttons that can display an icon in the toolbar, and icon+text when in the overflow."
+		  "description": "Overflow Toolbar Button is useful for showing lists of action buttons that can display an icon in the toolbar, and icon+text when in the overflow."
 		},
 		{
 		  "id": "sap.m.sample.Wizard",
