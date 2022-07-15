@@ -3319,6 +3319,8 @@ sap.ui.define([
 
 		var iPageHeight = this.iScreenHeight,
 			sClosestId,
+			oClosestSection,
+			sClosestSectionId,
 			sClosestSubSectionId;
 
 		if (iPageHeight === 0) {
@@ -3327,6 +3329,8 @@ sap.ui.define([
 
 		//find the currently scrolled section = where position - iScrollTop is closest to 0
 		sClosestId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
+		oClosestSection = ObjectPageSection._getClosestSection(sClosestId);
+		sClosestSectionId = oClosestSection ? oClosestSection.getId() : null;
 		sClosestSubSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight, true /* subSections only */);
 
 		if (sClosestId) {
@@ -3346,13 +3350,13 @@ sap.ui.define([
 				// then we do not want to process intermediate sections (i.e. sections between scroll-start section and scroll-destination sections)
 				// so if current section is not destination section
 				// then no need to proceed further
-				if (sDestinationSectionId && sDestinationSectionId !== sClosestId) {
+				if (sDestinationSectionId && sDestinationSectionId !== sClosestSectionId) {
 					return;
 				}
 				this.clearDirectScrollingToSection();
 
 				this._setAsCurrentSection(sClosestId);
-			} else if (sClosestId === this.getDirectScrollingToSection()) { //we are already in the destination section
+			} else if (sClosestSectionId === this.getDirectScrollingToSection()) { //we are already in the destination section
 				this.clearDirectScrollingToSection();
 			}
 
