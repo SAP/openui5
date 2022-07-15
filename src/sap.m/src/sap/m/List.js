@@ -49,6 +49,42 @@ sap.ui.define(["./library", "./ListBase", "./ListRenderer"],
 		}
 	}});
 
+	List.prototype.getAriaRole = function() {
+		return this._sAriaRole || "list";
+	};
+
+	/**
+	 * Applies the aria <code>role</code> attribute to the control.
+	 *
+	 * Supported values are:
+	 * <ul>
+	 * <li><code>list</code>: This is the default since version 1.105. The rendered items will have the <code>role="listitem"</code>.</li>
+	 * <li><code>listbox</code>: Legacy support. The rendererd items will have the <code>role="option"</code>.</li>
+	 * </ul>
+	 * <b>Note:</b> This method must be called before the control renders.
+	 * @param {string} sRole role attribute for the control
+	 * @protected
+	 * @ui5-restricted
+	 * @since 1.105
+	 */
+	List.prototype.applyAriaRole = function(sRole) {
+		this._sAriaRole = sRole;
+	};
+
+	List.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
+		ListBase.prototype.enhanceAccessibilityState.apply(this, arguments);
+
+		// update listitem Accessibility state according to the list's role attribute
+		if (this.getAriaRole() === "listbox" && oElement.isA("sap.m.ListItemBase")) {
+			mAriaProps.roledescription = null;
+			mAriaProps.role = "option";
+
+			if (oElement.isSelectable()) {
+				mAriaProps.selected = oElement.getSelected();
+			}
+		}
+	};
+
 	return List;
 
 });

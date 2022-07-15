@@ -169,6 +169,8 @@ sap.ui.define([
 				showSeparators: ListSeparators.None,
 				busyIndicatorDelay: 0
 			});
+
+			oList.applyAriaRole("listbox");
 		}
 
 		this.addContent(oList);

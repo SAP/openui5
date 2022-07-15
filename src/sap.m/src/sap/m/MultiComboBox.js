@@ -1161,6 +1161,9 @@ function(
 			return;
 		}
 
+		// apply aria role="listbox" to List control
+		oList.applyAriaRole("listbox");
+
 		// configure the list
 		oList.setMode(ListMode.MultiSelect);
 		oList.setIncludeItemInSelection(true);

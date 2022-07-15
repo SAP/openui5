@@ -10521,6 +10521,37 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("Check list 'role' attribute", function(assert) {
+		// system under test
+		var oComboBox = new ComboBox({
+			items: [
+				new Item({
+					key: "0",
+					text: "item 0"
+				}),
+				new Item({
+					key: "1",
+					text: "item 1"
+				})
+			]
+		});
+
+		// arrange
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+
+		// act
+		oComboBox.open();
+		this.clock.tick(10);
+
+		// Assert
+		assert.strictEqual(oComboBox._getList().$('listUl').attr("role"), "listbox", "role='listbox' applied to list control DOM");
+
+		// Cleanup
+		this.clock.restore();
+		oComboBox.destroy();
+	});
+
 	QUnit.module("Integration");
 
 	QUnit.test("Propagate Items to the list", function (assert) {

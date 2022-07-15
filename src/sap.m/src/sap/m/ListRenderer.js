@@ -17,8 +17,8 @@ sap.ui.define(["sap/ui/core/Renderer", "./ListBaseRenderer"],
 	var ListRenderer = Renderer.extend(ListBaseRenderer);
 	ListRenderer.apiVersion = 2;
 
-	ListRenderer.getNoDataAriaRole = function() {
-		return "option";
+	ListRenderer.getNoDataAriaRole = function(oControl) {
+		return oControl.getAriaRole() === "listbox" ? "option" : "listitem";
 	};
 
 	return ListRenderer;
