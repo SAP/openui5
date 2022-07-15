@@ -3,6 +3,7 @@ specVersion: "2.0"
 type: application
 metadata:
   name: testsuite
+  allowSapInternal: true
   copyright: |-
    OpenUI5
     * (c) Copyright 2009-${currentYear} SAP SE or an SAP affiliate company.
