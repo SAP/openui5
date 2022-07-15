@@ -671,7 +671,7 @@ sap.ui.define([
 	 *
 	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "BeforeHide" pseudo event on the source page and "BeforeFirstShow" (if applicable) and"BeforeShow" on the target page. Later - after the transition has completed - the "AfterShow" pseudo event is triggered on the target page and "AfterHide" on the page which has been left. The given data object is available in the "BeforeFirstShow", "BeforeShow" and "AfterShow" event object as "data" property.
 	 *
-	 * @param {string} vPageIdOrControl
+	 * @param {string | sap.ui.core.Control} vPageIdOrControl
 	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
 	 * @param {string} [sTransitionName=slide]
 	 *         The type of the transition/animation to apply. Options are "slide" (horizontal movement from the right), "baseSlide", "fade", "flip", and "show"
