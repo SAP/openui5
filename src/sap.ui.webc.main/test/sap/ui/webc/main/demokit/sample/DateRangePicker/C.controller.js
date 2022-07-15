@@ -1,25 +1,40 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/webc/main/Toast"
-], function(Controller, JSONModel, Toast) {
+	"sap/ui/core/Core",
+	"sap/ui/core/library",
+	"sap/ui/unified/library"
+], function(Controller, JSONModel, Core, CoreLibrary) {
 	"use strict";
+	var ValueState = CoreLibrary.ValueState;
 
-	return Controller.extend("sap.ui.webc.main.sample.DateRangePicker.C", {
+	return Controller.extend("sap.ui.webc.main.sample.DatePicker.C", {
 
-		onInit: function() {
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
+		onInit: function () {
+			// create model
+			var oModel = new JSONModel();
+			oModel.setData({
+				dateValue: new Date()
+			});
 			this.getView().setModel(oModel);
+
+			this._iEvent = 0;
 		},
-		handleChange: function(oEvent) {
-			var demoToast = this.getView().byId("demoToast");
-			demoToast.setText("Event change fired.");
-			demoToast.show();
-		},
-		handleInput: function(oEvent) {
-			var demoToast = this.getView().byId("demoToast");
-			demoToast.setText("Event input fired.");
-			demoToast.show();
+
+		handleChange: function (oEvent) {
+			var oText = this.byId("textResult"),
+				oDP = oEvent.getSource(),
+				sValue = oEvent.getParameter("value"),
+				bValid = oEvent.getParameter("valid");
+
+			this._iEvent++;
+			oText.setValue("Change - Event " + this._iEvent + ": DatePicker " + oDP.getId() + ":" + sValue);
+
+			if (bValid) {
+				oDP.setValueState(ValueState.None);
+			} else {
+				oDP.setValueState(ValueState.Error);
+			}
 		}
 
 	});
