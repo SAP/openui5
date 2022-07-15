@@ -3029,6 +3029,102 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.module("Pressing Accept/Emphasized footer button with Ctrl+Enter" , {
+		beforeEach: function() {
+			this.oDialog = new Dialog({
+				title: 'Test Ctrl+Enter shortcut'
+			});
+		},
+		afterEach: function() {
+			this.oDialog.destroy();
+		}
+	});
+
+	QUnit.test("Pressing Ctrl+Enter should press 'Accept' button", function (assert) {
+		// Arrange
+		this.oDialog.setBeginButton(new Button({
+			type: "Accept",
+			press: function () {
+				this.oDialog.close();
+			}.bind(this)
+		}));
+
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// Act
+		qutils.triggerKeydown(this.oDialog.getDomRef(), KeyCodes.ENTER, false, false, true);
+		this.clock.tick(500);
+
+		// Assert
+		assert.notOk(this.oDialog.isOpen(), "Dialog is closed after pressing Ctrl+Enter");
+	});
+
+	QUnit.test("Pressing Ctrl+Enter should press 'Emphasized' button", function (assert) {
+		// Arrange
+		this.oDialog.setEndButton(new Button({
+			type: "Emphasized",
+			press: function () {
+				this.oDialog.close();
+			}.bind(this)
+		}));
+
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// Act
+		qutils.triggerKeydown(this.oDialog.getDomRef(), KeyCodes.ENTER, false, false, true);
+		this.clock.tick(500);
+
+		// Assert
+		assert.notOk(this.oDialog.isOpen(), "Dialog is closed after pressing Ctrl+Enter");
+	});
+
+	QUnit.test("Pressing Ctrl+Enter should press 'Accept' button whe there are 'Accept' and 'Emphasized' buttons ('Accept' is added first)", function (assert) {
+		// Arrange
+		var oButton1 = new Button({
+			type: "Accept",
+			press: function () {
+				this.oDialog.close();
+			}.bind(this)
+			});
+		var oButton2 = new Button({
+				type: "Emphasized"
+			});
+		this.oDialog.addButton(oButton1);
+		this.oDialog.addButton(oButton2);
+
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// Act
+		qutils.triggerKeydown(this.oDialog.getDomRef(), KeyCodes.ENTER, false, false, true);
+		this.clock.tick(500);
+
+		// Assert
+		assert.notOk(this.oDialog.isOpen(), "Dialog is closed after pressing Ctrl+Enter");
+	});
+
+	QUnit.test("Pressing Ctrl+Enter shouldn't press 'Reject' button", function (assert) {
+		// Arrange
+		this.oDialog.setBeginButton(new Button({
+			type: "Reject",
+			press: function () {
+				this.oDialog.close();
+			}.bind(this)
+		}));
+
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// Act
+		qutils.triggerKeydown(this.oDialog.getDomRef(), KeyCodes.ENTER, false, false, true);
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(this.oDialog.isOpen(), "Dialog is NOT closed after pressing Ctrl+Enter");
+	});
+
 	QUnit.module("Within Area", {
 		beforeEach: function () {
 			this.oDialog = new Dialog();
