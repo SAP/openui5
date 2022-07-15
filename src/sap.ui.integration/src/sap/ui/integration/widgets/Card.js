@@ -467,9 +467,6 @@ sap.ui.define([
 		this._bFirstRendering = true;
 		this._aFundamentalErrors = [];
 
-		if (this.getProperty("dataMode") === CardDataMode.Auto) {
-			this._oCardObserver.createObserver(this);
-		}
 		/**
 		 * Facade of the {@link sap.ui.integration.widgets.Card} control.
 		 * @interface
