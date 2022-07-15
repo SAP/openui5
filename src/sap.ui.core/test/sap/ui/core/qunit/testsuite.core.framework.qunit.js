@@ -25,6 +25,7 @@ sap.ui.define(function() {
 					}
 				},
 				ui5: {
+					language: "en_US",
 					theme: "test_theme",
 					themeRoots: {
 						"my_preconfigured_theme" : "http://preconfig.com/ui5-themes",
@@ -127,6 +128,49 @@ sap.ui.define(function() {
 			Core_libraryPreloadFiles8_unavoidablyUsingEval: {
 				title: "sap.ui.core: library preload with libraryPreloadFiles=",
 				page: "test-resources/sap/ui/core/qunit/Core_libraryPreloadFiles_unavoidablyUsingEval.qunit.html?sap-ui-xx-libraryPreloadFiles=none"
+			},
+
+			Core_libraryTerminologies: {
+				title: "sap.ui.core: library preload with Terminologies=",
+				loader: {
+					paths: {
+						testlibs: "test-resources/sap/ui/core/qunit/testdata/libraries/"
+					}
+				},
+				ui5: {
+					preload: "async",
+					language: "en",
+					activeterminologies: "oil,retail"
+				}
+			},
+
+			Core_libraryTerminologies_unavoidablySync: {
+				title: "sap.ui.core: (sync) library preload with Terminologies=",
+				loader: {
+					paths: {
+						testlibs: "test-resources/sap/ui/core/qunit/testdata/libraries/"
+					}
+				},
+				ui5: {
+					language: "en",
+					preload: "sync",
+					activeterminologies: "oil,retail"
+				}
+			},
+
+			Core_libraryTerminologies_integration: {
+				title: "sap.ui.core: Integration Test with Library Terminologies=",
+				loader: {
+					paths: {
+						"terminologies/sample": "test-resources/sap/ui/core/qunit/testdata/libraries/terminologies/integration"
+					}
+				},
+				ui5: {
+					async: true,
+					language: "en",
+					preload: "async",
+					activeterminologies: "transportation"
+				}
 			},
 
 			Core_repeatedExecution: {
