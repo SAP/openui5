@@ -7,16 +7,17 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/Core"
-
-], function (
+	"sap/ui/core/Core",
+	"sap/ui/model/json/JSONModel"
+], function(
 	AddIFrameDialog,
 	Log,
 	isEmptyObject,
 	coreLibrary,
 	AddIFrameDialogController,
 	QUnitUtils,
-	oCore
+	oCore,
+	JSONModel
 ) {
 	"use strict";
 
@@ -133,7 +134,7 @@ sap.ui.define([
 	};
 
 	function createJSONModel() {
-		return new sap.ui.model.json.JSONModel({
+		return new JSONModel({
 			sectionName: {
 				value: "",
 				valueState: ValueState.None
