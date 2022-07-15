@@ -5611,6 +5611,21 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("aria-hidden attribute of the MultiComboBox dropdown icon must be set to true", function (assert) {
+		var oMultiComboBox = new MultiComboBox({
+			id: "simple-mcbox"
+		});
+
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		Core.applyChanges();
+
+		var bAriaHidden = oMultiComboBox.getDomRef().querySelector(".sapMInputBaseIconContainer").getAttribute("aria-hidden");
+
+		assert.strictEqual(bAriaHidden, "true", "aria-hidden is set to true");
+
+		oMultiComboBox.destroy();
+	});
+
 
 	QUnit.module("Keyboard handling", {
 		beforeEach: function(){
