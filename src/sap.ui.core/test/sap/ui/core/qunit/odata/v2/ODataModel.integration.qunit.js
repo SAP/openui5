@@ -16965,4 +16965,172 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: If a new node B is added to a leaf node A and the former leaf node A is expanded,
+	// ensure that the node A is also expanded while restoring the tree state after data is
+	// submitted.
+	// JIRA: CPOUI5MODELS-831
+	QUnit.test("ODataTreeBindingFlat: restore tree for nodes added to a leaf", function (assert) {
+		var oBinding, oCreatedContext, oTable,
+			oModel = createHierarchyMaintenanceModel(),
+			sView = '\
+<t:TreeTable id="table"\
+		rows="{\
+			parameters : {\
+				countMode : \'Inline\',\
+				numberOfExpandedLevels : 0,\
+				restoreTreeStateAfterChange : true\
+			},\
+			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
+		}"\
+		visibleRowCount="2"\
+		visibleRowCountMode="Fixed">\
+	<Text id="itemName" text="{ErhaOrderItemName}" />\
+</t:TreeTable>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest({
+				batchNo : 1,
+				requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=102&$inlinecount=allpages"
+					+ "&$filter=HierarchyDistanceFromRoot le 0"
+			}, {
+				__count : "1",
+				results : [{
+					__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='100')"},
+					ErhaOrder : "1",
+					ErhaOrderItem : "100",
+					ErhaOrderItemName : "foo",
+					HierarchyParentNode : "",
+					HierarchyDescendantCount : 0,
+					HierarchyDistanceFromRoot : 0,
+					HierarchyDrillState : "leaf",
+					HierarchyNode : "100",
+					HierarchyPreorderRank : 0,
+					HierarchySiblingRank : 0
+				}]
+			})
+			.expectValue("itemName", ["foo", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			// code under test: add node
+			oCreatedContext = oBinding.createEntry({
+				properties : {ErhaOrderItemName : "bar", HierarchyNode : "~key~"}});
+			oBinding.addContexts(oTable.getContextByIndex(0), [oCreatedContext]);
+
+			assert.strictEqual(oBinding.isExpanded(0), false);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("itemName", ["bar"], 1);
+
+			// code under test
+			oTable.expand(0);
+
+			assert.strictEqual(oBinding.isExpanded(0), true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({ // POST for entity creation
+					batchNo : 2,
+					created : true,
+					data : {
+						ErhaOrderItemName : "bar",
+						HierarchyNode : "~key~",
+						HierarchyParentNode : "100",
+						__metadata: {type : "cds_zrh_erhaordermanage.ErhaOrderItemType"}
+					},
+					method : "POST",
+					requestUri : "ErhaOrder('1')/to_Item"
+				}, {
+					data : {
+						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='110')"},
+						ErhaOrder : "1",
+						ErhaOrderItem : "110",
+						ErhaOrderItemName : "bar",
+						HierarchyParentNode : "100",
+						HierarchyDescendantCount : 0,
+						HierarchyDistanceFromRoot : 1,
+						HierarchyDrillState : "leaf",
+						HierarchyNode : "110",
+						HierarchyPreorderRank : 1,
+						HierarchySiblingRank : 0
+					},
+					statusCode : 201
+				})
+				.expectRequest({ // request to check whether the new node is a deep node
+					batchNo : 3,
+					requestUri : "ErhaOrder('1')/to_Item?"
+						+ "$select=ErhaOrder,ErhaOrderItem,HierarchyNode,HierarchyDescendantCount,"
+						+ "HierarchyDrillState,HierarchyPreorderRank"
+						+ "&$filter=ErhaOrder eq '1' and ErhaOrderItem eq '110' "
+						+ "and HierarchyDistanceFromRoot le 0"
+				}, {
+					__count : "1",
+					results : [{
+						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='100')"},
+						ErhaOrder : "1",
+						ErhaOrderItem : "100",
+						HierarchyDescendantCount : 0,
+						HierarchyDrillState : "collapsed",
+						HierarchyNode : "100",
+						HierarchyPreorderRank : 0
+					}]
+				})
+				.expectRequest({ // re-read server index nodes
+					batchNo : 4,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=1&$inlinecount=allpages"
+						+ "&$filter=HierarchyDistanceFromRoot le 0"
+				}, {
+					__count : "1",
+					results : [{
+						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='100')"},
+						ErhaOrder : "1",
+						ErhaOrderItem : "100",
+						ErhaOrderItemName : "foo",
+						HierarchyParentNode : "",
+						HierarchyDescendantCount : 0,
+						HierarchyDistanceFromRoot : 0,
+						HierarchyDrillState : "collapsed",
+						HierarchyNode : "100",
+						HierarchyPreorderRank : 0,
+						HierarchySiblingRank : 0
+					}]
+				})
+				.expectRequest({ // read children of the node to which the new node is added
+					batchNo : 4,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=1&$inlinecount=allpages"
+						+ "&$filter=HierarchyParentNode eq '100'"
+				}, {
+					__count : "1",
+					results : [{
+						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='110')"},
+						ErhaOrder : "1",
+						ErhaOrderItem : "110",
+						ErhaOrderItemName : "bar",
+						HierarchyParentNode : "100",
+						HierarchyDescendantCount : 0,
+						HierarchyDistanceFromRoot : 1,
+						HierarchyDrillState : "leaf",
+						HierarchyNode : "110",
+						HierarchyPreorderRank : 0,
+						HierarchySiblingRank : 0
+					}]
+				});
+
+			// code under test
+			oModel.submitChanges();
+
+			return Promise.all([
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(oBinding.isExpanded(0), true, "expanded state is restored");
+		});
+	});
 });
