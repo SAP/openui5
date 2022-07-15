@@ -85,6 +85,10 @@ sap.ui.define([
 				oDatePicker.setDisplayFormatType(oContentFactory.getCalendarType());
 			}
 
+			if (oDatePicker.setSecondaryCalendarType) {
+				oDatePicker.setSecondaryCalendarType(oContentFactory.getSecondaryCalendarType());
+			}
+
 			oDatePicker._setPreferUserInteraction(true);
 			oContentFactory.setAriaLabelledBy(oDatePicker);
 			oContentFactory.setBoundProperty("value");
@@ -102,6 +106,7 @@ sap.ui.define([
 				valueFormat: oContentFactory.getValueFormat(),
 				delimiter: "...",
 				displayFormatType: oContentFactory.getCalendarType(),
+				secondaryCalendarType: oContentFactory.getSecondaryCalendarType(),
 				placeholder: "{$field>/placeholder}",
 				textAlign: "{$field>/textAlign}",
 				textDirection: "{$field>/textDirection}",
@@ -168,6 +173,9 @@ sap.ui.define([
 				}
 				if (oFormatOptions.calendarType) {
 					oContentFactory.setCalendarType(oFormatOptions.calendarType);
+				}
+				if (oFormatOptions.secondaryCalendarType) {
+					oContentFactory.setSecondaryCalendarType(oFormatOptions.secondaryCalendarType);
 				}
 			}
 		},

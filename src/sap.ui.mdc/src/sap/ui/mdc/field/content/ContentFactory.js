@@ -451,6 +451,14 @@ sap.ui.define([
 		this._sCalendarType = sCalendarType;
 	};
 
+	ContentFactory.prototype.getSecondaryCalendarType = function() {
+		return this._sSecondaryCalendarType;
+	};
+
+	ContentFactory.prototype.setSecondaryCalendarType = function(sSecondaryCalendarType) {
+		this._sSecondaryCalendarType = sSecondaryCalendarType;
+	};
+
 	ContentFactory.prototype.getFieldTypeInitialization = function() {
 		return this.getField()._oTypeInitialization;
 	};
