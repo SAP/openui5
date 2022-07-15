@@ -349,5 +349,9 @@ sap.ui.define([
         //Nothing to do here in the test delegate
     };
 
+    ChartDelegate.changedNoDataStruct = function() {
+        //Nothing to do here for test delegate
+    };
+
     return ChartDelegate;
 });

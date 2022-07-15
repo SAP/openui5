@@ -40,6 +40,8 @@ sap.ui.define([],
                 oRm.style("min-height", "200px");
                 oRm.openEnd();
                 oRm.renderControl(oChartImplContainer.getContent());
+                oRm.renderControl(oChartImplContainer.getNoDataContent());
+                oRm.renderControl(oChartImplContainer._getChartNoDataForRenderer());
                 oRm.close("div");
         };
 

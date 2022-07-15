@@ -351,6 +351,17 @@ sap.ui.define([
     };
 
     /**
+     * This method is called to update invalidate the inner chart control to update the no data structure.
+     *
+     * @param {sap.ui.mdc.Chart} oMDCChart reference to the MDC Chart
+     *
+     * @experimental
+     * @private
+     */
+    ChartDelegate.changedNoDataStruct = function(oMDCChart) {
+    };
+
+    /**
      * Binds the inner chart to the back-end data and creates the inner chart content.
      * @param {sap.ui.mdc.Chart} oMDCChart Reference to the MDC chart
      * @param {function} fnCallbackDataLoaded Callback function when data is loaded
@@ -487,6 +498,19 @@ sap.ui.define([
      * @ui5-restricted sap.ui.mdc
      */
     ChartDelegate.fetchProperties = function (oMDCChart) {
+    };
+
+     /**
+     * Adds/Removes the overlay shown above the inner chart.
+     * @param {sap.ui.mdc.Chart} oMDCChart reference to the chart
+     * @param {boolean} bShow <code>true</code> to show overlay, <code>false</code> to hide
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     */
+    ChartDelegate.showOverlay = function(oMDCChart, bShow) {
+
     };
 
     return ChartDelegate;
