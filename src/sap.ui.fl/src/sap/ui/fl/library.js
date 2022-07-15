@@ -44,6 +44,16 @@ sap.ui.define([
 	 */
 
 	/**
+	 * The <code>sap.ui.fl.initial._internal</code> namespace contains internals that are used
+	 * during app startup, e.g. to load the flex data and resolve or bootstrap the <code>sap.ui.fl.apply</code> for applying changes.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.initial._internal
+	 * @private
+	 */
+
+	/**
 	 * The <code>sap.ui.fl.apply</code> namespace should contain all code necessary to
 	 * start a UI5 app for an end user with changes. Be aware that only the <code>api</code>
 	 * sub-namespace contains public and stable APIs.
