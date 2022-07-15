@@ -59,5 +59,22 @@ sap.ui.define([
 			oRm.style("max-width", oControl.getMaxWidth());
 		};
 
+		/**
+		 * Renders dropdown icon from the icon aggregations.
+		 *
+		 * @protected
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Icon[]} aIcons List of icons to render
+		 */
+		ComboBoxTextFieldRenderer.writeIcons = function (oRm, aIcons) {
+			oRm.openStart("div")
+				.attr("tabindex", "-1")
+				.attr("aria-hidden", "true")
+				.class("sapMInputBaseIconContainer")
+				.openEnd();
+			aIcons.forEach(oRm.renderControl, oRm);
+			oRm.close("div");
+		};
+
 		return ComboBoxTextFieldRenderer;
 	}, true);
