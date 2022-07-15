@@ -208,9 +208,6 @@ sap.ui.define([
 		$FocusedDay = jQuery(aMonths[0]).find("[tabindex='0']");
 		assert.equal($FocusedDay.attr("data-sap-day"), "20150105", "first Month: day 2015-01-05 has tabindex 0");
 
-		$FocusedDay = jQuery(aMonths[1]).find("[tabindex='0']");
-		assert.equal($FocusedDay.attr("data-sap-day"), "20150201", "second Month: day 2015-02-01 has tabindex 0");
-
 		aDays = jQuery(aMonths[0]).find(".sapUiCalItem");
 		bOK = false;
 
