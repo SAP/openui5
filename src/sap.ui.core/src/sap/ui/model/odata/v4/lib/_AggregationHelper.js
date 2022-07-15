@@ -180,8 +180,6 @@ sap.ui.define([
 		 *   A map of key-value pairs representing the query string, including a value for the
 		 *   "$apply" system query option if needed; it is a modified copy of
 		 *   <code>mQueryOptions</code>, with values removed as described above
-		 * @throws {Error}
-		 *   If the given data aggregation object is unsupported
 		 *
 		 * @public
 		 */
@@ -226,8 +224,6 @@ sap.ui.define([
 			mQueryOptions = Object.assign({}, mQueryOptions);
 
 			if (oAggregation.hierarchyQualifier) {
-				_AggregationHelper.checkTypeof(oAggregation, mRecursiveHierarchyType,
-					"$$aggregation");
 				if (mQueryOptions.$$filterBeforeAggregate) {
 					sApply = "filter(" + mQueryOptions.$$filterBeforeAggregate + ")/" + sApply;
 					delete mQueryOptions.$$filterBeforeAggregate;
@@ -239,7 +235,6 @@ sap.ui.define([
 				return mQueryOptions;
 			}
 
-			_AggregationHelper.checkTypeof(oAggregation, mDataAggregationType, "$$aggregation");
 			oAggregation.groupLevels = oAggregation.groupLevels || [];
 			bIsLeafLevel = !iLevel || iLevel > oAggregation.groupLevels.length;
 
@@ -863,6 +858,23 @@ sap.ui.define([
 			split(oFilter);
 
 			return [wrap(aFiltersAfterAggregate), wrap(aFiltersBeforeAggregate)];
+		},
+
+		/**
+		 * Validates the given data aggregation information.
+		 *
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for data aggregation; see
+		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
+		 * @throws {Error}
+		 *   If the given data aggregation object is unsupported
+		 *
+		 * @public
+		 */
+		validateAggregation : function (oAggregation) {
+			_AggregationHelper.checkTypeof(oAggregation,
+				oAggregation.hierarchyQualifier ? mRecursiveHierarchyType : mDataAggregationType,
+				"$$aggregation");
 		}
 	};
 
