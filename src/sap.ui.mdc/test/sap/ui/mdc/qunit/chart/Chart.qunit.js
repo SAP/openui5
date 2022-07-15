@@ -501,8 +501,62 @@ function(
     });
 
     QUnit.test("_innerChartDataLoadComplete", function(assert){
-        assert.ok(true);
+		//Arrange
+		var oMockDelegate = {requestToolbarUpdate: function(){return;}, getInnerChart: function(){return;}};
+		this.oMDCChart.getControlDelegate = function(){return oMockDelegate;};
+		var setBusySpy = sinon.spy(this.oMDCChart, "setBusy");
+		var _checkStyleClassesForDimensionsSpy = sinon.spy(this.oMDCChart, "_checkStyleClassesForDimensions");
+		var _renderOverlaySpy = sinon.spy(this.oMDCChart, "_renderOverlay");
+		var requestToolbarUpdateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "requestToolbarUpdate");
+
+		//Act
+		this.oMDCChart._innerChartDataLoadComplete({});
+
+		//Assert
+		assert.ok(setBusySpy.calledOnceWith(false), "SetBusy called");
+		assert.ok(_checkStyleClassesForDimensionsSpy.calledOnce, "_checkStyleClassesForDimensionsSpy called");
+		assert.ok(_renderOverlaySpy.calledOnceWith(false), "_renderOverlaySpy called");
+		assert.ok(requestToolbarUpdateSpy.calledOnce, "requestToolbarUpdateSpy called");
+
     });
+
+	QUnit.test("_checkStyleClassesForDimensions w/o dimension", function(assert){
+		//Arrange
+		this.oMDCChart.removeAllItems([]);
+		this.oMDCChart.addStyleClass("sapUiMDCChartGrid");
+
+		var addStyleClassSpy = sinon.spy(this.oMDCChart, "addStyleClass");
+		var removeStyleClassSpy = sinon.spy(this.oMDCChart, "removeStyleClass");
+
+		//Act
+		this.oMDCChart._checkStyleClassesForDimensions();
+
+		//Assert
+		assert.ok(addStyleClassSpy.calledOnceWith("sapUiMDCChartGridNoBreadcrumbs"), "sapUiMDCChartGridNoBreadcrumbs added");
+		assert.ok(removeStyleClassSpy.calledOnceWith("sapUiMDCChartGrid"), "sapUiMDCChartGrid removed");
+		assert.ok(this.oMDCChart.hasStyleClass("sapUiMDCChartGridNoBreadcrumbs"), "Styleclass in DOM");
+		assert.ok(!this.oMDCChart.hasStyleClass("sapUiMDCChartGrid"), "Styleclass not in DOM");
+	});
+
+	QUnit.test("_checkStyleClassesForDimensions with dimension after removal", function(assert){
+		//Arrange
+		this.oMDCChart.removeAllItems();
+		this.oMDCChart.addStyleClass("sapUiMDCChartGrid");
+		this.oMDCChart._checkStyleClassesForDimensions();
+		this.oMDCChart.addItem(new Item({name: "Test1", type:"groupable"}));
+
+		var addStyleClassSpy = sinon.spy(this.oMDCChart, "addStyleClass");
+		var removeStyleClassSpy = sinon.spy(this.oMDCChart, "removeStyleClass");
+
+		//Act
+		this.oMDCChart._checkStyleClassesForDimensions();
+
+		//Assert
+		assert.ok(addStyleClassSpy.calledOnceWith("sapUiMDCChartGrid"), "sapUiMDCChartGrid added");
+		assert.ok(removeStyleClassSpy.calledOnceWith("sapUiMDCChartGridNoBreadcrumbs"), "sapUiMDCChartGridNoBreadcrumbs removed");
+		assert.ok(this.oMDCChart.hasStyleClass("sapUiMDCChartGrid"), "Styleclass in DOM");
+		assert.ok(!this.oMDCChart.hasStyleClass("sapUiMDCChartGridNoBreadcrumbs"), "Styleclass not in DOM");
+	});
 
     QUnit.test("_getSortedProperties", function(assert){
         assert.ok(true);
