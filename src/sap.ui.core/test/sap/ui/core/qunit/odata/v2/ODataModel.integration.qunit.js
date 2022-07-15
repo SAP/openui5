@@ -1399,7 +1399,8 @@ sap.ui.define([
 			aUrlParts = vRequest.requestUri.split("?");
 			if (aUrlParts[1] && vRequest.encodeRequestUri !== false) {
 				vRequest.requestUri = aUrlParts[0] + "?"
-					+ aUrlParts[1].replace(/ /g, "%20").replace(/'/g, "%27").replace(/~/g, "%7e");
+					+ aUrlParts[1].replace(/ /g, "%20").replace(/'/g, "%27").replace(/~/g, "%7e")
+						.replace(/,/g, "%2c").replace(/\//g, "%2f");
 			}
 			delete vRequest.encodeRequestUri;
 			this.aRequests.push(vRequest);
@@ -3353,7 +3354,7 @@ usePreliminaryContext : false}}">\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderSet('1')?$select=SalesOrderID%2cNote&$expand=ToLineItems", {
+		this.expectRequest("SalesOrderSet('1')?$select=SalesOrderID,Note&$expand=ToLineItems", {
 				__metadata : {uri : "SalesOrderSet('1')"},
 				Note : "Note",
 				SalesOrderID : "1",
@@ -5814,7 +5815,7 @@ usePreliminaryContext : false}}">\
 			that = this;
 
 		this.expectHeadRequest()
-			.expectRequest("SalesOrderSet('1')?$select=SalesOrderID%2cNote&$expand=ToLineItems", {
+			.expectRequest("SalesOrderSet('1')?$select=SalesOrderID,Note&$expand=ToLineItems", {
 				__metadata : {uri : "SalesOrderSet('1')"},
 				Note : "foo",
 				SalesOrderID : "1",
@@ -6209,9 +6210,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		this.expectHeadRequest()
 			.expectRequest("SalesOrderLineItemSet"
 					+ "(SalesOrderID='0500000005',ItemPosition='0000000010')"
-					+ "?$expand=ToProduct%2cToProduct%2fToSupplier"
-					+ "&$select=SalesOrderID%2cItemPosition%2cToProduct%2fProductID"
-						+ "%2cToProduct%2fToSupplier%2fBusinessPartnerID", {
+					+ "?$expand=ToProduct,ToProduct/ToSupplier"
+					+ "&$select=SalesOrderID,ItemPosition,ToProduct/ProductID,"
+						+ "ToProduct/ToSupplier/BusinessPartnerID", {
 				SalesOrderID : "0500000005",
 				ItemPosition : "0000000010",
 				ToProduct : {
@@ -6872,7 +6873,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				headers : {"sap-message-scope" : "BusinessObject"},
 				requestUri : "SalesOrderSet('1')?$expand=ToBusinessPartner"
-					+ "&$select=ToBusinessPartner%2fBusinessPartnerID"
+					+ "&$select=ToBusinessPartner/BusinessPartnerID"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
 				SalesOrderID : "1",
@@ -8007,9 +8008,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return aItems;
 		}
 
-		this.expectRequest("Items" // Grand Total Request
+		this.expectRequest({
+				encodeRequestUri : false,
+				requestUri : "Items" // Grand Total Request
 					+ "?$select=AmountInCompanyCodeCurrency,Currency&$top=100"
-					+ "&$inlinecount=allpages", {
+					+ "&$inlinecount=allpages"
+			}, {
 				__count : "1",
 				results : [{
 					__metadata : {
@@ -8019,9 +8023,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					Currency : "USD"
 				}]
 			})
-			.expectRequest("Items" // Data and Count Request
+			.expectRequest({
+				encodeRequestUri : false,
+				requestUri : "Items" // Data and Count Request
 					+ "?$select=AccountingDocumentItem,AmountInCompanyCodeCurrency,Currency"
-					+ "&$orderby=AccountingDocumentItem%20asc&$top=11&$inlinecount=allpages", {
+					+ "&$orderby=AccountingDocumentItem%20asc&$top=11&$inlinecount=allpages"
+			}, {
 				__count : "550",
 				results : getItems(11)
 			});
@@ -8037,9 +8044,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		}).then(function () {
 			oTable = that.oView.byId("table");
 
-			that.expectRequest("Items"
+			that.expectRequest({
+					encodeRequestUri : false,
+					requestUri : "Items"
 						+ "?$select=AccountingDocumentItem,AmountInCompanyCodeCurrency,"
-						+ "Currency&$orderby=AccountingDocumentItem%20asc&$skip=11&$top=6", {
+						+ "Currency&$orderby=AccountingDocumentItem%20asc&$skip=11&$top=6"
+				}, {
 					results : getItems(6)
 				});
 
@@ -8053,9 +8063,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("Items"
+			that.expectRequest({
+					encodeRequestUri : false,
+					requestUri : "Items"
 						+ "?$select=AccountingDocumentItem,AmountInCompanyCodeCurrency,Currency"
-						+ "&$orderby=AccountingDocumentItem%20asc&$skip=90&$top=21", {
+						+ "&$orderby=AccountingDocumentItem%20asc&$skip=90&$top=21"
+				}, {
 					results : getItems(21)
 				});
 
@@ -8069,9 +8082,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("Items"
+			that.expectRequest({
+					encodeRequestUri : false,
+					requestUri : "Items"
 						+ "?$select=AccountingDocumentItem,AmountInCompanyCodeCurrency,Currency"
-						+ "&$orderby=AccountingDocumentItem%20asc&$skip=84&$top=6", {
+						+ "&$orderby=AccountingDocumentItem%20asc&$skip=84&$top=6"
+				}, {
 					results : getItems(6)
 				});
 
@@ -8639,7 +8655,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				// TreeTable becomes async so that its GET is not in the same $batch as the 1st GET
 				batchNo : 2,
 				requestUri : sObjectUri + "/to_AllwncReqToFe"
-					+ "?$skip=0&$top=101&$inlinecount=allpages&$filter=HierarchyLevel%20le%200"
+					+ "?$skip=0&$top=101&$inlinecount=allpages&$filter=HierarchyLevel le 0"
 			}, {
 				__count : "1",
 				results : [{
@@ -8694,7 +8710,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				batchNo : 1,
 				requestUri : "C_RSHMaintSchedSmltdOrdAndOp?$skip=0&$top=101&$inlinecount=allpages"
-					+ "&$filter=OrderOperationRowLevel%20le%200"
+					+ "&$filter=OrderOperationRowLevel le 0"
 			}, {
 				__count : "1",
 				results : [{
@@ -8719,7 +8735,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectRequest({
 					batchNo : 2,
 					requestUri : "C_RSHMaintSchedSmltdOrdAndOp?$skip=0&$top=101"
-						+ "&$inlinecount=allpages&$filter=OrderOperationRowLevel%20le%200"
+						+ "&$inlinecount=allpages&$filter=OrderOperationRowLevel le 0"
 				}, {
 					__count : "1",
 					results : [{
@@ -8773,7 +8789,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectRequest({
 					requestUri : "DummySet('42')/to_C_RSHMaintSchedSmltdOrdAndOp"
 						+ "?$skip=0&$top=101&$inlinecount=allpages&"
-						+ "$filter=OrderOperationRowLevel%20le%200"
+						+ "$filter=OrderOperationRowLevel le 0"
 				}, {
 					__count : "1",
 					results : [{
@@ -9158,7 +9174,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that = this;
 
 		this.expectHeadRequest()
-			.expectRequest("C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationRowLevel%20eq%200"
+			.expectRequest("C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationRowLevel eq 0"
 				+ "&$skip=0&$top=2&$inlinecount=allpages",
 				{
 					__count : "273",
@@ -9177,7 +9193,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					}]
 				})
 			.expectRequest("C_RSHMaintSchedSmltdOrdAndOp?"
-				+ "$filter=OrderOperationParentRowID%20eq%20%27id-0%27&$skip=0&$top=2"
+				+ "$filter=OrderOperationParentRowID eq 'id-0'&$skip=0&$top=2"
 				+ "&$inlinecount=allpages",
 				{
 					__count : "5",
@@ -9212,7 +9228,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		}).then(function () {
 			//TODO expect $top=2 instead of $top=4, check TreeBindingAdapter#_getContextsOrNodes?
 			that.expectRequest("C_RSHMaintSchedSmltdOrdAndOp"
-				+ "?$filter=OrderOperationRowLevel%20eq%200&$skip=2&$top=4",
+				+ "?$filter=OrderOperationRowLevel eq 0&$skip=2&$top=4",
 				{
 					results : [{
 						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('id-2')"},
@@ -13413,7 +13429,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest()
 			.expectRequest("BusinessPartnerSet?$skip=0&$top=100"
-					+ "&$select=Address%2cBusinessPartnerID%2cCompanyName", {
+					+ "&$select=Address,BusinessPartnerID,CompanyName", {
 				results : [{
 					__metadata : {uri : "/BusinessPartnerSet('1')"},
 					Address : {
@@ -13457,7 +13473,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 		this.expectHeadRequest()
 			.expectRequest("ProductSet?$skip=0&$top=100"
-					+ "&$expand=ToSupplier&$select=Name%2cToSupplier%2fCompany", {
+					+ "&$expand=ToSupplier&$select=Name,ToSupplier/Company", {
 				results : [{
 					__metadata : {uri : "/ProductSet('1')"},
 					Name : "Laptop",
@@ -13551,7 +13567,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				batchNo : 2,
 				requestUri : "BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=104"
 					+ "&$expand=ToBusinessPartner"
-					+ "&$select=SalesOrderID%2cNote%2cToBusinessPartner%2fCompanyName"
+					+ "&$select=SalesOrderID,Note,ToBusinessPartner/CompanyName"
 			}, {
 				results : [{
 					__metadata : {uri : "SalesOrderSet('1')"},
@@ -14234,7 +14250,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectRequest({
 					batchNo : 3,
 					requestUri : "BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=105"
-						+ "&$filter=not(SalesOrderID%20eq%20%272%27)&foo=bar"
+						+ "&$filter=not(SalesOrderID eq '2')&foo=bar"
 				}, {
 					results : [{
 						__metadata : {uri : "SalesOrderSet('1')"},
@@ -14757,7 +14773,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					}
 				})
 				.expectRequest("BusinessPartnerSet('42')/ToSalesOrders?$skip=0&$top=102"
-						+ "&$filter=not(SalesOrderID%20eq%20%2742%27)&foo=bar", {
+						+ "&$filter=not(SalesOrderID eq '42')&foo=bar", {
 					results : [{
 						__metadata : {uri : "SalesOrderSet('1')"},
 						SalesOrderID : "1",
@@ -16198,7 +16214,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				batchNo : 1,
 				requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
-					+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+					+ "&$filter=HierarchyDistanceFromRoot le 0"
 			}, {
 				__count : "1",
 				results : [oNode100]
@@ -16211,7 +16227,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					batchNo : 2,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
-						+ "&$filter=HierarchyParentNode%20eq%20%27100%27"
+						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "2",
 					results : [oNode200, oNode300]
@@ -16233,7 +16249,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectRequest({
 					batchNo : 4,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=1&$inlinecount=allpages"
-						+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+						+ "&$filter=HierarchyDistanceFromRoot le 0"
 				}, {
 					__count : "1",
 					results : [oNode100]
@@ -16241,7 +16257,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectRequest({
 					batchNo : 4,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=1&$inlinecount=allpages"
-						+ "&$filter=HierarchyParentNode%20eq%20%27100%27"
+						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "1",
 					results : [oNode200]
@@ -16269,7 +16285,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.expectRequest({
 						batchNo : 6,
 						requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=1&$inlinecount=allpages"
-							+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+							+ "&$filter=HierarchyDistanceFromRoot le 0"
 					}, {
 						__count : "1",
 						results : [oNode100]
@@ -16277,7 +16293,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					.expectRequest({
 						batchNo : 6,
 						requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=1&$inlinecount=allpages"
-							+ "&$filter=HierarchyParentNode%20eq%20%27100%27"
+							+ "&$filter=HierarchyParentNode eq '100'"
 					}, {
 						__count : "1",
 						results : [Object.assign(oNode200, {ErhaOrderItemName : "bar: renamed"})]
@@ -16372,7 +16388,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				batchNo : 1,
 				requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
-					+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+					+ "&$filter=HierarchyDistanceFromRoot le 0"
 			}, {
 				__count : "1",
 				results : [oNode100]
@@ -16385,7 +16401,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					batchNo : 2,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
-						+ "&$filter=HierarchyParentNode%20eq%20%27100%27"
+						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "2",
 					results : [oNode200, oNode300]
@@ -16407,7 +16423,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectRequest({
 					batchNo : 4,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
-						+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+						+ "&$filter=HierarchyDistanceFromRoot le 0"
 				}, {
 					__count : "1",
 					results : [oNode100]
@@ -16425,7 +16441,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					batchNo : 5,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
-						+ "&$filter=HierarchyParentNode%20eq%20%27100%27"
+						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "1",
 					results : [oNode200]
@@ -16453,7 +16469,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				that.expectRequest({
 						batchNo : 7,
 						requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
-							+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+							+ "&$filter=HierarchyDistanceFromRoot le 0"
 					}, {
 						__count : "1",
 						results : [oNode100]
@@ -16546,7 +16562,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				batchNo : 1,
 				requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
-					+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+					+ "&$filter=HierarchyDistanceFromRoot le 0"
 			}, {
 				__count : "1",
 				results : [oNode100]
@@ -16559,7 +16575,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					batchNo : 2,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
-						+ "&$filter=HierarchyParentNode%20eq%20%27100%27"
+						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "1",
 					results : [oNode200]
@@ -16575,7 +16591,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					batchNo : 3,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
-						+ "&$filter=HierarchyParentNode%20eq%20%27200%27"
+						+ "&$filter=HierarchyParentNode eq '200'"
 				}, {
 					__count : "1",
 					results : [oNode300]
@@ -16605,7 +16621,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectRequest({
 					batchNo : 4,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
-						+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+						+ "&$filter=HierarchyDistanceFromRoot le 0"
 				}, {
 					__count : "1",
 					results : [oNode100]
@@ -16624,7 +16640,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					batchNo : 5,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
-						+ "&$filter=HierarchyParentNode%20eq%20%27100%27"
+						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "1",
 					results : [oNode200]
@@ -16650,7 +16666,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectRequest({
 					batchNo : 6,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
-						+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+						+ "&$filter=HierarchyDistanceFromRoot le 0"
 				}, {
 					__count : "1",
 					results : [oNode100]
@@ -16812,7 +16828,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				batchNo : 1,
 				requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
-					+ "&$filter=HierarchyDistanceFromRoot%20le%200"
+					+ "&$filter=HierarchyDistanceFromRoot le 0"
 			}, {
 				__count : "1",
 				results : [oNode100]
@@ -16826,7 +16842,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			that.expectRequest({
 					batchNo : 2,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
-						+ "&$filter=HierarchyParentNode%20eq%20%27100%27"
+						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "2",
 					results : [oNode200, oNode300]
