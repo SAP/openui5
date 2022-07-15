@@ -221,5 +221,21 @@
         ]
       }
     ]
+  },
+  "1.102.4": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "2803d0587ae4d449b489a854837558b6718d99a2",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#setProperty: reverting a time property does not fail",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002233972022"
+          }
+        ]
+      }
+    ]
   }
 }

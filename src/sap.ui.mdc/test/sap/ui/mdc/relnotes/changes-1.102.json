@@ -56,5 +56,21 @@
         ]
       }
     ]
+  },
+  "1.102.4": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "c70bda3dcb3922be89f1dffc99077ce02de2f4d0",
+        "type": "FIX",
+        "text": " MDC Chart & SmartChart: Item panel field sorting",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004353342022"
+          }
+        ]
+      }
+    ]
   }
 }

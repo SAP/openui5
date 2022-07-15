@@ -947,5 +947,62 @@
         ]
       }
     ]
+  },
+  "1.102.4": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "e542984f33c29e5380ead68639ee6c0268f07273",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Correct dates are now set to the calendar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280121072"
+          }
+        ]
+      },
+      {
+        "id": "28eabf633a74b97ee44a0288dd1631e4a15a518f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Item navigation is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270005087"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280119442"
+          }
+        ]
+      },
+      {
+        "id": "21b0c50d5429da1224d88166241479254d05cda5",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Default boolean values can now be set in xml view",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280128892"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280108611"
+          }
+        ]
+      },
+      {
+        "id": "55741c730d0bcfe16b88a3d35862dd55f7ed467a",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Header is no longer created after IconTabBar is destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280084554"
+          }
+        ]
+      }
+    ]
   }
 }
