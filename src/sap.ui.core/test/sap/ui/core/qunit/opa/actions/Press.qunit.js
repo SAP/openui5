@@ -36,6 +36,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ObjectIdentifier",
+	"sap/m/ObjectStatus",
 	"sap/m/inputUtils/ListHelpers",
 	"sap/m/Slider",
 	"sap/m/RatingIndicator"
@@ -76,6 +77,7 @@ function(Press,
 		 Log,
 		 $,
 		 ObjectIdentifier,
+		 ObjectStatus,
 		 ListHelpers,
 		 Slider,
 		 RatingIndicator
@@ -596,6 +598,48 @@ function(Press,
 		});
 
 		oPressAction.executeOn(this.oObjectIdentifier);
+	});
+
+	QUnit.module("Press - interact with ObjectStatus", {
+		beforeEach: function() {
+			this.oObjectStatus = new ObjectStatus();
+			this.oObjectStatus.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oObjectStatus.destroy();
+		}
+	});
+
+	QUnit.test("Should press active ObjectStatus - press adapter", function (assert) {
+		var done = assert.async();
+		this.oObjectStatus.setActive(true);
+		this.oObjectStatus.setText("foo");
+		sap.ui.getCore().applyChanges();
+
+		var oPressAction = new Press();
+
+		$(".sapMObjStatusLink").on("click", function () {
+			assert.ok(true, "Executed press action on link");
+			done();
+		});
+
+		oPressAction.executeOn(this.oObjectStatus);
+	});
+
+	QUnit.test("Should press ObjectStatus - missing press adapter", function (assert) {
+		var done = assert.async();
+		this.oObjectStatus.setText("foo");
+		sap.ui.getCore().applyChanges();
+
+		var oPressAction = new Press();
+
+		$(".sapMObjStatus").on("click", function () {
+			assert.ok(true, "Executed press action on ObjectStatus");
+			done();
+		});
+
+		oPressAction.executeOn(this.oObjectStatus);
 	});
 
 	QUnit.module("Press - interact with SearchField", {

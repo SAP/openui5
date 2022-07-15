@@ -229,6 +229,13 @@ sap.ui.define([
 	Press.controlAdapters["sap.ui.comp.smartfilterbar.SmartFilterBar"] = "btnGo"; // always available?
 
 	Press.controlAdapters["sap.m.ObjectAttribute"] = "text"; // suffix is the same in active state. focusDomRef: <div> -- root
+	Press.controlAdapters["sap.m.ObjectStatus"] = function (oControl) {
+		if (oControl.getActive()) {
+			return "link";
+		} else {
+			return null; // focusDomRef: <div> -- root
+		}
+	};
 
 	Press.controlAdapters["sap.m.ObjectIdentifier"] = function (oControl) {
 		if (oControl.getTitleActive()) {
