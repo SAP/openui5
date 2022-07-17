@@ -1,6 +1,6 @@
-/*
-* ! ${copyright}
-*/
+/*!
+ * ${copyright}
+ */
 sap.ui.define([
 	"sap/ui/mdc/p13n/Engine"
 ], function(Engine) {

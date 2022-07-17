@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 sap.ui.define(['./ColumnPopoverItem', 'sap/m/ToggleButton'], function(ColumnPopoverItem, ToggleButton) {
 	"use strict";

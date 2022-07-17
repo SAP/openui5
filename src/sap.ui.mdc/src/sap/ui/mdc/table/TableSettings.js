@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 
 // TODO: this is just a draft version and is not yet finalized --> just for verifying flex/p13n concepts. We could move some code here to a base

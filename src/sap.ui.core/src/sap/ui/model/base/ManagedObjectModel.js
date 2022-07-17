@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 sap.ui.define([
 	'../json/JSONModel', '../json/JSONPropertyBinding', '../json/JSONListBinding', 'sap/ui/base/ManagedObject', 'sap/ui/base/ManagedObjectObserver', '../Context', '../ChangeReason', "sap/base/util/uid", "sap/base/Log", "sap/base/util/isPlainObject", "sap/base/util/deepClone"

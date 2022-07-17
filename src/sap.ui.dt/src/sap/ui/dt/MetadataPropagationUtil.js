@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 
 // Provides object sap.ui.dt.MetadataPropagationUtil.

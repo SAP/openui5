@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 sap.ui.define([
     './BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/base/util/merge'

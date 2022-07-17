@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 
 // Provides class sap.ui.base.ManagedObjectObserver.

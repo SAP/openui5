@@ -1,6 +1,6 @@
-/*
-* ! ${copyright}
-*/
+/*!
+ * ${copyright}
+ */
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/base/util/merge",

@@ -1,6 +1,6 @@
-/*
-* ! ${copyright}
-*/
+/*!
+ * ${copyright}
+ */
 sap.ui.define([
     "sap/ui/mdc/p13n/modification/ModificationHandler"
 ], function(ModificationHandler) {

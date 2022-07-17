@@ -1,6 +1,6 @@
-/*
-* ! {copyright}
-*/
+/*!
+ * ${copyright}
+ */
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"

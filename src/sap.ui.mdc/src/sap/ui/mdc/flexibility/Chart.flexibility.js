@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 sap.ui.define([
 	'./SortFlex', './ChartItemFlex', './ConditionFlex', './ChartTypeFlex'

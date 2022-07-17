@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 	"use strict";
