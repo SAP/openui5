@@ -1,67 +1,70 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <library xmlns="http://www.sap.com/sap.ui.library.xsd" >
 
-  <name>sap.ui.commons</name>
-  <vendor>SAP SE</vendor>
-  <copyright>${copyright}</copyright>
-  <version>${version}</version>
+	<name>sap.ui.commons</name>
+	<vendor>SAP SE</vendor>
+	<copyright>${copyright}</copyright>
+	<version>${version}</version>
 
-  <documentation>Common basic controls, mainly intended for desktop scenarios</documentation>
+	<documentation>Common basic controls, mainly intended for desktop scenarios</documentation>
 
-  <deprecation since="1.38">
+	<deprecation since="1.38">
 Instead of using this desktop-only library, applications should be built as responsive apps, using sap.m 
 (and other libraries). Some of the controls in sap.ui.commons.layout have been replaced by the new dedicated 
 layout library called sap.ui.layout, which runs on the same platforms as sap.m. Some of the old controls 
 have been made available again through the non-deprecated sap.ui.unified library (e.g. FileUploader, Menu), 
 which also runs on the same platforms as sap.m. Some concepts such as Accordion and Row Repeater have been 
 abandoned completely.
-  </deprecation>
-  
-  <dependencies>
-    <dependency>
-      <libraryName>sap.ui.core</libraryName>
-    </dependency>
-    <dependency>
-      <libraryName>sap.ui.layout</libraryName>
-    </dependency>
-    <dependency>
-      <libraryName>sap.ui.unified</libraryName>
-    </dependency>
-  </dependencies>
+	</deprecation>
 
-  <appData>
-    <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.commons" />
-    <!-- excludes for the JSCoverage -->
-    <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
-        <exclude name="sap.ui.commons.js." />
-        <exclude name="sap.ui.commons.DatePicker*" />
-    </jscoverage>
-    <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
-        url="../../../../test-resources/sap/ui/commons/relnotes/changes-{major}.{minor}.json"
-        resolve="lib" />
-    <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
-        <component>CA-UI5-CTR</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
-        <component>
-            <name>CA-UI5-TBL</name>
-            <modules>
-                <module>sap/ui/commons/layout/AbsoluteLayout</module>
-            </modules>
-        </component>
-    </ownership>
+	<dependencies>
+		<dependency>
+			<libraryName>sap.ui.core</libraryName>
+		</dependency>
+		<dependency>
+			<libraryName>sap.ui.layout</libraryName>
+		</dependency>
+		<dependency>
+			<libraryName>sap.ui.unified</libraryName>
+		</dependency>
+	</dependencies>
 
-    <!-- Thirdparty references -->
-    <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-        <lib name="jquery_UI" displayName="jQuery UI" version="1.10.4" homepage="https://jqueryui.com">
-            <license url="http://jQuery.org/license" type="MIT" />
-            <copyright>2014 jQuery Foundation and other contributors</copyright>
-            <pattern>sap/ui/commons/themes/base/jQueryUi*</pattern>
-        </lib>
-        <lib name="jquery-fix-clone" displayName="jquery.fix.clone" version="unknown" homepage="https://github.com/spencertipping/jquery.fix.clone">
-            <license url="https://github.com/spencertipping/jquery.fix.clone" type="MIT" />
-            <copyright>Spencer Tipping</copyright>
-            <pattern partial="true" otherContent="SAP" explanation="Carousel.js is authored by SAP, but contains an improved implementation of the clone function which is taken from jquery-fix-clone">sap/ui/commons/Carousel.js</pattern>
-		</lib>
-    </thirdparty>
-  </appData>
+	<appData>
+		<selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.commons" />
+
+		<!-- excludes for the JSCoverage -->
+		<jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
+			<exclude name="sap.ui.commons.js." />
+			<exclude name="sap.ui.commons.DatePicker*" />
+		</jscoverage>
+
+		<releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+			url="../../../../test-resources/sap/ui/commons/relnotes/changes-{major}.{minor}.json"
+			resolve="lib" />
+
+		<ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
+			<component>CA-UI5-CTR</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
+			<component>
+				<name>CA-UI5-TBL</name>
+				<modules>
+					<module>sap/ui/commons/layout/AbsoluteLayout</module>
+				</modules>
+			</component>
+		</ownership>
+
+		<!-- Thirdparty references -->
+		<thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
+			<lib name="jquery_UI" displayName="jQuery UI" version="1.10.4" homepage="https://jqueryui.com" id="73554900106100000044">
+				<license url="http://jQuery.org/license" type="MIT" />
+				<copyright>2014 jQuery Foundation and other contributors</copyright>
+				<pattern>sap/ui/commons/themes/base/jQueryUi*</pattern>
+			</lib>
+			<lib name="jquery-fix-clone" displayName="jquery.fix.clone" version="unknown" homepage="https://github.com/spencertipping/jquery.fix.clone" id="73554900106100005547">
+				<license url="https://github.com/spencertipping/jquery.fix.clone" type="MIT" />
+				<copyright>Spencer Tipping</copyright>
+				<pattern partial="true" otherContent="SAP" explanation="Carousel.js is authored by SAP, but contains an improved implementation of the clone function which is taken from jquery-fix-clone">sap/ui/commons/Carousel.js</pattern>
+			</lib>
+		</thirdparty>
+	</appData>
 
 </library>

@@ -45,27 +45,27 @@
     </packaging>
     <!-- Thirdparty references -->
     <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-      <lib name="esprima" displayName="Esprima" version="1.2.2" homepage="http://esprima.org">
+      <lib name="esprima" displayName="Esprima" version="1.2.2" homepage="http://esprima.org" id="73554900106100003281">
         <license url="http://esprima.org/doc/index.html#license" type="BSD-2-Clause" />
         <copyright>2013 Ariya Hidayat and other contributors</copyright>
         <pattern>sap/ui/documentation/sdk/thirdparty/esprima.js</pattern>
       </lib>
-      <lib name="highlight.js" displayName="highlight.js" version="10.4.1" homepage="https://highlightjs.org/">
+      <lib name="highlight.js" displayName="highlight.js" version="10.4.1" homepage="https://highlightjs.org/" id="73555000106100051976">
         <license url="https://github.com/highlightjs/highlight.js/blob/10.4.1/LICENSE" type="BSD-3-Clause" />
         <copyright>2006-2020, Ivan Sagalaev</copyright>
         <pattern>sap/ui/documentation/sdk/thirdparty/highlight.js/*</pattern>
       </lib>
-      <lib name="elasticlunr" displayName="Elasticlunr" version="0.9.5" homepage="http://elasticlunr.com/">
+      <lib name="elasticlunr" displayName="Elasticlunr" version="0.9.5" homepage="http://elasticlunr.com/" id="73554900106100021592">
         <license url="https://github.com/weixsong/elasticlunr.js/blob/v0.9.5/LICENSE" type="MIT" />
         <copyright>2017 Wei Song and Oliver Nightingale</copyright>
         <pattern>sap/ui/documentation/sdk/thirdparty/elasticlunr.js</pattern>
       </lib>
-      <lib name="datatables" displayName="DataTables" version="1.10.15" homepage="https://datatables.net/">
+      <lib name="datatables" displayName="DataTables" version="1.10.15" homepage="https://datatables.net/" id="73555000106100009470">
         <license url="https://datatables.net/license/" type="MIT" />
         <copyright>2008-2017 SpryMedia Ltd</copyright>
         <pattern>sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/*</pattern>
       </lib>
-      <lib name="datatables-buttons" displayName="Buttons extension for DataTables" version="1.4.0" homepage="https://datatables.net/extensions/buttons/">
+      <lib name="datatables-buttons" displayName="Buttons extension for DataTables" version="1.4.0" homepage="https://datatables.net/extensions/buttons/" id="73555000106100007649">
         <license url="https://datatables.net/license/" type="MIT" />
         <copyright>2016 SpryMedia Ltd</copyright>
         <pattern>sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/*</pattern>

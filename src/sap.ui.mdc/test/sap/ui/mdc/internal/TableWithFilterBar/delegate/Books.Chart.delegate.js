@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 sap.ui.define([
     "sap/ui/mdc/odata/v4/vizChart/ChartDelegate",

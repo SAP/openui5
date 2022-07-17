@@ -1,6 +1,6 @@
-/*
-* ! ${copyright}
-*/
+/*!
+ * ${copyright}
+ */
 sap.ui.define([
 	"./PropertyHelper",
     "sap/m/Button",

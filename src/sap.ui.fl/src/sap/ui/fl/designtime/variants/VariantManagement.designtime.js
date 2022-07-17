@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 
 // Provides the Design Time Metadata for the sap.ui.fl.variants.VariantManagement control.

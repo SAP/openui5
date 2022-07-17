@@ -1,6 +1,6 @@
-/*
-* ! ${copyright}
-*/
+/*!
+ * ${copyright}
+ */
 sap.ui.define([
     "./ModificationHandler",
     "sap/ui/mdc/p13n/FlexUtil",

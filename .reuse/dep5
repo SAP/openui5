@@ -159,7 +159,7 @@ Copyright:
 License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and jQuery.rtl-scroll-type: _FeatureDetection.js is overall written by SAP, but contains code which is inspired by jQuery.rtl-scroll-type
 
-Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit-composite*
+Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit-composite.*
 Copyright: jQuery Foundation and other contributors
 License: MIT
 Comment: these files belong to: QUnit Composite

@@ -47,33 +47,33 @@
 
     <!-- Thirdparty references -->
     <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty">
-        <lib name="ui5-web-components" displayName="UI5 Web Components" version="1.0.1" homepage="https://sap.github.io/ui5-webcomponents/">
+        <lib name="ui5-web-components" displayName="UI5 Web Components" version="1.0.1" homepage="https://sap.github.io/ui5-webcomponents/" id="73554900106100099957">
             <license url="https://github.com/SAP/ui5-webcomponents/blob/master/LICENSE.txt" type="Apache-2.0"></license>
             <copyright>SAP</copyright>
             <pattern>sap/ui/integration/thirdparty/webcomponents/*</pattern>
         </lib>
-        <lib name="adaptive-cards" displayName="Adaptive Cards" version="2.9.0" homepage="https://adaptivecards.io/">
+        <lib name="adaptive-cards" displayName="Adaptive Cards" version="2.9.0" homepage="https://adaptivecards.io/" id="73555000106100067533">
             <license url="https://github.com/microsoft/AdaptiveCards/blob/master/LICENSE" type="MIT"></license>
             <copyright>2017 Microsoft</copyright>
             <pattern>sap/ui/integration/thirdparty/adaptivecards.js</pattern>
             <pattern>sap/ui/integration/schemas/adaptive-card.json</pattern>
         </lib>
-        <lib name="adaptive-cards-templating" displayName="Adaptive Cards Templating" version="2.2.0" homepage="https://adaptivecards.io/">
+        <lib name="adaptive-cards-templating" displayName="Adaptive Cards Templating" version="2.2.0" homepage="https://adaptivecards.io/" id="73555000106100081288">
             <license url="https://github.com/microsoft/AdaptiveCards/blob/master/LICENSE" type="MIT"></license>
             <copyright>2017 Microsoft</copyright>
             <pattern>sap/ui/integration/thirdparty/adaptivecards-templating.js</pattern>
         </lib>
-        <lib name="adaptive-expressions" displayName="Adaptive Expressions" version="4.15.0" homepage="https://www.npmjs.com/package/adaptive-expressions">
+        <lib name="adaptive-expressions" displayName="Adaptive Expressions" version="4.15.0" homepage="https://www.npmjs.com/package/adaptive-expressions" id="73555000106100082268">
             <license url="https://github.com/microsoft/botbuilder-js/blob/main/LICENSE" type="MIT"></license>
             <copyright>Microsoft</copyright>
             <pattern>sap/ui/integration/thirdparty/adaptive-expressions.js</pattern>
         </lib>
-        <lib name="markdown-it" displayName="Markdown-it" version="12.2.0" homepage="https://github.com/markdown-it/markdown-it">
+        <lib name="markdown-it" displayName="Markdown-it" version="12.2.0" homepage="https://github.com/markdown-it/markdown-it" id="73554900106100093551">
             <license url="https://github.com/markdown-it/markdown-it/blob/master/LICENSE" type="MIT"></license>
             <copyright>2014 Vitaly Puzrin, Alex Kocharin</copyright>
             <pattern>sap/ui/integration/thirdparty/markdown-it.js</pattern>
         </lib>
-        <lib name="@cfworker/json-schema" displayName="@cfworker/json-schema" version="1.6.8" homepage="https://cfworker.dev/">
+        <lib name="@cfworker/json-schema" displayName="@cfworker/json-schema" version="1.6.8" homepage="https://cfworker.dev/" id="73554900106100067462">
             <license url="https://github.com/cfworker/cfworker/blob/main/LICENSE.md" type="MIT"></license>
             <copyright>2020 Jeremy Danyow</copyright>
             <pattern>../test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/CfWorkerJsonSchemaValidator.js</pattern>

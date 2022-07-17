@@ -104,7 +104,7 @@ Component: QUnit Composite, version: 1.0.2-pre
 Copyright: jQuery Foundation and other contributors
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit-composite*
+Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit-composite.*
 
 Component: JUnit Reporter for QUnit, version: 1.1.1
 Copyright: jQuery Foundation and other contributors

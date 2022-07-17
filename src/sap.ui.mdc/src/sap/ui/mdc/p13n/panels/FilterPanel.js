@@ -1,6 +1,6 @@
 
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 sap.ui.define([
     "sap/m/p13n/QueryPanel", "sap/m/VBox", "sap/m/Text", "sap/ui/layout/Grid", "sap/ui/layout/GridData", "sap/m/Button", "sap/m/ComboBox", "sap/ui/core/library"

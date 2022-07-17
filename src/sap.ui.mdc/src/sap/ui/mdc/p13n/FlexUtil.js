@@ -1,6 +1,6 @@
-/*
-* ! ${copyright}
-*/
+/*!
+ * ${copyright}
+ */
 sap.ui.define([
 	'sap/base/util/merge', 'sap/base/util/deepEqual','sap/ui/mdc/condition/FilterOperatorUtil', 'sap/base/Log'
 ], function (merge, deepEqual, FilterOperatorUtil, Log) {

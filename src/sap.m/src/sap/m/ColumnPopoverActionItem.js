@@ -1,5 +1,5 @@
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 sap.ui.define(['./ColumnPopoverItem', 'sap/m/Button'], function(ColumnPopoverItem, Button) {
 	"use strict";

@@ -1,6 +1,6 @@
 
-/*
- * ! ${copyright}
+/*!
+ * ${copyright}
  */
 
 // Provides control sap.ui.mdc.filterbar.p13n.FilterColumnLayout.
