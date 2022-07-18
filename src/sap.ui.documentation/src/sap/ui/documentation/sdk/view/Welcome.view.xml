@@ -333,8 +333,8 @@
 			</headerToolbar>
 			<l:BlockLayout>
 				<l:BlockLayoutRow>
-					<l:BlockLayoutCell backgroundColorSet="ColorSet6"
-									   backgroundColorShade="ShadeC">
+					<l:BlockLayoutCell backgroundColorSet="ColorSet10"
+									   backgroundColorShade="ShadeA">
 						<l:layoutData>
 							<l:BlockLayoutCellData sSize="1" mSize="2" lSize="3" xlSize="3"/>
 						</l:layoutData>
@@ -357,8 +357,8 @@
 
 					<l:BlockLayoutCell
 						class="welcomeBlock"
-						backgroundColorSet="ColorSet6"
-						backgroundColorShade="ShadeC">
+						backgroundColorSet="ColorSet10"
+						backgroundColorShade="ShadeA">
 
 						<l:layoutData>
 							<l:BlockLayoutCellData sSize="1" mSize="2" lSize="3" xlSize="3"/>
