@@ -922,7 +922,7 @@ sap.ui.define([
 				reference: sReference,
 				nonNormalizedReference: sReference,
 				appComponent: this.oAppComponent,
-				version: '2'
+				version: '3'
 			};
 
 			var oFirstVersion = {
@@ -939,7 +939,23 @@ sap.ui.define([
 				isPublished: false
 			};
 
+			var oThirdVersion = {
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				version: "3",
+				isPublished: false
+			};
+
+			var oFourthVersion = {
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				version: "4",
+				isPublished: false
+			};
+
 			var aReturnedVersions = [
+				oFourthVersion,
+				oThirdVersion,
 				oSecondVersion,
 				oFirstVersion
 			];
@@ -952,7 +968,9 @@ sap.ui.define([
 				.then(Versions.getVersionsModel.bind(Versions, mPropertyBag))
 				.then(function (oResponse) {
 					var aVersions = oResponse.getProperty("/versions");
-					assert.equal(aVersions[0].isPublished, true, "the version model is updated correctly");
+					assert.equal(aVersions[0].isPublished, false, "the 4. version model is not updated");
+					assert.equal(aVersions[1].isPublished, true, "the 3. version model is updated correctly");
+					assert.equal(aVersions[2].isPublished, true, "the 2. version model is updated correctly");
 					assert.equal(oResponse.getProperty("/publishVersionEnabled"), false, "after publish successfully, the button is disable");
 				});
 		});

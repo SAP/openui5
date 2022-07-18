@@ -374,9 +374,18 @@ sap.ui.define([
 				if (sMessage !== "Error" && sMessage !== "Cancel") {
 					oModel.setProperty("/publishVersionEnabled", false);
 					var aVersions = oModel.getProperty("/versions");
-					aVersions.find(function (oVersion) {
-						return oVersion.version === mPropertyBag.version;
-					}).isPublished = true;
+					var bIsPublishedOrOlderVersion = false;
+					aVersions.forEach(function (oVersion) {
+						if (oVersion.isPublished) {
+							return;
+						}
+						if (oVersion.version === mPropertyBag.version) {
+							bIsPublishedOrOlderVersion = true;
+						}
+						if (bIsPublishedOrOlderVersion && !oVersion.isPublished) {
+							oVersion.isPublished = true;
+						}
+					});
 				}
 				return sMessage;
 			});
