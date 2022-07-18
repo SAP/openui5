@@ -1146,29 +1146,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/support"]
 				}
 			},
-			"support/apps/uiFlexibilityDiagnostics/controller/Root.controller": {
-				group: "support",
-				coverage: {
-					only: ["sap/ui/fl/support"]
-				}
-			},
-			"support/apps/uiFlexibilityDiagnostics/helper/Extractor": {
-				group: "support",
-				coverage: {
-					only: ["sap/ui/fl/support"]
-				}
-			},
-			"support/Flexibility": {
-				group: "support",
-				coverage: {
-					only: ["sap/ui/fl/support"]
-				},
-				ui5: {
-					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
-					}
-				}
-			},
 
 			// transport
 			"write/_internal/transport/TransportDialog": {
