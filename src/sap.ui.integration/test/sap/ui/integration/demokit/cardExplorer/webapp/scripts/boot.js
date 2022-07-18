@@ -16,7 +16,7 @@ window.addEventListener("load", function () {
 	aNodes.push('<script src="' + sWebApp + 'scripts/codesample.js"></script>');
 	aNodes.push('<link rel="stylesheet" href="' + sWebApp + 'css/topic.css">');
 	aNodes.push('<link rel="stylesheet" href="' + sWebApp + 'css/codesample.css">');
-	aNodes.push('<link rel="stylesheet" href="' + sRes + 'sap/ui/core/themes/sap_fiori_3/library.css">');
+	aNodes.push('<link rel="stylesheet" href="' + sRes + 'sap/ui/core/themes/sap_horizon/library.css">');
 	aNodes.push('<link rel="stylesheet" href="' + sRes + 'sap/ui/documentation/sdk/thirdparty/highlight.js/styles.css">');
 	aNodes.push('<script src="' + sRes + 'sap/ui/documentation/sdk/thirdparty/highlight.js/highlight.js"></script>');
 	aNodes.push('<script src="' + sWebApp + 'scripts/topic.js"></script>');
@@ -43,7 +43,7 @@ window.addEventListener("load", function () {
 						var oScript = document.createElement("script");
 						oScript.setAttribute("id", "sap-ui-bootstrap");
 						oScript.setAttribute("src", sRes + "/sap-ui-integration.js");
-						oScript.setAttribute("data-sap-ui-theme", "sap_fiori_3");
+						oScript.setAttribute("data-sap-ui-theme", "sap_horizon");
 						oScript.setAttribute("data-sap-ui-compatVersion", "edge");
 						oScript.setAttribute("data-sap-ui-async", "true");
 						if (document.querySelector("script[data-require-ui5-init]")) {
