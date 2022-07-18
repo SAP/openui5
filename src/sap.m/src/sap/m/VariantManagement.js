@@ -40,6 +40,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	'sap/m/HBox',
 	"sap/ui/events/KeyCodes",
+	'sap/base/Log',
 	"sap/ui/core/library",
 	"sap/m/library"
 ], function(
@@ -79,6 +80,7 @@ sap.ui.define([
 	VBox,
 	HBox,
 	KeyCodes,
+	Log,
 	coreLibrary,
 	mobileLibrary
 ) {
@@ -1464,8 +1466,6 @@ sap.ui.define([
 			this.setDefaultKey(this.oDefault.getSelected());
 		}
 
-		//this.setModified(false);
-
 		var oObj = {
 				key: sKey,
 				name: sName,
@@ -1517,11 +1517,16 @@ sap.ui.define([
 			key: oItem.getKey(),
 			def: bDefault
 		});
-
-		//this.setModified(false);
 	};
 
 	// Manage Views dialog
+
+	VariantManagement.prototype.destroyManageDialog = function() {
+		if (this.oManagementDialog) {
+			this.oManagementDialog.destroy();
+			this.oManagementDialog = undefined;
+		}
+	};
 
 	/**
 	 * Opens the <i>Manage Views</i> dialog.
@@ -1613,6 +1618,7 @@ sap.ui.define([
 
 	VariantManagement.prototype._createManagementDialog = function() {
 		if (!this.oManagementDialog || this.oManagementDialog.bIsDestroyed) {
+
 			this.oManagementTable = new Table(this.getId() + "-managementTable", {
 				contextualWidth: "Auto",
 				fixedLayout: false,
@@ -1793,8 +1799,17 @@ sap.ui.define([
 		var oRolesCell;
 		var oItem = oContext.getObject();
 		if (!oItem) {
+			Log.error("couldn't obtain the item for '" + oContext.getPath() + "'");
 			return undefined;
 		}
+
+		var nPos = this._determineIndex(oContext.getPath());
+		if (nPos < 0) {
+			Log.error("couldn't obtain item position for '" + oContext.getPath() + "'");
+			return undefined;
+		}
+
+		var sIdPrefix = this.getId() + "-manage";
 
 		var sModelName = "$mVariants";
 
@@ -1832,7 +1847,7 @@ sap.ui.define([
 		}.bind(this);
 
 		if (oItem.getRename()) {
-			oNameControl = new Input({
+			oNameControl = new Input(sIdPrefix + "-input-" + nPos, {
 				liveChange: fLiveChange,
 				change: fChange,
 				value: '{' + sModelName + ">title}"
@@ -1844,7 +1859,7 @@ sap.ui.define([
 
 
 		} else {
-			oNameControl = new ObjectIdentifier({
+			oNameControl = new ObjectIdentifier(sIdPrefix + "-text-" + nPos, {
 				title: '{' + sModelName + ">title}"
 			});
 			if (sTooltip) {
@@ -1852,7 +1867,7 @@ sap.ui.define([
 			}
 		}
 
-		oDeleteButton = new Button({
+		oDeleteButton = new Button(sIdPrefix + "-del-" + nPos, {
 			icon: "sap-icon://decline",
 			enabled: true,
 			type: ButtonType.Transparent,
@@ -1861,9 +1876,7 @@ sap.ui.define([
 			visible: oItem.getRemove()
 		});
 
-		//this._assignColumnInfoForDeleteButton(oDeleteButton);
-
-		var oFavoriteIcon = new Icon({
+		var oFavoriteIcon = new Icon(sIdPrefix + "-fav-" + nPos, {
 			src: {
 				path: "favorite",
 				model: sModelName,
@@ -1889,19 +1902,13 @@ sap.ui.define([
 		}
 
 		if (this.getDisplayTextForExecuteOnSelectionForStandardVariant() && (this.getStandardVariantKey() === oItem.getKey())) {
-			oExecuteOnSelectCtrl = new CheckBox(this.getId() + "-manage-exe-0",{
+			oExecuteOnSelectCtrl = new CheckBox(sIdPrefix + "-exe-" + nPos, {
 				wrapping: true,
-				//text: this.getDisplayTextForExecuteOnSelectionForStandardVariant(),
 				text: '{' + sModelName + ">/displayTextForExecuteOnSelectionForStandardVariant}",
 				selected: '{' + sModelName + ">executeOnSelect}"
 			});
-		} else if (this.getStandardVariantKey() === oItem.getKey()) {
-			oExecuteOnSelectCtrl = new CheckBox(this.getId() + "-manage-exe-0",{
-				text: "",
-				selected: '{' + sModelName + ">executeOnSelect}"
-			});
 		} else {
-			oExecuteOnSelectCtrl = new CheckBox({
+			oExecuteOnSelectCtrl = new CheckBox(sIdPrefix + "-exe-" + nPos, {
 				text: "",
 				selected: '{' + sModelName + ">executeOnSelect}"
 			});
@@ -1917,16 +1924,17 @@ sap.ui.define([
 			});
 			oIcon.addStyleClass("sapMVarMngmtRolesEdit");
 			oIcon.setTooltip(this._oRb.getText("VARIANT_MANAGEMENT_VISIBILITY_ICON_TT"));
-			oRolesCell = new HBox({
+			oRolesCell = new HBox(sIdPrefix + "-role-" + nPos, {
 				items: [oText, oIcon]
 			});
 		} else {
 			oRolesCell = new Text();
 		}
 
+
 		return new ColumnListItem({
 			cells: [
-				oFavoriteIcon, oNameControl, new Text({
+				oFavoriteIcon, oNameControl, new Text(sIdPrefix + "-type-" + nPos, {
 					text: {
 						path: "sharing",
 						model: sModelName,
@@ -1935,7 +1943,7 @@ sap.ui.define([
 						}.bind(this)
 					},
 					textAlign: "Center"
-				}), new RadioButton({
+				}), new RadioButton(sIdPrefix + "-def-" + nPos, {
 					groupName: this.getId(),
 					select: fSelectRB,
 					selected: {
@@ -1945,7 +1953,7 @@ sap.ui.define([
 							return oItem.getKey() === sKey;
 						}
 					}
-				}), oExecuteOnSelectCtrl, oRolesCell, new Text({
+				}), oExecuteOnSelectCtrl, oRolesCell, new Text(sIdPrefix + "-author-" + nPos, {
 					text: '{' + sModelName + ">author}",
 					textAlign: "Begin"
 				}), oDeleteButton, new Text({
@@ -1954,6 +1962,7 @@ sap.ui.define([
 			]
 		});
 	};
+
 
 	VariantManagement.prototype._openManagementDialog = function() {
 		this._createManagementDialog();
@@ -2100,13 +2109,14 @@ sap.ui.define([
 		}
 	};
 
+
+
 	VariantManagement.prototype._getRowForKey = function(sKey) {
 		var oRowForKey = null;
 		if (this.oManagementTable) {
 			this.oManagementTable.getItems().some(function(oRow) {
 				var oColumnItem = oRow.getCells()[0].getParent();
 				var oItem = this.getModel("$mVariants").getObject(oColumnItem.getBindingContextPath());
-				//if (sKey === oRow.getCells()[0].getBindingContext().getObject().key) {
 				if (sKey === oItem.getKey()) {
 					oRowForKey = oRow;
 				}
@@ -2116,6 +2126,16 @@ sap.ui.define([
 		}
 
 		return oRowForKey;
+	};
+
+	VariantManagement.prototype._determineIndex = function(sPath) {
+		var nIdx = -1;
+		var nPos = sPath.indexOf('/', 1);
+		if (nPos > 0) {
+			nIdx = parseInt(sPath.substring(nPos + 1));
+		}
+
+		return nIdx;
 	};
 
 	VariantManagement.prototype._handleManageDeletePressed = function(oItem) {
