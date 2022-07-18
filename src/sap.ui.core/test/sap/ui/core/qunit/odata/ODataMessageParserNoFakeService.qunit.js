@@ -1976,9 +1976,11 @@ sap.ui.define([
 		this.mock(oMessageParser).expects("_createGenericError")
 			.withExactArgs(mRequestInfo)
 			.returns("~aMessages");
-		this.oLogMock.expects("error")
-			.withExactArgs("Request failed with status code 400: POST ~requestUri",
+		this.oLogMock.expects("debug")
+			.withExactArgs("Failed to parse error messages from the response body",
 				sinon.match.same(oError), sClassName);
+		this.mock(oMessageParser).expects("_logErrorMessages")
+			.withExactArgs("~aMessages", sinon.match.same(oRequest), "400");
 		this.mock(oMessageParser).expects("_propagateMessages")
 			.withExactArgs("~aMessages", mRequestInfo, "~mGetEntities", "~mChangeEntities", false);
 
