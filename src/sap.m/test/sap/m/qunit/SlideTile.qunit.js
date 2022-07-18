@@ -1027,6 +1027,16 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("S4 home slide tile", function(assert) {
+		//Arrange
+		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
+		this.oSlideTile.setWidth("100%");
+		this.stub(this.oSlideTile, "_hasStretchTiles").returns(true);
+		oCore.applyChanges();
+		//Assert
+		assert.ok(this.oSlideTile.getDomRef().classList.contains("sapMTileSmallPhone"),"class has been successfully added");
+	});
+
 	QUnit.test("Tab Navigation on tiles", function(assert) {
 		var bForward = true;
 		this.oTile1 = this.createTile().placeAt("qunit-fixture");

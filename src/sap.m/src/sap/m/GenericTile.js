@@ -711,16 +711,32 @@ sap.ui.define([
 	 */
 	GenericTile.prototype._setupResizeClassHandler = function () {
 		var fnCheckMedia = function () {
-			if (this.getSizeBehavior() === TileSizeBehavior.Small || window.matchMedia("(max-width: 374px)").matches) {
+			if (this.getSizeBehavior() === TileSizeBehavior.Small || window.matchMedia("(max-width: 374px)").matches || this._isSmallStretchTile()) {
 				this.$().addClass("sapMTileSmallPhone");
+				if (this._isSmallStretchTile()) {
+					this.addStyleClass("sapMGTStretch");
+				}
 			} else {
 				this.$().removeClass("sapMTileSmallPhone");
+				this.removeStyleClass("sapMGTStretch");
 			}
 		}.bind(this);
 
 		jQuery(window).on("resize", fnCheckMedia);
 		fnCheckMedia();
 	};
+
+	/**
+	 *Checks if the GenericTile has stretch frametype and the window size is below 600px
+	 *
+	 * @returns {boolean} True if the above mentioned condition is met
+	 * @private
+	 */
+
+	GenericTile.prototype._isSmallStretchTile = function () {
+		return this.getFrameType() === FrameType.Stretch && window.matchMedia("(max-width: 600px)").matches;
+	};
+
 
 	/**
 	 * Looks for the class '.sapUiSizeCompact' on the control and its parents to determine whether to render cozy or compact density mode.
