@@ -215,7 +215,7 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						var oColumns = oTable.getColumns();
 						assert.equal(oColumns.length, 8, "Table: column number is 8");
 						var oSelectionColumn = oColumns[0];
@@ -1413,7 +1413,7 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						var oColumns = oTable.getColumns();
@@ -1548,7 +1548,7 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						var oColumns = oTable.getColumns();
@@ -1675,7 +1675,7 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						var oColumns = oTable.getColumns();
@@ -1862,7 +1862,7 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						var oColumns = oTable.getColumns();
@@ -2041,7 +2041,7 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						var oColumns = oTable.getColumns();
@@ -2231,7 +2231,7 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						var oColumns = oTable.getColumns();

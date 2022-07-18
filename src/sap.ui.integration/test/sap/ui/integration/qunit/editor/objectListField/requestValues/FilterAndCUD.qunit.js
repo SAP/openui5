@@ -190,7 +190,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
@@ -334,7 +334,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
@@ -493,7 +493,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
@@ -666,7 +666,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
@@ -858,7 +858,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
@@ -1041,7 +1041,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
@@ -1244,7 +1244,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");
@@ -1327,7 +1327,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value");

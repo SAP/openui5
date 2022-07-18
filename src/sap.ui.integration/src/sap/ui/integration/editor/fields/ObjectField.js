@@ -90,7 +90,15 @@ sap.ui.define([
 	 */
 	var ObjectField = BaseField.extend("sap.ui.integration.editor.fields.ObjectField", {
 		metadata: {
-			library: "sap.ui.integration"
+			library: "sap.ui.integration",
+			events: {
+				/**
+				 * Fired when table is updated.
+				 * @experimental since 1.105
+				 * Disclaimer: this event is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+				 */
+				tableUpdated: {}
+			}
 		},
 		renderer: BaseField.getMetadata().getRenderer()
 	});
@@ -634,6 +642,7 @@ sap.ui.define([
 		var that = this;
 		that.updateSelectionColumn();
 		that.updateToolbar();
+		that.fireTableUpdated();
 	};
 
 	ObjectField.prototype.updateSelectionColumn = function() {
@@ -871,6 +880,7 @@ sap.ui.define([
 			oModel.setProperty("/_hasSelected", false);
 		}
 		oModel.checkUpdate();
+		that.updateTable();
 	};
 
 	ObjectField.prototype.onChangeOfTextArea = function (oEvent) {

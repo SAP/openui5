@@ -286,6 +286,7 @@ sap.ui.define([
 									assert.equal(sTranslationTextOfEN, "text en", "Texts: Translation text of EN correct");
 									oTranslationListPage3._navBtn.firePress();
 									wait().then(function () {
+										oNewObject._dt._position = oField._positionCount;
 										oAddButtonInPopover.firePress();
 										wait().then(function () {
 											assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");

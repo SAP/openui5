@@ -192,7 +192,7 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						oAddButton.firePress();
@@ -362,7 +362,7 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						oAddButton.firePress();
@@ -523,7 +523,7 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						oAddButton.firePress();
@@ -703,7 +703,7 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oEditButton = oToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table toolbar: edit button disabled");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						oAddButton.firePress();
@@ -918,7 +918,7 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oDeleteButton = oToolbar.getContent()[3];
 					assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button disabled");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						oAddButton.firePress();
@@ -997,7 +997,7 @@ sap.ui.define([
 					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 					var oDeleteButton = oToolbar.getContent()[3];
 					assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button disabled");
-					oTable.attachEventOnce("rowsUpdated", function(oEvent) {
+					oField.attachEventOnce("tableUpdated", function(oEvent) {
 						assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 						assert.equal(oTable.getBinding().getCount(), (oResponseData.Objects.length + 1), "Table: value length is " + (oResponseData.Objects.length + 1));
 						oAddButton.firePress();
