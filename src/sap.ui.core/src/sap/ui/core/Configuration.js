@@ -1519,9 +1519,9 @@ sap.ui.define([
 		_endCollect : function() {
 			var mChanges = this.mChanges;
 			if ( mChanges && (--mChanges.__count) === 0 ) {
-				this._oCore && this._oCore.fireLocalizationChanged(mChanges);
 				delete mChanges.__count;
 				delete this.mChanges;
+				this._oCore && this._oCore.fireLocalizationChanged(mChanges);
 			}
 		},
 
