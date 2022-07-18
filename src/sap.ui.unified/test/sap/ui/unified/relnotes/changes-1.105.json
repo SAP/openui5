@@ -3,6 +3,11 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "1742ac7743a7834da63b1128ee31d16a28d1b2ee",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.FileUploader: enable directory selection"
+      },
+      {
         "id": "436bdaabc893e05f78ff1c2993f38e502cb7eb89",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: now select correct year",

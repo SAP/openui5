@@ -3,9 +3,31 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "2bc9896ef227df77ca9c79909c2da005dddf99ab",
+        "type": "FIX",
+        "text": " Demo Kit: DataTable filter list population fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280110640"
+          }
+        ]
+      },
+      {
         "id": "b9384d2cdf65c5b346ae61b68f8c1438df05183b",
         "type": "FIX",
         "text": " Demo Kit: Enable qunit assertion"
+      },
+      {
+        "id": "657c336f11360062a46d139d4b7e4cb64c62b9c3",
+        "type": "FIX",
+        "text": " Demo Kit: DataTable filter row formatting fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280110637"
+          }
+        ]
       },
       {
         "id": "5073b5d58666ab6b4edd4fdf0ecc74734f9a8716",
