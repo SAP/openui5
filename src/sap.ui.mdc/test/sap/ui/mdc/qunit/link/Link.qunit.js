@@ -156,7 +156,10 @@ sap.ui.define([
 
 		oLink.open(oLink).then(function() {
 			assert.ok(fnUseDelegateAdditionalContent.calledOnce, "_useDelegateAdditionalContent called once");
-			assert.ok(oLink._oPopover, "Popover created");
+			var oPopover = oLink.getDependents().find(function(oDependent) {
+				return oDependent.isA("sap.m.ResponsivePopover");
+			});
+			assert.ok(oPopover, "Popover created");
 			done();
 		});
 	});

@@ -94,15 +94,18 @@ sap.ui.define([
 			throw new Error("sap.ui.mdc.field.FieldInfoBase: popover can not be open because the control is undefined");
 		}
 		// Avoid creation of a new popover instance if the same triggerable control is triggered again.
-		if (this._oPopover && this._oPopover.isOpen()) {
+		var oPopover = this.getDependents().find(function(oDependent) {
+			return oDependent.isA("sap.m.ResponsivePopover");
+		});
+		if (oPopover && oPopover.isOpen()) {
 			return Promise.resolve();
 		}
 		return this.checkDirectNavigation().then(function(bNavigated) {
 			return bNavigated ? Promise.resolve() : this.createPopover().then(function(oPopover) {
 				if (oPopover) {
-					this._oPopover.openBy(oControl);
+					oPopover.openBy(oControl);
 
-					this._oPopover.attachAfterOpen(function() {
+					oPopover.attachAfterOpen(function() {
 						this.firePopoverAfterOpen();
 					}.bind(this));
 				}
@@ -162,18 +165,14 @@ sap.ui.define([
 				content: [
 					oPanel
 				],
-				afterClose: function() {
-					if (this._oPopover) {
-						this._oPopover.destroy();
+				afterClose: function(oEvent) {
+					if (oEvent.getSource()) {
+						oEvent.getSource().destroy();
 					}
-				}.bind(this)
+				}
 			});
 
-			// Note: it is not needed to destroy this._oPopover in exit as through addDependent() the popover
-			// instance will be automatically destroyed once the FieldInfoBase instance is destroyed.
-			this._oPopover = oPopover;
-
-			this.addDependent(this._oPopover);
+			this.addDependent(oPopover);
 
 			return new Promise(function(resolve, reject) {
 				sap.ui.require([
