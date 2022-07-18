@@ -3,6 +3,54 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "6cb6d4eccc576987b2e9e85cac57dd0a9e1f932a",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: fix .to() method documentation"
+      },
+      {
+        "id": "a783010194f1b2d5944bf54f09a30b0f03b429b8",
+        "type": "FEATURE",
+        "text": " sap.m.Dialog: 'Ctrl' + 'Enter' triggers footer button if it is 'Accept' or 'Emphasized'"
+      },
+      {
+        "id": "faa37880e8135852d16d40be16f6e5b09951328c",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: selectedKey is now not updated if it is the same",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280131708"
+          }
+        ]
+      },
+      {
+        "id": "5b956ec94192799866b121a5897766d4246a8b02",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateUtil: Now provides a way to remove offset caused by timezone.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280126776"
+          }
+        ]
+      },
+      {
+        "id": "22b52025958f430d055d4949cd1d65f6892e051d",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Open DDR from another control (no visible input field)"
+      },
+      {
+        "id": "53a99c7981c7a4e6257b6b92c5a8dbd053cab9dc",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Selected state is now announced by the SR",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280094292"
+          }
+        ]
+      },
+      {
         "id": "8f4f7b5f247547a838ace4de3f74ac322b969073",
         "type": "FIX",
         "text": " sap.m.RadioButtonGroup: Selected button is now correctly set",

@@ -3,6 +3,11 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "ac8851b665d87820c97d0f2c9331314d5bf77d7b",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElements: check for late properties..."
+      },
+      {
         "id": "4ebdb057792d3108e2300dd4709f2b790051b9be",
         "type": "FIX",
         "text": " sap.ui.model.odata.v2.ODataModel#setProperty: reverting a time property does not fail",

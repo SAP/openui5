@@ -3,6 +3,22 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "71c4a8aa56fe1ddda95e0f17062a96671de1f1ce",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Title height corrected"
+      },
+      {
+        "id": "70e54750aa21350dc781b59ed5f6bfc5101df5f8",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Corrected qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280125573"
+          }
+        ]
+      },
+      {
         "id": "77241effc7a3089029384b6aba3aab4b892e2df1",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSection: Generic section label restricted",
