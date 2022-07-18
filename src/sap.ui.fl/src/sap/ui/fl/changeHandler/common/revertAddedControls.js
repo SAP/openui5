@@ -24,8 +24,8 @@ sap.ui.define([
 	 */
 	return function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
-		var oChangeDefinition = oChange.getDefinition();
-		var sAggregationName = oChangeDefinition.content.targetAggregation;
+		var oChangeContent = oChange.getContent();
+		var sAggregationName = oChangeContent.targetAggregation;
 		var oView = mPropertyBag.view || Utils.getViewForControl(oControl);
 		var oAppComponent = mPropertyBag.appComponent;
 		var aRevertData = oChange.getRevertData() || [];

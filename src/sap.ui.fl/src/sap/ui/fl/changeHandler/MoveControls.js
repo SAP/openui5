@@ -295,7 +295,7 @@ function(
 			.then(function(oRetrievedTargetParent) {
 				oTargetParent = oRetrievedTargetParent;
 				var aRevertData = oChange.getRevertData();
-				oChange.getContent().movedElements.reverse();
+				oChangeContent.movedElements.reverse();
 				var aPromises = [];
 				oChangeContent.movedElements.forEach(function(mMovedElement, iElementIndex) {
 					var fnPromise = function() {
@@ -410,7 +410,9 @@ function(
 			sourceAggregation: oRevertData.aggregation,
 			targetAggregation: oChangeContent.target.selector.aggregation,
 			setTargetIndex: function(oChange, iNewTargetIndex) {
-				oChange.getContent().movedElements[0].targetIndex = iNewTargetIndex;
+				var oChangeContent = oChange.getContent();
+				oChangeContent.movedElements[0].targetIndex = iNewTargetIndex;
+				oChange.setContent(oChangeContent);
 			},
 			getTargetIndex: function(oChange) {
 				return oChange.getContent().movedElements[0].targetIndex;

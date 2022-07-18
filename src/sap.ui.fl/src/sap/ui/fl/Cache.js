@@ -201,7 +201,7 @@ function(
 		Object.keys(oVariantsState).forEach(function(sId) {
 			oVariantsState[sId].variants.forEach(function(oVariant) {
 				oVariant.controlChanges = oVariant.controlChanges.filter(function(oChange) {
-					return aChangeNames.indexOf(oChange.getFileName()) === -1;
+					return aChangeNames.indexOf(oChange.getId()) === -1;
 				});
 			});
 		});

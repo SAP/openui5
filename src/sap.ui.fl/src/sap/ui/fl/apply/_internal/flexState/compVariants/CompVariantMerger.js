@@ -154,10 +154,10 @@ sap.ui.define([
 				mChanges[oStandardVariant.getVariantId()] = mChanges[oStandardVariant.getVariantId()] || [];
 				mChanges[oStandardVariant.getVariantId()].push(oStandardVariantChange);
 				mChanges[oStandardVariant.getVariantId()].sort(function (a, b) {
-					if (a.getDefinition().creation < b.getDefinition().creation) {
+					if (a.getCreation() < b.getCreation()) {
 						return -1;
 					}
-					if (a.getDefinition().creation > b.getDefinition().creation) {
+					if (a.getCreation() > b.getCreation()) {
 						return 1;
 					}
 					return 0;

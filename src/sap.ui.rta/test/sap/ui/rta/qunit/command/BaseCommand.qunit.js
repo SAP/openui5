@@ -908,9 +908,9 @@ sap.ui.define([
 			assert.notOk(this.compositeCommand._sCompositeId, "there is no private composite id set initially");
 			this.compositeCommand.insertCommand(this.command4, 0);
 			assert.ok(this.compositeCommand._sCompositeId, "there is a private composite id set after adding the first command");
-			assert.equal(this.command4._oPreparedChange.getDefinition().support.compositeCommand, this.compositeCommand._sCompositeId, "the id is written to the prepared change");
+			assert.equal(this.command4._oPreparedChange.getSupportInformation().compositeCommand, this.compositeCommand._sCompositeId, "the id is written to the prepared change");
 			this.compositeCommand.insertCommand(this.command5, 0);
-			assert.equal(this.command5._oPreparedChange.getDefinition().support.compositeCommand, this.compositeCommand._sCompositeId, "the id is written to any further prepared change of an added command");
+			assert.equal(this.command5._oPreparedChange.getSupportInformation().compositeCommand, this.compositeCommand._sCompositeId, "the id is written to any further prepared change of an added command");
 		});
 
 		QUnit.test("when adding a command to a composite command, ", function(assert) {
@@ -938,9 +938,9 @@ sap.ui.define([
 			assert.notOk(this.compositeCommand._sCompositeId, "there is no private composite id set initially");
 			this.compositeCommand.addCommand(this.command4);
 			assert.ok(this.compositeCommand._sCompositeId, "there is a private composite id set after adding the first command");
-			assert.equal(this.command4._oPreparedChange.getDefinition().support.compositeCommand, this.compositeCommand._sCompositeId, "the id is written to the prepared change");
+			assert.equal(this.command4._oPreparedChange.getSupportInformation().compositeCommand, this.compositeCommand._sCompositeId, "the id is written to the prepared change");
 			this.compositeCommand.addCommand(this.command5);
-			assert.equal(this.command5._oPreparedChange.getDefinition().support.compositeCommand, this.compositeCommand._sCompositeId, "the id is written to any further prepared change of an added command");
+			assert.equal(this.command5._oPreparedChange.getSupportInformation().compositeCommand, this.compositeCommand._sCompositeId, "the id is written to any further prepared change of an added command");
 		});
 
 		QUnit.test("After adding commands to composite command, when executing the composite and undoing it", function(assert) {
@@ -1257,11 +1257,11 @@ sap.ui.define([
 				assert.ok(oMoveCommand, "then command is available");
 				assert.equal(oCreateChangeFromDataSpy.callCount, 1, "and '_createChangeFromData' is called once");
 				assert.deepEqual(oCreateChangeFromDataSpy.args[0][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
-				assert.strictEqual(oMoveCommand.getPreparedChange().getDefinition().dependentSelector.originalSelector.id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
+				assert.strictEqual(oMoveCommand.getPreparedChange().getOriginalSelector().id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
 				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggegation is written to the change content");
-				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().source.selector.id, oMoveCommand.getPreparedChange().getDefinition().dependentSelector.source.id, "and the content of the change is also adjusted");
-				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().target.selector.id, oMoveCommand.getPreparedChange().getDefinition().dependentSelector.target.id, "and the content of the change is also adjusted");
-				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().movedElements[0].selector.id, oMoveCommand.getPreparedChange().getDefinition().dependentSelector.movedElements[0].id, "and the content of the change is also adjusted");
+				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().source.selector.id, oMoveCommand.getPreparedChange().getDependentSelector().source.id, "and the content of the change is also adjusted");
+				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().target.selector.id, oMoveCommand.getPreparedChange().getDependentSelector().target.id, "and the content of the change is also adjusted");
+				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().movedElements[0].selector.id, oMoveCommand.getPreparedChange().getDependentSelector().movedElements[0].id, "and the content of the change is also adjusted");
 				assert.notEqual(oMoveCommand.getMovedElements()[0].element.getId(), this.oText1.getId(), "and the moved element is not the UI control anymore");
 				var oTextItem = this.oItemTemplate.getContent()[0].getItems()[0].getItems()[0].getItems()[0];
 				assert.strictEqual(oMoveCommand.getMovedElements()[0].element, oTextItem, "the moved element is the corresponding control in the template");
@@ -1327,7 +1327,7 @@ sap.ui.define([
 				assert.ok(oRevealCommand, "then command is available");
 				assert.equal(oCreateChangeFromDataSpy.callCount, 1, "and '_createChangeFromData' is called once");
 				assert.deepEqual(oCreateChangeFromDataSpy.args[0][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
-				assert.strictEqual(oRevealCommand.getPreparedChange().getDefinition().dependentSelector.originalSelector.id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
+				assert.strictEqual(oRevealCommand.getPreparedChange().getOriginalSelector().id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
 				assert.strictEqual(oRevealCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggegation is written to the change content");
 				assert.strictEqual(oRevealCommand._getChangeSpecificData().revealedElementId, oTextItem.getId(), "and the change specific content of the change is also adjusted");
 				return oRevealCommand.execute();
@@ -1378,7 +1378,7 @@ sap.ui.define([
 				assert.ok(oPropertyCommand, "then command is available");
 				assert.equal(oCreateChangeFromDataSpy.callCount, 1, "and '_createChangeFromData' is called once");
 				assert.deepEqual(oCreateChangeFromDataSpy.args[0][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
-				assert.strictEqual(oPropertyCommand.getPreparedChange().getDefinition().dependentSelector.originalSelector.id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
+				assert.strictEqual(oPropertyCommand.getPreparedChange().getOriginalSelector().id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
 				assert.strictEqual(oPropertyCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggegation is written to the change content");
 				assert.strictEqual(oPropertyCommand._getChangeSpecificData().selector.id, oTextItem.getId(), "and the change specific content of the change is also adjusted");
 				return oPropertyCommand.execute();

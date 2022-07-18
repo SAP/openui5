@@ -92,7 +92,7 @@ sap.ui.define([
 				assert.equal(oStandardVariant.getExecuteOnSelection(), true, "and is executed on selection by a standardVariant change");
 				assert.equal(oStandardVariant.getFavorite(), true, "which is by default a favorite");
 				assert.equal(oStandardVariant.getChanges().length, 1, "one change was applied on the standard variant");
-				assert.equal(oStandardVariant.getChanges()[0].getFileName(), "id_1607667712160_48_standardVariant", "with the correct id");
+				assert.equal(oStandardVariant.getChanges()[0].getId(), "id_1607667712160_48_standardVariant", "with the correct id");
 
 				var aVariants = oResponse.variants;
 				assert.equal(aVariants.length, 6, "then six entities are returned");

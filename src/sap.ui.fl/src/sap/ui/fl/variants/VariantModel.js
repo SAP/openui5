@@ -645,7 +645,7 @@ sap.ui.define([
 			reference: this.sFlexReference
 		})
 			.map(function(oVariantChange) {
-				return oVariantChange.getDefinition();
+				return oVariantChange.convertToFileContent();
 			});
 
 		mPropertyBag.currentVariantComparison = LayerUtils.compareAgainstCurrentLayer(oSourceVariant.instance.getLayer(), mPropertyBag.layer);
@@ -904,7 +904,7 @@ sap.ui.define([
 			oChange.setText("title", mPropertyBag.title, "XFLD");
 		}
 
-		mUpdateVariantsStateParams.changeContent = oChange.getDefinition();
+		mUpdateVariantsStateParams.changeContent = oChange.convertToFileContent();
 		//update variants state and write change to ChangePersistence
 		VariantManagementState.updateChangesForVariantManagementInMap(mUpdateVariantsStateParams);
 		this.oChangePersistence.addDirtyChange(oChange);
@@ -927,7 +927,7 @@ sap.ui.define([
 		};
 
 		this.setVariantProperties(sVariantManagementReference, mPropertyBag, true);
-		mUpdateVariantsStateParams.changeContent = oChange.getDefinition();
+		mUpdateVariantsStateParams.changeContent = oChange.convertToFileContent();
 		//update variants state and write change to ChangePersistence
 		VariantManagementState.updateChangesForVariantManagementInMap(mUpdateVariantsStateParams);
 		this.oChangePersistence.deleteChange(oChange);
@@ -1442,7 +1442,7 @@ sap.ui.define([
 	 */
 	VariantModel.prototype._getDirtyChangesFromVariantChanges = function(aControlChanges) {
 		var aChangeFileNames = aControlChanges.map(function(oChange) {
-			return oChange.getDefinition().fileName;
+			return oChange.getId();
 		});
 
 		return this.oChangePersistence.getDirtyChanges().filter(function(oChange) {

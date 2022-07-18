@@ -161,15 +161,13 @@ sap.ui.define([
 			getFileType: function() {
 				return "change";
 			},
-			getDefinition: function() {
-				return {
-					support: {
-						command: sCommandName
-					}
-				};
-			},
 			getCreation: function() {
 				return new Date();
+			},
+			getSupportInformation: function() {
+				return {
+					command: sCommandName
+				};
 			},
 			getChangeType: function() { return "changeType"; },
 			getLayer: function() { return "layer"; }

@@ -101,7 +101,7 @@ sap.ui.define([
 					layer: Layer.VENDOR,
 					developerMode: false
 				});
-				assert.notOk(oAddXmlCommand._oPreparedChange.getDefinition().content.fragment, "after preparing, the fragment content is not yet in the change");
+				assert.notOk(oAddXmlCommand._oPreparedChange.getContent().fragment, "after preparing, the fragment content is not yet in the change");
 				return oAddXmlCommand.execute()
 
 				.then(function() { return oAddXmlCommand; });
@@ -110,7 +110,7 @@ sap.ui.define([
 			.then(function(oAddXmlCommand) {
 				assert.equal(oCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice");
 				assert.equal(oApplyChangeStub.callCount, 1, "then applyChange is called once");
-				assert.notOk(oAddXmlCommand._oPreparedChange.getDefinition().content.fragment, "after applying, the fragment content is not in the change anymore");
+				assert.notOk(oAddXmlCommand._oPreparedChange.getContent.fragment, "after applying, the fragment content is not in the change anymore");
 				assert.ok(oPreloadSpy.lastCall.args[0][sPath], "the preload was called with the correct object");
 				assert.equal(oPreloadSpy.lastCall.args[0][sPath], sFragment, "the preload was called with the correct object");
 			})
@@ -197,7 +197,7 @@ sap.ui.define([
 
 			.then(function(oAddXmlCommand) {
 				var oChange = oAddXmlCommand.getPreparedChange();
-				assert.strictEqual(oChange.getDefinition().jsOnly, true, "then change is marked to be applied on js only");
+				assert.strictEqual(oChange.getJsOnly(), true, "then change is marked to be applied on js only");
 			})
 
 			.catch(function (oError) {
@@ -273,7 +273,7 @@ sap.ui.define([
 				assert.strictEqual(oCommand.getFragment(), "fragment", "and its settings are merged correctly");
 				assert.strictEqual(oCommand.getIndex(), 0, "and its settings are merged correctly");
 				assert.strictEqual(oCommand.getPreparedChange().getSelector().id, this.oList.getId(), "and the prepared change contains the bound control as template selector");
-				assert.strictEqual(oCommand.getPreparedChange().getDefinition().dependentSelector.originalSelector.id, "item", "and the prepared change contains the original selector as dependency");
+				assert.strictEqual(oCommand.getPreparedChange().getOriginalSelector().id, "item", "and the prepared change contains the original selector as dependency");
 				assert.strictEqual(oCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggegation is written to the change content");
 				return oCommand.execute().then(function() { return oCommand; });
 			}.bind(this))
@@ -281,7 +281,7 @@ sap.ui.define([
 			.then(function(oCommand) {
 				assert.equal(oCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 				assert.equal(oApplyChangeStub.callCount, 1, "then applyChange is called once");
-				assert.notOk(oCommand._oPreparedChange.getDefinition().content.fragment, "after applying, the fragment content is not in the change anymore");
+				assert.notOk(oCommand._oPreparedChange.getContent().fragment, "after applying, the fragment content is not in the change anymore");
 			});
 		});
 	});

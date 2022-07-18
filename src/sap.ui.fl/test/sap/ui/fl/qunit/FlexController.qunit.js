@@ -387,7 +387,7 @@ sap.ui.define([
 				.then(function() {
 					assert.ok(oRevertMultipleChangesStub.calledOnce, "the revertMultipleChanges is called once");
 					assert.deepEqual(oRevertMultipleChangesStub.args[0][0], aDeletedChanges, "with the correct changes");
-					assert.deepEqual(oRevertMultipleChangesStub.args[0][0][0].getFileName(), "change2", "with the correct reverse order");
+					assert.deepEqual(oRevertMultipleChangesStub.args[0][0][0].getId(), "change2", "with the correct reverse order");
 					assert.deepEqual(URLHandler.update.getCall(0).args[0], {
 						parameters: [],
 						updateURL: true,
@@ -664,7 +664,7 @@ sap.ui.define([
 
 			return this.oFlexController.createChangeWithControlSelector({}, oControl)
 				.then(function(oChange) {
-					assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the ID as NOT local.");
+					assert.deepEqual(oChange.getSelector().idIsLocal, false, "the selector flags the ID as NOT local.");
 					assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
 					oControl.destroy();
 				});
@@ -681,7 +681,7 @@ sap.ui.define([
 
 			return this.oFlexController.createChangeWithControlSelector({}, oControl)
 				.then(function(oChange) {
-					assert.deepEqual(oChange.getDefinition().selector.idIsLocal, true, "the selector flags the ID as local");
+					assert.deepEqual(oChange.getSelector().idIsLocal, true, "the selector flags the ID as local");
 					assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
 					oControl.destroy();
 				});
@@ -706,8 +706,8 @@ sap.ui.define([
 
 			return this.oFlexController.createChangeWithControlSelector({}, mControl)
 				.then(function(oChange) {
-					assert.deepEqual(oChange.getDefinition().selector.idIsLocal, false, "the selector flags the ID as NOT local.");
-					assert.deepEqual(oChange.getDefinition().selector.id, this.oControl.getId(), "the selector flags the ID as NOT local.");
+					assert.deepEqual(oChange.getSelector().idIsLocal, false, "the selector flags the ID as NOT local.");
+					assert.deepEqual(oChange.getSelector().id, this.oControl.getId(), "the selector flags the ID as NOT local.");
 				}.bind(this));
 		});
 
@@ -761,7 +761,7 @@ sap.ui.define([
 
 			return this.oFlexController.createChangeWithExtensionPointSelector({}, mExtensionPointReference)
 				.then(function(oChange) {
-					assert.deepEqual(oChange.getDefinition().selector, mExpectedSelector, "the selector is correctly set");
+					assert.deepEqual(oChange.getSelector(), mExpectedSelector, "the selector is correctly set");
 					assert.ok(JsControlTreeModifier.getSelector.calledOnce, "then JsControlTreeModifier.getSelector is called to prepare the control selector");
 				});
 		});
@@ -1153,7 +1153,7 @@ sap.ui.define([
 					assert.ok(oChangePromiseSpy.called, "change was in applying state when waitForChangesToBeApplied was called");
 					assert.notOk(oChangePromiseSpy2.called, "change was filtered out");
 					assert.notOk(oChangePromiseSpy3.called, "change was filtered out");
-					delete this.oChange2.getDefinition().dependentSelector;
+					delete this.oChange2._oDefinition.dependentSelector;
 				}.bind(this));
 		});
 

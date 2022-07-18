@@ -135,17 +135,15 @@ sap.ui.define([
 
 		QUnit.test("When calling 'completeChangeContent' with complete information", function(assert) {
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-			var oChangeDefinition = this.oChange.getDefinition();
-			var oSpecificContent = oChangeDefinition.content;
-			assert.deepEqual(oSpecificContent, this.oChangeSpecificContent, "then the change specific content is in the change, but the fragment not");
-			assert.equal(oChangeDefinition.moduleName, "sap/ui/fl/qunit/changeHander/AddXMLAtExtensionPoint/changes/fragments/Fragment", "and the module name is set correct");
+			assert.deepEqual(this.oChange.getContent(), this.oChangeSpecificContent, "then the change specific content is in the change, but the fragment not");
+			assert.equal(this.oChange.getModuleName(), "sap/ui/fl/qunit/changeHander/AddXMLAtExtensionPoint/changes/fragments/Fragment", "and the module name is set correct");
 		});
 
 		QUnit.test("When calling 'completeChangeContent' without fragmentPath", function(assert) {
 			this.oChangeSpecificContent.fragmentPath = null;
 			assert.throws(
 				function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);},
-				Error("Attribute missing from the change specific content'fragmentPath'"),
+				Error("Attribute missing from the change specific content 'fragmentPath'"),
 				"without fragmentPath 'completeChangeContent' throws an error"
 			);
 		});

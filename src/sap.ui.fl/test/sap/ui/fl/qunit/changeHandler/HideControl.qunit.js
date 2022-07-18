@@ -86,9 +86,7 @@ function(
 		QUnit.test('completeChangeContent', function(assert) {
 			var oSpecificChangeInfo = {};
 			this.oChangeHandler.completeChangeContent(this.oChange, oSpecificChangeInfo);
-			var oChangeJson = this.oChange.getDefinition();
-
-			assert.equal(Object.keys(oChangeJson.content).length, 0);
+			assert.equal(Object.keys(this.oChange.getContent()).length, 0);
 		});
 	});
 

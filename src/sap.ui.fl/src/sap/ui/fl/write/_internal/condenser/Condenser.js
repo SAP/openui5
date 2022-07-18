@@ -427,12 +427,12 @@ sap.ui.define([
 			var oUpdateChange = oCondenserInfo.updateChange;
 			if (oUpdateChange && oUpdateChange.getState() !== Change.states.NEW) {
 				var oCondensedChange = oCondenserInfo.change;
-				if (oUpdateChange.getFileName() !== oCondensedChange.getFileName()) {
+				if (oUpdateChange.getId() !== oCondensedChange.getId()) {
 					var oNewContent = oCondensedChange.getContent();
 					oUpdateChange.setContent(oNewContent);
 					oCondensedChange.condenserState = "delete";
 					aReducedChanges = aReducedChanges.map(function(oChange) {
-						if (oChange.getFileName() === oCondensedChange.getFileName()) {
+						if (oChange.getId() === oCondensedChange.getId()) {
 							return oUpdateChange;
 						}
 						return oChange;

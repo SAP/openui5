@@ -113,9 +113,12 @@ sap.ui.define([
 
 	function registerControlsForChanges() {
 		sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
-		sandbox.stub(ChangesWriteAPI, "create").resolves({getDefinition: function() {
-			return {support: {}};
-		}});
+		sandbox.stub(ChangesWriteAPI, "create").resolves({
+			getSupportInformation: function() {
+				return {};
+			},
+			setSupportInformation: function () {}
+		});
 	}
 
 	var ON_SIBLING = "SIBLING";

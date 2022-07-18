@@ -22,7 +22,7 @@ sap.ui.define([
 		values(mVariantsMap).forEach(function(oVariantManagementReference) {
 			oVariantManagementReference.variants.forEach(function(oVariant) {
 				oVariant.controlChanges = oVariant.controlChanges.map(function(oChange) {
-					return oChange.getDefinition();
+					return oChange.convertToFileContent();
 				});
 				delete oVariant.instance;
 			});

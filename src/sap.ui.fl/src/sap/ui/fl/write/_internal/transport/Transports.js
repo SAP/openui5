@@ -140,7 +140,7 @@ sap.ui.define([
 				var oData = {};
 				oData.namespace = oCurrentChange.getNamespace();
 				oData.fileName = oCurrentChange.getId();
-				oData.fileType = oCurrentChange.getDefinition().fileType;
+				oData.fileType = oCurrentChange.getFileType();
 				aTransportData.push(oData);
 			}
 			return aTransportData;

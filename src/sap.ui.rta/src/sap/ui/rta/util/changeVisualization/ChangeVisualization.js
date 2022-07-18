@@ -286,7 +286,7 @@ sap.ui.define([
 	};
 
 	ChangeVisualization.prototype._getCommandForChange = function(oChange) {
-		var sCommand = oChange.getDefinition().support.command;
+		var sCommand = oChange.getSupportInformation().command;
 		if (sCommand) {
 			return sCommand;
 		}

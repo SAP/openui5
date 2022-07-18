@@ -76,7 +76,7 @@ sap.ui.define([
 				return aCustomerChanges.concat(aUserChangesChanges).reverse()
 					.filter(function (oChange) {
 						//skip descriptor changes
-						return !oChange.getDefinition().appDescriptorChange;
+						return !oChange.isAppDescriptorChange();
 					})
 					.reduce(function (oPreviousPromise, oChange) {
 						var oElementToBeReverted = JsControlTreeModifier.bySelector(oChange.getSelector(), oComponent);

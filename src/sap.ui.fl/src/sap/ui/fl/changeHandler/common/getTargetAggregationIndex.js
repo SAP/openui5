@@ -20,9 +20,9 @@ sap.ui.define([
 	 */
 	return function (oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
-		var oChangeDefinition = oChange.getDefinition();
-		var sAggregationName = oChangeDefinition.content.targetAggregation;
-		var iIndex = oChangeDefinition.content.index;
+		var oChangeContent = oChange.getContent();
+		var sAggregationName = oChangeContent.targetAggregation;
+		var iIndex = oChangeContent.index;
 
 		if (iIndex === undefined) {
 			return Promise.resolve()
