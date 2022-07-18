@@ -2722,14 +2722,15 @@ sap.ui.define([
 		});
 	};
 
-	Table.prototype.invalidate = function() {
-		if (this._bInvalidationSuppressedOnFlexChange && this._oTable) {
+	//Due to flexibility handling an additional invalidation on the inner control might be necessary
+	//Note: ManagedObject#invalidate does not provide arguments - sReason will only be provided when called during mdc flex handling
+	Table.prototype.invalidate = function(sReason) {
+		if (sReason === "InvalidationSuppressedByMDCFlex" && this._oTable) {
 			// Invalidation might have been suppressed when applying column changes, for example. See sap.ui.mdc.flexibility.ItemBaseFlex.
 			// The inner table might react to an invalidation, so it needs to be called manually.
-			delete this._bInvalidationSuppressedOnFlexChange;
 			this._oTable.invalidate();
 		}
-		return Control.prototype.invalidate.apply(this, arguments);
+		Control.prototype.invalidate.apply(this, arguments);
 	};
 
 	/**
