@@ -390,7 +390,10 @@
 				</f:content>
 			</f:Card>
 			<!-- Live Editor -->
-			<f:Card class="threeColumnLayoutCard" visible="{=! (${device>/system/phone} || ${device>/browser/msie}) }">
+			<f:Card class="threeColumnLayoutCard"
+				visible="{
+					path: '/liveEditor',
+					formatter: '.formatter.formatToolCardVisibility'}">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
@@ -409,7 +412,10 @@
 				</f:content>
 			</f:Card>
 			<!-- Flexible Programming Model Explorer -->
-			<f:Card class="threeColumnLayoutCard" visible="{=! (${device>/system/phone} || ${device>/browser/msie}) }">
+			<f:Card class="threeColumnLayoutCard"
+				visible="{
+						path: '/flexibleProgrammingModelExplorer',
+						formatter: '.formatter.formatToolCardVisibility'}">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
@@ -428,7 +434,10 @@
 				</f:content>
 			</f:Card>
 			<!-- Accessibility Guide -->
-			<f:Card class="threeColumnLayoutCard" visible="{=! (${device>/system/phone} || ${device>/browser/msie}) }">
+			<f:Card class="threeColumnLayoutCard"
+				visible="{
+							path: '/accessibilityGuide',
+							formatter: '.formatter.formatToolCardVisibility'}">
 				<f:content>
 					<VBox justifyContent="SpaceBetween">
 						<VBox class="sapUiSmallMargin toolspageCardInfo">
