@@ -142,7 +142,6 @@ sap.ui.define([
 		var that = this;
 		var oControl = oEvent.getSource();
 		that._newObjectTemplate._dt._uuid = Utils.generateUuidV4();
-		that._newObjectTemplate._dt._position = that._positionCount;
 		that.openObjectDetailsPopover(that._newObjectTemplate, oControl, "add");
 	};
 
@@ -195,6 +194,7 @@ sap.ui.define([
 		var that = this;
 		var oControl = that.getAggregation("_field");
 		var oNewObject = that._oObjectDetailsPopover.getModel().getProperty("/value");
+		oNewObject._dt._position = that._positionCount;
 		var sPath = oControl.getBinding("rows").getPath();
 		var oModel = oControl.getModel();
 		var oData = oModel.getProperty(sPath);
@@ -317,6 +317,7 @@ sap.ui.define([
 			oModel.setProperty("/_allSelected", false);
 		}
 		oModel.checkUpdate();
+		that.updateTable();
 	};
 
 	ObjectListField.prototype.onChangeOfTextArea = function (oEvent) {
