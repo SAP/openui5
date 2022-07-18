@@ -85,7 +85,7 @@ sap.ui.define([
 	});
 
 	function getEntityType(oChange){
-		return oChange.getDefinition().oDataInformation.entityType;
+		return oChange.getODataInformation().entityType;
 	}
 
 	QUnit.test('applyChange on a xml control tree', function(assert) {

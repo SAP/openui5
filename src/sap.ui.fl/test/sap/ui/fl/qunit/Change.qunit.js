@@ -58,7 +58,7 @@ sap.ui.define([
 					generator: "Dallas beta 1",
 					user: this.sUserId
 				},
-				oDataPropertyInformation: {
+				oDataInformation: {
 					propertyName: "propertyName",
 					entityType: "entityType",
 					oDataServiceUri: "oDataServiceUri"
@@ -276,6 +276,11 @@ sap.ui.define([
 		QUnit.test("Change.getContent", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
 			assert.ok(oInstance.getContent());
+		});
+
+		QUnit.test("Change.getODataInformation", function(assert) {
+			var oInstance = new Change(this.oChangeDef);
+			assert.ok(oInstance.getODataInformation());
 		});
 
 		QUnit.test("Change.setState with an incorrect value", function(assert) {

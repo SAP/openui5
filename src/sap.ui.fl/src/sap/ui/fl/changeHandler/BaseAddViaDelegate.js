@@ -65,21 +65,19 @@ sap.ui.define([
 				return sNewPropertyId + mAddViaDelegateSettings.fieldSuffix;
 			}
 
-			function evaluateSettingsFlag(mChangeDefinition, sSetting) {
+			function evaluateSettingsFlag(oChangeODataInformation, sSetting) {
 				if (isFunction(mAddViaDelegateSettings[sSetting])) {
-					return !!mAddViaDelegateSettings[sSetting]({
-						changeDefinition: mChangeDefinition
-					});
+					return !!mAddViaDelegateSettings[sSetting](oChangeODataInformation);
 				}
 				return !!mAddViaDelegateSettings[sSetting];
 			}
 
-			function skipCreateLabel(mChangeDefinition) {
-				return evaluateSettingsFlag(mChangeDefinition, "skipCreateLabel");
+			function skipCreateLabel(oChangeODataInformation) {
+				return evaluateSettingsFlag(oChangeODataInformation, "skipCreateLabel");
 			}
 
-			function skipCreateLayout(mChangeDefinition) {
-				return evaluateSettingsFlag(mChangeDefinition, "skipCreateLayout");
+			function skipCreateLayout(oChangeODataInformation) {
+				return evaluateSettingsFlag(oChangeODataInformation, "skipCreateLayout");
 			}
 
 			function checkCondensingEnabled(mChange, mPropertyBag) {
@@ -98,16 +96,16 @@ sap.ui.define([
 				})
 					.then(function (oDelegate) {
 						var bCondensingSupported = !isFunction(oDelegate.instance.createLayout);
-						return bCondensingSupported || skipCreateLayout(mChange.getDefinition());
+						return bCondensingSupported || skipCreateLayout(mChange.getODataInformation());
 					});
 			}
 
-			function getDelegateControlForPropertyAndLabel(mChangeDefinition, mDelegatePropertyBag, oDelegate) {
+			function getDelegateControlForPropertyAndLabel(oChangeODataInformation, mDelegatePropertyBag, oDelegate) {
 				var mDelegateSettings = merge({}, mDelegatePropertyBag);
 				mDelegateSettings.fieldSelector.id = getNewFieldId(mDelegateSettings.fieldSelector.id);
 				return oDelegate.createControlForProperty(mDelegateSettings)
 					.then(function(mSpecificControlInfo) {
-						if (skipCreateLabel(mChangeDefinition)) {
+						if (skipCreateLabel(oChangeODataInformation)) {
 							return mSpecificControlInfo;
 						}
 						var sNewFieldId = mDelegatePropertyBag.modifier.getId(mSpecificControlInfo.control);
@@ -122,11 +120,11 @@ sap.ui.define([
 					});
 			}
 
-			function getControlsFromDelegate(mChangeDefinition, mDelegate, mPropertyBag) {
+			function getControlsFromDelegate(oChangeContent, mDelegate, mPropertyBag, oChangeODataInformation) {
 				var mDelegatePropertyBag = merge({
 					aggregationName: mAddViaDelegateSettings.aggregationName,
 					payload: mDelegate.payload || {},
-					parentSelector: mChangeDefinition.content.parentId
+					parentSelector: oChangeContent.parentId
 				}, mPropertyBag);
 				var oDelegate = mDelegate.instance;
 
@@ -134,7 +132,7 @@ sap.ui.define([
 					.then(function() {
 						if (
 							isFunction(oDelegate.createLayout)
-							&& !skipCreateLayout(mChangeDefinition)
+							&& !skipCreateLayout(oChangeODataInformation)
 						) {
 							return oDelegate.createLayout(mDelegatePropertyBag);
 						}
@@ -144,7 +142,7 @@ sap.ui.define([
 							mLayoutControlInfo.layoutControl = true;
 							return mLayoutControlInfo;
 						}
-						return getDelegateControlForPropertyAndLabel(mChangeDefinition, mDelegatePropertyBag, oDelegate);
+						return getDelegateControlForPropertyAndLabel(oChangeODataInformation, mDelegatePropertyBag, oDelegate);
 					});
 			}
 
@@ -162,15 +160,15 @@ sap.ui.define([
 				 * @public
 				 */
 				applyChange: function(oChange, oControl, mPropertyBag) {
-					var mChangeDefinition = oChange.getDefinition();
 					var oAppComponent = mPropertyBag.appComponent;
-					var mChangeContent = mChangeDefinition.content;
-					var mFieldSelector = mChangeContent.newFieldSelector;
+					var oChangeContent = oChange.getContent();
+					var oChangeODataInformation = oChange.getODataInformation();
+					var mFieldSelector = oChangeContent.newFieldSelector;
 					var mCreateProperties = {
 						appComponent: mPropertyBag.appComponent,
 						view: mPropertyBag.view,
 						fieldSelector: mFieldSelector,
-						bindingPath: mChangeContent.bindingPath,
+						bindingPath: oChangeContent.bindingPath,
 						modifier: mPropertyBag.modifier,
 						element: oControl
 					};
@@ -188,7 +186,7 @@ sap.ui.define([
 					oChange.setRevertData(oRevertData);
 
 
-					var sModelType = getModelType(mChangeContent);
+					var sModelType = getModelType(oChangeContent);
 
 					return DelegateMediatorAPI.getDelegateForControl({
 						control: oControl,
@@ -196,7 +194,7 @@ sap.ui.define([
 						modelType: sModelType,
 						supportsDefault: mAddViaDelegateSettings.supportsDefault
 					}).then(function (mDelegate) {
-						return getControlsFromDelegate(mChangeDefinition, mDelegate, mCreateProperties);
+						return getControlsFromDelegate(oChangeContent, mDelegate, mCreateProperties, oChangeODataInformation);
 					}).then(function(mInnerControls) {
 						var mAddPropertySettings = merge({},
 							{
