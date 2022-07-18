@@ -211,7 +211,6 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 	MoveTableColumns.completeChangeContent = function (oChange, mSpecificChangeInfo, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oAppComponent = mPropertyBag.appComponent;
-		var mChangeData = oChange.getDefinition();
 		var oSourceControl = oModifier.bySelector(mSpecificChangeInfo.source.id, oAppComponent);
 		var oTargetControl = oModifier.bySelector(mSpecificChangeInfo.target.id, oAppComponent);
 		var mAdditionalSourceInfo = {
@@ -224,17 +223,18 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 		};
 
 		// We need to add the information about the movedElements together with the source and target index
-		mChangeData.content = {movedElements: []};
+		var oContent = {movedElements: []};
 		mSpecificChangeInfo.movedElements.forEach(function (mElement) {
 			var oElement = mElement.element || oModifier.bySelector(mElement.id, oAppComponent);
 
-			mChangeData.content.movedElements.push({
+			oContent.movedElements.push({
 				selector: oModifier.getSelector(oElement, oAppComponent),
 				sourceIndex: mElement.sourceIndex,
 				targetIndex: mElement.targetIndex
 			});
 		});
 
+		oChange.setContent(oContent);
 		oChange.addDependentControl(mSpecificChangeInfo.source.id, SOURCE_ALIAS, mPropertyBag, mAdditionalSourceInfo);
 		oChange.addDependentControl(mSpecificChangeInfo.target.id, TARGET_ALIAS, mPropertyBag, mAdditionalTargetInfo);
 		oChange.addDependentControl(mSpecificChangeInfo.movedElements.map(function (element) {

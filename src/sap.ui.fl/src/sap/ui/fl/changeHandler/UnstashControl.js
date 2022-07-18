@@ -80,11 +80,9 @@ sap.ui.define([
 	 * @public
 	 */
 	UnstashControl.completeChangeContent = function(oChange, oSpecificChangeInfo) {
-		var oChangeJson = oChange.getDefinition();
-
 		if (oSpecificChangeInfo.content) {
-			//old way including move, new way will have seperate move change
-			oChangeJson.content = oSpecificChangeInfo.content;
+			//old way including move, new way will have separate move change
+			oChange.setContent(oSpecificChangeInfo.content);
 		}
 	};
 

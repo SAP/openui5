@@ -36,9 +36,9 @@ sap.ui.define([
 	 */
 	AddIFrame.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
-		var oChangeDefinition = oChange.getDefinition();
+		var oChangeContent = oChange.getContent();
 		var oView = mPropertyBag.view;
-		var sAggregationName = oChangeDefinition.content.targetAggregation;
+		var sAggregationName = oChangeContent.targetAggregation;
 		var iIndex;
 		var oIFrame;
 		return Promise.resolve()
@@ -51,7 +51,7 @@ sap.ui.define([
 			})
 			.then(function(iRetrievedIndex) {
 				iIndex = iRetrievedIndex;
-				return createIFrame(oChange, mPropertyBag, oChangeDefinition.content.selector);
+				return createIFrame(oChange, mPropertyBag, oChangeContent.selector);
 			})
 			.then(function(oCreatedIFrame) {
 				oIFrame = oCreatedIFrame;
@@ -91,7 +91,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 	AddIFrame.completeChangeContent = function (oChange, oSpecificChangeInfo, mPropertyBag) {
-		var oChangeJson = oChange.getDefinition();
 		var oModifier = mPropertyBag.modifier;
 		var oAppComponent = mPropertyBag.appComponent;
 		// Required settings
@@ -100,8 +99,9 @@ sap.ui.define([
 				throw new Error("Attribute missing from the change specific content '" + sRequiredProperty + "'");
 			}
 		});
-		oChangeJson.content = Object.assign(oChangeJson.content || {}, oSpecificChangeInfo.content);
-		oChangeJson.content.selector = oModifier.getSelector(oChangeJson.content.baseId, oAppComponent);
+		var oContent = Object.assign({}, oSpecificChangeInfo.content);
+		oContent.selector = oModifier.getSelector(oContent.baseId, oAppComponent);
+		oChange.setContent(oContent);
 	};
 
 	AddIFrame.getChangeVisualizationInfo = function(oChange) {

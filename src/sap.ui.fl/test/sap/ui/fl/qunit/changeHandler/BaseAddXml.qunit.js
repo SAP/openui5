@@ -94,7 +94,7 @@ sap.ui.define([
 				fragmentPath: "fragments/Fragment.fragment.xml"
 			};
 
-			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChangeDefinition);
+			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChangeDefinition.content);
 			var oChangeDefinition = this.oChange.getDefinition();
 			var oSpecificContent = oChangeDefinition.content;
 			assert.deepEqual(oSpecificContent, oExpectedChangeContent, "then the change specific content is in the change, but the fragment not");

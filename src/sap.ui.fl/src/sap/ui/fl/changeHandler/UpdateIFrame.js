@@ -76,7 +76,6 @@ sap.ui.define([
 	 */
 	UpdateIFrame.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
-		var oChangeDefinition = oChange.getDefinition();
 
 		return oModifier.getControlMetadata(oControl)
 			.then(function (oControlMetadata) {
@@ -89,7 +88,7 @@ sap.ui.define([
 				oChange.setRevertData({
 					originalSettings: oOriginalSettings
 				});
-				return applySettings(oModifier, oControl, oChangeDefinition.settings);
+				return applySettings(oModifier, oControl, oChange.getContent());
 			});
 	};
 
@@ -134,13 +133,12 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 	UpdateIFrame.completeChangeContent = function (oChange, oSpecificChangeInfo) {
-		var oChangeJson = oChange.getDefinition();
 		if (!oSpecificChangeInfo.content || !Object.keys(oSpecificChangeInfo.content).some(function (sProperty) {
 			return aUpdatableProperties.indexOf(sProperty) !== -1;
 		})) {
 			throw new Error("oSpecificChangeInfo attribute required");
 		}
-		oChangeJson.settings = oSpecificChangeInfo.content;
+		oChange.setContent(oSpecificChangeInfo.content);
 	};
 
 	return UpdateIFrame;

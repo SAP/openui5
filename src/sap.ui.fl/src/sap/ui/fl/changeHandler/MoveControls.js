@@ -348,12 +348,11 @@ function(
 	MoveControls.completeChangeContent = function(oChange, mSpecificChangeInfo, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oAppComponent = mPropertyBag.appComponent;
-		var mChangeData = oChange.getDefinition();
 
 		return fnCheckCompleteChangeContentConditions(mSpecificChangeInfo)
 			.then(fnGetSpecificChangeInfo.bind(this, oModifier, mSpecificChangeInfo, oAppComponent))
 			.then(function(mSpecificChangeInfo) {
-				mChangeData.content = {
+				var oContent = {
 					movedElements: [],
 					source: {
 						selector: mSpecificChangeInfo.source.selector
@@ -370,7 +369,7 @@ function(
 							return mElement.element || oModifier.bySelector(mElement.id, oAppComponent);
 						})
 						.then(function(oElement) {
-							mChangeData.content.movedElements.push({
+							oContent.movedElements.push({
 								selector: oModifier.getSelector(oElement, oAppComponent),
 								sourceIndex: mElement.sourceIndex,
 								targetIndex: mElement.targetIndex
@@ -383,7 +382,9 @@ function(
 						});
 					aPromises.push(oPromise);
 				});
-				return Promise.all(aPromises);
+				return Promise.all(aPromises).then(function() {
+					oChange.setContent(oContent);
+				});
 			});
 	};
 

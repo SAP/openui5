@@ -34,10 +34,10 @@ sap.ui.define([
 	 * @name sap.ui.fl.changeHandler.AddXML#applyChange
 	 */
 	AddXML.applyChange = function(oChange, oControl, mPropertyBag) {
-		var oChangeDefinition = oChange.getDefinition();
+		var oContent = oChange.getContent();
 		var mChangeInfo = {
-			aggregationName: oChangeDefinition.content.targetAggregation,
-			index: oChangeDefinition.content.index
+			aggregationName: oContent.targetAggregation,
+			index: oContent.index
 		};
 
 		return BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mChangeInfo);
@@ -68,25 +68,20 @@ sap.ui.define([
 	 * @name sap.ui.fl.changeHandler.AddXML#completeChangeContent
 	 */
 	AddXML.completeChangeContent = function(oChange, oSpecificChangeInfo) {
-		var oChangeDefinition = oChange.getDefinition();
-
-		if (!oChangeDefinition.content) {
-			oChangeDefinition.content = {};
-		}
-
+		var oContent = {};
 		if (oSpecificChangeInfo.targetAggregation) {
-			oChangeDefinition.content.targetAggregation = oSpecificChangeInfo.targetAggregation;
+			oContent.targetAggregation = oSpecificChangeInfo.targetAggregation;
 		} else {
 			BaseAddXml._throwMissingAttributeError("targetAggregation");
 		}
 
 		if (oSpecificChangeInfo.index !== undefined) {
-			oChangeDefinition.content.index = oSpecificChangeInfo.index;
+			oContent.index = oSpecificChangeInfo.index;
 		} else {
 			BaseAddXml._throwMissingAttributeError("index");
 		}
 
-		BaseAddXml.completeChangeContent(oChange, oSpecificChangeInfo, oChangeDefinition);
+		BaseAddXml.completeChangeContent(oChange, oSpecificChangeInfo, oContent);
 	};
 
 	return AddXML;

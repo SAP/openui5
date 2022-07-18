@@ -44,7 +44,7 @@ sap.ui.define([
 	AddXMLAtExtensionPoint.applyChange = function (oChange, oControl, mPropertyBag) {
 		var oView = mPropertyBag.view;
 		var oModifier = mPropertyBag.modifier;
-		var oSelector = oChange.getDefinition().selector;
+		var oSelector = oChange.getSelector();
 		var mExtensionPointInfo;
 
 		return Promise.resolve()
@@ -114,7 +114,7 @@ sap.ui.define([
 	AddXMLAtExtensionPoint.completeChangeContent = function(oChange, oSpecificChangeInfo) {
 		// Complete change content could be called with a third parameter. That would override the
 		// optional changeDefinition parameter of the BaseAddXml used in e.g. addxml usecase
-		BaseAddXml.completeChangeContent(oChange, oSpecificChangeInfo/*, oChangeDefinition*/);
+		BaseAddXml.completeChangeContent(oChange, oSpecificChangeInfo/*, oContent*/);
 	};
 
 	return AddXMLAtExtensionPoint;

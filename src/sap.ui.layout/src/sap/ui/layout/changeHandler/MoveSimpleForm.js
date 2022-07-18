@@ -408,11 +408,13 @@ sap.ui.define([
 			Log.error("Element not found. This may be caused by an unstable id!");
 		}
 
-		var mChangeData = oChange.getDefinition();
-		mChangeData.content.targetSelector = mStableChangeInfo.targetSelector;
-		mChangeData.content.movedElements = mStableChangeInfo.movedElements;
-		// legacy changes had only a string with <appComponentId>---<uid>
-		mChangeData.content.newControlId = oModifier.getSelector(oView.createId(uid()), oAppComponent);
+		var oContent = {
+			targetSelector: mStableChangeInfo.targetSelector,
+			movedElements: mStableChangeInfo.movedElements,
+			// legacy changes had only a string with <appComponentId>---<uid>
+			newControlId: oModifier.getSelector(oView.createId(uid()), oAppComponent)
+		};
+		oChange.setContent(oContent);
 
 		if (mStableChangeInfo.source && mStableChangeInfo.target){
 			oChange.addDependentControl(mStableChangeInfo.source, "sourceParent", mPropertyBag);

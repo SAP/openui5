@@ -331,14 +331,19 @@ sap.ui.define([
 	 * Sets the new text for the given text ID or creates new text with the given ID.
 	 * @param {string} sTextId - Text ID which was used as part of the <code>texts</code> property
 	 * @param {string} sNewText - New text for the given text ID
+	 * @param {string} [sType] - Translation text type, e.g. XBUT, XTIT, XTOL, XFLD
 	 * @param {boolean} [bSkipStateChange] - If set to <code>true</code>, doesn't set the state to dirty
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} <code>this</code> context for chaining
 	 */
-	FlexObject.prototype.setText = function (sTextId, sNewText, bSkipStateChange) {
+	FlexObject.prototype.setText = function (sTextId, sNewText, sType, bSkipStateChange) {
 		var oTexts = Object.assign({}, this.getTexts());
-		oTexts[sTextId] = Object.assign({}, oTexts[sTextId], {
+		var oNewText = {
 			value: sNewText
-		});
+		};
+		if (sType) {
+			oNewText.type = sType;
+		}
+		oTexts[sTextId] = Object.assign({}, oTexts[sTextId], oNewText);
 		this.setTexts(oTexts);
 		if (!bSkipStateChange) {
 			this.setState(States.DIRTY);
@@ -351,7 +356,7 @@ sap.ui.define([
 	/**
 	 * Sets the transport request.
 	 * Also used by the SmartVariantManagement control.
-	 * @param {string} sRequest Transport request
+	 * @param {string} sRequest - Transport request
 	 */
 	FlexObject.prototype.setRequest = function (sRequest) {
 		this._sRequest = sRequest;

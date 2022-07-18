@@ -63,19 +63,19 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test('When providing change data via specific change info, Then', function(assert) {
-			return this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData)
-				.then(function() {
-					assert.deepEqual(this.oChange.getSelector(), this.mExpectedSelector, "the change SELECTOR is filled correctly");
-					assert.deepEqual(this.oChange.getContent(), this.mExpectedChangeContent, "the change CONTENT is filled correctly");
-					assert.equal(this.oChange.getChangeType(), "propertyChange", "the change TYPE is filled correctly");
-				 }.bind(this));
+			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData);
+
+			assert.deepEqual(this.oChange.getSelector(), this.mExpectedSelector, "the change SELECTOR is filled correctly");
+			assert.deepEqual(this.oChange.getContent(), this.mExpectedChangeContent, "the change CONTENT is filled correctly");
+			assert.equal(this.oChange.getChangeType(), "propertyChange", "the change TYPE is filled correctly");
 		});
 
 		QUnit.test("When calling completeChangeContent without content", function(assert) {
-			return this.oChangeHandler.completeChangeContent(this.oChange, {})
-				.catch(function(oError) {
-					assert.equal(oError.message, "oSpecificChangeInfo attribute required", "the correct error is thrown");
-				});
+			assert.throws(
+				function() {this.oChangeHandler.completeChangeContent(this.oChange, {});},
+				/oSpecificChangeInfo attribute required/,
+				"the correct error is thrown"
+			);
 		});
 
 		// TODO: enable again when apps have adapted

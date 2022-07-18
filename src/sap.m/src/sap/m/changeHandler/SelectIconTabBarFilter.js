@@ -29,16 +29,16 @@ sap.ui.define([
 	 */
 	SelectIconTabBarFilter.applyChange = function (oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
-		var oChangeDefinition = oChange.getDefinition();
+		var oChangeContent = oChange.getContent();
 
 		// Make sure the "select" event of the control is fired.
 		// By default it is not fired when the "selectedKey" property is changed,
 		// but only via user interaction
-		oControl._bFireSelectEvent = oChangeDefinition.content.fireEvent;
-		oModifier.setProperty(oControl, "selectedKey", oChangeDefinition.content.selectedKey);
+		oControl._bFireSelectEvent = oChangeContent.fireEvent;
+		oModifier.setProperty(oControl, "selectedKey", oChangeContent.selectedKey);
 		oControl._bFireSelectEvent = false;
 
-		oChange.setRevertData({key:oChangeDefinition.content.previousSelectedKey, fireEvent: oChangeDefinition.content.fireEvent});
+		oChange.setRevertData({key:oChangeContent.previousSelectedKey, fireEvent: oChangeContent.fireEvent});
 	};
 
 	/**

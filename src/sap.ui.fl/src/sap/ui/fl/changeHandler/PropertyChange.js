@@ -57,9 +57,9 @@ sap.ui.define([
 	 * @name sap.ui.fl.changeHandler.PropertyChange#applyChange
 	 */
 	PropertyChange.applyChange = function(oChange, oControl, mPropertyBag) {
-		var oDef = oChange.getDefinition();
-		var sPropertyName = oDef.content.property;
-		var vPropertyValue = oDef.content.newValue;
+		var oContent = oChange.getContent();
+		var sPropertyName = oContent.property;
+		var vPropertyValue = oContent.newValue;
 		var oModifier = mPropertyBag.modifier;
 
 		// TODO: enable again when apps have adapted
@@ -90,8 +90,8 @@ sap.ui.define([
 		var mRevertData = oChange.getRevertData();
 
 		if (mRevertData) {
-			var oDef = oChange.getDefinition();
-			var sPropertyName = oDef.content.property;
+			var oContent = oChange.getContent();
+			var sPropertyName = oContent.property;
 			var vPropertyValue = mRevertData.originalValue;
 			var oModifier = mPropertyBag.modifier;
 
@@ -113,20 +113,15 @@ sap.ui.define([
 	 * @name sap.ui.fl.changeHandler.PropertyChange#completeChangeContent
 	 */
 	PropertyChange.completeChangeContent = function(oChange, oSpecificChangeInfo) {
-		return Promise.resolve()
-			.then(function() {
-				var oChangeJson = oChange.getDefinition();
+		if (!oSpecificChangeInfo.content) {
+			throw new Error("oSpecificChangeInfo attribute required");
+		}
+		// TODO: enable again when apps have adapted
+		// if (isBinding(oSpecificChangeInfo.content.newValue)) {
+		// 	throw new Error(sBindingError);
+		// }
 
-				if (!oSpecificChangeInfo.content) {
-					throw new Error("oSpecificChangeInfo attribute required");
-				}
-				// TODO: enable again when apps have adapted
-				// if (isBinding(oSpecificChangeInfo.content.newValue)) {
-				// 	throw new Error(sBindingError);
-				// }
-
-				oChangeJson.content = oSpecificChangeInfo.content;
-			});
+		oChange.setContent(oSpecificChangeInfo.content);
 	};
 
 	/**

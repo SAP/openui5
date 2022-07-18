@@ -88,7 +88,7 @@ sap.ui.define([
 				// or the handler opts out
 
 				var oControl = mPropertyBag.modifier.bySelector(mChange.getSelector(), mPropertyBag.appComponent);
-				var sModelType = getModelType(mChange.getDefinition().content);
+				var sModelType = getModelType(mChange.getContent());
 
 				return DelegateMediatorAPI.getDelegateForControl({
 					control: oControl,
@@ -298,10 +298,7 @@ sap.ui.define([
 				 */
 				completeChangeContent: function(oChange, mSpecificChangeInfo, mPropertyBag) {
 					var oAppComponent = mPropertyBag.appComponent;
-					var mChangeDefinition = oChange.getDefinition();
-					if (!mChangeDefinition.content) {
-						mChangeDefinition.content = {};
-					}
+					var oContent = {};
 					if (mSpecificChangeInfo.parentId) {
 						if (isFunction(mAddViaDelegateSettings.mapParentIdIntoChange)) {
 							mAddViaDelegateSettings.mapParentIdIntoChange(oChange, mSpecificChangeInfo, mPropertyBag);
@@ -309,7 +306,7 @@ sap.ui.define([
 							oChange.addDependentControl(mSpecificChangeInfo.parentId, mAddViaDelegateSettings.parentAlias, mPropertyBag);
 						}
 						try {
-							mChangeDefinition.content.parentId = mPropertyBag.modifier.getSelector(mSpecificChangeInfo.parentId, oAppComponent);
+							oContent.parentId = mPropertyBag.modifier.getSelector(mSpecificChangeInfo.parentId, oAppComponent);
 						} catch (e) {
 							// If the parentId is not stable, e.g. in the case of SimpleForm groups
 							// don't set the parentId. This error is safe to ignore as a missing parentId
@@ -319,28 +316,29 @@ sap.ui.define([
 						throw new Error("mSpecificChangeInfo.parentId attribute required");
 					}
 					if (mSpecificChangeInfo.bindingPath) {
-						mChangeDefinition.content.bindingPath = mSpecificChangeInfo.bindingPath;
+						oContent.bindingPath = mSpecificChangeInfo.bindingPath;
 					} else {
 						throw new Error("mSpecificChangeInfo.bindingPath attribute required");
 					}
 					if (mSpecificChangeInfo.newControlId) {
-						mChangeDefinition.content.newFieldSelector = mPropertyBag.modifier.getSelector(mSpecificChangeInfo.newControlId, oAppComponent);
+						oContent.newFieldSelector = mPropertyBag.modifier.getSelector(mSpecificChangeInfo.newControlId, oAppComponent);
 					} else {
 						throw new Error("mSpecificChangeInfo.newControlId attribute required");
 					}
 					if (mSpecificChangeInfo.index === undefined) {
 						throw new Error("mSpecificChangeInfo.targetIndex attribute required");
 					} else {
-						mChangeDefinition.content.newFieldIndex = mSpecificChangeInfo.index;
+						oContent.newFieldIndex = mSpecificChangeInfo.index;
 					}
 					if (mSpecificChangeInfo.oDataServiceVersion) {
 						//used to connect to change handler mediator
-						mChangeDefinition.content.oDataServiceVersion = mSpecificChangeInfo.oDataServiceVersion;
+						oContent.oDataServiceVersion = mSpecificChangeInfo.oDataServiceVersion;
 					}
 					if (mSpecificChangeInfo.modelType && mAddViaDelegateSettings.supportsDefault) {
 						//used to connect to default delegate
-						mChangeDefinition.content.modelType = mSpecificChangeInfo.modelType;
+						oContent.modelType = mSpecificChangeInfo.modelType;
 					}
+					oChange.setContent(oContent);
 				},
 
 				getChangeVisualizationInfo: function(oChange) {
