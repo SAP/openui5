@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Control",
-	"sap/m/Text",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/rta/util/changeVisualization/categories/getVisualizationCategory",
@@ -18,7 +17,6 @@ sap.ui.define([
 	Fragment,
 	JSONModel,
 	Control,
-	Text,
 	DateFormat,
 	KeyCodes,
 	getVisualizationCategory,
@@ -166,6 +164,84 @@ sap.ui.define([
 		}
 	}
 
+	function getTexts(mChangeInformation, oRtaResourceBundle, sOverlayId) {
+		var oAffectedElement = Core.byId(mChangeInformation.affectedElementId);
+		var mPayload = Object.keys(mChangeInformation.payload || {}).reduce(function(mPayload, sKey) {
+			var vOriginalValue = mChangeInformation.payload[sKey];
+			var bIsBinding = FlUtils.isBinding(vOriginalValue);
+			var vValue = bIsBinding
+				? resolveBinding(vOriginalValue, oAffectedElement)
+				: vOriginalValue;
+			mPayload[sKey] = vValue;
+			return mPayload;
+		}, {});
+
+		var mPropertyBag = { appComponent: FlUtils.getAppComponentForControl(oAffectedElement) };
+		var oOverlay = Core.byId(sOverlayId);
+		var oVisualizationUtil = getVisualizationCategory(mChangeInformation);
+		var sElementLabel = oOverlay.getDesignTimeMetadata().getLabel(oAffectedElement);
+		var oDescription = oVisualizationUtil && oVisualizationUtil.getDescription(mPayload, sElementLabel, mPropertyBag);
+		sElementLabel = sElementLabel && "'" + sElementLabel + "'";
+		var sShortenedElementLabel = ChangeVisualizationUtils.shortenString(sElementLabel);
+		var sChangeTextKey = (
+			"TXT_CHANGEVISUALIZATION_CHANGE_"
+			+ mChangeInformation.commandName.toUpperCase()
+		);
+
+		var sDescriptionText;
+		var sDescriptionTooltip;
+		// for settings commands if available description and tooltip should be taken as is from the change handler
+		if (mPayload.description && mChangeInformation.commandName === "settings") {
+			sDescriptionText = mPayload.description;
+			sDescriptionTooltip = mPayload.descriptionTooltip || "";
+		} else {
+			if (oDescription) {
+				sDescriptionText = oDescription.descriptionText;
+				sDescriptionTooltip = oDescription.descriptionTooltip;
+			} else {
+				sDescriptionText = oRtaResourceBundle.getText(sChangeTextKey, sShortenedElementLabel);
+				sDescriptionTooltip = oRtaResourceBundle.getText(sChangeTextKey, sElementLabel);
+			}
+			sDescriptionTooltip = sDescriptionText.length < sDescriptionTooltip.length ? sDescriptionTooltip : null;
+		}
+		var sDetailButtonText = oDescription && oDescription.buttonText;
+
+		return {
+			description: sDescriptionText,
+			tooltip: sDescriptionTooltip,
+			buttonText: sDetailButtonText
+		};
+	}
+
+	function getDates(mChangeInformation, oRtaResourceBundle) {
+		var sCreationDate = mChangeInformation.change.getCreation();
+		var oDate = new Date(sCreationDate);
+		var sFallbackDate = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CREATED_IN_SESSION_DATE");
+
+		return {
+			fullDate: sCreationDate ? DateFormat.getDateTimeInstance().format(oDate) : sFallbackDate,
+			relativeDate: sCreationDate ? DateFormat.getDateTimeInstance({ relative: "true" }).format(oDate) : sFallbackDate
+		};
+	}
+
+	function formatChangesModelItem(sOverlayId, mChangeInformation) {
+		var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+		var oTexts = getTexts(mChangeInformation, oRtaResourceBundle, sOverlayId);
+		var oDates = getDates(mChangeInformation, oRtaResourceBundle);
+
+
+		return {
+			id: mChangeInformation.id,
+			change: mChangeInformation,
+			description: oTexts.description,
+			descriptionTooltip: oTexts.tooltip,
+			fullDate: oDates.fullDate,
+			relativeDate: oDates.relativeDate,
+			detailButtonText: oTexts.buttonText,
+			icon: CATEGORY_ICONS[mChangeInformation.commandCategory]
+		};
+	}
+
 	ChangeIndicator.prototype.init = function() {
 		this._iOldTabIndex = 0;
 		handleBrowserEventsOnElement.call(this, this, "attachBrowserEvent");
@@ -252,7 +328,7 @@ sap.ui.define([
 
 	ChangeIndicator.prototype.setChanges = function(aChanges) {
 		this.setProperty("changes", aChanges);
-		this._oDetailModel.setData((aChanges || []).reverse().map(this._formatChangesModelItem.bind(this)));
+		this._oDetailModel.setData((aChanges || []).reverse().map(formatChangesModelItem.bind(this, this.getOverlayId())));
 	};
 
 	ChangeIndicator.prototype._onSelect = function(oEvent) {
@@ -283,50 +359,6 @@ sap.ui.define([
 		var sFunctionName = bAdd ? "addStyleClass" : "removeStyleClass";
 		oOverlay[sFunctionName]("sapUiRtaChangeIndicatorHovered");
 		this[sFunctionName]("sapUiRtaHover");
-	};
-
-	ChangeIndicator.prototype._formatChangesModelItem = function(mChangeInformation) {
-		var oAffectedElement = Core.byId(mChangeInformation.affectedElementId);
-		var mPayload = Object.keys(mChangeInformation.payload || {}).reduce(function(mPayload, sKey) {
-			var vOriginalValue = mChangeInformation.payload[sKey];
-			var bIsBinding = FlUtils.isBinding(vOriginalValue);
-			var vValue = bIsBinding
-				? resolveBinding(vOriginalValue, oAffectedElement)
-				: vOriginalValue;
-			mPayload[sKey] = vValue;
-			return mPayload;
-		}, {});
-
-		var mPropertyBag = { appComponent: FlUtils.getAppComponentForControl(oAffectedElement) };
-		var oOverlay = Core.byId(this.getOverlayId());
-		var sElementLabel = oOverlay.getDesignTimeMetadata().getLabel(oAffectedElement);
-		var oVisualizationUtil = getVisualizationCategory(mChangeInformation.commandName);
-		var oDescription = oVisualizationUtil && oVisualizationUtil.getDescription(mPayload, sElementLabel, mPropertyBag);
-		var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
-		sElementLabel = sElementLabel && "'" + sElementLabel + "'";
-		var sShortenedElementLabel = ChangeVisualizationUtils.shortenString(sElementLabel);
-		var sChangeTextKey = (
-			"TXT_CHANGEVISUALIZATION_CHANGE_"
-			+ mChangeInformation.commandName.toUpperCase()
-		);
-		var sDescriptionText = oDescription ? oDescription.descriptionText : oRtaResourceBundle.getText(sChangeTextKey, sShortenedElementLabel);
-		var sDescriptionTooltip = oDescription ? oDescription.descriptionTooltip : oRtaResourceBundle.getText(sChangeTextKey, sElementLabel);
-		var sCreationDate = mChangeInformation.change.getCreation();
-		var oDate = new Date(sCreationDate);
-		var sFallbackDate = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CREATED_IN_SESSION_DATE");
-		var sFullDate = sCreationDate ? DateFormat.getDateTimeInstance().format(oDate) : sFallbackDate;
-		var sRelativeDate = sCreationDate ? DateFormat.getDateTimeInstance({ relative: "true" }).format(oDate) : sFallbackDate;
-		var sDetailButtonText = oDescription && oDescription.buttonText;
-		return {
-			id: mChangeInformation.id,
-			change: mChangeInformation,
-			description: sDescriptionText,
-			descriptionTooltip: sDescriptionTooltip && sDescriptionText.length < sDescriptionTooltip.length ? sDescriptionTooltip : null,
-			fullDate: sFullDate,
-			relativeDate: sRelativeDate,
-			detailButtonText: sDetailButtonText,
-			icon: CATEGORY_ICONS[mChangeInformation.commandCategory]
-		};
 	};
 
 	ChangeIndicator.prototype._openDetailPopover = function() {

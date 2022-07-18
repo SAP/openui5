@@ -141,7 +141,6 @@ sap.ui.define([
 					control: oControl
 				};
 			});
-		sandbox.stub(FlUtils, "getViewForControl").returns();
 		var oMergedChangeHandler = Object.assign(
 			{
 				getChangeVisualizationInfo: function() { }
@@ -262,6 +261,7 @@ sap.ui.define([
 					checkBinding(assert, aVizModel[2], aMenuItems[2]);
 				}.bind(this));
 		});
+
 		QUnit.test("With changes - Check if Menu is bound correctly to the model", function(assert) {
 			prepareChanges(this.aMockChanges);
 			this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [3]);
@@ -283,6 +283,7 @@ sap.ui.define([
 					checkBinding(assert, aVizModel[2], aMenuItems[2]);
 				}.bind(this));
 		});
+
 		QUnit.test("With changes (Not all visible) - Check if Menu is bound correctly to the model", function(assert) {
 			this.aMockChanges.push(createMockChange("testRename2", "rename", "Comp1---idMain1--test"));
 			prepareChanges(this.aMockChanges);
@@ -306,6 +307,7 @@ sap.ui.define([
 					checkBinding(assert, aVizModel[2], aMenuItems[2]);
 				}.bind(this));
 		});
+
 		QUnit.test("With changes (Not all supported) - Check if Menu is bound correctly to the model", function(assert) {
 			this.aMockChanges.push(createMockChange("testAddColumn", "addColumn", "Comp1---idMain1--lb1"));
 			prepareChanges(this.aMockChanges);
@@ -329,6 +331,7 @@ sap.ui.define([
 					checkBinding(assert, aVizModel[2], aMenuItems[2]);
 				}.bind(this));
 		});
+
 		QUnit.test("With changes (Change gets invisible) - Check if Menu is bound correctly to the model", function(assert) {
 			prepareChanges(this.aMockChanges);
 			this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [3]);
@@ -369,6 +372,7 @@ sap.ui.define([
 					checkBinding(assert, aVizModel[2], aMenuItems[2]);
 				}.bind(this));
 		});
+
 		QUnit.test("Menu & Model are in correct order", function(assert) {
 			var fnDone = assert.async();
 			waitForMethodCall(this.oRta.getToolbar(), "setModel")
@@ -390,6 +394,7 @@ sap.ui.define([
 				}.bind(this));
 			this.oRta.setMode("visualization");
 		});
+
 		QUnit.test("Menu Button Text will change on category selection", function(assert) {
 			var fnDone = assert.async();
 			var sMenuButtonText;
@@ -599,18 +604,16 @@ sap.ui.define([
 					);
 
 					// Activate again and select a different category
-					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("add"))
-						.then(function() {
-							this.oChangeVisualization.setIsActive(true);
-							oCore.applyChanges();
-							assert.strictEqual(
-								collectIndicatorReferences().filter(function(oIndicator) {
-									return oIndicator.getVisible();
-								}).length,
-								2,
-								"then all indicators are visible again after reactivation"
-							);
-						}.bind(this));
+					this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("add"));
+					this.oChangeVisualization.setIsActive(true);
+					oCore.applyChanges();
+					assert.strictEqual(
+						collectIndicatorReferences().filter(function(oIndicator) {
+							return oIndicator.getVisible();
+						}).length,
+						2,
+						"then all indicators are visible again after reactivation"
+					);
 				}.bind(this));
 		});
 
@@ -851,11 +854,9 @@ sap.ui.define([
 					}
 				}
 			);
-			return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("all"))
-				.then(function() {
-					this.oRta.setMode("visualization");
-					return waitForMethodCall(this.oToolbar, "setModel");
-				}.bind(this))
+			this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("all"));
+			this.oRta.setMode("visualization");
+			return waitForMethodCall(this.oToolbar, "setModel")
 				.then(function() {
 					oCore.applyChanges();
 					var oSelectChangePromise = waitForMethodCall(this.oChangeVisualization, "_selectChange");

@@ -39,8 +39,8 @@ sap.ui.define([
 
 		if (sSourceParentId !== sTargetParentId) {
 			sDescriptionText = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE", ChangeVisualizationUtils.shortenString(sLabel));
+			sDescriptionTooltip = (sSourceParentId && oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE", sLabel)) || "";
 			sButtonText = sSourceParentId && oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_SHOW_DEPENDENT_CONTAINER_MOVE");
-			sDescriptionTooltip = sSourceParentId && oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE", sLabel);
 		}
 		return { descriptionText: sDescriptionText, descriptionTooltip: sDescriptionTooltip, buttonText: sButtonText };
 	};

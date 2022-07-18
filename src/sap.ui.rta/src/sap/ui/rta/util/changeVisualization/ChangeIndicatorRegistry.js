@@ -3,15 +3,25 @@
  */
 
 sap.ui.define([
-	"sap/ui/base/ManagedObject",
 	"sap/base/util/includes",
 	"sap/base/util/values",
-	"sap/base/util/restricted/_omit"
+	"sap/base/util/restricted/_omit",
+	"sap/base/Log",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/Utils"
 ], function(
-	ManagedObject,
 	includes,
 	values,
-	_omit
+	_omit,
+	Log,
+	ManagedObject,
+	JsControlTreeModifier,
+	ElementUtil,
+	ChangesWriteAPI,
+	FlUtils
 ) {
 	"use strict";
 
@@ -35,12 +45,18 @@ sap.ui.define([
 				commandCategories: {
 					type: "object",
 					defaultValue: []
+				},
+				/**
+				 * Id of the component or control to visualize the changes for
+				 */
+				 rootControlId: {
+					type: "string"
 				}
 			}
 		},
 		constructor: function () {
 			ManagedObject.prototype.constructor.apply(this, arguments);
-			this._oChanges = {};
+			this._oChangeIndicatorData = {};
 			this._oChangeIndicators = {};
 		}
 	});
@@ -55,7 +71,7 @@ sap.ui.define([
 	 * @returns {object[]} Registered changes
 	 */
 	ChangeIndicatorRegistry.prototype.getChanges = function () {
-		return values(this._oChanges || {}).map(function (oChange) {
+		return values(this._oChangeIndicatorData || {}).map(function (oChange) {
 			return Object.assign({}, oChange);
 		});
 	};
@@ -66,7 +82,7 @@ sap.ui.define([
 	 * @returns {string[]} Promise with both design time and runtime change
 	 */
 	ChangeIndicatorRegistry.prototype.getChangeIds = function () {
-		return Object.keys(this._oChanges || {});
+		return Object.keys(this._oChangeIndicatorData || {});
 	};
 
 	/**
@@ -76,7 +92,7 @@ sap.ui.define([
 	 * @returns {object} Registered change
 	 */
 	ChangeIndicatorRegistry.prototype.getChange = function (sChangeId) {
-		return this._oChanges[sChangeId] && Object.assign({}, this._oChanges[sChangeId]);
+		return this._oChangeIndicatorData[sChangeId] && Object.assign({}, this._oChangeIndicatorData[sChangeId]);
 	};
 
 	/**
@@ -103,7 +119,7 @@ sap.ui.define([
 			));
 		}
 
-		values(this._oChanges).forEach(function (oChange) {
+		values(this._oChangeIndicatorData).forEach(function (oChange) {
 			oChange.visualizationInfo.displayElementIds.forEach(function (sSelectorId, iIndex) {
 				addSelector(sSelectorId, oChange.visualizationInfo.affectedElementIds[iIndex], oChange, false);
 			});
@@ -114,16 +130,6 @@ sap.ui.define([
 		});
 
 		return oChangeIndicators;
-	};
-
-	/**
-	 * Checks if the given element ID was registered as a change indicator.
-	 *
-	 * @param {string} sSelectorId - ID of the element to check
-	 * @returns {boolean} Whether the element was registered as an indicator
-	 */
-	ChangeIndicatorRegistry.prototype.hasChangeIndicator = function (sSelectorId) {
-		return !!this._oChangeIndicators[sSelectorId];
 	};
 
 	/**
@@ -150,24 +156,82 @@ sap.ui.define([
 	 *
 	 * @param {object} oChange - The change to register
 	 * @param {string} sCommandName - Command name of the change
+	 * @returns {Promise<undefined>} Resolves as soon as the change is registered
 	 */
-	ChangeIndicatorRegistry.prototype.registerChange = function (oChange, sCommandName) {
-		var aCategories = this.getCommandCategories();
-		var oNewChangeInformation = {
-			change: oChange,
-			commandName: sCommandName,
-			commandCategory: Object.keys(aCategories).find(function (sCommandCategoryName) {
-				return includes(aCategories[sCommandCategoryName], sCommandName);
-			}),
-			visualizationInfo: {
-				affectedElementIds: [],
-				displayElementIds: [],
-				dependentElementIds: []
+	ChangeIndicatorRegistry.prototype.registerChange = function(oChange, sCommandName) {
+		var oAppComponent = FlUtils.getAppComponentForControl(ElementUtil.getElementInstance(this.getRootControlId()));
+		return getVisualizationInfo(oChange, oAppComponent).then(function(mChangeVisualizationInfo) {
+			var aCategories = this.getCommandCategories();
+			var sCommandCategory;
+			if (sCommandName === "settings" && includes(Object.keys(aCategories), mChangeVisualizationInfo.payload.category)) {
+				sCommandCategory = mChangeVisualizationInfo.payload.category;
+			} else {
+				sCommandCategory = Object.keys(aCategories).find(function (sCommandCategoryName) {
+					return includes(aCategories[sCommandCategoryName], sCommandName);
+				});
 			}
-		};
 
-		this._oChanges[oChange.getId()] = oNewChangeInformation;
+			this._oChangeIndicatorData[oChange.getId()] = {
+				change: oChange,
+				commandName: sCommandName,
+				commandCategory: sCommandCategory,
+				visualizationInfo: mChangeVisualizationInfo
+			};
+		}.bind(this));
 	};
+
+	function getVisualizationInfo(oChange, oAppComponent) {
+		function getSelectorIds(aSelectorList) {
+			if (!aSelectorList) {
+				return undefined;
+			}
+			return aSelectorList
+				.map(function(vSelector) {
+					var oElement = typeof vSelector.getId === "function"
+						? vSelector
+						: JsControlTreeModifier.bySelector(vSelector, oAppComponent);
+					return oElement && oElement.getId();
+				})
+				.filter(Boolean);
+		}
+
+		return getInfoFromChangeHandler(oAppComponent, oChange)
+			.then(function(oInfoFromChangeHandler) {
+				var mVisualizationInfo = oInfoFromChangeHandler || {};
+				var aAffectedElementIds = getSelectorIds(mVisualizationInfo.affectedControls || [oChange.getSelector()]);
+
+				return {
+					affectedElementIds: aAffectedElementIds,
+					dependentElementIds: getSelectorIds(mVisualizationInfo.dependentControls) || [],
+					displayElementIds: getSelectorIds(mVisualizationInfo.displayControls) || aAffectedElementIds,
+					payload: mVisualizationInfo.payload || {}
+				};
+			});
+	}
+
+	function getInfoFromChangeHandler(oAppComponent, oChange) {
+		var oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+		if (oControl) {
+			return ChangesWriteAPI.getChangeHandler({
+				changeType: oChange.getChangeType(),
+				element: oControl,
+				modifier: JsControlTreeModifier,
+				layer: oChange.getLayer()
+			})
+				.then(function(oChangeHandler) {
+					if (oChangeHandler && typeof oChangeHandler.getChangeVisualizationInfo === "function") {
+						return oChangeHandler.getChangeVisualizationInfo(oChange, oAppComponent);
+					}
+					return undefined;
+				})
+				.catch(function(vErr) {
+					Log.error(vErr);
+					return undefined;
+				});
+		}
+
+		return Promise.resolve();
+	}
 
 	/**
 	 * Adds a change indicator to the registry.
@@ -180,29 +244,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds selectors for a registered change.
-	 *
-	 * @param {string} sChangeId - ID of the registered change
-	 * @param {object} mVisualizationInfo - Map of selector IDs to register
-	 * @param {string[]} [mVisualizationInfo.affectedElementIds] - Array of affected element IDs
-	 * @param {string[]} [mVisualizationInfo.displayElementIds] - Array of element IDs that the indicators are attached to
-	 * @param {string[]} [mVisualizationInfo.dependentElementIds] - Array of element IDs that the dependent indicators are attached to
-	 * @param {object} [mVisualizationInfo.payload] - Command category specific visualization information
-	 */
-	ChangeIndicatorRegistry.prototype.addVisualizationInfo = function (sChangeId, mVisualizationInfo) {
-		var oChange = this._oChanges[sChangeId];
-		if (oChange === undefined) {
-			throw new Error("Change id is not registered");
-		}
-
-		oChange.visualizationInfo = Object.assign({}, oChange.visualizationInfo, mVisualizationInfo);
-	};
-
-	/**
 	 * Resets the change and change indicator registries.
 	 */
 	ChangeIndicatorRegistry.prototype.reset = function () {
-		Object.keys(this._oChanges).forEach(function (sKeyToRemove) {
+		Object.keys(this._oChangeIndicatorData).forEach(function (sKeyToRemove) {
 			this.removeChange(sKeyToRemove);
 		}.bind(this));
 
@@ -218,7 +263,7 @@ sap.ui.define([
 	 * @param {string} sChangeId - ID of the registered change
 	 */
 	ChangeIndicatorRegistry.prototype.removeChange = function (sChangeId) {
-		delete this._oChanges[sChangeId];
+		delete this._oChangeIndicatorData[sChangeId];
 	};
 
 	return ChangeIndicatorRegistry;

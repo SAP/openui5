@@ -6,14 +6,10 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/base/util/restricted/_difference",
 	"sap/base/util/deepEqual",
-	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/ElementUtil",
-	"sap/ui/fl/apply/_internal/changes/Utils",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -25,14 +21,10 @@ sap.ui.define([
 	Fragment,
 	difference,
 	deepEqual,
-	Log,
 	JsControlTreeModifier,
 	Control,
 	OverlayRegistry,
-	OverlayUtil,
 	ElementUtil,
-	ChangesUtils,
-	ChangesWriteAPI,
 	PersistenceWriteAPI,
 	Layer,
 	FlUtils,
@@ -122,11 +114,12 @@ sap.ui.define([
 			}
 		},
 		constructor: function() {
-			Control.prototype.constructor.apply(this, arguments);
-
 			this._oChangeIndicatorRegistry = new ChangeIndicatorRegistry({
 				commandCategories: VALID_COMMANDS
 			});
+
+			Control.prototype.constructor.apply(this, arguments);
+
 			this._oTextBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			this.setModel(new ResourceModel({
 				bundle: this._oTextBundle
@@ -149,6 +142,7 @@ sap.ui.define([
 			this._reset();
 		}
 		this.setProperty("rootControlId", sRootControlId);
+		this._oChangeIndicatorRegistry.setRootControlId(sRootControlId);
 	};
 
 	ChangeVisualization.prototype._getComponent = function() {
@@ -274,14 +268,11 @@ sap.ui.define([
 	 */
 	ChangeVisualization.prototype.onCommandCategorySelection = function(oEvent) {
 		var sSelectedCommandCategory = oEvent.getSource().getBindingContext("visualizationModel").getObject().key;
-		return this._selectCommandCategory(sSelectedCommandCategory);
+		this._selectCommandCategory(sSelectedCommandCategory);
 	};
 
 	ChangeVisualization.prototype._selectCommandCategory = function(sSelectedCommandCategory) {
 		this._sSelectedCommandCategory = sSelectedCommandCategory;
-
-		var aRegisteredChanges = this._oChangeIndicatorRegistry.getChanges();
-		var aRelevantChanges = this._getChangesForCommandCategory(sSelectedCommandCategory, aRegisteredChanges);
 
 		var sCommandCategoryText = this._getCommandCategoryButton(sSelectedCommandCategory);
 
@@ -290,52 +281,8 @@ sap.ui.define([
 			commandCategoryText: sCommandCategoryText
 		});
 
-		return Promise.all(aRelevantChanges.map(function(oChange) {
-			return this._getVisualizationInfo(oChange)
-				.then(function(mVisualizationInfo) {
-					this._oChangeIndicatorRegistry.addVisualizationInfo(
-						oChange.change.getId(),
-						mVisualizationInfo
-					);
-				}.bind(this));
-		}.bind(this)))
-			.then(function() {
-				this._updateChangeIndicators();
-				this._setFocusedIndicator();
-			}.bind(this));
-	};
-
-	ChangeVisualization.prototype._getVisualizationInfo = function(mChangeInformation) {
-		var oComponent = this._getComponent();
-
-		function getSelectorIds(aSelectorList) {
-			if (!aSelectorList) {
-				return undefined;
-			}
-			return aSelectorList
-				.map(function(vSelector) {
-					var oElement = typeof vSelector.getId === "function"
-						? vSelector
-						: JsControlTreeModifier.bySelector(vSelector, oComponent);
-					return oElement && oElement.getId();
-				})
-				.filter(Boolean);
-		}
-
-		return this._getInfoFromChangeHandler(oComponent, mChangeInformation.change)
-			.then(function(oInfoFromChangeHandler) {
-				var mVisualizationInfo = oInfoFromChangeHandler || {};
-				var aAffectedElementIds = (
-					getSelectorIds(mVisualizationInfo.affectedControls || [mChangeInformation.change.getSelector()])
-				);
-
-				return {
-					affectedElementIds: aAffectedElementIds,
-					dependentElementIds: getSelectorIds(mVisualizationInfo.dependentControls) || [],
-					displayElementIds: getSelectorIds(mVisualizationInfo.displayControls) || aAffectedElementIds,
-					payload: mVisualizationInfo.payload
-				};
-			});
+		this._updateChangeIndicators();
+		this._setFocusedIndicator();
 	};
 
 	ChangeVisualization.prototype._getCommandForChange = function(oChange) {
@@ -382,36 +329,6 @@ sap.ui.define([
 			&& searchForCommand(OverlayRegistry.getOverlay(oLastDependentSelectorControl));
 	};
 
-	ChangeVisualization.prototype._getInfoFromChangeHandler = function(oAppComponent, oChange) {
-		var oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-		if (oControl) {
-			var mPropertyBag = {
-				modifier: JsControlTreeModifier,
-				appComponent: oAppComponent,
-				view: FlUtils.getViewForControl(oControl)
-			};
-			var mControl = ChangesUtils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
-			return ChangesWriteAPI.getChangeHandler({
-				changeType: oChange.getChangeType(),
-				element: mControl.control,
-				modifier: JsControlTreeModifier,
-				layer: oChange.getLayer()
-			})
-				.then(function(oChangeHandler) {
-					if (oChangeHandler && typeof oChangeHandler.getChangeVisualizationInfo === "function") {
-						return oChangeHandler.getChangeVisualizationInfo(oChange, oAppComponent);
-					}
-					return undefined;
-				})
-				.catch(function(vErr) {
-					Log.error(vErr);
-					return undefined;
-				});
-		}
-
-		return Promise.resolve();
-	};
-
 	ChangeVisualization.prototype._collectChanges = function() {
 		var oComponent = this._getComponent();
 		var mPropertyBag = {
@@ -430,7 +347,7 @@ sap.ui.define([
 			var aRegisteredChangeIds = this._oChangeIndicatorRegistry.getChangeIds();
 			var oCurrentChanges = aChanges
 				.filter(function(oChange) {
-					return oChange.getFileType() === 'change';
+					return oChange.getFileType() === "change";
 				})
 				.reduce(function(oChanges, oChange) {
 					oChanges[oChange.getId()] = oChange;
@@ -443,12 +360,14 @@ sap.ui.define([
 				this._oChangeIndicatorRegistry.removeChange(sChangeIdToRemove);
 			}.bind(this));
 
+			var aPromises = [];
 			// Register missing changes
 			difference(aCurrentChangeIds, aRegisteredChangeIds).forEach(function(sChangeIdToAdd) {
 				var oChangeToAdd = oCurrentChanges[sChangeIdToAdd];
 				var sCommandName = this._getCommandForChange(oChangeToAdd);
-				this._oChangeIndicatorRegistry.registerChange(oChangeToAdd, sCommandName);
+				aPromises.push(this._oChangeIndicatorRegistry.registerChange(oChangeToAdd, sCommandName));
 			}.bind(this));
+			return Promise.all(aPromises);
 		}.bind(this));
 	};
 
@@ -539,18 +458,19 @@ sap.ui.define([
 		}
 	};
 
-	ChangeVisualization.prototype._filterRelevantChanges = function(aChanges) {
-		if (!Array.isArray(aChanges)) {
-			return aChanges;
+	ChangeVisualization.prototype._filterRelevantChanges = function(aChangeVizInfo) {
+		if (!Array.isArray(aChangeVizInfo)) {
+			return aChangeVizInfo;
 		}
 		var oRootData = this._oChangeVisualizationModel.getData();
 
-		return aChanges.filter(function(oChange) {
+		return aChangeVizInfo.filter(function(oChangeVizInfo) {
 			return (
-				!oChange.dependent
+				!oChangeVizInfo.dependent
+				&& oChangeVizInfo.commandCategory
 				&& (
-					oRootData.commandCategory === 'all'
-					|| oRootData.commandCategory === oChange.commandCategory
+					oRootData.commandCategory === CATEGORY_ALL
+					|| oRootData.commandCategory === oChangeVizInfo.commandCategory
 				)
 			);
 		});
@@ -639,8 +559,8 @@ sap.ui.define([
 		this.setIsActive(true);
 		// show all change visualizations at startup
 		this._updateChangeRegistry()
-			.then(this._selectCommandCategory.bind(this, this._sSelectedCommandCategory))
 			.then(function() {
+				this._selectCommandCategory(this._sSelectedCommandCategory);
 				this._updateVisualizationModelMenuData();
 				oToolbar.setModel(this._oChangeVisualizationModel, "visualizationModel");
 			}.bind(this));
