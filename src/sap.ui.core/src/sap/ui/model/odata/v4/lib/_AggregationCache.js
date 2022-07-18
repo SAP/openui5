@@ -53,7 +53,9 @@ sap.ui.define([
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
 
 		this.oAggregation = oAggregation;
-		this.sDownloadUrl = _Cache.prototype.getDownloadUrl.call(this, "");
+		this.sDownloadUrl = oAggregation.hierarchyQualifier
+			? "n/a"
+			: _Cache.prototype.getDownloadUrl.call(this, "");
 		this.aElements = [];
 		this.aElements.$byPredicate = {};
 		this.aElements.$count = undefined;

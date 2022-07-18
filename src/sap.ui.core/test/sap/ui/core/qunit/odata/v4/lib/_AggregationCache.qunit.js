@@ -428,7 +428,7 @@ sap.ui.define([
 				hierarchyQualifier : "X"
 			},
 			oCache,
-			oGetDownloadUrlExpectation,
+			// oGetDownloadUrlExpectation,
 			mQueryOptions = {
 				$expand : {
 					EMPLOYEE_2_TEAM : {$select : ["Team_Id", "Name"]}
@@ -442,8 +442,9 @@ sap.ui.define([
 			.returns(undefined);
 		this.mock(_MinMaxHelper).expects("createCache").never();
 		this.mock(_Cache).expects("create").never();
-		oGetDownloadUrlExpectation = this.mock(_Cache.prototype).expects("getDownloadUrl")
-			.withExactArgs("").returns("~downloadUrl~");
+		/*oGetDownloadUrlExpectation =*/
+		this.mock(_Cache.prototype).expects("getDownloadUrl").never();
+			// .withExactArgs("").returns("~downloadUrl~");
 		this.mock(_AggregationCache.prototype).expects("createGroupLevelCache")
 			.withExactArgs(null, false).returns("~firstLevelCache~");
 		this.mock(_ConcatHelper).expects("enhanceCache").never();
@@ -463,10 +464,10 @@ sap.ui.define([
 		assert.strictEqual(typeof oCache.read, "function");
 		// c'tor itself
 		assert.strictEqual(oCache.oAggregation, oAggregation);
-		assert.strictEqual(oCache.sDownloadUrl, "~downloadUrl~");
-		assert.strictEqual(oCache.getDownloadUrl(""), "~downloadUrl~"); // <-- code under test
-		assert.strictEqual(oCache.toString(), "~downloadUrl~"); // <-- code under test
-		assert.ok(oGetDownloadUrlExpectation.alwaysCalledOn(oCache));
+		assert.strictEqual(oCache.sDownloadUrl, "n/a", "~downloadUrl~");
+		assert.strictEqual(oCache.getDownloadUrl(""), "n/a", "~downloadUrl~"); // code under test
+		assert.strictEqual(oCache.toString(), "n/a", "~downloadUrl~"); // <-- code under test
+		// assert.ok(oGetDownloadUrlExpectation.alwaysCalledOn(oCache));
 		assert.deepEqual(oCache.aElements, []);
 		assert.deepEqual(oCache.aElements.$byPredicate, {});
 		assert.ok("$count" in oCache.aElements);
@@ -648,8 +649,12 @@ sap.ui.define([
 				// $orderby : "~orderby~"
 				$select : ["~select~"]
 			},
-			oAggregationCache
-				= _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
+			oAggregationCache;
+
+		// avoid trouble when creating 1st level cache
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
+		oAggregationCache
+			= _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
 
 		if (oParentGroupNode) {
 			oParentGroupNode["@$ui5.node.level"] = 2;
@@ -877,7 +882,11 @@ sap.ui.define([
 		var oAggregation = {
 				hierarchyQualifier : "X"
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {});
+			oCache;
+
+		// avoid trouble when creating 1st level cache
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").returns({});
+		oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {});
 
 		this.mock(oCache.oFirstLevel).expects("fetchValue").never();
 		this.mock(oCache).expects("registerChangeListener").never();
@@ -2224,7 +2233,7 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["group"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			oCache,
 			bCollapseBottom = bUntilEnd || bSubtotalsAtBottom, // whether bottom line is affected
 			oCollapsed = {
 				"@$ui5.node.isExpanded" : false,
@@ -2280,6 +2289,9 @@ sap.ui.define([
 				delete aExpectedElements[1].A;
 			}
 		}
+		// avoid trouble when creating 1st level cache
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy").atMost(1).returns({});
+		oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 		oCache.aElements = aElements.slice(); // simulate a read
 		oCache.aElements.$count = aElements.length;
 		oCache.aElements.$byPredicate = {

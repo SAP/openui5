@@ -340,7 +340,8 @@ sap.ui.define([
 
 		/**
 		 * Builds the value for a "$apply" system query option based on the given data aggregation
-		 * information for a recursive hierarchy.
+		 * information for a recursive hierarchy. If no query options are given, only a symbolic
+		 * "$apply" is constructed to avoid timing issues with metadata.
 		 *
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for a recursive hierarchy; see
@@ -358,11 +359,25 @@ sap.ui.define([
 		 * @public
 		 */
 		buildApply4Hierarchy : function (oAggregation, mQueryOptions) {
-			var sApply;
+			var sApply,
+				sHierarchyQualifier = oAggregation.hierarchyQualifier,
+				sPath = oAggregation.$path,
+				sNodeProperty = mQueryOptions
+					? oAggregation.$fetchMetadata(sPath
+						+ "/@Org.OData.Aggregation.V1.RecursiveHierarchy#" + sHierarchyQualifier
+						+ "/NodeProperty/$PropertyPath").getResult()
+					: "???",
+				mRecursiveHierarchy;
 
 			function select(sProperty) {
 				if (mQueryOptions.$select) {
-					mQueryOptions.$select.push(sProperty);
+					if (!mRecursiveHierarchy) {
+						mRecursiveHierarchy = oAggregation.$fetchMetadata(sPath
+							+ "/@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#"
+							+ sHierarchyQualifier).getResult();
+					}
+
+					mQueryOptions.$select.push(mRecursiveHierarchy[sProperty].$PropertyPath);
 				}
 			}
 
@@ -372,22 +387,22 @@ sap.ui.define([
 			}
 
 			if (mQueryOptions.$$filterBeforeAggregate) { // children of a given parent
-				sApply = "descendants($root" + oAggregation.$path
-					+ "," + oAggregation.hierarchyQualifier
-					+ ",ID,filter(" + mQueryOptions.$$filterBeforeAggregate + "),1)";
+				sApply = "descendants($root" + sPath + "," + sHierarchyQualifier
+					+ "," + sNodeProperty
+					+ ",filter(" + mQueryOptions.$$filterBeforeAggregate + "),1)";
 				delete mQueryOptions.$$filterBeforeAggregate;
 			} else { // top levels of nodes
-				sApply = "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root"
-					+ oAggregation.$path
-					+ ",HierarchyQualifier='" + oAggregation.hierarchyQualifier
-					+ "',NodeProperty='ID',Levels=" + (oAggregation.expandTo || 1)
+				sApply = "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sPath
+					+ ",HierarchyQualifier='" + sHierarchyQualifier
+					+ "',NodeProperty='" + sNodeProperty
+					+ "',Levels=" + (oAggregation.expandTo || 1)
 					+ ")";
 				if (oAggregation.expandTo > 1) {
-					select("DescendantCount");
-					select("DistanceFromRoot");
+					select("DescendantCountProperty");
+					select("DistanceFromRootProperty");
 				}
 			}
-			select("DrillState");
+			select("DrillStateProperty");
 			mQueryOptions.$apply = sApply;
 
 			return mQueryOptions;
@@ -910,28 +925,37 @@ sap.ui.define([
 		},
 
 		/**
-		 * Validates the given data aggregation information. If successful, the given path is stored
-		 * inside as <code>$path</code>.
+		 * Validates the given data aggregation information. If successful, the given path and
+		 * function are stored inside that information as <code>$path</code> and
+		 * <code>$fetchMetadata</code> respectively.
 		 *
 		 *
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for data aggregation; see
 		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
-		 * @param {string} [sPath]
-		 *   The list binding's absolute path
+		 * @param {string} sPath
+		 *   The list binding's absolute data path
+		 * @param {function} fnFetchMetadata
+		 *   Function which fetches metadata for a given meta path
+		 * @param {boolean} bAutoExpandSelect
+		 *   The value of the model's parameter <code>autoExpandSelect</code>
 		 * @throws {Error}
-		 *   If the given data aggregation object is unsupported
+		 *   If the given data aggregation object is unsupported, or if a recursive hierarchy is
+		 *   requested, but the model does not use the <code>autoExpandSelect</code> parameter.
 		 *
 		 * @public
 		 */
-		validateAggregation : function (oAggregation, sPath) {
+		validateAggregation : function (oAggregation, sPath, fnFetchMetadata, bAutoExpandSelect) {
+			if (oAggregation.hierarchyQualifier && !bAutoExpandSelect) {
+				throw new Error("Missing parameter autoExpandSelect at model");
+			}
+
 			_AggregationHelper.checkTypeof(oAggregation,
 				oAggregation.hierarchyQualifier ? mRecursiveHierarchyType : mDataAggregationType,
 				"$$aggregation");
 
-			if (sPath) {
-				oAggregation.$path = sPath;
-			}
+			oAggregation.$fetchMetadata = fnFetchMetadata;
+			oAggregation.$path = sPath;
 		}
 	};
 

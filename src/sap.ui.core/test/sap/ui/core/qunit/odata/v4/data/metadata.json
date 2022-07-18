@@ -13,6 +13,12 @@
 		},
 		"/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value" : {
 			"$Include" : ["Org.OData.Measures.V1."]
+		},
+		"https://github.com/SAP/odata-vocabularies/blob/main/vocabularies/Hierarchy.xml": {
+			"$Include": ["com.sap.vocabularies.Hierarchy.v1."]
+		},
+		"https://github.com/oasis-tcs/odata-vocabularies/blob/aggregation-cs03-release-candidate/vocabularies/Org.OData.Aggregation.V1.xml": {
+			"$Include": ["Org.OData.Aggregation.V1."]
 		}
 	},
 	"com.sap.gateway.default.iwbep.tea_busi.v0001.Department" : {
@@ -731,8 +737,16 @@
 				}
 			},
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker" : {
-				"@com.sap.vocabularies.Common.v1.Messages" : {
-					"$Path" : "__CT__FAKE__Message/__FAKE__Messages"
+				"@Org.OData.Aggregation.V1.RecursiveHierarchy#OrgChart": {
+					"NodeProperty": {"$PropertyPath": "ID"}
+				},
+				"@com.sap.vocabularies.Common.v1.Messages": {
+					"$Path": "__CT__FAKE__Message/__FAKE__Messages"
+				},
+				"@com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#OrgChart": {
+					"DescendantCountProperty": {"$PropertyPath": "DescendantCount"},
+					"DistanceFromRootProperty": {"$PropertyPath": "DistanceFromRoot"},
+					"DrillStateProperty": {"$PropertyPath": "DrillState"}
 				}
 			},
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/LOCATION/COUNTRY" : {
