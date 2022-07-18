@@ -3523,14 +3523,16 @@ sap.ui.define([
 		oTable = new Table({
 			columns: [new Column({})],
 			items: [new ColumnListItem({ cells: [oOtb]})]
-		});
+		}),
+		sExpectedTooltip = oCore.getLibraryResourceBundle("sap.m")
+			.getText(OverflowToolbar.TOGGLE_BUTTON_TOOLTIP);
 
 		//Act
 		oTable.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		//Assert
-		assert.equal(oTable.getItems()[0].getContentAnnouncement(), "Button Test Button Button Additional options", "here");
+		assert.equal(oTable.getItems()[0].getContentAnnouncement(), "Button Test Button Button " + sExpectedTooltip, "here");
 	});
 
 	QUnit.module("Associative popover");
