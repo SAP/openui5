@@ -1,7 +1,6 @@
-
 {
 	"sap.app": {
-		"id": "card.explorer.object.formWithExtension",
+		"id": "card.explorer.object.form",
 		"i18n": "i18n/i18n.properties",
 		"type": "card",
 		"title": "Sample of an Object Card",
@@ -28,7 +27,20 @@
 	},
 	"sap.card": {
 		"type": "Object",
-		"extension": "./SampleExtension",
+		"configuration": {
+			"actionHandlers": {
+				"submit": {
+					"url": "./MOCK.json",
+					"method": "GET",
+					"parameters": {
+						"status": "approved",
+						"reason": "{form>/reason/key}",
+						"reasonText": "{form>/reason/value}",
+						"comment": "{form>/comment}"
+					}
+				}
+			}
+		},
 		"data": {
 			"json": {
 				"reasons": [
@@ -45,9 +57,9 @@
 		},
 		"header": {
 			"icon": {
-				"src": "sap-icon://product"
+				"text": "JN"
 			},
-			"title": "PR255 - Laptop Purchase",
+			"title": "Julia Neil",
 			"subTitle": "Purchase Requisition"
 		},
 		"content": {
@@ -56,12 +68,20 @@
 					"alignment": "Stretch",
 					"items": [
 						{
-							"value": "Status Open",
+							"value": "15,000.00 EUR",
 							"type": "Status",
-							"state": "Warning"
+							"state": "Information"
 						},
 						{
-							"value": "Total Amount 1,000.00 USD"
+							"value": "For Ultra Jet Super Highspeed"
+						}
+					]
+				},
+				{
+					"alignment": "Stretch",
+					"items": [
+						{
+							"value": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi finibus ex nunc. Nunc quis mattis augue. Phasellus eu mollis ligula, eleifend hendrerit neque. "
 						}
 					]
 				},
@@ -83,6 +103,10 @@
 							"validations": [
 								{
 									"required": true
+								},
+								{
+									"resrictToPredefinedOptions": true,
+									"message": "{i18n>ONLY_LISTED_VALUES_ALLOWED}"
 								}
 							]
 						},
@@ -95,6 +119,12 @@
 							"validations": [
 								{
 									"required": true
+								},
+								{
+									"minLength": 10,
+									"maxLength": 200,
+									"message": "Your comment should be between 10 and 200 characters.",
+									"type": "Warning"
 								}
 							]
 						}
@@ -109,6 +139,7 @@
 					"buttonType": "Accept",
 					"actions": [
 						{
+							"enabled": "{= !${messages>/hasErrors}}",
 							"type": "Submit"
 						}
 					]

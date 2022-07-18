@@ -588,6 +588,12 @@ sap.ui.define([
 	BaseContent.prototype.onActionSubmitEnd = function (oResponse, oError) {
 	};
 
+	/**
+	* @private
+	* @ui5-restricted
+ 	*/
+	BaseContent.prototype.validateControls = function () { };
+
 	BaseContent.prototype.getCardInstance = function () {
 		return Core.byId(this.getCard());
 	};

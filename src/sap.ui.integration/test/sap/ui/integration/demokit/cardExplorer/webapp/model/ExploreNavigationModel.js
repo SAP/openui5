@@ -258,6 +258,26 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Form Inputs with Validation',
+								key: 'formWithValidation',
+								experimental: true,
+								settings: {
+									columns: 5
+								},
+								files: [
+									{
+										url: '/samples/object/formWithValidation/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/object/formWithValidation/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n/i18n.properties'
+									}
+								]
+							},
+							{
 								title: 'Form Inputs with Extension',
 								key: 'formWithExtension',
 								experimental: true,

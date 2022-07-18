@@ -20,11 +20,11 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 			return;
 		}
 
-        oEvent.preventDefault();
+		oEvent.preventDefault();
 
-        // Validation
-        if (!mSubmitData.reason.key) {
-			oCard.showMessage("{i18n>ERROR_PLEASE_SELECT_REASON}", "Error");
+		// Validation
+		if (!oCard.validateControls()) {
+			oCard.showMessage("{i18n>ERROR_PLEASE_FILL_REQUIRED_FIELDS}", "Error");
 			return;
 		}
 
@@ -38,7 +38,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 			}
 		}).then(function () {
 			oCard.showMessage("{i18n>SUCCESSFUL_SUBMIT}", "Success");
-		}).catch(function(sErrorMessage) {
+		}).catch(function (sErrorMessage) {
 			oCard.showMessage(sErrorMessage, "Error");
 		});
 	};

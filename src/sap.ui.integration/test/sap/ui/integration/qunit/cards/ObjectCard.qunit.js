@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/m/library",
+	"sap/ui/core/library",
 	"sap/ui/integration/library",
 	"sap/ui/integration/cards/ObjectContent",
 	"sap/ui/integration/widgets/Card",
@@ -13,6 +14,7 @@ sap.ui.define([
 ], function (
 	Log,
 	mLibrary,
+	coreLibrary,
 	library,
 	ObjectContent,
 	Card,
@@ -23,10 +25,13 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+
 	// shortcut for sap.m.AvatarSize
 	var AvatarSize = mLibrary.AvatarSize;
 	var AvatarColor = mLibrary.AvatarColor;
 	var CardActionType = library.CardActionType;
+	var ValueState = coreLibrary.ValueState;
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
@@ -515,6 +520,105 @@ sap.ui.define([
 								"value": "{/initialComment}",
 								"rows": 4,
 								"placeholder": "Comment"
+							}
+						]
+					}
+				]
+			}
+		}
+	};
+
+	var oManifest_ObjectCardFormElementsWithValidation = {
+		"sap.app": {
+			"id": "test.cards.object.card5",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Object",
+			"data": {
+				"json": {
+					"reasons": [
+						{
+							"id": "reason1",
+							"title": "Reason 1"
+						},
+						{
+							"id": "reason2",
+							"title": "Reason 2"
+						}
+					]
+				}
+			},
+			"header": {
+				"icon": {
+					"src": "sap-icon://product"
+				},
+				"title": "PR255 - MacBook Purchase",
+				"subTitle": "Procurement Purchase Requisition"
+			},
+			"content": {
+				"groups": [
+					{
+						"alignment": "Stretch",
+						"items": [
+							{
+								"id": "reason",
+								"label": "Reason",
+								"type": "ComboBox",
+								"placeholder": "Select",
+								"selectedKey": "{/selectedKey}",
+								"required": true,
+								"item": {
+									"path": "/reasons",
+									"template": {
+										"key": "{id}",
+										"title": "{title}"
+									}
+								},
+								"validations": [
+									{
+										"required": true
+									}
+								]
+							},
+							{
+								"id": "reason2",
+								"label": "Reason 2",
+								"type": "ComboBox",
+								"placeholder": "Select",
+								"required": true,
+								"item": {
+									"path": "/reasons",
+									"template": {
+										"key": "{id}",
+										"title": "{title}"
+									}
+								},
+								"validations": [
+									{
+										"resrictToPredefinedOptions": true
+									}
+								]
+							},
+							{
+								"id": "comment",
+								"label": "Comment",
+								"type": "TextArea",
+								"rows": 4,
+								"placeholder": "Comment",
+								"required": true,
+								"validations": [
+									{
+										"required": true,
+										"message": "Value is required"
+									},
+									{
+										"minLength": 10,
+										"maxLength": 200,
+										"message": "Your comment should be between 10 and 200 characters.",
+										"type": "Warning"
+									}
+								]
 							}
 						]
 					}
@@ -1566,6 +1670,9 @@ sap.ui.define([
 		};
 
 		sinon.stub(oObjectContent, "getCardInstance").returns({
+			setModel: function () {
+
+			},
 			getBindingContext: function () {
 				return undefined;
 			},
@@ -1732,6 +1839,131 @@ sap.ui.define([
 		});
 
 		oCard.setManifest(oManifest_ObjectCardFormElementsSpecialValue);
+	});
+
+	QUnit.module("Form elements with Validation", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Controls validation", function (assert) {
+		var done = assert.async(),
+			oCard = this.oCard;
+
+		oCard.attachEvent("_ready", function () {
+			var oObjectContent = oCard.getCardContent(),
+				oLayout = oObjectContent.getAggregation("_content").getItems()[0],
+				aItems = oLayout.getItems(),
+				oComboBox1 = aItems[1],
+				oComboBox2 = aItems[3],
+				oTextArea = aItems[5];
+
+			assert.strictEqual(oComboBox1.getValueState(), ValueState.None, "Control has no error");
+
+			assert.deepEqual(oCard.getModel("messages").getData(), {
+				"hasErrors": true,
+				"hasWarnings": false,
+				"records": [
+					{
+						"bindingPath": "/reason",
+						"message": "Field is required",
+						"type": "Error"
+					},
+					{
+						"bindingPath": "/comment",
+						"message": "Value is required",
+						"type": "Error"
+					}
+				]
+			}, "messages model is correct");
+
+			oCard.validateControls();
+
+			assert.strictEqual(oComboBox1.getValueState(), ValueState.Error, "Control has an error");
+			assert.strictEqual(oComboBox1.getValueStateText(), oResourceBundle.getText("EDITOR_VAL_FIELDREQ"), "Error text is correct");
+
+			assert.strictEqual(oComboBox2.getValueState(), ValueState.None, "Control doesn't have an error");
+
+			assert.strictEqual(oTextArea.getValueState(), ValueState.Error, "Control has an error");
+			assert.strictEqual(oTextArea.getValueStateText(), "Value is required", "Error text is correct");
+
+			assert.deepEqual(oCard.getModel("messages").getData(), {
+				"hasErrors": true,
+				"hasWarnings": false,
+				"records": [
+					{
+						"bindingPath": "/reason",
+						"message": "Field is required",
+						"type": "Error"
+					},
+					{
+						"bindingPath": "/comment",
+						"message": "Value is required",
+						"type": "Error"
+					}
+				]
+			}, "messages model is correct");
+
+			oComboBox1.setValue("Text");
+			oComboBox2.setValue("Text");
+			oTextArea.setValue("Text");
+
+			Core.applyChanges();
+			oCard.validateControls();
+
+			assert.strictEqual(oComboBox1.getValueState(), ValueState.None, "Control doesn't have an error");
+			assert.strictEqual(oComboBox2.getValueState(), ValueState.Error, "Control has an error 1111");
+			assert.strictEqual(oComboBox2.getValueStateText(), oResourceBundle.getText("EDITOR_ONLY_LISTED_VALUES_ALLOWED"), "Error text is correct");
+			assert.strictEqual(oTextArea.getValueState(), ValueState.Warning, "ComboBox has an warning");
+			assert.strictEqual(oTextArea.getValueStateText(), "Your comment should be between 10 and 200 characters.", "Text is correct");
+
+			assert.deepEqual(oCard.getModel("messages").getData(),
+				{
+					"hasErrors": true,
+					"hasWarnings": true,
+					"records": [
+						{
+							"bindingPath": "/reason2",
+							"message": "Only listed values are allowed",
+							"type": "Error"
+						},
+						{
+							"bindingPath": "/comment",
+							"message": "Your comment should be between 10 and 200 characters.",
+							"type": "Warning"
+						}
+					]
+				}, "messages model is correct");
+
+			oComboBox2.setSelectedKey("reason1");
+			oTextArea.setValue("TextTextTextTextTextTextTextTextText");
+			Core.applyChanges();
+			oCard.validateControls();
+
+			assert.strictEqual(oComboBox2.getValueState(), ValueState.None, "Control doesn't have an error");
+			assert.strictEqual(oTextArea.getValueState(), ValueState.None, "Control doesn't have an error");
+
+			assert.deepEqual(oCard.getModel("messages").getData(), {
+				"hasErrors": false,
+				"hasWarnings": false,
+				"records": []
+			}, "messages model is correct");
+
+			done();
+		});
+
+		oCard.setManifest(oManifest_ObjectCardFormElementsWithValidation);
+		Core.applyChanges();
 	});
 
 	QUnit.module("titleMaxLine and labelWrapping", {
