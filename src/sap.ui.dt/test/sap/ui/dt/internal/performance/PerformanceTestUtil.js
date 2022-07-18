@@ -130,8 +130,7 @@ sap.ui.define([
 					//will result in custom timer in webPageTest
 					window.performance.mark("dt.synced");
 					window.performance.measure("Create DesignTime and Overlays", "dt.starts", "dt.synced");
-					sap.ui.dt.creationTime = window.performance.getEntriesByName("Create DesignTime and Overlays")[0].duration;
-					Log.info("Create DesignTime and Overlays", sap.ui.dt.creationTime + "ms");
+					Log.info("Create DesignTime and Overlays", window.performance.getEntriesByName("Create DesignTime and Overlays")[0].duration + "ms");
 					//visual change at the end
 					var oOverlay = OverlayRegistry.getOverlay(sSelectedOverlayId || "Control2");
 					oOverlay.setSelected(true);

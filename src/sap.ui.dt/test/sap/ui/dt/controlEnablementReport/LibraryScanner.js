@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"controlEnablementReport/ElementActionDefinitionTest",
-	"sap/ui/core/Core"
-], function(ManagedObject, ElementActionDefinitionTest, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/VersionInfo"
+], function(ManagedObject, ElementActionDefinitionTest, oCore, VersionInfo) {
 	"use strict";
 
 
@@ -60,27 +61,28 @@ sap.ui.define([
 
 		this.aElementEnablementTest = [];
 		this._aControlsCollection = [];
-		var aLoadLibraryPromises = [];
 
-		if (aLibraries.length === 0) {
-			var oVersionInfo = sap.ui.getVersionInfo();
-			oVersionInfo.libraries.forEach(function(oLib) {
-				if (oLib.name.indexOf("sap.ui.server") === -1 &&
+		return VersionInfo.load().then(function (oVersionInfo) {
+			var aLoadLibraryPromises = [];
+			if (aLibraries.length === 0) {
+				oVersionInfo.libraries.forEach(function(oLib) {
+					if (oLib.name.indexOf("sap.ui.server") === -1 &&
 						oLib.name.indexOf("themelib_") === -1 &&
 						oLib.name.indexOf("sap.ui.dev") === -1 &&
 						oLib.name.indexOf("sap.ui.demoapps") === -1 &&
 						oLib.name !== "sap.ui.core" &&
-						oLib.name !== "sap.ui.fl") {
-					aLoadLibraryPromises.push(oCore.loadLibrary(oLib.name, { async: true }));
-				}
-			});
-		} else {
-			aLibraries.forEach(function(sLib) {
-				aLoadLibraryPromises.push(oCore.loadLibrary(sLib, { async: true }));
-			});
-		}
-
-		return Promise.all(aLoadLibraryPromises).then(function () {
+						oLib.name !== "sap.ui.fl"
+					) {
+						aLoadLibraryPromises.push(oCore.loadLibrary(oLib.name, { async: true }));
+					}
+				});
+			} else {
+				aLibraries.forEach(function(sLib) {
+					aLoadLibraryPromises.push(oCore.loadLibrary(sLib, { async: true }));
+				});
+			}
+			return Promise.all(aLoadLibraryPromises);
+		}).then(function () {
 			var oLoadedLibs = oCore.getLoadedLibraries();
 			for (var sLibraryName in oLoadedLibs) {
 				if (aLibraries.length > 0 && aLibraries.indexOf(sLibraryName) === -1) {
