@@ -448,5 +448,32 @@
         ]
       }
     ]
+  },
+  "1.96.10": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "23066854651d709ac566555b68a1523c4c42515f",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElements: check for late properties...",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004766202022"
+          }
+        ]
+      },
+      {
+        "id": "01b0bca52c8dd9b9de063c695a4c3d95e2ba83e1",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#setProperty: reverting a time property does not fail",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002233972022"
+          }
+        ]
+      }
+    ]
   }
 }

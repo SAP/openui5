@@ -14,5 +14,21 @@
         ]
       }
     ]
+  },
+  "1.96.10": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "e412dea7d72229a2b17b0c46cd4134a56ce24109",
+        "type": "FIX",
+        "text": " sap.ui.fl - fix clean up of error MessageStrip in sharing variants",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280131690"
+          }
+        ]
+      }
+    ]
   }
 }

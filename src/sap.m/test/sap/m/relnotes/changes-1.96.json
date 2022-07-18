@@ -1063,5 +1063,47 @@
         ]
       }
     ]
+  },
+  "1.96.10": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "5230ae350b5d7eb4a52900e05e7a534a6e7e54c7",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection in table with many radio buttons is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003326492022"
+          }
+        ]
+      },
+      {
+        "id": "b3d87d18ce836ff3711febb1d78f2d4cd16724b9",
+        "type": "FIX",
+        "text": " P13nConditionPanel now respects upperCase format on field switch",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002594982022"
+          }
+        ]
+      },
+      {
+        "id": "6d1baa49d78c9335bb1f079b2800acf65ddbeae7",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Correct invisible text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280100206"
+          },
+          {
+            "type": "BCP",
+            "reference": "2170305447"
+          }
+        ]
+      }
+    ]
   }
 }

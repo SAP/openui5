@@ -148,5 +148,21 @@
         ]
       }
     ]
+  },
+  "1.96.10": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "8efd4feddd89ad545a3d43a0f2577e459b5de558",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Disappear of header is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270089016"
+          }
+        ]
+      }
+    ]
   }
 }

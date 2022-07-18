@@ -46,5 +46,21 @@
         ]
       }
     ]
+  },
+  "1.96.10": {
+    "date": "July 2022",
+    "notes": [
+      {
+        "id": "ae193363185e9d4d2b70182301b4f55916d8be0f",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: Position of collapsed items is no longer read twice",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080355933"
+          }
+        ]
+      }
+    ]
   }
 }
