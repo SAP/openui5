@@ -261,6 +261,7 @@ sap.ui.define([
 					width: "{= ${$this>/headerVisible} ? null : '0px' }",
 					text: "{$this>/header}",
 					textAlign: "{$this>/hAlign}",
+					tooltip: oTable._bMobileTable ? "{$this>/tooltip}" : "",
 					wrapping: {
 						parts: [
 							{path: "$this>/headerVisible"},
