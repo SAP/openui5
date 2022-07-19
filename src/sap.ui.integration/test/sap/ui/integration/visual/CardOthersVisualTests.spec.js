@@ -192,7 +192,7 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 
 	it("Parameters", function () {
 		utils.navigateTo("Parameters");
-		var aCardIds = ["weatherCard", "manifestOnly", "listCard", "defaultFromManifest", "defaultFromManifestOverwrite"];
+		var aCardIds = ["weatherCard", "manifestOnly", "listCard", "defaultFromManifest", "defaultFromManifestEdited"];
 
 		aCardIds.forEach(function (sId) {
 			utils.takePictureOfElement({

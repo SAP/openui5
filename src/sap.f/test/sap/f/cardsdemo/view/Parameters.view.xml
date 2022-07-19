@@ -54,7 +54,7 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
-			<w:Card id="defaultFromManifestOverwrite" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{manifests>/paramsDefaultParamFromManifestOverwrite}" parameters="{params>/locationOverwrite}">
+			<w:Card id="defaultFromManifestEdited" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{manifests>/paramsDefaultParamFromManifestEdited}" parameters="{params>/locationOverwrite}">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
