@@ -383,7 +383,7 @@ sap.ui.define([
 	 */
 	SlideTile.prototype._setupResizeClassHandler = function () {
 		var fnCheckMedia = function () {
-			if (this.getSizeBehavior() === TileSizeBehavior.Small || window.matchMedia("(max-width: 374px)").matches) {
+			if (this.getSizeBehavior() === TileSizeBehavior.Small || window.matchMedia("(max-width: 374px)").matches || this._hasStretchTiles()){
 				this.$().addClass("sapMTileSmallPhone");
 			} else {
 				this.$().removeClass("sapMTileSmallPhone");
@@ -392,6 +392,18 @@ sap.ui.define([
 
 		jQuery(window).on("resize", fnCheckMedia);
 		fnCheckMedia();
+	};
+
+	/**
+	 *Checks if the tiles inside the slidetile has stretch frametype and the window size is below 600px
+	 *
+	 * @returns {boolean} True if the above mentioned condition is met
+	 * @private
+	 */
+	SlideTile.prototype._hasStretchTiles = function () {
+		return this.getTiles().some(function(tile) {
+			return tile._isSmallStretchTile();
+		});
 	};
 
 	/**
