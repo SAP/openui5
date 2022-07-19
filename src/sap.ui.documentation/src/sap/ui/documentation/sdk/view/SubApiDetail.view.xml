@@ -632,7 +632,7 @@
 														</m:MessageStrip>
 													</template:if>
 
-													<custom:JSDocText text="{method>code}" />
+													<custom:JSDocText text="{path: 'method>code', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}" />
 
 													<template:if test="{= !!${method>parameters} &amp;&amp; ${method>parameters}.length > 0}">
 														<custom:LightTable
@@ -670,7 +670,7 @@
 															<custom:Row>
 																<layout:VerticalLayout class="sapUiDocumentationOrList" width="100%">
 																	<template:repeat list="{method>returnValue/types}" var="rtype">
-																		<m:Link text="{rtype>value}"
+																		<m:Link text="{path: 'rtype>value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"
 																				href="{rtype>href}"
 																				enabled="{= !!${rtype>linkEnabled} }"/>
 																	</template:repeat>
