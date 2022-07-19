@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/base/Object",
-	"sap/m/p13n/PersistenceProvider"
-], function (BaseObject, PersistenceProvider) {
+	"sap/m/p13n/PersistenceProvider",
+	"sap/ui/fl/Utils"
+], function (BaseObject, PersistenceProvider, FLUtils) {
 	"use strict";
 
 	var ERROR_INSTANCING = "DefaultProviderRegistry: This class is a singleton and should not be used without an AdaptationProvider. Please use 'sap.m.p13n.Engine.getInstance().defaultProviderRegistry' instead";
@@ -30,7 +31,7 @@ sap.ui.define([
 	 * @alias sap.m.p13n.modules.DefaultProviderRegistry
 	 */
 	var DefaultProviderRegistry = BaseObject.extend("sap.m.p13n.modules.DefaultProviderRegistry", {
-		constructor: function() {
+		constructor: function(oEngine) {
 
 			if (oDefaultProviderRegistry) {
 				throw Error(ERROR_INSTANCING);
@@ -38,6 +39,7 @@ sap.ui.define([
 
 			BaseObject.call(this);
 			this._mDefaultProviders = {};
+			this._oEngine = oEngine;
 		}
 	});
 
@@ -50,6 +52,8 @@ sap.ui.define([
 			this._mDefaultProviders[sProviderName].destroy();
 			delete this._mDefaultProviders[sProviderName];
 		}.bind(this));
+		this._oEngine = null;
+		oDefaultProviderRegistry = null;
 		BaseObject.prototype.destroy.apply(this, arguments);
 	};
 
@@ -59,18 +63,20 @@ sap.ui.define([
 	 *
 	 * Attaches a control to a default persistence provider held inside the DefaultProviderRegistry for the given <code>PersistenceMode</code>
 	 *
-	 * @param {sap.ui.core.Control|string} vControl The control instance or a control id.
+	 * @param {sap.ui.core.Control|string} vElement The control instance or a control id.
 	 * @param {sap.m.enum.PersistenceMode} sPersistenceMode Desired persistence mode for the retrieved persistence provider
 	 * @returns {sap.m.p13n.PersistenceProvider} Returns a persistence provider instance, if possible
 	 */
-	DefaultProviderRegistry.prototype.attach = function (vControl, sPersistenceMode) {
-		if (vControl.getEngine().isRegisteredForModification(vControl)) { // Modification settings for a registered control are only determined once in the Engine
-			throw new Error("DefaultProviderRegistry: You must not change the modificationSettings for an already registered control");
+	 DefaultProviderRegistry.prototype.attach = function (vElement, sPersistenceMode) {
+		if (this._oEngine.isRegisteredForModification(vElement)) { // Modification settings for a registered element are only determined once in the Engine
+			throw new Error("DefaultProviderRegistry: You must not change the modificationSettings for an already registered element");
 		}
-		var oDefaultProvider = this._retrieveDefaultProvider(sPersistenceMode);
-		var sControlId = typeof vControl === "string" ? vControl : vControl.getId();
-		if (oDefaultProvider.getFor().indexOf(sControlId) === -1) {
-			oDefaultProvider.addFor(vControl);
+
+		var oElement = typeof vElement === "string" ? sap.ui.getCore().byId(vElement) : vElement, sElementId = typeof vElement === "string" ? vElement : vElement.getId();
+		var oDefaultProvider = this._retrieveDefaultProvider(oElement, sPersistenceMode);
+
+		if (oDefaultProvider.getFor().indexOf(sElementId) === -1) {
+			oDefaultProvider.addFor(vElement);
 		}
 
 		return oDefaultProvider;
@@ -93,15 +99,32 @@ sap.ui.define([
 
 	/**
 	 * @private
-	 * @ui5-restricted sap.m
+	 * @ui5-restricted sap.ui.mdc
 	 *
 	 * Returns a promise resolving a default persistence provider for the given <code>Control</code> and <code>PersistenceMode</code>.
-	 *
-	 * @param {sap.m.enum.PersistenceMode} sPersistenceMode Desired persistence mode for the retrieved persistence provider
+	 * @param {sap.ui.core.Element} oElement The element instance.
+	 * @param {sap.ui.mdc.enum.PersistenceMode} sPersistenceMode Desired persistence mode for the retrieved persistence provider
 	 * @returns {Promise} Returns a <code>Promise</code> returning a persistence provider instance, if possible
 	 */
-	DefaultProviderRegistry.prototype._retrieveDefaultProvider = function (sPersistenceMode) {
-		this._mDefaultProviders[sPersistenceMode] = this._mDefaultProviders[sPersistenceMode] || new PersistenceProvider({mode: sPersistenceMode});
+	 DefaultProviderRegistry.prototype._retrieveDefaultProvider = function (oElement, sPersistenceMode) {
+
+		if (!this._mDefaultProviders[sPersistenceMode]) {
+			var oProvider = new PersistenceProvider("defaultProviderRegistry" + sPersistenceMode, {
+				mode: sPersistenceMode
+			});
+
+			var fnAttachVariantModel = function(){
+				var oModel = oElement.getModel(FLUtils.VARIANT_MODEL_NAME);
+				if (oModel) {
+					oProvider.setModel(oModel, FLUtils.VARIANT_MODEL_NAME);
+					oElement.detachEvent("modelContextChange", fnAttachVariantModel);
+				}
+			};
+
+			oElement.attachEvent("modelContextChange", fnAttachVariantModel);
+			this._mDefaultProviders[sPersistenceMode] = oProvider;
+		}
+
 		return this._mDefaultProviders[sPersistenceMode];
 	};
 
@@ -111,9 +134,9 @@ sap.ui.define([
 	 *
 	 * This method is the central point of access to the DefaultProviderRegistry Singleton.
 	 */
-	 DefaultProviderRegistry.getInstance = function() {
+	 DefaultProviderRegistry.getInstance = function(Engine) {
 		if (!oDefaultProviderRegistry) {
-			oDefaultProviderRegistry = new DefaultProviderRegistry();
+			oDefaultProviderRegistry = new DefaultProviderRegistry(Engine);
 		}
 		return oDefaultProviderRegistry;
 	};

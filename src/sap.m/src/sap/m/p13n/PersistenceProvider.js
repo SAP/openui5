@@ -79,6 +79,7 @@ sap.ui.define([
 				oVM.setModel(oModel, Utils.VARIANT_MODEL_NAME);
 			});
 			this._oWrapper = new VerticalLayout(this.getId() + "--accWrapper", {
+				visible: true,
 				content: [
 					oVM
 				]
@@ -96,19 +97,43 @@ sap.ui.define([
 		return this;
 	};
 
+	PersistenceProvider.prototype.addFor = function (sControlId) {
+		this.addAssociation("for", sControlId);
+
+		var oVM = sap.ui.getCore().byId(this.getId() + "--vm");
+		if (this.getMode() === mode.Transient && oVM) {
+			oVM.addFor(sControlId);
+		}
+
+		return this;
+	};
+
+	PersistenceProvider.prototype.removeFor = function (sControlId) {
+		this.removeAssociation("for", sControlId);
+
+		var oVM = sap.ui.getCore().byId(this.getId() + "--vm");
+		if (this.getMode() === mode.Transient && oVM) {
+			oVM.removeFor(sControlId);
+		}
+
+		return this;
+	};
+
 	/**
 	 * Set the mode for the <code>PersistenceProvider</code>.
 	 *
 	 * @override
 	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
-	PersistenceProvider.prototype.setMode = function (bValue) {
+	PersistenceProvider.prototype.setMode = function (sValue) {
 
-		if (this._bmodeLocked && bValue !== this.getMode()) {
+		if (this._bmodeLocked && sValue !== this.getMode()) {
 			throw new Error("mode is a final property.");
 		}
 
-		this.setProperty("mode", bValue);
+		this.setProperty("mode", sValue);
 
 		return this;
 	};

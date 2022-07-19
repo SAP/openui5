@@ -1,17 +1,18 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/Control",
-	"sap/ui/mdc/enum/PersistenceMode",
-	"sap/m/p13n/modules/DefaultProviderRegistry"
-], function (Control, PersistenceMode, DefaultProviderRegistry) {
+	"sap/ui/core/Control",
+	"sap/m/p13n/enum/PersistenceMode",
+	"sap/m/p13n/modules/DefaultProviderRegistry",
+	"sap/m/p13n/Engine"
+], function (Control, PersistenceMode, DefaultProviderRegistry, Engine) {
 	"use strict";
 
 	QUnit.module("Init");
 
 	QUnit.test("Use DefaultProviderRegistry as Singleton", function(assert){
 
-		var oFirstDefaultProviderRegistry = DefaultProviderRegistry.getInstance();
-		var oSecondDefaultProviderRegistry = DefaultProviderRegistry.getInstance();
+		var oFirstDefaultProviderRegistry = DefaultProviderRegistry.getInstance(Engine);
+		var oSecondDefaultProviderRegistry = DefaultProviderRegistry.getInstance(Engine);
 		assert.ok(oFirstDefaultProviderRegistry.isA("sap.m.p13n.modules.DefaultProviderRegistry"), "getInstance() returns an instance of DefaultProviderRegistry");
 		assert.deepEqual(oFirstDefaultProviderRegistry, oSecondDefaultProviderRegistry, "There is only one 'DefaultProviderRegistry' instance per session");
 
@@ -34,7 +35,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oFirstControl = new Control("myControl1");
 			this.oSecondControl = new Control("myControl2");
-			this.defaultProviderRegistry = DefaultProviderRegistry.getInstance();
+			this.defaultProviderRegistry = DefaultProviderRegistry.getInstance(Engine);
 		},
 		afterEach: function() {
 			this.oFirstControl.destroy();
@@ -48,8 +49,7 @@ sap.ui.define([
 		var _retrieveDefaultProviderSpy = sinon.spy(this.defaultProviderRegistry, "_retrieveDefaultProvider");
 
 		assert.equal(Object.keys(this.defaultProviderRegistry._mDefaultProviders).length, 0, "No persistence provider exists yet.");
-
-		var oEngineStub = sinon.stub(this.oFirstControl.getEngine(), "isRegisteredForModification").returns(true);
+		var oEngineStub = sinon.stub(Engine, "isRegisteredForModification").returns(true);
 
 		assert.throws(
 			function() {
@@ -58,7 +58,7 @@ sap.ui.define([
 			function(oError) {
 				return (
 					oError instanceof Error &&
-					oError.message === "DefaultProviderRegistry: You must not change the modificationSettings for an already registered control"
+					oError.message === "DefaultProviderRegistry: You must not change the modificationSettings for an already registered element"
 				);
 			},
 			"Attaching a control having already determined modification settings is prevented."
