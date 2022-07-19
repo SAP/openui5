@@ -551,6 +551,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the OData Information of the change.
+	 * oDataInformation.propertyName - Name of the OData property
+	 * oDataInformation.entityType - Name of the OData entity type that the property belongs to
+	 * oDataInformation.oDataServiceUri - URI of the OData service
+	 * @returns {object} OData Information of the change - propertyName, entityType and oDataServiceUri
+	 *
+	 * @function
+	 */
+	Change.prototype.getODataInformation = function () {
+		return this._oDefinition.oDataInformation;
+	};
+
+	/**
 	 * Checks if change is read only because of its source system.
 	 * @returns {boolean} <code>true</code> if the change is from another system
 	 *
