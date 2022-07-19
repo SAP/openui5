@@ -60,13 +60,9 @@ sap.ui.define([
 			this.oFilterBar = this.oView.byId('myFilterBar');
 			this.oFilterBar.setPropertyInfo([]);
 			this.oFilterBar.removeAllFilterItems([]);
-			sinon.stub(this.oFilterBar, "_toInternal").callsFake(function(oProperty, oXCondition) {
-				return oXCondition;
-			});
 		},
 		afterEach: function(){
 			this.oFilterBar.setFilterConditions({});
-			this.oFilterBar._toInternal.restore();
 		},
 		after: function(){
 			this.oUiComponentContainer = null;
