@@ -515,6 +515,43 @@ sap.ui.define([
 		qutils.triggerEvent("click", "myCal--Head-B1");
 	});
 
+	QUnit.test("change months pages", function(assert) {
+		var $MonthPicker,
+			$Month,
+			aMonths;
+
+		// System under test
+		this.oCal.setStartDate(new Date("2015", "4", "2"));
+		this.oCal.setDays(14);
+		oCore.applyChanges();
+
+		// act
+		qutils.triggerEvent("click", "myCal--Head-B1");
+		oCore.applyChanges();
+
+		$MonthPicker = oCore.byId("myCal").getAggregation("monthPicker").$();
+		aMonths = $MonthPicker.find(".sapUiCalItem");
+
+		$Month = jQuery("#myCal--MP-m4");
+		$Month.trigger("focus");
+		qutils.triggerKeydown($Month, KeyCodes.ARROW_RIGHT);
+		oCore.applyChanges();
+
+		// assert
+		aMonths = $MonthPicker.find(".sapUiCalItem");
+		assert.equal(aMonths[0].innerText, "June", "Calendar: page is changed on Arrow Right on the last displayed month");
+
+		// act
+		$Month = jQuery("#myCal--MP-m5");
+		$Month.trigger("focus");
+		qutils.triggerKeydown($Month, KeyCodes.ARROW_LEFT);
+		oCore.applyChanges();
+
+		// assert
+		aMonths = $MonthPicker.find(".sapUiCalItem");
+		assert.equal(aMonths[4].innerText, "May", "Calendar: page is changed on Arrow Left on the first displayed month");
+	});
+
 
 	QUnit.module("YearPicker", {
 		beforeEach: function () {

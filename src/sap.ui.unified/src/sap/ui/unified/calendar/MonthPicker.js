@@ -158,20 +158,36 @@ sap.ui.define([
 
 	MonthPicker.prototype.onAfterRendering = function(){
 
+		var iFocusedMonthInYear,
+			iMonth = this.getMonth(),
+			iMonths = this.getMonths(),
+			iFirstMonth = this.getProperty("_firstMonth"),
+			iFocusedMonth = this.getProperty("_focusedMonth"),
+			iRecentlyFousedMonth = this._oItemNavigation ? this._oItemNavigation.getFocusedIndex() : 0;
+
 		_initItemNavigation.call(this);
 
 		// check if day names are too big -> use smaller ones
 		_checkNamesLength.call(this);
 
-		var iFocusedMonthInYear = this.getProperty("_focusedMonth") % this.getMonths(),
+		if (this.getColumns() > 0) {
+			// not a single-line month picker
+			iFocusedMonthInYear = iFocusedMonth % iMonths;
 			// iFocusedMonthInYear holds which is the focused month from the currently displayed on the screen ones (values starts from 0 to this.getMonths())
-			iPropSeqMonths = parseInt(12 / this.getMonths()),
-			// iPropSeqMonths holds how many proper sequences of months starting from january and shifting with this.getMonths() are held in a year (from 0 to 11)
-			iLastDisplayedIndexFormPropSeqMonths = iPropSeqMonths * this.getMonths();
-			// iLastDisplayedIndexFormPropSeqMonths holds the index of the last month in the last group of properly sequences displayed months in year
+			var	iPropSeqMonths = parseInt(MONTHS_IN_YEAR / iMonths),
+				// iPropSeqMonths holds how many proper sequences of months starting from january and shifting with this.getMonths() are held in a year (from 0 to 11)
+				iLastDisplayedIndexFormPropSeqMonths = iPropSeqMonths * iMonths;
+				// iLastDisplayedIndexFormPropSeqMonths holds the index of the last month in the last group of properly sequences displayed months in year
 
-		if (this.getProperty("_focusedMonth") >= iLastDisplayedIndexFormPropSeqMonths) {
-			iFocusedMonthInYear = 12 - iLastDisplayedIndexFormPropSeqMonths + 1 + iFocusedMonthInYear;
+			if (iFocusedMonth >= iLastDisplayedIndexFormPropSeqMonths) {
+				iFocusedMonthInYear = 12 - iLastDisplayedIndexFormPropSeqMonths + 1 + iFocusedMonthInYear;
+			}
+		} else if (iMonth < iFirstMonth || iMonth > iFirstMonth + iMonths - 1) {
+			// focused month is out of displayed range, focus the same position as on previous page
+			iFocusedMonthInYear = iRecentlyFousedMonth;
+		} else {
+			// focus the proper month
+			iFocusedMonthInYear = iMonth - iFirstMonth;
 		}
 
 		this._oItemNavigation.focusItem(iFocusedMonthInYear);
@@ -754,7 +770,8 @@ sap.ui.define([
 			iColumns = this.getColumns(),
 			oSelectedDates = this._getSelectedDates()[0],
 			oStartDate,
-			oFocusedDate = CalendarDate.fromLocalJSDate(new Date(), this.getPrimaryCalendarType());
+			oFocusedDate = CalendarDate.fromLocalJSDate(new Date(), this.getPrimaryCalendarType()),
+			bOneRowMonths = iColumns === 0 && iMonths < MONTHS_IN_YEAR;
 
 		this._iYear && oFocusedDate.setYear(this._iYear);
 
@@ -767,7 +784,9 @@ sap.ui.define([
 			switch (oEvent.type) {
 				case "sapnext":
 				case "sapnextmodifiers":
-					if (oEvent.keyCode === KeyCodes.ARROW_DOWN && iColumns <= iMonths) {
+					if (bOneRowMonths) {
+						this._oneRowChangePage(iMonth, true);
+					} else if (oEvent.keyCode === KeyCodes.ARROW_DOWN && iColumns <= iMonths) {
 						if (iMonth < MONTHS_IN_YEAR - iMonths) {
 							// We dont need to fire "pageChange" event as we only render the next block of months in the same year
 							_updateMonths.call(this, iMonth + iColumns, false, OFFSET.OneYearForward);
@@ -778,6 +797,9 @@ sap.ui.define([
 							this.setProperty("_focusedMonth", iMonth % iColumns);
 							this._isSelectionInProgress() && this._markInterval(oStartDate, oFocusedDate);
 						} else {
+							if (iColumns === 0) {
+								iColumns = iMonths;
+							}
 							_updateMonths.call(this, iMonth % iColumns, true, OFFSET.OneYearForward);
 						}
 					} else {
@@ -797,7 +819,9 @@ sap.ui.define([
 
 				case "sapprevious":
 				case "sappreviousmodifiers":
-					if (oEvent.keyCode === KeyCodes.ARROW_UP && iColumns <= iMonths) {
+					if (bOneRowMonths) {
+						this._oneRowChangePage(iMonth);
+					} else if (oEvent.keyCode === KeyCodes.ARROW_UP && iColumns <= iMonths) {
 						if (iMonth >= iMonths) {
 							// We dont need to fire "pageChange" event as we only render the next block of months in the same year
 							_updateMonths.call(this, iMonth - iColumns, false, OFFSET.OneYearBackward);
@@ -853,6 +877,19 @@ sap.ui.define([
 		}
 
 	}
+
+	MonthPicker.prototype._oneRowChangePage = function(iMonth, bNext) {
+		var iFirstMonth = this.getProperty("_firstMonth"),
+			iMonths = this.getMonths(),
+			bShouldChangePage = bNext ? iFirstMonth + iMonths < MONTHS_IN_YEAR : iFirstMonth > 0,
+			iDelta = bNext ? 1 : -1;
+
+		if (bShouldChangePage) {
+			bNext && this.nextPage() || this.previousPage();
+			this.firePageChange({ offset: 0 });
+			this.setMonth(iMonth + iDelta);
+		}
+	};
 
 	MonthPicker.prototype._selectMonth = function(iMonth, bDontSetMonth) {
 		var oSelectedDates = this._getSelectedDates()[0],
