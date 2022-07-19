@@ -596,9 +596,11 @@ sap.ui.define([
         };
 
         Chart.prototype._createBreadcrumbs = function () {
-            this._oBreadcrumbs = new Breadcrumbs(this.getId() + "--breadcrumbs");
-            this._oBreadcrumbs.updateDrillBreadcrumbs(this, this.getControlDelegate().getDrillableItems(this));
-            this.setAggregation("_breadcrumbs", this._oBreadcrumbs);
+            if (!this._oBreadcrumbs){
+                this._oBreadcrumbs = new Breadcrumbs(this.getId() + "--breadcrumbs");
+                this._oBreadcrumbs.updateDrillBreadcrumbs(this, this.getControlDelegate().getDrillableItems(this));
+                this.setAggregation("_breadcrumbs", this._oBreadcrumbs);
+            }
         };
 
         /**

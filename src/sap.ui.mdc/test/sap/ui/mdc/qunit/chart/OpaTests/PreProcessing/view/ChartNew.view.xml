@@ -14,7 +14,7 @@
 	xmlns="sap.m"
 	controllerName="applicationUnderTestMDCChart.controller.ChartNew">
 		<mdc:Chart id="bookChart" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
-				'name': 'sap/ui/mdc/odata/v4/vizChart/ChartDelegate',
+				'name': 'delegates/odata/v4/vizChart/ChartDelegate',
 				'payload': {
 					collectionName: 'Books'
 				}

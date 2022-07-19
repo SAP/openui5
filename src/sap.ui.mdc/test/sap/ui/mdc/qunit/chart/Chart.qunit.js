@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/ui/mdc/enum/ActionToolbarActionAlignment",
-	"sap/m/ToolbarSeparator"
+	"sap/m/ToolbarSeparator",
+	"sap/ui/fl/variants/VariantManagement"
 ],
 function(
 	Core,
@@ -24,7 +25,8 @@ function(
 	Button,
 	ActionToolbarAction,
 	Alignment,
-	ToolbarSeparator
+	ToolbarSeparator,
+	VM
 ) {
     "use strict";
 
@@ -413,31 +415,161 @@ function(
      * Not implemented yet
      */
     QUnit.test("setP13nMode", function(assert){
-        assert.ok(true);
+
+        var done = assert.async();
+
+        this.oMDCChart.initialized().then(function(){
+
+            //1
+            var aMode = ['Item', 'Sort', 'Type', 'Filter'];
+            var _updateAdaptationStub = sinon.stub(this.oMDCChart,"_updateAdaptation");
+            var aModeSorted = ['Item', 'Sort', 'Filter', 'Type'];
+            var setPropertySpy = sinon.spy(this.oMDCChart,"setProperty");
+
+            this.oMDCChart.setP13nMode(aMode);
+
+            assert.ok(setPropertySpy.calledWith("p13nMode", aModeSorted, true),"P13nMode property correctly set");
+            assert.ok(_updateAdaptationStub.calledWith(aModeSorted),"_updateAdaption called with P13nMode parameters correctly");
+
+            //2
+            aMode = ['Item'];
+
+            this.oMDCChart.setP13nMode(aMode);
+
+            assert.ok(setPropertySpy.calledWith("p13nMode", aMode, true),"P13nMode property correctly set");
+            assert.ok(_updateAdaptationStub.calledWith(aMode),"_updateAdaption called with P13nMode parameters correctly");
+
+            done();
+        }.bind(this));
     });
 
     QUnit.test("_updateAdaption", function(assert){
-        assert.ok(true);
+        var done = assert.async();
+
+        this.oMDCChart.initialized().then(function(){
+
+            var aMode = ['Item', 'Sort', 'Type', 'Filter'];
+            sinon.spy(this.oMDCChart.getEngine(),"registerAdaptation");
+
+            this.oMDCChart._updateAdaptation(aMode);
+
+            assert.equal(this.oMDCChart.getEngine().registerAdaptation.getCall(0).args.length,2,"registerAdaptation correctly called");
+
+            done();
+        }.bind(this));
     });
 
     QUnit.test("isFilteringEnabled", function(assert){
-        assert.ok(true);
+        var done = assert.async();
+
+        this.oMDCChart.initialized().then(function(){
+
+            var aMode = ['Item', 'Sort', 'Type', 'Filter'];
+
+            this.oMDCChart.setP13nMode(aMode);
+
+            assert.equal(this.oMDCChart.isFilteringEnabled(),true, "filtering correctly enabled");
+
+            aMode.pop(); //remove filters
+
+            this.oMDCChart.setP13nMode(aMode);
+
+            assert.equal(this.oMDCChart.isFilteringEnabled(),false, "filtering correctly disabled");
+
+            done();
+        }.bind(this));
     });
 
     QUnit.test("setFilterConditions", function(assert){
-        assert.ok(true);
+        var done = assert.async();
+
+        this.oMDCChart.initialized().then(function(){
+
+            var mConditions = {};
+            var setPropertySpy = sinon.spy(this.oMDCChart,"setProperty");
+            var setFilterConditionsStub = sinon.stub();
+            var getInbuiltFilterStub = sinon.stub(this.oMDCChart,"getInbuiltFilter").returns(
+                {setFilterConditions: setFilterConditionsStub}
+            );
+
+            this.oMDCChart.setFilterConditions(mConditions);
+
+            assert.ok(setPropertySpy.calledWith("filterConditions", mConditions, true),"filterConditions property correctly set");
+            assert.ok(getInbuiltFilterStub.calledOnce, "getInbuiltFilter correctly called once");
+            assert.ok(setFilterConditionsStub.calledWith(mConditions),"setFilterConditions correcly called with parameters");
+
+            done();
+        }.bind(this));
     });
 
     QUnit.test("getConditions", function(assert){
-        assert.ok(true);
+        var done = assert.async();
+
+        this.oMDCChart.initialized().then(function(){
+            var aConditions = [1, 2, 3];
+            var getConditionsStub = sinon.stub().returns(aConditions);
+            var getInbuiltFilterStub = sinon.stub(this.oMDCChart,"getInbuiltFilter").returns(
+                {getConditions: getConditionsStub}
+            );
+
+            var aCon = this.oMDCChart.getConditions();
+
+            assert.equal(aCon, aConditions,"Conditions correctly returned");
+
+            getInbuiltFilterStub.returns(undefined);
+
+            var aCon = this.oMDCChart.getConditions();
+
+            assert.equal(aCon.length,0,"No Conditions correctly returned");
+
+            done();
+        }.bind(this));
     });
 
     QUnit.test("_registerInnerFilter", function(assert){
-        assert.ok(true);
+        var done = assert.async();
+
+        this.oMDCChart.initialized().then(function(){
+
+            var oFilter = {attachSearch:function(){}};
+            var attachSearchSpy = sinon.spy(oFilter,"attachSearch");
+
+            this.oMDCChart._registerInnerFilter(oFilter);
+
+
+            assert.ok(attachSearchSpy.calledOnce,"attachSearch correctly called");
+            done();
+        }.bind(this));
     });
 
     QUnit.test("applySettings", function(assert){
-        assert.ok(true);
+        var done = assert.async();
+
+        this.oMDCChart.initialized().then(function(){
+
+            var mSettings = {};
+            var oScope = {};
+
+            function isPromise(p) {
+                return p && Object.prototype.toString.call(p) === "[object Promise]";
+            }
+
+            var _setPropertyHelperClassStub = sinon.stub(this.oMDCChart,"_setPropertyHelperClass");
+            var _loadDelegateSpy = sinon.spy(this.oMDCChart,"_loadDelegate");
+            var isFilteringEnabledStub = sinon.stub(this.oMDCChart,"isFilteringEnabled").returns(true);
+            var retrieveInbuiltFilterSpy = sinon.spy(this.oMDCChart,"retrieveInbuiltFilter");
+
+            this.oMDCChart.applySettings(mSettings,oScope);
+
+            assert.ok(_setPropertyHelperClassStub.calledOnce,"_setPropertyHelperClass correctly called");
+            assert.ok(isPromise(this.oMDCChart.initializedPromise),"initializedPromise correctly created");
+            assert.ok(isPromise(this.oMDCChart.innerChartBoundPromise),"innerChartBoundPromise correctly created");
+            assert.ok(_loadDelegateSpy.calledOnce,"_loadDelegat correctly called");
+            assert.ok(isFilteringEnabledStub.calledOnce,"isFilteringEnabled correctly called");
+            assert.ok(retrieveInbuiltFilterSpy.calledOnce,"retrieveInbuiltFilter correctly called");
+
+            done();
+        }.bind(this));
     });
 
     QUnit.test("_initInnerControls", function(assert){
@@ -445,26 +577,48 @@ function(
     });
 
     QUnit.test("_createContentFromPropertyInfos", function(assert){
-        assert.ok(true);
+		var done = assert.async();
+        var oMockDelegate = {checkAndUpdateMDCItems : function(){return Promise.resolve();}, createInnerChartContent: function(){return Promise.resolve();}, getDrillableItems: function(){return [];}};
+		this.oMDCChart.getControlDelegate = function() {return oMockDelegate;};
+		this.oMDCChart._propagatePropertiesToInnerChart = function(){}; //Mock this as it requires an inner chart (which we don't want to test in this case)
+
+		var oCreateCrumbsSpy = sinon.spy(this.oMDCChart, "_createBreadcrumbs");
+		var oPropagateSpy = sinon.spy(this.oMDCChart, "_propagatePropertiesToInnerChart");
+
+		this.oMDCChart._createContentfromPropertyInfos();
+
+		this.oMDCChart.innerChartBound().then(function(){
+			assert.ok(oCreateCrumbsSpy.calledOnce, "Function was called");
+			assert.ok(this.oMDCChart._oObserver, "Observer was created");
+			assert.ok(oPropagateSpy.calledOnce, "Function was called");
+
+			done();
+		}.bind(this));
+
     });
 
     QUnit.test("_createBreadcrumbs", function(assert){
-        assert.ok(true);
+		var oMockDelegate = {getDrillableItems: function(){return [];}};
+		this.oMDCChart.getControlDelegate = function() {return oMockDelegate;};
+        this.oMDCChart.setAggregation("_breadcrumbs", null);
+
+		this.oMDCChart._createBreadcrumbs();
+
+		assert.ok(this.oMDCChart.getAggregation("_breadcrumbs"));
     });
 
     QUnit.test("getAdaptionUI", function(assert){
-        assert.ok(true);
-    });
+		var oMockDelegate = {getAdaptionUI : function() {return "Test";}};
+		this.oMDCChart.getControlDelegate = function() {return oMockDelegate;};
+		var oDelegateSpy = sinon.spy(oMockDelegate,"getAdaptionUI");
 
-    QUnit.test("_rebind", function(assert){
-        assert.ok(true);
+		var sResult = this.oMDCChart.getAdaptationUI();
+
+		assert.equal(sResult, "Test", "Correct result returned");
+		assert.ok(oDelegateSpy.calledOnce, "Function was called on delegate");
     });
 
     QUnit.test("_addItems", function(assert){
-        assert.ok(true);
-    });
-
-    QUnit.test("getCollectionModel", function(assert){
         assert.ok(true);
     });
 
@@ -473,23 +627,66 @@ function(
     });
 
     QUnit.test("innerChartBound", function(assert){
-        assert.ok(true);
+		var done = assert.async();
+        var oMockDelegate = {checkAndUpdateMDCItems : function(){return Promise.resolve();}, createInnerChartContent: function(){return Promise.resolve();}, getDrillableItems: function(){return [];}};
+		this.oMDCChart.getControlDelegate = function() {return oMockDelegate;};
+		this.oMDCChart._propagatePropertiesToInnerChart = function(){}; //Mock this as it requires an inner chart (which we don't want to test in this case)
+
+		this.oMDCChart._createContentfromPropertyInfos();
+
+		this.oMDCChart.innerChartBound().then(function(){
+			assert.ok(true, "Promise was resolved during _createContentfromPropertyInfos");
+
+			done();
+		});
     });
 
     QUnit.test("getSelectionHandler", function(assert){
-        assert.ok(true);
+        var done = assert.async();
+        this.oMDCChart.initialized().then(function(){
+
+            var getInnerChartSelectionHandlerSpy = sinon.spy(this.oMDCChart.getControlDelegate(),"getInnerChartSelectionHandler");
+
+            this.oMDCChart.getSelectionHandler();
+
+
+            assert.ok(getInnerChartSelectionHandlerSpy.calledOnce,"getInnerChartSelectionHandler correctly called");
+            assert.ok(getInnerChartSelectionHandlerSpy.calledWith(this.oMDCChart),"getInnerChartSelectionHandler params correctly passed");
+            done();
+        }.bind(this));
     });
 
     QUnit.test("getChartTypeLayoutConfig", function(assert){
-        assert.ok(true);
+        var oMockDelegate = {getChartTypeLayoutConfig : function() {return "Test";}};
+		this.oMDCChart.getControlDelegate = function() {return oMockDelegate;};
+		var oDelegateSpy = sinon.spy(oMockDelegate,"getChartTypeLayoutConfig");
+
+		var sResult = this.oMDCChart.getChartTypeLayoutConfig();
+
+		assert.equal(sResult, "Test", "Correct result returned");
+		assert.ok(oDelegateSpy.calledOnce, "Function was called on delegate");
     });
 
     QUnit.test("getAllowedRolesForKinds", function(assert){
-        assert.ok(true);
+		var oMockDelegate = {getAllowedRolesForKinds : function() {return "Test";}};
+		this.oMDCChart.getControlDelegate = function() {return oMockDelegate;};
+		var oDelegateSpy = sinon.spy(oMockDelegate,"getAllowedRolesForKinds");
+
+		var sResult = this.oMDCChart.getAllowedRolesForKinds();
+
+		assert.equal(sResult, "Test", "Correct result returned");
+		assert.ok(oDelegateSpy.calledOnce, "Function was called on delegate");
     });
 
     QUnit.test("destroy", function(assert){
-        assert.ok(true);
+        var done = assert.async();
+        this.oMDCChart.initialized().then(function(){
+
+            this.oMDCChart.destroy();
+
+            assert.ok(this.oMDCChart._bIsDestroyed,"isDestroyed flag correctly set");
+            done();
+        }.bind(this));
     });
 
     QUnit.test("_showDrillDown", function(assert){
@@ -497,7 +694,7 @@ function(
     });
 
     QUnit.test("getManagedObjectModel", function(assert){
-        assert.ok(true);
+        assert.equal(this.oMDCChart.getManagedObjectModel(), this.oMDCChart._oManagedObjectModel, "ManagedObjectModel of chart was returned");
     });
 
     QUnit.test("_innerChartDataLoadComplete", function(assert){
@@ -559,23 +756,58 @@ function(
 	});
 
     QUnit.test("_getSortedProperties", function(assert){
-        assert.ok(true);
+        this.oMDCChart.setSortConditions({sorters: "ABC"});
+		assert.equal(this.oMDCChart._getSortedProperties(), "ABC", "Should return sorters form sortConditions");
+
+		this.oMDCChart.setSortConditions();
+		assert.equal(this.oMDCChart._getSortedProperties().length, 0, "Should return empty array");
     });
 
     QUnit.test("_getTypeBtnActive", function(assert){
-        assert.ok(true);
+        this.oMDCChart.setP13nMode(["Type"]);
+		assert.ok(this.oMDCChart._getTypeBtnActive(), "Button is set active");
+
+		this.oMDCChart.setP13nMode(["Item"]);
+		assert.ok(!this.oMDCChart._getTypeBtnActive(), "Button is set inactive");
     });
 
     QUnit.test("_onFiltersChanged", function(assert){
-        assert.ok(true);
+		var oMockDelegate = {getInnerChartBound : function() {return true;}};
+		this.oMDCChart.getControlDelegate = function() {return oMockDelegate;};
+		this.oMDCChart._renderOverlay = function(){};
+		var oOverlaySpy = sinon.spy(this.oMDCChart, "_renderOverlay");
+		this.oMDCChart._bInnerChartReady = true;
+
+		this.oMDCChart._onFiltersChanged({getParameter: function(){return true;}});
+
+		assert.ok(oOverlaySpy.calledOnce, "Overlay function was called");
+
     });
 
-    QUnit.test("setVariant", function(assert){
-        assert.ok(true);
+	QUnit.test("_onFiltersChanged with invalid event", function(assert){
+		var oMockDelegate = {getInnerChartBound : function() {return true;}};
+		this.oMDCChart.getControlDelegate = function() {return oMockDelegate;};
+		this.oMDCChart._renderOverlay = function(){};
+		var oOverlaySpy = sinon.spy(this.oMDCChart, "_renderOverlay");
+		this.oMDCChart._bInnerChartReady = true;
+
+		this.oMDCChart._onFiltersChanged({getParameter: function(){return false;}});
+
+		assert.ok(!oOverlaySpy.called, "Overlay function was not called");
+
     });
 
-    QUnit.test("addAction", function(assert){
-        assert.ok(true);
+	QUnit.test("_onFiltersChanged with unbound chart", function(assert){
+		var oMockDelegate = {getInnerChartBound : function() {return false;}};
+		this.oMDCChart.getControlDelegate = function() {return oMockDelegate;};
+		this.oMDCChart._renderOverlay = function(){};
+		var oOverlaySpy = sinon.spy(this.oMDCChart, "_renderOverlay");
+		this.oMDCChart._bInnerChartReady = true;
+
+		this.oMDCChart._onFiltersChanged({getParameter: function(){return true;}});
+
+		assert.ok(!oOverlaySpy.called, "Overlay function was not called");
+
     });
 
 	QUnit.module("sap.ui.mdc.Chart: Toolbar Actions", {
@@ -633,7 +865,7 @@ function(
 		}.bind(this));
 	});
 
-	QUnit.test("setHeight", function(assert){
+	QUnit.test("setHeaderLevel", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -648,5 +880,13 @@ function(
 			done();
 		}.bind(this));
 	});
+
+	QUnit.test("setVariant", function(assert){
+		var oToolbarSpy = sinon.spy(this.oMDCChart.getAggregation("_toolbar"),"addVariantManagement");
+
+		this.oMDCChart.setVariant(new VM());
+
+		assert.ok(oToolbarSpy.called, "Function was called on toolbar");
+    });
 
 });
