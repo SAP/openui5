@@ -2228,13 +2228,12 @@ sap.ui.define([
 			oValueModel.setData(oData);
 			oValueModel.checkUpdate(true);
 			oValueModel.firePropertyChange();
-			this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
-			oField._hideValueState(true, true);
 			if (oConfig.type === "object" || oConfig.type === "object[]") {
 				oField.mergeValueWithRequestResult(tResult);
 			}
-		}.bind(this)).catch(function (oError) {
 			this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
+			oField._hideValueState(true, true);
+		}.bind(this)).catch(function (oError) {
 			var sError = this._oResourceBundle.getText("EDITOR_BAD_REQUEST");
 			if (Array.isArray(oError) && oError.length > 0) {
 				sError = oError[0];
@@ -2262,6 +2261,7 @@ sap.ui.define([
 			if (oConfig.type === "object" || oConfig.type === "object[]") {
 				oField.mergeValueWithRequestResult();
 			}
+			this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
 			oField._showValueState("error", sError, true);
 		}.bind(this));
 	};

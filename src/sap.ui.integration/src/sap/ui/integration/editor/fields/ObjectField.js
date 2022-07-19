@@ -187,6 +187,7 @@ sap.ui.define([
 			settings: {
 				visibleRowCount: 5,
 				busy: "{currentSettings>_loading}",
+				busyIndicatorDelay: 200,
 				columns: columns,
 				selectionBehavior: "RowOnly",
 				rowSelectionChange: that.onTableSelectionChange.bind(that),
