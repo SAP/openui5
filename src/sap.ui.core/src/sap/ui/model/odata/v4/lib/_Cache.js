@@ -169,6 +169,7 @@ sap.ui.define([
 
 		return this.fetchValue(_GroupLock.$cached, sParentPath).then(function (vCacheData) {
 			var vCachePath = _Cache.from$skip(vDeleteProperty, vCacheData),
+				oDeleted,
 				oEntity = vDeleteProperty
 					? vCacheData[vCachePath] || vCacheData.$byPredicate[vCachePath]
 					: vCacheData, // deleting at root level
@@ -193,13 +194,9 @@ sap.ui.define([
 			}
 			oEntity["@$ui5.context.isDeleted"] = true;
 			if (Array.isArray(vCacheData)) {
-				iIndex = that.removeElement(vCacheData, iIndex, sKeyPredicate, sParentPath);
-				vCacheData.$deleted = vCacheData.$deleted || {};
-				vCacheData.$deleted[sKeyPredicate] = {
-					created : !!sTransientPredicate,
-					groupId : oGroupLock && oGroupLock.getGroupId(),
-					index : iIndex
-				};
+				oDeleted = that.addDeleted(vCacheData, iIndex, sKeyPredicate, oGroupLock,
+					!!sTransientPredicate);
+				that.removeElement(vCacheData, iIndex, sKeyPredicate, sParentPath);
 				fnCallback(iIndex, -1);
 			}
 			mHeaders = {"If-Match" : oETagEntity || oEntity};
@@ -223,7 +220,7 @@ sap.ui.define([
 				oGroupLock && oGroupLock.unlock() // unlock when all requests have been queued
 			]).then(function () {
 				if (Array.isArray(vCacheData)) {
-					delete vCacheData.$deleted[sKeyPredicate];
+					vCacheData.$deleted.splice(vCacheData.$deleted.indexOf(oDeleted), 1);
 					delete vCacheData.$byPredicate[sKeyPredicate];
 					delete vCacheData.$byPredicate[sTransientPredicate];
 				} else if (vDeleteProperty) {
@@ -236,13 +233,16 @@ sap.ui.define([
 				that.oRequestor.getModelInterface().reportStateMessages(that.sResourcePath,
 					{}, [sEntityPath]);
 			}, function (oError) {
+				var iDeletedIndex;
+
 				delete oEntity["@$ui5.context.isDeleted"];
 				if (Array.isArray(vCacheData)) {
 					addToCount(that.mChangeListeners, sParentPath, vCacheData, 1);
-					iIndex = vCacheData.$deleted[sKeyPredicate].index;
+					iIndex = oDeleted.index;
+					iDeletedIndex = vCacheData.$deleted.indexOf(oDeleted);
+					that.adjustIndexes(sParentPath, vCacheData, iIndex, 1, iDeletedIndex);
 					vCacheData.splice(iIndex, 0, oEntity);
-					that.adjustIndexes(sParentPath, vCacheData, iIndex, 1);
-					delete vCacheData.$deleted[sKeyPredicate];
+					vCacheData.$deleted.splice(iDeletedIndex, 1);
 					if (sTransientPredicate) {
 						vCacheData.$created += 1;
 						if (!sParentPath) {
@@ -256,6 +256,39 @@ sap.ui.define([
 				_Helper.removeByPath(that.mChangeRequests, sEntityPath, oRequestPromise);
 			});
 		});
+	};
+
+	/**
+	 * Adds an entry about a deleted entity to <code>aElements.$deleted</code>. Ensures that the
+	 * entries are ordered by entity index and deletion order (if two entities were deleted on the
+	 * same index, the second one must be behind).
+	 *
+	 * @param {object[]} aElements - The elements collection
+	 * @param {number} iIndex - The entity's index
+	 * @param {string} sPredicate - The entity's key predicate
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock|undefined} oGroupLock - The deletion group lock
+	 * @param {boolean} bCreated - Whether the entity was created
+	 * @returns {object} The deletion info
+	 *
+	 * @private
+	 */
+	_Cache.prototype.addDeleted = function (aElements, iIndex, sPredicate, oGroupLock, bCreated) {
+		var oDeleted = {
+				created : bCreated,
+				groupId : oGroupLock && oGroupLock.getGroupId(),
+				predicate : sPredicate,
+				index : iIndex
+			},
+			i;
+
+		aElements.$deleted = aElements.$deleted || [];
+		for (i = 0; i < aElements.$deleted.length; i += 1) {
+			if (iIndex < aElements.$deleted[i].index) {
+				break;
+			}
+		}
+		aElements.$deleted.splice(i, 0, oDeleted);
+		return oDeleted;
 	};
 
 	/**
@@ -281,13 +314,15 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath The path of the collection in the cache
 	 * @param {object[]} aElements The collection
-	 * @param {number} iIndex The index at which an element has been inserted or removed
+	 * @param {number} iIndex The index at which the element has been inserted or removed
 	 * @param {number} iOffset The offset (1 = insert, -1 = remove)
+	 * @param {number} iDeletedIndex The element's index in $deleted (only for re-insertion)
 	 * @param {boolean} bCreate Whether the insert is a create (and not reverting a delete)
 	 *
 	 * @private
 	 */
-	_Cache.prototype.adjustIndexes = function (sPath, aElements, iIndex, iOffset, bCreate) {
+	_Cache.prototype.adjustIndexes = function (sPath, aElements, iIndex, iOffset, iDeletedIndex,
+			bCreate) {
 		if (!sPath) {
 			// If the path is empty, we are in a _CollectionCache and aReadRequest exists
 			this.aReadRequests.forEach(function (oReadRequest) {
@@ -297,11 +332,9 @@ sap.ui.define([
 				} // Note: no changes can happen inside *gaps*
 			});
 		}
-		Object.keys(aElements.$deleted || {}).forEach(function (sKey) {
-			var oDeleted = aElements.$deleted[sKey];
-
-			if (oDeleted.index > iIndex // definitely before the deleted one
-					|| bCreate && oDeleted.index === iIndex // creating at delete position
+		(aElements.$deleted || []).forEach(function (oDeleted, i) {
+			if (iIndex < oDeleted.index || iDeletedIndex < i // before the deleted one
+					|| bCreate
 						&& (iIndex === 0 // create at start
 							|| !oDeleted.created)) { // the deleted one was not created
 				oDeleted.index += iOffset;
@@ -514,7 +547,7 @@ sap.ui.define([
 		// if the nested collection is empty $byPredicate is not available, create it on demand
 		aCollection.$byPredicate = aCollection.$byPredicate || {};
 		aCollection.$byPredicate[sTransientPredicate] = oEntityData;
-		that.adjustIndexes(sPath, aCollection, 0, 1, true);
+		that.adjustIndexes(sPath, aCollection, 0, 1, 0, true);
 
 		return oPostPathPromise.then(function (sPostPath) {
 			sPostPath += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
@@ -2425,9 +2458,9 @@ sap.ui.define([
 				addKeyFilter(oElement);
 			}
 		}
-		Object.keys(this.aElements.$deleted || {}).forEach(function (sPredicate) {
-			if (that.aElements.$deleted[sPredicate].created) {
-				addKeyFilter(that.aElements.$byPredicate[sPredicate]);
+		(this.aElements.$deleted || []).forEach(function (oDeleted) {
+			if (oDeleted.created) {
+				addKeyFilter(that.aElements.$byPredicate[oDeleted.predicate]);
 			}
 		});
 
@@ -2473,16 +2506,14 @@ sap.ui.define([
 	_CollectionCache.prototype.getReadOffset = function (sGroupId, iStart) {
 		var iOffset = 0;
 
-		if (this.aElements.$deleted) {
-			Object.values(this.aElements.$deleted).forEach(function (oDeleteInfo) {
-				// if deleting in the same group, the entity is gone when the server reads
-				// created-persisted entities are excluded via filter
-				if (oDeleteInfo.groupId !== sGroupId && !oDeleteInfo.created
-						&& oDeleteInfo.index <= iStart) {
-					iOffset += 1;
-				}
-			});
-		}
+		(this.aElements.$deleted || []).forEach(function (oDeleteInfo) {
+			// if deleting in the same group, the entity is gone when the server reads
+			// created-persisted entities are excluded via filter
+			if (oDeleteInfo.groupId !== sGroupId && !oDeleteInfo.created
+					&& oDeleteInfo.index <= iStart) {
+				iOffset += 1;
+			}
+		});
 
 		return iOffset;
 	};

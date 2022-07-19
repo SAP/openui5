@@ -358,6 +358,7 @@ sap.ui.define([
 			+ ", created: " + oFixture.bCreated
 			+ (oFixture.oEntity ? " (ETagEntity)" : ""), function (assert) {
 		var that = this,
+			bAddDeleted = false,
 			mQueryOptions = {foo : "bar"},
 			oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')", mQueryOptions),
 			sEtag = 'W/"19770724000000.0000000"',
@@ -369,6 +370,7 @@ sap.ui.define([
 				"@odata.etag" : sEtag
 			}, {}],
 			fnCallback = this.spy(),
+			oDeleted = {index : "~insert~"},
 			oError = new Error(""),
 			oGroupLock = new _GroupLock("group", "owner", true),
 			oGroupLockCopy = {},
@@ -383,13 +385,12 @@ sap.ui.define([
 				that.mock(_Helper).expects("updateExisting").exactly(iOnFailure)
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath,
 						sinon.match.same(aCacheData), {$count : 3});
-				aCacheData.$deleted["('1')"].index = "~insert~";
 				aCacheData.$created = 1;
 				oCache.iActiveElements = 1;
 				that.mock(aCacheData).expects("splice").exactly(iOnFailure)
 					.withExactArgs("~insert~", 0, sinon.match.same(aCacheData[1]));
 				that.mock(oCache).expects("adjustIndexes").exactly(iOnFailure)
-					.withExactArgs(sPath, sinon.match.same(aCacheData), "~insert~", 1);
+					.withExactArgs(sPath, sinon.match.same(aCacheData), "~insert~", 1, 2);
 				if (oFixture.iStatus !== 200) {
 					throw oError;
 				}
@@ -404,8 +405,6 @@ sap.ui.define([
 		this.mock(oCache).expects("addPendingRequest").never();
 		this.mock(oCache).expects("removePendingRequest").never();
 		oCache.fetchValue = function () {};
-		// no need for different tests for top level or nested collections because
-		// fetchValue takes care to deliver corresponding elements
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), sPath)
 			.returns(SyncPromise.resolve(aCacheData));
@@ -413,9 +412,19 @@ sap.ui.define([
 			.withExactArgs(oFixture.bCreated ? "-1" : "0", sinon.match.same(aCacheData))
 			.returns(1);
 		oError.status = oFixture.iStatus;
+		this.mock(oCache).expects("addDeleted")
+			.withExactArgs(sinon.match.same(aCacheData), 1, "('1')", sinon.match.same(oGroupLock),
+				oFixture.bCreated)
+			.callsFake(function () {
+				bAddDeleted = true;
+				aCacheData.$deleted = ["a", "b", oDeleted, "c"];
+				return oDeleted;
+			});
 		this.mock(oCache).expects("removeElement")
 			.withExactArgs(sinon.match.same(aCacheData), 1, "('1')", sPath)
-			.returns("~removeIndex~");
+			.callsFake(function () {
+				assert.ok(bAddDeleted, "removeElement called after addDeleted");
+			});
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/EMPLOYEES", sinon.match.same(mQueryOptions), true)
 			.returns("?foo=bar");
@@ -445,20 +454,18 @@ sap.ui.define([
 
 		assert.notOk(oGroupLock.isLocked(), "unlocked synchronously");
 		assert.strictEqual(aCacheData[1]["@$ui5.context.isDeleted"], true);
-		assert.deepEqual(aCacheData.$deleted["('1')"],
-			{created : oFixture.bCreated, groupId : "group", index : "~removeIndex~"});
 		sinon.assert.calledOnce(fnCallback);
-		sinon.assert.calledWithExactly(fnCallback, "~removeIndex~", -1);
+		sinon.assert.calledWithExactly(fnCallback, 1, -1);
 
 		return oPromise.then(function () {
 			assert.notStrictEqual(oFixture.iStatus, 500, "unexpected success");
-			assert.notOk("('1')" in aCacheData.$deleted);
+			assert.deepEqual(aCacheData.$deleted, ["a", "b", "c"]);
 			assert.notOk("('1')" in aCacheData.$byPredicate);
 		}, function (oError0) {
 			assert.strictEqual(oFixture.iStatus, 500, JSON.stringify(oError0));
 			assert.strictEqual(oError0, oError);
 			assert.notOk("@$ui5.context.isDeleted" in aCacheData[1]);
-			assert.notOk("('1')" in aCacheData.$deleted);
+			assert.deepEqual(aCacheData.$deleted, ["a", "b", "c"]);
 			assert.strictEqual(aCacheData.$created, oFixture.bCreated ? 2 : 1);
 			assert.strictEqual(oCache.iActiveElements, oFixture.bCreated && !sPath ? 2 : 1);
 			sinon.assert.calledTwice(fnCallback);
@@ -667,16 +674,76 @@ sap.ui.define([
 		this.oRequestorMock.expects("request").never();
 		this.mock(oCache).expects("requestCount").never();
 		this.mock(oCache).expects("removeElement")
-			.withExactArgs(sinon.match.same(aCacheData), undefined, "('1')", "")
-			// in real life, returns undefined, but symbolic value leads to stronger test
-			.returns("iIndex");
+			.withExactArgs(sinon.match.same(aCacheData), undefined, "('1')", "");
 
 		// code under test
 		return oCache._delete(null, "EMPLOYEES('1')", "('1')", "etag", true, fnCallback)
 			.then(function () {
 				sinon.assert.calledOnce(fnCallback);
-				sinon.assert.calledWithExactly(fnCallback, "iIndex", -1);
+				sinon.assert.calledWithExactly(fnCallback, undefined, -1);
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#addDeleted", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
+			oDeleted1,
+			oDeleted2,
+			oDeleted3,
+			oDeleted4,
+			aElements = [],
+			oGroupLock = {
+				getGroupId : function () { return "group"; }
+			};
+
+		// code under test
+		oDeleted1 = oCache.addDeleted(aElements, 5, "('5')", oGroupLock);
+
+		assert.deepEqual(oDeleted1, {
+			created : undefined,
+			groupId : "group",
+			predicate : "('5')",
+			index : 5
+		});
+		assert.deepEqual(aElements, []); // to satisfy ESLint
+		assert.deepEqual(aElements.$deleted, [oDeleted1]);
+		assert.strictEqual(aElements.$deleted[0], oDeleted1);
+
+		// code under test
+		oDeleted2 = oCache.addDeleted(aElements, 0, "('0')", undefined, true);
+
+		assert.deepEqual(oDeleted2, {
+			created : true,
+			groupId : undefined,
+			predicate : "('0')",
+			index : 0
+		});
+		assert.deepEqual(aElements.$deleted, [oDeleted2, oDeleted1]);
+		assert.strictEqual(aElements.$deleted[0], oDeleted2);
+
+		// code under test
+		oDeleted3 = oCache.addDeleted(aElements, 3, "('3')");
+
+		assert.deepEqual(oDeleted3, {
+			created : undefined,
+			groupId : undefined,
+			predicate : "('3')",
+			index : 3
+		});
+		assert.deepEqual(aElements.$deleted, [oDeleted2, oDeleted3, oDeleted1]);
+		assert.strictEqual(aElements.$deleted[1], oDeleted3);
+
+		// code under test
+		oDeleted4 = oCache.addDeleted(aElements, 3, "('4')");
+
+		assert.deepEqual(oDeleted4, {
+			created : undefined,
+			groupId : undefined,
+			predicate : "('4')",
+			index : 3
+		});
+		assert.deepEqual(aElements.$deleted, [oDeleted2, oDeleted3, oDeleted4, oDeleted1]);
+		assert.strictEqual(aElements.$deleted[2], oDeleted4);
 	});
 
 	//*********************************************************************************************
@@ -5105,29 +5172,35 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "Employees"),
 			aElements = [];
 
-		aElements.$deleted = [{index : 0}, {index : 6}, {index : 8}];
+		aElements.$deleted = [{index : 0}, {index : 6}, {index : 7}, {index : 8}];
 
-		// code under test - remove: a previously removed entity at the same index must not be moved
+		// code under test
 		oCache.adjustIndexes("foo", aElements, 6, -1);
 
-		assert.deepEqual(aElements.$deleted, [{index : 0}, {index : 6}, {index : 7}]);
+		assert.deepEqual(aElements.$deleted, [{index : 0}, {index : 6}, {index : 6}, {index : 7}],
+			"remove: a previously removed entity at the same index must not be moved");
 
-		// code under test - re-insert (in reverse order): same index must not be moved
-		oCache.adjustIndexes("foo", aElements, 6, 1);
+		// code under test
+		oCache.adjustIndexes("foo", aElements, 6, 1, 1);
 
-		assert.deepEqual(aElements.$deleted, [{index : 0}, {index : 6}, {index : 8}]);
+		assert.deepEqual(aElements.$deleted, [{index : 0}, {index : 6}, {index : 7}, {index : 8}],
+			"re-insert: observe position in $deleted");
 
-		// code under test - insert a created entity at the start: index 0 moves
-		oCache.adjustIndexes("foo", aElements, 0, 1, true);
+		aElements.$deleted = [{index : 0, created : true}, {index : 2}];
 
-		assert.deepEqual(aElements.$deleted, [{index : 1}, {index : 7}, {index : 9}]);
+		// code under test
+		oCache.adjustIndexes("foo", aElements, 0, 1, 0, true);
+
+		assert.deepEqual(aElements.$deleted, [{index : 1, created : true}, {index : 3}],
+			"insert a created entity at the start: a previously created one moves");
 
 		aElements.$deleted = [{index : 2, created : true}, {index : 2}];
 
-		// code under test - insert a created entity at the end: only non-created entities move
-		oCache.adjustIndexes("foo", aElements, 2, 1, true);
+		// code under test
+		oCache.adjustIndexes("foo", aElements, 2, 1, 0, true);
 
-		assert.deepEqual(aElements.$deleted, [{index : 2, created : true}, {index : 3}]);
+		assert.deepEqual(aElements.$deleted, [{index : 2, created : true}, {index : 3}],
+			"insert a created entity at the end: only non-created entities move");
 	});
 
 	//*********************************************************************************************
@@ -6073,10 +6146,10 @@ sap.ui.define([
 				.returns("EmployeeId eq '42'");
 		}
 		if (oFixture.deleted) {
-			oCache.aElements.$deleted = {
-				"('23')" : {created : true},
-				"('46')" : {created : false}
-			};
+			oCache.aElements.$deleted = [
+				{created : true, predicate : "('23')"},
+				{created : false, predicate : "n/a"}
+			];
 			oCache.aElements.$byPredicate = {"('23')" : oElement4};
 			oHelperMock.expects("getKeyFilter")
 				.withExactArgs(sinon.match.same(oElement4), oCache.sMetaPath,
@@ -7797,7 +7870,7 @@ sap.ui.define([
 		this.spy(_Helper, "addByPath");
 		this.spy(oRequestor, "request");
 		oCacheMock.expects("adjustIndexes")
-			.withExactArgs("('0')/TEAM_2_EMPLOYEES", sinon.match.same(aCollection), 0, 1, true);
+			.withExactArgs("('0')/TEAM_2_EMPLOYEES", sinon.match.same(aCollection), 0, 1, 0, true);
 
 		// code under test
 		oCreatePromise = oCache.create(oGroupLock, oPostPathPromise, sPathInCache,
@@ -8584,7 +8657,7 @@ sap.ui.define([
 			.callThrough();
 		this.mock(oCache).expects("getValue").withExactArgs("").returns(aCollection);
 		this.mock(oCache).expects("adjustIndexes")
-			.withExactArgs("", sinon.match.same(aCollection), 0, 1, true);
+			.withExactArgs("", sinon.match.same(aCollection), 0, 1, 0, true);
 		this.mock(this.oRequestor).expects("buildQueryString")
 			.withExactArgs("/Employees", sinon.match.same(mQueryOptions), true)
 			.returns("?sap-client=111");
@@ -9772,14 +9845,14 @@ sap.ui.define([
 
 		assert.strictEqual(oCache.getReadOffset("group", 0), 0);
 
-		oCache.aElements.$deleted = {
-			"0" : {created : false, groupId : "group", index : 0},
-			new : {created : true, groupId : "other", index : 1},
-			"1" : {created : false, groupId : "other", index : 2},
-			"2" : {created : false, groupId : "other", index : 2},
-			"3" : {created : false, groupId : "other", index : 3},
-			"4" : {created : false, groupId : "other", index : 5}
-		};
+		oCache.aElements.$deleted = [
+			{created : false, groupId : "group", index : 0},
+			{created : true, groupId : "other", index : 1},
+			{created : false, groupId : "other", index : 2},
+			{created : false, groupId : "other", index : 2},
+			{created : false, groupId : "other", index : 3},
+			{created : false, groupId : "other", index : 5}
+		];
 
 		assert.strictEqual(oCache.getReadOffset("group", 3), 3);
 	});
