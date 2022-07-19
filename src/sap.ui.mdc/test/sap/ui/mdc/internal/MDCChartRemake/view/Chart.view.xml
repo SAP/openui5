@@ -457,7 +457,7 @@
 			<f2:content>
 				<VBox>
 					<mdc:Chart id="bookChart" filter="booksFilterBar" autoBindOnInit="false" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
-							'name': 'sap/ui/mdc/odata/v4/vizChart/ChartDelegate',
+							'name': 'delegates/odata/v4/vizChart/ChartDelegate',
 							'payload': {
 								collectionName: 'Books'
 							}
