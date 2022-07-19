@@ -12,9 +12,13 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Core",
+	"sap/f/GridContainerItemLayoutData",
+	"sap/f/GridContainerSettings",
+	"sap/f/GridContainer",
 	"sap/ui/dom/jquery/Selectors", // provides jQuery custom selector ":sapTabbable"
 	"sap/ui/events/jquery/EventExtension" // only used indirectly?
-], function(jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes, qutils, oCore) {
+], function(jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes, qutils, oCore, GridContainerItemLayoutData,
+	GridContainerSettings, GridContainer) {
 	"use strict";
 
 
@@ -904,6 +908,9 @@ sap.ui.define([
 		}
 	});
 
+// shortcut for sap.m.FrameType
+var FrameType = library.FrameType;
+
 	QUnit.module("SlideTile with GenericTiles", {
 		beforeEach: function() {
 			if (this.initialScreenWidth && this.initialWidth) {
@@ -942,6 +949,10 @@ sap.ui.define([
 				this.oSlideTile.destroy();
 				this.oSlideTile = null;
 			}
+			if (this.oGrid) {
+				this.oGrid.destroy();
+				this.oGrid = null;
+			}
 			if (this.oTile1) {
 				this.oTile1.destroy();
 				this.oTile1 = null;
@@ -952,6 +963,30 @@ sap.ui.define([
 			}
 			var done = assert.async();
 			this.applyTheme(this.sStartTheme, done);
+		},
+		fnCreateGridContainer: function(sGap){
+			this.oGrid = new GridContainer({
+				layout: ({columns: 6, rowSize: "80px", columnSize: "80px", gap: sGap}),
+				items: [
+					this.oTile1 = new SlideTile({
+						header: "headerText 1",
+						subheader: "subheaderText",
+						state:"Loaded",
+						layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 }),
+						items: [this.oTile3 = new GenericTile({
+							header: "headerText 2",
+							subheader: "subheaderText",
+							frameType : FrameType.TwoByOne,
+							state:"Loaded",
+							layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 })
+						})
+					]
+					})
+				]
+			});
+
+			this.oGrid.placeAt("qunit-fixture");
+			oCore.applyChanges();
 		},
 		createTile: function() {
 			return new GenericTile({
@@ -1055,6 +1090,17 @@ sap.ui.define([
 			document.querySelector("html").classList.add("sap-desktop");
 		}
 	});
+	QUnit.test("Checking if the correct width has been applied when the gap is 1rem", function (assert) {
+		// Arrange
+		this.fnCreateGridContainer("1rem");
+		var aItems = this.oGrid.getItems();
+		oCore.applyChanges();
+		// Assert
+		assert.ok(aItems[0].hasStyleClass("sapMSTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem");
+		//small tiles
+		aItems[0].setSizeBehavior("Small");
+		//Assert
+		assert.ok(aItems[0].hasStyleClass("sapMSTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem");
 
 	QUnit.test("S4 home slide tile", function(assert) {
 		//Arrange
@@ -1066,6 +1112,20 @@ sap.ui.define([
 		assert.ok(this.oSlideTile.getDomRef().classList.contains("sapMTileSmallPhone"),"class has been successfully added");
 	});
 
+	});
+	QUnit.test("Checking if the correct width has not been applied when the gap is not 1rem", function (assert) {
+		// Arrange
+		this.fnCreateGridContainer("0.5rem");
+		var aItems = this.oGrid.getItems();
+		oCore.applyChanges();
+		// Assert
+		assert.notOk(aItems[0].hasStyleClass("sapMSTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem");
+		//small tiles
+		aItems[0].setSizeBehavior("Small");
+		//Assert
+		assert.notOk(aItems[0].hasStyleClass("sapMSTWidthForGridContainer"),"Width has been applied successfully when the gap is 1rem");
+
+	});
 	QUnit.test("Tab Navigation on tiles", function(assert) {
 		var bForward = true;
 		this.oTile1 = this.createTile().placeAt("qunit-fixture");

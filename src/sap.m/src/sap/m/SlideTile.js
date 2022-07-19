@@ -157,6 +157,11 @@ sap.ui.define([
 		this._stopAnimation();
 		this._sWidth = this._sHeight = undefined;
 		this._iCurrentTile = this._iPreviousTile = undefined;
+
+		//sets the extra width of 0.5rem when the grid container has 1rem gap for the TwoByxxxx tiles
+		if (this.getParent() && this.getParent().isA("sap.f.GridContainer")){
+			this._applyExtraWidth();
+		}
 	};
 
 	/**
@@ -754,6 +759,16 @@ sap.ui.define([
 			}
 		}
 		return false;
+	};
+
+	SlideTile.prototype._applyExtraWidth = function() {
+		var sGap = this.getParent().getActiveLayoutSettings().getGap();
+		var bisGap16px = sGap === "16px" || sGap === "1rem";
+		if (bisGap16px){
+			this.addStyleClass("sapMSTWidthForGridContainer");
+		} else if (!bisGap16px && this.hasStyleClass("sapMSTWidthForGridContainer")){
+			this.removeStyleClass("sapMSTWidthForGridContainer");
+		}
 	};
 
 	/**
