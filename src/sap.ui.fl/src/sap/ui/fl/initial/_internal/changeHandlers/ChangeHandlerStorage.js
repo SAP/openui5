@@ -20,7 +20,15 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Storage of all registered change handlers
+	 * Storage of all registered change handlers.
+	 *
+	 * @alias sap.ui.fl.registry.ChangeHandlerStorage
+	 *
+	 * @author SAP SE
+	 * @version ${version}
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 *
 	 */
 	var ChangeHandlerStorage = {};
 

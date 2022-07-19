@@ -38,7 +38,9 @@ sap.ui.define([
 	 * @alias sap.ui.fl.Utils
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.25.0
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	var Utils = {
 		APP_ID_AT_DESIGN_TIME: "${pro" + "ject.art" + "ifactId}", //avoid replaced by content of ${project.artifactId} placeholder at build steps
@@ -75,9 +77,11 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
 		 * @returns {object} that represent the appDescriptor
-		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.getAppDescriptor
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
 		getAppDescriptor: function(oControl) {
 			var oManifest = null;
@@ -105,9 +109,11 @@ sap.ui.define([
 		 *
 		 * @param {object} oComponentData - Component data
 		 * @returns {string} siteId - that represent the found siteId
-		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.getSiteIdByComponentData
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl.apply._internal.flexState.Loader
 		 */
 		getSiteIdByComponentData: function(oComponentData) {
 			return this._getStartUpParameter(oComponentData, "hcpApplicationId");
@@ -118,9 +124,11 @@ sap.ui.define([
 		 *
 		 * @param {object} vPropertyValue - Property value
 		 * @returns {boolean} true if value represents a binding
-		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.isBinding
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl
 		 */
 		isBinding: function(vPropertyValue) {
 			return (
@@ -146,8 +154,10 @@ sap.ui.define([
 		 * @see sap.ui.fl.variants.VariantManagement
 		 * @param {sap.ui.fl.Change} oChange Change object
 		 * @returns {boolean} If the passed change is a variant management change
-		 * @public
 		 * @name sap.ui.fl.Utils.isChangeRelatedToVariants
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl.ChangePersistence
 		 */
 		isChangeRelatedToVariants: function(oChange) {
 			return oChange.getFileType() === "ctrl_variant_change"
@@ -226,7 +236,8 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
 		 * @returns {sap.ui.core.Component} found component
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.fl
 		 */
 		getComponentForControl: function(oControl) {
 			return Utils._getComponentForControl(oControl);
@@ -238,7 +249,8 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.base.ManagedObject} oControl - Managed object instance
 		 * @returns {sap.ui.core.Component} component instance if found or null
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.fl
 		 */
 		getAppComponentForControl: function(oControl) {
 			var oComponent = oControl instanceof Component ? oControl : this._getComponentForControl(oControl);
@@ -327,7 +339,9 @@ sap.ui.define([
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
 		 * @returns {sap.ui.core.mvc.View} The view
 		 * @see sap.ui.core.Component.getOwnerIdFor
-		 * @public
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl
 		 */
 		getViewForControl: function(oControl) {
 			return Utils.getFirstAncestorOfControlWithControlType(oControl, sap.ui.core.mvc.View);
@@ -359,10 +373,12 @@ sap.ui.define([
 		/**
 		 * Returns the tenant number for the communication with the ABAP back end.
 		 *
-		 * @public
 		 * @function
 		 * @returns {string} the current client
 		 * @name sap.ui.fl.Utils.getClient
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl.write._internal.transport.Transport
 		 */
 		getClient: function() {
 			var oUriParams;
@@ -378,7 +394,9 @@ sap.ui.define([
 		/**
 		 * Returns whether the hot fix mode is active (url parameter hotfix=true)
 		 *
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.fl.apply.api.SmartVariantManagementApplyAPI
+		 *
 		 * @returns {boolean} is hotfix mode active, or not
 		 */
 		isHotfixMode: function() {
@@ -387,33 +405,6 @@ sap.ui.define([
 			oUriParams = this._getUriParameters();
 			sIsHotfixMode = oUriParams.get("hotfix");
 			return (sIsHotfixMode === "true");
-		},
-
-		/**
-		 * Converts the browser language into a 2-character ISO 639-1 language. If the browser language is in format RFC4646, the first part will be
-		 * used: For example en-us will be converted to EN. If the browser language already is in ISO 639-1, it will be returned after an upper case
-		 * conversion: For example de will be converted to DE.
-		 *
-		 * @param {string} sBrowserLanguage - Language in RFC4646
-		 * @returns {string} Language in ISO 639-1. Empty string if conversion was not successful
-		 * @public
-		 * @function
-		 * @name sap.ui.fl.Utils.convertBrowserLanguageToISO639_1
-		 */
-		convertBrowserLanguageToISO639_1: function(sBrowserLanguage) {
-			if (!sBrowserLanguage || typeof sBrowserLanguage !== "string") {
-				return "";
-			}
-
-			var nIndex = sBrowserLanguage.indexOf("-");
-			if ((nIndex < 0) && (sBrowserLanguage.length <= 2)) {
-				return sBrowserLanguage.toUpperCase();
-			}
-			if (nIndex > 0 && nIndex <= 2) {
-				return sBrowserLanguage.substring(0, nIndex).toUpperCase();
-			}
-
-			return "";
 		},
 
 		getLrepUrl: function() {
@@ -429,11 +420,42 @@ sap.ui.define([
 		 * Returns the current language in ISO 639-1 format.
 		 *
 		 * @returns {string} Language in ISO 639-1. Empty string if language cannot be determined
-		 * @public
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl
 		 */
 		getCurrentLanguage: function() {
 			var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 			return Utils.convertBrowserLanguageToISO639_1(sLanguage);
+		},
+
+
+		/**
+		 * Converts the browser language into a 2-character ISO 639-1 language. If the browser language is in format RFC4646, the first part will be
+		 * used: For example en-us will be converted to EN. If the browser language already is in ISO 639-1, it will be returned after an upper case
+		 * conversion: For example de will be converted to DE.
+		 *
+		 * @function
+		 * @name sap.ui.fl.Utils.convertBrowserLanguageToISO639_1
+		 * @param {string} sBrowserLanguage - Language in RFC4646
+		 * @returns {string} Language in ISO 639-1. Empty string if conversion was not successful
+		 *
+		 * @private
+		 */
+		convertBrowserLanguageToISO639_1: function(sBrowserLanguage) {
+			if (!sBrowserLanguage || typeof sBrowserLanguage !== "string") {
+				return "";
+			}
+
+			var nIndex = sBrowserLanguage.indexOf("-");
+			if ((nIndex < 0) && (sBrowserLanguage.length <= 2)) {
+				return sBrowserLanguage.toUpperCase();
+			}
+			if (nIndex > 0 && nIndex <= 2) {
+				return sBrowserLanguage.substring(0, nIndex).toUpperCase();
+			}
+
+			return "";
 		},
 
 		/**
@@ -636,7 +658,9 @@ sap.ui.define([
 		 * @param {sap.ui.core.Manifest} oManifest - Manifest object
 		 * @param {boolean} isRaw - is manifest raw object
 		 * @returns {boolean} <code>true</code> if the passed manifest object is of type "application"
-		 * @public
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl
 		 */
 		isApplication: function(oManifest, isRaw) {
 			var sComponentType = isRaw ? Utils._getComponentTypeFromRawManifest(oManifest) : Utils._getComponentTypeFromManifest(oManifest);
@@ -646,7 +670,9 @@ sap.ui.define([
 		/** Returns <code>true</code> if the passed component is an application component.
 		 * @param {sap.ui.core.Component} oComponent - Component instance
 		 * @returns {boolean} <code>true</code> if the passed component is of type "application"
-		 * @public
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl
 		 */
 		isApplicationComponent: function(oComponent) {
 			return oComponent instanceof Component && Utils.isApplication(oComponent.getManifestObject());
@@ -655,7 +681,9 @@ sap.ui.define([
 		/** Returns <code>true</code> if the passed component is an embedded component.
 		 * @param {sap.ui.core.Component} oComponent - Component instance
 		 * @returns {boolean} <code>true</code> if the passed component is of type "component"
-		 * @public
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl
 		 */
 		isEmbeddedComponent: function(oComponent) {
 			return oComponent instanceof Component && Utils._getComponentTypeFromManifest(oComponent.getManifestObject()) === "component";
@@ -666,7 +694,9 @@ sap.ui.define([
 		 *
 		 * @param {object|sap.ui.core.Manifest} oManifest - Manifest of the component
 		 * @returns {string} Version of application if it is available in the manifest, otherwise an empty string
-		 * @public
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl
 		 */
 		getAppIdFromManifest: function(oManifest) {
 			if (oManifest) {
@@ -692,7 +722,9 @@ sap.ui.define([
 		 * @param {object[]} aArray Array of objects
 		 * @param {object} oObject object that should be part of the array
 		 * @returns {int} Returns the index of the object in the array, -1 if it is not in the array
-		 * @public
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl
 		 */
 		indexOfObject: function(aArray, oObject) {
 			var iObjectIndex = -1;
@@ -810,7 +842,8 @@ sap.ui.define([
 			 * @param {function} fnSuccess - Resolve handler
 			 * @param {function} fnError - Reject handler
 			 * @returns {sap.ui.fl.Utils.FakePromise|Promise} <code>FakePromise</code> if no promise is returned by the resolve handler
-			 * @public
+			 * @private
+			 * @ui5-restricted sap.ui.fl, sap.ui.rta, ui5 internal tests
 			 */
 			Utils.FakePromise.prototype.then = function(fnSuccess, fnError) {
 				if (!this.bContinueWithFakePromise) {
@@ -829,7 +862,9 @@ sap.ui.define([
 			 * <code>catch</code> function as for promise (es6)
 			 * @param {function} fn - Rejection handler
 			 * @returns {sap.ui.fl.Utils.FakePromise|Promise} <code>FakePromise</code> if no promise is returned by the rejection handler
-			 * @public
+			 *
+			 * @private
+			 * @ui5-restricted sap.ui.fl, sap.ui.rta
 			 */
 			Utils.FakePromise.prototype.catch = function(fn) {
 				if (!this.bContinueWithFakePromise) {

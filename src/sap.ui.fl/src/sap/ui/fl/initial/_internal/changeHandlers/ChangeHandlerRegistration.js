@@ -78,6 +78,14 @@ sap.ui.define([
 		/**
 		 * Detects already loaded libraries and registers defined changeHandlers.
 		 *
+		 *
+		 * @alias sap.ui.fl.registry.ChangeHandlerRegistration
+		 *
+		 * @author SAP SE
+		 * @version ${version}
+		 * @private
+		 * @ui5-restricted sap.ui.fl
+		 *
 		 * @returns {Promise} Returns an empty promise when all changeHandlers from all libraries are registered.
 		 */
 		getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs: function () {

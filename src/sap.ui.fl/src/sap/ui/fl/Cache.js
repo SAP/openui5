@@ -101,7 +101,7 @@ function(
 	 * @return {Promise} Returns the promise resolved with the determined cache key
 	 *
 	 * @private
-	 * @restricted sap.ui.fl
+	 * @ui5-restricted sap.ui.fl
 	 *
 	 */
 	Cache.getCacheKey = function(mComponent, oAppComponent) {

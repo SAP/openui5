@@ -25,7 +25,6 @@ sap.ui.define([
 	 *
 	 * @namespace sap.ui.fl.initial._internal.connectors.LrepConnector
 	 * @implements {sap.ui.fl.interfaces.BaseLoadConnector}
-	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @private
 	 * @ui5-restricted sap.ui.fl.initial._internal.Storage, sap.ui.fl.write._internal.Storage, sap.ui.fl.write._internal.transport

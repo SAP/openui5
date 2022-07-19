@@ -47,7 +47,9 @@ sap.ui.define([
 		 * 					"localonly" tells the consumer if only local development is valid and no transport selection should take place.
 		 * 					"transports" is an array of objects with attributes "transportId", "owner", "description", "locked"(true/false).
 		 * 					"errorCode" can have the values "INVALID_PACKAGE" or "NO_TRANSPORTS" or is an empty string if there is no error.
-		 * @public
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl.write._internal.transport
 		 */
 		getTransports: function (mParameters) {
 			if (FlexUtils.getClient()) {
@@ -80,7 +82,9 @@ sap.ui.define([
 		 * @param {string} mParameters.changeIds Array of change ID objects with attributes "namespace", "fileName", "fileType"
 		 * @param {string} mParameters.reference Application ID of the changes which should be transported
 		 * @returns {Promise} without parameters
-		 * @public
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl.write._internal.transport
 		 */
 		makeChangesTransportable: function (mParameters) {
 			if (!mParameters.transportId) {
@@ -111,6 +115,9 @@ sap.ui.define([
 		 * @param {Array} aLocalChanges List of changes which data have to be extracted
 		 * @param {Array} [aAppVariantDescriptors] List of app variant descriptors which data have to be extracted
 		 * @returns {Array} Returns an array of object containing all required data to transport the existing local changes
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl.write._internal.transport
 		 */
 		convertToChangeTransportData: function (aLocalChanges, aAppVariantDescriptors) {
 			var aTransportData = [];

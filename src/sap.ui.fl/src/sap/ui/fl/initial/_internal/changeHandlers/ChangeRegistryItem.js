@@ -28,7 +28,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @private
 	 * @ui5-restricted sap.ui.fl
-	 * @experimental Since 1.27.0
 	 *
 	 */
 	var ChangeRegistryItem = function(mParam) {

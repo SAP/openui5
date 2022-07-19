@@ -50,7 +50,7 @@ sap.ui.define([
 		 * Adds current language information into request parameters
 		 *
 		 * @param {object} mParameters - Parameters of the request
-		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
+		 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		addLanguageInfo: function (mParameters) {
 			if (!mParameters) {
@@ -72,7 +72,7 @@ sap.ui.define([
 		 * @param {object} [mParameters] Query-parameters which will be added to the url
 		 * @returns {string} Complete request url
 		 * @private
-		 * @restricted sap.ui.fl.initial._internal, sap.ui.fl.write._internal
+		 * @ui5-restricted sap.ui.fl.initial._internal, sap.ui.fl.write._internal
 		 */
 		getUrl: function (sRoute, mPropertyBag, mParameters) {
 			if (!sRoute || !mPropertyBag.url) {

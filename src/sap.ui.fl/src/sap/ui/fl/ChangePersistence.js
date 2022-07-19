@@ -126,7 +126,7 @@ sap.ui.define([
 	 * @param {object} oAppComponent - Application component
 	 * @returns {Promise} Returns a promise with an ETag for caching
 	 * @private
-	 * @restricted sap.ui.fl
+	 * @ui5-restricted sap.ui.fl
 	 */
 	ChangePersistence.prototype.getCacheKey = function(oAppComponent) {
 		return Cache.getCacheKey(this._mComponent, oAppComponent);
