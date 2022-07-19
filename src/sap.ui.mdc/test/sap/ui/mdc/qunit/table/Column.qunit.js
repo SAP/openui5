@@ -107,6 +107,7 @@ sap.ui.define([
 			assert.strictEqual(oColumnHeaderLabel.getWrapping(), true, "wrapping set on label control according to headerVisible");
 			assert.ok(!oColumnHeaderLabel.getWidth(), "width set on label control according to headerVisible");
 			assert.strictEqual(this.oColumn.getInnerColumn().getTooltip(), "Tooltip1", "tooltip forwarded to inner column control");
+			assert.ok(oColumnHeaderLabel.getTooltip() === "Tooltip1", "tooltip set also on column label");
 
 			this.oColumn.setHeader("Text2");
 			this.oColumn.setTooltip("Tooltip2");
@@ -118,6 +119,7 @@ sap.ui.define([
 			assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "wrapping set on label control according to headerVisible");
 			assert.strictEqual(oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to headerVisible");
 			assert.strictEqual(this.oColumn.getInnerColumn().getTooltip(), "Tooltip2", "tooltip forwarded to inner column control");
+			assert.ok(oColumnHeaderLabel.getTooltip() === "Tooltip2", "tooltip set also on column label");
 
 			this.oColumn.setHeaderVisible(true);
 			oTable.setEnableColumnResize(true);
@@ -158,6 +160,7 @@ sap.ui.define([
 			assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "no wrapping set on label control");
 			assert.ok(!oColumnHeaderLabel.getWidth(), "width set on label control according to headerVisible");
 			assert.strictEqual(this.oColumn.getInnerColumn().getTooltip(), "Tooltip1", "tooltip forwarded to inner column control");
+			assert.ok(!oColumnHeaderLabel.getTooltip(), "no tooltip on column label");
 
 			this.oColumn.setHeader("Text2");
 			this.oColumn.setTooltip("Tooltip2");
@@ -169,6 +172,7 @@ sap.ui.define([
 			assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "no wrapping set on label control");
 			assert.strictEqual(oColumnHeaderLabel.getWidth(), "0px", "width set on label control according to headerVisible");
 			assert.strictEqual(this.oColumn.getInnerColumn().getTooltip(), "Tooltip2", "tooltip forwarded to inner column control");
+			assert.ok(!oColumnHeaderLabel.getTooltip(), "no tooltip on column label");
 
 			this.oColumn.setHeaderVisible(true);
 			oTable.setEnableColumnResize(false);
