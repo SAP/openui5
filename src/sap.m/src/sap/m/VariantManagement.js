@@ -1464,7 +1464,7 @@ sap.ui.define([
 			this.setDefaultKey(this.oDefault.getSelected());
 		}
 
-		this.setModified(false);
+		//this.setModified(false);
 
 		var oObj = {
 				key: sKey,
@@ -1518,7 +1518,7 @@ sap.ui.define([
 			def: bDefault
 		});
 
-		this.setModified(false);
+		//this.setModified(false);
 	};
 
 	// Manage Views dialog
