@@ -535,7 +535,7 @@
 								text="new"
 								key="new">
 								<mdc:Chart id="bookChart" filter="booksFilterBar" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
-										'name': 'sap/ui/mdc/odata/v4/vizChart/ChartDelegate',
+										'name': 'delegates/odata/v4/vizChart/ChartDelegate',
 										'payload': {
 											collectionName: 'Books'
 										}
