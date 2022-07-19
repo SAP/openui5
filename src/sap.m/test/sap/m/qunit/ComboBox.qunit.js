@@ -10458,6 +10458,21 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
+	QUnit.test("aria-hidden attribute of the ComboBox dropdown icon must be set to true", function (assert) {
+		var oComboBox = new ComboBox({
+			id: "simple-cbox"
+		});
+
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var bAriaHidden = oComboBox.getDomRef().querySelector(".sapMInputBaseIconContainer").getAttribute("aria-hidden");
+
+		assert.strictEqual(bAriaHidden, "true", "aria-hidden is set to true");
+
+		oComboBox.destroy();
+	});
+
 	QUnit.module("Integration");
 
 	QUnit.test("Propagate Items to the list", function (assert) {
