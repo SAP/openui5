@@ -3423,7 +3423,7 @@ sap.ui.define([
 			ThemeParameters.get({ name: "sapUiFontFamily" }) || "Arial"
 		].join(" ");
 
-		var fPadding = 1.1875;
+		var fPadding = 1;
 		this.oTable.setEnableAutoColumnWidth(true);
 		Core.applyChanges();
 

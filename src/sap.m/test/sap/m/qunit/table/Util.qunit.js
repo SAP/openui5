@@ -164,6 +164,8 @@ sap.ui.define([
 		assert.ok(parseFloat(ccw(new SByte())) < parseFloat(ccw(new Byte(), Chars(4))), "Byte type width < 4 character column header width");
 		assert.ok(parseFloat(ccw(new SByte(), Chars(1000))) < 8, "Long column headers can only push small column widths logarithmically");
 		assert.equal(parseFloat(ccw(new SByte(), Chars(1000), {truncateLabel: false, maxWidth: 10})), 11, "Long column headers could push up to max width");
+		assert.equal(parseInt(ccw(new SByte(), "HeaderText", {truncateLabel: false})), parseInt(Util.calcHeaderWidth("HeaderText") + 1));
+		assert.equal(parseInt(ccw(new SByte(), "HeaderText", {truncateLabel: false, headerGap: true})), parseInt(Util.calcHeaderWidth("HeaderText") + 1 + 1.375));
 
 		[new BooleanType(), new Byte(), new Int16(), new Int32(), new Int64(), new Double(), new Decimal(), Str(10), new Time(), new DateType(), new Guid()].forEach(function(oType) {
 			var fWidth = parseFloat(ccw(oType, "", {padding: 0}));

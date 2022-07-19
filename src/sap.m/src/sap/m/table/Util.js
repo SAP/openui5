@@ -102,7 +102,7 @@ sap.ui.define([
 
 				var fSampleWidth = Util.measureText("A".repeat(iMaxLength));
 				if (iMaxLength < iMaxWidth || iMaxWidth < 10) {
-					return Math.min(fSampleWidth, iMaxWidth);
+					return applySettings(fSampleWidth);
 				}
 
 				var fWidth = Math.log(fSampleWidth - iMaxWidth * 0.16) / Math.log(iMaxWidth / 3) * (iMaxWidth / 2) * Math.pow(iMaxWidth / 19, 1 / fSampleWidth);
@@ -205,6 +205,7 @@ sap.ui.define([
 	 * @param {int} [mSettings.maxWidth=19] The maximum content width of the field in rem
 	 * @param {int} [mSettings.padding=1] The sum of column padding and border in rem
 	 * @param {float} [mSettings.gap=0] The additional content width in rem
+	 * @param {boolean} [mSettings.headerGap=false] Whether icons in the header should be taken into account
 	 * @param {boolean} [mSettings.truncateLabel=true] Whether the header of the column can be truncated or not
 	 * @param {boolean} [mSettings.verticalArrangement=false] Whether the fields are arranged vertically
 	 * @param {int} [mSettings.defaultWidth=8] The default column content width when type check fails
@@ -224,8 +225,7 @@ sap.ui.define([
 			defaultWidth: 8,
 			truncateLabel: true,
 			padding: 1,
-			gap: 0,
-			verticalArrangement: false
+			gap: 0
 		}, mSettings);
 
 		var fHeaderWidth = 0;
@@ -251,6 +251,7 @@ sap.ui.define([
 
 		if (sHeader) {
 			fHeaderWidth = Util.calcHeaderWidth(sHeader, (mSettings.truncateLabel ? fContentWidth : 0), iMaxWidth, iMinWidth);
+			fHeaderWidth += mSettings.headerGap ? (8 /* padding */ + 14 /* icon width */) / fBaseFontSize : 0;
 		}
 
 		fContentWidth = Math.max(iMinWidth, fContentWidth, fHeaderWidth);
