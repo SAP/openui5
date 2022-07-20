@@ -18,9 +18,10 @@ sap.ui.define([
 	"sap/ui/base/Event",
 	"sap/m/library",
 	"sap/ui/model/Sorter",
-	"sap/m/IllustratedMessageType"
+	"sap/m/IllustratedMessageType",
+	"sap/ui/core/Core"
 ], function (jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer,
-			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType) {
+			 Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, Core) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -893,6 +894,137 @@ sap.ui.define([
 			if (oItem._bGroupHeader) {
 				assert.ok(oItem.getTitle().length > 0, "The group item has title property");
 			}
+		});
+	});
+
+	return Core.loadLibrary("sap.suite.ui.commons", { async: true })
+	.then(function() {
+		QUnit.module("Cloud File Picker", {
+			beforeEach: function () {
+				this.$RootNode = jQuery(document.body);
+				this.oUploadSet = new UploadSet("uploadSet", {
+					items: {
+						path: "/items",
+						template: TestUtils.createItemTemplate(),
+						templateShareable: false
+					}
+				}).setModel(new JSONModel(getData()));
+				this.oUploadSet.placeAt("qunit-fixture");
+				oCore.applyChanges();
+				return this.oUploadSet._loadCloudFilePickerDependency()
+				.then(function(cloudFilePicker) {
+					this.oUploadSet._cloudFilePickerControl = cloudFilePicker;
+				}.bind(this));
+			},
+			afterEach: function() {
+				this.oUploadSet.destroy();
+				this.oUploadSet = null;
+			}
+		});
+
+		QUnit.test("CloudFilePicker instance is created and invoked", function(assert) {
+
+			// act
+			var oCloudFilePickerInstance = this.oUploadSet._invokeCloudFilePicker();
+
+			// assert
+			assert.ok(oCloudFilePickerInstance.getDomRef(), "CloudFilePicker rendered successfully");
+
+			oCloudFilePickerInstance.close();
+		});
+
+		QUnit.test("Cloud File Picker button visibility", function (assert) {
+			// assert
+			assert.equal(this.oUploadSet._getCloudFilePicker(), null, "Cloud File Picker Button not enabled by default");
+
+			//act
+			this.oUploadSet.setCloudFilePickerEnabled(true);
+
+			// assert
+			assert.equal(this.oUploadSet._getCloudFilePicker() instanceof sap.m.Button, true, "Cloud File Picker Button enabled with CloudFilePicker property enabled");
+		});
+
+		QUnit.test("Cloud File picker button created with custom text", function (assert) {
+
+			// arrange
+			var sDefaultCloudFilePickerButtonText = this.oUploadSet._oRb.getText("UPLOAD_SET_DEFAULT_CFP_BUTTON_TEXT");
+
+			//act
+			this.oUploadSet.setCloudFilePickerEnabled(true);
+			var oCloudPickerButton = this.oUploadSet._getCloudFilePicker();
+
+			// assert
+			assert.ok(oCloudPickerButton && oCloudPickerButton.getText() === sDefaultCloudFilePickerButtonText, "Cloud File Picker Button created with default text");
+
+			//act
+			this.oUploadSet.setCloudFilePickerButtonText("Upload from cloud");
+			var oCloudPickerButton2 = this.oUploadSet._getCloudFilePicker();
+
+			// assert
+			assert.ok(oCloudPickerButton2 && oCloudPickerButton2.getText() === 'Upload from cloud', "Cloud File Picker Button created with custom text");
+		});
+
+		QUnit.test("Cloud File Picker instance created with service url provided", function (assert) {
+
+			// act
+			var oCloudFilePickerInstance = this.oUploadSet._invokeCloudFilePicker();
+
+			// assert
+			assert.equal(oCloudFilePickerInstance.getServiceUrl(), '', "Cloud File Picker instance created with default service url");
+
+			oCloudFilePickerInstance.close();
+
+			//act
+			this.oUploadSet.setCloudFilePickerServiceUrl('test/');
+			oCloudFilePickerInstance = this.oUploadSet._invokeCloudFilePicker();
+
+			// assert
+			assert.equal(oCloudFilePickerInstance.getServiceUrl(), 'test/', "Cloud File Picker instance created with supplied service url");
+
+			oCloudFilePickerInstance.close();
+		});
+
+		QUnit.test("Selected File from cloud file picker uploaded", function (assert){
+			var CloudFileInfo = sap.ui.require("sap/suite/ui/commons/CloudFileInfo");
+			// arrange
+			var oCloudFilePickerSelectorSpy = this.spy(this.oUploadSet, '_onCloudPickerFileChange');
+			var mParameters = {
+				selectedFiles: [
+					new CloudFileInfo({
+						fileShareId: 'Ifs12test',
+						fileShareItemName: 'Test File.txt',
+						fileShareItemContentSize: '2048',
+						fileShareItemContentLink: '/test/test-file',
+						fileShareItemContentType: 'Doc'
+					})
+				]
+			};
+
+			// act
+			var oCloudFilePickerInstance = this.oUploadSet._invokeCloudFilePicker();
+			this.oUploadSet.setCloudFilePickerServiceUrl('test/');
+			oCloudFilePickerInstance.fireSelect(mParameters);
+
+			oCloudFilePickerInstance.close();
+
+			// assert
+			assert.ok(oCloudFilePickerSelectorSpy.called, "Cloud File Picker fires select event with selected files info");
+
+			var done = assert.async();
+
+			this.oUploadSet.attachEventOnce("uploadCompleted",function(oEvent){
+				//Assert
+				assert.ok(oEvent.getParameter("item"), "item param present");
+				var addedItem = oEvent.getParameter("item");
+				assert.ok(addedItem && addedItem.getFileName() === 'Test File.txt', "File selected from cloud uploaded");
+				done();
+			});
+		});
+	})
+	.catch(function () {
+		QUnit.module("Cloud File Picker");
+		QUnit.test("Cloud File Picker not supported", function (assert) {
+			assert.ok(true, "Cloud File Picker type is not available with this distribution.");
 		});
 	});
 

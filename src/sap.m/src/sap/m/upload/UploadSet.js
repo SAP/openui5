@@ -27,10 +27,11 @@ sap.ui.define([
 	"sap/m/upload/UploadSetToolbarPlaceholder",
 	"sap/m/IllustratedMessage",
 	"sap/m/IllustratedMessageType",
-	"sap/m/IllustratedMessageSize"
+	"sap/m/IllustratedMessageSize",
+	"sap/ui/core/Core"
 ], function (Control, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar,
 			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod,
-			DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder, IllustratedMessage,IllustratedMessageType, IllustratedMessageSize) {
+			DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder, IllustratedMessage,IllustratedMessageType, IllustratedMessageSize, Core) {
 	"use strict";
 
 	/**
@@ -142,7 +143,22 @@ sap.ui.define([
 				 * In addition, if instant upload is set to false the mode sap.m.ListMode.MultiSelect is not supported and will be automatically set to sap.m.ListMode.None.
 				 * @since 1.100.0
 				 */
-				mode: {type: "sap.m.ListMode", group: "Behavior", defaultValue: Library.ListMode.MultiSelect}
+				mode: {type: "sap.m.ListMode", group: "Behavior", defaultValue: Library.ListMode.MultiSelect},
+				/**
+				  * Enables CloudFile picker feature to upload files from cloud.
+				  * @private
+				  */
+				 cloudFilePickerEnabled: {type: "boolean", group: "Behavior", defaultValue: false},
+				/**
+				  * Url of the FileShare OData V4 service supplied for CloudFile picker control.
+				  * @private
+				  */
+				 cloudFilePickerServiceUrl: {type: "sap.ui.core.URI", group: "Data", defaultValue: ""},
+				/**
+				  * The text of the CloudFile picker button. The default text is "Upload from cloud" (translated to the respective language).
+				  * @private
+				  */
+				 cloudFilePickerButtonText: {type: 'string', defaultValue: ""}
 				},
 			defaultAggregation: "items",
 			aggregations: {
@@ -498,6 +514,7 @@ sap.ui.define([
 				description: this.getNoDataDescription()
 			});
 		this.setAggregation("_illustratedMessage", illustratedMessage);
+		this._cloudFilePickerControl = null;
 	};
 
 	UploadSet.prototype.exit = function () {
@@ -600,7 +617,7 @@ sap.ui.define([
 			this._oToolbar = this.getAggregation("toolbar");
 			if (!this._oToolbar) {
 				this._oToolbar = new OverflowToolbar(this.getId() + "-toolbar", {
-					content: [this._oNumberOfAttachmentsTitle, new ToolbarSpacer(), this.getDefaultFileUploader()]
+					content: [this._oNumberOfAttachmentsTitle, new ToolbarSpacer(), this.getDefaultFileUploader(), this._getCloudFilePicker()]
 				});
 				this._iFileUploaderPH = 2;
 				this.addDependent(this._oToolbar);
@@ -612,6 +629,7 @@ sap.ui.define([
 					// fallback position to add file uploader control if UploadSetToolbarPlaceHolder instance not found
 					this._oToolbar.addContent(this.getDefaultFileUploader());
 				}
+				this._oToolbar.addContent(this._getCloudFilePicker());
 			}
 		}
 
@@ -1721,5 +1739,167 @@ sap.ui.define([
 		this._oToolbar.getContent()[this._iFileUploaderPH].setVisible(false);
 		this._oToolbar.insertContent(fileUploader, this._iFileUploaderPH);
 	};
+
+	/**
+	 * Returns CloudFile picker button
+	 * @return {sap.m.Button} CloudPicker button
+	 * @private
+	 */
+	 UploadSet.prototype._getCloudFilePicker = function() {
+		if (this.getCloudFilePickerEnabled()) {
+			return new Button({
+				text:  this.getCloudFilePickerButtonText() ? this.getCloudFilePickerButtonText() :  this._oRb.getText("UPLOAD_SET_DEFAULT_CFP_BUTTON_TEXT"),
+				press: [this._invokeCloudFilePicker, this]
+			});
+		}
+		return null;
+	};
+
+	/**
+	 * Creates and invokes CloudFilePicker control instance
+	 * @private
+	 * @returns {Object} cloudFile picker instance
+	 */
+	 UploadSet.prototype._invokeCloudFilePicker = function() {
+		 var oCloudFilePickerInstance = null;
+		 if (this._cloudFilePickerControl) {
+			oCloudFilePickerInstance = this._getCloudFilePickerInstance();
+			oCloudFilePickerInstance.open();
+		 } else {
+			 // Dynamically load and cache CloudFilePicker control for first time
+			 this._loadCloudFilePickerDependency()
+			 .then(function(cloudFilePicker){
+				this._cloudFilePickerControl = cloudFilePicker;
+				oCloudFilePickerInstance = this._getCloudFilePickerInstance();
+				oCloudFilePickerInstance.open();
+			 }.bind(this))
+			 .catch(function(error) {
+				 Log.error(error);
+			 });
+		 }
+		return oCloudFilePickerInstance;
+	};
+
+	/**
+	 * Event handler for CloudFile picker selector
+	 * @param {Object} oEvent CloudFile picker file selection DOM change event
+	 * @private
+	 */
+	UploadSet.prototype._onCloudPickerFileChange = function(oEvent) {
+
+		var mParameters = oEvent.getParameters();
+		var aFiles = [];
+		if (mParameters && mParameters.selectedFiles) {
+			mParameters.selectedFiles.forEach(function (file) {
+				aFiles.push(this._createFileFromCloudPickerFile(file));
+			}.bind(this));
+		}
+
+		// invoking this method to handle file uploads
+		this._processNewCloudPickerFileObjects(aFiles);
+	};
+
+	/**
+	 * Creates file object that is to be uploaded from the CloudFilePicker file object
+	 * @param {sap.suite.ui.commons.CloudFileInfo} oCloudFile CloudFilepicker file object
+	 * @returns {Object} file metadata with file object and fileshare properties
+	 * @private
+	 */
+	UploadSet.prototype._createFileFromCloudPickerFile = function(oCloudFile) {
+		var parts = [new Blob([])];
+		var oFileMetaData = {
+			type: oCloudFile.getFileShareItemContentType(),
+			size: oCloudFile.getFileShareItemContentSize(),
+			webkitRelativePath: '',
+			name: oCloudFile.getFileShareItemName()
+		};
+		var oFile = new File(parts, oCloudFile.getFileShareItemName(), oFileMetaData);
+		return {
+			file: oFile,
+			fileShareProperties: oCloudFile.mProperties
+		};
+	};
+
+	/**
+	 * Maps the UploadSetItem with fileShare properties from the CloudFilePicker
+	 * @param {sap.m.UploadSetItem} oItem UploadSetItem to be mapped
+	 * @param {Object} oFileShareItem fileshare properties used for mapping
+	 * @private
+	 */
+	UploadSet.prototype._mapFileShareItemToUploadSetItem = function(oItem, oFileShareItem) {
+		oItem.setFileName(oFileShareItem.fileShareItemName);
+		oItem.setUrl(oFileShareItem.fileShareItemContentLink);
+	};
+
+	/**
+	 * Processing and uploading of file objects selected from the CloudFilePicker
+	 * @param {Array} oFiles File metadata list containing file to be uploaded and fileshare properties used for mapping
+	 * @private
+	 */
+	UploadSet.prototype._processNewCloudPickerFileObjects = function (oFiles) {
+		var	oItem;
+
+		oFiles.forEach(function (oFileMetaData) {
+			var oFile = oFileMetaData.file,
+			oFileShareProperties = oFileMetaData.fileShareProperties;
+			oItem = new UploadSetItem({
+				uploadState: UploadState.Ready
+			});
+			if (oFileShareProperties && oFileShareProperties !== null) {
+				// invoked and each selected file to map the fileshare properties to uploadsetItem to be uploaded
+				this._mapFileShareItemToUploadSetItem(oItem, oFileShareProperties);
+			}
+			oItem._setFileObject(oFile);
+			oItem.setFileName(oFile.name);//For handling curly braces in file name we have to use setter.Otherwise it will be treated as binding.
+
+			if (!this.fireBeforeItemAdded({item: oItem})) {
+				return;
+			}
+			this.insertIncompleteItem(oItem);
+			this.fireAfterItemAdded({item: oItem});
+
+			if (this.getInstantUpload()) {
+				this._uploadItemIfGoodToGo(oItem);
+			}
+		}.bind(this));
+	};
+
+	/**
+	 * Dynamically require CloudFilePicker Control
+	 * @returns {Promise} Promise that resolves on sucessful load of CloudFilePicker control
+	 * @private
+	 */
+	UploadSet.prototype._loadCloudFilePickerDependency = function() {
+		return new Promise(function (resolve, reject) {
+			Core.loadLibrary("sap.suite.ui.commons", { async: true })
+				.then(function() {
+					sap.ui.require(["sap/suite/ui/commons/CloudFilePicker"], function(cloudFilePicker) {
+						resolve(cloudFilePicker);
+					}, function (error) {
+						reject(error);
+					});
+				})
+				.catch(function () {
+					reject("CloudFilePicker Control not available.");
+				});
+		});
+	};
+
+	/**
+	 * Creates CloudFilePicker Instance
+	 * @returns {sap.suite.ui.commons.CloudFilePicker} CloudFilePicker instance
+	 * @private
+	 */
+	UploadSet.prototype._getCloudFilePickerInstance = function() {
+		return new this._cloudFilePickerControl({
+			serviceUrl: this.getCloudFilePickerServiceUrl(),
+			confirmButtonText: this._oRb.getText("SELECT_PICKER_TITLE_TEXT"),
+			title: this._oRb.getText("SELECT_PICKER_TITLE_TEXT"),
+			fileNameMandatory: true,
+			enableDuplicateCheck:this.getSameFilenameAllowed(),
+			select: this._onCloudPickerFileChange.bind(this)
+		});
+	};
+
 	return UploadSet;
 });
