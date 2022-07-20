@@ -55,7 +55,7 @@ sap.ui.define([
 				/**
 				 * Determines the intention of setting the current variant based on passed information.
 				 * <p>
-				 * <b>Note:</b> The <code>VariantManagement</code> control does not react in any way to this property.
+				 * <b>Note:</b> The <code>VariantManagement</code> control does not react in any way to this property. It is used internally by the flexibility layer.
 				 */
 				updateVariantInURL: {
 					type: "boolean",
@@ -63,7 +63,9 @@ sap.ui.define([
 					defaultValue: false
 				},
 				/**
-				 * When set to false, doesn't reset the <code>VariantManagement</code> control to the default variant, when its binding context is changed.
+				 * When set to <code>false</code>, doesn't reset the <code>VariantManagement</code> control to the default variant, when its binding context is changed.
+				 * <p>
+				 * <b>Note:</b> The <code>VariantManagement</code> control does not react in any way to this property. It is used internally by the flexibility layer.
 				 */
 				resetOnContextChange: {
 					type: "boolean",
@@ -96,7 +98,8 @@ sap.ui.define([
 				},
 				/**
 				 * If set to <code>true</code>, the key for a vendor variant will be added manually.<br>
-				 * <b>Note:</b>This flag is only used internally in the app variant scenarios.
+				 * <p>
+				 * <b>Note:</b> This flag is only used internally.
 				 */
 				manualVariantKey: {
 					type: "boolean",
@@ -105,8 +108,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Indicates that the control is in error state. If set to <code>true</code>, an error message will be displayed whenever the variant is
-				 * opened.
+				 * Indicates that the control is in error state. If set to <code>true</code>, an error message will be displayed whenever the variant is opened.
 				 */
 				inErrorState: {
 					type: "boolean",
@@ -126,8 +128,8 @@ sap.ui.define([
 
 				/**
 				 * Defines the Apply Automatically text for the standard variant in the Manage Views dialog if the application controls this behavior.
-				 *
-				 * <br><b>Note:</b> the usage of this property is restricted to <code>sap.fe</code> components only.
+				 * <p>
+				 * <b>Note:</b> the usage of this property is restricted to <code>sap.fe</code> components only.
 				 */
 				displayTextForExecuteOnSelectionForStandardVariant: {
 					type: "string",
@@ -268,7 +270,7 @@ sap.ui.define([
 			associations: {
 
 				/**
-				 * Contains the controls for which the variant management is responsible.
+				 * Contains the ids of the controls for which the variant management is responsible.
 				 */
 				"for": {
 					type: "sap.ui.core.Control",
@@ -709,9 +711,15 @@ sap.ui.define([
 		return this._oVM.getDefaultKey();
 	};
 
+	/**
+	 * Determines if the current variant is modified.
+	 * @public
+	 * @returns {boolean} If the current variant is modified <code>true</code>, otherwise <code>false</code>
+	 */
 	VariantManagement.prototype.getModified = function() {
 		return this._oVM.getModified();
 	};
+
 	VariantManagement.prototype.setModified = function(bFlag) {
 		this._oVM.setModified(bFlag);
 	};
