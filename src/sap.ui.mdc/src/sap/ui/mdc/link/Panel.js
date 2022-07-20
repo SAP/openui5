@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/mdc/p13n/subcontroller/LinkPanelController",
-	"sap/ui/mdc/p13n/Engine",
+	"sap/m/p13n/Engine",
 	"sap/ui/mdc/mixin/AdaptationMixin",
 	"sap/ui/mdc/link/PanelItem",
 	"sap/ui/core/CustomData"
@@ -114,9 +114,9 @@ sap.ui.define([
 	Panel.prototype.init = function() {
 		Control.prototype.init.call(this);
 
-		Engine.getInstance().registerAdaptation(this, {
+		Engine.getInstance().register(this, {
 			controller: {
-				LinkItems: LinkPanelController
+				LinkItems: new LinkPanelController({control: this})
 			}
 		});
 
@@ -391,7 +391,15 @@ sap.ui.define([
 				if (oParent.isA("sap.m.Popover")) {
 					oParent.setModal(true);
 				}
-				Engine.getInstance().uimanager.show(this, "LinkItems").then(function(oDialog) {
+				Engine.getInstance().uimanager.show(this, "LinkItems", {
+					contentWidth: "28rem",
+					contentHeight: "35rem",
+					close: function() {
+						if (oParent.isA("sap.m.Popover")) {
+							oParent.setModal(false);
+						}
+					}
+				}).then(function(oDialog) {
 					var oResetButton = oDialog.getCustomHeader().getContentRight()[0];
 					var oSelectionPanel = oDialog.getContent()[0];
 					oResetButton.setModel(oModel, "$sapuimdclinkPanel");
@@ -401,12 +409,15 @@ sap.ui.define([
 					fnUpdateResetButton.call(this, oSelectionPanel);
 					oSelectionPanel.attachChange(function(oEvent) {
 						fnUpdateResetButton.call(this, oSelectionPanel);
+						oSelectionPanel.attachChange(function(oEvent) {
+							fnUpdateResetButton.call(this, oSelectionPanel);
+						}.bind(this));
+						oDialog.attachAfterClose(function() {
+							if (oParent.isA("sap.m.Popover")) {
+								oParent.setModal(false);
+							}
+						});
 					}.bind(this));
-					oDialog.attachAfterClose(function() {
-						if (oParent.isA("sap.m.Popover")) {
-							oParent.setModal(false);
-						}
-					});
 					resolve(oDialog);
 				}.bind(this));
 			}.bind(this));

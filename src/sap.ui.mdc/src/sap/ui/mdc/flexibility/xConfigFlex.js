@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-    'sap/ui/mdc/p13n/Engine',
+    'sap/m/p13n/Engine',
     'sap/ui/mdc/flexibility/Util'
 ], function(Engine, Util) {
 	"use strict";
@@ -79,9 +79,9 @@ sap.ui.define([
 
                     return Engine.getInstance().enhanceXConfig(oControl, {
                         controlMeta: {
-                            aggregation: sAffectedAggregation,
-                            property: sAffectedProperty
+                            aggregation: sAffectedAggregation
                         },
+                        property: sAffectedProperty,
                         name: oChange.getContent().name,
                         value: oChange.getContent().value,
                         propertyBag: mPropertyBag
@@ -94,9 +94,9 @@ sap.ui.define([
         var fRevert = function (oChange, oControl, mPropertyBag) {
             return Engine.getInstance().enhanceXConfig(oControl, {
                 controlMeta: {
-                    aggregation: sAffectedAggregation,
-                    property: sAffectedProperty
+                    aggregation: sAffectedAggregation
                 },
+                property: sAffectedProperty,
                 name: oChange.getRevertData().name,
                 value: oChange.getRevertData().value,
                 propertyBag: mPropertyBag

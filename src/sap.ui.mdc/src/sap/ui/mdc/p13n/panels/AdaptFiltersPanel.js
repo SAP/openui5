@@ -277,6 +277,7 @@ sap.ui.define([
         if (!oP13nModel) {
             this.setP13nModel(new JSONModel(oP13nData));
         } else {
+            oP13nModel.setData(oP13nData);
             this.getView(this.LIST_KEY).getContent().setP13nData(oP13nModel.getProperty("/items"));
             this.getView(this.GROUP_KEY).getContent().setP13nData(oP13nModel.getProperty("/itemsGrouped"));
         }

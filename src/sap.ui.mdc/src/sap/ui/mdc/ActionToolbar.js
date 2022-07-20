@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/mdc/enum/ActionToolbarActionAlignment",
 	"sap/ui/mdc/p13n/subcontroller/ActionToolbarController",
-	"sap/ui/mdc/p13n/Engine"
+	"sap/m/p13n/Engine"
 ], function(OverflowToolbar, OverflowToolbarRenderer, ToolbarSpacer, ToolbarSeparator, mobileLibrary, ActionToolbarActionAlignment, ActionToolbarController, Engine) {
 	"use strict";
 
@@ -130,9 +130,9 @@ sap.ui.define([
 
 		this.setUseAsHeader(true);
 
-		Engine.getInstance().registerAdaptation(this, {
+		Engine.getInstance().register(this, {
 			controller: {
-				actionsKey: ActionToolbarController
+				actionsKey: new ActionToolbarController({control: this})
 			}
 		});
 	};

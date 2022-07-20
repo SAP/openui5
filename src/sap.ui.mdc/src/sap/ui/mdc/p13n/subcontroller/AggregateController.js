@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-    './BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/base/util/merge'
+    "./SelectionController", 'sap/ui/mdc/p13n/P13nBuilder', 'sap/base/util/merge'
 ], function (BaseController, P13nBuilder, merge) {
     "use strict";
 
@@ -12,14 +12,19 @@ sap.ui.define([
         return "aggregations";
     };
 
+	AggregateController.prototype.getCurrentState = function() {
+		return this.getAdaptationControl().getAggregateConditions();
+	};
+
     AggregateController.prototype.sanityCheck = function(change) {
         var aAggregations = [];
-        Object.keys(change).forEach(function(item) {
+        Object.keys(change).forEach(function(sKey) {
             var oAggregate = {
-                name: item
+                name: sKey,
+                key: sKey
             };
-            if (change[item].hasOwnProperty("aggregated")) {
-                oAggregate["aggregated"] = change[item].aggregated;
+            if (change[sKey].hasOwnProperty("aggregated")) {
+                oAggregate["aggregated"] = change[sKey].aggregated;
             }
             aAggregations.push(oAggregate);
         });
@@ -31,7 +36,7 @@ sap.ui.define([
         return BaseController.prototype.getDelta.apply(this, arguments);
     };
 
-    AggregateController.prototype.getAdaptationUI = function (oPropertyHelper) {
+    AggregateController.prototype.initAdaptationUI = function (oPropertyHelper) {
         return null;
     };
 
@@ -50,7 +55,7 @@ sap.ui.define([
 
         var mExistingAggregations = this.getCurrentState();
 
-        var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
             var oExisting = mExistingAggregations[oProperty.name];
             mItem.aggregated = !!oExisting;
             return oProperty.aggregatable;

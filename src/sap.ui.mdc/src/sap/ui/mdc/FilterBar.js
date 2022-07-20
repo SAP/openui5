@@ -95,18 +95,20 @@ sap.ui.define([
 		var aOldMode = this.getP13nMode();
 		this.setProperty("p13nMode", aMode || [], false);
 
-		var oRegisterConfig = {};
-		oRegisterConfig.controller = {};
+		var oRegisterConfig = {
+			helper: this.getPropertyHelper(),
+			controller: {}
+		};
 
 		aMode && aMode.forEach(function(sMode) {
 			if (!aOldMode || aOldMode.indexOf(sMode) < 0) {
 				this._setP13nMode(sMode, true);
 			}
 			if (sMode == "Item") {
-				oRegisterConfig.controller["Item"] = AdaptFiltersController;
+				oRegisterConfig.controller["Item"] = new AdaptFiltersController({control: this});
 			}
 			if (sMode == "Value") {
-				oRegisterConfig.controller["Filter"] = FilterController;
+				oRegisterConfig.controller["Filter"] = new FilterController({control: this});
 			}
 		}.bind(this));
 		aOldMode && aOldMode.forEach(function(sMode) {
@@ -115,7 +117,7 @@ sap.ui.define([
 			}
 		}.bind(this));
 
-		this.getEngine().registerAdaptation(this, oRegisterConfig);
+		this.getEngine().register(this, oRegisterConfig);
 
 		return this;
 	};
@@ -243,7 +245,10 @@ sap.ui.define([
 	FilterBar.prototype.onAdaptFilters = function(oEvent) {
 
 		return this._retrieveMetadata().then(function() {
-			return this.getEngine().uimanager.show(this, "Item", this._btnAdapt);
+			return this.getEngine().uimanager.show(this, "Item", this._btnAdapt).then(function(oPopup){
+				oPopup.setVerticalScrolling(false);
+				return oPopup;
+			});
 		}.bind(this));
 
 	};

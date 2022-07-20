@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/FilterBar",
 	"sap/ui/core/Core",
-	"sap/ui/mdc/p13n/Engine"
+	"sap/m/p13n/Engine"
 ], function (
 		FieldValueHelpMdcTableWrapper,
 		FieldValueHelpDelegate,
@@ -286,7 +286,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("close triggers Engine.reset for given FilterBar", function(assert) {
+	QUnit.test("close triggers Engine.getInstance().reset for given FilterBar", function(assert) {
 		var fnDone = assert.async();
 
 		_initTable(false, new GridTableType({rowCountMode: "Fixed"}));

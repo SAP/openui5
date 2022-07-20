@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/Column", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "delegates/odata/v4/TypeUtil", "sap/ui/mdc/p13n/modules/StateHandlerRegistry", "sap/ui/core/Core", "sap/base/util/merge"
-], function (createAppEnvironment, TableDelegate, Column, StateUtil, FilterBarDelegate, FilterField, ChartDelegate, TypeUtil, StateHandlerRegistry, oCore, merge) {
+	"sap/m/p13n/Engine", "test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/TableDelegate", "sap/ui/mdc/table/Column", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "delegates/odata/v4/TypeUtil", "sap/ui/mdc/p13n/modules/StateHandlerRegistry", "sap/ui/core/Core", "sap/base/util/merge"
+], function (Engine, createAppEnvironment, TableDelegate, Column, StateUtil, FilterBarDelegate, FilterField, ChartDelegate, TypeUtil, StateHandlerRegistry, oCore, merge) {
 	"use strict";
 
 	oCore.loadLibrary("sap.ui.fl");
@@ -1146,11 +1146,11 @@ sap.ui.define([
 
 		StateUtil.attachStateChange(fnHandler1);
 		StateUtil.attachStateChange(fnHandler2);
-		assert.equal(this.stateHandlerRegistry.mEventRegistry.stateChange.length, 2, "Event listeners attached");
+		assert.equal(Engine.getInstance().stateHandlerRegistry.mEventRegistry.stateChange.length, 2, "Event listeners attached");
 
 		StateUtil.detachStateChange(fnHandler1);
 		StateUtil.detachStateChange(fnHandler2);
-		assert.notOk(this.stateHandlerRegistry.mEventRegistry.hasOwnProperty("stateChange"), "Event listeners detached");
+		assert.notOk(Engine.getInstance().stateHandlerRegistry.mEventRegistry.hasOwnProperty("stateChange"), "Event listeners detached");
 	});
 
 	QUnit.module("State diff calculation", {

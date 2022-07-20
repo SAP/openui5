@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	'sap/ui/mdc/enum/ProcessingStrategy', 'sap/ui/mdc/condition/FilterOperatorUtil', './BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/ui/mdc/p13n/FlexUtil', 'sap/base/Log', 'sap/base/util/merge', 'sap/base/util/UriParameters'
+	'sap/ui/mdc/enum/ProcessingStrategy', 'sap/ui/mdc/condition/FilterOperatorUtil', './SelectionController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/ui/mdc/p13n/FlexUtil', 'sap/base/Log', 'sap/base/util/merge', 'sap/base/util/UriParameters'
 ], function (ProcessingStrategy, FilterOperatorUtil, BaseController, P13nBuilder, FlexUtil, Log, merge, SAPUriParameters) {
 	"use strict";
 
@@ -36,6 +36,10 @@ sap.ui.define([
                 oDialog.destroy();
             }
         };
+    };
+
+    FilterController.prototype.getCurrentState = function(){
+        return this.getAdaptationControl().getCurrentState()[this.getStateKey()];
     };
 
     FilterController.prototype.getChangeOperations = function() {
@@ -97,21 +101,26 @@ sap.ui.define([
         return "active";
     };
 
-    FilterController.prototype.getAdaptationUI = function (oPropertyHelper, oWrapper) {
-        var oAdaptationModel = this._getP13nModel(oPropertyHelper);
+    FilterController.prototype.initAdaptationUI = function (oPropertyHelper, oWrapper) {
+        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
 
         return this.getAdaptationControl().retrieveInbuiltFilter().then(function(oAdaptationFilterBar){
-            oAdaptationFilterBar.setP13nData(oAdaptationModel.oData);
+            oAdaptationFilterBar.setP13nData(oAdaptationData);
             oAdaptationFilterBar.setLiveMode(false);
+            oAdaptationFilterBar.getTitle = function() {
+                return sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filter.PERSONALIZATION_DIALOG_TITLE");
+            };
             this._oAdaptationFB = oAdaptationFilterBar;
             return oAdaptationFilterBar.createFilterFields().then(function(){
+                this._oPanel = oAdaptationFilterBar;
                 return oAdaptationFilterBar;
-            });
+            }.bind(this));
         }.bind(this));
     };
 
     FilterController.prototype.update = function(oPropertyHelper){
-        BaseController.prototype.update.apply(this, arguments);
+        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+        this._oPanel.setP13nData(oAdaptationData);
         var oAdaptationControl = this.getAdaptationControl();
         var oInbuiltFilter = oAdaptationControl && oAdaptationControl.getInbuiltFilter();
 
@@ -134,7 +143,7 @@ sap.ui.define([
     FilterController.prototype.model2State = function() {
         var oItems = {},
             oFilter = this.getCurrentState();
-            this._oAdaptationModel.getProperty("/items").forEach(function(oItem) {
+            this.getP13nData().items.forEach(function(oItem) {
             if (oItem.active && Object.keys(oFilter).includes(oItem.name)) {
                 oItems[oItem.name] = oFilter[oItem.name];
             }
@@ -147,7 +156,7 @@ sap.ui.define([
 
         var mExistingFilters = this.getCurrentState() || {};
 
-        var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
 
             var aExistingFilters = mExistingFilters[mItem.name];
             mItem.active = aExistingFilters && aExistingFilters.length > 0 ? true : false;

@@ -436,10 +436,10 @@ sap.ui.define([
             };
 
             var mRegistryOptions = {
-                Item: ChartItemController,
-                Sort: SortController,
-                Filter: FilterController,
-                Type: ChartTypeController
+                Item: new ChartItemController({control: this}),
+                Sort: new SortController({control: this}),
+                Filter: new FilterController({control: this}),
+                Type: new ChartTypeController({control: this})
             };
 
             if (aMode && aMode.length > 0) {
@@ -451,7 +451,7 @@ sap.ui.define([
                     }
                 });
 
-                this.getEngine().registerAdaptation(this, oRegisterConfig);
+                this.getEngine().register(this, oRegisterConfig);
             }
 
         };

@@ -3,38 +3,29 @@
  */
 
 sap.ui.define([
-    "./BaseController",
-    "sap/ui/mdc/p13n/P13nBuilder"
-], function (BaseController, P13nBuilder) {
+    "./SelectionController"
+], function (BaseController) {
     "use strict";
 
     var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
     var ChartItemController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.ChartItemController");
 
-    ChartItemController.prototype.getAdaptationUI = function(oPropertyHelper) {
+    ChartItemController.prototype.initAdaptationUI = function(oPropertyHelper) {
 
-        var fnResolve;
-
-        this._oAdaptationControl.getAdaptationUI().then(function(oPanel){
+        return this.getAdaptationControl().getAdaptationUI().then(function(oPanel){
             this._oPanel = oPanel;
-            this._oPropHelper = oPropertyHelper;
+            oPanel.setTitle(oResourceBundle.getText("p13nDialog.TAB_Chart"));
             var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
             oPanel.setP13nData(oAdaptationData.items);
-            fnResolve(oPanel);
+            return oPanel;
         }.bind(this));
-
-        return new Promise(function (resolve, reject) {
-            fnResolve = resolve;
-        });
 
     };
 
-    ChartItemController.prototype.update = function(){
+    ChartItemController.prototype.update = function(oPropertyHelper){
         BaseController.prototype.update.apply(this, arguments);
-
-        this._oPanel.setP13nData(this.mixInfoAndState(this._oPropHelper).items);
-
+        //this._oPanel.setP13nData(this.mixInfoAndState(oPropertyHelper).items);
     };
 
     ChartItemController.prototype.getDelta = function(mPropertyBag) {
@@ -42,19 +33,12 @@ sap.ui.define([
         return BaseController.prototype.getDelta.apply(this, arguments);
     };
 
-    ChartItemController.prototype.getUISettings = function() {
-        return {
-            title: oResourceBundle.getText("chart.PERSONALIZATION_DIALOG_TITLE"),
-            tabText: oResourceBundle.getText("p13nDialog.TAB_Chart")
-        };
-    };
-
     ChartItemController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
         var aItemState = this.getCurrentState();
-        var mItemState = P13nBuilder.arrayToMap(aItemState);
+        var mItemState = this.arrayToMap(aItemState);
 
-        var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
             var oExisting = mItemState[oProperty.name];
             mItem.visible = !!oExisting;
             mItem.position =  oExisting ? oExisting.position : -1;
@@ -69,7 +53,7 @@ sap.ui.define([
         });
 
 
-        P13nBuilder.sortP13nData({
+        this.sortP13nData({
             visible: "visible",
             position: "position"
         }, oP13nData.items);

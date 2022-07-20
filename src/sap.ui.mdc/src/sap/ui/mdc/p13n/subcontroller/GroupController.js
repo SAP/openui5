@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-    './BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/m/p13n/GroupPanel'
+    "./SelectionController", 'sap/ui/mdc/p13n/P13nBuilder', 'sap/m/p13n/GroupPanel'
 ], function (BaseController, P13nBuilder, GroupPanel) {
     "use strict";
 
@@ -23,7 +23,7 @@ sap.ui.define([
         return BaseController.prototype.getDelta.apply(this, arguments);
     };
 
-    GroupController.prototype.getAdaptationUI = function(oPropertyHelper){
+    GroupController.prototype.initAdaptationUI = function(oPropertyHelper){
         var oGroupPanel = new GroupPanel();
         var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
 		var oAdaptationControl = this.getAdaptationControl();
@@ -69,7 +69,7 @@ sap.ui.define([
         var oController = this.getAdaptationControl();
         var oAggregations = oController.getAggregateConditions ? oController.getAggregateConditions() || {} : {};
 
-        var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
             var oExisting = mItemState[oProperty.name];
             mItem.grouped = !!oExisting;
             mItem.position =  oExisting ? oExisting.position : -1;

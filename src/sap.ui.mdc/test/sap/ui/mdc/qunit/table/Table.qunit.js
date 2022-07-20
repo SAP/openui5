@@ -31,7 +31,7 @@ sap.ui.define([
 	"sap/ui/mdc/library",
 	"sap/m/library",
 	"sap/ui/mdc/odata/TypeUtil",
-	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler",
+	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/m/plugins/PasteProvider",
 	"../util/createAppEnvironment",

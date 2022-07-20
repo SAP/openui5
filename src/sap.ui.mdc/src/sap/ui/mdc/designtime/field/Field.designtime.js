@@ -5,7 +5,7 @@
 sap.ui.define([
 	'sap/ui/fl/Utils',
 	'sap/ui/fl/apply/api/FlexRuntimeInfoAPI',
-	'sap/ui/mdc/p13n/Engine',
+	'sap/m/p13n/Engine',
 	'sap/ui/core/Core'
 ], function(Utils, FlexRuntimeInfoAPI, Engine, oCore) {
 	"use strict";
@@ -57,12 +57,11 @@ sap.ui.define([
                             return FlexRuntimeInfoAPI.waitForChanges({
                                 element: oPanel
                             }).then(function() {
-                                var oEngine = Engine.getInstance();
                                 mPropertyBag.fnAfterClose = function() {
                                     oPanel.destroy();
                                 };
                                 var fnGetChanges = function() {
-                                    return oEngine.getRTASettingsActionHandler(oPanel, mPropertyBag, "LinkItems").then(function(aChanges) {
+                                    return Engine.getInstance().getRTASettingsActionHandler(oPanel, mPropertyBag, "LinkItems").then(function(aChanges) {
                                         aChanges.forEach(function(oChange) {
                                             var oSelectorElement = oChange.selectorElement;
                                             delete oChange.selectorElement;

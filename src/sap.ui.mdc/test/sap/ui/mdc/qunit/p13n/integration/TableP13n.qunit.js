@@ -1,6 +1,6 @@
 /* global QUnit,sinon */
 sap.ui.define([
-	"sap/ui/mdc/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/Table", "sap/ui/mdc/TableDelegate", "sap/m/Button", "sap/ui/mdc/table/Column", "sap/ui/mdc/FilterField", "sap/ui/mdc/p13n/modification/FlexModificationHandler", "test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler", "sap/ui/core/Core"
+	"sap/m/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/Table", "sap/ui/mdc/TableDelegate", "sap/m/Button", "sap/ui/mdc/table/Column", "sap/ui/mdc/FilterField", "sap/m/p13n/modification/FlexModificationHandler", "test-resources/sap/m/qunit/p13n/TestModificationHandler", "sap/ui/core/Core"
 ], function (Engine, MDCQUnitUtils, Table, TableDelegate, Button, Column, FilterField, FlexModificationHandler, TestModificationHandler, oCore) {
 	"use strict";
 	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
@@ -157,33 +157,6 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("create filter control for personalization", function (assert) {
-		var done = assert.async();
-
-		var aPropertyInfos = [
-			{
-				"name": "col1",
-				"path": "nav/col1",
-				"label": "col1",
-				"sortable": true,
-				"filterable": false
-			}
-		];
-
-		Engine.getInstance().uimanager.create(this.oTable, "Column", aPropertyInfos).then(function(oP13nControl){
-			//check container
-			assert.ok(oP13nControl, "Container has been created");
-			assert.ok(oP13nControl.isA("sap.m.Dialog"));
-
-			//check inner panel
-			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
-			assert.ok(oP13nControl.getContent()[0].isA("sap.m.p13n.SelectionPanel"), "Correct panel created");
-			assert.ok(oInnerTable, "Inner Table has been created");
-			assert.equal(oInnerTable.getItems().length, 1, "only one item has been created (as only one has been passed as parameter)");
-			done();
-		});
-	});
-
 	QUnit.test("handleP13n callback execution",function(assert){
 		var done = assert.async();
 
@@ -233,7 +206,6 @@ sap.ui.define([
 
 				//check container
 				assert.ok(oP13nControl, "Container has been created");
-				assert.ok(oP13nControl.getVerticalScrolling(), "Vertical scrolling is active");
 				assert.ok(Engine.getInstance().hasActiveP13n(this.oTable),"dialog is open");
 
 				//check inner panel
@@ -486,5 +458,4 @@ sap.ui.define([
 			});
 		}.bind(this));
 	});
-
 });

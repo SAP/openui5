@@ -890,39 +890,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("'createChanges' should throw an error if the required attributes are not provided (no control, no key, no state)'", function(assert) {
-		assert.throws(function() {
-			Engine.getInstance().createChanges();
-		}, "The method expects required parameters in order to create changes.");
-	});
-
-	QUnit.test("'createChanges' should throw an error if the required attributes are not provided' (no key, no state)", function(assert) {
-		assert.throws(function() {
-			Engine.getInstance().createChanges({
-				control: this.oControl
-			});
-		}, "The method expects required parameters in order to create changes.");
-	});
-
-	QUnit.test("'createChanges' should throw an error if the required attributes are not provided' (no state)", function(assert) {
-		assert.throws(function() {
-			Engine.getInstance().createChanges({
-				control: this.oControl,
-				key: "Test"
-			});
-		}, "The method expects required parameters in order to create changes.");
-	});
-
-	QUnit.test("'createChanges' should throw an error if the required attributes are not provided' (invalid key)", function(assert) {
-		assert.throws(function() {
-			Engine.getInstance().createChanges({
-				control: this.oControl,
-				state: [],
-				key: "unknownkey"
-			});
-		}, "The method expects a registerd key.");
-	});
-
 	QUnit.test("'_setModificationhandler' should throw an error if not the correct object is passed", function(assert) {
 		assert.throws(function() {
 			Engine.getInstance()._setModificationHandler(this.oControl, new BaseObject());

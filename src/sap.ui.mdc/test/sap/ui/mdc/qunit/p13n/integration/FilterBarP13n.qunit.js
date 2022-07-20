@@ -1,6 +1,6 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterBar", "sap/ui/mdc/FilterField", "test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler", "sap/ui/core/Core"
+	"sap/m/p13n/Engine", "../../QUnitUtils", "sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterBar", "sap/ui/mdc/FilterField", "test-resources/sap/m/qunit/p13n/TestModificationHandler", "sap/ui/core/Core"
 ], function (Engine, MDCQUnitUtils, FilterBarDelegate, FilterBar, FilterField, TestModificationHandler, oCore) {
 	"use strict";
 	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
@@ -82,7 +82,7 @@ sap.ui.define([
 
 		this.setLiveMode("Item", false);
 
-		Engine.getInstance().uimanager.show(this.oFilterBar, "Item").then(function(oP13nControl){
+		this.oFilterBar.onAdaptFilters().then(function(oP13nControl){
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
 			assert.ok(oP13nControl.isA("sap.m.Dialog"));
@@ -173,8 +173,8 @@ sap.ui.define([
 			assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
 
 			var oAddaptFiltersController = Engine.getInstance().getController(this.oFilterBar, "Item");
-			var aModelItems = oAddaptFiltersController._oAdaptationModel.getData().items;
-			var aModelItemsGrouped = oAddaptFiltersController._oAdaptationModel.getData().itemsGrouped;
+			var aModelItems = oAddaptFiltersController._oPanel.getP13nData().items;
+			var aModelItemsGrouped = oAddaptFiltersController._oPanel.getP13nData().itemsGrouped;
 
 			aModelItems[2].visible = true;
 			aModelItemsGrouped[0].items[2].visible = true;

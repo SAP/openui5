@@ -447,7 +447,7 @@ sap.ui.define([
 		var bSuppressCallback = !!mDiffParameters.suppressAppliance;
 
 		if (!sKey || !mDiffParameters.control || !vNewState) {
-			throw new Error("To create changes via Engine, atleast a 1)Control 2)Key and 3)State needs to be provided.");
+			return Promise.resolve([]);
 		}
 
 		var fDeltaHandling = function() {
@@ -1199,24 +1199,28 @@ sap.ui.define([
 
 			var oController = this.getController(oControl, sControllerKey);
 
-			var p = this.createChanges({
-				control: oControl,
-				key: sControllerKey,
-				state: oController.getP13nData(),
-				suppressAppliance: true,
-				applyAbsolute: true
-			})
-			.then(function(aItemChanges){
+			var vP13nData = oController.getP13nData();
+			if (vP13nData) {
+				var p = this.createChanges({
+					control: oControl,
+					key: sControllerKey,
+					state: vP13nData,
+					suppressAppliance: true,
+					applyAbsolute: true
+				})
+				.then(function(aItemChanges){
 
-				return oController.getBeforeApply().then(function(aChanges){
+					return oController.getBeforeApply().then(function(aChanges){
 
-					var aComulatedChanges = aChanges ? aChanges.concat(aItemChanges) : aItemChanges;
-					return aComulatedChanges;
+						var aComulatedChanges = aChanges ? aChanges.concat(aItemChanges) : aItemChanges;
+						return aComulatedChanges;
 
+					});
 				});
-			});
 
-			pChanges.push(p);
+				pChanges.push(p);
+			}
+
 		}.bind(this));
 
 		return Promise.all(pChanges).then(function(aChangeMatrix){

@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	'sap/ui/mdc/p13n/Engine', './ItemBaseFlex'
+	'sap/m/p13n/Engine', './ItemBaseFlex'
 ], function(Engine, ItemBaseFlex) {
 	"use strict";
 
