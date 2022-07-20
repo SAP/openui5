@@ -950,63 +950,86 @@ sap.ui.define([
 			assert.ok(aItems, "items in the management table exists");
 			assert.equal(aItems.length, 4,  "expected count of items in the management table exists");
 
+			var i, j, aCells, oControl, sTemp, bSkip;
 
-			for (var i = 0; i < aItems.length; i++) {
-				var aCells = aItems[i].getCells();
+			for (i = 0; i < this.oVM.oManagementTable.getItems().length; i++) {
+				aCells = this.oVM.oManagementTable.getItems()[i].getCells();
+				assert.ok(aCells, "expected cells found");
 
-				assert.ok(true, "item-" + i);
 				if (i === 0) {
-					assert.equal(aCells[0].getSrc(), "sap-icon://favorite", "expected favorite icon found");
-					assert.ok(aCells[0].hasStyleClass("sapMVarMngmtFavNonInteractiveColor"), "should be inactive");
+					assert.equal(aCells[0].getSrc(), "sap-icon://favorite", "expected favorite icon found" + "' for (" + i + ',' + 0 + ')');
+					assert.ok(aCells[0].hasStyleClass("sapMVarMngmtFavNonInteractiveColor"), "should be inactive" + "' for (" + i + ',' + 0 + ')');
 
-					assert.ok(aCells[1].isA("sap.m.ObjectIdentifier"),  "expected controltype found");
-					assert.equal(aCells[1].getTitle(), "One", "expected sharing info found");
+					assert.ok(aCells[1].isA("sap.m.ObjectIdentifier"),  "expected controltype found" + "' for (" + i + ',' + 1 + ')');
+					assert.equal(aCells[1].getTitle(), "One", "expected sharing info found" + "' for (" + i + ',' + 1 + ')');
 
-					assert.equal(aCells[2].getText(), "Public", "expected sharing info found");
-					assert.ok(!aCells[3].getSelected(), "expected default info found");
-					assert.ok(aCells[4].getSelected(), "expected apply automatically info found");
+					assert.equal(aCells[2].getText(), "Public", "expected sharing info found" + "' for (" + i + ',' + 2 + ')');
+					assert.ok(!aCells[3].getSelected(), "expected default info found" + "' for (" + i + ',' + 3 + ')');
+					assert.ok(aCells[4].getSelected(), "expected apply automatically info found" + "' for (" + i + ',' + 4 + ')');
 
-					assert.equal(aCells[6].getText(), "A", "expected author found");
-					assert.ok(!aCells[7].getVisible(), "expected delete info found");
+					assert.equal(aCells[6].getText(), "A", "expected author found" + "' for (" + i + ',' + 6 + ')');
+					assert.ok(!aCells[7].getVisible(), "expected delete info found" + "' for (" + i + ',' + 7 + ')');
 
 				} else if (i === 1) {
-					assert.equal(aCells[0].getSrc(), "sap-icon://favorite", "expected favorite icon found");
-					assert.ok(aCells[0].hasStyleClass("sapMVarMngmtFavColor"), "should be active");
+					assert.equal(aCells[0].getSrc(), "sap-icon://favorite", "expected favorite icon found" + "' for (" + i + ',' + 0 + ')');
+					assert.ok(aCells[0].hasStyleClass("sapMVarMngmtFavColor"), "should be active" + "' for (" + i + ',' + 0 + ')');
 
-					assert.ok(aCells[1].isA("sap.m.Input"),  "expected controltype found");
-					assert.equal(aCells[1].getValue(), "Two", "expected sharing info found");
+					assert.ok(aCells[1].isA("sap.m.Input"),  "expected controltype found" + "' for (" + i + ',' + 1 + ')');
+					assert.equal(aCells[1].getValue(), "Two", "expected sharing info found" + "' for (" + i + ',' + 1 + ')');
 
-					assert.equal(aCells[2].getText(),  "Private", "expected sharing info found");
-					assert.ok(!aCells[3].getSelected(),  "expected default info found");
-					assert.ok(!aCells[4].getSelected(),  "expected apply automatically info found");
+					assert.equal(aCells[2].getText(),  "Private", "expected sharing info found" + "' for (" + i + ',' + 2 + ')');
+					assert.ok(!aCells[3].getSelected(),  "expected default info found" + "' for (" + i + ',' + 3 + ')');
+					assert.ok(!aCells[4].getSelected(),  "expected apply automatically info found" + "' for (" + i + ',' + 4 + ')');
 
-					assert.equal(aCells[6].getText(), "B", "expected author found");
-					assert.ok(aCells[7].getVisible(), "expected delete info found");
+					assert.equal(aCells[6].getText(), "B", "expected author found" + "' for (" + i + ',' + 6 + ')');
+					assert.ok(aCells[7].getVisible(), "expected delete info found" + "' for (" + i + ',' + 7 + ')');
 				} else if (i === 2) {
-					assert.equal(aCells[0].getSrc(), "sap-icon://favorite", "expected favorite icon found");
-					assert.ok(aCells[0].hasStyleClass("sapMVarMngmtFavNonInteractiveColor"), "should be active");
+					assert.equal(aCells[0].getSrc(), "sap-icon://favorite", "expected favorite icon found" + "' for (" + i + ',' + 0 + ')');
+					assert.ok(aCells[0].hasStyleClass("sapMVarMngmtFavNonInteractiveColor"), "should be active" + "' for (" + i + ',' + 0 + ')');
 
-					assert.ok(aCells[1].isA("sap.m.Input"),  "expected controltype found");
-					assert.equal(aCells[1].getValue(), "Three", "expected sharing info found");
+					assert.ok(aCells[1].isA("sap.m.Input"),  "expected controltype found" + "' for (" + i + ',' + 1 + ')');
+					assert.equal(aCells[1].getValue(), "Three", "expected sharing info found" + "' for (" + i + ',' + 1 + ')');
 
-					assert.equal(aCells[2].getText(),  "Private", "expected sharing info found");
-					assert.ok(aCells[3].getSelected(),  "expected default info found");
-					assert.ok(aCells[4].getSelected(),  "expected apply automatically info found");
+					assert.equal(aCells[2].getText(),  "Private", "expected sharing info found" + "' for (" + i + ',' + 2 + ')');
+					assert.ok(aCells[3].getSelected(),  "expected default info found" + "' for (" + i + ',' + 3 + ')');
+					assert.ok(aCells[4].getSelected(),  "expected apply automatically info found" + "' for (" + i + ',' + 4 + ')');
 
-					assert.equal(aCells[6].getText(), "A", "expected author found");
-					assert.ok(aCells[7].getVisible(), "expected delete info found");
+					assert.equal(aCells[6].getText(), "A", "expected author found" + "' for (" + i + ',' + 6 + ')');
+					assert.ok(aCells[7].getVisible(), "expected delete info found" + "' for (" + i + ',' + 7 + ')');
 				} else {
-					assert.equal(aCells[0].getSrc(), "sap-icon://unfavorite", "expected favorite icon found");
+					assert.equal(aCells[0].getSrc(), "sap-icon://unfavorite", "expected favorite icon found" + "' for (" + i + ',' + 0 + ')');
 
-					assert.ok(aCells[1].isA("sap.m.ObjectIdentifier"), "expected controltype found");
-					assert.equal(aCells[1].getTitle(), "Four", "expected sharing info found");
+					assert.ok(aCells[1].isA("sap.m.ObjectIdentifier"), "expected controltype found" + "' for (" + i + ',' + 1 + ')');
+					assert.equal(aCells[1].getTitle(), "Four", "expected sharing info found" + "' for (" + i + ',' + 1 + ')');
 
-					assert.equal(aCells[2].getText(),  "Public", "expected sharing info found");
-					assert.ok(!aCells[3].getSelected(),  "expected default info found");
-					assert.ok(!aCells[4].getSelected(),  "expected apply automatically info found");
+					assert.equal(aCells[2].getText(),  "Public", "expected sharing info found" + "' for (" + i + ',' + 2 + ')');
+					assert.ok(!aCells[3].getSelected(),  "expected default info found" + "' for (" + i + ',' + 3 + ')');
+					assert.ok(!aCells[4].getSelected(),  "expected apply automatically info found" + "' for (" + i + ',' + 4 + ')');
 
-					assert.equal(aCells[6].getText(), "B", "expected author found");
-					assert.ok(!aCells[7].getVisible(), "expected delete info found");
+					assert.equal(aCells[6].getText(), "B", "expected author found" + "' for (" + i + ',' + 6 + ')');
+					assert.ok(!aCells[7].getVisible(), "expected delete info found" + "' for (" + i + ',' + 7 + ')');
+				}
+
+				var sIdPrefix = this.oVM.getId() + "-manage-";
+
+				for (j = 0; j < aCells.length; j++) {
+					oControl = aCells[j];
+					bSkip = false;
+					switch (j) {
+						case 0: sTemp = "fav-"; break;
+						case 1: sTemp = oControl.isA("sap.m.Input") ? "input-" : "text-"; break;
+						case 2: sTemp = "type-"; break;
+						case 3: sTemp = "def-"; break;
+						case 4: sTemp = "exe-"; break;
+						case 5: sTemp = "roles-"; bSkip = true; break;
+						case 6: sTemp = "author-"; break;
+						case 7: sTemp = "del-"; break;
+						default: bSkip = true; break;
+					}
+
+					if (!bSkip) {
+						assert.equal(oControl.getId(), sIdPrefix + sTemp + i, "expecting id '" + sTemp + "' for (" + i + ',' + j + ')');
+					}
 				}
 			}
 
