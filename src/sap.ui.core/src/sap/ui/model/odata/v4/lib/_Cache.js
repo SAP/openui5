@@ -647,8 +647,7 @@ sap.ui.define([
 						return oEntity && !bAgain
 							&& that.fetchLateProperty(oGroupLock, oEntity,
 								aSegments.slice(0, iEntityPathLength).join("/"),
-								aSegments.slice(iEntityPathLength).join("/"),
-								aSegments.slice(iEntityPathLength, iPathLength).join("/"))
+								aSegments.slice(iEntityPathLength).join("/"))
 							|| invalidSegment(sSegment);
 					}
 					// inside a transient entity, implicit values are determined as follows
@@ -733,7 +732,7 @@ sap.ui.define([
 
 	/**
 	 * Fetches a missing property while drilling down into the cache. Writes it into the cache and
-	 * returns it so that drillDown can continue.
+	 * resolves so that the drill-down can proceed.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID (on which unlock has already been called)
@@ -749,18 +748,15 @@ sap.ui.define([
 	 *   The path of the requested property relative to oResource; this property is requested from
 	 *   the server. For annotations, except client annotations, the annotated property is requested
 	 *   from the server.
-	 * @param {string} sMissingPropertyPath
-	 *   The path of the missing property relative to oResource; this property is returned so that
-	 *   drillDown can proceed
 	 * @returns {sap.ui.base.SyncPromise|undefined}
-	 *   A promise resolving with the missing property value or <code>undefined</code> if the
-	 *   requested property is not an expected late property; it rejects with an error if the GET
-	 *   request failed, or if the key predicate or the ETag has changed
+	 *   A promise resolving w/o any result, or <code>undefined</code> if the requested property is
+	 *   not an expected late property; it rejects with an error if the GET request failed, or if
+	 *   the key predicate or the ETag has changed
 	 *
 	 * @private
 	 */
 	_Cache.prototype.fetchLateProperty = function (oGroupLock, oResource, sResourcePath,
-			sRequestedPropertyPath, sMissingPropertyPath) {
+			sRequestedPropertyPath) {
 		var sFullResourceMetaPath,
 			sFullResourcePath,
 			sGroupId,
@@ -876,9 +872,6 @@ sap.ui.define([
 
 			_Helper.updateSelected(that.mChangeListeners, sResourcePath, oResource, oData,
 				aUpdateProperties);
-
-			// return the missing property, so that drillDown properly proceeds
-			return _Helper.drillDown(oResource, sMissingPropertyPath.split("/"));
 		}).finally(function () { // clean up only after updateSelected!
 			delete that.mPropertyRequestByPath[sRequestPath];
 		});
