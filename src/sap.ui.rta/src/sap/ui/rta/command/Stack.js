@@ -105,7 +105,7 @@ sap.ui.define([
 				var mComposite = {};
 				var mChanges = {};
 				aChanges.forEach(function(oChange) {
-					mChanges[oChange.getDefinition().fileName] = oChange;
+					mChanges[oChange.getId()] = oChange;
 				});
 				aFileNames
 					.reduce(toAvailableChanges.bind(null, mChanges), [])
