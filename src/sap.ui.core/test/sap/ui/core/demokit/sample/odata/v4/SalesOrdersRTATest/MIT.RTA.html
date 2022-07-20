@@ -17,9 +17,13 @@
 			To check console errors open the developer tools before starting the application and
 			check with each step, that there are no errors and warnings.
 
+		<h3>Testing with mock data</h3>
+		Start the Sales Orders RTA test application URL (adjust host and port if necessary) locally.
+			<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrdersRTATest">
+			http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrdersRTATest
+			</a>
 		<h3>Testing with back end</h3>
 		Start the Sales Orders RTA test application URL (adjust host and port if necessary) locally.
-		Note: The test only works with back end (realOData=true):
 			<a href="http://localhost:8080/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrdersRTATest&amp;realOData=true">
 			http://&lt;host>:&lt;port>/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrdersRTATest&amp;realOData=true
 			</a>
@@ -43,15 +47,17 @@
 		</ol>
 		<h3>Adapt Sales Orders details</h3>
 		<ol>
-			<li>Select the first entry in Sales Orders table. After loading the Sales Order Details
+			<li>Select the second entry in Sales Orders table. After loading the Sales Order Details
 			click on the gearwheel button which is the one with tooltip "Adapt Sales Order Details"
 			of the Sales Orders Details form.
 			</li>
 			<li><b>Check:</b>An adaptation dialog opens.</li>
 			<li>In the adaptation dialog: Uncheck "SalesOrderId", check "LifecycleStatus".
 				Click "Apply Changes".</li>
-			<li><b>Check:</b>The "SalesOrdersId" column is no longer displayed.</li>
-			<li><b>Check:</b>A "LifecycleStatus" column is now displayed.</li>
+			<li><b>Check:</b>The "SalesOrdersId" label and text fields are no longer displayed.</li>
+			<li><b>Check:</b>A "LifecycleStatus" label and text fields are now displayed.</li>
+			<li>When testing within mock data: In the adaptation dialog uncheck again
+				"LifecycleStatus", press "Apply Changes" and check that the field is gone</li>
 		</ol>
 		<h3>Adapt Business Partner</h3>
 		<ol>
@@ -61,8 +67,11 @@
 			<li><b>Check:</b>An adaptation dialog opens.</li>
 			<li>In the adaptation dialog: Uncheck "BusinessPartnerID", check "BusinessPartnerRole".
 				Click "Apply Changes".</li>
-			<li><b>Check:</b>The "BusinessPartnerID" column is no longer displayed.</li>
-			<li><b>Check:</b>A "BusinessPartnerRole" column is now displayed.</li>
+			<li><b>Check:</b>The "BusinessPartnerID" label and text fields are no longer displayed.
+			</li>
+			<li><b>Check:</b>A "BusinessPartnerRole" label and text fields are now displayed.</li>
+			<li>When testing within mock data: In the adaptation dialog uncheck again
+				"BusinessPartnerRole", press "Apply Changes" and check that the field is gone</li>
 		</ol>
 		<h3>Adapt Sales Order Line Items</h3>
 		<ol>

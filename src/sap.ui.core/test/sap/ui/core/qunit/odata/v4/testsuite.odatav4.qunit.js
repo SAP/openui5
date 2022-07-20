@@ -133,7 +133,8 @@ sap.ui.define(function () {
 			},
 			"OPA.SalesOrdersRTATest" : {
 				autostart : false,
-				module : ["sap/ui/core/sample/odata/v4/SalesOrdersRTATest/Opa.qunit"]
+				module : ["sap/ui/core/sample/odata/v4/SalesOrdersRTATest/Opa.qunit"],
+				realOData : false // realOData brings nothing new
 			},
 			"OPA.SalesOrdersTemplate" : {
 				autostart : false,
