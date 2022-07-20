@@ -284,14 +284,7 @@ sap.ui.define([
 										oTranslationListPage1._navBtn.firePress();
 										oCancelButtonInPopover1.firePress();
 										wait().then(function () {
-											oTable1.setSelectedIndex(1);
-											oTable1.fireRowSelectionChange({
-												rowIndex: 1,
-												userInteraction: true
-											});
-											assert.ok(oEditButton1.getEnabled(), "Table toolbar 1: edit button enabled");
-											oEditButton1.firePress();
-											wait().then(function () {
+											oField1._oObjectDetailsPopover.attachEventOnce("afterOpen", function(oEvent) {
 												var oCancelButtonInPopover2 = oField1._oObjectDetailsPopover._oCancelButton;
 												assert.ok(oCancelButtonInPopover2.getVisible(), "Popover 2: cancel button visible");
 												var oSimpleForm2 = oField1._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -299,17 +292,35 @@ sap.ui.define([
 												var oContents2 = oSimpleForm2.getContent();
 												assert.equal(oContents2.length, 16, "SimpleForm 2: length");
 												assert.ok(deepEqual(JSON.parse(oContents2[15].getValue()), oSelectedValue2), "SimpleForm 2 field textArea: Has the value");
-												var oFormField1 = oContents2[1];
-												assert.ok(oFormField1.isA("sap.m.Input"), "SimpleForm 2 field 1: Input Field");
-												assert.ok(oFormField1.getVisible(), "SimpleForm 2 field 1: Visible");
-												assert.ok(oFormField1.getEditable(), "SimpleForm 2 field 1: Editable");
-												assert.equal(oFormField1.getValue(), oObject2InAdminChange.key, "SimpleForm 2 field 1: Has value");
-												assert.ok(!oFormField1.getShowValueHelp(), "SimpleForm 2 field 1: ShowValueHelp not true");
-												var oValueHelpIcon2 = oFormField1._oValueHelpIcon;
+												var oFormField2 = oContents2[1];
+												assert.ok(oFormField2.isA("sap.m.Input"), "SimpleForm 2 field 1: Input Field");
+												assert.ok(oFormField2.getVisible(), "SimpleForm 2 field 1: Visible");
+												assert.ok(oFormField2.getEditable(), "SimpleForm 2 field 1: Editable");
+												assert.equal(oFormField2.getValue(), oObject2InAdminChange.key, "SimpleForm 2 field 1: Has value");
+												assert.ok(!oFormField2.getShowValueHelp(), "SimpleForm 2 field 1: ShowValueHelp not true");
+												var oValueHelpIcon2 = oFormField2._oValueHelpIcon;
 												assert.ok(oValueHelpIcon2, "SimpleForm 2 field 1: Value help icon exist");
 												assert.ok(!oValueHelpIcon2.getVisible(), "SimpleForm 2 field 1: Value help icon not visible");
 												oCancelButtonInPopover2.firePress();
 												wait().then(function () {
+													oField1._oObjectDetailsPopover.attachEventOnce("afterOpen", function(oEvent) {
+														var oSimpleForm3 = oField1._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
+														assert.ok(oSimpleForm3.isA("sap.ui.layout.form.SimpleForm"), "Popover 3: content is SimpleForm");
+														var oContents3 = oSimpleForm3.getContent();
+														assert.equal(oContents3.length, 16, "SimpleForm 3: length");
+														assert.ok(deepEqual(JSON.parse(oContents3[15].getValue()), oSelectedValue3), "SimpleForm 3 field textArea: Has the value");
+														var oFormField3 = oContents3[1];
+														assert.ok(oFormField3.isA("sap.m.Input"), "SimpleForm 3 field 1: Input Field");
+														assert.ok(oFormField3.getVisible(), "SimpleForm 3 field 1: Visible");
+														assert.ok(oFormField3.getEditable(), "SimpleForm 3 field 1: Editable");
+														assert.equal(oFormField3.getValue(), oObject3InAdminChange.key, "SimpleForm 3 field 1: Has value");
+														assert.ok(!oFormField3.getShowValueHelp(), "SimpleForm 3 field 1: ShowValueHelp not true");
+														var oValueHelpIcon3 = oFormField3._oValueHelpIcon;
+														assert.ok(oValueHelpIcon3, "SimpleForm 3 field 1: Value help icon exist");
+														assert.ok(!oValueHelpIcon3.getVisible(), "SimpleForm 3 field 1: Value help icon not visible");
+														destroyEditor(that.oEditor);
+														resolve();
+													});
 													oTable1.setSelectedIndex(2);
 													oTable1.fireRowSelectionChange({
 														rowIndex: 2,
@@ -317,26 +328,15 @@ sap.ui.define([
 													});
 													assert.ok(oEditButton1.getEnabled(), "Table toolbar 1: edit button enabled");
 													oEditButton1.firePress();
-													wait().then(function () {
-														var oSimpleForm3 = oField1._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
-														assert.ok(oSimpleForm3.isA("sap.ui.layout.form.SimpleForm"), "Popover 3: content is SimpleForm");
-														var oContents3 = oSimpleForm3.getContent();
-														assert.equal(oContents3.length, 16, "SimpleForm 3: length");
-														assert.ok(deepEqual(JSON.parse(oContents3[15].getValue()), oSelectedValue3), "SimpleForm 3 field textArea: Has the value");
-														var oFormField1 = oContents3[1];
-														assert.ok(oFormField1.isA("sap.m.Input"), "SimpleForm 3 field 1: Input Field");
-														assert.ok(oFormField1.getVisible(), "SimpleForm 3 field 1: Visible");
-														assert.ok(oFormField1.getEditable(), "SimpleForm 3 field 1: Editable");
-														assert.equal(oFormField1.getValue(), oObject3InAdminChange.key, "SimpleForm 3 field 1: Has value");
-														assert.ok(!oFormField1.getShowValueHelp(), "SimpleForm 3 field 1: ShowValueHelp not true");
-														var oValueHelpIcon3 = oFormField1._oValueHelpIcon;
-														assert.ok(oValueHelpIcon3, "SimpleForm 3 field 1: Value help icon exist");
-														assert.ok(!oValueHelpIcon3.getVisible(), "SimpleForm 3 field 1: Value help icon not visible");
-														destroyEditor(that.oEditor);
-														resolve();
-													});
 												});
 											});
+											oTable1.setSelectedIndex(1);
+											oTable1.fireRowSelectionChange({
+												rowIndex: 1,
+												userInteraction: true
+											});
+											assert.ok(oEditButton1.getEnabled(), "Table toolbar 1: edit button enabled");
+											oEditButton1.firePress();
 										});
 									});
 								});

@@ -372,16 +372,16 @@ sap.ui.define([
 									var oContents1 = oSimpleForm1.getContent();
 									assert.equal(oContents1.length, 16, "SimpleForm 1: length");
 									assert.ok(deepEqual(JSON.parse(oContents1[15].getValue()), oSelectedValue1), "SimpleForm 1 field textArea: Has the value");
-									var oFormLabel3 = oContents1[4];
-									var oFormField3 = oContents1[5];
-									assert.equal(oFormLabel3.getText(), "Text", "SimpleForm 1 label 3: Has label text");
-									assert.ok(oFormLabel3.getVisible(), "SimpleForm 1 label 3: Visible");
-									assert.ok(oFormField3.isA("sap.m.Input"), "SimpleForm 1 Field 3: Input Field");
-									assert.ok(oFormField3.getVisible(), "SimpleForm 1 Field 3: Visible");
-									assert.ok(oFormField3.getEditable(), "SimpleForm 1 Field 3: Editable");
-									assert.equal(oFormField3.getValue(), oObject1InContentChange.text, "SimpleForm 1 field 3: Has value");
-									assert.ok(oFormField3.getShowValueHelp(), "SimpleForm 1 field 3: ShowValueHelp true");
-									var oValueHelpIcon1 = oFormField3._oValueHelpIcon;
+									var oFormLabel1 = oContents1[4];
+									var oFormField1 = oContents1[5];
+									assert.equal(oFormLabel1.getText(), "Text", "SimpleForm 1 label 3: Has label text");
+									assert.ok(oFormLabel1.getVisible(), "SimpleForm 1 label 3: Visible");
+									assert.ok(oFormField1.isA("sap.m.Input"), "SimpleForm 1 Field 3: Input Field");
+									assert.ok(oFormField1.getVisible(), "SimpleForm 1 Field 3: Visible");
+									assert.ok(oFormField1.getEditable(), "SimpleForm 1 Field 3: Editable");
+									assert.equal(oFormField1.getValue(), oObject1InContentChange.text, "SimpleForm 1 field 3: Has value");
+									assert.ok(oFormField1.getShowValueHelp(), "SimpleForm 1 field 3: ShowValueHelp true");
+									var oValueHelpIcon1 = oFormField1._oValueHelpIcon;
 									assert.ok(oValueHelpIcon1, "SimpleForm 1 field 3: Value help icon exist");
 									assert.ok(oValueHelpIcon1.getVisible(), "SimpleForm 1 field 3: Value help icon visible");
 									assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "SimpleForm 1 field 3: Input value help icon");
@@ -411,14 +411,7 @@ sap.ui.define([
 										oTranslationListPage1._navBtn.firePress();
 										oCancelButtonInPopover1.firePress();
 										wait().then(function () {
-											oTable1.setSelectedIndex(1);
-											oTable1.fireRowSelectionChange({
-												rowIndex: 1,
-												userInteraction: true
-											});
-											assert.ok(oEditButton1.getEnabled(), "Table toolbar 1: edit button enabled");
-											oEditButton1.firePress();
-											wait().then(function () {
+											oField1._oObjectDetailsPopover.attachEventOnce("afterOpen", function(oEvent) {
 												var oCancelButtonInPopover2 = oField1._oObjectDetailsPopover._oCancelButton;
 												assert.ok(oCancelButtonInPopover2.getVisible(), "Popover 2: cancel button visible");
 												var oSimpleForm2 = oField1._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -426,16 +419,16 @@ sap.ui.define([
 												var oContents2 = oSimpleForm2.getContent();
 												assert.equal(oContents2.length, 16, "SimpleForm 2: length");
 												assert.ok(deepEqual(JSON.parse(oContents2[15].getValue()), oSelectedValue2), "SimpleForm 2 field textArea: Has the value");
-												oFormLabel3 = oContents2[4];
-												oFormField3 = oContents2[5];
-												assert.equal(oFormLabel3.getText(), "Text", "SimpleForm 2 label 3: Has label text");
-												assert.ok(oFormLabel3.getVisible(), "SimpleForm 2 label 3: Visible");
-												assert.ok(oFormField3.isA("sap.m.Input"), "SimpleForm 2 Field 3: Input Field");
-												assert.ok(oFormField3.getVisible(), "SimpleForm 2 Field 3: Visible");
-												assert.ok(oFormField3.getEditable(), "SimpleForm 2 Field 3: Editable");
-												assert.equal(oFormField3.getValue(), oObject2InContentChange.text, "SimpleForm 2 field 3: Has value");
-												assert.ok(oFormField3.getShowValueHelp(), "SimpleForm 2 field 3: ShowValueHelp true");
-												var oValueHelpIcon2 = oFormField3._oValueHelpIcon;
+												var oFormLabel2 = oContents2[4];
+												var oFormField2 = oContents2[5];
+												assert.equal(oFormLabel2.getText(), "Text", "SimpleForm 2 label 3: Has label text");
+												assert.ok(oFormLabel2.getVisible(), "SimpleForm 2 label 3: Visible");
+												assert.ok(oFormField2.isA("sap.m.Input"), "SimpleForm 2 Field 3: Input Field");
+												assert.ok(oFormField2.getVisible(), "SimpleForm 2 Field 3: Visible");
+												assert.ok(oFormField2.getEditable(), "SimpleForm 2 Field 3: Editable");
+												assert.equal(oFormField2.getValue(), oObject2InContentChange.text, "SimpleForm 2 field 3: Has value");
+												assert.ok(oFormField2.getShowValueHelp(), "SimpleForm 2 field 3: ShowValueHelp true");
+												var oValueHelpIcon2 = oFormField2._oValueHelpIcon;
 												assert.ok(oValueHelpIcon2, "SimpleForm field 3: Value help icon exist");
 												assert.ok(oValueHelpIcon2.getVisible(), "SimpleForm 2 field 3: Value help icon visible");
 												assert.ok(oValueHelpIcon2.isA("sap.ui.core.Icon"), "SimpleForm 2 field 3: Input value help icon");
@@ -465,21 +458,14 @@ sap.ui.define([
 													oTranslationListPage2._navBtn.firePress();
 													oCancelButtonInPopover2.firePress();
 													wait().then(function () {
-														oTable1.setSelectedIndex(2);
-														oTable1.fireRowSelectionChange({
-															rowIndex: 2,
-															userInteraction: true
-														});
-														assert.ok(oEditButton1.getEnabled(), "Table toolbar 1: edit button enabled");
-														oEditButton1.firePress();
-														wait().then(function () {
+														oField1._oObjectDetailsPopover.attachEventOnce("afterOpen", function(oEvent) {
 															var oSimpleForm3 = oField1._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 															assert.ok(oSimpleForm3.isA("sap.ui.layout.form.SimpleForm"), "Popover 3: content is SimpleForm");
 															var oContents3 = oSimpleForm3.getContent();
 															assert.equal(oContents3.length, 16, "SimpleForm 3: length");
 															assert.ok(deepEqual(JSON.parse(oContents3[15].getValue()), oSelectedValue3), "SimpleForm 3 field textArea: Has the value");
-															oFormLabel3 = oContents3[4];
-															oFormField3 = oContents3[5];
+															var oFormLabel3 = oContents3[4];
+															var oFormField3 = oContents3[5];
 															assert.equal(oFormLabel3.getText(), "Text", "SimpleForm 3 label 3: Has label text");
 															assert.ok(oFormLabel3.getVisible(), "SimpleForm 3 label 3: Visible");
 															assert.ok(oFormField3.isA("sap.m.Input"), "SimpleForm 3 Field 3: Input Field");
@@ -518,9 +504,23 @@ sap.ui.define([
 																resolve();
 															});
 														});
+														oTable1.setSelectedIndex(2);
+														oTable1.fireRowSelectionChange({
+															rowIndex: 2,
+															userInteraction: true
+														});
+														assert.ok(oEditButton1.getEnabled(), "Table toolbar 1: edit button enabled");
+														oEditButton1.firePress();
 													});
 												});
 											});
+											oTable1.setSelectedIndex(1);
+											oTable1.fireRowSelectionChange({
+												rowIndex: 1,
+												userInteraction: true
+											});
+											assert.ok(oEditButton1.getEnabled(), "Table toolbar 1: edit button enabled");
+											oEditButton1.firePress();
 										});
 									});
 								});

@@ -284,14 +284,7 @@ sap.ui.define([
 										oTranslationListPage1._navBtn.firePress();
 										oCancelButtonInPopover1.firePress();
 										wait().then(function () {
-											oTable1.setSelectedIndex(1);
-											oTable1.fireRowSelectionChange({
-												rowIndex: 1,
-												userInteraction: true
-											});
-											assert.ok(oEditButton1.getEnabled(), "Table toolbar 1: edit button enabled");
-											oEditButton1.firePress();
-											wait().then(function () {
+											oField1._oObjectDetailsPopover.attachEventOnce("afterOpen", function(oEvent) {
 												var oCancelButtonInPopover2 = oField1._oObjectDetailsPopover._oCancelButton;
 												assert.ok(oCancelButtonInPopover2.getVisible(), "Popover 2: cancel button visible");
 												var oSimpleForm2 = oField1._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
@@ -310,14 +303,7 @@ sap.ui.define([
 												assert.ok(!oValueHelpIcon2.getVisible(), "SimpleForm 2 field 1: Value help icon not visible");
 												oCancelButtonInPopover2.firePress();
 												wait().then(function () {
-													oTable1.setSelectedIndex(2);
-													oTable1.fireRowSelectionChange({
-														rowIndex: 2,
-														userInteraction: true
-													});
-													assert.ok(oEditButton1.getEnabled(), "Table toolbar 1: edit button enabled");
-													oEditButton1.firePress();
-													wait().then(function () {
+													oField1._oObjectDetailsPopover.attachEventOnce("afterOpen", function(oEvent) {
 														var oSimpleForm3 = oField1._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 														assert.ok(oSimpleForm3.isA("sap.ui.layout.form.SimpleForm"), "Popover 3: content is SimpleForm");
 														var oContents3 = oSimpleForm3.getContent();
@@ -335,8 +321,22 @@ sap.ui.define([
 														destroyEditor(that.oEditor);
 														resolve();
 													});
+													oTable1.setSelectedIndex(2);
+													oTable1.fireRowSelectionChange({
+														rowIndex: 2,
+														userInteraction: true
+													});
+													assert.ok(oEditButton1.getEnabled(), "Table toolbar 1: edit button enabled");
+													oEditButton1.firePress();
 												});
 											});
+											oTable1.setSelectedIndex(1);
+											oTable1.fireRowSelectionChange({
+												rowIndex: 1,
+												userInteraction: true
+											});
+											assert.ok(oEditButton1.getEnabled(), "Table toolbar 1: edit button enabled");
+											oEditButton1.firePress();
 										});
 									});
 								});
