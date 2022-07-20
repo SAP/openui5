@@ -92,7 +92,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.extensionPointName - Name of the extension point
 	 * @returns {Promise} Promise that resolves with an array of changes
 	 * @private
-	 * @restricted sap.ui.fl.apply._internal.extensionPoint.Processor
+	 * @ui5-restricted sap.ui.fl.apply._internal.extensionPoint.Processor
 	 */
 	ExtensionPointState.getChangesForExtensionPoint = function(oChangePersistence, mPropertyBag) {
 		if (!mPropertyBag.extensionPointName) {

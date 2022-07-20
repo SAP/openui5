@@ -306,7 +306,7 @@ sap.ui.define([
 		 *
 		 *
 		 * @param {object} mParameters - Parameters of the request
-		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
+		 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		addLanguageInfo: function (mParameters) {
 			if (!mParameters) {

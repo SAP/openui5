@@ -51,6 +51,20 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.fl.initial._internal
 	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 * The <code>sap.ui.fl.initial._internal.connectors</code> namespace contains modules to load flex entities from different sources.
+	 * The <code>flexibilityServices</code> parameter in the <code>sap.ui.core.Configuration</code> defines which connectors are in use.
+	 * The <code>Configuration</code> is not limited to these connectors and can include every connector extending <code>sap.ui.fl.interfaces.BaseLoadConnector</code>
+	 * and <code>sap.ui.fl.write.connectors.BaseConnector</code>.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.initial._internal.connectors
+	 * @private
+	 * @ui5-restricted sap.ui.fl.initial._internal.Storage, sap.ui.fl.write._internal.Storage
 	 */
 
 	/**
@@ -75,6 +89,177 @@ sap.ui.define([
 	 */
 
 	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal.changes
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal.changes.descriptor
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal.changes.descriptor.app
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal.changes.descriptor.fiori
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal.changes.descriptor.ovp
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal.changes.descriptor.ui5
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal.flexObjects
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal.flexState
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal.flexState.changes
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal.flexState.compVariants
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal.flexState.controlVariants
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal.flexState.UI2Personalization
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal.preprocessors
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.apply._internal.variants
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.support
+	 * @private
+	 * @ui5-restricted sap.ui.fl, UI5 Flexibility provided support tools
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.support.api
+	 * @private
+	 * @ui5-restricted sap.ui.fl, UI5 Flexibility provided support tools
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.support._internal
+	 * @private
+	 * @ui5-restricted sap.ui.fl.support.api
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.variants.context
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
 	 * The <code>sap.ui.fl.write</code> namespace should contain all code necessary to
 	 * create, update, and reset changes or other flex objects. Additional common functionality needed
 	 * by personalization dialogs or 'tools' like key user adaptation will be part of this namespace.
@@ -96,6 +281,69 @@ sap.ui.define([
 	 */
 
 	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.write._internal
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.write._internal.appVariant
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.write._internal.connectors
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.write._internal.extensionPoint
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.write._internal.fieldExtensibility
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.write._internal.flexState
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.write._internal.flexState.compVariants
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
 	 * The <code>sap.ui.fl.interfaces</code> namespace contains only interface jsdoc descriptions.
 	 * It does not contain running code.
 	 *
@@ -103,6 +351,17 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.fl.interfaces
 	 * @public
+	 */
+
+	/**
+	 * The <code>sap.ui.fl.interfaces</code> namespace contains only interface jsdoc descriptions.
+	 * It does not contain running code.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.registry
+	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 */
 
 	/**
