@@ -22,9 +22,19 @@ sap.ui.define([
 	return function () {
 		return Settings.getInstance().then(function (oSettings) {
 			return Object.keys(oSettings._oSettings).map(function(sKey) {
+				var value = oSettings._oSettings[sKey];
+
+				switch (sKey) {
+					case "versioning":
+						value = value.CUSTOMER || value.ALL;
+						break;
+					default:
+						break;
+				}
+
 				return {
 					key: sKey,
-					value: oSettings._oSettings[sKey]
+					value: value
 				};
 			});
 		});
