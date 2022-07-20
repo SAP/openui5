@@ -207,6 +207,7 @@ sap.ui.define([
 			oPropertyHelper.getProperties().forEach(function(oProperty) {
 
                 var mItem = {};
+                mItem.name = oProperty.name;
 
                 if (bEnhance) {
                     var bIsValid = fnEnhace(mItem, oProperty);
@@ -215,7 +216,6 @@ sap.ui.define([
                     }
                 }
 
-                mItem.name = oProperty.name;
                 mItem.label = oProperty.label || oProperty.name;
                 mItem.tooltip = oProperty.tooltip;
 

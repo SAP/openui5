@@ -143,9 +143,8 @@ sap.ui.define([
 
         var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
 
-            var sName = oProperty.name;
-
-            var aExistingFilters = mExistingFilters[sName];
+            mItem.name = oProperty.path || oProperty.name;
+            var aExistingFilters = mExistingFilters[mItem.name];
             mItem.active = aExistingFilters && aExistingFilters.length > 0 ? true : false;
 
             return !(oProperty.filterable === false);
