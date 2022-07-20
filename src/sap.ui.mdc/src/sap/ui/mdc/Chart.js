@@ -1051,6 +1051,7 @@ sap.ui.define([
          * @private
          */
         Chart.prototype._innerChartDataLoadComplete = function (mArguments) {
+            this._checkStyleClassesForDimensions();
             this.setBusy(false);
             this._renderOverlay(false);
 
@@ -1059,6 +1060,18 @@ sap.ui.define([
             this.fireEvent("innerChartLoadedData ", {
                 innerChart: this.getControlDelegate().getInnerChart(this)
             });
+        };
+
+        Chart.prototype._checkStyleClassesForDimensions = function() {
+            var bHasDimension = this.getItems().some(function(oItem){ return oItem.getType() === "groupable"; });
+
+            if (!bHasDimension && this.hasStyleClass("sapUiMDCChartGrid")) {
+                this.removeStyleClass("sapUiMDCChartGrid");
+                this.addStyleClass("sapUiMDCChartGridNoBreadcrumbs");
+            } else if (bHasDimension && this.hasStyleClass("sapUiMDCChartGridNoBreadcrumbs")) {
+                this.removeStyleClass("sapUiMDCChartGridNoBreadcrumbs");
+                this.addStyleClass("sapUiMDCChartGrid");
+            }
         };
 
         /**
