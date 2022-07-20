@@ -122,6 +122,8 @@ sap.ui.define([
 		this.sChangeReason = oModel.bAutoExpandSelect && !mParameters.$$aggregation
 			? "AddVirtualContext"
 			: undefined;
+		// BEWARE: #doReplaceWith can insert a context w/ negative index, but w/o #created promise
+		// into aContexts' area of "created contexts"!
 		this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
 		this.oDiff = undefined;
 		this.aFilters = [];
@@ -289,7 +291,7 @@ sap.ui.define([
 					oContext.resetKeepAlive(); // ensure that it is destroyed later
 					bDestroy = true;
 				}
-				if (oContext.created()) {
+				if (oContext.iIndex < 0) {
 					// happens only for a created context that is not transient anymore
 					that.destroyCreated(oContext);
 					bFireChange = true;
@@ -1222,8 +1224,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.doReplaceWith = function (oOldContext, oElement, sPredicate) {
-		var iIndex = oOldContext.iIndex,
-			bKeepAlive = oOldContext.isKeepAlive(),
+		var iModelIndex = oOldContext.getModelIndex(),
 			bNew,
 			fnOnBeforeDestroy = oOldContext.fnOnBeforeDestroy,
 			fnOnBeforeDestroyClone,
@@ -1237,21 +1238,21 @@ sap.ui.define([
 			if (oResult.iIndex !== undefined) {
 				throw new Error("Unexpected index: " + oResult);
 			}
-			oResult.iIndex = iIndex;
+			oResult.iIndex = oOldContext.iIndex;
 			delete this.mPreviousContextsByPath[sPath];
 		} else {
-			oResult = Context.create(this.oModel, this, sPath, iIndex);
+			oResult = Context.create(this.oModel, this, sPath, oOldContext.iIndex);
 			bNew = true;
 		}
 		oOldContext.iIndex = undefined;
-		if (iIndex === undefined) {
+		if (iModelIndex === undefined) {
 			this.mPreviousContextsByPath[sPath] = oResult;
 			this.oCache.addKeptElement(oElement);
 		} else {
-			this.aContexts[iIndex] = oResult;
-			this.oCache.doReplaceWith(iIndex, oElement);
+			this.aContexts[iModelIndex] = oResult;
+			this.oCache.doReplaceWith(iModelIndex, oElement);
 		}
-		if (bKeepAlive) {
+		if (oOldContext.isKeepAlive()) {
 			this.mPreviousContextsByPath[oOldContext.getPath()] = oOldContext;
 			if (bNew) {
 				if (fnOnBeforeDestroy) {
@@ -2862,7 +2863,7 @@ sap.ui.define([
 				var iIndex = oContext.getModelIndex(),
 					i;
 
-				if (oContext.created()) {
+				if (oContext.iIndex < 0) {
 					that.destroyCreated(oContext);
 					bDestroyed = true;
 				} else {

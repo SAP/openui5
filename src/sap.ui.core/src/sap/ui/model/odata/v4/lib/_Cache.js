@@ -2207,6 +2207,15 @@ sap.ui.define([
 	 * @public
 	 */
 	_CollectionCache.prototype.doReplaceWith = function (iIndex, oElement) {
+		var oOldElement = this.aElements[iIndex];
+
+		if (oOldElement && _Helper.hasPrivateAnnotation(oOldElement, "transientPredicate")
+				&& !_Helper.hasPrivateAnnotation(oElement, "transientPredicate")) {
+			// when replacing a created element (w/ transientPredicate), make sure the replacement
+			// also *looks* like a created one (but do not overwrite existing transientPredicate!)
+			_Helper.setPrivateAnnotation(oElement, "transientPredicate",
+				_Helper.getPrivateAnnotation(oElement, "predicate"));
+		}
 		this.aElements[iIndex] = oElement;
 		this.addKeptElement(oElement); // maintain $byPredicate
 	};
