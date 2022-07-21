@@ -339,6 +339,20 @@ sap.ui.define([
 			this.oControlVariantPlugin.configureVariants([this.oVariantManagementOverlay]);
 		});
 
+		QUnit.test("when configureVariants is called without changes", function(assert) {
+			var done = assert.async();
+			var aChanges = [];
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			sandbox.stub(this.oModel, "manageVariants").resolves(aChanges);
+			var oFireElementModifiedSpy = sandbox.spy(this.oControlVariantPlugin, "fireElementModified");
+
+			return this.oControlVariantPlugin.configureVariants([this.oVariantManagementOverlay])
+				.then(function() {
+					assert.ok(oFireElementModifiedSpy.notCalled, "then the command is not built");
+					done();
+				});
+		});
+
 		QUnit.test("when createSaveCommand is called and the key user presses the save button", function(assert) {
 			var done = assert.async();
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);

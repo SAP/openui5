@@ -482,6 +482,7 @@ sap.ui.define([
 	/**
 	 * Opens a dialog for Variant configuration.
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
+	 * @returns {Promise} Resolving when the dialog is closed and the command is created
 	 * @public
 	 */
 	ControlVariant.prototype.configureVariants = function (aElementOverlays) {
@@ -492,7 +493,7 @@ sap.ui.define([
 		var oDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
 		var mFlexSettings = this.getCommandFactory().getFlexSettings();
 
-		oModel.manageVariants(
+		return oModel.manageVariants(
 			oVariantManagementControl,
 			sVariantManagementReference,
 			mFlexSettings.layer,
@@ -500,22 +501,27 @@ sap.ui.define([
 			ContextSharingAPI.createComponent(mFlexSettings)
 		)
 		.then(function(aConfiguredChanges) {
-			return this.getCommandFactory().getCommandFor(
-				oVariantManagementControl,
-				"configure",
-				{
-					control: oVariantManagementControl,
-					changes: aConfiguredChanges
-				},
-				oDesignTimeMetadata,
-				sVariantManagementReference
-			);
+			if (aConfiguredChanges.length > 0) {
+				return this.getCommandFactory().getCommandFor(
+					oVariantManagementControl,
+					"configure",
+					{
+						control: oVariantManagementControl,
+						changes: aConfiguredChanges
+					},
+					oDesignTimeMetadata,
+					sVariantManagementReference
+				);
+			}
+			return undefined;
 		}.bind(this))
 
 		.then(function(oConfigureCommand) {
-			this.fireElementModified({
-				command: oConfigureCommand
-			});
+			if (oConfigureCommand) {
+				this.fireElementModified({
+					command: oConfigureCommand
+				});
+			}
 		}.bind(this))
 
 		.catch(function(oMessage) {
