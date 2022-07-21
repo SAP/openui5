@@ -23,6 +23,9 @@ sap.ui.define([
 			this.oStub2 = this.stub(oCore.getConfiguration(), "getFormatLocale").callsFake(function () {
 				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
+			this.oStub3 = this.stub(oCore.getConfiguration(), "getLocale").callsFake(function () {
+				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+			});
 		},
 		afterEach: function () {
 		}
@@ -30,6 +33,16 @@ sap.ui.define([
 
 	QUnit.test("getFirstDateOfWeek() for US border case where the first date of the first week is in the previous year", function(assert) {
 		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0))).toString(), new Date(Date.UTC(2015, 11, 27, 0)).toString(),
+			"1 Jan 2016->27 Dec 2015");
+	});
+
+	QUnit.test("getFirstDateOfWeek() with custom 1st day of week - Tuesday", function(assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0)), { firstDayOfWeek: 2, minimalDaysInFirstWeek: 4 }).toString(), new Date(Date.UTC(2015, 11, 29, 0)).toString(),
+			"1 Jan 2016->27 Dec 2015");
+	});
+
+	QUnit.test("getFirstDateOfWeek() with custom 1st day of week Monday", function(assert) {
+		assert.equal(CalendarUtils.getFirstDateOfWeek(new Date(Date.UTC(2016, 0, 1, 0)), { firstDayOfWeek: 1, minimalDaysInFirstWeek: 2 }).toString(), new Date(Date.UTC(2015, 11, 28, 0)).toString(),
 			"1 Jan 2016->27 Dec 2015");
 	});
 
@@ -81,6 +94,9 @@ sap.ui.define([
 			});
 			this.oStub2 = this.stub(oCore.getConfiguration(), "getFormatLocale").callsFake(function () {
 				return new Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
+			});
+			this.oStub3 = this.stub(oCore.getConfiguration(), "getLocale").callsFake(function () {
+				return new Locale("en_GB");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
 		},
 		afterEach: function () {
@@ -298,6 +314,9 @@ sap.ui.define([
 			this.oStub = this.stub(oCore.getConfiguration().getFormatSettings(), "getFormatLocale").callsFake(function () {
 				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
+			this.oStub3 = this.stub(oCore.getConfiguration(), "getLocale").callsFake(function () {
+				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+			});
 		},
 		afterEach: function () {
 		}
@@ -344,6 +363,9 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oStub = this.stub(oCore.getConfiguration().getFormatSettings(), "getFormatLocale").callsFake(function () {
 				return new Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
+			});
+			this.oStub3 = this.stub(oCore.getConfiguration(), "getLocale").callsFake(function () {
+				return new Locale("en_GB");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
 		},
 		afterEach: function () {

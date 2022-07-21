@@ -26,7 +26,8 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	'sap/base/Log',
 	"sap/base/util/deepEqual",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Locale"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -54,7 +55,8 @@ sap.ui.define([
 	Element,
 	BaseLog,
 	deepEqual,
-	KeyCodes
+	KeyCodes,
+	Locale
 ) {
 	"use strict";
 
@@ -3607,29 +3609,21 @@ sap.ui.define([
 	});
 
 	QUnit.test("Navigation forward in week view where next week starts at 1st January (locale en_US)", function(assert) {
-		var aDays,
-			oNextTarget,
-			oSelf = this,
+		var oSelf = this,
 			fnDone = assert.async(),
 			oOriginalFormatLocale = Core.getConfiguration().getFormatLocale();
 
 		//arrange
 		Core.getConfiguration().setFormatLocale('en_US');
+		this.oStub3 = this.stub(Core.getConfiguration(), "getLocale").callsFake(function () {
+			return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+		});
 		Core.applyChanges();
-		this.oPC2.setStartDate(new Date(2016, 11, 31));
+		this.oPC2.setStartDate(new Date(2017, 0, 1));
 		Core.applyChanges();
 		this.oPC2.setViewKey(CalendarIntervalType.Week);
 		Core.applyChanges();
 
-
-		aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");
-		oNextTarget = aDays[aDays.length - 1];
-
-		//act
-		aDays[aDays.length - 1].focus();
-		Core.applyChanges();
-
-		_navFocusNext.call(this, oNextTarget);
 		setTimeout(function() {
 			//assert
 			_assertDatesAreVisible.call(oSelf, [
