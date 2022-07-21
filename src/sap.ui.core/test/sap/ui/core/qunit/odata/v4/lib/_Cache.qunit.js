@@ -1496,15 +1496,10 @@ sap.ui.define([
 		this.mock(_Helper).expects("getMetaPath")
 			.withExactArgs("('42')/entity/foo/bar")
 			.returns("entity/foo/bar");
-		this.oModelInterfaceMock.expects("fetchMetadata")
-			.withExactArgs("/Products/entity/foo/bar")
-			.returns(SyncPromise.resolve({
-				$kind : "Property",
-				$Type : "some.ComplexType"
-			}));
 		this.mock(_Helper).expects("getAnnotationKey")
 			.withExactArgs(sinon.match.same(oData[0].entity.foo), ".Permissions", "bar")
 			.returns("bar@Core.Permissions");
+		this.oModelInterfaceMock.expects("fetchMetadata").never();
 		this.mock(oCache).expects("fetchLateProperty").never();
 
 		// code under test

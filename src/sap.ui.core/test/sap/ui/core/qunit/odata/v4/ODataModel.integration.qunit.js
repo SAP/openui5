@@ -40179,24 +40179,34 @@ sap.ui.define([
 	// @Core.Permissions: 'None'
 	//
 	// JIRA: CPOUI5ODATAV4-1065
+	// JIRA: CPOUI5ODATAV4-1720 see that there is no EDM.Stream defaulting
 	QUnit.test("Do not log drill-down errors for properties w/o permissions", function (assert) {
 		var sView = '\
-<FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
+<FlexBox id="form" binding="{/Products(\'HT-1000\')}">\
+	<Text id="id" text="{ID}"/>\
 	<Text id="name" text="{Name}"/>\
-	<Text id="budget" text="{Budget}"/>\
-	<Text id="budgetCurency" text="{BudgetCurrency}"/>\
+	<Text id="supplier" text="{SupplierIdentifier}"/>\
+	<Text id="picture" text="{ProductPicture/Picture}"/>\
 </FlexBox>';
 
-		this.expectRequest("TEAMS('TEAM_01')", {
-				Name : "Business Suite",
-				"Budget@Core.Permissions" : 0,
-				"BudgetCurrency@Core.Permissions" : "None"
+		this.expectRequest("Products('HT-1000')", {
+				ID : 42,
+				"Name@Core.Permissions" : 0,
+				"SupplierIdentifier@Core.Permissions" : "None",
+				ProductPicture : {
+					"Picture@Core.Permissions" : 0
+				}
 			})
-			.expectChange("name", "Business Suite")
-			.expectChange("budget", null)
-			.expectChange("budgetCurency", null);
+			.expectChange("id", "42")
+			.expectChange("name", null)
+			.expectChange("supplier", null)
+			.expectChange("picture", undefined);
 
-		return this.createView(assert, sView);
+		return this.createView(assert, sView, this.createModel(
+			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/", {}, {
+				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
+					: {source : "odata/v4/data/metadata_tea_busi_product.xml"}
+			}));
 	});
 
 	//*********************************************************************************************
