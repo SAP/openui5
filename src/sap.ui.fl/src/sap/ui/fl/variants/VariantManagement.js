@@ -961,5 +961,18 @@ sap.ui.define([
 		this._aSelectEventHandlers = undefined;
 	};
 
+	// <overwrite for docu>
+	/**
+	 * Adds a control to the association {@link #for for}.
+	 * @public
+	 * @param {sap.ui.core.ID | sap.ui.core.Control} vFor The control to add; if empty, nothing is inserted
+	 * @returns {Object} Reference to <code>this</code> in order to allow method chaining
+	 */
+	VariantManagement.prototype.addFor = function(vFor) {
+		this.addAssociation("for", vFor);
+		return this;
+	};
+
+
 	return VariantManagement;
 });
