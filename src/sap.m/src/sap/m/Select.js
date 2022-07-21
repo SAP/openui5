@@ -2320,6 +2320,7 @@ function(
 		 * Retrieves the index of the selected item from the aggregation named <code>items</code>.
 		 *
 		 * @returns {int} An integer specifying the selected index, or -1 if no item is selected.
+		 * @private
 		 * @since 1.26.0
 		 */
 		Select.prototype.getSelectedIndex = function() {
