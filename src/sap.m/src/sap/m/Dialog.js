@@ -639,6 +639,7 @@ function(
 		/**
 		 * Open the dialog.
 		 *
+		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
@@ -688,6 +689,7 @@ function(
 		/**
 		 * Close the dialog.
 		 *
+		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */

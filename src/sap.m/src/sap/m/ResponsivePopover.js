@@ -416,8 +416,8 @@ sap.ui.define([
 	/**
 	 * Opens the ResponsivePopover. The ResponsivePopover is positioned relatively to the control parameter on tablet or desktop and is full screen on phone. Therefore the control parameter is only used on tablet or desktop and is ignored on phone.
 	 *
-	 * @param {object} oParent When this control is displayed on tablet or desktop, the ResponsivePopover is positioned relative to this control.
-	 * @returns {object} Reference to the opening control
+	 * @param {sap.ui.core.Control|HTMLElement} oParent When this control is displayed on tablet or desktop, the ResponsivePopover is positioned relative to this UI5 control or DOM element.
+	 * @returns {sap.m.Popover|sap.m.Dialog} Reference to the opening control
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

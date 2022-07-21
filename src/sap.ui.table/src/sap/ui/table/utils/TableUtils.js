@@ -583,7 +583,7 @@ sap.ui.define([
 		 * @property {int} cellInRow Index of the cell in the row.
 		 * @property {int} row Index of row in the ItemNavigation.
 		 * @property {int} cellCount Number of cells in the ItemNavigation.
-		 * @property {Object | undefined} domRef Reference to the focused DOM element.
+		 * @property {HTMLElement | undefined} domRef Reference to the focused DOM element.
 		 */
 		getFocusedItemInfo: function(oTable) {
 			var oIN = oTable._getItemNavigation();

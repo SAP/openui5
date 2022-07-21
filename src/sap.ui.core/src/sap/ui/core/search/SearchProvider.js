@@ -47,7 +47,7 @@ sap.ui.define(['sap/ui/core/Element', "sap/base/Log", 'sap/ui/core/library'],
 	 * and an array of the suggestions (type '[string]', 2nd parameter).
 	 *
 	 * @param {string} sValue The value for which suggestions are requested.
-	 * @param {function} fnCallback The callback function which is called when the suggestions are available.
+	 * @param {function(string, string[])} fnCallback The callback function which is called when the suggestions are available.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

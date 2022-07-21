@@ -465,7 +465,7 @@ sap.ui.define([
 	/**
 	 * Helper function which ensures that there is non-breaking space between the last two words
 	 * of a given DOM content. By adding it, we prevent one word (widow) on the last row of a text node.
-	 * @param {DOMRef} oDomRef - the DOM object which will be checked against
+	 * @param {HTMLElement} oDomRef - the DOM object which will be checked against
 	 * @private
 	 */
 	IllustratedMessage.prototype._preventWidowWords = function(oDomRef) {

@@ -286,7 +286,7 @@ sap.ui.define([
 	/**
 	 * Sets the <code>detailBox</code> aggregation.
 	 * @param {sap.m.LightBox|undefined} oLightBox - Instance of the <code>LightBox</code> control or undefined
-	 * @returns {object} <code>this</code> for chaining
+	 * @returns {this} <code>this</code> for chaining
 	 * @override
 	 * @public
 	 */

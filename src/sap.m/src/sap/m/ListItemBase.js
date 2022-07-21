@@ -934,7 +934,7 @@ function(
 	/**
 	 * Detect text selection.
 	 *
-	 * @param {object} oDomRef DOM element of the control
+	 * @param {HTMLElement} oDomRef DOM element of the control
 	 * @returns {boolean} true if text selection is done within the control else false
 	 * @private
 	 */

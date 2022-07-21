@@ -1190,7 +1190,7 @@ if (typeof window.sap.ui !== "object") {
 	 * <li><code>mParams.name</code>: The name of the entered interval, if available</li>
 	 * </ul>
 	 *
-	 * @param {function}
+	 * @param {function({from: number, to: number, unit: string, name: string | undefined})}
 	 *            fnFunction The handler function to call when the event occurs. This function will be called in the context of the
 	 *                       <code>oListener</code> instance (if present) or on the <code>window</code> instance. A map with information
 	 *                       about the entered range set is provided as a single argument to the handler (see details above).
@@ -1349,7 +1349,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @param {string} sName The name of the range set. The range set must be initialized beforehand ({@link sap.ui.Device.media.initRangeSet})
 	 * @param {int} [iWidth] An optional width, based on which the range should be determined;
 	 *             If <code>iWidth</code> is not a number, the window size will be used.
-	 * @returns {object} Information about the current active interval of the range set. The returned object has the same structure as the argument of the event handlers ({@link sap.ui.Device.media.attachHandler})
+	 * @returns {{from: number, to: number, unit: string, name: string | undefined}} Information about the current active interval of the range set. The returned object has the same structure as the argument of the event handlers ({@link sap.ui.Device.media.attachHandler})
 	 *
 	 * @name sap.ui.Device.media.getCurrentRange
 	 * @function

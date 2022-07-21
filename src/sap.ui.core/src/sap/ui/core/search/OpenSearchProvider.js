@@ -55,7 +55,7 @@ sap.ui.define([
 	 * and an array of the suggestions (type '[string]', 2nd parameter).
 	 *
 	 * @param {string} sValue The value for which suggestions are requested.
-	 * @param {function} fCallback The callback function which is called when the suggestions are available.
+	 * @param {function(string, string[])} fCallback The callback function which is called when the suggestions are available.
 	 * @type void
 	 * @public
 	 */

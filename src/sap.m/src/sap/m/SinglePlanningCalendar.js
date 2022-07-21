@@ -961,7 +961,7 @@ function(
 	 * Switches the visibility of the SegmentedButton in the _header and aligns the columns in the grid after an
 	 * operation (add, insert, remove, removeAll, destroy) with the views is performed.
 	 *
-	 * @returns {object} this for method chaining
+	 * @returns {this} this for method chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._alignView = function () {
@@ -1061,7 +1061,7 @@ function(
 	 * If the SinglePlanningCalendar has only one view added to its view aggregation, the button is not visible.
 	 * Otherwise, it is displayed in the _header.
 	 *
-	 * @returns {object} this for method chaining
+	 * @returns {this} this for method chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._switchViewButtonVisibility = function () {
@@ -1076,7 +1076,7 @@ function(
 	/**
 	 * Attaches handlers to the events in the _header aggregation.
 	 *
-	 * @returns {object} this for method chaining
+	 * @returns {this} this for method chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._attachHeaderEvents = function () {
@@ -1113,7 +1113,7 @@ function(
 	/**
 	 * Attaches handlers to the events in the _grid aggregation.
 	 *
-	 * @returns {object} this for method chaining
+	 * @returns {this} this for method chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._attachGridEvents = function () {
