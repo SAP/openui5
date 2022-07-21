@@ -190,10 +190,6 @@ sap.ui.define([
 					growFactor: 1
 				}));
 
-				if (i === aGroups.length - 1) {
-					oGroup.addStyleClass("sapFCardObjectGroupLastInColumn");
-				}
-
 				oContainer.addItem(oGroup);
 				bNextAFLayout = true;
 			} else {
@@ -203,6 +199,10 @@ sap.ui.define([
 					bNextAFLayout = false;
 				}
 				oAFLayout.addContent(oGroup);
+			}
+
+			if (i === aGroups.length - 1) {
+				oGroup.addStyleClass("sapFCardObjectGroupLastInColumn");
 			}
 
 		}, this);
