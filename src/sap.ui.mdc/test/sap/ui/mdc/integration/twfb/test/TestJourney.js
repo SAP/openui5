@@ -49,7 +49,8 @@ sap.ui.define([
 				return this.iStartMyUIComponent({
 					componentConfig: {
 						name: "sap.ui.v4demo",
-						async: true
+						async: true,
+						settings: { id: "listreport" }
 					},
 					hash: "",
 					autowait: true
@@ -58,19 +59,15 @@ sap.ui.define([
 		}
 	});
 
-	var iComponent = 0;
-
 	var oModuleSettings = {
 		beforeEach: function() {},
-		afterEach: function() {
-			iComponent++;
-		}
+		afterEach: function() {}
 	};
 
 	QUnit.module("TwFb - Books", oModuleSettings);
 
 
-	/*
+
 	opaTest("twfb - start app and test mdc links", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 
@@ -102,12 +99,12 @@ sap.ui.define([
 	opaTest("twfb - start app and test field and valuehelp", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 
-		var sFieldID = "__component" + iComponent + "---books--ff1";
+		var sFieldID = "listreport---books--ff1";
 		When.onTheMDCValueHelp.iOpenTheValueHelpForField(sFieldID);
 		//TODO not more action or assertions available
 		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(true); //TODO close only work with FieldValueHelp
 
-		sFieldID = "__component" + iComponent + "---books--ff2";
+		sFieldID = "listreport---books--ff2";
 		When.onTheMDCValueHelp.iOpenTheValueHelpForField(sFieldID);
 		When.onTheMDCValueHelp.iCloseTheValueHelpDialog(true);
 
@@ -118,13 +115,13 @@ sap.ui.define([
 	opaTest("twfb - start app and test personalization of table", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 
-		var sTableID = "__component" + iComponent + "---books--booksTable";
+		var sTableID = "listreport---books--booksTable";
 		//???? first parameter is called oControl. Why not oTable or vTableIdentifier.....
 		When.onTheMDCTable.iPersonalizeColumns(sTableID, ["Genre", "Sub Genre"]);
 		When.onTheMDCTable.iResetThePersonalization(sTableID);
 		//Then TODO no assertions available
 
-		When.onTheMDCTable.iPersonalizeFilter(sTableID, [{key : "Language", values: ["DE"], inputControl: "__component" + iComponent + "---books--booksTable--filter--language_code"}]);
+		When.onTheMDCTable.iPersonalizeFilter(sTableID, [{key : "Language", values: ["DE"], inputControl: "listreport---books--booksTable--filter--language_code"}]);
 
 		When.onTheMDCTable.iPersonalizeSort(sTableID, [{key: "Price", descending: false}]); //ERROR failed because of custom stock slider (when at the end I call teardown....)
 		// When.onTheMDCTable.iResetThePersonalization(sTableID);
@@ -136,7 +133,7 @@ sap.ui.define([
 	opaTest("twfb - start app and test chart/personalization", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 
-		var sChartID = "__component" + iComponent + "---books--bookChart";
+		var sChartID = "listreport---books--bookChart";
 
 		Then.onTheMDCChart.iShouldSeeAChart();// Why does it not get the chartId?
 		Then.onTheMDCChart.iShouldSeeTheChartWithChartType(sChartID, "column"); // key of chart not the name
@@ -188,7 +185,7 @@ sap.ui.define([
 	opaTest("twfb - start app and test filterbar", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 
-		var sFilterBarID = "__component" + iComponent + "---books--booksFilterBar";
+		var sFilterBarID = "listreport---books--booksFilterBar";
 		// for the Filterbar the sFilterBarID can be Object instance or id string.
 		When.onTheMDCFilterBar.iPersonalizeFilter(sFilterBarID, {	Books: ["Author ID"] });
 		//    When.onTheMDCChart.iPersonalizeFilter(sFilterBarID, [{key : "language_code", operator: "EQ", values: ["DE"], inputControl: "__component0---books--booksTable--filter--language_code"}]);
@@ -227,10 +224,10 @@ sap.ui.define([
 
 		Then.iTeardownMyUIComponent();
 	});
-*/
+
 
 	opaTest("twfb - Search one book, navigate to factsheet, change the price and save it.", function(Given, When, Then) {
-		var booksComponentID = "__component" + iComponent + "---books--";
+		var booksComponentID = "listreport---books--";
 		var sFilterBarID = booksComponentID + "booksFilterBar";
 
 		// I start the Manage Books TwFb example app
@@ -240,7 +237,7 @@ sap.ui.define([
 
 
 		// I should see the Standard Variant and Filterbar with empty FilterFields
-		Then.onTheMDCVariant.iShouldSeeTheVariantManagerButton("Standard");
+		// Then.onTheMDCVariant.iShouldSeeTheVariantManagerButton("Standard");
 
 		Then.onTheMDCFilterBar.iShouldSeeTheFilterBar();
 		Then.onTheMDCFilterBar.iShouldSeeTheAdaptFiltersButton();
@@ -248,7 +245,7 @@ sap.ui.define([
 		//Then.onTheMDCFilterBar.iShouldSeeTheFilterFieldsWithLabels(["", "Author ID", "Title", "Stock range", "Published", "Language", "Genre", "Sub Genre"]);
 
 		// Chart (I should see a “Books Chart” Chart with Bars chart)
-		var sChartID = "__component" + iComponent + "---books--bookChart";
+		var sChartID = "listreport---books--bookChart";
 		Then.onTheMDCChart.iShouldSeeAChart();
 		Then.onTheMDCChart.iShouldSeeTheChartWithChartType(sChartID, "column");
 
@@ -308,8 +305,8 @@ sap.ui.define([
 
 
 		//I should see an editable field Price with value 48.79 GBP
-		var sFieldId = "__component" + iComponent + "---bookdetails--fPrice";
-		Then.onTheMDCField.iShouldSeeTheFieldWithValues(sFieldId, ['12', 'GBP']);
+		var sFieldId = "listreport---bookdetails--fPrice";
+		Then.onTheMDCField.iShouldSeeTheFieldWithValues(sFieldId, ['48.79', 'GBP']);
 
 
 
@@ -324,7 +321,7 @@ sap.ui.define([
 
 
 
-		//I should see a table with one row and a column Price with value 35.00 GBP
+		//I should see a table with one row and a column Price with value 22.00 GBP
 		Then.onTheMDCTable.iShouldSeeARowWithData(0, JSON.parse('["The Yellow Wallpaper","Mentally ill women  Fiction, Feminist fiction, Psychological fiction, Married women  Psychology  Fiction, Sex role  Fiction",102,["22","GBP"],815,"religious_text","prophecy"]'));
 
 
@@ -333,10 +330,10 @@ sap.ui.define([
 		When.onTheMDCLink.iPressTheLink(link);
 		When.onTheMDCLink.iPressLinkOnPopover(link, "Manage book");
 		When.util.iPressButton("Edit");
-		When.onTheMDCField.iEnterTextOnTheField(sFieldId, "12.00");
+		When.onTheMDCField.iEnterTextOnTheField(sFieldId, "48.79");
 		When.util.iPressButton("Save");
 
-		//Then.iTeardownMyUIComponent();
+		Then.iTeardownMyUIComponent();
 	});
 
 
