@@ -1008,7 +1008,7 @@ sap.ui.define([
 		beforeEach: function () {
 			sap.ui.loader.config({
 				paths: {
-					"sap/ui/integration/editor/test/customfield": "../test-resources/sap/ui/integration/qunit/editor/jsons/withDesigntime/sap.card/designtime"
+					"sap/ui/integration/editor/test/customfield": "test-resources/sap/ui/integration/qunit/editor/jsons/withDesigntime/sap.card/designtime"
 				}
 			});
 			this.oHost = new Host("host");
