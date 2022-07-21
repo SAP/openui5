@@ -1,9 +1,13 @@
-/*global QUnit, sinon*/
+/*global QUnit*/
 sap.ui.define(["sap/ui/core/Core",
                "sap/ui/core/Configuration",
                "sap/ui/core/mvc/XMLView",
-               "sap/uxap/ObjectPageLayout"],
-function (Core, Configuration, XMLView, ObjectPageLayout) {
+			   "sap/m/OverflowToolbar",
+			   "sap/m/HBox",
+               "sap/uxap/ObjectPageLayout",
+			   "sap/uxap/ObjectPageSection",
+			   "sap/uxap/ObjectPageSubSection"],
+function (Core, Configuration, XMLView, OverflowToolbar, HBox, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection) {
 	"use strict";
 
 	QUnit.module("ObjectPage - Rendering - Footer Visibility", {
@@ -14,7 +18,6 @@ function (Core, Configuration, XMLView, ObjectPageLayout) {
 				viewName: "view.UxAP-162_ObjectPageSample"
 			}).then(function (oView) {
 				this.objectPageSampleView = oView;
-				sinon.config.useFakeTimers = true;
 				this.objectPageSampleView.placeAt("qunit-fixture");
 				Core.applyChanges();
 				this.oObjectPage = this.objectPageSampleView.byId("objectPage162");
@@ -162,6 +165,44 @@ function (Core, Configuration, XMLView, ObjectPageLayout) {
 
 		// Assert
 		assert.equal(!this.oObjectPage._bIsFooterAanimationGoing, true, "Footer is visible");
+	});
+
+	QUnit.module("ObjectPage - Setter");
+
+	QUnit.test("Setting 'footer' aggregation and 'showFooter' property", function (assert) {
+		// Arrange
+		var oObjectPage = new ObjectPageLayout({
+			sections: [new ObjectPageSection({
+				subSections: [new ObjectPageSubSection({
+					blocks: [new HBox({
+						height: "2000px"
+					})]
+				})]
+			})]
+		}),
+		fnDone = assert.async();
+
+		oObjectPage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.expect(1);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+			oObjectPage.addEventDelegate({
+				onAfterRendering: function () {
+					// Assert
+					assert.ok(true, "No error is thrown");
+
+					oObjectPage.destroy();
+					fnDone();
+				}
+			});
+
+			// Act
+			oObjectPage.setShowFooter(true);
+			oObjectPage.setFooter(new OverflowToolbar());
+			Core.applyChanges();
+		});
 	});
 
 });

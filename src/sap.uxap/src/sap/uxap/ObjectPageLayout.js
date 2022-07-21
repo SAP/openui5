@@ -4793,7 +4793,7 @@ sap.ui.define([
 	* to avoid errors, thrown in IE10 and IE11
 	*/
 	ObjectPageLayout.prototype._getDOMRefHeight = function (oDOMRef) {
-		return oDOMRef.parentElement ? oDOMRef.getBoundingClientRect().height : 0;
+		return oDOMRef && oDOMRef.parentElement ? oDOMRef.getBoundingClientRect().height : 0;
 	};
 
 	/*
