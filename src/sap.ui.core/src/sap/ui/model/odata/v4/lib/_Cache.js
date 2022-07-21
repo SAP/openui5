@@ -672,7 +672,7 @@ sap.ui.define([
 		}
 		aSegments = sPath.split("/");
 		return aSegments.reduce(function (oPromise, sSegment, i) {
-			return oPromise.then(function (vValue) {
+			return oPromise.then(function step(vValue) {
 				var vIndex, aMatches, oParentValue;
 
 				if (sSegment === "$count") {
@@ -714,13 +714,17 @@ sap.ui.define([
 					vValue = vValue[vIndex];
 				}
 				// missing advertisement or annotation is not an error
-				vValue = vValue === undefined && sSegment[0] !== "#" && sSegment[0] !== "@"
-					? missingValue(oParentValue, sSegment, i + 1)
-					: vValue;
+				if (vValue === undefined && sSegment[0] !== "#" && sSegment[0] !== "@") {
+					vValue = missingValue(oParentValue, sSegment, i + 1);
+					if (vValue instanceof SyncPromise && vValue.isPending()) {
+						return vValue.then(function () {
+							return step(oParentValue); // repeat step once late property fetched
+						});
+					}
+				}
 				if (sSegment.includes("@")) {
 					bInAnnotation = true;
 				}
-
 				return vValue;
 			});
 		}, oDataPromise);

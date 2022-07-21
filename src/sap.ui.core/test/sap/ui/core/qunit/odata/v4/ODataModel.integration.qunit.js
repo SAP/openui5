@@ -13058,14 +13058,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: A new instance is created and the POST returns instance annotations, both for
 	// missing and existing properties, w/ and w/o updates. Check that these are properly updated in
-	// the client's data. Check that a late property request also updates instance annotations.
+	// the client's data.
 	//
 	// BCP: 2270023075
 	QUnit.test("BCP: 2270023075 - creation POST returns instance annotations", function (assert) {
 		var oContext,
 			oListBinding,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
-			fnRespond,
 			sView = '\
 <Table id="table" items="{/TEAMS}">\
 	<Text id="budget" text="{Budget}"/>\
@@ -13102,7 +13101,7 @@ sap.ui.define([
 					"@x.y.z" : "X, Y, Z",
 					Budget : "42", // update
 					"Budget@some.annotation" : "hello, world!",
-					// BudgetCurrency missing
+					BudgetCurrency : "EUR",
 					"BudgetCurrency@foo.bar" : "love & peace!",
 					MEMBER_COUNT : 0, // MUST be ignored
 					"MEMBER_COUNT@n.a" : "n/a",
@@ -13111,52 +13110,17 @@ sap.ui.define([
 					Team_Id : "Team_00"
 				})
 				.expectChange("budget", ["42"])
+				.expectChange("budgetCurrency", ["EUR"])
 				.expectChange("instanceAnnotation", ["A & B"])
-				.expectChange("propertyAnnotation", ["love & peace!"])
-				// Note: Properties other than Edm.Stream should not be missing. Still, we can
-				// nicely use this to check a "late property request" (because all _dependent_
-				// bindings are refreshed due to bSkipRefresh === true)
-				.expectRequest("TEAMS('Team_00')?$select=BudgetCurrency",
-					new Promise(function (resolve) {
-						fnRespond = resolve.bind(null, {
-							"@a.b" : "A & B",
-							"@x.y.z" : "X, Y, Z",
-							// BudgetCurrency still missing
-							"BudgetCurrency@a.b" : "A/B",
-							"BudgetCurrency@foo.bar" : "peace on earth"
-						});
-					}));
+				.expectChange("propertyAnnotation", ["love & peace!"]);
 
 			// code under test
 			oContext = oListBinding.create({Budget : "42.1", Name : "New Team"},
 				/*bSkipRefresh*/true);
 
-			// oContext.created() waits for the refresh of the dependent bindings which includes the
-			// late property request
-			return that.waitForChanges(assert, "create");
-		}).then(function () {
-			assert.deepEqual(oContext.getObject(), {
-					"@$ui5.context.isTransient" : false,
-					"@a.b" : "A & B",
-					"@x.y.z" : "X, Y, Z",
-					Budget : "42",
-					"Budget@some.annotation" : "hello, world!",
-					// BudgetCurrency still missing
-					"BudgetCurrency@$ui5.noData" : true,
-					"BudgetCurrency@foo.bar" : "love & peace!",
-					Name : "New Team",
-					"Name@my.comment" : "Please choose a new name",
-					Team_Id : "Team_00"
-			});
-
-			that.expectChange("budgetCurrency", [null])
-				.expectChange("propertyAnnotation", ["peace on earth"]);
-
-			fnRespond();
-
 			return Promise.all([
 				oContext.created(),
-				that.waitForChanges(assert, "late property request")
+				that.waitForChanges(assert, "create")
 			]);
 		}).then(function () {
 			assert.deepEqual(oContext.getObject(), {
@@ -13165,10 +13129,8 @@ sap.ui.define([
 					"@x.y.z" : "X, Y, Z",
 					Budget : "42",
 					"Budget@some.annotation" : "hello, world!",
-					// BudgetCurrency still missing
-					"BudgetCurrency@$ui5.noData" : true,
-					"BudgetCurrency@a.b" : "A/B",
-					"BudgetCurrency@foo.bar" : "peace on earth",
+					BudgetCurrency : "EUR",
+					"BudgetCurrency@foo.bar" : "love & peace!",
 					Name : "New Team",
 					"Name@my.comment" : "Please choose a new name",
 					Team_Id : "Team_00"
@@ -41253,6 +41215,8 @@ sap.ui.define([
 	//
 	// JIRA: CPOUI5ODATAV4-1290
 	// JIRA: CPOUI5ODATAV4-1640
+	// BCP: 2280130543 request also late Edm.Stream property and test whether defaulting for not
+	// existing stream property happens
 	QUnit.test("CPOUI5ODATAV4-1290: late Edm.Stream property annotation", function (assert) {
 		var oContext,
 			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
@@ -41262,6 +41226,7 @@ sap.ui.define([
 </FlexBox>\
 <FlexBox id="subform" binding="{}">\
 	<Text id="contentType" text="{= %{Picture@odata.mediaContentType}}"/>\
+	<Text id="url" text="{= %{Picture} }"/>\
 </FlexBox>',
 			that = this;
 
@@ -41271,17 +41236,20 @@ sap.ui.define([
 				Name : "The Beatles"
 			})
 			.expectChange("name", "The Beatles")
-			.expectChange("contentType");
+			.expectChange("contentType")
+			.expectChange("url");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oContext = that.oView.byId("form").getBindingContext();
 
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=Picture", {
 					ID : "42",
-					// Picture property not seen in late response -> Picture@$ui5.noData : true
+					// Picture property not seen in late response -> "Picture@$ui5.noData" : true
 					"Picture@odata.mediaContentType" : "image/gif"
 				})
-				.expectChange("contentType", "image/gif");
+				.expectChange("contentType", "image/gif")
+				.expectChange("url",
+					"/special/cases/Artists(ArtistID='42',IsActiveEntity=true)/Picture");
 
 			that.oView.byId("subform").setBindingContext(oContext);
 
