@@ -168,11 +168,11 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 		// Status us 4XX or 5XX - parse body
 		try {
 			aMessages = this._parseBody(oResponse, mRequestInfo);
-			this._logErrorMessages(aMessages, oRequest, sStatusCode);
 		} catch (ex) {
 			aMessages = this._createGenericError(mRequestInfo);
-			Log.error("Request failed with status code " + sStatusCode + ": " + oRequest.method
-				+ " " + oRequest.requestUri, ex, sClassName);
+			Log.debug("Failed to parse error messages from the response body", ex, sClassName);
+		} finally {
+			this._logErrorMessages(aMessages, oRequest, sStatusCode);
 		}
 	} else {
 		// Status neither ok nor error, may happen if no network connection is available (some

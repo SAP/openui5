@@ -2461,9 +2461,13 @@ sap.ui.define([
 				type : "Error"
 			}]);
 
+		this.oLogMock.expects("debug").atLeast(0); // Required for all additional debug logs
+		this.oLogMock.expects("debug")
+			.withExactArgs("Failed to parse error messages from the response body",
+				sinon.match.instanceOf(Error), sODataMessageParserClassName);
 		this.oLogMock.expects("error")
 			.withExactArgs("Request failed with status code 503: POST /SalesOrderSrv/$batch",
-				sinon.match.instanceOf(Error), sODataMessageParserClassName);
+				sinon.match.string, sODataMessageParserClassName);
 
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
