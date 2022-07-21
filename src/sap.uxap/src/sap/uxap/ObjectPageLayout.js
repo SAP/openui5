@@ -3290,7 +3290,8 @@ sap.ui.define([
 				// then we do not want to process intermediate sections (i.e. sections between scroll-start section and scroll-destination sections)
 				// so if current section is not destination section
 				// then no need to proceed further
-				if (sDestinationSectionId && sDestinationSectionId !== sClosestSectionId) {
+				if (sDestinationSectionId && sDestinationSectionId !== sClosestSectionId
+					&& (this.oCore.byId(sDestinationSectionId).getDomRef() && !this.isFirstRendering())) {
 					return;
 				}
 				this.clearDirectScrollingToSection();
