@@ -163,7 +163,8 @@ function(
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - modifier for the controls
 	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent - appComponent
 	 * @return {Promise} Promise resolving if the change could be applied
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.apply.changes.Applyer
 	 * @function
 	 * @name sap.ui.fl.changeHandler.MoveControls#applyChange
 	 */
@@ -262,7 +263,8 @@ function(
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - modifier for the controls
 	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent - appComopnent
 	 * @return {Promise} Promise resolving when change was successfully reverted
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.apply.changes.Reverter
 	 * @function
 	 * @name sap.ui.fl.changeHandler.MoveControls#revertChange
 	 */
@@ -341,7 +343,8 @@ function(
 	 * @param {object} mPropertyBag - map of properties
 	 * @param {sap.ui.core.UiComponent} mPropertyBag.appComponent component in which the change should be applied
 	 * @return {Promise} Promise resolving when all change content is completed
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.write._internal
 	 * @function
 	 * @name sap.ui.fl.changeHandler.MoveControls#completeChangeContent
 	 */

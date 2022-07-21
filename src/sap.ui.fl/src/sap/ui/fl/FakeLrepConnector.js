@@ -25,6 +25,12 @@ sap.ui.define([
 	 * Hooks into the {@link sap.ui.fl.LrepConnector.createConnector} factory function to enable the fake LRep connector.
 	 * After enabling fake LRep connector, function {@link sap.ui.fl.FakeLrepConnector.disableFakeConnector} must be called to restore the original connector.
 	 *
+	 * @private
+	 * @ui5-restricted
+	 * @deprecated since 1.70. Configure the <code>sap.ui.core.Configuration.flexibilityServices</code> to use a test connector
+	 * like <code>["LocalStorageConnector"]</code>, <code>["SessionStorageConnector"]</code> or <code>["JsObjectConnector"]</code>.
+	 * @see {@link https://ui5.sap.com/#/topic/642dab291a7b47ec9d46c39b3c482aba|Boostrapping UI5 Flexibility}
+	 *
 	 * @param {string} sInitialComponentJsonPath Relative path to a test-component-changes.json file
 	 */
 	FakeLrepConnector.enableFakeConnector = function(sInitialComponentJsonPath) {

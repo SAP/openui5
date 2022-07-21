@@ -35,7 +35,8 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - property bag
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
 	 * @returns {Promise} Promise that resolves with setting the property binding
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.apply.changes.Applyer
 	 * @name sap.ui.fl.changeHandler.PropertyBindingChange#applyChange
 	 */
 	PropertyBindingChange.applyChange = function(oChange, oControl, mPropertyBag) {
@@ -64,7 +65,8 @@ sap.ui.define([
 	 * @param {object} oControl - the control which has been determined by the selector id
 	 * @param {object} mPropertyBag - property bag
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.apply.changes.Reverter
 	 * @name sap.ui.fl.changeHandler.PropertyBindingChange#revertChange
 	 */
 	PropertyBindingChange.revertChange = function(oChange, oControl, mPropertyBag) {
@@ -89,7 +91,8 @@ sap.ui.define([
 	 * @param {object} oChange change object to be completed
 	 * @param {object} oSpecificChangeInfo with attribute property which contains an array which holds objects which have attributes
 	 * 				   id and index - id is the id of the field to property and index the new position of the field in the smart form group
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.write._internal
 	 * @name sap.ui.fl.changeHandler.PropertyBindingChange#completeChangeContent
 	 */
 	PropertyBindingChange.completeChangeContent = function(oChange, oSpecificChangeInfo) {

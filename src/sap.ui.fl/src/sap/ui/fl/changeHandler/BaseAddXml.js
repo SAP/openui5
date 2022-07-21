@@ -40,7 +40,8 @@ sap.ui.define([
 	 * @param {string} mChangeInfo.aggregationName Aggregation name of the control to be extended by the xml fragment
 	 * @param {boolean} [mChangeInfo.skipAdjustIndex] true in case of inserting an XML node or element at an extension point, needed only in XML case
 	 * @returns {array} an array of new created controls
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.apply.changes.Applyer
 	 * @name sap.ui.fl.changeHandler.BaseAddXml#applyChange
 	 */
 	BaseAddXml.applyChange = function(oChange, oControl, mPropertyBag, mChangeInfo) {
@@ -124,7 +125,8 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.appComponent App component
 	 * @param {object} mPropertyBag.view Root view
 	 * @return {boolean} <true> if change has been reverted successfully
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.apply.changes.Reverter
 	 * @name sap.ui.fl.changeHandler.BaseAddXml#revertChange
 	 */
 	BaseAddXml.revertChange = revertAddedControls;
@@ -147,7 +149,8 @@ sap.ui.define([
 	 * @param {object} oChange Change object to be completed
 	 * @param {object} oSpecificChangeInfo Additional information needed to complete the change
 	 * @param {object} [oContent] Already prepared definition of the change
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.write._internal
 	 * @name sap.ui.fl.changeHandler.BaseAddXml#completeChangeContent
 	 */
 	BaseAddXml.completeChangeContent = function(oChange, oSpecificChangeInfo, oContent) {

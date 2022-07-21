@@ -38,7 +38,8 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @param {object} mPropertyBag.view Root view
 	 * @returns {boolean} <true> if the change got applied successfully
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.apply.changes.Applyer
 	 * @name sap.ui.fl.changeHandler.AddXMLAtExtensionPoint#applyChange
 	 */
 	AddXMLAtExtensionPoint.applyChange = function (oChange, oControl, mPropertyBag) {
@@ -98,7 +99,8 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.appComponent App component
 	 * @param {object} mPropertyBag.view Root view
 	 * @return {boolean} <true> if change has been reverted successfully
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.apply.changes.Reverter
 	 * @name sap.ui.fl.changeHandler.AddXMLAtExtensionPoint#revertChange
 	 */
 	AddXMLAtExtensionPoint.revertChange = BaseAddXml.revertChange;
@@ -108,7 +110,8 @@ sap.ui.define([
 	 *
 	 * @param {object} oChange Change object to be completed
 	 * @param {object} oSpecificChangeInfo Additional information needed to complete the change
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.write._internal
 	 * @name sap.ui.fl.changeHandler.AddXMLAtExtensionPoint#completeChangeContent
 	 */
 	AddXMLAtExtensionPoint.completeChangeContent = function(oChange, oSpecificChangeInfo) {

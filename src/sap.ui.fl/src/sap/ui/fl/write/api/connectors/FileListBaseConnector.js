@@ -17,7 +17,8 @@ sap.ui.define([
 	 * The inherited objects must implement the function <code>getFileList</code>.
 	 * The <code>loadFlexData</code> already ensures that all <code>sap.ui.fl</code>-internals are handled accordingly.
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl, SAPUI5 Visual Editor, UX Tools
 	 * @abstract
 	 */
 	return {

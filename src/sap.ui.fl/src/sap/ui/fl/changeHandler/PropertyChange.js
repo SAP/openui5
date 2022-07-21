@@ -53,7 +53,8 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - property bag
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
 	 * @returns {Promise} Promise resolving when change is applied
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.apply.changes.Applyer
 	 * @name sap.ui.fl.changeHandler.PropertyChange#applyChange
 	 */
 	PropertyChange.applyChange = function(oChange, oControl, mPropertyBag) {
@@ -109,7 +110,8 @@ sap.ui.define([
 	 * @param {object} oSpecificChangeInfo with attribute property which contains an array which holds objects which have attributes
 	 * 				   id and index - id is the id of the field to property and index the new position of the field in the smart form group
 	 * @returns {Promise} Promise that resolves completing the change content
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.write._internal
 	 * @name sap.ui.fl.changeHandler.PropertyChange#completeChangeContent
 	 */
 	PropertyChange.completeChangeContent = function(oChange, oSpecificChangeInfo) {

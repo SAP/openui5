@@ -24,7 +24,7 @@ sap.ui.define([
 	/**
 	 * Provides an API for applications to work with control variants. See also {@link sap.ui.fl.variants.VariantManagement}.
 	 *
-	 * @namespace sap.ui.fl.apply.api.ControlVariantApplyAPI
+	 * @name sap.ui.fl.apply.api.ControlVariantApplyAPI
 	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @version ${version}
