@@ -816,7 +816,8 @@ sap.ui.define([
 	// @override sap.ui.model.odata.v4.lib._Cache#calculateKeyPredicate
 	_AggregationCache.calculateKeyPredicateRH = function (oGroupNode, oElement, mTypeForMetaPath,
 			sMetaPath) {
-		var bIsExpanded,
+		var iLevel = 1,
+			bIsExpanded,
 			sPredicate = _Helper.getKeyPredicate(oElement, sMetaPath, mTypeForMetaPath);
 
 		_Helper.setPrivateAnnotation(oElement, "predicate", sPredicate);
@@ -835,10 +836,16 @@ sap.ui.define([
 			default: // "leaf"
 				// bIsExpanded = undefined;
 		}
+		if (oGroupNode) {
+			iLevel = oGroupNode["@$ui5.node.level"] + 1;
+		} else if (oElement.DistanceFromRoot) {
+			iLevel = oElement.DistanceFromRoot + 1;
+		}
 		// set the node values
-		_AggregationHelper.setAnnotations(oElement, bIsExpanded, /*bIsTotal*/undefined,
-			oGroupNode ? oGroupNode["@$ui5.node.level"] + 1 : oElement.DistanceFromRoot + 1);
-		_Helper.setPrivateAnnotation(oElement, "descendants", oElement.DescendantCount);
+		_AggregationHelper.setAnnotations(oElement, bIsExpanded, /*bIsTotal*/undefined, iLevel);
+		if (oElement.DescendantCount) {
+			_Helper.setPrivateAnnotation(oElement, "descendants", oElement.DescendantCount);
+		}
 		delete oElement.DescendantCount;
 		delete oElement.DistanceFromRoot;
 		delete oElement.DrillState;

@@ -21050,13 +21050,15 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$select=ID,MANAGER_ID"
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+				+ ",Levels=1)&$select=DrillState,ID,MANAGER_ID"
 				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "1",
 				value : [{
 					// DescendantCount : 0, // not needed w/o expandTo
-					DistanceFromRoot : 0,
-					// DrillState : "leaf", // not needed w/o expandTo
+					// DistanceFromRoot : 0, // not needed w/o expandTo
+					DrillState : "leaf",
 					EMPLOYEE_2_TEAM : {
 						Name : "Team #01",
 						Team_Id : "01"
@@ -21115,7 +21117,10 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$select=ID,MANAGER_ID&$count=true&$skip=0&$top=3", {
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+				+ ",Levels=2)&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID"
+				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "6",
 				value : [{
 					DescendantCount : 5,
@@ -21177,9 +21182,8 @@ sap.ui.define([
 				["", "", "", ""]
 			]);
 
-			that.oLogMock.expects("error").withExactArgs(
-				"Failed to drill-down into $count, invalid segment: $count",
-				sTeaBusi + "EMPLOYEES?$select=ID,MANAGER_ID", "sap.ui.model.odata.v4.lib._Cache");
+			that.oLogMock.expects("error").withArgs(
+				"Failed to drill-down into $count, invalid segment: $count");
 
 			// code under test -- will log an error because $count is not available
 			assert.strictEqual(oTable.getBinding("rows").getCount(), undefined);
@@ -21201,8 +21205,9 @@ sap.ui.define([
 		}).then(function () {
 			oCollapsed = oTable.getRows()[1].getBindingContext();
 
-			that.expectRequest("EMPLOYEES?$select=ID,MANAGER_ID&$apply=filter(ID%20eq%20'1')/"
-					+ "&$count=true&$skip=0&$top=3", {
+			that.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
+					+ ",filter(ID eq '1'),1)&$select=DrillState,ID,MANAGER_ID&$count=true&$skip=0"
+					+ "&$top=3", {
 					"@odata.count" : "2",
 					value : [{
 						DrillState : "collapsed",
@@ -21239,7 +21244,11 @@ sap.ui.define([
 					MANAGER_ID : "0"
 				}, "technical properties have been removed");
 
-			that.expectRequest("EMPLOYEES?$select=ID,MANAGER_ID&$skip=3&$top=3", {
+			that.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=2)"
+					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID"
+					+ "&$skip=3&$top=3", {
 					value : [{
 						DescendantCount : 0,
 						DistanceFromRoot : 1,

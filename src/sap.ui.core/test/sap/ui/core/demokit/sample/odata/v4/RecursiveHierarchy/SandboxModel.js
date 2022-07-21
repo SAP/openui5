@@ -46,7 +46,39 @@ sap.ui.define([
 	// - Sometimes, you can derive the DrillState from DescendantCount and DistanceFromRoot, but at
 	//   the "edge of expansion" you cannot be certain.
 	// - When expanding, DescendantCount, DistanceFromRoot, MANAGER_ID are of no use
-	var a51Children = [{
+	var a11Children = [{
+			AGE : 38,
+			DrillState : "leaf",
+			ID : "1.1.1",
+			MANAGER_ID : "1.1",
+			Name : "Delta"
+		}, {
+			AGE : 39,
+			DrillState : "leaf",
+			ID : "1.1.2",
+			MANAGER_ID : "1.1",
+			Name : "Epsilon"
+		}],
+		a12Children = [{
+			AGE : 31,
+			DrillState : "leaf",
+			ID : "1.2.1",
+			MANAGER_ID : "1.2",
+			Name : "Eta"
+		}, {
+			AGE : 32,
+			DrillState : "leaf",
+			ID : "1.2.2",
+			MANAGER_ID : "1.2",
+			Name : "Theta"
+		}, {
+			AGE : 33,
+			DrillState : "leaf",
+			ID : "1.2.3",
+			MANAGER_ID : "1.2",
+			Name : "Iota"
+		}],
+		a51Children = [{
 			AGE : 21,
 			DrillState : "leaf",
 			ID : "5.1.1",
@@ -219,41 +251,15 @@ sap.ui.define([
 		});
 	}
 
-	countSkipTop("EMPLOYEES?$select=AGE,ID,MANAGER_ID,Name", aNodes);
-	countSkipTop("EMPLOYEES?$select=AGE,ID,MANAGER_ID,Name&$apply=filter(ID%20eq%20'1.1')/", [{
-			AGE : 38,
-			DrillState : "leaf",
-			ID : "1.1.1",
-			MANAGER_ID : "1.1",
-			Name : "Delta"
-		}, {
-			AGE : 39,
-			DrillState : "leaf",
-			ID : "1.1.2",
-			MANAGER_ID : "1.1",
-			Name : "Epsilon"
-		}]);
-	countSkipTop("EMPLOYEES?$select=AGE,ID,MANAGER_ID,Name&$apply=filter(ID%20eq%20'1.2')/", [{
-			AGE : 31,
-			DrillState : "leaf",
-			ID : "1.2.1",
-			MANAGER_ID : "1.2",
-			Name : "Eta"
-		}, {
-			AGE : 32,
-			DrillState : "leaf",
-			ID : "1.2.2",
-			MANAGER_ID : "1.2",
-			Name : "Theta"
-		}, {
-			AGE : 33,
-			DrillState : "leaf",
-			ID : "1.2.3",
-			MANAGER_ID : "1.2",
-			Name : "Iota"
-		}]);
-	countSkipTop("EMPLOYEES?$select=AGE,ID,MANAGER_ID,Name&$apply=filter(ID%20eq%20'5.1')/",
-		a51Children);
+	countSkipTop("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root"
+		+ "/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=3)"
+		+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name", aNodes);
+	countSkipTop("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID%20eq%20'1.1')"
+		+ ",1)&$select=AGE,DrillState,ID,MANAGER_ID,Name", a11Children);
+	countSkipTop("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID%20eq%20'1.2')"
+		+ ",1)&$select=AGE,DrillState,ID,MANAGER_ID,Name", a12Children);
+	countSkipTop("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID%20eq%20'5.1')"
+		+ ",1)&$select=AGE,DrillState,ID,MANAGER_ID,Name", a51Children);
 
 	SandboxModel = ODataModel.extend(
 		"sap.ui.core.sample.odata.v4.RecursiveHierarchy.SandboxModel", {
@@ -262,6 +268,14 @@ sap.ui.define([
 					oMockData);
 			}
 		});
+
+	SandboxModel.getChildrenOf1_1 = function () {
+		return a11Children.slice();
+	};
+
+	SandboxModel.getChildrenOf1_2 = function () {
+		return a12Children.slice();
+	};
 
 	SandboxModel.getChildrenOf5_1 = function (iSkip, iTop) {
 		return a51Children.slice(iSkip, iSkip + iTop);
