@@ -457,26 +457,11 @@ sap.ui.define([
 	//***********************************
 	QUnit.module("Suggestion");
 
-	var getProviderTest = function(oSearchControl){
-		return function(assert) {
-			checkSuggestion(assert, oSearchControl, function(sSuggestValue, aItems){
-				assert.equal(sSuggestValue, "INITIAL", "No suggest event when search provider connected");
-				assert.equal(aItems.length, 2, "Number of suggestions correct");
-				assert.equal(aItems[0].getText(), "a", "First suggestion item correct");
-				assert.equal(aItems[1].getText(), "b", "Second suggestion item correct");
-			});
-		};
-	};
-
 	QUnit.test("Textfield mode (no suggestion list)", function(assert) {
 		checkSuggestion(assert, oSearch7, function(sSuggestValue, aItems){
 			assert.equal(sSuggestValue, "SaSap", "Suggest value");
 		});
 	});
-
-	QUnit.test("Open Search provider with XML response", getProviderTest(oSearch8));
-
-	QUnit.test("Open Search provider with JSON response", getProviderTest(oSearch9));
 
 	QUnit.test("Combobox mode (with suggestion list)", function(assert) {
 		checkSuggestion(assert, oSearch10, function(sSuggestValue, aItems){
