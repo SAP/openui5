@@ -22,8 +22,8 @@ sap.ui.define([
 				 * OPA5 test action
 				 * @memberof onTheMDCFilterField
 				 * @method iEnterTextOnTheFilterField
-				 * @param {string} sLabelName Label of the given <code>FilterField</code>
-				 * @param {string} sValue Value which is to be entered in the <code>FilterField</code>
+				 * @param {string} sLabelName Label of the given <code>sap.ui.mdc.FilterField</code>
+				 * @param {string} sValue Value that is entered in the <code>sap.ui.mdc.FilterField</code>
 				 * @param {object} oConfig TODO: to be clarified
 				 * @returns {Promise} OPA waitFor
 				 */
@@ -34,8 +34,8 @@ sap.ui.define([
 				 * OPA5 test action
 				 * @memberof onTheMDCFilterField
 				 * @method iPressKeyOnFilterFieldWithLabel
-				 * @param {string} sLabelName Label of the given <code>FilterField</code>
-				 * @param {string} sValue Value of the Keycode which is to be pressed
+				 * @param {string} sLabelName Label of the given <code>sap.ui.mdc.FilterField</code>
+				 * @param {string} sValue Value of the key code that is pressed
 				 * @returns {Promise} OPA waitFor
 				 */
 				iPressKeyOnFilterFieldWithLabel: function(sLabelName, sValue) {
@@ -45,7 +45,7 @@ sap.ui.define([
 				 * OPA5 test action
 				 * @memberof onTheMDCFilterField
 				 * @method iPressOnTheFilterFieldValueHelpButton
-				 * @param {string} sLabelName Label of the given <code>FilterField</code>
+				 * @param {string} sLabelName Label of the given <code>sap.ui.mdc.FilterField</code>
 				 * @returns {Promise} OPA waitFor
 				 */
 				iPressOnTheFilterFieldValueHelpButton: function(sLabelName) {
@@ -57,7 +57,7 @@ sap.ui.define([
 				 * OPA5 test assertion
 				 * @memberof onTheMDCFilterField
 				 * @method iShouldSeeTheFilterFieldWithValues
-				 * @param {string} sLabelName Label of the given <code>FilterField</code>
+				 * @param {string} sLabelName Label of the given <code>sap.ui.mdc.FilterField</code>
 				 * @param {object} oValues Expected values
 				 * @returns {Promise} OPA waitFor
 				 */

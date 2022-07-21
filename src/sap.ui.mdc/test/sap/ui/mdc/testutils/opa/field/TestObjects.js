@@ -22,8 +22,8 @@ sap.ui.define([
 				 * Opa5 test action
 				 * @memberof onTheMDCField
 				 * @method iEnterTextOnTheField
-				 * @param {string} sId ID of the given <code>Field</code>
-				 * @param {Object} oValue Value which is to be entered in the <code>Field</code>
+				 * @param {string} sId ID of the given <code>sap.ui.mdc.Field</code>
+				 * @param {Object} oValue Value that is entered in the <code>sap.ui.mdc.Field</code>
 				 * @returns {Promise} OPA waitFor
 				 * @public
 				 */
@@ -36,8 +36,8 @@ sap.ui.define([
 				 * Opa5 test assertion
 				 * @memberof onTheMDCField
 				 * @method iShouldSeeTheFieldWithValues
-				 * @param {string} sId ID of the given <code>Field</code>
-				 * @param {object} oValues Values which are expected in the <code>Field</code>
+				 * @param {string} sId ID of the given <code>sap.ui.mdc.Field</code>
+				 * @param {object} oValues Values that are expected in the <code>sap.ui.mdc.Field</code>
 				 * @returns {Promise} OPA waitFor
 				 * @public
 				 */

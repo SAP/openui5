@@ -79,7 +79,7 @@ sap.ui.define([
 				* @memberof onTheMDCLink
 				* @method iPressLinkOnPopover
 				* @param {LinkIdentifier} oLinkIdentifier The object to identify the <code>sap.ui.mdc.Link</code> that opens the popover
-				* @param {string} sLink The text of the link that is to be clicked on the popover
+				* @param {string} sLink The text of the link that is clicked on the popover
 				* @returns {Promise} OPA waitFor
 				* 1. Presses a given <code>sap.ui.mdc.Link</code> to open its popover.
 				* 2. Presses a link on the opened popover defined by <code>sLink</code>.

@@ -9,8 +9,7 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/testutils/opa/link/TestObjects",
 	"test-resources/sap/ui/mdc/testutils/opa/valueHelp/TestObjects",
 	"test-resources/sap/ui/mdc/testutils/opa/field/TestObjects",
-	"test-resources/sap/ui/mdc/testutils/opa/filterfield/TestObjects",
-	"test-resources/sap/ui/mdc/testutils/opa/variant/TestObjects"
+	"test-resources/sap/ui/mdc/testutils/opa/filterfield/TestObjects"
 ], function() {
 	"use strict";
 });
