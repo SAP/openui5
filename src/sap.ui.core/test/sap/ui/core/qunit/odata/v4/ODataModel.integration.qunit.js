@@ -207,6 +207,9 @@ sap.ui.define([
 	 * @returns {function} The function
 	 */
 	function mustFail(assert) {
+		if (!assert || typeof assert.ok !== "function") {
+			throw new Error("QUnit assert object expected");
+		}
 		return function () {
 			assert.ok(false, "Unexpected success");
 		};
@@ -5795,7 +5798,7 @@ sap.ui.define([
 				}]);
 
 			return Promise.all([
-				oHeaderContext.setProperty("$count", 5).then(mustFail, function (oError) {
+				oHeaderContext.setProperty("$count", 5).then(mustFail(assert), function (oError) {
 					assert.strictEqual(oError.message,
 						"/SalesOrderList/$count: Not a (navigation) property: $count");
 				}),
@@ -16801,7 +16804,7 @@ sap.ui.define([
 			that.oLogMock.expects("error").twice(); // exact errors do not interest
 
 			return Promise.all([
-				oContext3.delete("$auto").then(mustFail, function () {}),
+				oContext3.delete("$auto").then(mustFail(assert), function () {}),
 				that.waitForChanges(assert, "direct delete failed")
 			]);
 		}).then(function () {
@@ -33814,7 +33817,7 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oHeaderContext.requestProperty("1/Note").then(mustFail, function (oError) {
+				oHeaderContext.requestProperty("1/Note").then(mustFail(assert), function (oError) {
 					assert.strictEqual(oError.message, "Invalid header path: 1/Note");
 				}),
 				oHeaderContext.requestProperty("$count").then(function (oResult) {
