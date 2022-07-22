@@ -7,20 +7,19 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/base/util/UriParameters"
+	"sap/ui/fl/write/_internal/FlexInfoSession"
 ], function(
 	LayerUtils,
 	Layer,
 	Utils,
 	Version,
-	ManifestUtils,
 	VersionsAPI,
 	FeaturesAPI,
-	PersistenceWriteAPI
+	PersistenceWriteAPI,
+	FlexInfoSession
 ) {
 	"use strict";
 
@@ -81,33 +80,42 @@ sap.ui.define([
 		});
 	}
 
-	function isAllContextsAvailable(oReloadInfo) {
-		var sContextsFromSession = getInfoContextsSession(oReloadInfo.selector);
-		if (sContextsFromSession !== null) {
-			return false; //already call flex/info and do not retrigger reload again
+	/**
+	 * Should reload happen when starting RTA due to allContextsProvided flag.
+	 * allContextsProvided determines if the user has provided all nessesary roles to see the views.
+	 * If allContextsProvided=false, that means that EndUser hasn't some specific roles to see the views,
+	 * so the reload should happen in order to provide all views for a KeyUser.
+	 *
+	 * @param {sap.ui.core.Control} oReloadInfo.selector - Root control instance
+	 * @return {boolean} true if allContextsProvided false and RTA wasn't started yet, otherwise false.
+	 */
+	function needContextSpecificReload(oReloadInfo) {
+		var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector);
+		if (oFlexInfoSession && oFlexInfoSession.initialAllContexts) {
+			return false; // if we are already in RTA mode, no reload needed again
 		}
-		var mPropertyBag = {
-			selector: oReloadInfo.selector,
-			layer: oReloadInfo.layer
-		};
-		return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag)
-			.then(function (oResult) {
-				setInfoSessionStorage(oResult, oReloadInfo.selector);
-				return !oResult.allContextsProvided;
-			});
+		if (oFlexInfoSession === null || oFlexInfoSession.allContextsProvided === undefined) {
+			var mPropertyBag = {
+				selector: oReloadInfo.selector,
+				layer: oReloadInfo.layer
+			};
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag)
+				.then(function (oResult) {
+					if (oFlexInfoSession === null || !oFlexInfoSession.initialAllContexts) {
+						oResult.initialAllContexts = true;
+					}
+					FlexInfoSession.set(oResult, oReloadInfo.selector);
+					return !oResult.allContextsProvided;
+				});
+		}
+		oFlexInfoSession.initialAllContexts = true;
+		FlexInfoSession.set(oFlexInfoSession, oReloadInfo.selector);
+		return !oFlexInfoSession.allContextsProvided;
 	}
 
-	function getInfoContextsSession(oControl) {
-		var sFlexReference = ManifestUtils.getFlexReferenceForControl(oControl);
-		var sParameter = sFlexReference || "true";
-		var oFlexInfoSession = JSON.parse(window.sessionStorage.getItem("sap.ui.fl.info." + sParameter));
+	function isAllContextsAvailable(oControl) {
+		var oFlexInfoSession = FlexInfoSession.get(oControl);
 		return oFlexInfoSession && !oFlexInfoSession.allContextsProvided;
-	}
-
-	function setInfoSessionStorage(oInfo, oControl) {
-		var sFlexReference = ManifestUtils.getFlexReferenceForControl(oControl);
-		var sParameter = sFlexReference || "true";
-		window.sessionStorage.setItem("sap.ui.fl.info." + sParameter, JSON.stringify(oInfo));
 	}
 
 	/**
@@ -135,24 +143,13 @@ sap.ui.define([
 			return Promise.all([
 				areHigherLayerChangesAvailable.call(this, oReloadInfo),
 				isDraftAvailable(oReloadInfo),
-				isAllContextsAvailable(oReloadInfo)
+				needContextSpecificReload(oReloadInfo)
 			]).then(function(aReasons) {
 				oReloadInfo.hasHigherLayerChanges = aReasons[0];
 				oReloadInfo.isDraftAvailable = aReasons[1];
 				oReloadInfo.allContexts = aReasons[2];
 				return oReloadInfo;
 			});
-		},
-
-		/**
-		 * Remove flex info form session storage.
-		 *
-		 * @param {object} oControl - Root control instance
-		 */
-		removeInfoSessionStorage: function(oControl) {
-			var sFlexReference = ManifestUtils.getFlexReferenceForControl(oControl);
-			var sParameter = sFlexReference || "true";
-			window.sessionStorage.removeItem("sap.ui.fl.info." + sParameter);
 		},
 
 		/**
@@ -165,6 +162,15 @@ sap.ui.define([
 		 */
 		hasVersionParameterWithValue: function(oParameter, oURLParsingService) {
 			return Utils.hasParameterAndValue(Version.UrlParameter, oParameter.value, oURLParsingService);
+		},
+
+		/**
+		 * Remove flex info form session storage.
+		 *
+		 * @param {object} oControl - Root control instance
+		 */
+		removeInfoSessionStorage: function(oControl) {
+			FlexInfoSession.remove(oControl);
 		},
 
 		/**
@@ -309,7 +315,7 @@ sap.ui.define([
 			if (oReloadInfo.initialDraftGotActivated) {
 				oReloadInfo.isDraftAvailable = false;
 			}
-			oReloadInfo.allContexts = getInfoContextsSession(oReloadInfo.selector);
+			oReloadInfo.allContexts = isAllContextsAvailable(oReloadInfo.selector);
 			if (oReloadInfo.changesNeedReload
 				|| oReloadInfo.isDraftAvailable
 				|| oReloadInfo.hasHigherLayerChanges
@@ -323,7 +329,7 @@ sap.ui.define([
 					oReloadInfo.reloadMethod = oRELOAD.VIA_HASH;
 				}
 			}
-			this.removeInfoSessionStorage(oReloadInfo.selector);
+			FlexInfoSession.remove(oReloadInfo.selector);
 			return oReloadInfo;
 		}
 	};

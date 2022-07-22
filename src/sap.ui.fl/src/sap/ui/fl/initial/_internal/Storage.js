@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/StorageResultMerger",
 	"sap/ui/fl/initial/_internal/storageResultDisassemble",
 	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/_internal/FlexInfoSession"
 ], function(
 	StorageUtils,
 	StorageResultMerger,
 	storageResultDisassemble,
 	Version,
-	Utils
+	Utils,
+	FlexInfoSession
 ) {
 	"use strict";
 
@@ -21,6 +23,10 @@ sap.ui.define([
 		if (!oConnectorConfig.layers || (oConnectorConfig.layers[0] !== "ALL" && oConnectorConfig.layers.indexOf("CUSTOMER") === -1)) {
 			delete oConnectorSpecificPropertyBag.version;
 			return oConnectorSpecificPropertyBag;
+		}
+
+		if (_shouldAllContextsParameterBeSet(mPropertyBag.reference)) {
+			oConnectorSpecificPropertyBag.allContexts = true;
 		}
 
 		if (mPropertyBag.version !== undefined) {
@@ -37,6 +43,13 @@ sap.ui.define([
 			oConnectorSpecificPropertyBag.version = parseInt(sVersion);
 		}
 		return oConnectorSpecificPropertyBag;
+	}
+
+
+	function _shouldAllContextsParameterBeSet(sFlexReference) {
+		var oFlexInfoSession = FlexInfoSession.getByReference(sFlexReference);
+		// a sign that we are in the RTA mode and allContexts query parameter should be set for flex/data request
+		return oFlexInfoSession && oFlexInfoSession.initialAllContexts;
 	}
 
 	/**

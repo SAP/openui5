@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/base/util/UriParameters",
 	"sap/ui/fl/Layer",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/write/_internal/FlexInfoSession"
 ], function(
 	Version,
 	ReloadInfoAPI,
@@ -23,7 +24,8 @@ sap.ui.define([
 	FlexUtils,
 	UriParameters,
 	Layer,
-	sinon
+	sinon,
+	FlexInfoSession
 ) {
 	"use strict";
 
@@ -38,6 +40,43 @@ sap.ui.define([
 			window.sessionStorage.removeItem("sap.ui.fl.info.true");
 		}
 	}, function() {
+		QUnit.test("allContexts is not saved in the session storage", function(assert) {
+			var oReloadInfo = {
+				ignoreMaxLayerParameter: false,
+				layer: Layer.CUSTOMER,
+				selector: {}
+			};
+			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify({}));
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
+			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
+			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				allContextsProvided: true
+			});
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
+
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
+				var oExpectedArgs = {
+					selector: oReloadInfo.selector,
+					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
+					upToLayer: oReloadInfo.layer,
+					includeCtrlVariants: oReloadInfo.includeCtrlVariants,
+					includeDirtyChanges: true
+				};
+				assert.deepEqual(oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
+				assert.deepEqual(oGetResetAndPublishInfoAPIStub.callCount, 1, "getResetAndPublishInfo was called");
+				assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
+				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
+				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
+				assert.deepEqual(FlexInfoSession.get().initialAllContexts, true, "initialAllContexts is set to true");
+				assert.deepEqual(FlexInfoSession.get().isResetEnabled, true, "isResetEnabled is set to true");
+				assert.deepEqual(FlexInfoSession.get().allContextsProvided, true, "allContextsProvided is set to true");
+				window.sessionStorage.removeItem("sap.ui.fl.info.true");
+			});
+		});
+
 		QUnit.test("allContexts is save in the session storage and do not call flex/info request", function(assert) {
 			var oReloadInfo = {
 				ignoreMaxLayerParameter: false,
@@ -66,6 +105,58 @@ sap.ui.define([
 				assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
 				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
+				assert.deepEqual(FlexInfoSession.get().initialAllContexts, true, "initialAllContexts is set to true");
+				assert.deepEqual(FlexInfoSession.get().isResetEnabled, undefined, "isResetEnabled is set to true");
+				assert.deepEqual(FlexInfoSession.get().allContextsProvided, true, "allContextsProvided is set to true");
+				window.sessionStorage.removeItem("sap.ui.fl.info.true");
+			});
+		});
+
+		QUnit.test("allContextsProvided false and initialAllContexts true", function(assert) {
+			var oFlexInfoResponse = {allContextsProvided: false, initialAllContexts: true};
+			var oStubs = setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse);
+
+			return ReloadInfoAPI.getReloadReasonsForStart(oStubs.oReloadInfo).then(function (oReloadInfo) {
+				assertReloadReasonsAndSession(oReloadInfo, oStubs, assert);
+				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, false, "allContextsProvided is set to true");
+				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
+				window.sessionStorage.removeItem("sap.ui.fl.info.true");
+			});
+		});
+
+		QUnit.test("allContextsProvided false and initialAllContexts false/undefined", function(assert) {
+			var oFlexInfoResponse = {allContextsProvided: false};
+			var reasons = setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse);
+
+			return ReloadInfoAPI.getReloadReasonsForStart(reasons.oReloadInfo).then(function (oReloadInfo) {
+				assertReloadReasonsAndSession(oReloadInfo, reasons, assert);
+				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, false, "allContextsProvided is set to true");
+				assert.deepEqual(oReloadInfo.allContexts, true, "allContexts is set to false");
+				window.sessionStorage.removeItem("sap.ui.fl.info.true");
+			});
+		});
+
+		QUnit.test("allContextsProvided true and initialAllContexts true", function(assert) {
+			var oFlexInfoResponse = {allContextsProvided: true, initialAllContexts: true};
+			var reasons = setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse);
+
+			return ReloadInfoAPI.getReloadReasonsForStart(reasons.oReloadInfo).then(function (oReloadInfo) {
+				assertReloadReasonsAndSession(oReloadInfo, reasons, assert);
+				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, true, "allContextsProvided is set to true");
+				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
+				window.sessionStorage.removeItem("sap.ui.fl.info.true");
+			});
+		});
+
+		QUnit.test("allContextsProvided true and initialAllContexts false/undefined", function(assert) {
+			var oFlexInfoResponse = {allContextsProvided: true};
+			var reasons = setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse);
+
+			return ReloadInfoAPI.getReloadReasonsForStart(reasons.oReloadInfo).then(function (oReloadInfo) {
+				assertReloadReasonsAndSession(oReloadInfo, reasons, assert);
+				assert.deepEqual(FlexInfoSession.getByReference().allContextsProvided, true, "allContextsProvided is set to true");
+				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
+				window.sessionStorage.removeItem("sap.ui.fl.info.true");
 			});
 		});
 
@@ -204,6 +295,7 @@ sap.ui.define([
 			};
 			sandbox.stub(FlexUtils, "getUshellContainer").returns(true);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(null);
+			window.sessionStorage.removeItem("sap.ui.fl.info.true");
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -306,6 +398,7 @@ sap.ui.define([
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then NOT_NEEDED reloadMethod was set");
+			window.sessionStorage.removeItem("sap.ui.fl.info.true");
 		});
 
 		QUnit.test("current active version is selected/previewed", function(assert) {
@@ -333,6 +426,7 @@ sap.ui.define([
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then NOT_NEEDED reloadMethod was set");
 			assert.equal(oReloadInfo.hasVersionUrlParameter, true, "has version paramert in the url");
+			window.sessionStorage.removeItem("sap.ui.fl.info.true");
 		});
 
 		QUnit.test("and sap-ui-fl-max-layer parameter exist", function(assert) {
@@ -645,12 +739,23 @@ sap.ui.define([
 		if (sScenario === "standalone") {
 			var oUriParameters = UriParameters.fromQuery(oActualParameters);
 			Object.entries(oExpectedParameters).forEach(function(aKeyValue) {
-				assert.strictEqual(oUriParameters.get(aKeyValue[0]), aKeyValue[1][0], "the parameters are correct");
+				var sActualValue = parseBooleanOrReturnValue(oUriParameters.get(aKeyValue[0]));
+				assert.strictEqual(sActualValue, aKeyValue[1][0], "the parameters are correct");
 			});
 			assert.strictEqual(Object.keys(oExpectedParameters).length, Object.keys(oUriParameters.mParams).length, "the number of params is correct");
 		} else {
 			assert.deepEqual(oActualParameters, vParameters, "the parameters are correct");
 		}
+	}
+
+	function parseBooleanOrReturnValue(sValue) {
+		if (sValue === "true") {
+			return true;
+		}
+		if (sValue === "false") {
+			return false;
+		}
+		return sValue;
 	}
 
 	function initialParameter(sKey, sValue, sScenario) {
@@ -807,4 +912,40 @@ sap.ui.define([
 	QUnit.done(function () {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
+
+	function assertReloadReasonsAndSession(oReloadInfo, oStubs, assert) {
+		var oExpectedArgs = {
+			selector: oReloadInfo.selector,
+			ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
+			upToLayer: oReloadInfo.layer,
+			includeCtrlVariants: oReloadInfo.includeCtrlVariants,
+			includeDirtyChanges: true
+		};
+		assert.deepEqual(oStubs.oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
+		assert.deepEqual(oStubs.oGetResetAndPublishInfoAPIStub.callCount, 0, "getResetAndPublishInfo was not called");
+		assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
+		assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
+		assert.deepEqual(FlexInfoSession.get().initialAllContexts, true, "initialAllContexts is set to true");
+		assert.deepEqual(FlexInfoSession.get().isResetEnabled, undefined, "isResetEnabled is set to true");
+	}
+
+	function setFlexInfoInStorageAndPrepareMocks(oFlexInfoResponse) {
+		var oReloadInfo = {
+			ignoreMaxLayerParameter: false,
+			layer: Layer.CUSTOMER,
+			selector: {}
+		};
+		FlexInfoSession.setByReference(oFlexInfoResponse);
+		sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
+		sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
+		sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
+		var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+		var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves();
+		sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
+		return {
+			oReloadInfo: oReloadInfo,
+			oHasHigherLayerChangesAPIStub: oHasHigherLayerChangesAPIStub,
+			oGetResetAndPublishInfoAPIStub: oGetResetAndPublishInfoAPIStub
+		};
+	}
 });

@@ -22,7 +22,9 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core",
+	"sap/ui/fl/write/_internal/connectors/KeyUserConnector"
 ], function(
 	_omit,
 	Log,
@@ -45,7 +47,9 @@ sap.ui.define([
 	Change,
 	Layer,
 	Utils,
-	sinon
+	sinon,
+	Core,
+	KeyUserConnector
 ) {
 	"use strict";
 
@@ -575,6 +579,31 @@ sap.ui.define([
 				.then(function () {
 					assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change, oAppComponent), "then the flex persistence was called with correct parameters");
 				});
+		});
+
+		QUnit.test("Given KeyUserConnector has implementation of getFlexInfo", function (assert) {
+			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
+			var mPropertyBag = {
+				change: {
+					_getMap: function () {
+						return {
+							changeType: sDescriptorChangeType
+						};
+					}
+				},
+				selector: this.vSelector,
+				layer: Layer.CUSTOMER
+			};
+			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "sap.com"}
+			]);
+
+			var oKeyUserConnectorStub = sandbox.stub(KeyUserConnector, "getFlexInfo");
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
+
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function () {
+				assert.equal(oKeyUserConnectorStub.callCount, 1, "KeyUserConnector getFlexInfo should be called");
+			});
 		});
 
 		QUnit.test("getResetAndPublishInfo when there is change but layer is not transportable", function(assert) {
