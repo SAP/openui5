@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
+	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
@@ -19,7 +20,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes"
-], function(Core, createAndAppendDiv, MockServer, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page, jQuery, qutils, KeyCodes) {
+], function(Core, createAndAppendDiv, MockServer, List, GrowingEnablement, Table, Column, ColumnListItem, Text, ODataV1Model, ODataModel, JSONModel, Sorter, StandardListItem, CustomListItem, HTML, Page, jQuery, qutils, KeyCodes) {
 	"use strict";
 	createAndAppendDiv("growing1");
 	createAndAppendDiv("growing2");
@@ -859,5 +860,34 @@ sap.ui.define([
 		aGroupHeaderListItems.forEach(function(oGroupItem) {
 			assert.strictEqual(oGroupItem.getGroupedItems().indexOf(this.oList._oGrowingDelegate._oTrigger.getId()), -1, "Growing Trigger is not mapped to the groupHeader");
 		}, this);
+	});
+
+	QUnit.module("itemsPool");
+
+	QUnit.test("should not be created for OData V1 model", function(assert) {
+		var done = assert.async();
+		var oMockServer = startMockServer();
+		var oList = new List({
+			growing: true,
+			models: new ODataV1Model("http://sap.com/model", true) // true is use JSON
+		});
+		var fFillItemsPoolSpy = sinon.spy(oList._oGrowingDelegate, "fillItemsPool");
+		oList.bindItems({
+			path: "/Products",
+			template: new StandardListItem({
+				title: "{Name}",
+				description: "{Category}"
+			})
+		});
+		oList.attachEventOnce("updateFinished", function() {
+			var oBinding = oList.getBinding("items");
+			assert.ok(oBinding.isA("sap.ui.model.odata.ODataListBinding"), "OData V1 binding found");
+			assert.ok(fFillItemsPoolSpy.notCalled, "fillItemsPool method was not called for OData V1");
+			oMockServer.stop();
+			oList.destroy();
+			done();
+		});
+		oList.placeAt("qunit-fixture");
+		Core.applyChanges();
 	});
 });
