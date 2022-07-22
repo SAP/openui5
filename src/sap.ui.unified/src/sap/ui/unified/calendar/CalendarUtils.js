@@ -160,7 +160,7 @@ sap.ui.define([
 			// search Locale for containing "en-US", since sometimes
 			// when any user settings have been defined, subtag "sapufmt" is added to the locale name
 			// this is described inside sap.ui.core.Configuration file
-			if (oLocale && oLocale.getLanguage() === "en" && (oLocale.getRegion() === "US" || !oLocale.getRegion())) {
+			if (oLocale && oLocale.getLanguage() === "en" && oLocale.getRegion() === "US") {
 				/*
 				 * in US the week starts with Sunday
 				 * The first week of the year starts with January 1st. But Dec. 31 is still in the last year
