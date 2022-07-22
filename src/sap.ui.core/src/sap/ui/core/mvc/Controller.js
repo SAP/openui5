@@ -781,8 +781,8 @@ sap.ui.define([
 		 * @param {object} mOptions Options regarding fragment loading
 		 * @param {string} mOptions.name The Fragment name, which must correspond to a Fragment which can be loaded via the module system
 		 *    (fragmentName + suffix ".fragment.[typeextension]") and which contains the Fragment definition.
-		 * @param {object} [mOptions.addToDependents=true] Whether the fragment content should be added to the <code>dependents</code> aggregation of the view
-		 * @param {object} [mOptions.autoPrefixId=true] Whether the IDs of the fragment content will be prefixed by the view ID
+		 * @param {boolean} [mOptions.addToDependents=true] Whether the fragment content should be added to the <code>dependents</code> aggregation of the view
+		 * @param {boolean} [mOptions.autoPrefixId=true] Whether the IDs of the fragment content will be prefixed by the view ID
 		 * @param {string} [mOptions.id] the ID of the Fragment
 		 * @param {string} [mOptions.type=XML] the Fragment type, e.g. "XML", "JS", or "HTML" (see above). Default is "XML"
 		 * @return {Promise} A Promise that resolves with the fragment content
