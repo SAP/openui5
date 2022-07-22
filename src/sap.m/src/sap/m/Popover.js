@@ -824,6 +824,13 @@ sap.ui.define([
 					name: "_sap_m_Popover_ForceCompactArrowOffset"
 			}) || "true"; // ensure a default value is added in case the parameter is not loaded
 
+			arrowOffset = Parameters.get({
+				name: "_sap_m_Popover_ArrowOffset",
+				callback: function(sValue) {
+					arrowOffset = parseFloat(sValue);
+				}
+			}) || 8;
+
 			// cast the string value to boolean
 			bForceCompactArrowOffset = bForceCompactArrowOffset === "true";
 
