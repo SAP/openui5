@@ -2316,7 +2316,7 @@ sap.ui.define([
 			// tzDiff is in seconds for a higher precision (historical timezone might have differences in seconds)
 			// e.g. new Date(Date.UTC(1730, 0, 1))
 			// is in Berlin: Sun Jan 01 1730 00:53:28 GMT+0053 (Central European Standard Time)
-			oDate.setUTCSeconds((oDateValue.second || 0) + oDateValue.tzDiff);
+			oDate.setUTCSeconds(oDate.getUTCSeconds() + oDateValue.tzDiff);
 		}
 		return oDate;
 	};
