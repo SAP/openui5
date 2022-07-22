@@ -214,6 +214,15 @@
 				]
 			},
 			{
+				"id": "sap.ui.webc.main.Menu",
+				"name": "Menu",
+				"category": "Web Components",
+				"since": "1.100.0",
+				"samples": [
+					"sap.ui.webc.main.sample.Menu"
+				]
+			},
+			{
 				"id": "sap.ui.webc.main.MessageStrip",
 				"name": "Message Strip",
 				"category": "Web Components",
@@ -576,6 +585,11 @@
 				"id": "sap.ui.webc.main.sample.ListSeparationTypes",
 				"name": "List 'separators' Property",
 				"description": "Demonstrates the different separators of List items"
+			},
+			{
+				"id": "sap.ui.webc.main.sample.Menu",
+				"name": "Demonstrates the basic usage of Menu",
+				"description": "Demonstrates the basic usage of Menu"
 			},
 			{
 				"id": "sap.ui.webc.main.sample.MessageStrip",
