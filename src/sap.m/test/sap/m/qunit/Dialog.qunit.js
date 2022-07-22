@@ -1,5 +1,5 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -61,6 +61,8 @@ sap.ui.define([
 	KeyCodes,
 	Title
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
@@ -101,81 +103,23 @@ sap.ui.define([
 		return $element[0].scrollWidth > ($element.innerWidth() + iTolerance);
 	}
 
-	var oDialog = new Dialog("dialog", {
-		title: "World Domination",
-		subHeader: new Bar({
-			contentMiddle: [
-				new SearchField({
-					placeholder: "Search ...",
-					width: "100%"
-				})
-			]
-		}),
-		content: [
-			new HTML({content: "<p>Do you want to start a new world domination campaign?</p>"})
-		],
-		icon: "../images/SAPUI5Icon.png",
-		beginButton: new Button("leftButton", {
-			text: "Reject",
-			type: ButtonType.Reject,
-			press: function () {
-				oDialog.close();
-			}
-		}),
-		endButton: new Button("rightButton", {
-			text: "Accept",
-			type: ButtonType.Accept,
-			press: function () {
-				oDialog.close();
-			}
-		}),
-		beforeOpen: function () {
-			assert.ok(jQuery.sap.byId("dialog").css("visibility") !== "visible", "Dialog should be hidden before it's opened");
-		},
-		afterOpen: function () {
-			assert.equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
-		},
-		beforeClose: function () {
-			assert.equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
-		},
-		afterClose: function (oEvent) {
-			assert.equal(jQuery.sap.byId("dialog").length, 0, "Dialog content is not rendered anymore");
-			assert.ok(oEvent.getParameter("origin") !== null, "Origin parameter should be set");
-			assert.ok(!oDialog.isOpen(), "Dialog is already closed");
-		}
-	});
-
-	var oButton = new Button({
-		text: "Open Dialog",
-		press: function () {
-			oDialog.open();
-		}
-	});
-
-	var page = new Page("myFirstPage", {
-		title: "Dialog Test",
-		showNavButton: true,
-		enableScrolling: true,
-		content: oButton
-	});
-
-	var app = new App("myApp", {
-		initialPage: "myFirstPage"
-	});
-
-	app.addPage(page).placeAt("qunit-fixture");
-
 	QUnit.module("Initial Check");
 
 	QUnit.test("Initialization", function (assert) {
+		// Arrange
+		var oDialog = new Dialog("dialog");
+
+		// Assert
 		assert.ok(!jQuery.sap.domById("dialog"), "Dialog is not rendered before it's ever opened.");
 		assert.equal(oDialog.oPopup._sF6NavMode, "SCOPE", "Dialog's popup navigation mode is set to SCOPE.");
+
+		// Clean up
+		oDialog.destroy();
 	});
 
 	QUnit.module("Content preservation");
 
 	QUnit.test("Preserve Dialog Content", function(assert) {
-		var done = assert.async();
 		this.clock.restore();
 
 		var bRendered = false;
@@ -199,8 +143,6 @@ sap.ui.define([
 			assert.ok(!!document.querySelector("#htmlControl"), "HTML control rendered");
 			assert.equal(document.querySelector("#htmlControl").getAttribute("data-some-attribute"), "some-value", "DOM attribute value set correctly");
 
-			oDialog.attachAfterClose(start);
-
 			oDialog.close();
 		};
 
@@ -214,7 +156,6 @@ sap.ui.define([
 
 			oDialog.open();
 		};
-
 
 		var fnOpened1 = function() {
 			oDialog.detachAfterOpen(fnOpened1);
@@ -362,17 +303,85 @@ sap.ui.define([
 		assert.equal(oRerenderSpy.callCount, iCallsCount, "OverflowToolbar is not reseted and invalidated when on desktop in Dialog");
 	});
 
-	QUnit.module("Open and Close");
+	QUnit.module("Open and Close", {
+		beforeEach: function () {
+			this.oDialog = new Dialog("dialog", {
+				title: "World Domination",
+				subHeader: new Bar({
+					contentMiddle: [
+						new SearchField({
+							placeholder: "Search ...",
+							width: "100%"
+						})
+					]
+				}),
+				content: [
+					new HTML({content: "<p>Do you want to start a new world domination campaign?</p>"})
+				],
+				icon: "../images/SAPUI5Icon.png",
+				beginButton: new Button("leftButton", {
+					text: "Reject",
+					type: ButtonType.Reject,
+					press: function () {
+						this.oDialog.close();
+					}.bind(this)
+				}),
+				endButton: new Button("rightButton", {
+					text: "Accept",
+					type: ButtonType.Accept,
+					press: function () {
+						this.oDialog.close();
+					}.bind(this)
+				})
+			});
+
+			this.oButton = new Button({
+				text: "Open Dialog",
+				press: function () {
+					this.oDialog.open();
+				}.bind(this)
+			});
+
+			var oPage = new Page("myFirstPage", {
+				title: "Dialog Test",
+				showNavButton: true,
+				enableScrolling: true,
+				content: this.oButton
+			});
+
+			this.oApp = new App("myApp", {
+				initialPage: "myFirstPage",
+				pages: [
+					oPage
+				]
+			});
+
+			this.oApp.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oApp.destroy();
+			this.oDialog.destroy();
+		}
+	});
 
 	QUnit.test("Open Dialog", function (assert) {
-		oButton.firePress();
-		assert.ok(oDialog.isOpen(), "Dialog is already open");
+		// Arrange
+		this.oDialog.attachBeforeOpen(function () {
+			assert.ok(jQuery.sap.byId("dialog").css("visibility") !== "visible", "Dialog should be hidden before it's opened");
+		});
+
+		this.oDialog.attachAfterOpen(function () {
+			assert.equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
+		});
+
+		this.oButton.firePress();
+		assert.ok(this.oDialog.isOpen(), "Dialog is already open");
 		this.clock.tick(600);
 		var $Dialog = jQuery.sap.byId("dialog"),
-			$ScrollDiv = oDialog.$("scroll"),
-			oTitleDom = jQuery.sap.domById(oDialog.getId() + "-title"),
+			$ScrollDiv = this.oDialog.$("scroll"),
+			oTitleDom = jQuery.sap.domById(this.oDialog.getId() + "-title"),
 			oSubHeaderDom = $Dialog.children(".sapMDialogSubHeader")[0],
-			oIconDom = jQuery.sap.domById(oDialog.getId() + "-icon"),
+			oIconDom = jQuery.sap.domById(this.oDialog.getId() + "-icon"),
 			oSearchField = Core.byId("__field0").getFocusDomRef();
 		assert.ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
 		assert.ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
@@ -393,11 +402,24 @@ sap.ui.define([
 	});
 
 	QUnit.test("Close Dialog. Test set origin parameter value", function (assert) {
+		// Arrange
 		assert.expect(4);
-		oDialog.getBeginButton().$().trigger("tap");
+		this.oDialog.attachBeforeClose(function () {
+			// Assert 1
+			assert.equal(jQuery.sap.byId("dialog").css("visibility"), "visible", "Dialog should be visible after it's opened");
+		});
+		this.oDialog.attachAfterClose(function (oEvent) {
+			// Assert 2,3,4
+			assert.equal(jQuery.sap.byId("dialog").length, 0, "Dialog content is not rendered anymore");
+			assert.ok(oEvent.getParameter("origin") !== null, "Origin parameter should be set");
+			assert.ok(!this.oDialog.isOpen(), "Dialog is already closed");
+		}.bind(this));
+
+		// Act
+		this.oButton.firePress();
+		this.oDialog.getBeginButton().$().trigger("tap");
 		this.clock.tick(500);
 	});
-
 
 	QUnit.test("Open Message Dialog on phone", function (assert) {
 		var oSystem = {
@@ -501,7 +523,7 @@ sap.ui.define([
 			resultingScrollPaneWidth;
 
 		//System under Test
-		sut = new Dialog({
+		var sut = new Dialog({
 			contentWidth: "500px",
 			content: new Text({
 				text: "This is just a sample text with width set to 700 px. We are testing vertical scrolling of wider content.",
