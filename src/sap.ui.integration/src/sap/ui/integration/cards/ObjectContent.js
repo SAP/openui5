@@ -473,6 +473,13 @@ sap.ui.define([
 				actionControl: oControl,
 				enabledPropertyName: "enabled"
 			});
+
+			// wrap in HBox to avoid stretching the link
+			oControl = new HBox({
+				renderType: FlexRendertype.Bare,
+				items: oControl
+			});
+
 		} else if (vValue) {
 			oControl = new Text({
 				text: vValue,

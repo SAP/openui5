@@ -1830,7 +1830,7 @@ sap.ui.define([
 				var oContent = this.oCard.getCardContent();
 
 				//Act
-				var oLink = oContent.$().find(".sapMLabel:contains('Website')+a").control(0);
+				var oLink = oContent.$().find(".sapMLnk").control(1);
 				assert.strictEqual(oLink.getEnabled(), false, "Link is disabled");
 
 				done();
