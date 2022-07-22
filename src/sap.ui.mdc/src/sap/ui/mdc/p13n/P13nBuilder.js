@@ -9,9 +9,8 @@ sap.ui.define([
     "sap/base/util/merge",
     "sap/m/MessageBox",
     "sap/ui/Device",
-    "sap/ui/fl/write/api/FieldExtensibility",
-    "sap/ui/rta/Utils"
-], function(P13nPropertyHelper, Button, Bar, Title, merge, MessageBox, Device, FieldExtensibility, Utils) {
+    "sap/ui/fl/write/api/FieldExtensibility"
+], function(P13nPropertyHelper, Button, Bar, Title, merge, MessageBox, Device, FieldExtensibility) {
     "use strict";
 
     var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -323,55 +322,66 @@ sap.ui.define([
             var bExtensibilityEnabled = false,
                 oDialogParent = oDialog.getParent();
 
-            var oHandleExtensibility = Promise.all([
-                Utils.isServiceUpToDate(oDialogParent),
-                FieldExtensibility.isExtensibilityEnabled(oDialogParent)
-            ]);
+            return sap.ui.getCore().loadLibrary('sap.ui.rta', {
+                async: true
+            }).then(function() {
+                return new Promise(function(resolve) {
+                    sap.ui.require([
+                        "sap/ui/rta/Utils"
+                    ], function(rtaUtils) {
+                        var oHandleExtensibility = Promise.all([
+                            rtaUtils.isServiceUpToDate(oDialogParent),
+                            FieldExtensibility.isExtensibilityEnabled(oDialogParent)
+                        ]);
 
-            return oHandleExtensibility.then(function (aResult) {
-                bExtensibilityEnabled = !!aResult[1];
-            })
-            .then(function() {
-                var oCustomHeader = oDialog.getCustomHeader(),
-                    sId = oDialogParent && oDialogParent.getId ? oDialogParent.getId() : undefined,
-                    oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+                        return oHandleExtensibility.then(function (aResult) {
+                            bExtensibilityEnabled = !!aResult[1];
+                        })
+                            .then(function() {
+                                var oCustomHeader = oDialog.getCustomHeader(),
+                                    sId = oDialogParent && oDialogParent.getId ? oDialogParent.getId() : undefined,
+                                    oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
-                if (!oCustomHeader) {
-                    var oBar = new Bar({
-                        contentLeft: [
-                            new Title({
-                                text: oDialog.getTitle()
-                            })
-                        ]
-                    });
-                    oDialog.setCustomHeader(oBar);
-                    oCustomHeader = oDialog.getCustomHeader();
-                }
+                                if (!oCustomHeader) {
+                                    var oBar = new Bar({
+                                        contentLeft: [
+                                            new Title({
+                                                text: oDialog.getTitle()
+                                            })
+                                        ]
+                                    });
+                                    oDialog.setCustomHeader(oBar);
+                                    oCustomHeader = oDialog.getCustomHeader();
+                                }
 
-                if (bExtensibilityEnabled) {
-                    oCustomHeader.addContentRight(new Button( sId + "-addCustomField", {
-                        icon: "sap-icon://add",
-                        enabled: bExtensibilityEnabled,
-                        tooltip: oResourceBundle.getText("p13nDialog.rtaAddTooltip"),
-                        press: function (oEvt) {
-                            var sRtaStyleClassName = Utils.getRtaStyleClassName(),
-                                oAdaptDialog =  oEvt.getSource().getParent().getParent(),
-                                oControl = oAdaptDialog.getParent();
+                                if (bExtensibilityEnabled) {
+                                    oCustomHeader.addContentRight(new Button( sId + "-addCustomField", {
+                                        icon: "sap-icon://add",
+                                        enabled: bExtensibilityEnabled,
+                                        tooltip: oResourceBundle.getText("p13nDialog.rtaAddTooltip"),
+                                        press: function (oEvt) {
+                                            var sRtaStyleClassName = rtaUtils.getRtaStyleClassName(),
+                                                oAdaptDialog =  oEvt.getSource().getParent().getParent(),
+                                                oControl = oAdaptDialog.getParent();
 
-                            FieldExtensibility.onControlSelected(oControl).then(function (oRetVal) {
-                                FieldExtensibility.getExtensionData().then(function (oExtensibilityInfo) {
-                                    FieldExtensibility.onTriggerCreateExtensionData(oExtensibilityInfo, sRtaStyleClassName);
-                                    oAdaptDialog.close(); // close as if there is newly created custom field, next time user tries to open it - it checks for service outdated and shows correct information
-                                });
+                                            FieldExtensibility.onControlSelected(oControl).then(function (oRetVal) {
+                                                FieldExtensibility.getExtensionData().then(function (oExtensibilityInfo) {
+                                                    FieldExtensibility.onTriggerCreateExtensionData(oExtensibilityInfo, sRtaStyleClassName);
+                                                    oAdaptDialog.close(); // close as if there is newly created custom field, next time user tries to open it - it checks for service outdated and shows correct information
+                                                });
+                                            });
+
+                                        }
+                                    }));
+
+                                    oDialog.setCustomHeader(oCustomHeader);
+                                    resolve(oDialog);
+                                }
+
                             });
 
-                        }
-                    }));
-
-                    oDialog.setCustomHeader(oCustomHeader);
-                    return oDialog;
-                }
-
+                    });
+                });
             });
         }
 
