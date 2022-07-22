@@ -413,11 +413,15 @@ sap.ui.define([
 			this._oTable.bindRows("/");
 			this._oTable.setModel(oModel);
 			this._oColumnWithColumnMenu = new Column({
+				template: new TableQUnitUtils.TestControl({text: "col1value"}),
+				label: new TableQUnitUtils.TestControl({text: "col1header"}),
 				filterProperty: "myProp",
 				showFilterMenuEntry: true
 			});
 
 			this._oColumnWithUnifiedMenu = new Column({
+				template: new TableQUnitUtils.TestControl({text: "col2value"}),
+				label: new TableQUnitUtils.TestControl({text: "col2header"}),
 				filterProperty: "myOtherProp",
 				showFilterMenuEntry: true,
 				menu: new Menu()
@@ -456,6 +460,40 @@ sap.ui.define([
 		this._oColumnWithUnifiedMenu.filter("filterValue");
 		assert.ok(!oSpyUnifiedMenu.called, "_setFilterValue not called on UnifiedMenu");
 		assert.ok(oSpyColumnMenuFilterState.calledOnce, "_setFilterState called on ColumnMenu");
+	});
+
+	QUnit.test("Set Grouping", function(assert) {
+		var done = assert.async();
+		var oTable = this._oTable;
+		var oColumn = this._oColumnWithColumnMenu;
+		oTable.setGroupBy = function() {};
+		var oSetGroupSpy = sinon.spy(oTable, "setGroupBy");
+
+		oTable.setEnableGrouping(true);
+		oColumn.setSortProperty("myProp");
+
+		oColumn._openMenu();
+
+		var oGroupMenuItem = oColumn.getMenu().getItems()[3];
+		assert.strictEqual(oGroupMenuItem.getText(), TableUtils.getResourceBundle().getText("TBL_GROUP"), "The group menu item exists");
+		oGroupMenuItem.fireSelect();
+		assert.ok(oSetGroupSpy.calledOnce, "setGroupBy is called");
+		assert.ok(oSetGroupSpy.calledWithExactly(oColumn), "setGroupBy is called with the correct parameter");
+		assert.equal(document.activeElement, oTable.getDomRef("rowsel0"), "Focus moves to the row selector cell");
+
+		oTable.attachEventOnce("rowsUpdated", function() {
+			setTimeout(function() {
+				oColumn._openMenu();
+				assert.strictEqual(oGroupMenuItem.getText(), TableUtils.getResourceBundle().getText("TBL_GROUP"), "The group menu item exists");
+				oGroupMenuItem.fireSelect();
+				assert.ok(oSetGroupSpy.calledTwice, "setGroupBy is called");
+				assert.ok(oSetGroupSpy.calledWithExactly(oColumn), "setGroupBy is called with the correct parameter");
+				assert.equal(document.activeElement, oTable.getDomRef("noDataCnt"), "Focus moves to the NoData element");
+
+				done();
+			}, 0);
+		});
+		oTable.getModel().setData([]);
 	});
 
 	QUnit.test("Localization and Invalidation", function(assert) {
@@ -1106,7 +1144,10 @@ sap.ui.define([
 		assert.strictEqual(oVisibilitySubmenuBefore.getItems()[0].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
 		assert.strictEqual(oVisibilitySubmenuBefore.getItems()[1].getIcon(), "sap-icon://accept", "The visibility submenu item is checked");
 
-		this._oColumn2.setVisible(false);
+		this._oColumn2.focus();
+		this._oColumn2._openMenu();
+		oVisibilitySubmenuBefore.getItems()[1].fireSelect();
+		assert.equal(document.activeElement, this._oColumn1.getDomRef(), "Focus moves to the other column header");
 		this._oColumn1._openMenu();
 		var oColumnMenuAfter = this._oColumn1.getMenu();
 		var oVisibilitySubmenuAfter = oColumnMenuAfter.getItems()[0].getSubmenu();
