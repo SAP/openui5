@@ -1060,6 +1060,7 @@ function(
 				// When reset the filter, the selected items might go outside
 				// the currently visible items (outside the current growing number).
 				// Set the growing to false to prevent this.
+				that._oList.destroyItems();
 				that._oList.setGrowing(false);
 				oBindings.filter([]);
 				that._oList.setGrowing(that.getGrowing());
