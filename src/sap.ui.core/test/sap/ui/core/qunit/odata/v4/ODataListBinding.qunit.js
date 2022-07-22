@@ -2908,7 +2908,7 @@ sap.ui.define([
 			that.mock(oBinding).expects("getResolvedPath").exactly(iCallCount).withExactArgs()
 				.returns("/resolved/path");
 			that.mock(oKeptContext).expects("resetKeepAlive").exactly(iCallCount).withExactArgs();
-			that.mock(oBinding).expects("destroyCreated").exactly(1 - iCallCount)
+			that.mock(oBinding).expects("removeCreated").exactly(1 - iCallCount)
 				.withExactArgs("~aContexts[2]~");
 
 			// code under test
@@ -3620,13 +3620,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("destroyCreated", function (assert) {
+	QUnit.test("removeCreated", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
-			oBindingMock = this.mock(oBinding),
 			oContext0 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
 				SyncPromise.resolve(Promise.resolve())),
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-24)", -2,
-				SyncPromise.resolve(Promise.resolve())),
+				SyncPromise.resolve()), // let's assume this is created, persisted, kept-alive
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-25)", -3,
 				SyncPromise.resolve(Promise.resolve()), /*bInactive*/true),
 			oContext3 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-26)", -4,
@@ -3637,12 +3636,13 @@ sap.ui.define([
 		oBinding.iActiveContexts = 3;
 		oBinding.iCreatedContexts = 4;
 		assert.strictEqual(oBinding.getLength(), 14, "length");
-		oBindingMock.expects("destroyLater").withExactArgs(sinon.match.same(oContext1));
-		oBindingMock.expects("destroyLater").withExactArgs(sinon.match.same(oContext2));
+		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(true);
+		this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(false);
+		this.mock(oBinding).expects("destroyLater").withExactArgs(sinon.match.same(oContext2));
 
 		// code under test
-		oBinding.destroyCreated(oContext1);
-		oBinding.destroyCreated(oContext2);
+		oBinding.removeCreated(oContext1);
+		oBinding.removeCreated(oContext2);
 
 		assert.strictEqual(oBinding.getLength(), 12);
 		assert.strictEqual(oBinding.iActiveContexts, 2);
@@ -4418,7 +4418,7 @@ sap.ui.define([
 		// code under test - call fnErrorCallback
 		oCreateInCacheExpectation.args[0][6](oError);
 
-		oBindingMock.expects("destroyCreated").withExactArgs(sinon.match.same(oContext0));
+		oBindingMock.expects("removeCreated").withExactArgs(sinon.match.same(oContext0));
 
 		// code under test - call fnCancelCallback to simulate cancellation
 		oPromise = oLockGroupExpectation.args[0][3]();
@@ -5209,7 +5209,7 @@ sap.ui.define([
 		oContext.created().catch(function (oError) {
 			assert.ok(oError.canceled, "create promise rejected with 'canceled'");
 		});
-		this.mock(oBinding).expects("destroyCreated").withExactArgs(sinon.match.same(oContext))
+		this.mock(oBinding).expects("removeCreated").withExactArgs(sinon.match.same(oContext))
 			.callThrough();
 		oBindingMock.expects("deleteFromCache").callsFake(function () {
 			return fnDeleteFromCache.apply(this, arguments).then(function () {
@@ -6633,7 +6633,7 @@ sap.ui.define([
 					// fnOnRemove Test
 					if (bOnRemoveCalled) {
 						oContextMock.expects("getModelIndex").withExactArgs().callThrough();
-						that.mock(oBinding).expects("destroyCreated").exactly(bCreated ? 1 : 0)
+						that.mock(oBinding).expects("removeCreated").exactly(bCreated ? 1 : 0)
 							.withExactArgs(sinon.match.same(oContext));
 						oContextMock.expects("destroy").exactly(bCreated ? 0 : 1)
 							.withExactArgs();
@@ -6655,7 +6655,7 @@ sap.ui.define([
 							assert.strictEqual(oBinding.aContexts[6].iIndex, 4);
 							assert.strictEqual(oBinding.iCreatedContexts, 2);
 							assert.strictEqual(oBinding.iMaxLength, 5);
-						} // else destroyCreated adjusted aContexts
+						} // else removeCreated adjusted aContexts
 					} else {
 						that.mock(oGroupLock).expects("getGroupId").returns("resultingGroupId");
 						oContextMock.expects("refreshDependentBindings")

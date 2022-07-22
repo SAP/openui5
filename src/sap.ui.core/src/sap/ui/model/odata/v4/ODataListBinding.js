@@ -865,7 +865,7 @@ sap.ui.define([
 				return;
 			}
 
-			that.destroyCreated(oContext);
+			that.removeCreated(oContext);
 			return Promise.resolve().then(function () {
 				// Fire the change asynchronously so that Cache#delete is finished and #getContexts
 				// can read the data synchronously. This is important for extended change detection.
@@ -1070,35 +1070,6 @@ sap.ui.define([
 
 		asODataParentBinding.prototype.destroy.call(this);
 		ListBinding.prototype.destroy.call(this);
-	};
-
-	/**
-	 * Removes the given context for a created entity from the list of contexts and destroys it
-	 * later so that the control has time to handle the context's dependent bindings before.
-	 *
-	 * @param {sap.ui.model.odata.v4.Context} oContext
-	 *   The context instance for the created entity to be destroyed
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.destroyCreated = function (oContext) {
-		var iIndex = oContext.getModelIndex(),
-			i;
-
-		this.iCreatedContexts -= 1;
-		if (!oContext.isInactive()) {
-			this.iActiveContexts -= 1;
-		}
-		for (i = 0; i < iIndex; i += 1) {
-			this.aContexts[i].iIndex += 1;
-		}
-		if (!this.iCreatedContexts) {
-			this.bFirstCreateAtEnd = undefined;
-		}
-		this.aContexts.splice(iIndex, 1);
-		this.destroyLater(oContext);
-		// The path of all contexts in aContexts after the removed one is untouched, still points to
-		// the same data, hence no checkUpdate is needed.
 	};
 
 	/**
@@ -2821,7 +2792,7 @@ sap.ui.define([
 						that.mPreviousContextsByPath[that.getResolvedPath() + sPredicate]
 							.resetKeepAlive();
 					} else { // Note: implies oContext.created()
-						that.destroyCreated(that.aContexts[iIndex]);
+						that.removeCreated(that.aContexts[iIndex]);
 					}
 				});
 		}).catch(function (oError) {
@@ -2898,7 +2869,7 @@ sap.ui.define([
 					i;
 
 				if (oContext.iIndex < 0) {
-					that.destroyCreated(oContext);
+					that.removeCreated(oContext);
 					bDestroyed = true;
 				} else {
 					if (iIndex === undefined) { // -> bStillAlive === false
@@ -2969,6 +2940,38 @@ sap.ui.define([
 
 			return SyncPromise.all(aPromises);
 		});
+	};
+
+	/**
+	 * Removes the given context for a created entity from the list of contexts and - unless it is
+	 * kept alive - destroys it later so that the control has time to handle the context's dependent
+	 * bindings before.
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   The context instance for the created entity to be destroyed
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.removeCreated = function (oContext) {
+		var iIndex = oContext.getModelIndex(),
+			i;
+
+		this.iCreatedContexts -= 1;
+		if (!oContext.isInactive()) {
+			this.iActiveContexts -= 1;
+		}
+		for (i = 0; i < iIndex; i += 1) {
+			this.aContexts[i].iIndex += 1;
+		}
+		if (!this.iCreatedContexts) {
+			this.bFirstCreateAtEnd = undefined;
+		}
+		this.aContexts.splice(iIndex, 1);
+		if (!oContext.isKeepAlive()) {
+			this.destroyLater(oContext);
+		}
+		// The path of all contexts in aContexts after the removed one is untouched, still points to
+		// the same data, hence no checkUpdate is needed.
 	};
 
 	/**
