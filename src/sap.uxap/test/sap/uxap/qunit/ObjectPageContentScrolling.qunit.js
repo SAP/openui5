@@ -955,6 +955,38 @@ function(Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, Object
 
 	});
 
+	QUnit.test("Scrolling to Section, when selectedSection is not visible", function (assert) {
+		// Arrange
+		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 10),
+			oFirstSection = oObjectPageLayout.getSections()[0],
+			oFirstSectionSubSection = oFirstSection.getSubSections()[0],
+			oScrollToSection = oObjectPageLayout.getSections()[6],
+			oScrollToSectionInfo,
+			iTargetPosition,
+			done = assert.async();
+
+		assert.expect(1);
+
+		oFirstSectionSubSection.setVisible(false);
+		oObjectPageLayout.setSelectedSection(oFirstSection);
+		oObjectPageLayout.placeAt('qunit-fixture');
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// Act
+			oScrollToSectionInfo = oObjectPageLayout._oSectionInfo[oScrollToSection.getId()];
+			iTargetPosition = oScrollToSectionInfo.positionTop;
+			oObjectPageLayout._$opWrapper.scrollTop(iTargetPosition);
+			oObjectPageLayout._onScroll({target: {scrollTop: iTargetPosition}});
+
+			// Assert
+			assert.strictEqual(oObjectPageLayout._oABHelper._getAnchorBar().getSelectedButton(), oScrollToSectionInfo.buttonId,
+				"Scrolled to Section is selected correctly in the AnchorBar");
+
+			// Clean up
+			done();
+		});
+	});
+
 	QUnit.module("ObjectPage scrolling without view");
 
 	QUnit.test("auto-scroll on resize of last section", function (assert) {
