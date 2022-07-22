@@ -4925,7 +4925,6 @@
 	"weekData-firstDay": 0,
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,
-	"weekData-algorithm": "FIRSTDAY_STARTS_FIRSTWEEK",
 	"timeData": {
 		"_allowed": "h hb H hB",
 		"_preferred": "h"
