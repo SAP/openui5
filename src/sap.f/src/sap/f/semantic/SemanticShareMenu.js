@@ -9,6 +9,8 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/base/EventProvider",
 	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/Device",
+	"sap/ui/core/ShortcutHintsMixin",
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/m/OverflowToolbarButton",
@@ -18,6 +20,8 @@ sap.ui.define([
 	IconPool,
 	EventProvider,
 	ManagedObjectObserver,
+	Device,
+	ShortcutHintsMixin,
 	coreLibrary,
 	mobileLibrary,
 	OverflowToolbarButton,
@@ -293,19 +297,32 @@ sap.ui.define([
 	* @returns {sap.m.Button}
 	*/
 	SemanticShareMenu.prototype._getShareMenuButton = function() {
-		var oContainer = this._getContainer();
+		var oContainer, oResourceBundle, sShortcutKey;
 
 		if (!this._oShareMenuBtn) {
+			oContainer = this._getContainer();
+			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.f");
+			sShortcutKey = "SEMANTIC_CONTROL_ACTION_SHARE_SHORTCUT"; // Ctrl+Shift+S
+
+			if (Device.os.macintosh) {
+				sShortcutKey += "_MAC"; // Cmd+Shift+S
+			}
+
 			this._oShareMenuBtn = new OverflowToolbarButton(oContainer.getId() + "-shareButton", {
 				ariaHasPopup: AriaHasPopup.Menu,
 				icon: IconPool.getIconURI("action"),
-				tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.f").getText("SEMANTIC_CONTROL_ACTION_SHARE"),
+				tooltip: oResourceBundle.getText("SEMANTIC_CONTROL_ACTION_SHARE"),
 				layoutData: new OverflowToolbarLayoutData({
 					closeOverflowOnInteraction: false
 				}),
-				text: sap.ui.getCore().getLibraryResourceBundle("sap.f").getText("SEMANTIC_CONTROL_ACTION_SHARE"),
+				text: oResourceBundle.getText("SEMANTIC_CONTROL_ACTION_SHARE"),
 				type: ButtonType.Transparent,
 				press: this._onShareButtonClickRef
+			});
+
+			ShortcutHintsMixin.addConfig(this._oShareMenuBtn, {
+				addAccessibilityLabel: true,
+				message: oResourceBundle.getText(sShortcutKey)
 			});
 		}
 
