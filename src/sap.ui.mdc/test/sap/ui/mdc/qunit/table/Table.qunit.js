@@ -1524,12 +1524,10 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("rearrage column - ResponsiveTable", function(assert) {
-		var done = assert.async();
+	QUnit.test("rearrange columns - ResponsiveTable", function(assert) {
 		var oTable = new Table({
 			type: "ResponsiveTable"
 		});
-		var fnSetMobileColumnOrderSpy = sinon.spy(oTable, "_setMobileColumnOrder");
 
 		oTable.addColumn(new Column("test1", {
 			header: "Test1",
@@ -1556,7 +1554,7 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		oTable.initialized().then(function() {
+		return oTable.initialized().then(function() {
 			var oTest3MDCColumn = oTable.getColumns()[2];
 			var oTest3InnerColumn = oTest3MDCColumn.getInnerColumn();
 			var oTest3Cell = oTable._oTemplate.getCells()[oTable._oTable.indexOfColumn(oTest3InnerColumn)];
@@ -1567,13 +1565,11 @@ sap.ui.define([
 
 			// trigger moveColumn - Test3 column is moved to index 0
 			oTable.moveColumn(oTest3MDCColumn, 0);
-			assert.ok(fnSetMobileColumnOrderSpy.calledOnce);
 			assert.strictEqual(oTable.indexOfColumn(oTest3MDCColumn), 0, "Test3 column is moved to index 0");
 			assert.strictEqual(oTable._oTable.indexOfColumn(oTest3InnerColumn), 0, "Inner table column aggregation also updated");
 			assert.strictEqual(oTest3InnerColumn.getOrder(), 0, "Test3 inner column is updated with the correct column order");
 
 			oTable.destroy();
-			done();
 		});
 	});
 
