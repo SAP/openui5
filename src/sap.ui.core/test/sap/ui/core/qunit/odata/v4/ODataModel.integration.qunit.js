@@ -41663,6 +41663,117 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Create a new draft entity and execute the ActivationAction to replace the draft
+	// context with the active context. Request a side-effects refresh for the active context.
+	// BCP: 2180347338
+	// BCP: 2280113990
+	// BCP: 2280127015
+	// BCP: 2280134548
+	QUnit.test("BCP: 2180347338, 2280113990, 2280127015, 2280134548", function (assert) {
+		var oActiveContext,
+			oDraftContext,
+			oListBinding,
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="list" items="{/Artists}">\
+	<Text id="artistID" text="{ArtistID}"/>\
+	<Text id="isActiveEntity" text="{IsActiveEntity}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("Artists?$select=ArtistID,IsActiveEntity&$skip=0&$top=100", {
+			value : [{
+				ArtistID : "42",
+				IsActiveEntity : true
+			}]
+		})
+		.expectChange("artistID", ["42"])
+		.expectChange("isActiveEntity", ["Yes"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oListBinding = that.oView.byId("list").getBinding("items");
+
+			that.expectChange("artistID", ["", "42"])
+				.expectChange("isActiveEntity", [null, "Yes"])
+				.expectRequest({
+					method : "POST",
+					url : "Artists",
+					payload : {}
+				}, {
+					ArtistID : "23",
+					IsActiveEntity : false
+				})
+				.expectChange("artistID", ["23"])
+				.expectChange("isActiveEntity", ["No"]);
+
+			oDraftContext = oListBinding.create({}, /*bSkipRefresh*/true);
+
+			assert.strictEqual(oDraftContext.isTransient(), true);
+
+			return Promise.all([
+				oDraftContext.created(),
+				that.waitForChanges(assert, "create new draft entity")
+			]);
+		}).then(function () {
+			var oActionBinding
+				= that.oModel.bindContext("special.cases.ActivationAction(...)", oDraftContext);
+
+			assert.strictEqual(oDraftContext.isTransient(), false);
+
+			that.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='23',IsActiveEntity=false)"
+						+ "/special.cases.ActivationAction",
+					payload : {}
+				}, {
+					ArtistID : "23",
+					IsActiveEntity : true
+				})
+				.expectChange("isActiveEntity", ["Yes"]);
+
+			return Promise.all([
+				// code under test
+				oActionBinding.execute(/*sGroupId*/undefined, /*bIgnoreETag*/false,
+					/*fnOnStrictHandlingFailed*/null, /*bReplaceWithRVC*/true),
+				that.waitForChanges(assert, "execute ActivationAction")
+			]);
+		}).then(function (aResults) {
+			oActiveContext = aResults[0];
+
+			assert.deepEqual(oListBinding.getAllCurrentContexts().map(getPath), [
+				"/Artists(ArtistID='23',IsActiveEntity=true)",
+				"/Artists(ArtistID='42',IsActiveEntity=true)"
+			]);
+			assert.strictEqual(oActiveContext.isTransient(), false);
+
+			// Note: this test is just about the right key predicate, no need for fake side effect
+			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity", {
+					ArtistID : "23",
+					IsActiveEntity : true
+				});
+
+			return Promise.all([
+				// code under test
+				oActiveContext.requestSideEffects([""]),
+				that.waitForChanges(assert, "side-effects refresh (BCP: 2280113990)")
+			]);
+		}).then(function () {
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity"
+					+ "&$filter=ArtistID eq '23' and IsActiveEntity eq true", {
+					value : [] // gone for good
+				})
+				.expectChange("artistID", ["42"]);
+
+			return Promise.all([
+				// code under test
+				oActiveContext.requestRefresh(/*sGroupId*/undefined, /*bAllowRemoval*/true),
+				that.waitForChanges(assert, "refreshSingleWithRemove")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: ODLB#getAllCurrentContexts must not fire unnecessary change events and must not
 	// modify internal states of the binding. Calling ODLB#getLength afterwards works as expected.
 	//

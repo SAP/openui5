@@ -1213,8 +1213,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.doReplaceWith = function (oOldContext, oElement, sPredicate) {
-		var iIndex = oOldContext.iIndex,
-			bKeepAlive = oOldContext.isKeepAlive(),
+		var iModelIndex = oOldContext.getModelIndex(),
 			bNew,
 			fnOnBeforeDestroy = oOldContext.fnOnBeforeDestroy,
 			fnOnBeforeDestroyClone,
@@ -1228,21 +1227,24 @@ sap.ui.define([
 			if (oResult.iIndex !== undefined) {
 				throw new Error("Unexpected index: " + oResult);
 			}
-			oResult.iIndex = iIndex;
+			oResult.iIndex = oOldContext.iIndex;
 			delete this.mPreviousContextsByPath[sPath];
 		} else {
-			oResult = Context.create(this.oModel, this, sPath, iIndex);
+			oResult = Context.create(this.oModel, this, sPath, oOldContext.iIndex,
+				// when replacing a created persisted (iIndex < 0), make sure the replacement also
+				// looks like a created persisted
+				oOldContext.iIndex < 0 ? SyncPromise.resolve() : undefined);
 			bNew = true;
 		}
 		oOldContext.iIndex = undefined;
-		if (iIndex === undefined) {
+		if (iModelIndex === undefined) {
 			this.mPreviousContextsByPath[sPath] = oResult;
 			this.oCache.addKeptElement(oElement);
 		} else {
-			this.aContexts[iIndex] = oResult;
-			this.oCache.doReplaceWith(iIndex, oElement);
+			this.aContexts[iModelIndex] = oResult;
+			this.oCache.doReplaceWith(iModelIndex, oElement);
 		}
-		if (bKeepAlive) {
+		if (oOldContext.isKeepAlive()) {
 			this.mPreviousContextsByPath[oOldContext.getPath()] = oOldContext;
 			if (bNew) {
 				if (fnOnBeforeDestroy) {

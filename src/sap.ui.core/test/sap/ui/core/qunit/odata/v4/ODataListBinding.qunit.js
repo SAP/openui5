@@ -8325,6 +8325,7 @@ sap.ui.define([
 			oExistingContext = {}, // no #setKeepAlive
 			oOldContext = {
 				iIndex : iIndex,
+				getModelIndex : function () { return iIndex; },
 				getPath : function () {},
 				isKeepAlive : function () {}
 			},
@@ -8377,8 +8378,8 @@ sap.ui.define([
 	QUnit.test("doReplaceWith: unexpected index", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oOldContext = {
-				iIndex : 42,
-				isKeepAlive : function () {}
+				getModelIndex : function () {}, // result does not matter
+				isKeepAlive : function () {} // result does not matter
 			};
 
 		oBinding.mPreviousContextsByPath["/EMPLOYEES('1')"] = {
@@ -8396,7 +8397,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[undefined, 0, 42].forEach(function (iIndex) {
+[undefined, -1, 0, 42].forEach(function (iIndex) {
 	[false, true].forEach(function (bHasOnBeforeDestroy) {
 		var bKeepAlive = iIndex === 42,
 			sTitle = "doReplaceWith: new Context, bKeepAlive = " + bKeepAlive
@@ -8411,18 +8412,21 @@ sap.ui.define([
 			oBinding = this.bindList("/EMPLOYEES"),
 			oDoReplaceWithExpectation,
 			oElement = {},
+			iModelIndex = iIndex < 0 ? 17 : iIndex,
 			oNewContext = {
 				setKeepAlive : function () {}
 			},
 			oOldContext = {
 				iIndex : iIndex,
 				fnOnBeforeDestroy : bHasOnBeforeDestroy ? sinon.spy() : undefined,
+				getModelIndex : function () {},
 				getPath : function () {},
 				isKeepAlive : function () {}
 			},
 			sPredicate = "('1')",
 			oSetKeepAliveExpectation;
 
+		this.mock(oOldContext).expects("getModelIndex").withExactArgs().returns(iModelIndex);
 		this.mock(oOldContext).expects("getPath").exactly(bKeepAlive ? 1 : 0).withExactArgs()
 			.returns("~old~context~path~");
 		this.mock(oOldContext).expects("isKeepAlive").withExactArgs().returns(bKeepAlive);
@@ -8430,14 +8434,15 @@ sap.ui.define([
 			.returns("~header~context~path~");
 		this.mock(Context).expects("create")
 			.withExactArgs(sinon.match.same(oBinding.oModel), sinon.match.same(oBinding),
-				"~header~context~path~('1')", iIndex)
+				"~header~context~path~('1')", iIndex,
+				iIndex < 0 ? sinon.match.same(SyncPromise.resolve()) : undefined)
 			.returns(oNewContext);
 		oAddKeptElementExpectation = this.mock(oBinding.oCache).expects("addKeptElement")
 			.exactly(iIndex === undefined ? 1 : 0)
 			.withExactArgs(sinon.match.same(oElement));
 		oDoReplaceWithExpectation = this.mock(oBinding.oCache).expects("doReplaceWith")
 			.exactly(iIndex === undefined ? 0 : 1)
-			.withExactArgs(iIndex, sinon.match.same(oElement));
+			.withExactArgs(iModelIndex, sinon.match.same(oElement));
 		oSetKeepAliveExpectation = this.mock(oNewContext).expects("setKeepAlive")
 			.exactly(bKeepAlive ? 1 : 0)
 			.withExactArgs(true, bHasOnBeforeDestroy ? sinon.match.func : undefined);
@@ -8456,7 +8461,7 @@ sap.ui.define([
 				}
 				assert.strictEqual(oOldContext.iIndex, undefined);
 				assert.strictEqual(oBinding.aContexts.indexOf(oNewContext),
-					iIndex === undefined ? -1 : iIndex);
+					iIndex === undefined ? -1 : iModelIndex);
 				assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length,
 					iIndex === undefined || bKeepAlive ? 1 : 0);
 				assert.strictEqual(oBinding.mPreviousContextsByPath["~old~context~path~"],
@@ -8493,6 +8498,7 @@ sap.ui.define([
 			oElement2 = {},
 			oNewContext1 = {
 				iIndex : 42,
+				getModelIndex : function () { return 42; },
 				getPath : function () {
 					return "/EMPLOYEES('1')";
 				},
@@ -8504,6 +8510,7 @@ sap.ui.define([
 			oOldContext = {
 				iIndex : 42,
 				fnOnBeforeDestroy : sinon.spy(),
+				getModelIndex : function () { return 42; },
 				getPath : function () {
 					return "/EMPLOYEES('0')";
 				},
@@ -8518,7 +8525,7 @@ sap.ui.define([
 
 		oContextMock.expects("create")
 			.withExactArgs(sinon.match.same(oBinding.oModel), sinon.match.same(oBinding),
-				"/EMPLOYEES('1')", 42)
+				"/EMPLOYEES('1')", 42, undefined)
 			.returns(oNewContext1);
 		oCacheMock.expects("doReplaceWith").withExactArgs(42, sinon.match.same(oElement1));
 		oSetKeepAliveExpectation1 = this.mock(oNewContext1).expects("setKeepAlive")
@@ -8547,7 +8554,7 @@ sap.ui.define([
 
 		oContextMock.expects("create")
 			.withExactArgs(sinon.match.same(oBinding.oModel), sinon.match.same(oBinding),
-				"/EMPLOYEES('2')", 42)
+				"/EMPLOYEES('2')", 42, undefined)
 			.returns(oNewContext2);
 		oCacheMock.expects("doReplaceWith").withExactArgs(42, sinon.match.same(oElement2));
 		oSetKeepAliveExpectation2 = this.mock(oNewContext2).expects("setKeepAlive")
@@ -8573,7 +8580,7 @@ sap.ui.define([
 	QUnit.test("doReplaceWith: same instance", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oOldContext = {
-				iIndex : 42,
+				getModelIndex : function () {}, // result does not matter
 				isKeepAlive : function () {} // result does not matter
 			};
 
