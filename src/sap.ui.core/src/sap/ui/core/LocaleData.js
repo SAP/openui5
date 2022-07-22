@@ -1664,7 +1664,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		 * @since 1.92.0
 		 */
 		firstDayStartsFirstWeek: function() {
-			return this._get("weekData-algorithm") === "FIRSTDAY_STARTS_FIRSTWEEK";
+			return this.oLocale.getLanguage() === "en" && this.oLocale.getRegion() === "US";
 		},
 
 		/**

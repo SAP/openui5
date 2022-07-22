@@ -191,7 +191,7 @@ sap.ui.define([
 		assert.strictEqual(iWeekNumber_enUS_custom, 47, "The week is 47 for 17.11.2016 when locale is en-US");
 	});
 
-	QUnit.test("Week numbers for the turn of the year when locale is en (defaults to region US)", function(assert) {
+	QUnit.test("Week numbers for the turn of the year when locale is en", function(assert) {
 		// prepare
 		var oDateLastWeek = new Date(2020, 11, 31, 6);
 		var oDateFirstWeek = new Date(2021, 0, 1, 6);
@@ -207,7 +207,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(iWeekNumberLastWeek, 53, "The week is 53 for 31.12.2020 when locale is en");
-		assert.strictEqual(iWeekNumberFirstWeek, 1, "The week is 1 for 01.01.2021 when locale is en");
+		assert.strictEqual(iWeekNumberFirstWeek, 53, "The week is 53 for 01.01.2021 when locale is en");
 
 		// Cleanup
 		getLanguageStub.restore();
