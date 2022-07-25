@@ -85,7 +85,13 @@ sap.ui.define([
 				}
 			},
 			events: {
-				afterInit: {}
+				afterInit: {},
+				/**
+				 * Fired when validation failed.
+				 * @experimental since 1.105
+				 * Disclaimer: this event is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+				 */
+				validateFailed: {}
 			}
 		},
 		renderer: function (oRm, oControl) {
@@ -258,8 +264,17 @@ sap.ui.define([
 		}
 		if (oConfig.validations && Array.isArray(oConfig.validations) && doValidation) {
 			for (var i = 0; i < oConfig.validations.length; i++) {
-				if (!this._handleValidation(oConfig.validations[i], value)) {
+				var oValidate = this._handleValidation(oConfig.validations[i], value);
+				if (typeof oValidate === "boolean" && !oValidate) {
+					this.fireValidateFailed();
 					return false;
+				} else if (typeof oValidate.then === "function") {
+					oValidate.then(function(bResult) {
+						if (!bResult) {
+							this.fireValidateFailed();
+							return false;
+						}
+					}.bind(this));
 				}
 			}
 			this._hideValueState();
@@ -445,7 +460,7 @@ sap.ui.define([
 				removeValidationMessage: this._removeValidationMessage
 			};
 			var fnValidate = oSettings["validate"];
-			Promise.resolve(fnValidate(oValue, oConfig, oContext)).then(function(result) {
+			return Promise.resolve(fnValidate(oValue, oConfig, oContext)).then(function(result) {
 				var bIsValid = result.isValid;
 				if (typeof bIsValid === "undefined") {
 					bIsValid = result;

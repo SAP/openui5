@@ -689,6 +689,8 @@ sap.ui.define([
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(iWaitTimeout).then(function () {
 								oMultiComboBox.focus();
+								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+								oField1.onfocusin();
 								var sMsgStripId = oField1.getAssociation("_messageStrip");
 								var oMsgStrip = Core.byId(sMsgStripId);
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -843,11 +845,11 @@ sap.ui.define([
 							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
 							var oCheckBox = oField1.getAggregation("_field");
 							assert.ok(!oCheckBox.getSelected(), "Selected is false");
-							oCheckBox.setSelected(true);
-							wait(iWaitTimeout).then(function () {
+							oField1.attachEventOnce("validateFailed", function() {
 								assert.ok(!oCheckBox.getSelected(), "Selected is false");
 								resolve();
 							});
+							oCheckBox.setSelected(true);
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oCardEditor);
@@ -936,11 +938,11 @@ sap.ui.define([
 							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
 							var oSwitch = oField1.getAggregation("_field");
 							assert.ok(!oSwitch.getState(), "State is false");
-							oSwitch.setState(true);
-							wait(iWaitTimeout).then(function () {
+							oField1.attachEventOnce("validateFailed", function() {
 								assert.ok(!oSwitch.getState(), "State is false");
 								resolve();
 							});
+							oSwitch.setState(true);
 						}.bind(this));
 					}.bind(this)).then(function () {
 						destroyEditor(this.oCardEditor);

@@ -151,6 +151,8 @@ sap.ui.define([
 							wait(500).then(function () {
 								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
 								oField1.getAggregation("_field").focus();
+								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+								oField1.onfocusin();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -160,6 +162,8 @@ sap.ui.define([
 								oField1.getAggregation("_field").setValue("12345678901");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
+									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+									oField1.onfocusin();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 									assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 									assert.equal(oDefaultBundle.getText("EDITOR_VAL_MAXLENGTH", [10]), oMsgStrip.getText(), "Default MaxLength String Text");
@@ -167,6 +171,8 @@ sap.ui.define([
 									oField1.getAggregation("_field").setValue("1234567890");
 									wait(500).then(function () {
 										oField1.getAggregation("_field").focus();
+										// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+										oField1.onfocusin();
 										assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 										resolve();
 									});
@@ -178,6 +184,8 @@ sap.ui.define([
 						return new Promise(function (resolve) {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[3];
 							oField1.getAggregation("_field").focus();
+							// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+							oField1.onfocusin();
 							var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 							var oI18nBundle = oField1.getModel("i18n").getResourceBundle();
 							assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip invisible");
@@ -185,6 +193,8 @@ sap.ui.define([
 							oField1.getAggregation("_field").setValue("a");
 							wait(500).then(function () {
 								oField1.getAggregation("_field").focus();
+								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+								oField1.onfocusin();
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Warning", "Message strip Warning");
 								assert.equal(oI18nBundle.getText("string2err2", [1]), oMsgStrip.getText(), "Custom Validate Val text");
@@ -192,6 +202,8 @@ sap.ui.define([
 								oField1.getAggregation("_field").setValue("111");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
+									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+									oField1.onfocusin();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 									assert.equal(oI18nBundle.getText("string2err3", [1]), oMsgStrip.getText(), "Custom pattern Val text");
 									assert.equal(oMsgStrip.getType(), "Warning", "Message strip Warning");
@@ -297,6 +309,8 @@ sap.ui.define([
 							wait(500).then(function () {
 								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
 								oField1.getAggregation("_field").focus();
+								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+								oField1.onfocusin();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -306,6 +320,8 @@ sap.ui.define([
 								oField1.getAggregation("_field").setValue("11");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
+									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+									oField1.onfocusin();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 									assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 									assert.equal(oDefaultBundle.getText("EDITOR_VAL_MAX", [10]), oMsgStrip.getText(), "Default Max Number Text");
@@ -313,6 +329,8 @@ sap.ui.define([
 									oField1.getAggregation("_field").setValue("1");
 									wait(500).then(function () {
 										oField1.getAggregation("_field").focus();
+										// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+										oField1.onfocusin();
 										assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 										resolve();
 									});
@@ -324,6 +342,8 @@ sap.ui.define([
 						return new Promise(function (resolve) {
 							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[3];
 							oField1.getAggregation("_field").focus();
+							// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+							oField1.onfocusin();
 							wait(500).then(function () {
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -334,6 +354,8 @@ sap.ui.define([
 								oField1.getAggregation("_field").setValue("10");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
+									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+									oField1.onfocusin();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 									assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 									var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
@@ -342,6 +364,8 @@ sap.ui.define([
 									oField1.getAggregation("_field").setValue("5");
 									wait(500).then(function () {
 										oField1.getAggregation("_field").focus();
+										// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+										oField1.onfocusin();
 										assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 										assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 										var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
@@ -358,6 +382,8 @@ sap.ui.define([
 							wait(500).then(function () {
 								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[5];
 								oField1.getAggregation("_field").focus();
+								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+								oField1.onfocusin();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oI18nBundle = oField1.getModel("i18n").getResourceBundle();
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -367,6 +393,8 @@ sap.ui.define([
 								oField1.getAggregation("_field").setValue("5");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
+									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+									oField1.onfocusin();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 									assert.equal(oMsgStrip.getType(), "Warning", "Message strip Warning");
 									assert.equal(oI18nBundle.getText("int1err2", [1]), oMsgStrip.getText(), "Custom Max Val text");
@@ -374,6 +402,8 @@ sap.ui.define([
 									oField1.getAggregation("_field").setValue("3");
 									wait(500).then(function () {
 										oField1.getAggregation("_field").focus();
+										// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+										oField1.onfocusin();
 										assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 										assert.equal(oI18nBundle.getText("int1err3", [1]), oMsgStrip.getText(), "Custom multiple of text");
 										assert.equal(oMsgStrip.getType(), "Warning", "Message strip Warning");
@@ -444,6 +474,8 @@ sap.ui.define([
 							oField1._settingsButton.focus();
 							wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
+								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+								oField1.onfocusin();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -453,6 +485,8 @@ sap.ui.define([
 								oField1.getAggregation("_field").setValue("aa");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
+									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+									oField1.onfocusin();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 									resolve();
 								});
@@ -530,6 +564,8 @@ sap.ui.define([
 							oField1._settingsButton.focus();
 							wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
+								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+								oField1.onfocusin();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -539,6 +575,8 @@ sap.ui.define([
 								oField1.getAggregation("_field").fireChange({ selectedItem: oField1.getAggregation("_field").getItems()[1] });
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
+									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+									oField1.onfocusin();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 									resolve();
 								});
@@ -602,6 +640,8 @@ sap.ui.define([
 							oField1.getAggregation("_field").fireChange({ value: ""});
 							wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
+								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+								oField1.onfocusin();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -611,6 +651,8 @@ sap.ui.define([
 								oField1.getAggregation("_field").setValue("11");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
+									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+									oField1.onfocusin();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 									resolve();
 								});
@@ -674,6 +716,8 @@ sap.ui.define([
 							oField1.getAggregation("_field").fireChange({ value: ""});
 							wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
+								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+								oField1.onfocusin();
 								var oMsgStrip = Core.byId(oField1.getAssociation("_messageStrip"));
 								var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -683,6 +727,8 @@ sap.ui.define([
 								oField1.getAggregation("_field").setValue("1.1");
 								wait(500).then(function () {
 									oField1.getAggregation("_field").focus();
+									// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+									oField1.onfocusin();
 									assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 									resolve();
 								});
