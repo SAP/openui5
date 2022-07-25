@@ -23,6 +23,12 @@ function(
 	 * @private
 	 * @since 1.58
 	 * @alias sap.ui.fl.FakeLrepConnectorSessionStorage
+	 *
+	 * @private
+	 * @ui5-restricted
+	 * @deprecated since 1.70. Configure the <code>sap.ui.core.Configuration.flexibilityServices</code> to use a test connector
+	 * like <code>["LocalStorageConnector"]</code>, <code>["SessionStorageConnector"]</code> or <code>["JsObjectConnector"]</code>.
+	 * @see {@link https://ui5.sap.com/#/topic/642dab291a7b47ec9d46c39b3c482aba|Boostrapping UI5 Flexibility}
 	 */
 
 	return {

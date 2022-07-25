@@ -30,17 +30,8 @@ sap.ui.define([
 	 * @since 1.44
 	 * @namespace
 	 * @name sap.ui.fl.initial
-	 * @public
-	 */
-
-	/**
-	 * The <code>sap.ui.fl.initial.api</code> namespace contains public APIs that can be used
-	 * during app startup, e.g. to inherit classes to create their own logic for retrieving data for flexibility.
-	 *
-	 * @version ${version}
-	 * @namespace
-	 * @name sap.ui.fl.initial.api
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 */
 
 	/**
@@ -68,24 +59,24 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The <code>sap.ui.fl.apply</code> namespace should contain all code necessary to
-	 * start a UI5 app for an end user with changes. Be aware that only the <code>api</code>
-	 * sub-namespace contains public and stable APIs.
+	 * The <code>sap.ui.fl.apply</code> namespace contains all code to apply flexibility changes on application startup.
 	 *
 	 * @version ${version}
 	 * @namespace
 	 * @name sap.ui.fl.apply
-	 * @public
+	 * @private
+	 * @ui5-restricted
 	 */
 
 	/**
 	 * The <code>sap.ui.fl.apply.api</code> namespace contains public APIs that can be used
-	 * during app startup, e.g. to wait for changes to be applied or to access the current variant.
+	 * during app startup, e.g. to wait for changes to be applied or to access the current variant and switch variants.
 	 *
 	 * @version ${version}
 	 * @namespace
 	 * @name sap.ui.fl.apply.api
-	 * @public
+	 * @private
+	 * @ui5-restricted
 	 */
 
 	/**
@@ -247,7 +238,7 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.fl.support._internal
 	 * @private
-	 * @ui5-restricted sap.ui.fl.support.api
+	 * @ui5-restricted sap.ui.fl.support
 	 */
 
 	/**
@@ -257,6 +248,18 @@ sap.ui.define([
 	 * @name sap.ui.fl.variants.context
 	 * @private
 	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 * Namespace containing interfaces and base classes of connectors to implement a connection to a specific end point
+	 * capable of storing flexibility entities as well as providing information about its capabilities.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.connectors
+	 * @deprecated since 1.87. Use a implementing class in the {@link sap.ui.fl.write.api.connectors} namespace instead.
+	 * @private
+	 * @ui5-restricted SAPUI5 Visual Editor, UX Tools, sap.ui.fl
 	 */
 
 	/**
@@ -281,6 +284,17 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Namespace containing interfaces and base classes of connectors to implement a connection to a specific end point
+	 * capable of storing flexibility entities as well as providing information about its capabilities.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.write.api.connectors
+	 * @private
+	 * @ui5-restricted SAPUI5 Visual Editor, UX Tools, sap.ui.fl
+	 */
+
+	/**
 	 *
 	 * @version ${version}
 	 * @namespace
@@ -299,12 +313,14 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Namespace containing all types of connectors to write flex data. The usage of the connectors is restricted to the
+	 * <code>sap.ui.fl</code> library.
 	 *
 	 * @version ${version}
 	 * @namespace
 	 * @name sap.ui.fl.write._internal.connectors
 	 * @private
-	 * @ui5-restricted sap.ui.fl
+	 * @ui5-restricted sap.ui.fl.initial._internal.Storage, sap.ui.fl.write._internal.Storage
 	 */
 
 	/**
@@ -344,13 +360,41 @@ sap.ui.define([
 	 */
 
 	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.write.connectors
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.changeHandler
+	 * @private
+	 * @ui5-restricted
+	 */
+
+	/**
 	 * The <code>sap.ui.fl.interfaces</code> namespace contains only interface jsdoc descriptions.
 	 * It does not contain running code.
 	 *
 	 * @version ${version}
 	 * @namespace
 	 * @name sap.ui.fl.interfaces
-	 * @public
+	 * @private
+	 * @ui5-restricted
+	 */
+
+	/**
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @name sap.ui.fl.interfaces.delegate
+	 * @private
+	 * @ui5-restricted
 	 */
 
 	/**
@@ -410,7 +454,7 @@ sap.ui.define([
 	 * This is the library for SAPUI5 flexibility.
 	 * It includes the handling of changes made on applications, such as descriptor changes, app variants,
 	 * UI changes, control variants (a.k.a. views), and personalization, as well as APIs for consumers.
-	 * In addition, it provides the VariantManagement control, which enables applications to use control variants (views).
+	 * In addition, it provides the {@link sap.ui.fl.variants.VariantManagement} control, which enables applications to use control variants (views).
 	 *
 	 * @namespace
 	 * @alias sap.ui.fl

@@ -89,7 +89,8 @@ sap.ui.define([
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - modifier for the controls
 	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent - appComopnent
 	 * @return {Promise} Promise resolving when change has been applied
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl.apply.changes.Applyer
 	 * @function
 	 * @name sap.ui.fl.changeHandler.MoveElements#applyChange
 	 */

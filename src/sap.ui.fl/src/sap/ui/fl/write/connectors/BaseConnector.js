@@ -11,9 +11,9 @@ sap.ui.define([
 	 * Base class for connectors.
 	 *
 	 * @namespace sap.ui.fl.write.connectors.BaseConnector
-	 * @experimental Since 1.67
 	 * @since 1.67
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 */
 	var BaseConnector = /** @lends sap.ui.fl.write.connectors.BaseConnector */{
 

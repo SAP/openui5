@@ -17,7 +17,6 @@ sap.ui.define([
 	 * Provides an API to determine which features are available for flexibility.
 	 *
 	 * @namespace sap.ui.fl.write.api.FeaturesAPI
-	 * @experimental Since 1.70
 	 * @since 1.70
 	 * @public
 	 *
@@ -90,7 +89,8 @@ sap.ui.define([
 		 *
 		 * @param {string} sLayer - Layer to check for the draft versioning
 		 * @returns {Promise<boolean>} Resolves to a boolean indicating if versioning is enabled
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.rta
 		 */
 		isVersioningEnabled: function (sLayer) {
 			return Settings.getInstance()
@@ -104,7 +104,8 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.fl.Layer} sLayer - Current layer
 		 * @returns {Promise<boolean>} Resolves to a boolean indicating if the key user is also an admin
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.rta
 		 */
 		isKeyUserTranslationEnabled: function (sLayer) {
 			if (sLayer === Layer.CUSTOMER) {
@@ -121,7 +122,8 @@ sap.ui.define([
 		 *
 		 * @param {string} sLayer - Layer to get correct connector
 		 * @returns {Promise<boolean>} Resolves to a boolean indicating if context sharing is enabled
-		 * @public
+		 * @private
+		 * @ui5-restricted sap.ui.fl.write.api.ContextSharingAPI
 		 */
 		isContextSharingEnabled: function (sLayer) {
 			if (sLayer !== Layer.CUSTOMER) {

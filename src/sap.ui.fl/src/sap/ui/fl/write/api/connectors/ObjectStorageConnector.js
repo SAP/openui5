@@ -70,7 +70,8 @@ sap.ui.define([
 	 * @namespace sap.ui.fl.write.api.connectors.ObjectStorageConnector
 	 * @extends sap.ui.fl.write.connectors.BaseConnector
 	 * @since 1.84
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.ui.fl, SAPUI5 Visual Editor, UX Tools
 	 * @abstract
 	 */
 	var ObjectStorageConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.write.api.connectors.ObjectStorageConnector */ {
