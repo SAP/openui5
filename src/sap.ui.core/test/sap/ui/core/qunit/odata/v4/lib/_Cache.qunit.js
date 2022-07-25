@@ -1328,43 +1328,48 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#drillDown: fetch missing property", function (assert) {
+[false, true].forEach(function (bGotIt) {
+	QUnit.test("_Cache#drillDown: fetch missing property, got it = " + bGotIt, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Products"),
 			oData = [{
 				entity : {
 					"@$ui5._" : {predicate : "(23)"}, // required for fetchLateProperty
 					foo : {}
 				}
-			}],
-			oGroupLock = {},
-			oValueOfBar = {baz : "qux"};
+			}];
 
 		oData.$byPredicate = {"('42')" : oData[0]};
 
-		this.mock(_Helper).expects("getMetaPath")
+		this.mock(_Helper).expects("getMetaPath").exactly(bGotIt ? 1 : 2)
 			.withExactArgs("('42')/entity/foo/bar").returns("entity/foo/bar");
-		this.oModelInterfaceMock.expects("fetchMetadata")
+		this.oModelInterfaceMock.expects("fetchMetadata").exactly(bGotIt ? 1 : 2)
 			.withExactArgs("/Products/entity/foo/bar")
 			.returns(SyncPromise.resolve({
 				$kind : "Property",
 				$Type : "some.ComplexType"
 			}));
-		this.mock(_Helper).expects("getAnnotationKey")
+		this.mock(_Helper).expects("getAnnotationKey").exactly(bGotIt ? 1 : 2)
 			.withExactArgs(sinon.match.same(oData[0].entity.foo), ".Permissions", "bar")
 			.returns(undefined);
-		this.mock(oCache).expects("fetchLateProperty")
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oData[0].entity),
+		this.mock(oCache).expects("fetchLateProperty") // MUST not be repeated!
+			.withExactArgs("~oGroupLock~", sinon.match.same(oData[0].entity),
 				"('42')/entity", "foo/bar/baz", "foo/bar")
 			.callsFake(function () {
-				oData[0].entity.foo.bar = oValueOfBar;
-				return SyncPromise.resolve(Promise.resolve(oValueOfBar));
+				if (bGotIt) {
+					oData[0].entity.foo.bar = {baz : "qux"};
+				}
+				return SyncPromise.resolve(Promise.resolve());
 			});
+		this.oLogMock.expects("error").exactly(bGotIt ? 0 : 1).withExactArgs(
+			"Failed to drill-down into ('42')/entity/foo/bar/baz, invalid segment: bar",
+			"/~/Products", sClassName);
 
-		return oCache.drillDown(oData, "('42')/entity/foo/bar/baz", oGroupLock)
+		return oCache.drillDown(oData, "('42')/entity/foo/bar/baz", "~oGroupLock~")
 			.then(function (vValue) {
-				assert.strictEqual(vValue, "qux");
+				assert.strictEqual(vValue, bGotIt ? "qux" : undefined);
 			});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#drillDown: unexpected missing property", function (assert) {

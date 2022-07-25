@@ -580,11 +580,12 @@ sap.ui.define([
 		 * @param {object} oValue - The object that is expected to have the value
 		 * @param {string} sSegment - The path segment that is missing
 		 * @param {number} iPathLength - The length of the path of the missing value
+		 * @param {boolean} [bAgain] - Whether we are trying again and must not cause a request
 		 * @returns {sap.ui.base.SyncPromise|undefined}
 		 *   Returns a SyncPromise which resolves with the value or returns undefined in some
 		 *   special cases.
 		 */
-		function missingValue(oValue, sSegment, iPathLength) {
+		function missingValue(oValue, sSegment, iPathLength, bAgain) {
 			var sPropertyName,
 				sPropertyPath = aSegments.slice(0, iPathLength).join("/"),
 				sPropertyMetaPath = _Helper.getMetaPath(sPropertyPath),
@@ -643,7 +644,7 @@ sap.ui.define([
 							oEntity = oData;
 							iEntityPathLength = 0;
 						}
-						return oEntity
+						return oEntity && !bAgain
 							&& that.fetchLateProperty(oGroupLock, oEntity,
 								aSegments.slice(0, iEntityPathLength).join("/"),
 								aSegments.slice(iEntityPathLength).join("/"),
@@ -672,7 +673,7 @@ sap.ui.define([
 		}
 		aSegments = sPath.split("/");
 		return aSegments.reduce(function (oPromise, sSegment, i) {
-			return oPromise.then(function step(vValue) {
+			return oPromise.then(function step(vValue, bAgain) {
 				var vIndex, aMatches, oParentValue;
 
 				if (sSegment === "$count") {
@@ -715,10 +716,10 @@ sap.ui.define([
 				}
 				// missing advertisement or annotation is not an error
 				if (vValue === undefined && sSegment[0] !== "#" && sSegment[0] !== "@") {
-					vValue = missingValue(oParentValue, sSegment, i + 1);
+					vValue = missingValue(oParentValue, sSegment, i + 1, bAgain);
 					if (vValue instanceof SyncPromise && vValue.isPending()) {
-						return vValue.then(function () {
-							return step(oParentValue); // repeat step once late property fetched
+						return vValue.then(function () { // repeat step once late property fetched
+							return step(oParentValue, true);
 						});
 					}
 				}
