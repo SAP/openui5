@@ -2149,6 +2149,10 @@ sap.ui.define([
 					}
 				}
 			},
+			"plugins/CellSelector": {
+				title: "Test Page for sap.m.plugins.CellSelector",
+				module: "test-resources/sap/m/qunit/plugins/CellSelector.qunit"
+			},
 			"plugins/PluginBase": {
 				title: "Test Page for sap.m.plugins.PluginBase"
 			},

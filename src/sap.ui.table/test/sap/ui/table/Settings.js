@@ -32,7 +32,8 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
-	"sap/ui/unified/MenuTextFieldItem"
+	"sap/ui/unified/MenuTextFieldItem",
+	"sap/m/plugins/CellSelector"
 ], function(
 	Log,
 	deepExtend,
@@ -67,7 +68,8 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	TableUtils,
 	UnifiedMenu,
 	UnifiedMenuItem,
-	MenuTextFieldItem
+	MenuTextFieldItem,
+	CellSelector
 ) {
 	"use strict";
 
@@ -582,6 +584,33 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 								});
 								oTable.addPlugin(oPlugin);
 								oCore.byId("__select5").setSelectedKey(oPlugin.getSelectionMode().toUpperCase());
+							}
+						}
+					}
+				},
+				CELLSELECTIONPLUGIN: {
+					text: "Cell Selection Plugin",
+					value: function (oTable) {
+						var oPlugin = oTable.getDependents().find(function (oDependent) {
+							return oDependent.isA("sap.m.plugins.CellSelector");
+						});
+						return oPlugin ? "CELLSELECTOR" : "NONE";
+					},
+					choice: {
+						NONE: {
+							text: "None",
+							action: function (oTable) {
+								var aDependents = oTable.getDependents(),
+									oPlugin = aDependents.find(function (oDependent) {
+										return oDependent.isA("sap.m.plugins.CellSelector");
+									});
+								oTable.removeDependent(oPlugin);
+							}
+						},
+						CELLSELECTOR: {
+							text: "Cell Selector",
+							action: function (oTable) {
+								oTable.addDependent(new CellSelector());
 							}
 						}
 					}

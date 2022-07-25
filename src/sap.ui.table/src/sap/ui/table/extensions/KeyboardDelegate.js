@@ -1026,6 +1026,9 @@ sap.ui.define([
 	 * Shift, Space, F2, F4, Ctrl+A, Ctrl+Shift+A
 	 */
 	KeyboardDelegate.prototype.onkeydown = function(oEvent) {
+		if (oEvent.isMarked()) {
+			return;
+		}
 		var oKeyboardExtension = this._getKeyboardExtension();
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 		var sSelectionMode = this.getSelectionMode();
@@ -1126,6 +1129,9 @@ sap.ui.define([
 	 * And this applies only for the german keyboard layout! It is different again in other languages.
 	 */
 	KeyboardDelegate.prototype.onkeypress = function(oEvent) {
+		if (oEvent.isMarked()) {
+			return;
+		}
 		var oKeyboardExtension = this._getKeyboardExtension();
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
@@ -1162,6 +1168,9 @@ sap.ui.define([
 	 * Shift, Space, Enter
 	 */
 	KeyboardDelegate.prototype.onkeyup = function(oEvent) {
+		if (oEvent.isMarked()) {
+			return;
+		}
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		// End the range selection mode.
