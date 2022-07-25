@@ -22,6 +22,16 @@ sap.ui.define([
 		v4: "v4"
 	};
 
+	function _extractName(sQualifiedName) {
+		if (sQualifiedName && sQualifiedName.split) {
+			var aSegments = sQualifiedName.split("."); //If separator does not occur, the returned array contains one element consisting of the entire string
+
+			return aSegments[aSegments.length - 1];
+		}
+
+		return null;
+	}
+
 	/**
 	 * Extracts error messages from request failure response
 	 *
@@ -61,7 +71,7 @@ sap.ui.define([
 	 * @returns {string} sBindingPath - binding path resp. target entity set of control or <code>null</code>
 	 */
 	function _getBindingPath(oControl) {
-		var sBindingPath = oControl.getEntitySet ? oControl.getEntitySet() : null;
+		var sBindingPath = _extractName(_getEntitySet(oControl));
 
 		if (!sBindingPath) {
 			var oBindingContext = oControl.getBindingContext ? oControl.getBindingContext() : null;
@@ -84,11 +94,22 @@ sap.ui.define([
 	 * @private
 	 * @param {sap.ui.model.odata.v2.ODataModel} oModel - oData model
 	 * @param {string} sBindingPath - binding path of control
+	 * @param {string} sEntityType - entity type of control (i.e. SmartFilterBar)
 	 * @returns {Promise<string>} Resolves with the entity set name to which the control is bound or <code>null</code>
 	 */
-	function _getBoundEntitySetFromV2Model(oModel, sBindingPath) {
+	function _getBoundEntitySetFromV2Model(oModel, sBindingPath, sEntityType) {
 		return oModel.metadataLoaded().then(function() {
-			var oEntitySet = oModel.oMetadata._getEntitySetByPath(sBindingPath);
+			var oEntitySet = null;
+
+			if (sEntityType) {
+				var oEntityType = oModel.oMetadata._getEntityTypeByName(sEntityType);
+				oEntitySet = oModel.oMetadata._getEntitySetByType(oEntityType);
+			}
+
+			if (!oEntitySet) {
+				oEntitySet = oModel.oMetadata._getEntitySetByPath(sBindingPath);
+			}
+
 			return oEntitySet ? oEntitySet.name : null;
 		});
 	}
@@ -122,11 +143,21 @@ sap.ui.define([
 	 * @private
 	 * @param {sap.ui.model.odata.v2.ODataModel} oModel - oData model
 	 * @param {string} sBindingPath - binding path of control
+	 * @param {string} sEntityType - entity type of control (i.e. SmartFilterBar)
 	 * @returns {Promise<string>} Resolves with the entity type name to which the control is bound or <code>null</code>
 	 */
-	function _getBoundEntityTypeFromV2Model(oModel, sBindingPath) {
+	function _getBoundEntityTypeFromV2Model(oModel, sBindingPath, sEntityType) {
 		return oModel.metadataLoaded().then(function() {
-			var oEntityType = oModel.oMetadata._getEntityTypeByPath(sBindingPath);
+			var oEntityType = null;
+
+			if (sEntityType) {
+				oEntityType = oModel.oMetadata._getEntityTypeByName(sEntityType);
+			}
+
+			if (!oEntityType) {
+				oEntityType = oModel.oMetadata._getEntityTypeByPath(sBindingPath);
+			}
+
 			return oEntityType ? oEntityType.name : null;
 		});
 	}
@@ -144,9 +175,16 @@ sap.ui.define([
 		var sMetaPath = oMetaModel.getMetaPath(sBindingPath);
 
 		return oMetaModel.requestObject(sMetaPath).then(function(oEntitySet) {
-			var aSegments = oEntitySet.$Type.split(".");
-			return aSegments[aSegments.length - 1];
+			return _extractName(oEntitySet.$Type);
 		});
+	}
+
+	function _getEntitySet(oControl) {
+		return oControl.getEntitySet ? oControl.getEntitySet() : null;
+	}
+
+	function _getEntityType(oControl) {
+		return oControl.getEntityType ? oControl.getEntityType() : null;
 	}
 
 	function _getServiceUri(oModel) {
@@ -225,7 +263,8 @@ sap.ui.define([
 			var oModel = _getModel(oControl);
 			var sServiceUri = _getServiceUri(oModel);
 			var sBindingPath = _getBindingPath(oControl);
-			return Boolean(sServiceUri && sBindingPath);
+			var sEntityType = _getEntityType(oControl);
+			return Boolean(sServiceUri && (sBindingPath || sEntityType));
 		}
 
 		Log.warning("No Control passed");
@@ -278,7 +317,7 @@ sap.ui.define([
 		var sProtocolType = _getProtocolType(oModel);
 
 		if (sProtocolType === mProtocolType.v2) {
-			return _getBoundEntitySetFromV2Model(oModel, _getBindingPath(oControl));
+			return _getBoundEntitySetFromV2Model(oModel, _getBindingPath(oControl), _getEntityType(oControl));
 		} else if (sProtocolType === mProtocolType.v4) {
 			return _getBoundEntitySetFromV4Model(oModel, _getBindingPath(oControl));
 		}
@@ -298,7 +337,7 @@ sap.ui.define([
 		var sProtocolType = _getProtocolType(oModel);
 
 		if (sProtocolType === mProtocolType.v2) {
-			return _getBoundEntityTypeFromV2Model(oModel, _getBindingPath(oControl));
+			return _getBoundEntityTypeFromV2Model(oModel, _getBindingPath(oControl), _getEntityType(oControl));
 		} else if (sProtocolType === mProtocolType.v4) {
 			return _getBoundEntityTypeFromV4Model(oModel, _getBindingPath(oControl));
 		}
@@ -353,7 +392,7 @@ sap.ui.define([
 	 * @param {Map} mParameters Map of given parameters
 	 * @returns {string} encoded URI parameters
 	 */
-	 Utils.getUriParameters = function(mParameters) {
+	Utils.getUriParameters = function(mParameters) {
 		if (!mParameters) {
 			return "";
 		}

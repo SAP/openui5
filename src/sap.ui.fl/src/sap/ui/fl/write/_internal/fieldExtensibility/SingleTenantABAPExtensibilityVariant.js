@@ -80,7 +80,7 @@ sap.ui.define([
 					});
 				}
 
-				Promise.resolve(null);
+				return Promise.resolve(null);
 			}.bind(this));
 		},
 

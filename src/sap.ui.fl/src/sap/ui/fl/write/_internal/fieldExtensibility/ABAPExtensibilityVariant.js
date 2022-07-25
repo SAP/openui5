@@ -97,7 +97,7 @@ sap.ui.define([
 	 * @protected
 	 * @returns {Promise<any>} Resolves with determined extension data from backend
 	 */
-	 ABAPExtensibilityVariant.prototype._determineExtensionData = function() {
+	ABAPExtensibilityVariant.prototype._determineExtensionData = function() {
 		return Promise.resolve(null);
 	};
 
