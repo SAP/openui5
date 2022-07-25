@@ -10,14 +10,17 @@ sap.ui.define([
 	"sap/ui/integration/designtime/cardEditor/config/ListCardConfig",
 	"sap/ui/integration/designtime/cardEditor/config/ObjectCardConfig",
 	"sap/ui/integration/designtime/cardEditor/config/TableCardConfig",
-	"sap/ui/integration/designtime/cardEditor/config/generateDataConfig"
+	"sap/ui/integration/designtime/cardEditor/config/generateDataConfig",
+	"sap/ui/integration/designtime/cardEditor/config/FooterConfig"
+
 ], function (
 	AppConfig,
 	HeaderConfig,
 	ListCardConfig,
 	ObjectCardConfig,
 	TableCardConfig,
-	generateDataConfig
+	generateDataConfig,
+	FooterConfig
 ) {
 	"use strict";
 
@@ -92,6 +95,15 @@ sap.ui.define([
 								value: "content"
 							}
 						]
+					},
+					{
+						"label": "{i18n>CARD_EDITOR.GROUP.FOOTER}",
+						"items": [
+							{
+								type: "tag",
+								value: "footer"
+							}
+						]
 					}
 				]
 			}
@@ -125,6 +137,7 @@ sap.ui.define([
 				"parameters": {
 					"tags": ["general"],
 					"label": "{i18n>CARD_EDITOR.PARAMETERS}",
+					"addItemLabel": "{i18n>CARD_EDITOR.ADD.PARAMETER}",
 					"path": "configuration/parameters",
 					"type": "parameters",
 					"allowedTypes": ["string", "array", "number", "boolean", "integer", "date", "datetime", "simpleicon", "object", "objectArray", "group", "separator"]
@@ -145,13 +158,14 @@ sap.ui.define([
 					"addItemLabel": "{i18n>CARD_EDITOR.FILTER}",
 					"path": "configuration/filters",
 					"type": "filters",
-					"allowedTypes": ["Select", "DateRange"]
+					"allowedTypes": ["Select", "DateRange", "Search"]
 				}
 			},
 			HeaderConfig,
 			ListCardConfig,
 			ObjectCardConfig,
 			TableCardConfig,
+			FooterConfig,
 			generateDataConfig(["general-data"], "", "card"),
 			generateDataConfig(["header"], "header/", "header"),
 			generateDataConfig(["content"], "content/", "content")

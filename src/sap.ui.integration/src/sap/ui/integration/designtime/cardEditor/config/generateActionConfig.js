@@ -37,7 +37,14 @@ sap.ui.define([
 				"type": {
 					"label": "{i18n>CARD_EDITOR.LABEL.TYPE}",
 					"type": "select",
-					"items": [{ "key": "Navigation" }],
+					"items": [
+						{
+							"key": "Navigation"
+						},
+						{
+							"key": "Custom"
+						}
+					],
 					"path": "type",
 					"visible": "{= !!${enabled}}"
 				},

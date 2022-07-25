@@ -105,14 +105,22 @@ sap.ui.define([
 						label: this.getI18nProperty("CARD_EDITOR.FILTER.DESCRIPTION"),
 						type: "string",
 						path: "description",
+						visible: "{= ${type} === 'Select' || ${type} === 'DateRange'}",
 						allowCustomValues: true,
 						allowBindings: false
 					},
 					value: {
-						label: this.getI18nProperty("CARD_EDITOR.FILTER.VALUE"),
+						label: this.getI18nProperty("CARD_EDITOR.FILTER.NORMALVALUE"),
+						// label: "{= ${type} === 'Select' ? ${i18n>CARD_EDITOR.FILTER.NORMALVALUE} : ${i18n>CARD_EDITOR.FILTER.VALUE} }",
 						path: "sValue",
 						type: "string",
 						visible: "{= ${type} === 'Select'}"
+					},
+					placeholder: {
+						label: this.getI18nProperty("CARD_EDITOR.FILTER.PLACEHOLDER"),
+						path: "placeholder",
+						type: "string",
+						visible: "{= ${type} === 'Search'}"
 					},
 					itemPath: {
 						label: this.getI18nProperty("CARD_EDITOR.FILTER.ITEM.PATH"),

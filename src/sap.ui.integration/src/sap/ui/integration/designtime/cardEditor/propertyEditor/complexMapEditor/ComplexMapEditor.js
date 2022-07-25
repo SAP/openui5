@@ -188,6 +188,11 @@ sap.ui.define([
 						});
 					}
 					aFormattedValues[i].selectedOptions = oSelectedOptions;
+				} else if (aFormattedValues[i].type === "Search") {
+					delete aFormattedValues[i].options;
+					delete aFormattedValues[i].selectedOptions;
+					aFormattedValues[i].sValue = aFormattedValues[i].value;
+					delete aFormattedValues[i].value;
 				}
 			}
 		}
@@ -272,6 +277,10 @@ sap.ui.define([
 					aValue[i].value = aValue[i].dValue;
 					delete aValue[i].dValue;
 					delete aValue[i].selectedOptions;
+				} else if (aValue[i].type === "Search") {
+					aValue[i].value = aValue[i].sValue;
+					delete aValue[i].sValue;
+					delete aValue[i].dValue;
 				}
 			}
 		}
