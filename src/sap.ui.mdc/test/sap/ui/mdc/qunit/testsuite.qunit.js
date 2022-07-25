@@ -368,42 +368,12 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					group: "Testsuite",
 					page: "test-resources/sap/ui/mdc/integration/testsuite.qunit.html"
 				},
-				"Chart": {
-					group: "Chart",
-					module: "./chart/Chart.qunit",
-					ui5: {
-						libs: [
-							"sap.ui.fl", "sap.ui.mdc"
-						]
-					}
-				},
-				"ChartToolbar": {
-					group: "Chart",
-					module: "./chart/ChartToolbar.qunit",
-					ui5: {
-						libs: [
-							"sap.ui.fl", "sap.ui.mdc"
-						]
-					}
-				},
-				"ChartV4Delegate": {
-					group: "Chart",
-					module: "./chart/ChartV4Delegate.qunit",
-					ui5: {
-						libs: [
-							"sap.ui.fl", "sap.ui.mdc"
-						]
-					}
-				},
-				"ChartBreadcrumbs": {
-					group: "Chart",
-					module: "./chart/ChartBreadcrumbs.qunit",
-					ui5: {
-						libs: [
-							"sap.ui.fl", "sap.ui.mdc"
-						]
-					}
-				},/* TO-Do: Check whether this is still needed with new MDC Chart
+                "Chart Testsuite" : {
+                    title: "Chart Testsuite",
+                    group: "Testsuite",
+                    page: "test-resources/sap/ui/mdc/qunit/chart/testsuite.chart.qunit.html"
+                },
+				/* TO-Do: Check whether this is still needed with new MDC Chart
 				"ChartFlex": {
 					group: "Chart",
 					module: "./chart/ChartFlex.qunit",
