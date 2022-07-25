@@ -561,8 +561,13 @@ sap.ui.define([
 		}
 
 		//sets the extra width of 0.5rem when the grid container has 1rem gap for the TwoByxxxx tiles
-		if (this.getParent() && this.getParent().isA("sap.f.GridContainer")){
+		var oGetParent = this.getParent();
+		if (oGetParent && oGetParent.isA("sap.f.GridContainer")){
 			this._applyExtraWidth();
+		}
+
+		if (oGetParent && oGetParent.getParent() && oGetParent.getParent().isA("sap.f.GridContainer") && oGetParent.isA("sap.m.SlideTile")){
+			this._applyExtraWidth(oGetParent.getParent(), true);
 		}
 
 		Device.media.detachHandler(this._handleMediaChange, this, DEVICE_SET);
@@ -1750,10 +1755,15 @@ GenericTile.prototype._isNavigateActionEnabled = function() {
 	 * An extra width of 0.5rem would be applied when the gap is 1rem(16px) in the grid container for the TwoByOne and TwoByHalf tiles
 	 * @private
 	 */
-	GenericTile.prototype._applyExtraWidth = function() {
-		var	sGap = this.getParent().getActiveLayoutSettings().getGap(),
-			bisLargeTile = this.getFrameType() === FrameType.TwoByHalf || this.getFrameType() === FrameType.TwoByOne,
-			bisGap16px = sGap === "16px" || sGap === "1rem";
+	GenericTile.prototype._applyExtraWidth = function(oGetParent, bTrue) {
+		var sGap;
+		if (bTrue == true){
+			sGap = oGetParent.getActiveLayoutSettings().getGap();
+		} else {
+		sGap = this.getParent().getActiveLayoutSettings().getGap();
+		}
+		var bisLargeTile = this.getFrameType() === FrameType.TwoByHalf || this.getFrameType() === FrameType.TwoByOne,
+		bisGap16px = sGap === "16px" || sGap === "1rem";
 		if (bisGap16px && bisLargeTile){
 			this.addStyleClass("sapMGTWidthForGridContainer");
 		} else if (!bisGap16px && this.hasStyleClass("sapMGTWidthForGridContainer")){
