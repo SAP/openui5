@@ -930,7 +930,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @see #delete
-	 * @since 1.105
+	 * @since 1.105.0
 	 */
 	Context.prototype.isDeleted = function () {
 		return this.bDeleted;

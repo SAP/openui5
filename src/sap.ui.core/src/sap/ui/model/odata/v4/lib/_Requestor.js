@@ -2145,6 +2145,11 @@ sap.ui.define([
 	 * @param {function} oModelInterface.fetchMetadata
 	 *   A function that returns a SyncPromise which resolves with the metadata instance for a
 	 *   given meta path
+	 * @param {function} oModelInterface.fireDataReceived
+	 *   A function that fires the 'dataReceived' event at the model with an optional parameter
+	 *   <code>oError</code>
+	 * @param {function} oModelInterface.fireDataRequested
+	 *   A function that fires the 'dataRequested' event at the model
 	 * @param {function} oModelInterface.fireSessionTimeout
 	 *   A function that fires the 'sessionTimeout' event (when the server has created a session for
 	 *   the model and this session ran into a timeout due to inactivity).

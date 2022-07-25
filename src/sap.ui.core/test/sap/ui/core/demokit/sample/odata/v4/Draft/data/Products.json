@@ -1,5 +1,5 @@
 {
-	"@odata.count" : "3",
+	"@odata.count" : "4",
 	"value" : [{
 		"ID" : 10,
 		"IsActiveEntity" : true,
@@ -18,5 +18,11 @@
 		"amount" : "1000",
 		"categoryID" : 3000,
 		"name" : "third product"
+	}, {
+		"ID" : 40,
+		"IsActiveEntity" : true,
+		"amount" : "1000",
+		"categoryID" : 3000,
+		"name" : "no object page"
 	}]
 }

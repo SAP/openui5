@@ -383,6 +383,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.base.EventProvider#getEventingParent
+	 */
+	ODataBinding.prototype.getEventingParent = function () {
+		// this allows that dataRequested/dataReceived events are bubbled up to the model
+		return this.oModel;
+	};
+
+	/**
 	 * Hook method for {@link #fetchQueryOptionsForOwnCache} to determine the query options for this
 	 * binding.
 	 *
@@ -631,6 +640,40 @@ sap.ui.define([
 		return oContextPathPromise.then(function (sContextResourcePath) {
 			return _Helper.buildPath(sContextResourcePath, that.sPath).slice(1);
 		});
+	};
+
+	/**
+	 * Fires the 'dataReceived' event. It may be bubbled up to the model.
+	 *
+	 * @param {object} oParameters
+	 *   The event parameters
+	 * @param {object} [oParameters.data]
+	 *   An empty data object if a back-end request succeeds
+	 * @param {Error} [oParameters.error]
+	 *   The error object if a back-end request failed.
+	 * @param {boolean} [bPreventBubbling]
+	 *   Whether the dataRequested and dataReceived events must not be bubbled up to the model
+	 *
+	 * @private
+	 */
+	 // @override sap.ui.model.Binding#fireDataReceived
+	ODataBinding.prototype.fireDataReceived = function (oParameters, bPreventBubbling) {
+		this.fireEvent("dataReceived", oParameters, /*bAllowPreventDefault*/false,
+			/*bEnableEventBubbling*/!bPreventBubbling);
+	};
+
+	/**
+	 * Fires the 'dataRequested' event. It may be bubbled up to the model.
+	 *
+	 * @param {boolean} [bPreventBubbling]
+	 *   Whether the dataRequested and dataReceived events must not be bubbled up to the model
+	 *
+	 * @private
+	 */
+	 // @override sap.ui.model.Binding#fireDataRequested
+	ODataBinding.prototype.fireDataRequested = function (bPreventBubbling) {
+		this.fireEvent("dataRequested", undefined, /*bAllowPreventDefault*/false,
+			/*bEnableEventBubbling*/!bPreventBubbling);
 	};
 
 	/**

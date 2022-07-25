@@ -116,12 +116,22 @@
 				"name": "objectPageNoList",
 				"pattern": "Products{key}?noList",
 				"target": ["empty", "objectPage"]
+			}, {
+				"layout" : "OneColumn",
+				"name": "error",
+				"pattern": "Error",
+				"target": ["error"]
 			}],
 			"targets": {
 				"empty": {
 					"id": "empty",
 					"level": 1,
 					"name": "Empty"
+				},
+				"error": {
+					"id": "error",
+					"level": 1,
+					"name": "Error"
 				},
 				"listReport": {
 					"id": "listReport",

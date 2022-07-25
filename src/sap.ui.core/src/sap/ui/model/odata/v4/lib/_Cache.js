@@ -795,7 +795,8 @@ sap.ui.define([
 	 */
 	_Cache.prototype.fetchLateProperty = function (oGroupLock, oResource, sResourcePath,
 			sRequestedPropertyPath) {
-		var sFullResourceMetaPath,
+		var bDataRequested = false,
+			sFullResourceMetaPath,
 			sFullResourcePath,
 			sGroupId,
 			iIndexOfAt = sRequestedPropertyPath.indexOf("@"),
@@ -807,6 +808,11 @@ sap.ui.define([
 			mTypeForMetaPath = this.fetchTypes().getResult(),
 			aUpdateProperties,
 			that = this;
+
+		function onSubmit() {
+			bDataRequested = true;
+			that.oRequestor.getModelInterface().fireDataRequested();
+		}
 
 		/*
 		 * Visits the query options recursively descending $expand. Determines the target type, adds
@@ -883,7 +889,7 @@ sap.ui.define([
 			sGroupId = _Helper.getPrivateAnnotation(oResource, "groupId");
 			oPromise = this.oRequestor.request("GET", sMergeBasePath,
 				sGroupId ? this.oRequestor.lockGroup(sGroupId, this) : oGroupLock.getUnlockedCopy(),
-				undefined, undefined, undefined, undefined, sFullResourceMetaPath, undefined,
+				undefined, undefined, onSubmit, undefined, sFullResourceMetaPath, undefined,
 				false, mQueryOptions
 			).then(function (oData) {
 				that.visitResponse(oData, mTypeForMetaPath, sFullResourceMetaPath, sResourcePath);
@@ -910,6 +916,15 @@ sap.ui.define([
 
 			_Helper.updateSelected(that.mChangeListeners, sResourcePath, oResource, oData,
 				aUpdateProperties);
+			if (bDataRequested) {
+				bDataRequested = false;
+				that.oRequestor.getModelInterface().fireDataReceived();
+			}
+		}).catch(function (oError) {
+			if (bDataRequested) {
+				that.oRequestor.getModelInterface().fireDataReceived(oError);
+			}
+			throw oError;
 		}).finally(function () { // clean up only after updateSelected!
 			delete that.mPropertyRequestByPath[sRequestPath];
 		});

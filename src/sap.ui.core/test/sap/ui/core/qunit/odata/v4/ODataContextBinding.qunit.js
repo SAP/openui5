@@ -690,7 +690,7 @@ sap.ui.define([
 		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to read path /EMPLOYEES(ID='1')", sClassName, sinon.match({canceled : true}));
 		oBindingMock = this.mock(oBinding);
-		oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
+		oBindingMock.expects("fireDataReceived").withExactArgs({data : {}}, null);
 		this.mock(oGroupLock1).expects("unlock").withExactArgs(true);
 
 		// trigger read before refresh
@@ -721,8 +721,10 @@ sap.ui.define([
 		oBinding.oReadGroupLock = undefined; // not interested in the initial case
 		oBindingMock.expects("lockGroup").withExactArgs().returns(oGroupLock);
 		oBindingMock.expects("getRelativePath").withExactArgs("/absolute/bar").returns("bar");
-		oBindingMock.expects("fireDataRequested").withExactArgs();
-		oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
+		oBindingMock.expects("isRefreshWithoutBubbling").withExactArgs()
+			.returns("~bPreventBubbling~");
+		oBindingMock.expects("fireDataRequested").withExactArgs("~bPreventBubbling~");
+		oBindingMock.expects("fireDataReceived").withExactArgs({data : {}}, "~bPreventBubbling~");
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock), "bar", sinon.match.func,
 				sinon.match.same(oListener))
@@ -813,7 +815,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oGroupLock2), "bar", sinon.match.func, undefined)
 			.returns(oRejectedPromise);
 		this.mock(oBinding).expects("fireDataReceived")
-			.withExactArgs({error : oExpectedError});
+			.withExactArgs({error : oExpectedError}, null);
 		this.mock(oGroupLock1).expects("unlock").withExactArgs(true);
 		this.mock(oGroupLock2).expects("unlock").withExactArgs(true);
 		this.mock(this.oModel).expects("reportError").withExactArgs(
@@ -862,7 +864,7 @@ sap.ui.define([
 					.throws(oError);
 				return {};
 			}));
-		this.mock(oBinding).expects("fireDataReceived").withExactArgs({error : oError});
+		this.mock(oBinding).expects("fireDataReceived").withExactArgs({error : oError}, null);
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to read path ~", sClassName, sinon.match.same(oError));
@@ -3209,7 +3211,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oContext), false, false,
 				bKeepCacheOnError ? "myGroup" : undefined);
 		this.mock(oBinding).expects("createRefreshPromise").exactly(bHasChangeListeners ? 1 : 0)
-			.withExactArgs().callThrough();
+			.withExactArgs(bKeepCacheOnError).callThrough();
 		this.mock(oBinding).expects("refreshDependentBindings")
 			.withExactArgs(sinon.match.same(sPath), "myGroup", sinon.match.same(bCheckUpdate),
 				bKeepCacheOnError)
@@ -3337,7 +3339,7 @@ sap.ui.define([
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
 			});
 		this.mock(oCache).expects("hasChangeListeners").withExactArgs().returns(true);
-		oBindingMock.expects("createRefreshPromise").withExactArgs().callThrough();
+		oBindingMock.expects("createRefreshPromise").withExactArgs(bKeepCacheOnError).callThrough();
 		oBindingMock.expects("fetchValue").withExactArgs("").callsFake(function () {
 			oBinding.resolveRefreshPromise(oReadPromise);
 			return SyncPromise.resolve(oReadPromise);
@@ -3412,7 +3414,7 @@ sap.ui.define([
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
 			});
 		this.mock(oCache).expects("hasChangeListeners").withExactArgs().returns(true);
-		oBindingMock.expects("createRefreshPromise").withExactArgs().callThrough();
+		oBindingMock.expects("createRefreshPromise").withExactArgs(bKeepCacheOnError).callThrough();
 		oBindingMock.expects("fetchValue").never();
 		oReadPromise.catch(function () {
 			var iCallCount = bKeepCacheOnError ? 1 : 0,
@@ -3492,7 +3494,7 @@ sap.ui.define([
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
 			});
 		this.mock(oOldCache).expects("hasChangeListeners").withExactArgs().returns(true);
-		oBindingMock.expects("createRefreshPromise").withExactArgs().callThrough();
+		oBindingMock.expects("createRefreshPromise").withExactArgs(true).callThrough();
 		oBindingMock.expects("fetchValue").withExactArgs("").callsFake(function () {
 			oBinding.resolveRefreshPromise(oReadPromise);
 			return SyncPromise.resolve(oReadPromise);
@@ -3549,7 +3551,7 @@ sap.ui.define([
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
 			});
 		this.mock(oOldCache).expects("hasChangeListeners").withExactArgs().returns(true);
-		oBindingMock.expects("createRefreshPromise").withExactArgs().returns(oRefreshPromise);
+		oBindingMock.expects("createRefreshPromise").withExactArgs(true).returns(oRefreshPromise);
 		oBindingMock.expects("fetchValue").never();
 		oBindingMock.expects("refreshDependentBindings")
 			.withExactArgs("path", "myGroup", true, true);

@@ -1606,7 +1606,8 @@ sap.ui.define([
 			.withExactArgs(5, 10, iMaximumPrefetchSize, undefined, false, sinon.match.func)
 			.returns(oFetchContextsPromise);
 		this.mock(oBinding).expects("resolveRefreshPromise")
-			.withExactArgs(sinon.match.same(oFetchContextsPromise));
+			.withExactArgs(sinon.match.same(oFetchContextsPromise))
+			.returns(oFetchContextsPromise);
 		this.mock(oBinding).expects("getContextsInViewOrder")
 			.withExactArgs(5, 10)
 			.returns(aContexts);
@@ -1652,7 +1653,8 @@ sap.ui.define([
 			oFetchContextsCall,
 			oFetchContextsPromise = SyncPromise.resolve(Promise.resolve()).then(function () {
 				// expect this when fetchContexts is finished
-				oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
+				oBindingMock.expects("fireDataReceived")
+					.withExactArgs({data : {}}, "~bPreventBubbling~");
 
 				return false;
 			});
@@ -1662,11 +1664,13 @@ sap.ui.define([
 			.returns(oFetchContextsPromise);
 		oBindingMock.expects("fireDataRequested").never(); // expect it later
 		oBindingMock.expects("fireDataReceived").never(); // expect it later
+		oBindingMock.expects("isRefreshWithoutBubbling").withExactArgs()
+			.returns("~bPreventBubbling~");
 
 		// code under test
 		oBinding.getContexts(0, 10, 100);
 
-		oBindingMock.expects("fireDataRequested").withExactArgs();
+		oBindingMock.expects("fireDataRequested").withExactArgs("~bPreventBubbling~");
 
 		// code under test
 		oFetchContextsCall.args[0][5]();
@@ -1882,6 +1886,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/~");
+		this.mock(oBinding).expects("isRefreshWithoutBubbling").withExactArgs()
+			.returns("~bPreventBubbling~");
 		oFetchContextsCall = this.mock(oBinding).expects("fetchContexts")
 			.withExactArgs(0, 10, 100, undefined, false, sinon.match.func)
 			.returns(oFetchContextsPromise);
@@ -1893,7 +1899,8 @@ sap.ui.define([
 		oBinding.getContexts(0, 10, 100);
 
 		this.mock(oBinding).expects("fireDataReceived").exactly(oFixture.bDataRequested ? 1 : 0)
-			.withExactArgs(oFixture.bCanceled ? {data : {}} : {error : sinon.match.same(oError)});
+			.withExactArgs(oFixture.bCanceled ? {data : {}} : {error : sinon.match.same(oError)},
+				"~bPreventBubbling~");
 
 		// code under test - dataRequested/dataReceived
 		if (oFixture.bDataRequested) {
@@ -1925,7 +1932,7 @@ sap.ui.define([
 			.returns(oFetchContextsPromise);
 		this.mock(oBinding.oModel).expects("resolve")
 			.withExactArgs(oBinding.sPath, sinon.match.same(oContext)).returns("/~");
-		oBindingMock.expects("fireDataRequested").withExactArgs().throws(oError);
+		oBindingMock.expects("fireDataRequested").withExactArgs(null).throws(oError);
 		this.mock(oBinding.oModel).expects("reportError")
 			.withExactArgs("Failed to get contexts for /service/~ with start index 0 and length 10",
 				sClassName, sinon.match.same(oError));
@@ -1952,7 +1959,7 @@ sap.ui.define([
 			.returns(oFetchContextsPromise);
 		this.mock(oBinding.oModel).expects("resolve")
 			.withExactArgs(oBinding.sPath, sinon.match.same(oContext)).returns("/~");
-		oBindingMock.expects("fireDataReceived").withExactArgs({data : {}})
+		oBindingMock.expects("fireDataReceived").withExactArgs({data : {}}, null)
 			.throws(oError);
 		this.mock(oBinding.oModel).expects("reportError")
 			.withExactArgs("Failed to get contexts for /service/~ with start index 0 and length 10",
@@ -2437,7 +2444,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oContext), false, /*bKeepQueryOptions*/true, undefined);
 		this.mock(oBinding).expects("refreshKeptElements").withExactArgs("myGroup")
 			.returns(oRefreshKeptElementsPromise);
-		this.mock(oBinding).expects("createRefreshPromise").withExactArgs().callThrough();
+		this.mock(oBinding).expects("createRefreshPromise").withExactArgs(undefined).callThrough();
 		this.mock(oBinding).expects("reset")
 			.withExactArgs(ChangeReason.Refresh, undefined, "myGroup");
 		this.mock(oBinding.oHeaderContext).expects("checkUpdateInternal")
@@ -2651,7 +2658,7 @@ sap.ui.define([
 				oBinding.oCache = oNewCache;
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
 			});
-		this.mock(oBinding).expects("createRefreshPromise").withExactArgs()
+		this.mock(oBinding).expects("createRefreshPromise").withExactArgs(true)
 			.returns(oRefreshPromise);
 		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh, false, "myGroup");
 		this.mock(this.oModel).expects("getDependentBindings")
@@ -2708,7 +2715,7 @@ sap.ui.define([
 				oBinding.oCache = oNewCache;
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
 			});
-		this.mock(oBinding).expects("createRefreshPromise").withExactArgs().rejects(oError);
+		this.mock(oBinding).expects("createRefreshPromise").withExactArgs(true).rejects(oError);
 		this.mock(oBinding).expects("fetchResourcePath").never();
 		this.mock(oCache).expects("restore").withExactArgs(false); // free memory
 		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh, false, "myGroup");

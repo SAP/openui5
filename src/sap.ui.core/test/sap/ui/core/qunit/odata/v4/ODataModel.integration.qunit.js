@@ -2401,6 +2401,235 @@ sap.ui.define([
 	);
 
 	//*********************************************************************************************
+[false, true].forEach(function (bSuccess) {
+	[false, true].forEach(function (bBubble) {
+		var bDataReceivedOnBinding,
+			bDataRequestedOnBinding,
+			bDataReceivedOnModel,
+			bDataRequestedOnModel,
+			sTitle = "dataRequested/dataReceived, success=" + bSuccess + ", bubble=" + bBubble;
+
+	function clearEvents() {
+		bDataRequestedOnBinding = false;
+		bDataReceivedOnBinding = false;
+		bDataRequestedOnModel = false;
+		bDataReceivedOnModel = false;
+	}
+
+	function setupListeners(assert, oBinding, oModel) {
+		clearEvents();
+		oBinding.attachDataRequested(function (oEvent) {
+			bDataRequestedOnBinding = true;
+			if (!bBubble) {
+				oEvent.cancelBubble();
+			}
+		});
+		oBinding.attachDataReceived(function (oEvent) {
+			var oError = oEvent.getParameter("error");
+
+			assert.deepEqual(oEvent.getParameter("data"), bSuccess ? {} : undefined);
+			if (bSuccess) {
+				assert.strictEqual(oError, undefined);
+			} else {
+				assert.strictEqual(oError.message, "Request intentionally failed");
+				assert.strictEqual(oError.status, 500);
+			}
+			bDataReceivedOnBinding = true;
+			if (!bBubble) {
+				oEvent.cancelBubble();
+			}
+		});
+		oModel.attachDataRequested(function () {
+			bDataRequestedOnModel = true;
+		}).attachDataRequested(function () {
+			bDataReceivedOnModel = true;
+		});
+	}
+
+	function checkEvents(assert, bModel) {
+		assert.strictEqual(bDataRequestedOnBinding, true);
+		assert.strictEqual(bDataReceivedOnBinding, true);
+		assert.strictEqual(bDataRequestedOnModel, bModel);
+		assert.strictEqual(bDataReceivedOnModel, bModel);
+		clearEvents();
+	}
+
+	//*********************************************************************************************
+	// Scenario: dataRequested/dataReceived on context binding and model. Check the initial request
+	// (incl. cancelBubble), refresh and requestSideEffects
+	QUnit.test("CPOUI5ODATAV4-1671: ODCB: " + sTitle, function (assert) {
+		var oBinding,
+			sView = '\
+<FlexBox id="form" binding="{EMPLOYEES(\'1\')}">\
+	<Text id="name" text="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("name");
+
+		return this.createView(assert, sView).then(function () {
+			oBinding = that.oView.byId("form").getObjectBinding();
+			setupListeners(assert, oBinding, that.oModel);
+
+			that.expectRequest("EMPLOYEES('1')",
+					bSuccess ? {Name : "Frederic Fall"} : createErrorInsideBatch()
+				);
+			if (bSuccess) {
+				that.expectChange("name", "Frederic Fall");
+			} else {
+				that.oLogMock.expects("error").twice(); // details do not interest
+				that.expectChange("name", null) // one change event is enforced
+					.expectMessages([{
+						code : "CODE",
+						message : "Request intentionally failed",
+						persistent : true,
+						technical : true,
+						type : "Error"
+					}]);
+			}
+
+			oBinding.setContext(that.oModel.createBindingContext("/"));
+
+			return that.waitForChanges(assert, bSuccess ? "success" : "failure");
+		}).then(function () {
+			checkEvents(assert, bBubble);
+
+			if (bSuccess && bBubble) {
+				that.expectRequest("EMPLOYEES('1')", {Name : "Frederic Fall"});
+
+				return Promise.all([
+					// code under test
+					oBinding.requestRefresh(),
+					that.waitForChanges(assert, "refresh")
+				]).then(function () {
+					checkEvents(assert, true);
+					that.expectRequest("EMPLOYEES('1')", {Name : "Frederic Fall"});
+
+					return Promise.all([
+						// code under test
+						oBinding.getBoundContext().requestSideEffects([""]),
+						that.waitForChanges(assert, "requestSideEffects")
+					]);
+				}).then(function () {
+					checkEvents(assert, false);
+				});
+			}
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: dataRequested/dataReceived on list binding and model. Check the initial request
+	// (incl. cancelBubble), refresh and requestSideEffects
+	QUnit.test("CPOUI5ODATAV4-1671: ODLB: " + sTitle, function (assert) {
+		var oBinding,
+			sView = '\
+<Table id="table" items="{EMPLOYEES}">\
+	<Text id="name" text="{Name}"/>\
+</Table>',
+			that = this;
+
+		this.expectChange("name", []);
+
+		return this.createView(assert, sView).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+			setupListeners(assert, oBinding, that.oModel);
+
+			that.expectRequest("EMPLOYEES?$skip=0&$top=100",
+					bSuccess
+						? {value : [{Name : "Frederic Fall"}, {Name : "Jonathan Smith"}]}
+						: createErrorInsideBatch()
+				);
+			if (bSuccess) {
+				that.expectChange("name", ["Frederic Fall", "Jonathan Smith"]);
+			} else {
+				that.oLogMock.expects("error"); // details do not interest
+				that.expectMessages([{
+						code : "CODE",
+						message : "Request intentionally failed",
+						persistent : true,
+						technical : true,
+						type : "Error"
+					}]);
+			}
+
+			oBinding.setContext(that.oModel.createBindingContext("/"));
+
+			return that.waitForChanges(assert, bSuccess ? "success" : "failure");
+		}).then(function () {
+			checkEvents(assert, bBubble);
+
+			if (bSuccess && bBubble) {
+				that.expectRequest("EMPLOYEES?$skip=0&$top=100",
+						{value : [{Name : "Frederic Fall"}, {Name : "Jonathan Smith"}]}
+					);
+
+				return Promise.all([
+					// code under test
+					oBinding.requestRefresh(),
+					that.waitForChanges(assert, "refresh")
+				]).then(function () {
+					checkEvents(assert, true);
+					that.expectRequest("EMPLOYEES?$skip=0&$top=100",
+							{value : [{Name : "Frederic Fall"}, {Name : "Jonathan Smith"}]}
+						);
+
+					return Promise.all([
+						// code under test
+						oBinding.getHeaderContext().requestSideEffects([""]),
+						that.waitForChanges(assert, "requestSideEffects")
+					]);
+				}).then(function () {
+					checkEvents(assert, false);
+				});
+			}
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: dataRequested/dataReceived on the property binding. Check refresh and
+	// requestSideEffects. (The FlexBox is only required to have a context for requestSideEffects.)
+	if (!(bSuccess && bBubble)) {
+		return; // only testing refresh vs. requestSideEffects
+	}
+
+	QUnit.test("CPOUI5ODATAV4-1671: ODPB", function (assert) {
+		var oBinding,
+			sView = '\
+<FlexBox id="form" binding="{/TEAMS(\'1\')}"/>\
+<Text id="age" text="{/EMPLOYEES(\'1\')/AGE}"/>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')/AGE", {value : 42})
+			.expectChange("age", "42");
+
+		return this.createView(assert, sView).then(function () {
+			oBinding = that.oView.byId("age").getBinding("text");
+			setupListeners(assert, oBinding, that.oModel);
+
+			that.expectRequest("EMPLOYEES('1')/AGE", {value : 42});
+
+			return Promise.all([
+				oBinding.requestRefresh(),
+				that.waitForChanges(assert, "refresh")
+			]);
+		}).then(function () {
+			checkEvents(assert, true);
+			that.expectRequest("EMPLOYEES('1')/AGE", {value : 42});
+
+			return Promise.all([
+				that.oView.byId("form").getBindingContext().requestSideEffects([
+					"/com.sap.gateway.default.iwbep.tea_busi.v0001.Container/EMPLOYEES/AGE"
+				]),
+				that.waitForChanges(assert, "requestSideEffects")
+			]);
+		}).then(function () {
+			checkEvents(assert, false);
+		});
+	});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: Rebind a table that uses the cache of the form, so that a list binding is created
 	// for which the data is already available in the cache. Ensure that it does not deliver the
 	// contexts in getContexts for the initial refresh event, but fires an additional change event.
@@ -2758,8 +2987,13 @@ sap.ui.define([
 	// cache. See that it is updated via requestSideEffects.
 	// JIRA: CPOUI5UISERVICESV3-1878
 	// BCP: 2070470932: see that sap-client is handled properly
+	// JIRA: CPOUI5ODATAV4-1671: See that dataRequested/dataReceived events are fired for late
+	//   property requests
 	QUnit.test("ODCB: late property", function (assert) {
-		var oFormContext,
+		var bChange = false,
+			iDataReceived = 0,
+			iDataRequested = 0,
+			oFormContext,
 			oModel = this.createSalesOrdersModel123({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')/SO_2_BP}">\
@@ -2784,8 +3018,20 @@ sap.ui.define([
 			.expectChange("longitude3");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.oLogMock.expects("error")
-				.withArgs("Failed to drill-down into CompanyName, invalid segment: CompanyName");
+			var oLongitude1 = that.oView.byId("longitude1");
+
+			oLongitude1.getBinding("text").attachEventOnce("change", function (oEvent) {
+				bChange = true;
+				assert.strictEqual(oEvent.getSource().getValue(), "8.7"); // unformatted
+				assert.strictEqual(oLongitude1.getText(), "8.700000000000"); // formatted
+			});
+			oModel.attachDataRequested(function () {
+				iDataRequested += 1;
+			}).attachDataReceived(function (oEvent) {
+				iDataReceived += 1;
+				assert.strictEqual(bChange, true, "fired after change event");
+				assert.deepEqual(oEvent.getParameter("data"), {});
+			});
 
 			that.expectRequest("SalesOrderList('1')/SO_2_BP?sap-client=123"
 					+ "&$select=Address/GeoLocation/Longitude,BusinessPartnerID", {
@@ -2802,6 +3048,9 @@ sap.ui.define([
 
 			oFormContext = that.oView.byId("form").getBindingContext();
 
+			that.oLogMock.expects("error")
+				.withArgs("Failed to drill-down into CompanyName, invalid segment: CompanyName");
+
 			// code under test - CompanyName leads to a "failed to drill-down"
 			assert.strictEqual(oFormContext.getProperty("CompanyName"), undefined);
 
@@ -2817,6 +3066,9 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			assert.strictEqual(iDataRequested, 1);
+			assert.strictEqual(iDataReceived, 1);
+
 			// late property request
 			that.expectRequest("SalesOrderList('1')/SO_2_BP?sap-client=123"
 					+ "&$select=BusinessPartnerID,CompanyName", {
@@ -2830,6 +3082,9 @@ sap.ui.define([
 				assert.strictEqual(sValue, "SAP");
 			});
 		}).then(function () {
+			assert.strictEqual(iDataRequested, 2);
+			assert.strictEqual(iDataReceived, 2);
+
 			that.expectChange("longitude3", "8.700000000000");
 
 			// code under test - Longitude is cached now
@@ -2856,6 +3111,9 @@ sap.ui.define([
 				oFormContext.requestSideEffects([{$PropertyPath : "Address"}]),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			assert.strictEqual(iDataRequested, 2);
+			assert.strictEqual(iDataReceived, 2);
 		});
 	});
 
@@ -3206,8 +3464,13 @@ sap.ui.define([
 	// BCP: 2070470932: see that sap-client and system query options are handled properly
 	// Test ODLB#getCount
 	// JIRA: CPOUI5ODATAV4-958
+	// JIRA: CPOUI5ODATAV4-1671: See that dataRequested/dataReceived events are fired for late
+	//   property requests
 	QUnit.test("ODLB: late property", function (assert) {
-		var oModel,
+		var bChange = false,
+			iDataReceived = 0,
+			iDataRequested = 0,
+			oModel,
 			oRowContext,
 			oTable,
 			sView = '\
@@ -3253,7 +3516,21 @@ sap.ui.define([
 			.expectChange("budget");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oTeam = that.oView.byId("team");
+
 			oTable = that.oView.byId("table");
+			oTeam.getBinding("value").attachEventOnce("change", function (oEvent) {
+				bChange = true;
+				assert.strictEqual(oEvent.getSource().getValue(), "1");
+				assert.strictEqual(oTeam.getValue(), "1");
+			});
+			oModel.attachDataRequested(function () {
+				iDataRequested += 1;
+			}).attachDataReceived(function (oEvent) {
+				iDataReceived += 1;
+				assert.deepEqual(oEvent.getParameter("data"), {});
+				assert.strictEqual(bChange, true, "fired after change event");
+			});
 
 			// code under test - count is not requested
 			assert.strictEqual(oTable.getBinding("items").getCount(), undefined);
@@ -3285,6 +3562,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			assert.strictEqual(iDataRequested, 1);
+			assert.strictEqual(iDataReceived, 1);
+
 			// BCP 1980517597
 			that.expectChange("age1", "18")
 				.expectRequest({
@@ -3332,6 +3612,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			assert.strictEqual(iDataRequested, 1);
+			assert.strictEqual(iDataReceived, 1);
+
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_TEAM?sap-client=123"
 					+ "&$select=Budget,Team_Id", {
 					"@odata.etag" : "etag1",
@@ -3345,6 +3628,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			assert.strictEqual(iDataRequested, 2);
+			assert.strictEqual(iDataReceived, 2);
+
 			that.expectChange("age2", "18");
 
 			// code under test - AGE is cached now
@@ -3367,6 +3653,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			assert.strictEqual(iDataRequested, 3, "bubbled up from the binding");
+			assert.strictEqual(iDataReceived, 3, "bubbled up from the binding");
+
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$select=AGE,ID,Name"
 					+ "&$filter=ID eq '2' or ID eq '3' or ID eq '4'&$top=3", {
 					value : [
@@ -3385,6 +3674,9 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			assert.strictEqual(iDataRequested, 3);
+			assert.strictEqual(iDataReceived, 3);
+
 			that.expectChange("age2", "29");
 
 			// change one Text to the second row - must be cached from requestSideEffects
@@ -3393,6 +3685,9 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			assert.strictEqual(iDataRequested, 3);
+			assert.strictEqual(iDataReceived, 3);
+
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$select=AGE,ID,Name"
 					+ "&$filter=ID eq '2' or ID eq '3' or ID eq '4'&$top=3", {
 					value : [
@@ -3413,6 +3708,22 @@ sap.ui.define([
 				]),
 				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			assert.strictEqual(iDataRequested, 3);
+			assert.strictEqual(iDataReceived, 3);
+
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('3')?sap-client=123&$select=TEAM_ID",
+				{"@odata.etag" : "etag0", TEAM_ID : "1"});
+
+			return Promise.all([
+				oRowContext.requestProperty("TEAM_ID").then(function (sTeamId) {
+					assert.strictEqual(sTeamId, "1");
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(iDataRequested, 4);
+			assert.strictEqual(iDataReceived, 4);
 		});
 	});
 
@@ -37807,6 +38118,8 @@ sap.ui.define([
 	// lastUsedChannel is only in the object page and must be requested as late property,
 	// HasDraftEntity is the manually requested late property, sendsAutographs is only in the list
 	// report and must be inherited by the action.
+	// Check that for all GET requests including late property requests the dataRequested and
+	// dataReceived events are fired at the model (JIRA: CPOUI5ODATAV4-1671)
 // list, page: the step number in which they are initialized;
 // patchNo: the batchNo of the $batch with the PATCH and the side effect request
 [
@@ -37817,7 +38130,10 @@ sap.ui.define([
 ].forEach(function (oFixture) {
 	QUnit.test("getKeepAliveContext: " + oFixture.title, function (assert) {
 		var oActiveContext,
+			iDataReceivedCount = 0,
+			iDataRequestedCount = 0,
 			oDraftContext,
+			iExpectedEventCount = 0,
 			bListResolved = false,
 			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oObjectPage,
@@ -37838,6 +38154,16 @@ sap.ui.define([
 	</Table>\
 </FlexBox>',
 			that = this;
+
+		function checkDataEvents() {
+			assert.strictEqual(iDataRequestedCount, iExpectedEventCount, "dataRequested");
+			assert.strictEqual(iDataReceivedCount, iExpectedEventCount, "dataReceived");
+			iDataRequestedCount = iDataReceivedCount = iExpectedEventCount = 0;
+		}
+
+		function expectDataEvents(iCount) {
+			iExpectedEventCount += iCount;
+		}
 
 		/*
 		 * Resolves the list report and expects the corresponding request and changes.
@@ -37862,6 +38188,7 @@ sap.ui.define([
 				.expectChange("listName", ["Artist 1"])
 				.expectChange("listChannel", ["Channel 1"])
 				.expectChange("sendsAutographs", ["Yes"]);
+			expectDataEvents(1);
 
 			that.oView.byId("listReport").setBindingContext(oModel.createBindingContext("/"));
 			bListResolved = true;
@@ -37916,6 +38243,7 @@ sap.ui.define([
 					type : "Information",
 					target : "/Artists(ArtistID='A1',IsActiveEntity=true)/defaultChannel"
 				}]);
+			expectDataEvents(2);
 
 			oActiveContext = that.oModel.getKeepAliveContext(
 				"/Artists(ArtistID='A1',IsActiveEntity=true)", true,
@@ -37933,6 +38261,12 @@ sap.ui.define([
 			.expectChange("lastUsedChannel")
 			.expectChange("publication", []);
 
+		oModel.attachDataRequested(function () {
+			iDataRequestedCount += 1;
+		}).attachDataReceived(function () {
+			iDataReceivedCount += 1;
+		});
+
 		return this.createView(assert, sView, oModel).then(function () {
 			oObjectPage = that.oView.byId("objectPage");
 
@@ -37944,6 +38278,7 @@ sap.ui.define([
 				that.waitForChanges(assert, "(1) initialization")
 			]);
 		}).then(function () {
+			checkDataEvents();
 			if (oFixture.list === 2) {
 				initializeList(2);
 			}
@@ -37972,6 +38307,7 @@ sap.ui.define([
 					+ "?$select=ArtistID,HasDraftEntity,IsActiveEntity,Messages,Name,"
 					+ "defaultChannel,lastUsedChannel";
 
+			checkDataEvents();
 			if (bListResolved) {
 				sUrl += ",sendsAutographs";
 				oResponse.sendsAutographs = true;
@@ -38002,12 +38338,14 @@ sap.ui.define([
 					{value : [{PublicationID : "P1"}]}
 				)
 				.expectChange("publication", ["P1"]);
+			expectDataEvents(1);
 
 			oDraftContext = aResults[0];
 			oObjectPage.setBindingContext(oDraftContext);
 
 			return that.waitForChanges(assert, "(4) setBindingContext");
 		}).then(function () {
+			checkDataEvents();
 			return that.checkValueState(assert, "defaultChannel", "Information", "Draft message");
 		}).then(function () {
 			that.expectChange("defaultChannel", "Channel 3")
@@ -38054,6 +38392,7 @@ sap.ui.define([
 				that.expectChange("listChannel", ["Channel 3"])
 					.expectChange("listChannel", ["Channel 3*"]);
 			}
+			expectDataEvents(0); // no events for requestSideEffects
 
 			that.oView.byId("defaultChannel").getBinding("value").setValue("Channel 3");
 
@@ -38062,6 +38401,7 @@ sap.ui.define([
 				that.waitForChanges(assert, "(5) set property and request side effects")
 			]);
 		}).then(function () {
+			checkDataEvents();
 			return that.checkValueState(assert, "defaultChannel", "Information", "Updated message");
 		}).then(function () {
 			that.expectChange("defaultChannel", "Channel 1")
@@ -38090,6 +38430,8 @@ sap.ui.define([
 			}
 
 			return that.waitForChanges(assert, "(7) resolve list if not done yet");
+		}).then(function () {
+			checkDataEvents();
 		});
 	});
 });

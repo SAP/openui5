@@ -2,9 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/UIComponent",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/json/JSONModel"
-], function (Controller, JSONModel) {
+], function (UIComponent, Controller, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.Draft.Main", {
@@ -15,14 +16,30 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			this.oUIModel = new JSONModel({
+			var oUIModel,
+				oView = this.getView(),
+				that = this;
+
+			this.oUIModel = oUIModel = new JSONModel({
 				iMessages : 0,
 				oProductsTable : null,
 				bShowList : true,
 				sShowListIcon : "sap-icon://close-command-field",
 				sShowListTooltip : "Hide List"
 			});
-			this.getView().setModel(this.oUIModel, "ui");
+			oView.setModel(this.oUIModel, "ui");
+
+			oView.getModel().attachDataReceived(function (oEvent) {
+				var oError = oEvent.getParameter("error");
+
+				if (oError) {
+					// Ignore follow-up errors ("...because the previous request failed")
+					if (!oUIModel.getProperty("/error")) {
+						oUIModel.setProperty("/error", oError.toString());
+						UIComponent.getRouterFor(that).navTo("error", {}, true);
+					}
+				}
+			});
 		}
 	});
 });

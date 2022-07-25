@@ -414,7 +414,7 @@ sap.ui.define([
 	 *
 	 * @abstract
 	 * @function
-	 * @name sap.ui.model.odata.v4.ODataListBinding#checkKeepAlive
+	 * @name sap.ui.model.odata.v4.ODataParentBinding#checkKeepAlive
 	 * @private
 	 * @see sap.ui.model.odata.v4.Context#setKeepAlive
 	 */
@@ -562,17 +562,22 @@ sap.ui.define([
 	/**
 	 * Creates a promise for the refresh to be resolved by the binding's GET request.
 	 *
-	 * @returns {Promise} the created promise
+	 * @param {boolean} bPreventBubbling
+	 *   Whether the dataRequested and dataReceived events related to the refresh must not be
+	 *   bubbled up to the model
+	 * @returns {Promise} The created promise
 	 *
+	 * @see #isRefreshWithoutBubbling
 	 * @see #resolveRefreshPromise
 	 * @private
 	 */
-	ODataParentBinding.prototype.createRefreshPromise = function () {
+	ODataParentBinding.prototype.createRefreshPromise = function (bPreventBubbling) {
 		var oPromise, fnResolve;
 
 		oPromise = new Promise(function (resolve) {
 			fnResolve = resolve;
 		});
+		oPromise.$preventBubbling = bPreventBubbling;
 		oPromise.$resolve = fnResolve;
 		this.oRefreshPromise = oPromise;
 		return oPromise;
@@ -1076,6 +1081,19 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.isMeta = function () {
 		return false;
+	};
+
+	/**
+	 * Whether the dataRequested and dataReceived events related to the refresh must not be bubbled
+	 * up to the model.
+	 *
+	 * @returns {boolean}  Whether to prevent bubbling
+	 *
+	 * @private
+	 * @see #createRefreshPromise
+	 */
+	ODataParentBinding.prototype.isRefreshWithoutBubbling = function () {
+		return this.oRefreshPromise && this.oRefreshPromise.$preventBubbling;
 	};
 
 	/**

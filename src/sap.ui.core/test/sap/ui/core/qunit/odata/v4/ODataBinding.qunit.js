@@ -3167,4 +3167,50 @@ sap.ui.define([
 		}, new Error(oBinding + ": Cannot refresh a suspended binding with group ID 'otherGroup' "
 			+ "(own group ID is 'myGroup')"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getEventingParent", function (assert) {
+		var oBinding = new ODataBinding({oModel : "~oModel~"});
+
+		// code under test
+		assert.strictEqual(oBinding.getEventingParent(), "~oModel~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fireDataRequested", function () {
+		var oBinding = new ODataBinding({
+				fireEvent : function () {}
+			}),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("fireEvent").withExactArgs("dataRequested", undefined, false, true);
+
+		// code under test
+		oBinding.fireDataRequested();
+
+		oBindingMock.expects("fireEvent").withExactArgs("dataRequested", undefined, false, false);
+
+		// code under test
+		oBinding.fireDataRequested(true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fireDataReceived", function () {
+		var oBinding = new ODataBinding({
+				fireEvent : function () {}
+			}),
+			oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("fireEvent")
+			.withExactArgs("dataReceived", "~oParameters~", false, true);
+
+		// code under test
+		oBinding.fireDataReceived("~oParameters~");
+
+		oBindingMock.expects("fireEvent")
+			.withExactArgs("dataReceived", "~oParameters~", false, false);
+
+		// code under test
+		oBinding.fireDataReceived("~oParameters~", true);
+	});
 });

@@ -168,6 +168,37 @@ sap.ui.getCore().attachInit(function () {
 			opaTest("Start with object page, open list in the end", function (Given, When, Then) {
 				runTest(Given, When, Then, "Products(ID=10,IsActiveEntity=true)?noList", false);
 			});
+
+			//*****************************************************************************
+			opaTest("Select defective product from list", function (Given, When, Then) {
+				Given.iStartMyUIComponent({
+					autoWait : true,
+					componentConfig : {
+						name : "sap.ui.core.sample.odata.v4.Draft"
+					}
+				});
+
+				// Select part with read error
+				When.onTheListReport.selectProduct(3);
+				Then.onTheErrorPage.checkError("Error: Communication error: 500 ");
+
+				Then.iTeardownMyUIComponent();
+			});
+
+			//*****************************************************************************
+			opaTest("Open defective product via hash", function (Given, Any, Then) {
+				Given.iStartMyUIComponent({
+					autoWait : true,
+					componentConfig : {
+						name : "sap.ui.core.sample.odata.v4.Draft"
+					},
+					hash : "/Products(ID=40,IsActiveEntity=true)"
+				});
+
+				Then.onTheErrorPage.checkError("Error: Communication error: 500 ");
+
+				Then.iTeardownMyUIComponent();
+			});
 		}
 
 		QUnit.start();

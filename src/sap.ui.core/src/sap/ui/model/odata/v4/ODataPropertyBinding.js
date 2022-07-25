@@ -226,6 +226,9 @@ sap.ui.define([
 	 *   The change reason for the change event
 	 * @param {string} [sGroupId=getGroupId()]
 	 *   The group ID to be used for the read.
+	 * @param {boolean} [bPreventBubbling]
+	 *   Whether the dataRequested and dataReceived events related to the refresh must not be
+	 *   bubbled up to the model
 	 * @param {any} [vValue]
 	 *   The new value obtained from the cache, see {@link #onChange}
 	 * @returns {sap.ui.base.SyncPromise}
@@ -239,7 +242,7 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.odata.v4.ODataBinding#checkUpdateInternal
 	ODataPropertyBinding.prototype.checkUpdateInternal = function (bForceUpdate, sChangeReason,
-			sGroupId, vValue) {
+			sGroupId, bPreventBubbling, vValue) {
 		var bDataRequested = false,
 			iHashHash = this.sPath.indexOf("##"),
 			bIsMeta = iHashHash >= 0,
@@ -276,7 +279,7 @@ sap.ui.define([
 					return oCache.fetchValue(that.lockGroup(sGroupId || that.getGroupId()),
 							/*sPath*/undefined, function () {
 								bDataRequested = true;
-								that.fireDataRequested();
+								that.fireDataRequested(bPreventBubbling);
 							}, that)
 						.then(function (vResult) {
 							that.assertSameCache(oCache);
@@ -350,7 +353,7 @@ sap.ui.define([
 				that.checkDataState();
 			}
 			if (bDataRequested) {
-				that.fireDataReceived(mParametersForDataReceived);
+				that.fireDataReceived(mParametersForDataReceived, bPreventBubbling);
 			}
 			if (mParametersForDataReceived.error) {
 				throw mParametersForDataReceived.error;
@@ -495,7 +498,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.onChange = function (vValue) {
-		this.checkUpdateInternal(undefined, undefined, undefined, vValue)
+		this.checkUpdateInternal(undefined, undefined, undefined, false, vValue)
 			.catch(this.oModel.getReporter());
 	};
 
@@ -527,7 +530,8 @@ sap.ui.define([
 			}
 
 			if (bCheckUpdate) {
-				return that.checkUpdateInternal(undefined, ChangeReason.Refresh, sGroupId);
+				return that.checkUpdateInternal(undefined, ChangeReason.Refresh, sGroupId,
+					/*bPreventBubbling*/bKeepCacheOnError);
 			}
 		});
 	};

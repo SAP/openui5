@@ -81,7 +81,9 @@ sap.ui.define([
 				{$$patchWithoutSideEffects : true});
 			oView.setBindingContext(oContext);
 			oView.setBusy(true);
-			oContext.requestProperty("ID").finally(function () {
+			oContext.requestProperty("IsActiveEntity").catch(function () {
+				// ignore; it's logged anyway
+			}).finally(function () {
 				oView.setBusy(false);
 			});
 			this.setShowList(!oEvent.getParameter("config").pattern.endsWith("?noList"));

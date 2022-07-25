@@ -498,7 +498,12 @@ sap.ui.define([
 	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter.
 	 *
+	 * Since 1.106 this event is bubbled up to the model, unless a listener calls
+	 * {@link sap.ui.base.Event#cancelBubble oEvent.cancelBubble()}.
+	 *
 	 * @param {sap.ui.base.Event} oEvent
+	 * @param {function} oEvent.cancelBubble
+	 *   A callback function to prevent that the event is bubbled up to the model
 	 * @param {object} oEvent.getParameters()
 	 * @param {object} [oEvent.getParameters().data]
 	 *   An empty data object if a back-end request succeeds
@@ -507,6 +512,7 @@ sap.ui.define([
 	 *
 	 * @event sap.ui.model.odata.v4.ODataContextBinding#dataReceived
 	 * @public
+	 * @see sap.ui.model.odata.v4.ODataModel#event:dataReceived
 	 * @since 1.37.0
 	 */
 
@@ -518,10 +524,16 @@ sap.ui.define([
 	 * fired: Whatever should happen in the event handler attached to that event, can instead be
 	 * done before calling {@link #execute}.
 	 *
+	 * Since 1.106 this event is bubbled up to the model, unless a listener calls
+	 * {@link sap.ui.base.Event#cancelBubble oEvent.cancelBubble()}.
+	 *
 	 * @param {sap.ui.base.Event} oEvent
+	 * @param {function} oEvent.cancelBubble
+	 *   A callback function to prevent that the event is bubbled up to the model
 	 *
 	 * @event sap.ui.model.odata.v4.ODataContextBinding#dataRequested
 	 * @public
+	 * @see sap.ui.model.odata.v4.ODataModel#event:dataRequested
 	 * @since 1.37.0
 	 */
 
@@ -1004,7 +1016,8 @@ sap.ui.define([
 			throw oError;
 		}
 		return oCachePromise.then(function (oCache) {
-			var bDataRequested = false,
+			var bPreventBubbling,
+				bDataRequested = false,
 				oGroupLock,
 				sResolvedPath = that.getResolvedPath(),
 				sRelativePath = oCache || that.oOperation
@@ -1039,11 +1052,12 @@ sap.ui.define([
 					oGroupLock = that.oReadGroupLock || that.lockGroup();
 					that.oReadGroupLock = undefined;
 				}
+				bPreventBubbling = that.isRefreshWithoutBubbling();
 
 				return that.resolveRefreshPromise(
 					oCache.fetchValue(oGroupLock, sRelativePath, function () {
 						bDataRequested = true;
-						that.fireDataRequested();
+						that.fireDataRequested(bPreventBubbling);
 					}, oListener)
 				).then(function (vValue) {
 					that.assertSameCache(oCache);
@@ -1051,7 +1065,7 @@ sap.ui.define([
 					return vValue;
 				}).then(function (vValue) {
 					if (bDataRequested) {
-						that.fireDataReceived({data : {}});
+						that.fireDataReceived({data : {}}, bPreventBubbling);
 					}
 					return vValue;
 				}, function (oError) {
@@ -1059,7 +1073,8 @@ sap.ui.define([
 					if (bDataRequested) {
 						that.oModel.reportError("Failed to read path " + sResolvedPath, sClassName,
 							oError);
-						that.fireDataReceived(oError.canceled ? {data : {}} : {error : oError});
+						that.fireDataReceived(oError.canceled ? {data : {}} : {error : oError},
+							bPreventBubbling);
 					}
 					throw oError;
 				});
@@ -1367,7 +1382,9 @@ sap.ui.define([
 					bKeepCacheOnError ? sGroupId : undefined);
 				// Do not fire a change event, or else ManagedObject destroys and recreates the
 				// binding hierarchy causing a flood of events.
-				oPromise = bHasChangeListeners ? that.createRefreshPromise() : undefined;
+				oPromise = bHasChangeListeners
+					? that.createRefreshPromise(/*bPreventBubbling*/bKeepCacheOnError)
+					: undefined;
 				if (bKeepCacheOnError && oPromise) {
 					oPromise = oPromise.catch(function (oError) {
 						return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
