@@ -128,6 +128,9 @@ sap.ui.define([
 	var iPressTheOKButtonOnTheDialog = function(oDialog, oSettings) {
 		return iPressAButtonOnTheDialog.call(this, oDialog, Util.texts.ok, oSettings);
 	};
+	var iPressTheCancelButtonOnTheDialog = function(oDialog, oSettings) {
+		return iPressAButtonOnTheDialog.call(this, oDialog, Util.texts.cancel, oSettings);
+	};
 
 	var iPressTheResetButtonOnTheDialog = function(oDialog, oSettings) {
 		return iPressAButtonOnTheDialog.call(this, oDialog, Util.texts.reset, oSettings);
@@ -361,12 +364,12 @@ sap.ui.define([
 	var iAddFilterConfiguration = function(oFilterPanel, iIndex, oConfiguration) {
 		this.waitFor({
 			controlType: "sap.m.CustomListItem",
-			matchers: new Ancestor(oFilterPanel, false),
+			//matchers: new Ancestor(oFilterPanel, false),
 			success: function(aCustomListItems) {
-				var oLastItem = aCustomListItems[aCustomListItems.length - 1];
+				//var oLastItem = aCustomListItems[aCustomListItems.length - 1];
 				this.waitFor({
 					controlType: "sap.m.ComboBox",
-					matchers: new Ancestor(oLastItem, false),
+					//matchers: new Ancestor(oLastItem, false),
 					actions: new EnterText({
 						text: oConfiguration.key,
 						pressEnterKey: true
@@ -374,18 +377,20 @@ sap.ui.define([
 					success: function() {
 						this.waitFor({
 							controlType: "sap.m.CustomListItem",
-							matchers: new Ancestor(oFilterPanel, false),
+							//matchers: new Ancestor(oFilterPanel, false),
 							success: function(aCustomListItems) {
 								Opa5.assert.ok(aCustomListItems.length > iIndex + 1, "New filter entry generated");
 
-								this.waitFor({
-									id: oConfiguration.inputControl,
-									//matchers: new Ancestor(oCreatedItem, false), Parent of FilterField is an AdapationFilterbar
-									actions: new EnterText({
-										text: oConfiguration.values[0],
-										pressEnterKey: true
-									})
-								});
+								oConfiguration.values.forEach(function(vValue){
+									this.waitFor({
+										id: oConfiguration.inputControl,
+										//matchers: new Ancestor(oCreatedItem, false), Parent of FilterField is an AdapationFilterbar
+										actions: new EnterText({
+											text: vValue,
+											pressEnterKey: true
+										})
+									});
+								}, this);
 							}
 						});
 					}
@@ -979,15 +984,16 @@ sap.ui.define([
 		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is filtered
 		 * @param {FilterPersonalizationConfiguration[]} aConfigurations Array containing the filter personalization configuration objects
 		 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the given control
+		 * @param {boolean} bCancel The dialog will be cancelled instead of confirmed
 		 * @returns {Promise} OPA waitFor
 		 */
-		iPersonalizeFilter: function(oControl, aConfigurations, fnOpenThePersonalizationDialog) {
+		iPersonalizeFilter: function(oControl, aConfigurations, fnOpenThePersonalizationDialog, bCancel) {
 			fnOpenThePersonalizationDialog = fnOpenThePersonalizationDialog ? fnOpenThePersonalizationDialog : iOpenThePersonalizationDialog;
 			return iPersonalize.call(this, oControl, Util.texts.filter, fnOpenThePersonalizationDialog, {
 				success: function(oP13nDialog) {
 					this.waitFor({
 						controlType: "sap.ui.mdc.p13n.panels.FilterPanel",
-						matchers: new Ancestor(oP13nDialog, false),
+						//matchers: new Ancestor(oP13nDialog, false),
 						success: function(aFilterPanels) {
 							var oFilterPanel = aFilterPanels[0];
 							iPressAllDeclineButtonsOnPanel.call(this, oFilterPanel, {
@@ -996,7 +1002,11 @@ sap.ui.define([
 									aConfigurations.forEach(function(oConfiguration, iIndex) {
 										iAddFilterConfiguration.call(this, oP13nDialog, iIndex, oConfiguration);
 									}.bind(this));
-									iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+									if (bCancel) {
+										iPressTheCancelButtonOnTheDialog.call(this, oP13nDialog);
+									} else {
+										iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+									}
 								}
 							});
 						}

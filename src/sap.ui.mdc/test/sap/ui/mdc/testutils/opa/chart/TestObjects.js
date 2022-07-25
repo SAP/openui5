@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"./ActionsViz",
 	"./AssertionsViz",
-	"../p13n/Actions"
+	"../p13n/Actions",
+	"../p13n/Assertions"
 ], function(
 	Opa5,
 	chartActions,
 	chartAssertions,
-	p13nActions
+	p13nActions,
+	p13nAssertions
 ) {
 	"use strict";
 
@@ -39,6 +41,30 @@ sap.ui.define([
 				 */
 				iPersonalizeChart: function(oChart, aConfigurations){
 					return p13nActions.iPersonalizeChart.call(this, oChart, null, aConfigurations, true, chartActions.iOpenThePersonalizationDialog);
+				},
+				/**
+				 * @typedef {object} FilterPersonalizationConfiguration
+				 * @property {string} key Key of the value that is the result of the personalization
+				 * @property {string} operator Operator defining how the items are filtered
+				 * @property {string[]} values Filter values for the given operator
+				 * @property {string} inputControl <code>Control</code> that is used as input for the value
+				 */
+
+				/**
+				 * OPA5 test action
+				 * 1. Opens the personalization dialog of a given chart.
+				 * 2. Executes the given <code>FilterPersonalizationConfiguration</code>.
+				 * 3. Closes the personalization dialog.
+				 * @memberof onTheMDCTable
+				 * @method iPersonalizeFilter
+				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is filtered
+				 * @param {FilterPersonalizationConfiguration[]} aSettings Array containing the filter personalization configuration objects
+				 * @param {boolean} bCancel Cancel the personalization dialog after the configuration has been done instead of confirming it
+				 * @returns {Promise} OPA waitFor
+				 * @public
+				 */
+				 iPersonalizeFilter: function(oControl, aSettings, bCancel) {
+					return p13nActions.iPersonalizeFilter.call(this, oControl, aSettings, chartActions.iOpenThePersonalizationDialog, bCancel);
 				},
 				/**
 				 * @typedef {object} SortPersonalizationConfiguration
@@ -338,6 +364,32 @@ sap.ui.define([
 				*/
 				iShouldSeeVisibleMeasuresInOrder: function(aMeasures, sId) {
 					return chartAssertions.iShouldSeeVisibleMeasuresInOrder.call(this, aMeasures, sId);
+				},
+				/**
+				 * OPA5 test assertion
+				 * 1. Opens the personalization dialog of a given chart.
+				 * 2. Executes the given <code>FilterPersonalizationConfiguration</code>.
+				 * 3. Closes the personalization dialog.
+				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is filtered
+				 * @param {FilterPersonalizationConfiguration[]} aConfigurations Array containing the filter personalization configuration objects
+				 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the given control
+				 * @returns {Promise} OPA waitFor
+				 */
+				iCheckFilterPersonalization: function(oControl, aConfigurations) {
+					return p13nAssertions.iCheckFilterPersonalization.call(this, oControl, aConfigurations, chartActions.iOpenThePersonalizationDialog);
+				},
+
+				/**
+				 * OPA5 test assertion
+				 * 1. Opens the personalization dialog of a given table.
+				 * 2. Checks the availability of the provided filter texts (by opening and comparing the available items in the ComboBox)
+				 * 3. Closes the personalization dialog.
+				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is filtered
+				 * @param {string[]} aFilters Array containing the names of selectable filters
+				 * @returns {Promise} OPA waitFor
+				 */
+				iCheckAvailableFilters: function(oControl, aFilters) {
+					return p13nAssertions.iCheckAvailableFilters.call(this, oControl, aFilters, chartActions.iOpenThePersonalizationDialog);
 				}
 			}
 		}
