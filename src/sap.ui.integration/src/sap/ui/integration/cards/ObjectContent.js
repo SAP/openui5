@@ -322,6 +322,7 @@ sap.ui.define([
 	ObjectContent.prototype._createItem = function (oItem, vVisible, oLabel) {
 		var oControl,
 			vValue = oItem.value,
+			vTooltip = oItem.tooltip,
 			vHref;
 
 		switch (oItem.type) {
@@ -350,6 +351,7 @@ sap.ui.define([
 				oControl = new Link({
 					href: oItem.url || vValue,
 					text: vValue,
+					tooltip: vTooltip,
 					target: oItem.target || '_blank',
 					visible: BindingHelper.reuse(vVisible)
 				});
@@ -375,6 +377,7 @@ sap.ui.define([
 				oControl = new Link({
 					href: vHref,
 					text: vValue,
+					tooltip: vTooltip,
 					visible: BindingHelper.reuse(vVisible)
 				});
 				break;
@@ -386,6 +389,7 @@ sap.ui.define([
 				oControl = new Link({
 					href: vHref,
 					text: vValue,
+					tooltip: vTooltip,
 					visible: BindingHelper.reuse(vVisible)
 				});
 				break;
@@ -446,11 +450,13 @@ sap.ui.define([
 
 	ObjectContent.prototype._createTextItem = function (oItem, vVisible, oLabel) {
 		var vValue = oItem.value,
+			vTooltip = oItem.tooltip,
 			oControl;
 
 		if (vValue && oItem.actions) {
 			oControl = new Link({
 				text: vValue,
+				tooltip: vTooltip,
 				visible: BindingHelper.reuse(vVisible)
 			});
 

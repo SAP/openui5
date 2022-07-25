@@ -38,7 +38,9 @@
         "1.26.0",
         "1.27.0",
         "1.28.0",
-        "1.29.0"
+        "1.29.0",
+        "1.30.0"
+
       ]
     },
     "designtime": {
@@ -1275,6 +1277,10 @@
         },
         "value": {
           "description": "Represents the text, which is associated with the label",
+          "type": "string"
+        },
+        "tooltip": {
+          "description": "Defines the tooltip of the link",
           "type": "string"
         },
         "type": {
