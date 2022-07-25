@@ -37,7 +37,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sId The id of the DOM element to return
 	 * @param {Window} [oWindow=window] The window (optional)
-	 * @return {Element} The DOMNode identified by the given sId
+	 * @returns {Element|null} The DOMNode identified by the given sId, or <code>null</code>
 	 * @public
 	 * @since 0.9.0
 	 * @deprecated since 1.58 use <code>document.getElementById</code> instead
@@ -56,7 +56,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sId The id to search for and construct the jQuery object
 	 * @param {Element} oContext the context DOM Element
-	 * @return {Object} The jQuery object for the DOM element identified by the given sId
+	 * @returns {jQuery} The jQuery object for the DOM element identified by the given sId
 	 * @public
 	 * @since 0.9.1
 	 * @function
@@ -79,7 +79,7 @@ sap.ui.define([
 	 * Calls focus() on the given DOM element.
 	 *
 	 * @param {Element} oDomRef The DOM element to focus (or null - in this case the method does nothing)
-	 * @return {boolean} Whether the focus() command was executed without an error
+	 * @returns {boolean|undefined} <code>true</code> when the focus() command was executed without an error, otherwise undefined.
 	 * @public
 	 * @since 1.1.2
 	 * @function
@@ -118,7 +118,7 @@ sap.ui.define([
 	/**
 	 * Returns the outer HTML of the given HTML element.
 	 *
-	 * @return {string} outer HTML
+	 * @returns {string} outer HTML
 	 * @public
 	 * @name jQuery#outerHTML
 	 * @author SAP SE
@@ -151,7 +151,7 @@ sap.ui.define([
 	 *
 	 * @param {Element} oDomRefContainer The container element
 	 * @param {Element} oDomRefChild The child element (must not be a text node, must be an element)
-	 * @return {boolean} Whether <code>oDomRefChild</code> is contained in or equal to <code>oDomRefContainer</code>
+	 * @returns {boolean} Whether <code>oDomRefChild</code> is contained in or equal to <code>oDomRefContainer</code>
 	 * @public
 	 * @author SAP SE
 	 * @since 0.9.0
@@ -172,7 +172,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iNormalizedScrollLeft The distance from the leftmost position to which the element should be scrolled
 	 * @param {Element} oDomRef The DOM Element to which scrollLeft will be applied
-	 * @return {int} The scroll position that must be set for the DOM element
+	 * @returns {int} The scroll position that must be set for the DOM element
 	 * @public
 	 * @author SAP SE
 	 * @since 0.20.0
@@ -197,7 +197,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iNormalizedScrollBegin The distance from the rightmost position to which the element should be scrolled
 	 * @param {Element} oDomRef The DOM Element to which scrollLeft will be applied
-	 * @return {int} The scroll position that must be set for the DOM element
+	 * @returns {int} The scroll position that must be set for the DOM element
 	 * @public
 	 * @author SAP SE
 	 * @since 1.26.1
@@ -232,7 +232,7 @@ sap.ui.define([
 	 * Returns the window reference for a DomRef.
 	 *
 	 * @param {Element} oDomRef The DOM reference
-	 * @return {Window} Window reference
+	 * @returns {Window} Window reference
 	 * @public
 	 * @since 0.9.0
 	 * @function
@@ -247,7 +247,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sClasses=null] the CSS class that should be added to the test element.
 	 * @param {boolean} [bForce=false] force recalculation of size (e.g. when CSS was changed). When no classes are passed all calculated sizes are reset.
-	 * @return {object} JSON object with properties <code>width</code> and <code>height</code> (the values are of type number and are pixels).
+	 * @returns {{width: number, height: number}} JSON object with properties <code>width</code> and <code>height</code> (the values are of type number and are pixels).
 	 * @public
 	 * @since 1.4.0
 	 * @function
@@ -263,7 +263,7 @@ sap.ui.define([
 	 * @param {string} sStyleClass CSS class name
 	 * @param {jQuery|sap.ui.core.Control|string} vSource jQuery object, control or an id of the source element.
 	 * @param {jQuery|sap.ui.core.Control} vDestination target jQuery object or a control.
-	 * @return {jQuery|Element} Target element
+	 * @returns {jQuery|Element} Target element
 	 * @public
 	 * @since 1.22
 	 * @function

@@ -326,7 +326,7 @@ sap.ui.define([
 	 * Returns the keys of the selected elements as an associative array.
 	 * An empty object is returned if no items are selected.
 	 *
-	 * @returns {Object.<string, string?>} Object with the selected keys
+	 * @returns {Object<string, string?>} Object with the selected keys
 
 	 * @public
 	 * @since 1.20.3
@@ -346,7 +346,7 @@ sap.ui.define([
 	 * If oKeys is <code>undefined</code>, <code>null</code>, or {} (empty object) then all items will be deselected.
 	 * After this method completes, only those items with matching keys will be selected. All other items in the list will be deselected.
 	 *
-	 * @param {Object.<string, string?>} oKeys
+	 * @param {Object<string, string?>} oKeys
 	 *         Associative array indicating which FacetFilterItems should be selected in the list. Each property must be set to the value of a FacetFilterItem.key property. Each property value should be set to the FacetFilterItem.text property value. The text value is used to display the FacetFilterItem text when the FacetFilterList button or FacetFilter summary bar is displayed. If no property value is set then the property key is used for the text.
 	 * @type {void}
 	 * @public

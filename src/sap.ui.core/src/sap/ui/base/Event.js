@@ -105,7 +105,7 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	/**
 	 * Returns an object with all parameter values of the event.
 	 *
-	 * @returns {object} All parameters of the event
+	 * @returns {Object<string, any>} All parameters of the event
 	 * @public
 	 */
 	Event.prototype.getParameters = function() {

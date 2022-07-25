@@ -285,7 +285,7 @@ sap.ui.define([
 	 *
 	 * The node must have an ID that will be used as ID for this instance of <code>UIArea</code>.
 	 *
-	 * @param {object} oRootNode
+	 * @param {Element} oRootNode
 	 *            the hosting DOM node for this instance of <code>UIArea</code>.
 	 * @public
 	 */
@@ -827,8 +827,8 @@ sap.ui.define([
 	 *   });
 	 * });
 	 *
-	 * @param {object} [mEventTypes] Map of logging flags keyed by event types
-	 * @returns {object} A copy of the resulting event logging configuration (not normalized)
+	 * @param {Object<string, boolean>} [mEventTypes] Map of logging flags keyed by event types
+	 * @returns {Object<string, boolean>} A copy of the resulting event logging configuration (not normalized)
 	 * @public
 	 * @since 1.62
 	 */

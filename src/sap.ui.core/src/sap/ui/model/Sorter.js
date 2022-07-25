@@ -76,11 +76,11 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/Log"],
 		},
 
 		/**
-		 * Returns a group object, at least containing a key property for group detection.
+		 * Returns a group object, at least containing a "key" property for group detection.
 		 * May contain additional properties as provided by a custom group function.
 		 *
 		 * @param {sap.ui.model.Context} oContext the binding context
-		 * @return {object} An object containing a key property and optional custom properties
+		 * @return {Object<string, any>} An object containing a key property and optional custom properties
 		 * @public
 		 */
 		getGroup : function(oContext) {

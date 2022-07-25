@@ -77,7 +77,7 @@ sap.ui.define([
 		 * @param {boolean} [iconInfo.suppressMirroring=false] indicates whether this icon should NOT be mirrored in RTL (right to left) mode.
 		 * @param {module:sap/base/i18n/ResourceBundle} [iconInfo.resourceBundle] ResourceBundle to be used for translation. Key format: "Icon.<iconName>".
 		 *
-		 * @returns {object} the info object of the registered icon which has the name, collection, uri, fontFamily, content and suppressMirroring properties.
+		 * @returns {{name: string, collection: string, uri: string, fontFamily: string, content: string | string[], suppressMirroring: boolean}} the info object of the registered icon which has the name, collection, uri, fontFamily, content and suppressMirroring properties.
 		 * @static
 		 * @public
 		 * @function

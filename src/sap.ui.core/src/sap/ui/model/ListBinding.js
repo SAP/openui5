@@ -171,7 +171,7 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 	 *
 	 * @function
 	 * @name sap.ui.model.ListBinding.prototype.sort
-	 * @param {sap.ui.model.Sorter|Array} aSorters
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} aSorters
 	 *   The Sorter object or an array of sorters which defines the sort order
 	 * @return {this}
 	 *   Returns <code>this</code> to facilitate method chaining
