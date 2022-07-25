@@ -467,6 +467,8 @@ sap.ui.define([
 						assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 						assert.equal(oOrderField.getAggregation("_field").getItems().length, 0, "Field: Order lenght is OK");
 						oOrderField.getAggregation("_field").focus();
+						// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+						oOrderField.onfocusin();
 						var sMsgStripId = oOrderField.getAssociation("_messageStrip");
 						var oMsgStrip = Core.byId(sMsgStripId);
 						assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -474,6 +476,8 @@ sap.ui.define([
 						assert.equal(oMsgStrip.getText(), "400: Please select a cutomer and an employee first", "Order Error Text");
 						assert.equal(oProductField.getAggregation("_field").getItems().length, 0, "Field: Product lenght is OK");
 						oProductField.getAggregation("_field").focus();
+						// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+						oProductField.onfocusin();
 						assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 						assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 						assert.equal(oMsgStrip.getText(), "400: Please select an order first", "Product Error Text");
@@ -532,6 +536,8 @@ sap.ui.define([
 							assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 							assert.equal(oOrderField.getAggregation("_field").getItems().length, 0, "Field: Order lenght is OK");
 							oOrderField.getAggregation("_field").focus();
+							// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+							oOrderField.onfocusin();
 							var sMsgStripId = oOrderField.getAssociation("_messageStrip");
 							var oMsgStrip = Core.byId(sMsgStripId);
 							assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -539,6 +545,8 @@ sap.ui.define([
 							assert.equal(oMsgStrip.getText(), "400: Please select a cutomer and an employee first", "Order Error Text");
 							assert.equal(oProductField.getAggregation("_field").getItems().length, 0, "Field: Product lenght is OK");
 							oProductField.getAggregation("_field").focus();
+							// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+							oProductField.onfocusin();
 							assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 							assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 							assert.equal(oMsgStrip.getText(), "400: Please select an order first", "Product Error Text");
@@ -599,6 +607,8 @@ sap.ui.define([
 							assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 							assert.equal(oOrderField.getAggregation("_field").getItems().length, 0, "Field: Order lenght is OK");
 							oOrderField.getAggregation("_field").focus();
+							// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+							oOrderField.onfocusin();
 							var sMsgStripId = oOrderField.getAssociation("_messageStrip");
 							var oMsgStrip = Core.byId(sMsgStripId);
 							assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
@@ -606,6 +616,8 @@ sap.ui.define([
 							assert.equal(oMsgStrip.getText(), "400: Please select a cutomer and an employee first", "Order Error Text");
 							assert.equal(oProductField.getAggregation("_field").getItems().length, 0, "Field: Product lenght is OK");
 							oProductField.getAggregation("_field").focus();
+							// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+							oProductField.onfocusin();
 							assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 							assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 							assert.equal(oMsgStrip.getText(), "400: Please select an order first", "Product Error Text");
@@ -670,6 +682,8 @@ sap.ui.define([
 							assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 							assert.equal(oOrderField.getAggregation("_field").getItems().length, 1, "Field: Order lenght is OK");
 							oOrderField.getAggregation("_field").focus();
+							// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+							oOrderField.onfocusin();
 							var sMsgStripId = oOrderField.getAssociation("_messageStrip");
 							var oMsgStrip = Core.byId(sMsgStripId);
 							var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
@@ -678,6 +692,8 @@ sap.ui.define([
 							assert.equal(oDefaultBundle.getText("EDITOR_VAL_TEXTREQ"), oMsgStrip.getText(), "Order Error Text : required");
 							assert.equal(oProductField.getAggregation("_field").getItems().length, 0, "Field: Product lenght is OK");
 							oProductField.getAggregation("_field").focus();
+							// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+							oProductField.onfocusin();
 							assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 							assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 							assert.equal(oMsgStrip.getText(), "400: Please select an order first", "Product Error Text");
@@ -747,11 +763,15 @@ sap.ui.define([
 								assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 								assert.equal(oOrderField.getAggregation("_field").getItems().length, 1, "Field: Order lenght is OK");
 								oOrderField.getAggregation("_field").focus();
+								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+								oOrderField.onfocusin();
 								var sMsgStripId = oOrderField.getAssociation("_messageStrip");
 								var oMsgStrip = Core.byId(sMsgStripId);
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 								assert.equal(oProductField.getAggregation("_field").getItems().length, 2, "Field: Product lenght is OK");
 								oProductField.getAggregation("_field").focus();
+								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+								oProductField.onfocusin();
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 								assert.equal(oCustomerLimitField.getAggregation("_field").getItems().length, 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 								resolve();
@@ -820,11 +840,15 @@ sap.ui.define([
 								assert.equal(oEmployeeField.getAggregation("_field").getItems().length, 6, "Field: Employee lenght is OK");
 								assert.equal(oOrderField.getAggregation("_field").getItems().length, 2, "Field: Order lenght is OK");
 								oOrderField.getAggregation("_field").focus();
+								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+								oOrderField.onfocusin();
 								var sMsgStripId = oOrderField.getAssociation("_messageStrip");
 								var oMsgStrip = Core.byId(sMsgStripId);
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 								assert.equal(oProductField.getAggregation("_field").getItems().length, 1, "Field: Product lenght is OK");
 								oProductField.getAggregation("_field").focus();
+								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
+								oProductField.onfocusin();
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 								assert.equal(oCustomerLimitField.getAggregation("_field").getItems().length, 2, "Field: CustomerWithTopAndSkipOption lenght is OK");
 								resolve();
