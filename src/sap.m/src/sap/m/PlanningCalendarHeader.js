@@ -19,6 +19,7 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CustomYearPicker',
 	'sap/ui/unified/calendar/IndexPicker',
 	'sap/ui/core/Configuration',
+	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/library',
@@ -40,6 +41,7 @@ function(
 	CustomYearPicker,
 	IndexPicker,
 	Configuration,
+	CalendarDate,
 	IconPool,
 	InvisibleText,
 	coreLibrary,
@@ -117,7 +119,15 @@ function(
 				/**
 				 * Determines the text of the button which opens the calendar picker.
 				 */
-				pickerText : { type : "string", group : "Data" }
+				pickerText : { type : "string", group : "Data" },
+
+				/**
+				 * If set, the calendar type is used for display.
+				 * If not set, the calendar type of the global configuration is used.
+				 * @private
+				 * @since 1.108.0
+				 */
+				_primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null}
 
 			},
 
@@ -243,6 +253,7 @@ function(
 		var sOPHId = this.getId(),
 			sNavToolbarId = sOPHId + "-NavToolbar",
 			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sCalendarType = this.getProperty("_primaryCalendarType"),
 			oPicker,
 			oCalendarPicker,
 			oMonthPicker,
@@ -279,7 +290,8 @@ function(
 			}.bind(this)
 		});
 		oCalendarPicker = new Calendar(sOPHId + "-Cal", {
-			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_RANGE_PICKER")
+			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_RANGE_PICKER"),
+			primaryCalendarType: sCalendarType
 		});
 		oCalendarPicker.attachEvent("select", this._handlePickerDateSelect, this);
 		oCalendarPicker.attachEvent("cancel", this._handlePickerCancelEvent, this);
@@ -297,7 +309,8 @@ function(
 		this.setAssociation("currentPicker", oCalendarPicker);
 
 		oMonthPicker = new CustomMonthPicker(sOPHId + "-MonthCal", {
-			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_RANGE_PICKER")
+			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_RANGE_PICKER"),
+			primaryCalendarType: sCalendarType
 		});
 		oMonthPicker.attachEvent("select", this._handlePickerDateSelect, this);
 		oMonthPicker.attachEvent("cancel", this._handlePickerCancelEvent, this);
@@ -305,7 +318,8 @@ function(
 		this._oMonthPicker = oMonthPicker;
 
 		oYearPicker = new CustomYearPicker(sOPHId + "-YearCal", {
-			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_RANGE_PICKER")
+			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_RANGE_PICKER"),
+			primaryCalendarType: sCalendarType
 		});
 		oYearPicker.attachEvent("select", this._handlePickerDateSelect, this);
 		oYearPicker.attachEvent("cancel", this._handlePickerCancelEvent, this);
@@ -381,6 +395,8 @@ function(
 		var bVisible = !!this.getActions().length || !!this.getTitle() || this._getOrCreateViewSwitch().getItems().length > 1;
 
 		this._getActionsToolbar().setProperty("visible", bVisible, true);
+
+		this.setPrimaryCalendarTypeToPickers(this.getProperty("_primaryCalendarType"));
 	};
 
 	PlanningCalendarHeader.prototype.setTitle = function (sTitle) {
@@ -445,6 +461,12 @@ function(
 		this._oPickerBtn.setText(sText);
 
 		return this;
+	};
+
+	PlanningCalendarHeader.prototype.setPrimaryCalendarTypeToPickers = function (sCalendarType) {
+		this._oCalendar.setPrimaryCalendarType(sCalendarType);
+		this._oMonthPicker.setPrimaryCalendarType(sCalendarType);
+		this._oYearPicker.setPrimaryCalendarType(sCalendarType);
 	};
 
 	/**

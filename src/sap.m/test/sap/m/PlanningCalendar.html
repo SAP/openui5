@@ -145,6 +145,34 @@
 							sap.ui.getCore().byId('PC1').setWidth(sSelectedWidth);
 						}
 					}),
+					new sap.m.Select('select_calendar_type', {
+						items: [
+							new sap.ui.core.Item('select_calendar_type_item_0', {
+								text: 'Gregorian',
+								key: 'Gregorian'
+							}),
+							new sap.ui.core.Item('select_calendar_type_item_1', {
+								text: 'Islamic',
+								key: 'Islamic'
+							}),
+							new sap.ui.core.Item('select_calendar_typeh_item_2', {
+								text: 'Japanese',
+								key: 'Japanese'
+							}),
+							new sap.ui.core.Item('select_calendar_type_item_3', {
+								text: 'Persian',
+								key: 'Persian'
+							}),
+							new sap.ui.core.Item('select_calendar_type_item_4', {
+								text: 'Buddhist',
+								key: 'Buddhist'
+							})
+						],
+						change: function (oEvent) {
+							var sSelectedCalendarType = oEvent.getParameter('selectedItem').getKey();
+							sap.ui.getCore().byId('PC1').setPrimaryCalendarType(sSelectedCalendarType);
+						}
+					}),
 					new sap.m.MultiComboBox({
 						id: "MCB1",
 						width: "230px",

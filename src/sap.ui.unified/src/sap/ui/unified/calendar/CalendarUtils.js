@@ -581,10 +581,11 @@ sap.ui.define([
 		CalendarUtils._getFirstDateOfMonth = function(oCalendarDate) {
 			this._checkCalendarDate(oCalendarDate);
 
-			var oJSDate = CalendarUtils.getFirstDateOfMonth(oCalendarDate.toUTCJSDate()).getJSDate();
-			oJSDate.setFullYear(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate());
+			var oCalendarDateFirstDay = new CalendarDate(oCalendarDate, oCalendarDate.getCalendarType());
 
-			return CalendarDate.fromLocalJSDate(oJSDate, oCalendarDate.getCalendarType());
+			oCalendarDateFirstDay.setDate(1);
+
+			return oCalendarDateFirstDay;
 		};
 
 		/**

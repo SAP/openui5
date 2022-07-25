@@ -11,7 +11,6 @@ sap.ui.define([
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/unified/library',
 	'sap/ui/core/format/DateFormat',
-	'sap/ui/core/library',
 	'sap/ui/core/Locale',
 	"./TimesRowRenderer",
 	"sap/ui/dom/containsOrEquals",
@@ -27,7 +26,6 @@ sap.ui.define([
 	UniversalDate,
 	library,
 	DateFormat,
-	coreLibrary,
 	Locale,
 	TimesRowRenderer,
 	containsOrEquals,
@@ -37,9 +35,6 @@ sap.ui.define([
 	Configuration
 ) {
 	"use strict";
-
-	// shortcut for sap.ui.core.CalendarType
-	var CalendarType = coreLibrary.CalendarType;
 
 	/*
 	 * <code>UniversalDate</code> objects are used inside the <code>TimesRow</code>, whereas JavaScript dates are used in the API.
@@ -117,7 +112,15 @@ sap.ui.define([
 			/**
 			 * If set, a header with the years is shown to visualize what month belongs to what year.
 			 */
-			showHeader : {type : "boolean", group : "Appearance", defaultValue : false}
+			showHeader : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * If set, the calendar type is used for display.
+			 * If not set, the calendar type of the global configuration is used.
+			 * @private
+			 * @since 1.108.0
+			 */
+			primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null}
 		},
 		aggregations : {
 
@@ -175,9 +178,9 @@ sap.ui.define([
 
 	TimesRow.prototype.init = function(){
 
-		this._oFormatYyyyMMddHHmm = DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: CalendarType.Gregorian});
-		this._oFormatLong = DateFormat.getDateTimeInstance({style: "long/short"});
-		this._oFormatDate = DateFormat.getDateInstance({style: "medium"});
+		this._oFormatYyyyMMddHHmm = DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: this.getProperty("primaryCalendarType")});
+		this._oFormatLong = DateFormat.getDateTimeInstance({style: "long/short", calendarType: this.getProperty("primaryCalendarType")});
+		this._oFormatDate = DateFormat.getDateInstance({style: "medium", calendarType: this.getProperty("primaryCalendarType")});
 
 		this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
 
@@ -388,7 +391,7 @@ sap.ui.define([
 
 		if (this._oFormatLong.oLocale.toString() != sLocale) {
 			var oLocale = new Locale(sLocale);
-			this._oFormatLong = DateFormat.getInstance({style: "long/short"}, oLocale);
+			this._oFormatLong = DateFormat.getInstance({style: "long/short", calendarType: this.getProperty("primaryCalendarType")}, oLocale);
 		}
 
 		return this._oFormatLong;
@@ -417,7 +420,7 @@ sap.ui.define([
 
 				if (sTimeFormatShort.search("a") >= 0) {
 					// AP/PM indicator used
-					this._oFormatTimeAmPm = DateFormat.getTimeInstance({pattern: "a"}, oLocale);
+					this._oFormatTimeAmPm = DateFormat.getTimeInstance({pattern: "a", calendarType: this.getProperty("primaryCalendarType")}, oLocale);
 				}
 			} else {
 				sPattern = sTimeFormatShort;
@@ -426,11 +429,11 @@ sap.ui.define([
 				sPattern = sPattern.replace("hh", "h");
 				if (sPattern.search("a") >= 0) {
 					// AP/PM indicator used
-					this._oFormatTimeAmPm = DateFormat.getTimeInstance({pattern: "a"}, oLocale);
+					this._oFormatTimeAmPm = DateFormat.getTimeInstance({pattern: "a", calendarType: this.getProperty("primaryCalendarType")}, oLocale);
 					sPattern = sPattern.replace("a", "").trim();
 				}
 			}
-			this._oFormatTime = DateFormat.getTimeInstance({pattern: sPattern}, oLocale);
+			this._oFormatTime = DateFormat.getTimeInstance({pattern: sPattern, calendarType: this.getProperty("primaryCalendarType")}, oLocale);
 		}
 
 		return this._oFormatTime;
@@ -446,7 +449,7 @@ sap.ui.define([
 
 		if (this._oFormatDate.oLocale.toString() != sLocale) {
 			var oLocale = new Locale(sLocale);
-			this._oFormatDate = DateFormat.getDateInstance({style: "medium"}, oLocale);
+			this._oFormatDate = DateFormat.getDateInstance({style: "medium", calendarType: this.getProperty("primaryCalendarType")}, oLocale);
 		}
 
 		return this._oFormatDate;
