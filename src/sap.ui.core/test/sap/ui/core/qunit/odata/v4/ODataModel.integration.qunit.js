@@ -6364,7 +6364,10 @@ sap.ui.define([
 				.expectRequest({
 					batchNo : 2,
 					method : "GET",
-					url : "SalesOrderList?$select=SalesOrderID&$skip=1&$top=2"
+					url : "SalesOrderList?$select=SalesOrderID"
+						+ "&$filter=not (SalesOrderID eq '0500000002'"
+							+ " or SalesOrderID eq '0500000003')"
+						+ "&$skip=1&$top=2"
 				}, {
 					value : [{SalesOrderID : "0500000004"}]
 				})
@@ -6413,7 +6416,8 @@ sap.ui.define([
 				.expectRequest({
 					batchNo : 2,
 					method : "GET",
-					url : "SalesOrderList?$select=SalesOrderID&$skip=2&$top=4"
+					url : "SalesOrderList?$select=SalesOrderID"
+						+ "&$filter=not (SalesOrderID eq '0500000002')&$skip=2&$top=4"
 				}, {
 					value : [{SalesOrderID : "0500000004"}]
 				})
@@ -17108,7 +17112,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "modify note");
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=5&$top=2", {
+			that.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
+					+ "&$filter=not (SalesOrderID eq '2' or SalesOrderID eq '4')&$skip=3&$top=2", {
 					"@odata.count" : "18",
 					value : [
 						{SalesOrderID : "6"},
@@ -17140,7 +17145,10 @@ sap.ui.define([
 					method : "DELETE",
 					url : "SalesOrderList('3')"
 				}, createErrorInsideBatch())
-				.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=6&$top=1")
+				.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
+					+ "&$filter=not (SalesOrderID eq '2' or SalesOrderID eq '3'"
+						+ " or SalesOrderID eq '4')"
+					+ "&$skip=4&$top=1")
 					// no response required
 				.expectChange("count", "18")
 				.expectMessages([{
@@ -17162,7 +17170,10 @@ sap.ui.define([
 
 			that.expectChange("count", "17")
 				.expectRequest({method : "DELETE", url : "SalesOrderList('3')"})
-				.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID&$skip=6&$top=1", {
+				.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
+					+ "&$filter=not (SalesOrderID eq '2' or SalesOrderID eq '3'"
+						+ " or SalesOrderID eq '4')"
+					+ "&$skip=4&$top=1", {
 					"@odata.count" : "17",
 					value : [{SalesOrderID : "8"}]
 				})
@@ -17640,6 +17651,102 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getLength(), 2, "correct length");
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: A deletion causes a gap, is performed immediately (but not in $auto) and fails. The
+	// gap-filling GET via $auto runs concurrently. Since it uses $filter to exclude the client-
+	// deleted entities, it is indepent on the order in which the requests are processed on the
+	// server. See that the re-inserted and the requested entities are ordered correctly, regardless
+	// which response is processed first.
+	// JIRA: CPOUI5ODATAV4-1660
+[false, true].forEach(function (bDirect) {
+	[false, true].forEach(function (bDeleteFirst) {
+	var sTitle = "CPOUI5ODATAV4-1660: " + (bDirect ? "$direct" : "$auto.foo")
+			+ " DELETE fails " + (bDeleteFirst ? "before" : "after") + " the gap-filling GET";
+
+	QUnit.test(sTitle, function (assert) {
+		var oBinding,
+			oDeletePromise,
+			oGetResult = {value : [{SalesOrderID : "3"}]},
+			oModel = this.createSalesOrdersModel({
+				groupId : bDirect ? "$direct" : "$auto",
+				autoExpandSelect : true
+			}),
+			fnRejectDelete,
+			fnResolveGet,
+			sView = '\
+<Table id="table" growing="true" growingThreshold="2" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=2", {
+				value : [
+					{SalesOrderID : "1"},
+					{SalesOrderID : "2"}
+				]
+			})
+			.expectChange("id", ["1", "2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("table").getItems()[1].getBindingContext();
+
+			that.expectRequest({method : "DELETE", url : "SalesOrderList('2')"},
+					new Promise(function (_resolve, reject) { fnRejectDelete = reject; }))
+				.expectRequest("SalesOrderList?$select=SalesOrderID"
+					+ "&$filter=not (SalesOrderID eq '2')&$skip=1&$top=1",
+					new Promise(function (resolve) { fnResolveGet = resolve; }));
+
+			oBinding = oContext.getBinding();
+			/* code under test */
+			oDeletePromise = oContext.delete(bDirect ? "$direct" : "$auto.foo");
+
+			if (!bDeleteFirst) {
+				that.expectChange("id", [, "3"]);
+
+				fnResolveGet(oGetResult);
+			}
+
+			return that.waitForChanges(assert, bDeleteFirst ? "delete" : "delete and GET");
+		}).then(function () {
+			var sMessage = bDirect ? "Communication error: 500 " : "Request intentionally failed";
+
+			that.oLogMock.expects("error")
+				.withArgs("Failed to delete /SalesOrderList('2')[1;deleted]");
+			that.expectMessages([{
+					code : bDirect ? undefined : "CODE",
+					message : sMessage,
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+			if (!bDeleteFirst) {
+				that.expectChange("id", [, "2"]);
+			}
+
+			fnRejectDelete(bDirect ? createError() : createErrorInsideBatch());
+
+			return Promise.all([
+				oDeletePromise.then(mustFail(assert), function (oError) {
+					assert.strictEqual(oError.message, sMessage);
+				}),
+				that.waitForChanges(assert, "DELETE fails")
+			]);
+		}).then(function () {
+			if (bDeleteFirst) {
+				fnResolveGet(oGetResult);
+
+				// no visible changes to wait for because the GET response is added behind the
+				// visible range
+				return resolveLater();
+			}
+		}).then(function () {
+			assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath),
+				["/SalesOrderList('1')", "/SalesOrderList('2')", "/SalesOrderList('3')"]);
+		});
+	});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: BCP 1870017061
@@ -30714,7 +30821,8 @@ sap.ui.define([
 					url : "SalesOrderList('1')"
 				});
 			if (bKeepAlive) {
-				that.expectRequest("SalesOrderList?$count=true&$top=0", {
+				that.expectRequest("SalesOrderList?$count=true&$filter=not (SalesOrderID eq '1')"
+					+ "&$top=0", {
 					"@odata.count" : "4",
 					value : []
 				});
@@ -36784,7 +36892,8 @@ sap.ui.define([
 				that.expectRequest({
 						batchNo : iBatch,
 						url : "SalesOrderList?$count=true"
-							+ "&$filter=(GrossAmount gt 1000) and not (SalesOrderID eq 'new')"
+							+ "&$filter=(GrossAmount gt 1000) and not (SalesOrderID eq '1'"
+								+ " or SalesOrderID eq 'new')"
 							+ "&$top=0"
 					}, {
 						"@odata.count" : oFixture.bCountHasChanged ? "41" : "42",
@@ -36840,13 +36949,15 @@ sap.ui.define([
 				}, createErrorInsideBatch(null, 404))
 				.expectRequest({
 					batchNo : 4,
-					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123&$top=0"
+					url : "SalesOrderList?$count=true"
+						+ "&$filter=(GrossAmount gt 123) and not (SalesOrderID eq '1')&$top=0"
 				}) // response does not matter, fails with DELETE in same $batch
 				.expectChange("objectPageGrossAmount", null)
 				.expectChange("objectPageNote", null)
 				.expectRequest({
 					batchNo : 5,
-					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123&$top=0"
+					url : "SalesOrderList?$count=true"
+						+ "&$filter=(GrossAmount gt 123) and not (SalesOrderID eq '1')&$top=0"
 				}, {
 					"@odata.count" : "38",
 					value : []

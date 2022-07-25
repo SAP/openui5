@@ -80,13 +80,13 @@ sap.ui.define([
 						value : []
 					}
 				},
-				"SalesOrderList?$count=true&$filter=GrossAmount%20gt%201000&$top=0" : {
+				"SalesOrderList?$count=true&$filter=(GrossAmount%20gt%201000)%20and%20not%20(SalesOrderID%20eq%20'0500000004')&$top=0" : {
 					message : {
 						"@odata.count" : "7",
 						value : []
 					}
 				},
-				"SalesOrderList('0500000000')/SO_2_SOITEM?$count=true&$top=0" : {
+				"SalesOrderList('0500000000')/SO_2_SOITEM?$count=true&$filter=not%20(SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000010')&$top=0" : {
 					message : {
 						"@odata.count" : "26",
 						value : []
