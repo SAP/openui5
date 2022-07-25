@@ -3,7 +3,7 @@
  */
 
 /* global QUnit */
-// QUnit.config.autostart = false;
+QUnit.config.autostart = false;
 
 sap.ui.require([
 	"sap/ui/test/Opa5",
@@ -26,7 +26,7 @@ sap.ui.require([
 		},
 		testLibs: {
 			mdcTestLibrary: {
-			// 	viewName: "sap.ui.mdc.sample.FieldEditMode.View"
+				viewName: "sap.ui.v4.demo.view.App"
 			}
 		}
 	});
@@ -39,7 +39,7 @@ sap.ui.require([
 		if (bServerAvailable) {
 
 			sap.ui.require([
-				"local/test/TestJourney"
+				"local/test/ListReportJourney"
 			], function() {
 				QUnit.start();
 			});
