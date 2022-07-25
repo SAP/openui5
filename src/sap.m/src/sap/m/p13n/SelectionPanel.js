@@ -118,7 +118,7 @@ sap.ui.define([
 		this._bShowFactory = false;
 		this.addStyleClass("SelectionPanelHover");
 		this._displayColumns();
-		this.setEnableReorder(true);
+		this._updateMovement(this.getEnableReorder());
 	};
 
 	SelectionPanel.prototype.setItemFactory = function(fnItemFactory) {
@@ -343,7 +343,8 @@ sap.ui.define([
 		var aColumns = [
 			this.getFieldColumn()
 		];
-		if (!this._bShowFactory) {
+		var bShowActiveColumn = this.getEnableReorder() || this.getActiveColumn();
+		if (!this._bShowFactory && bShowActiveColumn) {
 			aColumns.push(new Column({
 				width: "30%",
 				hAlign: "Center",
