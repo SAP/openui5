@@ -3,6 +3,17 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "733285eb279c20da59bc5ba2c85d390fb3eaae8f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Тhe select event now works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280134456"
+          }
+        ]
+      },
+      {
         "id": "1742ac7743a7834da63b1128ee31d16a28d1b2ee",
         "type": "FEATURE",
         "text": " sap.ui.unified.FileUploader: enable directory selection"

@@ -3,6 +3,28 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "24734bd3e36cd7b3b6cabc15d056c1517546ce38",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Option suggestion name is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280124375"
+          }
+        ]
+      },
+      {
+        "id": "a4ec0a38aebcab813079c586487f0ffad66a4c71",
+        "type": "FIX",
+        "text": " m.VariantManagement: remove modification handling during save",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280135359"
+          }
+        ]
+      },
+      {
         "id": "6cb6d4eccc576987b2e9e85cac57dd0a9e1f932a",
         "type": "FIX",
         "text": " sap.m.NavContainer: fix .to() method documentation"
@@ -96,6 +118,17 @@
           {
             "type": "BCP",
             "reference": "2270088701"
+          }
+        ]
+      },
+      {
+        "id": "c3c2a8db8d8ba5476d2d92d730da2c2633b0f6ed",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Enhanced active title description",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280115924"
           }
         ]
       },

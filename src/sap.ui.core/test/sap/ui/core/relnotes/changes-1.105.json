@@ -3,6 +3,51 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "1233137302e3c3684e67611c659c3611d8cbd65a",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#doReplaceWith: take care of created contexts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180347338"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280113990"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280127015"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280134548"
+          }
+        ]
+      },
+      {
+        "id": "9e35baa6bd256cbecce221096e4f08155c9a45b7",
+        "type": "FIX",
+        "text": " Table: Change vertical alignment of icons inside a cell to avoid cutting off",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004445502022"
+          }
+        ]
+      },
+      {
+        "id": "049c02f081d82b64c97fe70be47663eff4f9aabd",
+        "type": "FIX",
+        "text": " DateFormat: Apply timezone offset correctly in case of out-of-normal-range seconds",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004773012022"
+          }
+        ]
+      },
+      {
         "id": "ac8851b665d87820c97d0f2c9331314d5bf77d7b",
         "type": "FIX",
         "text": " sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElements: check for late properties..."

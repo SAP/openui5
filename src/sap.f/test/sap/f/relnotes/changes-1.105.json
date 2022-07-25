@@ -3,6 +3,11 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "a338dba46e29d4e83e5cf72ad15a43cbe25829a0",
+        "type": "FEATURE",
+        "text": " sap.f.semantic.SemanticPage: Share action shortcut added"
+      },
+      {
         "id": "308bc1ce1e7869506a32f9d2d335adf365078970",
         "type": "FIX",
         "text": " sap.f.DynamicPage: Correct header visibility issue",

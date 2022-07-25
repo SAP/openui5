@@ -3,6 +3,11 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "418c3f1825bede3bf44bf925b0645e18a481e2cf",
+        "type": "FEATURE",
+        "text": " SmartFilterBar - add custom-field button during UI adaptation at runtime is now available"
+      },
+      {
         "id": "ef095ae7dde894ac9bd17dbe199c545f16417724",
         "type": "FIX",
         "text": " MDC Chart & SmartChart: Item panel field sorting",

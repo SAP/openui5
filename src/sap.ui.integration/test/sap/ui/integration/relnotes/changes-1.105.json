@@ -3,6 +3,17 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "438558893f18c7899fd7c42fbbd01fb9d2fc245b",
+        "type": "FIX",
+        "text": " Integration cards: Fixed height flickering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280132052"
+          }
+        ]
+      },
+      {
         "id": "4e450d4966dfb2142b9d0519ba28d0744830922a",
         "type": "FIX",
         "text": " sap.ui.integration.widgets.Card: showMessage method now correctly handles expression binding",
