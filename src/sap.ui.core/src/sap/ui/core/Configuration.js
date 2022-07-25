@@ -164,7 +164,8 @@ sap.ui.define([
 					"xx-hyphenation" : { type : "string",  defaultValue : ""}, // (empty string)|native|thirdparty|disable
 					"xx-flexBundleRequestForced" : { type : "boolean",  defaultValue : false },
 					"xx-cssVariables"       : { type : "string",   defaultValue : "false" }, // false|true|additional (additional just includes the css_variables.css in addition)
-					"statistics"            : { type : "boolean",  defaultValue : false }
+					"statistics"            : { type : "boolean",  defaultValue : false },
+					"xx-acc-keys"           : {  type : "boolean",  defaultValue : false }
 			};
 
 			var M_COMPAT_FEATURES = {
@@ -1576,6 +1577,17 @@ sap.ui.define([
 		 */
 		getHyphenation : function() {
 			return this["xx-hyphenation"];
+		},
+
+		/**
+		 * Gets if pressing alt key will highlight access keys enabled elements on the screen.
+		 *
+		 * @returns {boolean} whether access keys is enabled
+		 * @since 1.104.0
+		 * @experimental
+		 */
+		getAccKeys: function () {
+			return this["xx-acc-keys"];
 		},
 
 		/**

@@ -5,11 +5,12 @@
  sap.ui.define([
 	 "sap/ui/core/Renderer",
 	 "sap/ui/core/library",
+	 'sap/ui/core/AccessKeysEnablement',
 	 "sap/ui/util/defaultLinkTypes",
 	 './library',
 	 'sap/ui/core/Core'
 	],
-	function(Renderer, coreLibrary, defaultLinkTypes, mobileLibrary, Core) {
+	function(Renderer, coreLibrary, AccessKeysEnablement, defaultLinkTypes, mobileLibrary, Core) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -55,7 +56,8 @@
 				haspopup: (sHasPopupType === AriaHasPopup.None) ? null : sHasPopupType.toLowerCase()
 			},
 			bEnabled = oControl.getEnabled(),
-			sTypeSemanticInfo = "";
+			sTypeSemanticInfo = "",
+			sAcccessKey = oControl.getProperty("accesskey");
 
 		// Link is rendered as a "<a>" element
 		oRm.openStart("a", oControl);
@@ -69,6 +71,10 @@
 		if (oControl.getEmphasized()) {
 			oRm.class("sapMLnkEmphasized");
 			sTypeSemanticInfo += " " + oControl._sAriaLinkEmphasizedId;
+		}
+
+		if (sAcccessKey) {
+			oRm.attr("data-ui5-accesskey", sAcccessKey);
 		}
 
 		switch (sAccessibleRole) {

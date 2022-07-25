@@ -3,8 +3,8 @@
  */
 
 // Provides the default renderer for control sap.m.Label
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library', 'sap/m/HyphenationSupport', "sap/ui/core/LabelEnablement"],
-	function(Core, Renderer, library, coreLibrary, HyphenationSupport, LabelEnablement) {
+sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/Renderer', 'sap/ui/core/AccessKeysEnablement', 'sap/m/library', 'sap/ui/core/library', 'sap/m/HyphenationSupport', "sap/ui/core/LabelEnablement"],
+	function(Core, Renderer, AccessKeysEnablement, library, coreLibrary, HyphenationSupport, LabelEnablement) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -121,6 +121,11 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/Renderer', 'sap/m/library', 'sap
 		// wrap the label text
 		rm.openStart("span", oLabel.getId() + "-text");
 		rm.class("sapMLabelTextWrapper");
+
+		if (oLabel.getProperty("highlightAccKeysRef")) {
+			rm.class(AccessKeysEnablement.CSS_CLASS);
+		}
+
 		rm.openEnd();
 
 		// write the label text

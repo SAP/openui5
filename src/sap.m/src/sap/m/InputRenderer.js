@@ -70,6 +70,10 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 		}
 	};
 
+	InputRenderer.writeOuterAttributes = function (oRm, oControl) {
+		oRm.attr("data-ui5-accesskey", oControl.getProperty("accesskey"));
+	};
+
 	/**
 	 * Adds inner css classes to the input field
 	 *

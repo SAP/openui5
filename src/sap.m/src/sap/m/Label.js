@@ -5,6 +5,7 @@
 // Provides control sap.m.Label
 sap.ui.define([
 	'./library',
+	"sap/ui/core/Core",
 	'sap/ui/core/Control',
 	'sap/ui/core/LabelEnablement',
 	'sap/m/HyphenationSupport',
@@ -13,6 +14,7 @@ sap.ui.define([
 ],
 function(
 	library,
+	Core,
 	Control,
 	LabelEnablement,
 	HyphenationSupport,
@@ -71,7 +73,7 @@ function(
 	 * <li> It is not recommended to use labels in Bold.</li>
 	 * </ul>
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.Label, sap.ui.core.IShrinkable
+	 * @implements sap.ui.core.Label, sap.ui.core.IShrinkable, sap.ui.core.IAccessKeySupport
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -88,7 +90,8 @@ function(
 			"sap.ui.core.Label",
 			"sap.ui.core.IShrinkable",
 			"sap.m.IOverflowToolbarContent",
-			"sap.m.IHyphenation"
+			"sap.m.IHyphenation",
+			"sap.ui.core.IAccessKeySupport"
 		],
 		library : "sap.m",
 		properties : {
@@ -166,7 +169,15 @@ function(
 			 * regardless of the value of the <code>showColon</code> property.
 			 * @since 1.98
 			 */
-			showColon : {type : "boolean", group : "Appearance", defaultValue : false}
+			showColon : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Indicates whether the access keys ref of the control should be highlighted.
+			 * NOTE: this property is used only when access keys feature is turned on.
+			 *
+			 * @private
+			 */
+			highlightAccKeysRef: { type: "boolean", defaultValue: false, visibility: "hidden" }
 		},
 		associations : {
 
@@ -197,6 +208,25 @@ function(
 		return {
 			description: sDescription
 		};
+	};
+
+	Label.prototype.onBeforeRendering = function () {
+		this._handleAccessKeysHighlighting();
+	};
+
+	Label.prototype._handleAccessKeysHighlighting = function () {
+		var sLabelForId = this.getLabelFor();
+		var sText = this.getText();
+
+		if (!sLabelForId || !sText) {
+			return;
+		}
+
+		var oLabeledControl = Core.byId(sLabelForId);
+
+		if (oLabeledControl && oLabeledControl.isA("sap.m.Input") && oLabeledControl.getProperty("highlightAccKeysRef")) {
+			Core.byId(sLabelForId).setProperty("accesskey", (sText[0].toLowerCase()), true);
+		}
 	};
 
 	/**

@@ -5,9 +5,11 @@
 // Provides control sap.m.Button.
 sap.ui.define([
 	"./library",
+	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/ShortcutHintsMixin",
 	"sap/ui/core/EnabledPropagator",
+	"sap/ui/core/AccessKeysEnablement",
 	"sap/ui/core/IconPool",
 	"sap/ui/Device",
 	"sap/ui/core/ContextMenuSupport",
@@ -20,9 +22,11 @@ sap.ui.define([
 	"sap/base/Log"
 ], function(
 	library,
+	Core,
 	Control,
 	ShortcutHintsMixin,
 	EnabledPropagator,
+	AccessKeysEnablement,
 	IconPool,
 	Device,
 	ContextMenuSupport,
@@ -83,7 +87,7 @@ sap.ui.define([
 	 * inactive and cannot be pressed.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IFormContent
+	 * @implements sap.ui.core.IFormContent, sap.ui.core.IAccessKeySupport
 	 * @mixes sap.ui.core.ContextMenuSupport
 	 *
 	 * @author SAP SE
@@ -97,7 +101,10 @@ sap.ui.define([
 	 */
 	var Button = Control.extend("sap.m.Button", /** @lends sap.m.Button.prototype */ { metadata : {
 
-		interfaces : ["sap.ui.core.IFormContent"],
+		interfaces : [
+			"sap.ui.core.IFormContent",
+			"sap.ui.core.IAccessKeySupport"
+		],
 		library : "sap.m",
 		properties : {
 
@@ -164,7 +171,23 @@ sap.ui.define([
 			 *
 			 * @since 1.84.0
 			 */
-			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None}
+			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None},
+
+			/**
+			 * Indicates whether the access keys ref of the control should be highlighted.
+			 * NOTE: this property is used only when access keys feature is turned on.
+			 *
+			 * @private
+			 */
+			highlightAccKeysRef: { type: "boolean", defaultValue: false, visibility: "hidden" },
+
+			/**
+			 * Indicates which keyboard key should be pressed to focus the access key ref
+			 * NOTE: this property is used only when access keys feature is turned on.
+			 *
+			 * @private
+			 */
+			accesskey: { type: "string", defaultValue: "", visibility: "hidden" }
 
 		},
 		associations : {
@@ -230,6 +253,8 @@ sap.ui.define([
 
 		this._badgeMinValue = BADGE_MIN_VALUE;
 		this._badgeMaxValue = BADGE_MAX_VALUE;
+
+		AccessKeysEnablement.registerControl(this);
 	};
 
 	//Formatter callback of the badge pre-set value, before it is visualized
@@ -322,7 +347,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype._updateBadgeInvisibleText = function(vValue) {
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oRb = Core.getLibraryResourceBundle("sap.m"),
 			sInvisibleTextValue,
 			iPlusPos;
 
@@ -415,7 +440,16 @@ sap.ui.define([
 	Button.prototype.onBeforeRendering = function() {
 		this._bRenderActive = this._bActive;
 
+		this._updateAccessKey();
 		this.$().off("mouseenter", this._onmouseenter);
+	};
+
+	Button.prototype._updateAccessKey = function () {
+		var sText = this.getText();
+
+		if (sText) {
+			this.setProperty("accesskey", sText[0].toLowerCase(), true);
+		}
 	};
 
 	/*
@@ -890,7 +924,7 @@ sap.ui.define([
 
 		return {
 			role: "button",
-			type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"),
+			type: Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"),
 			description: sDesc,
 			focusable: this.getEnabled(),
 			enabled: this.getEnabled()

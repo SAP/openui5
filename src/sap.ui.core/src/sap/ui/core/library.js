@@ -1733,6 +1733,7 @@ sap.ui.define([
 	 * @public
 	 * @experimental As of version 1.98
 	 * @since 1.98.0
+	 *
 	 */
 
 	/**
@@ -1760,7 +1761,47 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Implementing this interface allows a control to be accessible via access keys.
+	 *
+	 * @name sap.ui.core.IAccessKeySupport
+	 * @interface
+	 * @public
+	 * @experimental As of version 1.104
+	 * @since 1.104
+	 */
 
+	/**
+	 * Returns a refence to DOM element to be focused during Access key navigation.
+	 * If not implemented getFocusDomRef() method is used.
+	 *
+	 * @public
+	 * @function
+	 * @experimental As of version 1.104
+	 * @since 1.104
+	 * @name sap.ui.core.IAccessKeySupport.getAccessKeysFocusTarget?
+	 */
+
+	/**
+	 * If implemented called when access keys feature is enabled and highlighting is ongoing
+	 *
+	 * @public
+	 * @function
+	 * @experimental As of version 1.104
+	 * @since 1.104
+	 * @name sap.ui.core.IAccessKeySupport.onAccKeysHighlightStart?
+	 */
+
+	/**
+	 * If implemented called when access keys feature is enabled and highlighting is over
+	 *
+	 * @public
+	 * @function
+	 * @experimental As of version 1.104
+	 * @since 1.104
+	 * @name sap.ui.core.IAccessKeySupport.onAccKeysHighlightEnd?
+	 */
+
+	/**
 	 * Marker interface for controls that can serve as a context menu.
 	 *
 	 * Implementation of this interface should implement the <code>openAsContextMenu</code> method.

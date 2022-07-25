@@ -6,6 +6,9 @@
 sap.ui.define([
 	'./InputBase',
 	'sap/ui/core/Item',
+	'sap/ui/core/Core',
+	'sap/ui/core/LabelEnablement',
+	'sap/ui/core/AccessKeysEnablement',
 	'./ColumnListItem',
 	'./GroupHeaderListItem',
 	'sap/ui/core/SeparatorItem',
@@ -38,6 +41,9 @@ sap.ui.define([
 function(
 	InputBase,
 	Item,
+	Core,
+	LabelEnablement,
+	AccessKeysEnablement,
 	ColumnListItem,
 	GroupHeaderListItem,
 	SeparatorItem,
@@ -147,6 +153,7 @@ function(
 	 * </ul>
 	 *
 	 * @extends sap.m.InputBase
+	 * @implements sap.ui.core.IAccessKeySupport
 	 * @author SAP SE
 	 * @version ${version}
 	 *
@@ -157,7 +164,9 @@ function(
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Input = InputBase.extend("sap.m.Input", /** @lends sap.m.Input.prototype */ { metadata : {
-
+		interfaces : [
+			"sap.ui.core.IAccessKeySupport"
+		],
 		library : "sap.m",
 		properties : {
 
@@ -324,7 +333,23 @@ function(
 			 * Specifies whether to display separators in tabular suggestions.
 			 * @private
 			 */
-			separateSuggestions: { type: "boolean", defaultValue: false, visibility: "hidden" }
+			separateSuggestions: { type: "boolean", defaultValue: false, visibility: "hidden" },
+
+			/**
+			 * Indicates whether the access keys ref of the control should be highlighted.
+			 * NOTE: this property is used only when access keys feature is turned on.
+			 *
+			 * @private
+			 */
+			highlightAccKeysRef: { type: "boolean", defaultValue: false, visibility: "hidden" },
+
+			/**
+			 * Indicates which keyboard key should be pressed to focus the access key ref
+			 * NOTE: this property is used only when access keys feature is turned on.
+			 *
+			 * @private
+			 */
+			accesskey: { type: "string", defaultValue: "", visibility: "hidden" }
 		},
 		defaultAggregation : "suggestionItems",
 		aggregations : {
@@ -586,6 +611,28 @@ function(
 		// indicates whether input's popover has finished opening
 		// we asume that after open its content has been rendered => we don't have the power user scenario
 		this._bAfterOpenFinisihed = false;
+
+		AccessKeysEnablement.registerControl(this);
+	};
+
+	var setRefLabelsHighlightAccKeysRef = function (bHighlightAccKeysRef) {
+		var aRefLabels = LabelEnablement.getReferencingLabels(this);
+
+		aRefLabels.forEach(function(sLabelId) {
+			Core.byId(sLabelId).setProperty("highlightAccKeysRef", bHighlightAccKeysRef);
+		}, this);
+	};
+
+	Input.prototype.getAccessKeysFocusTarget = function () {
+		return this.getFocusDomRef();
+	};
+
+	Input.prototype.onAccKeysHighlightStart = function () {
+		setRefLabelsHighlightAccKeysRef.call(this, true);
+	};
+
+	Input.prototype.onAccKeysHighlightEnd = function () {
+		setRefLabelsHighlightAccKeysRef.call(this, false);
 	};
 
 	/**

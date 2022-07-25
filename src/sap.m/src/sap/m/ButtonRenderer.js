@@ -7,10 +7,11 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/core/ShortcutHintsMixin',
 	'sap/m/library',
-	'sap/ui/core/InvisibleText'
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/AccessKeysEnablement'
 ],
 
-	function(coreLibrary, IconPool, ShortcutHintsMixin, library, InvisibleText) {
+	function(coreLibrary, IconPool, ShortcutHintsMixin, library, InvisibleText, AccessKeysEnablement) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -64,6 +65,8 @@ sap.ui.define([
 		// start button tag
 		oRm.openStart("button", oButton);
 		oRm.class("sapMBtnBase");
+
+		oRm.attr("data-ui5-accesskey", oButton.getProperty("accesskey"));
 
 		// button container style class
 		if (!oButton._isUnstyled()) {
@@ -196,6 +199,11 @@ sap.ui.define([
 			if (sTextDir !== TextDirection.Inherit) {
 				oRm.attr("dir", sTextDir.toLowerCase());
 			}
+
+			if (oButton.getProperty("highlightAccKeysRef")) {
+				oRm.class(AccessKeysEnablement.CSS_CLASS);
+			}
+
 			oRm.openEnd();
 
 			if (bRenderBDI) {

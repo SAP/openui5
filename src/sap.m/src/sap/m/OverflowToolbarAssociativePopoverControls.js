@@ -117,7 +117,7 @@ sap.ui.define(['sap/ui/base/Object', './OverflowToolbarButton', './OverflowToolb
 			"sap.m.Button": {
 				canOverflow: true,
 				listenForEvents: ["press"],
-				noInvalidationProps: ["enabled"]
+				noInvalidationProps: ["enabled", "accesskey"]
 			},
 			"sap.m.MenuButton": {
 				canOverflow: true,
@@ -137,7 +137,7 @@ sap.ui.define(['sap/ui/base/Object', './OverflowToolbarButton', './OverflowToolb
 			"sap.m.CheckBox": {
 				canOverflow: true,
 				listenForEvents: ["select"],
-				noInvalidationProps: ["enabled", "selected"]
+				noInvalidationProps: ["enabled", "selected", "accesskey"]
 			},
 			"sap.m.ToggleButton": {
 				canOverflow: true,
@@ -157,7 +157,7 @@ sap.ui.define(['sap/ui/base/Object', './OverflowToolbarButton', './OverflowToolb
 			"sap.m.Input": {
 				canOverflow: true,
 				listenForEvents: [],
-				noInvalidationProps: ["enabled", "value"]
+				noInvalidationProps: ["enabled", "value", "accesskey"]
 			},
 			"sap.m.DateTimeInput": {
 				canOverflow: true,
