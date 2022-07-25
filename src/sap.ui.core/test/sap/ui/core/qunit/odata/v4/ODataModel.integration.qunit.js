@@ -41806,7 +41806,7 @@ sap.ui.define([
 				"/Artists(ArtistID='23',IsActiveEntity=true)",
 				"/Artists(ArtistID='42',IsActiveEntity=true)"
 			]);
-			assert.strictEqual(oActiveContext.isTransient(), false);
+			assert.strictEqual(oActiveContext.isTransient(), undefined, "no change here");
 
 			// Note: this test is just about the right key predicate, no need for fake side effect
 			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=true)"
@@ -41834,6 +41834,113 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: In an ODLB w/ filter, but w/o UI, create a new draft entity and execute the
+	// ActivationAction to replace the draft context with the active context. Refresh the active
+	// context in order to make it drop out of the collection, alternatively delete it. See that
+	// internal bookkeeping is OK by creating an inactive row at the other end.
+	// BCP: 2180347338, 2280113990, 2280127015, 2280134548
+[false, true].forEach(function (bAtEnd) {
+	[false, true].forEach(function (bDelete) {
+		var sTitle = "refreshSingle|onRemove: destroyCreated; at end = " + bAtEnd
+				+ ", delete = " + bDelete;
+
+	QUnit.test(sTitle, function (assert) {
+		var oActiveContext,
+			oDraftContext,
+			oInactiveContext,
+			oListBinding,
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			oListBinding = oModel.bindList("/Artists", null, [],
+				[new Filter("sendsAutographs", FilterOperator.EQ, true)]);
+
+			that.expectRequest("Artists?$filter=sendsAutographs%20eq%20true&$skip=0&$top=100", {
+					value : []
+				});
+
+			return Promise.all([
+				oListBinding.requestContexts(),
+				that.waitForChanges(assert, "make length final")
+			]);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "Artists",
+					payload : {}
+				}, {
+					ArtistID : "23",
+					IsActiveEntity : false
+				});
+
+			oDraftContext = oListBinding.create({}, /*bSkipRefresh*/true, bAtEnd);
+
+			return Promise.all([
+				oDraftContext.created(),
+				that.waitForChanges(assert, "create new draft entity")
+			]);
+		}).then(function () {
+			var oActionBinding
+				= that.oModel.bindContext("special.cases.ActivationAction(...)", oDraftContext);
+
+			that.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='23',IsActiveEntity=false)"
+						+ "/special.cases.ActivationAction",
+					payload : {}
+				}, {
+					ArtistID : "23",
+					IsActiveEntity : true
+				});
+
+			return Promise.all([
+				// code under test
+				oActionBinding.execute(undefined, false, null, /*bReplaceWithRVC*/true),
+				that.waitForChanges(assert, "execute ActivationAction")
+			]);
+		}).then(function (aResults) {
+			oActiveContext = aResults[0];
+
+			if (bDelete) {
+				that.expectRequest({
+					method : "DELETE",
+					url : "Artists(ArtistID='23',IsActiveEntity=true)"
+				});
+
+				return Promise.all([
+					// code under test
+					oActiveContext.delete(),
+					that.waitForChanges(assert, "delete")
+				]);
+			}
+
+			that.expectRequest("Artists?$filter=(sendsAutographs eq true)"
+					+ " and ArtistID eq '23' and IsActiveEntity eq true", {
+					value : [] // sorry, no autographs anymore ;-)
+				});
+
+			return Promise.all([
+				// code under test
+				oActiveContext.requestRefresh(/*sGroupId*/undefined, /*bAllowRemoval*/true),
+				that.waitForChanges(assert, "refreshSingleWithRemove")
+			]);
+		}).then(function () {
+			// code under test
+			oInactiveContext = oListBinding.create({}, true, !bAtEnd, /*bInactive*/true);
+
+			return Promise.all([
+				checkCanceled(assert, oInactiveContext.created()),
+				// code under test
+				oInactiveContext.delete(),
+				that.waitForChanges(assert, "create at other end")
+			]);
+		});
+	});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: ODLB#getAllCurrentContexts must not fire unnecessary change events and must not
