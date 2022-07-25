@@ -38,12 +38,13 @@ sap.ui.define([
 				 * @method iPersonalizeFilter
 				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is filtered
 				 * @param {FilterPersonalizationConfiguration[]} aSettings Array containing the filter personalization configuration objects
-				 * @param {function} fnOpenThePersonalizationDialog A function that opens the personalization dialog of the given control
+				 * @param {function} fnOpen A function that opens the personalization dialog of the given control
+				 * @param {boolean} bCancel Cancel the personalization dialog after the configuration has been done instead of confirming it
 				 * @returns {Promise} OPA waitFor
 				 * @public
 				 */
-				iPersonalizeFilter: function(oControl, aSettings) {
-					return p13nActions.iPersonalizeFilter.call(this, oControl, aSettings, TableActions.iOpenThePersonalizationDialog);
+				iPersonalizeFilter: function(oControl, aSettings, fnOpen, bCancel) {
+					return p13nActions.iPersonalizeFilter.call(this, oControl, aSettings, fnOpen || TableActions.iOpenThePersonalizationDialog, bCancel);
 				},
 				/**
 				 * @typedef {object} GroupPersonalizationConfiguration
@@ -161,6 +162,39 @@ sap.ui.define([
 				 */
 				iShouldSeeARowWithData: function(iIndexOfRow, aExpectedData) {
 					return TableAssertions.iShouldSeeARowWithData.apply(this, arguments);
+				},
+				/**
+				 * @typedef {object} FilterPersonalizationConfiguration
+				 * @property {string} key Key of the value that is the result of the personalization
+				 * @property {string} operator Operator defining how the items are filtered
+				 * @property {string[]} values Filter values for the given operator
+				 * @property {string} inputControl <code>Control</code> that is used as input for the value
+				 */
+				/**
+				 * OPA5 test assertion
+				 * 1. Opens the personalization dialog of a given table.
+				 * 2. Executes the given <code>FilterPersonalizationConfiguration</code>.
+				 * 3. Closes the personalization dialog.
+				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is filtered
+				 * @param {FilterPersonalizationConfiguration[]} aConfigurations Array containing the filter personalization configuration objects
+				 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the given control
+				 * @returns {Promise} OPA waitFor
+				 */
+				iCheckFilterPersonalization: function(oControl, aConfigurations) {
+					return p13nAssertions.iCheckFilterPersonalization.call(this, oControl, aConfigurations, TableActions.iOpenThePersonalizationDialog);
+				},
+
+				/**
+				 * OPA5 test assertion
+				 * 1. Opens the personalization dialog of a given table.
+				 * 2. Checks the availability of the provided filter texts (by opening and comparing the available items in the ComboBox)
+				 * 3. Closes the personalization dialog.
+				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is filtered
+				 * @param {string[]} aFilters Array containing the names of selectable filters
+				 * @returns {Promise} OPA waitFor
+				 */
+				iCheckAvailableFilters: function(oControl, aFilters) {
+					return p13nAssertions.iCheckAvailableFilters.call(this, oControl, aFilters, TableActions.iOpenThePersonalizationDialog);
 				}
 			}
 		}

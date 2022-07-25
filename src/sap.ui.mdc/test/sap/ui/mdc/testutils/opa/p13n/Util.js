@@ -14,6 +14,7 @@ sap.ui.define([
 		texts: {
 			resetwarning: oMBundle.getText("MSGBOX_TITLE_WARNING"),
 			ok: oMDCBundle.getText("p13nDialog.OK"),
+			cancel: oMDCBundle.getText("p13nDialog.CANCEL"),
 			reset: oMDCBundle.getText("p13nDialog.RESET"),
 			none: oMDCBundle.getText("sort.PERSONALIZATION_DIALOG_OPTION_NONE"),
 			chart: oMDCBundle.getText("p13nDialog.TAB_Chart"),
