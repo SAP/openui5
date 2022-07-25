@@ -35924,6 +35924,8 @@ sap.ui.define([
 	// 3. Request an array of properties
 	// JIRA: CPOUI5ODATAV4-339
 	// BCP: 2080303042
+	//
+	// Avoid endless loop when (mock) server does not respond properly (BCP: 2280141880)
 	QUnit.test("Context#requestProperty (JIRA: CPOUI5ODATAV4-339)", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oContext = oModel.bindContext("/SalesOrderList('1')").getBoundContext(),
@@ -35975,6 +35977,21 @@ sap.ui.define([
 					assert.deepEqual(aValues, ["S", "1234", "Test"]);
 				}),
 				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=NoteLanguage", {
+				"@odata.etag" : "etag"
+				// NoteLanguage is missing by mistake --> avoid endless loop
+			});
+			that.oLogMock.expects("error")
+				.withArgs("Failed to drill-down into NoteLanguage, invalid segment: NoteLanguage");
+
+			return Promise.all([
+				// code under test
+				oContext.requestProperty("NoteLanguage").then(function (sNoteLanguage) {
+					assert.strictEqual(sNoteLanguage, undefined);
+				}),
+				that.waitForChanges(assert, "avoid endless loop")
 			]);
 		});
 	});
