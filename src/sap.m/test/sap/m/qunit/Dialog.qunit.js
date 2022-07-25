@@ -143,11 +143,53 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
-	QUnit.module("Content preservation");
+	QUnit.test("Stretched dialog's position", function (assert) {
+		var oDialog = new Dialog({
+			stretch: true,
+			content: new Text({text: "test"})
+		});
+
+		oDialog.open();
+		this.clock.tick(100);
+
+		// Assert
+		var oDomRef = oDialog.getDomRef();
+		assert.ok(oDomRef.style.left, "dialog's left position is set");
+		assert.strictEqual(oDomRef.style.right, "", "dialog's right position is not set");
+
+		// Clean up
+		oDialog.destroy();
+	});
+
+	QUnit.test("Stretched dialog's position in RTL", function (assert) {
+		var oDialog = new Dialog({
+			stretch: true,
+			content: new Text({text: "test"})
+		});
+		// simulate RTL mode
+		oDialog._bRTL = true;
+
+		oDialog.open();
+		this.clock.tick(100);
+
+		// Assert
+		var oDomRef = oDialog.getDomRef();
+		assert.ok(oDomRef.style.right, "dialog's right position is set in RTL");
+		assert.strictEqual(oDomRef.style.left, "", "dialog's left position is not set");
+
+		oDialog.destroy();
+	});
+
+	QUnit.module("Content preservation", {
+		beforeEach: function() {
+			sinon.config.useFakeTimers = false;
+		},
+		afterEach: function() {
+			sinon.config.useFakeTimers = true;
+		}
+	});
 
 	QUnit.test("Preserve Dialog Content", function(assert) {
-		this.clock.restore();
-
 		var bRendered = false;
 		var oDialog = new Dialog();
 		var oHtml = new HTML({
