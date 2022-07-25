@@ -213,7 +213,6 @@ sap.ui.define([
 			var sControlId = (vControl instanceof ManagedObject) ? vControl.getId() : vControl;
 
 			if (!oAppComponent) {
-				Log.error("Determination of a local ID suffix failed due to missing app component for " + sControlId);
 				return false;
 			}
 
