@@ -479,6 +479,9 @@ function(
 		return "tree";
 	};
 
+	// items and groupHeader mapping is not required for the table control
+	Tree.prototype.setLastGroupHeader = function() {};
+
 	return Tree;
 
 });

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
+	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
@@ -29,6 +30,7 @@ function(
 	KeyCodes,
 	BindingMode,
 	Device,
+	Core,
 	coreLibrary,
 	Control,
 	IconPool,
@@ -186,7 +188,7 @@ function(
 	}});
 
 	ListItemBase.getAccessibilityText = function(oControl, bDetectEmpty) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Core.getLibraryResourceBundle("sap.m");
 
 		if (!oControl || !oControl.getVisible || !oControl.getVisible()) {
 			return bDetectEmpty ? oBundle.getText("CONTROL_EMPTY") : "";
@@ -452,7 +454,7 @@ function(
 	};
 
 	ListItemBase.prototype.getAccessibilityInfo = function() {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oBundle = Core.getLibraryResourceBundle("sap.m");
 		return {
 			type: this.getAccessibilityType(oBundle),
 			description: this.getAccessibilityDescription(oBundle),
@@ -523,7 +525,7 @@ function(
 			id: this.getId() + "-imgDel",
 			icon: this.DeleteIconURI,
 			type: ButtonType.Transparent,
-			tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_DELETE")
+			tooltip: Core.getLibraryResourceBundle("sap.m").getText("LIST_ITEM_DELETE")
 		}).addStyleClass("sapMLIBIconDel sapMLIBSelectD").setParent(this, null, true).attachPress(function(oEvent) {
 			this.informList("Delete");
 		}, this);
@@ -560,7 +562,7 @@ function(
 			id: this.getId() + "-imgDet",
 			icon: this.DetailIconURI,
 			type: ButtonType.Transparent,
-			tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("LIST_ITEM_EDIT")
+			tooltip: Core.getLibraryResourceBundle("sap.m").getText("LIST_ITEM_EDIT")
 		}).addStyleClass("sapMLIBType sapMLIBIconDet").setParent(this, null, true).attachPress(function() {
 			this.fireDetailTap();
 			this.fireDetailPress();
@@ -824,12 +826,11 @@ function(
 	};
 
 	ListItemBase.prototype.setParent = function(oParent) {
-		Control.prototype.setParent.apply(this, arguments);
 		if (!oParent) {
-			this._bGroupHeader = false;
-			return;
+			this.informList("Removed");
 		}
 
+		Control.prototype.setParent.apply(this, arguments);
 		this.informList("Inserted", this.bSelectedDelayed);
 		return this;
 	};
@@ -847,6 +848,20 @@ function(
 	 */
 	ListItemBase.prototype.isGroupHeader = function() {
 		return this._bGroupHeader;
+	};
+
+	/**
+	 * This gets called from the ListBase for the GroupHeader items to inform the connected sub items
+	 *
+	 * @param {sap.m.ListItemBase} oLI The list item
+	 */
+	ListItemBase.prototype.setGroupedItem = function(oLI) {
+		this._aGroupedItems = this._aGroupedItems || [];
+		this._aGroupedItems.push(oLI.getId());
+	};
+
+	ListItemBase.prototype.getGroupedItems = function() {
+		return this._aGroupedItems;
 	};
 
 	/**

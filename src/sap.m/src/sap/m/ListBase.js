@@ -590,7 +590,6 @@ function(
 	};
 
 	ListBase.prototype.exit = function () {
-		this._oSelectedItem = null;
 		this._aNavSections = [];
 		this._aSelectedPaths = [];
 		this._destroyGrowingDelegate();
@@ -762,9 +761,6 @@ function(
 			return this;
 		}
 
-		// clean up the selection
-		this._oSelectedItem = null;
-
 		// suppress the synchronous DOM removal of the aggregation destroy
 		this.destroyAggregation("items", "KeepDom");
 
@@ -778,20 +774,6 @@ function(
 		}
 
 		return this;
-	};
-
-
-	ListBase.prototype.removeAllItems = function(sAggregationName) {
-		this._oSelectedItem = null;
-		return this.removeAllAggregation("items");
-	};
-
-	ListBase.prototype.removeItem = function(vItem) {
-		var oItem = this.removeAggregation("items", vItem);
-		if (oItem && oItem === this._oSelectedItem) {
-			this._oSelectedItem = null;
-		}
-		return oItem;
 	};
 
 	ListBase.prototype.getItems = function(bReadOnly) {
@@ -1452,7 +1434,22 @@ function(
 		}
 	};
 
+	ListBase.prototype.onItemRemoved = function(oItem) {
+		oItem._bGroupHeader = false;
+		if (this._oLastGroupHeader == oItem) {
+			this._oLastGroupHeader = null;
+		}
+		if (this._oSelectedItem == oItem) {
+			this._oSelectedItem = null;
+		}
+	};
+
 	ListBase.prototype.onItemInserted = function(oItem, bSelectedDelayed) {
+		// trigger is also an item of the ListBase which should not me mapped to the groupHeaders
+		if (this._oLastGroupHeader && !oItem.isGroupHeader()) {
+			this._oLastGroupHeader.setGroupedItem(oItem);
+		}
+
 		if (bSelectedDelayed) {
 			// item was already selected before inserted to the list
 			this.onItemSelectedChange(oItem, true);
@@ -1936,15 +1933,29 @@ function(
 
 	ListBase.prototype.addItemGroup = function(oGroup, oHeader, bSuppressInvalidate) {
 		if (!oHeader) {
-			oHeader = new GroupHeaderListItem();
-			// setter is used to avoid complex binding parser checks which happens when setting values in constructor (ManagedObject)
-			// i.e., to ignore binding strings "{" "[" from the value being set
-			oHeader.setTitle(oGroup.text || oGroup.key);
+			oHeader = this.getGroupHeaderTemplate(oGroup);
 		}
 
 		oHeader._bGroupHeader = true;
 		this.addAggregation("items", oHeader, bSuppressInvalidate);
+		this.setLastGroupHeader(oHeader);
 		return oHeader;
+	};
+
+	ListBase.prototype.getGroupHeaderTemplate = function(oGroup) {
+		var oHeader = new GroupHeaderListItem();
+		// setter is used to avoid complex binding parser checks which happens when setting values in constructor (ManagedObject)
+		// i.e., to ignore binding strings "{" "[" from the value being set
+		oHeader.setTitle(oGroup.text || oGroup.key);
+		return oHeader;
+	};
+
+	ListBase.prototype.setLastGroupHeader = function(oGroupHeader) {
+		this._oLastGroupHeader = oGroupHeader;
+	};
+
+	ListBase.prototype.getLastGroupHeader = function() {
+		return this._oLastGroupHeader;
 	};
 
 	ListBase.prototype.removeGroupHeaders = function(bSuppressInvalidate) {
@@ -1998,15 +2009,25 @@ function(
 	ListBase.prototype.getAccessbilityPosition = function(oItem) {
 		var iSetSize = 0,
 			aItems = this.getVisibleItems(),
-			iPosInset = aItems.indexOf(oItem) + 1,
+			sAriaRole = this.getAriaRole(),
+			// exclude group headers from item count for role="list" || role="listbox" only
+			bExcludeGroupHeaderFromCount = sAriaRole === "list" || sAriaRole === "listbox";
+
+		if (bExcludeGroupHeaderFromCount) {
+			aItems = aItems.filter(function(oItem) {
+				return !oItem.isGroupHeader();
+			});
+		}
+
+		var iPosInset = aItems.indexOf(oItem) + 1,
 			oBinding = this.getBinding("items");
 
 		// use binding length if list is in scroll to load growing mode
 		if (this.getGrowing() && this.getGrowingScrollToLoad() && oBinding && oBinding.isLengthFinal()) {
 			iSetSize = oBinding.getLength();
-			if (oBinding.isGrouped()) {
+			if (oBinding.isGrouped() && !bExcludeGroupHeaderFromCount) {
 				iSetSize += aItems.filter(function(oItem) {
-					return oItem.isGroupHeader() && oItem.getVisible();
+					return oItem.isGroupHeader();
 				}).length;
 			}
 		} else {
@@ -2042,7 +2063,7 @@ function(
 
 			// when items have the role="listitem", aria-roledescription attribute containing the "type" info is already added to DOM,
 			// hence there is no need to add this information again to the custom announcement
-			if (this.getAriaRole() === "listbox") {
+			if (this.getAriaRole() !== "list") {
 				sDescription += oAccInfo.type + " . ";
 			}
 
