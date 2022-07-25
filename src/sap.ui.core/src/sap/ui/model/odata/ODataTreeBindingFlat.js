@@ -9,14 +9,15 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/uid",
+	"sap/ui/model/_Helper",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
 	"sap/ui/model/Filter",
 	"sap/ui/model/TreeBinding",
 	"sap/ui/model/TreeBindingUtils",
 	"sap/ui/model/odata/v2/ODataTreeBinding"
-], function(assert, Log, extend, isEmptyObject, uid, ChangeReason, Context, Filter, TreeBinding,
-		TreeBindingUtils, ODataTreeBinding) {
+], function(assert, Log, extend, isEmptyObject, uid, _Helper, ChangeReason, Context, Filter,
+		TreeBinding, TreeBindingUtils, ODataTreeBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.ODataTreeBindingFlat";
@@ -3403,64 +3404,73 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	/*
+	/**
+	 * Requests the magnitude, preorder rank and drill state for the given node.
+	 *
+	 * @param {object} oNode
+	 *   The node
+	 * @param {object} mParameters
+	 *   A map of parameters
+	 * @param {function} [mParameters.error]
+	 *   The function which is called once the request is completed with an error
+	 * @param {string} [mParameters.groupId]
+	 *   The group ID, if omitted this binding's group ID is used
+	 * @param {function} [mParameters.success]
+	 *   The function which is called once the request is completed successfully
+	 *
 	 * @private
 	 */
-	ODataTreeBindingFlat.prototype._generatePreorderPositionRequest = function(oNode, mParameters) {
-		var sGroupId, sKeyProperty, sKeySelect, mUrlParameters,
-			successHandler, errorHandler,
+	ODataTreeBindingFlat.prototype._generatePreorderPositionRequest = function (oNode,
+			mParameters) {
+		var i, sKeyProperty, fnOrgSuccess, fnSuccess, mUrlParameters,
 			aFilters = [],
-			aSorters = this.aSorters || [],
-			i;
+			sResolvedPath = this.getResolvedPath(),
+			aSelect = [],
+			that = this;
 
-		if (mParameters) {
-			sGroupId = mParameters.groupId || this.sGroupId;
-			successHandler = mParameters.success;
-			errorHandler = mParameters.error;
+		if (!sResolvedPath) {
+			return;
 		}
+
+		mParameters = mParameters || {};
+		fnOrgSuccess = mParameters.success || function () {};
+		fnSuccess = function (oData) {
+			that._updateNodeInfoAfterSave(oNode, oData.results || []);
+			fnOrgSuccess.apply(null, arguments);
+		};
 
 		if (this.aApplicationFilters) {
 			aFilters = aFilters.concat(this.aApplicationFilters);
 		}
-
 		for (i = this._aTreeKeyProperties.length - 1; i >= 0; i--) {
 			sKeyProperty = this._aTreeKeyProperties[i];
-			if (!sKeySelect) {
-				sKeySelect = sKeyProperty;
-			} else {
-				sKeySelect += "," + sKeyProperty;
-			}
+			aSelect.push(sKeyProperty);
 			aFilters.push(new Filter(
 				sKeyProperty, "EQ", oNode.context.getProperty(sKeyProperty)
 			));
 		}
-
 		aFilters.push(new Filter(
 			this.oTreeProperties["hierarchy-level-for"], "LE", this.getNumberOfExpandedLevels()
 		));
 
-		mUrlParameters = extend({}, this.mParameters);
-		mUrlParameters.select =  sKeySelect +
-									"," + this.oTreeProperties["hierarchy-node-for"] +
-									"," + this.oTreeProperties["hierarchy-node-descendant-count-for"] +
-									"," + this.oTreeProperties["hierarchy-drill-state-for"] +
-									"," + this.oTreeProperties["hierarchy-preorder-rank-for"];
+		mUrlParameters = _Helper.extend({}, this.mParameters);
+		// select the magnitude, preorder rank and drill state for the given node
+		aSelect = aSelect.concat([
+			this.oTreeProperties["hierarchy-node-for"],
+			this.oTreeProperties["hierarchy-node-descendant-count-for"],
+			this.oTreeProperties["hierarchy-drill-state-for"],
+			this.oTreeProperties["hierarchy-preorder-rank-for"]
+		]);
+		mUrlParameters.select = aSelect.join(",");
 
-		// request the magnitude and preorder
-		var sAbsolutePath = this.getResolvedPath();
-		if (sAbsolutePath) {
-			this.oModel.read(sAbsolutePath, {
-				urlParameters: this.oModel.createCustomParams(mUrlParameters),
-				filters: [new Filter({
-					filters: aFilters,
-					and: true
-				})],
-				sorters: aSorters,
-				groupId: sGroupId,
-				success: successHandler,
-				error: errorHandler
-			});
-		}
+		this.oModel.read(sResolvedPath, {
+			filters : [new Filter({filters : aFilters, and : true})],
+			error : mParameters.error,
+			groupId : mParameters.groupId || this.sGroupId,
+			sorters : this.aSorters,
+			success : fnSuccess,
+			urlParameters : this.oModel.createCustomParams(mUrlParameters)
+		});
 	};
 
 	/*
@@ -3696,27 +3706,34 @@ sap.ui.define([
 		};
 	};
 
-	/*
+	/**
+	 * Updates the "isDeepNode" and "initiallyCollapsed" properties of the given added node resp.
+	 * the "newIsDeepOne" and "newInitiallyCollapsed" properties of the given moved node based on
+	 * the given list of entities for the parent nodes.
+	 *
+	 * @param {object} oNode
+	 *   The added or moved node
+	 * @param {object[]} aEntities
+	 *   The parent nodes of the given node up to the initially expanded level
+	 *
 	 * @private
 	 */
-	ODataTreeBindingFlat.prototype._updateNodeInfoAfterSave = function(oNode) {
-		var bIsDeepOne = oNode.context.getProperty(this.oTreeProperties["hierarchy-preorder-rank-for"]) === undefined;
+	ODataTreeBindingFlat.prototype._updateNodeInfoAfterSave = function (oNode, aEntities) {
+		var bInitiallyCollapsed, bIsDeepOne,
+			oContext = oNode.context,
+			sDrillStateProperty = this.oTreeProperties["hierarchy-drill-state-for"],
+			sKeyProperty = this.oTreeProperties["hierarchy-node-for"],
+			sNodeKey = oContext.getProperty(sKeyProperty);
 
-		if (oNode.isDeepOne === undefined) {
-			// Added node
+		bIsDeepOne = !aEntities.some(function (oEntity) {
+			return sNodeKey === oEntity[sKeyProperty];
+		});
+		bInitiallyCollapsed = oContext.getProperty(sDrillStateProperty) === "collapsed";
+		if (this._aAdded.includes(oNode)) {
 			oNode.isDeepOne = bIsDeepOne;
-		} else {
-			// Moved node
-			oNode.newIsDeepOne = bIsDeepOne;
-		}
-
-		var bInitiallyCollapsed = oNode.context.getProperty(this.oTreeProperties["hierarchy-drill-state-for"]) === "collapsed";
-
-		if (oNode.initiallyCollapsed === undefined) {
-			// Added node
 			oNode.initiallyCollapsed = bInitiallyCollapsed;
-		} else {
-			// Moved node
+		} else { // moved node
+			oNode.newIsDeepOne = bIsDeepOne;
 			oNode.newInitiallyCollapsed = bInitiallyCollapsed;
 		}
 	};
@@ -3834,116 +3851,91 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._executeRestoreTreeState = function (oOptimizedChanges) {
-		var iCollapsedNodesCount,
-			oSection, aSections, oDeepNodeSection, oChildSection,
-			mCollapsedKeys,
-			aPromises,
-			i, j, k, l,
-			oChanges,
-			mDeepChanges,
+		var oChanges, iCollapsedNodesCount, mDeepChanges, aSections,
+			mCollapsedKeys = {},
+			aPromises = [],
 			that = this;
 
-		oOptimizedChanges.added.forEach(this._updateNodeInfoAfterSave.bind(this));
-		oOptimizedChanges.moved.forEach(this._updateNodeInfoAfterSave.bind(this));
-
-		aPromises = [];
-
-		// Collect server-index sections
 		aSections = this._collectServerSections(this._aNodes);
-
 		oOptimizedChanges = this._optimizeOptimizedChanges(oOptimizedChanges);
-
 		oChanges = this._filterChangeForServerSections(oOptimizedChanges);
 		this._adaptSections(aSections, oChanges);
 
-		// Request server-index nodes
-		//   (for all loaded server-index sections)
-		for (i = 0; i < aSections.length; i++) {
-			oSection = aSections[i];
-			aPromises.push(this._restoreServerIndexNodes(oSection.iSkip, oSection.iTop, i === 0 /* request inline count */));
-		}
+		// Request server-index nodes for all loaded server-index sections
+		aSections.forEach(function (oSection, i) {
+			aPromises.push(
+				// request inline count only for the first section
+				that._restoreServerIndexNodes(oSection.iSkip, oSection.iTop, i === 0));
+		});
 
-		// Request children
-		//   (for expanded nodes on initial-expand-level and expanded deep nodes)
-		var aDeepNodeSections = this._collectDeepNodes();
-
+		// Request children for expanded nodes on initial-expand-level and expanded deep nodes
 		mDeepChanges = this._filterChangesForDeepSections(oOptimizedChanges);
+		aSections = this._collectDeepNodes();
+		aSections.forEach(function (oDeepNodeSection) {
+			var aChildSections = oDeepNodeSection.aChildSections,
+				oParentNode = oDeepNodeSection.oParentNode,
+				oChanges = mDeepChanges[oParentNode.key];
 
-		for (j = 0; j < aDeepNodeSections.length; j++) {
-			oDeepNodeSection = aDeepNodeSections[j];
-
-			if (mDeepChanges) {
-				oChanges = mDeepChanges[oDeepNodeSection.oParentNode.key];
-				if (oChanges) {
-					this._adaptSections(oDeepNodeSection.aChildSections, oChanges, {
-						indexName: "positionInParent",
-						ignoreMagnitude: true
-					});
-				}
+			if (oChanges) {
+				that._adaptSections(aChildSections, oChanges, {
+					ignoreMagnitude : true,
+					indexName : "positionInParent"
+				});
 			}
+			aChildSections.forEach(function (oChildSection) {
+				aPromises.push(
+					that._restoreChildren(oParentNode, oChildSection.iSkip, oChildSection.iTop));
+			});
+		});
 
-			for (k = 0; k < oDeepNodeSection.aChildSections.length; k++) {
-				oChildSection = oDeepNodeSection.aChildSections[k];
-				aPromises.push(this._restoreChildren(oDeepNodeSection.oParentNode, oChildSection.iSkip, oChildSection.iTop));
-			}
-		}
-
-		mCollapsedKeys = {};
-		for (l = 0; l < this._aCollapsed.length; l++) {
-			mCollapsedKeys[this._aCollapsed[l].key] = true;
-		}
+		this._aCollapsed.forEach(function (oCollapsedNode) {
+			mCollapsedKeys[oCollapsedNode.key] = true;
+		});
 		iCollapsedNodesCount = this._aCollapsed.length;
-
 
 		// Dump all data
 		this.resetData(true);
 
-		function restoreCollapseState() {
-			if (iCollapsedNodesCount > 0) {
-				that._map(function (oNode, oRecursionBreaker) {
-					if (oNode && mCollapsedKeys[oNode.key]) {
-						that.collapse(oNode, true);
-						iCollapsedNodesCount--;
-						if (iCollapsedNodesCount === 0) {
-							oRecursionBreaker.broken = true;
-						}
-					}
-				});
-			}
-		}
-
-		// process all sub requests no matter it succeeds or fails
-		aPromises = aPromises.map(function(pPromise) {
-			return pPromise.then(function(aResponseData) {
-				return {
-					responseData: aResponseData
-				};
-			}, function(oError) {
-				return {
-					error: oError
-				};
+		// Process all sub requests no matter if it succeeds or fails
+		aPromises = aPromises.map(function (pPromise) {
+			return pPromise.then(function (aResponseData) {
+				return {responseData : aResponseData};
+			}, function (oError) {
+				return {error : oError};
 			});
 		});
 
-		return Promise.all(aPromises).then(function(aData) {
+		return Promise.all(aPromises).then(function (aData) {
 			var iAborted = 0;
 
 			aData.forEach(function(oData) {
-				if (oData.error) { // Error occurred
+				var oErrorResponse = oData.error;
+
+				if (oErrorResponse) {
 					// The request is aborted if statusCode is set with 0
-					if (oData.error.statusCode === 0) {
+					if (oErrorResponse.statusCode === 0) {
 						iAborted++;
 					} else {
-						throw new Error("Tree state restoration request failed. Complete or partial tree state might get lost. Error: " +
-							(oData.error.message.value || oData.error.message));
+						throw new Error("Tree state restoration request failed. Complete or partial"
+							+ " tree state might get lost. Error: "
+							+ (oErrorResponse.message.value || oErrorResponse.message));
 					}
 				}
 			});
 
 			// If all requests are aborted, the 'dataReceived' event shouldn't be fired
 			if (iAborted < aData.length) {
-				// Restore collapse state
-				restoreCollapseState();
+				if (iCollapsedNodesCount > 0) { // Restore collapse state
+					that._map(function (oNode, oRecursionBreaker) {
+						if (oNode && mCollapsedKeys[oNode.key]) {
+							that.collapse(oNode, true);
+							iCollapsedNodesCount--;
+							if (iCollapsedNodesCount === 0) {
+								oRecursionBreaker.broken = true;
+							}
+						}
+					});
+				}
 				return aData;
 			}
 
@@ -4270,29 +4262,33 @@ sap.ui.define([
 	};
 
 	/**
-	 * Collects the loaded deep nodes in the whole tree.
+	 * Collects all expanded nodes that contain loaded deep nodes.
 	 *
-	 * @return {array} Each element in the array represents all loaded children under a node.
-	 * 					The element has the following two properties: oParentNode and aChildSections.
-	 * 					oParentNode is the node where the deep nodes are collected and aChildSections
-	 * 					represents the loaded deep node sections under the oParentNode. Each element
-	 * 					in the aChildSections has these two properties: iSkip and iTop
+	 * @returns {Object[]}
+	 *   An array of expanded nodes with deep nodes. Each element has the properties "oParentNode"
+	 *   and "aChildSections". "oParentNode" is the node containing the deep nodes. "aChildSections"
+	 *   represents the loaded deep node sections under the "oParentNode". Each element in the
+	 *   aChildSections has the properties "iSkip" and "iTop".
 	 *
 	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._collectDeepNodes = function () {
-		var aDeepNodes = [], that = this;
+		var aDeepNodes = [],
+			that = this;
+
 		this._map(function(oNode) {
-			if (oNode && oNode.nodeState.expanded && (
-					(// server index nodes on the initial expansion level
-					oNode.initiallyCollapsed || oNode.isDeepOne) // deep nodes
-			)) {
+			if (oNode && oNode.nodeState.expanded
+					// initiallyIsLeaf is required for server index nodes that have been a leaf and
+					// to which deep nodes have been added; otherwise the former leaf node is not
+					// expanded when restoring the tree.
+					&& (oNode.isDeepOne || oNode.initiallyCollapsed || oNode.initiallyIsLeaf)) {
 				aDeepNodes.push({
-					oParentNode: oNode,
-					aChildSections: that._collectServerSections(oNode.children)
+					oParentNode : oNode,
+					aChildSections : that._collectServerSections(oNode.children)
 				});
 			}
 		});
+
 		return aDeepNodes;
 	};
 
