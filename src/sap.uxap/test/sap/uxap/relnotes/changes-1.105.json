@@ -3,6 +3,28 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "7c37c96edc8bb48241fbd8534bd170a67cabd941",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix scrolling to section",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270090240"
+          }
+        ]
+      },
+      {
+        "id": "a4b711b2c1d020ef8bfb88880c58d30472ebcc2a",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent error when footer is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270096171"
+          }
+        ]
+      },
+      {
         "id": "71c4a8aa56fe1ddda95e0f17062a96671de1f1ce",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Title height corrected"
