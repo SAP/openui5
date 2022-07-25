@@ -57,10 +57,12 @@ sap.ui.define([
 			this.oFilters = {
 				filters: {
 					sampleFilter: {
-						label: "MySampleFilter"
+						label: "MySampleFilter",
+						type: "Select"
 					},
 					anotherFilter: {
-						label: "MyAnotherFilter"
+						label: "MyAnotherFilter",
+						type: "Select"
 					}
 				}
 			};
@@ -109,7 +111,9 @@ sap.ui.define([
 						  "lastWeeks",
 						  "nextWeeks"
 						],
-						"selectedOptions": []
+						"sValue": undefined,
+						"selectedOptions": [],
+						"type": "Select"
 					  },
 					  {
 						"key": "anotherFilter",
@@ -125,7 +129,9 @@ sap.ui.define([
 						  "lastWeeks",
 						  "nextWeeks"
 						],
-						"selectedOptions": []
+						"sValue": undefined,
+						"selectedOptions": [],
+						"type": "Select"
 					  }
 				],
 				"Then the editor value is properly converted to an array"
@@ -153,7 +159,9 @@ sap.ui.define([
 							"lastWeeks",
 							"nextWeeks"
 						  ],
-						  "selectedOptions": []
+						  "selectedOptions": [],
+						  "type": "Select",
+						  "value": undefined
 						},
 						"sampleFilter": {
 						  "description": "dTest",
@@ -169,7 +177,9 @@ sap.ui.define([
 							"lastWeeks",
 							"nextWeeks"
 						  ],
-						  "selectedOptions": []
+						  "selectedOptions": [],
+						  "type": "Select",
+						  "value": undefined
 						}
 					},
 					"Then the description is updated"
