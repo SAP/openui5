@@ -55,5 +55,12 @@ sap.ui.define(["sap/ui/integration/util/DataProvider"], function (DataProvider) 
 		return this._oExtension[oExtensionSettings.method].apply(this._oExtension, oExtensionSettings.args);
 	};
 
+	/**
+ 	 * @override
+ 	 */
+	ExtensionDataProvider.prototype.getDetails = function () {
+		return "Load data from Extension. Method: " + this.getSettings().extension.method;
+	};
+
 	return ExtensionDataProvider;
 });

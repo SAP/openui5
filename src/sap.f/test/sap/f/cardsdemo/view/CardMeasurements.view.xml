@@ -22,16 +22,28 @@
 		<dependents>
 			<VBox id="measurementDetails">
 				<Title text="{id}" wrapping="true"></Title>
-				<HBox class="sapUiTinyMarginBottom">
-					<Label text="Start Time" showColon="true" class="sapUiTinyMarginEnd" wrapping="true"/>
-					<Text text="{start}" wrapping="false"/>
+				<HBox class="sapUiTinyMarginBottom" renderType="Bare">
+					<Label text="Start Time" showColon="true" class="sapUiTinyMarginEnd">
+						<layoutData>
+							<FlexItemData shrinkFactor="0"></FlexItemData>
+						</layoutData>
+					</Label>
+					<Text text="{start}" wrapping="true"/>
 				</HBox>
-				<HBox class="sapUiTinyMarginBottom">
-					<Label text="Duration" showColon="true" class="sapUiTinyMarginEnd" wrapping="true"/>
-					<Text text="{duration}" wrapping="false"/>
+				<HBox class="sapUiTinyMarginBottom" renderType="Bare">
+					<Label text="Duration (ms)" showColon="true" class="sapUiTinyMarginEnd">
+						<layoutData>
+							<FlexItemData shrinkFactor="0"></FlexItemData>
+						</layoutData>
+					</Label>
+					<Text text="{duration}" wrapping="true"/>
 				</HBox>
-				<HBox class="sapUiTinyMarginBottom">
-					<Label text="Info" showColon="true" class="sapUiTinyMarginEnd" wrapping="true"/>
+				<HBox class="sapUiTinyMarginBottom" renderType="Bare">
+					<Label text="Info" showColon="true" class="sapUiTinyMarginEnd">
+						<layoutData>
+							<FlexItemData shrinkFactor="0"></FlexItemData>
+						</layoutData>
+					</Label>
 					<Text text="{info}" wrapping="true"/>
 				</HBox>
 			</VBox>
