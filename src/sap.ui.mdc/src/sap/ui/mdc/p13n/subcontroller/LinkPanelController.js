@@ -41,11 +41,11 @@ sap.ui.define([
             showHeader: true,
             fieldColumn: oResourceBundle.getText("info.SELECTION_DIALOG_COLUMNHEADER_WITHOUT_COUNT"),
             enableCount: true,
+            enableReorder: false,
             linkPressed: this._onLinkPressed.bind(this)
         });
         var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
         oSelectionPanel.setP13nData(oAdaptationData.items);
-        oSelectionPanel.setEnableReorder(false);
         oSelectionPanel.setMultiSelectMode(MultiSelectMode.Default);
         this._oPanel = oSelectionPanel;
         return Promise.resolve(oSelectionPanel);

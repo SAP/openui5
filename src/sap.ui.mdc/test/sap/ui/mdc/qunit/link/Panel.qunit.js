@@ -349,17 +349,16 @@ sap.ui.define([
 				sinon.stub(FlexRuntimeInfoAPI, "isFlexSupported").returns(true);
 				sinon.stub(FlexRuntimeInfoAPI, "waitForChanges").resolves();
 
-				Engine.getInstance().uimanager.show(this.oPanel, "LinkItems");
-				//this.oPanel.openSelectionDialog(false, true, undefined);
-
-				setTimeout(function() {
+				this.oPanel._openPersonalizationDialog().then(function(oDialog) {
 					FlexRuntimeInfoAPI.isFlexSupported.restore();
 					FlexRuntimeInfoAPI.waitForChanges.restore();
-					assert.equal(this.oPanel.getDependents().length, 1, "Dialog opened");
-					assert.ok(this.oPanel.getDependents()[0].isA("sap.m.Dialog"), "Dialog is a 'sap.m.Dialog'");
-					assert.ok(this.oPanel.getDependents()[0].getContent()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
+					assert.ok(oDialog.isOpen(), "Dialog opened");
+					assert.ok(oDialog.isA("sap.m.Dialog"), "Dialog is a 'sap.m.Dialog'");
+					assert.ok(oDialog.getContent()[0].isA("sap.ui.mdc.p13n.panels.LinkSelectionPanel"), "Dialog content is a 'sap.ui.mdc.p13n.panels.LinkSelectionPanel'");
+					assert.equal(oDialog.getContent()[0].getEnableReorder(), false, "enableReorder property of LinkSelectionPanel is false");
+					assert.equal(oDialog.getContent()[0].getAggregation("_content").getItems()[0].getColumns().length, 1, "Only one column in column aggregation of LinkSelectionPanel -> no reorder column");
 					done();
-				}.bind(this), 500);
+				});
 			}.bind(this));
 		}.bind(this));
 	});

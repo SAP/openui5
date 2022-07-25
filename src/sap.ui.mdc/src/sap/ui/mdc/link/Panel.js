@@ -349,45 +349,57 @@ sap.ui.define([
 	};
 
 	Panel.prototype.onPressLinkPersonalization = function() {
-		sap.ui.require([this.getMetadataHelperPath() || "sap/ui/mdc/Link"], function(MetadataHelper) {
-			var oModel = this._getInternalModel();
-			var aMBaselineItems = MetadataHelper.retrieveBaseline(this);
-			var aMBaselineItemsTotal = aMBaselineItems;
-			var fnUpdateResetButton = function(oSelectionPanel) {
-				var aSelectedItems = oSelectionPanel._oListControl.getItems().filter(function(oItem) {
-					return oItem.getSelected();
-				});
-				aSelectedItems = aSelectedItems.map(function(oSelectedItem) {
-					var oItem = oSelectionPanel._getP13nModel().getProperty(oSelectedItem.getBindingContext(oSelectionPanel.P13N_MODEL).sPath);
-					return {
-						id: oItem.name,
-						description: oItem.description,
-						href: oItem.href,
-						target: oItem.target,
-						text: oItem.text,
-						visible: oItem.visible
-					};
-				});
-				var bShowResetEnabled = Panel._showResetButtonEnabled(aMBaselineItemsTotal, aSelectedItems);
-				this._getInternalModel().setProperty("/showResetEnabled", bShowResetEnabled);
-			};
+		this._openPersonalizationDialog();
+	};
 
-			var oPopover = this.getParent();
-			oPopover.setModal(true);
-			Engine.getInstance().uimanager.show(this, "LinkItems").then(function(oDialog) {
-				var oResetButton = oDialog.getCustomHeader().getContentRight()[0];
-				var oSelectionPanel = oDialog.getContent()[0];
-				oResetButton.setModel(oModel, "$sapuimdclinkPanel");
-				oResetButton.bindProperty("enabled", {
-					path: '$sapuimdclinkPanel>/showResetEnabled'
-				});
-				fnUpdateResetButton.call(this, oSelectionPanel);
-				oSelectionPanel.attachChange(function(oEvent) {
+	Panel.prototype._openPersonalizationDialog = function() {
+		return new Promise(function(resolve, reject) {
+			sap.ui.require([this.getMetadataHelperPath() || "sap/ui/mdc/Link"], function(MetadataHelper) {
+				var oModel = this._getInternalModel();
+				var aMBaselineItems = MetadataHelper.retrieveBaseline(this);
+				var aMBaselineItemsTotal = aMBaselineItems;
+				var fnUpdateResetButton = function(oSelectionPanel) {
+					var aSelectedItems = oSelectionPanel._oListControl.getItems().filter(function(oItem) {
+						return oItem.getSelected();
+					});
+					aSelectedItems = aSelectedItems.map(function(oSelectedItem) {
+						var oItem = oSelectionPanel._getP13nModel().getProperty(oSelectedItem.getBindingContext(oSelectionPanel.P13N_MODEL).sPath);
+						return {
+							id: oItem.name,
+							description: oItem.description,
+							href: oItem.href,
+							target: oItem.target,
+							text: oItem.text,
+							visible: oItem.visible
+						};
+					});
+					var bShowResetEnabled = Panel._showResetButtonEnabled(aMBaselineItemsTotal, aSelectedItems);
+					this._getInternalModel().setProperty("/showResetEnabled", bShowResetEnabled);
+				};
+
+				var oParent = this.getParent();
+				// In case of mobile oParent isA sap.m.Dialog
+				if (oParent.isA("sap.m.Popover")) {
+					oParent.setModal(true);
+				}
+				Engine.getInstance().uimanager.show(this, "LinkItems").then(function(oDialog) {
+					var oResetButton = oDialog.getCustomHeader().getContentRight()[0];
+					var oSelectionPanel = oDialog.getContent()[0];
+					oResetButton.setModel(oModel, "$sapuimdclinkPanel");
+					oResetButton.bindProperty("enabled", {
+						path: '$sapuimdclinkPanel>/showResetEnabled'
+					});
 					fnUpdateResetButton.call(this, oSelectionPanel);
+					oSelectionPanel.attachChange(function(oEvent) {
+						fnUpdateResetButton.call(this, oSelectionPanel);
+					}.bind(this));
+					oDialog.attachAfterClose(function(){
+						if (oParent.isA("sap.m.Popover")) {
+							oParent.setModal(false);
+						}
+					});
+					resolve(oDialog);
 				}.bind(this));
-				oDialog.attachAfterClose(function(){
-					oPopover.setModal(false);
-				});
 			}.bind(this));
 		}.bind(this));
 	};
