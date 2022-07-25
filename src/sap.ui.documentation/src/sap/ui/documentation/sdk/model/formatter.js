@@ -40,7 +40,7 @@ sap.ui.define([
 		 */
 		libraryLink: function (sNamespace) {
 			if (sNamespace && sNamespace.search("sap\\.") === 0) {
-				return this.formatter.crossLink("#docs/api/symbols/" + sNamespace + ".html");
+				return this.formatter.crossLink("api/" + sNamespace);
 			} else {
 				return "";
 			}

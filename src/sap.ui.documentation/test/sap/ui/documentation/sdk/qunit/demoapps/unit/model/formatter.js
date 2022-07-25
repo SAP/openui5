@@ -24,7 +24,7 @@ sap.ui.define([
 	QUnit.module("formatter - libraryLink");
 
 	QUnit.test("Should format a library link with sap.* to the corresponding demokit hash", function (assert) {
-		assert.strictEqual(formatter.libraryLink.call({formatter: formatter}, "sap.foo.bar"), "#docs/api/symbols/sap.foo.bar.html");
+		assert.strictEqual(formatter.libraryLink.call({formatter: formatter}, "sap.foo.bar"), "api/sap.foo.bar");
 	});
 
 	QUnit.test("Should format any other library link to the empty string", function (assert) {
