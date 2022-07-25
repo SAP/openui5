@@ -568,7 +568,7 @@ sap.ui.define([
 			assert.equal(aGroups[0].getItems()[3].getText(), oManifestContent.groups[0].items[1].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[0].getItems()[4].getText(), oData.lastName, "Should have correct item value.");
 			assert.equal(aGroups[0].getItems()[5].getText(), oManifestContent.groups[0].items[2].label + ":", "Should have correct item label.");
-			assert.equal(aGroups[0].getItems()[6].getText(), oData.phone, "Should have correct item value.");
+			assert.equal(aGroups[0].getItems()[6].getItems()[0].getText(), oData.phone, "Should have correct item value.");
 
 			// Group 2 assertions
 			assert.equal(aGroups[1].getItems().length, 2, "Should have 2 items.");
@@ -585,9 +585,9 @@ sap.ui.define([
 			assert.equal(aGroups[2].getItems()[3].getText(), oManifestContent.groups[2].items[1].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[2].getItems()[4].getText(), oData.company.address, "Should have correct item value.");
 			assert.equal(aGroups[2].getItems()[5].getText(), oManifestContent.groups[2].items[2].label + ":", "Should have correct item label.");
-			assert.equal(aGroups[2].getItems()[6].getText(), oData.company.email, "Should have correct item value.");
-			assert.equal(aGroups[2].getItems()[8].getText(), "newmail@example.com", "Should have correct item value.");
-			assert.equal(aGroups[2].getItems()[10].getText(), oData.company.website, "Should have correct item value.");
+			assert.equal(aGroups[2].getItems()[6].getItems()[0].getText(), oData.company.email, "Should have correct item value.");
+			assert.equal(aGroups[2].getItems()[8].getItems()[0].getText(), "newmail@example.com", "Should have correct item value.");
+			assert.equal(aGroups[2].getItems()[10].getItems()[0].getText(), oData.company.website, "Should have correct item value.");
 
 			done();
 		}.bind(this));
@@ -781,7 +781,7 @@ sap.ui.define([
 
 			// Assert
 			assert.notOk(aGroupItems[1].getVisible(), "Label for link is NOT visible");
-			assert.notOk(aGroupItems[2].getVisible(), "Link is also NOT visible");
+			assert.notOk(aGroupItems[2].getItems()[0].getVisible(), "Link is also NOT visible");
 			assert.notOk(aGroupItems[3].getVisible(), "Label for text is NOT visible");
 			assert.notOk(aGroupItems[4].getVisible(), "Text is also NOT visible");
 			done();
@@ -1295,7 +1295,7 @@ sap.ui.define([
 
 			var oLayout = this.oCard.getAggregation("_content").getAggregation("_content").getItems()[0],
 				oLabel = oLayout.getContent()[0].getItems()[0],
-				oLink = oLayout.getContent()[0].getItems()[1];
+				oLink = oLayout.getContent()[0].getItems()[1].getItems()[0];
 
 			assert.ok(oLink.getAriaLabelledBy().length,"Link should be labeled");
 			assert.strictEqual(oLink.getAriaLabelledBy()[0], oLabel.getId(), "Link should be labeled by the correct label");
@@ -1372,9 +1372,9 @@ sap.ui.define([
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
 			var oGroup = this.getCardContent().getAggregation("_content").getItems()[0].getContent()[0],
-				oPhone = oGroup.getItems()[1],
-				oEmail = oGroup.getItems()[3],
-				oLink = oGroup.getItems()[5];
+				oPhone = oGroup.getItems()[1].getItems()[0],
+				oEmail = oGroup.getItems()[3].getItems()[0],
+				oLink = oGroup.getItems()[5].getItems()[0];
 
 			assert.strictEqual(oPhone.getDomRef().getAttribute("title"), "Make a call", "The tooltip of the phone is correct");
 			assert.strictEqual(oEmail.getDomRef().getAttribute("title"), "Write an e-mail", "The tooltip of the email is correct");
