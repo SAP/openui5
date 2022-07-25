@@ -652,8 +652,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the view associated with this controller or undefined.
-		 * @return {sap.ui.core.mvc.View} View connected to this controller.
+		 * Returns the view associated with this controller or <code>undefined</code>.
+		 * @returns {sap.ui.core.mvc.View|undefined} View connected to this controller.
 		 * @public
 		 */
 		Controller.prototype.getView = function() {
@@ -668,10 +668,10 @@ sap.ui.define([
 		 * This method helps to find an element by its local ID only.
 		 *
 		 * If no view is connected or if the view doesn't contain an element with
-		 * the given local ID, undefined is returned.
+		 * the given local ID, <code>undefined</code> is returned.
 		 *
 		 * @param {string} sId View-local ID
-		 * @return {sap.ui.core.Element} Element by its (view local) ID
+		 * @returns {sap.ui.core.Element|undefined} Element by its (view local) ID
 		 * @public
 		 */
 		Controller.prototype.byId = function(sId) {
@@ -683,10 +683,10 @@ sap.ui.define([
 		 * Converts a view local ID to a globally unique one by prepending
 		 * the view ID.
 		 *
-		 * If no view is connected, undefined is returned.
+		 * If no view is connected, <code>undefined</code> is returned.
 		 *
 		 * @param {string} sId View-local ID
-		 * @return {string} Prefixed ID
+		 * @returns {string|undefined} Prefixed ID
 		 * @public
 		 */
 		Controller.prototype.createId = function(sId) {
@@ -697,9 +697,9 @@ sap.ui.define([
 		 * Gets the component of the controller's view
 		 *
 		 * If there is no Component connected to the view or the view is not connected to the controller,
-		 * undefined is returned.
+		 * <code>undefined</code> is returned.
 		 *
-		 * @return {sap.ui.core.Component} Component instance
+		 * @return {sap.ui.core.Component|undefined} Component instance
 		 * @since 1.23.0
 		 * @public
 		 */
@@ -785,7 +785,7 @@ sap.ui.define([
 		 * @param {boolean} [mOptions.autoPrefixId=true] Whether the IDs of the fragment content will be prefixed by the view ID
 		 * @param {string} [mOptions.id] the ID of the Fragment
 		 * @param {string} [mOptions.type=XML] the Fragment type, e.g. "XML", "JS", or "HTML" (see above). Default is "XML"
-		 * @return {Promise} A Promise that resolves with the fragment content
+		 * @returns {Promise<sap.ui.core.Control|sap.ui.core.Control[]>} A Promise that resolves with the fragment content
 		 *
 		 * @since 1.93
 		 * @public
@@ -921,7 +921,7 @@ sap.ui.define([
 		 * controller. The event handler functions, such as <code>onButtonClick</code>,
 		 * are replacing the original controller's function.
 		 *
-		 * When using an async extension provider you need to ensure that the
+		 * When using an async extension provider, you need to ensure that the
 		 * view is loaded in async mode.
 		 *
 		 * In both cases, return <code>undefined</code> if no controller extension shall be applied.
