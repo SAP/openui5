@@ -110,15 +110,25 @@ sap.ui.define([
 
 		QUnit.test("Prerequisites met (entity set)", function(assert) {
 			var oControl = {
-				getBindingContext: function() {
+				getEntitySet: function() {
+					return "someEntitySet";
+				},
+				getModel: function() {
 					return {
-						getPath: function() {
-							return "/someService/someEntity";
+						sServiceUrl: "/someService",
+						isA: function() {
+							return true;
 						}
 					};
-				},
-				getEntitySet: function() {
-					return "someEntity";
+				}
+			};
+			assert.equal(Utils.checkControlPrerequisites(oControl), true, "Prerequisites met (entity set)");
+		});
+
+		QUnit.test("Prerequisites met (entity type)", function(assert) {
+			var oControl = {
+				getEntityType: function() {
+					return "someEntityType";
 				},
 				getModel: function() {
 					return {
@@ -253,6 +263,141 @@ sap.ui.define([
 							return "/BusinessPartner(Id='1',DraftUUID=guid'00000000-0000-0000-0000-000000000000',IsActiveEntity=true)";
 						}
 					};
+				},
+				getModel: function() {
+					return oModel;
+				}
+			};
+
+			aPromises.push(Utils.getBoundEntitySet(oControl).then(function(sEntitySet) {
+				assert.equal(sEntitySet, "BusinessPartner", "Expected entity set");
+			}));
+
+			aPromises.push(Utils.getBoundEntityType(oControl).then(function(sEntityType) {
+				assert.equal(sEntityType, "BusinessPartnerType", "Expected entity type");
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				aResults.forEach(function(oResult) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				});
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Posititve test v2 (no binding context, but only entityType)", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			var sMetadata = jQuery.ajax({
+				type: "GET",
+				url: "test-resources/sap/ui/fl/qunit/write/_internal/fieldExtensibility/v2_metadata.xml",
+				async: false
+			}).responseText;
+			this.oServer = sinon.fakeServer.create();
+			this.oServer.autoRespond = true;
+			this.oServer.respondWith("GET", /.*\$metadata/, [200, { "Content-Type": "application/xml" }, sMetadata]);
+
+			var oModel = new ODataModelV2({
+				serviceUrl: "/sap/opu/odata/sap/C_CFDTSM_BUPA/"
+			});
+			var oControl = {
+				getEntitySet: function() {
+					return "";
+				},
+				getEntityType: function() {
+					return "cds_c_cfdtsm_bupa.BusinessPartnerType";
+				},
+				getModel: function() {
+					return oModel;
+				}
+			};
+
+			aPromises.push(Utils.getBoundEntitySet(oControl).then(function(sEntitySet) {
+				assert.equal(sEntitySet, "BusinessPartner", "Expected entity set");
+			}));
+
+			aPromises.push(Utils.getBoundEntityType(oControl).then(function(sEntityType) {
+				assert.equal(sEntityType, "BusinessPartnerType", "Expected entity type");
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				aResults.forEach(function(oResult) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				});
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Posititve test v2 (no binding context, but only entitySet)", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			var sMetadata = jQuery.ajax({
+				type: "GET",
+				url: "test-resources/sap/ui/fl/qunit/write/_internal/fieldExtensibility/v2_metadata.xml",
+				async: false
+			}).responseText;
+			this.oServer = sinon.fakeServer.create();
+			this.oServer.autoRespond = true;
+			this.oServer.respondWith("GET", /.*\$metadata/, [200, { "Content-Type": "application/xml" }, sMetadata]);
+
+			var oModel = new ODataModelV2({
+				serviceUrl: "/sap/opu/odata/sap/C_CFDTSM_BUPA/"
+			});
+			var oControl = {
+				getEntitySet: function() {
+					return "BusinessPartner";
+				},
+				getEntityType: function() {
+					return "";
+				},
+				getModel: function() {
+					return oModel;
+				}
+			};
+
+			aPromises.push(Utils.getBoundEntitySet(oControl).then(function(sEntitySet) {
+				assert.equal(sEntitySet, "BusinessPartner", "Expected entity set");
+			}));
+
+			aPromises.push(Utils.getBoundEntityType(oControl).then(function(sEntityType) {
+				assert.equal(sEntityType, "BusinessPartnerType", "Expected entity type");
+			}));
+
+			Promise.allSettled(aPromises).then(function(aResults) {
+				aResults.forEach(function(oResult) {
+					assert.equal(oResult.status, "fulfilled", oResult.reason || "Ok");
+				});
+			}).finally(function() {
+				done();
+			});
+		});
+
+		QUnit.test("Posititve test v2 (no binding context, but only entitySet - fully qualified)", function(assert) {
+			var aPromises = [];
+			var done = assert.async();
+
+			var sMetadata = jQuery.ajax({
+				type: "GET",
+				url: "test-resources/sap/ui/fl/qunit/write/_internal/fieldExtensibility/v2_metadata.xml",
+				async: false
+			}).responseText;
+			this.oServer = sinon.fakeServer.create();
+			this.oServer.autoRespond = true;
+			this.oServer.respondWith("GET", /.*\$metadata/, [200, { "Content-Type": "application/xml" }, sMetadata]);
+
+			var oModel = new ODataModelV2({
+				serviceUrl: "/sap/opu/odata/sap/C_CFDTSM_BUPA/"
+			});
+			var oControl = {
+				getEntitySet: function() {
+					return "cds_c_cfdtsm_bupa.BusinessPartner";
+				},
+				getEntityType: function() {
+					return "";
 				},
 				getModel: function() {
 					return oModel;
