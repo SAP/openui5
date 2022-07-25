@@ -6279,7 +6279,8 @@ sap.ui.define([
 	 * {@link #create}, {@link #update} or {@link #remove} are taken into account.
 	 *
 	 * With a given <code>aPath</code> only specified entities are reset. Note that tree hierarchy
-	 * changes are only affected if a given path is equal to its resolved binding path.
+	 * changes are only affected if a given path is equal to the tree binding's resolved binding
+	 * path.
 	 *
 	 * If <code>bDeleteCreatedEntities</code> is set, the entity is completely removed, provided it
 	 * has been created
@@ -6643,11 +6644,11 @@ sap.ui.define([
 	/**
 	 * Checks if there exist pending changes in the model.
 	 *
-	 * By default, only client data changes triggered through {@link #createEntry},
-	 * {@link #setProperty} and tree hierarchy changes are taken into account.
+	 * By default, only client data changes triggered through {@link #createEntry} or
+	 * {@link #setProperty}, and tree hierarchy changes are taken into account.
 	 *
 	 * If <code>bAll</code> is set to <code>true</code>, also deferred requests triggered through
-	 * {@link #create}, {@link #update} and {@link #remove} are taken into account.
+	 * {@link #create}, {@link #update}, and {@link #remove} are taken into account.
 	 *
 	 * @param {boolean}[bAll=false] If set to true, deferred requests are also taken into account.
 	 * @return {boolean} <code>true</code> if there are pending changes, <code>false</code> otherwise.
@@ -6680,7 +6681,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the changed properties of all changed entities in a map which are still pending. The
-	 * key is the string name of the entity and the value is an object which contains the changed
+	 * key is the string name of the entity, and the value is an object which contains the changed
 	 * properties. The tree hierarchy changes for removed nodes are represented via an empty object.
 	 *
 	 * In contrast to the two related functions {@link #hasPendingChanges} and {@link #resetChanges}, only
