@@ -18,8 +18,8 @@ Opa5 test action
 
 | Param | Type | Description |
 | --- | --- | --- |
-| sId | <code>string</code> | ID of the given <code>Field</code> |
-| oValue | <code>Object</code> | Value which is to be entered in the <code>Field</code> |
+| sId | <code>string</code> | ID of the given <code>sap.ui.mdc.Field</code> |
+| oValue | <code>Object</code> | Value that is entered in the <code>sap.ui.mdc.Field</code> |
 
 <a name="onTheMDCField.iShouldSeeTheFieldWithValues"></a>
 
@@ -32,6 +32,6 @@ Opa5 test assertion
 
 | Param | Type | Description |
 | --- | --- | --- |
-| sId | <code>string</code> | ID of the given <code>Field</code> |
-| oValues | <code>object</code> | Values which are expected in the <code>Field</code> |
+| sId | <code>string</code> | ID of the given <code>sap.ui.mdc.Field</code> |
+| oValues | <code>object</code> | Values that are expected in the <code>sap.ui.mdc.Field</code> |
 

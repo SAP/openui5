@@ -175,6 +175,8 @@ sap.ui.define([
 				 * 1. Opens the personalization dialog of a given table.
 				 * 2. Executes the given <code>FilterPersonalizationConfiguration</code>.
 				 * 3. Closes the personalization dialog.
+				 * @memberof onTheMDCTable
+				 * @method iCheckFilterPersonalization
 				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is filtered
 				 * @param {FilterPersonalizationConfiguration[]} aConfigurations Array containing the filter personalization configuration objects
 				 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the given control
@@ -189,6 +191,8 @@ sap.ui.define([
 				 * 1. Opens the personalization dialog of a given table.
 				 * 2. Checks the availability of the provided filter texts (by opening and comparing the available items in the ComboBox)
 				 * 3. Closes the personalization dialog.
+				 * @memberof onTheMDCTable
+				 * @method iCheckAvailableFilters
 				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is filtered
 				 * @param {string[]} aFilters Array containing the names of selectable filters
 				 * @returns {Promise} OPA waitFor
