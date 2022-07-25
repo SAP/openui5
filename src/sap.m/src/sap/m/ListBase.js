@@ -1088,7 +1088,7 @@ function(
 	 * Returns growing information as object with "actual" and "total" keys.
 	 * Note: This function returns "null" if "growing" feature is disabled.
 	 *
-	 * @type object
+	 * @returns {{actual: int, total: int} | null}
 	 * @public
 	 * @since 1.16
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel

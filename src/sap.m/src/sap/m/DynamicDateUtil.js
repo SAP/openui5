@@ -246,8 +246,8 @@ sap.ui.define([
 	/**
 	 * Returns a date in machine timezone setting, removing the offset added by the application configuration.
 	 *
-	 * @param {Object} oDate A local JS date with added offset
-	 * @returns {Object} A local JS date with removed offset
+	 * @param {Date} oDate A local JS date with added offset
+	 * @returns {Date} A local JS date with removed offset
 	 * @static
 	 * @public
 	 */

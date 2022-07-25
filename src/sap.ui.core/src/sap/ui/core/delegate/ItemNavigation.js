@@ -255,7 +255,7 @@ sap.ui.define([
 	/**
 	 * Sets the root DOM reference surrounding the items
 	 *
-	 * @param {object} oDomRef Root DOM reference
+	 * @param {Element} oDomRef Root DOM reference
 	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */

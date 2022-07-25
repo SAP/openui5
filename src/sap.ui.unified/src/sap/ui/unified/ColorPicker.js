@@ -2421,7 +2421,7 @@ sap.ui.define([
 
 	/**
 	 * Gets current RGB values.
-	 * @returns {object} Containing current RGB values
+	 * @returns {{r: int, g: int, b: int}} Containing current RGB values
 	 * @public
 	 * @since 1.48.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel

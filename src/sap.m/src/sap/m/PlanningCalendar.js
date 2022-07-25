@@ -884,7 +884,7 @@ sap.ui.define([
 	/**
 	 * Attaches handlers to the events in the _header aggregation.
 	 *
-	 * @returns {object} this for method chaining
+	 * @returns {this} this for method chaining
 	 * @private
 	 */
 	PlanningCalendar.prototype._attachHeaderEvents = function () {
@@ -3296,8 +3296,8 @@ sap.ui.define([
 	/**
 	 * Sets the width property and ensures that the start date is in sync with each row timeline.
 	 *
-	 * @param sWidth the width to be set to the PlanningCalendar
-	 * @returns {object} this for method chaining
+	 * @param {sap.ui.core.CSSSize} sWidth the width to be set to the PlanningCalendar
+	 * @returns {this} this for method chaining
 	 * @public
 	 */
 	PlanningCalendar.prototype.setWidth = function (sWidth) {

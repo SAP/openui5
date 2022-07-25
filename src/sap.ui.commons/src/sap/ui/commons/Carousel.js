@@ -429,7 +429,7 @@ sap.ui.define([
 
 	/**
 	 * Enters action mode
-	 * @param {Object} oDomRef The HTML element to be focused
+	 * @param {HTMLElement} oDomRef The HTML element to be focused
 	 * @private
 	 */
 	Carousel.prototype._enterActionMode = function(oDomRef) {

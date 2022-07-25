@@ -245,9 +245,9 @@ sap.ui.define([
 		 * The popover is positioned relative to the control parameter on tablet or desktop and is full screen on phone.
 		 * Therefore the openBy parameter is only used on tablet or desktop and is ignored on phone.
 		 *
-		 * @param {Object} openBy When this control is displayed on tablet or desktop, the <code>ColorPickerPopover</code>
+		 * @param {sap.ui.core.Control|HTMLElement} openBy When this control is displayed on tablet or desktop, the <code>ColorPickerPopover</code>
 		 * is positioned relative to this control
-		 * @returns {Object} Reference to the opening control
+		 * @returns {sap.m.Popover|sap.m.Dialog} Reference to the opening control
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */

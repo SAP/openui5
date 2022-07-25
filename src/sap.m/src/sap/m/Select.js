@@ -2367,7 +2367,7 @@ function(
 		/**
 		 * Checks whether the provided element is the open area.
 		 *
-		 * @param {Element} oDomRef
+		 * @param {HTMLElement} oDomRef
 		 * @returns {boolean}
 		 * @since 1.22.0
 		 */
