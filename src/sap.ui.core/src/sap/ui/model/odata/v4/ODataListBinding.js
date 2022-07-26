@@ -419,7 +419,8 @@ sap.ui.define([
 				throw new Error("Cannot combine $$aggregation and $apply");
 			}
 			if (!sChangeReason) { // called from c'tor or #setAggregation
-				_AggregationHelper.validateAggregation(mParameters.$$aggregation, this.sPath);
+				_AggregationHelper.validateAggregation(mParameters.$$aggregation, this.sPath,
+					this.oModel.oInterface.fetchMetadata, this.oModel.bAutoExpandSelect);
 			}
 			sApply = _AggregationHelper.buildApply(mParameters.$$aggregation).$apply;
 		}
@@ -3375,7 +3376,8 @@ sap.ui.define([
 	 *   it cannot be combined with group levels.<br>
 	 *   Since 1.105.0, either a recursive hierarchy or pure data aggregation is supported, but no
 	 *   mix; <code>hierarchyQualifier</code> is the leading property that decides between those two
-	 *   use cases - this is an <b>experimental API</b>!
+	 *   use cases - this is an <b>experimental API</b> and is only supported if the model uses the
+	 *   <code>autoExpandSelect</code> parameter!
 	 * @param {object} [oAggregation.aggregate]
 	 *   A map from aggregatable property names or aliases to objects containing the following
 	 *   details:
@@ -3420,8 +3422,9 @@ sap.ui.define([
 	 * @param {string} [oAggregation.hierarchyQualifier]
 	 *   The qualifier for the pair of "Org.OData.Aggregation.V1.RecursiveHierarchy" and
 	 *   "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy" annotations at this binding's
-	 *   entity type (@experimental as of version 1.105.0). If present, a recursive hierarchy w/o
-	 *   data aggregation is defined and the only other supported property is <code>expandTo</code>.
+	 *   entity type (@experimental as of version 1.105.0). If present, a recursive hierarchy
+	 *   without data aggregation is defined, and the only other supported property is
+	 *   <code>expandTo</code>.
 	 * @param {string} [oAggregation.search]
 	 *   Like the <a
 	 *   href="https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html">
@@ -3442,7 +3445,9 @@ sap.ui.define([
 	 *     <li> the given data aggregation object is unsupported,
 	 *     <li> the <code>$apply</code> system query option has been specified explicitly before,
 	 *     <li> the binding has a kept-alive context,
-	 *     <li> there are pending changes
+	 *     <li> there are pending changes,
+	 *     <li> a recursive hierarchy is requested, but the model does not use the
+	 *       <code>autoExpandSelect</code> parameter.
 	 *   </ul>
 	 * @example <caption>First group level is product category including subtotals for the net
 	 *     amount in display currency. On leaf level, transaction currency is used as an additional

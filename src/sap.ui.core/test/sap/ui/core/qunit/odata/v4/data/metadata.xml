@@ -15,6 +15,14 @@
 		Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
 	</edmx:Reference>
+	<edmx:Reference
+		Uri="https://github.com/oasis-tcs/odata-vocabularies/blob/aggregation-cs03-release-candidate/vocabularies/Org.OData.Aggregation.V1.xml">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregation"/>
+	</edmx:Reference>
+	<edmx:Reference
+		Uri="https://github.com/SAP/odata-vocabularies/blob/main/vocabularies/Hierarchy.xml">
+		<edmx:Include Namespace="com.sap.vocabularies.Hierarchy.v1" Alias="Hierarchy"/>
+	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema Namespace="com.sap.gateway.default.iwbep.tea_busi.v0001" Alias="SAP__self">
 			<EntityType Name="Department">
@@ -377,6 +385,23 @@
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Worker">
+				<Annotation Term="Org.OData.Aggregation.V1.RecursiveHierarchy#OrgChart">
+					<Record>
+						<PropertyValue Property="NodeProperty" PropertyPath="ID"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy#OrgChart">
+					<Record>
+						<!--Edm.Int64-->
+						<PropertyValue Property="DescendantCountProperty" PropertyPath="DescendantCount"/>
+						<!--Edm.Int64-->
+						<PropertyValue Property="DistanceFromRootProperty" PropertyPath="DistanceFromRoot"/>
+						<!--Edm.String: collapsed,expanded,leaf-->
+						<PropertyValue Property="DrillStateProperty" PropertyPath="DrillState"/>
+					</Record>
+				</Annotation>
 			</Annotations>
 		</Schema>
 	</edmx:DataServices>

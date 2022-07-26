@@ -1403,25 +1403,29 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("buildQueryOptions with $$ options", function (assert) {
 		assert.deepEqual(ODataModel.prototype.buildQueryOptions({$$groupId : "$direct"}), {});
+
+		assert.deepEqual(ODataModel.prototype.buildQueryOptions({
+				$$aggregation : { // avoid "TypeError: Converting circular structure to JSON"
+					$foo : this.createModel()
+				}
+			}), {});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("buildQueryOptions: parse system query options", function (assert) {
-		var oExpand = {foo : null},
-			oParserMock = this.mock(_Parser),
-			aSelect = ["bar"];
+		var oParserMock = this.mock(_Parser);
 
 		oParserMock.expects("parseSystemQueryOption")
-			.withExactArgs("$expand=foo").returns({$expand : oExpand});
+			.withExactArgs("$expand=foo").returns({$expand : {foo : null}});
 		oParserMock.expects("parseSystemQueryOption")
-			.withExactArgs("$select=bar").returns({$select : aSelect});
+			.withExactArgs("$select=bar").returns({$select : ["bar"]});
 
 		assert.deepEqual(ODataModel.prototype.buildQueryOptions({
 			$expand : "foo",
 			$select : "bar"
 		}, true), {
-			$expand : oExpand,
-			$select : aSelect
+			$expand : {foo : {}},
+			$select : ["bar"]
 		});
 	});
 

@@ -868,7 +868,7 @@ sap.ui.define([
 	ODataModel.prototype.buildQueryOptions = function (mParameters, bSystemQueryOptionsAllowed,
 			bSapAllowed) {
 		var sParameterName,
-			mTransformedOptions = _Helper.clone(mParameters) || {};
+			mTransformedOptions = Object.assign({}, mParameters); // shallow clone
 
 		/*
 		 * Parses the query options for the given option name "sOptionName" in the given map of
@@ -895,6 +895,7 @@ sap.ui.define([
 				mOptions[sOptionName] = vValue;
 			}
 			if (sOptionName === "$expand") {
+				vValue = mOptions[sOptionName] = _Helper.clone(vValue); // deep clone needed!
 				for (sExpandPath in vValue) {
 					mExpandOptions = vValue[sExpandPath];
 					if (mExpandOptions === null || typeof mExpandOptions !== "object") {
