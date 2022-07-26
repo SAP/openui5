@@ -987,6 +987,27 @@ function(Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout, Object
 		});
 	});
 
+	QUnit.test("Does not throw an error when selectedSection does not exists", function (assert) {
+		// Arrange
+		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 3),
+			done = assert.async();
+
+		assert.expect(1);
+
+		// Act
+		oObjectPageLayout.setSelectedSection("not-existing-section");
+		oObjectPageLayout.placeAt('qunit-fixture');
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// Assert
+			assert.ok(true, "Error is not thrown");
+
+			// Clean up
+			done();
+		});
+	});
+
 	QUnit.module("ObjectPage scrolling without view");
 
 	QUnit.test("auto-scroll on resize of last section", function (assert) {

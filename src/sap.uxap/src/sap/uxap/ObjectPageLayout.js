@@ -3277,7 +3277,8 @@ sap.ui.define([
 
 			// check if scroll destination is set in advance
 			// (this is when a particular section is requested from the anchorBar sectionsList and we are now scrolling to reach it)
-			var sDestinationSectionId = this.getDirectScrollingToSection();
+			var sDestinationSectionId = this.getDirectScrollingToSection(),
+				oDestinationSection = this.oCore.byId(sDestinationSectionId);
 
 			if (sClosestId !== this._sScrolledSectionId) {
 
@@ -3291,7 +3292,7 @@ sap.ui.define([
 				// so if current section is not destination section
 				// then no need to proceed further
 				if (sDestinationSectionId && sDestinationSectionId !== sClosestSectionId
-					&& (this.oCore.byId(sDestinationSectionId).getDomRef() && !this.isFirstRendering())) {
+					&& (oDestinationSection && oDestinationSection.getDomRef() && !this.isFirstRendering())) {
 					return;
 				}
 				this.clearDirectScrollingToSection();
