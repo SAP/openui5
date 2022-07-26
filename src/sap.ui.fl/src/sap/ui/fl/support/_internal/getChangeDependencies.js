@@ -6,13 +6,13 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
-	"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor",
+	"sap/ui/fl/support/_internal/extractChangeDependencies",
 	"sap/ui/fl/Utils"
 ], function(
 	Component,
 	ChangePersistenceFactory,
 	FlexCustomData,
-	Extractor,
+	extractChangeDependencies,
 	Utils
 ) {
 	"use strict";
@@ -48,7 +48,7 @@ sap.ui.define([
 				var oAppComponent = oCurrentAppContainerObject.oContainer.getComponentInstance();
 				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
 
-				return Extractor.extractData(oChangePersistence);
+				return extractChangeDependencies(oChangePersistence);
 			}
 
 			return {};
