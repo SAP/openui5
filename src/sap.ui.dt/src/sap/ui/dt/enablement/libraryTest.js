@@ -60,11 +60,11 @@ sap.ui.define([
 					var mLazyLibraries = sap.ui.getCore().getLoadedLibraries();
 					try {
 						var oRuntimeResourceModel = new ResourceModel({
-							bundleUrl: sap.ui.resource(sTestLibrary, "messagebundle.properties"),
+							bundleUrl: sap.ui.require.toUrl(sTestLibrary, "messagebundle.properties"),
 							bundleLocale: "en"
 						});
 						var oDesigntimeResourceModel = new ResourceModel({
-							bundleUrl: sap.ui.resource(sTestLibrary + ".designtime", "messagebundle.properties"),
+							bundleUrl: sap.ui.require.toUrl(sTestLibrary + ".designtime", "messagebundle.properties"),
 							bundleLocale: "en"
 						});
 						mBundles.runtime = oRuntimeResourceModel.getResourceBundle();
@@ -72,11 +72,11 @@ sap.ui.define([
 						Object.keys(mLazyLibraries).forEach(function(sLib) {
 							if (sTestLibrary !== sLib) {
 								oRuntimeResourceModel.enhance({
-									bundleUrl: sap.ui.resource(sLib, "messagebundle.properties"),
+									bundleUrl: sap.ui.require.toUrl(sLib, "messagebundle.properties"),
 									bundleLocale: "en"
 								});
 								oDesigntimeResourceModel.enhance({
-									bundleUrl: sap.ui.resource(sLib + ".designtime", "messagebundle.properties"),
+									bundleUrl: sap.ui.require.toUrl(sLib + ".designtime", "messagebundle.properties"),
 									bundleLocale: "en"
 								});
 							}

@@ -24,7 +24,7 @@ function () {
 	 */
 
 	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
+	var testLib = sap.ui.getCore().initLibrary({
 		name: "sap.ui.testLibrary",
 		version: "${version}",
 		dependencies: ["sap.ui.core", "sap.ui.dt"],
@@ -43,5 +43,5 @@ function () {
 		}
 	});
 
-	return sap.ui.testLibrary;
+	return testLib;
 }, /* bExport= */ true);
