@@ -10,7 +10,7 @@ sap.ui.define([
 		onInit: function () {
 			this.getView().setModel(new JSONModel({
 				listCard: {},
-				tableCard: {},
+				analyticalLineSingleData: {},
 				cardWithExtension: {}
 			}));
 		},
@@ -18,6 +18,14 @@ sap.ui.define([
 		getMeasurements: function (sCardId) {
 			return Measurement.filterMeasurements(function (measurement) {
 				return measurement.id.includes(sCardId) && measurement.id.includes("UI5 Integration Cards");
+			}).sort(function (measurement1, measurement2) {
+				// show firstRenderingWithDynamicData last
+				if (measurement1.id.includes("firstRenderingWithDynamicData")) {
+					return 1;
+				} else if (measurement2.id.includes("firstRenderingWithDynamicData")) {
+					return -1;
+				}
+				return 0;
 			});
 		},
 
