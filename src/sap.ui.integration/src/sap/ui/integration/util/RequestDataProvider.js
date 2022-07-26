@@ -389,5 +389,12 @@ sap.ui.define([
 		return mHeaders;
 	};
 
+	/**
+	 * @override
+	 */
+	RequestDataProvider.prototype.getDetails = function () {
+		return "Load data from URL: " + this.getSettings().request.url;
+	};
+
 	return RequestDataProvider;
 });

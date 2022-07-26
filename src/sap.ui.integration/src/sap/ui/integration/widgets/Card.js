@@ -793,8 +793,8 @@ sap.ui.define([
 		}
 
 		Measurement.start(this._sPerformanceId + "initManifest", "Load and initialize manifest. " + measurementStartTime());
-		Measurement.start(this._sPerformanceId + "firstRenderingWithStaticData", "First rendering with static data. " + measurementStartTime());
-		Measurement.start(this._sPerformanceId + "firstRenderingWithDynamicData", "First rendering with dynamic data. " + measurementStartTime());
+		Measurement.start(this._sPerformanceId + "firstRenderingWithStaticData", "First rendering with static data (includes initManifest). " + measurementStartTime());
+		Measurement.start(this._sPerformanceId + "firstRenderingWithDynamicData","First rendering with dynamic card level data (includes firstRenderingWithStaticData). " + measurementStartTime());
 
 		this._oCardManifest = new CardManifest("sap.card", vManifest, sBaseUrl, this.getManifestChanges());
 

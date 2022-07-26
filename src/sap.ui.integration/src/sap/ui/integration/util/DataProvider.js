@@ -208,7 +208,10 @@ sap.ui.define([
 		var oGetDataMeasurement;
 
 		if (this.getCard()) {
-			oGetDataMeasurement = Measurement.start("UI5 Integration Cards - " + this.getCard() +  "-" + this.getId() + "---getData#" + this._iCurrentRequestNumber);
+			oGetDataMeasurement = Measurement.start(
+				"UI5 Integration Cards - " + this.getCard() +  "-" + this.getId() + "---getData#" + this._iCurrentRequestNumber,
+				this.getDetails()
+			);
 		}
 
 		return this.getData()
@@ -315,6 +318,14 @@ sap.ui.define([
 		});
 
 		return Promise.all(aPromises);
+	};
+
+	/**
+	 * @protected
+	 * @returns {string} Details about the provider, to be used for logging.
+	 */
+	DataProvider.prototype.getDetails = function () {
+		return "Static JSON data provided in the manifest.";
 	};
 
 	return DataProvider;
