@@ -661,7 +661,7 @@ sap.ui.define([
 	 * you should rather use {@link sap.ui.core.Core#byId sap.ui.getCore().byId()}.
 	 *
 	 * @param {string} sId View local ID of the element
-	 * @return {sap.ui.core.Element} Element by its ID or <code>undefined</code>
+	 * @return {sap.ui.core.Element|undefined} Element by its ID or <code>undefined</code>
 	 * @public
 	 */
 	View.prototype.byId = function(sId) {
@@ -673,7 +673,7 @@ sap.ui.define([
 	 * by prefixing it with the view ID.
 	 *
 	 * @param {string} sId View local ID of the element
-	 * @return {string} prefixed id
+	 * @returns {string} prefixed id
 	 * @public
 	 */
 	View.prototype.createId = function(sId) {
@@ -689,7 +689,7 @@ sap.ui.define([
 	 * <code>null</code> if the ID does not contain a prefix.
 	 *
 	 * @param {string} sId Prefixed ID
-	 * @return {string} ID without prefix or <code>null</code>
+	 * @returns {string|null} ID without prefix or <code>null</code>
 	 * @public
 	 * @since 1.39.0
 	 */
@@ -702,16 +702,16 @@ sap.ui.define([
 	 * Checks whether the given ID already contains this view's ID prefix
 	 *
 	 * @param {string} sId ID that is checked for the prefix
-	 * @return {boolean} whether the ID is already prefixed
+	 * @returns {boolean} Whether the ID is already prefixed
 	 */
 	View.prototype.isPrefixedId = function(sId) {
 		return !!(sId && sId.indexOf(this.getId() + "--") === 0);
 	};
 
 	/**
-	 * Returns user specific data object
+	 * Returns user specific data object.
 	 *
-	 * @return {object} viewData
+	 * @returns {object} viewData
 	 * @public
 	 */
 	View.prototype.getViewData = function() {
