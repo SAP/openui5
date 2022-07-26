@@ -35,7 +35,8 @@ sap.ui.define([
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
 
-	var rCountTrue = /[?&]\$count=true/, // $count=true, but not inside $expand
+	var sContext = "sap.ui.model.odata.v4.Context",
+		rCountTrue = /[?&]\$count=true/, // $count=true, but not inside $expand
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		fnFireEvent = EventProvider.prototype.fireEvent,
 		sODCB = "sap.ui.model.odata.v4.ODataContextBinding",
@@ -10370,12 +10371,10 @@ sap.ui.define([
 
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to update path /SalesOrderList('41')/GrossAmount",
-					sinon.match("Value 4.22 not allowed"),
-					"sap.ui.model.odata.v4.Context");
+					sinon.match("Value 4.22 not allowed"), sContext);
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to update path /SalesOrderList('42')/GrossAmount",
-					sinon.match("Value 4.22 not allowed"),
-					"sap.ui.model.odata.v4.Context");
+					sinon.match("Value 4.22 not allowed"), sContext);
 
 			// Code under test
 			oBindingAmount0.setValue("4.11");
@@ -10492,10 +10491,10 @@ sap.ui.define([
 
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to update path /SalesOrderList('41')/GrossAmount",
-					sinon.match("Request intentionally failed"), "sap.ui.model.odata.v4.Context");
+					sinon.match("Request intentionally failed"), sContext);
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to update path /SalesOrderList('42')/GrossAmount",
-					sinon.match("Request intentionally failed"), "sap.ui.model.odata.v4.Context");
+					sinon.match("Request intentionally failed"), sContext);
 
 			// code under test
 			aItems[0].getCells()[0].getBinding("value").setValue("4.11");
@@ -16689,7 +16688,7 @@ sap.ui.define([
 	// Scenario: Deferred deletion of row contexts with an object page
 	// JIRA: CPOUI5ODATAV4-1629
 [
-	{desc : "submit"},
+	{desc : "submit", success : true},
 	{desc : "reset via model", resetViaModel : true},
 	{desc : "reset via binding", resetViaBinding : true}
 ].forEach(function (oFixture) {
@@ -16702,7 +16701,6 @@ sap.ui.define([
 				{autoExpandSelect : true, updateGroupId : "update"}),
 			oPromise2,
 			oPromise4,
-			bReset = oFixture.resetViaModel || oFixture.resetViaBinding,
 			sView = '\
 <Text id="count" text="{$count}"/>\
 <Table id="list" growing="true" growingThreshold="5" \
@@ -16825,7 +16823,17 @@ sap.ui.define([
 		}).then(function () {
 			assert.strictEqual(oBinding.getLength(), 17);
 
-			if (bReset) {
+			if (oFixture.success) {
+				that.expectRequest({
+						method : "PATCH",
+						url : "SalesOrderList('2')",
+						payload : {Note : "Note 2 (changed)"}
+					})
+					.expectRequest({method : "DELETE", url : "SalesOrderList('2')"})
+					.expectRequest({method : "DELETE", url : "SalesOrderList('4')"})
+					.expectChange("id", null) // The object page is cleared now
+					.expectChange("note", null);
+			} else {
 				that.expectCanceledError("Failed to update path /SalesOrderList('2')/Note",
 					"Request canceled: PATCH SalesOrderList('2'); group: update");
 				that.expectCanceledError("Failed to delete /SalesOrderList('4')[2]",
@@ -16836,16 +16844,6 @@ sap.ui.define([
 					.expectChange("count", "18")
 					.expectChange("count", "19")
 					.expectChange("note", "Note 2");
-			} else {
-				that.expectRequest({
-						method : "PATCH",
-						url : "SalesOrderList('2')",
-						payload : {Note : "Note 2 (changed)"}
-					})
-					.expectRequest({method : "DELETE", url : "SalesOrderList('2')"})
-					.expectRequest({method : "DELETE", url : "SalesOrderList('4')"})
-					.expectChange("id", null) // The object page is cleared now
-					.expectChange("note", null);
 			}
 
 			if (oFixture.resetViaModel) {
@@ -16856,26 +16854,26 @@ sap.ui.define([
 
 			return Promise.all([
 				oPromise2.then(function () {
-					assert.notOk(bReset);
+					assert.ok(oFixture.success);
 				}, function (oError) {
-					assert.ok(bReset);
+					assert.notOk(oFixture.success);
 					assert.ok(oError.canceled);
 					assert.notOk(oContext2.isDeleted());
 					assert.strictEqual(oContext2.getProperty("SalesOrderID"), "2");
 				}),
 				oPromise4.then(function () {
-					assert.notOk(bReset);
+					assert.ok(oFixture.success);
 				}, function (oError) {
-					assert.ok(bReset);
+					assert.notOk(oFixture.success);
 					assert.ok(oError.canceled);
 					assert.notOk(oContext4.isDeleted());
 					assert.strictEqual(oContext4.getProperty("SalesOrderID"), "4");
 				}),
 				oModel.submitBatch("update"),
-				that.waitForChanges(assert, bReset ? "reset" : "submit")
+				that.waitForChanges(assert, oFixture.success ? "submit" : "reset")
 			]);
 		}).then(function () {
-			assert.strictEqual(oBinding.getLength(), bReset ? 19 : 17);
+			assert.strictEqual(oBinding.getLength(), oFixture.success ? 17 : 19);
 			assert.notOk(oModel.hasPendingChanges());
 			assert.notOk(oBinding.hasPendingChanges());
 		});
@@ -16886,20 +16884,25 @@ sap.ui.define([
 	// Scenario: Deferred deletion of a row context in a binding w/o cache
 	// JIRA: CPOUI5ODATAV4-1629
 [
-	{desc : "submit"},
+	{desc : "submit", success : true},
 	{desc : "reset via model", resetViaModel : true},
-	{desc : "reset via binding", resetViaBinding : true}
+	{desc : "reset via binding", resetViaBinding : true},
+	{desc : "reset via model, reverse", resetViaModel : true, reverse : true},
+	{desc : "reset via binding, reverse", resetViaBinding : true, reverse : true},
+	{desc : "failure", failure : true}
 ].forEach(function (oFixture) {
 	var sTitle = "CPOUI5ODATAV4-1629: ODLB: no cache, deferred delete, " + oFixture.desc;
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding,
-			oContext,
-			sEntityPath = "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')",
+			oContext1,
+			oContext2,
+			sEntityPath1 = "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')",
+			sEntityPath2 = "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='30')",
 			oModel = this.createSalesOrdersModel(
 				{autoExpandSelect : true, updateGroupId : "update"}),
-			oPromise,
-			bReset = oFixture.resetViaModel || oFixture.resetViaBinding,
+			oPromise1,
+			oPromise2,
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}"/>\
@@ -16923,29 +16926,65 @@ sap.ui.define([
 			.expectChange("pos", ["10", "20", "30", "40"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oCurrentContexts;
+
 			oBinding = that.oView.byId("list").getBinding("items");
 			assert.strictEqual(oBinding.getCount(), 4);
 			assert.strictEqual(oBinding.getLength(), 4);
 
-			that.expectChange("pos", [, "30", "40"]);
+			that.expectChange("pos", [, "40"]);
 
-			oContext = (oBinding.getCurrentContexts())[1];
-			oPromise = oContext.delete();
+			oCurrentContexts = oBinding.getCurrentContexts();
+			oContext1 = oCurrentContexts[1];
+			oContext2 = oCurrentContexts[2];
+			if (oFixture.reverse) {
+				oPromise2 = oContext2.delete();
+				oPromise1 = oContext1.delete();
+			} else {
+				oPromise1 = oContext1.delete();
+				oPromise2 = oContext2.delete();
+			}
 
 			assert.ok(oBinding.hasPendingChanges());
 			assert.ok(oModel.hasPendingChanges());
 
 			return that.waitForChanges(assert, "deferred delete");
 		}).then(function () {
-			assert.strictEqual(oBinding.getCount(), 3);
-			assert.strictEqual(oBinding.getLength(), 3);
+			assert.strictEqual(oBinding.getCount(), 2);
+			assert.strictEqual(oBinding.getLength(), 2);
 
-			if (bReset) {
-				that.expectCanceledError("Failed to delete /" + sEntityPath + "[1]",
-					"Request canceled: DELETE " + sEntityPath + "; group: update");
-				that.expectChange("pos", [, "20", "30", "40"]);
+			if (oFixture.reverse) {
+				that.expectCanceledError("Failed to delete /" + sEntityPath1 + "[1]",
+					"Request canceled: DELETE " + sEntityPath1 + "; group: update");
+				that.expectCanceledError("Failed to delete /" + sEntityPath2 + "[2]",
+					"Request canceled: DELETE " + sEntityPath2 + "; group: update");
+			} else if (oFixture.resetViaBinding || oFixture.resetViaModel) {
+				that.expectCanceledError("Failed to delete /" + sEntityPath2 + "[2]",
+					"Request canceled: DELETE " + sEntityPath2 + "; group: update");
+				that.expectCanceledError("Failed to delete /" + sEntityPath1 + "[1]",
+					"Request canceled: DELETE " + sEntityPath1 + "; group: update");
 			} else {
-				that.expectRequest({method : "DELETE", url : sEntityPath});
+				if (oFixture.failure) {
+					that.oLogMock.expects("error")
+						.withExactArgs("Failed to delete /" + sEntityPath1 + "[1]",
+							sinon.match("Request intentionally failed"), sContext);
+					that.oLogMock.expects("error")
+						.withExactArgs("Failed to delete /" + sEntityPath2 + "[2]",
+							sinon.match("Request intentionally failed"), sContext);
+					that.expectMessages([{
+							code : "CODE",
+							message : "Request intentionally failed",
+							persistent : true,
+							technical : true,
+							type : "Error"
+						}]);
+				}
+				that.expectRequest({method : "DELETE", url : sEntityPath1},
+						oFixture.failure ? createErrorInsideBatch() : undefined)
+					.expectRequest({method : "DELETE", url : sEntityPath2});
+			}
+			if (!oFixture.success) {
+				that.expectChange("pos", [, "20", "30", "40"]);
 			}
 
 			if (oFixture.resetViaModel) {
@@ -16955,20 +16994,28 @@ sap.ui.define([
 			}
 
 			return Promise.all([
-				oPromise.then(function () {
-					assert.notOk(bReset);
+				oPromise1.then(function () {
+					assert.ok(oFixture.success);
 				}, function (oError) {
-					assert.ok(bReset);
-					assert.ok(oError.canceled);
-					assert.notOk(oContext.isDeleted());
-					assert.strictEqual(oContext.getProperty("ItemPosition"), "20");
+					assert.notOk(oFixture.success);
+					assert.strictEqual(oError.canceled, oFixture.failure ? undefined : true);
+					assert.notOk(oContext1.isDeleted());
+					assert.strictEqual(oContext1.getProperty("ItemPosition"), "20");
+				}),
+				oPromise2.then(function () {
+					assert.ok(oFixture.success);
+				}, function (oError) {
+					assert.notOk(oFixture.success);
+					assert.strictEqual(oError.canceled, oFixture.failure ? undefined : true);
+					assert.notOk(oContext2.isDeleted());
+					assert.strictEqual(oContext2.getProperty("ItemPosition"), "30");
 				}),
 				oModel.submitBatch("update"),
-				that.waitForChanges(assert, bReset ? "reset" : "submit")
+				that.waitForChanges(assert, oFixture.success ? "submit" : "reset")
 			]);
 		}).then(function () {
-			assert.strictEqual(oBinding.getCount(), bReset ? 4 : 3);
-			assert.strictEqual(oBinding.getLength(), bReset ? 4 : 3);
+			assert.strictEqual(oBinding.getCount(), oFixture.success ? 2 : 4);
+			assert.strictEqual(oBinding.getLength(), oFixture.success ? 2 : 4);
 			assert.notOk(oBinding.hasPendingChanges());
 			assert.notOk(oModel.hasPendingChanges());
 		});
@@ -21442,7 +21489,7 @@ sap.ui.define([
 					sinon.match.string, "sap.ui.model.odata.v4.ODataParentBinding"
 				); // fetchIfChildCanUseCache
 				that.oLogMock.expects("error").withExactArgs("Not a valid property path: "
-					+ sPrefix + "@$ui5._/predicate", undefined, "sap.ui.model.odata.v4.Context");
+					+ sPrefix + "@$ui5._/predicate", undefined, sContext);
 			}
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to drill-down into " + sPrefix
@@ -24962,7 +25009,7 @@ sap.ui.define([
 
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to delete /EMPLOYEES('1')[0]", sinon.match(oError.message),
-					"sap.ui.model.odata.v4.Context");
+					sContext);
 			that.expectChange("name", ["Frederic Fall"])
 				.expectChange("status", ["Available"])
 				.expectRequest({method : "DELETE", url : "EMPLOYEES('1')"}, oError)
@@ -28297,8 +28344,7 @@ sap.ui.define([
 
 				that.oLogMock.expects("error")
 					.withExactArgs("Failed to delete /SalesOrderList('0500000000')/SO_2_BP/"
-							+ "BP_2_PRODUCT('1')[0]", sinon.match(oError.message),
-						"sap.ui.model.odata.v4.Context");
+							+ "BP_2_PRODUCT('1')[0]", sinon.match(oError.message), sContext);
 				that.expectRequest({
 						method : "DELETE",
 						url : "ProductList('1')",
@@ -29796,7 +29842,7 @@ sap.ui.define([
 
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to update path /TEAMS('TEAM_01')/Name",
-					sinon.match("Request intentionally failed"), "sap.ui.model.odata.v4.Context");
+					sinon.match("Request intentionally failed"), sContext);
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
@@ -29844,7 +29890,7 @@ sap.ui.define([
 
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to update path /TEAMS('TEAM_01')/Name",
-					sinon.match("Request intentionally failed"), "sap.ui.model.odata.v4.Context");
+					sinon.match("Request intentionally failed"), sContext);
 
 			oBinding.attachPatchSent(function () {
 				iPatchSent += 1;
@@ -33005,8 +33051,7 @@ sap.ui.define([
 
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to update path /TEAMS('42')/Name",
-					sinon.match("Unexpected request: GET TEAMS('42')"),
-					"sap.ui.model.odata.v4.Context");
+					sinon.match("Unexpected request: GET TEAMS('42')"), sContext);
 
 			that.expectMessages([{
 				message : "Unexpected request: GET TEAMS('42')",
