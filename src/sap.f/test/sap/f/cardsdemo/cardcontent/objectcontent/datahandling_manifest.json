@@ -39,7 +39,16 @@
 						},
 						{
 							"label": "{{phone}}",
-							"value": "{phone}"
+							"value": "{phone}",
+							"tooltip":  "{{phoneTooltip}}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:{phone}"
+									}
+								}
+							]
 						},
 						{
 							"label": "Attachments",
