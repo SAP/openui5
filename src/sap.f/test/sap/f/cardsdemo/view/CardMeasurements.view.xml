@@ -62,8 +62,8 @@
 				<w:Card id="cardWithExtension" manifest="cardsdemo/bundles/cardWithExtension/manifest.json"></w:Card>
 			</VBox>
 			<VBox>
-				<VBox items="{ path: '/tableCard/measurements', factory: '.measurementDetailsFactory' }"></VBox>
-				<w:Card id="tableCard" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="cardsdemo/bundles/analyticalLine/manifest.json"></w:Card>
+				<VBox items="{ path: '/analyticalLineSingleData/measurements', factory: '.measurementDetailsFactory' }"></VBox>
+				<w:Card id="analyticalLineSingleData" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="cardsdemo/bundles/analyticalLineSingleData/manifest.json"></w:Card>
 			</VBox>
 		</cssgrid:CSSGrid>
 	</Page>

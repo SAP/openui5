@@ -393,7 +393,7 @@ sap.ui.define([
 	 * @override
 	 */
 	RequestDataProvider.prototype.getDetails = function () {
-		return "Load data from URL: " + this.getSettings().request.url;
+		return "Backend interaction - load data from URL: " + this.getSettings().request.url;
 	};
 
 	return RequestDataProvider;

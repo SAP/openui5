@@ -10,12 +10,12 @@
 			"title": "{{title}}",
 			"subTitle": "{{subtitle}}"
 		},
+		"data": {
+			"request": {
+				"url": "./mockdata/employees.json"
+			}
+		},
 		"content": {
-			"data": {
-				"request": {
-					"url": "./mockdata/employees.json"
-				}
-			},
 			"item": {
 				"title": "{Title}",
 				"description": "{Position}",
