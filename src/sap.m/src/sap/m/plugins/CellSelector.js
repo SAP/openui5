@@ -15,6 +15,14 @@ sap.ui.define([
 		PREVIOUS: 2
 	};
 
+	var MOUSE_POSITION = {
+		ABOVE: 0,
+		RIGHT: 1,
+		BELOW: 2,
+		LEFT: 3,
+		IN: 4
+	};
+
 	var CSS_CLASS = "sapMPluginsCellSelector";
 
 	/**
@@ -34,6 +42,12 @@ sap.ui.define([
 	 * - SHIFT + HOME: Enhances the current cell selection block to the begin of the covered rows.
 	 * - SHIFT + END: Enhances the current cell selection block to the end of the covered rows.
 	 * - CTRL + SHIFT + A: Clears the selection.
+	 *
+	 * Mouse Usage:
+	 * - Left Click: Select the clicked cell.
+	 * - Mousedown + Moving: Select an area of cells.
+	 * - Drag Borders: Drag the horizontal/vertical borders to enhance the cell selection in the corresponding direction.
+	 * - Drag Edge: Enhance your current cell selection in any direction, when dragging a corner.
 	 *
 	 * @extends sap.m.plugins.PluginBase
 	 * @class
@@ -55,18 +69,46 @@ sap.ui.define([
 		oControl.addDelegate(this, true, this);
 		this._oSession = {};
 		this._oSession.oCanvas = {};
+		this._oSession.oEdge = {};
+		this._oSession.oBorderLine = {};
 
 		var sScrollEvent = this.getConfig("scrollEvent");
 		sScrollEvent && oControl.attachEvent(sScrollEvent, this._handleScroll, this);
+
+		this._fnMouseupHandler = this._onmouseup.bind(this);
+		document.addEventListener("mouseup", this._fnMouseupHandler);
+		var oContainerRef = this.getControl().getDomRef(this.getConfig("scrollContainer"));
+		if (oContainerRef) {
+			this._fnMouseleaveHandler = this._onMouseLeave.bind(this);
+			oContainerRef.addEventListener("mouseleave", this._fnMouseleaveHandler);
+		}
 	};
 
 	CellSelector.prototype.onDeactivate = function (oControl) {
 		oControl.removeDelegate(this, this);
 		this._oSession = {};
 		this._oSession.oCanvas = {};
+		this._oSession.oEdge = {};
+		this._oSession.oBorderLine = {};
 
 		var sScrollEvent = this.getConfig("scrollEvent");
 		sScrollEvent && oControl.detachEvent(sScrollEvent, this._handleScroll, this);
+
+		document.removeEventListener("mouseup", this._fnMouseupHandler);
+		var oContainerRef = this.getControl().getDomRef(this.getConfig("scrollContainer"));
+		if (oContainerRef) {
+			oContainerRef.removeEventListener("mouseleave", this._fnMouseleaveHandler);
+		}
+	};
+
+	CellSelector.prototype.onAfterRendering = function () {
+		this._fnMouseupHandler = this._onmouseup.bind(this);
+		document.addEventListener("mouseup", this._fnMouseupHandler);
+		var oContainerRef = this.getControl().getDomRef(this.getConfig("scrollContainer"));
+		if (oContainerRef) {
+			this._fnMouseleaveHandler = this._onMouseLeave.bind(this);
+			oContainerRef.addEventListener("mouseleave", this._fnMouseleaveHandler);
+		}
 	};
 
 	/**
@@ -132,7 +174,7 @@ sap.ui.define([
 		if (!this._bSelecting) {
 			return;
 		}
-		this._clearSelection();
+		this.clearSelection();
 	};
 
 	CellSelector.prototype.onsaphome = CellSelector.prototype.onsapend = CellSelector.prototype.onsapnext;
@@ -219,7 +261,7 @@ sap.ui.define([
 		if (this._bSelecting) {
 			// CTRL+SHIFT+A: Clear Selection
 			if (isKeyCombination(oEvent, KeyCodes.A, true, true)) {
-				this._clearSelection();
+				this.clearSelection();
 			}
 			oEvent.preventDefault();
 			oEvent.setMarked();
@@ -231,6 +273,205 @@ sap.ui.define([
 			return;
 		}
 		oEvent.setMarked();
+	};
+
+	// Mouse Navigation
+
+	CellSelector.prototype.ontouchstart = function (oEvent) {
+		var oCellRef = this._getSelectableCell(oEvent.target);
+		if (oEvent.isMarked() || !oCellRef) {
+			return;
+		} else if (!this.getConfig("isSelectionEnabled", this.getControl())) {
+			Log.error("Cell selection is inactive, because preconditions are not met.");
+			return;
+		}
+
+		var oCellInfo = this.getConfig("getCellInfo", this.getControl(), oCellRef);
+
+		if (oCellInfo) {
+			this._bSelecting = true;
+			this._bMouseDown = true;
+			this._bByEdge = false;
+			if (this._oSession.mSource) {
+				if (this._oSession.mSource.rowIndex !== oCellInfo.rowIndex || this._oSession.mSource.colIndex !== oCellInfo.colIndex) {
+					this._oSession.mSource = null;
+					this._oSession.mTarget = null;
+				}
+			}
+
+			this._oSession.mSource = oCellInfo;
+			this._oSession.mStart = oCellInfo;
+			this._selectCells(this._oSession.mSource, oCellInfo, {info: {focus: oCellInfo}});
+			oEvent.preventDefault();
+		}
+		oEvent.setMarked();
+	};
+
+	CellSelector.prototype.ontouchmove = function (oEvent) {
+		if (!this._bMouseDown || !this._bSelecting) {
+			return;
+		}
+
+		var oTouchPosition = this._getMousePosition(this.getConfig("scrollContainer"), oEvent.clientX, oEvent.clientY);
+		if (oTouchPosition.x == MOUSE_POSITION.IN && oTouchPosition.y == MOUSE_POSITION.IN) {
+			this._bScrollSelecting = false;
+		}
+
+		var oTargetRef = this._getSelectableCell(oEvent.target);
+		if (!oTargetRef) {
+			return;
+		}
+
+		var oTargetInfo = this.getConfig("getCellInfo", this.getControl(), oTargetRef);
+		if (oTargetInfo) {
+			if (oTargetInfo.rowIndex == this._oSession.mTarget.rowIndex && oTargetInfo.colIndex == this._oSession.mTarget.colIndex) {
+				// if current mouse position is equal to current saved target position, no change is needed
+				return;
+			}
+
+			var oBounds = getNormalizedBounds(this._oSession.mSource, this._oSession.mTarget);
+
+			if (this._oEdgeInfo && this._oEdgeInfo.isActive && this._oEdgeInfo.moveStart) {
+				this._oEdgeInfo.moveStart = false;
+
+				// Move Start position to opposite edge to ensure correct enlarging/decreasing of selection area
+				if (this._oEdgeInfo.edgePosition === "NE") {
+					this._oSession.mStart.rowIndex = oBounds.to.rowIndex;
+					this._oSession.mStart.colIndex = oBounds.from.colIndex;
+				} else if (this._oEdgeInfo.edgePosition === "SE") {
+					this._oSession.mStart = oBounds.from;
+				} else if (this._oEdgeInfo.edgePosition === "SW") {
+					this._oSession.mStart.rowIndex = oBounds.from.rowIndex;
+					this._oSession.mStart.colIndex = oBounds.to.colIndex;
+				} else if (this._oEdgeInfo.edgePosition === "NW") {
+					this._oSession.mStart = oBounds.to;
+				}
+			} else if (this._oBorderMoveInfo && this._oBorderMoveInfo.isActive) {
+				// Move Start position to opposite border to ensure correct enlarging/decreasing of selection area
+				var sDirection = this._oBorderMoveInfo.direction, bMoveStart = this._oBorderMoveInfo.moveStart;
+				if (sDirection === "N") {
+					this._oSession.mStart = bMoveStart ? oBounds.to : this._oSession.mStart;
+					oTargetInfo.colIndex = oBounds.from.colIndex;
+				} else if (sDirection === "E") {
+					this._oSession.mStart = bMoveStart ? oBounds.from : this._oSession.mStart;
+					oTargetInfo.rowIndex = oBounds.to.rowIndex;
+				} else if (sDirection === "S") {
+					this._oSession.mStart = bMoveStart ? oBounds.from : this._oSession.mStart;
+					oTargetInfo.colIndex = oBounds.to.colIndex;
+				} else if (sDirection === "W") {
+					this._oSession.mStart = bMoveStart ? oBounds.to : this._oSession.mStart;
+					oTargetInfo.rowIndex = oBounds.from.rowIndex;
+				}
+				this._oBorderMoveInfo.moveStart = false;
+			}
+			var mFrom = this._oSession.mStart, mTo = oTargetInfo;
+			this._selectCells(mFrom, mTo, {info: {focus: oTargetInfo}});
+		}
+	};
+
+	CellSelector.prototype._onMouseLeave = function (oEvent) {
+		if (this._bMouseDown && this._bSelecting) {
+			this._bScrollSelecting = true;
+			var oMousePosition = this._getMousePosition(this.getConfig("scrollContainer"), oEvent.clientX, oEvent.clientY);
+			this._onScrollSelect(oMousePosition);
+		}
+	};
+
+	/**
+	 * Event handler for scroll selection. If the mouse is outside of the table while selecting cells, the table will be scrolled accordingly.
+	 *
+	 * Returns a promise, which will resolve if selection is stopped or the control has been destroyed.
+	 * @param {object} oMousePosition mouse position information
+	 * @param {MOUSE_POSITION} oMousePosition.x x position
+	 * @param {MOUSE_POSITION} oMousePosition.y y position
+	 * @returns {Promise} event promise
+	 */
+	CellSelector.prototype._onScrollSelect = function (oMousePosition) {
+		// recursively calls _onScrollSelect every 100ms, as long as scroll selecting is active
+		return new Promise(function (resolve, reject) {
+			if (!this._bScrollSelecting) {
+				resolve();
+				return;
+			}
+			setTimeout(function () {
+				if (!this.getControl()) {
+					// If during the asynchronous process, the control is somehow destroyed, simply resolve and return
+					resolve();
+					return;
+				}
+				var oContainerRef = this.getControl().getDomRef(this.getConfig("container"));
+				if (oMousePosition.x === MOUSE_POSITION.LEFT) {
+					if (this._oSession.mSource.colIndex < this._oSession.mTarget.colIndex && this._oSession.mSource.colIndex > 0) {
+						this._oSession.mSource.colIndex--;
+					} else if (this._oSession.mTarget.colIndex > 0) {
+						this._oSession.mTarget.colIndex--;
+					}
+					oContainerRef.dispatchEvent(new WheelEvent("wheel", {deltaX: -1, deltaMode: window.WheelEvent.DOM_DELTA_LINE}));
+					this._selectCells(this._oSession.mSource, this._oSession.mTarget);
+				} else if (oMousePosition.x === MOUSE_POSITION.RIGHT) {
+					this._oSession.mTarget.colIndex++;
+					oContainerRef.dispatchEvent(new WheelEvent("wheel", {deltaX: 1, deltaMode: window.WheelEvent.DOM_DELTA_LINE}));
+					this._selectCells(this._oSession.mSource, this._oSession.mTarget);
+				}
+				if (oMousePosition.y === MOUSE_POSITION.ABOVE) {
+					if (this._oSession.mSource.rowIndex < this._oSession.mTarget.rowIndex && this._oSession.mSource.rowIndex > 0) {
+						this._oSession.mSource.rowIndex--;
+					} else if (this._oSession.mTarget.rowIndex > 0) {
+						this._oSession.mTarget.rowIndex--;
+					}
+					oContainerRef.dispatchEvent(new WheelEvent("wheel", {deltaY: -1, deltaMode: window.WheelEvent.DOM_DELTA_LINE}));
+				} else if (oMousePosition.y === MOUSE_POSITION.BELOW) {
+					this._oSession.mTarget.rowIndex++;
+					oContainerRef.dispatchEvent(new WheelEvent("wheel", {deltaY: 1, deltaMode: window.WheelEvent.DOM_DELTA_LINE}));
+				}
+				resolve();
+			}.bind(this), 100);
+		}.bind(this)).then(function () {
+			if (!this._bScrollSelecting) {
+				return;
+			}
+			this._onScrollSelect(oMousePosition);
+		}.bind(this));
+	};
+
+	/**
+	 * Event handler for mouse movement with border or edge handles while selecting cells. Sets the according selection flags, if a selection is active.
+	 * @param {String} sFacing direction of movement
+	 * @param {boolean} bBorder is the movement by border dragging
+	 * @private
+	 */
+	CellSelector.prototype._onHandleMove = function (sFacing, bBorder) {
+		if (this._oBorderMoveInfo && this._oBorderMoveInfo.isActive) {
+			return;
+		}
+		this._bSelecting = true;
+		this._bMouseDown = true;
+		if (bBorder) {
+			this._oBorderMoveInfo = {isActive: true, direction: sFacing, moveStart: true};
+		} else {
+			this._oEdgeInfo = {isActive: true, moveStart: true, edgePosition: sFacing};
+		}
+	};
+
+	/**
+	 * Event handler for mouseup. Stops the cell selection and sets the necessary flags accordingly.
+	 * @param {sap.ui.base.Event} oEvent event object
+	 * @private
+	 */
+	CellSelector.prototype._onmouseup = function (oEvent) {
+		this._bMouseDown = false;
+		this._oEdgeInfo = null;
+		this._oBorderMoveInfo = null;
+		this._bScrollSelecting = false;
+	};
+
+	/**
+	 * Checks if the given DOM reference is a selectable cell.
+	 * @param {HTMLELement} oDomRef
+	 * @returns {HTMLELement|null}
+	 */
+	 CellSelector.prototype._getSelectableCell = function (oDomRef) {
+		return oDomRef && oDomRef.closest(this.getConfig("selectableCells"));
 	};
 
 	/**
@@ -302,10 +543,18 @@ sap.ui.define([
 		// "Select cells" - returns the area to draw on (boundaries), border information for drawing and selected cell information
 		var oSelection = this.getConfig("selectCells", this.getControl(), mBounds, oOptions);
 
-		this._oSession.aCells = oSelection.cells;
-		this._drawSelection(oSelection.bounds, oSelection.borderOptions);
+		var mDrawableBounds = this._getDrawableBounds(mBounds);
 
-		if (oOptions && oOptions.info && !oOptions.info.boundaryChange) {
+		if (!mDrawableBounds.from || !mDrawableBounds.to) {
+			// If there are no drawable bounds, do not continue.
+			return;
+		}
+
+		var oBorderOptions = this._getBorderOptions(mBounds, mDrawableBounds);
+		this._oSession.aCells = oSelection.cells;
+		this._drawSelection(mDrawableBounds, oBorderOptions);
+
+		if (!oOptions.info || (oOptions.info && !oOptions.info.boundaryChange)) {
 			// Set new source and target positions
 			this._oSession.mSource = mFrom;
 			this._oSession.mTarget = mTo;
@@ -316,6 +565,33 @@ sap.ui.define([
 		}
 	};
 
+	CellSelector.prototype._getDrawableBounds = function (mBounds) {
+		var mDrawableBounds = {from: {}, to: {}};
+
+		var mRange = this.getConfig("getVisibleRange", this.getControl(), mBounds); // from, to
+
+		if (mBounds.to.rowIndex < mRange.from.rowIndex || mBounds.from.rowIndex > mRange.to.rowIndex) {
+			mDrawableBounds = {};
+		} else {
+			mDrawableBounds.from.rowIndex = Math.max(mBounds.from.rowIndex, mRange.from.rowIndex);
+			mDrawableBounds.from.colIndex = Math.max(mBounds.from.colIndex, mRange.from.colIndex);
+			mDrawableBounds.to.rowIndex = Math.min(mBounds.to.rowIndex, mRange.to.rowIndex);
+			mDrawableBounds.to.colIndex = Math.min(mBounds.to.colIndex, mRange.to.colIndex);
+		}
+		return mDrawableBounds;
+	};
+
+	CellSelector.prototype._getBorderOptions = function (mBounds, mDrawableBounds) {
+		var oBorderOptions = {top: true, bottom: true};
+		if (mDrawableBounds.from.rowIndex > mBounds.from.rowIndex) {
+			oBorderOptions.top = false;
+		}
+		if (mDrawableBounds.to.rowIndex < mBounds.to.rowIndex) {
+			oBorderOptions.bottom = false;
+		}
+		return oBorderOptions;
+	};
+
 	/**
 	 * Draws the selection for the given bounds.
 	 * @param {Object} mBounds object containing the bounds information (from, to)
@@ -324,6 +600,10 @@ sap.ui.define([
 	 * @private
 	 */
 	CellSelector.prototype._drawSelection = function (mBounds, oOptions) {
+		if (!mBounds.from || !mBounds.to) {
+			return;
+		}
+
 		var aSelectionAreas = this.getConfig("getSelectionAreas", this.getControl(), mBounds.from, mBounds.to);
 
 		// Iterate through every selection area
@@ -359,6 +639,24 @@ sap.ui.define([
 
 			// Draw selection area
 			this._drawSelectionArea(oStyle, oArea.container);
+
+			// Draw Edge Handles
+			if (!this._oSession.oEdge[oArea.container]) {
+				this._oSession.oEdge[oArea.container] = {};
+			}
+			this._drawEdgeHandle(oStyle, oArea.container, "NE");
+			this._drawEdgeHandle(oStyle, oArea.container, "SE");
+			this._drawEdgeHandle(oStyle, oArea.container, "SW");
+			this._drawEdgeHandle(oStyle, oArea.container, "NW");
+
+			// Draw Border Lines
+			if (!this._oSession.oBorderLine[oArea.container]) {
+				this._oSession.oBorderLine[oArea.container] = {};
+			}
+			this._drawBorderLine(oStyle, oArea.container, "N");
+			this._drawBorderLine(oStyle, oArea.container, "E");
+			this._drawBorderLine(oStyle, oArea.container, "S");
+			this._drawBorderLine(oStyle, oArea.container, "W");
 		}.bind(this));
 	};
 
@@ -394,7 +692,58 @@ sap.ui.define([
 		oStyle.borderLeft = oTargetStyle.noBorderLeft ? "0px" : "";
 	};
 
-	CellSelector.prototype._clearSelection = function () {
+	/**
+	 * Draws the edge handles, which can be used to extend the cell selection in any direction.
+	 * @param {object} oTargetStyle object containing style information
+	 * @param {String} sContainer container name
+	 * @param {String} sFacing direction of edge
+	 * @private
+	 */
+	CellSelector.prototype._drawEdgeHandle = function (oTargetStyle, sContainer, sFacing) {
+		if (!this._oSession.oEdge[sContainer][sFacing]) {
+			this._oSession.oEdge[sContainer][sFacing] = {};
+
+			this._oSession.oEdge[sContainer][sFacing].wrapper = document.createElement("div");
+			this._oSession.oEdge[sContainer][sFacing].wrapper.className = CSS_CLASS + "EdgeWrapper";
+		}
+		if (!this._oSession.oEdge[sContainer][sFacing].wrapper.isConnected) {
+			this._oSession.oCanvas[sContainer].append(this._oSession.oEdge[sContainer][sFacing].wrapper);
+			this._oSession.oEdge[sContainer][sFacing].wrapper.addEventListener("mousedown", this._onHandleMove.bind(this, sFacing, false));
+		}
+		this._oSession.oEdge[sContainer][sFacing].wrapper.classList.add("sapMPluginsEdge" + sFacing);
+	};
+
+	/**
+	 * Draws a line for the border, which can be dragged to extend selection.
+	 * @param {object} oTargetStyle object containing style information
+	 * @param {String} sContainer container name
+	 * @param {String} sFacing direction of border
+	 * @private
+	 */
+	CellSelector.prototype._drawBorderLine = function (oTargetStyle, sContainer, sFacing) {
+		if (!this._oSession.oBorderLine[sContainer][sFacing]) {
+			this._oSession.oBorderLine[sContainer][sFacing] = document.createElement("div");
+			this._oSession.oBorderLine[sContainer][sFacing].className = CSS_CLASS + "BorderLine";
+		}
+		if (!this._oSession.oBorderLine[sContainer][sFacing].isConnected) {
+			this._oSession.oCanvas[sContainer].append(this._oSession.oBorderLine[sContainer][sFacing]);
+			this._oSession.oBorderLine[sContainer][sFacing].addEventListener("mousedown", this._onHandleMove.bind(this, sFacing, true));
+		}
+
+		var oStyle = this._oSession.oBorderLine[sContainer][sFacing].style;
+		this._oSession.oBorderLine[sContainer][sFacing].classList.add("sapMPluginsBorder" + sFacing);
+		if (sFacing === "N" || sFacing === "S") {
+			oStyle.width = oTargetStyle.width + "px";
+		} else {
+			oStyle.height = oTargetStyle.height + "px";
+		}
+		oStyle.display = "block";
+	};
+
+	/**
+	 * Clears the currently selected cells.
+	 */
+	CellSelector.prototype.clearSelection = function () {
 		this._bSelecting = false;
 		this._eraseSelection();
 		this._oSession.mSource = null;
@@ -408,6 +757,18 @@ sap.ui.define([
 	CellSelector.prototype._eraseSelection = function () {
 		Object.values(this._oSession.oCanvas).forEach(function (oArea) {
 			oArea.style = "";
+		});
+		Object.values(this._oSession.oBorderLine).forEach(function (oArea) {
+			Object.values(oArea).forEach(function (oBorder) {
+				oBorder.style = "";
+			});
+		});
+		Object.values(this._oSession.oEdge).forEach(function (oArea) {
+			Object.values(oArea).forEach(function (oEdge) {
+				Object.values(oEdge).forEach(function (oEdgePart) {
+					oEdgePart.style = "";
+				});
+			});
 		});
 	};
 
@@ -446,6 +807,32 @@ sap.ui.define([
 	};
 
 	/**
+	 * Retrieves the current mouse position and returns info on whether the mouse is inside the control or not.
+	 * @param {String} sContainer container name
+	 * @param {number} iX x position of mouse
+	 * @param {y} iY y position of mouse
+	 * @returns {object} object containing position information for x, y
+	 */
+	CellSelector.prototype._getMousePosition = function (sContainer, iX, iY) {
+		var oContainerRef = this.getControl().getDomRef(sContainer);
+		var oPosition = {x: MOUSE_POSITION.IN, y: MOUSE_POSITION.IN};
+		if (oContainerRef) {
+			var oContainerRect = oContainerRef.getBoundingClientRect();
+			if (iY > oContainerRect.bottom) {
+				oPosition.y = MOUSE_POSITION.BELOW;
+			} else if (iY < oContainerRect.top) {
+				oPosition.y = MOUSE_POSITION.ABOVE;
+			}
+			if (iX > oContainerRect.right) {
+				oPosition.x = MOUSE_POSITION.RIGHT;
+			} else if (iX < oContainerRect.left) {
+				oPosition.x = MOUSE_POSITION.LEFT;
+			}
+		}
+		return oPosition;
+	};
+
+	/**
 	 * Returns an object containing normalized coordinates for the given bounding area.
 	 * <code>from</code> will contain the coordinates for the upper left corner of the bounding area,
 	 * while <code>to</code> contains the coordinates of the lower right corner of the bounding area.
@@ -477,13 +864,34 @@ sap.ui.define([
 	}
 
 	PluginBase.setConfigs({
-		"sap.m.Table": {
-			selectableCells: ".sapMListTblCell:not([aria-hidden=true])"
-		},
 		"sap.ui.table.Table": {
-			container: "tableCtrlCnt",
+			container: "tableCCnt",
+			scrollContainer: "sapUiTableCtrlScr",
 			selectableCells: ".sapUiTableDataCell",
 			scrollEvent: "firstVisibleRowChanged",
+			onActivate: function (oControl, oPlugin) {
+				var sEvent = "rowSelectionChange";
+				var oSelectionPlugin = oControl;
+				oControl.getPlugins().forEach(function (oPlugin) {
+					if (oPlugin.isA("sap.ui.table.plugins.SelectionPlugin")) {
+						sEvent = "selectionChange";
+						oSelectionPlugin = oPlugin;
+					}
+				});
+				oSelectionPlugin.attachEvent(sEvent, oPlugin.clearSelection, oPlugin);
+			},
+			onDeactivate: function (oControl, oPlugin) {
+				var sEvent = "rowSelectionChange";
+				var oSelectionPlugin = oControl;
+				oControl.getPlugins().forEach(function (oPlugin) {
+					if (oPlugin.isA("sap.ui.table.plugins.SelectionPlugin")) {
+						sEvent = "selectionChange";
+						oSelectionPlugin = oPlugin;
+						return;
+					}
+				});
+				oSelectionPlugin.detachEvent(sEvent, oPlugin.clearSelection, oPlugin);
+			},
 			/**
 			 * Checks if the selection is enabled for the control.
 			 * @param {sap.ui.core.Control} oControl control instance
@@ -506,7 +914,7 @@ sap.ui.define([
 					var oColumn = this._getColumns(oTable)[mPosition.colIndex];
 					var oCell = oColumn && oRow.getCells()[mPosition.colIndex];
 					if (oCell) {
-						return oCell.$().closest(".sapUiTableDataCell")[0];
+						return oCell.$().closest(this.selectableCells)[0];
 					}
 				}
 			},
@@ -520,6 +928,18 @@ sap.ui.define([
 				return {
 					rowIndex: this.rowIndex(null, oTarget),
 					colIndex: this.colIndex(oTable, oTarget)
+				};
+			},
+			/**
+			 * Retrieve the visible row range for the given table.
+			 * @param {sap.ui.table.Table} oTable table instance
+			 * @returns {Object} object containing from - to table range
+			 */
+			getVisibleRange: function (oTable) {
+				var aRows = oTable.getRows();
+				return {
+					from: {rowIndex: aRows[0].getIndex(), colIndex: 0},
+					to: {rowIndex: aRows[aRows.length - 1].getIndex(), colIndex: this._getColumns(oTable).length - 1}
 				};
 			},
 			/**
@@ -542,14 +962,12 @@ sap.ui.define([
 					aAreas.push({container: "sapUiTableCtrlScrFixed", from: mFixedFrom, to: mFixedTo});
 				}
 				if (mTo.colIndex >= iFixedColumnCount || mTo.colIndex === Infinity) {
-					aAreas.push({container: this.container, from: mFrom, to: mTo, hasOffset: true});
+					aAreas.push({container: "tableCtrlCnt", from: mFrom, to: mTo, hasOffset: true});
 				}
 				return aAreas;
 			},
 			/**
 			 * Retrieves selected cells and returns their position and the boundaries of the selection area fitted to the table and its border options.
-			 *
-			 * Note: Also modifies the original mSelectionBounds object and replaces MIN/MAX with real values.
 			 *
 			 * Note: As the selection area may vary based on control-specific settings (e.g. SingleSelection), the information is returned as well.
 			 * @param {sap.ui.table.Table} oTable table instance
@@ -561,83 +979,41 @@ sap.ui.define([
 			 */
 			selectCells: function (oTable, mSelectionBounds, oOptions) {
 				var mBounds = {}, oBorderOptions = {top: true, bottom: true};
+				var iBindingLength = oTable.getBinding("rows").getLength();
 				mBounds.from = Object.assign({}, mSelectionBounds.from);
 				mBounds.to = Object.assign({}, mSelectionBounds.to);
+
+				mBounds.from.rowIndex = Math.max(mBounds.from.rowIndex, 0);
+				mBounds.from.colIndex = Math.max(mBounds.from.colIndex, 0);
+
+				mBounds.to.rowIndex = Math.min(mBounds.to.rowIndex, iBindingLength);
+				mBounds.to.colIndex = Math.min(mBounds.to.colIndex, this._getColumns(oTable).length - 1);
+
 				var aCells = [];
 
 				// Replace MIN/MAX with according number for focus object
 				if (oOptions && oOptions.info) {
-					if (oOptions.info.focus.rowIndex === -Infinity) {
-						oOptions.info.focus.rowIndex = 0;
-					} else if (oOptions.info.focus.rowIndex === Infinity) {
-						oOptions.info.focus.rowIndex = oTable._getTotalRowCount();
-					}
-					if (oOptions.info.focus.colIndex === -Infinity) {
-						oOptions.info.focus.colIndex = 0;
-					} else if (oOptions.info.focus.colIndex === Infinity) {
-						oOptions.info.focus.colIndex = this._getColumns(oTable).length - 1;
-					}
+					oOptions.info.focus.rowIndex = Math.min(Math.max(oOptions.info.focus.rowIndex, 0), iBindingLength);
+					oOptions.info.focus.colIndex = Math.min(Math.max(oOptions.info.focus.colIndex, 0), this._getColumns(oTable).length - 1);
 					this._focusCell(oTable, oOptions.info.focus, oOptions.info.direction);
 				}
 
-				// Determine the first, last and last row of unfixed rows. Needs to factor in fixed rows.
-				var iFirstRow = oTable.getFirstVisibleRow() + oTable.getFixedRowCount();
-				var iLastRowIndex = iFirstRow + oTable.getVisibleRowCount() - oTable.getFixedBottomRowCount() - oTable.getFixedRowCount() - 1;
-				var iLowerFixedLimit = iFirstRow + oTable.getVisibleRowCount() - oTable.getFixedRowCount() - oTable.getFixedBottomRowCount();
-
-				if ((mBounds.from.rowIndex < iFirstRow && mBounds.to.rowIndex < iFirstRow
-					|| mBounds.from.rowIndex > iLastRowIndex && mBounds.to.rowIndex > iLastRowIndex)
-					&& !(mBounds.from.rowIndex < oTable.getFixedRowCount() || mBounds.to.rowIndex >= iLowerFixedLimit)) {
-					// If both FROM and TO are out of the view port and there is no need to render them, set bounds to none. Needs to factor in fixed rows.
-					mBounds.from = {};
-					mBounds.to = {};
-				} else {
-					if ((mBounds.from.rowIndex < iFirstRow && mBounds.from.rowIndex > (oTable.getFixedRowCount() - 1)) || mBounds.from.rowIndex === -Infinity) {
-						// Case 1: FROM is "above" table, so return the position of the first row instead for rendering.
-						mBounds.from.rowIndex = iFirstRow;
-						oBorderOptions.top = mBounds.from.rowIndex == 0 ? true : false;
-						if (mSelectionBounds.from.rowIndex === -Infinity) {
-							// Case 1.A: If MIN is given, set it immediately to 0
-							mSelectionBounds.from.rowIndex = 0;
-							mBounds.from.rowIndex = oTable.getFixedRowCount() > 0 ? 0 : iFirstRow;
-						}
-					}
-					if ((mBounds.to.rowIndex > iLastRowIndex && mBounds.to.rowIndex < (oTable._getTotalRowCount() - oTable.getFixedBottomRowCount())) || mBounds.to.rowIndex === Infinity) {
-						// Case 2: TO is "below" table (currently visible rows), so return the position of the last visible row instead for rendering.
-						mBounds.to.rowIndex = iLastRowIndex;
-						oBorderOptions.bottom = mBounds.to.rowIndex == oTable._getTotalRowCount() - 1 ? true : false;
-						if (mSelectionBounds.to.rowIndex === Infinity) {
-							// Case 2.A: If MAX is given, set it immediately to the maximum row count
-							mSelectionBounds.to.rowIndex = oTable._getTotalRowCount() - 1;
-							mBounds.to.rowIndex = oTable.getFixedRowCount() > 0 ? oTable._getTotalRowCount() - 1 : iLastRowIndex;
-						}
-					}
-				}
-
 				// If table is in Single Selection Mode, only select the row with focus in it
-				if (mBounds.from.colIndex === -Infinity && mBounds.from.colIndex === Infinity) {
-					mBounds.from.rowIndex = oOptions.info.focus.rowIndex;
-					mSelectionBounds.from.rowIndex = oOptions.info.focus.rowIndex;
+				if (mBounds.from.colIndex === 0 && mBounds.to.colIndex === (this._getColumns(oTable).length - 1) && oTable.getSelectionMode() == "Single") {
+					mBounds.from.rowIndex = mSelectionBounds.from.rowIndex = oOptions.info.focus.rowIndex;
+					mBounds.to.rowIndex = mSelectionBounds.to.rowIndex = oOptions.info.focus.rowIndex;
 				}
 
-				var aVisibleColumns = this._getColumns(oTable);
-				mBounds.from.colIndex = mSelectionBounds.from.colIndex = Math.max(mSelectionBounds.from.colIndex, 0);
-				mBounds.to.colIndex = mSelectionBounds.to.colIndex = Math.min(mSelectionBounds.to.colIndex, aVisibleColumns.length - 1);
-
-				for (var iRow = mSelectionBounds.from.rowIndex; iRow <= mSelectionBounds.to.rowIndex; iRow++) {
+				for (var iRow = mBounds.from.rowIndex; iRow <= mBounds.to.rowIndex; iRow++) {
 					var oRow = this._getRowByIndex(oTable, iRow);
 					if (oRow) {
-						for (var iCol = mSelectionBounds.from.colIndex; iCol <= mSelectionBounds.to.colIndex; iCol++) {
+						for (var iCol = mBounds.from.colIndex; iCol <= mBounds.to.colIndex; iCol++) {
 							aCells.push([iRow, iCol]);
 						}
 					}
 				}
 
-				return {
-					bounds: mBounds,
-					borderOptions: oBorderOptions,
-					cells: aCells
-				};
+				return {borderOptions: oBorderOptions, cells: aCells};
 			},
 			/**
 			 * Retrieves the row index for the given cell's DOM reference.
@@ -668,8 +1044,10 @@ sap.ui.define([
 				return oColumn;
 			},
 			isNavigatableCell: function (oTable, mPosition) {
-				if (mPosition.rowIndex < 0 || mPosition.rowIndex >= oTable._getTotalRowCount()
-					|| mPosition.colIndex < 0 || mPosition.colIndex >= this._getColumns(oTable).length) {
+				if ((mPosition.rowIndex < 0 || mPosition.rowIndex >= oTable.getBinding("rows").getLength()
+					|| mPosition.colIndex < 0 || mPosition.colIndex >= this._getColumns(oTable).length)
+					&& !(mPosition.rowIndex == -Infinity || mPosition.rowIndex == Infinity
+					|| mPosition.colIndex == -Infinity || mPosition.colIndex == Infinity)) {
 					return false;
 				}
 				return true;
@@ -682,11 +1060,12 @@ sap.ui.define([
 			 */
 			_scrollRow: function (oTable, iDirection, iRow) {
 				var iFirstRow = oTable.getFirstVisibleRow();
-				if (iRow >= 0 && iRow < oTable._getTotalRowCount()) {
+				if (iRow >= 0 && iRow < oTable.getBinding("rows").getLength()) {
 					if (oTable.getFixedRowCount() > 0 && iRow == oTable.getFixedRowCount()) {
 						oTable.setFirstVisibleRow(0);
 					} else {
 						iDirection == SELECTION_DIRECTION.NEXT ? iFirstRow++ : iFirstRow--;
+						iFirstRow = iFirstRow < 0 ? 0 : iFirstRow;
 						oTable.setFirstVisibleRow(iFirstRow);
 					}
 				}
@@ -705,6 +1084,10 @@ sap.ui.define([
 				if (!oCellRef) {
 					this._scrollRow(oTable, iDirection, mPosition.rowIndex);
 					oCellRef = this.getCellRef(oTable, mPosition);
+					if (!oCellRef) {
+						oTable.setFirstVisibleRow(mPosition.rowIndex);
+						oCellRef = this.getCellRef(oTable, mPosition);
+					}
 				}
 				oCellRef &&	oCellRef.focus();
 			},
@@ -715,7 +1098,7 @@ sap.ui.define([
 			 */
 			_getColumns: function (oTable) {
 				return oTable.getColumns().filter(function (oColumn) {
-					return oColumn.shouldRender();
+					return oColumn.getDomRef();
 				});
 			},
 			/**
