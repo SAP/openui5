@@ -19,8 +19,8 @@ OPA5 test action
 
 | Param | Type | Description |
 | --- | --- | --- |
-| sLabelName | <code>string</code> | Label of the given <code>FilterField</code> |
-| sValue | <code>string</code> | Value which is to be entered in the <code>FilterField</code> |
+| sLabelName | <code>string</code> | Label of the given <code>sap.ui.mdc.FilterField</code> |
+| sValue | <code>string</code> | Value that is entered in the <code>sap.ui.mdc.FilterField</code> |
 | oConfig | <code>object</code> | TODO: to be clarified |
 
 <a name="onTheMDCFilterField.iPressKeyOnFilterFieldWithLabel"></a>
@@ -33,8 +33,8 @@ OPA5 test action
 
 | Param | Type | Description |
 | --- | --- | --- |
-| sLabelName | <code>string</code> | Label of the given <code>FilterField</code> |
-| sValue | <code>string</code> | Value of the Keycode which is to be pressed |
+| sLabelName | <code>string</code> | Label of the given <code>sap.ui.mdc.FilterField</code> |
+| sValue | <code>string</code> | Value of the key code that is pressed |
 
 <a name="onTheMDCFilterField.iPressOnTheFilterFieldValueHelpButton"></a>
 
@@ -46,7 +46,7 @@ OPA5 test action
 
 | Param | Type | Description |
 | --- | --- | --- |
-| sLabelName | <code>string</code> | Label of the given <code>FilterField</code> |
+| sLabelName | <code>string</code> | Label of the given <code>sap.ui.mdc.FilterField</code> |
 
 <a name="onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues"></a>
 
@@ -58,6 +58,6 @@ OPA5 test assertion
 
 | Param | Type | Description |
 | --- | --- | --- |
-| sLabelName | <code>string</code> | Label of the given <code>FilterField</code> |
+| sLabelName | <code>string</code> | Label of the given <code>sap.ui.mdc.FilterField</code> |
 | oValues | <code>object</code> | Expected values |
 

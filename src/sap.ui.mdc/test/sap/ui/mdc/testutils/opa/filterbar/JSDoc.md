@@ -21,13 +21,13 @@
 OPA5 test action
 <ol>
 	<li>
-		Opens the personalization dialog of the given <code>FilterBar</code>.
+		Opens the personalization dialog of the given <code>sap.ui.mdc.FilterBar</code>.
 	</li>
  <li>
-		Navigates to the "Group" tab.
+		Navigates to the Group tab.
 	</li>
 	<li>
-		Opens all groups and selects / deselects all <code>FilterFields</code> depending on <code>oSettings</code>. Only the labels defined in <code>oSettings</code> will be selected, others will be deselected.
+		Opens all groups and selects / deselects all filter fields depending on <code>oSettings</code>. Only the labels defined in <code>oSettings</code> will be selected, others will be deselected.
 	</li>
 	<li>
 		Closes the personalization dialog.
@@ -39,8 +39,8 @@ OPA5 test action
 
 | Param | Type | Description |
 | --- | --- | --- |
-| oFilterBar | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>FilterBar</code> that is filtered |
-| oSettings | <code>Object</code> | Map containing the settings for the filter personalization. Key is the label of the given group in the <code>FilterBar</code> personalization dialog, and value is an array containing the labels of the <code>FilterField</code> |
+| oFilterBar | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>sap.ui.mdc.FilterBar</code> that is filtered |
+| oSettings | <code>Object</code> | Map containing the settings for the filter personalization. Key is the label of the given group in the <code>sap.ui.mdc.FilterBar</code> personalization dialog, and value is an array containing the labels of the <code>FilterField</code> |
 
 <a name="onTheMDCFilterBar.iResetThePersonalization"></a>
 
@@ -48,13 +48,13 @@ OPA5 test action
 OPA5 test action
 <ol>
 	<li>
-		Opens the personalization dialog of the given <code>FilterBar</code>.
+		Opens the personalization dialog of the given <code>sap.ui.mdc.FilterBar</code>.
 	</li>
 	<li>
-		Presses the reset personalization button.
+		Presses the Reset personalization button.
 	</li>
 	<li>
-		Confirms the reset dialog.
+		Confirms the Reset dialog.
 	</li>
 	<li>
 		Closes the personalization dialog.
@@ -66,20 +66,20 @@ OPA5 test action
 
 | Param | Type | Description |
 | --- | --- | --- |
-| oFilterBar | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>FilterBar</code> |
+| oFilterBar | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>sap.ui.mdc.FilterBar</code> |
 
 <a name="onTheMDCFilterBar.iExpectSearch"></a>
 
 ### onTheMDCFilterBar.iExpectSearch(oFilterBar) ⇒ <code>Promise</code>
 OPA5 test action
-Presses the apply filters button of the <code>FilterBar</code>.
+Presses the Apply Filters button of the <code>sap.ui.mdc.FilterBar</code>.
 
 **Kind**: static method of [<code>onTheMDCFilterBar</code>](#onTheMDCFilterBar)  
 **Returns**: <code>Promise</code> - OPA waitFor  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| oFilterBar | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>FilterBar</code> |
+| oFilterBar | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>sap.ui.mdc.FilterBar</code> |
 
 <a name="onTheMDCFilterBar.iEnterFilterValue"></a>
 
@@ -87,10 +87,10 @@ Presses the apply filters button of the <code>FilterBar</code>.
 OPA5 test action
 <ol>
 	<li>
-		Opens the personalization dialog of the given <code>FilterBar</code>.
+		Opens the personalization dialog of the given <code>sap.ui.mdc.FilterBar</code>.
 	</li>
 	<li>
-		Navigates to the "Group" tab.
+		Navigates to the Group tab.
 	</li>
 	<li>
 		Opens the given groups and enters all values in the <code>FilterFields</code> depending on <code>oSettings</code>.
@@ -105,28 +105,28 @@ OPA5 test action
 
 | Param | Type | Description |
 | --- | --- | --- |
-| oFilterBar | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>FilterBar</code> |
-| mSettings | <code>Object</code> | Map containing the settings for the filter values. Key is the label of the given group in the <code>FilterBar</code> personalization dialog, and value is an object containing the label of the <code>FilterField</code> and the values that are entered |
+| oFilterBar | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>sap.ui.mdc.FilterBar</code> |
+| mSettings | <code>Object</code> | Map containing the settings for the filter values. Key is the label of the given group in the <code>sap.ui.mdc.FilterBar</code> personalization dialog, and value is an object containing the label of the <code>FilterField</code> and the values that are entered |
 
 <a name="onTheMDCFilterBar.iClearFilterValue"></a>
 
 ### onTheMDCFilterBar.iClearFilterValue(oFilterBar, sFilterLabel) ⇒ <code>Promise</code>
 OPA5 test action
-Clears all values of a <code>FilterField</code> with a given label on the <code>FilterBar</code>.
+Clears all values of a <code>FilterField</code> with a given label on the <code>sap.ui.mdc.FilterBar</code>.
 
 **Kind**: static method of [<code>onTheMDCFilterBar</code>](#onTheMDCFilterBar)  
 **Returns**: <code>Promise</code> - OPA waitFor  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| oFilterBar | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>FilterBar</code> |
+| oFilterBar | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>sap.ui.mdc.FilterBar</code> |
 | sFilterLabel | <code>string</code> | Label of the <code>FilterField</code> |
 
 <a name="onTheMDCFilterBar.iPressOnTheAdaptFiltersButton"></a>
 
 ### onTheMDCFilterBar.iPressOnTheAdaptFiltersButton() ⇒ <code>Promise</code>
 OPA5 test action
-Checks if there is a button visible on the application with the adopt filters icon and presses that given button.
+Checks if there is a button visible in the application with the Adapt Filters icon and presses that given button.
 
 **Kind**: static method of [<code>onTheMDCFilterBar</code>](#onTheMDCFilterBar)  
 **Returns**: <code>Promise</code> - OPA waitFor  
@@ -134,16 +134,16 @@ Checks if there is a button visible on the application with the adopt filters ic
 
 ### onTheMDCFilterBar.iShouldSeeFilters(oFilterBar, vSettings) ⇒ <code>Promise</code>
 OPA5 test assertion
-Checks if given <code>FilterFields</code> are displayed on a given <code>FilterBar</code>.
+Checks if given filter fields are displayed on a given <code>sap.ui.mdc.FilterBar</code>.
 Depending on the <code>vSettings</code> type this function can be used in two different ways:
 <ul>
 	<li>
 		<code>vSettings</code> is an array of strings:
-		Checks if all given strings are labels for <code>FilterFields</code> on a given <code>FilterBar</code>.
+		Checks if all given strings are labels for <code>FilterFields</code> on a given <code>sap.ui.mdc.FilterBar</code>.
 	</li>
 	<li>
  	<code>vSettings</code> is an object:
-		Checks for each key in the object if there is a label for a <code>FilterFields</code> of a given <code>FilterBar</code>.
+		Checks for each key in the object if there is a label for a <code>FilterField</code> of a given <code>sap.ui.mdc.FilterBar</code>.
 		The value of that key is an array containing objects with the operators and values that are expected for the given <code>FilterFields</code>.
 		If the value is an empty array, the given <code>FilterFields</code> doesn't have a value.
  </li>
@@ -154,14 +154,14 @@ Depending on the <code>vSettings</code> type this function can be used in two di
 
 | Param | Type | Description |
 | --- | --- | --- |
-| oFilterBar | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>FilterBar</code> |
+| oFilterBar | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>sap.ui.mdc.FilterBar</code> |
 | vSettings | <code>Array.&lt;string&gt;</code> \| <code>Object</code> | Settings in which the expected filters are defined |
 
 <a name="onTheMDCFilterBar.iShouldSeeTheFilterBar"></a>
 
 ### onTheMDCFilterBar.iShouldSeeTheFilterBar() ⇒ <code>Promise</code>
 OPA5 test assertion
-Checks if there is a <code>FilterBar</code> visible on the application.
+Checks if there is a <code>sap.ui.mdc.FilterBar</code> visible in the application.
 
 **Kind**: static method of [<code>onTheMDCFilterBar</code>](#onTheMDCFilterBar)  
 **Returns**: <code>Promise</code> - OPA waitFor  
@@ -169,7 +169,7 @@ Checks if there is a <code>FilterBar</code> visible on the application.
 
 ### onTheMDCFilterBar.iShouldSeeTheFilterFieldsWithLabels(aLabelNames) ⇒ <code>Promise</code>
 OPA5 test assertion
-Checks if there are <code>FilterFields</code> visible on the application with given labels.
+Checks if there are filter fields visible in the application with given labels.
 
 **Kind**: static method of [<code>onTheMDCFilterBar</code>](#onTheMDCFilterBar)  
 **Returns**: <code>Promise</code> - OPA waitFor  
@@ -182,7 +182,7 @@ Checks if there are <code>FilterFields</code> visible on the application with gi
 
 ### onTheMDCFilterBar.iShouldSeeTheAdaptFiltersButton() ⇒ <code>Promise</code>
 OPA5 test assertion
-Checks if there is a button visible on the application with the adopt filters icon.
+Checks if there is a button visible in the application with the Adapt Filters icon.
 
 **Kind**: static method of [<code>onTheMDCFilterBar</code>](#onTheMDCFilterBar)  
 **Returns**: <code>Promise</code> - OPA waitFor  

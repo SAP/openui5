@@ -10,6 +10,8 @@
 <dl>
 <dt><a href="#ChartPersonalizationConfiguration">ChartPersonalizationConfiguration</a> : <code>object</code></dt>
 <dd></dd>
+<dt><a href="#FilterPersonalizationConfiguration">FilterPersonalizationConfiguration</a> : <code>object</code></dt>
+<dd></dd>
 <dt><a href="#SortPersonalizationConfiguration">SortPersonalizationConfiguration</a> : <code>object</code></dt>
 <dd></dd>
 </dl>
@@ -21,6 +23,7 @@
 
 * [onTheMDCChart](#onTheMDCChart) : <code>object</code>
     * [.iPersonalizeChart(oChart, aConfigurations)](#onTheMDCChart.iPersonalizeChart) ⇒ <code>Promise</code>
+    * [.iPersonalizeFilter(oControl, aSettings, bCancel)](#onTheMDCChart.iPersonalizeFilter) ⇒ <code>Promise</code>
     * [.iPersonalizeSort(oChart, aConfigurations)](#onTheMDCChart.iPersonalizeSort) ⇒ <code>Promise</code>
     * [.iResetThePersonalization(oChart)](#onTheMDCChart.iResetThePersonalization) ⇒ <code>Promise</code>
     * [.iClickOnZoomIn(sId)](#onTheMDCChart.iClickOnZoomIn) ⇒ <code>Promise</code>
@@ -47,6 +50,8 @@
     * [.iShouldSeeADetailsPopover()](#onTheMDCChart.iShouldSeeADetailsPopover) ⇒ <code>Promise</code>
     * [.iShouldSeeVisibleDimensionsInOrder(aDimensions, sId)](#onTheMDCChart.iShouldSeeVisibleDimensionsInOrder) ⇒ <code>Promise</code>
     * [.iShouldSeeVisibleMeasuresInOrder(aMeasures, sId)](#onTheMDCChart.iShouldSeeVisibleMeasuresInOrder) ⇒ <code>Promise</code>
+    * [.iCheckFilterPersonalization(oControl, aConfigurations, fnOpenThePersonalizationDialog)](#onTheMDCChart.iCheckFilterPersonalization) ⇒ <code>Promise</code>
+    * [.iCheckAvailableFilters(oControl, aFilters)](#onTheMDCChart.iCheckAvailableFilters) ⇒ <code>Promise</code>
 
 <a name="onTheMDCChart.iPersonalizeChart"></a>
 
@@ -64,6 +69,24 @@ OPA5 test action
 | --- | --- | --- |
 | oChart | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>MDCChart</code> that is personalized |
 | aConfigurations | [<code>Array.&lt;ChartPersonalizationConfiguration&gt;</code>](#ChartPersonalizationConfiguration) | Array containing the chart personalization configuration objects |
+
+<a name="onTheMDCChart.iPersonalizeFilter"></a>
+
+### onTheMDCChart.iPersonalizeFilter(oControl, aSettings, bCancel) ⇒ <code>Promise</code>
+OPA5 test action
+1. Opens the personalization dialog of a given chart.
+2. Executes the given <code>FilterPersonalizationConfiguration</code>.
+3. Closes the personalization dialog.
+
+**Kind**: static method of [<code>onTheMDCChart</code>](#onTheMDCChart)  
+**Returns**: <code>Promise</code> - OPA waitFor  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| oControl | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>Control</code> that is filtered |
+| aSettings | [<code>Array.&lt;FilterPersonalizationConfiguration&gt;</code>](#FilterPersonalizationConfiguration) | Array containing the filter personalization configuration objects |
+| bCancel | <code>boolean</code> | Cancel the personalization dialog after the configuration has been done instead of confirming it |
 
 <a name="onTheMDCChart.iPersonalizeSort"></a>
 
@@ -389,6 +412,39 @@ Assertion to check visible measures on the <code>sap.ui.mdc.Chart</code>.
 | aMeasures | <code>Array.&lt;string&gt;</code> | Array containing the expected measures |
 | sId | <code>string</code> | The ID of the <code>sap.ui.mdc.Chart</code> |
 
+<a name="onTheMDCChart.iCheckFilterPersonalization"></a>
+
+### onTheMDCChart.iCheckFilterPersonalization(oControl, aConfigurations, fnOpenThePersonalizationDialog) ⇒ <code>Promise</code>
+OPA5 test assertion
+1. Opens the personalization dialog of a given chart.
+2. Executes the given <code>FilterPersonalizationConfiguration</code>.
+3. Closes the personalization dialog.
+
+**Kind**: static method of [<code>onTheMDCChart</code>](#onTheMDCChart)  
+**Returns**: <code>Promise</code> - OPA waitFor  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| oControl | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>Control</code> that is filtered |
+| aConfigurations | [<code>Array.&lt;FilterPersonalizationConfiguration&gt;</code>](#FilterPersonalizationConfiguration) | Array containing the filter personalization configuration objects |
+| fnOpenThePersonalizationDialog | <code>function</code> | a function which opens the personalization dialog of the given control |
+
+<a name="onTheMDCChart.iCheckAvailableFilters"></a>
+
+### onTheMDCChart.iCheckAvailableFilters(oControl, aFilters) ⇒ <code>Promise</code>
+OPA5 test assertion
+1. Opens the personalization dialog of a given table.
+2. Checks the availability of the provided filter texts (by opening and comparing the available items in the ComboBox)
+3. Closes the personalization dialog.
+
+**Kind**: static method of [<code>onTheMDCChart</code>](#onTheMDCChart)  
+**Returns**: <code>Promise</code> - OPA waitFor  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| oControl | <code>sap.ui.core.Control</code> \| <code>string</code> | Instance / ID of the <code>Control</code> that is filtered |
+| aFilters | <code>Array.&lt;string&gt;</code> | Array containing the names of selectable filters |
+
 <a name="ChartPersonalizationConfiguration"></a>
 
 ## ChartPersonalizationConfiguration : <code>object</code>
@@ -399,6 +455,19 @@ Assertion to check visible measures on the <code>sap.ui.mdc.Chart</code>.
 | --- | --- | --- |
 | key | <code>string</code> | Key of the value that is the result of the personalization |
 | role | <code>string</code> | Role of the given value |
+
+<a name="FilterPersonalizationConfiguration"></a>
+
+## FilterPersonalizationConfiguration : <code>object</code>
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| key | <code>string</code> | Key of the value that is the result of the personalization |
+| operator | <code>string</code> | Operator defining how the items are filtered |
+| values | <code>Array.&lt;string&gt;</code> | Filter values for the given operator |
+| inputControl | <code>string</code> | <code>Control</code> that is used as input for the value |
 
 <a name="SortPersonalizationConfiguration"></a>
 

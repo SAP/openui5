@@ -306,13 +306,13 @@ sap.ui.define([
 
 		//I should see an editable field Price with value 48.79 GBP
 		var sFieldId = "listreport---bookdetails--fPrice";
-		Then.onTheMDCField.iShouldSeeTheFieldWithValues(sFieldId, ['48.79', 'GBP']);
+		Then.onTheMDCField.iShouldSeeTheFieldWithValues(sFieldId, ['22', 'GBP']);
 
 
 
-		//I change the Price to 22 GBP
+		//I change the Price to 48.79 GBP
 		// TODO How can I change value and unit
-		When.onTheMDCField.iEnterTextOnTheField(sFieldId, '22');
+		When.onTheMDCField.iEnterTextOnTheField(sFieldId, '48.79');
 
 
 
@@ -321,8 +321,8 @@ sap.ui.define([
 
 
 
-		//I should see a table with one row and a column Price with value 22.00 GBP
-		Then.onTheMDCTable.iShouldSeeARowWithData(0, JSON.parse('["The Yellow Wallpaper","Mentally ill women  Fiction, Feminist fiction, Psychological fiction, Married women  Psychology  Fiction, Sex role  Fiction",102,["22","GBP"],815,"religious_text","prophecy"]'));
+		//I should see a table with one row and a column Price with value 48.79 GBP
+		Then.onTheMDCTable.iShouldSeeARowWithData(0, JSON.parse('["The Yellow Wallpaper","Mentally ill women  Fiction, Feminist fiction, Psychological fiction, Married women  Psychology  Fiction, Sex role  Fiction",102,["48.79","GBP"],815,"religious_text","prophecy"]'));
 
 
 
@@ -330,7 +330,7 @@ sap.ui.define([
 		When.onTheMDCLink.iPressTheLink(link);
 		When.onTheMDCLink.iPressLinkOnPopover(link, "Manage book");
 		When.util.iPressButton("Edit");
-		When.onTheMDCField.iEnterTextOnTheField(sFieldId, "48.79");
+		When.onTheMDCField.iEnterTextOnTheField(sFieldId, "22.00");
 		When.util.iPressButton("Save");
 
 		Then.iTeardownMyUIComponent();

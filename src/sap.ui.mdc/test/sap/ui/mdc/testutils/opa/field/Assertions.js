@@ -4,12 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/test/matchers/Matcher",
 	"sap/base/util/deepEqual",
 	"./waitForField"
 ], function(
 	Opa5,
-	Ancestor,
+	Matcher,
 	deepEqual,
 	waitForField
 ) {
@@ -18,14 +18,15 @@ sap.ui.define([
 	return {
 
 		iShouldSeeTheFieldWithValues: function(sId, oValues) {
+			var oMatcher = new Matcher();
+			oMatcher.isMatching = function(oField) {
+				return deepEqual(oField.getValue(), oValues);
+			};
 			return waitForField.call(this, {
 				properties: {
 					id: sId
 				},
-				check: function(aFields) {
-					var oField = aFields[0];
-					return deepEqual(oField.getValue(), oValues);
-				},
+				matchers: oMatcher,
 				success: onFieldWithExpectedValueFound,
 				errorMessage: "The field stores the unexpected value"
 			});

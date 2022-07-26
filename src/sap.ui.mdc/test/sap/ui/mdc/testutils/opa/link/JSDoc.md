@@ -84,7 +84,7 @@ Opa5 test action
 | Param | Type | Description |
 | --- | --- | --- |
 | oLinkIdentifier | [<code>LinkIdentifier</code>](#LinkIdentifier) | The object to identify the <code>sap.ui.mdc.Link</code> that opens the popover |
-| sLink | <code>string</code> | The text of the link that is to be clicked on the popover |
+| sLink | <code>string</code> | The text of the link that is clicked on the popover |
 
 <a name="onTheMDCLink.iCloseThePopover"></a>
 
