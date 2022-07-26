@@ -48,7 +48,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("when registration is called once with root parameter", function (assert) {
 			this.oMutationObserver.registerHandler(this.sNodeId, function () {}, true);
-			assert.ok(this.oMutationObserver._bHandlerRegistred, "then mutation observer contains registered handlers");
+			assert.ok(this.oMutationObserver._bHandlerRegistered, "then mutation observer contains registered handlers");
 			assert.strictEqual(typeof this.oMutationObserver._mMutationHandlers[this.sNodeId][0], "function", "then handler function is registered by the given nodeId");
 			assert.strictEqual(this.oMutationObserver._aRootIds[0], this.sNodeId, "then the nodeId is registered as root");
 		});
@@ -56,7 +56,7 @@ sap.ui.define([
 		QUnit.test("when registration and deregistration is called once", function (assert) {
 			this.oMutationObserver.registerHandler(this.sNodeId, function () {}, true);
 			this.oMutationObserver.deregisterHandler(this.sNodeId);
-			assert.notOk(this.oMutationObserver._bHandlerRegistred, "then mutation observer does not contain registered handlers");
+			assert.notOk(this.oMutationObserver._bHandlerRegistered, "then mutation observer does not contain registered handlers");
 			assert.notOk(this.oMutationObserver._mMutationHandlers[this.sNodeId], "then handler function is not registered by the given nodeId");
 			assert.notOk(this.oMutationObserver._aRootIds.length, "then root registration is empty");
 		});
@@ -112,6 +112,17 @@ sap.ui.define([
 				}, true);
 				this.$Node.contents().get(0).nodeValue = "123";
 			}.bind(this));
+		});
+
+		QUnit.test("when an open shadow root node is added to the observer and then modified", function (assert) {
+			var fnDone = assert.async();
+			var oShadowRoot = this.$Node.get(0).attachShadow({mode: "open"});
+			this.oMutationObserver.addNode(oShadowRoot);
+			this.oMutationObserver.registerHandler(this.sNodeId, function (mParameters) {
+				assert.ok(includes(mParameters.type, "MutationObserver"), "then domChanged callback is called with the host node");
+				fnDone();
+			}, true);
+			oShadowRoot.innerHTML = "<div></div>";
 		});
 
 		QUnit.test("ignoreOnce()", function (assert) {
