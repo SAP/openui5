@@ -214,11 +214,6 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 }
 
 /********************************************* Header navigation on phone *********************************************/
-.sapUiMedia-Std-Phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect,
-.sap-phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect {
-	height: 3rem;
-}
-
 .sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
 .sapUiTheme-sap_fiori_3_dark .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect,
 .sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow,
@@ -273,11 +268,6 @@ html.sap-desktop .sapContrast.sapMSlt.sapUiDocumentationSelect:not(.sapMSltExpan
 	outline: none;
 }
 
-.sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
-.sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltArrow {
-	line-height: 2.7rem;
-}
-
 /* Menu Select`s label */
 .sapUiTheme-sap_fiori_3 .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel,
 .sapUiTheme-sap_fiori_3_dark .sapTntToolHeader .sapMSlt.menuSelect.sapUiDocumentationSelect .sapMSltLabel {
@@ -295,11 +285,6 @@ html.sap-desktop .sapContrast.sapMSlt.sapUiDocumentationSelect:not(.sapMSltExpan
 }
 
 /* Menu Select`s arrow color on press */
-:not(.sapUiTheme-sap_fiori_3) .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before,
-:not(.sapUiTheme-sap_fiori_3_dark) .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before {
-	color: #cae4fb;
-}
-
 .sapUiTheme-sap_fiori_3_hcb .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before,
 .sapUiTheme-sap_belize_hcb .sapTntToolHeader .sapMSlt.sapMSltPressed > .sapMSltArrow::before {
 	color: #fff;
@@ -327,18 +312,26 @@ html.sap-desktop .sapContrast.sapMSlt.sapUiDocumentationSelect:not(.sapMSltExpan
 
 /* Topics - dynamic page */
 .sapUiDocumentationTopicTitle {
-	font-size: 1.375rem !important;
+	font-size: 2rem;
+	font-family: "72Black", "72", "72full", Arial, Helvetica, sans-serif;
 }
 
-html.sap-phone .sapUiDocumentationTopicTitle {
-	font-size: 1.25rem !important;
+.sapUiMedia-Std-Phone .sapUiDocumentationTopicTitle {
+	font-size: 1.5rem;
 }
 
-.sapUiDocumentationDynamicPageTitle .sapFDynamicPageTitleLeft {
-	width: 80% !important;
+.sapFDynamicPage:not(.sapFDynamicPage-Std-Phone):not(.sapFDynamicPage-Std-Desktop-XL)
+.sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
+	padding-left: 2rem;
+	padding-right: 2rem;
 }
-.sapUiDocumentationDynamicPageTitle .sapFDynamicPageTitleRight {
-	width: 20% !important;
+
+.sapUiTheme-sap_horizon .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent .sapMText {
+	color: #556b82;
+}
+
+.sapUiTheme-sap_horizon_dark .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent .sapMText {
+	color: #8396a8;
 }
 
 .sapUiDocumentation2ColumnsEqualTable {
@@ -1856,4 +1849,17 @@ html[dir="rtl"] .sapUiDemoKitTreeItemIcon {
 .sapUiDemokit .sapUiHomePage .sapMTitleStyleH1,
 .sapUiDemokit .sapUiDemoApps .sapMTitleStyleH1 {
 	font-size: 1.625rem;
+}
+
+html.sap-desktop .sapMFocus > .sapMSFF::before {
+	border: 0.125rem solid #0070f2 !important;
+	position: absolute;
+	content: " ";
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	border-radius: inherit;
+	z-index: 2;
+	pointer-events: none;
 }
