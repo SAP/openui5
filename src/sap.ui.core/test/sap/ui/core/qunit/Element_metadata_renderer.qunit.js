@@ -308,4 +308,21 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("Renderer resolving");
+
+	QUnit.test("Control with renderer that isn't exposed to the global namespace should find its renderer correctly", function(assert) {
+		var that = this,
+			done = assert.async();
+
+		sap.ui.require(["testdata/core/testdata/MyControl"], function(MyControl) {
+			var oSyncLoadSpy = that.spy(sap.ui, "requireSync");
+
+			var oRenderer = MyControl.getMetadata().getRenderer();
+			assert.ok(oRenderer, "Renderer can be found");
+			assert.notOk(oSyncLoadSpy.called, "Renderer shouldn't be loaded synchronously");
+
+			done();
+		});
+	});
+
 });

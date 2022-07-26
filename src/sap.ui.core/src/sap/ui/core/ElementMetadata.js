@@ -85,7 +85,9 @@ sap.ui.define([
 
 		// check if renderer class exists already, in case it was passed inplace,
 		// and written to the global namespace during applySettings().
-		this._oRenderer = ObjectPath.get(sRendererName);
+		this._oRenderer =
+			sap.ui.require(sRendererName.replace(/\./g, "/"))
+			|| ObjectPath.get(sRendererName);
 		if (this._oRenderer) {
 			return this._oRenderer;
 		}
@@ -136,8 +138,8 @@ sap.ui.define([
 			}
 
 			// try to identify fully built renderers
-			if ( typeof vRenderer === "object" && typeof vRenderer.render === "function" ) {
-				var oRenderer = ObjectPath.get(this.getRendererName());
+			if ( (typeof vRenderer === "object" || typeof vRenderer === "function") && typeof vRenderer.render === "function" ) {
+				var oRenderer = sap.ui.require(this.getRendererName().replace(/\./g, "/")) || ObjectPath.get(this.getRendererName());
 				if ( oRenderer === vRenderer ) {
 					// the given renderer has been exported globally already, it can be used without further action
 					this._oRenderer = vRenderer;
