@@ -106,14 +106,12 @@ sap.ui.define([
 
 			var sDataUrl = Utils.getUrl(ROUTES.DATA, mPropertyBag, mParameters);
 			return Utils.sendRequest(sDataUrl, "GET", {
+				initialConnector: this,
 				xsrfToken: this.xsrfToken,
 				siteId: mPropertyBag.siteId,
 				sAppDescriptorId: sAppDescriptorId
 			}).then(function (oResult) {
 				var oResponse = oResult.response;
-				if (oResult.xsrfToken) {
-					this.xsrfToken = oResult.xsrfToken;
-				}
 				if (oResult.etag) {
 					oResponse.cacheKey = oResult.etag;
 				} else if (mPropertyBag.cacheKey) {

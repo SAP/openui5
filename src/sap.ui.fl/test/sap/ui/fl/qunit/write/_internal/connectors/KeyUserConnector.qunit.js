@@ -36,7 +36,6 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: oChange});
 			return KeyUserConnector.write(mPropertyBag).then(function (oResponse) {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken: InitialConnector.xsrfToken,
 					tokenUrl: "/flexKeyuser/flex/keyuser/v1/settings",
 					initialConnector: InitialConnector,
 					contentType: "application/json; charset=utf-8",
@@ -60,7 +59,6 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: [oChange1, oChange2]});
 			return KeyUserConnector.write(mPropertyBag).then(function (oResponse) {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken: InitialConnector.xsrfToken,
 					tokenUrl: "/flexKeyuser/flex/keyuser/v1/settings",
 					initialConnector: InitialConnector,
 					contentType: "application/json; charset=utf-8",
@@ -97,7 +95,6 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves();
 			return KeyUserConnector.update(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken: InitialConnector.xsrfToken,
 					tokenUrl: "/flexKeyuser/flex/keyuser/v1/settings",
 					initialConnector: InitialConnector,
 					contentType: "application/json; charset=utf-8",
@@ -123,7 +120,6 @@ sap.ui.define([
 
 			return KeyUserConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: InitialConnector.xsrfToken,
 					tokenUrl: "/flexKeyuser/flex/keyuser/v1/settings",
 					initialConnector: InitialConnector,
 					contentType: "application/json; charset=utf-8",
@@ -144,7 +140,6 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves([]);
 			return KeyUserConnector.reset(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: InitialConnector.xsrfToken,
 					tokenUrl: "/flexKeyuser/flex/keyuser/v1/settings",
 					initialConnector: InitialConnector
 				}), "a send request with correct parameters and options is sent");
@@ -342,8 +337,6 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(1).args[0], "/flexKeyuser/flex/keyuser/v1/settings", "the second request has the correct url");
 				assert.equal(oStubSendRequest.getCall(1).args[1], "HEAD", "the second request was a HEAD request");
 				assert.equal(oStubSendRequest.getCall(2).args[1], "POST", "the third request was a POST request");
-				assert.equal(InitialConnector.xsrfToken, newToken, "a new token was stored in the apply connector");
-				assert.equal(oStubSendRequest.getCall(2).args[2].xsrfToken, newToken, "and the new token was used to resend the request");
 			});
 		});
 
@@ -360,10 +353,7 @@ sap.ui.define([
 			return KeyUserConnector.write(mPropertyBag).then(function () {
 				assert.equal(oStubSendRequest.callCount, 2, "two request were sent");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "HEAD", "the first request was a HEAD request");
-				assert.equal(oStubSendRequest.getCall(1).args[2].xsrfToken, newToken, "and the new token was used to resend the request");
 				assert.equal(oStubSendRequest.getCall(1).args[1], "POST", "the second request was a POST request");
-				assert.equal(InitialConnector.xsrfToken, newToken, "a new token was stored in the apply connector");
-				assert.equal(oStubSendRequest.getCall(1).args[2].xsrfToken, newToken, "and the new token was used to resend the request");
 			});
 		});
 	});
@@ -473,7 +463,6 @@ sap.ui.define([
 				limit: 10
 			};
 			var mExpectedPropertyBag = Object.assign({
-				xsrfToken: undefined,
 				initialConnector: InitialConnector,
 				tokenUrl: KeyUserConnector.ROUTES.TOKEN
 			}, mPropertyBag);
@@ -512,7 +501,6 @@ sap.ui.define([
 
 			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
 			var mExpectedPropertyBag = Object.assign({
-				xsrfToken: undefined,
 				initialConnector: InitialConnector,
 				tokenUrl: KeyUserConnector.ROUTES.TOKEN,
 				contentType: "application/json; charset=utf-8",
@@ -544,7 +532,6 @@ sap.ui.define([
 
 			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
 			var mExpectedPropertyBag = Object.assign({
-				xsrfToken: undefined,
 				initialConnector: InitialConnector,
 				tokenUrl: KeyUserConnector.ROUTES.TOKEN,
 				contentType: "application/json; charset=utf-8",
@@ -576,7 +563,6 @@ sap.ui.define([
 
 			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
 			var mExpectedPropertyBag = Object.assign({
-				xsrfToken: undefined,
 				initialConnector: InitialConnector,
 				tokenUrl: KeyUserConnector.ROUTES.TOKEN,
 				contentType: "application/json; charset=utf-8",
@@ -609,7 +595,6 @@ sap.ui.define([
 				reference: "com.sap.test.app"
 			};
 			var mExpectedPropertyBag = Object.assign({
-				xsrfToken: undefined,
 				initialConnector: InitialConnector,
 				tokenUrl: KeyUserConnector.ROUTES.TOKEN
 			}, mPropertyBag);
