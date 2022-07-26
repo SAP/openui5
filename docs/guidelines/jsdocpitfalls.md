@@ -24,7 +24,7 @@ Type String | Category | Description
 `Array<`*someType*`>` | Syntax | alternative representation of an array type, can be nested for multiple dimensions. In UI5 documentation, the syntax with square brackets is preferred. But the Array<*someType*> syntax can be used when *someType* is already a complex type, e.g. a union type
 `Object<`*keyType*`,`*valueType*`>` | Syntax | For Objects, the key and value types can be specified. Note that the key type is purely informational. JavaScript always converts key values to strings.
 `Promise<`*fulfillmentType*`>` | Syntax | a promise that fulfills with a value of the given type
-`{`*prop1*`:`*type1*`, ... }` | Syntax | a structured type: an object with a well defined set of properties, each of a specific type. Note that the pair of curly braces is an additional pair, e.g. `@param {{doc:string, type:string}} oInfo an object with a doc and a type property both of type string`
+`{`*prop1*`: `*type1*`, ... }` | Syntax | a structured type: an object with a well defined set of properties, each of a specific type. Note that the pair of curly braces is an additional pair, e.g. `@param {{doc: string, type: string}} oInfo an object with a doc and a type property both of type string` and that the space after each colon is required.
 `string` | UI5 Convention | a simple JavaScript string
 `int` | UI5 Convention | a JavaScript number which is not expected to have decimals. `ìnt` is not really a JavaScript built-in type, but in UI5 we decided to document integer values with this type, for clarity. BTW: the name is also inspired by TypeScript.
 `float` | UI5 Convention | a JavaScript number
