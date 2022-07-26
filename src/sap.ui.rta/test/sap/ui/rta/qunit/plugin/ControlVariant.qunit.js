@@ -1133,10 +1133,6 @@ sap.ui.define([
 				assert.deepEqual(arguments[0], mPropertyBag, "then correct map argument passed to RenameHandler");
 				done();
 			});
-
-			this.oVariantManagementOverlay.attachEventOnce("geometryChanged", function() {
-				assert.strictEqual(this.oVariantManagementControl.getTitle().getText(), "Standard Copy", "then calculated text set as variant control title");
-			}, this);
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 		});
 	});
