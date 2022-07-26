@@ -74,7 +74,7 @@ sap.ui.define([
 		 * feature should be visible to the current user. This only applies if key user adaptation
 		 * should be handled standalone without an SAP Fiori launchpad.
 		 *
-		 * @returns {Promise<boolean>} Resolves to a boolean indicating if key user is available
+		 * @returns {Promise<boolean>} Resolves to a boolean indicating if the key user role is assigned to the user
 		 * @public
 		 */
 		isKeyUser: function () {
