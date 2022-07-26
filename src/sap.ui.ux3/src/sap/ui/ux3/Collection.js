@@ -155,8 +155,8 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/SelectionModel', './library'
 	};
 
 	/**
-	 * @param {int | string | sap.ui.core.Item} vSelectedItem the selectedItem to remove or its index or id
-	 * @return {string} the id of the removed selectedItem or null
+	 * @param {int | string | sap.ui.core.Item} vSelectedItem the selected item to remove or its index or ID
+	 * @returns {string|null|undefined} the ID of the removed selected item or <code>null</code>
 	 * @public
 	 */
 	Collection.prototype.removeSelectedItem = function(vSelectedItem) {

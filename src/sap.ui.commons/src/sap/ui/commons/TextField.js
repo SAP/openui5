@@ -680,7 +680,7 @@ sap.ui.define([
 
 	/**
 	 * Method for accessing the DOM Ref of the input element.
-	 * @return {object} DOM reference or null
+	 * @returns {HTMLElement|null} DOM reference or <code>null</code>
 	 * @protected
 	 */
 	TextField.prototype.getInputDomRef = function(){

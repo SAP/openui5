@@ -410,8 +410,8 @@ sap.ui.define([
 	/**
 	 * Removes a collection from the aggregation named <code>collections</code>.
 	 *
-	 * @param {int | string | sap.ui.ux3.Collection} vCollection the collection to remove or its index or id
-	 * @return {sap.ui.ux3.Collection} the removed collection or null
+	 * @param {int | string | sap.ui.ux3.Collection} vCollection the collection to remove or its index or ID
+	 * @returns {sap.ui.ux3.Collection|null} the removed collection or <code>null</code>
 	 * @public
 	 */
 	CollectionInspector.prototype.removeCollection = function(vCollection) {
@@ -509,8 +509,8 @@ sap.ui.define([
 	/**
 	 * Removes a content from the aggregation named <code>content</code>.
 	 *
-	 * @param {int | string | sap.ui.core.Control} vContent the content to remove or its index or id
-	 * @return {sap.ui.core.Control} the removed content or null
+	 * @param {int | string | sap.ui.core.Control} vContent the content to remove or its index or ID
+	 * @returns {sap.ui.core.Control|null} the removed content or <code>null</code>
 	 * @public
 	 */
 	CollectionInspector.prototype.removeContent = function(vContent) {

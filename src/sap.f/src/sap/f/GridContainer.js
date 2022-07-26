@@ -655,7 +655,7 @@ sap.ui.define([
 	 * Removes an item from the aggregation named <code>items</code>.
 	 *
 	 * @param {int | string | sap.ui.core.Item} vItem The item to remove or its index or ID.
-	 * @returns {sap.ui.core.Control} The removed item or null.
+	 * @returns {sap.ui.core.Control|null} The removed item or <code>null</code>.
 	 * @public
 	 */
 	GridContainer.prototype.removeItem = function (vItem) {

@@ -1002,11 +1002,11 @@ function(
 	};
 
 	/**
-	 * Finds the view object by given key
+	 * Finds the view object by given key.
 	 * @param {string} sKey The key of the view
 	 * @public
 	 * @since 1.75
-	 * @returns {sap.m.SinglePlanningCalendarView} the view object which matched the given <code>sKey</code>, or null if there is no such view
+	 * @returns {sap.m.SinglePlanningCalendarView|null} the view object which matched the given <code>sKey</code>, or <code>null</code> if there is no such view
 	 */
 	SinglePlanningCalendar.prototype.getViewByKey = function (sKey) {
 		var aViews = this.getViews(),

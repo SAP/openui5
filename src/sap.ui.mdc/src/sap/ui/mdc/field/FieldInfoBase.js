@@ -65,7 +65,7 @@ sap.ui.define([
 	/**
 	 * Returns as a promise result href which defines the target navigation of the <code>Link</code> control created by <code>Field</code>.
 	 * If direct navigation is used, href is returned. If the information panel contains more content than only one link, <code>undefined</code> is returned.
-	 * @returns {Promise} Result of promise is href with values {string | undefined}
+	 * @returns {Promise<string|undefined>} Result of promise is href with values {string | undefined}
 	 * @protected
 	 */
 	FieldInfoBase.prototype.getTriggerHref = function() {

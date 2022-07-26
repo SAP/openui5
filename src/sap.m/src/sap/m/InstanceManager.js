@@ -64,7 +64,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 *
 	 * @param {string} sCategoryId The category's id.
 	 * @param {object} oInstance The instance that will be removed from the given category.
-	 * @returns {object|null} The removed instance or <code>null</code>. If the instance isn't managed, this method returns <code>null</code> instead of the instance object.
+	 * @returns {object|null} The removed instance, or <code>null</code> if the instance isn't managed.
 	 * @protected
 	 */
 	InstanceManager.removeInstance = function(sCategoryId, oInstance) {
@@ -167,7 +167,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	/**
 	 * Adds a control to predefined lightbox category in instance manager.
 	 *
-	 * @param {sap.m.LightBox} oLightBox Dialog to be added to instance manager. Dialog which doesn't inherit from sap.m.Dialog can also be added as long as it has a close method.
+	 * @param {sap.m.LightBox} oLightBox LightBox to be added to instance manager.
 	 * @returns {this} Enable method chaining.
 	 * @protected
 	 */
@@ -184,7 +184,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 * Removes control from predefined popover category in instance manager.
 	 *
 	 * @param {sap.ui.core.Control} oPopover to be removed from instance manager.
-	 * @returns {sap.ui.core.Control|null} The removed popover or <code>null</code>. If the popover isn't managed, this method returns <code>null</code> instead of the removed popover.
+	 * @returns {sap.ui.core.Control|null} The removed popover, or <code>null</code> if the popover isn't managed.
 	 * @protected
 	 */
 	InstanceManager.removePopoverInstance = function(oPopover){
@@ -195,7 +195,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 * Removes control from predefined dialog category in instance manager.
 	 *
 	 * @param {sap.ui.core.Control} oDialog to be removed from instance manager.
-	 * @returns {sap.ui.core.Control} The removed popover or <code>null</code>. If the popover isn't managed, this method returns <code>null</code> instead of the removed popover.
+	 * @returns {sap.ui.core.Control|null} The removed dialog, or <code>null</code> if the dialog isn't managed.
 	 * @protected
 	 */
 	InstanceManager.removeDialogInstance = function(oDialog){
@@ -206,7 +206,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	 * Removes control from predefined lightbox category in instance manager.
 	 *
 	 * @param {sap.m.LightBox} oLightBox to be removed from instance manager.
-	 * @returns {sap.m.LightBox|null} The removed popover or <code>null</code>. If the LightBox isn't managed, this method returns <code>null</code> instead of the removed LightBox.
+	 * @returns {sap.m.LightBox|null} The removed LightBox, or <code>null</code> if the LightBox isn't managed.
 	 * @protected
 	 */
 	InstanceManager.removeLightBoxInstance = function(oLightBox){
@@ -312,7 +312,7 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 	};
 
 	/**
-	 * Gets all of the open LightBoxes. If there's no dialog open, an empty array is returned.
+	 * Gets all of the open LightBoxes. If there's no LightBox open, an empty array is returned.
 	 *
 	 * @returns {sap.m.LightBox[]} The opened LightBoxes.
 	 * @public
