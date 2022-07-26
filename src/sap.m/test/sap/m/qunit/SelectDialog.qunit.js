@@ -409,6 +409,65 @@ sap.ui.define([
 			this.clock.tick(350);
 		});
 
+		QUnit.test("Selecting items using search does not throw", function (assert) {
+			// Arrange
+			this.oSelectDialog.setMultiSelect(true);
+
+			this.oSelectDialog.attachSearch(function (oEvent) {
+				var sValue = oEvent.getParameter("value");
+				var oFilter = new Filter("Title", FilterOperator.Contains, sValue);
+				var oBinding = oEvent.getParameter("itemsBinding");
+				oBinding.filter([oFilter]);
+			});
+
+			bindItems(this.oSelectDialog,
+				{ oData: { items: [{ Title: "AAA" }, { Title: "BBB" }, { Title: "CCC" }] },
+				path: "/items",
+				template: new StandardListItem({ title: "{Title}" })
+			});
+
+			var fnFirstAction = function () {
+				this.oSelectDialog._oDialog.detachAfterOpen(fnFirstAction);
+
+				// Act
+				this.oSelectDialog._executeSearch("CCC", false, "search");
+
+				Core.applyChanges();
+				this.clock.tick(500);
+
+				this.oSelectDialog.getItems()[0].setSelected(true);
+				this.oSelectDialog._getOkButton().firePress();
+
+				this.clock.tick(500);
+			}.bind(this);
+
+			this.oSelectDialog._oDialog.attachAfterOpen(fnFirstAction);
+
+			this.oSelectDialog.open();
+			this.clock.tick(500);
+
+			var fnSecondAction = function () {
+				this.oSelectDialog._oDialog.detachAfterOpen(fnSecondAction);
+
+				this.oSelectDialog._executeSearch("BBB", false, "search");
+
+				Core.applyChanges();
+				this.clock.tick(500);
+
+				// Act
+				this.oSelectDialog.getItems()[0].setSelected(true);
+				this.oSelectDialog._getOkButton().firePress();
+
+				this.clock.tick(500);
+			}.bind(this);
+
+			this.oSelectDialog._oDialog.attachAfterOpen(fnSecondAction);
+
+			this.oSelectDialog.open();
+			this.clock.tick(500);
+
+			assert.ok(true, "Did not throw after selecting item when internal list was reset");
+		});
 
 		QUnit.module("XML Rendering", {
 			beforeEach: function() {
