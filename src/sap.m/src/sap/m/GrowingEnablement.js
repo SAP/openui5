@@ -303,6 +303,8 @@ sap.ui.define([
 					$oTrigger.removeAttr("aria-selected");
 					// aria-roledescription not required for growing trigger
 					$oTrigger.removeAttr("aria-roledescription");
+					// aria-posinset & aria-setsize removed as it is not allowed with role="button"
+					$oTrigger.removeAttr("aria-posinset").removeAttr("aria-setsize");
 					$oTrigger.attr({
 						"tabindex": 0,
 						"role": "button",

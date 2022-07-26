@@ -110,6 +110,8 @@ sap.ui.define([
 			assert.strictEqual(oTrigger.$().attr("role"), "button", "role=button");
 			assert.strictEqual(oTrigger.$().attr("aria-selected"), undefined, "aria-selected attribute removed as role=button");
 			assert.notOk(oTrigger.$().attr("aria-roledescription"), "aria-roledescription remove from the growing trigger");
+			assert.notOk(oTrigger.$().attr("aria-posinset"), "aria-posinset remove from the growing trigger");
+			assert.notOk(oTrigger.$().attr("aria-setsize"), "aria-setsize remove from the growing trigger");
 
 			// act + assert growingScrollToLoad=true
 			oList.setGrowingScrollToLoad(false);
