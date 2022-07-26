@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
     "sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
     "sap/chart/Chart",
-    "sap/m/VBox"
+    "sap/m/VBox",
+    "sap/ui/mdc/odata/TypeUtil",
+    "sap/ui/mdc/odata/v4/ChartPropertyHelper"
 ],
 function(
 	Core,
@@ -18,7 +20,9 @@ function(
 	ComponentContainer,
     ChartDelegate,
     SapChart,
-    VBox
+    VBox,
+    TypeUtil,
+    ChartPropertyHelper
 
 ) {
     "use strict";
@@ -389,8 +393,9 @@ function(
 				createContent: function() {
 					return new Chart("IDChart", {delegate: {
                         name: sDelegatePath,
+                        inResultDimensions: ["Dimension2"],
 					    payload: {
-						collectionPath: "/testPath"
+						    collectionPath: "/testPath"
 						}}
 					});
 				}
@@ -515,8 +520,8 @@ function(
 
     });
 
-    /*
     QUnit.test("insertItemToInnerChart function", function(assert) {
+        sandbox.stub(ChartDelegate, "getPropertyFromNameAndKind").returns(undefined);
         assert.ok(this.oInnerChart.getVisibleDimensions().length === 0, "Visible dimensions are empty");
         assert.ok(this.oInnerChart.getVisibleMeasures().length === 0, "Visible dimensions are empty");
 
@@ -533,31 +538,22 @@ function(
         assert.ok(this.oInnerChart.getVisibleDimensions().length === 1, "Visible dimensions are set up correctly");
         assert.ok(this.oInnerChart.getVisibleMeasures().includes("Item1"), "Visible measures are set up correctly");
         assert.ok(this.oInnerChart.getVisibleMeasures().length === 1, "Visible measures are set up correctly");
-    });*/
 
-    /*
+    });
+
     QUnit.test("_createMDCChartItem function", function(assert) {
         var done = assert.async();
-
-        var oFetchPromise = new Promise(function(resolve){
-           var aMockedProps = [
-               {
-                   name: "Item1",
-                   groupable: true,
-                   label: "Label 1"
-               },
-               {
-                name: "Item2",
-                aggregatable: true,
-                label: "Label 2"
-            }
-           ];
-
-           resolve(aMockedProps);
-        });
-
-
-        sinon.stub(ChartDelegate, "fetchProperties").returns(oFetchPromise);
+        var oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
+        oStub.withArgs("Item1").returns(Promise.resolve({
+            name: "Item1",
+            groupable: true,
+            label: "Label 1"
+        }));
+        oStub.withArgs("Item2").returns(Promise.resolve({
+            name: "Item2",
+            aggregatable: true,
+            label: "Label 2"
+        }));
 
         ChartDelegate._createMDCChartItem("Item1", this.oMDCChart).then(function(oItemGroup){
             ChartDelegate._createMDCChartItem("Item2", this.oMDCChart).then(function(oItemAggr){
@@ -574,7 +570,7 @@ function(
             });
         }.bind(this));
     });
-    */
+
 
     QUnit.test("getInnerChart", function(assert) {
         assert.equal(ChartDelegate.getInnerChart(this.oMDCChart), this.oInnerChart, "Inner chart is returned");
@@ -647,111 +643,488 @@ function(
     /**Not implemented yet**/
 
     QUnit.test("getTypeUtil", function(assert) {
-        assert.ok(true);
+        assert.ok(true, "This must be implemented by custom delegate");
     });
 
     QUnit.test("getFilterDelegate", function(assert) {
-        assert.ok(true);
+        assert.ok(true, "This must be implemented by custom delegate");
     });
 
     QUnit.test("addCondition", function(assert) {
-        assert.ok(true);
+        assert.ok(true, "This must be implemented by custom delegate");
     });
 
     QUnit.test("removeCondition", function(assert) {
-        assert.ok(true);
+        assert.ok(true, "This must be implemented by custom delegate");
     });
 
-    QUnit.test("getChart", function(assert) {
-        assert.ok(true);
+    QUnit.test("_setChart & _getChart", function(assert) {
+        ChartDelegate._setChart(this.oMDCChart, "ABC");
+        assert.equal(ChartDelegate._getChart(this.oMDCChart), "ABC", "Correct internal state was returned by _getChart");
     });
 
-    QUnit.test("setChart", function(assert) {
-        assert.ok(true);
-    });
-
-    QUnit.test("_getInnerStructure", function(assert) {
-        assert.ok(true);
+    QUnit.test("_setInnerStructure & _getInnerStructure", function(assert) {
+        ChartDelegate._setInnerStructure(this.oMDCChart, "ABC");
+        assert.equal(ChartDelegate._getInnerStructure(this.oMDCChart), "ABC", "Correct internal state was returned by _getChart");
     });
 
     QUnit.test("getInnerChartSelectionHandler", function(assert) {
-        assert.ok(true);
-    });
+        ChartDelegate._setChart(this.oMDCChart, "ABC");
 
-    QUnit.test("getChartTypeLayoutConfig", function(assert) {
-        assert.ok(true);
-    });
+        var oSelectionHandler = ChartDelegate.getInnerChartSelectionHandler(this.oMDCChart);
 
-    QUnit.test("_setAdaptionUI", function(assert) {
-        assert.ok(true);
+        assert.ok(oSelectionHandler, "Selection Hanlder returned");
+        assert.equal(oSelectionHandler.eventId, "_selectionDetails", "Correct eventId");
+        assert.equal(oSelectionHandler.listener, "ABC", "Correct listener returned");
     });
 
     QUnit.test("removeItemFromInnerChart", function(assert) {
-        assert.ok(true);
+
+        var oInnerChartMock = {getVisibleDimensions: function(){return ["Dimension3", "Dimension1", "Dimension2"];}, getVisibleMeasures: function(){return ["Measure3", "Measure1", "Measure2"];}, setVisibleDimensions: function(){}, setVisibleMeasures: function(){}, getMeasureByName: function(){}, removeMeasure: function(){}};
+
+        ChartDelegate._setChart(this.oMDCChart, oInnerChartMock);
+        ChartDelegate._getState(this.oMDCChart).inResultDimensions = [];
+        sandbox.stub(ChartDelegate, "_updateColoring");
+        sandbox.stub(ChartDelegate, "_updateSemanticalPattern");
+
+        var oSetVisibleDimensionSpy = sinon.spy(oInnerChartMock, "setVisibleDimensions");
+        var oSetVisibleMeasuresSpy = sinon.spy(oInnerChartMock, "setVisibleMeasures");
+
+        var oDim = new Item({name: "Dimension1", type: "groupable"});
+        var oMeas1 = new Item({name: "Measure1", type: "aggregatable"});
+        var oMeas2 = new Item({name: "Measure2", type: "aggregatable"});
+        var oMeas3 = new Item({name: "Measure3", type: "aggregatable"});
+
+        this.oMDCChart.addItem(oDim);
+        this.oMDCChart.addItem(oMeas3);
+        this.oMDCChart.addItem(oMeas1);
+        this.oMDCChart.addItem(oMeas2);
+
+        ChartDelegate.removeItemFromInnerChart(this.oMDCChart, oDim);
+        ChartDelegate.removeItemFromInnerChart(this.oMDCChart, oMeas1);
+
+        assert.ok(oSetVisibleDimensionSpy.calledWithExactly(["Dimension3", "Dimension2"]), "Dimension were set correctly");
+        assert.ok(oSetVisibleMeasuresSpy.calledWithExactly(["Measure3", "Measure2"]), "Measure were set correctly");
+
     });
 
     QUnit.test("addItem", function(assert) {
-        assert.ok(true);
+        var done = assert.async();
+        var oCreateSpy = sinon.spy(ChartDelegate, "_createMDCChartItem");
+        sandbox.stub(ChartDelegate, "_getPropertyInfosByName").returns(Promise.resolve(undefined));
+
+        ChartDelegate.addItem("ABC", this.oMDCChart).then(function(){
+            assert.ok(oCreateSpy.called, "Create was called");
+            done();
+        });
+
     });
 
     QUnit.test("removeItem", function(assert) {
-        assert.ok(true);
+        var done = assert.async();
+
+        ChartDelegate.removeItem().then(function(oReturnValue){
+            assert.ok(oReturnValue, "Return value is set to true");
+            done();
+        });
     });
 
     QUnit.test("checkAndUpdateMDCItems", function(assert) {
-        assert.ok(true);
+        var done = assert.async();
+
+        var oDim = new Item({name: "Dimension1", type: "groupable", label: "Dim1"});
+        var oMeas = new Item({name: "Measure1", type: "aggregatable"});
+
+        this.oMDCChart.addItem(oDim);
+        this.oMDCChart.addItem(oMeas);
+
+        var oLabelSpyDim = sinon.spy(oDim, "setLabel");
+        var oRoleSpyDim = sinon.spy(oDim, "setRole");
+        var oLabelSpyMeas = sinon.spy(oMeas, "setLabel");
+        var oRoleSpyMeas = sinon.spy(oMeas, "setRole");
+
+        var oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
+        oStub.withArgs("Dimension1").returns(Promise.resolve({
+            name: "Dimension1",
+            groupable: true,
+            label: "Label 1"
+        }));
+        oStub.withArgs("Measure1").returns(Promise.resolve({
+            name: "Measure1",
+            aggregatable: true,
+            label: "Label 2"
+        }));
+
+        ChartDelegate.checkAndUpdateMDCItems(this.oMDCChart).then(function(){
+
+            assert.ok(!oLabelSpyDim.calledWithExactly("Dim1"), "Dimension label was changed");
+            assert.ok(oRoleSpyDim.calledWithExactly("category"), "Role set to category");
+            assert.ok(oLabelSpyMeas.calledWithExactly("Label 2"), "Label was set");
+            assert.ok(oRoleSpyMeas.calledWithExactly("axis1"), "Role was set to axis1");
+
+            done();
+        });
+
     });
 
-    QUnit.test("createMDCChartItem", function(assert) {
-        assert.ok(true);
-    });
+    QUnit.test("_createMDCChartItem", function(assert) {
+        var done = assert.async();
+        var oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
+        oStub.withArgs("Dimension1").returns(Promise.resolve({
+            name: "Dimension1",
+            groupable: true,
+            label: "Label 1"
+        }));
 
-    QUnit.test("createMDCItemFromProperty", function(assert) {
-        assert.ok(true);
+        ChartDelegate._createMDCChartItem("Dimension1", this.oMDCChart, "series").then(function(oCreatedItem){
+            assert.equal(oCreatedItem.getName(), "Dimension1", "Name is correct");
+            assert.equal(oCreatedItem.getType(), "groupable", "Item is groupable");
+            assert.equal(oCreatedItem.getRole(), "series", "Role was set correctly");
+            assert.equal(oCreatedItem.getLabel(), "Label 1", "Label was set correctly");
+
+            done();
+        });
     });
 
     QUnit.test("initializeInnerChart", function(assert) {
-        assert.ok(true);
+        var done = assert.async();
+        this.oMDCChart.setNoDataText("ABCDEFG");
+        sandbox.stub(ChartDelegate, "_loadChart").returns(Promise.resolve());
+
+        var oInnerStructSpy = sinon.spy(ChartDelegate, "_setInnerStructure");
+        var oObserverSpy = sinon.spy(ChartDelegate, "_setUpChartObserver");
+
+        ChartDelegate.initializeInnerChart(this.oMDCChart).then(function(){
+
+            assert.ok(oInnerStructSpy.called, "InnerStruct wes set");
+            assert.ok(oObserverSpy.called, "Observer was setup");
+
+            var oInnerStruct = ChartDelegate._getInnerStructure(this.oMDCChart);
+            assert.equal(oInnerStruct.getContent().getText(), "ABCDEFG", "No data text was set on inner struct");
+            assert.ok(oInnerStruct.hasStyleClass("sapUiMDCChartTempText"), "Inner struct has correct style class set");
+            assert.ok(this.oMDCChart.hasStyleClass("sapUiMDCChartTempTextOuter"), "MDC Chart has correct style class set");
+
+            done();
+        }.bind(this));
     });
 
-    QUnit.test("createInitialChartContent", function(assert) {
-        assert.ok(true);
+    QUnit.test("_createContentFromItems", function(assert) {
+        var done = assert.async();
+        var oInnerChartMock = {getVisibleDimensions: function(){return ["Dimension3", "Dimension1", "Dimension2"];}, getVisibleMeasures: function(){return ["Measure3", "Measure1", "Measure2"];}, setVisibleDimensions: function(){},
+                                setVisibleMeasures: function(){}, getMeasureByName: function(){}, removeMeasure: function(){}, addDimension: function(){}, setInResultDimensions: function(){}};
+
+        var oDim = new Item({name: "Dimension1", type: "groupable", label: "Dim1"});
+        var oMeas = new Item({name: "Measure1", type: "aggregatable"});
+
+        this.oMDCChart.addItem(oDim);
+        this.oMDCChart.addItem(oMeas);
+
+        var oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
+        oStub.withArgs("Dimension1").returns(Promise.resolve({
+            name: "Dimension1",
+            groupable: true,
+            label: "Label 1"
+        }));
+        oStub.withArgs("Dimension2").returns(Promise.resolve({
+            name: "Dimension2",
+            groupable: true,
+            label: "Label 2"
+        }));
+        oStub.withArgs("Measure1").returns(Promise.resolve({
+            name: "Measure1",
+            aggregatable: true,
+            label: "Label 2"
+        }));
+
+        var oColStub = sandbox.stub(ChartDelegate, "_updateColoring");
+        var oSemStub = sandbox.stub(ChartDelegate, "_updateSemanticalPattern");
+        var oAddDimStub = sandbox.stub(ChartDelegate, "_addInnerDimension");
+        var oAddMeasStub = sandbox.stub(ChartDelegate, "_addInnerMeasure");
+        var oSetVisDimSpy = sinon.spy(oInnerChartMock, "setVisibleDimensions");
+        var oSetVisMeasSpy = sinon.spy(oInnerChartMock, "setVisibleMeasures");
+        var oAddDimSpy = sinon.spy(oInnerChartMock, "addDimension");
+
+        ChartDelegate._setState(this.oMDCChart, {innerChart: oInnerChartMock, aColMeasures: [], aInSettings: [], inResultDimensions: []});
+
+        ChartDelegate._loadChart().then(function(){
+            ChartDelegate._createContentFromItems(this.oMDCChart).then(function(){
+                assert.ok(oAddDimStub.calledOnce, "Dimension add function was called");
+                assert.ok(oAddMeasStub.calledOnce, "Measure add function was called");
+                assert.ok(oAddDimSpy.calledOnce, "InResult dimension was added");
+                assert.ok(oColStub.calledOnce, "Coloring function was called");
+                assert.ok(oSemStub.calledOnce, "Semantic function was called");
+                assert.ok(oSetVisDimSpy.calledWithExactly(["Dimension1"]), "Visible dimension were set correctly");
+                assert.ok(oSetVisMeasSpy.calledWithExactly(["Measure1"]), "Visible measures were set correctly");
+                done();
+            });
+        }.bind(this));
+
     });
 
-    QUnit.test("createContentFromItems", function(assert) {
-        assert.ok(true);
-    });
+    QUnit.test("_prepareColoringForItem & addCriticality", function(assert) {
+        var done = assert.async();
 
-    QUnit.test("prepareColoringForItem", function(assert) {
-        assert.ok(true);
-    });
+        var oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
+        oStub.withArgs("Measure1").returns(Promise.resolve({
+            name: "Measure1",
+            aggregatable: true,
+            label: "Label 2",
+            datapoint: {
+                criticality : {
+                    DynamicThresholds : {
+                        usedMeasures : ["Measure2"]
+                    }
+                }
+            }
+        }));
+        //sandbox.stub(ChartDelegate, "_addCriticality").returns(Promise.resolve());
+        ChartDelegate._setState(this.oMDCChart, { aInSettings: [], aColMeasures : [] });
 
-    QUnit.test("getAdditionalColoringMeasuresForItem", function(assert) {
-        assert.ok(true);
-    });
+        var oMeas = new Item({name: "Measure1", type: "aggregatable"});
+        this.oMDCChart.addItem(oMeas);
 
-    QUnit.test("_addCriticality", function(assert) {
-        assert.ok(true);
+        ChartDelegate._prepareColoringForItem(oMeas).then(function(){
+            assert.ok(ChartDelegate._getState(this.oMDCChart).aColMeasures.indexOf("Measure2") > -1, "Coloring measure added to state");
+            done();
+        }.bind(this));
     });
 
     QUnit.test("_updateColoring", function(assert) {
-        assert.ok(true);
+        var done = assert.async();
+        var oInnerChartMock = {setColorings: function(){}, setActiveColoring: function(){}};
+
+        var oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
+        oStub.withArgs("Dimension1").returns(Promise.resolve({
+            name: "Dimension1",
+            groupable: true,
+            label: "Label 1",
+            criticality: {
+                "Positive": [
+                    "1"
+                ],
+                "Critical": [
+                    "2"
+                ],
+                "Negative": [
+                    "3"
+                ]
+            }
+
+        }));
+        oStub.withArgs("Measure1").returns(Promise.resolve({
+            name: "Measure1",
+            aggregatable: true,
+            label: "Label 2",
+            datapoint: {
+                criticality : {
+                    DynamicThresholds : {
+                        usedMeasures : ["Measure2"]
+                    }
+                }
+            }
+        }));
+
+        ChartDelegate._setState(this.oMDCChart, { innerChart: oInnerChartMock, aInSettings: [], aColMeasures : [] });
+        var oColorSpy = sinon.spy(oInnerChartMock, "setColorings");
+        var oActiveColorSpy = sinon.spy(oInnerChartMock, "setActiveColoring");
+
+        var oMeas = new Item({name: "Measure1", type: "aggregatable"});
+        var oDim = new Item({name: "Dimension1", type: "groupable", label: "Dim1"});
+        this.oMDCChart.addItem(oMeas);
+        this.oMDCChart.addItem(oDim);
+
+        var oCorrectColorConfig = {
+            "Criticality": {
+                "DimensionValues": {
+                    "Dimension1": {
+                        "Positive": {
+                            "Values": [
+                                "1"
+                            ]
+                        },
+                        "Critical": {
+                            "Values": [
+                                "2"
+                            ]
+                        },
+                        "Negative": {
+                            "Values": [
+                                "3"
+                            ]
+                        }
+                    }
+                }
+            }
+        };
+
+        var oCorrectActiveColorConfig = {
+            "coloring": "Criticality",
+            "parameters": {
+                "dimension": "Dimension1"
+            }
+        };
+
+        ChartDelegate._prepareColoringForItem(oMeas).then(function(){
+            ChartDelegate._prepareColoringForItem(oDim).then(function(){
+                ChartDelegate._updateColoring(this.oMDCChart, ["Dimension1"], ["Measure2"]);
+
+                assert.ok(oColorSpy.calledWithExactly(oCorrectColorConfig), "Color function called on inner chart");
+                assert.ok(oActiveColorSpy.calledWithExactly(oCorrectActiveColorConfig), "ActiveColor funciton called on inner chart");
+                done();
+            }.bind(this));
+        }.bind(this));
+    });
+
+    QUnit.test("_updateColoring only measure", function(assert) {
+        var done = assert.async();
+        var oInnerChartMock = {setColorings: function(){}, setActiveColoring: function(){}};
+
+        var oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
+        oStub.withArgs("Measure1").returns(Promise.resolve({
+            name: "Measure1",
+            aggregatable: true,
+            label: "Label 2",
+            datapoint: {
+                criticality : {
+                    DynamicThresholds : {
+                        usedMeasures : ["Measure2"]
+                    }
+                }
+            }
+        }));
+
+        ChartDelegate._setState(this.oMDCChart, { innerChart: oInnerChartMock, aInSettings: [], aColMeasures : [] });
+        var oColorSpy = sinon.spy(oInnerChartMock, "setColorings");
+        var oActiveColorSpy = sinon.spy(oInnerChartMock, "setActiveColoring");
+
+        var oMeas = new Item({name: "Measure1", type: "aggregatable"});
+        this.oMDCChart.addItem(oMeas);
+
+        var oCorrectColorConfig = {
+            "Criticality": {
+                "MeasureValues": {}
+            }
+        };
+
+        var oCorrectActiveColorConfig = {
+            "coloring": "Criticality",
+            "parameters": {
+                "measure": [
+                    "Measure2"
+                ]
+            }
+        };
+
+        ChartDelegate._prepareColoringForItem(oMeas).then(function(){
+            ChartDelegate._updateColoring(this.oMDCChart, ["Dimension1"], ["Measure2"]);
+
+            assert.ok(oColorSpy.calledWithExactly(oCorrectColorConfig), "Color function called on inner chart");
+            assert.ok(oActiveColorSpy.calledWithExactly(oCorrectActiveColorConfig), "ActiveColor funciton called on inner chart");
+            done();
+        }.bind(this));
     });
 
     QUnit.test("_updateSemanticalPattern", function(assert) {
-        assert.ok(true);
+        var oMeasureMock =  { setSemantics : function(){}, setSemanticallyRelatedMeasures: function(){} };
+        var oInnerChartMock = {getVisibleMeasures: function(){return ["Measure1"];}, getMeasureByName: function(){return oMeasureMock;}};
+
+        var oStub = sandbox.stub(ChartDelegate, "getPropertyFromNameAndKind");
+        oStub.withArgs("Measure1").returns({
+            name: "Measure1",
+            aggregatable: true,
+            label: "Label 1",
+            datapoint: {
+                targetValue: "100",
+                foreCastValue: "10"
+            }
+        });
+
+        var oSemanticsSpy = sinon.spy(oMeasureMock, "setSemantics");
+        var oRelMeasSpy = sinon.spy(oMeasureMock, "setSemanticallyRelatedMeasures");
+
+        ChartDelegate._setState(this.oMDCChart, { innerChart: oInnerChartMock});
+
+        var oMeas = new Item({name: "Measure1", type: "aggregatable"});
+        this.oMDCChart.addItem(oMeas);
+
+        ChartDelegate._updateSemanticalPattern(this.oMDCChart);
+
+        assert.ok(oRelMeasSpy.calledWithExactly({
+            referenceValueMeasure: "100",
+            projectedValueMeasure: "10"
+        }), "SemanticallyRelatedMeasures correctly set");
+
+        assert.ok(oSemanticsSpy.calledThrice, "Semantice have been set thrice (actual, reference, projected)");
+
+        oStub.withArgs("Measure1").returns({
+            name: "Measure1",
+            aggregatable: true,
+            label: "Label 1",
+            datapoint: {
+                targetValue: "100"
+            }
+        });
+
+        ChartDelegate._updateSemanticalPattern(this.oMDCChart);
+        assert.ok(oRelMeasSpy.calledWithExactly({
+            referenceValueMeasure: "100",
+            projectedValueMeasure: undefined
+        }), "SemanticallyRelatedMeasures correctly set");
+
+        oStub.withArgs("Measure1").returns({
+            name: "Measure1",
+            aggregatable: true,
+            label: "Label 1",
+            datapoint: {
+                foreCastValue: "10"
+            }
+        });
+
+        ChartDelegate._updateSemanticalPattern(this.oMDCChart);
+        assert.ok(oRelMeasSpy.calledWithExactly({
+            referenceValueMeasure: undefined,
+            projectedValueMeasure: "10"
+        }), "SemanticallyRelatedMeasures correctly set");
+
     });
 
     QUnit.test("getAvailableChartTypes", function(assert) {
-        assert.ok(true);
+        var oMockTypes =  {available : [{chart: "bar"}, {chart: "column"}]};
+        var oMockChart = {getAvailableChartTypes: function(){return oMockTypes;}};
+        ChartDelegate._setState(this.oMDCChart, { innerChart: oMockChart});
+
+        var oChartSpy = sinon.spy(oMockChart, "getAvailableChartTypes");
+
+        var aResult = ChartDelegate.getAvailableChartTypes(this.oMDCChart);
+
+        assert.equal(aResult.length, 2, "2 Chart Types retuened");
+        assert.ok(oChartSpy.calledOnce, "Chart types were get from inner chart");
+        assert.equal(aResult[0].key, "bar", "First chart type has correct key");
+        assert.equal(aResult[1].key, "column", "Second chart type has correct key");
+
     });
 
     QUnit.test("getDrillStack", function(assert) {
-        assert.ok(true);
-    });
+        var oMockStack =  [{dimension: ["A"]}, {dimension: ["A", "B"]}];
+        var oMockChart = {getDrillStack: function(){return oMockStack;}};
+        ChartDelegate._setState(this.oMDCChart, { innerChart: oMockChart});
 
-    QUnit.test("getDrillStackInfo", function(assert) {
-        assert.ok(true);
+        var oStub = sandbox.stub(ChartDelegate, "getPropertyFromNameAndKind");
+        oStub.withArgs("A").returns({
+            name: "A"
+        });
+        oStub.withArgs("B").returns({
+            name: "B"
+        });
+
+        var oChartSpy = sinon.spy(oMockChart, "getDrillStack");
+
+        var aResult = ChartDelegate.getDrillStack(this.oMDCChart);
+
+        assert.ok(oChartSpy.calledOnce, "DrillStack was called on inner chart");
+        assert.equal(aResult.length, 2, "DrillStack has a depth of 2");
+        assert.equal(aResult[0].dimension[0], "A", "Correct dimension for depth 1");
+        assert.equal(aResult[1].dimension[1], "B", "Correct dimension for depth 2");
     });
 
     QUnit.test("getSortedDimensions", function(assert) {
@@ -759,7 +1132,30 @@ function(
     });
 
     QUnit.test("_sortPropertyDimensions", function(assert) {
-        assert.ok(true);
+        var aProps = [
+            {
+                label: "C",
+                groupable: true
+            },
+            {
+                label: "D",
+                groupable: false
+            },
+            {
+                label: "A",
+                groupable: true
+            },
+            {
+                label: "B",
+                groupable: true
+            }
+        ];
+
+        var aRes = ChartDelegate._sortPropertyDimensions(aProps);
+        assert.equal(aRes.length, 3, "Measure was filtered out");
+        assert.equal(aRes[0].label, "A", "Pos 1 is correct");
+        assert.equal(aRes[1].label, "B", "Pos 2 is correct");
+        assert.equal(aRes[2].label, "C", "Pos 3 is correct");
     });
 
     QUnit.test("createInnerChartContent", function(assert) {
@@ -767,23 +1163,63 @@ function(
     });
 
     QUnit.test("_performInitialBind", function(assert) {
-        assert.ok(true);
-    });
+        var oMockChart = {bindData: function(){}};
+        ChartDelegate._setState(this.oMDCChart, {innerChart: oMockChart, dataLoadedCallback: function(){}});
 
-    QUnit.test("_getHeights", function(assert) {
-        assert.ok(true);
-    });
+        var oStub = sandbox.stub(ChartDelegate, "_addBindingListener");
+        var oBindSpy = sinon.spy(oMockChart, "bindData");
 
-    QUnit.test("createInnerDimension", function(assert) {
-        assert.ok(true);
+        ChartDelegate._performInitialBind(this.oMDCChart, {Test: true, binding: {}});
+
+        assert.ok(oStub.calledOnce, "Binding listener added");
+        assert.ok(oBindSpy.calledOnce, "bindData called");
+        assert.ok(ChartDelegate._getState(this.oMDCChart).bindingInfo.Test, "Binding info was cached");
+        assert.ok(ChartDelegate._getState(this.oMDCChart).innerChartBound, "innerChartBound was set on state");
+
     });
 
     QUnit.test("createInnerMeasure", function(assert) {
-        assert.ok(true);
+        var oMockChart = {addMeasure: function(){}};
+        ChartDelegate._setState(this.oMDCChart, {innerChart: oMockChart, dataLoadedCallback: function(){}});
+        var oSpy = sinon.spy(oMockChart, "addMeasure");
+        var done = assert.async();
+        ChartDelegate._loadChart().then(function(){
+            assert.ok(true, "Loaded completed");
+
+            var oMockProps = {
+                name: "test1",
+                aggregatable: true,
+                label: "Label1",
+                textFormatter: "abc"
+            };
+
+            ChartDelegate._addInnerMeasure(this.oMDCChart, new Item({name: "test1", type: "aggregatable", label: "Label1"}), oMockProps);
+            assert.ok(oSpy.calledOnce, "Measure added");
+
+            done();
+        }.bind(this));
     });
 
     QUnit.test("_addInnerDimension", function(assert) {
-        assert.ok(true);
+        var oMockChart = {addDimension: function(){}};
+        ChartDelegate._setState(this.oMDCChart, {innerChart: oMockChart, dataLoadedCallback: function(){}});
+        var oSpy = sinon.spy(oMockChart, "addDimension");
+        var done = assert.async();
+        ChartDelegate._loadChart().then(function(){
+            assert.ok(true, "Loaded completed");
+
+            var oMockProps = {
+                name: "test1",
+                groupable: true,
+                label: "Label1",
+                textFormatter: "abc"
+            };
+
+            ChartDelegate._addInnerDimension(this.oMDCChart, new Item({name: "test1", type: "groupable", label: "Label1"}), oMockProps);
+            assert.ok(oSpy.calledOnce, "Dimension added");
+
+            done();
+        }.bind(this));
     });
 
     QUnit.test("_addInnerMeasure", function(assert) {
@@ -794,47 +1230,62 @@ function(
         assert.ok(true);
     });
 
-    QUnit.test("rebindChart", function(assert) {
-        assert.ok(true);
-    });
-
     QUnit.test("rebind", function(assert) {
-        assert.ok(true);
+        var oMockChart = {bindData: function(){}};
+        ChartDelegate._setState(this.oMDCChart, {innerChart: oMockChart, dataLoadedCallback: function(){}});
+
+        var oStub = sandbox.stub(ChartDelegate, "_addBindingListener");
+        var oBindSpy = sinon.spy(oMockChart, "bindData");
+
+        ChartDelegate.rebind(this.oMDCChart, {Test: true, binding: {}});
+
+        assert.ok(oStub.calledOnce, "Binding listener added");
+        assert.ok(oBindSpy.calledOnce, "bindData called");
+        assert.ok(ChartDelegate._getState(this.oMDCChart).bindingInfo.Test, "Binding info was cached");
+        assert.ok(ChartDelegate._getState(this.oMDCChart).bindingInfo.binding.bHasAnalyticalInfo, "bHasAnalyticalInfo was set in binding");
+        assert.ok(ChartDelegate._getState(this.oMDCChart).innerChartBound, "innerChartBound was set on state");
+
     });
 
     QUnit.test("getInnerChartBound", function(assert) {
-        assert.ok(true);
+        ChartDelegate._setState(this.oMDCChart, {innerChartBound: true});
+
+        assert.equal(ChartDelegate.getInnerChartBound(this.oMDCChart), true, "Returns innerhcartBound from state");
     });
 
     QUnit.test("updateBindingInfo", function(assert) {
-        assert.ok(true);
+        assert.ok(true, "This must be implemented by custom delegate");
     });
 
     QUnit.test("getSorters", function(assert) {
-        assert.ok(true);
+        this.oMDCChart.setSortConditions({sorters: [{name: "Test1", descending: true}, {name: "Test2", descending: false}, {name: "Test3", descending: true}]});
+        var oDim = new Item({name: "Test1", type: "groupable"});
+        var oMeas = new Item({name: "Test2", type: "aggregatable"});
+        this.oMDCChart.addItem(oDim);
+        this.oMDCChart.addItem(oMeas);
+
+
+        var oRes = ChartDelegate.getSorters(this.oMDCChart);
+
+        assert.equal(oRes.length, 2, "One sorter returned");
+        assert.equal(oRes[0].sPath, "Test1", "Correct path returned");
+        assert.equal(oRes[1].sPath, "Test2", "Correct path returned");
+        assert.equal(oRes[0].bDescending, true, "Correct descending returned");
+        assert.equal(oRes[1].bDescending, false, "Correct descending returned");
+
     });
 
     QUnit.test("getAggregatedMeasureNameForMDCItem", function(assert) {
-        assert.ok(true);
+        var oMeas = new Item({name: "Test1"});
+
+        assert.equal(ChartDelegate._getAggregatedMeasureNameForMDCItem(oMeas), "Test1", "Should just return name in standard implementation");
     });
 
     QUnit.test("getInternalChartNameFromPropertyNameAndKind", function(assert) {
-        assert.ok(true);
+        assert.equal(ChartDelegate.getInternalChartNameFromPropertyNameAndKind("ABC"), "ABC", "Should return name in standard implementation");
     });
 
     QUnit.test("getPropertyFromNameAndKind", function(assert) {
-        assert.ok(true);
-    });
-
-    QUnit.test("addInnerItem", function(assert) {
-        assert.ok(true);
-    });
-
-    QUnit.test("insertInnerItem", function(assert) {
-        assert.ok(true);
-    });
-
-    QUnit.test("removeInnerItem", function(assert) {
         assert.ok(true);
     });
 
@@ -843,31 +1294,36 @@ function(
     });
 
     QUnit.test("_loadChart", function(assert) {
-        assert.ok(true);
+        var done = assert.async();
+        ChartDelegate._loadChart().then(function(){
+            assert.ok(true, "Loaded completed");
+
+            done();
+        });
     });
 
     QUnit.test("getPropertyHelperClass", function(assert) {
-        assert.ok(true);
+        assert.equal(ChartDelegate.getPropertyHelperClass(), ChartPropertyHelper, "Correct default class for propertyHelper");
     });
 
     QUnit.test("_formatText", function(assert) {
-        assert.ok(true);
+        assert.ok(ChartDelegate._formatText("ABC"), "ABC", "Must be implemented by custom delegate");
     });
 
     QUnit.test("setNoDataText", function(assert) {
-        assert.ok(true);
+        var oMockChart = {setCustomMessages: function(){}};
+        var oSpy = sinon.spy(oMockChart, "setCustomMessages");
+        ChartDelegate._setState(this.oMDCChart, { innerChart: oMockChart});
+
+        ChartDelegate.setNoDataText(this.oMDCChart, "ABC");
+
+        assert.ok(oSpy.calledWithExactly({
+            'NO_DATA': "ABC"
+        }), "Correct noData text set on inner chart");
     });
 
     QUnit.test("fetchProperties", function(assert) {
-        assert.ok(true);
-    });
-
-    QUnit.test("_createPropertyInfos", function(assert) {
-        assert.ok(true);
-    });
-
-    QUnit.test("_createPropertyInfosForAggregatable", function(assert) {
-        assert.ok(true);
+        assert.ok(true, "Must be implemented by custom delegate");
     });
 
     QUnit.test("_getPropertyInfosByName", function(assert) {
@@ -875,12 +1331,7 @@ function(
     });
 
     QUnit.test("_getModel", function(assert) {
-        assert.ok(true);
-    });
-
-    //existing as commented function already
-    QUnit.test("insertItemToInnerChart", function(assert) {
-        assert.ok(true);
+        assert.ok(true, "Must be implemented by custom delegate");
     });
 
     QUnit.test("_addBindingListener", function(assert) {

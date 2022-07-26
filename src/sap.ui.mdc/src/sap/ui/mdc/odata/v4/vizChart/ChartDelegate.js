@@ -875,16 +875,17 @@ sap.ui.define([
         return this._addCriticality(oItem).then(function(){
             this._getState(oItem.getParent()).aInSettings.push(oItem.getName());
 
-            if (oItem.getType === "aggregatable") {
+            if (oItem.getType() === "aggregatable") {
 
                 //Uses excact MDC CHart Item name
                 this._getPropertyInfosByName(oItem.getName(), oItem.getParent()).then(function (oPropertyInfo) {
-                    for (var j = 0; j < this._getAdditionalColoringMeasuresForItem(oPropertyInfo); j++) {
+                    this._getAdditionalColoringMeasuresForItem(oPropertyInfo).forEach(function(oMeasure){
 
-                        if (this._getState(oItem.getParent()).aColMeasures.indexOf(this._getAdditionalColoringMeasuresForItem(oPropertyInfo)[j]) == -1) {
-                            this._getState(oItem.getParent()).aColMeasures.push(this._getAdditionalColoringMeasuresForItem(oPropertyInfo)[j]);
+                        if (this._getState(oItem.getParent()).aColMeasures && this._getState(oItem.getParent()).aColMeasures.indexOf(oMeasure) == -1) {
+                            this._getState(oItem.getParent()).aColMeasures.push(oMeasure);
                         }
-                    }
+                    }.bind(this));
+
                 }.bind(this));
             }
         }.bind(this));

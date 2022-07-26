@@ -53,7 +53,7 @@ sap.ui.require([
 		assertions: new Opa5({
 			iShouldSeeAnVMPopover : function () {
 				return this.waitFor({
-					id: "__component0---chartNew--variantManagementChart-popover",
+					id: "__component0---chartNew--variantManagementChart-vm-popover-popover",
 					success: function(oPopver) {
 						Opa5.assert.ok(oPopver, "VM Popover is opened");
 					},

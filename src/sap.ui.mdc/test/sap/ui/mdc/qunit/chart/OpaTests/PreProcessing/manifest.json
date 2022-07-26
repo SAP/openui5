@@ -1,0 +1,103 @@
+{
+	"_version": "0.1.0",
+	"sap.app": {
+		"_version": "0.1.0",
+		"id": "applicationUnderTestMDCChart",
+		"type": "application",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {
+			"default": {
+				"uri": "/tenant(MDCChartP13nOpaTestApplication)/catalog/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"_version": "0.1.0",
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_belize"
+		]
+	},
+	"sap.ui5": {
+		"_version": "1.7.0",
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "applicationUnderTestMDCChart.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "chartNew",
+					"target": [
+						"chartNew"
+					]
+				}
+			],
+			"targets": {
+				"chartNew": {
+					"viewId": "chartNew",
+					"viewName": "chartNew"
+				}
+			}
+		},
+		"rootView": {
+			"viewName": "applicationUnderTestMDCChart.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.70",
+			"libs": {
+				"sap.m": {
+					"lazy": true
+				},
+				"sap.ui.layout": {
+					"lazy": true
+				},
+				"sap.ui.fl": {
+					"lazy": false
+				},
+				"sap.ui.mdc": {
+					"lazy": true
+				}
+			}
+		},
+		"autoPrefixId": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"operationMode": "Server",
+					"synchronizationMode": "None",
+					"updateGroupId": "booksGroup"
+				},
+				"type": "sap.ui.model.odata.v4.ODataModel"
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		}
+	}
+}

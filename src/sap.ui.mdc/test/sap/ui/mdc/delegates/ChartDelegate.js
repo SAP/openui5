@@ -142,7 +142,7 @@ sap.ui.define([
      * Creates the inner dataset for the inner chart
      */
     ChartDelegate.createInnerChartContent = function (oMDCChart, aPropertyInfos) {
-
+        return Promise.resolve();
         //Nothing to test
     };
 
