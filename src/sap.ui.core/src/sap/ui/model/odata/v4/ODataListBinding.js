@@ -122,6 +122,8 @@ sap.ui.define([
 		this.sChangeReason = oModel.bAutoExpandSelect && !_Helper.isDataAggregation(mParameters)
 			? "AddVirtualContext"
 			: undefined;
+		// BEWARE: #doReplaceWith can insert a context w/ negative index, but w/o #created promise
+		// into aContexts' area of "created contexts"!
 		this.iCreatedContexts = 0; // number of (client-side) created contexts in aContexts
 		this.iDeletedContexts = 0; // number of (client-side) deleted contexts
 		this.oDiff = undefined;
@@ -290,6 +292,8 @@ sap.ui.define([
 
 		return this.deleteFromCache(oGroupLock, sEditUrl, sPath, oETagEntity, bDoNotRequestCount,
 			function (iIndex, iOffset) {
+				var iContextIndex = oContext.iIndex;
+
 				if (iIndex !== undefined) {
 					// An entity can only be deleted when its key predicate is known. So we can be
 					// sure to have key predicates and the contexts a related to entities and not
@@ -306,9 +310,12 @@ sap.ui.define([
 							that._fireChange({reason : ChangeReason.Remove});
 						});
 					}
-					if (oContext.created()) {
+					if (iContextIndex < 0 || oContext.created()) {
 						that.iCreatedContexts += iOffset;
 						that.iActiveContexts += iOffset;
+						if (!that.iCreatedContexts) { //@see #destroyCreated
+							that.bFirstCreateAtEnd = undefined;
+						}
 					} else {
 						// iMaxLength is the number of server rows w/o the created entities
 						that.iMaxLength += iOffset; // this doesn't change Infinity
@@ -1231,10 +1238,7 @@ sap.ui.define([
 			oResult.iIndex = oOldContext.iIndex;
 			delete this.mPreviousContextsByPath[sPath];
 		} else {
-			oResult = Context.create(this.oModel, this, sPath, oOldContext.iIndex,
-				// when replacing a created persisted (iIndex < 0), make sure the replacement also
-				// looks like a created persisted
-				oOldContext.iIndex < 0 ? SyncPromise.resolve() : undefined);
+			oResult = Context.create(this.oModel, this, sPath, oOldContext.iIndex);
 			bNew = true;
 		}
 		oOldContext.iIndex = undefined;
@@ -2893,7 +2897,7 @@ sap.ui.define([
 				var iIndex = oContext.getModelIndex(),
 					i;
 
-				if (oContext.created()) {
+				if (oContext.iIndex < 0) {
 					that.destroyCreated(oContext);
 					bDestroyed = true;
 				} else {

@@ -11477,10 +11477,78 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#doReplaceWith", function (assert) {
+	QUnit.test("CollectionCache#doReplaceWith: no old element", function (assert) {
 		var oCache = this.createCache("Employees"),
 			oElement = {};
 
+		this.mock(_Helper).expects("hasPrivateAnnotation").never();
+		this.mock(_Helper).expects("getPrivateAnnotation").never();
+		this.mock(_Helper).expects("setPrivateAnnotation").never();
+		this.mock(oCache).expects("addKeptElement").withExactArgs(sinon.match.same(oElement));
+
+		// code under test
+		oCache.doReplaceWith(23, oElement);
+
+		assert.strictEqual(oCache.aElements[23], oElement);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#doReplaceWith: old not created", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oElement = {},
+			oOldElement = {};
+
+		oCache.aElements[23] = oOldElement;
+		this.mock(_Helper).expects("hasPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oOldElement), "transientPredicate").returns(false);
+		this.mock(_Helper).expects("getPrivateAnnotation").never();
+		this.mock(_Helper).expects("setPrivateAnnotation").never();
+		this.mock(oCache).expects("addKeptElement").withExactArgs(sinon.match.same(oElement));
+
+		// code under test
+		oCache.doReplaceWith(23, oElement);
+
+		assert.strictEqual(oCache.aElements[23], oElement);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#doReplaceWith: transientPredicate", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oElement = {},
+			oHelperMock = this.mock(_Helper),
+			oOldElement = {};
+
+		oCache.aElements[23] = oOldElement;
+		oHelperMock.expects("hasPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oOldElement), "transientPredicate").returns(true);
+		oHelperMock.expects("hasPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "transientPredicate").returns(false);
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "predicate").returns("~predicate~");
+		oHelperMock.expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "transientPredicate", "~predicate~");
+		this.mock(oCache).expects("addKeptElement").withExactArgs(sinon.match.same(oElement));
+
+		// code under test
+		oCache.doReplaceWith(23, oElement);
+
+		assert.strictEqual(oCache.aElements[23], oElement);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#doReplaceWith: do not overwrite", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oElement = {},
+			oHelperMock = this.mock(_Helper),
+			oOldElement = {};
+
+		oCache.aElements[23] = oOldElement;
+		oHelperMock.expects("hasPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oOldElement), "transientPredicate").returns(true);
+		oHelperMock.expects("hasPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oElement), "transientPredicate").returns(true);
+		oHelperMock.expects("getPrivateAnnotation").never();
+		oHelperMock.expects("setPrivateAnnotation").never();
 		this.mock(oCache).expects("addKeptElement").withExactArgs(sinon.match.same(oElement));
 
 		// code under test
