@@ -612,7 +612,8 @@
 		  "formFactors": "-",
 		  "samples": [
 			  "sap.m.sample.Image",
-			  "sap.m.sample.ImageModeBackground"
+			  "sap.m.sample.ImageModeBackground",
+			  "sap.m.sample.ImageErrorWithIllustration"
 			]
 		},
 		{
@@ -2188,6 +2189,11 @@
 		  "id": "sap.m.sample.ImageModeBackground",
 		  "name": "Image with ImageMode.Background",
 		  "description": "Visualizes the state of the control when the mode property is set to ImageMode.Background."
+		},
+		{
+		  "id": "sap.m.sample.ImageErrorWithIllustration",
+		  "name": "Image error handling with IllustratedMessage",
+		  "description": "Handle errors using the sap.m.IllustratedMessage with the error event."
 		},
 		{
 		  "id": "sap.m.sample.InitialPagePattern",
