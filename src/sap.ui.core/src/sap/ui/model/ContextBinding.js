@@ -53,7 +53,7 @@ sap.ui.define(['./Binding'],
 	/**
 	 * Return the bound context.
 	 *
-	 * @returns {sap.ui.model.Context}
+	 * @returns {sap.ui.model.Context|null}
 	 *   Context object used by this context binding or <code>null</code>
 	 * @public
 	 */

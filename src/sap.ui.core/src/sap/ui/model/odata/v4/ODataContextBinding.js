@@ -1507,7 +1507,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sPath=""]
 	 *   A path relative to this context binding
-	 * @returns {Promise}
+	 * @returns {Promise<any|undefined>}
 	 *   A promise on the requested value; in case there is no bound context this promise resolves
 	 *   with <code>undefined</code>
 	 * @throws {Error}

@@ -1121,7 +1121,7 @@ sap.ui.define(
              * Creates a matcher function that returns an aggregation element of a control at a given index.
              * @param {string} sAggregationName the name of the aggregation that is used for matching
              * @param {int} iIndex the index within the aggregation
-             * @returns {function} the matcher function returns the item at a certain index in the aggregation or <code>undefined</code> if index not in range
+             * @returns {function(sap.ui.core.Control): sap.ui.base.ManagedObject} the matcher function returns the item at a certain index in the aggregation or <code>undefined</code> if index not in range
              * @public
              * @static
              */

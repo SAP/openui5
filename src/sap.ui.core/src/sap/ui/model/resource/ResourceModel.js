@@ -499,7 +499,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   The path to the property
-	 * @returns {string}
+	 * @returns {string|null}
 	 *   The value of the property in the resource bundle or <code>null</code> if resource bundle is
 	 *   not available
 	 *

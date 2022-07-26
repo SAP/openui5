@@ -82,7 +82,7 @@ sap.ui.define([
 	 * @param {string} sTargetType
 	 *   The target type; must be "string", or a type with "string" as its
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}
-	 * @returns {string}
+	 * @returns {string|null}
 	 *   The formatted output value; the values <code>undefined</code> or <code>null</code> or
 	 *   an amount <code>undefined</code> or <code>null</code> are formatted to <code>null</code>
 	 * @throws {sap.ui.model.FormatException}

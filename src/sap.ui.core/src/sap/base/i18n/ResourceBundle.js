@@ -318,9 +318,6 @@ sap.ui.define([
 	 *
 	 * @param {module:sap/base/i18n/ResourceBundle} oCustomBundle an instance of a <code>sap/base/i18n/ResourceBundle</code>
 	 * @private
-	 *
-	 * @function
-	 * @name module:sap/base/i18n/ResourceBundle.prototype._enhance
 	 */
 	ResourceBundle.prototype._enhance = function(oCustomBundle) {
 		if (oCustomBundle instanceof ResourceBundle) {
@@ -348,9 +345,8 @@ sap.ui.define([
 	 *     whenever <code>aArgs</code> is given, no matter whether the text contains placeholders or not
 	 *     and no matter whether <code>aArgs</code> contains a value for <i>n</i> or not.
 	 * @param {boolean} [bIgnoreKeyFallback=false] If set, <code>undefined</code> is returned instead of the key string, when the key is not found in any bundle or fallback bundle.
-	 * @returns {string} The value belonging to the key, if found; otherwise the key itself or <code>undefined</code> depending on <code>bIgnoreKeyFallback</code>.
+	 * @returns {string|undefined} The value belonging to the key, if found; otherwise the key itself or <code>undefined</code> depending on <code>bIgnoreKeyFallback</code>.
 	 *
-	 * @function
 	 * @public
 	 */
 	ResourceBundle.prototype.getText = function(sKey, aArgs, bIgnoreKeyFallback){
@@ -381,7 +377,7 @@ sap.ui.define([
 	 * @param {string} sValue the given input value
 	 * @param {string} sKey the key within the bundle
 	 * @param {array} [aArgs] arguments to format the message
-	 * @returns {string} formatted string, <code>null</code> if sValue is not a string
+	 * @returns {string|null} formatted string, <code>null</code> if sValue is not a string
 	 * @private
 	 */
 	ResourceBundle.prototype._formatValue = function(sValue, sKey, aArgs){
@@ -410,7 +406,7 @@ sap.ui.define([
 	 * The custom bundles are checked first in reverse order.
 	 * @param {string} sKey the key within the bundle
 	 * @param {array} [aArgs] arguments to format the message
-	 * @returns {string} the formatted value if found, <code>null</code> otherwise
+	 * @returns {string|null} the formatted value if found, <code>null</code> otherwise
 	 * @private
 	 */
 	ResourceBundle.prototype._getTextFromFallback = function(sKey, aArgs){
@@ -449,7 +445,7 @@ sap.ui.define([
 	 * The custom bundles are checked first in reverse order.
 	 * @param {string} sKey the key within the bundle
 	 * @param {array} [aArgs] arguments to format the message
-	 * @returns {string} the formatted value if found, <code>null</code> otherwise
+	 * @returns {string|null} the formatted value if found, <code>null</code> otherwise
 	 * @private
 	 */
 	ResourceBundle.prototype._getTextFromProperties = function(sKey, aArgs){
@@ -489,9 +485,8 @@ sap.ui.define([
 	 * used after the resource bundle has been loaded.
 	 *
 	 * @param {string} sKey Key to check
-	 * @returns {boolean} true if the text has been found in the concrete bundle
+	 * @returns {boolean} Whether the text has been found in the concrete bundle
 	 *
-	 * @function
 	 * @public
 	 */
 	ResourceBundle.prototype.hasText = function(sKey) {
@@ -535,7 +530,8 @@ sap.ui.define([
 	 *
 	 * @param {module:sap/base/i18n/ResourceBundle} oBundle ResourceBundle to extend
 	 * @param {boolean} [bAsync=false] Whether the resource should be loaded asynchronously
-	 * @returns The newly loaded properties (sync mode) or a Promise on the properties (async mode);
+	 * @returns {module:sap/base/util/Properties|null|Promise<module:sap/base/util/Properties|null>}
+	 *         The newly loaded properties (sync mode) or a Promise on the properties (async mode);
 	 *         value / Promise fulfillment will be <code>null</code> when the properties for the
 	 *         next fallback locale should not be loaded or when loading failed or when there
 	 *         was no more fallback locale

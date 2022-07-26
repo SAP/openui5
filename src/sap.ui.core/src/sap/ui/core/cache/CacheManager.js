@@ -142,11 +142,11 @@ sap.ui.define([
 			/**
 			 * Retrieves a value for given key.
 			 * @param key the key to retrieve a value for
-			 * @returns {Promise} a promise that would be resolved in case of successful operation or rejected with
+			 * @returns {Promise<any|undefined>} a promise that would be resolved in case of successful operation or rejected with
 			 * value of the error message if the operation fails. It resolves with a value that is either:
 			 * <ul>
 			 *  <li>undefined - the entry does not exist</li>
-			 *  <li>any other - the entry exists and value contains the actually one</li>
+			 *  <li>any other - the entry exists and value contains the actual one</li>
 			 * </ul>
 			 * @public
 			 */

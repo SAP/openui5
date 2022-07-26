@@ -256,7 +256,7 @@ sap.ui.define([
 	 * Once the promise is resolved, {@link #getPath} returns a path including the key predicate
 	 * of the new entity. This requires that all key properties are available.
 	 *
-	 * @returns {Promise}
+	 * @returns {Promise<void>|undefined}
 	 *   A promise that is resolved without data when the entity represented by this context has
 	 *   been created in the back end. It is rejected with an <code>Error</code> instance where
 	 *   <code>oError.canceled === true</code> if the transient entity is deleted before it is
@@ -956,7 +956,7 @@ sap.ui.define([
 	 * Returns whether this context is inactive. The result of this function can also be accessed
 	 * via instance annotation "@$ui5.context.isInactive" at the entity.
 	 *
-	 * @returns {boolean} <code>true</code> if this context is inactive, <code>false</code> if it
+	 * @returns {boolean|undefined} <code>true</code> if this context is inactive, <code>false</code> if it
 	 *   was created in an inactive state and has been activated, and <code>undefined</code>
 	 *   otherwise.
 	 *
@@ -990,7 +990,7 @@ sap.ui.define([
 	 * if the context is not transient. The result of this function can also be accessed via
 	 * instance annotation "@$ui5.context.isTransient" at the entity.
 	 *
-	 * @returns {boolean}
+	 * @returns {boolean|undefined}
 	 *   Whether this context is transient if it is created using
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#create}; <code>undefined</code> if it is not
 	 *   created using {@link sap.ui.model.odata.v4.ODataListBinding#create}
@@ -1323,7 +1323,7 @@ sap.ui.define([
 	 *   specified, make sure that {@link #requestSideEffects} is called after the corresponding
 	 *   updates have been successfully processed by the server and that there are no pending
 	 *   changes for the affected properties.
-	 * @returns {Promise}
+	 * @returns {Promise<undefined>}
 	 *   Promise resolved with <code>undefined</code>, or rejected with an error if loading of side
 	 *   effects fails. Use it to set fields affected by side effects to read-only before
 	 *   {@link #requestSideEffects} and make them editable again when the promise resolves; in the

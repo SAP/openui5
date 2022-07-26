@@ -717,7 +717,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext] Context with which the path should be resolved
 	 * @param {object} [mParameters] Additional model-specific parameters
 	 *
-	 * @returns {any}
+	 * @returns {any|undefined}
 	 *   The value for the given path/context or <code>undefined</code> if data could not be found
 	 * @public
 	 */
@@ -1116,7 +1116,7 @@ sap.ui.define([
 	 * model type.
 	 * @abstract
 	 * @public
-	 * @returns {sap.ui.model.MetaModel}
+	 * @returns {sap.ui.model.MetaModel|undefined}
 	 *   The meta model or <code>undefined</code> if no meta model exists.
 	 */
 	Model.prototype.getMetaModel = function() {

@@ -592,7 +592,7 @@ sap.ui.define([
 	 * manifest file! It returns only the entries which have been defined in
 	 * the Component metadata or in the proper Component manifest.
 	 *
-	 * @return {string} Required version of UI5 or if not specified then null.
+	 * @returns {string|null} Required version of UI5 or if not specified then <code>null</code>.
 	 * @public
 	 * @deprecated Since 1.27.1. Please use {@link sap.ui.core.Component#getManifestEntry}("/sap.ui5/dependencies/minUI5Version")
 	 */

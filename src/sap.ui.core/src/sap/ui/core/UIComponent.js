@@ -599,7 +599,7 @@ sap.ui.define([
 	 * Returns an element by its ID in the context of the component.
 	 *
 	 * @param {string} sId Component local ID of the element
-	 * @return {sap.ui.core.Element} element by its ID or <code>undefined</code>
+	 * @return {sap.ui.core.Element|undefined} element by its ID or <code>undefined</code>
 	 * @public
 	 */
 	UIComponent.prototype.byId = function(sId) {
@@ -627,7 +627,7 @@ sap.ui.define([
 	 * <code>null</code> if the ID does not contain a prefix.
 	 *
 	 * @param {string} sId Prefixed ID
-	 * @return {string} ID without prefix or <code>null</code>
+	 * @return {string|null} ID without prefix or <code>null</code>
 	 * @public
 	 * @since 1.39.0
 	 */

@@ -381,7 +381,7 @@ sap.ui.define([
 	 *   The path to the property
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which will be used to retrieve the property
-	 * @return {any}
+	 * @return {any|null|undefined}
 	 *   The value of the property. If the property is not found, <code>null</code> or
 	 *   <code>undefined</code> is returned.
 	 * @public
