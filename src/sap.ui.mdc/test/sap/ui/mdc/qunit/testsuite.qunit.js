@@ -29,6 +29,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 			},
 			loader: {
 				paths: {
+					"delegates": "test-resources/sap/ui/mdc/delegates",
 					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
 				}
 			},
@@ -317,7 +318,7 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				group: "Util",
 				module: "./odata/v4/TypeUtil.qunit",
 				coverage: {
-					only: "[sap/ui/mdc/odata/v4]"
+					only: "[delegates/odata/v4]"
 				},
 				sinon: true
 			},

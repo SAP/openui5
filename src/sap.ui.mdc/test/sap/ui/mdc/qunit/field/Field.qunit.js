@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/mdc/field/ConditionsType",
 	"sap/ui/mdc/field/FieldInput",
-	"sap/ui/mdc/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
+	"delegates/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
 	"sap/m/Label",
 	"sap/m/Input", // async. loading of content control tested in FieldBase test
 	"sap/m/Text",
@@ -878,7 +878,7 @@ sap.ui.define([
 			oType4._bMyType = true;
 
 			oField4 = new Field("F4", {
-				delegate: { name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: { x: 1 } }, // to test V4 delegate
+				delegate: { name: "delegates/odata/v4/FieldBaseDelegate", payload: { x: 1 } }, // to test V4 delegate
 				value: { parts: [{ path: '/price' }, { path: '/currencyCode' }, { path: '/units' }], type: oType4 },
 				change: _myChangeHandler
 			}).placeAt("content");
@@ -889,7 +889,7 @@ sap.ui.define([
 			oType5._bMyType = true;
 
 			oField5 = new Field("F5", {
-				delegate: { name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: { x: 2 } }, // to test V4 delegate
+				delegate: { name: "delegates/odata/v4/FieldBaseDelegate", payload: { x: 2 } }, // to test V4 delegate
 				value: { parts: [{ path: '/price2' }, { path: '/currencyCode2' }, { path: '/units2' }], type: oType5 },
 				change: _myChangeHandler
 			}).placeAt("content");
@@ -1291,7 +1291,7 @@ sap.ui.define([
 			oField = new Field("F1", {
 				dataType: "sap.ui.model.odata.type.Currency",
 				dataTypeFormatOptions: { parseAsString: false },
-				delegate: { name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {} },
+				delegate: { name: "delegates/odata/v4/FieldBaseDelegate", payload: {} },
 				change: _myChangeHandler
 			});
 		},

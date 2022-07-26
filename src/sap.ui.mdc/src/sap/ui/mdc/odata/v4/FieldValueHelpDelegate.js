@@ -48,6 +48,7 @@ sap.ui.define([
 	 * @experimental As of version 1.77
 	 * @since 1.77.0
 	 * @alias sap.ui.mdc.odata.v4.FieldValueHelpDelegate
+	 * @deprecated This module should not be used and will be removed in future versions!
 	 */
 	var ODataFieldValueHelpDelegate = Object.assign({}, FieldValueHelpDelegate);
 

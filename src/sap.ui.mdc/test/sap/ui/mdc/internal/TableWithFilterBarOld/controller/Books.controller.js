@@ -55,19 +55,19 @@ sap.ui.define([
 					liveMode: false,
 					filterItems: [
 						new FilterField({
-							delegate:{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
+							delegate:{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}},
 							label: "Code",
 							dataType: "Edm.String",
 							conditions: "{$filters>/conditions/code}"
 						}),
 						new FilterField({
-							delegate:{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
+							delegate:{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}},
 							label: "Title",
 							dataType: "Edm.String",
 							conditions: "{$filters>/conditions/title}"
 						}),
 						new FilterField({
-							delegate:{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
+							delegate:{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}},
 							label: "Classification",
 							dataType: "Edm.String",
 							conditions: "{$filters>/conditions/classification_code}"

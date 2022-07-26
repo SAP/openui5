@@ -27,7 +27,7 @@
 					p13nMode="Item"
 				>
                 <mdc:basicSearchField>
-                    <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
+                    <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
 					dataType="Edm.String"
 					placeholder= "Search Orders"
 					conditions="{$filters>/conditions/$search}"
@@ -47,7 +47,7 @@
 						width="100%"
 						rowAction="Navigation"
 					>
-					
+
                     <mdc:actions>
 						<mdcat:ActionToolbarAction>
 							<Button type="Emphasized" text="Add Order" press="onAddButtonPress"/>
@@ -60,7 +60,7 @@
 									dataProperty="ID"
 									width="15rem"
 								>
-                            <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
+                            <mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
                         </mdc:table.Column>
                         <mdc:table.Column
 									id="cOrderNo"
@@ -68,7 +68,7 @@
 									dataProperty="OrderNo"
 									width="15rem"
 								>
-                            <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{OrderNo}" editMode="Display"/>
+                            <mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{OrderNo}" editMode="Display"/>
                         </mdc:table.Column>
                         <mdc:table.Column
 									id="cCreatedBy"
@@ -76,7 +76,7 @@
 									dataProperty="createdBy"
 									width="15rem"
 								>
-                            <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{createdBy}" editMode="Display"/>
+                            <mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{createdBy}" editMode="Display"/>
                         </mdc:table.Column>
                         <mdc:table.Column
 									id="cCreatedAt"
@@ -84,7 +84,7 @@
 									dataProperty="createdAt"
 									width="15rem"
 								>
-                            <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{createdAt}" display="Description" editMode="Display"/>
+                            <mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{createdAt}" display="Description" editMode="Display"/>
                         </mdc:table.Column>
 						<mdc:table.Column
 									id="cTotal"
@@ -92,7 +92,7 @@
 									dataProperty="total"
 									width="15rem"
 								>
-                                <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" editMode="Display" />
+                                <mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" editMode="Display" />
 
 						</mdc:table.Column>
 					</mdc:columns>

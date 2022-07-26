@@ -45,16 +45,16 @@
 								<core:Title text="Order Details"></core:Title>
 
 								<Label text="ID"></Label>
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+								<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 
 								<Label text="OrderNo"></Label>
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{OrderNo}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+								<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{OrderNo}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 
 								<Label text="createdBy"></Label>
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{createdBy}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+								<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{createdBy}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 
 								<Label text="Total"></Label>
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" />
+								<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" />
 							</f:SimpleForm>
 						</uxap:blocks>
 					</uxap:ObjectPageSubSection>
@@ -73,16 +73,16 @@
 								</mdc:actions>
 								<mdc:columns>
 									<mdc:table.Column id="cID" header="ID" dataProperty="ID" width="15rem">
-										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display" />
+										<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display" />
 									</mdc:table.Column>
 									<mdc:table.Column id="cAmount" header="amount" dataProperty="amount" width="15rem">
-										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{amount}" editMode="Display" />
+										<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{amount}" editMode="Display" />
 									</mdc:table.Column>
 									<mdc:table.Column id="cNetAmount" header="netAmount" dataProperty="netAmount" width="15rem">
-										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{netAmount}" editMode="Display" />
+										<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{netAmount}" editMode="Display" />
 									</mdc:table.Column>
 									<mdc:table.Column id="cBook" header="Book" dataProperty="book_title" width="15rem">
-										<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{book/title}" display="Description" editMode="Display" />
+										<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{book/title}" display="Description" editMode="Display" />
 									</mdc:table.Column>
 								</mdc:columns>
 								<mdc:creationRow>

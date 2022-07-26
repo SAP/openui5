@@ -48,13 +48,13 @@
 								<core:Title text="Order Details"></core:Title>
 
 								<Label text="ID"></Label>
-								<mdc:Field id="fID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="{=${view>/editMode} ? 'ReadOnly' : 'Display'}" multipleLines="false"/>
+								<mdc:Field id="fID" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="{=${view>/editMode} ? 'ReadOnly' : 'Display'}" multipleLines="false"/>
 
 								<Label text="OrderNo"></Label>
-								<mdc:Field id="fOrderNo" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false"/>
+								<mdc:Field id="fOrderNo" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false"/>
 
 								<Label text="Total"></Label>
-								<mdc:Field id="fTotal" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false" fieldHelp="FVH-Currency">
+								<mdc:Field id="fTotal" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false" fieldHelp="FVH-Currency">
 									<mdc:dependents>
 										<mdc:ValueHelp id="FVH-Currency"
 											delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
@@ -70,7 +70,7 @@
 								</mdc:Field>
 
 								<Label text="Customer"></Label>
-								<mdc:Field id="fCustomer" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'customer_ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" display="Description" multipleLines="false" fieldHelp="FVH-Customer">
+								<mdc:Field id="fCustomer" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'customer_ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" display="Description" multipleLines="false" fieldHelp="FVH-Customer">
 									<mdc:dependents>
 										<mdc:ValueHelp id="FVH-Customer"
 											delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
@@ -86,9 +86,9 @@
 								</mdc:Field>
 
 								<Label text="Created On"></Label>
-								<mdc:Field id="fCreatedOn" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'createdAt', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {precision: 7, V4: true}}, {path: 'view>/timezone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
+								<mdc:Field id="fCreatedOn" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'createdAt', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {precision: 7, V4: true}}, {path: 'view>/timezone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
 								<Label text="Modified On"></Label>
-								<mdc:Field id="fModifiedOn" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'modifiedAt', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {precision: 7, V4: true}}, {path: 'view>/timezone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone', formatOptions: {showDate: true, showTime: true, showTimezone: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
+								<mdc:Field id="fModifiedOn" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'modifiedAt', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {precision: 7, V4: true}}, {path: 'view>/timezone', type: 'sap.ui.model.odata.type.String'}], type: 'sap.ui.model.odata.type.DateTimeWithTimezone', formatOptions: {showDate: true, showTime: true, showTimezone: true}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
 							</f:SimpleForm>
 						</uxap:blocks>
 					</uxap:ObjectPageSubSection>
@@ -112,16 +112,16 @@
 								</mdc:actions>
 								<mdc:columns>
 									<mdc:table.Column id="cID" header="ID" dataProperty="ID">
-										<mdc:Field id="F_ID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" width="100%" editMode="Display" multipleLines="false"/>
+										<mdc:Field id="F_ID" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" width="100%" editMode="Display" multipleLines="false"/>
 									</mdc:table.Column>
 									<mdc:table.Column id="cAmount" header="amount" dataProperty="amount">
-										<mdc:Field id="F_amount" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'amount', type: 'sap.ui.model.odata.type.Int32'}" editMode="Display" width="100%" multipleLines="false"/>
+										<mdc:Field id="F_amount" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'amount', type: 'sap.ui.model.odata.type.Int32'}" editMode="Display" width="100%" multipleLines="false"/>
 									</mdc:table.Column>
 									<mdc:table.Column id="cNetAmount" header="netAmount" dataProperty="netAmount">
-										<mdc:Field id="F_netAmount" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'netAmount', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}" editMode="Display" width="100%" multipleLines="false"/>
+										<mdc:Field id="F_netAmount" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'netAmount', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}" editMode="Display" width="100%" multipleLines="false"/>
 									</mdc:table.Column>
 									<mdc:table.Column id="cBook" header="Book" dataProperty="book_ID">
-										<mdc:Field id="F_book_ID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'book_ID', type: 'sap.ui.model.odata.type.Int32'}" additionalValue="{book/title}" display="Description" width="100%" editMode="Display" multipleLines="false"/>
+										<mdc:Field id="F_book_ID" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'book_ID', type: 'sap.ui.model.odata.type.Int32'}" additionalValue="{book/title}" display="Description" width="100%" editMode="Display" multipleLines="false"/>
 									</mdc:table.Column>
 								</mdc:columns>
 								<mdc:creationRow>
@@ -175,10 +175,10 @@
 														enableAutoColumnWidth="true">
 														<mdc:columns>
 															<mdc:table.Column id="FH4--mdc--gridtable--id" header="ID" dataProperty="ID">
-																<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="Display" width="100%" multipleLines="false"/>
+																<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="Display" width="100%" multipleLines="false"/>
 															</mdc:table.Column>
 															<mdc:table.Column id="FH4--mdc--gridtable--title" header="Title" dataProperty="title">
-																<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'title', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" multipleLines="false"/>
+																<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'title', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" multipleLines="false"/>
 															</mdc:table.Column>
 														</mdc:columns>
 														<mdc:type>

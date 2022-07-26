@@ -43,13 +43,13 @@
 								<f:content>
 									<core:Title text="Author Details"></core:Title>
 									<Label text="Name"></Label>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 									<Label text="Date of birth"></Label>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path:'dateOfBirth', type:'sap.ui.model.odata.type.Date'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path:'dateOfBirth', type:'sap.ui.model.odata.type.Date'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 									<Label text="Date of death"></Label>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path:'dateOfDeath', type:'sap.ui.model.odata.type.Date'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path:'dateOfDeath', type:'sap.ui.model.odata.type.Date'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 									<Label text="Country"></Label>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{countryOfOrigin_code}" additionalValue="{countryOfOrigin/descr}" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHCountry">
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{countryOfOrigin_code}" additionalValue="{countryOfOrigin/descr}" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHCountry">
 										<mdc:dependents>
 											<mdcf:FieldValueHelp id="IOFFVHCountry" title="Countries" showConditionPanel="false" filterFields="*code,descr*" keyPath="code" descriptionPath="descr" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Authors', key: 'code'}}">
 												<mdcf:suggestContent>
@@ -96,7 +96,7 @@
 										</mdc:dependents>
 									</mdc:Field>
 									<Label text="Region"></Label>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{regionOfOrigin_code}" additionalValue="{regionOfOrigin/text}" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHRegion">
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{regionOfOrigin_code}" additionalValue="{regionOfOrigin/text}" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHRegion">
 										<mdc:dependents>
 											<mdcf:FieldValueHelp id="IOFFVHRegion" title="Regions" showConditionPanel="false" filterFields="*code,country_code,text*" keyPath="code" descriptionPath="text" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Authors', key: 'code'}}">
 												<mdcf:inParameters>
@@ -175,7 +175,7 @@
 
 									</mdc:Field>
 									<Label text="City"></Label>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{cityOfOrigin_city}" additionalValue="{cityOfOrigin/text}" display="ValueDescription"  editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHCity">
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{cityOfOrigin_city}" additionalValue="{cityOfOrigin/text}" display="ValueDescription"  editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="IOFFVHCity">
 										<mdc:dependents>
 											<mdcf:FieldValueHelp id="IOFFVHCity" title="Cities" showConditionPanel="false" filterFields="*country_code,region_code,city,text*" keyPath="city" descriptionPath="text" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Authors', key: 'city'}}">
 												<mdcf:inParameters>
@@ -314,7 +314,7 @@
 						<uxap:blocks>
 							<List growing="true" growingScrollToLoad="true" growingThreshold="20" items="{path: 'genres', templateShareable: false}">
 								<CustomListItem>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" additionalValue="{genre_label}" editMode="Display" display="Description"/>
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" additionalValue="{genre_label}" editMode="Display" display="Description"/>
 								</CustomListItem>
 							</List>
 						</uxap:blocks>

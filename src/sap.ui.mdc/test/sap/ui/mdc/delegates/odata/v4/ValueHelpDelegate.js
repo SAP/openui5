@@ -3,15 +3,13 @@
  */
 
 sap.ui.define([
-	"../../ValueHelpDelegate",
+	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/model/FilterType",
-	'sap/ui/mdc/odata/v4/TypeUtil',
-	'sap/ui/mdc/condition/ConditionConverter'
+	"delegates/odata/v4/TypeUtil"
 ], function(
 	ValueHelpDelegate,
 	FilterType,
-	TypeUtil,
-	ConditionConverter
+	TypeUtil
 ) {
 	"use strict";
 
@@ -27,8 +25,7 @@ sap.ui.define([
 	 * @experimental As of version 1.95
 	 * @since 1.95.0
 	 * @extends module:sap/ui/mdc/ValueHelpDelegate
-	 * @alias module:sap/ui/mdc/odata/v4/ValueHelpDelegate
-	 * @deprecated This module should not be used and will be removed in future versions!
+	 * @alias module:delegates/odata/v4/ValueHelpDelegate
 	 */
 	 var ODataV4ValueHelpDelegate = Object.assign({}, ValueHelpDelegate);
 

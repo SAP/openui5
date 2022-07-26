@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/base/SyncPromise",
-	"sap/ui/mdc/odata/v4/ChartDelegate"
+	"delegates/odata/v4/ChartDelegate"
 ], function(
 	SyncPromise,
 	ChartDelegate

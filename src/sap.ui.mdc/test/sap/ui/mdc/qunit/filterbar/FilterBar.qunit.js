@@ -445,7 +445,7 @@ sap.ui.define([
 			oFilterBar.setBasicSearchField(new FilterField({
 				conditions: "{$filters>/conditions/$search}",
 				maxConditions: 1,
-				delegate: '{name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}}'
+				delegate: '{name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}'
 			}));
 
 			oPromise.then(function () {

@@ -38,7 +38,7 @@
 									<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 										<vhfb:basicSearchField>
 											<mdc:FilterField
-												delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+												delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 												dataType= "Edm.String"
 												conditions= "{$filters>/conditions/$search}"
 												width="50%"
@@ -46,16 +46,16 @@
 												placeholder="Search" />
 										</vhfb:basicSearchField>
 										<vhfb:filterItems>
-											<!-- <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" dataType= "Edm.String" conditions= "{$filters>/conditions/$search}" width="50%" maxConditions="1" placeholder="Search" /> -->
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="myID" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" />
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Country of origin" dataType="Edm.String" maxConditions="-1" conditions= "{$filters>/conditions/countryOfOrigin_code}"/>
-											<!-- <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 2" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 3" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 4" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 5" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 6" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 7" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" /> -->
+											<!-- <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" dataType= "Edm.String" conditions= "{$filters>/conditions/$search}" width="50%" maxConditions="1" placeholder="Search" /> -->
+											<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="myID" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" />
+											<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Country of origin" dataType="Edm.String" maxConditions="-1" conditions= "{$filters>/conditions/countryOfOrigin_code}"/>
+											<!-- <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 2" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 3" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 4" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 5" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 6" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 7" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" /> -->
 										</vhfb:filterItems>
 									</vhfb:FilterBar>
 								</mdcf:filterBar>
@@ -100,7 +100,7 @@
 
 		</mdc:dependents>
 		<mdc:filterItems>
-			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+			<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 				id="FB0-FF6"
 				label="Country of origin"
 				conditions="{$filters>/conditions/countryOfOrigin_code}"
@@ -108,7 +108,7 @@
 				fieldHelp="FB0-FH-Country"
 				display="ValueDescription"
 				maxConditions="{settings>/maxConditions}"/>
-			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+			<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 				id="FB0-FF1-11"
 				label="FieldValueHelp"
 				conditions="{$filters>/conditions/ID}"
@@ -117,7 +117,7 @@
 				fieldHelp="FB0-FH1-11"
 				display="DescriptionValue"
 				maxConditions="{settings>/maxConditions}" />
-			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+			<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 				id="FB0-FF7"
 				label="Region of origin"
 				conditions="{$filters>/conditions/regionOfOrigin_code}"
@@ -125,7 +125,7 @@
 				fieldHelp="FB0-FH-Region"
 				display="ValueDescription"
 				maxConditions="{settings>/maxConditions}"/>
-			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+			<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 				id="FB0-FF8"
 				label="City of origin"
 				conditions="{$filters>/conditions/cityOfOrigin_city}"

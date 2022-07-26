@@ -23,7 +23,7 @@
 		delegate="{name: 'sap/ui/mdc/sample/TableWithFilterBar/FilterBar.delegate', payload: {collectionName: 'Books'}}">
 
 		<mdc:basicSearchField>
-			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
+			<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
 			dataType="Edm.String"
 			placeholder= "Search"
 			conditions="{$filters>/conditions/$search}"
@@ -33,7 +33,7 @@
 
 		<mdc:filterItems>
 			<mdc:FilterField
-				delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 				id="ff1"
 				label="Author ID"
 				conditions="{$filters>/conditions/author_ID}"
@@ -44,7 +44,7 @@
 				width="100%"/>
 
 			<mdc:FilterField
-				delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+				delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 				id="ff2"
 				label="Title"
 				conditions="{$filters>/conditions/title}"
@@ -68,7 +68,7 @@
 
 	<Panel headerText="Chart" class="sapUiSmallMarginTop" expandable="true">
 		<mdc:Chart id="mdcChart" filter="booksFilterBar" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
-			'name':  'sap/ui/mdc/odata/v4/vizChart/ChartDelegate',
+			'name':  'delegates/odata/v4/vizChart/ChartDelegate',
 			'payload': {
 				collectionName: 'Books'
 			}

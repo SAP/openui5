@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-		'sap/ui/mdc/util/TypeUtil',
-		'sap/ui/mdc/enum/BaseType',
-		'sap/base/util/ObjectPath'
-	], function(BaseTypeUtil, BaseType, ObjectPath) {
+	'sap/ui/mdc/util/TypeUtil',
+	'sap/ui/mdc/enum/BaseType',
+	'sap/base/util/ObjectPath'
+], function(BaseTypeUtil, BaseType, ObjectPath) {
 	"use strict";
 
 	/**
@@ -19,7 +19,6 @@ sap.ui.define([
 	 * @experimental As of version 1.79
 	 * @since 1.79.0
 	 * @alias sap.ui.mdc.odata.TypeUtil
-	 * @deprecated This module should not be used and will be removed in future versions!
 	 */
 	var TypeUtil = Object.assign({}, BaseTypeUtil, {
 

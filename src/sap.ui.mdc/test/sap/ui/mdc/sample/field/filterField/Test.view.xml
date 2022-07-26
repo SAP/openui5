@@ -199,7 +199,7 @@
 						conditions="{cm>/conditions/Description}"
 						dataType="sap.ui.model.odata.type.String"
 						dataTypeConstraints="{nullable: false}"
-						delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate'}"
+						delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}"
 						maxConditions="3"
 						placeholder="{/#Product/Description/@sap:label}"
 						label="{/#Product/Description/@sap:label}"

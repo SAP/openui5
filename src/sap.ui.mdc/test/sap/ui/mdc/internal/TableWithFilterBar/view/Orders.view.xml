@@ -86,7 +86,7 @@
 									<mdcvc:filterBar>
 										<vhfb:FilterBar id="FH1--mdc--responsivetable-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 											<vhfb:filterItems>
-												<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints="{maxLength: 10, isDigitSequence: true}"/>
+												<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints="{maxLength: 10, isDigitSequence: true}"/>
 											</vhfb:filterItems>
 										</vhfb:FilterBar>
 									</mdcvc:filterBar>
@@ -102,10 +102,10 @@
 										enableAutoColumnWidth="true">
 										<mdc:columns>
 											<mdc:table.Column header="Order Number" dataProperty="OrderNo">
-												<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="Display" multipleLines="false" width="100%"/>
+												<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="Display" multipleLines="false" width="100%"/>
 											</mdc:table.Column>
 											<mdc:table.Column header="Order ID" dataProperty="ID">
-												<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="Display" multipleLines="false" width="100%"/>
+												<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="Display" multipleLines="false" width="100%"/>
 											</mdc:table.Column>
 										</mdc:columns>
 										<mdc:type>
@@ -118,7 +118,7 @@
 									<mdcvc:filterBar>
 										<vhfb:FilterBar id="FH1--mdc--gridtable-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 											<vhfb:filterItems>
-												<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints="{maxLength: 10, isDigitSequence: true}"/>
+												<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints="{maxLength: 10, isDigitSequence: true}"/>
 											</vhfb:filterItems>
 										</vhfb:FilterBar>
 									</mdcvc:filterBar>
@@ -134,10 +134,10 @@
 										enableAutoColumnWidth="true">
 										<mdc:columns>
 											<mdc:table.Column header="Order Number" dataProperty="OrderNo">
-												<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="Display" multipleLines="false" width="100%"/>
+												<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="Display" multipleLines="false" width="100%"/>
 											</mdc:table.Column>
 											<mdc:table.Column header="Order ID" dataProperty="ID">
-												<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="Display" multipleLines="false" width="100%"/>
+												<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="Display" multipleLines="false" width="100%"/>
 											</mdc:table.Column>
 										</mdc:columns>
 										<mdc:type>
@@ -163,7 +163,7 @@
 					</mdc:ValueHelp>
 				</mdc:dependents>
                 <mdc:basicSearchField>
-                    <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
+                    <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
 					dataType="Edm.String"
 					placeholder= "Search Orders"
 					conditions="{$filters>/conditions/$search}"
@@ -171,10 +171,10 @@
 				</mdc:basicSearchField>
 
 				<mdc:filterItems>
-					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff2" fieldHelp="FH1" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints="{maxLength: 10, isDigitSequence: true}"/>
-					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff3" label="Order Time" conditions="{$filters>/conditions/orderTime}" dataType="Edm.TimeOfDay" />
-					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff4" label="Order w. one Item for Book (Any)" conditions="{$filters>/conditions/Items*/book_ID}" dataType="Edm.Int32" />
-					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff5" label="Order w. all Items for Book (All)" conditions="{$filters>/conditions/Items+/book_ID}" dataType="Edm.Int32" />
+					<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="ff2" fieldHelp="FH1" label="Order Number" conditions="{$filters>/conditions/OrderNo}" dataType="sap.ui.model.odata.type.String" dataTypeConstraints="{maxLength: 10, isDigitSequence: true}"/>
+					<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="ff3" label="Order Time" conditions="{$filters>/conditions/orderTime}" dataType="Edm.TimeOfDay" />
+					<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="ff4" label="Order w. one Item for Book (Any)" conditions="{$filters>/conditions/Items*/book_ID}" dataType="Edm.Int32" />
+					<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="ff5" label="Order w. all Items for Book (All)" conditions="{$filters>/conditions/Items+/book_ID}" dataType="Edm.Int32" />
 				</mdc:filterItems>
             </mdc:FilterBar>
 
@@ -213,49 +213,49 @@
 									header="ID"
 									dataProperty="ID"
 								>
-                            <mdc:Field id="F_ID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="Display" multipleLines="false" width="100%"/>
+                            <mdc:Field id="F_ID" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="Display" multipleLines="false" width="100%"/>
                         </mdc:table.Column>
                         <mdc:table.Column
 									id="cOrderNo"
 									header="Order Number"
 									dataProperty="OrderNo"
 								>
-                            <mdc:Field id="F_OrderNo" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="Display" multipleLines="false" width="100%"/>
+                            <mdc:Field id="F_OrderNo" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'OrderNo', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10, isDigitSequence: true}}" editMode="Display" multipleLines="false" width="100%"/>
                         </mdc:table.Column>
 						<mdc:table.Column
 									id="cTime"
 									header="Order time"
 									dataProperty="orderTime"
 								>
-                            <mdc:Field id="F_orderTime" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'orderTime', type: 'sap.ui.model.odata.type.TimeOfDay'}" editMode="Display" multipleLines="false" width="100%"/>
+                            <mdc:Field id="F_orderTime" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'orderTime', type: 'sap.ui.model.odata.type.TimeOfDay'}" editMode="Display" multipleLines="false" width="100%"/>
                         </mdc:table.Column>
                         <mdc:table.Column
 									id="cCustomer"
 									header="Customer"
 									dataProperty="customer_ID"
 								>
-                            <mdc:Field id="F_customer_ID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'customer_ID', type: 'sap.ui.model.odata.type.Int32'}" additionalValue="{customer/name}" display="Description" editMode="Display" multipleLines="false" width="100%"/>
+                            <mdc:Field id="F_customer_ID" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'customer_ID', type: 'sap.ui.model.odata.type.Int32'}" additionalValue="{customer/name}" display="Description" editMode="Display" multipleLines="false" width="100%"/>
                         </mdc:table.Column>
                         <mdc:table.Column
 									id="cCreatedAt"
 									header="Created On"
 									dataProperty="createdAt"
 								>
-                            <mdc:Field id="F_createdAt" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'createdAt', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {precision: 7, V4: true}}" editMode="Display" multipleLines="false" width="100%"/>
+                            <mdc:Field id="F_createdAt" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'createdAt', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {precision: 7, V4: true}}" editMode="Display" multipleLines="false" width="100%"/>
                         </mdc:table.Column>
 						<mdc:table.Column
 									id="cModifiedAt"
 									header="Modified On"
 									dataProperty="modifiedAt"
 								>
-                            <mdc:Field id="F_modifiedAt" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'modifiedAt', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {precision: 7, V4: true}}" editMode="Display" multipleLines="false" width="100%"/>
+                            <mdc:Field id="F_modifiedAt" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'modifiedAt', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {precision: 7, V4: true}}" editMode="Display" multipleLines="false" width="100%"/>
                         </mdc:table.Column>
 						<mdc:table.Column
 									id="cTotal"
 									header="Total"
 									dataProperty="total"
 								>
-                            <mdc:Field id="F_total" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" editMode="Display" multipleLines="false" width="100%"/>
+                            <mdc:Field id="F_total" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" editMode="Display" multipleLines="false" width="100%"/>
 						</mdc:table.Column>
 					</mdc:columns>
 					<mdc:creationRow>

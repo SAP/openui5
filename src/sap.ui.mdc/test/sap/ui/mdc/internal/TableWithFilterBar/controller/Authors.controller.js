@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/UIComponent",
 	"sap/m/Text", // to have it loaded before rendering starts
-	"sap/ui/mdc/odata/v4/FieldBaseDelegate", // to have it loaded before rendering starts
+	"delegates/odata/v4/FieldBaseDelegate", // to have it loaded before rendering starts
 	"sap/ui/mdc/field/FieldMultiInput", // to have it loaded before rendering starts
 	"sap/m/Token", // to have it loaded before rendering starts
 	"sap/m/ExpandableText", // to have it loaded before rendering starts

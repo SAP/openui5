@@ -14,7 +14,7 @@
 		id="bookChart"
 		noDataText="This is a test noData text"
 		p13nMode="Item,Sort,Type"
-		delegate="{name: 'sap/ui/mdc/odata/v4/vizChart/ChartDelegate', payload: {collectionName: 'Books'}}"
+		delegate="{name: 'delegates/odata/v4/vizChart/ChartDelegate', payload: {collectionName: 'Books'}}"
 		chartType="column"
 		header="Books Chart"
 		height="400px"

@@ -22,7 +22,7 @@
 			display="ValueDescription"
 			maxConditions="-1"
 			fieldHelp="FVH1"
-			delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}">
+			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}">
 			<mdc:dependents>
 				<mdcField:FieldValueHelp
 					id="FVH1"
@@ -68,7 +68,7 @@
 			dataTypeConstraints="{V4: true}"
 			maxConditions="-1"
 			fieldHelp="FVH2"
-			delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" >
+			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" >
 			<mdc:dependents>
 				<mdcField:FieldValueHelp
 					id="FVH2"
@@ -87,7 +87,7 @@
 			dataTypeConstraints=""
 			maxConditions="-1"
 			fieldHelp="FVH3"
-			delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" >
+			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" >
 			<mdc:dependents>
 				<mdcField:FieldValueHelp
 					id="FVH3"
@@ -107,7 +107,7 @@
 			maxConditions="1"
 			fieldHelp="FVH4"
 			operators="TODAY,YESTERDAY,TOMORROW,TODAYFROMTO,LASTDAYS,NEXTDAYS"
-			delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" >
+			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" >
 			<mdc:dependents>
 				<mdcField:ConditionFieldHelp
 					id="FVH4"

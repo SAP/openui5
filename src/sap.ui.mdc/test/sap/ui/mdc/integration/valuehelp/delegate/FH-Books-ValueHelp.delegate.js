@@ -96,7 +96,7 @@ sap.ui.define([
 						filterItems: [
 							new FilterField({
 								delegate: {
-									name: "sap/ui/mdc/odata/v4/FieldBaseDelegate",
+									name: "delegates/odata/v4/FieldBaseDelegate",
 									payload: {}
 								},
 								label: "ID",
@@ -104,7 +104,7 @@ sap.ui.define([
 							}),
 							new FilterField({
 								delegate: {
-									name: "sap/ui/mdc/odata/v4/FieldBaseDelegate",
+									name: "delegates/odata/v4/FieldBaseDelegate",
 									payload: {}
 								},
 								label: "Title",
@@ -112,7 +112,7 @@ sap.ui.define([
 							}),
 							new FilterField({
 								delegate: {
-									name: "sap/ui/mdc/odata/v4/FieldBaseDelegate",
+									name: "delegates/odata/v4/FieldBaseDelegate",
 									payload: {}
 								},
 								label: "Description",
@@ -158,7 +158,7 @@ sap.ui.define([
 						filterItems: [
 							new FilterField({
 								delegate: {
-									name: "sap/ui/mdc/odata/v4/FieldBaseDelegate",
+									name: "delegates/odata/v4/FieldBaseDelegate",
 									payload: {}
 								},
 								label: "ID",
@@ -166,7 +166,7 @@ sap.ui.define([
 							}),
 							new FilterField({
 								delegate: {
-									name: "sap/ui/mdc/odata/v4/FieldBaseDelegate",
+									name: "delegates/odata/v4/FieldBaseDelegate",
 									payload: {}
 								},
 								label: "Title",
@@ -174,7 +174,7 @@ sap.ui.define([
 							}),
 							new FilterField({
 								delegate: {
-									name: "sap/ui/mdc/odata/v4/FieldBaseDelegate",
+									name: "delegates/odata/v4/FieldBaseDelegate",
 									payload: {}
 								},
 								label: "Description",

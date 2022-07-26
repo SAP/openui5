@@ -7,7 +7,7 @@
                 <mdcf:filterBar>
                     <vhfb:FilterBar id="FB0-FH1-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
                         <vhfb:filterItems>
-                            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
+                            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
                         </vhfb:filterItems>
                     </vhfb:FilterBar>
                 </mdcf:filterBar>
@@ -20,7 +20,7 @@
             </mdcf:FieldValueHelp>
         </mdc:dependents>
         <mdc:filterItems>
-            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FB0-FF1" label="M.Table / MDC.GridtableType: via Delegate" conditions="{$filters>/conditions/author_ID}" dataType="Edm.Int32" required="false" fieldHelp="FB0-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
+            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="FB0-FF1" label="M.Table / MDC.GridtableType: via Delegate" conditions="{$filters>/conditions/author_ID}" dataType="Edm.Int32" required="false" fieldHelp="FB0-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
         </mdc:filterItems>
     </mdc:FilterBar>
 
@@ -30,10 +30,10 @@
                 <mdcf:filterBar>
                     <vhfb:FilterBar id="FB1-FH1-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
                         <vhfb:basicSearchField>
-                            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" dataType="Edm.String" conditions="{$filters>/conditions/$search}" width="50%" maxConditions="1" placeholder="Search" />
+                            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" dataType="Edm.String" conditions="{$filters>/conditions/$search}" width="50%" maxConditions="1" placeholder="Search" />
                         </vhfb:basicSearchField>
                         <vhfb:filterItems>
-                            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
+                            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
                         </vhfb:filterItems>
                     </vhfb:FilterBar>
                 </mdcf:filterBar>
@@ -68,10 +68,10 @@
                         <mdc:Table autoBindOnInit="true" id="FB1-FH1--mdc--gridtable" width="30rem" selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}" p13nMode="Column,Sort" delegate="{name: 'sap/ui/v4demo/delegate/MDCUITable.delegate', payload: {collectionName: 'Authors'}}" threshold="50">
                             <mdc:columns>
                                 <mdc:table.Column id="FB1-FH1--mdc--gridtable--id" header="ID" dataProperty="ID">
-                                    <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display" />
+                                    <mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display" />
                                 </mdc:table.Column>
                                 <mdc:table.Column id="FB1-FH1--mdc--gridtable--name" header="Name" dataProperty="name">
-                                    <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="Display" />
+                                    <mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="Display" />
                                 </mdc:table.Column>
                             </mdc:columns>
                             <mdc:type>
@@ -83,7 +83,7 @@
             </mdcf:FieldValueHelp>
         </mdc:dependents>
         <mdc:filterItems>
-            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FB1-FF1" label="M.Table / MDC.GridtableType: via XML" conditions="{$filters>/conditions/author_ID}" dataType="Edm.Int32" required="false" fieldHelp="FB1-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
+            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="FB1-FF1" label="M.Table / MDC.GridtableType: via XML" conditions="{$filters>/conditions/author_ID}" dataType="Edm.Int32" required="false" fieldHelp="FB1-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
         </mdc:filterItems>
     </mdc:FilterBar>
 
@@ -93,10 +93,10 @@
                 <mdcf:filterBar>
                     <vhfb:FilterBar id="FB2-FH1-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
                         <vhfb:basicSearchField>
-                            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" dataType="Edm.String" conditions="{$filters>/conditions/$search}" width="50%" maxConditions="1" placeholder="Search" />
+                            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" dataType="Edm.String" conditions="{$filters>/conditions/$search}" width="50%" maxConditions="1" placeholder="Search" />
                         </vhfb:basicSearchField>
                         <vhfb:filterItems>
-                            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
+                            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
                         </vhfb:filterItems>
                     </vhfb:FilterBar>
                 </mdcf:filterBar>
@@ -109,7 +109,7 @@
             </mdcf:FieldValueHelp>
         </mdc:dependents>
         <mdc:filterItems>
-            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FB2-FF1" label="M.Table / MDC.ResponsivetableType: via Delegate" conditions="{$filters>/conditions/author_ID}" dataType="Edm.Int32" required="false" fieldHelp="FB2-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
+            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="FB2-FF1" label="M.Table / MDC.ResponsivetableType: via Delegate" conditions="{$filters>/conditions/author_ID}" dataType="Edm.Int32" required="false" fieldHelp="FB2-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
         </mdc:filterItems>
     </mdc:FilterBar>
 
@@ -120,10 +120,10 @@
                 <mdcf:filterBar>
                     <vhfb:FilterBar id="FB3-FH1-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
                         <vhfb:basicSearchField>
-                            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" dataType="Edm.String" conditions="{$filters>/conditions/$search}" width="50%" maxConditions="1" placeholder="Search" />
+                            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" dataType="Edm.String" conditions="{$filters>/conditions/$search}" width="50%" maxConditions="1" placeholder="Search" />
                         </vhfb:basicSearchField>
                         <vhfb:filterItems>
-                            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
+                            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
                         </vhfb:filterItems>
                     </vhfb:FilterBar>
                 </mdcf:filterBar>
@@ -158,10 +158,10 @@
                         <mdc:Table autoBindOnInit="true" id="FB3-FH1--mdc--gridtable" width="30rem" selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}" p13nMode="Column,Sort" delegate="{name: 'sap/ui/v4demo/delegate/MDCMTable.delegate', payload: {collectionName: 'Authors'}}" threshold="50">
                             <mdc:columns>
                                 <mdc:table.Column id="FB3-FH1--mdc--gridtable--id" header="ID" dataProperty="ID" >
-                                    <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display" />
+                                    <mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display" />
                                 </mdc:table.Column>
                                 <mdc:table.Column id="FB3-FH1--mdc--gridtable--name" header="Name" dataProperty="name" >
-                                    <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="Display" />
+                                    <mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{name}" editMode="Display" />
                                 </mdc:table.Column>
                             </mdc:columns>
                             <mdc:type>
@@ -173,7 +173,7 @@
             </mdcf:FieldValueHelp>
         </mdc:dependents>
         <mdc:filterItems>
-            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FB3-FF1" label="M.Table / MDC.ResponsivetableType: via XML" conditions="{$filters>/conditions/author_ID}" dataType="Edm.Int32" required="false" fieldHelp="FB3-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
+            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="FB3-FF1" label="M.Table / MDC.ResponsivetableType: via XML" conditions="{$filters>/conditions/author_ID}" dataType="Edm.Int32" required="false" fieldHelp="FB3-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
         </mdc:filterItems>
     </mdc:FilterBar>
 
@@ -184,7 +184,7 @@
                 <mdcf:filterBar>
                     <vhfb:FilterBar id="FB7-FH1-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
                         <vhfb:filterItems>
-                            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
+                            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
                         </vhfb:filterItems>
                     </vhfb:FilterBar>
                 </mdcf:filterBar>
@@ -194,7 +194,7 @@
             </mdcf:FieldValueHelp>
         </mdc:dependents>
         <mdc:filterItems>
-            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FB7-FF1" label="M.Table via Delegate" conditions="{$filters>/conditions/author_ID}" dataType="Edm.Int32" required="false" fieldHelp="FB7-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
+            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="FB7-FF1" label="M.Table via Delegate" conditions="{$filters>/conditions/author_ID}" dataType="Edm.Int32" required="false" fieldHelp="FB7-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
         </mdc:filterItems>
     </mdc:FilterBar>
 
@@ -204,7 +204,7 @@
                 <mdcf:filterBar>
                     <vhfb:FilterBar id="FB8-FH1-FB" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
                         <vhfb:filterItems>
-                            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
+                            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
                         </vhfb:filterItems>
                     </vhfb:FilterBar>
                 </mdcf:filterBar>
@@ -238,7 +238,7 @@
             </mdcf:FieldValueHelp>
         </mdc:dependents>
         <mdc:filterItems>
-            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FB8-FF1" label="M.Table via XML" conditions="{$filters>/conditions/author_ID}" dataType="Edm.Int32" required="false" fieldHelp="FB8-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
+            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="FB8-FF1" label="M.Table via XML" conditions="{$filters>/conditions/author_ID}" dataType="Edm.Int32" required="false" fieldHelp="FB8-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
         </mdc:filterItems>
     </mdc:FilterBar>
 
@@ -334,13 +334,13 @@
                         <mdc:Table id="FB10-FH3--mdc--gridtable" width="30rem" selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}" delegate="{name: 'sap/ui/v4demo/delegate/MDCUITable.delegate', payload: {collectionName: 'Genres'}}" threshold="50" p13nMode="Column,Sort">
                             <mdc:columns>
                                 <mdc:table.Column id="FB10-FH3--mdc--gridtable--code" header="code" dataProperty="code" >
-                                    <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{code}" editMode="Display" />
+                                    <mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{code}" editMode="Display" />
                                 </mdc:table.Column>
                                 <mdc:table.Column id="FB10-FH3--mdc--gridtable--label" header="label" dataProperty="label" >
-                                    <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{label}" editMode="Display" />
+                                    <mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{label}" editMode="Display" />
                                 </mdc:table.Column>
                                 <mdc:table.Column id="FB10-FH3--mdc--gridtable--classification_code" header="classification_code" dataProperty="classification_code" >
-                                    <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{classification_code}" editMode="Display" />
+                                    <mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{classification_code}" editMode="Display" />
                                 </mdc:table.Column>
                             </mdc:columns>
                             <mdc:type>
@@ -352,9 +352,9 @@
             </mdcf:FieldValueHelp>
         </mdc:dependents>
         <mdc:filterItems>
-            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FB10-FF1" label="M.Table" conditions="{$filters>/conditions/classification_code}" dataType="Edm.String" required="false" fieldHelp="FB10-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
-            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FB10-FF2" label="M.Table with InputParameter" conditions="{$filters>/conditions/genre_code}" dataType="Edm.String" required="false" fieldHelp="FB10-FH2" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
-            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FB10-FF3" label="MDC.Table with InputParameter" conditions="{$filters>/conditions/genre_code}" dataType="Edm.String" required="false" fieldHelp="FB10-FH3" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
+            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="FB10-FF1" label="M.Table" conditions="{$filters>/conditions/classification_code}" dataType="Edm.String" required="false" fieldHelp="FB10-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
+            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="FB10-FF2" label="M.Table with InputParameter" conditions="{$filters>/conditions/genre_code}" dataType="Edm.String" required="false" fieldHelp="FB10-FH2" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
+            <mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="FB10-FF3" label="MDC.Table with InputParameter" conditions="{$filters>/conditions/genre_code}" dataType="Edm.String" required="false" fieldHelp="FB10-FH3" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
         </mdc:filterItems>
     </mdc:FilterBar>
 

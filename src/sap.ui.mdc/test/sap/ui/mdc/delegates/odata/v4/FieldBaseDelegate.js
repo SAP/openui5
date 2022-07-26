@@ -8,8 +8,7 @@
 
 sap.ui.define([
 	"sap/ui/mdc/field/FieldBaseDelegate",
-	"sap/ui/mdc/odata/v4/TypeUtil"
-
+	"delegates/odata/v4/TypeUtil"
 ], function(
 		FieldBaseDelegate,
 		TypeUtil
@@ -29,8 +28,7 @@ sap.ui.define([
 	 * @experimental As of version 1.74
 	 * @since 1.74.0
 	 * @extends module:sap/ui/mdc/field/FieldBaseDelegate
-	 * @alias module:sap/ui/mdc/odata/v4/FieldBaseDelegate
-	 * @deprecated This module should not be used and will be removed in future versions!
+	 * @alias module:delegates/odata/v4/FieldBaseDelegate
 	 */
 	var ODataFieldBaseDelegate = Object.assign({}, FieldBaseDelegate);
 
@@ -111,7 +109,7 @@ sap.ui.define([
 
 	ODataFieldBaseDelegate.getDefaultValueHelpDelegate = function(oPayload) {
 
-		return {name: "sap/ui/mdc/odata/v4/ValueHelpDelegate", payload: {}};
+		return {name: "delegates/odata/v4/ValueHelpDelegate", payload: {}};
 
 	};
 

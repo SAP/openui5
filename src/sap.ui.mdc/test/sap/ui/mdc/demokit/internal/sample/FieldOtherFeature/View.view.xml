@@ -14,24 +14,24 @@
 		<core:Title text="Field feature"></core:Title>
 
 		<Label text="required"></Label>
-		<mdc:Field id="F1" value="{title}" required="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F1" value="{title}" required="true" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="textAlign=Center"></Label>
-		<mdc:Field id="F2" value="{title}" textAlign="Center" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F2" value="{title}" textAlign="Center" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="textDirection=RTL"></Label>
-		<mdc:Field id="F3" value="{title}" textDirection="RTL" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F3" value="{title}" textDirection="RTL" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="placeholder"></Label>
-		<mdc:Field id="F4" value="{title}" placeholder="enter title" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F4" value="{title}" placeholder="enter title" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="label"></Label>
 		<!-- TODO label property only works inside a Filterbar -->
-		<mdc:Field id="F5" value="{title}" label="my Label" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F5" value="{title}" label="my Label" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="showEmpty"></Label>
-		<mdc:Field id="F6" value="{title}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
-		<mdc:Field id="F6-2" value="{title}" showEmptyIndicator="true" editMode="Display" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F6" value="{title}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F6-2" value="{title}" showEmptyIndicator="true" editMode="Display" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 	</form:SimpleForm>
 </mvc:View>

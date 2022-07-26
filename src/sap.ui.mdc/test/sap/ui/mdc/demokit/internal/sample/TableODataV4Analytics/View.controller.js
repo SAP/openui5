@@ -223,7 +223,7 @@ sap.ui.define([
 				},
 				basicSearchField: new FilterField({
 					delegate: {
-						name: "sap/ui/mdc/odata/v4/FieldBaseDelegate"
+						name: "delegates/odata/v4/FieldBaseDelegate"
 					},
 					dataType: "Edm.String",
 					placeholder: "Search",

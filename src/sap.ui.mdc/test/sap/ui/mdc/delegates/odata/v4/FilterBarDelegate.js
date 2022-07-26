@@ -7,7 +7,19 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	'sap/ui/mdc/odata/v4/ODataMetaModelUtil', 'sap/ui/mdc/enum/FieldDisplay', "sap/ui/fl/Utils", "sap/ui/mdc/FilterBarDelegate", 'sap/base/util/ObjectPath', 'sap/base/util/merge', 'sap/ui/mdc/odata/v4/TypeUtil', 'sap/ui/mdc/condition/FilterOperatorUtil', "sap/ui/model/FilterOperator", "sap/ui/model/Filter", 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/base/Log'
+	'delegates/odata/v4/ODataMetaModelUtil',
+	'sap/ui/mdc/enum/FieldDisplay',
+	"sap/ui/fl/Utils",
+	"sap/ui/mdc/FilterBarDelegate",
+	'sap/base/util/ObjectPath',
+	'sap/base/util/merge',
+	'delegates/odata/v4/TypeUtil',
+	'sap/ui/mdc/condition/FilterOperatorUtil',
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Filter",
+	'sap/ui/mdc/util/IdentifierUtil',
+	'sap/ui/core/util/reflection/JsControlTreeModifier',
+	'sap/base/Log'
 	], function (ODataMetaModelUtil, FieldDisplay, FlUtils, FilterBarDelegate, ObjectPath, merge, TypeUtil, FilterOperatorUtil, ModelOperator, Filter, IdentifierUtil, JsControlTreeModifier, Log) {
 	"use strict";
 
@@ -176,7 +188,7 @@ sap.ui.define([
 				required: oProperty.required,
 				label: oProperty.label || oProperty.name,
 				maxConditions: oProperty.maxConditions,
-				delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}}
+				delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}
 			})).then(function(oFilterField) {
 				if (oProperty.fieldHelp) {
 

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/mdc/enum/EditMode",
-	"sap/ui/mdc/odata/v4/util/DelegateUtil",
+	"delegates/odata/v4/util/DelegateUtil",
 	"sap/ui/model/odata/type/Int32",
 	"sap/m/Text"
 ], function (ODataTableDelegate, BooksFBDelegate, Field, Link, FieldDisplay, EditMode, DelegateUtil, Int32Type, Text) {

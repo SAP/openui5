@@ -14,26 +14,26 @@
 		<core:Title text="String Fields"></core:Title>
 
 		<Label text="editable Field"></Label>
-		<mdc:Field id="F1" value="{title}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F1" value="{title}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="display Field"></Label>
-		<mdc:Field id="F2" value="{title}" editMode="Display" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F2" value="{title}" editMode="Display" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="readonly Field"></Label>
-		<mdc:Field id="F3" value="{title}" editMode="ReadOnly" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F3" value="{title}" editMode="ReadOnly" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="disabled Field"></Label>
-		<mdc:Field id="F4" value="{title}" editMode="Disabled" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F4" value="{title}" editMode="Disabled" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<core:Title text="currency Fields"></core:Title>
 		<Label text="currency Field"></Label>
-		<mdc:Field id="F2_1" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F2_1" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="currency Field, unit readonly"></Label>
-		<mdc:Field id="F2_2" editMode="EditableReadOnly" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F2_2" editMode="EditableReadOnly" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="currency Field, unit display"></Label>
-		<mdc:Field id="F2_3" editMode="EditableDisplay" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F2_3" editMode="EditableDisplay" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 	</form:SimpleForm>
 </mvc:View>

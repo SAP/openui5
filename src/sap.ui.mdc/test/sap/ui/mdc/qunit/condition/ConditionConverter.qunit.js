@@ -7,7 +7,7 @@
 sap.ui.define([
 	"sap/ui/mdc/condition/ConditionConverter",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/odata/v4/TypeUtil",
+	"delegates/odata/v4/TypeUtil",
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/odata/type/Date",

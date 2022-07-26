@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/m/DynamicDateOption",
 	"sap/m/DynamicDateFormat",
 	"sap/base/strings/formatMessage",
-	"sap/ui/mdc/odata/v4/FieldBaseDelegate",
+	"delegates/odata/v4/FieldBaseDelegate",
 	"sap/m/DynamicDateUtil",
 	"sap/m/DynamicDateValueHelpUIType",
 	"sap/m/Slider"

@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-    "sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
-    "sap/ui/mdc/odata/v4/ODataMetaModelUtil",
+    "delegates/odata/v4/vizChart/ChartDelegate",
+    "delegates/odata/v4/ODataMetaModelUtil",
     "sap/ui/mdc/chart/PropertyHelper",
     "sap/ui/mdc/chart/Item"
 ], function (

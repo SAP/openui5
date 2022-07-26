@@ -38,7 +38,7 @@ sap.ui.define([
 
 			jQuery.sap.unloadResources("sap/ui/mdc/BaseDelegate.js", false, true, true);
 			jQuery.sap.unloadResources("sap/ui/mdc/odata/BaseDelegate.js", false, true, true);
-			jQuery.sap.unloadResources("sap/ui/mdc/odata/v4/BaseDelegate.js", false, true, true);
+			jQuery.sap.unloadResources("delegates/odata/v4/BaseDelegate.js", false, true, true);
 
 			TestClass = ManagedObject.extend("temp", {
 				metadata: {
@@ -131,7 +131,7 @@ sap.ui.define([
 		oSomeInstance1.destroy();
 
 		assert.throws(function () {
-			oSomeInstance.setDelegate({name: "sap/ui/mdc/odata/v4/BaseDelegate"});
+			oSomeInstance.setDelegate({name: "delegates/odata/v4/BaseDelegate"});
 		}, function(oError) {
 			return oError instanceof Error && oError.message === "Runtime delegate configuration is not permitted.";
 		},  "runtime configuration changes fail");
