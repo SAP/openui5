@@ -56,13 +56,12 @@
 					<Label design="Bold" text="{name}"/>
 					<Text text="sap-icon://{view>/iconPath}{name}"/>
 					<l:HorizontalLayout
-						class="tagsArea"
 						content="{
 							path: 'tags',
 							templateShareable: true
 						}"
 						allowWrapping="true">
-						<Token text="{name}" select=".onTagSelect" editable="false" class="tagsToken"/>
+						<Token text="{name}" select=".onTagSelect" editable="false"/>
 					</l:HorizontalLayout>
 					<RatingIndicator
 						iconUnselected="sap-icon://unfavorite"

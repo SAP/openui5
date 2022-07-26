@@ -77,7 +77,6 @@
 					<Text
 						text="sap-icon://{fav>iconPath}{fav>name}"/>
 					<l:HorizontalLayout
-							class="tagsArea"
 							content="{
 								path: 'fav>tags',
 								templateShareable: true
@@ -86,8 +85,7 @@
 						<Token
 							text="{fav>name}"
 							select=".onTagSelect"
-							editable="false"
-							class="tagsToken"/>
+							editable="false"/>
 					</l:HorizontalLayout>
 					<RatingIndicator
 						iconUnselected="sap-icon://unfavorite"

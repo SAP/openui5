@@ -1,11 +1,12 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
-	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.f"
+	xmlns:grid="sap.ui.layout.cssgrid"
 	xmlns:core="sap.ui.core">
-	<List
+	<f:GridList
 		id="results"
 		width="auto"
-		class="sapUiTinyMargin sapUiNoContentPadding wrappingList"
+		class="sapUiTinyMargin sapUiNoContentPadding"
 		items="{
 			path: 'groups/0/icons',
 			length: '200',
@@ -21,18 +22,20 @@
 		growingThreshold="{view>/growingThreshold}"
 		updateFinished=".onUpdateFinished">
 
-		<CustomListItem class="wrappingListItem sapUiTinyMargin">
-			<l:VerticalLayout
-				width="130px"
-				class="sapThemeBaseBG-asBackgroundColor visualLayoutCell sapMLIB sapMLIBFocusable sapMFocusable">
-				<core:Icon size="1rem" src="sap-icon://{view>/iconPath}{name}" color="Default" useIconTooltip="false"/>
+		<f:customLayout>
+			<grid:GridBoxLayout boxWidth="8.125rem"/>
+		</f:customLayout>
+
+		<f:GridListItem class="sapUiTinyMargin">
+			<VBox alignItems="Center">
+				<core:Icon class="sapUiTinyMarginTop" size="1rem" src="sap-icon://{view>/iconPath}{name}" color="Default" useIconTooltip="false"/>
 				<core:Icon size="1.25rem" src="sap-icon://{view>/iconPath}{name}" color="Default" useIconTooltip="false"/>
 				<core:Icon size="1.375rem" src="sap-icon://{view>/iconPath}{name}" color="Default" useIconTooltip="false"/>
 				<core:Icon size="1.5rem" src="sap-icon://{view>/iconPath}{name}" color="Default" useIconTooltip="false"/>
 				<core:Icon size="2rem" src="sap-icon://{view>/iconPath}{name}" color="Default" useIconTooltip="false"/>
 				<core:Icon size="2.5rem" src="sap-icon://{view>/iconPath}{name}" color="Default" useIconTooltip="false"/>
 				<core:Icon size="3rem" src="sap-icon://{view>/iconPath}{name}" color="Default" useIconTooltip="false"/>
-				<Label text="{name}" textAlign="Center" class="sapUiTinyMarginTopBottom"/>
+				<Label text="{name}" width="6rem" textAlign="Center" class="sapUiTinyMarginTop"/>
 				<RatingIndicator
 					iconUnselected="sap-icon://unfavorite"
 					value="{
@@ -41,7 +44,7 @@
 					}"
 					maxValue="1"
 					change=".onToggleFavorite"/>
-			</l:VerticalLayout>
-		</CustomListItem>
-	</List>
+			</VBox>
+		</f:GridListItem>
+	</f:GridList>
 </core:FragmentDefinition>
