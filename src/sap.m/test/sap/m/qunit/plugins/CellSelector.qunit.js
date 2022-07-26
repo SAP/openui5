@@ -56,6 +56,8 @@ sap.ui.define([
 
 	function assertSelection(assert, oTable, oSourceCellRef, oTargetCellRef, sContainer) {
 		var oCanvasRef = oTable.getDomRef(sContainer).querySelector(".sapMPluginsCellSelectorCanvas");
+		// getBoundingClientRect can return slightly incorrect values differing from the set width (see Firefox for example), so we introduce an EPSILON value, which tries to circumvent such situations
+		var EPSILON = 1; // only 1px difference allowed
 
 		var oSourceRect = oSourceCellRef.getBoundingClientRect(), oTargetRect = oTargetCellRef.getBoundingClientRect();
 		var iExpLeft = oSourceRect.left;
@@ -65,7 +67,7 @@ sap.ui.define([
 
 		var oCanvasRect = oCanvasRef.getBoundingClientRect();
 		assert.ok(oCanvasRect.left == iExpLeft && oCanvasRect.top == iExpTop
-			&& oCanvasRect.width == iExpWidth && oCanvasRect.height == iExpHeight, "Canvas is at correct location");
+			&& oCanvasRect.width - iExpWidth < EPSILON && oCanvasRect.height - iExpHeight < EPSILON, "Canvas is at correct location");
 	}
 
 	function assertEmptySelection(assert, oTable, sContainer) {
