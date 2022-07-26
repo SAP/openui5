@@ -263,10 +263,18 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The <code>sap.ui.fl.write</code> namespace should contain all code necessary to
-	 * create, update, and reset changes or other flex objects. Additional common functionality needed
-	 * by personalization dialogs or 'tools' like key user adaptation will be part of this namespace.
-	 * Be aware that only the <code>api</code> sub-namespace contains public and stable APIs.
+	 * The <code>sap.ui.fl.variants</code> namespace contains the {@link sap.ui.fl.variants.VariantManagement} control and its internals.
+	 *
+	 * @version ${version}
+	 * @namespace
+	 * @public
+	 * @name sap.ui.fl.variants
+	 */
+
+	/**
+	 * The <code>sap.ui.fl.write</code> namespace contains all code to
+	 * create, update, and reset flex objects. Additional common functionality needed
+	 * by personalization dialogs or tools like key user adaptation are part of the namespace.
 	 *
 	 * @version ${version}
 	 * @namespace
