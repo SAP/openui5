@@ -72,7 +72,7 @@ function (
 			assert.strictEqual(oLabel.textContent, "Number", "Label text is correctly mapped");
 			assert.ok(oNumberInput.required, "required attribute is set on the ui5-select");
 			assert.strictEqual(oNumberInput.getAttribute("accessible-name-ref"), oLabel.id, "accessibleNameRef refers to the id of the label");
-			assert.strictEqual(oNumInputWithoutValue.value, "", "There is no initial value set.");
+			assert.strictEqual(oNumInputWithoutValue.getAttribute("value"), null, "There is no initial value set.");
 			assert.strictEqual(oNumInputWithoutValue.placeholder, "Quantity", "The placeholder is correct.");
 			assert.strictEqual(oValueStateMessage.getAttribute("slot"), "valueStateMessage", "valueStateMessage is rendered");
 			assert.strictEqual(oValueStateMessage.innerText, "Error", "valueStateMessage is set correctly");
