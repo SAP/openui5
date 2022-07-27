@@ -184,7 +184,7 @@ sap.ui.define([
 			deps: ["highcharts/highstock"]
 		},
 		"highcharts/solid-gauge": {
-			deps: ["highcharts/highstock"]
+			deps: ["highcharts/highstock", "highcharts/highcharts-more"]
 		},
 		"highcharts/histogram-bellcurve": {
 			deps: ["highcharts/highstock"]
