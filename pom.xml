@@ -316,40 +316,6 @@
 		</profile>
 
 		<profile>
-			<id>fast.voter.build</id>
-			<properties>
-				<!-- fast.voter.build profile does not have to generate the npm-resources package
-					 (has to be kept in sync with sapui5.runtime poms)					-->
-				<effective.npm.package.phase>never</effective.npm.package.phase>
-			</properties>
-		</profile>
-
-		<profile>
-			<!-- fast.voter.build profile to be used in combination with ui5tooling.build profile -->
-			<id>ui5tooling.build-fast.voter.build</id>
-			<properties>
-				<!-- ui5tooling.build currently relies on the npm-resources package, so it must not be skipped -->
-			</properties>
-		</profile>
-
-		<profile>
-			<id>documentation.build</id>
-			<properties>
-				<!-- documentation.build profile does not have to generate the npm-resources package
-					 (has to be kept in sync with sapui5.runtime poms)					-->
-				<effective.npm.package.phase>never</effective.npm.package.phase>
-			</properties>
-		</profile>
-
-		<profile>
-			<!-- documentation.build profile to be used in combination with ui5tooling.build profile -->
-			<id>ui5tooling.build-documentation.build</id>
-			<properties>
-				<!-- ui5tooling.build currently relies on the npm-resources package, so it must not be skipped -->
-			</properties>
-		</profile>
-
-		<profile>
 			<id>testsuite.build</id>
 
 			<activation>
