@@ -373,6 +373,20 @@ sap.ui.define([
 
 	// ----------------------------------------------------
 
+	// ----------------- temporary functions -------------
+
+	/**
+	 * Necessary due to consumers like Visual Editor still
+	 * calling this function with e.g. Variants
+	 * Should be removed after all consumers are adjusted.
+	 * @returns {object} file content as JSON object
+	 */
+	FlexObject.prototype.getDefinition = function() {
+		return this.convertToFileContent();
+	};
+
+	// ----------------------------------------------------
+
 	function capitalize(sKey) {
 		return sKey.length ? sKey.charAt(0).toUpperCase() + sKey.slice(1) : sKey;
 	}
