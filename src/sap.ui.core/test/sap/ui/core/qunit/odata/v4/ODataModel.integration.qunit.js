@@ -42029,8 +42029,11 @@ sap.ui.define([
 	// createContexts -> modifies bLengthFinal) and fires a "rowsUpdated" event, where another
 	// listener in MDCTable#_handleUpdateFinished reacts on. That listener calls
 	// ODLB#getAllCurrentContexts, which would again fire a change event, creating an infinite loop.
-	//
 	// BCP: 2270093727
+	//
+	// Check that v4.Context#hasPendingChanges also works for unbound properties (1) and test a
+	// workaround for the missing v4.Context#resetChanges (2)
+	// (https://github.com/SAP/openui5/issues/3562)
 	QUnit.test("BCP: 2270093727", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -42054,7 +42057,21 @@ sap.ui.define([
 			.expectChange("salesOrderID", ["01", "02", "03", "04"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oBinding = that.oView.byId("table").getBinding("rows");
+			var oBinding = that.oView.byId("table").getBinding("rows"),
+				oContext = oBinding.getCurrentContexts()[0],
+				oPatchPromise,
+				oResetPromise;
+
+			// code under test (1)
+			oPatchPromise = oContext.setProperty("Note", "n/a", "noSubmit");
+
+			assert.ok(oContext.hasPendingChanges());
+
+			that.expectCanceledError("Failed to update path /SalesOrderList('01')/Note",
+				"Request canceled: PATCH SalesOrderList('01'); group: noSubmit");
+
+			// code under test (2)
+			oResetPromise = oModel.bindContext("", oContext).resetChanges();
 
 			oBinding.attachChange(function () {
 				assert.ok(false);
@@ -42073,6 +42090,15 @@ sap.ui.define([
 			]);
 
 			assert.strictEqual(oBinding.getLength(), 20, "after");
+
+			return Promise.all([
+				checkCanceled(assert, oPatchPromise),
+				oResetPromise.then(function () {
+					assert.notOk(oContext.hasPendingChanges());
+				}),
+				oModel.submitBatch("noSubmit"), // expect no PATCH
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 });

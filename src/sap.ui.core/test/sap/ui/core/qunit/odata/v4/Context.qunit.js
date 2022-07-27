@@ -415,23 +415,31 @@ sap.ui.define([
 					withUnresolvedBindings : function () {}
 				},
 				oBinding0 = {
+					oCache : {},
 					hasPendingChanges : function () {}
+					// no hasPendingChangesInDependents
 				},
 				oBinding1 = {
-					hasPendingChanges : function () {}
+					// no hasPendingChanges
+					hasPendingChangesInDependents : function () {}
 				},
-				oParentBinding = {},
+				oParentBinding = {
+					hasPendingChangesForPath : function () {}
+				},
 				sPath = "/EMPLOYEES('42')",
 				oContext = Context.create(oModel, oParentBinding, sPath, 13);
 
+			this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
+			this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+			this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+			this.mock(oParentBinding).expects("hasPendingChangesForPath").withExactArgs(sPath)
+				.returns(false);
 			this.mock(oModel).expects("getDependentBindings")
 				.withExactArgs(sinon.match.same(oContext))
 				.returns([oBinding0, oBinding1]);
-			this.mock(oBinding0).expects("hasPendingChanges")
-				.withExactArgs()
+			this.mock(oBinding0).expects("hasPendingChanges").withExactArgs()
 				.returns(oFixture.aBindingHasPendingChanges[0]);
-			this.mock(oBinding1).expects("hasPendingChanges")
-				.withExactArgs()
+			this.mock(oBinding1).expects("hasPendingChangesInDependents").withExactArgs()
 				.exactly(oFixture.aBindingHasPendingChanges[0] ? 0 : 1)
 				.returns(oFixture.aBindingHasPendingChanges[1]);
 			this.mock(oModel).expects("withUnresolvedBindings")
@@ -447,18 +455,25 @@ sap.ui.define([
 	//*********************************************************************************************
 	[false, true].forEach(function (bTransient) {
 		QUnit.test("hasPendingChanges: transient context = " + bTransient, function (assert) {
-			var oModel = {
+			var oBinding = {
+					hasPendingChangesForPath : function () {}
+				},
+				oModel = {
 					getDependentBindings : function () {},
 					withUnresolvedBindings : function () {}
 				},
-				oContext = Context.create(oModel, {/*oBinding*/}, "/TEAMS", 0);
+				oContext = Context.create(oModel, oBinding, "/TEAMS('1')", 0);
 
 			this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
 			this.mock(oContext).expects("isTransient").withExactArgs().returns(bTransient);
+			this.mock(oContext).expects("isDeleted").withExactArgs().exactly(bTransient ? 0 : 1)
+				.returns(false);
+			this.mock(oBinding).expects("hasPendingChangesForPath").exactly(bTransient ? 0 : 1)
+				.withExactArgs("/TEAMS('1')").returns(false);
 			this.mock(oModel).expects("getDependentBindings").exactly(bTransient ? 0 : 1)
 				.withExactArgs(sinon.match.same(oContext)).returns([]);
 			this.mock(oModel).expects("withUnresolvedBindings").exactly(bTransient ? 0 : 1)
-				.withExactArgs("hasPendingChangesInCaches", "TEAMS").returns(false);
+				.withExactArgs("hasPendingChangesInCaches", "TEAMS('1')").returns(false);
 
 			// code under test
 			assert.strictEqual(oContext.hasPendingChanges(), bTransient);
@@ -468,20 +483,54 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bDeleted) {
 	QUnit.test("hasPendingChanges: deleted=" + bDeleted, function (assert) {
-		var oModel = {
+		var oBinding = {
+				hasPendingChangesForPath : function () {}
+			},
+			oModel = {
 				getDependentBindings : function () {},
 				withUnresolvedBindings : function () {}
 			},
-			oContext = Context.create(oModel, {/*oBinding*/}, "/TEAMS", 0);
+			oContext = Context.create(oModel, oBinding, "/TEAMS('1')", 0);
 
+		this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oContext).expects("isDeleted").withExactArgs().returns(bDeleted);
+		this.mock(oBinding).expects("hasPendingChangesForPath").exactly(bDeleted ? 0 : 1)
+			.withExactArgs("/TEAMS('1')").returns(false);
 		this.mock(oModel).expects("getDependentBindings").exactly(bDeleted ? 0 : 1)
 			.withExactArgs(sinon.match.same(oContext)).returns([]);
 		this.mock(oModel).expects("withUnresolvedBindings").exactly(bDeleted ? 0 : 1)
-			.withExactArgs("hasPendingChangesInCaches", "TEAMS").returns(false);
+			.withExactArgs("hasPendingChangesInCaches", "TEAMS('1')").returns(false);
 
 		// code under test
 		assert.strictEqual(oContext.hasPendingChanges(), bDeleted);
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bForPath) {
+	QUnit.test("hasPendingChanges: for path=" + bForPath, function (assert) {
+		var oBinding = {
+				hasPendingChangesForPath : function () {}
+			},
+			oModel = {
+				getDependentBindings : function () {},
+				withUnresolvedBindings : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/TEAMS('1')", 0);
+
+		this.stub(oContext, "toString"); // called by SinonJS, would call #isTransient :-(
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
+		this.mock(oBinding).expects("hasPendingChangesForPath")
+			.withExactArgs("/TEAMS('1')").returns(bForPath);
+		this.mock(oModel).expects("getDependentBindings").exactly(bForPath ? 0 : 1)
+			.withExactArgs(sinon.match.same(oContext)).returns([]);
+		this.mock(oModel).expects("withUnresolvedBindings").exactly(bForPath ? 0 : 1)
+			.withExactArgs("hasPendingChangesInCaches", "TEAMS('1')").returns(false);
+
+		// code under test
+		assert.strictEqual(oContext.hasPendingChanges(), bForPath);
 	});
 });
 
