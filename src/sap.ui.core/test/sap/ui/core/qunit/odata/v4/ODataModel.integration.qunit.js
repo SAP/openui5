@@ -17124,6 +17124,84 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Create and persist two contexts using "end of start". Delete one via API group and
+	// the other one via $auto (to see that we must react on the last deletion). Create a third
+	// context // before submitting the deferred deletion. See that this context is inserted at the
+	// end of start, although no created context is shown in the table currently.
+	// JIRA: CPOUI5ODATAV4-1629
+	QUnit.test("CPOUI5ODATAV4-1629: ODLB: deferred delete & createAtEnd", function (assert) {
+		var oBinding,
+			oContext1,
+			oContext2,
+			oContext3,
+			oModel = this.createSalesOrdersModel({updateGroupId : "update"}),
+			oPromise,
+			sView = '\
+<Table id="list" items="{/SalesOrderList}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$skip=0&$top=100", {value : [{SalesOrderID : "1"}]})
+			.expectChange("id", ["1"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("id", ["new1", "new2", "1"])
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {SalesOrderID : "new1"}
+				}, {SalesOrderID : "new1"})
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {SalesOrderID : "new2"}
+				}, {SalesOrderID : "new2"});
+
+			oBinding = that.oView.byId("list").getBinding("items");
+			oContext1 = oBinding.create({SalesOrderID : "new1"}, true, /*bAtEnd*/false);
+			oContext2 = oBinding.create({SalesOrderID : "new2"}, true, /*bAtEnd*/true);
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oContext1.created(),
+				oContext2.created(),
+				that.waitForChanges(assert, "create")
+			]);
+		}).then(function () {
+			that.expectChange("id", ["1"])
+				.expectRequest({method : "DELETE", url : "SalesOrderList('new2')"});
+
+			oPromise = oContext1.delete();
+
+			return Promise.all([
+				oContext2.delete("$auto"),
+				that.waitForChanges(assert, "delete")
+			]);
+		}).then(function () {
+			that.expectChange("id", ["new3", "1"]);
+
+			oContext3 = oBinding.create({SalesOrderID : "new3"}, true, /*bAtEnd*/true);
+
+			return that.waitForChanges(assert, "create w/ a pending delete");
+		}).then(function () {
+			that.expectRequest({method : "DELETE", url : "SalesOrderList('new1')"})
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {SalesOrderID : "new3"}
+				}, {SalesOrderID : "new3"});
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oPromise,
+				oContext3.created(),
+				that.waitForChanges(assert, "submit")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: BCP 1870017061
 	// List/Detail, object page with a sap.ui.table.Table: When changing the entity for the object
 	// page the property bindings below the table's list binding complained about an invalid path in

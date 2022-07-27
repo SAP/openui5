@@ -313,9 +313,6 @@ sap.ui.define([
 					if (iContextIndex < 0 || oContext.created()) {
 						that.iCreatedContexts += iOffset;
 						that.iActiveContexts += iOffset;
-						if (!that.iCreatedContexts) { //@see #destroyCreated
-							that.bFirstCreateAtEnd = undefined;
-						}
 					} else {
 						// iMaxLength is the number of server rows w/o the created entities
 						that.iMaxLength += iOffset; // this doesn't change Infinity
@@ -332,6 +329,10 @@ sap.ui.define([
 			var iOldMaxLength = that.iMaxLength;
 
 			that.iDeletedContexts -= 1;
+			if (!that.iDeletedContexts && !that.iCreatedContexts) {
+				// all (created) contexts finally gone -> free to create at any end
+				that.bFirstCreateAtEnd = undefined;
+			}
 			oContext.resetKeepAlive();
 			if (bReadCount) {
 				that.iMaxLength = that.fetchValue("$count", undefined, true).getResult()
