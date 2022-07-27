@@ -369,6 +369,16 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Invalidate", function(assert) {
+		return this.oTable.initialized().then(function() {
+			var oInnerTableInvalidate = sinon.spy(this.oTable._oTable, "invalidate");
+
+			this.oTable.invalidate();
+
+			assert.equal(oInnerTableInvalidate.callCount, 0, "Inner table is not invalidated if the MDC Table is invalidated");
+		}.bind(this));
+	});
+
 	QUnit.test("Create UI5 Responsive Table after initialise (model is set on the parent/control)", function(assert) {
 		// Destroy the old/default table
 		this.oTable.destroy();

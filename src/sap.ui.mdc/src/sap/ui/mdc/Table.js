@@ -2722,6 +2722,16 @@ sap.ui.define([
 		});
 	};
 
+	Table.prototype.invalidate = function() {
+		if (this._bInvalidationSuppressedOnFlexChange && this._oTable) {
+			// Invalidation might have been suppressed when applying column changes, for example. See sap.ui.mdc.flexibility.ItemBaseFlex.
+			// The inner table might react to an invalidation, so it needs to be called manually.
+			delete this._bInvalidationSuppressedOnFlexChange;
+			this._oTable.invalidate();
+		}
+		return Control.prototype.invalidate.apply(this, arguments);
+	};
+
 	/**
 	 * Terminates the <code>MDCTable</code> control.
 	 * @private
