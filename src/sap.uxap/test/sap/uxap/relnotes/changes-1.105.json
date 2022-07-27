@@ -3,6 +3,17 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "0e4dd234741ddcfc7682367c1891ab114c33b866",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix throwing an error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280143866"
+          }
+        ]
+      },
+      {
         "id": "7c37c96edc8bb48241fbd8534bd170a67cabd941",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Fix scrolling to section",

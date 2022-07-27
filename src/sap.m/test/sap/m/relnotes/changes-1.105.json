@@ -3,6 +3,17 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "2c388d0c0d036b9373460d19d1e5808d47348545",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Corrected filtering behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280118237"
+          }
+        ]
+      },
+      {
         "id": "24734bd3e36cd7b3b6cabc15d056c1517546ce38",
         "type": "FIX",
         "text": " sap.m.DynamicDateRange: Option suggestion name is now correct",

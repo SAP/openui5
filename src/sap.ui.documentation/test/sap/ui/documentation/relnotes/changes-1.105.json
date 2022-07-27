@@ -3,6 +3,28 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "5d9721a0dc6e937259ff3f906a7b154adca75f76",
+        "type": "FIX",
+        "text": " sap.ui.documentation: use new url syntax for library links",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280142485"
+          }
+        ]
+      },
+      {
+        "id": "ef1e127ce8935de1e3f722b9ab9b1cdcaacbee2a",
+        "type": "FIX",
+        "text": " Demo Kit: Horizon styles adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280118826"
+          }
+        ]
+      },
+      {
         "id": "2bc9896ef227df77ca9c79909c2da005dddf99ab",
         "type": "FIX",
         "text": " Demo Kit: DataTable filter list population fixed",

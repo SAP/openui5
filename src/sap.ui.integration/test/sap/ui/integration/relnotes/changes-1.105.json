@@ -3,6 +3,11 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "c72738f162a2e39a7967646007aedc8efd69785a",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.Card: 'tooltip' property added for Object Card"
+      },
+      {
         "id": "438558893f18c7899fd7c42fbbd01fb9d2fc245b",
         "type": "FIX",
         "text": " Integration cards: Fixed height flickering",

@@ -3,6 +3,17 @@
     "date": "July 2022",
     "notes": [
       {
+        "id": "10016302fbab54ea03f823b55e01baa52876a305",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: fixed menu item separator height in Belize theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005248202022"
+          }
+        ]
+      },
+      {
         "id": "733285eb279c20da59bc5ba2c85d390fb3eaae8f",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: Тhe select event now works properly",
