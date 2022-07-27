@@ -422,16 +422,16 @@ sap.ui.define([
 				var oFilterBar = this._getPriorityFilterBar();
 				if (oFilterBar) {
 					var sFilterFields =  this.getFilterFields();
-					var oNewConditions = merge({}, this._oInitialFilterConditions);
-
+					var oNewConditions = merge({}, this._oInitialFilterConditions), oStateBefore;
 					return Promise.resolve(!oNewConditions[sFilterFields] && StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
-						_addSearchConditionToConditionMap(oNewConditions, sFilterFields, this._getPriorityFilterValue(), oState.filter);
+						oStateBefore = oState;
 						if (bInitial) {
-							_addEmptyConditionPathsToConditionMap(oNewConditions, oState.filter);
+							return StateUtil.diffState(oFilterBar, oState, {filter: oNewConditions});
 						}
-					}.bind(this))).then(function () {
-						return StateUtil.applyExternalState(oFilterBar, {filter: oNewConditions});
-					});
+					})).then(function (oStateDiff) {
+						_addSearchConditionToConditionMap(oStateDiff.filter, sFilterFields, this._getPriorityFilterValue(), oStateBefore.filter);
+						return StateUtil.applyExternalState(oFilterBar, oStateDiff);
+					}.bind(this));
 				}
 			}.bind(this));
 		}
@@ -517,33 +517,27 @@ sap.ui.define([
 			oCurrentConditions = oCurrentConditions || oConditions;
 			var aCurrentSearchConditions = oCurrentConditions[sFilterFields];
 
+			//1) Only create condition for truthy value (e.g. have a string) if no $search path exists in the CM
 			if (!aCurrentSearchConditions) {
 				if (sFilterValue) {
-					oConditions[sFilterFields] = [_getSearchCondition(sFilterValue)];
+					oConditions[sFilterFields] = (oConditions[sFilterFields] || []).concat([_getSearchCondition(sFilterValue)]);
 				}
 				return;
 			}
 
+			//2) Only modifiy existing $search condition to new value if its value has changed --> there is an existing condition
 			if (aCurrentSearchConditions.length === 1  && aCurrentSearchConditions[0].values[0] !== sFilterValue) {
-				oConditions[sFilterFields] = [_getSearchCondition(sFilterValue)];
+				oConditions[sFilterFields] = (oConditions[sFilterFields] || []).concat([_getSearchCondition(sFilterValue)]);
 				return;
 			}
 
+			//3) Path is existing, but its containing of an empty array --> if its still empty array, don't do anything
 			if (aCurrentSearchConditions.length === 0) {
-				oConditions[sFilterFields] = sFilterValue ? [_getSearchCondition(sFilterValue)] : [];
+				oConditions[sFilterFields] = sFilterValue ? (oConditions[sFilterFields] || []).concat([_getSearchCondition(sFilterValue)]) : [];
 				return;
 			}
 		}
 		return;
-	}
-
-	function _addEmptyConditionPathsToConditionMap (oConditions, oCurrentConditions) {
-		var aCurrentKeys = Object.keys(oCurrentConditions).filter(function (sKey) {
-			return sKey !== "$search";
-		});
-		aCurrentKeys.forEach(function (sCurrentKey) {
-			oConditions[sCurrentKey] = oConditions[sCurrentKey] || [];
-		});
 	}
 
 	return FilterableListContent;

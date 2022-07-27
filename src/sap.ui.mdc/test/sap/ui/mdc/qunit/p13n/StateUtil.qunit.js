@@ -200,7 +200,7 @@ sap.ui.define([
 
 		var mFilterConditionsNew = {
 			"String": [{ "operator": "Contains", "values": ["Test"] }],
-			"Boolean": [{ "operator": "EQ", "values": [false] }],//set to false
+			"Boolean": [{ "operator": "EQ", "values": [false] }],//set to false --> only add one filter value as delta and not remove existing value
 			"Decimal":[{"operator":"EQ","values":["12.01"]}],
 			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
 		};
@@ -216,16 +216,13 @@ sap.ui.define([
 		StateUtil.applyExternalState(this.oFilterBar, oExternalState).then(function(aDirtyChanges){
 
 			//an existing value has been changed --> removeCondition + addCondition
-			assert.equal(aDirtyChanges.length, 2, "The correct amount of changes has been created");
-			assert.equal(aDirtyChanges[0].getChangeType(), "removeCondition", "The condition change for remove has been created");
+			assert.equal(aDirtyChanges.length, 1, "The correct amount of changes has been created");
+			assert.equal(aDirtyChanges[0].getChangeType(), "addCondition", "The condition change for add has been created");
 			assert.equal(aDirtyChanges[0].getContent().name, "Boolean", "The correct property is affected");
-			assert.equal(aDirtyChanges[1].getChangeType(), "addCondition", "The condition change for add has been created");
-			assert.equal(aDirtyChanges[1].getContent().name, "Boolean", "The correct property is affected");
 
 			//we expect the retrieved staste to match the latest changes
 			StateUtil.retrieveExternalState(this.oFilterBar).then(function(oRetrievedState){
 				assert.ok(oRetrievedState, "Externalized State has been retrieved");
-				assert.deepEqual(oRetrievedState, oExternalState, "The retried state matches the applied state");
 				done();
 			});
 
@@ -271,7 +268,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("call 'applyExternalState' with an empty object to reset the state", function(assert){
+	QUnit.test("call 'applyExternalState' with an empty objects --> no implict reset triggered", function(assert){
 		var done = assert.async();
 
 		var mFilterConditions = {
@@ -310,7 +307,52 @@ sap.ui.define([
 				};
 
 				StateUtil.applyExternalState(this.oFilterBar, oResetState).then(function(aDirtyChanges){
-					assert.equal(aDirtyChanges.length, 4, "Every condition has been removed via 'removeCondition' change");
+					assert.equal(aDirtyChanges.length, 0, "No implicit removal! Only explicitly conditions will be removed.");
+					done();
+				});
+			}.bind(this));
+	});
+
+	QUnit.test("call 'applyExternalState' with an empty objects --> explicit reset triggered", function(assert){
+		var done = assert.async();
+
+		var mFilterConditions = {
+			"String": [{ "operator": "Contains", "values": ["Test"] }],
+			"Boolean": [{ "operator": "EQ", "values": [true] }],
+			"Decimal":[{"operator":"EQ","values":["12.01"]}],
+			"Date":[{"operator":"EQ","values":["2020-02-11"]}]
+		};
+
+		var oExternalState = {
+			filter: mFilterConditions
+		};
+
+			//we expect one change and the other conditions to be unaffected by the change
+			StateUtil.applyExternalState(this.oFilterBar, oExternalState).then(function(aDirtyChanges){
+
+				//an existing value has been changed --> removeCondition + addCondition
+				assert.equal(aDirtyChanges.length, 4, "The correct amount of changes has been created");
+				assert.equal(aDirtyChanges[0].getChangeType(), "addCondition", "The condition change for add has been created");
+				assert.equal(aDirtyChanges[0].getContent().name, "String", "The correct property is affected");
+				assert.equal(aDirtyChanges[1].getChangeType(), "addCondition", "The condition change for add has been created");
+				assert.equal(aDirtyChanges[1].getContent().name, "Boolean", "The correct property is affected");
+				assert.equal(aDirtyChanges[2].getChangeType(), "addCondition", "The condition change for add has been created");
+				assert.equal(aDirtyChanges[2].getContent().name, "Decimal", "The correct property is affected");
+				assert.equal(aDirtyChanges[3].getChangeType(), "addCondition", "The condition change for add has been created");
+				assert.equal(aDirtyChanges[3].getContent().name, "Date", "The correct property is affected");
+
+				//the second time there should not be any changes
+				var oResetState = {
+					filter: {
+						"String": [{ "operator": "Contains", "values": ["Test"], "filtered": false }],
+						"Boolean": [{ "operator": "EQ", "values": [true], "filtered": false }],
+						"Decimal":[{"operator":"EQ","values":["12.01"], "filtered": false}],
+						"Date":[{"operator":"EQ","values":["2020-02-11"], "filtered": false}]
+					}
+				};
+
+				StateUtil.applyExternalState(this.oFilterBar, oResetState).then(function(aDirtyChanges){
+					assert.equal(aDirtyChanges.length, 4, "Conditions will not be removed explicitly");
 					assert.equal(aDirtyChanges[0].getChangeType(), "removeCondition", "The condition change for remove has been created");
 					assert.equal(aDirtyChanges[0].getContent().name, "String", "The correct property is affected");
 					assert.equal(aDirtyChanges[1].getChangeType(), "removeCondition", "The condition change for remove has been created");
@@ -319,7 +361,6 @@ sap.ui.define([
 					assert.equal(aDirtyChanges[2].getContent().name, "Decimal", "The correct property is affected");
 					assert.equal(aDirtyChanges[3].getChangeType(), "removeCondition", "The condition change for remove has been created");
 					assert.equal(aDirtyChanges[3].getContent().name, "Date", "The correct property is affected");
-
 					done();
 				});
 			}.bind(this));
@@ -775,15 +816,12 @@ sap.ui.define([
 				}
 			};
 
+			//A date value has been added --> we expect only one change
 			StateUtil.applyExternalState(this.oTable, oResetState).then(function(aDirtyChanges){
-				assert.equal(aDirtyChanges.length, 3, "Every condition has been removed via 'removeCondition' change");
-				assert.equal(aDirtyChanges[0].getChangeType(), "removeCondition", "The condition change for remove has been created");
-				assert.equal(aDirtyChanges[0].getContent().name, "String", "The correct property is affected");
-				assert.equal(aDirtyChanges[1].getChangeType(), "removeCondition", "The condition change for remove has been created");
-				assert.equal(aDirtyChanges[1].getContent().name, "Date", "The correct property is affected");
-				assert.equal(aDirtyChanges[2].getChangeType(), "addCondition", "The condition change for remove has been created");
-				assert.equal(aDirtyChanges[2].getContent().name, "Date", "The correct property is affected");
-
+				assert.equal(aDirtyChanges.length, 1, "Every condition has been removed via 'removeCondition' change");
+				assert.equal(aDirtyChanges[0].getChangeType(), "addCondition", "The condition change for remove has been created");
+				assert.equal(aDirtyChanges[0].getContent().name, "Date", "The correct property is affected");
+				assert.deepEqual(aDirtyChanges[0].getContent().condition, {"operator":"EQ","values":["2020-02-12"]}, "The correct value is affected");
 				done();
 			});
 		}.bind(this));
@@ -1269,13 +1307,37 @@ sap.ui.define([
 		//--> oNewState has one item change and one filter change in addition, the two changes done above should be the diff
 		var oNewState = this.getSampleState();
 
-		var oInitialState;
-
 		StateUtil.diffState(this.oTable, oInitialState, oNewState)
 		.then(function(oStateDiff){
 
 			assert.equal(oStateDiff.items.length, 1, "One item diffed in state");
 			assert.equal(Object.keys(oStateDiff.filter).length, 1, "One filter diffed in state");
+			assert.equal(oStateDiff.sorters.length, 0, "No sorter diffed in state");
+			assert.equal(oStateDiff.groupLevels.length, 0, "No grouping diffed in state");
+			done();
+		});
+
+	});
+
+	QUnit.test("Check diff in case information gets removed", function(assert) {
+
+		var done = assert.async();
+
+		var oInitialState = this.getSampleState();
+
+		//--> oNewState has a filter removed
+		var oNewState = this.getSampleState();
+		delete oNewState.filter.String;//new state has one less filter
+
+		//we expect the diff to only return that one filter got removed
+		StateUtil.diffState(this.oTable, oInitialState, oNewState)
+		.then(function(oStateDiff){
+			assert.equal(oStateDiff.items.length, 0, "No item diffed in state");
+			assert.equal(Object.keys(oStateDiff.filter).length, 1, "One filter diffed in state");
+
+			//check that the removal is explcitily marked
+			assert.equal(oStateDiff.filter.String[0].filtered, false, "Filter removal is explicitly provided");
+
 			assert.equal(oStateDiff.sorters.length, 0, "No sorter diffed in state");
 			assert.equal(oStateDiff.groupLevels.length, 0, "No grouping diffed in state");
 			done();
