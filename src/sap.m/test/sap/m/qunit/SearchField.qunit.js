@@ -722,17 +722,25 @@ sap.ui.define([
 	});
 
 	QUnit.test("sapMFocus class isn't deleted when invalidated", function (assert) {
+		var done = assert.async();
+
 		// Act
 		this.oSearchField.focus();
 
-		// Assert
-		assert.ok(this.oSearchField.$().hasClass("sapMFocus"), "Focus class wasn't added");
+		setTimeout(function () {
+			// Assert
+			assert.ok(this.oSearchField.$().hasClass("sapMFocus"), "Focus class wasn't added");
 
-		// Act
-		this.oSearchField.invalidate();
-		Core.applyChanges();
+			// Act
+			this.oSearchField.invalidate();
+			Core.applyChanges();
 
-		// Assert
-		assert.ok(this.oSearchField.$().hasClass("sapMFocus"), "Focus class should still be present after invalidation");
+			// Assert
+			setTimeout(function () {
+				assert.ok(this.oSearchField.$().hasClass("sapMFocus"), "Focus class should still be present after invalidation");
+				done();
+			}.bind(this), 300);
+		}.bind(this), 300);
+
 	});
 });
