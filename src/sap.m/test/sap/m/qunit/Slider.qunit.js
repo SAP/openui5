@@ -1370,6 +1370,7 @@ sap.ui.define([
 
 		// act
 		oSlider.setValue(5);
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getDomRef("handle").hasAttribute("title"), false);
@@ -1461,6 +1462,7 @@ sap.ui.define([
 			targetTouches: oTouches,
 			srcControl: oSlider
 		});
+		Core.applyChanges();
 
 		for (var i = 51; i <= 100; i++) {
 
@@ -1470,6 +1472,7 @@ sap.ui.define([
 				targetTouches: oTouches,
 				pageX: i
 			}, '_on');
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSlider.getValue(), i);
@@ -1478,6 +1481,7 @@ sap.ui.define([
 		qutils.triggerTouchEvent("touchend", oSlider.getDomRef(), {
 			targetTouches: oTouches
 		}, '_on');
+		Core.applyChanges();
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 100);
@@ -1650,6 +1654,8 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.ARROW_RIGHT, false, false, /* Ctrl key */ true);
+		Core.applyChanges();
+		this.clock.tick(500);
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), expectedValue, "The slider value must be increased to " + expectedValue);
@@ -1837,6 +1843,8 @@ sap.ui.define([
 		// act
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.HOME);
 		qutils.triggerKeydown(oSlider.getDomRef(), KeyCodes.HOME);
+		Core.applyChanges();
+		this.clock.tick(500);
 
 		// assert
 		assert.strictEqual(oSlider.getValue(), 0);
@@ -1961,6 +1969,7 @@ sap.ui.define([
 
 		// act
 		oSlider.onkeydown(fnFakeEvent);
+		this.clock.tick(200);
 
 		// assert
 		assert.ok(preventDefaultSpy.calledOnce, "Prevent default should be called once.");
@@ -1988,7 +1997,7 @@ sap.ui.define([
 
 		// arrange
 		this.oSlider.setEnableTickmarks(true);
-		this.oSlider.placeAt("content");
+		oPage.addContent(this.oSlider);
 		Core.applyChanges();
 
 		// assert
