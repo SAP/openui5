@@ -585,7 +585,9 @@ sap.ui.define([
 		//Arrange
 		//Act
 		//Assert
+		var sSizeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION");
 		assert.equal(this.oGenericTile.getFrameType(), FrameType.OneByOne, "FrameType Auto set to OneByOne");
+		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes(sSizeDescription),"Size description rendered successfully");
 	});
 
 	QUnit.test("FrameType is in TwoByOne", function(assert) {
@@ -597,6 +599,33 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByOne, "FrameType Auto set to TwoByOne");
+		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes("Wide Tile"),"Size description rendered successfully");
+	});
+
+	QUnit.test("FrameType is in OneByHalf", function(assert) {
+		//Arrange
+		this.oGenericTile.setFrameType(FrameType.OneByHalf);
+		var sSizeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_FLAT_SIZE");
+
+		//Act
+		oCore.applyChanges();
+
+		//Assert
+		assert.equal(this.oGenericTile.getFrameType(), FrameType.OneByHalf, "FrameType Auto set to TwoByOne");
+		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes(sSizeDescription),"Size description rendered successfully");
+	});
+
+	QUnit.test("FrameType is in TwoByHalf", function(assert) {
+		//Arrange
+		this.oGenericTile.setFrameType(FrameType.TwoByHalf);
+		var sSizeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_FLAT_WIDE_SIZE");
+
+		//Act
+		oCore.applyChanges();
+
+		//Assert
+		assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByHalf, "FrameType Auto set to TwoByOne");
+		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes(sSizeDescription),"Size description rendered successfully");
 	});
 
 	QUnit.module("Scope rendering tests", {
@@ -877,6 +906,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("All elements found", function(assert) {
+		var sLineModeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_LINE_SIZE");
 		assert.ok(this.oGenericTile.$().hasClass("sapMGT"), "Tile has class 'sapMGT'");
 		assert.ok(this.oGenericTile.$().hasClass("sapMGTLineMode"), "Tile has class 'sapMGTLineMode'");
 		assert.ok(this.oGenericTile.$("startMarker").length > 0, "StartMarker was found.");
@@ -886,6 +916,7 @@ sap.ui.define([
 		assert.ok(this.oGenericTile.$("subHdr-text").length > 0, "SubHeader was found");
 		assert.equal(this.oGenericTile.$("subHdr-text").text(), "subheaderText", "SubHeader text was correct");
 		assert.ok(this.oGenericTile.$("styleHelper").length > 0, "Style helper was found.");
+		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes(sLineModeDescription),"Size description rendered successfully");
 
 	});
 
@@ -1842,7 +1873,7 @@ sap.ui.define([
 
 	QUnit.test("Internal method _getAriaAndTooltipText", function(assert) {
 		//Arrange
-		var sAriaAndTooltipText,
+		var sAriaAndTooltipText,fnDone = assert.async(),
 			sExpectedAriaAndTooltipText = "header text of GenericTile\nsubheader text of GenericTile\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
 		//Act
 		sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
@@ -1855,9 +1886,12 @@ sap.ui.define([
 		assert.equal(sAriaAndTooltipText, sExpectedAriaAndTooltipText, "Expected text for ARIA-label and tooltip generated if tooltip is supressed");
 		//Act
 		this.oGenericTile.setTooltip("someTooltipText");
-		sAriaAndTooltipText = this.oGenericTile._getAriaAndTooltipText();
+		oCore.applyChanges();
 		//Assert
-		assert.equal(sAriaAndTooltipText, "someTooltipText", "Expected text for ARIA-label and tooltip generated if an explicite tooltip is set");
+		setTimeout(function(){
+			assert.equal(this.oGenericTile.getAggregation("_invisibleText").getText(),"someTooltipText","Tooltip has been successfully attached to the invisible text");
+			fnDone();
+		}.bind(this), 100);
 
 		//Arrange - stubs GenericTile's functions, no store & restore needed on the instance level
 		this.oGenericTile.getTooltip_AsString = function() {
@@ -1888,17 +1922,17 @@ sap.ui.define([
 		//Act
 		sAriaText = this.oGenericTile._getAriaText();
 		//Assert
-		assert.equal(sAriaText, "ARIA and tooltip text", "Expected text for ARIA-label generated if no tooltip set");
+		assert.equal(sAriaText, "ARIA and tooltip text\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"), "Expected text for ARIA-label generated if no tooltip set");
 		//Act
 		this.oGenericTile.setTooltip(" ");
 		sAriaText = this.oGenericTile._getAriaText();
 		//Assert
-		assert.equal(sAriaText, "ARIA and tooltip text", "Expected text for ARIA-label generated in case tooltip is supressed");
+		assert.equal(sAriaText, "ARIA and tooltip text\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"), "Expected text for ARIA-label generated in case tooltip is supressed");
 		//Act
 		this.oGenericTile.setTooltip("someTooltipText");
-		sAriaText = this.oGenericTile._getAriaText();
+		oCore.applyChanges();
 		//Assert
-		assert.equal(sAriaText, "someTooltipText", "Expected text for ARIA-label generated in case an explicite tooltip is set");
+		assert.equal(this.oGenericTile.getAggregation("_invisibleText").getText(),"someTooltipText","Tooltip has been successfully attached to the invisible text");
 		//Act
 		sAriaText = this.oGenericTile._getAriaText();
 		this.oGenericTile.setProperty("ariaLabel", "additional aria text");
@@ -1917,7 +1951,7 @@ sap.ui.define([
 		var sAriaText = this.oGenericTile._getAriaText();
 		var sActionsText = this.oGenericTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT");
 		//Assert
-		assert.equal(sAriaText, sActionsText + " ARIA and tooltip test", "Expected text for ARIA-label generated for actions scope");
+		assert.equal(sAriaText, sActionsText + " ARIA and tooltip test\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"), "Expected text for ARIA-label generated for actions scope");
 	});
 
 	QUnit.test("Internal method _getAriaText for ActionMore scope", function(assert) {
@@ -1930,7 +1964,7 @@ sap.ui.define([
 		//Act
 		var sAriaText = this.oGenericTile._getAriaText();
 		//Assert
-		assert.equal(sAriaText, "ARIA and tooltip test", "Expected text for ARIA-label generated for actionMore scope");
+		assert.equal(sAriaText, "ARIA and tooltip test\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"), "Expected text for ARIA-label generated for actionMore scope");
 	});
 
 	QUnit.test("Internal method _getTooltipText", function(assert) {
@@ -2077,6 +2111,7 @@ sap.ui.define([
 		sTooltipText = this.oGenericTile._getTooltipText();
 		//Assert
 		assert.equal(sAriaAndTooltipText, sExpectedAriaAndTooltipText, "Expected text for ARIA-label and tooltip has been generated after content was updated and tooltip was suppressed");
+		sExpectedAriaAndTooltipText += ("\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"));
 		assert.equal(sAriaText, sExpectedAriaAndTooltipText, "Expected text for ARIA-label has been generated after content was updated and tooltip was suppressed");
 		assert.equal(sTooltipText, null, "No text for tooltip has been generated after content was updated and tooltip was suppressed");
 		//Arrange
@@ -2119,29 +2154,29 @@ sap.ui.define([
 		//Arrange
 		this.oGenericTile.setAdditionalTooltip("System U1Y");
 		this.oGenericTile.$().trigger("mouseenter");
-		var sAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\nSystem U1Y";
+		var sAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\nSystem U1Y\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION");
 		var sTooltip = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\nSystem U1Y";
 
 		//Act
 		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");
 		//Assert
-		assert.equal(sGenericTileTooltip, sAriaLabel, "ToolTip with Header+SubHeader and content data together with additionalTooltip property value");
-		assert.equal(sGenericTileAriaLabel, sTooltip, "Tooltip of GenericTile is identical with ARIA-label");
+		assert.equal(sGenericTileTooltip, sTooltip, "ToolTip with Header+SubHeader and content data together with additionalTooltip property value");
+		assert.equal(sGenericTileAriaLabel, sAriaLabel, "Aria-Label has been rendered with the additionalTooltip property value");
 	});
 
 	QUnit.test("GenericTile tooltip provided by the control", function(assert) {
 		//Arrange
 		this.oGenericTile.$().trigger("mouseenter");
-		var sAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		var sAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION");
 		var sTooltip = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
 
 		//Act
 		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");
 		//Assert
-		assert.equal(sGenericTileTooltip, sAriaLabel, "ToolTip with Header+SubHeader and content data");
-		assert.equal(sGenericTileAriaLabel, sTooltip, "Tooltip of GenericTile is identical with ARIA-label");
+		assert.equal(sGenericTileTooltip, sTooltip, "ToolTip with Header+SubHeader and content data");
+		assert.equal(sGenericTileAriaLabel, sAriaLabel, "Tooltip of GenericTile is identical with ARIA-label");
 	});
 
 	QUnit.test("Explicit tooltip set by user with short header text, short subheader text", function(assert) {
@@ -2154,7 +2189,8 @@ sap.ui.define([
 		var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");
 		//Assert
 		assert.equal(sGenericTileTooltip, "tooltip", "Explicit tooltip of GenericTile is consistent");
-		assert.equal(sGenericTileAriaLabel, sGenericTileTooltip, "Explicit tooltip of GenericTile is identical with ARIA-label");
+		assert.ok(this.oGenericTile.getAggregation("_invisibleText").getText(), "Tooltip has been successfully attached to the invisible text");
+		assert.equal(this.oGenericTile.getDomRef().getAttribute("aria-describedby"),this.oGenericTile.getAggregation("_invisibleText").getId(), "ARIA-describedby has invisible text id");
 		assert.equal(sGenericTileAriaLabel.indexOf("Generic Tile") === -1, true, "ARIA-label should not contain control specific information such as Generic Tile applications can use ariaLabel property for additional info");
 		assert.equal(sGenericTileAriaLabel.indexOf("GenericTile") === -1, true, "ARIA-label should not contain control specific information such as GenericTile applications can use ariaLabel property for additional info");
 	});
@@ -2191,13 +2227,13 @@ sap.ui.define([
 		this.oGenericTile.setTooltip(" ");
 		oCore.applyChanges();
 		this.oGenericTile.$().trigger("mouseenter");
-		var sConsistentTooltip = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
+		var sExpectedAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION");
 		//Act
 		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");
 		//Assert
 		assert.equal(sGenericTileTooltip, null, "GenericTile rendered without tooltip");
-		assert.equal(sGenericTileAriaLabel, sConsistentTooltip, "GenericTile has correct ARIA-label");
+		assert.equal(sGenericTileAriaLabel, sExpectedAriaLabel, "GenericTile has correct ARIA-label");
 	});
 
 	QUnit.test("Suppress tooltip with space tooltip set by user with long header text, long subheader text", function(assert) {
@@ -2285,7 +2321,7 @@ sap.ui.define([
 
 	QUnit.test("GenericTile tooltip provided by the control", function(assert) {
 		//Arrange
-		var sAriaLabel = "header\nsubheader\n";
+		var sAriaLabel = "header\nsubheader\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_LINE_SIZE");
 
 		//Act
 		this.oGenericTile.$().trigger("mouseenter");
@@ -2297,7 +2333,7 @@ sap.ui.define([
 
 	QUnit.test("GenericTile tooltip provided by the control when TileContent is available but in line mode not shown", function(assert) {
 		//Arrange
-		var sAriaLabel = "header\nsubheader\n";
+		var sAriaLabel = "header\nsubheader\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_LINE_SIZE");
 
 		//Act
 		this.oGenericTile.$().trigger("mouseenter");
@@ -2317,7 +2353,7 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(this.oGenericTile.$().attr("title"), "tooltip", "Explicit tooltip of GenericTile is consistent");
-		assert.equal(this.oGenericTile.$().attr("aria-label"), this.oGenericTile.$().attr("title"), "Explicit tooltip of GenericTile is identical with ARIA-label");
+		assert.ok(this.oGenericTile.getAggregation("_invisibleText").getText(), "Tooltip has been successfully attached to the invisible text");
 	});
 
 	QUnit.test("Explicit tooltip set by user with long header text, long subheader text", function(assert) {
@@ -2332,12 +2368,12 @@ sap.ui.define([
 
 		//Assert
 		assert.equal(this.oGenericTile.$().attr("title"), "tooltip", "User tooltip overwrites the header and subheader texts");
-		assert.equal(this.oGenericTile.$().attr("aria-label"), this.oGenericTile.$().attr("title"), "Explicit tooltip of GenericTile is identical with ARIA-label");
+		assert.ok(this.oGenericTile.getAggregation("_invisibleText").getText(), "Tooltip has been successfully attached to the invisible text");
 	});
 
 	QUnit.test("Suppress tooltip with space tooltip set by user with short header text, short subheader text", function(assert) {
 		//Arrange
-		var sAriaLabel = "header\nsubheader\n";
+		var sAriaLabel = "header\nsubheader\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_LINE_SIZE");
 		this.oGenericTile.setTooltip(" ");
 		oCore.applyChanges();
 
@@ -2351,7 +2387,7 @@ sap.ui.define([
 
 	QUnit.test("Suppress tooltip with space tooltip set by user with long header text, long subheader text", function(assert) {
 		//Arrange
-		var sAriaLabel = "A long long long long long long long long long long header text\nA long long subheader text\n";
+		var sAriaLabel = "A long long long long long long long long long long header text\nA long long subheader text\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_LINE_SIZE");
 		this.oGenericTile.setHeader("A long long long long long long long long long long header text");
 		this.oGenericTile.setSubheader("A long long subheader text");
 		this.oGenericTile.setTooltip(" ");
@@ -4855,7 +4891,32 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 	});
 
 	QUnit.test("Test a Link", function(assert) {
+		var sLineModeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_LINK");
 		assert.equal(this.oGenericTile.$().attr("draggable"),undefined, "a Links are draggale by default hence draggable attr should not be set manually ");
+		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes(sLineModeDescription),"Size description rendered successfully");
+	});
+
+	QUnit.module("sap.m.GenericTileMode.LineMode Test a button", {
+		beforeEach: function() {
+			this.stub(Device.media, "attachHandler");
+			this.oGenericTile = new GenericTile({
+				state: LoadState.Loaded,
+				header: "headerText",
+				subheader: "subheaderText",
+				mode: GenericTileMode.LineMode,
+				press: "press"
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("Test a button", function(assert) {
+		var sLineModeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_LINK");
+		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes(sLineModeDescription),"Size description rendered successfully");
 	});
 	QUnit.module("Loading State Tests", {
 		beforeEach: function() {

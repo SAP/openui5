@@ -172,7 +172,7 @@ sap.ui.define([
 		var sToolTip = this.oToDo.getDomRef().getAttribute("title");
 		var sAriaLabel = this.oToDo.getDomRef().getAttribute("aria-label");
 		//Assert
-		assert.equal(sToolTip,this.oToDo._getAriaText(),"Tooltip successfully generated");
+		assert.equal(sToolTip,this.oToDo._getAriaAndTooltipText(),"Tooltip successfully generated");
 		assert.equal(sAriaLabel,this.oToDo._getAriaText(),"Aria-label successfully generated");
 	});
 
