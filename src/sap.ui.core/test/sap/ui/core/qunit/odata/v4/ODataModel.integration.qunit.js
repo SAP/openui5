@@ -17126,8 +17126,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Create and persist two contexts using "end of start". Delete one via API group and
 	// the other one via $auto (to see that we must react on the last deletion). Create a third
-	// context // before submitting the deferred deletion. See that this context is inserted at the
-	// end of start, although no created context is shown in the table currently.
+	// context before submitting the deferred deletion. See that this context is inserted at the end
+	// of start, although no created context is shown in the table currently.
 	// JIRA: CPOUI5ODATAV4-1629
 	QUnit.test("CPOUI5ODATAV4-1629: ODLB: deferred delete & createAtEnd", function (assert) {
 		var oBinding,
@@ -17198,6 +17198,94 @@ sap.ui.define([
 				oContext3.created(),
 				that.waitForChanges(assert, "submit")
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a draft at the end, save it and replace it with the active entity. Start
+	// deleting it, but cancel the deletion. See that it is still at the end.
+	// JIRA: CPOUI5ODATAV4-1629
+	QUnit.test("CPOUI5ODATAV4-1629: ODLB: create, delete & doReplaceWith", function (assert) {
+		var sAction = "special.cases.ActivationAction",
+			oBinding,
+			oContext,
+			oModel = this.createSpecialCasesModel(
+				{autoExpandSelect : true, updateGroupId : "update"}),
+			oPromise,
+			sView = '\
+<Table id="list" items="{/Artists}">\
+	<Text id="id" text="{ArtistID}"/>\
+	<Text id="active" text="{IsActiveEntity}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("Artists?$select=ArtistID,IsActiveEntity&$skip=0&$top=100", {
+				value : [
+					{ArtistID : "1", IsActiveEntity : true}
+				]
+			})
+			.expectChange("id", ["1"])
+			.expectChange("active", ["Yes"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("id", [, ""])
+				.expectChange("active", [, null])
+				.expectRequest({
+					method : "POST",
+					url : "Artists",
+					payload : {}
+				}, {ArtistID : "new", IsActiveEntity : false})
+				.expectChange("id", [, "new"])
+				.expectChange("active", [, "No"]);
+
+			oBinding = that.oView.byId("list").getBinding("items");
+			oContext = oBinding.create({}, true, /*bAtEnd*/true);
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oContext.created(),
+				that.waitForChanges(assert, "create draft at end")
+			]);
+		}).then(function () {
+			var oAction = oModel.bindContext(sAction + "(...)", oContext);
+
+			that.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='new',IsActiveEntity=false)/" + sAction,
+					payload : {}
+				}, {ArtistID : "new", IsActiveEntity : true})
+				.expectChange("active", [, "Yes"]);
+
+			return Promise.all([
+				oAction.execute(undefined, false, null, /*bReplaceWithRVC*/true),
+				that.waitForChanges(assert, "replace with active")
+			]);
+		}).then(function (aResult) {
+			oPromise = aResult[0].delete(); // delete the RVC
+
+			that.waitForChanges(assert, "deferred delete");
+		}).then(function () {
+			that.expectCanceledError(
+				"Failed to delete /Artists(ArtistID='new',IsActiveEntity=true)[-1]",
+				"Request canceled: DELETE Artists(ArtistID='new',IsActiveEntity=true);"
+				+ " group: update"
+			);
+			that.expectChange("id", [, "new"])
+				.expectChange("active", [, "Yes"]);
+
+			// code under test
+			oModel.resetChanges();
+
+			return Promise.all([
+				checkCanceled(assert, oPromise),
+				that.waitForChanges(assert, "resetChanges")
+			]);
+		}).then(function () {
+			assert.deepEqual(oBinding.getCurrentContexts().map(getPath), [
+				"/Artists(ArtistID='1',IsActiveEntity=true)",
+				"/Artists(ArtistID='new',IsActiveEntity=true)"
+			], "correct order");
+			assert.strictEqual(oBinding.getLength(), 2, "correct length");
 		});
 	});
 
