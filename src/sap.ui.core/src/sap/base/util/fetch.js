@@ -51,30 +51,28 @@ sap.ui.define([], function () {
 	 * @ui5-restricted SAPUI5 Dist
 	 */
 	function SimpleResponse(xhr, PromiseImpl) {
-		this.xhr = xhr;
-
-		var headers = parseHeaders(this.xhr.getAllResponseHeaders());
+		var headers = parseHeaders(xhr.getAllResponseHeaders());
 		Object.defineProperties(this, {
 			headers: {
 				value: headers
 			},
 			ok: {
-				value: this.xhr.status >= 200 && this.xhr.status < 300
+				value: xhr.status >= 200 && xhr.status < 300
 			},
 			status: {
-				value: this.xhr.status
+				value: xhr.status
 			},
 			statusText: {
-				value: this.xhr.statusText
+				value: xhr.statusText
 			}
 		});
 
 		this.json = function() {
-			if (this.xhr.responseType === "json") {
-				return PromiseImpl.resolve(this.xhr.response);
+			if (xhr.responseType === "json") {
+				return PromiseImpl.resolve(xhr.response);
 			} else {
 				try {
-					var oData = JSON.parse(this.xhr.responseText);
+					var oData = JSON.parse(xhr.responseText);
 					return PromiseImpl.resolve(oData);
 				} catch (err) {
 					return PromiseImpl.reject(err);
@@ -83,7 +81,7 @@ sap.ui.define([], function () {
 		};
 
 		this.text = function() {
-			return PromiseImpl.resolve(this.xhr.responseText);
+			return PromiseImpl.resolve(xhr.responseText);
 		};
 	}
 
