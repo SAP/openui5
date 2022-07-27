@@ -397,6 +397,15 @@
 				]
 			},
 			{
+				"id": "sap.ui.webc.main.TimePicker",
+				"name": "Time Picker",
+				"category": "Web Components",
+				"since": "1.101.0",
+				"samples": [
+					"sap.ui.webc.main.sample.TimePicker"
+				]
+			},
+			{
 				"id": "sap.ui.webc.main.Toast",
 				"name": "Toast",
 				"category": "Web Components",
@@ -700,6 +709,11 @@
 				"id": "sap.ui.webc.main.sample.Title",
 				"name": "Title",
 				"description": "Demonstrates the basic usage of Title"
+			},
+			{
+				"id": "sap.ui.webc.main.sample.TimePicker",
+				"name": "Time Picker",
+				"description": "Demonstrates the basic usage of TimePicker"
 			},
 			{
 				"id": "sap.ui.webc.main.sample.Toast",
