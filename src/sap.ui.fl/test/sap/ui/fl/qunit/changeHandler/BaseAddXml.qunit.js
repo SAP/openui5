@@ -187,7 +187,7 @@ sap.ui.define([
 			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 				.catch(function(oError) {
 					assert.equal(oError.message,
-						"Error during execPromiseQueueSequentially processing occured: " + sTypeError + this.sAggregationType,
+						"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
 						"then apply change throws an error");
 					assert.equal(this.oHBox.getItems().length, 1, "after the change there is still only 1 item in the hbox");
 				}.bind(this));
@@ -218,7 +218,7 @@ sap.ui.define([
 			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 				.catch(function(oError) {
 					assert.equal(oError.message,
-						"Error during execPromiseQueueSequentially processing occured: " + sTypeError + this.sAggregationType,
+						"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
 						"then apply change throws an error");
 					assert.equal(this.oHBox.getItems().length, 1, "after the change there is still only 1 item in the hbox");
 					return this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
@@ -327,7 +327,7 @@ sap.ui.define([
 			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 				.catch(function(oError) {
 					assert.equal(oError.message,
-						"Error during execPromiseQueueSequentially processing occured: " + sTypeError + this.sAggregationType,
+						"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
 						"then apply change throws an error");
 				}.bind(this));
 		});
@@ -362,7 +362,7 @@ sap.ui.define([
 			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 				.catch(function(oError) {
 					assert.equal(oError.message,
-						"Error during execPromiseQueueSequentially processing occured: " + sTypeError + this.sAggregationType,
+						"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
 						"then apply change throws an error");
 					var oHBoxItems = this.oHBox.childNodes[1];
 					assert.equal(oHBoxItems.childNodes.length, 1, "after the change there is still only 1 item in the hbox");
@@ -387,7 +387,7 @@ sap.ui.define([
 			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo)
 				.catch(function(oError) {
 					assert.equal(oError.message,
-						"Error during execPromiseQueueSequentially processing occured: " + sTypeError + this.sAggregationType,
+						"Error during execPromiseQueueSequentially processing occurred: " + sTypeError + this.sAggregationType,
 						"then apply change throws an error");
 					return this.oChangeHandler.revertChange(this.oChange, this.oHBox, this.oPropertyBag);
 				}.bind(this))

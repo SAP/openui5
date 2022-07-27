@@ -202,6 +202,7 @@ sap.ui.define([
 	QUnit.module("Negative Tests", {
 		beforeEach: function() {
 			this.oRtaStartStub = sandbox.stub(RuntimeAuthoring.prototype, "start");
+			this.fnMessageBoxStub = sandbox.stub(MessageBox, "error");
 			this.oLogStub = sandbox.stub(Log, "error");
 		},
 		afterEach: function() {
@@ -210,6 +211,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("When the user is not a key user", function(assert) {
 			setIsKeyUser(false);
+
 			return adaptationStarter({
 				rootControl: oAppComponent,
 				flexSettings: {
@@ -222,8 +224,9 @@ sap.ui.define([
 			.catch(function(oError) {
 				assert.strictEqual(this.oRtaStartStub.callCount, 0, "RuntimeAuthoring is not started");
 				assert.strictEqual(this.oLogStub.callCount, 1, "an error was logged");
+				assert.strictEqual(this.fnMessageBoxStub.callCount, 1, "a message box is displayed with the error");
 				assert.strictEqual(this.oLogStub.lastCall.args[0], "UI Adaptation could not be started", "the generic part is correct");
-				assert.strictEqual(this.oLogStub.lastCall.args[1], "Key user rights have not been granted to the current user", "the specific part is correct");
+				assert.strictEqual(this.oLogStub.lastCall.args[1], "You do not have key user permissions. Please contact your administrator.", "the specific part is correct");
 				assert.strictEqual(oError.reason, "isKeyUser", "the reason is properly set");
 			}.bind(this));
 		});
@@ -247,6 +250,7 @@ sap.ui.define([
 			.catch(function(oError) {
 				assert.strictEqual(this.oRtaStartStub.callCount, 0, "RuntimeAuthoring is not started");
 				assert.strictEqual(this.oLogStub.callCount, 1, "an error was logged");
+				assert.strictEqual(this.fnMessageBoxStub.callCount, 1, "a message box is displayed with the error");
 				assert.strictEqual(this.oLogStub.lastCall.args[0], "UI Adaptation could not be started", "the generic part is correct");
 				assert.strictEqual(this.oLogStub.lastCall.args[1], "This app is not enabled for key user adaptation", "the specific part is correct");
 				assert.ok(oError instanceof Error, "then promise was rejected with an error");
@@ -268,6 +272,7 @@ sap.ui.define([
 			.catch(function(oError) {
 				assert.strictEqual(this.oRtaStartStub.callCount, 0, "RuntimeAuthoring is not started");
 				assert.strictEqual(this.oLogStub.callCount, 1, "an error was logged");
+				assert.strictEqual(this.fnMessageBoxStub.callCount, 1, "a message box is displayed with the error");
 				assert.strictEqual(this.oLogStub.lastCall.args[0], "UI Adaptation could not be started", "the generic part is correct");
 				assert.strictEqual(this.oLogStub.lastCall.args[1], "An invalid root control was passed", "the specific part is correct");
 				assert.ok(oError instanceof Error, "then promise was rejected with an error");

@@ -159,7 +159,7 @@ sap.ui.define([
 							});
 						})
 						.catch(function(oError) {
-							Log.error("A Change was not added successfully. Reason:", oError.message);
+							Log.error("A Change was not added successfully. Reason: ", oError.message);
 						});
 				}, Promise.resolve())
 					.then(function() {

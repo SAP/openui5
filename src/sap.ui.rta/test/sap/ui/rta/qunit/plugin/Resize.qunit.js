@@ -469,7 +469,7 @@ sap.ui.define([
 				.catch(function(oError) {
 					assert.equal(
 						oError.message,
-						"Error occured during handler execution. Original error: Error - " + sErrorMessage,
+						"Error occurred during handler execution. Original error: Error - " + sErrorMessage,
 						"then the proper error is raised"
 					);
 					assert.ok(this.oColumn0Overlay.isSelected(), "then the overlay is selected");
@@ -490,7 +490,7 @@ sap.ui.define([
 				.catch(function(oError) {
 					assert.equal(
 						oError.message,
-						"Error occured during resize command creation. Original error: Error - " + sErrorMessage,
+						"Error occurred during resize command creation. Original error: Error - " + sErrorMessage,
 						"then the proper error is raised"
 					);
 					assert.ok(this.oColumn0Overlay.isSelected(), "then the overlay is selected");

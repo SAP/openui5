@@ -238,7 +238,7 @@ sap.ui.define([
 				throw DtUtil.propagateError(
 					vError,
 					"AddXMLAtExtensionPoint#handler",
-					"Error occured in AddXMLAtExtensionPoint handler function",
+					"Error occurred in AddXMLAtExtensionPoint handler function",
 					"sap.ui.rta"
 				);
 			});

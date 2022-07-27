@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
-	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
@@ -19,7 +18,6 @@ sap.ui.define([
 	"sap/base/Log"
 ], function(
 	ChangeHandlerStorage,
-	Version,
 	Utils,
 	Layer,
 	Change,
@@ -544,10 +542,10 @@ sap.ui.define([
 	 *
 	 * @param {object} oSelector selector of the control
 	 * @param {sap.ui.core.Component} oComponent - component instance that is currently loading
-	 * @returns {boolean} Returns true if there are open dependencies
+	 * @returns {sap.ui.fl.Change[]} Array of all open dependent changes for the control
 	 */
-	FlexController.prototype.checkForOpenDependenciesForControl = function(oSelector, oComponent) {
-		return this._oChangePersistence.checkForOpenDependenciesForControl(oSelector, oComponent);
+	FlexController.prototype.getOpenDependentChangesForControl = function(oSelector, oComponent) {
+		return this._oChangePersistence.getOpenDependentChangesForControl(oSelector, oComponent);
 	};
 
 	/**

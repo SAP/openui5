@@ -1771,9 +1771,9 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("checkForOpenDependenciesForControl", function(assert) {
-			var oCheckDependenciesStub = sandbox.stub(DependencyHandler, "checkForOpenDependenciesForControl");
-			this.oChangePersistence.checkForOpenDependenciesForControl({
+		QUnit.test("getOpenDependentChangesForControl", function(assert) {
+			var oCheckDependenciesStub = sandbox.stub(DependencyHandler, "getOpenDependentChangesForControl");
+			this.oChangePersistence.getOpenDependentChangesForControl({
 				id: "anotherId",
 				idIsLocal: false
 			}, this._oAppComponentInstance);

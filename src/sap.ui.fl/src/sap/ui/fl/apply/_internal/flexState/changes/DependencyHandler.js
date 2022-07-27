@@ -409,20 +409,24 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks the dependencies map for any unresolved dependencies belonging to the given control.
-	 * Returns <code>true</code> as soon as the first dependency is found, otherwise <code>false</code>
+	 * Checks the dependencies map for any open (unresolved) dependencies belonging to the given control and
+	 * returns the dependent changes.
 	 *
 	 * @param {object} mChangesMap - Map with changes and dependencies
 	 * @param {object} sControlId - ID of the control
 	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
-	 * @returns {boolean} <code>true</code> if there are open dependencies
+	 * @returns {sap.ui.fl.Change[]} Array of all open dependent changes for the control
 	 */
-	DependencyHandler.checkForOpenDependenciesForControl = function(mChangesMap, sControlId, oAppComponent) {
-		return Object.keys(mChangesMap.mDependencies).some(function(sKey) {
-			return mChangesMap.mDependencies[sKey].changeObject.getDependentSelectorList().some(function(oDependendSelector) {
-				return JsControlTreeModifier.getControlIdBySelector(oDependendSelector, oAppComponent) === sControlId;
+	DependencyHandler.getOpenDependentChangesForControl = function(mChangesMap, sControlId, oAppComponent) {
+		var aDependentChanges = [];
+		Object.keys(mChangesMap.mDependencies).forEach(function(sKey) {
+			 mChangesMap.mDependencies[sKey].changeObject.getDependentSelectorList().forEach(function(oDependendSelector) {
+				if (JsControlTreeModifier.getControlIdBySelector(oDependendSelector, oAppComponent) === sControlId) {
+					aDependentChanges.push(mChangesMap.mDependencies[sKey].changeObject);
+				}
 			});
 		});
+		return aDependentChanges;
 	};
 
 	return DependencyHandler;

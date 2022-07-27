@@ -198,7 +198,7 @@ sap.ui.define([
 		}.bind(this))
 
 		.catch(function(oError) {
-			Log.error("Error during rename : ", oError);
+			Log.error("Error during rename: ", oError);
 		});
 	};
 

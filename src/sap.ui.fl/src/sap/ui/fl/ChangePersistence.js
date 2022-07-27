@@ -312,15 +312,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks the current dependencies map for any unresolved dependencies belonging to the given control
-	 * Returns true as soon as the first dependency is found, otherwise false
+	 * Checks the current dependencies map for any open (unresolved) dependencies belonging to the given control
+	 * and returns the IDs of the open dependent changes.
 	 *
 	 * @param {object} oSelector selector of the control
 	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
-	 * @returns {boolean} Returns true if there are open dependencies
+	 * @returns {sap.ui.fl.Change[]} Array of all open dependent changes for the control
 	 */
-	ChangePersistence.prototype.checkForOpenDependenciesForControl = function(oSelector, oAppComponent) {
-		return DependencyHandler.checkForOpenDependenciesForControl(this._mChanges, JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent), oAppComponent);
+	ChangePersistence.prototype.getOpenDependentChangesForControl = function(oSelector, oAppComponent) {
+		return DependencyHandler.getOpenDependentChangesForControl(this._mChanges, JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent), oAppComponent);
 	};
 
 	function getInitalDependencyClone(oChange) {

@@ -293,7 +293,7 @@ sap.ui.define([
 						throw DtUtils.propagateError(
 							vMessage,
 							"AdditionalElementsPlugin#_createCommands",
-							"Error occured during _createCommands execution",
+							"Error occurred during _createCommands execution",
 							"sap.ui.rta.plugin"
 						);
 					});

@@ -155,7 +155,7 @@ sap.ui.define([
 			assert.strictEqual(this.mChangesMap.aChanges[3].getId(), oNewFileName, "then the newly created change is positioned right after the reference change");
 		});
 
-		QUnit.test("'insertChange' is called and the refernce change is not in the changes map", function (assert) {
+		QUnit.test("'insertChange' is called and the reference change is not in the changes map", function (assert) {
 			var sReferenceChangeFileName = "referenceChangeFileName";
 			var sNewFileName = "newChangeFileName";
 			var oReferenceChange = createChange({ fileName: sReferenceChangeFileName });
@@ -491,16 +491,17 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("checkForOpenDependenciesForControl", function(assert) {
-			assert.equal(
-				DependencyHandler.checkForOpenDependenciesForControl(this.mChangesMap, "controlId2", this.oAppComponent),
-				true,
-				"the given control ID is in a pending dependency"
+		QUnit.test("getOpenDependentChangesForControl", function(assert) {
+			var aDependentChanges = [this.oChange1, this.oChange3];
+			assert.deepEqual(
+				DependencyHandler.getOpenDependentChangesForControl(this.mChangesMap, "controlId2", this.oAppComponent),
+				aDependentChanges,
+				"the given control ID is in a pending dependency and the dependent changes are returned"
 			);
 
 			assert.equal(
-				DependencyHandler.checkForOpenDependenciesForControl(this.mChangesMap, "controlId25", this.oAppComponent),
-				false,
+				DependencyHandler.getOpenDependentChangesForControl(this.mChangesMap, "controlId25", this.oAppComponent).length,
+				0,
 				"the given control ID is not in a pending dependency"
 			);
 		});
