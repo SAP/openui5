@@ -27,7 +27,7 @@ sap.ui.define([
 	}
 
 	function pushToStack(oComponent, mComposite, oStack, oChange) {
-		var oSelector = oChange.getSelector();
+		var oSelector = oChange.getSelector && oChange.getSelector();
 		var oCommand = new Settings({
 			selector: oSelector,
 			changeType: oChange.getDefinition().changeType,
