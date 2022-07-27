@@ -97,7 +97,7 @@
     "local-web-server": "^4.0.0",
     "mkdirp": "^0.5.0",
     "mocha": "^9.2.2",
-    "moment": "^2.22.2",
+    "moment": "^2.29.4",
     "npm-run-all": "^4.1.5",
     "opn": "^5.4.0",
     "pacote": "^9.5.12",
