@@ -10,7 +10,7 @@ sap.ui.define([
     "sap/chart/Chart",
     "sap/m/VBox",
     "sap/ui/mdc/odata/TypeUtil",
-    "sap/ui/mdc/odata/v4/ChartPropertyHelper"
+    "sap/ui/mdc/chart/PropertyHelper"
 ],
 function(
 	Core,

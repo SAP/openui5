@@ -5,7 +5,7 @@
 sap.ui.define([
     "sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
     "sap/ui/mdc/odata/v4/ODataMetaModelUtil",
-    "sap/ui/mdc/odata/v4/ChartPropertyHelper",
+    "sap/ui/mdc/chart/PropertyHelper",
     "sap/ui/mdc/chart/Item"
 ], function (
     V4ChartDelegate,
@@ -163,7 +163,7 @@ sap.ui.define([
      * Initializes a new chart property helper.
      *
      * @param {sap.ui.mdc.Chart} oMDCChart Instance of the MDC chart.
-     * @returns {Promise<sap.ui.mdc.odata.v4.ChartPropertyHelper>} A promise that resolves with the property helper.
+     * @returns {Promise<sap.ui.chart.PropertyHelper>} A promise that resolves with the property helper.
      * @private
      * @ui5-restricted sap.ui.mdc
      */

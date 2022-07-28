@@ -23,7 +23,7 @@ sap.ui.define([
     "../TypeUtil",
     "sap/ui/mdc/FilterBarDelegate",
     "sap/ui/model/Filter",
-    "sap/ui/mdc/odata/v4/ChartPropertyHelper",
+    "sap/ui/mdc/chart/PropertyHelper",
     "sap/ui/thirdparty/jquery"
 ], function (
     V4ChartDelegate,
