@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/core/util/MockServer",
-	"./jsons/withDesigntime/sap.card1/DataExtensionImpl"
+	"./jsons/withDesigntime/sap.card1/DataExtensionImpl",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	merge,
 	x,
@@ -26,7 +27,8 @@ sap.ui.define([
 	KeyCodes,
 	ResourceBundle,
 	MockServer,
-	DataExtensionImpl
+	DataExtensionImpl,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -429,13 +431,8 @@ sap.ui.define([
 
 					setTimeout(function () {
 						assert.equal(oCustomerComoboBox.getItems().length, 4, "Field: Customer origin lenght is OK");
-						oCustomerComoboBox.setValue("c");
-						oCustomerField.onInput({
-							"target": {
-								"value": "c"
-							},
-							"srcControl": oCustomerComoboBox
-						});
+						oCustomerComoboBox.focus();
+						EditorQunitUtils.setInputValue(oCustomerComoboBox, "c");
 						setTimeout(function () {
 							assert.equal(oCustomerComoboBox.getItems().length, 2, "Field: Customer lenght is OK");
 							resolve();
@@ -465,13 +462,8 @@ sap.ui.define([
 
 					setTimeout(function () {
 						assert.equal(oCustomerComoboBox.getItems().length, 4, "Field: Customer origin lenght is OK");
-						oCustomerComoboBox.setValue("c");
-						oCustomerField.onInput({
-							"target": {
-								"value": "c"
-							},
-							"srcControl": oCustomerComoboBox
-						});
+						oCustomerComoboBox.focus();
+						EditorQunitUtils.setInputValue(oCustomerComoboBox, "c");
 						setTimeout(function () {
 							assert.equal(oCustomerComoboBox.getItems().length, 2, "Field: Customer lenght is OK");
 							resolve();
@@ -710,13 +702,8 @@ sap.ui.define([
 
 					setTimeout(function () {
 						assert.equal(oCustomersMultiComboBox.getItems().length, 5, "Field: Customers origin lenght is OK");
-						oCustomersMultiComboBox.setValue("c");
-						oCustomersField.onInputForMultiComboBox({
-							"target": {
-								"value": "c"
-							},
-							"srcControl": oCustomersMultiComboBox
-						});
+						oCustomersMultiComboBox.focus();
+						EditorQunitUtils.setInputValue(oCustomersMultiComboBox, "c");
 						setTimeout(function () {
 							assert.equal(oCustomersMultiComboBox.getItems().length, 3, "Field: Customers lenght is OK");
 							resolve();
@@ -746,13 +733,8 @@ sap.ui.define([
 
 					setTimeout(function () {
 						assert.equal(oCustomersMultiComboBox.getItems().length, 5, "Field: Customers origin lenght is OK");
-						oCustomersMultiComboBox.setValue("c");
-						oCustomersField.onInputForMultiComboBox({
-							"target": {
-								"value": "c"
-							},
-							"srcControl": oCustomersMultiComboBox
-						});
+						oCustomersMultiComboBox.focus();
+						EditorQunitUtils.setInputValue(oCustomersMultiComboBox, "c");
 						setTimeout(function () {
 							assert.equal(oCustomersMultiComboBox.getItems().length, 3, "Field: Customers lenght is OK");
 							resolve();
@@ -987,17 +969,8 @@ sap.ui.define([
 					assert.ok(oCustomersMultiInput.isA("sap.m.MultiInput"), "Field: Customers is MultiInput");
 
 					setTimeout(function () {
-						oCustomersMultiInput.setValue("c");
-						oCustomersMultiInput._openSuggestionsPopover();
-						var oFakeEvent = {
-							isMarked: function(){},
-							setMarked:function(){},
-							"target": {
-								"value": "c"
-							},
-							"srcControl": oCustomersMultiInput
-						};
-						oCustomersField.onInputForMultiInput(oFakeEvent);
+						oCustomersMultiInput.focus();
+						EditorQunitUtils.setInputValue(oCustomersMultiInput, "c");
 						setTimeout(function () {
 							assert.equal(oCustomersMultiInput._getSuggestionsList().getItems().length, 3, "Field: Customers lenght is OK");
 							resolve();
@@ -1026,17 +999,8 @@ sap.ui.define([
 					assert.ok(oCustomersMultiInput.isA("sap.m.MultiInput"), "Field: Customers is MultiInput");
 
 					setTimeout(function () {
-						oCustomersMultiInput.setValue("c");
-						oCustomersMultiInput._openSuggestionsPopover();
-						var oFakeEvent = {
-							isMarked: function(){},
-							setMarked:function(){},
-							"target": {
-								"value": "c"
-							},
-							"srcControl": oCustomersMultiInput
-						};
-						oCustomersField.onInputForMultiInput(oFakeEvent);
+						oCustomersMultiInput.focus();
+						EditorQunitUtils.setInputValue(oCustomersMultiInput, "c");
 						setTimeout(function () {
 							assert.equal(oCustomersMultiInput._getSuggestionsList().getItems().length, 3, "Field: Customers lenght is OK");
 							resolve();
