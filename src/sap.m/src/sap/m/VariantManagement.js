@@ -564,7 +564,6 @@ sap.ui.define([
 	};
 
 
-
 	/**
 	 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
 	 * Registers invalidations event which is fired when width of the control is changed.
@@ -586,6 +585,9 @@ sap.ui.define([
 	 */
 	VariantManagement.prototype.getTitle = function() {
 		return this.oVariantText;
+	};
+	VariantManagement.prototype.refreshTitle = function() {
+		this.oVariantText.getBinding("text").refresh(true);
 	};
 
 	VariantManagement.prototype._setInvisibleText = function(sText, bFlag) {

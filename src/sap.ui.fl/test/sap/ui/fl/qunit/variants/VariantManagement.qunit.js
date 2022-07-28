@@ -241,9 +241,29 @@ sap.ui.define([
 			assert.ok(this._oVM._openVariantList.called);
 		});
 
-		QUnit.test("Check getTitle", function(assert) {
+		QUnit.test("Check title", function(assert) {
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			this.oVariantManagement.setCurrentVariantKey("2");
+			sap.ui.getCore().applyChanges();
+
 			assert.equal(this.oVariantManagement.getTitle(), this._oVM.oVariantText);
+			assert.equal(this.oVariantManagement.getTitle().getText(), "Two");
+
+			var aItems = this.oVariantManagement.getVariants();
+			assert.ok(aItems);
+			assert.equal(aItems.length, 5);
+
+			aItems[2].title = "Hugo";
+			oModel.checkUpdate(true);
+			sap.ui.getCore().applyChanges();
+			assert.equal(this.oVariantManagement.getTitle().getText(), "Two");
+
+			this.oVariantManagement.refreshTitle();
+			sap.ui.getCore().applyChanges();
+			assert.equal(this.oVariantManagement.getTitle().getText(), "Hugo");
 		});
+
 
 		QUnit.test("Check getVariants", function(assert) {
 			var aItems = this.oVariantManagement.getVariants();

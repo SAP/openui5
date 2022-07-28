@@ -617,6 +617,10 @@ sap.ui.define([
 		return this._oVM.getTitle();
 	};
 
+	VariantManagement.prototype.refreshTitle = function() {
+		this._oVM.refreshTitle();
+	};
+
 	VariantManagement.prototype.setPopoverTitle = function(sTitle) {
 		this._oVM.setPopoverTitle(sTitle);
 		return this;

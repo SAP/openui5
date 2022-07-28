@@ -120,6 +120,27 @@ sap.ui.define([
 		assert.equal(this.oVM.getSelectedKey(), "2", "expected selected key");
 	});
 
+	QUnit.test("VariantManagement check title", function(assert) {
+		this.oVM.addItem(new VariantItem({key: "1", title:"One"}));
+		this.oVM.addItem(new VariantItem({key: "2", title:"Two"}));
+		sap.ui.getCore().applyChanges();
+
+		this.oVM.setSelectedKey("2");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(this.oVM.getTitle().getText(), "Two", "expected text");
+
+		var aItems = this.oVM.getItems();
+		assert.equal(aItems.length, 2, "expected items found");
+
+		aItems[1].setTitle("Hugo");
+		assert.equal(this.oVM.getTitle().getText(), "Two", "expected text");
+		sap.ui.getCore().applyChanges();
+
+		this.oVM.refreshTitle();
+		sap.ui.getCore().applyChanges();
+		assert.equal(this.oVM.getTitle().getText(), "Hugo", "expected text");
+	});
 
 	QUnit.module("VariantManagement variantlist", {
 		beforeEach: function() {
