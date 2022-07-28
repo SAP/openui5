@@ -23,10 +23,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Instantiate Item", function (assert) {
-		assert.ok(this.oItem);
-	});
-
 	QUnit.test("Retrieve label", function (assert) {
 		assert.equal(this.oItem.getLabel(), sText);
 	});

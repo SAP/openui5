@@ -15,10 +15,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Instantiate ItemBase", function(assert) {
-		assert.ok(this.oItemBase);
-	});
-
 	QUnit.test("Return effective items", function(assert) {
 		var effectiveItem = this.oItemBase.getEffectiveItems();
 		assert.deepEqual(effectiveItem, [this.oItemBase]);

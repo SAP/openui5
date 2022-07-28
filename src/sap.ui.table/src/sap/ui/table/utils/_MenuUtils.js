@@ -89,20 +89,20 @@ sap.ui.define([
 			var bExecuteDefault = true;
 
 			if (oCellInfo.isOfType(MenuUtils.TableUtils.CELLTYPE.COLUMNHEADER)) {
-				var bCellHasMenuButton = oCell.querySelector(".sapUiTableColDropDown") !== null;
-
 				var oColumn = oTable.getColumns()[iColumnIndex];
 				var oColumnHeaderMenu = oColumn.getHeaderMenuInstance();
-
-				if (!Device.system.desktop && !bCellHasMenuButton && !oColumnHeaderMenu) {
-					return MenuUtils._applyColumnHeaderCellMenu(oTable, oCell);
-				}
-				MenuUtils._removeColumnHeaderCellMenu(oTable);
 
 				if (oColumnHeaderMenu) {
 					oColumn._openHeaderMenu(oCell);
 					return true;
 				} else {
+					var bCellHasMenuButton = oCell.querySelector(".sapUiTableColDropDown") !== null;
+
+					if (!Device.system.desktop && !bCellHasMenuButton) {
+						return MenuUtils._applyColumnHeaderCellMenu(oTable, oCell);
+					}
+
+					MenuUtils._removeColumnHeaderCellMenu(oTable);
 					bExecuteDefault = oTable.fireColumnSelect({
 						column: oColumn
 					});

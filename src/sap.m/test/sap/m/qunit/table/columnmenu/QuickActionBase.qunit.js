@@ -1,11 +1,11 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/m/table/columnmenu/QuickActionBase"
-], function (QUnitUtils, QuickActionBase) {
+	"sap/m/table/columnmenu/QuickActionBase",
+	"sap/m/library"
+], function (QUnitUtils, QuickActionBase, library) {
 	"use strict";
 
-	// Test setup
 	QUnit.module("Plain ItemBase", {
 		beforeEach: function () {
 			this.oQuickActionBase = new QuickActionBase();
@@ -15,11 +15,26 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Instantiate QuickActionBase", function(assert) {
-		assert.ok(this.oQuickActionBase);
-	});
-
 	QUnit.test("Return effective items", function(assert) {
 		assert.deepEqual(this.oQuickActionBase.getEffectiveQuickActions(), [this.oQuickActionBase]);
+	});
+
+	QUnit.test("Category", function(assert) {
+		assert.strictEqual(this.oQuickActionBase.getCategory(), library.table.columnmenu.Category.Generic);
+	});
+
+	QUnit.test("Category of a subclass with a property named 'category'", function(assert) {
+		var QuickActionBaseSubClass = QuickActionBase.extend("sap.m.test.table.columnmenu.QuickActionBaseSubClass", {
+			metadata: {
+				properties: {
+					category: {type: "sap.m.table.columnmenu.Category"}
+				}
+			}
+		});
+		var oQuickAction = new QuickActionBaseSubClass({category: library.table.columnmenu.Category.Filter});
+
+		assert.strictEqual(oQuickAction.getCategory(), library.table.columnmenu.Category.Filter);
+
+		oQuickAction.destroy();
 	});
 });

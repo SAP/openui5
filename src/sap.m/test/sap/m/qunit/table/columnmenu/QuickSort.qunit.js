@@ -5,8 +5,10 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickSort",
 	"sap/m/table/columnmenu/QuickSortItem",
 	"sap/m/Button",
-	"sap/ui/core/Core"
-], function (QUnitUtils, Menu, QuickSort, QuickSortItem, Button, Core) {
+	"sap/m/library",
+	"sap/ui/core/Core",
+	"sap/ui/core/library"
+], function (QUnitUtils, Menu, QuickSort, QuickSortItem, Button, library, oCore, CoreLibrary) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -26,13 +28,25 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Defaults", function(assert) {
+		var oQuickSort = new QuickSort({
+			items: new QuickSortItem()
+		});
+
+		assert.strictEqual(oQuickSort.getItems()[0].getKey(), undefined, "Item: Key");
+		assert.strictEqual(oQuickSort.getItems()[0].getLabel(), "", "Item: Label");
+		assert.strictEqual(oQuickSort.getItems()[0].getSortOrder(), CoreLibrary.SortOrder.None, "Item: SortOrder");
+
+		oQuickSort.destroy();
+	});
+
 	QUnit.test("getEffectiveQuickActions", function(assert) {
 		assert.equal(this.oQuickSort.getEffectiveQuickActions().length, 1, "Returns an array that contains 1 item");
 		assert.ok(this.oQuickSort.getEffectiveQuickActions()[0].isA("sap.m.table.columnmenu.QuickAction"), "The array contains a QuickAction instance");
 	});
 
 	QUnit.test("Label", function(assert) {
-		var oBundle = Core.getLibraryResourceBundle("sap.m");
+		var oBundle = oCore.getLibraryResourceBundle("sap.m");
 		var sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT");
 		var aItems = this.oQuickSort.getItems();
 		assert.equal(aItems[0]._getLabel(aItems.length), sLabel, "QuickSort label is correct.");
@@ -51,7 +65,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Content", function(assert) {
-		var oBundle = Core.getLibraryResourceBundle("sap.m");
+		var oBundle = oCore.getLibraryResourceBundle("sap.m");
 		var aContent = this.oQuickSort.getEffectiveQuickActions()[0].getContent();
 		assert.ok(aContent, "The quick sort has content");
 
@@ -86,6 +100,14 @@ sap.ui.define([
 		testItems(aQuickActions[1].getContent(), "Descending");
 	});
 
+	QUnit.test("Category", function(assert) {
+		assert.strictEqual(this.oQuickSort.getCategory(), library.table.columnmenu.Category.Generic, "Category of the QuickSort instance itself");
+
+		this.oQuickSort.getEffectiveQuickActions().forEach(function(oQuickAction) {
+			assert.strictEqual(oQuickAction.getCategory(), library.table.columnmenu.Category.Sort, "Category of the inner QuickAction instances");
+		});
+	});
+
 	QUnit.module("Events", {
 		triggerClickEvent: function(sId) {
 			QUnitUtils.triggerEvent("mousedown", sId);
@@ -106,7 +128,7 @@ sap.ui.define([
 				})]
 			});
 
-			Core.applyChanges();
+			oCore.applyChanges();
 		},
 		afterEach: function () {
 			this.oColumnMenu.destroy();

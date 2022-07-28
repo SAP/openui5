@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickTotal",
 	"sap/m/table/columnmenu/QuickTotalItem",
 	"sap/m/Button",
+	"sap/m/library",
 	"sap/ui/core/Core"
-], function (QUnitUtils, Menu, QuickTotal, QuickTotalItem, Button, Core) {
+], function (QUnitUtils, Menu, QuickTotal, QuickTotalItem, Button, library, Core) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -31,6 +32,18 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Defaults", function(assert) {
+		var oQuickTotal = new QuickTotal({
+			items: new QuickTotalItem()
+		});
+
+		assert.strictEqual(oQuickTotal.getItems()[0].getKey(), undefined, "Item: Key");
+		assert.strictEqual(oQuickTotal.getItems()[0].getLabel(), "", "Item: Label");
+		assert.strictEqual(oQuickTotal.getItems()[0].getTotaled(), false, "Item: Totaled");
+
+		oQuickTotal.destroy();
+	});
+
 	QUnit.test("getEffectiveQuickActions", function(assert) {
 		assert.deepEqual(this.oQuickTotal.getEffectiveQuickActions(), [this.oQuickTotal],
 			"It returns an array that contains the QuickTotal instance");
@@ -53,6 +66,10 @@ sap.ui.define([
 		assert.ok(!aContent[0].getPressed(), "The first button is not pressed");
 		assert.equal(aContent[1].getText(), "B", "The second button text is correct");
 		assert.ok(aContent[1].getPressed(), "The second button is pressed");
+	});
+
+	QUnit.test("Category", function(assert) {
+		assert.strictEqual(this.oQuickTotal.getCategory(), library.table.columnmenu.Category.Aggregate);
 	});
 
 	QUnit.test("QuickTotalItem setTotaled", function(assert) {

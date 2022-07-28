@@ -128,7 +128,6 @@ sap.ui.define([
 			sinon.assert.calledWithExactly(oGetContextsSpy.getCall(3), 15, 1, 0, true); // fixed bottom rows
 
 			oTable.destroy();
-			window.breaky = false;
 		});
 	});
 

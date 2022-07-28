@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/m/table/columnmenu/Entry"
-], function (
+], function(
 	Entry
 ) {
 	"use strict";
@@ -31,16 +31,15 @@ sap.ui.define([
 	 */
 	var QuickActionItem = Entry.extend("sap.m.table.columnmenu.QuickActionItem", {
 		metadata: {
-			library: "sap.m",
-			properties: {
+			library: "sap.m", properties: {
 				/**
 				 * The property name
 				 */
-				key: { type: "string" },
+				key: {type: "string"},
 				/**
 				 * Defines the text for the label.
 				 */
-				label: { type: "string" }
+				label: {type: "string", defaultValue: ""}
 			}
 		}
 	});

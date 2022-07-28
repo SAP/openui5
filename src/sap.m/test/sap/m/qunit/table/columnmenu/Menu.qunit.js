@@ -4,12 +4,26 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
+	"sap/m/table/columnmenu/QuickActionContainer",
 	"sap/m/table/columnmenu/Item",
 	"sap/m/Button",
+	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/layout/GridData",
 	"sap/ui/Device"
-], function (QUnitUtils, createAndAppendDiv, Menu, QuickAction, Item, Button, oCore, GridData, Device) {
+], function(
+	QUnitUtils,
+	createAndAppendDiv,
+	Menu,
+	QuickAction,
+	QuickActionContainer,
+	Item,
+	Button,
+	library,
+	oCore,
+	GridData,
+	Device
+) {
 	"use strict";
 	// Test setup
 
@@ -151,7 +165,9 @@ sap.ui.define([
 			oCore.applyChanges();
 		},
 		afterEach: function () {
-			this.oColumnMenu.destroy();
+			if (this.oColumnMenu) {
+				this.oColumnMenu.destroy();
+			}
 			this.oButton.destroy();
 			this.oButton1.destroy();
 		}
@@ -379,6 +395,49 @@ sap.ui.define([
 		aItems = this.oColumnMenu._oItemsContainer._getNavigationList().getItems();
 		assert.equal(aItems.length, 4, "Menu has exactly 4 items");
 		assert.equal(aItems[3].getTitle(), "Added Item");
+	});
+
+	QUnit.test("Order of quick actions", function(assert) {
+		var Category = library.table.columnmenu.Category;
+		var oMenu = new Menu({
+			quickActions: [
+				new QuickAction({label: "Custom generic action", content: new Button()}),
+				new QuickAction({label: "Custom aggregate action", content: new Button(), category: Category.Aggregate}),
+				new QuickAction({label: "Custom sort action", content: new Button(), category: Category.Sort}),
+				new QuickActionContainer({quickActions: [
+					new QuickAction({label: "Custom group action", content: new Button(), category: Category.Group}),
+					new QuickAction({label: "Custom filter action", content: new Button(), category: Category.Filter})
+				]})
+			],
+			_quickActions: [
+				new QuickAction({label: "Control generic action", content: new Button()}),
+				new QuickAction({label: "Control group action", content: new Button(), category: Category.Group}),
+				new QuickAction({label: "Control filter action", content: new Button(), category: Category.Filter}),
+				new QuickActionContainer({quickActions: [
+					new QuickAction({label: "Control aggregate action", content: new Button(), category: Category.Aggregate}),
+					new QuickAction({label: "Control sort action", content: new Button(), category: Category.Sort})
+				]})
+			]
+		});
+		var aLabelsInExpectedOrder = [
+			"Control sort action",
+			"Custom sort action",
+			"Control filter action",
+			"Custom filter action",
+			"Control group action",
+			"Custom group action",
+			"Control aggregate action",
+			"Custom aggregate action",
+			"Control generic action",
+			"Custom generic action"
+		];
+
+		oMenu.openBy(this.oButton);
+		oMenu.getDomRef().querySelectorAll(".sapMTCMenuQALabel").forEach(function(oLabelElement, iIndex) {
+			assert.equal(oLabelElement.innerText, aLabelsInExpectedOrder[iIndex], aLabelsInExpectedOrder[iIndex]);
+		});
+
+		oMenu.destroy();
 	});
 
 	QUnit.module("Button states", {
@@ -630,5 +689,29 @@ sap.ui.define([
 		assert.equal(aFormElements[4].getFields()[0].getLayoutData().getSpanM(), 8, "Span M is set correctly to 8");
 		assert.ok(oControl.isA("sap.m.Button"), "Control is a button");
 		assert.equal(oControl.getText(), "Button Added", "Correct button with correct button text");
+	});
+
+	QUnit.module("Events", {
+		beforeEach: function () {
+			this.oColumnMenu = new Menu();
+			this.oButton = new Button();
+			this.oButton.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oColumnMenu.destroy();
+			this.oButton.destroy();
+		}
+	});
+
+	QUnit.test("beforeOpen", function(assert) {
+		assert.expect(1);
+
+		this.oColumnMenu.attachBeforeOpen(function(oEvent) {
+			assert.deepEqual(oEvent.getParameters(), {id: this.oColumnMenu.getId()}, "Fired with correct parameters");
+		}, this);
+
+		this.oColumnMenu.openBy(this.oButton);
+		this.oColumnMenu.openBy(this.oButton);
 	});
 });
