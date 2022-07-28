@@ -486,12 +486,7 @@ sap.ui.define([
 				oChangeContent.variantContent = mPropertyBag.content;
 			}
 			if (mPropertyBag.name) {
-				oChangeContent.texts = {
-					variantName: {
-						value: mPropertyBag.name,
-						type: "XFLD"
-					}
-				};
+				oChange.setText("variantName", mPropertyBag.name);
 			}
 			oChange.setContent(oChangeContent);
 			if (mPropertyBag.transportId) {
