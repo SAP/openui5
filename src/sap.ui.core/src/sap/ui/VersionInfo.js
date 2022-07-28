@@ -51,15 +51,23 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 
 	/**
 	 * Mapping of library name to it's dependencies.
-	 * Extracted from sap.ui.versioninfo.
+	 * Extracted from the loaded version info.
 	 */
 	var mKnownLibs;
 
 	/**
 	 * Mapping of component names to it's dependencies.
-	 * Extracted from sap.ui.versioninfo.
+	 * Extracted from the loaded version info.
 	 */
 	var mKnownComponents;
+
+	function updateVersionInfo(oNewVersionInfo) {
+		// Persist the info object
+		oVersionInfo = oNewVersionInfo;
+		// reset known libs and components
+		mKnownLibs = null;
+		mKnownComponents = null;
+	}
 
 	Object.defineProperty(sap.ui, "versioninfo", {
 		configurable: true,
@@ -68,11 +76,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 			return oVersionInfo;
 		},
 		set: function(oNewVersionInfo) {
-			oVersionInfo = oNewVersionInfo;
-
-			// reset known libs and components
-			mKnownLibs = null;
-			mKnownComponents = null;
+			updateVersionInfo(oNewVersionInfo);
 		}
 	});
 
@@ -104,7 +108,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 		// Cast "failOnError" to boolean (defaults to true)
 		mOptions.failOnError = mOptions.failOnError !== false;
 
-		if (!sap.ui.versioninfo) {
+		if (!oVersionInfo) {
 			// Load and cache the versioninfo
 
 			// When async is enabled and the file is currently being loaded
@@ -118,8 +122,8 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 				});
 			}
 
-			var fnHandleSuccess = function(oVersionInfo) {
-				// Remove the stored Promise as the versioninfo is now cached.
+			var fnHandleSuccess = function(oNewVersionInfo) {
+				// Remove the stored Promise as the version info is now cached.
 				// This allows reloading the file by clearing "sap.ui.versioninfo"
 				// (however this is not documented and therefore not supported).
 				oVersionInfoPromise = null;
@@ -127,20 +131,18 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 				// "LoaderExtensions.loadResource" returns "null" in case of an error when
 				// "failOnError" is set to "false". In this case the won't be persisted
 				// and undefined will be returned.
-				if (oVersionInfo === null) {
+				if (oNewVersionInfo === null) {
 					return undefined;
 				}
 
-				// Persist the info object to return it in subsequent calls
-				sap.ui.versioninfo = oVersionInfo;
-
+				updateVersionInfo(oNewVersionInfo);
 
 				// Calling the function again with the same arguments will return the
-				// cached value from "sap.ui.versioninfo".
+				// cached value from the loaded version info.
 				return VersionInfo._load(mOptions);
 			};
 			var fnHandleError = function(oError) {
-				// Remove the stored Promise as the versioninfo couldn't be loaded
+				// Remove the stored Promise as the version info couldn't be loaded
 				// and should be requested again the next time.
 				oVersionInfoPromise = null;
 
@@ -168,7 +170,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 			var oResult;
 			if (typeof mOptions.library !== "undefined") {
 				// Find the version of the individual library
-				var aLibs = sap.ui.versioninfo.libraries;
+				var aLibs = oVersionInfo.libraries;
 				if (aLibs) {
 					for (var i = 0, l = aLibs.length; i < l; i++) {
 						if (aLibs[i].name === mOptions.library) {
@@ -179,7 +181,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 				}
 			} else {
 				// Return the full version info
-				oResult = sap.ui.versioninfo;
+				oResult = oVersionInfo;
 			}
 
 			return mOptions.async ? Promise.resolve(oResult) : oResult;
@@ -187,49 +189,50 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 	};
 
 	/**
-	 * Transforms the sap.ui.versioninfo to an easier consumable map.
+	 * Transforms the loaded version info to an easier consumable map.
 	 */
 	function transformVersionInfo() {
+		if (oVersionInfo){
+			// get the transitive dependencies of the given libs from the loaded version info
+			// only do this once if mKnownLibs is not created yet
+			if (oVersionInfo.libraries && !mKnownLibs) {
+				// flatten dependency lists for all libs
+				mKnownLibs = {};
+				oVersionInfo.libraries.forEach(function(oLib, i) {
+					mKnownLibs[oLib.name] = {};
 
-		// get the transitive dependencies of the given libs from the sap.ui.versioninfo
-		// only do this once if mKnownLibs is not created yet
-		if (sap.ui.versioninfo && sap.ui.versioninfo.libraries && !mKnownLibs) {
-			// flatten dependency lists for all libs
-			mKnownLibs = {};
-			sap.ui.versioninfo.libraries.forEach(function(oLib, i) {
-				mKnownLibs[oLib.name] = {};
-
-				var mDeps = oLib.manifestHints && oLib.manifestHints.dependencies &&
-							oLib.manifestHints.dependencies.libs;
-				for (var sDep in mDeps) {
-					if (!mDeps[sDep].lazy) {
-						mKnownLibs[oLib.name][sDep] = true;
+					var mDeps = oLib.manifestHints && oLib.manifestHints.dependencies &&
+								oLib.manifestHints.dependencies.libs;
+					for (var sDep in mDeps) {
+						if (!mDeps[sDep].lazy) {
+							mKnownLibs[oLib.name][sDep] = true;
+						}
 					}
-				}
-			});
-		}
+				});
+			}
 
-		// get transitive dependencies for a component
-		if (sap.ui.versioninfo && sap.ui.versioninfo.components && !mKnownComponents) {
-			mKnownComponents = {};
+			// get transitive dependencies for a component
+			if (oVersionInfo.components && !mKnownComponents) {
+				mKnownComponents = {};
 
-			Object.keys(sap.ui.versioninfo.components).forEach(function(sComponentName) {
-				var oComponentInfo = sap.ui.versioninfo.components[sComponentName];
+				Object.keys(oVersionInfo.components).forEach(function(sComponentName) {
+					var oComponentInfo = oVersionInfo.components[sComponentName];
 
-				mKnownComponents[sComponentName] = {
-					library: oComponentInfo.library,
-					hasOwnPreload: oComponentInfo.hasOwnPreload || false,
-					dependencies: []
-				};
+					mKnownComponents[sComponentName] = {
+						library: oComponentInfo.library,
+						hasOwnPreload: oComponentInfo.hasOwnPreload || false,
+						dependencies: []
+					};
 
-				var mDeps = oComponentInfo.manifestHints && oComponentInfo.manifestHints.dependencies &&
-							oComponentInfo.manifestHints.dependencies.libs;
-				for (var sDep in mDeps) {
-					if (!mDeps[sDep].lazy) {
-						mKnownComponents[sComponentName].dependencies.push(sDep);
+					var mDeps = oComponentInfo.manifestHints && oComponentInfo.manifestHints.dependencies &&
+						oComponentInfo.manifestHints.dependencies.libs;
+					for (var sDep in mDeps) {
+						if (!mDeps[sDep].lazy) {
+							mKnownComponents[sComponentName].dependencies.push(sDep);
+						}
 					}
-				}
-			});
+				});
+			}
 		}
 	}
 
@@ -237,7 +240,7 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 	 * Gets all additional transitive dependencies for the given list of libraries.
 	 * Returns a new array.
 	 * @param {string[]} aLibraries a list of libraries for which the transitive
-	 * dependencies will be extracted from the sap.ui.versioninfo
+	 * dependencies will be extracted from the loaded version info
 	 * @returns {string[]} the list of all transitive dependencies for the given initial
 	 * list of libraries
 	 * @static
