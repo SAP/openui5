@@ -50,12 +50,12 @@ sap.ui.define([
 	}
 
 	function getPropertyFromVersionsModel(sPropertyName, mPropertyBag) {
-		var bIsVersionEnabled = Settings.getInstanceOrUndef().isVersioningEnabled(mPropertyBag.layer);
-		if (bIsVersionEnabled && mPropertyBag.layer === Layer.CUSTOMER) {
-			return Versions.getVersionsModel({
-				reference: Utils.normalizeReference(mPropertyBag.reference),
-				layer: mPropertyBag.layer
-			}).getProperty(sPropertyName);
+		var mPropertyBag = {
+			reference: Utils.normalizeReference(mPropertyBag.reference),
+			layer: mPropertyBag.layer
+		};
+		if (Versions.hasVersionsModel(mPropertyBag)) {
+			return Versions.getVersionsModel(mPropertyBag).getProperty(sPropertyName);
 		}
 		return undefined;
 	}
