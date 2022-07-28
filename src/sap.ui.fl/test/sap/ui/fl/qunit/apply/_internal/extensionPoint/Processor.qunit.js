@@ -212,7 +212,7 @@ sap.ui.define([
 			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(1).args[0].getId(), sReference + "_EP1_sync_VENDOR_addXMLAtExtensionPoint", "second change applied with correct order");
 			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(2).args[0].getId(), sReference + "_EP3_sync_VENDOR_addXMLAtExtensionPoint", "third change applied with correct order");
 			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(3).args[0].getId(), sReference + "_EP4_sync_VENDOR_addXMLAtExtensionPoint", "fourth change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(4).args[0].getDefinition().support.sourceChangeFileName, sReference + "_EP4_sync_VENDOR_addXMLAtExtensionPoint", "fifth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(4).args[0].getSupportInformation().sourceChangeFileName, sReference + "_EP4_sync_VENDOR_addXMLAtExtensionPoint", "fifth change applied with correct order");
 			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(5).args[0].getId(), sReference + "_EP8_inner_sync_VENDOR_addXMLAtExtensionPoint", "sixth change applied with correct order");
 			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(6).args[0].getId(), sReference + "_EP10_inner_sync_VENDOR_addXMLAtExtensionPoint", "seventh change applied with correct order");
 			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(7).args[0].getId(), sReference + "_EP1_sync_CUSTOMER_BASE_addXMLAtExtensionPoint", "eight change applied with correct order");
@@ -223,7 +223,7 @@ sap.ui.define([
 			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(10).args[0].getId(), sReference + "_EP1_async_CUSTOMER_BASE_addXMLAtExtensionPoint", "eleventh change applied with correct order");
 			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(11).args[0].getId(), sReference + "_EP5_async_VENDOR_addXMLAtExtensionPoint", "twelfth change applied with correct order");
 			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(12).args[0].getId(), sReference + "_EP4_async_VENDOR_addXMLAtExtensionPoint", "thirteenth change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(13).args[0].getDefinition().support.sourceChangeFileName, sReference + "_EP4_async_VENDOR_addXMLAtExtensionPoint", "fourteenth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(13).args[0].getSupportInformation().sourceChangeFileName, sReference + "_EP4_async_VENDOR_addXMLAtExtensionPoint", "fourteenth change applied with correct order");
 			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(14).args[0].getId(), sReference + "_EP8_inner_async_VENDOR_addXMLAtExtensionPoint", "fifteenth change applied with correct order");
 			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(15).args[0].getId(), sReference + "_EP10_inner_async_VENDOR_addXMLAtExtensionPoint", "sixteenth change applied with correct order");
 		};

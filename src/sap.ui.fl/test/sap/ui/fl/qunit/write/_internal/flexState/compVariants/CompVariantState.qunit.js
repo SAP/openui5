@@ -555,7 +555,7 @@ sap.ui.define([
 			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[0], oChange, "the change is set under the persistencyKey");
 			assert.strictEqual(oChange.getContent().defaultVariantName, this.sVariantId1, "the change content is correct");
 			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "one entity for persistencyKeys is present");
-			assert.strictEqual(oChange.getDefinition().layer, Layer.CUSTOMER, "The default layer is set to CUSTOMER");
+			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is set to CUSTOMER");
 
 			var oChange2 = CompVariantState.setDefault({
 				reference: sComponentId,
@@ -567,7 +567,7 @@ sap.ui.define([
 			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[0], oChange2, "the change is set under the persistencyKey");
 			assert.strictEqual(oChange, oChange2, "it is still the same change object");
 			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "still one entity for persistencyKeys is present");
-			assert.strictEqual(oChange.getDefinition().layer, Layer.CUSTOMER, "The default layer is still set to CUSTOMER");
+			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is still set to CUSTOMER");
 		});
 
 		QUnit.test("Given setDefault is called once for USER layer and once for CUSTOMER layer", function(assert) {
@@ -579,7 +579,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			});
 			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "one entity for persistencyKeys is present");
-			assert.strictEqual(oChange.getDefinition().layer, Layer.CUSTOMER, "The default layer is set to CUSTOMER");
+			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is set to CUSTOMER");
 
 			var oChange2 = CompVariantState.setDefault({
 				reference: sComponentId,
@@ -590,7 +590,7 @@ sap.ui.define([
 			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[1], oChange2,
 				"the new CUSTOMER change is now the the defaultVariant");
 			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 2, "still one entity for persistencyKeys is present");
-			assert.strictEqual(oChange2.getDefinition().layer, Layer.USER, "The default layer is still set to USER");
+			assert.strictEqual(oChange2.getLayer(), Layer.USER, "The default layer is still set to USER");
 		});
 
 		QUnit.test("Given setDefault is called once for USER layer and twice for CUSTOMER layer and then reverted three times", function(assert) {
@@ -652,8 +652,8 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				layer: Layer.CUSTOMER
 			});
-			oChange.getDefinition().packageName = "TRANSPORTED";
-			assert.strictEqual(oChange.getDefinition().layer, Layer.CUSTOMER, "The default layer is set to CUSTOMER");
+			oChange.setPackage("TRANSPORTED");
+			assert.strictEqual(oChange.getLayer(), Layer.CUSTOMER, "The default layer is set to CUSTOMER");
 
 			var oChange2 = CompVariantState.setDefault({
 				reference: sComponentId,
@@ -664,7 +664,7 @@ sap.ui.define([
 			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[1], oChange2,
 				"the new CUSTOMER change is now the the defaultVariant");
 			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 2, "still one entity for persistencyKeys is present");
-			assert.strictEqual(oChange2.getDefinition().layer, Layer.CUSTOMER, "The default layer of the new Change is set to CUSTOMER");
+			assert.strictEqual(oChange2.getLayer(), Layer.CUSTOMER, "The default layer of the new Change is set to CUSTOMER");
 		});
 
 		QUnit.test("Given I have a USER Layer setDefault and create a CUSTOMER setDefault", function(assert) {
@@ -676,7 +676,7 @@ sap.ui.define([
 				layer: Layer.USER
 			});
 			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 1, "one entity for persistencyKeys is present");
-			assert.strictEqual(oChange.getDefinition().layer, Layer.USER, "The default layer is set to USER");
+			assert.strictEqual(oChange.getLayer(), Layer.USER, "The default layer is set to USER");
 
 			var oChange2 = CompVariantState.setDefault({
 				reference: sComponentId,
@@ -687,7 +687,7 @@ sap.ui.define([
 			assert.strictEqual(oCompVariantStateMapForPersistencyKey.defaultVariants[1], oChange2,
 				"the new CUSTOMER change is now the the defaultVariant");
 			assert.strictEqual(Object.keys(oCompVariantStateMapForPersistencyKey.byId).length, 2, "still one entity for persistencyKeys is present");
-			assert.strictEqual(oChange2.getDefinition().layer, Layer.CUSTOMER, "The default layer of the new Change is set to CUSTOMER");
+			assert.strictEqual(oChange2.getLayer(), Layer.CUSTOMER, "The default layer of the new Change is set to CUSTOMER");
 		});
 	});
 
@@ -833,8 +833,8 @@ sap.ui.define([
 				executeOnSelection: true,
 				layer: Layer.USER
 			});
-			assert.strictEqual(oVariant.getChanges()[0].getDefinition().content.executeOnSelection, true, "the original change sets executeOnSelection to true");
-			assert.strictEqual(oVariant.getChanges()[0].getDefinition().content.favorite, undefined, "the original change does not change favorite");
+			assert.strictEqual(oVariant.getChanges()[0].getContent().executeOnSelection, true, "the original change sets executeOnSelection to true");
+			assert.strictEqual(oVariant.getChanges()[0].getContent().favorite, undefined, "the original change does not change favorite");
 			assert.strictEqual(oVariant.getFavorite(), true, "favorite is originally true");
 
 			CompVariantState.updateVariant({
@@ -845,8 +845,8 @@ sap.ui.define([
 				layer: Layer.USER
 			});
 			assert.strictEqual(oVariant.getChanges().length, 1, "before the revert one updated change is present");
-			assert.strictEqual(oVariant.getChanges()[0].getDefinition().content.executeOnSelection, true, "the updated change sets executeOnSelection to true");
-			assert.strictEqual(oVariant.getChanges()[0].getDefinition().content.favorite, false, "the updated change sets favorite to false");
+			assert.strictEqual(oVariant.getChanges()[0].getContent().executeOnSelection, true, "the updated change sets executeOnSelection to true");
+			assert.strictEqual(oVariant.getChanges()[0].getContent().favorite, false, "the updated change sets favorite to false");
 			assert.strictEqual(oVariant.getFavorite(), false, "favorite is set to false");
 
 			CompVariantState.revert({
@@ -855,8 +855,8 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey
 			});
 
-			assert.strictEqual(oVariant.getChanges()[0].getDefinition().content.executeOnSelection, true, "the remaining change sets executeOnSelection to true");
-			assert.strictEqual(oVariant.getChanges()[0].getDefinition().content.favorite, undefined, "the remaining change does not change favorite");
+			assert.strictEqual(oVariant.getChanges()[0].getContent().executeOnSelection, true, "the remaining change sets executeOnSelection to true");
+			assert.strictEqual(oVariant.getChanges()[0].getContent().favorite, undefined, "the remaining change does not change favorite");
 			assert.strictEqual(oVariant.getChanges().length, 1, "one change was written - the change update was reverted");
 			assert.strictEqual(oVariant.getFavorite(), true, "favorite goes back to true on the variant after the revert");
 			assert.strictEqual(oVariant.getExecuteOnSelection(), true, "executeOnSelection remains true on the variant after the revert");

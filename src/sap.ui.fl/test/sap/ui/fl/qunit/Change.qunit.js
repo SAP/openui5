@@ -236,7 +236,7 @@ sap.ui.define([
 
 		QUnit.test("Change.getFileName", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
-			assert.equal(oInstance.getFileName(), "0815_1");
+			assert.equal(oInstance.getId(), "0815_1");
 		});
 
 		QUnit.test("Change.getPackage & Change.setPackage", function(assert) {
@@ -792,7 +792,7 @@ sap.ui.define([
 			assert.equal(oChange.getDependentControlSelectorList().length, 0, "no controls are in the list");
 			assert.equal(oChange.getDependentSelectorList().length, 1, "only the selector is in the list");
 			assert.equal(oChange.getDependentSelectorList()[0].id, "control1");
-			assert.equal(Object.keys(oChange.getDefinition().dependentSelector).length, 3, "there are 3 dependent selectors defined in the change");
+			assert.equal(Object.keys(oChange.getDependentSelector()).length, 3, "there are 3 dependent selectors defined in the change");
 			assert.deepEqual(oChange.getDependentControl("originalSelector", {modifier: JsControlTreeModifier}), oControl, "the 'getDependentControl' function still returns the original selector");
 			assert.deepEqual(oChange.getOriginalSelector(), {id: "original", idIsLocal: false}, "the getter returns the selector");
 		});

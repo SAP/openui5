@@ -107,7 +107,7 @@ sap.ui.define([
 					layer: Layer.VENDOR,
 					developerMode: false
 				});
-				assert.notOk(oAddXMLAtExtensionPointCommand._oPreparedChange.getDefinition().content.fragment, "after preparing, the fragment content is not yet in the change");
+				assert.notOk(oAddXMLAtExtensionPointCommand._oPreparedChange.getContent().fragment, "after preparing, the fragment content is not yet in the change");
 				return oAddXMLAtExtensionPointCommand.execute()
 
 				.then(function() { return oAddXMLAtExtensionPointCommand; });
@@ -117,7 +117,7 @@ sap.ui.define([
 				assert.equal(oGetExtensionPointInfoSpy.callCount, 1, "then getExtensionPointInfo was called once");
 				assert.equal(oCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice");
 				assert.equal(oApplyChangeStub.callCount, 1, "then applyChange is called once");
-				assert.notOk(oAddXMLAtExtensionPointCommand._oPreparedChange.getDefinition().content.fragment, "after applying, the fragment content is not in the change anymore");
+				assert.notOk(oAddXMLAtExtensionPointCommand._oPreparedChange.getContent().fragment, "after applying, the fragment content is not in the change anymore");
 				assert.ok(oPreloadSpy.lastCall.args[0][sPath], "the preload was called with the correct object");
 				assert.equal(oPreloadSpy.lastCall.args[0][sPath], sFragment, "the preload was called with the correct object");
 			})
@@ -169,7 +169,7 @@ sap.ui.define([
 
 			.then(function(oAddXMLAtExtensionPointCommand) {
 				var oChange = oAddXMLAtExtensionPointCommand.getPreparedChange();
-				assert.strictEqual(oChange.getDefinition().jsOnly, true, "then change is marked to be applied on js only");
+				assert.strictEqual(oChange.getJsOnly(), true, "then change is marked to be applied on js only");
 			})
 
 			.catch(function (oError) {

@@ -94,7 +94,7 @@ sap.ui.define([
 		var oChange;
 		if (oChangeOrChangeContent instanceof Change || oChangeOrChangeContent instanceof FlexObject) {
 			oChange = oChangeOrChangeContent; // can have other states
-			this._mChangesEntries[oChange.getFileName()] = oChange;
+			this._mChangesEntries[oChange.getId()] = oChange;
 		} else {
 			if (!this._mChangesEntries[oChangeOrChangeContent.fileName]) {
 				if (oChangeOrChangeContent.changeType === "codeExt") {
@@ -135,7 +135,7 @@ sap.ui.define([
 	/**
 	 * Verifies whether a change fulfils the preconditions.
 	 *
-	 * All changes need to have a fileName;
+	 * All changes need to have a fileType;
 	 * only changes whose <code>fileType</code> is 'change' and whose <code>changeType</code> is different from 'defaultVariant' are valid;
 	 *
 	 * @param {object} oChangeOrChangeContent Change instance or content of the change
@@ -143,14 +143,30 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if all the preconditions are fulfilled
 	 */
 	function preconditionsFulfilled(oChangeOrChangeContent) {
-		var oChangeContent = oChangeOrChangeContent instanceof Change ? oChangeOrChangeContent.getDefinition() : oChangeOrChangeContent;
+		var sFileType;
+		var sVariantManagementReference;
+		var sVariantReference;
+		var sSelectorId;
 
-		var bControlVariantChange = false;
-		if ((oChangeContent.fileType === "ctrl_variant") || (oChangeContent.fileType === "ctrl_variant_change") || (oChangeContent.fileType === "ctrl_variant_management_change")) {
-			bControlVariantChange = oChangeContent.variantManagementReference || oChangeContent.variantReference || (oChangeContent.selector && oChangeContent.selector.id);
+		if (oChangeOrChangeContent instanceof Change) {
+			var oChange = oChangeOrChangeContent;
+			sFileType = oChange.getFileType();
+			sVariantReference = oChange.getVariantReference();
+			sSelectorId = oChange.getSelector() && oChange.getSelector().id;
+		} else {
+			var oChangeContent = oChangeOrChangeContent;
+			sFileType = oChangeContent.fileType;
+			sVariantManagementReference = oChangeContent.variantManagementReference;
+			sVariantReference = oChangeContent.variantReference;
+			sSelectorId = oChangeContent.selector && oChangeContent.selector.id;
 		}
 
-		return oChangeContent.fileType === "change" || bControlVariantChange;
+		var bControlVariantChange = false;
+		if ((sFileType === "ctrl_variant") || (sFileType === "ctrl_variant_change") || (sFileType === "ctrl_variant_management_change")) {
+			bControlVariantChange = sVariantManagementReference || sVariantReference || sSelectorId;
+		}
+
+		return sFileType === "change" || bControlVariantChange;
 	}
 
 	/**
@@ -559,7 +575,7 @@ sap.ui.define([
 			if (bAlreadyDeletedViaCondense) {
 				this.removeChange(oChange);
 				// Remove also from Cache if the persisted change is still there (e.g. navigate away and back to the app)
-				Cache.deleteChange(this._mComponent, oChange.getDefinition());
+				Cache.deleteChange(this._mComponent, oChange.convertToFileContent());
 			} else {
 				this.deleteChange(oChange);
 			}
@@ -618,7 +634,7 @@ sap.ui.define([
 		var sLayer = aDirtyChanges[0].getLayer();
 		var aPersistedAndSameLayerChanges = this._mChanges.aChanges.filter(function(oChange) {
 			if (sLayer === Layer.CUSTOMER && aDraftFilenames) {
-				return oChange.getState() === Change.states.PERSISTED && aDraftFilenames.includes(oChange.getFileName());
+				return oChange.getState() === Change.states.PERSISTED && aDraftFilenames.includes(oChange.getId());
 			}
 			return oChange.getState() === Change.states.PERSISTED && LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), sLayer) === 0;
 		});
@@ -730,13 +746,13 @@ sap.ui.define([
 				}
 				return Storage.write({
 					layer: oDirtyChange.getLayer(),
-					flexObjects: [oDirtyChange.getDefinition()],
+					flexObjects: [oDirtyChange.convertToFileContent()],
 					transport: oDirtyChange.getRequest(),
 					parentVersion: sParentVersion
 				});
 			case Change.states.DELETED:
 				return Storage.remove({
-					flexObject: oDirtyChange.getDefinition(),
+					flexObject: oDirtyChange.convertToFileContent(),
 					layer: oDirtyChange.getLayer(),
 					transport: oDirtyChange.getRequest(),
 					parentVersion: sParentVersion
@@ -939,7 +955,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype._getChangesFromMapByNames = function(aNames) {
 		return this._mChanges.aChanges.filter(function(oChange) {
-			return aNames.indexOf(oChange.getFileName()) !== -1;
+			return aNames.indexOf(oChange.getId()) !== -1;
 		});
 	};
 
@@ -965,7 +981,7 @@ sap.ui.define([
 				return false;
 			}
 
-			if (sGenerator && oChange.getDefinition().support.generator !== sGenerator) {
+			if (sGenerator && oChange.getSupportInformation().generator !== sGenerator) {
 				return false;
 			}
 

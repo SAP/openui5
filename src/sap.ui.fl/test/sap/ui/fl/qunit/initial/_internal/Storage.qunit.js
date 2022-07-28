@@ -130,7 +130,7 @@ sap.ui.define([
 				},
 				variantReference: sVariant1
 			});
-			var mChange1 = oChange1.getDefinition();
+			var mChange1 = oChange1.convertToFileContent();
 			JsObjectConnector.storage.setItem(ObjectStorageUtils.createFlexObjectKey(mChange1), mChange1);
 
 			var sChangeId2 = "change2";
@@ -145,7 +145,7 @@ sap.ui.define([
 					id: "control.id"
 				}
 			});
-			var mChange2 = oChange2.getDefinition();
+			var mChange2 = oChange2.convertToFileContent();
 			JsObjectConnector.storage.setItem(ObjectStorageUtils.createFlexObjectKey(mChange2), mChange2);
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
@@ -479,7 +479,7 @@ sap.ui.define([
 				reference: "app.id",
 				content: {}
 			});
-			oStaticFileConnectorResponse.changes = [oChange1.getDefinition()];
+			oStaticFileConnectorResponse.changes = [oChange1.convertToFileContent()];
 
 			var oChange2 = new Change({
 				fileName: "rename_id_123",
@@ -488,7 +488,7 @@ sap.ui.define([
 				reference: "app.id",
 				content: {}
 			});
-			oLrepConnectorResponse.changes = [oChange2.getDefinition()];
+			oLrepConnectorResponse.changes = [oChange2.convertToFileContent()];
 
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oStaticFileConnectorResponse);
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(oLrepConnectorResponse);

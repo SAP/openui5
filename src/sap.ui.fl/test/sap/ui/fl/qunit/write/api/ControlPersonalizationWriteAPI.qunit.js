@@ -618,12 +618,12 @@ sap.ui.define([
 					id: "mockview--ObjectPageLayout",
 					idIsLocal: true
 				}, "then first successfully applied change was returned");
-				assert.equal(aSuccessfulChanges[0].getDefinition().variantReference, "mockview--VariantManagement1", "the variant reference is correct");
+				assert.equal(aSuccessfulChanges[0].getVariantReference(), "mockview--VariantManagement1", "the variant reference is correct");
 				assert.deepEqual(aSuccessfulChanges[1].getSelector(), {
 					id: "mockview--ObjectPageLayout",
 					idIsLocal: true
 				}, "then second successfully applied change was returned");
-				assert.equal(aSuccessfulChanges[1].getDefinition().variantReference, "mockview--VariantManagement1", "the variant reference is correct");
+				assert.equal(aSuccessfulChanges[1].getVariantReference(), "mockview--VariantManagement1", "the variant reference is correct");
 			}.bind(this));
 		});
 
@@ -639,12 +639,12 @@ sap.ui.define([
 					id: "mockview--ObjectPageLayout",
 					idIsLocal: true
 				}, "then first successfully applied change was returned");
-				assert.equal(aSuccessfulChanges[0].getDefinition().variantReference, "mockview--VariantManagement1", "the variant reference is correct");
+				assert.equal(aSuccessfulChanges[0].getVariantReference(), "mockview--VariantManagement1", "the variant reference is correct");
 				assert.deepEqual(aSuccessfulChanges[1].getSelector(), {
 					id: "mockview--ObjectPageLayout",
 					idIsLocal: true
 				}, "then second successfully applied change was returned");
-				assert.equal(aSuccessfulChanges[0].getDefinition().variantReference, "mockview--VariantManagement1", "the variant reference is correct");
+				assert.equal(aSuccessfulChanges[0].getVariantReference(), "mockview--VariantManagement1", "the variant reference is correct");
 			}.bind(this));
 		});
 	});

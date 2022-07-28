@@ -98,7 +98,7 @@ sap.ui.define([
 					assert.strictEqual(oRemoveStub.callCount, 2, "Then all changes are removed");
 					assert.strictEqual(oRevertStub.callCount, 2, "Then all changes are reverted");
 					assert.strictEqual(
-						oRevertStub.firstCall.args[0].change.getFileName(),
+						oRevertStub.firstCall.args[0].change.getId(),
 						"foo2",
 						"then the changes are reverted in the correct order"
 					);
@@ -123,7 +123,7 @@ sap.ui.define([
 					assert.strictEqual(oAddStub.callCount, 2, "Then all changes are added again");
 					assert.strictEqual(oApplyStub.callCount, 2, "Then all changes are applied again");
 					assert.strictEqual(
-						oApplyStub.firstCall.args[0].change.getFileName(),
+						oApplyStub.firstCall.args[0].change.getId(),
 						"foo",
 						"then the changes are applied in the correct order"
 					);
@@ -265,7 +265,7 @@ sap.ui.define([
 
 		function getFilenamesForChanges (aChanges) {
 			return aChanges.map(function (oChange) {
-				return oChange.getFileName();
+				return oChange.getId();
 			});
 		}
 

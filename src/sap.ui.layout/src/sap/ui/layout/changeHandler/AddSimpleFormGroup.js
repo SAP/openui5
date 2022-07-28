@@ -188,8 +188,8 @@ sap.ui.define([
 	AddSimpleFormGroup.getControlIdFromChangeContent = function (oChange) {
 		var sControlId;
 
-		if (oChange && oChange._oDefinition) {
-			sControlId = oChange._oDefinition.content.group.id;
+		if (oChange && oChange.getContent()) {
+			sControlId = oChange.getContent().group.id;
 		}
 
 		return sControlId;

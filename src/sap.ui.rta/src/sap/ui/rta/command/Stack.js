@@ -30,12 +30,12 @@ sap.ui.define([
 		var oSelector = oChange.getSelector && oChange.getSelector();
 		var oCommand = new Settings({
 			selector: oSelector,
-			changeType: oChange.getDefinition().changeType,
+			changeType: oChange.getChangeType(),
 			element: JsControlTreeModifier.bySelector(oSelector, oComponent)
 		});
 		oCommand._oPreparedChange = oChange;
 		// check if change belongs to a composite command
-		var sCompositeId = oChange.getDefinition().support.compositeCommand;
+		var sCompositeId = oChange.getSupportInformation().compositeCommand;
 		if (sCompositeId) {
 			if (!mComposite[sCompositeId]) {
 				mComposite[sCompositeId] = new CompositeCommand();

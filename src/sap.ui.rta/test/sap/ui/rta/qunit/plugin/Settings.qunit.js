@@ -66,11 +66,12 @@ sap.ui.define([
 	QUnit.module("Given a designTime and settings plugin are instantiated", {
 		beforeEach: function() {
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
-			sandbox.stub(ChangesWriteAPI, "create").resolves({getDefinition: function() {
-				return {
-					support: {}
-				};
-			}});
+			sandbox.stub(ChangesWriteAPI, "create").resolves({
+				getSupportInformation: function() {
+					return {};
+				},
+				setSupportInformation: function() {}
+			});
 			sandbox.stub(ChangesWriteAPI, "apply").resolves({success: true});
 
 			this.oCommandStack = new Stack();

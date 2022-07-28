@@ -468,7 +468,7 @@ sap.ui.define([
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
-				getDefinition: function() {}
+				convertToFileContent: function() {}
 			});
 			var fnDeleteChangeStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChange");
 			var mPropertyBag = {
@@ -513,7 +513,7 @@ sap.ui.define([
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
-				getDefinition: function() {}
+				convertToFileContent: function() {}
 			});
 			var fnDeleteChangeStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChange");
 			var mPropertyBag = {
@@ -558,7 +558,7 @@ sap.ui.define([
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
-				getDefinition: function() {}
+				convertToFileContent: function() {}
 			});
 			var fnDeleteChangeStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChange");
 			var mPropertyBag = {
@@ -603,7 +603,7 @@ sap.ui.define([
 			var fnSetVariantDataStub = sandbox.stub(VariantManagementState, "setVariantData").returns(1);
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(1);
 			var fnChangeStub = sandbox.stub().returns({
-				getDefinition: function() {}
+				convertToFileContent: function() {}
 			});
 			var fnDeleteChangeStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChange");
 			var mPropertyBag = {
@@ -645,7 +645,7 @@ sap.ui.define([
 			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
-				getDefinition: function() {}
+				convertToFileContent: function() {}
 			});
 			var fnDeleteChangeStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChange");
 			var mPropertyBag = {
@@ -665,7 +665,7 @@ sap.ui.define([
 			sandbox.stub(this.oModel, "getVariant").returns({instance: createVariant(this.oModel.oData["variantMgmtId1"].variants[2])});
 			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
 			var fnChangeStub = sandbox.stub().returns({
-				getDefinition: function() {}
+				convertToFileContent: function() {}
 			});
 			var fnDeleteChangeStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChange");
 			var fnUpdateCurrentVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant").resolves();
@@ -692,7 +692,7 @@ sap.ui.define([
 				variantManagementReference: "variantMgmtId1",
 				appComponent: this.oComponent,
 				change: {
-					getDefinition: function() {}
+					convertToFileContent: function() {}
 				}
 			};
 			sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
@@ -724,7 +724,7 @@ sap.ui.define([
 				variantManagementReference: "variantMgmtId1",
 				appComponent: this.oComponent,
 				change: {
-					getDefinition: function() {}
+					convertToFileContent: function() {}
 				}
 			};
 			sandbox.stub(VariantManagementState, "updateChangesForVariantManagementInMap").returns(true);
@@ -1183,8 +1183,8 @@ sap.ui.define([
 
 			var aDirtyChanges = this.oModel._getDirtyChangesFromVariantChanges(aControlChanges);
 			assert.equal(aDirtyChanges.length, 2, "only two of the given changes are returned as dirty by the model");
-			assert.equal(aDirtyChanges[0].getFileName(), "change1", "change1 is dirty");
-			assert.equal(aDirtyChanges[1].getFileName(), "change3", "change3 is dirty");
+			assert.equal(aDirtyChanges[0].getId(), "change1", "change1 is dirty");
+			assert.equal(aDirtyChanges[1].getId(), "change3", "change3 is dirty");
 		});
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default/execute box checked", function(assert) {
@@ -1780,8 +1780,8 @@ sap.ui.define([
 			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variantReference", "the variantReference is correct");
 			assert.strictEqual(oDuplicateVariant.controlChanges.length, 2, "both changes were copied");
-			assert.strictEqual(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, "change0", "the sourceChangeFileName is correct");
-			assert.strictEqual(oDuplicateVariant.controlChanges[1].getDefinition().support.sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+			assert.strictEqual(oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName, "change0", "the sourceChangeFileName is correct");
+			assert.strictEqual(oDuplicateVariant.controlChanges[1].getSupportInformation().sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from USER layer referencing a CUSTOMER layer variant", function(assert) {
@@ -1804,7 +1804,7 @@ sap.ui.define([
 			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variant0", "the variantReference is correct");
 			assert.strictEqual(oDuplicateVariant.controlChanges.length, 1, "one change was copied");
-			assert.strictEqual(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+			assert.strictEqual(oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from PUBLIC layer referencing a USER layer variant", function(assert) {
@@ -1828,7 +1828,7 @@ sap.ui.define([
 			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variantReference", "the variantReference is correct");
 			assert.strictEqual(oDuplicateVariant.controlChanges.length, 1, "one change was copied");
-			assert.strictEqual(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+			assert.strictEqual(oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
 			assert.strictEqual(oDuplicateVariant.controlChanges[0].getLayer(), Layer.PUBLIC, "the layer is correct");
 		});
 
@@ -1853,7 +1853,7 @@ sap.ui.define([
 			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "variant0", "the variantReference is correct");
 			assert.strictEqual(oDuplicateVariant.controlChanges.length, 1, "one change was copied");
-			assert.strictEqual(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+			assert.strictEqual(oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from PUBLIC layer referencing a USER layer variant, that references a PUBLIC layer variant", function(assert) {
@@ -1889,7 +1889,7 @@ sap.ui.define([
 			assert.deepEqual(oDuplicateVariant.instance.getContexts(), {role: ["testRole2"]}, "the contexts object is correct");
 			assert.strictEqual(oDuplicateVariant.instance.getVariantReference(), "publicVariantReference", "the variantReference is correct");
 			assert.strictEqual(oDuplicateVariant.controlChanges.length, 1, "one change was copied");
-			assert.strictEqual(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
+			assert.strictEqual(oDuplicateVariant.controlChanges[0].getSupportInformation().sourceChangeFileName, "change1", "the sourceChangeFileName is correct");
 		});
 	});
 

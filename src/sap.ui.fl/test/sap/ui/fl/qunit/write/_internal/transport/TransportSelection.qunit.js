@@ -155,12 +155,6 @@ sap.ui.define([
 				fileType: "change",
 				id: "changeId1",
 				namespace: "namespace",
-				getDefinition: function() {
-					return {
-						packageName: this.packageName,
-						fileType: this.fileType
-					};
-				},
 				getId: function() {
 					return this.id;
 				},
@@ -172,6 +166,18 @@ sap.ui.define([
 				},
 				getPackage: function() {
 					return this.packageName;
+				},
+				getFileType: function() {
+					return this.fileType;
+				},
+				setPackage: function(sPackageName) {
+					this.packageName = sPackageName;
+				},
+				convertToFileContent: function() {
+					return {
+						packageName: this.packageName,
+						fileType: this.fileType
+					};
 				}
 			};
 			var oMockNewChange = {
@@ -179,12 +185,6 @@ sap.ui.define([
 				fileType: "change",
 				id: "changeId2",
 				namespace: "namespace",
-				getDefinition: function() {
-					return {
-						packageName: this.packageName,
-						fileType: this.fileType
-					};
-				},
 				getId: function() {
 					return this.id;
 				},
@@ -196,6 +196,18 @@ sap.ui.define([
 				},
 				getPackage: function() {
 					return this.packageName;
+				},
+				getFileType: function() {
+					return this.fileType;
+				},
+				setPackage: function(sPackageName) {
+					this.packageName = sPackageName;
+				},
+				convertToFileContent: function() {
+					return {
+						packageName: this.packageName,
+						fileType: this.fileType
+					};
 				}
 			};
 			var aMockLocalChanges = [oMockTransportedChange, oMockNewChange];
@@ -233,6 +245,9 @@ sap.ui.define([
 				},
 				getPackage: function() {
 					return this.packageName;
+				},
+				getFileType: function() {
+					return this.fileType;
 				}
 			};
 			var oMockNewChange = {
@@ -240,12 +255,6 @@ sap.ui.define([
 				fileType: "change",
 				id: "changeId2",
 				namespace: "namespace2",
-				getDefinition: function() {
-					return {
-						packageName: this.packageName,
-						fileType: this.fileType
-					};
-				},
 				getId: function() {
 					return this.id;
 				},
@@ -257,6 +266,18 @@ sap.ui.define([
 				},
 				getPackage: function() {
 					return this.packageName;
+				},
+				getFileType: function() {
+					return this.fileType;
+				},
+				setPackage: function(sPackageName) {
+					this.packageName = sPackageName;
+				},
+				convertToFileContent: function() {
+					return {
+						packageName: this.packageName,
+						fileType: this.fileType
+					};
 				}
 			};
 			var aMockLocalChanges = [oMockNewChange];
@@ -540,7 +561,7 @@ sap.ui.define([
 				fileType: "change"
 			});
 
-			sandbox.stub(oChange, "getDefinition").returns({packageName: "$TMP"});
+			sandbox.stub(oChange, "getPackage").returns("$TMP");
 			var oSetRequestSpy = sandbox.stub(oChange, "setRequest");
 
 			return this.oTransportSelection.setTransports([oChange], oRootControl).then(function () {

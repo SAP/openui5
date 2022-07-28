@@ -47,11 +47,10 @@ sap.ui.define([
 		 */
 		getControlIfTemplateAffected: function (oChange, oControl, mPropertyBag) {
 			var oModifier = mPropertyBag.modifier;
-			var oChangeDefinition = oChange.getDefinition();
 			var mControl = {
 				originalControl: oControl
 			};
-			var oOriginalDependentSelector = oChangeDefinition.dependentSelector && oChangeDefinition.dependentSelector.originalSelector;
+			var oOriginalDependentSelector = oChange.getOriginalSelector();
 			if (oChange.getContent().boundAggregation && oOriginalDependentSelector) {
 				mControl.control = oModifier.bySelector(oOriginalDependentSelector, mPropertyBag.appComponent, mPropertyBag.view);
 				mControl.controlType = oModifier.getControlType(mControl.control);

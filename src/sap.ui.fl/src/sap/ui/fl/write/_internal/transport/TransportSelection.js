@@ -260,7 +260,7 @@ sap.ui.define([
 					// if the request has been set by the transport dialog already,
 					// do not bring up the transport dialog a second time, but use this transport instead
 					// if the change is locked on another transport, this will be resolved in the back end when the DELETE request is send
-					if (oCurrentChange.getDefinition().packageName !== "$TMP") {
+					if (oCurrentChange.getPackage() !== "$TMP") {
 						oCurrentChange.setRequest(sTransport);
 					}
 					iChangeIdx--;
@@ -268,7 +268,7 @@ sap.ui.define([
 					return fnSetTransports(aChanges, iChangeIdx, oControl, sTransport, bFromDialog);
 				}
 				// bring up the transport dialog to get the transport information for a change
-				if (oCurrentChange.getDefinition().packageName !== "$TMP") {
+				if (oCurrentChange.getPackage() !== "$TMP") {
 					return that.openTransportSelection(oCurrentChange, oControl).then(function(oTransportInfo) {
 						if (oTransportInfo === "cancel") {
 							return Promise.reject("cancel");
@@ -340,7 +340,7 @@ sap.ui.define([
 				oObject["package"] = oChange.getPackage();
 				oObject.namespace = oChange.getNamespace();
 				oObject.name = oChange.getId();
-				oObject.type = oChange.getDefinition().fileType;
+				oObject.type = oChange.getFileType();
 			}
 
 			that.selectTransport(oObject, fnOkay, fnError, false, oControl, sStyleClass, bLocalObjectVisible);
@@ -388,9 +388,8 @@ sap.ui.define([
 			// but is not reflected in the client cache until the application is reloaded
 			aAllLocalChanges.forEach(function(oChange) {
 				if (oChange.getPackage() === '$TMP') {
-					var oDefinition = oChange.getDefinition();
-					oDefinition.packageName = oTransportInfo.packageName;
-					oChange.setResponse(oDefinition);
+					oChange.setPackage(oTransportInfo.packageName);
+					oChange.setResponse(oChange.convertToFileContent());
 				}
 			});
 		});

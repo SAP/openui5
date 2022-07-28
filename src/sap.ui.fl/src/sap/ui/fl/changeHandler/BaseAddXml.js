@@ -132,7 +132,7 @@ sap.ui.define([
 	BaseAddXml.revertChange = revertAddedControls;
 
 	BaseAddXml._throwMissingAttributeError = function(sAttribute) {
-		throw new Error("Attribute missing from the change specific content'" + sAttribute + "'");
+		throw new Error("Attribute missing from the change specific content '" + sAttribute + "'");
 	};
 
 	BaseAddXml._destroyArrayOfControls = function(aControls) {
@@ -163,7 +163,7 @@ sap.ui.define([
 		oChange.setContent(oContent);
 
 		//Calculate the moduleName for the fragment
-		var sModuleName = oChange.getDefinition().reference.replace(/\.Component/g, "").replace(/\./g, "/");
+		var sModuleName = oChange.getComponent().replace(/\.Component/g, "").replace(/\./g, "/");
 		sModuleName += "/changes/";
 		sModuleName += oContent.fragmentPath;
 		oChange.setModuleName(sModuleName);

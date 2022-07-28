@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
+	"sap/base/util/isPlainObject",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/base/util/includes"
 ], function (
-	jQuery,
+	isPlainObject,
 	ManagedObject,
 	Layer,
 	Utils,
@@ -42,7 +42,7 @@ sap.ui.define([
 		constructor: function(oFile) {
 			ManagedObject.apply(this);
 
-			if (!jQuery.isPlainObject(oFile)) {
+			if (!isPlainObject(oFile)) {
 				Log.error("Constructor : sap.ui.fl.Change : oFile is not defined");
 			}
 
@@ -307,7 +307,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.isVariant = function () {
-		return this._oDefinition.fileType === "variant";
+		return this.getFileType() === "variant";
 	};
 
 	/**
@@ -317,9 +317,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getChangeType = function () {
-		if (this._oDefinition) {
-			return this._oDefinition.changeType;
-		}
+		return this.getDefinition().changeType;
 	};
 
 	/**
@@ -329,9 +327,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getFileName = function () {
-		if (this._oDefinition) {
-			return this._oDefinition.fileName;
-		}
+		return this.getDefinition().fileName;
 	};
 
 	/**
@@ -341,7 +337,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getFileType = function () {
-		return this._oDefinition.fileType;
+		return this.getDefinition().fileType;
 	};
 
 	/**
@@ -351,7 +347,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getPackage = function () {
-		return this._oDefinition.packageName;
+		return this.getDefinition().packageName;
 	};
 
 	/**
@@ -376,7 +372,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getNamespace = function () {
-		return this._oDefinition.namespace;
+		return this.getDefinition().namespace;
 	};
 
 	/**
@@ -398,7 +394,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getModuleName = function () {
-		return this._oDefinition.moduleName;
+		return this.getDefinition().moduleName;
 	};
 
 	/**
@@ -420,7 +416,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getProjectId = function () {
-		return this._oDefinition.projectId;
+		return this.getDefinition().projectId;
 	};
 
 	/**
@@ -430,7 +426,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getId = function () {
-		return this._oDefinition.fileName;
+		return this.getDefinition().fileName;
 	};
 
 	/**
@@ -440,7 +436,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getContent = function () {
-		return this._oDefinition.content;
+		return this.getDefinition().content;
 	};
 
 	/**
@@ -462,7 +458,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getVariantReference = function () {
-		return this._oDefinition.variantReference || "";
+		return this.getDefinition().variantReference || "";
 	};
 
 	/**
@@ -484,7 +480,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getSelector = function () {
-		return this._oDefinition.selector;
+		return this.getDefinition().selector;
 	};
 
 	Change.prototype.setSelector = function (oSelector) {
@@ -503,9 +499,9 @@ sap.ui.define([
 		if (typeof (sTextId) !== "string") {
 			Log.error("sap.ui.fl.Change.getTexts : sTextId is not defined");
 		}
-		if (this._oDefinition.texts) {
-			if (this._oDefinition.texts[sTextId]) {
-				return this._oDefinition.texts[sTextId].value;
+		if (this.getDefinition().texts) {
+			if (this.getDefinition().texts[sTextId]) {
+				return this.getDefinition().texts[sTextId].value;
 			}
 		}
 		return "";
@@ -519,7 +515,10 @@ sap.ui.define([
 	 * @function
 	 */
 	Change.prototype.getTexts = function () {
-		return this._oDefinition.texts;
+		if (isPlainObject(this.getDefinition().texts)) {
+			return Object.assign({}, this.getDefinition().texts);
+		}
+		return this.getDefinition().texts;
 	};
 
 	/**
@@ -536,7 +535,7 @@ sap.ui.define([
 			Log.error("sap.ui.fl.Change.setTexts : sTextId is not defined");
 			return;
 		}
-		this._oDefinition.texts = this._oDefinition.texts || {};
+		this._oDefinition.texts = this.getDefinition().texts || {};
 		if (this._oDefinition.texts) {
 			if (this._oDefinition.texts[sTextId]) {
 				this._oDefinition.texts[sTextId].value = sNewText;
@@ -560,7 +559,7 @@ sap.ui.define([
 	 * @function
 	 */
 	Change.prototype.getODataInformation = function () {
-		return this._oDefinition.oDataInformation;
+		return this.getDefinition().oDataInformation;
 	};
 
 	/**
@@ -635,7 +634,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getLayer = function () {
-		return this._oDefinition.layer;
+		return this.getDefinition().layer;
 	};
 
 	/**
@@ -645,7 +644,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getComponent = function () {
-		return this._oDefinition.reference;
+		return this.getDefinition().reference;
 	};
 
 	/**
@@ -667,7 +666,18 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getCreation = function () {
-		return this._oDefinition.creation;
+		return this.getDefinition().creation;
+	};
+
+	/**
+	 * Sets the creation timestamp.
+	 *
+	 * @param {string} sCreation creation timestamp
+	 *
+	 * @public
+	 */
+	Change.prototype.setCreation = function (sCreation) {
+		this._oDefinition.creation = sCreation;
 	};
 
 	/**
@@ -809,6 +819,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the dependent selector.
+	 *
+	 * @returns {object|undefined} Dependent selector object if available
+	 */
+	Change.prototype.getDependentSelector = function() {
+		return this.getDefinition().dependentSelector;
+	};
+
+	/**
+	 * Sets the dependent selector.
+	 *
+	 * @param {object} oDependentSelector Dependent selector
+	 */
+	Change.prototype.setDependentSelector = function(oDependentSelector) {
+		this._oDefinition.dependentSelector = oDependentSelector;
+	};
+
+	/**
 	 * Returns all dependent selectors, including the selector from the selector of the change.
 	 *
 	 * @returns {array} Dependent selector list
@@ -819,8 +847,8 @@ sap.ui.define([
 		var aDependentSelectors = [this.getSelector()];
 
 		if (!this._aDependentSelectorList) {
-			if (this._oDefinition.dependentSelector) {
-				Object.keys(this._oDefinition.dependentSelector).some(function(sAlias) {
+			if (this.getDefinition().dependentSelector) {
+				Object.keys(this.getDefinition().dependentSelector).some(function(sAlias) {
 					// if there is an 'originalSelector' as dependent the change is made inside a template; this means that the
 					// dependent selectors point to the specific clones of the template; those clones don't go through the
 					// propagation listener and will never be cleaned up from the dependencies, thus blocking the JS Change Applying
@@ -829,7 +857,7 @@ sap.ui.define([
 						aDependentSelectors = [this.getSelector()];
 						return true;
 					}
-					var aCurrentSelector = that._oDefinition.dependentSelector[sAlias];
+					var aCurrentSelector = that.getDefinition().dependentSelector[sAlias];
 					if (!Array.isArray(aCurrentSelector)) {
 						aCurrentSelector = [aCurrentSelector];
 					}
@@ -874,6 +902,9 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getRevertData = function() {
+		if (isPlainObject(this._vRevertData)) {
+			return Object.assign({}, this._vRevertData);
+		}
 		return this._vRevertData;
 	};
 
@@ -908,12 +939,64 @@ sap.ui.define([
 		this.setRevertData(null);
 	};
 
+
+	/**
+	 * Gets the extension point information.
+	 * @returns {*} Extension point information
+	 */
 	Change.prototype.getExtensionPointInfo = function() {
+		if (isPlainObject(this._oExtensionPointInfo)) {
+			return Object.assign({}, this._oExtensionPointInfo);
+		}
 		return this._oExtensionPointInfo;
 	};
 
+	/**
+	 * Sets the extension point information.
+	 * @param {*} oExtensionPointInfo Extension point information
+	 */
 	Change.prototype.setExtensionPointInfo = function(oExtensionPointInfo) {
 		this._oExtensionPointInfo = oExtensionPointInfo;
+	};
+
+	/**
+	 * Gets the support information.
+	 * @returns {object} Support information
+	 */
+	Change.prototype.getSupportInformation = function() {
+		return Object.assign({}, this._oDefinition.support);
+	};
+
+	/**
+	 * Sets the support information.
+	 * @param {object} oChangeSupportInformation Support information
+	 */
+	Change.prototype.setSupportInformation = function(oChangeSupportInformation) {
+		this._oDefinition.support = oChangeSupportInformation;
+	};
+
+	/**
+	 * Gets the JSOnly property.
+	 * @returns {boolean} True if the change is JSOnly
+	 */
+	Change.prototype.getJsOnly = function() {
+		return this.getDefinition().jsOnly;
+	};
+
+	/**
+	 * Sets the JSOnly property.
+	 * @param {boolean} bJsOnly Value to be set
+	 */
+	Change.prototype.setJsOnly = function(bJsOnly) {
+		this._oDefinition.jsOnly = bJsOnly;
+	};
+
+	/**
+	 * Returns the appDescriptorChange flag.
+	 * @returns {boolean} True if the change is an appDescriptor change
+	 */
+	Change.prototype.isAppDescriptorChange = function() {
+		return this.getDefinition().appDescriptorChange;
 	};
 
 	/**

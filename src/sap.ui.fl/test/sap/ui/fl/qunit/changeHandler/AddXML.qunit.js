@@ -73,17 +73,15 @@ sap.ui.define([
 			};
 
 			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
-			var oChangeDefinition = this.oChange.getDefinition();
-			var oSpecificContent = oChangeDefinition.content;
-			assert.deepEqual(oSpecificContent, oExpectedChangeContent, "then the change specific content is in the change, but the fragment not");
-			assert.equal(oChangeDefinition.moduleName, "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/Fragment", "and the module name is set correct");
+			assert.deepEqual(this.oChange.getContent(), oExpectedChangeContent, "then the change specific content is in the change, but the fragment not");
+			assert.equal(this.oChange.getModuleName(), "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/Fragment", "and the module name is set correct");
 		});
 
 		QUnit.test("When calling 'completeChangeContent' without complete information", function(assert) {
 			this.oChangeSpecificContent.targetAggregation = null;
 			assert.throws(
 				function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);},
-				Error("Attribute missing from the change specific content'targetAggregation'"),
+				Error("Attribute missing from the change specific content 'targetAggregation'"),
 				"without targetAggregation 'completeChangeContent' throws an error"
 			);
 
@@ -91,7 +89,7 @@ sap.ui.define([
 			this.oChangeSpecificContent.fragmentPath = null;
 			assert.throws(
 				function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);},
-				Error("Attribute missing from the change specific content'fragmentPath'"),
+				Error("Attribute missing from the change specific content 'fragmentPath'"),
 				"without fragmentPath 'completeChangeContent' throws an error"
 			);
 
@@ -99,7 +97,7 @@ sap.ui.define([
 			this.oChangeSpecificContent.index = undefined;
 			assert.throws(
 				function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);},
-				Error("Attribute missing from the change specific content'index'"),
+				Error("Attribute missing from the change specific content 'index'"),
 				"without index 'completeChangeContent' throws an error"
 			);
 		});

@@ -201,7 +201,7 @@ sap.ui.define([
 				.then(function () {
 					// Get one of the changes that would normally be condensed
 					oFailedChange = this.aChanges.find(function (oChange) {
-						return oChange.getFileName() === "id_1576490280160_42_renameField";
+						return oChange.getId() === "id_1576490280160_42_renameField";
 					});
 					oFailedChange.markFailed();
 					return Condenser.condense(oAppComponent, this.aChanges);

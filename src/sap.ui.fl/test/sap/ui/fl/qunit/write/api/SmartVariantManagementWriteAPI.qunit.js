@@ -392,8 +392,8 @@ sap.ui.define([
 					assert.equal(oVariant.getChanges().length, 1, "one change was added");
 					var oChange = oVariant.getChanges()[0];
 					assert.equal(oChange.getLayer(), testData.expected.layer, "the layer is set correct");
-					assert.equal(oChange.getDefinition().changeType, "updateVariant", "changeType ist updateVariant");
-					assert.deepEqual(oChange.getDefinition().content, testData.expected.changeContent, "change content ist updateVariant");
+					assert.equal(oChange.getChangeType(), "updateVariant", "changeType ist updateVariant");
+					assert.deepEqual(oChange.getContent(), testData.expected.changeContent, "change content ist updateVariant");
 					assert.equal(oVariant.getFavorite(), testData.expected.favorite, "the favorite flag flag is set correct");
 					assert.equal(oVariant.getExecuteOnSelection(), testData.expected.executeOnSelection, "the executeOnSelection flag is set correct");
 					assert.deepEqual(oVariant.getContexts(), testData.expected.contexts, "the contexts section is set correct");

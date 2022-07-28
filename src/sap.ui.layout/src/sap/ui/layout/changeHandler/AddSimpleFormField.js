@@ -106,9 +106,10 @@ sap.ui.define([
 			var aContentClone;
 
 			var oChange = mPropertyBag.change;
-			// as the label is stored independent of the field and will not be destroyed by destroying the field, is needs to be remembered
+			// as the label is stored independent of the field and will not be destroyed by destroying the field, it needs to be remembered
 			var oRevertData = oChange.getRevertData();
 			oRevertData.labelSelector = oModifier.getSelector(mInnerControls.label, oAppComponent);
+			oChange.setRevertData(oRevertData);
 
 			return Promise.resolve()
 				.then(oModifier.getAggregation.bind(oModifier, oSimpleForm, "content"))

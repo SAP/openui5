@@ -44,11 +44,8 @@ sap.ui.define([
 				fileType: "change",
 				id: "changeId2",
 				namespace: "namespace",
-				getDefinition: function() {
-					return {
-						packageName: this.packageName,
-						fileType: this.fileType
-					};
+				getFileType: function() {
+					return this.fileType;
 				},
 				getId: function() {
 					return this.id;

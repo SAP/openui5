@@ -82,8 +82,6 @@ sap.ui.define([
 			};
 
 			this.oChange = new Change(oChangeJson);
-			this.oChangeDefinition = this.oChange.getDefinition();
-			this.oChangeDefinition.content = {};
 		},
 		afterEach: function() {
 			this.oHBox.destroy();
@@ -94,18 +92,16 @@ sap.ui.define([
 				fragmentPath: "fragments/Fragment.fragment.xml"
 			};
 
-			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChangeDefinition.content);
-			var oChangeDefinition = this.oChange.getDefinition();
-			var oSpecificContent = oChangeDefinition.content;
-			assert.deepEqual(oSpecificContent, oExpectedChangeContent, "then the change specific content is in the change, but the fragment not");
-			assert.equal(oChangeDefinition.moduleName, "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/Fragment.fragment.xml", "and the module name is set correct in oChangeDefinition");
+			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChange.getContent());
+			assert.deepEqual(this.oChange.getContent(), oExpectedChangeContent, "then the change specific content is in the change, but the fragment not");
+			assert.equal(this.oChange.getModuleName(), "sap/ui/fl/qunit/changeHander/BaseAddXml/changes/fragments/Fragment.fragment.xml", "and the module name is set correct in change");
 		});
 
 		QUnit.test("When calling 'completeChangeContent' without complete information", function(assert) {
 			this.oChangeSpecificContent.fragmentPath = null;
 			assert.throws(
-				function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChangeDefinition);},
-				Error("Attribute missing from the change specific content'fragmentPath'"),
+				function() {this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChange.getContent());},
+				Error("Attribute missing from the change specific content 'fragmentPath'"),
 				"without fragmentPath 'completeChangeContent' throws an error"
 			);
 		});
@@ -141,9 +137,7 @@ sap.ui.define([
 			};
 
 			this.oChange = new Change(oChangeJson);
-			this.oChangeDefinition = this.oChange.getDefinition();
-			this.oChangeDefinition.content = {};
-			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChangeDefinition);
+			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChange.getContent());
 
 			// JSTreeModifier specific beforeEach
 			this.oButton = new Button();
@@ -265,9 +259,7 @@ sap.ui.define([
 			};
 
 			this.oChange = new Change(oChangeJson);
-			this.oChangeDefinition = this.oChange.getDefinition();
-			this.oChangeDefinition.content = {};
-			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChangeDefinition);
+			this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent, this.oChange.getContent());
 
 			// XMLTreeModifier specific beforeEach
 			this.oComponent = oCore.createComponent({

@@ -851,7 +851,9 @@ sap.ui.define([
 			var oOriginalTemplateControl = new Control("originalTemplate");
 			var oActualTemplateControl = new Control("actualTemplate");
 			var oChange0 = new Change(getLabelChangeContent("a"));
-			oChange0.getContent().boundAggregation = "boundAggregationName";
+			var oChange0Content = oChange0.getContent();
+			oChange0Content.boundAggregation = "boundAggregationName";
+			oChange0.setContent(oChange0Content);
 			var oGetBindingInfoStub = sandbox.stub(this.oControl, "getBindingInfo").returns({
 				template: oActualTemplateControl
 			});
@@ -896,7 +898,9 @@ sap.ui.define([
 			});
 
 			var oChange0 = new Change(getLabelChangeContent("a"));
-			oChange0.getContent().boundAggregation = "boundAggregationName";
+			var oChange0Content = oChange0.getContent();
+			oChange0Content.boundAggregation = "boundAggregationName";
+			oChange0.setContent(oChange0Content);
 			var oGetBindingInfoStub = sandbox.stub(this.oControl, "getBindingInfo").returns({
 				template: oActualTemplate
 			});
@@ -1095,7 +1099,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("does nothing if 'jsOnly' is set on the change", function(assert) {
-			this.oChange.getDefinition().jsOnly = true;
+			this.oChange.setJsOnly(true);
 			var oSetInitialStub = sandbox.stub(this.oChange, "setInitialApplyState");
 
 			return Applier.applyChangeOnControl(this.oChange, this.oControl, this.mPropertyBag).then(function(vReturn) {

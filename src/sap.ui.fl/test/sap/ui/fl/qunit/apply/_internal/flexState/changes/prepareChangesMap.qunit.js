@@ -24,8 +24,8 @@ sap.ui.define([
 			assert.equal(mPreparedMap.changes.length, 2, "an array with 2 objects is returned");
 			assert.ok(mPreparedMap.changes[0] instanceof Change, "both objects are Change instances");
 			assert.ok(mPreparedMap.changes[1] instanceof Change, "both objects are Change instances");
-			assert.deepEqual(mPreparedMap.changes[0].getDefinition(), {fileName: "a"}, "the change was created with the correct definition");
-			assert.deepEqual(mPreparedMap.changes[1].getDefinition(), {fileName: "b"}, "the change was created with the correct definition");
+			assert.deepEqual(mPreparedMap.changes[0].getId(), "a", "the change was created with the correct ID");
+			assert.deepEqual(mPreparedMap.changes[1].getId(), "b", "the change was created with the correct ID");
 		});
 	});
 

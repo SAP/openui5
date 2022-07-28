@@ -353,7 +353,7 @@ sap.ui.define([
 
 			function includesDirtyChange(aChanges) {
 				return !!aChanges.find(function(oChange) {
-					return oChange.getFileName() === "dirtyChange";
+					return oChange.getId() === "dirtyChange";
 				});
 			}
 
@@ -686,8 +686,8 @@ sap.ui.define([
 				return oChange.getId();
 			});
 			assert.equal(aVariants[iIndex].controlChanges.length, 3, "then one own change and 2 referenced changes exists");
-			assert.equal(aChangeFileNames[0], aVariants[2].controlChanges[0].getDefinition().fileName, "then referenced change exists at the starting of the array");
-			assert.equal(aChangeFileNames[1], aVariants[2].controlChanges[1].getDefinition().fileName, "then referenced change exists at the starting of the array");
+			assert.equal(aChangeFileNames[0], aVariants[2].controlChanges[0].getId(), "then referenced change exists at the starting of the array");
+			assert.equal(aChangeFileNames[1], aVariants[2].controlChanges[1].getId(), "then referenced change exists at the starting of the array");
 			assert.equal(aChangeFileNames[2], oChangeContent0.getId(), "then variant's own change exists and is placed at the end of the the array");
 		});
 
@@ -714,9 +714,9 @@ sap.ui.define([
 				return oChange.getId();
 			});
 			assert.equal(aVariants[iIndex].controlChanges.length, 4, "then one own change and 2 referenced changes exists");
-			assert.equal(aChangeFileNames[0], aVariants[2].controlChanges[0].getDefinition().fileName, "then referenced change exists at the starting of the array");
-			assert.equal(aChangeFileNames[1], aVariants[2].controlChanges[1].getDefinition().fileName, "then referenced change exists at the starting of the array");
-			assert.equal(aChangeFileNames[2], aVariants[2].controlChanges[2].getDefinition().fileName, "then referenced change exists at the starting of the array");
+			assert.equal(aChangeFileNames[0], aVariants[2].controlChanges[0].getId(), "then referenced change exists at the starting of the array");
+			assert.equal(aChangeFileNames[1], aVariants[2].controlChanges[1].getId(), "then referenced change exists at the starting of the array");
+			assert.equal(aChangeFileNames[2], aVariants[2].controlChanges[2].getId(), "then referenced change exists at the starting of the array");
 			assert.equal(aChangeFileNames[3], oChangeContent0.getId(), "then variant's own change exists and is placed at the end of the the array");
 		});
 
@@ -766,11 +766,8 @@ sap.ui.define([
 
 			var oVariantDependentControlChange = {
 				getState: function() {return Change.states.NEW;},
-				getDefinition: function() {
-					return {fileType: "change"};
-				},
 				convertToFileContent: function() {
-					return this.getDefinition();
+					return {fileType: "change"};
 				}
 			};
 			VariantManagementState.updateVariantsState({
@@ -778,17 +775,14 @@ sap.ui.define([
 				changeToBeAddedOrDeleted: oVariantDependentControlChange,
 				content: {}
 			});
-			assert.deepEqual(this.oResponse.variantDependentControlChanges[0], oVariantDependentControlChange.getDefinition(), "then the variants related change was added to flex state response");
+			assert.deepEqual(this.oResponse.variantDependentControlChanges[0], oVariantDependentControlChange.convertToFileContent(), "then the variants related change was added to flex state response");
 			assert.strictEqual(oStub1.callCount, 1, "the listener was called");
 			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 
 			var oVariant = {
 				getState: function() {return Change.states.NEW;},
-				getDefinition: function() {
-					return {fileType: "ctrl_variant"};
-				},
 				convertToFileContent: function() {
-					return this.getDefinition();
+					return {fileType: "ctrl_variant"};
 				}
 			};
 			VariantManagementState.updateVariantsState({
@@ -796,17 +790,14 @@ sap.ui.define([
 				changeToBeAddedOrDeleted: oVariant,
 				content: {}
 			});
-			assert.deepEqual(this.oResponse.variants[0], oVariant.getDefinition(), "then the variants related change was added to flex state response");
+			assert.deepEqual(this.oResponse.variants[0], oVariant.convertToFileContent(), "then the variants related change was added to flex state response");
 			assert.strictEqual(oStub1.callCount, 2, "the listener was called");
 			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 
 			var oVariantManagementChange = {
 				getState: function() {return Change.states.NEW;},
-				getDefinition: function() {
-					return {fileType: "ctrl_variant_management_change"};
-				},
 				convertToFileContent: function() {
-					return this.getDefinition();
+					return {fileType: "ctrl_variant_management_change"};
 				}
 			};
 			VariantManagementState.updateVariantsState({
@@ -814,17 +805,14 @@ sap.ui.define([
 				changeToBeAddedOrDeleted: oVariantManagementChange,
 				content: {}
 			});
-			assert.deepEqual(this.oResponse.variantManagementChanges[0], oVariantManagementChange.getDefinition(), "then the variants related change was added to flex state response");
+			assert.deepEqual(this.oResponse.variantManagementChanges[0], oVariantManagementChange.convertToFileContent(), "then the variants related change was added to flex state response");
 			assert.strictEqual(oStub1.callCount, 3, "the listener was called");
 			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 
 			var oVariantChange = {
 				getState: function() {return Change.states.NEW;},
-				getDefinition: function() {
-					return {fileType: "ctrl_variant_change"};
-				},
 				convertToFileContent: function() {
-					return this.getDefinition();
+					return {fileType: "ctrl_variant_change"};
 				}
 			};
 			VariantManagementState.updateVariantsState({
@@ -832,18 +820,15 @@ sap.ui.define([
 				changeToBeAddedOrDeleted: oVariantChange,
 				content: {}
 			});
-			assert.deepEqual(this.oResponse.variantChanges[0], oVariantChange.getDefinition(), "then the variants related change was added to flex state response");
+			assert.deepEqual(this.oResponse.variantChanges[0], oVariantChange.convertToFileContent(), "then the variants related change was added to flex state response");
 			assert.strictEqual(oStub1.callCount, 4, "the listener was called");
 			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 
 			VariantManagementState.removeUpdateStateListener(this.sReference);
 			var oVariantDependentControlChange1 = {
 				getState: function() {return Change.states.NEW;},
-				getDefinition: function() {
-					return {fileType: "change"};
-				},
 				convertToFileContent: function() {
-					return this.getDefinition();
+					return {fileType: "change"};
 				}
 			};
 			VariantManagementState.updateVariantsState({
@@ -851,7 +836,7 @@ sap.ui.define([
 				changeToBeAddedOrDeleted: oVariantDependentControlChange1,
 				content: {}
 			});
-			assert.deepEqual(this.oResponse.variantDependentControlChanges[0], oVariantDependentControlChange.getDefinition(), "then the variants related change was added to flex state response");
+			assert.deepEqual(this.oResponse.variantDependentControlChanges[0], oVariantDependentControlChange.convertToFileContent(), "then the variants related change was added to flex state response");
 			assert.strictEqual(oStub1.callCount, 4, "the listener was not called again");
 			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 		});
@@ -859,17 +844,14 @@ sap.ui.define([
 		QUnit.test("when 'updateVariantsState' is called to delete variant related changes", function(assert) {
 			var oVariantDependentControlChange = {
 				getState: function() {return Change.states.DELETE;},
-				getDefinition: function() {
+				convertToFileContent: function() {
 					return {
 						fileType: "change",
 						fileName: "variantDependentControlChange"
 					};
-				},
-				convertToFileContent: function() {
-					return this.getDefinition();
 				}
 			};
-			this.oResponse.variantDependentControlChanges.push(oVariantDependentControlChange.getDefinition());
+			this.oResponse.variantDependentControlChanges.push(oVariantDependentControlChange.convertToFileContent());
 			VariantManagementState.updateVariantsState({
 				reference: this.sReference,
 				changeToBeAddedOrDeleted: oVariantDependentControlChange,
@@ -879,17 +861,14 @@ sap.ui.define([
 
 			var oVariant = {
 				getState: function() {return Change.states.DELETE;},
-				getDefinition: function() {
+				convertToFileContent: function() {
 					return {
 						fileType: "ctrl_variant",
 						fileName: "variant"
 					};
-				},
-				convertToFileContent: function() {
-					return this.getDefinition();
 				}
 			};
-			this.oResponse.variants.push(oVariant.getDefinition());
+			this.oResponse.variants.push(oVariant.convertToFileContent());
 			VariantManagementState.updateVariantsState({
 				reference: this.sReference,
 				changeToBeAddedOrDeleted: oVariant,
@@ -899,17 +878,14 @@ sap.ui.define([
 
 			var oVariantManagementChange = {
 				getState: function() {return Change.states.DELETE;},
-				getDefinition: function() {
+				convertToFileContent: function() {
 					return {
 						fileType: "ctrl_variant_management_change",
 						fileName: "variantManagementChange"
 					};
-				},
-				convertToFileContent: function() {
-					return this.getDefinition();
 				}
 			};
-			this.oResponse.variantManagementChanges.push(oVariantManagementChange.getDefinition());
+			this.oResponse.variantManagementChanges.push(oVariantManagementChange.convertToFileContent());
 			VariantManagementState.updateVariantsState({
 				reference: this.sReference,
 				changeToBeAddedOrDeleted: oVariantManagementChange,
@@ -919,17 +895,14 @@ sap.ui.define([
 
 			var oVariantChange = {
 				getState: function() {return Change.states.DELETE;},
-				getDefinition: function() {
+				convertToFileContent: function() {
 					return {
 						fileType: "ctrl_variant_change",
 						fileName: "variantChange"
 					};
-				},
-				convertToFileContent: function() {
-					return this.getDefinition();
 				}
 			};
-			this.oResponse.variantChanges.push(oVariantChange.getDefinition());
+			this.oResponse.variantChanges.push(oVariantChange.convertToFileContent());
 			VariantManagementState.updateVariantsState({
 				reference: this.sReference,
 				changeToBeAddedOrDeleted: oVariantChange,
