@@ -41943,6 +41943,83 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: In an ODLB w/ filter, but w/o UI, create a new draft entity and execute the
+	// ActivationAction to replace the draft context with the active context. Keep the active
+	// context alive and refresh it in order to make it drop out of the collection. See that is
+	// it is still alive.
+	QUnit.test("still alive", function (assert) {
+		var oActiveContext,
+			oDraftContext,
+			oListBinding,
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			fnOnBeforeDestroy = sinon.spy(),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			oListBinding = oModel.bindList("/Artists", null, [],
+				[new Filter("sendsAutographs", FilterOperator.EQ, true)]);
+
+			that.expectRequest({
+					method : "POST",
+					url : "Artists",
+					payload : {}
+				}, {
+					ArtistID : "23",
+					IsActiveEntity : false
+				});
+
+			oDraftContext = oListBinding.create({}, /*bSkipRefresh*/true);
+
+			return Promise.all([
+				oDraftContext.created(),
+				that.waitForChanges(assert, "create new draft entity")
+			]);
+		}).then(function () {
+			var oActionBinding
+				= that.oModel.bindContext("special.cases.ActivationAction(...)", oDraftContext);
+
+			that.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='23',IsActiveEntity=false)"
+						+ "/special.cases.ActivationAction",
+					payload : {}
+				}, {
+					ArtistID : "23",
+					IsActiveEntity : true
+				});
+
+			return Promise.all([
+				// code under test
+				oActionBinding.execute(undefined, false, null, /*bReplaceWithRVC*/true),
+				that.waitForChanges(assert, "execute ActivationAction")
+			]);
+		}).then(function (aResults) {
+			oActiveContext = aResults[0];
+			oActiveContext.setKeepAlive(true, fnOnBeforeDestroy);
+
+			that.expectRequest("Artists?$filter=ArtistID eq '23' and IsActiveEntity eq true", {
+					value : [{
+						ArtistID : "23",
+						IsActiveEntity : true
+					}] // still alive
+				})
+				.expectRequest("Artists?$filter=(sendsAutographs eq true)"
+					+ " and ArtistID eq '23' and IsActiveEntity eq true&$count=true&$top=0", {
+					"@odata.count" : "0", // sorry, no autographs anymore ;-)
+					value : []
+				});
+
+			return Promise.all([
+				// code under test
+				oActiveContext.requestRefresh(/*sGroupId*/undefined, /*bAllowRemoval*/true),
+				that.waitForChanges(assert, "refreshSingleWithRemove")
+			]);
+		}).then(function () {
+			assert.notOk(fnOnBeforeDestroy.called, "still alive");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: ODLB#getAllCurrentContexts must not fire unnecessary change events and must not
 	// modify internal states of the binding. Calling ODLB#getLength afterwards works as expected.
 	//
