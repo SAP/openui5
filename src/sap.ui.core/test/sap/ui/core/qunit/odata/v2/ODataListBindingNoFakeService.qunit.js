@@ -62,6 +62,7 @@ sap.ui.define([
 			.withExactArgs();
 		oResetDataExpectation = this.mock(ODataListBinding.prototype).expects("resetData")
 			.withExactArgs();
+		this.mock(ODataListBinding.prototype).expects("_reassignCreateActivate").withExactArgs();
 
 		oBinding = new ODataListBinding(oModel, "path", oContext);
 
@@ -200,6 +201,7 @@ sap.ui.define([
 		this.mock(oModel).expects("checkFilterOperation").withExactArgs([]);
 		this.mock(ODataListBinding.prototype).expects("checkExpandedList").withExactArgs()
 			.returns(true);
+		this.mock(ODataListBinding.prototype).expects("_reassignCreateActivate").withExactArgs();
 
 		// code under test
 		oBinding = new ODataListBinding(oModel, "path", "context", undefined /*aSorters*/,
@@ -227,6 +229,7 @@ sap.ui.define([
 		this.mock(ODataListBinding.prototype).expects("_removePersistedCreatedContexts")
 			.withExactArgs();
 		this.mock(ODataListBinding.prototype).expects("resetData").withExactArgs();
+		this.mock(ODataListBinding.prototype).expects("_reassignCreateActivate").withExactArgs();
 
 		// code under test
 		assert.ok(new ODataListBinding(oModel, "path", "context"));
@@ -256,6 +259,7 @@ sap.ui.define([
 		this.mock(oModel).expects("checkFilterOperation").withExactArgs([]);
 		this.mock(ODataListBinding.prototype).expects("checkExpandedList").withExactArgs()
 			.returns(true);
+		this.mock(ODataListBinding.prototype).expects("_reassignCreateActivate").withExactArgs();
 
 		// code under test
 		oBinding = new ODataListBinding(oModel, "path", "context", undefined /*aSorters*/,
@@ -285,6 +289,7 @@ sap.ui.define([
 		this.mock(ODataListBinding.prototype).expects("checkExpandedList")
 			.withExactArgs()
 			.returns(true);
+		this.mock(ODataListBinding.prototype).expects("_reassignCreateActivate").withExactArgs();
 
 		// code under test
 		oBinding = new ODataListBinding(oModel, "~sPath", "~oContext");
@@ -3405,5 +3410,39 @@ sap.ui.define([
 			true);
 
 		assert.deepEqual(oBinding.aAllKeys, ["~key0", "~key1", "~key2"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_reassignCreateActivate", function (assert) {
+		var fnResolveActivatedPromise,
+			oActivatedPromise = new Promise(function (resolve) {
+				fnResolveActivatedPromise = resolve;
+			}),
+			oBinding = {
+				_getCreatedContexts : function () {},
+				fireEvent : function () {}
+			},
+			oContext0 = {isInactive : function () {}},
+			oContext1 = {
+				fetchActivated : function () {},
+				isInactive : function () {}
+			};
+
+		this.mock(oBinding).expects("_getCreatedContexts")
+			.withExactArgs()
+			.returns([oContext0, oContext1]);
+		this.mock(oContext0).expects("isInactive").withExactArgs().returns(false);
+		this.mock(oContext1).expects("isInactive").withExactArgs().returns(true);
+		this.mock(oContext1).expects("fetchActivated").withExactArgs().returns(oActivatedPromise);
+
+		// code under test
+		ODataListBinding.prototype._reassignCreateActivate.call(oBinding);
+
+		this.mock(oBinding).expects("fireEvent").withExactArgs("createActivate");
+
+		// code under test: async context activation
+		fnResolveActivatedPromise();
+
+		return oActivatedPromise;
 	});
 });
