@@ -1400,10 +1400,11 @@ sap.ui.define([
 
         if (oPropertyInfo.textProperty){
             oDimension.setTextProperty(oPropertyInfo.textProperty);
-            if (oPropertyInfo.textFormatter){
-                oDimension.setTextFormatter(this._formatText.bind(oPropertyInfo));
-            }
             oDimension.setDisplayText(true);
+        }
+
+        if (oPropertyInfo.textFormatter){
+            oDimension.setTextFormatter(this._formatText.bind(oPropertyInfo));
         }
 
         this._getChart(oMDCChart).addDimension(oDimension);

@@ -1217,6 +1217,10 @@ function(
 
             ChartDelegate._addInnerDimension(this.oMDCChart, new Item({name: "test1", type: "groupable", label: "Label1"}), oMockProps);
             assert.ok(oSpy.calledOnce, "Dimension added");
+            assert.equal(oSpy.getCall(0).args[0].getName(), "test1", "Correct name for dimension");
+            assert.equal(oSpy.getCall(0).args[0].getLabel(), "Label1", "Correct label added");
+            assert.equal(oSpy.getCall(0).args[0].getTextProperty(), undefined, "No text property specified");
+            assert.ok(oSpy.getCall(0).args[0].getTextFormatter(), "Formatter function was set");
 
             done();
         }.bind(this));
