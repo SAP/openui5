@@ -727,7 +727,10 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				id: this.oVariant.getVariantId(),
 				favorite: false,
-				layer: Layer.VENDOR
+				layer: Layer.VENDOR,
+				executeOnSelection: true,
+				contexts: {foo: "bar"},
+				name: "newName"
 			});
 
 			assert.strictEqual(this.oVariant.getFavorite(), false, "the favorite was set to false for the variant");
@@ -742,11 +745,17 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				id: this.oVariant.getVariantId(),
 				favorite: false,
-				layer: Layer.USER
+				layer: Layer.USER,
+				executeOnSelection: true,
+				contexts: {foo: "bar"},
+				name: "newName"
 			});
 			assert.strictEqual(this.oVariant.getChanges().length, 1, "then one variant change was created");
 			assert.ok(oApplyChangesOnVariantSpy.called, "then the change is applied on the variant");
 			assert.strictEqual(this.oVariant.getFavorite(), false, "the favorite was changed in the variant by the applied change");
+			assert.strictEqual(this.oVariant.getName(), "newName", "the variant name is correct");
+			assert.deepEqual(this.oVariant.getContexts(), {foo: "bar"}, "the contexts are correct");
+			assert.strictEqual(this.oVariant.getExecuteOnSelection(), true, "the executeOnSelection is correct");
 		});
 
 		QUnit.test("Given updateVariant is called on a non-updatable variant (different layer) and an updatable change", function(assert) {
@@ -756,9 +765,15 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				id: this.oVariant.getVariantId(),
 				favorite: false,
-				layer: Layer.USER
+				layer: Layer.USER,
+				executeOnSelection: true,
+				contexts: {foo: "bar"},
+				name: "newName"
 			});
 			assert.strictEqual(this.oVariant.getFavorite(), false, "the favorite is first set to false by the applied change");
+			assert.strictEqual(this.oVariant.getName(), "newName", "the variant name is correct");
+			assert.deepEqual(this.oVariant.getContexts(), {foo: "bar"}, "the contexts are correct");
+			assert.strictEqual(this.oVariant.getExecuteOnSelection(), true, "the executeOnSelection is correct");
 			CompVariantState.updateVariant({
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey,
@@ -779,9 +794,15 @@ sap.ui.define([
 				persistencyKey: this.sPersistencyKey,
 				id: this.oVariant.getVariantId(),
 				favorite: false,
-				layer: Layer.CUSTOMER
+				layer: Layer.CUSTOMER,
+				executeOnSelection: true,
+				contexts: {foo: "bar"},
+				name: "newName"
 			});
 			assert.strictEqual(this.oVariant.getFavorite(), false, "the favorite is first set to false by the non-updatable change");
+			assert.strictEqual(this.oVariant.getName(), "newName", "the variant name is correct");
+			assert.deepEqual(this.oVariant.getContexts(), {foo: "bar"}, "the contexts are correct");
+			assert.strictEqual(this.oVariant.getExecuteOnSelection(), true, "the executeOnSelection is correct");
 			// because the update is within another layer, the previous change cannot be updated
 			CompVariantState.updateVariant({
 				reference: sComponentId,
