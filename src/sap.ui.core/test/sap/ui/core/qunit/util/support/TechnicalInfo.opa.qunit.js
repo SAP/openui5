@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	var sTestPageURL = sap.ui.require.toUrl("static/TechnicalInfoTestbench.html"),
-		sOpenUI5NightlyKey = "https://openui5nightly.hana.ondemand.com/resources/sap/ui/support/";
+		sOpenUI5NightlyKey = "https://sdk.openui5.org/nightly/resources/sap/ui/support/";
 
 	Opa5.extendConfig({
 		autoWait : true

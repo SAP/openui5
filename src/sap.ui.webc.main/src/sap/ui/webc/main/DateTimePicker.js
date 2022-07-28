@@ -43,7 +43,7 @@ sap.ui.define([
 	 *
 	 * The value entered by typing into the input field must fit to the used date/time format. <br>
 	 * <br>
-	 * Supported format options are pattern-based on Unicode LDML Date Format notation. For more information, see <ui5-link target="_blank" href="https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table" class="api-table-content-cell-link">UTS #35: Unicode Locale Data Markup Language</ui5-link>. <br>
+	 * Supported format options are pattern-based on Unicode LDML Date Format notation. For more information, see {@link https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table UTS #35: Unicode Locale Data Markup Language}. <br>
 	 * <br>
 	 * <b>Example:</b> the following format <code>dd/MM/yyyy, hh:mm:ss aa</code> corresponds the <code>13/04/2020, 03:16:16 AM</code> value. <br>
 	 * The small 'h' defines "12" hours format and the "aa" symbols - "AM/PM" time periods.

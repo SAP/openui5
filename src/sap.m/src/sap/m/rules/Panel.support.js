@@ -36,7 +36,7 @@ sap.ui.define([
 				text: "SAP Fiori Design Guidelines: Panel",
 				href: "https://experience.sap.com/fiori-design-web/panel/#components",
 				text2: "Explored Sample",
-				href2: "https://openui5beta.hana.ondemand.com/#/sample/sap.m.sample.Panel/preview"
+				href2: "https://sdk.openui5.org/entity/sap.m.Panel/sample/sap.m.sample.Panel"
 			}],
 			check: function (oIssueManager, oCoreFacade, oScope) {
 				oScope.getElementsByClassName("sap.m.Panel")

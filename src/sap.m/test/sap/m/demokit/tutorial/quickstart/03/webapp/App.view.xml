@@ -37,7 +37,7 @@
 							<Switch change=".onChange" customTextOn="yes" customTextOff="no"/>
 							<l:HorizontalLayout id="ready" visible="false" class="sapUiSmallMargin">
 								<Text text="Ok, let's get you started!" class="sapUiTinyMarginEnd"/>
-								<Link text="Learn more" href="https://openui5.hana.ondemand.com/"/>
+								<Link text="Learn more" href="https://sdk.openui5.org/"/>
 							</l:HorizontalLayout>
 						</Panel>
 					</l:BlockLayoutCell>

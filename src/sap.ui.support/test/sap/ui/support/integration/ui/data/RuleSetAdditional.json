@@ -26,7 +26,7 @@
 					"resolutionurls": [
 						{
 							"text": "API Reference: FileUploader",
-							"href": "https://openui5.hana.ondemand.com/api/sap.ui.unified.FileUploader"
+							"href": "https://sdk.openui5.org/api/sap.ui.unified.FileUploader"
 						}
 					],
 					"check": "function (oIssueManager, oCoreFacade, oScope) {\n\t\t\toScope.getElementsByClassName(\"sap.ui.unified.FileUploader\")\n\t\t\t\t.forEach(function(oElement) {\n\t\t\t\t\tif (!oElement.getUseMultipart()\n\t\t\t\t\t\t&& !oElement.getSendXHR()) {\n\n\t\t\t\t\t\tvar sElementId = oElement.getId(),\n\t\t\t\t\t\t\tsElementName = oElement.getMetadata().getElementName();\n\n\t\t\t\t\t\toIssueManager.addIssue({\n\t\t\t\t\t\t\tseverity: Severity.High,\n\t\t\t\t\t\t\tdetails: \"FileUploader '\" + sElementName + \"' (\" + sElementId + \") multipart upload cannot be disabled\",\n\t\t\t\t\t\t\tcontext: {\n\t\t\t\t\t\t\t\tid: sElementId\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t});\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t}",

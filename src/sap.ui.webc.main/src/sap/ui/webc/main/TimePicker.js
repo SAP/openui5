@@ -37,7 +37,7 @@ sap.ui.define([
 	 *
 	 * If a time is entered by typing it into the input field, it must fit to the used time format. <br>
 	 * <br>
-	 * Supported format options are pattern-based on Unicode LDML Date Format notation. For more information, see <ui5-link target="_blank" href="http://unicode.org/reports/tr35/#Date_Field_Symbol_Table" class="api-table-content-cell-link">UTS #35: Unicode Locale Data Markup Language</ui5-link>. <br>
+	 * Supported format options are pattern-based on Unicode LDML Date Format notation. For more information, see {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table UTS #35: Unicode Locale Data Markup Language}. <br>
 	 * <br>
 	 * For example, if the <code>format-pattern</code> is "HH:mm:ss", a valid value string is "11:42:35" and the same is displayed in the input.
 	 *

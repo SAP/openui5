@@ -64,7 +64,7 @@
 		  "since": "1.56",
 		  "formFactors": "-",
 		  "description": "In this tutorial, we showcase how to structure your UI5 app using the layout patterns that comply with the SAP Fiori design guidelines.",
-		  "docuLink": "#docs/guide/c4de2df385174e58a689d9847c7553bd.html",
+		  "docuLink": "topic/c4de2df385174e58a689d9847c7553bd",
 		  "samplesAsSteps": [
 			"Setting Up the Initial App",
 			"Creating an Empty Flexible Column Layout",

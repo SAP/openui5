@@ -51,7 +51,7 @@ sap.ui.define([
 	QUnit.module("CustomURLType");
 	QUnit.test("URL Validation", function(assert) {
 		var aValidValues = [
-				"https://openui5.hana.ondemand.com/resources/sap/ui/support/",
+				"https://sdk.openui5.org/resources/sap/ui/support/",
 				"https://www.sap.com:8080/sap/ui/support/"
 			],
 			aInvalidValues = [
@@ -106,7 +106,7 @@ sap.ui.define([
 			aInvalidValues = [
 				"111",
 				"sap is awesome!",
-				"http://www.openui5.hana.ondemand.com",
+				"http://www.sdk.openui5.org",
 				"\"hello\"",
 				"sap_ui",
 				"\\//\\",

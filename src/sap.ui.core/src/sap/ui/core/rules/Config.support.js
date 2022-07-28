@@ -37,15 +37,15 @@ sap.ui.define([
 		resolutionurls: [
 			{
 				text: "Performance: Speed Up Your App",
-				href: "https://openui5.hana.ondemand.com/topic/408b40efed3c416681e1bd8cdd8910d4"
+				href: "https://sdk.openui5.org/topic/408b40efed3c416681e1bd8cdd8910d4"
 			},
 			{
 				text: "Best Practices for Loading Modules Asynchronously",
-				href: "https://openui5.hana.ondemand.com/topic/00737d6c1b864dc3ab72ef56611491c4#loio00737d6c1b864dc3ab72ef56611491c4"
+				href: "https://sdk.openui5.org/topic/00737d6c1b864dc3ab72ef56611491c4"
 			},
 			{
 				text: "Is Your Application Ready for Asynchronous Loading?",
-				href: "https://openui5.hana.ondemand.com/topic/493a15aa978d4fe9a67ea9407166eb01"
+				href: "https://sdk.openui5.org/topic/493a15aa978d4fe9a67ea9407166eb01"
 			}
 		]
 	};
@@ -113,7 +113,7 @@ sap.ui.define([
 			"For more information, see the SAPUI5 developer guide.",
 		resolutionurls: [{
 			text: "Documentation: Cache Buster for SAPUI5 Application Resources",
-			href: "https://openui5.hana.ondemand.com/topic/4cfe7eff3001447a9d4b0abeaba95166"
+			href: "https://sdk.openui5.org/topic/4cfe7eff3001447a9d4b0abeaba95166"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var sUI5ICFNode = "/sap/bc/ui5_ui5/";
@@ -162,7 +162,7 @@ sap.ui.define([
 		resolution: "Adapt your application descriptor and your application coding to improve the performance",
 		resolutionurls: [{
 			text: 'Documentation: Descriptor Dependencies to Libraries and Components',
-			href: 'https://openui5.hana.ondemand.com/topic/8521ad1955f340f9a6207d615c88d7fd'
+			href: 'https://sdk.openui5.org/topic/8521ad1955f340f9a6207d615c88d7fd'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			if (oScope.getType() === "global") {
@@ -246,7 +246,7 @@ sap.ui.define([
 		resolution: "Adapt your application descriptor and your application coding to improve the performance",
 		resolutionurls: [{
 			text: 'Documentation: Descriptor Dependencies to Libraries and Components',
-			href: 'https://openui5.hana.ondemand.com/topic/8521ad1955f340f9a6207d615c88d7fd'
+			href: 'https://sdk.openui5.org/topic/8521ad1955f340f9a6207d615c88d7fd'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var mComponents = oCoreFacade.getComponents();
@@ -293,7 +293,7 @@ sap.ui.define([
 		resolution: "Adapt your application descriptor and your application coding to improve the performance",
 		resolutionurls: [{
 			text: 'Documentation: Using and Nesting Components',
-			href: 'https://openui5.hana.ondemand.com/topic/346599f0890d4dfaaa11c6b4ffa96312'
+			href: 'https://sdk.openui5.org/topic/346599f0890d4dfaaa11c6b4ffa96312'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var mComponents = oCoreFacade.getComponents();
@@ -343,7 +343,7 @@ sap.ui.define([
 		resolution: "Adapt your application descriptor and your application coding to improve the performance",
 		resolutionurls: [{
 			text: 'Documentation: Manifest Model Preload',
-			href: 'https://openui5.hana.ondemand.com/topic/26ba6a5c1e5c417f8b21cce1411dba2c'
+			href: 'https://sdk.openui5.org/topic/26ba6a5c1e5c417f8b21cce1411dba2c'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var mComponents = oCoreFacade.getComponents();
@@ -395,10 +395,10 @@ sap.ui.define([
 		resolution: "Set manifest parameter models[<Model Name>].settings.earlyRequests to true",
 		resolutionurls: [{
 			text: 'Documentation: Manifest Model Preload',
-			href: 'https://openui5.hana.ondemand.com/topic/26ba6a5c1e5c417f8b21cce1411dba2c'
+			href: 'https://sdk.openui5.org/topic/26ba6a5c1e5c417f8b21cce1411dba2c'
 		}, {
 			text: 'API: V4 ODataModel, parameter earlyRequests',
-			href: 'https://openui5.hana.ondemand.com/api/sap.ui.model.odata.v4.ODataModel'
+			href: 'https://sdk.openui5.org/api/sap.ui.model.odata.v4.ODataModel'
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var mComponents = oCoreFacade.getComponents();
@@ -446,13 +446,13 @@ sap.ui.define([
 		resolution: "Adapt your application descriptor and your application coding to improve the performance and efficiency",
 		resolutionurls: [{
 			text: 'Documentation: Routing Configuration',
-			href: 'https://openui5.hana.ondemand.com/topic/902313063d6f45aeaa3388cc4c13c34e'
+			href: 'https://sdk.openui5.org/topic/902313063d6f45aeaa3388cc4c13c34e'
 		}, {
 			text: "Documentation: Instantiating Views",
-			href: "https://openui5.hana.ondemand.com/topic/68d0e58857a647d49470d9f92dd859bd"
+			href: "https://sdk.openui5.org/topic/68d0e58857a647d49470d9f92dd859bd"
 		}, {
 			text: "Documentation: UI Adaptation at Runtime: Enable Your App",
-			href: "https://openui5.hana.ondemand.com/topic/f1430c0337534d469da3a56307ff76af"
+			href: "https://sdk.openui5.org/topic/f1430c0337534d469da3a56307ff76af"
 		}],
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			var mComponents = oCoreFacade.getComponents();

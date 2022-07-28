@@ -675,7 +675,7 @@ sap.ui.define([
 
 		};
 
-		ViewInfo.DemokitUrl = "https://openui5.hana.ondemand.com/api/";
+		ViewInfo.DemokitUrl = "https://sdk.openui5.org/api/";
 
 		ViewInfo.prototype.updateObjectInfo = function(oData, iIdx, sReason) {
 			var oObjectViewer = this.aObjectViewers[iIdx],

@@ -64,7 +64,7 @@ sap.ui.define([
 				/**
 				 * Defines the icon to be displayed as graphical element within the component. The SAP-icons font provides numerous options. <br>
 				 * <br>
-				 * <b>* Example:</b> See all the available icons in the <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" class="api-table-content-cell-link">Icon Explorer</ui5-link>.
+				 * <b>* Example:</b> See all the available icons in the {@link demo:sap/m/demokit/iconExplorer/webapp/index.html Icon Explorer}.
 				 */
 				icon: {
 					type: "string",

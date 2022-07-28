@@ -153,15 +153,15 @@ sap.ui.define([
 					bHideTopicSection: !!window['sap-ui-documentation-hideTopicSection'],
 					bHideApiSection: !!window['sap-ui-documentation-hideApiSection'],
 					sAboutInfoSAPUI5: "Looking for the Demo Kit for a specific SAPUI5 version? " +
-					"Check at <a href = 'https://sapui5.hana.ondemand.com/versionoverview.html'>https://sapui5.hana.ondemand.com/versionoverview.html</a> " +
+					"Check at <a href = 'https://ui5.sap.com/versionoverview.html'>https://ui5.sap.com/versionoverview.html</a> " +
 					"which versions are available. " +
 					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
-					"<a href='https://sapui5.hana.ondemand.com/1.52.4/'>https://sapui5.hana.ondemand.com/1.52.4/</a>",
+					"<a href='https://ui5.sap.com/1.71.46/'>https://ui5.sap.com/1.71.46/</a>",
 					sAboutInfoOpenUI5: "Looking for the Demo Kit for a specific OpenUI5 version? " +
-					"Check at <a href = 'https://openui5.hana.ondemand.com/versionoverview.html'>https://openui5.hana.ondemand.com/versionoverview.html</a> " +
+					"Check at <a href = 'https://sdk.openui5.org/versionoverview.html'>https://sdk.openui5.org/versionoverview.html</a> " +
 					"which versions are available. " +
 					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
-					"<a href='https://openui5.hana.ondemand.com/1.52.4/'>https://openui5.hana.ondemand.com/1.52.4/</a>",
+					"<a href='https://sdk.openui5.org/1.71.46/'>https://sdk.openui5.org/1.71.46/</a>",
 					bUseFeedbackDialog: false // enable to restore previous feedback dialog and hide the Qualtrics surveys
 				});
 

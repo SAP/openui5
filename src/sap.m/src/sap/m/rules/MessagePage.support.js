@@ -40,7 +40,7 @@ function(SupportLib) {
 		resolution: "Use Message Page in a container with set height, such as sap.m.App",
 		resolutionurls: [{
 			text: "sap.m.MessagePage API Reference",
-			href: "https://openui5.hana.ondemand.com/api/sap.m.MessagePage"
+			href: "https://sdk.openui5.org/api/sap.m.MessagePage"
 		}],
 		check: function (oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName("sap.m.MessagePage").forEach(function(oMPage) {

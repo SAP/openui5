@@ -236,7 +236,7 @@ sap.ui.define([
 
 		_formatMockFile: function (sMockData) {
 			var sWrongPath = "test-resources/sap/ui/documentation/sdk/images/",
-				sCorrectPath = "https://openui5.hana.ondemand.com/test-resources/sap/ui/documentation/sdk/images/",
+				sCorrectPath = "https://sdk.openui5.org/test-resources/sap/ui/documentation/sdk/images/",
 				oRegExp = new RegExp(sWrongPath, "g");
 
 			return sMockData.replace(oRegExp, sCorrectPath);

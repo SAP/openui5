@@ -702,15 +702,15 @@ sap.ui.define([
 				},
 				{
 					"DisplayName": "OpenUI5 CDN",
-					"Value": "https://openui5.hana.ondemand.com/resources/sap/ui/support/"
+					"Value": "https://sdk.openui5.org/resources/sap/ui/support/"
 				},
 				{
 					"DisplayName": "OpenUI5 (Nightly)",
-						"Value": "https://openui5nightly.hana.ondemand.com/resources/sap/ui/support/"
+						"Value": "https://sdk.openui5.org/nightly/resources/sap/ui/support/"
 				},
 				{
 					"DisplayName": "SAPUI5 CDN",
-					"Value": "https://sapui5.hana.ondemand.com/resources/sap/ui/support/"
+					"Value": "https://ui5.sap.com/resources/sap/ui/support/"
 				}
 			];
 			var sDebugModulesTitle = this._getText("TechInfo.DebugModulesConfigPopup.SelectionCounter", oViewModel.DebugModuleSelectionCount);

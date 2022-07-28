@@ -29,14 +29,14 @@
 		}
 		function _init() {
 			var oScript = document.createElement("script");
-			oScript.setAttribute("src", "https://sapui5nightly.int.sap.eu2.hana.ondemand.com/resources/sap-ui-integration-nojQuery.js");
+			oScript.setAttribute("src", "https://sdk.openui5.org/resources/sap-ui-integration-nojQuery.js");
 			oScript.setAttribute("id", "sap-ui-bootstrap");
 			oScript.setAttribute("data-sap-ui-theme", "sap_fiori_3");
 			//oScript.setAttribute("data-sap-ui-oninit", "init");
 			oScript.addEventListener("load", function () {
 				init();
 			})
-			oScript.setAttribute("data-sap-ui-resourceroots", '{"":"https://sapui5nightly.int.sap.eu2.hana.ondemand.com/resources","testjs":"./"}');
+			oScript.setAttribute("data-sap-ui-resourceroots", '{"":"https://sdk.openui5.org/resources","testjs":"./"}');
 			document.head.appendChild(oScript);
 		}
 	</script>
