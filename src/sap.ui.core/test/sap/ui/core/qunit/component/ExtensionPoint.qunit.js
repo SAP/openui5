@@ -359,24 +359,27 @@ sap.ui.define([
 		return XMLView.create({
 			viewName: "testdata.customizing.customer.ext.Main"
 		}).then(function(oView) {
+			var oNestedView = oView.byId("EPinBinding_in_nestedView");
+			return oNestedView.loaded().then(function() {
+				// reset the spy before loading the fragment
+				this.oEPSpy.resetHistory();
 
-			// reset the spy before loading the fragment
-			this.oEPSpy.resetHistory();
-
-			// should trigger exactly 1 EP Provider call
-			return Fragment.load({
-				id: "EPInFragment",
-				name: "testdata.customizing.customer.ext.FragmentWithEP",
-				type: "XML",
-				containingView: oView
-			}).then(function(oFragmentContent) {
-				assert.equal(this.oEPSpy.args.length, 1, "1 Call to the EP Provider");
-				// EP in Fragment
-				var oArgsEPInFragment = this.oEPSpy.args[0][0];
-				assert.equal(oArgsEPInFragment.name, "EPInFragment", "EPInFragment");
-				assert.ok(oArgsEPInFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPInFragment: View instance is correct");
-				assert.equal(oArgsEPInFragment.fragmentId, "EPInFragment", "Local Fragment-ID is passed for 'EPInFragment'");
-				oFragmentContent.destroy();
+				// should trigger exactly 1 EP Provider call
+				return Fragment.load({
+					id: "EPInFragment",
+					name: "testdata.customizing.customer.ext.FragmentWithEP",
+					type: "XML",
+					containingView: oView
+				}).then(function(oFragmentContent) {
+					assert.equal(this.oEPSpy.args.length, 1, "1 Call to the EP Provider");
+					// EP in Fragment
+					var oArgsEPInFragment = this.oEPSpy.args[0][0];
+					assert.equal(oArgsEPInFragment.name, "EPInFragment", "EPInFragment");
+					assert.ok(oArgsEPInFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPInFragment: View instance is correct");
+					assert.equal(oArgsEPInFragment.fragmentId, "EPInFragment", "Local Fragment-ID is passed for 'EPInFragment'");
+					oFragmentContent.destroy();
+					oView.destroy();
+				}.bind(this));
 			}.bind(this));
 		}.bind(this));
 	});
@@ -389,106 +392,109 @@ sap.ui.define([
 			viewName: "testdata.customizing.customer.ext.Main",
 			id: "myView"
 		}).then(function(oView) {
-			// inspect EP Provider calls
-			assert.equal(this.oEPSpy.args.length, 16, "16 Calls to the EP Provider");
+			var oNestedView = oView.byId("EPinBinding_in_nestedView");
+			return oNestedView.loaded().then(function() {
+				// inspect EP Provider calls
+				assert.equal(this.oEPSpy.args.length, 16, "16 Calls to the EP Provider");
 
-			// EP 1
-			var oArgsEP1 = this.oEPSpy.args[0][0];
-			assert.equal(oArgsEP1.name, "EP1", "EP1");
-			assert.ok(oArgsEP1.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP1: View instance is correct");
+				// EP 1
+				var oArgsEP1 = this.oEPSpy.args[0][0];
+				assert.equal(oArgsEP1.name, "EP1", "EP1");
+				assert.ok(oArgsEP1.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP1: View instance is correct");
 
-			// EP 2
-			var oArgsEP2 = this.oEPSpy.args[1][0];
-			assert.equal(oArgsEP2.name, "EP2", "EP2");
-			assert.ok(oArgsEP2.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP2: View instance is correct");
+				// EP 2
+				var oArgsEP2 = this.oEPSpy.args[1][0];
+				assert.equal(oArgsEP2.name, "EP2", "EP2");
+				assert.ok(oArgsEP2.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP2: View instance is correct");
 
-			// Closest Binding Carrier Test: EPinBinding from Fragement
-			// EP Product_Table_Cell_Ext
-			var oArgsProductTableCellInFragment = this.oEPSpy.args[2][0];
-			assert.equal(oArgsProductTableCellInFragment.name, "Product_Table_Cell_Ext", "Product_Table_Cell_Ext");
-			assert.ok(oArgsProductTableCellInFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "Product_Table_Cell_Ext: View instance is correct");
-			assert.equal(oArgsProductTableCellInFragment.closestAggregationBindingCarrier, "myView--EPinBinding--product_table", "BindingCarrier ID set correctly");
-			assert.equal(oArgsProductTableCellInFragment.closestAggregationBinding, "items", "BindingCarrier aggregation set cortrectly");
+				// Closest Binding Carrier Test: EPinBinding from Fragement
+				// EP Product_Table_Cell_Ext
+				var oArgsProductTableCellInFragment = this.oEPSpy.args[2][0];
+				assert.equal(oArgsProductTableCellInFragment.name, "Product_Table_Cell_Ext", "Product_Table_Cell_Ext");
+				assert.ok(oArgsProductTableCellInFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "Product_Table_Cell_Ext: View instance is correct");
+				assert.equal(oArgsProductTableCellInFragment.closestAggregationBindingCarrier, "myView--EPinBinding--product_table", "BindingCarrier ID set correctly");
+				assert.equal(oArgsProductTableCellInFragment.closestAggregationBinding, "items", "BindingCarrier aggregation set cortrectly");
 
-			// EP Product_Table_Column_Ext
-			var oArgsProductTableColumnInFragment = this.oEPSpy.args[3][0];
-			assert.equal(oArgsProductTableColumnInFragment.name, "Product_Table_Column_Ext", "Product_Table_Column_Ext");
-			assert.ok(oArgsProductTableColumnInFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "Product_Table_Column_Ext: View instance is correct");
-			assert.equal(oArgsProductTableColumnInFragment.closestAggregationBindingCarrier, "myView--EPinBinding--supplier_panel", "BindingCarrier ID set correctly");
-			assert.equal(oArgsProductTableColumnInFragment.closestAggregationBinding, "content", "BindingCarrier aggregation set cortrectly");
+				// EP Product_Table_Column_Ext
+				var oArgsProductTableColumnInFragment = this.oEPSpy.args[3][0];
+				assert.equal(oArgsProductTableColumnInFragment.name, "Product_Table_Column_Ext", "Product_Table_Column_Ext");
+				assert.ok(oArgsProductTableColumnInFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "Product_Table_Column_Ext: View instance is correct");
+				assert.equal(oArgsProductTableColumnInFragment.closestAggregationBindingCarrier, "myView--EPinBinding--supplier_panel", "BindingCarrier ID set correctly");
+				assert.equal(oArgsProductTableColumnInFragment.closestAggregationBinding, "content", "BindingCarrier aggregation set cortrectly");
 
-			// EP Panel_Button_Ext
-			var oArgsPanelButtonInFragment = this.oEPSpy.args[4][0];
-			assert.equal(oArgsPanelButtonInFragment.name, "Panel_Button_Ext", "Panel_Button_Ext");
-			assert.ok(oArgsPanelButtonInFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "Panel_Button_Ext: View instance is correct");
-			assert.equal(oArgsPanelButtonInFragment.closestAggregationBindingCarrier, "myView--EPinBinding--supplier_panel", "BindingCarrier ID set correctly");
-			assert.equal(oArgsPanelButtonInFragment.closestAggregationBinding, "content", "BindingCarrier aggregation set cortrectly");
+				// EP Panel_Button_Ext
+				var oArgsPanelButtonInFragment = this.oEPSpy.args[4][0];
+				assert.equal(oArgsPanelButtonInFragment.name, "Panel_Button_Ext", "Panel_Button_Ext");
+				assert.ok(oArgsPanelButtonInFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "Panel_Button_Ext: View instance is correct");
+				assert.equal(oArgsPanelButtonInFragment.closestAggregationBindingCarrier, "myView--EPinBinding--supplier_panel", "BindingCarrier ID set correctly");
+				assert.equal(oArgsPanelButtonInFragment.closestAggregationBinding, "content", "BindingCarrier aggregation set cortrectly");
 
-			// EP 0
-			var oArgsEP0 = this.oEPSpy.args[5][0];
-			assert.equal(oArgsEP0.name, "EP0", "EP0");
-			assert.ok(oArgsEP0.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP0: View instance is correct");
+				// EP 0
+				var oArgsEP0 = this.oEPSpy.args[5][0];
+				assert.equal(oArgsEP0.name, "EP0", "EP0");
+				assert.ok(oArgsEP0.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP0: View instance is correct");
 
-			// EP 99
-			var oArgsEP99 = this.oEPSpy.args[6][0];
-			assert.equal(oArgsEP99.name, "EP99", "EP99");
-			assert.ok(oArgsEP99.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP99: View instance is correct");
+				// EP 99
+				var oArgsEP99 = this.oEPSpy.args[6][0];
+				assert.equal(oArgsEP99.name, "EP99", "EP99");
+				assert.ok(oArgsEP99.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP99: View instance is correct");
 
-			// EP 23
-			var oArgsEP23 = this.oEPSpy.args[7][0];
-			assert.equal(oArgsEP23.name, "EP23", "EP23");
-			assert.ok(oArgsEP23.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP23: View instance is correct");
+				// EP 23
+				var oArgsEP23 = this.oEPSpy.args[7][0];
+				assert.equal(oArgsEP23.name, "EP23", "EP23");
+				assert.ok(oArgsEP23.view.getMetadata().isA("sap.ui.core.mvc.View"), "EP23: View instance is correct");
 
-			// EP Table
-			var oArgsEPTable = this.oEPSpy.args[8][0];
-			assert.equal(oArgsEPTable.name, "EPTable", "EPTable");
-			assert.ok(oArgsEPTable.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPTable: View instance is correct");
+				// EP Table
+				var oArgsEPTable = this.oEPSpy.args[8][0];
+				assert.equal(oArgsEPTable.name, "EPTable", "EPTable");
+				assert.ok(oArgsEPTable.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPTable: View instance is correct");
 
-			//EPinEPRoot
-			var oArgsEPinEP = this.oEPSpy.args[9][0];
-			assert.equal(oArgsEPinEP.name, "EPinEPRoot", "EPinEPRoot");
-			assert.ok(oArgsEPinEP.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPinEPRoot: View instance is correct");
+				//EPinEPRoot
+				var oArgsEPinEP = this.oEPSpy.args[9][0];
+				assert.equal(oArgsEPinEP.name, "EPinEPRoot", "EPinEPRoot");
+				assert.ok(oArgsEPinEP.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPinEPRoot: View instance is correct");
 
-			//EPinRootFragmentRoot
-			var oArgsEPinRootFragment = this.oEPSpy.args[10][0];
-			assert.equal(oArgsEPinRootFragment.name, "EPinRootFragment", "EPinRootFragment");
-			assert.ok(oArgsEPinRootFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPinRootFragment: View instance is correct");
+				//EPinRootFragmentRoot
+				var oArgsEPinRootFragment = this.oEPSpy.args[10][0];
+				assert.equal(oArgsEPinRootFragment.name, "EPinRootFragment", "EPinRootFragment");
+				assert.ok(oArgsEPinRootFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPinRootFragment: View instance is correct");
 
-			// EP Root
-			var oArgsEPRoot = this.oEPSpy.args[11][0];
-			assert.equal(oArgsEPRoot.name, "EPRoot", "EPRoot");
-			assert.ok(oArgsEPRoot.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPRoot: View instance is correct");
-			assert.equal(oArgsEPRoot.fragmentId, "EPRootFragment", "Local Fragment-ID is passed for 'EPRootFragment'");
+				// EP Root
+				var oArgsEPRoot = this.oEPSpy.args[11][0];
+				assert.equal(oArgsEPRoot.name, "EPRoot", "EPRoot");
+				assert.ok(oArgsEPRoot.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPRoot: View instance is correct");
+				assert.equal(oArgsEPRoot.fragmentId, "EPRootFragment", "Local Fragment-ID is passed for 'EPRootFragment'");
 
-			// NestingFragment --> EP Root
-			var oArgsEPRootNested = this.oEPSpy.args[12][0];
-			assert.equal(oArgsEPRootNested.name, "EPRoot", "EPRoot");
-			assert.ok(oArgsEPRootNested.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPRoot: View instance is correct");
-			assert.equal(oArgsEPRootNested.fragmentId, "NestingFragment--EPRootFragment", "Local Fragment-ID is passed for 'EPRootFragment'");
+				// NestingFragment --> EP Root
+				var oArgsEPRootNested = this.oEPSpy.args[12][0];
+				assert.equal(oArgsEPRootNested.name, "EPRoot", "EPRoot");
+				assert.ok(oArgsEPRootNested.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPRoot: View instance is correct");
+				assert.equal(oArgsEPRootNested.fragmentId, "NestingFragment--EPRootFragment", "Local Fragment-ID is passed for 'EPRootFragment'");
 
-			// Closest Binding Carrier Test: EPinBinding from nested View
-			// EP Product_Table_Cell_Ext_In_View
-			var oArgsProductTableCellInView = this.oEPSpy.args[13][0];
-			assert.equal(oArgsProductTableCellInView.name, "Product_Table_Cell_Ext_In_View", "Product_Table_Cell_Ext_In_View");
-			assert.ok(oArgsProductTableCellInView.view.getMetadata().isA("sap.ui.core.mvc.View"), "Product_Table_Cell_Ext_In_View: View instance is correct");
-			assert.equal(oArgsProductTableCellInView.closestAggregationBindingCarrier, "myView--EPinBinding_in_nestedView--product_table", "BindingCarrier ID set correctly");
-			assert.equal(oArgsProductTableCellInView.closestAggregationBinding, "items", "BindingCarrier aggregation set cortrectly");
+				// Closest Binding Carrier Test: EPinBinding from nested View
+				// EP Product_Table_Cell_Ext_In_View
+				var oArgsProductTableCellInView = this.oEPSpy.args[13][0];
+				assert.equal(oArgsProductTableCellInView.name, "Product_Table_Cell_Ext_In_View", "Product_Table_Cell_Ext_In_View");
+				assert.ok(oArgsProductTableCellInView.view.getMetadata().isA("sap.ui.core.mvc.View"), "Product_Table_Cell_Ext_In_View: View instance is correct");
+				assert.equal(oArgsProductTableCellInView.closestAggregationBindingCarrier, "myView--EPinBinding_in_nestedView--product_table", "BindingCarrier ID set correctly");
+				assert.equal(oArgsProductTableCellInView.closestAggregationBinding, "items", "BindingCarrier aggregation set cortrectly");
 
-			// EP Product_Table_Column_Ext_In_View
-			var oArgsProductTableColumnInView = this.oEPSpy.args[14][0];
-			assert.equal(oArgsProductTableColumnInView.name, "Product_Table_Column_Ext_In_View", "Product_Table_Column_Ext_In_View");
-			assert.ok(oArgsProductTableColumnInView.view.getMetadata().isA("sap.ui.core.mvc.View"), "Product_Table_Column_Ext_In_View: View instance is correct");
-			assert.equal(oArgsProductTableColumnInView.closestAggregationBindingCarrier, "myView--EPinBinding_in_nestedView", "BindingCarrier ID set correctly");
-			assert.equal(oArgsProductTableColumnInView.closestAggregationBinding, "dependents", "BindingCarrier aggregation set cortrectly");
+				// EP Product_Table_Column_Ext_In_View
+				var oArgsProductTableColumnInView = this.oEPSpy.args[14][0];
+				assert.equal(oArgsProductTableColumnInView.name, "Product_Table_Column_Ext_In_View", "Product_Table_Column_Ext_In_View");
+				assert.ok(oArgsProductTableColumnInView.view.getMetadata().isA("sap.ui.core.mvc.View"), "Product_Table_Column_Ext_In_View: View instance is correct");
+				assert.equal(oArgsProductTableColumnInView.closestAggregationBindingCarrier, "myView--EPinBinding_in_nestedView", "BindingCarrier ID set correctly");
+				assert.equal(oArgsProductTableColumnInView.closestAggregationBinding, "dependents", "BindingCarrier aggregation set cortrectly");
 
-			// EP Panel_Button_Ext_In_View
-			var oArgsPanelButtonInView = this.oEPSpy.args[15][0];
-			assert.equal(oArgsPanelButtonInView.name, "Panel_Button_Ext_In_View", "Panel_Button_Ext_In_View");
-			assert.ok(oArgsPanelButtonInView.view.getMetadata().isA("sap.ui.core.mvc.View"), "Panel_Button_Ext_In_View: View instance is correct");
-			assert.equal(oArgsPanelButtonInView.closestAggregationBindingCarrier, "myView--EPinBinding_in_nestedView", "BindingCarrier ID set correctly");
-			assert.equal(oArgsPanelButtonInView.closestAggregationBinding, "dependents", "BindingCarrier aggregation set cortrectly");
+				// EP Panel_Button_Ext_In_View
+				var oArgsPanelButtonInView = this.oEPSpy.args[15][0];
+				assert.equal(oArgsPanelButtonInView.name, "Panel_Button_Ext_In_View", "Panel_Button_Ext_In_View");
+				assert.ok(oArgsPanelButtonInView.view.getMetadata().isA("sap.ui.core.mvc.View"), "Panel_Button_Ext_In_View: View instance is correct");
+				assert.equal(oArgsPanelButtonInView.closestAggregationBindingCarrier, "myView--EPinBinding_in_nestedView", "BindingCarrier ID set correctly");
+				assert.equal(oArgsPanelButtonInView.closestAggregationBinding, "dependents", "BindingCarrier aggregation set cortrectly");
 
-			oView.destroy();
+				oView.destroy();
+			}.bind(this));
 		}.bind(this));
 
 	});
