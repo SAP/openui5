@@ -1,10 +1,40 @@
-<mvc:View xmlns:form="sap.ui.layout.form" xmlns:cssgrid="sap.ui.layout.cssgrid" xmlns:layout="sap.ui.layout"
+<mvc:View
 	controllerName="sap.f.cardsdemo.controller.CardMeasurements"
+	xmlns:cssgrid="sap.ui.layout.cssgrid"
+	xmlns:layout="sap.ui.layout"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:f="sap.f"
-	xmlns:w="sap.ui.integration.widgets"
+	xmlns:codeeditor="sap.ui.codeeditor"
 	displayBlock="true">
+	<mvc:dependents>
+		<VBox id="measurementDetails" class="sapUiTinyMarginTopBottom">
+			<Title text="{cardMeasurements>id}" wrapping="true" titleStyle="H5"></Title>
+			<HBox class="sapUiTinyMarginBottom" renderType="Bare">
+				<Label text="Start Time" showColon="true" class="sapUiTinyMarginEnd">
+					<layoutData>
+						<FlexItemData shrinkFactor="0"></FlexItemData>
+					</layoutData>
+				</Label>
+				<Text text="{cardMeasurements>start}" wrapping="true"/>
+			</HBox>
+			<HBox class="sapUiTinyMarginBottom" renderType="Bare">
+				<Label text="Duration (ms)" showColon="true" class="sapUiTinyMarginEnd">
+					<layoutData>
+						<FlexItemData shrinkFactor="0"></FlexItemData>
+					</layoutData>
+				</Label>
+				<Text text="{cardMeasurements>duration}" wrapping="true"/>
+			</HBox>
+			<HBox class="sapUiTinyMarginBottom" renderType="Bare">
+				<Label text="Info" showColon="true" class="sapUiTinyMarginEnd">
+					<layoutData>
+						<FlexItemData shrinkFactor="0"></FlexItemData>
+					</layoutData>
+				</Label>
+				<Text text="{cardMeasurements>info}" wrapping="true"/>
+			</HBox>
+		</VBox>
+	</mvc:dependents>
 	<Page title="{i18n>appTitle}">
 		<subHeader>
 			<Toolbar>
@@ -13,58 +43,24 @@
 				<ToolbarSpacer/>
 			</Toolbar>
 		</subHeader>
+		<FormattedText
+			htmlText="To enable the measurements add &lt;strong&gt;sap-ui-measure=true&lt;/strong&gt; in the query string of the URL"
+			class="sapUiSmallMargin">
+		</FormattedText>
+		<Panel headerText="Snippets for API usage" expandable="true" content="{cardMeasurements>/snippets}">
+			<VBox >
+				<Title text="{cardMeasurements>title}" class="sapUiTinyMarginBottom" titleStyle="H5"></Title>
+				<codeeditor:CodeEditor value="{cardMeasurements>code}" height="3rem" class="sapUiSmallMarginBottom"></codeeditor:CodeEditor>
+			</VBox>
+		</Panel>
 		<layout:VerticalLayout class="sapUiSmallMargin">
-			<FormattedText htmlText="To enable the measurements add &lt;strong&gt;sap-ui-measure=true&lt;/strong&gt; in the query string of the URL" class="sapUiTinyMarginBottom"></FormattedText>
 			<MessageStrip text="This page is not optimized and the results should not be taken into account!" class="sapUiTinyMarginBottom"></MessageStrip>
 			<Button text="Show Measurements" press=".showMeasurements"></Button>
 		</layout:VerticalLayout>
-
-		<dependents>
-			<VBox id="measurementDetails">
-				<Title text="{id}" wrapping="true"></Title>
-				<HBox class="sapUiTinyMarginBottom" renderType="Bare">
-					<Label text="Start Time" showColon="true" class="sapUiTinyMarginEnd">
-						<layoutData>
-							<FlexItemData shrinkFactor="0"></FlexItemData>
-						</layoutData>
-					</Label>
-					<Text text="{start}" wrapping="true"/>
-				</HBox>
-				<HBox class="sapUiTinyMarginBottom" renderType="Bare">
-					<Label text="Duration (ms)" showColon="true" class="sapUiTinyMarginEnd">
-						<layoutData>
-							<FlexItemData shrinkFactor="0"></FlexItemData>
-						</layoutData>
-					</Label>
-					<Text text="{duration}" wrapping="true"/>
-				</HBox>
-				<HBox class="sapUiTinyMarginBottom" renderType="Bare">
-					<Label text="Info" showColon="true" class="sapUiTinyMarginEnd">
-						<layoutData>
-							<FlexItemData shrinkFactor="0"></FlexItemData>
-						</layoutData>
-					</Label>
-					<Text text="{info}" wrapping="true"/>
-				</HBox>
-			</VBox>
-		</dependents>
-
-		<cssgrid:CSSGrid class="sapUiSmallMargin" width="calc(100% - 2rem)">
+		<cssgrid:CSSGrid class="sapUiSmallMargin" width="calc(100% - 2rem)" items="{path: 'cardMeasurements>/cards', factory: '.cardFactory'}">
 			<cssgrid:customLayout>
 				<cssgrid:GridBoxLayout boxMinWidth="20rem"></cssgrid:GridBoxLayout>
 			</cssgrid:customLayout>
-			<VBox>
-				<VBox items="{ path: '/listCard/measurements', factory: '.measurementDetailsFactory' }"></VBox>
-				<w:Card id="listCard" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="cardsdemo/bundles/listbundle/manifest.json"></w:Card>
-			</VBox>
-			<VBox>
-				<VBox items="{ path: '/cardWithExtension/measurements', factory: '.measurementDetailsFactory' }"></VBox>
-				<w:Card id="cardWithExtension" manifest="cardsdemo/bundles/cardWithExtension/manifest.json"></w:Card>
-			</VBox>
-			<VBox>
-				<VBox items="{ path: '/analyticalLineSingleData/measurements', factory: '.measurementDetailsFactory' }"></VBox>
-				<w:Card id="analyticalLineSingleData" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="cardsdemo/bundles/analyticalLineSingleData/manifest.json"></w:Card>
-			</VBox>
 		</cssgrid:CSSGrid>
 	</Page>
 </mvc:View>
