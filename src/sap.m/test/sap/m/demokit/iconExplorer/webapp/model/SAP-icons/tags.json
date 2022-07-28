@@ -6667,9 +6667,9 @@
 			"tri-state"
 		]
 	},
-	"binary": {
+	"non-binary": {
 		"tags": [
-			"binary",
+			"non-binary",
 			"shapes",
 			"symbol",
 			"gender"

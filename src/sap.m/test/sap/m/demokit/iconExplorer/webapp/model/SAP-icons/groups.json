@@ -127,7 +127,7 @@
 				{ "name" : "user-settings" },
 				{ "name" : "visits" },
 				{ "name" : "add-employee" },
-				{ "name" : "binary" },
+				{ "name" : "non-binary" },
 				{ "name" : "female" },
 				{ "name" : "gender-male-and-female" },
 				{ "name" : "male" }
