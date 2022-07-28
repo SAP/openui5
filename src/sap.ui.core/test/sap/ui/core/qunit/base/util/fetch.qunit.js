@@ -25,6 +25,7 @@ sap.ui.define(["sap/base/util/fetch"], function(fetch) {
 			assert.ok(response.ok, "The Status of the request should be 'ok'.");
 			assert.ok(response.headers instanceof Headers, "The 'SimpleResponse.headers' property should contain an instance of Headers.");
 			assert.equal(response.headers.get("Content-Type"), "application/json", "The 'Content-Type' header should be correct.");
+			assert.notOk(response.xhr, "XHR object should not be exposed.");
 
 			// SimpleRespone methods
 			var pText = response.text().then(function(responseText) {
