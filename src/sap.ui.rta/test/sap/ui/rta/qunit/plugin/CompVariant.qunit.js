@@ -425,6 +425,26 @@ sap.ui.define([
 			oMenuItem.handler([this.oOverlay]);
 			return pReturn;
 		});
+
+		QUnit.test("the handler is called and the dialog resolves to undefined", function(assert) {
+			this.oDTHandlerStub.resolves();
+			var oGetCommandSpy = sandbox.spy(this.oPlugin.getCommandFactory(), "getCommandFor");
+
+			var oMenuItem = this.oPlugin.getMenuItems([this.oOverlay])[0];
+			return oMenuItem.handler([this.oOverlay]).then(function() {
+				assert.strictEqual(oGetCommandSpy.callCount, 0, "no command was created");
+			});
+		});
+
+		QUnit.test("the handler is called and the dialog resolves to empty array", function(assert) {
+			this.oDTHandlerStub.resolves([]);
+			var oGetCommandSpy = sandbox.spy(this.oPlugin.getCommandFactory(), "getCommandFor");
+
+			var oMenuItem = this.oPlugin.getMenuItems([this.oOverlay])[0];
+			return oMenuItem.handler([this.oOverlay]).then(function() {
+				assert.strictEqual(oGetCommandSpy.callCount, 0, "no command was created");
+			});
+		});
 	});
 
 	QUnit.done(function() {
