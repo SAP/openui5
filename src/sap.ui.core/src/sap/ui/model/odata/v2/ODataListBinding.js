@@ -141,6 +141,8 @@ sap.ui.define([
 				this._removePersistedCreatedContexts();
 				this.resetData();
 			}
+
+			this._reassignCreateActivate();
 		},
 
 		metadata : {
@@ -2163,6 +2165,24 @@ sap.ui.define([
 			this._refresh();
 			this.sRefreshGroupId = undefined;
 		}
+	};
+
+	/**
+	 * Assigns the "createActivate"-event to all already exisiting inactive contexts which are
+	 * belonging to this binding.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype._reassignCreateActivate = function () {
+		var that = this;
+
+		this._getCreatedContexts().forEach(function (oContext) {
+			if (oContext.isInactive()) {
+				oContext.fetchActivated().then(function () {
+					that.fireEvent("createActivate");
+				});
+			}
+		});
 	};
 
 	return ODataListBinding;
