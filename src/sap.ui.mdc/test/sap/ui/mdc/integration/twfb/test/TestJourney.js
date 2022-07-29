@@ -67,7 +67,6 @@ sap.ui.define([
 	QUnit.module("TwFb - Books", oModuleSettings);
 
 
-
 	opaTest("twfb - start app and test mdc links", function(Given, When, Then) {
 		Given.iStartMyUIComponentInViewMode();
 
@@ -336,6 +335,24 @@ sap.ui.define([
 		Then.iTeardownMyUIComponent();
 	});
 
+	opaTest("twfb - Search a book via Created On DateTime filterfield.", function(Given, When, Then) {
+		var booksComponentID = "listreport---books--";
+		var sFilterBarID = booksComponentID + "booksFilterBar";
+
+		// I start the Manage Books TwFb example app
+		Given.iStartMyUIComponentInViewMode();
+
+		When.onTheMDCFilterBar.iPersonalizeFilter(sFilterBarID, {	Books: ["Created On"] });
+		When.onTheMDCFilterField.iEnterTextOnTheFilterField("Created On", "Feb 22, 2005, 6:24:25 PM");
+
+		//I press the Go button (or press enter in the search field)
+		When.onTheMDCFilterBar.iExpectSearch(sFilterBarID);
+
+		//I should see a table with one book and the title “The Yellow Wallpaper“
+		Then.onTheMDCTable.iShouldSeeRowsWithData(1);
+
+		Then.iTeardownMyUIComponent();
+	});
 
 
 });
