@@ -2137,7 +2137,7 @@ sap.ui.define([
 			}).then(function(oDescriptorVariant) {
 				return oDescriptorVariant.submit().then(function(oResponse) {
 					assert.notEqual(oResponse, null);
-					assert.equal(that._fStubSend.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?sap-language=en");
+					assert.equal(that._fStubSend.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?sap-language=EN");
 				});
 			});
 		});
@@ -2151,7 +2151,7 @@ sap.ui.define([
 			}).then(function(oDescriptorVariant) {
 				return oDescriptorVariant.submit().then(function(oResponse) {
 					assert.notEqual(oResponse, null);
-					assert.equal(that._fStubSend.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?sap-language=en");
+					assert.equal(that._fStubSend.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?sap-language=EN");
 					assert.equal(JSON.parse(that._fStubSend.getCall(0).args[2].payload).referenceVersion, "1.1");
 				});
 			});
@@ -2166,7 +2166,7 @@ sap.ui.define([
 					assert.ok(oStubOpenTransportSelection.calledOnce);
 					assert.notEqual(oResponse, null);
 					assert.equal(that._fStubSend.callCount, 2);
-					assert.equal(that._fStubSend.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?sap-language=en");
+					assert.equal(that._fStubSend.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?sap-language=EN");
 				});
 			});
 		});
@@ -2180,7 +2180,7 @@ sap.ui.define([
 					assert.ok(oStubOpenTransportSelection.calledOnce);
 					assert.notEqual(oResponse, null);
 					assert.equal(that._fStubSend.callCount, 2);
-					assert.equal(that._fStubSend.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?changelist=aTransport&sap-language=en");
+					assert.equal(that._fStubSend.getCall(1).args[0], "/sap/bc/lrep/appdescr_variants/a.id?changelist=aTransport&sap-language=EN");
 				});
 			});
 		});
@@ -2249,7 +2249,7 @@ sap.ui.define([
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?sap-language=en');
+				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?sap-language=EN');
 			});
 		});
 
@@ -2265,7 +2265,7 @@ sap.ui.define([
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=en');
+				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN');
 			});
 		});
 
@@ -2279,7 +2279,7 @@ sap.ui.define([
 					assert.ok(oStubOpenTransportSelection.calledOnce);
 					assert.notEqual(oResponse, null);
 					assert.equal(that._fStubSend.callCount, 2);
-					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?sap-language=en');
+					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?sap-language=EN');
 				});
 		});
 
@@ -2332,7 +2332,7 @@ sap.ui.define([
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?sap-language=en');
+				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?sap-language=EN');
 			});
 		});
 
@@ -2348,7 +2348,7 @@ sap.ui.define([
 				return oDescriptorVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=en');
+				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN');
 			});
 		});
 
@@ -2359,7 +2359,7 @@ sap.ui.define([
 					return oDescriptorVariant.submit();
 				}).then(function(oResponse) {
 					assert.notEqual(oResponse, null);
-					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION&sap-language=en');
+					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION&sap-language=EN');
 				});
 		});
 
