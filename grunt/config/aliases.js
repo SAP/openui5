@@ -1,7 +1,6 @@
 // task aliases
 
 var semver = require('semver');
-var async = require('async');
 var path = require('path');
 var cldr = require('../../lib/cldr-openui5/lib/index.js');
 
