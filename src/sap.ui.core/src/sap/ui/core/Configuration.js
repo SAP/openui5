@@ -1231,13 +1231,16 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns whether the page runs in debug mode.
-		 * @return {boolean} whether the page runs in debug mode
+		 * Returns whether the page runs in full debug mode.
+		 * @returns {boolean} Whether the page runs in full debug mode
 		 * @public
 		 */
 		getDebug : function () {
-			// debug mode is calculated in ui5loade-autoconfig and written to window["sap-ui-debug"]
-			return !!window["sap-ui-debug"] || this.getValue("debug");
+			// Configuration only maintains a flag for the full debug mode.
+			// ui5loader-autoconfig calculates detailed information also for the partial debug
+			// mode and writes it to window["sap-ui-debug"].
+			// Only a value of true must be reflected by this getter
+			return window["sap-ui-debug"] === true || this.getValue("debug");
 		},
 
 		/**
