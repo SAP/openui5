@@ -107,9 +107,6 @@ sap.ui.define([
 		afterEach: function() {
 			if (this.oTable) {
 				this.oFetchProperties.restore();
-				this.oFetchPropertyExtensions.restore();
-				this.oFetchPropertiesForBinding.restore();
-				this.oFetchPropertyExtensionsForBinding.restore();
 				this.oTable.destroy();
 			}
 		},
@@ -126,19 +123,13 @@ sap.ui.define([
 
 			return this.oTable.awaitControlDelegate().then(function(oDelegate) {
 				this.oFetchProperties = sinon.spy(oDelegate, "fetchProperties");
-				this.oFetchPropertyExtensions = sinon.spy(oDelegate, "fetchPropertyExtensions");
-				this.oFetchPropertiesForBinding = sinon.spy(oDelegate, "fetchPropertiesForBinding");
-				this.oFetchPropertyExtensionsForBinding = sinon.spy(oDelegate, "fetchPropertyExtensionsForBinding");
 				return this.oTable._fullyInitialized();
 			}.bind(this)).then(function() {
 				return this.oTable;
 			}.bind(this));
 		},
-		assertFetchPropertyCalls: function(assert, iProperties, iPropertyExtensions, iPropertiesForBinding, oPropertyExtensionsForBinding) {
-			assert.equal(this.oFetchProperties.callCount, iProperties, "Delegate.fetchProperties calls");
-			assert.equal(this.oFetchPropertyExtensions.callCount, iPropertyExtensions, "Delegate.fetchPropertyExtensions calls");
-			assert.equal(this.oFetchPropertiesForBinding.callCount, iPropertiesForBinding, "Delegate.fetchPropertiesForBinding calls");
-			assert.equal(this.oFetchPropertyExtensionsForBinding.callCount, oPropertyExtensionsForBinding, "Delegate.fetchPropertyExtensionsForBinding calls");
+		assertFetchPropertyCalls: function(assert, iCallCount) {
+			assert.equal(this.oFetchProperties.callCount, iCallCount, "Delegate.fetchProperties calls");
 		}
 	});
 
@@ -147,7 +138,7 @@ sap.ui.define([
 			assert.notOk(oTable._oTable.getDependents().find(function(oDependent) {
 				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
 			}), "V4Aggregation plugin is not added to the inner table");
-			this.assertFetchPropertyCalls(assert, 1, 1, 0, 0);
+			this.assertFetchPropertyCalls(assert, 1);
 		}.bind(this));
 	});
 
@@ -164,7 +155,7 @@ sap.ui.define([
 			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
 			oGroupHeaderFormatter.restore();
 
-			this.assertFetchPropertyCalls(assert, 2, 2, 1, 1);
+			this.assertFetchPropertyCalls(assert, 1);
 		}.bind(this));
 	});
 
@@ -175,7 +166,7 @@ sap.ui.define([
 			assert.notOk(oTable._oTable.getDependents().find(function(oDependent) {
 				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
 			}), "V4Aggregation plugin is not added to the inner table");
-			this.assertFetchPropertyCalls(assert, 1, 1, 0, 0);
+			this.assertFetchPropertyCalls(assert, 1);
 		}.bind(this));
 	});
 
@@ -187,7 +178,7 @@ sap.ui.define([
 			assert.notOk(oTable._oTable.getDependents().find(function(oDependent) {
 				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
 			}), "V4Aggregation plugin is not added to the inner table");
-			this.assertFetchPropertyCalls(assert, 1, 1, 0, 0);
+			this.assertFetchPropertyCalls(assert, 1);
 		}.bind(this));
 	});
 
@@ -217,32 +208,20 @@ sap.ui.define([
 
 			return this.oTable.awaitControlDelegate().then(function(oDelegate) {
 				this.oFetchProperties = sinon.spy(oDelegate, "fetchProperties");
-				this.oFetchPropertyExtensions = sinon.spy(oDelegate, "fetchPropertyExtensions");
-				this.oFetchPropertiesForBinding = sinon.spy(oDelegate, "fetchPropertiesForBinding");
-				this.oFetchPropertyExtensionsForBinding = sinon.spy(oDelegate, "fetchPropertyExtensionsForBinding");
 				return this.oTable._fullyInitialized();
 			}.bind(this)).then(function() {
 				return this.oTable;
 			}.bind(this));
 		},
-		assertFetchPropertyCalls: function(assert, iProperties, iPropertyExtensions, iPropertiesForBinding, oPropertyExtensionsForBinding) {
-			assert.equal(this.oFetchProperties.callCount, iProperties, "Delegate.fetchProperties calls");
-			assert.equal(this.oFetchPropertyExtensions.callCount, iPropertyExtensions, "Delegate.fetchPropertyExtensions calls");
-			assert.equal(this.oFetchPropertiesForBinding.callCount, iPropertiesForBinding, "Delegate.fetchPropertiesForBinding calls");
-			assert.equal(this.oFetchPropertyExtensionsForBinding.callCount, oPropertyExtensionsForBinding, "Delegate.fetchPropertyExtensionsForBinding calls");
+		assertFetchPropertyCalls: function(assert, iCallCount) {
+			assert.equal(this.oFetchProperties.callCount, iCallCount, "Delegate.fetchProperties calls");
 		},
 		resetFetchPropertyCalls: function() {
 			this.oFetchProperties.reset();
-			this.oFetchPropertyExtensions.reset();
-			this.oFetchPropertiesForBinding.reset();
-			this.oFetchPropertyExtensionsForBinding.reset();
 		},
 		restoreFetchPropertyMethods: function() {
 			if (this.oFetchProperties) {
 				this.oFetchProperties.restore();
-				this.oFetchPropertyExtensions.restore();
-				this.oFetchPropertiesForBinding.restore();
-				this.oFetchPropertyExtensionsForBinding.restore();
 			}
 		}
 	});
@@ -257,7 +236,7 @@ sap.ui.define([
 			assert.notOk(that.oTable._oTable.getDependents().find(function(oDependent) {
 				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
 			}), "V4Aggregation plugin is not added to the inner table");
-			that.assertFetchPropertyCalls(assert, 0, 0, 0, 0);
+			that.assertFetchPropertyCalls(assert, 0);
 
 			that.resetFetchPropertyCalls();
 			that.oTable.setType(TableType.Table);
@@ -274,7 +253,7 @@ sap.ui.define([
 			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(that.oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
 			oGroupHeaderFormatter.restore();
 
-			that.assertFetchPropertyCalls(assert, 0, 0, 0, 0);
+			that.assertFetchPropertyCalls(assert, 0);
 		});
 	});
 
@@ -287,13 +266,13 @@ sap.ui.define([
 		assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
 		assert.notOk(oPlugin.isActive(), "V4Aggregation plugin is not active");
 		assert.equal(oPlugin, this.oTable._oTable.getDependents()[0], "V4Aggregation plugin is the same instance");
-		this.assertFetchPropertyCalls(assert, 0, 0, 0, 0);
+		this.assertFetchPropertyCalls(assert, 0);
 
 		this.oTable.setP13nMode(["Group"]);
 		assert.ok(oPlugin.isA("sap.ui.table.plugins.V4Aggregation"), "V4Aggregation plugin is added to the inner table");
 		assert.ok(oPlugin.isActive(), "V4Aggregation plugin is active");
 		assert.equal(oPlugin, this.oTable._oTable.getDependents()[0], "V4Aggregation plugin is the same instance");
-		this.assertFetchPropertyCalls(assert, 0, 0, 0, 0);
+		this.assertFetchPropertyCalls(assert, 0);
 	});
 
 	QUnit.test("GridTable; Initial activation of analytical p13n modes", function(assert) {
@@ -310,8 +289,8 @@ sap.ui.define([
 			}), "V4Aggregation plugin is not yet added to the inner table");
 
 			return new Promise(function(resolve) {
-				new ManagedObjectObserver(function(oChange) {
-					oChange.child.setPropertyInfos = resolve;
+				new ManagedObjectObserver(function() {
+					resolve();
 				}).observe(that.oTable._oTable, {
 					aggregations: ["dependents"]
 				});
@@ -326,7 +305,7 @@ sap.ui.define([
 			assert.ok(oGroupHeaderFormatter.calledOnceWithExactly(that.oTable, "MyContext", "MyProperty"), "Call Delegate.formatGroupHeader");
 			oGroupHeaderFormatter.restore();
 
-			that.assertFetchPropertyCalls(assert, 1, 1, 1, 1);
+			that.assertFetchPropertyCalls(assert, 0);
 		});
 	});
 
@@ -336,12 +315,20 @@ sap.ui.define([
 				name: "Name",
 				label: "Name",
 				path: "Name",
-				groupable: true
+				groupable: true,
+				aggregatable: true,
+				extension: {
+					customAggregate: {}
+				}
 			}, {
 				name: "Country",
 				label: "Country",
 				path: "Country",
-				groupable: true
+				groupable: true,
+				aggregatable: true,
+				extension: {
+					customAggregate: {}
+				}
 			}, {
 				name: "name_country",
 				label: "Complex Title & Description",
@@ -353,14 +340,6 @@ sap.ui.define([
 				sortable: false,
 				filterable: false
 			}]);
-			MDCQUnitUtils.stubPropertyExtension(Table.prototype, {
-				Name: {
-					defaultAggregate: {}
-				},
-				Country: {
-					defaultAggregate: {}
-				}
-			});
 		},
 		beforeEach: function() {
 			return this.createTestObjects().then(function() {
@@ -374,7 +353,6 @@ sap.ui.define([
 		},
 		after: function() {
 			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
-			MDCQUnitUtils.restorePropertyExtension(Table.prototype);
 		},
 		createTestObjects: function() {
 			return createAppEnvironment(sTableView1, "Table").then(function(mCreatedApp){
@@ -925,7 +903,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Tests with specific propertyInfos and extensions for binding", {
+	QUnit.module("Tests with specific propertyInfos", {
 		before: function() {
 			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
 				name: "Name",
@@ -935,8 +913,7 @@ sap.ui.define([
 			}, {
 				name: "Country",
 				label: "Country",
-				path: "Country",
-				groupable: true
+				path: "Country"
 			}, {
 				name: "Value",
 				label: "Value",
@@ -944,32 +921,8 @@ sap.ui.define([
 			}, {
 				name: "name_country",
 				label: "Complex Title & Description",
-				propertyInfos: ["Name"]
+				propertyInfos: ["Name", "Country"]
 			}]);
-			MDCQUnitUtils.stubPropertyInfosForBinding(Table.prototype, [{
-				name: "Name",
-				label: "Name",
-				path: "Name",
-				groupable: true
-			}, {
-				name: "Country",
-				label: "Country",
-				path: "Country",
-				groupable: true
-			}, {
-				name: "Value",
-				label: "Value",
-				path: "Value"
-			}, {
-				name: "name_country",
-				label: "Complex Title & Description",
-				propertyInfos: ["Name", "Country", "Value"]
-			}]);
-			MDCQUnitUtils.stubPropertyExtensionsForBinding(Table.prototype, {
-				Value: {
-					defaultAggregate: {}
-				}
-			});
 		},
 		beforeEach: function() {
 			return this.createTestObjects().then(function() {
@@ -983,8 +936,6 @@ sap.ui.define([
 		},
 		after: function() {
 			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
-			MDCQUnitUtils.restorePropertyInfosForBinding(Table.prototype);
-			MDCQUnitUtils.restorePropertyExtensionsForBinding(Table.prototype);
 		},
 		createTestObjects: function() {
 			return createAppEnvironment(sTableView2, "Table").then(function(mCreatedApp){
@@ -1048,7 +999,7 @@ sap.ui.define([
 				oDelegate.rebind = function () {
 					fnRebind.apply(this, arguments);
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: ["Name", "Country","Value"],
+						visible: ["Name", "Country"],
 						groupLevels: ["Name"],
 						grandTotal: [],
 						subtotals: [],
@@ -1093,10 +1044,6 @@ sap.ui.define([
 				},
 				{name: "RegionAndRegionText", label: "Region+RegionText", propertyInfos: ["Region", "RegionText"]}
 			]);
-			MDCQUnitUtils.stubPropertyExtension(Table.prototype, {
-				SalesAmount: {defaultAggregate: {}},
-				Currency: {defaultAggregate: {}}
-			});
 		},
 		beforeEach: function() {
 			return this.createTestObjects().then(function() {
@@ -1161,7 +1108,6 @@ sap.ui.define([
 		},
 		after: function() {
 			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
-			MDCQUnitUtils.restorePropertyExtension(Table.prototype);
 		},
 		createTestObjects: function() {
 			return createAppEnvironment(sTableView2, "Table").then(function(mCreatedApp){

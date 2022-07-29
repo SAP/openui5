@@ -153,55 +153,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("PropertyHelper initialization from delegate with valid class and property extensions", function(assert) {
-		var oDelegate;
-		var fnFetchProperties;
-		var fnFetchPropertyExtensions;
-		var fnGetPropertyHelperClass;
-		var oFetchPropertiesSpy = sinon.spy();
-		var oFetchPropertyExtensionsSpy = sinon.spy();
-		var oGetPropertyHelperClassSpy = sinon.spy();
-		var oPropertyHelperConstructorSpy = sinon.spy();
-		var PropertyHelperStub = PropertyHelperSubclass.extend("sap.ui.mdc.mixin.test.PropertyHelperStub", {
-			constructor: function() {
-				oPropertyHelperConstructorSpy.apply(this, arguments);
-				PropertyHelperSubclass.call(this, []);
-			}
-		});
-		var aProperties = [];
-		var mExtensions = {};
-
-		var oCustomDelegate = Object.assign({}, AggregationBaseDelegate, {
-			fetchProperties: function () { oFetchPropertiesSpy.apply(this, arguments); return Promise.resolve(aProperties); },
-			fetchPropertyExtensions: function () { oFetchPropertyExtensionsSpy.apply(this, arguments); return Promise.resolve(mExtensions); },
-			getPropertyHelperClass: function () { oGetPropertyHelperClassSpy.apply(this, arguments); return PropertyHelperStub; }
-		});
-
-		TestClass.prototype.initControlDelegate = function () {
-			this._oDelegate = oCustomDelegate;
-			this.fnResolveDelegate(oSomeInstance._oDelegate);
-			this.bDelegateInitialized = true;
-			return Promise.resolve(oSomeInstance._oDelegate);
-		};
-
-		oSomeInstance = fnCreateInstance();
-
-		return oSomeInstance.initControlDelegate().then(function(_oDelegate) {
-			oDelegate = _oDelegate;
-			return oSomeInstance.initPropertyHelper();
-		}).then(function(oPropertyHelper) {
-			assert.ok(oPropertyHelper instanceof PropertyHelperStub, "Property helper type");
-			assert.ok(oFetchPropertiesSpy.calledOnceWithExactly(oSomeInstance), "Delegate.fetchProperties");
-			assert.ok(oFetchPropertyExtensionsSpy.calledOnceWithExactly(oSomeInstance, aProperties), "Delegate.fetchPropertyExtensions");
-			assert.ok(oGetPropertyHelperClassSpy.calledOnceWithExactly(), "Delegate.getPropertyHelperClass");
-			assert.ok(oPropertyHelperConstructorSpy.calledOnceWith(aProperties, mExtensions, oSomeInstance), "PropertyHelper constructor");
-		}).finally(function() {
-			oDelegate.fetchProperties = fnFetchProperties;
-			oDelegate.fetchPropertyExtensions = fnFetchPropertyExtensions;
-			oDelegate.getPropertyHelperClass = fnGetPropertyHelperClass;
-		});
-	});
-
 	QUnit.test("PropertyHelper initialization from delegate with invalid class", function(assert) {
 		var oDelegate;
 		oSomeInstance = fnCreateInstance();

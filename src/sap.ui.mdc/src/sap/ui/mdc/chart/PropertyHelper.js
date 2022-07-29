@@ -30,7 +30,14 @@ sap.ui.define([
 	 * @since 1.83
 	 * @alias sap.ui.mdc.chart.PropertyHelper
 	 */
-    var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.chart.PropertyHelper");
+    var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.chart.PropertyHelper", {
+		constructor: function(aProperties, oParent) {
+			PropertyHelperBase.call(this, aProperties, oParent, {
+				filterable: true,
+				sortable: true
+			});
+		}
+	});
 
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
 		PropertyHelperBase.prototype.prepareProperty.apply(this, arguments);

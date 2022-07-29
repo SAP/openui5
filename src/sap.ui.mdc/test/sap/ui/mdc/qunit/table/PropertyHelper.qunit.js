@@ -2,13 +2,178 @@
  * ${copyright}
  */
 
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/mdc/table/PropertyHelper",
-	"sap/ui/mdc/table/Column"
-], function(PropertyHelper, Column) {
+	"sap/ui/mdc/table/Column",
+	"sap/base/Log"
+], function(PropertyHelper, Column, Log) {
 	"use strict";
+
+	QUnit.module("Validation", {
+		beforeEach: function() {
+			this.logWarning = sinon.spy(Log, "warning");
+		},
+		afterEach: function() {
+			this.logWarning.restore();
+		}
+	});
+
+	QUnit.test("Simple property with attribute 'aggregatable'", function(assert) {
+		new PropertyHelper([{
+			name: "prop",
+			label: "Property",
+			aggregatable: true
+		}]).destroy();
+		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+	});
+
+	QUnit.test("Complex property with attribute 'groupable'", function(assert) {
+		new PropertyHelper([{
+			name: "prop",
+			label: "Property"
+		}, {
+			name: "complexProp",
+			label: "ComplexProperty",
+			propertyInfos: ["prop"],
+			groupable: true
+		}]).destroy();
+		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+	});
+
+	QUnit.test("Complex property with attribute 'key'", function(assert) {
+		new PropertyHelper([{
+			name: "prop",
+			label: "Property"
+		}, {
+			name: "complexProp",
+			label: "ComplexProperty",
+			propertyInfos: ["prop"],
+			key: true
+		}]).destroy();
+		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+	});
+
+	QUnit.test("Complex property with attribute 'unit'", function(assert) {
+		new PropertyHelper([{
+			name: "prop",
+			label: "Property"
+		}, {
+			name: "complexProp",
+			label: "ComplexProperty",
+			propertyInfos: ["prop"],
+			unit: "prop"
+		}]).destroy();
+		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+	});
+
+	QUnit.test("Complex property with attribute 'text'", function(assert) {
+		new PropertyHelper([{
+			name: "prop",
+			label: "Property"
+		}, {
+			name: "complexProp",
+			label: "ComplexProperty",
+			propertyInfos: ["prop"],
+			text: "prop"
+		}]).destroy();
+		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+	});
+
+	QUnit.module("Defaults", {
+		beforeEach: function() {
+			this.oSimplePropertyDefaults = {
+				name: "prop",
+				label: "Property",
+				tooltip: "",
+				caseSensitive: true,
+				exportSettings: {},
+				filterable: true,
+				group: "",
+				groupLabel: "",
+				groupable: false,
+				key: false,
+				maxConditions: -1,
+				path: "",
+				sortable: true,
+				text: "",
+				typeConfig: null,
+				unit: "",
+				visible: true,
+				visualSettings: {
+					widthCalculation: {
+						defaultWidth: 8,
+						excludeProperties: [],
+						gap: 0,
+						includeLabel: true,
+						maxWidth: 19,
+						minWidth: 2,
+						truncateLabel: true,
+						verticalArrangement: false
+					}
+				}
+			};
+
+			this.oComplexPropertyDefaults = {
+				name: "complexProp",
+				label: "Complex Property",
+				tooltip: "",
+				exportSettings: {},
+				filterable: false,
+				group: "",
+				groupLabel: "",
+				groupable: false,
+				key: false,
+				maxConditions: null,
+				path: null,
+				propertyInfos: ["prop"],
+				sortable: false,
+				typeConfig: null,
+				visible: true,
+				visualSettings: {
+					widthCalculation: {
+						defaultWidth: 8,
+						excludeProperties: [],
+						gap: 0,
+						includeLabel: true,
+						maxWidth: 19,
+						minWidth: 2,
+						truncateLabel: true,
+						verticalArrangement: false
+					}
+				}
+			};
+		},
+		afterEach: function() {
+			delete this.oSimplePropertyDefaults;
+			delete this.oComplexPropertyDefaults;
+		}
+	});
+
+	QUnit.test("Simple property", function(assert) {
+		var oPropertyHelper = new PropertyHelper([{
+			name: "prop",
+			label: "Property"
+		}]);
+
+		assert.deepEqual(oPropertyHelper.getProperties(), [this.oSimplePropertyDefaults]);
+		oPropertyHelper.destroy();
+	});
+
+	QUnit.test("Complex property", function(assert) {
+		var oPropertyHelper = new PropertyHelper([{
+			name: "prop",
+			label: "Property"
+		}, {
+			name: "complexProp",
+			label: "Complex Property",
+			propertyInfos: ["prop"]
+		}]);
+
+		assert.deepEqual(oPropertyHelper.getProperty("complexProp"), this.oComplexPropertyDefaults);
+		oPropertyHelper.destroy();
+	});
 
 	QUnit.module("API", {
 		beforeEach: function() {
@@ -24,11 +189,17 @@ sap.ui.define([
 				}
 			}, {
 				name: "propB",
-				path: "propB",
+				path: "propBPath",
 				label: "Property B",
 				sortable: false,
 				filterable: false,
+				groupable: true,
 				groupLabel: "Group Label"
+			}, {
+				name: "propC",
+				path: "propCPath",
+				label: "Property C",
+				exportSettings: null
 			}, {
 				name: "complexPropA",
 				path: "complexPropA",
@@ -85,6 +256,11 @@ sap.ui.define([
 					width: 30,
 					label: "Complex export label C"
 				}
+			}, {
+				name: "complexPropD",
+				path: "complexPropD",
+				label: "Complex Property D",
+				propertyInfos: ["propA", "propB", "propC"]
 			}]);
 			this.aProperties = this.oPropertyHelper.getProperties();
 
@@ -143,6 +319,12 @@ sap.ui.define([
 				header: "Complex Property C",
 				dataProperty: "complexPropC"
 			});
+
+			this.oColumnComplexPropD = new Column({
+				id: "columnComplexPropD",
+				header: "Complex Property D",
+				dataProperty: "complexPropD"
+			});
 		},
 		afterEach: function() {
 			this.oPropertyHelper.destroy();
@@ -152,6 +334,7 @@ sap.ui.define([
 			this.oColumnComplexPropA.destroy();
 			this.oColumnComplexPropB.destroy();
 			this.oColumnComplexPropC.destroy();
+			this.oColumnComplexPropD.destroy();
 			this.oColumnPrice.destroy();
 			this.oInvalidColumn.destroy();
 			this.oNoDataColumn1.destroy();
@@ -159,10 +342,17 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("getGroupableProperties", function(assert) {
+		assert.deepEqual(this.oPropertyHelper.getGroupableProperties(), [this.oPropertyHelper.getProperty("propB")]);
+
+		this.oPropertyHelper.destroy();
+		assert.deepEqual(this.oPropertyHelper.getGroupableProperties(), [], "After destruction");
+	});
+
 	QUnit.test("getColumnExportSettings", function(assert) {
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(), [], "No parameter");
-		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings({}), [], "Empty property object");
-		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oInvalidColumn), [], "mdc.Column pointing to invalid property info");
+		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings({}), [], "No column instance passed");
+		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oInvalidColumn), [], "Column pointing to invalid property");
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnPropA), [{
 			columnId: "propAColumn",
 			label: "Export label",
@@ -177,7 +367,7 @@ sap.ui.define([
 			textAlign: "End",
 			type: "String",
 			width: "",
-			property: "propB"
+			property: "propBPath"
 		}], "Expected column export settings returned");
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnComplexPropA), [{
 			columnId: "columnComplexPropA",
@@ -185,7 +375,7 @@ sap.ui.define([
 			textAlign: "Begin",
 			type: "String",
 			width: 25,
-			property: ["propAPath", "propB"],
+			property: ["propAPath", "propBPath"],
 			template: "{0} ({1})"
 		}], "Expected column export settings returned");
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnComplexPropB), [{
@@ -194,7 +384,7 @@ sap.ui.define([
 			textAlign: "End",
 			type: "String",
 			width: 30,
-			property: ["propB"]
+			property: ["propBPath"]
 		}], "Expected column export settings returned");
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnPrice), [{
 			columnId: "priceColumn",
@@ -230,6 +420,176 @@ sap.ui.define([
 			type: "String",
 			width: 30
 		}], "Expected column export settings returned");
+		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnComplexPropD), [{
+			columnId: "columnComplexPropD",
+			label: "Export label",
+			property: "propAPath",
+			textAlign: "Begin",
+			type: "Number",
+			width: 20
+		}, {
+			columnId: "columnComplexPropD-additionalProperty1",
+			label: "Property B",
+			textAlign: "Begin",
+			type: "String",
+			width: "",
+			property: "propBPath"
+		}], "Complex property without exportSettings referencing property with exportSettings=null");
 	});
 
+	QUnit.module("Property", {
+		beforeEach: function() {
+			this.oPropertyHelper = new PropertyHelper([{
+				name: "prop",
+				label: "Property",
+				groupable: true
+			}, {
+				name: "prop2",
+				label: "Property 2",
+				sortable: false,
+				filterable: false,
+				visible: false
+			}, {
+				name: "complexProp",
+				label: "Complex property",
+				propertyInfos: ["prop"]
+			}, {
+				name: "complexProp2",
+				label: "Complex property 2",
+				propertyInfos: ["prop2"]
+			}, {
+				name: "complexProp3",
+				label: "Complex property 3",
+				propertyInfos: ["prop"],
+				visible: false
+			}, {
+				name: "complexProp4",
+				label: "Complex property 4",
+				propertyInfos: ["prop2"],
+				visible: false
+			}]);
+		},
+		afterEach: function() {
+			this.oPropertyHelper.destroy();
+		}
+	});
+
+	QUnit.test("getGroupableProperties", function(assert) {
+		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+
+		oSimpleProperty.getGroupableProperties().push("s"); // Returned array must not be influenced by changes to previously returned arrays.
+		assert.deepEqual(oSimpleProperty.getGroupableProperties(), [oSimpleProperty], "Groupable simple property");
+		assert.deepEqual(oComplexProperty.getGroupableProperties(), [oSimpleProperty], "Complex property referencing groupable properties");
+		assert.deepEqual(this.oPropertyHelper.getProperty("prop2").getGroupableProperties(), [], "Non-groupable simple property");
+		assert.deepEqual(this.oPropertyHelper.getProperty("complexProp2").getGroupableProperties(), [],
+			"Complex property referencing non-groupable properties");
+		assert.ok(Object.isFrozen(oSimpleProperty.getGroupableProperties()[0]), "Returned properties are frozen");
+
+		this.oPropertyHelper.destroy();
+		assert.deepEqual(oComplexProperty.getGroupableProperties(), [oSimpleProperty], "After destruction");
+	});
+
+	QUnit.module("Extension attributes", {
+		beforeEach: function() {
+			this.logWarning = sinon.spy(Log, "warning");
+		},
+		afterEach: function() {
+			this.logWarning.restore();
+		}
+	});
+
+	QUnit.test("Property with extension when no extension attributes are defined", function(assert) {
+		new PropertyHelper([{
+			name: "foo",
+			label: "bar",
+			extension: {}
+		}]).destroy();
+		assert.equal(this.logWarning.callCount, 1, "Warning logged");
+	});
+
+	QUnit.test("Set 'extension' attribute", function(assert) {
+		var oPropertyHelper = new PropertyHelper([{
+			name: "foo",
+			label: "bar",
+			extension: {
+				newAttribute: "test"
+			}
+		}], null, {
+			newAttribute: {type: "string"}
+		});
+
+		assert.deepEqual(oPropertyHelper.getProperty("foo").extension, {
+			newAttribute: "test"
+		});
+
+		oPropertyHelper.destroy();
+	});
+
+	QUnit.test("'extension' attribute has default value", function(assert) {
+		var oPropertyHelper = new PropertyHelper([{
+			name: "foo",
+			label: "bar"
+		}], null, {
+			newAttribute: {type: "string", "default": {value: "myValue"}}
+		});
+
+		assert.deepEqual(oPropertyHelper.getProperty("foo").extension, {
+			newAttribute: "myValue"
+		});
+
+		oPropertyHelper.destroy();
+	});
+
+	QUnit.test("Attributes cannot be mandatory", function(assert) {
+		new PropertyHelper([{
+			name: "foo",
+			label: "bar"
+		}], null, {
+			newAttribute: {type: "string", mandatory: true}
+		}).destroy();
+		assert.ok(true, "No error thrown if an extension attribute is declared as mandatory and not provided in the property infos.");
+	});
+
+	QUnit.test("Complex property", function(assert) {
+		var oPropertyHelper = new PropertyHelper([{
+			name: "foo",
+			label: "bar"
+		}, {
+			name: "complexFoo",
+			label: "Complex Foo",
+			propertyInfos: ["foo"],
+			extension: {
+				allowedForComplex: "allowed"
+			}
+		}], null, {
+			allowedForComplex: {type: "string", forComplexProperty: {allowed: true}},
+			notAllowedForComplex: {type: "string"},
+			notAllowedForComplexWithValue: {type: "string", forComplexProperty: {valueIfNotAllowed: "not allowed"}}
+		});
+
+		assert.deepEqual(oPropertyHelper.getProperty("complexFoo").extension, {
+			allowedForComplex: "allowed",
+			notAllowedForComplexWithValue: "not allowed"
+		});
+
+		oPropertyHelper.destroy();
+
+		this.logWarning.reset();
+		new PropertyHelper([{
+			name: "foo",
+			label: "bar"
+		}, {
+			name: "complexFoo",
+			label: "Complex Foo",
+			propertyInfos: ["foo"],
+			extension: {
+				notAllowedForComplex: "allowed?"
+			}
+		}], null, {
+			allowedForComplex: {type: "string", forComplexProperty: {allowed: true}},
+			notAllowedForComplex: {type: "string", forComplexProperty: {valueIfNotAllowed: "not allowed"}}
+		}).destroy();
+		assert.equal(this.logWarning.callCount, 1, "Warning logged if a complex property contains an extension attribute that is not allowed.");
+	});
 });

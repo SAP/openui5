@@ -105,16 +105,18 @@ sap.ui.define([
 		}
 
 		if (oTable.isAggregationEnabled()) {
-			var aAggregatableProperties = oPropertyHelper.getProperty(oColumn.getDataProperty()).getAggregatableProperties();
-			var oAggregatedProperty = oTable._getAggregatedProperties();
+			var aPropertiesThatCanBeTotaled = oPropertyHelper.getProperty(oColumn.getDataProperty()).getAggregatableProperties().filter(function(oProperty) {
+				return oProperty.extension && oProperty.extension.customAggregate;
+			});
+			var mAggregatedProperties = oTable._getAggregatedProperties();
 
-			if (aAggregatableProperties.length > 0) {
+			if (aPropertiesThatCanBeTotaled.length > 0) {
 				this.addQuickAction(new QuickTotal({
-					items: aAggregatableProperties.map(function(oProperty) {
+					items: aPropertiesThatCanBeTotaled.map(function(oProperty) {
 						return new QuickTotalItem({
 							key: oProperty.name,
 							label: oProperty.label,
-							totaled: oAggregatedProperty.hasOwnProperty(oProperty.name)
+							totaled: mAggregatedProperties.hasOwnProperty(oProperty.name)
 						});
 					}),
 					change: function(oEvent) {

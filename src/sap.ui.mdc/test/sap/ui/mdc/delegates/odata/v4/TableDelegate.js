@@ -176,6 +176,7 @@ sap.ui.define([
 			var oSortRestrictionsInfo = ODataMetaModelUtil.getSortRestrictionsInfo(oSortRestrictions);
 			var oFilterRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.FilterRestrictions"];
 			var oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
+			var mAllCustomAggregates = ODataMetaModelUtil.getAllCustomAggregates(mEntitySetAnnotations);
 
 			for (var sKey in oEntityType) {
 				var oDataObject = oEntityType[sKey];
@@ -221,6 +222,24 @@ sap.ui.define([
 						caseSensitive : !bIsUpperCase
 					};
 
+					// For simplicity, the property is declared aggregatable if there is a CustomAggregate whose Qualifier matches the property name.
+					if (sKey in mAllCustomAggregates) {
+						var aContextDefiningPropertiesPaths = [];
+
+						if ("contextDefiningProperties" in mAllCustomAggregates[sKey]) {
+							for (var i = 0; i < mAllCustomAggregates[sKey].contextDefiningProperties.length; i++) {
+								aContextDefiningPropertiesPaths.push(mAllCustomAggregates[sKey].contextDefiningProperties[i].$PropertyPath);
+							}
+						}
+
+						oPropertyInfo.aggregatable = true;
+						oPropertyInfo.extension = {
+							customAggregate: {
+								contextDefiningProperties: aContextDefiningPropertiesPaths
+							}
+						};
+					}
+
 					aProperties.push(oPropertyInfo);
 
 					if (oPropertyInfo.unit) {
@@ -257,44 +276,6 @@ sap.ui.define([
 			return aProperties;
 		});
 	}
-
-	TestTableDelegate.fetchPropertyExtensions = function(oTable, aPropertyInfos) {
-		var mExtensions = {};
-		var oModel = TableDelegateUtils.getModel(oTable);
-		var oMetadataInfo = TableDelegateUtils.getMetadataInfo(oTable);
-		var sEntitySetPath = "/" + oMetadataInfo.collectionName;
-		var oMetaModel = oModel.getMetaModel();
-
-		return Promise.all([
-			oMetaModel.requestObject(sEntitySetPath + "/"), oMetaModel.requestObject(sEntitySetPath + "/@")
-		]).then(function(aResults) {
-			var mEntitySet = aResults[0];
-			var mAnnotations = aResults[1];
-			var mAllCustomAggregates = ODataMetaModelUtil.getAllCustomAggregates(mAnnotations);
-
-			// process the Qualifier of the CustomAggregate annotation if it matches the property name in the EntityType
-			for (var sKey in mAllCustomAggregates) {
-				if (sKey in mEntitySet) {
-					mExtensions[sKey] = {
-						defaultAggregate: {}
-					};
-
-					if ("contextDefiningProperties" in mAllCustomAggregates[sKey]) {
-						var aContextDefiningProperties = mAllCustomAggregates[sKey].contextDefiningProperties;
-						var aContextDefiningPropertiesPaths = [];
-
-						for (var i = 0; i < aContextDefiningProperties.length; i++) {
-							aContextDefiningPropertiesPaths.push(aContextDefiningProperties[i].$PropertyPath);
-						}
-
-						mExtensions[sKey].defaultAggregate.contextDefiningProperties = aContextDefiningPropertiesPaths;
-					}
-				}
-			}
-
-			return mExtensions;
-		});
-	};
 
 	TestTableDelegate.getFilterDelegate = function() {
 		return FilterBarDelegate;

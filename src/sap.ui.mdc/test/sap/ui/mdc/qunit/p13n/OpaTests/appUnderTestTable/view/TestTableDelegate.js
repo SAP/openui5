@@ -30,18 +30,6 @@ sap.ui.define([
 		});
 	};
 
-	oCustomDelegate.fetchPropertyExtensions = function(oTable, aProperties) {
-		var mExtensions = {};
-
-		mExtensions[aProperties[0].name] = {
-			defaultAggregate: {}
-		};
-
-		return new Promise(function(resolve) {
-			resolve(mExtensions);
-		});
-	};
-
 	oCustomDelegate.addItem = function(sPropertyInfoName, oTable, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var sId = mPropertyBag.id + "--" + sPropertyInfoName;
