@@ -263,7 +263,18 @@ sap.ui.define([
 				"TBL_GROUP",
 				null,
 				function() {
+					var oDomRef;
 					oTable.setGroupBy(oColumn);
+
+					if (TableUtils.isNoDataVisible(oTable)) {
+						oDomRef = oTable.getDomRef("noDataCnt");
+					} else {
+						oDomRef = oTable.getDomRef("rowsel0");
+					}
+
+					if (oDomRef) {
+						oDomRef.focus();
+					}
 				}
 			));
 		}
@@ -354,6 +365,10 @@ sap.ui.define([
 						});
 					}
 					if (bExecuteDefault) {
+						if (oTable.getFocusDomRef().getAttribute("id") === oColumn.getId()) {
+							var aVisibleColumns = oTable._getVisibleColumns();
+							aVisibleColumns[Math.min(aVisibleColumns.indexOf(oColumn) + 1, TableUtils.getVisibleColumnCount(oTable) - 2)].focus();
+						}
 						oColumn.setVisible(bVisible);
 					}
 				}

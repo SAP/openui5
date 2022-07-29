@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.AnalyticalColumnMenu.
-sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './library', "sap/ui/thirdparty/jquery"],
-	function(ColumnMenu, MenuRenderer, library, jQuery) {
+sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './utils/TableUtils', './library', "sap/ui/thirdparty/jquery"],
+	function(ColumnMenu, MenuRenderer, TableUtils, library, jQuery) {
 	"use strict";
 
 	/**
@@ -51,7 +51,8 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './library', "sap/
 	 * @private
 	 */
 	AnalyticalColumnMenu.prototype._addGroupMenuItem = function() {
-		var oColumn = this._oColumn;
+		var oColumn = this._oColumn,
+			oTable = this._oTable;
 
 		if (oColumn.isGroupableByMenu()) {
 			this._oGroupIcon = this._createMenuItem(
@@ -63,6 +64,19 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './library', "sap/
 					var bGrouped = oColumn.getGrouped();
 
 					oColumn._setGrouped(!bGrouped);
+					if (!bGrouped && !oColumn.getShowIfGrouped()) {
+						var oDomRef;
+
+						if (TableUtils.isNoDataVisible(oTable)) {
+							oDomRef = oTable.getDomRef("noDataCnt");
+						} else {
+							oDomRef = oTable.getDomRef("rowsel0");
+						}
+
+						if (oDomRef) {
+							oDomRef.focus();
+						}
+					}
 					oMenuItem.setIcon(!bGrouped ? "sap-icon://accept" : null);
 				}
 			);
