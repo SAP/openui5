@@ -983,7 +983,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} sName name of the property
-	 * @returns {Object} An info object describing the property or <code>undefined</code>
+	 * @returns {Object|undefined} An info object describing the property or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -1119,7 +1119,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} [sName] name of the aggregation or empty
-	 * @returns {Object} An info object describing the aggregation or <code>undefined</code>
+	 * @returns {Object|undefined} An info object describing the aggregation or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -1401,7 +1401,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} sName name of the property like setting
-	 * @returns {Object} An info object describing the property or aggregation or <code>undefined</code>
+	 * @returns {Object|undefined} An info object describing the property or aggregation or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -1441,7 +1441,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} sName name of the association
-	 * @returns {Object} An info object describing the association or <code>undefined</code>
+	 * @returns {Object|undefined} An info object describing the association or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -1549,7 +1549,7 @@ function(
 	 *   in the constructor documentation of this class.
 	 *
 	 * @param {string} sName name of the event
-	 * @returns {Object} An info object describing the event or <code>undefined</code>
+	 * @returns {Object|undefined} An info object describing the event or <code>undefined</code>
 	 * @public
 	 * @since 1.27.0
 	 */

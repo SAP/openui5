@@ -1623,9 +1623,9 @@ sap.ui.define([
 	 * Use the concrete method get<i>XYZ</i> for association 'XYZ' instead.
 	 *
 	 * @param {string} sAssociationName the name of the association
-	 * @param {object}
-	 *			  oDefaultForCreation the object that is used in case the current aggregation is empty (only null or empty array allowed)
-	 * @return {string | string[]} the ID of the associated managed object or an array of such IDs; may be null if the association has not been populated
+	 * @param {object} oDefaultForCreation
+	 *            the object that is used in case the current aggregation is empty (only null or empty array allowed)
+	 * @returns {string | string[] | null} the ID of the associated managed object or an array of such IDs; may be null if the association has not been populated
 	 * @protected
 	 */
 	ManagedObject.prototype.getAssociation = function(sAssociationName, oDefaultForCreation) {
@@ -2774,7 +2774,7 @@ sap.ui.define([
 	 *
 	 * <b>Note: </b> There is no API to determine the original API parent.
 	 *
-	 * @return {sap.ui.base.ManagedObject} The technical parent managed object or <code>null</code>
+	 * @returns {sap.ui.base.ManagedObject|null} The technical parent managed object or <code>null</code>
 	 * @public
 	 */
 	ManagedObject.prototype.getParent = function() {
@@ -4408,7 +4408,7 @@ sap.ui.define([
 	 * Returns the parent managed object as new eventing parent to enable control event bubbling
 	 * or <code>null</code> if this object hasn't been added to a parent yet.
 	 *
-	 * @return {sap.ui.base.EventProvider} the parent event provider
+	 * @returns {sap.ui.base.EventProvider|null} the parent event provider
 	 * @protected
 	 */
 	ManagedObject.prototype.getEventingParent = function() {
@@ -4416,10 +4416,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Get the binding object for a specific aggregation/property
+	 * Get the binding object for a specific aggregation/property.
 	 *
 	 * @param {string} sName the name of the property or aggregation
-	 * @return {sap.ui.model.Binding} the binding for the given name
+	 * @returns {sap.ui.model.Binding|undefined} the binding for the given name
 	 * @public
 	 */
 	ManagedObject.prototype.getBinding = function(sName){
@@ -4428,10 +4428,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Get the binding path for a specific aggregation/property
+	 * Get the binding path for a specific aggregation/property.
 	 *
 	 * @param {string} sName the name of the property or aggregation
-	 * @return {string} the binding path for the given name
+	 * @return {string|undefined} the binding path for the given name
 	 * @protected
 	 */
 	ManagedObject.prototype.getBindingPath = function(sName){

@@ -535,7 +535,7 @@ sap.ui.define([
 	/**
 	 * Requests the value of the property binding.
 	 *
-	 * @returns {Promise}
+	 * @returns {Promise<any|undefined>}
 	 *   A promise resolving with the resulting value or <code>undefined</code> if it could not be
 	 *   determined, or rejecting in case of an error
 	 *

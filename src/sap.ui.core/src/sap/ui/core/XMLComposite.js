@@ -229,7 +229,7 @@ sap.ui.define([
 		 * May only be used by the implementation of a specific XMLComposite, not by an application using a XMLComposite.
 		 *
 		 * @param {string} sId XMLComposite-local ID of the inner element
-		 * @returns {sap.ui.core.Element} element by its ID or <code>undefined</code>
+		 * @returns {sap.ui.core.Element|undefined} element by its ID or <code>undefined</code>
 		 * @protected
 		 */
 		XMLComposite.prototype.byId = function (sId) {

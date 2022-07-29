@@ -68,7 +68,7 @@ sap.ui.define(['./Element', './library', "sap/base/assert"],
 		 * represents one of these states.
 		 *
 		 * @param {sap.ui.core.Element|sap.ui.core.ValueState} vValue the Element of which the valueState needs to be checked, or the ValueState explicitly
-		 * @returns {string} the success/warning/error text, if appropriate; otherwise null
+		 * @returns {string|null} the success/warning/error text, if appropriate; otherwise null
 		 *
 		 * @public
 		 * @name sap.ui.core.ValueStateSupport.getAdditionalText

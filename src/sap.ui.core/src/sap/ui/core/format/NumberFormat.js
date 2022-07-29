@@ -1707,7 +1707,7 @@ sap.ui.define([
 	 * Parse a string which is formatted according to the given format options.
 	 *
 	 * @param {string} sValue the string containing a formatted numeric value
-	 * @return {number|array|string} the parsed value as:
+	 * @return {number|array|string|null} the parsed value as:
 	 * <ul>
 	 *  <li>number</li>
 	 *  <li>array which contains the parsed value and the currency code (symbol) or unit for currency and unit instances</li>

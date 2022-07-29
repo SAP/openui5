@@ -1703,7 +1703,7 @@ sap.ui.define([
 		/**
 		 * Returns the list of active terminologies defined via the Configuration.
 		 *
-		 * @returns {string[]} if no active terminologies are set, the default value <code>undefined</code> is returned.
+		 * @returns {string[]|undefined} if no active terminologies are set, the default value <code>undefined</code> is returned.
 		 * @since 1.77.0
 		 * @public
 		 */

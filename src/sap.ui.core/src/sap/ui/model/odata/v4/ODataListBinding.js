@@ -2346,7 +2346,7 @@ sap.ui.define([
 	/**
 	 * Returns the header context which allows binding to <code>$count</code>.
 	 *
-	 * @returns {sap.ui.model.odata.v4.Context}
+	 * @returns {sap.ui.model.odata.v4.Context|null}
 	 *   The header context or <code>null</code> if the binding is relative and has no context
 	 *
 	 * @public
@@ -3065,7 +3065,7 @@ sap.ui.define([
 	 *   A callback function to filter only relevant messages. The callback returns whether the
 	 *   given {@link sap.ui.core.message.Message} is considered. If no callback function is given,
 	 *   all messages are considered.
-	 * @returns {Promise<sap.ui.model.Filter>}
+	 * @returns {Promise<sap.ui.model.Filter|null>}
 	 *   A Promise that resolves with a {@link sap.ui.model.Filter} representing the entries with
 	 *   messages; it resolves with <code>null</code> if the binding is not resolved or if there is
 	 *   no message for any entry

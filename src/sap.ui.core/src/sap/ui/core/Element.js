@@ -944,7 +944,7 @@ sap.ui.define([
 	 * matter where it comes from (be it a string tooltip or the text from a TooltipBase
 	 * instance) then they could call {@link #getTooltip_Text} instead.
 	 *
-	 * @return {string|sap.ui.core.TooltipBase} The tooltip for this Element.
+	 * @returns {string|sap.ui.core.TooltipBase|null} The tooltip for this Element or <code>null</code>.
 	 * @public
 	 */
 	Element.prototype.getTooltip = function() {
@@ -975,7 +975,7 @@ sap.ui.define([
 	 * of that object is returned. Otherwise the object itself is returned (either a string
 	 * or <code>undefined</code> or <code>null</code>).
 	 *
-	 * @returns {string|undefined} Text of the current tooltip or <code>undefined</code> or <code>null</code>
+	 * @returns {string|undefined|null} Text of the current tooltip or <code>undefined</code> or <code>null</code>
 	 * @public
 	 */
 	Element.prototype.getTooltip_Text = function() {
@@ -1454,7 +1454,7 @@ sap.ui.define([
 	 * refers to the default model.
 	 *
 	 * @param {string} [sModelName=undefined] Name of the model or <code>undefined</code>
-	 * @return {sap.ui.model.ContextBinding} Context binding for the given model name or <code>undefined</code>
+	 * @return {sap.ui.model.ContextBinding|undefined} Context binding for the given model name or <code>undefined</code>
 	 * @public
 	 * @function
 	 */

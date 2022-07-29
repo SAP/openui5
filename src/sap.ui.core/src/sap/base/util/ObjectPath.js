@@ -87,7 +87,7 @@ sap.ui.define([], function() {
 	 * @static
 	 * @param {string|string[]} vObjectPath Path as string where each name is separated by '.'. Can also be an array of names.
 	 * @param {Object} [oRootContext=window] Root context where the path starts
-	 * @returns {any} Returns the value located in the provided path, or <code>undefined</code> if the path does not exist completely.
+	 * @returns {any|undefined} Returns the value located in the provided path, or <code>undefined</code> if the path does not exist completely.
 	 * @example
 	 * ObjectPath.get("my.test.module", root) === root.my.test.module
 	 * ObjectPath.get(["my", "test", "otherModule"], root) === root.my.test.otherModule

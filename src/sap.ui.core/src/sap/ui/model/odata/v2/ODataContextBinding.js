@@ -57,7 +57,7 @@ sap.ui.define([
 	/**
 	 * Returns the bound context.
 	 *
-	 * @returns {sap.ui.model.odata.v2.Context}
+	 * @returns {sap.ui.model.odata.v2.Context|null}
 	 *   The context object used by this context binding or <code>null</code>
 	 * @function
 	 * @name sap.ui.model.odata.v2.ODataContextBinding#getBoundContext

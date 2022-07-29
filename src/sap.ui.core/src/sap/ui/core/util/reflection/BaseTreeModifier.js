@@ -670,7 +670,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vParent - Control which has the association
 		 * @param {string} sName - Association name
-		 * @returns {string|string[]} ID of the associated managed object or an array of such IDs; may be null if the association has not been populated
+		 * @returns {string|string[]|null} ID of the associated managed object or an array of such IDs; may be <code>null</code> if the association has not been populated
 		 * @public
 		 */
 		getAssociation: function (vParent, sName) {},

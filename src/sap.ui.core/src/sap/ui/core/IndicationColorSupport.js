@@ -45,7 +45,7 @@ sap.ui.define(['./library'],
 		 * represents one of five states.
 		 *
 		 * @param {sap.ui.core.Element|sap.ui.core.IndicationColor} vValue the Element of which the indicationColor needs to be checked, or the IndicationColor explicitly
-		 * @returns {string} the indication color text, if appropriate; otherwise null
+		 * @returns {string|null} the indication color text, if appropriate; otherwise <code>null</code>
 		 *
 		 * @public
 		 * @name sap.ui.core.IndicationColorSupport.getAdditionalText

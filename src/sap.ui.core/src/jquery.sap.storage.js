@@ -132,7 +132,7 @@ sap.ui.define([
 	 * sStorageKeyPrefix is the id prefix defined for the storage instance (@see jQuery.sap#storage)
 	 *
 	 * @param {string} sId Id for the state to retrieve
-	 * @return {string} the string from the storage, if the retrieval
+	 * @return {string|null} the string from the storage, if the retrieval
 	 * was successful, and null otherwise
 	 * @public
 	 * @name jQuery.sap.storage.Storage#get

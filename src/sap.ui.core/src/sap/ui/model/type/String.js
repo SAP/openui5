@@ -71,7 +71,7 @@ sap.ui.define([
 	 *   The target type; may be "any", "boolean", "float", "int" or "string", or a type with "any",
 	 *   "boolean", "float", "int" or "string" as its
 	 *   {@link sap.ui.base.DataType#getPrimitiveType primitive type}
-	 * @returns {string|number|boolean}
+	 * @returns {string|number|boolean|null}
 	 *   The formatted output value in the target type; <code>undefined</code> and <code>null</code>
 	 *   are always formatted to <code>null</code>
 	 * @throws {sap.ui.model.FormatException}

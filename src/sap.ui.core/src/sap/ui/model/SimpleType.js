@@ -107,7 +107,7 @@ sap.ui.define([
 	 *
 	 * @param {any} vValue
 	 *   The value to be validated
-	 * @returns {void|Promise}
+	 * @returns {void|Promise<undefined>}
 	 *   <code>undefined</code> or a <code>Promise</code> resolving with an undefined value
 	 * @throws {sap.ui.model.ValidateException}
 	 *   If at least one of the type constraints are not met; the message of the exception is

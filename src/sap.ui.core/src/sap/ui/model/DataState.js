@@ -308,7 +308,7 @@ sap.ui.define([
 	 * value was not rejected it returns <code>undefined</code>. In this case the current
 	 * model value can be accessed using the {@link #getValue} method.
 	 *
-	 * @returns {any} The value that was rejected or <code>undefined</code>
+	 * @returns {any|undefined} The value that was rejected or <code>undefined</code>
 	 * @public
 	 */
 	DataState.prototype.getInvalidValue = function() {
