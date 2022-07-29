@@ -257,10 +257,7 @@ sap.ui.define([
 			aItems[2].title = "Hugo";
 			oModel.checkUpdate(true);
 			sap.ui.getCore().applyChanges();
-			assert.equal(this.oVariantManagement.getTitle().getText(), "Two");
 
-			this.oVariantManagement.refreshTitle();
-			sap.ui.getCore().applyChanges();
 			assert.equal(this.oVariantManagement.getTitle().getText(), "Hugo");
 		});
 

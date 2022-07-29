@@ -134,11 +134,8 @@ sap.ui.define([
 		assert.equal(aItems.length, 2, "expected items found");
 
 		aItems[1].setTitle("Hugo");
-		assert.equal(this.oVM.getTitle().getText(), "Two", "expected text");
 		sap.ui.getCore().applyChanges();
 
-		this.oVM.refreshTitle();
-		sap.ui.getCore().applyChanges();
 		assert.equal(this.oVM.getTitle().getText(), "Hugo", "expected text");
 	});
 
