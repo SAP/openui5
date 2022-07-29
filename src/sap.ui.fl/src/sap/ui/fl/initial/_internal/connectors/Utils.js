@@ -47,7 +47,7 @@ sap.ui.define([
 
 	return {
 		/**
-		 * Adds current language information into request parameters
+		 * Adds current BCP-47 standard language code into request parameters as value of <code>sap-language</code> parameter.
 		 *
 		 * @param {object} mParameters - Parameters of the request
 		 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
@@ -57,6 +57,19 @@ sap.ui.define([
 				mParameters = {};
 			}
 			mParameters["sap-language"] = sap.ui.getCore().getConfiguration().getLanguage();
+		},
+
+		/**
+		 * Adds current SAP language code into request parameters as value of <code>sap-language</code> parameter.
+		 *
+		 * @param {object} mParameters - Parameters of the request
+		 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
+		 */
+		addSAPLogonLanguageInfo: function (mParameters) {
+			if (!mParameters) {
+				mParameters = {};
+			}
+			mParameters["sap-language"] = sap.ui.getCore().getConfiguration().getSAPLogonLanguage();
 		},
 
 		/**
