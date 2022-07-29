@@ -1356,11 +1356,10 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oData), ".Permissions", "foo")
 			.returns(undefined);
 		this.mock(oCache).expects("fetchLateProperty")
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oData), "", "foo/bar",
-				"foo")
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oData), "", "foo/bar")
 			.callsFake(function () {
 				oData.foo = {bar : "baz"};
-				return SyncPromise.resolve(Promise.resolve(oData.foo));
+				return SyncPromise.resolve(Promise.resolve());
 			});
 
 		return oCache.drillDown(oData, "foo/bar", oGroupLock).then(function (vValue) {
@@ -1420,7 +1419,7 @@ sap.ui.define([
 			.returns(undefined);
 		this.mock(oCache).expects("fetchLateProperty") // MUST not be repeated!
 			.withExactArgs("~oGroupLock~", sinon.match.same(oData[0].entity),
-				"('42')/entity", "foo/bar/baz", "foo/bar")
+				"('42')/entity", "foo/bar/baz")
 			.callsFake(function () {
 				if (bGotIt) {
 					oData[0].entity.foo.bar = {baz : "qux"};
@@ -1465,7 +1464,7 @@ sap.ui.define([
 			.returns(undefined);
 		this.mock(oCache).expects("fetchLateProperty")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oData[0].entity),
-				"('42')/entity", "foo/bar/baz", "foo/bar")
+				"('42')/entity", "foo/bar/baz")
 			.returns(undefined);
 		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into ('42')/entity/foo/bar/baz, invalid segment: bar",
@@ -1531,7 +1530,7 @@ sap.ui.define([
 			.returns(undefined);
 		this.mock(oCache).expects("fetchLateProperty")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oData[0]), "('42')",
-				"PRODUCT_2_BP", "PRODUCT_2_BP")
+				"PRODUCT_2_BP")
 			.returns(undefined);
 		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into ('42')/PRODUCT_2_BP, invalid segment: PRODUCT_2_BP",
@@ -1856,13 +1855,16 @@ sap.ui.define([
 			.returns(false);
 		this.mock(oCache).expects("fetchLateProperty")
 			.withExactArgs("~oGroupLock~", sinon.match.same(oData), "",
-				"PostAddress@some.Annotation", "PostAddress@some.Annotation")
-			.returns("annotationValue");
+				"PostAddress@some.Annotation")
+			.callsFake(function () {
+				oData["PostAddress@some.Annotation"] = "~value~";
+				return SyncPromise.resolve(Promise.resolve());
+			});
 
 		// code under test
 		return oCache.drillDown(oData, "PostAddress@some.Annotation", "~oGroupLock~")
 			.then(function (sValue) {
-				assert.strictEqual(sValue, "annotationValue");
+				assert.strictEqual(sValue, "~value~");
 			});
 	});
 
@@ -1885,8 +1887,11 @@ sap.ui.define([
 			.returns(SyncPromise.resolve({$Type : "Edm.Stream"}));
 		this.mock(oCache).expects("fetchLateProperty")
 			.withExactArgs("~oGroupLock~", sinon.match.same(oData), "",
-				"Picture@odata.mediaContentType", "Picture@odata.mediaContentType")
-			.returns("image/jpg");
+				"Picture@odata.mediaContentType")
+			.callsFake(function () {
+				oData["Picture@odata.mediaContentType"] = "image/jpg";
+				return SyncPromise.resolve(Promise.resolve());
+			});
 
 		// code under test
 		return oCache.drillDown(oData, "Picture@odata.mediaContentType", "~oGroupLock~")
@@ -1925,7 +1930,7 @@ sap.ui.define([
 			.returns(false);
 
 		this.mock(oCache).expects("fetchLateProperty")
-			.withExactArgs("~oGroupLock~", sinon.match.same(oData), "", "Picture", "Picture")
+			.withExactArgs("~oGroupLock~", sinon.match.same(oData), "", "Picture")
 			.callsFake(function () {
 				if (!bPictureInResponse) {
 					oData["Picture@$ui5.noData"] = true; // done by _Helper.updateSelected
@@ -4331,7 +4336,6 @@ sap.ui.define([
 				getUnlockedCopy : function () {}
 			},
 			oHelperMock = this.mock(_Helper),
-			sMissingPropertyPath = "foo/bar",
 			oPromise,
 			sRequestedPropertyPath = "foo/bar/baz",
 			oRequestGroupLock = {},
@@ -4386,16 +4390,12 @@ sap.ui.define([
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 				sinon.match.same(oEntity), sinon.match.same(oData), [sRequestedPropertyPath]);
-		oHelperMock.expects("drillDown")
-			.withExactArgs(sinon.match.same(oEntity), ["foo", "bar"])
-			.returns("baz");
 
 		// code under test
-		oPromise = oCache.fetchLateProperty(oGroupLock, oEntity, "",
-			sRequestedPropertyPath, sMissingPropertyPath);
+		oPromise = oCache.fetchLateProperty(oGroupLock, oEntity, "", sRequestedPropertyPath);
 
 		return oPromise.then(function (oResult) {
-			assert.strictEqual(oResult, "baz");
+			assert.strictEqual(oResult, undefined);
 		});
 	});
 });
@@ -4414,7 +4414,6 @@ sap.ui.define([
 				getUnlockedCopy : function () {}
 			},
 			oHelperMock = this.mock(_Helper),
-			sMissingPropertyPath = "foo/bar",
 			oPromise,
 			sRequestedPropertyPath = "foo/bar/baz",
 			oRequestGroupLock = {},
@@ -4475,16 +4474,13 @@ sap.ui.define([
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('31')/entity/path",
 				sinon.match.same(oEntity), sinon.match.same(oData), [sRequestedPropertyPath]);
-		oHelperMock.expects("drillDown")
-			.withExactArgs(sinon.match.same(oEntity), ["foo", "bar"])
-			.returns("baz");
 
 		// code under test
 		oPromise = oCache.fetchLateProperty(oGroupLock, oEntity, "('31')/entity/path",
-			sRequestedPropertyPath + sAnnotation, sMissingPropertyPath);
+			sRequestedPropertyPath + sAnnotation);
 
 		return oPromise.then(function (oResult) {
-			assert.strictEqual(oResult, "baz");
+			assert.strictEqual(oResult, undefined);
 		});
 	});
 });
@@ -4620,16 +4616,13 @@ sap.ui.define([
 				sinon.match.same(oEntity), sinon.match.same(oData), [
 					"foo/bar/baz/qux", "foo/foo1", "foo/t/foo2", "foo/bar/baz/baz1"
 				]);
-		oHelperMock.expects("drillDown")
-			.withExactArgs(sinon.match.same(oEntity), ["foo"])
-			.returns(oData.foo);
 
 		// code under test - assuming foo, bar and baz are navigation properties
 		oPromise = oCache.fetchLateProperty(oGroupLock, oEntity, "('1')/entity/path",
-			"foo/bar/baz/qux", "foo");
+			"foo/bar/baz/qux");
 
 		return oPromise.then(function (oResult) {
-			assert.deepEqual(oResult, oData.foo);
+			assert.strictEqual(oResult, undefined);
 			assert.ok((oUpdateSelectedCall.calledAfter(oVisitResponseCall)));
 		});
 	});
@@ -4705,8 +4698,8 @@ sap.ui.define([
 			});
 
 		// code under test
-		oPromise1 = oCache.fetchLateProperty(oGroupLock, oEntity, "", "property/foo", "property");
-		oPromise2 = oCache.fetchLateProperty(oGroupLock, oEntity, "", "property/bar", "property");
+		oPromise1 = oCache.fetchLateProperty(oGroupLock, oEntity, "", "property/foo");
+		oPromise2 = oCache.fetchLateProperty(oGroupLock, oEntity, "", "property/bar");
 
 		return Promise.all([oPromise1, oPromise2]).then(function () {
 			assert.deepEqual(oCache.mPropertyRequestByPath, {});
@@ -4751,7 +4744,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("updateSelected").never();
 
 		// Code under test
-		return oCache.fetchLateProperty(oGroupLock, oEntity, "", "property", "property")
+		return oCache.fetchLateProperty(oGroupLock, oEntity, "", "property")
 			.then(function () {
 				assert.ok(false);
 			}, function (oResult) {
@@ -4822,7 +4815,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("updateSelected").never();
 
 		// Code under test
-		return oCache.fetchLateProperty(oGroupLock, oCacheData, "", "property", "property")
+		return oCache.fetchLateProperty(oGroupLock, oCacheData, "", "property")
 			.then(function () {
 				assert.ok(false);
 			}, function (oError) {
@@ -4843,8 +4836,7 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			oCache.fetchLateProperty({/*oGroupLock*/}, {/*oCacheData*/}, "('1')", "property",
-				"property"),
+			oCache.fetchLateProperty({/*oGroupLock*/}, {/*oCacheData*/}, "('1')", "property"),
 			undefined
 		);
 	});
@@ -4861,8 +4853,7 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			oCache.fetchLateProperty({/*oGroupLock*/}, {/*oCacheData*/}, "('1')", sAnnotation,
-				sAnnotation),
+			oCache.fetchLateProperty({/*oGroupLock*/}, {/*oCacheData*/}, "('1')", sAnnotation),
 			undefined
 		);
 	});
@@ -4888,8 +4879,7 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			oCache.fetchLateProperty({/*oGroupLock*/}, {/*oCacheData*/}, "('1')", "property",
-				"property"),
+			oCache.fetchLateProperty({/*oGroupLock*/}, {/*oCacheData*/}, "('1')", "property"),
 			undefined
 		);
 	});
