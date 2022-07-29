@@ -79,7 +79,7 @@ sap.ui.define([
 		if (mPropertyBag.skipIam) {
 			mParameters.skipIam = mPropertyBag.skipIam;
 		}
-		InitialUtils.addLanguageInfo(mParameters);
+		InitialUtils.addSAPLogonLanguageInfo(mParameters);
 		InitialConnector._addClientInfo(mParameters);
 		//single update --> fileName needs to be in the url
 		if (mPropertyBag.flexObject && !mPropertyBag.isAppVariant) {

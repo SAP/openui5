@@ -165,7 +165,7 @@ sap.ui.define([
 					});
 					var sTextKey = oAppVariant.id + "_sap.app.title";
 					assert.deepEqual(oAppVariant.content[1].texts[sTextKey], this.oDescrChangeSpecificData2.content, "then texts are correct for setTitle change");
-					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=U1YK123456&sap-language=en", "POST"), "then backend call is triggered with correct parameters");
+					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=U1YK123456&sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
 				}.bind(this));
 		});
 
@@ -198,7 +198,7 @@ sap.ui.define([
 					assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
 					assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
 					assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
-					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=en", "POST"), "then backend call is triggered with correct parameters");
+					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
 				});
 		});
 
@@ -235,7 +235,7 @@ sap.ui.define([
 					assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
 					assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
 					assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
-					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=U1YK123456&sap-language=en", "POST"), "then backend call is triggered with correct parameters");
+					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=U1YK123456&sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
 				});
 		});
 
@@ -305,7 +305,7 @@ sap.ui.define([
 					assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
 					assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
 					assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
-					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?sap-language=en", "POST"), "then backend call is triggered with correct parameters");
+					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
 				});
 		});
 
@@ -377,7 +377,7 @@ sap.ui.define([
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
 					var oRequestPayload = JSON.parse(fnNewConnectorCall.getCall(1).args[2].payload);
 					assert.equal(oRequestPayload.content.length, 1, "then the app variant will be updated with 1 inline change");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=en", "PUT"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN", "PUT"), "then the parameters are correct");
 				});
 		});
 
@@ -437,7 +437,7 @@ sap.ui.define([
 						}
 					});
 					assert.equal(oRequestPayload.content.length, 2, "then the app variant will be updated with 2 inline changes");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=en", "PUT"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=ATO_NOTIFICATION&skipIam=true&sap-language=EN", "PUT"), "then the parameters are correct");
 				}.bind(this));
 		});
 
@@ -473,7 +473,7 @@ sap.ui.define([
 				.then(function() {
 					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?sap-language=en", "PUT"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?sap-language=EN", "PUT"), "then the parameters are correct");
 				});
 		});
 
@@ -509,7 +509,7 @@ sap.ui.define([
 				.then(function() {
 					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?sap-language=en", "PUT"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?sap-language=EN", "PUT"), "then the parameters are correct");
 				})
 				.catch(function() {
 					assert.ok(false, "Should not fail");
@@ -549,7 +549,7 @@ sap.ui.define([
 				.then(function() {
 					assert.ok(oOldConnectorCall.notCalled, "then getTransports from backend is never called");
 					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123&sap-language=en", "PUT"), "then the parameters are correct");
+					assert.ok(fnNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123&sap-language=EN", "PUT"), "then the parameters are correct");
 				});
 		});
 
