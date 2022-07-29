@@ -406,12 +406,16 @@ sap.ui.define([
 			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
-					"items": [
+					"groups": [
 						{
-							"title": "Comfort Easy"
-						},
-						{
-							"title": "ITelO Vault"
+							"items": [
+								{
+									"title": "Comfort Easy"
+								},
+								{
+									"title": "ITelO Vault"
+								}
+							]
 						}
 					]
 				};
@@ -452,7 +456,11 @@ sap.ui.define([
 			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
-					"items": []
+					"groups": [
+						{
+							"items": []
+						}
+					]
 				};
 
 				// Assert
@@ -695,139 +703,143 @@ sap.ui.define([
 			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
-					"items": [
+					"groups": [
 						{
-							"title": "Comfort Easy",
-							"description": "32 GB Digital Assistant",
-							"info": {
-								"value": "€50,000.00 Profit",
-								"state": "Success"
-							},
-							"chart": {
-								"type": "Bullet",
-								"minValue": 0,
-								"maxValue": 300000,
-								"target": 280000,
-								"value": 330000,
-								"scale": "€",
-								"displayValue": "€330,000.00",
-								"color": "Good"
-							},
-							"actions": [
+							"items": [
 								{
-									"type": "Navigation",
-									"enabled": true,
-									"parameters": {
-										"url": 330000
-									}
-								}
-							]
-						},
-						{
-							"title": "ITelO Vault",
-							"description": "Digital Organizer",
-							"info": {
-								"value": "€15,000.00 Profit",
-								"state": "Success"
-							},
-							"chart": {
-								"type": "Bullet",
-								"minValue": 0,
-								"maxValue": 230000,
-								"target": 210000,
-								"value": 225000,
-								"scale": "€",
-								"displayValue": "€225,000.00",
-								"color": "Good"
-							},
-							"actions": [
+									"title": "Comfort Easy",
+									"description": "32 GB Digital Assistant",
+									"info": {
+										"value": "€50,000.00 Profit",
+										"state": "Success"
+									},
+									"chart": {
+										"type": "Bullet",
+										"minValue": 0,
+										"maxValue": 300000,
+										"target": 280000,
+										"value": 330000,
+										"scale": "€",
+										"displayValue": "€330,000.00",
+										"color": "Good"
+									},
+									"actions": [
+										{
+											"type": "Navigation",
+											"enabled": true,
+											"parameters": {
+												"url": 330000
+											}
+										}
+									]
+								},
 								{
-									"type": "Navigation",
-									"enabled": true,
-									"parameters": {
-										"url": 225000
-									}
-								}
-							]
-						},
-						{
-							"title": "Notebook Professional 15",
-							"description": "Multitouch LCD",
-							"info": {
-								"value": "€1,000.00 Profit",
-								"state": "Success"
-							},
-							"chart": {
-								"type": "Bullet",
-								"minValue": 0,
-								"maxValue": 170000,
-								"target": 149000,
-								"value": 150000,
-								"scale": "€",
-								"displayValue": "€150,000.00",
-								"color": "Good"
-							},
-							"actions": [
+									"title": "ITelO Vault",
+									"description": "Digital Organizer",
+									"info": {
+										"value": "€15,000.00 Profit",
+										"state": "Success"
+									},
+									"chart": {
+										"type": "Bullet",
+										"minValue": 0,
+										"maxValue": 230000,
+										"target": 210000,
+										"value": 225000,
+										"scale": "€",
+										"displayValue": "€225,000.00",
+										"color": "Good"
+									},
+									"actions": [
+										{
+											"type": "Navigation",
+											"enabled": true,
+											"parameters": {
+												"url": 225000
+											}
+										}
+									]
+								},
 								{
-									"type": "Navigation",
-									"enabled": true,
-									"parameters": {
-										"url": 150000
-									}
-								}
-							]
-						},
-						{
-							"title": "Ergo Screen E-I",
-							"description": "Optimum Hi-Resolution max.",
-							"info": {
-								"value": "€0.00 Profit",
-								"state": "Warning"
-							},
-							"chart": {
-								"type": "Bullet",
-								"minValue": 0,
-								"maxValue": 120000,
-								"target": 100000,
-								"value": 100000,
-								"scale": "€",
-								"displayValue": "€100,000.00",
-								"color": "Neutral"
-							},
-							"actions": [
+									"title": "Notebook Professional 15",
+									"description": "Multitouch LCD",
+									"info": {
+										"value": "€1,000.00 Profit",
+										"state": "Success"
+									},
+									"chart": {
+										"type": "Bullet",
+										"minValue": 0,
+										"maxValue": 170000,
+										"target": 149000,
+										"value": 150000,
+										"scale": "€",
+										"displayValue": "€150,000.00",
+										"color": "Good"
+									},
+									"actions": [
+										{
+											"type": "Navigation",
+											"enabled": true,
+											"parameters": {
+												"url": 150000
+											}
+										}
+									]
+								},
 								{
-									"type": "Navigation",
-									"enabled": true,
-									"parameters": {
-										"url": 100000
-									}
-								}
-							]
-						},
-						{
-							"title": "Laser Professional Eco",
-							"description": "Powerful 500 MHz processor",
-							"info": {
-								"value": "€15,000.00 Profit",
-								"state": "Error"
-							},
-							"chart": {
-								"type": "Bullet",
-								"minValue": 0,
-								"maxValue": 45000,
-								"target": 45000,
-								"value": 60000,
-								"scale": "€",
-								"displayValue": "€60,000.00",
-								"color": "Error"
-							},
-							"actions": [
+									"title": "Ergo Screen E-I",
+									"description": "Optimum Hi-Resolution max.",
+									"info": {
+										"value": "€0.00 Profit",
+										"state": "Warning"
+									},
+									"chart": {
+										"type": "Bullet",
+										"minValue": 0,
+										"maxValue": 120000,
+										"target": 100000,
+										"value": 100000,
+										"scale": "€",
+										"displayValue": "€100,000.00",
+										"color": "Neutral"
+									},
+									"actions": [
+										{
+											"type": "Navigation",
+											"enabled": true,
+											"parameters": {
+												"url": 100000
+											}
+										}
+									]
+								},
 								{
-									"type": "Navigation",
-									"enabled": true,
-									"parameters": {
-										"url": 60000
-									}
+									"title": "Laser Professional Eco",
+									"description": "Powerful 500 MHz processor",
+									"info": {
+										"value": "€15,000.00 Profit",
+										"state": "Error"
+									},
+									"chart": {
+										"type": "Bullet",
+										"minValue": 0,
+										"maxValue": 45000,
+										"target": 45000,
+										"value": 60000,
+										"scale": "€",
+										"displayValue": "€60,000.00",
+										"color": "Error"
+									},
+									"actions": [
+										{
+											"type": "Navigation",
+											"enabled": true,
+											"parameters": {
+												"url": 60000
+											}
+										}
+									]
 								}
 							]
 						}
@@ -947,69 +959,73 @@ sap.ui.define([
 			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
-					"items": [
+					"groups": [
 						{
-							"title": 2017,
-							"description": "Computer system accessories",
-							"chart": {
-								"type": "StackedBar",
-								"displayValue": "700K",
-								"maxValue": 700,
-								"bars": [
-									{
-										"value": 200,
-										"displayValue": "Notebook 13: 200K",
-										"legendTitle": "Notebook 13"
-									},
-									{
-										"value": 500,
-										"displayValue": "Notebook 17: 500K",
-										"legendTitle": "Notebook 17"
+							"items": [
+								{
+									"title": 2017,
+									"description": "Computer system accessories",
+									"chart": {
+										"type": "StackedBar",
+										"displayValue": "700K",
+										"maxValue": 700,
+										"bars": [
+											{
+												"value": 200,
+												"displayValue": "Notebook 13: 200K",
+												"legendTitle": "Notebook 13"
+											},
+											{
+												"value": 500,
+												"displayValue": "Notebook 17: 500K",
+												"legendTitle": "Notebook 17"
+											}
+										]
 									}
-								]
-							}
-						},
-						{
-							"title": 2018,
-							"description": "Computer system accessories",
-							"chart": {
-								"type": "StackedBar",
-								"displayValue": "620K",
-								"maxValue": 700,
-								"bars": [
-									{
-										"value": 300,
-										"displayValue": "Notebook 13: 300K",
-										"legendTitle": "Notebook 13"
-									},
-									{
-										"value": 320,
-										"displayValue": "Notebook 17: 320K",
-										"legendTitle": "Notebook 17"
+								},
+								{
+									"title": 2018,
+									"description": "Computer system accessories",
+									"chart": {
+										"type": "StackedBar",
+										"displayValue": "620K",
+										"maxValue": 700,
+										"bars": [
+											{
+												"value": 300,
+												"displayValue": "Notebook 13: 300K",
+												"legendTitle": "Notebook 13"
+											},
+											{
+												"value": 320,
+												"displayValue": "Notebook 17: 320K",
+												"legendTitle": "Notebook 17"
+											}
+										]
 									}
-								]
-							}
-						},
-						{
-							"title": 2019,
-							"description": "Computer system accessories",
-							"chart": {
-								"type": "StackedBar",
-								"displayValue": "395K",
-								"maxValue": 700,
-								"bars": [
-									{
-										"value": 140,
-										"displayValue": "Notebook 13: 140K",
-										"legendTitle": "Notebook 13"
-									},
-									{
-										"value": 255,
-										"displayValue": "Notebook 17: 255K",
-										"legendTitle": "Notebook 17"
+								},
+								{
+									"title": 2019,
+									"description": "Computer system accessories",
+									"chart": {
+										"type": "StackedBar",
+										"displayValue": "395K",
+										"maxValue": 700,
+										"bars": [
+											{
+												"value": 140,
+												"displayValue": "Notebook 13: 140K",
+												"legendTitle": "Notebook 13"
+											},
+											{
+												"value": 255,
+												"displayValue": "Notebook 17: 255K",
+												"legendTitle": "Notebook 17"
+											}
+										]
 									}
-								]
-							}
+								}
+							]
 						}
 					]
 				};
@@ -1084,24 +1100,28 @@ sap.ui.define([
 							"visible": false
 						}
 					],
-					"rows": [
+					"groups": [
 						{
-							"columns": [
+							"rows": [
 								{
-									"value": "Donna"
+									"columns": [
+										{
+											"value": "Donna"
+										},
+										{
+											"value": "Moore"
+										}
+									]
 								},
 								{
-									"value": "Moore"
-								}
-							]
-						},
-						{
-							"columns": [
-								{
-									"value": "John"
-								},
-								{
-									"value": "Miller"
+									"columns": [
+										{
+											"value": "John"
+										},
+										{
+											"value": "Miller"
+										}
+									]
 								}
 							]
 						}
@@ -1152,7 +1172,11 @@ sap.ui.define([
 					"headers": [{
 						"title": "Title"
 					}],
-					"rows": []
+					"groups": [
+						{
+							"rows": []
+						}
+					]
 				};
 
 				// Assert
@@ -1405,7 +1429,7 @@ sap.ui.define([
 			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
-				assert.strictEqual(oRes["sap.card"].content.items[0].title, "Training: Scrum", "Should have correctly resolved predefined formatter");
+				assert.strictEqual(oRes["sap.card"].content.groups[0].items[0].title, "Training: Scrum", "Should have correctly resolved predefined formatter");
 
 				oCard.destroy();
 			});

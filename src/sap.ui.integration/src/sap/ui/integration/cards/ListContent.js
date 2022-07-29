@@ -191,7 +191,11 @@ sap.ui.define([
 		if (bHasGroups) {
 			oStaticConfiguration.groups = aResolvedGroups;
 		} else {
-			oStaticConfiguration.items = aResolvedItems;
+			oStaticConfiguration.groups = [
+				{
+					items: aResolvedItems
+				}
+			];
 		}
 
 		return oStaticConfiguration;
