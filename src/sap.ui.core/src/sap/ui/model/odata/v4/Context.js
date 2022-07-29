@@ -900,8 +900,8 @@ sap.ui.define([
 	 * Returns whether there are pending changes for bindings dependent on this context, or for
 	 * unresolved bindings (see {@link sap.ui.model.Binding#isResolved}) which were dependent on
 	 * this context at the time the pending change was created. This includes the context itself
-	 * being {@link #isTransient transient}. Since 1.98.0, {@link #isInactive inactive} contexts are
-	 * ignored.
+	 * being {@link #isTransient transient} or {@link #isDeleted deleted}. Since 1.98.0,
+	 * {@link #isInactive inactive} contexts are ignored.
 	 *
 	 * @returns {boolean}
 	 *   Whether there are pending changes
@@ -912,8 +912,11 @@ sap.ui.define([
 	Context.prototype.hasPendingChanges = function () {
 		return this.isTransient()
 			|| this.isDeleted()
+			|| this.getBinding().hasPendingChangesForPath(this.sPath)
 			|| this.oModel.getDependentBindings(this).some(function (oDependentBinding) {
-				return oDependentBinding.hasPendingChanges();
+				return oDependentBinding.oCache
+					? oDependentBinding.hasPendingChanges()
+					: oDependentBinding.hasPendingChangesInDependents();
 			})
 			|| this.oModel.withUnresolvedBindings("hasPendingChangesInCaches", this.sPath.slice(1));
 	};
