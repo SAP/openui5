@@ -1365,9 +1365,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Extends the method inherited from sap.ui.core.Element by providing information on Search Help access (if needed)
+	 * Overrides the method inherited from {@link sap.ui.core.Element} by providing information on Search Help access (if needed)
 	 *
-	 * @return {string} string tooltip or undefined
+	 * @returns {string|undefined} string tooltip or <code>undefined</code>
 	 * @public
 	 */
 	DropdownBox.prototype.getTooltip_AsString = function() {
