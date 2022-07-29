@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/mdc/Control',
 	'sap/base/Log',
 	'sap/base/util/merge',
+	'sap/base/util/deepEqual',
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/mdc/condition/ConditionModel',
@@ -28,6 +29,7 @@ sap.ui.define([
 		Control,
 		Log,
 		merge,
+		deepEqual,
 		ManagedObjectModel,
 		ManagedObjectObserver,
 		ConditionModel,
@@ -1299,13 +1301,24 @@ sap.ui.define([
 
 	};
 
+	FilterBarBase.prototype._onModifications = function() {
+		this._setXConditions(this.getFilterConditions(), true);
+	};
+
 	FilterBarBase.prototype._setXConditions = function(mConditionsData, bRemoveBeforeApplying) {
+
 		var sFieldPath, oProperty, aConditions, oConditionModel = this._getConditionModel();
 
 		var fPromiseResolve = null;
 		var oPromise = new Promise(function(resolve, reject) {
 			fPromiseResolve = resolve;
 		});
+
+		if (deepEqual(this._getXConditions(), mConditionsData)) {
+			// optimized executions in case nothing needs to be done
+			// --> e.g. conditions are already provided in CM, hence no update is required
+			return Promise.resolve();
+		}
 
 		this._oConditionModel.detachPropertyChange(this._handleConditionModelPropertyChange, this);
 		var fApplyConditions = function(mConditionsData) {
@@ -1329,7 +1342,7 @@ sap.ui.define([
 					}
 				}
 			}
-
+			this._reportModelChange(false);
 			this._oConditionModel.attachPropertyChange(this._handleConditionModelPropertyChange, this);
 			fPromiseResolve();
 		}.bind(this);

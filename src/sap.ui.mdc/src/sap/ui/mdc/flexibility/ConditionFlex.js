@@ -85,9 +85,6 @@ sap.ui.define([
 					if (bIsRevert) {
 						oChange.resetRevertData();
 					}
-					if (oFilterControl && oFilterControl.addCondition) {
-						return oFilterControl.addCondition(oChangeContent.name, oChangeContent.condition);
-					}
 				});
 			}
 		});
@@ -154,9 +151,6 @@ sap.ui.define([
 					.finally(function() {
 						if (bIsRevert) {
 							oChange.resetRevertData();
-						}
-						if (oFilterControl && oFilterControl.removeCondition) {
-							return oFilterControl.removeCondition(oChangeContent.name, oChangeContent.condition);
 						}
 					});
 				}
