@@ -314,13 +314,19 @@ sap.ui.define([
         /**
          *
          * @param {object} oDialog AdaptFiltersDialog
+         * @param {object} [oParent] An optional parent object to chain if necessary
          *
          * @returns {Promise} Promise resolving in the Dialog instance
          */
-        addRTACustomFieldButton: function (oDialog) {
+        addRTACustomFieldButton: function (oDialog, oParent) {
 
             var bExtensibilityEnabled = false,
                 oDialogParent = oDialog.getParent();
+
+            // cover SmartTable scenario
+            if (oParent && oParent.isA('sap.ui.comp.smarttable.SmartTable')) {
+                oDialogParent = oParent;
+            }
 
             return sap.ui.getCore().loadLibrary('sap.ui.rta', {
                 async: true
@@ -363,6 +369,11 @@ sap.ui.define([
                                             var sRtaStyleClassName = rtaUtils.getRtaStyleClassName(),
                                                 oAdaptDialog =  oEvt.getSource().getParent().getParent(),
                                                 oControl = oAdaptDialog.getParent();
+
+                                            // cover SmartTable scenario
+                                            if (oParent && oParent.isA('sap.ui.comp.smarttable.SmartTable')) {
+                                                oControl = oParent;
+                                            }
 
                                             FieldExtensibility.onControlSelected(oControl).then(function (oRetVal) {
                                                 FieldExtensibility.getExtensionData().then(function (oExtensibilityInfo) {
