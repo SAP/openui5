@@ -20,6 +20,18 @@ sap.ui.define([
 	 */
     var xConfigFlex = {};
 
+    var fConfigModified = function(oControl) {
+        if (!oControl._bWaitForModificationChanges && oControl.isA) {
+            oControl._bWaitForModificationChanges = true;
+            Engine.getInstance().waitForChanges(oControl).then(function() {
+                if (oControl._onModifications instanceof Function) {
+                    oControl._onModifications();
+                }
+                delete oControl._bWaitForModificationChanges;
+            });
+        }
+	};
+
     var fnQueueChange = function(oControl, fTask) {
 		var fCleanupPromiseQueue = function(pOriginalPromise) {
 			if (oControl._pQueue === pOriginalPromise){
@@ -86,7 +98,11 @@ sap.ui.define([
                         value: oChange.getContent().value,
                         propertyBag: mPropertyBag
                     });
+                })
+                .then(function() {
+                    fConfigModified(oControl);
                 });
+
             });
 
         };
@@ -103,6 +119,7 @@ sap.ui.define([
             })
             .then(function() {
                 oChange.resetRevertData();
+                fConfigModified(oControl);
             });
         };
 

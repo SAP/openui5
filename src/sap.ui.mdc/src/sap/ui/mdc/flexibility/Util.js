@@ -2,9 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/util/loadModules",
-	"sap/ui/mdc/p13n/Engine"
-], function(loadModules, Engine) {
+	"sap/ui/mdc/util/loadModules"
+], function(loadModules) {
 	"use strict";
 
 	/**
@@ -20,38 +19,6 @@ sap.ui.define([
 
 	Util.APPLY = "apply";
 	Util.REVERT = "revert";
-
-	/*
-	* Hack to prevent invalidation/rendering until all changes are applied. This seems to be needed now because our change handlers are now async and
-	* get executed once micro-task execution starts and can lead to other JS event loop tasks being executed after every promise resolution. If we
-	* add the item synchronously (as was done before), this is not observed as we run to completion with change application before continuing to
-	* other tasks in the JS event loop (e.g. rendering). The change has to be async as consumers (mainly FE) want to use the same fragment-based mechanism
-	* mechanism to apply changes. One might also have to wait for some metadata to be loaded and then continue with application of such changes.
-	* @TODO: As this is a generic issue on applying multiple changes, we need a mechanism (preferably in Core/FL) to be able to prevent invalidation
-	* while such processing (mainly application of flex changes on a control is taking place). This is NOT an issue during normal JS handling and can
-	* also happen for other controls where execution is async and multiple changes are applied.
-	*/
-	function delayInvalidate(oControl) {
-		if (oControl && oControl.isInvalidateSuppressed && !oControl.isInvalidateSuppressed()) {
-			oControl.iSuppressInvalidate = 1;
-			Engine.getInstance().waitForChanges(oControl).then(function() {
-				oControl.iSuppressInvalidate = 0;
-				oControl.invalidate("InvalidationSuppressedByMDCFlex");
-			});
-		}
-	}
-
-	function fConfigModified(oControl) {
-        if (!oControl._bWaitForModificationChanges && oControl.isA) {
-            oControl._bWaitForModificationChanges = true;
-            Engine.getInstance().waitForChanges(oControl).then(function() {
-                if (oControl._onModifications instanceof Function) {
-                    oControl._onModifications();
-                }
-                delete oControl._bWaitForModificationChanges;
-            });
-        }
-	}
 
 	/**
 	 * Creates a changehandler object for mdc controls.
@@ -78,11 +45,7 @@ sap.ui.define([
 		return {
 			"changeHandler": {
 				applyChange: function(oChange, oControl, mPropertyBag) {
-					delayInvalidate(oControl);
-					return fApply(oChange, oControl, mPropertyBag, Util.APPLY)
-					.then(function(){
-						fConfigModified(oControl);
-					});
+					return fApply(oChange, oControl, mPropertyBag, Util.APPLY);
 				},
 				completeChangeContent: function(oChange, mChangeSpecificInfo, mPropertyBag) {
 					if (fComplete) {
@@ -90,11 +53,7 @@ sap.ui.define([
 					}
 				},
 				revertChange: function(oChange, oControl, mPropertyBag) {
-					delayInvalidate(oControl);
-					return fRevert(oChange, oControl, mPropertyBag, Util.REVERT)
-					.then(function(){
-						fConfigModified(oControl);
-					});
+					return fRevert(oChange, oControl, mPropertyBag, Util.REVERT);
 				},
 				onAfterXMLChangeProcessing: function(oControl, mPropertyBag) {
 					mPropertyBag.modifier.getProperty(oControl, "delegate")

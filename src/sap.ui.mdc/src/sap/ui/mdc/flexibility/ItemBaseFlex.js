@@ -8,6 +8,8 @@ sap.ui.define([
 
 	var ItemBaseFlex = {
 
+		_bSupressFlickering: true,
+
 		/******************************* Control specific methods (Interface) *************************************/
 
 		/**
@@ -131,9 +133,32 @@ sap.ui.define([
 			return bAdd ? "add" : "remove";
 		},
 
+		/*
+		* Hack to prevent invalidation/rendering until all changes are applied. This seems to be needed now because our change handlers are now async and
+		* get executed once micro-task execution starts and can lead to other JS event loop tasks being executed after every promise resolution. If we
+		* add the item synchronously (as was done before), this is not observed as we run to completion with change application before continuing to
+		* other tasks in the JS event loop (e.g. rendering). The change has to be async as consumers (mainly FE) want to use the same fragment-based mechanism
+		* mechanism to apply changes. One might also have to wait for some metadata to be loaded and then continue with application of such changes.
+		* @TODO: As this is a generic issue on applying multiple changes, we need a mechanism (preferably in Core/FL) to be able to prevent invalidation
+		* while such processing (mainly application of flex changes on a control is taking place). This is NOT an issue during normal JS handling and can
+		* also happen for other controls where execution is async and multiple changes are applied.
+		*/
+		_delayInvalidate: function(oControl) {
+			if (oControl && oControl.isInvalidateSuppressed && !oControl.isInvalidateSuppressed()) {
+				oControl.iSuppressInvalidate = 1;
+				Engine.getInstance().waitForChanges(oControl).then(function() {
+					oControl.iSuppressInvalidate = 0;
+					oControl.invalidate();
+				});
+			}
+		},
+
 		_applyAdd: function(oChange, oControl, mPropertyBag, sChangeReason) {
 			var bIsRevert = (sChangeReason === Util.REVERT);
 			this.beforeApply(oChange.getChangeType(), oControl, bIsRevert);
+			if (this._bSupressFlickering) {
+				this._delayInvalidate(oControl);
+			}
 			var oModifier = mPropertyBag.modifier, oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			var sDataPropertyName = oChangeContent.name;
 			var iIndex;
@@ -212,6 +237,9 @@ sap.ui.define([
 		_applyRemove: function(oChange, oControl, mPropertyBag, sChangeReason) {
 			var bIsRevert = (sChangeReason === Util.REVERT);
 			this.beforeApply(oChange.getChangeType(), oControl, bIsRevert);
+			if (this._bSupressFlickering) {
+				this._delayInvalidate(oControl);
+			}
 
 			var oModifier = mPropertyBag.modifier, oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
 			var oAggregation;
@@ -256,7 +284,7 @@ sap.ui.define([
 						// Continue? --> destroy the item (but only if it exists, it may not exist if an earlier layer removed it already)
 						if (bContinue && oControlAggregationItem) {
 							// destroy the item
-							oModifier.destroy(oControlAggregationItem, "KeepDom");
+							oModifier.destroy(oControlAggregationItem);
 						}
 						this.afterApply(oChange.getChangeType(), oControl, bIsRevert);
 					}.bind(this));
