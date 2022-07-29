@@ -17137,4 +17137,60 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(oBinding.isExpanded(0), true, "expanded state is restored");
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: A table has an inactive created entity. After rebinding the table and activating
+	// this inactive entity, the createActivate-event of the ODataListBinding is properly handled.
+	// BCP: 2280135558
+	QUnit.test("ODataListBinding: createActivate-event works after rebinding", function (assert) {
+		var oBinding, oTable,
+			aCreateActivateCalledBy = [],
+			oModel = createSalesOrdersModel({defaultBindingMode : BindingMode.TwoWay}),
+			sView = '\
+<t:Table id="table" rows="{/BusinessPartnerSet}" visibleRowCount="2">\
+	<Input id="company" value="{CompanyName}"/>\
+</t:Table>',
+			that = this;
+
+		function fnAttachEvent(sText) {
+			oBinding.attachCreateActivate(function () {
+				aCreateActivateCalledBy.push(sText);
+			});
+		}
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet?$skip=0&$top=102", {results : []})
+			.expectValue("company", ["", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectValue("company", "Initial", 0);
+
+			// code under test: attach createActivate on initial binding; create inactive entity
+			fnAttachEvent("table before rebind");
+			oBinding.create({CompanyName : "Initial"}, false, {inactive : true});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("BusinessPartnerSet?$skip=0&$top=102", {results : []});
+
+			// code under test: rebind table and attach event on new binding
+			oTable.bindRows(oTable.getBindingInfo("rows"));
+			oBinding = oTable.getBinding("rows");
+			fnAttachEvent("table after rebind");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("company", "Activation", 0);
+
+			// code under test: activate entity
+			oTable.getRows()[0].getCells()[0].setValue("Activation");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(aCreateActivateCalledBy, ["table after rebind"]);
+		});
+	});
 });
