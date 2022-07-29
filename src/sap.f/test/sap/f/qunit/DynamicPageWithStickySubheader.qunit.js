@@ -23,20 +23,20 @@ sap.ui.define([
 			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
 
 			oDynamicPage._setScrollPosition(iIntermediateHeightInHeader);
-			oDynamicPage._adjustStickyContent();
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			oDynamicPage._toggleHeaderOnScroll();
+			assert.strictEqual(!oDynamicPageContent._getStickySubheaderSticked(), oDynamicPage.getHeaderExpanded());
 
 			oDynamicPage._setScrollPosition(BIG_SCROLL_POSITION);
-			oDynamicPage._adjustStickyContent();
-			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
+			oDynamicPage._toggleHeaderOnScroll();
+			assert.strictEqual(!oDynamicPageContent._getStickySubheaderSticked(), oDynamicPage.getHeaderExpanded());
 
 			oDynamicPage._setScrollPosition(iIntermediateHeightInHeader);
-			oDynamicPage._adjustStickyContent();
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			oDynamicPage._toggleHeaderOnScroll();
+			assert.strictEqual(!oDynamicPageContent._getStickySubheaderSticked(), oDynamicPage.getHeaderExpanded());
 
 			oDynamicPage._setScrollPosition(INITIAL_SCROLL_POSITION);
-			oDynamicPage._adjustStickyContent();
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			oDynamicPage._toggleHeaderOnScroll();
+			assert.strictEqual(!oDynamicPageContent._getStickySubheaderSticked(), oDynamicPage.getHeaderExpanded());
 			oDynamicPage.destroy();
 
 		}
@@ -52,57 +52,58 @@ sap.ui.define([
 			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
 			oDynamicPage._setScrollPosition(iIntermediateHeightInHeader);
 
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
 			oDynamicPage._setScrollPosition(BIG_SCROLL_POSITION);
 
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 			oDynamicPage.setHeaderExpanded(true);
 			oDynamicPage._pin();
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 			oDynamicPage._setScrollPosition(iIntermediateHeightInHeader);
 
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 			oDynamicPage._setScrollPosition(INITIAL_SCROLL_POSITION);
 
-			oDynamicPage._adjustStickyContent();
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			oDynamicPage._toggleHeaderOnScroll();
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 			oDynamicPage._setScrollPosition(iIntermediateHeightInHeader);
 
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 			oDynamicPage._setScrollPosition(BIG_SCROLL_POSITION);
 
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 			oDynamicPage._unPin();
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 			oDynamicPage._setScrollPosition(iIntermediateHeightInHeader);
 
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
 			oDynamicPage._setScrollPosition(INITIAL_SCROLL_POSITION);
 
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
 
 			oDynamicPage.destroy();
 		}
 
 		function headerSnapExpandStateWhileScrolling(assert, oDynamicPage) {
-			var oDynamicPageContent = oDynamicPage.getContent();
+			var oDynamicPageContent = oDynamicPage.getContent(),
+				bShouldInitiallyStick = oDynamicPage.getPreserveHeaderStateOnScroll();
 
 			oDynamicPage.setHeaderExpanded(true);
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			assert.strictEqual(!!oDynamicPageContent._getStickySubheaderSticked(), bShouldInitiallyStick, "Initial position is correct");
 			oDynamicPage.setHeaderExpanded(false);
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 			oDynamicPage.setHeaderExpanded(true);
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 			oDynamicPage._setScrollPosition(BIG_SCROLL_POSITION);
 
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 			oDynamicPage.setHeaderExpanded(true);
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
@@ -125,7 +126,30 @@ sap.ui.define([
 			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
 			oDynamicPage._setScrollPosition(BIG_SCROLL_POSITION);
 
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
+			oDynamicPage.getHeader().setVisible(true);
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
+			oDynamicPage.getHeader().setVisible(false);
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
+			oDynamicPage.getHeader().setVisible(true);
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
+
+			oDynamicPage.destroy();
+		}
+
+		function headerDynamicVisibilityChangeWithPreserveHeaderStateOnScroll(assert, oDynamicPage) {
+			var oDynamicPageContent = oDynamicPage.getContent();
+
+			oDynamicPage.getHeader().setVisible(true);
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
+			oDynamicPage.getHeader().setVisible(false);
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
+			oDynamicPage.getHeader().setVisible(true);
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
+			oDynamicPage._setScrollPosition(BIG_SCROLL_POSITION);
+
+			oDynamicPage._toggleHeaderOnScroll();
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 			oDynamicPage.getHeader().setVisible(true);
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
@@ -233,6 +257,28 @@ sap.ui.define([
 			headerSnapExpandStateWhileScrolling(assert, oDynamicPage);
 		});
 
+		QUnit.test("DynamicPage with header expanded in the title-area", function (assert) {
+			var oDynamicPage = oLibraryFactory.getDynamicPageWithStickySubheader(false /*preserveHeaderStateOnScroll*/, true  /*has header*/, true /*header visible*/, true /*has title*/),
+				iHeaderContentHeight,
+				iStickySubHeaderHeight;
+
+			oUtil.renderObject(oDynamicPage);
+
+			iHeaderContentHeight = oDynamicPage._getHeaderHeight();
+			iStickySubHeaderHeight = oDynamicPage._oStickySubheader.getDomRef().offsetHeight;
+
+			// Act: scroll to snap [where the scroll Top is slose to the snap breakpoints]
+			oDynamicPage._setScrollPosition(iHeaderContentHeight + iStickySubHeaderHeight);
+			 // Act: click to expand the heasder in the title area
+			oDynamicPage._titleExpandCollapseWhenAllowed(true /* user interaction */);
+			assert.ok(oDynamicPage._shouldStickStickyContent(), "sticky content shouled snap");
+
+			oDynamicPage._toggleHeaderOnScroll();// call the scroll listener synchronously to speed up the test
+			assert.ok(oDynamicPage.getContent()._getStickySubheaderSticked(), "Sticky content is in sticky area");
+
+			oDynamicPage.destroy();
+		});
+
 		QUnit.module("DynamicPage sticky content position while scrolling and changing the visibility of header");
 
 		QUnit.test("DynamicPage which has header and title", function (assert) {
@@ -294,7 +340,7 @@ sap.ui.define([
 			oUtil.renderObject(oDynamicPage);
 
 			oDynamicPage._setScrollPosition(BIG_SCROLL_POSITION);
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 
 			// Verify init state
 			assert.ok(oIconTabBar._getStickySubheaderSticked(), "Sticky content is in sticky area");
@@ -320,45 +366,45 @@ sap.ui.define([
 
 			iIntermediateHeightInHeader = oDynamicPage._getHeaderHeight() / 2;
 
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 
 			oDynamicPage._setScrollPosition(iIntermediateHeightInHeader);
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 
 			oDynamicPage._setScrollPosition(BIG_SCROLL_POSITION);
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 
 			oDynamicPage._setScrollPosition(iIntermediateHeightInHeader);
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 
 			oDynamicPage._setScrollPosition(INITIAL_SCROLL_POSITION);
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			oDynamicPage.setHeaderExpanded(false);
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 
 			oDynamicPage._setScrollPosition(BIG_SCROLL_POSITION);
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 
 			oDynamicPage._setScrollPosition(INITIAL_SCROLL_POSITION);
-			oDynamicPage._adjustStickyContent();
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			oDynamicPage._toggleHeaderOnScroll();
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 
 			oDynamicPage._setScrollPosition(BIG_SCROLL_POSITION);
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			oDynamicPage.setHeaderExpanded(true);
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 
 			oDynamicPage._setScrollPosition(iIntermediateHeightInHeader);
-			oDynamicPage._adjustStickyContent();
+			oDynamicPage._toggleHeaderOnScroll();
 			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 
 			oDynamicPage._setScrollPosition(INITIAL_SCROLL_POSITION);
-			oDynamicPage._adjustStickyContent();
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			oDynamicPage._toggleHeaderOnScroll();
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 
 			oDynamicPage.destroy();
 		});
@@ -371,11 +417,11 @@ sap.ui.define([
 
 			oUtil.renderObject(oDynamicPage);
 
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 			oDynamicPage.setHeaderExpanded(false);
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 			oDynamicPage.setHeaderExpanded(true);
-			assert.ok(!oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in the DOM of his provider");
+			assert.ok(oDynamicPageContent._getStickySubheaderSticked(), "Sticky content is in sticky area");
 
 			oDynamicPage.destroy();
 		});
@@ -395,28 +441,28 @@ sap.ui.define([
 			var oDynamicPage = oLibraryFactory.getDynamicPageWithStickySubheader(true /*preserveHeaderStateOnScroll*/, true /*has header*/, true /*header visible*/, true /*has title*/);
 
 			oUtil.renderObject(oDynamicPage);
-			headerDynamicVisibilityChange(assert, oDynamicPage);
+			headerDynamicVisibilityChangeWithPreserveHeaderStateOnScroll(assert, oDynamicPage);
 		});
 
 		QUnit.test("DynamicPage which has header and without title", function (assert) {
 			var oDynamicPage = oLibraryFactory.getDynamicPageWithStickySubheader(true /*preserveHeaderStateOnScroll*/, true  /*has header*/, true /*header visible*/, false /*has title*/);
 
 			oUtil.renderObject(oDynamicPage);
-			headerDynamicVisibilityChange(assert, oDynamicPage);
+			headerDynamicVisibilityChangeWithPreserveHeaderStateOnScroll(assert, oDynamicPage);
 		});
 
 		QUnit.test("DynamicPage which has not visible header and title", function (assert) {
 			var oDynamicPage = oLibraryFactory.getDynamicPageWithStickySubheader(true /*preserveHeaderStateOnScroll*/, true  /*has header*/, false /*header visible*/, true /*has title*/);
 
 			oUtil.renderObject(oDynamicPage);
-			headerDynamicVisibilityChange(assert, oDynamicPage);
+			headerDynamicVisibilityChangeWithPreserveHeaderStateOnScroll(assert, oDynamicPage);
 		});
 
 		QUnit.test("DynamicPage which has not visible header and without title", function (assert) {
 			var oDynamicPage = oLibraryFactory.getDynamicPageWithStickySubheader(true /*preserveHeaderStateOnScroll*/, true  /*has header*/, false /*header visible*/, false /*has title*/);
 
 			oUtil.renderObject(oDynamicPage);
-			headerDynamicVisibilityChange(assert, oDynamicPage);
+			headerDynamicVisibilityChangeWithPreserveHeaderStateOnScroll(assert, oDynamicPage);
 		});
 
 		QUnit.module("DynamicPage with preservedHeaderStateOnScroll sticky content position while scrolling and changing the visibility of header without content");
@@ -427,7 +473,7 @@ sap.ui.define([
 			oDynamicPage.getHeader().destroyContent();
 			oUtil.renderObject(oDynamicPage);
 
-			headerDynamicVisibilityChange(assert, oDynamicPage);
+			headerDynamicVisibilityChangeWithPreserveHeaderStateOnScroll(assert, oDynamicPage);
 		});
 
 		QUnit.test("DynamicPage which has header without content and without title", function (assert) {
@@ -436,7 +482,7 @@ sap.ui.define([
 			oDynamicPage.getHeader().destroyContent();
 			oUtil.renderObject(oDynamicPage);
 
-			headerDynamicVisibilityChange(assert, oDynamicPage);
+			headerDynamicVisibilityChangeWithPreserveHeaderStateOnScroll(assert, oDynamicPage);
 		});
 
 		QUnit.module("DynamicPage - Conditional CSS applied when StickySubheaderProvider is present", {
