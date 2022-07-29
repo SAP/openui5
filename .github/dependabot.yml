@@ -10,7 +10,7 @@ updates:
   reviewers: # UI5 Core Foundation team
     - "RandomByte"
     - "matz3"
-    - "svbender"
+    - "flovogt"
     - "codeworrior"
     - "tobiasso85"
   versioning-strategy: increase
