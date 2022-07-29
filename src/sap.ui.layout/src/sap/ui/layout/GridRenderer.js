@@ -166,7 +166,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/layout/library"],
 				// sSpanL needed for XL if XL is not defined at all
 				var sSpanL;
 				var sSpan = oLay.getSpan();
-				if (!sSpan || !sSpan.lenght == 0) {
+				if (!sSpan) {
 					aSpan = aDefaultSpan;
 				} else {
 					aSpan = SPANPATTERN.exec(sSpan);
