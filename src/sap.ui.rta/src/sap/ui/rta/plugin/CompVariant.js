@@ -165,12 +165,14 @@ sap.ui.define([
 	function changeContent(aOverlays) {
 		var oControl = aOverlays[0].getElementInstance();
 		var oAction = this.getAction(aOverlays[0]);
-		oAction.handler(oControl, {styleClass: Utils.getRtaStyleClassName()}).then(function(aData) {
-			createCommandAndFireEvent.call(this, aOverlays[0], "compVariantContent", {
-				variantId: aData[0].changeSpecificData.content.key,
-				newContent: aData[0].changeSpecificData.content.content,
-				persistencyKey: aData[0].changeSpecificData.content.persistencyKey
-			}, oControl.getVariantManagement());
+		return oAction.handler(oControl, {styleClass: Utils.getRtaStyleClassName()}).then(function(aData) {
+			if (aData && aData.length) {
+				createCommandAndFireEvent.call(this, aOverlays[0], "compVariantContent", {
+					variantId: aData[0].changeSpecificData.content.key,
+					newContent: aData[0].changeSpecificData.content.content,
+					persistencyKey: aData[0].changeSpecificData.content.persistencyKey
+				}, oControl.getVariantManagement());
+			}
 		}.bind(this));
 	}
 
