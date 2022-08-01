@@ -1,4 +1,4 @@
-<core:FragmentDefinition xmlns:richtexteditor="sap.ui.richtexteditor"
+<core:FragmentDefinition
 	xmlns:form="sap.ui.layout.form"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">

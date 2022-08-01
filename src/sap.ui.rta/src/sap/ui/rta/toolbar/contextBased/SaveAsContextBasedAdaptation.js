@@ -53,17 +53,9 @@ sap.ui.define([
 				name: "sap.ui.rta.toolbar.contextBased.SaveAsContextBasedAdaptationDialog",
 				id: this.getToolbar().getId() + "_fragment--sapUiRta_addAdaptationDialog",
 				controller: {
-					onAdaptationTitleChange: function (oEvent) {
-						this.sAdaptationTitle = oEvent.getParameter("value");
-						_validateAddAdaptationInput.call(this);
-					}.bind(this),
-					// TODO: implementation of save as context based adaptation
-					onSaveAsContextBasedAdaptation: function () {
-					},
-					onCancelContextBasedAdaptationDialog: function () {
-						_clearContexts.call(this);
-						this._oAddAdaptationDialog.close();
-					}.bind(this)
+					onAdaptationTitleChange: _onAdaptationTitleChange.bind(this),
+					onSaveAsContextBasedAdaptation: _onSaveAsContextBasedAdaptation.bind(this),
+					onCancelContextBasedAdaptationDialog: _onCancelContextBasedAdaptationDialog.bind(this)
 				}
 			}).then(function (oDialog) {
 				this._oAddAdaptationDialog = oDialog;
@@ -79,41 +71,42 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	function _onAdaptationTitleChange(oEvent) {
+		this.sAdaptationTitle = oEvent.getParameter("value");
+		_enableSaveAsButton.call(this);
+	}
+
+	function _onCancelContextBasedAdaptationDialog() {
+		_clearContexts.call(this);
+		this._oAddAdaptationDialog.close();
+	}
+
+	function _onSaveAsContextBasedAdaptation() {
+		var oContextBasedAdaptation = {};
+		oContextBasedAdaptation.title = getAdaptationTitle.call(this);
+		oContextBasedAdaptation.contexts = this._oContextComponentInstance.getSelectedContexts();
+		this.getToolbar().fireEvent("saveAsContextBasedAdaptation", oContextBasedAdaptation);
+	}
+
 	function createContextSharingComponent(sLayer) {
-		var mPropertyBag = { layer: sLayer || Layer.CUSTOMER, isAppContext: true };
+		var mPropertyBag = { layer: sLayer || Layer.CUSTOMER };
 		return ContextSharingAPI.createComponent(mPropertyBag).then(function (oContextSharingComponent) {
 			this._oContextComponent = oContextSharingComponent;
 			this._oContextComponentInstance = oContextSharingComponent.getComponentInstance();
-			this._oContextComponentInstance.setSelectedContexts({ role: [] });
+			this._oContextComponentInstance.resetSelectedContexts();
 			this._oAddAdaptationDialog.addContent(this._oContextComponent);
 			var oSelectedContextsModel = this._oContextComponentInstance.getSelectedContextsModel();
 			this.oSelectedContextsBinding = new Binding(oSelectedContextsModel, "/", oSelectedContextsModel.getContext("/"));
-			this.oSelectedContextsBinding.attachChange(onSelectedContextsChange.bind(this));
+			this.oSelectedContextsBinding.attachChange(_enableSaveAsButton.bind(this));
 		}.bind(this));
-	}
-
-	function onSelectedContextsChange() {
-		this.aSelectedRoles = this._oContextComponentInstance.getSelectedContexts().role;
-		_validateAddAdaptationInput.call(this);
-	}
-
-	function _validateAddAdaptationInput() {
-		if (getAdaptationTitle.call(this).length > 0 && getSelectedContexts.call(this).length > 0) {
-			_enableSaveAsButton.call(this, true);
-		} else {
-			_enableSaveAsButton.call(this, false);
-		}
 	}
 
 	function getAdaptationTitle() {
 		return this.sAdaptationTitle || "";
 	}
 
-	function getSelectedContexts() {
-		return this.aSelectedRoles || [];
-	}
-
-	function _enableSaveAsButton(bEnable) {
+	function _enableSaveAsButton() {
+		var bEnable = getAdaptationTitle.call(this).length > 0 && this._oContextComponentInstance.getSelectedContexts().role.length > 0;
 		this.getToolbar().getControl("addAdaptationDialog--saveContextBasedAdaptation-saveButton").setEnabled(bEnable);
 	}
 
@@ -122,7 +115,7 @@ sap.ui.define([
 			if (this._oContextComponent.isDestroyed()) {
 				return createContextSharingComponent.call(this);
 			}
-			this._oContextComponentInstance.setSelectedContexts({ role: [] });
+			this._oContextComponentInstance.resetSelectedContexts();
 			this._oAddAdaptationDialog.addContent(this._oContextComponent);
 		}
 	}

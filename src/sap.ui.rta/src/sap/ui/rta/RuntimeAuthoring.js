@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/TranslationAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings",
@@ -74,6 +75,7 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	ReloadInfoAPI,
 	VersionsAPI,
+	ContextBasedAdaptationsAPI,
 	TranslationAPI,
 	Layer,
 	Settings,
@@ -953,6 +955,15 @@ sap.ui.define([
 		return this.getCommandStack().redo();
 	};
 
+	RuntimeAuthoring.prototype._onSaveAsContextBasedAdaptation = function(oEvent) {
+		var mPropertyBag = {
+			parameters: oEvent.mParameters,
+			control: this.getRootControlInstance(),
+			layer: this.getLayer()
+		};
+		return ContextBasedAdaptationsAPI.create(mPropertyBag);
+	};
+
 	RuntimeAuthoring.prototype._onActivate = function(oEvent) {
 		var sVersionTitle = oEvent.getParameter("versionTitle");
 		if (this._isOldVersionDisplayed() && this._isDraftAvailable()) {
@@ -1093,6 +1104,7 @@ sap.ui.define([
 				oProperties.activate = this._onActivate.bind(this);
 				oProperties.discardDraft = this._onDiscardDraft.bind(this);
 				oProperties.switchVersion = this._onSwitchVersion.bind(this);
+				oProperties.saveAsContextBasedAdaptation = this._onSaveAsContextBasedAdaptation.bind(this);
 				oProperties.openChangeCategorySelectionPopover = this.getChangeVisualization
 					? this.getChangeVisualization().openChangeCategorySelectionPopover.bind(this.getChangeVisualization())
 					: function () {};

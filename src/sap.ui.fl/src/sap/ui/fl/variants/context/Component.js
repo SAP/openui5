@@ -46,6 +46,11 @@ sap.ui.define([
 			return { role: aSelectedRoleIds };
 		},
 
+		/**
+		 * Returns context sharing data binding model
+		 *
+		 * @returns {sap.ui.model.Model} Model containing selected contexts
+		 */
 		getSelectedContextsModel: function() {
 			return this.getModel("selectedContexts");
 		},
@@ -60,6 +65,11 @@ sap.ui.define([
 			});
 			var oSelectedContextsModel = this.getModel("selectedContexts");
 			oSelectedContextsModel.setProperty("/selected", aSelectedRoles);
+			oSelectedContextsModel.refresh(true);
+		},
+		resetSelectedContexts: function() {
+			var oSelectedContextsModel = this.getModel("selectedContexts");
+			oSelectedContextsModel.setProperty("/selected", []);
 			oSelectedContextsModel.refresh(true);
 		},
 
