@@ -1096,7 +1096,7 @@ sap.ui.define([
 		 * @experimental
 		 */
 		getLanguagesDeliveredWithCore : function() {
-			return this.getValue("languagesDeliveredWithCore");
+			return this["languagesDeliveredWithCore"];
 		},
 
 		/**
@@ -1841,10 +1841,11 @@ sap.ui.define([
 				);
 			}
 
-			// Until the Configuration is initialized we return the configuration value from URL or window["sap-ui-config"].
+			// Until the Configuration is initialized we return the configuration value either from the instance
+			// (if a setter was called), from URL or window["sap-ui-config"].
 			// In case there is no value or the type conversion fails we return the defaultValue.
 			// After the Configuration is initialized we only return the value of the configuration.
-			if (this.bInitialized) {
+			if (this.bInitialized || this.hasOwnProperty(sName)) {
 				vValue = this[sName];
 			} else {
 				if (!this.ignoreUrlParams && !M_SETTINGS[sName].noUrl) {
