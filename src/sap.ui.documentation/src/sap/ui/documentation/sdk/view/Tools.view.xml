@@ -215,10 +215,7 @@
 								<Link text="{i18n>TOOLS_VIEW_DOC}"
 									class="sapUiMediumMarginEnd"
 									target="_blank"
-									  href="{
-										path: 'newWindowLinks>/inspectorHomeLink',
-										formatter: '.formatter.formatHttpHrefForNewWindow'
-									}"/>
+									href="{newWindowLinks>/inspectorHomeLink}"/>
 								<html:div class="sapUIDisclaimerLink">
 									<Link text="{i18n>TOOLS_CARD_4_LINK_1}"
 										target="_blank"
@@ -272,19 +269,13 @@
 									titleStyle="H1"
 									text="{/supportAssistant/text}"
 									class="sapUiSmallMarginBottom"
-									href="{
-										path : 'newWindowLinks>/supportAssistantHomeLink',
-										formatter : '.formatter.formatHttpHrefForNewWindow'
-									}"
+									href="{newWindowLinks>/supportAssistantHomeLink}"
 									target="_blank"/>
 							<Text class="sapUiSmallMarginBottom" text="{i18n>TOOLS_CARD_6_TEXT}" />
 							<HBox wrap="Wrap">
 								<Link text="{i18n>TOOLS_VIEW_DOC}"
 									target="_blank"
-									href="{
-										path : 'newWindowLinks>/supportAssistantHomeLink',
-										formatter : '.formatter.formatHttpHrefForNewWindow'
-									}"/>
+									href="{newWindowLinks>/supportAssistantHomeLink}"/>
 							</HBox>
 						</VBox>
 						<Image src="./resources/sap/ui/documentation/sdk/images/tools/SupportAssistant.jpg" class="toolsPageImage"  alt="{i18n>TOOLS_CARD_6_IMG_ALT}"/>
@@ -307,10 +298,7 @@
 							<HBox wrap="Wrap">
 								<Link text="{i18n>TOOLS_VIEW_DOC}"
 									target="_blank"
-									href="{
-										path : 'newWindowLinks>/iconExplorerHomeLink',
-										formatter : '.formatter.formatHttpHrefForNewWindow'
-									}"
+									href="{newWindowLinks>/iconExplorerHomeLink}"
 									class="sapUiMediumMarginEnd"/>
 								<Link text="{i18n>TOOLS_CARD_7_LINK_1}"
 									target="_blank"
