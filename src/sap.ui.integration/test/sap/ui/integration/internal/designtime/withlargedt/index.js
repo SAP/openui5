@@ -11,7 +11,7 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 		sBaseUrl = document.location.protocol + "//" + document.location.host + document.location.pathname.substring(0, document.location.pathname.lastIndexOf("/") + 1);
 
 	loadCardEditor().then(function (BASCardEditor) {
-		sap.ui.require(["sap/ui/integration/widgets/Card", "sap/ui/integration/designtime/editor/CardEditor"], function (Card, ConfigurationEditor) {
+		sap.ui.require(["sap/ui/integration/widgets/Card", "sap/ui/integration/designtime/editor/CardEditor", "indexjs/HostImpl"], function (Card, ConfigurationEditor, oHost) {
 			LoaderExtensions.loadResource("indexjs/manifest.json", {
 				dataType: "json",
 				failOnError: false,
@@ -19,6 +19,7 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 			}).then(function (oManifest) {
 				var oCard = new Card({
 					baseUrl: sBaseUrl,
+					host: "host",
 					manifest: oManifest
 				});
 				oCard.placeAt("card");
@@ -41,7 +42,7 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 											oConfigAdmin.destroy();
 										}
 										oConfigAdmin = new ConfigurationEditor({
-											card: { manifest: oBASCardEditor.getManifest(), baseUrl: sBaseUrl },
+											card: { manifest: oBASCardEditor.getManifest(), host: "host", baseUrl: sBaseUrl },
 											designtime: oBASCardEditor.getConfigurationClass(),
 											allowSettings: true,
 											allowDynamicValues: true,
@@ -60,7 +61,7 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 											oConfigContent.destroy();
 										}
 										oConfigContent = new ConfigurationEditor({
-											card: { manifest: oBASCardEditor.getManifest(), baseUrl: sBaseUrl },
+											card: { manifest: oBASCardEditor.getManifest(), host: "host", baseUrl: sBaseUrl },
 											designtime: oBASCardEditor.getConfigurationClass(),
 											allowSettings: true,
 											allowDynamicValues: true,
@@ -81,7 +82,7 @@ sap.ui.require(["sap/ui/integration/util/loadCardEditor", "sap/base/util/LoaderE
 											oConfigTranslation.destroy();
 										}
 										oConfigTranslation = new ConfigurationEditor({
-											card: { manifest: oBASCardEditor.getManifest(), baseUrl: sBaseUrl },
+											card: { manifest: oBASCardEditor.getManifest(), host: "host", baseUrl: sBaseUrl },
 											designtime: oBASCardEditor.getConfigurationClass(),
 											mode: "translation",
 											language: "ru"
