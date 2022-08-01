@@ -84,7 +84,7 @@ sap.ui.define([
 
 		renderingTest.call(this, function() {
 
-			assert.equal(jQuery("#myBar1").position().top, (jQuery("#myBar").position().top + jQuery("#myBar").outerHeight()),
+			assert.equal(Math.round(jQuery("#myBar1").position().top), Math.round(jQuery("#myBar").position().top + jQuery("#myBar").outerHeight()),
 					"Bar1 should be located below Bar");
 
 		});
@@ -324,9 +324,9 @@ sap.ui.define([
 		//Assert
 		function check (sMsgPrefix) {
 			oBarWidths = getBarContentStyles(sut);
-			assert.equal("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must be set to 100%");
-			assert.notEqual("width:100%", oBarWidths.mid, sMsgPrefix + " Middle Content width must not be set to 100%");
-			assert.notEqual("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must not be set to 100%");
+			assert.notEqual(oBarWidths.left.indexOf("width:100%"), -1, sMsgPrefix + " Left Content width must be set to 100%");
+			assert.equal(oBarWidths.mid.indexOf("width:100%"), -1 ,sMsgPrefix + " Middle Content width must not be set to 100%");
+			assert.equal(oBarWidths.right.indexOf("width:100%"), -1, sMsgPrefix + " Right Content width must not be set to 100%");
 		}
 
 		//Arrange
@@ -353,9 +353,9 @@ sap.ui.define([
 		//Assert
 		function check (sMsgPrefix) {
 			oBarWidths = getBarContentStyles(sut);
-			assert.notEqual("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must not be set to 100%");
-			assert.notEqual("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must not be set to 100%");
-			assert.equal("width:100%",oBarWidths.mid, sMsgPrefix + " Middle Content width must be set to 100%");
+			assert.equal(oBarWidths.left.indexOf("width:100%"), -1, sMsgPrefix + " Left Content width must not be set to 100%");
+			assert.equal(oBarWidths.right.indexOf("width:100%"), -1, sMsgPrefix + " Right Content width must not be set to 100%");
+			assert.notEqual(oBarWidths.mid.indexOf("width:100%"), -1, sMsgPrefix + " Middle Content width must be set to 100%");
 		}
 
 		//Arrange
@@ -382,9 +382,9 @@ sap.ui.define([
 		//Assert
 		function check (sMsgPrefix) {
 			oBarWidths = getBarContentStyles(sut);
-			assert.notEqual("width:100%", oBarWidths.left, sMsgPrefix + " Left Content width must not be set to 100%");
-			assert.notEqual("width:100%", oBarWidths.mid, sMsgPrefix + " Middle Content width must not be set to 100%");
-			assert.equal("width:100%", oBarWidths.right, sMsgPrefix + " Right Content width must be set to 100%");
+			assert.equal(oBarWidths.left.indexOf("width:100%"), -1, sMsgPrefix + " Left Content width must not be set to 100%");
+			assert.equal(oBarWidths.mid.indexOf("width:100%"), -1, sMsgPrefix + " Middle Content width must not be set to 100%");
+			assert.notEqual(oBarWidths.right.indexOf("width:100%"), -1, sMsgPrefix + " Right Content width must be set to 100%");
 		}
 
 		//Arrange
@@ -802,9 +802,9 @@ sap.ui.define([
 		var oBarInternals = getJqueryObjectsForBar(sut);
 
 		if (oCore.getConfiguration().getRTL()) {
-			assert.strictEqual(oBarInternals.$right.outerWidth(), oBarInternals.$left.position().left, "left content starts where right content ends");
+			assert.strictEqual(oBarInternals.$right.outerWidth(), Math.round(oBarInternals.$left.position().left), "left content starts where right content ends");
 		} else {
-			assert.strictEqual(oBarInternals.$left.outerWidth(), oBarInternals.$right.position().left, "right content starts where left content ends");
+			assert.strictEqual(oBarInternals.$left.outerWidth(), Math.round(oBarInternals.$right.position().left), "right content starts where left content ends");
 		}
 
 		//Cleanup
