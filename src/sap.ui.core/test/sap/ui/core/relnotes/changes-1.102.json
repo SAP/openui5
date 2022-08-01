@@ -237,5 +237,44 @@
         ]
       }
     ]
+  },
+  "1.102.5": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "e798c4e9a89cc97001ff7a0d4f352694d7b790ae",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#doReplaceWith: take care of created contexts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180347338"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280113990"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280127015"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280134548"
+          }
+        ]
+      },
+      {
+        "id": "03bf61ae5a0cc851a48737b847a76081f53bbccd",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: no split weeks for \"en\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004563022022"
+          }
+        ]
+      }
+    ]
   }
 }

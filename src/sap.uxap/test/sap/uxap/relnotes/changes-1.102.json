@@ -68,5 +68,32 @@
         ]
       }
     ]
+  },
+  "1.102.5": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "3f23d2ba0215b31b892de13acd64eed053dfa741",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Corrected qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280125573"
+          }
+        ]
+      },
+      {
+        "id": "46b26d396e539c933e835cc8943b64aeffbec830",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Generic section label restricted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2240323326"
+          }
+        ]
+      }
+    ]
   }
 }
