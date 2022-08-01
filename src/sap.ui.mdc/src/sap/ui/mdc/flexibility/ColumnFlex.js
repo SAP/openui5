@@ -23,11 +23,6 @@ sap.ui.define([
 		}
 	};
 
-	ColumnFlex._delayInvalidate = function(oTable) {
-		oTable._bInvalidationSuppressedOnFlexChange = true;
-		ItemBaseFlex._delayInvalidate.apply(this, arguments);
-	};
-
 	ColumnFlex.findItem = function(oModifier, aColumns, sName) {
 		return aColumns.reduce(function(oPreviousPromise, oColumn) {
 			return oPreviousPromise

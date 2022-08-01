@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/mdc/Control',
 	'sap/base/Log',
 	'sap/base/util/merge',
+	'sap/base/util/deepEqual',
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/mdc/condition/ConditionModel',
@@ -28,6 +29,7 @@ sap.ui.define([
 		Control,
 		Log,
 		merge,
+		deepEqual,
 		ManagedObjectModel,
 		ManagedObjectObserver,
 		ConditionModel,
@@ -293,7 +295,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this._bIgnoreChanges = false;
-
+		this._aOngoingChangeAppliance = [];
 		this._bSearchTriggered = false;
 		this._bIgnoreQueuing = false;     // used to overrule the default behaviour of suspendSelection
 	};
@@ -623,11 +625,6 @@ sap.ui.define([
 
 
 	FilterBarBase.prototype._addConditionChange = function(mOrigConditions, sFieldPath) {
-
-		if (!this._aOngoingChangeAppliance) {
-			this._aOngoingChangeAppliance = [];
-		}
-
 		this._aOngoingChangeAppliance.push(this.getEngine().createChanges({
 			control: this,
 			applySequentially: true,
@@ -1034,10 +1031,10 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._handleOngoingChangeAppliance = function(bFireSearch) {
-		if (this._aOngoingChangeAppliance && (this._aOngoingChangeAppliance.length > 0)) {
+        if (this._aOngoingChangeAppliance && (this._aOngoingChangeAppliance.length > 0)) {
 
-			var aChangePromises = this._aOngoingChangeAppliance.slice();
-			this._aOngoingChangeAppliance = null;
+            var aChangePromises = this._aOngoingChangeAppliance.slice();
+            this._aOngoingChangeAppliance = [];
 
 			Promise.all(aChangePromises).then(function() {
 				this._validate(bFireSearch);
@@ -1299,13 +1296,26 @@ sap.ui.define([
 
 	};
 
+	FilterBarBase.prototype._onModifications = function() {
+		return this._setXConditions(this.getFilterConditions(), true).then(function(){
+			this._changesApplied();
+		}.bind(this));
+	};
+
 	FilterBarBase.prototype._setXConditions = function(mConditionsData, bRemoveBeforeApplying) {
+
 		var sFieldPath, oProperty, aConditions, oConditionModel = this._getConditionModel();
 
 		var fPromiseResolve = null;
 		var oPromise = new Promise(function(resolve, reject) {
 			fPromiseResolve = resolve;
 		});
+
+		if (deepEqual(this._getXConditions(), mConditionsData)) {
+			// optimized executions in case nothing needs to be done
+			// --> e.g. conditions are already provided in CM, hence no update is required
+			return Promise.resolve();
+		}
 
 		this._oConditionModel.detachPropertyChange(this._handleConditionModelPropertyChange, this);
 		var fApplyConditions = function(mConditionsData) {
@@ -1329,7 +1339,6 @@ sap.ui.define([
 					}
 				}
 			}
-
 			this._oConditionModel.attachPropertyChange(this._handleConditionModelPropertyChange, this);
 			fPromiseResolve();
 		}.bind(this);
@@ -1667,27 +1676,8 @@ sap.ui.define([
 		}
 	};
 
-	FilterBarBase.prototype.applyConditionsAfterChangesApplied = function() {
-		if (this._isChangeApplying()) {
-			return;
-		}
-		this._bIgnoreChanges = true;
-
-		// Wait until all changes have been applied
-		this._oFlexPromise = this._getWaitForChangesPromise();
-
-		Promise.all([this._oFlexPromise, this._oInitialFiltersAppliedPromise, this._oMetadataAppliedPromise]).then(function(vArgs) {
-
-			this._oFlexPromise = null;
-
-			//wait for changes not based on variant switch
-			this._changesApplied();
-
-		}.bind(this));
-	};
-
 	FilterBarBase.prototype._isChangeApplying = function() {
-		return  !!this._oFlexPromise;
+		return this._aOngoingChangeAppliance.length > 0;
 	};
 
 	FilterBarBase.prototype._applyInitialFilterConditions = function() {

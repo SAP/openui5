@@ -953,7 +953,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("check applyConditionsAfterChangesApplied", function (assert) {
+	QUnit.test("check _onModifications (e.g. change appliance)", function (assert) {
 
 		var fResolve;
 		var oPromise = new Promise(function (resolve) {
@@ -962,20 +962,25 @@ sap.ui.define([
 		sinon.stub(FlexRuntimeInfoAPI, "waitForChanges").returns(oPromise);
         sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
 
+		//no changes in pending appliance
 		assert.ok(!oFilterBar._isChangeApplying());
-		oFilterBar.applyConditionsAfterChangesApplied();
+
+		//--> add a personalization change
+		oFilterBar._addConditionChange({
+			key1: [
+				{operator: "EQ", values: ["Test"]}
+			]
+		});
+
+		//--> pending appliance
 		assert.ok(oFilterBar._isChangeApplying());
 
-		oFilterBar.applyConditionsAfterChangesApplied();
-
-
 		var done = assert.async();
+		sinon.spy(oFilterBar, "_changesApplied");
 
 		oFilterBar.initialized().then(function () {
 			fResolve();
 			oPromise.then(function () {
-				sinon.spy(oFilterBar, "_changesApplied");
-
 				setTimeout(function () { // required for condition model....
 					FlexRuntimeInfoAPI.waitForChanges.restore();
 					assert.ok(oFilterBar._changesApplied.calledOnce);
