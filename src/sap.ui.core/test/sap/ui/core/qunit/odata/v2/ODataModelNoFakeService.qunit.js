@@ -4343,6 +4343,7 @@ sap.ui.define([
 			.returns(oCreatedContextsCache);
 		this.mock(oCreatedContextsCache).expects("removePersistedContexts")
 			.withExactArgs("~resolvedPath", "");
+		this.mock(ODataListBinding.prototype).expects("_reassignCreateActivate").withExactArgs();
 		oListBinding = new ODataListBinding(oModel, "path/to/collection", "~oContext1");
 
 		this.mock(ODataPropertyBinding.prototype).expects("_getValue").withExactArgs()
