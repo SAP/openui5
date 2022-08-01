@@ -168,7 +168,7 @@ sap.ui.define([
 				throw DtUtil.propagateError(
 					vError,
 					"LocalReset#handler",
-					"Error occured during handler execution",
+					"Error occurred during handler execution",
 					"sap.ui.rta.plugin"
 				);
 			});

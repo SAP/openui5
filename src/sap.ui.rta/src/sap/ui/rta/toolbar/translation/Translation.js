@@ -9,12 +9,10 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
 	"sap/ui/rta/Utils",
-	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/fl/write/api/TranslationAPI",
-	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/core/util/File"
 ], function(
@@ -22,12 +20,10 @@ sap.ui.define([
 	ManagedObject,
 	Fragment,
 	Utils,
-	FlUtils,
 	JSONModel,
 	MessageBox,
 	MessageToast,
 	TranslationAPI,
-	VersionsAPI,
 	Layer,
 	FileUtil
 ) {

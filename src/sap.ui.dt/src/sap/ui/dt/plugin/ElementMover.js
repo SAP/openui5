@@ -138,7 +138,7 @@ sap.ui.define([
 			.catch(function(oError) {
 				throw DtUtil.createError(
 					"ElementMover#_activateValidTargetZone",
-					"An error occured during activation of valid target zones: " + oError
+					"An error occurred during activation of valid target zones: " + oError
 				);
 			});
 	};

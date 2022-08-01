@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/Core"
 ], function(
 	Log,
 	JsControlTreeModifier,
@@ -39,7 +40,8 @@ sap.ui.define([
 	ChangesWriteAPI,
 	Layer,
 	FlexUtils,
-	sinon
+	sinon,
+	Core
 ) {
 	"use strict";
 
@@ -231,7 +233,7 @@ sap.ui.define([
 			sandbox.stub(Applier, "applyChangeOnControl").resolves(sReturnValue);
 
 			mockFlexController(mPropertyBag.element, {
-				checkForOpenDependenciesForControl: function() {return false;}
+				getOpenDependentChangesForControl: function() {return [];}
 			});
 
 			return ChangesWriteAPI.apply(mPropertyBag).then(function(sValue) {
@@ -255,15 +257,35 @@ sap.ui.define([
 
 			var oApplyStub = sandbox.stub(Applier, "applyChangeOnControl").resolves();
 			var oRevertStub = sandbox.stub(Reverter, "revertChangeOnControl").resolves();
+			var aDependentChanges = [
+				{
+					getId: function() {
+						return "changeId1";
+					}
+				},
+				{
+					getId: function() {
+						return "changeId2";
+					}
+				}
+			];
+			var oFlResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
 
 			mockFlexController(mPropertyBag.element, {
-				checkForOpenDependenciesForControl: function() {return true;}
+				getOpenDependentChangesForControl: function() {return aDependentChanges;}
 			});
 
 			return ChangesWriteAPI.apply(mPropertyBag).catch(function (oError) {
 				assert.equal(oApplyStub.callCount, 1, "the change got applied");
 				assert.equal(oRevertStub.callCount, 1, "the change got reverted");
-				assert.strictEqual(oError.message, "The following Change cannot be applied because of a dependency: changeId", "then a rejected promise with an error was returned");
+				assert.strictEqual(
+					oError.message,
+					oFlResourceBundle.getText(
+						"MSG_DEPENDENT_CHANGE_ERROR",
+						["changeId", "changeId1, changeId2"]
+					),
+					"then a rejected promise with an error was returned"
+				);
 			});
 		});
 

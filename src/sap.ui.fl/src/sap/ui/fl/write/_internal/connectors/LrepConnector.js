@@ -268,7 +268,7 @@ sap.ui.define([
 				BusyIndicator.hide();
 				var sMessage = oResourceBundle.getText("MSG_TRANSPORT_ERROR", oError ? [oError.message || oError] : undefined);
 				var sTitle = oResourceBundle.getText("HEADER_TRANSPORT_ERROR");
-				Log.error("transport error" + oError);
+				Log.error("transport error: " + oError);
 				MessageBox.show(sMessage, {
 					icon: MessageBox.Icon.ERROR,
 					title: sTitle,

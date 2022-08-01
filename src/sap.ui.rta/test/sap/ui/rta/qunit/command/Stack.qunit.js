@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/m/Input",
 	"sap/m/Panel",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
+	"sap/m/MessageBox",
+	"sap/ui/core/Core"
 ], function(
 	DesignTimeMetadata,
 	ChangesWriteAPI,
@@ -23,7 +25,9 @@ sap.ui.define([
 	sinon,
 	Input,
 	Panel,
-	RtaQunitUtils
+	RtaQunitUtils,
+	MessageBox,
+	Core
 ) {
 	"use strict";
 
@@ -99,9 +103,27 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when execute is called and command.execute fails", function(assert) {
+			var fnDone = assert.async();
+			var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+			sandbox.stub(MessageBox, "error").callsFake(function(sMessage, mOptions) {
+				assert.strictEqual(sMessage, oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", "My Error"), "then the message text is correct");
+				assert.deepEqual(mOptions, {title: oRtaResourceBundle.getText("HEADER_ERROR")}, "then the message title is correct");
+				fnDone();
+			});
+			// Create commands
+			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
+				removedElement: this.oInput1
+			}, this.oInputDesignTimeMetadata)
+			.then(function(oRemoveCommand) {
+				sandbox.stub(oRemoveCommand, "execute").rejects(new Error("My Error"));
+				this.oCommandStack.pushAndExecute(oRemoveCommand);
+			}.bind(this));
+		});
+
 		QUnit.test("when 2 Changes get executed and one gets an error after execution", function(assert) {
 			var done = assert.async();
-
+			sandbox.stub(MessageBox, "error");
 			var iCounter = 0;
 			var aInputs = [this.oInput1, this.oInput2];
 			this.oCommandStack.attachCommandExecuted(function(oEvent) {

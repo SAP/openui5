@@ -67,7 +67,7 @@ sap.ui.define([
 			var sFragment = "fragment";
 			var oApplyChangeStub = sandbox.stub(AddXMLAtExtensionPoint, "applyChange");
 			var oCompleteChangeContentSpy = sandbox.spy(AddXMLAtExtensionPoint, "completeChangeContent");
-			sandbox.stub(FlexController.prototype, "checkForOpenDependenciesForControl").returns(false);
+			sandbox.stub(FlexController.prototype, "getOpenDependentChangesForControl").returns([]);
 			var oGetExtensionPointInfoSpy = sandbox.spy(ExtensionPointRegistryAPI, "getExtensionPointInfo");
 			var oPreloadSpy = sandbox.spy(sap.ui.require, "preload");
 

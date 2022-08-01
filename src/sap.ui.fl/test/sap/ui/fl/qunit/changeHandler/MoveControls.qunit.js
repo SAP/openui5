@@ -651,7 +651,7 @@ sap.ui.define([
 					return MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 				}.bind(this))
 				.catch(function(oError) {
-					var sError = "Error during execPromiseQueueSequentially processing occured: Missing targetIndex for element with id '" + this.oObjectAttribute.getId()
+					var sError = "Error during execPromiseQueueSequentially processing occurred: Missing targetIndex for element with id '" + this.oObjectAttribute.getId()
 						+ "' in movedElements supplied";
 					assert.equal(oError.message, sError, "missing target index error captured");
 					oChange = new Change({
@@ -681,7 +681,7 @@ sap.ui.define([
 					return MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 				}.bind(this))
 				.catch(function(oError) {
-					var sError = "Error during execPromiseQueueSequentially processing occured: Control to move was not found. Id: '" + this.oObjectAttribute.getId() + "foo" + "'";
+					var sError = "Error during execPromiseQueueSequentially processing occurred: Control to move was not found. Id: '" + this.oObjectAttribute.getId() + "foo" + "'";
 					assert.equal(oError.message, sError, "Control with the given ID not found and error is raised");
 				}.bind(this));
 		});

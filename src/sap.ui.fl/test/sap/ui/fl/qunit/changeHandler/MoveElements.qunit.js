@@ -360,7 +360,7 @@ sap.ui.define([
 			.catch(function(oError) {
 				assert.equal(
 					oError.message,
-					"Error during execPromiseQueueSequentially processing occured: Missing targetIndex for element with id '"
+					"Error during execPromiseQueueSequentially processing occurred: Missing targetIndex for element with id '"
 						+ this.oObjectAttribute.getId() + "' in movedElements supplied",
 					"missing target index error captured");
 			}.bind(this));

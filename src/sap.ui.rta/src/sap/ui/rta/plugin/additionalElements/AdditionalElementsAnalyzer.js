@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/util/ObjectPath",
-	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
@@ -13,7 +12,6 @@ sap.ui.define([
 ], function(
 	isPlainObject,
 	ObjectPath,
-	Log,
 	JsControlTreeModifier,
 	ElementUtil,
 	DelegateMediatorAPI,

@@ -788,7 +788,7 @@ sap.ui.define([
 					}
 				})
 				.catch(function(e) {
-					var sErrorMessage = "Error during execPromiseQueueSequentially processing occured";
+					var sErrorMessage = "Error during execPromiseQueueSequentially processing occurred";
 					sErrorMessage += e ? ": " + e.message : "";
 					Log.error(sErrorMessage, e);
 

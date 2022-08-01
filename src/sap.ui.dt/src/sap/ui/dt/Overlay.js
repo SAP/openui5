@@ -635,7 +635,7 @@ sap.ui.define([
 			.catch(function(vError) {
 				Log.error(Util.createError(
 					"Overlay#applyStyles",
-					"Error occured during applySizes calculation: " + vError
+					"An error occurred during applySizes calculation: " + vError
 				));
 			})
 			.then(function() {

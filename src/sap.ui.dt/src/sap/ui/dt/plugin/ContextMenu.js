@@ -268,7 +268,7 @@ sap.ui.define([
 			.catch(function(oError) {
 				throw DtUtil.createError(
 					"ContextMenu#open",
-					"An error occured during calling getMenuItems: " + oError
+					"An error occurred during calling getMenuItems: " + oError
 				);
 			});
 	};

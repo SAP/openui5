@@ -141,7 +141,7 @@ sap.ui.define([
 			throw DtUtil.propagateError(
 				vError,
 				"Split#handleSplit",
-				"Error occured during handleSplit execution",
+				"Error occurred during handleSplit execution",
 				"sap.ui.rta.plugin"
 			);
 		});

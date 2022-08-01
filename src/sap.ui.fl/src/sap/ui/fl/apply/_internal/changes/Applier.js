@@ -173,8 +173,8 @@ sap.ui.define([
 
 		var sChangeId = oChange.getId();
 		var sLogMessage = "Change ''{0}'' could not be applied.";
-		var bErrorOccured = oError instanceof Error;
-		var sCustomDataIdentifier = FlexCustomData.getCustomDataIdentifier(false, bErrorOccured, bXmlModifier);
+		var bErrorOccurred = oError instanceof Error;
+		var sCustomDataIdentifier = FlexCustomData.getCustomDataIdentifier(false, bErrorOccurred, bXmlModifier);
 		switch (sCustomDataIdentifier) {
 			case FlexCustomData.notApplicableChangesCustomDataKey:
 				FlUtils.formatAndLogMessage("info", [sLogMessage, oError.message], [sChangeId]);
