@@ -6,8 +6,9 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/thirdparty/URI",
-		"sap/uxap/ThrottledTaskHelper"
-	], function (BaseController, JSONModel, URI, ThrottledTask) {
+		"sap/uxap/ThrottledTaskHelper",
+		"sap/ui/core/Core"
+	], function (BaseController, JSONModel, URI, ThrottledTask, Core) {
 		"use strict";
 
 		var SRC_FILE_NAMES = {
@@ -73,6 +74,15 @@ sap.ui.define([
 				// additional performance optimization:
 				// throttle the output of src changes
 				this._oThrottledTask = null;
+
+				this.bus = Core.getEventBus();
+				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
+			},
+
+			onDemoKitThemeChanged: function (sChannelId, sEventId, oData) {
+				// clean throttled task to reload iFrame with new theme
+				this._oThrottledTask = null;
+				this.requestExecuteCurrentSrc();
 			},
 
 			onSrcLiveChange: function(oEvent) {
@@ -155,7 +165,8 @@ sap.ui.define([
 
 				return {
 					src: oModulesToPost,
-					moduleNameToRequire: sInitModuleName
+					moduleNameToRequire: sInitModuleName,
+					activeTheme: Core.getConfiguration().getTheme().toLowerCase()
 				};
 			},
 
