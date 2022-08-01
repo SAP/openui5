@@ -1,0 +1,56 @@
+{
+  "1.106.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "0e4dd234741ddcfc7682367c1891ab114c33b866",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix throwing an error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280143866"
+          }
+        ]
+      },
+      {
+        "id": "7c37c96edc8bb48241fbd8534bd170a67cabd941",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix scrolling to section",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270090240"
+          }
+        ]
+      },
+      {
+        "id": "a4b711b2c1d020ef8bfb88880c58d30472ebcc2a",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent error when footer is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270096171"
+          }
+        ]
+      },
+      {
+        "id": "71c4a8aa56fe1ddda95e0f17062a96671de1f1ce",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Title height corrected"
+      },
+      {
+        "id": "70e54750aa21350dc781b59ed5f6bfc5101df5f8",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Corrected qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280125573"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,240 @@
+{
+  "1.106.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "f066ae92beed86211d1f547ab5fb08f1eae1aec6",
+        "type": "FIX",
+        "text": " adapt return types to textual description"
+      },
+      {
+        "id": "52b706bfad5b35545b4e0c0bca7f28d7ddf74ed5",
+        "type": "FEATURE",
+        "text": " Table: Using the new ColumnMenu when the headerMenu association is set"
+      },
+      {
+        "id": "6b15a537270a0d181ef0bd782b470ff503aa65f5",
+        "type": "FEATURE",
+        "text": " You can now upload files from cloud using the UploadSet control"
+      },
+      {
+        "id": "2c388d0c0d036b9373460d19d1e5808d47348545",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Corrected filtering behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280118237"
+          }
+        ]
+      },
+      {
+        "id": "24734bd3e36cd7b3b6cabc15d056c1517546ce38",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Option suggestion name is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280124375"
+          }
+        ]
+      },
+      {
+        "id": "a4ec0a38aebcab813079c586487f0ffad66a4c71",
+        "type": "FIX",
+        "text": " m.VariantManagement: remove modification handling during save",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280135359"
+          }
+        ]
+      },
+      {
+        "id": "6cb6d4eccc576987b2e9e85cac57dd0a9e1f932a",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: fix .to() method documentation"
+      },
+      {
+        "id": "a783010194f1b2d5944bf54f09a30b0f03b429b8",
+        "type": "FEATURE",
+        "text": " sap.m.Dialog: 'Ctrl' + 'Enter' triggers footer button if it is 'Accept' or 'Emphasized'"
+      },
+      {
+        "id": "faa37880e8135852d16d40be16f6e5b09951328c",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: selectedKey is now not updated if it is the same",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280131708"
+          }
+        ]
+      },
+      {
+        "id": "5b956ec94192799866b121a5897766d4246a8b02",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateUtil: Now provides a way to remove offset caused by timezone.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280126776"
+          }
+        ]
+      },
+      {
+        "id": "22b52025958f430d055d4949cd1d65f6892e051d",
+        "type": "FEATURE",
+        "text": " sap.m.DynamicDateRange: Open DDR from another control (no visible input field)"
+      },
+      {
+        "id": "53a99c7981c7a4e6257b6b92c5a8dbd053cab9dc",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Selected state is now announced by the SR",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280094292"
+          }
+        ]
+      },
+      {
+        "id": "8f4f7b5f247547a838ace4de3f74ac322b969073",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Selected button is now correctly set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280128023"
+          }
+        ]
+      },
+      {
+        "id": "ef5f0d60fab9c0af7bba175122b7cbd74ed85335",
+        "type": "FIX",
+        "text": " sap.m.Bar: make unit tests run on Belize theme"
+      },
+      {
+        "id": "067e4ba5d26e5736471ea709067cb2188cf48a1f",
+        "type": "FIX",
+        "text": " sap.m.Button: adjusting self reference",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270101986"
+          }
+        ]
+      },
+      {
+        "id": "e6a2afe7e43e27255a1574dd0caa2922432e54de",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: Correct dates are now set to the calendar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280121072"
+          }
+        ]
+      },
+      {
+        "id": "d99985caa2de9b0adca1a670227edce5640ce0d0",
+        "type": "FIX",
+        "text": " sap.m.Button: adjust self reference",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270088701"
+          }
+        ]
+      },
+      {
+        "id": "c3c2a8db8d8ba5476d2d92d730da2c2633b0f6ed",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Enhanced active title description",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280115924"
+          }
+        ]
+      },
+      {
+        "id": "563fe3a1ce62fc653847a451f51ed7f96ef9fc81",
+        "type": "FIX",
+        "text": " sap.m.StepInput: qunit test adaptation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280121694"
+          }
+        ]
+      },
+      {
+        "id": "2351e9eee34bb31f483013306cca999712f8ac22",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Fixed Illustration not loading initially",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280118931"
+          }
+        ]
+      },
+      {
+        "id": "6b4ddbc593ae4915882f092cbe2f03695168ceda",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Default boolean values can now be set in xml view",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280108611"
+          }
+        ]
+      },
+      {
+        "id": "4dae11d4b362fc3cb8979f9982707586faf7f414",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Header is no longer created after IconTabBar is destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280084554"
+          }
+        ]
+      },
+      {
+        "id": "3183b3cf7248e07a2ede274579c170dd6bf4a7e2",
+        "type": "FIX",
+        "text": " P13nConditionPanel now respects upperCase format on field switch",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002594982022"
+          }
+        ]
+      },
+      {
+        "id": "f2afbe270453d7b89ff39d19af6f55acfaab97cc",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: adjust control invalidation behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280102763"
+          }
+        ]
+      },
+      {
+        "id": "7ad927ac4f23e9bdc20cb682b66fd2f8987ccf31",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection in table with many radio buttons is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003326492022"
+          }
+        ]
+      }
+    ]
+  }
+}

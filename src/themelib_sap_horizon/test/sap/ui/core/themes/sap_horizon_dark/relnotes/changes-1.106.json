@@ -1,0 +1,23 @@
+{
+  "1.106.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "b620ed6f1e4addaf20deab5dcd413ee3693a2eab",
+        "type": "FIX",
+        "text": " \"72\" font: redirect special character from '72' to '72-full'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "2aa851b94107c936e5a8f3fc8963b8c3a8817e27",
+        "type": "FIX",
+        "text": " Improve contrast ratios for chart labels"
+      }
+    ]
+  }
+}

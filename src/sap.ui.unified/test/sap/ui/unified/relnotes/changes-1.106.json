@@ -1,0 +1,56 @@
+{
+  "1.106.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "8b8a6dbf186d7bd6c1c35a716bead8501650a616",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.MonthPicker: fixed one-row month navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270108525"
+          }
+        ]
+      },
+      {
+        "id": "10016302fbab54ea03f823b55e01baa52876a305",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: fixed menu item separator height in Belize theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005248202022"
+          }
+        ]
+      },
+      {
+        "id": "733285eb279c20da59bc5ba2c85d390fb3eaae8f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Тhe select event now works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280134456"
+          }
+        ]
+      },
+      {
+        "id": "1742ac7743a7834da63b1128ee31d16a28d1b2ee",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.FileUploader: enable directory selection"
+      },
+      {
+        "id": "436bdaabc893e05f78ff1c2993f38e502cb7eb89",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: now select correct year",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280125046"
+          }
+        ]
+      }
+    ]
+  }
+}

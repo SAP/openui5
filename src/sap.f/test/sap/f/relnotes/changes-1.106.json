@@ -1,0 +1,50 @@
+{
+  "1.106.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "f066ae92beed86211d1f547ab5fb08f1eae1aec6",
+        "type": "FIX",
+        "text": " adapt return types to textual description"
+      },
+      {
+        "id": "3d541b7f374644f335d5ae9725129e5fdda07380",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Issue with header state corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280133870"
+          }
+        ]
+      },
+      {
+        "id": "a338dba46e29d4e83e5cf72ad15a43cbe25829a0",
+        "type": "FEATURE",
+        "text": " sap.f.semantic.SemanticPage: Share action shortcut added"
+      },
+      {
+        "id": "35eae87c9325f94251bd4bb55e90b4ddf0bcc8e2",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Snapping issue corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280092564"
+          }
+        ]
+      },
+      {
+        "id": "308bc1ce1e7869506a32f9d2d335adf365078970",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Correct header visibility issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280122057"
+          }
+        ]
+      }
+    ]
+  }
+}
