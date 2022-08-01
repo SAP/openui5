@@ -289,6 +289,7 @@ sap.ui.define([
 
 			if (sBaseType === BaseType.DateTime) {
 				oDateRangeFormatOptions.datetime = oUsedFormatOptions;
+				oDateRangeFormatOptions.datetime.UTC =  oType.getFormatOptions().UTC === true; // for DateTime we have to set it depending on the type UTC setting
 			}
 
 			// use Date FormatOptions anyhow for Operations supporting only dates
