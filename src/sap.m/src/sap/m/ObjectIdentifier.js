@@ -269,16 +269,19 @@ function(
 	ObjectIdentifier.prototype._getTitleControl = function() {
 		var oTitleControl = this.getAggregation("_titleControl"),
 			sId = this.getId(),
-			sTitle = ManagedObject.escapeSettingsValue(this.getProperty("title"));
+			sTitle = ManagedObject.escapeSettingsValue(this.getProperty("title")),
+			addAriaLabelledBy;
 
 		if (!oTitleControl) {
 			// Lazy initialization
 			if (this.getProperty("titleActive")) {
+				addAriaLabelledBy = this.getAriaLabelledBy().slice();
+				addAriaLabelledBy.push(InvisibleText.getStaticId("sap.m", "OI_ARIA_ROLE"));
 				oTitleControl = new Link({
 					id : sId + "-link",
 					text: sTitle,
 					//Add a custom hidden role "ObjectIdentifier" with hidden text
-					ariaLabelledBy: InvisibleText.getStaticId("sap.m", "OI_ARIA_ROLE")
+					ariaLabelledBy: addAriaLabelledBy
 				});
 				oTitleControl.addAriaLabelledBy(sId + "-text");
 			} else {

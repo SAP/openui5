@@ -922,6 +922,34 @@ sap.ui.define([
 		sut2.destroy();
 	});
 
+	QUnit.test("ariaLabelledBy propery propaged to the anchor tag", function(assert) {
+		// Prepare
+		var sLabelId = "label",
+			oLabel = new sap.m.Label(sLabelId, {
+				text: "label text"
+			}),
+			oOI = new sap.m.ObjectIdentifier({
+				text: "identifier text",
+				title: "identifier title",
+				ariaLabelledBy: [sLabelId]
+			});
+
+		oLabel.placeAt("qunit-fixture");
+		oOI.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		oOI.setTitleActive(true);
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(oOI.getDomRef().querySelector(".sapMLnk").getAttribute("aria-labelledby").indexOf(sLabelId) !== -1, "Correct ariaLabeldBy is set on after rendering of the control");
+
+		// Clean
+		oLabel.destroy();
+		oOI.destroy();
+	});
+
 	QUnit.test("function getAccessibilityInfo", function(assert) {
 
 		//SUT
