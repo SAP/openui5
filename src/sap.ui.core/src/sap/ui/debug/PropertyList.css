@@ -21,35 +21,5 @@
 }
 
 .sapDbgPropertyList input.sapDbgComplexValue {
-	color: #a5a5a5;'
+	color: #a5a5a5;
 }
-
-.sapDbgQH {
-	position: fixed;
-	display: none;
-	padding: 5px;
-	background-color: rgb(200,220,231);
-	border: 1px solid gray;
-	overflow: hidden;
-}
-
-.sapDbgQHClassTitle {
-	font-size: 10pt;
-	font-weight: bold;
-	padding: 5px 0px;
-	margin-bottom: 5px;
-	border-bottom: 1px solid gray;
-}
-
-.sapDbgQHDocPadding {
-	padding: 2px 0px;
-}
-
-.sapDbgQHSettingTitle {
-	font-size:10pt;
-	font-weight:bold;
-	padding:3px 0px;
-	margin-bottom:3px;
-	border-bottom:1px solid gray;
-}
-
