@@ -19,12 +19,15 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "string",
 						"translatable": true,
 						"required": true,
-						"label": "cardTitle cardTitle cardTitle",
+						"label": "cardTitle",
 						"allowDynamicValues": true,
 						"editableToUser": false,
 						"visibleToUser": false,
 						"description": "test",
-						"cols": 1
+						"cols": 1,
+						"visualization": {
+							"fragment": "sap/ui5/test/editor/listcard/viz/Input"
+						}
 					},
 					"contextModelSyntax": {
 						"manifestpath": "/sap.card1/configuration/parameters/contextModelSyntax/value",
@@ -211,6 +214,21 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card1/configuration/parameters/booleanLabelTrans/value",
 						"type": "boolean",
 						"label": "{i18n>TRANSLATED_BOOLEAN_LABEL}"
+					},
+					"dateRange": {
+						"manifestpath": "/sap.card1/configuration/parameters/dateRange/value",
+						"type": "string",
+						"label": "Date Range",
+						"displayFormat": "yyyy/MM/dd",
+						"visualization": {
+							"type": "sap/ui5/test/editor/listcard/viz/CustomDateRangeSelection",
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}",
+								//"displayFormat": "{currentSettings>displayFormat}"
+								"displayFormat": "yyyy/MM/dd"
+							}
+						}
 					},
 					"date": {
 						"manifestpath": "/sap.card1/configuration/parameters/date/value",
@@ -1427,6 +1445,611 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"layout": {
 							"label-width": "30%",
 							"position": "field-label"
+						}
+					},
+					"objectFieldGroup": {
+						"type": "group",
+						"label": "Object Fields"
+					},
+					"object": {
+						"manifestpath": "/sap.card1/configuration/parameters/object/value",
+						"type": "object",
+						"label": "Object Field"
+					},
+					"objectWithPropertiesDefined": {
+						"manifestpath": "/sap.card1/configuration/parameters/objectWithPropertiesDefined/value",
+						"type": "object",
+						"label": "Object properties defined",
+						"properties": {
+							"key": {
+								"label": "{{TRANSLATED_KEY}}",
+								"placeholder": "placeholder of key"
+							},
+							"icon": {
+								"label": "Icon",
+								"placeholder": "placeholder of icon"
+							},
+							"text": {
+								"label": "Text",
+								"placeholder": "placeholder of text",
+								"translatable": false
+							},
+							"url": {
+								"label": "URL",
+								"placeholder": "placeholder of url"
+							},
+							"editable": {
+								"label": "Editable",
+								"type": "boolean"
+							},
+							"int": {
+								"label": "Integer",
+								"placeholder": "placeholder of int",
+								"type": "int",
+								"formatter": {
+									"minIntegerDigits": 1,
+									"maxIntegerDigits": 6,
+									"emptyString": ""
+								}
+							},
+							"number": {
+								"label": "Number",
+								"placeholder": "placeholder of number",
+								"type": "number",
+								"formatter": {
+									"decimals": 1,
+									"style":"short"
+								}
+							}
+						},
+						"addButtonText": "Add a new step"
+					},
+					"objectWithPropertiesDefinedAndValueFromJsonList": {
+						"manifestpath": "/sap.card1/configuration/parameters/objectWithPropertiesDefinedAndValueFromJsonList/value",
+						"type": "object",
+						"label": "Object - properties defined: value from Json list",
+						"values": {
+							"data": {
+								"json": {
+									"values": [
+										{ "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 },
+										{ "text": "text02", "key": "key02", "url": "http://sapui5.hana.ondemand.com/05", "icon": "sap-icon://cart", "iconcolor": "#64E4CE", "int": 2 },
+										{ "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3 },
+										{ "text": "text04", "key": "key04", "url": "https://sapui5.hana.ondemand.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4 },
+										{ "text": "text05", "key": "key05", "url": "http://sapui5.hana.ondemand.com/02", "icon": "sap-icon://cart", "iconcolor": "#8875E7", "int": 5 },
+										{ "text": "text06", "key": "key06", "url": "https://sapui5.hana.ondemand.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 6 },
+										{ "text": "text07", "key": "key07", "url": "http://sapui5.hana.ondemand.com/02", "icon": "sap-icon://cart", "iconcolor": "#1C4C98", "int": 7 },
+										{ "text": "text08", "key": "key08", "url": "https://sapui5.hana.ondemand.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#8875E7", "int": 8 }
+									]
+								},
+								"path": "/values"
+							},
+							"allowAdd": true
+						},
+						"properties": {
+							"key": {
+								"label": "{{TRANSLATED_KEY}}",
+								"placeholder": "placeholder of key",
+								"column": {
+									"filterProperty": "key"
+								},
+								"cell": {
+									"text": "{{TRANSLATED_KEY}}"
+								}
+							},
+							"icon": {
+								"label": "Icon",
+								"defaultValue": "sap-icon://add",
+								"placeholder": "placeholder of icon",
+								"column": {
+									"hAlign": "Center",
+									"width": "4rem"
+								},
+								"cell": {
+									"type": "Icon",
+									"color": "{iconcolor}"
+								}
+							},
+							"text": {
+								"label": "Text",
+								"defaultValue": "text",
+								"placeholder": "placeholder of text",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"
+								}
+							},
+							"url": {
+								"label": "URL",
+								"defaultValue": "http://",
+								"placeholder": "placeholder of url",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem",
+									"label": "URL Link",
+									"filterProperty": "url",
+									"defaultFilterOperator": "StartsWith"
+								},
+								"cell": {
+									"type": "Link",
+									"href": "{url}"
+								}
+							},
+							"editable": {
+								"label": "Editable",
+								"defaultValue": false,
+								"type": "boolean"
+							},
+							"int": {
+								"label": "Integer",
+								"placeholder": "placeholder of int",
+								"defaultValue": 0,
+								"type": "int",
+								"formatter": {
+									"minIntegerDigits": 1,
+									"maxIntegerDigits": 6,
+									"emptyString": ""
+								},
+								"column": {
+									"hAlign": "Center",
+									"width": "5rem",
+									"label": "Integer",
+									"filterProperty": "int",
+									"defaultFilterOperator": "EQ",
+									"filterType": "sap.ui.model.type.Integer"
+								}
+							},
+							"number": {
+								"label": "Number",
+								"defaultValue": 0.5,
+								"type": "number",
+								"formatter": {
+									"decimals": 1,
+									"style":"short"
+								}
+							}
+						},
+						"addButtonText": "Add a new step"
+					},
+					"objectWithPropertiesDefinedAndValueFromRequestedFile": {
+						"manifestpath": "/sap.card1/configuration/parameters/objectWithPropertiesDefinedAndValueFromRequestedFile/value",
+						"type": "object",
+						"label": "Object properties defined: value from requested file",
+						"values": {
+							"data": {
+								"request": {
+									"url": "./../objectWithRequestList.json"
+								},
+								"path": "/values"
+							},
+							"allowAdd": true
+						},
+						"properties": {
+							"key": {
+								"label": "{i18n>TRANSLATED_KEY}",
+								"column": {
+									"filterProperty": "key"
+								}
+							},
+							"icon": {
+								"label": "Icon",
+								"defaultValue": "sap-icon://add",
+								"column": {
+									"hAlign": "Center",
+									"width": "4rem"
+								},
+								"cell": {
+									"type": "Icon",
+									"color": "{iconcolor}"
+								}
+							},
+							"text": {
+								"label": "Text",
+								"defaultValue": "text",
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"
+								}
+							},
+							"additionalText": {
+								"label": "Additional Text",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"
+								}
+							}
+						}
+					},
+					"objectWithPropertiesDefinedAndValueFromODataRequest": {
+						"manifestpath": "/sap.card1/configuration/parameters/objectWithPropertiesDefinedAndValueFromODataRequest/value",
+						"type": "object",
+						"label": "Object properties defined: value from OData Request",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address"
+									}
+								},
+								"path": "/value"
+							},
+							"allowAdd": true
+						},
+						"properties": {
+							"CustomerID": {
+								"label": "Customer ID",
+								"column": {
+									"filterProperty": "CustomerID",
+									"defaultFilterOperator": "Contains"
+								}
+							},
+							"CompanyName": {
+								"label": "Company Name",
+								"column": {
+									"width": "10rem",
+									"filterProperty": "CompanyName",
+									"defaultFilterOperator": "Contains"
+								}
+							},
+							"Country": {
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "Country",
+									"defaultFilterOperator": "Contains"
+								}
+							},
+							"City": {
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "City",
+									"defaultFilterOperator": "Contains"
+								}
+							},
+							"Address": {
+								"column": {
+									"width": "10rem",
+									"filterProperty": "Address",
+									"defaultFilterOperator": "Contains"
+								}
+							}
+						}
+					},
+					"objectListFieldGroup": {
+						"type": "group",
+						"label": "Object List Fields"
+					},
+					"objects": {
+						"manifestpath": "/sap.card1/configuration/parameters/objects/value",
+						"type": "object[]",
+						"label": "Object List Field"
+					},
+					"objectsWithPropertiesDefined": {
+						"manifestpath": "/sap.card1/configuration/parameters/objectsWithPropertiesDefined/value",
+						"type": "object[]",
+						"label": "Object List - properties defined",
+						"properties": {
+							"key": {
+								"label": "{{TRANSLATED_KEY}}",
+								"placeholder": "placeholder of key",
+								"column": {
+									"filterProperty": "key"
+								},
+								"cell": {
+									"text": "{{TRANSLATED_KEY}}"
+								}
+							},
+							"icon": {
+								"label": "Icon",
+								"defaultValue": "sap-icon://add",
+								"placeholder": "placeholder of icon",
+								"column": {
+									"hAlign": "Center",
+									"width": "4rem"
+								},
+								"cell": {
+									"type": "Icon",
+									"color": "{iconcolor}"
+								}
+							},
+							"text": {
+								"label": "Text",
+								"defaultValue": "text",
+								"placeholder": "placeholder of text",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"
+								},
+								"translatable": true
+							},
+							"url": {
+								"label": "URL",
+								"defaultValue": "http://",
+								"placeholder": "placeholder of url",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem",
+									"label": "URL Link",
+									"filterProperty": "url",
+									"defaultFilterOperator": "StartsWith"
+								},
+								"cell": {
+									"type": "Link",
+									"href": "{url}"
+								}
+							},
+							"editable": {
+								"label": "Editable",
+								"defaultValue": false,
+								"type": "boolean",
+								"column": {
+									"hAlign": "Center"
+								},
+								"cell": {
+									"type": "Switch",
+									"customTextOn": "YES",
+									"customTextOff": "NO"
+								}
+							},
+							"int": {
+								"label": "Integer",
+								"placeholder": "placeholder of int",
+								"defaultValue": 0,
+								"type": "int",
+								"formatter": {
+									"minIntegerDigits": 1,
+									"maxIntegerDigits": 6,
+									"emptyString": ""
+								},
+								"column": {
+									"hAlign": "Center",
+									"width": "5rem",
+									"label": "Integer",
+									"filterProperty": "int",
+									"defaultFilterOperator": "EQ",
+									"filterType": "sap.ui.model.type.Integer"
+								}
+							},
+							"number": {
+								"label": "Number",
+								"defaultValue": 0.5,
+								"type": "number",
+								"formatter": {
+									"decimals": 1,
+									"style":"short"
+								}
+							}
+						},
+						"addButtonText": "Add a new step"
+					},
+					"objectsWithPropertiesDefinedAndValueFromJsonList": {
+						"manifestpath": "/sap.card1/configuration/parameters/objectsWithPropertiesDefinedAndValueFromJsonList/value",
+						"type": "object[]",
+						"label": "Object List - properties defined: value from Json list",
+						"values": {
+							"data": {
+								"json": {
+									"values": [
+										{ "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 },
+										{ "text": "text02", "key": "key02", "url": "http://sapui5.hana.ondemand.com/05", "icon": "sap-icon://cart", "iconcolor": "#64E4CE", "int": 2 },
+										{ "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3 },
+										{ "text": "text04", "key": "key04", "url": "https://sapui5.hana.ondemand.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4 },
+										{ "text": "text05", "key": "key05", "url": "http://sapui5.hana.ondemand.com/02", "icon": "sap-icon://cart", "iconcolor": "#8875E7", "int": 5 },
+										{ "text": "text06", "key": "key06", "url": "https://sapui5.hana.ondemand.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 6 },
+										{ "text": "text07", "key": "key07", "url": "http://sapui5.hana.ondemand.com/02", "icon": "sap-icon://cart", "iconcolor": "#1C4C98", "int": 7 },
+										{ "text": "text08", "key": "key08", "url": "https://sapui5.hana.ondemand.com/01", "icon": "sap-icon://zoom-in", "iconcolor": "#8875E7", "int": 8 }
+									]
+								},
+								"path": "/values"
+							},
+							"allowAdd": true
+						},
+						"properties": {
+							"key": {
+								"label": "{{TRANSLATED_KEY}}",
+								"placeholder": "placeholder of key",
+								"column": {
+									"filterProperty": "key"
+								},
+								"cell": {
+									"text": "{{TRANSLATED_KEY}}"
+								}
+							},
+							"icon": {
+								"label": "Icon",
+								"defaultValue": "sap-icon://add",
+								"placeholder": "placeholder of icon",
+								"column": {
+									"hAlign": "Center",
+									"width": "4rem"
+								},
+								"cell": {
+									"type": "Icon",
+									"color": "{iconcolor}"
+								}
+							},
+							"text": {
+								"label": "Text",
+								"defaultValue": "text",
+								"placeholder": "placeholder of text",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"
+								},
+								"translatable": true
+							},
+							"url": {
+								"label": "URL",
+								"defaultValue": "http://",
+								"placeholder": "placeholder of url",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem",
+									"label": "URL Link",
+									"filterProperty": "url",
+									"defaultFilterOperator": "StartsWith"
+								},
+								"cell": {
+									"type": "Link",
+									"href": "{url}"
+								}
+							},
+							"editable": {
+								"label": "Editable",
+								"defaultValue": false,
+								"type": "boolean"
+							},
+							"int": {
+								"label": "Integer",
+								"placeholder": "placeholder of int",
+								"defaultValue": 0,
+								"type": "int",
+								"formatter": {
+									"minIntegerDigits": 1,
+									"maxIntegerDigits": 6,
+									"emptyString": ""
+								},
+								"column": {
+									"hAlign": "Center",
+									"width": "5rem",
+									"label": "Integer",
+									"filterProperty": "int",
+									"defaultFilterOperator": "EQ",
+									"filterType": "sap.ui.model.type.Integer"
+								}
+							},
+							"number": {
+								"label": "Number",
+								"defaultValue": 0.5,
+								"type": "number",
+								"formatter": {
+									"decimals": 1,
+									"style":"short"
+								}
+							}
+						},
+						"addButtonText": "Add a new step"
+					},
+					"objectsWithPropertiesDefinedAndValueFromRequestedFile": {
+						"manifestpath": "/sap.card1/configuration/parameters/objectsWithPropertiesDefinedAndValueFromRequestedFile/value",
+						"type": "object[]",
+						"label": "Object List - properties defined: value from requested file",
+						"values": {
+							"data": {
+								"request": {
+									"url": "./../objectWithRequestList.json"
+								},
+								"path": "/values"
+							}
+						},
+						"properties": {
+							"key": {
+								"label": "Key",
+								"column": {
+									"filterProperty": "key"
+								}
+							},
+							"icon": {
+								"label": "Icon",
+								"defaultValue": "sap-icon://add",
+								"column": {
+									"hAlign": "Center",
+									"width": "4rem"
+								},
+								"cell": {
+									"type": "Icon",
+									"color": "{iconcolor}"
+								}
+							},
+							"text": {
+								"label": "Text",
+								"defaultValue": "text",
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"
+								}
+							},
+							"additionalText": {
+								"label": "Additional Text",
+								"column": {
+									"hAlign": "Center",
+									"width": "10rem",
+									"filterProperty": "text",
+									"defaultFilterOperator": "Contains"
+								}
+							}
+						},
+						"addButtonText": "Add a new step"
+					},
+					"objectsWithPropertiesDefinedAndValueFromODataRequest": {
+						"manifestpath": "/sap.card1/configuration/parameters/objectsWithPropertiesDefinedAndValueFromODataRequest/value",
+						"type": "object[]",
+						"label": "Object properties defined: value from OData Request",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address"
+									}
+								},
+								"path": "/value"
+							},
+							"allowAdd": false
+						},
+						"properties": {
+							"CustomerID": {
+								"label": "Customer ID",
+								"column": {
+									"filterProperty": "CustomerID",
+									"defaultFilterOperator": "Contains"
+								}
+							},
+							"CompanyName": {
+								"label": "Company Name",
+								"column": {
+									"width": "10rem",
+									"filterProperty": "CompanyName",
+									"defaultFilterOperator": "Contains"
+								}
+							},
+							"Country": {
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "Country",
+									"defaultFilterOperator": "Contains"
+								}
+							},
+							"City": {
+								"column": {
+									"hAlign": "Center",
+									"width": "6rem",
+									"filterProperty": "City",
+									"defaultFilterOperator": "Contains"
+								}
+							},
+							"Address": {
+								"column": {
+									"width": "10rem",
+									"filterProperty": "Address",
+									"defaultFilterOperator": "Contains"
+								}
+							}
 						}
 					}
 				}

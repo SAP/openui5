@@ -122,6 +122,9 @@
 				"dateLabelTrans": {
 					"value": "2020-09-02"
 				},
+				"dateRange": {
+					"value": ""
+				},
 				"dateTime": {
 					"value": "2020-09-02T11:21:51.470Z"
 				},
