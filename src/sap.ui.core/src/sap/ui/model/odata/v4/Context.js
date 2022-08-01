@@ -320,7 +320,7 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li> the given group ID is invalid,
 	 *     <li> this context's root binding is suspended,
-	 *     <li> a <code>null</code> group ID is used with a context which is not kept-alive
+	 *     <li> a <code>null</code> group ID is used with a context which is not kept alive
 	 *       (see {@link #isKeepAlive}),
 	 *     <li> the context is already being deleted,
 	 *     <li> the resulting group ID has {@link sap.ui.model.odata.v4.SubmitMode.API}, and the
@@ -1094,8 +1094,9 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li> this context's root binding is suspended,
 	 *     <li> this context is transient (see {@link #isTransient}),
-	 *     <li> the given other context does not belong to the same list binding as this context, or
-	 *       is already in the collection (has an index, see {@link #getIndex}).
+	 *     <li> the given other context does not belong to the same list binding as this context, is
+	 *       already in the collection (has an index, see {@link #getIndex}), or is not kept alive
+	 *       (see {@link #isKeepAlive}).
 	 *   </ul>
 	 *
 	 * @public
@@ -1108,7 +1109,8 @@ sap.ui.define([
 		if (this.isTransient()) {
 			throw new Error("Cannot replace " + this);
 		}
-		if (oOtherContext.oBinding !== this.oBinding || oOtherContext.iIndex !== undefined) {
+		if (oOtherContext.oBinding !== this.oBinding || oOtherContext.iIndex !== undefined
+				|| !oOtherContext.bKeepAlive) {
 			throw new Error("Cannot replace with " + oOtherContext);
 		}
 		oElement = oOtherContext.getValue();

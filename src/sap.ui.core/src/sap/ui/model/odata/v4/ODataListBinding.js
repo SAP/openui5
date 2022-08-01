@@ -1213,11 +1213,11 @@ sap.ui.define([
 			oResult = Context.create(this.oModel, this, sPath, oOldContext.iIndex);
 			bNew = true;
 		}
-		oOldContext.iIndex = undefined;
-		if (iModelIndex === undefined) {
+		if (iModelIndex === undefined) { // => oOldContext.iIndex === undefined
 			this.mPreviousContextsByPath[sPath] = oResult;
 			this.oCache.addKeptElement(oElement);
 		} else {
+			oOldContext.iIndex = undefined;
 			this.aContexts[iModelIndex] = oResult;
 			this.oCache.doReplaceWith(iModelIndex, oElement);
 		}
@@ -1231,7 +1231,7 @@ sap.ui.define([
 				}
 				oResult.setKeepAlive(true, fnOnBeforeDestroyClone);
 			}
-		} else {
+		} else { // Note: w/o a key predicate, oOldContext cannot be kept alive
 			this.destroyLater(oOldContext);
 		}
 		this._fireChange({reason : ChangeReason.Change});

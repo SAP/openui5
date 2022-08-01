@@ -1568,6 +1568,7 @@ sap.ui.define([
 			oOtherContext = {
 				oBinding : oBinding,
 				iIndex : undefined,
+				bKeepAlive : true,
 				getValue : function () {}
 			};
 
@@ -1622,6 +1623,26 @@ sap.ui.define([
 		}, new Error("Cannot replace with " + oOtherContext));
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("replaceWith: other context not kept alive", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES($uid=1)", 0,
+					SyncPromise.resolve(Promise.resolve())),
+			oOtherContext = {
+				bKeepAlive : false
+			};
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+
+		assert.throws(function () {
+			// code under test
+			oContext.replaceWith(oOtherContext);
+		}, new Error("Cannot replace with " + oOtherContext));
+	});
 
 	//*********************************************************************************************
 	QUnit.test("requestRefresh, list binding", function (assert) {
