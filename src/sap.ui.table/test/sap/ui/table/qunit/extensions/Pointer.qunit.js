@@ -457,6 +457,16 @@ sap.ui.define([
 		oContextMenuEventArgument = oContextMenuEvent.args[0][0];
 		oContextMenuEvent.resetHistory();
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
+
+		oColumn.setVisible(false);
+		oCore.applyChanges();
+		oColumn = oTable.getColumns()[oTable.getColumns().length - 1];
+		oColumn.setSortProperty("dummy");
+		oElem = getColumnHeader(oTable._getVisibleColumns().indexOf(oColumn), true);
+		oColumnMenu = oColumn.getMenu();
+		this.triggerMouseDownEvent(oElem, 0);
+		qutils.triggerMouseEvent(oElem, "click");
+		assert.ok(oColumnMenu.bOpen, "Menu is opened if there are invisible columns in the aggregation before this column");
 	});
 
 	QUnit.test("Column header if first row is a summary", function(assert) {
