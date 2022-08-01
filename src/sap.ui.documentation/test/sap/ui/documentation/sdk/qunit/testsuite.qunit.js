@@ -43,6 +43,12 @@ sap.ui.define([], function() {
 				}
 			},
 
+			"SampleController": {
+				coverage: {
+					only : ["sap/ui/documentation/sdk/controller/Sample.controller"]
+				}
+			},
+
 			"LiveEditorOutput": {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/util/LiveEditorOutput.html"]
@@ -80,8 +86,12 @@ sap.ui.define([], function() {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/util/URLUtil"]
 				}
+			},
+			"LoadingSamples": {
+				coverage: {
+					only : ["sap/ui/documentation/sdk/index"]
+				}
 			}
-
 			// "Forwarding": {
 			// 	coverage: {
 			// 		only : ["sap/ui/documentation/sdk/Forwarding"]
