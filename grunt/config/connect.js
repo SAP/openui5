@@ -48,53 +48,63 @@ module.exports = function(grunt, config) {
 
 				livereload: grunt.option('watch') || false,
 
-				// hacky solution to replace the "version" placeholder in sap/ui/Global.js to enable version comparison
-				// the file won't be cached
 				middleware: function(connect, options, middlewares) {
+					// hacky solution to replace the "version" / "buildtime" placeholders to enable version comparison
+					// the files won't be cached
+					function createReplacementMiddleware(filePath) {
+						return [ '/' + testsuiteName + '/resources/' + filePath, function(req, res, next) {
+							fs.readFile(sapUiCoreBasePath + '/src/' + filePath, { encoding: 'utf-8' } , function(err, data) {
+								if (err) {
+									res.writeHead(404);
+									res.end();
+								} else {
+									res.writeHead(200, { 'Content-Type': 'application/javascript' });
+									data = data.replace(/(?:\$\{version\}|@version@)/g, grunt.config("package.version"));
+									if (filePath === "sap/ui/Global.js") {
+										data = data.replace(/(?:\$\{buildtime\}|@buildtime@)/g, sapUiBuildtime);
+									}
+									res.write(data);
+									res.end();
+								}
+							});
+						}];
+					}
+
 					// make sure to put the middleware after "cors"
 					// if "watch" is enabled, there will be another livereload middleware in between
-					middlewares.splice(grunt.option('watch') ? 3 : 2, 0, [ '/' + testsuiteName + '/resources/sap/ui/Global.js', function(req, res, next) {
-						fs.readFile(sapUiCoreBasePath + '/src/sap/ui/Global.js', { encoding: 'utf-8' } , function(err, data) {
-							if (err) {
-								res.writeHead(404);
-								res.end();
-							} else {
-								res.writeHead(200, { 'Content-Type': 'application/javascript' });
-								data = data.replace(/(?:\$\{version\}|@version@)/g, grunt.config("package.version"));
-								data = data.replace(/(?:\$\{buildtime\}|@buildtime@)/g, sapUiBuildtime);
-								res.write(data);
-								res.end();
-							}
-						});
-					} ], [ '/' + testsuiteName + '/resources/sap-ui-version.json', function(req, res, next) {
+					middlewares.splice(grunt.option('watch') ? 3 : 2, 0,
+						createReplacementMiddleware("sap/ui/Global.js"),
+						createReplacementMiddleware("sap/ui/core/Configuration.js"),
+						[ '/' + testsuiteName + '/resources/sap-ui-version.json', function(req, res, next) {
 
-						var version = grunt.config('package.version');
+							var version = grunt.config('package.version');
 
-						var sapUiVersionJson = {
-							name: testsuiteName,
-							version: version,
-							buildTimestamp: sapUiBuildtime,
-							scmRevision: '',
-							gav: 'com.sap.openui5:testsuite:' + version,
-							libraries: config.allLibraries.map(function(library) {
-								return {
-									name: library.name,
-									version: version,
-									buildTimestamp: sapUiBuildtime,
-									scmRevision: ''
-								};
-							})
-						};
+							var sapUiVersionJson = {
+								name: testsuiteName,
+								version: version,
+								buildTimestamp: sapUiBuildtime,
+								scmRevision: '',
+								gav: 'com.sap.openui5:testsuite:' + version,
+								libraries: config.allLibraries.map(function(library) {
+									return {
+										name: library.name,
+										version: version,
+										buildTimestamp: sapUiBuildtime,
+										scmRevision: ''
+									};
+								})
+							};
 
-						var data = JSON.stringify(sapUiVersionJson, null, "\t");
+							var data = JSON.stringify(sapUiVersionJson, null, "\t");
 
-						res.writeHead(200, {
-							'Content-Type': 'application/json'
-						});
-						res.write(data);
-						res.end();
+							res.writeHead(200, {
+								'Content-Type': 'application/json'
+							});
+							res.write(data);
+							res.end();
 
-					} ]);
+						} ]
+					);
 
 					middlewares.unshift(function (req, res, next) {
 						var sRequestUrl = req.url;
