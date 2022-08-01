@@ -1294,7 +1294,7 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 			sSubSectionControlName, "Subsections without titles should have aria-label='Subsection'");
 
 		assert.strictEqual(Core.byId(sSubSectionWithTitleAriaLabelledBy).getText(),
-			oSubSectionWithTitle.getTitle() + " " + sSubSectionControlName, "Subsection title is properly labelled (ends with 'Subsection')");
+			oSubSectionWithTitle.getTitle(), "Subsection title is properly labelled");
 	});
 
 	QUnit.module("Title ID propagation");

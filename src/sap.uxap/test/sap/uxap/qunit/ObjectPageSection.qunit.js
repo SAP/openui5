@@ -591,25 +591,25 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 					// assert
 					oLastSection.removeEventDelegate(oRenderingAfterTitleUpdate);
 					assert.strictEqual(Core.byId(sLastSectionAriaLabelledBy).getText(),
-						oLastSection._getTitle() + " " + sSectionText, "aria-labelledby is updated properly");
+						oLastSection._getTitle(), "aria-labelledby is updated properly");
 					done();
 				}
 			};
 
 		// assert
 		assert.strictEqual(Core.byId(sFirstSectionAriaLabelledBy).getText(),
-			oFirstSection._getTitle() + " " + sSectionText, "aria-labelledby is set properly");
+			oFirstSection._getTitle(), "aria-labelledby is set properly");
 		assert.strictEqual(Core.byId(sSectionWithoutTitleAriaLabel).getText(),
 			sSectionText, "sections without title are labelled by 'Section' texts");
 		assert.strictEqual(Core.byId(sLastSectionAriaLabelledBy).getText(),
-			oLastSection._getTitle() + " " + sSectionText, "aria-labelledby is set properly");
+			oLastSection._getTitle(), "aria-labelledby is set properly");
 
 		// act
 		oFirstSection.setTitle("New title");
 
 		// assert
 		assert.strictEqual(Core.byId(sFirstSectionAriaLabelledBy).getText(),
-			oFirstSection._getTitle() + " " + sSectionText, "aria-labelledby is updated properly");
+			oFirstSection._getTitle(), "aria-labelledby is updated properly");
 
 		// arrange
 		oLastSection.addEventDelegate(oRenderingAfterTitleUpdate);
