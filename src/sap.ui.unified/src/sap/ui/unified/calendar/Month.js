@@ -1971,7 +1971,7 @@ sap.ui.define([
 		}
 
 		if (!this._oItemNavigation) {
-			this._oItemNavigation = new ItemNavigation();
+			this._oItemNavigation = new ItemNavigation(undefined, undefined, this._bNotInTabChain);
 			this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, _handleAfterFocus, this);
 			this._oItemNavigation.attachEvent(ItemNavigation.Events.FocusAgain, _handleFocusAgain, this);
 			this._oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, this._handleBorderReached, this);
