@@ -18,7 +18,8 @@
 			return;
 		}
 
-		var oData = event.data;
+		var oData = event.data,
+			oCore, sIFrameTheme, sDemoKitTheme;
 
 		if (!oData || !oData.src || !oData.moduleNameToRequire) {
 			return;
@@ -26,6 +27,14 @@
 
 		addErrorHandlers();
 		preloadModules(oData);
+
+		oCore = sap.ui.getCore();
+		sIFrameTheme = oCore.getConfiguration().getTheme();
+		sDemoKitTheme = oData.activeTheme;
+
+		if (sIFrameTheme !== sDemoKitTheme) {
+			oCore.applyTheme(sDemoKitTheme);
+		}
 	});
 
 	/**
