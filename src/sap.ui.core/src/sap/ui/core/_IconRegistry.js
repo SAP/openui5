@@ -721,7 +721,7 @@ sap.ui.define([
 				'heart-2': 0xe294,
 				'paint-bucket': 0xe29b,
 				'tri-state': 0xe295,
-				'binary': 0xe29d,
+				'non-binary': 0xe29d,
 				'direction-arrows': 0xe29c,
 				'female': 0xe29e,
 				'gender-male-and-female': 0x1e300,
