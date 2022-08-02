@@ -344,39 +344,47 @@ sap.ui.define([
 
 					if (that.isReturnValueLikeBindingParameter(oOperationMetadata)) {
 						oOldValue = that.oContext.getValue();
+						// Note: sContextPredicate missing e.g. when collection-bound
 						sContextPredicate = oOldValue
 							&& _Helper.getPrivateAnnotation(oOldValue, "predicate");
 						sResponsePredicate = _Helper.getPrivateAnnotation(
 							oResponseEntity, "predicate");
-						if (sContextPredicate === sResponsePredicate) {
-							// this is synchronous, because the entity to be patched is available in
-							// the context (we already read its predicate)
-							that.oContext.patch(oResponseEntity);
+
+						if (sResponsePredicate) {
+							if (sContextPredicate === sResponsePredicate) {
+								// this is sync, because the entity to be patched is available in
+								// the context (we already read its predicate)
+								that.oContext.patch(oResponseEntity);
+							}
+							if (that.hasReturnValueContext()) {
+								if (that.oReturnValueContext) {
+									that.oReturnValueContext.destroy();
+								}
+
+								if (bReplaceWithRVC) {
+									that.oCache = null;
+									that.oCachePromise = SyncPromise.resolve(null);
+									oResult = that.oContext.getBinding()
+										.doReplaceWith(that.oContext, oResponseEntity,
+											sResponsePredicate);
+									oResult.setNewGeneration();
+
+									return oResult;
+								}
+
+								that.oReturnValueContext = Context.createNewContext(that.oModel,
+									that,
+									getReturnValueContextPath(sResolvedPath, sResponsePredicate));
+								// set the resource path for late property requests
+								that.oCache.setResourcePath(
+									that.oReturnValueContext.getPath().slice(1));
+
+								return that.oReturnValueContext;
+							}
 						}
 					}
 
-					if (that.hasReturnValueContext(oOperationMetadata)) {
-						if (that.oReturnValueContext) {
-							that.oReturnValueContext.destroy();
-						}
-
-						if (bReplaceWithRVC) {
-							that.oCache = null;
-							that.oCachePromise = SyncPromise.resolve(null);
-							oResult = that.oContext.getBinding().doReplaceWith(that.oContext,
-								oResponseEntity, sResponsePredicate);
-							oResult.setNewGeneration();
-
-							return oResult;
-						}
-
-						that.oReturnValueContext = Context.createNewContext(that.oModel,
-							that, getReturnValueContextPath(sResolvedPath, sResponsePredicate));
-						// set the resource path for late property requests
-						that.oCache.setResourcePath(that.oReturnValueContext.getPath().slice(1));
-
-						return that.oReturnValueContext;
-					} else if (bReplaceWithRVC) {
+					if (bReplaceWithRVC) {
 						throw new Error("Cannot replace w/o return value context");
 					}
 				});
@@ -651,15 +659,16 @@ sap.ui.define([
 		 * @returns {string} The original resource path
 		 */
 		function getOriginalResourcePath(oResponseEntity) {
-			if (that.hasReturnValueContext(oOperationMetadata)) {
-				return getReturnValueContextPath(sOriginalResourcePath,
-					_Helper.getPrivateAnnotation(oResponseEntity, "predicate"));
-			}
-			if (that.isReturnValueLikeBindingParameter(oOperationMetadata)
-				&& _Helper.getPrivateAnnotation(vEntity, "predicate")
-					=== _Helper.getPrivateAnnotation(oResponseEntity, "predicate")) {
-				// return value is *same* as binding parameter: attach messages to the latter
-				return sOriginalResourcePath.slice(0, sOriginalResourcePath.lastIndexOf("/"));
+			if (that.isReturnValueLikeBindingParameter(oOperationMetadata)) {
+				if (that.hasReturnValueContext()) {
+					return getReturnValueContextPath(sOriginalResourcePath,
+						_Helper.getPrivateAnnotation(oResponseEntity, "predicate"));
+				}
+				if (_Helper.getPrivateAnnotation(vEntity, "predicate")
+						=== _Helper.getPrivateAnnotation(oResponseEntity, "predicate")) {
+					// return value is *same* as binding parameter: attach messages to the latter
+					return sOriginalResourcePath.slice(0, sOriginalResourcePath.lastIndexOf("/"));
+				}
 			}
 
 			return sOriginalResourcePath;
@@ -870,16 +879,17 @@ sap.ui.define([
 	 * @param {boolean} [bReplaceWithRVC]
 	 *   Whether this operation binding's parent context, which must belong to a list binding, is
 	 *   replaced with the operation's return value context (see below) and that list context is
-	 *   returned instead. The list context may be a newly created context or an existing context.
+	 *   returned instead. That list context may be a newly created context or an existing context.
 	 *   A newly created context has the same <code>keepAlive</code> attribute and
 	 *   <code>fnOnBeforeDestroy</code> function as the parent context, see
 	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive}; <code>fnOnBeforeDestroy</code> will be
 	 *   called with the new context instance as the only argument in this case. An existing context
 	 *   does not change its <code>keepAlive</code> attribute. In any case, the resulting context
-	 *   takes the place (index, position) of the parent context
-	 *   {@link sap.ui.model.odata.v4.Context#getIndex}. If the parent context has requested
-	 *   messages when it was kept alive, they will be inherited if the $$inheritExpandSelect
-	 *   binding parameter is set to <code>true</code>. Since 1.97.0.
+	 *   takes the place (index, position) of the parent context (see
+	 *   {@link sap.ui.model.odata.v4.Context#getIndex}), which need not be in the collection
+	 *   currently if it is kept alive (see {@link sap.ui.model.odata.v4.Context#isKeepAlive}). If
+	 *   the parent context has requested messages when it was kept alive, they will be inherited if
+	 *   the $$inheritExpandSelect binding parameter is set to <code>true</code>. Since 1.97.0.
 	 * @returns {Promise}
 	 *   A promise that is resolved without data or with a return value context when the operation
 	 *   call succeeded, or rejected with an <code>Error</code> instance <code>oError</code> in case
@@ -951,7 +961,7 @@ sap.ui.define([
 			if (bReplaceWithRVC) {
 				if (!this.oContext.getBinding) {
 					throw new Error("Cannot replace this parent context: " + this.oContext);
-				}
+				} // Note: parent context need not have a key predicate!
 				this.oContext.getBinding().checkKeepAlive(this.oContext);
 			}
 		} else if (bReplaceWithRVC) {
@@ -1203,19 +1213,15 @@ sap.ui.define([
 	 *    (a) a V4 parent context which
 	 *    (b) points to an entity from an entity set w/o navigation properties.
 	 *
-	 * @param {object} oMetadata The operation metadata
+	 * BEWARE: It is the caller's duty to check 1. through 4.(a) via
+	 * {@link #isReturnValueLikeBindingParameter}!
+	 *
 	 * @returns {boolean} Whether a return value context is created
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.hasReturnValueContext = function (oMetadata) {
-		var aMetaSegments;
-
-		if (!this.isReturnValueLikeBindingParameter(oMetadata)) {
-			return false;
-		}
-
-		aMetaSegments = _Helper.getMetaPath(this.getResolvedPath()).split("/");
+	ODataContextBinding.prototype.hasReturnValueContext = function () {
+		var aMetaSegments = _Helper.getMetaPath(this.getResolvedPath()).split("/");
 
 		// case 4b
 		return aMetaSegments.length === 3
@@ -1257,6 +1263,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether operation's return value is like its binding parameter
 	 *
 	 * @private
+	 * @see #hasReturnValueContext
 	 */
 	ODataContextBinding.prototype.isReturnValueLikeBindingParameter = function (oMetadata) {
 		var oParentMetaData, sParentMetaPath;

@@ -5335,7 +5335,7 @@ sap.ui.define([
 
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to execute /ChangeTeamBudgetByID(...)",
-				sinon.match(oError.message), sODCB);
+					sinon.match(oError.message), sODCB);
 			that.expectRequest({
 					method : "POST",
 					url : "ChangeTeamBudgetByID",
@@ -10587,6 +10587,9 @@ sap.ui.define([
 	// Scenario: Execute a bound action while an update request for the entity is not yet
 	// resolved. Determine the ETag as late as possible.
 	// JIRA: CPOUI5UISERVICESV3-1450
+	//
+	// Do not update binding parameter when both key predicates are missing.
+	// JIRA: CPOUI5ODATAV4-1683
 	QUnit.test("Lazy determination of ETag while ODataContextBinding#execute", function (assert) {
 		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 			oBinding,
@@ -10606,6 +10609,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("EMPLOYEES('1')", {
+				// ID : "1", // no key predicate here!
 				Name : "Jonathan Smith",
 				"@odata.etag" : "ETag0"
 			})
@@ -10623,7 +10627,7 @@ sap.ui.define([
 				}, new Promise(function (resolve) {
 					fnRespond = resolve.bind(null, {
 						"@odata.etag" : "ETag1",
-						Name : "Jonathan Mueller"
+						Name : "Jonathan Müller"
 					});
 				}))
 				.expectChange("name", "Jonathan Mueller"); // triggered by setValue
@@ -10637,6 +10641,7 @@ sap.ui.define([
 			oExecutePromise = that.oView.byId("action").getObjectBinding()
 				.setParameter("TeamID", "42").execute("update");
 
+			that.expectChange("name", "Jonathan Müller"); // triggered by PATCH response
 			fnRespond();
 
 			return Promise.all([
@@ -10649,12 +10654,19 @@ sap.ui.define([
 					headers : {"If-Match" : "ETag1"},
 					url : "EMPLOYEES('1')/" + sAction,
 					payload : {TeamID : "42"}
-				}, {TEAM_ID : "42"})
+				}, {
+					// ID : "1", // no key predicate here!
+					TEAM_ID : "42",
+					Name : "n/a" // Note: w/o key predicate, do not update binding parameter!
+				})
 				.expectChange("teamId", "42");
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
-				oExecutePromise,
+				oExecutePromise.then(function (oReturnValueContext) {
+					assert.strictEqual(oReturnValueContext, undefined,
+						"no R.V.C. w/o key predicate");
+				}),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -11546,7 +11558,11 @@ sap.ui.define([
 				.expectChange("teamId", "42");
 
 			return Promise.all([
-				that.oView.byId("action").getObjectBinding().execute(),
+				that.oView.byId("action").getObjectBinding().execute()
+					.then(function (oReturnValueContext) {
+						assert.strictEqual(oReturnValueContext, undefined,
+							"no R.V.C. w/o key predicate");
+					}),
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
@@ -11838,6 +11854,7 @@ sap.ui.define([
 			return Promise.all([
 				// code under test
 				oAction.execute(),
+				// Note: no R.V.C. because path "/TEAMS('42')/TEAM_2_EMPLOYEES('2')" too long
 				that.waitForChanges(assert)
 			]);
 		});
@@ -11897,7 +11914,10 @@ sap.ui.define([
 
 			return Promise.all([
 				oContext.requestRefresh(undefined, true),
-				oExecutionPromise,
+				oExecutionPromise.then(function (oReturnValueContext) {
+					assert.strictEqual(oReturnValueContext, undefined,
+						"no R.V.C. w/o key predicate");
+				}),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -14222,7 +14242,10 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oActionBinding.setParameter("TeamID", "TEAM_02").execute(),
+				oActionBinding.setParameter("TeamID", "TEAM_02").execute()
+					.then(function (oReturnValueContext) {
+						assert.strictEqual(oReturnValueContext.getPath(), "/EMPLOYEES('2')");
+					}),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -14300,7 +14323,10 @@ sap.ui.define([
 
 			return Promise.all([
 				// code under test
-				oActionBinding.setParameter("TeamID", "TEAM_02").execute(),
+				oActionBinding.setParameter("TeamID", "TEAM_02").execute()
+					.then(function (oReturnValueContext) {
+						assert.strictEqual(oReturnValueContext.getPath(), "/EMPLOYEES('2')");
+					}),
 				that.waitForChanges(assert)
 			]);
 		});
@@ -14364,10 +14390,13 @@ sap.ui.define([
 				.expectChange("enabled", 1)
 				.expectChange("title", "Second Title");
 
-			// code under test
-			oActionBinding.execute();
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// code under test
+				oActionBinding.execute().then(function (oReturnValueContext) {
+						assert.strictEqual(oReturnValueContext.getPath(), "/EMPLOYEES('2')");
+					}),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -24268,6 +24297,7 @@ sap.ui.define([
 			return Promise.all([
 				// code under test
 				oAction.execute(),
+				// Note: no R.V.C. because path "/TEAMS('42')/TEAM_2_EMPLOYEES('7')" too long
 				that.waitForChanges(assert)
 			]);
 		});
@@ -27790,7 +27820,11 @@ sap.ui.define([
 				that.oView.byId("form").getBindingContext().requestSideEffects(["SO_2_SOITEM"]),
 				Promise.resolve().then(function () {
 					// code under test - execute while requestSideEffects is already being processed
-					return that.oView.byId("action").getObjectBinding().execute();
+					return that.oView.byId("action").getObjectBinding().execute()
+						.then(function (oReturnValueContext) {
+							assert.strictEqual(oReturnValueContext, undefined,
+								"no R.V.C. w/o key predicate");
+						});
 				}),
 				that.waitForChanges(assert)
 			]);
@@ -27830,7 +27864,7 @@ sap.ui.define([
 			}, {/* don't care */});
 
 		oRoomIdBinding.setValue("23"); // the same field is changed again
-	}, function () {
+	}, function (assert) {
 		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 			oRoomIdBinding = this.oView.byId("roomId").getBinding("value");
 
@@ -27852,7 +27886,11 @@ sap.ui.define([
 		// bound action also triggers retry
 		return this.oModel.bindContext(sAction + "(...)", oRoomIdBinding.getContext())
 			.setParameter("TeamID", "23")
-			.execute("$auto");
+			.execute("$auto")
+			.then(function (oReturnValueContext) {
+				assert.strictEqual(oReturnValueContext, undefined,
+					"no R.V.C. w/o key predicate");
+			});
 /* eslint-disable no-tabs */
 // Note: "Cannot delete due to pending changes" --> this scenario is currently impossible
 //
@@ -28174,7 +28212,10 @@ sap.ui.define([
 				.execute("$auto");
 
 			return Promise.all([
-				oPromise,
+				oPromise.then(function (oReturnValueContext) {
+					assert.strictEqual(oReturnValueContext, undefined,
+						"no R.V.C. w/o key predicate");
+				}),
 				resolveLater(reject),
 				that.waitForChanges(assert)
 			]);
@@ -42025,7 +42066,11 @@ sap.ui.define([
 	// ActivationAction to replace the draft context with the active context. Keep the active
 	// context alive and refresh it in order to make it drop out of the collection. See that is
 	// it is still alive.
-	QUnit.test("still alive", function (assert) {
+	//
+	// Execute the EditAction with empty response to check that bReplaceWithRVC requires a key
+	// predicate.
+	// JIRA: CPOUI5ODATAV4-1683
+	QUnit.test("JIRA: CPOUI5ODATAV4-1683", function (assert) {
 		var oActiveContext,
 			oDraftContext,
 			oListBinding,
@@ -42093,7 +42138,37 @@ sap.ui.define([
 				that.waitForChanges(assert, "refreshSingleWithRemove")
 			]);
 		}).then(function () {
+			var oActionBinding
+				= that.oModel.bindContext("special.cases.EditAction(...)", oActiveContext);
+
 			assert.notOk(fnOnBeforeDestroy.called, "still alive");
+
+			that.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='23',IsActiveEntity=true)"
+						+ "/special.cases.EditAction",
+					payload : {}
+				}, {/* This page intentionally left blank. */})
+				.expectMessages([{
+					message : "Cannot replace w/o return value context",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to execute /Artists(ArtistID='23',IsActiveEntity=true)"
+					+ "/special.cases.EditAction(...)",
+					sinon.match("Cannot replace w/o return value context"), sODCB);
+
+			return Promise.all([
+				// code under test
+				oActionBinding.execute(undefined, false, null, /*bReplaceWithRVC*/true)
+					.then(mustFail(assert), function (oError) {
+						assert.strictEqual(oError.message,
+							"Cannot replace w/o return value context");
+					}),
+				that.waitForChanges(assert, "execute EditAction")
+			]);
 		});
 	});
 
