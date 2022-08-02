@@ -98,7 +98,7 @@ sap.ui.define([
 		if (mPropertyBag.parentVersion) {
 			mParameters.parentVersion = mPropertyBag.parentVersion;
 		}
-		InitialUtils.addLanguageInfo(mParameters);
+		InitialUtils.addSAPLogonLanguageInfo(mParameters);
 		InitialConnector._addClientInfo(mParameters);
 		//single update --> fileName needs to be in the url
 		if (mPropertyBag.flexObject && !mPropertyBag.isAppVariant) {
@@ -632,7 +632,7 @@ sap.ui.define([
 					InitialUtils.getUrl(ROUTES.TOKEN, mPropertyBag)
 				);
 				var mParameters = {};
-				InitialUtils.addLanguageInfo(mParameters);
+				InitialUtils.addSAPLogonLanguageInfo(mParameters);
 				mParameters.limit = mPropertyBag.limit;
 				var sVersionsUrl = InitialUtils.getUrl(ROUTES.VERSIONS.GET, mPropertyBag, mParameters);
 				return WriteUtils.sendRequest(sVersionsUrl, "GET", oRequestOption).then(function (oResult) {
@@ -650,7 +650,7 @@ sap.ui.define([
 					"json"
 				);
 				var mParameters = {version: mPropertyBag.version};
-				InitialUtils.addLanguageInfo(mParameters);
+				InitialUtils.addSAPLogonLanguageInfo(mParameters);
 				var sVersionsUrl = InitialUtils.getUrl(ROUTES.VERSIONS.ACTIVATE, mPropertyBag, mParameters);
 				return WriteUtils.sendRequest(sVersionsUrl, "POST", oRequestOption).then(function (oResult) {
 					var oVersion = oResult.response;

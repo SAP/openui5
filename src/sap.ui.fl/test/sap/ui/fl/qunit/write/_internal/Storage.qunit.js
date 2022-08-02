@@ -1398,7 +1398,7 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.callCount, 1, "send request was called once");
 				assert.equal(oStubGetUrl.callCount, 2, "getUrl was called twice");
 				assert.equal(oStubGetUrl.returnValues[1], "/sap/bc/lrep/actions/getcsrftoken/", "token url is correct");
-				assert.equal(oStubGetUrl.returnValues[0], "/sap/bc/lrep/flex/contexts/?sap-language=en", "post url is correct");
+				assert.equal(oStubGetUrl.returnValues[0], "/sap/bc/lrep/flex/contexts/?sap-language=EN", "post url is correct");
 				assert.ok(oResponse.lastHitReached, "response is as expected");
 			});
 		});

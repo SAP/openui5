@@ -64,7 +64,7 @@ sap.ui.define([
 			mockResponse.call(this, JSON.stringify({changes: [], loadModules: false}));
 
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", cacheKey: sCacheKey}).then(function () {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?sap-language=en", "the cacheKey is included in the request");
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?sap-language=EN", "the cacheKey is included in the request");
 			}.bind(this));
 		});
 
@@ -79,7 +79,7 @@ sap.ui.define([
 			mockResponse.call(this, JSON.stringify({changes: [], loadModules: false}));
 
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", cacheKey: sCacheKey, preview: oPreview}).then(function () {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/base.app.reference?sap-language=en&upToLayerType=PARTNER", "the reference is replaced by the base apps and the upToLayerType is included in the request");
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/base.app.reference?sap-language=EN&upToLayerType=PARTNER", "the reference is replaced by the base apps and the upToLayerType is included in the request");
 			}.bind(this));
 		});
 
@@ -107,7 +107,7 @@ sap.ui.define([
 					}
 				}
 			}).then(function () {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?sap-language=en", "the cacheKey is included in the request");
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?sap-language=EN", "the cacheKey is included in the request");
 				assert.equal(this.oXHR.requestHeaders["X-LRep-Site-Id"], "dummySite", "the siteId is included in the request");
 				assert.equal(this.oXHR.requestHeaders["X-LRep-AppDescriptor-Id"], "appDescriptorId", "the appDescriptorId is included in the request");
 			}.bind(this));
@@ -119,7 +119,7 @@ sap.ui.define([
 			mockResponse.call(this, JSON.stringify({changes: [], loadModules: true}));
 			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", cacheKey: sCacheKey}).then(function (oResult) {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?sap-language=en", "and the URL was correct");
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/~abc123~/reference?sap-language=EN", "and the URL was correct");
 				assert.ok(oStubLoadModule.calledOnce, "loadModule triggered");
 				assert.deepEqual(oResult, {changes: [], loadModules: true, cacheKey: "abc123"}, "and the flex_data response resolves the promise");
 			}.bind(this));
@@ -143,7 +143,7 @@ sap.ui.define([
 			mockResponse.call(this, JSON.stringify({changes: [], loadModules: true}));
 			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", allContexts: true}).then(function () {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?allContexts=true&sap-language=en", "and the URL was correct");
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?allContexts=true&sap-language=EN", "and the URL was correct");
 				assert.equal(oStubLoadModule.callCount, 1, "loadModule triggered");
 			}.bind(this));
 		});
@@ -152,7 +152,7 @@ sap.ui.define([
 			mockResponse.call(this, JSON.stringify({changes: [], loadModules: true}));
 			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", version: "versionGUID"}).then(function () {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?version=versionGUID&sap-language=en", "and the URL was correct");
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?version=versionGUID&sap-language=EN", "and the URL was correct");
 				assert.equal(oStubLoadModule.callCount, 1, "loadModule triggered");
 			}.bind(this));
 		});
@@ -161,7 +161,7 @@ sap.ui.define([
 			mockResponse.call(this, JSON.stringify({changes: [], loadModules: true}));
 			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", allContexts: true, version: "0"}).then(function () {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?version=0&allContexts=true&sap-language=en", "and the URL was correct");
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?version=0&allContexts=true&sap-language=EN", "and the URL was correct");
 				assert.equal(oStubLoadModule.callCount, 1, "loadModule triggered");
 			}.bind(this));
 		});
@@ -170,7 +170,7 @@ sap.ui.define([
 			mockResponse.call(this, JSON.stringify({changes: [], loadModules: true}), undefined, undefined, "application/manifest+json");
 			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference"}).then(function () {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?sap-language=en", "and the URL was correct");
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?sap-language=EN", "and the URL was correct");
 				assert.equal(oStubLoadModule.callCount, 1, "loadModule triggered");
 			}.bind(this));
 		});
@@ -179,7 +179,7 @@ sap.ui.define([
 			mockResponse.call(this, JSON.stringify({changes: [], loadModules: false}), undefined, undefined, "application/json; charset=UTF-8");
 			var oStubLoadModule = sandbox.stub(LrepConnector, "_loadModules").resolves();
 			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference"}).then(function () {
-				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?sap-language=en", "and the URL was correct");
+				assert.equal(this.oXHR.url, "/sap/bc/lrep/flex/data/reference?sap-language=EN", "and the URL was correct");
 				assert.equal(oStubLoadModule.callCount, 0, "loadModule triggered");
 			}.bind(this));
 		});
