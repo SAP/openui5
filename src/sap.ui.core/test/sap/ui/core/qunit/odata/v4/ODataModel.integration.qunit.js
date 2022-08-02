@@ -42173,6 +42173,67 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Combine the various forms of filters and remove them again.
+	// BCP: 2280148151
+	QUnit.test("BCP: 2280148151", function (assert) {
+		var oListBinding,
+			that = this;
+
+		return this.createView(assert, "").then(function () {
+			var aApplicationFilters = [
+					new Filter("MEMBER_COUNT", FilterOperator.GT, 3),
+					new Filter({
+						caseSensitive : false,
+						operator : FilterOperator.EQ,
+						path : "BudgetCurrency",
+						value1 : "EUR"
+					}),
+					new Filter({
+						condition : new Filter("employee/AGE", FilterOperator.GT, 18),
+						operator : FilterOperator.Any,
+						path : "TEAM_2_EMPLOYEES",
+						variable : "employee"
+					})
+				],
+				aControlFilters = [
+					new Filter("Budget", FilterOperator.GE, 1000),
+					new Filter("Name", FilterOperator.StartsWith, "T")
+				];
+
+			that.expectRequest("TEAMS?$filter=Budget ge 1000 and startswith(Name,'T')"
+				+ " and MEMBER_COUNT gt 3 and tolower(BudgetCurrency) eq tolower('EUR')"
+				+ " and TEAM_2_EMPLOYEES/any(employee:employee/AGE gt 18)"
+				+ " and (Team_Id)&$skip=0&$top=42", {value : []});
+
+			oListBinding = that.oModel.bindList("/TEAMS", null, [], aApplicationFilters, {
+				$filter : "Team_Id"
+			});
+
+			that.expectCanceledError("Cache discarded as a new cache has been created");
+
+			// code under test
+			oListBinding.filter(aControlFilters, FilterType.Control);
+
+			return Promise.all([
+				oListBinding.requestContexts(0, 42),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("TEAMS?$skip=8&$top=15", {value : []});
+
+			oListBinding.changeParameters({$filter : undefined});
+			oListBinding.filter([]);
+			// code under test
+			oListBinding.filter([], FilterType.Control);
+
+			return Promise.all([
+				oListBinding.requestContexts(8, 15),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: ODLB#getAllCurrentContexts must not fire unnecessary change events and must not
 	// modify internal states of the binding. Calling ODLB#getLength afterwards works as expected.
 	//
