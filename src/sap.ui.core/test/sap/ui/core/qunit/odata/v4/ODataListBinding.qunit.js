@@ -5155,10 +5155,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create at the start after creation at end, delete in between", function () {
+	QUnit.test("create at the start after creation at end, delete in between", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
-			oContext,
+			oContext1,
+			oContext2,
+			oDeletePromise,
 			oGroupLock = {getGroupId : function () { return "$auto"; }};
 
 		oBinding.bLengthFinal = true;
@@ -5166,22 +5168,36 @@ sap.ui.define([
 		this.mock(oContextPrototype).expects("fetchValue").atLeast(1).withExactArgs().resolves({});
 		oBindingMock.expects("refreshSingle").atLeast(1).returns(SyncPromise.resolve());
 
-		oBindingMock.expects("createInCache").returns(SyncPromise.resolve({}));
+		oBindingMock.expects("createInCache").twice().returns(SyncPromise.resolve({}));
 
 		// code under test
-		oContext = oBinding.create(undefined, false, /*bAtEnd*/true);
+		oContext1 = oBinding.create(undefined, false, /*bAtEnd*/true);
+		oContext2 = oBinding.create(undefined, false, /*bAtEnd*/true);
 
 		oBindingMock.expects("deleteFromCache")
-			.callsArgWith(5, 0) // the cancel callback
-			.returns(SyncPromise.resolve());
+			.withArgs(sinon.match.same(oGroupLock), "~1")
+			.callsArgWith(5, 0) // the callback removing the context
+			.returns(SyncPromise.resolve(Promise.resolve()));
+		oBindingMock.expects("deleteFromCache")
+			.withArgs(null, "~2")
+			.callsArgWith(5, 0) // the callback removing the context
+			.returns(SyncPromise.resolve(Promise)); // finish immediately
 
 		// code under test
-		oBinding._delete(oGroupLock, "~", oContext);
+		oDeletePromise = oBinding._delete(oGroupLock, "~1", oContext1);
+		oBinding._delete(null, "~2", oContext2);
 
-		oBindingMock.expects("createInCache").returns(SyncPromise.resolve({}));
+		assert.throws(function () {
+			// code under test - as long as a reinsertion is possible, bAtEnd must not be changed
+			oBinding.create(undefined, false, /*bAtEnd*/false);
+		}, new Error("Cannot create at the start after creation at end"));
 
-		// code under test
-		oBinding.create(undefined, false, /*bAtEnd*/false);
+		return oDeletePromise.then(function () {
+			oBindingMock.expects("createInCache").returns(SyncPromise.resolve({}));
+
+			// code under test
+			oBinding.create(undefined, false, /*bAtEnd*/false);
+		});
 	});
 
 	//*********************************************************************************************
