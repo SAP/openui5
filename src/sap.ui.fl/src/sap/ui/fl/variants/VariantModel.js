@@ -1286,7 +1286,7 @@ sap.ui.define([
 			var sVariantChangeLayer = mParameters.layer || Layer.USER;
 
 			// handle triggered "SaveAs" button
-			var sNewVariantReference = mParameters.newVariantReference || Utils.createDefaultFileName();
+			var sNewVariantReference = mParameters.newVariantReference || Utils.createDefaultFileName("flVariant");
 			var mPropertyBag = {
 				variantManagementReference: sVariantManagementReference,
 				appComponent: oAppComponent,
