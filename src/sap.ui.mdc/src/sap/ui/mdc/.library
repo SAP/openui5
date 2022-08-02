@@ -30,14 +30,6 @@
 		<jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage">
 			<exclude name="sap.ui.mdc.js." />
 		</jscoverage>
-		<!-- Thirdparty references -->
-		<thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-			<lib name="BooleanExpressionEvaluator" displayName="BooleanExpressionEvaluator" version="master-18530acbf3" homepage="https://unnikked.ga/how-to-build-a-boolean-expression-evaluator-518e9e068a65">
-				<license url="https://github.com/unnikkedga/BooleanExpressionEvaluator/blob/master/LICENSE" type="MIT"/>
-				<copyright>2015 unnikked</copyright>
-				<pattern partial="true" otherContent="SAP" explanation="BoolExprTool.js is authored by SAP, but partly inspired by BooleanExpressionEvaluator">../test/sap/ui/mdc/sample/field/filterfieldwithoperators/BoolExprTool.js</pattern>
-			</lib>
-		</thirdparty>
 		<documentation xmlns="http://www.sap.com/ui5/buildext/documentation" indexUrl="../../../../test-resources/sap/ui/mdc/demokit/docuindex.json" resolve="lib" />
 		<releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes" url="../../../../test-resources/sap/ui/mdc/relnotes/changes-{major}.{minor}.json" resolve="lib" />
 		<ownership xmlns="http://www.sap.com/ui5/buildext/ownership">

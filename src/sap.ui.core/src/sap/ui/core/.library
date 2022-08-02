@@ -181,17 +181,20 @@
         <lib name="qunit" displayName="QUnit" version="1.18.0" homepage="https://qunitjs.com" id="73554900106100002636">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>jQuery Foundation and other contributors</copyright>
-            <pattern>sap/ui/thirdparty/qunit.*</pattern>
+            <pattern>sap/ui/thirdparty/qunit.css</pattern>
+            <pattern>sap/ui/thirdparty/qunit.js</pattern>
         </lib>
         <lib name="qunit-2" displayName="QUnit 2" version="2.3.2" homepage="https://qunitjs.com" id="73555000106100006951">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>jQuery Foundation and other contributors</copyright>
-            <pattern>sap/ui/thirdparty/qunit-2.*</pattern>
+            <pattern>sap/ui/thirdparty/qunit-2.css</pattern>
+            <pattern>sap/ui/thirdparty/qunit-2.js</pattern>
         </lib>
         <lib name="qunit-2.18" displayName="QUnit 2.18" version="2.18.0" homepage="https://qunitjs.com" id="73554900106100134323">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>jQuery Foundation and other contributors</copyright>
-            <pattern>../test/sap/ui/core/qunit/thirdparty/qunit-2.18.*</pattern>
+            <pattern>../test/sap/ui/core/qunit/thirdparty/qunit-2.18.css</pattern>
+            <pattern>../test/sap/ui/core/qunit/thirdparty/qunit-2.18.js</pattern>
         </lib>
         <lib name="jquery-migrate" displayName="jQuery-Migrate" version="3.3.1" homepage="https://github.com/jquery/jquery-migrate/" id="73555000106100043843">
             <license url="https://github.com/jquery/jquery-migrate/blob/3.3.1/LICENSE.txt" type="MIT" />
@@ -212,7 +215,8 @@
             <!-- version is "1.0.2-pre", in PPMS as "1.0.2" -->
             <license url="http://jquery.org/license" type="MIT" />
             <copyright>jQuery Foundation and other contributors</copyright>
-            <pattern>sap/ui/thirdparty/qunit-composite.*</pattern>
+            <pattern>sap/ui/thirdparty/qunit-composite.css</pattern>
+            <pattern>sap/ui/thirdparty/qunit-composite.js</pattern>
         </lib>
         <lib name="qunit-reporter-junit" displayName="JUnit Reporter for QUnit" version="1.1.1" homepage="https://github.com/JamesMGreene/qunit-reporter-junit" id="73554900106100005540">
             <license url="https://raw.githubusercontent.com/JamesMGreene/qunit-reporter-junit/master/LICENSE.txt" type="MIT" />
@@ -297,7 +301,7 @@
         <lib name="sinonjs14" displayName="SinonJS 14" version="14.0.0" homepage="http://sinonjs.org" id="73554900106100134880">
             <license url="https://raw.github.com/cjohansen/Sinon.JS/master/LICENSE" type="BSD-3-Clause" />
             <copyright>2010-2022, Christian Johansen, christian@cjohansen.no</copyright>
-            <pattern>../test/sap/ui/core/qunit/thirdparty/sinon-14.0.*</pattern>
+            <pattern>../test/sap/ui/core/qunit/thirdparty/sinon-14.0.js</pattern>
         </lib>
         <lib name="sinon-qunit" displayName="Sinon-qunit" version="2.0.0" homepage="http://sinonjs.org" id="73554900106100005534">
             <license url="https://raw.github.com/cjohansen/Sinon.JS/master/LICENSE" type="BSD-3-Clause" />
@@ -372,7 +376,7 @@
         <lib name="lodash" displayName="lodash" version="4.17.21" homepage="https://github.com/lodash/lodash" id="73555000106100057925">
             <license url="https://github.com/lodash/lodash/blob/master/LICENSE" type="MIT" />
             <copyright>OpenJS Foundation and other contributors</copyright>
-            <pattern>sap/ui/base/util/restricted/_/lodash.custom.js</pattern>
+            <pattern>sap/base/util/restricted/_/lodash.custom.js</pattern>
         </lib>
         <lib name="hyphenopoly" displayName="Hyphenopoly" version="3.4.0" homepage="https://github.com/mnater/Hyphenopoly" id="73555000106100074224">
             <license url="https://github.com/mnater/Hyphenopoly/blob/master/LICENSE" type="MIT" />
@@ -382,12 +386,12 @@
         <lib name="p-cancelable" displayName="p-cancelable" version="2.0.0" homepage="https://github.com/sindresorhus/p-cancelable/tree/v2.0.0" id="73555000106100034052">
             <license url="https://github.com/sindresorhus/p-cancelable/blob/v2.0.0/license" type="MIT" />
             <copyright>Sindre Sorhus &lt;sindresorhus@gmail.com&gt;</copyright>
-            <pattern partial="true" otherContent="@babel/helpers" explanation="_CancelablePromise.js is derived from p-cancelable by Sindre Sorhus and was transpiled with Babel, so the resulting file contains Babel code fragments">sap/ui/base/util/restricted/_CancelablePromise.js</pattern>
+            <pattern partial="true" otherContent="@babel/helpers" explanation="_CancelablePromise.js is derived from p-cancelable by Sindre Sorhus and was transpiled with Babel, so the resulting file contains Babel code fragments">sap/base/util/restricted/_CancelablePromise.js</pattern>
         </lib>
         <lib name="@babel/helpers" displayName="@babel/helpers" version="7.10.4" homepage="https://github.com/babel/babel/tree/v7.10.4" id="73555000106100041674">
             <license url="https://github.com/babel/babel/blob/v7.10.4/LICENSE" type="MIT" />
             <copyright>2014-present Sebastian McKenzie and other contributors</copyright>
-            <pattern partial="true" otherContent="p-cancelable" explanation="_CancelablePromise.js is derived from p-cancelable by Sindre Sorhus and was transpiled with Babel, so the resulting file contains Babel code fragments">sap/ui/base/util/restricted/_CancelablePromise.js</pattern>
+            <pattern partial="true" otherContent="p-cancelable" explanation="_CancelablePromise.js is derived from p-cancelable by Sindre Sorhus and was transpiled with Babel, so the resulting file contains Babel code fragments">sap/base/util/restricted/_CancelablePromise.js</pattern>
             <!-- Babel transformation added some helper code, hence Babel is mentioned here -->
         </lib>
         <lib name="jalaali" displayName="Jalaali JS" version="unknown" homepage="https://github.com/jalaali/jalaali-js/" id="73555000106100004826">

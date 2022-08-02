@@ -127,17 +127,17 @@ Copyright:
 License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and jQuery UI 1.11: zIndex.js is overall written by SAP, but contains an implementation of the function 'fnzIndex' which is taken from jQuery UI Datepicker 1.11.1
 
-Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit.*
+Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit.css src/sap.ui.core/src/sap/ui/thirdparty/qunit.js
 Copyright: jQuery Foundation and other contributors
 License: MIT
 Comment: these files belong to: QUnit
 
-Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit-2.*
+Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit-2.css src/sap.ui.core/src/sap/ui/thirdparty/qunit-2.js
 Copyright: jQuery Foundation and other contributors
 License: MIT
 Comment: these files belong to: QUnit 2
 
-Files: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/qunit-2.18.*
+Files: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/qunit-2.18.css src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/qunit-2.18.js
 Copyright: jQuery Foundation and other contributors
 License: MIT
 Comment: these files belong to: QUnit 2.18
@@ -159,7 +159,7 @@ Copyright:
 License: Apache-2.0 and MIT
 Comment: these files contain content from SAP and jQuery.rtl-scroll-type: _FeatureDetection.js is overall written by SAP, but contains code which is inspired by jQuery.rtl-scroll-type
 
-Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit-composite.*
+Files: src/sap.ui.core/src/sap/ui/thirdparty/qunit-composite.css src/sap.ui.core/src/sap/ui/thirdparty/qunit-composite.js
 Copyright: jQuery Foundation and other contributors
 License: MIT
 Comment: these files belong to: QUnit Composite
@@ -239,7 +239,7 @@ Copyright: 2010-2017, Christian Johansen, christian@cjohansen.no
 License: BSD-3-Clause
 Comment: these files belong to: SinonJS
 
-Files: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/sinon-14.0.*
+Files: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/sinon-14.0.js
 Copyright: 2010-2022, Christian Johansen, christian@cjohansen.no
 License: BSD-3-Clause
 Comment: these files belong to: SinonJS 14
@@ -313,7 +313,7 @@ Copyright: 2018 Michael Mclaughlin
 License: MIT
 Comment: these files belong to: bignumber.js
 
-Files: src/sap.ui.core/src/sap/ui/base/util/restricted/_/lodash.custom.js
+Files: src/sap.ui.core/src/sap/base/util/restricted/_/lodash.custom.js
 Copyright: OpenJS Foundation and other contributors
 License: MIT
 Comment: these files belong to: lodash
@@ -323,7 +323,7 @@ Copyright: 2021 Mathias Nater
 License: MIT
 Comment: these files belong to: Hyphenopoly
 
-Files: src/sap.ui.core/src/sap/ui/base/util/restricted/_CancelablePromise.js
+Files: src/sap.ui.core/src/sap/base/util/restricted/_CancelablePromise.js
 Copyright:
     Sindre Sorhus <sindresorhus@gmail.com>
     2014-present Sebastian McKenzie and other contributors
@@ -416,16 +416,6 @@ Files: src/sap.ui.integration/test/sap/ui/integration/demokit/cardExplorer/webap
 Copyright: 2020 Jeremy Danyow
 License: MIT
 Comment: these files belong to: @cfworker/json-schema
-
-
-# Library: sap.ui.mdc:
-
-Files: src/sap.ui.mdc/test/sap/ui/mdc/sample/field/filterfieldwithoperators/BoolExprTool.js
-Copyright:
-    2009-2022 SAP SE or an SAP affiliate company and OpenUI5 contributors
-    2015 unnikked
-License: Apache-2.0 and MIT
-Comment: these files contain content from SAP and BooleanExpressionEvaluator: BoolExprTool.js is authored by SAP, but partly inspired by BooleanExpressionEvaluator
 
 
 # Library: sap.ui.webc.common:
