@@ -2,9 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/mdc/filterbar/FilterBarBase",
-	"sap/ui/mdc/FilterField"
+	"sap/ui/mdc/FilterField",
+    "sap/ui/mdc/odata/TypeUtil"
 ], function (
-	FilterBarBase, FilterField
+	FilterBarBase, FilterField, TypeUtil
 ) {
 	"use strict";
 
@@ -368,7 +369,6 @@ sap.ui.define([
             this.oFilterBarBase._fResolveInitialFiltersApplied = null;
         }.bind(this));
 
-        this.oFilterBarBase.applyConditionsAfterChangesApplied();
         var nStep = 0;
         var fSearch = function(oEvent) {
             assert.equal(++nStep, 2);
@@ -381,11 +381,49 @@ sap.ui.define([
         this.oFilterBarBase.attachSearch(fSearch);
 
 		sinon.stub(this.oFilterBarBase, "waitForInitialization").returns(Promise.resolve());
+        this.oFilterBarBase._changesApplied();
 
         this.oFilterBarBase._handleFilterItemSubmit(oEvent);
         oSubmitPromise.then(function() {
             setTimeout(function() { fnFlexPromiseResolve(); });
         });
+    });
+
+    QUnit.test("Check change appliance handling", function(assert){
+
+        assert.ok(!this.oFilterBarBase._isChangeApplying(), "no pending appliance");
+        this.oFilterBarBase._addConditionChange({
+			key1: [
+				{operator: "EQ", value: ["Test"]}
+			]
+		});
+        assert.ok(this.oFilterBarBase._isChangeApplying(), "pending appliance");
+    });
+
+    QUnit.test("Check sync of ConditionModel with filterConditions after change appliance", function(assert){
+        sinon.stub(this.oFilterBarBase, "_getPropertyByName").returns({name: "key1", typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
+
+		return this.oFilterBarBase.initialized().then(function () {
+
+            //add condition to filterConditions --> simulate flex change
+            this.oFilterBarBase.setFilterConditions({
+                key1: [
+                    {operator: "EQ", values: ["Test"]}
+                ]
+            });
+
+            //Check empty CM
+            assert.equal(this.oFilterBarBase._getConditionModel().getConditions("key1").length, 0, "No conditions yet in CM");
+
+            //trigger the sync
+            return this.oFilterBarBase._onModifications()
+            .then(function(){
+                assert.equal(this.oFilterBarBase._getConditionModel().getConditions("key1").length, 1, "CM and filterConditons are now in sync");
+            }.bind(this));
+
+        }.bind(this));
+
+
     });
 
 });

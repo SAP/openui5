@@ -206,7 +206,6 @@ sap.ui.define([
 	};
 
 	AdaptationFilterBar.prototype.applyConditionsAfterChangesApplied = function(oControl) {
-		FilterBarBase.prototype.applyConditionsAfterChangesApplied.apply(this, arguments);
 		if (oControl === this._getAdaptationControlInstance()) {
 			this.triggerSearch();
 		}

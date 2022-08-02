@@ -45,6 +45,13 @@ sap.ui.define([
 				addFilterField.call(this, oFF, oFilterBar.__aProperties);
 			}.bind(this));
 
+			var bSearchExists = !!oFilterBar.__aProperties.find(function(oProperty){return oProperty.name === "$search";});
+			if (!bSearchExists) {
+				oFilterBar.__aProperties.push({
+					name: "$search",
+					typeConfig: FilterBarDelegate.getTypeUtil().getTypeConfig("Edm.String", null, null)
+				});
+			}
 			fResolve(oFilterBar.__aProperties);
 		}.bind(this));
 
