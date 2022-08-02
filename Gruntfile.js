@@ -284,7 +284,19 @@ module.exports = function(grunt) {
 				name: 'themelib_sap_horizon',
 				path: 'src/themelib_sap_horizon',
 				type: 'theme'
-			}
+			},
+			{
+				name: 'sap.ui.webc.common',
+				path: 'src/sap.ui.webc.common'
+			},
+			{
+				name: 'sap.ui.webc.main',
+				path: 'src/sap.ui.webc.main'
+			},
+			{
+				name: 'sap.ui.webc.fiori',
+				path: 'src/sap.ui.webc.fiori'
+			},
 		]
 
 	};
