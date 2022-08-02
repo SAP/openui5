@@ -672,6 +672,30 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("dependency of submit and rendering", function (assert) {
+		// arrange
+		var done = assert.async(),
+			oFileUploader = new FileUploader(),
+			oAfterRenderingDelegate = {
+				onAfterRendering: function() {
+					// act
+					oFileUploader.setEnabled(null);
+
+					// assert
+					assert.notOk(oFileUploader.FUEl.getAttribute("disabled"), "File uploader is enabled");
+
+					// clean
+					oFileUploader.removeDelegate(oAfterRenderingDelegate);
+					oFileUploader.destroy();
+					done();
+				}
+			};
+
+		oFileUploader.addDelegate(oAfterRenderingDelegate);
+		oFileUploader.placeAt("qunit-fixture");
+		oCore.applyChanges();
+	});
+
 	QUnit.module("File validation");
 	QUnit.test("Test file type validation - handlechange()", function (assert){
 		//setup
