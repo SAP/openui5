@@ -357,10 +357,6 @@ sap.ui.define([
 								that.oContext.patch(oResponseEntity);
 							}
 							if (that.hasReturnValueContext()) {
-								if (that.oReturnValueContext) {
-									that.oReturnValueContext.destroy();
-								}
-
 								if (bReplaceWithRVC) {
 									that.oCache = null;
 									that.oCachePromise = SyncPromise.resolve(null);
@@ -402,10 +398,6 @@ sap.ui.define([
 				});
 			}).catch(function (oError) {
 				oGroupLock.unlock(true);
-				if (that.oReturnValueContext) {
-					that.oReturnValueContext.destroy();
-					that.oReturnValueContext = null;
-				}
 				that.oModel.reportError("Failed to execute " + sResolvedPath, sClassName, oError);
 				throw oError;
 			});
@@ -727,6 +719,10 @@ sap.ui.define([
 			throw new Error("Unsupported parameters for navigation property");
 		}
 
+		if (that.oReturnValueContext) {
+			that.oReturnValueContext.destroy();
+			that.oReturnValueContext = null;
+		}
 		this.oOperation.bAction = bAction;
 		this.oOperation.mRefreshParameters = mParameters;
 		mParameters = Object.assign({}, mParameters);
@@ -912,7 +908,8 @@ sap.ui.define([
 	 *   operation response. It is created only if the operation is bound and has a single entity
 	 *   return value from the same entity set as the operation's binding parameter and has a
 	 *   parent context which is a {@link sap.ui.model.odata.v4.Context} and points to an entity
-	 *   from an entity set.<br>
+	 *   from an entity set. It is destroyed the next time this operation binding is executed again!
+	 *   <br>
 	 *   If a return value context is created, it must be used instead of
 	 *   <code>this.getBoundContext()</code>. All bound messages will be related to the return value
 	 *   context only. Such a message can only be connected to a corresponding control if the
