@@ -10,7 +10,7 @@
 
 <script>
 jQuery.sap.require("sap.ui.core.util.MockServer");
-jQuery.sap.require("sap.ui.model.odata.ODataModel");
+jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
 
 var sServiceURI = "/odataFake/";
 var sMetaDataURI = "mockdata/";
@@ -38,7 +38,7 @@ var oTree = new sap.m.Tree({
 	headerText: "OData in Tree Structure"
 });
 
-var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, true);
+var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI);
 oTree.setModel(oModel, "odata");
 
 oTree.bindItems({

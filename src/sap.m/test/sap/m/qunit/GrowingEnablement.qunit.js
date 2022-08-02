@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
 	"sap/m/StandardListItem",
@@ -382,8 +382,7 @@ sap.ui.define([
 	var oModel;
 
 	function setODataModelAndBindItems (oList) {
-		//true is use JSON
-		oModel = new ODataModel("http://sap.com/model", true);
+		oModel = new ODataModel("http://sap.com/model");
 
 		oList.setModel(oModel);
 
