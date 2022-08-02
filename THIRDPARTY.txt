@@ -68,19 +68,22 @@ Component: QUnit, version: 1.18.0
 Copyright: jQuery Foundation and other contributors
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit.*
+Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit.css
+	src/sap.ui.core/src/sap/ui/thirdparty/qunit.js
 
 Component: QUnit 2, version: 2.3.2
 Copyright: jQuery Foundation and other contributors
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit-2.*
+Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit-2.css
+	src/sap.ui.core/src/sap/ui/thirdparty/qunit-2.js
 
 Component: QUnit 2.18, version: 2.18.0
 Copyright: jQuery Foundation and other contributors
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/qunit-2.18.*
+Contained in: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/qunit-2.18.css
+	src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/qunit-2.18.js
 
 Component: jQuery-Migrate, version: 3.3.1
 Copyright: OpenJS Foundation and other contributors
@@ -104,7 +107,8 @@ Component: QUnit Composite, version: 1.0.2-pre
 Copyright: jQuery Foundation and other contributors
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit-composite.*
+Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit-composite.css
+	src/sap.ui.core/src/sap/ui/thirdparty/qunit-composite.js
 
 Component: JUnit Reporter for QUnit, version: 1.1.1
 Copyright: jQuery Foundation and other contributors
@@ -201,7 +205,7 @@ Component: SinonJS 14, version: 14.0.0
 Copyright: 2010-2022, Christian Johansen, christian@cjohansen.no
 License: BSD-3-Clause
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
-Contained in: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/sinon-14.0.*
+Contained in: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/sinon-14.0.js
 
 Component: Sinon-qunit, version: 2.0.0
 Copyright: 2010-2011, Christian Johansen
@@ -289,7 +293,7 @@ Component: lodash, version: 4.17.21
 Copyright: OpenJS Foundation and other contributors
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/src/sap/ui/base/util/restricted/_/lodash.custom.js
+Contained in: src/sap.ui.core/src/sap/base/util/restricted/_/lodash.custom.js
 
 Component: Hyphenopoly, version: 3.4.0
 Copyright: 2021 Mathias Nater
@@ -301,13 +305,13 @@ Component: p-cancelable, version: 2.0.0
 Copyright: Sindre Sorhus <sindresorhus@gmail.com>
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/src/sap/ui/base/util/restricted/_CancelablePromise.js
+Contained in: src/sap.ui.core/src/sap/base/util/restricted/_CancelablePromise.js
 
 Component: @babel/helpers, version: 7.10.4
 Copyright: 2014-present Sebastian McKenzie and other contributors
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/src/sap/ui/base/util/restricted/_CancelablePromise.js
+Contained in: src/sap.ui.core/src/sap/base/util/restricted/_CancelablePromise.js
 
 Component: Jalaali JS
 Copyright: Behrang Norouzinia
@@ -405,15 +409,6 @@ Copyright: 2020 Jeremy Danyow
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.integration/test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/CfWorkerJsonSchemaValidator.js
-
-
-Library: sap.ui.mdc:
-
-Component: BooleanExpressionEvaluator, version: master-18530acbf3
-Copyright: 2015 unnikked
-License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.mdc/test/sap/ui/mdc/sample/field/filterfieldwithoperators/BoolExprTool.js
 
 
 Library: sap.ui.webc.common:
