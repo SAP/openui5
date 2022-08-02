@@ -251,15 +251,18 @@ sap.ui.define([
 		});
 	}
 
-	countSkipTop("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root"
-		+ "/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=3)"
+	function descendants(sNode, aChildren) {
+		countSkipTop("EMPLOYEES?$orderby=AGE&$apply=descendants($root/EMPLOYEES,OrgChart,ID"
+			+ ",filter(ID%20eq%20'" + sNode + "'),1)&$select=AGE,DrillState,ID,MANAGER_ID,Name",
+			aChildren);
+	}
+
+	countSkipTop("EMPLOYEES?$apply=orderby(AGE)/com.sap.vocabularies.Hierarchy.v1.TopLevels("
+		+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=3)"
 		+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name", aNodes);
-	countSkipTop("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID%20eq%20'1.1')"
-		+ ",1)&$select=AGE,DrillState,ID,MANAGER_ID,Name", a11Children);
-	countSkipTop("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID%20eq%20'1.2')"
-		+ ",1)&$select=AGE,DrillState,ID,MANAGER_ID,Name", a12Children);
-	countSkipTop("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID%20eq%20'5.1')"
-		+ ",1)&$select=AGE,DrillState,ID,MANAGER_ID,Name", a51Children);
+	descendants("1.1", a11Children);
+	descendants("1.2", a12Children);
+	descendants("5.1", a51Children);
 
 	SandboxModel = ODataModel.extend(
 		"sap.ui.core.sample.odata.v4.RecursiveHierarchy.SandboxModel", {

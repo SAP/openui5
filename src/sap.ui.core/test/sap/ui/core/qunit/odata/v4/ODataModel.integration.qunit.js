@@ -21187,6 +21187,8 @@ sap.ui.define([
 	// expand the root node. Expand an initially collapsed node. Scroll to the end and collapse the
 	// root node again.
 	// JIRA: CPOUI5ODATAV4-1643
+	//
+	// Use a sort order (JIRA: CPOUI5ODATAV4-1675).
 	QUnit.test("Recursive Hierarchy: expand to 2, collapse & expand root etc.", function (assert) {
 		var oCollapsed,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
@@ -21198,7 +21200,8 @@ sap.ui.define([
 			$$aggregation : {\
 				expandTo : 2,\
 				hierarchyQualifier : \'OrgChart\'\
-			}\
+			},\
+			$orderby : \'AGE desc\'\
 		}}" threshold="0" visibleRowCount="3">\
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text text="{= %{@$ui5.node.level} }"/>\
@@ -21207,9 +21210,10 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
-				+ ",Levels=2)&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID"
+		this.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
+				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID"
 				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "6",
 				value : [{
@@ -21295,9 +21299,10 @@ sap.ui.define([
 		}).then(function () {
 			oCollapsed = oTable.getRows()[1].getBindingContext();
 
-			that.expectRequest("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
-					+ ",filter(ID eq '1'),1)&$select=DrillState,ID,MANAGER_ID&$count=true&$skip=0"
-					+ "&$top=3", {
+			// Note: $orderby is evaluated after $apply => only the descendants are sorted
+			that.expectRequest("EMPLOYEES?$orderby=AGE desc"
+					+ "&$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)"
+					+ "&$select=DrillState,ID,MANAGER_ID&$count=true&$skip=0&$top=3", {
 					"@odata.count" : "2",
 					value : [{
 						DrillState : "collapsed",
@@ -21334,9 +21339,9 @@ sap.ui.define([
 					MANAGER_ID : "0"
 				}, "technical properties have been removed");
 
-			that.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
-					+ ",NodeProperty='ID',Levels=2)"
+			that.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
+					+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+						+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
 					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID"
 					+ "&$skip=3&$top=3", {
 					value : [{
