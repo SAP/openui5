@@ -2,10 +2,8 @@
 sap.ui.define([
 	"./AnyViewAsync.qunit",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/JSView",
-	"sap/ui/core/mvc/XMLView",
-	"sap/base/Log"
-], function(asyncTestsuite, View, JSView, XMLView, Log) {
+	"sap/ui/core/mvc/JSView"
+], function(asyncTestsuite, View, JSView) {
 	"use strict";
 
 	// setup test config with generic factory
