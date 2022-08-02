@@ -265,6 +265,7 @@
     oScriptTag.dataset.sapUiTheme = sPresetTheme;
     oScriptTag.dataset.sapUiCompatversion = "edge";
     oScriptTag.dataset.sapUiOninit = "onInit";
+    oScriptTag.dataset.sapUiBindingsyntax = "complex";
 
     document.write(oScriptTag.outerHTML);
 

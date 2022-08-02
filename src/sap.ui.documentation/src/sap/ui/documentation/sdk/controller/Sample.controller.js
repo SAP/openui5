@@ -515,7 +515,7 @@ sap.ui.define([
 				if (eMessage.data.type === "INIT") {
 					this.fnMessageInit(eMessage);
 				} else if (eMessage.data.type === "ERR") {
-					this.fnMessageLoad(eMessage);
+					this.fnMessageError(eMessage);
 				} else if (eMessage.data.type === "LOAD") {
 					this.fnMessageLoad(eMessage);
 				} else if (eMessage.data.type === "RTA") {
