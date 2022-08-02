@@ -1779,8 +1779,9 @@ sap.ui.define([
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
 		}
 
-		if (sFilterType === FilterType.Control && _Helper.deepEqual(aFilters, this.aFilters)
-				|| _Helper.deepEqual(aFilters, this.aApplicationFilters)) {
+		if (sFilterType === FilterType.Control
+				? _Helper.deepEqual(aFilters, this.aFilters)
+				: _Helper.deepEqual(aFilters, this.aApplicationFilters)) {
 			return this;
 		}
 
