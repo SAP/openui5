@@ -11,7 +11,7 @@
 		},
 		"dataSources": {
 			"default": {
-				"uri": "https://odatav4server.internal.cfapps.sap.hana.ondemand.com/catalog/",
+				"uri": "/tenant(mdcvaluehelpintegration)/catalog/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "4.0"
