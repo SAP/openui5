@@ -7,7 +7,8 @@
 
   The configuration must be given using the query option "team" which is expanded to a UI5 module
   named "BeforePush.<team>" in the same folder as this script. This module is expected to return a
-  map of test files to 'full', 'integration' or 'both'.
+  map of test URLs to 'full', 'integration' or 'both'. These URLs must be relative to the UI5 folder
+  "test-resources/sap/ui/core"; the test runner "Test.qunit.html" may be given without path.
 
   The page has two modes. As a default ("full mode") all tests are run except those with
   'integration'.
@@ -193,14 +194,14 @@
 
 				oTest.frame.removeEventListener("load", onLoad);
 				if (!(oQUnit && oQUnit.on)) {
-					// oTest.element.firstChild.classList.remove("running");
-					// oTest.element.firstChild.classList.add("failed");
+					oTest.element.firstChild.classList.remove("running");
+					oTest.element.firstChild.classList.add("failed");
 					oTest.infoNode.data = oQUnit ? ": no QUnit V2 found" : ": no QUnit found";
-					// if (bVisible && oTest === oSelectedTest) {
-					// 	select(oTest); // unselect the test to make it invisible
-					// }
-					// iRunningTests -= 1;
-					// next();
+					if (bVisible && oTest === oSelectedTest) {
+						select(oTest); // unselect the test to make it invisible
+					}
+					iRunningTests -= 1;
+					next();
 					return;
 				}
 				// see https://github.com/js-reporters/js-reporters (@since QUnit 2)
@@ -320,8 +321,12 @@
 		iFrames = getFrameCount();
 		bVisible = !iFrames;
 		document.getElementById("list").classList.remove("hidden");
-		aTests = aTests.map(function (sUrl) {
-			return createTest(sUrl, "test-resources/sap/ui/core/" + sUrl);
+		aTests = aTests.map(function (sSimplifiedUrl) {
+			var sUrl = sSimplifiedUrl.startsWith("Test.qunit.html?")
+				? "../../../../resources/sap/ui/test/starter/" + sSimplifiedUrl
+				: "test-resources/sap/ui/core/" + sSimplifiedUrl;
+
+			return createTest(sSimplifiedUrl.replace(/testsuite=.*?&/, ""), sUrl);
 		});
 		aTests.sort(function (oTest1, oTest2) { return oTest2.last - oTest1.last; });
 		oTotal = createTest("Finished");

@@ -18,21 +18,24 @@ sap.ui.define([
 			'qunit/internal/1Ring.qunit.html?hidepassed&coverage&module=sap.ui.model.odata.v4.ODataModel.realOData&realOData=true' : 'integration'
 		};
 
-	function addOPATests(oSuite) {
+	function addOPATests(oSuite, sName) {
+		var sSuite = "Test.qunit.html?testsuite=test-resources/sap/ui/core/qunit/" + sName
+				+ "&test=";
+
 		Object.keys(oSuite.tests).forEach(function (sTest) {
 			if (sTest.startsWith("OPA.")) {
-				var sFile = oSuite.tests[sTest].module[0].replace("sap/ui/core/", "demokit/")
-					+ ".html";
-				mTests[sFile + "?supportAssistant=true"] = "both";
+				var sFile = sSuite + sTest;
+
+				mTests[sFile + "&supportAssistant=true"] = "both";
 				if (oSuite.tests[sTest].realOData !== false) {
-					mTests[sFile + "?realOData=true"] = "both";
+					mTests[sFile + "&realOData=true"] = "both";
 				}
 			}
 		});
 	}
 
-	addOPATests(oODataSuite);
-	addOPATests(oFeatureSuite);
+	addOPATests(oODataSuite, "odata/v4/testsuite.odatav4.qunit");
+	addOPATests(oFeatureSuite, "internal/testsuite.feature-odata-v4.qunit");
 
 	return mTests;
 });

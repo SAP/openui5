@@ -12,8 +12,9 @@ sap.ui.define([
  ],function (oTestSuite) {
 	"use strict";
 
-	var sSuite = "../../../../resources/sap/ui/test/starter/Test.qunit.html"
+	var sSuite = "Test.qunit.html"
 			+ "?testsuite=test-resources/sap/ui/core/qunit/internal/testsuite.models.qunit&test=",
+
 		mTests = {
 			'internal/samples/odata/twoFields/Opa.qunit.html' : 'both',
 			'internal/samples/odata/v2/SalesOrders/Opa.qunit.html' : 'both',
