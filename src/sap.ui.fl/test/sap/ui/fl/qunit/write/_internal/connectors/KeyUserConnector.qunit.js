@@ -20,8 +20,6 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var sFeatureFlagEnabled = "&sap-ui-fl-cf-contextsharing=true";
-	var sFeatureFlagDisabled = "&sap-ui-fl-cf-contextsharing=false";
 
 	QUnit.module("KeyUserConnector", {
 		afterEach: function() {
@@ -366,35 +364,6 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(1).args[1], "POST", "the second request was a POST request");
 				assert.equal(InitialConnector.xsrfToken, newToken, "a new token was stored in the apply connector");
 				assert.equal(oStubSendRequest.getCall(1).args[2].xsrfToken, newToken, "and the new token was used to resend the request");
-			});
-		});
-	});
-
-	QUnit.module("KeyUserConnector isContextSharingEnabled", {
-		afterEach: function() {
-			InitialConnector.xsrfToken = undefined;
-			sandbox.restore();
-			window.history.replaceState(null, null, window.location.href.replace(sFeatureFlagEnabled, ""));
-			window.history.replaceState(null, null, window.location.href.replace(sFeatureFlagDisabled, ""));
-		}
-	}, function() {
-		QUnit.test("receive the flag 'isContextSharingEnabled 'false'", function (assert) {
-			return KeyUserConnector.isContextSharingEnabled().then(function (bIsEnabled) {
-				assert.equal(bIsEnabled, false, "context sharing is not enabled with non existing feature flag");
-			});
-		});
-
-		QUnit.test("receive the flag 'isContextSharingEnabled' false", function(assert) {
-			window.history.replaceState(null, null, window.location.href + sFeatureFlagDisabled);
-			return KeyUserConnector.isContextSharingEnabled().then(function(bIsEnabled) {
-				assert.equal(bIsEnabled, false, "context sharing is not enabled with feature flag set to false");
-			});
-		});
-
-		QUnit.test("receive the flag 'isContextSharingEnabled 'true'", function (assert) {
-			window.history.replaceState(null, null, window.location.href + sFeatureFlagEnabled);
-			return KeyUserConnector.isContextSharingEnabled().then(function (bIsEnabled) {
-				assert.equal(bIsEnabled, true, "context sharing is enabled with feature flag set to true");
 			});
 		});
 	});

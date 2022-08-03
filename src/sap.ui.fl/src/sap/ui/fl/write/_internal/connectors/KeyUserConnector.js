@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/base/util/restricted/_pick",
-	"sap/base/util/UriParameters",
 	"sap/ui/fl/write/_internal/FlexInfoSession"
 ], function (
 	merge,
@@ -18,7 +17,6 @@ sap.ui.define([
 	InitialUtils,
 	WriteUtils,
 	_pick,
-	UriParameters,
 	FlexInfoSession
 ) {
 	"use strict";
@@ -88,9 +86,7 @@ sap.ui.define([
 		},
 
 		isContextSharingEnabled: function () {
-			var oUriParameters = new UriParameters(window.location.href);
-			var sAppContextsEnabled = oUriParameters.get("sap-ui-fl-cf-contextsharing");
-			return Promise.resolve(sAppContextsEnabled === "true");
+			return Promise.resolve(true);
 		},
 
 		getFlexInfo: function (mPropertyBag) {
