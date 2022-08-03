@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/events/PseudoEvents",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/library"
 ], function (
 	library,
 	Control,
@@ -37,18 +38,28 @@ sap.ui.define([
 	deepEqual,
 	PseudoEvents,
 	Parameters,
-	jQuery
+	jQuery,
+	coreLibrary
 ) {
 	"use strict";
 
 	var GenericTileScope = library.GenericTileScope,
 		LoadState = library.LoadState,
+		CSSColor = coreLibrary.CSSColor,
 		FrameType = library.FrameType,
 		Size = library.Size,
 		GenericTileMode = library.GenericTileMode,
 		TileSizeBehavior = library.TileSizeBehavior,
 		WrappingType = library.WrappingType,
-		URLHelper = library.URLHelper;
+		URLHelper = library.URLHelper,
+		DEFAULT_BG_COLOR;
+		//Loading the default background color asynchronously if the given color is not initially loaded
+		DEFAULT_BG_COLOR = Parameters.get({
+			name: "sapLegendColor9",
+			callback: function (params) {
+				DEFAULT_BG_COLOR = params;
+			}
+		});
 
 	var DEVICE_SET = "GenericTileDeviceSet";
 	var keyPressed = {};
@@ -205,7 +216,7 @@ sap.ui.define([
 				 * @since 1.96
 				 * @experimental Since 1.96
 				*/
-				backgroundColor: {type: "sap.ui.core.CSSColor", group: "Appearance"},
+				backgroundColor: {type: "string", group: "Appearance",defaultValue : DEFAULT_BG_COLOR},
 				/**
 				 * The semantic color of the value.
 				 * @experimental Since 1.95
@@ -217,7 +228,13 @@ sap.ui.define([
 				 * @experimental Since 1.103
 				 * @since 1.103
 				 */
-				iconLoaded: {type: "boolean", group: "Misc", defaultValue: true}
+				iconLoaded: {type: "boolean", group: "Misc", defaultValue: true},
+				/**
+				 * The Tile rerenders on theme change.
+				 * @experimental Since 1.106
+				 * @since 1.106
+				 */
+				 renderOnThemeChange: {type: "boolean", group: "Misc", defaultValue: false}
 			},
 			defaultAggregation: "tileContent",
 			aggregations: {
@@ -356,6 +373,7 @@ sap.ui.define([
 
 		this._bTilePress = true;
 
+		this._sBGColor = DEFAULT_BG_COLOR;
 		this._bThemeApplied = true;
 		if (!sap.ui.getCore().isInitialized()) {
 			this._bThemeApplied = false;
@@ -420,6 +438,17 @@ sap.ui.define([
 		this._bThemeApplied = true;
 		this._oTitle.clampHeight();
 		sap.ui.getCore().detachThemeChanged(this._handleThemeApplied, this);
+	};
+
+	/**
+	 * Re-render control on Theme change.
+	 *
+	 * @private
+	 */
+		GenericTile.prototype.onThemeChanged = function() {
+		if (this.getDomRef() && this.getRenderOnThemeChange()) {
+			this.invalidate();
+		}
 	};
 
 	/**
@@ -589,6 +618,10 @@ sap.ui.define([
 			this._oNavigateAction.setText(sButtonText);
 			this._oNavigateAction.detachPress(this._navigateEventHandler, this);
 		}
+		//Validates the color that is getting applied on icon mode tiles so that it changes by theme
+		if (this._isIconMode()) {
+			this._validateBackgroundColor();
+		}
 	};
 
 	GenericTile.prototype.onAfterRendering = function () {
@@ -663,7 +696,27 @@ sap.ui.define([
 			this.getDomRef("content").classList.remove("sapMGTFtrMarginTop");
 		}
 	};
-
+	/**
+	 * If the given background color is not from the parameters then the default color is applied
+	 * @private
+	 */
+	GenericTile.prototype._validateBackgroundColor = function() {
+		var sBGColor = this.getBackgroundColor();
+		if (CSSColor.isValid(sBGColor)) {
+			this._sBGColor = sBGColor;
+		} else {
+			//Fetching the color from the parameters asynchronously if its not loaded initially
+			var sColor = Parameters.get({
+				name:sBGColor,
+				callback: function(sParamColor) {
+					this._sBGColor = sParamColor ? sParamColor : DEFAULT_BG_COLOR;
+				}.bind(this)
+			});
+			if (sColor) {
+				this._sBGColor = sColor;
+			}
+		}
+	};
 	GenericTile.prototype._setMaxLines = function() {
 		var sFrameType = this.getFrameType(),
 			iLines = sFrameType === FrameType.OneByOne || sFrameType === FrameType.TwoByHalf ? 1 : 2;
@@ -1717,9 +1770,6 @@ sap.ui.define([
 	GenericTile.prototype._isIconMode = function () {
 		if (this.getMode() === GenericTileMode.IconMode
 			&& (this.getFrameType() === FrameType.OneByOne || this.getFrameType() === FrameType.TwoByHalf)){
-				if (!this.getBackgroundColor() && this.getFrameType() === FrameType.TwoByHalf) {
-					this._setDefaultBackgroundColor();
-				}
 				if (this.getTileIcon() && this.getBackgroundColor()) {
 					return true;
 				} else {
@@ -1732,14 +1782,6 @@ sap.ui.define([
 		} else {
 			return false;
 		}
-	};
-
-	/**
-	 * Sets the default background color when the tile is in iconmode.
-	 */
-	GenericTile.prototype._setDefaultBackgroundColor = function() {
-		var sColor = Parameters.get("sapUiContentPlaceholderloadingBackground");
-		this.setProperty("backgroundColor" , sColor, true);
 	};
 
 	/**
