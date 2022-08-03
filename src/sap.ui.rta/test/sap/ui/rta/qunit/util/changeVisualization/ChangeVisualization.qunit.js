@@ -181,8 +181,10 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			sandbox.stub(oObject, sMethodName)
 				.callsFake(function() {
-					var oResult = oObject[sMethodName].wrappedMethod.apply(this, arguments);
-					resolve(oResult);
+					if (oObject[sMethodName].wrappedMethod) {
+						var oResult = oObject[sMethodName].wrappedMethod.apply(this, arguments);
+						resolve(oResult);
+					}
 				});
 		})
 			.then(function() {
@@ -790,22 +792,24 @@ sap.ui.define([
 		});
 
 		QUnit.test("when ChangeVisualization is active and mode change is triggered", function(assert) {
-			var fnDone = assert.async();
 			prepareChanges(this.aMockChanges);
 			this.oRta.setMode("visualization");
 			oCore.applyChanges();
 			var fnClickSpy = sandbox.spy(this.oChangeVisualization, "_fnOnClickHandler");
-			assert.strictEqual(this.oChangeVisualization.getIsActive(), true, "then the ChangeVisualization was active before");
-			waitForMethodCall(this.oChangeVisualization, "triggerModeChange")
+			return waitForMethodCall(this.oChangeVisualization, "triggerModeChange")
+				.then(function () {
+					assert.strictEqual(this.oChangeVisualization.getIsActive(), true, "then the ChangeVisualization was active before");
+				}.bind(this))
+				.then(function () {
+					this.oChangeVisualization.triggerModeChange("Comp1", this.oRta.getToolbar());
+				}.bind(this))
 				.then(function() {
 					assert.strictEqual(this.oChangeVisualization.getIsActive(), false, "then the ChangeVisualization is inactive afterwards");
 					var oRootOverlay = OverlayRegistry.getOverlay("Comp1");
 					var oMouseEvent = new Event("click");
 					oRootOverlay.getDomRef().dispatchEvent(oMouseEvent);
 					assert.notOk(fnClickSpy.called, "then the click event handler was removed from the Root Overlay DomRef");
-					fnDone();
 				}.bind(this));
-			this.oChangeVisualization.triggerModeChange("Comp1", this.oRta.getToolbar());
 		});
 
 		QUnit.test("when changes have different fileTypes", function(assert) {
@@ -953,15 +957,20 @@ sap.ui.define([
 			return RtaQunitUtils.clear();
 		}
 	}, function() {
+		function _round(iValue) {
+			// round up to 3 numbers after the comma for test consistency reasons
+			return Math.round(iValue * 1000) / 1000;
+		}
 		QUnit.test("when the visualization is started", function(assert) {
 			var aIndicators = collectIndicatorReferences();
-			var iYPosIndicator1 = getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].y + getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].height / 2;
-			var iXPosIndicator1 = getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].x;
-			var iYPosIndicator2 = getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].y + getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].height / 2;
-			var iXPosIndicator2 = getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].x;
+			var iYPosIndicator1 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].y + getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].height / 2);
+			var iXPosIndicator1 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb1").getClientRects()[0].x);
+			var iYPosIndicator2 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].y + getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].height / 2);
+			var iXPosIndicator2 = _round(getIndicatorForElement(aIndicators, "Comp1---idMain1--rb2").getClientRects()[0].x);
 			assert.ok(
 				(iYPosIndicator1 === iYPosIndicator2) && (iXPosIndicator1 < iXPosIndicator2),
-				"When two indicators have the same Y-Position, the X-Position is used for sort"
+				"When two indicators have the same Y-Position, the X-Position is used for sort" +
+				iYPosIndicator1 + iXPosIndicator1 + iYPosIndicator2 + iXPosIndicator2
 			);
 
 			assert.ok(
