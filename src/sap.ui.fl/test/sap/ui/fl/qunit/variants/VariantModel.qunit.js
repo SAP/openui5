@@ -1264,7 +1264,7 @@ sap.ui.define([
 			return this.oModel._handleSaveEvent(oEvent)
 				.then(function() {
 					var sNewVariantReference = Utils.createDefaultFileName.getCall(0).returnValue;
-					assert.strictEqual(Utils.createDefaultFileName.getCall(0).args.length, 0, "then no argument was passed to sap.ui.fl.Utils.createDefaultFileName");
+					assert.strictEqual(Utils.createDefaultFileName.getCall(0).args[0], "flVariant", "then the file type was passed to sap.ui.fl.Utils.createDefaultFileName");
 					assert.equal(this.oModel.copyVariant.called, 1, "then copyVariant() was called once");
 					assert.deepEqual(this.oModel.copyVariant.lastCall.args[0], {
 						appComponent: this.oComponent,
