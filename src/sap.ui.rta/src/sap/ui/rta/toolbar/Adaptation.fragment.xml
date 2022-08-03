@@ -205,6 +205,16 @@
 					</layoutData>
 				</MenuButton>
 				<toolbar:OverflowToolbarButton
+						id="sapUiRta_saveAsContextBasedAdaptation"
+						visible="{= (${controls>/contextBasedAdaptationVisible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
+						press=".saveAsContextBasedAdaptation"
+						type="Transparent"
+						text="{i18n>BTN_SAVE_AS}" >
+					<toolbar:layoutData>
+						<OverflowToolbarLayoutData priority="Low" />
+					</toolbar:layoutData>
+				</toolbar:OverflowToolbarButton>
+				<toolbar:OverflowToolbarButton
 						id="sapUiRta_saveAs"
 						visible="{= (${controls>/saveAsVisible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
 						enabled="{parts: ['controls>/saveAsEnabled', 'versions>/displayedVersion'], formatter: '.formatSaveAsEnabled'}"

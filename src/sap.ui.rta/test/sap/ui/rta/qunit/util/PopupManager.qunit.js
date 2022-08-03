@@ -132,6 +132,9 @@ sap.ui.define([
 				},
 				isPublicLayerAvailable: function() {
 					return false;
+				},
+				isContextBasedAdaptationEnabled: function() {
+					return false;
 				}
 			};
 			sandbox.stub(FlSettings, "getInstance").resolves(oSettings);

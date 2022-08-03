@@ -46,6 +46,9 @@ sap.ui.define([
 			return { role: aSelectedRoleIds };
 		},
 
+		getSelectedContextsModel: function() {
+			return this.getModel("selectedContexts");
+		},
 		/**
 		 * Sets selected contexts.
 		 *

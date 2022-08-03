@@ -69,6 +69,24 @@ sap.ui.define([
 		},
 
 		/**
+		 * Determine if the context-based adaptation feature is available in the connected backend
+		 *
+		 * @param {string} sLayer - Layer to check for key user app variants
+		 * @returns {Promise<boolean>} Promise resolving with a flag if the context-based adaptaion is available
+		 *
+		 * @private
+	 	 * @ui5-restricted
+		 */
+		isContextBasedAdaptationAvailable: function(sLayer) {
+			return Settings.getInstance().then(function (oSettings) {
+				if (oSettings.isContextBasedAdaptationEnabled() && sLayer === Layer.CUSTOMER) {
+					return true;
+				}
+				return false;
+			});
+		},
+
+		/**
 		 * Checks if key user rights are available for the current user.
 		 * Application developers can use this API to decide if the key user adaptation
 		 * feature should be visible to the current user. This only applies if key user adaptation

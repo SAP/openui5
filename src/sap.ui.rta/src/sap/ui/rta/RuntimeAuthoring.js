@@ -606,14 +606,20 @@ sap.ui.define([
 	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
 	 */
 	RuntimeAuthoring.prototype._getToolbarButtonsVisibility = function() {
-		return FeaturesAPI.isPublishAvailable().then(function(bIsPublishAvailable) {
-			return RtaAppVariantFeature.isSaveAsAvailable(this.getRootControlInstance(), this.getLayer(), this._oSerializer).then(function(bIsSaveAsAvailable) {
-				return {
-					publishAvailable: bIsPublishAvailable,
-					saveAsAvailable: bIsPublishAvailable && bIsSaveAsAvailable
-				};
-			});
-		}.bind(this));
+		return Promise.all([
+			FeaturesAPI.isPublishAvailable(),
+			RtaAppVariantFeature.isSaveAsAvailable(this.getRootControlInstance(), this.getLayer(), this._oSerializer),
+			FeaturesAPI.isContextBasedAdaptationAvailable(this.getLayer())
+		]).then(function(aRtaFeaturesAvailability) {
+			var bIsPublishAvailable = aRtaFeaturesAvailability[0];
+			var bIsSaveAsAvailable = aRtaFeaturesAvailability[1];
+			var bIsContextBasedAdaptationAvailable = aRtaFeaturesAvailability[2];
+			return {
+				publishAvailable: bIsPublishAvailable,
+				saveAsAvailable: bIsPublishAvailable && bIsSaveAsAvailable,
+				contextBasedAdaptationAvailable: bIsContextBasedAdaptationAvailable
+			};
+		});
 	};
 
 	RuntimeAuthoring.prototype._isOldVersionDisplayed = function() {
@@ -1123,6 +1129,7 @@ sap.ui.define([
 						appVariantsOverviewVisible: bSaveAsAvailable && bExtendedOverview,
 						appVariantsOverviewEnabled: bSaveAsAvailable && bExtendedOverview,
 						saveAsVisible: bSaveAsAvailable,
+						contextBasedAdaptationVisible: aButtonsVisibility.contextBasedAdaptationAvailable,
 						saveAsEnabled: false,
 						manageAppsVisible: bSaveAsAvailable && !bExtendedOverview,
 						manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview,
