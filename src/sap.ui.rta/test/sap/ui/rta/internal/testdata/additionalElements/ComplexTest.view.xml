@@ -110,6 +110,19 @@
 									<smartForm:GroupElement id="EntityType01.Prop11" >
 										<smartField:SmartField editable="true" contextEditable="true" value="{Property11-visible-via-Field-Control}"/>
 									</smartForm:GroupElement>
+									<smartForm:GroupElement id="FormActivationElement" label="Template using another model + bound field">
+										<Select
+											id="FormSelect" items="{path: '/activation', templateShareable: false}">
+											<core:Item key="{key}" text="{text}" />
+										</Select>
+										<smartField:SmartField editable="true" contextEditable="true" value="{Property01}"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement id="FormActivationElementAlone" label="Template using another model alone">
+										<Select
+											id="FormSelectAlone" items="{path: '/activation', templateShareable: false}">
+											<core:Item key="{key}" text="{text}" />
+										</Select>
+									</smartForm:GroupElement>
 								</smartForm:Group>
 								<!--This Group is bound to EntityType02 because the form is bound to EntityType02 -->
 								<smartForm:Group id="GroupEntityType02" label="Group2 bound to EntityType02" >
@@ -427,6 +440,9 @@
 									<Column id="Column3">
 										<Text id="tabletext3" text="{/#EntityTypeNav/EntityTypeNav_Property03/@sap:label}" />
 									</Column>
+									<Column id="Column4">
+										<Text id="tableActivationText" text="Activation" />
+									</Column>
 								</columns>
 								<items>
 									<ColumnListItem id="CLI">
@@ -435,6 +451,10 @@
 											<Text id="celltext1" text="{EntityTypeNav_Property01}" />
 											<Text id="celltext2" text="{EntityTypeNav_Property02}" />
 											<Text id="celltext3" text="{EntityTypeNav_Property03}" />
+											<Select
+												id="TableSelect" items="{path: '/activation', templateShareable: false}">
+												<core:Item key="{key}" text="{text}" />
+											</Select>
 										</cells>
 									</ColumnListItem>
 								</items>

@@ -777,6 +777,27 @@ sap.ui.define([
 				assert.equal(aAdditionalElements[0].label, "Field with property bound to control field", "the property is found");
 			});
 		});
+
+		QUnit.test("when getting the available columns on a table with template where 3 of the 6 properties are already visible", function(assert) {
+			var oTable = this.oView.byId("table");
+
+			var mAddViaDelegateAction = {
+				action: {
+					aggregation: "items",
+					getLabel: function() {
+						return "testLabel";
+					}
+				},
+				delegateInfo: {
+					payload: {},
+					delegate: this.oDelegate
+				}
+			};
+
+			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oTable, mAddViaDelegateAction).then(function(aAdditionalElements) {
+				assert.strictEqual(aAdditionalElements.length, 3, "then there are 3 additional columns available");
+			});
+		});
 	});
 
 	QUnit.done(function () {
