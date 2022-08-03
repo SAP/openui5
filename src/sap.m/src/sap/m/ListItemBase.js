@@ -281,7 +281,7 @@ function(
 	};
 
 	ListItemBase.prototype.onAfterRendering = function() {
-		if (this._oDomRef !== this.getDomRef()) {
+		if (!this._oDomRef || this._oDomRef !== this.getDomRef()) {
 			this.informList("DOMUpdate", true);
 		}
 		this._oDomRef = undefined;
