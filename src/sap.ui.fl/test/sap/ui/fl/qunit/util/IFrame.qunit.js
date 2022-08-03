@@ -23,9 +23,7 @@ sap.ui.define([
 
 	var sTitle = "IFrame Title";
 	var sProtocol = "https";
-	var sFlavor = "openui5";
-	var sServer = "hana.ondemand.com";
-	var sOpenUI5Url = sProtocol + "://" + sFlavor + "." + sServer + "/";
+	var sOpenUI5Url = sProtocol + "://openu5/";
 	var sDefaultSize = "500px";
 	var sUserFirstName = "John";
 	var sUserLastName = "Doe";
@@ -58,22 +56,6 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("width", function (assert) {
-			assert.equal(this.oIFrame.getWidth(), sDefaultSize, "Width is correct using 'equals()'!");
-		});
-
-		QUnit.test("height", function (assert) {
-			assert.equal(this.oIFrame.getHeight(), sDefaultSize, "Height is correct using 'equals()'!");
-		});
-
-		QUnit.test("url", function (assert) {
-			return checkUrl(assert, this.oIFrame, sOpenUI5Url);
-		});
-
-		QUnit.test("title", function (assert) {
-			assert.equal(this.oIFrame.getTitle(), sTitle, "Title is correct using 'equals()'!");
-		});
-
 		QUnit.test("when trying to set the url to an invalid value", function(assert) {
 			// eslint-disable-next-line no-script-url
 			this.oIFrame.setUrl("javascript:someJs");
@@ -144,14 +126,13 @@ sap.ui.define([
 			this.oIFrame = new IFrame({
 				width: "{model>/width}",
 				height: "{model>/height}",
-				url: "{model>/protocol}://{model>/flavor}.{model>/server}/"
+				url: "{model>/protocol}://{model>/flavor}/"
 			});
 			this.oModel = new JSONModel({
 				width: sDefaultSize,
 				height: sDefaultSize,
 				protocol: sProtocol,
-				flavor: "openui5",
-				server: sServer
+				flavor: "openui5"
 			});
 			this.oIFrame.setModel(this.oModel, "model");
 			this.oIFrame.placeAt("qunit-fixture");
@@ -162,18 +143,6 @@ sap.ui.define([
 			this.oModel.destroy();
 		}
 	}, function () {
-		QUnit.test("width", function (assert) {
-			assert.equal(this.oIFrame.getWidth(), sDefaultSize, "Width is correct using 'equals()'!");
-		});
-
-		QUnit.test("height", function (assert) {
-			assert.equal(this.oIFrame.getHeight(), sDefaultSize, "Height is correct using 'equals()'!");
-		});
-
-		QUnit.test("url", function (assert) {
-			return checkUrl(assert, this.oIFrame, sOpenUI5Url);
-		});
-
 		QUnit.test("getFocusDomRef", function (assert) {
 			var oFocusDomRef = this.oIFrame.getFocusDomRef();
 			var $iframe = jQuery("#qunit-fixture iframe");
@@ -182,7 +151,7 @@ sap.ui.define([
 
 		QUnit.test("URL should refresh if bound to a changing model without rewriting the iframe", function(assert) {
 			var oFocusDomRef = this.oIFrame.getFocusDomRef();
-			var sSapUI5Url = sProtocol + "://sapui5." + sServer + "/";
+			var sSapUI5Url = sProtocol + "://sapui5/";
 
 			this.oModel.setProperty("/flavor", "sapui5");
 

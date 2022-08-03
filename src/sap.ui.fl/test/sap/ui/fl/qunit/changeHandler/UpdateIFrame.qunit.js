@@ -29,12 +29,9 @@ sap.ui.define([
 		id: "testComponent"
 	});
 	var sProtocol = "https";
-	var sServer = "hana.ondemand.com";
-	var sOpenUI5Flavor = "openui5";
-	var sOpenUI5Url = sProtocol + "://" + sOpenUI5Flavor + "." + sServer + "/";
-	var sSapUI5Flavor = "sapui5";
-	var sSapUI5Url = sProtocol + "://" + sSapUI5Flavor + "." + sServer + "/";
-	var sBoundUrl = "{model>/protocol}://{model>/flavor}.{model>/server}/";
+	var sOpenUI5Url = sProtocol + "://openu5/";
+	var sSapUI5Url = sProtocol + "://sapui5/";
+	var sBoundUrl = "{model>/protocol}://{model>/flavor}/";
 	var sDefaultSize = "500px";
 
 	var mPropertyBag = {modifier: JsControlTreeModifier, appComponent: oComponent};
@@ -54,8 +51,7 @@ sap.ui.define([
 				width: sDefaultSize,
 				height: sDefaultSize,
 				protocol: sProtocol,
-				flavor: sSapUI5Flavor,
-				server: sServer
+				flavor: "sapui5"
 			});
 			this.oIFrame.setModel(this.oModel, "model");
 
