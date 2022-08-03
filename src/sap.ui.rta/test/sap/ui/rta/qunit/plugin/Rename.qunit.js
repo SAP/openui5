@@ -394,6 +394,11 @@ sap.ui.define([
 			return triggerAndWaitForStartEdit(this.oRenamePlugin, this.oLayoutOverlay).then(function() {
 				var oTextMutatorSpy = sinon.spy(this.oRenamePlugin._$oEditableControlDomRef, "text");
 				assert.ok(this.oLayoutOverlay.getSelected(), "then the overlay is still selected");
+				assert.deepEqual(
+					this.oRenamePlugin._$editableField.offset(),
+					this.oRenamePlugin._$oEditableControlDomRef.offset(),
+					"then the editable field for rename is positioned correctly"
+				);
 				this.oRenamePlugin.stopEdit(this.oLayoutOverlay);
 				assert.ok(this.oLayoutOverlay.getSelected(), "then the overlay is still selected");
 				assert.ok(oTextMutatorSpy.called, "then the label is changed via jQuery");
