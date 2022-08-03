@@ -4102,13 +4102,7 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bSuccess) {
 	[false, true].forEach(function (bCreated) { // the deleted context is created-persisted
-		[false, true].forEach(function (bHasPromise) { // the deleted context has a #created promise
-		var sTitle = "_delete: success=" + bSuccess + ", created=" + bCreated
-				+ ", promise=" + bHasPromise;
-
-		if (!bCreated && bHasPromise) {
-			return;
-		}
+		var sTitle = "_delete: success=" + bSuccess + ", created=" + bCreated;
 
 		QUnit.test(sTitle, function (assert) {
 			var oBinding = this.bindList("/EMPLOYEES"),
@@ -4140,13 +4134,10 @@ sap.ui.define([
 			oContext1 = oBinding.aContexts[1];
 			oContext1Mock = this.mock(oContext1);
 			sContext1Path = oContext1.getPath();
-			// fake a created context: it needs at least a #created promise OR a negative index
-			if (bCreated && !bHasPromise) {
+			if (bCreated) { // fake a created context: it needs a negative index
 				oContext1.iIndex = -1;
 				sPath = "-1";
 			}
-			this.mock(oContext1).expects("created").atLeast(0) // call as you please ;-)
-				.withExactArgs().returns(bHasPromise ? "~createdPromise~" : undefined);
 			oBindingMock.expects("destroyPreviousContexts").never();
 			oContext1Mock.expects("resetKeepAlive").never();
 			oDeleteCall = oBindingMock.expects("deleteFromCache")
@@ -4211,10 +4202,8 @@ sap.ui.define([
 						// aContexts : [-1, 0, 2, undefined, 4] -> [-1, 0, 1, 2, undefined, 4]
 						assert.strictEqual(oBinding.getLength(), 6);
 						assert.strictEqual(oBinding.aContexts.length, 6);
-						if (bHasPromise) { //TODO fix this issue w/ deferred delete & #doReplaceWith
-							assert.strictEqual(oBinding.iCreatedContexts, 1);
-							assert.strictEqual(oBinding.iActiveContexts, 1);
-						}
+						assert.strictEqual(oBinding.iCreatedContexts, 1);
+						assert.strictEqual(oBinding.iActiveContexts, 1);
 						assert.strictEqual(oBinding.aContexts[0], aPreviousContexts[0]);
 						assert.strictEqual(oBinding.aContexts[1], aPreviousContexts[1]);
 						assert.strictEqual(oBinding.aContexts[2], aPreviousContexts[2]);
@@ -4250,7 +4239,6 @@ sap.ui.define([
 				assert.strictEqual(oError, "~oError~");
 				assert.strictEqual(oBinding.iDeletedContexts, 3);
 			});
-		});
 		});
 	});
 });

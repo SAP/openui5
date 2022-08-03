@@ -275,7 +275,11 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype._delete = function (oGroupLock, sEditUrl, oContext, oETagEntity,
 			bDoNotRequestCount) {
-		var sPath = oContext.iIndex === undefined
+		// When deleting a context with negative index, iCreatedContexts et al. must be adjusted.
+		// However, when re-inserting, the context has lost its index. Beware: Do NOT use the
+		// created() promise, because doReplaceWith places a context w/o the promise here.
+		var bCreated = oContext.iIndex < 0,
+			sPath = oContext.iIndex === undefined
 				// context is not in aContexts -> use the predicate
 				? _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())
 				: String(oContext.iIndex),
@@ -292,8 +296,6 @@ sap.ui.define([
 
 		return this.deleteFromCache(oGroupLock, sEditUrl, sPath, oETagEntity, bDoNotRequestCount,
 			function (iIndex, iOffset) {
-				var iContextIndex = oContext.iIndex;
-
 				if (iIndex !== undefined) {
 					// An entity can only be deleted when its key predicate is known. So we can be
 					// sure to have key predicates and the contexts a related to entities and not
@@ -310,7 +312,7 @@ sap.ui.define([
 							that._fireChange({reason : ChangeReason.Remove});
 						});
 					}
-					if (iContextIndex < 0 || oContext.created()) {
+					if (bCreated) {
 						that.iCreatedContexts += iOffset;
 						that.iActiveContexts += iOffset;
 					} else {
