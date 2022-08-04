@@ -41,7 +41,8 @@ sap.ui.define([
 			+ ")(?:" + _Parser.sWhitespace + "+(?:asc|desc))?$"),
 		mRecursiveHierarchyType = {
 			expandTo : /^[1-9]\d*$/, // a positive integer
-			hierarchyQualifier : "string"
+			hierarchyQualifier : "string",
+			search : "string"
 		},
 		/**
 		 * Collection of helper methods for data aggregation.
@@ -346,6 +347,9 @@ sap.ui.define([
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for a recursive hierarchy; see
 		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
+		 * @param {string} [oAggregation.search]
+		 *   Like the value for a "$search" system query option (remember ODATA-1452); it is turned
+		 *   into the search expression parameter of an "ancestors()" transformation
 		 * @param {object} [mQueryOptions={}]
 		 *   A map of key-value pairs representing the query string; it is not modified
 		 * @param {string} [mQueryOptions.$filter]
@@ -373,7 +377,8 @@ sap.ui.define([
 						+ "/@Org.OData.Aggregation.V1.RecursiveHierarchy#" + sHierarchyQualifier
 						+ "/NodeProperty/$PropertyPath").getResult()
 					: "???",
-				mRecursiveHierarchy;
+				mRecursiveHierarchy,
+				sSeparator = "";
 
 			function select(sProperty) {
 				if (mQueryOptions.$select) {
@@ -392,13 +397,20 @@ sap.ui.define([
 				mQueryOptions.$select = mQueryOptions.$select.slice();
 			}
 
-			if (mQueryOptions.$filter) {
-				sApply += "ancestors($root" + sPath
+			if (mQueryOptions.$filter || oAggregation.search) {
+				if (mQueryOptions.$filter) {
+					sApply = "filter(" + mQueryOptions.$filter;
+					sSeparator = ")/";
+					delete mQueryOptions.$filter;
+				}
+				if (oAggregation.search) {
+					sApply += sSeparator + "search(" + oAggregation.search;
+				}
+				sApply = "ancestors($root" + sPath
 					+ "," + sHierarchyQualifier
 					+ "," + sNodeProperty
-					+ ",filter(" + mQueryOptions.$filter
+					+ "," + sApply
 					+ "),keep start)/";
-				delete mQueryOptions.$filter;
 			}
 			if (mQueryOptions.$$filterBeforeAggregate) { // children of a given parent
 				sApply += "descendants($root" + sPath + "," + sHierarchyQualifier

@@ -3434,8 +3434,9 @@ sap.ui.define([
 	 *   The qualifier for the pair of "Org.OData.Aggregation.V1.RecursiveHierarchy" and
 	 *   "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy" annotations at this binding's
 	 *   entity type (@experimental as of version 1.105.0). If present, a recursive hierarchy
-	 *   without data aggregation is defined, and the only other supported property is
-	 *   <code>expandTo</code>.
+	 *   without data aggregation is defined, and the only other supported properties are
+	 *   <code>expandTo</code> and <code>search</code>. A recursive hierarchy cannot be combined
+	 *   with "$search".
 	 * @param {string} [oAggregation.search]
 	 *   Like the <a
 	 *   href="https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html">

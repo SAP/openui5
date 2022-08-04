@@ -822,29 +822,34 @@ sap.ui.define([
 	//*********************************************************************************************
 [{
 	sExpectedApply : "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
-		+ ",HierarchyQualifier='X',NodeProperty='aNodeID',Levels=1)",
-	mQueryOptions : {}
-}, {
-	sExpectedApply : "orderby(~$orderby~)/com.sap.vocabularies.Hierarchy.v1.TopLevels("
-		+ "HierarchyNodes=$root/Foo,HierarchyQualifier='X',NodeProperty='aNodeID',Levels=1)",
-	mQueryOptions : {$orderby : "~$orderby~"}
+		+ ",HierarchyQualifier='X',NodeProperty='aNodeID',Levels=1)"
 }, {
 	sExpectedApply : "ancestors($root/Foo,X,aNodeID,filter(~$filter~),keep start)"
 		+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
 		+ ",HierarchyQualifier='X',NodeProperty='aNodeID',Levels=1)",
 	mQueryOptions : {$filter : "~$filter~"}
 }, {
-	sExpectedApply : "ancestors($root/Foo,X,aNodeID,filter(~$filter~),keep start)"
+	sExpectedApply : "orderby(~$orderby~)/com.sap.vocabularies.Hierarchy.v1.TopLevels("
+		+ "HierarchyNodes=$root/Foo,HierarchyQualifier='X',NodeProperty='aNodeID',Levels=1)",
+	mQueryOptions : {$orderby : "~$orderby~"}
+}, {
+	oAggregation : {search : "~$search~"},
+	sExpectedApply : "ancestors($root/Foo,X,aNodeID,search(~$search~),keep start)"
+		+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
+		+ ",HierarchyQualifier='X',NodeProperty='aNodeID',Levels=1)"
+}, {
+	oAggregation : {search : "~$search~"},
+	sExpectedApply : "ancestors($root/Foo,X,aNodeID,filter(~$filter~)/search(~$search~),keep start)"
 		+ "/orderby(~$orderby~)/com.sap.vocabularies.Hierarchy.v1.TopLevels("
 		+ "HierarchyNodes=$root/Foo,HierarchyQualifier='X',NodeProperty='aNodeID',Levels=1)",
 	mQueryOptions : {$filter : "~$filter~", $orderby : "~$orderby~"}
 }].forEach(function (mFixture, i) {
 	QUnit.test("buildApply4Hierarchy: top levels of nodes, #" + i, function (assert) {
-		var oAggregation = {
+		var oAggregation = Object.assign({
 				hierarchyQualifier : "X",
 				$fetchMetadata : function () {},
 				$path : "/Foo"
-			},
+			}, mFixture.oAggregation),
 			mQueryOptions = Object.assign({
 				// intentionally no $select here, e.g. some early call
 				foo : "bar"
@@ -929,8 +934,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [{
-	sExpectedApply : "descendants($root/some/path,XYZ,myID,filter(ID eq '42'),1)",
-	mQueryOptions : {}
+	sExpectedApply : "descendants($root/some/path,XYZ,myID,filter(ID eq '42'),1)"
 }, {
 	sExpectedApply : "ancestors($root/some/path,XYZ,myID,filter(~$filter~),keep start)"
 		+ "/descendants($root/some/path,XYZ,myID,filter(ID eq '42'),1)",
@@ -940,17 +944,22 @@ sap.ui.define([
 		+ "/orderby(~$orderby~)",
 	mQueryOptions : {$orderby : "~$orderby~"}
 }, {
-	sExpectedApply : "ancestors($root/some/path,XYZ,myID,filter(~$filter~),keep start)"
+	oAggregation : {search : "~$search~"},
+	sExpectedApply : "ancestors($root/some/path,XYZ,myID,search(~$search~),keep start)"
 		+ "/descendants($root/some/path,XYZ,myID,filter(ID eq '42'),1)"
+}, {
+	oAggregation : {search : "~$search~"},
+	sExpectedApply : "ancestors($root/some/path,XYZ,myID,filter(~$filter~)/search(~$search~)"
+		+ ",keep start)/descendants($root/some/path,XYZ,myID,filter(ID eq '42'),1)"
 		+ "/orderby(~$orderby~)",
 	mQueryOptions : {$filter : "~$filter~", $orderby : "~$orderby~"}
 }].forEach(function (mFixture, i) {
 	QUnit.test("buildApply4Hierarchy: children of a given parent, #" + i, function (assert) {
-		var oAggregation = {
+		var oAggregation = Object.assign({
 				hierarchyQualifier : "XYZ",
 				$fetchMetadata : function () {},
 				$path : "/some/path"
-			},
+			}, mFixture.oAggregation),
 			oAggregationMock = this.mock(oAggregation),
 			mQueryOptions = Object.assign({
 				$$filterBeforeAggregate : "ID eq '42'",
@@ -1025,7 +1034,8 @@ sap.ui.define([
 		this.mock(_AggregationHelper).expects("checkTypeof")
 			.withExactArgs(sinon.match.same(oAggregation), {
 				expandTo : /^[1-9]\d*$/,
-				hierarchyQualifier : "string"
+				hierarchyQualifier : "string",
+				search : "string"
 			}, "$$aggregation")
 			.throws(oError);
 
@@ -1151,6 +1161,14 @@ sap.ui.define([
 				hierarchyQualifier : "X"
 			}, "", Function, true);
 		}, new Error("Not a matching value for '$$aggregation/expandTo'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.validateAggregation({
+				search : true,
+				hierarchyQualifier : "X"
+			}, "", Function, true);
+		}, new Error("Not a string value for '$$aggregation/search'"));
 	});
 
 	//*********************************************************************************************

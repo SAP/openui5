@@ -891,7 +891,8 @@ sap.ui.define([
 	 *   If the system query option "$filter" is combined with group levels or with grand totals
 	 *   (unless "grandTotal like 1.84"), or if grand totals or group levels are combined with
 	 *   min/max, or if the system query options "$expand" or "$select" are combined with pure data
-	 *   aggregation (no recursive hierarchy)
+	 *   aggregation (no recursive hierarchy), or if the system query option "$search" is combined
+	 *   with grand totals or group levels or a recursive hierarchy
 	 *
 	 * @public
 	 */
@@ -909,7 +910,8 @@ sap.ui.define([
 					|| bHasGroupLevels)) {
 				throw new Error("Unsupported system query option: $filter");
 			}
-			if (mQueryOptions.$search && (bHasGrandTotal || bHasGroupLevels)) {
+			if (mQueryOptions.$search
+					&& (bHasGrandTotal || bHasGroupLevels || oAggregation.hierarchyQualifier)) {
 				throw new Error("Unsupported system query option: $search");
 			}
 			if (bHasMinOrMax) {
