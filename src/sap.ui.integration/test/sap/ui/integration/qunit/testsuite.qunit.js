@@ -140,6 +140,7 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"CardParameters": {},
 			"UI5InputText": {
 				coverage: {
 					only: ["sap/ui/integration/cards/adaptivecards/elements/UI5InputText"]
