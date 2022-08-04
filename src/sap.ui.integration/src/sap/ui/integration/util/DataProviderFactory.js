@@ -102,55 +102,41 @@ sap.ui.define([
 	/**
 	 * Factory function which returns an instance of <code>DataProvider</code>.
 	 *
-	 * @param {Object} oDataSettings The data settings.
-	 * @param {sap.ui.integration.util.ServiceManager} oServiceManager A reference to the service manager.
+	 * @param {object} oDataConfiguration The data configuration.
+	 * @param {sap.ui.integration.util.ServiceManager} [oServiceManager] A reference to the service manager.
+	 * @param {boolean} [bIsFilter=false] Whether the caller of this method is Filter.
+	 * @param {boolean} [bConfigurationAlreadyResolved=false] Whether configuration bindings are already resolved. Useful, when they depend on user input. In this case they should already be resolved.
 	 * @private
 	 * @ui5-restricted sap.ui.integration, shell-toolkit
 	 * @returns {sap.ui.integration.util.DataProvider|null} A data provider instance used for data retrieval.
 	 */
-	DataProviderFactory.prototype.create = function (oDataSettings, oServiceManager, bIsFilter) {
+	DataProviderFactory.prototype.create = function (oDataConfiguration, oServiceManager, bIsFilter, bConfigurationAlreadyResolved) {
+		if (!oDataConfiguration) {
+			return null;
+		}
+
 		var oCard = this._oCard,
 			oEditor = this._oEditor,
 			oHost = this._oHost || (oCard && oCard.getHostInstance()) || (oEditor && oEditor.getHostInstance()),
 			bUseExperimentalCaching = oHost && oHost.bUseExperimentalCaching,
-			oConfig,
+			oSettings = this._createDataProviderSettings(oDataConfiguration, bConfigurationAlreadyResolved),
 			oDataProvider;
 
-		if (!oDataSettings) {
-			return null;
-		}
-
-		if (oCard) {
-			oConfig = {
-				"baseRuntimeUrl": oCard.getRuntimeUrl("/"),
-				"settingsJson": JSONBindingHelper.createJsonWithBindingInfos(oDataSettings, oCard.getBindingNamespaces())
-			};
-		} else if (oEditor) {
-			oConfig = {
-				"baseRuntimeUrl": oEditor.getRuntimeUrl("/"),
-				"settingsJson": JSONBindingHelper.createJsonWithBindingInfos(oDataSettings, oEditor.getBindingNamespaces())
-			};
-		} else {
-			oConfig = {
-				"settingsJson": JSONBindingHelper.createJsonWithBindingInfos(oDataSettings, {})
-			};
-		}
-
-		if (oDataSettings.request && bUseExperimentalCaching) {
-			oDataProvider = new CacheAndRequestDataProvider(oConfig);
+		if (oDataConfiguration.request && bUseExperimentalCaching) {
+			oDataProvider = new CacheAndRequestDataProvider(oSettings);
 			oDataProvider.setHost(oHost);
-		} else if (oDataSettings.request) {
-			oDataProvider = new RequestDataProvider(oConfig);
+		} else if (oDataConfiguration.request) {
+			oDataProvider = new RequestDataProvider(oSettings);
 
 			if (oHost) {
 				oDataProvider.setHost(oHost);
 			}
-		} else if (oDataSettings.service) {
-			oDataProvider = new ServiceDataProvider(oConfig);
-		} else if (oDataSettings.json) {
-			oDataProvider = new DataProvider(oConfig);
-		} else if (oDataSettings.extension) {
-			oDataProvider = new ExtensionDataProvider(oConfig, this._oExtension);
+		} else if (oDataConfiguration.service) {
+			oDataProvider = new ServiceDataProvider(oSettings);
+		} else if (oDataConfiguration.json) {
+			oDataProvider = new DataProvider(oSettings);
+		} else if (oDataConfiguration.extension) {
+			oDataProvider = new ExtensionDataProvider(oSettings, this._oExtension);
 		} else {
 			return null;
 		}
@@ -211,6 +197,29 @@ sap.ui.define([
 		if (this._oCsrfTokenHandler) {
 			this._oCsrfTokenHandler.setHost(oHost);
 		}
+	};
+
+	DataProviderFactory.prototype._createDataProviderSettings = function (oDataConfiguration, bConfigurationAlreadyResolved) {
+		var oCard = this._oCard;
+		var oEditor = this._oEditor;
+		var oConfig = {};
+
+		if (oCard) {
+			oConfig.baseRuntimeUrl = oCard.getRuntimeUrl("/");
+
+			if (bConfigurationAlreadyResolved) {
+				oConfig.settings = oDataConfiguration;
+			} else {
+				oConfig.settingsJson = JSONBindingHelper.createJsonWithBindingInfos(oDataConfiguration, oCard.getBindingNamespaces());
+			}
+		} else if (oEditor) {
+			oConfig.baseRuntimeUrl = oEditor.getRuntimeUrl("/");
+			oConfig.settingsJson = JSONBindingHelper.createJsonWithBindingInfos(oDataConfiguration, oEditor.getBindingNamespaces());
+		} else {
+			oConfig.settingsJson = JSONBindingHelper.createJsonWithBindingInfos(oDataConfiguration, {});
+		}
+
+		return oConfig;
 	};
 
 	return DataProviderFactory;

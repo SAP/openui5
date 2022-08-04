@@ -52,7 +52,7 @@ sap.ui.define([
 			this.oDataProviderFactory = new DataProviderFactory({
 				card: this.oCard
 			});
-			sinon.stub(DataProvider.prototype, "setSettings");
+			sinon.spy(DataProvider.prototype, "setSettings");
 		},
 		afterEach: function () {
 			DataProvider.prototype.setSettings.restore();
@@ -162,6 +162,30 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oDestroySpy.calledOnce, "Should destroy all created instances when destroying the factory.");
+	});
+
+	QUnit.test("Binding parts that depend on user input (form model), which are not suitable for settingsJson", function (assert) {
+		// Arrange
+		var oSettings = {
+			request: {
+				parameters: {
+					reason: "{form>/reason/value}"
+				}
+			}
+		};
+		this.oCard.getModel("form").setProperty("/reason", {
+			value: "{\"reason\": \"{form>/some/binding/syntax/input}\"}"
+		});
+
+		assert.throws(
+			function () {
+				this.oDataProviderFactory.create(oSettings);
+			}.bind(this),
+			"Exception is thrown when settingsJson is bound to illegal input"
+		);
+
+		// Cleanup
+		this.oDataProviderFactory.destroy();
 	});
 
 	QUnit.module("DataProvider", {

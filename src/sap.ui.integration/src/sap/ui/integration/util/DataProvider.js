@@ -41,7 +41,14 @@ sap.ui.define([
 			library: "sap.ui.integration",
 			properties: {
 				/**
-				 * Data settings in json format. Will override any other settings.
+				 * Data settings.
+				 */
+				settings: {
+					type: "object"
+				},
+
+				/**
+				 * Data settings in json format. Will override <code>settings</code>.
 				 */
 				settingsJson: {
 					type: "string"
@@ -137,7 +144,6 @@ sap.ui.define([
 	 */
 	DataProvider.prototype.setSettingsJson = function (sSettingsJson) {
 		this.setProperty("settingsJson", sSettingsJson);
-
 		this.setSettings(JSON.parse(sSettingsJson));
 
 		if (this._bActive) {
@@ -157,24 +163,6 @@ sap.ui.define([
 		}
 		var sSanitizedUrl = sUrl && sUrl.trim().replace(/^\//, "");
 		return this.getBaseRuntimeUrl() + sSanitizedUrl;
-	};
-
-	/**
-	 * Sets the data settings for the <code>DataProvider</code>
-	 *
-	 * @param {Object} oSettings The data settings.
-	 */
-	DataProvider.prototype.setSettings = function (oSettings) {
-		this._oSettings = oSettings;
-	};
-
-	/**
-	 * Returns the data settings for the <code>DataProvider</code>
-	 *
-	 * @returns {Object} The data settings.
-	 */
-	DataProvider.prototype.getSettings = function () {
-		return this._oSettings;
 	};
 
 	/**
@@ -265,7 +253,6 @@ sap.ui.define([
 			this._iDataUpdateCallId = null;
 		}
 
-		this._oSettings = null;
 		ManagedObject.prototype.destroy.apply(this, arguments);
 	};
 
@@ -275,12 +262,13 @@ sap.ui.define([
 
 	DataProvider.prototype.onDataRequestComplete = function () {
 		var iInterval;
+		var oSettings = this.getSettings();
 
-		if (!this._oSettings || !this._oSettings.updateInterval) {
+		if (!oSettings || !oSettings.updateInterval) {
 			return;
 		}
 
-		iInterval = parseInt(this._oSettings.updateInterval);
+		iInterval = parseInt(oSettings.updateInterval);
 
 		if (isNaN(iInterval)) {
 			return;
