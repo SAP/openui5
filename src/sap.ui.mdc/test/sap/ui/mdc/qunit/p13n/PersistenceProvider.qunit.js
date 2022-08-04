@@ -45,6 +45,7 @@ sap.ui.define([
 		assert.ok(aStaticAreaContent[0].getContent()[0].isA("sap.ui.fl.variants.VariantManagement"), "VM has been placed in the static area");
 	});
 
+	/*
 	QUnit.test("PersistenceProvider is wrapped by a container that sets aria-hidden after rendering", function(assert){
 		var done = assert.async();
 		var aStaticAreaContent = oCore.getUIArea(oCore.getStaticAreaRef()).getContent();
@@ -54,7 +55,7 @@ sap.ui.define([
 			done();
 		};
 
-	});
+	});*/
 
 	QUnit.test("PersistenceProvider created an inner fl.VariantManagement", function(assert){
 		assert.ok(oCore.byId(this.oPP.getId() + "--vm"), "VM created");

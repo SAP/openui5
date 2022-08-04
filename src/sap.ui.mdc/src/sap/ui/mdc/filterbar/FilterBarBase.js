@@ -1685,7 +1685,7 @@ sap.ui.define([
 		this._bIgnoreChanges = true;
 
 		this._applyFilterConditionsChanges().then(function() {
-
+			this._bIgnoreChanges = false;
 			this._changesApplied();
 			this._bInitialFiltersApplied = true;
 			this._fResolveInitialFiltersApplied();
@@ -1768,11 +1768,6 @@ sap.ui.define([
 
 
 	FilterBarBase.prototype._changesApplied = function() {
-
-		if (!this._isChangeApplying()) {
-			this._bIgnoreChanges = false;
-		}
-
 		this._reportModelChange(this._bExecuteOnSelect, this._bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch);
 		this._bExecuteOnSelect = undefined;
 		this._bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch = undefined;
