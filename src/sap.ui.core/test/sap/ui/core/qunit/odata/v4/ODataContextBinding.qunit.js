@@ -1707,11 +1707,9 @@ sap.ui.define([
 				oParentEntity = {},
 				oResponseEntity = {},
 				oReturnValueContextFirstExecute = {
-					destroy : function () {},
 					getPath : function () { return "/TEAMS('77')"; }
 				},
 				oReturnValueContextSecondExecute = {
-					destroy : function () {},
 					getPath : function () { return "/TEAMS('77')"; }
 				},
 				that = this;
@@ -1776,7 +1774,6 @@ sap.ui.define([
 					.withExactArgs("~oOperationMetadata~").returns(true);
 				oBindingMock.expects("hasReturnValueContext").withExactArgs().returns(true);
 				oParentContextMock.expects("getValue").returns(oParentEntity);
-				that.mock(oReturnValueContextFirstExecute).expects("destroy").withExactArgs();
 				oContextMock.expects("createNewContext")
 					.withExactArgs(sinon.match.same(that.oModel), sinon.match.same(oBinding),
 						"/TEAMS('77')")
@@ -1801,7 +1798,6 @@ sap.ui.define([
 				oGroupLockMock.expects("getGroupId").withExactArgs().returns("groupId");
 				oBindingMock.expects("refreshDependentBindings").withExactArgs("", "groupId", true)
 					.returns(SyncPromise.resolve(Promise.resolve()));
-				that.mock(oReturnValueContextSecondExecute).expects("destroy").withExactArgs();
 				that.mock(_Helper).expects("adjustTargetsInError")
 					.withExactArgs({}, "~oOperationMetadata~", (bOnCollection
 							? "/TEAMS"
@@ -1815,7 +1811,6 @@ sap.ui.define([
 					assert.ok(false, "unexpected success");
 				}, function (oError0) {
 					assert.strictEqual(oError0, oError);
-					assert.strictEqual(oBinding.oReturnValueContext, null);
 				});
 			});
 		});
@@ -2511,6 +2506,7 @@ sap.ui.define([
 		QUnit.test("createCacheAndRequest: bound action, " + sCase, function (assert) {
 			var bAutoExpandSelect = {/*false, true*/},
 				oBinding = this.bindContext("n/a(...)"),
+				oDestroyExpectation,
 				oEntity = {},
 				oExpectation,
 				fnGetEntity = this.spy(function () {
@@ -2531,11 +2527,16 @@ sap.ui.define([
 				mQueryOptions = {},
 				sResourcePath = "Entity('1')/navigation/bound.Action",
 				oResponseEntity = {},
+				oReturnValueContext = {
+					destroy : function () {}
+				},
 				oSingleCache = {
 					post : function () {}
 				};
 
 			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
+			oBinding.oReturnValueContext = oReturnValueContext;
+			oDestroyExpectation = this.mock(oReturnValueContext).expects("destroy").withExactArgs();
 			this.mock(Object).expects("assign")
 				.withExactArgs({}, sinon.match.same(mParameters))
 				.returns(mParametersCopy);
@@ -2562,6 +2563,8 @@ sap.ui.define([
 				oBinding.createCacheAndRequest(oGroupLock, sPath, oOperationMetadata, mParameters,
 					fnGetEntity, "~bIgnoreETag~"),
 				oPromise);
+			assert.strictEqual(oBinding.oReturnValueContext, null);
+			assert.ok(oDestroyExpectation.calledBefore(oExpectation));
 			assert.strictEqual(oBinding.oOperation.bAction, true);
 			assert.strictEqual(oBinding.oCache, oSingleCache);
 			assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);

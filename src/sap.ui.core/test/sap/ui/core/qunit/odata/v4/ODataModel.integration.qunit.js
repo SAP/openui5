@@ -42327,6 +42327,79 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A return value context is destroyed as soon as a new cache is created during
+	// #execute, no matter what happens after that.
+	//
+	// JIRA: CPOUI5ODATAV4-1687
+	QUnit.test("JIRA: CPOUI5ODATAV4-1687", function (assert) {
+		var oActionBinding,
+			sActionName = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
+			oModel = this.createTeaBusiModel(),
+			oReturnValueContext,
+			sView = '\
+<FlexBox binding="{/EMPLOYEES(\'2\')}">\
+	<Text id="name" text="{Name}"/>\
+	<Text id="team" text="{TEAM_ID}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('2')", {
+				ID : "2",
+				Name : "Frederic Fall",
+				TEAM_ID : "TEAM_01"
+			})
+			.expectChange("name", "Frederic Fall")
+			.expectChange("team", "TEAM_01");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("name").getBindingContext();
+
+			oActionBinding = oModel.bindContext(sActionName + "(...)", oContext);
+			oActionBinding.setParameter("TeamID", "TEAM_02");
+
+			that.expectRequest({
+					method : "POST",
+					payload : {TeamID : "TEAM_02"},
+					url : "EMPLOYEES('2')/" + sActionName
+				}, {
+					ID : "2",
+					Name : "Frederic Fall",
+					TEAM_ID : "TEAM_02"
+				})
+				.expectChange("team", "TEAM_02");
+
+			return Promise.all([
+				oActionBinding.execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			oReturnValueContext = aResults[0];
+
+			assert.strictEqual(oReturnValueContext.getProperty("Name"), "Frederic Fall");
+
+			that.expectRequest({
+					method : "POST",
+					payload : {TeamID : "TEAM_0815"},
+					url : "EMPLOYEES('2')/" + sActionName
+				}, {
+					// ID : "2", // no key predicate here!
+					Name : "n/a",
+					TEAM_ID : "TEAM_0815"
+				});
+			// Note: w/o key predicate, do not update binding parameter!
+
+			return Promise.all([
+				// code under test
+				oActionBinding.setParameter("TeamID", "TEAM_0815").execute(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function (aResults) {
+			assert.strictEqual(aResults[0], undefined, "no R.V.C. w/o key predicate");
+			assert.strictEqual(oReturnValueContext.getModel(), undefined, "destroyed");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: ODLB#getAllCurrentContexts must not fire unnecessary change events and must not
 	// modify internal states of the binding. Calling ODLB#getLength afterwards works as expected.
 	//
