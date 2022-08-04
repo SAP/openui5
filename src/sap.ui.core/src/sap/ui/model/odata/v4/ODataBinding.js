@@ -749,8 +749,8 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Returns the root binding of this binding's hierarchy, see binding
-	 * {@link topic:54e0ddf695af4a6c978472cecb01c64d Initialization and Read Requests}.
+	 * Returns the root binding of this binding's hierarchy, see
+	 * {@link topic:fccfb2eb41414f0792c165e69a878717 Initialization and Read Requests}.
 	 *
 	 * @returns {sap.ui.model.odata.v4.ODataContextBinding|sap.ui.model.odata.v4.ODataListBinding|
 	 *      sap.ui.model.odata.v4.ODataPropertyBinding|undefined}

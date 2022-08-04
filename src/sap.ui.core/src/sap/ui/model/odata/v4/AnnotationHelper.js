@@ -16,7 +16,7 @@ sap.ui.define([
 		/**
 		 * @classdesc
 		 * A collection of methods which help to consume
-		 * <a href="http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html">
+		 * <a href="https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html">
 		 * OData V4 annotations</a> in XML template views. Every context argument must belong to a
 		 * {@link sap.ui.model.odata.v4.ODataMetaModel} instance.
 		 *
