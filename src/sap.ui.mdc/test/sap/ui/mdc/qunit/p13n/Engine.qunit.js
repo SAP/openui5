@@ -972,6 +972,110 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("Check Engine trace", {
+		beforeEach: function() {
+			this.oEngine = Engine.getInstance();
+			this.oControl = new Control("MyCustomHookTestControl");
+			this.oEngine.registerAdaptation(this.oControl, {
+				controller: {
+					TraceTest: Controller,
+					TraceTestSecond: Controller
+				}
+			});
+		},
+		afterEach: function() {
+			this.oControl.destroy();
+			this.oEngine.destroy();
+		}
+	});
+
+	QUnit.test("Check that trace logs changes passed", function(assert){
+		Engine.getInstance().getController(this.oControl, "TraceTest").getChangeOperations = function() {
+			return {
+				add: "addItem",
+				remove: "removeItem"
+			};
+		};
+
+		var oTestAddChange = {
+			changeSpecificData: {
+				changeType: "addItem",
+				content: {}
+			}
+		};
+
+		this.oEngine.trace(this.oControl, oTestAddChange);
+
+		var oTrace = this.oEngine.getTrace(this.oControl);
+		assert.equal(oTrace[0], "TraceTest", "The trace entry has been created");
+	});
+
+	QUnit.test("Check that trace logs changes passed (multiple controllers) & clearTrace", function(assert){
+		Engine.getInstance().getController(this.oControl, "TraceTest").getChangeOperations = function() {
+			return {
+				add: "addItem",
+				remove: "removeItem"
+			};
+		};
+
+		var oTestAddChange = {
+			changeSpecificData: {
+				changeType: "addItem",
+				content: {}
+			}
+		};
+
+		this.oEngine.trace(this.oControl, oTestAddChange);
+
+		var oTrace = this.oEngine.getTrace(this.oControl);
+		assert.equal(oTrace.length, 1, "Only applied changes traced");
+		assert.equal(oTrace[0], "TraceTest", "The trace entry has been created");
+
+		Engine.getInstance().getController(this.oControl, "TraceTestSecond").getChangeOperations = function() {
+			return {
+				add: "addFoo",
+				remove: "removeFoo"
+			};
+		};
+		var oFooChange = {
+			changeSpecificData: {
+				changeType: "addFoo",
+				content: {}
+			}
+		};
+		this.oEngine.trace(this.oControl, oFooChange);
+		var oTraceNew = this.oEngine.getTrace(this.oControl);
+		assert.equal(oTraceNew.length, 2, "Only applied changes traced");
+		assert.equal(oTraceNew[0], "TraceTest", "The trace entry has been created");
+		assert.equal(oTraceNew[1], "TraceTestSecond", "The trace entry has been created");
+
+		//Check clear
+		this.oEngine.clearTrace(this.oControl);
+		oTrace = this.oEngine.getTrace(this.oControl);
+		assert.equal(oTrace.length, 0, "Trace has been cleared");
+	});
+
+	QUnit.test("Check that only known changes will be passed", function(assert){
+		Engine.getInstance().getController(this.oControl, "TraceTest").getChangeOperations = function() {
+			return {
+				add: "addItem",
+				remove: "removeItem"
+			};
+		};
+
+		var oTestAddChange = {
+			changeSpecificData: {
+				changeType: "unknownChange",
+				content: {}
+			}
+		};
+
+		this.oEngine.trace(this.oControl, oTestAddChange);
+
+		var oTrace = this.oEngine.getTrace(this.oControl);
+		assert.equal(oTrace.length, 0, "Unknown change not traced");
+	});
+
 	QUnit.module("Check optional hook executions on registered control instances", {
 		beforeEach: function() {
 			this.oEngine = Engine.getInstance();

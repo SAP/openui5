@@ -59,6 +59,15 @@ sap.ui.define(
         };
 
         /**
+         * Returns a promise after the Control#_onModifications hook has been fulfilled which may return a promise.
+         *
+         * @returns {Promise} Resolves after all control updates have been considered
+         */
+        AdaptationMixin.awaitPendingModification = function() {
+            return this._pPendingModification || Promise.resolve();
+        };
+
+        /**
          * Initializes the <code>AdaptationFilterBar</code> used for inbuilt filtering.
          *
          * @private
@@ -153,6 +162,7 @@ sap.ui.define(
             this.getInbuiltFilter = AdaptationMixin.getInbuiltFilter;
             this.validateState = AdaptationMixin.validateState;
             this._onModifications = AdaptationMixin._onModifications;
+            this.awaitPendingModification = AdaptationMixin.awaitPendingModification;
             this._getWaitForChangesPromise = AdaptationMixin._getWaitForChangesPromise;
             this.getEngine = AdaptationMixin.getEngine;
             this.exit = AdaptationMixin.exit(this.exit);
