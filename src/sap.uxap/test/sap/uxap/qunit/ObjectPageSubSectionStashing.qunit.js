@@ -28,6 +28,7 @@ function (XMLView, Core, StashedSupport, ObjectPageLazyLoader) {
 
 	QUnit.test("ObjectPageSubSection stashing", function (assert) {
 		var oTestedSection = this.objectPageSampleView.byId("subsection10"),
+			oNotifySpy = this.spy(oTestedSection, "_notifyObjectPageLayout"),
 			oDestroySpy = sinon.spy(ObjectPageLazyLoader.prototype, "destroy"),
 			oLazyLoaderRemoveAllContentSpy = sinon.spy(ObjectPageLazyLoader.prototype, "removeAllContent"),
 			stashedObjects = 3;
@@ -39,6 +40,7 @@ function (XMLView, Core, StashedSupport, ObjectPageLazyLoader) {
 		oTestedSection.connectToModels();
 
 		assert.equal(oTestedSection.getBlocks().length, stashedObjects, "Blocks successfully unstashed");
+		assert.equal(oNotifySpy.callCount, stashedObjects, "parent page was notified");
 		assert.equal(StashedSupport.getStashedControls(oTestedSection.getId()).length, 0, "There are no blocks left to unstash");
 
 		oTestedSection.getBlocks().forEach(function (oContent) {
