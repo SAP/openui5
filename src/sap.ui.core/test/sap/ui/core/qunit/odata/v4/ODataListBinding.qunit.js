@@ -3269,7 +3269,7 @@ sap.ui.define([
 				oHelperMock.expects("deepEqual").exactly(sFilterType === FilterType.Control ? 1 : 0)
 					.withExactArgs(sinon.match.same(aFilters), sinon.match.same(oBinding.aFilters))
 					.returns(false);
-				oHelperMock.expects("deepEqual").exactly(1)
+				oHelperMock.expects("deepEqual").exactly(sFilterType === FilterType.Control ? 0 : 1)
 					.withExactArgs(sinon.match.same(aFilters),
 						sinon.match.same(oBinding.aApplicationFilters))
 					.returns(false);
@@ -3337,6 +3337,25 @@ sap.ui.define([
 			// code under test
 			assert.strictEqual(oBinding.filter("~filter~", sFilterType), oBinding, "chaining");
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("filter: BCP: 2280148151", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", null, [/*vSorters*/], [/*vFilters*/], {
+				$$operationMode : OperationMode.Server
+			});
+
+		oBinding.aFilters.push("~filter~");
+		this.mock(oBinding).expects("getGroupId").withExactArgs().returns("groupId");
+		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("groupId", true);
+		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
+		this.mock(oBinding).expects("fetchCache").withExactArgs(null);
+		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Filter);
+
+		// code under test
+		oBinding.filter([], FilterType.Control);
+
+		assert.deepEqual(oBinding.aFilters, [], "control filters removed");
 	});
 
 	//*********************************************************************************************
