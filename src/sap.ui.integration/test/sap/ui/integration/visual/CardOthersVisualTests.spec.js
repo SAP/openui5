@@ -189,22 +189,4 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 
 		utils.navigateBack();
 	});
-
-	it("Parameters", function () {
-		utils.navigateTo("Parameters");
-		var aCardIds = ["weatherCard", "manifestOnly", "listCard", "defaultFromManifest", "defaultFromManifestEdited"];
-
-		aCardIds.forEach(function (sId) {
-			utils.takePictureOfElement({
-				control: {
-					viewNamespace: "sap.f.cardsdemo.view.",
-					viewName: "Parameters",
-					interaction: "root",
-					id: sId
-				}
-			}, "10_Parameters_" + sId);
-		});
-
-		utils.navigateBack();
-	});
 });
