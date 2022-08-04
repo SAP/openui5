@@ -138,6 +138,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 							Log.error("explored: cannot register sample '" + oSample.id + "'. missing 'name'");
 						} else {
 							data.samples[oSample.id] = oSample;
+							oSample.library = oDoc.library;
 						}
 					});
 

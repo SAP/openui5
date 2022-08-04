@@ -10,6 +10,7 @@
 
     sSampleId = getUrlParam('sap-ui-xx-sample-id'),
     sOrigin = getUrlParam('sap-ui-xx-sample-origin'),
+    sLib = getUrlParam('sap-ui-xx-sample-lib'),
     sPresetTheme = getUrlParam('sap-ui-theme') || 'sap_fiori_3',
     sPresetRTL = getUrlParam('sap-ui-rtl') || false,
     sPresetDensity = getUrlParam('sap-ui-density'),
@@ -49,59 +50,29 @@
 
                 var loadInfo = function() {
                     return new Promise(function (resolve) {
-                        var fnCallback = function(oAppInfo) {
-                            var aLibPromises = [];
-                            if (oAppInfo && oAppInfo.libraries) {
-                                oAppInfo.libraries.forEach(function(oLib) {
-                                    var oLibPromise = new Promise(function(innResolve) {
-                                        oLibraryInfoSingleton._getDocuIndex(oLib.name, function(oDoc) {
-                                        if (!oDoc.explored) {
-                                            innResolve();
-                                            return;
-                                        }
+                        oLibraryInfoSingleton._getDocuIndex(sLib, function(oDoc) {
+                        if (!oDoc.explored) {
+                            resolve();
+                            return;
+                        }
 
-                                        if (Array.isArray(oDoc.explored.samplesRef)) {
-                                            // register an array of namespaces
-                                            oDoc.explored.samplesRef.forEach(function (oItem) {
-                                                var paths = {};
-                                                paths[oItem.namespace.replace(/\./g, "/")] = "" + (oItem.ref || ".");
-                                                sap.ui.loader.config({paths: paths});
-                                            });
-                                        } else {
-                                            // register a single namespace
-
-                                            var paths = {};
-                                            paths[oDoc.explored.samplesRef.namespace.replace(/\./g, "/")] = "" + (oDoc.explored.samplesRef.ref || ".");
-                                            sap.ui.loader.config({paths: paths});
-                                        }
-                                        innResolve();
-                                        });
-                                    });
-                                    aLibPromises.push(oLibPromise);
-                                });
-                            }
-                            Promise.all(aLibPromises).then(function(){
-                                resolve();
+                        if (Array.isArray(oDoc.explored.samplesRef)) {
+                            // register an array of namespaces
+                            oDoc.explored.samplesRef.forEach(function (oItem) {
+                                var paths = {};
+                                paths[oItem.namespace.replace(/\./g, "/")] = "" + (oItem.ref || ".");
+                                sap.ui.loader.config({paths: paths});
                             });
-                        };
-                        var sUrl = sap.ui.require.toUrl("sap-ui-version.json");
-                        jQuery.ajax({
-                            url: sUrl,
-                            dataType: "json",
-                            error: function(xhr, status, e) {
-                                Log.error("failed to load library list from '" + sUrl + "': " + status + ", " + e);
-                                resolve();
-                            },
-                            success : function(oAppInfo, sStatus, oXHR) {
-                                if (!oAppInfo) {
-                                    Log.error("failed to load library list from '" + sUrl + "': " + sStatus + ", Data: " + oAppInfo);
-                                    resolve();
-                                    return;
-                                }
+                        } else {
+                            // register a single namespace
 
-                                fnCallback(oAppInfo);
-                            }
+                            var paths = {};
+                            paths[oDoc.explored.samplesRef.namespace.replace(/\./g, "/")] = "" + (oDoc.explored.samplesRef.ref || ".");
+                            sap.ui.loader.config({paths: paths});
+                        }
+                        resolve();
                         });
+
                     });
                 };
 

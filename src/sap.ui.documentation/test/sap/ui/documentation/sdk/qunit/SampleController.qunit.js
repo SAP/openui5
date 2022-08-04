@@ -9,9 +9,12 @@ function (
 ) {
 	"use strict";
 
+	var sSampleId = 'sample.id';
+
 	QUnit.module("_initIframeURL", {
 		beforeEach: function () {
 			this.controller = new SampleController();
+			this.controller._sId = sSampleId;
 		},
 		afterEach: function () {
 			this.controller.destroy();
@@ -51,10 +54,7 @@ function (
 	});
 
 	QUnit.test("url contains sample id", function (assert) {
-		var sSampleId = 'sample.id',
-			oIFrameUrl;
-
-		this.controller._sId = sSampleId;
+		var oIFrameUrl;
 
 		// Act
 		this.controller._initIframeURL();
@@ -74,6 +74,18 @@ function (
 		//Check
 		oIFrameUrl = new URL(this.controller.sIFrameUrl, document.baseURI);
 		assert.strictEqual(oIFrameUrl.searchParams.get("sap-ui-xx-sample-origin"), sSampleOrigin, "sample origin is correct");
+	});
+
+	QUnit.test("url contains sample library", function (assert) {
+		var sSampleLib = "",
+			oIFrameUrl;
+
+		// Act
+		this.controller._initIframeURL();
+
+		//Check
+		oIFrameUrl = new URL(this.controller.sIFrameUrl, document.baseURI);
+		assert.strictEqual(oIFrameUrl.searchParams.get("sap-ui-xx-sample-lib"), sSampleLib, "sample origin is correct");
 	});
 
 });

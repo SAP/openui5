@@ -16,6 +16,7 @@ sap.ui.define([],
 			oURLParams.append("sap-ui-xx-dk-origin", window.location.origin);
 			oURLParams.append("sap-ui-xx-sample-id", sSampleId);
 			oURLParams.append("sap-ui-xx-sample-origin", ".");
+			oURLParams.append("sap-ui-xx-sample-lib", "sap.m");
 
 			oURL.search = oURLParams;
 			return oURL;
@@ -186,6 +187,44 @@ sap.ui.define([],
 
 		//SETTINGS
 		QUnit.test("Iframe sends applied settings, when requested", function(assert) {
+
+			var done = assert.async(),
+				oFrame = this.iframe;
+
+			function onMessage(oMessage) {
+				if (oMessage.data.type === "SETTINGS") {
+					window.removeEventListener("message", onMessage);
+					assert.ok(oMessage.data.data, "Initial settings has been send back on request");
+					done();
+				} else if (oMessage.data.type === "INIT") {
+					oFrame.contentWindow.postMessage({
+						type: "SETTINGS",
+						reason: "get"
+					}, window.location.origin);
+				}
+			}
+			window.addEventListener("message", onMessage);
+
+			oFrame.src = this.oURL.toString();
+		});
+
+		//Resources
+		QUnit.module("Messaging", {
+
+			beforeEach: function () {
+				this.iframe = document.createElement('iframe');
+				this.oURL = createURL();
+				document.body.appendChild(this.iframe);
+			},
+			afterEach: function () {
+				this.iframe.parentElement.removeChild(this.iframe);
+				this.iframe = null;
+				this.oURL = null;
+			}
+		});
+
+		//SETTINGS
+		QUnit.test("Resources from certain library has been loaded", function(assert) {
 
 			var done = assert.async(),
 				oFrame = this.iframe;

@@ -131,6 +131,8 @@ sap.ui.define([
 
 				// we need this property to navigate to API reference
 				this.entityId = this._sEntityId ? this._sEntityId : oSample.entityId;
+				// we need the lib name in order to fetch dependencies for the sample
+				this._sLib = oSample.library;
 
 				oModelData.sEntityId = this.entityId;
 
@@ -240,6 +242,7 @@ sap.ui.define([
 
 				sSampleSearchParams = (sSampleSearchParams === "" ? "?" : sSampleSearchParams + "&") +
 					"sap-ui-xx-sample-id=" + this._sId
+					+ "&sap-ui-xx-sample-lib=" + (this._sLib || "")
 					+ "&sap-ui-xx-sample-origin=" + sSampleOrigin + sSampleVersion
 					+ "&sap-ui-xx-dk-origin=" + window.location.origin;
 
