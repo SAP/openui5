@@ -82,7 +82,7 @@
 				"samples" : [ "sap.ui.core.sample.InvisibleText" ]
 			},
 			{
-				"id" : "sap.ui.core.sample.Commands",
+				"id" : "sap.ui.core.CommandExecution",
 				"name" : "Commands",
 				"category" : "Action",
 				"since" : "1.70",

@@ -3259,11 +3259,16 @@ sap.ui.define([
 	 *   subclass of <code>sap.ui.model.PropertyBinding</code>
 	 * @property {object} [events=null]
 	 *   Map of event handler functions keyed by the name of the binding events that they should be attached to
-	 * @property {sap.ui.base.ManagedObject.PropertyBindingInfo[]} [parts]
+	 * @property {Array<string|sap.ui.base.ManagedObject.PropertyBindingInfo>} [parts]
 	 *   Array of binding info objects for the parts of a composite binding; the structure of
 	 *   each binding info is the same as described for the <code>oBindingInfo</code> as a whole.
 	 *
-	 *   <b>Note</b>: recursive composite bindings are currently not supported
+	 *   If a part is not specified as a binding info object but as a simple string, a binding info object
+	 *   will be created with that string as <code>path</code>. The string may start with a model name prefix
+	 *   (see property <code>path</code>).
+	 *
+	 *   <b>Note</b>: recursive composite bindings are currently not supported. Therefore, a part must not
+	 *   contain a <code>parts</code> property.
 	 *
 	 * @public
 	 */
