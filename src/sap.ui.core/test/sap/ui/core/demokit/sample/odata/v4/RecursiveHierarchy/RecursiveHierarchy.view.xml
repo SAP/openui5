@@ -6,9 +6,8 @@
 	xmlns:mvc="sap.ui.core.mvc">
 
 	<Table id="table" ariaLabelledBy="title"
-		rows="{path : '/EMPLOYEES', parameters : {
-				$count : false
-			}, suspended : true}" selectionMode="None" threshold="0"
+		rows="{path : '/EMPLOYEES', parameters : {$count : false, $orderby : 'AGE'},
+			suspended : true}" selectionMode="None" threshold="0"
 		visibleRowCount="5">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">

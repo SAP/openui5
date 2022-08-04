@@ -847,6 +847,36 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("buildApply4Hierarchy: top levels of nodes, orderby", function (assert) {
+		var oAggregation = {
+				hierarchyQualifier : "X",
+				$fetchMetadata : function () {},
+				$path : "/Foo"
+			},
+			mQueryOptions = {
+				$orderby : "~$orderby~",
+				// $select does not matter here
+				foo : "bar"
+			},
+			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
+
+		this.mock(oAggregation).expects("$fetchMetadata").withExactArgs(
+				"/Foo/@Org.OData.Aggregation.V1.RecursiveHierarchy#X/NodeProperty/$PropertyPath")
+			.returns(SyncPromise.resolve("aNodeID"));
+
+		// code under test
+		assert.deepEqual(_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions), {
+				$apply : "orderby(~$orderby~)/com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/Foo,HierarchyQualifier='X',NodeProperty='aNodeID'"
+					+ ",Levels=1)",
+				// no more $orderby!
+				foo : "bar"
+			});
+
+		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("buildApply4Hierarchy: call from ODLB#applyParameters", function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "X",

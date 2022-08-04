@@ -348,7 +348,10 @@ sap.ui.define([
 		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
 		 * @param {object} [mQueryOptions={}]
 		 *   A map of key-value pairs representing the query string; it is not modified
-		 * @param {number} [mQueryOptions.$select]
+		 * @param {string} [mQueryOptions.$orderby]
+		 *   The value for a "$orderby" system query option; it is removed from the returned map and
+		 *   turned into an "orderby()" transformation for the top levels of nodes
+		 * @param {string[]} [mQueryOptions.$select]
 		 *   The value for a "$select" system query option; additional technical properties are
 		 *   added to the returned copy
 		 * @returns {object}
@@ -359,7 +362,7 @@ sap.ui.define([
 		 * @public
 		 */
 		buildApply4Hierarchy : function (oAggregation, mQueryOptions) {
-			var sApply,
+			var sApply = "",
 				sHierarchyQualifier = oAggregation.hierarchyQualifier,
 				sPath = oAggregation.$path,
 				sNodeProperty = mQueryOptions
@@ -392,7 +395,11 @@ sap.ui.define([
 					+ ",filter(" + mQueryOptions.$$filterBeforeAggregate + "),1)";
 				delete mQueryOptions.$$filterBeforeAggregate;
 			} else { // top levels of nodes
-				sApply = "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sPath
+				if (mQueryOptions.$orderby) {
+					sApply = "orderby(" + mQueryOptions.$orderby + ")/";
+					delete mQueryOptions.$orderby;
+				}
+				sApply += "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sPath
 					+ ",HierarchyQualifier='" + sHierarchyQualifier
 					+ "',NodeProperty='" + sNodeProperty
 					+ "',Levels=" + (oAggregation.expandTo || 1)
