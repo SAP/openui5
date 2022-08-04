@@ -1,0 +1,101 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.object.titleMaxLinesAndLabelWrapping",
+		"type": "card",
+		"title": "Sample of an Object Card",
+		"subTitle": "Sample of an Object Card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"json": {
+				"firstName": "Donna",
+				"lastName": "Moore",
+				"position": "Sales Executive",
+				"phone": "+1 202 555 5555",
+				"email": "my@mymail.com",
+				"phoneTooltip": "Make a call",
+				"emailTooltip": "Write an e-mail",
+				"agendaTooltip": "Open a calendar",
+				"photo": "./../DonnaMoore.png",
+				"agendaUrl": "/agenda"
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "{photo}"
+			},
+			"title": "Employment Form",
+			"subTitle": "{firstName} {lastName}"
+		},
+		"content": {
+			"groups": [
+				{
+					"title": "Employee Details (the 'titleMaxLines' property limits the number of lines for wrapping texts)",
+					"titleMaxLines": 2,
+					"labelWrapping": true,
+					"items": [
+						{
+							"label": "First Name (this long label will be wrapped when the 'labelWrapping' property is set to true)",
+							"value": "{firstName}"
+						},
+						{
+							"label": "Last Name (another long label that is wrapped when the 'labelWrapping' property is set to true",
+							"value": "{lastName}"
+						},
+						{
+							"label": "Phone (all long labels in the group are wrapped when the group's 'labelWrapping' property is set to true)",
+							"value": "{phone}",
+							"tooltip": "{phoneTooltip}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:{phone}"
+									}
+								}
+							]
+						},
+						{
+							"label": "Email",
+							"value": "{email}",
+							"tooltip": "{emailTooltip}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:{email}"
+									}
+								}
+							]
+						},
+						{
+							"label": "Position",
+							"value": "{position}"
+						}
+					]
+				}
+			]
+		}
+	}
+}

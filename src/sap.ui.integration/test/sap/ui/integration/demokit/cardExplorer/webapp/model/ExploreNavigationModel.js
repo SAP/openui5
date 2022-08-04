@@ -270,6 +270,20 @@ sap.ui.define([
 										key: 'i18n/i18n.properties'
 									}
 								]
+							},
+							{
+								title: 'Content Title Max Lines and Label Wrapping',
+								key: 'titleMaxLinesAndLabelWrapping',
+								experimental: true,
+								settings: {
+									columns: 5
+								},
+								files: [{
+										url: '/samples/object/titleMaxLinesAndLabelWrapping/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},

@@ -1610,4 +1610,85 @@ sap.ui.define([
 		oCard.setManifest(oManifest_ObjectCardFormElements);
 		Core.applyChanges();
 	});
+
+	QUnit.module("titleMaxLine and labelWrapping", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("titleMaxLine and labelWrapping are applied correctly", function (assert) {
+		var done = assert.async(),
+			oCard = this.oCard;
+
+		oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			var oContent = oCard.getCardContent(),
+				aGroups = oContent.getAggregation("_content").getItems()[0].getContent(),
+				oGroupTitle1 = aGroups[0].getItems()[0],
+				iFirstGroupTitleMaxLines = aGroups[0].getItems()[0].getMaxLines(),
+				oGroupTitle2 = aGroups[1].getItems()[0],
+				aGroup1Label1 = aGroups[0].getItems()[1],
+				aGroup1Label2 = aGroups[0].getItems()[2],
+				aGroup2Label1 = aGroups[1].getItems()[1],
+				aGroup2Label2 = aGroups[1].getItems()[2];
+
+
+
+				assert.strictEqual(oGroupTitle1.$("inner").css("-webkit-line-clamp"), iFirstGroupTitleMaxLines.toString(), "Title is clamped correctly based on titleMaxLines");
+				assert.strictEqual(oGroupTitle2.$("inner").css("-webkit-line-clamp"), undefined, "Title is not clamped when titleMaxLines is set to 1");
+				assert.ok(aGroup1Label1.$().hasClass("sapMLabelWrapped"), "First label is wrapped when labelWrapping is set to true");
+				assert.ok(aGroup1Label2.$().hasClass("sapMLabelWrapped"), "Second label is wrapped when labelWrapping is set to true");
+				assert.notOk(aGroup2Label1.$().hasClass("sapMLabelWrapped"), "First label is not wrapped when labelWrapping is set to false");
+				assert.notOk(aGroup2Label2.$().hasClass("sapMLabelWrapped"), "Second label is not wrapped when labelWrapping is set to false");
+			done();
+		});
+
+
+		oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"content": {
+					"groups": [{
+						"title": "Some very very long title that will be clamped based on the titleMaxLine property",
+						"titleMaxLines": 2,
+						"labelWrapping": true,
+						"items": [{
+								"label": "Some very very long label that will be wrapped if labelWrapping is set to true"
+							},
+							{
+								"label": "Another very very long label that will be wrapped if labelWrapping is set to true"
+							}
+						]
+					},
+					{
+						"title": "Another very very long title that will be clamped based on the titleMaxLine property",
+						"titleMaxLines": 1,
+						"labelWrapping": false,
+						"items": [{
+								"label": "Some very very long label that will be wrapped if labelWrapping is set to true"
+							},
+							{
+								"label": "Another very very long label that will be wrapped if labelWrapping is set to true"
+							}
+						]
+					}]
+				}
+			}
+		});
+	});
 });
