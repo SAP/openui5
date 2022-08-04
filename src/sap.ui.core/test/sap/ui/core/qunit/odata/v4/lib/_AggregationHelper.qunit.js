@@ -820,16 +820,35 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("buildApply4Hierarchy: top levels of nodes", function (assert) {
+[{
+	sExpectedApply : "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
+		+ ",HierarchyQualifier='X',NodeProperty='aNodeID',Levels=1)",
+	mQueryOptions : {}
+}, {
+	sExpectedApply : "orderby(~$orderby~)/com.sap.vocabularies.Hierarchy.v1.TopLevels("
+		+ "HierarchyNodes=$root/Foo,HierarchyQualifier='X',NodeProperty='aNodeID',Levels=1)",
+	mQueryOptions : {$orderby : "~$orderby~"}
+}, {
+	sExpectedApply : "ancestors($root/Foo,X,aNodeID,filter(~$filter~),keep start)"
+		+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
+		+ ",HierarchyQualifier='X',NodeProperty='aNodeID',Levels=1)",
+	mQueryOptions : {$filter : "~$filter~"}
+}, {
+	sExpectedApply : "ancestors($root/Foo,X,aNodeID,filter(~$filter~),keep start)"
+		+ "/orderby(~$orderby~)/com.sap.vocabularies.Hierarchy.v1.TopLevels("
+		+ "HierarchyNodes=$root/Foo,HierarchyQualifier='X',NodeProperty='aNodeID',Levels=1)",
+	mQueryOptions : {$filter : "~$filter~", $orderby : "~$orderby~"}
+}].forEach(function (mFixture, i) {
+	QUnit.test("buildApply4Hierarchy: top levels of nodes, #" + i, function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "X",
 				$fetchMetadata : function () {},
 				$path : "/Foo"
 			},
-			mQueryOptions = {
+			mQueryOptions = Object.assign({
 				// intentionally no $select here, e.g. some early call
 				foo : "bar"
-			},
+			}, mFixture.mQueryOptions),
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
 		this.mock(oAggregation).expects("$fetchMetadata").withExactArgs(
@@ -838,43 +857,14 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions), {
-				$apply : "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
-					+ ",HierarchyQualifier='X',NodeProperty='aNodeID',Levels=1)",
+				$apply : mFixture.sExpectedApply,
+				// no more $filter or $orderby!
 				foo : "bar"
 			});
 
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
 	});
-
-	//*********************************************************************************************
-	QUnit.test("buildApply4Hierarchy: top levels of nodes, orderby", function (assert) {
-		var oAggregation = {
-				hierarchyQualifier : "X",
-				$fetchMetadata : function () {},
-				$path : "/Foo"
-			},
-			mQueryOptions = {
-				$orderby : "~$orderby~",
-				// $select does not matter here
-				foo : "bar"
-			},
-			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
-
-		this.mock(oAggregation).expects("$fetchMetadata").withExactArgs(
-				"/Foo/@Org.OData.Aggregation.V1.RecursiveHierarchy#X/NodeProperty/$PropertyPath")
-			.returns(SyncPromise.resolve("aNodeID"));
-
-		// code under test
-		assert.deepEqual(_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions), {
-				$apply : "orderby(~$orderby~)/com.sap.vocabularies.Hierarchy.v1.TopLevels("
-					+ "HierarchyNodes=$root/Foo,HierarchyQualifier='X',NodeProperty='aNodeID'"
-					+ ",Levels=1)",
-				// no more $orderby!
-				foo : "bar"
-			});
-
-		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
-	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("buildApply4Hierarchy: call from ODLB#applyParameters", function (assert) {
@@ -938,18 +928,26 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("buildApply4Hierarchy: children of a given parent", function (assert) {
+[{
+	sExpectedApply : "descendants($root/some/path,XYZ,myID,filter(foo),1)",
+	mQueryOptions : {}
+}, {
+	sExpectedApply : "ancestors($root/some/path,XYZ,myID,filter(~$filter~),keep start)"
+		+ "/descendants($root/some/path,XYZ,myID,filter(foo),1)",
+	mQueryOptions : {$filter : "~$filter~"}
+}].forEach(function (mFixture, i) {
+	QUnit.test("buildApply4Hierarchy: children of a given parent, #" + i, function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "XYZ",
 				$fetchMetadata : function () {},
 				$path : "/some/path"
 			},
 			oAggregationMock = this.mock(oAggregation),
-			mQueryOptions = {
+			mQueryOptions = Object.assign({
 				$$filterBeforeAggregate : "foo",
 				$select : ["ID"], // by now, auto-$expand/$select must have finished
 				foo : "bar"
-			},
+			}, mFixture.mQueryOptions),
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
 		oAggregationMock.expects("$fetchMetadata").withExactArgs("/some/path"
@@ -963,13 +961,15 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, mQueryOptions), {
-				$apply : "descendants($root/some/path,XYZ,myID,filter(foo),1)",
+				$apply : mFixture.sExpectedApply,
+				// no more $filter
 				$select : ["ID", "aDrillState"],
 				foo : "bar"
 			});
 
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unchanged");
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("validateAggregation: checkTypeof for data aggregation", function (assert) {
