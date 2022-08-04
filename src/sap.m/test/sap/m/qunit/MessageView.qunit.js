@@ -795,11 +795,10 @@ sap.ui.define([
 		assert.ok(oDetailsTitle.getAriaDescribedBy().indexOf(oFirstListItem.getId() + "-link") > -1, "Details title should be described by the item's link");
 	});
 
-	QUnit.test("MessageItem with active title - Message Bundle Texts", function (assert) {
+	QUnit.test("MessageItem with active title - Message Bundle Texts - Error", function (assert) {
 		var oFirstMessageItem = new MessageItem({
 			type: "Error"
-		}), oBundle, sMessageAnnouncement,
-			sContentAnnouncementLocation, sContentAnnouncementDescription, sAnnouncement;
+		}), oBundle, sContentAnnouncementLocation, sContentAnnouncementDescription, sAnnouncement;
 
 		this.oMessageView.addItem(oFirstMessageItem);
 		this.oMessageView.placeAt("qunit-fixture");
@@ -807,9 +806,116 @@ sap.ui.define([
 		Core.applyChanges();
 
 		oBundle = Core.getLibraryResourceBundle("sap.m");
-		sMessageAnnouncement = oBundle.getText("MESSAGEVIEW_BUTTON_TOOLTIP_ERROR");
-		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION", [sMessageAnnouncement]);
-		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION", [sMessageAnnouncement]);
+		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_ERROR");
+		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementLocation), -1, "Message List Item should not include information for the navigation");
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
+
+		oFirstMessageItem.setActiveTitle(true);
+		Core.applyChanges();
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementLocation) > -1 , "Message List Item should include information for the navigation");
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
+
+		oFirstMessageItem.setDescription("description");
+		Core.applyChanges();
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementLocation) > -1 , "Message List Item should include information for the navigation");
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementDescription) > -1, "Message List Item should include information for description");
+	});
+
+	QUnit.test("MessageItem with active title - Message Bundle Texts - Warning", function (assert) {
+		var oFirstMessageItem = new MessageItem({
+			type: "Warning"
+		}), oBundle, sContentAnnouncementLocation, sContentAnnouncementDescription, sAnnouncement;
+
+		this.oMessageView.addItem(oFirstMessageItem);
+		this.oMessageView.placeAt("qunit-fixture");
+
+		Core.applyChanges();
+
+		oBundle = Core.getLibraryResourceBundle("sap.m");
+		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_WARNING");
+		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementLocation), -1, "Message List Item should not include information for the navigation");
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
+
+		oFirstMessageItem.setActiveTitle(true);
+		Core.applyChanges();
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementLocation) > -1 , "Message List Item should include information for the navigation");
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
+
+		oFirstMessageItem.setDescription("description");
+		Core.applyChanges();
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementLocation) > -1 , "Message List Item should include information for the navigation");
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementDescription) > -1, "Message List Item should include information for description");
+	});
+
+	QUnit.test("MessageItem with active title - Message Bundle Texts - Information", function (assert) {
+		var oFirstMessageItem = new MessageItem({
+			type: "Information"
+		}), oBundle, sContentAnnouncementLocation, sContentAnnouncementDescription, sAnnouncement;
+
+		this.oMessageView.addItem(oFirstMessageItem);
+		this.oMessageView.placeAt("qunit-fixture");
+
+		Core.applyChanges();
+
+		oBundle = Core.getLibraryResourceBundle("sap.m");
+		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_INFORMATION");
+		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementLocation), -1, "Message List Item should not include information for the navigation");
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
+
+		oFirstMessageItem.setActiveTitle(true);
+		Core.applyChanges();
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementLocation) > -1 , "Message List Item should include information for the navigation");
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
+
+		oFirstMessageItem.setDescription("description");
+		Core.applyChanges();
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementLocation) > -1 , "Message List Item should include information for the navigation");
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementDescription) > -1, "Message List Item should include information for description");
+	});
+
+	QUnit.test("MessageItem with active title - Message Bundle Texts - Success", function (assert) {
+		var oFirstMessageItem = new MessageItem({
+			type: "Success"
+		}), oBundle, sContentAnnouncementLocation, sContentAnnouncementDescription, sAnnouncement;
+
+		this.oMessageView.addItem(oFirstMessageItem);
+		this.oMessageView.placeAt("qunit-fixture");
+
+		Core.applyChanges();
+
+		oBundle = Core.getLibraryResourceBundle("sap.m");
+		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_SUCCESS");
+		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
 
 		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
 

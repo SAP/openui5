@@ -79,7 +79,7 @@ sap.ui.define([
 		};
 
 		MessageListItem.prototype._getLinkAriaDescribedBy = function () {
-			var sAccessibilityText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("MESSAGE_VIEW_LINK_FOCUS_TEXT", [this.getMessageType()]);
+			var sAccessibilityText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("MESSAGE_VIEW_LINK_FOCUS_TEXT_" + this.getMessageType().toUpperCase());
 
 			return new InvisibleText(this.getId() + "-link", {
 				text: sAccessibilityText
@@ -102,8 +102,8 @@ sap.ui.define([
 				sAdditionalTextLocation, sAdditionalTextDescription, sMessageType;
 
 			if (this.getActiveTitle()) {
-				sMessageType = oBundle.getText("MESSAGEVIEW_BUTTON_TOOLTIP_" + this.getMessageType().toUpperCase());
-				sAdditionalTextLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION", [sMessageType]);
+				sMessageType = this.getMessageType().toUpperCase();
+				sAdditionalTextLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_" + sMessageType);
 				sAdditionalTextDescription = this.getType() === ListType.Navigation ? oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION") : "";
 
 				sAnnouncement += ". ".concat(sAdditionalTextLocation, ". ", sAdditionalTextDescription);
