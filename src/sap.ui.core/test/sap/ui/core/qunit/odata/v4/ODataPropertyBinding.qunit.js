@@ -1665,18 +1665,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bForceUpdate) {
 	QUnit.test("onChange", function () {
 		var oBinding = this.oModel.bindProperty("/absolute");
 
 		this.mock(oBinding).expects("checkUpdateInternal")
-			.withExactArgs(undefined, undefined, undefined, false, "~vValue~")
+			.withExactArgs(bForceUpdate, undefined, undefined, false, "~vValue~")
 			.returns(SyncPromise.resolve());
 		this.mock(this.oModel).expects("getReporter").withExactArgs()
 			.returns(function () { throw new Error(); });
 
 		// code under test
-		oBinding.onChange("~vValue~");
+		oBinding.onChange("~vValue~", bForceUpdate);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("onChange: checkUpdateInternal fails", function () {
