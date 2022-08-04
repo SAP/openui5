@@ -647,7 +647,8 @@ sap.ui.define([
 			return that.oRequestor.getModelInterface()
 				.fetchMetadata(that.sMetaPath + "/" + sPropertyMetaPath)
 				.then(function (oProperty) {
-					var vPermissions;
+					var vPermissions,
+						vResult = false;
 
 					if (!oProperty) {
 						return invalidSegment(sSegment);
@@ -677,11 +678,14 @@ sap.ui.define([
 							oEntity = oData;
 							iEntityPathLength = 0;
 						}
-						return oEntity && !bAgain
-							&& that.fetchLateProperty(oGroupLock, oEntity,
+						if (oEntity && !bAgain) {
+							vResult = that.fetchLateProperty(oGroupLock, oEntity,
 								aSegments.slice(0, iEntityPathLength).join("/"),
-								aSegments.slice(iEntityPathLength).join("/"))
-							|| invalidSegment(sSegment);
+								aSegments.slice(iEntityPathLength).join("/"));
+						}
+						return typeof vResult === "boolean"
+							? invalidSegment(sSegment, /*bAsInfo*/vResult)
+							: vResult; // fetchLateProperty's promise
 					}
 					// inside a transient entity, implicit values are determined as follows
 					if (oProperty.$kind === "NavigationProperty") {
@@ -781,10 +785,11 @@ sap.ui.define([
 	 *   The path of the requested property relative to oResource; this property is requested from
 	 *   the server. For annotations, except client annotations, the annotated property is requested
 	 *   from the server.
-	 * @returns {sap.ui.base.SyncPromise|undefined}
-	 *   A promise resolving w/o any result, or <code>undefined</code> if the requested property is
-	 *   not an expected late property; it rejects with an error if the GET request failed, or if
-	 *   the key predicate or the ETag has changed
+	 * @returns {sap.ui.base.SyncPromise|boolean}
+	 *   A promise resolving w/o any result if the requested property is an expected late property,
+	 *   or a <code>boolean</code> value if it is not; it rejects with an error if the GET request
+	 *   failed, or if the key predicate or the ETag has changed. The returned <code>boolean</code>
+	 *   value tells if the issue can be safely ignored.
 	 *
 	 * @private
 	 */
@@ -842,12 +847,12 @@ sap.ui.define([
 		}
 
 		if (!this.mLateQueryOptions) {
-			return undefined; // no autoExpandSelect
+			return false; // no autoExpandSelect
 		}
 
 		if (iIndexOfAt >= 0) {
 			if (sRequestedPropertyPath.startsWith("@$ui5.", iIndexOfAt)) {
-				return undefined; // do not request for a client annotation
+				return true; // send no request for a client annotation
 			}
 			sRequestedPropertyPath = sRequestedPropertyPath.slice(0, iIndexOfAt);
 		}
@@ -861,7 +866,7 @@ sap.ui.define([
 			[sRequestedPropertyPath], this.oRequestor.getModelInterface().fetchMetadata,
 			sFullResourceMetaPath);
 		if (!mQueryOptions) {
-			return undefined;
+			return false;
 		}
 
 		visitQueryOptions(mQueryOptions);

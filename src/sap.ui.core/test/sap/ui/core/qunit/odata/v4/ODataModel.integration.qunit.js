@@ -41373,10 +41373,10 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	// Scenario: Request a client annotation of a missing instance late. See that no request happens
-	// and a drill-down error is logged.
+	// Scenario: Request a client annotation of a missing instance as a late property. See that no
+	// request happens and no drill-down error is logged.
 	// BCP: 2280122602
-	QUnit.test("BCP 2280122602: client instance annotation late", function (assert) {
+	QUnit.test("BCP: 2280122602 - EMPLOYEE_2_TEAM/@$ui5.context.isTransient", function (assert) {
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form0" binding="{/EMPLOYEES(\'1\')}">\
@@ -41392,10 +41392,9 @@ sap.ui.define([
 			.expectChange("isTransient");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.oLogMock.expects("error").withArgs("Failed to drill-down into EMPLOYEE_2_TEAM"
-				+ "/@$ui5.context.isTransient, invalid segment: EMPLOYEE_2_TEAM");
 			that.expectChange("isTransient", undefined);
 
+			// code under test
 			that.oView.byId("form1")
 				.setBindingContext(that.oView.byId("form0").getBindingContext());
 
@@ -42157,8 +42156,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: In an ODLB w/ filter, but w/o UI, create a new draft entity and execute the
 	// ActivationAction to replace the draft context with the active context. Keep the active
-	// context alive and refresh it in order to make it drop out of the collection. See that is
-	// it is still alive.
+	// context alive and refresh it in order to make it drop out of the collection. See that it is
+	// still alive.
 	//
 	// Execute the EditAction with empty response to check that bReplaceWithRVC requires a key
 	// predicate.

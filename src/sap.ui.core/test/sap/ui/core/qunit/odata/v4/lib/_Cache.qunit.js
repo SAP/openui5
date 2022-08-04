@@ -1438,7 +1438,10 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#drillDown: unexpected missing property", function (assert) {
+[false, true].forEach(function (bAsInfo) {
+	var sTitle = "_Cache#drillDown: unexpected missing property, bAsInfo=" + bAsInfo;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Products"),
 			oData = [{
 				entity : {
@@ -1465,8 +1468,8 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchLateProperty")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oData[0].entity),
 				"('42')/entity", "foo/bar/baz")
-			.returns(undefined);
-		this.oLogMock.expects("error").withExactArgs(
+			.returns(bAsInfo);
+		this.oLogMock.expects(bAsInfo ? "info" : "error").withExactArgs(
 			"Failed to drill-down into ('42')/entity/foo/bar/baz, invalid segment: bar",
 			"/~/Products", sClassName);
 
@@ -1475,6 +1478,7 @@ sap.ui.define([
 				assert.strictEqual(vValue, undefined);
 			});
 	});
+});
 
 	//*********************************************************************************************
 [0, "None"].forEach(function (vPermissions) {
@@ -1531,7 +1535,7 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchLateProperty")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oData[0]), "('42')",
 				"PRODUCT_2_BP")
-			.returns(undefined);
+			.returns(false);
 		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into ('42')/PRODUCT_2_BP, invalid segment: PRODUCT_2_BP",
 			oCache.toString(), sClassName);
@@ -1936,7 +1940,7 @@ sap.ui.define([
 					oData["Picture@$ui5.noData"] = true; // done by _Helper.updateSelected
 				}
 				Object.assign(oData, oFixture.oResponse);
-				return SyncPromise.resolve(Promise.resolve(/*do not resolve with the value*/));
+				return SyncPromise.resolve(Promise.resolve());
 			});
 
 		// code under test
@@ -4837,7 +4841,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oCache.fetchLateProperty({/*oGroupLock*/}, {/*oCacheData*/}, "('1')", "property"),
-			undefined
+			false
 		);
 	});
 
@@ -4854,7 +4858,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oCache.fetchLateProperty({/*oGroupLock*/}, {/*oCacheData*/}, "('1')", sAnnotation),
-			undefined
+			true
 		);
 	});
 });
@@ -4880,7 +4884,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oCache.fetchLateProperty({/*oGroupLock*/}, {/*oCacheData*/}, "('1')", "property"),
-			undefined
+			false
 		);
 	});
 
