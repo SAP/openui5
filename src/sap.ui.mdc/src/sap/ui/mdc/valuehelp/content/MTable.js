@@ -590,7 +590,8 @@ sap.ui.define([
 			iSelectedIndex = iItems + iStep;
 		}
 
-		if (this._getMaxConditions() !== 1) { // || (oFirstSelectedItem && !oTableItemForFirstSelection)  prevent navigation if selected item noch present in table?
+		if (this._getMaxConditions() !== 1) {
+			// in case of multiToken field the focus can be set to the table and the navigation will be handled by the focused table control.
 			if (this.getParent().isOpen()) {
 				oTable.focus();
 				return;
@@ -632,9 +633,15 @@ sap.ui.define([
 
 		var oItem = aItems[iSelectedIndex];
 		if (oItem) {
+
 			var oCondition;
 			if (oItem !== oSelectedItem) {
 				oItem.setSelected(true);
+
+				// in case of a single value field trigger the focusin on the new selected item to update the screenreader invisible text
+				if (this.getParent().isOpen()) {
+					oItem.$().trigger("focusin");
+				}
 
 				var oBindingInfo = this._getListBindingInfo();
 				var sModelName = oBindingInfo.model;
