@@ -21521,6 +21521,62 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Show the single root node of a recursive hierarchy and expand it. Use a filter as
+	// well as a sort order.
+	// JIRA: CPOUI5ODATAV4-1675
+	QUnit.test("Recursive Hierarchy: expand root, w/ filter & orderby", function (assert) {
+		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<t:Table id="table" rows="{path : \'/EMPLOYEES\',\
+		parameters : {\
+			$$aggregation : {\
+				hierarchyQualifier : \'OrgChart\'\
+			},\
+			$filter : \'Is_Manager\',\
+			$orderby : \'AGE desc\'\
+		}}">\
+	<Text id="id" text="{ID}"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES"
+				+ "?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager),keep start)"
+				+ "/orderby(AGE desc)/com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+				+ ",Levels=1)&$select=DrillState,ID&$count=true&$skip=0&$top=110", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "0"
+				}]
+			})
+			.expectChange("id", ["0"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table"),
+				oRoot = oTable.getRows()[0].getBindingContext();
+
+			// Note: $orderby is evaluated after $apply => only the descendants are sorted
+			that.expectRequest("EMPLOYEES?$orderby=AGE desc"
+					+ "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager),keep start)"
+					+ "/descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
+					+ "&$select=DrillState,ID&$count=true&$skip=0&$top=110", {
+					"@odata.count" : "1",
+					value : [{
+						DrillState : "leaf",
+						ID : "1"
+					}]
+				})
+				.expectChange("id", [, "1"]);
+
+			// code under test
+			oRoot.expand();
+
+			return that.waitForChanges(assert, "expand root");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Application tries to overwrite client-side instance annotations.
 	// JIRA: CPOUI5UISERVICESV3-1220
 	QUnit.test("@$ui5.* is write-protected", function (assert) {
