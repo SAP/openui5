@@ -12,14 +12,9 @@ sap.ui.define(['../base/ManagedObject', "sap/base/assert"],
 
 	// The controls which should not be referenced by a "for" attribute (Specified in the HTML standard).
 	// Extend when needed.
-	var NON_LABELABLE_CONTROLS = [
-		"sap.ui.comp.navpopover.SmartLink",
-		"sap.m.Link",
-		"sap.m.Label",
-		"sap.m.Text",
-		"sap.ui.webc.main.Label",
-		"sap.ui.webc.main.Link"
-	];
+
+	var NON_LABELABLE_CONTROLS = ["sap.ui.comp.navpopover.SmartLink", "sap.m.Link", "sap.m.Label", "sap.m.Text", "sap.m.CheckBox", "sap.ui.webc.main.Label",
+	"sap.ui.webc.main.Link"];
 
 	// Returns the control for the given id (if available) and invalidates it if desired
 	function toControl(sId, bInvalidate) {

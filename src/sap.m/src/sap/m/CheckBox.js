@@ -471,7 +471,9 @@ sap.ui.define([
 	 */
 	CheckBox.prototype._getLabel = function() {
 		if (!this._oLabel) {
-			this._oLabel = new Label(this.getId() + "-label").addStyleClass("sapMCbLabel");
+			this._oLabel = new Label(this.getId() + "-label", {
+				labelFor: this.getId()
+			}).addStyleClass("sapMCbLabel");
 
 			this._oLabel.getAccessKeysFocusTarget = function () {
 				return this.getFocusDomRef();
