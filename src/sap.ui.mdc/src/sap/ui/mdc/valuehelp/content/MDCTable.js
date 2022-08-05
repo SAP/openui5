@@ -303,7 +303,7 @@ sap.ui.define([
 				 */
 				forceBind: {
 					type: "boolean",
-					defaultValue: true
+					defaultValue: false
 				}
 			},
 			aggregations: {
