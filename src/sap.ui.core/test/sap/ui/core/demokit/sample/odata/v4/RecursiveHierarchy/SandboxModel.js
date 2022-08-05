@@ -252,8 +252,8 @@ sap.ui.define([
 	}
 
 	function descendants(sNode, aChildren) {
-		countSkipTop("EMPLOYEES?$orderby=AGE&$apply=descendants($root/EMPLOYEES,OrgChart,ID"
-			+ ",filter(ID%20eq%20'" + sNode + "'),1)&$select=AGE,DrillState,ID,MANAGER_ID,Name",
+		countSkipTop("EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID%20eq%20'"
+			+ sNode + "'),1)/orderby(AGE)&$select=AGE,DrillState,ID,MANAGER_ID,Name",
 			aChildren);
 	}
 

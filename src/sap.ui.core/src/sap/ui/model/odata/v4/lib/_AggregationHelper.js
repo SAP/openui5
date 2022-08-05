@@ -353,7 +353,7 @@ sap.ui.define([
 		 *   turned into the filter expression parameter of an "ancestors()" transformation
 		 * @param {string} [mQueryOptions.$orderby]
 		 *   The value for a "$orderby" system query option; it is removed from the returned map and
-		 *   turned into an "orderby()" transformation for the top levels of nodes
+		 *   turned into an "orderby()" transformation
 		 * @param {string[]} [mQueryOptions.$select]
 		 *   The value for a "$select" system query option; additional technical properties are
 		 *   added to the returned copy
@@ -405,6 +405,10 @@ sap.ui.define([
 					+ "," + sNodeProperty
 					+ ",filter(" + mQueryOptions.$$filterBeforeAggregate + "),1)";
 				delete mQueryOptions.$$filterBeforeAggregate;
+				if (mQueryOptions.$orderby) {
+					sApply += "/orderby(" + mQueryOptions.$orderby + ")";
+					delete mQueryOptions.$orderby;
+				}
 			} else { // top levels of nodes
 				if (mQueryOptions.$orderby) {
 					sApply += "orderby(" + mQueryOptions.$orderby + ")/";
