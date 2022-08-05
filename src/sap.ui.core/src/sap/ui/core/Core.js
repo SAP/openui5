@@ -883,7 +883,7 @@ sap.ui.define([
 
 		// if a list of preloaded library CSS is configured, request a merged CSS (if application did not already do it)
 		var aCSSLibs = Configuration.getValue("preloadLibCss");
-		if (aCSSLibs && aCSSLibs.length > 0 && !aCSSLibs.appManaged) {
+		if (aCSSLibs && aCSSLibs.length > 0 && !Configuration.getCssAppManaged()) {
 			this.includeLibraryTheme("sap-ui-merged", undefined, "?l=" + aCSSLibs.join(","));
 		}
 
