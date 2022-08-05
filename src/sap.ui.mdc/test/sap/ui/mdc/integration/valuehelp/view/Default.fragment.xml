@@ -246,7 +246,7 @@
 							</mdcvc:filterBar>
 
 								<!-- type="ResponsiveTable" -->
-							<mdc:Table autoBindOnInit="true"
+							<mdc:Table autoBindOnInit="false"
 								id="mdcTable1"
 								width="100%"
 								height="100%"
@@ -290,7 +290,7 @@
 							</mdcvc:filterBar>
 
 								<!-- type="ResponsiveTable" -->
-							<mdc:Table autoBindOnInit="true"
+							<mdc:Table autoBindOnInit="false"
 								id="mdcTable2"
 								width="100%"
 								height="100%"
@@ -376,7 +376,7 @@
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
 
-								<mdc:Table autoBindOnInit="true"
+								<mdc:Table autoBindOnInit="false"
 									id="mdcTable-listcollection-1"
 									width="100%"
 									height="100%"
@@ -417,7 +417,7 @@
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
 
-								<mdc:Table autoBindOnInit="true"
+								<mdc:Table autoBindOnInit="false"
 									id="mdcTable-listcollection-2"
 									width="100%"
 									height="100%"
@@ -461,7 +461,7 @@
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
 
-								<mdc:Table autoBindOnInit="true"
+								<mdc:Table autoBindOnInit="false"
 									id="mdcTable-listcollection-3"
 									width="100%"
 									height="100%"
@@ -714,7 +714,7 @@
 									</vhfb:filterItems>
 								</vhfb:FilterBar>
 							</mdcvc:filterBar>
-							<mdc:Table autoBindOnInit="true"
+							<mdc:Table autoBindOnInit="false"
 								id="mdcTable-city"
 								width="100%"
 								height="100%"

@@ -2299,7 +2299,11 @@ sap.ui.define([
 							var sDisplay = this.getDisplay();
 							// remove "(", ")" from serach string
 							// TODO: better solution to search in this case?
-							this._sFilterValue = "";
+
+							if (typeof this._vLiveChangeValue !== "undefined") {
+								this._sFilterValue = "";
+							}
+
 							if (this._vLiveChangeValue) {
 								// use EQ operator
 								var oOperator = FilterOperatorUtil.getEQOperator();

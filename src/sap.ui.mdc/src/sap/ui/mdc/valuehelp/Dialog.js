@@ -662,6 +662,9 @@ sap.ui.define([
 	}
 
 	Dialog.prototype._open = function (oDialog) {
+
+		this._mAlreadyShownContents = {};
+
 		if (oDialog) {
 			this._updateInitialContentKey(); // Update initial key as visibilities might change during content retrieval
 
@@ -700,16 +703,21 @@ sap.ui.define([
 			throw new Error("sap.ui.mdc.ValueHelp: No content found.");
 		}
 
-		var aNecessaryPromises = [oNextContent.getContent(), oNextContent.onBeforeShow()];
+		var aNecessaryPromises = [oNextContent.getContent()];
 		var sSelectedContentGroup = oNextContent.getGroup && oNextContent.getGroup();
 		var oGroupSelectPromise;
 		if (sSelectedContentGroup && _isValidContentGroup.call(this, sSelectedContentGroup)) {
 			oGroupSelectPromise = this._retrieveGroupSelect();
 			aNecessaryPromises.push(oGroupSelectPromise);
 		}
-		return Promise.all(aNecessaryPromises).then(function (aPromiseResults) {
+		var bAlreadyShown = !this._mAlreadyShownContents[sNextContentId];
 
+		return Promise.all(aNecessaryPromises).then(function () {
 			this._bindContent(oNextContent);
+		}.bind(this)).then(function () {
+			return Promise.resolve(oNextContent.onBeforeShow(bAlreadyShown));
+		}).then(function () {
+			this._mAlreadyShownContents[sNextContentId] = true;
 			this.setProperty("_selectedContentKey", sNextContentId);
 			this.setProperty("_selectableContents", this._getSelectableContents());
 			this._oManagedObjectModel.checkUpdate(true, false, function (oBinding) { // force update as bindings to $help>displayContent are not updated automatically in some cases
@@ -730,7 +738,7 @@ sap.ui.define([
 			}
 
 			return this._retrievePromise("open").then(function () {
-				oNextContent.onShow();
+				oNextContent.onShow(bAlreadyShown);
 				return oNextContent;
 			});
 		}.bind(this));
@@ -781,7 +789,8 @@ sap.ui.define([
 			"_oIconTabBar",
 			"_oGroupSelect",
 			"_oGroupSelectModel",
-			"_sInitialContentKey"
+			"_sInitialContentKey",
+			"_mAlreadyShownContents"
 		]);
 
 		Container.prototype.exit.apply(this, arguments);

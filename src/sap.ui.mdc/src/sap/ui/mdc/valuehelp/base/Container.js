@@ -44,6 +44,12 @@ sap.ui.define([
 					type: "string",
 					group: "Appearance",
 					defaultValue: ""
+				},
+				/**
+				 * This property may be used by FilterableListContents to share basic search state in collective search scenarios
+				 */
+				localFilterValue: {
+					type: "string"
 				}
 			},
 			aggregations: {
@@ -187,7 +193,7 @@ sap.ui.define([
 	};
 
 	Container.prototype._unbindContent = function (oContent) {
-		oContent.unbindProperty("filterValue");
+		oContent.unbindProperty("filterValue", true);
 		oContent.unbindProperty("conditions");
 		oContent.unbindProperty("config");
 		oContent.detachConfirm(this._handleConfirmed, this);

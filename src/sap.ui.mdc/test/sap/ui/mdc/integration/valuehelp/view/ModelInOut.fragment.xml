@@ -82,7 +82,7 @@
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
 
-								<mdc:Table autoBindOnInit="true"
+								<mdc:Table autoBindOnInit="false"
 									id="mdcTable-listcollection-1"
 									width="100%"
 									height="100%"

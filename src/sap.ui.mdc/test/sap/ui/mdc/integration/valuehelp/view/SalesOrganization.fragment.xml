@@ -122,7 +122,7 @@
 
 						<mdcvc:MDCTable title="Divisions" keyPath="key" descriptionPath="text" filterFields="*text*" group="divA">
 
-							<mdc:Table autoBindOnInit="true"
+							<mdc:Table autoBindOnInit="false"
 								id="mdcTable-Divisions-1"
 								type="ResponsiveTable"
 								width="100%"
@@ -148,7 +148,7 @@
 
 						<mdcvc:MDCTable title="Divisions (salesOrganization)" keyPath="key" descriptionPath="text" filterFields="*text*" group="divA">
 							<mdcvc:filterBar>
-								<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/salesorganization/FilterBar.delegate', payload: {modelName: 'settings', collectionName: 'divisions'}}">
+								<vhfb:FilterBar id="fb1" liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/salesorganization/FilterBar.delegate', payload: {modelName: 'settings', collectionName: 'divisions'}}">
 									<vhfb:filterItems>
 										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="SalesOrganization" conditions="{$filters>/conditions/salesOrganization}"/>
 									</vhfb:filterItems>
@@ -156,7 +156,7 @@
 							</mdcvc:filterBar>
 
 
-						<mdc:Table autoBindOnInit="true"
+						<mdc:Table autoBindOnInit="false"
 								id="mdcTable-Divisions-2"
 								type="ResponsiveTable"
 								width="100%"
@@ -185,7 +185,7 @@
 
 						<mdcvc:MDCTable title="Divisions" keyPath="key" descriptionPath="text" filterFields="*text*" group="divB">
 
-							<mdc:Table autoBindOnInit="true"
+							<mdc:Table autoBindOnInit="false"
 								id="mdcTable-Divisions-3"
 								type="ResponsiveTable"
 								width="100%"
@@ -211,7 +211,7 @@
 
 						<mdcvc:MDCTable title="Divisions (distributionChannel)" keyPath="key" descriptionPath="text" filterFields="*text*" group="divB">
 							<mdcvc:filterBar>
-								<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/salesorganization/FilterBar.delegate', payload: {modelName: 'settings', collectionName: 'divisions'}}">
+								<vhfb:FilterBar id="fb2" liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/salesorganization/FilterBar.delegate', payload: {modelName: 'settings', collectionName: 'divisions'}}">
 									<vhfb:filterItems>
 										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="SalesOrganization" conditions="{$filters>/conditions/salesOrganization}"/>
 									</vhfb:filterItems>
@@ -219,7 +219,7 @@
 							</mdcvc:filterBar>
 
 
-							<mdc:Table autoBindOnInit="true"
+							<mdc:Table autoBindOnInit="false"
 									id="mdcTable-Divisions-4"
 									type="ResponsiveTable"
 									width="100%"

@@ -15,8 +15,8 @@ sap.ui.define([
 	// "sap/ui/mdc/enum/PersistenceMode",
 	'sap/ui/mdc/condition/FilterConverter',
 	'sap/base/util/restricted/_throttle',
-	'sap/ui/mdc/util/Common'
-
+	'sap/ui/mdc/util/Common',
+	"sap/base/Log"
 ], function(
 	FilterableListContent,
 	loadModules,
@@ -30,7 +30,8 @@ sap.ui.define([
 	// PersistenceMode,
 	FilterConverter,
 	throttle,
-	Common
+	Common,
+	Log
 ) {
 	"use strict";
 
@@ -295,6 +296,15 @@ sap.ui.define([
 				"sap.ui.mdc.valuehelp.IDialogContent"
 			],
 			properties: {
+				/**
+				 * This property will lead to a rebind on newly inserted tables after initial filters are set, immediately before the table is shown for the first time.
+				 *
+				 * <b>Note:</b> This only takes effect if autoBindOnInit is disabled on the <code>Table</code>
+				 */
+				forceBind: {
+					type: "boolean",
+					defaultValue: true
+				}
 			},
 			aggregations: {
 				/**
@@ -323,6 +333,8 @@ sap.ui.define([
 		});
 
 		this._addPromise("listBinding");
+
+		this._bRebindTable = false;
 	};
 
 	var handleListBinding = function () {
@@ -347,7 +359,6 @@ sap.ui.define([
 	MDCTable.prototype._handleUpdateFinished = function (oEvent) {
 
 		this._bScrolling = false;
-		this._bSearchTriggered = false;
 		_updateSelectionThrottled.call(this);
 	};
 
@@ -408,15 +419,6 @@ sap.ui.define([
 		}
 	};
 
-	MDCTable.prototype._handleSearch = function (oEvent) {
-		var sFilterFields = this.getFilterFields();
-		var oFilterBar = oEvent.getSource();
-		var oConditions = oFilterBar.getInternalConditions();
-		var oCondition = sFilterFields && oConditions[sFilterFields] && oConditions[sFilterFields][0];
-		var sFilterValue = oCondition && oCondition.values[0];
-		this.setFilterValue(sFilterValue);
-	};
-
 	MDCTable.prototype._observeChanges = function (oChanges) {
 
 		if (["_defaultFilterBar", "filterBar"].indexOf(oChanges.name) !== -1) {
@@ -432,6 +434,13 @@ sap.ui.define([
 				this._addPromise("listBinding");
 			} else {
 				this._oTable = oTable;
+
+				if (this._oTable.getAutoBindOnInit()) {
+					Log.warning("Usage of autobound tables may lead to unnecessary requests.");
+				} else if (this.getForceBind()) {
+					this._bRebindTable = true;
+				}
+
 				this._oObserver.observe(oTable, {aggregations: ["_content"]});
 				this._sTableType = _getMDCTableType(oTable);
 				oTable.addDelegate({ onmouseover: function (oEvent) {	// Fix m.Table itemPress
@@ -563,6 +572,18 @@ sap.ui.define([
 		return this._oTableHelper && this._oTableHelper.getListBindingInfo();
 	};
 
+	MDCTable.prototype.onBeforeShow = function() {
+		return Promise.resolve(FilterableListContent.prototype.onBeforeShow.apply(this, arguments)).then(function () {
+			var oTable = this.getTable();
+			var bOverlay = oTable && oTable.isTableBound() && oTable._oTable.getShowOverlay();
+			var bForceRebind = oTable && this._bRebindTable;
+			if (bForceRebind || bOverlay) {
+				oTable.rebind();
+				this._bRebindTable = false;
+			}
+		}.bind(this));
+	};
+
 	MDCTable.prototype.onShow = function () {
 		if (this._oTable) {
 			// check if selection mode is fine
@@ -576,58 +597,6 @@ sap.ui.define([
 		}
 
 		FilterableListContent.prototype.onShow.apply(this, arguments);
-	};
-
-	MDCTable.prototype.onHide = function () {
-		this._bSearchTriggered = false;
-		FilterableListContent.prototype.onHide.apply(this, arguments);
-	};
-
-	MDCTable.prototype._createFiltersFromBarConditions = function (oConditions) {
-		var oConditionTypes = this._getTypesForConditions(oConditions);
-		var oCreatedFBFilters = oConditions && oConditionTypes && FilterConverter.createFilters(oConditions, oConditionTypes, undefined, this.getCaseSensitive());
-		return oCreatedFBFilters && [].concat(oCreatedFBFilters);
-	};
-
-	MDCTable.prototype.applyFilters = function(sSearch) { // TODO the arguments are not passed as expected.
-
-
-		var oTable = this.getTable();
-		var oFilterBar = this._getPriorityFilterBar();
-
-		if (oTable && oFilterBar) {
-			var oListBinding = this.getListBinding();
-			var bListBindingSuspended = oListBinding && oListBinding.isSuspended();
-
-			if (oListBinding && !bListBindingSuspended && !this._bSearchTriggered) {
-				var sFBSearch = oFilterBar.getSearch() || "";
-				var sBindingSearch = oListBinding.mParameters.$search || "";
-				var aFBFilters = this._createFiltersFromBarConditions(oFilterBar.getConditions());
-				var aBindingFilters = oListBinding.aApplicationFilters.reduce(function (aResult, oFilter) {
-					return aResult.concat(oFilter._bMultiFilter ? oFilter.aFilters : oFilter);
-				}, []);
-				var bFiltersChanged = !deepEqual(aFBFilters, aBindingFilters);
-				var bSearchChanged = sFBSearch !== sBindingSearch;
-				var bTableHasOverlay = oTable._oTable && oTable._oTable.getShowOverlay && oTable._oTable.getShowOverlay();
-
-
-				if (bFiltersChanged || bSearchChanged || bTableHasOverlay) {
-					this._handleScrolling();
-					oFilterBar.triggerSearch();
-					this._bSearchTriggered = true;
-				}
-			}
-
-			if (bListBindingSuspended) {
-				oListBinding.resume();
-			}
-
-			if (!oListBinding && oTable.getAutoBindOnInit()) {
-				this._retrievePromise("listBinding").then(function () {
-					this.applyFilters(sSearch);
-				}.bind(this));
-			}
-		}
 	};
 
 	MDCTable.prototype._handleScrolling = function (oItem) {
@@ -688,7 +657,8 @@ sap.ui.define([
 			"_bBusy",
 			"_sTableType",
 			"_oUITableSelectionPlugin",
-			"_oTable"
+			"_oTable",
+			"_bRebindTable"
 		]);
 
 		FilterableListContent.prototype.exit.apply(this, arguments);
