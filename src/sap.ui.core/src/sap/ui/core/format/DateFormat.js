@@ -1429,6 +1429,11 @@ sap.ui.define([
 				}
 			}
 		},
+		// day number of week (depends on locale's first day of week)
+		// e.g. Thursday
+		// "de": 4 (firstDay: 1)
+		// "en": 5 (firstDay: 0)
+		// "ar": 6 (firstDay: 6)
 		"u": {
 			name: "dayNumberOfWeek",
 			format: function(oField, oDate, bUTC, oFormat) {
