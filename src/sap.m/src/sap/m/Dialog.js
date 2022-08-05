@@ -1265,7 +1265,12 @@ function(
 			oPosition = {
 				top: Math.round(oAreaDimensions.top + iTop)
 			};
-			oPosition[this._bRTL ? "right" : "left"] = Math.round(oAreaDimensions.left + iLeft);
+
+			if (this._bRTL) {
+				oPosition.right = Math.round(window.innerWidth - oAreaDimensions.right + iLeft);
+			} else {
+				oPosition.left = Math.round(oAreaDimensions.left + iLeft);
+			}
 
 			return oPosition;
 		};

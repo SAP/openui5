@@ -3145,7 +3145,7 @@ sap.ui.define([
 				this.oWithinArea.style[sProp] = _mStyles[sProp];
 			}
 		},
-		assertIsCenteredInWithinArea: function (assert) {
+		assertIsInsideWithinArea: function (assert) {
 			var oStyles = this.oDialog.getDomRef().style,
 				fTop = parseFloat(oStyles.getPropertyValue("top")),
 				fLeft = parseFloat(oStyles.getPropertyValue("left")),
@@ -3153,8 +3153,8 @@ sap.ui.define([
 				oWithinAreaPos = $withinArea.offset();
 
 			// Assert
-			assert.ok(fTop >= oWithinAreaPos.top + parseInt($withinArea.css("border-top-width")), "Dialog is inside Within Area");
-			assert.ok(fLeft >= oWithinAreaPos.left + parseInt($withinArea.css("border-left-width")), "Dialog is inside Within Area");
+			assert.ok(fTop >= oWithinAreaPos.top + parseInt($withinArea.css("border-top-width")), "Dialog is inside Within Area vertically");
+			assert.ok(fLeft >= oWithinAreaPos.left + parseInt($withinArea.css("border-left-width")), "Dialog is inside Within Area horizontally");
 			assert.ok(this.oDialog.$().outerHeight(true) <= $withinArea.innerHeight(), "Dialog isn't higher than Within Area");
 			assert.ok(this.oDialog.$().outerWidth(true) <= $withinArea.innerWidth(), "Dialog isn't wider than Within Area");
 		}
@@ -3191,7 +3191,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		this.assertIsCenteredInWithinArea(assert);
+		this.assertIsInsideWithinArea(assert);
 	});
 
 	QUnit.test("Custom Within Area. 'width' and 'height' of Within Area should be included", function (assert) {
@@ -3205,7 +3205,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		this.assertIsCenteredInWithinArea(assert);
+		this.assertIsInsideWithinArea(assert);
 	});
 
 	QUnit.test("Custom Within Area. Dialog bigger than available space", function (assert) {
@@ -3220,7 +3220,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		this.assertIsCenteredInWithinArea(assert);
+		this.assertIsInsideWithinArea(assert);
 	});
 
 	QUnit.test("Custom Within Area. Stretched dialog", function (assert) {
@@ -3241,7 +3241,7 @@ sap.ui.define([
 			iExpectedMargin = 10;
 
 		// Assert
-		this.assertIsCenteredInWithinArea(assert);
+		this.assertIsInsideWithinArea(assert);
 		assert.ok(Math.abs($dialog.outerWidth() - $withinArea.width()) > iExpectedMargin, "There is margin around the dialog");
 		assert.ok(Math.abs($dialog.outerHeight() - $withinArea.height()) > iExpectedMargin, "There is margin around the dialog");
 	});
@@ -3271,7 +3271,7 @@ sap.ui.define([
 			oWithinAreaPos = $withinArea.offset();
 
 		// Assert
-		this.assertIsCenteredInWithinArea(assert);
+		this.assertIsInsideWithinArea(assert);
 		assert.strictEqual(oDialogPos.top, oWithinAreaPos.top, "Positions of dialog and Within Area are the same");
 		assert.strictEqual(oDialogPos.left, oWithinAreaPos.left, "Positions of dialog and Within Area are the same");
 		assert.strictEqual($dialog.outerWidth(), $withinArea.width(), "Dialog takes full width");
@@ -3293,7 +3293,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		this.assertIsCenteredInWithinArea(assert);
+		this.assertIsInsideWithinArea(assert);
 	});
 
 	QUnit.module("Resize of Within Area", {
