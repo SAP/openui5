@@ -1046,7 +1046,12 @@ sap.ui.define([
 		this.setProperty("enabled", bEnabled);
 		this.oFilePath.setEnabled(bEnabled);
 		this.oBrowse.setEnabled(bEnabled);
-		bEnabled ? $oFileUpload.removeAttr('disabled') : $oFileUpload.attr('disabled', 'disabled');
+
+		if (this.getEnabled()) {
+			$oFileUpload.removeAttr('disabled');
+		} else {
+			$oFileUpload.attr('disabled', 'disabled');
+		}
 
 		return this;
 	};
