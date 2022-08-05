@@ -93,7 +93,7 @@ sap.ui.define([
 				mParameters["allContexts"] = mPropertyBag.allContexts;
 			}
 			this._addClientInfo(mParameters);
-			Utils.addLanguageInfo(mParameters);
+			Utils.addSAPLogonLanguageInfo(mParameters);
 			var sAppDescriptorId;
 			if (mPropertyBag.appDescriptor && mPropertyBag.appDescriptor["sap.app"]) {
 				sAppDescriptorId = mPropertyBag.appDescriptor["sap.app"].id;
