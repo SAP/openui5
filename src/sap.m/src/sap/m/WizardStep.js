@@ -102,6 +102,8 @@ sap.ui.define([
 				 * This association is used only when the <code>enableBranching</code> property of the Wizard is set to true.
 				 * Use the association to store the next steps that are about to come after the current.
 				 * If this is going to be a final step - leave this association empty.
+				 * <strong>NOTE:</strong> The association needs to be set prior the step is shown. Dynamical addition of subsequent steps is not supported use case
+				 * especially when the current step is final (the association was empty before the step was displayed).
 				 * @since 1.32
 				 */
 				subsequentSteps : {type : "sap.m.WizardStep", multiple : true, singularName : "subsequentStep"},
