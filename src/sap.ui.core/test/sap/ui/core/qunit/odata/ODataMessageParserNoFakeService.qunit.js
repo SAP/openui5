@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/core/message/Message",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/ODataMessageParser",
+	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/test/TestUtils"
-], function (Log, coreLibrary, Message, MessageScope, ODataMessageParser, TestUtils) {
+], function (Log, coreLibrary, Message, MessageScope, ODataMessageParser, ODataUtils, TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0*/
 	"use strict";
@@ -507,6 +508,63 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[{
+	expectedPersistentMessages : true,
+	expectedTarget : "",
+	persistTechnicalMessages : true,
+	technicalMessage : true
+}, {
+	expectedPersistentMessages : false,
+	expectedTarget : "~targetWithNormalizedKeys",
+	persistTechnicalMessages : false,
+	technicalMessage : true
+}, {
+	expectedPersistentMessages : false,
+	expectedTarget : "~targetWithNormalizedKeys",
+	persistTechnicalMessages : false,
+	technicalMessage : false
+}, {
+	expectedPersistentMessages : false,
+	expectedTarget : "~targetWithNormalizedKeys",
+	persistTechnicalMessages : true,
+	technicalMessage : false
+}].forEach(function (oFixture) {
+	var sTitle = "_createMessage - bPersistTechnicalMessages: " + oFixture.persistTechnicalMessages
+			+ " technical message: " + oFixture.technicalMessage;
+
+	QUnit.test(sTitle, function (assert) {
+		var oODataMessageParser = {
+				_createTarget : function () {},
+				_bPersistTechnicalMessages : oFixture.persistTechnicalMessages
+			},
+			oMessage,
+			oMessageObject = {transition: false, canonicalTarget : "~canonicalTarget" },
+			mRequestInfo = {
+				response : {
+					headers : "~headers",
+					statusCode : "~statusCode"
+				}
+			};
+
+		if (oFixture.expectedTarget) {
+			this.mock(oODataMessageParser).expects("_createTarget")
+				.withExactArgs(oMessageObject, mRequestInfo);
+			this.mock(ODataUtils).expects("_normalizeKey")
+				.withExactArgs("~canonicalTarget")
+				.returns(oFixture.expectedTarget);
+		}
+
+		// code under test
+		oMessage = ODataMessageParser.prototype._createMessage.call(oODataMessageParser,
+			oMessageObject, mRequestInfo, oFixture.technicalMessage);
+
+		assert.ok(oMessage instanceof Message);
+		assert.strictEqual(oMessage.persistent, oFixture.expectedPersistentMessages);
+		assert.strictEqual(oMessage.target, oFixture.expectedTarget);
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("_addGenericError", function (assert) {
 		var oMessage = "~oMessage",
 			aMessages = ["~message0"],
@@ -628,5 +686,32 @@ sap.ui.define([
 		// code under test
 		ODataMessageParser.prototype._parseBodyJSON.call(oODataMessageParser, "~aMessages",
 			oResponse, mRequestInfo);
+	});
+
+	//**********************************************************************************************
+	QUnit.test("ODataMessageParser constructor", function (assert) {
+		this.mock(ODataMessageParser.prototype).expects("_parseUrl").withExactArgs("url")
+			.returns({url : "/service/"});
+
+		// code under test
+		var oMessageParser = new ODataMessageParser("url", "~oMetadata", "~persist");
+
+		assert.strictEqual(oMessageParser._serviceUrl, "/service/");
+		assert.strictEqual(oMessageParser._metadata, "~oMetadata");
+		assert.strictEqual(oMessageParser._processor, null);
+		assert.strictEqual(oMessageParser._headerField, "sap-message");
+		assert.deepEqual(oMessageParser._lastMessages, []);
+		assert.strictEqual(oMessageParser._bPersistTechnicalMessages, "~persist");
+	});
+
+	//**********************************************************************************************
+	QUnit.test("_setPersistTechnicalMessages", function (assert) {
+		var oODataMessageParser = {};
+
+		//code under test
+		ODataMessageParser.prototype._setPersistTechnicalMessages.call(oODataMessageParser,
+			"~bPersist");
+
+		assert.strictEqual(oODataMessageParser._bPersistTechnicalMessages, "~bPersist");
 	});
 });

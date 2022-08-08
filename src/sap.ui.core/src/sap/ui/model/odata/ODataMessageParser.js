@@ -69,17 +69,24 @@ var mSeverityMap = {
  */
 
 /**
- * OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
+ * OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses
+ * from the back end.
+ *
+ * @param {string} sServiceUrl
+ *   Base URI of the service used for the calculation of message targets
+ * @param {sap.ui.model.odata.ODataMetadata} oMetadata
+ *   The ODataMetadata object
+ * @param {boolean} bPersistTechnicalMessages
+ *   Whether technical messages should always be treated as persistent, since 1.83.0
  *
  * @class
- * @classdesc
- *   OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses from the back-end.
+ *   OData implementation of the sap.ui.core.message.MessageParser class. Parses message responses
+ *   from the back end.
  * @extends sap.ui.core.message.MessageParser
  *
  * @author SAP SE
  * @version ${version}
  * @public
- * @abstract
  * @alias sap.ui.model.odata.ODataMessageParser
  */
 var ODataMessageParser = MessageParser.extend("sap.ui.model.odata.ODataMessageParser", {
@@ -87,13 +94,14 @@ var ODataMessageParser = MessageParser.extend("sap.ui.model.odata.ODataMessagePa
 		publicMethods: [ "parse", "setProcessor", "getHeaderField", "setHeaderField" ]
 	},
 
-	constructor: function(sServiceUrl, oMetadata) {
+	constructor: function(sServiceUrl, oMetadata, bPersistTechnicalMessages) {
 		MessageParser.apply(this);
 		this._serviceUrl = getRelativeServerUrl(this._parseUrl(sServiceUrl).url);
 		this._metadata = oMetadata;
 		this._processor = null;
 		this._headerField = "sap-message"; // Default header field
 		this._lastMessages = [];
+		this._bPersistTechnicalMessages = bPersistTechnicalMessages;
 	}
 });
 
@@ -366,6 +374,8 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 	} else if (oMessageObject.transient) {
 		bPersistent = true;
 	} else if (oMessageObject.transition) {
+		bPersistent = true;
+	} else if (bIsTechnical && this._bPersistTechnicalMessages) {
 		bPersistent = true;
 	}
 
@@ -837,6 +847,17 @@ ODataMessageParser.prototype._outputMesages = function(aMessages) {
 				break;
 		}
 	}
+};
+
+/**
+ * Sets whether technical messages should always be treated as persistent.
+ *
+ * @param {boolean} bPersistTechnicalMessages
+ *   Whether technical messages should always be treated as persistent
+ * @private
+ */
+ODataMessageParser.prototype._setPersistTechnicalMessages = function (bPersistTechnicalMessages) {
+	this._bPersistTechnicalMessages = bPersistTechnicalMessages;
 };
 
 ///////////////////////////////////////// Hidden Functions /////////////////////////////////////////

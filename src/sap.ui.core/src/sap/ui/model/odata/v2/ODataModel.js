@@ -123,6 +123,8 @@ sap.ui.define([
 	 *            Sets the default binding mode for the model
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.defaultCountMode=Request]
 	 *            Sets the default count mode for the model
+	 * @param {boolean} [mParameters.persistTechnicalMessages]
+	 *   Whether technical messages should always be treated as persistent
 	 * @param {boolean} [mParameters.preliminaryContext=false]
 	 *            Whether a preliminary Context will be created/used by a binding
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.defaultOperationMode=Default]
@@ -211,6 +213,7 @@ sap.ui.define([
 				sWarmupUrl,
 				bCanonicalRequests,
 				bTokenHandlingForGet,
+				bPersistTechnicalMessages,
 				that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -247,6 +250,7 @@ sap.ui.define([
 				sWarmupUrl = mParameters.warmupUrl;
 				bCanonicalRequests = mParameters.canonicalRequests;
 				bTokenHandlingForGet = mParameters.tokenHandlingForGet;
+				bPersistTechnicalMessages = mParameters.persistTechnicalMessages;
 			}
 
 			/* Path cache to avoid multiple expensive resolve operations
@@ -301,6 +305,8 @@ sap.ui.define([
 			this.aBindableResponseHeaders = aBindableResponseHeaders ? aBindableResponseHeaders : null;
 			this.bPreliminaryContext = bPreliminaryContext || false;
 			this.mMetadataUrlParams = mMetadataUrlParams || {};
+			this.bPersistTechnicalMessages = bPersistTechnicalMessages === undefined
+				? undefined : !!bPersistTechnicalMessages;
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -6375,7 +6381,8 @@ sap.ui.define([
 	ODataModel.prototype._parseResponse = function(oResponse, oRequest, mGetEntities, mChangeEntities) {
 		try {
 			if (!this.oMessageParser) {
-				this.oMessageParser = new ODataMessageParser(this.sServiceUrl, this.oMetadata);
+				this.oMessageParser = new ODataMessageParser(this.sServiceUrl, this.oMetadata,
+					!!this.bPersistTechnicalMessages);
 				this.oMessageParser.setProcessor(this);
 			}
 			// Parse response and delegate messages to the set message parser
@@ -6896,6 +6903,44 @@ sap.ui.define([
 			return !!bCanonicalRequest;
 		} else {
 			return !!this.bCanonicalRequests;
+		}
+	};
+
+	/**
+	 * Gets the flag whether technical messages should always be treated as persistent.
+	 *
+	 * @returns {boolean} Whether technical messages should always be treated as persistent
+	 *
+	 * @private
+	 * @ui5-restricted sap.suite.ui.generic.template
+	 */
+	ODataModel.prototype.getPersistTechnicalMessages = function () {
+		return this.bPersistTechnicalMessages;
+	};
+
+	/**
+	 * Sets the flag whether technical messages should always be treated as persistent. Works only
+	 * with {@link class sap.ui.model.odata.ODataMessageParser}.
+	 *
+	 * @param {boolean} bPersistTechnicalMessages
+	 *   Whether technical messages should always be treated as persistent
+	 *
+	 * @private
+	 * @ui5-restricted sap.suite.ui.generic.template
+	 */
+	ODataModel.prototype.setPersistTechnicalMessages = function (bPersistTechnicalMessages) {
+		bPersistTechnicalMessages = !!bPersistTechnicalMessages;
+		if (this.bPersistTechnicalMessages === bPersistTechnicalMessages) {
+			return;
+		}
+		if (this.bPersistTechnicalMessages !== undefined) {
+			Log.warning("The flag whether technical messages should always be treated as persistent"
+				+ " has been overwritten to " + bPersistTechnicalMessages, undefined,
+					"sap.ui.model.odata.v2.ODataModel");
+		}
+		this.bPersistTechnicalMessages = bPersistTechnicalMessages;
+		if (this.oMessageParser) {
+			this.oMessageParser._setPersistTechnicalMessages(bPersistTechnicalMessages);
 		}
 	};
 
