@@ -549,6 +549,19 @@ sap.ui.define([
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
+	 * @param {string|object} [mParameters.$expand]
+	 *   The value for the "5.1.2 System Query Option $expand" or an object which determines that
+	 *   value. The object is a map from expand path to expand options, where the options are again
+	 *   maps of system query options, typically with string values. $count can also be given as a
+	 *   <code>boolean</code> value, $expand can recursively be given as a map, $levels can also be
+	 *   given as a <code>number</code> value, and $select can also be given as an array (but
+	 *   without navigation paths). An empty map can also be given as <code>null</code> or
+	 *   <code>true</code>. See also {@link topic:1ab4f62de6ab467096a2a98b363a1373 Parameters}.
+	 * @param {string|string[]} [mParameters.$select]
+	 *   A comma separated list or an array of items which determine the value for the
+	 *   "5.1.3 System Query Option $select". Since 1.75.0, when using the "autoExpandSelect" model
+	 *   parameter (see {@link sap.ui.model.odata.v4.ODataModel#constructor}), paths with navigation
+	 *   properties can be included and will contribute to the "5.1.2 System Query Option $expand".
 	 * @param {boolean} [mParameters.$$canonicalPath]
 	 *   Whether a binding relative to a {@link sap.ui.model.odata.v4.Context} uses the canonical
 	 *   path computed from its context's path for data service requests; only the value
@@ -656,10 +669,41 @@ sap.ui.define([
 	 *     <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
 	 *       (unless starting with "sap-valid-")
 	 *     <li> The $apply, $count, $expand, $filter, $levels, $orderby, $search, and $select
-	 *       "5.1 System Query Options"
+	 *       "5.1 System Query Options"; OData V4 only allows $levels inside $expand.
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
+	 * @param {string} [mParameters.$apply]
+	 *   The value for the "3 System Query Option $apply" (see also
+	 *   <a href="https://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
+	 *   Extension for Data Aggregation Version 4.0</a>) as an alternative to
+	 *   <code>$$aggregation</code>
+	 * @param {string|boolean} [mParameters.$count]
+	 *   The value for the "5.1.6 System Query Option $count", useful for creation at the end and
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#getCount}
+	 * @param {string|object} [mParameters.$expand]
+	 *   The value for the "5.1.2 System Query Option $expand" or an object which determines that
+	 *   value. The object is a map from expand path to expand options, where the options are again
+	 *   maps of system query options, typically with string values. $count can also be given as a
+	 *   <code>boolean</code> value, $expand can recursively be given as a map, $levels can also be
+	 *   given as a <code>number</code> value, and $select can also be given as an array (but
+	 *   without navigation paths). An empty map can also be given as <code>null</code> or
+	 *   <code>true</code>. See also {@link topic:1ab4f62de6ab467096a2a98b363a1373 Parameters}.
+	 * @param {string} [mParameters.$filter]
+	 *   The value for the "5.1.1 System Query Option $filter" used in addition to
+	 *   <code>vFilters</code>
+	 * @param {string|number} [mParameters.$orderby]
+	 *   The value for the "5.1.4 System Query Option $orderby" used in addition to
+	 *   <code>vSorters</code>
+	 * @param {string} [mParameters.$search]
+	 *   The value for the "5.1.7 System Query Option $search"; see also
+	 *   <code>oAggregation.search</code> at
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation} and the note there!
+	 * @param {string|string[]} [mParameters.$select]
+	 *   A comma separated list or an array of items which determine the value for the
+	 *   "5.1.3 System Query Option $select". Since 1.75.0, when using the "autoExpandSelect" model
+	 *   parameter (see {@link sap.ui.model.odata.v4.ODataModel#constructor}), paths with navigation
+	 *   properties can be included and will contribute to the "5.1.2 System Query Option $expand".
 	 * @param {object} [mParameters.$$aggregation]
 	 *   An object holding the information needed for data aggregation, see
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation} for details.
@@ -781,6 +825,16 @@ sap.ui.define([
 	 *   relative to a context created via {@link #createBindingContext}. The binding parameters are
 	 *   ignored in case the binding creates no own data service request or in case the binding
 	 *   points to metadata.
+	 * @param {string} [mParameters.$apply]
+	 *   The value for the "3 System Query Option $apply" (see also
+	 *   <a href="https://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
+	 *   Extension for Data Aggregation Version 4.0</a>), if the path ends with a "$count" segment
+	 * @param {string} [mParameters.$filter]
+	 *   The value for the "5.1.1 System Query Option $filter", if the path ends with a "$count"
+	 *   segment
+	 * @param {string} [mParameters.$search]
+	 *   The value for the "5.1.7 System Query Option $search", if the path ends with a "$count"
+	 *   segment
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
