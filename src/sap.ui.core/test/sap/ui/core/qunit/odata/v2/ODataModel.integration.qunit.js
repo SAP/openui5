@@ -36,7 +36,9 @@ sap.ui.define([
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
-		sDefaultTimezone = sap.ui.getCore().getConfiguration().getTimezone(),
+		// TODO Timezone Configuration: Configuration#setTimezone currently does not change the
+		// timezone configuration.
+		// sDefaultTimezone = sap.ui.getCore().getConfiguration().getTimezone(),
 		MessageType = coreLibrary.MessageType, // shortcut for sap.ui.core.MessageType
 		NO_CONTENT = {/*204 no content*/},
 		sODataMessageParserClassName = "sap.ui.model.odata.ODataMessageParser",
@@ -474,7 +476,9 @@ sap.ui.define([
 			// reset the language
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 			// reset the time zone
-			sap.ui.getCore().getConfiguration().setTimezone(sDefaultTimezone);
+			// TODO Timezone Configuration: Configuration#setTimezone currently does not change the
+			// timezone configuration.
+			// sap.ui.getCore().getConfiguration().setTimezone(sDefaultTimezone);
 		},
 
 		/**
@@ -7694,7 +7698,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: DateTimeWithTimezone type parses empty input for time zone to empty string instead
 	// of null if the corresponding part has format option parseKeepsEmptyString.
 	// JIRA: CPOUI5MODELS-858
-	QUnit.test("Empty string: sap.ui.model.odata.type.DateTimeWithTimezone", function (assert) {
+
+	// TODO Timezone Configuration: Configuration#setTimezone currently does not change the timezone
+	// configuration.
+	// The timezone configuration will always remain to be the browser timezone. In addition, a
+	// warning is logged which this test does not expect.
+	// Therefore skipping this test as the result would depend on the browser/OS.
+	// Unskip once #setTimezone functionality is restored.
+	QUnit.skip("Empty string: sap.ui.model.odata.type.DateTimeWithTimezone", function (assert) {
 		var oModel = createSpecialCasesModel({defaultBindingMode : BindingMode.TwoWay}),
 			sView = '\
 <FlexBox id="objectPage" binding="{/DateTimeWithTimezoneSet(\'1\')}">\

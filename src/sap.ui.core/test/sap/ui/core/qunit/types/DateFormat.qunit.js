@@ -12,6 +12,16 @@ sap.ui.define([
 		// shortcut for sap.ui.core.CalendarType
 		var CalendarType = library.CalendarType;
 
+		var getTimezoneStub;
+		var stubTimezone = function(sTimezoneID) {
+			if (getTimezoneStub) {
+				getTimezoneStub.restore();
+			}
+			if (sTimezoneID) {
+				getTimezoneStub = sinon.stub(sap.ui.getCore().getConfiguration(), "getTimezone").returns(sTimezoneID);
+			}
+		};
+
 		var oDateTime = new Date("Tue Sep 23 06:46:13 2000 GMT+0000"),
 			oTZDateTime = new Date("Tue Sep 23 03:46:13 2000 GMT+0530"),
 			oDefaultDate = DateFormat.getInstance(),
@@ -20,14 +30,14 @@ sap.ui.define([
 
 		QUnit.module("DateFormat format", {
 			beforeEach: function (assert) {
-				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				stubTimezone("Europe/Berlin");
 				var Log = sap.ui.require("sap/base/Log");
 				assert.ok(Log, "Log module should be available");
 				this.oErrorSpy = sinon.spy(Log, "error");
 			},
 			afterEach: function () {
 				this.oErrorSpy.restore();
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -121,10 +131,10 @@ sap.ui.define([
 
 		QUnit.module("format relative with timezone America/Los_Angeles", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("America/Los_Angeles");
+				stubTimezone("America/Los_Angeles");
 			},
 			afterEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -177,10 +187,10 @@ sap.ui.define([
 
 		QUnit.module("parse using pattern in UTC", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("Etc/UTC");
+				stubTimezone("Etc/UTC");
 			},
 			afterEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -395,10 +405,10 @@ sap.ui.define([
 
 		QUnit.module("format Asia/Tokyo", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("Asia/Tokyo");
+				stubTimezone("Asia/Tokyo");
 			},
 			afterEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -416,10 +426,10 @@ sap.ui.define([
 
 		QUnit.module("format with timezone Etc/UTC", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("Etc/UTC");
+				stubTimezone("Etc/UTC");
 			},
 			afterEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -473,10 +483,10 @@ sap.ui.define([
 
 		QUnit.module("format with timezone Europe/Berlin", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				stubTimezone("Europe/Berlin");
 			},
 			afterEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -526,10 +536,10 @@ sap.ui.define([
 
 		QUnit.module("format with timezone Asia/Calcutta", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("Asia/Calcutta");
+				stubTimezone("Asia/Calcutta");
 			},
 			afterEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -693,13 +703,13 @@ sap.ui.define([
 
 		QUnit.module("relative to '2021-03-22T23:30:00Z'", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				stubTimezone("Europe/Berlin");
 				this.clock = sinon.useFakeTimers(new Date("2021-03-22T23:30:00Z").getTime());
 				// 28.03 - 0:30 (GMT+1)
 			},
 			afterEach: function () {
 				this.clock.restore();
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -736,13 +746,13 @@ sap.ui.define([
 
 		QUnit.module("relative to '2021-03-22T03:30:00Z'", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				stubTimezone("Europe/Berlin");
 				this.clock = sinon.useFakeTimers(new Date("2021-03-22T03:30:00Z").getTime());
 				// 28.03 - 0:30 (GMT+1)
 			},
 			afterEach: function () {
 				this.clock.restore();
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -781,13 +791,13 @@ sap.ui.define([
 
 		QUnit.module("German summer time 28.03.2021 (2h->3h) (offset: +2 -> +1)", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				stubTimezone("Europe/Berlin");
 				this.clock = sinon.useFakeTimers(new Date("2021-03-27T23:30:00Z").getTime());
 				// 28.03 - 0:30 (GMT+1)
 			},
 			afterEach: function () {
 				this.clock.restore();
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -806,13 +816,13 @@ sap.ui.define([
 
 		QUnit.module("German winter time 31.10.2021 (3h->2h) (offset: +1 -> +2)", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				stubTimezone("Europe/Berlin");
 				this.clock = sinon.useFakeTimers(new Date("2021-10-30T22:30:00Z").getTime());
 				// 31.10 - 0:30 (GMT+2)
 			},
 			afterEach: function () {
 				this.clock.restore();
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -1124,11 +1134,11 @@ sap.ui.define([
 				// 2 digit years require the current year to be fixed
 				// e.g. for pattern: "yyyy-MM-dd" with input "04-03-12" the result depends on the current year
 				this.clock = sinon.useFakeTimers(Date.UTC(2018, 7, 2, 11, 37));
-				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				stubTimezone("Europe/Berlin");
 			},
 			afterEach: function () {
 				this.clock.restore();
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -2200,7 +2210,7 @@ sap.ui.define([
 				timezone: "America/New_York", // -5
 				date: Date.UTC(1999, 2, 19, 4, 12, 11)
 			}].forEach(function(oFixture) {
-				sap.ui.getCore().getConfiguration().setTimezone(oFixture.timezone);
+				stubTimezone(oFixture.timezone);
 				var oDate = new Date(oFixture.date);
 
 				assert.equal(oDateFormat.format(oDate).toString(), "Dhuʻl-Q. 30, 1419 AH",
@@ -2211,7 +2221,7 @@ sap.ui.define([
 
 				assert.equal(oDateFormat.format(oDate).toString(), "Dhuʻl-H. 1, 1419 AH",
 					"succeeding month in " + oFixture.timezone);
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			});
 		});
 
@@ -2301,7 +2311,7 @@ sap.ui.define([
 				timezone: "America/New_York",
 				date: Date.UTC(2019, 4, 1, 2, 12, 11)
 			}].forEach(function(oFixture) {
-				sap.ui.getCore().getConfiguration().setTimezone(oFixture.timezone);
+				stubTimezone(oFixture.timezone);
 
 				// 2019-5-1 era change
 				var oDate1 = new Date(oFixture.date);
@@ -2312,7 +2322,7 @@ sap.ui.define([
 				oDate1.setUTCHours(oDate1.getUTCHours() + 2);
 
 				assert.equal(oDateFormat.format(oDate1), "令和元年5月1日", "new era in " + oFixture.timezone);
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			});
 		});
 
@@ -2526,7 +2536,7 @@ sap.ui.define([
 				timezone: "America/New_York",
 				date: Date.UTC(1940, 3, 1, 4, 12, 11)
 			}].forEach(function(oFixture) {
-				sap.ui.getCore().getConfiguration().setTimezone(oFixture.timezone);
+				stubTimezone(oFixture.timezone);
 				var oDate1 = new Date(oFixture.date);
 
 				// Before 1941 new year started on 1st of April
@@ -2538,7 +2548,7 @@ sap.ui.define([
 
 				assert.equal(oDateFormat.format(oDate1).toString(), "1 เม.ย. 2483",
 					"succeeding year in " + oFixture.timezone);
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			});
 		});
 
@@ -3223,10 +3233,10 @@ sap.ui.define([
 
 		QUnit.module("Timezone pattern symbol VV", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				stubTimezone("Europe/Berlin");
 			},
 			afterEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -3294,11 +3304,11 @@ sap.ui.define([
 			beforeEach: function () {
 				this.clock = sinon.useFakeTimers(new Date("2021-10-09T02:37:00Z").getTime());
 				// Oct 8th 22:37 (New York -4 EDT)
-				sap.ui.getCore().getConfiguration().setTimezone("America/New_York");
+				stubTimezone("America/New_York");
 			},
 			afterEach: function () {
 				this.clock.restore();
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -3331,10 +3341,10 @@ sap.ui.define([
 
 		QUnit.module("DateFormat with timezone Australia/Sydney", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("Australia/Sydney");
+				stubTimezone("Australia/Sydney");
 			},
 			afterEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -3399,10 +3409,10 @@ sap.ui.define([
 
 		QUnit.module("DateFormat with timezone Europe/Berlin", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				stubTimezone("Europe/Berlin");
 			},
 			afterEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -3441,10 +3451,10 @@ sap.ui.define([
 
 		QUnit.module("DateFormat with timezone America/Adak", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("America/Adak");
+				stubTimezone("America/Adak");
 			},
 			afterEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -3483,10 +3493,10 @@ sap.ui.define([
 
 		QUnit.module("DateFormat with timezone Pacific/Kiritimati", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("Pacific/Kiritimati");
+				stubTimezone("Pacific/Kiritimati");
 			},
 			afterEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -3515,10 +3525,10 @@ sap.ui.define([
 
 		QUnit.module("DateFormat with timezone America/New_York", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("America/New_York");
+				stubTimezone("America/New_York");
 			},
 			afterEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
@@ -3569,7 +3579,7 @@ sap.ui.define([
 				{timezone: "Pacific/Fiji",          expectedDate: "09.10.2021, 14:37:00"}, // +12:00
 				{timezone: "Pacific/Chatham",       expectedDate: "09.10.2021, 16:22:00"}  // +13:45
 			].forEach(function(oFixture) {
-				sap.ui.getCore().getConfiguration().setTimezone(oFixture.timezone);
+				stubTimezone(oFixture.timezone);
 				var oDateFormat = DateFormat.getDateTimeInstance(new Locale("de"));
 				var sFormatted = oDateFormat.format(oDate);
 
@@ -3640,10 +3650,10 @@ sap.ui.define([
 
 		QUnit.module("DateFormat with timezone Europe/Berlin", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone("Europe/Berlin");
+				stubTimezone("Europe/Berlin");
 			},
 			afterEach: function () {
-				sap.ui.getCore().getConfiguration().setTimezone(null);
+				stubTimezone(null);
 			}
 		});
 
