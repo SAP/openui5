@@ -418,9 +418,13 @@ sap.ui.define([
 				if (oUriParams.has('sap-timezone')) {
 					// validate the IANA timezone ID, but do not trigger a localizationChanged event
 					// because the initialization should not trigger a "*Changed" event
+					Log.warning("Timezone configuration cannot be changed at the moment");
 					var sTimezone = oUriParams.get('sap-timezone');
 					if (checkTimezone(sTimezone)) {
+						/*
+						TODO Timezone Configuration: re-activate following line when re-enabling Configuration#setTimezone
 						this.timezone = sTimezone;
+						*/
 					}
 				}
 
@@ -763,14 +767,19 @@ sap.ui.define([
 		},
 
 		/**
-		 * Retrieves the configured IANA timezone ID
+		 * <b>Note: Due to compatibility considerations, this function will always return the timezone of the browser/host system
+		 * in this release</b>
+		 *
+		 * Retrieves the configured IANA timezone ID.
 		 *
 		 * @returns {string} The configured IANA timezone ID, e.g. "America/New_York"
 		 * @public
 		 * @since 1.99.0
 		 */
 		getTimezone : function () {
-			return this.getValue("timezone");
+			// TODO Timezone Configuration: re-activate following line when re-enabling Configuration#setTimezone
+			// return this.getValue("timezone");
+			return TimezoneUtil.getLocalTimezone();
 		},
 
 		/**
@@ -860,6 +869,9 @@ sap.ui.define([
 		},
 
 		/**
+		 * <b>Note: Due to compatibility considerations, this function has no effect in this release.
+		 * The timezone configuration will always reflect the timezone of the browser/host system.</b>
+		 *
 		 * Sets the timezone such that all date and time based calculations use this timezone.
 		 *
 		 * When the timezone has changed, the Core will fire its
@@ -875,6 +887,10 @@ sap.ui.define([
 			check(sTimezone == null || typeof sTimezone === 'string',
 				"Configuration.setTimezone: sTimezone must be null or be a string", /* warn= */ true);
 
+			Log.warning("Timezone configuration cannot be changed at the moment");
+			sTimezone != null && checkTimezone(sTimezone);
+			/*
+			TODO Timezone Configuration: re-activate following code when re-enabling Configuration#setTimezone
 			if (sTimezone == null || !checkTimezone(sTimezone)) {
 				sTimezone = TimezoneUtil.getLocalTimezone();
 			}
@@ -884,7 +900,7 @@ sap.ui.define([
 				var mChanges = this._collect();
 				mChanges.timezone = sTimezone;
 				this._endCollect();
-			}
+			} */
 			return this;
 		},
 
