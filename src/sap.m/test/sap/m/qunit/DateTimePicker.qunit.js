@@ -1300,6 +1300,22 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
+	QUnit.test("Timezone ID without a translation are also displayed", function(assert) {
+		// arrange
+		var oDTP = new DateTimePicker({
+			timezone: "Etc/GMT-8",
+			showTimezone: true
+		}).placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assert
+		assert.equal(oDTP.getDomRef().querySelector(".sapMDTPTimezoneLabel").innerText, "Etc/GMT-8",
+			"Timezone ID is displayed");
+
+		// clean
+		oDTP.destroy();
+	});
+
 	QUnit.module("Events");
 
 	QUnit.test("afterValueHelpOpen and afterValueHelpClose event fire when value help opens and closes", function(assert) {
