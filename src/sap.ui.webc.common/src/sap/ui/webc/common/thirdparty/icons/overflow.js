@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/overflow', './v4/overflow'], function (exports, Theme, overflow$1, overflow$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/overflow", "./v4/overflow"], function (_exports, _Theme, _overflow, _overflow2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? overflow$1.pathData : overflow$2.pathData;
-	var overflow = "overflow";
-
-	exports.accData = overflow$1.accData;
-	exports.ltr = overflow$1.ltr;
-	exports.default = overflow;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _overflow.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _overflow.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _overflow.pathData : _overflow2.pathData;
+  _exports.pathData = pathData;
+  var _default = "overflow";
+  _exports.default = _default;
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/trend-down', './v4/trend-down'], function (exports, Theme, trendDown$1, trendDown$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/trend-down", "./v4/trend-down"], function (_exports, _Theme, _trendDown, _trendDown2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? trendDown$1.pathData : trendDown$2.pathData;
-	var trendDown = "trend-down";
-
-	exports.accData = trendDown$1.accData;
-	exports.ltr = trendDown$1.ltr;
-	exports.default = trendDown;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _trendDown.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _trendDown.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _trendDown.pathData : _trendDown2.pathData;
+  _exports.pathData = pathData;
+  var _default = "trend-down";
+  _exports.default = _default;
 });

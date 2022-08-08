@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var sceneSvg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="320" height="240" viewBox="0 0 320 240" id="sapIllus-Scene-SuccessCheckMark">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="320" height="240" viewBox="0 0 320 240" id="sapIllus-Scene-SuccessCheckMark">
 <rect class="sapIllus_ObjectFillColor" fill="var(sapIllus_ObjectFillColor)" x="115.9017" y="15.7201" width="3.6366" height="2.1791" rx="1.0895" transform="translate(4.3792 -19.1684) rotate(9.4846)"/>
 <circle class="sapIllus_BackgroundColor" fill="var(sapIllus_BackgroundColor)" cx="149.698" cy="125.0103" r="103.679"/>
 <rect class="sapIllus_Layering1" fill="var(sapIllus_Layering1)" x="145.0592" y="158.3959" width="12.6402" height="29.5245" transform="translate(34.4918 -24.9245) rotate(10.6162)"/>
@@ -44,7 +49,5 @@ sap.ui.define(function () { 'use strict';
 <path class="sapIllus_ObjectFillColor" d="M135.7286,180.4434a3.2219,3.2219,0,0,0,1.376,2.1186l3.0048,2.0567a3.4353,3.4353,0,0,0,4.6954-.792,3.16,3.16,0,0,0,.5615-2.4111,3.229,3.229,0,0,0-1.376-2.12l-3.0059-2.0566a3.4349,3.4349,0,0,0-4.6943.7925A3.1572,3.1572,0,0,0,135.7286,180.4434Z"/>
 </svg>
 `;
-
-	return sceneSvg;
-
+  _exports.default = _default;
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/scissors', './v4/scissors'], function (exports, Theme, scissors$1, scissors$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/scissors", "./v4/scissors"], function (_exports, _Theme, _scissors, _scissors2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? scissors$1.pathData : scissors$2.pathData;
-	var scissors = "scissors";
-
-	exports.accData = scissors$1.accData;
-	exports.ltr = scissors$1.ltr;
-	exports.default = scissors;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _scissors.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _scissors.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _scissors.pathData : _scissors2.pathData;
+  _exports.pathData = pathData;
+  var _default = "scissors";
+  _exports.default = _default;
 });

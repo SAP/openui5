@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/user-edit', './v4/user-edit'], function (exports, Theme, userEdit$1, userEdit$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/user-edit", "./v4/user-edit"], function (_exports, _Theme, _userEdit, _userEdit2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? userEdit$1.pathData : userEdit$2.pathData;
-	var userEdit = "user-edit";
-
-	exports.accData = userEdit$1.accData;
-	exports.ltr = userEdit$1.ltr;
-	exports.default = userEdit;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _userEdit.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _userEdit.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _userEdit.pathData : _userEdit2.pathData;
+  _exports.pathData = pathData;
+  var _default = "user-edit";
+  _exports.default = _default;
 });

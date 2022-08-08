@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/multiple-bar-chart', './v4/multiple-bar-chart'], function (exports, Theme, multipleBarChart$1, multipleBarChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/multiple-bar-chart", "./v4/multiple-bar-chart"], function (_exports, _Theme, _multipleBarChart, _multipleBarChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? multipleBarChart$1.pathData : multipleBarChart$2.pathData;
-	var multipleBarChart = "multiple-bar-chart";
-
-	exports.accData = multipleBarChart$1.accData;
-	exports.ltr = multipleBarChart$1.ltr;
-	exports.default = multipleBarChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _multipleBarChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _multipleBarChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _multipleBarChart.pathData : _multipleBarChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "multiple-bar-chart";
+  _exports.default = _default;
 });

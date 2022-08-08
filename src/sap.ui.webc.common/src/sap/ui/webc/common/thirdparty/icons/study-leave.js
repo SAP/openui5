@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/study-leave', './v4/study-leave'], function (exports, Theme, studyLeave$1, studyLeave$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/study-leave", "./v4/study-leave"], function (_exports, _Theme, _studyLeave, _studyLeave2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? studyLeave$1.pathData : studyLeave$2.pathData;
-	var studyLeave = "study-leave";
-
-	exports.accData = studyLeave$1.accData;
-	exports.ltr = studyLeave$1.ltr;
-	exports.default = studyLeave;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _studyLeave.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _studyLeave.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _studyLeave.pathData : _studyLeave2.pathData;
+  _exports.pathData = pathData;
+  var _default = "study-leave";
+  _exports.default = _default;
 });

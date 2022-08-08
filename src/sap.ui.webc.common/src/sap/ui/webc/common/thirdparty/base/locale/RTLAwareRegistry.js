@@ -1,16 +1,21 @@
-sap.ui.define(['exports'], function (exports) { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	const rtlAwareSet = new Set();
-	const markAsRtlAware = klass => {
-		rtlAwareSet.add(klass);
-	};
-	const isRtlAware = klass => {
-		return rtlAwareSet.has(klass);
-	};
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.markAsRtlAware = _exports.isRtlAware = void 0;
+  const rtlAwareSet = new Set();
 
-	exports.isRtlAware = isRtlAware;
-	exports.markAsRtlAware = markAsRtlAware;
+  const markAsRtlAware = klass => {
+    rtlAwareSet.add(klass);
+  };
 
-	Object.defineProperty(exports, '__esModule', { value: true });
+  _exports.markAsRtlAware = markAsRtlAware;
 
+  const isRtlAware = klass => {
+    return rtlAwareSet.has(klass);
+  };
+
+  _exports.isRtlAware = isRtlAware;
 });

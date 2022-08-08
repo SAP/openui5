@@ -1,22 +1,43 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations', './sapIllus-Dialog-NoNotifications', './sapIllus-Scene-NoNotifications', './sapIllus-Spot-NoNotifications', '../generated/i18n/i18n-defaults'], function (exports, Illustrations, sapIllusDialogNoNotifications, sapIllusSceneNoNotifications, sapIllusSpotNoNotifications, i18nDefaults) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations", "./sapIllus-Dialog-NoNotifications", "./sapIllus-Scene-NoNotifications", "./sapIllus-Spot-NoNotifications", "../generated/i18n/i18n-defaults"], function (_exports, _Illustrations, _sapIllusDialogNoNotifications, _sapIllusSceneNoNotifications, _sapIllusSpotNoNotifications, _i18nDefaults) {
+  "use strict";
 
-	const name = "NoNotifications";
-	const set = "fiori";
-	const title = i18nDefaults.IM_TITLE_NONOTIFICATIONS;
-	const subtitle = i18nDefaults.IM_SUBTITLE_NONOTIFICATIONS;
-	Illustrations.registerIllustration(name, {
-		dialogSvg: sapIllusDialogNoNotifications,
-		sceneSvg: sapIllusSceneNoNotifications,
-		spotSvg: sapIllusSpotNoNotifications,
-		title,
-		subtitle,
-		set,
-	});
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "dialogSvg", {
+    enumerable: true,
+    get: function () {
+      return _sapIllusDialogNoNotifications.default;
+    }
+  });
+  Object.defineProperty(_exports, "sceneSvg", {
+    enumerable: true,
+    get: function () {
+      return _sapIllusSceneNoNotifications.default;
+    }
+  });
+  Object.defineProperty(_exports, "spotSvg", {
+    enumerable: true,
+    get: function () {
+      return _sapIllusSpotNoNotifications.default;
+    }
+  });
+  _sapIllusDialogNoNotifications = _interopRequireDefault(_sapIllusDialogNoNotifications);
+  _sapIllusSceneNoNotifications = _interopRequireDefault(_sapIllusSceneNoNotifications);
+  _sapIllusSpotNoNotifications = _interopRequireDefault(_sapIllusSpotNoNotifications);
 
-	exports.dialogSvg = sapIllusDialogNoNotifications;
-	exports.sceneSvg = sapIllusSceneNoNotifications;
-	exports.spotSvg = sapIllusSpotNoNotifications;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  const name = "NoNotifications";
+  const set = "fiori";
+  const title = _i18nDefaults.IM_TITLE_NONOTIFICATIONS;
+  const subtitle = _i18nDefaults.IM_SUBTITLE_NONOTIFICATIONS;
+  (0, _Illustrations.registerIllustration)(name, {
+    dialogSvg: _sapIllusDialogNoNotifications.default,
+    sceneSvg: _sapIllusSceneNoNotifications.default,
+    spotSvg: _sapIllusSpotNoNotifications.default,
+    title,
+    subtitle,
+    set
+  });
 });

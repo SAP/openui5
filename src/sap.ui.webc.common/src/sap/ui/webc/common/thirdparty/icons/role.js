@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/role', './v4/role'], function (exports, Theme, role$1, role$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/role", "./v4/role"], function (_exports, _Theme, _role, _role2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? role$1.pathData : role$2.pathData;
-	var role = "role";
-
-	exports.accData = role$1.accData;
-	exports.ltr = role$1.ltr;
-	exports.default = role;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _role.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _role.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _role.pathData : _role2.pathData;
+  _exports.pathData = pathData;
+  var _default = "role";
+  _exports.default = _default;
 });

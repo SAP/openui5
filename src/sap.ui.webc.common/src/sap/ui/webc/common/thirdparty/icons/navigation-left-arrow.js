@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/navigation-left-arrow', './v4/navigation-left-arrow'], function (exports, Theme, navigationLeftArrow$1, navigationLeftArrow$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/navigation-left-arrow", "./v4/navigation-left-arrow"], function (_exports, _Theme, _navigationLeftArrow, _navigationLeftArrow2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? navigationLeftArrow$1.pathData : navigationLeftArrow$2.pathData;
-	var navigationLeftArrow = "navigation-left-arrow";
-
-	exports.accData = navigationLeftArrow$1.accData;
-	exports.ltr = navigationLeftArrow$1.ltr;
-	exports.default = navigationLeftArrow;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _navigationLeftArrow.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _navigationLeftArrow.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _navigationLeftArrow.pathData : _navigationLeftArrow2.pathData;
+  _exports.pathData = pathData;
+  var _default = "navigation-left-arrow";
+  _exports.default = _default;
 });

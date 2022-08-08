@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sys-find-next', './v4/sys-find-next'], function (exports, Theme, sysFindNext$1, sysFindNext$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sys-find-next", "./v4/sys-find-next"], function (_exports, _Theme, _sysFindNext, _sysFindNext2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? sysFindNext$1.pathData : sysFindNext$2.pathData;
-	var sysFindNext = "sys-find-next";
-
-	exports.accData = sysFindNext$1.accData;
-	exports.ltr = sysFindNext$1.ltr;
-	exports.default = sysFindNext;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _sysFindNext.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _sysFindNext.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _sysFindNext.pathData : _sysFindNext2.pathData;
+  _exports.pathData = pathData;
+  var _default = "sys-find-next";
+  _exports.default = _default;
 });

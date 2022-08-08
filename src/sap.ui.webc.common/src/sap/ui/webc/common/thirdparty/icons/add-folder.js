@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/add-folder', './v4/add-folder'], function (exports, Theme, addFolder$1, addFolder$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/add-folder", "./v4/add-folder"], function (_exports, _Theme, _addFolder, _addFolder2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? addFolder$1.pathData : addFolder$2.pathData;
-	var addFolder = "add-folder";
-
-	exports.accData = addFolder$1.accData;
-	exports.ltr = addFolder$1.ltr;
-	exports.default = addFolder;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _addFolder.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _addFolder.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _addFolder.pathData : _addFolder2.pathData;
+  _exports.pathData = pathData;
+  var _default = "add-folder";
+  _exports.default = _default;
 });

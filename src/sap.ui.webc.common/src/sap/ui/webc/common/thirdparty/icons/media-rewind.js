@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/media-rewind', './v4/media-rewind'], function (exports, Theme, mediaRewind$1, mediaRewind$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/media-rewind", "./v4/media-rewind"], function (_exports, _Theme, _mediaRewind, _mediaRewind2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? mediaRewind$1.pathData : mediaRewind$2.pathData;
-	var mediaRewind = "media-rewind";
-
-	exports.accData = mediaRewind$1.accData;
-	exports.ltr = mediaRewind$1.ltr;
-	exports.default = mediaRewind;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _mediaRewind.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _mediaRewind.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _mediaRewind.pathData : _mediaRewind2.pathData;
+  _exports.pathData = pathData;
+  var _default = "media-rewind";
+  _exports.default = _default;
 });

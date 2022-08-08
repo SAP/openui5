@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var dialogSvg = `<svg width="160" height="142" viewBox="0 0 160 142" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-EmptyPlanningCalendar">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="160" height="142" viewBox="0 0 160 142" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-EmptyPlanningCalendar">
 <circle cx="70.7182" cy="70.7182" r="70.7182" fill="var(--sapContent_Illustrative_Color7)"/>
 <mask id="mask0_1663_6728" class="sapIllus_MaskTypeAlpha" maskUnits="userSpaceOnUse" x="0" y="0" width="142" height="142">
 <circle cx="70.7182" cy="70.7182" r="70.7182" fill="var(--sapContent_Illustrative_Color7)"/>
@@ -79,7 +84,5 @@ sap.ui.define(function () { 'use strict';
 <path d="M105.511 55.5688C105.49 56.0266 105.433 56.482 105.34 56.9307C105.117 57.982 104.652 58.9666 103.98 59.8055C103.824 60.0031 103.753 60.2546 103.783 60.5045C103.812 60.7545 103.94 60.9825 104.138 61.1384C104.335 61.2943 104.587 61.3653 104.837 61.3358C105.087 61.3063 105.315 61.1787 105.471 60.9811C106.324 59.9108 106.916 58.6556 107.197 57.3159C107.319 56.7406 107.392 56.1563 107.416 55.5688H105.511Z" fill="var(--sapContent_Illustrative_Color6)"/>
 </svg>
 `;
-
-	return dialogSvg;
-
+  _exports.default = _default;
 });

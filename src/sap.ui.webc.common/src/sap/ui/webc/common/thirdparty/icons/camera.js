@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/camera', './v4/camera'], function (exports, Theme, camera$1, camera$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/camera", "./v4/camera"], function (_exports, _Theme, _camera, _camera2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? camera$1.pathData : camera$2.pathData;
-	var camera = "camera";
-
-	exports.accData = camera$1.accData;
-	exports.ltr = camera$1.ltr;
-	exports.default = camera;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _camera.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _camera.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _camera.pathData : _camera2.pathData;
+  _exports.pathData = pathData;
+  var _default = "camera";
+  _exports.default = _default;
 });

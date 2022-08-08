@@ -1,22 +1,43 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations', './sapIllus-Dialog-FilterTable', './sapIllus-Scene-FilterTable', './sapIllus-Spot-FilterTable', '../generated/i18n/i18n-defaults'], function (exports, Illustrations, sapIllusDialogFilterTable, sapIllusSceneFilterTable, sapIllusSpotFilterTable, i18nDefaults) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations", "./sapIllus-Dialog-FilterTable", "./sapIllus-Scene-FilterTable", "./sapIllus-Spot-FilterTable", "../generated/i18n/i18n-defaults"], function (_exports, _Illustrations, _sapIllusDialogFilterTable, _sapIllusSceneFilterTable, _sapIllusSpotFilterTable, _i18nDefaults) {
+  "use strict";
 
-	const name = "FilterTable";
-	const set = "fiori";
-	const title = i18nDefaults.IM_TITLE_FILTERTABLE;
-	const subtitle = i18nDefaults.IM_SUBTITLE_FILTERTABLE;
-	Illustrations.registerIllustration(name, {
-		dialogSvg: sapIllusDialogFilterTable,
-		sceneSvg: sapIllusSceneFilterTable,
-		spotSvg: sapIllusSpotFilterTable,
-		title,
-		subtitle,
-		set,
-	});
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "dialogSvg", {
+    enumerable: true,
+    get: function () {
+      return _sapIllusDialogFilterTable.default;
+    }
+  });
+  Object.defineProperty(_exports, "sceneSvg", {
+    enumerable: true,
+    get: function () {
+      return _sapIllusSceneFilterTable.default;
+    }
+  });
+  Object.defineProperty(_exports, "spotSvg", {
+    enumerable: true,
+    get: function () {
+      return _sapIllusSpotFilterTable.default;
+    }
+  });
+  _sapIllusDialogFilterTable = _interopRequireDefault(_sapIllusDialogFilterTable);
+  _sapIllusSceneFilterTable = _interopRequireDefault(_sapIllusSceneFilterTable);
+  _sapIllusSpotFilterTable = _interopRequireDefault(_sapIllusSpotFilterTable);
 
-	exports.dialogSvg = sapIllusDialogFilterTable;
-	exports.sceneSvg = sapIllusSceneFilterTable;
-	exports.spotSvg = sapIllusSpotFilterTable;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  const name = "FilterTable";
+  const set = "fiori";
+  const title = _i18nDefaults.IM_TITLE_FILTERTABLE;
+  const subtitle = _i18nDefaults.IM_SUBTITLE_FILTERTABLE;
+  (0, _Illustrations.registerIllustration)(name, {
+    dialogSvg: _sapIllusDialogFilterTable.default,
+    sceneSvg: _sapIllusSceneFilterTable.default,
+    spotSvg: _sapIllusSpotFilterTable.default,
+    title,
+    subtitle,
+    set
+  });
 });

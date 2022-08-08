@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var spotSvg = `<svg width="128" height="129" viewBox="0 0 128 129" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Spot-SimpleBell">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="128" height="129" viewBox="0 0 128 129" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Spot-SimpleBell">
 <path d="M68.9097 22.6104C66.926 22.6104 65.0235 23.3984 63.6209 24.8011C62.2182 26.2038 61.4302 28.1063 61.4302 30.0899V40.425H76.3993V30.0899C76.3966 28.1053 75.6064 26.2029 74.2021 24.8005C72.7978 23.3981 70.8943 22.6104 68.9097 22.6104V22.6104Z" fill="var(--sapContent_Illustrative_Color15)"/>
 <path d="M107.943 72.0604V105.86H29.3477V72.0604C29.3477 61.638 33.488 51.6425 40.8578 44.2727C48.2275 36.903 58.223 32.7627 68.6455 32.7627C79.0679 32.7627 89.0634 36.903 96.4332 44.2727C103.803 51.6425 107.943 61.638 107.943 72.0604Z" fill="var(--sapContent_Illustrative_Color3)"/>
 <path d="M68.9096 129C74.2247 129 78.5334 124.691 78.5334 119.376C78.5334 114.061 74.2247 109.753 68.9096 109.753C63.5946 109.753 59.2859 114.061 59.2859 119.376C59.2859 124.691 63.5946 129 68.9096 129Z" fill="var(--sapContent_Illustrative_Color3)"/>
@@ -13,7 +18,5 @@ sap.ui.define(function () { 'use strict';
 <circle cx="25" cy="55" r="3" fill="var(--sapContent_Illustrative_Color20)"/>
 </svg>
 `;
-
-	return spotSvg;
-
+  _exports.default = _default;
 });

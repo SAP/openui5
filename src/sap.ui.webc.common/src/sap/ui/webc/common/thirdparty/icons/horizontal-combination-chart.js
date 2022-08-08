@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/horizontal-combination-chart', './v4/horizontal-combination-chart'], function (exports, Theme, horizontalCombinationChart$1, horizontalCombinationChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/horizontal-combination-chart", "./v4/horizontal-combination-chart"], function (_exports, _Theme, _horizontalCombinationChart, _horizontalCombinationChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? horizontalCombinationChart$1.pathData : horizontalCombinationChart$2.pathData;
-	var horizontalCombinationChart = "horizontal-combination-chart";
-
-	exports.accData = horizontalCombinationChart$1.accData;
-	exports.ltr = horizontalCombinationChart$1.ltr;
-	exports.default = horizontalCombinationChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _horizontalCombinationChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _horizontalCombinationChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _horizontalCombinationChart.pathData : _horizontalCombinationChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "horizontal-combination-chart";
+  _exports.default = _default;
 });

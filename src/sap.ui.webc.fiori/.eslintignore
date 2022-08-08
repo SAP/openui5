@@ -2,3 +2,4 @@
 dist
 target
 src/sap/ui/webc/fiori/thirdparty
+src/sap/ui/webc/fiori/lib

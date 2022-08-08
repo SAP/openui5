@@ -1,18 +1,39 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations', './tnt-Dialog-Components', './tnt-Scene-Components', './tnt-Spot-Components'], function (exports, Illustrations, tntDialogComponents, tntSceneComponents, tntSpotComponents) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations", "./tnt-Dialog-Components", "./tnt-Scene-Components", "./tnt-Spot-Components"], function (_exports, _Illustrations, _tntDialogComponents, _tntSceneComponents, _tntSpotComponents) {
+  "use strict";
 
-	const name = "Components";
-	const set = "tnt";
-	Illustrations.registerIllustration(name, {
-		dialogSvg: tntDialogComponents,
-		sceneSvg: tntSceneComponents,
-		spotSvg: tntSpotComponents,
-		set,
-	});
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "dialogSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntDialogComponents.default;
+    }
+  });
+  Object.defineProperty(_exports, "sceneSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntSceneComponents.default;
+    }
+  });
+  Object.defineProperty(_exports, "spotSvg", {
+    enumerable: true,
+    get: function () {
+      return _tntSpotComponents.default;
+    }
+  });
+  _tntDialogComponents = _interopRequireDefault(_tntDialogComponents);
+  _tntSceneComponents = _interopRequireDefault(_tntSceneComponents);
+  _tntSpotComponents = _interopRequireDefault(_tntSpotComponents);
 
-	exports.dialogSvg = tntDialogComponents;
-	exports.sceneSvg = tntSceneComponents;
-	exports.spotSvg = tntSpotComponents;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  const name = "Components";
+  const set = "tnt";
+  (0, _Illustrations.registerIllustration)(name, {
+    dialogSvg: _tntDialogComponents.default,
+    sceneSvg: _tntSceneComponents.default,
+    spotSvg: _tntSpotComponents.default,
+    set
+  });
 });

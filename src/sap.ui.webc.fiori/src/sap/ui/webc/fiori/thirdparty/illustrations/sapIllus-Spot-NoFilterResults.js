@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var spotSvg = `<svg width="128" height="129" viewBox="0 0 128 129" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Spot-NoFilterResults">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="128" height="129" viewBox="0 0 128 129" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Spot-NoFilterResults">
 <circle cx="64" cy="64.5776" r="64" fill="var(--sapContent_Illustrative_Color7)"/>
 <mask id="mask0_396_6557" class="sapIllus_MaskTypeAlpha" maskUnits="userSpaceOnUse" x="0" y="0" width="128" height="129">
 <circle cx="64" cy="64.5776" r="64" fill="var(--sapContent_Illustrative_Color7)"/>
@@ -26,7 +31,5 @@ sap.ui.define(function () { 'use strict';
 </g>
 </svg>
 `;
-
-	return spotSvg;
-
+  _exports.default = _default;
 });

@@ -15,6 +15,9 @@
     "type": "git",
     "url": "https://github.com/SAP/openui5.git"
   },
+  "scripts": {
+    "build": "rimraf src/sap/ui/webc/common/thirdparty/ && ui5-webc-prebuild"
+  },
   "dependencies": {
     "@openui5/sap.ui.core": "1.106.0-SNAPSHOT"
   }

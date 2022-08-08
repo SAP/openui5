@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/machine', './v4/machine'], function (exports, Theme, machine$1, machine$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/machine", "./v4/machine"], function (_exports, _Theme, _machine, _machine2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? machine$1.pathData : machine$2.pathData;
-	var machine = "machine";
-
-	exports.accData = machine$1.accData;
-	exports.ltr = machine$1.ltr;
-	exports.default = machine;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _machine.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _machine.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _machine.pathData : _machine2.pathData;
+  _exports.pathData = pathData;
+  var _default = "machine";
+  _exports.default = _default;
 });

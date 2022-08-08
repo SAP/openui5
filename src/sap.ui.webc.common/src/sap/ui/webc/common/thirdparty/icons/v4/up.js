@@ -1,19 +1,26 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons', '../generated/i18n/i18n-defaults'], function (exports, Icons, i18nDefaults) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons", "../generated/i18n/i18n-defaults"], function (_exports, _Icons, _i18nDefaults) {
+  "use strict";
 
-	const name = "up";
-	const pathData = "M256 32l256 448H0zm0 64L64 448h384z";
-	const ltr = false;
-	const accData = i18nDefaults.ICON_UP;
-	const collection = "SAP-icons";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, accData, collection, packageName });
-	var up = "up";
-
-	exports.accData = accData;
-	exports.default = up;
-	exports.ltr = ltr;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
+  const name = "up";
+  const pathData = "M256 32l256 448H0zm0 64L64 448h384z";
+  _exports.pathData = pathData;
+  const ltr = false;
+  _exports.ltr = ltr;
+  const accData = _i18nDefaults.ICON_UP;
+  _exports.accData = accData;
+  const collection = "SAP-icons";
+  const packageName = "@ui5/webcomponents-icons";
+  (0, _Icons.registerIcon)(name, {
+    pathData,
+    ltr,
+    accData,
+    collection,
+    packageName
+  });
+  var _default = "up";
+  _exports.default = _default;
 });

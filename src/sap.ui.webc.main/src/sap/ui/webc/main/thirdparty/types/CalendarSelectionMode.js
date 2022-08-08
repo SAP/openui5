@@ -1,21 +1,58 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/DataType'], function (DataType) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+  "use strict";
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  _DataType = _interopRequireDefault(_DataType);
 
-	var DataType__default = /*#__PURE__*/_interopDefaultLegacy(DataType);
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	const CalendarSelectionModes = {
-		Single: "Single",
-		Multiple: "Multiple",
-		Range: "Range",
-	};
-	class CalendarSelectionMode extends DataType__default {
-		static isValid(value) {
-			return !!CalendarSelectionModes[value];
-		}
-	}
-	CalendarSelectionMode.generateTypeAccessors(CalendarSelectionModes);
+  /**
+   * @lends sap.ui.webcomponents.main.types.CalendarSelectionMode.prototype
+   * @public
+   */
+  const CalendarSelectionModes = {
+    /**
+     * Only one date can be selected at a time
+     * @public
+     * @type {Single}
+     */
+    Single: "Single",
 
-	return CalendarSelectionMode;
+    /**
+     * Several dates can be selected
+     * @public
+     * @type {Multiple}
+     */
+    Multiple: "Multiple",
 
+    /**
+     * A range defined by a start date and an end date can be selected
+     * @public
+     * @type {Range}
+     */
+    Range: "Range"
+  };
+  /**
+   * @class
+   * Different date selection modes for <code>ui5-calendar</code>.
+   * @constructor
+   * @author SAP SE
+   * @alias sap.ui.webcomponents.main.types.CalendarSelectionMode
+   * @public
+   * @enum {string}
+   */
+
+  class CalendarSelectionMode extends _DataType.default {
+    static isValid(value) {
+      return !!CalendarSelectionModes[value];
+    }
+
+  }
+
+  CalendarSelectionMode.generateTypeAccessors(CalendarSelectionModes);
+  var _default = CalendarSelectionMode;
+  _exports.default = _default;
 });

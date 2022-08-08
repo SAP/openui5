@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/fridge', './v4/fridge'], function (exports, Theme, fridge$1, fridge$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/fridge", "./v4/fridge"], function (_exports, _Theme, _fridge, _fridge2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? fridge$1.pathData : fridge$2.pathData;
-	var fridge = "fridge";
-
-	exports.accData = fridge$1.accData;
-	exports.ltr = fridge$1.ltr;
-	exports.default = fridge;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _fridge.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _fridge.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _fridge.pathData : _fridge2.pathData;
+  _exports.pathData = pathData;
+  var _default = "fridge";
+  _exports.default = _default;
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/system-exit-2', './v4/system-exit-2'], function (exports, Theme, systemExit2$1, systemExit2$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/system-exit-2", "./v4/system-exit-2"], function (_exports, _Theme, _systemExit, _systemExit2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? systemExit2$1.pathData : systemExit2$2.pathData;
-	var systemExit2 = "system-exit-2";
-
-	exports.accData = systemExit2$1.accData;
-	exports.ltr = systemExit2$1.ltr;
-	exports.default = systemExit2;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _systemExit.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _systemExit.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _systemExit.pathData : _systemExit2.pathData;
+  _exports.pathData = pathData;
+  var _default = "system-exit-2";
+  _exports.default = _default;
 });

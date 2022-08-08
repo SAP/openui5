@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/negative', './v4/negative'], function (exports, Theme, negative$1, negative$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/negative", "./v4/negative"], function (_exports, _Theme, _negative, _negative2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? negative$1.pathData : negative$2.pathData;
-	var negative = "negative";
-
-	exports.accData = negative$1.accData;
-	exports.ltr = negative$1.ltr;
-	exports.default = negative;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _negative.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _negative.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _negative.pathData : _negative2.pathData;
+  _exports.pathData = pathData;
+  var _default = "negative";
+  _exports.default = _default;
 });

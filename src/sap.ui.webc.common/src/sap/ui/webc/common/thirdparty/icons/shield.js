@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/shield', './v4/shield'], function (exports, Theme, shield$1, shield$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/shield", "./v4/shield"], function (_exports, _Theme, _shield, _shield2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? shield$1.pathData : shield$2.pathData;
-	var shield = "shield";
-
-	exports.accData = shield$1.accData;
-	exports.ltr = shield$1.ltr;
-	exports.default = shield;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _shield.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _shield.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _shield.pathData : _shield2.pathData;
+  _exports.pathData = pathData;
+  var _default = "shield";
+  _exports.default = _default;
 });

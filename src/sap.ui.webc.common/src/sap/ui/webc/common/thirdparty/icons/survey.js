@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/survey', './v4/survey'], function (exports, Theme, survey$1, survey$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/survey", "./v4/survey"], function (_exports, _Theme, _survey, _survey2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? survey$1.pathData : survey$2.pathData;
-	var survey = "survey";
-
-	exports.accData = survey$1.accData;
-	exports.ltr = survey$1.ltr;
-	exports.default = survey;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _survey.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _survey.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _survey.pathData : _survey2.pathData;
+  _exports.pathData = pathData;
+  var _default = "survey";
+  _exports.default = _default;
 });

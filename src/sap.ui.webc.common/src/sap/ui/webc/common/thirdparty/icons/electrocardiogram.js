@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/electrocardiogram', './v4/electrocardiogram'], function (exports, Theme, electrocardiogram$1, electrocardiogram$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/electrocardiogram", "./v4/electrocardiogram"], function (_exports, _Theme, _electrocardiogram, _electrocardiogram2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? electrocardiogram$1.pathData : electrocardiogram$2.pathData;
-	var electrocardiogram = "electrocardiogram";
-
-	exports.accData = electrocardiogram$1.accData;
-	exports.ltr = electrocardiogram$1.ltr;
-	exports.default = electrocardiogram;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _electrocardiogram.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _electrocardiogram.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _electrocardiogram.pathData : _electrocardiogram2.pathData;
+  _exports.pathData = pathData;
+  var _default = "electrocardiogram";
+  _exports.default = _default;
 });

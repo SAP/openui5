@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var dialogSvg = `<svg width="139" height="160" viewBox="0 0 139 160" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-SuccessHighFive">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="139" height="160" viewBox="0 0 139 160" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-SuccessHighFive">
 <circle cx="69.2255" cy="90.7748" r="69.2255" fill="var(--sapContent_Illustrative_Color7)"/>
 <path d="M33.5638 65.5206C33.5638 64.7133 31.2204 64.0671 28.0893 63.9203C27.9103 60.7932 27.221 58.4679 26.4136 58.4697C25.6062 58.4715 24.9349 60.8146 24.763 63.9579C21.623 64.1727 19.2885 64.8744 19.2992 65.6835C19.31 66.4926 21.6427 67.1388 24.7738 67.2838C24.9617 70.4109 25.642 72.7362 26.4476 72.7344C27.2532 72.7326 27.9282 70.3894 28.1 67.2462C31.2401 67.0314 33.5728 66.3297 33.5638 65.5206Z" fill="var(--sapContent_Illustrative_Color18)"/>
 <path d="M106.565 135.185C106.565 134.567 104.773 134.073 102.379 133.961C102.242 131.57 101.715 129.792 101.097 129.793C100.48 129.794 99.9666 131.586 99.8352 133.99C97.434 134.154 95.6488 134.691 95.657 135.309C95.6652 135.928 97.449 136.422 99.8434 136.533C99.9872 138.924 100.507 140.703 101.123 140.701C101.739 140.7 102.256 138.908 102.387 136.504C104.788 136.34 106.572 135.804 106.565 135.185Z" fill="var(--sapContent_Illustrative_Color18)"/>
@@ -46,7 +51,5 @@ sap.ui.define(function () { 'use strict';
 </g>
 </svg>
 `;
-
-	return dialogSvg;
-
+  _exports.default = _default;
 });

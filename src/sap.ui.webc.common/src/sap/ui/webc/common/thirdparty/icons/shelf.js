@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/shelf', './v4/shelf'], function (exports, Theme, shelf$1, shelf$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/shelf", "./v4/shelf"], function (_exports, _Theme, _shelf, _shelf2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? shelf$1.pathData : shelf$2.pathData;
-	var shelf = "shelf";
-
-	exports.accData = shelf$1.accData;
-	exports.ltr = shelf$1.ltr;
-	exports.default = shelf;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _shelf.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _shelf.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _shelf.pathData : _shelf2.pathData;
+  _exports.pathData = pathData;
+  var _default = "shelf";
+  _exports.default = _default;
 });

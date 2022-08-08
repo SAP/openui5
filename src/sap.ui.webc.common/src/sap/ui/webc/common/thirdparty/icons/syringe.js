@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/syringe', './v4/syringe'], function (exports, Theme, syringe$1, syringe$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/syringe", "./v4/syringe"], function (_exports, _Theme, _syringe, _syringe2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? syringe$1.pathData : syringe$2.pathData;
-	var syringe = "syringe";
-
-	exports.accData = syringe$1.accData;
-	exports.ltr = syringe$1.ltr;
-	exports.default = syringe;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _syringe.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _syringe.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _syringe.pathData : _syringe2.pathData;
+  _exports.pathData = pathData;
+  var _default = "syringe";
+  _exports.default = _default;
 });

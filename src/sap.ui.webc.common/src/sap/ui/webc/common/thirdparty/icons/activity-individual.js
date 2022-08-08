@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/activity-individual', './v4/activity-individual'], function (exports, Theme, activityIndividual$1, activityIndividual$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/activity-individual", "./v4/activity-individual"], function (_exports, _Theme, _activityIndividual, _activityIndividual2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? activityIndividual$1.pathData : activityIndividual$2.pathData;
-	var activityIndividual = "activity-individual";
-
-	exports.accData = activityIndividual$1.accData;
-	exports.ltr = activityIndividual$1.ltr;
-	exports.default = activityIndividual;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _activityIndividual.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _activityIndividual.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _activityIndividual.pathData : _activityIndividual2.pathData;
+  _exports.pathData = pathData;
+  var _default = "activity-individual";
+  _exports.default = _default;
 });

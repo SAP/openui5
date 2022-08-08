@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/paper-plane', './v4/paper-plane'], function (exports, Theme, paperPlane$1, paperPlane$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/paper-plane", "./v4/paper-plane"], function (_exports, _Theme, _paperPlane, _paperPlane2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? paperPlane$1.pathData : paperPlane$2.pathData;
-	var paperPlane = "paper-plane";
-
-	exports.accData = paperPlane$1.accData;
-	exports.ltr = paperPlane$1.ltr;
-	exports.default = paperPlane;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _paperPlane.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _paperPlane.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _paperPlane.pathData : _paperPlane2.pathData;
+  _exports.pathData = pathData;
+  var _default = "paper-plane";
+  _exports.default = _default;
 });

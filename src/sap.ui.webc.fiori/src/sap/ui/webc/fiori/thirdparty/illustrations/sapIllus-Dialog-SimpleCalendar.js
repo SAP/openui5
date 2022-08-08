@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var dialogSvg = `<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-SimpleCalendar">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-SimpleCalendar">
 <g clip-path="url(#clip0_101_5566)">
 <path d="M137.769 31.0923H14.3444C13.448 31.0923 12.7214 31.8189 12.7214 32.7152V128.339C12.7214 129.236 13.448 129.962 14.3444 129.962H137.769C138.665 129.962 139.392 129.236 139.392 128.339V32.7152C139.392 31.8189 138.665 31.0923 137.769 31.0923Z" fill="var(--sapContent_Illustrative_Color6)"/>
 <path d="M132.048 25.7559H8.62292C7.72661 25.7559 7 26.4825 7 27.3788V123.003C7 123.899 7.72661 124.626 8.62292 124.626H132.048C132.944 124.626 133.67 123.899 133.67 123.003V27.3788C133.67 26.4825 132.944 25.7559 132.048 25.7559Z" fill="var(--sapContent_Illustrative_Color2)"/>
@@ -49,7 +54,5 @@ sap.ui.define(function () { 'use strict';
 </defs>
 </svg>
 `;
-
-	return dialogSvg;
-
+  _exports.default = _default;
 });

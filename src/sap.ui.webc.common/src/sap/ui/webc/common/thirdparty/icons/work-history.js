@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/work-history', './v4/work-history'], function (exports, Theme, workHistory$1, workHistory$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/work-history", "./v4/work-history"], function (_exports, _Theme, _workHistory, _workHistory2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? workHistory$1.pathData : workHistory$2.pathData;
-	var workHistory = "work-history";
-
-	exports.accData = workHistory$1.accData;
-	exports.ltr = workHistory$1.ltr;
-	exports.default = workHistory;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _workHistory.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _workHistory.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _workHistory.pathData : _workHistory2.pathData;
+  _exports.pathData = pathData;
+  var _default = "work-history";
+  _exports.default = _default;
 });

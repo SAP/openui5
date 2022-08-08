@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/hr-approval', './v4/hr-approval'], function (exports, Theme, hrApproval$1, hrApproval$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/hr-approval", "./v4/hr-approval"], function (_exports, _Theme, _hrApproval, _hrApproval2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? hrApproval$1.pathData : hrApproval$2.pathData;
-	var hrApproval = "hr-approval";
-
-	exports.accData = hrApproval$1.accData;
-	exports.ltr = hrApproval$1.ltr;
-	exports.default = hrApproval;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _hrApproval.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _hrApproval.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _hrApproval.pathData : _hrApproval2.pathData;
+  _exports.pathData = pathData;
+  var _default = "hr-approval";
+  _exports.default = _default;
 });

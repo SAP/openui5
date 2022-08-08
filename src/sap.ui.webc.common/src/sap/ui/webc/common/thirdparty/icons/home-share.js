@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/home-share', './v4/home-share'], function (exports, Theme, homeShare$1, homeShare$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/home-share", "./v4/home-share"], function (_exports, _Theme, _homeShare, _homeShare2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? homeShare$1.pathData : homeShare$2.pathData;
-	var homeShare = "home-share";
-
-	exports.accData = homeShare$1.accData;
-	exports.ltr = homeShare$1.ltr;
-	exports.default = homeShare;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _homeShare.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _homeShare.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _homeShare.pathData : _homeShare2.pathData;
+  _exports.pathData = pathData;
+  var _default = "home-share";
+  _exports.default = _default;
 });

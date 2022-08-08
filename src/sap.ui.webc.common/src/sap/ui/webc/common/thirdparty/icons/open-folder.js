@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/open-folder', './v4/open-folder'], function (exports, Theme, openFolder$1, openFolder$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/open-folder", "./v4/open-folder"], function (_exports, _Theme, _openFolder, _openFolder2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? openFolder$1.pathData : openFolder$2.pathData;
-	var openFolder = "open-folder";
-
-	exports.accData = openFolder$1.accData;
-	exports.ltr = openFolder$1.ltr;
-	exports.default = openFolder;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _openFolder.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _openFolder.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _openFolder.pathData : _openFolder2.pathData;
+  _exports.pathData = pathData;
+  var _default = "open-folder";
+  _exports.default = _default;
 });

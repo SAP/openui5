@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/action-settings', './v4/action-settings'], function (exports, Theme, actionSettings$1, actionSettings$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/action-settings", "./v4/action-settings"], function (_exports, _Theme, _actionSettings, _actionSettings2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? actionSettings$1.pathData : actionSettings$2.pathData;
-	var actionSettings = "action-settings";
-
-	exports.accData = actionSettings$1.accData;
-	exports.ltr = actionSettings$1.ltr;
-	exports.default = actionSettings;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _actionSettings.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _actionSettings.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _actionSettings.pathData : _actionSettings2.pathData;
+  _exports.pathData = pathData;
+  var _default = "action-settings";
+  _exports.default = _default;
 });

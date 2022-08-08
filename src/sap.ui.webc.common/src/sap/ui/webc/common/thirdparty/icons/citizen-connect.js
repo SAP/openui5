@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/citizen-connect', './v4/citizen-connect'], function (exports, Theme, citizenConnect$1, citizenConnect$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/citizen-connect", "./v4/citizen-connect"], function (_exports, _Theme, _citizenConnect, _citizenConnect2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? citizenConnect$1.pathData : citizenConnect$2.pathData;
-	var citizenConnect = "citizen-connect";
-
-	exports.accData = citizenConnect$1.accData;
-	exports.ltr = citizenConnect$1.ltr;
-	exports.default = citizenConnect;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _citizenConnect.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _citizenConnect.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _citizenConnect.pathData : _citizenConnect2.pathData;
+  _exports.pathData = pathData;
+  var _default = "citizen-connect";
+  _exports.default = _default;
 });

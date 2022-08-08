@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var sceneSvg = `<svg width="320" height="240" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Scene-SimpleCalendar">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="320" height="240" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Scene-SimpleCalendar">
 <path d="M127.001 124.923H33.0309C17.6963 124.923 5.26514 137.354 5.26514 152.689C5.26514 168.023 17.6963 180.455 33.0309 180.455H127.001C142.336 180.455 154.767 168.023 154.767 152.689C154.767 137.354 142.336 124.923 127.001 124.923Z" fill="var(--sapContent_Illustrative_Color7)"/>
 <path d="M161.212 152.481H67.2421C51.9075 152.481 39.4763 164.913 39.4763 180.247C39.4763 195.582 51.9075 208.013 67.2421 208.013H161.212C176.547 208.013 188.978 195.582 188.978 180.247C188.978 164.913 176.547 152.481 161.212 152.481Z" fill="var(--sapContent_Illustrative_Color7)"/>
 <path d="M283.48 75.6943H189.51C174.175 75.6943 161.744 88.1255 161.744 103.46C161.744 118.795 174.175 131.226 189.51 131.226H283.48C298.815 131.226 311.246 118.795 311.246 103.46C311.246 88.1255 298.815 75.6943 283.48 75.6943Z" fill="var(--sapContent_Illustrative_Color7)"/>
@@ -45,7 +50,5 @@ sap.ui.define(function () { 'use strict';
 <path d="M307.154 57.0975C306.853 57.0936 306.553 57.1417 306.266 57.24C305.985 57.3585 305.725 57.5234 305.493 57.7286L295.47 67.3785C295.027 67.8133 294.757 68.4105 294.717 69.0478C294.674 69.6931 294.875 70.3301 295.277 70.819C295.643 71.2663 296.151 71.5562 296.706 71.6334C297.025 71.7048 297.354 71.7048 297.672 71.6334C297.978 71.5246 298.261 71.3514 298.502 71.1244L308.525 61.4949C308.976 61.0547 309.252 60.451 309.298 59.8052C309.33 59.1676 309.129 58.5414 308.738 58.0544C308.335 57.5638 307.767 57.2573 307.154 57.1993V57.0975Z" fill="var(--sapContent_Illustrative_Color5)"/>
 </svg>
 `;
-
-	return sceneSvg;
-
+  _exports.default = _default;
 });

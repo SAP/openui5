@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/customer-financial-fact-sheet', './v4/customer-financial-fact-sheet'], function (exports, Theme, customerFinancialFactSheet$1, customerFinancialFactSheet$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/customer-financial-fact-sheet", "./v4/customer-financial-fact-sheet"], function (_exports, _Theme, _customerFinancialFactSheet, _customerFinancialFactSheet2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? customerFinancialFactSheet$1.pathData : customerFinancialFactSheet$2.pathData;
-	var customerFinancialFactSheet = "customer-financial-fact-sheet";
-
-	exports.accData = customerFinancialFactSheet$1.accData;
-	exports.ltr = customerFinancialFactSheet$1.ltr;
-	exports.default = customerFinancialFactSheet;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _customerFinancialFactSheet.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _customerFinancialFactSheet.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _customerFinancialFactSheet.pathData : _customerFinancialFactSheet2.pathData;
+  _exports.pathData = pathData;
+  var _default = "customer-financial-fact-sheet";
+  _exports.default = _default;
 });

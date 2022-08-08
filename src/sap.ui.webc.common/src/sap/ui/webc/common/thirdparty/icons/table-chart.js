@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/table-chart', './v4/table-chart'], function (exports, Theme, tableChart$1, tableChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/table-chart", "./v4/table-chart"], function (_exports, _Theme, _tableChart, _tableChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? tableChart$1.pathData : tableChart$2.pathData;
-	var tableChart = "table-chart";
-
-	exports.accData = tableChart$1.accData;
-	exports.ltr = tableChart$1.ltr;
-	exports.default = tableChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _tableChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _tableChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _tableChart.pathData : _tableChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "table-chart";
+  _exports.default = _default;
 });

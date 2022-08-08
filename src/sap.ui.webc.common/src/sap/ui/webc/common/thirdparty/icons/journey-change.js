@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/journey-change', './v4/journey-change'], function (exports, Theme, journeyChange$1, journeyChange$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/journey-change", "./v4/journey-change"], function (_exports, _Theme, _journeyChange, _journeyChange2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? journeyChange$1.pathData : journeyChange$2.pathData;
-	var journeyChange = "journey-change";
-
-	exports.accData = journeyChange$1.accData;
-	exports.ltr = journeyChange$1.ltr;
-	exports.default = journeyChange;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _journeyChange.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _journeyChange.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _journeyChange.pathData : _journeyChange2.pathData;
+  _exports.pathData = pathData;
+  var _default = "journey-change";
+  _exports.default = _default;
 });

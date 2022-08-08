@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/filter-fields', './v4/filter-fields'], function (exports, Theme, filterFields$1, filterFields$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/filter-fields", "./v4/filter-fields"], function (_exports, _Theme, _filterFields, _filterFields2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? filterFields$1.pathData : filterFields$2.pathData;
-	var filterFields = "filter-fields";
-
-	exports.accData = filterFields$1.accData;
-	exports.ltr = filterFields$1.ltr;
-	exports.default = filterFields;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _filterFields.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _filterFields.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _filterFields.pathData : _filterFields2.pathData;
+  _exports.pathData = pathData;
+  var _default = "filter-fields";
+  _exports.default = _default;
 });

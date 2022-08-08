@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/text-color', './v4/text-color'], function (exports, Theme, textColor$1, textColor$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/text-color", "./v4/text-color"], function (_exports, _Theme, _textColor, _textColor2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? textColor$1.pathData : textColor$2.pathData;
-	var textColor = "text-color";
-
-	exports.accData = textColor$1.accData;
-	exports.ltr = textColor$1.ltr;
-	exports.default = textColor;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _textColor.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _textColor.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _textColor.pathData : _textColor2.pathData;
+  _exports.pathData = pathData;
+  var _default = "text-color";
+  _exports.default = _default;
 });

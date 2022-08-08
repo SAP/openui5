@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/dropdown', './v4/dropdown'], function (exports, Theme, dropdown$1, dropdown$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/dropdown", "./v4/dropdown"], function (_exports, _Theme, _dropdown, _dropdown2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? dropdown$1.pathData : dropdown$2.pathData;
-	var dropdown = "dropdown";
-
-	exports.accData = dropdown$1.accData;
-	exports.ltr = dropdown$1.ltr;
-	exports.default = dropdown;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _dropdown.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _dropdown.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _dropdown.pathData : _dropdown2.pathData;
+  _exports.pathData = pathData;
+  var _default = "dropdown";
+  _exports.default = _default;
 });

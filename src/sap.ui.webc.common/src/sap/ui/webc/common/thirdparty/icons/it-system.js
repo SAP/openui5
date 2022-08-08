@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/it-system', './v4/it-system'], function (exports, Theme, itSystem$1, itSystem$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/it-system", "./v4/it-system"], function (_exports, _Theme, _itSystem, _itSystem2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? itSystem$1.pathData : itSystem$2.pathData;
-	var itSystem = "it-system";
-
-	exports.accData = itSystem$1.accData;
-	exports.ltr = itSystem$1.ltr;
-	exports.default = itSystem;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _itSystem.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _itSystem.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _itSystem.pathData : _itSystem2.pathData;
+  _exports.pathData = pathData;
+  var _default = "it-system";
+  _exports.default = _default;
 });

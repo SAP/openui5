@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sys-cancel-2', './v4/sys-cancel-2'], function (exports, Theme, sysCancel2$1, sysCancel2$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sys-cancel-2", "./v4/sys-cancel-2"], function (_exports, _Theme, _sysCancel, _sysCancel2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? sysCancel2$1.pathData : sysCancel2$2.pathData;
-	var sysCancel2 = "sys-cancel-2";
-
-	exports.accData = sysCancel2$1.accData;
-	exports.ltr = sysCancel2$1.ltr;
-	exports.default = sysCancel2;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _sysCancel.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _sysCancel.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _sysCancel.pathData : _sysCancel2.pathData;
+  _exports.pathData = pathData;
+  var _default = "sys-cancel-2";
+  _exports.default = _default;
 });

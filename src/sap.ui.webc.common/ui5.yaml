@@ -1,12 +1,16 @@
 ---
-specVersion: "2.0"
+specVersion: "2.1"
 type: library
 metadata:
   name: sap.ui.webc.common
   copyright: |-
-   OpenUI5
-    * (c) Copyright 2009-${currentYear} SAP SE or an SAP affiliate company.
-    * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+    OpenUI5
+     * (c) Copyright 2009-${currentYear} SAP SE or an SAP affiliate company.
+     * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+resources:
+  configuration:
+    paths:
+      src: "src/"
 builder:
   jsdoc:
     excludes:
@@ -49,3 +53,102 @@ builder:
             resolve: false
             resolveConditional: false
             renderer: true
+customConfiguration:
+  ui5-tooling-webc:
+    packages:
+      # base
+      '@ui5/webcomponents-base':
+        aliases:
+          "^@ui5\/webcomponents-base\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/base/$1"
+        reverseAliases:
+          "^/resources/sap/ui/webc/common/thirdparty/base/(.*?)$": "@ui5/webcomponents-base/dist/$1"
+        inputPath: "../../node_modules/@ui5/webcomponents-base/dist/"
+        outputPath: "src/sap/ui/webc/common/thirdparty/base/"
+        inputPathFilters:
+          - "**/*{.js,.json,.css}"
+          - "!assets/"
+          - "!test/"
+          - "!**/*-static.js"
+          - "!sap/"
+          - "!**/caja-html-sanitizer.js"
+          - "!**/HTMLSanitizer.js"
+          - "!**/sanitizeHTML.js"
+          - "!**/URLListValidator.js"
+      # theming
+      '@ui5/webcomponents-theming':
+        aliases:
+          "^@ui5\/webcomponents-theming\/dist\/(.*?)": "sap/ui/webc/common/thirdparty/theming/$1"
+        reverseAliases:
+          "^/resources/sap/ui/webc/common/thirdparty/theming/(.*?)$": "@ui5/webcomponents-theming/dist/$1"
+        outputPath: "src/sap/ui/webc/common/thirdparty/theming/"
+        inputPath: "../../node_modules/@ui5/webcomponents-theming/dist/"
+        inputPathFilters:
+          - "**/*{.js,.json,.css}"
+          - "!**/*-static.js"
+      # localization
+      '@ui5/webcomponents-localization':
+        aliases:
+          "^@ui5\/webcomponents-localization\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/localization/$1"
+        reverseAliases:
+          "^/resources/sap/ui/webc/common/thirdparty/localization/(.*?)$": "@ui5/webcomponents-localization/dist/$1"
+        inputPath: "../../node_modules/@ui5/webcomponents-localization/dist/"
+        outputPath: "src/sap/ui/webc/common/thirdparty/localization/"
+        inputPathFilters:
+          - "**/*{.js,.json,.css}"
+          - "!**/*-static.js"
+          - "!sap/"
+          - "!generated/assets/"
+        emptyModules:
+          - "generated/json-imports/LocaleData.js"
+      # icons
+      '@ui5/webcomponents-icons':
+        aliases:
+          "^@ui5\/webcomponents-icons\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/icons/$1"
+        reverseAliases:
+          "^/resources/sap/ui/webc/common/thirdparty/icons/(.*?)$": "@ui5/webcomponents-icons/dist/$1"
+        inputPath: "../../node_modules/@ui5/webcomponents-icons/dist/"
+        outputPath: "src/sap/ui/webc/common/thirdparty/icons/"
+        inputPathFilters:
+          - "**/*{.js,.json,.css}"
+          - "!**/*-static.js"
+      # icons-tnt
+      '@ui5/webcomponents-icons-tnt':
+        aliases:
+          "^@ui5\/webcomponents-icons-tnt\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/icons-tnt/$1"
+        reverseAliases:
+          "^/resources/sap/ui/webc/common/thirdparty/icons-tnt/(.*?)$": "@ui5/webcomponents-icons-tnt/dist/$1"
+        inputPath: "../../node_modules/@ui5/webcomponents-icons-tnt/dist/"
+        outputPath: "src/sap/ui/webc/common/thirdparty/icons-tnt/"
+        inputPathFilters:
+          - "**/*{.js,.json,.css}"
+          - "!**/*-static.js"
+      # icons-business-suite
+      '@ui5/webcomponents-icons-business-suite':
+        aliases:
+          "^@ui5\/webcomponents-icons-business-suite\/dist\/(.*?).js$": "sap/ui/webc/common/thirdparty/icons-business-suite/$1"
+        reverseAliases:
+          "^/resources/sap/ui/webc/common/thirdparty/icons-business-suite/(.*?)$": "@ui5/webcomponents-icons-business-suite/dist/$1"
+        inputPath: "../../node_modules/@ui5/webcomponents-icons-business-suite/dist/"
+        outputPath: "src/sap/ui/webc/common/thirdparty/icons-business-suite/"
+        inputPathFilters:
+          - "**/*{.js,.json,.css}"
+          - "!**/*-static.js"
+      # lit-html
+      'lit-html':
+        aliases:
+          "^lit-html\/(.*?).js$": "sap/ui/webc/common/thirdparty/lit-html/$1"
+          "^lit-html$": "sap/ui/webc/common/thirdparty/lit-html/lit-html"
+        reverseAliases:
+          "^/resources/sap/ui/webc/common/thirdparty/lit-html/(.*?)$": "lit-html/$1"
+          "^/resources/sap/ui/webc/common/thirdparty/lit-html/lit-html$": "lit-html"
+        inputPath: "../../node_modules/lit-html/"
+        outputPath: "src/sap/ui/webc/common/thirdparty/lit-html/"
+        inputPathFilters:
+          - "lit-html.js"
+          - "static.js"
+          - "directive.js"
+          - "directive-helpers.js"
+          - "directives/if-defined.js"
+          - "directives/class-map.js"
+          - "directives/repeat.js"
+          - "directives/unsafe-html.js"

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/s4hana', './v4/s4hana'], function (exports, Theme, s4hana$1, s4hana$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/s4hana", "./v4/s4hana"], function (_exports, _Theme, _s4hana, _s4hana2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? s4hana$1.pathData : s4hana$2.pathData;
-	var s4hana = "s4hana";
-
-	exports.accData = s4hana$1.accData;
-	exports.ltr = s4hana$1.ltr;
-	exports.default = s4hana;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _s4hana.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _s4hana.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _s4hana.pathData : _s4hana2.pathData;
+  _exports.pathData = pathData;
+  var _default = "s4hana";
+  _exports.default = _default;
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/inspect-down', './v4/inspect-down'], function (exports, Theme, inspectDown$1, inspectDown$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/inspect-down", "./v4/inspect-down"], function (_exports, _Theme, _inspectDown, _inspectDown2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? inspectDown$1.pathData : inspectDown$2.pathData;
-	var inspectDown = "inspect-down";
-
-	exports.accData = inspectDown$1.accData;
-	exports.ltr = inspectDown$1.ltr;
-	exports.default = inspectDown;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _inspectDown.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _inspectDown.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _inspectDown.pathData : _inspectDown2.pathData;
+  _exports.pathData = pathData;
+  var _default = "inspect-down";
+  _exports.default = _default;
 });

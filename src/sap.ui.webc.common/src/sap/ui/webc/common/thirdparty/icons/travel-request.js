@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/travel-request', './v4/travel-request'], function (exports, Theme, travelRequest$1, travelRequest$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/travel-request", "./v4/travel-request"], function (_exports, _Theme, _travelRequest, _travelRequest2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? travelRequest$1.pathData : travelRequest$2.pathData;
-	var travelRequest = "travel-request";
-
-	exports.accData = travelRequest$1.accData;
-	exports.ltr = travelRequest$1.ltr;
-	exports.default = travelRequest;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _travelRequest.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _travelRequest.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _travelRequest.pathData : _travelRequest2.pathData;
+  _exports.pathData = pathData;
+  var _default = "travel-request";
+  _exports.default = _default;
 });

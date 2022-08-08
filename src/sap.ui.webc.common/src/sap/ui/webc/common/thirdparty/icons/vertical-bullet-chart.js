@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/vertical-bullet-chart', './v4/vertical-bullet-chart'], function (exports, Theme, verticalBulletChart$1, verticalBulletChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/vertical-bullet-chart", "./v4/vertical-bullet-chart"], function (_exports, _Theme, _verticalBulletChart, _verticalBulletChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? verticalBulletChart$1.pathData : verticalBulletChart$2.pathData;
-	var verticalBulletChart = "vertical-bullet-chart";
-
-	exports.accData = verticalBulletChart$1.accData;
-	exports.ltr = verticalBulletChart$1.ltr;
-	exports.default = verticalBulletChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _verticalBulletChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _verticalBulletChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _verticalBulletChart.pathData : _verticalBulletChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "vertical-bullet-chart";
+  _exports.default = _default;
 });

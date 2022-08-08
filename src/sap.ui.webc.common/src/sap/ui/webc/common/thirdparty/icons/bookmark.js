@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/bookmark', './v4/bookmark'], function (exports, Theme, bookmark$1, bookmark$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/bookmark", "./v4/bookmark"], function (_exports, _Theme, _bookmark, _bookmark2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? bookmark$1.pathData : bookmark$2.pathData;
-	var bookmark = "bookmark";
-
-	exports.accData = bookmark$1.accData;
-	exports.ltr = bookmark$1.ltr;
-	exports.default = bookmark;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _bookmark.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _bookmark.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _bookmark.pathData : _bookmark2.pathData;
+  _exports.pathData = pathData;
+  var _default = "bookmark";
+  _exports.default = _default;
 });

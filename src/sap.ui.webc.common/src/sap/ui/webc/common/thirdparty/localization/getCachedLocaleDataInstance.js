@@ -1,17 +1,24 @@
-sap.ui.define(['sap/ui/core/LocaleData'], function (LocaleData) { 'use strict';
+sap.ui.define(["exports", "./LocaleData"], function (_exports, _LocaleData) {
+  "use strict";
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  _LocaleData = _interopRequireDefault(_LocaleData);
 
-	var LocaleData__default = /*#__PURE__*/_interopDefaultLegacy(LocaleData);
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	const cache = new Map();
-	const getCachedLocaleDataInstance = locale => {
-		if (!cache.has(locale)) {
-			cache.set(locale, LocaleData__default.getInstance(locale));
-		}
-		return cache.get(locale);
-	};
+  const cache = new Map();
 
-	return getCachedLocaleDataInstance;
+  const getCachedLocaleDataInstance = locale => {
+    if (!cache.has(locale)) {
+      cache.set(locale, _LocaleData.default.getInstance(locale));
+    }
 
+    return cache.get(locale);
+  };
+
+  var _default = getCachedLocaleDataInstance;
+  _exports.default = _default;
 });

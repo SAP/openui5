@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/attachment-zip-file', './v4/attachment-zip-file'], function (exports, Theme, attachmentZipFile$1, attachmentZipFile$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/attachment-zip-file", "./v4/attachment-zip-file"], function (_exports, _Theme, _attachmentZipFile, _attachmentZipFile2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? attachmentZipFile$1.pathData : attachmentZipFile$2.pathData;
-	var attachmentZipFile = "attachment-zip-file";
-
-	exports.accData = attachmentZipFile$1.accData;
-	exports.ltr = attachmentZipFile$1.ltr;
-	exports.default = attachmentZipFile;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _attachmentZipFile.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _attachmentZipFile.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _attachmentZipFile.pathData : _attachmentZipFile2.pathData;
+  _exports.pathData = pathData;
+  var _default = "attachment-zip-file";
+  _exports.default = _default;
 });

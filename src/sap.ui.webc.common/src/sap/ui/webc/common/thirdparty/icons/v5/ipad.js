@@ -1,19 +1,26 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons', '../generated/i18n/i18n-defaults'], function (exports, Icons, i18nDefaults) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons", "../generated/i18n/i18n-defaults"], function (_exports, _Icons, _i18nDefaults) {
+  "use strict";
 
-	const name = "ipad";
-	const pathData = "M395.5 1q29 0 49.5 20t20.5 50v371q0 30-20.5 50t-49.5 20h-279q-29 0-49-20t-20-50V71q0-30 20-50t49-20h279zm23 441V71h-325v371h325z";
-	const ltr = false;
-	const accData = i18nDefaults.ICON_IPAD;
-	const collection = "SAP-icons-v5";
-	const packageName = "@ui5/webcomponents-icons";
-	Icons.registerIcon(name, { pathData, ltr, accData, collection, packageName });
-	var ipad = "ipad";
-
-	exports.accData = accData;
-	exports.default = ipad;
-	exports.ltr = ltr;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
+  const name = "ipad";
+  const pathData = "M395.5 1q29 0 49.5 20t20.5 50v371q0 30-20.5 50t-49.5 20h-279q-29 0-49-20t-20-50V71q0-30 20-50t49-20h279zm23 441V71h-325v371h325z";
+  _exports.pathData = pathData;
+  const ltr = false;
+  _exports.ltr = ltr;
+  const accData = _i18nDefaults.ICON_IPAD;
+  _exports.accData = accData;
+  const collection = "SAP-icons-v5";
+  const packageName = "@ui5/webcomponents-icons";
+  (0, _Icons.registerIcon)(name, {
+    pathData,
+    ltr,
+    accData,
+    collection,
+    packageName
+  });
+  var _default = "ipad";
+  _exports.default = _default;
 });

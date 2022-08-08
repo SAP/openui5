@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var dialogSvg = `<svg width="160" height="156" viewBox="0 0 160 156" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-FilterTable">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="160" height="156" viewBox="0 0 160 156" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-FilterTable">
 <circle cx="82.4128" cy="77.5872" r="77.5872" fill="var(--sapContent_Illustrative_Color7)"/>
 <path d="M93.5321 32.0046H9.24732C4.14017 32.0046 0 36.1448 0 41.252V145.495C0 150.602 4.14017 154.742 9.24732 154.742H93.5321C98.6393 154.742 102.779 150.602 102.779 145.495V41.252C102.779 36.1448 98.6393 32.0046 93.5321 32.0046Z" fill="var(--sapContent_Illustrative_Color8)"/>
 <path fill-rule="evenodd" clip-rule="evenodd" d="M9.4751 41.9416C9.4751 41.5212 9.59062 41.1843 9.73181 41.1843H92.5149C92.6561 41.1843 92.7716 41.5052 92.7716 41.9416V144.808C92.7716 145.228 92.6561 145.565 92.5149 145.565H9.73181C9.59062 145.565 9.4751 145.244 9.4751 144.808V41.9416Z" fill="var(--sapContent_Illustrative_Color8)"/>
@@ -42,7 +47,5 @@ sap.ui.define(function () { 'use strict';
 <path d="M99.8935 33.8669C99.8935 33.0985 97.663 32.4834 94.6826 32.3437C94.5122 29.3671 93.8562 27.1538 93.0876 27.1555C92.3191 27.1572 91.6801 29.3875 91.5165 32.3794C88.5277 32.5839 86.3056 33.2518 86.3158 34.0219C86.3261 34.792 88.5464 35.4071 91.5268 35.5451C91.7057 38.5217 92.3532 40.735 93.12 40.7333C93.8868 40.7316 94.5293 38.5013 94.6928 35.5094C97.6817 35.3049 99.9021 34.637 99.8935 33.8669Z" fill="var(--sapContent_Illustrative_Color3)"/>
 </svg>
 `;
-
-	return dialogSvg;
-
+  _exports.default = _default;
 });

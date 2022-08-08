@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/batch-payments', './v4/batch-payments'], function (exports, Theme, batchPayments$1, batchPayments$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/batch-payments", "./v4/batch-payments"], function (_exports, _Theme, _batchPayments, _batchPayments2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? batchPayments$1.pathData : batchPayments$2.pathData;
-	var batchPayments = "batch-payments";
-
-	exports.accData = batchPayments$1.accData;
-	exports.ltr = batchPayments$1.ltr;
-	exports.default = batchPayments;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _batchPayments.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _batchPayments.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _batchPayments.pathData : _batchPayments2.pathData;
+  _exports.pathData = pathData;
+  var _default = "batch-payments";
+  _exports.default = _default;
 });

@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var dialogSvg = `<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-EmptyList">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-EmptyList">
 <mask id="mask0_20012_10743" class="sapIllus_MaskTypeAlpha" maskUnits="userSpaceOnUse" x="0" y="10" width="141" height="141">
 <circle cx="70.4545" cy="80.4545" r="70.4545" fill="var(--sapContent_Illustrative_Color7)"/>
 </mask>
@@ -37,7 +42,5 @@ sap.ui.define(function () { 'use strict';
 <path d="M145.185 104.437C144.769 104.987 145.14 105.777 145.828 105.809L152.639 106.125C155.983 106.28 158.293 102.825 156.872 99.7946V99.7946C155.451 96.7639 151.317 96.3302 149.298 98.9998L145.185 104.437Z" fill="var(--sapContent_Illustrative_Color18)"/>
 </svg>
 `;
-
-	return dialogSvg;
-
+  _exports.default = _default;
 });

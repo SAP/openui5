@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-      var dialogSvg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="160" height="160" viewBox="0 0 160 160" id="sapIllus-Dialog-NoSavedItems">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="160" height="160" viewBox="0 0 160 160" id="sapIllus-Dialog-NoSavedItems">
       <path class="sapIllus_BackgroundColor" d="M31.718,140.9657V56.6524A46.03,46.03,0,0,0,14.8286,91.8957c-.35,21.9863,3.6217,41.3245,20.4675,51.5083-.893-.54-1.7561-1.1017-2.5781-1.6923C32.3781,141.4676,32.0458,141.2183,31.718,140.9657Z"/>
       <path class="sapIllus_BackgroundColor" d="M126.718,59.0435v80.0491c-.33.217-.6609.4342-1,.6526-.62.3989-1.2585.8013-1.9082,1.2064,15.1032-9.41,21.8634-16.8622,22.58-35.3973C147.0678,88.0281,139.5279,71.152,126.718,59.0435Z"/>
       <path class="sapIllus_PatternShadow" d="M129.0112,49.6546H125.718v90.0878a84.0585,84.0585,0,0,0,7-4.9621V53.3613A3.7067,3.7067,0,0,0,129.0112,49.6546Z"/>
@@ -14,7 +19,5 @@ sap.ui.define(function () { 'use strict';
       <path class="sapIllus_BrandColorSecondary" d="M71.718,36.8881a1.2371,1.2371,0,0,0-1.2336-1.2335H49.9457a1.2278,1.2278,0,0,0-1.2277,1.2277V75.971a1.2292,1.2292,0,0,0,2.1489.8155L52.718,74.699l6.5832-7.4239a1.2252,1.2252,0,0,1,1.8335,0L63.0988,69.49l6.4746,7.3014a1.222,1.222,0,0,0,1.9592-.1785,1.1979,1.1979,0,0,0,.1854-.6354V36.8881Z"/>
 </svg>
 `;
-
-      return dialogSvg;
-
+  _exports.default = _default;
 });

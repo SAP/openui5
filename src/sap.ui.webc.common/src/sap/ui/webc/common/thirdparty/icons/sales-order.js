@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sales-order', './v4/sales-order'], function (exports, Theme, salesOrder$1, salesOrder$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sales-order", "./v4/sales-order"], function (_exports, _Theme, _salesOrder, _salesOrder2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? salesOrder$1.pathData : salesOrder$2.pathData;
-	var salesOrder = "sales-order";
-
-	exports.accData = salesOrder$1.accData;
-	exports.ltr = salesOrder$1.ltr;
-	exports.default = salesOrder;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _salesOrder.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _salesOrder.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _salesOrder.pathData : _salesOrder2.pathData;
+  _exports.pathData = pathData;
+  var _default = "sales-order";
+  _exports.default = _default;
 });

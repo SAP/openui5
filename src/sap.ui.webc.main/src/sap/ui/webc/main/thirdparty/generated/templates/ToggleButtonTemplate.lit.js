@@ -1,9 +1,18 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/renderer/LitRenderer'], function (litRender) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer"], function (_exports, _LitRenderer) {
+  "use strict";
 
-	const block0 = (context, tags, suffix) => litRender.html`<button type="button" class="ui5-button-root" ?disabled="${context.disabled}" data-sap-focus-ref  aria-pressed="${litRender.ifDefined(context.pressed)}"  @focusout=${context._onfocusout} @focusin=${context._onfocusin} @click=${context._onclick} @mousedown=${context._onmousedown} @mouseup=${context._onmouseup} @keydown=${context._onkeydown} @keyup=${context._onkeyup} @touchstart="${context._ontouchstart}" @touchend="${context._ontouchend}" tabindex=${litRender.ifDefined(context.tabIndexValue)} aria-expanded="${litRender.ifDefined(context.accessibilityAttributes.expanded)}" aria-controls="${litRender.ifDefined(context.accessibilityAttributes.controls)}" aria-haspopup="${litRender.ifDefined(context.accessibilityAttributes.hasPopup)}" aria-label="${litRender.ifDefined(context.ariaLabelText)}" title="${litRender.ifDefined(context.tooltip)}" part="button">${ context.icon ? block1(context, tags, suffix) : undefined }<span id="${litRender.ifDefined(context._id)}-content" class="ui5-button-text"><bdi><slot></slot></bdi></span>${ context.hasButtonType ? block2(context) : undefined }</button> `;
-	const block1 = (context, tags, suffix) => suffix ? litRender.html`<${litRender.scopeTag("ui5-icon", tags, suffix)} class="ui5-button-icon" name="${litRender.ifDefined(context.icon)}" accessible-role="${litRender.ifDefined(context.iconRole)}" part="icon" ?show-tooltip=${context.showIconTooltip}></${litRender.scopeTag("ui5-icon", tags, suffix)}>` : litRender.html`<ui5-icon class="ui5-button-icon" name="${litRender.ifDefined(context.icon)}" accessible-role="${litRender.ifDefined(context.iconRole)}" part="icon" ?show-tooltip=${context.showIconTooltip}></ui5-icon>`;
-	const block2 = (context, tags, suffix) => litRender.html`<span class="ui5-hidden-text">${litRender.ifDefined(context.buttonTypeText)}</span>`;
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
 
-	return block0;
+  /* eslint no-unused-vars: 0 */
+  const block0 = (context, tags, suffix) => (0, _LitRenderer.html)`<button type="button" class="ui5-button-root" ?disabled="${context.disabled}" data-sap-focus-ref  aria-pressed="${(0, _LitRenderer.ifDefined)(context.pressed)}"  @focusout=${context._onfocusout} @focusin=${context._onfocusin} @click=${context._onclick} @mousedown=${context._onmousedown} @mouseup=${context._onmouseup} @keydown=${context._onkeydown} @keyup=${context._onkeyup} @touchstart="${context._ontouchstart}" @touchend="${context._ontouchend}" tabindex=${(0, _LitRenderer.ifDefined)(context.tabIndexValue)} aria-expanded="${(0, _LitRenderer.ifDefined)(context.accessibilityAttributes.expanded)}" aria-controls="${(0, _LitRenderer.ifDefined)(context.accessibilityAttributes.controls)}" aria-haspopup="${(0, _LitRenderer.ifDefined)(context.accessibilityAttributes.hasPopup)}" aria-label="${(0, _LitRenderer.ifDefined)(context.ariaLabelText)}" title="${(0, _LitRenderer.ifDefined)(context.tooltip)}" part="button">${context.icon ? block1(context, tags, suffix) : undefined}<span id="${(0, _LitRenderer.ifDefined)(context._id)}-content" class="ui5-button-text"><bdi><slot></slot></bdi></span>${context.hasButtonType ? block2(context, tags, suffix) : undefined}</button> `;
 
+  const block1 = (context, tags, suffix) => suffix ? (0, _LitRenderer.html)`<${(0, _LitRenderer.scopeTag)("ui5-icon", tags, suffix)} class="ui5-button-icon" name="${(0, _LitRenderer.ifDefined)(context.icon)}" accessible-role="${(0, _LitRenderer.ifDefined)(context.iconRole)}" part="icon" ?show-tooltip=${context.showIconTooltip}></${(0, _LitRenderer.scopeTag)("ui5-icon", tags, suffix)}>` : (0, _LitRenderer.html)`<ui5-icon class="ui5-button-icon" name="${(0, _LitRenderer.ifDefined)(context.icon)}" accessible-role="${(0, _LitRenderer.ifDefined)(context.iconRole)}" part="icon" ?show-tooltip=${context.showIconTooltip}></ui5-icon>`;
+
+  const block2 = (context, tags, suffix) => (0, _LitRenderer.html)`<span class="ui5-hidden-text">${(0, _LitRenderer.ifDefined)(context.buttonTypeText)}</span>`;
+
+  var _default = block0;
+  _exports.default = _default;
 });

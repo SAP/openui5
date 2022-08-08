@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/favorite-list', './v4/favorite-list'], function (exports, Theme, favoriteList$1, favoriteList$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/favorite-list", "./v4/favorite-list"], function (_exports, _Theme, _favoriteList, _favoriteList2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? favoriteList$1.pathData : favoriteList$2.pathData;
-	var favoriteList = "favorite-list";
-
-	exports.accData = favoriteList$1.accData;
-	exports.ltr = favoriteList$1.ltr;
-	exports.default = favoriteList;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _favoriteList.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _favoriteList.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _favoriteList.pathData : _favoriteList2.pathData;
+  _exports.pathData = pathData;
+  var _default = "favorite-list";
+  _exports.default = _default;
 });

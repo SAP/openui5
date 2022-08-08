@@ -1,5 +1,3 @@
-sap.ui.define(['sap/ui/core/date/Gregorian'], function (Gregorian) { 'use strict';
-
-
-
+sap.ui.define(["sap/ui/core/date/Gregorian"], function (_Gregorian) {
+  "use strict";
 });

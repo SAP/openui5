@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/unlocked', './v4/unlocked'], function (exports, Theme, unlocked$1, unlocked$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/unlocked", "./v4/unlocked"], function (_exports, _Theme, _unlocked, _unlocked2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? unlocked$1.pathData : unlocked$2.pathData;
-	var unlocked = "unlocked";
-
-	exports.accData = unlocked$1.accData;
-	exports.ltr = unlocked$1.ltr;
-	exports.default = unlocked;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _unlocked.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _unlocked.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _unlocked.pathData : _unlocked2.pathData;
+  _exports.pathData = pathData;
+  var _default = "unlocked";
+  _exports.default = _default;
 });

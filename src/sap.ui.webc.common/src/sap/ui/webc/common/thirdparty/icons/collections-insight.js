@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/collections-insight', './v4/collections-insight'], function (exports, Theme, collectionsInsight$1, collectionsInsight$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/collections-insight", "./v4/collections-insight"], function (_exports, _Theme, _collectionsInsight, _collectionsInsight2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? collectionsInsight$1.pathData : collectionsInsight$2.pathData;
-	var collectionsInsight = "collections-insight";
-
-	exports.accData = collectionsInsight$1.accData;
-	exports.ltr = collectionsInsight$1.ltr;
-	exports.default = collectionsInsight;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _collectionsInsight.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _collectionsInsight.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _collectionsInsight.pathData : _collectionsInsight2.pathData;
+  _exports.pathData = pathData;
+  var _default = "collections-insight";
+  _exports.default = _default;
 });

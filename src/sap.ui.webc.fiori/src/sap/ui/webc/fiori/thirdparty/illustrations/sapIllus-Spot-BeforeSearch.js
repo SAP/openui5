@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-    var spotSvg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" viewBox="0 0 128 128" id="sapIllus-Spot-BeforeSearch">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="128" height="128" viewBox="0 0 128 128" id="sapIllus-Spot-BeforeSearch">
     <path class="sapIllus_AccentColor" d="M111.7219,25.5662c-2.7032-1.0653-4.0145-3.653-5.029-6.29A.4258.4258,0,0,0,106.3022,19h-.0051a.4254.4254,0,0,0-.3924.2664c-1.3529,3.2782-3.3643,4.9541-5.6934,6.8946l-.054.0452a.442.442,0,0,0-.1455.44.4317.4317,0,0,0,.3259.3238c2.0547.4459,5.2344,4.4584,5.2344,6.6053a.433.433,0,0,0,.365.4315.4206.4206,0,0,0,.0607.0042.4272.4272,0,0,0,.4083-.3127c.6818-2.3766,2.66-6.2863,5.3142-7.3185a.4394.4394,0,0,0,.0016-.8139Z"/>
     <path class="sapIllus_AccentColor" d="M94.7267,41.78c-1.4341-.5859-2.1375-2.0305-2.6847-3.5041A.4115.4115,0,0,0,91.6655,38h-.0048a.4111.4111,0,0,0-.3782.266,9.48,9.48,0,0,1-3.1,3.8839l-.03.0263a.4512.4512,0,0,0-.14.44.4239.4239,0,0,0,.3141.3234c1.0576.2375,2.7592,2.4639,2.7592,3.609a.4281.4281,0,0,0,.3517.4308.4063.4063,0,0,0,.0585.0043.4143.4143,0,0,0,.3934-.3124c.3677-1.3281,1.4268-3.51,2.8369-4.0784a.4451.4451,0,0,0,.0016-.8128Z"/>
     <polygon class="sapIllus_NoColor" points="59.063 28.836 59.062 28.836 59.063 28.836 59.063 28.836"/>
@@ -11,7 +16,5 @@ sap.ui.define(function () { 'use strict';
     <path class="sapIllus_StrokeDetailColor" d="M54.76,72.6162l.6714,1.176s7.3005,1.4574,10.7275-2.421l-2.1312-3.7377-.36.2689a21.6468,21.6468,0,0,1-7.44,4.1914Z"/>
 </svg>
 `;
-
-    return spotSvg;
-
+  _exports.default = _default;
 });

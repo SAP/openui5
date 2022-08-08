@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/eam-work-order', './v4/eam-work-order'], function (exports, Theme, eamWorkOrder$1, eamWorkOrder$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/eam-work-order", "./v4/eam-work-order"], function (_exports, _Theme, _eamWorkOrder, _eamWorkOrder2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? eamWorkOrder$1.pathData : eamWorkOrder$2.pathData;
-	var eamWorkOrder = "eam-work-order";
-
-	exports.accData = eamWorkOrder$1.accData;
-	exports.ltr = eamWorkOrder$1.ltr;
-	exports.default = eamWorkOrder;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _eamWorkOrder.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _eamWorkOrder.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _eamWorkOrder.pathData : _eamWorkOrder2.pathData;
+  _exports.pathData = pathData;
+  var _default = "eam-work-order";
+  _exports.default = _default;
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/activity-assigned-to-goal', './v4/activity-assigned-to-goal'], function (exports, Theme, activityAssignedToGoal$1, activityAssignedToGoal$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/activity-assigned-to-goal", "./v4/activity-assigned-to-goal"], function (_exports, _Theme, _activityAssignedToGoal, _activityAssignedToGoal2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? activityAssignedToGoal$1.pathData : activityAssignedToGoal$2.pathData;
-	var activityAssignedToGoal = "activity-assigned-to-goal";
-
-	exports.accData = activityAssignedToGoal$1.accData;
-	exports.ltr = activityAssignedToGoal$1.ltr;
-	exports.default = activityAssignedToGoal;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _activityAssignedToGoal.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _activityAssignedToGoal.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _activityAssignedToGoal.pathData : _activityAssignedToGoal2.pathData;
+  _exports.pathData = pathData;
+  var _default = "activity-assigned-to-goal";
+  _exports.default = _default;
 });

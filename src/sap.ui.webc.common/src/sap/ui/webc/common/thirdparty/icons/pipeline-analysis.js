@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/pipeline-analysis', './v4/pipeline-analysis'], function (exports, Theme, pipelineAnalysis$1, pipelineAnalysis$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/pipeline-analysis", "./v4/pipeline-analysis"], function (_exports, _Theme, _pipelineAnalysis, _pipelineAnalysis2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? pipelineAnalysis$1.pathData : pipelineAnalysis$2.pathData;
-	var pipelineAnalysis = "pipeline-analysis";
-
-	exports.accData = pipelineAnalysis$1.accData;
-	exports.ltr = pipelineAnalysis$1.ltr;
-	exports.default = pipelineAnalysis;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _pipelineAnalysis.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _pipelineAnalysis.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _pipelineAnalysis.pathData : _pipelineAnalysis2.pathData;
+  _exports.pathData = pathData;
+  var _default = "pipeline-analysis";
+  _exports.default = _default;
 });

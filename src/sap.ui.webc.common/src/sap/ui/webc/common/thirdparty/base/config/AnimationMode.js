@@ -1,21 +1,31 @@
-sap.ui.define(['exports', '../InitialConfiguration', '../types/AnimationMode'], function (exports, InitialConfiguration, AnimationMode) { 'use strict';
+sap.ui.define(["exports", "../InitialConfiguration", "../types/AnimationMode"], function (_exports, _InitialConfiguration, _AnimationMode) {
+  "use strict";
 
-	let animationMode;
-	const getAnimationMode = () => {
-		if (animationMode === undefined) {
-			animationMode = InitialConfiguration.getAnimationMode();
-		}
-		return animationMode;
-	};
-	const setAnimationMode = newAnimationMode => {
-		if (Object.values(AnimationMode).includes(newAnimationMode)) {
-			animationMode = newAnimationMode;
-		}
-	};
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.setAnimationMode = _exports.getAnimationMode = void 0;
+  _AnimationMode = _interopRequireDefault(_AnimationMode);
 
-	exports.getAnimationMode = getAnimationMode;
-	exports.setAnimationMode = setAnimationMode;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	Object.defineProperty(exports, '__esModule', { value: true });
+  let animationMode;
 
+  const getAnimationMode = () => {
+    if (animationMode === undefined) {
+      animationMode = (0, _InitialConfiguration.getAnimationMode)();
+    }
+
+    return animationMode;
+  };
+
+  _exports.getAnimationMode = getAnimationMode;
+
+  const setAnimationMode = newAnimationMode => {
+    if (Object.values(_AnimationMode.default).includes(newAnimationMode)) {
+      animationMode = newAnimationMode;
+    }
+  };
+
+  _exports.setAnimationMode = setAnimationMode;
 });

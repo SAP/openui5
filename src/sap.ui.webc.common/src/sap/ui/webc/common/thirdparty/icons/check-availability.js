@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/check-availability', './v4/check-availability'], function (exports, Theme, checkAvailability$1, checkAvailability$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/check-availability", "./v4/check-availability"], function (_exports, _Theme, _checkAvailability, _checkAvailability2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? checkAvailability$1.pathData : checkAvailability$2.pathData;
-	var checkAvailability = "check-availability";
-
-	exports.accData = checkAvailability$1.accData;
-	exports.ltr = checkAvailability$1.ltr;
-	exports.default = checkAvailability;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _checkAvailability.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _checkAvailability.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _checkAvailability.pathData : _checkAvailability2.pathData;
+  _exports.pathData = pathData;
+  var _default = "check-availability";
+  _exports.default = _default;
 });

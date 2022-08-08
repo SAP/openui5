@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/feeder-arrow', './v4/feeder-arrow'], function (exports, Theme, feederArrow$1, feederArrow$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/feeder-arrow", "./v4/feeder-arrow"], function (_exports, _Theme, _feederArrow, _feederArrow2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? feederArrow$1.pathData : feederArrow$2.pathData;
-	var feederArrow = "feeder-arrow";
-
-	exports.accData = feederArrow$1.accData;
-	exports.ltr = feederArrow$1.ltr;
-	exports.default = feederArrow;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _feederArrow.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _feederArrow.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _feederArrow.pathData : _feederArrow2.pathData;
+  _exports.pathData = pathData;
+  var _default = "feeder-arrow";
+  _exports.default = _default;
 });

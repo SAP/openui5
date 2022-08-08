@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var dialogSvg = `<svg width="127" height="161" viewBox="0 0 127 161" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-SimpleError">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="127" height="161" viewBox="0 0 127 161" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dialog-SimpleError">
 <path d="M21.123 19.6319L4.9884 116.883C4.37321 120.591 6.88042 124.095 10.5884 124.71L78.8015 136.027C82.5095 136.643 86.0141 134.135 86.6292 130.427L102.764 33.1768C103.379 29.4688 100.872 25.9642 97.1639 25.349L28.9508 14.0319C25.2428 13.4168 21.7382 15.924 21.123 19.6319Z" fill="var(--sapContent_Illustrative_Color3)"/>
 <path d="M77.3293 18.7032H11.0337C7.27502 18.7032 4.22803 21.7502 4.22803 25.5089V120.227C4.22803 123.985 7.27502 127.032 11.0337 127.032H77.3293C81.088 127.032 84.135 123.985 84.135 120.227V25.5089C84.135 21.7502 81.088 18.7032 77.3293 18.7032Z" fill="var(--sapContent_Illustrative_Color8)"/>
 <path fill-rule="evenodd" clip-rule="evenodd" d="M11.0337 19.7032C7.82731 19.7032 5.22803 22.3025 5.22803 25.5089V120.227C5.22803 123.433 7.82731 126.032 11.0337 126.032H77.3293C80.5357 126.032 83.135 123.433 83.135 120.227V25.5089C83.135 22.3025 80.5357 19.7032 77.3293 19.7032H11.0337ZM3.22803 25.5089C3.22803 21.198 6.72274 17.7032 11.0337 17.7032H77.3293C81.6403 17.7032 85.135 21.198 85.135 25.5089V120.227C85.135 124.538 81.6403 128.032 77.3293 128.032H11.0337C6.72274 128.032 3.22803 124.538 3.22803 120.227V25.5089Z" fill="var(--sapContent_Illustrative_Color4)"/>
@@ -11,7 +16,5 @@ sap.ui.define(function () { 'use strict';
 <path d="M52.2639 161C81.1284 161 104.528 159.582 104.528 157.834C104.528 156.085 81.1284 154.667 52.2639 154.667C23.3993 154.667 0 156.085 0 157.834C0 159.582 23.3993 161 52.2639 161Z" fill="var(--sapContent_Illustrative_Color6)"/>
 </svg>
 `;
-
-	return dialogSvg;
-
+  _exports.default = _default;
 });

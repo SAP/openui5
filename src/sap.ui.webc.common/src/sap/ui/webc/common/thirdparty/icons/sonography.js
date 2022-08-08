@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sonography', './v4/sonography'], function (exports, Theme, sonography$1, sonography$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sonography", "./v4/sonography"], function (_exports, _Theme, _sonography, _sonography2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? sonography$1.pathData : sonography$2.pathData;
-	var sonography = "sonography";
-
-	exports.accData = sonography$1.accData;
-	exports.ltr = sonography$1.ltr;
-	exports.default = sonography;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _sonography.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _sonography.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _sonography.pathData : _sonography2.pathData;
+  _exports.pathData = pathData;
+  var _default = "sonography";
+  _exports.default = _default;
 });

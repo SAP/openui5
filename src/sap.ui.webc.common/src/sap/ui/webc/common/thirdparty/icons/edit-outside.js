@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/edit-outside', './v4/edit-outside'], function (exports, Theme, editOutside$1, editOutside$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/edit-outside", "./v4/edit-outside"], function (_exports, _Theme, _editOutside, _editOutside2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? editOutside$1.pathData : editOutside$2.pathData;
-	var editOutside = "edit-outside";
-
-	exports.accData = editOutside$1.accData;
-	exports.ltr = editOutside$1.ltr;
-	exports.default = editOutside;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _editOutside.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _editOutside.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _editOutside.pathData : _editOutside2.pathData;
+  _exports.pathData = pathData;
+  var _default = "edit-outside";
+  _exports.default = _default;
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/eraser', './v4/eraser'], function (exports, Theme, eraser$1, eraser$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/eraser", "./v4/eraser"], function (_exports, _Theme, _eraser, _eraser2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? eraser$1.pathData : eraser$2.pathData;
-	var eraser = "eraser";
-
-	exports.accData = eraser$1.accData;
-	exports.ltr = eraser$1.ltr;
-	exports.default = eraser;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _eraser.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _eraser.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _eraser.pathData : _eraser2.pathData;
+  _exports.pathData = pathData;
+  var _default = "eraser";
+  _exports.default = _default;
 });

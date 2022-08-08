@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/employee-pane', './v4/employee-pane'], function (exports, Theme, employeePane$1, employeePane$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/employee-pane", "./v4/employee-pane"], function (_exports, _Theme, _employeePane, _employeePane2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? employeePane$1.pathData : employeePane$2.pathData;
-	var employeePane = "employee-pane";
-
-	exports.accData = employeePane$1.accData;
-	exports.ltr = employeePane$1.ltr;
-	exports.default = employeePane;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _employeePane.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _employeePane.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _employeePane.pathData : _employeePane2.pathData;
+  _exports.pathData = pathData;
+  var _default = "employee-pane";
+  _exports.default = _default;
 });

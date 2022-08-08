@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/family-protection', './v4/family-protection'], function (exports, Theme, familyProtection$1, familyProtection$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/family-protection", "./v4/family-protection"], function (_exports, _Theme, _familyProtection, _familyProtection2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? familyProtection$1.pathData : familyProtection$2.pathData;
-	var familyProtection = "family-protection";
-
-	exports.accData = familyProtection$1.accData;
-	exports.ltr = familyProtection$1.ltr;
-	exports.default = familyProtection;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _familyProtection.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _familyProtection.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _familyProtection.pathData : _familyProtection2.pathData;
+  _exports.pathData = pathData;
+  var _default = "family-protection";
+  _exports.default = _default;
 });

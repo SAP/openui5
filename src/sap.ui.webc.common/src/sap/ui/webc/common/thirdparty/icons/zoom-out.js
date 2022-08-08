@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/zoom-out', './v4/zoom-out'], function (exports, Theme, zoomOut$1, zoomOut$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/zoom-out", "./v4/zoom-out"], function (_exports, _Theme, _zoomOut, _zoomOut2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? zoomOut$1.pathData : zoomOut$2.pathData;
-	var zoomOut = "zoom-out";
-
-	exports.accData = zoomOut$1.accData;
-	exports.ltr = zoomOut$1.ltr;
-	exports.default = zoomOut;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _zoomOut.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _zoomOut.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _zoomOut.pathData : _zoomOut2.pathData;
+  _exports.pathData = pathData;
+  var _default = "zoom-out";
+  _exports.default = _default;
 });

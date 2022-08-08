@@ -1,22 +1,43 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations', './sapIllus-Dialog-EmptyPlanningCalendar', './sapIllus-Scene-EmptyPlanningCalendar', './sapIllus-Spot-EmptyPlanningCalendar', '../generated/i18n/i18n-defaults'], function (exports, Illustrations, sapIllusDialogEmptyPlanningCalendar, sapIllusSceneEmptyPlanningCalendar, sapIllusSpotEmptyPlanningCalendar, i18nDefaults) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Illustrations", "./sapIllus-Dialog-EmptyPlanningCalendar", "./sapIllus-Scene-EmptyPlanningCalendar", "./sapIllus-Spot-EmptyPlanningCalendar", "../generated/i18n/i18n-defaults"], function (_exports, _Illustrations, _sapIllusDialogEmptyPlanningCalendar, _sapIllusSceneEmptyPlanningCalendar, _sapIllusSpotEmptyPlanningCalendar, _i18nDefaults) {
+  "use strict";
 
-	const name = "EmptyPlanningCalendar";
-	const set = "fiori";
-	const title = i18nDefaults.IM_TITLE_EMPTYPLANNINGCALENDAR;
-	const subtitle = i18nDefaults.IM_SUBTITLE_EMPTYPLANNINGCALENDAR;
-	Illustrations.registerIllustration(name, {
-		dialogSvg: sapIllusDialogEmptyPlanningCalendar,
-		sceneSvg: sapIllusSceneEmptyPlanningCalendar,
-		spotSvg: sapIllusSpotEmptyPlanningCalendar,
-		title,
-		subtitle,
-		set,
-	});
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "dialogSvg", {
+    enumerable: true,
+    get: function () {
+      return _sapIllusDialogEmptyPlanningCalendar.default;
+    }
+  });
+  Object.defineProperty(_exports, "sceneSvg", {
+    enumerable: true,
+    get: function () {
+      return _sapIllusSceneEmptyPlanningCalendar.default;
+    }
+  });
+  Object.defineProperty(_exports, "spotSvg", {
+    enumerable: true,
+    get: function () {
+      return _sapIllusSpotEmptyPlanningCalendar.default;
+    }
+  });
+  _sapIllusDialogEmptyPlanningCalendar = _interopRequireDefault(_sapIllusDialogEmptyPlanningCalendar);
+  _sapIllusSceneEmptyPlanningCalendar = _interopRequireDefault(_sapIllusSceneEmptyPlanningCalendar);
+  _sapIllusSpotEmptyPlanningCalendar = _interopRequireDefault(_sapIllusSpotEmptyPlanningCalendar);
 
-	exports.dialogSvg = sapIllusDialogEmptyPlanningCalendar;
-	exports.sceneSvg = sapIllusSceneEmptyPlanningCalendar;
-	exports.spotSvg = sapIllusSpotEmptyPlanningCalendar;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  const name = "EmptyPlanningCalendar";
+  const set = "fiori";
+  const title = _i18nDefaults.IM_TITLE_EMPTYPLANNINGCALENDAR;
+  const subtitle = _i18nDefaults.IM_SUBTITLE_EMPTYPLANNINGCALENDAR;
+  (0, _Illustrations.registerIllustration)(name, {
+    dialogSvg: _sapIllusDialogEmptyPlanningCalendar.default,
+    sceneSvg: _sapIllusSceneEmptyPlanningCalendar.default,
+    spotSvg: _sapIllusSpotEmptyPlanningCalendar.default,
+    title,
+    subtitle,
+    set
+  });
 });

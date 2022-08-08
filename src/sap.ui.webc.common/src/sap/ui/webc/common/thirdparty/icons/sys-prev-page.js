@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sys-prev-page', './v4/sys-prev-page'], function (exports, Theme, sysPrevPage$1, sysPrevPage$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sys-prev-page", "./v4/sys-prev-page"], function (_exports, _Theme, _sysPrevPage, _sysPrevPage2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? sysPrevPage$1.pathData : sysPrevPage$2.pathData;
-	var sysPrevPage = "sys-prev-page";
-
-	exports.accData = sysPrevPage$1.accData;
-	exports.ltr = sysPrevPage$1.ltr;
-	exports.default = sysPrevPage;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _sysPrevPage.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _sysPrevPage.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _sysPrevPage.pathData : _sysPrevPage2.pathData;
+  _exports.pathData = pathData;
+  var _default = "sys-prev-page";
+  _exports.default = _default;
 });

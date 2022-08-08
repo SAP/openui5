@@ -1,21 +1,59 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/DataType'], function (DataType) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+  "use strict";
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  _DataType = _interopRequireDefault(_DataType);
 
-	var DataType__default = /*#__PURE__*/_interopDefaultLegacy(DataType);
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	const ListSeparatorsTypes = {
-		All: "All",
-		Inner: "Inner",
-		None: "None",
-	};
-	class ListSeparators extends DataType__default {
-		static isValid(value) {
-			return !!ListSeparatorsTypes[value];
-		}
-	}
-	ListSeparators.generateTypeAccessors(ListSeparatorsTypes);
+  /**
+   * @lends sap.ui.webcomponents.main.types.ListSeparators.prototype
+   * @public
+   */
+  const ListSeparatorsTypes = {
+    /**
+     * Separators between the items including the last and the first one.
+     * @public
+     * @type {All}
+     */
+    All: "All",
 
-	return ListSeparators;
+    /**
+     * Separators between the items.
+     * <b>Note:</b> This enumeration depends on the theme.
+     * @public
+     * @type {Inner}
+     */
+    Inner: "Inner",
 
+    /**
+     * No item separators.
+     * @public
+     * @type {None}
+     */
+    None: "None"
+  };
+  /**
+   * @class
+   * Defines which separator style will be applied for the list items.
+   * @constructor
+   * @author SAP SE
+   * @alias sap.ui.webcomponents.main.types.ListSeparators
+   * @public
+   * @enum {string}
+   */
+
+  class ListSeparators extends _DataType.default {
+    static isValid(value) {
+      return !!ListSeparatorsTypes[value];
+    }
+
+  }
+
+  ListSeparators.generateTypeAccessors(ListSeparatorsTypes);
+  var _default = ListSeparators;
+  _exports.default = _default;
 });

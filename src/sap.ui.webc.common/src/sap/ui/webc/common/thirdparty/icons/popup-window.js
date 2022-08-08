@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/popup-window', './v4/popup-window'], function (exports, Theme, popupWindow$1, popupWindow$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/popup-window", "./v4/popup-window"], function (_exports, _Theme, _popupWindow, _popupWindow2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? popupWindow$1.pathData : popupWindow$2.pathData;
-	var popupWindow = "popup-window";
-
-	exports.accData = popupWindow$1.accData;
-	exports.ltr = popupWindow$1.ltr;
-	exports.default = popupWindow;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _popupWindow.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _popupWindow.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _popupWindow.pathData : _popupWindow2.pathData;
+  _exports.pathData = pathData;
+  var _default = "popup-window";
+  _exports.default = _default;
 });

@@ -1,14 +1,26 @@
-sap.ui.define(['./DataType'], function (DataType) { 'use strict';
+sap.ui.define(["exports", "./DataType"], function (_exports, _DataType) {
+  "use strict";
 
-	class Float extends DataType {
-		static isValid(value) {
-			return Number(value) === value;
-		}
-		static attributeToProperty(attributeValue) {
-			return parseFloat(attributeValue);
-		}
-	}
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  _DataType = _interopRequireDefault(_DataType);
 
-	return Float;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+  class Float extends _DataType.default {
+    static isValid(value) {
+      // Assuming that integers are floats as well!
+      return Number(value) === value;
+    }
+
+    static attributeToProperty(attributeValue) {
+      return parseFloat(attributeValue);
+    }
+
+  }
+
+  var _default = Float;
+  _exports.default = _default;
 });

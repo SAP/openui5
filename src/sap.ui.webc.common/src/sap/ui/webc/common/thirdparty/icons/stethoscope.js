@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/stethoscope', './v4/stethoscope'], function (exports, Theme, stethoscope$1, stethoscope$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/stethoscope", "./v4/stethoscope"], function (_exports, _Theme, _stethoscope, _stethoscope2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? stethoscope$1.pathData : stethoscope$2.pathData;
-	var stethoscope = "stethoscope";
-
-	exports.accData = stethoscope$1.accData;
-	exports.ltr = stethoscope$1.ltr;
-	exports.default = stethoscope;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _stethoscope.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _stethoscope.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _stethoscope.pathData : _stethoscope2.pathData;
+  _exports.pathData = pathData;
+  var _default = "stethoscope";
+  _exports.default = _default;
 });

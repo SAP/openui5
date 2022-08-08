@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/status-completed', './v4/status-completed'], function (exports, Theme, statusCompleted$1, statusCompleted$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/status-completed", "./v4/status-completed"], function (_exports, _Theme, _statusCompleted, _statusCompleted2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? statusCompleted$1.pathData : statusCompleted$2.pathData;
-	var statusCompleted = "status-completed";
-
-	exports.accData = statusCompleted$1.accData;
-	exports.ltr = statusCompleted$1.ltr;
-	exports.default = statusCompleted;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _statusCompleted.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _statusCompleted.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _statusCompleted.pathData : _statusCompleted2.pathData;
+  _exports.pathData = pathData;
+  var _default = "status-completed";
+  _exports.default = _default;
 });

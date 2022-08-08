@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sorting-ranking', './v4/sorting-ranking'], function (exports, Theme, sortingRanking$1, sortingRanking$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sorting-ranking", "./v4/sorting-ranking"], function (_exports, _Theme, _sortingRanking, _sortingRanking2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? sortingRanking$1.pathData : sortingRanking$2.pathData;
-	var sortingRanking = "sorting-ranking";
-
-	exports.accData = sortingRanking$1.accData;
-	exports.ltr = sortingRanking$1.ltr;
-	exports.default = sortingRanking;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _sortingRanking.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _sortingRanking.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _sortingRanking.pathData : _sortingRanking2.pathData;
+  _exports.pathData = pathData;
+  var _default = "sorting-ranking";
+  _exports.default = _default;
 });

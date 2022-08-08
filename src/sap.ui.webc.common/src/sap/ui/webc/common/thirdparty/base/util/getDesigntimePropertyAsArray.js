@@ -1,10 +1,15 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var getDesigntimePropertyAsArray = value => {
-		const m = /\$([-a-z0-9A-Z._]+)(?::([^$]*))?\$/.exec(value);
-		return m && m[2] ? m[2].split(/,/) : null;
-	};
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
 
-	return getDesigntimePropertyAsArray;
+  var _default = value => {
+    const m = /\$([-a-z0-9A-Z._]+)(?::([^$]*))?\$/.exec(value);
+    return m && m[2] ? m[2].split(/,/) : null;
+  };
 
+  _exports.default = _default;
 });

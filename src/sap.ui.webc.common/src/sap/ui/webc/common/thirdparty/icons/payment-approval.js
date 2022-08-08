@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/payment-approval', './v4/payment-approval'], function (exports, Theme, paymentApproval$1, paymentApproval$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/payment-approval", "./v4/payment-approval"], function (_exports, _Theme, _paymentApproval, _paymentApproval2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? paymentApproval$1.pathData : paymentApproval$2.pathData;
-	var paymentApproval = "payment-approval";
-
-	exports.accData = paymentApproval$1.accData;
-	exports.ltr = paymentApproval$1.ltr;
-	exports.default = paymentApproval;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _paymentApproval.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _paymentApproval.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _paymentApproval.pathData : _paymentApproval2.pathData;
+  _exports.pathData = pathData;
+  var _default = "payment-approval";
+  _exports.default = _default;
 });

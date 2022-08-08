@@ -1,22 +1,65 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/DataType'], function (DataType) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+  "use strict";
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  _DataType = _interopRequireDefault(_DataType);
 
-	var DataType__default = /*#__PURE__*/_interopDefaultLegacy(DataType);
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	const MessageStripDesigns = {
-		Information: "Information",
-		Positive: "Positive",
-		Negative: "Negative",
-		Warning: "Warning",
-	};
-	class MessageStripDesign extends DataType__default {
-		static isValid(value) {
-			return !!MessageStripDesigns[value];
-		}
-	}
-	MessageStripDesign.generateTypeAccessors(MessageStripDesigns);
+  /**
+   * @lends sap.ui.webcomponents.main.types.MessageStripDesign.prototype
+   * @public
+   */
+  const MessageStripDesigns = {
+    /**
+     * Message should be just an information
+     * @public
+     * @type {Information}
+     */
+    Information: "Information",
 
-	return MessageStripDesign;
+    /**
+     * Message is a success message
+     * @public
+     * @type {Positive}
+     */
+    Positive: "Positive",
 
+    /**
+     * Message is an error
+     * @public
+     * @type {Negative}
+     */
+    Negative: "Negative",
+
+    /**
+     * Message is a warning
+     * @public
+     * @type {Warning}
+     */
+    Warning: "Warning"
+  };
+  /**
+   * @class
+   * Defines different types of MessageStrip.
+   * @constructor
+   * @author SAP SE
+   * @alias sap.ui.webcomponents.main.types.MessageStripDesign
+   * @public
+   * @enum {string}
+   */
+
+  class MessageStripDesign extends _DataType.default {
+    static isValid(value) {
+      return !!MessageStripDesigns[value];
+    }
+
+  }
+
+  MessageStripDesign.generateTypeAccessors(MessageStripDesigns);
+  var _default = MessageStripDesign;
+  _exports.default = _default;
 });

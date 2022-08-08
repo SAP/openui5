@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/lab', './v4/lab'], function (exports, Theme, lab$1, lab$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/lab", "./v4/lab"], function (_exports, _Theme, _lab, _lab2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? lab$1.pathData : lab$2.pathData;
-	var lab = "lab";
-
-	exports.accData = lab$1.accData;
-	exports.ltr = lab$1.ltr;
-	exports.default = lab;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _lab.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _lab.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _lab.pathData : _lab2.pathData;
+  _exports.pathData = pathData;
+  var _default = "lab";
+  _exports.default = _default;
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/area-chart', './v4/area-chart'], function (exports, Theme, areaChart$1, areaChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/area-chart", "./v4/area-chart"], function (_exports, _Theme, _areaChart, _areaChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? areaChart$1.pathData : areaChart$2.pathData;
-	var areaChart = "area-chart";
-
-	exports.accData = areaChart$1.accData;
-	exports.ltr = areaChart$1.ltr;
-	exports.default = areaChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _areaChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _areaChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _areaChart.pathData : _areaChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "area-chart";
+  _exports.default = _default;
 });

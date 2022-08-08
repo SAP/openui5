@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/account', './v4/account'], function (exports, Theme, account$1, account$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/account", "./v4/account"], function (_exports, _Theme, _account, _account2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? account$1.pathData : account$2.pathData;
-	var account = "account";
-
-	exports.accData = account$1.accData;
-	exports.ltr = account$1.ltr;
-	exports.default = account;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _account.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _account.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _account.pathData : _account2.pathData;
+  _exports.pathData = pathData;
+  var _default = "account";
+  _exports.default = _default;
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/nav-back', './v4/nav-back'], function (exports, Theme, navBack$1, navBack$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/nav-back", "./v4/nav-back"], function (_exports, _Theme, _navBack, _navBack2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? navBack$1.pathData : navBack$2.pathData;
-	var navBack = "nav-back";
-
-	exports.accData = navBack$1.accData;
-	exports.ltr = navBack$1.ltr;
-	exports.default = navBack;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _navBack.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _navBack.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _navBack.pathData : _navBack2.pathData;
+  _exports.pathData = pathData;
+  var _default = "nav-back";
+  _exports.default = _default;
 });

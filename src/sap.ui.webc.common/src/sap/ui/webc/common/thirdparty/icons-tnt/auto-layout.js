@@ -1,19 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/asset-registries/Icons'], function (exports, Icons) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/Icons"], function (_exports, _Icons) {
+  "use strict";
 
-	const name = "auto-layout";
-	const pathData = "M32 288V32h208v256H32zm240-64h208v256H272V224zM480 32v160H272V32h208zM32 320h208v160H32V320z";
-	const ltr = false;
-	const accData = null;
-	const collection = "tnt";
-	const packageName = "@ui5/webcomponents-icons-tnt";
-	Icons.registerIcon(name, { pathData, ltr, collection, packageName });
-	var autoLayout = "auto-layout";
-
-	exports.accData = accData;
-	exports.default = autoLayout;
-	exports.ltr = ltr;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
+  const name = "auto-layout";
+  const pathData = "M32 288V32h208v256H32zm240-64h208v256H272V224zM480 32v160H272V32h208zM32 320h208v160H32V320z";
+  _exports.pathData = pathData;
+  const ltr = false;
+  _exports.ltr = ltr;
+  const accData = null;
+  _exports.accData = accData;
+  const collection = "tnt";
+  const packageName = "@ui5/webcomponents-icons-tnt";
+  (0, _Icons.registerIcon)(name, {
+    pathData,
+    ltr,
+    collection,
+    packageName
+  });
+  var _default = "auto-layout";
+  _exports.default = _default;
 });

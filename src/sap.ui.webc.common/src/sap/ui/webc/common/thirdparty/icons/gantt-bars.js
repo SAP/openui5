@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/gantt-bars', './v4/gantt-bars'], function (exports, Theme, ganttBars$1, ganttBars$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/gantt-bars", "./v4/gantt-bars"], function (_exports, _Theme, _ganttBars, _ganttBars2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? ganttBars$1.pathData : ganttBars$2.pathData;
-	var ganttBars = "gantt-bars";
-
-	exports.accData = ganttBars$1.accData;
-	exports.ltr = ganttBars$1.ltr;
-	exports.default = ganttBars;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _ganttBars.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _ganttBars.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _ganttBars.pathData : _ganttBars2.pathData;
+  _exports.pathData = pathData;
+  var _default = "gantt-bars";
+  _exports.default = _default;
 });

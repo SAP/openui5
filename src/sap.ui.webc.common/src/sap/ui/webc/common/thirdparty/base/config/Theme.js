@@ -1,33 +1,65 @@
-sap.ui.define(['exports', '../InitialConfiguration', '../Render', '../theming/applyTheme'], function (exports, InitialConfiguration, Render, applyTheme) { 'use strict';
+sap.ui.define(["exports", "../InitialConfiguration", "../Render", "../theming/applyTheme"], function (_exports, _InitialConfiguration, _Render, _applyTheme) {
+  "use strict";
 
-	let theme;
-	const getTheme = () => {
-		if (theme === undefined) {
-			theme = InitialConfiguration.getTheme();
-		}
-		return theme;
-	};
-	const setTheme = async newTheme => {
-		if (theme === newTheme) {
-			return;
-		}
-		theme = newTheme;
-		await applyTheme(theme);
-		await Render.reRenderAllUI5Elements({ themeAware: true });
-	};
-	const isTheme = _theme => {
-		const currentTheme = getTheme();
-		return currentTheme === _theme || currentTheme === `${_theme}_exp`;
-	};
-	const isThemeFamily = _theme => {
-		return getTheme().startsWith(_theme);
-	};
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.setTheme = _exports.isThemeFamily = _exports.isTheme = _exports.getTheme = void 0;
+  _applyTheme = _interopRequireDefault(_applyTheme);
 
-	exports.getTheme = getTheme;
-	exports.isTheme = isTheme;
-	exports.isThemeFamily = isThemeFamily;
-	exports.setTheme = setTheme;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	Object.defineProperty(exports, '__esModule', { value: true });
+  let theme;
 
+  const getTheme = () => {
+    if (theme === undefined) {
+      theme = (0, _InitialConfiguration.getTheme)();
+    }
+
+    return theme;
+  };
+
+  _exports.getTheme = getTheme;
+
+  const setTheme = async newTheme => {
+    if (theme === newTheme) {
+      return;
+    }
+
+    theme = newTheme; // Update CSS Custom Properties
+
+    await (0, _applyTheme.default)(theme);
+    await (0, _Render.reRenderAllUI5Elements)({
+      themeAware: true
+    });
+  };
+  /**
+   * Returns if the given theme name is the one currently applied.
+   * @private
+   * @param {String}
+   * @returns {boolean}
+   */
+
+
+  _exports.setTheme = setTheme;
+
+  const isTheme = _theme => {
+    const currentTheme = getTheme();
+    return currentTheme === _theme || currentTheme === `${_theme}_exp`;
+  };
+  /**
+   * Returns if the current theme is part of given theme family
+   * @private
+   * @param {String} the theme family
+   * @returns {boolean}
+   */
+
+
+  _exports.isTheme = isTheme;
+
+  const isThemeFamily = _theme => {
+    return getTheme().startsWith(_theme);
+  };
+
+  _exports.isThemeFamily = isThemeFamily;
 });

@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/in-progress', './v4/in-progress'], function (exports, Theme, inProgress$1, inProgress$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/in-progress", "./v4/in-progress"], function (_exports, _Theme, _inProgress, _inProgress2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? inProgress$1.pathData : inProgress$2.pathData;
-	var inProgress = "in-progress";
-
-	exports.accData = inProgress$1.accData;
-	exports.ltr = inProgress$1.ltr;
-	exports.default = inProgress;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _inProgress.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _inProgress.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _inProgress.pathData : _inProgress2.pathData;
+  _exports.pathData = pathData;
+  var _default = "in-progress";
+  _exports.default = _default;
 });

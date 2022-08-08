@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/choropleth-chart', './v4/choropleth-chart'], function (exports, Theme, choroplethChart$1, choroplethChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/choropleth-chart", "./v4/choropleth-chart"], function (_exports, _Theme, _choroplethChart, _choroplethChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? choroplethChart$1.pathData : choroplethChart$2.pathData;
-	var choroplethChart = "choropleth-chart";
-
-	exports.accData = choroplethChart$1.accData;
-	exports.ltr = choroplethChart$1.ltr;
-	exports.default = choroplethChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _choroplethChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _choroplethChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _choroplethChart.pathData : _choroplethChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "choropleth-chart";
+  _exports.default = _default;
 });

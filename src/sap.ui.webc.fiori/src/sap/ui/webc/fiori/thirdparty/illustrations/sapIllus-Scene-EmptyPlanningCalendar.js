@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-	var sceneSvg = `<svg width="320" height="200" viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Scene-EmptyPlanningCalendar">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="320" height="200" viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Scene-EmptyPlanningCalendar">
 <path d="M305.547 6.15619e-06H14.4533C12.5559 -0.00174584 10.6768 0.37047 8.92329 1.09536C7.16981 1.82026 5.57638 2.88362 4.23409 4.22468C2.8918 5.56573 1.82697 7.15816 1.10045 8.91098C0.373942 10.6638 -8.08861e-07 12.5426 0 14.44V185.547C0 189.38 1.52275 193.056 4.23328 195.767C6.9438 198.477 10.6201 200 14.4533 200H305.547C309.38 200 313.056 198.477 315.767 195.767C318.477 193.056 320 189.38 320 185.547V14.44C320 12.5426 319.626 10.6638 318.9 8.91098C318.173 7.15816 317.108 5.56573 315.766 4.22468C314.424 2.88362 312.83 1.82026 311.077 1.09536C309.323 0.37047 307.444 -0.00174584 305.547 6.15619e-06V6.15619e-06Z" fill="var(--sapContent_Illustrative_Color7)"/>
 <rect x="29.3334" y="188" width="83.5556" height="12" rx="4" fill="var(--sapContent_Illustrative_Color18)"/>
 <rect x="105.778" y="188" width="184.889" height="12" rx="4" fill="var(--sapContent_Illustrative_Color20)"/>
@@ -92,7 +97,5 @@ sap.ui.define(function () { 'use strict';
 <path d="M183.188 82.7036C182.997 82.9092 182.849 83.1515 182.754 83.4156C182.66 83.6796 182.619 83.9599 182.636 84.2393L183.27 96.7812C183.302 97.3435 183.549 97.8704 183.961 98.2517C184.373 98.633 184.917 98.8392 185.479 98.8272C186.001 98.8139 186.5 98.6048 186.877 98.2413C187.095 98.0314 187.264 97.7775 187.375 97.4967C187.486 97.2159 187.535 96.9149 187.519 96.6142L186.885 84.0724C186.854 83.5069 186.605 82.977 186.19 82.5941C185.776 82.2113 185.228 82.0052 184.662 82.0191C184.384 82.0282 184.11 82.0935 183.856 82.2111C183.603 82.3287 183.376 82.4962 183.188 82.7036V82.7036Z" fill="var(--sapContent_Illustrative_Color5)"/>
 </svg>
 `;
-
-	return sceneSvg;
-
+  _exports.default = _default;
 });

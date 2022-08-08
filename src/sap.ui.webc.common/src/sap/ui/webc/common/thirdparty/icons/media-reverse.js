@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/media-reverse', './v4/media-reverse'], function (exports, Theme, mediaReverse$1, mediaReverse$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/media-reverse", "./v4/media-reverse"], function (_exports, _Theme, _mediaReverse, _mediaReverse2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? mediaReverse$1.pathData : mediaReverse$2.pathData;
-	var mediaReverse = "media-reverse";
-
-	exports.accData = mediaReverse$1.accData;
-	exports.ltr = mediaReverse$1.ltr;
-	exports.default = mediaReverse;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _mediaReverse.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _mediaReverse.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _mediaReverse.pathData : _mediaReverse2.pathData;
+  _exports.pathData = pathData;
+  var _default = "media-reverse";
+  _exports.default = _default;
 });

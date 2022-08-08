@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/sys-monitor', './v4/sys-monitor'], function (exports, Theme, sysMonitor$1, sysMonitor$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/sys-monitor", "./v4/sys-monitor"], function (_exports, _Theme, _sysMonitor, _sysMonitor2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? sysMonitor$1.pathData : sysMonitor$2.pathData;
-	var sysMonitor = "sys-monitor";
-
-	exports.accData = sysMonitor$1.accData;
-	exports.ltr = sysMonitor$1.ltr;
-	exports.default = sysMonitor;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _sysMonitor.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _sysMonitor.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _sysMonitor.pathData : _sysMonitor2.pathData;
+  _exports.pathData = pathData;
+  var _default = "sys-monitor";
+  _exports.default = _default;
 });

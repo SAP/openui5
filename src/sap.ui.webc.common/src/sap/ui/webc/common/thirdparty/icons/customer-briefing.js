@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/customer-briefing', './v4/customer-briefing'], function (exports, Theme, customerBriefing$1, customerBriefing$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/customer-briefing", "./v4/customer-briefing"], function (_exports, _Theme, _customerBriefing, _customerBriefing2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? customerBriefing$1.pathData : customerBriefing$2.pathData;
-	var customerBriefing = "customer-briefing";
-
-	exports.accData = customerBriefing$1.accData;
-	exports.ltr = customerBriefing$1.ltr;
-	exports.default = customerBriefing;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _customerBriefing.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _customerBriefing.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _customerBriefing.pathData : _customerBriefing2.pathData;
+  _exports.pathData = pathData;
+  var _default = "customer-briefing";
+  _exports.default = _default;
 });

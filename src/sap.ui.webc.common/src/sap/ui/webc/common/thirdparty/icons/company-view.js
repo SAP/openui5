@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/company-view', './v4/company-view'], function (exports, Theme, companyView$1, companyView$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/company-view", "./v4/company-view"], function (_exports, _Theme, _companyView, _companyView2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? companyView$1.pathData : companyView$2.pathData;
-	var companyView = "company-view";
-
-	exports.accData = companyView$1.accData;
-	exports.ltr = companyView$1.ltr;
-	exports.default = companyView;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _companyView.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _companyView.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _companyView.pathData : _companyView2.pathData;
+  _exports.pathData = pathData;
+  var _default = "company-view";
+  _exports.default = _default;
 });

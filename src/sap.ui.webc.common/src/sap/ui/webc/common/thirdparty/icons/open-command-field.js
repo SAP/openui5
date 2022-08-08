@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/open-command-field', './v4/open-command-field'], function (exports, Theme, openCommandField$1, openCommandField$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/open-command-field", "./v4/open-command-field"], function (_exports, _Theme, _openCommandField, _openCommandField2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? openCommandField$1.pathData : openCommandField$2.pathData;
-	var openCommandField = "open-command-field";
-
-	exports.accData = openCommandField$1.accData;
-	exports.ltr = openCommandField$1.ltr;
-	exports.default = openCommandField;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _openCommandField.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _openCommandField.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _openCommandField.pathData : _openCommandField2.pathData;
+  _exports.pathData = pathData;
+  var _default = "open-command-field";
+  _exports.default = _default;
 });

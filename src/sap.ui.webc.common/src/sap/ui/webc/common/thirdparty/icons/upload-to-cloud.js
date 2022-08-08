@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/upload-to-cloud', './v4/upload-to-cloud'], function (exports, Theme, uploadToCloud$1, uploadToCloud$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/upload-to-cloud", "./v4/upload-to-cloud"], function (_exports, _Theme, _uploadToCloud, _uploadToCloud2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? uploadToCloud$1.pathData : uploadToCloud$2.pathData;
-	var uploadToCloud = "upload-to-cloud";
-
-	exports.accData = uploadToCloud$1.accData;
-	exports.ltr = uploadToCloud$1.ltr;
-	exports.default = uploadToCloud;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _uploadToCloud.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _uploadToCloud.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _uploadToCloud.pathData : _uploadToCloud2.pathData;
+  _exports.pathData = pathData;
+  var _default = "upload-to-cloud";
+  _exports.default = _default;
 });

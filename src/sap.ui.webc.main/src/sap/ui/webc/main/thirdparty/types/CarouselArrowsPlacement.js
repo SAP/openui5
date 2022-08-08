@@ -1,20 +1,51 @@
-sap.ui.define(['sap/ui/webc/common/thirdparty/base/types/DataType'], function (DataType) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/types/DataType"], function (_exports, _DataType) {
+  "use strict";
 
-	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  _DataType = _interopRequireDefault(_DataType);
 
-	var DataType__default = /*#__PURE__*/_interopDefaultLegacy(DataType);
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	const CarouselArrowsPlacementTypes = {
-		Content: "Content",
-		Navigation: "Navigation",
-	};
-	class CarouselArrowsPlacement extends DataType__default {
-		static isValid(value) {
-			return !!CarouselArrowsPlacementTypes[value];
-		}
-	}
-	CarouselArrowsPlacement.generateTypeAccessors(CarouselArrowsPlacementTypes);
+  /**
+   * @lends sap.ui.webcomponents.main.types.CarouselArrowsPlacement.prototype
+   * @public
+   */
+  const CarouselArrowsPlacementTypes = {
+    /**
+     * Carousel arrows are placed on the sides of the current Carousel page.
+     * @public
+     * @type {Content}
+     */
+    Content: "Content",
 
-	return CarouselArrowsPlacement;
+    /**
+     * Carousel arrows are placed on the sides of the page indicator of the Carousel.
+     * @public
+     * @type {Navigation}
+     */
+    Navigation: "Navigation"
+  };
+  /**
+   * @class
+   * Different types of Arrow Placement for <code>ui5-carousel</code>.
+   * @constructor
+   * @author SAP SE
+   * @alias sap.ui.webcomponents.main.types.CarouselArrowsPlacement
+   * @public
+   * @enum {string}
+   */
 
+  class CarouselArrowsPlacement extends _DataType.default {
+    static isValid(value) {
+      return !!CarouselArrowsPlacementTypes[value];
+    }
+
+  }
+
+  CarouselArrowsPlacement.generateTypeAccessors(CarouselArrowsPlacementTypes);
+  var _default = CarouselArrowsPlacement;
+  _exports.default = _default;
 });

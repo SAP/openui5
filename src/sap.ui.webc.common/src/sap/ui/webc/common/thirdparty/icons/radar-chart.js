@@ -1,13 +1,25 @@
-sap.ui.define(['exports', 'sap/ui/webc/common/thirdparty/base/config/Theme', './v5/radar-chart', './v4/radar-chart'], function (exports, Theme, radarChart$1, radarChart$2) { 'use strict';
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/config/Theme", "./v5/radar-chart", "./v4/radar-chart"], function (_exports, _Theme, _radarChart, _radarChart2) {
+  "use strict";
 
-	const pathData = Theme.isThemeFamily("sap_horizon") ? radarChart$1.pathData : radarChart$2.pathData;
-	var radarChart = "radar-chart";
-
-	exports.accData = radarChart$1.accData;
-	exports.ltr = radarChart$1.ltr;
-	exports.default = radarChart;
-	exports.pathData = pathData;
-
-	Object.defineProperty(exports, '__esModule', { value: true });
-
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "accData", {
+    enumerable: true,
+    get: function () {
+      return _radarChart.accData;
+    }
+  });
+  _exports.default = void 0;
+  Object.defineProperty(_exports, "ltr", {
+    enumerable: true,
+    get: function () {
+      return _radarChart.ltr;
+    }
+  });
+  _exports.pathData = void 0;
+  const pathData = (0, _Theme.isThemeFamily)("sap_horizon") ? _radarChart.pathData : _radarChart2.pathData;
+  _exports.pathData = pathData;
+  var _default = "radar-chart";
+  _exports.default = _default;
 });

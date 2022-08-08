@@ -1,6 +1,11 @@
-sap.ui.define(function () { 'use strict';
+sap.ui.define(["exports"], function (_exports) {
+  "use strict";
 
-  var dialogSvg = `<svg width="160" height="160" viewBox="0 0 160 160" id="tnt-Dialog-Company">
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _default = `<svg width="160" height="160" viewBox="0 0 160 160" id="tnt-Dialog-Company">
   <path fill="var(--sapIllus_BackgroundColor)" d="M38.1847,139.791 L127.1847,139.791 C145.0777,139.791 156.3477,100.79 151.1897,77.434 C141.9327,35.507 103.4597,17.651 68.6257,22.89 C52.5167,25.312 37.1227,32.826 25.4207,44.345 C9.3107,60.201 1.2417,95.745 11.6907,120.442 C18.1847,135.791 29.1847,139.791 38.1847,139.791" class="sapIllus_BackgroundColor"/>
   <path fill="var(--sapIllus_BrandColorSecondary)" d="M109.1852,50.0049 L109.1852,40.1639 C109.1852,39.8639 108.8532,39.2539 108.2142,39.2919 L79.5592,39.2919 C78.9412,39.2919 78.7662,39.6509 78.7662,40.2069 L78.7662,139.6389 L109.1852,139.6539 L109.1852,50.0079 L109.1852,50.0049 Z" class="sapIllus_BrandColorSecondary"/>
   <path fill="var(--sapIllus_ObjectFillColor)" d="M85.7057,117.876 L85.7057,67.491 L85.7057,62.215 C85.7057,61.927 85.5157,61.674 85.2387,61.594 L54.1517,52.562 C53.7367,52.44 53.3227,52.75 53.3247,53.183 C53.3307,54.854 53.3457,58.383 53.3457,58.509 L53.3457,114.463 C53.3457,114.672 53.2447,114.868 53.0747,114.989 L39.8587,124.429 C39.7927,124.476 39.7537,124.551 39.7537,124.632 L39.7537,139.04 C39.7537,139.177 39.8657,139.289 40.0037,139.291 L85.4527,139.271 C85.5927,139.272 85.7057,139.16 85.7057,139.021 L85.7057,117.876 Z" class="sapIllus_ObjectFillColor"/>
@@ -13,7 +18,5 @@ sap.ui.define(function () { 'use strict';
   <polygon fill="var(--sapIllus_StrokeDetailColor)" points="106.161 118.342 113.873 118.342 113.873 119.213 106.161 118.469" class="sapIllus_StrokeDetailColor"/>
   <polygon fill="var(--sapIllus_StrokeDetailColor)" points="69.338 99.244 80.34 99.244 80.34 100.487 69.338 99.425" class="sapIllus_StrokeDetailColor"/>
 </svg>`;
-
-  return dialogSvg;
-
+  _exports.default = _default;
 });
