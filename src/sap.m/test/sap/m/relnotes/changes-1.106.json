@@ -3,6 +3,28 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "44933b6700a8eceb1b89338de92b9bf86ebce318",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: adjust association propagation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280088360"
+          }
+        ]
+      },
+      {
+        "id": "d22ac93c9c7f9c0b451222eafad0fd537b0c3336",
+        "type": "FIX",
+        "text": " sap.m.Bar: qunit tests adaptation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280120372"
+          }
+        ]
+      },
+      {
         "id": "f066ae92beed86211d1f547ab5fb08f1eae1aec6",
         "type": "FIX",
         "text": " adapt return types to textual description"

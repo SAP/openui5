@@ -3,6 +3,11 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "7bb8be64f64e69c534c6be65553ebea3c0e9f761",
+        "type": "FEATURE",
+        "text": " sap.ui.fl - enable sharing of control variants on CF"
+      },
+      {
         "id": "f066ae92beed86211d1f547ab5fb08f1eae1aec6",
         "type": "FIX",
         "text": " adapt return types to textual description"

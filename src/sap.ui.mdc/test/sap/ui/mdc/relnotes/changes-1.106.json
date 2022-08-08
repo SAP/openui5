@@ -3,6 +3,11 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "487f585d9c1096ce619c4950488909732f422c50",
+        "type": "FEATURE",
+        "text": " SmartTable - add custom-field button during UI adaptation at run time is now available"
+      },
+      {
         "id": "f066ae92beed86211d1f547ab5fb08f1eae1aec6",
         "type": "FIX",
         "text": " adapt return types to textual description"

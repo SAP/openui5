@@ -3,6 +3,22 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "4579bf2255ba04c44a62032a3b668897106e3f60",
+        "type": "FIX",
+        "text": " Demo Kit: Binding in samples fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "e442902e7f71d8c3c0356d738d9b7acfbb1c9268",
+        "type": "FIX",
+        "text": " Demo Kit: Tools page links fixed"
+      },
+      {
         "id": "5d9721a0dc6e937259ff3f906a7b154adca75f76",
         "type": "FIX",
         "text": " sap.ui.documentation: use new url syntax for library links",

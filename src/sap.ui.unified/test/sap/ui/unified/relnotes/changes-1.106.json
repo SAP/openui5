@@ -3,6 +3,17 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "90aaecf6980a7bfc390119985e652f91aaf32323",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: adjust enabled property setter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280114722"
+          }
+        ]
+      },
+      {
         "id": "8b8a6dbf186d7bd6c1c35a716bead8501650a616",
         "type": "FIX",
         "text": " sap.ui.unified.calendar.MonthPicker: fixed one-row month navigation",
@@ -32,6 +43,17 @@
           {
             "type": "BCP",
             "reference": "2280134456"
+          }
+        ]
+      },
+      {
+        "id": "52b1422b9afeefe274da7b7f0955507ea55ce99d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust keyboard navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004860722022"
           }
         ]
       },

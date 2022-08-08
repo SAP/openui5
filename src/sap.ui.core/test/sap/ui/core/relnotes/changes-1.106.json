@@ -3,6 +3,22 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "2eeaf175f4f4bc94b0dc743dc525e7d840194b08",
+        "type": "FIX",
+        "text": " sap.ui.core: address SDK feedback in samples and API reference"
+      },
+      {
+        "id": "54043fc7e83eb8446e5a809081ee338831d8d0b9",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#filter: allow removal for FilterType.Control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280148151"
+          }
+        ]
+      },
+      {
         "id": "5c24494c5ca88a77904cd8d921937ad530a21475",
         "type": "FIX",
         "text": " sap.ui.core: adapt return types to textual description"
