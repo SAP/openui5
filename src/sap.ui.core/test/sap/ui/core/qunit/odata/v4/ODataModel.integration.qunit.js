@@ -21416,9 +21416,9 @@ sap.ui.define([
 		}).then(function () {
 			oCollapsed = oTable.getRows()[1].getBindingContext();
 
-			// Note: $orderby is evaluated after $apply => only the descendants are sorted
-			that.expectRequest("EMPLOYEES?$orderby=AGE desc"
-					+ "&$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)"
+			that.expectRequest("EMPLOYEES"
+					+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)"
+					+ "/orderby(AGE desc)"
 					+ "&$select=DrillState,ID,MANAGER_ID&$count=true&$skip=0&$top=3", {
 					"@odata.count" : "2",
 					value : [{
@@ -21556,10 +21556,10 @@ sap.ui.define([
 			var oTable = that.oView.byId("table"),
 				oRoot = oTable.getRows()[0].getBindingContext();
 
-			// Note: $orderby is evaluated after $apply => only the descendants are sorted
-			that.expectRequest("EMPLOYEES?$orderby=AGE desc"
-					+ "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager),keep start)"
+			that.expectRequest("EMPLOYEES"
+					+ "?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager),keep start)"
 					+ "/descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
+					+ "/orderby(AGE desc)"
 					+ "&$select=DrillState,ID&$count=true&$skip=0&$top=110", {
 					"@odata.count" : "1",
 					value : [{

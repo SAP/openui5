@@ -929,12 +929,21 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [{
-	sExpectedApply : "descendants($root/some/path,XYZ,myID,filter(foo),1)",
+	sExpectedApply : "descendants($root/some/path,XYZ,myID,filter(ID eq '42'),1)",
 	mQueryOptions : {}
 }, {
 	sExpectedApply : "ancestors($root/some/path,XYZ,myID,filter(~$filter~),keep start)"
-		+ "/descendants($root/some/path,XYZ,myID,filter(foo),1)",
+		+ "/descendants($root/some/path,XYZ,myID,filter(ID eq '42'),1)",
 	mQueryOptions : {$filter : "~$filter~"}
+}, {
+	sExpectedApply : "descendants($root/some/path,XYZ,myID,filter(ID eq '42'),1)"
+		+ "/orderby(~$orderby~)",
+	mQueryOptions : {$orderby : "~$orderby~"}
+}, {
+	sExpectedApply : "ancestors($root/some/path,XYZ,myID,filter(~$filter~),keep start)"
+		+ "/descendants($root/some/path,XYZ,myID,filter(ID eq '42'),1)"
+		+ "/orderby(~$orderby~)",
+	mQueryOptions : {$filter : "~$filter~", $orderby : "~$orderby~"}
 }].forEach(function (mFixture, i) {
 	QUnit.test("buildApply4Hierarchy: children of a given parent, #" + i, function (assert) {
 		var oAggregation = {
@@ -944,7 +953,7 @@ sap.ui.define([
 			},
 			oAggregationMock = this.mock(oAggregation),
 			mQueryOptions = Object.assign({
-				$$filterBeforeAggregate : "foo",
+				$$filterBeforeAggregate : "ID eq '42'",
 				$select : ["ID"], // by now, auto-$expand/$select must have finished
 				foo : "bar"
 			}, mFixture.mQueryOptions),
@@ -962,7 +971,7 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(_AggregationHelper.buildApply(oAggregation, mQueryOptions), {
 				$apply : mFixture.sExpectedApply,
-				// no more $filter
+				// no more $filter or $orderby!
 				$select : ["ID", "aDrillState"],
 				foo : "bar"
 			});
