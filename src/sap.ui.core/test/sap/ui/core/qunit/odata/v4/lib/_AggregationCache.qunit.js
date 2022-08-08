@@ -195,9 +195,17 @@ sap.ui.define([
 	hasMinOrMax : false,
 	message : "Unsupported system query option: $search",
 	queryOptions : {$search : "blue OR green"}
+}, {
+	oAggregation : {
+		hierarchyQualifier : "X"
+	},
+	hasGrandTotal : false,
+	hasMinOrMax : false,
+	message : "Unsupported system query option: $search",
+	queryOptions : {$search : "blue OR green"}
 }].forEach(function (oFixture) {
 	QUnit.test("create: " + oFixture.message, function (assert) {
-		var oAggregation = {
+		var oAggregation = oFixture.oAggregation || {
 				aggregate : {},
 				group : {},
 				groupLevels : oFixture.groupLevels || []

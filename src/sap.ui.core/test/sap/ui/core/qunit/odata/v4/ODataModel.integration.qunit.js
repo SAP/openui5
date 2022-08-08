@@ -21521,16 +21521,17 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Show the single root node of a recursive hierarchy and expand it. Use a filter as
-	// well as a sort order.
+	// Scenario: Show the single root node of a recursive hierarchy and expand it. Use a filter and
+	// a search as well as a sort order.
 	// JIRA: CPOUI5ODATAV4-1675
-	QUnit.test("Recursive Hierarchy: expand root, w/ filter & orderby", function (assert) {
+	QUnit.test("Recursive Hierarchy: expand root, w/ filter, search & orderby", function (assert) {
 		var oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" rows="{path : \'/EMPLOYEES\',\
 		parameters : {\
 			$$aggregation : {\
-				hierarchyQualifier : \'OrgChart\'\
+				hierarchyQualifier : \'OrgChart\',\
+				search : \'covfefe\'\
 			},\
 			$filter : \'Is_Manager\',\
 			$orderby : \'AGE desc\'\
@@ -21539,8 +21540,8 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES"
-				+ "?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager),keep start)"
+		this.expectRequest("EMPLOYEES?$apply=ancestors"
+				+ "($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager)/search(covfefe),keep start)"
 				+ "/orderby(AGE desc)/com.sap.vocabularies.Hierarchy.v1.TopLevels("
 				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
 				+ ",Levels=1)&$select=DrillState,ID&$count=true&$skip=0&$top=110", {
@@ -21556,8 +21557,8 @@ sap.ui.define([
 			var oTable = that.oView.byId("table"),
 				oRoot = oTable.getRows()[0].getBindingContext();
 
-			that.expectRequest("EMPLOYEES"
-					+ "?$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager),keep start)"
+			that.expectRequest("EMPLOYEES?$apply=ancestors"
+					+ "($root/EMPLOYEES,OrgChart,ID,filter(Is_Manager)/search(covfefe),keep start)"
 					+ "/descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
 					+ "/orderby(AGE desc)"
 					+ "&$select=DrillState,ID&$count=true&$skip=0&$top=110", {
