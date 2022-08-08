@@ -196,5 +196,21 @@
         ]
       }
     ]
+  },
+  "1.71.47": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "4be86da47a439ce596960463680a496e71094699",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Correct maxScrollHeight computation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180305489"
+          }
+        ]
+      }
+    ]
   }
 }

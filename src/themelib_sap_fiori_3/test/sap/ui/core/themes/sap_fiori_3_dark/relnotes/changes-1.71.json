@@ -14,5 +14,25 @@
         ]
       }
     ]
+  },
+  "1.71.47": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "90e0db8ed1019f95295269d7e5e57c294c2f5020",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: No longer overflows when used standalone or in Groups with 1 column",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080199747"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003967302022"
+          }
+        ]
+      }
+    ]
   }
 }

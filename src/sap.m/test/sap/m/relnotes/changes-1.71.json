@@ -3204,5 +3204,125 @@
         ]
       }
     ]
+  },
+  "1.71.47": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "610cee26ea1f0e6b7fae8fcf9dc02ce4994a5320",
+        "type": "FIX",
+        "text": " sap.m.Link: when disabled has tabindex -1",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080064134"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270090937"
+          }
+        ]
+      },
+      {
+        "id": "46914a9938b7251c8099de1a4ca543b8392ed842",
+        "type": "FIX",
+        "text": " P13nConditionPanel.js : paste handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002558222020"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400005409522022"
+          }
+        ]
+      },
+      {
+        "id": "191d0b7428af70a89c7bbcc9a746e4c87e4513b9",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Max sizes are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270068256"
+          }
+        ]
+      },
+      {
+        "id": "5febdf0e500929a8f8bafc66301186dc4b31d874",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Stretched dialog is correctly positioned in RTL languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180203872"
+          }
+        ]
+      },
+      {
+        "id": "ca39c96a693e51d42eab50bd60b44261ed3276b6",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Unnecessary console errors are no longer thrown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270084087"
+          }
+        ]
+      },
+      {
+        "id": "671becbd5165c645514332fb5f938aed93fafef4",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection in table with many radio buttons is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003326492022"
+          }
+        ]
+      },
+      {
+        "id": "e0745eff4394d1cee41456d2d1b5a2dd889ef73d",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: now change event is fired when the input field is cleared (oData v4/TimeOfDay)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002233972022"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070354898"
+          }
+        ]
+      },
+      {
+        "id": "90e0db8ed1019f95295269d7e5e57c294c2f5020",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: No longer overflows when used standalone or in Groups with 1 column",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080199747"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003967302022"
+          }
+        ]
+      },
+      {
+        "id": "f1685f071d7c09a3670670c67f8df112cf4d36f8",
+        "type": "FIX",
+        "text": " sap.m.Input: Sticky column headers in table with suggestions enabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003326312022"
+          }
+        ]
+      }
+    ]
   }
 }

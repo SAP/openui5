@@ -123,5 +123,25 @@
         ]
       }
     ]
+  },
+  "1.71.47": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "4d8ae3445854e23462d567dfa7f81c8c6675a199",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: Visibility issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070227066"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500004153322022"
+          }
+        ]
+      }
+    ]
   }
 }

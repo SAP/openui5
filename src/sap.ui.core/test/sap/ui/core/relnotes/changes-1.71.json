@@ -1354,5 +1354,43 @@
         ]
       }
     ]
+  },
+  "1.71.47": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "39e4ce9ce29f87f2ad8431f9ef69f770b7f3e483",
+        "type": "FIX",
+        "text": " Enable Controller extensions for legacy application",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002832352022"
+          }
+        ]
+      },
+      {
+        "id": "b24c67c1c0ae51bace122ac8d9ee93c03cd325a3",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#setProperty: reverting a time property does not fail",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002233972022"
+          }
+        ]
+      },
+      {
+        "id": "a04c08e25e0afe89f4dc25f48b41e8241ec53faf",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: no split weeks for \"en\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004563022022"
+          }
+        ]
+      }
+    ]
   }
 }

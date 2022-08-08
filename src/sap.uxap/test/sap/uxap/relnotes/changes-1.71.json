@@ -304,5 +304,21 @@
         ]
       }
     ]
+  },
+  "1.71.47": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "aff0581d5c1323559faabf5f53124319aac5f843",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Generic section label restricted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2240323326"
+          }
+        ]
+      }
+    ]
   }
 }
