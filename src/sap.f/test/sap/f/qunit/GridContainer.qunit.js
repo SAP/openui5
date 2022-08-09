@@ -178,8 +178,26 @@ function (
 		assert.strictEqual(oGrid.getSnapToRow(), false, "GridContainer snapToRow property is false");
 		assert.strictEqual(oGrid.getAllowDenseFill(), false, "GridContainer allowDenseFill property is false");
 		assert.strictEqual(oGrid.getInlineBlockLayout(), false, "GridContainer inlineBlockLayout property is false");
-
 		assert.ok(oGrid.getActiveLayoutSettings().isA("sap.f.GridContainerSettings"), true, "GridContainer has default layout settings");
+
+		// Clean up
+		oGrid.destroy();
+	});
+
+	QUnit.test("Tab indexes of dummy areas", function (assert) {
+		// Arrange
+		var oGrid = new GridContainer({
+			items: [new Card()]
+		});
+		oGrid.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oGrid.getDomRef("before").tabIndex, -1, "tabindex of 'before' dummy area should be correct");
+		assert.strictEqual(oGrid.getDomRef("after").tabIndex, 0, "tabindex of 'after' dummy area should be correct");
+
+		// Clean up
+		oGrid.destroy();
 	});
 
 	QUnit.module("Properties", {
@@ -1702,6 +1720,26 @@ function (
 
 		// Assert
 		assert.notOk(GridContainerUtils.getItemWrapper(oCard).classList.contains("sapFGridContainerItemWrapperNoVisualFocus"), "Class for own focus is not added");
+
+		// Clean up
+		oGrid.destroy();
+	});
+
+	QUnit.test("'after' dummy area correctly forwards the focus to grid item", function (assert) {
+		// Arrange
+		var oCard = new Card(),
+			oGrid = new GridContainer({
+				items: [ oCard ]
+			});
+
+		oGrid.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act - focus the "after" element
+		qutils.triggerEvent("focusin", oGrid.getDomRef("after"));
+
+		// Assert - check if the "after" element correctly forwarded the focus to grid element
+		assert.strictEqual(document.activeElement, GridContainerUtils.getItemWrapper(oCard), "Correct grid item wrapper is focused");
 
 		// Clean up
 		oGrid.destroy();
