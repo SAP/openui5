@@ -26,8 +26,8 @@
  * @class sap.ui.support.ExecutionScope
  */
 sap.ui.define(
-	["sap/base/Log", "sap/ui/core/Component", "sap/ui/core/Element"],
-	function (Log, Component, Element) {
+	["sap/base/Log", "sap/ui/core/Component", "sap/ui/core/Element", "sap/ui/core/UIArea"],
+	function (Log, Component, Element, UIArea) {
 		"use strict";
 
 		var _context = null,
@@ -244,7 +244,7 @@ sap.ui.define(
 				 */
 				getPublicElements: function () {
 					var aPublicElements = [];
-					var mUIAreas = core.mUIAreas;
+					var mUIAreas = UIArea.registry.all();
 
 					Component.registry.forEach(function(oComponent) {
 						aPublicElements = aPublicElements.concat(

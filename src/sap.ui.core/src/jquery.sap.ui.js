@@ -6,9 +6,10 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/base/util/ObjectPath',
+	'sap/ui/core/UIArea',
 	'sap/ui/dom/jquery/control'
 	/* cyclic: 'sap/ui/core/Core' */
-], function(jQuery, ObjectPath /* jQueryControl */) {
+], function(jQuery, ObjectPath, UIArea /* jQueryControl */) {
 	"use strict";
 
 	function fgetUIAreaOfCtrl(oCtrl){
@@ -16,13 +17,11 @@ sap.ui.define([
 	}
 
 	function fUIAreaFilter(){
-		// @evo-todo: remove this global access (for now requiring the Core module would introduce a circular dependency)
-		return sap.ui.getCore().getUIArea(this.id) != null;
+		return UIArea.registry.get(this.id) != null;
 	}
 
 	function fgetUIArea(){
-		// @evo-todo: remove this global access (for now requiring the Core module would introduce a circular dependency)
-		return sap.ui.getCore().getUIArea(this.id);
+		return UIArea.registry.get(this.id).getInterface();
 	}
 
 	/**
@@ -57,8 +56,7 @@ sap.ui.define([
 
 		// create UIAreas
 		this.each(function(){
-			// @evo-todo: remove this global access (for now requiring the Core module would introduce a circular dependency)
-			sap.ui.getCore().createUIArea(this);
+			UIArea.create(this);
 		});
 		return this;
 	};
