@@ -611,7 +611,7 @@ sap.ui.define([
 	 *
 	 * Example:
 	 * <pre>
-	 * ManagedObect.extend('sap.mylib.MyClass', {
+	 * ManagedObject.extend('sap.mylib.MyClass', {
 	 *   metadata : {
 	 *     library: 'sap.mylib',
 	 *     properties : {
