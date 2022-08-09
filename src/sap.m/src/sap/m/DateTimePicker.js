@@ -186,9 +186,7 @@ sap.ui.define([
 			/**
 			 * The IANA timezone ID, e.g <code>"Europe/Berlin"</code>. Date and time are displayed in this timezone.
 			 * The <code>value</code> property string is treated as if it is formatted in this timezone.
-			 * However, the <code>dateValue</code> property is a JS Date object, which is the same point in time
-			 * as the <code>value</code>, but in the local timezone. Thus, it is adjusted when the
-			 * <code>timezone</code> changes.
+			 * The <code>dateValue</code> property should not be used as this could lead to an unpredictable results. Use <code>getValue()</code> instead.
 			 * @since 1.99
 			 */
 			timezone: { type: "string", group: "Data" }
@@ -1007,6 +1005,17 @@ sap.ui.define([
 
 		return oDate;
 	};
+
+	/**
+	 * This method should not be used because it could produce unpredictable results. Use <code>getValue()</code> instead.
+	 *
+	 * @name sap.m.DateTimePicker#getDateValue
+	 * @function
+	 * @public
+	 * @returns {object}
+	 * @since 1.102
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 
 	DateTimePicker.prototype.getLocaleId = function(){
 
