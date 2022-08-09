@@ -486,9 +486,6 @@ sap.ui.define([
 				"sap.ui.fl.util.IFrame": "sap/ui/fl/util/IFrame"
 			},
 			"sap.ui.support": {
-				diagnosticPlugins: [
-					"sap/ui/fl/support/Flexibility"
-				],
 				//Configuration used for rule loading of Support Assistant
 				publicRules: true
 			}
