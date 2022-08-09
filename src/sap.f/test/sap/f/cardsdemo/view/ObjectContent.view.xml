@@ -65,6 +65,9 @@
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/form.json"
 				width="400px"
 				class="sapUiTinyMargin" />
+			<w:Card id="card4" manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/titleMaxLines_labelWrapping.json"
+				width="400px"
+				class="sapUiTinyMargin" />
 		</Panel>
 	</Page>
 </mvc:View>

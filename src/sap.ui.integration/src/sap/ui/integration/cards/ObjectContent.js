@@ -229,14 +229,16 @@ sap.ui.define([
 		}).addStyleClass("sapFCardObjectGroup");
 
 		if (oGroupConfiguration.title) {
-			oGroup.addItem(new Title({
-				text: oGroupConfiguration.title
-			}).addStyleClass("sapFCardObjectItemTitle"));
+			oGroup.addItem(new Text({
+				text: oGroupConfiguration.title,
+				maxLines: oGroupConfiguration.titleMaxLines || 1
+			}).addStyleClass("sapFCardObjectItemTitle sapMTitle sapMTitleStyleAuto"));
 
 			oGroup.addStyleClass("sapFCardObjectGroupWithTitle");
 		}
 
 		oGroupConfiguration.items.forEach(function (oItem) {
+			oItem.labelWrapping = oGroupConfiguration.labelWrapping;
 			this._createGroupItems(oItem).forEach(oGroup.addItem, oGroup);
 		}, this);
 
@@ -263,7 +265,8 @@ sap.ui.define([
 
 			oLabel = new Label({
 				text: vLabel,
-				visible: vVisible
+				visible: vVisible,
+				wrapping: oItem.labelWrapping
 			}).addStyleClass("sapFCardObjectItemLabel");
 
 			oLabel.addEventDelegate({

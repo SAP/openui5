@@ -39,8 +39,8 @@
         "1.27.0",
         "1.28.0",
         "1.29.0",
-        "1.30.0"
-
+        "1.30.0",
+        "1.31.0"
       ]
     },
     "designtime": {
@@ -1240,6 +1240,30 @@
         "title": {
           "description": "Represents a title of the object group; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
           "type": "string"
+        },
+        "titleMaxLines": {
+            "description": "[Experimental] Limits the number of lines for wrapping the group title.",
+            "oneOf": [
+                {
+                    "type": "number"
+                },
+                {
+                    "$ref": "#/definitions/simpleBinding"
+                }
+            ],
+            "default": 1
+        },
+        "labelWrapping": {
+            "description": "[Experimental] Determines whether the labels of the group items will be wrapped.",
+            "oneOf": [
+                {
+                    "type": "boolean"
+                },
+                {
+                    "$ref": "#/definitions/simpleBinding"
+                }
+            ],
+            "default": false
         },
         "items": {
           "description": "Represents items of information",
