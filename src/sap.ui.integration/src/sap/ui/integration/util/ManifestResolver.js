@@ -76,6 +76,7 @@ sap.ui.define([
 			var sManifestPath = aPathAndContext[0];
 			var oContext = aPathAndContext[1];
 			var oSubConfig;
+			var sDataPath;
 
 			if (oContext.getStaticConfiguration) {
 				oSubConfig = oContext.getStaticConfiguration();
@@ -86,12 +87,12 @@ sap.ui.define([
 			}
 
 			if (oSubConfig.data) {
-				var sDataPath = oSubConfig.data.path;
+				sDataPath = oSubConfig.data.path;
 				delete oSubConfig.data;
-				oSubConfig = BindingHelper.createBindingInfos(oSubConfig, oCard.getBindingNamespaces());
-				oSubConfig = BindingResolver.resolveValue(oSubConfig, oContext, sDataPath);
 			}
 
+			oSubConfig = BindingHelper.createBindingInfos(oSubConfig, oCard.getBindingNamespaces());
+			oSubConfig = BindingResolver.resolveValue(oSubConfig, oContext, sDataPath);
 			Utils.setNestedPropertyValue(oManifest, sManifestPath, oSubConfig);
 		});
 

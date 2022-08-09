@@ -177,6 +177,52 @@ sap.ui.define([
 			});
 	});
 
+	QUnit.test("Resolve translations when there are no 'data' sections", function (assert) {
+		// Arrange
+		var oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card",
+				"type": "card",
+				"i18n": {
+					"bundleUrl": "i18n/i18n.properties",
+					"supportedLocales": [""],
+					"fallbackLocale": ""
+				}
+			},
+			"sap.card": {
+				"type": "Object",
+				"header": {
+					"title": "{{contactDetails}}",
+					"subTitle": "{i18n>contactDetails}"
+				},
+				"content": {
+					"groups": [
+						{
+							"title": "Group",
+							"items": []
+						}
+					]
+				 }
+			}
+		};
+
+		var oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(JSON.parse)
+			.then(function (oRes) {
+				// Assert
+				assert.strictEqual(oRes["sap.card"].header.title, "Contact Details", "Double curly bracket translation syntax is resolved");
+				assert.strictEqual(oRes["sap.card"].header.subTitle, "Contact Details", "Translation syntax is resolved from i18n model");
+
+				oCard.destroy();
+			});
+	});
+
 	QUnit.test("Resolve predefined translations", function (assert) {
 		var oManifest = {
 			"sap.app": {
