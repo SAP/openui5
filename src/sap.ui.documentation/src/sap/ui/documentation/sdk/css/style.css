@@ -11,15 +11,17 @@
 	vertical-align: bottom;
 }
 
-.newsButton.sapMBtn .sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
+.newsButton.sapMBtn .sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator,
+.surveyButton.sapMBtn .sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
 	position: absolute;
 	top: 0;
 	right: 0;
 	padding: 0;
 }
 
-.sapUiSizeCompact .newsButton.sapMBtn .sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
-	top: -0.25rem;
+.sapUiSizeCompact .newsButton.sapMBtn .sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator,
+.sapUiSizeCompact .surveyButton.sapMBtn .sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
+	top: -0.125rem;
 	right: -0.125rem;
 }
 
@@ -1862,4 +1864,36 @@ html.sap-desktop .sapMFocus > .sapMSFF::before {
 	border-radius: inherit;
 	z-index: 2;
 	pointer-events: none;
+}
+
+.surveyPopoverTitle {
+	padding: 1rem 1.5rem 0 1.5rem;
+	font-size: 1.125rem;
+}
+
+.longSurveyAvailability {
+	font-size: 0.775rem;
+}
+
+.longSurveyBadge .sapMObjStatusText {
+	border-radius: 25px;
+}
+
+.surveyDescription {
+	font-size: 0.875rem;
+	opacity: 0.85;
+}
+
+.surveyPopoverCustomStylesTop {
+	padding-top: 1.375rem;
+	border-top: 1px solid #85848487;
+}
+
+.surveyPopoverCustomPaddingBottom {
+	padding-bottom: 1.5rem;
+}
+
+.surveyPopoverCustomPaddingBeginEnd {
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
 }

@@ -64,6 +64,9 @@ sap.ui.define([
 		// shortcut for sap.m.SplitAppMode
 		var SplitAppMode = mobileLibrary.SplitAppMode;
 
+		// Shortcut for sap.m.URLHelper
+		var URLHelper = mobileLibrary.URLHelper;
+
 		var MAIN_WEB_PAGE_TITLE = "Demo Kit - \uFFFD SDK",
 			WEB_PAGE_TITLE = {
 				topic: "Documentation - " + MAIN_WEB_PAGE_TITLE,
@@ -158,7 +161,8 @@ sap.ui.define([
 					"Check at <a href = 'https://openui5.hana.ondemand.com/versionoverview.html'>https://openui5.hana.ondemand.com/versionoverview.html</a> " +
 					"which versions are available. " +
 					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
-					"<a href='https://openui5.hana.ondemand.com/1.52.4/'>https://openui5.hana.ondemand.com/1.52.4/</a>"
+					"<a href='https://openui5.hana.ondemand.com/1.52.4/'>https://openui5.hana.ondemand.com/1.52.4/</a>",
+					bUseFeedbackDialog: false // enable to restore previous feedback dialog and hide the Qualtrics surveys
 				});
 
 				var oComponent = this.getOwnerComponent();
@@ -268,6 +272,7 @@ sap.ui.define([
 					oCookieMgmtComponent.enable(oComponent.getRootControl());
 				});
 
+				this.setSurveyModelData();
 			},
 
 			_updateMessagesModel: function(oMessagesData) {
@@ -455,12 +460,17 @@ sap.ui.define([
 
 			handleMenuItemClick: function (oEvent) {
 				var sTargetText = oEvent.getParameter("item").getKey(),
-					sTarget = this.MENU_LINKS_MAP[sTargetText];
+					sTarget = this.MENU_LINKS_MAP[sTargetText],
+					bUseFeedbackDialog = this.getModel("appView").getProperty("/bUseFeedbackDialog");
 
 				if (sTargetText === ABOUT_TEXT) {
 					this.aboutDialogOpen();
 				} else if (sTargetText === FEEDBACK_TEXT) {
-					this.feedbackDialogOpen();
+					if (!bUseFeedbackDialog) {
+						this.launchSurvey(oEvent, true);
+					} else {
+						this.feedbackDialogOpen();
+					}
 				} else if (sTargetText === CHANGE_SETTINGS_TEXT) {
 					this.settingsDialogOpen();
 				} else if (sTargetText === CHANGE_COOKIE_PREFERENCES_TEXT) {
@@ -1263,6 +1273,115 @@ sap.ui.define([
 					syncStyleClass("sapUiSizeCompact", this.getView(), this._oFeedbackDialog);
 					this._oFeedbackDialog.open();
 				}
+			},
+
+			/**
+			 * Opens the Qualtrics UX survey when the feedback button gets pressed.
+			 * There are two available surveys - a short one (all year round), and quarterly survey.
+			 *
+			 * Depending on the number of available surveys:
+			 * - Directly opens the short survey in a new tab.
+			 * - If a long, quarterly survey is available, opens a popover with links for both.
+			 *
+			 * @param {sap.ui.base.Event} oEvent The feedback/menu button's press event
+			 * @param {boolean} bMenu Whether the pressed button is hidden in the 'About' menu
+			 */
+			launchSurvey: function (oEvent, bMenu) {
+				var oTarget = this.byId(!bMenu ? "surveyButton" : "aboutMenuButton"),
+					oView = this.getView(),
+					oViewModel = this.getModel("appView"),
+					bShowLongSurvey = oViewModel.getProperty("/bShowLongSurvey");
+
+				if (!bShowLongSurvey) {
+					this.shortSurveyRedirect();
+				} else if (!this._oSurveyPopover) {
+					Fragment.load({
+						name: "sap.ui.documentation.sdk.view.SurveyPopover",
+						controller: this
+					}).then(function (oPopover) {
+						oView.addDependent(oPopover);
+						this._oSurveyPopover = oPopover;
+
+						if (Device.system.phone) {
+							this.addSurveyPopoverCloseBtn();
+						}
+
+						this._oSurveyPopover.openBy(oTarget);
+					}.bind(this));
+				} else {
+					this._oSurveyPopover.openBy(oTarget);
+				}
+			},
+
+			/**
+			 * Closes the survey popover on mobile.
+			 * @param {sap.ui.base.Event} oEvent The close button's press event
+			 */
+			closeSurveyPopover: function (oEvent) {
+				this._oSurveyPopover.close();
+			},
+
+			shortSurveyRedirect: function () {
+				var sQueryParams = "?product=SAPUI5&product_filter=UI5&cluster=BTP",
+					sProdURL = "https://sapinsights.eu.qualtrics.com/jfe/form/SV_2gcfdw3EYYOIz5A" + sQueryParams,
+					sDevURL = "https://sapinsights.eu.qualtrics.com/jfe/form/SV_d3UPNymSgUHAb9Y" + sQueryParams,
+					bProd = !this.getModel("versionData").getProperty("/isDevEnv");
+
+				// This survey could be displayed in a Qualtrics intercept
+				// dialog in the future, instead of a new tab
+				URLHelper.redirect(bProd ? sProdURL : sDevURL, true);
+			},
+
+			longSurveyRedirect: function () {
+				var sBaseURL = "https://sapinsights.eu.qualtrics.com/jfe/form/SV_7X5P63Zg5zXC5zE",
+					sBaseQueryParams = "?product=SAPUI5&product_filter=UI5&cluster=BTP",
+					sProdURL = sBaseURL + sBaseQueryParams,
+					sDevURL = sBaseURL + sBaseQueryParams + "&Q_CHL=preview&Q_SurveyVersionID=current",
+					bProd = !this.getModel("versionData").getProperty("/isDevEnv");
+
+				URLHelper.redirect(bProd ? sProdURL : sDevURL, true);
+			},
+
+			setSurveyModelData: function () {
+				var oViewModel = this.getModel("appView"),
+					dCurrentDate = new Date(),
+					iCurrentYear = dCurrentDate.getFullYear(),
+					aDateSpans = [
+						[new Date(iCurrentYear, 1, 1), new Date(iCurrentYear, 1, 21)], // Feb 1-21
+						[new Date(iCurrentYear, 4, 1), new Date(iCurrentYear, 4, 21)], // May 1-21
+						[new Date(iCurrentYear, 7, 1), new Date(iCurrentYear, 7, 21)], // Aug 1-21
+						[new Date(iCurrentYear, 10, 1), new Date(iCurrentYear, 10, 21)] // Nov 1-21
+					],
+					bDateInSpan = false,
+					sLastAvailableDate;
+
+					aDateSpans.forEach(function (aDateSpan) {
+						var dMinDate = aDateSpan[0],
+							dMaxDate = aDateSpan[1];
+
+						if (dCurrentDate >= dMinDate && dCurrentDate <= dMaxDate) {
+							bDateInSpan = true;
+							sLastAvailableDate = dMaxDate.toLocaleDateString();
+							return;
+						}
+					});
+
+					oViewModel.setProperty("/bShowLongSurvey", bDateInSpan);
+
+					if (bDateInSpan) {
+						oViewModel.setProperty("/sLongSurveyLastDate", sLastAvailableDate);
+					}
+			},
+
+			addSurveyPopoverCloseBtn: function () {
+				var oResourceBundle = this.getModel("i18n").getResourceBundle(),
+					fCloseBtnHandler = this.closeSurveyPopover.bind(this),
+					oCloseButton = new Button({
+						text: oResourceBundle.getText("SURVEY_POPOVER_CLOSE_BTN"),
+						press: fCloseBtnHandler
+					});
+
+				this._oSurveyPopover.setEndButton(oCloseButton);
 			},
 
 			/**

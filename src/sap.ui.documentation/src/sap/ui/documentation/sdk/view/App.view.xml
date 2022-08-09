@@ -90,8 +90,19 @@
 
 						<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" liveChange="onSearchLiveChange" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
 
-						<Button id="feedBackDialogButton" tooltip="{i18n>APP_FEEDBACK_BTN_TOOLTIP}" press="feedbackDialogOpen" icon="sap-icon://comment" type="Transparent" visible="{=!${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
+						<Button id="feedBackDialogButton" tooltip="{i18n>APP_FEEDBACK_BTN_TOOLTIP}" press="feedbackDialogOpen" icon="sap-icon://comment" type="Transparent" visible="{=${appView>/bUseFeedbackDialog} &amp;&amp; !${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
 
+							<layoutData>
+								<OverflowToolbarLayoutData priority="NeverOverflow" />
+							</layoutData>
+						</Button>
+
+						<Button id="surveyButton" class="surveyButton" tooltip="{i18n>APP_FEEDBACK_BTN_TOOLTIP}" press="launchSurvey" icon="sap-icon://feedback" type="Transparent" visible="{=!${appView>/bUseFeedbackDialog} &amp;&amp; !${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
+							<customData>
+								<BadgeCustomData
+									visible="{appView>/bShowLongSurvey}"
+									value="1" />
+							</customData>
 							<layoutData>
 								<OverflowToolbarLayoutData priority="NeverOverflow" />
 							</layoutData>
