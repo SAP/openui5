@@ -87,7 +87,7 @@ sap.ui.define([
 		var oSortOrderSwitch = new SegmentedButton({
 			enabled: sKey ? true : false,
 			layoutData: new GridData({
-				span: "XL2 L2 M2 S4" //on "S" the Asc/Desc text is invisible, we need to increase the size then
+				span: "XL2 L2 M2 S3" //on "S" the Asc/Desc text is invisible, we need to increase the size then
 			}),
 			items: [
 				new SegmentedButtonItem({
@@ -132,7 +132,7 @@ sap.ui.define([
 
 		return new Grid({
 			containerQuery: true,
-			defaultSpan: "XL4 L4 M4 S4",
+			defaultSpan: "XL4 L4 M4 S5",
 			content: [
 				oSelect,
 				oSortOrderSwitch,
