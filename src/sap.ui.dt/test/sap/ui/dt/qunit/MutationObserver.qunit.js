@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/dt/DOMUtil",
 	"sap/base/util/includes",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery",
@@ -19,7 +18,6 @@ sap.ui.define([
 	Panel,
 	Button,
 	VerticalLayout,
-	DOMUtil,
 	includes,
 	sinon,
 	jQuery,
@@ -139,11 +137,15 @@ sap.ui.define([
 		QUnit.test("when animationend is called", function(assert) {
 			var fnDone = assert.async();
 
-			DOMUtil.insertStyles('\
+			var style = document.createElement("style");
+			document.head.appendChild(style);
+			style.sheet.insertRule('\
 				@keyframes example {\
 					from	{ width: 100px; }\
 					to		{ width: 200px; }\
 				}\
+			');
+			style.sheet.insertRule('\
 				.customClass {\
 					animation-name: example;\
 					animation-duration: 0.05s;\
@@ -151,8 +153,8 @@ sap.ui.define([
 					height: 30px;\
 					width: 100px;\
 					background-color: blue;\
-				} \
-			', document.getElementById("qunit-fixture"));
+				}\
+			');
 
 			this.oMutationObserver.registerHandler(this.sNodeId, function (mParameters) {
 				if (mParameters.type === "MutationOnAnimationEnd") {

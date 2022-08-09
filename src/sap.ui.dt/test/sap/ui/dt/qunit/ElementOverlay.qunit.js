@@ -269,17 +269,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("when CSS animation takes place in UI", function(assert) {
-			DOMUtil.insertStyles("\
+			var style = document.createElement("style");
+			document.head.appendChild(style);
+			style.sheet.insertRule('\
 				@keyframes example {\
 					from	{ width: 100px; }\
 					to		{ width: 200px; }\
 				}\
+			');
+			style.sheet.insertRule('\
 				.sapUiDtTestAnimate {\
 					animation-name: example;\
 					animation-duration: 0.05s;\
 					animation-fill-mode: forwards;\
-				} \
-			", document.getElementById("qunit-fixture"));
+				}\
+			');
 
 			var done = assert.async();
 

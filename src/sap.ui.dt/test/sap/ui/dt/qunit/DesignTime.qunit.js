@@ -67,11 +67,13 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	DOMUtil.insertStyles("\
+	var style = document.createElement("style");
+	document.head.appendChild(style);
+	style.sheet.insertRule("\
 		.hidden {\
 			display: none !important;\
 		}\
-	", document.head);
+	");
 
 	var sandbox = sinon.createSandbox();
 
