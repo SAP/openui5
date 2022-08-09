@@ -2252,8 +2252,14 @@ sap.ui.define([
 				if ( candidate === oRootNode || needsPlaceholder(candidate) ) {
 					makePlaceholder(candidate);
 				}
+
+				FocusHandler.trackFocusForPreservedElement(candidate);
+
 				$preserve.append(candidate);
 			} else if ( bPreserveNodesWithId && candidate.id ) {
+
+				FocusHandler.trackFocusForPreservedElement(candidate);
+
 				RenderManager.markPreservableContent(jQuery(candidate), candidate.id);
 				$preserve.append(candidate);
 				return;
