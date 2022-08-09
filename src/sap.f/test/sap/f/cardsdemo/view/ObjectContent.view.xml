@@ -30,6 +30,7 @@
 				width="auto"
 				class="sapUiTinyMargin" />
 			<w:Card
+				id="cardLongLabelAvatar"
 				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/objectcontent/manifest.json"
 				width="auto"
 				class="sapUiTinyMargin" />

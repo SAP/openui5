@@ -40,7 +40,7 @@
 					"title": "{{organizationalDetails}}",
 					"items": [
 						{
-							"label": "{{directManager}}",
+							"label": "Very long label that shouldn't hide the avatar.",
 							"value": "{manager/firstName} {manager/lastName}",
 							"icon": {
 								"src": "{manager/photo}"
