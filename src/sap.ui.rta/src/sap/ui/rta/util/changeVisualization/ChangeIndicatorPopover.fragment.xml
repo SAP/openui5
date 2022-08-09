@@ -31,7 +31,8 @@
 					<cells>
 						<core:Icon
 							src="{details>icon}"
-							class="sapUiTinyMarginBegin"/>
+							class="sapUiTinyMarginBegin"
+							tooltip="{details>iconTooltip}"/>
 						<HBox alignItems="Center">
 							<Text
 								text="{details>description}"

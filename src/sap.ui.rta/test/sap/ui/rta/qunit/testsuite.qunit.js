@@ -733,35 +733,43 @@ sap.ui.define([
 					only: ["sap/ui/rta/util/showMessageBox"]
 				}
 			},
-			"util/changeVisualization/categories/CombineVisualization": {
+			"util/changeVisualization/commands/CombineVisualization": {
 				group: "Change visualization",
 				coverage: {
 					only: [
-						"sap/ui/rta/util/changeVisualization/categories/CombineVisualization"
+						"sap/ui/rta/util/changeVisualization/commands/CombineVisualization"
 					]
 				}
 			},
-			"util/changeVisualization/categories/MoveVisualization": {
+			"util/changeVisualization/commands/MoveVisualization": {
 				group: "Change visualization",
 				coverage: {
 					only: [
-						"sap/ui/rta/util/changeVisualization/categories/MoveVisualization"
+						"sap/ui/rta/util/changeVisualization/commands/MoveVisualization"
 					]
 				}
 			},
-			"util/changeVisualization/categories/RenameVisualization": {
+			"util/changeVisualization/commands/RenameVisualization": {
 				group: "Change visualization",
 				coverage: {
 					only: [
-						"sap/ui/rta/util/changeVisualization/categories/RenameVisualization"
+						"sap/ui/rta/util/changeVisualization/commands/RenameVisualization"
 					]
 				}
 			},
-			"util/changeVisualization/categories/SplitVisualization": {
+			"util/changeVisualization/commands/SplitVisualization": {
 				group: "Change visualization",
 				coverage: {
 					only: [
-						"sap/ui/rta/util/changeVisualization/categories/SplitVisualization"
+						"sap/ui/rta/util/changeVisualization/commands/SplitVisualization"
+					]
+				}
+			},
+			"util/changeVisualization/ChangeCategories": {
+				group: "Change visualization",
+				coverage: {
+					only: [
+						"sap/ui/rta/util/changeVisualization/commands/ChangeCategories"
 					]
 				}
 			},

@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/rta/util/changeVisualization/categories/CombineVisualization",
+	"sap/ui/rta/util/changeVisualization/commands/CombineVisualization",
 	"sap/ui/core/Core",
 	"sap/ui/dt/ElementUtil",
 	"sap/m/Button"

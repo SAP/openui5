@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/rta/util/changeVisualization/categories/SplitVisualization",
+	"sap/ui/rta/util/changeVisualization/commands/SplitVisualization",
 	"sap/ui/core/Core"
 ], function(
 	SplitVisualization,

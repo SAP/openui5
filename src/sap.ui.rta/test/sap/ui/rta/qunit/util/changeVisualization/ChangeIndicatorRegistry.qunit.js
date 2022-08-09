@@ -37,7 +37,7 @@ sap.ui.define([
 	QUnit.module("Basic tests", {
 		beforeEach: function() {
 			this.oRegistry = new ChangeIndicatorRegistry({
-				commandCategories: {
+				changeCategories: {
 					fooCategory: [
 						"foo"
 					],
@@ -61,15 +61,15 @@ sap.ui.define([
 				this.oRegistry.registerChange(createMockChange("fooChange"), "foo"),
 				this.oRegistry.registerChange(createMockChange("barChange"), "bar")
 			]).then(function() {
-				assert.deepEqual(this.oRegistry.getChangeIds(), ["fooChange", "barChange"], "then the change ids are registered");
-				assert.strictEqual(this.oRegistry.getChanges().length, 2, "then the changes are added to the registry");
-				assert.strictEqual(this.oRegistry.getChange("fooChange").commandCategory, "fooCategory", "then the command categories are properly classified");
+				assert.deepEqual(this.oRegistry.getRegisteredChangeIds(), ["fooChange", "barChange"], "then the change ids are registered");
+				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 2, "then the changes are added to the registry");
+				assert.strictEqual(this.oRegistry.getRegisteredChange("fooChange").changeCategory, "fooCategory", "then the command categories are properly classified");
 			}.bind(this));
 		});
 
 		QUnit.test("when a change with an invalid command type is registered", function(assert) {
 			return this.oRegistry.registerChange(createMockChange("bazChange"), "baz").then(function() {
-				assert.ok(this.oRegistry.getChange("bazChange"), "then it is added to the registry");
+				assert.ok(this.oRegistry.getRegisteredChange("bazChange"), "then it is added to the registry");
 			}.bind(this));
 		});
 
@@ -85,7 +85,7 @@ sap.ui.define([
 				}
 			});
 			return this.oRegistry.registerChange(createMockChange("id1"), "settings").then(function() {
-				assert.strictEqual(this.oRegistry.getChange("id1").commandCategory, "fooCategory", "then the category is considered");
+				assert.strictEqual(this.oRegistry.getRegisteredChange("id1").changeCategory, "fooCategory", "then the category is considered");
 			}.bind(this));
 		});
 
@@ -101,7 +101,7 @@ sap.ui.define([
 				}
 			});
 			return this.oRegistry.registerChange(createMockChange("id1"), "settings").then(function() {
-				assert.strictEqual(this.oRegistry.getChange("id1").commandCategory, undefined, "then the category is empty");
+				assert.strictEqual(this.oRegistry.getRegisteredChange("id1").changeCategory, "other", "then the category is set to 'other'");
 			}.bind(this));
 		});
 
@@ -111,7 +111,7 @@ sap.ui.define([
 			ChangesWriteAPI.getChangeHandler.rejects("foo");
 			return this.oRegistry.registerChange(createMockChange("id1"), "settings").then(function() {
 				assert.strictEqual(oLogStub.callCount, 1, "then an error is logged");
-				assert.ok(this.oRegistry.getChange("id1"), "then the change is still added");
+				assert.ok(this.oRegistry.getRegisteredChange("id1"), "then the change is still added");
 			}.bind(this));
 		});
 
@@ -127,7 +127,7 @@ sap.ui.define([
 				}
 			});
 			return this.oRegistry.registerChange(createMockChange("id1"), "bar").then(function() {
-				assert.strictEqual(this.oRegistry.getChange("id1").commandCategory, "barCategory", "then the category is ignored");
+				assert.strictEqual(this.oRegistry.getRegisteredChange("id1").changeCategory, "barCategory", "then the category is ignored");
 			}.bind(this));
 		});
 
@@ -144,7 +144,7 @@ sap.ui.define([
 	QUnit.module("Cleanup", {
 		beforeEach: function() {
 			this.oRegistry = new ChangeIndicatorRegistry({
-				commandCategories: {
+				changeCategories: {
 					fooCategory: [
 						"foo"
 					]
@@ -167,7 +167,7 @@ sap.ui.define([
 				this.oRegistry.registerChangeIndicator("someChangeIndicator", oIndicator);
 
 				this.oRegistry.destroy();
-				assert.strictEqual(this.oRegistry.getChanges().length, 0, "then all changes are deleted");
+				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 0, "then all changes are deleted");
 				assert.strictEqual(this.oRegistry.getChangeIndicators().length, 0, "then all indicator references are deleted");
 				assert.ok(oDestructionSpy.calledOnce, "then the registered indicators are destroyed");
 			}.bind(this));

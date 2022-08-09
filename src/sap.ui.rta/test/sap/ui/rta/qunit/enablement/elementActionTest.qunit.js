@@ -58,6 +58,14 @@ sap.ui.define([
 		},
 		afterRedo: function () {
 			fnConfirmFormElementIsInvisible.apply(this, arguments);
+		},
+
+		changeVisualization: {
+			displayElementId: "container",
+			visualizationInfo: {
+				affectedControls: ["formelement"],
+				displayControls: ["container"]
+			}
 		}
 	});
 

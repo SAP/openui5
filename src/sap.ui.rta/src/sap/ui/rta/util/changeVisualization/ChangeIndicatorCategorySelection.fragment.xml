@@ -18,13 +18,13 @@
 		</MessageStrip>
 		<List
 			class="sapUiRtaChangesList"
-			items="{visualizationModel>/commandCategories/}">
+			items="{visualizationModel>/changeCategories/}">
 			<StandardListItem
 				title="{visualizationModel>title}"
 				counter="{visualizationModel>count}"
 				type="{= ${visualizationModel>count} > 0 ? 'Active' : 'Inactive'}"
 				icon="{visualizationModel>icon}"
-				press=".onCommandCategorySelection"/>
+				press=".onChangeCategorySelection"/>
 		</List>
 	</Popover>
 </core:FragmentDefinition>
