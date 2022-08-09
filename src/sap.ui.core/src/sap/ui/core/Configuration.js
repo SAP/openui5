@@ -317,6 +317,7 @@ sap.ui.define([
 	 *
 	 * Values of boolean parameters are case insensitive where "true" and "x" are interpreted as true.
 	 *
+	 * @hideconstructor
 	 * @extends sap.ui.base.Object
 	 * @author Frank Weigel (Martin Schaus)
 	 * @public
@@ -569,8 +570,8 @@ sap.ui.define([
 			var aCSSLibs = config['preloadLibCss'];
 			if ( aCSSLibs.length > 0 ) {
 				// a leading "!" denotes that the application has loaded the file already
-				aCSSLibs.appManaged = aCSSLibs[0].slice(0,1) === "!";
-				if ( aCSSLibs.appManaged ) {
+				config.cssAppManaged = aCSSLibs[0].slice(0,1) === "!";
+				if ( config.cssAppManaged ) {
 					aCSSLibs[0] = aCSSLibs[0].slice(1); // also affect same array in "config"!
 				}
 				if ( aCSSLibs[0] === "*" ) {
@@ -1741,6 +1742,18 @@ sap.ui.define([
 					"Not a function: " + fnSecurityTokenHandler);
 			});
 			this.securityTokenHandlers = aSecurityTokenHandlers.slice();
+		},
+
+		/**
+		 * Returns whether preload lib CSS is app managed or not
+		 *
+		 * @returns {boolean} whether preload lib CSS is app managed or not
+		 * @private
+		 * @ui5-restricted sap.ui.core.Core
+		 * @since 1.106.0
+		 */
+		getCssAppManaged: function () {
+			return !!this.cssAppManaged;
 		},
 
 		/**
