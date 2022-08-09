@@ -276,5 +276,43 @@
         ]
       }
     ]
+  },
+  "1.102.6": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "540a9980c81e21eb2d29000139ef13f6f0a064d4",
+        "type": "FIX",
+        "text": " sap.ui.core.Configuration: Disable timezone configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "7bfc573ce643e8ceaa1fb87d3919c199594126ce",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#filter: allow removal for FilterType.Control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280148151"
+          }
+        ]
+      },
+      {
+        "id": "4de95e23858ee5f6e638308b7de26a3b45e94cd8",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding: Handling of createActivate-event after rebinding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280135558"
+          }
+        ]
+      }
+    ]
   }
 }
