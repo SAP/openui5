@@ -246,8 +246,8 @@ sap.ui.define([
 					.then(function (oOverlay) {
 						var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", "I18N_KEY_USER_FRIENDLY_CONTROL_NAME");
 						assert.equal(this.oPlugin.getContextMenuText(test.sibling, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
-						assert.ok(this.oPlugin.isAvailable(test.sibling, [oOverlay]), "then the action is available");
-						assert.notOk(this.oPlugin.isEnabled(test.sibling, [oOverlay], sAggregationName), "then the action is disabled");
+						assert.ok(this.oPlugin.isAvailable([oOverlay], test.sibling), "then the action is available");
+						assert.notOk(this.oPlugin.isEnabled([oOverlay], test.sibling, sAggregationName), "then the action is disabled");
 						return this.oPlugin._isEditableCheck(oOverlay, test.sibling)
 							.then(function (bIsEditable) {
 								assert.strictEqual(bIsEditable, true, "then the overlay is editable");
@@ -274,8 +274,8 @@ sap.ui.define([
 					var sExpectedControlTypeText = this.oRTATexts.getText("MULTIPLE_CONTROL_NAME");
 					var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", [sExpectedControlTypeText]);
 					assert.equal(this.oPlugin.getContextMenuText(true, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
-					assert.ok(this.oPlugin.isAvailable(true, [oOverlay]), "then the action is available");
-					assert.notOk(this.oPlugin.isEnabled(true, [oOverlay], "content"), "then the action is disabled");
+					assert.ok(this.oPlugin.isAvailable([oOverlay], true), "then the action is available");
+					assert.notOk(this.oPlugin.isEnabled([oOverlay], true, "content"), "then the action is disabled");
 					return this.oPlugin._isEditableCheck(oOverlay, true)
 						.then(function (bIsEditable) {
 							assert.strictEqual(bIsEditable, true, "then the overlay is editable");
@@ -302,8 +302,8 @@ sap.ui.define([
 					})();
 				}.bind(this))
 				.then(function (oOverlay) {
-					assert.ok(this.oPlugin.isAvailable(ON_SIBLING, [oOverlay]), "then the action is available");
-					assert.notOk(this.oPlugin.isEnabled(ON_SIBLING, [oOverlay], "content"), "then the action is disabled");
+					assert.ok(this.oPlugin.isAvailable([oOverlay], ON_SIBLING), "then the action is available");
+					assert.notOk(this.oPlugin.isEnabled([oOverlay], ON_SIBLING, "content"), "then the action is disabled");
 					return this.oPlugin._isEditableCheck(oOverlay, ON_SIBLING)
 						.then(function (bIsEditable) {
 							assert.strictEqual(bIsEditable, true, "then the overlay is editable");
@@ -351,7 +351,7 @@ sap.ui.define([
 					.then(function (oOverlay) {
 						sandbox.stub(oOverlay, "isVisible").returns(true);
 						sandbox.stub(oOverlay.getParentElementOverlay(), "isVisible").returns(true);
-						assert.notOk(this.oPlugin.isAvailable(test.sibling, [oOverlay]), "then the action is not available");
+						assert.notOk(this.oPlugin.isAvailable([oOverlay], test.sibling), "then the action is not available");
 						return this.oPlugin._isEditableCheck(oOverlay, test.sibling);
 					}.bind(this))
 					.then(function (bEditable) {
@@ -376,7 +376,7 @@ sap.ui.define([
 				.then(function (oOverlay) {
 					sandbox.stub(oOverlay, "isVisible").returns(true);
 					sandbox.stub(oOverlay.getParentElementOverlay(), "isVisible").returns(true);
-					assert.notOk(this.oPlugin.isAvailable(true, [oOverlay]), "then the action is not available");
+					assert.notOk(this.oPlugin.isAvailable([oOverlay], true), "then the action is not available");
 					return this.oPlugin._isEditableCheck(oOverlay, true);
 				}.bind(this))
 				.then(function (bEditable) {
@@ -535,7 +535,7 @@ sap.ui.define([
 					.then(function (oOverlay) {
 						return this.oPlugin.showAvailableElements(test.sibling, "contentLeft", [oOverlay])
 							.then(function () {
-								assert.strictEqual(this.oPlugin.isEnabled(test.sibling, [oOverlay], "contentLeft"), true, "then isEnabled() returns true");
+								assert.strictEqual(this.oPlugin.isEnabled([oOverlay], test.sibling, "contentLeft"), true, "then isEnabled() returns true");
 							}.bind(this));
 					}.bind(this))
 
@@ -624,7 +624,7 @@ sap.ui.define([
 						oElement = oCreatedOverlay.getElement();
 						return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oCreatedOverlay])
 							.then(function() {
-								assert.strictEqual(this.oPlugin.isEnabled(test.sibling, [oCreatedOverlay], sAggregationName), true, "then isEnabled() returns true");
+								assert.strictEqual(this.oPlugin.isEnabled([oCreatedOverlay], test.sibling, sAggregationName), true, "then isEnabled() returns true");
 							}.bind(this));
 					}.bind(this))
 
@@ -697,7 +697,7 @@ sap.ui.define([
 						oElement = oCreatedOverlay.getElement();
 						return this.oPlugin.showAvailableElements(test.sibling, sAggregationName, [oCreatedOverlay])
 							.then(function() {
-								assert.strictEqual(this.oPlugin.isEnabled(test.sibling, [oCreatedOverlay], sAggregationName), true, "then isEnabled() returns true");
+								assert.strictEqual(this.oPlugin.isEnabled([oCreatedOverlay], test.sibling, sAggregationName), true, "then isEnabled() returns true");
 							}.bind(this));
 					}.bind(this))
 
@@ -813,7 +813,7 @@ sap.ui.define([
 
 		QUnit.test("when the control's dt metadata has a reveal action on a responsible element and getMenuItems() is called", function (assert) {
 			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function () {
-				if (arguments[1][0] === this.oPseudoPublicParentOverlay) {
+				if (arguments[0][0] === this.oPseudoPublicParentOverlay) {
 					return true;
 				}
 				return undefined;
@@ -840,7 +840,7 @@ sap.ui.define([
 
 		QUnit.test("when the control's dt metadata has a disabled reveal action along with an enabled reveal action on the responsible element and getActions() is called", function (assert) {
 			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function () {
-				if (arguments[1][0] === this.oPseudoPublicParentOverlay) {
+				if (arguments[0][0] === this.oPseudoPublicParentOverlay) {
 					return true;
 				}
 				return undefined;

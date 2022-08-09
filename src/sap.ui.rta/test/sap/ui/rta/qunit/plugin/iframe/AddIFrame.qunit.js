@@ -164,7 +164,7 @@ sap.ui.define([
 
 			return DtUtil.waitForSynced(this.oDesignTime)()
 			.then(function() {
-				assert.strictEqual(this.oAddIFrame.isAvailable(false, [this.oObjectPageLayoutOverlay]), false, "then isAvailable is called and it returns false");
+				assert.strictEqual(this.oAddIFrame.isAvailable([this.oObjectPageLayoutOverlay], false), false, "then isAvailable is called and it returns false");
 				assert.strictEqual(this.oAddIFrame.isEnabled("dummyAggregation", [this.oObjectPageLayoutOverlay]), false, "then isEnabled is called and it returns false");
 				return this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
 			}.bind(this))
@@ -191,7 +191,7 @@ sap.ui.define([
 
 			return DtUtil.waitForSynced(this.oDesignTime)()
 			.then(function() {
-				assert.strictEqual(this.oAddIFrame.isAvailable(false, [this.oObjectPageLayoutOverlay]), true, "then isAvailable is called and it returns true");
+				assert.strictEqual(this.oAddIFrame.isAvailable([this.oObjectPageLayoutOverlay], false), true, "then isAvailable is called and it returns true");
 				assert.strictEqual(this.oAddIFrame.isEnabled("sections", [this.oObjectPageLayoutOverlay]), true, "then isEnabled is called and it returns true");
 				return this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
 			}.bind(this))
@@ -218,7 +218,7 @@ sap.ui.define([
 
 			return DtUtil.waitForSynced(this.oDesignTime)()
 			.then(function() {
-				assert.strictEqual(this.oAddIFrame.isAvailable(false, [this.oObjectPageLayoutOverlay]), false, "then isAvailable is called and then it returns false");
+				assert.strictEqual(this.oAddIFrame.isAvailable([this.oObjectPageLayoutOverlay], false), false, "then isAvailable is called and then it returns false");
 				assert.strictEqual(this.oAddIFrame.isEnabled("sections", [this.oObjectPageLayoutOverlay]), true, "then isEnabled is called and then it returns correct value");
 				return this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
 			}.bind(this))
@@ -275,11 +275,11 @@ sap.ui.define([
 
 			return DtUtil.waitForSynced(this.oDesignTime)()
 				.then(function() {
-					assert.strictEqual(this.oAddIFrame.isAvailable(true, [this.oButtonOverlay]), true, "then isAvailable returns true as a sibling");
-					assert.strictEqual(this.oAddIFrame.isAvailable(false, [this.oButtonOverlay]), false, "then isAvailable returns false when it's not a sibling");
+					assert.strictEqual(this.oAddIFrame.isAvailable([this.oButtonOverlay], true), true, "then isAvailable returns true as a sibling");
+					assert.strictEqual(this.oAddIFrame.isAvailable([this.oButtonOverlay], false), false, "then isAvailable returns false when it's not a sibling");
 
 					var bAvailable = true;
-					sandbox.stub(this.oAddIFrame, "isAvailable").callsFake(function(bSibling, aElementOverlays) {
+					sandbox.stub(this.oAddIFrame, "isAvailable").callsFake(function(aElementOverlays, bSibling) {
 						if (bSibling === true && aElementOverlays[0] === this.oButtonOverlay) {
 							return bAvailable;
 						}
@@ -314,7 +314,7 @@ sap.ui.define([
 
 			return DtUtil.waitForSynced(this.oDesignTime)()
 				.then(function() {
-					assert.strictEqual(this.oAddIFrame.isAvailable(false, [this.oObjectPageLayoutOverlay]), true, "then isAvailable is called and it returns true");
+					assert.strictEqual(this.oAddIFrame.isAvailable([this.oObjectPageLayoutOverlay], false), true, "then isAvailable is called and it returns true");
 					assert.strictEqual(this.oAddIFrame.isEnabled("sections", [this.oObjectPageLayoutOverlay]), true, "then isEnabled is called and it returns correct value from function call");
 					return this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
 				}.bind(this))
@@ -325,7 +325,7 @@ sap.ui.define([
 					var oCheckOverlay;
 					var bIsAvailable = true;
 
-					sandbox.stub(this.oAddIFrame, "isAvailable").callsFake(function(bOverlayIsSibling, aElementOverlays) {
+					sandbox.stub(this.oAddIFrame, "isAvailable").callsFake(function(aElementOverlays, bOverlayIsSibling) {
 						aOverlaySiblingRequests.push(bOverlayIsSibling); // Not assuming any order
 						assert.deepEqual(aElementOverlays[0].getId(), oCheckOverlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
 						return bIsAvailable;

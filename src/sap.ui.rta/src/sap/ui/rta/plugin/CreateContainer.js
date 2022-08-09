@@ -46,7 +46,7 @@ sap.ui.define([
 	 * @return {boolean} Indicates if action is enabled
 	 * @override
 	 */
-	CreateContainer.prototype.isEnabled = function(bSibling, aElementOverlays) {
+	CreateContainer.prototype.isEnabled = function(aElementOverlays, bSibling) {
 		var oElementOverlay = aElementOverlays[0];
 		var oAction = this.getCreateAction(bSibling, oElementOverlay);
 		return this.isActionEnabled(oAction, bSibling, oElementOverlay);
@@ -116,13 +116,18 @@ sap.ui.define([
 		var sPluginId = "CTX_CREATE_SIBLING_CONTAINER";
 		var iRank = 40;
 		var aMenuItems = [];
+
+		var isMenuItemEnabled = function (bOverlayIsSibling, aOverlays) {
+			return this.isEnabled(aOverlays, bOverlayIsSibling);
+		}.bind(this);
+
 		for (var i = 0; i < 2; i++) {
-			if (this.isAvailable(bOverlayIsSibling, aElementOverlays)) {
+			if (this.isAvailable(aElementOverlays, bOverlayIsSibling)) {
 				aMenuItems.push({
 					id: sPluginId,
 					text: this.getCreateContainerText.bind(this, bOverlayIsSibling),
 					handler: this.handleCreate.bind(this, bOverlayIsSibling, aElementOverlays[0]),
-					enabled: this.isEnabled.bind(this, bOverlayIsSibling),
+					enabled: isMenuItemEnabled.bind(this, bOverlayIsSibling),
 					icon: "sap-icon://add-folder",
 					rank: iRank
 				});

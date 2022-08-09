@@ -118,8 +118,8 @@ sap.ui.define([
 
 			return DtUtil.waitForSynced(this.oDesignTime)()
 			.then(function() {
-				assert.strictEqual(this.oCreateContainer.isAvailable(false, [this.oFormOverlay]), false, "then isAvailable is called and it returns false");
-				assert.strictEqual(this.oCreateContainer.isEnabled(false, [this.oFormOverlay]), false, "then isEnabled is called and it returns false");
+				assert.strictEqual(this.oCreateContainer.isAvailable([this.oFormOverlay], false), false, "then isAvailable is called and it returns false");
+				assert.strictEqual(this.oCreateContainer.isEnabled([this.oFormOverlay], false), false, "then isEnabled is called and it returns false");
 				return this.oCreateContainer._isEditableCheck(this.oFormOverlay, false);
 			}.bind(this))
 			.then(function(bIsEditable) {
@@ -144,8 +144,8 @@ sap.ui.define([
 
 			return DtUtil.waitForSynced(this.oDesignTime)()
 			.then(function() {
-				assert.strictEqual(this.oCreateContainer.isAvailable(false, [this.oFormOverlay]), true, "then isAvailable is called and it returns true");
-				assert.strictEqual(this.oCreateContainer.isEnabled(false, [this.oFormOverlay]), true, "then isEnabled is called and it returns true");
+				assert.strictEqual(this.oCreateContainer.isAvailable([this.oFormOverlay], false), true, "then isAvailable is called and it returns true");
+				assert.strictEqual(this.oCreateContainer.isEnabled([this.oFormOverlay], false), true, "then isEnabled is called and it returns true");
 				return this.oCreateContainer._isEditableCheck(this.oFormOverlay, false);
 			}.bind(this))
 			.then(function(bIsEditable) {
@@ -170,8 +170,8 @@ sap.ui.define([
 
 			return DtUtil.waitForSynced(this.oDesignTime)()
 			.then(function() {
-				assert.strictEqual(this.oCreateContainer.isAvailable(false, [this.oFormOverlay]), false, "then isAvailable is called and then it returns false");
-				assert.strictEqual(this.oCreateContainer.isEnabled(false, [this.oFormOverlay]), true, "then isEnabled is called and then it returns correct value");
+				assert.strictEqual(this.oCreateContainer.isAvailable([this.oFormOverlay], false), false, "then isAvailable is called and then it returns false");
+				assert.strictEqual(this.oCreateContainer.isEnabled([this.oFormOverlay], false), true, "then isEnabled is called and then it returns correct value");
 				return this.oCreateContainer._isEditableCheck(this.oFormOverlay, false);
 			}.bind(this))
 			.then(function(bIsEditable) {
@@ -200,8 +200,8 @@ sap.ui.define([
 
 			return DtUtil.waitForSynced(this.oDesignTime)()
 			.then(function() {
-				assert.strictEqual(this.oCreateContainer.isAvailable(false, [this.oFormOverlay]), true, "then isAvailable is called and it returns true");
-				assert.strictEqual(this.oCreateContainer.isEnabled(false, [this.oFormOverlay]), true, "then isEnabled is called and it returns correct value from function call");
+				assert.strictEqual(this.oCreateContainer.isAvailable([this.oFormOverlay], false), true, "then isAvailable is called and it returns true");
+				assert.strictEqual(this.oCreateContainer.isEnabled([this.oFormOverlay], false), true, "then isEnabled is called and it returns correct value from function call");
 				return this.oCreateContainer._isEditableCheck(this.oFormOverlay, false);
 			}.bind(this))
 			.then(function(bIsEditable) {
@@ -210,7 +210,7 @@ sap.ui.define([
 				var bCheckValue = true;
 				var bFirstCall = true;
 				var bIsAvailable = true;
-				sandbox.stub(this.oCreateContainer, "isAvailable").callsFake(function(bOverlayIsSibling, aElementOverlays) {
+				sandbox.stub(this.oCreateContainer, "isAvailable").callsFake(function(aElementOverlays, bOverlayIsSibling) {
 					assert.equal(bOverlayIsSibling, bFirstCall, "the 'available' function calls isAvailable with bOverlayIsSibling = " + bFirstCall);
 					assert.deepEqual(aElementOverlays[0].getId(), this.oFormOverlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
 					bFirstCall = false;
@@ -220,7 +220,7 @@ sap.ui.define([
 					assert.equal(bOverlayIsSibling, bCheckValue, "the 'handleCreate' function is called with bOverlayIsSibling = " + bCheckValue);
 					assert.deepEqual(oElementOverlay.getId(), this.oFormOverlay.getId(), "the 'handleCreate' function is called with the correct overlay");
 				}.bind(this));
-				sandbox.stub(this.oCreateContainer, "isEnabled").callsFake(function(bOverlayIsSibling, aElementOverlays) {
+				sandbox.stub(this.oCreateContainer, "isEnabled").callsFake(function(aElementOverlays, bOverlayIsSibling) {
 					assert.equal(bOverlayIsSibling, bCheckValue, "the 'enabled' function calls isEnabled with bOverlayIsSibling = " + bCheckValue);
 					assert.deepEqual(aElementOverlays[0].getId(), this.oFormOverlay.getId(), "the 'enabled' function calls isEnabled with the correct overlay");
 				}.bind(this));
