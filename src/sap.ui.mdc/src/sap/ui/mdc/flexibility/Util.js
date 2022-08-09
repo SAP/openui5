@@ -41,16 +41,26 @@ sap.ui.define([
 		}
 	}
 
-	function fConfigModified(oControl) {
-        if (!oControl._bWaitForModificationChanges && oControl.isA) {
-            oControl._bWaitForModificationChanges = true;
-            Engine.getInstance().waitForChanges(oControl).then(function() {
-                if (oControl._onModifications instanceof Function) {
-                    oControl._onModifications();
-                }
-                delete oControl._bWaitForModificationChanges;
-            });
-        }
+	function fConfigModified(oControl, oChange) {
+
+		if (oControl.isA) {
+			Engine.getInstance().trace(oControl, {
+				selectorElement: oControl,
+				changeSpecificData: {
+					changeType: oChange.getChangeType(),
+					content: oChange.getContent()
+				}
+			});
+
+			if (!oControl._pPendingModification && oControl._onModifications instanceof Function) {
+				oControl._pPendingModification = Engine.getInstance().waitForChanges(oControl).then(function() {
+					var aAffectedControllerKeys = Engine.getInstance().getTrace(oControl);
+					Engine.getInstance().clearTrace(oControl);
+					delete oControl._pPendingModification;
+					return oControl._onModifications(aAffectedControllerKeys);
+				});
+			}
+		}
 	}
 
 	/**
@@ -81,7 +91,7 @@ sap.ui.define([
 					delayInvalidate(oControl);
 					return fApply(oChange, oControl, mPropertyBag, Util.APPLY)
 					.then(function(){
-						fConfigModified(oControl);
+						fConfigModified(oControl, oChange);
 					});
 				},
 				completeChangeContent: function(oChange, mChangeSpecificInfo, mPropertyBag) {
@@ -93,7 +103,7 @@ sap.ui.define([
 					delayInvalidate(oControl);
 					return fRevert(oChange, oControl, mPropertyBag, Util.REVERT)
 					.then(function(){
-						fConfigModified(oControl);
+						fConfigModified(oControl, oChange);
 					});
 				},
 				onAfterXMLChangeProcessing: function(oControl, mPropertyBag) {

@@ -381,7 +381,10 @@ sap.ui.define([
         this.oFilterBarBase.attachSearch(fSearch);
 
 		sinon.stub(this.oFilterBarBase, "waitForInitialization").returns(Promise.resolve());
-        this.oFilterBarBase._changesApplied();
+        this.oFilterBarBase._reportModelChange({
+            triggerSearch: true,
+            triggerFilterUpdate: true
+        });
 
         this.oFilterBarBase._handleFilterItemSubmit(oEvent);
         oSubmitPromise.then(function() {
@@ -389,15 +392,85 @@ sap.ui.define([
         });
     });
 
+    QUnit.test("Check 'filtersChange' event handling on filter changes", function(assert){
+
+        var done = assert.async();
+
+        sinon.stub(this.oFilterBarBase, "_getPropertyByName").returns({name: "key1", typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
+
+		this.oFilterBarBase.initialized().then(function () {
+            // --> this would happen during runtime through a change
+            this.oFilterBarBase.setFilterConditions({
+                "key1": [
+                    {
+                    "operator": "EQ",
+                    "values": [
+                        "SomeTestValue"
+                    ],
+                    "validated": "Validated"
+                    }
+                ]
+            });
+
+            this.oFilterBarBase.attachFiltersChanged(function(oEvent){
+                assert.ok(oEvent, "Event gets triggered since a filter update is done by _onModifications");
+                done();
+            });
+
+            //trigger the handling after changes have been applied
+            this.oFilterBarBase._onModifications();
+        }.bind(this));
+
+    });
+
     QUnit.test("Check change appliance handling", function(assert){
 
-        assert.ok(!this.oFilterBarBase._isChangeApplying(), "no pending appliance");
+        assert.ok(this.oFilterBarBase._aOngoingChangeAppliance.length === 0, "no pending appliance");
         this.oFilterBarBase._addConditionChange({
 			key1: [
 				{operator: "EQ", value: ["Test"]}
 			]
 		});
-        assert.ok(this.oFilterBarBase._isChangeApplying(), "pending appliance");
+        assert.ok(this.oFilterBarBase._aOngoingChangeAppliance.length === 1, "pending appliance");
+    });
+
+    QUnit.test("Check modification handling & pending modification (awaitPendingModification)", function(assert){
+
+		var oReportSpy = sinon.spy(this.oFilterBarBase, "_reportModelChange");
+
+        // usually this promise is provided by sap/ui/mdc/flexibility/Util --> since this is propagated by AdaptationMixin#awaitPendingModification
+        // this test is using this variable to mock a long pending change appliance
+        this.oFilterBarBase._pPendingModification = new Promise(function(resolve, reject){
+            setTimeout(function(){
+                resolve();
+            }, 200);
+        });
+
+		assert.notOk(oReportSpy.called, "No change reported yet");
+
+		return this.oFilterBarBase.awaitPendingModification().then(function(){
+			assert.ok(oReportSpy.calledOnce, "Change has been reported to update FilterBar");
+		});
+
+    });
+
+	QUnit.test("Check modification handlingg & pending modification (awaitPendingModification)", function(assert){
+
+		var done = assert.async();
+
+		this.oFilterBarBase.attachFiltersChanged(function(oEvt){
+			assert.ok(oEvt, "Filter event fired after modification has been processed");
+			done();
+		});
+
+        // usually this promise is provided by sap/ui/mdc/flexibility/Util --> since this is propagated by AdaptationMixin#awaitPendingModification
+        // this test is using this variable to mock a long pending change appliance
+        this.oFilterBarBase._pPendingModification = new Promise(function(resolve, reject){
+            setTimeout(function(){
+                resolve();
+            }, 200);
+        });
+
     });
 
     QUnit.test("Check sync of ConditionModel with filterConditions after change appliance", function(assert){

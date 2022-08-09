@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"../QUnitUtils",
 	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/fl/variants/VariantManagement"
 ], function (
 	FlexRuntimeInfoAPI,
 	FilterBar,
@@ -33,7 +34,8 @@ sap.ui.define([
 	CoreLibrary,
 	MDCQUnitUtils,
 	TestModificationHandler,
-	oCore
+	oCore,
+	VariantManagement
 ) {
 	"use strict";
 
@@ -962,9 +964,6 @@ sap.ui.define([
 		sinon.stub(FlexRuntimeInfoAPI, "waitForChanges").returns(oPromise);
         sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
 
-		//no changes in pending appliance
-		assert.ok(!oFilterBar._isChangeApplying());
-
 		//--> add a personalization change
 		oFilterBar._addConditionChange({
 			key1: [
@@ -972,18 +971,15 @@ sap.ui.define([
 			]
 		});
 
-		//--> pending appliance
-		assert.ok(oFilterBar._isChangeApplying());
-
 		var done = assert.async();
-		sinon.spy(oFilterBar, "_changesApplied");
+		sinon.spy(oFilterBar, "_reportModelChange");
 
 		oFilterBar.initialized().then(function () {
 			fResolve();
 			oPromise.then(function () {
 				setTimeout(function () { // required for condition model....
 					FlexRuntimeInfoAPI.waitForChanges.restore();
-					assert.ok(oFilterBar._changesApplied.calledOnce);
+					assert.ok(oFilterBar._reportModelChange.calledOnce);
 					done();
 				}, 20);
 			});
@@ -1533,16 +1529,17 @@ sap.ui.define([
 
 			// conditionBase = true; usual variantSwitch
 			oFilterBar._handleVariantSwitch({});
+			oFilterBar._reportModelChange({triggerFilterUpdate: true}); //usually this would happen through an according flex change in _onModifications
 
 			// conditionBase = false; variantSwitch after SaveAs; changes not from FB
 			oFilterBar._handleVariantSwitch({createScenario: "saveAs"});
+			oFilterBar._reportModelChange({triggerFilterUpdate: true}); //usually this would happen through an according flex change in _onModifications
 
 			// conditionBased = false; variantSwitch after SaveAs; changes from FB
-			sinon.stub(oFilterBar, "_isChangeApplying").returns(true);
 			oFilterBar._handleVariantSwitch({createScenario: "saveAs"});
-			//simulate flex changes applied
-			oFilterBar._changesApplied();
+			oFilterBar._reportModelChange({triggerFilterUpdate: true}); //usually this would happen through an according flex change in _onModifications
 		});
 
 	});
+
 });
