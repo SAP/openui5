@@ -1413,67 +1413,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("HeaderContainer in Mobile View initialization in RTL Mode.", function (assert) {
-		var fnDone = assert.async(),
-			iCount = 5,
-			i;
-
-		sap.ui.getCore().getConfiguration().setRTL(true);
-		this.initializeMobileView(320);
-		this.oHeaderContainer = new HeaderContainer({
-			gridLayout: true,
-			orientation: Orientation.Horizontal,
-			showDividers: false,
-			scrollTime: 1000
-		});
-		var afterRenderDelegate = {
-			onAfterRendering: function () {
-				var leftArrowOffsetWidth = this.oHeaderContainer.getDomRef("prev-button-container").offsetWidth;
-				var leftArrowOffsetHeight = this.oHeaderContainer.getDomRef("prev-button-container").offsetHeight;
-				var isLeftArrowVisible = false;
-				if (leftArrowOffsetWidth > 0 && leftArrowOffsetHeight > 0) {
-					isLeftArrowVisible = true;
-				} else {
-					isLeftArrowVisible = false;
-				}
-				var rightArrowOffsetWidth = this.oHeaderContainer.getDomRef("next-button-container").offsetWidth;
-				var rightArrowOffsetHeight = this.oHeaderContainer.getDomRef("next-button-container").offsetHeight;
-				var isRightArrowVisible = false;
-				if (rightArrowOffsetWidth > 0 && rightArrowOffsetHeight > 0) {
-					isRightArrowVisible = true;
-				} else {
-					isRightArrowVisible = false;
-				}
-
-				assert.ok(this.oHeaderContainer._oArrowPrev, "Previous Arrow is present.");
-				assert.ok(this.oHeaderContainer._oArrowNext, "Next Arrow is present.");
-				if (!isLeftArrowVisible && !isRightArrowVisible) {
-					assert.notOk(isLeftArrowVisible,"Left arrow indicator is hidden on mobile devices");
-					assert.notOk(isRightArrowVisible,"Right arrow indicator is hidden on mobile devices");
-				}
-				assert.equal(this.oHeaderContainer.getGridLayout(), true,  "Property gridLayout is true.");
-				assert.equal(this.oHeaderContainer.getOrientation(), Orientation.Horizontal,  "Orientation is Hotizontal.");
-				assert.equal(Device.resize.width >= ScreenSizes.xsmall && Device.resize.width < ScreenSizes.tablet, true,  "Screen size is Mobilee.");
-				assert.equal(this.oHeaderContainer._isMobileView(), true,  "Method returns true.");
-				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[0].sEventType, "scrollstart", "scrollstart Event is bound.");
-				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[1].sEventType, "scrollstop", "scrollstop Event is bound.");
-				this.oHeaderContainer.removeEventDelegate(afterRenderDelegate);
-				sap.ui.getCore().getConfiguration().setRTL(false);
-				fnDone();
-			}.bind(this)
-		};
-		this.oHeaderContainer.addEventDelegate(afterRenderDelegate);
-		for (i = 0; i < iCount; i++) {
-			this.oHeaderContainer.addContent(new Panel({
-				width: "272px",
-				content: createTile()
-			}));
-		}
-		this.oHeaderContainer.placeAt("qunit-fixture");
-		oCore.applyChanges();
-
-	});
-
 	QUnit.test("HeaderContainer in Mobile View initialization-ScreenSize 420.", function (assert) {
 		var fnDone = assert.async(),
 			iCount = 5,
@@ -1531,6 +1470,98 @@ sap.ui.define([
 
 				assert.ok(bIsFinalItemVisible , "Final item is visible.");
 
+				this.oHeaderContainer.removeEventDelegate(afterRenderDelegate);
+				fnDone();
+			}.bind(this)
+		};
+		this.oHeaderContainer.addEventDelegate(afterRenderDelegate);
+		for (i = 0; i < iCount; i++) {
+			this.oHeaderContainer.addContent(new Panel({
+				width: "272px",
+				content: createTile()
+			}));
+		}
+		this.oHeaderContainer.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+	});
+	QUnit.module("HeaderContainer with RTL", {
+		beforeEach: function () {
+		sap.ui.getCore().getConfiguration().setRTL(true);
+		sap.ui.getCore().applyChanges();
+		this.initializeMobileView(320);
+		this.oHeaderContainer = new HeaderContainer({
+			gridLayout: true,
+			orientation: Orientation.Horizontal,
+			showDividers: false,
+			scrollTime: 1000
+		});
+		},
+		afterEach: function () {
+			if (this.oHeaderContainer) {
+				this.oHeaderContainer.destroy();
+				this.oHeaderContainer = null;
+			}
+			if (this.initialScreenWidth && this.initialWidth) {
+				this.resetMobileView();
+			}
+			sap.ui.getCore().getConfiguration().setRTL(false);
+			sap.ui.getCore().applyChanges();
+		},
+		initializeMobileView: function(iScreenWidth) {
+			this.initialScreenWidth = Device.resize.width;
+			this.initialWidth = document.getElementById("qunit-fixture").offsetWidth;
+			Device.resize.width = iScreenWidth;
+			document.getElementById("qunit-fixture").style.width = iScreenWidth + "px";
+			Device.system.desktop = false;
+			Device.system.phone = true;
+			document.querySelector("html").classList.add("sap-phone");
+			document.querySelector("html").classList.remove("sap-desktop");
+		},
+		resetMobileView: function(){
+			Device.resize.width = this.initialScreenWidth;
+			document.getElementById("qunit-fixture").style.width = this.initialWidth;
+			Device.system.desktop = true;
+			Device.system.phone = false;
+			document.querySelector("html").classList.remove("sap-phone");
+			document.querySelector("html").classList.add("sap-desktop");
+		}
+	});
+	QUnit.test("HeaderContainer in Mobile View initialization in RTL Mode.", function (assert) {
+		var fnDone = assert.async(),
+			iCount = 5,
+			i;
+		var afterRenderDelegate = {
+			onAfterRendering: function () {
+				var leftArrowOffsetWidth = this.oHeaderContainer.getDomRef("prev-button-container").offsetWidth;
+				var leftArrowOffsetHeight = this.oHeaderContainer.getDomRef("prev-button-container").offsetHeight;
+				var isLeftArrowVisible = false;
+				if (leftArrowOffsetWidth > 0 && leftArrowOffsetHeight > 0) {
+					isLeftArrowVisible = true;
+				} else {
+					isLeftArrowVisible = false;
+				}
+				var rightArrowOffsetWidth = this.oHeaderContainer.getDomRef("next-button-container").offsetWidth;
+				var rightArrowOffsetHeight = this.oHeaderContainer.getDomRef("next-button-container").offsetHeight;
+				var isRightArrowVisible = false;
+				if (rightArrowOffsetWidth > 0 && rightArrowOffsetHeight > 0) {
+					isRightArrowVisible = true;
+				} else {
+					isRightArrowVisible = false;
+				}
+
+				assert.ok(this.oHeaderContainer._oArrowPrev, "Previous Arrow is present.");
+				assert.ok(this.oHeaderContainer._oArrowNext, "Next Arrow is present.");
+				if (!isLeftArrowVisible && !isRightArrowVisible) {
+					assert.notOk(isLeftArrowVisible,"Left arrow indicator is hidden on mobile devices");
+					assert.notOk(isRightArrowVisible,"Right arrow indicator is hidden on mobile devices");
+				}
+				assert.equal(this.oHeaderContainer.getGridLayout(), true,  "Property gridLayout is true.");
+				assert.equal(this.oHeaderContainer.getOrientation(), Orientation.Horizontal,  "Orientation is Hotizontal.");
+				assert.equal(Device.resize.width >= ScreenSizes.xsmall && Device.resize.width < ScreenSizes.tablet, true,  "Screen size is Mobilee.");
+				assert.equal(this.oHeaderContainer._isMobileView(), true,  "Method returns true.");
+				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[0].sEventType, "scrollstart", "scrollstart Event is bound.");
+				assert.equal(this.oHeaderContainer._oScrollCntr.aBindParameters[1].sEventType, "scrollstop", "scrollstop Event is bound.");
 				this.oHeaderContainer.removeEventDelegate(afterRenderDelegate);
 				fnDone();
 			}.bind(this)
