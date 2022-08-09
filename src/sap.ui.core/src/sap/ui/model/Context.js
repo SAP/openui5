@@ -196,6 +196,9 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 	 * @private
 	 */
 	Context.hasChanged = function(oOldContext, oNewContext) {
+		// The check below is used in ManagedObject.setBindingContext as well to avoid
+		// a dependency to Context (ManagedObject should be databinding free).
+		// Both places must kept in sync!
 		return oOldContext !== oNewContext
 			|| !!oNewContext && !!oNewContext.hasChanged();
 	};
