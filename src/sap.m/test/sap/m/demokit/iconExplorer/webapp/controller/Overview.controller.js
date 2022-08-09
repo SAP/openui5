@@ -67,17 +67,6 @@ sap.ui.define([
 			oTagModel = new JSONModel();
 			this.setModel(oTagModel, "tags");
 
-			// Sets the current previewCopyIcon and the fontName when pressing an icon
-			this.byId("previewCopyIcon").addEventDelegate({
-				onAfterRendering: function () {
-					var $previewCopyIcon = this.byId("previewCopyIcon").$(),
-						sFontName = this.getModel("view").getProperty("/fontName");
-
-					// always set current font family for the preview
-					$previewCopyIcon.children("span").css("font-family", sFontName);
-				}.bind(this)
-			});
-
 			// register to both new and legacy pattern to not break bookmarked URLs
 			this.getRouter().getRoute("legacy").attachPatternMatched(this._updateUI, this);
 			this.getRouter().getRoute("overview").attachPatternMatched(this._updateUI, this);
@@ -173,17 +162,6 @@ sap.ui.define([
 							if (oRoot.getMetadata().getName().search("ToggleButton") >= 0 || oEvent.srcControl.getMetadata().getName().search("ToggleButton") >= 0) {
 								return;
 							}
-
-							// reset previoulsy pressed item and store current item
-							if (this._oPreviouslySelectedLayoutCell) {
-								this._oPreviouslySelectedLayoutCell.removeStyleClass("sapMLIBSelected");
-								this._oPreviouslySelectedLayoutCell.removeStyleClass("sapMLIBHoverable");
-							}
-							// set the LIB styles on the current cell
-							oRoot.addStyleClass("sapMLIBSelected");
-
-							this._oPreviouslySelectedLayoutCell = oRoot;
-							oRoot.addStyleClass("sapMLIBHoverable");
 
 							// select the icon
 							this._updateHash("icon", oBindingContext.getProperty("name"));
@@ -424,9 +402,6 @@ sap.ui.define([
 					this.byId("preview").bindElement({
 						path: sPath
 					});
-
-					var sIconSymbol = this.getModel().getUnicodeHTML(sIcon);
-					this.byId("previewCopyIcon").setHtmlText("<span>" + sIconSymbol + "</span>" + sIcon);
 
 					// update the group information with a timeout as this task takes some time to calculate
 					setTimeout(function () {

@@ -174,68 +174,60 @@
 										<Panel
 											id="previewCopy"
 											headerText="{i18n>previewCopyTitle}"
-											accessibleRole="Region"
-											class="previewCopy">
-											<l:FixFlex
-												fixFirst="false"
-												vertical="false">
-												<l:flexContent>
-													<Input
-														id="previewCopyCode"
-														editable="false"
-														value="sap-icon://{view>/iconPath}{name}"/>
-												</l:flexContent>
-												<l:fixContent>
-													<Button
-														icon="sap-icon://copy"
-														type="Emphasized"
-														tooltip="{i18n>previewCopyIconToClipboard}"
-														press=".onCopyCodeToClipboard"
-														class="sapUiTinyMarginBegin"
-														ariaLabelledBy="labelCopyButton"/>
-												</l:fixContent>
-											</l:FixFlex>
-											<l:FixFlex
-												fixFirst="false"
-												vertical="false">
-												<l:flexContent>
-													<FormattedText
-														id="previewCopyIcon"
-														htmlText=""
-														class="sapUiCopyIcon"/>
-												</l:flexContent>
-												<l:fixContent>
-													<Button
-														icon="sap-icon://copy"
-														type="Emphasized"
-														tooltip="{i18n>previewCopyIconToClipboard}"
-														press=".onCopyIconToClipboard"
-														class="sapUiTinyMarginBegin"
-														ariaLabelledBy="labelCopyButton"/>
-												</l:fixContent>
-											</l:FixFlex>
-											<l:FixFlex
-												fixFirst="false"
-												vertical="false">
-												<l:flexContent>
-													<Input
-														id="previewCopyUnicode"
-														editable="false"
-														value="{
-															path: 'name',
-															formatter: '.formatter.getUnicodeTextByName'}"
-														class=""/>
-												</l:flexContent>
-												<l:fixContent>
-													<Button
-														icon="sap-icon://copy"
-														type="Emphasized"
-														tooltip="{i18n>previewCopyIconToClipboard}"
-														press=".onCopyUnicodeToClipboard"
-														class="sapUiTinyMarginBegin"
-														ariaLabelledBy="labelCopyButton"/>
-												</l:fixContent>
-											</l:FixFlex>
+											accessibleRole="Region">
+											<HBox>
+												<Input
+													id="previewCopyCode"
+													editable="false"
+													value="sap-icon://{view>/iconPath}{name}">
+													<layoutData>
+														<FlexItemData growFactor="1" />
+													</layoutData>
+												</Input>
+												<Button
+													icon="sap-icon://copy"
+													type="Emphasized"
+													tooltip="{i18n>previewCopyIconToClipboard}"
+													press=".onCopyCodeToClipboard"
+													class="sapUiTinyMarginBegin"
+													ariaLabelledBy="labelCopyButton"/>
+											</HBox>
+											<HBox>
+												<Input
+													id="previewCopyIcon"
+													editable="false"
+													value="{view>/iconPath}{name} {i18n>overviewSymbolText}">
+													<layoutData>
+														<FlexItemData growFactor="1" />
+													</layoutData>
+												</Input>
+												<Button
+													icon="sap-icon://copy"
+													type="Emphasized"
+													tooltip="{i18n>previewCopyIconToClipboard}"
+													press=".onCopyIconToClipboard"
+													class="sapUiTinyMarginBegin"
+													ariaLabelledBy="labelCopyButton"/>
+											</HBox>
+											<HBox>
+												<Input
+													id="previewCopyUnicode"
+													editable="false"
+													value="{
+														path: 'name',
+														formatter: '.formatter.getUnicodeTextByName'}">
+													<layoutData>
+														<FlexItemData growFactor="1" />
+													</layoutData>
+												</Input>
+												<Button
+													icon="sap-icon://copy"
+													type="Emphasized"
+													tooltip="{i18n>previewCopyIconToClipboard}"
+													press=".onCopyUnicodeToClipboard"
+													class="sapUiTinyMarginBegin"
+													ariaLabelledBy="labelCopyButton"/>
+											</HBox>
 										</Panel>
 										<Panel
 										headerText="{i18n>previewIconTitle}"
@@ -243,14 +235,15 @@
 										backgroundDesign="Solid"
 										class="sapUiContentPadding">
 											<l:BlockLayout
-													class="centeredBlockCells"
 													background="Accent">
-												<l:BlockLayoutRow>
+												<l:BlockLayoutRow rowColorSet="ColorSet4">
 													<l:BlockLayoutCell>
-														<core:Icon
-															id="previewIcon"
-															src="sap-icon://{view>/iconPath}{name}"
-															class="previewIcon" />
+														<HBox justifyContent="Center">
+															<core:Icon
+																id="previewIcon"
+																size="5rem"
+																src="sap-icon://{view>/iconPath}{name}"/>
+														</HBox>
 													</l:BlockLayoutCell>
 												</l:BlockLayoutRow>
 											</l:BlockLayout>
@@ -261,34 +254,35 @@
 											accessibleRole="Region">
 											<l:BlockLayout
 												id="useCaseLayout"
-												class="centeredBlockCells"
-												background="Accent">
+												background="Light">
 												<l:BlockLayoutRow>
 												<l:BlockLayoutCell>
-													<!-- Preview for only icon buttons -->
-													<Button
-														icon="sap-icon://{view>/iconPath}{name}"
-														class="sapUiTinyMarginEnd"
-														tooltip="{i18n>previewIconButton}"
-														ariaLabelledBy="labelPreviewButton"/>
-													<Button
-														icon="sap-icon://{view>/iconPath}{name}"
-														type="Accept"
-														class="sapUiTinyMarginEnd"
-														tooltip="{i18n>previewIconButton}"
-														ariaLabelledBy="labelPreviewButton"/>
-													<Button
-														icon="sap-icon://{view>/iconPath}{name}"
-														type="Reject"
-														class="sapUiTinyMarginEnd"
-														tooltip="{i18n>previewIconButton}"
-														ariaLabelledBy="labelPreviewButton"/>
-													<Button
-														icon="sap-icon://{view>/iconPath}{name}"
-														type="Emphasized"
-														class="sapUiTinyMarginEnd"
-														tooltip="{i18n>previewIconButton}"
-														ariaLabelledBy="labelPreviewButton"/>
+													<HBox justifyContent="SpaceAround">
+														<!-- Preview for only icon buttons -->
+														<Button
+															icon="sap-icon://{view>/iconPath}{name}"
+															class="sapUiTinyMarginEnd"
+															tooltip="{i18n>previewIconButton}"
+															ariaLabelledBy="labelPreviewButton"/>
+														<Button
+															icon="sap-icon://{view>/iconPath}{name}"
+															type="Accept"
+															class="sapUiTinyMarginEnd"
+															tooltip="{i18n>previewIconButton}"
+															ariaLabelledBy="labelPreviewButton"/>
+														<Button
+															icon="sap-icon://{view>/iconPath}{name}"
+															type="Reject"
+															class="sapUiTinyMarginEnd"
+															tooltip="{i18n>previewIconButton}"
+															ariaLabelledBy="labelPreviewButton"/>
+														<Button
+															icon="sap-icon://{view>/iconPath}{name}"
+															type="Emphasized"
+															class="sapUiTinyMarginEnd"
+															tooltip="{i18n>previewIconButton}"
+															ariaLabelledBy="labelPreviewButton"/>
+														</HBox>
 												</l:BlockLayoutCell>
 												<l:BlockLayoutCell>
 													<!-- Preview for only icon buttons in Toolbar -->
@@ -296,9 +290,8 @@
 														id="previewToolbar"
 														design="Solid"
 														class="sapContrast sapContrastPlus">
-														<Label
-															text="{i18n>previewIconButtonText}"
-															class="sapUiTinyMarginBegin"/>
+														<GenericTag
+															text="{i18n>previewIconButtonText}"/>
 														<ToolbarSpacer/>
 														<Button
 															icon="sap-icon://{view>/iconPath}{name}"
@@ -358,7 +351,7 @@
 																iconColor="Negative"/>
 														</items>
 														<content>
-															<Label
+															<GenericTag
 																text="{i18n>previewIconTabBarText}"
 																class="sapUiTinyMargin"/>
 														</content>
@@ -387,14 +380,19 @@
 													</GenericTile>
 												</l:BlockLayoutCell>
 												<l:BlockLayoutCell>
-													<f:Avatar
-														src="sap-icon://{view>/iconPath}{name}"
-														displaySize="L"
-														class="sapUiTinyMarginBottom"/>
-													<Text
-														width="100%"
-														textAlign="Center"
-														text="{i18n>avatarText}"/>
+													<VBox
+													alignItems="Center"
+													height="100%"
+													justifyContent="Center">
+														<f:Avatar
+															src="sap-icon://{view>/iconPath}{name}"
+															displaySize="L"/>
+														<Text
+															width="100%"
+															class="sapUiTinyMarginTop"
+															textAlign="Center"
+															text="{i18n>avatarText}"/>
+													</VBox>
 												</l:BlockLayoutCell>
 											</l:BlockLayoutRow>
 										</l:BlockLayout>
@@ -421,11 +419,10 @@
 												path: 'tags',
 												templateShareable: true
 											}"
-											editable="false"
-											class="tagsArea" >
+											renderMode="Narrow"
+											editable="false">
 											<Token
 												text="{name}"
-												class="tagsToken"
 												press=".onTagSelect"/>
 										</Tokenizer>
 									</Panel>

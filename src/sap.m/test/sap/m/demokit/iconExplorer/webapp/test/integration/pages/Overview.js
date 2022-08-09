@@ -52,7 +52,7 @@ sap.ui.define([
 			if (oItem.getCells) {
 				sText = oItem.getCells()[1].getText();
 			} else  {
-				sText = oItem.getContent()[0].getContent()[1].getText();
+				sText = oItem.getContent()[0].getItems()[1].getText();
 			}
 			return sText.indexOf(sName) !== -1;
 		});
