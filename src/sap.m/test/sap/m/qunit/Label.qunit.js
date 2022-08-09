@@ -371,6 +371,7 @@ sap.ui.define([
 		assert.strictEqual(oInfo.focusable, undefined, "Focusable");
 		assert.strictEqual(oInfo.enabled, undefined, "Enabled");
 		assert.strictEqual(oInfo.editable, undefined, "Editable");
+		assert.strictEqual(oInfo.required, false, "Required");
 	});
 
 	QUnit.test("getAccessibilityInfo with required=true", function(assert) {
@@ -378,6 +379,7 @@ sap.ui.define([
 
 		var oInfo = this.label.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, "Label *", "Description");
+		assert.ok(oInfo.required, "Required");
 
 		this.label.setRequired(false);
 	});
