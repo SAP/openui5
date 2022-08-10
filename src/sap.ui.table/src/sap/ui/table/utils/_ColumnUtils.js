@@ -764,6 +764,44 @@ sap.ui.define([
 				sText = getLabelText(oColumn.getLabel());
 			}
 			return sText;
+		},
+		/**
+		 * Returns one of the following starting with highest priority:
+		 * <ul>
+		 * <li>Last label of the column with a span equal to 1, if the column has multiLabels</li>
+		 * <li>label control</li>
+		 * </ul>
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @param {int} iColumnIndex The index of a column
+		 * @returns {sap.ui.core.Control} Returns the column header label
+		 */
+		getHeaderLabel: function (oTable, iColumnIndex) {
+			if (!oTable ||
+				iColumnIndex == null || iColumnIndex < 0) {
+				return null;
+			}
+
+			var aColumns = oTable.getColumns();
+			if (iColumnIndex >= aColumns.length) {
+				return null;
+			}
+
+			var oColumn = aColumns[iColumnIndex];
+			var oLabel;
+			var aMultiLabels = oColumn.getMultiLabels();
+
+			for (var i = aMultiLabels.length - 1; i >= 0; i--) {
+				if (ColumnUtils.getHeaderSpan(oColumn, i) === 1) {
+					oLabel = aMultiLabels[i];
+					break;
+				}
+			}
+
+			if (!oLabel) {
+				oLabel = oColumn.getLabel();
+			}
+			return oLabel;
 		}
 	};
 

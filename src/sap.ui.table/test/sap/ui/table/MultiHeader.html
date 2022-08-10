@@ -25,7 +25,7 @@
 		oTable.addColumn(new sap.ui.table.Column({
 			multiLabels: [
 				new sap.m.Text({text: "Row:1, Column header with a long description", wrapping: true, textAlign: "Center", width: "100%"}),
-				new sap.m.Text({text: "Row:2, Column:1", wrapping: true})
+				new sap.m.Label({text: "Row:2, Column:1", wrapping: true, required: true})
 			],
 			headerSpan: "3, 1",
 			template: new sap.m.Text({text: "{lastName}"}),
