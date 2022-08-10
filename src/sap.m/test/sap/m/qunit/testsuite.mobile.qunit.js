@@ -275,6 +275,15 @@ sap.ui.define([
 					compatVersion: "1.16"
 				}
 			},
+			DialogRTL: {
+				title: "QUnit Page for sap.m.Dialog in RTL",
+				sinon: {
+					useFakeTimers: true
+				},
+				ui5: {
+					rtl: true
+				}
+			},
 			DisplayListItem: {
 				title: "Test Page for sap.m.DisplayListItem"
 			},
