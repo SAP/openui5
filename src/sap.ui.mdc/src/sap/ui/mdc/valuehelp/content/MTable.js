@@ -573,7 +573,6 @@ sap.ui.define([
 		}
 
 		var oTable = this._getTable();
-		oTable.addStyleClass("sapMListFocus"); // to show focus outline on navigated item
 
 		var aItems = this._oTable.getItems();
 		var oSelectedItem = oTable.getSelectedItem();
@@ -597,6 +596,8 @@ sap.ui.define([
 				return;
 			}
 		}
+
+		oTable.addStyleClass("sapMListFocus"); // to show focus outline on navigated item
 
 		var bSearchForNext;
 		if (iSelectedIndex < 0) {
