@@ -30,7 +30,7 @@ sap.ui.define([
 			_oConfigUtilInstance = oConfigUtilInstance;
 			_sLocalStorageNewsName = _oConfigUtilInstance.LOCAL_STORAGE_NAMES[_sOldNewsLocalStorageKey];
 
-			return _requireConfigJSON()
+			return oConfigUtilInstance._requireConfigJSON()
 					.then(_requireFeedXML)
 					.then(_parseDateToLocaleString)
 					.then(_splitNewAndOldItems)
@@ -124,22 +124,6 @@ sap.ui.define([
 
 		function _publishNewsChangedEvent() {
 			Core.getEventBus().publish("newsChanged", "onDemoKitNewsChanged");
-		}
-
-		function _requireConfigJSON() {
-			return new Promise(function (resolve) {
-				jQuery.ajax(ResourcesUtil.getResourceOriginPath("/news-config.json"), {
-						type: "GET",
-						dataType: "JSON",
-					success : function(oResult) {
-						resolve(oResult);
-					},
-					error : function () {
-						Log.error("failed to load news-config.json");
-						resolve();
-					}
-				});
-			});
 		}
 
 		function _requireFeedXML(oJSON) {

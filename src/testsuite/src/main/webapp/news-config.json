@@ -1,3 +1,4 @@
 {
-	"feedPath": "/news_feed.xml"
+	"feedPath": "/news_feed.xml",
+	"browserSupportPath": "/static/BPSupport.html"
 }

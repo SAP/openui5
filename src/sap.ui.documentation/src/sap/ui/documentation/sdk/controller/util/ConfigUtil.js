@@ -5,8 +5,11 @@
 /* Utility class that facilitates route configuration handling */
 sap.ui.define([
 	"sap/ui/base/Object",
-	"sap/base/strings/capitalize"
-], function (BaseObject, capitalize) {
+	"sap/base/strings/capitalize",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/documentation/sdk/util/Resources",
+	"sap/base/Log"
+], function (BaseObject, capitalize, jQuery, ResourcesUtil, Log) {
 	"use strict";
 
 	return BaseObject.extend("sap.ui.documentation.sdk.controller.util.ConfigUtil", {
@@ -106,6 +109,23 @@ sap.ui.define([
 		destroy: function () {
 			this._oComponent = null;
 			return BaseObject.prototype.destroy.apply(this, arguments);
+		},
+
+		// Require the configuration file for static pages paths
+		_requireConfigJSON: function() {
+			return new Promise(function (resolve) {
+				jQuery.ajax(ResourcesUtil.getResourceOriginPath("/news-config.json"), {
+						type: "GET",
+						dataType: "JSON",
+					success : function(oResult) {
+						resolve(oResult);
+					},
+					error : function () {
+						Log.error("failed to load news-config.json");
+						resolve();
+					}
+				});
+			});
 		}
 	});
 });

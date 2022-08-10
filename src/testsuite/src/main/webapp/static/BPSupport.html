@@ -1,0 +1,509 @@
+<h1>SAPUI5: Browser and Platform Support</h1>
+<p>Browser and platform support for the SAPUI5 libraries on iOS, Android, macOS, and Windows platforms.</p>
+<h3>Note:</h3>
+<p>The single source of truth about supported browsers and platforms is the Product Availability Matrix (PAM) that you can find at <a href="https://support.sap.com/pam">https://support.sap.com/pam</a>. SAPUI5 is not a product of its own, so please check the PAM for the product you’re using SAPUI5 with. For more information, see SAP Note <a href="https://launchpad.support.sap.com/#/notes/1716423">1716423</a>.</p>
+<p>The following sections only contain additional information on restrictions and platform support information for specific SAPUI5 libraries in a summarized form.</p>
+<p>As SAPUI5 is based on CSS3, HTML5, and the ECMAScript 5 (ES5) JavaScript API, only browsers with HTML5 capabilities are supported. In general, only major versions that are also supported by the respective platform can be supported by the SAPUI5 framework.</p>
+<h3>Restriction:</h3>
+<p>We currently do not guarantee that ECMAScript standards ES6/ES2015 or newer, work with SAPUI5.</p>
+<p>Depending on the platform your SAPUI5 apps run on, different browsers in different versions are supported. If you know which platform and which browsers are used by your users, you can decide on which libraries to use for your app.</p>
+<h2>Overview of Supported Browsers, Platforms, and Reference Devices</h2>
+<p>The following tables give a general overview of the browsers, platforms, and reference devices supported by the main SAPUI5 libraries.</p>
+<h2>Browser and Platform Support Matrix (Choose Version Range)</h2>
+<details>
+ <summary><b>1.88 or Higher</b></summary>
+<table>
+<tbody><tr>
+<th valign="center" align="middle">
+<p>Platform</p>
+</th>
+<th valign="center" align="middle">
+<p>Device Category</p>
+</th>
+<th valign="center" align="middle">
+<p>Platform Version</p>
+</th>
+<th valign="center" align="middle">
+<p>Safari</p>
+</th>
+<th valign="center" align="middle">
+<p>Web View</p>
+</th>
+<th valign="center" align="middle">
+<p>Microsoft Edge (Chromium)<sup>2</sup></p>
+</th>
+<th valign="center" align="middle">
+<p>Google Chrome</p>
+</th>
+<th valign="center" align="middle">
+<p>Mozilla Firefox</p>
+</th>
+<th valign="center" align="middle">
+<p>SAP Fiori Client</p>
+</th>
+</tr>
+<tr>
+<td rowspan="3" valign="center" align="middle">
+<p>Windows<sup>1</sup></p>
+</td>
+<td rowspan="2" valign="center" align="middle">
+<p>Desktop</p>
+</td>
+<td valign="center" align="middle">
+<p>Windows 8.1</p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td rowspan="2" valign="center" align="middle">
+<p>Latest version</p>
+</td>
+<td rowspan="2" valign="center" align="middle">
+<p>Latest version</p>
+</td>
+<td rowspan="3" valign="center" align="middle">
+<p>Latest version and latest Extended Support Release (ESR)<sup>7</sup></p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+</tr>
+<tr>
+<td valign="center" align="middle">
+<p>Windows 10</p>
+<p>Windows 11</p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<p>Latest version</p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+</tr>
+<tr>
+<td valign="center" align="middle">
+<p>Touch<sup>5, 6</sup></p>
+</td>
+<td valign="center" align="middle">
+<p>Windows 10</p>
+<p>Windows 11</p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<p>Latest version</p>
+</td>
+<td valign="center" align="middle">
+<p>Latest version<sup>7</sup></p>
+</td>
+<td valign="center" align="middle">
+<p>Latest version<sup>7</sup></p>
+</td>
+<td valign="center" align="middle">
+<p>Latest version</p>
+</td>
+</tr>
+<tr>
+<td valign="center" align="middle">
+<p>macOS</p>
+</td>
+<td valign="center" align="middle">
+<p>Desktop</p>
+</td>
+<td valign="center" align="middle">
+<p>Latest 2 versions</p>
+</td>
+<td valign="center" align="middle">
+<p>Latest 2 versions</p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<p>Latest version<sup>5</sup></p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+</tr>
+<tr>
+<td valign="center" align="middle">
+<p>iOS &amp; iPadOS<sup>3</sup></p>
+</td>
+<td valign="center" align="middle">
+<p>Phone and Tablet<sup>5, 6</sup></p>
+</td>
+<td valign="center" align="middle">
+<p>Latest 2 versions</p>
+</td>
+<td valign="center" align="middle">
+<p>Latest 2 versions</p>
+</td>
+<td valign="center" align="middle">
+<p>Latest version<sup>7</sup></p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<p>Latest version</p>
+</td>
+</tr>
+<tr>
+<td valign="center" align="middle">
+<p>Android<sup>4</sup></p>
+</td>
+<td valign="center" align="middle">
+<p>Phone and Tablet<sup>5, 6</sup></p>
+</td>
+<td valign="center" align="middle">
+<p>Latest 3 versions supported by Google</p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<p>Latest version</p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<p>Latest version</p>
+</td>
+</tr>
+</tbody></table>
+<ol>
+<li>The specified browsers are also supported in virtual environments, such as Citrix and VMware. Any issues found must be reproducible in a non-virtualized environment.</li>
+<li>SAPUI5 detects Microsoft Edge (Chromium) as Google Chrome and treats it the same.</li>
+<li>We use current Apple iPhone and iPad devices for testing and reproducing the reported issues.</li>
+<li>Android-based devices are very fragmented in matters of operating system variants and hardware diversity. We use current Samsung Galaxy S and Galaxy Tab S series devices for testing and reproducing the reported issues.</li>
+<li>Not supported for <code>sap.ui.commons</code> and <code>sap.ui.ux3</code>.</li>
+<li>Not supported for <code>sap.gantt</code>. Note that gantt charts consuming <code>sap.gantt</code> can be displayed on tablet devices.</li>
+<li>Not supported for <code>sap.ui.vbm</code>.</li>
+</ol>
+</details>
+<details>
+ <summary><b>1.87 or Lower</b></summary>
+<table>
+<tbody><tr>
+<th valign="center" align="middle">
+<p>Platform</p>
+</th>
+<th valign="center" align="middle">
+<p>Device Category</p>
+</th>
+<th valign="center" align="middle">
+<p>Platform Version</p>
+</th>
+<th valign="center" align="middle">
+<p>Safari</p>
+</th>
+<th valign="center" align="middle">
+<p>Web View</p>
+</th>
+<th valign="center" align="middle">
+<p>Internet Explorer<sup>2</sup></p>
+</th>
+<th valign="center" align="middle">
+<p>Microsoft Edge (Chromium)<sup>3</sup></p>
+</th>
+<th valign="center" align="middle">
+<p>Google Chrome</p>
+</th>
+<th valign="center" align="middle">
+<p>Mozilla Firefox</p>
+</th>
+<th valign="center" align="middle">
+<p>SAP Fiori Client</p>
+</th>
+</tr>
+<tr>
+<td rowspan="3" valign="center" align="middle">
+<p>Windows<sup>1</sup></p>
+</td>
+<td rowspan="2" valign="center" align="middle">
+<p>Desktop</p>
+</td>
+<td valign="center" align="middle">
+<p>Windows 8.1</p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td rowspan="2" valign="center" align="middle">
+<p>Version 11</p>
+</td>
+<td rowspan="2" valign="center" align="middle">
+<p>Latest version</p>
+</td>
+<td rowspan="2" valign="center" align="middle">
+<p>Latest version</p>
+</td>
+<td rowspan="3" valign="center" align="middle">
+<p>Latest version and latest Extended Support Release (ESR)<sup>8</sup></p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+</tr>
+<tr>
+<td valign="center" align="middle">
+<p>Windows 10</p>
+<p>Windows 11</p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<p>Latest version</p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+</tr>
+<tr>
+<td valign="center" align="middle">
+<p>Touch<sup>6, 7</sup></p>
+</td>
+<td valign="center" align="middle">
+<p>Windows 10</p>
+<p>Windows 11</p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<p>Latest version</p>
+</td>
+<td valign="center" align="middle">
+<p>Version 11</p>
+</td>
+<td valign="center" align="middle">
+<p>Latest version<sup>8</sup></p>
+</td>
+<td valign="center" align="middle">
+<p>Latest version<sup>8</sup></p>
+</td>
+<td valign="center" align="middle">
+<p>Latest version</p>
+</td>
+</tr>
+<tr>
+<td valign="center" align="middle">
+<p>macOS</p>
+</td>
+<td valign="center" align="middle">
+<p>Desktop</p>
+</td>
+<td valign="center" align="middle">
+<p>Latest 2 versions</p>
+</td>
+<td valign="center" align="middle">
+<p>Latest 2 versions</p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<p>Latest version<sup>6</sup></p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+</tr>
+<tr>
+<td valign="center" align="middle">
+<p>iOS &amp; iPadOS<sup>4</sup></p>
+</td>
+<td valign="center" align="middle">
+<p>Phone and Tablet<sup>6, 7</sup></p>
+</td>
+<td valign="center" align="middle">
+<p>Latest 2 versions</p>
+</td>
+<td valign="center" align="middle">
+<p>Latest 2 versions</p>
+</td>
+<td valign="center" align="middle">
+<p>Latest version<sup>8</sup></p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<p>Latest version</p>
+</td>
+</tr>
+<tr>
+<td valign="center" align="middle">
+<p>Android<sup>5</sup></p>
+</td>
+<td valign="center" align="middle">
+<p>Phone and Tablet<sup>6, 7</sup></p>
+</td>
+<td valign="center" align="middle">
+<p>Latest 3 versions supported by Google</p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<p>Latest version</p>
+</td>
+<td valign="center" align="middle">
+<ul>
+<li></li>
+</ul>
+</td>
+<td valign="center" align="middle">
+<p>Latest version</p>
+</td>
+</tr>
+</tbody></table>
+<ol>
+<li>The specified browsers are also supported in virtual environments, such as Citrix and VMware. Any issues found must be reproducible in a non-virtualized environment.</li>
+<li>For the upcoming end of support for Microsoft Internet Explorer 11 in SAPUI5, see section <em>SAPUI5 Support Status for Microsoft Internet Explorer 11</em>.</li>
+<li>SAPUI5 detects Microsoft Edge (Chromium) as Google Chrome and treats it the same.</li>
+<li>We use current Apple iPhone and iPad devices for testing and reproducing the reported issues.</li>
+<li>Android-based devices are very fragmented in matters of operating system variants and hardware diversity. We use current Samsung Galaxy S and Galaxy Tab S series devices for testing and reproducing the reported issues.</li>
+<li>Not supported for <code>sap.ui.commons</code> and <code>sap.ui.ux3</code>.</li>
+<li>Not supported for <code>sap.gantt</code>. Note that gantt charts consuming <code>sap.gantt</code> can be displayed on tablet devices.</li>
+<li>Not supported for <code>sap.ui.vbm</code>.</li>
+</ol>
+</details>
+<h2>SAPUI5 Support Status for Microsoft Internet Explorer 11</h2>
+<p>Support for Microsoft Internet Explorer 11 (IE11) ended after SAPUI5 1.87. The last long-term maintenance version of SAPUI5 that supports IE11 is SAPUI5 1.84. Versions up to and including SAPUI5 1.87 will continue to support IE11 as long as they are in maintenance (see <a href="https://ui5.sap.com/versionoverview.html">https://ui5.sap.com/versionoverview.html</a>).</p>
+<h3>Note:</h3>
+<p>Products based on SAPUI5 have their own browser support strategy and may have dropped support for IE11 even though the underlying maintenance version of SAPUI5 still supports it. Keep this in mind when you decide to use a certain product version. For more information, check the <a href="https://support.sap.com/pam">Product Availability Matrix (PAM)</a> for the product.</p>
+<p>Legacy web applications using active browser plugins that require IE11 cannot run embedded inside an SAP Fiori launchpad that depends on an SAPUI5 version released after support ended. The same goes for integrating SAPUI5 applications into SAP GUI for Windows through the SAP HTML control: Your SAP GUI for Windows version needs to be higher than 7.60 for you to be able to configure a browser engine other than the Microsoft Internet Explorer Control, see SAP Note <a href="https://launchpad.support.sap.com/#/notes/2913405">2913405</a>.</p>
+<p>In case you have legacy applications and you still need IE11 with an SAPUI5 version that no longer supports it, we recommend that you either use a dual browser strategy (for example, your users use another supported browser in addition to IE11) or you switch to Microsoft Edge (Chromium), which has an integrated Internet Explorer runtime mode.</p>
+<p>Internet Explorer 11 requires add-ons <em>XML DOM Document</em> and <em>XML DOM Document 3.0</em> to be activated for XML parsing support.</p>
+<p>Internet Explorer 11 (IE11) provides specific document and enterprise modes for compatibility reasons. SAPUI5 supports only the IE11 document mode. For backward compatibility, IE11 allows to enable a special enterprise mode that can simulate either an IE8 or IE7 within an IE11, which is NOT supported for SAPUI5 apps. This functionality should be used only for critical apps that require an older browser version to run. For more information, see “<a href="https://technet.microsoft.com/itpro/internet-explorer/ie11-deploy-guide/fix-compat-issues-with-doc-modes-and-enterprise-mode-site-list">Fix web compatibility issues using document modes and the Enterprise Mode site list</a>” in the Microsoft Windows IT Center.</p>
