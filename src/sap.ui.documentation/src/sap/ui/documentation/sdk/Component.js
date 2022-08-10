@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/controller/ErrorHandler",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/documentation/sdk/controller/util/ConfigUtil",
+	"sap/ui/documentation/sdk/controller/util/URLUtil",
 	"sap/base/util/Version",
 	"sap/ui/documentation/sdk/util/Resources",
 	// used via manifest.json
@@ -24,6 +25,7 @@ sap.ui.define([
 	ErrorHandler,
 	JSONModel,
 	ConfigUtil,
+	DemokitURLUtil,
 	Version,
 	ResourcesUtil /*, DocumentationRouter, ColumnListItem*/
 ) {
@@ -205,6 +207,7 @@ sap.ui.define([
 					isSnapshotVersion: bSnapshot,
 					isDevVersion: bSnapshot,
 					isBetaVersion: !bOpenUI5 && !bSnapshot && /-beta$/i.test(sVersionSuffix),
+					isURLVersioned: !!DemokitURLUtil.parseVersion(document.location.href),
 					isInternal: !!bIsInternal,
 					supportsSWA: bSupportsSWA,
 					libraries: oVersionInfo.libraries,
