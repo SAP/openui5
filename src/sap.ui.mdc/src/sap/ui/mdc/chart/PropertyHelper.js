@@ -3,9 +3,10 @@
  */
 
 sap.ui.define([
-	"../util/PropertyHelper"
+	"../util/PropertyHelper", "sap/ui/mdc/library"
 ], function(
-	PropertyHelperBase
+	PropertyHelperBase,
+	MDCLib
 ) {
 	"use strict";
 
@@ -40,13 +41,65 @@ sap.ui.define([
 	});
 
 	PropertyHelper.prototype.prepareProperty = function(oProperty) {
+		if (oProperty.groupable) {
+			oProperty.availableRoles = this._getLayoutOptionsForType("groupable");
+			oProperty.kind = "Groupable";
+		} else if (oProperty.aggregatable) {
+			oProperty.availableRoles = this._getLayoutOptionsForType("aggregatable");
+			oProperty.kind = "Aggregatable";
+		}
+
+		if (!oProperty.typeConfig && oProperty.dataType){
+			var oFormatOptions = oProperty.formatOptions ? oProperty.formatOptions : null;
+			var oConstraints = oProperty.constraints ? oProperty.constraints : {};
+
+			oProperty.typeConfig = this.getParent().getControlDelegate().getTypeUtil().getTypeConfig(oProperty.dataType, oFormatOptions, oConstraints);
+		}
+
 		PropertyHelperBase.prototype.prepareProperty.apply(this, arguments);
+
 		oProperty.isAggregatable = function() {
 
 			if (oProperty) {
 				return oProperty.isComplex() ? false : oProperty.aggregatable;
 			}
 		};
+	};
+
+		/**
+		 * This returns the layout options for a specific type of Item (measure/dimension,groupable/aggregatable)
+		 * It is used by p13n to determine which layout options to show in the p13n panel
+		 * @param {string} sType the type for which the layout options are requested
+		 */
+		PropertyHelper.prototype._getLayoutOptionsForType = function(sType){
+		var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		var oAvailableRoles = {
+			groupable: [
+				{
+					key: MDCLib.ChartItemRoleType.category,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY')
+				}, {
+					key: MDCLib.ChartItemRoleType.category2,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY2')
+				}, {
+					key: MDCLib.ChartItemRoleType.series,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_SERIES')
+				}
+			],
+			aggregatable: [
+				{
+					key: MDCLib.ChartItemRoleType.axis1,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS1')
+				}, {
+					key: MDCLib.ChartItemRoleType.axis2,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS2')
+				}, {
+					key: MDCLib.ChartItemRoleType.axis3,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS3')
+				}
+			]
+		};
+		return oAvailableRoles[sType];
 	};
 
 	/**
