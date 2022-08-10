@@ -1,7 +1,29 @@
 {
   "1.105.0": {
-    "date": "July 2022",
+    "date": "August 2022",
     "notes": [
+      {
+        "id": "ce09b1aecbc717a7704951efc2c1dda7313e248d",
+        "type": "FIX",
+        "text": " sap.ui.core.Configuration: Disable timezone configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "b4b327759a1e6c26d2c70f34a343ff7c6f1ecbb5",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataListBinding: Handling of createActivate-event after rebinding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280135558"
+          }
+        ]
+      },
       {
         "id": "f04936f1224c5dab58bb3ab0bafc513f19112d8e",
         "type": "FIX",

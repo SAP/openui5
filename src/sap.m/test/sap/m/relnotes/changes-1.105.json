@@ -1,7 +1,29 @@
 {
   "1.105.0": {
-    "date": "July 2022",
+    "date": "August 2022",
     "notes": [
+      {
+        "id": "09737ed6676cbe337dd76620c709b4de2a7f2785",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: use of the dateValue property isn`t recommended",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "ce09b1aecbc717a7704951efc2c1dda7313e248d",
+        "type": "FIX",
+        "text": " sap.ui.core.Configuration: Disable timezone configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
       {
         "id": "2c388d0c0d036b9373460d19d1e5808d47348545",
         "type": "FIX",
