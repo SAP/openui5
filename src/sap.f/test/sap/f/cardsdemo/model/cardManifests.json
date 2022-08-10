@@ -807,7 +807,7 @@
 					}
 				},
 				"content": {
-					"maxItems": "7",
+					"maxItems": "4",
 					"data": {
 						"request": {
 							"url": "./cardcontent/employees.json"
@@ -862,7 +862,7 @@
 					"subTitle": "For Today"
 				},
 				"content": {
-					"maxItems": "5",
+					"maxItems": "3",
 					"data": {
 						"request": {
 							"url": "./cardcontent/employees.json"

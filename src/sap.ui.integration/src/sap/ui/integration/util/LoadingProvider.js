@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/f/cards/loading/CalendarPlaceholder",
 	"sap/f/cards/loading/ObjectPlaceholder",
 	"sap/f/cards/loading/TablePlaceholder",
-	"../cards/TableContentRenderer"
+	"sap/f/cards/loading/TimelinePlaceholder",
+	"../cards/TableContentRenderer",
+	"../cards/TimelineContentRenderer"
 ], function (
 	ListContentRenderer,
 	library,
@@ -20,7 +22,9 @@ sap.ui.define([
 	CalendarPlaceholder,
 	ObjectPlaceholder,
 	TablePlaceholder,
-	TableContentRenderer
+	TimelinePlaceholder,
+	TableContentRenderer,
+	TimelineContentRenderer
 ) {
 	"use strict";
 
@@ -108,6 +112,14 @@ sap.ui.define([
 					maxItems: oCard ? oCard.getContentPageSize(oConfiguration) || 2 : 2,
 					itemHeight: TableContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem",
 					columns: oConfiguration.row ? oConfiguration.row.columns.length || 2 : 2
+				});
+				break;
+
+			case "Timeline":
+				this._oContentPlaceholder = new TimelinePlaceholder({
+					maxItems: oCard ? oCard.getContentPageSize(oConfiguration) || 2 : 2,
+					item: oConfiguration.item,
+					itemHeight: TimelineContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem"
 				});
 				break;
 

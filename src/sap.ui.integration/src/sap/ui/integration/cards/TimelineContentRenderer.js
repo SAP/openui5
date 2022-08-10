@@ -24,10 +24,17 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 			return this.DEFAULT_MIN_HEIGHT;
 		}
 
-		var bIsCompact = this.isCompact(oContent),
-			iItemHeight = bIsCompact ? 4 : 5; // timeline item height in "rem"
+		var iItemHeight = this.getItemMinHeight(oConfiguration, oContent);
 
 		return (iMaxItems * iItemHeight) + "rem";
+	};
+
+	TimelineContentRenderer.getItemMinHeight = function (oConfiguration, oControl) {
+		if (!oConfiguration || !oConfiguration.item) {
+			return 0;
+		}
+
+		return oConfiguration.item.ownerImage ? 7 : 5.625;
 	};
 
 	return TimelineContentRenderer;
