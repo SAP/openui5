@@ -225,7 +225,7 @@ sap.ui.define([
 
 			this._$oEditableControlDomRef.css("visibility", "hidden");
 			_$oWrapper.offset({left: this._$oEditableControlDomRef.offset().left});
-			RenameHandler._setEditableFieldPosition();
+			RenameHandler._setEditableFieldPosition.apply(this);
 			this._$editableField.css("visibility", "");
 			this._$editableField.trigger("focus");
 
