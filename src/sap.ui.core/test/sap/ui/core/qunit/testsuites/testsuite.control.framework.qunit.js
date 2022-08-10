@@ -132,6 +132,13 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
+			"util/Popup-rtl": {
+				title: "sap.ui.core.Popup",
+				page: "test-resources/sap/ui/core/qunit/util/Popup.qunit.html?sap-ui-rtl=true",
+				qunit: {
+					reorder: false
+				}
+			},
 			RenderManager: {
 				title: "sap.ui.core.RenderManager"
 			},
