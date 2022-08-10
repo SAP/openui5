@@ -44,7 +44,7 @@
 }
 
 #withinArea {
-	position: absolute;
+	position: fixed;
 	width: 300px;
 	height: 300px;
 	left: 100px;
@@ -52,7 +52,7 @@
 }
 
 #withinArea1 {
-	position: absolute;
+	position: fixed;
 	width: 400px;
 	height: 400px;
 	bottom: 100px;
