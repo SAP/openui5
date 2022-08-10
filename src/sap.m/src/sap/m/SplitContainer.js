@@ -1796,10 +1796,10 @@ function(
 		var oReturn = oPage, aContent;
 
 		while (oReturn) {
-			if (oReturn.isA(["sap.m.Page", "sap.m.MessagePage", "sap.m.semantic.SemanticPage"])) {
+			if (oReturn && oReturn.isA(["sap.m.Page", "sap.m.MessagePage", "sap.m.semantic.SemanticPage"])) {
 				return oReturn;
 			}
-			if (oReturn.isA("sap.ui.core.mvc.View")) {
+			if (oReturn && oReturn.isA("sap.ui.core.mvc.View")) {
 				aContent = oReturn.getContent();
 				if (aContent.length === 1) {
 					oReturn = aContent[0];
