@@ -137,6 +137,38 @@
 					]
 				}
 			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"type": "Link",
+					"text": "Link to Meal",
+					"icon": "sap-icon://action",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "{agendaUrl}"
+							}
+						}
+					]
+				},
+				{
+					"type": "ToolbarSpacer"
+				},
+				{
+					"text": "Approve",
+					"overflowPriority": "High",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "approve"
+							}
+						}
+					]
+				}
+			]
 		}
 	}
 }
