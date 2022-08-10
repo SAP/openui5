@@ -181,6 +181,7 @@ sap.ui.define([
 			oAFLayout,
 			bNextAFLayout = true,
 			aGroups = oConfiguration.groups || [];
+		this._formElementsIds = new Set();
 
 		aGroups.forEach(function (oGroupConfiguration, i) {
 			var oGroup = this._createGroup(oGroupConfiguration);
@@ -637,7 +638,11 @@ sap.ui.define([
 		if (!oItem.id) {
 			Log.error("Each input element must have an ID.", "sap.ui.integration.widgets.Card");
 			return oControl;
+		} else if (this._formElementsIds.has(oItem.id)) {
+			Log.error("Duplicate form element ID - " + "'" + oItem.id + "'" , "sap.ui.integration.widgets.Card");
 		}
+
+		this._formElementsIds.add(oItem.id);
 
 		fnUpdateValue = function () {
 			oFormModel.setProperty("/" + oItem.id, {
@@ -672,7 +677,11 @@ sap.ui.define([
 		if (!oItem.id) {
 			Log.error("Each input element must have an ID.", "sap.ui.integration.widgets.Card");
 			return oControl;
+		} else if (this._formElementsIds.has(oItem.id)) {
+			Log.error("Duplicate form element ID - " + "'" + oItem.id + "'" , "sap.ui.integration.widgets.Card");
 		}
+
+		this._formElementsIds.add(oItem.id);
 
 		fnUpdateValue = function () {
 			oFormModel.setProperty("/" + oItem.id, oControl.getValue());

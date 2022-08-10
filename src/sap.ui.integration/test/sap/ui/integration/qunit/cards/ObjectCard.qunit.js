@@ -1611,6 +1611,48 @@ sap.ui.define([
 		Core.applyChanges();
 	});
 
+	QUnit.test("Check for duplicate ID in form elements", function (assert) {
+		var done = assert.async(),
+			oLogSpy = this.spy(Log, "error"),
+			oCard = this.oCard;
+
+
+		this.oCard.attachEvent("_ready", function () {
+			Core.applyChanges();
+
+			assert.ok(oLogSpy.calledWithExactly(sinon.match("Duplicate form element ID"), "sap.ui.integration.widgets.Card"), "Error for duplicate ID should be logged");
+			done();
+		});
+
+		oCard.setManifest({
+			"sap.app": {
+				"id": "test.cards.object.card6",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"content": {
+					"groups": [
+						{
+							"alignment": "Stretch",
+							"items": [
+								{
+									"id": "reason",
+									"type": "ComboBox"
+								},
+								{
+									"id": "reason",
+									"type": "ComboBox"
+								}
+							]
+						}
+					]
+				}
+			}
+		});
+		Core.applyChanges();
+	});
+
 	QUnit.module("titleMaxLine and labelWrapping", {
 		beforeEach: function () {
 			this.oCard = new Card({
