@@ -3438,9 +3438,9 @@ sap.ui.define([
 	 *   <code>expandTo</code> and <code>search</code>. A recursive hierarchy cannot be combined
 	 *   with "$search".
 	 * @param {string} [oAggregation.search]
-	 *   Like the <a
-	 *   href="https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html">
-	 *   "5.1.7 System Query Option $search"</a>, but applied before data aggregation
+	 *   Like the <a href=
+	 *   "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html#_Search_System_Query"
+	 *   >"5.1.7 System Query Option $search"</a>, but applied before data aggregation
 	 *   (since 1.93.0). Note that certain content will break the syntax of the system query option
 	 *   <code>$apply</code> and result in an invalid request. If the OData service supports the
 	 *   proposal <a href="https://issues.oasis-open.org/browse/ODATA-1452">ODATA-1452</a>, then

@@ -15,9 +15,9 @@ sap.ui.define([
 		rUnsupportedPathSegments = /\$(?:Navigation)?PropertyPath/,
 		/**
 		 * @classdesc
-		 * A collection of methods which help to consume
-		 * <a href="https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html">
-		 * OData V4 annotations</a> in XML template views. Every context argument must belong to a
+		 * A collection of methods which help to consume <a href=
+		 * "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html#_Vocabulary_and_Annotation"
+		 * >OData V4 annotations</a> in XML template views. Every context argument must belong to a
 		 * {@link sap.ui.model.odata.v4.ODataMetaModel} instance.
 		 *
 		 * @alias sap.ui.model.odata.v4.AnnotationHelper

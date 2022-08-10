@@ -364,7 +364,7 @@ sap.ui.define([
 		 *     <li> <code>statusText</code>: (optional) HTTP status text
 		 *   </ul>
 		 * @see <a href=
-		 * "http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html"
+		 * "http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Representing_Errors_in"
 		 * >"19 Error Response"</a>
 		 */
 		createError : function (jqXHR, sMessage, sRequestUrl, sResourcePath) {
