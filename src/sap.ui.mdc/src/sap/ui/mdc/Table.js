@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/ColumnHeaderPopover",
 	"sap/m/ColumnPopoverSelectListItem",
-	"sap/m/ColumnPopoverActionItem",
 	"sap/m/OverflowToolbar",
 	"sap/m/library",
 	"sap/m/table/columnmenu/Menu",
@@ -40,11 +39,8 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/AggregateController",
 	"sap/ui/mdc/p13n/subcontroller/ColumnWidthController",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
-	"sap/ui/mdc/table/RowActionItem",
-	"sap/ui/mdc/table/RowSettings",
 	"sap/ui/mdc/table/menu/QuickActionContainer",
-	"sap/ui/mdc/table/menu/ItemContainer",
-	"sap/ui/base/ManagedObjectMetadata"
+	"sap/ui/mdc/table/menu/ItemContainer"
 ], function(
 	Control,
 	ActionToolbar,
@@ -58,7 +54,6 @@ sap.ui.define([
 	Title,
 	ColumnHeaderPopover,
 	ColumnPopoverSelectListItem,
-	ColumnPopoverActionItem,
 	OverflowToolbar,
 	MLibrary,
 	ColumnMenu,
@@ -83,11 +78,8 @@ sap.ui.define([
 	AggregateController,
 	ColumnWidthController,
 	ActionToolbarAction,
-	RowActionItem,
-	RowSettings,
 	QuickActionContainer,
-	ItemContainer,
-	ManagedObjectMetadata
+	ItemContainer
 ) {
 	"use strict";
 
@@ -2319,7 +2311,9 @@ sap.ui.define([
 
 			if (oRowBinding && this._oTable) {
 				var iBindingRowCount = oRowBinding.getLength();
-				var iTableRowCount = this._oTable.getItems().length;
+				var iTableRowCount = this._oTable.getItems().filter(function(oItem) {
+					return !oItem.isGroupHeader();
+				}).length;
 				var bIsLengthFinal = oRowBinding.isLengthFinal();
 
 				if (iTableRowCount != iBindingRowCount || !bIsLengthFinal) {
