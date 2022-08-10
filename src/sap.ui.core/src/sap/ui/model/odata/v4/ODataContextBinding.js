@@ -883,9 +883,9 @@ sap.ui.define([
 	 *   does not change its <code>keepAlive</code> attribute. In any case, the resulting context
 	 *   takes the place (index, position) of the parent context (see
 	 *   {@link sap.ui.model.odata.v4.Context#getIndex}), which need not be in the collection
-	 *   currently if it is kept alive (see {@link sap.ui.model.odata.v4.Context#isKeepAlive}). If
-	 *   the parent context has requested messages when it was kept alive, they will be inherited if
-	 *   the $$inheritExpandSelect binding parameter is set to <code>true</code>. Since 1.97.0.
+	 *   currently if it is {@link sap.ui.model.odata.v4.Context#isKeepAlive kept alive}. If the
+	 *   parent context has requested messages when it was kept alive, they will be inherited if the
+	 *   $$inheritExpandSelect binding parameter is set to <code>true</code>. Since 1.97.0.
 	 * @returns {Promise}
 	 *   A promise that is resolved without data or with a return value context when the operation
 	 *   call succeeded, or rejected with an <code>Error</code> instance <code>oError</code> in case

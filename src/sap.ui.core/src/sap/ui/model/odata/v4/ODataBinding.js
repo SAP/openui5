@@ -835,7 +835,7 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#refresh refresh} (since 1.100.0),
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort sort}, or
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#suspend suspend} because they relate to a
-	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding
+	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this binding
 	 *   (since 1.97.0). Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient}
 	 *   contexts of a {@link #getRootBinding root binding} are treated as kept-alive by this flag.
 	 *   Since 1.99.0, the same happens for bindings using the <code>$$ownRequest</code> parameter
@@ -1031,7 +1031,7 @@ sap.ui.define([
 	 *       binding,
 	 *     <li> or a value of type boolean is given.
 	 *   </ul> Since 1.100.0, pending changes are ignored if they relate to a
-	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding, and
+	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this binding, and
 	 *   {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts of a
 	 *   {@link #getRootBinding root binding} do not count as pending changes.
 	 *

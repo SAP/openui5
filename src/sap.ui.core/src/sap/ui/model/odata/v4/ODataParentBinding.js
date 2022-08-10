@@ -330,7 +330,7 @@ sap.ui.define([
 	 *   1.93.0, string values for "$expand" and "$select" are ignored if they are unchanged;
 	 *   pending changes are ignored if all parameters are unchanged. Since 1.97.0, pending changes
 	 *   are ignored if they relate to a
-	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
+	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this binding.
 	 *   Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
 	 *   of a {@link #getRootBinding root binding} do not count as pending changes.
 	 *
@@ -1330,7 +1330,7 @@ sap.ui.define([
 	 * Suspends this binding. A suspended binding does not fire change events nor does it trigger
 	 * data service requests. Call {@link #resume} to resume the binding. Before 1.53.0, this method
 	 * was not supported and threw an error. Since 1.97.0, pending changes are ignored if they
-	 * relate to a {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this
+	 * relate to a {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this
 	 * binding. Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
 	 * of a {@link #getRootBinding root binding} do not count as pending changes.
 	 *
