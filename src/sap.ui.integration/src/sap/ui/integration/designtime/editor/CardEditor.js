@@ -146,7 +146,7 @@ sap.ui.define([
 		if (typeof vCardIdOrSettings === "object") {
 			this._oEditorCard = new Card(vCardIdOrSettings);
 			this._oEditorCard.onBeforeRendering();
-			this._oEditorCard.attachEventOnce("_cardReady", function () {
+			this._oEditorCard.attachEventOnce("_dataReady", function () {
 				this.setJson(vCardIdOrSettings, bSuppressRerendering);
 			}.bind(this));
 		}
