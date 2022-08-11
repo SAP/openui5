@@ -621,7 +621,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assertions
-		assert.equal(oRadioButton1.$('label').css('width'), '20px', "Label width should be 20px");
+		assert.equal(oRadioButton1._oLabel.getDomRef().style.width, '20px', "Label width should be 20px");
 		assert.equal(oRadioButton1.$('label').hasClass('sapMRbBLabel'), true, 'The class sapMRbBLabel should be set to the label');
 		assert.strictEqual(oRadioButton1.$('label').text(), _sLabelText, "Label text should be " + _sLabelText);
 

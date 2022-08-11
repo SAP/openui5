@@ -1706,7 +1706,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oDialog.destroy();
-			this.oWithinArea.remove();
+			this.oWithinArea.parentElement.removeChild(this.oWithinArea); // workaround of "remove" method for IE
 			Popup.setWithinArea(null);
 		}
 	});
@@ -2234,7 +2234,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oDialog.destroy();
-			this.oWithinArea.remove();
+			this.oWithinArea.parentElement.removeChild(this.oWithinArea); // workaround of "remove" method for IE
 			Popup.setWithinArea(null);
 		},
 		styleWithinArea: function (mStyles) {
@@ -2450,7 +2450,7 @@ sap.ui.define([
 
 				// Clean up
 				oObserver.disconnect();
-				oWithinArea.remove();
+				oWithinArea.parentElement.removeChild(oWithinArea); // workaround of "remove" method for IE
 				Popup.setWithinArea(null);
 				done();
 			}.bind(this));
