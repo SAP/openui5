@@ -3709,7 +3709,19 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.equal(this.oSituation.getTileContent()[0].getContent().getMaxLines(),3,"max lines has been set correct after setting priorityText property alone");
 	});
 
+	function setup() {
+		this.DEFAULT_BG_COLOR = Parameters.get({
+			name: "sapLegendColor9",
+			callback: function (params) {
+				this.DEFAULT_BG_COLOR = params;
+			}
+		});
+	}
+
 	QUnit.module("GenericTile IconMode", {
+		before : function() {
+			setup.call(this);
+		},
 		beforeEach: function() {
 			this.oGenericTile = new GenericTile({
 				header: "GenericTile",
@@ -3742,7 +3754,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 			assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
 			assert.equal(this.oGenericTile.getFrameType(), FrameType.OneByOne, "Current FrameType is " + FrameType.OneByOne);
 			assert.equal(this.oGenericTile.getTileIcon(), undefined, "No Tile Icon.");
-			assert.equal(this.oGenericTile.getBackgroundColor(), undefined, "No Tile Background Color");
+			assert.equal(this.oGenericTile._sBGColor,this.DEFAULT_BG_COLOR, "Default Background Color has been set");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 1, "SubHeader Text is created.");
@@ -3752,13 +3764,13 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOneIcon").length, 0, "No Icon Container Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTOneByOne").length, 0, "No Text Container Created.");
 			this.oGenericTile.setTileIcon("sap-icon://key");
-			this.oGenericTile.setBackgroundColor("teal");
+			this.oGenericTile.setBackgroundColor("sapLegendColor1");
 			oCore.applyChanges();
 			setTimeout(function(){
 				assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
 				assert.equal(this.oGenericTile.getFrameType(), FrameType.OneByOne, "Current FrameType is " + FrameType.OneByOne);
 				assert.equal(this.oGenericTile.getTileIcon(), "sap-icon://key", "Tile Icon is present.");
-				assert.equal(this.oGenericTile.getBackgroundColor(), "teal", "Tile Background Coloris present");
+				assert.equal(this.oGenericTile._sBGColor, "#ad7900", "Tile Background Color is present");
 				assert.ok(this.oGenericTile._oIcon.isA("sap.ui.core.Icon"), "Icon Created");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
@@ -3776,7 +3788,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 					assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
 					assert.equal(this.oGenericTile.getFrameType(), FrameType.OneByOne, "Current FrameType is " + FrameType.OneByOne);
 					assert.equal(this.oGenericTile.getTileIcon(), IMAGE_PATH + "female_BaySu.jpg", "Tile Icon is present.");
-					assert.equal(this.oGenericTile.getBackgroundColor(), "teal", "Tile Background Coloris present");
+					assert.equal(this.oGenericTile._sBGColor, "#ad7900", "Tile Background Color is present");
 					assert.ok(this.oGenericTile._oIcon.isA("sap.m.Image"), "Image Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
@@ -3812,7 +3824,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 			assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
 			assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByHalf, "Current FrameType is " + FrameType.TwoByHalf);
 			assert.equal(this.oGenericTile.getTileIcon(), undefined, "No Tile Icon.");
-			assert.equal(this.oGenericTile.getBackgroundColor(), Parameters.get("sapUiContentPlaceholderloadingBackground"), "Default Background Color has been set");
+			assert.equal(this.oGenericTile._sBGColor, this.DEFAULT_BG_COLOR, "Default Background Color has been set");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 0, "SubHeader Text is created.");
@@ -3822,13 +3834,13 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 			assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTwoByHalfIcon").length, 0, "No Icon Container Created.");
 			assert.equal(this.oGenericTile._oMoreIcon.getType(), "Unstyled", "Button Created in Unstyled Type");
 			this.oGenericTile.setTileIcon("sap-icon://key");
-			this.oGenericTile.setBackgroundColor("teal");
+			this.oGenericTile.setBackgroundColor("sapLegendColor2");
 			oCore.applyChanges();
 			setTimeout(function() {
 				assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
 				assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByHalf, "Current FrameType is " + FrameType.TwoByHalf);
 				assert.equal(this.oGenericTile.getTileIcon(), "sap-icon://key", "Tile Icon is present.");
-				assert.equal(this.oGenericTile.getBackgroundColor(), "teal", "Tile Background Coloris present");
+				assert.equal(this.oGenericTile._sBGColor, "#dc5c0c", "Default background color is restored");
 				assert.ok(this.oGenericTile._oIcon.isA("sap.ui.core.Icon"), "Icon Created");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
@@ -3846,7 +3858,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 					assert.equal(this.oGenericTile.getMode(), GenericTileMode.IconMode, "CurrentMode is " + GenericTileMode.IconMode);
 					assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByHalf, "Current FrameType is " + FrameType.TwoByHalf);
 					assert.equal(this.oGenericTile.getTileIcon(), IMAGE_PATH + "female_BaySu.jpg", "Tile Icon is present.");
-					assert.equal(this.oGenericTile.getBackgroundColor(), "teal", "Tile Background Coloris present");
+					assert.equal(this.oGenericTile._sBGColor, "#dc5c0c", "Default background color is restored");
 					assert.ok(this.oGenericTile._oIcon.isA("sap.m.Image"), "Image Created");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
@@ -4847,6 +4859,77 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		assert.equal(getComputedStyle(document.querySelector(".sapMGTContentShimmerPlaceholderItemHeader")).width,"116px","Header Shimmer Width Set Correctly");
 		assert.equal(getComputedStyle(document.querySelector(".sapMGTContentShimmerPlaceholderItemText")).width,"94px","Sub Header Shimmer Width Set Correctly");
 		assert.equal(getComputedStyle(document.querySelector(".sapMTileCntContentShimmerPlaceholderItemTextFooter")).width,"94px","Footer Shimmer Width Set Correctly");
+	});
+
+	QUnit.module("Tests for renderOnThemeChange property", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile({
+				state: LoadState.Loading,
+				renderOnThemeChange: true,
+				header: "headerText",
+				subheader: "subheaderText",
+				url: "Test url",
+				sizeBehavior: "Small",
+				tileContent: new TileContent("tile-cont", {
+					unit: "EUR",
+					footer: "Current Quarter"
+				})
+			}).placeAt("qunit-fixture");
+			oCore.applyChanges();
+			this.sStartTheme = oCore.getConfiguration().getTheme();
+			this.sRequiredTheme = null;
+
+			this.applyTheme = function(sTheme, fnCallback) {
+				this.sRequiredTheme = sTheme;
+				if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+					if (typeof fnCallback === "function") {
+						fnCallback.bind(this)();
+						fnCallback = undefined;
+					}
+				} else {
+					oCore.attachThemeChanged(fnThemeApplied.bind(this));
+					oCore.applyTheme(sTheme);
+				}
+
+				function fnThemeApplied(oEvent) {
+					oCore.detachThemeChanged(fnThemeApplied);
+					if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+						if (typeof fnCallback === "function") {
+							fnCallback.bind(this)();
+							fnCallback = undefined;
+						}
+					} else {
+						setTimeout(fnThemeApplied.bind(this, oEvent), 1500);
+					}
+				}
+			};
+		},
+		afterEach: function(assert) {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+			var done = assert.async();
+			this.applyTheme(this.sStartTheme, done);
+		}
+	});
+
+	QUnit.test("Test if the tile has rendered again on theme change", function(assert){
+		var done = assert.async();
+		this.oSpy = this.spy(this.oGenericTile, "invalidate");
+		this.applyTheme("sap_horizon", function() {
+			assert.ok(this.oSpy.calledOnce, "The Tile has been Rendered upon theme change");
+			done();
+		});
+	});
+
+	QUnit.test("Test if the tile has not rendered again on theme change", function(assert){
+		var done = assert.async();
+		this.oGenericTile.setRenderOnThemeChange(false);
+		oCore.applyChanges();
+		this.oSpy = this.spy(this.oGenericTile, "invalidate");
+		this.applyTheme("sap_horizon", function() {
+			assert.notOk(this.oSpy.callCount, "The Tile has not been Rendered upon theme change");
+			done();
+		});
 	});
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
