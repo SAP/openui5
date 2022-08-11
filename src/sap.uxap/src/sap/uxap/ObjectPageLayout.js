@@ -1641,7 +1641,7 @@ sap.ui.define([
 					}
 
 					if (this._shouldApplySectionTitleLevel(oSubSection)) {
-						oSubSection._setInternalTitleLevel(this._determineSectionBaseInternalTitleLevel(oSubSection), bInvalidate);
+						oSubSection._setInternalTitleLevel(this._determineSectionBaseInternalTitleLevel(oSubSection, !oFirstVisibleSection), bInvalidate);
 					}
 				}
 
@@ -2707,16 +2707,23 @@ sap.ui.define([
 	 * <code>sap.ui.core.TitleLevel.H3</code> is returned for <code>ObjectPageSection</code> and
 	 * <code>sap.ui.core.TitleLevel.H4</code> for <code>ObjectPageSubSection</code>.
 	 * @param {sap.uxap.ObjectPageSectionBase} oSectionBase <code>ObjectPageSectionBase</code> instance
+	 * @param {boolean} bFirstVisibleSection if the section is the first visible section (only used when determining subsection title level)
 	 * @returns {string} <code>sap.ui.core.TitleLevel</code>
 	 * @since 1.44
 	 * @private
 	 */
-	ObjectPageLayout.prototype._determineSectionBaseInternalTitleLevel = function(oSectionBase) {
+	ObjectPageLayout.prototype._determineSectionBaseInternalTitleLevel = function(oSectionBase, bFirstVisibleSection) {
 		var sSectionBaseTitleLevel = this.getSectionTitleLevel(),
 			bIsSection = oSectionBase instanceof ObjectPageSection;
 
 		if (sSectionBaseTitleLevel === TitleLevel.Auto) {
-			return bIsSection ? TitleLevel.H3 : TitleLevel.H4;
+			// if this is a subsection contained inside the first visible section - meaning that the section's title is hidden
+			// then we need to return H3 to prevent heading levels increasing by more than one
+			if (bIsSection || (bFirstVisibleSection && !bIsSection)) {
+				// section or subsections inside the first visible section
+				return TitleLevel.H3;
+			}
+			return TitleLevel.H4;
 		}
 
 		return bIsSection ? sSectionBaseTitleLevel : ObjectPageLayout._getNextTitleLevelEntry(sSectionBaseTitleLevel);

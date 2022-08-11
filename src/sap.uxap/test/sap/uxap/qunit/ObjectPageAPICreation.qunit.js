@@ -1488,23 +1488,31 @@ function (
 	QUnit.module("ObjectPage API: sectionTitleLevel");
 
 	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is TitleLevel.Auto", function (assert) {
-		var oObjectPage = oFactory.getObjectPageLayoutWithSectionTitleLevel(null),
+		var oObjectPage = helpers.generateObjectPageWithSubSectionContent(oFactory, 2, 2),
 			oSection,
 			$sectionHeader,
 			oSubSection,
 			$subSectionTitle,
-			sSectionAriaLevelDefault = "3",
-			sSubSectionAriaLevelDefault = "4";
+			oFirstSection,
+			$firstSectionSubSectionTitle,
+			sTitleLevel3 = "3",
+			sTitleLevel4 = "4";
 
 		helpers.renderObject(oObjectPage);
 
-		oSection = oObjectPage.getSections()[0];
+		// subsection titles inside the first section should have aria-level 3 because the section title is hidden
+		oFirstSection = oObjectPage.getSections()[0];
+		$firstSectionSubSectionTitle = oFirstSection.getSubSections()[0].$("headerTitle");
+
+		// get the second section to test the aria-level of the section title and the subsection title
+		oSection = oObjectPage.getSections()[1];
 		$sectionHeader = oSection.$("header");
 		oSubSection = oSection.getSubSections()[0];
 		$subSectionTitle = oSubSection.$("headerTitle");
 
-		assert.equal($sectionHeader.attr("aria-level"), sSectionAriaLevelDefault, "The section has the correct aria-level");
-		assert.equal($subSectionTitle.attr("aria-level"), sSubSectionAriaLevelDefault, "The subSection has the correct aria-level");
+		assert.equal($sectionHeader.attr("aria-level"), sTitleLevel3, "The section has the correct aria-level");
+		assert.equal($firstSectionSubSectionTitle.attr("aria-level"), sTitleLevel3, "The subSection in the first section has the correct aria-level");
+		assert.equal($subSectionTitle.attr("aria-level"), sTitleLevel4, "The subSection has the correct aria-level");
 	});
 
 	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is not TitleLevel.Auto", function (assert) {
