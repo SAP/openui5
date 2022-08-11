@@ -1525,10 +1525,6 @@ sap.ui.define([
 	RuntimeAuthoring.prototype.setMode = function (sNewMode) {
 		var sCurrentMode = this.getMode();
 		if (sCurrentMode !== sNewMode) {
-			var oChangeVisualization = this.getChangeVisualization && this.getChangeVisualization();
-			if (sNewMode === "visualization" || sCurrentMode === "visualization") {
-				oChangeVisualization.triggerModeChange(this.getRootControl(), this.getToolbar());
-			}
 			var oTabHandlingPlugin = this.getPluginManager().getPlugin("tabHandling");
 			var oSelectionPlugin = this.getPluginManager().getPlugin("selection");
 
@@ -1536,6 +1532,14 @@ sap.ui.define([
 			if (sCurrentMode === "navigation" || sNewMode === "navigation") {
 				this._oDesignTime.setEnabled(sNewMode !== "navigation");
 				oTabHandlingPlugin[(sNewMode === "navigation") ? "restoreTabIndex" : "removeTabIndex"]();
+			}
+
+			var oChangeVisualization = this.getChangeVisualization && this.getChangeVisualization();
+			if (sNewMode === "visualization" || sCurrentMode === "visualization") {
+				DtUtil.waitForSynced(this._oDesignTime)()
+					.then(function () {
+						return oChangeVisualization.triggerModeChange(this.getRootControl(), this.getToolbar());
+					}.bind(this));
 			}
 
 			if (sCurrentMode === "adaptation") {
