@@ -142,13 +142,13 @@ sap.ui.define([
 			return AdditionalElementsUtils.getText("CTX_ADD_ELEMENTS", mActions, mParents.parent, SINGULAR);
 		},
 
-		isAvailable: function (bOverlayIsSibling, aElementOverlays) {
+		isAvailable: function(aElementOverlays, bOverlayIsSibling) {
 			return aElementOverlays.every(function (oElementOverlay) {
 				return this._isEditableByPlugin(oElementOverlay, bOverlayIsSibling);
 			}, this);
 		},
 
-		isEnabled: function(bOverlayIsSibling, aElementOverlays, sAggregationName) {
+		isEnabled: function(aElementOverlays, bOverlayIsSibling, sAggregationName) {
 			if (aElementOverlays.length > 1) {
 				return false;
 			}
@@ -450,8 +450,8 @@ sap.ui.define([
 				var bHasChildren = aElementsWithAggregations[0].length > 0;
 				var bHasMultipleAggregations = aElementsWithAggregations[0].length > 1;
 				var bHasSiblings = aElementsWithAggregations[1].length > 0;
-				var bIsAvailableForChildren = this.isAvailable(false, aElementOverlays);
-				var bIsAvailableForSibling = this.isAvailable(true, aElementOverlays);
+				var bIsAvailableForChildren = this.isAvailable(aElementOverlays, false);
+				var bIsAvailableForSibling = this.isAvailable(aElementOverlays, true);
 				if (bIsAvailableForSibling && (!bIsAvailableForChildren || !bHasChildren)) {
 					// Case 1: Only siblings -> No submenu required
 					oMenuItem = this._buildMenuItem("CTX_ADD_ELEMENTS_AS_SIBLING", true, aElementOverlays, aElementsWithAggregations, false);
@@ -505,7 +505,7 @@ sap.ui.define([
 				id: sPluginId,
 				text: this.getContextMenuText.bind(this, bOverlayIsSibling, oSelectedOverlay, sAggregationName, bHasSubMenu),
 				enabled: bHasSubMenu || function(bOverlayIsSibling, aElementOverlays) {
-					return this.isEnabled(bOverlayIsSibling, aElementOverlays, sAggregationName);
+					return this.isEnabled(aElementOverlays, bOverlayIsSibling, sAggregationName);
 				}.bind(this, bOverlayIsSibling),
 				rank: 20,
 				icon: "sap-icon://add",
@@ -542,9 +542,9 @@ sap.ui.define([
 				var oItem = {
 					id: sPluginId + '_' + iPosition,
 					text: sDisplayText,
-					enabled: function(bOverlayIsSibling, aElementOverlays) {
-						return this.isEnabled(bOverlayIsSibling, aElementOverlays, sAggregationName);
-					}.bind(this, bOverlayIsSibling),
+					enabled: function(aElementOverlays) {
+						return this.isEnabled(aElementOverlays, bOverlayIsSibling, sAggregationName);
+					}.bind(this),
 					handler: function (bOverlayIsSibling, aElementOverlays) {
 						// showAvailableElements has optional parameters
 						return this.showAvailableElements(bOverlayIsSibling, sAggregationName, aElementOverlays, undefined, undefined, sDisplayText);

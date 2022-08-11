@@ -122,7 +122,7 @@ sap.ui.define([
 		return aActions[0];
 	};
 
-	BaseCreate.prototype.isAvailable = function (bSibling, aElementOverlays) {
+	BaseCreate.prototype.isAvailable = function (aElementOverlays, bSibling) {
 		return this._isEditableByPlugin(aElementOverlays[0], bSibling);
 	};
 

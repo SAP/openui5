@@ -170,7 +170,7 @@ sap.ui.define([
 		var aMenuItems = [];
 
 		var bIsSibling = true;
-		if (this.isAvailable(bIsSibling, aElementOverlays)) {
+		if (this.isAvailable(aElementOverlays, bIsSibling)) {
 			var oAction = this.getCreateAction(bIsSibling, aElementOverlays[0]);
 			if (oAction) {
 				var oSiblingMenuItem = Object.assign({
@@ -185,7 +185,7 @@ sap.ui.define([
 		}
 
 		bIsSibling = false;
-		if (this.isAvailable(bIsSibling, aElementOverlays)) {
+		if (this.isAvailable(aElementOverlays, bIsSibling)) {
 			aMenuItems = aMenuItems.concat(this.getCreateActions(bIsSibling, aElementOverlays[0])
 				.map(function(oAction, iIndex) {
 					var oParentMenuItem = Object.assign({
