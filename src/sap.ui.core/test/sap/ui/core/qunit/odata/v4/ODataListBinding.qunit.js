@@ -8848,6 +8848,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getKeepAliveContext: missing path", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		assert.throws(function () {
+			// code under test
+			oBinding.getKeepAliveContext();
+		}, new Error("Not a list context path to an entity: undefined"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getKeepAliveContext: not a valid context path", function (assert) {
 		var oParentContext = this.oModel.createBindingContext("/"),
 			oBinding = this.bindList("EMPLOYEES", oParentContext),
