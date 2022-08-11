@@ -1735,7 +1735,7 @@ sap.ui.define([
 	 *   If there are pending changes that cannot be ignored or if an unsupported operation mode is
 	 *   used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}). Since 1.97.0, pending changes
 	 *   are ignored if they relate to a
-	 *   {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
+	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this binding.
 	 *   Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts
 	 *   of a {@link #getRootBinding root binding} do not count as pending changes. Pending
 	 *   {@link sap.ui.model.odata.v4.Context#delete deletions} lead to an error.
@@ -1808,8 +1808,9 @@ sap.ui.define([
 	 * {@link #getCurrentContexts}, this method does not request any data from a back end and does
 	 * not change the binding's state. In contrast to {@link #getCurrentContexts}, it does not only
 	 * return those contexts that were last requested by a control, but all contexts that are
-	 * currently available in the binding, including kept-alive contexts. To filter out kept-alive
-	 * contexts that are not part of the list, you could check whether the index is
+	 * currently available in the binding, including
+	 * {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} contexts. To filter out
+	 * kept-alive contexts that are not part of the list, you could check whether the index is
 	 * <code>undefined</code>, as described in {@link sap.ui.model.odata.v4.Context#getIndex}.
 	 *
 	 * @returns {sap.ui.model.odata.v4.Context[]}
@@ -2820,8 +2821,9 @@ sap.ui.define([
 	 *   destroyed, see {@link sap.ui.model.Context#destroy}.
 	 *   Supported since 1.55.0
 	 *
-	 *   A removed context is destroyed unless it is kept alive
-	 *   (see {@link sap.ui.model.odata.v4.Context#isKeepAlive}) and still exists on the server.
+	 *   A removed context is destroyed unless it is
+	 *   {@link sap.ui.model.odata.v4.Context#isKeepAlive kept alive} and still exists on the
+	 *   server.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves without a defined value when the entity is updated in the cache,
 	 *   or rejects if the refresh failed.
@@ -3456,7 +3458,8 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li> the given data aggregation object is unsupported,
 	 *     <li> the <code>$apply</code> system query option has been specified explicitly before,
-	 *     <li> the binding has a kept-alive context,
+	 *     <li> the binding has a {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive}
+	 *       context,
 	 *     <li> there are pending changes,
 	 *     <li> a recursive hierarchy is requested, but the model does not use the
 	 *       <code>autoExpandSelect</code> parameter.
@@ -3597,7 +3600,7 @@ sap.ui.define([
 	 *     <li> an unsupported operation mode is used (see
 	 *       {@link sap.ui.model.odata.v4.ODataModel#bindList}). Since 1.97.0, pending changes are
 	 *       ignored if they relate to a
-	 *       {@link sap.ui.model.odata.v4.Context#setKeepAlive kept-alive} context of this binding.
+	 *       {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive} context of this binding.
 	 *       Since 1.98.0, {@link sap.ui.model.odata.v4.Context#isTransient transient} contexts of a
 	 *       {@link #getRootBinding root binding} do not count as pending changes.
 	 *     <li> contexts are {@link sap.ui.model.data.v4.Context#delete deleted} on the client, but

@@ -320,11 +320,11 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li> the given group ID is invalid,
 	 *     <li> this context's root binding is suspended,
-	 *     <li> a <code>null</code> group ID is used with a context which is not kept alive
-	 *       (see {@link #isKeepAlive}),
+	 *     <li> a <code>null</code> group ID is used with a context which is not
+	 *       {@link #isKeepAlive kept alive},
 	 *     <li> the context is already being deleted,
 	 *     <li> the resulting group ID has {@link sap.ui.model.odata.v4.SubmitMode.API}, and the
-	 *       context is kept alive (see {@link #isKeepAlive}), but not in the current collection,
+	 *       context is {@link #isKeepAlive kept alive}, but not in the current collection,
 	 *     <li> (only before 1.105) the resulting group ID has
 	 *       {@link sap.ui.model.odata.v4.SubmitMode.API}
 	 *   </ul>
@@ -706,7 +706,7 @@ sap.ui.define([
 	 *   The context's index within the binding's collection. It is <code>undefined</code> if
 	 *   <ul>
 	 *     <li> it does not belong to a list binding,
-	 *     <li> it is kept alive (see {@link #isKeepAlive}), but not in the collection currently.
+	 *     <li> it is {@link #isKeepAlive kept alive}, but not in the collection currently.
 	 *   </ul>
 	 *
 	 * @public
@@ -738,7 +738,7 @@ sap.ui.define([
 	 *   The context's index within the binding's collection. It is <code>undefined</code> if
 	 *   <ul>
 	 *     <li> it does not belong to a list binding,
-	 *     <li> it is kept alive (see {@link #isKeepAlive}), but not in the collection currently.
+	 *     <li> it is {@link #isKeepAlive kept alive}, but not in the collection currently.
 	 *   </ul>
 	 *
 	 * @private
@@ -971,7 +971,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether this context is kept alive.
+	 * Returns whether this context is kept alive even when it is removed from its binding's
+	 * collection, for example if a filter is applied and the entity represented by this context
+	 * does not match the filter criteria.
 	 *
 	 * @returns {boolean} <code>true</code> if this context is kept alive
 	 *
@@ -1034,9 +1036,9 @@ sap.ui.define([
 	 *   binding, the parameter must not be used.
 	 *   Supported since 1.55.0
 	 *
-	 *   Since 1.84.0, if this context is kept alive (see {@link #isKeepAlive}), it is only
-	 *   destroyed if the corresponding entity does no longer exist in the back end. In this case,
-	 *   the <code>fnOnBeforeDestroy</code> callback passed with {@link #setKeepAlive}) is called.
+	 *   Since 1.84.0, if this context is {@link #isKeepAlive kept alive}, it is only destroyed if
+	 *   the corresponding entity does no longer exist in the back end. In this case, the
+	 *   <code>fnOnBeforeDestroy</code> callback passed with {@link #setKeepAlive}) is called.
 	 * @throws {Error}
 	 *   If the group ID is not valid, if this context has pending changes or does not represent a
 	 *   single entity (see {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext}), if the
@@ -1095,8 +1097,8 @@ sap.ui.define([
 	 *     <li> this context's root binding is suspended,
 	 *     <li> this context is transient (see {@link #isTransient}),
 	 *     <li> the given other context does not belong to the same list binding as this context, is
-	 *       already in the collection (has an index, see {@link #getIndex}), or is not kept alive
-	 *       (see {@link #isKeepAlive}).
+	 *       already in the collection (has an index, see {@link #getIndex}), or is not
+	 *       {@link #isKeepAlive kept alive}.
 	 *   </ul>
 	 *
 	 * @public
