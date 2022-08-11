@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
 	"sap/f/DynamicPageHeader",
+	"sap/ui/webc/main/CheckBox",
 	"sap/ui/dt/qunit/TestUtil",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
@@ -58,6 +59,7 @@ sap.ui.define([
 	DynamicPage,
 	DynamicPageTitle,
 	DynamicPageHeader,
+	WebComponentCheckBox,
 	TestUtil,
 	jQuery,
 	sinon,
@@ -123,13 +125,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control gets a new width and the Overlay is rerendered", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var iLastZIndex = this.oElementOverlay.$().css("z-index");
 
 			this.oElementOverlay.attachEventOnce("geometryChanged", function() {
 				assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "the overlay has the new width as well");
 				assert.equal(this.oElementOverlay.$().css("z-index"), iLastZIndex, "the root overlay does not get a new z-index from the Popup");
-				done();
+				fnDone();
 			}, this);
 
 			this.oButton.setWidth("500px");
@@ -285,7 +287,7 @@ sap.ui.define([
 				}\
 			');
 
-			var done = assert.async();
+			var fnDone = assert.async();
 
 			this.oElementOverlay.attachEvent(
 				"geometryChanged",
@@ -300,7 +302,7 @@ sap.ui.define([
 							// setTimeout added to cover animation duration
 							assert.strictEqual(this.oButton.$().width(), 200, "then the button width is correct");
 							assert.strictEqual(this.oButton.$().width(), this.oElementOverlay.$().width(), "then the overlay size is in sync");
-							done();
+							fnDone();
 						}.bind(this), 51);
 					}.bind(this))
 			);
@@ -473,7 +475,7 @@ sap.ui.define([
 
 	QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
 		beforeEach: function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			this.oLabel = new Label();
 			this.oLabel.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -482,7 +484,7 @@ sap.ui.define([
 			});
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oOverlay = OverlayRegistry.getOverlay(this.oLabel);
-				done();
+				fnDone();
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -500,9 +502,40 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given that an Overlay is created for a control with a shadow root (e.g. web component)", {
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
+			this.oCheckBox = new WebComponentCheckBox();
+			this.oCheckBox.placeAt("qunit-fixture");
+			oCore.applyChanges();
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oCheckBox]
+			});
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oOverlay = OverlayRegistry.getOverlay(this.oCheckBox);
+				fnDone();
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oDesignTime.destroy();
+			this.oCheckBox.destroy();
+		}
+	}, function() {
+		QUnit.test("when the control's text is modified...", function(assert) {
+			var fnDone = assert.async();
+			this.oCheckBox.setText("This is a very long text");
+			sandbox.stub(this.oOverlay, "applyStyles").callsFake(function() {
+				assert.ok(true, "applyStyles is called");
+				fnDone();
+				return Promise.resolve();
+			});
+			oCore.applyChanges();
+		});
+	});
+
 	QUnit.module("Given that an Overlay is created for a layout with an invisible domRef", {
 		beforeEach: function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			this.oLabel = new Label({ text: "text" });
 			this.oVerticalLayout = new VerticalLayout({ content: [this.oLabel] });
 			this.oVerticalLayout.placeAt("qunit-fixture");
@@ -515,7 +548,7 @@ sap.ui.define([
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oLabelOverlay = OverlayRegistry.getOverlay(this.oLabel);
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
-				done();
+				fnDone();
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -881,7 +914,7 @@ sap.ui.define([
 
 	QUnit.module("Given a SimpleScrollControl with Overlays", {
 		beforeEach: function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 
 			this.oSimpleScrollControl = new SimpleScrollControl("scrollControl");
 			this.oSimpleScrollControl.addContent1(
@@ -910,9 +943,9 @@ sap.ui.define([
 				this.oContent1Overlay = OverlayRegistry.getOverlay(this.oContent1);
 				// FIXME: when synced event is resolved including scrollbar synchronization
 				if (this.oContent1Overlay.$().css("transform") === "none") {
-					this.oContent1Overlay.attachEventOnce("geometryChanged", done);
+					this.oContent1Overlay.attachEventOnce("geometryChanged", fnDone);
 				} else {
-					done();
+					fnDone();
 				}
 			}, this);
 		},
@@ -942,23 +975,23 @@ sap.ui.define([
 		}
 
 		QUnit.test("when the control is scrolled", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var mInitialValues = createInitialScrollHandlerValues.call(this);
-			this.oSimpleScrollControlOverlay.attachEventOnce("scrollSynced", scrollHandler.bind(this, assert, done, mInitialValues));
+			this.oSimpleScrollControlOverlay.attachEventOnce("scrollSynced", scrollHandler.bind(this, assert, fnDone, mInitialValues));
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scrollTop(100);
 		});
 
 		QUnit.test("when the overlay is scrolled", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var mInitialValues = createInitialScrollHandlerValues.call(this);
-			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").on("scroll", scrollHandler.bind(this, assert, done, mInitialValues));
+			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").on("scroll", scrollHandler.bind(this, assert, fnDone, mInitialValues));
 			this.oSimpleScrollControlOverlay.getScrollContainerById(0).scrollTop(100);
 		});
 
 		QUnit.test("when the control is re-rendered (with removal of all events) and then scrolled", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var mInitialValues = createInitialScrollHandlerValues.call(this);
-			this.oSimpleScrollControlOverlay.attachEventOnce("scrollSynced", scrollHandler.bind(this, assert, done, mInitialValues));
+			this.oSimpleScrollControlOverlay.attachEventOnce("scrollSynced", scrollHandler.bind(this, assert, fnDone, mInitialValues));
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").off();
 			var oDelegate = {
 				onAfterRendering: function() {
