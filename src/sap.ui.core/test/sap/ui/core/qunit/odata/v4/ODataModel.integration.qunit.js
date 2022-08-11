@@ -187,7 +187,7 @@ sap.ui.define([
 	 * @returns {string} The context's path
 	 */
 	function getNormalizedPath(oContext) {
-		return oContext.getPath().replace(rTransientPredicate, "($uid=...)");
+		return normalizeUID(oContext.getPath());
 	}
 
 	/**
@@ -214,6 +214,16 @@ sap.ui.define([
 		return function () {
 			assert.ok(false, "Unexpected success");
 		};
+	}
+
+	/**
+	 * Returns the given text with transient predicates normalized to "($uid=...)".
+	 *
+	 * @param {string} sText - Any text
+	 * @returns {string} The text with normalized UIDs
+	 */
+	function normalizeUID(sText) {
+		return sText.replace(rTransientPredicate, "($uid=...)");
 	}
 
 	/**
@@ -645,7 +655,7 @@ sap.ui.define([
 			var aCurrentMessages = sap.ui.getCore().getMessageManager().getMessageModel()
 					.getObject("/").map(function (oMessage) {
 						var aTargets = oMessage.getTargets().map(function (sTarget) {
-							return sTarget.replace(rTransientPredicate, "($uid=...)");
+							return normalizeUID(sTarget);
 						});
 
 						return {
@@ -2522,6 +2532,8 @@ sap.ui.define([
 					"/SalesOrderList('02')",
 					"/SalesOrderList('03')"
 				]);
+				assert.strictEqual(aContexts[0].toString(), "/SalesOrderList('01')[0]",
+					"Context#toString: persisted");
 			});
 
 			return that.waitForChanges(assert);
@@ -16633,7 +16645,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			if (bReset) {
-				that.expectCanceledError("Failed to delete /SalesOrderList('1')",
+				that.expectCanceledError("Failed to delete /SalesOrderList('1');deleted",
 					"Request canceled: DELETE SalesOrderList('1'); group: update");
 				that.expectChange("id", "1")
 					.expectChange("pos", ["0010"]);
@@ -16697,7 +16709,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectCanceledError("Failed to delete /SalesOrderList('1')",
+			that.expectCanceledError("Failed to delete /SalesOrderList('1');deleted",
 				"Request canceled: DELETE SalesOrderList('1'); group: update");
 
 			oModel.resetChanges();
@@ -16865,9 +16877,9 @@ sap.ui.define([
 			} else {
 				that.expectCanceledError("Failed to update path /SalesOrderList('2')/Note",
 					"Request canceled: PATCH SalesOrderList('2'); group: update");
-				that.expectCanceledError("Failed to delete /SalesOrderList('4')[2]",
+				that.expectCanceledError("Failed to delete /SalesOrderList('4')[2;deleted]",
 					"Request canceled: DELETE SalesOrderList('4'); group: update");
-				that.expectCanceledError("Failed to delete /SalesOrderList('2')[1]",
+				that.expectCanceledError("Failed to delete /SalesOrderList('2')[1;deleted]",
 					"Request canceled: DELETE SalesOrderList('2'); group: update");
 				that.expectChange("listId", [, "2", "4"])
 					.expectChange("count", "18")
@@ -16983,22 +16995,22 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getLength(), 2);
 
 			if (oFixture.reverse) {
-				that.expectCanceledError("Failed to delete /" + sEntityPath1 + "[1]",
+				that.expectCanceledError("Failed to delete /" + sEntityPath1 + "[1;deleted]",
 					"Request canceled: DELETE " + sEntityPath1 + "; group: update");
-				that.expectCanceledError("Failed to delete /" + sEntityPath2 + "[2]",
+				that.expectCanceledError("Failed to delete /" + sEntityPath2 + "[2;deleted]",
 					"Request canceled: DELETE " + sEntityPath2 + "; group: update");
 			} else if (oFixture.resetViaBinding || oFixture.resetViaModel) {
-				that.expectCanceledError("Failed to delete /" + sEntityPath2 + "[2]",
+				that.expectCanceledError("Failed to delete /" + sEntityPath2 + "[2;deleted]",
 					"Request canceled: DELETE " + sEntityPath2 + "; group: update");
-				that.expectCanceledError("Failed to delete /" + sEntityPath1 + "[1]",
+				that.expectCanceledError("Failed to delete /" + sEntityPath1 + "[1;deleted]",
 					"Request canceled: DELETE " + sEntityPath1 + "; group: update");
 			} else {
 				if (oFixture.failure) {
 					that.oLogMock.expects("error")
-						.withExactArgs("Failed to delete /" + sEntityPath1 + "[1]",
+						.withExactArgs("Failed to delete /" + sEntityPath1 + "[1;deleted]",
 							sinon.match("Request intentionally failed"), sContext);
 					that.oLogMock.expects("error")
-						.withExactArgs("Failed to delete /" + sEntityPath2 + "[2]",
+						.withExactArgs("Failed to delete /" + sEntityPath2 + "[2;deleted]",
 							sinon.match("Request intentionally failed"), sContext);
 					that.expectMessages([{
 							code : "CODE",
@@ -17124,7 +17136,7 @@ sap.ui.define([
 			assertIDs(["1", "2", "3", "4", "5", "6"]);
 
 			that.expectChange("id", ["new"])
-				.expectCanceledError("Failed to delete /SalesOrderList('new')[-1]",
+				.expectCanceledError("Failed to delete /SalesOrderList('new')[-1;deleted]",
 				"Request canceled: DELETE SalesOrderList('new'); group: update");
 
 			oModel.resetChanges();
@@ -17295,7 +17307,7 @@ sap.ui.define([
 			that.waitForChanges(assert, "deferred delete");
 		}).then(function () {
 			that.expectCanceledError(
-				"Failed to delete /Artists(ArtistID='new',IsActiveEntity=true)[-1]",
+				"Failed to delete /Artists(ArtistID='new',IsActiveEntity=true)[-1;deleted]",
 				"Request canceled: DELETE Artists(ArtistID='new',IsActiveEntity=true);"
 				+ " group: update"
 			);
@@ -25266,8 +25278,8 @@ sap.ui.define([
 				});
 
 			that.oLogMock.expects("error")
-				.withExactArgs("Failed to delete /EMPLOYEES('1')[0]", sinon.match(oError.message),
-					sContext);
+				.withExactArgs("Failed to delete /EMPLOYEES('1')[0;deleted]",
+					sinon.match(oError.message), sContext);
 			that.expectChange("name", ["Frederic Fall"])
 				.expectChange("status", ["Available"])
 				.expectRequest({method : "DELETE", url : "EMPLOYEES('1')"}, oError)
@@ -28611,9 +28623,9 @@ sap.ui.define([
 						}]
 					});
 
-				that.oLogMock.expects("error")
-					.withExactArgs("Failed to delete /SalesOrderList('0500000000')/SO_2_BP/"
-							+ "BP_2_PRODUCT('1')[0]", sinon.match(oError.message), sContext);
+				that.oLogMock.expects("error").withExactArgs("Failed to delete"
+						+ " /SalesOrderList('0500000000')/SO_2_BP/BP_2_PRODUCT('1')[0;deleted]",
+						sinon.match(oError.message), sContext);
 				that.expectRequest({
 						method : "DELETE",
 						url : "ProductList('1')",
@@ -35552,6 +35564,9 @@ sap.ui.define([
 			assert.strictEqual(oContext1.isTransient(), true);
 			assert.strictEqual(oContext2.isTransient(), true);
 			assert.strictEqual(oContext3.isTransient(), true);
+			assert.strictEqual(normalizeUID(oContext1.toString()),
+				"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-1;inactive]",
+				"Context#toString: inactive");
 
 			return Promise.all([
 				bAPI && oModel.submitBatch("update"), // no POST sent
@@ -35591,6 +35606,9 @@ sap.ui.define([
 			assert.strictEqual(oContext1.hasPendingChanges(), true);
 			assert.strictEqual(oContext1.isInactive(), false);
 			assert.strictEqual(oContext1.isTransient(), true);
+			assert.strictEqual(normalizeUID(oContext1.toString()),
+				"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-1;transient]",
+				"Context#toString: transient");
 			assert.strictEqual(iEventCount, 1, "createActivate was fired");
 
 			return Promise.all([
@@ -35623,9 +35641,17 @@ sap.ui.define([
 			assert.strictEqual(oContext1.hasPendingChanges(), false);
 			assert.strictEqual(oContext1.isInactive(), false);
 			assert.strictEqual(oContext1.isTransient(), false);
+			assert.strictEqual(oContext1.toString(),
+				"/SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0020')"
+					+ "[-1;createdPersisted]",
+				"Context#toString: createdPersisted");
 
 			// code under test
 			oContext2.delete();
+
+			assert.strictEqual(normalizeUID(oContext2.toString()),
+				"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-9007199254740991;deleted]",
+				"Context#toString: deleted");
 
 			return Promise.all([
 				checkCanceled(assert, oContext2.created()),
@@ -35635,6 +35661,9 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getCount(), 2);
 			assert.strictEqual(oBinding.getLength(), 3);
 			assert.strictEqual(oBinding.isLengthFinal(), true);
+			assert.strictEqual(normalizeUID(oContext2.toString()),
+				"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-9007199254740991;destroyed]",
+				"Context#toString: destroyed");
 
 			that.expectChange("count", "3")
 				.expectChange("note", [,, "Note 3"])

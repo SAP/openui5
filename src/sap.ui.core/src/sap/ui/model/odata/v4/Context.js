@@ -956,9 +956,9 @@ sap.ui.define([
 	 * Returns whether this context is inactive. The result of this function can also be accessed
 	 * via instance annotation "@$ui5.context.isInactive" at the entity.
 	 *
-	 * @returns {boolean|undefined} <code>true</code> if this context is inactive, <code>false</code> if it
-	 *   was created in an inactive state and has been activated, and <code>undefined</code>
-	 *   otherwise.
+	 * @returns {boolean|undefined} <code>true</code> if this context is inactive,
+	 *   <code>false</code> if it was created in an inactive state and has been activated, and
+	 *   <code>undefined</code> otherwise.
 	 *
 	 * @public
 	 * @see #isTransient
@@ -1713,19 +1713,46 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a string representation of this object including the binding path.
+	 * Returns a string representation of this object including the {@link #getPath binding path),
+	 * {@link #getIndex index}, and state (see also "Context states" of
+	 * {@link topic:c9723f8265f644af91c0ed941e114d46 Creating an Entity}).
 	 *
 	 * @return {string} A string description of this binding
+	 *
 	 * @public
+	 * @see #destroy
+	 * @see #isDeleted
+	 * @see #isInactive
+	 * @see #isTransient
 	 * @since 1.39.0
 	 */
 	Context.prototype.toString = function () {
-		var sIndex = "";
+		var sSuffix = "";
+
+		if (!this.oModel) {
+			sSuffix = ";destroyed";
+		} else if (this.bDeleted) {
+			sSuffix = ";deleted";
+		}
 
 		if (this.iIndex !== undefined) {
-			sIndex = "[" + this.iIndex + (this.isTransient() ? "|transient" : "") + "]";
+			if (!sSuffix) {
+				switch (this.isTransient()) {
+					case false:
+						sSuffix = ";createdPersisted";
+						break;
+
+					case true:
+						sSuffix = this.bInactive ? ";inactive" : ";transient";
+						break;
+
+					// no default
+				}
+			}
+			sSuffix = "[" + this.iIndex + sSuffix + "]";
 		}
-		return this.sPath + sIndex;
+
+		return this.sPath + sSuffix;
 	};
 
 	/**
