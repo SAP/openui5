@@ -1,10 +1,7 @@
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/demo/iconexplorer/model/formatter",
-	"sap/ui/demo/iconexplorer/controller/BaseController",
-	"sap/ui/core/Icon",
-	"sap/ui/Device"
-], function(JSONModel, formatter, BaseController, Icon, Device) {
+	"sap/ui/demo/iconexplorer/controller/BaseController"
+], function(formatter, BaseController) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.iconexplorer.controller.Home", {
@@ -12,14 +9,6 @@ sap.ui.define([
 		formatter:formatter,
 
 		onInit: function () {
-			// model used to manipulate control states
-			var oViewModel = new JSONModel({
-				sapui5: sap.ui.versioninfo.libraries.some(function (oLib) { return oLib.name === "sap.ushell"; }),
-				searchBackground: "image/" + (Device.system.desktop ? "IcoExp_M_and_L.jpg" : "IcoExp_S.jpg" ),
-				imagePath: "image/" + "logo_sap.png"
-			});
-			this.setModel(oViewModel, "view");
-
 			// search in tags and icon string for the global search
 			var oSearchField = this.byId("search");
 			oSearchField.setFilterFunction(function (sValue, oControl) {
