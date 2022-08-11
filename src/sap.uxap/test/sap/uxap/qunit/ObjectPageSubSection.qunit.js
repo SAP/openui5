@@ -1639,6 +1639,28 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 			});
 	});
 
+	QUnit.test("update sapUxAPObjectPageSubSectionFitContainer from _adjustLayoutAndUXRules",
+		function (assert) {
+			var oPage = this.oObjectPage,
+				oLayoutSpy = this.spy(this.oObjectPage, "_requestAdjustLayout"),
+				oDetectFullscreenSubSectionSpy = this.spy(this.oObjectPage, "_hasSingleVisibleFullscreenSubSection"),
+				done = assert.async();
+
+			assert.expect(1);
+
+			oPage.setUseIconTabBar(true); // tabs mode
+
+			oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+				oPage._adjustLayoutAndUxRules(); // call synchronously to speed up the test
+
+				// Assert
+				assert.ok(oDetectFullscreenSubSectionSpy.calledBefore(oLayoutSpy),
+					"fullscreen subSection is detected before applying the layout");
+
+				done();
+			});
+	});
+
 	QUnit.module("Invalidation", {
 		beforeEach: function() {
 			this.oObjectPageLayout = new ObjectPageLayout("page", {

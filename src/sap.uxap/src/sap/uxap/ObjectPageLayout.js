@@ -1925,8 +1925,6 @@ sap.ui.define([
 
 		this._applyUxRules(true);
 
-		this._requestAdjustLayout(true);
-
 		/* reset the selected section,
 		 as the previously selected section may not be available anymore,
 		 as it might have been deleted, or emptied, or set to hidden in the previous step */
@@ -1940,6 +1938,7 @@ sap.ui.define([
 				this._setCurrentTabSection(oSelectedSection);
 				this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(oSelectedSection);
 			}
+			this._requestAdjustLayout(true);
 			if (this.getEnableLazyLoading() && this._oLazyLoading) {
 				this._oLazyLoading.doLazyLoading();
 			}
