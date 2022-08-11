@@ -28,7 +28,6 @@ sap.ui.define(['sap/m/semantic/SemanticSelect'], function(SemanticSelect) {
 	 * @public
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.SortSelect
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var SortSelect = SemanticSelect.extend("sap.m.semantic.SortSelect", /** @lends sap.m.semantic.SortSelect.prototype */ {

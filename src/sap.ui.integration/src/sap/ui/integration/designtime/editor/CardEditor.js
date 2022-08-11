@@ -49,7 +49,6 @@ sap.ui.define([
 	 * @private
 	 * @experimental since 1.83.0
 	 * @alias sap.ui.integration.designtime.editor.CardEditor
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CardEditor = Editor.extend("sap.ui.integration.designtime.editor.CardEditor", /** @lends sap.ui.integration.designtime.editor.CardEditor.prototype */ {
 		metadata: {

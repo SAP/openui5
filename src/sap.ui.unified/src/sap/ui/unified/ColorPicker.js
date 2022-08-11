@@ -67,7 +67,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.48.0
 	 * @alias sap.ui.unified.ColorPicker
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ColorPicker = Control.extend("sap.ui.unified.ColorPicker", /** @lends sap.ui.unified.ColorPicker.prototype */ { metadata : {
 
@@ -2424,7 +2423,6 @@ sap.ui.define([
 	 * @returns {{r: int, g: int, b: int}} Containing current RGB values
 	 * @public
 	 * @since 1.48.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ColorPicker.prototype.getRGB = function() {
 		return {r: this.Color.r, g: this.Color.g, b: this.Color.b};

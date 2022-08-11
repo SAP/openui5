@@ -43,7 +43,6 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	 * @public
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.FullscreenPage
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FullscreenPage = ShareMenuPage.extend("sap.m.semantic.FullscreenPage", /** @lends sap.m.semantic.FullscreenPage.prototype */ {
 		metadata: {

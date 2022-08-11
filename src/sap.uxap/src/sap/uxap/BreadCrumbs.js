@@ -62,7 +62,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.30
 	 * @alias sap.uxap.BreadCrumbs
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var BreadCrumbs = Control.extend("sap.uxap.BreadCrumbs", /** @lends sap.uxap.BreadCrumbs.prototype */ {
 		metadata: {

@@ -29,7 +29,6 @@ sap.ui.define(['sap/ui/commons/library', 'sap/ui/layout/form/GridElementData'],
 	 * @deprecated Since version 1.16.0.
 	 * moved to sap.ui.layout library. Please use this one.
 	 * @alias sap.ui.commons.form.GridElementData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridElementData = LayoutGridElementData.extend("sap.ui.commons.form.GridElementData", /** @lends sap.ui.commons.form.GridElementData.prototype */ { metadata : {
 

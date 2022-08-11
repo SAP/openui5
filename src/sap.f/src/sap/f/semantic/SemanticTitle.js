@@ -17,7 +17,6 @@ sap.ui.define(["sap/m/library", "./SemanticContainer"], function(mobileLibrary, 
 	 * @private
 	 * @since 1.46.0
 	 * @alias sap.f.semantic.SemanticTitle
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SemanticTitle = SemanticContainer.extend("sap.f.semantic.SemanticTitle", {
 		constructor : function(oContainer, oParent) {

@@ -41,7 +41,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.26.0
 		 * @alias sap.m.SelectList
-		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
 		var SelectList = Control.extend("sap.m.SelectList", /** @lends sap.m.SelectList.prototype */ {
 			metadata: {

@@ -39,7 +39,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.IconTabSeparator
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var IconTabSeparator = Element.extend("sap.m.IconTabSeparator", /** @lends sap.m.IconTabSeparator.prototype */ {
 		metadata: {

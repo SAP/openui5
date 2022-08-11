@@ -104,7 +104,6 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.m.Carousel
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/carousel/ Carousel}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Carousel = Control.extend("sap.m.Carousel", /** @lends sap.m.Carousel.prototype */ { metadata : {
 
@@ -811,7 +810,6 @@ sap.ui.define([
 	 *
 	 * @type this
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Carousel.prototype.previous = function () {
 		if (this._oMobifyCarousel) {
@@ -828,7 +826,6 @@ sap.ui.define([
 	 *
 	 * @type this
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Carousel.prototype.next = function () {
 		if (this._oMobifyCarousel) {

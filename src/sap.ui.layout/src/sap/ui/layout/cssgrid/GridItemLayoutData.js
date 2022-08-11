@@ -32,7 +32,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.layout.cssgrid.GridItemLayoutData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridItemLayoutData = LayoutData.extend("sap.ui.layout.cssgrid.GridItemLayoutData", { metadata: {
 		library: "sap.ui.layout",

@@ -34,7 +34,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.MenuButton</code> control.
 	 * @alias sap.ui.commons.MenuButton
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MenuButton = Button.extend("sap.ui.commons.MenuButton", /** @lends sap.ui.commons.MenuButton.prototype */ { metadata : {
 

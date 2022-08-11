@@ -40,7 +40,6 @@ sap.ui.define([
 	 * @since 1.12
 	 * @deprecated as of version 1.50, replaced by {@link sap.m.GenericTile}
 	 * @alias sap.m.Tile
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Tile = Control.extend("sap.m.Tile", /** @lends sap.m.Tile.prototype */ { metadata : {
 

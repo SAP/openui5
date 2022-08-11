@@ -91,7 +91,6 @@ sap.ui.define([
 		 * @abstract
 		 * @since 1.38
 		 * @alias sap.m.NotificationListBase
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var NotificationListBase = ListItemBase.extend('sap.m.NotificationListBase', /** @lends sap.m.NotificationListBase.prototype */ {
 			metadata: {

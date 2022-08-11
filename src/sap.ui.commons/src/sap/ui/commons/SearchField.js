@@ -76,7 +76,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.SearchField</code> control.
 	 * @alias sap.ui.commons.SearchField
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SearchField = Control.extend("sap.ui.commons.SearchField", /** @lends sap.ui.commons.SearchField.prototype */ { metadata : {
 
@@ -365,7 +364,6 @@ sap.ui.define([
 	 *
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SearchField.prototype.clearHistory = function() {
 		this._oHistory.clear();
@@ -382,7 +380,6 @@ sap.ui.define([
 	 *         The list of suggestions belonging to the suggest value
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SearchField.prototype.suggest = function(sSuggestValue, aSuggestions) {
 		if (!this.getEnableListSuggest() || !sSuggestValue || !aSuggestions) {

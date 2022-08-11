@@ -76,7 +76,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.28
 		 * @alias sap.m.MessagePage
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var MessagePage = Control.extend("sap.m.MessagePage", /** @lends sap.m.MessagePage.prototype */ { metadata : {
 

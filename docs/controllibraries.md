@@ -158,7 +158,6 @@ sap.ui.define(['jquery.sap.global',
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.TaskCircleColor = {
 	
@@ -346,7 +345,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @public
 	 * @since 1.12
 	 * @alias sap.m.ObjectNumber
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectNumber = Control.extend("sap.m.ObjectNumber", /** @lends sap.m.ObjectNumber.prototype */ { metadata : {
 	
@@ -419,9 +417,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 });
 ```
-
-The ´@ui5-metamodel´ annotation relates to the "old" Maven build, which is internally still used. It means that the legacy `*.control` files should be re-generated for this control, for potential other users in upper layers. This annotation is planned to be removed.
-
 
 ### The Control Renderer
 

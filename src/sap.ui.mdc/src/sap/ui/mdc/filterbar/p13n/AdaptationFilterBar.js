@@ -21,7 +21,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.filterbar.p13n.AdaptationFilterBar
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AdaptationFilterBar = FilterBarBase.extend("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar", {
 		metadata: {

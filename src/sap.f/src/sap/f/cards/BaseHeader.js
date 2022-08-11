@@ -42,7 +42,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.86
 	 * @alias sap.f.cards.BaseHeader
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var BaseHeader = Control.extend("sap.f.cards.BaseHeader", {
 		metadata: {

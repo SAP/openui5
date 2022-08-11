@@ -46,7 +46,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.NavContainer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NavContainer = Control.extend("sap.m.NavContainer", /** @lends sap.m.NavContainer.prototype */ {
 		metadata: {
@@ -406,7 +405,6 @@ sap.ui.define([
 	 *
 	 * @param {string} pageId The ID of the aggregated control to find
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {sap.ui.core.Control|null} The control with the given ID or <code>null</code> if it doesn't exist
 	 */
 	NavContainer.prototype.getPage = function (pageId) {
@@ -438,7 +436,6 @@ sap.ui.define([
 	 * <code>sap.ui.core.mvc.View</code>, <code>sap.m.Carousel</code> or whatever is aggregated.
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {sap.ui.core.Control} The current page
 	 */
 	NavContainer.prototype.getCurrentPage = function () {
@@ -461,7 +458,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @since 1.7.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {sap.ui.core.Control} The previous page
 	 */
 	NavContainer.prototype.getPreviousPage = function () {
@@ -486,7 +482,6 @@ sap.ui.define([
 	 * but logically one is not at the top level, so this method returns "false" in this case.
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {boolean} Whether the current page is a top page
 	 */
 	NavContainer.prototype.currentPageIsTopPage = function () {
@@ -508,7 +503,6 @@ sap.ui.define([
 	 * @param {object} data This optional object can carry any payload data which would have been given to the inserted previous page if the user would have done a normal forward navigation to it.
 	 * @public
 	 * @since 1.16.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.insertPreviousPage = function (pageId, transitionName, data) {
@@ -693,7 +687,6 @@ sap.ui.define([
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 *         The "show", "slide", "baseSlide" and "fade" transitions do not use any parameter.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.to = function (vPageIdOrControl, sTransitionName, oData, oTransitionParameters, bFromQueue) {
@@ -878,7 +871,6 @@ sap.ui.define([
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.back = function (backData, oTransitionParameters) {
@@ -908,7 +900,6 @@ sap.ui.define([
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
 	 * @since 1.7.2
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.backToPage = function (pageId, backData, oTransitionParameters) {
@@ -937,7 +928,6 @@ sap.ui.define([
 	 * @type this
 	 * @public
 	 * @since 1.7.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	NavContainer.prototype.backToTop = function (backData, oTransitionParameters) {
 		this._backTo("backToTop", backData, oTransitionParameters);
@@ -1639,7 +1629,6 @@ sap.ui.define([
 	 *
 	 *         See the documentation of NavContainer.addCustomTransitions for more details about this function.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.addCustomTransition = function (sName, fTo, fBack) {

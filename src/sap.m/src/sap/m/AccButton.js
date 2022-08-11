@@ -24,7 +24,6 @@ sap.ui.define(['./Button','./AccButtonRenderer'],
 	 * @constructor
 	 * @private
 	 * @alias sap.m.AccButton
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AccButton = Button.extend("sap.m.AccButton", {
 		metadata: {

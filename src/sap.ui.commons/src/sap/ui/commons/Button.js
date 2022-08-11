@@ -39,7 +39,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated as of version 1.38, replaced by {@link sap.m.Button}
 	 * @alias sap.ui.commons.Button
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Button = Control.extend("sap.ui.commons.Button", /** @lends sap.ui.commons.Button.prototype */ { metadata : {
 
@@ -150,7 +149,6 @@ sap.ui.define([
 	 * @function
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 

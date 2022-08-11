@@ -78,7 +78,6 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.m.Title
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/title/ Title}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Title = Control.extend("sap.m.Title", /** @lends sap.m.Title.prototype */ { metadata : {
 

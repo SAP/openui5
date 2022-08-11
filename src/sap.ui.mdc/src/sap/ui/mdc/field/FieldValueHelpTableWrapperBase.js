@@ -51,7 +51,6 @@ sap.ui.define([
 	 * @experimental As of version 1.88
 	 * @since 1.88.0
 	 * @alias sap.ui.mdc.field.FieldValueHelpTableWrapperBase
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FieldValueHelpTableWrapperBase = FieldValueHelpContentWrapperBase.extend("sap.ui.mdc.field.FieldValueHelpTableWrapperBase", /** @lends sap.ui.mdc.field.FieldValueHelpTableWrapperBase.prototype */
 	{

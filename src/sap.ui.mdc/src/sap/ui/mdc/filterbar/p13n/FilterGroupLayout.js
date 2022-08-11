@@ -18,7 +18,6 @@ sap.ui.define(['sap/ui/core/Control'
 	 * @private
 	 * @since 1.82.0
 	 * @alias sap.ui.mdc.filterbar.p13n.FilterGroupLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FilterGroupLayout = Control.extend("sap.ui.mdc.filterbar.p13n.FilterGroupLayout", {
 		renderer: {

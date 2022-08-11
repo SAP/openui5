@@ -14,7 +14,6 @@ sap.ui.define([], function () {
 	 * @enum {string}
 	 * @public
 	 * @alias sap.ui.core.mvc.ViewType
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ViewType = {
 

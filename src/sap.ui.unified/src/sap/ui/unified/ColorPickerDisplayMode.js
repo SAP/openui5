@@ -13,7 +13,6 @@ sap.ui.define([], function() {
 	 * @alias sap.ui.unified.ColorPickerDisplayMode
 	 * @public
 	 * @since 1.58.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ColorPickerDisplayMode = {
 

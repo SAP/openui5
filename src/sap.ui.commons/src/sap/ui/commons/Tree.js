@@ -36,7 +36,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated as of version 1.38, replaced by {@link sap.m.Tree}
 	 * @alias sap.ui.commons.Tree
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Tree = Control.extend("sap.ui.commons.Tree", /** @lends sap.ui.commons.Tree.prototype */ { metadata : {
 
@@ -215,7 +214,6 @@ sap.ui.define([
 	 *
 	 * @type {void}
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Tree.prototype.expandAll = function(){
 		var aNodes = this._getNodes();
@@ -231,7 +229,6 @@ sap.ui.define([
 	 *
 	 * @type {void}
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Tree.prototype.collapseAll = function(){
 		var aNodes = this._getNodes();

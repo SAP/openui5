@@ -27,7 +27,6 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 	 *
 	 * @public
 	 * @alias sap.m.TileContent
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TileContent = Control.extend("sap.m.TileContent", /** @lends sap.m.TileContent.prototype */ {
 		metadata : {

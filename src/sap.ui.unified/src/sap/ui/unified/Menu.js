@@ -63,7 +63,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.unified.Menu
-	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model
 	 */
 	var Menu = Control.extend("sap.ui.unified.Menu", /** @lends sap.ui.unified.Menu.prototype */ { metadata : {
 		interfaces: [
@@ -403,7 +402,6 @@ sap.ui.define([
 	 *
 	 * @type {void}
 	 * @public
-	 * @ui5-metamodel This method will also be described in the UI5 (legacy) design time meta model
 	 */
 	Menu.prototype.open = function(bWithKeyboard, oOpenerRef, my, at, of, offset, collision){
 		var oNextSelectableItem;
@@ -541,7 +539,6 @@ sap.ui.define([
 	 *
 	 * @type {void}
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Menu.prototype.close = function(bWithKeyboard) {
 		if (!this.bOpen || Menu._dbg /*Avoid closing for debugging purposes*/) {

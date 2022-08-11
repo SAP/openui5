@@ -24,7 +24,6 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', 'sap/ui/Device', 'sap/ui
 		 * @public
 		 * @since 1.16
 		 * @alias sap.m.ActionSelect
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var ActionSelect = Select.extend("sap.m.ActionSelect", /** @lends sap.m.ActionSelect.prototype */ { metadata : {
 

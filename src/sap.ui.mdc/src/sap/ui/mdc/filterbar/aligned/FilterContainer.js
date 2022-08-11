@@ -17,7 +17,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.filterbar.aligned.FilterContainer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FilterContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.aligned.FilterContainer");
 

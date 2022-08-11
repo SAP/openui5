@@ -99,7 +99,6 @@ function(
 		 * @public
 		 * @alias sap.m.Slider
 		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/slider/ Slider}
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var Slider = Control.extend("sap.m.Slider", /** @lends sap.m.Slider.prototype */ { metadata: {
 

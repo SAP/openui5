@@ -31,7 +31,6 @@ sap.ui.define([
 	 * @deprecated Since version 1.16.0.
 	 * Moved to sap.ui.layout library. Please use this one.
 	 * @alias sap.ui.commons.layout.VerticalLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var VerticalLayout = LayoutVerticalLayout.extend("sap.ui.commons.layout.VerticalLayout", /** @lends sap.ui.commons.layout.VerticalLayout.prototype */ { metadata : {
 

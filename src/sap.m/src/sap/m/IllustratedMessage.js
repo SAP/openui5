@@ -86,7 +86,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.98
 	 * @alias sap.m.IllustratedMessage
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var IllustratedMessage = Control.extend("sap.m.IllustratedMessage", /** @lends sap.m.IllustratedMessage.prototype */ {
 		metadata: {

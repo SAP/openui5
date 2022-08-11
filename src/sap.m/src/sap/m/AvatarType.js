@@ -12,7 +12,6 @@ sap.ui.define([], function() {
 	 * @public
 	 * @alias sap.m.AvatarType
 	 * @since 1.73
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AvatarType = {
 		/**

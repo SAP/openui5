@@ -31,7 +31,6 @@ sap.ui.define([
 	 * @deprecated Since version 1.4.0.
 	 * A new messaging concept will be created in future. Therefore this control might be removed in one of the next versions.
 	 * @alias sap.ui.commons.MessageList
-	 * @ui5-metamodel This control/element also will be described in the UI5 design-time metamodel
 	 */
 	var MessageList = Control.extend("sap.ui.commons.MessageList", /** @lends sap.ui.commons.MessageList.prototype */ { metadata : {
 
@@ -164,7 +163,6 @@ sap.ui.define([
 	 * @param {sap.ui.commons.Message[]} aMessages Message list.
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 design-time metamodel
 	 */
 	MessageList.prototype.setMessages = function(aMessages) {
 		// Storing the Messages:

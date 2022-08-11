@@ -81,7 +81,6 @@ function(
 	 * @constructor
 	 * @public
 	 * @alias sap.m.ListItemBase
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ListItemBase = Control.extend("sap.m.ListItemBase", /** @lends sap.m.ListItemBase.prototype */ { metadata : {
 
@@ -784,7 +783,6 @@ function(
 	 * @returns {boolean}
 	 * @deprecated Since version 1.10.2.
 	 * API Change makes this method unnecessary. Use the {@link #getSelected} method instead.
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
 	 */
 	ListItemBase.prototype.isSelected = ListItemBase.prototype.getSelected;

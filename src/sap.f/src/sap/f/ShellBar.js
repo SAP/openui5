@@ -60,7 +60,6 @@ function(
 	 * @public
 	 * @alias sap.f.ShellBar
 	 * @since 1.63
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ShellBar = Control.extend("sap.f.ShellBar", /** @lends sap.f.ShellBar.prototype */ {
 		metadata: {

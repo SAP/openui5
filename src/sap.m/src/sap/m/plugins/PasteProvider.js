@@ -31,7 +31,6 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/core/util/PasteHelper
 	 * @public
 	 * @since 1.91
 	 * @alias sap.m.plugins.PasteProvider
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PasteProvider = PluginBase.extend("sap.m.plugins.PasteProvider", /** @lends sap.m.plugins.PasteProvider.prototype */ { metadata: {
 		library: "sap.m",

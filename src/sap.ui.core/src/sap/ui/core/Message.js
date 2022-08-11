@@ -28,7 +28,6 @@ sap.ui.define(['./Element', './library', "sap/base/Log"],
 	 *
 	 * @public
 	 * @alias sap.ui.core.Message
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Message = Element.extend("sap.ui.core.Message", /** @lends sap.ui.core.Message.prototype */ { metadata : {
 
@@ -70,7 +69,6 @@ sap.ui.define(['./Element', './library', "sap/base/Log"],
 	 * @param {string} [sSize="16x16"] Only the values "16x16" or "32x32" are allowed. Otherwise the default value is used.
 	 * @return {sap.ui.core.URI} URI of the default icon.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Message.prototype.getDefaultIcon = function(sSize) {
 		var sModulePath = sap.ui.require.toUrl("sap/ui/core/themes/" + sap.ui.getCore().getConfiguration().getTheme());

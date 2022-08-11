@@ -39,7 +39,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.RadioButtonGroup</code> control.
 	 * @alias sap.ui.commons.RadioButtonGroup
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RadioButtonGroup = Control.extend("sap.ui.commons.RadioButtonGroup", /** @lends sap.ui.commons.RadioButtonGroup.prototype */ { metadata : {
 
@@ -253,7 +252,6 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.Item} oSelectedItem Selected item
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RadioButtonGroup.prototype.setSelectedItem = function(oSelectedItem) {
 
@@ -276,7 +274,6 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.core.Item} Selected Item
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RadioButtonGroup.prototype.getSelectedItem = function() {
 

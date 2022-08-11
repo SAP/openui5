@@ -49,7 +49,6 @@ sap.ui.define(["sap/m/semantic/SemanticPage", "sap/m/semantic/SemanticPageRender
 	 * @public
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.MasterPage
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MasterPage = SemanticPage.extend("sap.m.semantic.MasterPage", /** @lends sap.m.semantic.MasterPage.prototype */ {
 		metadata: {

@@ -22,7 +22,6 @@ sap.ui.define([
 	 * @experimental
 	 * @since 1.65
 	 * @alias sap.ui.mdc.table.TableTypeBase
-	 * @ui5-metamodel This element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TableTypeBase = Element.extend("sap.ui.mdc.table.TableTypeBase", {
 		metadata: {

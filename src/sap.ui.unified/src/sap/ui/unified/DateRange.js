@@ -24,7 +24,6 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/calendar/Cale
 	 * @public
 	 * @since 1.22.0
 	 * @alias sap.ui.unified.DateRange
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DateRange = Element.extend("sap.ui.unified.DateRange", /** @lends sap.ui.unified.DateRange.prototype */ { metadata : {
 

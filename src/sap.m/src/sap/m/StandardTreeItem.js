@@ -30,7 +30,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.42.0
 	 * @alias sap.m.StandardTreeItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var StandardTreeItem = TreeItemBase.extend("sap.m.StandardTreeItem", /** @lends sap.m.StandardTreeItem.prototype */ { metadata : {
 

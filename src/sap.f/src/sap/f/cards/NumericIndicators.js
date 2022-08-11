@@ -30,7 +30,6 @@ sap.ui.define([
 	 * @experimental 1.98
 	 * @since 1.98
 	 * @alias sap.f.cards.NumericIndicators
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NumericIndicators = Control.extend("sap.f.cards.NumericIndicators", {
 		metadata: {

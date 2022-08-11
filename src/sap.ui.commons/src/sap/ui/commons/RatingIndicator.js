@@ -39,8 +39,6 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.commons.RatingIndicator
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.RatingIndicator</code> control.
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy)
-	 * designtime metamodel
 	 */
 	var RatingIndicator = Control.extend("sap.ui.commons.RatingIndicator", /** @lends sap.ui.commons.RatingIndicator.prototype */ { metadata : {
 

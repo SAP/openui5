@@ -49,7 +49,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.OverflowToolbar</code> control.
 	 * @alias sap.ui.commons.MenuBar
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MenuBar = Control.extend("sap.ui.commons.MenuBar", /** @lends sap.ui.commons.MenuBar.prototype */ { metadata : {
 

@@ -28,7 +28,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.f.GridListItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridListItem = ListItemBase.extend("sap.f.GridListItem", /** @lends sap.f.GridListItem.prototype */ { metadata : {
 

@@ -40,7 +40,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated as of version 1.38, replaced by {@link sap.m.ComboBox}
 	 * @alias sap.ui.commons.DropdownBox
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DropdownBox = ComboBox.extend("sap.ui.commons.DropdownBox", /** @lends sap.ui.commons.DropdownBox.prototype */ { metadata : {
 
@@ -1678,7 +1677,6 @@ sap.ui.define([
 	 * This might be necessary if the items of the DropdownBox have changed. Otherwise invalid items may appear in the history.
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	DropdownBox.prototype.clearHistory = function() {
 

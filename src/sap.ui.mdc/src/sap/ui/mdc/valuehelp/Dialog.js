@@ -45,7 +45,6 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.Dialog
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Dialog = Container.extend("sap.ui.mdc.valuehelp.Dialog", /** @lends sap.ui.mdc.valuehelp.Dialog.prototype */
 	{

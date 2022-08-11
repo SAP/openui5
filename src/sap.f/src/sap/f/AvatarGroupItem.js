@@ -37,7 +37,6 @@ sap.ui.define([
 	 * @experimental Since 1.73. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 * @since 1.73
 	 * @alias sap.f.AvatarGroupItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AvatarGroupItem = Control.extend("sap.f.AvatarGroupItem", {
 		metadata: {

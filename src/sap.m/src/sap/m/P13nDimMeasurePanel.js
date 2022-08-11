@@ -90,7 +90,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.34.0
 	 * @alias sap.m.P13nDimMeasurePanel
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nDimMeasurePanel = P13nPanel.extend("sap.m.P13nDimMeasurePanel", /** @lends sap.m.P13nDimMeasurePanel.prototype */
 	{

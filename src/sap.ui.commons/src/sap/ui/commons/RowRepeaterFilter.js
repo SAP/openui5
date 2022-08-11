@@ -26,7 +26,6 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.ui.table.Table</code> control.
 	 * @alias sap.ui.commons.RowRepeaterFilter
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RowRepeaterFilter = Element.extend("sap.ui.commons.RowRepeaterFilter", /** @lends sap.ui.commons.RowRepeaterFilter.prototype */ { metadata : {
 

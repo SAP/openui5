@@ -23,7 +23,6 @@ sap.ui.define([
 	* @private
 	* @since 1.46.0
 	* @alias sap.f.semantic.SemanticFooter
-	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	var SemanticFooter = SemanticContainer.extend("sap.f.semantic.SemanticFooter", {
 		constructor : function(oContainer, oParent) {

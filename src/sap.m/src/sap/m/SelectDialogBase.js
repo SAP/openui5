@@ -32,7 +32,6 @@ function(
 	 * @abstract
 	 * @since 1.93
 	 * @alias sap.m.SelectDialogBase
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SelectDialogBase = Control.extend("sap.m.SelectDialogBase", /** @lends sap.m.SelectDialogBase.prototype */ {
 		metadata: {

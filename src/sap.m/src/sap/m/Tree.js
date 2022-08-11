@@ -44,7 +44,6 @@ function(
 	 * @since 1.42
 	 * @alias sap.m.Tree
 	 * @see {@link fiori:/tree/ Tree}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Tree = ListBase.extend("sap.m.Tree", { metadata : {
 		library : "sap.m",

@@ -21,7 +21,6 @@ sap.ui.define(['./ColumnPopoverItem', 'sap/m/ToggleButton'], function(ColumnPopo
 	 * @since 1.63
 	 * @private
 	 * @alias sap.m.ColumnPopoverCustomItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ColumnPopoverCustomItem = ColumnPopoverItem.extend("sap.m.ColumnPopoverCustomItem", /** @lends sap.m.ColumnPopoverCustomItem.prototype */
 	{

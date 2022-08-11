@@ -18,7 +18,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.82.0
 	 * @alias sap.ui.mdc.filterbar.p13n.GroupContainer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GroupContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.p13n.GroupContainer");
 

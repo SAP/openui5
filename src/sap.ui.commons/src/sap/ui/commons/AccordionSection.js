@@ -26,7 +26,6 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 	 * @public
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.AccordionSection
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) design time metamodel
 	 */
 	var AccordionSection = Element.extend("sap.ui.commons.AccordionSection", /** @lends sap.ui.commons.AccordionSection.prototype */ { metadata : {
 

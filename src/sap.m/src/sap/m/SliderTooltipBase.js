@@ -25,7 +25,6 @@ function(Control, Library, SliderTooltipBaseRenderer) {
 		 * @public
 		 * @since 1.56
 		 * @alias sap.m.SliderTooltipBase
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var SliderTooltipBase = Control.extend("sap.m.SliderTooltipBase", /** @lends sap.m.SliderTooltipBase.prototype */ {
 			metadata: {

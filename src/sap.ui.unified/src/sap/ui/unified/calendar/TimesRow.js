@@ -66,7 +66,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.32.0
 	 * @alias sap.ui.unified.calendar.TimesRow
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TimesRow = Control.extend("sap.ui.unified.calendar.TimesRow", /** @lends sap.ui.unified.calendar.TimesRow.prototype */ { metadata : {
 
@@ -330,7 +329,6 @@ sap.ui.define([
 	 * @param {object} oDate JavaScript Date object for focused date.
 	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TimesRow.prototype.displayDate = function(oDate){
 
@@ -872,7 +870,6 @@ sap.ui.define([
 	 * @param {object} oDate JavaScript Date object for focused date.
 	 * @returns {boolean} flag if focusable
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TimesRow.prototype.checkDateFocusable = function(oDate){
 

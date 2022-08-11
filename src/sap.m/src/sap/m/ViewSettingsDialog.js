@@ -149,7 +149,6 @@ function(
 	 * @since 1.16
 	 * @alias sap.m.ViewSettingsDialog
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/view-settings-dialog/ View Settings Dialog}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ViewSettingsDialog = Control.extend("sap.m.ViewSettingsDialog", /** @lends sap.m.ViewSettingsDialog.prototype */ { metadata : {
 
@@ -1321,7 +1320,6 @@ function(
 	 *	The available values are "sort", "group", "filter" or IDs of custom tabs.
 	 *
 	 * @return {this} this pointer for chaining
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ViewSettingsDialog.prototype.open = function(sPageId) {
 		// add to static UI area manually because we don't have a renderer
@@ -1404,7 +1402,6 @@ function(
 	 * @override
 	 * @public
 	 * @return {sap.m.ViewSettingsItem[]} An array of selected filter items
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ViewSettingsDialog.prototype.getSelectedFilterItems = function() {
 		var aSelectedFilterItems = [], aFilterItems = this.getFilterItems(), aSubFilterItems, bMultiSelect = true, i = 0, j;
@@ -1439,7 +1436,6 @@ function(
 	 *
 	 * @public
 	 * @return {string} The selected filter string
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ViewSettingsDialog.prototype.getSelectedFilterString = function() {
 		var sFilterString       = "",
@@ -1507,7 +1503,6 @@ function(
 	 *
 	 * @public
 	 * @return {object} An object with item and sub-item keys
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.42, replaced by <code>getSelectedFilterCompoundKeys</code> method
 	 */
 	ViewSettingsDialog.prototype.getSelectedFilterKeys = function() {
@@ -1527,7 +1522,6 @@ function(
 	 *
 	 * @public
 	 * @return {object} An object with item and sub-item keys
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @since 1.42
 	 */
 	ViewSettingsDialog.prototype.getSelectedFilterCompoundKeys = function() {
@@ -1575,7 +1569,6 @@ function(
 	 *         Setting boolean to true will set the filter to true, false or omitting an entry will set the filter to false.
 	 *         It can be used to set the dialog state based on presets.
 	 * @return {this} this pointer for chaining
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.42, replaced by <code>setSelectedFilterCompoundKeys</code> method
 	 */
 	ViewSettingsDialog.prototype.setSelectedFilterKeys = function(oSelectedFilterKeys) {
@@ -1650,7 +1643,6 @@ function(
 	 *         Setting boolean to true will set the filter to true, false or omitting an entry will set the filter to false.
 	 *         It can be used to set the dialog state based on presets.
 	 * @return {this} this pointer for chaining
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @since 1.42
 	 */
 	ViewSettingsDialog.prototype.setSelectedFilterCompoundKeys = function(oSelectedFilterKeys) {

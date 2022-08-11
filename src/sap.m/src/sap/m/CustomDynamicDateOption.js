@@ -23,7 +23,6 @@ sap.ui.define(['sap/m/DynamicDateOption'],
 		 * @public
 		 * @since 1.92
 		 * @alias sap.m.CustomDynamicDateOption
-		 * @ui5-metamodel This element also will be described in the UI5 (legacy) designtime metamodel
 		 * @experimental Since 1.92. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 		 */
 		var CustomDynamicDateOption = DynamicDateOption.extend("sap.m.CustomDynamicDateOption", /** @lends sap.m.CustomDynamicDateOption.prototype */ {

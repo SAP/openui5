@@ -35,7 +35,6 @@ function (coreLibrary, ManagedObject, Log) {
 	 * @public
 	 * @since 1.78
 	 * @alias sap.ui.core.InvisibleMessage
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var InvisibleMessage = ManagedObject.extend("sap.ui.core.InvisibleMessage", /** @lends sap.ui.core.InvisibleMessage.prototype */ {

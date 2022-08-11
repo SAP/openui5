@@ -33,7 +33,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.46.0
 	 * @alias sap.m.P13nSelectionPanel
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nSelectionPanel = P13nPanel.extend("sap.m.P13nSelectionPanel", /** @lends sap.m.P13nSelectionPanel.prototype */
 	{

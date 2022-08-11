@@ -28,7 +28,6 @@ sap.ui.define(
 		 * @protected
 		 * @since 1.84.0
 		 * @alias sap.ui.mdc.filterbar.vh.FilterContainer
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var FilterContainer = IFilterContainer.extend(
 			"sap.ui.mdc.filterbar.vh.FilterContainer",

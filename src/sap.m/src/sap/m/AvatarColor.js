@@ -20,7 +20,6 @@ sap.ui.define([], function() {
 	 * @public
 	 * @alias sap.m.AvatarColor
 	 * @since 1.73
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AvatarColor = {
 		/**

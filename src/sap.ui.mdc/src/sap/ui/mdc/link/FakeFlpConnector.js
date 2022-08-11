@@ -14,7 +14,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @private
 	 * @since 1.54.0
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	function FakeFlpConnector() {
 	}

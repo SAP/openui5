@@ -25,7 +25,6 @@ sap.ui.define(['sap/base/Log', './library', 'sap/ui/unified/FileUploaderParamete
 	 * @deprecated Since version 1.21.0.
 	 * Please use the element sap.ui.unified.FileUploaderParameter of the library sap.ui.unified instead.
 	 * @alias sap.ui.commons.FileUploaderParameter
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FileUploaderParameter = UnifiedFileUploaderParameter.extend("sap.ui.commons.FileUploaderParameter", /** @lends sap.ui.commons.FileUploaderParameter.prototype */ { metadata : {
 

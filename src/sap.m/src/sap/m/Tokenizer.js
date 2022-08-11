@@ -83,7 +83,6 @@ sap.ui.define([
 	 * @since 1.22
 	 * @alias sap.m.Tokenizer
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/token/ Tokenizer}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Tokenizer = Control.extend("sap.m.Tokenizer", /** @lends sap.m.Tokenizer.prototype */ { metadata : {
 

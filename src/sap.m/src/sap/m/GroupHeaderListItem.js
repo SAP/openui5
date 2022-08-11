@@ -34,7 +34,6 @@ sap.ui.define(["sap/ui/core/library", "./library", "./ListItemBase", "./GroupHea
 	 * @public
 	 * @since 1.12
 	 * @alias sap.m.GroupHeaderListItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GroupHeaderListItem = ListItemBase.extend("sap.m.GroupHeaderListItem", /** @lends sap.m.GroupHeaderListItem.prototype */ { metadata : {
 

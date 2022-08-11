@@ -35,7 +35,6 @@ sap.ui.define(['sap/ui/layout/library', './FormLayout', './GridLayoutRenderer'],
 	 * as <code>sap.ui.commons</code> library is deprecated and the <code>GridLayout</code> must not be used in responsive applications.
 	 * Please use <code>ResponsiveGridLayout</code> or <code>ColumnLayout</code> instead.
 	 * @alias sap.ui.layout.form.GridLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridLayout = FormLayout.extend("sap.ui.layout.form.GridLayout", /** @lends sap.ui.layout.form.GridLayout.prototype */ { metadata : {
 

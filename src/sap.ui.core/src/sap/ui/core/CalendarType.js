@@ -12,7 +12,6 @@ sap.ui.define([], function() {
 	 * @enum {string}
 	 * @alias sap.ui.core.CalendarType
 	 * @public
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CalendarType = {
 

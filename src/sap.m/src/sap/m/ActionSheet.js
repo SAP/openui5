@@ -75,7 +75,6 @@ sap.ui.define([
 	 * @since 1.9.1
 	 * @alias sap.m.ActionSheet
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/action-sheet/ Action Sheet}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ActionSheet = Control.extend("sap.m.ActionSheet", /** @lends sap.m.ActionSheet.prototype */ { metadata : {
 
@@ -293,7 +292,6 @@ sap.ui.define([
 	 * @param {object} oControl The control to which the ActionSheet is opened
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ActionSheet.prototype.openBy = function(oControl){
 		var that = this;
@@ -419,7 +417,6 @@ sap.ui.define([
 	 * Calling this method will make the ActionSheet disappear from the screen.
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ActionSheet.prototype.close = function(){
 		if (this._parent) {
@@ -432,7 +429,6 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} Whether the ActionSheet is open.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ActionSheet.prototype.isOpen = function(){
 		return !!this._parent && this._parent.isOpen();

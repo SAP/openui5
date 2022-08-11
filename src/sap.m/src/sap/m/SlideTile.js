@@ -42,7 +42,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @alias sap.m.SlideTile
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SlideTile = Control.extend("sap.m.SlideTile", /** @lends sap.m.SlideTile.prototype */ {
 		metadata: {

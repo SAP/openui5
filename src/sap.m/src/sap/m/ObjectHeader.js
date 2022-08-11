@@ -84,7 +84,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.12
 	 * @alias sap.m.ObjectHeader
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectHeader = Control.extend("sap.m.ObjectHeader", /** @lends sap.m.ObjectHeader.prototype */ { metadata : {
 

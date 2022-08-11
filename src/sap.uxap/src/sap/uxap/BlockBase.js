@@ -74,7 +74,6 @@ sap.ui.define([
 		 * @see {@link topic:4527729576cb4a4888275b6935aad03a Block Base}
 		 * @see {@link topic:2978f6064742456ebed31c5ccf4d051d Creating Blocks}
 		 * @alias sap.uxap.BlockBase
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		var BlockBase = Control.extend("sap.uxap.BlockBase", {

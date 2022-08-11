@@ -143,7 +143,6 @@ sap.ui.define([
 	 * @private
 	 * @experimental since 1.94.0
 	 * @alias sap.ui.integration.editor.Editor
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Editor = Control.extend("sap.ui.integration.editor.Editor", /** @lends sap.ui.integration.editor.Editor.prototype */ {
 		metadata: {

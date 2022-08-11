@@ -37,7 +37,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.4.0. Instead, use the <code>sap.m.MessageToast</code> control.
 	 * @alias sap.ui.commons.MessageToast
-	 * @ui5-metamodel This control/element also will be described in the UI5 design-time metamodel
 	 */
 	var MessageToast = Control.extend("sap.ui.commons.MessageToast", /** @lends sap.ui.commons.MessageToast.prototype */ { metadata : {
 
@@ -234,7 +233,6 @@ sap.ui.define([
 	 *         DOM ID of the anchor against which the Toast Arrow should align for a given Toast.
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 design-time metamodel
 	 */
 	MessageToast.prototype.toast = function(oMessage, sAnchorId) {
 	  // Storing the supplied data:
@@ -253,7 +251,6 @@ sap.ui.define([
 	 *
 	 * @type boolean
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 design-time metamodel
 	 */
 	MessageToast.prototype.isIdle = function() {
 	  return this.bIdle;

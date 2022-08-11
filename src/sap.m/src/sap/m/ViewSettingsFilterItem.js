@@ -28,7 +28,6 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 * @public
 	 * @since 1.16
 	 * @alias sap.m.ViewSettingsFilterItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ViewSettingsFilterItem = ViewSettingsItem.extend("sap.m.ViewSettingsFilterItem", /** @lends sap.m.ViewSettingsFilterItem.prototype */ { metadata : {
 

@@ -39,7 +39,6 @@ sap.ui.define([
 	 * @experimental Since version 1.2.
 	 * The API may change. User with care.
 	 * @alias sap.ui.suite.VerticalProgressIndicator
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var VerticalProgressIndicator = Control.extend("sap.ui.suite.VerticalProgressIndicator", /** @lends sap.ui.suite.VerticalProgressIndicator.prototype */ { metadata : {
 
@@ -143,7 +142,6 @@ sap.ui.define([
 	 *
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	VerticalProgressIndicator.prototype.focus = function() {
 		var oDomRef = this.getDomRef();

@@ -71,7 +71,6 @@ sap.ui.define([
 	 * @since 1.16
 	 * @alias sap.m.Panel
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/panel/ Panel}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Panel = Control.extend("sap.m.Panel", /** @lends sap.m.Panel.prototype */ { metadata: {
 		library: "sap.m",

@@ -27,7 +27,6 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 * @alias sap.ui.table.rowmodes.VariableRowMode
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var VariableRowMode = RowMode.extend("sap.ui.table.rowmodes.VariableRowMode", {
 		metadata: {

@@ -45,7 +45,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.tnt.ToolHeader</code> control.
 	 * @alias sap.ui.commons.ApplicationHeader
-	 * @ui5-metamodel This control/element also will be described in the UI5 design-time metamodel
 	 */
 	var ApplicationHeader = Control.extend("sap.ui.commons.ApplicationHeader", /** @lends sap.ui.commons.ApplicationHeader.prototype */ { metadata : {
 

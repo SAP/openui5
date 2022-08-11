@@ -30,7 +30,6 @@ sap.ui.define([
 	 * @experimental Since 1.95.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.SuggestionGroupItem
 	 * @implements sap.ui.webc.main.IInputSuggestionItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SuggestionGroupItem = WebComponent.extend("sap.ui.webc.main.SuggestionGroupItem", {
 		metadata: {

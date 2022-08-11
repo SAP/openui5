@@ -53,7 +53,6 @@ sap.ui.define(["sap/ui/core/library", "sap/m/library"],
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.RenderMode = {
 		/**
@@ -76,7 +75,6 @@ sap.ui.define(["sap/ui/core/library", "sap/m/library"],
 	 * @name sap.tnt.IToolHeader
 	 * @public
 	 * @interface
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	return thisLib;

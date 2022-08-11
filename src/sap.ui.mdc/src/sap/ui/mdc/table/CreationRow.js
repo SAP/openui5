@@ -26,7 +26,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @since 1.65
 	 * @alias sap.ui.mdc.table.CreationRow
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CreationRow = Element.extend("sap.ui.mdc.table.CreationRow", {
 		metadata: {

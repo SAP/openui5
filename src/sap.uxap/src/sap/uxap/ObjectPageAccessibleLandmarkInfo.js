@@ -26,7 +26,6 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 * @public
 	 * @alias sap.uxap.ObjectPageAccessibleLandmarkInfo
 	 * @since 1.61
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectPageAccessibleLandmarkInfo = Element.extend("sap.uxap.ObjectPageAccessibleLandmarkInfo", /** @lends sap.uxap.ObjectPageAccessibleLandmarkInfo.prototype */ { metadata : {
 

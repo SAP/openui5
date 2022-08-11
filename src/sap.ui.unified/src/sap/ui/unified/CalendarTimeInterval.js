@@ -70,7 +70,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.32.0
 	 * @alias sap.ui.unified.CalendarTimeInterval
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CalendarTimeInterval = Control.extend("sap.ui.unified.CalendarTimeInterval", /** @lends sap.ui.unified.CalendarTimeInterval.prototype */ { metadata : {
 
@@ -589,7 +588,6 @@ sap.ui.define([
 	 * @param {object} oDate JavaScript date object for focused item.
 	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	CalendarTimeInterval.prototype.focusDate = function(oDate){
 
@@ -617,7 +615,6 @@ sap.ui.define([
 	 * @param {object} oDate JavaScript date object for displayed item.
 	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	CalendarTimeInterval.prototype.displayDate = function(oDate){
 

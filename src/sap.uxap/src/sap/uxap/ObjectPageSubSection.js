@@ -81,7 +81,6 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.uxap.ObjectPageSubSection
 	 * @since 1.26
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectPageSubSection = ObjectPageSectionBase.extend("sap.uxap.ObjectPageSubSection", /** @lends sap.uxap.ObjectPageSubSection.prototype */ {
 		metadata: {

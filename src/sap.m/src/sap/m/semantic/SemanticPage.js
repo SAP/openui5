@@ -113,7 +113,6 @@ function(
 	 * @public
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.SemanticPage
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SemanticPage = Control.extend("sap.m.semantic.SemanticPage", /** @lends sap.m.semantic.SemanticPage.prototype */ {
 		metadata: {

@@ -110,7 +110,6 @@ sap.ui.define([
 	 * @since 1.16
 	 * @alias sap.m.TableSelectDialog
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/table-select-dialog/ Table Select Dialog}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TableSelectDialog = SelectDialogBase.extend("sap.m.TableSelectDialog", /** @lends sap.m.TableSelectDialog.prototype */ {
 		metadata : {
@@ -542,7 +541,6 @@ sap.ui.define([
 	 * @param {string} sSearchValue
 	 *         Value for the search. The table will be automatically trigger the search event if this parameter is set.
 	 * @returns {this} <code>this</code> to allow method chaining
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TableSelectDialog.prototype.open = function (sSearchValue) {
 		if (!this.getParent() && !this._bAppendedToUIArea) {

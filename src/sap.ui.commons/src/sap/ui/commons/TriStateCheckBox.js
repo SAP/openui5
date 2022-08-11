@@ -39,7 +39,6 @@ sap.ui.define([
 	 * @since 1.7.2
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.TriStateCheckBox
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TriStateCheckBox = Control.extend("sap.ui.commons.TriStateCheckBox", /** @lends sap.ui.commons.TriStateCheckBox.prototype */ { metadata : {
 
@@ -173,7 +172,6 @@ sap.ui.define([
 	 * @param {sap.ui.commons.TriStateCheckBoxState} destState
 	 *         destined selection state of checkbox
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TriStateCheckBox.prototype.toggle = function(destState) {
 		if (destState in TriStateCheckBoxState) {

@@ -80,7 +80,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @alias sap.m.GenericTile
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GenericTile = Control.extend("sap.m.GenericTile", /** @lends sap.m.GenericTile.prototype */ {
 		metadata: {

@@ -148,7 +148,6 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.core.mvc.View
 	 * @abstract
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var View = Control.extend("sap.ui.core.mvc.View", /** @lends sap.ui.core.mvc.View.prototype */ {
 		metadata : {

@@ -50,7 +50,6 @@ sap.ui.define([
 		 * @public
 		 * @alias sap.m.PDFViewer
 		 * @see {@link topic:cd80a8bca4ac450b86547d78f0653330 PDF Viewer}
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var PDFViewer = Control.extend("sap.m.PDFViewer",
 			/** @lends sap.m.PDFViewer.prototype */

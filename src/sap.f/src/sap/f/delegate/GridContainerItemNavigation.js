@@ -44,7 +44,6 @@ sap.ui.define([
 	 * @private
 	 * @constructor
 	 * @alias sap.f.delegate.GridContainerItemNavigation
-	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridContainerItemNavigation = GridItemNavigation.extend("sap.f.delegate.GridContainerItemNavigation", /** @lends sap.f.delegate.GridContainerItemNavigation.prototype */ {
 		constructor: function () {

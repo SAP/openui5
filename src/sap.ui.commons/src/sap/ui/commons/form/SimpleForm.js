@@ -30,7 +30,6 @@ sap.ui.define([
 	 * @deprecated Since version 1.16.0.
 	 * moved to sap.ui.layout library. Please use this one.
 	 * @alias sap.ui.commons.form.SimpleForm
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SimpleForm = LayoutSimpleForm.extend("sap.ui.commons.form.SimpleForm", /** @lends sap.ui.commons.form.SimpleForm.prototype */ { metadata : {
 

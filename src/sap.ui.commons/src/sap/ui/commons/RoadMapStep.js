@@ -26,7 +26,6 @@ sap.ui.define(['sap/ui/dom/containsOrEquals', './library', 'sap/ui/core/Element'
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Wizard</code> control.
 	 * @alias sap.ui.commons.RoadMapStep
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RoadMapStep = Element.extend("sap.ui.commons.RoadMapStep", /** @lends sap.ui.commons.RoadMapStep.prototype */ { metadata : {
 

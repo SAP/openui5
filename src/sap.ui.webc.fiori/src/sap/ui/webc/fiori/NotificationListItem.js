@@ -55,7 +55,6 @@ sap.ui.define([
 	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.fiori.NotificationListItem
 	 * @implements sap.ui.webc.fiori.INotificationListItem, sap.ui.webc.main.IListItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NotificationListItem = WebComponent.extend("sap.ui.webc.fiori.NotificationListItem", {
 		metadata: {

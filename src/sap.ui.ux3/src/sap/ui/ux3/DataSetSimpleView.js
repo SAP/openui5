@@ -41,7 +41,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38. Use a layout by choice from the {@link sap.m} library, instead.
 	 * @alias sap.ui.ux3.DataSetSimpleView
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DataSetSimpleView = Control.extend("sap.ui.ux3.DataSetSimpleView", /** @lends sap.ui.ux3.DataSetSimpleView.prototype */ { metadata : {
 

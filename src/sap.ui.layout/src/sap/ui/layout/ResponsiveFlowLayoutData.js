@@ -26,7 +26,6 @@ sap.ui.define(['sap/ui/core/LayoutData', './library', "sap/base/Log"],
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.ResponsiveFlowLayoutData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsiveFlowLayoutData = LayoutData.extend("sap.ui.layout.ResponsiveFlowLayoutData", /** @lends sap.ui.layout.ResponsiveFlowLayoutData.prototype */ { metadata : {
 

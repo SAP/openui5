@@ -20,7 +20,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.56.0
 	 * @alias sap.m.P13nAnyFilterItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nAnyFilterItem = P13nFilterItem.extend("sap.m.P13nAnyFilterItem", /** @lends sap.m.P13nAnyFilterItem.prototype */
 	{

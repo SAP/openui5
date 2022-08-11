@@ -21,7 +21,6 @@ sap.ui.define(['sap/ui/core/LayoutData', './library'],
 	 * @public
 	 * @since 1.50.0
 	 * @alias sap.ui.layout.BlockLayoutCellData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) design time metamodel
 	 */
 	var BlockLayoutCellData = LayoutData.extend("sap.ui.layout.BlockLayoutCellData", { metadata : {
 		library : "sap.ui.layout",

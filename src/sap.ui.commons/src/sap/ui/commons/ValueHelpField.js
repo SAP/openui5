@@ -29,7 +29,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Input</code> control.
 	 * @alias sap.ui.commons.ValueHelpField
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ValueHelpField = TextField.extend("sap.ui.commons.ValueHelpField", /** @lends sap.ui.commons.ValueHelpField.prototype */ { metadata : {
 

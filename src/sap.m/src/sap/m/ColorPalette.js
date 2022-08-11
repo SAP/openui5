@@ -108,7 +108,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.54
 		 * @alias sap.m.ColorPalette
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var ColorPalette = Control.extend("sap.m.ColorPalette", /** @lends sap.m.ColorPalette.prototype */ {
 			metadata: {

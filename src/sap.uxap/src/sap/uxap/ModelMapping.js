@@ -24,7 +24,6 @@ sap.ui.define(["sap/ui/core/Element", "./library"],
 	 * @public
 	 * @alias sap.uxap.ModelMapping
 	 * @since 1.26
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ModelMapping = Element.extend("sap.uxap.ModelMapping", /** @lends sap.uxap.ModelMapping.prototype */ {
 		metadata: {

@@ -96,7 +96,6 @@ function(
 		 * @since 1.28
 		 * @alias sap.m.MessagePopover
 		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/message-popover/ Message Popover}
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var MessagePopover = Control.extend("sap.m.MessagePopover", /** @lends sap.m.MessagePopover.prototype */ {
 			metadata: {
@@ -515,7 +514,6 @@ function(
 		 * @param {sap.ui.core.Control} oControl Control which opens the MessagePopover
 		 * @returns {this} Reference to the 'this' for chaining purposes
 		 * @public
-		 * @ui5-metamodel
 		 */
 		MessagePopover.prototype.openBy = function (oControl) {
 			var oResponsivePopoverControl = this._oPopover.getAggregation("_popup"),

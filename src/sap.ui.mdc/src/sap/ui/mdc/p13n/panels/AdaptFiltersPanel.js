@@ -36,7 +36,6 @@ sap.ui.define([
 	 * @experimental
 	 * @since 1.85
 	 * @alias sap.ui.mdc.p13n.panels.AdaptFiltersPanel
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AdaptFiltersPanel = AbstractContainer.extend("sap.ui.mdc.p13n.panels.AdaptFiltersPanel", {
 		metadata: {

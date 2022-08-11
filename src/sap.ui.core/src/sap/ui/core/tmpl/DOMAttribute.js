@@ -23,7 +23,6 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/library'],
 	 * @since 1.15
 	 * @deprecated since 1.56
 	 * @alias sap.ui.core.tmpl.DOMAttribute
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DOMAttribute = Element.extend("sap.ui.core.tmpl.DOMAttribute", /** @lends sap.ui.core.tmpl.DOMAttribute.prototype */ { metadata : {
 

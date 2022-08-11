@@ -23,7 +23,6 @@ sap.ui.define(['sap/f/semantic/SemanticButton'], function(SemanticButton) {
 	* @public
 	* @since 1.46.0
 	* @alias sap.f.semantic.SendEmailAction
-	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	var SendEmailAction = SemanticButton.extend("sap.f.semantic.SendEmailAction", /** @lends sap.f.semantic.SendEmailAction.prototype */ {
 		metadata: {

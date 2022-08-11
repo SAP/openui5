@@ -53,7 +53,6 @@ sap.ui.define([
 	 * @since 1.25.0
 	 * @alias sap.ui.unified.ShellLayout
 	 * @deprecated Since version 1.44.0.
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ShellLayout = Control.extend("sap.ui.unified.ShellLayout", /** @lends sap.ui.unified.ShellLayout.prototype */ { metadata : {
 

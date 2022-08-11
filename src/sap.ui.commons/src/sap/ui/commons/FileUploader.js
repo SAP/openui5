@@ -31,7 +31,6 @@ sap.ui.define([
 	 * @deprecated Since version 1.21.0.
 	 * Please use the control sap.ui.unified.FileUploader of the library sap.ui.unified instead.
 	 * @alias sap.ui.commons.FileUploader
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FileUploader = UnifiedFileUploader.extend("sap.ui.commons.FileUploader", /** @lends sap.ui.commons.FileUploader.prototype */ { metadata : {
 

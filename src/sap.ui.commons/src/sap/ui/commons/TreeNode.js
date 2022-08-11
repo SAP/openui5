@@ -27,7 +27,6 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/CustomStyle
 	 * @public
 	 * @deprecated as of version 1.38, replaced by {@link sap.m.Tree}
 	 * @alias sap.ui.commons.TreeNode
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TreeNode = Element.extend("sap.ui.commons.TreeNode", /** @lends sap.ui.commons.TreeNode.prototype */ { metadata : {
 
@@ -132,7 +131,6 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/CustomStyle
 	 * @param {boolean} bExpandChildren Propagates expand to node's children
 	 * @param {boolean} bDisableExpandFinishedHandler Disables the expand finished handler
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeNode.prototype.expand = function(bExpandChildren, bDisableExpandFinishedHandler){
 		//Change property anyway. (Even if node has no expander)
@@ -182,7 +180,6 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/CustomStyle
 	 * @param {boolean} bCollapseChildren Propagates collapse to node's children
 	 * @param {boolean} bDisableCollapseFinishedHandler Disables the collapse finished handler
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeNode.prototype.collapse = function(bCollapseChildren, bDisableCollapseFinishedHandler){
 		//Change property anyway. (Even if node has no expander)
@@ -228,7 +225,6 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/CustomStyle
 	 * Select the node, and if any, deselects the previously selected node
 	 * @param {boolean} bSuppressEvent
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeNode.prototype.select = function(bSuppressEvent) {
 		var oTree = this.getTree();

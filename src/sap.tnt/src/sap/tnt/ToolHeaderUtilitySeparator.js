@@ -28,7 +28,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.16
 	 * @alias sap.tnt.ToolHeaderUtilitySeparator
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToolHeaderUtilitySeparator = Control.extend("sap.tnt.ToolHeaderUtilitySeparator", /** @lends sap.tnt.ToolHeaderUtilitySeparator.prototype */ {
 		metadata: {

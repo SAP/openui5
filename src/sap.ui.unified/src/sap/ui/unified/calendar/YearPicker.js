@@ -62,7 +62,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.28.0
 	 * @alias sap.ui.unified.calendar.YearPicker
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var YearPicker = Control.extend("sap.ui.unified.calendar.YearPicker", /** @lends sap.ui.unified.calendar.YearPicker.prototype */ { metadata : {
 
@@ -326,7 +325,6 @@ sap.ui.define([
 	 *
 	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	YearPicker.prototype.nextPage = function(){
 
@@ -341,7 +339,6 @@ sap.ui.define([
 	 *
 	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	YearPicker.prototype.previousPage = function(){
 
@@ -471,7 +468,6 @@ sap.ui.define([
 	 *
 	 * @returns {object} JavaScript Date Object
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @since 1.38.0
 	 */
 	YearPicker.prototype.getFirstRenderedDate = function(){

@@ -192,7 +192,6 @@ sap.ui.define([
 	 * @see {@link topic:5b46b03f024542ba802d99d67bc1a3f4 Cards}
 	 * @since 1.62
 	 * @alias sap.ui.integration.widgets.Card
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Card = CardBase.extend("sap.ui.integration.widgets.Card", /** @lends sap.ui.integration.widgets.Card.prototype */ {
 		metadata: {

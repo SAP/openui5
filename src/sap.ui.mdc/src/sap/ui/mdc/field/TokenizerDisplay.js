@@ -33,7 +33,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.TokenizerDisplay
 	 * @since 1.99.0
 	 * @alias sap.ui.mdc.field.TokenizerDisplay
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TokenizerDisplay = Tokenizer.extend("sap.ui.mdc.field.TokenizerDisplay", /** @lends sap.ui.mdc.field.TokenizerDisplay.prototype */
 	{

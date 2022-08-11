@@ -25,7 +25,6 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/SelectionModel', './library'
 	 * @since 1.9.0
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.ux3.Collection
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Collection = Element.extend("sap.ui.ux3.Collection", /** @lends sap.ui.ux3.Collection.prototype */ { metadata : {
 

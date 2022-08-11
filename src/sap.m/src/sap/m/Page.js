@@ -91,7 +91,6 @@ function(
 		 *
 		 * @public
 		 * @alias sap.m.Page
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var Page = Control.extend("sap.m.Page", /** @lends sap.m.Page.prototype */ {
 			metadata: {
@@ -642,7 +641,6 @@ function(
 		 * @param {int} [time=0] The duration of animated scrolling in milliseconds. The value <code>0</code> results in immediate scrolling without animation.
 		 * @returns {this} <code>this</code> to facilitate method chaining.
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Page.prototype.scrollTo = function (y, time) {
 			if (this._oScroller) {

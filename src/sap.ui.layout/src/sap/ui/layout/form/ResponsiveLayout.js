@@ -55,7 +55,6 @@ sap.ui.define([
 	 * @since 1.16.0
 	 * @deprecated As of version 1.93, replaced by {@link sap.ui.layout.form.ColumnLayout ColumnLayout}
 	 * @alias sap.ui.layout.form.ResponsiveLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsiveLayout = FormLayout.extend("sap.ui.layout.form.ResponsiveLayout", /** @lends sap.ui.layout.form.ResponsiveLayout.prototype */ { metadata : {
 

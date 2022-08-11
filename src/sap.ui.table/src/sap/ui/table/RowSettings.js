@@ -28,7 +28,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.48.0
 	 * @alias sap.ui.table.RowSettings
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RowSettings = Element.extend("sap.ui.table.RowSettings", /** @lends sap.ui.table.RowSettings.prototype */ {
 		metadata: {

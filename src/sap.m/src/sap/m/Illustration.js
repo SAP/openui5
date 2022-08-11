@@ -36,7 +36,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.98
 	 * @alias sap.m.Illustration
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Illustration = Control.extend("sap.m.Illustration", /** @lends sap.m.Illustration.prototype */ {
 		metadata: {

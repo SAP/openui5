@@ -45,7 +45,6 @@ sap.ui.define([
 		 * @constructor
 		 * @public
 		 * @alias sap.uxap.ObjectPageDynamicHeaderTitle
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 * @since 1.52
 		 * @see {@link topic:6e340c119ddd4c778b315f65a0432420 Object Page Dynamic Header}
 		 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}

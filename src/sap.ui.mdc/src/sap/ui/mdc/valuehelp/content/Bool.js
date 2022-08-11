@@ -28,7 +28,6 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.valuehelp.content.Bool
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Bool = FixedList.extend("sap.ui.mdc.valuehelp.content.Bool", /** @lends sap.ui.mdc.valuehelp.content.Bool.prototype */
 	{

@@ -614,7 +614,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.BackgroundDesign = {
 
@@ -644,7 +643,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.81
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.BadgeState = {
 
@@ -674,7 +672,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.87
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.BadgeAnimationType = {
 
@@ -704,7 +701,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.87
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.EmptyIndicatorMode = {
 
@@ -734,7 +730,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @private
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.BadgeStyle = {
 		/**
@@ -758,7 +753,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.20
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.BarDesign = {
 
@@ -794,7 +788,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.69
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	thisLib.BreadcrumbsSeparatorStyle = {
@@ -847,7 +840,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ButtonType = {
 
@@ -967,7 +959,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @private
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ButtonAccessibilityType = {
 		/**
@@ -1004,7 +995,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.CarouselArrowsPlacement = {
 		/**
@@ -1026,7 +1016,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.50
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.PlanningCalendarBuiltInView = {
 
@@ -1070,7 +1059,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @deprecated Since version 1.32.8. Instead, use dedicated <code>sap.m.DatePicker</code> and/or <code>sap.m.TimePicker</code> controls.
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.DateTimeInputType = {
 
@@ -1103,7 +1091,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.DialogType = {
 
@@ -1131,7 +1118,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @since 1.65
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.DialogRoleType = {
 
@@ -1154,7 +1140,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.34
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.DeviationIndicator = {
 
@@ -1184,7 +1169,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.DraftIndicatorState = {
 
@@ -1214,7 +1198,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.FacetFilterListDataType = {
 
@@ -1268,7 +1251,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.FacetFilterType = {
 
@@ -1294,7 +1276,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.FlexAlignItems = {
 
@@ -1346,7 +1327,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.FlexAlignSelf = {
 
@@ -1404,7 +1384,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.FlexDirection = {
 
@@ -1446,7 +1425,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.FlexJustifyContent = {
 
@@ -1494,7 +1472,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.FlexWrap = {
 
@@ -1523,7 +1500,6 @@ sap.ui.define([
 	 * Available options for the layout of container lines along the cross axis of the flexbox layout.
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.FlexAlignContent = {
 
@@ -1576,7 +1552,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.FlexRendertype = {
 
@@ -1607,7 +1582,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.34.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.FrameType = {
 
@@ -1668,7 +1642,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.45.5
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.LinkConversion = {
 
@@ -1697,7 +1670,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.104.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	 thisLib.LinkAccessibleRole = {
 
@@ -1720,7 +1692,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.44.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.InputTextFormatMode = {
 
@@ -1755,7 +1726,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.62.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.GenericTagDesign = {
 		/**
@@ -1776,7 +1746,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.62.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.GenericTagValueState = {
 		/**
@@ -1798,7 +1767,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.38.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.GenericTileMode = {
 
@@ -1861,7 +1829,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.Priority = {
 
@@ -1901,7 +1868,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @since 1.46.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @public
 	 */
 	thisLib.GenericTileScope = {
@@ -1935,7 +1901,6 @@ sap.ui.define([
 	 * @enum {string}
  	 * @since 1.90.0
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.TabsOverflowMode = {
 		/**
@@ -1955,7 +1920,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @since 1.56.0
-	 * @ui5-metamodel This enumeration will also be described in the SAPUI5 (legacy) designtime metamodel
 	 * @public
 	 */
 	thisLib.TileSizeBehavior = {
@@ -1976,7 +1940,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.HeaderLevel = {
 
@@ -2029,7 +1992,6 @@ sap.ui.define([
 	 * @name sap.m.IBar
 	 * @interface
 	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -2039,7 +2001,6 @@ sap.ui.define([
 	 * @name sap.m.IBadge
 	 * @interface
 	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -2049,7 +2010,6 @@ sap.ui.define([
 	 * @name sap.m.IBreadcrumbs
 	 * @interface
 	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -2067,7 +2027,6 @@ sap.ui.define([
 	 * @name sap.m.IScale
 	 * @interface
 	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -2137,7 +2096,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.22
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.IBarHTMLTag = {
 
@@ -2169,7 +2127,6 @@ sap.ui.define([
 	 * @name sap.m.IconTab
 	 * @interface
 	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 
@@ -2179,7 +2136,6 @@ sap.ui.define([
 	 * @name sap.m.semantic.IGroup
 	 * @interface
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -2188,7 +2144,6 @@ sap.ui.define([
 	 * @name sap.m.semantic.IFilter
 	 * @interface
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 
@@ -2198,7 +2153,6 @@ sap.ui.define([
 	 * @name sap.m.semantic.ISort
 	 * @interface
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -2251,7 +2205,6 @@ sap.ui.define([
 	 * @name sap.m.IOverflowToolbarContent
 	 * @interface
 	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -2272,7 +2225,6 @@ sap.ui.define([
 	 * @interface
 	 * @private
 	 * @ui5-restricted
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -2329,7 +2281,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.IconTabHeaderMode = {
 
@@ -2351,7 +2302,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.IconTabDensityMode = {
 
@@ -2379,7 +2329,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.IconTabFilterDesign = {
 
@@ -2403,7 +2352,6 @@ sap.ui.define([
 	* @enum {string}
 	* @public
 	* @since 1.30.0
-	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	thisLib.ImageMode = {
 
@@ -2436,7 +2384,6 @@ sap.ui.define([
 	* @enum {string}
 	* @public
 	* @since 1.34.0
-	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	thisLib.Size = {
 
@@ -2484,7 +2431,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ValueColor = {
 
@@ -2535,7 +2481,6 @@ sap.ui.define([
 	 * @final
 	 * @namespace
 	 * @public
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ValueCSSColor = DataType.createType("sap.m.ValueCSSColor", {
 		isValid : function (vValue) {
@@ -2560,7 +2505,6 @@ sap.ui.define([
 	 * @namespace
 	 * @public
 	 * @since 1.86
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SelectColumnRatio = DataType.createType("sap.m.SelectColumnRatio", {
 		isValid : function (vValue) {
@@ -2575,7 +2519,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.InputType = {
 
@@ -2671,7 +2614,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.LabelDesign = {
 
@@ -2697,7 +2639,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.16.
 	 * Has no functionality since 1.16.
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ListHeaderDesign = {
 
@@ -2721,7 +2662,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ListMode = {
 
@@ -2769,7 +2709,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.38.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ListKeyboardMode = {
 
@@ -2801,7 +2740,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.40.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ListGrowingDirection = {
 
@@ -2827,7 +2765,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ListSeparators = {
 
@@ -2858,7 +2795,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ListType = {
 
@@ -2902,7 +2838,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.38
-	 * @ui5-metamodel This enumeration will also be described in the UI5 (legacy) design time meta model.
 	 */
 	thisLib.SelectListKeyboardNavigationMode = {
 
@@ -2925,7 +2860,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.34.0
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.LoadState = {
 
@@ -2960,7 +2894,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @since 1.38.0
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.MenuButtonMode = {
 
@@ -2984,7 +2917,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.32
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.OverflowToolbarPriority = {
 
@@ -3042,7 +2974,6 @@ sap.ui.define([
 	 * @name sap.m.ObjectHeaderContainer
 	 * @interface
 	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -3051,7 +2982,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration will also be described in the UI5 (legacy) designtime metamodel
 	 * @since 1.61
 	 */
 	thisLib.ObjectHeaderPictureShape = {
@@ -3075,7 +3005,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.P13nPanelType = {
 
@@ -3131,7 +3060,6 @@ sap.ui.define([
 	 * @interface
 	 * @public
 	 * @experimental
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -3150,7 +3078,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.P13nPopupMode = {
 
@@ -3225,7 +3152,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.PageBackgroundDesign = {
 
@@ -3260,7 +3186,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.PanelAccessibleRole = {
 
@@ -3291,7 +3216,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.PDFViewerDisplayType = {
 		/**
@@ -3323,7 +3247,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.PlacementType = {
 
@@ -3472,7 +3395,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @enum {string}
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @experimental Since 1.92. These keys are experimental. The API might be changed in future.
 	 */
 	thisLib.StandardDynamicDateRangeKeys = {
@@ -3783,7 +3705,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.QuickViewGroupElementType = {
 
@@ -3830,7 +3751,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.VerticalPlacementType = {
 
@@ -3859,7 +3779,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.13.2
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.PopinDisplay = {
 
@@ -3891,7 +3810,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.52
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.PopinLayout = {
 
@@ -3932,7 +3850,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.54
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.Sticky = {
 		/**
@@ -3961,7 +3878,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.RatingIndicatorVisualMode = {
 
@@ -3985,7 +3901,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ScreenSize = {
 
@@ -4057,7 +3972,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @protected
 	 * @since 1.48
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SelectionDetailsActionLevel = {
 
@@ -4086,7 +4000,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.16
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SelectType = {
 
@@ -4110,7 +4023,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SplitAppMode = {
 
@@ -4150,7 +4062,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.StandardTileType = {
 
@@ -4182,7 +4093,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @since 1.44
 	 */
 	thisLib.semantic.SemanticRuleSetType = {
@@ -4226,7 +4136,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ObjectMarkerType = {
 
@@ -4281,7 +4190,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ObjectMarkerVisibility = {
 
@@ -4311,7 +4219,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SwipeDirection = {
 
@@ -4357,7 +4264,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SwitchType = {
 
@@ -4381,7 +4287,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.80
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.TokenizerRenderMode = {
 
@@ -4408,7 +4313,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.16.8
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ToolbarDesign = {
 
@@ -4450,7 +4354,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.54
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ToolbarStyle = {
 
@@ -4476,7 +4379,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.54
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.TimePickerMaskMode = {
 		/**
@@ -4498,7 +4400,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.42
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.StringFilterOperator = {
 
@@ -4535,7 +4436,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.40
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.LightBoxLoadingStates = {
 
@@ -4568,7 +4468,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.StepInputValidationMode = {
 
@@ -4592,7 +4491,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.54
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.StepInputStepModeType = {
 		/**
@@ -4641,7 +4539,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.UploadState = {
 		/**
@@ -4677,7 +4574,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.60
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.WrappingType = {
 		/**
@@ -4699,7 +4595,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.62
-	 * @ui5-metamodel This enumeration also will be described in tge UI5 (legacy) designtime metamodel
 	 */
 	thisLib.PlanningCalendarStickyMode = {
 		/**
@@ -4726,7 +4621,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.TitleAlignment = {
 
@@ -4762,7 +4656,6 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ExpandableTextOverflowMode = {
 		/**
@@ -4793,7 +4686,6 @@ sap.ui.define([
 		 * @enum {string}
 		 * @public
 		 * @experimental since 1.83
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.WizardRenderMode = {
 
@@ -4841,7 +4733,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.93
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.MultiSelectMode = {
 

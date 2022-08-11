@@ -90,7 +90,6 @@ function(
 	 * @public
 	 * @since 1.12
 	 * @alias sap.m.Link
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Link = Control.extend("sap.m.Link", /** @lends sap.m.Link.prototype */ { metadata : {
 

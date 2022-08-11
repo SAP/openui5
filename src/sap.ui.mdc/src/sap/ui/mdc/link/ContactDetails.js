@@ -28,7 +28,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.56.0
 	 * @alias sap.ui.mdc.link.ContactDetails
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ContactDetails = Control.extend("sap.ui.mdc.link.ContactDetails", /** @lends sap.ui.mdc.link.ContactDetails.prototype */ {
 		metadata: {

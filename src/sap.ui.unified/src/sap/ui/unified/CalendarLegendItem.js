@@ -25,7 +25,6 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 * @public
 	 * @since 1.24.0
 	 * @alias sap.ui.unified.CalendarLegendItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CalendarLegendItem = Element.extend("sap.ui.unified.CalendarLegendItem", /** @lends sap.ui.unified.CalendarLegendItem.prototype */ { metadata : {
 

@@ -62,7 +62,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.21.1
 		 * @alias sap.ui.unified.Currency
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var Currency = Control.extend("sap.ui.unified.Currency", /** @lends sap.ui.unified.Currency.prototype */ { metadata : {
 
@@ -277,7 +276,6 @@ sap.ui.define([
 		 * @type {string}
 		 * @returns {string} The formatted value
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Currency.prototype.getFormattedValue = function() {
 			var sCurrency = this.getCurrency(),
@@ -321,7 +319,6 @@ sap.ui.define([
 		 *
 		 * @type {string}
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Currency.prototype.getCurrencySymbol = function() {
 			return this._oFormat.oLocaleData.getCurrencySymbol(this.getCurrency());

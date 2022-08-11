@@ -27,7 +27,6 @@ sap.ui.define(['sap/m/PlanningCalendarLegend', 'sap/ui/unified/CalendarLegendIte
 		 * @since 1.74
 		 * @experimental Since 1.74.
 		 * @alias sap.f.PlanningCalendarInCardLegend
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var PlanningCalendarInCardLegend = PlanningCalendarLegend.extend("sap.f.PlanningCalendarInCardLegend", /** @lends sap.f.PlanningCalendarInCardLegend.prototype */ { metadata : {
 

@@ -104,7 +104,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.28.11
 	 * @alias sap.m.QuickViewPage
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var QuickViewPage = Control.extend("sap.m.QuickViewPage", /** @lends sap.m.QuickViewPage.prototype */ {
 		metadata: {

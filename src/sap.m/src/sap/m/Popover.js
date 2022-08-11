@@ -123,7 +123,6 @@ sap.ui.define([
 		* @public
 		* @alias sap.m.Popover
 		* @see {@link fiori:https://experience.sap.com/fiori-design-web/popover/ Popover}
-		* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		*/
 		var Popover = Control.extend("sap.m.Popover", /** @lends sap.m.Popover.prototype */ {
 			metadata: {
@@ -803,7 +802,6 @@ sap.ui.define([
 		 * @param {boolean} bSkipInstanceManager Indicates whether popover should be managed by InstanceManager or not
 		 * @returns {this} Reference to the control instance for chaining
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Popover.prototype.openBy = function (oControl, bSkipInstanceManager) {
 			// If already opened with the needed content then return
@@ -941,7 +939,6 @@ sap.ui.define([
 		 *
 		 * @return {this} Reference to the control instance for chaining
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Popover.prototype.close = function () {
 			var eOpenState = this.oPopup.getOpenState(),
@@ -979,7 +976,6 @@ sap.ui.define([
 		 * @return {boolean} whether the Popover is currently opened
 		 * @public
 		 * @since 1.9.1
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Popover.prototype.isOpen = function () {
 			return this.oPopup && this.oPopup.isOpen();

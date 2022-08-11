@@ -36,7 +36,6 @@ sap.ui.define([
 	 * @experimental As of version 1.58
 	 * @ui5-restricted sap.ui.mdc
 	 * @alias sap.ui.mdc.ActionToolbar
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var ActionToolbar = OverflowToolbar.extend("sap.ui.mdc.ActionToolbar", {

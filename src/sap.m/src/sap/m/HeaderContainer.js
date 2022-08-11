@@ -127,7 +127,6 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @alias sap.m.HeaderContainer
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var HeaderContainer = Control.extend("sap.m.HeaderContainer", /** @lends sap.m.HeaderContainer.prototype */ {
 			metadata: {

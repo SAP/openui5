@@ -25,7 +25,6 @@ sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/
 	 * @public
 	 * @since 1.34.0
 	 * @alias sap.ui.unified.CalendarAppointment
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CalendarAppointment = DateTypeRange.extend("sap.ui.unified.CalendarAppointment", /** @lends sap.ui.unified.CalendarAppointment.prototype */ { metadata : {
 

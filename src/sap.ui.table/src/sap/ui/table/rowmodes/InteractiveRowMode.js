@@ -33,7 +33,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var InteractiveRowMode = RowMode.extend("sap.ui.table.rowmodes.InteractiveRowMode", /** @lends sap.ui.table.rowmodes.InteractiveRowMode.prototype */ {
 		metadata: {

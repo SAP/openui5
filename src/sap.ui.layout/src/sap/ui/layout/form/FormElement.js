@@ -30,7 +30,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.form.FormElement
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FormElement = Element.extend("sap.ui.layout.form.FormElement", /** @lends sap.ui.layout.form.FormElement.prototype */ { metadata : {
 
@@ -207,7 +206,6 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.core.Label} <code>Label</code> control used to render the label
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FormElement.prototype.getLabelControl = function() {
 

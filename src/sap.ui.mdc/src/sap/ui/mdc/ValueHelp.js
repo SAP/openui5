@@ -90,7 +90,6 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @experimental As of version 1.95
 	 * @alias sap.ui.mdc.ValueHelp
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ValueHelp = Element.extend("sap.ui.mdc.ValueHelp", /** @lends sap.ui.mdc.ValueHelp.prototype */
 	{

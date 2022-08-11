@@ -40,7 +40,6 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.60.0
 	 * @alias sap.ui.mdc.field.FieldValueHelpMTableWrapper
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FieldValueHelpMTableWrapper = FieldValueHelpTableWrapperBase.extend("sap.ui.mdc.field.FieldValueHelpMTableWrapper", /** @lends sap.ui.mdc.field.FieldValueHelpMTableWrapper.prototype */
 	{

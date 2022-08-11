@@ -161,7 +161,6 @@ function(
 	 * @public
 	 * @alias sap.m.Input
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/input-field/ Input}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Input = InputBase.extend("sap.m.Input", /** @lends sap.m.Input.prototype */ { metadata : {
 		interfaces : [
@@ -1276,7 +1275,6 @@ function(
 	 * @param {function} fnFilter The filter function is called when displaying suggestion items and has two input parameters: the first one is the string that is currently typed in the input field and the second one is the item that is being filtered. Returning true will add this item to the popup, returning false will not display it.
 	 * @returns {this} this pointer for chaining
 	 * @since 1.16.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Input.prototype.setFilterFunction = function(fnFilter) {
 		// reset to default function when calling with null or undefined
@@ -1315,7 +1313,6 @@ function(
 	 * @param {function} fnFilter The result function is called with one parameter: the sap.m.ColumnListItem that is selected. The function must return a result string that will be displayed as the input field's value.
 	 * @returns {this} this pointer for chaining
 	 * @since 1.21.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Input.prototype.setRowResultFunction = function(fnFilter) {
 		var sSelectedRow;

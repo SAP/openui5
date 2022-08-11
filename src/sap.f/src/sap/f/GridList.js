@@ -100,7 +100,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.f.GridList
-	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridList = ListBase.extend("sap.f.GridList", { metadata : {
 		library: "sap.f",

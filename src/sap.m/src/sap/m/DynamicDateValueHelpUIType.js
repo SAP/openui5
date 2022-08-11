@@ -23,7 +23,6 @@ sap.ui.define(['sap/ui/core/Element'],
 		 * @public
 		 * @since 1.92
 		 * @alias sap.m.DynamicDateValueHelpUIType
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 * @experimental Since 1.92. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 		 */
 		var DynamicDateValueHelpUIType = Element.extend("sap.m.DynamicDateValueHelpUIType", /** @lends sap.m.DynamicDateValueHelpUIType.prototype */ {

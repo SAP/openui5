@@ -38,7 +38,6 @@ sap.ui.define([
 	 * @since 1.9.1
 	 * @deprecated as of version 1.38. There is not an exact replacement.
 	 * @alias sap.ui.ux3.ThingViewer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ThingViewer = Control.extend("sap.ui.ux3.ThingViewer", /** @lends sap.ui.ux3.ThingViewer.prototype */ { metadata : {
 

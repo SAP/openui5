@@ -22,7 +22,6 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 	 * @public
 	 * @since 1.73
 	 * @alias sap.m.plugins.DataStateIndicator
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DataStateIndicator = PluginBase.extend("sap.m.plugins.DataStateIndicator", /** @lends sap.m.plugins.DataStateIndicator.prototype */ { metadata: {
 		library: "sap.m",

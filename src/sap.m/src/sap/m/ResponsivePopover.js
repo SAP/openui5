@@ -66,7 +66,6 @@ sap.ui.define([
 	 * @since 1.15.1
 	 * @alias sap.m.ResponsivePopover
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/popover/ Responsive Popover}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsivePopover = Control.extend("sap.m.ResponsivePopover", /** @lends sap.m.ResponsivePopover.prototype */ { metadata : {
 
@@ -286,7 +285,6 @@ sap.ui.define([
 	 * @function
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 
@@ -297,7 +295,6 @@ sap.ui.define([
 	 * @function
 	 * @return {boolean} whether the ResponsivePopover is currently opened
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 
@@ -419,7 +416,6 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control|HTMLElement} oParent When this control is displayed on tablet or desktop, the ResponsivePopover is positioned relative to this UI5 control or DOM element.
 	 * @returns {sap.m.Popover|sap.m.Dialog} Reference to the opening control
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ResponsivePopover.prototype.openBy = function(oParent){
 		if (!this._bAppendedToUIArea && !this.getParent()) {

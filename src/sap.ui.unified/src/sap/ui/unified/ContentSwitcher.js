@@ -38,7 +38,6 @@ sap.ui.define([
 	 * API is not yet finished and might change completely
 	 * @deprecated Since version 1.44.0.
 	 * @alias sap.ui.unified.ContentSwitcher
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ContentSwitcher = Control.extend("sap.ui.unified.ContentSwitcher", /** @lends sap.ui.unified.ContentSwitcher.prototype */ { metadata : {
 

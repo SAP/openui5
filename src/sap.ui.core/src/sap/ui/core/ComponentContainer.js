@@ -61,7 +61,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @alias sap.ui.core.ComponentContainer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ComponentContainer = Control.extend("sap.ui.core.ComponentContainer", /** @lends sap.ui.core.ComponentContainer.prototype */ {
 		metadata : {

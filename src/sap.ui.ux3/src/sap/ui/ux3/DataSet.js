@@ -48,7 +48,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated as of version 1.38. Use a container by choice from the {@link sap.m} library, instead.
 	 * @alias sap.ui.ux3.DataSet
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DataSet = Control.extend("sap.ui.ux3.DataSet", /** @lends sap.ui.ux3.DataSet.prototype */ { metadata : {
 
@@ -383,7 +382,6 @@ sap.ui.define([
 	 *
 	 * @return {int} selected index
 	 * @protected
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	DataSet.prototype.getLeadSelection = function() {
 		return this.selectionModel.getLeadSelectedIndex();
@@ -395,7 +393,6 @@ sap.ui.define([
 	 * @param {int} iIIndex set LeadSelection index
 	 * @type void
 	 * @protected
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	DataSet.prototype.setLeadSelection = function(iIndex) {
 		this.selectionModel.setLeadSelectedIndex(iIndex);
@@ -657,7 +654,6 @@ sap.ui.define([
 	 *         ToolbarItem
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	DataSet.prototype.addToolbarItem = function(oToolbarItem) {
 		this._getToolbar().addItem(oToolbarItem);
@@ -671,7 +667,6 @@ sap.ui.define([
 	 * @param {sap.ui.commons.ToolbarItem} oOToolbarItem
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	DataSet.prototype.removeToolbarItem = function(oToolbarItem) {
 		this._getToolbar().removeItem(oToolbarItem);

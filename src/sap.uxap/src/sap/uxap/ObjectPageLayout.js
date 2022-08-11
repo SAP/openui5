@@ -141,7 +141,6 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.uxap.ObjectPageLayout
 	 * @since 1.26
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectPageLayout = Control.extend("sap.uxap.ObjectPageLayout", /** @lends sap.uxap.ObjectPageLayout.prototype */ {
 		metadata: {
@@ -2037,7 +2036,6 @@ sap.ui.define([
 	 * @param {int} [iDuration=0] Scroll duration (in ms)
 	 * @param {int} [iOffset=0] Additional pixels to scroll
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset, bIsTabClicked, bRedirectScroll) {
 		var oSection = this.oCore.byId(sId),
@@ -2274,7 +2272,6 @@ sap.ui.define([
 	 *
 	 * @type string
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ObjectPageLayout.prototype.getScrollingSectionId = function () {
 		return this._sScrolledSectionId;

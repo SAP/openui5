@@ -46,7 +46,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.ui.table.Table</code> control.
 	 * @alias sap.ui.commons.RowRepeater
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RowRepeater = Control.extend("sap.ui.commons.RowRepeater", /** @lends sap.ui.commons.RowRepeater.prototype */ { metadata : {
 
@@ -289,7 +288,6 @@ sap.ui.define([
 	 *
 	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RowRepeater.prototype.triggerShowMore = function() {
 
@@ -351,7 +349,6 @@ sap.ui.define([
 	 *         The new value of number of rows displayed.
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RowRepeater.prototype.resize = function(numberOfRows) {
 
@@ -409,7 +406,6 @@ sap.ui.define([
 	 *         The ID if the filter.
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RowRepeater.prototype.applyFilter = function(id) {
 
@@ -459,7 +455,6 @@ sap.ui.define([
 	 *         The ID of the sorter.
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RowRepeater.prototype.triggerSort = function(id) {
 
@@ -507,7 +502,6 @@ sap.ui.define([
 	 *
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RowRepeater.prototype.firstPage = function() {
 
@@ -566,7 +560,6 @@ sap.ui.define([
 	 *
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RowRepeater.prototype.lastPage = function() {
 
@@ -626,7 +619,6 @@ sap.ui.define([
 	 *
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RowRepeater.prototype.previousPage = function() {
 
@@ -685,7 +677,6 @@ sap.ui.define([
 	 *
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RowRepeater.prototype.nextPage = function() {
 
@@ -747,7 +738,6 @@ sap.ui.define([
 	 *         The index of the page to go to.
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RowRepeater.prototype.gotoPage = function(iPageNumber) {
 

@@ -32,7 +32,6 @@ sap.ui.define([
 	 * @experimental As of version 1.54
 	 * @ui5-restricted sap.ui.mdc
 	 * @alias sap.ui.mdc.field.FieldInfoBase
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FieldInfoBase = Element.extend("sap.ui.mdc.field.FieldInfoBase", /** @lends sap.ui.mdc.field.FieldInfoBase.prototype */
 	{

@@ -29,7 +29,6 @@ sap.ui.define(['./library', 'sap/ui/core/LayoutData'],
 	 * @public
 	 * @since 1.20
 	 * @alias sap.m.ToolbarLayoutData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToolbarLayoutData = LayoutData.extend("sap.m.ToolbarLayoutData", /** @lends sap.m.ToolbarLayoutData.prototype */ { metadata : {
 

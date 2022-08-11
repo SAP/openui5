@@ -54,7 +54,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated as of version 1.38, replaced by {@link sap.m.Input}
 	 * @alias sap.ui.commons.TextField
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TextField = Control.extend("sap.ui.commons.TextField", /** @lends sap.ui.commons.TextField.prototype */ { metadata : {
 
@@ -726,7 +725,6 @@ sap.ui.define([
 	 *
 	 * @return {string} live value
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TextField.prototype.getLiveValue = function() {
 		var oIDomRef = this.getInputDomRef();

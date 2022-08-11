@@ -37,7 +37,6 @@ sap.ui.define([
 	 * @deprecated Since version 1.14.2.
 	 * The LocalBusyIndicator Control is not needed anymore by the new implementation of the LBI. Hence, it is not used anymore.
 	 * @alias sap.ui.core.LocalBusyIndicator
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var LocalBusyIndicator = Control.extend("sap.ui.core.LocalBusyIndicator", /** @lends sap.ui.core.LocalBusyIndicator.prototype */ {
 		metadata : {

@@ -52,7 +52,6 @@ sap.ui.define([
 	 * @experimental
 	 * @since 1.85
 	 * @alias sap.ui.mdc.table.V4AnalyticsPropertyHelper
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PropertyHelper = TablePropertyHelper.extend("sap.ui.mdc.table.V4AnalyticsPropertyHelper", {
 		constructor: function(aProperties, oParent) {

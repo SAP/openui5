@@ -81,7 +81,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.NavigationMode = {
 
@@ -109,7 +108,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.RowActionType = {
 
@@ -140,7 +138,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SelectionBehavior = {
 
@@ -171,7 +168,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SelectionMode = {
 
@@ -209,7 +205,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SortOrder = {
 
@@ -234,7 +229,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	 * @version ${version}
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.VisibleRowCountMode = {
 

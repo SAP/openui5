@@ -50,7 +50,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.12
 	 * @alias sap.m.Column
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Column = Element.extend("sap.m.Column", /** @lends sap.m.Column.prototype */ { metadata : {
 

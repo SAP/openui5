@@ -41,7 +41,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.77
 	 * @alias sap.ui.integration.cards.NumericHeader
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NumericHeader = FNumericHeader.extend("sap.ui.integration.cards.NumericHeader", {
 

@@ -85,7 +85,6 @@ sap.ui.define([
 	 * @experimental
 	 * @since 1.83
 	 * @alias sap.ui.mdc.table.PropertyHelper
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.table.PropertyHelper", {
 		constructor: function(aProperties, oParent, mExtensionAttributes) {

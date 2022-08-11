@@ -38,7 +38,6 @@ sap.ui.define([
 	 * @since 1.97.0
 	 * @experimental Since 1.97.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.ColorPalettePopover
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ColorPalettePopover = WebComponent.extend("sap.ui.webc.main.ColorPalettePopover", {
 		metadata: {

@@ -214,7 +214,6 @@ sap.ui.define([
 		 * @enum {string}
 		 * @private
 		 * @since 1.75
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Operator.ValueType = {
 				/**

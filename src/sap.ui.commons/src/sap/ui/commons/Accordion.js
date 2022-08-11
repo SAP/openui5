@@ -36,7 +36,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.Accordion
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Accordion = Control.extend("sap.ui.commons.Accordion", /** @lends sap.ui.commons.Accordion.prototype */ { metadata : {
 
@@ -627,7 +626,6 @@ sap.ui.define([
 	 *         Id of the section that is being opened
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) design time meta model
 	 */
 	Accordion.prototype.openSection = function(sSectionId){
 
@@ -658,7 +656,6 @@ sap.ui.define([
 	 *         Id of the section that is being closed
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) design time meta model
 	 */
 	Accordion.prototype.closeSection = function(sSectionId){
 

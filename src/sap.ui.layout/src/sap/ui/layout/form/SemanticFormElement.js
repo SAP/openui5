@@ -35,7 +35,6 @@ sap.ui.define([
 	 * @experimental As of version 1.86
 	 * @since 1.86.0
 	 * @alias sap.ui.layout.form.SemanticFormElement
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SemanticFormElement = FormElement.extend("sap.ui.layout.form.SemanticFormElement", /** @lends sap.ui.layout.form.SemanticFormElement.prototype */ { metadata : {
 

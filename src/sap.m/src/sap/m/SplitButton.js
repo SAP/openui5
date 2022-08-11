@@ -50,7 +50,6 @@ function(
 		 * @private
 		 * @ui5-restricted sap.m.MenuButton,sap.ui.richtextEditor.ToolbarWrapper
 		 * @alias sap.m.SplitButton
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var SplitButton = Control.extend("sap.m.SplitButton", /** @lends sap.m.SplitButton.prototype */ { metadata : {
 

@@ -26,7 +26,6 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/core/IconPool'],
 	 * @constructor
 	 * @public
 	 * @alias sap.m.SuggestionItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SuggestionItem = Item.extend("sap.m.SuggestionItem", /** @lends sap.m.SuggestionItem.prototype */ { metadata : {
 

@@ -164,7 +164,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.ButtonStyle = {
@@ -205,7 +204,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 * @typedef {sap.ui.unified.ColorPickerMode}
 	 * @public
 	 * @deprecated Since version 1.48.0. Use {@link sap.ui.unified.ColorPickerMode} instead.
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ColorPickerMode = sap.ui.unified.ColorPickerMode;
 
@@ -215,7 +213,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 * @name sap.ui.commons.FormattedTextViewControl
 	 * @interface
 	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 
@@ -225,7 +222,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.HorizontalDividerHeight = {
@@ -262,7 +258,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.HorizontalDividerType = {
@@ -287,7 +282,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.LabelDesign = {
@@ -312,7 +306,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.MenuBarDesign = {
@@ -337,7 +330,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.MessageType = {
@@ -368,7 +360,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.PaginatorEvent = {
@@ -411,7 +402,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.RatingIndicatorVisualMode = {
@@ -442,7 +432,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.RowRepeaterDesign = {
@@ -474,7 +463,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 * @final
 	 * @namespace
 	 * @public
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.SplitterSize = DataType.createType('sap.ui.commons.SplitterSize', {
@@ -492,7 +480,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.TextViewColor = {
@@ -529,7 +516,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.TextViewDesign = {
@@ -627,7 +613,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.ToolbarDesign = {
@@ -667,7 +652,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 * @name sap.ui.commons.ToolbarItem
 	 * @interface
 	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 
@@ -677,7 +661,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.ToolbarSeparatorDesign = {
@@ -702,7 +685,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.TreeSelectionMode = {
@@ -740,7 +722,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 * @enum {string}
 	 * @public
 	 * @since 1.7.2
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.TriStateCheckBoxState = {
@@ -777,7 +758,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.enums.AreaDesign = {
@@ -808,7 +788,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.enums.BorderDesign = {
@@ -833,7 +812,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.enums.Orientation = {
@@ -893,7 +871,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.layout.BackgroundDesign = {
@@ -962,7 +939,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.layout.BorderLayoutAreaTypes = {
@@ -1007,7 +983,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.layout.HAlign = {
@@ -1063,7 +1038,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.layout.Padding = {
@@ -1123,7 +1097,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.layout.Separation = {
@@ -1192,7 +1165,6 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 	 *
 	 * @enum {string}
 	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 * @deprecated as of version 1.38
 	 */
 	thisLib.layout.VAlign = {

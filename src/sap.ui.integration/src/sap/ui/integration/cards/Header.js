@@ -48,7 +48,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.77
 	 * @alias sap.ui.integration.cards.Header
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Header = FHeader.extend("sap.ui.integration.cards.Header", {
 

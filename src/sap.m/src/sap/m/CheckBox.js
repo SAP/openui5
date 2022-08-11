@@ -89,7 +89,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.CheckBox
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CheckBox = Control.extend("sap.m.CheckBox", /** @lends sap.m.CheckBox.prototype */ { metadata : {
 

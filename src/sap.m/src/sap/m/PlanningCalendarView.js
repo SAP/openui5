@@ -29,7 +29,6 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
 	 * @public
 	 * @since 1.34.0
 	 * @alias sap.m.PlanningCalendarView
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PlanningCalendarView = Element.extend("sap.m.PlanningCalendarView", /** @lends sap.m.PlanningCalendarView.prototype */ { metadata : {
 

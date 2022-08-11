@@ -61,7 +61,6 @@ sap.ui.define([
 	 * @deprecated as of version 1.98. Use the {@link sap.m.IllustratedMessage} instead.
 	 * @since 1.88
 	 * @alias sap.f.IllustratedMessage
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var IllustratedMessage = sapMIllustratedMessage.extend("sap.f.IllustratedMessage", /** @lends sap.f.IllustratedMessage.prototype */ {
 		metadata: {

@@ -46,7 +46,6 @@ sap.ui.define([
 	 * @since 1.46
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/avatar/ Avatar}
 	 * @alias sap.f.Avatar
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Avatar = MAvatar.extend("sap.f.Avatar", {
 		metadata: {

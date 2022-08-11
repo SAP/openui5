@@ -58,7 +58,6 @@ sap.ui.define([
 	 * API is not yet finished and might change completely
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.ux3.Exact
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Exact = Control.extend("sap.ui.ux3.Exact", /** @lends sap.ui.ux3.Exact.prototype */ { metadata : {
 
@@ -189,7 +188,6 @@ sap.ui.define([
 	 *
 	 * @type sap.ui.ux3.ExactArea
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Exact.prototype.getResultArea = function() {
 		return this._resultArea;
@@ -201,7 +199,6 @@ sap.ui.define([
 	 *
 	 * @type sap.ui.commons.SearchField
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Exact.prototype.getSearchField = function() {
 		return this._search_input;

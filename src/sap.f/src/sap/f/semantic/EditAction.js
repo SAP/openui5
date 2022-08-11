@@ -22,7 +22,6 @@ sap.ui.define(['./SemanticButton'], function(SemanticButton) {
 	* @public
 	* @since 1.50
 	* @alias sap.f.semantic.EditAction
-	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	var EditAction = SemanticButton.extend("sap.f.semantic.EditAction", /** @lends sap.f.semantic.EditAction.prototype */ {
 		metadata: {

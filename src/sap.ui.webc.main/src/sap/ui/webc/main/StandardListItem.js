@@ -47,7 +47,6 @@ sap.ui.define([
 	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.StandardListItem
 	 * @implements sap.ui.webc.main.IListItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var StandardListItem = WebComponent.extend("sap.ui.webc.main.StandardListItem", {
 		metadata: {

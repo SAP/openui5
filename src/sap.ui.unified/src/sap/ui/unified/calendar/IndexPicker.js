@@ -36,7 +36,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.93.0
 	 * @alias sap.ui.unified.calendar.IndexPicker
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var IndexPicker = Control.extend("sap.ui.unified.calendar.IndexPicker", {
 		metadata: {

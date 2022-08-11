@@ -28,7 +28,6 @@ sap.ui.define([
 	* @public
 	* @since 1.46.0
 	* @alias sap.f.semantic.SemanticControl
-	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	var SemanticControl = Element.extend("sap.f.semantic.SemanticControl", /** @lends sap.f.semantic.SemanticControl.prototype */ {
 		metadata: {

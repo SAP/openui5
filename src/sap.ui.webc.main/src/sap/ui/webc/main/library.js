@@ -248,7 +248,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -259,7 +258,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.95.0
 		 * @experimental Since 1.95.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -270,7 +268,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -281,7 +278,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -292,7 +288,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -303,7 +298,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -314,7 +308,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -325,7 +318,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -336,7 +328,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -347,7 +338,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -358,7 +348,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.102.0
 		 * @experimental Since 1.102.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -369,7 +358,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -380,7 +368,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.95.0
 		 * @experimental Since 1.95.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -391,7 +378,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -402,7 +388,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -413,7 +398,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -424,7 +408,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -435,7 +418,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -446,7 +428,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -457,7 +438,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**
@@ -467,7 +447,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.AvatarColorScheme = {
 
@@ -546,7 +525,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.AvatarGroupType = {
 
@@ -571,7 +549,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.AvatarShape = {
 
@@ -596,7 +573,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.AvatarSize = {
 
@@ -639,7 +615,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.95.0
 		 * @experimental Since 1.95.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.BreadcrumbsDesign = {
 
@@ -664,7 +639,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.95.0
 		 * @experimental Since 1.95.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.BreadcrumbsSeparatorStyle = {
 
@@ -713,7 +687,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.BusyIndicatorSize = {
 
@@ -744,7 +717,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.ButtonDesign = {
 
@@ -793,7 +765,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.CalendarSelectionMode = {
 
@@ -824,7 +795,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.CarouselArrowsPlacement = {
 
@@ -849,7 +819,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.GrowingMode = {
 
@@ -880,7 +849,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.99.0
 		 * @experimental Since 1.99.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.HasPopup = {
 
@@ -923,7 +891,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.InputType = {
 
@@ -972,7 +939,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.LinkDesign = {
 
@@ -1003,7 +969,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.ListGrowingMode = {
 
@@ -1034,7 +999,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.ListItemType = {
 
@@ -1065,7 +1029,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.ListMode = {
 
@@ -1120,7 +1083,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.ListSeparators = {
 
@@ -1151,7 +1113,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.MessageStripDesign = {
 
@@ -1188,7 +1149,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.PanelAccessibleRole = {
 
@@ -1219,7 +1179,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.PopoverHorizontalAlign = {
 
@@ -1256,7 +1215,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.PopoverPlacementType = {
 
@@ -1293,7 +1251,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.PopoverVerticalAlign = {
 
@@ -1330,7 +1287,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.Priority = {
 
@@ -1367,7 +1323,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.SemanticColor = {
 
@@ -1410,7 +1365,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.SwitchDesign = {
 
@@ -1435,7 +1389,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.TabLayout = {
 
@@ -1460,7 +1413,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.TableGrowingMode = {
 
@@ -1491,7 +1443,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.TableMode = {
 
@@ -1522,7 +1473,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.TableRowType = {
 
@@ -1547,7 +1497,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.99.0
 		 * @experimental Since 1.99.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.TabsOverflowMode = {
 
@@ -1572,7 +1521,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.TitleLevel = {
 
@@ -1621,7 +1569,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.ToastPlacement = {
 
@@ -1688,7 +1635,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.92.0
 		 * @experimental Since 1.92.0 This API is experimental and might change significantly.
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		thisLib.WrappingType = {
 

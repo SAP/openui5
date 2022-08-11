@@ -64,7 +64,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @experimental since 1.64
 	 * Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 * @public
 	 */
 	thisLib.CardActionType = {
@@ -123,7 +122,6 @@ sap.ui.define([
 	 * @experimental since 1.65
 	 * @public
 	 * @since 1.65
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.CardDataMode = {
 		/**
@@ -147,7 +145,6 @@ sap.ui.define([
 	 * Specifies different areas of a card where actions can be attached.
 	 *
 	 * @private
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.CardActionArea = {
 		None: "None",
@@ -163,7 +160,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.86
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.CardArea = {
 		/**
@@ -188,7 +184,6 @@ sap.ui.define([
 	 * @enum {string}
 	 * @public
 	 * @since 1.96
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.AttributesLayoutType = {
 		/**
@@ -217,7 +212,6 @@ sap.ui.define([
 	 * @property {boolean|function} visible If the action is visible. Default value is <code>true</code>.
 	 * @property {function} action The action function.
 	 * @property {object} parameters The parameters of the action.
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.CardMenuAction = DataType.createType("sap.ui.integration.CardMenuAction", {
 		isValid: function (oValue) {

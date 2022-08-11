@@ -35,7 +35,6 @@ sap.ui.define(['./ListItemBase', './library', './ActionListItemRenderer'],
 	 * @public
 	 * @alias sap.m.ActionListItem
 	 * @see {@link fiori:/action-list-item/ Action List Item}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ActionListItem = ListItemBase.extend("sap.m.ActionListItem", /** @lends sap.m.ActionListItem.prototype */ { metadata : {
 

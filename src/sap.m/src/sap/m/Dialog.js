@@ -182,7 +182,6 @@ function(
 		* @public
 		* @alias sap.m.Dialog
 		* @see {@link fiori:https://experience.sap.com/fiori-design-web/dialog/ Dialog}
-		* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		*/
 		var Dialog = Control.extend("sap.m.Dialog", /** @lends sap.m.Dialog.prototype */ {
 			metadata: {
@@ -641,7 +640,6 @@ function(
 		 *
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Dialog.prototype.open = function () {
 
@@ -691,7 +689,6 @@ function(
 		 *
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Dialog.prototype.close = function () {
 			this._bOpenAfterClose = false;
@@ -726,7 +723,6 @@ function(
 		 * @returns {boolean} Whether the dialog is open.
 		 * @public
 		 * @since 1.9.1
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Dialog.prototype.isOpen = function () {
 			return !!this.oPopup && this.oPopup.isOpen();

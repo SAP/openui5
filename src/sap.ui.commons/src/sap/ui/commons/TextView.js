@@ -43,7 +43,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.TextView
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TextView = Control.extend("sap.ui.commons.TextView", /** @lends sap.ui.commons.TextView.prototype */ { metadata : {
 
