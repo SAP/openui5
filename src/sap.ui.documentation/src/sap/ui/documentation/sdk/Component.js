@@ -206,6 +206,7 @@ sap.ui.define([
 					isDevVersion: bSnapshot,
 					isBetaVersion: !bOpenUI5 && !bSnapshot && /-beta$/i.test(sVersionSuffix),
 					isInternal: !!bIsInternal,
+					isDevEnv: /testsuite/.test(oVersionInfo.name),
 					supportsSWA: bSupportsSWA,
 					libraries: oVersionInfo.libraries,
 					allowedMembers: this.aAllowedMembers
