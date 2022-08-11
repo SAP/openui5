@@ -150,7 +150,7 @@ sap.ui.define([
 			if (vError !== "Reload triggered") {
 				var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
 				showMessageBox(
-					vError.message,
+					oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", vError.message),
 					{title: oRtaResourceBundle.getText("MSG_ADAPTATION_COULD_NOT_START")},
 					"error"
 				);
