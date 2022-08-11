@@ -2516,6 +2516,7 @@ sap.ui.define([
 		success("foo('bar')", "('bar')");
 		success("foo('bar()')", "('bar()')");
 		success("foo('bar')/baz('qux')", "('qux')");
+		fail();
 		fail("foo");
 		fail("foo('bar'");
 		fail("foo('bar')/baz)");

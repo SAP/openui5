@@ -1722,12 +1722,14 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath - The path
 	 * @returns {number} The index of the key predicate
-	 * @throws {Error} If the last segment contains no key predicate
+	 * @throws {Error} If no path is given or the last segment contains no key predicate
 	 *
 	 * @private
 	 */
 	ODataModel.prototype.getPredicateIndex = function (sPath) {
-		var iPredicateIndex = sPath.indexOf("(", sPath.lastIndexOf("/"));
+		var iPredicateIndex = sPath
+				? sPath.indexOf("(", sPath.lastIndexOf("/"))
+				: -1;
 
 		if (iPredicateIndex < 0 || !sPath.endsWith(")")) {
 			throw new Error("Not a list context path to an entity: " + sPath);
