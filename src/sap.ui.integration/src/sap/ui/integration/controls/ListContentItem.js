@@ -112,5 +112,11 @@ sap.ui.define([
 		return oAvatar;
 	};
 
+	ListContentItem.prototype._getVisibleAttributes = function () {
+		return this.getAttributes().filter(function (oAttribute) {
+			return oAttribute.getVisible();
+		});
+	};
+
 	return ListContentItem;
 });

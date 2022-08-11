@@ -778,6 +778,17 @@
                         "$ref": "#/definitions/simpleBinding"
                     }
                 ]
+            },
+            "visible": {
+              "description": "Visibility of the item",
+              "oneOf": [
+                {
+                 "type": "boolean"
+                },
+                {
+                  "$ref": "#/definitions/simpleBinding"
+                }
+              ]
             }
         }
     },

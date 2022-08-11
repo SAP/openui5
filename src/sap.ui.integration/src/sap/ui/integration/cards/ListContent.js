@@ -279,7 +279,8 @@ sap.ui.define([
 				mSettings.attributes.push(new ObjectStatus({
 					text: attr.value,
 					state: attr.state,
-					emptyIndicatorMode: EmptyIndicatorMode.On
+					emptyIndicatorMode: EmptyIndicatorMode.On,
+					visible: attr.visible
 				}));
 			});
 		}
