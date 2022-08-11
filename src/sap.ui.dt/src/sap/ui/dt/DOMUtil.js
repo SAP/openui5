@@ -420,18 +420,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Inserts a &lt;style> tag with specified styles into #overlay-container
-	 * @param {string} sStyles - Plain CSS as a string to be added into the page
-	 * @param {HTMLElement} oTarget - Target DOM Node where to add &lt;style> tag with CSS
-	 */
-	DOMUtil.insertStyles = function (sStyles, oTarget) {
-		var oStyle = document.createElement('style');
-		oStyle.type = 'text/css';
-		oStyle.appendChild(document.createTextNode(sStyles));
-		oTarget.appendChild(oStyle);
-	};
-
-	/**
 	 * Check whether the target node is a descendant of a node referenced by id
 	 * @param {string} sId - ID of a potential parent node
 	 * @param {HTMLElement} oTargetNode - Node to look for in a potential parent node

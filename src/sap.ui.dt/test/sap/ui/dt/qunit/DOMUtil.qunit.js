@@ -13,17 +13,25 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	DOMUtil.insertStyles('\
+	var style = document.createElement("style");
+	document.head.appendChild(style);
+	style.sheet.insertRule('\
 		#left-part .withAfterElement::after {\
 			content: ":";\
 		}\
+	');
+	style.sheet.insertRule('\
 		#left-part .withBeforeElement::before {\
 			content: "Nr.";\
 			color: white;\
 		}\
+	');
+	style.sheet.insertRule('\
 		#left-part .withBeforeElementAndAttrContent::before {\
 			content: attr(data-sap-ui-icon-content);\
 		}\
+	');
+	style.sheet.insertRule('\
 		.shrink {\
 			transform: scale(0.1, 0.5);\
 			-webkit-transform: scale(0.1, 0.5);\
@@ -31,7 +39,7 @@ sap.ui.define([
 			-ms-transform: scale(0.1, 0.5);\
 			-o-transform: scale(0.1, 0.5);\
 		}\
-	', document.head);
+	');
 
 	/**
 	 * getSize
@@ -520,37 +528,6 @@ sap.ui.define([
 		QUnit.test("a svg with height and width but visible none", function(assert) {
 			this.oNode.style.display = "none";
 			assert.strictEqual(DOMUtil.isVisible(this.oNode), false, "with display:none the domRef is not visible");
-		});
-	});
-
-	QUnit.module("insertStyles()", function () {
-		QUnit.test("basic functionality", function (assert) {
-			var oFixtureNode = document.getElementById("qunit-fixture");
-			var oNode = document.createElement("div");
-			oNode.classList.add("customClass");
-			oNode.style.width = "300px";
-			oNode.style.height = "300px";
-			oNode.style.opacity = 1;
-			oFixtureNode.appendChild(oNode);
-
-			var oComputedStyle = window.getComputedStyle(oNode);
-			assert.strictEqual(parseFloat(oComputedStyle.getPropertyValue("opacity")), 1);
-			assert.strictEqual(parseInt(oComputedStyle.getPropertyValue("width")), 300);
-			assert.strictEqual(parseInt(oComputedStyle.getPropertyValue("height")), 300);
-
-			DOMUtil.insertStyles("\
-				.customClass {\
-					background-color: green;\
-					width: 100px !important;\
-					height: 100px !important;\
-					opacity: 0.5 !important;\
-				}\
-			", oFixtureNode);
-
-			oComputedStyle = window.getComputedStyle(oNode);
-			assert.strictEqual(parseFloat(oComputedStyle.getPropertyValue("opacity")), 0.5);
-			assert.strictEqual(parseInt(oComputedStyle.getPropertyValue("width")), 100);
-			assert.strictEqual(parseInt(oComputedStyle.getPropertyValue("height")), 100);
 		});
 	});
 

@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
-	"sap/ui/dt/DOMUtil",
 	"sap/ui/core/Core"
 ], function (
 	DesignTime,
@@ -18,17 +17,9 @@ sap.ui.define([
 	ComponentContainer,
 	VerticalLayout,
 	Button,
-	DOMUtil,
 	oCore
 ) {
 	'use strict';
-
-	DOMUtil.insertStyles('\
-		.sapUiDtElementOverlay {\
-			box-sizing: border-box;\
-			border: 1px dashed grey;\
-		}\
-	', document.head);
 
 	var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 		/**

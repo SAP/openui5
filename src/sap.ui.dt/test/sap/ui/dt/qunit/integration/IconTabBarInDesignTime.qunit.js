@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/IconTabBar",
 	"sap/m/IconTabFilter",
-	"sap/ui/dt/DOMUtil",
 	"sap/ui/core/Core"
 ], function(
 	DesignTime,
@@ -18,17 +17,9 @@ sap.ui.define([
 	Button,
 	IconTabBar,
 	IconTabFilter,
-	DOMUtil,
 	oCore
 ) {
 	'use strict';
-
-	DOMUtil.insertStyles('\
-		.sapUiDtElementOverlay {\
-			box-sizing: border-box;\
-			border: 1px dashed grey;\
-		}\
-	', document.head);
 
 	QUnit.module("Given the IconTabBar is created with 3 filters and different content..", {
 		beforeEach: function(assert) {
