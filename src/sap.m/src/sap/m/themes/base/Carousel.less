@@ -58,7 +58,7 @@
 }
 
 //show the left and right arrows when the carousel is focused
-.sapMCrsl:focus .sapMCrslHud a {
+.sapMCrsl:focus .sapMCrslHud .sapMCrslArrow {
 	opacity: 0.3;
 }
 
@@ -191,7 +191,7 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 	width: 100%;
 }
 
-.sapMCrslHud a {
+.sapMCrslHud .sapMCrslArrow {
 	z-index: 2;
 	opacity: 0;
 	display: none;
@@ -241,15 +241,15 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 	}
 }
 
-.sapMCrslHudMiddle a {
+.sapMCrslHudMiddle .sapMCrslArrow {
 	top:  calc(~"50% - 1rem");
 }
 
-.sapMCrslHudTop a {
+.sapMCrslHudTop .sapMCrslArrow {
 	top: 50%;
 }
 
-.sapMCrslHudBottom a {
+.sapMCrslHudBottom .sapMCrslArrow {
 	top: calc(~"50% - 2rem");
 }
 
@@ -486,8 +486,8 @@ html[data-sap-ui-animation='off'] {
 	background: @sapUiBaseBG;
 }
 
-.sapMCrsl .sapMCrslHud.sapMCrslLeftmost a.sapMCrslPrev,
-.sapMCrsl .sapMCrslHud.sapMCrslRightmost a.sapMCrslNext {
+.sapMCrsl .sapMCrslHud.sapMCrslLeftmost .sapMCrslArrow.sapMCrslPrev,
+.sapMCrsl .sapMCrslHud.sapMCrslRightmost .sapMCrslArrow.sapMCrslNext {
 	opacity: 0;
 	display: none;
 }
@@ -530,7 +530,7 @@ html[data-sap-ui-animation='off'] {
 	overflow: hidden;
 }
 
-.sapMCrsl:hover .sapMCrslHud a {
+.sapMCrsl:hover .sapMCrslHud .sapMCrslArrow {
 	opacity: 1;
 	display: block;
 }

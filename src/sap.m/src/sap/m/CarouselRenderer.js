@@ -286,9 +286,9 @@ sap.ui.define([
 	CarouselRenderer._renderArrow = function (oRM, oCarousel, sDirection) {
 		var sShort = sDirection.slice(0, 4);
 
-		oRM.openStart("a")
+		oRM.openStart("span")
+			.class("sapMCrslArrow")
 			.class("sapMCrsl" + capitalize(sShort))
-			.attr("tabindex", "-1")
 			.attr("data-slide", sShort)
 			.attr("title", oResourceBundle.getText("PAGINGBUTTON_" + sDirection.toUpperCase()))
 			.openEnd();
@@ -297,7 +297,7 @@ sap.ui.define([
 
 		oRM.renderControl(oCarousel._getNavigationArrow(sDirection === "previous" ? "Left" : "Right"));
 
-		oRM.close("div").close("a");
+		oRM.close("div").close("span");
 	};
 
 	/**

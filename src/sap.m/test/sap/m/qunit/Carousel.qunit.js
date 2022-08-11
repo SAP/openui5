@@ -1549,9 +1549,9 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// act
-		this.oCarousel.$().find("a.sapMCrslNext").trigger("click");
+		this.oCarousel.$().find(".sapMCrslNext").trigger("click");
 		this.oCarousel.ontouchend(oFakeEvent);
-		this.oCarousel.$().find("a.sapMCrslNext").trigger("click");
+		this.oCarousel.$().find(".sapMCrslNext").trigger("click");
 		this.oCarousel.ontouchend(oFakeEvent);
 		forceTransitionComplete(this.oCarousel);
 
@@ -1569,9 +1569,9 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// act
-		this.oCarousel.$().find("a.sapMCrslPrev").trigger("click");
+		this.oCarousel.$().find(".sapMCrslPrev").trigger("click");
 		this.oCarousel.ontouchend(oFakeEvent);
-		this.oCarousel.$().find("a.sapMCrslPrev").trigger("click");
+		this.oCarousel.$().find(".sapMCrslPrev").trigger("click");
 		this.oCarousel.ontouchend(oFakeEvent);
 
 		forceTransitionComplete(this.oCarousel);
