@@ -4,30 +4,18 @@
 
 // Provides the implementation for a MessageManager
 sap.ui.define([
-	'sap/ui/base/EventProvider',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/model/message/MessageModel',
-	'./Message',
-	'./ControlMessageProcessor',
-	'sap/ui/core/message/MessageProcessor',
-	"sap/base/util/deepEqual",
+	"./ControlMessageProcessor",
+	"./Message",
 	"sap/base/Log",
-	'sap/base/util/merge',
-	"sap/ui/core/Configuration"
-],
-	function(
-		EventProvider,
-		ManagedObject,
-		MessageModel,
-		Message,
-		ControlMessageProcessor,
-		MessageProcessor,
-		deepEqual,
-		Log,
-		merge,
-		Configuration
-	) {
-
+	"sap/base/util/deepEqual",
+	"sap/base/util/merge",
+	"sap/ui/base/EventProvider",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/message/MessageProcessor",
+	"sap/ui/model/message/MessageModel"
+], function (ControlMessageProcessor, Message, Log, deepEqual, merge, EventProvider, ManagedObject,
+		Configuration, MessageProcessor, MessageModel) {
 	"use strict";
 	/*global Map */
 

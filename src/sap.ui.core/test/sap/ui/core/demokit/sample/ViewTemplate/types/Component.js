@@ -9,32 +9,26 @@ sap.ui.define([
 	"sap/m/FlexItemData",
 	"sap/m/MessageBox",
 	"sap/ui/core/Configuration",
-	"sap/ui/core/library",
 	"sap/ui/core/LocaleData",
-	"sap/ui/core/mvc/View", // sap.ui.view()
-	"sap/ui/core/mvc/XMLView", // type : ViewType.XML
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (FlexItemData, MessageBox, Configuration, library, LocaleData, View, _XMLView,
-		BaseComponent, BindingMode, JSONModel, ODataModelV2, ODataModelV4, TestUtils) {
+], function (FlexItemData, MessageBox, Configuration, LocaleData, View, ViewType, BaseComponent,
+		BindingMode, JSONModel, ODataModelV2, ODataModelV4, TestUtils) {
 	"use strict";
-
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = library.mvc.ViewType;
 
 	return BaseComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
 		metadata : "json",
 		createContent : function () {
-			var oLocaleData = new LocaleData(Configuration.getLocale()),
-				oModelV2,
-				oModelV4,
+			var pIdentificationViewV2, pIdentificationViewV4, oModelV2, oModelV4,
+				oLocaleData = new LocaleData(Configuration.getLocale()),
 				bRealOData = TestUtils.isRealOData(),
 				sResourcePath = "sap/ui/core/sample/ViewTemplate/types/data",
-				oRootView,
 				sUriV2 = "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
 				sUriV4 = "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_edm_types_v4/0001/",
 				mViews = {
@@ -79,10 +73,10 @@ sap.ui.define([
 				updateGroupId : "EDMTypes"
 			});
 
-			oModelV2.getMetaModel().loaded().then(function () {
+			pIdentificationViewV2 = oModelV2.getMetaModel().loaded().then(function () {
 				var oMetaModel = oModelV2.getMetaModel();
 
-				View.create({
+				return View.create({
 					preprocessors : {
 						xml : {
 							bindingContexts : {meta : oMetaModel.createBindingContext(
@@ -94,19 +88,16 @@ sap.ui.define([
 					viewName : "sap.ui.core.sample.ViewTemplate.types.TemplateV2"
 				}).then(function (oView) {
 					oView.setLayoutData(new FlexItemData({growFactor : 1.0, baseSize : "0%"}));
-					oRootView.loaded().then(function () {
-						oRootView.byId("identificationBox").addItem(oView);
-					});
 					mViews["false"] = oView;
 				});
 			}, onError);
 
-			oModelV4.getMetaModel()
+			pIdentificationViewV4 = oModelV4.getMetaModel()
 				.requestObject("/com.sap.gateway.default.zui5_edm_types_v4.v0001.EdmTypes")
 				.then(function () {
 					var oMetaModel = oModelV4.getMetaModel();
 
-					View.create({
+					return View.create({
 						preprocessors : {
 							xml : {
 								bindingContexts : {meta : oMetaModel.createBindingContext(
@@ -122,37 +113,40 @@ sap.ui.define([
 					});
 				}, onError);
 
-			oRootView = sap.ui.view({
-				async : true,
-				models : {
-					undefined : oModelV2,
-					ui : new JSONModel({
-						sCode : "",
-						bCodeVisible : false,
-						iMessages : 0,
-						patterns : {
-							dateMedium : oLocaleData.getDatePattern("medium"),
-							dateShort : oLocaleData.getDatePattern("short"),
-							dateTimeLong :
-								oLocaleData.getCombinedDateTimePattern("long", "long"),
-							dateTimeMedium :
-								oLocaleData.getCombinedDateTimePattern("medium", "medium"),
-							timeLong : oLocaleData.getTimePattern("long"),
-							timeMedium : oLocaleData.getTimePattern("medium"),
-							timeShort : oLocaleData.getTimePattern("short")
-						},
-						realOData : bRealOData,
-						v2 : true,
-						v4 : false
-					}),
-					v2 : oModelV2,
-					v4 : oModelV4
-				},
-				type : ViewType.XML,
-				viewData : mViews,
-				viewName : "sap.ui.core.sample.ViewTemplate.types.Types"
+			return Promise.all([pIdentificationViewV2, pIdentificationViewV4]).then(function () {
+				return View.create({
+					models : {
+						undefined : oModelV2,
+						ui : new JSONModel({
+							sCode : "",
+							bCodeVisible : false,
+							iMessages : 0,
+							patterns : {
+								dateMedium : oLocaleData.getDatePattern("medium"),
+								dateShort : oLocaleData.getDatePattern("short"),
+								dateTimeLong :
+									oLocaleData.getCombinedDateTimePattern("long", "long"),
+								dateTimeMedium :
+									oLocaleData.getCombinedDateTimePattern("medium", "medium"),
+								timeLong : oLocaleData.getTimePattern("long"),
+								timeMedium : oLocaleData.getTimePattern("medium"),
+								timeShort : oLocaleData.getTimePattern("short")
+							},
+							realOData : bRealOData,
+							v2 : true,
+							v4 : false
+						}),
+						v2 : oModelV2,
+						v4 : oModelV4
+					},
+					type : ViewType.XML,
+					viewData : mViews,
+					viewName : "sap.ui.core.sample.ViewTemplate.types.Types"
+				}).then(function (oRootView) {
+					oRootView.byId("identificationBox").addItem(mViews["false"]);
+					return oRootView;
+				});
 			});
-			return oRootView;
 		}
 	});
 });
