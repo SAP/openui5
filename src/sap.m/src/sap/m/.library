@@ -28,10 +28,12 @@
     <!-- excludes for the JSDoc -->
     <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
         <exclude name="sap.m.js." />
+        <exclude name="sap.m._thirdparty." />
     </jsdoc>
     <!-- excludes for the JSCoverage -->
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
         <exclude name="sap.m.js." />
+        <exclude name="sap.m._thirdparty." />
     </jscoverage>
     <!-- excludes for the library-preload.js -->
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
