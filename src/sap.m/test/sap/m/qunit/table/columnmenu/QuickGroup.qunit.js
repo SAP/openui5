@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickGroup",
 	"sap/m/table/columnmenu/QuickGroupItem",
 	"sap/m/Button",
+	"sap/m/library",
 	"sap/ui/core/Core"
-], function (QUnitUtils, Menu, QuickGroup, QuickGroupItem, Button, Core) {
+], function (QUnitUtils, Menu, QuickGroup, QuickGroupItem, Button, library, Core) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -31,6 +32,18 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Defaults", function(assert) {
+		var oQuickGroup = new QuickGroup({
+			items: new QuickGroupItem()
+		});
+
+		assert.strictEqual(oQuickGroup.getItems()[0].getKey(), undefined, "Item: Key");
+		assert.strictEqual(oQuickGroup.getItems()[0].getLabel(), "", "Item: Label");
+		assert.strictEqual(oQuickGroup.getItems()[0].getGrouped(), false, "Item: Grouped");
+
+		oQuickGroup.destroy();
+	});
+
 	QUnit.test("getEffectiveQuickActions", function(assert) {
 		assert.deepEqual(this.oQuickGroup.getEffectiveQuickActions(), [this.oQuickGroup],
 			"It returns an array that contains the QuickGroup instance");
@@ -53,6 +66,10 @@ sap.ui.define([
 		assert.ok(aContent[0].getPressed(), "The first button is pressed");
 		assert.equal(aContent[1].getText(), "B", "The second button text is correct");
 		assert.ok(!aContent[1].getPressed(), "The second button is not pressed");
+	});
+
+	QUnit.test("Category", function(assert) {
+		assert.strictEqual(this.oQuickGroup.getCategory(), library.table.columnmenu.Category.Group);
 	});
 
 	QUnit.test("QuickGroupItem setGrouped", function(assert) {

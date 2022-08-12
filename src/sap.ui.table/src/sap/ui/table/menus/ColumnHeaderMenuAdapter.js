@@ -36,7 +36,7 @@ sap.ui.define([
 		constructor: function() {
 			BaseObject.apply(this, arguments);
 
-			this._bMenuItemsInjected = false;
+			this._mInjectionTarget = null;
 
 			// The menu is just associated with the column. There is no automatic notification about the destruction of the menu.
 			this._oColumnHeaderMenuObserver = new ManagedObjectObserver(function(oChange) {
@@ -46,10 +46,16 @@ sap.ui.define([
 	});
 
 	/**
-	 * Maps the column menu instance to the specified column and modifies its entries based on the column configuration.
+	 * Activates an adapter for the column and links them, if there is an adapter for the menu type the column is associated with. The adapter adds
+	 * items to the menu based on the column configuration. Should be called before the menu is opened. The menu should then be opened after the
+	 * returned <code>Promise</code> resolves, to make sure it already contains all items.
+	 * Activation is required again before opening the menu, if the column is associated with a menu of a different type, or the column
+	 * configuration that affects the added menu items is changed. In other cases, a repeated activation is not required, but possible. However,
+	 * depending on the concrete adapter implementation this might cause unnecessary overhead.
 	 *
-	 * @param {sap.ui.table.Column} oColumn The column to which the column menu instance should be mapped
-	 * @returns {Promise} A promise that resolves once the column menu instance is mapped and its entries are modified
+	 * @see sap.ui.table.menus.ColumnHeaderMenuAdapter.unlink
+	 * @param {sap.ui.table.Column} oColumn The column for which to activate an adapter
+	 * @returns {Promise} A promise that resolves once the adapter is activated and the menu items are modified
 	 */
 	ColumnHeaderMenuAdapter.activateFor = function(oColumn) {
 		var oColumnHeaderMenu = oColumn.getHeaderMenuInstance();
@@ -97,37 +103,36 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the mapping between the column menu instance and the given column.
+	 * Unlinks the column from the adapter. If a column does no longer need an adapter, for example because it is destroyed, it needs to be unlinked
+	 * for proper cleanup.
 	 *
 	 * @param {sap.ui.table.Column} oColumn The column for the mapping to be removed
 	 */
 	ColumnHeaderMenuAdapter.unlink = function(oColumn) {
-		unlink(oColumn, getAdapterName(oColumn.getHeaderMenuInstance()));
+		unlink(oColumn);
 	};
 
 	ColumnHeaderMenuAdapter.prototype._injectMenuItems = function(oColumnHeaderMenu, oColumn) {
-		if (this._bMenuItemsInjected) {
-			return;
-		}
-
-		oColumnHeaderMenu.attachBeforeClose({columnHeaderMenu: oColumnHeaderMenu, column: oColumn}, onMenuBeforeClose, this);
+		this._removeMenuItems();
 		this._oColumnHeaderMenuObserver.observe(oColumnHeaderMenu, {destroy: true});
 		this.injectMenuItems(oColumnHeaderMenu, oColumn);
-		this._bMenuItemsInjected = true;
+		this._mInjectionTarget = {
+			column: oColumn,
+			menu: oColumnHeaderMenu
+		};
 	};
 
-	ColumnHeaderMenuAdapter.prototype._removeMenuItems = function(oColumnHeaderMenu) {
-		if (!this._bMenuItemsInjected) {
+	ColumnHeaderMenuAdapter.prototype._removeMenuItems = function() {
+		if (!this._mInjectionTarget) {
 			return;
 		}
 
-		oColumnHeaderMenu.detachBeforeClose(onMenuBeforeClose, this);
-		this.removeMenuItems(oColumnHeaderMenu);
-		this._bMenuItemsInjected = false;
+		this.removeMenuItems(this._mInjectionTarget.menu);
+		this._mInjectionTarget = null;
 	};
 
 	/**
-	 * Injects entries to the column menu. Should be overwritten in child-classes.
+	 * This hook is called when menu items should be added to the column menu.
 	 *
 	 * @param {sap.ui.core.IColumnHeaderMenu} oColumnHeaderMenu Instance of the column menu
 	 * @param {sap.ui.table.Column} oColumn Instance of the column
@@ -135,14 +140,15 @@ sap.ui.define([
 	ColumnHeaderMenuAdapter.prototype.injectMenuItems = function(oColumnHeaderMenu, oColumn) {};
 
 	/**
-	 * Removes entries from the column menu. Should be overwritten in child-classes.
+	 * This hook is called when menu items should be removed from the column menu.
 	 *
 	 * @param {sap.ui.core.IColumnHeaderMenu} oColumnHeaderMenu
 	 */
 	ColumnHeaderMenuAdapter.prototype.removeMenuItems = function(oColumnHeaderMenu) {};
 
 	/**
-	 * Executed after the column menu is destroyed. Should be overwritten in child-classes.
+	 * This hook is called after the column menu and injected menu items are destroyed.
+	 *
 	 * @param {sap.ui.core.IColumnHeaderMenu} oColumnHeaderMenu
 	 */
 	ColumnHeaderMenuAdapter.prototype.onAfterMenuDestroyed = function(oColumnHeaderMenu) {};
@@ -152,7 +158,7 @@ sap.ui.define([
 	 */
 	ColumnHeaderMenuAdapter.prototype.destroy = function() {
 		BaseObject.prototype.destroy.apply(this, arguments);
-		this._removeMenuItems(this._oMenu);
+		this._removeMenuItems();
 		this._oColumnHeaderMenuObserver.disconnect();
 		delete this._oColumnHeaderMenuObserver;
 	};
@@ -178,7 +184,19 @@ sap.ui.define([
 	}
 
 	function unlink(oColumn, sAdapterName) {
-		var mRegistryData = oAdapterRegistry.get(sAdapterName);
+		var mRegistryData;
+
+		if (sAdapterName) {
+			mRegistryData = oAdapterRegistry.get(sAdapterName);
+		} else {
+			oAdapterRegistry.forEach(function(_mRegistryData, _sAdapterName) {
+				if (_mRegistryData.columns.includes(oColumn)) {
+					mRegistryData = _mRegistryData;
+					sAdapterName = _sAdapterName;
+				}
+			});
+		}
+
 
 		if (!mRegistryData) {
 			return;
@@ -198,10 +216,6 @@ sap.ui.define([
 				oAdapterRegistry.delete(sAdapterName);
 			}
 		}
-	}
-
-	function onMenuBeforeClose(oEvent, oData) {
-		this._removeMenuItems(oData.columnHeaderMenu);
 	}
 
 	return ColumnHeaderMenuAdapter;

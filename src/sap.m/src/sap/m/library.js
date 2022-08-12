@@ -177,6 +177,7 @@ sap.ui.define([
 			"sap.m.WrappingType",
 			"sap.m.WizardRenderMode",
 			"sap.m.semantic.SemanticRuleSetType",
+			"sap.m.table.columnmenu.Category",
 			"sap.m.upload.UploaderHttpRequestMethod"
 		],
 		interfaces: [
@@ -4198,6 +4199,25 @@ sap.ui.define([
 		 */
 		Optimized : "Optimized"
 
+	};
+
+
+	thisLib.table = thisLib.table || {};
+	thisLib.table.columnmenu = thisLib.table.columnmenu || {};
+
+	/**
+	 * Categories of column menu entries.
+	 *
+	 * @enum {string}
+	 * @private
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.table.columnmenu.Category = {
+		Sort: "Sort",
+		Filter: "Filter",
+		Group: "Group",
+		Aggregate: "Aggregate",
+		Generic: "Generic"
 	};
 
 

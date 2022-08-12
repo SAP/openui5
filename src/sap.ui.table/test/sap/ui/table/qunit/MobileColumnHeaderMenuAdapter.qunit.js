@@ -6,66 +6,76 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Column",
 	"sap/ui/table/Table",
-	"sap/ui/table/CreationRow",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/unified/Menu",
+	"sap/ui/table/library",
+	"sap/m/library",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/QuickSort",
 	"sap/m/table/columnmenu/QuickSortItem",
 	"sap/m/table/columnmenu/Item",
 	"sap/m/Button",
+	"sap/ui/core/library",
 	"sap/ui/core/Core",
-	'sap/ui/Device'
+	"sap/ui/Device"
 ], function(
 	TableQUnitUtils,
 	qutils,
 	TableUtils,
 	Column,
 	Table,
-	CreationRow,
-	JSONModel,
-	Menu,
+	library,
+	MLibrary,
 	ColumnMenu,
 	QuickAction,
 	QuickSort,
 	QuickSortItem,
 	Item,
 	Button,
+	CoreLibrary,
 	oCore,
 	Device
 ) {
 	"use strict";
 
-	QUnit.module("Content", {
+	QUnit.module("Menu entries and interaction", {
 		beforeEach: function() {
 			this.oMenu1 = new ColumnMenu({
-				quickSort: new QuickAction({
-					label: "Custom Quick Sort",
-					content: new sap.m.Button({text: "Sort by Property A"})
-				}),
-				quickActions: [new QuickAction({label: "Quick Action B", content: new Button({text: "Execute B"})})],
+				quickActions: [
+					new QuickSort({
+						items: new QuickSortItem({
+							key: "CustomQuickSort",
+							label: "Custom Quick Sort"
+						})
+					}),
+					new QuickAction({
+						label: "Custom Quick Filter",
+						content: new Button({text: "Execute B"}),
+						category: MLibrary.table.columnmenu.Category.Filter
+					})
+				],
 				items: [new Item({label: "Item C", icon: "sap-icon://sort"})]
 			});
-			this.oMenu2 = new ColumnMenu({
-				quickActions: [new QuickAction({label: "Quick Action D", content: new Button({text: "Execute D"})})],
-				items: [new Item({label: "Item E", icon: "sap-icon://filter"})]
-			});
-			this.oColumn1 = TableQUnitUtils.createTextColumn();
+			this.oColumn1 = TableQUnitUtils.createTextColumn({label: "Menu with custom items"});
 			this.oColumn1.setSortProperty("F");
+			this.oColumn1.setSorted(true);
+			this.oColumn1.setSortOrder(library.SortOrder.Descending);
 			this.oColumn1.setFilterProperty("F");
+			this.oColumn1.setFilterValue("initial filter value");
 			this.oColumn1.setAssociation("headerMenu", this.oMenu1);
 
-			this.oColumn2 = TableQUnitUtils.createTextColumn();
+			this.oMenu2 = new ColumnMenu();
+			this.oColumn2 = TableQUnitUtils.createTextColumn({label: "Menu without custom items"});
 			this.oColumn2.setSortProperty("G");
 			this.oColumn2.setFilterProperty("G");
 			this.oColumn2.setAssociation("headerMenu", this.oMenu2);
 
 			this.oTable = TableQUnitUtils.createTable({
-				columns: [this.oColumn1, this.oColumn2]
+				columns: [this.oColumn1, this.oColumn2],
+				enableGrouping: true,
+				enableColumnFreeze: true
 			});
-			this.oTable.setEnableGrouping(true);
-			this.oTable.setEnableColumnFreeze(true);
+
+			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oMenu1.destroy();
@@ -74,198 +84,183 @@ sap.ui.define([
 		},
 		openColumnMenu: function(iColumnIndex) {
 			var oElement = this.oTable.qunit.getColumnHeaderCell(iColumnIndex);
+
 			oElement.focus();
 			qutils.triggerMouseEvent(oElement, "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(oElement, "click");
+
+			return new Promise(function(resolve) {
+				var oMenu = this["oMenu" + (iColumnIndex + 1)];
+
+				if (oMenu.isOpen()) {
+					resolve();
+				} else {
+					oMenu.attachEventOnce("beforeOpen", resolve);
+				}
+			}.bind(this));
+		},
+		getQuickAction: function(oMenu, sType) {
+			var aQuickActions = oMenu.getAggregation("_quickActions")[0].getQuickActions().filter(function(oQuickAction) {
+				return oQuickAction.isA("sap.m.table.columnmenu." + sType);
+			});
+
+			return sType === "QuickAction" ? aQuickActions : aQuickActions[0];
 		}
 	});
 
-	QUnit.test("Interaction and header menu content", function (assert) {
-		var oMBundle = oCore.getLibraryResourceBundle("sap.m");
-		var oUITableBundle = oCore.getLibraryResourceBundle("sap.ui.table");
-		var done = assert.async();
+	QUnit.test("Menu entries", function (assert) {
+		var that = this;
 
-		this.openColumnMenu(0);
-		var oMenu1 = this.oTable.getColumns()[0].getHeaderMenuInstance();
+		return this.openColumnMenu(0).then(function() {
+			var oMenu = that.oTable.getColumns()[0].getHeaderMenuInstance();
 
-		oMenu1.attachBeforeOpen(function() {
-			var oQuickSort = oMenu1.getAggregation("_quickSort");
-			var oQuickSortItem = oQuickSort.getItems()[0];
-			var oQuickAction = oQuickSortItem.getAggregation("quickAction");
-			var aContent = oQuickAction.getContent();
+			var oQuickSort = that.getQuickAction(oMenu, "QuickSort");
+			var oQuickSortItems = oQuickSort.getItems();
+			assert.equal(oQuickSortItems.length, 1, "Quick sort item count");
+			assert.strictEqual(oQuickSortItems[0].getKey(), undefined, "Quick sort 'key'");
+			assert.strictEqual(oQuickSortItems[0].getLabel(), "", "Quick sort 'label'");
+			assert.strictEqual(oQuickSortItems[0].getSortOrder(), CoreLibrary.SortOrder.Descending, "Quick sort 'sortOrder'");
 
-			assert.equal(oQuickAction.getLabel(), oMBundle.getText("table.COLUMNMENU_QUICK_SORT"), "quick sort label is correct");
-			assert.ok(aContent.length === 2 && aContent[0].isA("sap.m.Button") && aContent[1].isA("sap.m.Button"), "quick sort contains two buttons");
+			var oQuickFilter = that.getQuickAction(oMenu, "QuickAction")[0];
+			var aQuickFilterContent = oQuickFilter.getContent();
+			assert.equal(aQuickFilterContent.length, 1, "Quick filter content count");
+			assert.ok(aQuickFilterContent[0].isA("sap.m.Input"), "Quick filter content is a sap.m.Input");
+			assert.strictEqual(aQuickFilterContent[0].getValue(), "initial filter value", "Quick filter value");
 
-			var oCustomQuickSort = oMenu1.getQuickSort();
-			aContent = oCustomQuickSort.getContent();
-			assert.equal(oCustomQuickSort.getLabel(), "Custom Quick Sort", "quick sort label is correct");
-			assert.ok(aContent.length === 1 && aContent[0].isA("sap.m.Button"), "quick sort contains one button");
-			assert.equal(aContent[0].getText(), "Sort by Property A", "button text is correct");
+			var oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
+			var oQuickGroupItems = oQuickGroup.getItems();
+			assert.equal(oQuickGroupItems.length, 1, "Quick group item count");
+			assert.strictEqual(oQuickGroupItems[0].getKey(), undefined, "Quick group 'key'");
+			assert.strictEqual(oQuickGroupItems[0].getLabel(), "", "Quick group 'label'");
+			assert.strictEqual(oQuickGroupItems[0].getGrouped(), false, "Quick group 'grouped'");
 
-			var oQuickFilter = oMenu1.getAggregation("_quickFilter");
-			aContent = oQuickFilter.getContent();
-			assert.equal(oQuickFilter.getLabel(), oMBundle.getText("table.COLUMNMENU_QUICK_FILTER"), "quick filter label is correct");
-			assert.ok(aContent.length === 1 && aContent[0].isA("sap.m.Input"), "quick filter contains one input field");
+			var oQuickFreeze = that.getQuickAction(oMenu, "QuickAction")[1];
+			var aQuickFreezeContent = oQuickFreeze.getContent();
+			assert.equal(aQuickFreezeContent.length, 1, "Quick freeze content count");
+			assert.ok(aQuickFreezeContent[0].isA("sap.m.Button"), "Quick freeze content is a sap.m.Button");
+			assert.equal(aQuickFreezeContent[0].getText(), TableUtils.getResourceText("TBL_FREEZE"), "Quick freeze button text");
+		}).then(function() {
+			return that.openColumnMenu(1);
+		}).then(function() {
+			var oMenu = that.oTable.getColumns()[1].getHeaderMenuInstance();
 
-			var oQuickGroup = oMenu1.getAggregation("_quickGroup");
-			aContent = oQuickGroup.getContent();
-			assert.equal(oQuickGroup.getLabel(), oMBundle.getText("table.COLUMNMENU_QUICK_GROUP"), "quick group label is correct");
-			assert.ok(aContent.length === 1 && aContent[0].isA("sap.m.Button"), "quick group contains one button");
-			assert.equal(aContent[0].getText(), oUITableBundle.getText("TBL_GROUP"), "button text is correct");
+			var oQuickSort = that.getQuickAction(oMenu, "QuickSort");
+			var oQuickSortItems = oQuickSort.getItems();
+			assert.equal(oQuickSortItems.length, 1, "Quick sort item count");
+			assert.strictEqual(oQuickSortItems[0].getKey(), undefined, "Quick sort 'key'");
+			assert.strictEqual(oQuickSortItems[0].getLabel(), "", "Quick sort 'label'");
+			assert.strictEqual(oQuickSortItems[0].getSortOrder(), CoreLibrary.SortOrder.None, "Quick sort 'sortOrder'");
 
-			oQuickAction = oMenu1.getQuickActions()[0];
-			aContent = oQuickAction.getContent();
-			assert.equal(oQuickAction.getLabel(), "Quick Action B", "quick action label is correct");
-			assert.ok(aContent.length === 1 && aContent[0].isA("sap.m.Button"), "quick action contains one button");
-			assert.equal(aContent[0].getText(), "Execute B", "button text is correct");
+			var oQuickFilter = that.getQuickAction(oMenu, "QuickAction")[0];
+			var aQuickFilterContent = oQuickFilter.getContent();
+			assert.equal(aQuickFilterContent.length, 1, "Quick filter content count");
+			assert.ok(aQuickFilterContent[0].isA("sap.m.Input"), "Quick filter content is a sap.m.Input");
+			assert.strictEqual(aQuickFilterContent[0].getValue(), "", "Quick filter value");
 
-			oQuickAction = oMenu1.getAggregation("_quickActions")[0];
-			aContent = oQuickAction.getContent();
-			assert.equal(oQuickAction.getLabel(), undefined, "freeze doesn't have a label");
-			assert.ok(aContent.length === 1 && aContent[0].isA("sap.m.Button"), "quick action contains one button");
-			assert.equal(aContent[0].getText(), oUITableBundle.getText("TBL_FREEZE"), "button text is correct");
+			var oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
+			var oQuickGroupItems = oQuickGroup.getItems();
+			assert.equal(oQuickGroupItems.length, 1, "Quick group item count");
+			assert.strictEqual(oQuickGroupItems[0].getKey(), undefined, "Quick group 'key'");
+			assert.strictEqual(oQuickGroupItems[0].getLabel(), "", "Quick group 'label'");
+			assert.strictEqual(oQuickGroupItems[0].getGrouped(), false, "Quick group 'grouped'");
 
-			var oItem = oMenu1.getItems()[0];
-			assert.equal(oItem.getLabel(), "Item C", "item label is correct");
-
-			setTimeout(function() {
-				this.openColumnMenu(1);
-				var oMenu2 = this.oTable.getColumns()[1].getHeaderMenuInstance();
-
-				oMenu2.attachBeforeOpen(function() {
-					oQuickSort = oMenu2.getAggregation("_quickSort");
-					oQuickSortItem = oQuickSort.getItems()[0];
-					oQuickAction = oQuickSortItem.getAggregation("quickAction");
-					aContent = oQuickAction.getContent();
-
-					assert.equal(oQuickAction.getLabel(), oMBundle.getText("table.COLUMNMENU_QUICK_SORT"), "quick sort label is correct");
-					assert.ok(aContent.length === 2 && aContent[0].isA("sap.m.Button") && aContent[1].isA("sap.m.Button"), "quick sort contains two buttons");
-
-					oQuickFilter = oMenu2.getAggregation("_quickFilter");
-					aContent = oQuickFilter.getContent();
-					assert.equal(oQuickFilter.getLabel(), oMBundle.getText("table.COLUMNMENU_QUICK_FILTER"), "quick filter label is correct");
-					assert.ok(aContent.length === 1 && aContent[0].isA("sap.m.Input"), "quick filter contains one input field");
-
-					oQuickGroup = oMenu2.getAggregation("_quickGroup");
-					aContent = oQuickGroup.getContent();
-					assert.equal(oQuickGroup.getLabel(), oMBundle.getText("table.COLUMNMENU_QUICK_GROUP"), "quick group label is correct");
-					assert.ok(aContent.length === 1 && aContent[0].isA("sap.m.Button"), "quick group contains one button");
-					assert.equal(aContent[0].getText(), oUITableBundle.getText("TBL_GROUP"), "button text is correct");
-
-					oQuickAction = oMenu2.getQuickActions()[0];
-					aContent = oQuickAction.getContent();
-					assert.equal(oQuickAction.getLabel(), "Quick Action D", "quick action label is correct");
-					assert.ok(aContent.length === 1 && aContent[0].isA("sap.m.Button"), "quick action contains one button");
-					assert.equal(aContent[0].getText(), "Execute D", "button text is correct");
-
-					oItem = oMenu2.getItems()[0];
-					assert.equal(oItem.getLabel(), "Item E", "item label is correct");
-					done();
-				});
-			}.bind(this), 100);
-		}.bind(this));
+			var oQuickFreeze = that.getQuickAction(oMenu, "QuickAction")[1];
+			var aQuickFreezeContent = oQuickFreeze.getContent();
+			assert.equal(aQuickFreezeContent.length, 1, "Quick freeze content count");
+			assert.ok(aQuickFreezeContent[0].isA("sap.m.Button"), "Quick freeze content is a sap.m.Button");
+			assert.equal(aQuickFreezeContent[0].getText(), TableUtils.getResourceText("TBL_FREEZE"), "Quick freeze button text");
+		});
 	});
 
 	QUnit.test("Quick Sort", function(assert) {
-		var done = assert.async();
+		var that = this;
 		var oTable = this.oTable;
-		var oSpySort = this.spy(this.oColumn1, "sort");
+		var oColumnSortSpy = this.spy(this.oColumn1, "sort");
 
-		this.openColumnMenu(0);
-
-		setTimeout(function() {
-			var oMenu1 = oTable.getColumns()[0].getHeaderMenuInstance();
-			var oQuickAction = oMenu1.getAggregation("_quickSort").getItems()[0].getAggregation("quickAction");
+		return this.openColumnMenu(0).then(function() {
+			var oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
+			var oQuickAction = that.getQuickAction(oMenu, "QuickSort").getItems()[0].getAggregation("quickAction");
 			var aContent = oQuickAction.getContent();
+
 			qutils.triggerMouseEvent(aContent[0].getId(), "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(aContent[0].getId(), "click");
 
-			assert.ok(oSpySort.calledOnce, "sort is called");
-			assert.ok(oSpySort.calledWithExactly(false, true), "sort is called with the correct parameters");
-			done();
-		}, 500);
+			assert.ok(oColumnSortSpy.calledOnceWithExactly(false, true), "Column#sort is called once with the correct arguments");
+		});
 	});
 
 	QUnit.test("Quick Filter and validation", function(assert) {
-		var done = assert.async();
+		var that = this;
 		var oTable = this.oTable;
-		var oColumn1 = this.oColumn1;
-		var oSpyValidate = this.spy(oColumn1, "_getFilterState");
-		var oSpyFilter = this.spy(oColumn1, "filter");
+		var oColumn = this.oColumn1;
+		var oColumnGetFilterStateSpy = this.spy(oColumn, "_getFilterState");
+		var oColumnFilterSpy = this.spy(oColumn, "filter");
 
-		this.openColumnMenu(0);
-
-		setTimeout(function() {
-			var oMenu1 = oTable.getColumns()[0].getHeaderMenuInstance();
-			var oQuickFilter = oMenu1.getAggregation("_quickFilter");
+		return this.openColumnMenu(0).then(function() {
+			var oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
+			var oQuickFilter = that.getQuickAction(oMenu, "QuickAction")[0];
 			var oFilterField = oQuickFilter.getContent()[0];
 
-			assert.ok(oSpyValidate.calledOnce, "_getFilterState is called once when the menu opens");
+			assert.ok(oColumnGetFilterStateSpy.calledOnce, "Column#_getFilterState is called once when the menu opens");
 			oFilterField.setValue("test");
 			oFilterField.fireEvent("submit");
 
-			assert.ok(oSpyValidate.calledTwice, "_getFilterState is called when the filter value is submitted");
-			assert.ok(oSpyFilter.calledOnce, "filter is called");
-			assert.ok(oSpyFilter.calledWithExactly("test"), "filter is called with the correct parameter");
-			oSpyValidate.restore();
-			oSpyFilter.restore();
+			assert.ok(oColumnGetFilterStateSpy.calledTwice, "Column#_getFilterState is called when the filter value is submitted");
+			assert.ok(oColumnFilterSpy.calledOnceWithExactly("test"), "Column#filter is called once with the correct arguments");
+			oColumnGetFilterStateSpy.restore();
+			oColumnFilterSpy.restore();
 
-			oColumn1.setFilterType(new sap.ui.model.type.Integer());
-			assert.equal(oColumn1._getFilterState(), "Error", "Validation error, the expected input was integer");
+			oColumn.setFilterType(new sap.ui.model.type.Integer());
+			assert.equal(oColumn._getFilterState(), "Error", "Validation error, the expected input was integer");
 
-			oColumn1.setFilterValue("1");
-			assert.equal(oColumn1._getFilterState(), "None", "Validation successful");
-
-			done();
-		}, 500);
+			oColumn.setFilterValue("1");
+			assert.equal(oColumn._getFilterState(), "None", "Validation successful");
+		});
 	});
 
 	QUnit.test("Custom Filter", function(assert) {
-		var done = assert.async();
 		var oTable = this.oTable;
-		var oColumn2 = this.oColumn2;
+		var oColumn = this.oColumn2;
 
 		oTable.setEnableCustomFilter(true);
-		this.openColumnMenu(1);
 
-		setTimeout(function() {
-			var oMenu2 = oTable.getColumns()[1].getHeaderMenuInstance();
-			var oCustomFilter = oMenu2.getAggregation("_items")[0];
-			assert.equal(oCustomFilter.getLabel(), TableUtils.getResourceText("TBL_FILTER_ITEM"), "custom filter label is correct");
-			assert.equal(oCustomFilter.getIcon(), "sap-icon://filter", "custom filter icon is correct");
+		return this.openColumnMenu(1).then(function() {
+			var oMenu = oTable.getColumns()[1].getHeaderMenuInstance();
+			var oCustomFilter = oMenu.getAggregation("_items")[0].getItems()[0];
 
-			oTable.attachCustomFilter(function(oEvent) {
-				assert.ok(true, "customFilter event was fired");
-				assert.equal(oEvent.getParameter("column"), oColumn2);
-				done();
+			assert.equal(oCustomFilter.getLabel(), TableUtils.getResourceText("TBL_FILTER_ITEM"), "Custom filter label is correct");
+			assert.equal(oCustomFilter.getIcon(), "sap-icon://filter", "Custom filter icon is correct");
+
+			return new Promise(function(resolve) {
+				oTable.attachCustomFilter(function(oEvent) {
+					assert.ok(true, "'customFilter' event was fired");
+					assert.equal(oEvent.getParameter("column"), oColumn, "Event parameter 'column'");
+					resolve();
+				});
+				oCustomFilter.firePress();
 			});
-			oCustomFilter.firePress();
-		}, 500);
+		});
 	});
 
 	QUnit.test("Quick Group", function(assert) {
-		var done = assert.async();
+		var that = this;
 		var oTable = this.oTable;
-		var oSpyGroup = this.spy(this.oColumn1, "_setGrouped");
+		var oColumnSetGroupedSpy = this.spy(this.oColumn1, "_setGrouped");
 
-		this.openColumnMenu(0);
-
-		setTimeout(function() {
-			var oMenu1 = oTable.getColumns()[0].getHeaderMenuInstance();
-			var oQuickGroup = oMenu1.getAggregation("_quickGroup");
+		return this.openColumnMenu(0).then(function() {
+			var oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
+			var oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
 			var aContent = oQuickGroup.getContent();
 
 			qutils.triggerMouseEvent(aContent[0].getId(), "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(aContent[0].getId(), "click");
 
-			assert.ok(oSpyGroup.calledOnce, "_setGrouped is called");
-			done();
-		}, 500);
+			assert.ok(oColumnSetGroupedSpy.calledOnceWithExactly(true), "Column#_setGrouped is called once with the correct arguments");
+		});
 	});
 
 	QUnit.test("Quick Total", function(assert) {
-		var done = assert.async();
+		var that = this;
 		var oTable = this.oTable;
 
 		// simulate AnalyticalTable
@@ -282,68 +277,58 @@ sap.ui.define([
 			assert.ok(true, "setSummed is called");
 		};
 
-		var oSpyTotal = this.spy(this.oColumn2, "setSummed");
-		this.openColumnMenu(1);
+		var oColumnSetSummedSpy = this.spy(this.oColumn2, "setSummed");
 
-		setTimeout(function() {
-			var oMenu2 = oTable.getColumns()[1].getHeaderMenuInstance();
-			var oQuickTotal = oMenu2.getAggregation("_quickTotal");
+		return this.openColumnMenu(1).then(function() {
+			var oMenu = oTable.getColumns()[1].getHeaderMenuInstance();
+			var oQuickTotal = that.getQuickAction(oMenu, "QuickTotal");
 			var aContent = oQuickTotal.getContent();
 
 			qutils.triggerMouseEvent(aContent[0].getId(), "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(aContent[0].getId(), "click");
 
-			assert.ok(oSpyTotal.calledOnce, "setSummed is called");
-			done();
-		}, 500);
+			assert.ok(oColumnSetSummedSpy.calledOnceWithExactly(true), "Column#setSummed is called once with the correct arguments");
+		});
 	});
 
 	QUnit.test("Quick Freeze", function(assert) {
-		var done = assert.async();
+		var that = this;
 		var oTable = this.oTable;
-		var oSpyFreeze = this.spy(this.oTable, "setFixedColumnCount");
+		var oSetFixedColumnCountSpy = this.spy(this.oTable, "setFixedColumnCount");
 
-		this.openColumnMenu(0);
-
-		setTimeout(function() {
-			var oMenu1 = oTable.getColumns()[0].getHeaderMenuInstance();
-			var oQuickFreeze = oMenu1.getAggregation("_quickActions")[0];
+		return this.openColumnMenu(0).then(function() {
+			var oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
+			var oQuickFreeze = that.getQuickAction(oMenu, "QuickAction")[1];
 			var aContent = oQuickFreeze.getContent();
 
 			qutils.triggerMouseEvent(aContent[0].getId(), "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(aContent[0].getId(), "click");
 
-			assert.ok(oSpyFreeze.calledOnce, "setFixedColumnCount is called");
-			assert.ok(oSpyFreeze.calledWithExactly(1), "setFixedColumnCount is called with the correct parameter");
-			done();
-		}, 500);
+			assert.ok(oSetFixedColumnCountSpy.calledOnceWithExactly(1), "Table#setFixedColumnCount is called once with the correct arguments");
+		});
 	});
 
 	QUnit.test("Resize", function(assert) {
+		var that = this;
+		var oTable = this.oTable;
 		var bOriginalPointerSupport = Device.support.pointer;
 		var bOriginalTouchSupport = Device.support.touch;
 
 		Device.support.pointer = false;
 		Device.support.touch = true;
 
-		var done = assert.async();
-		var oTable = this.oTable;
-		this.openColumnMenu(0);
-
-		setTimeout(function() {
-			var oMenu1 = oTable.getColumns()[0].getHeaderMenuInstance();
-			var oQuickResize = oMenu1.getAggregation("_quickActions")[1];
+		return this.openColumnMenu(0).then(function() {
+			var oMenu = oTable.getColumns()[0].getHeaderMenuInstance();
+			var oQuickResize = that.getQuickAction(oMenu, "QuickAction")[2];
 			var aContent = oQuickResize.getContent();
 
 			qutils.triggerMouseEvent(aContent[0].getId(), "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(aContent[0].getId(), "click");
 
-			assert.ok(oTable.$().hasClass("sapUiTableResizing") && oTable.$("rsz").hasClass("sapUiTableColRszActive"), "resizing started");
+			assert.ok(oTable.$().hasClass("sapUiTableResizing") && oTable.$("rsz").hasClass("sapUiTableColRszActive"), "Resizing started");
 
 			Device.support.pointer = bOriginalPointerSupport;
 			Device.support.touch = bOriginalTouchSupport;
-
-			done();
-		}, 500);
+		});
 	});
 });

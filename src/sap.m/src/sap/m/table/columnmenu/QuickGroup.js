@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/m/table/columnmenu/QuickActionBase",
-	"sap/m/ToggleButton"
+	"sap/m/ToggleButton",
+	"sap/m/library"
 ], function (
 	QuickActionBase,
-	ToggleButton
+	ToggleButton,
+	library
 ) {
 	"use strict";
 
@@ -147,6 +149,10 @@ sap.ui.define([
 		oItem.setProperty("grouped", oEvent.getParameters().pressed, true);
 		this.fireChange({item: oItem});
 		this.getMenu().close();
+	};
+
+	QuickGroup.prototype.getCategory = function() {
+		return library.table.columnmenu.Category.Group;
 	};
 
 	return QuickGroup;

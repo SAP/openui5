@@ -110,11 +110,12 @@
 	// sap.m.Label
 	oControl = new sap.m.Label({text: "{name}"});
 	var oMenu2 = new sap.m.table.columnmenu.Menu({
-		quickSort: new sap.m.table.columnmenu.QuickAction({
-			label: "custom quick sort",
-			content: new sap.m.Button({text: "QA2.1"})
-		}),
 		quickActions: [
+			new sap.m.table.columnmenu.QuickAction({
+				label: "custom quick sort",
+				content: new sap.m.Button({text: "QA2.1"}),
+				category: "Sort"
+			}),
 			new sap.m.table.columnmenu.QuickAction({
 				label: "custom quick action",
 				content: new sap.m.Button({text: "QA2.2"})

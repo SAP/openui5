@@ -217,7 +217,6 @@ sap.ui.define([
 			assert.equal(oColumn.$().width(), iWidth, "check column width after resize: " + iWidth);
 
 			Device.system.desktop = true;
-			window.breaky = true;
 			return triggerDoubleClick(true, 1);
 		}).then(function() {
 			iWidth = oColumn.$().width();

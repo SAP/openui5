@@ -50,11 +50,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	// shortcut for sap.ui.core.aria.HasPopup
 	var HasPopup = coreLibrary.aria.HasPopup;
-
-	// shortcut for sap.ui.core.VerticalAlign
 	var VerticalAlign = coreLibrary.VerticalAlign;
+	var Category = library.table.columnmenu.Category;
 
 	/**
 	 * Constructor for a new Menu.
@@ -94,26 +92,6 @@ sap.ui.define([
 				quickActions: { type: "sap.m.table.columnmenu.QuickActionBase" },
 
 				/**
-				 * Defines the quick sorts of the column menu
-				 */
-				quickSort: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false},
-
-				/**
-				 * Defines the quick filters of the column menu
-				 */
-				quickFilter: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false},
-
-				/**
-				 * Defines the quick groups of the column menu
-				 */
-				quickGroup: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false},
-
-				/**
-				 * Defines the quick totals of the column menu
-				 */
-				quickTotal: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false},
-
-				/**
 				 * Defines the items of the column menu.
 				 */
 				items: { type: "sap.m.table.columnmenu.ItemBase" },
@@ -125,30 +103,6 @@ sap.ui.define([
 				_quickActions: { type: "sap.m.table.columnmenu.QuickActionBase", visibility: "hidden" },
 
 				/**
-				 * Defines quick sorts that are control-specific.
-				 * @private
-				 */
-				_quickSort: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false, visibility: "hidden"},
-
-				/**
-				 * Defines quick filters that are control-specific.
-				 * @private
-				 */
-				_quickFilter: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false, visibility: "hidden"},
-
-				/**
-				 * Defines quick groups that are control-specific.
-				 * @private
-				 */
-				_quickGroup: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false, visibility: "hidden"},
-
-				/**
-				 * Defines quick totals that are control-specific.
-				 * @private
-				 */
-				_quickTotal: {type: "sap.m.table.columnmenu.QuickActionBase", multiple: false, visibility: "hidden"},
-
-				/**
 				 * Defines menu items that are control-specific.
 				 * @private
 				 */
@@ -158,17 +112,7 @@ sap.ui.define([
 				/**
 				 * Fires before the column menu is opened
 				 */
-				beforeOpen: {},
-
-				/**
-				 * Fires before the column menu is closed
-				 */
-				beforeClose: {},
-
-				/**
-				 * Fires after the column menu is closed
-				 */
-				afterClose: {}
+				beforeOpen: {}
 			}
 		},
 		renderer: MenuRenderer
@@ -290,7 +234,6 @@ sap.ui.define([
 			contentWidth: MENU_WIDTH,
 			horizontalScrolling: false,
 			verticalScrolling: false,
-			beforeClose: [this.fireBeforeClose, this],
 			afterClose: [this.close, this]
 		});
 		this.addDependent(this._oPopover);
@@ -509,25 +452,31 @@ sap.ui.define([
 		return sText ? this.oResourceBundle.getText(sText, vValue) : this.oResourceBundle;
 	};
 
-	Menu.prototype._getAllEffectiveQuickActions = function() {
-		var aQuickActions = [].concat(this.getAggregation("_quickSort"))
-			.concat(this.getQuickSort())
-			.concat(this.getAggregation("_quickFilter"))
-			.concat(this.getQuickFilter())
-			.concat(this.getAggregation("_quickGroup"))
-			.concat(this.getQuickGroup())
-			.concat(this.getAggregation("_quickTotal"))
-			.concat(this.getQuickTotal())
-			.concat(this.getAggregation("_quickActions"))
-			.concat(this.getQuickActions());
+	var mSortOrder = {};
+	mSortOrder[Category.Sort] = 0;
+	mSortOrder[Category.Filter] = 1;
+	mSortOrder[Category.Group] = 2;
+	mSortOrder[Category.Aggregate] = 3;
+	mSortOrder[Category.Generic] = 4;
 
-		return aQuickActions.reduce(function(aQuickActions, oQuickAction) {
+	Menu.prototype._getAllEffectiveQuickActions = function(bSkipImplicitSorting) {
+		var aQuickActions = (this.getAggregation("_quickActions") || []).concat(this.getQuickActions());
+
+		aQuickActions = aQuickActions.reduce(function(aQuickActions, oQuickAction) {
 			return aQuickActions.concat(oQuickAction ? oQuickAction.getEffectiveQuickActions() : []);
 		}, []);
+
+		if (!bSkipImplicitSorting) {
+			aQuickActions.sort(function(oLeftQuickAction, oRightQuickAction) {
+				return mSortOrder[oLeftQuickAction.getCategory()] - mSortOrder[oRightQuickAction.getCategory()];
+			});
+		}
+
+		return aQuickActions;
 	};
 
 	Menu.prototype._hasQuickActions = function() {
-		return this._getAllEffectiveQuickActions().length > 0;
+		return this._getAllEffectiveQuickActions(true).length > 0;
 	};
 
 	Menu.prototype._getAllEffectiveItems = function() {
