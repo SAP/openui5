@@ -365,6 +365,8 @@ sap.ui.define([
             renderer: ChartRenderer
         });
 
+        var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+
         FilterIntegrationMixin.call(Chart.prototype);
 
         /**
@@ -991,10 +993,14 @@ sap.ui.define([
                 mInfo = this.getControlDelegate().getChartTypeInfo(this);
             } catch (error) {
                 //Inner chart is not yet ready
+                var oChartResourceBundle = Core.getLibraryResourceBundle("sap.chart.messages");
+
                 if (!mInfo) {
                     mInfo = {
                         icon: "sap-icon://vertical-bar-chart",
-                        text: "Selected Chart Type: Bar Chart"
+                        text: MDCRb.getText("chart.CHART_TYPE_TOOLTIP", [
+                            oChartResourceBundle.getText("info/bar")
+                        ])
                     };
                 }
             }
