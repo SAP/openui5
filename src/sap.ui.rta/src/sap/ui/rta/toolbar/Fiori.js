@@ -101,7 +101,7 @@ function(
 
 		if (iWidth !== iNaturalWidth || iHeight !== iNaturalHeight) {
 			Log.error([
-				"sap.ui.rta: please check Fiori Launchpad logo, expected size is ",
+				"sap.ui.rta: please check Fiori Launchpad logo, expected size is",
 				iWidth + "x" + iHeight + ",",
 				"but actual is " + iNaturalWidth + "x" + iNaturalHeight
 			].join(" "));
