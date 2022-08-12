@@ -260,9 +260,11 @@ sap.ui.define([
 		var aBindingPaths = [];
 
 		aRelevantElements.forEach(function(oElement) {
-			aBindingPaths = aBindingPaths.concat(BindingsExtractor.getBindings(oElement, oModel)
-				.map(_vBindingToPath)
-			);
+			aBindingPaths = aBindingPaths.concat(BindingsExtractor.getBindings({
+				element: oElement,
+				model: oModel,
+				parent: oElement.getParent()
+			}).map(_vBindingToPath));
 		});
 		return aBindingPaths;
 	}
@@ -395,7 +397,10 @@ sap.ui.define([
 		// BCP: 1880498671
 		} else if (_getBindingContextPath(oElement, sAggregationName, sModelName) === _getBindingContextPath(oInvisibleElement, sAggregationName, sModelName)) {
 			aBindingPaths = BindingsExtractor.collectBindingPaths(oInvisibleElement, oModel).bindingPaths;
-		} else if (mAddViaDelegate && BindingsExtractor.getBindings(oInvisibleElement, oModel).length > 0) {
+		} else if (mAddViaDelegate && BindingsExtractor.getBindings({
+			element: oInvisibleElement,
+			model: oModel
+		}).length > 0) {
 			bIncludeElement = false;
 		}
 

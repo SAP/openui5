@@ -65,6 +65,25 @@ sap.ui.define([
 			oStateModel.setData(data);
 			oView.setModel(oStateModel, "state");
 
+			var oActivationModel = new JSONModel({
+				activation: [
+					{
+						key: "1",
+						text: "Active"
+					},
+					{
+						key: "2",
+						text: "Inactive"
+					}
+				]
+			});
+			var oFormSelect = oView.byId("FormSelect");
+			oFormSelect.setModel(oActivationModel);
+			var oFormSelectAlone = oView.byId("FormSelectAlone");
+			oFormSelectAlone.setModel(oActivationModel);
+			var oTableSelect = oView.byId("TableSelect");
+			oTableSelect.setModel(oActivationModel);
+
 			this._data.push(
 				new Promise(function (resolve) {
 					oView.bindElement({
