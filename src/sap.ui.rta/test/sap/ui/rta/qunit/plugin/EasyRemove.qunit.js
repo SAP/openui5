@@ -1,33 +1,35 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
+	"sap/m/Button",
+	"sap/ui/core/Core",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/EasyRemove",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/uxap/ObjectPageSection",
-	"sap/uxap/ObjectPageLayout",
-	"sap/uxap/ObjectPageSubSection",
-	"sap/m/Button",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/rta/plugin/Remove",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/uxap/ObjectPageLayout",
+	"sap/uxap/ObjectPageSection",
+	"sap/uxap/ObjectPageSubSection",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
-	QUnitUtils,
+	Button,
+	oCore,
 	DesignTime,
+	OverlayRegistry,
+	ChangesWriteAPI,
+	QUnitUtils,
 	CommandFactory,
 	EasyRemove,
-	OverlayRegistry,
-	ObjectPageSection,
-	ObjectPageLayout,
-	ObjectPageSubSection,
-	Button,
-	ChangesWriteAPI,
+	Remove,
 	sinon,
-	RtaQunitUtils,
-	oCore
+	ObjectPageLayout,
+	ObjectPageSection,
+	ObjectPageSubSection,
+	RtaQunitUtils
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -115,12 +117,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the overlay for the section gets deregistered", function(assert) {
+			var oSuperDeregisterSpy = sandbox.spy(Remove.prototype, "deregisterElementOverlay");
 			var sControlStyleClass = "sapUiRtaPersDelete";
 			assert.ok(this.oSectionOverlay.hasStyleClass(sControlStyleClass), "initially the style class got set on the section");
 
 			this.oEasyRemovePlugin.deregisterElementOverlay(this.oSectionOverlay);
 			assert.ok(this.oSectionOverlay._oDeleteButton.bIsDestroyed, "after deregistering, the easy add button got destroyed");
 			assert.notOk(this.oSectionOverlay.hasStyleClass(sControlStyleClass), "and the style class got deleted");
+			assert.strictEqual(oSuperDeregisterSpy.callCount, 1, "the super class was called");
 		});
 	});
 

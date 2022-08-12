@@ -158,12 +158,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the overlay for the section and layout get deregistered", function(assert) {
+			var oSuperDeregisterSpy = sandbox.spy(AdditionalElementsPlugin.prototype, "deregisterElementOverlay");
 			var sControlStyleClass = "sapUiRtaMarginBottom";
 			assert.ok(this.oSection.hasStyleClass(sControlStyleClass), "initially the style class got set on the section");
 
 			this.oEasyAddPlugin.deregisterElementOverlay(this.oSectionOverlay);
 			assert.ok(this.oSectionOverlay._oAddButton.bIsDestroyed, "after deregistering, the easy add button got destroyed");
 			assert.notOk(this.oSection.hasStyleClass(sControlStyleClass), "and the style class got deleted");
+			assert.strictEqual(oSuperDeregisterSpy.callCount, 1, "the super class was called");
 
 			sControlStyleClass = "sapUiRtaPaddingTop";
 			assert.ok(this.oLayout.$("sectionsContainer").hasClass(sControlStyleClass), "initially the style class got set on the layout");
@@ -171,6 +173,7 @@ sap.ui.define([
 			this.oEasyAddPlugin.deregisterElementOverlay(this.oLayoutOverlay);
 			assert.ok(this.oLayoutOverlay._oAddButton.bIsDestroyed, "after deregistering, the easy add button got destroyed");
 			assert.notOk(this.oLayout.$("sectionsContainer").hasClass(sControlStyleClass), "and the style class got deleted");
+			assert.strictEqual(oSuperDeregisterSpy.callCount, 2, "the super class was called");
 		});
 	});
 

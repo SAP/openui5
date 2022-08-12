@@ -1,39 +1,41 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/base/util/restricted/_debounce",
+	"sap/base/util/includes",
+	"sap/m/Button",
+	"sap/m/HBox",
+	"sap/m/VBox",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Core",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/layout/VerticalLayout",
-	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/layout/form/FormLayout",
+	"sap/ui/layout/form/Form",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/Stretch",
-	"sap/m/HBox",
-	"sap/m/VBox",
-	"sap/m/Button",
-	"sap/base/util/includes",
-	"sap/base/util/restricted/_debounce",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
+	_debounce,
+	includes,
+	Button,
+	HBox,
+	VBox,
 	ManagedObject,
+	oCore,
 	DesignTime,
 	OverlayRegistry,
-	VerticalLayout,
-	Form,
 	FormContainer,
 	FormElement,
 	FormLayout,
+	Form,
+	VerticalLayout,
+	Plugin,
 	Stretch,
-	HBox,
-	VBox,
-	Button,
-	includes,
-	_debounce,
-	sinon,
-	oCore
+	sinon
 ) {
 	'use strict';
 
@@ -175,12 +177,15 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the plugin gets deregistered", function(assert) {
+			var oSuperDeregisterSpy = sandbox.spy(Plugin.prototype, "deregisterElementOverlay");
+
 			this.oStretchPlugin.deregisterElementOverlay(this.oLayoutOverlay);
 			this.oStretchPlugin.deregisterElementOverlay(this.oVBoxOverlay1);
 			this.oStretchPlugin.deregisterElementOverlay(this.oVBoxOverlay2);
 			assert.notOk(isStretched(this.oLayoutOverlay), "the style class was removed");
 			assert.notOk(isStretched(this.oVBoxOverlay1), "the style class was removed");
 			assert.notOk(isStretched(this.oVBoxOverlay2), "the style class was removed");
+			assert.strictEqual(oSuperDeregisterSpy.callCount, 3, "the super class was called");
 		});
 
 		QUnit.test("when a vbox changes editable to false", function(assert) {

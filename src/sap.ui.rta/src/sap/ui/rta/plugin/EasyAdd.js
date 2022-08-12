@@ -112,6 +112,8 @@ sap.ui.define([
 			oOverlay.removeStyleClass("sapUiRtaPersAddTop");
 			oControl.$("sectionsContainer").removeClass("sapUiRtaPaddingTop");
 		}
+
+		AdditionalElementsPlugin.prototype.deregisterElementOverlay.apply(this, arguments);
 	};
 
 	/**

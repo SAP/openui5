@@ -211,6 +211,8 @@ sap.ui.define([
 	 */
 	Stretch.prototype.deregisterElementOverlay = function(oOverlay) {
 		toggleStyleClass(oOverlay, false);
+
+		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
 	};
 
 	/**
