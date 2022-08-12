@@ -4,12 +4,13 @@
 
 sap.ui.define([
     "sap/ui/base/Object",
+    "sap/ui/core/Element",
     "sap/ui/test/OpaPlugin",
     "sap/ui/test/actions/Press",
     "sap/ui/test/_LogCollector",
     "sap/ui/test/_OpaLogger",
     "sap/ui/thirdparty/jquery"
-], function(UI5Object, OpaPlugin, Press, _LogCollector, _OpaLogger, $) {
+], function(UI5Object, Element, OpaPlugin, Press, _LogCollector, _OpaLogger, $) {
     "use strict";
 
     var oPlugin = new OpaPlugin();
@@ -108,8 +109,7 @@ sap.ui.define([
      */
     _ControlFinder._getControlForElement = function (vElement) {
         var vSelector = Object.prototype.toString.call(vElement) === "[object String]" ? "#" + vElement : vElement;
-        var controls = _ControlFinder._getIdentifiedDOMElement(vSelector).control();
-        return controls && controls[0];
+        return Element.closestTo(_ControlFinder._getIdentifiedDOMElement(vSelector)[0]);
     };
 
     /**

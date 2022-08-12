@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Button",
 	'sap/m/App',
+	'sap/ui/core/Element',
 	'sap/ui/core/mvc/XMLView'
-], function (_ControlSelectorGenerator, $, Button, App, XMLView) {
+], function (_ControlSelectorGenerator, $, Button, App, Element, XMLView) {
 	"use strict";
 
 	QUnit.module("_ViewID", {
@@ -41,7 +42,7 @@ sap.ui.define([
 
 	QUnit.test("Should generate selector for control in a view with stable ID", function (assert) {
 		var fnDone = assert.async();
-		_ControlSelectorGenerator._generate({control: $("#myView form input").control()[0], includeAll: true})
+		_ControlSelectorGenerator._generate({control: Element.closestTo("#myView form input"), includeAll: true})
 			.then(function (aSelector) {
 				var mViewIdSelector = aSelector[1][0];
 				assert.strictEqual(mViewIdSelector.viewId, "myView", "Should generate selector with viewName");
@@ -55,7 +56,7 @@ sap.ui.define([
 		var $view = $(".sapUiView").filter(function (i, $elem) {
 			return $elem.id !== "myView";
 		});
-		_ControlSelectorGenerator._generate({control: $view.find("form input").control()[0], includeAll: true})
+		_ControlSelectorGenerator._generate({control: $view[0] ? Element.closestTo($view[0].querySelector("form input")) : undefined, includeAll: true})
 			.then(function (aSelector) {
 				var mViewIdSelector = aSelector[0][0];
 				assert.strictEqual(mViewIdSelector.viewName, "myViewWithoutId", "Should generate selector with viewName");
@@ -66,7 +67,8 @@ sap.ui.define([
 
 	QUnit.test("Should not generate selector for control with generated ID", function (assert) {
 		var fnDone = assert.async();
-		_ControlSelectorGenerator._generate({control: $("#myView form input").control()[1], includeAll: true, shallow: true})
+		var aDomNodes = document.querySelectorAll("#myView form input");
+		_ControlSelectorGenerator._generate({control: Element.closestTo(aDomNodes[1]), includeAll: true, shallow: true})
 			.then(function (aSelector) {
 				assert.ok(!hasViewIdSelector(aSelector), "Should not generate selector");
 			}).finally(fnDone);

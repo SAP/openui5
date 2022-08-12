@@ -8,11 +8,12 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/VBox",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils"
-], function(LocalBusyIndicatorSupport, BusyDialog, Button, List, Slider, StandardListItem, VBox, Control, XMLView, KeyCodes, jQuery, qutils) {
+], function(LocalBusyIndicatorSupport, BusyDialog, Button, List, Slider, StandardListItem, VBox, Control, Element, XMLView, KeyCodes, jQuery, qutils) {
 	"use strict";
 
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
@@ -345,7 +346,7 @@ sap.ui.define([
 
 		dialog.open();
 		setTimeout(function () {
-			jQuery("#__dialog0-busyInd").control(0).setBusy(true);
+			Element.closestTo("#__dialog0-busyInd").setBusy(true);
 			dialog.close();
 			assert.ok("everythings fine");
 			done();

@@ -7,9 +7,7 @@ sap.ui.define([
 	"../base/Object",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/dom/_ready",
-	// jQuery Plugin "control"
-	"sap/ui/dom/jquery/control"
+	"sap/ui/dom/_ready"
 ],
 	function(BaseObject, Log, jQuery, _ready) {
 	"use strict";
@@ -61,16 +59,19 @@ sap.ui.define([
 		 * @public
 		 */
 		FocusHandler.prototype.getCurrentFocusedControlId = function(){
-			var aCtrls = null;
+			var oControl;
 			try {
 				var $Act = jQuery(document.activeElement);
 				if ($Act.is(":focus")) {
-					aCtrls = $Act.control();
+					if (!Element) {
+						Element = sap.ui.require("sap/ui/core/Element");
+					}
+					oControl = Element && Element.closestTo($Act[0]);
 				}
 			} catch (err) {
 				//escape eslint check for empty block
 			}
-			return aCtrls && aCtrls.length > 0 ? aCtrls[0].getId() : null;
+			return oControl ? oControl.getId() : null;
 		};
 
 		/**

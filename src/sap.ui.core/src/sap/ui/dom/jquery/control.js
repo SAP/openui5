@@ -23,6 +23,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/Global'],
 	 * @name jQuery#control
 	 * @function
 	 * @public
+	 * @deprecated Since 1.106. Instead, use {@link sap.ui.core.Element.closestTo}.
 	 * @requires module:sap/ui/dom/jquery/control
 	 */
 	jQuery.fn.control = function(iIndex, bIncludeRelated) {

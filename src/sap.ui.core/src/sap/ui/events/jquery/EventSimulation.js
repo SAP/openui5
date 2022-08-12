@@ -3,15 +3,15 @@
  */
 sap.ui.define([
 	'sap/base/util/Version',
+	'sap/ui/core/Element',
 	'sap/ui/events/PseudoEvents',
 	'sap/ui/events/checkMouseEnterOrLeave',
 	'sap/ui/events/ControlEvents',
 	'sap/ui/Device',
 	'sap/ui/events/TouchToMouseMapping',
 	'sap/ui/thirdparty/jquery',
-	'sap/ui/thirdparty/jquery-mobile-custom',
-	'sap/ui/dom/jquery/control'
-], function(Version, PseudoEvents, checkMouseEnterOrLeave, ControlEvents, Device, TouchToMouseMapping, jQuery /*, jQueryMobile, control, EventExtension*/) {
+	'sap/ui/thirdparty/jquery-mobile-custom'
+], function(Version, Element, PseudoEvents, checkMouseEnterOrLeave, ControlEvents, Device, TouchToMouseMapping, jQuery /*, jQueryMobile*/) {
 	"use strict";
 
 	/**
@@ -111,7 +111,7 @@ sap.ui.define([
 		}
 
 		var $DomRef = jQuery(oConfig.domRef),
-			oControl = jQuery.fn.control ? jQuery(oEvent.target).control(0) : null,
+			oControl = Element.closestTo(oEvent.target),
 			sTouchStartControlId = $DomRef.data("__touchstart_control"),
 			oTouchStartControlDOM = sTouchStartControlId && window.document.getElementById(sTouchStartControlId);
 

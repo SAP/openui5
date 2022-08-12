@@ -5,14 +5,13 @@
 // Provides control sap.ui.core.TooltipBase.
 sap.ui.define([
 	'./Control',
+	'./Element',
 	'./Popup',
 	'./library',
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery",
-	// jQuery Plugin "control"
-	"sap/ui/dom/jquery/control"
+	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, Popup, library, KeyCodes, jQuery) {
+	function(Control, Element, Popup, library, KeyCodes, jQuery) {
 	"use strict";
 
 
@@ -122,7 +121,7 @@ sap.ui.define([
 	 */
 	TooltipBase.prototype.onfocusin = function(oEvent) {
 
-		var oSC = jQuery(oEvent.target).control(0);
+		var oSC = Element.closestTo(oEvent.target);
 		if (oSC != null) {
 			var oDomRef = oSC.getFocusDomRef();
 			this.sStoredTooltip = null;
@@ -154,7 +153,7 @@ sap.ui.define([
 	 * @private
 	 */
 	TooltipBase.prototype.onfocusout = function(oEvent) {
-		var oSC = jQuery(oEvent.target).control(0);
+		var oSC = Element.closestTo(oEvent.target);
 		if (oSC != null) {
 
 			var oDomRef = oSC.getFocusDomRef();
@@ -202,10 +201,10 @@ sap.ui.define([
 	 */
 	TooltipBase.prototype.onmouseover = function(oEvent) {
 
-		var oEventSource = jQuery(oEvent.target).control(0), // The Element or Control that initiated the event.
-			oCurrentElement = jQuery(oEvent.currentTarget).control(0), // The current Element or Control within the event bubbling phase.
-			oLeftElement = jQuery(oEvent.relatedTarget).control(0); // Indicates the element being exited.
-		// Log.debug("MOUSE OVER    " +  oEventSource + "  " + jQuery(oEvent.currentTarget).control(0) + "   " + this._currentControl.getId());
+		var oEventSource = Element.closestTo(oEvent.target), // The Element or Control that initiated the event.
+			oCurrentElement = Element.closestTo(oEvent.currentTarget), // The current Element or Control within the event bubbling phase.
+			oLeftElement = Element.closestTo(oEvent.relatedTarget); // Indicates the element being exited.
+		// Log.debug("MOUSE OVER    " +  oEventSource + "  " + Element.closestTo(oEvent.currentTarget) + "   " + this._currentControl.getId());
 
 		if (!oEventSource) {
 			return;
@@ -276,7 +275,7 @@ sap.ui.define([
 	 * @private
 	 */
 	TooltipBase.prototype.onmouseout = function(oEvent) {
-		// Log.debug("MOUSE OUT    " + jQuery(oEvent.target).control(0) + "   "+ jQuery(oEvent.currentTarget).control(0) );
+		// Log.debug("MOUSE OUT    " + Element.closestTo(oEvent.target) + "   " + Element.closestTo(oEvent.currentTarget) );
 		if (TooltipBase.sOpenTimeout) {
 			clearTimeout(TooltipBase.sOpenTimeout);
 			TooltipBase.sOpenTimeout = undefined;
@@ -442,7 +441,7 @@ sap.ui.define([
 		if (oEvent.ctrlKey && oEvent.which == KeyCodes.I) {
 			// The Element or Control that initiated the event.
 
-			var oEventSource = jQuery(oEvent.target).control(0);
+			var oEventSource = Element.closestTo(oEvent.target);
 			if (oEventSource != null) {
 				// If the current control is the event source or event source does not have a standard tooltip
 				if (this._currentControl === oEventSource || !this.isStandardTooltip(oEventSource.getTooltip())) {

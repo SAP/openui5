@@ -2383,7 +2383,7 @@ sap.ui.define([
 			var oElement;
 			this._aExtraContent.forEach(function(oAreaRef) {
 				if (oAreaRef.delegate) {
-					oElement = jQuery(document.getElementById(oAreaRef.id)).control(0);
+					oElement = Element.closestTo(document.getElementById(oAreaRef.id));
 					if (oElement) {
 						oElement.removeEventDelegate(oAreaRef.delegate);
 					}
