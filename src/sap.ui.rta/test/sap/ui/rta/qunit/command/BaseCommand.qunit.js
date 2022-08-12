@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Input",
+	"sap/m/MessageBox",
 	"sap/m/Text",
 	"sap/m/VBox",
 	"sap/m/List",
@@ -34,6 +35,7 @@ sap.ui.define([
 ], function (
 	Button,
 	Input,
+	MessageBox,
 	Text,
 	VBox,
 	List,
@@ -78,7 +80,7 @@ sap.ui.define([
 
 	function prepareAndExecute(oFlexCommand) {
 		return Promise.resolve()
-		.then(oFlexCommand.prepare.bind(oFlexCommand))
+		.then(oFlexCommand.prepare.bind(oFlexCommand, {generator: "myFancyGenerator"}))
 		.then(oFlexCommand.execute.bind(oFlexCommand));
 	}
 
@@ -168,14 +170,13 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when executing the command,", function(assert) {
 			assert.ok(this.oFlexCommand.isEnabled(), "then command is enabled");
+			var oCreateChangeSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return prepareAndExecute(this.oFlexCommand)
 				.then(function() {
-					assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
-				}.bind(this))
-				.catch(function (oError) {
-					assert.ok(false, "catch must never be called - Error: " + oError);
-				});
+					assert.strictEqual(this.fnApplyChangeSpy.callCount, 1, "then the change handler should do the work.");
+					assert.strictEqual(oCreateChangeSpy.lastCall.args[0].changeSpecificData.generator, "myFancyGenerator", "the generator was passed properly");
+				}.bind(this));
 		});
 
 		QUnit.test("when executing a command that fails", function(assert) {
@@ -199,6 +200,7 @@ sap.ui.define([
 				return Promise.reject(ERROR_INTENTIONALLY);
 			};
 			this.command2 = new BaseCommand();
+			sandbox.stub(MessageBox, "error");
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -261,8 +263,8 @@ sap.ui.define([
 			.then(function() {
 				var oTopCommand = this.stack.pop();
 				assert.equal(this.stack._toBeExecuted, -1, " the to be executed index is in range");
-				assert.equal(this.stack.getCommands().length, 1, "  only first commmand is on the stack");
-				assert.equal(this.stack.getCommands()[0].getId(), this.command.getId(), "only first commmand is on the stack");
+				assert.equal(this.stack.getCommands().length, 1, "  only first command is on the stack");
+				assert.equal(this.stack.getCommands()[0].getId(), this.command.getId(), "only first command is on the stack");
 				assert.equal(oTopCommand.getId(), this.command2.getId(), " the correct command is returned");
 			}.bind(this))
 
@@ -279,9 +281,9 @@ sap.ui.define([
 
 			.catch(function(oError) {
 				assert.ok(this.stack.isEmpty(), "and the command stack is still empty");
-				assert.strictEqual(oError, ERROR_INTENTIONALLY, "an error is rejected and catched");
+				assert.strictEqual(oError, ERROR_INTENTIONALLY, "an error is rejected and caught");
 				assert.strictEqual(oError.command, this.failingCommand, "and the command is part of the error");
-				assert.equal(fnStackModifiedSpy.callCount, 2, " the modify stack listener is called twice, onence for push and once for pop");
+				assert.equal(fnStackModifiedSpy.callCount, 2, " the modify stack listener is called twice, once for push and once for pop");
 			}.bind(this));
 		});
 
@@ -297,10 +299,10 @@ sap.ui.define([
 
 			.catch(function(oError) {
 				assert.ok(this.stack.isEmpty(), "and the command stack is still empty");
-				assert.equal(oError.message, oStandardError.message, "an error is rejected and catched");
+				assert.equal(oError.message, oStandardError.message, "an error is rejected and caught");
 				assert.strictEqual(oError.command, this.failingCommand, "and the command is part of the error");
 				assert.equal(oError.index, 0, "and the index is part of the error");
-				assert.equal(fnStackModifiedSpy.callCount, 2, " the modify stack listener is called twice, onence for push and once for pop");
+				assert.equal(fnStackModifiedSpy.callCount, 2, " the modify stack listener is called twice, once for push and once for pop");
 			}.bind(this));
 		});
 
@@ -308,7 +310,7 @@ sap.ui.define([
 			return this.stack.pushAndExecute(this.failingCommand)
 
 			.catch(function(oError) {
-				assert.strictEqual(oError, ERROR_INTENTIONALLY, " an error is rejected and catched");
+				assert.strictEqual(oError, ERROR_INTENTIONALLY, " an error is rejected and caught");
 			})
 
 			.then(this.stack.pushAndExecute.bind(this.stack, this.command))
@@ -412,20 +414,20 @@ sap.ui.define([
 			return this.oPropertyCommand.execute()
 
 			.then(function() {
-				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
+				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the change handler should do the work.");
 				assert.equal(this.oControl.getWidth(), this.NEW_VALUE, "then the controls text changed accordingly");
 				return this.oPropertyCommand.undo();
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should not be called, because undo is done via rta ControlTreeModifier!");
+				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the change handler should not be called, because undo is done via rta ControlTreeModifier!");
 				assert.equal(this.oControl.getWidth(), this.OLD_VALUE, "then the controls text changed accordingly");
 
 				return this.oPropertyCommand.execute();
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the changehandler should do the work.");
+				assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the change handler should do the work.");
 				assert.equal(this.oControl.getWidth(), this.NEW_VALUE, "then the controls text changed accordingly");
 			}.bind(this))
 
@@ -514,19 +516,19 @@ sap.ui.define([
 			return this.oBindShowValueHelpCommandWithoutOldValueSet.execute()
 
 			.then(function() {
-				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
+				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the change handler should do the work.");
 				assert.equal(this.oInput.getShowValueHelp(), this.NEW_BOOLEAN_VALUE, "then the controls property changed accordingly");
 				return this.oBindShowValueHelpCommandWithoutOldValueSet.undo();
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should not be called for the undo.");
+				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the change handler should not be called for the undo.");
 				assert.equal(this.oInput.getShowValueHelp(), this.OLD_BOOLEAN_VALUE, "then the controls property changed accordingly");
 				return this.oBindShowValueHelpCommandWithoutOldValueSet.execute();
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the changehandler should do the work.");
+				assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the change handler should do the work.");
 				assert.equal(this.oInput.getShowValueHelp(), this.NEW_BOOLEAN_VALUE, "then the controls property changed accordingly");
 			}.bind(this))
 
@@ -539,64 +541,25 @@ sap.ui.define([
 			return this.oBindValuePropertyCommandWithoutOldBindingSet.execute()
 
 			.then(function() {
-				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
+				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the change handler should do the work.");
 				assert.equal(this.oInput.getValue(), this.NEW_VALUE, "then the controls property changed accordingly");
 				return this.oBindValuePropertyCommandWithoutOldBindingSet.undo();
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should not be called for the undo.");
+				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the change handler should not be called for the undo.");
 				assert.equal(this.oInput.getValue(), this.OLD_VALUE, "then the controls property changed accordingly");
 				return this.oBindValuePropertyCommandWithoutOldBindingSet.execute();
 			}.bind(this))
 
 			.then(function() {
-				assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the changehandler should do the work.");
+				assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the change handler should do the work.");
 				assert.equal(this.oInput.getValue(), this.NEW_VALUE, "then the controls property changed accordingly");
 			}.bind(this))
 
 			.catch(function (oError) {
 				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
-		});
-	});
-
-	QUnit.module("Given remove command", {
-		beforeEach: function() {
-			this.oButton = new Button(oMockedAppComponent.createId("button"));
-
-			return CommandFactory.getCommandFor(this.oButton, "Remove", {
-				removedElement: this.oButton
-			}, new ElementDesignTimeMetadata({
-				data: {
-					actions: {
-						remove: {
-							changeType: "hideControl"
-						}
-					}
-				}
-			}))
-			.then(function(oCommand) {
-				this.oCommand = oCommand;
-				return this.oCommand.prepare();
-			}.bind(this));
-		},
-		afterEach: function () {
-			sandbox.restore();
-			this.oCommand.destroy();
-			this.oButton.destroy();
-		}
-	}, function() {
-		QUnit.test("when prepare() of remove command is called", function(assert) {
-			return this.oCommand.prepare()
-				.then(function() {
-					assert.deepEqual(this.oCommand.getSelector(), {
-						appComponent: oMockedAppComponent,
-						controlType: "sap.m.Button",
-						id: "someName---button"
-					}, "then selector is properly set for remove command");
-					assert.ok(this.oCommand.getPreparedChange(), "then change is successfully prepared");
-				}.bind(this));
 		});
 	});
 
@@ -658,7 +621,7 @@ sap.ui.define([
 			assert.ok(FlexCommand.prototype.prepare.calledOnce, "then FlexCommand.prepare() called once");
 			assert.strictEqual(this.oCommand.getPreparedChange().getVariantReference(), this.sCurrentVariantReference, "then correct variant reference set to the prepared change");
 			assert.strictEqual(this.oCommand.getPreparedChange().getLayer(), this.oFlexSettings.layer, "then correct layer was set to the prepared change");
-			assert.deepEqual(this.oCommandFactory.getFlexSettings(), this.oFlexSettings, "then correct flex settings were set to the commandfactory");
+			assert.deepEqual(this.oCommandFactory.getFlexSettings(), this.oFlexSettings, "then correct flex settings were set to the command factory");
 		});
 	});
 
@@ -808,6 +771,7 @@ sap.ui.define([
 			this.command4 = new FlexCommand();
 			this.command5 = new FlexCommand();
 			this.compositeCommand = new CompositeCommand();
+			sandbox.stub(MessageBox, "error");
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -1033,7 +997,7 @@ sap.ui.define([
 					actions: {
 						move: "moveControls"
 					},
-					fakeAggreagtionWithoutMove: {}
+					fakeAggregationWithoutMove: {}
 				}
 			});
 			this.oOtherParentDesignTimeMetadata = new ElementDesignTimeMetadata({
@@ -1113,7 +1077,7 @@ sap.ui.define([
 			this.oCommandStack.push(this.oFlexCommand);
 
 			return Promise.resolve()
-				.then(this.oFlexCommand.prepare.bind(this.oFlexCommand))
+				.then(this.oFlexCommand.prepare.bind(this.oFlexCommand, {}))
 				.then(this.oCommandStack.execute.bind(this.oCommandStack))
 				.then(function () {
 					var oChange = this.oFlexCommand.getPreparedChange();
@@ -1258,7 +1222,7 @@ sap.ui.define([
 				assert.equal(oCreateChangeFromDataSpy.callCount, 1, "and '_createChangeFromData' is called once");
 				assert.deepEqual(oCreateChangeFromDataSpy.args[0][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
 				assert.strictEqual(oMoveCommand.getPreparedChange().getOriginalSelector().id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
-				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggegation is written to the change content");
+				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggregation is written to the change content");
 				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().source.selector.id, oMoveCommand.getPreparedChange().getDependentSelector().source.id, "and the content of the change is also adjusted");
 				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().target.selector.id, oMoveCommand.getPreparedChange().getDependentSelector().target.id, "and the content of the change is also adjusted");
 				assert.strictEqual(oMoveCommand.getPreparedChange().getContent().movedElements[0].selector.id, oMoveCommand.getPreparedChange().getDependentSelector().movedElements[0].id, "and the content of the change is also adjusted");
@@ -1328,7 +1292,7 @@ sap.ui.define([
 				assert.equal(oCreateChangeFromDataSpy.callCount, 1, "and '_createChangeFromData' is called once");
 				assert.deepEqual(oCreateChangeFromDataSpy.args[0][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
 				assert.strictEqual(oRevealCommand.getPreparedChange().getOriginalSelector().id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
-				assert.strictEqual(oRevealCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggegation is written to the change content");
+				assert.strictEqual(oRevealCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggregation is written to the change content");
 				assert.strictEqual(oRevealCommand._getChangeSpecificData().revealedElementId, oTextItem.getId(), "and the change specific content of the change is also adjusted");
 				return oRevealCommand.execute();
 			})
@@ -1379,7 +1343,7 @@ sap.ui.define([
 				assert.equal(oCreateChangeFromDataSpy.callCount, 1, "and '_createChangeFromData' is called once");
 				assert.deepEqual(oCreateChangeFromDataSpy.args[0][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
 				assert.strictEqual(oPropertyCommand.getPreparedChange().getOriginalSelector().id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
-				assert.strictEqual(oPropertyCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggegation is written to the change content");
+				assert.strictEqual(oPropertyCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggregation is written to the change content");
 				assert.strictEqual(oPropertyCommand._getChangeSpecificData().selector.id, oTextItem.getId(), "and the change specific content of the change is also adjusted");
 				return oPropertyCommand.execute();
 			})
