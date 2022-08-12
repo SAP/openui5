@@ -16982,6 +16982,140 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: If a node A is collapsed by the user and a node B below node A is expanded and
+	// thereby loads deep nodes, then the binding length is correctly calculated.
+	// BCP: 002075129400005773722022
+	QUnit.test("ODataTreeBindingFlat: binding length is correct", function (assert) {
+		var oBinding, oTable,
+			oModel = createHierarchyMaintenanceModel(),
+			sView = '\
+<t:TreeTable id="table"\
+		rows="{\
+			parameters : {\
+				countMode : \'Inline\',\
+				numberOfExpandedLevels : 1,\
+				restoreTreeStateAfterChange : true\
+			},\
+			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
+		}"\
+		visibleRowCount="3"\
+		visibleRowCountMode="Fixed">\
+	<Text id="itemName" text="{ErhaOrderItemName}" />\
+</t:TreeTable>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest({
+				batchNo : 1,
+				requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
+					+ "&$filter=HierarchyDistanceFromRoot le 1"
+			}, {
+				__count : "4",
+				results : [{
+					__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='099')"},
+					ErhaOrder : "1",
+					ErhaOrderItem : "099",
+					ErhaOrderItemName : "099",
+					HierarchyParentNode : "",
+					HierarchyDescendantCount : 0,
+					HierarchyDistanceFromRoot : 0,
+					HierarchyDrillState : "leaf",
+					HierarchyNode : "099",
+					HierarchyPreorderRank : 0,
+					HierarchySiblingRank : 0
+				}, {
+					__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='100')"},
+					ErhaOrder : "1",
+					ErhaOrderItem : "100",
+					ErhaOrderItemName : "100",
+					HierarchyParentNode : "",
+					HierarchyDescendantCount : 1,
+					HierarchyDistanceFromRoot : 0,
+					HierarchyDrillState : "expanded",
+					HierarchyNode : "100",
+					HierarchyPreorderRank : 1,
+					HierarchySiblingRank : 1
+				}, {
+					__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='110')"},
+					ErhaOrder : "1",
+					ErhaOrderItem : "110",
+					ErhaOrderItemName : "110",
+					HierarchyParentNode : "100",
+					HierarchyDescendantCount : 0,
+					HierarchyDistanceFromRoot : 1,
+					HierarchyDrillState : "collapsed",
+					HierarchyNode : "110",
+					HierarchyPreorderRank : 2,
+					HierarchySiblingRank : 0
+				}, {
+					__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
+					ErhaOrder : "1",
+					ErhaOrderItem : "200",
+					ErhaOrderItemName : "200",
+					HierarchyParentNode : "",
+					HierarchyDescendantCount : 1,
+					HierarchyDistanceFromRoot : 0,
+					HierarchyDrillState : "collapsed",
+					HierarchyNode : "200",
+					HierarchyPreorderRank : 3,
+					HierarchySiblingRank : 2
+				}]
+			})
+			.expectValue("itemName", ["099", "100", "110"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			assert.strictEqual(oBinding.isExpanded(1), true, "row 2 expanded");
+			assert.strictEqual(oBinding.isExpanded(3), false, "row 4 collapsed");
+			assert.strictEqual(oBinding.getLength(), 4, "initial binding length is 3");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("itemName", "200", 2);
+
+			// code under test
+			oBinding.collapse(1);
+
+			assert.strictEqual(oBinding.getLength(), 3,
+				"first collapse reduces binding length to 3");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					batchNo : 2,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages&"
+						+ "$filter=HierarchyParentNode eq '200'"
+				}, {
+					__count : 1,
+					results : [{
+						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='210')"},
+						ErhaOrder : "1",
+						ErhaOrderItem : "210",
+						ErhaOrderItemName : "baz",
+						HierarchyParentNode : "200",
+						HierarchyDescendantCount : 0,
+						HierarchyDistanceFromRoot : 1,
+						HierarchyDrillState : "collapsed",
+						HierarchyNode : "210",
+						HierarchyPreorderRank : 0,
+						HierarchySiblingRank : 0
+					}]
+				});
+
+			// code under test
+			oBinding.expand(2);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oBinding.isExpanded(2), true, "row 2 expanded");
+			assert.strictEqual(oBinding.getLength(), 4,
+				"expand of row 2 increases binding length to 4");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: If a new node B is added to a leaf node A and the former leaf node A is expanded,
 	// ensure that the node A is also expanded while restoring the tree state after data is
 	// submitted.
