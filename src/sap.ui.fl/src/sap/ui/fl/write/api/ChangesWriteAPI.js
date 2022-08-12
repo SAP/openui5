@@ -152,7 +152,7 @@ sap.ui.define([
 						var oFlResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
 						var sDependentChangesFileNames = aDependentChanges.map(function(oChange) {
 							return oChange.getId();
-						}).toString().replace(/,/g, ", ");
+						}).join(", ");
 						throw Error(
 							oFlResourceBundle.getText(
 								"MSG_DEPENDENT_CHANGE_ERROR",
