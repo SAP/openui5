@@ -161,9 +161,36 @@
 												</mdc:type>
 											</mdc:Table>
 										</mdcvc:MDCTable>
-										<mdcvc:Conditions label="Title"/>
+										<mdcvc:Conditions label="Title" fieldHelp="FH4_DEFCOND"/>
 									</mdcv:Dialog>
 								</mdc:dialog>
+							</mdc:ValueHelp>
+
+							<mdc:ValueHelp id="FH4_DEFCOND"
+								validateInput="false"
+								delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+								<mdc:typeahead>
+									<mdcv:Popover title="Title">
+										<mdcvc:MTable keyPath="title" descriptionPath="title" filterFields="$search">
+											<Table id="mTable1_2_title" items='{path : "/Books"}' growing="true" growingScrollToLoad="true" growingThreshold="20" width="50rem" mode="SingleSelectMaster">
+												<columns>
+													<Column>
+														<header>
+															<Text text="Title" />
+														</header>
+													</Column>
+												</columns>
+												<items>
+													<ColumnListItem type="Active">
+														<cells>
+															<Text text="{title}" />
+														</cells>
+													</ColumnListItem>
+												</items>
+											</Table>
+										</mdcvc:MTable>
+									</mdcv:Popover>
+								</mdc:typeahead>
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FH1"
@@ -200,9 +227,42 @@
 									<mdcv:Dialog id="FH1-Dialog" title="Author ID">
 										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_default" title="Default" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch"/>
 										<mdcvc:MDCTable id="FH1-Dialog-MDCTable_withCountry" title="with Country" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch"/>
-										<mdcvc:Conditions label="Author ID"/>
+										<mdcvc:Conditions label="Author ID" fieldHelp="FH1_DEFCOND"/>
 									</mdcv:Dialog>
 								</mdc:dialog>
+							</mdc:ValueHelp>
+
+							<mdc:ValueHelp id="FH1_DEFCOND"
+								validateInput="false"
+								delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+								<mdc:typeahead>
+									<mdcv:Popover title="Author ID">
+										<mdcvc:MTable id="FH1-Popover-MTable_defcond" keyPath="ID" descriptionPath="name" filterFields="$search" >
+											<Table id="mTable1_defcond" items='{path : "/Authors"}' growing="true" growingScrollToLoad="true" growingThreshold="20" width="50rem" mode="SingleSelectMaster">
+												<columns>
+													<Column width="5rem">
+														<header>
+															<Text text="ID" />
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Text text="Name" />
+														</header>
+													</Column>
+												</columns>
+												<items>
+													<ColumnListItem type="Active">
+														<cells>
+															<Text text="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" />
+															<Text text="{name}" />
+														</cells>
+													</ColumnListItem>
+												</items>
+											</Table>
+										</mdcvc:MTable>
+									</mdcv:Popover>
+								</mdc:typeahead>
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FHPublished"
@@ -272,9 +332,43 @@
 												</mdc:type>
 											</mdc:Table>
 										</mdcvc:MDCTable>
-										<mdcvc:Conditions label="Languages"/>
+										<mdcvc:Conditions label="Languages" fieldHelp="FHLanguage_DEFCOND"/>
 									</mdcv:Dialog>
 								</mdc:dialog>
+							</mdc:ValueHelp>
+
+							<mdc:ValueHelp id="FHLanguage_DEFCOND"
+								validateInput="false"
+								delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
+								<mdc:typeahead>
+									<mdcv:Popover title="Languages">
+										<mdcvc:MTable keyPath="code" descriptionPath="name" filterFields="$search">
+										<!-- useAsValueHelp="true"> -->
+											<Table id="mTable1_languages_defcond" items='{path : "/Languages"}' growing="true" growingScrollToLoad="true" growingThreshold="20" width="30rem" mode="SingleSelectMaster">
+												<columns>
+													<Column>
+														<header>
+															<Text text="Code" />
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Text text="Name" />
+														</header>
+													</Column>
+												</columns>
+												<items>
+													<ColumnListItem type="Active">
+														<cells>
+															<Text text="{code}" />
+															<Text text="{name}" />
+														</cells>
+													</ColumnListItem>
+												</items>
+											</Table>
+										</mdcvc:MTable>
+									</mdcv:Popover>
+								</mdc:typeahead>
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FHClassification"

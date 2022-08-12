@@ -1276,4 +1276,56 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("usage of FieldHelp on value fields", {
+		beforeEach: function() {
+			_init();
+			},
+		afterEach: _teardown
+	});
+
+	QUnit.test("value field has fieldHelp for EQ and NE operators", function(assert) {
+
+		oModel.setData({
+			conditions: {
+				Name: [
+					   Condition.createCondition("BT", ["A", "Z"], undefined, undefined, ConditionValidated.NotValidated),
+					   Condition.createCondition("NE", ["X"], undefined, undefined, ConditionValidated.NotValidated),
+					   Condition.createCondition("LE", ["X"], undefined, undefined, ConditionValidated.NotValidated)
+					   ]
+			}
+		});
+
+		assert.equal(oDefineConditionPanel.getFieldHelp(), null, "default fieldHelp is not defined");
+		oDefineConditionPanel.setFieldHelp("MyTestValueHelp");
+		assert.equal(oDefineConditionPanel.getFieldHelp(), "MyTestValueHelp", "fieldHelp is set");
+
+		var fnDone = assert.async();
+		setTimeout(function () { // wait for rendering
+			oCore.applyChanges();
+			var oOperatorField = oCore.byId("DCP1--0-operator-inner");
+			oOperatorField.setValue("EQ");
+			oOperatorField.fireChange({value: "EQ"}); // fake item select
+
+			setTimeout(function () { // as model update is async
+				setTimeout(function () { // as parsing is async
+					setTimeout(function () { // as model update is async
+						setTimeout(function () { // as row update is async
+							oCore.applyChanges();
+
+							var oField1 = oCore.byId("DCP1--0-values0");
+							var oField2 = oCore.byId("DCP1--1-values0");
+							var oField3 = oCore.byId("DCP1--2-values0");
+							assert.equal(oField1.getFieldHelp(), "MyTestValueHelp", "fieldHelp on field is set");
+							assert.equal(oField2.getFieldHelp(), "MyTestValueHelp", "fieldHelp on field is set");
+							assert.equal(oField3.getFieldHelp(), null, "fieldHelp on field is NOT set");
+
+							fnDone();
+						}, 0);
+					}, 0);
+				}, 0);
+			}, 0);
+		}, 0);
+
+	});
+
 });

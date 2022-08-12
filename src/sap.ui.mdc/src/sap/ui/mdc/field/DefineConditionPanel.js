@@ -77,6 +77,7 @@ sap.ui.define([
 	var ButtonType = mLibrary.ButtonType;
 	var ValueState = coreLibrary.ValueState;
 	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
+	var aFieldHelpSupportedOperators = ["EQ", "NE"]; // only for this operators we use the FieldHelp on the value fields
 
 	/**
 	 * Constructor for a new <code>DefineConditionPanel</code>.
@@ -170,6 +171,21 @@ sap.ui.define([
 					type: "sap.ui.core.Control",
 					multiple: false,
 					visibility: "hidden"
+				}
+			},
+			associations: {
+				/**
+				 * Optional <code>FieldHelp</code>.
+				 *
+				 * This is an association that allows the usage of one <code>FieldHelp</code> instance for the value fields on the <code>DefineConditionPanel</code>.
+
+				 * <b>Note:</b> The Fields are single value inputs and the display is always set to <code>FieldDisplay.Value</code>. only a ValueHelp with a TypeAhead and single select MTable can be used.
+
+				 * <b>Note:</b> For Boolean, Date or Time types, no <code>FieldHelp</code> should be added, but a default <code>FieldHelp</code> used instead.
+				 */
+				fieldHelp: {
+					type: "sap.ui.mdc.ValueHelp",
+					multiple: false
 				}
 			},
 			events: {
@@ -351,21 +367,47 @@ sap.ui.define([
 
 		// called when the user has change the value of the condition field
 		onChange: function(oEvent) {
-			var aOperators = _getOperators.call(this);
-			var aConditions = this.getConditions();
-			FilterOperatorUtil.checkConditionsEmpty(aConditions, aOperators);
-			FilterOperatorUtil.updateConditionsValues(aConditions, aOperators);
+			var oPromise = oEvent && oEvent.getParameter("promise");
+			var oSourceControl = oEvent && oEvent.getSource();
+			var fnHandleChange = function(oEvent) {
+				var aOperators = _getOperators.call(this);
+				var aConditions = this.getConditions();
+				FilterOperatorUtil.checkConditionsEmpty(aConditions, aOperators);
+				FilterOperatorUtil.updateConditionsValues(aConditions, aOperators);
 
-			if (oEvent) {
-				// remove isInitial when the user modified the value and the codndition is not Empty
-				aConditions.forEach(function(oCondition) {
-					if (!oCondition.isEmpty) {
-						delete oCondition.isInitial;
+				if (oEvent) {
+					// remove isInitial when the user modified the value and the condition is not Empty
+					aConditions.forEach(function(oCondition) {
+						if (!oCondition.isEmpty) {
+							delete oCondition.isInitial;
+						}
+					});
+				}
+
+				this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+			}.bind(this);
+
+			if (oPromise) {
+				oPromise.then(function(vResult) {
+					this._bPendingChange = false;
+					fnHandleChange({mParameters: {value: vResult}}); // TODO: use a real event?
+					if (this._bPendingValidateCondition) {
+						_validateCondition.call(this, oSourceControl);
+						delete this._bPendingValidateCondition;
 					}
-				});
-			}
+				}.bind(this)).catch(function(oError) { // cleanup pending stuff
+					this._bPendingChange = false;
+					if (this._bPendingValidateCondition) {
+						_validateCondition.call(this, oSourceControl);
+						delete this._bPendingValidateCondition;
+					}
+				}.bind(this));
 
-			this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
+				this._bPendingChange = true; // TODO: handle multiple changes
+				return;
+			} else {
+				fnHandleChange();
+			}
 
 		},
 
@@ -645,6 +687,17 @@ sap.ui.define([
 				oValue0Field = undefined;
 			}
 
+			if (aFieldHelpSupportedOperators.length === 0 || aFieldHelpSupportedOperators.indexOf(sKey) >= 0) {
+				// enable the fieldHelp for the used value fields
+				var sFiedHelp = this.getFieldHelp();
+				oValue0Field && oValue0Field.setFieldHelp && oValue0Field.setFieldHelp(sFiedHelp);
+				oValue1Field && oValue1Field.setFieldHelp && oValue1Field.setFieldHelp(sFiedHelp);
+			} else {
+				// remove the fieldHelp for the used value fields
+				oValue0Field && oValue0Field.setFieldHelp && oValue0Field.setFieldHelp();
+				oValue1Field && oValue1Field.setFieldHelp && oValue1Field.setFieldHelp();
+			}
+
 			if (oOperator.createControl || oOperatorOld.createControl) {
 				// custom control used -> needs to be created new
 				if (oValue0Field) {
@@ -714,7 +767,9 @@ sap.ui.define([
 				value: { path: "$this>", type: oNullableType, mode: 'TwoWay', targetType: 'raw' },
 				editMode: {parts: [{path: "$condition>operator"}, {path: "$condition>invalid"}], formatter: _getEditModeFromOperator},
 				multipleLines: false,
-				width: "100%"
+				width: "100%",
+				fieldHelp: (aFieldHelpSupportedOperators.length === 0 || aFieldHelpSupportedOperators.indexOf(oCondition.operator) >= 0) ? this.getFieldHelp() : null
+				//display: should always be FieldDisplay.Value
 			});
 		}
 
@@ -1439,6 +1494,11 @@ sap.ui.define([
 	}
 
 	function _validateFieldGroup(oEvent) {
+
+		if (this._bPendingChange) {
+			this._bPendingValidateCondition = true;
+			return;
+		}
 
 		// TODO: can there be FieldGroups set from outside?
 		var oField = oEvent.getSource();
