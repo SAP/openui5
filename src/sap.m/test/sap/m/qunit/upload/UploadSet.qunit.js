@@ -440,6 +440,12 @@ sap.ui.define([
 		assert.ok(document.querySelector(".sapMUCNoDataPage"), "No Data template is visible");
 	});
 
+	QUnit.test("Upload url of Uploader updated with UploadSet uploadurl", function (assert) {
+		this.oUploadSet._getImplicitUploader();
+		this.oUploadSet.setUploadUrl('/test');
+		assert.equal(this.oUploadSet.getUploadUrl(), "/test", "Uploader uploadUrl is updated successfuly");
+	});
+
 	function createNativeDragEventDummy(sEventType) {
 		var oEvent;
 

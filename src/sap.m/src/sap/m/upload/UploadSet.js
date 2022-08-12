@@ -877,6 +877,14 @@ sap.ui.define([
 		return this._oUploadButton;
 	};
 
+	UploadSet.prototype.setUploadUrl = function (sUploadUrl) {
+		this.setProperty("uploadUrl", sUploadUrl);
+		if (this._oUploader) {
+			this._oUploader.setUploadUrl(sUploadUrl);
+		}
+		return this;
+	};
+
 	/* ============== */
 	/* Public methods */
 	/* ============== */
