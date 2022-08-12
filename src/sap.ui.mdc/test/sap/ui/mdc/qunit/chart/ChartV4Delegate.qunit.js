@@ -580,10 +580,10 @@ function(
 
         var oExpectedChartTypeInfo = {
             "icon": "sap-icon://vertical-bar-chart",
-            "text": "Selected Chart Type: column"
+            "text": "Selected Chart Type: Column Chart"
         };
 
-        assert.equal(JSON.stringify(ChartDelegate.getChartTypeInfo(this.oMDCChart)), JSON.stringify(oExpectedChartTypeInfo), "Inner chart is returned");
+        assert.equal(JSON.stringify(ChartDelegate.getChartTypeInfo(this.oMDCChart)), JSON.stringify(oExpectedChartTypeInfo), "Expected Chart Type info was returned");
     });
 
     QUnit.test("getDrillableItems", function(assert) {

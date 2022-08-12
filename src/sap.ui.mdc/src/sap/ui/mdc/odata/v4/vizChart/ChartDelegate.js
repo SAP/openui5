@@ -1102,12 +1102,13 @@ sap.ui.define([
         }
 
         var sType = oMDCChart.getChartType(),
-            oMDCResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+            oMDCResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc"),
+            oChartResourceBundle = Core.getLibraryResourceBundle("sap.chart.messages");
 
         var mInfo = {
             icon: ChartTypeButton.mMatchingIcon[sType],
             text: oMDCResourceBundle.getText("chart.CHART_TYPE_TOOLTIP", [
-                sType
+                oChartResourceBundle.getText("info/" + sType)
             ])
         };
 
