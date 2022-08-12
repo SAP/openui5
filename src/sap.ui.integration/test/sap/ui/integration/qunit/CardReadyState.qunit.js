@@ -2,10 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/util/RequestDataProvider"
+	"sap/ui/thirdparty/jquery"
 ], function (
 	Card,
-	RequestDataProvider
+	jQuery
 ) {
 	"use strict";
 
@@ -79,10 +79,10 @@ sap.ui.define([
 
 	QUnit.module("Card with data", {
 		beforeEach: function () {
-			var oData = {
-				title: "Hello World"
-			};
-			this._fnRequestStub = this.stub(RequestDataProvider.prototype, "getData").resolves(oData);
+			this.deferredData = new jQuery.Deferred();
+			this.stub(jQuery, "ajax").callsFake(function () {
+				return this.deferredData.promise();
+			}.bind(this));
 			this.oCard = new Card({
 				manifest: {
 					"sap.app": {
@@ -92,8 +92,11 @@ sap.ui.define([
 						"type": "List",
 						"data": {
 							"request": {
-
+								"url": "some/url"
 							}
+						},
+						"header": {
+							"title": "Title"
 						},
 						"content": {
 							"item": { }
@@ -109,25 +112,30 @@ sap.ui.define([
 	});
 
 	QUnit.test("Card data is loaded, but content is still not", function (assert) {
-		var done = assert.async();
+		// Arrange
+		var done = assert.async(2);
+		assert.expect(2);
+		var deferred = new jQuery.Deferred();
 
-		this.oCard.attachEventOnce("_ready", function () {
-			// Arrange
-			var oContent = this.oCard.getCardContent();
-			oContent.awaitEvent("someSlowEvent", true);
+		this.stub(sap.ui.integration.util.ContentFactory.prototype, "create").callsFake(function () {
+			return deferred.promise();
+		});
+
+		this.oCard.attachEventOnce("manifestApplied", function () {
+			this.oCard.attachEventOnce("_headerReady", function () {
+				// Assert
+				assert.ok(this.oCard.getCardHeader().isReady(), "Header should be ready");
+				done();
+			}.bind(this));
+
+			this.oCard.attachEventOnce("_dataReady", function () {
+				// Assert
+				assert.ok(this.oCard._bDataReady, "Card data should be ready regardless of the content");
+				done();
+			}.bind(this));
 
 			// Act
-			this.oCard.getModel().fireEvent("change");
-
-			// Assert
-			assert.notOk(this.oCard.getCardHeader().isLoading(), "Header shouldn't be loading after data request of card is complete");
-			assert.ok(oContent.isLoading(), "Content should still be loading after data request of card is complete");
-
-			// Act
-			oContent.fireEvent("someSlowEvent");
-			assert.notOk(oContent.isLoading(), "Content should NOT be loading anymore when its internal events are complete");
-
-			done();
+			this.deferredData.resolve({});
 		}.bind(this));
 
 		this.oCard.placeAt(DOM_RENDER_LOCATION);

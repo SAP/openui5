@@ -475,8 +475,8 @@ sap.ui.define([
 		this._bFirstRendering = true;
 		this._aFundamentalErrors = [];
 		this._sPerformanceId = "UI5 Integration Cards - " + this.getId() + "---";
-		this._fnOnCardReady = function () {
-			this._bCardReady = true;
+		this._fnOnDataReady = function () {
+			this._bDataReady = true;
 		}.bind(this);
 
 		/**
@@ -598,17 +598,18 @@ sap.ui.define([
 	Card.prototype._initReadyState = function () {
 		this._aReadyPromises = [];
 
+		this._awaitEvent("_dataReady");
+		this._awaitEvent("_dataPassedToContent");
 		this._awaitEvent("_headerReady");
 		this._awaitEvent("_filterBarReady");
 		this._awaitEvent("_contentReady");
-		this._awaitEvent("_cardReady");
 
 		Promise.all(this._aReadyPromises).then(function () {
 			this._bReady = true;
 			this.fireEvent("_ready");
 		}.bind(this));
 
-		this.attachEventOnce("_cardReady", this._fnOnCardReady);
+		this.attachEventOnce("_dataReady", this._fnOnDataReady);
 	};
 
 	/**
@@ -618,9 +619,9 @@ sap.ui.define([
 	 */
 	Card.prototype._clearReadyState = function () {
 		this._bReady = false;
-		this._bCardReady = false;
+		this._bDataReady = false;
 		this._aReadyPromises = [];
-		this.detachEvent("_cardReady", this._fnOnCardReady);
+		this.detachEvent("_dataReady", this._fnOnDataReady);
 	};
 
 	/**
@@ -646,7 +647,7 @@ sap.ui.define([
 				Measurement.end(this._sPerformanceId + "firstRenderingWithStaticData");
 			}
 
-			if (this._bCardReady && !Measurement.getMeasurement(this._sPerformanceId + "firstRenderingWithDynamicData").end) {
+			if (this._bDataReady && !Measurement.getMeasurement(this._sPerformanceId + "firstRenderingWithDynamicData").end) {
 				Measurement.end(this._sPerformanceId + "firstRenderingWithDynamicData");
 			}
 		}
@@ -1517,7 +1518,8 @@ sap.ui.define([
 			oModel;
 
 		if (!oDataSettings) {
-			this.fireEvent("_cardReady");
+			this.fireEvent("_dataReady");
+			this.fireEvent("_dataPassedToContent");
 			return;
 		}
 
@@ -1539,7 +1541,8 @@ sap.ui.define([
 		}
 
 		if (!oModel) {
-			this.fireEvent("_cardReady");
+			this.fireEvent("_dataReady");
+			this.fireEvent("_dataPassedToContent");
 			return;
 		}
 
@@ -1554,9 +1557,11 @@ sap.ui.define([
 			if (this._createContentPromise) {
 				this._createContentPromise.then(function (oContent) {
 					oContent.onDataChanged();
+					this.fireEvent("_dataPassedToContent");
 					this.onDataRequestComplete();
 				}.bind(this));
 			} else {
+				this.fireEvent("_dataPassedToContent");
 				this.onDataRequestComplete();
 			}
 
@@ -1568,17 +1573,21 @@ sap.ui.define([
 			}.bind(this));
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
+				this.fireEvent("_dataReady");
 				oModel.setData(oEvent.getParameter("data"));
-			});
+			}.bind(this));
 
 			this._oDataProvider.attachError(function (oEvent) {
+				this.fireEvent("_dataReady");
+				this.fireEvent("_dataPassedToContent");
 				this._handleError("Data service unavailable. " + oEvent.getParameter("message"));
 				this.onDataRequestComplete();
 			}.bind(this));
 
 			this._oDataProvider.triggerDataUpdate();
 		} else {
-			this.fireEvent("_cardReady");
+			this.fireEvent("_dataReady");
+			this.fireEvent("_dataPassedToContent");
 		}
 	};
 
@@ -2276,7 +2285,6 @@ sap.ui.define([
 		var oContent = this.getCardContent(),
 			oLoadingProvider = this.getAggregation("_loadingProvider");
 
-		this.fireEvent("_cardReady");
 		this.hideLoadingPlaceholders(CardArea.Header);
 		this.hideLoadingPlaceholders(CardArea.Filters);
 
