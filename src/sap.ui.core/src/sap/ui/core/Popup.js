@@ -152,9 +152,13 @@ sap.ui.define([
 	 * @private
 	 */
 	function clearSizeAndPosition($BlockRef) {
-		var aProperties = ["left", "top", "width", "height", "position"];
+		// left and top are set by jQuery.position
+		// width and height are set by function 'adaptSizeAndPosition'
+		// All of them need to be removed for being prepared to show a full screen blocklayer
+		var aProperties = ["left", "top", "width", "height"];
 
 		if ($BlockRef[0]) {
+			$BlockRef[0].classList.remove("sapUiBLyWithin");
 			aProperties.forEach(function(sProperty) {
 				$BlockRef[0].style.removeProperty(sProperty);
 			});
@@ -171,12 +175,13 @@ sap.ui.define([
 	function adaptSizeAndPosition($BlockRef, oWithin) {
 		var oClientRect = oWithin.getBoundingClientRect();
 
-		$BlockRef.css({
-			width: oClientRect.width,
-			height: oClientRect.height,
-			display: "block",
-			position: "absolute"
-		}).position({
+		$BlockRef
+			.css({
+				width: oClientRect.width,
+				height: oClientRect.height
+			})
+			.addClass("sapUiBLyWithin")
+			.position({
 			my: "left top",
 			at: "left top",
 			of: oWithin
