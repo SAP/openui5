@@ -20,10 +20,11 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/test/TestUtils"
 ], function (Log, SyncPromise, Configuration, CacheManager, Message, Binding, BindingMode,
-		BaseContext, Model, OperationMode, Context, ODataMetaModel, ODataModel, SubmitMode,
-		_Helper, _MetadataRequestor, _Parser, _Requestor, library) {
+		BaseContext, Model, OperationMode, Context, ODataMetaModel, ODataModel, SubmitMode, _Helper,
+		_MetadataRequestor, _Parser, _Requestor, library, TestUtils) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -3185,6 +3186,36 @@ sap.ui.define([
 			// code under test
 			oModel.delete("Entity('key')", "group");
 		}, new Error("Invalid path: Entity('key')"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchKeyPredicate", function (assert) {
+		var oModel = this.createModel(),
+			mTypeForMetaPathExpected;
+
+		this.mock(oModel.oRequestor).expects("fetchType")
+			.withExactArgs(sinon.match(function (mTypeForMetaPath) {
+				mTypeForMetaPathExpected = mTypeForMetaPath;
+				return typeof mTypeForMetaPath === "object";
+			}), "~metaPath~")
+			.returns(SyncPromise.resolve("~fetchTypeResult~"));
+		this.mock(_Helper).expects("getKeyPredicate")
+			.withExactArgs("~oEntity~", "~metaPath~",
+				sinon.match(function (mTypeForMetaPath) {
+					return mTypeForMetaPath === mTypeForMetaPathExpected;
+				}))
+			.returns("~keyPredicate~");
+
+		// code under test
+		return oModel.fetchKeyPredicate("~metaPath~", "~oEntity~").then(function (sPredicate) {
+			assert.strictEqual(sPredicate, "~keyPredicate~");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getKeyPredicate, requestKeyPredicate", function (assert) {
+		return TestUtils.checkGetAndRequest(this, this.createModel(), assert, "fetchKeyPredicate",
+			["~metapath~", {/*oEntity*/}], true);
 	});
 });
 //TODO constructor: test that the service root URL is absolute?

@@ -1518,6 +1518,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests the metadata for the given meta path and calculates the key predicate by taking the
+	 * key properties from the given entity instance.
+	 *
+	 * @param {string} sMetaPath
+	 *   An absolute metadata path to the entity set
+	 * @param {object} oEntity
+	 *   The entity instance with the key property values
+	 * @returns {sap.ui.base.SyncPromise<string|undefined>}
+	 *   A promise that gets resolved with the proper URI encoded key predicate, for example
+	 *   "(Sector='A%2FB%26C',ID='42')" or "('42')", or <code>undefined</code>, if at least one key
+	 *   property is undefined. It gets rejected if the metadata cannot be fetched or in case the
+	 *   entity has no key properties according to metadata.
+	 *
+	 * @private
+	 * @see #requestKeyPredicate
+	 */
+	ODataModel.prototype.fetchKeyPredicate = function (sMetaPath, oEntity) {
+		var mTypeForMetaPath = {};
+
+		return this.oRequestor.fetchType(mTypeForMetaPath, sMetaPath).then(function () {
+			return _Helper.getKeyPredicate(oEntity, sMetaPath, mTypeForMetaPath);
+		});
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.Model#filterMatchingMessages
 	 */
@@ -1685,6 +1710,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Takes the metadata for the given meta path and calculates the key predicate by taking the key
+	 * properties from the given entity instance.
+	 *
+	 * @param {string} sMetaPath
+	 *   An absolute metadata path to an entity set
+	 * @param {object} oEntity
+	 *   The entity instance with the key property values
+	 * @returns {string|undefined}
+	 *   The proper URI-encoded key predicate, for example "(Sector='A%2FB%26C',ID='42')" or
+	 *   "('42')", or <code>undefined</code> if at least one key property is undefined.
+	 * @throws {Error}
+	 *   If the key predicate cannot be determined synchronously
+	 *   (due to a pending metadata request), or if the metadata could not be fetched.
+	 *
+	 * @function
+	 * @public
+	 * @see #requestKeyPredicate
+	 * @since 1.107.0
+	 */
+	ODataModel.prototype.getKeyPredicate = _Helper.createGetMethod("fetchKeyPredicate", true);
+
+	/**
 	 * Returns messages of this model associated with the given context, that is messages belonging
 	 * to the object referred to by this context or a child object of that object. The messages are
 	 * sorted by their {@link sap.ui.core.message.Message#getType type} according to the type's
@@ -1790,7 +1837,7 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.Context#getBinding binding} during its lifetime.
 	 *
 	 * @param {string} sPath
-	 *   A list context path to an entity
+	 *   A list context path to an entity, see also {@link #requestKeyPredicate}
 	 * @param {boolean} [bRequestMessages]
 	 *   Whether to request messages for the context's entity
 	 * @param {object} [mParameters]
@@ -2334,6 +2381,27 @@ sap.ui.define([
 		assert(oEntityContext.getModel() === this, "oEntityContext must belong to this model");
 		return oEntityContext.requestCanonicalPath();
 	};
+
+	/**
+	 * Requests the metadata for the given meta path and calculates the key predicate by taking the
+	 * key properties from the given entity instance.
+	 *
+	 * @param {string} sMetaPath
+	 *   An absolute metadata path to the entity set
+	 * @param {object} oEntity
+	 *   The entity instance with the key property values
+	 * @returns {Promise<string|undefined>}
+	 *   A promise that gets resolved with the proper URI-encoded key predicate, for example
+	 *   "(Sector='A%2FB%26C',ID='42')" or "('42')", or <code>undefined</code> if at least one key
+	 *   property is undefined. It gets rejected if the metadata cannot be fetched, or in case the
+	 *   entity has no key properties according to the metadata.
+	 *
+	 * @function
+	 * @public
+	 * @see #getKeyPredicates
+	 * @since 1.107.0
+	 */
+	ODataModel.prototype.requestKeyPredicate = _Helper.createRequestMethod("fetchKeyPredicate");
 
 	/**
 	 * Requests side effects for the given paths on all affected root bindings.
