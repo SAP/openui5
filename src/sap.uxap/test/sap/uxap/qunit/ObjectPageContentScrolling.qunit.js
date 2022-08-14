@@ -383,6 +383,40 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 
 	});
 
+	QUnit.test("Failure to scroll resumes lazy loading", function (assert) {
+
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oTargetSection = oObjectPage.getSections()[2],
+			sTargetSectionId = oTargetSection.getId(),
+			oStub,
+			oSuppressSpy,
+			done = assert.async();
+
+		//Setup
+		oObjectPage.setEnableLazyLoading(true);
+		oStub = sinon.stub(oObjectPage, "_resumeLazyLoading", function () {
+			// Assert
+			assert.ok(true, "lazy loading is resumed");
+			done();
+			oStub.restore();
+			oSuppressSpy.restore();
+		});
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oSuppressSpy = sinon.spy(oObjectPage._oLazyLoading, "suppress");
+
+			// initiate scroll that involves supression of lazy loading
+			oObjectPage.scrollToSection(sTargetSectionId);
+			assert.equal(oSuppressSpy.callCount, 1, "lazy loading is suppressed");
+
+			// Act: change the DOM structure in a way
+			// that prevents the animation to end normally
+			oTargetSection.destroy();
+			Core.applyChanges();
+		});
+
+	});
+
 	QUnit.test("Rerendering the page preserves the scroll position", function (assert) {
 		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
 			oSecondSection = this.oObjectPageContentScrollingView.byId("secondSection"),

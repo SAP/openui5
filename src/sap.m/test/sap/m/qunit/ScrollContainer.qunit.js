@@ -435,8 +435,8 @@ sap.ui.define([
 		}));
 
 		fnWaitToRender(this.oScrollContainer).then(function() {
-			oStub = sinon.stub(oDelegate._$Container, "animate", function(oOptions, iTime, fnCallback) {
-				fnCallback();
+			oStub = sinon.stub(oDelegate._$Container, "animate", function(oProperties, oOptions) {
+				oOptions.always();
 			});
 			oDelegate.scrollTo(10, 0, 60, this.fnScrollEndSpy);
 			assert.strictEqual(this.fnScrollEndSpy.callCount, 1, "scrollEnd callback fired");
