@@ -3,6 +3,17 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "ea4c27f1e16312afc9180928d87f7bbec94d75a2",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Allow RTA revert moved headerContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180311371"
+          }
+        ]
+      },
+      {
         "id": "0e4dd234741ddcfc7682367c1891ab114c33b866",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Fix throwing an error",

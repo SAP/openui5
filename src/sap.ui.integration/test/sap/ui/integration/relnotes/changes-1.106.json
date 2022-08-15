@@ -3,6 +3,33 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "3f65d0a9b79fbee352dbbed80b11ff3a471929c7",
+        "type": "FEATURE",
+        "text": " Integration cards: Added experimental 'titleMaxLines' and 'labelWrapping' properties for Object card"
+      },
+      {
+        "id": "7f727c868a595aed700a8fe3d1e07205f7888514",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Prevent hidden icons due to overflow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280149730"
+          }
+        ]
+      },
+      {
+        "id": "d6f35e51fbeb74bde61db219b8c55230d5b2a838",
+        "type": "FIX",
+        "text": " Integration cards: Button group in Object card is now aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280135973"
+          }
+        ]
+      },
+      {
         "id": "c72738f162a2e39a7967646007aedc8efd69785a",
         "type": "FEATURE",
         "text": " sap.ui.integration.Card: 'tooltip' property added for Object Card"

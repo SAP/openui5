@@ -3,6 +3,66 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "df3533a5865cbfa5c34200f9a7e17bad2b143c4e",
+        "type": "FIX",
+        "text": " sap.m: Fix failing runtime build",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "fba46983ca8d438a50f3f1b1de62ae9afc719e89",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Selected correct time separators in binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280136834"
+          }
+        ]
+      },
+      {
+        "id": "83eb054e6ec0872d68440fa6b3ffc36edfc23155",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Corrected use of instance type check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280157279"
+          }
+        ]
+      },
+      {
+        "id": "dc8a1b40825dd9a6e810e809511703676772a2c9",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: use of the dateValue property isn`t recommended",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "d9e57866a4e7ba106f67e2792c61e9da0048e0c6",
+        "type": "FIX",
+        "text": " sap.ui.core.Configuration: Disable timezone configuration"
+      },
+      {
+        "id": "ff7864ce629452fe6534a605b04165d0e3720244",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Position inside custom within area is now correct in RTL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280142500"
+          }
+        ]
+      },
+      {
         "id": "44933b6700a8eceb1b89338de92b9bf86ebce318",
         "type": "FIX",
         "text": " sap.m.ObjectIdentifier: adjust association propagation",
@@ -38,6 +98,11 @@
         "id": "6b15a537270a0d181ef0bd782b470ff503aa65f5",
         "type": "FEATURE",
         "text": " You can now upload files from cloud using the UploadSet control"
+      },
+      {
+        "id": "d459de2f3a44e76d7f608cf58b10cfd646185c91",
+        "type": "FEATURE",
+        "text": " sap.m.Image: Enable inline svg rendering"
       },
       {
         "id": "2c388d0c0d036b9373460d19d1e5808d47348545",
