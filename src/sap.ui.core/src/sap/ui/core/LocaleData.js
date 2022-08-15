@@ -155,7 +155,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		},
 
 		/**
-		 * Get stand alone month names in width "narrow", "abbreviated" or "wide".
+		 * Get standalone month names in width "narrow", "abbreviated" or "wide".
 		 *
 		 * @param {string} sWidth the required width for the month names
 		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
@@ -181,7 +181,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		},
 
 		/**
-		 * Get stand alone day names in width "narrow", "abbreviated" or "wide".
+		 * Get standalone day names in width "narrow", "abbreviated" or "wide".
 		 *
 		 * @param {string} sWidth the required width for the day names
 		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
@@ -207,7 +207,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		},
 
 		/**
-		 * Get stand alone quarter names in width "narrow", "abbreviated" or "wide".
+		 * Get standalone quarter names in width "narrow", "abbreviated" or "wide".
 		 *
 		 * @param {string} sWidth the required width for the quarter names
 		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
@@ -744,7 +744,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 							}
 						}
 					}
-					// if neither symbol or group matched, add it to the missing tokens and add distance
+					// if neither symbol nor group matched, add it to the missing tokens and add distance
 					aMissingTokens.push(oToken);
 					iDistance += 50 - i;
 				}
@@ -1588,6 +1588,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		 *
 		 * Call:
 		 * <code>getUnitFromMapping("my")</code> would result in <code>"my-custom-unit"</code>
+		 * @param {string} sMapping mapping identifier
 		 * @return {string} unit from the mapping
 		 * @public
 		 * @since 1.54
@@ -2072,6 +2073,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 	 * from the configuration, in case sCalendarType is undefined.
 	 *
 	 * @param {sap.ui.core.CalendarType} sCalendarType the type defined in {@link sap.ui.core.CalendarType}.
+	 * @returns {string} calendar name
 	 * @private
 	 */
 	function getCLDRCalendarName(sCalendarType) {
