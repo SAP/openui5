@@ -1105,7 +1105,7 @@ sap.ui.define([
 			try {
 				Configuration.setCore(oRealCore);
 				assert.equal(Configuration.getTheme(), "custom", "Configuration 'theme'");
-				assert.equal(Configuration.getValue("themeRoot"), oSetup.expectedThemeRoot, "Configuration 'themeRoot'");
+				assert.equal(Configuration.getThemeRoot(), oSetup.expectedThemeRoot, "Configuration 'themeRoot'");
 			} finally {
 				browserUrl.reset();
 				if ( oMeta ) {
