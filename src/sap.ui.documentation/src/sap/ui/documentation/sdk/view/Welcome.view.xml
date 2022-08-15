@@ -491,7 +491,7 @@
 								width="100%">
 							<html:div class="sapUIDisclaimerLink sapUiSmallMarginBottom">
 								<custom:TitleLink
-										href="https://sapui5.hana.ondemand.com/#/topic/91f346786f4d1014b6dd926db0e91070"
+										href="https://ui5.sap.com/#/topic/91f346786f4d1014b6dd926db0e91070"
 										target="_blank"
 										text="{i18n>WELCOME_BLOCK_9_TITLE}"
 										titleStyle="H2"/>

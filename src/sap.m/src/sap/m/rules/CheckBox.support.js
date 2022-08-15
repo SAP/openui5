@@ -30,7 +30,7 @@ sap.ui.define(["sap/ui/support/library"],
 			resolution: "Either set enabled to true ot set editable to false",
 			resolutionurls: [{
 				text: "API Reference: sap.m.CheckBox",
-				href: "https://openui5.hana.ondemand.com/api/sap.m.CheckBox"
+				href: "https://sdk.openui5.org/api/sap.m.CheckBox"
 			}],
 			check: function (oIssueManager, oCoreFacade, oScope) {
 				oScope.getElementsByClassName("sap.m.CheckBox")

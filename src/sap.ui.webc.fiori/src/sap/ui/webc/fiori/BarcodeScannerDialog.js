@@ -27,7 +27,7 @@ sap.ui.define([
 	 * <br>
 	 * Internally, the component uses the zxing-js/library third party OSS.
 	 *
-	 * For a list of supported barcode formats, see the <ui5-link target="_blank" href="https://github.com/zxing-js/library">zxing-js/library</ui5-link> documentation.
+	 * For a list of supported barcode formats, see the {@link https://github.com/zxing-js/library zxing-js/library} documentation.
 	 *
 	 * @author SAP SE
 	 * @version ${version}

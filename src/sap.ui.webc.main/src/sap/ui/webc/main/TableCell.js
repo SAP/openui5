@@ -25,7 +25,7 @@ sap.ui.define([
 	 *
 	 * <h3>CSS Shadow Parts</h3>
 	 *
-	 * <ui5-link target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part">CSS Shadow Parts</ui5-link> allow developers to style elements inside the Shadow DOM. <br>
+	 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/::part CSS Shadow Parts} allow developers to style elements inside the Shadow DOM. <br>
 	 * The <code>sap.ui.webc.main.TableCell</code> exposes the following CSS Shadow Parts:
 	 * <ul>
 	 *     <li>cell - Used to style the native <code>td</code> element</li>

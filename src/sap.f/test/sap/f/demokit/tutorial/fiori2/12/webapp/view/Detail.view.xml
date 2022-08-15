@@ -23,7 +23,7 @@
 					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
 						<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
 							<f:Avatar
-								src="https://openui5.hana.ondemand.com/{products>ProductPicUrl}"
+								src="https://sdk.openui5.org/{products>ProductPicUrl}"
 								displaySize="S"
 								displayShape="Square"
 								class="sapUiTinyMarginEnd"/>
@@ -74,7 +74,7 @@
 		<headerContent>
 			<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Stretch">
 				<f:Avatar
-					src="https://openui5.hana.ondemand.com/{products>ProductPicUrl}"
+					src="https://sdk.openui5.org/{products>ProductPicUrl}"
 					displaySize="L"
 					displayShape="Square"
 					class="sapUiTinyMarginEnd">

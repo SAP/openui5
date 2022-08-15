@@ -63,7 +63,7 @@ sap.ui.define([
 			"configuration": {
 				"parameters": {
 					"objectWithPropertiesDefined": {
-						"value": { "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "int": 1 , "editable": true, "number": 3.55 }
+						"value": { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "int": 1 , "editable": true, "number": 3.55 }
 					}
 				},
 				"destinations": {
@@ -916,7 +916,7 @@ sap.ui.define([
 					assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field 2: Control is SimpleForm");
 					var oContents = oSimpleForm.getContent();
 					assert.equal(oContents.length, 16, "SimpleForm: length");
-					assert.ok(deepEqual(cleanDT(oContents[15].getValue()), {"text": "text01","key": "key01","url": "https://sapui5.hana.ondemand.com/06","icon": "sap-icon://accept","int": 1,"editable": true,"number": 3.55}), "SimpleForm field textArea: Has Origin value");
+					assert.ok(deepEqual(cleanDT(oContents[15].getValue()), {"text": "text01","key": "key01","url": "https://sap.com/06","icon": "sap-icon://accept","int": 1,"editable": true,"number": 3.55}), "SimpleForm field textArea: Has Origin value");
 					var oFormLabel = oContents[0];
 					var oFormField = oContents[1];
 					assert.equal(oFormLabel.getText(), "Key", "SimpleForm label1: Has label text");
@@ -954,9 +954,9 @@ sap.ui.define([
 					assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field4: Input Field");
 					assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 					assert.ok(oFormField.getEditable(), "SimpleForm Field4: Editable");
-					assert.equal(oFormField.getValue(), "https://sapui5.hana.ondemand.com/06", "SimpleForm field4: Has value");
-					oFormField.setValue("https://sapui5.hana.ondemand.com/06 1");
-					oFormField.fireChange({ value: "https://sapui5.hana.ondemand.com/06 1" });
+					assert.equal(oFormField.getValue(), "https://sap.com/06", "SimpleForm field4: Has value");
+					oFormField.setValue("https://sap.com/06 1");
+					oFormField.fireChange({ value: "https://sap.com/06 1" });
 					oFormLabel = oContents[8];
 					oFormField = oContents[9];
 					assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Has label text");
@@ -1035,7 +1035,7 @@ sap.ui.define([
 						assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 						assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
 						assert.equal(oFormField.getValue(), '', "SimpleForm Field8: Has No value");
-						var sNewValue = '{\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": true,\n\t"number": 5.55\n}';
+						var sNewValue = '{\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sap.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": true,\n\t"number": 5.55\n}';
 						oFormField.setValue(sNewValue);
 						oFormField.fireChange({ value: sNewValue});
 						oSwitchModeButton.firePress();
@@ -1064,7 +1064,7 @@ sap.ui.define([
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label4: Visible");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 							assert.equal(oFormLabel.getText(), "URL", "SimpleForm label4: Label text");
-							assert.equal(oFormField.getValue(), "https://sapui5.hana.ondemand.com/06 2", "SimpleForm field4: Value changed");
+							assert.equal(oFormField.getValue(), "https://sap.com/06 2", "SimpleForm field4: Value changed");
 							oFormLabel = oContents[8];
 							oFormField = oContents[9];
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label5: Visible");
@@ -1113,7 +1113,7 @@ sap.ui.define([
 					assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
 					var oContents = oSimpleForm.getContent();
 					assert.equal(oContents.length, 16, "SimpleForm: length");
-					assert.ok(deepEqual(cleanDT(oContents[15].getValue()), {"text": "text01","key": "key01","url": "https://sapui5.hana.ondemand.com/06","icon": "sap-icon://accept","int": 1,"editable": true,"number": 3.55}), "SimpleForm field textArea: Has Origin value");
+					assert.ok(deepEqual(cleanDT(oContents[15].getValue()), {"text": "text01","key": "key01","url": "https://sap.com/06","icon": "sap-icon://accept","int": 1,"editable": true,"number": 3.55}), "SimpleForm field textArea: Has Origin value");
 					var oFormLabel = oContents[0];
 					var oFormField = oContents[1];
 					assert.equal(oFormLabel.getText(), "Key", "SimpleForm label1: Has label text");
@@ -1151,9 +1151,9 @@ sap.ui.define([
 					assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field4: Input Field");
 					assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 					assert.ok(oFormField.getEditable(), "SimpleForm Field4: Editable");
-					assert.equal(oFormField.getValue(), "https://sapui5.hana.ondemand.com/06", "SimpleForm field4: Has value");
-					oFormField.setValue("https://sapui5.hana.ondemand.com/06 1");
-					oFormField.fireChange({ value: "https://sapui5.hana.ondemand.com/06 1" });
+					assert.equal(oFormField.getValue(), "https://sap.com/06", "SimpleForm field4: Has value");
+					oFormField.setValue("https://sap.com/06 1");
+					oFormField.fireChange({ value: "https://sap.com/06 1" });
 					oFormLabel = oContents[8];
 					oFormField = oContents[9];
 					assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Has label text");
@@ -1227,8 +1227,8 @@ sap.ui.define([
 						oFormField = oContents[15];
 						assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 						assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
-						assert.ok(deepEqual(cleanDT(oFormField.getValue()), {"text": "text01 1","key": "key01 1","url": "https://sapui5.hana.ondemand.com/06 1","icon": "sap-icon://accept 1","int": 2,"editable": false,"number": 4.55}), "SimpleForm field8: Has value");
-						var sNewValue = '{\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": true,\n\t"number": 5.55\n}';
+						assert.ok(deepEqual(cleanDT(oFormField.getValue()), {"text": "text01 1","key": "key01 1","url": "https://sap.com/06 1","icon": "sap-icon://accept 1","int": 2,"editable": false,"number": 4.55}), "SimpleForm field8: Has value");
+						var sNewValue = '{\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sap.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": true,\n\t"number": 5.55\n}';
 						oFormField.setValue(sNewValue);
 						oFormField.fireChange({ value: sNewValue});
 						oSwitchModeButton.firePress();
@@ -1257,7 +1257,7 @@ sap.ui.define([
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label4: Visible");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 							assert.equal(oFormLabel.getText(), "URL", "SimpleForm label4: Label text");
-							assert.equal(oFormField.getValue(), "https://sapui5.hana.ondemand.com/06 2", "SimpleForm field4: Value changed");
+							assert.equal(oFormField.getValue(), "https://sap.com/06 2", "SimpleForm field4: Value changed");
 							oFormLabel = oContents[8];
 							oFormField = oContents[9];
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label5: Visible");

@@ -121,7 +121,7 @@ sap.ui.define([
 				 * <br>
 				 * Example:
 				 *
-				 * See all the available icons within the <ui5-link target="_blank" href="https://openui5.hana.ondemand.com/test-resources/sap/m/demokit/iconExplorer/webapp/index.html" class="api-table-content-cell-link">Icon Explorer</ui5-link>.
+				 * See all the available icons within the {@link demo:sap/m/demokit/iconExplorer/webapp/index.html Icon Explorer}.
 				 */
 				icon: {
 					type: "string",

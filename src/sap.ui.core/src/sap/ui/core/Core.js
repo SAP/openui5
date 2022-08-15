@@ -1133,9 +1133,9 @@ sap.ui.define([
 	 * Resources for styling the <code>my.own.library</code> controls will be loaded from the configured
 	 * location:
 	 * <pre>
-	 *   https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/sap_belize/library.css
-	 *   https://openui5.hana.ondemand.com/resources/sap/ui/layout/themes/sap_belize/library.css
-	 *   https://openui5.hana.ondemand.com/resources/sap/m/themes/sap_belize/library.css
+	 *   https://sdk.openui5.org/resources/sap/ui/core/themes/sap_belize/library.css
+	 *   https://sdk.openui5.org/resources/sap/ui/layout/themes/sap_belize/library.css
+	 *   https://sdk.openui5.org/resources/sap/m/themes/sap_belize/library.css
 	 *   https://mythemeserver.com/allThemes/my/own/library/themes/sap_belize/library.css
 	 * </pre>
 	 *

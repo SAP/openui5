@@ -38,7 +38,7 @@ sap.ui.define([
 			"configuration": {
 				"parameters": {
 					"objectWithPropertiesDefinedAndValueFromJsonList": {
-						"value": {"text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_uuid": "111771a4-0d3f-4fec-af20-6f28f1b894cb"}}
+						"value": {"text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_uuid": "111771a4-0d3f-4fec-af20-6f28f1b894cb"}}
 					},
 					"objectWithPropertiesDefinedAndValueFromRequestedFile": {
 						"value": {"text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_dt": {"_editable": false, "_uuid": "222771a4-0d3f-4fec-af20-6f28f1b894cb"}}
@@ -60,8 +60,8 @@ sap.ui.define([
 		}
 	};
 
-	var oEditObject = {"text": "textnew","key": "keynew","url": "https://sapui5.hana.ondemand.com/04","icon": "sap-icon://zoom-in","iconcolor": "#E69A17","int": 3,"_dt": {"_selected": true}};
-	var oChangedObject = {"text": "text01","key": "key01","url": "https://sapui5.hana.ondemand.com/06","icon": "sap-icon://accept","iconcolor": "#E69A17","int": 1,"_dt": {"_selected": true},"editable": true,"number": 0.55};
+	var oEditObject = {"text": "textnew","key": "keynew","url": "https://sap.com/04","icon": "sap-icon://zoom-in","iconcolor": "#E69A17","int": 3,"_dt": {"_selected": true}};
+	var oChangedObject = {"text": "text01","key": "key01","url": "https://sap.com/06","icon": "sap-icon://accept","iconcolor": "#E69A17","int": 1,"_dt": {"_selected": true},"editable": true,"number": 0.55};
 	var oResponseData = {
 		"Customers": [
 			{"CustomerID": "a", "CompanyName": "A Company", "Country": "Country 1", "City": "City 1", "Address": "Address 1"},
@@ -292,7 +292,7 @@ sap.ui.define([
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
 					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
 					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 					oSelectionCell1.setSelected(false);
 					oSelectionCell1.fireSelect({
@@ -315,7 +315,7 @@ sap.ui.define([
 					assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
 					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
 					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sapui5.hana.ondemand.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 
 					oRemoveValueButton.firePress();
@@ -620,7 +620,7 @@ sap.ui.define([
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
 					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
 					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 					oSelectionCell1.setSelected(false);
 					oSelectionCell1.fireSelect({
@@ -643,7 +643,7 @@ sap.ui.define([
 					assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
 					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
 					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sapui5.hana.ondemand.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 
 					oRemoveValueButton.firePress();
@@ -886,7 +886,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oTableToolbar = oTable.getToolbar();
@@ -925,7 +925,7 @@ sap.ui.define([
 						userInteraction: true
 					});
 					assert.equal(oTable.getSelectedIndices()[0], 0, "Table: SelectedIndices Value after table selection change");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: DT Value not change after table selection change");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: DT Value not change after table selection change");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
@@ -935,7 +935,7 @@ sap.ui.define([
 						userInteraction: true
 					});
 					assert.equal(oTable.getSelectedIndices()[0], 3, "Table: SelectedIndices Value after table selection change again");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: DT Value not change after table selection change again");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: DT Value not change after table selection change again");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar enabled");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
@@ -946,7 +946,7 @@ sap.ui.define([
 					});
 					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value after remove table selection");
 					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value after remove table selection");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value not change after remove table selection");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value not change after remove table selection");
 					assert.ok(oSelectAllSelectionsButton.getEnabled(), "Table: SelectAllSelections button in toolbar enabled");
 					assert.ok(!oClearAllSelectionsButton.getEnabled(), "Table: ClearAllSelections button in toolbar disabled");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
@@ -977,7 +977,7 @@ sap.ui.define([
 					assert.ok(oSelectionCell1.getSelected(), "Row 1: Cell 1 is selected after selecting");
 					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
 					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled after selecting");
 					oSelectionCell1.setSelected(false);
 					oSelectionCell1.fireSelect({
@@ -1000,7 +1000,7 @@ sap.ui.define([
 					assert.ok(oSelectionCell4.getSelected(), "Row 4: Cell 1 is selected after selecting");
 					assert.equal(oTable.getSelectedIndex(), -1, "Table: SetectedIndex Value not change after selecting");
 					assert.equal(oTable.getSelectedIndices().length, 0, "Table: SelectedIndices Value not change after selecting");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sapui5.hana.ondemand.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selecting again");
 					assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");
 
 					oRemoveValueButton.firePress();
@@ -1161,10 +1161,10 @@ sap.ui.define([
 									"value": {"string": "string value", "boolean": true, "integer": 3, "number": 3.22}
 								},
 								"objectWithPropertiesDefined": {
-									"value": {"text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 , "editable": true, "number": 3.55}
+									"value": {"text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 , "editable": true, "number": 3.55}
 								},
 								"objectWithPropertiesDefinedAndValueFromJsonList": {
-									"value": {"text": "textnew", "key": "keynew", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3}
+									"value": {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3}
 								},
 								"objectWithPropertiesDefinedAndValueFromRequestedFile": {
 									"value": {"text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_editable": false}
@@ -1189,8 +1189,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oValue = {"text": "textnew", "key": "keynew", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
-					var oValueInTable = {"text": "textnew", "key": "keynew", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
+					var oValue = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
+					var oValueInTable = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -1277,9 +1277,9 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field4: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field4: Editable");
-							assert.equal(oFormField.getValue(), "https://sapui5.hana.ondemand.com/04", "SimpleForm field4: Has value");
-							oFormField.setValue("https://sapui5.hana.ondemand.com/06");
-							oFormField.fireChange({ value: "https://sapui5.hana.ondemand.com/06" });
+							assert.equal(oFormField.getValue(), "https://sap.com/04", "SimpleForm field4: Has value");
+							oFormField.setValue("https://sap.com/06");
+							oFormField.fireChange({ value: "https://sap.com/06" });
 							oFormLabel = oContents[8];
 							oFormField = oContents[9];
 							assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Has label text");
@@ -1354,7 +1354,7 @@ sap.ui.define([
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
 								assert.ok(deepEqual(cleanUUID(oFormField.getValue()), oChangedObject), "SimpleForm field textArea: Has changed value");
-								var sNewValue = '{\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
+								var sNewValue = '{\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sap.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
 								oFormField.setValue(sNewValue);
 								oFormField.fireChange({ value: sNewValue});
 								oSwitchModeButton.firePress();
@@ -1383,7 +1383,7 @@ sap.ui.define([
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label4: Visible");
 									assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 									assert.equal(oFormLabel.getText(), "URL", "SimpleForm label4: Label text");
-									assert.equal(oFormField.getValue(), "https://sapui5.hana.ondemand.com/06 2", "SimpleForm field4: Value changed");
+									assert.equal(oFormField.getValue(), "https://sap.com/06 2", "SimpleForm field4: Value changed");
 									oFormLabel = oContents[8];
 									oFormField = oContents[9];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label5: Visible");
@@ -1434,10 +1434,10 @@ sap.ui.define([
 									"value": {"string": "string value", "boolean": true, "integer": 3, "number": 3.22}
 								},
 								"objectWithPropertiesDefined": {
-									"value": {"text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 , "editable": true, "number": 3.55}
+									"value": {"text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1 , "editable": true, "number": 3.55}
 								},
 								"objectWithPropertiesDefinedAndValueFromJsonList": {
-									"value": {"text": "textnew", "key": "keynew", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3}
+									"value": {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3}
 								},
 								"objectWithPropertiesDefinedAndValueFromRequestedFile": {
 									"value": {"text": "text4req", "key": "key4", "additionalText": "addtext4", "icon": "sap-icon://zoom-out", "_editable": false}
@@ -1462,8 +1462,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oValue = {"text": "textnew", "key": "keynew", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
-					var oValueInTable = {"text": "textnew", "key": "keynew", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
+					var oValue = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
+					var oValueInTable = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -1482,7 +1482,7 @@ sap.ui.define([
 					var oEditButton = oTableToolbar.getContent()[2];
 					assert.ok(!oEditButton.getEnabled(), "Table: Edit button in toolbar disabled");
 					var oRow = oTable.getRows()[1];
-					assert.ok(deepEqual(cleanUUID(oRow.getBindingContext().getObject()), { "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": {"_editable": false}}), "Table: target row");
+					assert.ok(deepEqual(cleanUUID(oRow.getBindingContext().getObject()), { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": {"_editable": false}}), "Table: target row");
 					oTable.setSelectedIndex(1);
 					oTable.fireRowSelectionChange();
 					assert.ok(oEditButton.getEnabled(), "Table: Edit button in toolbar enabled");
@@ -1533,7 +1533,7 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field4: Input Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 							assert.ok(!oFormField.getEditable(), "SimpleForm Field4: Not Editable");
-							assert.equal(oFormField.getValue(), "https://sapui5.hana.ondemand.com/06", "SimpleForm field4: Has value");
+							assert.equal(oFormField.getValue(), "https://sap.com/06", "SimpleForm field4: Has value");
 							oFormLabel = oContents[8];
 							oFormField = oContents[9];
 							assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Has label text");
@@ -1565,7 +1565,7 @@ sap.ui.define([
 							assert.ok(oFormField.isA("sap.m.TextArea"), "SimpleForm Field8: TextArea Field");
 							assert.ok(!oFormField.getVisible(), "SimpleForm Field8: Not Visible");
 							assert.ok(!oFormField.getEditable(), "SimpleForm Field8: Not Editable");
-							var oFormFieldObject = {"text": "text01","key": "key01","url": "https://sapui5.hana.ondemand.com/06","icon": "sap-icon://accept","iconcolor": "#031E48","int": 1,"_dt": {"_editable": false}};
+							var oFormFieldObject = {"text": "text01","key": "key01","url": "https://sap.com/06","icon": "sap-icon://accept","iconcolor": "#031E48","int": 1,"_dt": {"_editable": false}};
 							assert.ok(deepEqual(cleanUUID(oFormField.getValue()), oFormFieldObject), "SimpleForm field textArea: Has the value");
 							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
@@ -1598,7 +1598,7 @@ sap.ui.define([
 								assert.ok(!oFormField.getVisible(), "SimpleForm Field4: Not Visible");
 								assert.ok(!oFormField.getEditable(), "SimpleForm Field4: Not Editable");
 								assert.equal(oFormLabel.getText(), "URL", "SimpleForm label4: Label text");
-								assert.equal(oFormField.getValue(), "https://sapui5.hana.ondemand.com/06", "SimpleForm field4: Value");
+								assert.equal(oFormField.getValue(), "https://sap.com/06", "SimpleForm field4: Value");
 								oFormLabel = oContents[8];
 								oFormField = oContents[9];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label5: Not Visible");
@@ -1656,7 +1656,7 @@ sap.ui.define([
 									assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 									assert.ok(!oFormField.getEditable(), "SimpleForm Field4: Not Editable");
 									assert.equal(oFormLabel.getText(), "URL", "SimpleForm label4: Label text");
-									assert.equal(oFormField.getValue(), "https://sapui5.hana.ondemand.com/06", "SimpleForm field4: Value");
+									assert.equal(oFormField.getValue(), "https://sap.com/06", "SimpleForm field4: Value");
 									oFormLabel = oContents[8];
 									oFormField = oContents[9];
 									assert.ok(oFormLabel.getVisible(), "SimpleForm label5: Visible");

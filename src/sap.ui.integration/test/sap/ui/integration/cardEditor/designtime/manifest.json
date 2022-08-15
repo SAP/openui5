@@ -35,7 +35,7 @@
 				},
 				"checkItemWithTabNotEditable": {
 					"value": {
-						"text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "editable": true
+						"text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "editable": true
 					}
 				},
 				"contextModelSyntax": {

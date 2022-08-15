@@ -38,7 +38,7 @@ sap.ui.define([
 			"configuration": {
 				"parameters": {
 					"objectWithPropertiesDefinedAndValueFromJsonList": {
-						"value": {"text": "textnew", "key": "keynew", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_uuid": "111771a4-0d3f-4fec-af20-6f28f1b894cb"}}
+						"value": {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_uuid": "111771a4-0d3f-4fec-af20-6f28f1b894cb"}}
 					}
 				},
 				"destinations": {
@@ -168,8 +168,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oValue = {"text": "textnew", "key": "keynew", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
-					var oValueInTable = {"text": "textnew", "key": "keynew", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
+					var oValue = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
+					var oValueInTable = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -287,8 +287,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oValue = {"text": "textnew", "key": "keynew", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
-					var oValueInTable = {"text": "textnew", "key": "keynew", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
+					var oValue = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
+					var oValueInTable = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -388,8 +388,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oValue = {"text": "textnew", "key": "keynew", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
-					var oValueInTable = {"text": "textnew", "key": "keynew", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
+					var oValue = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3};
+					var oValueInTable = {"text": "textnew", "key": "keynew", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_selected": true}};
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
@@ -451,7 +451,7 @@ sap.ui.define([
 									selected: true
 								});
 								assert.ok(oCell.getSelected(), "Row 1: Cell 1 is selected");
-								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sapui5.hana.ondemand.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selection change");
+								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text01", "key": "key01", "url": "https://sap.com/06", "icon": "sap-icon://accept", "iconcolor": "#031E48", "int": 1, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selection change");
 								oCell = oTable.getRows()[3].getCells()[0];
 								assert.ok(!oCell.getSelected(), "Row 3: Cell 1 is not selected");
 								oCell.setSelected(true);
@@ -459,7 +459,7 @@ sap.ui.define([
 									selected: true
 								});
 								assert.ok(oCell.getSelected(), "Row 3: Cell 1 is selected");
-								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sapui5.hana.ondemand.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selection change again");
+								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text04", "key": "key04", "url": "https://sap.com/03", "icon": "sap-icon://accept", "iconcolor": "#1C4C98", "int": 4, "_dt": { "_editable": false} }), "Field 1: DT Value changed after selection change again");
 								var oSelectionColumn = oTable.getColumns()[0];
 								var oRemoveValueButton = oSelectionColumn.getAggregation("multiLabels")[0];
 								assert.ok(oRemoveValueButton.getEnabled(), "Table: Remove Value button in Selection column enabled");

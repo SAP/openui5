@@ -19,8 +19,8 @@ Third-party module license information is also available in machine-readable for
 
 Try it!
 -------
-Check out our [control playground](https://openui5.hana.ondemand.com/controls)
-as well as a number of [sample applications](https://openui5.hana.ondemand.com/demoapps).
+Check out our [control playground](https://sdk.openui5.org/controls)
+as well as a number of [sample applications](https://sdk.openui5.org/demoapps).
 
 Get it!
 -------
@@ -32,9 +32,9 @@ Or use [**UI5 Tooling**](https://sap.github.io/ui5-tooling/), the recommended to
 Get started!
 ------------
 Try the [Hello World](https://openui5.org/), read
-the [Developer Guide](https://openui5.hana.ondemand.com/topic)
-and refer to the [API Reference](https://openui5.hana.ondemand.com/api).
-Use [App Templates](https://openui5.hana.ondemand.com/topic/a460a7348a6c431a8bd967ab9fb8d918) as a foundation for your developments (available in SAP Business Application Studio or here on [GitHub](https://github.com/SAP?q=openui5-worklist-app%20OR%20openui5-masterdetail-app%20OR%20openui5-sample-app)).
+the [Developer Guide](https://sdk.openui5.org/topic)
+and refer to the [API Reference](https://sdk.openui5.org/api).
+Use [App Templates](https://sdk.openui5.org/topic/a460a7348a6c431a8bd967ab9fb8d918) as a foundation for your developments (available in SAP Business Application Studio or here on [GitHub](https://github.com/SAP?q=openui5-worklist-app%20OR%20openui5-masterdetail-app%20OR%20openui5-sample-app)).
 Check out the [SAP Community Forum](https://answers.sap.com/tags/500983881501772639608291559920477) for 20,000+ questions and answers and
 [stackoverflow](http://stackoverflow.com/questions/tagged/sapui5) (use the tag "sapui5") to discuss code-related problems and questions. Or join the [OpenUI5 Slack](https://ui5-slack-invite.cfapps.eu10.hana.ondemand.com/). 
 

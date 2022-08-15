@@ -16,7 +16,7 @@ sap.ui.define([
 
 		QUnit.test("Location", function (assert) {
 			// Arrange
-			var sLocationUrl = "https://openui5nightly.hana.ondemand.com/resources/sap/ui/support";
+			var sLocationUrl = "https://sdk.openui5.org/nightly/resources/sap/ui/support";
 			this.DataCollector.setSupportAssistantLocation(sLocationUrl);
 
 			// Assert

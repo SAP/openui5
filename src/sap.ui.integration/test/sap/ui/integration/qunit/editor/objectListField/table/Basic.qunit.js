@@ -354,8 +354,8 @@ sap.ui.define([
 							assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field4: Editable");
 							assert.equal(oFormField.getValue(), "http://", "SimpleForm field4: Has value");
-							oFormField.setValue("https://sapui5.hana.ondemand.com/06");
-							oFormField.fireChange({ value: "https://sapui5.hana.ondemand.com/06" });
+							oFormField.setValue("https://sap.com/06");
+							oFormField.fireChange({ value: "https://sap.com/06" });
 							oFormLabel = oContents[8];
 							oFormField = oContents[9];
 							assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Has label text");
@@ -429,7 +429,7 @@ sap.ui.define([
 								oFormField = oContents[15];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
-								assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
+								assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sap.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
 								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -441,11 +441,11 @@ sap.ui.define([
 								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									assert.equal(oTable.getBinding().getCount(), 1, "Table: value length is 1");
-									var oDefaultNewObject = {"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55, "key": "key01", "editable": true, "int": 1, "_dt": {"_selected": true}};
+									var oDefaultNewObject = {"icon": "sap-icon://accept","text": "text01","url": "https://sap.com/06","number": 0.55, "key": "key01", "editable": true, "int": 1, "_dt": {"_selected": true}};
 									assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[0].getObject()), oDefaultNewObject), "Table: new row data");
 									var oRow1 = oTable.getRows()[0];
 									assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), oDefaultNewObject), "Table: new row");
-									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55, "key": "key01", "editable": true, "int": 1}]), "Field 1: Value after adding");
+									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"icon": "sap-icon://accept","text": "text01","url": "https://sap.com/06","number": 0.55, "key": "key01", "editable": true, "int": 1}]), "Field 1: Value after adding");
 									resolve();
 								});
 							});
@@ -560,8 +560,8 @@ sap.ui.define([
 							assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field4: Editable");
 							assert.equal(oFormField.getValue(), "http://", "SimpleForm field4: Has value");
-							oFormField.setValue("https://sapui5.hana.ondemand.com/06");
-							oFormField.fireChange({ value: "https://sapui5.hana.ondemand.com/06" });
+							oFormField.setValue("https://sap.com/06");
+							oFormField.fireChange({ value: "https://sap.com/06" });
 							oFormLabel = oContents[8];
 							oFormField = oContents[9];
 							assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Has label text");
@@ -635,8 +635,8 @@ sap.ui.define([
 								oFormField = oContents[15];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
-								assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
-								var sNewValue = '{\n\t"_dt": {\n\t\t"_selected": true\n\t},\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
+								assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sap.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
+								var sNewValue = '{\n\t"_dt": {\n\t\t"_selected": true\n\t},\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sap.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
 								oFormField.setValue(sNewValue);
 								oFormField.fireChange({ value: sNewValue});
 								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -650,11 +650,11 @@ sap.ui.define([
 								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									assert.equal(oTable.getBinding().getCount(), 1, "Table: value length is 1");
-									var oDefaultNewObject = {"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sapui5.hana.ondemand.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55, "_dt": {"_selected": true}};
+									var oDefaultNewObject = {"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sap.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55, "_dt": {"_selected": true}};
 									assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[0].getObject()), oDefaultNewObject), "Table: new row data");
 									var oRow1 = oTable.getRows()[0];
 									assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), oDefaultNewObject), "Table: new row");
-									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sapui5.hana.ondemand.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55}]), "Field 1: Value after adding");
+									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sap.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55}]), "Field 1: Value after adding");
 									resolve();
 								});
 							});
@@ -926,8 +926,8 @@ sap.ui.define([
 							assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field4: Editable");
 							assert.equal(oFormField.getValue(), "http://", "SimpleForm field4: Has value");
-							oFormField.setValue("https://sapui5.hana.ondemand.com/06");
-							oFormField.fireChange({ value: "https://sapui5.hana.ondemand.com/06" });
+							oFormField.setValue("https://sap.com/06");
+							oFormField.fireChange({ value: "https://sap.com/06" });
 							oFormLabel = oContents[8];
 							oFormField = oContents[9];
 							assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Has label text");
@@ -1001,7 +1001,7 @@ sap.ui.define([
 								oFormField = oContents[15];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
-								assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
+								assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sap.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
 								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -1013,11 +1013,11 @@ sap.ui.define([
 								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									assert.equal(oTable.getBinding().getCount(), 1, "Table: value length is 1");
-									var oDefaultNewObject = {"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55, "key": "key01", "editable": true, "int": 1, "_dt": {"_selected": true}};
+									var oDefaultNewObject = {"icon": "sap-icon://accept","text": "text01","url": "https://sap.com/06","number": 0.55, "key": "key01", "editable": true, "int": 1, "_dt": {"_selected": true}};
 									assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[0].getObject()), oDefaultNewObject), "Table: new row data");
 									var oRow1 = oTable.getRows()[0];
 									assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), oDefaultNewObject), "Table: new row");
-									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55, "key": "key01", "editable": true, "int": 1}]), "Field 1: Value after adding");
+									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"icon": "sap-icon://accept","text": "text01","url": "https://sap.com/06","number": 0.55, "key": "key01", "editable": true, "int": 1}]), "Field 1: Value after adding");
 									resolve();
 								});
 							});
@@ -1134,8 +1134,8 @@ sap.ui.define([
 							assert.ok(oFormField.getVisible(), "SimpleForm Field4: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field4: Editable");
 							assert.equal(oFormField.getValue(), "http://", "SimpleForm field4: Has value");
-							oFormField.setValue("https://sapui5.hana.ondemand.com/06");
-							oFormField.fireChange({ value: "https://sapui5.hana.ondemand.com/06" });
+							oFormField.setValue("https://sap.com/06");
+							oFormField.fireChange({ value: "https://sap.com/06" });
 							oFormLabel = oContents[8];
 							oFormField = oContents[9];
 							assert.equal(oFormLabel.getText(), "Editable", "SimpleForm label5: Has label text");
@@ -1209,8 +1209,8 @@ sap.ui.define([
 								oFormField = oContents[15];
 								assert.ok(!oFormLabel.getVisible(), "SimpleForm label8: Not Visible");
 								assert.ok(oFormField.getVisible(), "SimpleForm Field8: Visible");
-								assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sapui5.hana.ondemand.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
-								var sNewValue = '{\n\t"_dt": {\n\t\t"_selected": true\n\t},\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sapui5.hana.ondemand.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
+								assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), {"_dt": {"_selected": true},"icon": "sap-icon://accept","text": "text01","url": "https://sap.com/06","number": 0.55,"key": "key01","editable": true,"int": 1}), "SimpleForm field8: Has value");
+								var sNewValue = '{\n\t"_dt": {\n\t\t"_selected": true\n\t},\n\t"text new": "textnew",\n\t"text": "text01 2",\n\t"key": "key01 2",\n\t"url": "https://sap.com/06 2",\n\t"icon": "sap-icon://accept 2",\n\t"int": 3,\n\t"editable": false,\n\t"number": 5.55\n}';
 								oFormField.setValue(sNewValue);
 								oFormField.fireChange({ value: sNewValue});
 								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
@@ -1224,11 +1224,11 @@ sap.ui.define([
 								oAddButtonInPopover.firePress();
 								wait().then(function () {
 									assert.equal(oTable.getBinding().getCount(), 1, "Table: value length is 1");
-									var oDefaultNewObject = {"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sapui5.hana.ondemand.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55, "_dt": {"_selected": true}};
+									var oDefaultNewObject = {"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sap.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55, "_dt": {"_selected": true}};
 									assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[0].getObject()), oDefaultNewObject), "Table: new row data");
 									var oRow1 = oTable.getRows()[0];
 									assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), oDefaultNewObject), "Table: new row");
-									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sapui5.hana.ondemand.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55}]), "Field 1: Value after adding");
+									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [{"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sap.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55}]), "Field 1: Value after adding");
 									resolve();
 								});
 							});

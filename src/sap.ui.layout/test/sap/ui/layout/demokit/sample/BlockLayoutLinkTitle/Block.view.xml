@@ -35,7 +35,7 @@
 					title="Left aligned heading">
 					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr." />
 					<l:titleLink>
-						<Link text="This is a title link" href="https://openui5.hana.ondemand.com/" />
+						<Link text="This is a title link" href="https://sdk.openui5.org/" />
 					</l:titleLink>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell title="This is just a title">
@@ -46,7 +46,7 @@
 					<l:titleLink>
 						<Link
 							text="This is a title link - wrapping true"
-							href="https://openui5.hana.ondemand.com/"
+							href="https://sdk.openui5.org/"
 							wrapping="true" />
 					</l:titleLink>
 				</l:BlockLayoutCell>
@@ -58,19 +58,19 @@
 				<l:BlockLayoutCell title="25% width cell">
 					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr." />
 					<l:titleLink>
-						<Link text="This is a title link" href="https://openui5.hana.ondemand.com/"/>
+						<Link text="This is a title link" href="https://sdk.openui5.org/"/>
 					</l:titleLink>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell title="25% width cell">
 					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr." />
 					<l:titleLink>
-						<Link text="This is a title link - open in new window" href="https://openui5.hana.ondemand.com/" target="_blank" />
+						<Link text="This is a title link - open in new window" href="https://sdk.openui5.org/" target="_blank" />
 					</l:titleLink>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell title="25% width cell">
 					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr." />
 					<l:titleLink>
-						<Link text="This is a title link - wrapping true" href="https://openui5.hana.ondemand.com/" wrapping="true" />
+						<Link text="This is a title link - wrapping true" href="https://sdk.openui5.org/" wrapping="true" />
 					</l:titleLink>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>

@@ -43,7 +43,7 @@ sap.ui.define([
 	 *
 	 * <h3>CSS Shadow Parts</h3>
 	 *
-	 * <ui5-link target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part">CSS Shadow Parts</ui5-link> allow developers to style elements inside the Shadow DOM. <br>
+	 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/::part CSS Shadow Parts} allow developers to style elements inside the Shadow DOM. <br>
 	 * The <code>sap.ui.webc.main.Slider</code> exposes the following CSS Shadow Parts:
 	 * <ul>
 	 *     <li>progress-container - Used to style the progress container(the horizontal bar which visually represents the range between the minimum and maximum value) of the <code>sap.ui.webc.main.Slider</code>.</li>

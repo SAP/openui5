@@ -42,7 +42,7 @@ webapp/control/MyCustomControlRenderer.js
 ```
 
 ### HTML Control
-The [sap.ui.core.HTML](https://openui5.hana.ondemand.com/api/sap.ui.core.HTML) control of UI5 embeds standard HTML into the UI5 control tree. HTML content is passed to the control via its `content` attribute, either as a value in the XML view / constructor or via a binding. The elements of this HTML content need to be properly closed in all cases.
+The [sap.ui.core.HTML](https://sdk.openui5.org/api/sap.ui.core.HTML) control of UI5 embeds standard HTML into the UI5 control tree. HTML content is passed to the control via its `content` attribute, either as a value in the XML view / constructor or via a binding. The elements of this HTML content need to be properly closed in all cases.
 
 Usages of HTML controls can be found in JavaScript source files (typical extension `js`) as well as in XML views, fragments and composite controls (typical extensions `view.xml`, `fragment.xml`, `control.xml`).
 
@@ -94,11 +94,11 @@ area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr
 ```
 
 Please note that there is no need to change XML content. This includes the XML content of SVG and MathML as well as the `<svg>` and the `<math>` elements themselves.
-Of course, this also includes UI5 XML views, fragments and composite controls - even if there is [embedded native HTML](https://openui5.hana.ondemand.com/topic/be54950cae1041f59d4aa97a6bade2d8)
-in them. Some HTML elements share their name with UI5 controls. For example, there is a native `label` HTML element and a [sap.m.Label](https://openui5.hana.ondemand.com/api/sap.m.Label) UI5 control.
+Of course, this also includes UI5 XML views, fragments and composite controls - even if there is [embedded native HTML](https://sdk.openui5.org/topic/be54950cae1041f59d4aa97a6bade2d8)
+in them. Some HTML elements share their name with UI5 controls. For example, there is a native `label` HTML element and a [sap.m.Label](https://sdk.openui5.org/api/sap.m.Label) UI5 control.
 If `sap.m` is the default namespace in an XML view, the `sap.m.Label` element will appear as Label in this XML view. However, there is no need to change the self-closing of such XML tags.
 
-Please also note that if a [sap.ui.core.HTML](https://openui5.hana.ondemand.com/api/sap.ui.core.HTML) control is used inside an XML view or fragment, its content property has to be checked!
+Please also note that if a [sap.ui.core.HTML](https://sdk.openui5.org/api/sap.ui.core.HTML) control is used inside an XML view or fragment, its content property has to be checked!
 
 ## Testing
 We have added a test mode to UI5 which logs an error to the console and shows a popup (or a native alert) in the browser after a short delay to ensure it is not missed in any manual testing.

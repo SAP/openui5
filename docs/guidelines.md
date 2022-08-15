@@ -46,7 +46,7 @@ General
 JavaScript Coding Guidelines
 ----------------------------
 
--   No global JavaScript variables; Use AMD modules for encapsulation. For more information, see [Best Practices for Loading Modules](https://openui5.hana.ondemand.com/topic/00737d6c1b864dc3ab72ef56611491c4.html) and [API Reference: `sap.ui.define`](https://openui5.hana.ondemand.com/api/sap.ui/methods/sap.ui.define).
+-   No global JavaScript variables; Use AMD modules for encapsulation. For more information, see [Best Practices for Loading Modules](https://sdk.openui5.org/topic/00737d6c1b864dc3ab72ef56611491c4) and [API Reference: `sap.ui.define`](https://sdk.openui5.org/api/sap.ui/methods/sap.ui.define).
     -   This also means: no undeclared variables
     -   When using global variables introduced by other libraries, declare the usage in a special "global"-comment: `/*global JSZip, OpenAjax */`
 -   Do not access internal (private) members of other objects
@@ -165,7 +165,7 @@ Tags such as `@public` or `@private` allow you to control the visibility of the 
 You can select from several block tags to determine if and how the JSDoc documentation for your API is displayed in the *API Reference*. The tag you choose also affects API usage and compatibility, namely
 
 -   whether your API is meant to be used in application development or OpenUI5 framework development,
--   whether you have to keep your API compatible. For more information, see [Compatibility Rules](https://openui5.hana.ondemand.com/#/topic/91f087396f4d1014b6dd926db0e91070).
+-   whether you have to keep your API compatible. For more information, see [Compatibility Rules](https://sdk.openui5.org/topic/91f087396f4d1014b6dd926db0e91070).
 
 The following table gives an overview over the available tags:
 
@@ -323,7 +323,7 @@ General:
 -   Proper API documentation
 -   Translation: all texts visible in the UI must be translatable
     -   Do not provide translations, only provide the "developer english" version in messagebundle.properties, but annotate properly for translators, see [this page](guidelines/translationfiles.md) for details.
--   Follow the compatibility rules, as specified [here](https://openui5.hana.ondemand.com/topic/91f087396f4d1014b6dd926db0e91070)
+-   Follow the compatibility rules, as specified [here](https://sdk.openui5.org/topic/91f087396f4d1014b6dd926db0e91070)
 -   Make sure other Open Source libraries (or parts of them) are officially approved before adding them to UI5. Do not add code you "found" somewhere.
 
 For controls in addition:

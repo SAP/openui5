@@ -37,7 +37,7 @@ sap.ui.define([
 			"configuration": {
 				"parameters": {
 					"objectWithPropertiesDefinedAndValueFromJsonList": {
-						"value": {"text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_uuid": "111771a4-0d3f-4fec-af20-6f28f1b894cb"}}
+						"value": {"text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_uuid": "111771a4-0d3f-4fec-af20-6f28f1b894cb"}}
 					}
 				},
 				"destinations": {
@@ -142,7 +142,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -234,7 +234,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -326,7 +326,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];
@@ -419,7 +419,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
-					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sapui5.hana.ondemand.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
+					assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false }}), "Field 1: Value");
 					var oTable = oField.getAggregation("_field");
 					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 					var oSelectionColumn = oTable.getColumns()[0];

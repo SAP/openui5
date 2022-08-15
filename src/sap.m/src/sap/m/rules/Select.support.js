@@ -34,7 +34,7 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/model/BindingMode"],
 		resolution: "Use the sap.ui.model.Model.prototype.setSizeLimit to adjust the size limit of the 'items' model if you expect more than 100 items",
 		resolutionurls: [{
 			text: "API Reference for sap.ui.model.Model",
-			href: "https://openui5.hana.ondemand.com/api/sap.ui.model.Model"
+			href: "https://sdk.openui5.org/api/sap.ui.model.Model"
 		}],
 		check: function (oIssueManager, oCoreFacade, oScope) {
 			oScope.getElementsByClassName("sap.m.Select")
