@@ -102,4 +102,34 @@ function (
 			"_sSymbolId is built as expected when all of the Illustration properties are present");
 	});
 
+		/* --------------------------- Illustrattion Associations -------------------------------------- */
+		QUnit.module("Illustrattion - Associations ", {
+			beforeEach: function () {
+				// Arrange
+				this.oIllustration = new Illustration();
+				this.oIllustration.placeAt("qunit-fixture");
+				Core.applyChanges();
+			},
+			afterEach: function () {
+				// Clean
+				this.oIllustration.destroy();
+				this.oIllustration = null;
+			}
+		});
+
+		QUnit.test("Testing ariaLabelledBy association", function (assert) {
+
+			// Arrange
+			new sap.ui.core.InvisibleText("illustration_label", {text: "My label"}).toStatic();
+
+			var $illustration = this.oIllustration.$();
+
+			// Act
+			this.oIllustration.addAriaLabelledBy('illustration_label');
+			Core.applyChanges();
+
+			// Assert
+			assert.equal($illustration.attr("aria-labelledby"), 'illustration_label');
+		});
+
 });

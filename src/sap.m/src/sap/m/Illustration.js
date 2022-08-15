@@ -63,6 +63,13 @@ sap.ui.define([
 				 */
 				type: {type: "string", defaultValue: null}
 			},
+			associations : {
+				/**
+				 * Association to controls / IDs which label those controls (see WAI-ARIA attribute aria-labelledBy).
+	 			 * @since 1.106.0
+				 */
+				ariaLabelledBy: {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+			},
 			dnd: { draggable: true, droppable: false }
 		}
 	});
