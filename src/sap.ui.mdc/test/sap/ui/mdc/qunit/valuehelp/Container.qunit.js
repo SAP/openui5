@@ -422,9 +422,9 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_getControl", function(assert) {
+	QUnit.test("getControl", function(assert) {
 
-		var oControl = oContainer._getControl();
+		var oControl = oContainer.getControl();
 		assert.equal(oControl, oField, "Control returned from ValueHelp");
 
 	});

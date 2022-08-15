@@ -220,7 +220,7 @@ sap.ui.define([
 	Container.prototype._getContainer = function () {
 	};
 
-	Container.prototype._getControl = function () {
+	Container.prototype.getControl = function () {
 		var oValueHelp = this.getParent();
 		return oValueHelp && oValueHelp.getControl();
 	};

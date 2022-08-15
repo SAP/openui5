@@ -385,20 +385,20 @@ sap.ui.define([
 		var oPromise1 = _checkListBindingPending.call(this);
 		var oDelegate = this._getValueHelpDelegate();
 		var oDelegatePayload = this._getValueHelpDelegatePayload();
-		var oPromise2 = oDelegate && oDelegate.getInitialFilterConditions(oDelegatePayload, this, oConfig.control);
+		var oPromise2 = oDelegate && oDelegate.getFilterConditions(oDelegatePayload, this, oConfig);
 
 		return Promise.all([oPromise1, oPromise2]).then(function(aResult) {
 			var bPending = aResult[0];
-			var oInitialConditions = aResult[1];
+			var oConditions = aResult[1];
 			var oResult;
 
 			if (!bPending) {
 				var oTable = this.getTable();
-				oResult = _filterItems.call(this, oConfig, oTable.getItems(), oInitialConditions);
+				oResult = _filterItems.call(this, oConfig, oTable.getItems(), oConditions);
 			}
 
 			if (!oResult) {
-				oResult = this._loadItemForValue(oConfig, oInitialConditions);
+				oResult = this._loadItemForValue(oConfig, oConditions);
 			}
 
 			return oResult;
@@ -406,7 +406,7 @@ sap.ui.define([
 
 	};
 
-	function _filterItems(oConfig, aItems, oInitialConditions) {
+	function _filterItems(oConfig, aItems, oConditions) {
 
 		if (aItems.length === 0) {
 			return;
@@ -423,7 +423,7 @@ sap.ui.define([
 		var aInParameters;
 		var aOutParameters;
 
-		var oFilter = _createItemFilters.call(this, oConfig, oInitialConditions);
+		var oFilter = _createItemFilters.call(this, oConfig, oConditions);
 
 		var aFilteredItems = FilterProcessor.apply(aItems, oFilter, _getFilterValue);
 		if (aFilteredItems.length === 1) {
@@ -435,14 +435,14 @@ sap.ui.define([
 				// try with case sensitive search
 				var oNewConfig = merge({}, oConfig);
 				oNewConfig.caseSensitive = true;
-				return _filterItems.call(this, oNewConfig, aItems, oInitialConditions);
+				return _filterItems.call(this, oNewConfig, aItems, oConditions);
 			}
 			throw _createException.call(this, oConfig.exception, true, oConfig.parsedValue || oConfig.value);
 		}
 
 	}
 
-	function _createItemFilters(oConfig, oInitialConditions) {
+	function _createItemFilters(oConfig, oConditions) {
 
 		var bCaseSensitive = oConfig.caseSensitive;
 		var sKeyPath = this.getKeyPath();
@@ -457,9 +457,9 @@ sap.ui.define([
 
 		var oFilter = aFilters.length > 1 ? new Filter({filters: aFilters, and: false}) : aFilters[0];
 
-		if (oInitialConditions) {
-			var oConditionTypes = this._getTypesForConditions(oInitialConditions);
-			var oConditionsFilter = FilterConverter.createFilters(oInitialConditions, oConditionTypes, undefined, this.getCaseSensitive());
+		if (oConditions) {
+			var oConditionTypes = this._getTypesForConditions(oConditions);
+			var oConditionsFilter = FilterConverter.createFilters(oConditions, oConditionTypes, undefined, this.getCaseSensitive());
 			if (oConditionsFilter) {
 				oFilter = new Filter({filters: [oFilter, oConditionsFilter], and: true});
 			}
@@ -492,7 +492,7 @@ sap.ui.define([
 		return oTable && oTable.getBindingInfo("items");
 	};
 
-	MTable.prototype._loadItemForValue = function (oConfig, oInitialConditions) {
+	MTable.prototype._loadItemForValue = function (oConfig, oConditions) {
 
 		if (!oConfig.checkKey && oConfig.parsedValue && !oConfig.checkDescription) {
 			return null;
@@ -515,10 +515,11 @@ sap.ui.define([
 		var oDelegate = this._getValueHelpDelegate();
 		var oDelegatePayload = this._getValueHelpDelegatePayload();
 
-		var sPromiseKey = ["loadItemForValue", sPath, sKeyPath, oConfig.parsedValue || oConfig.value].join("_");
+		var sPromiseKey = ["loadItemForValue", sPath, sKeyPath, oConfig.parsedValue || oConfig.value, JSON.stringify(oConfig.context)].join("_");
+
 
 		return this._retrievePromise(sPromiseKey, function () {
-			var oFilter = _createItemFilters.call(this, oConfig, oInitialConditions);
+			var oFilter = _createItemFilters.call(this, oConfig, oConditions);
 			var oFilterListBinding = oModel.bindList(sPath, oBindingContext);
 
 			return oDelegate.executeFilter(oDelegatePayload, oFilterListBinding, oFilter, 2).then(function (oBinding) {

@@ -205,6 +205,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.101.0
+	 * @deprecated (since 1.106.0) - replaced by {@link sap.ui.mdc.ValueHelpDelegate.getFilterConditions}
 	 */
 	ValueHelpDelegate.getInitialFilterConditions = function (oPayload, oContent, oControl) {
 
@@ -310,9 +311,37 @@ sap.ui.define([
 		return oConditionTypes;
 	};
 
-	/* ValueHelpDelegate.getCount = function (oPayload, oContent, aConditions, sGroup) {
-		return 0;
-	}; */
+	/**
+	 * This method should provide a map of conditions for the following situations:
+	 * 	1. Initial set of conditions applied everytime a value help content is shown for the first time since opening it's container.
+	 * 	2. Detailed set of conditions in getItemForValue scenarios allowing to find a specific FieldHelpItem (indicated by oConfig availability)
+	 *
+	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
+ 	 * @param {object} [oConfig] Configuration
+	 * @param {any} oConfig.value Value as entered by user
+	 * @param {any} [oConfig.parsedValue] Value parsed by type to fit the data type of the key
+	 * @param {object} [oConfig.context] Contextual information provided by condition payload or inParameters/outParameters. This is only filled if the description needs to be determined for an existing condition.
+	 * @param {object} [oConfig.context.inParameter] In parameters of the current condition
+	 * @param {object} [oConfig.context.ouParameter] Out parameters of the current condition
+	 * @param {object} [oConfig.context.payload] Payload of the current condition
+	 * @param {sap.ui.core.Control} oConfig.control Instance of the calling control
+	 * @param {sap.ui.model.Context} [oConfig.bindingContext] <code>BindingContext</code> of the checked field. Inside a table the <code>ValueHelp</code> element might be connected to a different row.
+	 * @param {boolean} [oConfig.checkKeyFirst] If set, the value help checks first if the value fits a key // TODO: not longer needed?
+	 * @param {boolean} oConfig.checkKey If set, the value help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
+	 * @param {boolean} oConfig.checkDescription If set, the value help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.	 * @returns {object} Returns a type map for property paths
+	 * @returns {Promise<object>|object} Returns a map of conditions
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @since 1.106.0
+	 */
+	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
+		if (this.getInitialFilterConditions) {
+			return this.getInitialFilterConditions(oPayload, oContent, (oConfig && oConfig.control) || (oContent && oContent.getControl()));
+		}
+		return {};
+	};
 
 	return ValueHelpDelegate;
 });

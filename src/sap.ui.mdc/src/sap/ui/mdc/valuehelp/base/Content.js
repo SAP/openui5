@@ -493,9 +493,9 @@ sap.ui.define([
 		return oContainer && oContainer.isValueHelpDelegateInitialized();
 	};
 
-	Content.prototype._getControl = function () {
+	Content.prototype.getControl = function () {
 		var oContainer = this.getParent();
-		return oContainer && oContainer._getControl();
+		return oContainer && oContainer.getControl();
 	};
 
 	Content.prototype.getCount = function (aConditions) {
