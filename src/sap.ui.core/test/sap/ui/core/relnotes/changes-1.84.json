@@ -643,5 +643,32 @@
         ]
       }
     ]
+  },
+  "1.84.27": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "3b7aaa0d959f2d3bb301c90f6dd86fc22ad623c7",
+        "type": "FIX",
+        "text": " Enable Controller extensions for legacy application",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002832352022"
+          }
+        ]
+      },
+      {
+        "id": "0198567d87b9b2e31ecd74bef8351b35ab7430de",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: no split weeks for \"en\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004563022022"
+          }
+        ]
+      }
+    ]
   }
 }

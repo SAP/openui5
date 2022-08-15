@@ -1460,5 +1460,54 @@
         ]
       }
     ]
+  },
+  "1.84.27": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "93fa015bf79e371f6b45d3a899cac98e31faaeaa",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Max sizes are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270068256"
+          }
+        ]
+      },
+      {
+        "id": "69340f3892516891ee9b79d957b940f6b4772c9d",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Stretched dialog is correctly positioned in RTL languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180203872"
+          }
+        ]
+      },
+      {
+        "id": "4a1c03bf192fdb58703bd178cbb2211a9342bf25",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Unnecessary console errors are no longer thrown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270084087"
+          }
+        ]
+      },
+      {
+        "id": "3c577bc41faf596291279cd694f56fc80c3e09e2",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Selection in table with many radio buttons is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003326492022"
+          }
+        ]
+      }
+    ]
   }
 }

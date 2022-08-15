@@ -393,5 +393,21 @@
         ]
       }
     ]
+  },
+  "1.84.27": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "0198567d87b9b2e31ecd74bef8351b35ab7430de",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: no split weeks for \"en\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004563022022"
+          }
+        ]
+      }
+    ]
   }
 }
