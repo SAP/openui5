@@ -42,7 +42,7 @@ sap.ui.define([
 					component : "sap.ui.model.odata.v4.ODataListBinding",
 					level : Log.Level.ERROR,
 					message : new RegExp("Failed to refresh entity: "
-						+ "\\/SalesOrderList\\('.*'\\)\\[-1\\]"),
+						+ "\\/SalesOrderList\\('.*'\\)\\[-1;createdPersisted\\]"),
 					details : "HTTP request was not processed because the previous request failed"
 				},
 				oUpdateFailLog = {

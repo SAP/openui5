@@ -222,18 +222,28 @@ sap.ui.define([
 		var oContext,
 			fnResolve;
 
-		assert.strictEqual(Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees").toString(),
-			"/Employees");
-		assert.strictEqual(Context.create({}, {}, "/Employees", 5).toString(), "/Employees[5]");
-		oContext = Context.create({}, {}, "/Employees", -1,
+		assert.strictEqual(
+			// code under test
+			Context.create(/*oModel=*/{}, /*oBinding=*/{}, "/Employees('42')").toString(),
+			"/Employees('42')");
+
+		assert.strictEqual(
+			// code under test
+			Context.create({}, {}, "/Employees('42')", 5).toString(),
+			"/Employees('42')[5]");
+
+		oContext = Context.create({}, {}, "/Employees($uid=123)", -1,
 			new SyncPromise(function (resolve) {
 				fnResolve = resolve;
 			}));
-		assert.strictEqual(oContext.toString(), "/Employees[-1|transient]");
+
+		// code under test
+		assert.strictEqual(oContext.toString(), "/Employees($uid=123)[-1;transient]");
 
 		fnResolve();
 		return oContext.created().then(function () {
-			assert.strictEqual(oContext.toString(), "/Employees[-1]");
+			// code under test
+			assert.strictEqual(oContext.toString(), "/Employees($uid=123)[-1;createdPersisted]");
 		});
 	});
 
@@ -1148,6 +1158,9 @@ sap.ui.define([
 		assert.ok(oDeletePromise instanceof Promise);
 		assert.strictEqual(oContext.isDeleted(), true);
 
+		// code under test
+		assert.strictEqual(oContext.toString(), "/Foo/Bar('42')[42;deleted]");
+
 		return oDeletePromise.then(function () {
 			assert.ok(true);
 			assert.strictEqual(oContext.isDeleted(), false);
@@ -1190,8 +1203,8 @@ sap.ui.define([
 			}));
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 		this.mock(oModel).expects("reportError")
-			.withExactArgs("Failed to delete " + oContext, "sap.ui.model.odata.v4.Context",
-				oError);
+			.withExactArgs("Failed to delete /EMPLOYEES/42[42;deleted]",
+				"sap.ui.model.odata.v4.Context", oError);
 
 		// code under test
 		return oContext.delete("myGroup", "~bDoNotRequestCount~").then(function () {
@@ -1219,8 +1232,8 @@ sap.ui.define([
 		this.mock(oContext).expects("_delete").withExactArgs(null, null, true).rejects(oError);
 		this.mock(oContext).expects("checkUpdate").withExactArgs();
 		this.mock(oModel).expects("reportError")
-			.withExactArgs("Failed to delete " + oContext, "sap.ui.model.odata.v4.Context",
-				oError);
+			.withExactArgs("Failed to delete /EMPLOYEES('1');deleted",
+				"sap.ui.model.odata.v4.Context", oError);
 
 		// code under test
 		return oContext.delete(null, "~bDoNotRequestCount~").then(function () {
@@ -1438,7 +1451,7 @@ sap.ui.define([
 		assert.strictEqual(oContext.getGeneration(true), iGeneration, "generation is kept");
 		assert.strictEqual(oContext.isInactive(), undefined);
 		assert.strictEqual(oContext.isTransient(), undefined);
-		assert.strictEqual(oContext.toString(), "/EMPLOYEES/42[42]");
+		assert.strictEqual(oContext.toString(), "/EMPLOYEES/42[42;destroyed]");
 
 		if (bfnOnBeforeDestroy) {
 			assert.ok(bCallbackCalled);
@@ -2808,12 +2821,19 @@ sap.ui.define([
 			},
 			oModelMock = this.mock(oModel),
 			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')", 42,
-				/*oCreatePromise*/undefined, bInactive),
+				bInactive ? new SyncPromise(function () {}) : /*oCreatePromise*/undefined,
+				bInactive),
 			oError = new Error("This call intentionally failed"),
 			bSkipRetry = i === 1,
 			vWithCacheResult = {},
 			that = this;
 
+		if (bInactive) {
+			assert.strictEqual(
+				// code under test
+				oContext.toString(),
+				"/BusinessPartnerList('0100000000')[42;inactive]");
+		}
 		this.mock(oContext).expects("isDeleted").withExactArgs().returns(false);
 		this.mock(oContext).expects("getValue").never();
 		this.mock(oContext).expects("isKeepAlive").withExactArgs().on(oContext)
@@ -3401,6 +3421,9 @@ sap.ui.define([
 				assert.ok(false);
 			}, function (oError0) {
 				assert.strictEqual(oError0, oError);
+
+				// code under test
+				assert.strictEqual(oContext.toString(), "/ProductList('HT-1000');destroyed");
 			});
 	});
 
