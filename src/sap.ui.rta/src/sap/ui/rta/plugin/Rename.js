@@ -170,7 +170,7 @@ sap.ui.define([
 		oOverlay.detachEvent("editableChange", RenameHandler._manageClickEvent, this);
 		oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
 
-		this.removeFromPluginsList(oOverlay);
+		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
 	};
 
 	/**

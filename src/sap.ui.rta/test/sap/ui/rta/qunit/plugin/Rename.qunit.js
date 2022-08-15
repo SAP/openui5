@@ -1,47 +1,49 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/layout/VerticalLayout",
-	"sap/ui/dt/DesignTime",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/rta/Utils",
-	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/layout/form/FormContainer",
-	"sap/ui/layout/form/Form",
-	"sap/ui/layout/form/FormLayout",
-	"sap/ui/rta/plugin/Rename",
-	"sap/ui/rta/plugin/RenameHandler",
-	"sap/ui/core/Title",
 	"sap/m/Button",
 	"sap/m/Label",
+	"sap/m/ScrollContainer",
+	"sap/ui/core/Core",
+	"sap/ui/core/Title",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/layout/form/FormLayout",
+	"sap/ui/layout/form/Form",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/plugin/RenameHandler",
+	"sap/ui/rta/plugin/Rename",
+	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core",
-	"sap/m/ScrollContainer"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
-	VerticalLayout,
-	DesignTime,
-	ChangesWriteAPI,
-	Utils,
-	CommandFactory,
-	OverlayRegistry,
-	FormContainer,
-	Form,
-	FormLayout,
-	RenamePlugin,
-	RenameHandler,
-	Title,
 	Button,
 	Label,
+	ScrollContainer,
+	oCore,
+	Title,
+	DesignTime,
+	OverlayRegistry,
 	KeyCodes,
+	ChangesWriteAPI,
+	FormContainer,
+	FormLayout,
+	Form,
+	VerticalLayout,
+	CommandFactory,
+	Plugin,
+	RenameHandler,
+	RenamePlugin,
+	Utils,
 	jQuery,
 	sinon,
-	RtaQunitUtils,
-	oCore,
-	ScrollContainer
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -321,6 +323,12 @@ sap.ui.define([
 			this.oRenamePlugin.registerElementOverlay(this.oFormContainerOverlay);
 
 			assert.strictEqual(this.oRenamePlugin.isEnabled([this.oFormContainerOverlay]), false, "then rename is not enabled for the overlay");
+		});
+
+		QUnit.test("when deregister is called", function(assert) {
+			var oSuperDeregisterSpy = sandbox.spy(Plugin.prototype, "deregisterElementOverlay");
+			this.oRenamePlugin.deregisterElementOverlay(this.oFormContainerOverlay);
+			assert.strictEqual(oSuperDeregisterSpy.callCount, 1, "the super class was called");
 		});
 	});
 

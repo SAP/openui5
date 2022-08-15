@@ -123,6 +123,8 @@ sap.ui.define([
 				oOverlay._oDeleteButton.destroy();
 			}
 		}
+
+		Remove.prototype.deregisterElementOverlay.apply(this, arguments);
 	};
 
 	return EasyRemove;
