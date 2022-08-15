@@ -37,7 +37,7 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer', './InputBaseRende
 	};
 
 	DateTimePickerRenderer.writeAdditionalContent = function(oRm, oControl) {
-		var sTimezone = oControl._getTranslatedTimezone(true);
+		var sTimezone = oControl._getTranslatedTimezone(true) || oControl._getTimezone(true);
 
 		if (!oControl._getShowTimezone()) {
 			return;
