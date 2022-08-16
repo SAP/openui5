@@ -407,7 +407,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.doSetProperty = function (sPath, vValue, oGroupLock, bSkipRetry) {
-		var oMetaModel = this.oModel.getMetaModel(),
+		var oModel = this.oModel,
+			oMetaModel = oModel.getMetaModel(),
 			oPromise,
 			oValue,
 			that = this;
@@ -453,8 +454,7 @@ sap.ui.define([
 					 * @param {Error} oError
 					 */
 					function errorCallback(oError) {
-						that.oModel.reportError(
-							"Failed to update path " + that.oModel.resolve(sPath, that),
+						oModel.reportError("Failed to update path " + oModel.resolve(sPath, that),
 							sClassName, oError);
 						firePatchCompleted(false);
 					}
