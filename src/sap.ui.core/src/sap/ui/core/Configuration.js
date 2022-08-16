@@ -244,7 +244,6 @@ sap.ui.define([
 		"fileShareSupport"      : { type : "string",   defaultValue : undefined, noUrl:true }, // Module name (AMD syntax)
 		"securityTokenHandlers"	: { type : "function[]", defaultValue: [],       noUrl:true },
 		"productive"			: { type : "boolean",  defaultValue: false,      noUrl:true },
-		"themeRoot"				: { type : "string",   defaultValue: "",         noUrl:true },
 		"themeRoots"			: { type : "object",   defaultValue: {},  noUrl:true },
 		"xx-placeholder"		: { type : "boolean",  defaultValue : true },
 		"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
@@ -270,7 +269,7 @@ sap.ui.define([
 		"xx-hyphenation" : { type : "string",  defaultValue : ""}, // (empty string)|native|thirdparty|disable
 		"xx-flexBundleRequestForced" : { type : "boolean",  defaultValue : false },
 		"xx-cssVariables"       : { type : "string",   defaultValue : "false" }, // false|true|additional (additional just includes the css_variables.css in addition)
-		"xx-debugModuleLoading"	: { type : "boolean",  defaultValue: false,       noUrl:true },
+		"xx-debugModuleLoading"	: { type : "boolean",  defaultValue: false },
 		"statistics"            : { type : "boolean",  defaultValue : false },
 		"xx-acc-keys"           : { type : "boolean",  defaultValue : false }
 	};
@@ -678,6 +677,19 @@ sap.ui.define([
 			return this.getValue("theme");
 		},
 
+		/**
+		 * Get themeRoot for configured theme
+		 * @returns {string|object} Returns themeRoot for configured theme
+		 * @private
+		 */
+		getThemeRoot : function () {
+			return this.themeRoot;
+		},
+
+		/**
+		 * Returns whether placeholders are active or not
+		 * @returns {boolean} Whether placeholders are active or not
+		 */
 		getPlaceholder : function() {
 			return this.getValue("xx-placeholder");
 		},
@@ -695,6 +707,9 @@ sap.ui.define([
 
 		/**
 		 * Normalize the given theme, resolve known aliases
+		 * @param {string} sTheme The theme name
+		 * @param {string} sThemeBaseUrl The theme's base url
+		 * @returns {string} The normalized theme name
 		 * @private
 		 */
 		normalizeTheme : function (sTheme, sThemeBaseUrl) {
