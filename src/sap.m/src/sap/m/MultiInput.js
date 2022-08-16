@@ -1441,27 +1441,19 @@ function(
 	 */
 	MultiInput.prototype._decoratePopupInput = function (oPopupInput) {
 		Input.prototype._decoratePopupInput.apply(this, arguments);
-		var that = this;
 
 		if (!oPopupInput) {
 			return;
 		}
 
-		oPopupInput.addEventDelegate({
-			oninput: that._manageListsVisibility.bind(that, false),
-			onsapenter: function (oEvent) {
-				if (oPopupInput.getValue()) {
-					that._closeSuggestionPopup();
-				}
+		if (!this._oPopupInputDelegate) {
+			this._oPopupInputDelegate = {
+				oninput: this._manageListsVisibility.bind(this, false),
+				onsapenter: this._handleConfirmation.bind(this, false)
+			};
+		}
 
-				that._validateCurrentText();
-				that._setValueVisible(false);
-
-				// Fire through the MultiInput Popup's input value and save it
-				that.onChange(oEvent, null, oPopupInput.getValue());
-			}
-		});
-
+		oPopupInput.addEventDelegate(this._oPopupInputDelegate, this);
 		return oPopupInput;
 	};
 
@@ -1471,9 +1463,29 @@ function(
 
 
 	MultiInput.prototype.forwardEventHandlersToSuggPopover = function (oSuggPopover) {
-
-		Input.prototype.forwardEventHandlersToSuggPopover.apply(this, arguments);
 		oSuggPopover.setShowSelectedPressHandler(this._handleShowSelectedPress.bind(this));
+		oSuggPopover.setOkPressHandler(this._handleConfirmation.bind(this, true));
+		oSuggPopover.setCancelPressHandler(this._handleCancelPress.bind(this));
+	};
+
+	// Handles "Enter" key press and OK button press
+	MultiInput.prototype._handleConfirmation = function (bOkButtonPressed, oEvent) {
+		var oPopupInput = this._getSuggestionsPopover().getInput();
+
+		if (bOkButtonPressed || (!bOkButtonPressed && oPopupInput.getValue())) {
+			this._closeSuggestionPopup();
+		}
+
+		this._validateCurrentText();
+		this._setValueVisible(false);
+
+		// Fire through the MultiInput Popup's input value and save it
+		this.onChange(oEvent, null, oPopupInput.getValue());
+	};
+
+	MultiInput.prototype._handleCancelPress  = function (oEvent) {
+		this._getSuggestionsPopover().getInput().setDOMValue(this.getLastValue());
+		this._closeSuggestionPopup();
 	};
 
 	MultiInput.prototype._handleShowSelectedPress  = function (oEvent) {

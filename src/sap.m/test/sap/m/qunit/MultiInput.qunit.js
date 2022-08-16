@@ -1428,47 +1428,6 @@ sap.ui.define([
 		assert.strictEqual(this.multiInput1.getTokens().length, 4, "4 tokens");
 	});
 
-	QUnit.skip("onsapenter on mobile device", function (assert) {
-		// Setup
-		var oMI, sValue, oPickerTextFieldDomRef, sOpenState;
-
-		this.stub(Device, "system", {
-			desktop: false,
-			phone: true,
-			tablet: false
-		});
-
-		oMI = new MultiInput({
-			change: function (oEvent) {
-				sValue = oEvent.getParameter("value");
-			}
-		}).placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		// Act
-		oMI._getSuggestionsPopoverPopup().open();
-		this.clock.tick(1000);
-
-		// Assert
-		assert.ok(oMI._getSuggestionsPopoverPopup().isOpen(), "The dialog is opened");
-
-		// Act
-		oPickerTextFieldDomRef = oMI._getSuggestionsPopoverInstance().getInput().getFocusDomRef();
-
-		qutils.triggerCharacterInput(oPickerTextFieldDomRef, "test");
-		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
-
-		sOpenState = oMI._getSuggestionsPopoverPopup().oPopup.getOpenState();
-
-		// Assert
-		assert.strictEqual(sOpenState === OpenState.CLOSED || sOpenState === OpenState.CLOSING, true, "The dialog is still open after enter key");
-		assert.strictEqual(sValue, 'test', "The change event is triggered and the right value is passed");
-
-		// Cleanup
-		oMI._getSuggestionsPopoverPopup().close();
-		oMI.destroy();
-	});
-
 	QUnit.skip("oninput on mobile device", function (assert) {
 
 		// Setup
@@ -1817,6 +1776,234 @@ sap.ui.define([
 		assert.ok(true, "No error has been thrown");
 
 		oMI.destroy();
+	});
+
+	QUnit.module("Mobile: Closing behaviour of the Dialog", {
+		beforeEach: function() {
+			Device["system"] = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
+			this.oMultiInput = new MultiInput({}).placeAt("content");
+			Core.applyChanges();
+		},
+		afterEach : function() {
+			Device["system"] = {
+				desktop: true,
+				phone: false,
+				tablet: false
+			};
+			this.oMultiInput.destroy();
+		}
+	});
+
+	QUnit.test("Should close the dialog when 'x' button is pressed", function (assert) {
+		// Setup
+		var bChangeFired, sOpenState;
+		var oSuggestionsDialog = this.oMultiInput._getSuggestionsPopover();
+
+		// Act
+		oSuggestionsDialog.getPopover().open();
+		this.clock.tick();
+
+		// Assert
+		assert.ok(oSuggestionsDialog.isOpen(), "The dialog is opened");
+
+		// Arrange
+		this.oMultiInput.attachChange(function() {
+			bChangeFired = true;
+		});
+
+		// Act
+		this.oMultiInput._handleCancelPress();
+
+		sOpenState = oSuggestionsDialog.getPopover().oPopup.getOpenState();
+
+		// Assert
+		assert.strictEqual(sOpenState === OpenState.CLOSED || sOpenState === OpenState.CLOSING, true, "The dialog is closed after enter key");
+		assert.strictEqual(bChangeFired, undefined, "The change event is not fired");
+	});
+
+	QUnit.test("Should disregard the new value when 'x' button is pressed", function (assert) {
+		// Setup
+		var bChangeFired, sOpenState;
+		var oSuggestionsDialog = this.oMultiInput._getSuggestionsPopover();
+
+		// Arrange
+		this.oMultiInput.attachChange(function() {
+			bChangeFired = true;
+		});
+
+		// Arrange
+		oSuggestionsDialog.getInput().setValue("test");
+		oSuggestionsDialog.getPopover().open();
+		this.clock.tick();
+
+		// Act
+		this.oMultiInput._handleCancelPress();
+
+		sOpenState = oSuggestionsDialog.getPopover().oPopup.getOpenState();
+
+		// Assert
+		assert.strictEqual(sOpenState === OpenState.CLOSED || sOpenState === OpenState.CLOSING, true, "The dialog is closed after enter key");
+		assert.strictEqual(this.oMultiInput.getValue(), '', "The new value is dismissed");
+		assert.strictEqual(bChangeFired, undefined, "The change event is not fired");
+
+	});
+
+	QUnit.test("Should restore the last confirmed value when 'x' button is pressed", function (assert) {
+		// Setup
+		var bChangeFired;
+		var oSuggestionsDialog = this.oMultiInput._getSuggestionsPopover();
+
+		// Arrange
+		this.oMultiInput.attachChange(function() {
+			bChangeFired = true;
+		});
+
+		// Arrange
+		this.oMultiInput.setValue("test");
+		oSuggestionsDialog.getPopover().open();
+		this.clock.tick();
+
+		// Act
+		oSuggestionsDialog.getInput().setValue("new value");
+		this.oMultiInput._handleCancelPress();
+
+		// Assert
+		assert.strictEqual(this.oMultiInput.getValue(), 'test', "The last confirmed value is still set");
+		assert.strictEqual(bChangeFired, undefined, "The change event is not fired");
+	});
+
+	QUnit.test("Pressing the OK button should tokenize the value if there is validation", function (assert) {
+		// Setup
+		var oSuggestionsDialog, oValidatorSpy;
+		var oEventMock = {};
+		var oSuggestionsDialog = this.oMultiInput._getSuggestionsPopover();
+
+		// Act
+		oSuggestionsDialog.getPopover().open();
+		this.clock.tick();
+
+		// Arrange
+		oValidatorSpy = this.spy(function (oParams) {
+			return new Token({
+				key: oParams.text,
+				text: oParams.text
+			});
+		});
+
+		this.oMultiInput.setValue("");
+		this.oMultiInput.addValidator(oValidatorSpy);
+		Core.applyChanges();
+
+		oSuggestionsDialog.getPopover().open();
+		this.clock.tick(300);
+
+		// Act
+		oSuggestionsDialog.getInput().setValue("another value");
+		this.oMultiInput._handleConfirmation(oEventMock);
+
+		// Assert
+		assert.strictEqual(this.oMultiInput.getValue(), '', "The new value is tokenized");
+		assert.strictEqual(oValidatorSpy.calledOnce, true, "Validator is fired");
+		assert.strictEqual(this.oMultiInput.getAggregation("tokenizer").getTokens()[0].getText(), 'another value', "The new value is tokenized");
+	});
+
+	QUnit.test("Pressing the OK button should set the value if there is no validation", function (assert) {
+		// Setup
+		var bChangeFired, sOpenState, oSuggestionsDialog;
+		var oEventMock = {};
+		var oSuggestionsDialog = this.oMultiInput._getSuggestionsPopover();
+
+		// Act
+		oSuggestionsDialog.getPopover().open();
+		this.clock.tick();
+
+		// Arrange
+		this.oMultiInput.attachChange(function() {
+			bChangeFired = true;
+		});
+
+		// Arrange
+		oSuggestionsDialog.getInput().setValue("test");
+
+		// Act
+		this.oMultiInput._handleConfirmation(oEventMock);
+		sOpenState = oSuggestionsDialog.getPopover().oPopup.getOpenState();
+
+		// Assert
+		assert.strictEqual(sOpenState === OpenState.CLOSED || sOpenState === OpenState.CLOSING, true, "The dialog is closed after confirmation");
+		assert.strictEqual(this.oMultiInput.getValue(), 'test', "The new value is set");
+		assert.strictEqual(bChangeFired, true, "The change event is fired");
+	});
+
+	QUnit.test("Pressing the OK button should close the dialog even if the value is empty", function (assert) {
+		// Setup
+		var sOpenState, oSuggestionsDialog;
+		var oEventMock = {};
+		var oSuggestionsDialog = this.oMultiInput._getSuggestionsPopover();
+
+		// Act
+		oSuggestionsDialog.getPopover().open();
+		this.clock.tick();
+
+		// Act
+		this.oMultiInput._handleConfirmation(true, oEventMock);
+		sOpenState = oSuggestionsDialog.getPopover().oPopup.getOpenState();
+
+		// Assert
+		assert.strictEqual(sOpenState === OpenState.CLOSED || sOpenState === OpenState.CLOSING, true, "The dialog is closed after confirmation");
+	});
+
+	QUnit.test("onsapenter should change the value and close the picker", function (assert) {
+		// Setup
+		var sValue, oPickerTextFieldDomRef, sOpenState;
+		var oSuggestionsDialog = this.oMultiInput._getSuggestionsPopover();
+
+		// Act
+		this.oMultiInput._getSuggestionsPopoverPopup().open();
+		this.clock.tick();
+
+		oPickerTextFieldDomRef = oSuggestionsDialog.getInput().getFocusDomRef();
+		this.oMultiInput.attachChange(function(oEvent) {
+			sValue = oEvent.getParameter("value");
+		});
+
+		// Act
+		qutils.triggerCharacterInput(oPickerTextFieldDomRef, "test");
+		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
+		this.clock.tick();
+
+		sOpenState = this.oMultiInput._getSuggestionsPopoverPopup().oPopup.getOpenState();
+
+		// Assert
+		assert.strictEqual(sOpenState === OpenState.CLOSED || sOpenState === OpenState.CLOSING, true, "The dialog is closed after enter key if the value is typed in");
+		assert.strictEqual(this.oMultiInput.getValue(), 'test', "Value is confirmed");
+		assert.strictEqual(sValue, 'test', "The change event is triggered and the right value is passed");
+	});
+
+	QUnit.test("Pressing 'Enter' should not close the dialog if the value is empty", function (assert) {
+		// Setup
+		var sOpenState, oSuggestionsDialog, oPickerTextFieldDomRef;
+		var oSuggestionsDialog = this.oMultiInput._getSuggestionsPopover();
+
+		// Act
+		oSuggestionsDialog.getPopover().open();
+		this.clock.tick();
+
+		oPickerTextFieldDomRef = oSuggestionsDialog.getInput().getFocusDomRef();
+
+		// Act
+		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
+		this.clock.tick();
+
+		sOpenState = oSuggestionsDialog.getPopover().oPopup.getOpenState();
+
+		// Assert
+		assert.strictEqual(sOpenState === OpenState.OPEN || sOpenState === OpenState.OPENING, true, "The dialog is not closed if no value is provided");
 	});
 
 	QUnit.module("Events", {
