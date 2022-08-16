@@ -412,7 +412,7 @@ sap.ui.define([
 		// check ih href disappears if there is no text
 		oLink.setText("");
 		Core.applyChanges();
-		assert.notOk(oLinkDomRef.getAttribute("href"), "Empty links don't have href");
+		assert.ok(oLinkDomRef.getAttribute("href"), "Empty links don't have href");
 
 		oLink.destroy();
 	});
