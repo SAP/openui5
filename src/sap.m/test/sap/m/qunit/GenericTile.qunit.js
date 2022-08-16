@@ -1918,6 +1918,19 @@ sap.ui.define([
 		assert.equal(sAriaText, sActionsText + " ARIA and tooltip test", "Expected text for ARIA-label generated for actions scope");
 	});
 
+	QUnit.test("Internal method _getAriaText for ActionMore scope", function(assert) {
+		//Arrange
+		this.oGenericTile.setScope("ActionMore");
+		this.oGenericTile._getAriaAndTooltipText = function() {
+			return "ARIA and tooltip test";
+		};
+		oCore.applyChanges();
+		//Act
+		var sAriaText = this.oGenericTile._getAriaText();
+		//Assert
+		assert.equal(sAriaText, "ARIA and tooltip test", "Expected text for ARIA-label generated for actionMore scope");
+	});
+
 	QUnit.test("Internal method _getTooltipText", function(assert) {
 		//Arrange
 		var sTooltipText;
