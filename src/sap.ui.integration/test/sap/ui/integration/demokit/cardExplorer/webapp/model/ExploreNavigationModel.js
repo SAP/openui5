@@ -83,6 +83,17 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Attributes Visibility',
+								key: 'attributesVisibility',
+								files: [
+									{
+										url: '/samples/list/attributesVisibility.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
 								title: 'Bullet Chart',
 								key: 'bulletChart',
 								experimental: true,

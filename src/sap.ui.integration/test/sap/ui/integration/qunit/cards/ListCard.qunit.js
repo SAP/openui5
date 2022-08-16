@@ -654,7 +654,6 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest_ListCard);
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
 	QUnit.test("List Card - static items", function (assert) {
@@ -674,7 +673,6 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest_ListCard_StaticContent);
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
 	QUnit.test("List Card - item title and description with string values", function (assert) {
@@ -718,7 +716,6 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest);
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
 	QUnit.test("List Card - attributes", function (assert) {
@@ -746,7 +743,70 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest_ListCard_Attributes);
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("List Card - attributes visibility", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+
+			var oListItem1 = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
+			Core.applyChanges();
+
+			// Assert
+			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrRow").length, 2, "2 attr rows are created.");
+			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrCell").length, 3, "3 attr cells are created.");
+			assert.strictEqual(oListItem1.$().find(".sapUiIntLCIAttrs .sapUiIntLCIAttrSecondCell").length, 1, "1 attr second cells is created.");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "oManifest_ListCard_Attributes"
+			},
+			"sap.card": {
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 15",
+								"Processor": "2,80 GHz quad core",
+								"Monitor": "15\" LCD",
+								"RAM": "4 GB DDR3 RAM",
+								"HHD": "500 GB Hard Disc",
+								"OS": "Windows"
+							}
+						]
+					},
+					"item": {
+						"title": "{Name}",
+						"attributes": [
+							{
+								"value": "{Processor}"
+							},
+							{
+								"value": "{Monitor}",
+								"visible": false
+							},
+							{
+								"value": "{RAM}"
+							},
+							{
+								"value": "{HHD}"
+							},
+							{
+								"value": "{OS}",
+								"visible": "{= ${OS} !== 'Windows'}"
+							}
+						]
+					}
+				}
+			}
+		});
 	});
 
 	QUnit.test("List Card - ActionsStrip", function (assert) {
@@ -763,7 +823,6 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest(oManifest_ListCard_ActionsStrip);
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
 	QUnit.test("Using maxItems manifest property", function (assert) {
