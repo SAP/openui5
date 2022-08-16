@@ -218,10 +218,10 @@ sap.ui.define([
 					});
 				}
 
+				this.checkUpdate();
+
 				// tell listeners that variant switch has happened
 				this._callVariantSwitchListeners(mPropertyBag.vmReference, mPropertyBag.newVReference, undefined, sScenario);
-
-				this.checkUpdate();
 			}.bind(this));
 	}
 

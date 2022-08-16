@@ -263,7 +263,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'setModelPropertiesForControl'", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			sandbox.stub(Settings, "getInstance").resolves({
 				isVariantPersonalizationEnabled: function () {
 					return false;
@@ -279,7 +279,7 @@ sap.ui.define([
 				assert.notOk(this.oModel.getData()["variantMgmtId1"].variants[4].rename, "user variant can not be renamed after flp setting is received");
 				assert.notOk(this.oModel.getData()["variantMgmtId1"].variants[4].remove, "user variant can not be removed after flp setting is received");
 				assert.notOk(this.oModel.getData()["variantMgmtId1"].variants[4].change, "user variant can not be changed after flp setting is received");
-				done();
+				fnDone();
 			}.bind(this), 0);
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
 			assert.notOk(this.oModel.getData()["variantMgmtId1"].variantsEditable, "the parameter variantsEditable is set to false for bDesignTimeMode = true");
@@ -375,12 +375,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'switchToDefaultForVariant' for a current variant reference", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			this.oData["variantMgmtId1"].currentVariant = "variant0";
 			sandbox.stub(this.oModel, "updateCurrentVariant").callsFake(function(mPropertyBag) {
 				assert.equal(mPropertyBag.variantManagementReference, "variantMgmtId1", "the correct variant management reference was passed");
 				assert.equal(mPropertyBag.newVariantReference, this.oData["variantMgmtId1"].defaultVariant, "the correct variant reference was passed");
-				return Promise.resolve().then(done);
+				return Promise.resolve().then(fnDone);
 			});
 			this.oModel.switchToDefaultForVariant("variant0");
 		});
@@ -392,7 +392,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'switchToDefaultForVariant' without a variant reference", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			this.oData["dummy"] = {
 				defaultVariant: "dummyDefaultVariant",
 				currentVariant: "dummyCurrentVariant"
@@ -409,7 +409,7 @@ sap.ui.define([
 					assert.equal(mPropertyBag.newVariantReference, this.oData[aVariantManagementReferences[iIndex]].defaultVariant, "the correct variant reference was passed");
 					aVariantManagementReferences.splice(iIndex, 1);
 					if (aVariantManagementReferences.length === 0) {
-						done();
+						fnDone();
 					}
 				}.bind(this));
 			}.bind(this));
@@ -1188,7 +1188,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default/execute box checked", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var sVMReference = "variantMgmtId1";
 			var oChange1 = new Change({
 				fileName: "change1",
@@ -1300,7 +1300,7 @@ sap.ui.define([
 						}
 					});
 					oVariantManagement.destroy();
-					done();
+					fnDone();
 				}.bind(this));
 		});
 
@@ -1357,7 +1357,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default box unchecked", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var sVMReference = "variantMgmtId1";
 			var oChange1 = new Change({
 				fileName: "change1",
@@ -1439,7 +1439,7 @@ sap.ui.define([
 					assert.ok(this.oModel.oFlexController.deleteChange.calledWith(oDirtyChange, this.oComponent), "then dirty changes from source variant were deleted from the persistence");
 				}.bind(this));
 				oVariantManagement.destroy();
-				done();
+				fnDone();
 			}.bind(this));
 		});
 
@@ -1517,7 +1517,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_handleSaveEvent' with bDesignTimeMode set to true", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var sVMReference = "variantMgmtId1";
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var oEvent = {
@@ -1541,12 +1541,12 @@ sap.ui.define([
 			return this.oModel._handleSaveEvent(oEvent).then(function() {
 				assert.equal(oHandleSaveSpy.callCount, 0, "then _handleSave() was not called");
 				oVariantManagement.destroy();
-				done();
+				fnDone();
 			});
 		});
 
 		QUnit.test("when calling '_handleSave' with with bDesignTimeMode set to true and parameters from SaveAs button and default/execute box checked", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var sVMReference = "variantMgmtId1";
 			var sNewVariantReference = "variant2";
 			var oChange1 = new Change({
@@ -1643,7 +1643,7 @@ sap.ui.define([
 						assert.ok(this.oModel.oFlexController.deleteChange.calledWith(oDirtyChange, this.oComponent), "then dirty changes from source variant were deleted from the persistence");
 					}.bind(this));
 					oVariantManagement.destroy();
-					done();
+					fnDone();
 				}.bind(this));
 		});
 
@@ -1969,7 +1969,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when waitForVMControlInit is called before the control is initialized", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var oData = {
 				varMgmtRef1: {
 					defaultVariant: "variant1",
@@ -1990,7 +1990,7 @@ sap.ui.define([
 			this.oModel.setData(oData);
 			this.oModel.waitForVMControlInit("varMgmtRef1").then(function() {
 				assert.ok(true, "the function resolves");
-				done();
+				fnDone();
 			});
 			this.oModel.registerToModel(this.oVariantManagement);
 		});
@@ -2096,8 +2096,29 @@ sap.ui.define([
 			assert.strictEqual(this.oModel.getVariantManagementReferenceForControl(this.oVariantManagement), "varMgmtRef1", "then the local id of the control is retuned");
 		});
 
+		QUnit.test("when 'save' event event is triggered from a variant management control for a new variant", function(assert) {
+			var fnDone = assert.async();
+
+			sandbox.stub(this.oModel, "_callVariantSwitchListeners").callsFake(function(sVmReference, sNewVMReference) {
+				assert.strictEqual(
+					this.oVariantManagement.getCurrentVariantKey(),
+					sNewVMReference,
+					"then when the listeners are called the VM control model is up-to-date"
+				);
+				fnDone();
+			}.bind(this));
+
+			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+
+			this.oVariantManagement.fireSave({
+				name: "variant created title",
+				overwrite: false,
+				def: false
+			});
+		});
+
 		QUnit.test("when 'save' event event is triggered from a variant management control for a new variant, when variant model is busy", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var fnSwitchPromiseStub = sandbox.stub();
 
 			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
@@ -2106,7 +2127,7 @@ sap.ui.define([
 					// resolved when variant model is not busy anymore
 					assert.ok(fnSwitchPromiseStub.calledOnce, "then first the previous variant switch was performed completely");
 					assert.ok(this.oFlexController.saveSequenceOfDirtyChanges.getCall(0).args[0][0].getName(), "variant created title", "then the required variant change was saved");
-					done();
+					fnDone();
 				}.bind(this));
 			}.bind(this));
 
@@ -2126,7 +2147,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'save' event is triggered from a variant management control for an existing variant, when variant model is busy", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var sVMReference = "varMgmtRef1";
 			var fnSwitchPromiseStub = sandbox.stub();
 
@@ -2151,7 +2172,7 @@ sap.ui.define([
 					// resolved when variant model is not busy anymore
 					assert.ok(fnSwitchPromiseStub.calledOnce, "then first the previous variant switch was performed completely");
 					assert.deepEqual(this.oFlexController.saveSequenceOfDirtyChanges.getCall(0).args[0], [oDirtyChange1, oDirtyChange2], "then the control changes inside the variant were saved");
-					done();
+					fnDone();
 				}.bind(this));
 			}.bind(this));
 
@@ -2169,7 +2190,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'save' event is triggered from a variant management control for a new variant, with another update variant call being triggered in parallel", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			assert.expect(4);
 			var sVMReference = "varMgmtRef1";
 			sandbox.stub(Reverter, "revertMultipleChanges");
@@ -2184,7 +2205,7 @@ sap.ui.define([
 					newVariantReference: sVMReference
 				}).then(function() {
 					assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, false, "then 'variantBusy' property is unset");
-					done();
+					fnDone();
 				}.bind(this));
 				return Promise.resolve();
 			}.bind(this));
@@ -2329,7 +2350,7 @@ sap.ui.define([
 		}
 
 		QUnit.test("when the control is switched to a new variant with no unsaved personalization changes", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var oCallListenerStub = sandbox.stub(this.oVariantModel, "_callVariantSwitchListeners");
 			var sVMControlId = this.oComp.createId(this.sVMReference);
 			var oVMControl = oCore.byId(sVMControlId);
@@ -2349,7 +2370,7 @@ sap.ui.define([
 						assert.ok(Reverter.revertMultipleChanges.notCalled, "then variant was not reverted explicitly");
 						assert.ok(VariantManagementState.removeChangeFromVariant.notCalled, "then dirty changes were not removed from the source variant");
 						assert.ok(this.oVariantModel.oFlexController.deleteChange.notCalled, "then no dirty changes were deleted");
-						done();
+						fnDone();
 					}.bind(this));
 					return Promise.resolve();
 				}.bind(this));
@@ -2361,7 +2382,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control is switched to a new variant with unsaved personalization changes", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var oCallListenerStub = sandbox.stub(this.oVariantModel, "_callVariantSwitchListeners");
 			var sVMControlId = this.oComp.createId(this.sVMReference);
 			var oVMControl = oCore.byId(sVMControlId);
@@ -2395,7 +2416,7 @@ sap.ui.define([
 						}), "then a dirty change was removed from the variant");
 						assert.ok(this.oVariantModel.oFlexController.deleteChange.calledWith(oDirtyChange, this.oComp), "then a dirty change was deleted from the persistence");
 					}.bind(this));
-					done();
+					fnDone();
 				}.bind(this));
 			}.bind(this));
 
@@ -2405,7 +2426,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control is switched to the same variant with no unsaved personalization changes", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var oCallListenerStub = sandbox.stub(this.oVariantModel, "_callVariantSwitchListeners");
 			var sVMControlId = this.oComp.createId(this.sVMReference);
 			var oVMControl = oCore.byId(sVMControlId);
@@ -2423,7 +2444,7 @@ sap.ui.define([
 					assert.ok(this.oVariantModel.updateCurrentVariant.notCalled, "then variant switch was not performed");
 					assert.ok(VariantManagementState.removeChangeFromVariant.notCalled, "then dirty changes were not removed from the variant");
 					assert.ok(this.oVariantModel.oFlexController.deleteChange.notCalled, "then dirty changes were not deleted from the persistence");
-					done();
+					fnDone();
 				}.bind(this));
 			}.bind(this));
 
@@ -2433,7 +2454,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control is switched to the same variant with unsaved personalization changes", function(assert) {
-			var done = assert.async();
+			var fnDone = assert.async();
 			var sVMControlId = this.oComp.createId(this.sVMReference);
 			var oVMControl = oCore.byId(sVMControlId);
 			var oCallListenerStub = sandbox.stub(this.oVariantModel, "_callVariantSwitchListeners");
@@ -2469,7 +2490,7 @@ sap.ui.define([
 						assert.ok(this.oVariantModel.oFlexController.deleteChange.calledWith(oDirtyChange, this.oComp), "then a dirty change was deleted from the persistence");
 					}.bind(this));
 
-					done();
+					fnDone();
 				}.bind(this));
 			}.bind(this));
 
