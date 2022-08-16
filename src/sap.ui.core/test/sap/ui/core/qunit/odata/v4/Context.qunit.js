@@ -2766,7 +2766,8 @@ sap.ui.define([
 }, function () {
 	// simulate a PATCH for a newly created entity (PATCH is merged into POST -> no events)
 	return Promise.resolve("n/a"); // #update succeeds
-}, function (_assert, oModelMock, oBinding, oBindingMock, fnErrorCallback, fnPatchSent) {
+}, function (_assert, oModelMock, oBinding, oBindingMock, fnErrorCallback, fnPatchSent, _oError,
+		oContext) {
 	// simulate repeating a patch if first request failed
 	var oError = new Error("500 Internal Server Error");
 
@@ -2781,6 +2782,7 @@ sap.ui.define([
 	oBindingMock.expects("firePatchCompleted").on(oBinding).withExactArgs(false);
 
 	// code under test: simulate retry; call fnErrorCallback and then fnPatchSent
+	oContext.oModel = undefined; // simulate destroy
 	fnErrorCallback(oError);
 	fnErrorCallback(oError); // no patchCompleted event if it is already fired
 
@@ -2885,7 +2887,7 @@ sap.ui.define([
 						return SyncPromise.resolve(
 							fnScenario(assert, that.mock(oModel), oBinding, oBindingMock,
 								/*fnErrorCallback*/arguments[3], /*fnPatchSent*/arguments[8],
-								/*fnIsKeepAlive*/arguments[9], oError));
+								/*fnIsKeepAlive*/arguments[9], oError, oContext));
 					});
 
 				// code under test

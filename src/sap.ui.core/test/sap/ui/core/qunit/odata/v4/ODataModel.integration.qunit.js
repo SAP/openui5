@@ -40095,6 +40095,152 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A property of a created-persisted entity in a binding w/o cache is modified, and
+	// side effects are requested. Afterwards the PATCH fails.
+	QUnit.test("BCP: 2280150835", function (assert) {
+		var oCreatedContext,
+			oListBinding,
+			oModel = this.createSalesOrdersModel(
+				{autoExpandSelect : true, updateGroupId : "update"}),
+			oPromise,
+			fnReject,
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Table id="items" items="{SO_2_SOITEM}">\
+		<Input id="note" value="{Note}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+				SalesOrderID : "1",
+				SO_2_SOITEM : []
+			})
+			.expectChange("note", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("note", [""])
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('1')/SO_2_SOITEM",
+					payload : {}
+				}, {
+					ItemPosition : "10",
+					Note : "initial",
+					SalesOrderID : "1"
+				})
+				.expectChange("note", ["initial"]);
+
+			oListBinding = that.oView.byId("items").getBinding("items");
+			oCreatedContext = oListBinding.create({}, /*bSkipRefresh*/true);
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oCreatedContext.created(),
+				that.waitForChanges(assert, "create and persist entity")
+			]);
+		}).then(function () {
+			that.expectChange("note", ["modified"]);
+
+			that.oView.byId("items").getItems()[0].getCells()[0].getBinding("value")
+				.setValue("modified");
+
+			return that.waitForChanges(assert, "patch");
+		}).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')",
+					payload : {Note : "modified"}
+				}, new Promise(function (_resolve, reject) { fnReject = reject; }))
+				.expectRequest("SalesOrderList('1')?$select=SO_2_SOITEM"
+					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)"
+				); // no response required since the PATCH fails
+
+			// code under test
+			oPromise = that.oView.byId("form").getBindingContext()
+				.requestSideEffects(["SO_2_SOITEM"]);
+			oModel.submitBatch("update");
+
+			return that.waitForChanges(assert, "requestSideEffects");
+		}).then(function () {
+			that.oLogMock.expects("error").withArgs(sinon.match("Failed to update path"));
+			that.oLogMock.expects("error").withArgs("Failed to request side effects");
+			that.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+
+			fnReject(createErrorInsideBatch());
+
+			return Promise.all([
+				oPromise.then(mustFail(assert), function () {}),
+				that.waitForChanges(assert, "response")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A property change fails. Before the error response arrives, the context is
+	// destroyed. See that the error is still reported correctly.
+	QUnit.test("BCP: 2280150835: update fails after context destroyed", function (assert) {
+		var oForm,
+			oModel = this.createSalesOrdersModel(
+				{autoExpandSelect : true, updateGroupId : "$direct"}),
+			fnReject,
+			sView = '\
+<FlexBox id="form" binding="{}">\
+	<Input id="note" value="{Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("note");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=Note,SalesOrderID",
+					{Note : "Note 1", SalesOrderID : "1"})
+				.expectChange("note", "Note 1");
+
+			oForm = that.oView.byId("form");
+			oForm.setBindingContext(oModel.createBindingContext("/SalesOrderList('1')"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.oLogMock.expects("error").twice().withArgs(sinon.match("Failed to update path"));
+			that.expectChange("note", "Note 1 (changed)")
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('1')",
+					payload : {Note : "Note 1 (changed)"}
+				}, new Promise(function (_resolve, reject) { fnReject = reject; }));
+
+			that.oView.byId("note").getBinding("value").setValue("Note 1 (changed)");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('2')?$select=Note,SalesOrderID",
+					{Note : "Note 2", SalesOrderID : "2"})
+				.expectChange("note", "Note 2")
+				.expectMessages([{
+						code : "CODE",
+						message : "Request intentionally failed",
+						persistent : true,
+						technical : true,
+						type : "Error"
+					}]);
+
+			oForm.setBindingContext(oModel.createBindingContext("/SalesOrderList('2')"));
+			fnReject(createErrorInsideBatch()); // let the PATCH fail
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: A table shows a visible area with three persisted rows. Three transient ones are
 	// added at the end, outside of the visible area. The list is then filtered, sorted, etc.
 	// Show that the transient ones properly survive.
