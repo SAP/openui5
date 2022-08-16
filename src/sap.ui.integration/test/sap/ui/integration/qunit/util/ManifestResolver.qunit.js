@@ -1480,4 +1480,108 @@ sap.ui.define([
 				oCard.destroy();
 			});
 	});
+
+	QUnit.module("Invalid manifests");
+
+	QUnit.test("Invalid binding", function (assert) {
+		// Arrange
+		var oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"json": [
+						{
+							"training": "Scrum"
+						}
+					]
+				},
+				"content": {
+					"item": {
+						"title": "{ formatter: '' }"
+					}
+				}
+			}
+		};
+
+		var oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(JSON.parse)
+			.then(function (oRes) {
+				var oExpectedResult = {
+					"groups": [
+						{
+							"items": [
+								{
+									"title": {}
+								}
+							]
+						}
+					]
+				};
+
+				// Assert
+				assert.deepEqual(oRes["sap.card"].content, oExpectedResult, "list template is resolved correctly");
+				oCard.destroy();
+			});
+	});
+
+	QUnit.test("Invalid actions binding", function (assert) {
+		// Arrange
+		var oManifest = {
+			"sap.app": {
+				"id": "sap.ui.integration.test"
+			},
+			"sap.card": {
+				"type": "List",
+				"extension": "./extensions/Extension1",
+				"data": {
+					"extension": {
+						"method": "getData"
+					}
+				},
+				"configuration": {
+					"parameters": {
+						"state": {
+							"value": "{\"presentationVariant\":{\"SortOrder\":[{\"Property\":\"BillingDocDateYearMonth\",\"Descending\":false}]},\"sensitiveProps\":{}}"
+						}
+					}
+				},
+				"content": {
+					"item": {
+						"title": "{= extension.formatters.toUpperCase(${city}) }",
+						"actions": [
+							{
+								"type": "Navigation",
+								"parameters": {
+									"title": "{= extension.formatters.toUpperCase(${parameters>/state/value}) }"
+								}
+							}
+						]
+					}
+				}
+			}
+		};
+
+		var oCard = new SkeletonCard({
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
+			manifest: oManifest
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.catch(function () {
+				// Assert
+				assert.ok(true, "an exception is thrown");
+				oCard.destroy();
+			});
+	});
 });

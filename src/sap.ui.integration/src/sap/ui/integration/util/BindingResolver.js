@@ -106,6 +106,11 @@ sap.ui.define([
 				sPath = "/";
 			}
 
+			// clean the object
+			oSimpleControl.unbindProperty("resolved");
+			oSimpleControl.unbindObject();
+			oSimpleControl.setModel(null);
+
 			if (vModelOrObject instanceof Model) {
 				oSimpleControl.setModel(vModelOrObject);
 			} else {
@@ -116,10 +121,6 @@ sap.ui.define([
 			oSimpleControl.bindProperty("resolved", oBindingInfo);
 
 			var vValue = oSimpleControl.getResolved();
-
-			oSimpleControl.unbindProperty("resolved");
-			oSimpleControl.unbindObject();
-			oSimpleControl.setModel(null);
 
 			return vValue;
 		}
