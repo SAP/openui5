@@ -24,13 +24,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("sap.ui.versioninfo", function(assert) {
+	QUnit.test("Implicit loading of the VersionInfo", function(assert) {
 		if (mOptions.versionedLibCss) {
-			assert.deepEqual(sap.ui.versioninfo, oVersionInfo,
-				"'sap.ui.versioninfo' should have been loaded.");
+			assert.ok(oVersionInfo, "VersionInfo should have been loaded.");
 		} else {
-			assert.deepEqual(sap.ui.versioninfo, undefined,
-				"'sap.ui.versioninfo' should not have been loaded.");
+			assert.notOk(oVersionInfo, "VersionInfo should not have been loaded.");
 		}
 	});
 

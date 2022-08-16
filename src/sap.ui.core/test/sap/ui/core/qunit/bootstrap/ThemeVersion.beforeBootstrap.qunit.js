@@ -6,7 +6,7 @@ sap.ui.define([
 
 	function setupFakeServer(mOptions) {
 		// Fake "sap-ui-version.json" request to have a static content
-		var oVersionInfo = window.oVersionInfo = {
+		var oVersionInfo = {
 			"name": "qunit",
 			"version": "1.0.0",
 			"buildTimestamp": "<TIMESTAMP>",
@@ -28,14 +28,18 @@ sap.ui.define([
 		window.oServer.xhr.addFilter(function(sMethod, sPath, bAsync) {
 			return !(sPath === "resources/sap-ui-version.json" && bAsync === mOptions.async);
 		});
-		window.oServer.respondWith("GET", "resources/sap-ui-version.json",
-		[
-			200,
-			{
-				"Content-Type": "application/json"
-			},
-			JSON.stringify(oVersionInfo)
-		]);
+		window.oServer.respondWith("GET", "resources/sap-ui-version.json", function(xhr) {
+			xhr.respond(
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oVersionInfo)
+			);
+			// only write the VersionInfo object to the window after it was requested
+			// We check for the (un)expected loading of the VersionInfo from the unit tests
+			window.oVersionInfo = oVersionInfo;
+		});
 	}
 
 	// nomen est omen
