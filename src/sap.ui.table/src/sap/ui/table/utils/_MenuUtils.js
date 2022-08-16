@@ -11,9 +11,6 @@ sap.ui.define([
 ], function(Device, Menu, MenuItem, Popup) {
 	"use strict";
 
-	// Table uses z-indices, ensure that popups starts their z-indices at least with 20.
-	Popup.setInitialZIndex(10);
-
 	function onCellFilterSelect(oColumn, oRow) {
 		// "this" is the table instance.
 		var oRowContext = oRow.getRowBindingContext();
