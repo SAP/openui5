@@ -1029,6 +1029,27 @@ sap.ui.define([
 			assert.strictEqual(oRenderSpy.callCount, 0, "The list should not be rerendered when enableBusyIndicator is changed");
 		});
 
+		QUnit.test("setBusy method test enableBusyIndicator property", function(assert) {
+			oList.setEnableBusyIndicator(false);
+			// simulate List is busy
+			oList._bBusy = true;
+			oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+			var fSetBusy = sinon.spy(oList, "setBusy");
+			oList._hideBusyIndicator();
+			assert.notOk(oList._bBusy, "_bBusy was reset");
+			assert.notOk(fSetBusy.called, "setBusy function not called, since enableBusyIndicator=false");
+
+			// enable busy indicator
+			oList.setEnableBusyIndicator(true);
+			// simulate List is busy
+			oList._bBusy = true;
+			Core.applyChanges();
+			oList._hideBusyIndicator();
+			assert.ok(fSetBusy.calledWith(false , "listUl"));
+			assert.notOk(oList._bBusy, "_bBusy is false");
+		});
+
 		window.IntersectionObserver && QUnit.test("BusyIndicator in the middle", function(assert) {
 			this.clock.restore();
 			createAndAppendDiv("uiArea1");

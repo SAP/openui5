@@ -825,9 +825,7 @@ function(
 
 	ListBase.prototype.setEnableBusyIndicator = function(bEnable) {
 		this.setProperty("enableBusyIndicator", bEnable, true);
-		if (!this.getEnableBusyIndicator()) {
-			this._hideBusyIndicator();
-		}
+		this._hideBusyIndicator();
 		return this;
 	};
 
@@ -1384,7 +1382,10 @@ function(
 		if (this._bBusy) {
 			// revert busy state
 			this._bBusy = false;
-			this.setBusy(false, "listUl");
+			if (this.getEnableBusyIndicator()) {
+				// only call the setBusy method if enableBusyIndicator=true
+				this.setBusy(false, "listUl");
+			}
 		}
 	};
 

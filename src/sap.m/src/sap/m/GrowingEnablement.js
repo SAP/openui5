@@ -217,12 +217,8 @@ sap.ui.define([
 			// if max item count not reached or if we do not know the count
 			var oBinding = this._oControl.getBinding("items");
 			if (oBinding && !oBinding.isLengthFinal() || this._iLimit < this._oControl.getMaxItemsCount()) {
-				// The GrowingEnablement has its own busy indicator. Do not show the busy indicator, if existing, of the parent control.
-				if (this._oControl.getMetadata().hasProperty("enableBusyIndicator")) {
-					this._bParentEnableBusyIndicator = this._oControl.getEnableBusyIndicator();
-					this._oControl.setEnableBusyIndicator(false);
-				}
-
+				// block busy indicator animation from the ListBase
+				this._oControl._bBusy = true;
 				this._iLimit += this._oControl.getGrowingThreshold();
 				this._updateTriggerDelayed(true);
 				this.updateItems("Growing");
@@ -244,11 +240,6 @@ sap.ui.define([
 			this._bLoading = false;
 			this._updateTriggerDelayed(false);
 			this._oControl.onAfterPageLoaded(this.getInfo(), sChangeReason);
-
-			// After the data has been loaded, restore the busy indicator handling of the parent control.
-			if (this._oControl.setEnableBusyIndicator) {
-				this._oControl.setEnableBusyIndicator(this._bParentEnableBusyIndicator);
-			}
 		},
 
 		// created and returns load more trigger
