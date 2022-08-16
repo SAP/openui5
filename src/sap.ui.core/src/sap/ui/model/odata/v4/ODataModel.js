@@ -64,6 +64,8 @@ sap.ui.define([
 			MessageType.Error
 		],
 		mSupportedEvents = {
+			dataReceived : true,
+			dataRequested : true,
 			messageChange : true,
 			sessionTimeout : true
 		},
@@ -329,6 +331,8 @@ sap.ui.define([
 		this.oInterface = {
 			fetchEntityContainer : this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
 			fetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
+			fireDataReceived : this.fireDataReceived.bind(this),
+			fireDataRequested : this.fireDataRequested.bind(this),
 			fireSessionTimeout : function () {
 				that.fireEvent("sessionTimeout");
 			},
@@ -368,6 +372,9 @@ sap.ui.define([
 		}
 		this.aPrerenderingTasks = null; // @see #addPrerenderingTask
 		this.fnOptimisticBatchEnabler = null;
+		this.oDataReceivedError = undefined; // the error for the next dataReceived event
+		// counts the fireDataRequested calls for which one event was fired
+		this.iDataRequestedCount = 0;
 	}
 
 	/**
@@ -394,6 +401,58 @@ sap.ui.define([
 			}
 		});
 	};
+
+	/**
+	 * The 'dataReceived' event is fired when the back-end data has been received on the client. It
+	 * is only fired for GET requests and is to be used by applications to process an error.
+	 *
+	 * If back-end requests are successful, the event has almost no parameters. For compatibility
+	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
+	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
+	 * is not.
+	 *
+	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
+	 * 'error' event parameter.
+	 *
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters()
+	 * @param {object} [oEvent.getParameters().data]
+	 *   An empty data object if a back-end request succeeds
+	 * @param {Error} [oEvent.getParameters().error]
+	 *   The error object if a back-end request failed. If there are multiple failed back-end
+	 *   requests, the error of the first one is provided.
+	 *
+	 * @event sap.ui.model.odata.v4.ODataModel#dataReceived
+	 * @public
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#event:dataReceived
+	 * @see sap.ui.model.odata.v4.ODataListBinding#event:dataReceived
+	 * @see sap.ui.model.odata.v4.ODataModel#event:dataRequested
+	 * @since 1.106.0
+	 */
+
+	/**
+	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
+	 * It is only fired for GET requests. Registered event handlers are called without parameters.
+	 *
+	 * There are two kinds of requests leading to such an event:
+	 * <ul>
+	 *   <li> When a binding requests initial data, or a list binding requests data for additional
+	 *     rows, the event is fired at the binding and may be bubbled up to the model. This includes
+	 *     refreshes except those triggered by
+	 *     {@link sap.ui.model.odata.v4.Context#requestSideEffects}.
+	 *   <li> For additional property requests for an entity that already has been requested, the
+	 *     event is only fired at the model.
+	 * </ul>
+	 *
+	 * @param {sap.ui.base.Event} oEvent
+	 *
+	 * @event sap.ui.model.odata.v4.ODataModel#dataRequested
+	 * @public
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#event:dataRequested
+	 * @see sap.ui.model.odata.v4.ODataListBinding#event:dataRequested
+	 * @see sap.ui.model.odata.v4.ODataModel#event:dataReceived
+	 * @since 1.106.0
+	 */
 
 	/**
 	 * The 'parseError' event is not supported by this model.
@@ -489,6 +548,34 @@ sap.ui.define([
 	};
 
 	/**
+	 * Attach event handler <code>fnFunction</code> to the 'dataReceived' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.105.0
+	 */
+	ODataModel.prototype.attachDataReceived = function (fnFunction, oListener) {
+		return this.attachEvent("dataReceived", fnFunction, oListener);
+	};
+
+	/**
+	 * Attach event handler <code>fnFunction</code> to the 'dataRequested' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.106.0
+	 */
+	ODataModel.prototype.attachDataRequested = function (fnFunction, oListener) {
+		return this.attachEvent("dataRequested", fnFunction, oListener);
+	};
+
+	/**
 	 * See {@link sap.ui.base.EventProvider#attachEvent}
 	 *
 	 * @param {string} sEventId The identifier of the event to listen for
@@ -504,8 +591,7 @@ sap.ui.define([
 	// @override sap.ui.base.EventProvider#attachEvent
 	ODataModel.prototype.attachEvent = function (sEventId, _oData, _fnFunction, _oListener) {
 		if (!(sEventId in mSupportedEvents)) {
-			throw new Error("Unsupported event '" + sEventId
-				+ "': v4.ODataModel#attachEvent");
+			throw new Error("Unsupported event '" + sEventId + "': v4.ODataModel#attachEvent");
 		}
 		return Model.prototype.attachEvent.apply(this, arguments);
 	};
@@ -1401,6 +1487,34 @@ sap.ui.define([
 	};
 
 	/**
+	 * Detach event handler <code>fnFunction</code> from the 'dataReceived' event of this model.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.105.0
+	 */
+	ODataModel.prototype.detachDataReceived = function (fnFunction, oListener) {
+		return this.detachEvent("dataReceived", fnFunction, oListener);
+	};
+
+	/**
+	 * Detach event handler <code>fnFunction</code> from the 'dataRequested' event of this model.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.106.0
+	 */
+	ODataModel.prototype.detachDataRequested = function (fnFunction, oListener) {
+		return this.detachEvent("dataRequested", fnFunction, oListener);
+	};
+
+	/**
 	 * Detach event handler <code>fnFunction</code> from the 'sessionTimeout' event of this model.
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
@@ -1422,6 +1536,47 @@ sap.ui.define([
 		return _Helper.hasPathPrefix(sMessageTarget, sPathPrefix)
 			? this.mMessages[sMessageTarget]
 			: [];
+	};
+
+	/**
+	 * Fires the 'dataReceived' event. This function is only called from the property bindings for
+	 * late property requests. Bubbling up from the binding goes directly to fireEvent.
+	 *
+	 * Fire only one event, even when many late properties are requested (and each request calls
+	 * this function). Use the first response error.
+	 *
+	 * @param {Error} [oError]
+	 *   The error if the request failed
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.fireDataReceived = function (oError) {
+		if (this.iDataRequestedCount === 0) {
+			throw new Error("Received more data than requested");
+		}
+		this.iDataRequestedCount -= 1;
+		this.oDataReceivedError = this.oDataReceivedError || oError; // first error wins
+		if (this.iDataRequestedCount === 0) {
+			this.fireEvent("dataReceived",
+				this.oDataReceivedError ? {error : this.oDataReceivedError} : {data : {}});
+			this.oDataReceivedError = undefined;
+		}
+	};
+
+	/**
+	 * Fires the 'dataRequested' event. This function is only called from the property bindings for
+	 * late property requests. Bubbling up from the binding goes directly to fireEvent.
+	 *
+	 * Fire only one event, even when many late properties are requested (and each request calls
+	 * this function).
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.fireDataRequested = function () {
+		this.iDataRequestedCount += 1;
+		if (this.iDataRequestedCount === 1) {
+			this.fireEvent("dataRequested");
+		}
 	};
 
 	/**

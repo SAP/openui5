@@ -135,6 +135,9 @@ sap.ui.define([
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, sServiceUrl + "$metadata");
 		assert.deepEqual(oMetaModel.aAnnotationUris, ["my/annotations.xml"]);
+		assert.strictEqual(oModel.iDataRequestedCount, 0);
+		assert.ok("oDataReceivedError" in oModel);
+		assert.strictEqual(oModel.oDataReceivedError, undefined);
 	});
 });
 
@@ -410,16 +413,11 @@ sap.ui.define([
 			oExpectedBind4,
 			oExpectedBind5,
 			oExpectedBind6,
+			oExpectedBind7,
+			oExpectedBind8,
 			oExpectedCreate = this.mock(_Requestor).expects("create"),
-			fnFetchEntityContainer = {},
-			fnFetchMetadata = {},
-			fnGetGroupProperty = {},
-			fnGetOptimisticBatchEnabler = function () { return "~OptimisticBatchEnabler~"; },
-			fnGetReporter = {},
 			oModel,
 			oModelInterface,
-			fnreportStateMessages = {},
-			fnreportTransitionMessages = {},
 			oRequestor = {
 				checkForOpenRequests : function () {},
 				checkHeaderNames : function () {}
@@ -430,15 +428,17 @@ sap.ui.define([
 			.returns(bStatistics);
 		oExpectedCreate
 			.withExactArgs(sServiceUrl, {
-					fetchEntityContainer : sinon.match.same(fnFetchEntityContainer),
-					fetchMetadata : sinon.match.same(fnFetchMetadata),
+					fetchEntityContainer : "~fnFetchEntityContainer~",
+					fetchMetadata : "~fnFetchMetadata~",
+					fireDataReceived : "~fnFireDataReceived~",
+					fireDataRequested : "~fnFireDataRequested~",
 					fireSessionTimeout : sinon.match.func,
-					getGroupProperty : sinon.match.same(fnGetGroupProperty),
-					getOptimisticBatchEnabler : sinon.match.same(fnGetOptimisticBatchEnabler),
-					getReporter : sinon.match.same(fnGetReporter),
+					getGroupProperty : "~fnGetGroupProperty~",
+					getOptimisticBatchEnabler : "~fnGetOptimisticBatchEnabler~",
+					getReporter : "~fnGetReporter~",
 					onCreateGroup : sinon.match.func,
-					reportStateMessages : sinon.match.same(fnreportStateMessages),
-					reportTransitionMessages : sinon.match.same(fnreportTransitionMessages)
+					reportStateMessages : "~fnReportStateMessages~",
+					reportTransitionMessages : "~fnReportTransitionMessages~"
 				},
 				{"Accept-Language" : "ab-CD"},
 				bStatistics
@@ -447,19 +447,23 @@ sap.ui.define([
 				"4.0")
 			.returns(oRequestor);
 		oExpectedBind0 = this.mock(ODataMetaModel.prototype.fetchEntityContainer).expects("bind")
-			.returns(fnFetchEntityContainer);
+			.returns("~fnFetchEntityContainer~");
 		oExpectedBind1 = this.mock(ODataMetaModel.prototype.fetchObject).expects("bind")
-			.returns(fnFetchMetadata);
-		oExpectedBind2 = this.mock(ODataModel.prototype.getGroupProperty).expects("bind")
-			.returns(fnGetGroupProperty);
-		oExpectedBind3 = this.mock(ODataModel.prototype.getOptimisticBatchEnabler).expects("bind")
-			.returns(fnGetOptimisticBatchEnabler);
-		oExpectedBind4 = this.mock(ODataModel.prototype.getReporter).expects("bind")
-			.returns(fnGetReporter);
-		oExpectedBind5 = this.mock(ODataModel.prototype.reportTransitionMessages).expects("bind")
-			.returns(fnreportTransitionMessages);
-		oExpectedBind6 = this.mock(ODataModel.prototype.reportStateMessages).expects("bind")
-			.returns(fnreportStateMessages);
+			.returns("~fnFetchMetadata~");
+		oExpectedBind2 = this.mock(ODataModel.prototype.fireDataReceived).expects("bind")
+			.returns("~fnFireDataReceived~");
+		oExpectedBind3 = this.mock(ODataModel.prototype.fireDataRequested).expects("bind")
+			.returns("~fnFireDataRequested~");
+		oExpectedBind4 = this.mock(ODataModel.prototype.getGroupProperty).expects("bind")
+			.returns("~fnGetGroupProperty~");
+		oExpectedBind5 = this.mock(ODataModel.prototype.getOptimisticBatchEnabler).expects("bind")
+			.returns("~fnGetOptimisticBatchEnabler~");
+		oExpectedBind6 = this.mock(ODataModel.prototype.getReporter).expects("bind")
+			.returns("~fnGetReporter~");
+		oExpectedBind7 = this.mock(ODataModel.prototype.reportTransitionMessages).expects("bind")
+			.returns("~fnReportTransitionMessages~");
+		oExpectedBind8 = this.mock(ODataModel.prototype.reportStateMessages).expects("bind")
+			.returns("~fnReportStateMessages~");
 
 		// code under test
 		oModel = this.createModel("?sap-client=123", {}, true);
@@ -473,21 +477,21 @@ sap.ui.define([
 		assert.strictEqual(oExpectedBind4.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind5.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind6.firstCall.args[0], oModel);
+		assert.strictEqual(oExpectedBind7.firstCall.args[0], oModel);
+		assert.strictEqual(oExpectedBind8.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedCreate.firstCall.args[1], oModel.oInterface);
 
 		this.mock(oModel._submitBatch).expects("bind")
 			.withExactArgs(sinon.match.same(oModel), "$auto", true)
 			.returns(fnSubmitAuto);
-		this.mock(oModel).expects("addPrerenderingTask")
-			.withExactArgs(fnSubmitAuto);
+		this.mock(oModel).expects("addPrerenderingTask").withExactArgs(fnSubmitAuto);
 
 		// code under test - call onCreateGroup
 		oModelInterface = oExpectedCreate.firstCall.args[1];
 		oModelInterface.onCreateGroup("$auto");
 		oModelInterface.onCreateGroup("foo");
 
-		this.mock(oModel).expects("fireEvent")
-			.withExactArgs("sessionTimeout");
+		this.mock(oModel).expects("fireEvent").withExactArgs("sessionTimeout");
 
 		// code under test - call fireSessionTimeout
 		oModelInterface.fireSessionTimeout();
@@ -824,7 +828,20 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("events", function (assert) {
-		var oModel = this.createModel();
+		var oModel = this.createModel(),
+			oModelPrototypeMock = this.mock(Model.prototype);
+
+		[
+			"dataReceived", "dataRequested", "messageChange", "sessionTimeout"
+		].forEach(function (sEventId) {
+			oModelPrototypeMock.expects("attachEvent")
+				.withExactArgs(sEventId, "~oData~", "~fnFunction~", "~oListener~")
+				.returns(oModel);
+
+			assert.strictEqual(
+				oModel.attachEvent(sEventId, "~oData~", "~fnFunction~", "~oListener~"),
+				oModel);
+		});
 
 		assert.throws(function () {
 			oModel.attachParseError();
@@ -841,6 +858,46 @@ sap.ui.define([
 		assert.throws(function () {
 			oModel.attachRequestSent();
 		}, new Error("Unsupported event 'requestSent': v4.ODataModel#attachEvent"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("event: dataRequested", function (assert) {
+		var oModel = this.createModel(),
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("attachEvent")
+			.withExactArgs("dataRequested", "~fnFunction~", "~oListener~")
+			.returns(oModel);
+
+		// code under test
+		assert.strictEqual(oModel.attachDataRequested("~fnFunction~", "~oListener~"), oModel);
+
+		oModelMock.expects("detachEvent")
+			.withExactArgs("dataRequested", "~fnFunction~", "~oListener~")
+			.returns(oModel);
+
+		// code under test
+		assert.strictEqual(oModel.detachDataRequested("~fnFunction~", "~oListener~"), oModel);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("event: dataReceived", function (assert) {
+		var oModel = this.createModel(),
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("attachEvent")
+			.withExactArgs("dataReceived", "~fnFunction~", "~oListener~")
+			.returns(oModel);
+
+		// code under test
+		assert.strictEqual(oModel.attachDataReceived("~fnFunction~", "~oListener~"), oModel);
+
+		oModelMock.expects("detachEvent")
+			.withExactArgs("dataReceived", "~fnFunction~", "~oListener~")
+			.returns(oModel);
+
+		// code under test
+		assert.strictEqual(oModel.detachDataReceived("~fnFunction~", "~oListener~"), oModel);
 	});
 
 	//*********************************************************************************************
@@ -866,6 +923,50 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oModel.detachSessionTimeout(fnFunction, oListener), oModel);
 	});
+
+	//*********************************************************************************************
+[undefined, "~oError~"].forEach(function (oError) {
+	QUnit.test("fireDataRequested/fireDataReceived", function (assert) {
+		var oModel = this.createModel(),
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("fireEvent").withExactArgs("dataRequested");
+
+		// code under test
+		oModel.fireDataRequested();
+
+		assert.strictEqual(oModel.iDataRequestedCount, 1);
+
+		// code under test
+		oModel.fireDataRequested();
+
+		assert.strictEqual(oModel.iDataRequestedCount, 2);
+
+		// code under test
+		oModel.fireDataReceived(oError);
+
+		assert.strictEqual(oModel.iDataRequestedCount, 1);
+
+		oModelMock.expects("fireEvent")
+			.withExactArgs("dataReceived", oError ? {error : oError} : {data : {}});
+
+		// code under test
+		oModel.fireDataReceived();
+
+		assert.strictEqual(oModel.iDataRequestedCount, 0);
+
+		assert.throws(function () {
+			oModel.fireDataReceived();
+		}, new Error("Received more data than requested"));
+
+		oModelMock.expects("fireEvent").withExactArgs("dataRequested");
+		oModelMock.expects("fireEvent").withExactArgs("dataReceived", {data : {}});
+
+		// code under test
+		oModel.fireDataRequested();
+		oModel.fireDataReceived();
+	});
+});
 
 	//*********************************************************************************************
 	[{

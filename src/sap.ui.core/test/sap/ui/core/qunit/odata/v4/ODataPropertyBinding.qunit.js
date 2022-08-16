@@ -863,7 +863,7 @@ sap.ui.define([
 			this.mock(oBinding.oCachePromise).expects("then").never();
 
 			// code under test
-			oPromise = oBinding.checkUpdateInternal(undefined, undefined, undefined, vValue);
+			oPromise = oBinding.checkUpdateInternal(undefined, undefined, undefined, false, vValue);
 
 			assert.ok(oPromise.isFulfilled());
 			assert.strictEqual(oBinding.getValue(), vValue);
@@ -888,7 +888,7 @@ sap.ui.define([
 			});
 
 		// code under test
-		return oBinding.checkUpdateInternal(undefined, undefined, undefined, undefined)
+		return oBinding.checkUpdateInternal(undefined, undefined, undefined, false, undefined)
 			.then(function () {
 				assert.strictEqual(oBinding.getValue(), "~value~");
 			});
@@ -1457,6 +1457,45 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bSuccess) {
+	QUnit.test("dataRequested/dataReceived: success=" + bSuccess, function (assert) {
+		var oBinding = this.oModel.bindProperty("/EntitySet('foo')/Name");
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/path");
+		this.mock(this.oModel.oMetaModel).expects("fetchUI5Type").withExactArgs("/resolved/path")
+			.resolves("~type~");
+		this.mock(oBinding).expects("lockGroup").withExactArgs("groupId").returns("~oGroupLock~");
+		this.mock(oBinding).expects("fireDataRequested").withExactArgs("~bPreventBubbling~");
+		this.mock(oBinding.oCache).expects("fetchValue")
+			.withExactArgs("~oGroupLock~", undefined, sinon.match.func, sinon.match.same(oBinding))
+			.callsFake(function () {
+				arguments[2]();
+				return bSuccess ? Promise.resolve("~vValue~") : Promise.reject("~oError~");
+			});
+		this.mock(oBinding).expects("setType").withExactArgs("~type~", undefined);
+		this.mock(this.oModel).expects("reportError").exactly(bSuccess ? 0 : 1);
+		this.mock(oBinding).expects("_fireChange").exactly(bSuccess ? 1 : 0)
+			.withExactArgs({reason : "~reason~"});
+		this.mock(oBinding).expects("checkDataState");
+		this.mock(oBinding).expects("fireDataReceived")
+			.withExactArgs(bSuccess ? {data : {}} : {error : "~oError~"}, "~bPreventBubbling~")
+			.callsFake(function () {
+				if (bSuccess) {
+					assert.strictEqual(oBinding.getValue(), "~vValue~");
+				}
+			});
+
+		// code under test
+		return oBinding.checkUpdateInternal(false, "~reason~", "groupId", "~bPreventBubbling~")
+			.then(function () {
+				assert.strictEqual(oBinding.getValue(), "~vValue~");
+			}, function (oError) {
+				assert.strictEqual(oError, "~oError~");
+			});
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("expression binding", function (assert) {
 		var oCacheMock = this.mock(_Cache),
 			oModel = new ODataModel({
@@ -1627,33 +1666,31 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("onChange", function () {
-		var oBinding = this.oModel.bindProperty("/absolute"),
-			vValue = "foo";
+		var oBinding = this.oModel.bindProperty("/absolute");
 
 		this.mock(oBinding).expects("checkUpdateInternal")
-			.withExactArgs(undefined, undefined, undefined, vValue)
+			.withExactArgs(undefined, undefined, undefined, false, "~vValue~")
 			.returns(SyncPromise.resolve());
 		this.mock(this.oModel).expects("getReporter").withExactArgs()
 			.returns(function () { throw new Error(); });
 
 		// code under test
-		oBinding.onChange(vValue);
+		oBinding.onChange("~vValue~");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("onChange: checkUpdateInternal fails", function () {
 		var oBinding = this.oModel.bindProperty("/absolute"),
 			oError = new Error("This call intentionally failed"),
-			fnReporter = sinon.spy(),
-			vValue = "foo";
+			fnReporter = sinon.spy();
 
 		this.mock(oBinding).expects("checkUpdateInternal")
-			.withExactArgs(undefined, undefined, undefined, vValue)
+			.withExactArgs(undefined, undefined, undefined, false, "~vValue~")
 			.returns(SyncPromise.reject(oError));
 		this.mock(this.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 
 		// code under test
-		oBinding.onChange(vValue);
+		oBinding.onChange("~vValue~");
 
 		sinon.assert.calledOnce(fnReporter);
 		sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
@@ -2024,7 +2061,7 @@ sap.ui.define([
 				.withExactArgs(oContext, false, /*bKeepQueryOptions*/true, "~bKeepCacheOnError~");
 			that.mock(oBinding).expects("checkUpdateInternal")
 				.exactly(bCheckUpdate ? 1 : 0)
-				.withExactArgs(undefined, ChangeReason.Refresh, "myGroup")
+				.withExactArgs(undefined, ChangeReason.Refresh, "myGroup", "~bKeepCacheOnError~")
 				.returns(oCheckUpdatePromise);
 			return Promise.resolve().then(fnThen);
 		});

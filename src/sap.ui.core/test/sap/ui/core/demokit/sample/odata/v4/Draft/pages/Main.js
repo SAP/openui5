@@ -11,6 +11,20 @@ sap.ui.define([
 		sObjectPage = "sap.ui.core.sample.odata.v4.Draft.ObjectPage";
 
 	Opa5.createPageObjects({
+		onTheErrorPage : {
+			assertions : {
+				checkError : function (sMessage) {
+					this.waitFor({
+						controlType : "sap.m.Text",
+						id : "error",
+						success : function (oErrorText) {
+							Opa5.assert.strictEqual(oErrorText.getText(), sMessage, "Error text");
+						},
+						viewName : "sap.ui.core.sample.odata.v4.Draft.Error"
+					});
+				}
+			}
+		},
 		onTheListReport : {
 			actions : {
 				selectProduct : function (iRow) {

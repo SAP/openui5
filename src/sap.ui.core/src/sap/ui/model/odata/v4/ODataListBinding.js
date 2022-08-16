@@ -558,7 +558,12 @@ sap.ui.define([
 	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter.
 	 *
+	 * Since 1.106 this event is bubbled up to the model, unless a listener calls
+	 * {@link sap.ui.base.Event#cancelBubble oEvent.cancelBubble()}.
+	 *
 	 * @param {sap.ui.base.Event} oEvent
+	 * @param {function} oEvent.cancelBubble
+	 *   A callback function to prevent that the event is bubbled up to the model
 	 * @param {object} oEvent.getParameters()
 	 * @param {object} [oEvent.getParameters().data]
 	 *   An empty data object if a back-end request succeeds
@@ -567,6 +572,7 @@ sap.ui.define([
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#dataReceived
 	 * @public
+	 * @see sap.ui.model.odata.v4.ODataModel#event:dataReceived
 	 * @since 1.37.0
 	 */
 
@@ -576,10 +582,16 @@ sap.ui.define([
 	 * for example to switch on a busy indicator. Registered event handlers are called without
 	 * parameters.
 	 *
+	 * Since 1.106 this event is bubbled up to the model, unless a listener calls
+	 * {@link sap.ui.base.Event#cancelBubble oEvent.cancelBubble()}.
+	 *
 	 * @param {sap.ui.base.Event} oEvent
+	 * @param {function} oEvent.cancelBubble
+	 *   A callback function to prevent that the event is bubbled up to the model
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#dataRequested
 	 * @public
+	 * @see sap.ui.model.odata.v4.ODataModel#event:dataRequested
 	 * @since 1.37.0
 	 */
 
@@ -1937,6 +1949,7 @@ sap.ui.define([
 			bDataRequested = false,
 			bFireChange = false,
 			oGroupLock,
+			bPreventBubbling,
 			oPromise,
 			bRefreshEvent = !!this.sChangeReason, // ignored for "*VirtualContext"
 			sResolvedPath = this.getResolvedPath(),
@@ -2028,14 +2041,15 @@ sap.ui.define([
 		oGroupLock = this.oReadGroupLock;
 		this.oReadGroupLock = undefined;
 		if (!this.oDiff) { // w/o E.C.D there won't be a diff
+			// before fetchContexts needing it and resolveRefreshPromise destroying it
+			bPreventBubbling = this.isRefreshWithoutBubbling();
 			// make sure "refresh" is followed by async "change"
 			oPromise = this.fetchContexts(iStart, iLength, iMaximumPrefetchSize, oGroupLock,
 				/*bAsync*/bRefreshEvent, function () {
 					bDataRequested = true;
-					that.fireDataRequested();
+					that.fireDataRequested(bPreventBubbling);
 				});
-			this.resolveRefreshPromise(oPromise);
-			oPromise.then(function (bChanged) {
+			this.resolveRefreshPromise(oPromise).then(function (bChanged) {
 				if (that.bUseExtendedChangeDetection) {
 					that.oDiff = {
 						aDiff : that.getDiff(iLength),
@@ -2050,12 +2064,13 @@ sap.ui.define([
 					}
 				}
 				if (bDataRequested) {
-					that.fireDataReceived({data : {}});
+					that.fireDataReceived({data : {}}, bPreventBubbling);
 				}
 			}, function (oError) {
 				// cache shares promises for concurrent read
 				if (bDataRequested) {
-					that.fireDataReceived(oError.canceled ? {data : {}} : {error : oError});
+					that.fireDataReceived(oError.canceled ? {data : {}} : {error : oError},
+						bPreventBubbling);
 				}
 				throw oError;
 			}).catch(function (oError) {
@@ -2728,7 +2743,9 @@ sap.ui.define([
 					bKeepCacheOnError ? sGroupId : undefined);
 				oKeptElementsPromise = that.refreshKeptElements(sGroupId);
 				if (that.iCurrentEnd > 0) {
-					oPromise = that.createRefreshPromise().catch(function (oError) {
+					oPromise = that.createRefreshPromise(
+						/*bPreventBubbling*/bKeepCacheOnError
+					).catch(function (oError) {
 						if (!bKeepCacheOnError || oError.canceled) {
 							throw oError;
 						}

@@ -3074,14 +3074,19 @@ sap.ui.define([
 		oError.canceled = bCanceled;
 
 		// code under test
-		oRefreshPromise = oBinding.createRefreshPromise();
+		assert.notOk(oBinding.isRefreshWithoutBubbling());
+
+		// code under test
+		oRefreshPromise = oBinding.createRefreshPromise("~bPreventBubbling~");
 
 		assert.strictEqual(oRefreshPromise, oBinding.oRefreshPromise);
+		assert.strictEqual(oBinding.isRefreshWithoutBubbling(), "~bPreventBubbling~");
 
 		// code under test
 		assert.strictEqual(oBinding.resolveRefreshPromise(oErrorPromise), oErrorPromise);
 
 		assert.strictEqual(oBinding.oRefreshPromise, null);
+		assert.notOk(oBinding.isRefreshWithoutBubbling());
 
 		// code under test
 		assert.strictEqual(oBinding.resolveRefreshPromise("~n/a~"), "~n/a~");

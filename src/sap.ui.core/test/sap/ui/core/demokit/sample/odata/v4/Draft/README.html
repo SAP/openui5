@@ -110,5 +110,28 @@
 			<li>Press the "Show List" button.</li>
 			<li><b>Note:</b> The list report appears.</li>
 		</ol>
+
+		<h2>Scenario: Start with list report, navigate to defective product</h2>
+		<h3>Start Up</h3>
+		<ol>
+			<li>Start the Draft application with URL:
+				<a href="/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft">
+					/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft
+				</a></li>
+			<li>Select the last product in the list report.</li>
+			<li><b>Note:</b> An error page is shown telling that there was a "Communication error"
+				with status code 500.
+		</ol>
+
+		<h2>Scenario: Start with defective product in object page</h2>
+		<h3>Start Up</h3>
+		<ol>
+			<li>Start the Draft application with URL:
+				<a href="/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=40,IsActiveEntity=true)">
+					/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.Draft#/Products(ID=40,IsActiveEntity=true)
+				</a></li>
+			<li><b>Note:</b> An error page is shown telling that there was a "Communication error"
+				with status code 500.
+		</ol>
 	</body>
 </html>
