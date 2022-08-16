@@ -170,6 +170,11 @@ sap.ui.define([
 	};
 
 	BooksTableDelegate.addItem = function (sPropertyName, oTable, mPropertyBag) {
+
+		if (sPropertyName === "createdAt") {
+			return null;
+		}
+
 		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
 			if (oColumn) { // in XML templating there is no column
 				var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);

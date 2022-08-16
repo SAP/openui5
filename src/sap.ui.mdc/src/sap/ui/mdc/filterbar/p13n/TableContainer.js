@@ -47,16 +47,16 @@ sap.ui.define([
 		//FIXME: remove check once the UI has been decided
 		if (this._bUseQueryPanel) {
 			this.oLayout = new FilterPanel({
-				enableReorder: false
+				enableReorder: false,
+				itemFactory: function(oItem){
+					var sKey = oItem.name;
+					var oFilterItem = this.mFilterItems[sKey];
+					return oFilterItem;
+				}.bind(this)
 			});
 
 			this.mFilterItems = {};
 
-			this.oLayout.setItemFactory(function(oItem){
-				var sKey = oItem.name;
-				var oFilterItem = this.mFilterItems[sKey];
-				return oFilterItem;
-			}.bind(this));
 		} else {
 			this._oMessageStripContainer = new VBox(this.getId() + "-messageStripContainer");
 
@@ -74,7 +74,9 @@ sap.ui.define([
 
 		//FIXME: remove check once the UI has been decided
 		if (this._bUseQueryPanel) {
-			this.mFilterItems[oControl._getFieldPath()] = oControl;
+			var oFilterBar = oControl._oFilterField.getParent();
+			var sKey = oFilterBar._getPropertyByName(oControl._getFieldPath()).name;
+			this.mFilterItems[sKey] = oControl;
 		} else {
 			this._oTable.insertItem(oControl, iIndex);
 		}

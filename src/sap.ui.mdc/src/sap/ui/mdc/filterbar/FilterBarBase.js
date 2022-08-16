@@ -643,7 +643,6 @@ sap.ui.define([
 		}));
 	};
 
-
 	FilterBarBase.prototype._handleConditionModelPropertyChange = function(oEvent) {
 
 		var pConditionState;

@@ -4355,7 +4355,7 @@ sap.ui.define([
 			var iIntervalId;
 
 			oFilterInfoBar.firePress();
-			assert.ok(oTableSettingsShowPanelSpy.calledOnceWithExactly(that.oTable, "Filter", oFilterInfoBar), "TableSettings.showPanel call");
+			assert.ok(oTableSettingsShowPanelSpy.calledOnceWithExactly(that.oTable, "Filter", undefined), "TableSettings.showPanel call");
 
 			that.oTable.setFilterConditions({
 				name: []

@@ -202,6 +202,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"FilterPanel": {
+				group: "UI Panels",
+				module: "./panels/FilterPanel.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"ChartItemPanel": {
 				group: "UI Panels",
 				module: "./ChartItemPanel.qunit",

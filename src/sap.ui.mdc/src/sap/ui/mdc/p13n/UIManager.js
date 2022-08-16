@@ -151,6 +151,7 @@ sap.ui.define([
 		}
 	};
 
+
 	/**
 	 * This method can be used to retrieve the p13n container.
 	 *
@@ -190,8 +191,7 @@ sap.ui.define([
 				}
 				if (oAdaptationUI && oAdaptationUI.attachChange) {
 					oAdaptationUI.attachChange(function(oEvt){
-						var sKey = bUseP13nContainer ? oEvt.getSource().getParent().getParent().getCurrentViewKey() : aKeys[0];
-						this.oAdaptationProvider.validateP13n(oControl, sKey, oAdaptationUI);
+						this.oAdaptationProvider.validateP13n(oControl, pAdaptationUI._key, oAdaptationUI);
 					}.bind(this));
 				}
 				var oSetting = oUISettings[pAdaptationUI._key];
