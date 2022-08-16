@@ -4363,19 +4363,10 @@ sap.ui.define([
 	 * @returns {number} The index delta
 	 */
 	ODataTreeBindingFlat.prototype._calcIndexDelta = function (iEndServerIndex) {
-		var i, bIgnore,
+		var i, bIgnore, aManuallyCollapsedServerIndexNodes,
 			iCollapsedDelta = 0,
-			mCollapsedServerIndices = {},
+			iExpandedDelta = 0,
 			iLastCollapsedIndex = 0;
-
-		// collect all collapsed server indices and magnitude as a look-up table
-		// serverIndex + magnitude form a range for which we can check if there is a containment situation
-		this._aCollapsed.forEach(function (oNode) {
-			// only regard nodes with a server-index and not initially collapsed
-			if (oNode.serverIndex >= 0 && oNode.serverIndex < iEndServerIndex && !oNode.isDeepOne && !oNode.initiallyCollapsed) {
-				mCollapsedServerIndices[oNode.serverIndex] = oNode.magnitude;
-			}
-		});
 
 		for (i = 0; i < this._aCollapsed.length; i++) {
 			var oCollapsedNode = this._aCollapsed[i];
@@ -4397,26 +4388,26 @@ sap.ui.define([
 			}
 		}
 
-		// expanded delta
-		var iExpandedDelta = 0;
+		// filter all collapsed nodes for server-index nodes that are not initially collapsed
+		aManuallyCollapsedServerIndexNodes = this._aCollapsed.filter(function (oNode) {
+			return oNode.serverIndex >= 0 && oNode.serverIndex < iEndServerIndex
+				&& !oNode.isDeepOne && !oNode.initiallyCollapsed;
+		});
 
-		var fnInCollapsedRange = function (oNode) {
-			var bIgnore = false;
-			var iContainingIndexToCheck = oNode.serverIndex || oNode.containingServerIndex;
-			for (var j in mCollapsedServerIndices) {
-				// if the expanded node is inside a collapsed range -> ignore it
-				if (iContainingIndexToCheck > j && iContainingIndexToCheck < j + mCollapsedServerIndices[j]) {
-					bIgnore = true;
-					break;
-				}
-			}
-			return bIgnore;
+		// Checks if the given expanded node is a child node of any of the manually collapsed
+		// server-index nodes
+		var fnInCollapsedRange = function (iExpandedNodeIndex) {
+			return aManuallyCollapsedServerIndexNodes.some(function (oNode) {
+				return iExpandedNodeIndex > oNode.serverIndex
+					&& iExpandedNodeIndex < oNode.serverIndex + oNode.magnitude;
+			});
 		};
 
 		for (i = 0; i < this._aExpanded.length; i++) {
-			var oExpandedNode = this._aExpanded[i];
+			var oExpandedNode = this._aExpanded[i],
+				iExpandedNodeIndex = this._getRelatedServerIndex(oExpandedNode);
 
-			if (this._getRelatedServerIndex(oExpandedNode) >= iEndServerIndex) {
+			if (iExpandedNodeIndex >= iEndServerIndex) {
 				break;
 			}
 
@@ -4433,7 +4424,9 @@ sap.ui.define([
 					oParent = oParent.parent;
 				}
 
-				bIgnore = fnInCollapsedRange(oExpandedNode);
+				// if oExpandedNode is a child of a collapsed node it is not visible on the UI and
+				// can be ignored for the expanded delta
+				bIgnore = fnInCollapsedRange(iExpandedNodeIndex);
 
 				// if not then regard the children for the expanded delta
 				if (!bYep && !bIgnore) {
@@ -4442,7 +4435,7 @@ sap.ui.define([
 
 			} else if (oExpandedNode.initiallyCollapsed) {
 				// see if the node on the last auto-expand level is contained in a sub-tree of a collapsed server-indexed node
-				bIgnore = fnInCollapsedRange(oExpandedNode);
+				bIgnore = fnInCollapsedRange(iExpandedNodeIndex);
 				if (!bIgnore) {
 					// still we have to check for a
 					iExpandedDelta += oExpandedNode.children.length;
