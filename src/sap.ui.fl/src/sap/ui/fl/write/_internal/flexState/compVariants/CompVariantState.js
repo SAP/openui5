@@ -47,7 +47,7 @@ sap.ui.define([
 		var aDraftFilenames = getPropertyFromVersionsModel("/draftFilenames", mPropertyBag);
 		if (aDraftFilenames) {
 			return oChange.getState() === Change.states.NEW
-			|| aDraftFilenames.includes(oChange.getFileName ? oChange.getFileName() : oChange.getId());
+			|| aDraftFilenames.includes(oChange.getId());
 		}
 		return true;
 	}
@@ -134,7 +134,7 @@ sap.ui.define([
 			//aObjectArray can come from either back end response or flex state
 			//In the first case, the fileName is a direct property of object
 			//In the second case, it can be obtained from getId() function
-			var sFileName = aObjectArray[i].fileName || (aObjectArray[i].getFileName && aObjectArray[i].getFileName());
+			var sFileName = aObjectArray[i].fileName || (aObjectArray[i].getId());
 			if ((sFileName || aObjectArray[i].getId()) === sObjectId) {
 				aObjectArray.splice(i, 1);
 				break;

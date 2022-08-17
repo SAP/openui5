@@ -1183,8 +1183,8 @@ sap.ui.define([
 
 			var aDirtyChanges = this.oModel._getDirtyChangesFromVariantChanges(aControlChanges);
 			assert.equal(aDirtyChanges.length, 2, "only two of the given changes are returned as dirty by the model");
-			assert.equal(aDirtyChanges[0].getFileName(), "change1", "change1 is dirty");
-			assert.equal(aDirtyChanges[1].getFileName(), "change3", "change3 is dirty");
+			assert.equal(aDirtyChanges[0].getId(), "change1", "change1 is dirty");
+			assert.equal(aDirtyChanges[1].getId(), "change3", "change3 is dirty");
 		});
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default/execute box checked", function(assert) {

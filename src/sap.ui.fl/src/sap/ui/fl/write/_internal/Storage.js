@@ -143,26 +143,26 @@ sap.ui.define([
 					var bDifferentOrder = false;
 					if (oChange.condenserState === "delete") {
 						if (oChange.getState() === States.PERSISTED) {
-							mCondense.delete.change.push(oChange.getFileName());
+							mCondense.delete.change.push(oChange.getId());
 						}
 						iOffset++;
 					} else if (mPropertyBag.condensedChanges.length) {
-						bDifferentOrder = mPropertyBag.allChanges[index].getFileName() !== mPropertyBag.condensedChanges[index - iOffset].getFileName();
+						bDifferentOrder = mPropertyBag.allChanges[index].getId() !== mPropertyBag.condensedChanges[index - iOffset].getId();
 					}
 					if ((oChange.condenserState === "select" || oChange.condenserState === "update") && bDifferentOrder && !bAlreadyReordered) {
 						var aReorderedChanges = mPropertyBag.condensedChanges.slice(index - iOffset).map(function(oChange) {
-							return oChange.getFileName();
+							return oChange.getId();
 						});
 						mCondense.reorder.change = aReorderedChanges;
 						bAlreadyReordered = true;
 					}
 					if (oChange.condenserState === "select" && oChange.getState() === States.NEW) {
 						mCondense.create.change[iChangeCreateIndex] = {};
-						mCondense.create.change[iChangeCreateIndex][oChange.getFileName()] = oChange.getDefinition();
+						mCondense.create.change[iChangeCreateIndex][oChange.getId()] = oChange.getDefinition();
 					} else if (oChange.condenserState === "update") {
 						var iChangeUpdateIndex = mCondense.update.change.length;
 						mCondense.update.change[iChangeUpdateIndex] = {};
-						mCondense.update.change[iChangeUpdateIndex][oChange.getFileName()] = {
+						mCondense.update.change[iChangeUpdateIndex][oChange.getId()] = {
 							content: oChange.getContent()
 						};
 					}

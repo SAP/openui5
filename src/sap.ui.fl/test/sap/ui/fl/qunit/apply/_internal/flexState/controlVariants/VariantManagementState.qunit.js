@@ -353,7 +353,7 @@ sap.ui.define([
 
 			function includesDirtyChange(aChanges) {
 				return !!aChanges.find(function(oChange) {
-					return oChange.getFileName() === "dirtyChange";
+					return oChange.getId() === "dirtyChange";
 				});
 			}
 
