@@ -1341,7 +1341,10 @@ sap.ui.define([
 	QUnit.test("updateSelected: properties & annotations", function (assert) {
 		var oCacheValue = {
 				"@$ui5._" : {predicate : "('1')"}, // must not get lost
-				nested : {}
+				"editing@$ui5.updating" : true, // must not get lost
+				nested : {
+					"editing@$ui5.updating" : true // must not get lost
+				}
 			},
 			oHelperMock = this.mock(_Helper),
 			oNewValue = {
@@ -1353,7 +1356,10 @@ sap.ui.define([
 			aSelectJSON,
 			oUpdatedValue = {
 				"@$ui5._" : {predicate : "('1')"},
-				nested : {}
+				"editing@$ui5.updating" : true,
+				nested : {
+					"editing@$ui5.updating" : true
+				}
 			};
 
 		function set(oObject, sName, sValue) {
@@ -1386,6 +1392,7 @@ sap.ui.define([
 		selected("missing", "keep", undefined, "keep");
 		selected("toNull", "old", null, null, true);
 		selected("unchanged", "same", "same", "same");
+		selected("editing", "protected", "protected", "protected");
 		// TODO no change events as long as collection-valued properties are not supported
 		selected("collection", [], ["a", "b"], ["a", "b"]);
 		property("unselected", "keep", "new", "keep");
@@ -4442,5 +4449,165 @@ sap.ui.define([
 				simple1 : true,
 				simple2 : true
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deleteUpdating", function (assert) {
+		var oEntity = {
+				foo : "",
+				"foo@$ui5.updating" : true,
+				keep : "",
+				"keep@$ui5.updating" : true,
+				sub : {
+					bar : "",
+					"bar@$ui5.updating" : true,
+					subSub : null,
+					qux : [0, 1, 2]
+				}
+			};
+
+		// code under test
+		_Helper.deleteUpdating("foo", oEntity);
+
+		assert.deepEqual(oEntity, {
+			foo : "",
+			keep : "",
+			"keep@$ui5.updating" : true,
+			sub : {
+				bar : "",
+				"bar@$ui5.updating" : true,
+				subSub : null,
+				qux : [0, 1, 2]
+			}
+		});
+
+		// code under test
+		_Helper.deleteUpdating("sub/bar", oEntity);
+
+		assert.deepEqual(oEntity, {
+			foo : "",
+			keep : "",
+			"keep@$ui5.updating" : true,
+			sub : {
+				bar : "",
+				subSub : null,
+				qux : [0, 1, 2]
+			}
+		});
+
+		// code under test
+		_Helper.deleteUpdating("sub/subSub/baz", oEntity);
+
+		assert.deepEqual(oEntity, {
+			foo : "",
+			keep : "",
+			"keep@$ui5.updating" : true,
+			sub : {
+				bar : "",
+				subSub : null,
+				qux : [0, 1, 2]
+			}
+		});
+
+		// code under test
+		_Helper.deleteUpdating("sub/qux/1", oEntity);
+
+		assert.deepEqual(oEntity, {
+			foo : "",
+			keep : "",
+			"keep@$ui5.updating" : true,
+			sub : {
+				bar : "",
+				subSub : null,
+				qux : [0, 1, 2]
+			}
+		});
+	});
+
+	//*********************************************************************************************
+[{ // handling undefined old
+	oOld : undefined,
+	oNew : undefined,
+	oRestored : undefined
+}, { // straight forward use cases: edited and NON edited properties, on top and nested
+	oOld : {
+		FirstName : "John",
+		Name : "Doe - edited",
+		"Name@$ui5.updating" : true,
+		Address : {
+			City : "Walldorf - edited",
+			"City@$ui5.updating" : true,
+			PostalCode : 0
+		}
+	},
+	oNew : {
+		FirstName : "John - server changed",
+		Name : "foo1",
+		Address : {
+			City : "Walldorf",
+			PostalCode : 69190
+		}
+	},
+	oRestored : {
+		FirstName : "John - server changed",
+		Name : "Doe - edited",
+		"Name@$ui5.updating" : true,
+		Address : {
+			City : "Walldorf - edited",
+			"City@$ui5.updating" : true,
+			PostalCode : 69190
+		}
+	}
+}, { // special case: complex structure not yet seen on server side
+	oOld : {
+		Name : "Doe",
+		Location : {
+			Country : "Germany - edited",
+			"Country@$ui5.updating" : true,
+			City : {
+				CityName : "Walldorf - edited",
+				"CityName@$ui5.updating" : true,
+				PostalCode : 69190,
+				"PostalCode@$ui5.updating" : true
+			}
+		},
+		Messages : [{}, {}, {}]
+	},
+	oNew : {
+		Name : "Doe - server changed",
+		Location : null,
+		Messages : []
+	},
+	oRestored : {
+		Name : "Doe - server changed",
+		Location : {
+			Country : "Germany - edited",
+			"Country@$ui5.updating" : true,
+			City : {
+				CityName : "Walldorf - edited",
+				"CityName@$ui5.updating" : true,
+				PostalCode : 69190,
+				"PostalCode@$ui5.updating" : true
+			}
+		},
+		Messages : []
+	}
+}].forEach(function (oFixture, i) {
+	QUnit.test("restoreUpdatingProperties: " + i, function (assert) {
+		assert.deepEqual(
+			// code under test
+			_Helper.restoreUpdatingProperties(oFixture.oOld, oFixture.oNew),
+			oFixture.oRestored);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("restoreUpdatingProperties: skip annotations", function () {
+		var oCycle = {oBinding : {oContext : null}};
+
+		oCycle.oBinding.oContext = oCycle;
+
+		// code under test (no endless loop, e.g. @$ui5._.context may contain cycles)
+		_Helper.restoreUpdatingProperties({"@foo" : oCycle});
 	});
 });

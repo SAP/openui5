@@ -1562,6 +1562,7 @@ sap.ui.define([
 		var oOldElement, sTransientPredicate;
 
 		if (iIndex === undefined) { // kept-alive element not in the list
+			oOldElement = aElements.$byPredicate[sPredicate];
 			aElements.$byPredicate[sPredicate] = oElement;
 		} else {
 			// the element might have moved due to parallel insert/delete
@@ -1576,6 +1577,8 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
 			}
 		}
+		_Helper.restoreUpdatingProperties(oOldElement, oElement);
+
 		// Note: iStart is not needed here because we know we have key predicates
 		this.visitResponse(oElement, mTypeForMetaPath,
 			_Helper.getMetaPath(_Helper.buildPath(this.sMetaPath, sPath)), sPath + sPredicate);
@@ -1728,6 +1731,8 @@ sap.ui.define([
 	 *   The new value
 	 * @param {string} [sEntityPath]
 	 *   Path of the entity, relative to the cache (as used by change listeners)
+	 * @param {boolean} [bUpdating]
+	 *   Whether the given property will not be overwritten by a creation POST(+GET) response
 	 * @returns {Promise}
 	 *   A promise which resolves with <code>undefined</code> once the value has been set, or is
 	 *   rejected with an error if setting fails somehow
@@ -1735,14 +1740,14 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_Cache.prototype.setProperty = function (sPropertyPath, vValue, sEntityPath) {
+	_Cache.prototype.setProperty = function (sPropertyPath, vValue, sEntityPath, bUpdating) {
 		var that = this;
 
 		this.checkSharedRequest();
 		return this.fetchValue(_GroupLock.$cached, sEntityPath, null, null, true)
 			.then(function (oEntity) {
 				_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity,
-					_Cache.makeUpdateData(sPropertyPath.split("/"), vValue));
+					_Cache.makeUpdateData(sPropertyPath.split("/"), vValue, bUpdating));
 			});
 	};
 
@@ -2010,6 +2015,9 @@ sap.ui.define([
 				throw new Error("Cannot update '" + sPropertyPath + "': '" + sEntityPath
 					+ "' does not exist");
 			}
+
+			_Helper.deleteUpdating(sPropertyPath, oEntity);
+
 			sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient");
 			if (sTransientGroup) {
 				if (typeof sTransientGroup !== "string") {
@@ -4006,16 +4014,22 @@ sap.ui.define([
 	 *   The property path split into an array of segments
 	 * @param {any} vValue
 	 *   The property value
+	 * @param {boolean} [bUpdating]
+	 *   Whether the given property will not be overwritten by a creation POST(+GET) response
 	 * @returns {object}
 	 *   The resulting object
 	 *
 	 * @private
 	 */
-	_Cache.makeUpdateData = function (aPropertyPath, vValue) {
+	_Cache.makeUpdateData = function (aPropertyPath, vValue, bUpdating) {
 		return aPropertyPath.reduceRight(function (vValue0, sSegment) {
 			var oResult = {};
 
 			oResult[sSegment] = vValue0;
+			if (bUpdating) {
+				oResult[sSegment + "@$ui5.updating"] = true;
+				bUpdating = false;
+			}
 			return oResult;
 		}, vValue);
 	};

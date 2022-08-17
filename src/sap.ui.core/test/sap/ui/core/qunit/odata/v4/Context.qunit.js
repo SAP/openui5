@@ -3136,7 +3136,7 @@ sap.ui.define([
 						.withExactArgs("/entity/path", "/resolved/binding/path")
 						.returns("helper/path");
 					that.mock(oCache).expects("setProperty")
-						.withExactArgs("property/path", "new value", "helper/path")
+						.withExactArgs("property/path", "new value", "helper/path", "~bUpdating~")
 						.resolves();
 				});
 
@@ -3144,7 +3144,8 @@ sap.ui.define([
 			});
 
 		// code under test (no group lock!)
-		return oContext.doSetProperty("/some/absolute/path", "new value");
+		return oContext.doSetProperty("/some/absolute/path", "new value",
+			/*oGroupLock*/undefined, /*bSkipRetry n/a */undefined, "~bUpdating~");
 	});
 
 	//*********************************************************************************************
@@ -3261,7 +3262,7 @@ sap.ui.define([
 			.returns(oPostPromise);
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns("~unlockedCopy~");
-		oContextMock.expects("doSetProperty").withExactArgs("~sPath~", "~vValue~", null, true)
+		oContextMock.expects("doSetProperty").withExactArgs("~sPath~", "~vValue~", null, true, true)
 			.rejects(oError); // to prove error handling
 		this.mock(oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 		oExpectation = oContextMock.expects("doSetProperty")

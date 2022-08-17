@@ -41802,6 +41802,7 @@ sap.ui.define([
 	// returned. No error must happen and user input must win over server's default value. This
 	// must also work if the 1st POST fails (PATCH is then still merged).
 	// JIRA: CPOUI5ODATAV4-1583
+	// JIRA: CPOUI5ODATAV4-1600
 [false, true].forEach(function (bSkipRefresh) {
 	QUnit.test("JIRA: CPOUI5ODATAV4-1583, bSkipRefresh=" + bSkipRefresh, function (assert) {
 		var oBinding,
@@ -41810,20 +41811,21 @@ sap.ui.define([
 			fnRespond0,
 			fnRespond1,
 			sView = '\
-<t:Table id="table" rows="{/TEAMS}">\
-	<Text id="id" text="{Team_Id}"/>\
+<t:Table id="table" rows="{/EMPLOYEES}">\
+	<Text id="id" text="{ID}"/>\
 	<Text id="name" text="{Name}"/>\
-	<Text id="budget" text="{Budget}"/>\
-	<Text id="budgetCurency" text="{BudgetCurrency}"/>\
+	<Text id="salary" text="{SALARY/MONTHLY_BASIC_SALARY_AMOUNT}"/>\
+	<Text id="salaryCurrency" text="{SALARY/BASIC_SALARY_CURR}"/>\
 </t:Table>',
 			that = this;
 
-		this.expectRequest("TEAMS?$select=Budget,BudgetCurrency,Name,Team_Id&$skip=0&$top=110",
+		this.expectRequest("EMPLOYEES?$select=ID,Name,SALARY/BASIC_SALARY_CURR,"
+			+ "SALARY/MONTHLY_BASIC_SALARY_AMOUNT&$skip=0&$top=110",
 				{value : []})
 			.expectChange("id", [])
 			.expectChange("name", [])
-			.expectChange("budget", [])
-			.expectChange("budgetCurency", []);
+			.expectChange("salary", [])
+			.expectChange("salaryCurrency", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oBinding = that.oView.byId("table").getBinding("rows");
@@ -41831,12 +41833,12 @@ sap.ui.define([
 
 			that.expectChange("id", [""])
 				.expectChange("name", ["New A"])
-				.expectChange("budget", [null])
-				.expectChange("budgetCurency", [""])
+				.expectChange("salary", [null])
+				.expectChange("salaryCurrency", [""])
 				.expectRequest({
 					method : "POST",
 					payload : {Name : "New A"},
-					url : "TEAMS"
+					url : "EMPLOYEES"
 				}, new Promise(function (_resolve, reject) {
 					fnRespond0 = reject.bind(null, createError()); // take care of timing
 				}));
@@ -41845,16 +41847,16 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "activate");
 		}).then(function () {
-			that.expectChange("budgetCurency", ["GBP"]);
+			that.expectChange("salaryCurrency", ["GBP"]);
 
 			// code under test
-			oContext.setProperty("BudgetCurrency", "GBP");
+			oContext.setProperty("SALARY/BASIC_SALARY_CURR", "GBP");
 
 			return that.waitForChanges(assert, "1st update");
 		}).then(function () {
 			that.oLogMock.expects("error").withArgs("$batch failed");
 			that.oLogMock.expects("error")
-				.withArgs("POST on 'TEAMS' failed; will be repeated automatically");
+				.withArgs("POST on 'EMPLOYEES' failed; will be repeated automatically");
 			that.expectMessages([{
 					message : "Communication error: 500 ",
 					persistent : true,
@@ -41869,15 +41871,22 @@ sap.ui.define([
 				.expectRequest({
 					method : "POST",
 					// Note: PATCH is merged into POST
-					payload : {BudgetCurrency : "GBP", Name : "New A"},
-					url : "TEAMS"
+					payload : {
+						SALARY : {
+							BASIC_SALARY_CURR : "GBP"
+						},
+						Name : "New A"
+					},
+					url : "EMPLOYEES"
 				}, new Promise(function (resolve) {
 					fnRespond1 = resolve.bind(null, {
 						"@odata.etag" : "etag0",
-						Budget : "0",
-						BudgetCurrency : "EUR",
-						Name : "New A Team",
-						Team_Id : "TEAM_A"
+						SALARY : {
+							MONTHLY_BASIC_SALARY_AMOUNT : "0", //CPOUI5ODATAV4-1600: 1234 survives
+							BASIC_SALARY_CURR : "EUR"
+						},
+						Name : "New Employee A",
+						ID : "A"
 					});
 				}));
 
@@ -41885,46 +41894,53 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "1st response");
 		}).then(function () {
-			that.expectChange("budget", ["1,234"]);
+			that.expectChange("salary", ["1,234"]);
 
 			// code under test
-			oContext.setProperty("Budget", "1234");
+			oContext.setProperty("SALARY/MONTHLY_BASIC_SALARY_AMOUNT", "1234");
 
 			return that.waitForChanges(assert, "2nd update");
 		}).then(function () {
-			that.expectChange("id", ["TEAM_A"])
-				.expectChange("name", ["New A Team"])
-				.expectChange("budget", ["0"]) //TODO
-				.expectChange("budgetCurency", ["EUR"]);
+			that.expectChange("id", ["A"])
+				.expectChange("name", ["New Employee A"])
+				.expectChange("salaryCurrency", ["EUR"]);
 			if (!bSkipRefresh) {
-				that.expectRequest("TEAMS('TEAM_A')?$select=Budget,BudgetCurrency,Name,Team_Id", {
-						"@odata.etag" : "etag1",
-						Budget : "1",
-						BudgetCurrency : "DEM",
-						Name : "New 'A' Team",
-						Team_Id : "TEAM_A"
+				that.expectRequest("EMPLOYEES('A')?$select=ID,Name,SALARY/BASIC_SALARY_CURR,"
+					+ "SALARY/MONTHLY_BASIC_SALARY_AMOUNT", {
+					"@odata.etag" : "etag1",
+					SALARY : {
+						MONTHLY_BASIC_SALARY_AMOUNT : "1", //CPOUI5ODATAV4-1600: 1234 survives
+						BASIC_SALARY_CURR : "DEM"
+					},
+					Name : "New Employee 'A'",
+					ID : "A"
 					})
-					.expectChange("name", ["New 'A' Team"])
-					.expectChange("budget", ["1"])
-					.expectChange("budgetCurency", ["DEM"]);
+					.expectChange("name", ["New Employee 'A'"])
+					.expectChange("salaryCurrency", ["DEM"]);
 			}
-			that.expectChange("budget", ["1,234"]) //TODO much too late, there's a GET in between!
-				.expectRequest({
+			that.expectRequest({
 					headers : {"If-Match" : bSkipRefresh ? "etag0" : "etag1"},
 					method : "PATCH",
 					// Note: up-to-date currency value is used!
-					payload : {Budget : "1234", BudgetCurrency : bSkipRefresh ? "EUR" : "DEM"},
-					url : "TEAMS('TEAM_A')"
+					payload : {
+						SALARY : {
+							MONTHLY_BASIC_SALARY_AMOUNT : "1234",
+							BASIC_SALARY_CURR : bSkipRefresh ? "EUR" : "DEM"
+						}
+					},
+					url : "EMPLOYEES('A')"
 				}, {
 					"@odata.etag" : "etag2",
-					Budget : "4321",
-					BudgetCurrency : "USD",
+					SALARY : {
+						MONTHLY_BASIC_SALARY_AMOUNT : "4321",
+						BASIC_SALARY_CURR : "USD"
+					},
 					Name : "'A' Team",
-					Team_Id : "TEAM_A"
+					ID : "A"
 				})
 				.expectChange("name", ["'A' Team"])
-				.expectChange("budget", ["4,321"])
-				.expectChange("budgetCurency", ["USD"]);
+				.expectChange("salary", ["4,321"])
+				.expectChange("salaryCurrency", ["USD"]);
 
 			fnRespond1();
 

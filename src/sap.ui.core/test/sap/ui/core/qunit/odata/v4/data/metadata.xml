@@ -338,7 +338,8 @@
 			</Annotations>
 			<Annotations Target="SAP__self.ComplexType_Salary/MONTHLY_BASIC_SALARY_AMOUNT">
 				<Annotation Term="SAP__common.Label" String="Planned basic salary amount per month"/>
-				<Annotation Term="Measures.ISOCurrency" Path="BASIC_SALARY_CURR"/>
+<!--TODO: this is wrong, ODataMetaModel#getUnitOrCurrencyPath returns the wrong path, this have to be fixed-->
+				<Annotation Term="Measures.ISOCurrency" Path="SALARY/BASIC_SALARY_CURR"/>
 			</Annotations>
 			<Annotations Target="SAP__self.ComplexType_Salary/BASIC_SALARY_CURR">
 				<Annotation Term="SAP__common.Label" String="Währung"/>
