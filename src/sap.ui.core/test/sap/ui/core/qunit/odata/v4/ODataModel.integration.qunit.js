@@ -42360,6 +42360,72 @@ sap.ui.define([
 			assert.strictEqual(oModel.hasPendingChanges(), false);
 			assert.strictEqual(iPatchSent, 1);
 			assert.strictEqual(iPatchCompleted, 1);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A property is changed twice. The first change is using the automatic retry feature
+	// the second is not. The changes are not submitted, they are canceled via #resetChanges. The
+	// initial state should be present again.
+	// JIRA: CPOUI5ODATAV4-1603
+	// BCP: 2280153659,
+	QUnit.test("BCP: 2280153659 - #resetChanges skipRetry", function (assert) {
+		var oContext,
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			aPatchPromises = [],
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+	<Input id="note" value="{Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=Note,SalesOrderID", {
+				Note : "Foo",
+				SalesOrderID : "1"
+			})
+			.expectChange("note", "Foo");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oContext = that.oView.byId("form").getBindingContext();
+
+			that.expectChange("note", "Bar");
+
+			aPatchPromises.push(
+				oContext.setProperty("Note", "Bar", "update", true));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("note", "Baz");
+
+			aPatchPromises.push(
+				oContext.setProperty("Note", "Baz", "update", false));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectCanceledError(
+					"Failed to update path /SalesOrderList('1')/Note",
+					"Request canceled: PATCH SalesOrderList('1'); group: update")
+				.expectCanceledError(
+					"Failed to update path /SalesOrderList('1')/Note",
+					"Request canceled: PATCH SalesOrderList('1'); group: update")
+				.expectChange("note", "Bar")
+				.expectChange("note", "Foo");
+
+			// code under test
+			oModel.resetChanges("update");
+
+			return Promise.all(
+				aPatchPromises.map(checkCanceled.bind(null, assert))
+					.concat([that.waitForChanges(assert)])
+			);
+		}).then(function () {
+			assert.strictEqual(oContext.getValue("Note"), "Foo");
+			assert.strictEqual(oContext.hasPendingChanges(), false);
+			assert.strictEqual(oModel.hasPendingChanges(), false);
+
+			return that.waitForChanges(assert);
 		});
 	});
 

@@ -1957,7 +1957,7 @@ sap.ui.define([
 				}, function (oError) {
 					var sRetryGroupId = sGroupId;
 
-					if (!fnErrorCallback) {
+					if (!fnErrorCallback && !oError.canceled) {
 						onCancel();
 						throw oError;
 					}
