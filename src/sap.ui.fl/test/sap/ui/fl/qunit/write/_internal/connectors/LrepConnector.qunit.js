@@ -815,6 +815,22 @@ sap.ui.define([
 			sandbox.verifyAndRestore();
 		}
 	}, function() {
+		QUnit.test("given a mock server, when appVariant.getManifirstSupport is triggered", function (assert) {
+			var mPropertyBag = {
+				appId: "test.app.id"
+			};
+			var oExpectedResponse = true;
+			var sUrl = "/sap/bc/ui2/app_index/ui5_app_mani_first_supported/?id=test.app.id";
+			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
+
+			return WriteLrepConnector.appVariant.getManifirstSupport(mPropertyBag).then(function (oResponse) {
+				assert.equal(oResponse, true);
+				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
+				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a getManifirstSupport request is send containing the id as query parameters");
+				assert.deepEqual(oResponse, oExpectedResponse, "getManifirstSupport response flow is correct");
+			});
+		});
+
 		QUnit.test("given a mock server, when appVariant.getManifest is triggered", function (assert) {
 			var mPropertyBag = {
 				appVarUrl: "/sap/bc/lrep/content/apps/someBaseAppId/appVariants/someAppVariantID/manifest.appdescr_variant",

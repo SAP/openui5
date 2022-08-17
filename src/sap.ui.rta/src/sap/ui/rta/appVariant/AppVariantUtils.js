@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
-/* global XMLHttpRequest */
-
 sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/m/MessageBox",
@@ -13,7 +11,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
-	"sap/ui/fl/write/api/ChangesWriteAPI"
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/_internal/connectors/LrepConnector"
 ],
 function(
 	FlexUtils,
@@ -24,7 +23,8 @@ function(
 	Log,
 	PersistenceWriteAPI,
 	AppVariantWriteAPI,
-	ChangesWriteAPI
+	ChangesWriteAPI,
+	LrepConnector
 ) {
 	"use strict";
 	var AppVariantUtils = {};
@@ -35,24 +35,7 @@ function(
 	AppVariantUtils._newAppVariantId = null;
 
 	AppVariantUtils.getManifirstSupport = function(sRunningAppId) {
-		var sManifirstUrl = '/sap/bc/ui2/app_index/ui5_app_mani_first_supported/?id=' + sRunningAppId;
-
-		return new Promise(function (resolve, reject) {
-			var xhr = new XMLHttpRequest();
-			xhr.open("GET", sManifirstUrl);
-			xhr.send();
-
-			xhr.onload = function() {
-				if (xhr.status >= 200 && xhr.status < 400) {
-					resolve(xhr.response);
-				} else {
-					reject({
-						status: xhr.status,
-						message: xhr.statusText
-					});
-				}
-			};
-		});
+		return LrepConnector.appVariant.getManifirstSupport({appId: sRunningAppId});
 	};
 
 	AppVariantUtils.getNewAppVariantId = function() {

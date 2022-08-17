@@ -74,7 +74,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
-			var oGetManifirstSupport = sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves({response: true});
+			var oGetManifirstSupport = sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);
 
 			return RtaAppVariantFeature.isManifestSupported().then(function(bSuccess) {
 				assert.ok(oGetManifirstSupport.calledWith("BaseAppId"), "then getManifirstSupport is called with correct parameters");
@@ -90,7 +90,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedDescriptorData);
-			var oGetManifirstSupport = sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.reject("Server error"));
+			var oGetManifirstSupport = sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.reject(false));
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject(false));
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Server error").returns();
 

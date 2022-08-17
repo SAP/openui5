@@ -394,7 +394,7 @@ sap.ui.define([
 				saveAsAvailable: true,
 				draftAvailable: false
 			}));
-			sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: false}));
+			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(false);
 			sandbox.stub(Utils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
 
 			return this.oRta.start()

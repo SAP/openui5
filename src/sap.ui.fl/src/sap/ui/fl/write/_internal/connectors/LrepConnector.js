@@ -50,7 +50,8 @@ sap.ui.define([
 		APPVARIANTS: "/appdescr_variants/",
 		APPVARIANTS_OVERVIEW: "/app_variant_overview/",
 		UI2PERSONALIZATION: "/ui2personalization/",
-		CONTEXTS: "/flex/contexts/"
+		CONTEXTS: "/flex/contexts/",
+		MANI_FIRST_SUPPORTED: "/sap/bc/ui2/app_index/ui5_app_mani_first_supported"
 	};
 
 	/**
@@ -463,6 +464,12 @@ sap.ui.define([
 			return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
 		},
 		appVariant: {
+			getManifirstSupport: function (mPropertyBag) {
+				var sManifirstUrl = ROUTES.MANI_FIRST_SUPPORTED + "/?id=" + mPropertyBag.appId;
+				return InitialUtils.sendRequest(sManifirstUrl).then(function (oResponse) {
+					return oResponse.response;
+				});
+			},
 			getManifest: function (mPropertyBag) {
 				var sAppVariantManifestUrl = mPropertyBag.appVarUrl;
 				var oRequestOption = WriteUtils.getRequestOptions(
