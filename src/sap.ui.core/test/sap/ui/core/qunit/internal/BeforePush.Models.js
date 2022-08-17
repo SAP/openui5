@@ -31,5 +31,5 @@ sap.ui.define([
 		mTests[sSuite + sTest] = "both";
 	});
 
-	return mTests;
+	return {tests : mTests};
 });
