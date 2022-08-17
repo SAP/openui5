@@ -144,7 +144,7 @@ sap.ui.define([
 	}
 
 
-	QUnit.module("Basic FilterBar.flexibility functionality with JsControlTreeModifier", {
+	QUnit.module("Basic FilterBar.flexibility functionality with XML- & JsControlTreeModifier", {
 		before: function() {
 			// Implement required Delgate APIs
 			this._fnFetchPropertiers = FilterBarDelegate.fetchProperties;
@@ -485,5 +485,187 @@ sap.ui.define([
 			});
 		}.bind(this));
 	});
+
+	QUnit.test('XML: trigger multiple addCondition in parallel --> check no overruling filterCondition appliance', function(assert) {
+		var oConditionChange1 = {
+			"changeType": "addCondition",
+			"content": {
+				"name":"to_nav/field1",
+				"condition":{"operator": "EQ","values":["test1"]}
+			}
+		};
+
+		var oConditionChange2 = {
+			"changeType": "addCondition",
+			"content": {
+				"name":"to_nav/field1",
+				"condition":{"operator": "EQ","values":["test2"]}
+			}
+		};
+
+		var oConditionChange3 = {
+			"changeType": "addCondition",
+			"content": {
+				"name":"to_nav/field1",
+				"condition":{"operator": "EQ","values":["test3"]}
+			}
+		};
+
+		var oXMLFilterBar = this.oView._xContent.children[0];
+
+		var pCreate1 = ChangesWriteAPI.create({
+			changeSpecificData: oConditionChange1,
+			selector: this.oFilterBar
+		});
+		var pCreate2 = ChangesWriteAPI.create({
+			changeSpecificData: oConditionChange2,
+			selector: this.oFilterBar
+		});
+		var pCreate3 = ChangesWriteAPI.create({
+			changeSpecificData: oConditionChange3,
+			selector: this.oFilterBar
+		});
+
+		return Promise.all([pCreate1, pCreate2, pCreate3]).then(function(aChanges){
+
+			var oChangeHandler = FilterBarFlexHandler["addCondition"].changeHandler;
+
+			var pApply1 = oChangeHandler.applyChange(aChanges[0], oXMLFilterBar, {
+				modifier: XMLTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			});
+			var pApply2 = oChangeHandler.applyChange(aChanges[1], oXMLFilterBar, {
+				modifier: XMLTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			});
+			var pApply3 = oChangeHandler.applyChange(aChanges[2], oXMLFilterBar, {
+				modifier: XMLTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			});
+
+			return Promise.all([pApply1, pApply2, pApply3]);
+
+		}.bind(this)).then(function(){
+			var sFilterConditions = oXMLFilterBar.getAttribute("filterConditions").replace(/\\/g, '');
+			var mAppliedConditions = JSON.parse(sFilterConditions);
+
+			assert.deepEqual(mAppliedConditions, {
+				"to_nav/field1": [
+					{
+						"operator": "EQ",
+						"values": [
+							"test1"
+						]
+					},
+					{
+						"operator": "EQ",
+						"values": [
+							"test2"
+						]
+					},
+					{
+						"operator": "EQ",
+						"values": [
+							"test3"
+						]
+					}
+				]
+			});
+		});
+
+	});
+
+	QUnit.test('JS: trigger multiple addCondition in parallel --> check no overruling filterCondition appliance', function(assert) {
+		var oConditionChange1 = {
+			"changeType": "addCondition",
+			"content": {
+				"name":"to_nav/field1",
+				"condition":{"operator": "EQ","values":["test1"]}
+			}
+		};
+
+		var oConditionChange2 = {
+			"changeType": "addCondition",
+			"content": {
+				"name":"to_nav/field1",
+				"condition":{"operator": "EQ","values":["test2"]}
+			}
+		};
+
+		var oConditionChange3 = {
+			"changeType": "addCondition",
+			"content": {
+				"name":"to_nav/field1",
+				"condition":{"operator": "EQ","values":["test3"]}
+			}
+		};
+
+		var pCreate1 = ChangesWriteAPI.create({
+			changeSpecificData: oConditionChange1,
+			selector: this.oFilterBar
+		});
+		var pCreate2 = ChangesWriteAPI.create({
+			changeSpecificData: oConditionChange2,
+			selector: this.oFilterBar
+		});
+		var pCreate3 = ChangesWriteAPI.create({
+			changeSpecificData: oConditionChange3,
+			selector: this.oFilterBar
+		});
+
+		return Promise.all([pCreate1, pCreate2, pCreate3]).then(function(aChanges){
+
+			var oChangeHandler = FilterBarFlexHandler["addCondition"].changeHandler;
+
+			var pApply1 = oChangeHandler.applyChange(aChanges[0], this.oFilterBar, {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			});
+			var pApply2 = oChangeHandler.applyChange(aChanges[1], this.oFilterBar, {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			});
+			var pApply3 = oChangeHandler.applyChange(aChanges[2], this.oFilterBar, {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			});
+
+			return Promise.all([pApply1, pApply2, pApply3]);
+
+		}.bind(this)).then(function(){
+			var mAppliedConditions = this.oFilterBar.getFilterConditions();
+
+			assert.deepEqual(mAppliedConditions, {
+				"to_nav/field1": [
+					{
+						"operator": "EQ",
+						"values": [
+							"test1"
+						]
+					},
+					{
+						"operator": "EQ",
+						"values": [
+							"test2"
+						]
+					},
+					{
+						"operator": "EQ",
+						"values": [
+							"test3"
+						]
+					}
+				]
+			});
+		}.bind(this));
+
+	});
+
 
 });
