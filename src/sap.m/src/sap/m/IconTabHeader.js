@@ -418,24 +418,7 @@ sap.ui.define([
 			return;
 		}
 
-		var aItems = this.getItems();
-		var iIndex = -1;
-		var oItem;
-
-		for (var i = 0; i < aItems.length; i++) {
-			oItem = aItems[i];
-
-			if (!oItem.isA("sap.m.IconTabFilter") || !oItem.getVisible()) {
-				continue;
-			}
-
-			iIndex++;
-
-			if ((this.oSelectedItem._getRootTab() || this.oSelectedItem) === oItem) {
-				break;
-			}
-		}
-
+		var iIndex = this._oItemNavigation.getItemDomRefs().indexOf(this.oSelectedItem._getRootTab().getDomRef());
 		this._oItemNavigation.setFocusedIndex(iIndex);
 	};
 

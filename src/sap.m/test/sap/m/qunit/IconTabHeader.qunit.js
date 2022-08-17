@@ -1164,48 +1164,117 @@ sap.ui.define([
 		assert.strictEqual(oSelectSpy.lastCall.args[0].previousKey, "key1", "first filter key is passed as previousKey select event arg");
 	});
 
-	QUnit.module("Focusing", {
-		beforeEach: function () {
-			this.oITH = new IconTabHeader({
-				items: [
-					new IconTabFilter({
-						text: "Tab1",
-						key: "tab1"
-					}),
-					new IconTabFilter({
-						text: "Tab2",
-						key: "tab2",
-						visible: false
-					}),
-					new IconTabFilter({
-						text: "Tab3",
-						key: "tab3"
-					}),
-					new IconTabFilter({
-						text: "Tab4",
-						key: "tab4"
-					}),
-					new IconTabFilter({
-						text: "Tab5",
-						key: "tab5"
-					})
-				]
-			});
-			this.oITH.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-		},
-		afterEach: function () {
-			this.oITH.destroy();
-		}
-	});
+	QUnit.module("Focusing");
 
 	QUnit.test("Focused index on focus leave", function(assert) {
-		this.oITH.setSelectedKey("tab4");
+		var oITH = new IconTabHeader({
+			items: [
+				new IconTabFilter({
+					text: "Tab1",
+					key: "tab1"
+				}),
+				new IconTabFilter({
+					text: "Tab2",
+					key: "tab2",
+					visible: false
+				}),
+				new IconTabFilter({
+					text: "Tab3",
+					key: "tab3"
+				}),
+				new IconTabFilter({
+					text: "Tab4",
+					key: "tab4"
+				}),
+				new IconTabFilter({
+					text: "Tab5",
+					key: "tab5"
+				})
+			]
+		});
+		oITH.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
-		this.oITH._onItemNavigationFocusLeave();
+		oITH.setSelectedKey("tab4");
+		Core.applyChanges();
+
+		oITH._onItemNavigationFocusLeave();
 
 		// Assert
-		assert.strictEqual(this.oITH._oItemNavigation.getFocusedIndex(), 2, "focused index is correct");
+		assert.strictEqual(oITH._oItemNavigation.getFocusedIndex(), 2, "focused index is correct");
+
+		oITH.destroy();
+	});
+
+	QUnit.test("Focused index on focus leave when StartAndEnd overflow", function(assert) {
+		var oITH = new IconTabHeader({
+			tabsOverflowMode: TabsOverflowMode.StartAndEnd,
+			items: [
+				new IconTabFilter({
+					text: "Tab1",
+					key: "tab1"
+				}),
+				new IconTabFilter({
+					text: "Tab2",
+					key: "tab2"
+				}),
+				new IconTabFilter({
+					text: "Tab3",
+					key: "tab3"
+				}),
+				new IconTabFilter({
+					text: "Tab4",
+					key: "tab4"
+				}),
+				new IconTabFilter({
+					text: "Tab5",
+					key: "tab5"
+				}),
+				new IconTabFilter({
+					text: "Tab6",
+					key: "tab6",
+					items: [
+						new IconTabFilter({
+							text: "Tab61",
+							key: "tab61"
+						}),
+						new IconTabFilter({
+							text: "Tab62",
+							key: "tab62"
+						})
+					]
+				}),
+				new IconTabFilter({
+					text: "Tab7",
+					key: "tab7"
+				})
+			]
+		});
+
+		var oScrollContainer = new ScrollContainer({
+			width: "400px",
+			content: oITH
+		});
+
+		oScrollContainer.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		oITH.setSelectedKey("tab5");
+		Core.applyChanges();
+
+		oITH._onItemNavigationFocusLeave();
+
+		// Assert
+		assert.strictEqual(oITH._oItemNavigation.getFocusedIndex(), 5, "focused index is correct");
+
+		oITH.setSelectedKey("tab62");
+		Core.applyChanges();
+
+		oITH._onItemNavigationFocusLeave();
+
+		// Assert
+		assert.strictEqual(oITH._oItemNavigation.getFocusedIndex(), 6, "focused index is correct");
+
+		oScrollContainer.destroy();
 	});
 });
