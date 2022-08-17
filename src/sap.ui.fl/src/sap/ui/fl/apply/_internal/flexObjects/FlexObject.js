@@ -385,6 +385,16 @@ sap.ui.define([
 		return this.convertToFileContent();
 	};
 
+	FlexObject.prototype.getCreation = function() {
+		return this.getFlexObjectMetadata().creation;
+	};
+
+	FlexObject.prototype.setCreation = function(sNewCreation) {
+		var oFlexObjectMetadata = this.getFlexObjectMetadata();
+		oFlexObjectMetadata.creation = sNewCreation;
+		this.setFlexObjectMetadata(oFlexObjectMetadata);
+	};
+
 	// ----------------------------------------------------
 
 	function capitalize(sKey) {

@@ -51,11 +51,15 @@ sap.ui.define([
 
 	function addChangesToChangePersistence(oChangePersistence) {
 		var oChangeInPersistence1 = new Change({
+			fileName: "change1",
+			fileType: "change",
 			selector: {},
 			changeType: "renameField",
 			layer: Layer.USER
 		});
 		var oChangeInPersistence2 = new Change({
+			fileType: "change",
+			fileName: "change1",
 			selector: {},
 			changeType: "addGroup",
 			layer: Layer.USER

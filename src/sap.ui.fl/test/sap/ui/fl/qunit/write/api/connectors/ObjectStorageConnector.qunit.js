@@ -1,27 +1,27 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base/strings/hash",
+	"sap/base/util/restricted/_uniq",
 	"sap/base/util/merge",
-	"sap/ui/thirdparty/sinon-4",
+	"sap/base/util/values",
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/_internal/connectors/ObjectStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
-	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
-	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/fl/Layer",
-	"sap/base/util/values",
-	"sap/base/util/restricted/_uniq"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	hash,
+	_uniq,
 	merge,
-	sinon,
+	values,
+	ObjectStorageUtils,
+	FlexObjectFactory,
+	JsObjectConnector,
 	ObjectStorageConnector,
 	SessionStorageWriteConnector,
-	JsObjectConnector,
-	ObjectStorageUtils,
 	Layer,
-	values,
-	_uniq
+	sinon
 ) {
 	"use strict";
 
@@ -34,13 +34,16 @@ sap.ui.define([
 			fileType: "change",
 			reference: "sap.ui.fl.test",
 			layer: Layer.CUSTOMER,
+			content: {
+				foo: "bar"
+			},
 			selector: {
 				id: "selector1"
 			},
 			changeType: "type1"
 		},
 		oChange2: {
-			creation: "2021-05-06T12:57:32.229Z",
+			creation: "2021-05-04T12:57:32.231Z",
 			fileName: "oChange2",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
@@ -49,6 +52,16 @@ sap.ui.define([
 				id: "selector2"
 			},
 			changeType: "type2"
+		},
+		oChange21: {
+			fileName: "oChange21",
+			fileType: "change",
+			reference: "sap.ui.fl.test",
+			layer: Layer.USER,
+			selector: {
+				id: "selector2"
+			},
+			changeType: "type1"
 		},
 		oChange3: {
 			fileName: "oChange3",
@@ -61,7 +74,7 @@ sap.ui.define([
 			changeType: "type1"
 		},
 		oChange4: {
-			creation: "2021-05-05T12:57:32.229Z",
+			creation: "2021-05-04T12:57:32.230Z",
 			fileName: "oChange4",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
@@ -71,12 +84,17 @@ sap.ui.define([
 		oVariant1: {
 			fileName: "oVariant1",
 			fileType: "ctrl_variant",
+			reference: "sap.ui.fl.test",
+			layer: Layer.CUSTOMER,
 			variantManagementReference: "variantManagement0",
 			variantReference: "variantManagement0"
 		},
 		oVariantChange1: {
+			creation: "2021-05-04T12:57:32.240Z",
 			fileName: "oVariantChange1",
 			fileType: "ctrl_variant_change",
+			reference: "sap.ui.fl.test",
+			layer: Layer.CUSTOMER,
 			changeType: "setTitle",
 			selector: {
 				id: "oVariant1"
@@ -85,8 +103,10 @@ sap.ui.define([
 		oVariantManagementChange: {
 			fileName: "oVariantManagementChange",
 			fileType: "ctrl_variant_management_change",
+			reference: "sap.ui.fl.test",
+			layer: Layer.CUSTOMER,
 			changeType: "setDefault",
-			selector: {
+			content: {
 				id: "variantManagement0"
 			}
 		}
@@ -149,7 +169,7 @@ sap.ui.define([
 					})
 					.then(function(aFlexData) {
 						assert.strictEqual(aFlexData[0].changes.length, 3, "three changes are returned");
-						assert.strictEqual(aFlexData[0].cacheKey, hash("162013305222916202194522291620305852229"), "the cacheKey got calculated correctly");
+						assert.ok(aFlexData[0].cacheKey, "the cacheKey got calculated");
 
 						// clean up
 						return removeListFromStorage(oConnector.storage, values(oTestData));
@@ -217,7 +237,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.module("loadFlexData: Given some changes in a " + sStorage, {
+		QUnit.module("Given some changes in a " + sStorage, {
 			beforeEach: function() {
 				return saveListWithConnector(oConnector, values(oTestData));
 			},
@@ -363,6 +383,163 @@ sap.ui.define([
 				.then(getNumberOfFlexObjects.bind(undefined, oConnector))
 				.then(function(iNewCount) {
 					assert.equal(iInitialCount - iNewCount, 0, "no change got removed");
+				});
+			});
+
+			QUnit.test("when condense is called", function(assert) {
+				var oNewChange1 = {
+					creation: "2022-05-05T12:57:32.229Z",
+					fileName: "oChange5",
+					fileType: "change",
+					reference: "sap.ui.fl.test",
+					layer: Layer.CUSTOMER,
+					selector: {
+						id: "selector1"
+					},
+					changeType: "type1"
+				};
+				var oNewChange2 = {
+					creation: "2022-06-05T12:57:32.230Z",
+					fileName: "oChange6",
+					fileType: "change",
+					reference: "sap.ui.fl.test",
+					layer: Layer.CUSTOMER,
+					selector: {
+						id: "selector1"
+					},
+					changeType: "type1"
+				};
+				var oNewVarChange1 = {
+					creation: "2021-05-05T12:57:32.241Z",
+					fileName: "oVariantChange2",
+					fileType: "ctrl_variant_change",
+					reference: "sap.ui.fl.test",
+					layer: Layer.CUSTOMER,
+					changeType: "setTitle",
+					selector: {
+						id: "oVariant1"
+					}
+				};
+				var oNewVarChange2 = {
+					creation: "2021-05-05T12:57:32.242Z",
+					fileName: "oVariantChange3",
+					fileType: "ctrl_variant_change",
+					reference: "sap.ui.fl.test",
+					layer: Layer.CUSTOMER,
+					changeType: "setTitle",
+					selector: {
+						id: "oVariant1"
+					}
+				};
+				var oUpdatedChange = merge({}, oTestData.oChange1, {content: {
+					foo: "foobar",
+					bar: "foo"
+				}});
+				var oUpdatedVariantMngtChange = merge({}, oTestData.oVariantManagementChange);
+				oUpdatedVariantMngtChange.content = {
+					bar: "foo"
+				};
+				var aFlexObjects = [
+					oTestData.oChange21, oTestData.oVariant1,
+					oUpdatedChange, oTestData.oChange2, oTestData.oChange4,
+					oNewChange2, oNewChange1, oNewVarChange2, oNewVarChange1,
+					oTestData.oVariantChange1, oUpdatedVariantMngtChange
+				].map(function(oChangeJson) {
+					return FlexObjectFactory.createFromFileContent(oChangeJson);
+				});
+				var mPropertyBag = {
+					allChanges: aFlexObjects,
+					condensedChanges: aFlexObjects.slice(2),
+					flexObjects: {
+						namespace: "",
+						layer: "",
+						create: {
+							change: [
+								{
+									oChange5: oNewChange1
+								},
+								{
+									oChange6: oNewChange2
+								}
+							],
+							ctrl_variant_change: [
+								{
+									oVariantChange2: oNewVarChange1
+								},
+								{
+									oVariantChange3: oNewVarChange2
+								}
+							]
+						},
+						reorder: {
+							change: ["oChange2", "oChange4", "oChange6", "oChange5"],
+							ctrl_variant_change: ["oVariantChange3", "oVariantChange2", "oVariantChange1"]
+						},
+						update: {
+							change: [
+								{
+									oChange1: {
+										content: {
+											foo: "foobar",
+											bar: "foo"
+										}
+									}
+								}
+							],
+							ctrl_variant_management_change: [
+								{
+									oVariantManagementChange: {
+										content: {
+											bar: "foo"
+										}
+									}
+								}
+							]
+						},
+						"delete": {
+							ctrl_variant: ["oVariant1"],
+							change: ["oChange21"]
+						}
+					}
+				};
+
+				return oConnector.condense(mPropertyBag)
+
+				.then(function() {
+					return oConnector.loadFlexData({reference: "sap.ui.fl.test"});
+				})
+				.then(function(aResponses) {
+					var aFlexObjectsFileContent = aResponses[0].changes.concat(aResponses[0].variantChanges, aResponses[0].variantManagementChanges, aResponses[0].variants);
+					assert.strictEqual(aFlexObjectsFileContent.length, 9, "there is one more change in the storage");
+
+					var aIds = aFlexObjectsFileContent.map(function(oFlexObjectFileContent) {
+						return oFlexObjectFileContent.fileName;
+					});
+					assert.ok(aIds.indexOf("oChange5") > -1, "the first change was added");
+					assert.ok(aIds.indexOf("oChange6") > -1, "the second change was added");
+					assert.ok(aIds.indexOf("oVariantChange2") > -1, "the first variant change was added");
+					assert.ok(aIds.indexOf("oVariantChange3") > -1, "the second variant change was added");
+
+					assert.notOk(aIds.indexOf("oVariant1") > -1, "the variant was deleted");
+					assert.notOk(aIds.indexOf("oChange21") > -1, "the change was deleted");
+
+					assert.deepEqual(aFlexObjectsFileContent[aIds.indexOf("oChange1")].content, {
+						foo: "foobar",
+						bar: "foo"
+					}, "the change was updated");
+					assert.deepEqual(aFlexObjectsFileContent[aIds.indexOf("oVariantManagementChange")].content, {
+						bar: "foo"
+					}, "the ctrl_variant_management_change was updated");
+
+					assert.ok(aIds.indexOf("oVariantChange3") < aIds.indexOf("oVariantChange2"), "the variant changes were reordered");
+					assert.ok(aIds.indexOf("oVariantChange2") < aIds.indexOf("oVariantChange1"), "the variant changes were reordered");
+
+					assert.ok(aIds.indexOf("oChange1") < aIds.indexOf("oChange2"), "the changes were reordered");
+					assert.ok(aIds.indexOf("oChange2") < aIds.indexOf("oChange4"), "the changes were reordered");
+					assert.ok(aIds.indexOf("oChange4") < aIds.indexOf("oChange6"), "the changes were reordered");
+					assert.ok(aIds.indexOf("oChange6") < aIds.indexOf("oChange5"), "the changes were reordered");
+
+					return removeListFromStorage(oConnector.storage, values(oTestData).concat([oNewChange2, oNewChange1, oNewVarChange2, oNewVarChange1]));
 				});
 			});
 		});

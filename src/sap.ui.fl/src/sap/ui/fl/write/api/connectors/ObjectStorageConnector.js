@@ -4,12 +4,16 @@
 
 sap.ui.define([
 	"sap/base/strings/hash",
+	"sap/base/util/restricted/_uniqBy",
+	"sap/base/util/each",
 	"sap/base/util/merge",
 	"sap/ui/fl/write/connectors/BaseConnector",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"
 ], function(
 	hash,
+	_uniqBy,
+	each,
 	merge,
 	BaseConnector,
 	StorageUtils,
@@ -60,6 +64,105 @@ sap.ui.define([
 		return hash(aFlexObjects.reduce(function(sKey, oFlexObject) {
 			return sKey + new Date(oFlexObject.creation).getTime();
 		}, ""));
+	}
+
+	/* the structure of create and update is like
+		{
+			<fileType>:[
+				{
+					<fileName>: <content>
+				},
+				...
+			],
+			...
+		}
+	*/
+	function forEveryMapInArrayInMap(mMap, fnCallback) {
+		each(mMap, function(sOuterKey, aArray) {
+			aArray.forEach(function(mInnerMap) {
+				// eslint-disable-next-line max-nested-callbacks
+				each(mInnerMap, function(sInnerKey, oContent) {
+					fnCallback(oContent, sInnerKey);
+				});
+			});
+		});
+	}
+
+	function handleCondenseCreate(oCreateInfos, aCondensedChanges) {
+		var aReturn = [];
+		forEveryMapInArrayInMap(oCreateInfos, function(oFlexObjectFileContent, sChangeId) {
+			var sKey = ObjectStorageUtils.createFlexKey(sChangeId);
+			var oFlexObject = aCondensedChanges.find(function(oCurrentFlexObject) {
+				return oCurrentFlexObject.getId() === oFlexObjectFileContent.fileName;
+			});
+			aReturn.push({key: sKey, value: oFlexObject});
+		});
+
+		return aReturn;
+	}
+
+	function handleCondenseUpdate(oUpdateInfos, aCondenserChanges) {
+		// the FlexObject instance is already up to date, so the new file content can be taken from there
+		var aReturn = [];
+		forEveryMapInArrayInMap(oUpdateInfos, function(oCurrentFlexObject, sChangeId) {
+			var sKey = ObjectStorageUtils.createFlexKey(sChangeId);
+			var oUpdatedFlexObject;
+			aCondenserChanges.some(function(oCurrentFlexObject) {
+				if (oCurrentFlexObject.getId() === sChangeId) {
+					oUpdatedFlexObject = oCurrentFlexObject;
+					return true;
+				}
+			});
+			aReturn.push({key: sKey, value: oUpdatedFlexObject});
+		});
+
+		return aReturn;
+	}
+
+	function handleCondenseReorder(oReorderInfos, aCondensedChanges) {
+		var aReturn = [];
+		each(oReorderInfos, function(sFileType, aChangeIds) {
+			if (aChangeIds.length < 2) {
+				return;
+			}
+
+			// sorting is based solely on the creation timestamp
+			// aCondensedChanges is already in the new, correct order
+			// starting from the first FlexObject in the reorder section
+			// each subsequent FlexObject has to have a higher creation timestamp
+			// to achieve that the getTime result is increased by 1
+			var aFilteredFlexObjects = aCondensedChanges.filter(function(oFlexObject) {
+				return oFlexObject.getFileType() === sFileType;
+			});
+			aFilteredFlexObjects.forEach(function(oFlexObject, iIndex) {
+				if (aChangeIds.indexOf(oFlexObject.getId()) > -1 && iIndex < aFilteredFlexObjects.length - 1) {
+					var oNextFlexObject = aFilteredFlexObjects[iIndex + 1];
+					var oCurrentDate = new Date(oFlexObject.getCreation());
+					var oNextDate = new Date(oNextFlexObject.getCreation());
+
+					if (oNextFlexObject && oCurrentDate >= oNextDate) {
+						var oNewDateTime = oCurrentDate.getTime() + 1;
+						oNextFlexObject.setCreation(new Date(oNewDateTime).toISOString());
+						var sKey = ObjectStorageUtils.createFlexKey(oNextFlexObject.getId());
+						aReturn.push({key: sKey, value: oNextFlexObject});
+					}
+				}
+			});
+		});
+
+		return aReturn;
+	}
+
+	function handleCondenseDelete(oDeleteInformation) {
+		var aPromises = [];
+		Object.entries(oDeleteInformation).forEach(function(aChangeIds) {
+			aChangeIds.forEach(function(sChangeId) {
+				var sKey = ObjectStorageUtils.createFlexKey(sChangeId);
+				aPromises.push(this.storage.removeItem(sKey));
+			}.bind(this));
+		}.bind(this));
+
+		return aPromises;
 	}
 
 	/**
@@ -180,7 +283,8 @@ sap.ui.define([
 			return Promise.resolve({
 				isKeyUser: true,
 				isVariantSharingEnabled: true,
-				isProductiveSystem: false
+				isProductiveSystem: false,
+				isCondensingEnabled: true
 			});
 		},
 
@@ -194,6 +298,31 @@ sap.ui.define([
 					isResetEnabled: aFlexObjects.length > 0
 				};
 			});
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		condense: function(mPropertyBag) {
+			// the functionality below would normally be done in the back end
+			// but in this case the storage can't be extended, so the logic has to be included in the connector
+			var oCondenseInformation = mPropertyBag.flexObjects;
+			var aObjectsToSet = [];
+			// the same FlexObject can be in multiple sections of the condense information, so the instance has to be set in the array
+			aObjectsToSet = aObjectsToSet.concat(handleCondenseCreate(oCondenseInformation.create, mPropertyBag.condensedChanges));
+			aObjectsToSet = aObjectsToSet.concat(handleCondenseUpdate(oCondenseInformation.update, mPropertyBag.condensedChanges));
+			aObjectsToSet = aObjectsToSet.concat(handleCondenseReorder(oCondenseInformation.reorder, mPropertyBag.condensedChanges));
+			aObjectsToSet = _uniqBy(aObjectsToSet, "key");
+
+			var aPromises = [];
+			aPromises = aPromises.concat(handleCondenseDelete.call(this, oCondenseInformation.delete));
+			aObjectsToSet.forEach(function(oItemToSet) {
+				var oFileContent = oItemToSet.value.convertToFileContent();
+				var vFlexObject = this.storage._itemsStoredAsObjects ? oFileContent : JSON.stringify(oFileContent);
+				aPromises.push(this.storage.setItem(oItemToSet.key, vFlexObject));
+			}.bind(this));
+
+			return Promise.all(aPromises);
 		}
 	});
 
