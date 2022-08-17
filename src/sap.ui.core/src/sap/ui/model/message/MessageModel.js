@@ -61,11 +61,6 @@ sap.ui.define(['sap/ui/model/BindingMode', 'sap/ui/model/ClientModel', 'sap/ui/m
 		this.checkUpdate();
 	};
 
-	MessageModel.prototype.fireMessageChange = function(oParameters) {
-		this.fireEvent("messageChange", oParameters);
-		return this;
-	};
-
 	/*
 	 * @see sap.ui.model.Model.prototype.bindProperty
 	 *

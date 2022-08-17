@@ -7,11 +7,12 @@ sap.ui.define([
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/URI",
+	"sap/ui/core/message/MessageManager",
 	"sap/ui/core/message/MessageParser",
 	"sap/ui/core/message/Message",
 	"sap/base/Log"
 ],
-	function(ODataMetadata, ODataUtils, coreLibrary, URI, MessageParser, Message, Log) {
+	function(ODataMetadata, ODataUtils, coreLibrary, URI, MessageManager, MessageParser, Message, Log) {
 	"use strict";
 
 var sClassName = "sap.ui.model.odata.ODataMessageParser",
@@ -354,11 +355,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 			}
 		});
 	}
-	this.getProcessor().fireMessageChange({
-		oldMessages: aRemovedMessages,
-		newMessages: aMessages
-	});
-
+	MessageManager.updateMessages(aRemovedMessages, aMessages);
 	this._lastMessages = aKeptMessages.concat(aMessages);
 };
 

@@ -199,6 +199,12 @@ sap.ui.define([
 				Core.prototype[sFuncName] = _oEventProvider[sFuncName].bind(_oEventProvider);
 			});
 
+			this.oMessageManager = MessageManager;
+			var bHandleValidation = Configuration.getHandleValidation();
+			if (bHandleValidation) {
+				MessageManager.registerObject(this, true);
+			}
+
 			/**
 			 * Whether the core has been booted
 			 * @private
@@ -2554,9 +2560,6 @@ sap.ui.define([
 	 * @since 1.33.0
 	 */
 	Core.prototype.getMessageManager = function() {
-		if (!this.oMessageManager) {
-			this.oMessageManager = new MessageManager();
-		}
 		return this.oMessageManager;
 	};
 

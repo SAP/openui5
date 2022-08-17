@@ -434,9 +434,13 @@ sap.ui.define([
 
 
 			oParser.setProcessor({
-				fireMessageChange: function(oObj) {
+				getId: function() {
+					return "myProcessor";
+				},
+				fireEvent: function(sType, oObj) {
 					aNewMessages = oObj.newMessages;
 				},
+				setMessages: function() {},
 				resolve: function(sPath){
 					return sPath;
 				}
@@ -515,10 +519,14 @@ sap.ui.define([
 			var aNewMessages = [];
 			var aOldMessages = [];
 			oParser.setProcessor({
-				fireMessageChange: function(oObj) {
+				getId: function() {
+					return "myProcessor";
+				},
+				fireEvent: function(sType, oObj) {
 					aNewMessages = oObj.newMessages;
 					aOldMessages = oObj.oldMessages;
 				},
+				setMessages: function() {},
 				resolve: function(sPath){
 					return sPath;
 				}
@@ -624,9 +632,14 @@ sap.ui.define([
 			// Use processor to get new messages
 			var aNewMessages = [];
 			oParser.setProcessor({
-				fireMessageChange: function(oObj) {
+				getId: function() {
+					return "myProcessor";
+				},
+				fireEvent: function(sType, oObj) {
 					aNewMessages = oObj.newMessages;
-				}, resolve: function(sPath){
+				},
+				setMessages: function() {},
+				resolve: function(sPath){
 					return sPath;
 				}
 			});
@@ -693,6 +706,7 @@ sap.ui.define([
 
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 
+		sap.ui.getCore().getMessageManager().removeAllMessages();
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 		assert.equal(oMessageModel.getProperty("/").length, 0,
 			"No messages are set at the beginning of the test");
@@ -705,9 +719,13 @@ sap.ui.define([
 				oResponse;
 
 			oParser.setProcessor({
-				fireMessageChange: function(oObj) {
+				getId: function() {
+					return "myProcessor";
+				},
+				fireEvent: function(sType, oObj) {
 					aNewMessages = oObj.newMessages;
 				},
+				setMessages: function() {},
 				resolve: function(sPath){
 					return sPath;
 				}
@@ -761,6 +779,7 @@ sap.ui.define([
 					})
 				}
 			};
+			aNewMessages = [];
 			oParser.setHeaderField("message");
 			oParser.parse(oResponse, oRequest);
 			assert.equal(aNewMessages.length, 4, "Messages parsed from 'message' header");
@@ -774,11 +793,13 @@ sap.ui.define([
 					"invalid": "{ invalid: Json }"
 				}
 			};
+			aNewMessages = [];
 			oParser.setHeaderField("invalid");
 			oParser.parse(oResponse, oRequest);
 			assert.equal(aNewMessages.length, 0,
 				"No message parsed from 'invalid' header with invalid content");
 
+			aNewMessages = [];
 			oParser.setHeaderField("none");
 			oParser.parse(oResponse, oRequest);
 			assert.equal(aNewMessages.length, 0, "No message parsed from non-existent header");
@@ -801,6 +822,7 @@ sap.ui.define([
 			useBatch: false,
 			json: false
 		});
+		sap.ui.getCore().getMessageManager().removeAllMessages();
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
@@ -900,6 +922,7 @@ sap.ui.define([
 			useBatch: bUseBatch,
 			json: bJSON
 		});
+		sap.ui.getCore().getMessageManager().removeAllMessages();
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
@@ -961,6 +984,7 @@ sap.ui.define([
 			useBatch: bUseBatch,
 			json: bJSON
 		});
+		sap.ui.getCore().getMessageManager().removeAllMessages();
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
@@ -1019,6 +1043,7 @@ sap.ui.define([
 
 		assert.expect(10);
 		var oModel = new ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
+		sap.ui.getCore().getMessageManager().removeAllMessages();
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
@@ -1072,6 +1097,7 @@ sap.ui.define([
 
 		assert.expect(26);
 		var oModel = new ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
+		sap.ui.getCore().getMessageManager().removeAllMessages();
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 		var oMessage;
 
@@ -1205,6 +1231,7 @@ sap.ui.define([
 		sap.ui.getCore().setModel(oModel);
 
 		oInput3.placeAt("content");
+		sap.ui.getCore().getMessageManager().removeAllMessages();
 		sap.ui.getCore().getMessageManager().registerObject(oInput3, true);
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
@@ -1273,7 +1300,7 @@ sap.ui.define([
 				oModel.read(sPath, { success: resolve });
 			});
 		};
-
+		sap.ui.getCore().getMessageManager().removeAllMessages();
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
@@ -1326,6 +1353,7 @@ sap.ui.define([
 		};
 
 		var oMessageManager = sap.ui.getCore().getMessageManager();
+		oMessageManager.removeAllMessages();
 		var oMessageModel = oMessageManager.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
@@ -1421,6 +1449,7 @@ sap.ui.define([
 		};
 
 		var oMessageManager = sap.ui.getCore().getMessageManager();
+		oMessageManager.removeAllMessages();
 		var oMessageModel = oMessageManager.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
@@ -1464,6 +1493,7 @@ sap.ui.define([
 		};
 
 		var oMessageManager = sap.ui.getCore().getMessageManager();
+		oMessageManager.removeAllMessages();
 		var oMessageModel = oMessageManager.getMessageModel();
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
@@ -1540,10 +1570,14 @@ sap.ui.define([
 			var aNewMessages = [];
 			var aOldMessages = [];
 			oParser.setProcessor({
-				fireMessageChange: function(oObj) {
+				getId: function() {
+					return "myProcessor";
+				},
+				fireEvent: function(sType, oObj) {
 					aNewMessages = oObj.newMessages;
 					aOldMessages = oObj.oldMessages;
 				},
+				setMessages: function() {},
 				resolve: function(sPath){
 					return sPath;
 				},
@@ -1602,10 +1636,14 @@ sap.ui.define([
 			var aNewMessages = [];
 			var aOldMessages = [];
 			oParser.setProcessor({
-				fireMessageChange: function(oObj) {
+				getId: function() {
+					return "myProcessor";
+				},
+				fireEvent: function(sType, oObj) {
 					aNewMessages = oObj.newMessages;
 					aOldMessages = oObj.oldMessages;
 				},
+				setMessages: function() {},
 				resolve: function(sPath){
 					return sPath;
 				}
@@ -1663,10 +1701,14 @@ sap.ui.define([
 			var aNewMessages = [];
 			var aOldMessages = [];
 			oParser.setProcessor({
-				fireMessageChange: function(oObj) {
+				getId: function() {
+					return "myProcessor";
+				},
+				fireEvent: function(sType, oObj) {
 					aNewMessages = oObj.newMessages;
 					aOldMessages = oObj.oldMessages;
 				},
+				setMessages: function() {},
 				resolve: function(sPath){
 					return sPath;
 				}
@@ -1752,10 +1794,14 @@ sap.ui.define([
 			var aNewMessages = [];
 			var aOldMessages = [];
 			oParser.setProcessor({
-				fireMessageChange: function(oObj) {
+				getId: function() {
+					return "myProcessor";
+				},
+				fireEvent: function(sType, oObj) {
 					aNewMessages = oObj.newMessages;
 					aOldMessages = oObj.oldMessages;
 				},
+				setMessages: function() {},
 				resolve: function(sPath){
 					return sPath;
 				}

@@ -12,8 +12,7 @@ sap.ui.define([
 	QUnit.module("sap/ui/core/message/MessageManager", {
 		beforeEach : function () {
 			// avoid attaching to validation events on UI5 core
-			this.mock(Configuration).expects("getHandleValidation").returns(false);
-
+			this.stub(Configuration, "getHandleValidation").returns(false);
 			this.oMessageManager = new MessageManager();
 		}
 	});

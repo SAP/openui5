@@ -5,11 +5,10 @@
 // Provides the implementation for a Message
 sap.ui.define([
 	'sap/ui/base/Object',
-	'./MessageProcessor',
 	'sap/base/util/uid',
 	'sap/base/Log'
 ],
-	function(BaseObject, MessageProcessor, uid, Log) {
+	function(BaseObject, uid, Log) {
 	"use strict";
 
 	var mMessageType2Severity = {
@@ -346,14 +345,14 @@ sap.ui.define([
 	/**
 	 * Set message processor
 	 *
-	 * @param {sap.ui.core.message.MessageProcessor} oMessageProcessor The Message processor
+	 * @param {sap.ui.model.Model} oMessageProcessor The Message processor
 	 * @public
 	 */
 	Message.prototype.setMessageProcessor = function(oMessageProcessor) {
-		if (oMessageProcessor instanceof MessageProcessor) {
+		if (oMessageProcessor && oMessageProcessor.isA && oMessageProcessor.isA("sap.ui.core.message.MessageProcessor")) {
 			this.processor = oMessageProcessor;
 		} else {
-			Log.error("MessageProcessor must be an instance of sap.ui.core.message.MessageProcessor");
+			Log.error("oMessageProcessor must be an instance of 'sap.ui.core.message.MessageProcessor'");
 		}
 	};
 

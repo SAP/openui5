@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/base/util/ObjectPath",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/base/ManagedObject",
 	"sap/ui/base/ManagedObjectMetadata"
 ], function(
 	BindingMode,
@@ -32,7 +31,6 @@ sap.ui.define([
 	BaseObject,
 	ObjectPath,
 	SyncPromise,
-	ManagedObject,
 	ManagedObjectMetadata) {
 	"use strict";
 
@@ -632,10 +630,10 @@ sap.ui.define([
 					if (oDataState) {
 						var oControlMessages = oDataState.getControlMessages();
 						if (oControlMessages && oControlMessages.length > 0) {
-							var oMessageManager = sap.ui.getCore().getMessageManager();
 							oDataState.setControlMessages([]); //remove the controlMessages before informing manager to avoid 'dataStateChange' event to fire
-							if (oControlMessages) {
-								oMessageManager.removeMessages(oControlMessages);
+							var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
+							if (MessageManager) {
+								MessageManager.removeMessages(oControlMessages);
 							}
 						}
 						oDataState.setInvalidValue(undefined); //assume that the model always sends valid data

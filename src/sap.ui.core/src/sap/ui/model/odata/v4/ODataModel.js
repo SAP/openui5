@@ -37,6 +37,7 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
 	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageManager",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
 	"sap/ui/model/Model",
@@ -44,8 +45,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI"
 ], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
 		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
-		SyncPromise, CacheManager, Configuration, coreLibrary, Message, BindingMode, BaseContext,
-		Model, OperationMode, URI) {
+		SyncPromise, CacheManager, Configuration, coreLibrary, Message, MessageManager, BindingMode,
+		BaseContext, Model, OperationMode, URI) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -1703,6 +1704,10 @@ sap.ui.define([
 			this.mPath2DataRequestedCount[sPath] = 1;
 			this.fireEvent("dataRequested", {path : sPath});
 		}
+	};
+
+	ODataModel.prototype.fireMessageChange = function (mParameters) {
+		MessageManager.updateMessages(mParameters.oldMessages, mParameters.newMessages);
 	};
 
 	/**

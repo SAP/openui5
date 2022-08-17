@@ -475,7 +475,7 @@ sap.ui.define([
 			.returns("~fnFetchEntityContainer~");
 		oExpectedBind1 = this.mock(ODataMetaModel.prototype.fetchObject).expects("bind")
 			.returns("~fnFetchMetadata~");
-		oExpectedBind2 = this.mock(ODataMetaModel.prototype.fireMessageChange).expects("bind")
+		oExpectedBind2 = this.mock(ODataModel.prototype.fireMessageChange).expects("bind")
 			.returns("~fnFireMessageChange~");
 		oExpectedBind3 = this.mock(ODataModel.prototype.fireDataReceived).expects("bind")
 			.returns("~fnFireDataReceived~");

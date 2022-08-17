@@ -60,10 +60,13 @@ sap.ui.define(["sap/ui/core/library", "sap/base/Log", "sap/ui/core/LabelEnableme
 					bForceUpdate = true;
 				}
 			}.bind(this));
-			// Update the model to apply the changes
-			var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
-			oMessageModel.checkUpdate(bForceUpdate, true);
 
+			var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
+			if (MessageManager) {
+				// Update the model to apply the changes
+				var oMessageModel = MessageManager.getMessageModel();
+				oMessageModel.checkUpdate(bForceUpdate, true);
+			}
 			// propagate messages
 			if (aMessages && aMessages.length > 0) {
 				var oMessage = aMessages[0];
