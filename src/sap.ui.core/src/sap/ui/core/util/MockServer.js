@@ -757,6 +757,8 @@ sap.ui
 				}
 				var that = this;
 				var fnGetFilteredData = function(bValue, iValueIndex, iPathIndex, fnSelectFilteredData) {
+					// TODO: do the check using the property type and not value
+					//       or consider the reuse of sap/ui/model/odata/ODataUtils.parseValue
 					var aODataFilterValues, sValue, sPath;
 					if (!bValue) { //e.g eq, ne, gt, lt, le, ge
 						aODataFilterValues = rExp.exec(sODataQueryValue);
@@ -772,13 +774,7 @@ sap.ui
 					if (/^\(.+\)$/.test(sValue)) {
 						sValue = sValue.replace(/^\(|\)$/g, "");
 					}
-					//TODO do the check using the property type and not value
-					// remove number suffixes from EDM types decimal, Int64, Single
-					var sTypecheck = sValue[sValue.length - 1];
-					if (sTypecheck === "M" || sTypecheck === "m" || sTypecheck === "L" || sTypecheck === "f") {
-						sValue = sValue.substring(0, sValue.length - 1);
-					}
-					//fix for filtering on date time properties
+					// fix for filtering on date time properties
 					if (sValue.indexOf("datetime") === 0) {
 						sValue = that._getJsonDate(sValue);
 					} else if (sValue.indexOf("guid") === 0) {
@@ -3539,7 +3535,11 @@ sap.ui
 			 * @private
 			 */
 			MockServer.prototype._isValidNumber = function(sString) {
-				return !isNaN(parseFloat(sString)) && isFinite(sString);
+				if (/^([-+]?)0*(\d+)(\.\d+|)([eE][-+]?\d+[d]?|[mldf])?$/i.test(sString)) {
+					var anyNumber = parseFloat(sString);
+					return !isNaN(anyNumber) && isFinite(anyNumber);
+				}
+				return false;
 			};
 
 			/**
