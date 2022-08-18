@@ -11,6 +11,7 @@
 						<Button text="Set wrong src" press=".onPressSetSrc"/>
 
 						<Image
+							load=".onLoad"
 							error=".onError"
 							visible="{= !${/hasError} }"
 							src="{img>/products/pic1}"

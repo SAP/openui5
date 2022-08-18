@@ -19,6 +19,10 @@ sap.ui.define([
 			this.getView().setModel(oImgModel, "img");
 		},
 
+		onLoad: function () {
+			this.getView().getModel().setProperty("/hasError", false);
+		},
+
 		onError: function () {
 			this.getView().getModel().setProperty('/hasError', true);
 		},
