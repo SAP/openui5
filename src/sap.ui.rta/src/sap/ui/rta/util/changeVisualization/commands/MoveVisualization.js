@@ -18,6 +18,8 @@ sap.ui.define([
 	 * current element label.
 	 *
 	 * @param {object} mPayload - Change visualization payload from the change handler
+	 * @param {string} mPayload.sourceParentContainer - Parent container from where the element was moved
+	 * @param {string} mPayload.targetParentContainer - Parent container to where the element was moved
 	 * @param {string} sLabel - Change handler label
 	 * @param {object} mPropertyBag - Additional properties
 	 * @returns {object} Localized description text and button text

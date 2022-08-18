@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicator",
-	"sap/ui/rta/util/changeVisualization/categories/RenameVisualization",
+	"sap/ui/rta/util/changeVisualization/commands/RenameVisualization",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/m/Button",
@@ -28,12 +28,12 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 	var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
 
-	function createMockChange(sId, sAffectedElementId, sCommandName, sCommandCategory, mPayload) {
+	function createMockChange(sId, sAffectedElementId, sCommandName, sChangeCategory, mPayload) {
 		var oCreationDate = new Date();
 		return {
 			id: sId,
 			commandName: sCommandName,
-			commandCategory: sCommandCategory,
+			changeCategory: sChangeCategory,
 			change: {
 				getCreation: function() {
 					return oCreationDate;
@@ -149,6 +149,13 @@ sap.ui.define([
 						),
 						"then a description for the change is displayed"
 					);
+					assert.strictEqual(
+						aItems[0].getCells()[0].getTooltip(),
+						oRtaResourceBundle.getText(
+							"TXT_CHANGEVISUALIZATION_OVERVIEW_RENAME"
+						),
+						"then an icon tooltip is displayed"
+					);
 					assert.notOk(
 						aItems[0].getCells()[1].getItems()[0].getTooltip(),
 						"then the description tooltip is not set because the description was not shorted"
@@ -235,7 +242,7 @@ sap.ui.define([
 		QUnit.test("when a change was created within the session", function(assert) {
 			this.oChangeIndicator.getModel().setData({
 				changes: [Object.assign(
-					createMockChange("someChangeId", this.oButton.getId(), "remove"),
+					createMockChange("someChangeId", this.oButton.getId(), "remove", "remove"),
 					{
 						change: {
 							getCreation: function() { }
@@ -281,9 +288,9 @@ sap.ui.define([
 
 			this.oChangeIndicator.getModel().setData({
 				changes: [
-					createMockChange("changeId1", this.oButton.getId(), "move", "", oPayloadInsideGroup),
-					createMockChange("changeId2", this.oButton.getId(), "move", "", oPayloadOutsideGroup),
-					createMockChange("changeId3", this.oButton.getId(), "move", "", oPayloadWithoutSourceParentId)
+					createMockChange("changeId1", this.oButton.getId(), "move", "move", oPayloadInsideGroup),
+					createMockChange("changeId2", this.oButton.getId(), "move", "move", oPayloadOutsideGroup),
+					createMockChange("changeId3", this.oButton.getId(), "move", "move", oPayloadWithoutSourceParentId)
 				]
 			});
 			oCore.applyChanges();
@@ -311,15 +318,19 @@ sap.ui.define([
 
 		QUnit.test("when a change indicator is created for a settings command change", function(assert) {
 			var oPayload1 = {
-				description: "myFancyDescription1",
-				descriptionTooltip: "myVeryLengthyTooltip"
+				description: "RemoveDescription",
+				descriptionTooltip: "RemoveDescriptionTooltip"
 			};
 			var oPayload2 = {
-				description: "myFancyDescription2"
+				description: "SettingsAddDescription"
+			};
+			var oPayload3 = {
+				description: "SettingsOtherDescription",
+				descriptionTooltip: "SettingsOtherChangeTooltip"
 			};
 			var oPayloadOutsideGroup = {
 				description: "moveDescription",
-				descriptionTooltip: "myVeryLengthyTooltip2",
+				descriptionTooltip: "moveDescriptionVeryLongTooltip",
 				sourceParentContainer: { id: "Group1" },
 				targetParentContainer: { id: "Group2" }
 			};
@@ -327,32 +338,37 @@ sap.ui.define([
 				createMockChange("id0", this.oButton.getId(), "move", "move", oPayloadOutsideGroup),
 				createMockChange("id1", this.oButton.getId(), "settings", "move", oPayloadOutsideGroup),
 				createMockChange("id2", this.oButton.getId(), "settings", "remove", oPayload1),
-				createMockChange("id3", this.oButton.getId(), "settings", "add", oPayload2)
+				createMockChange("id3", this.oButton.getId(), "settings", "add", oPayload2),
+				createMockChange("id4", this.oButton.getId(), "settings", "other", oPayload3)
 			];
 			this.oChangeIndicator.setChanges(aChanges);
 
-			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[0].description, "myFancyDescription2", "the description is correct");
-			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[0].descriptionTooltip, "", "the tooltip is correct");
-			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[0].detailButtonText, undefined, "the button text is correct");
+			assert.notStrictEqual(this.oChangeIndicator._oDetailModel.getData()[4].description, "moveDescription", "the description from the change handler is not considered");
+			assert.notStrictEqual(this.oChangeIndicator._oDetailModel.getData()[4].descriptionTooltip, "moveDescriptionVeryLongTooltip", "the tooltip from the change handler is not considered");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[4].detailButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_SHOW_DEPENDENT_CONTAINER_MOVE"), "the button text is correct");
 
-			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[1].description, "myFancyDescription1", "the description is correct");
-			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[1].descriptionTooltip, "myVeryLengthyTooltip", "the tooltip is correct");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[3].description, "moveDescription", "the description from the change handler is not considered");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[3].descriptionTooltip, "moveDescriptionVeryLongTooltip", "the tooltip from the change handler is not considered");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[3].detailButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_SHOW_DEPENDENT_CONTAINER_MOVE"), "the button text is correct");
+
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[2].description, "RemoveDescription", "the description is correct");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[2].descriptionTooltip, "RemoveDescriptionTooltip", "the tooltip is correct");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[2].detailButtonText, undefined, "there is no button");
+
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[1].description, "SettingsAddDescription", "the description is correct");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[1].descriptionTooltip, null, "there is no tooltip");
 			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[1].detailButtonText, undefined, "the button text is correct");
 
-			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[2].description, "moveDescription", "the description is correct");
-			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[2].descriptionTooltip, "myVeryLengthyTooltip2", "the tooltip is correct");
-			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[2].detailButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_SHOW_DEPENDENT_CONTAINER_MOVE"), "the button text is correct");
-
-			assert.notStrictEqual(this.oChangeIndicator._oDetailModel.getData()[3].description, "moveDescription", "the description from the change handler is not considered");
-			assert.notStrictEqual(this.oChangeIndicator._oDetailModel.getData()[3].descriptionTooltip, "myVeryLengthyTooltip", "the tooltip from the change handler is not considered");
-			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[3].detailButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_SHOW_DEPENDENT_CONTAINER_MOVE"), "the button text is correct");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[0].description, "SettingsOtherDescription", "the description is correct");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[0].descriptionTooltip, "SettingsOtherChangeTooltip", "the tooltip is correct");
+			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[0].detailButtonText, undefined, "there is no button text");
 		});
 
 		QUnit.test("when a change indicator with two changes is created", function(assert) {
 			this.oChangeIndicator.getModel().setData({
 				changes: [
-					createMockChange("someChangeId", this.oButton.getId(), "move"),
-					createMockChange("someOtherChangeId", this.oButton.getId(), "rename")
+					createMockChange("someChangeId", this.oButton.getId(), "move", "move"),
+					createMockChange("someOtherChangeId", this.oButton.getId(), "rename", "rename")
 				]
 			});
 			oCore.applyChanges();
@@ -390,11 +406,11 @@ sap.ui.define([
 		QUnit.test("when a change indicator with five changes is created", function(assert) {
 			this.oChangeIndicator.getModel().setData({
 				changes: [
-					createMockChange("someChangeId", this.oButton.getId(), "move"),
-					createMockChange("someOtherChangeId", this.oButton.getId(), "rename"),
-					createMockChange("someOtherChangeIdTwo", this.oButton.getId(), "rename"),
-					createMockChange("someOtherChangeIdThree", this.oButton.getId(), "rename"),
-					createMockChange("someOtherChangeIdFour", this.oButton.getId(), "rename")
+					createMockChange("someChangeId", this.oButton.getId(), "move", "move"),
+					createMockChange("someOtherChangeId", this.oButton.getId(), "rename", "rename"),
+					createMockChange("someOtherChangeIdTwo", this.oButton.getId(), "rename", "rename"),
+					createMockChange("someOtherChangeIdThree", this.oButton.getId(), "rename", "rename"),
+					createMockChange("someOtherChangeIdFour", this.oButton.getId(), "rename", "rename")
 				]
 			});
 			oCore.applyChanges();
@@ -407,7 +423,7 @@ sap.ui.define([
 		QUnit.test("when a change indicator is created and is hovered", function(assert) {
 			this.oChangeIndicator.getModel().setData({
 				changes: [
-					createMockChange("someChangeId", this.oButton.getId(), "move")
+					createMockChange("someChangeId", this.oButton.getId(), "move", "move")
 				]
 			});
 			var oOverlay = sap.ui.getCore().byId(this.oChangeIndicator.getOverlayId());

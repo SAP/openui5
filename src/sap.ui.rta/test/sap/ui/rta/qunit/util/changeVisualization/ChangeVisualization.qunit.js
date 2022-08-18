@@ -114,7 +114,7 @@ sap.ui.define([
 		assert.strictEqual(oModelPart.key, oCheckValues.key, "'key' is set correctly to the model");
 		assert.strictEqual(oModelPart.title, oCheckValues.title, "'text' is set correctly to the model");
 		assert.strictEqual(oModelPart.icon, oCheckValues.icon, "'icon' is set correctly to the model");
-		assert.strictEqual(oModelPart.count, oCheckValues.count, "there are no changes for this category available");
+		assert.strictEqual(oModelPart.count, oCheckValues.count, "the number of changes is correct");
 	}
 
 	function checkBinding(assert, oModelPart, oMenuData) {
@@ -252,7 +252,7 @@ sap.ui.define([
 					return oOpenPopoverPromise;
 				}.bind(this))
 				.then(function() {
-					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().commandCategories;
+					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 					assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[0].getVisible(), "Hidden Info Message is invisible");
 					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[1].getItems();
 					checkModel(assert, aVizModel[0], this.oCheckModelAll);
@@ -274,7 +274,7 @@ sap.ui.define([
 					return oOpenPopoverPromise;
 				}.bind(this))
 				.then(function() {
-					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().commandCategories;
+					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 					assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[0].getVisible(), "Hidden Info Message is invisible");
 					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[1].getItems();
 					checkModel(assert, aVizModel[0], this.oCheckModelAll);
@@ -298,7 +298,7 @@ sap.ui.define([
 					return oOpenPopoverPromise;
 				}.bind(this))
 				.then(function() {
-					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().commandCategories;
+					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 					assert.ok(this.oChangeVisualization.getAggregation("popover").getContent()[0].getVisible(), "Hidden Info Message is visible");
 					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[1].getItems();
 					checkModel(assert, aVizModel[0], this.oCheckModelAll);
@@ -308,11 +308,19 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("With changes (Not all supported) - Check if Menu is bound correctly to the model", function(assert) {
+		QUnit.test("With one change belonging to other category - Check if Menu is bound correctly to the model", function(assert) {
 			this.aMockChanges.push(createMockChange("testAddColumn", "addColumn", "Comp1---idMain1--lb1"));
 			prepareChanges(this.aMockChanges);
+
+			this.oCheckModelOther = {
+				key: "other",
+				title: oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_OTHER", [0]),
+				icon: "sap-icon://key-user-settings",
+				count: 1
+			};
+
 			this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [3]);
-			this.oCheckModelAll.count = 3;
+			this.oCheckModelAll.count = 4;
 			this.oCheckModelAll.tooltip = oRtaResourceBundle.getText("TOOLTIP_CHANGEVISUALIZATION_OVERVIEW_ADDITIONAL_CHANGES");
 			return startVisualization(this.oRta)
 				.then(function() {
@@ -322,11 +330,11 @@ sap.ui.define([
 					return oOpenPopoverPromise;
 				}.bind(this))
 				.then(function() {
-					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().commandCategories;
-					assert.ok(this.oChangeVisualization.getAggregation("popover").getContent()[0].getVisible(), "Hidden Info Message is visible");
+					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[1].getItems();
 					checkModel(assert, aVizModel[0], this.oCheckModelAll);
 					checkModel(assert, aVizModel[2], this.oCheckModelMove);
+					checkModel(assert, aVizModel[6], this.oCheckModelOther);
 					checkBinding(assert, aVizModel[0], aMenuItems[0]);
 					checkBinding(assert, aVizModel[2], aMenuItems[2]);
 				}.bind(this));
@@ -344,7 +352,7 @@ sap.ui.define([
 					return oOpenPopoverPromise;
 				}.bind(this))
 				.then(function() {
-					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().commandCategories;
+					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 					assert.notOk(this.oChangeVisualization.getAggregation("popover").getContent()[0].getVisible(), "Hidden Info Message is invisible");
 					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[1].getItems();
 					checkModel(assert, aVizModel[0], this.oCheckModelAll);
@@ -363,7 +371,7 @@ sap.ui.define([
 					this.oCheckModelAll.count = 2;
 					this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 					oCore.applyChanges();
-					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().commandCategories;
+					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 					assert.ok(this.oChangeVisualization.getAggregation("popover").getContent()[0].getVisible(), "Hidden Info Message is visible");
 					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getContent()[1].getItems();
 					checkModel(assert, aVizModel[0], this.oCheckModelAll);
@@ -383,7 +391,7 @@ sap.ui.define([
 					return oOpenPopoverPromise;
 				}.bind(this))
 				.then(function() {
-					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getModel("visualizationModel").getData().commandCategories;
+					var aMenuItems = this.oChangeVisualization.getAggregation("popover").getModel("visualizationModel").getData().changeCategories;
 					assert.strictEqual(aMenuItems[0].key, "all", "'all' is on first position");
 					assert.strictEqual(aMenuItems[1].key, "add", "'add' is on second position");
 					assert.strictEqual(aMenuItems[2].key, "move", "'move' is on third position");
@@ -403,7 +411,7 @@ sap.ui.define([
 					oCore.applyChanges();
 					sMenuButtonText = this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").getText();
 					assert.strictEqual(sMenuButtonText, oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_OVERVIEW_ALL"));
-					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("move"));
+					return this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("move"));
 				}.bind(this))
 				.then(function() {
 					oCore.applyChanges();
@@ -511,17 +519,17 @@ sap.ui.define([
 				getControl: function() { },
 				setModel: function(oData) {
 					assert.strictEqual(
-						oData.getData().commandCategories[3].count,
+						oData.getData().changeCategories[3].count,
 						1,
 						"then changes where the command is defined on the element are properly categorized"
 					);
 					assert.strictEqual(
-						oData.getData().commandCategories[1].count,
+						oData.getData().changeCategories[1].count,
 						1,
 						"then changes where the command is defined on the element are properly categorized"
 					);
 					assert.strictEqual(
-						oData.getData().commandCategories[2].count,
+						oData.getData().changeCategories[2].count,
 						1,
 						"then changes where the command is defined on the element are properly categorized"
 					);
@@ -604,7 +612,7 @@ sap.ui.define([
 					);
 
 					// Activate again and select a different category
-					this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("add"));
+					this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("add"));
 					this.oChangeVisualization.setIsActive(true);
 					oCore.applyChanges();
 					assert.strictEqual(
@@ -832,7 +840,7 @@ sap.ui.define([
 				.then(function() {
 					oCore.applyChanges();
 					assert.strictEqual(
-						this.oRta.getToolbar().getModel("visualizationModel").getData().commandCategories[0].count,
+						this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories[0].count,
 						2,
 						"then only changes with the fileType \"change\" are applied and visible"
 					);
@@ -856,7 +864,7 @@ sap.ui.define([
 					}
 				}
 			);
-			this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("all"));
+			this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
 			this.oRta.setMode("visualization");
 			return waitForMethodCall(this.oToolbar, "setModel")
 				.then(function() {
@@ -944,7 +952,7 @@ sap.ui.define([
 					return startVisualization(this.oRta);
 				}.bind(this))
 				.then(function() {
-					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("all"));
+					return this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
 				}.bind(this))
 				.then(function() {
 					oCore.applyChanges();
@@ -1047,7 +1055,7 @@ sap.ui.define([
 					waitForMethodCall(this.oToolbar, "setModel");
 				}.bind(this))
 				.then(function() {
-					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("all"));
+					return this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
 				}.bind(this))
 				.then(function() {
 					oCore.applyChanges();
@@ -1073,7 +1081,7 @@ sap.ui.define([
 			this.oRta.setMode("visualization");
 			return waitForMethodCall(this.oToolbar, "setModel")
 				.then(function() {
-					return this.oChangeVisualization.onCommandCategorySelection(prepareMockEvent("all"));
+					return this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("all"));
 				}.bind(this))
 				.then(function() {
 					oCore.applyChanges();

@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicator",
-	"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry"
+	"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry",
+	"sap/ui/rta/util/changeVisualization/ChangeCategories"
 ], function(
 	Fragment,
 	difference,
@@ -31,41 +32,10 @@ sap.ui.define([
 	ResourceModel,
 	JSONModel,
 	ChangeIndicator,
-	ChangeIndicatorRegistry
+	ChangeIndicatorRegistry,
+	ChangeCategories
 ) {
 	"use strict";
-
-	var VALID_COMMANDS = {
-		add: [
-			"createContainer",
-			"addDelegateProperty",
-			"reveal",
-			"addIFrame"
-		],
-		move: [
-			"move"
-		],
-		rename: [
-			"rename"
-		],
-		combinesplit: [
-			"combine",
-			"split"
-		],
-		remove: [
-			"remove"
-		]
-	};
-	var CATEGORY_ALL = "all";
-
-	var CATEGORY_ICONS = {
-		all: "sap-icon://show",
-		add: "sap-icon://add",
-		move: "sap-icon://move",
-		rename: "sap-icon://edit",
-		combinesplit: "sap-icon://combine",
-		remove: "sap-icon://less"
-	};
 
 	/**
 	 * When clicking anywhere on the application, the menu must close
@@ -115,7 +85,7 @@ sap.ui.define([
 		},
 		constructor: function() {
 			this._oChangeIndicatorRegistry = new ChangeIndicatorRegistry({
-				commandCategories: VALID_COMMANDS
+				changeCategories: ChangeCategories.getCategories()
 			});
 
 			Control.prototype.constructor.apply(this, arguments);
@@ -129,7 +99,7 @@ sap.ui.define([
 				active: this.getIsActive()
 			});
 			this._oChangeVisualizationModel.setDefaultBindingMode("OneWay");
-			this._sSelectedCommandCategory = "all";
+			this._sSelectedChangeCategory = ChangeCategories.ALL;
 			this._bSetModeChanged = false;
 
 			// For the event handlers to work, the function instance has to remain stable
@@ -174,37 +144,37 @@ sap.ui.define([
 	ChangeVisualization.prototype._updateVisualizationModelMenuData = function() {
 		var aVisualizedChanges = this._oChangeVisualizationModel.getData().visualizedChanges;
 		var aHiddenChanges = [];
-		var aRegisteredChanges = this._oChangeIndicatorRegistry.getChanges();
-		aRegisteredChanges.forEach(function(oChange) {
+		var aAllRegisteredChanges = this._oChangeIndicatorRegistry.getAllRegisteredChanges();
+		aAllRegisteredChanges.forEach(function(oRegisteredChange) {
 			var oVisualizedChange = aVisualizedChanges.find(function(oVisualizedChange) {
-				return oChange.change.getId() === oVisualizedChange.id;
+				return oRegisteredChange.change.getId() === oVisualizedChange.id;
 			});
-			if (!oVisualizedChange && !oChange.dependent) {
-				aHiddenChanges.push(oChange);
+			if (!oVisualizedChange && !oRegisteredChange.dependent) {
+				aHiddenChanges.push(oRegisteredChange);
 			}
 		});
-		var aCommandData = Object.keys(VALID_COMMANDS).map(function(sCommandCategoryName) {
-			var sTitle = this._getCommandCategoryLabel(
-				sCommandCategoryName,
-				this._getChangesForCommandCategory(sCommandCategoryName, aVisualizedChanges).length
+		var aCommandData = Object.keys(ChangeCategories.getCategories()).map(function(sChangeCategoryName) {
+			var sTitle = this._getChangeCategoryLabel(
+				sChangeCategoryName,
+				this._getChangesForChangeCategory(sChangeCategoryName, aVisualizedChanges).length
 			);
 			return {
-				key: sCommandCategoryName,
-				count: this._getChangesForCommandCategory(sCommandCategoryName, aVisualizedChanges).length,
+				key: sChangeCategoryName,
+				count: this._getChangesForChangeCategory(sChangeCategoryName, aVisualizedChanges).length,
 				title: sTitle,
-				icon: CATEGORY_ICONS[sCommandCategoryName]
+				icon: ChangeCategories.getIconForCategory(sChangeCategoryName)
 			};
 		}.bind(this));
 
 		aCommandData.unshift({
-			key: CATEGORY_ALL,
-			count: this._getChangesForCommandCategory(CATEGORY_ALL, aVisualizedChanges).length,
-			title: this._getCommandCategoryLabel(CATEGORY_ALL, this._getChangesForCommandCategory(CATEGORY_ALL, aVisualizedChanges).length),
-			icon: CATEGORY_ICONS[CATEGORY_ALL]
+			key: ChangeCategories.ALL,
+			count: this._getChangesForChangeCategory(ChangeCategories.ALL, aVisualizedChanges).length,
+			title: this._getChangeCategoryLabel(ChangeCategories.ALL, this._getChangesForChangeCategory(ChangeCategories.ALL, aVisualizedChanges).length),
+			icon: ChangeCategories.getIconForCategory(ChangeCategories.ALL)
 		});
 
 		this._updateVisualizationModel({
-			commandCategories: aCommandData,
+			changeCategories: aCommandData,
 			hiddenChanges: aHiddenChanges,
 			popupInfoMessage: this._oTextBundle.getText(
 				"MSG_CHANGEVISUALIZATION_HIDDEN_CHANGES_INFO",
@@ -213,21 +183,21 @@ sap.ui.define([
 		});
 	};
 
-	ChangeVisualization.prototype._getChangesForCommandCategory = function(sCommandCategory, aChanges) {
+	ChangeVisualization.prototype._getChangesForChangeCategory = function(sChangeCategory, aChanges) {
 		return aChanges.filter(function(oChange) {
-			return sCommandCategory === CATEGORY_ALL
-				? oChange.commandCategory !== undefined
-				: sCommandCategory === oChange.commandCategory;
+			return sChangeCategory === ChangeCategories.ALL
+				? oChange.changeCategory !== undefined
+				: sChangeCategory === oChange.changeCategory;
 		});
 	};
 
-	ChangeVisualization.prototype._getCommandCategoryLabel = function(sCommandCategoryName, iChangesCount) {
-		var sLabelKey = "TXT_CHANGEVISUALIZATION_OVERVIEW_" + sCommandCategoryName.toUpperCase();
+	ChangeVisualization.prototype._getChangeCategoryLabel = function(sChangeCategoryName, iChangesCount) {
+		var sLabelKey = "TXT_CHANGEVISUALIZATION_OVERVIEW_" + sChangeCategoryName.toUpperCase();
 		return this._oTextBundle.getText(sLabelKey, [iChangesCount]);
 	};
 
-	ChangeVisualization.prototype._getCommandCategoryButton = function(sCommandCategoryName) {
-		var sButtonKey = "BTN_CHANGEVISUALIZATION_OVERVIEW_" + sCommandCategoryName.toUpperCase();
+	ChangeVisualization.prototype._getChangeCategoryButton = function(sChangeCategoryName) {
+		var sButtonKey = "BTN_CHANGEVISUALIZATION_OVERVIEW_" + sChangeCategoryName.toUpperCase();
 		return this._oTextBundle.getText(sButtonKey);
 	};
 
@@ -261,24 +231,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the selected command category and visualizes all changes for the given category
+	 * Sets the selected change category and visualizes all changes for the given category
 	 *
 	 * @param {event} oEvent - Event
-	 * @returns {Promise} - Promise of category change
 	 */
-	ChangeVisualization.prototype.onCommandCategorySelection = function(oEvent) {
-		var sSelectedCommandCategory = oEvent.getSource().getBindingContext("visualizationModel").getObject().key;
-		this._selectCommandCategory(sSelectedCommandCategory);
+	ChangeVisualization.prototype.onChangeCategorySelection = function(oEvent) {
+		var sSelectedChangeCategory = oEvent.getSource().getBindingContext("visualizationModel").getObject().key;
+		this._selectChangeCategory(sSelectedChangeCategory);
 	};
 
-	ChangeVisualization.prototype._selectCommandCategory = function(sSelectedCommandCategory) {
-		this._sSelectedCommandCategory = sSelectedCommandCategory;
+	ChangeVisualization.prototype._selectChangeCategory = function(sSelectedChangeCategory) {
+		this._sSelectedChangeCategory = sSelectedChangeCategory;
 
-		var sCommandCategoryText = this._getCommandCategoryButton(sSelectedCommandCategory);
+		var sChangeCategoryText = this._getChangeCategoryButton(sSelectedChangeCategory);
 
 		this._updateVisualizationModel({
-			commandCategory: sSelectedCommandCategory,
-			commandCategoryText: sCommandCategoryText
+			changeCategory: sSelectedChangeCategory,
+			changeCategoryText: sChangeCategoryText
 		});
 
 		this._updateChangeIndicators();
@@ -344,7 +313,7 @@ sap.ui.define([
 
 	ChangeVisualization.prototype._updateChangeRegistry = function() {
 		return this._collectChanges().then(function(aChanges) {
-			var aRegisteredChangeIds = this._oChangeIndicatorRegistry.getChangeIds();
+			var aRegisteredChangeIds = this._oChangeIndicatorRegistry.getRegisteredChangeIds();
 			var oCurrentChanges = aChanges
 				.filter(function(oChange) {
 					return oChange.getFileType() === "change";
@@ -377,7 +346,7 @@ sap.ui.define([
 	};
 
 	ChangeVisualization.prototype._selectChange = function(sChangeId) {
-		var aDependentElements = this._oChangeIndicatorRegistry.getChange(sChangeId).visualizationInfo.dependentElementIds;
+		var aDependentElements = this._oChangeIndicatorRegistry.getRegisteredChange(sChangeId).visualizationInfo.dependentElementIds;
 		aDependentElements.forEach(function(sElementId) {
 			var oOverlayDomRef = OverlayRegistry.getOverlay(sElementId).getDomRef();
 			oOverlayDomRef.scrollIntoViewIfNeeded();
@@ -397,7 +366,7 @@ sap.ui.define([
 	};
 
 	ChangeVisualization.prototype._updateChangeIndicators = function() {
-		var oSelectors = this._oChangeIndicatorRegistry.getChangeIndicatorData();
+		var oSelectors = this._oChangeIndicatorRegistry.getSelectorsWithRegisteredChanges();
 		var oIndicators = {};
 		var aVisualizedChanges = [];
 		Object.keys(oSelectors)
@@ -467,10 +436,10 @@ sap.ui.define([
 		return aChangeVizInfo.filter(function(oChangeVizInfo) {
 			return (
 				!oChangeVizInfo.dependent
-				&& oChangeVizInfo.commandCategory
+				&& oChangeVizInfo.changeCategory
 				&& (
-					oRootData.commandCategory === CATEGORY_ALL
-					|| oRootData.commandCategory === oChangeVizInfo.commandCategory
+					oRootData.changeCategory === ChangeCategories.ALL
+					|| oRootData.changeCategory === oChangeVizInfo.changeCategory
 				)
 			);
 		});
@@ -560,7 +529,7 @@ sap.ui.define([
 		// show all change visualizations at startup
 		this._updateChangeRegistry()
 			.then(function() {
-				this._selectCommandCategory(this._sSelectedCommandCategory);
+				this._selectChangeCategory(this._sSelectedChangeCategory);
 				this._updateVisualizationModelMenuData();
 				oToolbar.setModel(this._oChangeVisualizationModel, "visualizationModel");
 			}.bind(this));

@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/rta/util/changeVisualization/categories/MoveVisualization",
+	"sap/ui/rta/util/changeVisualization/commands/MoveVisualization",
 	"sap/ui/core/Core"
 ], function(
 	MoveVisualization,

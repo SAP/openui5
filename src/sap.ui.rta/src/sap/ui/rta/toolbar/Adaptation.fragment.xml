@@ -119,7 +119,7 @@
 				<Button
 						id="sapUiRta_toggleChangeVisualizationMenuButton"
 						visible="{= ${controls>/modeSwitcher} === 'visualization'}"
-						text="{visualizationModel>/commandCategoryText}"
+						text="{visualizationModel>/changeCategoryText}"
 						type="Transparent"
 						icon="sap-icon://slim-arrow-down"
 						iconFirst="false"

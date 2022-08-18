@@ -8,32 +8,26 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/rta/util/changeVisualization/categories/getVisualizationCategory",
+	"sap/ui/rta/util/changeVisualization/commands/getCommandVisualization",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/util/resolveBinding",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/rta/util/changeVisualization/ChangeCategories"
 ], function(
 	Fragment,
 	JSONModel,
 	Control,
 	DateFormat,
 	KeyCodes,
-	getVisualizationCategory,
+	getCommandVisualization,
 	FlUtils,
 	resolveBinding,
 	ChangeVisualizationUtils,
-	Core
+	Core,
+	ChangeCategories
 ) {
 	"use strict";
-
-	var CATEGORY_ICONS = {
-		add: "sap-icon://add",
-		move: "sap-icon://move",
-		rename: "sap-icon://edit",
-		combinesplit: "sap-icon://combine",
-		remove: "sap-icon://less"
-	};
 
 	/**
 	 * @class
@@ -178,38 +172,47 @@ sap.ui.define([
 
 		var mPropertyBag = { appComponent: FlUtils.getAppComponentForControl(oAffectedElement) };
 		var oOverlay = Core.byId(sOverlayId);
-		var oVisualizationUtil = getVisualizationCategory(mChangeInformation);
 		var sElementLabel = oOverlay.getDesignTimeMetadata().getLabel(oAffectedElement);
-		var oDescription = oVisualizationUtil && oVisualizationUtil.getDescription(mPayload, sElementLabel, mPropertyBag);
-		sElementLabel = sElementLabel && "'" + sElementLabel + "'";
-		var sShortenedElementLabel = ChangeVisualizationUtils.shortenString(sElementLabel);
-		var sChangeTextKey = (
-			"TXT_CHANGEVISUALIZATION_CHANGE_"
-			+ mChangeInformation.commandName.toUpperCase()
-		);
-
+		var oCommandVisualization = getCommandVisualization(mChangeInformation);
+		var oDescription = oCommandVisualization && oCommandVisualization.getDescription(mPayload, sElementLabel, mPropertyBag) || {};
+		var sCommandName = mChangeInformation.commandName;
 		var sDescriptionText;
 		var sDescriptionTooltip;
-		// for settings commands if available description and tooltip should be taken as is from the change handler
-		if (mPayload.description && mChangeInformation.commandName === "settings") {
-			sDescriptionText = mPayload.description;
-			sDescriptionTooltip = mPayload.descriptionTooltip || "";
-		} else {
-			if (oDescription) {
-				sDescriptionText = oDescription.descriptionText;
-				sDescriptionTooltip = oDescription.descriptionTooltip;
-			} else {
-				sDescriptionText = oRtaResourceBundle.getText(sChangeTextKey, sShortenedElementLabel);
-				sDescriptionTooltip = oRtaResourceBundle.getText(sChangeTextKey, sElementLabel);
-			}
-			sDescriptionTooltip = sDescriptionText.length < sDescriptionTooltip.length ? sDescriptionTooltip : null;
+
+		// 'Settings' with a custom description should overwrite the description from the CommandVisualization
+		if (sCommandName === "settings" && mPayload.description) {
+			oDescription.descriptionText = mPayload.description;
+			oDescription.descriptionTooltip = mPayload.descriptionTooltip;
+		} else if (mChangeInformation.changeCategory === "other") {
+			// To retrieve the generic description for commands without visualization
+			sCommandName = "other";
 		}
+
+		if (oDescription.descriptionText) {
+			sDescriptionText = oDescription.descriptionText;
+			sDescriptionTooltip = oDescription.descriptionTooltip || "";
+		} else {
+			sElementLabel = sElementLabel && "'" + sElementLabel + "'";
+			var sShortenedElementLabel = ChangeVisualizationUtils.shortenString(sElementLabel);
+			var sChangeTextKey = (
+				"TXT_CHANGEVISUALIZATION_CHANGE_"
+				+ sCommandName.toUpperCase()
+			);
+			sDescriptionText = oRtaResourceBundle.getText(sChangeTextKey, sShortenedElementLabel);
+			sDescriptionTooltip = oRtaResourceBundle.getText(sChangeTextKey, sElementLabel);
+		}
+		sDescriptionTooltip = sDescriptionText.length < sDescriptionTooltip.length ? sDescriptionTooltip : null;
 		var sDetailButtonText = oDescription && oDescription.buttonText;
+		var sIconTooltip = oRtaResourceBundle.getText(
+			"TXT_CHANGEVISUALIZATION_OVERVIEW_"
+			+ sCommandName.toUpperCase()
+		);
 
 		return {
 			description: sDescriptionText,
 			tooltip: sDescriptionTooltip,
-			buttonText: sDetailButtonText
+			buttonText: sDetailButtonText,
+			iconTooltip: sIconTooltip
 		};
 	}
 
@@ -229,7 +232,6 @@ sap.ui.define([
 		var oTexts = getTexts(mChangeInformation, oRtaResourceBundle, sOverlayId);
 		var oDates = getDates(mChangeInformation, oRtaResourceBundle);
 
-
 		return {
 			id: mChangeInformation.id,
 			change: mChangeInformation,
@@ -238,7 +240,8 @@ sap.ui.define([
 			fullDate: oDates.fullDate,
 			relativeDate: oDates.relativeDate,
 			detailButtonText: oTexts.buttonText,
-			icon: CATEGORY_ICONS[mChangeInformation.commandCategory]
+			icon: ChangeCategories.getIconForCategory(mChangeInformation.changeCategory),
+			iconTooltip: oTexts.iconTooltip
 		};
 	}
 
