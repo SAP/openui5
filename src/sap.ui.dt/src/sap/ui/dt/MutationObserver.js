@@ -285,7 +285,8 @@ sap.ui.define([
 
 		// If the node is inside a shadow root, the host is the target
 		if (
-			oMutationTarget.getRootNode()
+			oMutationTarget
+			&& oMutationTarget.getRootNode()
 			&& oMutationTarget.getRootNode().host
 		) {
 			return oMutationTarget.getRootNode().host;
