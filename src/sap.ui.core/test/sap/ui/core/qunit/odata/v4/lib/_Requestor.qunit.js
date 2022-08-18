@@ -4106,6 +4106,36 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
+	QUnit.test("cleanUpChangeSets: DELETE", function (assert) {
+		var oEntity1 = {"@odata.etag" : "etag1"},
+			oEntity2 = {},
+			oEntity3 = {"@odata.etag" : "etag3"},
+			oRequestor = _Requestor.create("/", oModelInterface),
+			aRequests = [[
+					{method : "PATCH", url : "Products('1')", body : {Name : "p1"},
+						headers : {"If-Match" : oEntity1}},
+					{method : "DELETE", url : "Products('1')", headers : {"If-Match" : oEntity1}},
+					{method : "DELETE", url : "Products('2')", headers : {"If-Match" : oEntity2}},
+					{method : "DELETE", url : "Products('3')", headers : {"If-Match" : oEntity3}}
+				]];
+
+		aRequests.iChangeSet = 0;
+
+		// code under test
+		assert.strictEqual(oRequestor.cleanUpChangeSets(aRequests), true);
+
+		assert.deepEqual(aRequests, [[
+			{method : "PATCH", url : "Products('1')", body : {Name : "p1"},
+				headers : {"If-Match" : oEntity1}},
+			{method : "DELETE", url : "Products('1')",
+				headers : {"If-Match" : {"@odata.etag" : "*"}}},
+			{method : "DELETE", url : "Products('2')", headers : {"If-Match" : oEntity2}},
+			{method : "DELETE", url : "Products('3')", headers : {"If-Match" : oEntity3}}
+		]]);
+		assert.deepEqual(oEntity1, {"@odata.etag" : "etag1"});
+	});
+
+	//*****************************************************************************************
 [false, true].forEach(function (bTimeout) {
 	QUnit.test("clearSessionContext: bTimeout=" + bTimeout, function (assert) {
 		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
