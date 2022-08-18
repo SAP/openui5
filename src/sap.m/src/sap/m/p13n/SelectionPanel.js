@@ -339,6 +339,11 @@ sap.ui.define([
 		return this._bShowFactory;
 	};
 
+	SelectionPanel.prototype._updateMovement = function(bEnableReorder) {
+		BasePanel.prototype._updateMovement.apply(this, arguments);
+		this._displayColumns();
+	};
+
 	SelectionPanel.prototype._displayColumns = function() {
 		var aColumns = [
 			this.getFieldColumn()

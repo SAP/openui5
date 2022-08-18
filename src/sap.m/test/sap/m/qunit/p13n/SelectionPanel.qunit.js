@@ -371,4 +371,21 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Check toggling 'setEnableReorder'", function(assert){
+
+		this.oSelectionPanel.setP13nData(this.getTestData());
+		var aColumns = this.oSelectionPanel._oListControl.getColumns();
+		assert.equal(aColumns.length, 2, "Reordering is enabled by default --> two columns (+1 for reordering)");
+
+		this.oSelectionPanel.setActiveColumn("TestActiveColumnText");
+		this.oSelectionPanel.setEnableReorder(false);
+		aColumns = this.oSelectionPanel._oListControl.getColumns();
+		assert.equal(aColumns.length, 2, "Reordering has been disabled --> two columns (+1 since active text is still provided)");
+
+		this.oSelectionPanel.setActiveColumn(undefined);
+		this.oSelectionPanel.setEnableReorder(false);
+		aColumns = this.oSelectionPanel._oListControl.getColumns();
+		assert.equal(aColumns.length, 1, "Reordering has been disabled --> only the fieldColumn is used");
+	});
+
 });
