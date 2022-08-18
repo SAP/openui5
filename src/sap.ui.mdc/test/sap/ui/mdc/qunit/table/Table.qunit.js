@@ -24,6 +24,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/VBox",
 	"sap/m/Link",
+	"sap/m/IllustratedMessage",
+	"sap/m/IllustratedMessageType",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
 	"sap/ui/mdc/library",
@@ -64,6 +66,8 @@ sap.ui.define([
 	Device,
 	VBox,
 	Link,
+	IllustratedMessage,
+	IllustratedMessageType,
 	Control,
 	CoreLibrary,
 	MdcLibrary,
@@ -1387,19 +1391,105 @@ sap.ui.define([
 
 			this.oTable.initialized().then(function() {
 				invalidateSpy.reset();
-				assert.equal(this.oTable._oTable.getNoDataText(), "test");
+				assert.equal(this.oTable._oTable.getNoData(), "test");
 
 				this.oTable.setNoDataText();
-				assert.equal(this.oTable._oTable.getNoDataText(), this.oTable._getNoDataText());
+				assert.equal(this.oTable._oTable.getNoData(), this.oTable._getNoDataText());
 
 				this.oTable.setNoDataText("another text");
-				assert.equal(this.oTable._oTable.getNoDataText(), "another text");
+				assert.equal(this.oTable._oTable.getNoData(), "another text");
 
 				this.oTable.setNoDataText(null);
-				assert.equal(this.oTable._oTable.getNoDataText(), this.oTable._getNoDataText());
+				assert.equal(this.oTable._oTable.getNoData(), this.oTable._getNoDataText());
 				assert.equal(invalidateSpy.callCount, 0);
 
 				done();
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("noDataAggregation", function(assert) {
+		var done = assert.async();
+		var setNoDataSpy = sinon.spy(this.oTable, "setNoData");
+		var invalidateSpy = sinon.spy(this.oTable, "invalidate");
+		var sNoDataText = "Some No Data text";
+		this.oTable.setNoData(sNoDataText);
+
+		assert.equal(invalidateSpy.callCount, 0);
+		assert.ok(setNoDataSpy.returned(this.oTable));
+
+		this.oTable.initialized().then(function() {
+			invalidateSpy.reset();
+			assert.equal(this.oTable._oTable.getNoData(), this.oTable.getNoData());
+			assert.equal(this.oTable._oTable.getNoData(), sNoDataText);
+
+			this.oTable.setNoData();
+			assert.equal(this.oTable.getNoData(), null);
+
+			this.oTable.setNoData("foo");
+			assert.equal(this.oTable._oTable.getNoData(), "foo");
+
+			this.oTable.setNoData(undefined);
+			assert.equal(this.oTable._oTable.getNoData(), this.oTable._getNoDataText());
+			assert.equal(invalidateSpy.callCount, 0);
+
+			this.oTable.setNoData("test");
+			this.oTable.setType("ResponsiveTable");
+
+			this.oTable.initialized().then(function() {
+				invalidateSpy.reset();
+				assert.equal(this.oTable._oTable.getNoData(), "test");
+
+				this.oTable.setNoData();
+				assert.equal(this.oTable._oTable.getNoData(), this.oTable._getNoDataText());
+
+				this.oTable.setNoData("another text");
+				assert.equal(this.oTable._oTable.getNoData(), "another text");
+
+				this.oTable.setNoData(null);
+				assert.equal(this.oTable._oTable.getNoData(), this.oTable._getNoDataText());
+				assert.equal(invalidateSpy.callCount, 0);
+
+				invalidateSpy.resetHistory();
+
+				var oNoData = new IllustratedMessage();
+				var fnOpenTableSettingsSpy = sinon.spy(TableSettings, "showPanel");
+				this.oTable.setNoData(oNoData);
+
+				assert.ok(setNoDataSpy.returned(this.oTable));
+				assert.equal(this.oTable._oTable.getNoData(), this.oTable.getNoData());
+				assert.notOk(this.oTable._oTable.getNoData().getEnableVerticalResponsiveness());
+				assert.ok(this.oTable._oTable.getAggregation("_noColumnsMessage"), "No columns illustration message is added");
+				assert.ok(this.oTable._oTable.getAggregation("_noColumnsMessage").getAdditionalContent()[0].isA("sap.m.Button"));
+				assert.equal(this.oTable._oTable.getAggregation("_noColumnsMessage").getAdditionalContent()[0].getIcon(), "sap-icon://action-settings");
+				assert.notOk(this.oTable._oTable.getAggregation("_noColumnsMessage").getEnableVerticalResponsiveness());
+
+				this.oTable._oTable.getAggregation("_noColumnsMessage").getAdditionalContent()[0].firePress();
+				assert.ok(fnOpenTableSettingsSpy.calledOnce);
+				assert.ok(fnOpenTableSettingsSpy.calledWith(this.oTable, "Columns"));
+				fnOpenTableSettingsSpy.restore();
+
+				oNoData.setTitle("Title");
+				oNoData.setDescription("Description");
+
+				assert.equal(this.oTable._oTable.getNoData().getTitle(), this.oTable.getNoData().getTitle());
+				assert.equal(this.oTable._oTable.getNoData().getDescription(), this.oTable.getNoData().getDescription());
+
+				this.oTable.setNoData("CustomText");
+				assert.equal(this.oTable._oTable.getNoData(), this.oTable.getNoData());
+				assert.equal(this.oTable._oTable.getNoData(), "CustomText");
+
+				this.oTable.setNoData(oNoData).setType("Table");
+				this.oTable.initialized().then(function() {
+					assert.ok(this.oTable._oTable.getNoData().getEnableVerticalResponsiveness());
+					assert.ok(this.oTable._oTable.getAggregation("_noColumnsMessage").getEnableVerticalResponsiveness());
+
+					oNoData.destroy();
+					assert.notOk(this.oTable.getNoData());
+					assert.notOk(this.oTable._oTable.getNoData());
+
+					done();
+				}.bind(this));
 			}.bind(this));
 		}.bind(this));
 	});
@@ -2503,12 +2593,38 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("noDataAggregation - Table with FilterBar and not bound", function(assert) {
+		this.oTable.setAutoBindOnInit(false);
+		this.oTable.setNoData(new IllustratedMessage());
+
+		return this.oTable._fullyInitialized().then(function() {
+			this.oTable.setFilter(new FilterBar());
+			return wait(0);
+		}.bind(this)).then(function() {
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA_WITH_FILTERBAR"),
+				"'To start, set the relevant filters.' is displayed");
+			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.SearchEarth);
+		}.bind(this));
+	});
+
 	QUnit.test("noDataText - Table without FilterBar and not bound", function(assert) {
 		this.oTable.setAutoBindOnInit(false);
 
 		return this.oTable._fullyInitialized().then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
+		}.bind(this));
+	});
+
+	QUnit.test("noDataAggregation - Table without FilterBar and not bound", function(assert) {
+		this.oTable.setAutoBindOnInit(false);
+		this.oTable.setNoData(new IllustratedMessage());
+
+		return this.oTable._fullyInitialized().then(function() {
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
+			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.EmptyList);
 		}.bind(this));
 	});
 
@@ -2520,6 +2636,19 @@ sap.ui.define([
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"),
 				"'No data available' is displayed");
+		}.bind(this));
+	});
+
+	QUnit.test("noDataAggregation - Table with FilterBar without any filters and the table is bound", function(assert) {
+		this.oTable.setNoData(new IllustratedMessage());
+		return this.oTable._fullyInitialized().then(function() {
+			this.oTable.setFilter(new FilterBar());
+			return waitForBindingInfo(this.oTable);
+		}.bind(this)).then(function() {
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"),
+				"'No data available' is displayed");
+			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.NoEntries);
 		}.bind(this));
 	});
 
@@ -2536,6 +2665,23 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("noDataAggregation - Table with FilterBar with filters and the table is bound", function(assert) {
+		this.oTable.setNoData(new IllustratedMessage());
+		return this.oTable._fullyInitialized().then(function() {
+			var oFilterBar = new FilterBar("FB2");
+			sinon.stub(oFilterBar, "getConditions").returns({key: [{operator: "EQ", values: ["Pr"]}]});
+			this.oTable.setFilter(oFilterBar);
+			return waitForBindingInfo(this.oTable);
+		}.bind(this)).then(function() {
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_RESULTS_TITLE"),
+				"'No data available.' is displayed");
+			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), oRb.getText("table.NO_RESULTS_DESCRIPTION"),
+				"'Try adjusting the filter settings.' is displayed");
+			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.NoFilterResults);
+		}.bind(this));
+	});
+
 	QUnit.test("noDataText - Table without FilterBar but with internal filters and the table is bound", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {
 			this.oTable.setFilterConditions({ key: [{ operator: "EQ", values: ["Pr"] }] });
@@ -2546,12 +2692,33 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("noDataAggregation - Table without FilterBar but with internal filters and the table is bound", function(assert) {
+		this.oTable.setNoData(new IllustratedMessage());
+		return this.oTable._fullyInitialized().then(function() {
+			this.oTable.setFilterConditions({ key: [{ operator: "EQ", values: ["Pr"] }] });
+			return waitForBindingInfo(this.oTable);
+		}.bind(this)).then(function() {
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"), "'No data available'");
+		}.bind(this));
+	});
+
 	QUnit.test("noDataText - Table without FilterBar and internal filters and the table is bound", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {
 			return waitForBindingInfo(this.oTable);
 		}.bind(this)).then(function() {
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
+		}.bind(this));
+	});
+
+	QUnit.test("noDataAggregation - Table without FilterBar and internal filters and the table is bound", function(assert) {
+		this.oTable.setNoData(new IllustratedMessage());
+		return this.oTable._fullyInitialized().then(function() {
+			return waitForBindingInfo(this.oTable);
+		}.bind(this)).then(function() {
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
 		}.bind(this));
 	});
 
@@ -2567,6 +2734,21 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("noDataAggregation - Table with custom external filter control without filters, and the table is bound", function(assert) {
+		this.oTable.setNoData(new IllustratedMessage());
+		return this.oTable._fullyInitialized().then(function() {
+			var oFilterControl = new CustomFilterControl();
+			this.oTable.setFilter(oFilterControl);
+			return waitForBindingInfo(this.oTable);
+		}.bind(this)).then(function() {
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"),
+				"'No data available' is displayed");
+			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"),
+				"'No data available' is displayed");
+		}.bind(this));
+	});
+
 	QUnit.test("noDataText - Table with custom external filter control with search string, and the table is bound", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {
 			var oFilterControl = new CustomFilterControl({customSearch: "found something?"});
@@ -2576,6 +2758,33 @@ sap.ui.define([
 			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData(), oRb.getText("table.NO_RESULTS"),
 				"'No data available. Try adjusting the filter settings.' is displayed");
+		}.bind(this));
+	});
+
+	QUnit.test("noDataAggregation - Table with custom external filter control with search string, and the table is bound", function(assert) {
+		this.oTable.setNoData(new IllustratedMessage());
+		return this.oTable._fullyInitialized().then(function() {
+			var oFilterControl = new CustomFilterControl({customSearch: "found something?"});
+			this.oTable.setFilter(oFilterControl);
+			return waitForBindingInfo(this.oTable);
+		}.bind(this)).then(function() {
+			var oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_RESULTS_TITLE"),
+				"'No data available.' is displayed");
+			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), oRb.getText("table.NO_RESULTS_DESCRIPTION"),
+				"'Try adjusting the filter settings.' is displayed");
+		}.bind(this));
+	});
+
+	QUnit.test("noDataAggregation CustomText - Table with custom external filter control with search string, and the table is bound", function(assert) {
+		this.oTable.setNoData(new IllustratedMessage({title: "NoData Title", description: "NoData Description"}));
+		return this.oTable._fullyInitialized().then(function() {
+			var oFilterControl = new CustomFilterControl({customSearch: "found something?"});
+			this.oTable.setFilter(oFilterControl);
+			return waitForBindingInfo(this.oTable);
+		}.bind(this)).then(function() {
+			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), "NoData Title");
+			assert.strictEqual(this.oTable._oTable.getNoData().getDescription(), "NoData Description");
 		}.bind(this));
 	});
 

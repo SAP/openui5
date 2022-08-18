@@ -45,6 +45,9 @@
 		<mdc:dataStateIndicator>
 			<plugins:DataStateIndicator id="dataStatePlugin" filter=".dataStateFilter" />
 		</mdc:dataStateIndicator>
+		<mdc:noData>
+			<IllustratedMessage />
+		</mdc:noData>
 		<mdc:columns>
 			<mdcTable:Column id="create" header="Created On" tooltip="Created On" initialIndex="3" dataProperty="CreatedAt" importance="Low">
 				<Text text="{CreatedAt}"/>
