@@ -4,16 +4,24 @@
 /* =========================================== */
 
 .sapFFCL {
-	&.sapFFCLBackgroundDesignSolid {
-		background: @sapUiShellBackground;
-	}
-	&.sapFFCLBackgroundDesignTranslucent {
-		background: @sapUiGroupContentBackground;
-	}
+    &.sapFFCLBackgroundDesignSolid {
+        background: @sapUiShellBackground;
+    }
+    &.sapFFCLBackgroundDesignTranslucent {
+        background: @sapUiGroupContentBackground;
+    }
 }
 .sapFFCLNavigationButton,
 .sapUiSizeCompact .sapFFCLNavigationButton {
-	.sapMBtnInner {
-		height: 1.625rem;
-	}
+    .sapMBtnInner {
+        height: 1.625rem;
+    }
+
+    &:before {
+        background-image: linear-gradient(to top, @sapUiGroupContentBorderColor, transparent);
+    }
+
+    &:after {
+        background-image: linear-gradient(to bottom, @sapUiGroupContentBorderColor, transparent);
+    }
 }
