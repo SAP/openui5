@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/m/Title",
 	"sap/m/Text",
-	"sap/m/ObjectNumber"
+	"sap/m/ObjectNumber",
+	"sap/m/OverflowToolbarLayoutData"
 ],
 function (
 	$,
@@ -21,7 +22,8 @@ function (
 	Link,
 	Title,
 	Text,
-	ObjectNumber
+	ObjectNumber,
+	OverflowToolbarLayoutData
 ) {
 	"use strict";
 
@@ -942,6 +944,25 @@ function (
 		// Assert
 		var sFlexBasis = this.oDynamicPageTitle.$("content").css("flex-basis");
 		assert.equal(sFlexBasis, "auto", "No flex-basis set");
+	});
+
+	QUnit.test("Adding an OverflowToolbar to the content with NeverOverflow priority sets min-width", function (assert) {
+		// Arrange
+		var oLabel = oFactory.getLabel(""),
+			oButton = oFactory.getAction().setLayoutData(new OverflowToolbarLayoutData({
+				priority: "NeverOverflow"
+			})),
+			sOrigMinWidth = this.oDynamicPageTitle.$("mainActions").css("min-width");
+
+		// Act
+		this.oDynamicPageTitle.addAction(oLabel);
+		this.oDynamicPageTitle.addAction(oButton);
+		Core.applyChanges();
+		this.clock.tick(1000);
+
+		// Assert
+		var sMinWidth = this.oDynamicPageTitle.$("mainActions").css("min-width");
+		assert.notEqual(sMinWidth, sOrigMinWidth, "Adding an OverflowToolbar's content with NeverOverflow sets min-width");
 	});
 
 	QUnit.test("Actions toolbar is extended when its label content extends", function (assert) {
