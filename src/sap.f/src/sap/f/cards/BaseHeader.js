@@ -66,7 +66,7 @@ sap.ui.define([
 				dataTimestampUpdating: { type: "boolean", defaultValue: false, visibility: "hidden" },
 
 				/**
-				 * Set to true to false if header shouldn't be focusable.
+				 * Set to false if header shouldn't be focusable.
 				 * @private
 				 */
 				focusable: { type: "boolean", defaultValue: true, visibility: "hidden" }

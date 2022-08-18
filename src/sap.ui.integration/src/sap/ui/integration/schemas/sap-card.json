@@ -41,7 +41,8 @@
         "1.28.0",
         "1.29.0",
         "1.30.0",
-        "1.31.0"
+        "1.31.0",
+        "1.32.0"
       ]
     },
     "designtime": {
@@ -446,6 +447,18 @@
         "status": {
           "description": "Represents the status of the card",
           "$ref": "#/definitions/status"
+        },
+        "visible": {
+          "description": "[Experimental] Visibility of the header",
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": true
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },
@@ -556,6 +569,18 @@
         "status": {
           "description": "Represents the status of the card",
           "$ref": "#/definitions/status"
+        },
+        "visible": {
+          "description": "[Experimental] Visibility of the header",
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": true
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },

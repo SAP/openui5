@@ -53,7 +53,8 @@
 			"subTitle": "Card Sub Title",
 			"icon": {
 				"src": "{{parameters.headericon}}"
-			}
+			},
+			"visible": true
 		},
 		"content": {
 			"data": {

@@ -1580,6 +1580,65 @@ sap.ui.define([
 			this.oCard.setManifest(oManifest);
 		});
 
+		QUnit.test("hidden header", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.hiddenHeader"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"visible": false,
+						"title": "Card title"
+					}
+				}
+			});
+		});
+
+		QUnit.test("hidden header with binding", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.hiddenHeader"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": {
+							"headerVisible": false
+						}
+					},
+					"header": {
+						"visible": "{/headerVisible}",
+						"title": "Card title"
+					}
+				}
+			});
+		});
+
 		QUnit.module("Numeric Header", {
 			beforeEach: function () {
 				this.oCard = new Card("somecard", {
@@ -1762,6 +1821,67 @@ sap.ui.define([
 			this.oCard.setManifest(oManifest_NumericHeader_OnlyTitleAndSubtitle);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
+		});
+
+		QUnit.test("hidden header", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.hiddenHeader"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"type": "Numeric",
+						"visible": false,
+						"title": "Card title"
+					}
+				}
+			});
+		});
+
+		QUnit.test("hidden header with binding", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.notOk(this.oCard.getCardHeader().getVisible(), "Card Header is hidden.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.hiddenHeader"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": {
+							"headerVisible": false
+						}
+					},
+					"header": {
+						"type": "Numeric",
+						"visible": "{/headerVisible}",
+						"title": "Card title"
+					}
+				}
+			});
 		});
 
 		QUnit.module("Card Accessibility", {

@@ -9,7 +9,7 @@ describe("sap.ui.integration.CardHeadersVisualTests", function () {
 
 	it("Default Header", function () {
 		utils.navigateTo("Default Header");
-		var aCardIds = ["card1", "card2", "card3", "card4", "defaultDataTimestamp"];
+		var aCardIds = ["card1", "card2", "card3", "card4", "defaultDataTimestamp", "hiddenHeader"];
 
 		aCardIds.forEach(function (sId) {
 			utils.takePictureOfElement({
@@ -27,7 +27,7 @@ describe("sap.ui.integration.CardHeadersVisualTests", function () {
 
 	it("Numeric Header", function () {
 		utils.navigateTo("Numeric Header");
-		var aCardIds = ["fcard1", "fcard2", "kpicard1", "kpicard2", "kpicard3", "kpicard4", "kpicard5", "tablecard1", "tablecard123", "unitOfMeasurementOnly"];
+		var aCardIds = ["fcard1", "fcard2", "kpicard1", "kpicard2", "kpicard3", "kpicard4", "kpicard5", "tablecard1", "tablecard123", "unitOfMeasurementOnly", "hiddenHeader"];
 
 		aCardIds.forEach(function (sId) {
 			utils.takePictureOfElement({
