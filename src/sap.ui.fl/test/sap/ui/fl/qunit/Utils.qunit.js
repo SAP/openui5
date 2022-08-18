@@ -327,7 +327,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getAppDescriptorComponentObjectForControl calls getAppComponentForControl and returns a modified object", function(assert) {
-			var oComponent = new sap.ui.core.UIComponent();
+			var oComponent = new UIComponent();
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			var oAppDescriptorComponent = Utils.getAppDescriptorComponentObjectForControl(oComponent);

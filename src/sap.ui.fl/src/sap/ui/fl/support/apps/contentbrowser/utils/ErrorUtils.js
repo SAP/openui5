@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/m/MessagePopoverItem",
-	"sap/m/MessagePopover"],
-function (MessagePopoverItem, MessagePopover) {
+	"sap/m/MessagePopover",
+	"sap/ui/model/json/JSONModel"],
+function (MessagePopoverItem, MessagePopover, JSONModel) {
 	"use strict";
 
 	/**
@@ -21,7 +22,7 @@ function (MessagePopoverItem, MessagePopover) {
 
 	ErrorUtils._masterComponent = undefined;
 	ErrorUtils._messagesModel = undefined;
-	ErrorUtils._emptyModel = new sap.ui.model.json.JSONModel([]);
+	ErrorUtils._emptyModel = new JSONModel([]);
 
 	ErrorUtils._messageTemplate = new MessagePopoverItem({
 		type: "{messages>type}",

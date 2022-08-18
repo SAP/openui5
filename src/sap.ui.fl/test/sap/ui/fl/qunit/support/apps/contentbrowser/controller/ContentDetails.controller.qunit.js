@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/routing/Router",
 	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/m/Dialog"
+	"sap/m/Dialog",
+	"sap/ui/model/json/JSONModel"
 ], function(
 	ContentDetails,
 	LRepConnector,
@@ -17,7 +18,8 @@ sap.ui.define([
 	Router,
 	DataUtils,
 	sinon,
-	Dialog
+	Dialog,
+	JSONModel
 ) {
 	"use strict";
 
@@ -37,7 +39,7 @@ sap.ui.define([
 			var sNamespace = "hi/there/";
 			var sFileName = "helloWorld";
 			var sFileType = "json";
-			var oSelectedContentModel = new sap.ui.model.json.JSONModel();
+			var oSelectedContentModel = new JSONModel();
 			oController.oSelectedContentModel = oSelectedContentModel;
 
 			sandbox.stub(oController, "getView").returns({

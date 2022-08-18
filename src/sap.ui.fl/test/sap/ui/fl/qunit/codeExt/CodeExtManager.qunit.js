@@ -1,6 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/fl/codeExt/CodeExtManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Utils",
@@ -8,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	Core,
 	CodeExtManager,
 	Storage,
 	Utils,
@@ -228,7 +230,7 @@ sap.ui.define([
 						generator: "Change.createInitialFileContent",
 						service: "",
 						user: "",
-						sapui5Version: sap.ui.version,
+						sapui5Version: Core.getConfiguration().getVersion().toString(),
 						compositeCommand: "",
 						sourceChangeFileName: ""
 					},
@@ -261,7 +263,7 @@ sap.ui.define([
 						generator: "Change.createInitialFileContent",
 						service: "",
 						user: "",
-						sapui5Version: sap.ui.version,
+						sapui5Version: Core.getConfiguration().getVersion().toString(),
 						compositeCommand: "",
 						sourceChangeFileName: ""
 					},

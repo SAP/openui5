@@ -77,7 +77,7 @@ sap.ui.define([
 							generator: "Change.createInitialFileContent",
 							service: "",
 							user: "",
-							sapui5Version: sap.ui.version
+							sapui5Version: oCore.getConfiguration().getVersion().toString()
 						},
 						dependentSelector: {}
 					}],

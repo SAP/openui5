@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/strings/formatMessage",
+	"sap/base/util/ObjectPath",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/uid",
 	"sap/base/util/UriParameters",
@@ -14,9 +15,10 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/Scenario",
 	"sap/ui/thirdparty/hasher",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/core/mvc/View"
 ], function(
 	formatMessage,
+	ObjectPath,
 	isPlainObject,
 	uid,
 	UriParameters,
@@ -27,7 +29,7 @@ sap.ui.define([
 	Component,
 	Scenario,
 	hasher,
-	jQuery
+	View
 ) {
 	"use strict";
 
@@ -344,7 +346,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl
 		 */
 		getViewForControl: function(oControl) {
-			return Utils.getFirstAncestorOfControlWithControlType(oControl, sap.ui.core.mvc.View);
+			return Utils.getFirstAncestorOfControlWithControlType(oControl, View);
 		},
 
 		getFirstAncestorOfControlWithControlType: function(oControl, controlType) {
@@ -484,11 +486,9 @@ sap.ui.define([
 		asciiToString: function(ascii) {
 			var asciiArray = ascii.split(",");
 			var parsedString = "";
-
-			jQuery.each(asciiArray, function(index, asciiChar) {
-				parsedString += String.fromCharCode(asciiChar);
-			});
-
+			for (var i = 0; i < asciiArray.length; i++) {
+				parsedString += String.fromCharCode(asciiArray[i]);
+			}
 			return parsedString;
 		},
 
@@ -567,7 +567,8 @@ sap.ui.define([
 		 * @returns {object|undefined} Returns UShell container object if available or undefined
 		 */
 		getUshellContainer: function() {
-			return sap.ushell && sap.ushell.Container;
+			// TODO wait until  FLP does offer anything
+			return ObjectPath.get("sap.ushell.Container");
 		},
 
 		createDefaultFileName: function(sNameAddition) {

@@ -2,8 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function(FlexRuntimeInfoAPI) {
+sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/ui/core/library"], function(FlexRuntimeInfoAPI, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
 	return {
 		formatStatusState: function (aChanges, aControlIds) {
 			var bParameterMissing = !aChanges || aControlIds.some(
@@ -12,11 +16,11 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function(FlexRuntimeIn
 				});
 
 			if (bParameterMissing) {
-				return sap.ui.core.ValueState.None;
+				return ValueState.None;
 			}
 
 			return FlexRuntimeInfoAPI.isPersonalized({selectors: aControlIds}).then(function (bIsPersonalized) {
-				return bIsPersonalized ? sap.ui.core.ValueState.Success : sap.ui.core.ValueState.Error;
+				return bIsPersonalized ? ValueState.Success : ValueState.Error;
 			});
 		},
 

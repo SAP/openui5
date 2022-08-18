@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/MessageToast",
 	"sap/ui/core/ListItem",
-	"sap/ui/fl/write/_internal/transport/Transports"
+	"sap/ui/fl/write/_internal/transport/Transports",
+	"sap/ui/core/library"
 ], function(
 	List,
 	InputListItem,
@@ -22,9 +23,13 @@ sap.ui.define([
 	Input,
 	MessageToast,
 	ListItem,
-	Transports
+	Transports,
+	coreLibrary
 ) {
 	"use strict";
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	/**
 	 * Constructor for a new transport/TransportDialog.
@@ -206,7 +211,7 @@ sap.ui.define([
 			this.destroy();
 		} else {
 			this.getButtons()[1].setEnabled(false);
-			this._oTransport.setValueState(sap.ui.core.ValueState.Error);
+			this._oTransport.setValueState(ValueState.Error);
 			this._oTransport.setValueStateText(this.getTitle());
 		}
 	};
@@ -248,7 +253,7 @@ sap.ui.define([
 				}
 
 				that.getButtons()[1].setEnabled(true);
-				that._oTransport.setValueState(sap.ui.core.ValueState.None);
+				that._oTransport.setValueState(ValueState.None);
 			},
 			change: function(oEvent) {
 				var fCheck = function(oItem) {
@@ -262,7 +267,7 @@ sap.ui.define([
 				if (oEvent && oEvent.mParameters && oEvent.mParameters.newValue) {
 					if (fCheck(that._oTransport.getSelectedItem())) {
 						that.getButtons()[1].setEnabled(false);
-						that._oTransport.setValueState(sap.ui.core.ValueState.Error);
+						that._oTransport.setValueState(ValueState.Error);
 						that._oTransport.setValueStateText(that._oResources.getText("TRANSPORT_DIALOG_TRANSPORT_TT"));
 					}
 				}
@@ -349,7 +354,7 @@ sap.ui.define([
 				this._setTransports(oTransports);
 			} else if (oTransports.errorCode) {
 				this.getButtons()[1].setEnabled(false);
-				this._oPackage.setValueState(sap.ui.core.ValueState.Error);
+				this._oPackage.setValueState(ValueState.Error);
 				this._oPackage.setValueStateText(this._oResources.getText("TRANSPORT_DIALOG_" + oTransports.errorCode));
 				this._setTransports(oTransports);
 			} else {
@@ -389,7 +394,7 @@ sap.ui.define([
 		//clear the transport combo-box, if necessary.
 		if (!aTransports || aTransports.length === 0) {
 			this._oTransport.setSelectedKey(null);
-			this._oTransport.setValueState(sap.ui.core.ValueState.None);
+			this._oTransport.setValueState(ValueState.None);
 			this.getButtons()[1].setEnabled(false);
 		}
 	};

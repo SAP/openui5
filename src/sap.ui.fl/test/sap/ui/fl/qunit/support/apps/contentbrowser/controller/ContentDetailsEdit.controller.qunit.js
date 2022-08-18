@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/routing/Router",
 	"sap/ui/core/UIComponent",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/m/Dialog"
+	"sap/m/Dialog",
+	"sap/ui/model/json/JSONModel"
 ], function(
 	ContentDetailsEdit,
 	LRepConnector,
@@ -17,7 +18,8 @@ sap.ui.define([
 	Router,
 	UIComponent,
 	sinon,
-	Dialog
+	Dialog,
+	JSONModel
 ) {
 	"use strict";
 
@@ -51,7 +53,7 @@ sap.ui.define([
 					};
 				}
 			};
-			var oSelectedContentModel = new sap.ui.model.json.JSONModel();
+			var oSelectedContentModel = new JSONModel();
 			oController.oSelectedContentModel = oSelectedContentModel;
 
 			sandbox.stub(oController, "getView").returns({

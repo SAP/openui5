@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 	return UIComponent.extend("testComponentAsync.Component", {
 		init: function() {
-			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+			UIComponent.prototype.init.apply(this, arguments);
 		},
 
 		createContent: function() {

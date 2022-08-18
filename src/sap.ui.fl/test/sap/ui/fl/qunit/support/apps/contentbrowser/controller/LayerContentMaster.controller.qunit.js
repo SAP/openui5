@@ -5,13 +5,15 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/routing/Router",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/model/json/JSONModel"
 ], function(
 	LayerContentMaster,
 	Layer,
 	UIComponent,
 	Router,
-	sinon
+	sinon,
+	JSONModel
 ) {
 	"use strict";
 
@@ -54,7 +56,7 @@ sap.ui.define([
 
 		QUnit.test("navigates into a folder", function(assert) {
 			var sLayer = Layer.USER;
-			var oModel = new sap.ui.model.json.JSONModel([
+			var oModel = new JSONModel([
 				{
 					name: "someFile",
 					filetype: "json"
@@ -93,7 +95,7 @@ sap.ui.define([
 
 		QUnit.test("navigates to the details of a file", function(assert) {
 			var sLayer = Layer.USER;
-			var oModel = new sap.ui.model.json.JSONModel([
+			var oModel = new JSONModel([
 				{
 					name: "someFile",
 					fileType: "json"

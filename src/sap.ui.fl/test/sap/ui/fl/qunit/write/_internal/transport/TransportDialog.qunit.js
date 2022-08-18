@@ -3,15 +3,20 @@
 sap.ui.define([
 	"sap/ui/fl/write/_internal/transport/TransportDialog",
 	"sap/ui/fl/write/_internal/transport/Transports",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/core/library"
 ], function(
 	TransportDialog,
 	Transports,
-	sinon
+	sinon,
+	coreLibrary
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	QUnit.module("sap.ui.fl.write._internal.transport.TransportDialog", {
 		beforeEach: function () {
@@ -115,7 +120,7 @@ sap.ui.define([
 				transports: []
 			});
 			assert.equal(this.oDialog.getButtons()[1].getEnabled(), false);
-			assert.equal(this.oDialog._oPackage.getValueState(), sap.ui.core.ValueState.Error);
+			assert.equal(this.oDialog._oPackage.getValueState(), ValueState.Error);
 		});
 
 		QUnit.test("okay callback not invoked", function (assert) {

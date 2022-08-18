@@ -94,7 +94,7 @@ sap.ui.define([
 
 		QUnit.test("When a component id is provided and one code extension with two methods is present", function(assert) {
 			var sModuleName = "sap/ui/fl/qunit/ControllerExtension/1.0.0/codeExtensions/firstCodeExt";
-			sap.ui.predefine(sModuleName, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) {
+			sap.ui.predefine(sModuleName, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) { // legacy-relevant: simulates a loaded code extension. no option to replace this regarding legacy free coding
 				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension1", {
 					extHookOnInit: function() {},
 					onInit: function() {}
@@ -185,7 +185,7 @@ sap.ui.define([
 					controllerName: "sap.ui.fl.ControllerExtension.testResources.view1"
 				}
 			});
-			sap.ui.predefine(sModuleName1, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) {
+			sap.ui.predefine(sModuleName1, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) { // legacy-relevant: simulates a loaded code extension. no option to replace this regarding legacy free coding
 				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension2", {
 					override: {
 						onInit: function () {
@@ -207,7 +207,7 @@ sap.ui.define([
 					controllerName: "sap.ui.fl.ControllerExtension.testResources.view2"
 				}
 			});
-			sap.ui.predefine(sModuleName2, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) {
+			sap.ui.predefine(sModuleName2, ["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) { // legacy-relevant: simulates a loaded code extension. no option to replace this regarding legacy free coding
 				return ControllerExtension.extend("ui.s2p.mm.purchorder.approve.Extension3", {
 					override: {
 						onInit: function () {

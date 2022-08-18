@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/base/Object"], function(BaseObject) {
 	"use strict";
 	/**
 	 * Is property of complex type.
@@ -86,7 +86,7 @@ sap.ui.define([], function() {
 		var sFieldControlPath = mFieldControlAnnotation && mFieldControlAnnotation.Path;
 		if (sFieldControlPath && !mProp.hideFromReveal) {
 			// if the binding is a list binding, skip the check for field control
-			var bListBinding = oElement.getBinding(sAggregationName) instanceof sap.ui.model.ListBinding;
+			var bListBinding = BaseObject.isA(oElement.getBinding(sAggregationName), "sap/ui/model/ListBinding");
 			if (!bListBinding) {
 				var iFieldControlValue = oElement.getBindingContext().getProperty(sFieldControlPath);
 				mProp.hideFromReveal = iFieldControlValue === 0;
