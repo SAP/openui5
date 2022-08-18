@@ -379,6 +379,13 @@ sap.ui.define([
 			Then.onTheMainPage.checkMessagesButtonCount(4);
 			Then.onTheMainPage.checkSalesOrderLineItemGrossAmount(8, "1,137.64");
 			When.onTheMainPage.pressCancelSalesOrderChangesButton();
+
+			When.onTheMainPage.deleteSelectedSalesOrder();
+			Then.onTheMainPage.checkMessagesButtonCount(2);
+			When.onTheMainPage.pressCancelSalesOrderListChangesButton();
+			Then.onTheMainPage.checkMessagesButtonCount(4);
+			When.onTheMainPage.selectSalesOrder(6);
+
 			Then.onTheMainPage.checkTableLength(8, "SO_2_SOITEM");
 			When.onTheMainPage.changeNoteInLineItem(0, "EPM DG: SO ID 0500000006 Item 0000000010");
 			When.onTheMainPage.changeQuantityInLineItem(0, "2");

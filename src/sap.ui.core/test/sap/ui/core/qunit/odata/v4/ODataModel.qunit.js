@@ -420,6 +420,8 @@ sap.ui.define([
 			oExpectedBind6,
 			oExpectedBind7,
 			oExpectedBind8,
+			oExpectedBind9,
+			oExpectedBind10,
 			oExpectedCreate = this.mock(_Requestor).expects("create"),
 			oModel,
 			oModelInterface,
@@ -434,10 +436,12 @@ sap.ui.define([
 			.withExactArgs(sServiceUrl, {
 					fetchEntityContainer : "~fnFetchEntityContainer~",
 					fetchMetadata : "~fnFetchMetadata~",
+					fireMessageChange : "~fnFireMessageChange~",
 					fireDataReceived : "~fnFireDataReceived~",
 					fireDataRequested : "~fnFireDataRequested~",
 					fireSessionTimeout : sinon.match.func,
 					getGroupProperty : "~fnGetGroupProperty~",
+					getMessagesByPath : "~fnGetMessagesByPath~",
 					getOptimisticBatchEnabler : "~fnGetOptimisticBatchEnabler~",
 					getReporter : "~fnGetReporter~",
 					onCreateGroup : sinon.match.func,
@@ -454,19 +458,23 @@ sap.ui.define([
 			.returns("~fnFetchEntityContainer~");
 		oExpectedBind1 = this.mock(ODataMetaModel.prototype.fetchObject).expects("bind")
 			.returns("~fnFetchMetadata~");
-		oExpectedBind2 = this.mock(ODataModel.prototype.fireDataReceived).expects("bind")
+		oExpectedBind2 = this.mock(ODataMetaModel.prototype.fireMessageChange).expects("bind")
+			.returns("~fnFireMessageChange~");
+		oExpectedBind3 = this.mock(ODataModel.prototype.fireDataReceived).expects("bind")
 			.returns("~fnFireDataReceived~");
-		oExpectedBind3 = this.mock(ODataModel.prototype.fireDataRequested).expects("bind")
+		oExpectedBind4 = this.mock(ODataModel.prototype.fireDataRequested).expects("bind")
 			.returns("~fnFireDataRequested~");
-		oExpectedBind4 = this.mock(ODataModel.prototype.getGroupProperty).expects("bind")
+		oExpectedBind5 = this.mock(ODataModel.prototype.getGroupProperty).expects("bind")
 			.returns("~fnGetGroupProperty~");
-		oExpectedBind5 = this.mock(ODataModel.prototype.getOptimisticBatchEnabler).expects("bind")
+		oExpectedBind6 = this.mock(ODataModel.prototype.getMessagesByPath).expects("bind")
+			.returns("~fnGetMessagesByPath~");
+		oExpectedBind7 = this.mock(ODataModel.prototype.getOptimisticBatchEnabler).expects("bind")
 			.returns("~fnGetOptimisticBatchEnabler~");
-		oExpectedBind6 = this.mock(ODataModel.prototype.getReporter).expects("bind")
+		oExpectedBind8 = this.mock(ODataModel.prototype.getReporter).expects("bind")
 			.returns("~fnGetReporter~");
-		oExpectedBind7 = this.mock(ODataModel.prototype.reportTransitionMessages).expects("bind")
+		oExpectedBind9 = this.mock(ODataModel.prototype.reportTransitionMessages).expects("bind")
 			.returns("~fnReportTransitionMessages~");
-		oExpectedBind8 = this.mock(ODataModel.prototype.reportStateMessages).expects("bind")
+		oExpectedBind10 = this.mock(ODataModel.prototype.reportStateMessages).expects("bind")
 			.returns("~fnReportStateMessages~");
 
 		// code under test
@@ -483,6 +491,8 @@ sap.ui.define([
 		assert.strictEqual(oExpectedBind6.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind7.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind8.firstCall.args[0], oModel);
+		assert.strictEqual(oExpectedBind9.firstCall.args[0], oModel);
+		assert.strictEqual(oExpectedBind10.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedCreate.firstCall.args[1], oModel.oInterface);
 
 		this.mock(oModel._submitBatch).expects("bind")

@@ -64,6 +64,8 @@ sap.ui.define([
 					},
 					fireDataReceived : function () {},
 					fireDataRequested : function () {},
+					fireMessageChange : function () {},
+					getMessagesByPath : function () { return []; },
 					reportStateMessages : function () {}
 				};
 
@@ -353,7 +355,7 @@ sap.ui.define([
 	{bCreated : false, oEntity : undefined, iStatus : 404, sPath : ""},
 	{bCreated : false, oEntity : undefined, iStatus : 500, sPath : ""},
 	{bCreated : true, oEntity : undefined, iStatus : 500, sPath : "EMPLOYEE_2_EQUIPMENTS"},
-	{bCreated : true, oEntity : undefined, iStatus : 500, sPath : ""},
+	{bCreated : true, oEntity : undefined, iStatus : 500, sPath : "", bMessagesToRestore : true},
 	{bCreated : false, oEntity : {"@odata.etag" : "AnotherETag"}, iStatus : 200, sPath : ""}
 ].forEach(function (oFixture) {
 	QUnit.test("_Cache#_delete: from collection, status: " + oFixture.iStatus
@@ -376,15 +378,25 @@ sap.ui.define([
 			oError = new Error(""),
 			oGroupLock = new _GroupLock("group", "owner", true),
 			oGroupLockCopy = {},
+			oHelperMock = this.mock(_Helper),
+			oMessage1 = {},
+			oMessage2 = {persistent : true},
+			aMessages = [oMessage1, oMessage2],
+			aMessagesFiltered = oFixture.bMessagesToRestore ? [oMessage1] : undefined,
 			sPath = oFixture.sPath,
 			oPromise,
 			oRequestPromise = Promise.resolve().then(function () {
 				var iOnFailure = oFixture.iStatus === 500 ? 1 : 0;
 
-				that.oModelInterfaceMock.expects("reportStateMessages").exactly(1 - iOnFailure)
-					.withExactArgs(oCache.sResourcePath, {}, [sPath + "('1')"]);
+				oHelperMock.expects("getPrivateAnnotation").exactly(iOnFailure)
+					.withExactArgs(aCacheData[1], "messages").returns(aMessagesFiltered);
+				that.oModelInterfaceMock.expects("fireMessageChange")
+					.exactly(oFixture.bMessagesToRestore ? 1 : 0)
+					.withExactArgs({newMessages : aMessagesFiltered});
+				oHelperMock.expects("deletePrivateAnnotation")
+					.withExactArgs(aCacheData[1], "messages");
 				aCacheData.$count = 2; // ensure that count is updated
-				that.mock(_Helper).expects("updateExisting").exactly(iOnFailure)
+				oHelperMock.expects("updateExisting").exactly(iOnFailure)
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath,
 						sinon.match.same(aCacheData), {$count : 3});
 				aCacheData.$created = 1;
@@ -414,6 +426,19 @@ sap.ui.define([
 			.withExactArgs(oFixture.bCreated ? "-1" : "0", sinon.match.same(aCacheData))
 			.returns(1);
 		oError.status = oFixture.iStatus;
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(aCacheData[1], "predicate").callThrough();
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(aCacheData[1], "transient").callThrough();
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(aCacheData[1], "transientPredicate").callThrough();
+		that.oModelInterfaceMock.expects("getMessagesByPath")
+			.withExactArgs("/" + oCache.sResourcePath + (sPath ? "/" + sPath : "") + "('1')", true)
+			.returns(aMessages);
+		oHelperMock.expects("setPrivateAnnotation")
+			.withExactArgs(aCacheData[1], "messages", [oMessage1]);
+		that.oModelInterfaceMock.expects("reportStateMessages")
+			.withExactArgs(oCache.sResourcePath, {}, [sPath + "('1')"]);
 		this.mock(oCache).expects("addDeleted")
 			.withExactArgs(sinon.match.same(aCacheData), 1, "('1')", sinon.match.same(oGroupLock),
 				oFixture.bCreated)
@@ -518,8 +543,8 @@ sap.ui.define([
 			},
 			oGroupLock = bLock ? new _GroupLock("group", "owner", true) : null,
 			oGroupLockCount = {},
-			oUpdateData = {},
-			that = this;
+			sPath = "Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM",
+			oUpdateData = {};
 
 		oCache.fetchValue = function () {};
 		this.mock(oCache).expects("fetchValue")
@@ -531,19 +556,17 @@ sap.ui.define([
 			this.oRequestorMock.expects("request")
 				.withExactArgs("DELETE", "TEAMS('23')", "~oGroupLockCopy~", {
 						"If-Match" : sinon.match.same(oCacheData["EMPLOYEE_2_TEAM"])
-					}, undefined, undefined, sinon.match.func, undefined,
-					"Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM")
-				.returns(Promise.resolve().then(function () {
-					that.oModelInterfaceMock.expects("reportStateMessages")
-						.withExactArgs(oCache.sResourcePath, {},
-							["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"]);
-				}));
+					}, undefined, undefined, sinon.match.func, undefined, sPath)
+				.returns(Promise.resolve());
 			oGroupLockCount = oGroupLock;
 		} else {
 			this.oRequestorMock.expects("request").never();
 			this.oRequestorMock.expects("lockGroup")
 				.withExactArgs("$auto", sinon.match.same(oCache))
 				.returns(oGroupLockCount);
+			this.oModelInterfaceMock.expects("getMessagesByPath")
+				.withExactArgs("/" + sPath, true)
+				.returns([]);
 			this.oModelInterfaceMock.expects("reportStateMessages")
 				.withExactArgs(oCache.sResourcePath, {}, ["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"]);
 		}
@@ -571,8 +594,7 @@ sap.ui.define([
 			fnCallback = this.spy(),
 			bDeleted = false,
 			oGroupLock = new _GroupLock("group", "owner", true),
-			oGroupLockCopy = {},
-			that = this;
+			oGroupLockCopy = {};
 
 		aCacheData.$byPredicate = {
 			"('1')" : {
@@ -585,14 +607,14 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
 			.returns(SyncPromise.resolve(aCacheData));
+		this.oModelInterfaceMock.expects("reportStateMessages")
+			.withExactArgs(oCache.sResourcePath, {}, ["('1')"]);
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy);
 		this.oRequestorMock.expects("request")
 			.withExactArgs("DELETE", "EMPLOYEES('1')", sinon.match.same(oGroupLockCopy), {
 					"If-Match" : "etag"
 				}, undefined, undefined, sinon.match.func, undefined, "EMPLOYEES('1')")
 			.returns(Promise.resolve().then(function () {
-				that.oModelInterfaceMock.expects("reportStateMessages")
-					.withExactArgs(oCache.sResourcePath, {}, ["('1')"]);
 				bDeleted = true;
 			}));
 		this.mock(oCache).expects("requestCount").exactly(bDoNotRequestCount ? 0 : 1)
@@ -8974,6 +8996,7 @@ sap.ui.define([
 		// real requestor to avoid reimplementing callback handling of _Requestor.request
 		var oRequestor = _Requestor.create("/~/", {
 				getGroupProperty : defaultGetGroupProperty,
+				getMessagesByPath : function () { return []; },
 				reportStateMessages : function () {},
 				onCreateGroup : function () {}
 			}),
@@ -9026,15 +9049,14 @@ sap.ui.define([
 				},
 				oDeleteGroupLockCopy;
 
+			that.mock(oRequestor.oModelInterface).expects("reportStateMessages")
+				.withExactArgs(oCache.sResourcePath, {}, ["('4711')"]);
 			that.mock(oDeleteGroupLock).expects("getUnlockedCopy").returns(oDeleteGroupLockCopy);
 			that.mock(oRequestor).expects("request")
 				.withExactArgs("DELETE", sEditUrl, sinon.match.same(oDeleteGroupLockCopy),
 					{"If-Match" : sinon.match.same(oCacheData)},
 					undefined, undefined, sinon.match.func, undefined, "Employees('4711')")
-				.returns(Promise.resolve().then(function () {
-					that.mock(oRequestor.oModelInterface).expects("reportStateMessages")
-						.withExactArgs(oCache.sResourcePath, {}, ["('4711')"]);
-				}));
+				.returns(Promise.resolve());
 
 			// code under test
 			return oCache._delete(oDeleteGroupLock, sEditUrl, /*TODO sTransientPredicate*/"-1",
@@ -10662,6 +10684,8 @@ sap.ui.define([
 				oDeleteGroupLock = oFixture.lock ? new _GroupLock("group", "owner", true) : null;
 
 			if (oFixture.lock) {
+				that.oModelInterfaceMock.expects("reportStateMessages")
+					.withExactArgs(oCache.sResourcePath, {}, [""]);
 				that.mock(oDeleteGroupLock).expects("getUnlockedCopy").withExactArgs()
 					.returns("~oDeleteGroupLockCopy~");
 				that.oRequestorMock.expects("request")
@@ -10669,9 +10693,6 @@ sap.ui.define([
 						{"If-Match" : sinon.match.same(oEntity)},
 						undefined, undefined, sinon.match.func, undefined, "Employees('42')")
 					.returns(Promise.resolve().then(function () {
-						that.oModelInterfaceMock.expects("reportStateMessages")
-							.exactly(oFixture.success ? 1 : 0)
-							.withExactArgs(oCache.sResourcePath, {}, [""]);
 						if (!oFixture.success) {
 							throw "~oError~";
 						}

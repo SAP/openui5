@@ -17072,9 +17072,12 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	// Scenario: Deferred deletion of a bound context with a dependent list
+	// Scenario: Deferred deletion of a bound context with a dependent list, corresponding messages,
+	// are also deleted and restored if the delete is canceled. A persistent message is not
+	// affected.
 	// JIRA: CPOUI5ODATAV4-1629
 	// JIRA: CPOUI5ODATAV4-1670: Use "If-Match: *" if a PATCH is in the same changeset
+	// JIRA: CPOUI5ODATAV4-1637
 [
 	{desc : "submit"},
 	{desc : "reset via model", resetViaModel : true},
@@ -17083,15 +17086,20 @@ sap.ui.define([
 	QUnit.test("CPOUI5ODATAV4-1629: ODCB: deferred delete, " + oFixture.desc, function (assert) {
 		var oBinding,
 			oContext,
+			oListBinding,
 			oModel = this.createSalesOrdersModel({updateGroupId : "update"}),
-			oPromise,
 			bReset = oFixture.resetViaModel || oFixture.resetViaBinding,
+			oPromise,
+			oRowContext,
+			oUpdatePromise,
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}"/>\
 	<Input id="note" value="{Note}"/>\
-	<Table items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
+	<Table id="table" items="{path : \'SO_2_SOITEM\',\
+			parameters : {$select : \'Messages\', $$ownRequest : true}}">\
 		<Text id="pos" text="{ItemPosition}"/>\
+		<Input id="quantity" value="{Quantity}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
@@ -17101,17 +17109,98 @@ sap.ui.define([
 				Note : "Note",
 				SalesOrderID : "1"
 			})
-			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$skip=0&$top=100",
-				{value : [{ItemPosition : "0010", SalesOrderID : "1"}]})
+			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$select=Messages&$skip=0&$top=100",
+				{value : [{
+					ItemPosition : "0010",
+					SalesOrderID : "1",
+					Quantity : "1",
+					QuantityUnit : "DZ",
+					Messages : [{
+						code : "code 1",
+						message : "Enter a minimum quantity of 2",
+						numericSeverity : 3,
+						target : "Quantity"
+					}]
+				}]})
 			.expectChange("id", "1")
 			.expectChange("note", "Note")
-			.expectChange("pos", ["0010"]);
+			.expectChange("pos", ["0010"])
+			.expectChange("quantity", ["1.000"])
+			.expectMessages([{
+				code : "code 1",
+				message : "Enter a minimum quantity of 2",
+				targets : [
+					"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
+						+ "/Quantity"
+				],
+				type : "Warning"
+			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oListBinding = that.oView.byId("table").getBinding("items");
+			oRowContext = oListBinding.getCurrentContexts()[0];
+
+			that.expectChange("quantity", ["3.000"]);
+
+			oUpdatePromise = oRowContext.setProperty("Quantity", "3", "update");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oError = createErrorInsideBatch({
+					code : "code 2",
+					message : "Only multiples of 2 are allowed",
+					target : "/SalesOrderList('1')"
+						+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')/Quantity"
+				});
+
+			that.oLogMock.expects("error"); // Details do not interest
+			that.expectRequest({
+				method : "PATCH",
+				payload : {Quantity : "3", QuantityUnit : "DZ"},
+				url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
+				}, oError)
+				.expectChange("quantity", ["1.000"])
+				.expectMessages([{
+					code : "code 2",
+					message : "Only multiples of 2 are allowed",
+					targets : [
+						"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
+							+ "/Quantity"
+					],
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}, {
+					code : "code 1",
+					message : "Enter a minimum quantity of 2",
+					targets : [
+						"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
+							+ "/Quantity"
+					],
+					type : "Warning"
+				}]);
+
+			return Promise.all([
+				oUpdatePromise.then(mustFail(assert), function () {}),
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
 			that.expectChange("note", "Note (changed)")
 				.expectChange("id", null)
 				.expectChange("note", null)
-				.expectChange("pos", []);
+				.expectChange("pos", [])
+				.expectMessages([{
+					code : "code 2",
+					message : "Only multiples of 2 are allowed",
+					targets : [
+						"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
+							+ "/Quantity"
+					],
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
 
 			oBinding = that.oView.byId("form").getObjectBinding();
 			oContext = oBinding.getBoundContext();
@@ -17132,7 +17221,27 @@ sap.ui.define([
 					"Request canceled: DELETE SalesOrderList('1'); group: update");
 				that.expectChange("id", "1")
 					.expectChange("note", "Note")
-					.expectChange("pos", ["0010"]);
+					.expectChange("pos", ["0010"])
+					.expectChange("quantity", ["1.000"])
+					.expectMessages([{
+						code : "code 1",
+						message : "Enter a minimum quantity of 2",
+						targets : [
+							"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
+								+ "/Quantity"
+						],
+						type : "Warning"
+					}, {
+						code : "code 2",
+						message : "Only multiples of 2 are allowed",
+						targets : [
+							"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
+								+ "/Quantity"
+						],
+						persistent : true,
+						technical : true,
+						type : "Error"
+					}]);
 			} else {
 				that.expectRequest({
 						headers : {"If-Match" : "etag"},

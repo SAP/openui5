@@ -335,12 +335,14 @@ sap.ui.define([
 		this.oInterface = {
 			fetchEntityContainer : this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
 			fetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
+			fireMessageChange : this.fireMessageChange.bind(this),
 			fireDataReceived : this.fireDataReceived.bind(this),
 			fireDataRequested : this.fireDataRequested.bind(this),
 			fireSessionTimeout : function () {
 				that.fireEvent("sessionTimeout");
 			},
 			getGroupProperty : this.getGroupProperty.bind(this),
+			getMessagesByPath : this.getMessagesByPath.bind(this),
 			getOptimisticBatchEnabler : this.getOptimisticBatchEnabler.bind(this),
 			getReporter : this.getReporter.bind(this),
 			onCreateGroup : function (sGroupId) {

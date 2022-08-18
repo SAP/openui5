@@ -2150,10 +2150,12 @@ sap.ui.define([
 	 *   An interface allowing to call back to the owning model
 	 * @param {function} oModelInterface.fetchEntityContainer
 	 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
-	 *   container is fully available, or rejected with an error.
+	 *   container is fully available, or rejected with an error
 	 * @param {function} oModelInterface.fetchMetadata
 	 *   A function that returns a SyncPromise which resolves with the metadata instance for a
 	 *   given meta path
+	 * @param {function} oModelInterface.fireMessageChange
+	 *   A function that fires the 'messageChange' event for the given messages
 	 * @param {function} oModelInterface.fireDataReceived
 	 *   A function that fires the 'dataReceived' event at the model with an optional parameter
 	 *   <code>oError</code>
@@ -2161,18 +2163,21 @@ sap.ui.define([
 	 *   A function that fires the 'dataRequested' event at the model
 	 * @param {function} oModelInterface.fireSessionTimeout
 	 *   A function that fires the 'sessionTimeout' event (when the server has created a session for
-	 *   the model and this session ran into a timeout due to inactivity).
+	 *   the model and this session ran into a timeout due to inactivity)
 	 * @param {function} oModelInterface.getGroupProperty
 	 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
 	 *   returning the property value in question. Only 'submit' is supported for <code>
-	 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
+	 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'
+	 * @param {function} oModelInterface.getMessagesByPath
+	 *   A function returning model messages for which the target matches the given resolved binding
+	 *   path
 	 * @param {function} oModelInterface.getOptimisticBatchEnabler
 	 *   A function that returns a callback function which controls the optimistic batch handling,
-	 *   see also {@link sap.ui.model.odata.v4.ODataModel#setOptimisticBatchEnabler}.
+	 *   see also {@link sap.ui.model.odata.v4.ODataModel#setOptimisticBatchEnabler}
 	 * @param {function} oModelInterface.getReporter
 	 *   A catch handler function expecting an <code>Error</code> instance. This function will call
 	 *   {@link sap.ui.model.odata.v4.ODataModel#reportError} if the error has not been reported
-	 *   yet.
+	 *   yet
 	 * @param {function} oModelInterface.onCreateGroup
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group

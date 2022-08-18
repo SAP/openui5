@@ -173,11 +173,13 @@ sap.ui.define([
 				oEntity = vDeleteProperty
 					? vCacheData[vCachePath] || vCacheData.$byPredicate[vCachePath]
 					: vCacheData, // deleting at root level
+				aMessages,
 				mHeaders,
 				iIndex = typeof vCachePath === "number" ? vCachePath : undefined,
 				sKeyPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
 				sEntityPath = _Helper.buildPath(sParentPath,
 					Array.isArray(vCacheData) ? sKeyPredicate : vDeleteProperty),
+				oModelInterface = that.oRequestor.getModelInterface(),
 				oRequestPromise,
 				sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient"),
 				sTransientPredicate = _Helper.getPrivateAnnotation(oEntity, "transientPredicate");
@@ -192,6 +194,19 @@ sap.ui.define([
 			if (oEntity["@$ui5.context.isDeleted"]) {
 				throw new Error("Must not delete twice: " + sEditUrl);
 			}
+
+			aMessages = oModelInterface.getMessagesByPath(
+				_Helper.buildPath("/", that.sResourcePath, sEntityPath), true);
+
+			if (aMessages.length) {
+				aMessages = aMessages.filter(function (oMessage) {
+					return !oMessage.persistent;
+				});
+				_Helper.setPrivateAnnotation(oEntity, "messages", aMessages);
+			}
+
+			oModelInterface.reportStateMessages(that.sResourcePath, {}, [sEntityPath]);
+
 			oEntity["@$ui5.context.isDeleted"] = true;
 			if (Array.isArray(vCacheData)) {
 				oDeleted = that.addDeleted(vCacheData, iIndex, sKeyPredicate, oGroupLock,
@@ -219,6 +234,7 @@ sap.ui.define([
 					&& that.requestCount(oGroupLock || that.oRequestor.lockGroup("$auto", that)),
 				oGroupLock && oGroupLock.unlock() // unlock when all requests have been queued
 			]).then(function () {
+				_Helper.deletePrivateAnnotation(oEntity, "messages");
 				if (Array.isArray(vCacheData)) {
 					vCacheData.$deleted.splice(vCacheData.$deleted.indexOf(oDeleted), 1);
 					delete vCacheData.$byPredicate[sKeyPredicate];
@@ -230,10 +246,14 @@ sap.ui.define([
 				} else { // deleting at root level
 					oEntity["$ui5.deleted"] = true;
 				}
-				that.oRequestor.getModelInterface().reportStateMessages(that.sResourcePath,
-					{}, [sEntityPath]);
 			}, function (oError) {
-				var iDeletedIndex;
+				var iDeletedIndex,
+					aMessages = _Helper.getPrivateAnnotation(oEntity, "messages");
+
+				if (aMessages) {
+					oModelInterface.fireMessageChange({newMessages : aMessages});
+				}
+				_Helper.deletePrivateAnnotation(oEntity, "messages");
 
 				delete oEntity["@$ui5.context.isDeleted"];
 				if (Array.isArray(vCacheData)) {
