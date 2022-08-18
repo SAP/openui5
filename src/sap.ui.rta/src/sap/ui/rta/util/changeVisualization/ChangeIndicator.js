@@ -205,7 +205,7 @@ sap.ui.define([
 		var sDetailButtonText = oDescription && oDescription.buttonText;
 		var sIconTooltip = oRtaResourceBundle.getText(
 			"TXT_CHANGEVISUALIZATION_OVERVIEW_"
-			+ sCommandName.toUpperCase()
+			+ mChangeInformation.changeCategory.toUpperCase()
 		);
 
 		return {

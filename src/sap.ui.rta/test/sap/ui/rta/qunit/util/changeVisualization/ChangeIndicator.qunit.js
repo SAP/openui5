@@ -154,7 +154,7 @@ sap.ui.define([
 						oRtaResourceBundle.getText(
 							"TXT_CHANGEVISUALIZATION_OVERVIEW_RENAME"
 						),
-						"then an icon tooltip is displayed"
+						"then the proper icon tooltip is displayed"
 					);
 					assert.notOk(
 						aItems[0].getCells()[1].getItems()[0].getTooltip(),
@@ -368,7 +368,7 @@ sap.ui.define([
 			this.oChangeIndicator.getModel().setData({
 				changes: [
 					createMockChange("someChangeId", this.oButton.getId(), "move", "move"),
-					createMockChange("someOtherChangeId", this.oButton.getId(), "rename", "rename")
+					createMockChange("someOtherChangeId", this.oButton.getId(), "addDelegateProperty", "add")
 				]
 			});
 			oCore.applyChanges();
@@ -399,6 +399,20 @@ sap.ui.define([
 					assert.notOk(
 						aItems[0].getCells()[1].getItems()[1].getVisible(),
 						"then the show details button is not visible when dependent selectors don't exist"
+					);
+					assert.strictEqual(
+						aItems[0].getCells()[0].getTooltip(),
+						oRtaResourceBundle.getText(
+							"TXT_CHANGEVISUALIZATION_OVERVIEW_ADD"
+						),
+						"then the proper icon tooltip is displayed for add"
+					);
+					assert.strictEqual(
+						aItems[1].getCells()[0].getTooltip(),
+						oRtaResourceBundle.getText(
+							"TXT_CHANGEVISUALIZATION_OVERVIEW_MOVE"
+						),
+						"then the proper icon tooltip is displayed for move"
 					);
 				}.bind(this));
 		});
