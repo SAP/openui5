@@ -24,6 +24,33 @@ sap.ui.define([
 	) {
 		"use strict";
 
+		var fnFake = function (oRequestConfig) {
+			return new Promise(function (resolve, reject) {
+				var oRequest = {
+					"mode": oRequestConfig.mode || "cors",
+					"url": "test-resources/sap/ui/integration/qunit/testResources/" + oRequestConfig.url,
+					"method": (oRequestConfig.method && oRequestConfig.method.toUpperCase()) || "GET",
+					"data": oRequestConfig.parameters,
+					"headers": oRequestConfig.headers,
+					"timeout": 15000,
+					"xhrFields": {
+						"withCredentials": !!oRequestConfig.withCredentials
+					}
+				};
+
+				if (oRequest.method === "GET") {
+					oRequest.dataType = "json";
+				}
+				jQuery.ajax(oRequest).done(function (oData) {
+					setTimeout(function () {
+						resolve(oData);
+					}, 150000000);
+				}).fail(function (jqXHR, sTextStatus, sError) {
+					reject(sError);
+				});
+			});
+		};
+
 		var CardArea = integrationLibrary.CardArea;
 
 		var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -710,6 +737,42 @@ sap.ui.define([
 								}
 							}
 						]
+					}
+				}
+			}
+		};
+
+		var Manifest_TimelineCard = {
+			"sap.app": {
+				"id": "test.card.loading.cardTimeline"
+			},
+			"sap.card": {
+				"type": "Timeline",
+				"data": {
+					"request": {
+						"url": "employees.json"
+					}
+				},
+				"header": {
+					"title": "Upcoming Activities"
+				},
+				"content": {
+					"item": {
+						"dateTime": {
+							"label": "{{time_label}}",
+							"value": "{Time}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Title}"
+						},
+						"icon": {
+							"src": "{Icon}"
+						}
 					}
 				}
 			}
@@ -1409,35 +1472,6 @@ sap.ui.define([
 
 		QUnit.module("Loading", {
 			beforeEach: function () {
-				var fnFake = function (oRequestConfig) {
-
-					return new Promise(function (resolve, reject) {
-
-						var oRequest = {
-							"mode": oRequestConfig.mode || "cors",
-							"url": "test-resources/sap/ui/integration/qunit/testResources/" + oRequestConfig.url,
-							"method": (oRequestConfig.method && oRequestConfig.method.toUpperCase()) || "GET",
-							"data": oRequestConfig.parameters,
-							"headers": oRequestConfig.headers,
-							"timeout": 15000,
-							"xhrFields": {
-								"withCredentials": !!oRequestConfig.withCredentials
-							}
-						};
-
-						if (oRequest.method === "GET") {
-							oRequest.dataType = "json";
-						}
-						jQuery.ajax(oRequest).done(function (oData) {
-							setTimeout(function () {
-								resolve(oData);
-							}, 150000000);
-						}).fail(function (jqXHR, sTextStatus, sError) {
-							reject(sError);
-						});
-					});
-				};
-
 				this.oCard = new Card({
 					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 				});
@@ -1493,10 +1527,6 @@ sap.ui.define([
 
 		QUnit.test("Calendar - Loading indicator should be present - content level request", function (assert) {
 			isLoadingIndicatorShowingContent(oManifest_Calendar_ContentLevel, this.oCard, "Calendar content has a loading placeholder", true, ".sapFCardContentPlaceholder", assert);
-		});
-
-		QUnit.test("Analytical - Loading indicator should be present - content level request", function (assert) {
-			isLoadingIndicatorShowingContent(oManifest_AnalyticalCard, this.oCard, "Analytical content has a loading placeholder", true, ".sapFCardContentGenericPlaceholder", assert);
 		});
 
 		QUnit.test("Object - Loading indicator should be present - content level request", function (assert) {
@@ -1938,4 +1968,56 @@ sap.ui.define([
 			});
 		});
 
+		var oPromiseVizModule =  Core.loadLibrary("sap.viz", { async: true }).then(function () {
+			QUnit.module("Analytical Loading", {
+				beforeEach: function () {
+					this.oCard = new Card({
+						baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+					});
+					this._fnRequestStub = sinon.stub(RequestDataProvider.prototype, "_fetch").callsFake(fnFake);
+				},
+				afterEach: function () {
+					this.oCard.destroy();
+					this.oCard = null;
+					this._fnRequestStub.restore();
+				}
+			});
+
+			QUnit.test("Analytical - Loading indicator should be present - content level request", function (assert) {
+				isLoadingIndicatorShowingContent(oManifest_AnalyticalCard, this.oCard, "Analytical content has a loading placeholder", true, ".sapFCardContentGenericPlaceholder", assert);
+			});
+
+		}).catch(function () {
+			QUnit.module("Analytical Loading");
+			QUnit.test("Analytical not supported", function (assert) {
+				assert.ok(true, "Analytical content type is not available with this distribution.");
+			});
+		});
+
+		var oPromiseSuiteUiCommonsModule = Core.loadLibrary("sap.suite.ui.commons", { async: true }).then(function () {
+			QUnit.module("Timeline Loading", {
+				beforeEach: function () {
+					this.oCard = new Card({
+						baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+					});
+					this._fnRequestStub = sinon.stub(RequestDataProvider.prototype, "_fetch").callsFake(fnFake);
+				},
+				afterEach: function () {
+					this.oCard.destroy();
+					this.oCard = null;
+					this._fnRequestStub.restore();
+				}
+			});
+
+			QUnit.test("Timeline - Loading indicator should be present - card level request", function (assert) {
+				isLoadingIndicatorShowingContent(Manifest_TimelineCard, this.oCard, "Timeline content has a loading placeholder", true, ".sapFCardContentTimelinePlaceholder", assert);
+			});
+		}).catch(function () {
+			QUnit.module("Timeline Loading");
+			QUnit.test("Timeline not supported", function (assert) {
+				assert.ok(true, "Timeline content type is not available with this distribution.");
+			});
+		});
+
+		return Promise.all([oPromiseVizModule, oPromiseSuiteUiCommonsModule]);
 	});

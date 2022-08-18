@@ -48,6 +48,11 @@ sap.ui.define([
 			"key": "calendar1",
 			"columns": 5,
 			"manifest": "sap/ui/integration/sample/LazyLoading/manifests/calendarManifest1.json"
+		},
+		{
+			"key": "timeline1",
+			"columns": 5,
+			"manifest": "sap/ui/integration/sample/LazyLoading/manifests/timelineManifest.json"
 		}
 	];
 

@@ -30,7 +30,9 @@
 					"manifests/listData1.json",
 					"manifests/listData2.json",
 					"manifests/someitems.json",
-					"manifests/tableData.json"
+					"manifests/tableData.json",
+					"manifests/timelineManifest.json",
+					"manifests/activities.json"
 				]
 			}
 		}
