@@ -1452,7 +1452,7 @@ sap.ui.define([
 		if (!sAriaText || this._isTooltipSuppressed()) {
 			sAriaText = this._getAriaAndTooltipText(); // ARIA label set by the control
 		}
-		if (this._isInActionScope()) {
+		if (this._isInActionScope() && this.getScope() !== GenericTileScope.ActionMore) {
 			sAriaText = this._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + " " + sAriaText;
 		}
 		if (sAriaLabel) {
