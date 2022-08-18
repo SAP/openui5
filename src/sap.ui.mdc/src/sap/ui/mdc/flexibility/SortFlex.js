@@ -8,24 +8,6 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/condenser/Classification"
 ], function(Engine, Util, FLChangeHandlerBase, CondenserClassification) {
 	"use strict";
-	var fRebindControl = function(oControl) {
-		var bExecuteRebindForTable = oControl && oControl.isA && oControl.isA("sap.ui.mdc.Table") && oControl.isTableBound();
-		var bExecuteRebindForChart = oControl && oControl.isA && (oControl.isA("sap.ui.mdc.Chart"));
-		if (bExecuteRebindForTable || bExecuteRebindForChart) {
-			if (!oControl._bWaitForBindChanges) {
-				oControl._bWaitForBindChanges = true;
-				Engine.getInstance().waitForChanges(oControl).then(function() {
-					if (bExecuteRebindForTable) {
-						oControl.rebind();
-					} else if (bExecuteRebindForChart) {
-						oControl.rebind();
-					}
-					delete oControl._bWaitForBindChanges;
-				});
-
-			}
-		}
-	};
 
 	var fFinalizeSortChange = function(oChange, oControl, oSortContent, bIsRevert) {
 		if (bIsRevert) {
@@ -35,8 +17,6 @@ sap.ui.define([
 			// Set revert data on the change
 			oChange.setRevertData(oSortContent);
 		}
-		// Rebind Table if needed
-		fRebindControl(oControl);
 	};
 
 	var fAddSort = function(oChange, oControl, mPropertyBag, sChangeReason) {

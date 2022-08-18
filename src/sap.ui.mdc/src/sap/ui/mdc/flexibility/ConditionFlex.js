@@ -36,20 +36,10 @@ sap.ui.define([
 		});
 	};
 
-	var fDetermineFilterControl = function(oControl) {
-		var oController = oControl && oControl.getEngine ? oControl.getEngine().getController(oControl, "Filter") : null;
-		return oController ? oController.getFilterControl() : null;
-	};
-
 	var fAddCondition = function(oChange, oControl, mPropertyBag, sChangeReason) {
 
-		var oFilterControl = fDetermineFilterControl(oControl);
 		var bIsRevert = (sChangeReason === Util.REVERT);
 		var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-
-		if (oFilterControl && oFilterControl.applyConditionsAfterChangesApplied) {
-			oFilterControl.applyConditionsAfterChangesApplied(oControl);
-		}
 
 		var mConditionsData, aConditions = null, oModifier = mPropertyBag.modifier;
 
@@ -114,13 +104,8 @@ sap.ui.define([
 
 	var fRemoveCondition = function(oChange, oControl, mPropertyBag, sChangeReason) {
 
-		var oFilterControl = fDetermineFilterControl(oControl);
 		var bIsRevert = (sChangeReason === Util.REVERT);
 		var oChangeContent = bIsRevert ? oChange.getRevertData() : oChange.getContent();
-
-		if (oFilterControl && oFilterControl.applyConditionsAfterChangesApplied) {
-			oFilterControl.applyConditionsAfterChangesApplied(oControl);
-		}
 
 		var mConditionsData, aConditions, nDelIndex = -1, oModifier = mPropertyBag.modifier;
 

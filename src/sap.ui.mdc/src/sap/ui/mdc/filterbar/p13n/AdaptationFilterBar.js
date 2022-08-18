@@ -309,15 +309,6 @@ sap.ui.define([
 		return this.getEngine().waitForChanges(this._getAdaptationControlInstance());
 	};
 
-	AdaptationFilterBar.prototype.applyConditionsAfterChangesApplied = function(oControl) {
-		if (oControl === this._getAdaptationControlInstance()) {
-			this._getWaitForChangesPromise()
-			.then(function(){
-				this.triggerSearch();
-			}.bind(this));
-		}
-	};
-
 	/**
 	 * Method which will initialize the <code>AdaptationFilterBar</code> and create the required FilterFields
 	 *
