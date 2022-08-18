@@ -173,6 +173,7 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(oSF.getPlaceholder(), sPlaceholder, "Set value of placeholder property is empty string");
 		assert.strictEqual(oSFDomRef.placeholder, sPlaceholder, "Set placeholder is added to the DOM");
+		assert.strictEqual(oSFDomRef.getAttribute("aria-label"), sPlaceholder, "aria-label attribute has the same value as the placeholder");
 
 		// clean up
 		oSF.destroy();
