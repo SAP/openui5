@@ -464,7 +464,7 @@ sap.ui.define([
 	 * @returns {Promise} resolving with an array of responses or rejecting with the first error
 	 * @public
 	 */
-	FlexController.prototype.saveAll = function(oAppComponent, bSkipUpdateCache, bDraft, sLayer, bRemoveOtherLayerChanges) {
+	FlexController.prototype.saveAll = function(oAppComponent, bSkipUpdateCache, bDraft, sLayer, bRemoveOtherLayerChanges, bCondenseAnyLayer) {
 		var sParentVersion;
 		var aDraftFilenames;
 		if (bDraft) {
@@ -476,7 +476,7 @@ sap.ui.define([
 			aDraftFilenames = oVersionModel.getProperty("/draftFilenames");
 		}
 		return this._removeOtherLayerChanges(oAppComponent, sLayer, bRemoveOtherLayerChanges)
-			.then(this._oChangePersistence.saveDirtyChanges.bind(this._oChangePersistence, oAppComponent, bSkipUpdateCache, undefined, sParentVersion, aDraftFilenames))
+			.then(this._oChangePersistence.saveDirtyChanges.bind(this._oChangePersistence, oAppComponent, bSkipUpdateCache, undefined, sParentVersion, aDraftFilenames, bCondenseAnyLayer))
 			.then(function(oResult) {
 				if (bDraft && oResult && oResult.response) {
 					var vChangeDefinition = oResult.response;

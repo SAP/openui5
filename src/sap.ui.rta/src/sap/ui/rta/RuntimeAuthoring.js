@@ -914,7 +914,7 @@ sap.ui.define([
 			.then(fnCallback);
 	};
 
-	RuntimeAuthoring.prototype._serializeAndSave = function(bActivateVersion) {
+	RuntimeAuthoring.prototype._serializeAndSave = function(bActivateVersion, bCondenseAnyLayer) {
 		if (this.getShowToolbars()) {
 			this.bPersistedDataTranslatable = this._oToolbarControlsModel.getProperty("/translationEnabled");
 		}
@@ -923,22 +923,24 @@ sap.ui.define([
 			saveAsDraft: this._oVersionsModel.getProperty("/versioningEnabled") && this.getLayer() === Layer.CUSTOMER,
 			layer: this.getLayer(),
 			removeOtherLayerChanges: true,
-			version: bActivateVersion ? this._oVersionsModel.getProperty("/displayedVersion") : undefined
+			version: bActivateVersion ? this._oVersionsModel.getProperty("/displayedVersion") : undefined,
+			condenseAnyLayer: bCondenseAnyLayer
 		};
 
 		return this._oSerializer.saveCommands(mPropertyBag);
 	};
 
-	RuntimeAuthoring.prototype._serializeToLrep = function() {
+	// this function is used to save in the Visual Editor
+	RuntimeAuthoring.prototype._serializeToLrep = function(bCondenseAnyLayer) {
 		// when saving a change that requires a reload, the information has to be cached
 		// to do the reload when exiting UI Adaptation as then the change will not be available anymore
 		if (!this._bSavedChangesNeedReload) {
 			return this._oSerializer.needsReload().then(function(bReloadNeeded) {
 				this._bSavedChangesNeedReload = bReloadNeeded;
-				return this._serializeAndSave();
+				return this._serializeAndSave(undefined, bCondenseAnyLayer);
 			}.bind(this));
 		}
-		return this._serializeAndSave();
+		return this._serializeAndSave(undefined, bCondenseAnyLayer);
 	};
 
 	RuntimeAuthoring.prototype._onUndo = function() {

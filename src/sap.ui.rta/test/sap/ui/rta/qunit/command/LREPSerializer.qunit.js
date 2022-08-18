@@ -508,17 +508,18 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("Execute 1 'remove' command and save in a system where versioning is disabled", function(assert) {
+		QUnit.test("Execute 1 'remove' command and save in a system where versioning is disabled and condensing param is true", function(assert) {
 			var oSaveChangesStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
 
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement: this.oInput1
 			}, this.oInputDesignTimeMetadata)
 				.then(this.oCommandStack.pushAndExecute.bind(this.oCommandStack))
-				.then(this.oSerializer.saveCommands.bind(this.oSerializer, {saveAsDraft: false}))
+				.then(this.oSerializer.saveCommands.bind(this.oSerializer, {saveAsDraft: false, condenseAnyLayer: true}))
 				.then(function() {
 					assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
-					assert.equal(oSaveChangesStub.getCall(0).args[0].draft, false, "then the save on the persistence API is called with a draft flag, default value is false");
+					assert.strictEqual(oSaveChangesStub.getCall(0).args[0].condenseAnyLayer, true, "then the condense parameter is passed");
+					assert.strictEqual(oSaveChangesStub.getCall(0).args[0].draft, false, "then the save on the persistence API is called with a draft flag, default value is false");
 				});
 		});
 

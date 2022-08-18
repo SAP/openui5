@@ -682,6 +682,17 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when _serializeAndSave is triggered with condense parameter", function(assert) {
+			var oSaveStub;
+			return this.oRta.start().then(function() {
+				oSaveStub = sandbox.stub(this.oRta._oSerializer, "saveCommands");
+				return this.oRta._serializeAndSave(null, true);
+			}.bind(this))
+			.then(function() {
+				assert.strictEqual(oSaveStub.lastCall.args[0].condenseAnyLayer, true, "the parameter is passed");
+			});
+		});
+
 		QUnit.test("when save is triggered via the toolbar with a translatable change", function(assert) {
 			return new Promise(function (resolve) {
 				this.oRta.start().then(function () {

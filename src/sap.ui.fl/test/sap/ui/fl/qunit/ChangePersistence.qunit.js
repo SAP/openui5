@@ -2276,7 +2276,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Shall not call condenser when no appcomponent gets passed to saveDirtyChanges", function(assert) {
+		QUnit.test("Shall not call condenser when no appComponent gets passed to saveDirtyChanges", function(assert) {
 			var oChangeContent = {
 				fileName: "Gizorillus",
 				layer: Layer.VENDOR,
@@ -2325,6 +2325,24 @@ sap.ui.define([
 					assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 					assert.equal(this.oWriteStub.callCount, 1, "the write function was called");
 					assert.equal(this.oStorageCondenseStub.callCount, 0, "the condenser route was not called");
+				}.bind(this));
+			});
+
+			var sName2 = "Shall call condenser with the condense flag set in VENDOR layer";
+			if (bBackendEnablement) {
+				sName2 += " with backend condensing enabled";
+			}
+			QUnit.test(sName2, function(assert) {
+				if (bBackendEnablement) {
+					sandbox.stub(Settings, "getInstanceOrUndef").returns({
+						isCondensingEnabled: function() {
+							return true;
+						}
+					});
+				}
+				addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR);
+				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, false, false, false, false, true).then(function() {
+					assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 				}.bind(this));
 			});
 		});

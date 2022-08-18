@@ -504,7 +504,8 @@ sap.ui.define([
 				selector: oComponent,
 				skipUpdateCache: true,
 				draft: true,
-				layer: Layer.USER
+				layer: Layer.USER,
+				condenseAnyLayer: true
 			}).then(function(sReturn) {
 				assert.equal(sReturn, "foo", "the function returns whatever getFlexObjects returns");
 				assert.equal(oPersistAllStub.callCount, 1, "the CompVariant changes were saved");
@@ -513,10 +514,12 @@ sap.ui.define([
 				assert.deepEqual(oSaveAllStub1.firstCall.args[0], oComponent, "the component was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[1], true, "the skipUpdateCache flag was passed");
 				assert.deepEqual(oSaveAllStub1.firstCall.args[2], true, "the draft flag was passed");
+				assert.deepEqual(oSaveAllStub1.firstCall.args[5], true, "the condense flag was passed");
 				assert.equal(oSaveAllStub2.callCount, 1, "the descriptor Changes were saved");
 				assert.deepEqual(oSaveAllStub2.firstCall.args[0], oComponent, "the component was passed");
 				assert.deepEqual(oSaveAllStub2.firstCall.args[1], true, "the skipUpdateCache flag was passed");
 				assert.deepEqual(oSaveAllStub2.firstCall.args[2], true, "the draft flag was passed");
+				assert.deepEqual(oSaveAllStub2.firstCall.args[5], true, "the condense flag was passed");
 
 				assert.equal(oGetFlexObjectsStub.callCount, 1, "the changes were retrieved at the end");
 				var oExpectedParameters = {
@@ -525,7 +528,8 @@ sap.ui.define([
 					draft: true,
 					layer: Layer.USER,
 					currentLayer: Layer.USER,
-					invalidateCache: true
+					invalidateCache: true,
+					condenseAnyLayer: true
 				};
 				assert.deepEqual(oGetFlexObjectsStub.firstCall.args[0], oExpectedParameters, "the parameters for getFlexObjects are correct");
 			});

@@ -593,17 +593,23 @@ sap.ui.define([
 		return aUniqueProperties.length === 1;
 	}
 
-	function shouldCondensingBeEnabled(oAppComponent, aChanges) {
+	function shouldCondensingBeEnabled(oAppComponent, aChanges, bCondenseAnyLayer) {
 		var bCondenserEnabled = false;
 
 		if (!oAppComponent || aChanges.length < 2 || !checkIfOnlyOne(aChanges, "getLayer")) {
 			return false;
 		}
 
-		var sLayer = aChanges[0].getLayer();
-		if ([Layer.CUSTOMER, Layer.USER].includes(sLayer)) {
+
+		if (bCondenseAnyLayer) {
 			bCondenserEnabled = true;
+		} else {
+			var sLayer = aChanges[0].getLayer();
+			if ([Layer.CUSTOMER, Layer.USER].includes(sLayer)) {
+				bCondenserEnabled = true;
+			}
 		}
+
 
 		var oUriParameters = UriParameters.fromURL(window.location.href);
 		if (oUriParameters.has("sap-ui-xx-condense-changes")) {
@@ -653,15 +659,16 @@ sap.ui.define([
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 * @param {sap.ui.fl.Change} [aChanges] - If passed only those changes are saved
 	 * @param {string} sParentVersion - Parent version
-	 * @param {string[]} [aDraftFilenames] - Filesnames from persisted changes draft version
+	 * @param {string[]} [aDraftFilenames] - Filenames from persisted changes draft version
+	 * @param {boolean} [bCondenseAnyLayer] - This will enable condensing regardless of the current layer
 	 * @returns {Promise} Resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveDirtyChanges = function(oAppComponent, bSkipUpdateCache, aChanges, sParentVersion, aDraftFilenames) {
+	ChangePersistence.prototype.saveDirtyChanges = function(oAppComponent, bSkipUpdateCache, aChanges, sParentVersion, aDraftFilenames, bCondenseAnyLayer) {
 		var aDirtyChanges = aChanges || this._aDirtyChanges;
 		var aRelevantChangesForCondensing = getAllRelevantChangesForCondensing.call(this, aDirtyChanges, aDraftFilenames);
 		var bIsCondensingEnabled = (
 			isBackendCondensingEnabled(aRelevantChangesForCondensing)
-			&& shouldCondensingBeEnabled(oAppComponent, aRelevantChangesForCondensing)
+			&& shouldCondensingBeEnabled(oAppComponent, aRelevantChangesForCondensing, bCondenseAnyLayer)
 		);
 		var aAllChanges = bIsCondensingEnabled ? aRelevantChangesForCondensing : aDirtyChanges;
 		var aChangesClone = aAllChanges.slice(0);
@@ -671,7 +678,7 @@ sap.ui.define([
 
 		if (aStates.length === 1 && aRequests.length === 1 && aStates[0] === Change.states.NEW) {
 			var oCondensedChangesPromise = Promise.resolve(aChangesClone);
-			if (shouldCondensingBeEnabled(oAppComponent, aChangesClone)) {
+			if (shouldCondensingBeEnabled(oAppComponent, aChangesClone, bCondenseAnyLayer)) {
 				oCondensedChangesPromise = Condenser.condense(oAppComponent, aChangesClone);
 			}
 			return oCondensedChangesPromise.then(function(aCondensedChanges) {

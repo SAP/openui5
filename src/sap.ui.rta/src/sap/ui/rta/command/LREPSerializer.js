@@ -174,7 +174,8 @@ sap.ui.define([
 				draft: !!mPropertyBag.saveAsDraft,
 				layer: mPropertyBag.layer,
 				removeOtherLayerChanges: !!mPropertyBag.removeOtherLayerChanges,
-				version: mPropertyBag.version
+				version: mPropertyBag.version,
+				condenseAnyLayer: mPropertyBag.condenseAnyLayer
 			});
 		}.bind(this))
 		.then(function() {

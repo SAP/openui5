@@ -126,6 +126,14 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("when saveAll is called with bCondenseAnyLayer", function(assert) {
+			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
+			return this.oFlexController.saveAll(oComponent, false, false, false, false, true)
+				.then(function() {
+					assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, false, undefined, undefined, undefined, true), "the app component and the flag were passed");
+				});
+		});
+
 		QUnit.test("when saveAll is called with a layer and bRemoveOtherLayerChanges", function(assert) {
 			var oComp = {
 				name: "testComp",
@@ -154,7 +162,6 @@ sap.ui.define([
 					assert.equal(fnChangePersistenceSaveStub.calledWith(oComponent, undefined, undefined, undefined, undefined), true, "then ChangePersistence.saveDirtyChanges() was called with correct parameters");
 				});
 		});
-
 
 		QUnit.test("when saveAll is called for a draft without filenames", function(assert) {
 			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({

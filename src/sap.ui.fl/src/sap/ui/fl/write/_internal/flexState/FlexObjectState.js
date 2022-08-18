@@ -144,7 +144,8 @@ sap.ui.define([
 			mPropertyBag.skipUpdateCache,
 			mPropertyBag.draft,
 			mPropertyBag.layer,
-			mPropertyBag.removeOtherLayerChanges
+			mPropertyBag.removeOtherLayerChanges,
+			mPropertyBag.condenseAnyLayer
 		)
 			.then(oDescriptorFlexController.saveAll.bind(
 				oDescriptorFlexController,
@@ -152,7 +153,8 @@ sap.ui.define([
 				mPropertyBag.skipUpdateCache,
 				mPropertyBag.draft,
 				mPropertyBag.layer,
-				mPropertyBag.removeOtherLayerChanges
+				mPropertyBag.removeOtherLayerChanges,
+				mPropertyBag.condenseAnyLayer
 			));
 	}
 

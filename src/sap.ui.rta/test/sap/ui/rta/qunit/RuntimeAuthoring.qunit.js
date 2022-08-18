@@ -362,16 +362,17 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when stopping rta with saving changes and versioning is enabled", function(assert) {
+		QUnit.test("when stopping rta with saving changes and versioning is enabled and condenseAnyLayer true", function(assert) {
 			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
 
 			var oSaveStub = sandbox.stub(PersistenceWriteAPI, "save").resolves();
 
-			return this.oRta._serializeToLrep()
+			return this.oRta._serializeToLrep(true)
 			.then(function() {
 				assert.equal(oSaveStub.callCount, 1, "save was triggered");
 				var aSavePropertyBag = oSaveStub.getCall(0).args[0];
-				assert.equal(aSavePropertyBag.draft, true, "the draft flag is set to true");
+				assert.strictEqual(aSavePropertyBag.draft, true, "the draft flag is set to true");
+				assert.strictEqual(aSavePropertyBag.condenseAnyLayer, true, "the condense flag is set to true");
 			});
 		});
 
