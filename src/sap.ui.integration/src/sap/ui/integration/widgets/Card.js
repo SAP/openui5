@@ -253,12 +253,15 @@ sap.ui.define([
 				 *
 				 * This can be a list of flexibility changes generated during designtime.
 				 *
-				 * Each level of changes is an item in the list. The change has property "content" which contains the configuration, which will be merged on top of the original <code>sap.card</code> section.
+				 * Each item in the array represents a separate level of changes. For example, the first item might be created by an administrator, the second by a page administrator and the third by the end user.
+				 *
+				 * The order of the items is the order in which the changes will be merged on top of each other. So the last item will overwrite the previous items where the paths match.
 				 *
 				 * Example:
 				 * <pre>
 				 * [
 				 * 	{
+				 * 		// Administrator
 				 * 		"/sap.card/header/title": "My Configured Title in Default Language",
 				 * 		"/sap.card/content/maxItems": 10,
 				 * 		"texts": {
@@ -268,13 +271,13 @@ sap.ui.define([
 				 * 		}
 				 * 	},
 				 * 	{
-				 * 		"/sap.card/header/title": "My Configured Title in Default Language",
-				 * 		"/sap.card/content/maxItems": 10,
-				 * 		"texts": {
-				 * 			"en-US": {
-				 * 				"/sap.card/header/title": "My Configured Title in US-English"
-				 * 			}
-				 * 		}
+				 * 		// Page administrator
+				 * 		"/sap.card/content/maxItems": 5
+				 * 	},
+				 * 	{
+				 * 		// End user
+				 *      "/sap.card/header/title": "Title by End User",
+				 * 		"/sap.card/content/maxItems": 8
 				 * 	}
 				 * ]
 				 * </pre>
