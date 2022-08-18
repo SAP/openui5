@@ -194,9 +194,15 @@ function(
 	 */
 	Cache.removeChanges = function(oComponent, aChangeNames) {
 		var oEntry = FlexState.getFlexObjectsFromStorageResponse(oComponent.name);
+
+		if (!oEntry) {
+			return;
+		}
+
 		oEntry.changes = oEntry.changes.filter(function(oChange) {
 			return aChangeNames.indexOf(oChange.fileName) === -1;
 		});
+
 		var oVariantsState = FlexState.getVariantsState(oComponent.name);
 		Object.keys(oVariantsState).forEach(function(sId) {
 			oVariantsState[sId].variants.forEach(function(oVariant) {

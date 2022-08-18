@@ -32,7 +32,7 @@ sap.ui.define([
 		};
 	}
 
-	QUnit.module("add / update / delete change", {
+	QUnit.module("add / update / delete change / remove changes", {
 		beforeEach: function() {
 			this.oEntry = _createEntryMap({something: "1"});
 			this.oGetStorageResponseStub = sandbox.stub(FlexState, "getStorageResponse").resolves(this.oEntry);
@@ -59,7 +59,6 @@ sap.ui.define([
 				assert.equal(oSecondChanges.changes.changes.length, 2);
 			});
 		});
-
 		QUnit.test("updateChange", function(assert) {
 			var oEntry = _createEntryMap({
 				something: "1",
@@ -84,7 +83,6 @@ sap.ui.define([
 				assert.equal(mFlexData.changes.changes[0].something, "3");
 			});
 		});
-
 		QUnit.test("deleteChange", function(assert) {
 			var oEntry = _createEntryMap({
 				something: "1",
@@ -107,6 +105,92 @@ sap.ui.define([
 			}).then(function(mFlexData) {
 				assert.strictEqual(mFlexData.changes.changes.length, 0);
 			});
+		});
+		QUnit.test("remove all addChange changes from the cache and VariantState", function(assert) {
+			var oEntry = _createEntryMap([{
+				something: "1",
+				fileName: "addChange",
+				content: {},
+				selector: {}
+			}, {
+				something: "2",
+				fileName: "moveChange",
+				content: {},
+				selector: {}
+			}]);
+
+			this.oGetStorageResponseStub.resolves(oEntry);
+			this.oGetFlexObjectsStub.returns(oEntry.changes);
+			var oVariantState = {
+				1: {
+					variants: [{
+						controlChanges: [
+							{
+								getId: function() {return "addChange";}
+							},
+							{
+								getId: function() {return "moveChange";}
+							}
+						]
+					}]
+				}
+			};
+			sandbox.stub(FlexState, "getVariantsState").returns(oVariantState);
+
+			Cache.removeChanges({name: sComponentName}, ["addChange"]);
+
+			assert.strictEqual(oEntry.changes.changes.length, 1);
+			Object.keys(oVariantState).forEach(function(sId) {
+				oVariantState[sId].variants.forEach(function(oVariant) {
+					oVariant.controlChanges.forEach(function(oChange) {
+						assert.strictEqual(oChange.getId(), "moveChange", "moveChange is the only change left in the VariantState");
+					});
+				});
+			});
+		});
+		QUnit.test("remove all moveChange types from the Cache", function(assert) {
+			var oEntry = _createEntryMap({
+				something: "1",
+				fileName: "moveChange",
+				content: {},
+				selector: {}
+			});
+			this.oGetStorageResponseStub.resolves(oEntry);
+			this.oGetFlexObjectsStub.returns(oEntry.changes);
+			var oVariantState = {
+				1: {
+					variants: [{
+						controlChanges: [
+							{
+								getId: function() {return "moveChange";}
+							}
+						]
+					}]
+				}
+			};
+			sandbox.stub(FlexState, "getVariantsState").returns(oVariantState);
+
+			Cache.removeChanges({name: sComponentName}, ["moveChange"]);
+
+			assert.strictEqual(oEntry.changes.changes.length, 0);
+			Object.keys(oVariantState).forEach(function(sId) {
+				oVariantState[sId].variants.forEach(function(oVariant) {
+					assert.strictEqual(oVariant.controlChanges.length, 0, "moveChanges were all removed");
+				});
+			});
+		});
+
+		QUnit.test("removeChanges correctly aborts when storage response is undefined", function(assert) {
+			this.oGetStorageResponseStub.resolves(undefined);
+			this.oGetFlexObjectsStub.returns(undefined);
+			var oGetVariantStateStub = sandbox.stub(FlexState, "getVariantsState");
+
+			var oCacheSpy = sandbox.spy(Cache, "removeChanges");
+
+			Cache.removeChanges({name: sComponentName}, ["moveChange"]);
+
+			assert.strictEqual(oCacheSpy.calledOnce, true);
+			assert.strictEqual(oGetVariantStateStub.notCalled, true);
 		});
 
 		QUnit.test("addChange of an comp variant related change", function(assert) {
