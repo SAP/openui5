@@ -1627,7 +1627,7 @@ sap.ui.define([
 			};
 
 			var oMockCompVariant3 = {
-				getFileName: function() {
+				getId: function() {
 					return "oMockCompVariant3";
 				},
 				getRequest: function () {
@@ -1669,9 +1669,9 @@ sap.ui.define([
 				assert.equal(oResetArgs.reference, "MyComponent");
 				assert.equal(oResetArgs.layer, Layer.CUSTOMER);
 				assert.equal(oResetArgs.changes.length, 3); //oCUSTOMERChange1, oCUSTOMERChange2, oMockCompVariant3
-				assert.equal(oResetArgs.changes[0].getFileName(), "oCUSTOMERChange1");
-				assert.equal(oResetArgs.changes[1].getFileName(), "oCUSTOMERChange2");
-				assert.equal(oResetArgs.changes[2].getFileName(), "oMockCompVariant3");
+				assert.equal(oResetArgs.changes[0].getId(), "oCUSTOMERChange1");
+				assert.equal(oResetArgs.changes[1].getId(), "oCUSTOMERChange2");
+				assert.equal(oResetArgs.changes[2].getId(), "oMockCompVariant3");
 				assert.equal(oCacheRemoveChangesStub.callCount, 0, "the Cache.removeChanges is not called");
 				assert.equal(oGetChangesFromMapByNamesStub.callCount, 0, "the getChangesFromMapByNames is not called");
 				assert.deepEqual(aChanges, [], "empty array is returned");
@@ -2136,7 +2136,7 @@ sap.ui.define([
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 
-				var aFilenames = [this.oChangePersistence._mChanges.aChanges[0].getFileName(), this.oChangePersistence._mChanges.aChanges[1].getFileName()];
+				var aFilenames = [this.oChangePersistence._mChanges.aChanges[0].getId(), this.oChangePersistence._mChanges.aChanges[1].getId()];
 				var oChangeContent = {
 					fileName: "NewFileName",
 					layer: Layer.CUSTOMER,
@@ -2179,7 +2179,7 @@ sap.ui.define([
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 
-				var aFilenames = [this.oChangePersistence._mChanges.aChanges[0].getFileName(), "newDraftFileName"];
+				var aFilenames = [this.oChangePersistence._mChanges.aChanges[0].getId(), "newDraftFileName"];
 				var oChangeContent = {
 					fileName: "NewFileName",
 					layer: Layer.CUSTOMER,

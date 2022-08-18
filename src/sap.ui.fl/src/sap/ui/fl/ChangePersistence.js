@@ -94,7 +94,7 @@ sap.ui.define([
 		var oChange;
 		if (oChangeOrChangeContent instanceof Change || oChangeOrChangeContent instanceof FlexObject) {
 			oChange = oChangeOrChangeContent; // can have other states
-			this._mChangesEntries[oChange.getFileName()] = oChange;
+			this._mChangesEntries[oChange.getId()] = oChange;
 		} else {
 			if (!this._mChangesEntries[oChangeOrChangeContent.fileName]) {
 				if (oChangeOrChangeContent.changeType === "codeExt") {
@@ -618,7 +618,7 @@ sap.ui.define([
 		var sLayer = aDirtyChanges[0].getLayer();
 		var aPersistedAndSameLayerChanges = this._mChanges.aChanges.filter(function(oChange) {
 			if (sLayer === Layer.CUSTOMER && aDraftFilenames) {
-				return oChange.getState() === Change.states.PERSISTED && aDraftFilenames.includes(oChange.getFileName());
+				return oChange.getState() === Change.states.PERSISTED && aDraftFilenames.includes(oChange.getId());
 			}
 			return oChange.getState() === Change.states.PERSISTED && LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), sLayer) === 0;
 		});
@@ -939,7 +939,7 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype._getChangesFromMapByNames = function(aNames) {
 		return this._mChanges.aChanges.filter(function(oChange) {
-			return aNames.indexOf(oChange.getFileName()) !== -1;
+			return aNames.indexOf(oChange.getId()) !== -1;
 		});
 	};
 

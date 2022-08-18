@@ -236,7 +236,7 @@ sap.ui.define([
 
 		QUnit.test("Change.getFileName", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
-			assert.equal(oInstance.getFileName(), "0815_1");
+			assert.equal(oInstance.getId(), "0815_1");
 		});
 
 		QUnit.test("Change.getPackage & Change.setPackage", function(assert) {

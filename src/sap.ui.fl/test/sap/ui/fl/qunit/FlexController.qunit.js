@@ -387,7 +387,7 @@ sap.ui.define([
 				.then(function() {
 					assert.ok(oRevertMultipleChangesStub.calledOnce, "the revertMultipleChanges is called once");
 					assert.deepEqual(oRevertMultipleChangesStub.args[0][0], aDeletedChanges, "with the correct changes");
-					assert.deepEqual(oRevertMultipleChangesStub.args[0][0][0].getFileName(), "change2", "with the correct reverse order");
+					assert.deepEqual(oRevertMultipleChangesStub.args[0][0][0].getId(), "change2", "with the correct reverse order");
 					assert.deepEqual(URLHandler.update.getCall(0).args[0], {
 						parameters: [],
 						updateURL: true,

@@ -231,8 +231,8 @@ sap.ui.define([
 					var aChanges = FlexState.getUIChanges(sReference);
 					assert.equal(oLrepConnectorStub.callCount, 1, "only called once");
 					assert.equal(aChanges.length, 2, "there are two UI changes");
-					assert.equal(aChanges[0].getFileName(), "id_1581069458324_142_propertyChange", "first change comes from changes-bundle");
-					assert.equal(aChanges[1].getFileName(), "id_1581069458324_200_propertyChange", "second change comes from LrepConnector");
+					assert.equal(aChanges[0].getId(), "id_1581069458324_142_propertyChange", "first change comes from changes-bundle");
+					assert.equal(aChanges[1].getId(), "id_1581069458324_200_propertyChange", "second change comes from LrepConnector");
 				}.bind(this));
 		});
 	});
