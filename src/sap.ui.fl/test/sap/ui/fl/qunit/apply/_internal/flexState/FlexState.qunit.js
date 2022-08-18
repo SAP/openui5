@@ -343,6 +343,9 @@ sap.ui.define([
 			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey", oStandardVariant2, aVariants2);
 			oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component");
 			assert.deepEqual(oStoredData, {persistencyKey: oStoredData2}, "store the data will overwrite existing stored data");
+			FlexState.setInitialNonFlCompVariantData("reference.Component", "persistencyKey2", oStandardVariant1, aVariants1);
+			oStoredData = FlexState.getInitialNonFlCompVariantData("reference.Component");
+			assert.deepEqual(oStoredData, {persistencyKey: oStoredData2, persistencyKey2: oStoredData1}, "storing data for a new persistencyKey does not overwrite existing data");
 		});
 	});
 
