@@ -287,27 +287,6 @@ function(
 	 */
 	Link.prototype.onBeforeRendering = function() {};
 
-	Link.prototype.onAfterRendering = function() {
-		var oLinkElement = this.getDomRef(),
-			oTextBinding = this.getBinding("text");
-
-		if (!oLinkElement) {
-			return;
-		}
-
-		// Update the default no-navigation href attribute value via JS,
-		// so we don't confuse the Chrome browser accessibility mappings,
-		// in case there is double rendering resulting from a "text" property binding.
-		// Remove the href if there's no text. Otherwise virtual cursor would stop on the empty link. BCP 2070055617
-		if (oTextBinding) {
-			if (!oTextBinding.bInitial && !oTextBinding.getValue()) {
-				this.getDomRef().removeAttribute("href");
-			}
-		} else if (!this.getText()) {
-			this.getDomRef().removeAttribute("href");
-		}
-	};
-
 	Link.prototype.getAccessKeysFocusTarget = function () {
 		return this.getFocusDomRef();
 	};
