@@ -316,7 +316,9 @@ sap.ui.define([
 			var aRegisteredChangeIds = this._oChangeIndicatorRegistry.getRegisteredChangeIds();
 			var oCurrentChanges = aChanges
 				.filter(function(oChange) {
-					return oChange.getFileType() === "change";
+					// Filter out changes with different fileTypes (e.g. variant)
+					// or without selectors (e.g. App Descriptor changes)
+					return oChange.getFileType() === "change" && oChange.getSelector();
 				})
 				.reduce(function(oChanges, oChange) {
 					oChanges[oChange.getId()] = oChange;

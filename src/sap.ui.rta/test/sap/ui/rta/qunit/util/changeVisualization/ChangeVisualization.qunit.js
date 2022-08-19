@@ -847,6 +847,24 @@ sap.ui.define([
 				}.bind(this));
 		});
 
+		QUnit.test("when appDescriptor changes are present (fileType 'change' but no selector)", function(assert) {
+			var aMockChanges = [
+				createMockChange("appDescriptor", undefined, null),
+				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1"),
+				createMockChange("testReveal", "reveal", "Comp1---idMain1--rb2")
+			];
+			prepareChanges(aMockChanges);
+			return startVisualization(this.oRta)
+				.then(function() {
+					oCore.applyChanges();
+					assert.strictEqual(
+						this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories[0].count,
+						2,
+						"then only the other changes are applied and visible"
+					);
+				}.bind(this));
+		});
+
 		QUnit.test("when details are selected for a change", function(assert) {
 			prepareChanges(
 				[
