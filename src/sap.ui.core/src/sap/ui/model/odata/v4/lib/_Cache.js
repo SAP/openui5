@@ -1601,7 +1601,7 @@ sap.ui.define([
 			delete mQueryOptions.$expand;
 			delete mQueryOptions.$orderby;
 			delete mQueryOptions.$select;
-			sExclusiveFilter = this.getFilterExcludingCreated();
+			sExclusiveFilter = this.getExclusiveFilter();
 			if (sExclusiveFilter) {
 				mQueryOptions.$filter = mQueryOptions.$filter
 					? "(" + mQueryOptions.$filter + ") and " + sExclusiveFilter
@@ -2321,6 +2321,34 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks the given range of currently available elements to contain the given promise.
+	 *
+	 * @param {sap.ui.base.SyncPromise} oPromise
+	 *   The promise
+	 * @param {number} iStart
+	 *   The start index
+	 * @param {number} iEnd
+	 *   The end index (will not be filled)
+	 * @throws {Error}
+	 *   If there is an index no longer containing the promise
+	 *
+	 * @private
+	 */
+	_CollectionCache.prototype.checkRange = function (oPromise, iStart, iEnd) {
+		var i;
+
+		// if the request used $tail, not all indexes got the promise, so we cannot check
+		if (oPromise !== this.aElements.$tail) {
+			iEnd = Math.min(iEnd, this.aElements.length);
+			for (i = iStart; i < iEnd; i += 1) {
+				if (this.aElements[i] !== oPromise) {
+					throw new Error("Found data at an index being read from the back end");
+				}
+			}
+		}
+	};
+
+	/**
 	 * Creates an empty element for the given predicate to the cache, adds it to the cache and
 	 * returns it.
 	 *
@@ -2453,15 +2481,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a filter that excludes all created entities in this cache's collection (including
-	 * those that have been deleted on the client again).
+	 * Returns a filter that excludes all created entities in this cache's collection and all
+	 * entities that have been deleted on the client, but not on the server yet.
 	 *
 	 * @returns {string|undefined}
-	 *   The filter or <code>undefined</code> if there is no created entity.
+	 *   The filter or <code>undefined</code> if there is no such entity.
 	 *
 	 * @private
 	 */
-	_CollectionCache.prototype.getFilterExcludingCreated = function () {
+	_CollectionCache.prototype.getExclusiveFilter = function () {
 		var oElement,
 			aKeyFilters = [],
 			mTypeForMetaPath,
@@ -2486,9 +2514,7 @@ sap.ui.define([
 			}
 		}
 		(this.aElements.$deleted || []).forEach(function (oDeleted) {
-			if (oDeleted.created) {
-				addKeyFilter(that.aElements.$byPredicate[oDeleted.predicate]);
-			}
+			addKeyFilter(that.aElements.$byPredicate[oDeleted.predicate]);
 		});
 
 		return aKeyFilters.length ? "not (" + aKeyFilters.sort().join(" or ") + ")" : undefined;
@@ -2504,7 +2530,7 @@ sap.ui.define([
 	 * @private
 	 */
 	_CollectionCache.prototype.getQueryString = function () {
-		var sExclusiveFilter = this.getFilterExcludingCreated(),
+		var sExclusiveFilter = this.getExclusiveFilter(),
 			mQueryOptions = Object.assign({}, this.mQueryOptions),
 			sFilterOptions = mQueryOptions.$filter,
 			sQueryString = this.sQueryString;
@@ -2521,28 +2547,6 @@ sap.ui.define([
 		}
 
 		return sQueryString;
-	};
-
-	/**
-	 * Determines the offset to <code>$skip</code> due to deleted elements in other groups.
-	 *
-	 * @param {string} sGroupId - The group ID for the read request
-	 * @param {number} iStart - The start index for the read
-	 * @returns {number} The offset
-	 */
-	_CollectionCache.prototype.getReadOffset = function (sGroupId, iStart) {
-		var iOffset = 0;
-
-		(this.aElements.$deleted || []).forEach(function (oDeleteInfo) {
-			// if deleting in the same group, the entity is gone when the server reads
-			// created-persisted entities are excluded via filter
-			if (oDeleteInfo.groupId !== sGroupId && !oDeleteInfo.created
-					&& oDeleteInfo.index <= iStart) {
-				iOffset += 1;
-			}
-		});
-
-		return iOffset;
 	};
 
 	/**
@@ -2626,7 +2630,7 @@ sap.ui.define([
 			iResultLength = oResult.value.length,
 			i;
 
-		// simulate #getFilterExcludingCreated for newly created persisted
+		// simulate #getExclusiveFilter for newly created persisted
 		iEnd -= iFiltered;
 		iResultLength -= iFiltered;
 
@@ -2798,7 +2802,7 @@ sap.ui.define([
 				// count persisted inline creation rows which are refreshed separately during a
 				// side-effects refresh (see #refreshKeptElements) and might be deleted on server;
 				// increase prefetch to compensate for our exclusive filter (see
-				// #getFilterExcludingCreated) (JIRA: CPOUI5ODATAV4-1521)
+				// #getExclusiveFilter) (JIRA: CPOUI5ODATAV4-1521)
 				iCreatedPersisted += 1;
 			}
 		}
@@ -2970,8 +2974,7 @@ sap.ui.define([
 	 */
 	_CollectionCache.prototype.requestElements = function (iStart, iEnd, oGroupLock,
 			iTransientElements, fnDataRequested) {
-		var iOffset = this.getReadOffset(oGroupLock.getGroupId(), iStart),
-			oPromise,
+		var oPromise,
 			oReadRequest = {
 				iEnd : iEnd,
 				iStart : iStart
@@ -2982,12 +2985,13 @@ sap.ui.define([
 		this.bSentRequest = true;
 		oPromise = SyncPromise.all([
 			this.oRequestor.request("GET",
-				this.getResourcePathWithQuery(iStart + iOffset, iEnd + iOffset),
+				this.getResourcePathWithQuery(iStart, iEnd),
 				oGroupLock, undefined, undefined, fnDataRequested),
 			this.fetchTypes()
 		]).then(function (aResult) {
 			var iFiltered;
 
+			that.checkRange(oPromise, oReadRequest.iStart, oReadRequest.iEnd);
 			if (that.aElements.$tail === oPromise) {
 				that.aElements.$tail = undefined;
 			}
@@ -2996,6 +3000,7 @@ sap.ui.define([
 			return that.handleCount(oGroupLock, iTransientElements, oReadRequest.iStart,
 				oReadRequest.iEnd, aResult[0], iFiltered);
 		}).catch(function (oError) {
+			that.checkRange(oPromise, oReadRequest.iStart, oReadRequest.iEnd);
 			that.fill(undefined, oReadRequest.iStart, oReadRequest.iEnd);
 			throw oError;
 		}).finally(function () {
