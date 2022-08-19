@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/mdc/FilterBar",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/mdc/odata/v4/TypeUtil"
+	"delegates/odata/v4/TypeUtil"
 ], function(FilterBarDelegate, ODataModel, MockServer, FilterBar, JsControlTreeModifier, TypeUtil) {
 	'use strict';
 

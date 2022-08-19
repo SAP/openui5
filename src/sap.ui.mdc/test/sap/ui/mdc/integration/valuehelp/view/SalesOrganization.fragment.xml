@@ -150,7 +150,7 @@
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="fb1" liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/salesorganization/FilterBar.delegate', payload: {modelName: 'settings', collectionName: 'divisions'}}">
 									<vhfb:filterItems>
-										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="SalesOrganization" conditions="{$filters>/conditions/salesOrganization}"/>
+										<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="SalesOrganization" conditions="{$filters>/conditions/salesOrganization}"/>
 									</vhfb:filterItems>
 								</vhfb:FilterBar>
 							</mdcvc:filterBar>
@@ -213,7 +213,7 @@
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="fb2" liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/salesorganization/FilterBar.delegate', payload: {modelName: 'settings', collectionName: 'divisions'}}">
 									<vhfb:filterItems>
-										<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="SalesOrganization" conditions="{$filters>/conditions/salesOrganization}"/>
+										<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="SalesOrganization" conditions="{$filters>/conditions/salesOrganization}"/>
 									</vhfb:filterItems>
 								</vhfb:FilterBar>
 							</mdcvc:filterBar>
@@ -255,7 +255,7 @@
 		</mdc:dependents>
 
 		<mdc:filterItems>
-			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+			<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 				id="FB0-SO"
 				label="Sales Organization"
 				conditions="{$filters>/conditions/salesOrganization}"
@@ -263,7 +263,7 @@
 				maxConditions="{settings>/maxConditions}"
 				display="DescriptionValue"
 				/>
-			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+			<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 				id="FB0-DC"
 				label="Distribution Channel"
 				conditions="{$filters>/conditions/distributionChannel}"
@@ -271,7 +271,7 @@
 				maxConditions="{settings>/maxConditions}"
 				display="DescriptionValue"
 				/>
-			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+			<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 				id="FB0-D"
 				label="Division"
 				conditions="{$filters>/conditions/division}"

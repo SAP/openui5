@@ -7,8 +7,16 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"delegates/odata/v4/FilterBarDelegate", "sap/ui/mdc/odata/v4/vizChart/ChartDelegate", "sap/ui/mdc/odata/v4/ODataMetaModelUtil", "sap/ui/mdc/library"
-	], function (FilterBarDelegate, VizChartDelegate, ODataMetaModelUtil, MDCLib) {
+	"delegates/odata/v4/FilterBarDelegate",
+    "sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
+    "delegates/odata/v4/ODataMetaModelUtil",
+    "sap/ui/mdc/library"
+], function (
+    FilterBarDelegate,
+    VizChartDelegate,
+    ODataMetaModelUtil,
+    MDCLib
+) {
 	"use strict";
 
     var ChartDelegate = Object.assign({}, VizChartDelegate);

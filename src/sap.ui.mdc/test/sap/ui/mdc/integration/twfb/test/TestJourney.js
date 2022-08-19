@@ -303,7 +303,7 @@ sap.ui.define([
 
 
 
-		//I should see an editable field Price with value 48.79 GBP
+		//I should see an editable field Price with value 22.00 GBP
 		var sFieldId = "listreport---bookdetails--fPrice";
 		Then.onTheMDCField.iShouldSeeTheFieldWithValues(sFieldId, ['22', 'GBP']);
 

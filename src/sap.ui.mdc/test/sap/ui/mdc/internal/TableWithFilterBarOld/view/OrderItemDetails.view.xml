@@ -40,16 +40,16 @@
 								<core:Title text="Order Item Details"></core:Title>
 
 								<Label text="ID"></Label>
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+								<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 
 								<Label text="amount"></Label>
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'amount', type:'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+								<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'amount', type:'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 
 								<Label text="netAmount"></Label>
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{netAmount}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+								<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{netAmount}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 
 								<Label text="Book"></Label>
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{book_ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FH4" display="Description">
+								<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{book_ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FH4" display="Description">
 									<mdc:dependents>
 										<mdcf:FieldValueHelp filterFields="$search" title="Book" id="FH4" noDialog="false" keyPath="ID" descriptionPath="title" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Orders', key: 'ID'}}">
 										<mdcf:suggestContent>
@@ -100,7 +100,7 @@
 									</mdc:dependents>
 								</mdc:Field>
 								<Label text="Parent ID"></Label>
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parent_ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FH5">
+								<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{parent_ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FH5">
 									<mdc:dependents>
 										<mdcf:FieldValueHelp filterFields="$search" title="Parent ID" id="FH5" noDialog="false" keyPath="ID" delegate="{name: 'sap/ui/v4demo/delegate/FieldValueHelp.delegate', payload: {collectionName: 'Orders', key: 'ID'}}">
 											<mdcf:content>

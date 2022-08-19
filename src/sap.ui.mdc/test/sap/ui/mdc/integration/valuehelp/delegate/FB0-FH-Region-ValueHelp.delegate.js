@@ -111,7 +111,7 @@ sap.ui.define([
 						},
 						basicSearchField: new FilterField({
 							delegate: {
-								name: "sap/ui/mdc/odata/v4/FieldBaseDelegate",
+								name: "delegates/odata/v4/FieldBaseDelegate",
 								payload: {}
 							},
 							dataType: "Edm.String",
@@ -123,7 +123,7 @@ sap.ui.define([
 						filterItems: [
 							new FilterField({
 								delegate: {
-									name: "sap/ui/mdc/odata/v4/FieldBaseDelegate",
+									name: "delegates/odata/v4/FieldBaseDelegate",
 									payload: {}
 								},
 								label: "Country",

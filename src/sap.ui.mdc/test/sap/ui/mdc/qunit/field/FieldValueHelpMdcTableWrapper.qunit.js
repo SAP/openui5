@@ -122,12 +122,12 @@ sap.ui.define([
 					filterConditions: { myfilter: [{ operator: "EQ", values: ["a"] }] },
 					filterItems: [
 						new FilterField({
-							delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
+							delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}},
 							conditions: "{$filters>/conditions/myfilter}"
 						})
 					],
 					basicSearchField: new FilterField({
-						delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
+						delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}},
 						dataType: "Edm.String",
 						conditions: "{$filters>/conditions/$search}",
 						width: "50%",

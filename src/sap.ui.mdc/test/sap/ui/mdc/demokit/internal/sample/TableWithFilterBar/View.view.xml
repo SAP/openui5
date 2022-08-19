@@ -22,7 +22,7 @@
 			<mdcf:filterBar>
 				<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: 'Books'}}" >
 				<vhfb:filterItems>
-					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions="{$filters>/conditions/title}" />
+					<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions="{$filters>/conditions/title}" />
 				</vhfb:filterItems>
 				</vhfb:FilterBar>
 			</mdcf:filterBar>
@@ -57,19 +57,19 @@
 							delegate="{name: 'sap/ui/mdc/sample/FilterBar/GridTable.delegate', payload: {collectionName: 'Books'}}" threshold="50">
 							<mdc:columns>
 								<mdc:table.Column id="id" header="ID" dataProperty="ID" initialIndex="1">
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
 								</mdc:table.Column>
 								<mdc:table.Column id="title" header="Title" dataProperty="title" initialIndex="2">
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display"/>
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display"/>
 								</mdc:table.Column>
 								<mdc:table.Column id="descr" header="Description" dataProperty="descr" initialIndex="2">
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{descr}" editMode="Display"/>
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{descr}" editMode="Display"/>
 								</mdc:table.Column>
 								<mdc:table.Column id="pub" header="Published" dataProperty="published" initialIndex="2">
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{published}" editMode="Display"/>
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{published}" editMode="Display"/>
 								</mdc:table.Column>
 								<mdc:table.Column id="genre" header="Genre" dataProperty="genre_code" initialIndex="2">
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{genre_code}" additionalValue="{genre/label}" editMode="Display"/>
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{genre_code}" additionalValue="{genre/label}" editMode="Display"/>
 								</mdc:table.Column>
 							</mdc:columns>
 							<mdc:type>
@@ -94,7 +94,7 @@
 				<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 					<vhfb:basicSearchField>
 						<mdc:FilterField
-							delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+							delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 							dataType= "Edm.String"
 							conditions= "{$filters>/conditions/$search}"
 							width="50%"
@@ -102,8 +102,8 @@
 							placeholder="Search" />
 					</vhfb:basicSearchField>
 					<vhfb:filterItems>
-						<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
-						<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" />
+						<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+						<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" />
 					</vhfb:filterItems>
 				</vhfb:FilterBar>
 			</mdcf:filterBar>
@@ -146,7 +146,7 @@
 	</mdc:dependents>
 
 	<mdc:basicSearchField>
-		<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
+		<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="field0"
 		dataType="Edm.String"
 		placeholder= "Search"
 		conditions="{$filters>/conditions/$search}"
@@ -156,7 +156,7 @@
 
 	<mdc:filterItems>
 		<mdc:FilterField
-			delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 			id="ff1"
 			label="Author ID"
 			conditions="{$filters>/conditions/author_ID}"
@@ -167,7 +167,7 @@
 			width="100%"/>
 
 		<mdc:FilterField
-			delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+			delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 			id="ff2"
 			label="Title"
 			conditions="{$filters>/conditions/title}"

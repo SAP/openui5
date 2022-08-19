@@ -107,15 +107,15 @@ sap.ui.define([
 					liveMode: false,
 					delegate: {name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}},
 					basicSearchField: new FilterField({
-						delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
+						delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}},
 						dataType: "Edm.String",
 						conditions: "{$filters>/conditions/$search}",
 						width:"50%",
 						maxConditions:1,
 						placeholder:"Search"}),
-					filterItems: [new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"myID", dataType:"Edm.Int32", conditions:"{$filters>/conditions/ID}" }),
-								  new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
-								  new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Country", maxConditions:-1, conditions:"{$filters>/conditions/countryOfOrigin_code}"})]
+					filterItems: [new FilterField({ delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}, label:"myID", dataType:"Edm.Int32", conditions:"{$filters>/conditions/ID}" }),
+								  new FilterField({ delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
+								  new FilterField({ delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}, label:"Country", maxConditions:-1, conditions:"{$filters>/conditions/countryOfOrigin_code}"})]
 				});
 			}
 			return this.MySearchTemplate1Filterbar;

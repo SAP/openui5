@@ -13,8 +13,8 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/Bool",
 	"sap/ui/mdc/valuehelp/content/Conditions",
 	"sap/ui/mdc/field/FieldInfoBase",
-	"sap/ui/mdc/odata/v4/FieldBaseDelegate", // to test V4 logic too
-	"sap/ui/mdc/odata/v4/ValueHelpDelegate",
+	"delegates/odata/v4/FieldBaseDelegate", // to test V4 logic too
+	"delegates/odata/v4/ValueHelpDelegate",
 	"sap/ui/mdc/field/FieldHelpBaseDelegate",
 	"sap/ui/mdc/field/FieldValueHelpDelegate",
 	"sap/ui/mdc/field/FieldInput",
@@ -224,10 +224,10 @@ sap.ui.define([
 	QUnit.test("V4 delegate", function(assert) {
 
 		oField = new FieldBase("F1", {
-			delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {x: 1}}
+			delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {x: 1}}
 		});
 
-		var oDelegate = sap.ui.require("sap/ui/mdc/odata/v4/FieldBaseDelegate");
+		var oDelegate = sap.ui.require("delegates/odata/v4/FieldBaseDelegate");
 		assert.equal(oField.getControlDelegate(), oDelegate, "Delegate used");
 		assert.deepEqual(oField.getPayload(), {x: 1}, "Payload used");
 
@@ -236,16 +236,16 @@ sap.ui.define([
 	QUnit.test("V4 delegate, async loading", function(assert) {
 
 		var oStub = sinon.stub(sap.ui, "require");
-		oStub.withArgs("sap/ui/mdc/odata/v4/FieldBaseDelegate").onFirstCall().returns(undefined);
+		oStub.withArgs("delegates/odata/v4/FieldBaseDelegate").onFirstCall().returns(undefined);
 		oStub.callThrough();
 
 		oField = new FieldBase("F1", {
-			delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {x: 1}}
+			delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {x: 1}}
 		});
 
 		var fnDone = assert.async();
 		oField.awaitControlDelegate().then(function() {
-			var oDelegate = sap.ui.require("sap/ui/mdc/odata/v4/FieldBaseDelegate");
+			var oDelegate = sap.ui.require("delegates/odata/v4/FieldBaseDelegate");
 			assert.equal(oField.getControlDelegate(), oDelegate, "Delegate used");
 			assert.deepEqual(oField.getPayload(), {x: 1}, "Payload used");
 			fnDone();
@@ -388,14 +388,14 @@ sap.ui.define([
 		oField.destroy();
 		oField = new FieldBase("F1", {
 			conditions: "{cm>/conditions/Name}",
-			delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {x: 1}}
+			delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {x: 1}}
 		}).placeAt("content");
 		oCore.applyChanges();
 
 		assert.equal(oField._sDefaultFieldHelp, "Field-DefineConditions-Help", "Default Field help set");
 		var oFieldHelp = oCore.byId(oField._sDefaultFieldHelp);
 		assert.ok(oFieldHelp && oFieldHelp instanceof ValueHelp, "ValueHelp used");
-		assert.deepEqual(oFieldHelp.getDelegate(), {name: "sap/ui/mdc/odata/v4/ValueHelpDelegate", payload: {}}, "V4 delegate used on ValueHelp");
+		assert.deepEqual(oFieldHelp.getDelegate(), {name: "delegates/odata/v4/ValueHelpDelegate", payload: {}}, "V4 delegate used on ValueHelp");
 
 	});
 
@@ -1024,7 +1024,7 @@ sap.ui.define([
 				editMode: EditMode.Editable,
 				conditions: "{cm>/conditions/Name}",
 				maxConditions: 1,
-				delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {x: 1}} // to test V4 delegate
+				delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {x: 1}} // to test V4 delegate
 			});
 			sinon.stub(oFieldEditSingle, "_getOperators").callsFake(fnOnlyEQ); // fake Field
 			oFieldDisplay = new FieldBase("F3", { editMode: EditMode.Display, conditions: "{cm>/conditions/Name}" });
@@ -1404,7 +1404,7 @@ sap.ui.define([
 			var aPopoverContent = oPopover && oPopover.getContent()[0];
 			assert.ok(aPopoverContent && aPopoverContent instanceof Bool, "Bool content used");
 			assert.equal(oContent.getValue(), "Yes", "Value set on Input control");
-			assert.deepEqual(oFieldHelp.getDelegate(), {name: "sap/ui/mdc/odata/v4/ValueHelpDelegate", payload: {}}, "base delegate used on FieldHelp");
+			assert.deepEqual(oFieldHelp.getDelegate(), {name: "delegates/odata/v4/ValueHelpDelegate", payload: {}}, "base delegate used on FieldHelp");
 			oFieldEditSingle.focus();
 			assert.equal(oPopover.getTitle(), "", "no title on typeahead");
 

@@ -42,16 +42,16 @@
 								<core:Title text="Order Item Details"></core:Title>
 
 								<Label text="ID"></Label>
-								<mdc:Field id="fID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="{=${view>/editMode} ? 'ReadOnly' : 'Display'}" multipleLines="false"/>
+								<mdc:Field id="fID" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'ID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}" editMode="{=${view>/editMode} ? 'ReadOnly' : 'Display'}" multipleLines="false"/>
 
 								<Label text="amount"></Label>
-								<mdc:Field id="fAmount" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'amount', type:'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false"/>
+								<mdc:Field id="fAmount" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'amount', type:'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false"/>
 
 								<Label text="netAmount"></Label>
-								<mdc:Field id="fNetAmount" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'netAmount', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false"/>
+								<mdc:Field id="fNetAmount" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'netAmount', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false"/>
 
 								<Label text="Book"></Label>
-								<mdc:Field id="fBookId" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'book_ID', type: 'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FH4" display="Description" multipleLines="false">
+								<mdc:Field id="fBookId" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'book_ID', type: 'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" fieldHelp="FH4" display="Description" multipleLines="false">
 									<mdc:dependents>
 										<mdc:ValueHelp id="FH4" delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 											<mdc:typeahead>
@@ -90,7 +90,7 @@
 															enableAutoColumnWidth="true">
 															<mdc:columns>
 																<mdc:table.Column id="FH4--mdc--gridtable--title" header="Title" dataProperty="title">
-																	<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'title', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" multipleLines="false"/>
+																	<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'title', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" width="100%" multipleLines="false"/>
 																</mdc:table.Column>
 															</mdc:columns>
 															<mdc:type>
@@ -104,7 +104,7 @@
 									</mdc:dependents>
 								</mdc:Field>
 								<Label text="Parent ID"></Label>
-								<mdc:Field id="fParentID" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'parent_ID', type: 'sap.ui.model.odata.type.Guid'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false" fieldHelp="FH5">
+								<mdc:Field id="fParentID" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'parent_ID', type: 'sap.ui.model.odata.type.Guid'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false" fieldHelp="FH5">
 									<mdc:dependents>
 										<mdc:ValueHelp id="FH5" delegate="{name: 'sap/ui/v4demo/delegate/ValueHelp.delegate', payload: {}}">
 											<mdc:typeahead>

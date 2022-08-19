@@ -14,24 +14,24 @@
 		<core:Title text="editable Fields"></core:Title>
 
 		<Label text="display=Value Field"></Label>
-		<mdc:Field id="F1" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="Value" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F1" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="Value" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 		<Label text="display=Description Field"></Label>
-		<mdc:Field id="F2" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="Description" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F2" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="Description" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 		<Label text="display=ValueDescription Field"></Label>
-		<mdc:Field id="F3" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="ValueDescription" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F3" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="ValueDescription" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 		<Label text="display=DescriptionValue Field"></Label>
-		<mdc:Field id="F4" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="DescriptionValue" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F4" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="DescriptionValue" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<core:Title text="displayOnly Fields"></core:Title>
 
 		<Label text="display=Value Field"></Label>
-		<mdc:Field id="F1_1" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="Value" editMode="Display" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F1_1" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="Value" editMode="Display" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 		<Label text="display=Description Field"></Label>
-		<mdc:Field id="F1_2" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="Description" editMode="Display" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F1_2" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="Description" editMode="Display" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 		<Label text="display=ValueDescription Field"></Label>
-		<mdc:Field id="F1_3" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="ValueDescription" editMode="Display" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F1_3" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="ValueDescription" editMode="Display" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 		<Label text="display=DescriptionValue Field"></Label>
-		<mdc:Field id="F1_4" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="DescriptionValue" editMode="Display" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F1_4" value="{path:'ID', type:'sap.ui.model.odata.type.Int32'}" additionalValue="{title}" display="DescriptionValue" editMode="Display" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 
 	</form:SimpleForm>

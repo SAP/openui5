@@ -39,17 +39,17 @@
 							<f:SimpleForm id="detailForm" layout="ResponsiveGridLayout">
 								<f:content>
 									<Label text="ID" />
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id= "fID" value="{ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" />
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id= "fID" value="{ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" />
 									<Label text="Author" />
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fAuthor" value="{author_ID}" fieldHelp="FH1" dataType= "Edm.Int32" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="fAuthor" value="{author_ID}" fieldHelp="FH1" dataType= "Edm.Int32" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
 										<mdc:dependents>
 											<mdcf:FieldValueHelp title="Author Value Help" id="FH1" noDialog="false" keyPath="ID" descriptionPath="name" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
 												<mdcf:filterBar>
 													<mdc:FilterBar liveMode="false">
 														<mdc:filterItems>
-															<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" dataType= "Edm.Int32" valueState= "{$filters>/fieldPath/ID/valueState}" valueStateText= "{$filters>/fieldPath/ID/valueStateText}" />
-															<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" valueState= "{$filters>/fieldPath/name/valueState}" valueStateText= "{$filters>/fieldPath/name/valueStateText}" />
-															<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Date of Birth" dataType= "Edm.Date" maxConditions="-1" conditions= "{$filters>/conditions/dateOfBirth}" valueState= "{$filters>/fieldPath/dateOfBirth/valueState}" valueStateText= "{$filters>/fieldPath/dateOfBirth/valueStateText}" fieldHelp= "FH2">
+															<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" dataType= "Edm.Int32" valueState= "{$filters>/fieldPath/ID/valueState}" valueStateText= "{$filters>/fieldPath/ID/valueStateText}" />
+															<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" valueState= "{$filters>/fieldPath/name/valueState}" valueStateText= "{$filters>/fieldPath/name/valueStateText}" />
+															<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Date of Birth" dataType= "Edm.Date" maxConditions="-1" conditions= "{$filters>/conditions/dateOfBirth}" valueState= "{$filters>/fieldPath/dateOfBirth/valueState}" valueStateText= "{$filters>/fieldPath/dateOfBirth/valueStateText}" fieldHelp= "FH2">
 																<mdc:dependents>
 																	<mdcf:FieldValueHelp title="Conditions Value Help" id="FH2" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
 																</mdc:dependents>
@@ -95,7 +95,7 @@
 										</mdc:dependents>
 									</mdc:Field>
 									<Label text="Title"/>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fTitle" value="{title}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="fTitle" value="{title}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
 										<mdc:fieldInfo>
 											<mdc:Link
 												sourceControl="fTitle"
@@ -106,11 +106,11 @@
 										</mdc:fieldInfo>
 									</mdc:Field>
 									<Label text="Description"/>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fDescr" multipleLines="true" value="{descr}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="fDescr" multipleLines="true" value="{descr}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
 									<Label text="Stock"/>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fStock" value="{stock}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="fStock" value="{stock}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"/>
 									<Label text="Price"/>
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fPrice" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" fieldHelp="FVH-Currency" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="fPrice" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency', formatOptions: {parseAsString: true}}" fieldHelp="FVH-Currency" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
 										<mdc:dependents>
 											<mdcf:ListFieldHelp id="FVH-Currency" items="{/Currencies}">
 												<core:ListItem key="{code}" text="{code}" additionalText="{descr}" />
@@ -118,7 +118,7 @@
 										</mdc:dependents>
 									</mdc:Field>
 									<Label text="Link" />
-									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fLink" value="{title}" editMode="Display">
+									<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="fLink" value="{title}" editMode="Display">
 										<mdc:fieldInfo>
 											<mdc:Link
 												sourceControl="fLink"

@@ -7,7 +7,6 @@ sap.ui.define([
     "sap/ui/mdc/chart/PropertyHelper"
 ], function (
     V4ChartDelegate,
-    ODataMetaModelUtil,
     PropertyHelper
 ) {
     "use strict";

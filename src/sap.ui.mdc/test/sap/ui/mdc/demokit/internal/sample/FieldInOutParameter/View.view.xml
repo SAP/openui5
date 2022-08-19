@@ -16,9 +16,9 @@
 		<core:Title text="Fields with 'Genre' as In-Parameter for 'Subgenre' and 'Subgenre' as out-parameter back to 'Genre'"></core:Title>
 
 		<Label text="Genre" />
-		<mdc:Field id="fGenre" value="{genre_code}" fieldHelp="FHGenre" display="Description" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"/>
+		<mdc:Field id="fGenre" value="{genre_code}" fieldHelp="FHGenre" display="Description" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"/>
 		<Label text="SubGenre" />
-		<mdc:Field id="fSubGenre" value="{subgenre_code}" fieldHelp="FHSubGenre" display="Description" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"/>
+		<mdc:Field id="fSubGenre" value="{subgenre_code}" fieldHelp="FHSubGenre" display="Description" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"/>
 
 		<form:dependents>
 			<mdcf:FieldValueHelp
@@ -37,8 +37,8 @@
 				<mdcf:filterBar>
 					<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 						<vhfb:filterItems>
-							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" conditions="{$filters>/conditions/code}" />
-							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
+							<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" conditions="{$filters>/conditions/code}" />
+							<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
 						</vhfb:filterItems>
 					</vhfb:FilterBar>
 				</mdcf:filterBar>
@@ -89,9 +89,9 @@
 				<mdcf:filterBar>
 					<vhfb:FilterBar liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}}" >
 						<vhfb:filterItems>
-							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" conditions="{$filters>/conditions/code}" />
-							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
-							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Genre" conditions= "{$filters>/conditions/genre_code}" />
+							<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" conditions="{$filters>/conditions/code}" />
+							<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
+							<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Genre" conditions= "{$filters>/conditions/genre_code}" />
 						</vhfb:filterItems>
 					</vhfb:FilterBar>
 				</mdcf:filterBar>

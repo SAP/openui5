@@ -7,7 +7,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/ValueHelpDelegate",
-	"sap/ui/mdc/odata/v4/ValueHelpDelegate",
+	"delegates/odata/v4/ValueHelpDelegate",
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enum/ConditionValidated",

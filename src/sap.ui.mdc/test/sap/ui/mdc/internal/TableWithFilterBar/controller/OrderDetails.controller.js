@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/m/library",
 	'sap/m/Text',
 	"sap/m/MessageToast",
-	"sap/ui/mdc/odata/v4/FieldBaseDelegate" // to have it loaded before rendering starts
+	"delegates/odata/v4/FieldBaseDelegate" // to have it loaded before rendering starts
 ], function (Controller, UIComponent, JSONModel, ConditionModel, Condition, Dialog, Button, mobileLibrary, Text, MessageToast, FieldBaseDelegate) {
 
 	"use strict";

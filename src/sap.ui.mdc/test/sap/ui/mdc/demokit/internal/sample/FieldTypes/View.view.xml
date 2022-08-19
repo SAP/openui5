@@ -14,34 +14,34 @@
 		<core:Title text="Field"></core:Title>
 
 		<Label text="String Field"></Label>
-		<mdc:Field id="F1" value="{title}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F1" value="{title}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="int Field"></Label>
-		<mdc:Field id="F2" value="{path:'metricsWords', type:'sap.ui.model.odata.type.Int32'}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"></mdc:Field>
+		<mdc:Field id="F2" value="{path:'metricsWords', type:'sap.ui.model.odata.type.Int32'}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"></mdc:Field>
 
 		<Label text="double Field"></Label>
-		<mdc:Field id="F3" value="{path: 'price', type:'sap.ui.model.odata.type.Double'}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F3" value="{path: 'price', type:'sap.ui.model.odata.type.Double'}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="time Field"></Label>
 		<!-- TODO No property on books with this type available -->
-		<mdc:Field id="F4" value="{path:'', type:'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'long'}, constraints: {}}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F4" value="{path:'', type:'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'long'}, constraints: {}}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="date Field"></Label>
-		<mdc:Field id="F5" value="{path:'published', type:'sap.ui.model.odata.type.Date', formatOptions: {}, constraints: {V4: true}}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F5" value="{path:'published', type:'sap.ui.model.odata.type.Date', formatOptions: {}, constraints: {V4: true}}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="dateTimeOffset Field"></Label>
 		<!-- TODO modifiedAt uses milli second which we can not use with this type -->
-		<mdc:Field id="F6" value="{path:'modifiedAt', type:'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {}, constraints: {V4: true}}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F6" value="{path:'modifiedAt', type:'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {}, constraints: {V4: true}}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="boolean Field"></Label>
 		<!-- TODO No property on books with this type available -->
-		<mdc:Field id="F7" value="{path:'', type:'sap.ui.model.odata.type.Boolean', constraints: {nullable: false}}" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" />
+		<mdc:Field id="F7" value="{path:'', type:'sap.ui.model.odata.type.Boolean', constraints: {nullable: false}}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" />
 
 		<Label text="A multi line Field in edit mode"></Label>
-		<mdc:Field id="F8" value="{descr}" editMode="Editable" multipleLines="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F8" value="{descr}" editMode="Editable" multipleLines="true" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 		<Label text="A multi line Field in display mode"></Label>
-		<mdc:Field id="F9" value="{descr}" editMode="Display" multipleLines="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
+		<mdc:Field id="F9" value="{descr}" editMode="Display" multipleLines="true" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" ></mdc:Field>
 
 	</form:SimpleForm>
 </mvc:View>

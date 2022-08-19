@@ -22,7 +22,11 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 				only: "[sap/ui/mdc]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
 				branchCoverage: true		// Whether to enable standard branch coverage
 			},
-			loader: {},
+			loader: {
+				paths: {
+					"delegates": "test-resources/sap/ui/mdc/delegates"
+				}
+			},
 			page: "test-resources/sap/ui/mdc/qunit/teststarter.qunit.html?testsuite={suite}&test={name}",
 			autostart: true
 		},

@@ -5,7 +5,7 @@
 sap.ui.define([
 	"delegates/odata/v4/vizChart/ChartDelegate",
 	"sap/ui/mdc/library",
-	"sap/ui/mdc/odata/v4/ODataMetaModelUtil"
+	"delegates/odata/v4/ODataMetaModelUtil"
 ], function(ChartDelegate, MDCLib, ODataMetaModelUtil) {
 	"use strict";
 

@@ -66,7 +66,7 @@
 									<vhfb:FilterBar id="mdcFilterbar-listcollection-2" liveMode="false" delegate="{name: 'delegates/GenericVhFilterBarDelegate', payload: {}}">
 										<vhfb:basicSearchField>
 											<mdc:FilterField
-												delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+												delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 												dataType= "Edm.String"
 												conditions= "{$filters>/conditions/$search}"
 												width="50%"
@@ -74,10 +74,10 @@
 												placeholder="Search" />
 										</vhfb:basicSearchField>
 										<vhfb:filterItems>
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="CreatedAt" dataType="Edm.DateTimeOffset" dataTypeConstraints="{precision: 7, V4: true}" conditions="{path: '$filters>/conditions/createdAt'}" />
+											<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="CreatedAt" dataType="Edm.DateTimeOffset" dataTypeConstraints="{precision: 7, V4: true}" conditions="{path: '$filters>/conditions/createdAt'}" />
 										</vhfb:filterItems>
 										<vhfb:filterItems>
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="metricsSyllables" dataType="Edm.Decimal" dataTypeConstraints="{scale: 1, precision: 9}" conditions="{path: '$filters>/conditions/metricsSyllables'}" />
+											<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="metricsSyllables" dataType="Edm.Decimal" dataTypeConstraints="{scale: 1, precision: 9}" conditions="{path: '$filters>/conditions/metricsSyllables'}" />
 										</vhfb:filterItems>
 									</vhfb:FilterBar>
 								</mdcvc:filterBar>
@@ -96,16 +96,16 @@
 									</mdc:type>
 									<mdc:columns>
 										<mdc:table.Column id="mdcTable-listcollection-1_col_ID" header="ID" dataProperty="ID">
-											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
+											<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="Display"/>
 										</mdc:table.Column>
 										<mdc:table.Column id="mdcTable-listcollection-1_col_title" header="title" dataProperty="title">
-											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display"/>
+											<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display"/>
 										</mdc:table.Column>
 										<mdc:table.Column id="mdcTable-listcollection-1_col_syllables" header="metricsSyllables" dataProperty="metricsSyllables">
-											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{metricsSyllables}" editMode="Display"/>
+											<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{metricsSyllables}" editMode="Display"/>
 										</mdc:table.Column>
 										<mdc:table.Column id="mdcTable-listcollection-1_col_created" header="createdAt" dataProperty="createdAt">
-											<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{createdAt}" editMode="Display"/>
+											<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{createdAt}" editMode="Display"/>
 										</mdc:table.Column>
 									</mdc:columns>
 								</mdc:Table>
@@ -116,7 +116,7 @@
 			</mdc:ValueHelp>
 		</mdc:dependents>
 		<mdc:filterItems>
-			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+			<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 				id="FB0-FF1-11"
 				label="Books"
 				conditions="{$filters>/conditions/ID}"
@@ -131,7 +131,7 @@
 
 	<mdc:FilterBar class="sapUiLargeMarginBottom" id="FB1" p13nMode="Item,Value" liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/FB0.delegate', payload: {collectionName: 'Books'}}">
 		<mdc:filterItems>
-			<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
+			<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"
 				id="FB1-FF1-11"
 				label="Receives Externalized State"
 				conditions="{$filters>/conditions/ID}"

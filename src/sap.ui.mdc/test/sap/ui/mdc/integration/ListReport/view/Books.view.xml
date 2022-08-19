@@ -47,9 +47,9 @@
 						<mdcf:filterBar>
 							<mdc:FilterBar liveMode="false">
 								<mdc:filterItems>
-									<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
-									<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" />
-									<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Date of Birth" dataType= "Edm.Date" maxConditions="-1" conditions= "{$filters>/conditions/dateOfBirth}" fieldHelp= "FH2">
+									<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="ID" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+									<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions= "{$filters>/conditions/name}" />
+									<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" label="Date of Birth" dataType= "Edm.Date" maxConditions="-1" conditions= "{$filters>/conditions/dateOfBirth}" fieldHelp= "FH2">
 										<mdc:dependents>
 											<mdcf:FieldValueHelp title="Conditions Value Help" id="FH2" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
 										</mdc:dependents>
@@ -131,15 +131,15 @@
 					</mdcf:FieldValueHelp>
 				</mdc:dependents>
 				<mdc:filterItems>
-					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff1" label="Author" conditions= "{$filters>/conditions/author_ID}" dataType= "Edm.Int32" required="false" fieldHelp="FH1" display="Description" editMode="Editable"></mdc:FilterField>
-					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff2" label="Title" conditions="{$filters>/conditions/title}" fieldHelp="FH4" visible="true" />
-					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" visible="true" id="ff3" label="Stock range" maxConditions="1" conditions="{$filters>/conditions/stock}" operators="BT">
+					<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="ff1" label="Author" conditions= "{$filters>/conditions/author_ID}" dataType= "Edm.Int32" required="false" fieldHelp="FH1" display="Description" editMode="Editable"></mdc:FilterField>
+					<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="ff2" label="Title" conditions="{$filters>/conditions/title}" fieldHelp="FH4" visible="true" />
+					<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" visible="true" id="ff3" label="Stock range" maxConditions="1" conditions="{$filters>/conditions/stock}" operators="BT">
 						<mdc:contentEdit>
 							<demo:CustomRangeSlider value="{path: '$field>/conditions/stock'}" max="99999" width="100%" class="sapUiMediumMarginBottom" />
 						</mdc:contentEdit>
 					</mdc:FilterField>
-					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff4" label="CreatedAt" dataType="Edm.DateTimeOffset" dataTypeConstraints="{V4: true}" maxConditions="-1" fieldHelp="FH3" conditions="{$filters>/conditions/createdAt}" operators="EQ,GT,LT,BT,LASTYEAR" />
-					<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="ff5" label="Language" display="Description" dataType="Edm.String" dataTypeConstraints="{V4: true}" maxConditions="-1" fieldHelp="FH5" conditions="{$filters>/conditions/language_code}" />
+					<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="ff4" label="CreatedAt" dataType="Edm.DateTimeOffset" dataTypeConstraints="{V4: true}" maxConditions="-1" fieldHelp="FH3" conditions="{$filters>/conditions/createdAt}" operators="EQ,GT,LT,BT,LASTYEAR" />
+					<mdc:FilterField delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="ff5" label="Language" display="Description" dataType="Edm.String" dataTypeConstraints="{V4: true}" maxConditions="-1" fieldHelp="FH5" conditions="{$filters>/conditions/language_code}" />
 
 				</mdc:filterItems>
 			</mdc:FilterBar>
@@ -173,7 +173,7 @@
 					</mdc:actions>
 					<mdc:columns>
 						<mdc:table.Column id="id2" header="Title" dataProperty="title" width="15rem">
-							<mdc:Field id="fTitle" delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display" multipleLines="true">
+							<mdc:Field id="fTitle" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{title}" editMode="Display" multipleLines="true">
 								<mdc:fieldInfo>
 									<mdc:Link sourceControl="fTitle" delegate='{ name: "sap/ui/mdc/flp/FlpLinkDelegate", payload: {
                                             semanticObjects: ["FakeFlpSemanticObject"],
@@ -183,20 +183,20 @@
 							</mdc:Field>
 						</mdc:table.Column>
 						<mdc:table.Column id="id3" header="Description" dataProperty="descr" width="30%">
-							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{descr}" multipleLines="true" editMode="Display" />
+							<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{descr}" multipleLines="true" editMode="Display" />
 						</mdc:table.Column>
 						<mdc:table.Column id="id1" header="Author" dataProperty="author_name" width="10rem">
-							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FAN_1" value="{author/name}" editMode="Display" multipleLines="true">
+							<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" id="FAN_1" value="{author/name}" editMode="Display" multipleLines="true">
 								<mdc:fieldInfo>
 									<mdc:Link delegate="{name: 'sap/ui/v4demo/delegate/Books.Link.delegate'}"></mdc:Link>
 								</mdc:fieldInfo>
 							</mdc:Field>
 						</mdc:table.Column>
 						<mdc:table.Column id="id4" header="Price" dataProperty="price" width="6rem">
-							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" editMode="Display" />
+							<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" editMode="Display" />
 						</mdc:table.Column>
 						<mdc:table.Column id="id5" header="Stock" dataProperty="stock" width="4rem">
-							<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{stock}" editMode="Display" />
+							<mdc:Field delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{stock}" editMode="Display" />
 						</mdc:table.Column>
 					</mdc:columns>
 					<mdc:type>

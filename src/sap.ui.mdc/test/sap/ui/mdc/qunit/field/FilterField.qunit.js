@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldMultiInput", // async. loading of content control tested in FieldBase test
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/enum/BaseType",
-	"sap/ui/mdc/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
+	"delegates/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function (
@@ -357,7 +357,7 @@ sap.ui.define([
 		oFilterField = new FilterField("FF1", {
 			conditions: "{$filters>/conditions/$search}",
 			maxConditions: 1,
-			delegate: '{name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}}'
+			delegate: '{name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}'
 		});
 
 		sinon.spy(oFilterField, "fireChange");

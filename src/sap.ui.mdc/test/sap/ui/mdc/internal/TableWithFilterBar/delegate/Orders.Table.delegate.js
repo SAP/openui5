@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/mdc/enum/FieldDisplay",
 	"sap/ui/mdc/enum/EditMode",
 	"sap/ui/mdc/util/FilterUtil",
-	"sap/ui/mdc/odata/v4/util/DelegateUtil",
+	"delegates/odata/v4/util/DelegateUtil",
 	"sap/ui/core/Core",
 	"sap/ui/model/Filter",
 	'sap/ui/model/FilterOperator',

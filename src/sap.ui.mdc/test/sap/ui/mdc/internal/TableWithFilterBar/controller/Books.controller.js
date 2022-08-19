@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/Table",
 	"sap/m/Text",
-	"sap/ui/mdc/odata/v4/FieldBaseDelegate", // to have it loaded before rendering starts
+	"delegates/odata/v4/FieldBaseDelegate", // to have it loaded before rendering starts
 	"sap/ui/mdc/field/FieldMultiInput", // to have it loaded before rendering starts
 	"sap/m/Token", // to have it loaded before rendering starts
 	"sap/m/ExpandableText" // to have it loaded before rendering starts
@@ -59,19 +59,19 @@ sap.ui.define([
 					liveMode: false,
 					filterItems: [
 						new FilterField({
-							delegate:{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
+							delegate:{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}},
 							label: "Code",
 							dataType: "Edm.String",
 							conditions: "{$filters>/conditions/code}"
 						}),
 						new FilterField({
-							delegate:{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
+							delegate:{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}},
 							label: "Title",
 							dataType: "Edm.String",
 							conditions: "{$filters>/conditions/title}"
 						}),
 						new FilterField({
-							delegate:{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
+							delegate:{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}},
 							label: "Classification",
 							dataType: "Edm.String",
 							conditions: "{$filters>/conditions/classification_code}"

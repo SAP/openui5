@@ -50,7 +50,7 @@ sap.ui.define([
 								liveMode: false,
 								delegate: {name: "delegates/GenericVhFilterBarDelegate", payload: {}},
 								basicSearchField: new FilterField({
-									delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}},
+									delegate: {name: "delegates/odata/v4/FieldBaseDelegate", payload: {}},
 									dataType: "Edm.String",
 									conditions: "{$filters>/conditions/$search}",
 									width: "50%",
@@ -58,9 +58,9 @@ sap.ui.define([
 									placeholder: "Search"
 								}),
 								filterItems: [
-									new FilterField(oCurrentContent.getId() + "--" +  "template1-FB-AuthorId", { delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", dataTypeFormatOptions: {groupingEnabled: false}, conditions:"{$filters>/conditions/ID}" }),
-									new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
-									new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Country of Origin", maxConditions:-1, conditions:"{$filters>/conditions/countryOfOrigin_code}"})
+									new FilterField(oCurrentContent.getId() + "--" +  "template1-FB-AuthorId", { delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", dataTypeFormatOptions: {groupingEnabled: false}, conditions:"{$filters>/conditions/ID}" }),
+									new FilterField({ delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
+									new FilterField({ delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}, label:"Country of Origin", maxConditions:-1, conditions:"{$filters>/conditions/countryOfOrigin_code}"})
 								]
 							})
 						);
@@ -92,7 +92,7 @@ sap.ui.define([
 								liveMode: false,
 								delegate: {name: "delegates/GenericVhFilterBarDelegate", payload: {}},
 								basicSearchField: new FilterField({
-									delegate: {	name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}},
+									delegate: {	name: "delegates/odata/v4/FieldBaseDelegate", payload: {}},
 									dataType: "Edm.String",
 									conditions: "{$filters>/conditions/$search}",
 									width: "50%",
@@ -100,9 +100,9 @@ sap.ui.define([
 									placeholder: "Search"
 								}),
 								filterItems: [
-									new FilterField(oCurrentContent.getId() + "--" +  "default-FB-AuthorId", { delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", dataTypeFormatOptions: {groupingEnabled: false}, conditions:"{$filters>/conditions/ID}" }),
-									new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
-									new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Date of Birth", maxConditions:-1, dataType:"Edm.Date", conditions:"{$filters>/conditions/dateOfBirth}"})
+									new FilterField(oCurrentContent.getId() + "--" +  "default-FB-AuthorId", { delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", dataTypeFormatOptions: {groupingEnabled: false}, conditions:"{$filters>/conditions/ID}" }),
+									new FilterField({ delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
+									new FilterField({ delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}, label:"Date of Birth", maxConditions:-1, dataType:"Edm.Date", conditions:"{$filters>/conditions/dateOfBirth}"})
 								]
 							})
 						);
@@ -203,15 +203,15 @@ sap.ui.define([
 	// 				liveMode: false,
 	// 				delegate: {name: 'delegates/GenericVhFilterBarDelegate', payload: {collectionName: ''}},
 	// 				basicSearchField: new FilterField({
-	// 					delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}},
+	// 					delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}},
 	// 					dataType: "Edm.String",
 	// 					conditions: "{$filters>/conditions/$search}",
 	// 					width:"50%",
 	// 					maxConditions:1,
 	// 					placeholder:"Search"}),
-	// 				filterItems: [new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", conditions:"{$filters>/conditions/ID}" }),
-	// 							  new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
-	// 							  new FilterField({ delegate: {name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}, label:"Country", maxConditions:-1, conditions:"{$filters>/conditions/countryOfOrigin_code}"})]
+	// 				filterItems: [new FilterField({ delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}, label:"ID", dataType:"Edm.Int32", conditions:"{$filters>/conditions/ID}" }),
+	// 							  new FilterField({ delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}, label:"Name", conditions:"{$filters>/conditions/name}" }),
+	// 							  new FilterField({ delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}, label:"Country", maxConditions:-1, conditions:"{$filters>/conditions/countryOfOrigin_code}"})]
 	// 			});
 	// 		}
 	// 		return this.MySearchTemplate1Filterbar;
