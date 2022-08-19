@@ -3,9 +3,58 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "f4ecdcabad79e7833855b349c9e9b82c920c1a82",
+        "type": "FIX",
+        "text": " core.Popup: correctly align Blocklayer with within area in RTL mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280154052"
+          }
+        ]
+      },
+      {
+        "id": "d9e57866a4e7ba106f67e2792c61e9da0048e0c6",
+        "type": "FIX",
+        "text": " sap.ui.core.Configuration: Disable timezone configuration"
+      },
+      {
+        "id": "7bdfd083879632b47c3cdc486c471f9b724d0311",
+        "type": "FIX",
+        "text": " sap/ui/base/ManagedObject: Clone Object Bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270069150"
+          }
+        ]
+      },
+      {
+        "id": "f4ad1b8e28261195173f37bf194719f4584cd4ba",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel: document more parameters for TypeScript",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280143893"
+          }
+        ]
+      },
+      {
         "id": "2eeaf175f4f4bc94b0dc743dc525e7d840194b08",
         "type": "FIX",
         "text": " sap.ui.core: address SDK feedback in samples and API reference"
+      },
+      {
+        "id": "8428c2d31298693acc1bc3de72fff7dfd8eabcb1",
+        "type": "FIX",
+        "text": " RenderManager: Keep track of focused element before preserving DOM",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970240933"
+          }
+        ]
       },
       {
         "id": "54043fc7e83eb8446e5a809081ee338831d8d0b9",
@@ -15,6 +64,17 @@
           {
             "type": "BCP",
             "reference": "2280148151"
+          }
+        ]
+      },
+      {
+        "id": "ec07a6d87ec4717849bb82989b25a8c682195ebc",
+        "type": "FIX",
+        "text": " MockServer: fix the OData system query selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280133414"
           }
         ]
       },
