@@ -179,6 +179,8 @@ sap.ui.define([
 			.then(function() {
 				assert.ok(oCommandExecutionHandlerStub.calledBefore(oFireExecutedStub), "the executed event waits for the command execution handler");
 				assert.ok(oCommandExecutionHandlerStub.calledBefore(oFireModifiedStub), "the modified event waits for the command execution handler");
+				assert.strictEqual(oFireModifiedStub.callCount, 1, "the modified event was fired once");
+				assert.strictEqual(oFireExecutedStub.callCount, 1, "the executed event was fired once");
 			})
 			.then(function() {
 				return this.oCommandStack.undo();
@@ -186,6 +188,8 @@ sap.ui.define([
 			.then(function() {
 				assert.ok(oCommandExecutionHandlerStub.calledBefore(oFireExecutedStub), "the executed event waits for the command execution handler");
 				assert.ok(oCommandExecutionHandlerStub.calledBefore(oFireModifiedStub), "the modified event waits for the command execution handler");
+				assert.strictEqual(oFireModifiedStub.callCount, 2, "the modified event was fired once again");
+				assert.strictEqual(oFireExecutedStub.callCount, 2, "the executed event was fired once again");
 			});
 		});
 	});

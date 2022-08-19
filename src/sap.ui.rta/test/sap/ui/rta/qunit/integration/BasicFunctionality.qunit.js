@@ -32,7 +32,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.done(function () {
-		QUnit.config.fixture = '';
+		QUnit.config.fixture = "";
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
 
@@ -82,7 +82,7 @@ sap.ui.define([
 
 			assert.strictEqual(this.oRta.canUndo(), false, "initially no undo is possible");
 			assert.strictEqual(this.oRta.canRedo(), false, "initially no redo is possible");
-			assert.notOk(this.oRta.getToolbar().getControl('publish').getEnabled(), "initially no Changes are existing");
+			assert.notOk(this.oRta.getToolbar().getControl("publish").getEnabled(), "initially no Changes are existing");
 
 			return new CommandFactory().getCommandFor(this.oGroup, "Remove", {
 				removedElement: this.oGroup
@@ -97,8 +97,8 @@ sap.ui.define([
 				assert.strictEqual(this.oGroup.getVisible(), false, "then group is hidden...");
 				assert.strictEqual(this.oRta.canUndo(), true, "after any change undo is possible");
 				assert.strictEqual(this.oRta.canRedo(), false, "after any change no redo is possible");
-				assert.ok(this.oRta.getToolbar().getControl('undo').getEnabled(), "Undo button of RTA is enabled");
-				assert.ok(this.oRta.getToolbar().getControl('publish').getEnabled(), "Transport button of RTA is enabled");
+				assert.ok(this.oRta.getToolbar().getControl("undo").getEnabled(), "Undo button of RTA is enabled");
+				assert.ok(this.oRta.getToolbar().getControl("publish").getEnabled(), "Transport button of RTA is enabled");
 			}.bind(this))
 
 			.then(this.oCommandStack.undo.bind(this.oCommandStack))
@@ -108,7 +108,7 @@ sap.ui.define([
 				assert.strictEqual(this.oGroup.getVisible(), true, "when the undo is called, then the group is visible again");
 				assert.strictEqual(this.oRta.canUndo(), false, "after reverting a change undo is not possible");
 				assert.strictEqual(this.oRta.canRedo(), true, "after reverting a change redo is possible");
-				assert.notOk(this.oRta.getToolbar().getControl('publish').getEnabled(), "Transport button of RTA is disabled");
+				assert.notOk(this.oRta.getToolbar().getControl("publish").getEnabled(), "Transport button of RTA is disabled");
 			}.bind(this))
 
 			.then(this.oRta.redo.bind(this.oRta))
@@ -116,13 +116,12 @@ sap.ui.define([
 			.then(function() {
 				oCore.applyChanges();
 				assert.strictEqual(this.oGroup.getVisible(), false, "when the redo is called, then the group is not visible again");
-				assert.ok(this.oRta.getToolbar().getControl('publish').getEnabled(), "Transport button of RTA is enabled again");
-				// pushAndExecute fires modified twice!
-				assert.strictEqual(iFiredCounter, 4, "undoRedoStackModified event of RTA is fired twice");
+				assert.ok(this.oRta.getToolbar().getControl("publish").getEnabled(), "Transport button of RTA is enabled again");
+				assert.strictEqual(iFiredCounter, 3, "undoRedoStackModified event of RTA is fired 3 times");
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -156,7 +155,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 	});
@@ -206,7 +205,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("with focus on the toolbar", function(assert) {
-			this.oRta.getToolbar().getControl('exit').focus();
+			this.oRta.getToolbar().getControl("exit").focus();
 
 			QUnitUtils.triggerKeydown(document, KeyCodes.Z, false, false, true);
 			assert.equal(this.fnUndoSpy.callCount, 1, "then _onUndo was called once");
@@ -245,7 +244,7 @@ sap.ui.define([
 
 		QUnit.test("during rename", function(assert) {
 			var fnDone = assert.async();
-			oCore.getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
+			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function (sChannel, sEvent, mParams) {
 				if (mParams.overlay === this.oElementOverlay) {
 					QUnitUtils.triggerKeydown(document, KeyCodes.Z, false, false, true);
 					assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");

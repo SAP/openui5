@@ -76,7 +76,15 @@ sap.ui.define([
 				}
 			},
 			events: {
+				/**
+				 * Fired if the Stack changes because of a change execution or if all commands get removed.
+				 * In case of change execution the modified event will be fired after the commandExecuted event.
+				 */
 				modified: {},
+
+				/**
+				 * Fired after a successful execution of a command (also includes undo).
+				 */
 				commandExecuted: {
 					parameters: {
 						command: {type: "object"},
@@ -128,12 +136,14 @@ sap.ui.define([
 	Stack.prototype.addCommandExecutionHandler = function(fnHandler) {
 		this._aCommandExecutionHandler.push(fnHandler);
 	};
+
 	Stack.prototype.removeCommandExecutionHandler = function(fnHandler) {
 		var i = this._aCommandExecutionHandler.indexOf(fnHandler);
 		if (i > -1) {
 			this._aCommandExecutionHandler.splice(i, 1);
 		}
 	};
+
 	Stack.prototype.init = function() {
 		this._aCommandExecutionHandler = [];
 		this._toBeExecuted = -1;
@@ -158,6 +168,7 @@ sap.ui.define([
 	 */
 	Stack.prototype.pushExecutedCommand = function(oCommand) {
 		this.push(oCommand, true);
+		this.fireModified();
 	};
 
 	Stack.prototype.push = function(oCommand, bExecuted) {
@@ -172,7 +183,6 @@ sap.ui.define([
 		if (!bExecuted) {
 			this._toBeExecuted++;
 		}
-		this.fireModified();
 	};
 
 	Stack.prototype.top = function() {
@@ -188,7 +198,6 @@ sap.ui.define([
 
 	Stack.prototype.removeCommand = function(vObject, bSuppressInvalidate) {
 		var oRemovedCommand = this.removeAggregation("commands", vObject, bSuppressInvalidate);
-		this.fireModified();
 		return oRemovedCommand;
 	};
 
