@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
 	"sap/ui/integration/cards/actions/CardActions",
+	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/qunit/utils/MemoryLeakCheck"
 ], function (
 	Log,
@@ -17,6 +18,7 @@ sap.ui.define([
 	Card,
 	Core,
 	CardActions,
+	RequestDataProvider,
 	MemoryLeakCheck
 ) {
 	"use strict";
@@ -513,6 +515,54 @@ sap.ui.define([
 								"value": "{/initialComment}",
 								"rows": 4,
 								"placeholder": "Comment"
+							}
+						]
+					}
+				]
+			}
+		}
+	};
+
+	var oManifest_ObjectCardFormElementsSpecialValue = {
+		"sap.app": {
+			"id": "test.cards.object.card5",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Object",
+			"configuration": {
+				"actionHandlers": {
+					"submit": {
+						"url": "./MOCK.json",
+						"method": "GET",
+						"parameters": {
+							"status": "approved",
+							"comment": "{form>/comment}"
+						}
+					}
+				}
+			},
+			"content": {
+				"groups": [
+					{
+						"alignment": "Stretch",
+						"items": [
+							{
+								"id": "comment",
+								"type": "TextArea"
+							}
+						]
+					}
+				]
+			},
+			"footer": {
+				"actionsStrip": [
+					{
+						"text": "Submit",
+						"buttonType": "Accept",
+						"actions": [
+							{
+								"type": "Submit"
 							}
 						]
 					}
@@ -1603,7 +1653,7 @@ sap.ui.define([
 
 		oCard.attachEvent("_ready", function () {
 			oCard.triggerAction({
-				"type": CardActionType.Submit
+				type: CardActionType.Submit
 			});
 		});
 
@@ -1651,6 +1701,37 @@ sap.ui.define([
 			}
 		});
 		Core.applyChanges();
+	});
+
+	QUnit.test("Element values are properly passed on submit action - special value", function (assert) {
+		var done = assert.async(),
+			oCard = this.oCard,
+			oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
+
+
+		oCard.attachEvent("_ready", function () {
+			var oTextArea = oCard.getCardContent().getAggregation("_content").getItems()[0].getItems()[0];
+
+			// Act
+			oTextArea.setValue('{"reason": "{form>/reason/key}"}');
+			Core.applyChanges();
+			oCard.triggerAction({
+				type: CardActionType.Submit
+			});
+
+			// Assert
+			assert.deepEqual(
+				oDataProviderStub.thisValues[0].getSettings().request.parameters,
+				{
+					"status": "approved",
+					"comment": '{"reason": "{form>/reason/key}"}'
+				},
+				"Text area with special value shouldn't break form submit"
+			);
+			done();
+		});
+
+		oCard.setManifest(oManifest_ObjectCardFormElementsSpecialValue);
 	});
 
 	QUnit.module("titleMaxLine and labelWrapping", {

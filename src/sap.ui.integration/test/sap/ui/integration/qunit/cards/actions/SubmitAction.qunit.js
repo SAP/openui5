@@ -333,6 +333,58 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Binding in action handler", function (assert) {
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			// Arrange
+			var oDataProviderStub = this.stub(RequestDataProvider.prototype, "getData").resolves("Success");
+
+			// Act
+			this.oCard.getCardContent().getActions().fireAction(
+				this.oCard.getCardContent(),
+				CardActionType.Submit
+			);
+
+			// Assert
+			assert.strictEqual(
+				oDataProviderStub.thisValues[0].getSettings().request.url,
+				"some/fake/api",
+				"Binding should be resolved"
+			);
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.adaptive.submit.action.payload",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"parameters": {
+						"submitUrl": {
+							"value": "some/fake/api"
+						}
+					},
+					"actionHandlers": {
+						"submit": {
+							"url": "{parameters>/submitUrl/value}",
+							"parameters": {
+								"user": "Donna Moore"
+							}
+						}
+					}
+				},
+				"content": {
+					"item": {}
+				}
+			}
+		});
+	});
+
 	QUnit.test("Binding in action handler parameters", function (assert) {
 		var done = assert.async();
 

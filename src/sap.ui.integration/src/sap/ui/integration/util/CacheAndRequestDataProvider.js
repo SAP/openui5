@@ -87,11 +87,11 @@ sap.ui.define([
 			this._iUpdateIntervalTimeout = null;
 		}
 
-		if (!this._oSettings || !this._oSettings.updateInterval) {
+		if (!this.getSettings() || !this.getSettings().updateInterval) {
 			return;
 		}
 
-		iInterval = parseInt(this._oSettings.updateInterval);
+		iInterval = parseInt(this.getSettings().updateInterval);
 
 		if (isNaN(iInterval)) {
 			return;

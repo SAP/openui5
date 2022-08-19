@@ -38,9 +38,14 @@ sap.ui.define([
 
 		this._onActionSubmitStart(oData);
 
-		var oDataProvider = oDataProviderFactory.create({
-			request: this._createRequest(oSubmitActionHandler, oData)
-		});
+		var oDataProvider = oDataProviderFactory.create(
+			{
+				request: this._createRequest(oSubmitActionHandler, oData)
+			},
+			undefined,
+			undefined,
+			true
+		);
 
 		oDataProvider.getData()
 			.then(function (oResponse) {
@@ -72,28 +77,25 @@ sap.ui.define([
 	};
 
 	SubmitAction.prototype._createRequest = function (oSubmitActionHandler, oData) {
-		return {
+		var oRequest = {
 			mode: oSubmitActionHandler.mode || "cors",
 			url: oSubmitActionHandler.url,
 			method: oSubmitActionHandler.method || "POST",
-			parameters: this._resolveActionHandlerParams(oSubmitActionHandler.parameters) || oData,
+			parameters: oSubmitActionHandler.parameters || oData,
 			headers: oSubmitActionHandler.headers,
 			xhrFields: {
 				withCredentials: !!oSubmitActionHandler.withCredentials
 			}
 		};
-	};
 
-	SubmitAction.prototype._resolveActionHandlerParams = function (oActionHandlerParameters) {
-		var oCard = this.getCardInstance();
-
-		oActionHandlerParameters = BindingResolver.resolveValue(
-			BindingHelper.createBindingInfos(oActionHandlerParameters, oCard.getBindingNamespaces()),
+		oRequest =  BindingResolver.resolveValue(
+			BindingHelper.createBindingInfos(oRequest, this.getCardInstance().getBindingNamespaces()),
 			this.getSourceInstance()
 		);
-		Utils.makeUndefinedValuesNull(oActionHandlerParameters);
 
-		return oActionHandlerParameters;
+		Utils.makeUndefinedValuesNull(oRequest.parameters);
+
+		return oRequest;
 	};
 
 	return SubmitAction;

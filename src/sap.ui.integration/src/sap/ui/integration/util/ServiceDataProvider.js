@@ -49,11 +49,11 @@ sap.ui.define(["sap/ui/integration/util/DataProvider"], function (DataProvider) 
 	ServiceDataProvider.prototype.createServiceInstances = function (oServiceManager) {
 		this._oServiceManager = oServiceManager;
 
-		if (!this._oSettings || !this._oSettings.service) {
+		if (!this.getSettings() || !this.getSettings().service) {
 			return;
 		}
 
-		var vService = this._oSettings.service;
+		var vService = this.getSettings().service;
 		if (vService && typeof vService === "object") {
 			vService = vService.name;
 		}
@@ -67,7 +67,7 @@ sap.ui.define(["sap/ui/integration/util/DataProvider"], function (DataProvider) 
 	 * @param {string} sServiceName The name of the service to create an instance of.
 	 */
 	ServiceDataProvider.prototype._createServiceInstance = function (sServiceName) {
-		var oDataSettings = this._oSettings;
+		var oDataSettings = this.getSettings();
 
 		this._oDataServicePromise = this._oServiceManager
 			.getService(sServiceName)
