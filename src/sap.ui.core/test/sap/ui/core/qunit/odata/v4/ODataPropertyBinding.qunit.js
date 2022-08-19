@@ -314,6 +314,7 @@ sap.ui.define([
 				oModel = this.oModel,
 				oCache = {
 					oRequestor : oModel.oRequestor,
+					deregisterChange : function () {},
 					setActive : function () {}
 				},
 				oCacheMock = this.mock(_Cache),
@@ -340,6 +341,8 @@ sap.ui.define([
 
 			if (oFixture.sInit === "base") {
 				assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
+				this.mock(oCache).expects("deregisterChange")
+					.withExactArgs("", sinon.match.same(oBinding));
 				this.mock(oCache).expects("setActive").withExactArgs(false);
 			} else {
 				assert.strictEqual(oBinding.oCachePromise.getResult(), null);

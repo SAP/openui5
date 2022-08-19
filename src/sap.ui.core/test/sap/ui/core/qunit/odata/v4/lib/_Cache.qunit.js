@@ -676,9 +676,11 @@ sap.ui.define([
 	QUnit.test("_Cache#registerChange: $$sharedRequst", function () {
 		var oCache = new _Cache(this.oRequestor, "TEAMS", undefined, false, undefined, true);
 
-		this.mock(_Helper).expects("addByPath").never();
+		this.mock(_Helper).expects("addByPath")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "", "listener2");
 
-		oCache.registerChange("path", "listener");
+		oCache.registerChange("path", "listener1");
+		oCache.registerChange("", "listener2");
 	});
 
 	//*********************************************************************************************
@@ -695,9 +697,11 @@ sap.ui.define([
 	QUnit.test("_Cache#deregisterChange: $$sharedRequst", function () {
 		var oCache = new _Cache(this.oRequestor, "TEAMS", undefined, false, undefined, true);
 
-		this.mock(_Helper).expects("removeByPath").never();
+		this.mock(_Helper).expects("removeByPath")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "", "listener2");
 
-		oCache.deregisterChange("path", "listener");
+		oCache.deregisterChange("path", "listener1");
+		oCache.deregisterChange("", "listener2");
 	});
 
 	//*********************************************************************************************
@@ -821,6 +825,7 @@ sap.ui.define([
 
 		oCache.iActiveUsages = 99;
 		oCache.mPatchRequests = {"path" : {}};
+		oCache.mChangeListeners = {path1 : "~listener1~", path2 : "~listener2~"};
 
 		// code under test
 		oCache.setActive(true);
@@ -835,6 +840,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.iActiveUsages, 99);
 		assert.strictEqual(oCache.hasPendingChangesForPath(), false);
 		assert.strictEqual(oCache.iInactiveSince, Infinity);
+		assert.deepEqual(oCache.mChangeListeners, {path1 : "~listener1~", path2 : "~listener2~"});
 
 		oCache.iActiveUsages = 1;
 
@@ -845,6 +851,7 @@ sap.ui.define([
 
 		assert.strictEqual(oCache.iActiveUsages, 0);
 		assert.strictEqual(oCache.iInactiveSince, 42);
+		assert.deepEqual(oCache.mChangeListeners, {});
 
 		// code under test
 		oCache.setActive(true);
@@ -8296,6 +8303,32 @@ sap.ui.define([
 		return oPromise.then(function (vResult) {
 			assert.strictEqual(vResult, 42);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#reset, shared cache", function (assert) {
+		var oCache = this.createCache("Employees"),
+			mChangeListeners = {"" : "~listeners~"},
+			aElements = ["~0~", "~1~", "~2~"];
+
+		aElements.$byPredicate = {"(0)" : "~0~", "(1)" : "~1~", "(2)" : "~2~"};
+		oCache.aElements = aElements;
+		oCache.mChangeListeners = mChangeListeners;
+		oCache.sContext = "~context~";
+		oCache.aElements.$count = oCache.iLimit = 3;
+
+		this.mock(_Helper).expects("fireChange").withExactArgs({"" : "~listeners~"}, "");
+
+		// code under test
+		oCache.reset();
+
+		assert.strictEqual(oCache.aElements, aElements);
+		assert.strictEqual(oCache.aElements.length, 0);
+		assert.strictEqual(oCache.aElements.$created, 0);
+		assert.strictEqual(oCache.aElements.$count, undefined);
+		assert.deepEqual(oCache.aElements.$byPredicate, {});
+		assert.strictEqual(oCache.iLimit, Infinity);
+		assert.deepEqual(oCache.mChangeListeners, {"" : "~listeners~"});
 	});
 
 	//*********************************************************************************************

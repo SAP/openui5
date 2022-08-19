@@ -308,9 +308,12 @@ sap.ui.define([
 	 * @since 1.66
 	 */
 	ODataBinding.prototype.destroy = function () {
+		var that = this;
+
 		this.mCacheByResourcePath = undefined;
 		this.oCachePromise.then(function (oOldCache) {
 			if (oOldCache) {
+				oOldCache.deregisterChange("", that);
 				oOldCache.setActive(false);
 			}
 		}, function () {});
@@ -403,6 +406,7 @@ sap.ui.define([
 
 		if (oCache) {
 			// if oCachePromise is pending no cache will be created because of oFetchCacheCallToken
+			oCache.deregisterChange("", this);
 			oCache.setActive(false);
 		} else if (bKeepQueryOptions) {
 			if (oCache === undefined) {

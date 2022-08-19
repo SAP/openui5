@@ -35489,6 +35489,143 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: A list binding with $$sharedRequest (e.g. from a value list) is refreshed. Other
+	// bindings share that cache and must follow, one binding while resumed and one binding while
+	// suspended.
+	// BCP: 002075129500004766202022
+[false, true].forEach(function (bSuspend) {
+	QUnit.test("refresh list with $$sharedRequest, suspend=" + bSuspend, function (assert) {
+		var oBinding1,
+			oBinding3,
+			oModel = createTeaBusiModel({autoExpandSelect : true, sharedRequests : true}),
+			sView = '\
+<Text id="count1" text="{$count}"/>\
+<Table id="table1" items="{/TEAMS}">\
+	<Text id="name1" text="{Name}"/>\
+	<Table items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : true}">\
+		<Text id="id1" text="{ID}"/>\
+	</Table>\
+</Table>\
+<Text id="count2" text="{$count}"/>\
+<Table id="table2" items="{/TEAMS}">\
+	<Text id="name2" text="{Name}"/>\
+	<Table items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : true}">\
+		<Text id="id2" text="{ID}"/>\
+	</Table>\
+</Table>\
+<Table id="table3" items="{/TEAMS}">\
+	<Text id="name3" text="{Name}"/>\
+	<Table items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : true}">\
+		<Text id="id3" text="{ID}"/>\
+	</Table>\
+</Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Name,Team_Id&$expand=TEAM_2_EMPLOYEES($select=ID)"
+				+ "&$skip=0&$top=100", {
+				value : [
+					{Team_Id : "1", Name : "Team #1", TEAM_2_EMPLOYEES : [{ID : "1"}]},
+					{Team_Id : "2", Name : "Team #2", TEAM_2_EMPLOYEES : []}
+				]
+			})
+			.expectChange("name1", ["Team #1", "Team #2"])
+			.expectChange("name2", ["Team #1", "Team #2"])
+			.expectChange("name3", ["Team #1", "Team #2"])
+			.expectChange("count1")
+			.expectChange("count2")
+			.expectChange("id1", ["1"])
+			.expectChange("id2", ["1"])
+			.expectChange("id3", ["1"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("count1", "2")
+				.expectChange("count2", "2");
+
+			oBinding1 = that.oView.byId("table1").getBinding("items");
+			that.oView.byId("count1").setBindingContext(oBinding1.getHeaderContext());
+			that.oView.byId("count2").setBindingContext(
+				that.oView.byId("table2").getBinding("items").getHeaderContext());
+
+			return that.waitForChanges(assert, "count");
+		}).then(function () {
+			that.expectRequest("TEAMS?$select=Name,Team_Id&$expand=TEAM_2_EMPLOYEES($select=ID)"
+					+ "&$skip=0&$top=100", {
+					value : [
+						{Team_Id : "1", Name : "Team #1", TEAM_2_EMPLOYEES : []},
+						{Team_Id : "2", Name : "Team #2 (changed)", TEAM_2_EMPLOYEES : []},
+						{Team_Id : "3", Name : "Team #3", TEAM_2_EMPLOYEES : []}
+					]
+				})
+				.expectChange("name1", [, "Team #2 (changed)", "Team #3"])
+				.expectChange("name2", [, "Team #2 (changed)", "Team #3"])
+				.expectChange("count1", "3")
+				.expectChange("count2", "3");
+
+			oBinding3 = that.oView.byId("table3").getBinding("items");
+			oBinding3.suspend();
+			if (bSuspend) {
+				oBinding1.suspend();
+				oBinding1.refresh();
+				oBinding1.resume();
+			} else {
+				oBinding1.refresh();
+			}
+
+			return that.waitForChanges(assert, "refresh");
+		}).then(function () {
+			that.expectChange("name3", [, "Team #2 (changed)", "Team #3"]);
+
+			oBinding3.resume();
+
+			return that.waitForChanges(assert, "resume 3rd binding");
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Refreshing a list with $$sharedRequest not using a non-standard group. Additionally
+	// check that requestRefresh waits (for this purpose we let the request fail and check that
+	// requestRefresh reports the error).
+	// BCP: 002075129500004766202022
+	QUnit.test("refresh list with $$sharedRequest, read error", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true, sharedRequests : true}),
+			sView = '\
+<Table id="table" items="{/TEAMS}">\
+	<Text id="name" text="{Name}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
+				value : [
+					{Team_Id : "1", Name : "Team #1"},
+					{Team_Id : "2", Name : "Team #2"}
+				]
+			})
+			.expectChange("name", ["Team #1", "Team #2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error"); // details do not interest
+			that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100",
+					createErrorInsideBatch())
+				.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+
+			return Promise.all([
+				that.oView.byId("table").getBinding("items").requestRefresh("$auto.foo")
+					.then(mustFail(assert), function (oError) {
+						assert.strictEqual(oError.message, "Request intentionally failed");
+					}),
+				that.waitForChanges(assert, "refresh")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Absolute property bindings for $count
 	// 1. Refresh a simple absolute property binding for $count.
 	// 2. Request absolute side effects that affect that simple binding twice - last one wins.

@@ -80,6 +80,7 @@ sap.ui.define([
 	QUnit.test("destroy", function (assert) {
 		var oBinding = new ODataBinding(),
 			oCache = {
+				deregisterChange : function () {},
 				setActive : function () {}
 			},
 			// we might become asynchronous due to auto $expand/$select reading $metadata
@@ -91,6 +92,8 @@ sap.ui.define([
 		oBinding.mCacheQueryOptions = {};
 		oBinding.oContext = {}; // @see sap.ui.model.Binding's c'tor
 		oBinding.oFetchCacheCallToken = {};
+		this.mock(oCache).expects("deregisterChange")
+			.withExactArgs("", sinon.match.same(oBinding));
 		this.mock(oCache).expects("setActive").withExactArgs(false);
 
 		// code under test
@@ -1257,7 +1260,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	[
 		null,
-		{ setActive : function () {} }
+		{deregisterChange : function () {}, setActive : function () {}}
 	].forEach(function (oCache, i) {
 		QUnit.test("fetchCache: previous cache, " + i, function (assert) {
 			var oBinding = new ODataBinding({
@@ -1274,6 +1277,8 @@ sap.ui.define([
 				});
 
 			if (oCache) {
+				this.mock(oCache).expects("deregisterChange")
+					.withExactArgs("", sinon.match.same(oBinding));
 				this.mock(oCache).expects("setActive").withExactArgs(false);
 			}
 
@@ -1410,6 +1415,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("fetchCache: bKeepQueryOptions and own cache", function (assert) {
 		var oCache = {
+				deregisterChange : function () {},
 				getResourcePath : function () {},
 				setActive : function () {}
 			},
@@ -1432,6 +1438,7 @@ sap.ui.define([
 			oContext = {},
 			oNewCache = {};
 
+		this.mock(oCache).expects("deregisterChange").withExactArgs("", sinon.match.same(oBinding));
 		this.mock(oCache).expects("setActive").withExactArgs(false);
 		this.mock(oCache).expects("getResourcePath").withExactArgs().returns("~resourcePath~");
 		this.mock(oBinding).expects("createAndSetCache")
