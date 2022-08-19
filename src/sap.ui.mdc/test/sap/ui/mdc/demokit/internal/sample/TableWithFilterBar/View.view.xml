@@ -187,6 +187,9 @@
 			p13nMode="Column,Sort,Filter"
 			selectionMode="Multi"
 			height="100%">
+		<mdc:noData>
+			<IllustratedMessage />
+		</mdc:noData>
 		<mdc:columns>
 			<mdcTable:Column id="_ID" header="ID" dataProperty="ID">
 				<Text text="{ID}"/>
