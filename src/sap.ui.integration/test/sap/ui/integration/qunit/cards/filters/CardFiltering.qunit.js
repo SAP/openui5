@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/Host",
 	"sap/ui/core/Core"
 ], function (
 	Card,
+	RequestDataProvider,
 	Host,
 	Core
 ) {
@@ -131,7 +133,10 @@ sap.ui.define([
 
 	QUnit.module("Dynamic filters", {
 		beforeEach: function () {
-			this.oCard = new Card();
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		},
 		afterEach: function () {
 			this.oCard.destroy();
@@ -159,6 +164,55 @@ sap.ui.define([
 
 		// Act
 		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_dynamic_filter.json");
-		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
+
+	QUnit.test("Unable to load the filter", function (assert) {
+		// Arrange
+		var done = assert.async();
+		this.stub(RequestDataProvider.prototype, "getData").rejects("Fake data load error");
+
+		this.oCard.attachEvent("_ready", function () {
+			var oFilterBar = this.oCard.getAggregation("_filterBar");
+			var sErrorText = oFilterBar.getItems()[0]._getErrorMessage().getItems()[1].getText();
+			var sExpectedErrorText = Core.getLibraryResourceBundle("sap.ui.integration").getText("CARD_FILTER_DATA_LOAD_ERROR");
+
+			// Assert
+			assert.strictEqual(sErrorText, sExpectedErrorText, "Error message is correct");
+
+			done();
+		}, this);
+
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.filters.errorMessage",
+				"type": "card"
+			},
+			"sap.card": {
+				"configuration": {
+					"filters": {
+						"searchFilter": {
+							"type": "Select",
+							"data": {
+								"request": {
+									"url": "/some/url"
+								}
+							},
+							"item": {
+								"template": {
+									"title": "{OptionName}",
+									"key": "{OptionKey}"
+								}
+							}
+						}
+					}
+				},
+				"type": "Object",
+				"content": {
+					"groups": []
+				}
+			}
+		});
+	});
+
 });
