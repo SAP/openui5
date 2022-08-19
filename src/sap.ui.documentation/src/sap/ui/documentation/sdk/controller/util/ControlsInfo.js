@@ -278,6 +278,8 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 
 							// add generated sample to this entity and to the samples array
 							oEnt.samples.push(oStep);
+							//Added library property, used to load sample resources
+							oStep.library = oEnt.library;
 							data.samples[oStep.id] = oStep;
 							oEnt.searchTags += " " + oStep.name;
 						}
