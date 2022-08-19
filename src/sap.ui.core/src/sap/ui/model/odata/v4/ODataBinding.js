@@ -312,6 +312,7 @@ sap.ui.define([
 				undefined, sGroupId, oOldCache);
 		}
 		if (oOldCache && oOldCache !== oCache) {
+			oOldCache.deregisterChange("", this);
 			oOldCache.setActive(false);
 		}
 		if (this.mLateQueryOptions) {
@@ -329,9 +330,12 @@ sap.ui.define([
 	 * @since 1.66
 	 */
 	ODataBinding.prototype.destroy = function () {
+		var that = this;
+
 		this.mCacheByResourcePath = undefined;
 		this.oCachePromise.then(function (oOldCache) {
 			if (oOldCache) {
+				oOldCache.deregisterChange("", that);
 				oOldCache.setActive(false);
 			}
 		}, function () {});

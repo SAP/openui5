@@ -144,6 +144,7 @@ sap.ui.define([
 		this.mPreviousContextsByPath = {};
 		this.aPreviousData = [];
 		this.bRefreshKeptElements = false; // refresh kept elements when resuming?
+		this.sResumeAction = undefined; // a special resume action for $$sharedRequest
 		this.bSharedRequest = mParameters.$$sharedRequest || oModel.bSharedRequests;
 		this.aSorters = _Helper.toArray(vSorters);
 		this.sUpdateGroupId = mParameters.$$updateGroupId;
@@ -1115,7 +1116,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.destroyLater = function (oContext) {
 		if (this.iCurrentEnd) {
-			// Add the context to mPreviousContextsByPath although it definitely won't be reused.
+			// Add the context to mPreviousContextsByPath, although it definitely won't be reused.
 			// Then it is destroyed later, but only if there is a listener (iCurrentEnd is set by
 			// getContexts and mPreviousContextsByPath is only cleared when getContexts is called)
 			this.mPreviousContextsByPath[oContext.getPath()] = oContext;
@@ -1162,6 +1163,7 @@ sap.ui.define([
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext,
 			sDeepResourcePath, sGroupId, oOldCache) {
 		var sBindingPath,
+			oCache,
 			aKeptElementPaths,
 			that = this;
 
@@ -1186,10 +1188,15 @@ sap.ui.define([
 
 		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
 
-		return this.getCacheAndMoveKeepAliveContexts(sResourcePath, mQueryOptions)
+		oCache = this.getCacheAndMoveKeepAliveContexts(sResourcePath, mQueryOptions)
 			|| _AggregationCache.create(this.oModel.oRequestor, sResourcePath, sDeepResourcePath,
 				this.mParameters.$$aggregation, mQueryOptions, this.oModel.bAutoExpandSelect,
 				this.bSharedRequest);
+		if (this.bSharedRequest) {
+			oCache.registerChange("", this);
+		}
+
+		return oCache;
 	};
 
 	/**
@@ -2673,6 +2680,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Notification from the cache that the collection has changed. Currently, only bindings with
+	 * bSharedRequest register at the cache and are notified when the cache has been reset.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.onChange = function () {
+		var aDependentBindings,
+			that = this;
+
+		if (!this.oRefreshPromise) {
+			// some other binding with the same cache is refreshing
+			if (this.isRootBindingSuspended()) {
+				this.sResumeAction = "onChange";
+			} else {
+				// Note: after reset the dependent bindings cannot be found anymore
+				aDependentBindings = this.getDependentBindings();
+				this.reset(ChangeReason.Refresh);
+				SyncPromise.all(
+					aDependentBindings.map(function (oBinding) {
+						return oBinding.refreshInternal("");
+					})
+				).then(function () {
+					return that.oHeaderContext.checkUpdateInternal();
+				}).catch(this.oModel.getReporter());
+			}
+		}
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
@@ -2699,8 +2735,12 @@ sap.ui.define([
 
 		if (this.isRootBindingSuspended()) {
 			// Note: side-effects (incl. refresh) are forbidden while suspended
-			this.refreshSuspended(sGroupId);
-			this.bRefreshKeptElements = true;
+			if (this.bSharedRequest) {
+				this.sResumeAction = "resetCache";
+			} else {
+				this.refreshSuspended(sGroupId);
+				this.bRefreshKeptElements = true;
+			}
 			return SyncPromise.all(refreshAll(that.getDependentBindings()));
 		}
 
@@ -2715,44 +2755,50 @@ sap.ui.define([
 
 			if (oCache && !oPromise) { // do not refresh twice
 				that.removeCachesAndMessages(sResourcePathPrefix);
-				that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/true,
-					bKeepCacheOnError ? sGroupId : undefined);
-				oKeptElementsPromise = that.refreshKeptElements(sGroupId);
-				if (that.iCurrentEnd > 0) {
-					oPromise = that.createRefreshPromise().catch(function (oError) {
-						if (!bKeepCacheOnError || oError.canceled) {
-							throw oError;
-						}
-						return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
-							var i;
-
-							if (!that.bRelative || oCache.getResourcePath() === sResourcePath) {
-								if (that.oCache === oCache) {
-									oCache.restore(true);
-								} else { // still needed in case of _AggregationCache
-									oCache.setActive(true);
-									that.oCache = oCache;
-									that.oCachePromise = SyncPromise.resolve(oCache);
-								}
-								that.iActiveContexts = iActiveContexts;
-								that.iCreatedContexts = iCreatedContexts;
-								for (i = 0; i < iCreatedContexts; i += 1) {
-									aContexts[i].iIndex = i - iCreatedContexts;
-									delete that.mPreviousContextsByPath[aContexts[i].getPath()];
-								}
-								that.aContexts = aContexts; // restore created contexts
-								that._fireChange({reason : ChangeReason.Change});
+				if (that.bSharedRequest) {
+					oPromise = that.createRefreshPromise();
+					oCache.reset([]);
+				} else {
+					that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/true,
+						bKeepCacheOnError ? sGroupId : undefined);
+					oKeptElementsPromise = that.refreshKeptElements(sGroupId);
+					if (that.iCurrentEnd > 0) {
+						oPromise = that.createRefreshPromise().catch(function (oError) {
+							if (!bKeepCacheOnError || oError.canceled) {
+								throw oError;
 							}
-							throw oError;
+							return that.fetchResourcePath(that.oContext
+							).then(function (sResourcePath) {
+								var i;
+
+								if (!that.bRelative || oCache.getResourcePath() === sResourcePath) {
+									if (that.oCache === oCache) {
+										oCache.restore(true);
+									} else { // still needed in case of _AggregationCache
+										oCache.setActive(true);
+										that.oCache = oCache;
+										that.oCachePromise = SyncPromise.resolve(oCache);
+									}
+									that.iActiveContexts = iActiveContexts;
+									that.iCreatedContexts = iCreatedContexts;
+									for (i = 0; i < iCreatedContexts; i += 1) {
+										aContexts[i].iIndex = i - iCreatedContexts;
+										delete that.mPreviousContextsByPath[aContexts[i].getPath()];
+									}
+									that.aContexts = aContexts; // restore created contexts
+									that._fireChange({reason : ChangeReason.Change});
+								}
+								throw oError;
+							});
+						}).finally(function () {
+							if (oCache.restore) {
+								oCache.restore(false);
+							}
 						});
-					}).finally(function () {
-						if (oCache.restore) {
-							oCache.restore(false);
-						}
-					});
+					}
 				}
 			}
-			// Note: after reset the dependent bindings cannot be found any more
+			// Note: after reset the dependent bindings cannot be found anymore
 			aDependentBindings = that.getDependentBindings();
 			that.reset(ChangeReason.Refresh, !oCache || (bKeepCacheOnError ? false : undefined),
 				sGroupId); // this may reset that.oRefreshPromise
@@ -3291,14 +3337,24 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.resumeInternal = function (_bCheckUpdate, bParentHasChanges) {
 		var aBindings = this.getDependentBindings(),
+			sResumeAction = this.sResumeAction,
 			sResumeChangeReason = this.sResumeChangeReason,
-			bRefresh = bParentHasChanges || sResumeChangeReason,
+			bRefresh = bParentHasChanges || sResumeAction || sResumeChangeReason,
 			that = this;
 
+		this.sResumeAction = undefined;
 		this.sResumeChangeReason = undefined;
 
 		if (bRefresh) {
 			this.removeCachesAndMessages("");
+			if (sResumeAction === "onChange") {
+				this.onChange();
+				return;
+			}
+			if (sResumeAction === "resetCache") {
+				this.oCache.reset([]);
+				return;
+			}
 			this.reset();
 			// if the parent binding resumes but there are no changes in the parent binding
 			// ignore the parent cache and create an own cache
