@@ -2183,6 +2183,11 @@ function(
 	Input.prototype._handleTypeAhead = function (oInput) {
 		var sValue = this.getValue();
 
+		// check if typeahead is already performed
+		if ((oInput && oInput.getValue().toLowerCase()) === (this._sProposedItemText && this._sProposedItemText.toLowerCase())) {
+			return;
+		}
+
 		this._setTypedInValue(sValue);
 		oInput._sProposedItemText = null;
 
@@ -2902,6 +2907,10 @@ function(
 
 		oPopover.attachBeforeClose(function () {
 			this._updateSuggestionsPopoverValueState();
+		}, this);
+
+		oPopover.attachAfterOpen(function () {
+			this._handleTypeAhead(this);
 		}, this);
 
 		if (this.isMobileDevice()) {

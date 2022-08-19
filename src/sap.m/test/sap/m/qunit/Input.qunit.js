@@ -2362,16 +2362,15 @@ sap.ui.define([
 		this.clock.tick();
 
 		// Act
-		qutils.triggerCharacterInput(oInput.getFocusDomRef(), "t");
-		qutils.triggerEvent("input", oInput.getFocusDomRef());
-		oInput._openSuggestionPopup();
-		oSpy = this.spy(oInput, "_setTypedInValue");
-		this.clock.tick();
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.t });
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
+		this.clock.tick(300);
 
 		// Assert
 		assert.strictEqual(oInput._getTypedInValue(), "t", "Typed in value stored initially");
 
 		// Act
+		oSpy = this.spy(oInput, "_setTypedInValue");
 		qutils.triggerTouchEvent("tap", oItemsContainer.getItems()[0].getDomRef());
 		this.clock.tick();
 
@@ -5616,6 +5615,33 @@ sap.ui.define([
 
 		oInput.destroy();
 		oInput = null;
+	});
+
+	QUnit.test("Op", function (assert) {
+		var oPopup; // is lazy loaded
+
+		var oInput = new Input({
+			showSuggestion: true,
+			suggest: function(){
+				setTimeout(function(){
+					oInput.addSuggestionItem(new Item({text: "Text 1"}));
+				}, 0);
+			}
+		});
+
+		oInput.placeAt("content");
+		oCore.applyChanges();
+
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.t });
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("t").trigger("input");
+		this.clock.tick(300);
+
+
+		oPopup = oInput._getSuggestionsPopover().getPopover();
+		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
+		assert.strictEqual(oInput.getSelectedText(), "ext 1", "Suggested value should be selected");
+
+		oInput.destroy();
 	});
 
 	QUnit.module("Input with Suggestions and Value State, but not Value State Message", {
