@@ -818,12 +818,12 @@ sap.ui.define([
 			}.bind(this))
 			.then(this._applyManifest.bind(this))
 			.catch(function (e) {
-				if (e.message !== CARD_DESTROYED_ERROR) {
-					this._applyManifest();
+				if (e.message === CARD_DESTROYED_ERROR) {
 					return;
 				}
 
 				this._logFundamentalError(e.message);
+				this._applyManifest();
 			}.bind(this));
 	};
 
