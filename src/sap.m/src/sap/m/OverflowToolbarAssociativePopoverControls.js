@@ -124,11 +124,6 @@ sap.ui.define(['sap/ui/base/Object', './OverflowToolbarButton', './OverflowToolb
 				listenForEvents: ["defaultAction", "_menuItemSelected"],
 				noInvalidationProps: ["enabled", "text", "icon"]
 			},
-			"sap.m.OverflowToolbarButton": {
-				canOverflow: true,
-				listenForEvents: ["press"],
-				noInvalidationProps: ["enabled", "type"]
-			},
 			"sap.m.OverflowToolbarToggleButton": {
 				canOverflow: true,
 				listenForEvents: ["press"],

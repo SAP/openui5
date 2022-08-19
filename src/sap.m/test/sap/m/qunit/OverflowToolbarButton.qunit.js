@@ -110,4 +110,25 @@ sap.ui.define([
 		assert.ok(oButton._bInOverflow, "OverflowToolbarButton is in the overflow area");
 		assert.strictEqual(oButton._getTooltip(), "", "OverflowToolbarButton tooltip value is correct when the tooltip is same to text");
 	});
+
+	QUnit.module("Public methods");
+
+	QUnit.test("_getOverflowToolbarConfig", function (assert) {
+		// Arrange
+		var oButton = new OverflowToolbarButton(),
+			oConfig;
+
+		// Act
+		oConfig = oButton.getOverflowToolbarConfig();
+
+		// Assert
+		assert.strictEqual(oConfig.canOverflow, true, "OverflowToolbarButton can overflow");
+		assert.ok(oConfig.propsUnrelatedToSize.indexOf("enabled") > -1, "OverflowToolbarButton does not invalidate on 'enabled' property change");
+		assert.ok(oConfig.propsUnrelatedToSize.indexOf("type") > -1, "OverflowToolbarButton does not invalidate on 'type' property change");
+		assert.ok(oConfig.propsUnrelatedToSize.indexOf("accesskey") > -1, "OverflowToolbarButton does not invalidate on 'accesskey' property change");
+		assert.ok(oConfig.autoCloseEvents.indexOf("press") > -1, "OverflowToolbarButton listen for 'press' event");
+
+		//Clean up
+		oButton.destroy();
+	});
 });
