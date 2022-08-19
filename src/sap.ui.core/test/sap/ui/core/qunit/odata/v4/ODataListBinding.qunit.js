@@ -213,6 +213,7 @@ sap.ui.define([
 		assert.ok(oBinding.hasOwnProperty("mPreviousContextsByPath"));
 		assert.ok(oBinding.hasOwnProperty("aPreviousData"));
 		assert.ok(oBinding.hasOwnProperty("bRefreshKeptElements"));
+		assert.ok(oBinding.hasOwnProperty("sResumeAction"));
 		assert.ok(oBinding.hasOwnProperty("aSorters"));
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
 
@@ -2765,8 +2766,10 @@ sap.ui.define([
 	});
 
 //*********************************************************************************************
-	[false, true].forEach(function (bSuspended) {
-		var sTitle = "refreshInternal: dependent bindings, suspended=" + bSuspended;
+[false, true].forEach(function (bSuspended) {
+	[false, true].forEach(function (bShared) {
+		var sTitle = "refreshInternal: dependent bindings, suspended=" + bSuspended
+				+ ", shared=" + bShared;
 
 		QUnit.test(sTitle, function (assert) {
 			var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
@@ -2812,9 +2815,10 @@ sap.ui.define([
 				};
 			}
 
+			oBinding.bSharedRequest = bShared;
 			this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs()
 				.returns(bSuspended);
-			this.mock(oBinding).expects("refreshSuspended").exactly(bSuspended ? 1 : 0)
+			this.mock(oBinding).expects("refreshSuspended").exactly(bSuspended && !bShared ? 1 : 0)
 				.withExactArgs("myGroup");
 			this.mock(oBinding).expects("createReadGroupLock").exactly(bSuspended ? 0 : 1)
 				.withExactArgs("myGroup", true);
@@ -2863,7 +2867,8 @@ sap.ui.define([
 			// code under test
 			oRefreshResult = oBinding.refreshInternal(sResourcePathPrefix, "myGroup");
 			if (bSuspended) {
-				assert.strictEqual(oBinding.bRefreshKeptElements, true);
+				assert.strictEqual(oBinding.bRefreshKeptElements, !bShared);
+				assert.strictEqual(oBinding.sResumeAction, bShared ? "resetCache" : undefined);
 			} else {
 				oBinding.resolveRefreshPromise(Promise.resolve()); // simulate getContexts
 			}
@@ -2874,6 +2879,28 @@ sap.ui.define([
 				assert.strictEqual(oChild2Refreshed, true);
 				assert.strictEqual(oChild3RefreshedIfSuspended, bSuspended);
 			});
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("refreshInternal: shared cache", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", null, null, null, {$$sharedRequest : true});
+
+		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", true);
+		this.mock(oBinding).expects("removeCachesAndMessages")
+			.withExactArgs("~sResourcePathPrefix~");
+		this.mock(oBinding).expects("createRefreshPromise").withExactArgs()
+			.returns(Promise.reject("~oError~"));
+		this.mock(oBinding.oCache).expects("reset").withExactArgs([]);
+		this.mock(oBinding).expects("fetchCache").never();
+		this.mock(oBinding).expects("refreshKeptElements").never();
+
+		// code under test
+		return oBinding.refreshInternal("~sResourcePathPrefix~", "myGroup").then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			assert.strictEqual(oError, "~oError~");
 		});
 	});
 
@@ -6105,13 +6132,16 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bWithOld) {
 	[false, true].forEach(function (bFromModel) {
+		[false, true].forEach(function (bShared) {
 	var sTitle = (bWithOld
 		? "doCreateCache w/ old cache, but w/o kept-alive elements"
-		: "doCreateCache w/o old cache") + ", bFromModel=" + bFromModel;
+		: "doCreateCache w/o old cache") + ", bFromModel=" + bFromModel + ", bShared=" + bShared;
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
-			oCache = {}, // #setLateQueryOptions must not be called
+			oCache = { // #setLateQueryOptions must not be called
+				registerChangeListener : function () {}
+			},
 			oContext0 = {
 				isKeepAlive : function () {}
 			},
@@ -6125,7 +6155,7 @@ sap.ui.define([
 		oBinding.mPreviousContextsByPath = {
 			"/EMPLOYEES('0')" : oContext0
 		};
-		oBinding.bSharedRequest = "~sharedRequest~";
+		oBinding.bSharedRequest = bShared;
 		if (bWithOld) {
 			this.mock(oOldCache).expects("getResourcePath").withExactArgs()
 				.returns("resource/path");
@@ -6139,8 +6169,10 @@ sap.ui.define([
 		this.mock(_AggregationCache).expects("create").exactly(bFromModel ? 0 : 1)
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
 				"deep/resource/path", sinon.match.same(oBinding.mParameters.$$aggregation),
-				"~mergedQueryOptions~", "~autoExpandSelect~", "~sharedRequest~")
+				"~mergedQueryOptions~", "~autoExpandSelect~", bShared)
 			.returns(oCache);
+		this.mock(oCache).expects("registerChangeListener").exactly(bShared ? 1 : 0)
+			.withExactArgs("", sinon.match.same(oBinding));
 
 		assert.strictEqual(
 			// code under test
@@ -6148,6 +6180,7 @@ sap.ui.define([
 				"deep/resource/path", undefined, bWithOld ? oOldCache : undefined),
 			oCache);
 	});
+		});
 	});
 });
 
@@ -6158,7 +6191,9 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
-			oCache = {},
+			oCache = {
+				registerChangeListener : function () {}
+			},
 			oOldCache = {
 				$deepResourcePath : bDeep ? "W.R.O.N.G." : "deep/resource/path",
 				getResourcePath : function () {}
@@ -6954,6 +6989,7 @@ sap.ui.define([
 				oHeaderContextCheckUpdateExpectation,
 				oResetExpectation;
 
+			oBinding.bSharedRequest = true; // this must not have an influence
 			oBinding.sChangeReason = bInitial ? "AddVirtualContext" : undefined;
 			oBinding.sResumeChangeReason = sChangeReason;
 			oBindingMock.expects("removeCachesAndMessages").withExactArgs("");
@@ -7090,6 +7126,44 @@ sap.ui.define([
 		oBinding.resumeInternal(true/*ignored*/);
 
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Sort);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resumeInternal: shared cache, after refresh", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", null, null, null, {$$sharedRequest : true});
+
+		oBinding.sResumeAction = "resetCache";
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
+			.returns(["do", "not", "use"]);
+		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
+		this.mock(oBinding.oCache).expects("reset").withExactArgs([]);
+		this.mock(oBinding).expects("onChange").never();
+		this.mock(oBinding).expects("fetchCache").never();
+		this.mock(oBinding).expects("refreshKeptElements").never();
+
+		// code under test
+		oBinding.resumeInternal(true/*ignored*/);
+
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resumeInternal: shared cache, after onChange", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", null, null, null, {$$sharedRequest : true});
+
+		oBinding.sResumeAction = "onChange";
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs()
+			.returns(["do", "not", "use"]);
+		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("");
+		this.mock(oBinding.oCache).expects("reset").never();
+		this.mock(oBinding).expects("onChange").withExactArgs();
+		this.mock(oBinding).expects("fetchCache").never();
+		this.mock(oBinding).expects("refreshKeptElements").never();
+
+		// code under test
+		oBinding.resumeInternal(true/*ignored*/);
+
+		assert.strictEqual(oBinding.sResumeChangeReason, undefined);
 	});
 
 	//*********************************************************************************************
@@ -9201,6 +9275,78 @@ sap.ui.define([
 			// code under test
 			oBinding.findContextForCanonicalPath("/EMPLOYEES('2')"),
 			undefined);
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bRefreshFails) {
+	var sTitle = "onChange: " + (bRefreshFails ? ": refresh" : "checkUpdate") + " fails";
+
+	QUnit.test(sTitle, function (assert) {
+		var done = assert.async(),
+			oBinding = this.bindList("/EMPLOYEES"),
+			oDependent1 = {
+				refreshInternal : function () {}
+			},
+			oDependent2 = {
+				refreshInternal : function () {}
+			},
+			oDependentsExpectation,
+			oRejectedPromise = Promise.reject("~oError~"),
+			oResetExpectation;
+
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
+		this.mock(oBinding).expects("refreshSuspended").never();
+		oDependentsExpectation = this.mock(oBinding).expects("getDependentBindings")
+			.withExactArgs().returns([oDependent1, oDependent2]);
+		oResetExpectation = this.mock(oBinding).expects("reset")
+			.withExactArgs(ChangeReason.Refresh);
+		this.mock(oDependent1).expects("refreshInternal").withExactArgs("").resolves();
+		this.mock(oDependent2).expects("refreshInternal").withExactArgs("")
+			.returns(bRefreshFails ? oRejectedPromise : Promise.resolve());
+		this.mock(oBinding.oHeaderContext).expects("checkUpdateInternal")
+			.exactly(bRefreshFails ? 0 : 1).withExactArgs().returns(oRejectedPromise);
+		this.mock(this.oModel).expects("getReporter").withExactArgs().returns(function (oError) {
+			assert.strictEqual(oError, "~oError~");
+			done();
+		});
+
+		// code under test
+		oBinding.onChange();
+
+		assert.ok(oDependentsExpectation.calledBefore(oResetExpectation));
+
+		oRejectedPromise.catch(function () {});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("onChange: refreshing", function () {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		oBinding.oRefreshPromise = "~oRefreshPromise~";
+		this.mock(oBinding).expects("isRootBindingSuspended").never();
+		this.mock(oBinding).expects("refreshSuspended").never();
+		this.mock(oBinding).expects("getDependentBindings").never();
+		this.mock(oBinding).expects("reset").never();
+		this.mock(oBinding.oHeaderContext).expects("checkUpdateInternal").never();
+
+		// code under test
+		oBinding.onChange();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("onChange: suspended", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getDependentBindings").never();
+		this.mock(oBinding).expects("reset").never();
+		this.mock(oBinding.oHeaderContext).expects("checkUpdateInternal").never();
+
+		// code under test
+		oBinding.onChange();
+
+		assert.strictEqual(oBinding.sResumeAction, "onChange");
 	});
 });
 
