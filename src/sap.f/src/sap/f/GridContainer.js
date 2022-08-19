@@ -273,6 +273,18 @@ sap.ui.define([
 				 */
 				_defaultLayout: { type: "sap.f.GridContainerSettings", multiple: false, visibility: "hidden" }
 			},
+			associations : {
+
+				/**
+				 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
+				 */
+				ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
+
+				/**
+				 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+			},
 			events: {
 
 				/**
