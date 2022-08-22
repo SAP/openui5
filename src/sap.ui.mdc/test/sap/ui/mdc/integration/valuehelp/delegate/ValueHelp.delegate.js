@@ -215,41 +215,45 @@ sap.ui.define([
 	ValueHelpDelegate.onConditionPropagation = function (oPayload, oValueHelp, sReason, oConfig) {
 		var oControl = oValueHelp.getControl();
 
-		// find all conditions carrying country information
-		var aAllConditionCountries = oControl && oControl.getConditions().reduce(function (aResult, oCondition) {
-			if (oCondition.payload) {
-				Object.values(oCondition.payload).forEach(function (aSegments) {
-					aSegments.forEach(function (oSegment) {
-						if (oSegment["salesOrganization"] && aResult.indexOf(oSegment["salesOrganization"]) === -1) {
-							aResult.push(oSegment["salesOrganization"]);
+			if (sReason !== "ControlChange") {
+				return;
+			}
+
+			// find all conditions carrying country information
+			var aAllConditionCountries = oControl && oControl.getConditions().reduce(function (aResult, oCondition) {
+				if (oCondition.payload) {
+					Object.values(oCondition.payload).forEach(function (aSegments) {
+						aSegments.forEach(function (oSegment) {
+							if (oSegment["salesOrganization"] && aResult.indexOf(oSegment["salesOrganization"]) === -1) {
+								aResult.push(oSegment["salesOrganization"]);
+							}
+						});
+					});
+				}
+				return aResult;
+			}, []);
+
+			if (aAllConditionCountries && aAllConditionCountries.length) {
+				var oFilterBar = Core.byId("FB0");
+				StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
+					var bModify = false;
+					aAllConditionCountries.forEach(function(sCountry) {
+						var bExists = oState.filter && oState.filter['salesOrganization'] && oState.filter['salesOrganization'].find(function (oCondition) {
+							return oCondition.values[0] === sCountry;
+						});
+						if (!bExists) {
+							var oNewCondition = Condition.createCondition("EQ", [sCountry], undefined, undefined, ConditionValidated.Validated);
+							oState.filter['salesOrganization'] = oState.filter && oState.filter['salesOrganization'] || [];
+							oState.filter['salesOrganization'].push(oNewCondition);
+							bModify = true;
 						}
 					});
-				});
-			}
-			return aResult;
-		}, []);
 
-		if (aAllConditionCountries && aAllConditionCountries.length) {
-			var oFilterBar = Core.byId("FB0");
-			StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
-				var bModify = false;
-				aAllConditionCountries.forEach(function(sCountry) {
-					var bExists = oState.filter && oState.filter['salesOrganization'] && oState.filter['salesOrganization'].find(function (oCondition) {
-						return oCondition.values[0] === sCountry;
-					});
-					if (!bExists) {
-						var oNewCondition = Condition.createCondition("EQ", [sCountry], undefined, undefined, ConditionValidated.Validated);
-						oState.filter['salesOrganization'] = oState.filter && oState.filter['salesOrganization'] || [];
-						oState.filter['salesOrganization'].push(oNewCondition);
-						bModify = true;
+					if (bModify) {
+						StateUtil.applyExternalState(oFilterBar, oState);
 					}
 				});
-
-				if (bModify) {
-					StateUtil.applyExternalState(oFilterBar, oState);
-				}
-			});
-		}
+			}
 	};
 
 	ValueHelpDelegate.getInitialFilterConditions = function (oPayload, oContent, oControl) {
@@ -360,6 +364,23 @@ sap.ui.define([
 				secondTableWrapper.setVisible(!secondTableWrapper.getVisible());
 			}
 		} */
+	};
+
+	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
+			var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(oPayload, oContent, oConfig);
+
+		var oConfigPayload = oConfig && oConfig.context && oConfig.context.payload;	// As oConfig is present we are called in a getItemForValue context and would also like to search by payload, if available
+		if (oConfigPayload) {
+			Object.values(oConfigPayload).forEach(function (aEntries) {
+				aEntries.forEach(function (oEntry) {
+					Object.keys(oEntry).forEach(function (sKey) {
+						oConditions[sKey] = oConditions[sKey] || [];
+						oConditions[sKey].push(Condition.createCondition("EQ", [oEntry[sKey]], undefined, undefined, ConditionValidated.NotValidated));
+					});
+				});
+			});
+		}
+		return oConditions;
 	};
 
 	return ValueHelpDelegate;

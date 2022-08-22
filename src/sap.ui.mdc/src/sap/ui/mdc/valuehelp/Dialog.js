@@ -628,7 +628,7 @@ sap.ui.define([
 		var oValueHelpModel = this.getModel("$valueHelp");
 		var oConfig = oValueHelpModel ? oValueHelpModel.getProperty("/_config") : {};
 		var oParent = this.getParent();
-		var oControl = this._getControl();
+		var oControl = this.getControl();
 		return { // TODO: is more needed?
 			maxConditions: -1, // as for tokens there should not be a limit on type side
 			valueType: oConfig.dataType,

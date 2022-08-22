@@ -412,7 +412,7 @@ sap.ui.define([
 	FilterableListContent.prototype.onBeforeShow = function(bInitial) {
 		if (bInitial) {
 			var oDelegate = this._getValueHelpDelegate();
-			return Promise.resolve(oDelegate && oDelegate.getInitialFilterConditions(this._getValueHelpDelegatePayload(), this, this._getControl())).then(function (oConditions) {
+			return Promise.resolve(oDelegate && oDelegate.getFilterConditions(this._getValueHelpDelegatePayload(), this)).then(function (oConditions) {
 				this._oInitialFilterConditions = oConditions;
 
 				var oFilterBar = this._getPriorityFilterBar();

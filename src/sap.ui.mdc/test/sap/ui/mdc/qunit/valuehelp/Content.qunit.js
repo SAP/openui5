@@ -58,7 +58,7 @@ sap.ui.define([
 			return true;
 		},
 		invalidate: function () {},
-		_getControl: function () {
+		getControl: function () {
 			return "Control"; // just to test forwarding
 		}
 	};
@@ -360,9 +360,9 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_getControl", function(assert) {
+	QUnit.test("getControl", function(assert) {
 
-		var oControl = oContent._getControl();
+		var oControl = oContent.getControl();
 		assert.equal(oControl, "Control", "Delegate returned");
 
 	});

@@ -113,7 +113,7 @@ sap.ui.define([
 		getId: function() {
 			return "myFakeContainer";
 		},
-		_getControl: function () {
+		getControl: function () {
 			return "Control"; // just to test forwarding
 		},
 		getLocalFilterValue: function () {
@@ -938,6 +938,54 @@ sap.ui.define([
 			assert.ok(false, "Exception missing");
 		} catch (oException) {
 			assert.equal(oException.message, "MTable: DescriptionPath missing! " + oMTable.getId(), "Exception fired");
+		}
+
+	});
+
+	QUnit.test("getItemForValue: ValueHelpDelegate.getFilterConditions", function(assert) {
+
+		oModel.setData({
+			items: [
+				{ text: "Item 1A", key: "I1", additionalText: "Text 1a", inValue: "a" },
+				{ text: "Item 1B", key: "I1", additionalText: "Text 1b", inValue: "b" },
+				{ text: "Item 1C", key: "I1", additionalText: "Text 1c", inValue: "c" }
+			]
+		});
+
+		var oConfig = {
+			parsedValue: "I1",
+			value: "I1",
+			context: {payload: {inValue: "b"}},
+			bindingContext: undefined,
+			conditionModel: undefined,
+			conditionModelName: undefined,
+			checkKey: true,
+			checkDescription: false,
+			caseSensitive: false,
+			exception: ParseException,
+			control: "MyControl"
+		};
+
+		sinon.stub(ValueHelpDelegate, "getFilterConditions").callsFake(function (oPayload, oContent, oLocalConfig) {
+			assert.ok(true, "ValueHelpDelegate.getFilterConditions is called.");
+			assert.equal(oContent, oMTable, "getFilterConditions receives correct content");
+			assert.equal(oLocalConfig, oConfig, "getFilterConditions receives correct config");
+			return 	{"inValue": [{operator: "EQ", values: ["b"], validated: "NotValidated"}]};
+		});
+
+		var oPromise = oMTable.getItemForValue(oConfig);
+		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
+
+		if (oPromise) {
+			var fnDone = assert.async();
+			oPromise.then(function(oItem) {
+				assert.ok(true, "Promise Then must be called");
+				assert.deepEqual(oItem, {key: "I1", description: "Item 1B", payload: undefined}, "Correct item returned");
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+			}).finally(function() {
+				fnDone();
+			});
 		}
 
 	});

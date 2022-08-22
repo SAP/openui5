@@ -111,7 +111,7 @@ sap.ui.define([
 				ValueStateHeader = aLoaded[4];
 
 				var oValueStateHeader = new ValueStateHeader();
-				fUpdateValueHelpHeader(this._getControl(), oValueStateHeader);
+				fUpdateValueHelpHeader(this.getControl(), oValueStateHeader);
 
 				oPopover = new MPopover(this.getId() + "-pop", {
 					contentHeight: "auto",
@@ -166,7 +166,7 @@ sap.ui.define([
 			}.bind(this));
 		}
 
-		fUpdateValueHelpHeader(this._getControl(), oPopover.getCustomHeader());
+		fUpdateValueHelpHeader(this.getControl(), oPopover.getCustomHeader());
 
 		return oPopover;
 	};
@@ -213,7 +213,7 @@ sap.ui.define([
 			var oFooterContent = aContents[1];
 
 			// to prevent a Fieldgroup leave if opening control has fieldgroups, asign the fieldgroups to content
-			var oControl = this._getControl();
+			var oControl = this.getControl();
 			this._oCurrentContent.setFieldGroupIds(oControl.getFieldGroupIds());
 
 			if (oFooterContent && oPopover.getFooter() != oFooterContent && oFooterContent.isA && oFooterContent.isA("sap.m.Toolbar")) {
@@ -247,7 +247,7 @@ sap.ui.define([
 
 		var oContent = this._getContent();
 		Promise.resolve(oContent && oContent.onBeforeShow(true)).then(function () {
-			var oControl = this._getControl();
+			var oControl = this.getControl();
 			var oTarget = oControl && oControl.getFocusElementForValueHelp ? oControl.getFocusElementForValueHelp(this.isTypeahead()) : oControl;
 
 			if (oTarget && oTarget.getDomRef()) {
