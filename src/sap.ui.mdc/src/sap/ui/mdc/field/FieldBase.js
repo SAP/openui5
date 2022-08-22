@@ -440,12 +440,12 @@ sap.ui.define([
 				 * This is an association that allows the usage of one <code>FieldHelp</code> instance for multiple fields.
 				 *
 				 * <b>Note:</b> If the field is inside of a table, do not set the <code>FieldHelp</code> instance as <code>dependent</code>
-				 * to the field. If you do every field instance in every table row gets a clone of it.
+				 * to the field. If you do, every field instance in every table row gets a clone of it.
 				 * Put the <code>FieldHelp</code> instance e.g. as dependent on the table or page.
 				 * The <code>FieldHelp</code> instance must be somewhere in the control tree, otherwise there might
 				 * be rendering or update issues.
 				 *
-				 * <b>Note:</b> For Boolean fields, no <code>FieldHelp</code> should be added, but a default <code>FieldHelp</code> used instead.
+				 * <b>Note:</b> For <code>Boolean</code> fields, no <code>FieldHelp</code> should be added, but a default <code>FieldHelp</code> used instead.
 				 */
 				fieldHelp: {
 					type: "sap.ui.mdc.ValueHelp",
