@@ -475,5 +475,54 @@
         ]
       }
     ]
+  },
+  "1.96.11": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "f837e1cc6ca1450fd3c9f4a5e51aaaa7c4fdba0e",
+        "type": "FIX",
+        "text": " sap.ui.core.ScrollEnablement: Scroll-end callback issue corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004009642022"
+          }
+        ]
+      },
+      {
+        "id": "08548f5e516cc343460ef85a5c803a2cab47b945",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context#doSetProperty: report error although context is destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280150835"
+          }
+        ]
+      },
+      {
+        "id": "a10652754b739da1c61ef1103e99e3c3d8ce68ea",
+        "type": "FIX",
+        "text": " Enable Controller extensions for legacy application",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002832352022"
+          }
+        ]
+      },
+      {
+        "id": "a79f659e5e0c7d4cbeb489551b320bda70788901",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: no split weeks for \"en\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004563022022"
+          }
+        ]
+      }
+    ]
   }
 }

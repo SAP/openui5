@@ -79,5 +79,43 @@
         ]
       }
     ]
+  },
+  "1.96.11": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "f837e1cc6ca1450fd3c9f4a5e51aaaa7c4fdba0e",
+        "type": "FIX",
+        "text": " sap.ui.core.ScrollEnablement: Scroll-end callback issue corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004009642022"
+          }
+        ]
+      },
+      {
+        "id": "035134d8065478989969300fa2f55148c8abdb96",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: ObjectPageState tests fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280011569"
+          }
+        ]
+      },
+      {
+        "id": "35679bb4f750bd7d3f80e708257331fa8c20a1d8",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Generic section label restricted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2240323326"
+          }
+        ]
+      }
+    ]
   }
 }

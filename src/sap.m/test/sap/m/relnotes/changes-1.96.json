@@ -1105,5 +1105,43 @@
         ]
       }
     ]
+  },
+  "1.96.11": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "f837e1cc6ca1450fd3c9f4a5e51aaaa7c4fdba0e",
+        "type": "FIX",
+        "text": " sap.ui.core.ScrollEnablement: Scroll-end callback issue corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004009642022"
+          }
+        ]
+      },
+      {
+        "id": "860584f78dec1d58d6616da2a5134e5fa7c58459",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Clock is not mirrored in rtl languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005455192022"
+          }
+        ]
+      },
+      {
+        "id": "1f0e554aca70589121396c550fc3f6e2c4812dbe",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: hasSelection now toggled correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280120969"
+          }
+        ]
+      }
+    ]
   }
 }
