@@ -528,7 +528,7 @@ function (
 		}
 	});
 
-	QUnit.test("Header added for actions toolbar", function(assert) {
+	QUnit.test("Empty header added for actions toolbar", function(assert) {
 		// Arrange
 		var done = assert.async();
 
@@ -544,12 +544,37 @@ function (
 		this.oCard.attachEvent("_ready", function () {
 			var oHeader = this.oCard.getCardHeader();
 
-			assert.ok(oHeader, "There is a header added to hold the actions toolbar.");
+			assert.notOk(oHeader, "Empty header shouldn't be added only to hold the actions toolbar.");
 
 			done();
 		}.bind(this));
 
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.module("Actions for card with header", {
+		beforeEach: function () {
+			this.oHost = new Host();
+			this.oCard = new Card({
+				manifest: {
+					"sap.app": {
+						"id": "test4"
+					},
+					"sap.card": {
+						"type": "List",
+						"header": {
+							"title": "Header Title"
+						}
+					}
+				}
+			});
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+			this.oHost.destroy();
+			this.oHost = null;
+		}
 	});
 
 	QUnit.test("Action property 'visible' is false", function(assert) {
@@ -578,7 +603,7 @@ function (
 			var oHeader = this.oCard.getCardHeader();
 			Core.applyChanges();
 
-			assert.notOk(oHeader.getVisible(), "The header is not visible when all actions are not visible.");
+			assert.ok(oHeader.getVisible(), "The header is still visible when all actions are not visible.");
 
 			done();
 		}.bind(this));

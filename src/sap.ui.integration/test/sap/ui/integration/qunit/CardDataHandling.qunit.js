@@ -236,7 +236,9 @@ function (
 		},
 		"sap.card": {
 			"type": "List",
-			"header": {}
+			"header": {
+				"title": "Header Title"
+			}
 		}
 	};
 	var oManifest_ContentCase1 = {

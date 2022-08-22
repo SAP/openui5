@@ -557,7 +557,8 @@ sap.ui.define([
 
 		oCard.attachEventOnce("_ready", function () {
 			// Assert
-			assert.strictEqual(oCard.getDomRef().classList.contains("sapFCardNoHeader"), false, "The card has a header");
+			assert.notOk(oCard.getCardHeader(), "Card header shouldn't be created only to show actions toolbar header");
+			assert.ok(oCard.getDomRef().classList.contains("sapFCardNoHeader"), "The card has correct CSS class");
 
 			// Act
 			oCard.destroyActionDefinitions();
@@ -565,7 +566,8 @@ sap.ui.define([
 
 			setTimeout(function () {
 				// Assert
-				assert.strictEqual(oCard.getDomRef().classList.contains("sapFCardNoHeader"), true, "The card does not have a header");
+				assert.notOk(oCard.getCardHeader(), "Card header shouldn't be created only to show actions toolbar header");
+				assert.ok(oCard.getDomRef().classList.contains("sapFCardNoHeader"), "The card still has correct CSS class");
 
 				oCard.destroy();
 				done();

@@ -886,7 +886,7 @@ sap.ui.define([
 
 				// Assert
 				setTimeout(function () {
-					assert.notOk(oCard.getAggregation("_header").getDomRef(), "Card header should not be rendered.");
+					assert.notOk(oCard.getAggregation("_header"), "Card header should not be created.");
 
 					// Cleanup
 					oCard.destroy();

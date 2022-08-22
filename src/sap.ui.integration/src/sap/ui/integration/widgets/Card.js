@@ -1689,9 +1689,13 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._applyHeaderManifestSettings = function () {
+		var oPrevHeader = this.getAggregation("_header");
 		var oHeader = this.createHeader();
 
-		this.destroyAggregation("_header");
+		if (oPrevHeader) {
+			oPrevHeader.setToolbar(null); // ensure that actionsToolbar won't be destroyed
+			this.destroyAggregation("_header");
+		}
 
 		if (!oHeader) {
 			this.fireEvent("_headerReady");

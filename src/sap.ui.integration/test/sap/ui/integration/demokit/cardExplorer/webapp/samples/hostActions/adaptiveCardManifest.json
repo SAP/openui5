@@ -21,6 +21,9 @@
 	},
 	"sap.card": {
 		"type": "AdaptiveCard",
+		"header": {
+			"title": "Personal Information"
+		},
 		"content": {
 			"data": {
 				"json": {

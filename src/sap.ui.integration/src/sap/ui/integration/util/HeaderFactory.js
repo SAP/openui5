@@ -4,6 +4,8 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"./BaseFactory",
+	"sap/base/Log",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/library",
 	"sap/m/library",
@@ -14,6 +16,8 @@ sap.ui.define([
 ], function (
 	Core,
 	BaseFactory,
+	Log,
+	isEmptyObject,
 	CardActions,
 	library,
 	mLibrary,
@@ -47,6 +51,11 @@ sap.ui.define([
 	var HeaderFactory = BaseFactory.extend("sap.ui.integration.util.HeaderFactory");
 
 	HeaderFactory.prototype.create = function (mConfiguration, oToolbar) {
+		if (isEmptyObject(mConfiguration)) {
+			Log.warning("Card sap.card/header entry in the manifest is mandatory", "sap.ui.integration.widgets.Card");
+			return null;
+		}
+
 		var oCard = this._oCard,
 			bIsInDialog = oCard.getOpener(),
 			oBindingInfo,
@@ -94,10 +103,6 @@ sap.ui.define([
 			control: oHeader
 		});
 		oHeader._oActions = oActions;
-
-		if (oHeader._bIsEmpty) {
-			oHeader.setVisible(oToolbar.getVisible());
-		}
 
 		if (bIsInDialog) {
 			// if card is in dialog - header shouldn't be focusable

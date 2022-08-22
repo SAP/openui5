@@ -4,7 +4,6 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/f/cards/Header",
 	"sap/f/cards/HeaderRenderer",
@@ -16,7 +15,6 @@ sap.ui.define([
 ], function (
 	Core,
 	JSONModel,
-	isEmptyObject,
 	merge,
 	FHeader,
 	FHeaderRenderer,
@@ -55,8 +53,6 @@ sap.ui.define([
 
 			mConfiguration = mConfiguration || {};
 
-			this._bIsEmpty = isEmptyObject(mConfiguration);
-
 			var mSettings = {
 				title: mConfiguration.title,
 				titleMaxLines: mConfiguration.titleMaxLines,
@@ -86,10 +82,6 @@ sap.ui.define([
 			mSettings.toolbar = oActionsToolbar;
 
 			FHeader.call(this, mSettings);
-
-			if (oActionsToolbar && oActionsToolbar.isA("sap.ui.integration.controls.ActionsToolbar")) {
-				oActionsToolbar.attachVisibilityChange(this._handleToolbarVisibilityChange.bind(this));
-			}
 
 			this._oConfiguration = mConfiguration;
 		},
@@ -176,14 +168,6 @@ sap.ui.define([
 
 	Header.prototype._handleError = function (sLogMessage) {
 		this.fireEvent("_error", { logMessage: sLogMessage });
-	};
-
-	Header.prototype._handleToolbarVisibilityChange = function (oEvent) {
-		var bToolbarVisible = oEvent.getParameter("visible");
-
-		if (this._bIsEmpty && this.getVisible() !== bToolbarVisible) {
-			this.setVisible(bToolbarVisible);
-		}
 	};
 
 	/**

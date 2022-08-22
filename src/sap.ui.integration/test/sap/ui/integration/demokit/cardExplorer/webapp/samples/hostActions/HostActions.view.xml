@@ -9,12 +9,7 @@
 				<f:GridContainerItemLayoutData columns="3" />
 			</w:layoutData>
 		</w:Card>
-		<w:Card id="card2" manifest="./cardManifest.json">
-			<w:layoutData>
-				<f:GridContainerItemLayoutData columns="3" />
-			</w:layoutData>
-		</w:Card>
-		<w:Card id="card3" manifest="./adaptiveCardManifest.json">
+		<w:Card id="card2" manifest="./adaptiveCardManifest.json">
 			<w:layoutData>
 				<f:GridContainerItemLayoutData columns="4" />
 			</w:layoutData>

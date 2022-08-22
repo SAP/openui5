@@ -4,7 +4,6 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/base/util/extend",
-	"sap/base/util/isEmptyObject",
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericHeaderRenderer",
 	"sap/f/cards/NumericSideIndicator",
@@ -14,7 +13,6 @@ sap.ui.define([
 ], function (
 	Core,
 	extend,
-	isEmptyObject,
 	FNumericHeader,
 	FNumericHeaderRenderer,
 	NumericSideIndicator,
@@ -47,8 +45,6 @@ sap.ui.define([
 		constructor: function (mConfiguration, oActionsToolbar) {
 
 			mConfiguration = mConfiguration || {};
-
-			this._bIsEmpty = isEmptyObject(mConfiguration);
 
 			var mSettings = {
 				title: mConfiguration.title,
@@ -85,10 +81,6 @@ sap.ui.define([
 			mSettings.toolbar = oActionsToolbar;
 
 			FNumericHeader.call(this, mSettings);
-
-			if (oActionsToolbar && oActionsToolbar.isA("sap.ui.integration.controls.ActionsToolbar")) {
-				oActionsToolbar.attachVisibilityChange(this._handleToolbarVisibilityChange.bind(this));
-			}
 		},
 		metadata: {
 			library: "sap.ui.integration",
@@ -254,14 +246,6 @@ sap.ui.define([
 
 	NumericHeader.prototype._handleError = function (sLogMessage) {
 		this.fireEvent("_error", { logMessage: sLogMessage });
-	};
-
-	NumericHeader.prototype._handleToolbarVisibilityChange = function (oEvent) {
-		var bToolbarVisible = oEvent.getParameter("visible");
-
-		if (this._bIsEmpty && this.getVisible() !== bToolbarVisible) {
-			this.setVisible(bToolbarVisible);
-		}
 	};
 
 	NumericHeader.prototype.refreshData = function () {
