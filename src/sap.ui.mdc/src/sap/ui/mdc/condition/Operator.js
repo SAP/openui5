@@ -289,7 +289,7 @@ sap.ui.define([
 		 * @param {sap.ui.mdc.enum.BaseType} [sBaseType] Basic type
 		 * @returns {sap.ui.model.Filter} filter object
 		 * @private
-		 * @ui5-restricted sap.ui.mdc
+		 * @ui5-restricted sap.ui.mdc, sap.fe
 		 */
 		Operator.prototype.getModelFilter = function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
 
