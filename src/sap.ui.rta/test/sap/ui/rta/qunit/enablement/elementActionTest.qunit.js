@@ -62,7 +62,7 @@ sap.ui.define([
 
 		changeVisualization: {
 			displayElementId: "container",
-			visualizationInfo: {
+			info: {
 				affectedControls: ["formelement"],
 				displayControls: ["container"]
 			}

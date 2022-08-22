@@ -76,9 +76,13 @@ sap.ui.define([
 	 * @param {function} mOptions.afterAction - Function(oUiComponent, oView, assert) which checks the outcome of the action
 	 * @param {function} mOptions.afterUndo - Function(oUiComponent, oView, assert) which checks the execution of the action and an immediate undo
 	 * @param {function} mOptions.afterRedo - Function(oUiComponent, oView, assert) which checks the outcome of action with immediate undo and redo
-	 * @param {object} [mOptions.changeVisualization] - Configuration to test change visualization
-	 * @param {sap.ui.core.Element} [mOptions.changeVisualization.displayElementId] - ID of the element where the change indicator should be displayed
-	 * @param {string} [mOptions.changeVisualization.description] - Change visualization description to be compared
+	 * @param {object} [mOptions.changeVisualization] - Change visualization information
+	 * @param {string} [mOptions.changeVisualization.displayElementId] - ID of the element where the change indicator should be displayed
+	 * @param {object} [mOptions.changeVisualization.info] - Change visualization specific information from the change handler
+	 * @param {string[]} [mOptions.changeVisualization.info.affectedControls] - IDs of affected controls
+	 * @param {string[]} [mOptions.changeVisualization.info.dependentControls] - IDs of dependent controls
+	 * @param {string[]} [mOptions.changeVisualization.info.displayControls] - IDs of the elements where the change indicator will be displayed
+	 * @param {object} [mOptions.changeVisualization.info.payload] - Payload with additional data for the change visualization
 	 */
 	function elementActionTest(sMsg, mOptions) {
 		// Return if elementActionTest.only() has been used to exclude this call
@@ -355,7 +359,7 @@ sap.ui.define([
 				var sSelector = sDisplayElementId ? oView.createId(sDisplayElementId) : oView.getId();
 				assert.ok(oData[sSelector] && oData[sSelector].length, "there is a change indicator at the correct element");
 				var oRegisteredChange = oChangeIndicatorRegistry.getAllRegisteredChanges()[0];
-				var oVisualizationInfo = mOptions.changeVisualization.visualizationInfo;
+				var mVisualizationInfo = mOptions.changeVisualization.info;
 
 				function mapIds(aIds) {
 					return aIds.map(function(sId) {
@@ -363,20 +367,20 @@ sap.ui.define([
 					});
 				}
 
-				if (oVisualizationInfo.affectedControls) {
-					var aAffectedControlIds = mapIds(oVisualizationInfo.affectedControls);
+				if (mVisualizationInfo.affectedControls) {
+					var aAffectedControlIds = mapIds(mVisualizationInfo.affectedControls);
 					assert.deepEqual(aAffectedControlIds, oRegisteredChange.visualizationInfo.affectedElementIds, "then the affected control ids are correct");
 				}
-				if (oVisualizationInfo.dependentControls) {
-					var aDependentControlIds = mapIds(oVisualizationInfo.dependentControls);
+				if (mVisualizationInfo.dependentControls) {
+					var aDependentControlIds = mapIds(mVisualizationInfo.dependentControls);
 					assert.deepEqual(aDependentControlIds, oRegisteredChange.visualizationInfo.dependentElementIds, "then the dependent control ids are correct");
 				}
-				if (oVisualizationInfo.displayControls) {
-					var aDisplayControlIds = mapIds(oVisualizationInfo.displayControls);
+				if (mVisualizationInfo.displayControls) {
+					var aDisplayControlIds = mapIds(mVisualizationInfo.displayControls);
 					assert.deepEqual(aDisplayControlIds, oRegisteredChange.visualizationInfo.displayElementIds, "then the display control ids are correct");
 				}
-				if (oVisualizationInfo.payload) {
-					assert.deepEqual(oVisualizationInfo.payload, oRegisteredChange.visualizationInfo.payload, "then the payload is correct");
+				if (mVisualizationInfo.payload) {
+					assert.deepEqual(mVisualizationInfo.payload, oRegisteredChange.visualizationInfo.payload, "then the payload is correct");
 				}
 			});
 		}
