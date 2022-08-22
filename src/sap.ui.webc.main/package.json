@@ -1,6 +1,6 @@
 {
   "name": "@openui5/sap.ui.webc.main",
-  "version": "1.96.11",
+  "version": "1.96.12-SNAPSHOT",
   "description": "OpenUI5 UI Library sap.ui.webc.main",
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
@@ -16,7 +16,7 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "dependencies": {
-    "@openui5/sap.ui.core": "1.96.11",
-    "@openui5/sap.ui.webc.common": "1.96.11"
+    "@openui5/sap.ui.core": "1.96.12-SNAPSHOT",
+    "@openui5/sap.ui.webc.common": "1.96.12-SNAPSHOT"
   }
 }
