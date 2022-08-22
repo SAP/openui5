@@ -24,12 +24,7 @@ sap.ui.define([
 	var FB0Delegate = Object.assign({}, FilterBarDelegate);
 
     FB0Delegate.fetchProperties = function (oFilterBar) {
-        var oMetadataInfo = oFilterBar.getPayload();
-		var oModel = oFilterBar.getModel(oMetadataInfo.modelName);
-		var oPath = oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
-		var aProps = Object.keys(oModel.getObject(oPath)[0]);
-
-		return Promise.resolve(aProps.map(function (sProp) {
+       return Promise.resolve(["salesOrganization", "distributionChannel", "division"].map(function (sProp) {
 			return {
 				caseSensitive: false,
 				filterable: true,
