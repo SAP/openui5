@@ -634,23 +634,25 @@ sap.ui.define([
 	};
 
 
-	FilterBarBase.prototype._addConditionChange = function(mOrigConditions, sFieldPath) {
+	FilterBarBase.prototype._addConditionChange = function(pConditionState) {
 		this._aOngoingChangeAppliance.push(this.getEngine().createChanges({
 			control: this,
 			applySequentially: true,
 			key: "Filter",
-			state: mOrigConditions
+			state: pConditionState
 		}));
 	};
 
 
 	FilterBarBase.prototype._handleConditionModelPropertyChange = function(oEvent) {
 
+		var pConditionState;
+
 		var fAddConditionChange = function(sFieldPath, aConditions) {
 			var mOrigConditions = {};
 			mOrigConditions[sFieldPath] = this._stringifyConditions(sFieldPath, merge([], aConditions));
 			this._cleanupConditions(mOrigConditions[sFieldPath]);
-			this._addConditionChange(mOrigConditions, sFieldPath);
+			return mOrigConditions;
 		}.bind(this);
 
 		if (!this._bIgnoreChanges) {
@@ -665,10 +667,10 @@ sap.ui.define([
 					var aConditions = oEvent.getParameter("value");
 
 					if (this._getPropertyByName(sFieldPath)) {
-						fAddConditionChange(sFieldPath, aConditions);
+						pConditionState = fAddConditionChange(sFieldPath, aConditions);
 					} else {
-						this._retrieveMetadata().then(function() {
-							fAddConditionChange(sFieldPath, aConditions);
+						pConditionState = this._retrieveMetadata().then(function() {
+							return fAddConditionChange(sFieldPath, aConditions);
 						});
 					}
 
@@ -680,6 +682,11 @@ sap.ui.define([
 				}
 			}
 		}
+
+		if (pConditionState) {
+			this._addConditionChange(pConditionState);
+		}
+
 	};
 
 

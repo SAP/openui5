@@ -403,7 +403,6 @@ sap.ui.define([
 			control: this.oControl,
 			key: "Test",
 			suppressAppliance: true,
-			applySequentially: true,
 			state: []
 		}).then(function(){
 			done(1);
@@ -413,7 +412,6 @@ sap.ui.define([
 			control: this.oControl,
 			key: "Test",
 			suppressAppliance: true,
-			applySequentially: true,
 			state: []
 		}).then(function(){
 			done(2);
@@ -423,17 +421,16 @@ sap.ui.define([
 			control: this.oControl,
 			key: "Test",
 			suppressAppliance: true,
-			applySequentially: true,
 			state: []
 		}).then(function(){
 			done(3);
 		});
 
-		assert.ok(this.oControl._pModificationQueue instanceof Promise, "Promise queue started");
+		assert.ok(this.oEngine._getRegistryEntry(this.oControl).pendingModification instanceof Promise, "Promise queue started");
 
 		Promise.all([oChangeCreation1, oChangeCreation2, oChangeCreation3])
 		.then(function(){
-			assert.ok(!this.oControl.hasOwnProperty("_pModificationQueue"), "Promise queue finished and cleared");
+			assert.notOk(this.oEngine._getRegistryEntry(this.oControl).pendingModification, "Promise queue finished and cleared");
 			done(4);
 		}.bind(this));
 
@@ -655,6 +652,64 @@ sap.ui.define([
 			FlexRuntimeInfoAPI.waitForChanges.restore();
 
 			done();
+		});
+	});
+
+	QUnit.test("Check 'applyState' takes engine housekeeping of promises into account", function(assert){
+
+		var done = assert.async(2);
+
+		sinon.stub(FlexRuntimeInfoAPI, "isFlexSupported").returns(true);
+		sinon.stub(FlexRuntimeInfoAPI, "waitForChanges").returns(Promise.resolve());
+
+		//1. --> initAdaptation is resolved before
+		var oLongPromise = new Promise(function(resolve){
+			setTimeout(function(){
+				done(1);
+				resolve();
+			}, 100);
+		});
+
+		sinon.stub(this.oEngine, "initAdaptation").returns(oLongPromise);
+
+		this.oEngine.applyState(this.oControl, {
+			items: []
+		})
+		.then(function(){
+
+			assert.ok(true, "State appliance promise resolves");
+
+			//Cleanup stubs
+			FlexRuntimeInfoAPI.isFlexSupported.restore();
+			FlexRuntimeInfoAPI.waitForChanges.restore();
+			this.oEngine.initAdaptation.restore();
+
+			done(2);
+		}.bind(this));
+	});
+
+	QUnit.test("Check 'waitForChanges' takes engine housekeeping of promises into account", function(assert){
+
+		var done = assert.async(2);
+
+		//1. --> initAdaptation is resolved before
+		var oLongPromise = new Promise(function(resolve){
+			setTimeout(function(){
+				done(1);
+				resolve();
+			}, 100);
+		});
+
+		this.oEngine._addToQueue(this.oControl, function(){
+			return oLongPromise;
+		});
+
+		this.oEngine.waitForChanges(this.oControl)
+		.then(function(){
+
+			assert.ok(true, "Engine#waitForChanges promise resolves in correct timing order");
+
+			done(2);
 		});
 	});
 

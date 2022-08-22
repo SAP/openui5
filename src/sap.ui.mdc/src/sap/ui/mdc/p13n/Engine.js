@@ -14,8 +14,9 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/modules/DefaultProviderRegistry",
 	"sap/ui/mdc/p13n/UIManager",
 	"sap/ui/mdc/p13n/modules/StateHandlerRegistry",
-	"sap/ui/mdc/p13n/modules/xConfigAPI"
-], function (AdaptationProvider, merge, Log, PropertyHelper, FlexModificationHandler, MessageStrip, coreLibrary, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry, xConfigAPI) {
+	"sap/ui/mdc/p13n/modules/xConfigAPI",
+	"sap/base/util/UriParameters"
+], function (AdaptationProvider, merge, Log, PropertyHelper, FlexModificationHandler, MessageStrip, coreLibrary, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry, xConfigAPI, SAPUriParameters) {
 	"use strict";
 
 	var ERROR_INSTANCING = "Engine: This class is a singleton. Please use the getInstance() method instead.";
@@ -54,6 +55,8 @@ sap.ui.define([
 			if (oEngine) {
 				throw Error(ERROR_INSTANCING);
 			}
+
+			this._bDebugMode = new SAPUriParameters(window.location.search).getAll("sap-ui-xx-debugP13n")[0] === "true";
 
 			this._aRegistry = [];
 			this._aStateHandlers = [];
@@ -159,17 +162,19 @@ sap.ui.define([
 		this._getRegistryEntry(vControl).modification = oModificationSetting;
 	};
 
-	var fnQueue = function(oControl, fTask) {
+	Engine.prototype._addToQueue = function(oControl, fTask) {
+		var oRegistryEntry = this._getRegistryEntry(oControl);
+
 		var fCleanupPromiseQueue = function(pOriginalPromise) {
-			if (oControl._pModificationQueue === pOriginalPromise){
-				delete oControl._pModificationQueue;
+			if (oRegistryEntry.pendingModification === pOriginalPromise){
+				oRegistryEntry.pendingModification = null;
 			}
 		};
 
-		oControl._pModificationQueue = oControl._pModificationQueue instanceof Promise ? oControl._pModificationQueue.then(fTask) : fTask();
-		oControl._pModificationQueue.then(fCleanupPromiseQueue.bind(null, oControl._pModificationQueue));
+		oRegistryEntry.pendingModification = oRegistryEntry.pendingModification instanceof Promise ? oRegistryEntry.pendingModification.then(fTask) : fTask();
+		oRegistryEntry.pendingModification.then(fCleanupPromiseQueue.bind(null, oRegistryEntry.pendingModification));
 
-		return oControl._pModificationQueue;
+		return oRegistryEntry.pendingModification;
 	};
 
 	/**
@@ -181,34 +186,33 @@ sap.ui.define([
 	 * @param {object} mDiffParameters A map defining the configuration to create the changes.
 	 * @param {sap.ui.mdc.Control} mDiffParameters.control The control instance tht should be adapted.
 	 * @param {string} mDiffParameters.key The key used to retrieve the corresponding Controller.
-	 * @param {object} mDiffParameters.state The state which should be applied on the provided control instance
+	 * @param {object[]|Promise<object[]>} mDiffParameters.state The state which should be applied on the provided control instance
 	 * @param {boolean} [mDiffParameters.applyAbsolute] Decides whether unmentioned entries should be affected,
 	 * @param {boolean} [mDiffParameters.stateBefore] In case the state should be diffed manually
 	 * for example if "A" is existing in the control state, but not mentioned in the new state provided in the
 	 * mDiffParameters.state then the absolute appliance decides whether to remove "A" or to keep it.
 	 * @param {boolean} [mDiffParameters.suppressAppliance] Decides whether the change should be applied directly.
-	 * @param {boolean} [mDiffParameters.applySequentially] Decides whether the appliance should be queued or processed in parallel.
 	 * Controller
 	 *
 	 * @returns {Promise} A Promise resolving in the according delta changes.
 	 */
 	Engine.prototype.createChanges = function(mDiffParameters) {
 
+		var oControl = Engine.getControlInstance(mDiffParameters.control);
 		var sKey = mDiffParameters.key;
-		var aNewState = mDiffParameters.state;
+		var vNewState = mDiffParameters.state;
 		var bApplyAbsolute = !!mDiffParameters.applyAbsolute;
 		var bSuppressCallback = !!mDiffParameters.suppressAppliance;
-		var bApplySequentially = !!mDiffParameters.applySequentially;
 
-		if (!sKey || !mDiffParameters.control || !aNewState) {
+		if (!sKey || !mDiffParameters.control || !vNewState) {
 			throw new Error("To create changes via Engine, atleast a 1)Control 2)Key and 3)State needs to be provided.");
 		}
 
-		var oControl = Engine.getControlInstance(mDiffParameters.control);
-
 		var fDeltaHandling = function() {
 			return this.initAdaptation(oControl, sKey).then(function(){
-
+				return vNewState;
+			})
+			.then(function(aNewState){
 				var oController = this.getController(oControl, sKey);
 				var mChangeOperations = oController.getChangeOperations();
 
@@ -234,16 +238,10 @@ sap.ui.define([
 				}
 
 				return aChanges || [];
-
 			}.bind(this));
-
 		}.bind(this);
 
-		if (bApplySequentially) {
-			return fnQueue(oControl, fDeltaHandling);
-		} else {
-			return fDeltaHandling.apply(this);
-		}
+		return this._addToQueue(oControl, fDeltaHandling);
 	};
 
 	/**
@@ -288,6 +286,7 @@ sap.ui.define([
 
 	/**
 	 * Returns a promise resolving after all currently pending modifications have been applied.
+	 * This method will wait in addition for <code>Engine</code> related promises (retrieving necessary modules, initializing the propertyhelper, etc.) to be fulfilled before resolving.
 	 *
 	 * @private
 	 * @param {sap.ui.mdc.Control} oControl The according control instance.
@@ -295,9 +294,13 @@ sap.ui.define([
 	 */
 	Engine.prototype.waitForChanges = function(oControl) {
 		var oModificationSetting = this._determineModification(oControl);
-		return oModificationSetting.handler.waitForChanges({
-			element: oControl
-		}, oModificationSetting.payload);
+		var oRegistryEntry = this._getRegistryEntry(oControl);
+		return oRegistryEntry && oRegistryEntry.pendingModification ? oRegistryEntry.pendingModification : Promise.resolve()
+		.then(function(){
+			return oModificationSetting.handler.waitForChanges({
+				element: oControl
+			}, oModificationSetting.payload);
+		});
 	};
 
 	/**
@@ -538,6 +541,11 @@ sap.ui.define([
 						aChanges = aChanges.concat(aSpecificChanges);
 					}
 				});
+
+				if (this._bDebugMode) {
+					Log.info("Engine state appliance for control: \n" + oControl.getId() + "\n\napplied state: \n" + JSON.stringify(oState, null, 2));
+				}
+
 				return this._processChanges(oControl, aChanges);
 			}.bind(this));
 
@@ -824,7 +832,8 @@ sap.ui.define([
 				activeP13n: null,
 				helper: null,
 				xConfig: null,
-				pendingAppliance: {}
+				pendingAppliance: {},
+				pendingModification: null
 			});
 
 		}
@@ -1182,6 +1191,7 @@ sap.ui.define([
 		this.defaultProviderRegistry = null;
 		this.stateHandlerRegistry.destroy();
 		this.stateHandlerRegistry = null;
+		this._bDebugMode = null;
 		this.uimanager.destroy();
 		this.uimanager = null;
 	};
