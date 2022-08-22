@@ -3,6 +3,22 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "4313c4b2bdaa8ae63c3bb870f85187be3461dbfb",
+        "type": "FEATURE",
+        "text": " sap.f.GridContainer: ariaLabelledBy and ariaDescribedBy added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270017889"
+          }
+        ]
+      },
+      {
+        "id": "4216c03144b27475e601a4bd2a1ffb2bac45ff9c",
+        "type": "FEATURE",
+        "text": " Integration card: Timeline card now has loading placeholder"
+      },
+      {
         "id": "3f65d0a9b79fbee352dbbed80b11ff3a471929c7",
         "type": "FEATURE",
         "text": " Integration cards: Added experimental 'titleMaxLines' and 'labelWrapping' properties for Object card"
