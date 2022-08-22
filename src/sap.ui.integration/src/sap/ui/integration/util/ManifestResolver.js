@@ -59,44 +59,48 @@ sap.ui.define([
 			return Promise.reject(aErrors.join(" "));
 		}
 
-		if (oCard.getAggregation("_filterBar")) {
-			aFilters =  oCard.getAggregation("_filterBar")._getFilters().map(function (oFilter) {
-				return ["/sap.card/configuration/filters/" + oFilter.getKey(), oFilter];
+		try {
+			if (oCard.getAggregation("_filterBar")) {
+				aFilters =  oCard.getAggregation("_filterBar")._getFilters().map(function (oFilter) {
+					return ["/sap.card/configuration/filters/" + oFilter.getKey(), oFilter];
+				});
+			}
+
+			// Process card sections in order - nested sections with "data" have to be processed first
+			aFilters.concat([
+				["/sap.card/content", oCard.getCardContent()],
+				["/sap.card/header", oCard.getCardHeader()],
+				["/sap.card", oCard]
+			]).filter(function (aPathAndContext) {
+				return !!oCard.getManifestEntry(aPathAndContext[0]); // only resolve existing sections
+			}).forEach(function (aPathAndContext) {
+				var sManifestPath = aPathAndContext[0];
+				var oContext = aPathAndContext[1];
+				var oSubConfig;
+				var sDataPath;
+
+				if (oContext.getStaticConfiguration) {
+					oSubConfig = oContext.getStaticConfiguration();
+				} else if (oContext._oCardOriginalContent && oContext._oCardOriginalContent.getStaticConfiguration) {
+					oSubConfig = oContext._oCardOriginalContent.getStaticConfiguration();
+				} else {
+					oSubConfig = Utils.getNestedPropertyValue(oManifest, sManifestPath);
+				}
+
+				if (oSubConfig.data) {
+					sDataPath = oSubConfig.data.path;
+					delete oSubConfig.data;
+				}
+
+				oSubConfig = BindingHelper.createBindingInfos(oSubConfig, oCard.getBindingNamespaces());
+				oSubConfig = BindingResolver.resolveValue(oSubConfig, oContext, sDataPath);
+				Utils.setNestedPropertyValue(oManifest, sManifestPath, oSubConfig);
 			});
+
+			return JSON.stringify(oManifest);
+		} catch (ex) {
+			return Promise.reject(ex);
 		}
-
-		// Process card sections in order - nested sections with "data" have to be processed first
-		aFilters.concat([
-			["/sap.card/content", oCard.getCardContent()],
-			["/sap.card/header", oCard.getCardHeader()],
-			["/sap.card", oCard]
-		]).filter(function (aPathAndContext) {
-			return !!oCard.getManifestEntry(aPathAndContext[0]); // only resolve existing sections
-		}).forEach(function (aPathAndContext) {
-			var sManifestPath = aPathAndContext[0];
-			var oContext = aPathAndContext[1];
-			var oSubConfig;
-			var sDataPath;
-
-			if (oContext.getStaticConfiguration) {
-				oSubConfig = oContext.getStaticConfiguration();
-			} else if (oContext._oCardOriginalContent && oContext._oCardOriginalContent.getStaticConfiguration) {
-				oSubConfig = oContext._oCardOriginalContent.getStaticConfiguration();
-			} else {
-				oSubConfig = Utils.getNestedPropertyValue(oManifest, sManifestPath);
-			}
-
-			if (oSubConfig.data) {
-				sDataPath = oSubConfig.data.path;
-				delete oSubConfig.data;
-			}
-
-			oSubConfig = BindingHelper.createBindingInfos(oSubConfig, oCard.getBindingNamespaces());
-			oSubConfig = BindingResolver.resolveValue(oSubConfig, oContext, sDataPath);
-			Utils.setNestedPropertyValue(oManifest, sManifestPath, oSubConfig);
-		});
-
-		return JSON.stringify(oManifest);
 	};
 
 	return ManifestResolver;

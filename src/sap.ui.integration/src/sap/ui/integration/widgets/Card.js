@@ -2486,9 +2486,17 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype.getContentPageSize = function (oContentConfig) {
-		var iMaxItems = parseInt(BindingResolver.resolveValue(oContentConfig, this).maxItems) || 0,
+		var iMaxItems = 0,
 			oFooter = this.getAggregation("_footer"),
 			oPaginator;
+
+		if (oContentConfig.maxItems !== undefined) {
+			if (typeof oContentConfig.maxItems === "number") {
+				iMaxItems = oContentConfig.maxItems;
+			} else {
+				iMaxItems = parseInt(BindingResolver.resolveValue(oContentConfig, this).maxItems) || 0;
+			}
+		}
 
 		if (!oFooter) {
 			return iMaxItems;
