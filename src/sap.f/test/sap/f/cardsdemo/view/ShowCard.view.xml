@@ -9,7 +9,8 @@
 		<f:GridContainer class="sapUiSmallMargin">
 			<w:Card
 				id="showCard1"
-				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/order/manifest.json">
+				manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/showCard/order/manifest.json"
+				referenceId="67d1ee24-2225-11ed-861d-0242ac120002">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>

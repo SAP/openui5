@@ -201,6 +201,7 @@ sap.ui.define([
 
 				/**
 				 * Optional property which can be used by the host to reference the card.
+				 * It will be forwarded to any children cards.
 				 * Does not affect the card behavior.
 				 */
 				referenceId : {
@@ -2610,7 +2611,8 @@ sap.ui.define([
 			oChildCard = this._createCard({
 				width: oParameters.width,
 				host: this.getHostInstance(),
-				parameters: oParameters.parameters
+				parameters: oParameters.parameters,
+				referenceId: this.getReferenceId()
 			});
 
 		oChildCard.setAssociation("openerReference", this);
