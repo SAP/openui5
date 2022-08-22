@@ -972,6 +972,32 @@ sap.ui.define([
 			oList.destroy();
 		});
 
+		QUnit.test("setBusy method test enableBusyIndicator property", function(assert) {
+			var oList = new List({
+				enableBusyIndicator: false
+			});
+
+			// simulate List is busy
+			oList._bBusy = true;
+			oList.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			var fSetBusy = sinon.spy(oList, "setBusy");
+			oList._hideBusyIndicator();
+			assert.notOk(oList._bBusy, "_bBusy was reset");
+			assert.notOk(fSetBusy.called, "setBusy function not called, since enableBusyIndicator=false");
+
+			// enable busy indicator
+			oList.setEnableBusyIndicator(true);
+			// simulate List is busy
+			oList._bBusy = true;
+			sap.ui.getCore().applyChanges();
+			oList._hideBusyIndicator();
+			assert.ok(fSetBusy.calledWith(false , "listUl"));
+			assert.notOk(oList._bBusy, "_bBusy is false");
+
+			oList.destroy();
+		});
+
 		QUnit.test("setBackgroundDesign", function(assert) {
 			var oListItem = createListItem(),
 				oList = new List({

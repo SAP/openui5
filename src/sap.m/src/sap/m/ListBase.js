@@ -721,9 +721,7 @@ function(
 
 	ListBase.prototype.setEnableBusyIndicator = function(bEnable) {
 		this.setProperty("enableBusyIndicator", bEnable, true);
-		if (!this.getEnableBusyIndicator()) {
-			this._hideBusyIndicator();
-		}
+		this._hideBusyIndicator();
 		return this;
 	};
 
@@ -1241,8 +1239,10 @@ function(
 		if (this._bBusy) {
 			// revert busy state
 			this._bBusy = false;
-			this.setBusy(false, "listUl");
-			clearTimeout(this._sBusyTimer);
+			if (this.getEnableBusyIndicator()) {
+				this.setBusy(false, "listUl");
+				clearTimeout(this._sBusyTimer);
+			}
 
 			// revert no data texts when necessary
 			if (!this.getItems(true).length) {
