@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/base/util/deepEqual",
 	"sap/base/util/deepClone",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"sap/ui/integration/util/Validators"
 ], function (
 	Control,
 	MultiInput,
@@ -22,7 +23,8 @@ sap.ui.define([
 	ObjectPath,
 	deepEqual,
 	deepClone,
-	Fragment
+	Fragment,
+	Validators
 ) {
 	"use strict";
 
@@ -281,137 +283,6 @@ sap.ui.define([
 		}
 		return true;
 	};
-	/*
-		default error messages
-		#XMSG: Validation Error: Does not match pattern
-		EDITOR_VAL_NOMATCH=Value does not match the validation criteria
-
-		#XMSG: Validation Error: Max length exceeded
-		EDITOR_VAL_MAXLENGTH=Value exceeds the maximum length of {0}
-
-		#XMSG: Validation Error: Min length
-		EDITOR_VAL_MINLENGTH=Value needs to be minimal {0} characters
-
-		#XMSG: Validation Error: Number required
-		EDITOR_VAL_TEXTREQ=Field is required, please enter a text
-
-		#XMSG: Validation Error: List required
-		EDITOR_VAL_LISTREQ=Field is required, please select 1 item
-
-		#XMSG: Validation Error: Number Maximum Inclusive
-		EDITOR_VAL_MAX_E=Value needs to be {0} or less
-
-		#XMSG: Validation Error: Number Minimum Inclusive
-		EDITOR_VAL_MIN_E=Value needs to be {0} or greater
-
-		#XMSG: Validation Error: Number Maximum Exclusive
-		EDITOR_VAL_MAX_E=Value needs to be less than {0}
-
-		#XMSG: Validation Error: Number Minimum Exclusive
-		EDITOR_VAL_MIN_E=Value needs to be greater than {0}
-
-
-		#XMSG: Validation Error: Number Multiple Of
-		EDITOR_VAL_MULTIPLE=Value needs to be a multiple of {0}
-
-		#XMSG: Validation Error: Number required
-		EDITOR_VAL_NUMBERREQ=Field is required, please enter a number
-	*/
-
-	BaseField.validations = {
-		string: {
-			maxLength: function (v, max) {
-				return v.length <= max;
-			},
-			maxLengthTxt: "EDITOR_VAL_MAXLENGTH",
-			minLength: function (v, min) {
-				return v.length >= min;
-			},
-			minLengthTxt: "EDITOR_VAL_MINLENGTH",
-			pattern: function (v, pattern) {
-				var p = new RegExp(pattern);
-				return p.test(v);
-			},
-			patternTxt: "EDITOR_VAL_NOMATCH",
-			required: function (v, b) {
-				return b && !!v;
-			},
-			requiredTxt: "EDITOR_VAL_TEXTREQ",
-			validateTxt: "EDITOR_VAL_NOMATCH"
-		},
-		"string[]": {
-			maxLength: function (v, max) {
-				return Array.isArray(v) && v.length <= max;
-			},
-			maxLengthTxt: "EDITOR_VAL_LISTMAXLENGTH",
-			minLength: function (v, min) {
-				return Array.isArray(v) && v.length >= min;
-			},
-			minLengthTxt: "EDITOR_VAL_LISTMINLENGTH",
-			required: function (v, b) {
-				return Array.isArray(v) && v.length > 0;
-			},
-			requiredTxt: "EDITOR_VAL_LISTREQ"
-		},
-		integer: {
-			maximum: function (v, valValue, valSettings) {
-				if (valSettings.exclusiveMaximum) {
-					valSettings._txt = "maximumExclusiveTxt";
-					return v < valValue;
-				}
-				return v <= valValue;
-			},
-			maximumTxt: "EDITOR_VAL_MAX",
-			maximumExclusiveTxt: "EDITOR_VAL_MAX_E",
-			minimum: function (v, valValue, valSettings) {
-				if (valSettings.exclusiveMinimum) {
-					valSettings._txt = "minimumExclusiveTxt";
-					return v > valValue;
-				}
-				return v >= valValue;
-			},
-			minimumTxt: "EDITOR_VAL_MIN",
-			minimumExclusiveTxt: "EDITOR_VAL_MIN_E",
-			multipleOf: function (v, valValue) {
-				return (v % valValue) === 0;
-			},
-			multipleOfTxt: "EDITOR_VAL_MULTIPLE",
-			required: function (v, b) {
-				return !isNaN(v) && v !== "";
-			},
-			requiredTxt: "EDITOR_VAL_NUMBERREQ",
-			validateTxt: "EDITOR_VAL_NOMATCH"
-		},
-		number: {
-			maximum: function (v, valValue, valSettings) {
-				if (valSettings.exclusiveMaximum) {
-					valSettings._txt = "maximumExclusiveTxt";
-					return v < valValue;
-				}
-				return v <= valValue;
-			},
-			maximumTxt: "EDITOR_VAL_MAX",
-			maximumExclusiveTxt: "EDITOR_VAL_MAX_E",
-			minimum: function (v, valValue, valSettings) {
-				if (valSettings.exclusiveMinimum) {
-					valSettings._txt = "minimumExclusiveTxt";
-					return v > valValue;
-				}
-				return v >= valValue;
-			},
-			minimumTxt: "EDITOR_VAL_MIN",
-			minimumExclusiveTxt: "EDITOR_VAL_MAX_E",
-			multipleOf: function (v, valValue) {
-				return (v % valValue) === 0;
-			},
-			multipleOfTxt: "EDITOR_VAL_MULTIPLE",
-			required: function (v, b) {
-				return !isNaN(v) && v !== "";
-			},
-			requiredTxt: "EDITOR_VAL_NUMBERREQ",
-			validateTxt: "EDITOR_VAL_NOMATCH"
-		}
-	};
 
 	BaseField.prototype._requestData = function (oRequest) {
 		var oField = this.control.getParent();
@@ -436,7 +307,7 @@ sap.ui.define([
 
 	BaseField.prototype._handleValidation = function (oSettings, oValue) {
 		var oConfig = this.getConfiguration(),
-			oValidations = BaseField.validations[oConfig.type];
+			oValidations = Validators[oConfig.type];
 		var fnFailed = function(n, oData) {
 			var sError;
 			if (typeof oSettings.message === "function") {

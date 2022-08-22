@@ -101,7 +101,7 @@ sap.ui.define([
 	/**
 	 * @const A list of model names which are used internally by the card.
 	 */
-	var INTERNAL_MODEL_NAMES = ["parameters", "filters", "paginator", "form", "context", "i18n"];
+	var INTERNAL_MODEL_NAMES = ["parameters", "filters", "paginator", "form", "messages", "context", "i18n"];
 
 	var RESERVED_PARAMETER_NAMES = ["visibleItems", "allItems"];
 
@@ -516,6 +516,7 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#showCard as showCard
 		 * @borrows sap.ui.integration.widgets.Card#hide as hide
 		 * @borrows sap.ui.integration.widgets.Card#getOpener as getOpener
+		 * @borrows sap.ui.integration.widgets.Card#validateControls as validateControls
 		 */
 		this._oLimitedInterface = new Interface(this, [
 			"getDomRef",
@@ -543,7 +544,8 @@ sap.ui.define([
 			"hideLoadingPlaceholders",
 			"showCard",
 			"hide",
-			"getOpener"
+			"getOpener",
+			"validateControls"
 		]);
 	};
 
@@ -570,6 +572,13 @@ sap.ui.define([
 						ParameterMap.getParamsForModel()
 					);
 				break;
+				case "messages":
+					oModel = new JSONModel({
+						hasErrors: false,
+						hasWarnings: false,
+						records: []
+					});
+					break;
 				default:
 					oModel = new JSONModel();
 				break;
@@ -877,6 +886,22 @@ sap.ui.define([
 	 */
 	Card.prototype.getFundamentalErrors = function () {
 		return this._aFundamentalErrors;
+	};
+
+	/**
+	 * Causes all of the controls within the Card
+	 * that support validation to validate their data.
+	 * @public
+	 * @experimental
+	 * @returns {boolean} if all of the controls validated successfully; otherwise, false
+	 */
+	Card.prototype.validateControls = function () {
+		var oCardContent = this.getCardContent();
+		if (oCardContent) {
+			oCardContent.validateControls();
+		}
+
+		return !this.getModel("messages").getProperty("/hasErrors");
 	};
 
 	/**

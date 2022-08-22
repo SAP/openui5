@@ -1477,6 +1477,12 @@
               "pattern": "^[a-zA-Z0-9_\\.\\-/|@#]*$"
             }
           }
+        },
+        "validations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ContentType.Object.Item.Validation"
+          }
         }
       }
     },
@@ -1592,6 +1598,79 @@
           "type": "string"
         }
       }
+    },
+    "ContentType.Object.Item.Validation": {
+      "description": "[Experimental] Defines the user input validation",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+         "message": {
+           "description": "Defines custom validation message text",
+           "type": "string"
+         },
+         "type": {
+           "description": "Defines the validation type",
+           "oneOf": [
+             {
+               "enum": [
+                 "Error",
+                 "Warning",
+                 "Information"
+               ],
+               "default": "Error"
+             },
+             {
+               "$ref": "#/definitions/simpleBinding"
+             }
+           ]
+         },
+         "required": {
+           "description": "Defines whether the user input is required",
+           "oneOf": [
+             {
+               "type": "boolean",
+               "default": false
+             },
+             {
+               "$ref": "#/definitions/simpleBinding"
+             }
+           ]
+         },
+         "minLength": {
+           "description": "Defines the minimum number of characters",
+           "oneOf": [
+             {
+               "type": "number"
+             },
+             {
+               "$ref": "#/definitions/simpleBinding"
+             }
+           ]
+         },
+         "maxLength": {
+           "description": "Defines the maximum number of characters",
+           "oneOf": [
+             {
+               "type": "number"
+             },
+             {
+               "$ref": "#/definitions/simpleBinding"
+             }
+           ]
+         },
+         "resrictToPredefinedOptions": {
+           "description": "Defines whether the value is restricted to predefined options",
+           "oneOf": [
+             {
+               "type": "boolean",
+               "default": false
+             },
+             {
+               "$ref": "#/definitions/simpleBinding"
+             }
+           ]
+         }
+       }
     },
     "ContentType.Table": {
       "description": "Represents table content attributes",

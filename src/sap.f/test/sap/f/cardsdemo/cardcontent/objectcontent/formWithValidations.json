@@ -1,6 +1,7 @@
+
 {
 	"sap.app": {
-		"id": "card.explorer.object.form",
+		"id": "cardsdemo.object.form.sample1",
 		"type": "card",
 		"title": "Sample of an Object Card",
 		"subTitle": "Sample of an Object Card",
@@ -33,9 +34,9 @@
 					"method": "GET",
 					"parameters": {
 						"status": "approved",
-						"reason": "{form>/reason/key}",
-						"reasonText": "{form>/reason/value}",
-						"comment": "{form>/comment}"
+						"reason": "{form>/reason}",
+						"comment": "{form>/comment}",
+						"email": "{form>/email}"
 					}
 				}
 			}
@@ -51,7 +52,9 @@
 						"id": "reason2",
 						"title": "Reason 2"
 					}
-				]
+				],
+				"selectedKey": "",
+				"msg": "dddd"
 			}
 		},
 		"header": {
@@ -59,7 +62,7 @@
 				"text": "JN"
 			},
 			"title": "Julia Neil",
-			"subTitle": "Purchase Requisition"
+			"subTitle": "Procurement Purchase Requisition"
 		},
 		"content": {
 			"groups": [
@@ -92,20 +95,99 @@
 							"label": "Reason",
 							"type": "ComboBox",
 							"placeholder": "Select",
+							"selectedKey": "{/selectedKey}",
+							"required": true,
 							"item": {
 								"path": "/reasons",
 								"template": {
 									"key": "{id}",
 									"title": "{title}"
 								}
-							}
+							},
+							"validations": [
+								{
+									"required": true,
+									"message": "Value is required"
+								}
+							]
+						},
+						{
+							"id": "reason2",
+							"label": "Reason 2",
+							"type": "ComboBox",
+							"placeholder": "Select",
+							"required": true,
+							"item": {
+								"path": "/reasons",
+								"template": {
+									"key": "{id}",
+									"title": "{title}"
+								}
+							},
+							"validations": [
+								{
+									"required": true
+								},
+								{
+									"resrictToPredefinedOptions": true
+								}
+							]
+						},
+						{
+							"id": "reason3",
+							"label": "Reason 3",
+							"type": "ComboBox",
+							"placeholder": "Select",
+							"item": {
+								"path": "/reasons",
+								"template": {
+									"key": "{id}",
+									"title": "{title}"
+								}
+							},
+							"validations": [
+								{
+									"resrictToPredefinedOptions": true
+								}
+							]
 						},
 						{
 							"id": "comment",
 							"label": "Comment",
 							"type": "TextArea",
 							"rows": 4,
-							"placeholder": "Comment"
+							"placeholder": "Comment",
+							"value": "{/msg}",
+							"required": true,
+							"validations": [
+								{
+									"required": true,
+									"message": "Value is required"
+								},
+								{
+									"minLength": 10,
+									"maxLength": 20,
+									"message": "Your comment should be between 10 and 20 characters.",
+									"type": "Warning"
+								}
+							]
+						},
+						{
+							"id": "email",
+							"label": "Email",
+							"type": "TextArea",
+							"placeholder": "email",
+							"required": true,
+							"validations": [
+								{
+									"required": true,
+									"message": "Email is required"
+								},
+								{
+									"pattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
+									"message": "Enter a valid email"
+								}
+							]
 						}
 					]
 				}
@@ -118,6 +200,7 @@
 					"buttonType": "Accept",
 					"actions": [
 						{
+							"enabled": "{= !${messages>/hasErrors}}",
 							"type": "Submit"
 						}
 					]

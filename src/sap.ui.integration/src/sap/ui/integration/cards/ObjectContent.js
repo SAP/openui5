@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/Utils",
+	"sap/ui/integration/util/Forms",
 	"sap/f/AvatarGroup",
 	"sap/f/AvatarGroupItem",
 	"sap/f/cards/NumericIndicators",
@@ -57,6 +58,7 @@ sap.ui.define([
 	BindingHelper,
 	BindingResolver,
 	Utils,
+	Forms,
 	AvatarGroup,
 	AvatarGroupItem,
 	NumericIndicators,
@@ -114,6 +116,8 @@ sap.ui.define([
 	ObjectContent.prototype.exit = function() {
 		BaseContent.prototype.exit.apply(this, arguments);
 
+		delete this._aValidationControls;
+
 		if (this._sResizeListenerId) {
 			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = "";
@@ -125,6 +129,27 @@ sap.ui.define([
 	 */
 	ObjectContent.prototype.onDataChanged = function () {
 		this._handleNoItemsError(this.getParsedConfiguration().hasData);
+		this._validateInputFields(false);
+	};
+
+	ObjectContent.prototype.validateControls = function () {
+		this._validateInputFields(true);
+	};
+
+	ObjectContent.prototype._validationControlChanged = function (oEvent) {
+		Forms.validateControl(oEvent.getSource(), this.getCardInstance(), true);
+	};
+
+	ObjectContent.prototype._validateInputFields = function (bShowValueState) {
+		(this._aValidationControls || []).forEach(function (oControl) {
+			Forms.validateControl(oControl, this.getCardInstance(), bShowValueState);
+		}.bind(this));
+	};
+
+	ObjectContent.prototype._prepareValidationControl = function (oControl, oItem, sChangeFunction) {
+		oControl.attachEvent(sChangeFunction, this._validationControlChanged.bind(this));
+		this._aValidationControls.push(oControl);
+		oControl._oItem = oItem;
 	};
 
 	/**
@@ -153,6 +178,8 @@ sap.ui.define([
 		if (!oConfiguration) {
 			return this;
 		}
+
+		this._aValidationControls = [];
 
 		if (oConfiguration.groups) {
 			this._addGroups(oConfiguration);
@@ -604,7 +631,8 @@ sap.ui.define([
 			oFormModel = oCard.getModel("form"),
 			oSettings = {
 				visible: BindingHelper.reuse(vVisible),
-				placeholder: oItem.placeholder
+				placeholder: oItem.placeholder,
+				required: Forms.getRequiredValidationValue(oItem)
 			},
 			oControl,
 			oItemTemplate,
@@ -655,6 +683,7 @@ sap.ui.define([
 		oControl.addEventDelegate({
 			onAfterRendering: fnUpdateValue
 		});
+		this._prepareValidationControl(oControl, oItem, "change");
 
 		return oControl;
 	};
@@ -663,6 +692,7 @@ sap.ui.define([
 		var oCard = this.getCardInstance(),
 			oFormModel = oCard.getModel("form"),
 			oControl = new TextArea({
+				required: Forms.getRequiredValidationValue(oItem),
 				value: oItem.value,
 				visible: BindingHelper.reuse(vVisible),
 				rows: oItem.rows,
@@ -691,6 +721,7 @@ sap.ui.define([
 		oControl.addEventDelegate({
 			onAfterRendering: fnUpdateValue
 		});
+		this._prepareValidationControl(oControl, oItem, "liveChange");
 
 		return oControl;
 	};

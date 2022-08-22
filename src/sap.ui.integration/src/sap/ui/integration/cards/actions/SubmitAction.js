@@ -29,6 +29,10 @@ sap.ui.define([
 		var oCard = this.getCardInstance(),
 			oSubmitActionHandler = this.getActionHandler();
 
+		if (!oCard.validateControls()) {
+			return;
+		}
+
 		if (!oSubmitActionHandler) {
 			return;
 		}

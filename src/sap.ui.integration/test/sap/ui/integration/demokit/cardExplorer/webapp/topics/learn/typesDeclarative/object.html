@@ -628,6 +628,14 @@
 						<td>1.44</td>
 						<td>1.104</td>
 					</tr>
+					<tr>
+						<td>validations</td>
+						<td><a href="#validationsProperties">ObjectGroupItemValidation[]</a></td>
+						<td>No</td>
+						<td>Defines the user input validations.</td>
+						<td>1.44</td>
+						<td>1.106</td>
+					</tr>
 				</table>
 			</div>
 
@@ -727,8 +735,110 @@
 						<td>1.44</td>
 						<td>1.104</td>
 					</tr>
+					<tr>
+						<td>validations</td>
+						<td><a href="#validationsProperties">ObjectGroupItemValidation[]</a></td>
+						<td>No</td>
+						<td>Defines the user input validations.</td>
+						<td>1.44</td>
+						<td>1.106</td>
+					</tr>
 				</table>
 			</div>
+
+			<h4 id="validationsProperties">ObjectGroupItemValidation Properties</h4>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>message</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>Defines custom validation message text.</td>
+						<td>1.44</td>
+						<td>1.106</td>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td>string</td>
+						<td>"Error"</td>
+						<td>No</td>
+						<td>Defines the validation type - "Error", "Warning" or "Information".</td>
+						<td>1.44</td>
+						<td>1.106</td>
+					</tr>
+					<tr>
+						<td>required</td>
+						<td>boolean</td>
+						<td>false</td>
+						<td>No</td>
+						<td>Defines whether the user input is required.</td>
+						<td>1.44</td>
+						<td>1.106</td>
+					</tr>
+					<tr>
+						<td>minLength</td>
+						<td>integer</td>
+						<td></td>
+						<td>No</td>
+						<td>Defines the minimum number of characters.</td>
+						<td>1.44</td>
+						<td>1.106</td>
+					</tr>
+					<tr>
+						<td>maxLength</td>
+						<td>integer</td>
+						<td></td>
+						<td>No</td>
+						<td>Defines the maximum number of characters.</td>
+						<td>1.44</td>
+						<td>1.106</td>
+					</tr>
+					<tr>
+						<td>resrictToPredefinedOptions</td>
+						<td>boolean</td>
+						<td>false</td>
+						<td>No</td>
+						<td>Defines whether the value is restricted to predefined options.</td>
+						<td>1.44</td>
+						<td>1.106</td>
+					</tr>
+				</table>
+			</div>
+			<h2 id="messages">"messages" Model</h2>
+			<p>For each Card a "messages" model is created. It contains records for
+				all validation errors, warnings or informations. Here is the "messages" model structure:</p>
+			<ul>
+				<li>messages>/hasErrors - if some control has a validation record with type "error"</li>
+				<li>messages>/hasWarnings - if some control has a validation record with type "warning"</li>
+				<li>messages>/records - all validation records</li>
+			</ul>
+			<p>Here is an example how the "messages" model
+				can be used to disable the "Submit" button if there are any validation errors:</p>
+	<pre class="lang-json">"footer": {
+	"actionsStrip": [
+		{
+			"text": "Submit",
+			"buttonType": "Accept",
+			"actions": [
+				{
+					"enabled": "{= !${messages>/hasErrors}}",
+					"type": "Submit"
+				}
+			]
+		}
+	]
+}</pre>
+			<a class="try-button" href="../../../index.html#/explore/object/formWithValidation" target="_parent">Try it Out</a>
 
 			<h2 id="example">Example</h2>
 			<p>Define the type and data for the card:
@@ -991,6 +1101,7 @@
 			<h4>Table of Contents</h4>
 			<div><a href="#overview">Object Card</a></div>
 			<div><a href="#properties">Properties</a></div>
+			<div><a href="#messages">"messages" Model</a></div>
 			<div><a href="#example">Example</a></div>
 		</div>
 	</div>
