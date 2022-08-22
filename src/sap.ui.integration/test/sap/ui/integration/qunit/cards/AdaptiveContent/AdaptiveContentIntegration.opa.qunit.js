@@ -21,6 +21,18 @@ sap.ui.define([
 				errorMessage: "The component does not exist or the value could not be changed"
 			});
 		},
+		iLoadTheCardContent: function () {
+			return this.waitFor({
+				controlType: "sap.ui.integration.widgets.Card",
+				matchers: function (oNode) {
+					return oNode.$().find("ui5-button");
+				},
+				success: function () {
+					Opa5.assert.ok("AdaptiveCard", "The AdaptiveCard has loaded its content");
+				},
+				errorMessage: "The card content does not exist or the value could not be changed"
+			});
+		},
 		iClickTheSubmitAction: function () {
 			return this.waitFor({
 				controlType: "sap.ui.integration.widgets.Card",
@@ -120,6 +132,7 @@ sap.ui.define([
 
 		When
 			.iLoadTheCard()
+			.and.iLoadTheCardContent()
 			.and.iClickTheSubmitAction();
 
 		Then.shouldTriggerSubmitAction();
