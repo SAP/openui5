@@ -3903,6 +3903,46 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Export button state should be checked for bindingChange, if a row is added to the table", function(assert) {
+		this.oTable.destroy();
+		this.oTable = new Table({
+			enableExport: true,
+			delegate: {
+				name: sDelegatePath,
+				payload: {
+					collectionPath: "/testPath"
+				}
+			},
+			columns: [
+				new Column({
+					dataProperty: "name",
+					template: new Text({
+						text: "{name}"
+					})
+				})
+			],
+			models: new JSONModel({
+				testPath: []
+			})
+		});
+
+		return this.oTable._fullyInitialized().then(function() {
+			return waitForBinding(this.oTable);
+		}.bind(this)).then(function() {
+			assert.notOk(this.oTable._oExportButton.getEnabled(), "Export button is disabled since there are no rows");
+			var fUpdateExportState = sinon.spy(this.oTable, "_updateExportState"),
+				fGetRowCountStub = sinon.stub(this.oTable, "_getRowCount");
+			fGetRowCountStub.returns(1);
+
+			// simulate binding change
+			this.oTable.getRowBinding().fireEvent("change");
+			assert.ok(fUpdateExportState.calledOnce);
+			assert.ok(this.oTable._oExportButton.getEnabled(), "Export button enabled, since binding change added a row to the table");
+
+			fGetRowCountStub.restore();
+		}.bind(this));
+	});
+
 	QUnit.module("Inbuilt filter initialization", {
 		createTable: function(mSettings) {
 			this.oTable = new Table(mSettings);
