@@ -3,6 +3,17 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "3fbd8e2e589a41f3d3e17df10f9a33c4da5c0fa0",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: firstWeekDay now works in different locales",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004751872022"
+          }
+        ]
+      },
+      {
         "id": "90aaecf6980a7bfc390119985e652f91aaf32323",
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: adjust enabled property setter",

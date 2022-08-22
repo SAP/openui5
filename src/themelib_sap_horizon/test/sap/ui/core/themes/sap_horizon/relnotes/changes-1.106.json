@@ -3,6 +3,17 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "03a6d051bcef9efbfcd60dcfbee5375c36d92b56",
+        "type": "FIX",
+        "text": " sap.m.Slider: Start/end dot position adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280159201"
+          }
+        ]
+      },
+      {
         "id": "58c57d08a13c9af7859db35cb25f39c359c49a37",
         "type": "FIX",
         "text": "sap.m.InputBase: Width adjustment for not editable input controls",

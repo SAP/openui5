@@ -3,6 +3,17 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "2987b55203bd1ecd62b4368045b48118113c287e",
+        "type": "FIX",
+        "text": " sap.ui.core.ScrollEnablement: Scroll-end callback issue corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004009642022"
+          }
+        ]
+      },
+      {
         "id": "ea4c27f1e16312afc9180928d87f7bbec94d75a2",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Allow RTA revert moved headerContent",

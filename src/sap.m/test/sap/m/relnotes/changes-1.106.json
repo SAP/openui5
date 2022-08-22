@@ -3,6 +3,92 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "8bbab74fba318b60d214c85eec6b1d9bd58e463e",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Receiving focus on selected item is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280152633"
+          }
+        ]
+      },
+      {
+        "id": "3a19ea06bef2786e6bbaf9f989e88255e7c793ad",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: OverflowToolbarButton invalidation prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280160553"
+          }
+        ]
+      },
+      {
+        "id": "29764c0f477636d112dcedbd15a6c399d846c432",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Access Continuum issue is now fixed"
+      },
+      {
+        "id": "3fbd8e2e589a41f3d3e17df10f9a33c4da5c0fa0",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: firstWeekDay now works in different locales",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004751872022"
+          }
+        ]
+      },
+      {
+        "id": "0ae40fe105a30fcb19252881152a114a8320f83e",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust link type announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280119447"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070055617"
+          }
+        ]
+      },
+      {
+        "id": "ec162e3f09b8358946abfbadc1fcad3b5aad5910",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: adjust parsing for different calendar types",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280147918"
+          }
+        ]
+      },
+      {
+        "id": "0beb3dc80c6dff57f0f75400e7e61a7939d8eb23",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: adjust timezone display",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280155919"
+          }
+        ]
+      },
+      {
+        "id": "2987b55203bd1ecd62b4368045b48118113c287e",
+        "type": "FIX",
+        "text": " sap.ui.core.ScrollEnablement: Scroll-end callback issue corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004009642022"
+          }
+        ]
+      },
+      {
         "id": "df3533a5865cbfa5c34200f9a7e17bad2b143c4e",
         "type": "FIX",
         "text": " sap.m: Fix failing runtime build",
@@ -12,6 +98,11 @@
             "reference": ""
           }
         ]
+      },
+      {
+        "id": "c755333cfece87fc6a3da2df3c1fe34105069306",
+        "type": "FEATURE",
+        "text": " UploadSet - enable upload of documents from cloud"
       },
       {
         "id": "fba46983ca8d438a50f3f1b1de62ae9afc719e89",
