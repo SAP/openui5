@@ -13,6 +13,12 @@ sap.ui.define([
 	var oMockData = {
 			sFilterBase : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 			mFixture : {
+				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata" : {
+					source : "metadata_product.xml"
+				},
+				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_supplier/0001/$metadata" : {
+					source : "metadata_supplier.xml"
+				},
 				"localAnnotations.xml" : {source : "localAnnotations.xml"},
 				"Equipments?$select=Category,EmployeeId,ID,Name&$expand=EQUIPMENT_2_PRODUCT($select=ID,Name;$expand=PRODUCT_2_CATEGORY($select=CategoryIdentifier,CategoryName),PRODUCT_2_SUPPLIER($select=SUPPLIER_ID,Supplier_Name))&$skip=0&$top=5" : {
 					source : "equipments.json"
@@ -21,16 +27,6 @@ sap.ui.define([
 					source : "equipments.json"
 				}
 			},
-			aRegExps : [{
-				regExp : /^GET [\w\/]+\/TEA_BUSI\/0001\/\$metadata\?sap-language=..$/,
-				response : {source : "metadata.xml"}
-			}, {
-				regExp : /^GET [\w\/]+\/tea_busi_product\/0001\/\$metadata\?sap-language=..$/,
-				response : {source : "metadata_product.xml"}
-			}, {
-				regExp : /^GET [\w\/]+\/tea_busi_supplier\/0001\/\$metadata\?sap-language=..$/,
-				response : {source : "metadata_supplier.xml"}
-			}],
 			sSourceBase : "sap/ui/core/sample/odata/v4/ListBindingTemplate/data"
 		};
 

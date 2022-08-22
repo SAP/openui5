@@ -1355,7 +1355,9 @@ sap.ui.define([
 			"single annotation is wrapped");
 
 		// code under test
-		oMetaModel = new ODataMetaModel(null, null, null, oModel);
+		oMetaModel = new ODataMetaModel(null, null, null, oModel, "~mUrlParams~");
+
+		assert.strictEqual(oMetaModel.mUrlParams, "~mUrlParams~");
 	});
 
 	//*********************************************************************************************
@@ -5389,6 +5391,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getOrCreateSharedModel, metadataUrlParams", function (assert) {
+		var oModel = new ODataModel({
+				metadataUrlParams : {"sap-language" : "en", "sap-client" : "123"},
+				serviceUrl : "/Foo2/DataService/",
+				synchronizationMode : "None"
+			}),
+			oMetaModel = oModel.getMetaModel(),
+			oMetaModelMock = this.mock(oMetaModel),
+			oSharedModel;
+
+		oMetaModelMock.expects("getAbsoluteServiceUrl")
+			.withExactArgs("../ValueListService/$metadata")
+			.returns("/Foo2/ValueListService/");
+
+		// code under test
+		oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata");
+
+		assert.deepEqual(oSharedModel.getMetaModel().mUrlParams,
+			{"sap-language" : "en", "sap-client" : "123"});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchValueListType: unknown property", function (assert) {
 		var oContext = {},
 			sPath = "/Products('HT-1000')/Foo";
@@ -6729,6 +6753,11 @@ sap.ui.define([
 					if (bHasStandardCode) {
 						aSelect.push("ISOCode");
 					}
+					this.oMetaModel.mUrlParams = {
+						"sap-language" : "EN",
+						"sap-client" : "123",
+						"sap-context-token" : "foo"
+					};
 					this.oMetaModelMock.expects("fetchEntityContainer").twice()
 						.returns(SyncPromise.resolve(mScope));
 					this.oMetaModelMock.expects("requestObject").twice()
@@ -6737,14 +6766,17 @@ sap.ui.define([
 							CollectionPath : "UnitsOfMeasure",
 							Url : sUrl
 						});
+					this.mock(_Helper).expects("addQueryOptions").twice()
+						.withExactArgs(sUrl, {"sap-language" : "EN", "sap-client" : "123"})
+						.returns("~sUrlWithParams~");
 					this.oMetaModelMock.expects("getAbsoluteServiceUrl").twice()
-						.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+						.withExactArgs("~sUrlWithParams~").returns(sAbsoluteServiceUrl);
 					oMapGetExpectation = this.mock(Map.prototype).expects("get").twice()
 						.withExactArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
 					oMapSetExpectation = this.mock(Map.prototype).expects("set")
 						.withArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
 					this.oMetaModelMock.expects("getOrCreateSharedModel")
-						.withExactArgs(sUrl, "$direct")
+						.withExactArgs("~sUrlWithParams~", "$direct")
 						.returns(oCodeListModel);
 					this.mock(oCodeListModel).expects("getMetaModel").withExactArgs()
 						.returns(oCodeListMetaModel);

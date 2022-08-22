@@ -22,10 +22,10 @@ sap.ui.define([
 				"ProductList?custom-option=value&$count=true&$select=CurrencyCode,Messages,Name,Price,ProductID,WeightMeasure,WeightUnit&$skip=0&$top=5" : {
 					source : "ProductList.json"
 				},
-				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode" : {
+				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/Currencies?sap-language=EN&$select=CurrencyCode,DecimalPlaces,Text,ISOCode" : {
 					source : "Currencies.json"
 				},
-				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode" : {
+				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/UnitsOfMeasure?sap-language=EN&$select=ExternalCode,DecimalPlaces,Text,ISOCode" : {
 					source : "UnitsOfMeasure.json"
 				},
 				"POST ProductList?custom-option=value" : [{

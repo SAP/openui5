@@ -330,7 +330,7 @@ sap.ui.define([
 			_MetadataRequestor.create(this.mMetadataHeaders, sODataVersion,
 				Object.assign({}, mUriParameters, mParameters.metadataUrlParams)),
 			this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
-			mParameters.supportReferences);
+			mParameters.metadataUrlParams, mParameters.supportReferences);
 		this.oInterface = {
 			fetchEntityContainer : this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
 			fetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),

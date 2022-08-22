@@ -14,6 +14,9 @@ sap.ui.define([
 			sFilterBase :
 				"/sap/opu/odata4/sap/sepm_odata_ref/sadl/sap/sepm_c_slsorder_tp_100/0001/",
 			mFixture : {
+				"/sap/opu/odata4/sap/sepm_odata_ref/sadl/sap/sepm_c_slsorderitem_tp_100/0001/$metadata" : {
+					source : "metadata_item.xml"
+				},
 				"SEPM_C_SLSORDER_TP_100?$count=true&$expand=_Item($select=GrossAmount,Product,SalesOrder,SalesOrderItem,SalesOrderItemUUID,SalesOrderUUID)&$select=Customer,OverallStatus,SalesOrder,SalesOrderUUID&$skip=0&$top=5" : {
 					source : "SEPM_C_SLSORDER_TP_100_Skip0_Top5_V4.json"
 				},
@@ -21,13 +24,6 @@ sap.ui.define([
 					source : "SEPM_C_SLSORDER_TP_100_Skip5_Top5_V4.json"
 				}
 			},
-			aRegExps : [{
-				regExp : /^GET [\w\/]+slsorder_tp_100\/0001\/\$metadata\?sap-language=..$/,
-				response : {source : "metadata.xml"}
-			}, {
-				regExp : /^GET [\w\/]+slsorderitem_tp_100\/0001\/\$metadata\?sap-language=..$/,
-				response : {source : "metadata_item.xml"}
-			}],
 			sSourceBase : "sap/ui/core/sample/odata/v4/SalesOrderTP100_V4/data"
 		};
 

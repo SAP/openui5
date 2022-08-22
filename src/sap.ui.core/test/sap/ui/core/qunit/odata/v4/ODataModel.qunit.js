@@ -142,8 +142,9 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("metadataUrlParams", function () {
-		var mUriParameters = {
+	QUnit.test("metadataUrlParams", function (assert) {
+		var oModel,
+			mUriParameters = {
 				"sap-client" : "279",
 				"sap-context-token" : "n/a"
 			};
@@ -162,11 +163,16 @@ sap.ui.define([
 			.callThrough();
 
 		// code under test
-		this.createModel("", {
+		oModel = this.createModel("", {
 			metadataUrlParams : {
 				"sap-context-token" : "20200716120000",
 				"sap-language" : "en"
 			}
+		});
+
+		assert.deepEqual(oModel.getMetaModel().mUrlParams, {
+			"sap-context-token" : "20200716120000",
+			"sap-language" : "en"
 		});
 	});
 

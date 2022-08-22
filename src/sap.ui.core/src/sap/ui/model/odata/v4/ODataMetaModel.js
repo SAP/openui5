@@ -690,12 +690,14 @@ sap.ui.define([
 	 *   Supported since 1.41.0
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 	 *   The model this meta model is related to
+	 * @param {object} [mUrlParams]
+	 *   The model's metadataUrlParams
 	 * @param {boolean} [bSupportReferences=true]
 	 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives are
 	 *   supported in order to load schemas on demand from other $metadata documents and include
 	 *   them into the current service ("cross-service references").
 	 */
-	function constructor(oRequestor, sUrl, vAnnotationUri, oModel, bSupportReferences) {
+	function constructor(oRequestor, sUrl, vAnnotationUri, oModel, mUrlParams, bSupportReferences) {
 		MetaModel.call(this);
 		this.aAnnotationUris = vAnnotationUri && !Array.isArray(vAnnotationUri)
 			? [vAnnotationUri] : vAnnotationUri;
@@ -723,6 +725,7 @@ sap.ui.define([
 		// not support "All" and "Any" filters
 		this.mUnsupportedFilterOperators = {All : true, Any : true};
 		this.sUrl = sUrl;
+		this.mUrlParams = mUrlParams;
 	}
 
 	/**
@@ -2343,6 +2346,7 @@ sap.ui.define([
 				autoExpandSelect : bAutoExpandSelect,
 				groupId : sGroupId,
 				httpHeaders : this.oModel.getHttpHeaders(),
+				metadataUrlParams : this.mUrlParams,
 				operationMode : OperationMode.Server,
 				serviceUrl : sUrl,
 				sharedRequests : true,
@@ -2553,24 +2557,23 @@ sap.ui.define([
 
 		return this.requestObject("/@com.sap.vocabularies.CodeList.v1." + sTerm)
 			.then(function (oCodeList) {
-				var sCacheKey,
-					oCodeListMetaModel,
-					oCodeListModel,
-					oPromise,
-					sTypePath;
+				var sCacheKey, oCodeListMetaModel, oCodeListModel, oPromise, sTypePath, sUrl,
+					mUrlParams;
 
 				if (!oCodeList) {
 					return null;
 				}
 
-				sCacheKey = that.getAbsoluteServiceUrl(oCodeList.Url)
-					+ "#" + oCodeList.CollectionPath;
+				mUrlParams = Object.assign({}, that.mUrlParams);
+				delete mUrlParams["sap-context-token"];
+				sUrl = _Helper.addQueryOptions(oCodeList.Url, mUrlParams);
+				sCacheKey = that.getAbsoluteServiceUrl(sUrl) + "#" + oCodeList.CollectionPath;
 				oPromise = mCodeListUrl2Promise.get(sCacheKey);
 				if (oPromise) {
 					return oPromise;
 				}
 
-				oCodeListModel = that.getOrCreateSharedModel(oCodeList.Url, "$direct");
+				oCodeListModel = that.getOrCreateSharedModel(sUrl, "$direct");
 				oCodeListMetaModel = oCodeListModel.getMetaModel();
 				sTypePath = "/" + oCodeList.CollectionPath + "/";
 				oPromise = oCodeListMetaModel.requestObject(sTypePath).then(function (oType) {
