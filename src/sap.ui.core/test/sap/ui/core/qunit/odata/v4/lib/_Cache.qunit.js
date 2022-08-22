@@ -2726,7 +2726,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#update: failure w/o fnErrorCallback", function (assert) {
+[true, false].forEach(function (bCanceled) {
+	var sTitle = "_Cache#update: failure w/o fnErrorCallback and oError.canceled: " + bCanceled;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "BusinessPartnerList", {}),
 			oEntity = {
 				"@odata.etag" : 'W/"19700101000000.0000000"',
@@ -2743,6 +2746,7 @@ sap.ui.define([
 				}
 			};
 
+		oError.canceled = bCanceled;
 		oCache.fetchValue = function () {};
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "('0')/path/to/entity")
@@ -2760,6 +2764,7 @@ sap.ui.define([
 				"('0')/path/to/entity/Address/City", sinon.match.same(oPatchPromise));
 		this.oRequestorMock.expects("getGroupSubmitMode").never();
 		this.mock(_Helper).expects("updateExisting")
+			.exactly(bCanceled ? 0 : 1)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('0')/path/to/entity",
 				sinon.match.same(oEntity), {Address : {City : "Heidelberg"}});
 		this.mock(_Helper).expects("removeByPath")
@@ -2776,6 +2781,7 @@ sap.ui.define([
 				assert.strictEqual(oResult, oError);
 			});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#update: invalid entity path", function (assert) {
