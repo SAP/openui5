@@ -377,4 +377,24 @@ sap.ui.define([
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
 	});
+
+	QUnit.test("fieldHelp", function(assert) {
+
+		var sFieldHelp = oConditions.getFieldHelp();
+		assert.equal(sFieldHelp, null, "fieldHelp is empty");
+
+		oConditions.setFieldHelp("myFieldHelp");
+		sFieldHelp = oConditions.getFieldHelp();
+		assert.equal(sFieldHelp, "myFieldHelp", "FieldHelp is set");
+
+		var oContentPromise = oConditions.getContent();
+		var fnDone = assert.async();
+		oContentPromise.then(function(oContent) {
+			var oDefineConditionPanel = oContent.getContent()[0];
+
+			assert.equal(oDefineConditionPanel.getFieldHelp(), "myFieldHelp", "DefineConditionPanel fieldHelp is set");
+			fnDone();
+		});
+
+	});
 });

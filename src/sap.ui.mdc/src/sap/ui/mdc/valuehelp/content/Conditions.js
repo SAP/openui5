@@ -61,6 +61,22 @@ sap.ui.define([
 				},
 				aggregations: {
 				},
+				associations: {
+					/**
+					 * Optional <code>FieldHelp</code>.
+					 *
+					 * This is an association that allows the usage of one <code>FieldHelp</code> instance for the value fields on the <code>Conditions</code>.
+
+					 * <b>Note:</b> The value Fields on the conditions UI are created by the used <code>DefineConditionPanel</code>. They can not be access from outside.
+					 The Fields are single value inputs and the display is always set to <code>FieldDisplay.Value</code>. only a ValueHelp with a TypeAhead and single select MTable can be used.
+
+					 * <b>Note:</b> For Boolean, Date or Time types, no <code>FieldHelp</code> should be added, but a default <code>FieldHelp</code> used instead.
+					 */
+					fieldHelp: {
+						type: "sap.ui.mdc.ValueHelp",
+						multiple: false
+					}
+				},
 				events: {}
 			}
 		}
@@ -106,7 +122,8 @@ sap.ui.define([
 							conditions: "{$help>/conditions}",
 							inputOK: "{$valueHelp>/_valid}",
 							formatOptions: {path: "$help>/config", formatter: _convertConfig}, // TODO: change DefineConditionPanel to use Config
-							conditionProcessed: _handleConditionProcessed.bind(this)
+							conditionProcessed: _handleConditionProcessed.bind(this),
+							fieldHelp: this.getFieldHelp() //TODO FieldHelp can only be set once and not modified?
 						}
 					).setModel(this._oManagedObjectModel, "$help");
 
