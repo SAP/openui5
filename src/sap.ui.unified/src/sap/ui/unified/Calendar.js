@@ -788,6 +788,7 @@ sap.ui.define([
 				oMonth.attachEvent("_bindMousemove", _handleBindMousemove, this);
 				oMonth.attachEvent("_unbindMousemove", _handleUnbindMousemove, this);
 				oMonth._bNoThemeChange = true;
+				oMonth.setSecondaryCalendarType(this._getSecondaryCalendarType());
 				this.addAggregation("month",oMonth);
 			}
 		} else if (aMonths.length > iMonths){
