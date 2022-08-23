@@ -489,7 +489,8 @@ sap.ui.define([
 				aSelect = _Helper.getQueryOptionsForPath(that.mQueryOptions, sPath).$select;
 				_Helper.updateSelected(that.mChangeListeners,
 					_Helper.buildPath(sPath, sPredicate || sTransientPredicate), oEntityData,
-					oCreatedEntity, aSelect);
+					oCreatedEntity, aSelect, /*fnCheckKeyPredicate*/ undefined,
+					/*bOkIfMissing*/ true);
 
 				that.removePendingRequest();
 				fnResolve(true);
@@ -1925,7 +1926,7 @@ sap.ui.define([
 					mHeaders.Prefer = "return=minimal";
 				}
 				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
-					mHeaders, oUpdateData, onSubmit, onCancel, /*sMetaPath*/undefined,
+					mHeaders, oUpdateData, onSubmit, onCancel, /*sMetaPath*/ undefined,
 					_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath),
 					bAtFront, /*mQueryOptions*/ undefined, /*vOwner*/ undefined,
 					mergePatchRequests);
@@ -3153,8 +3154,8 @@ sap.ui.define([
 				for (i = 0, n = oResult.value.length; i < n; i += 1) {
 					oElement = oResult.value[i];
 					sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
-					_Helper.updateAll(that.mChangeListeners, sPredicate,
-						that.aElements.$byPredicate[sPredicate], oElement,
+					_Helper.updateSelected(that.mChangeListeners, sPredicate,
+						that.aElements.$byPredicate[sPredicate], oElement, aPaths,
 						preventKeyPredicateChange);
 				}
 			});
@@ -3671,11 +3672,12 @@ sap.ui.define([
 				_Helper.getPrivateAnnotation(oOldValue, "predicate"));
 			// visit response to report the messages
 			that.visitResponse(oNewValue, aResult[1]);
-			_Helper.updateAll(that.mChangeListeners, "", oOldValue, oNewValue, function (sPath) {
-				// not (below) a $NavigationPropertyPath?
-				return !aPaths.some(function (sSideEffectPath) {
-					return _Helper.getRelativePath(sPath, sSideEffectPath) !== undefined;
-				});
+			_Helper.updateSelected(that.mChangeListeners, "", oOldValue, oNewValue, aPaths,
+				function (sPath) {
+					// not (below) a $NavigationPropertyPath?
+					return !aPaths.some(function (sSideEffectPath) {
+						return _Helper.getRelativePath(sPath, sSideEffectPath) !== undefined;
+					});
 			});
 		});
 

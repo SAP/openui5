@@ -7593,7 +7593,7 @@ sap.ui.define([
 					.callsArg(5) // fnSubmit
 					.resolves({});
 				oCountChangeListenerMock.expects("onChange").exactly(bInactive ? 0 : 1)
-					.withExactArgs(iCountAfterCreate);
+					.withExactArgs(iCountAfterCreate, undefined);
 				oCache.registerChangeListener("$count", oCountChangeListener);
 
 				return oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "",
@@ -7614,7 +7614,7 @@ sap.ui.define([
 				assert.strictEqual(oCache.iActiveElements, bInactive ? 0 : 1);
 
 				oCountChangeListenerMock.expects("onChange").exactly(bInactive ? 0 : 1)
-					.withExactArgs(26);
+					.withExactArgs(26, undefined);
 				that.mock(oGroupLock).expects("cancel").withExactArgs();
 
 				// code under test - cancel the create
@@ -7850,7 +7850,7 @@ sap.ui.define([
 					sPathInCache
 						+ (bKeepTransientPath === false ? sPredicate : sTransientPredicate),
 					sinon.match.same(oEntityDataCleaned), sinon.match.same(oPostResult),
-					["ID", "Name"])
+					["ID", "Name"], undefined, true)
 				.callsFake(function () {
 					if (bKeepTransientPath === false) {
 						oEntityDataCleaned["@$ui5._"].predicate = sPredicate;
@@ -8256,7 +8256,8 @@ sap.ui.define([
 				"/Employees", sTransientPredicate, true);
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
-				sinon.match.same(oCache.aElements[0]), sinon.match.same(oPostResult), undefined);
+				sinon.match.same(oCache.aElements[0]), sinon.match.same(oPostResult), undefined,
+				undefined, true);
 		// The lock must be unlocked although no request is created
 		this.mock(oUpdateGroupLock0).expects("unlock").withExactArgs();
 		this.mock(oUpdateGroupLock0).expects("getGroupId").withExactArgs().returns("updateGroup");
@@ -8643,7 +8644,7 @@ sap.ui.define([
 		oHelperMock.expects("updateAll")
 			.withExactArgs({}, sTransientPredicate, sinon.match.object, {Name : "foo"});
 		this.mock(oCountChangeListener).expects("onChange").exactly(bInactive ? 1 : 0)
-			.withExactArgs(43);
+			.withExactArgs(43, undefined);
 		oCache.registerChangeListener("$count", oCountChangeListener);
 		oHelperMock.expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
@@ -8654,7 +8655,7 @@ sap.ui.define([
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
 				sinon.match.same(oCache.aElements[bAtEndOfCreated ? 1 : 0]),
-				sinon.match.same(oResponseData), undefined);
+				sinon.match.same(oResponseData), undefined, undefined, true);
 		this.mock(oUpdateGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
@@ -9273,10 +9274,11 @@ sap.ui.define([
 								sinon.match.same(oCache.aElements.$byPredicate[sPredicate]),
 								"/TEAMS/Foo", sinon.match.same(mTypeForMetaPath))
 							.callsFake(getKeyFilter);
-						oHelperMock.expects("updateAll")
+						oHelperMock.expects("updateSelected")
 							.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPredicate,
 								sinon.match.same(oCache.aElements.$byPredicate[sPredicate]),
-								sinon.match.same(oFixture.aValues[i]), sinon.match.func);
+								sinon.match.same(oFixture.aValues[i]), sinon.match.same(aPaths),
+								sinon.match.func);
 					}
 					if (iReceivedLength > 0) { // expect a GET iff. there is s.th. to do
 						if (oFixture.aValues.length > 1) {
@@ -9504,12 +9506,12 @@ sap.ui.define([
 						false, sinon.match.same(mMergeableQueryOptions), sinon.match.same(oCache),
 						sinon.match.func)
 					.resolves({value : [oNewValue]});
-				oHelperMock.expects("updateAll")
+				oHelperMock.expects("updateSelected")
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('c')",
 						sinon.match.same(oCache.aElements[2]), sinon.match.same(oNewValue),
-						sinon.match.func)
-					.callsFake(function (_mChangeListeners, _sPath, _oTarget, _oSource,
-								fnCheckKeyPredicate) {
+						sinon.match.same(aPaths), sinon.match.func)
+					.callsFake(function (_mChangeListeners, _sPath, _oTarget, _oSource, _aPaths,
+						fnCheckKeyPredicate) {
 							if (fnCheckKeyPredicate("('c')/" + oFixture.path)) {
 								throw oError;
 							}
@@ -9592,11 +9594,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	// false: no request merging
 	// undefined: another request merges its aPaths into the resulting GET request.
-	//            Helper.updateAll is not skipped.
-	// true: the resulting GET request is merged. Helper.updateAll is skipped (It would be
+	//            Helper.updateSelected is not skipped.
+	// true: the resulting GET request is merged. Helper.updateSelected is skipped (It would be
 	//       done by the "other" request).
 	[false, undefined, true].forEach(function (bSkip) {
-		var sTitle = "CollectionCache#requestSideEffects: skip updateAll: " + bSkip;
+		var sTitle = "CollectionCache#requestSideEffects: skip updateSelected: " + bSkip;
 
 		QUnit.test(sTitle, function (assert) {
 			var oElement = {"@$ui5._" : {predicate : "('c')"}},
@@ -9615,7 +9617,7 @@ sap.ui.define([
 					= Object.assign({$filter : "~key_filter~"}, mIntersectedQueryOptions),
 				sResourcePath = "TEAMS('42')/Foo",
 				mTypeForMetaPath = {"/TEAMS/Foo" : "~type~"},
-				oUpdateAllExpectation,
+				oUpdateSelectedExpectation,
 				oVisitResponseExpectation,
 				oCache = this.createCache(sResourcePath);
 
@@ -9665,11 +9667,14 @@ sap.ui.define([
 				.exactly(bSkip ? 0 : 1)
 				.withExactArgs(sinon.match.same(oNewValue), sinon.match.same(mTypeForMetaPath),
 					undefined, "", false, NaN);
-			oUpdateAllExpectation = this.mock(_Helper).expects("updateAll")
+
+			oUpdateSelectedExpectation = this.mock(_Helper).expects("updateSelected")
 				.exactly(bSkip ? 0 : 1)
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('c')",
-					sinon.match.same(oElement),
-					sinon.match.same(oNewValue.value[0]), sinon.match.func)
+					sinon.match.same(oElement), sinon.match.same(oNewValue.value[0]),
+					bSkip === undefined ? ["EMPLOYEE", "~another~", "~path~"]
+						: sinon.match.same(aPaths),
+					sinon.match.func)
 				.callThrough();
 			if (bSkip === true) {
 				oGetRelativePathExpectation
@@ -9688,7 +9693,8 @@ sap.ui.define([
 				.then(function () {
 					if (bSkip === false) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [["", "EMPLOYEE"]]);
-						assert.ok(oVisitResponseExpectation.calledBefore(oUpdateAllExpectation));
+						assert.ok(oVisitResponseExpectation
+							.calledBefore(oUpdateSelectedExpectation));
 					} else if (bSkip === undefined) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [
 							["", "EMPLOYEE"],
@@ -10699,7 +10705,7 @@ sap.ui.define([
 				oPromise,
 				mQueryOptions = {},
 				mTypeForMetaPath = {},
-				oUpdateAllExpectation,
+				oUpdateSelectedExpectation,
 				oVisitResponseExpectation;
 
 			oCache.oPromise = SyncPromise.resolve(oOldValue); // from previous #fetchValue
@@ -10751,10 +10757,13 @@ sap.ui.define([
 				.withExactArgs(
 					sinon.match.same(oNewValue).and(sinon.match({"@$ui5._" : {predicate : "(~)"}})),
 					sinon.match.same(mTypeForMetaPath));
-			oUpdateAllExpectation = this.mock(_Helper).expects("updateAll")
+			oUpdateSelectedExpectation = this.mock(_Helper).expects("updateSelected")
 				.exactly(bSkip ? 0 : 1)
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
-					sinon.match.same(oOldValue), sinon.match.same(oNewValue), sinon.match.func)
+					sinon.match.same(oOldValue), sinon.match.same(oNewValue),
+					bSkip !== undefined ? sinon.match.same(aPaths)
+						: ["ROOM_ID", "~another~", "~path~"],
+					sinon.match.func)
 				.callThrough();
 			if (bSkip === true) {
 				oGetRelativePathExpectation = this.mock(_Helper).expects("getRelativePath")
@@ -10772,7 +10781,8 @@ sap.ui.define([
 				.then(function () {
 					if (bSkip === false) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [["", "ROOM_ID"]]);
-						assert.ok(oVisitResponseExpectation.calledBefore(oUpdateAllExpectation));
+						assert.ok(oVisitResponseExpectation
+							.calledBefore(oUpdateSelectedExpectation));
 					} else if (bSkip === undefined) {
 						assert.deepEqual(oGetRelativePathExpectation.args, [
 							["", "ROOM_ID"],
@@ -10857,10 +10867,11 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(oOldValue));
 		this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oNewValue), sinon.match.same(mTypeForMetaPath));
-		this.mock(_Helper).expects("updateAll")
+		this.mock(_Helper).expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
-				sinon.match.same(oOldValue), sinon.match.same(oNewValue), sinon.match.func)
-			.callsFake(function (_mChangeListeners, _sPath, _oTarget, _oSource,
+				sinon.match.same(oOldValue), sinon.match.same(oNewValue), sinon.match.same(aPaths),
+				sinon.match.func)
+			.callsFake(function (_mChangeListeners, _sPath, _oTarget, _oSource, _aPaths,
 				fnCheckKeyPredicate) {
 					if (fnCheckKeyPredicate(oFixture.path)) {
 						throw oError;

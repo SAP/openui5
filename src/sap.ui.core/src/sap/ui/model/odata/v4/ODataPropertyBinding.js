@@ -494,11 +494,13 @@ sap.ui.define([
 	 *
 	 * @param {any} vValue
 	 *   The new value
+	 * @param {boolean} [bForceUpdate]
+	 *   Update the bound control even if no data have been changed.
 	 *
 	 * @private
 	 */
-	ODataPropertyBinding.prototype.onChange = function (vValue) {
-		this.checkUpdateInternal(undefined, undefined, undefined, false, vValue)
+	ODataPropertyBinding.prototype.onChange = function (vValue, bForceUpdate) {
+		this.checkUpdateInternal(bForceUpdate, undefined, undefined, false, vValue)
 			.catch(this.oModel.getReporter());
 	};
 

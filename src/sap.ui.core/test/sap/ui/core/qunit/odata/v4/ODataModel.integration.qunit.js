@@ -13333,6 +13333,144 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: requesting a stream property with requestSideEffects always fires a change event
+	// even if the returned URL from the "@odata.mediaReadLink" annotation or the URL calculated by
+	// the model did not change.
+	//
+	// (0) Initial URL from "@odata.mediaReadLink" annotation
+	// (1) Unchanged URL read via "@odata.mediaReadLink" annotation
+	// (2) No URL in response (calculated by model)
+	// (3) Again, no URL in response (calculated by model)
+	// (4) Switch back to URL read via "@odata.mediaReadLink" annotation
+	// (5) New URL read via "@odata.mediaReadLink" annotation
+	// (6) TODO: @*
+	//
+	// JIRA: CPOUI5ODATAV4-1628
+	QUnit.test("CPOUI5ODATAV4-1628: re-read Edm.Stream URL & readLink", function (assert) {
+		var oContext,
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/Artists(ArtistID=\'42\')}">\
+	<Text id="picture" text="{Picture}"/>\
+	<Text id="link" text="{= %{Picture@odata.mediaReadLink} }"/>\
+</FlexBox>',
+			sPrefix = "/special/cases/",
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='42')"
+				+ "?$select=ArtistID,IsActiveEntity,Picture", {
+				ID : "42",
+				// Picture (Edm.Stream) missing here
+				"Picture@odata.mediaReadLink" : "Artists(ArtistID='42')/Picture"
+			})
+			.expectChange("picture", sPrefix + "Artists(ArtistID='42')/Picture")
+			.expectChange("link", sPrefix + "Artists(ArtistID='42')/Picture")
+			.expectEvents(assert, "sap.ui.model.odata.v4.OData", [
+				["ContextBinding: /Artists(ArtistID='42')", "change", {reason : "change"}],
+				["ContextBinding: /Artists(ArtistID='42')", "dataRequested", undefined],
+				["ContextBinding: /Artists(ArtistID='42')", "dataReceived", {data : {}}],
+				["PropertyBinding: /Artists(ArtistID='42')|Picture", "change", {reason : "change"}],
+				["PropertyBinding: /Artists(ArtistID='42')"
+					+ "|Picture@odata.mediaReadLink", "change", {reason : "change"}]
+			]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oContext = that.oView.byId("form").getBindingContext();
+
+			that.expectRequest("Artists(ArtistID='42')?$select=Picture", {
+					ID : "42",
+					// Picture (Edm.Stream) missing here
+					"Picture@odata.mediaReadLink" : "Artists(ArtistID='42')/Picture"
+				})
+				.expectChange("picture", sPrefix + "Artists(ArtistID='42')/Picture")
+				.expectEvents(assert, "sap.ui.model.odata.v4.OData", [
+				["PropertyBinding: /Artists(ArtistID='42')|Picture",
+					"change", {reason : "change"}]
+			]);
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects(["Picture"]),
+				that.waitForChanges(assert, "(1) unchanged URL via @odata.mediaReadLink annotation")
+			]);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42')?$select=Picture", {
+					ID : "42"
+					// Picture (Edm.Stream) missing here
+				})
+				.expectChange("picture", sPrefix + "Artists(ArtistID='42')/Picture")
+				.expectChange("link", undefined) // no more Picture@odata.mediaReadlink
+				.expectEvents(assert, "sap.ui.model.odata.v4.OData", [
+					["PropertyBinding: /Artists(ArtistID='42')|Picture@odata.mediaReadLink",
+						"change", {reason : "change"}],
+					["PropertyBinding: /Artists(ArtistID='42')|Picture",
+						"change", {reason : "change"}]
+				]);
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects(["Picture"]),
+				that.waitForChanges(assert, "(2) no URL in response (calculated by model)")
+			]);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42')?$select=Picture", {
+					ID : "42"
+					// Picture (Edm.Stream) missing here
+				})
+				.expectChange("picture", sPrefix + "Artists(ArtistID='42')/Picture")
+				.expectEvents(assert, "sap.ui.model.odata.v4.OData", [
+					["PropertyBinding: /Artists(ArtistID='42')|Picture",
+						"change", {reason : "change"}]
+				]);
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects(["Picture"]),
+				that.waitForChanges(assert, "(3) again, no URL in response (calculated by model)")
+			]);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42')?$select=Picture", {
+					ID : "42",
+					// Picture (Edm.Stream) missing here
+					"Picture@odata.mediaReadLink" : "Artists(ArtistID='42')/Picture"
+				})
+				.expectChange("picture", sPrefix + "Artists(ArtistID='42')/Picture")
+				.expectChange("link", sPrefix + "Artists(ArtistID='42')/Picture")
+				.expectEvents(assert, "sap.ui.model.odata.v4.OData", [
+					["PropertyBinding: /Artists(ArtistID='42')|Picture@odata.mediaReadLink",
+						"change", {reason : "change"}],
+					["PropertyBinding: /Artists(ArtistID='42')|Picture",
+						"change", {reason : "change"}]
+				]);
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects(["Picture"]),
+				that.waitForChanges(assert, "(4) back to URL via @odata.mediaReadLink")
+			]);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42')?$select=Picture", {
+					ID : "42",
+					// Picture (Edm.Stream) missing here
+					"Picture@odata.mediaReadLink" : "Artists(ArtistID='42')/PictureHighRes"
+				})
+				.expectChange("picture", sPrefix + "Artists(ArtistID='42')/PictureHighRes")
+				.expectChange("link", sPrefix + "Artists(ArtistID='42')/PictureHighRes")
+				.expectEvents(assert, "sap.ui.model.odata.v4.OData", [
+					["PropertyBinding: /Artists(ArtistID='42')|Picture@odata.mediaReadLink",
+						"change", {reason : "change"}],
+					["PropertyBinding: /Artists(ArtistID='42')|Picture",
+						"change", {reason : "change"}]
+				]);
+
+			return Promise.all([
+				// code under test
+				oContext.requestSideEffects(["Picture"]),
+				that.waitForChanges(assert, "(5) changed URL via @odata.mediaReadLink annotation")
+			]);
+		});
+	});
+	//*********************************************************************************************
 	// Scenario: Writing instance annotations via create and update.
 	// 1. POST: Initial payload containing instance annotations
 	// 2. PATCH: Update instance annotations
@@ -28321,6 +28459,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList('42')?$select=Note", {
+					"@odata.etag" : "ETag2",
 					Note : "Side effect"
 				})
 				.expectChange("note", "Side effect"); // side effect wins over user input!
@@ -28332,7 +28471,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest({
-					headers : {"If-Match" : "ETag"},
+					headers : {"If-Match" : "ETag2"}, // uses ETag from side effect!
 					method : "PATCH",
 					payload : {Note : "User input"},
 					url : "SalesOrderList('42')"

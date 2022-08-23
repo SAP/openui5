@@ -571,21 +571,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fireChange: multiple listeners", function () {
+[undefined, true].forEach(function (bForceUpdate) {
+	QUnit.test("fireChange: multiple listeners, forceUpdate:" + bForceUpdate, function () {
 		var oChangeListener0 = {onChange : function () {}},
 			oChangeListener1 = {onChange : function () {}},
 			oChangeListener2 = {onChange : function () {}},
 			vValue = {};
 
-		this.mock(oChangeListener0).expects("onChange").withExactArgs(sinon.match.same(vValue));
-		this.mock(oChangeListener1).expects("onChange").withExactArgs(sinon.match.same(vValue));
-		this.mock(oChangeListener2).expects("onChange").withExactArgs(sinon.match.same(vValue));
+		this.mock(oChangeListener0).expects("onChange").withExactArgs(sinon.match.same(vValue),
+			bForceUpdate);
+		this.mock(oChangeListener1).expects("onChange").withExactArgs(sinon.match.same(vValue),
+			bForceUpdate);
+		this.mock(oChangeListener2).expects("onChange").withExactArgs(sinon.match.same(vValue),
+			bForceUpdate);
 
 		// code under test
 		_Helper.fireChange({
 				"path/to/property" : [oChangeListener0, oChangeListener1, oChangeListener2]
-			}, "path/to/property", vValue);
+			}, "path/to/property", vValue, bForceUpdate);
 	});
+});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bRemove) {
@@ -929,9 +934,9 @@ sap.ui.define([
 			};
 
 		this.mock(mChangeListeners["SO_2_BP/Address/City"][0]).expects("onChange")
-			.withExactArgs(undefined);
+			.withExactArgs(undefined, undefined);
 		this.mock(mChangeListeners["SO_2_BP/Address/Foo/Bar"][0]).expects("onChange")
-			.withExactArgs(undefined);
+			.withExactArgs(undefined, undefined);
 
 		_Helper.updateExisting(mChangeListeners, "SO_2_BP", oCacheData, {
 			BusinessPartnerID : "42",
@@ -956,9 +961,9 @@ sap.ui.define([
 			};
 
 		this.mock(mChangeListeners["SO_2_BP/Address/City"][0]).expects("onChange")
-			.withExactArgs("Walldorf");
+			.withExactArgs("Walldorf", undefined);
 		this.mock(mChangeListeners["SO_2_BP/Address/Foo/Bar"][0]).expects("onChange")
-			.withExactArgs("Baz");
+			.withExactArgs("Baz", undefined);
 
 		_Helper.updateExisting(mChangeListeners, "SO_2_BP", oCacheData, {
 			BusinessPartnerID : "42",
@@ -1431,33 +1436,44 @@ sap.ui.define([
 			oOldValue = {"@$ui5._" : {context : oContext}};
 
 		oBinding.oContext = oContext;
-		this.mock(_Helper).expects("fireChange").never();
+		this.mock(_Helper).expects("fireChange").withExactArgs("~mChangeListener~", "foo",
+			undefined, true);
 
 		// code under test
 		_Helper.updateSelected("~mChangeListener~", "", oOldValue,
-			{"@$ui5._" : {predicate : "(1)"}},
-			["foo"]); // "foo" is just selected so that we do not jump to updateAll
+			{"@$ui5._" : {predicate : "(1)"}, bar : {}},
+			["foo", "bar/*"]);
 
 		assert.deepEqual(oOldValue,
-			{"@$ui5._" : {context : oContext, predicate : "(1)"}, "foo@$ui5.noData" : true});
+			{"@$ui5._" : {context : oContext, predicate : "(1)"}, bar : {},
+				"foo@$ui5.noData" : true});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("updateSelected: create annotation", function (assert) {
 		var oBinding = {},
+			oHelperMock = this.mock(_Helper),
 			oOldValue = {};
 
 		oBinding.oContext = {oBinding : oBinding};
-		this.mock(_Helper).expects("fireChange").never();
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListener~", "foo", undefined,
+			true);
+		oHelperMock.expects("fireChange").withExactArgs("~mChangeListener~", "bar", undefined,
+			true);
+
+		oHelperMock.expects("buildPath").withExactArgs("", "foo").returns("foo");
+		oHelperMock.expects("buildPath").withExactArgs("", "bar").returns("bar");
+		oHelperMock.expects("buildPath").withExactArgs("", "baz").returns("baz");
+		oHelperMock.expects("buildPath").withExactArgs("baz", "bar").returns("baz/bar");
 
 		// code under test
 		_Helper.updateSelected("~mChangeListener~", "", oOldValue,
-			{baz : {}}, ["foo", "bar", "baz"]);
+			{baz : {bar : {}}}, ["foo", "bar", "baz/bar"]);
 
 		assert.deepEqual(oOldValue, {
 			"foo@$ui5.noData" : true,
 			"bar@$ui5.noData" : true,
-			baz : {}
+			baz : {bar : {}}
 		});
 	});
 
@@ -1522,7 +1538,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateSelected: complex type is selected", function (assert) {
+[undefined, ["selected"], ["selected/*"], ["foo", "bar", "*"]].forEach(function (aSelect) {
+	var sTitle = "updateSelected: complex type is selected: " + aSelect;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCacheValue = {
 				selected : {
 					changed : "old",
@@ -1548,7 +1567,6 @@ sap.ui.define([
 				}
 			},
 			oNewValueJSON = JSON.stringify(oNewValue),
-			aSelect = ["selected"],
 			aSelectJSON = JSON.stringify(aSelect);
 
 		function expectChange(sPath, vValue) {
@@ -1568,17 +1586,6 @@ sap.ui.define([
 		assert.deepEqual(oCacheValue, oNewValue);
 		assert.strictEqual(JSON.stringify(oNewValue), oNewValueJSON);
 		assert.strictEqual(JSON.stringify(aSelect), aSelectJSON);
-	});
-
-	//*********************************************************************************************
-[undefined, ["foo", "bar", "*", "baz"]].forEach(function (aSelect) {
-	QUnit.test("updateSelected: update all, aSelect=" + aSelect, function () {
-		this.mock(_Helper).expects("updateAll")
-			.withExactArgs("~mChangeListeners~", "base/path", "~oTarget~", "~oSource~");
-
-		// code under test
-		_Helper.updateSelected("~mChangeListeners~", "base/path", "~oTarget~", "~oSource~",
-			aSelect);
 	});
 });
 
@@ -1626,7 +1633,6 @@ sap.ui.define([
 	QUnit.test("updateAll: recursion", function (assert) {
 		var aAdded = [],
 			mChangeListeners = {},
-			fnCheckKeyPredicate = "fnCheckKeyPredicate",
 			oHelperMock = this.mock(_Helper),
 			oSource = {
 				updated : {},
@@ -1638,21 +1644,20 @@ sap.ui.define([
 
 		oHelperMock.expects("updateAll") // obviously :-)
 			.withExactArgs(sinon.match.same(mChangeListeners), "path", sinon.match.same(oTarget),
-				sinon.match.same(oSource), fnCheckKeyPredicate)
+				sinon.match.same(oSource))
 			.callThrough();
 		oHelperMock.expects("buildPath").withExactArgs("path", "updated").returns("~updated");
 		oHelperMock.expects("updateAll")
 			.withExactArgs(sinon.match.same(mChangeListeners), "~updated",
-				sinon.match.same(oTarget.updated), sinon.match.same(oSource.updated),
-				fnCheckKeyPredicate);
+				sinon.match.same(oTarget.updated), sinon.match.same(oSource.updated));
 		oHelperMock.expects("buildPath").withExactArgs("path", "added").returns("~added");
 		oHelperMock.expects("updateAll")
 			.withExactArgs(sinon.match.same(mChangeListeners), "~added", {},
-				sinon.match.same(oSource.added), fnCheckKeyPredicate)
+				sinon.match.same(oSource.added))
 			.returns(aAdded);
 
 		// code under test
-		_Helper.updateAll(mChangeListeners, "path", oTarget, oSource, fnCheckKeyPredicate);
+		_Helper.updateAll(mChangeListeners, "path", oTarget, oSource);
 
 		assert.strictEqual(oTarget.added, aAdded);
 	});
@@ -1727,7 +1732,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateAll: check key predicate, unchanged", function (assert) {
+	QUnit.test("updateSelected: check key predicate, unchanged", function (assert) {
 		var o = { // only a container for checkPredicate so that we can mock it
 				checkKeyPredicate : function () {}
 			},
@@ -1748,13 +1753,13 @@ sap.ui.define([
 		oMock.expects("checkKeyPredicate").withExactArgs("path").returns(true);
 
 		// code under test
-		_Helper.updateAll({}, "path", oTarget, oSource, o.checkKeyPredicate);
+		_Helper.updateSelected({}, "path", oTarget, oSource, undefined, o.checkKeyPredicate);
 
 		assert.deepEqual(oTarget, oSource);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateAll: check key predicate, changed", function (assert) {
+	QUnit.test("updateSelected: check key predicate, changed", function (assert) {
 		var o = { // only a container for checkPredicate so that we can mock it
 				checkKeyPredicate : function () {}
 			},
@@ -1775,12 +1780,12 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			_Helper.updateAll({}, "path", oTarget, oSource, o.checkKeyPredicate);
+			_Helper.updateSelected({}, "path", oTarget, oSource, undefined, o.checkKeyPredicate);
 		}, new Error("Key predicate of 'path' changed from ('0') to ('1')"));
 
 		oMock.expects("checkKeyPredicate").withExactArgs("path").returns(false);
 
-		_Helper.updateAll({}, "path", oTarget, oSource, o.checkKeyPredicate);
+		_Helper.updateSelected({}, "path", oTarget, oSource, undefined, o.checkKeyPredicate);
 
 		assert.deepEqual(oTarget, oSource);
 	});
@@ -4399,6 +4404,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("buildSelect", function (assert) {
+		// code under test
+		assert.deepEqual(_Helper.buildSelect(undefined), true);
+
+		// code under test
+		assert.deepEqual(_Helper.buildSelect(["foo", "bar", "*"]), true);
+
 		assert.deepEqual(
 			// code under test
 			_Helper.buildSelect([
@@ -4409,6 +4420,9 @@ sap.ui.define([
 				"complex/all/simple", // sub-path in the list -> ignore
 				"complex/complex/simple1",
 				"complex/complex/simple2",
+				"complex2/*",
+				"complex2/simple", // already selected through "*"
+				"complex3/complex/*",
 				"all/simple", // sub-path in the list -> ignore
 				"all"
 			]), {
@@ -4420,6 +4434,10 @@ sap.ui.define([
 						simple2 : true
 					},
 					simple : true
+				},
+				complex2 : true,
+				complex3 : {
+					complex : true
 				},
 				simple1 : true,
 				simple2 : true
