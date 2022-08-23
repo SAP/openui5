@@ -3451,5 +3451,59 @@ sap.ui.define([
 			});
 			oCard.startManifestProcessing();
 		});
+
+		QUnit.module("Creation of children cards", {
+			beforeEach: function () {
+				this.oCard = new Card();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Property referenceId is forwarded to children cards", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oCard = this.oCard,
+				sReferenceId = "test-id",
+				oChildCard;
+
+			oCard.attachEvent("_ready", function () {
+				oChildCard = oCard._createChildCard({
+					manifest: {
+						"sap.app": {
+							"id": "test.card.childCard.card2"
+						},
+						"sap.card": {
+							"type": "Object",
+							"header": {
+								"title": "Test Card 2"
+							}
+						}
+					}
+				});
+
+				// Assert
+				assert.strictEqual(oChildCard.getReferenceId(), sReferenceId, "The created child card has the same reference id as the parent card.");
+				done();
+			});
+
+			// Act
+			oCard.setReferenceId(sReferenceId);
+
+			oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.childCard.card1"
+				},
+				"sap.card": {
+					"type": "Object",
+					"header": {
+						"title": "Test Card"
+					}
+				}
+			});
+			oCard.startManifestProcessing();
+		});
 	}
 );
