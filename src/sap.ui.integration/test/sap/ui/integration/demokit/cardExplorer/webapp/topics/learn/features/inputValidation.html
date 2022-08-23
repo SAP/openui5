@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Input Validation</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1>
+				Input Validation
+			</h1>
+
+			<h2 id="overview">
+				Overview
+			</h2>
+			<p>
+				The user input provided in the form fields in <a href="../../../index.html#/learn/typesDeclarative/object" target="_parent">Object card</a> can be validated.
+			</p>
+			<h2 id="formFields">
+				Validate Input Fields
+			</h2>
+			<p>Here is an example how form field user input can be validated:</p>
+				<pre class="lang-json">
+{
+	"id": "comment",
+	"label": "Comment",
+	"type": "TextArea",
+	"placeholder": "Comment",
+	"validations": [
+		{
+			"required": true,
+			"message": "Field is required. Please enter a text.",
+			"type": "Error"
+		}
+	]
+}</pre>
+
+			<p>For each form input field can be added one or more validations. Each validation contains:</p>
+			<ul>
+				<li>One or more validation functions</li>
+				<li>message – Validation message. By default each validation function has its own message text, but the message can also be a custom text.</li>
+				<li>type -  The type of the validation – “Error”, “Warning” or “Information”. By default the validation type is “Error”.</li>
+			</ul>
+
+			<p>The currently available validation functions are:</p>
+			<ul>
+				<li>required – defines if the value is required</li>
+				<li>minLength – defines the minimum number of characters the user can enter into the input</li>
+				<li>maxLength - defines the maximum number of characters the user can enter into the input</li>
+				<li>resrictToPredefinedOptions – defines whether the value is restricted to predefined options</li>
+			</ul>
+
+			<p>Here is an example of adding multiple validation functions in a single validation:</p>
+			<pre class="lang-json">
+"validations": [
+	{
+		"minLength": 10,
+		"maxLength": 200,
+		"message": "Your comment should be between 10 and 200 characters.",
+		"type": "Warning"
+	}
+]</pre>
+			<p>Here is an example of adding multiple validations to a single input:</p>
+			<pre class="lang-json">
+"validations": [
+	{
+		"required": true
+	},
+	{
+		"minLength": 10,
+		"maxLength": 200,
+		"message": "Your comment should be between 10 and 200 characters.",
+		"type": "Warning"
+	}
+]</pre>
+			<a class="try-button sapUiSmallMarginTop" href="../../../index.html#/explore/object/formWithValidation" target="_parent">Try
+				it Out</a>
+			<h2 id="messages">"messages" Model</h2>
+			<p>For each card a "messages" model is created. It contains all
+				validation messages. Here is the "messages" model structure:</p>
+			<ul>
+				<li>messages>/hasErrors - if some field has a validation message with type "Error"</li>
+				<li>messages>/hasWarnings - if some field has a validation message with type "Warning"</li>
+				<li>messages>/records - contains all validation messages</li>
+			</ul>
+			<p>Here is an example how the "messages" model
+				can be used to disable the "Submit" button if there are any validation errors:</p>
+			<pre class="lang-json">"footer": {
+	"actionsStrip": [
+		{
+			"text": "Submit",
+			"buttonType": "Accept",
+			"actions": [
+				{
+					"enabled": "{= !${messages>/hasErrors}}",
+					"type": "Submit"
+				}
+			]
+		}
+	]
+}</pre>
+			<a class="try-button" href="../../../index.html#/explore/object/formWithValidation" target="_parent">Try it Out</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#formFields">Validate Input Fields</a></div>
+			<div><a href="#messages">"messages" Model</a></div>
+		</div>
+	</div>
+</body>
+
+</html>

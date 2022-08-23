@@ -193,6 +193,12 @@ sap.ui.define([
 						key: 'extension'
 					},
 					{
+						title: 'Input Validation',
+						target: 'learnDetail',
+						key: 'inputValidation',
+						experimental: true
+					},
+					{
 						title: 'Microcharts',
 						target: 'learnDetail',
 						key: 'microcharts',
