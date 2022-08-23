@@ -142,14 +142,7 @@ sap.ui.define([
 		},
 		isManifestSupported: function() {
 			var oDescriptor = fnGetDescriptor();
-
-			return AppVariantUtils.getManifirstSupport(oDescriptor["sap.app"].id).then(function(oResult) {
-				return oResult.response;
-			}).catch(function(oError) {
-				var oErrorInfo = AppVariantUtils.buildErrorInfo("MSG_APP_VARIANT_FEATURE_FAILED", oError);
-				oErrorInfo.overviewDialog = true;
-				return AppVariantUtils.showRelevantDialog(oErrorInfo, false);
-			});
+			return AppVariantUtils.getManifirstSupport(oDescriptor["sap.app"].id);
 		},
 		/**
 		 * @param {object} oRootControl - Root control of an app (variant)
