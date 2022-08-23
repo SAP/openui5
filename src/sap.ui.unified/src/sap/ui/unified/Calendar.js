@@ -954,7 +954,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Calendar.prototype.setMinDate = function(oDate){
-		var sPrimaryCalendarType = this.getPrimaryCalendarType(),
+		var aMonths = this.getAggregation("month"),
+			sPrimaryCalendarType = this.getPrimaryCalendarType(),
 			iMinYear;
 
 		if (deepEqual(oDate, this.getMinDate())) {
@@ -989,7 +990,11 @@ sap.ui.define([
 			iMinYear = this._oMinDate.getYear();
 
 			this._getYearPicker()._oMinDate.setYear(iMinYear);
-			this.getAggregation("yearRangePicker")._oMinDate.setYear(iMinYear);
+			this._getYearRangePicker()._oMinDate.setYear(iMinYear);
+
+			for (var i = 0; i < aMonths.length; i++) {
+				aMonths[i]._oMinDate = new CalendarDate(this._oMinDate);
+			}
 		}
 
 		return this;
@@ -1003,8 +1008,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Calendar.prototype.setMaxDate = function(oDate){
-
-		var sPrimaryCalendarType,
+		var aMonths = this.getAggregation("month"),
+			sPrimaryCalendarType,
 			iMaxYear;
 
 		if (deepEqual(oDate, this.getMaxDate())) {
@@ -1037,7 +1042,11 @@ sap.ui.define([
 			iMaxYear = this._oMaxDate.getYear();
 
 			this._getYearPicker()._oMaxDate.setYear(iMaxYear);
-			this.getAggregation("yearRangePicker")._oMaxDate.setYear(iMaxYear);
+			this._getYearRangePicker()._oMaxDate.setYear(iMaxYear);
+		}
+
+		for (var i = 0; i < aMonths.length; i++) {
+			aMonths[i]._oMaxDate = new CalendarDate(this._oMaxDate);
 		}
 
 		return this;

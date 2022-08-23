@@ -271,6 +271,9 @@ sap.ui.define([
 
 		// Currently visible days
 		this._aVisibleDays = [];
+
+		this._oMinDate = CalendarUtils._minDate(this.getPrimaryCalendarType());
+		this._oMaxDate = CalendarUtils._maxDate(this.getPrimaryCalendarType());
 	};
 
 	Month.prototype._getAriaRole = function(){
@@ -1577,23 +1580,37 @@ sap.ui.define([
 	 * @returns {sap.ui.unified.calendar.Month} this For chaining
 	 * @private
 	 */
-	Month.prototype._handleWeekSelection = function (oStartDate, bFocusStartDate) {
-		var iSelectedWeekNumber = CalendarUtils.calculateWeekNumber(oStartDate.toUTCJSDate(), oStartDate.getYear(), this._getLocale(), this._getLocaleData()),
+	Month.prototype._handleWeekSelection = function (oStartDate, bFocusStartDate){
+		var iSelectedWeekNumber = this._calculateWeekNumber(oStartDate),
 			oEndDate = this._getLastWeekDate(oStartDate),
 			bSingleSelection = this.getSingleSelection(),
-			bIntervalSelection = this.getIntervalSelection();
+			bIntervalSelection = this.getIntervalSelection(),
+			oFirstEnabledDateOfWeek = this._checkDateEnabled(oStartDate) ? oStartDate : null,
+			oLastEnabledDateOfWeek = this._checkDateEnabled(oEndDate) ? oEndDate : null;
+
+		if (oStartDate.isAfter(this._oMaxDate) || oEndDate.isBefore(this._oMinDate)){
+			return this;
+		}
+
+		if (!oFirstEnabledDateOfWeek){
+			oFirstEnabledDateOfWeek = new CalendarDate(this._oMinDate);
+		}
+
+		if (!oLastEnabledDateOfWeek){
+			oLastEnabledDateOfWeek =  new CalendarDate(this._oMaxDate);
+		}
 
 		if (!bSingleSelection && !bIntervalSelection) {
 			// Selecting each day separately
-			this._handleWeekSelectionByMultipleDays(iSelectedWeekNumber, oStartDate, oEndDate);
+			this._handleWeekSelectionByMultipleDays(iSelectedWeekNumber, oFirstEnabledDateOfWeek, oLastEnabledDateOfWeek);
 		} else if (bSingleSelection && bIntervalSelection) {
 			// Selecting the week as a whole interval
-			this._handleWeekSelectionBySingleInterval(iSelectedWeekNumber, oStartDate, oEndDate);
+			this._handleWeekSelectionBySingleInterval(iSelectedWeekNumber, oFirstEnabledDateOfWeek, oLastEnabledDateOfWeek);
 		}
 
 		// When this method is called due to a week number's press, then focus
 		// should be moved to the first date, since the week number itself isn't focusable
-		bFocusStartDate && this._focusDate(oStartDate);
+		bFocusStartDate && this._focusDate(oFirstEnabledDateOfWeek);
 
 		return this;
 	};
