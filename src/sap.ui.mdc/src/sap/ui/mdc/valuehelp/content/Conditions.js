@@ -65,12 +65,12 @@ sap.ui.define([
 					/**
 					 * Optional <code>FieldHelp</code>.
 					 *
-					 * This is an association that allows the usage of one <code>FieldHelp</code> instance for the value fields on the <code>Conditions</code>.
+					 * This is an association that allows the usage of one <code>FieldHelp</code> instance for the value fields for the <code>Conditions</code>.
 
-					 * <b>Note:</b> The value Fields on the conditions UI are created by the used <code>DefineConditionPanel</code>. They can not be access from outside.
-					 The Fields are single value inputs and the display is always set to <code>FieldDisplay.Value</code>. only a ValueHelp with a TypeAhead and single select MTable can be used.
+					 * <b>Note:</b> The value fields on the conditions UI are created by the used <code>DefineConditionPanel</code>. They cannot be accessed from outside.
+					 The fields are single-value input, and the display is always set to <code>FieldDisplay.Value</code>. Only a <code>ValueHelp>/code> with a <code>TypeAhead</code> and a single-selection <code>MTable</code> can be used.
 
-					 * <b>Note:</b> For Boolean, Date or Time types, no <code>FieldHelp</code> should be added, but a default <code>FieldHelp</code> used instead.
+					 * <b>Note:</b> For <code>Boolean</code>, <code>Date</code>, or <code>Time</code> types, no <code>FieldHelp</code> should be added, but a default <code>FieldHelp</code> used instead.
 					 */
 					fieldHelp: {
 						type: "sap.ui.mdc.ValueHelp",
