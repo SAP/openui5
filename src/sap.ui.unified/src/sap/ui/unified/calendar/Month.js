@@ -1525,19 +1525,21 @@ sap.ui.define([
 		var iSelectedWeekNumber = this._calculateWeekNumber(oStartDate),
 			oEndDate = this._getLastWeekDate(oStartDate),
 			bSingleSelection = this.getSingleSelection(),
-			bIntervalSelection = this.getIntervalSelection();
+			bIntervalSelection = this.getIntervalSelection(),
+			oFirstEnabledDateOfWeek = this._checkDateEnabled(oStartDate) ? oStartDate : new CalendarDate(this._oMinDate),
+			oLastEnabledDateOfweek = this._checkDateEnabled(oEndDate) ? oEndDate : new CalendarDate(this._oMaxDate);
 
 		if (!bSingleSelection && !bIntervalSelection) {
 			// Selecting each day separately
-			this._handleWeekSelectionByMultipleDays(iSelectedWeekNumber, oStartDate, oEndDate);
+			this._handleWeekSelectionByMultipleDays(iSelectedWeekNumber, oFirstEnabledDateOfWeek, oLastEnabledDateOfweek);
 		} else if (bSingleSelection && bIntervalSelection) {
 			// Selecting the week as a whole interval
-			this._handleWeekSelectionBySingleInterval(iSelectedWeekNumber, oStartDate, oEndDate);
+			this._handleWeekSelectionBySingleInterval(iSelectedWeekNumber, oFirstEnabledDateOfWeek, oLastEnabledDateOfweek);
 		}
 
 		// When this method is called due to a week number's press, then focus
 		// should be moved to the first date, since the week number itself isn't focusable
-		bFocusStartDate && this._focusDate(oStartDate);
+		bFocusStartDate && this._focusDate(oFirstEnabledDateOfWeek);
 
 		return this;
 	};

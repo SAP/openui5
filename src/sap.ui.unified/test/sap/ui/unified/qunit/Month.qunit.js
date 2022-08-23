@@ -1268,6 +1268,52 @@ sap.ui.define([
 			this.assertWeekDeselected(oWeekNumberSelectSpy, assert);
 		});
 
+		QUnit.test("_handleWeekSelection", function(assert) {
+			// Prepare
+			var oStartDate = CalendarDate.fromLocalJSDate(new Date(2016, 0, 3)),
+				oMinDate = CalendarDate.fromLocalJSDate(new Date(2016, 0, 4)),
+				oMaxDate = CalendarDate.fromLocalJSDate(new Date(2016, 0, 8)),
+				oMinDateStub = this.stub(this.oM, "_oMinDate").value(oMinDate),
+				oMaxDateStub = this.stub(this.oM, "_oMaxDate").value(oMaxDate),
+				oGetParentStub = this.stub(this.oM, "getParent").returns({
+					_oMinDate: oMinDate,
+					_oMaxDate: oMaxDate
+				}),
+				oGetIntervalSelectionStub = this.stub(this.oM, "getIntervalSelection").returns(true),
+				oGetSingleSelectionStub,
+				oHandleWeekSelectionByMultipleDaysSpy = this.spy(this.oM, "_handleWeekSelectionByMultipleDays"),
+				oHandleWeekSelectionBySingleIntervalSpy = this.spy(this.oM, "_handleWeekSelectionBySingleInterval");
+
+			// Act
+			this.oM._handleWeekSelection(oStartDate);
+
+			// Assert
+			assert.ok(
+				oHandleWeekSelectionBySingleIntervalSpy.calledWith("2", oMinDate, oMaxDate),
+				"Single interval selection respects the min/max constraints"
+			);
+
+			// Prepare
+			oGetIntervalSelectionStub.restore();
+			oGetSingleSelectionStub = this.stub(this.oM, "getSingleSelection").returns(false);
+
+			// Act
+			this.oM._handleWeekSelection(oStartDate);
+
+			// Assert
+			assert.ok(
+				oHandleWeekSelectionByMultipleDaysSpy.calledWith("2", oMinDate, oMaxDate),
+				"Week selection by multiple day selection respects the min/max constraints"
+			);
+
+			// Clean
+			oGetSingleSelectionStub.restore();
+			oHandleWeekSelectionByMultipleDaysSpy.restore();
+			oHandleWeekSelectionBySingleIntervalSpy.restore();
+			oGetParentStub.restore();
+			oMinDateStub.restore();
+			oMaxDateStub.restore();
+		});
 
 		QUnit.module("Multiselect mode (SHIFT + Click/ENTER)", {
 			beforeEach: function () {
