@@ -21,8 +21,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	"sap/base/strings/camelize",
 	"sap/base/strings/capitalize",
 	"sap/base/util/UriParameters",
-	"sap/base/Log",
-	"sap/ui/core/Element"
+	"sap/base/Log"
 ],
 	function(
 		jQuery,
@@ -32,8 +31,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 		camelize,
 		capitalize,
 		UriParameters,
-		Log,
-		Element
+		Log
 	) {
 	"use strict";
 
@@ -232,12 +230,10 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 
 		if (typeof (oTarget) == "string") {
 			oTarget = oTarget ? document.getElementById(oTarget) : null;
-		} else if (oTarget instanceof jQuery) {
-			oTarget = oTarget[0];
 		}
 
 		var oEvent = fakeEvent(sEventName, oTarget, oParams),
-			oElement = Element.closestTo(oTarget),
+			oElement = jQuery(oTarget).control(0),
 			sEventHandlerName = (sEventHandlerPrefix == null ? 'on' : sEventHandlerPrefix) + sEventName;
 
 		if (oElement && oElement[sEventHandlerName]) {
