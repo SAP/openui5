@@ -1213,6 +1213,71 @@ sap.ui.define([
 			this.assertWeekDeselected(oWeekNumberSelectSpy, assert);
 		});
 
+		QUnit.test("_handleWeekSelection", function(assert) {
+			// Prepare
+			var oStartDateInBounds = CalendarDate.fromLocalJSDate(new Date(2016, 0, 3)),
+				oStartDateOutBounds = CalendarDate.fromLocalJSDate(new Date(2016, 0, 10)),
+				oMinDate = CalendarDate.fromLocalJSDate(new Date(2016, 0, 1)),
+				oMaxDate = CalendarDate.fromLocalJSDate(new Date(2016, 0, 8)),
+				oMinDateStub = this.stub(this.oM, "_oMinDate").value(oMinDate),
+				oMaxDateStub = this.stub(this.oM, "_oMaxDate").value(oMaxDate),
+				oGetParentStub = this.stub(this.oM, "getParent").returns({
+					_oMinDate: oMinDate,
+					_oMaxDate: oMaxDate
+				}),
+				oGetIntervalSelectionStub = this.stub(this.oM, "getIntervalSelection").returns(true),
+				oGetSingleSelectionStub,
+				oHandleWeekSelectionByMultipleDaysSpy = this.spy(this.oM, "_handleWeekSelectionByMultipleDays"),
+				oHandleWeekSelectionBySingleIntervalSpy = this.spy(this.oM, "_handleWeekSelectionBySingleInterval");
+
+			// Act - Out of Bounds
+			this.oM._handleWeekSelection(oStartDateOutBounds);
+
+			// Assert
+			assert.ok(
+				oHandleWeekSelectionBySingleIntervalSpy.notCalled,
+				"Single interval selection not called when outside of min/max constraints"
+			);
+
+			// Act - In Bounds
+			this.oM._handleWeekSelection(oStartDateInBounds);
+
+			// Assert
+			assert.ok(
+				oHandleWeekSelectionBySingleIntervalSpy.calledWith("2", oStartDateInBounds, oMaxDate),
+				"Single interval selection called when inside the min/max constraints"
+			);
+
+			// Prepare
+			oGetIntervalSelectionStub.restore();
+			oGetSingleSelectionStub = this.stub(this.oM, "getSingleSelection").returns(false);
+
+			// Act - Out of Bounds
+			this.oM._handleWeekSelection(oStartDateOutBounds);
+
+			// Assert
+			assert.ok(
+				oHandleWeekSelectionByMultipleDaysSpy.notCalled,
+				"Week selection by multiple day selection not called when outside of min/max constraints"
+			);
+
+			// Act - In Bounds
+			this.oM._handleWeekSelection(oStartDateInBounds);
+
+			// Assert
+			assert.ok(
+				oHandleWeekSelectionByMultipleDaysSpy.calledWith("2", oStartDateInBounds, oMaxDate),
+				"Week selection by multiple day selection called when inside the min/max constraints"
+			);
+
+			// Clean
+			oGetSingleSelectionStub.restore();
+			oHandleWeekSelectionByMultipleDaysSpy.restore();
+			oHandleWeekSelectionBySingleIntervalSpy.restore();
+			oGetParentStub.restore();
+			oMinDateStub.restore();
+			oMaxDateStub.restore();
+		});
 
 		QUnit.module("Multiselect mode (SHIFT + Click/ENTER)", {
 			beforeEach: function () {
