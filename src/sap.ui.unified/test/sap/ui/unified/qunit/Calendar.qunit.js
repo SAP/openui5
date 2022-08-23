@@ -714,6 +714,20 @@ sap.ui.define([
 		oCal.destroy();
 	});
 
+	QUnit.test("Secondary calendar type is propaged to the all months", function(assert) {
+		// Prepare
+		var oCalendar = new Calendar({
+			secondaryCalendarType: "Islamic"
+		});
+
+		// Act
+		oCalendar.setMonths(2);
+		var oSecondMonth = oCalendar.getAggregation("month")[1];
+
+		// Assert
+		assert.strictEqual(oSecondMonth.getSecondaryCalendarType(), "Islamic", "Secondary calendar type properly set");
+	});
+
 	QUnit.module("Interaction");
 
 	QUnit.test("month switch", function(assert) {
