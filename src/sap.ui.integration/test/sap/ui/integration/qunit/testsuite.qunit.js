@@ -40,52 +40,6 @@ sap.ui.define(function () {
 				]
 			},
 			"CardPagination": { },
-			"AllCards": {
-				ui5: {
-					libs: ["sap.ui.integration"]
-				},
-				coverage: {
-					only: [
-						"sap/ui/integration/cards/Header",
-						"sap/f/cards/HeaderRenderer",
-						"sap/ui/integration/cards/NumericHeader",
-						"sap/f/cards/NumericHeaderRenderer",
-						"sap/f/cards/NumericSideIndicator",
-						"sap/f/cards/NumericSideIndicatorRenderer",
-						"sap/ui/integration/widgets/Card",
-						"sap/ui/integration/util/CardObserver",
-						"sap/ui/integration/util/CardManifest",
-						"sap/ui/integration/util/ServiceManager",
-						"sap/ui/integration/customElements/",
-						"sap/ui/integration/cards/CalendarCard",
-						"sap/ui/integration/cards/AdaptiveCard",
-						"sap/ui/integration/cards/AnalyticalContent",
-						"sap/ui/integration/util/BindingHelper",
-						"sap/ui/integration/util/JSONBindingHelper",
-						"sap/ui/integration/util/BindingResolver",
-						"sap/ui/integration/cards/ComponentContent",
-						"sap/ui/integration/cards/ListContent",
-						"sap/ui/integration/cards/ObjectContent",
-						"sap/ui/integration/cards/TableContent",
-						"sap/ui/integration/cards/BaseContent",
-						"sap/ui/integration/cards/AnalyticsCloudContent"
-					]
-				},
-				module: [
-					'./Card.qunit',
-					'./util/CardManifest.qunit',
-					'./util/ServiceManager.qunit',
-					'./customElements/CustomElements.qunit',
-					'./util/BindingHelper.qunit',
-					'./util/JSONBindingHelper.qunit',
-					'./util/BindingResolver.qunit',
-					'./cardbundle/CardStaticResources.qunit',
-					'./cards/BaseContent.qunit',
-					'./bindingFeatures/DateRange.qunit',
-					'./CardHost.qunit',
-					'./cards/AnalyticsCloudContent.qunit'
-				]
-			},
 			"CardLoading": {
 				ui5: {
 					libs: ["sap.ui.integration"]
@@ -209,6 +163,7 @@ sap.ui.define(function () {
 				}
 			},
 			"cardbundle/CardStaticResources": {},
+			"cards/BaseContent": {},
 			"cards/AdaptiveCard": {},
 			"cards/AnalyticalCard": {},
 			"cards/CalendarCard": {},
