@@ -17,9 +17,8 @@ sap.ui.define([
 		 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
 		 *   The cache to be enhanced
 		 * @param {object} oAggregation
-		 *   An object holding the information needed for data aggregation; see also
-		 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-		 *   Extension for Data Aggregation Version 4.0</a>; must already be normalized by
+		 *   An object holding the information needed for data aggregation; see also "OData
+		 *   Extension for Data Aggregation Version 4.0"; must already be normalized by
 		 *   {@link _AggregationHelper.buildApply}
 		 * @param {function[]} [aAdditionalRowHandlers]
 		 *   Handlers for the additional response rows (which are automatically scanned for

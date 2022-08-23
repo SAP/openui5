@@ -146,9 +146,10 @@ sap.ui.define([
 		 *   Root URL of the service to request data from. The path part of the URL must end with a
 		 *   forward slash according to OData V4 specification ABNF, rule "serviceRoot". You may
 		 *   append OData custom query options to the service root URL separated with a "?", for
-		 *   example "/MyService/?custom=foo". See specification "OData Version 4.0 Part 2: URL
-		 *   Conventions", "5.2 Custom Query Options". OData system query options and OData
-		 *   parameter aliases lead to an error.
+		 *   example "/MyService/?custom=foo". See specification <a href=
+		 *   "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html#_Custom_Query_Options"
+		 *   >"OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options"</a>. OData
+		 *   system query options and OData parameter aliases lead to an error.
 		 * @param {boolean} [mParameters.sharedRequests]
 		 *   Whether all list bindings for the same resource path share their data, so that it is
 		 *   requested only once; only the value <code>true</code> is allowed; see parameter
@@ -182,7 +183,9 @@ sap.ui.define([
 		 *   This model is not prepared to be inherited from.
 		 *
 		 *   Every resource path (relative to the service root URL, no query options) according to
-		 *   "4 Resource Path" in specification "OData Version 4.0 Part 2: URL Conventions" is
+		 *   <a href=
+		 *   "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html#resource-pathurl4"
+		 *   >"4 Resource Path"</a> in specification "OData Version 4.0 Part 2: URL Conventions" is
 		 *   a valid data binding path within this model if a leading slash is added; for example
 		 *   "/" + "SalesOrderList('A%2FB%26C')" to access an entity instance with key "A/B&C". Note
 		 *   that appropriate URI encoding is necessary, see the example of
@@ -618,9 +621,10 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   Map of binding parameters which can be OData query options as specified in
-	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters as specified
-	 *   below.
+	 *   Map of binding parameters which can be OData query options as specified in <a href=
+	 *   "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html"
+	 *   >"OData Version 4.0 Part 2: URL Conventions"</a> or the binding-specific parameters as
+	 *   specified below.
 	 *   Note: The binding creates its own data service request if it is absolute or if it has any
 	 *   parameters or if it is relative and has a context created via
 	 *   {@link #createBindingContext}.
@@ -744,9 +748,10 @@ sap.ui.define([
 	 *   using a logical <code>AND</code>.
 	 *   Supported since 1.39.0.
 	 * @param {object} [mParameters]
-	 *   Map of binding parameters which can be OData query options as specified in
-	 *   "OData Version 4.0 Part 2: URL Conventions" or binding-specific parameters as specified
-	 *   below.
+	 *   Map of binding parameters which can be OData query options as specified in <a href=
+	 *   "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html"
+	 *   >"OData Version 4.0 Part 2: URL Conventions"</a> or binding-specific parameters as
+	 *   specified below.
 	 *   Note: The binding creates its own data service request if it is absolute or if it has any
 	 *   parameters or if it is relative and has a context created via {@link #createBindingContext}
 	 *   or if it has sorters or filters.
@@ -896,9 +901,10 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   Map of binding parameters which can be OData query options as specified in
-	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters as specified
-	 *   below. The following OData query options are allowed:
+	 *   Map of binding parameters which can be OData query options as specified in <a href=
+	 *   "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html"
+	 *   >"OData Version 4.0 Part 2: URL Conventions"</a> or the binding-specific parameters as
+	 *   specified below. The following OData query options are allowed:
 	 *   <ul>
 	 *     <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
 	 *       (unless starting with "sap-valid-")
@@ -1094,8 +1100,10 @@ sap.ui.define([
 	 * headers: Headers with an <code>undefined</code> value are removed, the other headers are set,
 	 * and missing headers remain unchanged. The following headers must not be used:
 	 * <ul>
-	 *   <li> OData V4 requests headers as specified in "8.1 Common Headers" and
-	 *     "8.2 Request Headers" of the specification "OData Version 4.0 Part 1: Protocol"
+	 *   <li> OData V4 requests headers as specified in <a href=
+	 *     "https://docs.oasis-open.org/odata/odata/v4.0/os/part1-protocol/odata-v4.0-os-part1-protocol.html#_Common_Headers"
+	 *     >"8.1 Common Headers"</a> and "8.2 Request Headers" of the specification "OData Version
+	 *     4.0 Part 1: Protocol"
 	 *   <li> OData V2 request headers as specified in "2.2.5 HTTP Header Fields" of the
 	 *     specification "OData Version 2 v10.1"
 	 *   <li> The headers "Content-Id" and "Content-Transfer-Encoding"
@@ -2329,11 +2337,12 @@ sap.ui.define([
 
 	/**
 	 * Returns a promise for the "canonical path" of the entity for the given context.
-	 * According to "4.3.1 Canonical URL" of the specification "OData Version 4.0 Part 2: URL
-	 * Conventions", this is the "name of the entity set associated with the entity followed by the
-	 * key predicate identifying the entity within the collection".
-	 * Use the canonical path in {@link sap.ui.core.Element#bindElement} to create an element
-	 * binding.
+	 * According to <a href=
+	 * "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html#canonical-urlurl4.1.1"
+	 * >"4.3.1 Canonical URL"</a> of the specification "OData Version 4.0 Part 2: URL Conventions",
+	 * this is the "name of the entity set associated with the entity followed by the key predicate
+	 * identifying the entity within the collection". Use the canonical path in
+	 * {@link sap.ui.core.Element#bindElement} to create an element binding.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oEntityContext
 	 *   A context in this model which must point to a non-contained OData entity

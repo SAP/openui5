@@ -137,13 +137,16 @@ sap.ui.define([
 			 * and URLs.
 			 *
 			 * @param {any} vValue
-			 *   The value according to "OData JSON Format Version 4.0" section
-			 *   "7.1 Primitive Value"
+			 *   The value according to <a href=
+			 *   "https://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Primitive_Value"
+			 *   >"OData JSON Format Version 4.0" section "7.1 Primitive Value"</a>
 			 * @param {string} sType
 			 *   The OData primitive type, for example "Edm.String"
 			 * @returns {string}
-			 *   The literal according to "OData Version 4.0 Part 2: URL Conventions" section
-			 *   "5.1.1.6.1 Primitive Literals"
+			 *   The literal according to <a href=
+			 *   "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html"
+			 *   >"OData Version 4.0 Part 2: URL Conventions"</a> section
+			 *   "5.1.1.11.1 Primitive Literals"
 			 * @throws {Error}
 			 *   If the value is undefined or the type is not supported
 			 *

@@ -2771,9 +2771,11 @@ sap.ui.define([
 	 * &lt;/template:with>
 	 * </pre>
 	 *
-	 * The basic idea is that every path described in "14.2.1 Attribute Target" in specification
-	 * "OData Version 4.0 Part 3: Common Schema Definition Language" is a valid absolute path
-	 * within the metadata model if a leading slash is added; for example
+	 * The basic idea is that every path described in <a href=
+	 * "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html#_Attribute_Target"
+	 * >"14.2.1 Attribute Target"</a> in specification "OData Version 4.0 Part 3: Common Schema
+	 * Definition Language" is a valid absolute path within the metadata model if a leading slash is
+	 * added; for example
 	 * "/" + "MySchema.MyEntityContainer/MyEntitySet/MyComplexProperty/MyNavigationProperty". Also,
 	 * every path described in "14.5.2 Expression edm:AnnotationPath",
 	 * "14.5.11 Expression edm:NavigationPropertyPath", "14.5.12 Expression edm:Path", and
@@ -2848,8 +2850,9 @@ sap.ui.define([
 	 * "14.5.14.2 Element edm:PropertyValue" are addressed by segments like
 	 * "&lt;7.2.1 Attribute Property>@...", "$OnDelete@...", "&lt;10.2.1 Attribute Name>@..." and
 	 * "&lt;14.5.14.2.1 Attribute Property>@..." (where angle brackets denote a variable part and
-	 * sections refer to specification "OData Version 4.0 Part 3: Common Schema Definition
-	 * Language").
+	 * sections refer to specification <a href=
+	 * "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.htm"
+	 * >"OData Version 4.0 Part 3: Common Schema Definition Language"</a>).
 	 *
 	 * Annotations starting with "@@", for example
 	 * "@@sap.ui.model.odata.v4.AnnotationHelper.isMultiple" or "@@.AH.isMultiple" or

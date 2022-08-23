@@ -1516,10 +1516,9 @@ sap.ui.define([
 	/**
 	 * Returns a promise on the value for the given path relative to this binding. The function
 	 * allows access to the complete data the binding points to (if <code>sPath</code> is "") or
-	 * any part thereof. The data is a JSON structure as described in
-	 * <a
-	 * href="https://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">
-	 * "OData JSON Format Version 4.0"</a>.
+	 * any part thereof. The data is a JSON structure as described in <a href=
+	 * "https://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html"
+	 * >"OData JSON Format Version 4.0"</a>.
 	 * Note that the function clones the result. Modify values via
 	 * {@link sap.ui.model.odata.v4.Context#setProperty}.
 	 *

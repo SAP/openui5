@@ -641,12 +641,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the "canonical path" of the entity for this context.
-	 * According to "4.3.1 Canonical URL" of the specification "OData Version 4.0 Part 2: URL
-	 * Conventions", this is the "name of the entity set associated with the entity followed by the
-	 * key predicate identifying the entity within the collection".
-	 * Use the canonical path in {@link sap.ui.core.Element#bindElement} to create an element
-	 * binding.
+	 * Returns the "canonical path" of the entity for this context. According to <a href=
+	 * "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html#canonical-urlurl4.1.1"
+	 * >"4.3.1 Canonical URL"</a> of the specification "OData Version 4.0 Part 2: URL Conventions",
+	 * this is the "name of the entity set associated with the entity followed by the key predicate
+	 * identifying the entity within the collection". Use the canonical path in
+	 * {@link sap.ui.core.Element#bindElement} to create an element binding.
+	 *
 	 * Note: For a transient context (see {@link #isTransient}) a wrong path is returned unless all
 	 * key properties are available within the initial data.
 	 *
@@ -753,10 +754,9 @@ sap.ui.define([
 	/**
 	 * Returns the value for the given path relative to this context. The function allows access to
 	 * the complete data the context points to (if <code>sPath</code> is "") or any part thereof.
-	 * The data is a JSON structure as described in
-	 * <a
-	 * href="https://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">
-	 * "OData JSON Format Version 4.0"</a>.
+	 * The data is a JSON structure as described in <a href=
+	 * "https://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html"
+	 * >"OData JSON Format Version 4.0"</a>.
 	 * Note that the function clones the result. Modify values via
 	 * {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue}.
 	 *
@@ -861,10 +861,9 @@ sap.ui.define([
 	/**
 	 * Returns the value for the given path relative to this context. The function allows access to
 	 * the complete data the context points to (if <code>sPath</code> is "") or any part thereof.
-	 * The data is a JSON structure as described in
-	 * <a
-	 * href="https://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">
-	 * "OData JSON Format Version 4.0"</a>.
+	 * The data is a JSON structure as described in <a href=
+	 * "https://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html"
+	 * >"OData JSON Format Version 4.0"</a>.
 	 * Note that the function returns the cache instance. Do not modify the result, use
 	 * {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue} instead.
 	 *
@@ -1121,12 +1120,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a promise for the "canonical path" of the entity for this context.
-	 * According to "4.3.1 Canonical URL" of the specification "OData Version 4.0 Part 2: URL
-	 * Conventions", this is the "name of the entity set associated with the entity followed by the
-	 * key predicate identifying the entity within the collection".
-	 * Use the canonical path in {@link sap.ui.core.Element#bindElement} to create an element
-	 * binding.
+	 * Returns a promise for the "canonical path" of the entity for this context. According to
+	 * <a href=
+	 * "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html#canonical-urlurl4.1.1"
+	 * >"4.3.1 Canonical URL"</a> of the specification "OData Version 4.0 Part 2: URL Conventions",
+	 * this is the "name of the entity set associated with the entity followed by the key predicate
+	 * identifying the entity within the collection". Use the canonical path in
+	 * {@link sap.ui.core.Element#bindElement} to create an element binding.
+	 *
 	 * Note: For a transient context (see {@link #isTransient}) a wrong path is returned unless all
 	 * key properties are available within the initial data.
 	 *
@@ -1144,10 +1145,9 @@ sap.ui.define([
 	/**
 	 * Returns a promise on the value for the given path relative to this context. The function
 	 * allows access to the complete data the context points to (if <code>sPath</code> is "") or
-	 * any part thereof. The data is a JSON structure as described in
-	 * <a
-	 * href="https://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">
-	 * "OData JSON Format Version 4.0"</a>.
+	 * any part thereof. The data is a JSON structure as described in <a href=
+	 * "https://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html"
+	 * >"OData JSON Format Version 4.0"</a>.
 	 * Note that the function clones the result. Modify values via
 	 * {@link sap.ui.model.odata.v4.Context#setProperty}.
 	 *
