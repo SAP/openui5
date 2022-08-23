@@ -52,9 +52,14 @@ sap.ui.define([
 			render: function (oRm, oControl) {
 				var iMaxItems = oControl.getMaxItems(),
 					iColumns = oControl.getColumns(),
+					bHasActualContent = oControl.getParent()._getTable().getColumns().length,
 					// set title for screen reader
 					oResBundle = Core.getLibraryResourceBundle("sap.ui.core"),
 					sTitle = oResBundle.getText("BUSY_TEXT");
+
+				if (!bHasActualContent) {
+					return;
+				}
 
 				oRm.openStart("div", oControl)
 					.class("sapFCardContentPlaceholder")
