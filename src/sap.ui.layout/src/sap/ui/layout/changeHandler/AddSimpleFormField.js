@@ -174,7 +174,8 @@ sap.ui.define([
 		var oRevertData = oChange.getRevertData();
 		if (oRevertData && oRevertData.labelSelector) {
 			return {
-				affectedControls: [JsControlTreeModifier.bySelector(oRevertData.labelSelector, oAppComponent).getParent().getId()]
+				affectedControls: [JsControlTreeModifier.bySelector(oRevertData.labelSelector, oAppComponent).getId()],
+				hasParentWithUnstableId: true
 			};
 		}
 		return {

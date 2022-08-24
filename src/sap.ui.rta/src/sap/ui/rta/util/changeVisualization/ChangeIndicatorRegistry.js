@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/changeHandler/common/ChangeCategories"
+	"sap/ui/fl/changeHandler/common/ChangeCategories",
+	"sap/ui/core/Core"
 ], function(
 	includes,
 	values,
@@ -23,7 +24,8 @@ sap.ui.define([
 	ElementUtil,
 	ChangesWriteAPI,
 	FlUtils,
-	ChangeCategories
+	ChangeCategories,
+	Core
 ) {
 	"use strict";
 
@@ -125,15 +127,21 @@ sap.ui.define([
 			));
 		}
 
-		values(this._oRegisteredChanges).forEach(function (oChangeIndicatorData) {
-			oChangeIndicatorData.visualizationInfo.displayElementIds.forEach(function (sSelectorId, iIndex) {
-				addSelector(sSelectorId, oChangeIndicatorData.visualizationInfo.affectedElementIds[iIndex], oChangeIndicatorData, false);
-			});
+		values(this._oRegisteredChanges)
+			.forEach(function (oChangeIndicatorData) {
+				oChangeIndicatorData.visualizationInfo.displayElementIds
+				.forEach(function (sId, iIndex) {
+					// in some cases (like with simple forms) you have to pass the stable id of the child element because the parent id is unstable
+					if (oChangeIndicatorData.visualizationInfo.hasParentWithUnstableId) {
+						sId = Core.byId(sId).getParent().getId();
+					}
+					addSelector(sId, oChangeIndicatorData.visualizationInfo.affectedElementIds[iIndex], oChangeIndicatorData, false);
+				});
 
-			oChangeIndicatorData.visualizationInfo.dependentElementIds.forEach(function (sSelectorId) {
-				addSelector(sSelectorId, sSelectorId, oChangeIndicatorData, true);
+				oChangeIndicatorData.visualizationInfo.dependentElementIds.forEach(function (sId) {
+					addSelector(sId, sId, oChangeIndicatorData, true);
+				});
 			});
-		});
 
 		return oChangeIndicators;
 	};
@@ -214,6 +222,7 @@ sap.ui.define([
 					affectedElementIds: aAffectedElementIds,
 					dependentElementIds: getSelectorIds(mVisualizationInfo.dependentControls) || [],
 					displayElementIds: getSelectorIds(mVisualizationInfo.displayControls) || aAffectedElementIds,
+					hasParentWithUnstableId: mVisualizationInfo.hasParentWithUnstableId,
 					payload: mVisualizationInfo.payload || {}
 				};
 			});
