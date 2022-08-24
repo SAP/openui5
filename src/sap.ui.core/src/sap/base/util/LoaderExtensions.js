@@ -270,14 +270,14 @@ sap.ui.define([
 		assert(/^(xml|html|json|text)$/.test(sType), "type must be one of xml, html, json or text");
 
 		function convertData(d) {
-		    switch (sType) {
+			switch (sType) {
 				case "json":
 					return JSON.parse(d);
 				case "xml":
 					return XMLHelper.parse(d);
 				default:
 					return d;
-		    }
+			}
 		}
 
 		oData = sap.ui.loader._.getModuleContent(sResourceName, mOptions.url);
