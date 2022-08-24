@@ -46,7 +46,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @alias sap.ui.core.HTML
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var HTML = Control.extend("sap.ui.core.HTML", /** @lends sap.ui.core.HTML.prototype */ {
 		metadata : {

@@ -51,7 +51,6 @@ sap.ui.define([
 		 * @public
 		 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Dialog</code> control.
 		 * @alias sap.ui.commons.Dialog
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var Dialog = Control.extend("sap.ui.commons.Dialog", /** @lends sap.ui.commons.Dialog.prototype */ {
 			metadata: {
@@ -394,7 +393,6 @@ sap.ui.define([
 		/**
 		 * Opens the dialog control instance.
 		 *
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 * @public
 		 */
 		Dialog.prototype.open = function () {
@@ -475,7 +473,6 @@ sap.ui.define([
 		/**
 		 * Closes the dialog control instance.
 		 *
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 * @public
 		 */
 		Dialog.prototype.close = function () {
@@ -736,7 +733,6 @@ sap.ui.define([
 		 * Indicates whether the Dialog is open (this includes opening and closing animations).
 		 * For more detailed information about the current state check Dialog.getOpenState().
 		 *
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 * @returns {boolean}
 		 * @public
 		 */
@@ -749,7 +745,6 @@ sap.ui.define([
 		/**
 		 * Indicates whether the Dialog is currently open, closed, or transitioning between these states.
 		 *
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 * @returns {sap.ui.core.OpenState}
 		 * @public
 		 */

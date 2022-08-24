@@ -73,7 +73,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.28.0
 	 * @alias sap.ui.unified.calendar.Month
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Month = Control.extend("sap.ui.unified.calendar.Month", /** @lends sap.ui.unified.calendar.Month.prototype */ { metadata : {
 
@@ -484,7 +483,6 @@ sap.ui.define([
 	 * @param {object} oDate JavaScript date object for focused date.
 	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Month.prototype.displayDate = function(oDate){
 		var oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
@@ -1337,7 +1335,6 @@ sap.ui.define([
 	 * @param {object} oDate JavaScript date object for focused date.
 	 * @returns {boolean} flag if focusable
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Month.prototype.checkDateFocusable = function(oDate){
 

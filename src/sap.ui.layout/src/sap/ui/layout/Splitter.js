@@ -72,7 +72,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.22.0
 	 * @alias sap.ui.layout.Splitter
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Splitter = Control.extend("sap.ui.layout.Splitter", /** @lends sap.ui.layout.Splitter.prototype */ {
 		metadata: {

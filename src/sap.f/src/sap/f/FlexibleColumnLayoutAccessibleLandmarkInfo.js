@@ -26,7 +26,6 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 * @constructor
 	 * @public
 	 * @alias sap.f.FlexibleColumnLayoutAccessibleLandmarkInfo
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FlexibleColumnLayoutAccessibleLandmarkInfo = Element.extend("sap.f.FlexibleColumnLayoutAccessibleLandmarkInfo", /** @lends sap.f.FlexibleColumnLayoutAccessibleLandmarkInfo.prototype */ { metadata : {
 

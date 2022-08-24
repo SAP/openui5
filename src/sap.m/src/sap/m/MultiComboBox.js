@@ -151,7 +151,6 @@ function(
 	 * @since 1.22.0
 	 * @alias sap.m.MultiComboBox
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/multi-combobox/ Multi-Combo Box}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MultiComboBox = ComboBoxBase.extend("sap.m.MultiComboBox", /** @lends sap.m.MultiComboBox.prototype */ { metadata: {
 
@@ -2865,7 +2864,6 @@ function(
 	 * @param {string[]} aKeys An array of item keys that identifies the items to be removed
 	 * @returns {sap.ui.core.Item[]} The removed items
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MultiComboBox.prototype.removeSelectedKeys = function (aKeys) {
 		var oItem, aItems = [];
@@ -2921,7 +2919,6 @@ function(
 	 * @param {string[]} aKeys An array of item keys that identifies the items to be added as selected
 	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MultiComboBox.prototype.addSelectedKeys = function (aKeys) {
 		var aStoredSelectedKeys,

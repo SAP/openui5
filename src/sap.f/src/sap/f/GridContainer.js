@@ -171,7 +171,6 @@ sap.ui.define([
 	 * @public
 	 * @constructor
 	 * @alias sap.f.GridContainer
-	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridContainer = Control.extend("sap.f.GridContainer", /** @lends sap.f.GridContainer.prototype */ {
 		metadata: {

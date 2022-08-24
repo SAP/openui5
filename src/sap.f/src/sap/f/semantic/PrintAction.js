@@ -23,7 +23,6 @@ sap.ui.define(['sap/f/semantic/SemanticButton'], function(SemanticButton) {
 	* @public
 	* @since 1.46.0
 	* @alias sap.f.semantic.PrintAction
-	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	var PrintAction =  SemanticButton.extend("sap.f.semantic.PrintAction", /** @lends sap.f.semantic.PrintAction.prototype */ {
 		metadata: {

@@ -26,7 +26,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.form.GridContainerData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridContainerData = LayoutData.extend("sap.ui.layout.form.GridContainerData", /** @lends sap.ui.layout.form.GridContainerData.prototype */ { metadata : {
 

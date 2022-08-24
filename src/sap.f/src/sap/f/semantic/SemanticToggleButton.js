@@ -27,7 +27,6 @@ sap.ui.define([
 	* @public
 	* @since 1.46.0
 	* @alias sap.f.semantic.SemanticToggleButton
-	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	var SemanticToggleButton = MSemanticToggleButton.extend("sap.f.semantic.SemanticToggleButton", {
 		metadata: {

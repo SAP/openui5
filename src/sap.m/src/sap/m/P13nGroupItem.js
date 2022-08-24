@@ -20,7 +20,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.28.0
 	 * @alias sap.m.P13nGroupItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nGroupItem = Item.extend("sap.m.P13nGroupItem", /** @lends sap.m.P13nGroupItem.prototype */
 	{

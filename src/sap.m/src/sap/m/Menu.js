@@ -71,7 +71,6 @@ sap.ui.define([
 		 * @constructor
 		 * @public
 		 * @alias sap.m.Menu
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var Menu = Control.extend("sap.m.Menu", /** @lends sap.m.Menu.prototype */ {
 			metadata : {

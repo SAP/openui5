@@ -42,7 +42,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.42.0
 	 * @alias sap.m.IconTabBarSelectList
-	 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 	 */
 	var IconTabBarSelectList = Control.extend("sap.m.IconTabBarSelectList", /** @lends sap.m.IconTabBarSelectList.prototype */ { metadata: {
 		library: "sap.m",

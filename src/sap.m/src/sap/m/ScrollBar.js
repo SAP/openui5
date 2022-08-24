@@ -27,7 +27,6 @@ function(Control, ScrollBarRenderer) {
 	 *
 	 * @private
 	 * @alias sap.m.ScrollBar
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ScrollBar = Control.extend("sap.m.ScrollBar", /** @lends sap.m.ScrollBar.prototype */ { metadata : {
 

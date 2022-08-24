@@ -174,7 +174,6 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.m.FacetFilter
 	 * @see {@link topic:c6c38217a4a64001a22ad76cdfa97fae Facet Filter}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FacetFilter = Control.extend("sap.m.FacetFilter", /** @lends sap.m.FacetFilter.prototype */ { metadata : {
 
@@ -458,7 +457,6 @@ sap.ui.define([
 	 *
 	 * @returns {this} this pointer for chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FacetFilter.prototype.openFilterDialog = function() {
 

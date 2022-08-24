@@ -28,7 +28,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @since 1.60.0
 	 * @alias sap.ui.mdc.field.FieldValueHelpContentWrapperBase
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FieldValueHelpContentWrapperBase = Element.extend("sap.ui.mdc.field.FieldValueHelpContentWrapperBase", /** @lends sap.ui.mdc.field.FieldValueHelpContentWrapperBase.prototype */
 	{

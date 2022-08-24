@@ -123,7 +123,6 @@ function(
 	 * @public
 	 * @alias sap.m.SelectDialog
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/select-dialog/ Select Dialog}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SelectDialog = SelectDialogBase.extend("sap.m.SelectDialog", /** @lends sap.m.SelectDialog.prototype */ { metadata : {
 
@@ -597,7 +596,6 @@ function(
 	 * @param {string} sSearchValue  A value for the search can be passed to match with the filter applied to the list binding.
 	 * @returns {this} <code>this</code> pointer for chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SelectDialog.prototype.open = function (sSearchValue) {
 		// CSN #80686/2014: only invalidate inner dialog if call does not come from inside

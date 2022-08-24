@@ -21,7 +21,6 @@ sap.ui.define([
 	 * @abstract
 	 * @since 1.26.0
 	 * @alias sap.m.P13nPanel
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nPanel = Control.extend("sap.m.P13nPanel", /** @lends sap.m.P13nPanel.prototype */
 	{

@@ -23,7 +23,6 @@ sap.ui.define(['sap/f/semantic/SemanticButton'], function(SemanticButton) {
 	* @public
 	* @since 1.46.0
 	* @alias sap.f.semantic.NegativeAction
-	* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	var NegativeAction = SemanticButton.extend("sap.f.semantic.NegativeAction", /** @lends sap.f.semantic.NegativeAction.prototype */ {
 		metadata: {

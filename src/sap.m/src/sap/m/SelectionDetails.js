@@ -41,7 +41,6 @@ function(
 	 * @constructor
 	 * @protected
 	 * @since 1.48.0
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 * @alias sap.m.SelectionDetails
 	 */
 	var SelectionDetails = Control.extend("sap.m.SelectionDetails", /** @lends sap.m.SelectionDetails.prototype */ { metadata: {

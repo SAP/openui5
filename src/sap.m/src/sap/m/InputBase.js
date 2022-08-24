@@ -68,7 +68,6 @@ function(
 	 * @public
 	 * @since 1.12.0
 	 * @alias sap.m.InputBase
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var InputBase = Control.extend("sap.m.InputBase", /** @lends sap.m.InputBase.prototype */ { metadata: {
 

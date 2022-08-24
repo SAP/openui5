@@ -39,7 +39,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.layout.AbsoluteLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AbsoluteLayout = Control.extend("sap.ui.commons.layout.AbsoluteLayout", /** @lends sap.ui.commons.layout.AbsoluteLayout.prototype */ { metadata : {
 
@@ -226,7 +225,6 @@ sap.ui.define([
 	 *
 	 * @type sap.ui.core.Control[]
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AbsoluteLayout.prototype.getContent = function() {
 		var aControls = [];
@@ -249,7 +247,6 @@ sap.ui.define([
 	 *         The object is expected to have one or more from the attribute set top, bottom, left, right; each with a value of type sap.ui.core.CSSSize.
 	 * @type this
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AbsoluteLayout.prototype.addContent = function(oContent, oPos) {
 		var oPosition = PositionContainer.createPosition(oContent, oPos);
@@ -272,7 +269,6 @@ sap.ui.define([
 	 *         The object is expected to have one or more from the attribute set top, bottom, left, right; each with a value of type sap.ui.core.CSSSize.
 	 * @type this
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AbsoluteLayout.prototype.insertContent = function(oContent, iIndex, oPos) {
 		var oPosition = PositionContainer.createPosition(oContent, oPos);
@@ -289,7 +285,6 @@ sap.ui.define([
 	 *         The content control to remove, its ID, or the index of the corresponding position container in the 'positions' aggregation.
 	 * @type sap.ui.core.Control
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AbsoluteLayout.prototype.removeContent = function(vContent) {
 		var iIndex = vContent;
@@ -313,7 +308,6 @@ sap.ui.define([
 	 *
 	 * @type sap.ui.core.Control[]
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AbsoluteLayout.prototype.removeAllContent = function() {
 		var aControls = this.getContent();
@@ -331,7 +325,6 @@ sap.ui.define([
 	 *         The content of which the index is looked for
 	 * @type int
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AbsoluteLayout.prototype.indexOfContent = function(oContent) {
 		var aControls = this.getContent();
@@ -350,7 +343,6 @@ sap.ui.define([
 	 *
 	 * @type this
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AbsoluteLayout.prototype.destroyContent = function() {
 		this.destroyPositions();
@@ -369,7 +361,6 @@ sap.ui.define([
 	 *         The object is expected to have one or more from the attribute set top, bottom, left, right; each with a value of type sap.ui.core.CSSSize.
 	 * @type boolean
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AbsoluteLayout.prototype.setPositionOfChild = function(oControl, oPos) {
 		var iIdx = this.indexOfContent(oControl);

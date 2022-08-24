@@ -36,7 +36,6 @@ sap.ui.define([
 		 * @constructor
 		 * @private
 		 * @alias sap.m.MessageListItem
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var MessageListItem = StandardListItem.extend("sap.m.MessageListItem", /** @lends sap.m.MessageListItem.prototype */ {
 			metadata: {

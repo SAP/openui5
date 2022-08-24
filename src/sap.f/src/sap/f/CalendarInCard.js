@@ -45,7 +45,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.84.0
 	 * @alias sap.f.CalendarInCard
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CalendarInCard = Calendar.extend("sap.f.CalendarInCard", /** @lends sap.f.CalendarInCard.prototype */ { metadata : {
 			library : "sap.f"

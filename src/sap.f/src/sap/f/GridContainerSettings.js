@@ -70,7 +70,6 @@ sap.ui.define([
 	 * @public
 	 * @constructor
 	 * @alias sap.f.GridContainerSettings
-	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridContainerSettings = ManagedObject.extend("sap.f.GridContainerSettings", {
 		metadata: {

@@ -104,7 +104,6 @@ function(library,
 	 * @public
 	 * @since 1.87
 	 * @alias sap.m.ExpandableText
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ExpandableText = Control.extend("sap.m.ExpandableText", /** @lends sap.m.ExpandableText.prototype */ {
 		metadata: {

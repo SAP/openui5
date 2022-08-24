@@ -38,7 +38,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated as of version 1.38, replaced by {@link sap.m.Page}
 	 * @alias sap.ui.commons.layout.BorderLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var BorderLayout = Control.extend("sap.ui.commons.layout.BorderLayout", /** @lends sap.ui.commons.layout.BorderLayout.prototype */ { metadata : {
 
@@ -152,7 +151,6 @@ sap.ui.define([
 	 * @returns {sap.ui.commons.layout.BorderLayoutArea} The aria
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	BorderLayout.prototype.getArea = function(sAreaId, bCreate) {
 		return this._getOrCreateArea(sAreaId, bCreate ? [] : null);
@@ -169,7 +167,6 @@ sap.ui.define([
 	 * @returns {sap.ui.commons.layout.BorderLayoutArea} The created aria
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	BorderLayout.prototype.createArea = function(sAreaId, oContent /* ... */) {
 		return this._getOrCreateArea(sAreaId, Array.prototype.slice.call(arguments, 1));
@@ -184,7 +181,6 @@ sap.ui.define([
 	 * @returns {sap.ui.commons.layout.BorderLayoutArea} The aria
 	 * @type {sap.ui.commons.layout.BorderLayoutArea}
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	BorderLayout.prototype.getAreaById = function(sAreaId) {
 		return this._getOrCreateArea(sAreaId, []);
@@ -199,7 +195,6 @@ sap.ui.define([
 	 * @returns {object} The aria data
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	BorderLayout.prototype.getAreaData = function(sAreaId) {
 		var oArea = this.getAreaById(sAreaId);
@@ -224,7 +219,6 @@ sap.ui.define([
 	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	BorderLayout.prototype.setAreaData = function(sAreaId, oData) {
 		this.getArea(sAreaId, true).applySettings(oData);
@@ -240,7 +234,6 @@ sap.ui.define([
 	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	BorderLayout.prototype.addContent = function(sAreaId) {
 		var oArea = this.getArea(sAreaId, true),
@@ -264,7 +257,6 @@ sap.ui.define([
 	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	BorderLayout.prototype.insertContent = function(sAreaId, iIndex) { //obsolete
 		var oArea = this.getArea(sAreaId, true),
@@ -287,7 +279,6 @@ sap.ui.define([
 	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	BorderLayout.prototype.removeContent = function(oAreaId, vElement) {
 		var oArea = this.getAreaById(oAreaId);
@@ -306,7 +297,6 @@ sap.ui.define([
 	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	BorderLayout.prototype.removeAllContent = function(sAreaId) {
 		var oArea = this.getAreaById(sAreaId);
@@ -325,7 +315,6 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control[]} The array with the content
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	BorderLayout.prototype.getContent = function(sAreaId) {
 		var oArea = this.getAreaById(sAreaId);
@@ -356,7 +345,6 @@ sap.ui.define([
 	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	BorderLayout.prototype.destroyContent = function(sAreaId) {
 		this.getAreaById(sAreaId, true).destroyContent();

@@ -45,7 +45,6 @@ sap.ui.define([
 		 * @experimental Since 1.72. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 		 * @alias sap.f.ProductSwitchItem
 		 * @since 1.72
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var ProductSwitchItem = Control.extend("sap.f.ProductSwitchItem", {
 			metadata: {

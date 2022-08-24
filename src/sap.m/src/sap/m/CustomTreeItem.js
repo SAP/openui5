@@ -26,7 +26,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.48.0
 	 * @alias sap.m.CustomTreeItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CustomTreeItem = TreeItemBase.extend("sap.m.CustomTreeItem", /** @lends sap.m.CustomTreeItem.prototype */
 	{

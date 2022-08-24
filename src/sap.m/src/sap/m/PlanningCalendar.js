@@ -191,7 +191,6 @@ sap.ui.define([
 	 * @since 1.34
 	 * @alias sap.m.PlanningCalendar
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/planning-calendar/ Planning Calendar}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PlanningCalendar = Control.extend("sap.m.PlanningCalendar", /** @lends sap.m.PlanningCalendar.prototype */ {
 		metadata : {
@@ -2525,7 +2524,6 @@ sap.ui.define([
 	 *
 	 * @returns {sap.m.PlanningCalendarRow[]} selected rows
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	PlanningCalendar.prototype.getSelectedRows = function() {
 
@@ -2544,7 +2542,6 @@ sap.ui.define([
 	 * @param {boolean} bSelect Indicator showing whether <code>PlanningCalendarRows</code> should be selected or deselected
 	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	PlanningCalendar.prototype.selectAllRows = function(bSelect) {
 

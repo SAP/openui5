@@ -33,7 +33,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.34
 		 * @alias sap.m.ComboBoxTextField
-		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
 		var ComboBoxTextField = InputBase.extend("sap.m.ComboBoxTextField", /** @lends sap.m.ComboBoxTextField.prototype */ {
 			metadata: {

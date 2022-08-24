@@ -33,7 +33,6 @@ sap.ui.define([
 	 * @deprecated Since version 1.4.0.
 	 * A new messaging concept will be created in future. Therefore this control might be removed in one of the next versions.
 	 * @alias sap.ui.commons.Message
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Message = Control.extend("sap.ui.commons.Message", /** @lends sap.ui.commons.Message.prototype */ { metadata : {
 
@@ -283,7 +282,6 @@ sap.ui.define([
 	 * function getDetails(sId) {... return htmlString;}
 	 *
 	 * @param {function} fnCallBack the callback function
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @public
 	 */
 	Message.prototype.bindDetails = function(fnCallBack) {

@@ -40,7 +40,6 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.82.0
 	 * @alias sap.ui.mdc.field.ConditionFieldHelp
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ConditionFieldHelp = FieldHelpBase.extend("sap.ui.mdc.field.ConditionFieldHelp", /** @lends sap.ui.mdc.field.ConditionFieldHelp.prototype */
 	{

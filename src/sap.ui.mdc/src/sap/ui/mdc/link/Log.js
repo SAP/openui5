@@ -19,7 +19,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.58.0
 	 * @alias sap.ui.mdc.link.Log
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Log = BaseObject.extend("sap.ui.mdc.link.Log", /** @lends sap.ui.mdc.link.Log.prototype */
 	{

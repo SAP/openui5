@@ -70,7 +70,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.34
 		 * @alias sap.m.TabContainer
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var TabContainer = Control.extend("sap.m.TabContainer", /** @lends sap.m.TabContainer.prototype */ {
 			metadata : {

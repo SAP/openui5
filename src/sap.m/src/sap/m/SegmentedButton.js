@@ -59,7 +59,6 @@ function(
 	 * @public
 	 * @alias sap.m.SegmentedButton
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/button/ Segmented Button}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SegmentedButton = Control.extend("sap.m.SegmentedButton", /** @lends sap.m.SegmentedButton.prototype */ { metadata : {
 
@@ -507,7 +506,6 @@ function(
 	 *         @since 1.28.0
 	 * @return {sap.m.Button} The created Button
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SegmentedButton.prototype.createButton = function (sText, sURI, bEnabled, sTextDirection) {
 		var oButton = new Button();

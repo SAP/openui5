@@ -41,7 +41,6 @@ sap.ui.define([
 	 * @experimental Since 1.68 This class is experimental. The API may change.
 	 * @since 1.68
 	 * @alias sap.f.dnd.GridDropInfo
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridDropInfo = DropInfo.extend("sap.f.dnd.GridDropInfo", /** @lends sap.f.dnd.GridDropInfo.prototype */ { metadata: {
 		library: "sap.f",

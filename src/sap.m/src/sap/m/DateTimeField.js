@@ -63,7 +63,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.50.0
 	 * @alias sap.m.DateTimeField
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DateTimeField = InputBase.extend("sap.m.DateTimeField", /** @lends sap.m.DateTimeField.prototype */ {
 		metadata: {

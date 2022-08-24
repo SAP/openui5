@@ -75,7 +75,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.64
 	 * @alias sap.f.Card
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Card = CardBase.extend("sap.f.Card", /** @lends sap.f.Card.prototype */ {
 		metadata: {

@@ -24,7 +24,6 @@ sap.ui.define(["./DragDropBase"],
 	 * @public
 	 * @since 1.56
 	 * @alias sap.ui.core.dnd.DropInfo
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DropInfo = DragDropBase.extend("sap.ui.core.dnd.DropInfo", /** @lends sap.ui.core.dnd.DropInfo.prototype */ { metadata: {
 

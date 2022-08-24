@@ -40,7 +40,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.ux3.Notifier
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Notifier = Element.extend("sap.ui.ux3.Notifier", /** @lends sap.ui.ux3.Notifier.prototype */ { metadata : {
 
@@ -124,7 +123,6 @@ sap.ui.define([
 		 *
 		 * @type boolean
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Notifier.prototype.hasItems = function() {
 			if (this.getMessages().length > 0) {

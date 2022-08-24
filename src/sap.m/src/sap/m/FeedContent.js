@@ -31,7 +31,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @alias sap.m.FeedContent
-	 * @ui5-metamodel This control will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FeedContent = Control.extend("sap.m.FeedContent", /** @lends sap.m.FeedContent.prototype */ {
 		metadata : {

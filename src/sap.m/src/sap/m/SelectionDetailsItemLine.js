@@ -27,7 +27,6 @@ sap.ui.define(["sap/ui/core/Element", "sap/base/Log", "sap/base/util/isPlainObje
 	 * @protected
 	 * @alias sap.m.SelectionDetailsItemLine
 	 * @since 1.48.0
-	 * @ui5-metamodel This element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SelectionDetailsItemLine = Element.extend("sap.m.SelectionDetailsItemLine", /** @lends sap.m.SelectionDetailsItemLine.prototype */ {
 		metadata: {

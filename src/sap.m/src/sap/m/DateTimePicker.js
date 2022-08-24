@@ -146,7 +146,6 @@ sap.ui.define([
 	 * @since 1.38.0
 	 * @alias sap.m.DateTimePicker
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/datetime-picker/ Date/Time Picker}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DateTimePicker = DatePicker.extend("sap.m.DateTimePicker", /** @lends sap.m.DateTimePicker.prototype */ { metadata : {
 
@@ -1035,7 +1034,6 @@ sap.ui.define([
 	 * @public
 	 * @returns {object}
 	 * @since 1.102
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	DateTimePicker.prototype.getLocaleId = function(){

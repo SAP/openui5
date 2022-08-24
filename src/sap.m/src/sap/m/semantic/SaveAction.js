@@ -23,7 +23,6 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 	 * @public
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.SaveAction
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var SaveAction = SemanticButton.extend("sap.m.semantic.SaveAction", /** @lends sap.m.semantic.SaveAction.prototype */ {

@@ -42,7 +42,6 @@ sap.ui.define([
 		 * @public
 		 * @since 1.54
 		 * @alias sap.m.ColorPalettePopover
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var ColorPalettePopover = Control.extend("sap.m.ColorPalettePopover", /** @lends sap.m.ColorPalettePopover.prototype */ {
 			metadata: {
@@ -231,7 +230,6 @@ sap.ui.define([
 		 * is positioned relative to this control
 		 * @returns {Object} Reference to the opening control
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 
@@ -242,7 +240,6 @@ sap.ui.define([
 		 * @function
 		 * @type sap.ui.core.Control
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 
 		/**

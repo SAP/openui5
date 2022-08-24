@@ -25,7 +25,6 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './utils/TableUtil
 	 * @experimental Since version 1.21.
 	 * The AnalyticalColumnMenu will be productized soon.
 	 * @alias sap.ui.table.AnalyticalColumnMenu
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AnalyticalColumnMenu = ColumnMenu.extend("sap.ui.table.AnalyticalColumnMenu", /** @lends sap.ui.table.AnalyticalColumnMenu.prototype */ {
 		metadata : {

@@ -50,7 +50,6 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @experimental Since 1.95.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.main.Breadcrumbs
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Breadcrumbs = WebComponent.extend("sap.ui.webc.main.Breadcrumbs", {
 		metadata: {

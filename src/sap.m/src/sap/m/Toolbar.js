@@ -76,7 +76,6 @@ function(
 	 * @public
 	 * @since 1.16
 	 * @alias sap.m.Toolbar
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Toolbar = Control.extend("sap.m.Toolbar", /** @lends sap.m.Toolbar.prototype */ { metadata : {
 

@@ -29,7 +29,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.64
 	 * @alias sap.f.shellBar.CoPilot
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CoPilot = Control.extend("sap.f.shellBar.CoPilot", /** @lends sap.f.shellBar.CoPilot.prototype */ { metadata : {
 			library : "sap.f",

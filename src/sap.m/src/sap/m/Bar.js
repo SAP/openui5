@@ -59,7 +59,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.Bar
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Bar = Control.extend("sap.m.Bar", /** @lends sap.m.Bar.prototype */ { metadata : {
 

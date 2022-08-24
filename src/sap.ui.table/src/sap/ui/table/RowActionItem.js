@@ -28,7 +28,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.table.RowActionItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Item = Element.extend("sap.ui.table.RowActionItem", /** @lends sap.ui.table.RowActionItem.prototype */ {
 		metadata: {

@@ -37,7 +37,6 @@ sap.ui.define([
 	 * @since 1.38
 	 * @alias sap.ui.dt.enablement.report.Statistic
 	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var oStatistic = Control.extend("sap.ui.dt.enablement.report.Statistic", /** @lends sap.ui.dt.enablement.report.Statistic.prototype */ {
 		metadata: {

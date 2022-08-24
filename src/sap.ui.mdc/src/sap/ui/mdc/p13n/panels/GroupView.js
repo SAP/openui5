@@ -40,7 +40,6 @@ sap.ui.define([
 	 * @experimental
 	 * @since 1.85
 	 * @alias sap.ui.mdc.p13n.panels.GroupView
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GroupView = BasePanel.extend("sap.ui.mdc.p13n.panels.GroupView", {
 		metadata: {

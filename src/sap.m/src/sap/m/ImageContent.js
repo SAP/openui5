@@ -36,7 +36,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @alias sap.m.ImageContent
-	 * @ui5-metamodel This control will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ImageContent = Control.extend("sap.m.ImageContent", /** @lends sap.m.ImageContent.prototype */ {
 		metadata: {

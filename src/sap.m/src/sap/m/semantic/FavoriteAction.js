@@ -23,7 +23,6 @@ sap.ui.define(['sap/m/semantic/SemanticToggleButton'], function(SemanticToggleBu
 	 * @public
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.FavoriteAction
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var FavoriteAction = SemanticToggleButton.extend("sap.m.semantic.FavoriteAction", /** @lends sap.m.semantic.FavoriteAction.prototype */ {

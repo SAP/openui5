@@ -47,7 +47,6 @@ sap.ui.define([
 	 * @since 1.15
 	 * @deprecated since 1.56
 	 * @alias sap.ui.core.tmpl.TemplateControl
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TemplateControl = Control.extend("sap.ui.core.tmpl.TemplateControl", /** @lends sap.ui.core.tmpl.TemplateControl.prototype */ {
 		metadata : {

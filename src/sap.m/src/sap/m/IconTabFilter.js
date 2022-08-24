@@ -97,7 +97,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.m.IconTabFilter
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var IconTabFilter = Item.extend("sap.m.IconTabFilter", /** @lends sap.m.IconTabFilter.prototype */ { metadata : {
 

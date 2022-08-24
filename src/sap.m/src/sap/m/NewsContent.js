@@ -28,7 +28,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @alias sap.m.NewsContent
-	 * @ui5-metamodel This control will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NewsContent = Control.extend("sap.m.NewsContent", /** @lends sap.m.NewsContent.prototype */ {
 		metadata : {

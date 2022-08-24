@@ -567,10 +567,10 @@ sap.ui.define([
 	 * <b>Note:</b> The creation of new primitive types is not supported. When a type is created
 	 * without a base type, it is automatically derived from the primitive type <code>any</code>.
 	 *
-	 * <b>Note:</b> If a type has to be used in classes tagged with <code>@ui5-metamodel</code>,
-	 * then the implementation of <code>isValid</code> must exactly have the structure shown
-	 * in the example above (single return statement, regular expression literal of the form
-	 * <code>/^(...)$/</code>, calling <code>/regex/.test()</code> on the given value).
+	 * <b>Note:</b> If a type has to be used in classes, then the implementation of
+	 * <code>isValid</code> must exactly have the structure shown in the example above (single
+	 * return statement, regular expression literal of the form <code>/^(...)$/</code>, calling
+	 * <code>/regex/.test()</code> on the given value).
 	 * Only the inner part of the regular expression literal can be different.
 	 *
 	 * @param {string} sName Unique qualified name of the new type

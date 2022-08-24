@@ -33,7 +33,6 @@ sap.ui.define([
 	 * @since 1.15.1
 	 * @alias sap.ui.unified.ShellHeadItem
 	 * @deprecated Since version 1.44.0.
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ShellHeadItem = Element.extend("sap.ui.unified.ShellHeadItem", /** @lends sap.ui.unified.ShellHeadItem.prototype */ { metadata : {
 

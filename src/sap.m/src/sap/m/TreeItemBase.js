@@ -34,7 +34,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.42.0
 	 * @alias sap.m.TreeItemBase
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TreeItemBase = ListItemBase.extend("sap.m.TreeItemBase", /** @lends sap.m.TreeItemBase.prototype */ { metadata : {
 		library : "sap.m"

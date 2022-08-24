@@ -25,7 +25,6 @@ sap.ui.define(['./Item', './library'],
 	 *
 	 * @public
 	 * @alias sap.ui.core.SeparatorItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SeparatorItem = Item.extend("sap.ui.core.SeparatorItem", /** @lends sap.ui.core.SeparatorItem.prototype */ { metadata : {
 

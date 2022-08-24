@@ -127,7 +127,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @public
 	 * @alias sap.ui.core.Element
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Element = ManagedObject.extend("sap.ui.core.Element", {
 
@@ -1018,7 +1017,6 @@ sap.ui.define([
 	 * Contains a single key/value pair of custom data attached to an <code>Element</code>.
 	 * @public
 	 * @alias sap.ui.core.CustomData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 * @synthetic
 	 */
 	var CustomData = Element.extend("sap.ui.core.CustomData", /** @lends sap.ui.core.CustomData.prototype */ { metadata : {

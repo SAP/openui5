@@ -35,7 +35,6 @@ sap.ui.define([
 		 * @constructor
 		 * @private
 		 * @alias sap.m.MenuListItem
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var MenuListItem = ListItemBase.extend("sap.m.MenuListItem", /** @lends sap.m.MenuListItem.prototype */ { metadata : {
 

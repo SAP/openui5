@@ -103,7 +103,6 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.m.LightBox
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/lightbox/ Light Box}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var LightBox = Control.extend("sap.m.LightBox", /** @lends sap.m.LightBox.prototype */ {
 		metadata: {
@@ -299,7 +298,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @returns {this} Pointer to the control instance for chaining.
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	LightBox.prototype.open = function () {
 		/** @type {sap.m.LightBoxItem} */
@@ -334,7 +332,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @returns {this} Pointer to the control instance for chaining.
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	LightBox.prototype.close = function () {
 		if (this._iResizeListenerId) {

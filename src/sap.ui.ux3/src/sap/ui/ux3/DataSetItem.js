@@ -24,7 +24,6 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 * @public
 	 * @deprecated as of version 1.38
 	 * @alias sap.ui.ux3.DataSetItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DataSetItem = Element.extend("sap.ui.ux3.DataSetItem", /** @lends sap.ui.ux3.DataSetItem.prototype */ { metadata : {
 

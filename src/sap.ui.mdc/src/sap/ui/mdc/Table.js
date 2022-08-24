@@ -130,7 +130,6 @@ sap.ui.define([
 	 * @experimental
 	 * @since 1.58
 	 * @alias sap.ui.mdc.Table
-	 * @ui5-metamodel This control will also be described in the UI5 (legacy) designtime metamodel
 	 * @ui5-restricted sap.fe
 	 * MDC_PUBLIC_CANDIDATE
 	 */

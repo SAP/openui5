@@ -31,7 +31,6 @@ sap.ui.define(['sap/ui/commons/library', 'sap/ui/core/CustomStyleClassSupport', 
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Page</code> control.
 	 * @alias sap.ui.commons.layout.BorderLayoutArea
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var BorderLayoutArea = Element.extend("sap.ui.commons.layout.BorderLayoutArea", /** @lends sap.ui.commons.layout.BorderLayoutArea.prototype */ { metadata : {
 

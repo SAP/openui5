@@ -46,7 +46,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.9.2
 	 * @alias sap.m.PullToRefresh
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PullToRefresh = Control.extend("sap.m.PullToRefresh", /** @lends sap.m.PullToRefresh.prototype */ { metadata : {
 
@@ -330,7 +329,6 @@ sap.ui.define([
 	 * Hides the control and resets it to the normal state. In non-touch environments the control is not hidden.
 	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	PullToRefresh.prototype.hide = function(){
 		this.setState(0);

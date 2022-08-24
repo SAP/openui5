@@ -96,7 +96,6 @@ function(
 	 * @public
 	 * @since 1.16
 	 * @alias sap.m.ListBase
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ListBase = Control.extend("sap.m.ListBase", /** @lends sap.m.ListBase.prototype */ { metadata : {
 
@@ -853,7 +852,6 @@ function(
 	 *
 	 * @type sap.m.ListItemBase
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.getSelectedItem = function() {
 		var aItems = this.getItems(true);
@@ -875,7 +873,6 @@ function(
 	 *         Sets selected status of the list item
 	 * @type this
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.setSelectedItem = function(oListItem, bSelect, bFireEvent) {
 		if (this.indexOfItem(oListItem) < 0) {
@@ -894,7 +891,6 @@ function(
 	 *
 	 * @type sap.m.ListItemBase[]
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.getSelectedItems = function() {
 		return this.getItems(true).filter(function(oItem) {
@@ -912,7 +908,6 @@ function(
 	 *         Sets selected status of the list item
 	 * @type this
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.setSelectedItemById = function(sId, bSelect) {
 		var oListItem = Core.byId(sId);
@@ -930,7 +925,6 @@ function(
 	 * @type sap.ui.model.Context[]
 	 * @public
 	 * @since 1.18.6
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.getSelectedContexts = function(bAll) {
 		var oBindingInfo = this.getBindingInfo("items"),
@@ -963,7 +957,6 @@ function(
 	 *         Since version 1.16.3. This control keeps old selections after filter or sorting. Set this parameter "true" to remove all selections.
 	 * @type this
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.removeSelections = function(bAll, bFireEvent, bDetectBinding) {
 		var aChangedListItems = [];
@@ -1000,7 +993,6 @@ function(
 	 * @type this
 	 * @public
 	 * @since 1.16
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.selectAll = function (bFireEvent) {
 		if (this.getMode() != "MultiSelect" || this.getMultiSelectMode() == MultiSelectMode.ClearAll) {
@@ -1071,7 +1063,6 @@ function(
 	 * @returns {{actual: int, total: int} | null}
 	 * @public
 	 * @since 1.16
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.getGrowingInfo = function() {
 		return this._oGrowingDelegate ? this._oGrowingDelegate.getInfo() : null;
@@ -1783,7 +1774,6 @@ function(
 	 *         This callback function is called with two parameters(swipedListItem and swipedContent) after swipe-out animation is finished.
 	 * @type this
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.swipeOut = function(callback) {
 		if (!this._isSwipeActive) {
@@ -1907,7 +1897,6 @@ function(
 	 *
 	 * @type sap.m.ListItemBase
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBase.prototype.getSwipedItem = function() {
 		return (this._isSwipeActive ? this._swipedItem : null);

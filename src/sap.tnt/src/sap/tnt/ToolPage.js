@@ -40,7 +40,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.34
 	 * @alias sap.tnt.ToolPage
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToolPage = Control.extend("sap.tnt.ToolPage", /** @lends sap.tnt.ToolPage.prototype */ {
 		metadata: {

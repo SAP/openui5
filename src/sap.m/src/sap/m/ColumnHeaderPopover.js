@@ -32,7 +32,6 @@ sap.ui.define([
 	 * @since 1.63
 	 * @private
 	 * @alias sap.m.ColumnHeaderPopover
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ColumnHeaderPopover = Control.extend("sap.m.ColumnHeaderPopover", /** @lends sap.m.ColumnHeaderPopover.prototype */
 		{

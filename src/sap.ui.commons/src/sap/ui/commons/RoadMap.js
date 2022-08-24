@@ -33,7 +33,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Wizard</code> control.
 	 * @alias sap.ui.commons.RoadMap
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RoadMap = Control.extend("sap.ui.commons.RoadMap", /** @lends sap.ui.commons.RoadMap.prototype */ { metadata : {
 

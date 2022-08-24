@@ -34,7 +34,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.integration, shell-toolkit
 	 * @since 1.65
 	 * @alias sap.ui.integration.util.DataProvider
-	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DataProvider = ManagedObject.extend("sap.ui.integration.util.DataProvider", {
 		metadata: {

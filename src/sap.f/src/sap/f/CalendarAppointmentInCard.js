@@ -25,7 +25,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.88.0
 	 * @alias sap.f.CalendarAppointmentInCard
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CalendarAppointmentInCard = CalendarAppointment.extend("sap.f.CalendarAppointmentInCard", /** @lends sap.f.CalendarAppointmentInCard.prototype */ {
 		metadata : {

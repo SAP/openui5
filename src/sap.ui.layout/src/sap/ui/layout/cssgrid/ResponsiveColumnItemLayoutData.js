@@ -24,7 +24,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.layout.cssgrid.ResponsiveColumnItemLayoutData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsiveColumnItemLayoutData = LayoutData.extend("sap.ui.layout.cssgrid.ResponsiveColumnItemLayoutData", { metadata: {
 		library: "sap.ui.layout",

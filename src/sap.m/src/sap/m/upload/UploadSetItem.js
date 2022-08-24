@@ -37,7 +37,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.63
 	 * @alias sap.m.upload.UploadSetItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel.
 	 */
 	var UploadSetItem = Element.extend("sap.m.upload.UploadSetItem", {
 		metadata: {

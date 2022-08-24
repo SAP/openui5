@@ -42,7 +42,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.table.ColumnMenu
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) design time metamodel
 	 */
 	var ColumnMenu = Menu.extend("sap.ui.table.ColumnMenu", /** @lends sap.ui.table.ColumnMenu.prototype */ {
 		metadata : {

@@ -35,7 +35,6 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Panel</code> control.
 	 * @alias sap.ui.commons.Panel
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Panel = Control.extend("sap.ui.commons.Panel", /** @lends sap.ui.commons.Panel.prototype */ { metadata : {
 

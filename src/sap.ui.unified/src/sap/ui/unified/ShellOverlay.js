@@ -45,7 +45,6 @@ sap.ui.define([
 	 * @since 1.16.3
 	 * @alias sap.ui.unified.ShellOverlay
 	 * @deprecated Since version 1.44.0.
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ShellOverlay = Control.extend("sap.ui.unified.ShellOverlay", /** @lends sap.ui.unified.ShellOverlay.prototype */ { metadata : {
 

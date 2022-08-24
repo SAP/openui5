@@ -39,7 +39,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.60.0
 	 * @alias sap.ui.mdc.field.BoolFieldHelp
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var BoolFieldHelp = FieldHelpBase.extend("sap.ui.mdc.field.BoolFieldHelp", /** @lends sap.ui.mdc.field.BoolFieldHelp.prototype */
 	{

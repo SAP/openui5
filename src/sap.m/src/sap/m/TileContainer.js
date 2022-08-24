@@ -51,7 +51,6 @@ function(
 	 * @since 1.12
 	 * @deprecated as of version 1.50, replaced by a container of your choice with {@link sap.m.GenericTile} instances
 	 * @alias sap.m.TileContainer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TileContainer = Control.extend("sap.m.TileContainer", /** @lends sap.m.TileContainer.prototype */ { metadata : {
 
@@ -774,7 +773,6 @@ function(
 	 *
 	 * @returns {int} The index of the first Tile that is visible in the current page
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TileContainer.prototype.getPageFirstTileIndex = function() {
 		return this._iCurrentTileStartIndex || 0;
@@ -787,7 +785,6 @@ function(
 	 * @param {int} iNewIndex The new Tile position in the tiles aggregation
 	 * @returns {this} this pointer for chaining
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TileContainer.prototype.moveTile = function(vTile, iNewIndex) {
 		if (!isNaN(vTile)) {
@@ -1120,7 +1117,6 @@ function(
 	 * @param {boolean} bAnimated Whether the scroll should be animated
 	 * @param {sap.m.Tile[]} [aVisibleTiles] optional list of visible tiles in order to avoid filtering them again.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TileContainer.prototype.scrollIntoView = function(vTile, bAnimated, aVisibleTiles) {
 

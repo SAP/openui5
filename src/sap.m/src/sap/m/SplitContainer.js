@@ -83,7 +83,6 @@ function(
 	 * @constructor
 	 * @public
 	 * @alias sap.m.SplitContainer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SplitContainer = Control.extend("sap.m.SplitContainer", /** @lends sap.m.SplitContainer.prototype */ { metadata : {
 
@@ -811,7 +810,6 @@ function(
 	 *         The "show", "slide" and "fade" transitions do not use any parameter.
 	 * @public
 	 * @since 1.10.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.to = function(pageId, transitionName, data, oTransitionParameters) {
 		if (this._oMasterNav.getPage(pageId)) {
@@ -852,7 +850,6 @@ function(
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
 	 * @since 1.10.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.backToPage = function(pageId, backData, oTransitionParameters) {
 		if (this._oMasterNav.getPage(pageId)) {
@@ -893,7 +890,6 @@ function(
 	 *         This optional object can carry any payload data which would have been given to the inserted previous page if the user would have done a normal forward navigation to it.
 	 * @returns {this}
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.insertPreviousPage = function(pageId, transitionName, data) {
 		if (this._oMasterNav.getPage(pageId)) {
@@ -930,7 +926,6 @@ function(
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 *         The "show", "slide" and "fade" transitions do not use any parameter.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.toMaster = function(pageId, transitionName, data, oTransitionParameters) {
 		this._oMasterNav.to(pageId, transitionName, data, oTransitionParameters);
@@ -956,7 +951,6 @@ function(
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.backMaster = function(backData, oTransitionParameters) {
 		this._oMasterNav.back(backData, oTransitionParameters);
@@ -990,7 +984,6 @@ function(
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 *         The "show", "slide" and "fade" transitions do not use any parameter.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.toDetail = function(pageId, transitionName, data, oTransitionParameters) {
 		this._oDetailNav.to(pageId, transitionName, data, oTransitionParameters);
@@ -1015,7 +1008,6 @@ function(
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.backDetail = function(backData, oTransitionParameters) {
 		this._oDetailNav.back(backData, oTransitionParameters);
@@ -1046,7 +1038,6 @@ function(
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.backToTopMaster = function(backData, oTransitionParameters) {
 		this._oMasterNav.backToTop(backData, oTransitionParameters);
@@ -1073,7 +1064,6 @@ function(
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.backToTopDetail = function(backData, oTransitionParameters) {
 		this._oDetailNav.backToTop(backData, oTransitionParameters);
@@ -1272,7 +1262,6 @@ function(
 	 * @returns {this}
 	 * @public
 	 * @since 1.11.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.addPage = function(oPage, bMaster){
 		if (bMaster) {
@@ -1288,7 +1277,6 @@ function(
 	 *
 	 * @@returns {this}
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.showMaster = function() {
 		var _curPage = this._getRealPage(this._oDetailNav.getCurrentPage());
@@ -1344,7 +1332,6 @@ function(
 	 *
 	 * @returns {this}
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.hideMaster = function() {
 		if (this._portraitPopover()) {
@@ -1402,7 +1389,6 @@ function(
 	 *
 	 * @type sap.ui.core.Control
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.getCurrentMasterPage = function() {
 		return this._oMasterNav.getCurrentPage();
@@ -1414,7 +1400,6 @@ function(
 	 *
 	 * @type sap.ui.core.Control
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.getCurrentDetailPage = function() {
 		return this._oDetailNav.getCurrentPage();
@@ -1432,7 +1417,6 @@ function(
 	 * @type sap.ui.core.Control
 	 * @public
 	 * @since 1.11.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.getCurrentPage = function(bMaster){
 		if (bMaster) {
@@ -1452,7 +1436,6 @@ function(
 	 *         States if this function returns the previous page in master area. If it's set to false, the previous page in detail area will be returned.
 	 * @type sap.ui.core.Control
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.getPreviousPage = function(bMaster) {
 		if (bMaster) {
@@ -1472,7 +1455,6 @@ function(
 	 *         The requested page
 	 * @public
 	 * @since 1.11.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.getMasterPage = function(pageId){
 		return this._oMasterNav.getPage(pageId);
@@ -1486,7 +1468,6 @@ function(
 	 * @returns {sap.ui.core.Control|null} the requested page
 	 * @public
 	 * @since 1.11.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.getDetailPage = function(pageId){
 		return this._oDetailNav.getPage(pageId);
@@ -1503,7 +1484,6 @@ function(
 	 * @returns {sap.ui.core.Control|null}
 	 * @public
 	 * @since 1.11.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.getPage = function(pageId, bMaster){
 		if (bMaster) {
@@ -1523,7 +1503,6 @@ function(
 	 * @returns {boolean}
 	 * @public
 	 * @since 1.16.5
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	SplitContainer.prototype.isMasterShown = function(){
 		if (Device.system.phone) {

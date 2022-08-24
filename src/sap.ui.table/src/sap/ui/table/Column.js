@@ -75,7 +75,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.table.Column
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Column = Element.extend("sap.ui.table.Column", /** @lends sap.ui.table.Column.prototype */ { metadata : {
 
@@ -842,7 +841,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.5.1.
 	 * Please use the function "sap.ui.Table.prototype.sort".
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Column.prototype.toggleSort = function() {
 		// by default we sort ascending / only if already is sorted ascending then we toggle
@@ -857,7 +855,6 @@ sap.ui.define([
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @deprecated Since version 1.5.1. Please use the function "sap.ui.Table.prototype.sort".
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Column.prototype.sort = function(bDescending, bAdd) {
 		var oTable = this.getParent();

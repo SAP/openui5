@@ -43,7 +43,6 @@ sap.ui.define([
 	 * @experimental Since 1.92.0 This control is experimental and its API might change significantly.
 	 * @alias sap.ui.webc.fiori.WizardStep
 	 * @implements sap.ui.webc.fiori.IWizardStep
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var WizardStep = WebComponent.extend("sap.ui.webc.fiori.WizardStep", {
 		metadata: {

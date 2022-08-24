@@ -21,7 +21,6 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/Log"], function(BaseObject, Log) 
 	 * @private
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.Segment
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var Segment = BaseObject.extend("sap.m.semantic.Segment", {

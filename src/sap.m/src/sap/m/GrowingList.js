@@ -27,7 +27,6 @@ sap.ui.define(['./List', './library', './GrowingListRenderer'],
 	 * @deprecated Since version 1.16.
 	 * Instead use "List" or "Table" control with setting "growing" property to "true"
 	 * @alias sap.m.GrowingList
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GrowingList = List.extend("sap.m.GrowingList", /** @lends sap.m.GrowingList.prototype */ { metadata : {
 

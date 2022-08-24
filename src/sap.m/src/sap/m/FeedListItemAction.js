@@ -23,7 +23,6 @@ sap.ui.define(["sap/ui/core/Element"],
 	 * @public
 	 * @alias sap.m.FeedListItemAction
 	 * @since 1.52.0
-	 * @ui5-metamodel This element will be described in the UI5 (legacy) designtime metamodel as well
 	 */
 	var FeedListItemAction = Element.extend("sap.m.FeedListItemAction", /** @lends sap.m.FeedListItemAction.prototype */ {
 		metadata: {

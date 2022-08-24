@@ -57,7 +57,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.62.0
 	 * @alias sap.m.GenericTag
-	 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 	 */
 	var GenericTag = Control.extend("sap.m.GenericTag", /** @lends sap.m.GenericTag.prototype */ {
 		metadata: {

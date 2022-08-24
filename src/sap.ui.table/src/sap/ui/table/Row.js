@@ -138,7 +138,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.table.Row
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Row = Element.extend("sap.ui.table.Row", /** @lends sap.ui.table.Row.prototype */ { metadata : {
 		library : "sap.ui.table",
@@ -238,7 +237,6 @@ sap.ui.define([
 	 *
 	 * @returns {int} index of the row (considers scroll position and fixed rows)
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Row.prototype.getIndex = function() {
 		var oTable = this.getTable();

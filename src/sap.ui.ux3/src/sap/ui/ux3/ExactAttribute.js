@@ -27,7 +27,6 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 * @public
 	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.ux3.ExactAttribute
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ExactAttribute = Element.extend("sap.ui.ux3.ExactAttribute", /** @lends sap.ui.ux3.ExactAttribute.prototype */ { metadata : {
 
@@ -125,7 +124,6 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 *         The direct child attribute
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ExactAttribute.prototype.scrollTo = function(oAttribute) {
 		if (!(oAttribute instanceof ExactAttribute)) {
@@ -290,7 +288,6 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 *
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ExactAttribute.prototype.getShowSubAttributesIndicator_Computed = function() {
 		return this.hasListeners("supplyAttributes") && this.getSupplyActive() ? this.getShowSubAttributesIndicator() : this.getAttributesInternal().length > 0;

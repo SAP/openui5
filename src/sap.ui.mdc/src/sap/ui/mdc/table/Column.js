@@ -39,7 +39,6 @@ sap.ui.define([
 	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.58
 	 * @alias sap.ui.mdc.table.Column
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Column = Control.extend("sap.ui.mdc.table.Column", {
 		metadata: {

@@ -697,7 +697,6 @@
 	 * @interface
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -736,7 +735,6 @@
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -748,7 +746,6 @@
 	 * @name sap.ui.mdc.IxState
 	 * @interface
 	 * @private
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -759,7 +756,6 @@
 	 * @since 1.74
 	 * @experimental As of version 1.74
 	 * @ui5-restricted sap.ui.mdc
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.FilterBarP13nMode = {
 		/**
@@ -782,7 +778,6 @@
 	 * @enum {string}
 	 * @private
 	 * @since 1.58
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.TableType = {
 		/**
@@ -807,7 +802,6 @@
 	 * @ui5-restricted sap.fe
 	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.62
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.TableP13nMode = {
 		/**
@@ -850,7 +844,6 @@
 	 * @ui5-restricted sap.ui.mdc
 	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.65
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.GrowingMode = {
 		/**
@@ -882,7 +875,6 @@
 	 * @ui5-restricted sap.ui.mdc
 	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.65
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.RowCountMode = {
 		/**
@@ -907,7 +899,6 @@
 	 * @since 1.64
 	 * @experimental As of version 1.64
 	 * @ui5-restricted sap.ui.mdc
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ChartToolbarActionType = {
 		/**
@@ -944,7 +935,6 @@
 	 * @since 1.75
 	 * @experimental As of version 1.75
 	 * @ui5-restricted sap.ui.mdc
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ChartP13nMode = {
 		/**
@@ -981,7 +971,6 @@
 	 * @ui5-restricted sap.ui.mdc
 	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.58
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.SelectionMode = {
 		/**
@@ -1014,7 +1003,6 @@
 	 * @ui5-restricted sap.ui.mdc
 	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.60
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.RowAction = {
 		/**
@@ -1031,7 +1019,6 @@
 	 * @enum {string}
 	 * @private
 	 * @since 1.61
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.FilterExpression = {
 		/**
@@ -1112,7 +1099,6 @@
 	 * @enum {string}
 	 * @private
 	 * @since 1.64
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ContactDetailsAddressType = {
 		work: "work",
@@ -1125,7 +1111,6 @@
 	 * @enum {string}
 	 * @private
 	 * @since 1.64
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ContactDetailsEmailType = {
 		work: "work",
@@ -1138,7 +1123,6 @@
 	 * @enum {string}
 	 * @private
 	 * @since 1.64
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.ContactDetailsPhoneType = {
 		work: "work",
@@ -1153,7 +1137,6 @@
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.MultiSelectMode = {
 		/**

@@ -109,7 +109,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @alias sap.ui.core.mvc.XMLView
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var XMLView = View.extend("sap.ui.core.mvc.XMLView", /** @lends sap.ui.core.mvc.XMLView.prototype */ {
 		metadata : {

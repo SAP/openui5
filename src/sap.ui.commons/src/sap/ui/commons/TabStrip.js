@@ -59,7 +59,6 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.TabContainer</code> control.
 	 * @alias sap.ui.commons.TabStrip
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TabStrip = Control.extend("sap.ui.commons.TabStrip", /** @lends sap.ui.commons.TabStrip.prototype */ { metadata : {
 
@@ -227,7 +226,6 @@ sap.ui.define([
 	 * @returns {sap.ui.commons.Tab} oTab
 	 *         The created tab control
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TabStrip.prototype.createTab = function(sText,oContent) {
 		var oTitle = new Title({text:sText}),
@@ -449,7 +447,6 @@ sap.ui.define([
 	 *         The index of the tab that should be closed
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TabStrip.prototype.closeTab = function(iIndex) {
 

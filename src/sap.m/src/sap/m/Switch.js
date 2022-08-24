@@ -51,7 +51,6 @@ function(
 		 * @constructor
 		 * @public
 		 * @alias sap.m.Switch
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var Switch = Control.extend("sap.m.Switch", /** @lends sap.m.Switch.prototype */ { metadata: {
 

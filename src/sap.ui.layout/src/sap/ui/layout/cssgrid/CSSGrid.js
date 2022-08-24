@@ -103,7 +103,6 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.layout.cssgrid.CSSGrid
-	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CSSGrid = Control.extend("sap.ui.layout.cssgrid.CSSGrid", {
 		metadata: {

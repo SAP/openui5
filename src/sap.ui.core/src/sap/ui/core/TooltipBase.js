@@ -32,7 +32,6 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @alias sap.ui.core.TooltipBase
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TooltipBase = Control.extend("sap.ui.core.TooltipBase", /** @lends sap.ui.core.TooltipBase.prototype */ {
 		metadata : {

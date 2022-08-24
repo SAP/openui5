@@ -35,7 +35,6 @@ sap.ui.define([
 	 * @since 1.76
 	 * @experimental
 	 * @alias sap.ui.table.plugins.V4Aggregation
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var V4Aggregation = PluginBase.extend("sap.ui.table.plugins.V4Aggregation", /** @lends sap.ui.table.plugins.V4Aggregation.prototype */ {
 		metadata: {

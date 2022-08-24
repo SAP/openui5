@@ -40,7 +40,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.form.FormLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FormLayout = Control.extend("sap.ui.layout.form.FormLayout", /** @lends sap.ui.layout.form.FormLayout.prototype */ { metadata : {
 

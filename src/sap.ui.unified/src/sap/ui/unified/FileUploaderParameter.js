@@ -25,7 +25,6 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.unified.FileUploaderParameter
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FileUploaderParameter = Element.extend("sap.ui.unified.FileUploaderParameter", /** @lends sap.ui.unified.FileUploaderParameter.prototype */ { metadata : {
 

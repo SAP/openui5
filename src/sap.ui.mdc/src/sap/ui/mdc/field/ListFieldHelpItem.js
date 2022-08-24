@@ -28,7 +28,6 @@ sap.ui.define([
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.86.0
 	 * @alias sap.ui.mdc.field.ListFieldHelpItem
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ListFieldHelpItem = ListItem.extend("sap.ui.mdc.field.ListFieldHelpItem", /** @lends sap.ui.mdc.field.ListFieldHelpItem.prototype */ { metadata : {
 

@@ -32,7 +32,6 @@ sap.ui.define([
 	 * @experimental Since 1.75
 	 * @since 1.75
 	 * @alias sap.ui.table.plugins.PluginBase
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PluginBase = Element.extend("sap.ui.table.plugins.PluginBase", /** @lends sap.ui.table.plugins.PluginBase.prototype */ {
 		metadata: {

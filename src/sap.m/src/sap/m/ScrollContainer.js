@@ -40,7 +40,6 @@ sap.ui.define([
 		 * @constructor
 		 * @public
 		 * @alias sap.m.ScrollContainer
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var ScrollContainer = Control.extend("sap.m.ScrollContainer", /** @lends sap.m.ScrollContainer.prototype */ {
 			metadata: {
@@ -148,7 +147,6 @@ sap.ui.define([
 		 *         The value <code>0</code> results in immediate scrolling without animation.
 		 * @returns {this} <code>this</code> to facilitate method chaining
 		 * @public
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		ScrollContainer.prototype.scrollTo = function (x, y, time) {
 			if (this._oScroller) {

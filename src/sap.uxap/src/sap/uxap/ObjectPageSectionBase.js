@@ -34,7 +34,6 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.uxap.ObjectPageSectionBase
 	 * @since 1.26
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectPageSectionBase = Control.extend("sap.uxap.ObjectPageSectionBase", /** @lends sap.uxap.ObjectPageSectionBase.prototype */ {
 		metadata: {
@@ -103,7 +102,6 @@ sap.ui.define([
 	 * @function
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	ObjectPageSectionBase.prototype.init = function () {

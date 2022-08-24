@@ -65,7 +65,6 @@ sap.ui.define([
 	 * @since 1.26.0
 	 * @alias sap.m.P13nDialog
 	 * @see {@link topic:a3c3c5eb54bc4cc38e6cfbd8e90c6a01 Personalization Dialog}
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.prototype */
 	{

@@ -24,7 +24,6 @@ sap.ui.define([
 	 * MDC_PUBLIC_CANDIDATE
 	 * @since 1.65
 	 * @alias sap.ui.mdc.table.GridTableType
-	 * @ui5-metamodel This element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var GridTableType = TableTypeBase.extend("sap.ui.mdc.table.GridTableType", {

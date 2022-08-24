@@ -35,7 +35,6 @@ sap.ui.define([
 		 * @since 1.9.0
 		 * @deprecated Since version 1.38. Instead, use the <code>sap.ui.core.HTML</code> control.
 		 * @alias sap.ui.commons.FormattedTextView
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var FormattedTextView = Control.extend("sap.ui.commons.FormattedTextView", /** @lends sap.ui.commons.FormattedTextView.prototype */ {
 			metadata: {
@@ -246,7 +245,6 @@ sap.ui.define([
 		 *
 		 * @param {string} sHtmlText Contains the corresponding HTML text
 		 * @param {sap.ui.commons.FormattedTextViewControl} aControls Array of controls that should be used within given HTML text
-		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 * @public
 		 */
 		FormattedTextView.prototype.setContent = function (sHtmlText, aControls) {

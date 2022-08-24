@@ -23,7 +23,6 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select', "sap/base/Log"]
 	 * @public
 	 * @since 1.30
 	 * @alias sap.m.semantic.SemanticSelect
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var SemanticSelect = SemanticControl.extend("sap.m.semantic.SemanticSelect", /** @lends sap.m.semantic.SemanticSelect.prototype */ {

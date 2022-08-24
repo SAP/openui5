@@ -23,7 +23,6 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 	 * @public
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.OpenInAction
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var OpenInAction = SemanticButton.extend("sap.m.semantic.OpenInAction", /** @lends sap.m.semantic.OpenInAction.prototype */ {

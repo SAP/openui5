@@ -41,7 +41,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.ResponsiveFlowLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsiveFlowLayout = Control.extend("sap.ui.layout.ResponsiveFlowLayout", /** @lends sap.ui.layout.ResponsiveFlowLayout.prototype */ { metadata : {
 

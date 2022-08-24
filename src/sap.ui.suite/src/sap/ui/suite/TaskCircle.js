@@ -33,7 +33,6 @@ sap.ui.define([
 	 * @experimental Since version 1.2.
 	 * The API may change. User with care.
 	 * @alias sap.ui.suite.TaskCircle
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TaskCircle = Control.extend("sap.ui.suite.TaskCircle", /** @lends sap.ui.suite.TaskCircle.prototype */ { metadata : {
 
@@ -115,7 +114,6 @@ sap.ui.define([
 	 *
 	 * @type void
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TaskCircle.prototype.focus = function() {
 		var oDomRef = this.getDomRef();

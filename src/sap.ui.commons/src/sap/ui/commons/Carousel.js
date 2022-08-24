@@ -47,7 +47,6 @@ sap.ui.define([
 	 * @since 1.8.0
 	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Carousel</code> control.
 	 * @alias sap.ui.commons.Carousel
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Carousel = Control.extend("sap.ui.commons.Carousel", /** @lends sap.ui.commons.Carousel.prototype */ { metadata : {
 
@@ -513,7 +512,6 @@ sap.ui.define([
 	/**
 	 * Shows the previous item in carousel. This can be only used after the component is rendered.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Carousel.prototype.showPrevious = function() {
 		var that = this,
@@ -547,7 +545,6 @@ sap.ui.define([
 	/**
 	 * Shows the next item in carousel. This can be only used after the component is rendered.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Carousel.prototype.showNext = function() {
 		var that = this,
@@ -581,7 +578,6 @@ sap.ui.define([
 	 * Shows the element with the specified Id. This can be only used after the component is rendered.
 	 * @param {string} sElementId Id of the element to slide to.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Carousel.prototype.showElementWithId = function(sElementId) {
 		this._showAllItems();

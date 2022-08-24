@@ -31,7 +31,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.32.0
 	 * @alias sap.m.DraftIndicator
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	var DraftIndicator = Control.extend("sap.m.DraftIndicator", /** @lends sap.m.DraftIndicator.prototype */ {

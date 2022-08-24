@@ -57,7 +57,6 @@ sap.ui.define([
 	 * @author SAP SE.
 	 * @version ${version}
 	 * @private
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	return {
 

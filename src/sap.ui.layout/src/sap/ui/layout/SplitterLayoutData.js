@@ -30,7 +30,6 @@ sap.ui.define(['sap/ui/core/LayoutData', './library'],
 	 * @experimental Since version 1.22.0.
 	 * API is not yet finished and might change completely
 	 * @alias sap.ui.layout.SplitterLayoutData
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SplitterLayoutData = LayoutData.extend("sap.ui.layout.SplitterLayoutData", /** @lends sap.ui.layout.SplitterLayoutData.prototype */ { metadata : {
 

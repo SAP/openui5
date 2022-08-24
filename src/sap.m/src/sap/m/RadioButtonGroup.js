@@ -63,7 +63,6 @@ sap.ui.define([
 			 * @public
 			 * @since 1.25.0
 			 * @alias sap.m.RadioButtonGroup
-			 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 			 */
 			var RadioButtonGroup = Control.extend("sap.m.RadioButtonGroup", /** @lends sap.m.RadioButtonGroup.prototype */ { metadata : {
 
