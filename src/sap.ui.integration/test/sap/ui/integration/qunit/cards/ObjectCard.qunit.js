@@ -333,7 +333,7 @@ sap.ui.define([
 								"path": "team",
 								"template": {
 									"icon": {
-										"text": "{/name}"
+										"initials": "{/name}"
 									}
 								}
 							}
@@ -1182,6 +1182,42 @@ sap.ui.define([
 
 			// Assert
 			assert.strictEqual(oAvatar.getBackgroundColor(), sExpected, "Background should have default value when there are initials.");
+			assert.strictEqual(oAvatar.getInitials(), "AC", "Initials should be correctly set.");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card.icon"
+			},
+			"sap.card": {
+				"type": "Object",
+				"content": {
+					"groups": [{
+						"title": "Company Details",
+						"items": [{
+							"icon": {
+								"initials": "AC"
+							}
+						}]
+					}]
+				}
+			}
+		});
+	});
+
+	QUnit.test("Icon initials set with deprecated 'text' property", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oContent = this.oCard.getAggregation("_content"),
+				oAvatar = oContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
+
+			// Assert
+			assert.strictEqual(oAvatar.getInitials(), "AC", "Initials should be correctly set.");
 
 			done();
 		}.bind(this));
@@ -1351,7 +1387,7 @@ sap.ui.define([
 							"template": {
 								"icon": {
 									"src": "{/iconSrc}",
-									"text": "{/name}"
+									"initials": "{/name}"
 								}
 							}
 						}]
@@ -1396,6 +1432,49 @@ sap.ui.define([
 							"template": {
 								"icon": {
 									"src": "{/iconSrc}",
+									"initials": "{/name}"
+								}
+							}
+						}]
+					}]
+				}
+			}
+		});
+	});
+
+	QUnit.test("Initials property of item template for avatars is correctly bound with deprecated 'text' property", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
+				oAvatarGroup = oGroup.getItems()[1],
+				oItemTemplate = oAvatarGroup.getBindingInfo("items").template;
+
+			// Assert
+			assert.strictEqual(oItemTemplate.getBindingPath("initials"), "/name", "'initials' property should be correctly bound");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card.avatarGroup"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"json": {}
+				},
+				"content": {
+					"groups": [{
+						"items": [{
+							"label": "Team",
+							"type": "IconGroup",
+							"path": "team",
+							"template": {
+								"icon": {
 									"text": "{/name}"
 								}
 							}
@@ -1786,7 +1865,7 @@ sap.ui.define([
 					"template": {
 						"icon": {
 							"src": "{/iconSrc}",
-							"text": "{/name}"
+							"initials": "{/name}"
 						}
 					}
 				}]

@@ -1,71 +1,71 @@
 {
-  "_version": "1.17.0",
-  "sap.app": {
-	"id": "card.explorer.format.unit",
-	"type": "card",
-	"title": "Sample for Formatters for Initials",
-	"subTitle": "Sample for Formatters for Initials",
-	"applicationVersion": {
-	  "version": "1.0.0"
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "card.explorer.format.initials",
+		"type": "card",
+		"title": "Sample for Formatters for Initials",
+		"subTitle": "Sample for Formatters for Initials",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Unit",
+				"Formatter",
+				"Card",
+				"Sample"
+			]
+		}
 	},
-	"shortTitle": "A short title for this Card",
-	"info": "Additional information about this Card",
-	"description": "A long description for this Card",
-	"tags": {
-	  "keywords": [
-		"Unit",
-		"Formatter",
-		"Card",
-		"Sample"
-	  ]
-	}
-  },
-  "sap.card": {
-	"type": "Table",
-	"header": {
-	  "title": "Employees Info",
-	  "subTitle": "Birthdates of Employees"
-	},
-	"content": {
-	  "data": {
-		"json": [
-		  {
-			"Name": "Donna Moore",
-			"Birthdate": "1986-08-11"
-		  },
-		  {
-			"Name": "John Doe Miller",
-			"Birthdate": "1984-05-13"
-		  },
-		  {
-			"Name": "Alain Chevalier",
-			"Birthdate": "1993-02-01"
-		  },
-		  {
-			"Name": "Elena Vasileva Petrova",
-			"Birthdate": "1976-09-19"
-		  }
-		]
-	  },
-	  "row": {
-		"columns": [
-		  {
-			"title": "Avatar",
-			"icon": {
-			  "text": "{= format.initials(${Name})}",
-			  "shape": "Circle"
+	"sap.card": {
+		"type": "Table",
+		"header": {
+			"title": "Employees Info",
+			"subTitle": "Birthdates of Employees"
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Donna Moore",
+						"Birthdate": "1986-08-11"
+					},
+					{
+						"Name": "John Doe Miller",
+						"Birthdate": "1984-05-13"
+					},
+					{
+						"Name": "Alain Chevalier",
+						"Birthdate": "1993-02-01"
+					},
+					{
+						"Name": "Elena Vasileva Petrova",
+						"Birthdate": "1976-09-19"
+					}
+				]
+			},
+			"row": {
+				"columns": [
+					{
+						"title": "Avatar",
+						"icon": {
+							"initials": "{= format.initials(${Name})}",
+							"shape": "Circle"
+						}
+					},
+					{
+						"title": "Name",
+						"value": "{Name}"
+					},
+					{
+						"title": "Birthdate",
+						"value": "{Birthdate}"
+					}
+				]
 			}
-		  },
-		  {
-			"title": "Name",
-			"value": "{Name}"
-		  },
-		  {
-			"title": "Birthdate",
-			"value": "{Birthdate}"
-		  }
-		]
-	  }
+		}
 	}
-  }
 }
