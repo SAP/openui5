@@ -3,6 +3,11 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "f7268aef73f91f7b5ff4bad48251420c62898860",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageSection: Introduced new heading aggregation"
+      },
+      {
         "id": "2987b55203bd1ecd62b4368045b48118113c287e",
         "type": "FIX",
         "text": " sap.ui.core.ScrollEnablement: Scroll-end callback issue corrected",

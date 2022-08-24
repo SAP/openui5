@@ -3,6 +3,32 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "44d3379b7da0a4e7284da4b8ec378726c630b992",
+        "type": "FIX",
+        "text": " Integration cards: Binding exception is handled correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280156190"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280156722"
+          }
+        ]
+      },
+      {
+        "id": "ec346f6d1ee0700b70da4c9e70178f23e3897580",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Filters error message is now localized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280158254"
+          }
+        ]
+      },
+      {
         "id": "4216c03144b27475e601a4bd2a1ffb2bac45ff9c",
         "type": "FEATURE",
         "text": " Integration card: Timeline card now has loading placeholder"
