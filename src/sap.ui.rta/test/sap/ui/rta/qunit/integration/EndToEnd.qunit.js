@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/LabelEnablement"
 ], function (
 	RuntimeAuthoring,
 	OverlayRegistry,
@@ -17,7 +18,8 @@ sap.ui.define([
 	KeyCodes,
 	FlexTestAPI,
 	sinon,
-	oCore
+	oCore,
+	LabelEnablement
 ) {
 	"use strict";
 
@@ -234,12 +236,13 @@ sap.ui.define([
 						var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
 						var oGroupElement = oGroupElements[iIndex];
 						var oSmartField = oGroupElement && oGroupElement.getElements()[0];
-						var bSmartFieldIsRendered = false;
-						if (oSmartField && oSmartField.getFirstInnerControl()) {
-							bSmartFieldIsRendered = true;
+						var oSmartFieldInnerControl = oSmartField && oSmartField.getFirstInnerControl();
+						var bLabelIsInitialized = false;
+						if (oSmartFieldInnerControl && LabelEnablement.getReferencingLabels(oSmartFieldInnerControl)[0] !== undefined) {
+							bLabelIsInitialized = true;
 						}
 
-						if (bSmartFieldIsRendered) {
+						if (bLabelIsInitialized) {
 							assert.equal(oGroupElement.getLabelText(), sFieldToAddText, "the added element is at the correct position");
 							assert.ok(oGroupElement.getVisible(), "the new field is visible");
 							var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
