@@ -35,11 +35,6 @@
         <raw-module name="sap/ui/documentation/sdk/thirdparty/highlight.js/highlight.js" requiresTopLevelScope="false" />
       </module-infos>
       <all-in-one>
-        <!-- ===========================================================================
-             !! ATTENTION !!
-             The following excludes must be kept in sync with those configured for the
-             'preload-and-merge' plugin execution in the pom.xml of the wrapper library.
-             =========================================================================== -->
         <exclude name="sap/ui/documentation/sdk/thirdparty/" />
       </all-in-one>
     </packaging>

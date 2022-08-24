@@ -26,11 +26,6 @@
 		<!-- excludes for the default preload files -->
 		<packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
 			<all-in-one>
-				<!-- ===========================================================================
-				     !! ATTENTION !!
-				     The following excludes must be kept in sync with those configured for the
-				     'preload-and-merge' plugin execution in the pom.xml of the wrapper library.
-				     =========================================================================== -->
 				<exclude name="sap/ui/codeeditor/js/" />
 			</all-in-one>
 		</packaging>
