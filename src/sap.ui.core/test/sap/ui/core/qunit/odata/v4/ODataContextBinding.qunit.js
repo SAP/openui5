@@ -2995,8 +2995,7 @@ sap.ui.define([
 				if (bSuccess) {
 					that.mock(oContext).expects("destroy").withExactArgs();
 				} else {
-					oBindingMock.expects("_fireChange")
-						.withExactArgs({reason : ChangeReason.Insert});
+					oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Add});
 					throw "~Error~";
 				}
 			}));
@@ -3072,7 +3071,7 @@ sap.ui.define([
 					that.mock(oElementContext).expects("destroy").withExactArgs();
 				} else {
 					oBindingMock.expects("_fireChange").exactly(("newContext" in oFixture) ? 0 : 1)
-						.withExactArgs({reason : ChangeReason.Insert});
+						.withExactArgs({reason : ChangeReason.Add});
 					throw "~Error~";
 				}
 			}));
@@ -3135,7 +3134,7 @@ sap.ui.define([
 						}
 					} else {
 						oBindingMock.expects("_fireChange")
-							.withExactArgs({reason : ChangeReason.Insert})
+							.withExactArgs({reason : ChangeReason.Add})
 							.callsFake(function () {
 								assert.strictEqual(oBinding.oElementContext, oElementContext);
 								if (oReturnValueContext) {

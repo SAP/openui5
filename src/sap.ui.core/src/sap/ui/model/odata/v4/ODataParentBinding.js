@@ -607,10 +607,6 @@ sap.ui.define([
 	 *   An entity with the ETag of the binding for which the deletion was requested. This is
 	 *   provided if the deletion is delegated from a context binding with empty path to a list
 	 *   binding. W/o a lock, this is ignored.
-	 * @param {boolean} [bDoNotRequestCount]
-	 *   Whether not to request the new count from the server; useful in case of
-	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
-	 *   unchanged; only relevant for the list binding
 	 * @param {function} [fnCallback]
 	 *  A function which is called immediately when an entity has been deleted from the cache, or
 	 *   when it was re-inserted due to an error; only used in the list binding; the index of the
@@ -625,10 +621,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.deleteFromCache = function (oGroupLock, sEditUrl, sPath,
-			oETagEntity, bDoNotRequestCount, fnCallback) {
+			oETagEntity, fnCallback) {
 		return this.withCache(function (oCache, sCachePath) {
-			return oCache._delete(oGroupLock, sEditUrl, sCachePath, oETagEntity, bDoNotRequestCount,
-				fnCallback);
+			return oCache._delete(oGroupLock, sEditUrl, sCachePath, oETagEntity, fnCallback);
 		}, sPath, /*bSync*/true);
 	};
 

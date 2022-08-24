@@ -324,8 +324,6 @@ sap.ui.define([
 	 *     <li> a <code>null</code> group ID is used with a context which is not
 	 *       {@link #isKeepAlive kept alive},
 	 *     <li> the context is already being deleted,
-	 *     <li> the resulting group ID has {@link sap.ui.model.odata.v4.SubmitMode.API}, and the
-	 *       context is {@link #isKeepAlive kept alive}, but not in the current collection,
 	 *     <li> (only before 1.105) the resulting group ID has
 	 *       {@link sap.ui.model.odata.v4.SubmitMode.API}
 	 *   </ul>
@@ -380,7 +378,7 @@ sap.ui.define([
 			if (oGroupLock) {
 				oGroupLock.unlock(true);
 			}
-			oModel.reportError("Failed to delete " + that, sClassName, oError);
+			oModel.reportError("Failed to delete " + that.getPath(), sClassName, oError);
 			that.bDeleted = false;
 			that.checkUpdate();
 			throw oError;

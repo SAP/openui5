@@ -852,7 +852,7 @@ sap.ui.define([
 		 *    context is still alive and has its data.
 		 *
 		 * @param {object} assert The QUnit assert object
-		 * @param {boolean} bDropFromCollection If <code>true</code> the context is not longer in
+		 * @param {boolean} bDropFromCollection If <code>true</code> the context is no longer in
 		 *   the collection
 		 * @param {function} [fnOnBeforeDestroy]
 		 *  Call back function that is executed once the kept-alive context gets destroyed.
@@ -1815,7 +1815,15 @@ sap.ui.define([
 		 *
 		 * @param {string|object} vRequest
 		 *   The request with the properties "method", "url" and "headers". A string is interpreted
-		 *   as URL with method "GET". Spaces inside the URL are percent-encoded automatically.
+		 *   as URL with method "GET" and no headers. Spaces inside the URL are percent-encoded
+		 *   automatically. Additionally the following properties may be given for requests within a
+		 *   $batch:
+		 *   <ul>
+		 *      <li> groupId: the group ID by which the $batch was sent
+		 *      <li> batchNo: the number of the $batch within the test (starting with 1)
+		 *      <li> changeSetNo: The number of the change set within $batch (starting with 1)
+		 *      <li> $ContentID: The content ID of the request within the change set
+		 *   </ul>
 		 * @param {any|Error|Promise|function} [vResponse]
 		 *   The response message to be returned from the requestor or a promise on it or a function
 		 *   (invoked "just in time" when the request is actually sent) returning the response
@@ -17232,6 +17240,7 @@ sap.ui.define([
 			assert.ok(oContext.isDeleted());
 			assert.ok(oContext.hasPendingChanges());
 			assert.ok(oBinding.hasPendingChanges());
+			assert.strictEqual(oBinding.getBoundContext(), null);
 			assert.ok(oModel.hasPendingChanges());
 
 			return that.waitForChanges(assert);
@@ -17239,7 +17248,7 @@ sap.ui.define([
 			if (bReset) {
 				that.expectCanceledError("Failed to update path /SalesOrderList('1')/Note",
 					"Request canceled: PATCH SalesOrderList('1'); group: update");
-				that.expectCanceledError("Failed to delete /SalesOrderList('1');deleted",
+				that.expectCanceledError("Failed to delete /SalesOrderList('1')",
 					"Request canceled: DELETE SalesOrderList('1'); group: update");
 				that.expectChange("id", "1")
 					.expectChange("note", "Note")
@@ -17334,7 +17343,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectCanceledError("Failed to delete /SalesOrderList('1');deleted",
+			that.expectCanceledError("Failed to delete /SalesOrderList('1')",
 				"Request canceled: DELETE SalesOrderList('1'); group: update");
 
 			oModel.resetChanges();
@@ -17509,9 +17518,9 @@ sap.ui.define([
 			} else {
 				that.expectCanceledError("Failed to update path /SalesOrderList('2')/Note",
 					"Request canceled: PATCH SalesOrderList('2'); group: update");
-				that.expectCanceledError("Failed to delete /SalesOrderList('4')[2;deleted]",
+				that.expectCanceledError("Failed to delete /SalesOrderList('4')",
 					"Request canceled: DELETE SalesOrderList('4'); group: update");
-				that.expectCanceledError("Failed to delete /SalesOrderList('2')[1;deleted]",
+				that.expectCanceledError("Failed to delete /SalesOrderList('2')",
 					"Request canceled: DELETE SalesOrderList('2'); group: update");
 				that.expectChange("listId", [, "2", "4"])
 					.expectChange("count", "18")
@@ -17627,22 +17636,22 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getLength(), 2);
 
 			if (oFixture.reverse) {
-				that.expectCanceledError("Failed to delete /" + sEntityPath1 + "[1;deleted]",
+				that.expectCanceledError("Failed to delete /" + sEntityPath1,
 					"Request canceled: DELETE " + sEntityPath1 + "; group: update");
-				that.expectCanceledError("Failed to delete /" + sEntityPath2 + "[2;deleted]",
+				that.expectCanceledError("Failed to delete /" + sEntityPath2,
 					"Request canceled: DELETE " + sEntityPath2 + "; group: update");
 			} else if (oFixture.resetViaBinding || oFixture.resetViaModel) {
-				that.expectCanceledError("Failed to delete /" + sEntityPath2 + "[2;deleted]",
+				that.expectCanceledError("Failed to delete /" + sEntityPath2,
 					"Request canceled: DELETE " + sEntityPath2 + "; group: update");
-				that.expectCanceledError("Failed to delete /" + sEntityPath1 + "[1;deleted]",
+				that.expectCanceledError("Failed to delete /" + sEntityPath1,
 					"Request canceled: DELETE " + sEntityPath1 + "; group: update");
 			} else {
 				if (oFixture.failure) {
 					that.oLogMock.expects("error")
-						.withExactArgs("Failed to delete /" + sEntityPath1 + "[1;deleted]",
+						.withExactArgs("Failed to delete /" + sEntityPath1,
 							sinon.match("Request intentionally failed"), sContext);
 					that.oLogMock.expects("error")
-						.withExactArgs("Failed to delete /" + sEntityPath2 + "[2;deleted]",
+						.withExactArgs("Failed to delete /" + sEntityPath2,
 							sinon.match("Request intentionally failed"), sContext);
 					that.expectMessages([{
 							code : "CODE",
@@ -17768,7 +17777,7 @@ sap.ui.define([
 			assertIDs(["1", "2", "3", "4", "5", "6"]);
 
 			that.expectChange("id", ["new"])
-				.expectCanceledError("Failed to delete /SalesOrderList('new')[-1;deleted]",
+				.expectCanceledError("Failed to delete /SalesOrderList('new')",
 				"Request canceled: DELETE SalesOrderList('new'); group: update");
 
 			oModel.resetChanges();
@@ -17939,7 +17948,7 @@ sap.ui.define([
 			that.waitForChanges(assert, "deferred delete");
 		}).then(function () {
 			that.expectCanceledError(
-				"Failed to delete /Artists(ArtistID='new',IsActiveEntity=true)[-1;deleted]",
+				"Failed to delete /Artists(ArtistID='new',IsActiveEntity=true)",
 				"Request canceled: DELETE Artists(ArtistID='new',IsActiveEntity=true);"
 				+ " group: update"
 			);
@@ -17959,6 +17968,187 @@ sap.ui.define([
 				"/Artists(ArtistID='new',IsActiveEntity=true)"
 			], "correct order");
 			assert.strictEqual(oBinding.getLength(), 2, "correct length");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Deferred deletion of a row context (oRowContext) and a hidden kept-alive context
+	// (oKeptContext1) in different groups. The count must be decreased immediately; for
+	// oKeptContext1 a count request is needed. Then the binding reads more contexts. The context
+	// with highest index is also kept alive (oKeptContext2). Then the deletion of oKeptContext1
+	// fails, and it must be reinserted. The binding must refresh the data to find the context's
+	// correct position and must not disturb the pending delete of oRowContext. oKeptContext2
+	// becomes invisible by this, but must not be lost. In the end the binding is reset and
+	// oRowContext must be re-inserted w/o a request.
+	// JIRA: CPOUI5ODATAV4-1638
+	QUnit.test("CPOUI5ODATAV4-1638: ODLB: deferred delete w/ isKeepAlive fails", function (assert) {
+		var oBinding,
+			oKeptContext1,
+			oKeptContext2,
+			oKeptPromise,
+			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			oRowContext,
+			oRowPromise,
+			oTable,
+			sView = '\
+<Table id="listReport" growing="true" growingThreshold="2" items="{path : \'/SalesOrderList\',\
+		parameters : {$count : true, $filter : \'LifecycleStatus eq \\\'N\\\'\'}}">\
+	<Text text="{SalesOrderID}"/>\
+	<Text text="{GrossAmount}"/>\
+</Table>',
+			that = this;
+
+		function assertIDs(aExpectedIDs) {
+			assert.deepEqual(oBinding.getCurrentContexts().map(function (oContext) {
+				return oContext.getValue("SalesOrderID");
+			}), aExpectedIDs, "IDs " + aExpectedIDs);
+		}
+
+		this.expectRequest("SalesOrderList?$count=true&$filter=LifecycleStatus eq 'N'"
+				+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2", {
+				"@odata.count" : "8",
+				value : [
+					{GrossAmount : "3", SalesOrderID : "1", "@odata.etag" : "etag1"},
+					{GrossAmount : "1", SalesOrderID : "2"}
+				]
+			});
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("listReport");
+			oBinding = oTable.getBinding("items");
+			assertIDs(["1", "2"]);
+
+			that.expectRequest("SalesOrderList?$count=true&$filter=LifecycleStatus eq 'N'"
+					+ "&$select=GrossAmount,SalesOrderID&$orderby=GrossAmount&$skip=0&$top=2", {
+					"@odata.count" : "8",
+					value : [
+						{GrossAmount : "1", SalesOrderID : "2"},
+						{GrossAmount : "2", SalesOrderID : "3"}
+					]
+				});
+
+			oKeptContext1 = oBinding.getCurrentContexts()[0];
+			oKeptContext1.setKeepAlive(true);
+			oBinding.sort(new Sorter("GrossAmount"));
+
+			return that.waitForChanges(assert, "setKeepAlive and sort");
+		}).then(function () {
+			assertIDs(["2", "3"]);
+			that.checkMoreButton(assert, "[2/8]");
+
+			that.expectRequest("SalesOrderList?$count=true"
+					+ "&$filter=(LifecycleStatus eq 'N') and not (SalesOrderID eq '2')"
+					+ "&$select=GrossAmount,SalesOrderID&$orderby=GrossAmount&$skip=1&$top=1", {
+					"@odata.count" : "7",
+					value : [
+						{GrossAmount : "4", SalesOrderID : "4"}
+					]
+				});
+
+			oRowContext = oBinding.getCurrentContexts()[0];
+			oRowPromise = oRowContext.delete("doNotSubmit");
+
+			return that.waitForChanges(assert, "delete and fill gap");
+		}).then(function () {
+			assertIDs(["3", "4"]);
+			that.checkMoreButton(assert, "[2/7]");
+
+			that.expectRequest("SalesOrderList?$count=true&$filter=(LifecycleStatus eq 'N')"
+					+ " and not (SalesOrderID eq '1' or SalesOrderID eq '2')&$top=0",
+					{"@odata.count" : "6", value : []}
+				);
+
+			oKeptPromise = oKeptContext1.delete("update");
+
+			return that.waitForChanges(assert, "delete kept-alive and request count");
+		}).then(function () {
+			assertIDs(["3", "4"]);
+			that.checkMoreButton(assert, "[2/6]");
+
+			that.expectRequest("SalesOrderList?$count=true"
+					+ "&$filter=(LifecycleStatus eq 'N') and"
+					+ " not (SalesOrderID eq '1' or SalesOrderID eq '2')"
+					+ "&$select=GrossAmount,SalesOrderID&$orderby=GrossAmount&$skip=2&$top=2", {
+					"@odata.count" : "6",
+					value : [
+						{GrossAmount : "5", SalesOrderID : "5"},
+						{GrossAmount : "6", SalesOrderID : "6"}
+					]
+				});
+
+			that.oView.byId("listReport").requestItems();
+
+			return that.waitForChanges(assert, "more");
+		}).then(function () {
+			assertIDs(["3", "4", "5", "6"]);
+			that.checkMoreButton(assert, "[4/6]");
+
+			that.oLogMock.expects("error").withArgs("Failed to delete /SalesOrderList('1')");
+			that.expectRequest({
+					batchNo : 6,
+					method : "DELETE",
+					headers : {"If-Match" : "etag1"},
+					url : "SalesOrderList('1')"
+				}, createErrorInsideBatch())
+				.expectRequest({
+					batchNo : 7, // from the binding's reset due to the failed DELETE
+					method : "GET",
+					url : "SalesOrderList?$count=true"
+						+ "&$filter=(LifecycleStatus eq 'N') and not (SalesOrderID eq '2')"
+						+ "&$select=GrossAmount,SalesOrderID&$orderby=GrossAmount&$skip=0&$top=4"
+				}, {
+					"@odata.count" : "7",
+					value : [
+						{GrossAmount : "2", SalesOrderID : "3"},
+						{GrossAmount : "3", SalesOrderID : "1"},
+						{GrossAmount : "4", SalesOrderID : "4"},
+						{GrossAmount : "5", SalesOrderID : "5"}
+					]
+				})
+				.expectMessages([{
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
+					technical : true,
+					type : "Error"
+				}]);
+
+			oKeptContext2 = oBinding.getCurrentContexts()[3];
+			oKeptContext2.setKeepAlive(true);
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				oKeptPromise.then(mustFail(assert), function (oError) {
+					assert.strictEqual(oError.message, "Request intentionally failed");
+				}),
+				that.waitForChanges(assert, "submit")
+			]);
+		}).then(function () {
+			assertIDs(["3", "1", "4", "5"]);
+			that.checkMoreButton(assert, "[4/7]");
+			assert.deepEqual(oKeptContext1.getObject(),
+				{GrossAmount : "3", SalesOrderID : "1"});
+			assert.deepEqual(oKeptContext2.getObject(),
+				{GrossAmount : "6", SalesOrderID : "6"});
+
+			that.expectCanceledError("Failed to delete /SalesOrderList('2')",
+				"Request canceled: DELETE SalesOrderList('2'); group: doNotSubmit");
+
+			oBinding.resetChanges();
+
+			return Promise.all([
+				checkCanceled(assert, oRowPromise),
+				that.waitForChanges(assert, "resetChanges")
+			]);
+		}).then(function () {
+			assertIDs(["2", "3", "1", "4"]);
+			that.checkMoreButton(assert, "[4/8]");
+			assert.deepEqual(oRowContext.getObject(),
+				{GrossAmount : "1", SalesOrderID : "2"});
+			assert.deepEqual(oKeptContext1.getObject(),
+				{GrossAmount : "3", SalesOrderID : "1"});
+			assert.deepEqual(oKeptContext2.getObject(),
+				{GrossAmount : "6", SalesOrderID : "6"});
 		});
 	});
 
@@ -18021,8 +18211,7 @@ sap.ui.define([
 		}).then(function () {
 			var sMessage = bDirect ? "Communication error: 500 " : "Request intentionally failed";
 
-			that.oLogMock.expects("error")
-				.withArgs("Failed to delete /SalesOrderList('2')[1;deleted]");
+			that.oLogMock.expects("error").withArgs("Failed to delete /SalesOrderList('2')");
 			that.expectMessages([{
 					code : bDirect ? undefined : "CODE",
 					message : sMessage,
@@ -26071,8 +26260,8 @@ sap.ui.define([
 				});
 
 			that.oLogMock.expects("error")
-				.withExactArgs("Failed to delete /EMPLOYEES('1')[0;deleted]",
-					sinon.match(oError.message), sContext);
+				.withExactArgs("Failed to delete /EMPLOYEES('1')", sinon.match(oError.message),
+					sContext);
 			that.expectChange("name", ["Frederic Fall"])
 				.expectChange("status", ["Available"])
 				.expectRequest({method : "DELETE", url : "EMPLOYEES('1')"}, oError)
@@ -29418,7 +29607,7 @@ sap.ui.define([
 					});
 
 				that.oLogMock.expects("error").withExactArgs("Failed to delete"
-						+ " /SalesOrderList('0500000000')/SO_2_BP/BP_2_PRODUCT('1')[0;deleted]",
+						+ " /SalesOrderList('0500000000')/SO_2_BP/BP_2_PRODUCT('1')",
 						sinon.match(oError.message), sContext);
 				that.expectRequest({
 						method : "DELETE",
@@ -37207,24 +37396,26 @@ sap.ui.define([
 	//    implies that the new count must be requested after deleting the context. This request can
 	//    result in a changed or unchanged count.
 	// 4. Create and save a new sales order, add an inactive context.
-	// 5. Delete the kept-alive context. Check that the context is deleted and a request for $count
-	//    is sent (filtering out the new sales order) if the context was not in the list anymore.
+	// 5. Delete the kept-alive context (immediately or deferredly). Check that the context is
+	//    deleted (if immediately) and a request for $count is sent (filtering out the new and the
+	//    deleted sales order) if the context was not in the list anymore.
+	// 6. Submit and observe the delete request if necessary
+	// 7. Check that the context has been destroyed
 	// JIRA: CPOUI5ODATAV4-365
 	// JIRA: CPOUI5ODATAV4-473
+	// JIRA: CPOUI5ODATAV4-1638
 [
-	{bCountHasChanged : true, bFilter : false},
-	{bCountHasChanged : false, bFilter : true},
-	{bCountHasChanged : true, bFilter : true}
+	{bCountHasChanged : true, bDeferred : false, bFilter : false},
+	{bCountHasChanged : false, bDeferred : false, bFilter : true},
+	{bCountHasChanged : true, bDeferred : false, bFilter : true},
+	{bCountHasChanged : false, bDeferred : true, bFilter : true},
+	{bCountHasChanged : true, bDeferred : true, bFilter : true}
 ].forEach(function (oFixture) {
-	var sTitle = "CPOUI5ODATAV4-365: Delete kept-alive context, bFilter = "
-		+ oFixture.bFilter;
-
-	if (oFixture.bFilter) {
-		sTitle += " , bCountHasChanged = " + oFixture.bCountHasChanged;
-	}
+	var sTitle = "CPOUI5ODATAV4-365: Delete kept-alive context " + JSON.stringify(oFixture);
 
 	QUnit.test(sTitle, function (assert) {
-		var oKeptContext,
+		var oDeletePromise,
+			oKeptContext,
 			oListBinding,
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			fnOnBeforeDestroy = sinon.spy(),
@@ -37298,14 +37489,18 @@ sap.ui.define([
 
 			that.checkMoreButton(assert, oFixture.bFilter ? "[3/44]" : "[3/104]");
 
-			that.expectRequest({
-					batchNo : iBatch,
-					method : "DELETE",
-					url : "SalesOrderList('1')"
-				});
+			if (!oFixture.bDeferred) {
+				that.expectRequest({
+						groupId : "$auto.foo",
+						batchNo : iBatch,
+						method : "DELETE",
+						url : "SalesOrderList('1')"
+					});
+			}
 
 			if (oFixture.bFilter) {
 				that.expectRequest({
+						groupId : oFixture.bDeferred ? "$auto" : "$auto.foo",
 						batchNo : iBatch,
 						url : "SalesOrderList?$count=true"
 							+ "&$filter=(GrossAmount gt 1000) and not (SalesOrderID eq '1'"
@@ -37323,9 +37518,11 @@ sap.ui.define([
 				that.expectChange("count", oFixture.bFilter ? "42" : "102");
 			}
 
+			// code under test
+			oDeletePromise = oKeptContext.delete(oFixture.bDeferred ? "update" : "$auto.foo");
+
 			return Promise.all([
-				// code under test
-				oKeptContext.delete(),
+				oFixture.bDeferred || oDeletePromise,
 				that.waitForChanges(assert, "(5)")
 			]);
 		}).then(function () {
@@ -37335,7 +37532,22 @@ sap.ui.define([
 				that.checkMoreButton(assert, "[3/103]");
 			}
 
-			return that.waitForChanges(assert, "await rendering");
+			return that.waitForChanges(assert, "await rendering so that the context is destroyed");
+		}).then(function () {
+			if (!oFixture.bDeferred) {
+				return;
+			}
+
+			that.expectRequest({
+				method : "DELETE",
+				url : "SalesOrderList('1')"
+			});
+
+			return Promise.all([
+				oDeletePromise,
+				oModel.submitBatch("update"),
+				that.waitForChanges(assert, "submit")
+			]);
 		}).then(function () {
 			sinon.assert.called(fnOnBeforeDestroy);
 		});

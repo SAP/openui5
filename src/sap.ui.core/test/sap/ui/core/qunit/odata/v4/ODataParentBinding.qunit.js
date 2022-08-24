@@ -2049,13 +2049,13 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			oBinding.deleteFromCache("~oGroupLock~", "EMPLOYEES('1')", "~sPath~",
-				"~oETagEntity~", "~bDoNotRequestCount~", "~fnCallback~"),
+			oBinding.deleteFromCache("~oGroupLock~", "EMPLOYEES('1')", "~sPath~", "~oETagEntity~",
+				"~fnCallback~"),
 			"~oResult~");
 
 		this.mock(oCache).expects("_delete")
 			.withExactArgs("~oGroupLock~", "EMPLOYEES('1')", "~sCachePath~", "~oETagEntity~",
-				"~bDoNotRequestCount~", "~fnCallback~")
+				"~fnCallback~")
 			.returns("~oDeleteResult~");
 
 		assert.strictEqual(

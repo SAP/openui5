@@ -267,7 +267,7 @@ sap.ui.define([
 				if (oReturnValueContext) {
 					oEmptyPathParentBinding.oReturnValueContext = oReturnValueContext;
 				}
-				that._fireChange({reason : ChangeReason.Insert});
+				that._fireChange({reason : ChangeReason.Add});
 			}
 			throw oError;
 		});
