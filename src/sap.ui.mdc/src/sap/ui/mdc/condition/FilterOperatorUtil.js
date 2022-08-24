@@ -12,6 +12,7 @@ sap.ui.define([
 	'./RangeOperator',
 	'sap/ui/mdc/enum/BaseType',
 	'sap/ui/mdc/enum/ConditionValidated',
+	'sap/ui/mdc/util/loadModules',
 	'sap/ui/core/date/UniversalDate',
 	'sap/ui/core/date/UniversalDateUtils',
 	'sap/ui/core/format/DateFormat',
@@ -30,6 +31,7 @@ function(
 		RangeOperator,
 		BaseType,
 		ConditionValidated,
+		loadModules,
 		UniversalDate,
 		UniversalDateUtils,
 		DateFormat,
@@ -43,10 +45,6 @@ function(
 		sap.ui.getCore().attachLocalizationChanged(function() {
 			oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		});
-
-		// shared ListFieldHelp for month operators
-		var oMonthFieldHelp;
-
 
 
 		/**
@@ -806,16 +804,16 @@ function(
 
 							return null;
 						},
-						createControl: function(oType, sPath, iIndex, sId, aClass)  {
+						createControl: function(oType, sPath, iIndex, sId)  {
 							var Field = sap.ui.require("sap/ui/mdc/Field");
-							if (Field && _getMonthFieldHelp.call(this)) {
+							var sValueHelp = _getMonthFieldHelp.call(this);
+							if (Field && sValueHelp) {
 
 								var oField = new Field(sId, {
 									value: { path: sPath, type: oType, mode: 'TwoWay', targetType: 'raw' },
-									additionalValue: { path: sPath, formatter: function(iValue) { return oMonthFieldHelp.getTextForKey(iValue); }, mode: 'OneWay' },
 									display: 'Description',
 									width: "100%",
-									fieldHelp: "LFHForSpecificMonth"
+									fieldHelp: sValueHelp
 								});
 
 								return oField;
@@ -880,7 +878,7 @@ function(
 
 							return null;
 						},
-						createControl: function(oType, sPath, iIndex, sId, aClass)  {
+						createControl: function(oType, sPath, iIndex, sId)  {
 							var oField;
 							var Field = sap.ui.require("sap/ui/mdc/Field");
 							if (!Field) {
@@ -889,14 +887,15 @@ function(
 							}
 
 							if (iIndex == 0) {
-								if (_getMonthFieldHelp.call(this)) {
+								var sValueHelp = _getMonthFieldHelp.call(this);
+
+								if (sValueHelp) {
 
 									oField = new Field(sId, {
 										value: { path: sPath, type: oType, mode: 'TwoWay', targetType: 'raw' },
-										additionalValue: { path: sPath, formatter: function(iValue) { return oMonthFieldHelp.getTextForKey(iValue); }, mode: 'OneWay' },
 										display: 'Description',
 										width: "100%",
-										fieldHelp: "LFHForSpecificMonth"
+										fieldHelp: sValueHelp
 									});
 								} else {
 									Log.warning("Operator.createControl", "not able to create the control for the operator " + this.name);
@@ -1817,49 +1816,80 @@ function(
 			return iIndex;
 		}
 
+
+		var bCreatingMonthFieldHelp = false;
+
 		function _getMonthFieldHelp() {
-			if (!oMonthFieldHelp) {
-				var ListFieldHelp = sap.ui.require("sap/ui/mdc/field/ListFieldHelp");
-				var ListItem = sap.ui.require("sap/ui/core/ListItem");
-				if (!ListFieldHelp || !ListItem) {
-					Log.warning("Operator.createControl", "not able to create the control for the operator " + this.name);
-					return null;
-				}
 
-				var getMonthItems = function() {
-					if (!this._aMonthsItems) {
-						var aMonths = _getMonths.apply(this);
-						this._aMonthsItems = [];
+			var sId = "LFHForSpecificMonth";
 
-						for (var i = 0; i < 12; i++) {
-							this._aMonthsItems.push({
-								text: aMonths[i],
-								key: i
-							});
-						}
-					}
+			if (!bCreatingMonthFieldHelp) {
+				bCreatingMonthFieldHelp = true;
 
-					return this._aMonthsItems;
-				}.bind(this);
+				loadModules([
+					"sap/ui/mdc/valuehelp/content/FixedList",
+					"sap/ui/mdc/field/ListFieldHelpItem",
+					"sap/ui/mdc/ValueHelp",
+					"sap/ui/mdc/valuehelp/Popover",
+					"sap/ui/core/Control"
+				]).then(function (aLoaded) {
+					var FixedList = aLoaded[0];
+					var ListFieldHelpItem = aLoaded[1];
+					var ValueHelp = aLoaded[2];
+					var Popover = aLoaded[3];
+					var Control = aLoaded[4];
 
-				oMonthFieldHelp = new ListFieldHelp({
-					id: "LFHForSpecificMonth",
-					items: {
-						path: "$items>/",
-						template: new ListItem({
-							text: {
-								path: "$items>text"
-							},
-							key: {
-								path: "$items>key"
+					var getMonthItems = function() {
+						if (!this._aMonthsItems) {
+							var aMonths = _getMonths.apply(this);
+							this._aMonthsItems = [];
+
+							for (var i = 0; i < 12; i++) {
+								this._aMonthsItems.push({
+									text: aMonths[i],
+									key: i
+								});
 							}
-						}),
-						templateShareable: false
+						}
+
+						return this._aMonthsItems;
+					}.bind(this);
+
+					var oMonthFieldHelp = new ValueHelp({
+						id: sId,
+						typeahead: new Popover({
+							content: [new FixedList({
+								filterList: false,
+								useFirstMatch: true,
+								items: {
+									path: "$items>/",
+									template: new ListFieldHelpItem({
+										text: "{$items>text}",
+										key: "{$items>key}"
+									}),
+									templateShareable: false
+								}
+							})]
+						})
+					}).setModel(new JSONModel(getMonthItems()), "$items");
+
+					// put in static UIArea to have only one instance. As in UIArea only controls are alloweg we need a dummy Control
+					try {
+						var oStaticAreaRef = sap.ui.getCore().getStaticAreaRef();
+						// only a facade of the static UIArea is returned that contains only the public methods
+						var oStaticUIArea = sap.ui.getCore().getUIArea(oStaticAreaRef);
+						var oControl = new Control(sId + "-parent", {dependents: [oMonthFieldHelp]});
+						oStaticUIArea.addContent(oControl, true); // do not invalidate UIArea
+					} catch (e) {
+						Log.error(e);
+						throw new Error("MonthFieldHelp cannot be assigned because static UIArea cannot be determined.");
 					}
-				}).setModel(new JSONModel(getMonthItems()), "$items");
+
+				}.bind(this));
 			}
 
-			return oMonthFieldHelp;
+			return sId;
+
 		}
 
 		return FilterOperatorUtil;
