@@ -1,6 +1,6 @@
 {
   "name": "@openui5/sap.ui.webc.common",
-  "version": "1.106.0-SNAPSHOT",
+  "version": "1.107.0-SNAPSHOT",
   "description": "OpenUI5 UI Library sap.ui.webc.common",
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
@@ -19,6 +19,6 @@
     "build": "rimraf src/sap/ui/webc/common/thirdparty/ && ui5-webc-prebuild"
   },
   "dependencies": {
-    "@openui5/sap.ui.core": "1.106.0-SNAPSHOT"
+    "@openui5/sap.ui.core": "1.107.0-SNAPSHOT"
   }
 }
