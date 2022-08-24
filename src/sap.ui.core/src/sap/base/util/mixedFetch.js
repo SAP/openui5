@@ -11,7 +11,7 @@ sap.ui.define([
 	 * Allows to perform an synchronous or asynchronous XMLHttpRequest (XHR) with the provided resource URL and request settings.
 	 * It returns a Promise resolving with an <code>sap.base.util.SimpleResponse</code> object, which is
 	 * a simplified implementation of the global Response interface, representing the response of the XHR.
-	 * It returns a <code>sap.ui.base.SyncPromise</code>, if the property <code>init.sync</code> is set to 'true'.
+	 * It returns a <code>sap.ui.base.SyncPromise</code>, if the parameter <code>bSync</code> is set to 'true'.
 	 *
 	 * If the request encounters network failures, the returned promise will be rejected with a <code>TypeError</code>.
 	 * In case of an HTTP error status (e.g. error status 404), the returned promise will resolve instead. The properties
