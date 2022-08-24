@@ -414,6 +414,8 @@ sap.ui.define([
 			sErrorMessage = oError.messages.map(function(oError) {
 				return oError.text;
 			}).join("\n");
+		} else if (oError.userMessage) {
+			sErrorMessage = oError.userMessage;
 		} else if (oError.iamAppId) {
 			sErrorMessage = "IAM App Id: " + oError.iamAppId;
 		} else {

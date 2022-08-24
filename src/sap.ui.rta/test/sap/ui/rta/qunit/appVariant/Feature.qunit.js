@@ -971,6 +971,54 @@ sap.ui.define([
 				assert.equal(oNavigateToFLPHomepage.callCount, 1, "then the _navigateToFLPHomepage method is called once");
 			});
 		});
+
+		QUnit.test("when onSaveAs() is triggered from RTA toolbar on S/4HANA Cloud with an backend status error: 500 during app variant creation", function(assert) {
+			var oSelectedAppVariant = {
+				"sap.app": {
+					id: "TestId",
+					crossNavigation: {
+						inbounds: {}
+					}
+				}
+			};
+
+			var oAppVariantData = {
+				referenceAppId: "TestId",
+				title: "Title",
+				subTitle: "Subtitle",
+				description: "Description",
+				icon: "sap-icon://history",
+				inbounds: {}
+			};
+
+			var oError = {
+				status: 500,
+				userMessage: "The referenced object does not exist or is not unique\n",
+				messageKey: "MSG_SAVE_APP_VARIANT_FAILED"
+			};
+
+			simulateSystemConfig(true, true, true);
+
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
+			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(this.oAppComponent);
+			var oProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
+
+			var ocreateAppVariantStub = sandbox.stub(AppVariantManager.prototype, "createAppVariant").rejects(oError);
+			var oCatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
+			var oGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
+
+			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
+				assert.ok(sText.includes(oError.userMessage), "then the correct error message is returned");
+				mParameters.onClose("Close");
+			});
+
+			return RtaAppVariantFeature.onSaveAs(true, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
+				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
+				assert.equal(ocreateAppVariantStub.callCount, 1, "then the AppVariantManager.createAppVariant method is called once");
+				assert.equal(oGetOverviewSpy.callCount, 1, "then the overview loads only once after the new app variant has been saved to LREP");
+				assert.strictEqual(oCatchErrorDialog.getCall(0).args[1], "MSG_SAVE_APP_VARIANT_FAILED", "then the oCatchErrorDialog method is called with correct message key");
+			});
+		});
 	});
 
 	QUnit.done(function () {
