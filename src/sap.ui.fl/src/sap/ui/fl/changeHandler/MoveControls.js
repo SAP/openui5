@@ -426,9 +426,9 @@ function(
 		return {
 			affectedControls: [oChangeContent.movedElements[0].selector],
 			dependentControls: [oChangeContent.source.selector],
-			payload: {
-				sourceParentContainer: oRevertData.sourceParent,
-				targetParentContainer: oChangeContent.target.selector
+			descriptionPayload: {
+				sourceContainer: oRevertData.sourceParent,
+				targetContainer: oChangeContent.target.selector
 			}
 		};
 	};

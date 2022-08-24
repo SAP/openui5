@@ -172,10 +172,11 @@ sap.ui.define([
 
 	AddSimpleFormField.getChangeVisualizationInfo = function(oChange, oAppComponent) {
 		var oRevertData = oChange.getRevertData();
+
 		if (oRevertData && oRevertData.labelSelector) {
 			return {
-				affectedControls: [JsControlTreeModifier.bySelector(oRevertData.labelSelector, oAppComponent).getId()],
-				hasParentWithUnstableId: true
+				affectedControls: [JsControlTreeModifier.bySelector(oRevertData.labelSelector, oAppComponent).getParent().getId()],
+				updateRequired: true
 			};
 		}
 		return {

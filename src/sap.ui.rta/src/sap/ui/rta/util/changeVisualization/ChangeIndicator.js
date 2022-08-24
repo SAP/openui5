@@ -160,29 +160,29 @@ sap.ui.define([
 
 	function getTexts(mChangeInformation, oRtaResourceBundle, sOverlayId) {
 		var oAffectedElement = Core.byId(mChangeInformation.affectedElementId);
-		var mPayload = Object.keys(mChangeInformation.payload || {}).reduce(function(mPayload, sKey) {
-			var vOriginalValue = mChangeInformation.payload[sKey];
+		var mDescriptionPayload = Object.keys(mChangeInformation.descriptionPayload || {}).reduce(function(mDescriptionPayload, sKey) {
+			var vOriginalValue = mChangeInformation.descriptionPayload[sKey];
 			var bIsBinding = FlUtils.isBinding(vOriginalValue);
 			var vValue = bIsBinding
 				? resolveBinding(vOriginalValue, oAffectedElement)
 				: vOriginalValue;
-			mPayload[sKey] = vValue;
-			return mPayload;
+			mDescriptionPayload[sKey] = vValue;
+			return mDescriptionPayload;
 		}, {});
 
 		var mPropertyBag = { appComponent: FlUtils.getAppComponentForControl(oAffectedElement) };
 		var oOverlay = Core.byId(sOverlayId);
 		var sElementLabel = oOverlay.getDesignTimeMetadata().getLabel(oAffectedElement);
 		var oCommandVisualization = getCommandVisualization(mChangeInformation);
-		var oDescription = oCommandVisualization && oCommandVisualization.getDescription(mPayload, sElementLabel, mPropertyBag) || {};
+		var oDescription = oCommandVisualization && oCommandVisualization.getDescription(mDescriptionPayload, sElementLabel, mPropertyBag) || {};
 		var sCommandName = mChangeInformation.commandName;
 		var sDescriptionText;
 		var sDescriptionTooltip;
 
 		// 'Settings' with a custom description should overwrite the description from the CommandVisualization
-		if (sCommandName === "settings" && mPayload.description) {
-			oDescription.descriptionText = mPayload.description;
-			oDescription.descriptionTooltip = mPayload.descriptionTooltip;
+		if (sCommandName === "settings" && mDescriptionPayload.description) {
+			oDescription.descriptionText = mDescriptionPayload.description;
+			oDescription.descriptionTooltip = mDescriptionPayload.descriptionTooltip;
 		} else if (mChangeInformation.changeCategory === "other") {
 			// To retrieve the generic description for commands without visualization
 			sCommandName = "other";

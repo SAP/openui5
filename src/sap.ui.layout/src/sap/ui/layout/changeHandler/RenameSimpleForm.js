@@ -133,10 +133,12 @@ sap.ui.define([
 
 	RenameForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {
 		var oElementSelector = oChange.getContent().elementSelector;
-		var oAffectedControlSelector = JsControlTreeModifier.bySelector(oElementSelector, oAppComponent).getParent().getId();
+		var sAffectedControlId = JsControlTreeModifier.bySelector(oElementSelector, oAppComponent).getParent().getId();
+
 		return {
-			affectedControls: [oAffectedControlSelector],
-			payload: {
+			affectedControls: [sAffectedControlId],
+			updateRequired: true,
+			descriptionPayload: {
 				originalLabel: oChange.getRevertData(),
 				newLabel:  oChange.getTexts().formText.value
 			}

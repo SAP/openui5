@@ -17,7 +17,7 @@ sap.ui.define([
 	 * Creates a localized description and button text for split changes based on the provided
 	 * current element label
 	 *
-	 * @param {object} mPayload - Change visualization payload from the change handler
+	 * @param {object} mPayload - Change visualization description payload from the change handler
 	 * @param {string} sLabel - Current element label
 	 * @returns {object} Localized description text and button text
 	 */

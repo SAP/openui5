@@ -313,6 +313,7 @@ sap.ui.define([
 
 	ChangeVisualization.prototype._updateChangeRegistry = function() {
 		return this._collectChanges().then(function(aChanges) {
+			this._oChangeIndicatorRegistry.removeOutdatedRegisteredChanges();
 			var aRegisteredChangeIds = this._oChangeIndicatorRegistry.getRegisteredChangeIds();
 			var oCurrentChanges = aChanges
 				.filter(function(oChange) {

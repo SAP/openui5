@@ -39,7 +39,7 @@ sap.ui.define([
 					return oCreationDate;
 				}
 			},
-			payload: mPayload,
+			descriptionPayload: mPayload,
 			affectedElementId: sAffectedElementId
 		};
 	}
@@ -274,16 +274,16 @@ sap.ui.define([
 
 		QUnit.test("when a move change indicator is created", function(assert) {
 			var oPayloadInsideGroup = {
-				sourceParentContainer: { id: "Group1" },
-				targetParentContainer: { id: "Group1" }
+				sourceContainer: { id: "Group1" },
+				targetContainer: { id: "Group1" }
 			};
 			var oPayloadOutsideGroup = {
-				sourceParentContainer: { id: "Group1" },
-				targetParentContainer: { id: "Group2" }
+				sourceContainer: { id: "Group1" },
+				targetContainer: { id: "Group2" }
 			};
 			var oPayloadWithoutSourceParentId = {
-				sourceParentContainer: { id: null },
-				targetParentContainer: { id: "Group2" }
+				sourceContainer: { id: null },
+				targetContainer: { id: "Group2" }
 			};
 
 			this.oChangeIndicator.getModel().setData({
@@ -331,8 +331,8 @@ sap.ui.define([
 			var oPayloadOutsideGroup = {
 				description: "moveDescription",
 				descriptionTooltip: "moveDescriptionVeryLongTooltip",
-				sourceParentContainer: { id: "Group1" },
-				targetParentContainer: { id: "Group2" }
+				sourceContainer: { id: "Group1" },
+				targetContainer: { id: "Group2" }
 			};
 			var aChanges = [
 				createMockChange("id0", this.oButton.getId(), "move", "move", oPayloadOutsideGroup),

@@ -82,7 +82,7 @@ sap.ui.define([
 	 * @param {string[]} [mOptions.changeVisualization.info.affectedControls] - IDs of affected controls
 	 * @param {string[]} [mOptions.changeVisualization.info.dependentControls] - IDs of dependent controls
 	 * @param {string[]} [mOptions.changeVisualization.info.displayControls] - IDs of the elements where the change indicator will be displayed
-	 * @param {object} [mOptions.changeVisualization.info.payload] - Payload with additional data for the change visualization
+	 * @param {object} [mOptions.changeVisualization.info.descriptionPayload] - Payload with additional data for the change visualization
 	 */
 	function elementActionTest(sMsg, mOptions) {
 		// Return if elementActionTest.only() has been used to exclude this call
@@ -379,8 +379,8 @@ sap.ui.define([
 					var aDisplayControlIds = mapIds(mVisualizationInfo.displayControls);
 					assert.deepEqual(aDisplayControlIds, oRegisteredChange.visualizationInfo.displayElementIds, "then the display control ids are correct");
 				}
-				if (mVisualizationInfo.payload) {
-					assert.deepEqual(mVisualizationInfo.payload, oRegisteredChange.visualizationInfo.payload, "then the payload is correct");
+				if (mVisualizationInfo.descriptionPayload) {
+					assert.deepEqual(mVisualizationInfo.descriptionPayload, oRegisteredChange.visualizationInfo.descriptionPayload, "then the descriptionPayload is correct");
 				}
 			});
 		}
