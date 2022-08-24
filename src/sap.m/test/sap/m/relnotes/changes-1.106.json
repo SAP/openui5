@@ -3,6 +3,26 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "d699670b9d4aed15eb33f6e159ad67307f3f6f56",
+        "type": "FEATURE",
+        "text": " sap.m.IllustratedMessage: ariaLabelledBy association added"
+      },
+      {
+        "id": "50a644ee4948f57f8f8f55628455be34277d3708",
+        "type": "FIX",
+        "text": " sap.m.Input: Type-ahead with dynamic suggestions enabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005963762022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005849042022"
+          }
+        ]
+      },
+      {
         "id": "8bbab74fba318b60d214c85eec6b1d9bd58e463e",
         "type": "FIX",
         "text": " sap.m.IconTabBar: Receiving focus on selected item is now correct",

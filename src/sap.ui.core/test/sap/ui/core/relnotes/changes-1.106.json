@@ -3,6 +3,17 @@
     "date": "August 2022",
     "notes": [
       {
+        "id": "cd520fc77edc65e638f7a7e57eae2a7ffd2e3cfb",
+        "type": "FIX",
+        "text": " sap/ui/core/util/Mockserver: improve number handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280151906"
+          }
+        ]
+      },
+      {
         "id": "909119d289ce258da7517d841f5907f99055476e",
         "type": "FIX",
         "text": " sap.ui.model.odata.v4.Context#doSetProperty: report error although context is destroyed",
