@@ -694,4 +694,38 @@ function (
 			sOriginalDefaultTitleText, "ReloadScreen Title text fallbacks to the original one (UnableToLoad).");
 	});
 
+	/* --------------------------- IllustratedMessage Associations -------------------------------------- */
+	QUnit.module("IllustratedMessage - Associations ", {
+		beforeEach: function () {
+			// Arrange
+			this.oIllustratedMessage = new IllustratedMessage();
+			this.oIllustratedMessage.placeAt("qunit-fixture");
+			this.oIllustration = this.oIllustratedMessage._getIllustration();
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			// Clean
+			this.oIllustratedMessage.destroy();
+			this.oIllustratedMessage = null;
+			this.oIllustration.destroy();
+			this.oIllustration = null;
+		}
+	});
+
+	QUnit.test("Testing illustrationAriaLabelledBy association", function (assert) {
+
+		// Arrange
+		new sap.ui.core.InvisibleText("illustration_label", {text: "My label"}).toStatic();
+
+		var $illustration = this.oIllustration.$();
+
+		// Act
+		this.oIllustratedMessage.addIllustrationAriaLabelledBy('illustration_label');
+		Core.applyChanges();
+
+		// Assert
+		assert.equal($illustration.attr("aria-labelledby"), 'illustration_label');
+	});
+
+
 });
