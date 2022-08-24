@@ -1818,6 +1818,12 @@ function(
 		this.setGroupDescending(this._oInitialState.groupDescending);
 		this._updateListSelection(this._groupOrderList, this._oInitialState.groupDescending);
 
+		this._getNavContainer().attachEventOnce("afterNavigate", function(){
+			if (this._prevSelectedFilterItem) {
+				this._prevSelectedFilterItem.focus();
+			}
+		}, this);
+
 		// set reset buttons state the global reset
 		this._checkResetStatus();
 
@@ -2800,14 +2806,13 @@ function(
 
 
 	ViewSettingsDialog.prototype._pressBackButton = function() {
-		var that = this;
 		if (this._vContentPage === 3) {
 			this._updateFilterCounters();
-			this._getNavContainer().attachEvent("afterNavigate", function(){
-				if (that._prevSelectedFilterItem) {
-					that._prevSelectedFilterItem.focus();
+			this._getNavContainer().attachEventOnce("afterNavigate", function(){
+				if (this._prevSelectedFilterItem) {
+					this._prevSelectedFilterItem.focus();
 				}
-			});
+			}, this);
 			setTimeout(this._getNavContainer()['back'].bind(this._getNavContainer()), 0);
 			this._switchToPage(2);
 			this._segmentedButton.setSelectedButton(this._filterButton);
