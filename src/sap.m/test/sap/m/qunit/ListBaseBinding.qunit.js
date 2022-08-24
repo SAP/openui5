@@ -1000,16 +1000,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("enableItemsPool", {
-		beforeEach: function() {
-			GrowingEnablement.prototype._aItemsPool = [];
-		},
-		afterEach: function() {
-			delete GrowingEnablement.prototype._aItemsPool;
-		}
-	});
+	QUnit.module("ItemsPool");
 
-	QUnit.test("Items pool array should be available", function(assert) {
+	QUnit.test("Array should be available", function(assert) {
 		var done = assert.async();
 		var oMockServer = startMockServer();
 		var oModel = createODataModel(sServiceURI, {useBatch: false});
@@ -1033,6 +1026,58 @@ sap.ui.define([
 					// call the original function
 					fnFillItemsPool.call(oControl._oGrowingDelegate);
 					assert.strictEqual(oControl._oGrowingDelegate._aItemsPool.length, 8, "8 items are available in the itemsPool");
+					// inform that the "fillItemsPool" has done its job by resolving the promise
+					fnDone();
+				});
+			}
+		}, {
+			template: new CustomListItem({
+				content: [
+					new VBox({
+						items: [
+							new Text({text: "{ProductId}"}),
+							new Text({text: "{Name}"}),
+							new Text({text: "{Category}"})
+						]
+					})
+				]
+			})
+		},
+		oModel);
+
+		pPromise.then(function() {
+			// clean up
+			fnFillItemsPoolStub.restore();
+			oList.destroy();
+			oMockServer.stop();
+			done();
+		});
+	});
+
+	QUnit.test("Array should be limited to 100 items", function(assert) {
+		var done = assert.async();
+		var oMockServer = startMockServer();
+		var oModel = createODataModel(sServiceURI, {useBatch: false});
+		var fnDone, oControl, fnFillItemsPoolStub;
+		var pPromise = new Promise(function(resolve) {
+			fnDone = resolve;
+		});
+		var oList = createList({
+			growing: true,
+			growingThreshold: 200, // sut - high threshold value
+			updateStarted: function(oEvent) {
+				oControl = oEvent.getSource();
+				assert.ok(oControl._oGrowingDelegate._aItemsPool, "itemsPool was created");
+				// reference to the original "fillItemsPool" function
+				var fnFillItemsPool = oControl._oGrowingDelegate.fillItemsPool;
+				// "fillItemsPool" is called in a timeout, which causes unstable unit tests due to timing issues,
+				// instead stub the function which calls the original function and also take care of assertions here
+				fnFillItemsPoolStub = sinon.stub(oControl._oGrowingDelegate, "fillItemsPool").callsFake(function() {
+					// simulate no items are rendered
+					oControl._oGrowingDelegate._iRenderedDataItems = 0;
+					// call the original function
+					fnFillItemsPool.call(oControl._oGrowingDelegate);
+					assert.strictEqual(oControl._oGrowingDelegate._aItemsPool.length, 100, "itemPool limited to 100 items, inspite of the growingThreshold=" + oControl.getGrowingThreshold());
 					// inform that the "fillItemsPool" has done its job by resolving the promise
 					fnDone();
 				});
