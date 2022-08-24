@@ -122,23 +122,26 @@ sap.ui.define([
 			assert.strictEqual(aBindings.length, 0, "then no binding is found");
 		});
 
-		QUnit.test("when getting the Bindings for a field with some bindings inside a template with different data model", function(assert) {
+		QUnit.test("when getting the Bindings for a form element containing a control with a binding for the same model and another with a different data model", function(assert) {
 			var oMainModel = this.oView.getModel();
 			var oElement = this.oView.byId("FormActivationElement");
 			var aBindings = BindingsExtractor.getBindings({element: oElement, model: oMainModel});
-			assert.strictEqual(aBindings.length, 3, "then all relevant bindings are found");
-			assert.strictEqual(aBindings[0].parts[0].path, "text", "then the binding for the 'text' element of the select data model is found");
-			assert.strictEqual(aBindings[1].parts[0].path, "key", "then the binding for the 'key' element of the select data model is found");
-			assert.strictEqual(aBindings[2].getPath(), "Property01", "then the binding for the field (Property01) is found");
+			assert.strictEqual(aBindings.length, 1, "then only one binding is found");
+			assert.strictEqual(aBindings[0].getPath(), "Property01", "then only the binding from the same model (Property01) is found");
 		});
 
-		QUnit.test("when getting the Bindings for a field with only bindings inside a template with different data model", function(assert) {
+		QUnit.test("when getting the Bindings for a form element containing a control with only bindings inside a template with different data model", function(assert) {
 			var oMainModel = this.oView.getModel();
 			var oElement = this.oView.byId("FormActivationElementAlone");
 			var aBindings = BindingsExtractor.getBindings({element: oElement, model: oMainModel});
-			assert.strictEqual(aBindings[0].parts[0].path, "text", "then the binding for the 'text' element of the select data model is found");
-			assert.strictEqual(aBindings[1].parts[0].path, "key", "then the binding for the 'key' element of the select data model is found");
-			assert.strictEqual(aBindings.length, 2, "then all relevant bindings are found");
+			assert.strictEqual(aBindings.length, 0, "then no bindings are found, because they belong to a different data model");
+		});
+
+		QUnit.test("when getting the Bindings for a table where a column has a control with bindings inside a template with different data model", function(assert) {
+			var oMainModel = this.oView.getModel();
+			var oElement = this.oView.byId("table");
+			var aBindings = BindingsExtractor.getBindings({element: oElement, model: oMainModel});
+			assert.strictEqual(aBindings.length, 4, "then only the bindings belonging to the same data model are found");
 		});
 
 		QUnit.test("when collecting the BindingPaths for the Smart Form Group bound to EntityType02 and main data model", function(assert) {

@@ -146,13 +146,21 @@ function(
 	function getBindingsForAggregation(oElement, oModel, bTemplate, sAggregationName, oRelevantContainerElement) {
 		var aBindings = [];
 		var aElements = [];
+		var oTemplate;
 		var bIsInTemplate = bTemplate;
+		var oElementModel = oElement.getModel();
 
 		var oBinding = oElement.getBindingInfo(sAggregationName);
-		var oTemplate = oBinding && oBinding.template;
+		oTemplate = oBinding && oBinding.template;
 
-		// If a template is bound to the current element, we continue
-		// the evaluation on the template (as it has no direct parent)
+		// If a template is found for a different model, we don't look inside the template
+		// e.g. a Select control whose entries are defined in an own JSON model
+		if (oTemplate && oElementModel && oElementModel !== oModel) {
+			return [];
+		}
+
+		// If a template is bound to the current element on the given model,
+		// we continue the evaluation on the template (as it has no direct parent)
 		if (oTemplate) {
 			bIsInTemplate = true;
 			aElements = [oTemplate];
@@ -287,6 +295,7 @@ function(
 			.filter(function (sPropertyName) {
 				var mBindingInfo = oTemplate.mBindingInfos[sPropertyName];
 				var sModelName = mBindingInfo && mBindingInfo.parts[0] && mBindingInfo.parts[0].model;
+				bIsSameModel = oModel === oTemplateParent.getModel(sModelName);
 				if (!sModelName) {
 					var oParentDefaultModel = oTemplateParent.getDefaultModel ? oTemplateParent.getDefaultModel() : null;
 					var oTemplateDefaultModel = oTemplate.getDefaultModel ? oTemplate.getDefaultModel() : null;
