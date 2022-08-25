@@ -1805,6 +1805,12 @@ sap.ui.define([
 			},
 			isSkeleton: function () {
 				return false;
+			},
+			addActiveLoadingProvider: function () {
+
+			},
+			removeActiveLoadingProvider: function () {
+
 			}
 		});
 

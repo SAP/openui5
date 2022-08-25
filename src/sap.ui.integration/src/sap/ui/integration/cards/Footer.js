@@ -128,11 +128,24 @@ sap.ui.define([
 		return Core.byId(this.getCard());
 	};
 
+	Footer.prototype.setEnabled = function (bValue) {
+		var oActionsStrip = this.getActionsStrip();
+		if (!oActionsStrip) {
+			return;
+		}
+
+		if (bValue) {
+			oActionsStrip.enableItems();
+		} else {
+			oActionsStrip.disableItems();
+		}
+	};
+
 	Footer.create = function (oCard, oConfiguration) {
 		return new Footer({
 			configuration: oConfiguration,
 			card: oCard,
-			actionsStrip: ActionsStrip.create(oCard, oConfiguration.actionsStrip),
+			actionsStrip: ActionsStrip.create(oCard, oConfiguration.actionsStrip, true),
 			paginator: Paginator.create(oCard, oConfiguration.paginator)
 		});
 	};

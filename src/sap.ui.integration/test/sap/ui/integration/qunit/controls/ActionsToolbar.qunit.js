@@ -174,7 +174,6 @@ sap.ui.define([
 			});
 
 		this.oCard.attachEvent("_ready", function () {
-			Core.applyChanges();
 			var oToolbar = this.oCard.getCardHeader().getToolbar();
 
 			oToolbar.getAggregation("_actionSheet").attachAfterOpen(function () {
@@ -327,6 +326,40 @@ sap.ui.define([
 
 		// Act
 		this.oCard.addActionDefinition(oAI);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("Actions toolbar is disabled when some loading placeholder is active", function (assert) {
+		// Arrange
+		var done = assert.async(2);
+
+		this.oCard.addActionDefinition(new ActionDefinition({
+			type: "Navigation",
+			text: "Text",
+			icon: "sap-icon://learning-assistant"
+		}));
+
+		this.oCard.attachEvent("_headerReady", function () {
+			var oToolbar = this.oCard.getCardHeader().getToolbar();
+			assert.notOk(oToolbar._getToolbar().getEnabled(), "Toolbar is initially disabled");
+			done();
+		}.bind(this));
+
+		this.oCard.attachEvent("_ready", function () {
+			var oToolbar = this.oCard.getCardHeader().getToolbar();
+			assert.ok(oToolbar._getToolbar().getEnabled(), "Toolbar is enabled");
+
+			this.oCard.showLoadingPlaceholders();
+			Core.applyChanges();
+			assert.notOk(oToolbar._getToolbar().getEnabled(), "Toolbar is disabled");
+
+			this.oCard.hideLoadingPlaceholders();
+			Core.applyChanges();
+			assert.ok(oToolbar._getToolbar().getEnabled(), "Toolbar is enabled");
+
+			done();
+		}.bind(this));
+
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 

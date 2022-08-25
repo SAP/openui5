@@ -1,9 +1,9 @@
 {
 	"_version": "1.14.0",
 	"sap.app": {
-		"id": "card.explorer.data.list.card",
+		"id": "card.explorer.footer.actions.card",
 		"type": "card",
-		"title": "Cards with Server-Side Pagination",
+		"title": "Cards with Footer Actions",
 		"subTitle": "",
 		"applicationVersion": {
 			"version": "1.0.0"
@@ -21,7 +21,6 @@
 		}
 	},
 	"sap.card": {
-		"type": "List",
 		"configuration": {
 			"parameters": {
 				"top": {
@@ -36,48 +35,30 @@
 				}
 			}
 		},
-		"data": {
-			"request": {
-				"url": "https://services.odata.org/V4/Northwind/Northwind.svc/Products",
-				"parameters": {
-					"$format": "json",
-					"$count": true,
-					"$skip": "{paginator>/skip}",
-					"$top": "{parameters>/top/value}"
-				}
-			},
-			"path": "/value"
-		},
+		"type": "List",
 		"header": {
-			"title": "Global Data",
-			"subTitle": "In Stock Information",
-			"icon": {
-				"src": "sap-icon://product"
-			},
-			"status": {
-				"text": {
-					"format": {
-						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
-						"parts": [
-							"parameters>/visibleItems",
-							"/@odata.count"
-						]
-					}
-				}
-			}
+			"title": "Title"
 		},
 		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Name 1"
+					},
+					{
+						"Name": "Name 2"
+					},
+					{
+						"Name": "Name 3"
+					}
+				]
+			},
+			"maxItems": 3,
 			"item": {
-				"title": "{ProductName}",
-				"description": "{UnitsInStock} units in stock",
-				"highlight": "{= ${Discontinued} ? 'Error' : 'Success'}"
+				"title": "{Name}"
 			}
 		},
 		"footer": {
-			"paginator": {
-				"totalCount": "{/@odata.count}",
-				"pageSize": "{parameters>/top/value}"
-			},
 			"actionsStrip": [
 				{
 					"text": "Bound False",

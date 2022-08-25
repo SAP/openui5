@@ -485,6 +485,7 @@ sap.ui.define([
 		this._bFirstRendering = true;
 		this._aFundamentalErrors = [];
 		this._sPerformanceId = "UI5 Integration Cards - " + this.getId() + "---";
+		this._aActiveLoadingProviders = [];
 		this._fnOnDataReady = function () {
 			this._bDataReady = true;
 		}.bind(this);
@@ -624,9 +625,7 @@ sap.ui.define([
 		this._awaitEvent("_contentReady");
 
 		Promise.all(this._aReadyPromises).then(function () {
-			this._bReady = true;
-			this.fireEvent("_ready");
-			this._fireStateChanged();
+			this._onReady();
 		}.bind(this));
 
 		this.attachEventOnce("_dataReady", this._fnOnDataReady);
@@ -1150,6 +1149,7 @@ sap.ui.define([
 		this._oContentFactory = null;
 		this._bFirstRendering = null;
 		this._oIntegrationRb = null;
+		this._aActiveLoadingProviders = null;
 
 		if (this._oActionsToolbar) {
 			this._oActionsToolbar.destroy();
@@ -1605,7 +1605,7 @@ sap.ui.define([
 
 		if (this._oDataProvider) {
 			this._oDataProvider.attachDataRequested(function () {
-				this._showLoadingPlaceholders();
+				this._setLoadingProviderState(true);
 			}.bind(this));
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
@@ -1686,6 +1686,7 @@ sap.ui.define([
 		if (!this._oActionsToolbar) {
 			this._oActionsToolbar = new ActionsToolbar();
 			this._oActionsToolbar.setCard(this);
+			this._oActionsToolbar.setEnabled(false);
 		}
 
 		return this._oActionsToolbar;
@@ -1750,6 +1751,8 @@ sap.ui.define([
 		if (oFooter) {
 			this.setAggregation("_footer", oFooter);
 		}
+
+		this.fireEvent("_footerReady");
 	};
 
 	/**
@@ -2241,7 +2244,7 @@ sap.ui.define([
 				this.showLoadingPlaceholders(CardArea.Header);
 				this.showLoadingPlaceholders(CardArea.Filters);
 				this.showLoadingPlaceholders(CardArea.Content);
-				this.getAggregation("_loadingProvider").setLoading(true);
+				this._setLoadingProviderState(true);
 		}
 
 		return this;
@@ -2284,7 +2287,7 @@ sap.ui.define([
 				this.hideLoadingPlaceholders(CardArea.Header);
 				this.hideLoadingPlaceholders(CardArea.Filters);
 				this.hideLoadingPlaceholders(CardArea.Content);
-				this.getAggregation("_loadingProvider").setLoading(false);
+				this._setLoadingProviderState(false);
 		}
 
 		return this;
@@ -2317,13 +2320,8 @@ sap.ui.define([
 		return this.getDomRef();
 	};
 
-	Card.prototype._showLoadingPlaceholders = function () {
-		this.getAggregation("_loadingProvider").setLoading(true);
-	};
-
 	Card.prototype.onDataRequestComplete = function () {
-		var oContent = this.getCardContent(),
-			oLoadingProvider = this.getAggregation("_loadingProvider");
+		var oContent = this.getCardContent();
 
 		this.hideLoadingPlaceholders(CardArea.Header);
 		this.hideLoadingPlaceholders(CardArea.Filters);
@@ -2332,9 +2330,7 @@ sap.ui.define([
 			this.hideLoadingPlaceholders(CardArea.Content);
 		}
 
-		if (oLoadingProvider) {
-			oLoadingProvider.setLoading(false);
-		}
+		this._setLoadingProviderState(false);
 
 		this._fireContentDataChange();
 	};
@@ -2532,6 +2528,84 @@ sap.ui.define([
 	Card.prototype._fireContentDataChange = function () {
 		this.fireEvent("_contentDataChange");
 		this._fireDataChange();
+	};
+
+	Card.prototype._onReady = function () {
+		this._bReady = true;
+		this._setActionButtonsEnabled(true);
+		this.fireEvent("_ready");
+		this._fireStateChanged();
+	};
+
+	/**
+	 * @private
+	 */
+	Card.prototype._setLoadingProviderState = function (bLoading) {
+		var oLoadingProvider = this.getAggregation("_loadingProvider");
+		if (!oLoadingProvider) {
+			return;
+		}
+
+		oLoadingProvider.setLoading(bLoading);
+
+		if (bLoading) {
+			this.addActiveLoadingProvider(oLoadingProvider);
+		} else {
+			this.removeActiveLoadingProvider(oLoadingProvider);
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	Card.prototype.addActiveLoadingProvider = function (oLoadingProvider) {
+		if (!this.isReady()) {
+			return;
+		}
+
+		if (!this.hasActiveLoadingProvider()) {
+			this._setActionButtonsEnabled(false);
+		}
+
+		if (this._aActiveLoadingProviders.indexOf(oLoadingProvider) === -1) {
+			this._aActiveLoadingProviders.push(oLoadingProvider);
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	Card.prototype.removeActiveLoadingProvider = function (oLoadingProvider) {
+		if (!this.isReady()) {
+			return;
+		}
+
+		var aActiveLoadingProviders = this._aActiveLoadingProviders,
+			iIndexOf = aActiveLoadingProviders.indexOf(oLoadingProvider);
+
+		aActiveLoadingProviders.splice(iIndexOf, 1);
+
+		if (!this.hasActiveLoadingProvider()) {
+			this._setActionButtonsEnabled(true);
+		}
+	};
+
+	Card.prototype._setActionButtonsEnabled = function (bValue) {
+		var oFooter = this.getAggregation("_footer");
+		if (oFooter) {
+			oFooter.setEnabled(bValue);
+		}
+
+		if (this._oActionsToolbar) {
+			this._oActionsToolbar.setEnabled(bValue);
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	Card.prototype.hasActiveLoadingProvider = function () {
+		return this._aActiveLoadingProviders.length > 0;
 	};
 
 	/**

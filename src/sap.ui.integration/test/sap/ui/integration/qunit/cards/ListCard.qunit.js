@@ -815,9 +815,20 @@ sap.ui.define([
 
 		this.oCard.attachEvent("_ready", function () {
 			Core.applyChanges();
+			var oCardContent = this.oCard.getCardContent(),
+				oList = oCardContent.getAggregation("_content"),
+				oListContentItem = oList.getItems()[0],
+				oActionsStrip = oListContentItem.getActionsStrip(),
+				aItems = oActionsStrip._getToolbar().getContent();
+
+			aItems.forEach(function (oItem) {
+				if (oItem.getEnabled) {
+					assert.ok(oItem.getEnabled(), "Action is initially enabled");
+				}
+			});
 
 			// Assert
-			assert.ok(this.oCard.getCardContent().isA("sap.ui.integration.cards.ListContent"), "list content is displayed");
+			assert.ok(oCardContent.isA("sap.ui.integration.cards.ListContent"), "list content is displayed");
 			done();
 		}.bind(this));
 
@@ -1409,6 +1420,12 @@ sap.ui.define([
 			},
 			isSkeleton: function () {
 				return false;
+			},
+			addActiveLoadingProvider: function () {
+
+			},
+			removeActiveLoadingProvider: function () {
+
 			}
 		});
 

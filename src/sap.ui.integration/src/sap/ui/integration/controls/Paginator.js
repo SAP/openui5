@@ -339,8 +339,14 @@ sap.ui.define([
 		return bHasAnimations && this.getCard().getCardContent().isA("sap.ui.integration.cards.ListContent");
 	};
 
+	Paginator.prototype._hasActiveLoadingProvider = function () {
+		var oCard = this.getCard();
+
+		return oCard && oCard.hasActiveLoadingProvider();
+	};
+
 	Paginator.prototype._previous = function () {
-		if (this._bActiveAnimation) {
+		if (this._bActiveAnimation || this._hasActiveLoadingProvider()) {
 			return;
 		}
 
@@ -349,7 +355,7 @@ sap.ui.define([
 	};
 
 	Paginator.prototype._next = function () {
-		if (this._bActiveAnimation) {
+		if (this._bActiveAnimation || this._hasActiveLoadingProvider()) {
 			return;
 		}
 

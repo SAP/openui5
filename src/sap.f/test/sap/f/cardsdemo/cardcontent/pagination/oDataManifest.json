@@ -27,6 +27,12 @@
 				"top": {
 					"value": 5,
 					"type": "integer"
+				},
+				"actionEnabled": {
+					"value": true
+				},
+				"actionDisabled": {
+					"value": false
 				}
 			}
 		},
@@ -60,7 +66,49 @@
 			"paginator": {
 				"totalCount": "{/@odata.count}",
 				"pageSize": "{parameters>/top/value}"
-			}
+			},
+			"actionsStrip": [
+				{
+					"text": "Bound False",
+					"actions": [
+						{
+							"enabled": "{parameters>/actionDisabled/value}",
+							"type": "Custom",
+							"parameters": { }
+						}
+					]
+				},
+				{
+					"text": "Bound True",
+					"actions": [
+						{
+							"enabled": "{parameters>/actionEnabled/value}",
+							"type": "Custom",
+							"parameters": { }
+						}
+					]
+				},
+				{
+					"text": "True",
+					"actions": [
+						{
+							"enabled": true,
+							"type": "Custom",
+							"parameters": { }
+						}
+					]
+				},
+				{
+					"text": "False",
+					"actions": [
+						{
+							"enabled": false,
+							"type": "Custom",
+							"parameters": { }
+						}
+					]
+				}
+			]
 		}
 	}
 }

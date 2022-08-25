@@ -95,6 +95,8 @@ sap.ui.define([
 			}
 		]);
 		oActionsStrip.placeAt(DOM_RENDER_LOCATION);
+		oActionsStrip.enableItems();
+
 		Core.applyChanges();
 		this.oCard.attachAction(function (oEvent) {
 			// Assert
@@ -108,4 +110,62 @@ sap.ui.define([
 		oActionsStrip._getToolbar().getContent()[1].$().trigger("tap");
 	});
 
+	QUnit.module("Enabled state", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				manifest: "test-resources/sap/ui/integration/qunit/testResources/card.footer.actions.manifest.json"
+			});
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Actions are disabled when some loading placeholder is active", function (assert) {
+		// Arrange
+		var done = assert.async(2);
+
+		this.oCard.attachEvent("_footerReady", function () {
+			var oFooter = this.oCard.getAggregation("_footer"),
+				aItems = oFooter.getActionsStrip()._getToolbar().getContent();
+
+			aItems.forEach(function (oItem) {
+				if (oItem.getEnabled) {
+					assert.notOk(oItem.getEnabled(), "Action is initially disabled");
+				}
+			});
+
+			done();
+		}.bind(this));
+
+		this.oCard.attachEvent("_ready", function () {
+			var oFooter = this.oCard.getAggregation("_footer"),
+				aItems = oFooter.getActionsStrip()._getToolbar().getContent();
+
+			assert.notOk(aItems[1].getEnabled(), "Enabled value is correct");
+			assert.ok(aItems[2].getEnabled(), "Enabled value is correct");
+			assert.ok(aItems[3].getEnabled(), "Enabled value is correct");
+			assert.notOk(aItems[4].getEnabled(), "Enabled value is correct");
+
+			this.oCard.showLoadingPlaceholders();
+			Core.applyChanges();
+			aItems.forEach(function (oItem) {
+				if (oItem.getEnabled) {
+					assert.notOk(oItem.getEnabled(), "Action is initially disabled");
+				}
+			});
+
+			this.oCard.hideLoadingPlaceholders();
+			Core.applyChanges();
+			assert.notOk(aItems[1].getEnabled(), "Enabled value is correct");
+			assert.ok(aItems[2].getEnabled(), "Enabled value is correct");
+			assert.ok(aItems[3].getEnabled(), "Enabled value is correct");
+			assert.notOk(aItems[4].getEnabled(), "Enabled value is correct");
+
+			done();
+		}.bind(this));
+
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
 });
