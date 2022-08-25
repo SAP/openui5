@@ -5091,7 +5091,7 @@ sap.ui.define([
 			fnResolve();
 		});
 
-		aPromises.push[vEnablerResult];
+		aPromises.push(vEnablerResult);
 		oRequestor.oOptimisticBatch = {key : sKey};
 		this.mock(oModelInterface).expects("getOptimisticBatchEnabler")
 			.withExactArgs()
