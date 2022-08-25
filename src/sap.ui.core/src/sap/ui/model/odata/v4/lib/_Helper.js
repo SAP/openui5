@@ -2150,7 +2150,7 @@ sap.ui.define([
 		 * @param {function} [fnCheckKeyPredicate]
 		 *   Callback function which tells whether the key predicate for the given path is checked
 		 *   for equality instead of just being copied from source to target
-		 *  @param {boolean} [bOkIfMissing]
+		 * @param {boolean} [bOkIfMissing]
 		 *   Whether this should not check for selected properties missing in the response
 		 */
 		updateSelected : function (mChangeListeners, sBasePath, oOldValue, oNewValue, aSelect,
