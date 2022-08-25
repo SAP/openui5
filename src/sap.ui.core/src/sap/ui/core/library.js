@@ -825,13 +825,16 @@ sap.ui.define([
 	// thisLib.CalendarType = CalendarType;
 
 	/**
-	 * @classdesc A string type that represents CSS color values.
+	 * @classdesc A string type that represents CSS color values (CSS Color Level 3).
 	 *
-	 * Allowed values are CSS hex colors like "#666666" or "#fff", RGB/HSL values like "rgb(0,0,0)"
-	 * or "hsla(50%,10%,30%,0.5)" as well as CSS color names like "green" and "darkblue" and special
-	 * values like "inherit" and "transparent".
-	 *
-	 * The empty string is also allowed and has the same effect as setting no color.
+	 * <b>Allowed values are:</b>
+	 * <ul>
+	 *   <li>Hex colors like <code>#666666</code> or <code>#fff</code>,</li>
+	 *   <li>HSL/RGB values with or without transparency, like <code>hsla(90,10%,30%,0.5)</code> or <code>rgb(0,0,0)</code>,</li>
+	 *   <li>CSS color names like <code>darkblue</code>, or special values like <code>inherit</code> and <code>transparent</code>,</li>
+	 *   <li>an empty string, which has the same effect as setting no color.</li>
+	 * </ul>
+	 * For more information about the CSS Level 3 color specification, see {@link https://www.w3.org/TR/css-color-3/#css-system}.
 	 *
 	 * @final
 	 * @namespace
