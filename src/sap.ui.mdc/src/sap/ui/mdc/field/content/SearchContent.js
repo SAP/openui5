@@ -55,7 +55,12 @@ sap.ui.define([
 				placeholder: "{$field>/placeholder}",
 				width: "100%",
 				tooltip: "{$field>/tooltip}",
-				search: oContentFactory.getHandleEnter(), // submit event should be fired on Enter and Search-button
+				search: function(oEvent) { // submit event should be fired on Enter and not via the clear-icon
+					if (oEvent.getParameters().clearButtonPressed) {
+						return;
+					}
+					oContentFactory.getHandleEnter().call(this, oEvent);
+				},
 				change: oContentFactory.getHandleContentChange(),
 				liveChange: oContentFactory.getHandleContentLiveChange()
 			});
