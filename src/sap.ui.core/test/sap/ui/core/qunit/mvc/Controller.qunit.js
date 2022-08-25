@@ -159,6 +159,12 @@ sap.ui.define([
 
 	QUnit.test("Multiple asynchronous Fragment.create - duplicate ID issue expected", function(assert){
 		assert.expect(2);
+		var aFragmentPromises = [];
+		var assertCatch = function(oErr) {
+			// Catch should be only executed once for the failing Fragment.load (independent which fragment is first).
+			assert.ok(true, "Promise is rejected correctly because of duplicate ID error");
+			assert.strictEqual(oErr.message, "Error: adding element with duplicate id 'xmlViewInsideFragment'", "Error message is correct");
+		};
 
 		Controller.extend("my.controller", {
 
@@ -170,27 +176,29 @@ sap.ui.define([
 			}
 		});
 
-		XMLView.create({
+		var pView1 = XMLView.create({
 			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
 			"</mvc:View>"
 		}).then(function(oView){
-			oView.destroy();
+			aFragmentPromises.push(oView.getController()._pFragment.catch(assertCatch));
+			return oView;
 		});
 
-		var oView2;
-		return XMLView.create({
+		var pView2 = XMLView.create({
 			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
 						"</mvc:View>"
 		}).then(function(oView){
-			oView2 = oView;
-			return oView.getController()._pFragment;
-		}).catch(function(oErr) {
-			assert.ok(true, "Promise is rejected correctly because of duplicate ID error");
-			assert.strictEqual(oErr.message, "Error: adding element with duplicate id 'xmlViewInsideFragment'", "Error message is correct");
-		}).finally(function(){
-			// Clean-Up
-			oView2.destroy();
-			sap.ui.getCore().byId("xmlViewInsideFragment").destroy();
+			aFragmentPromises.push(oView.getController()._pFragment.catch(assertCatch));
+			return oView;
+		});
+
+		return Promise.all([pView1, pView2]).then(function (oArguments) {
+			return Promise.allSettled(aFragmentPromises).then(function(){
+				// Clean-Up
+				oArguments[0].destroy();
+				oArguments[1].destroy();
+				sap.ui.getCore().byId("xmlViewInsideFragment").destroy();
+			});
 		});
 	});
 
