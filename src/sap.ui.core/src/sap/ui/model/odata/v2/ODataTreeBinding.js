@@ -2557,7 +2557,7 @@ sap.ui.define([
 	 *
 	 * See the API documentation for the function {@link sap.ui.model.odata.v2.ODataTreeBinding#createEntry createEntry}.
 	 *
-	 * This feature is only available when the underlying OData service exposes the "hierarchy-descendant-count-for" annotation.
+	 * This feature is only available when the underlying OData service exposes the "hierarchy-node-descendant-count-for" annotation.
 	 * See the constructor documentation for more details.
 	 *
 	 * @function
@@ -2573,7 +2573,7 @@ sap.ui.define([
 	 *
 	 * Calling <code>removeContext</code> for a given context implicitly removes the complete subtree underneath it.
 	 *
-	 * This feature is only available when the underlying OData service exposes the "hierarchy-descendant-count-for" annotation.
+	 * This feature is only available when the underlying OData service exposes the "hierarchy-node-descendant-count-for" annotation.
 	 * See the constructor documentation for more details.
 	 *
 	 * @function
@@ -2590,7 +2590,7 @@ sap.ui.define([
 	 * The available API is the same as for the v2.ODataModel.
 	 * See the API documentation here: {@link sap.ui.model.odata.v2.ODataModel#createEntry createEntry}.
 	 *
-	 * This feature is only available when the underlying OData service exposes the "hierarchy-descendant-count-for" annotation.
+	 * This feature is only available when the underlying OData service exposes the "hierarchy-node-descendant-count-for" annotation.
 	 * See the constructor documentation for more details.
 	 *
 	 * @function
@@ -2606,7 +2606,7 @@ sap.ui.define([
 	 * The available API is the same as for the v2.ODataModel.
 	 * See the API documentation here: {@link sap.ui.model.odata.v2.ODataModel#submitChanges submitChanges}.
 	 *
-	 * This feature is only available when the underlying OData service exposes the "hierarchy-descendant-count-for" annotation.
+	 * This feature is only available when the underlying OData service exposes the "hierarchy-node-descendant-count-for" annotation.
 	 * See the Constructor documentation for more details.
 	 *
 	 * @function

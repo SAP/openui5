@@ -86,7 +86,7 @@ sap.ui.define([
 			/**
 			 * Setting collapseRecursive to true means, that when collapsing a node all subsequent child nodes will also be collapsed.
 			 * This property is only supported with sap.ui.model.odata.v2.ODataModel.
-			 * <b>Note:</b> collapseRecursive is currently <b>not</b> supported if your OData service exposes the hierarchy annotation <code>hierarchy-descendant-count-for</code>.
+			 * <b>Note:</b> collapseRecursive is currently <b>not</b> supported if your OData service exposes the hierarchy annotation <code>hierarchy-node-descendant-count-for</code>.
 			 * In this case the value of the collapseRecursive property is ignored.
 			 * For more information about the OData hierarchy annotations, please see the <b>SAP Annotations for OData Version 2.0</b> specification.
 			 *
