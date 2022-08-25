@@ -574,7 +574,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel = this.oEditor.getAggregation("_formContent")[0];
+					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 					var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 					assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
@@ -589,7 +589,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel = this.oEditor.getAggregation("_formContent")[0];
+					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 					assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
 					assert.ok(oPanel.getExpanded(), "Group expanded by default");
@@ -603,7 +603,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel = this.oEditor.getAggregation("_formContent")[0];
+					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 					assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
 					assert.ok(!oPanel.getExpanded(), "Group collapsed by setting");
@@ -619,10 +619,10 @@ sap.ui.define([
 					wait().then(function () {
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
-						var oSubPanel = oPanel.getContent()[0];
+						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
 						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(oSubPanel.getExpanded(), "Sub group expanded by default");
 						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
@@ -666,11 +666,11 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					wait().then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
-						var oSubTab = oPanel.getContent()[1];
-						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub tab bar");
+						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
+						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 0 of Default Panel is sub tab bar");
 						assert.ok(oSubTab.getExpanded(), "Sub group expanded by default");
 						var oMessageStripOfSubTab = oPanel.getContent()[0];
 						assert.ok(!oMessageStripOfSubTab.getVisible(), "Message strip of sub tab is not visible since sub tab is expanded");
@@ -694,12 +694,12 @@ sap.ui.define([
 					wait().then(function () {
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						assert.equal(oPanel.getHeaderText(), "no default group", "Group text");
 						var oMessageStripOfPanel = oPanel._messageStrip;
 						assert.ok(!oMessageStripOfPanel.getVisible(), "Message strip of group is not visible since group is expanded");
-						var oSubPanel = oPanel.getContent()[0];
+						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
 						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(oSubPanel.getExpanded(), "Sub group expanded by default");
 						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
@@ -772,13 +772,13 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					wait().then(function () {
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
 						assert.equal(oPanel.getContent().length, 3, "Default Panel contains 3 items");
-						var oSubPanel = oPanel.getContent()[0];
+						var oSubPanel = oPanel.getContent()[0].getAggregation("_field");
 						assert.ok(oSubPanel.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(!oSubPanel.getExpanded(), "Group collapsed by setting");
 						assert.equal(oSubPanel.getHeaderText(), "Sub group", "Sub group text");
@@ -800,13 +800,13 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					wait().then(function () {
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
 						assert.equal(oPanel.getContent().length, 4, "Default Panel contains 4 items");
-						var oSubPanel1 = oPanel.getContent()[0];
+						var oSubPanel1 = oPanel.getContent()[0].getAggregation("_field");
 						assert.ok(oSubPanel1.isA("sap.m.Panel"), "Item 1 of Default Panel is sub panel");
 						assert.ok(!oSubPanel1.getExpanded(), "Group collapsed by setting");
 						assert.equal(oSubPanel1.getHeaderText(), "Sub group 1", "Sub group 1 text");
@@ -815,7 +815,7 @@ sap.ui.define([
 						assert.ok(oSubPanel1.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Sub Group 1 is a String field");
 						assert.equal(oSubPanel1.getContent()[1].getAggregation("_field").getValue(), "stringParameter1 Value", "Value of item 2 of Sub Group 1 correct");
 						assert.ok(oPanel.getContent()[1].isA("sap.m.MessageStrip"), "Item 2 of Default Panel is a message strip");
-						var oSubPanel2 = oPanel.getContent()[2];
+						var oSubPanel2 = oPanel.getContent()[2].getAggregation("_field");
 						assert.ok(oSubPanel2.isA("sap.m.Panel"), "Item 3 of Default Panel is sub panel");
 						assert.ok(oSubPanel2.getExpanded(), "Group expended by default");
 						assert.equal(oSubPanel2.getHeaderText(), "Sub group 3", "Sub group 3 text");
@@ -837,7 +837,7 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					wait().then(function () {
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
@@ -846,7 +846,7 @@ sap.ui.define([
 						assert.equal(oPanel.getContent()[0].getItems()[0].getText(), "stringParameter", "Lable of item 1 of Group correct");
 						assert.ok(oPanel.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Group is a String field");
 						assert.equal(oPanel.getContent()[1].getAggregation("_field").getValue(), "stringParameter Value", "Value of item 2 of Group correct");
-						var oSubPanel1 = oPanel.getContent()[2];
+						var oSubPanel1 = oPanel.getContent()[2].getAggregation("_field");
 						assert.ok(oSubPanel1.isA("sap.m.Panel"), "Item 3 of Default Panel is sub panel");
 						assert.ok(!oSubPanel1.getExpanded(), "Group collapsed by setting");
 						assert.equal(oSubPanel1.getHeaderText(), "Sub group 2", "Sub group 2 text");
@@ -855,7 +855,7 @@ sap.ui.define([
 						assert.ok(oSubPanel1.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Sub Group 2 is a String field");
 						assert.equal(oSubPanel1.getContent()[1].getAggregation("_field").getValue(), "stringParameter1 Value", "Value of item 2 of Sub Group 2 correct");
 						assert.ok(oPanel.getContent()[3].isA("sap.m.MessageStrip"), "Item 4 of Default Panel is a message strip");
-						var oSubPanel2 = oPanel.getContent()[4];
+						var oSubPanel2 = oPanel.getContent()[4].getAggregation("_field");
 						assert.ok(oSubPanel2.isA("sap.m.Panel"), "Item 5 of Default Panel is sub panel");
 						assert.ok(oSubPanel2.getExpanded(), "Group expended by default");
 						assert.equal(oSubPanel2.getHeaderText(), "Sub group 3", "Sub group 3 text");
@@ -908,13 +908,13 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					wait().then(function () {
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
 						assert.equal(oPanel.getContent().length, 3, "Default Panel contains 3 items");
-						var oSubGroup = oPanel.getContent()[1];
+						var oSubGroup = oPanel.getContent()[1].getAggregation("_field");
 						assert.ok(oSubGroup.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub Tab");
 						assert.ok(!oSubGroup.getExpanded(), "Group collapsed by setting");
 						assert.equal(oSubGroup.getItems().length, 1, "Icon tab bar contains 1 icon tab filter.");
@@ -936,13 +936,13 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					wait().then(function () {
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
 						assert.equal(oPanel.getContent().length, 3, "Default Panel contains 4 items");
-						var oSubTab = oPanel.getContent()[1];
+						var oSubTab = oPanel.getContent()[1].getAggregation("_field");
 						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 1 of Default Panel is sub tab");
 						assert.ok(oSubTab.getExpanded(), "Tab expanded by setting");
 						assert.equal(oSubTab.getItems().length, 3, "Icon tab bar contains 1 icon tab filter.");
@@ -971,7 +971,7 @@ sap.ui.define([
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					wait().then(function () {
-						var oPanel = this.oEditor.getAggregation("_formContent")[0];
+						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
@@ -980,7 +980,7 @@ sap.ui.define([
 						assert.equal(oPanel.getContent()[0].getItems()[0].getText(), "stringParameter", "Lable of item 1 of Group correct");
 						assert.ok(oPanel.getContent()[1].isA("sap.ui.integration.editor.fields.StringField"), "Item 2 of Group is a String field");
 						assert.equal(oPanel.getContent()[1].getAggregation("_field").getValue(), "stringParameter Value", "Value of item 2 of Group correct");
-						var oSubTab = oPanel.getContent()[3];
+						var oSubTab = oPanel.getContent()[3].getAggregation("_field");
 						assert.ok(oSubTab.isA("sap.m.IconTabBar"), "Item 3 of Default Panel is sub panel");
 						assert.ok(oSubTab.getExpanded(), "Group collapsed by setting");
 						assert.equal(oSubTab.getItems().length, 2, "Icon tab bar contains 1 icon tab filter.");

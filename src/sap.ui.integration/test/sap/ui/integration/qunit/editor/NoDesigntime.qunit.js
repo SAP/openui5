@@ -304,7 +304,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel = this.oEditor.getAggregation("_formContent")[0];
+					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");

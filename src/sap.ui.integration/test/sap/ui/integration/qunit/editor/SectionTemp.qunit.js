@@ -1106,7 +1106,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel = this.oEditor.getAggregation("_formContent")[0];
+					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
@@ -1127,7 +1127,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					var oPanel = this.oEditor.getAggregation("_formContent")[3];
+					var oPanel = this.oEditor.getAggregation("_formContent")[3].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[4];
 					var oField1 = this.oEditor.getAggregation("_formContent")[5];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1172,9 +1172,9 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
+					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
-					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
+					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
                     assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 
 					var oLabel = this.oEditor.getAggregation("_formContent")[2];
@@ -1226,9 +1226,9 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
+					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
-					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
+					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
                     assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 
 					var oLabel = this.oEditor.getAggregation("_formContent")[2];

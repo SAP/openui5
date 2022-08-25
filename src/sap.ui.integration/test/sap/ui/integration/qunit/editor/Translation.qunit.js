@@ -66,7 +66,6 @@ sap.ui.define([
 			oContent.innerHTML = "";
 			document.body.style.zIndex = "unset";
 		}
-
 	}
 
 
@@ -398,8 +397,8 @@ sap.ui.define([
 				});
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
-					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
+					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[2];
 					var oField1Ori = this.oEditor.getAggregation("_formContent")[3];
 					var oField1Trans = this.oEditor.getAggregation("_formContent")[4];
@@ -482,8 +481,8 @@ sap.ui.define([
 				});
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
-					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
+					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[2];
 					var oField1Ori = this.oEditor.getAggregation("_formContent")[3];
 					var oField1Trans = this.oEditor.getAggregation("_formContent")[4];
@@ -565,8 +564,8 @@ sap.ui.define([
 				});
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
-					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
+					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[2];
 					var oField1Ori = this.oEditor.getAggregation("_formContent")[3];
 					var oField1Trans = this.oEditor.getAggregation("_formContent")[4];
@@ -648,8 +647,8 @@ sap.ui.define([
 				});
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
-					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
+					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[2];
 					var oField1Ori = this.oEditor.getAggregation("_formContent")[3];
 					var oField1Trans = this.oEditor.getAggregation("_formContent")[4];
@@ -736,8 +735,8 @@ sap.ui.define([
 				});
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
-					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
+					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[2];
 					var oField1Ori = this.oEditor.getAggregation("_formContent")[3];
 					var oField1Trans = this.oEditor.getAggregation("_formContent")[4];
@@ -830,8 +829,8 @@ sap.ui.define([
 				});
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
-					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
+					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[2];
 					var oField1Ori = this.oEditor.getAggregation("_formContent")[3];
 					var oField1Trans = this.oEditor.getAggregation("_formContent")[4];
@@ -914,8 +913,8 @@ sap.ui.define([
 				});
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
-					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
+					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[2];
 					var oField1Ori = this.oEditor.getAggregation("_formContent")[3];
 					var oField1Trans = this.oEditor.getAggregation("_formContent")[4];
@@ -998,8 +997,8 @@ sap.ui.define([
 				});
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
-					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
+					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[2];
 					var oField1Ori = this.oEditor.getAggregation("_formContent")[3];
 					var oField1Trans = this.oEditor.getAggregation("_formContent")[4];
@@ -1084,8 +1083,8 @@ sap.ui.define([
 				});
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
-					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
+					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[2];
 					var oField1Ori = this.oEditor.getAggregation("_formContent")[3];
 					var oField1Trans = this.oEditor.getAggregation("_formContent")[4];
@@ -1201,8 +1200,8 @@ sap.ui.define([
 				});
 				this.oEditor.attachReady(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					var oPanel1 = this.oEditor.getAggregation("_formContent")[0];
-					var oPanel2 = this.oEditor.getAggregation("_formContent")[1];
+					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
+					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[2];
 					var oField1Ori = this.oEditor.getAggregation("_formContent")[3];
 					var oField1Trans = this.oEditor.getAggregation("_formContent")[4];

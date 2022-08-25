@@ -389,7 +389,7 @@ sap.ui.define([
 					var oCustomerComboBox = oCustomerNotEditableField.getAggregation("_field");
 					assert.ok(oCustomerComboBox.isA("sap.m.ComboBox"), "Field: Customer NotEditable is ComboBox");
 					assert.ok(!oCustomerComboBox.getEditable(), "Field: Customer NotEditable is Not Editable");
-					var oNextField = this.oEditor.getAggregation("_formContent")[7];
+					var oNextField = this.oEditor.getAggregation("_formContent")[7].getAggregation("_field");
 					assert.ok(oNextField.isA("sap.m.Panel"), "Field: Customer NotVisible is not visible");
 					setTimeout(function () {
 						assert.equal(oCustomerComboBox.getItems().length, 4, "Field: Customer NotEditable data lenght is OK");
@@ -656,7 +656,7 @@ sap.ui.define([
 					var oCustomersMultiComboBox = oCustomersNotEditableField.getAggregation("_field");
 					assert.ok(oCustomersMultiComboBox.isA("sap.m.MultiComboBox"), "Field: Customers NotEditable is MultiComboBox");
 					assert.ok(!oCustomersMultiComboBox.getEditable(), "Field: Customers NotEditable is Not Editable");
-					var oNextField = this.oEditor.getAggregation("_formContent")[7];
+					var oNextField = this.oEditor.getAggregation("_formContent")[7].getAggregation("_field");
 					assert.ok(oNextField.isA("sap.m.Panel"), "Field: Customers NotVisible is not visible");
 					setTimeout(function () {
 						assert.equal(oCustomersMultiComboBox.getItems().length, 5, "Field: Customers NotEditable data lenght is OK");
@@ -923,7 +923,7 @@ sap.ui.define([
 					var oCustomersMultiInput = oCustomersNotEditableField.getAggregation("_field");
 					assert.ok(oCustomersMultiInput.isA("sap.m.MultiInput"), "Field: Customers NotEditable is MultiInput");
 					assert.ok(!oCustomersMultiInput.getEditable(), "Field: Customers NotEditable is Not Editable");
-					var oNextField = this.oEditor.getAggregation("_formContent")[7];
+					var oNextField = this.oEditor.getAggregation("_formContent")[7].getAggregation("_field");
 					assert.ok(oNextField.isA("sap.m.Panel"), "Field: Customers NotVisible is not visible");
 					resolve();
 				}.bind(this));

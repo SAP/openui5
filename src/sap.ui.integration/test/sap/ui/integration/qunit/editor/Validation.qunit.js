@@ -149,7 +149,7 @@ sap.ui.define([
 					var fTest1 = function () {
 						return new Promise(function (resolve) {
 							wait(500).then(function () {
-								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
@@ -182,7 +182,7 @@ sap.ui.define([
 					}.bind(this);
 					var fTest2 = function () {
 						return new Promise(function (resolve) {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[3];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[3];
 							oField1.getAggregation("_field").focus();
 							// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 							oField1.onfocusin();
@@ -307,7 +307,7 @@ sap.ui.define([
 					var fTest1 = function () {
 						return new Promise(function (resolve) {
 							wait(500).then(function () {
-								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
@@ -340,7 +340,7 @@ sap.ui.define([
 					}.bind(this);
 					var fTest2 = function () {
 						return new Promise(function (resolve) {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[3];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[3];
 							oField1.getAggregation("_field").focus();
 							// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 							oField1.onfocusin();
@@ -380,7 +380,7 @@ sap.ui.define([
 					var fTest3 = function () {
 						return new Promise(function (resolve) {
 							wait(500).then(function () {
-								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[5];
+								var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[5];
 								oField1.getAggregation("_field").focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();
@@ -470,7 +470,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
@@ -560,7 +560,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getContent()[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getContent()[1];
 							oField1._settingsButton.focus();
 							wait(1000).then(function () {
 								oField1.getAggregation("_field").focus();
@@ -634,7 +634,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							oField1.getAggregation("_field").setValue("");
 							oField1.getAggregation("_field").fireChange({ value: ""});
@@ -710,7 +710,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							oField1.getAggregation("_field").setValue("");
 							oField1.getAggregation("_field").fireChange({ value: ""});
@@ -812,7 +812,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
@@ -904,7 +904,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
@@ -1003,7 +1003,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
@@ -1171,7 +1171,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
@@ -1277,7 +1277,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
@@ -1366,7 +1366,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
@@ -1468,7 +1468,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
@@ -1576,7 +1576,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
@@ -1686,7 +1686,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
@@ -1794,7 +1794,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(500).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
 							wait(1000).then(function () {
@@ -1940,7 +1940,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(1000).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oCheckBox = oField1.getAggregation("_field");
 							assert.ok(!oCheckBox.getSelected(), "Selected is false");
 							oCheckBox.setSelected(true);
@@ -2023,7 +2023,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(1000).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oCheckBox = oField1.getAggregation("_field");
 							assert.ok(!oCheckBox.getSelected(), "Selected is false");
 							oCheckBox.setSelected(true);
@@ -2094,7 +2094,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(1000).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oSwitch = oField1.getAggregation("_field");
 							assert.ok(!oSwitch.getState(), "State is false");
 							oSwitch.setState(true);
@@ -2187,7 +2187,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					return new Promise(function (resolve) {
 						wait(1000).then(function () {
-							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+							var oField1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							var oSwitch = oField1.getAggregation("_field");
 							assert.ok(!oSwitch.getState(), "State is false");
 							oSwitch.setState(true);

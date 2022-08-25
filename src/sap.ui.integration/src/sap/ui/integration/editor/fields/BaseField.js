@@ -111,8 +111,6 @@ sap.ui.define([
 			oRm.openEnd();
 			if (oControl.getVisible()) {
 				oRm.openStart("span");
-				oRm.openEnd();
-				oRm.openStart("span");
 				oRm.addClass("sapUiIntegrationEditorEditor");
 				if (oControl._hasDynamicValue()) {
 					oRm.addStyle("width", "1px");
