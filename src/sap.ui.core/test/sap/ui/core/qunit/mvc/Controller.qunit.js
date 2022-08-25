@@ -2,10 +2,11 @@
 sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/Fragment',
+	'sap/ui/core/Element',
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/core/mvc/Controller',
 	'sap/base/Log'
-], function(Component, Fragment, XMLView, Controller, Log) {
+], function(Component, Fragment, Element, XMLView, Controller, Log) {
 	"use strict";
 
 	QUnit.module("getComponent");
@@ -157,9 +158,20 @@ sap.ui.define([
 		}
 	});
 
+	// helper function to check if a view fully destroys itself
+	function checkForDanglingControls(assert, oView) {
+		var aDangling = Element.registry.filter(function(o) {
+			return o.getId().startsWith(oView.getId());
+		});
+
+		assert.equal(aDangling.length, 0, "No dangling controls found for '" + oView.getId() + "'.");
+	}
+
 	QUnit.test("Multiple asynchronous Fragment.create - duplicate ID issue expected", function(assert){
-		assert.expect(2);
+		assert.expect(4);
 		var aFragmentPromises = [];
+		var aViews = [];
+
 		var assertCatch = function(oErr) {
 			// Catch should be only executed once for the failing Fragment.load (independent which fragment is first).
 			assert.ok(true, "Promise is rejected correctly because of duplicate ID error");
@@ -193,20 +205,32 @@ sap.ui.define([
 		});
 
 		return Promise.all([pView1, pView2]).then(function (oArguments) {
+			aViews = oArguments;
+
 			return Promise.allSettled(aFragmentPromises).then(function(){
 				// Clean-Up
-				oArguments[0].destroy();
-				oArguments[1].destroy();
+				aViews[0].destroy();
+				aViews[1].destroy();
+				// dangling fragment content (not prefixed and not aggregated)
 				sap.ui.getCore().byId("xmlViewInsideFragment").destroy();
 			});
+		}).then(function() {
+			checkForDanglingControls(assert, aViews[0]);
+			checkForDanglingControls(assert, aViews[1]);
 		});
 	});
 
 	QUnit.test("Multiple asynchronous Controller.loadFragment - no duplicate ID issue expectecd", function(assert){
-		assert.expect(0);
+		assert.expect(2);
+
+		var aViews = [], aFragmentPromises = [];
+
+		// Catch should not be executed
+		var assertCatch = function() {
+			assert.ok(false, "should not reject with duplicate ID error");
+		};
 
 		Controller.extend("my.controller", {
-
 			onInit: function(){
 				this._pFragment = this.loadFragment({
 					name: "testdata.fragments.XMLView",
@@ -214,23 +238,44 @@ sap.ui.define([
 				});
 			}
 		});
-		XMLView.create({
+
+		var pView1 = XMLView.create({
 			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
 			"</mvc:View>"
 		}).then(function(oView){
-			oView.destroy();
+			aFragmentPromises.push(oView.getController()._pFragment.catch(assertCatch));
+			return oView;
 		});
 
-		return XMLView.create({
+		var pView2 = XMLView.create({
 			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
 						"</mvc:View>"
 		}).then(function(oView){
-			return oView.getController()._pFragment.then(function() {
-				oView.destroy();
-			});
+			aFragmentPromises.push(oView.getController()._pFragment.catch(assertCatch));
+			return oView;
+		});
 
-		}).catch(function(oErr) {
-			assert.ok(false, "should not reject with duplicate ID error");
+		return Promise.all([pView1, pView2]).then(function (aResult) {
+			aViews = aResult;
+
+			// get controller first, the reference is otherwise lost after calling destroy()
+			var oCtr1 = aViews[0].getController();
+			var oCtr2 = aViews[1].getController();
+
+			// Destroy views before fragment promises are settled.
+			// Should lead to automatic cleanup of so called 'destroyables'.
+			// If a fragment is already resolved, its content is added to the dependents aggregation
+			// and will be cleaned up normally.
+			aViews[0].destroy();
+			aViews[1].destroy();
+
+			// capture all concurrent promises, the catch handler above and the implicit destroy of the controller
+			return Promise.allSettled(
+				aFragmentPromises.concat(oCtr1._getDestroyables())
+								.concat(oCtr2._getDestroyables()));
+		}).then(function() {
+			checkForDanglingControls(assert, aViews[0]);
+			checkForDanglingControls(assert, aViews[1]);
 		});
 	});
 
@@ -265,7 +310,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Controller.loadFragment - dependents cleaned up correctly", function(assert){
-		assert.expect(3);
+		assert.expect(5);
 
 		Controller.extend("my.controller", {
 
@@ -276,14 +321,23 @@ sap.ui.define([
 				});
 			}
 		});
-		XMLView.create({
+
+		var pView1 = XMLView.create({
 			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
 			"</mvc:View>"
 		}).then(function(oView){
+			var pResult = oView.getController()._pFragment.then(function() {
+				// return so we can use it for a clean up check later!
+				return oView;
+			});
+
+			// destroy view before inner fragment is resolved
 			oView.destroy();
+
+			return pResult;
 		});
 
-		return XMLView.create({
+		var pView2 = XMLView.create({
 			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
 						"</mvc:View>"
 		}).then(function(oView){
@@ -292,10 +346,19 @@ sap.ui.define([
 				assert.ok(oView.getDependents().length === 1, "View has 1 dependent");
 				assert.equal(oView.getDependents()[0], oView.byId("xmlViewInsideFragment"), "View correctly added to dependents");
 				oView.destroy();
+
+				// return so we can use it for a clean up check later!
+				return oView;
 			});
 
 		}).catch(function() {
 			assert.ok(false, "should not reject with duplicate ID error");
+		});
+
+		return Promise.all([pView1, pView2]).then(function(aViews) {
+			// check if everything is cleaned up
+			checkForDanglingControls(assert, aViews[0]);
+			checkForDanglingControls(assert, aViews[1]);
 		});
 	});
 
