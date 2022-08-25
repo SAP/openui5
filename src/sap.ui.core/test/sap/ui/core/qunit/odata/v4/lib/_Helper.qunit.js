@@ -1453,7 +1453,8 @@ sap.ui.define([
 	QUnit.test("updateSelected: create annotation", function (assert) {
 		var oBinding = {},
 			oHelperMock = this.mock(_Helper),
-			oOldValue = {};
+			oOldValue0 = {},
+			oOldValue1 = {};
 
 		oBinding.oContext = {oBinding : oBinding};
 		oHelperMock.expects("fireChange").withExactArgs("~mChangeListener~", "foo", undefined,
@@ -1463,16 +1464,24 @@ sap.ui.define([
 
 		oHelperMock.expects("buildPath").withExactArgs("", "foo").returns("foo");
 		oHelperMock.expects("buildPath").withExactArgs("", "bar").returns("bar");
-		oHelperMock.expects("buildPath").withExactArgs("", "baz").returns("baz");
-		oHelperMock.expects("buildPath").withExactArgs("baz", "bar").returns("baz/bar");
+		oHelperMock.expects("buildPath").twice().withExactArgs("", "baz").returns("baz");
+		oHelperMock.expects("buildPath").twice().withExactArgs("baz", "bar").returns("baz/bar");
 
 		// code under test
-		_Helper.updateSelected("~mChangeListener~", "", oOldValue,
+		_Helper.updateSelected("~mChangeListener~", "", oOldValue0,
 			{baz : {bar : {}}}, ["foo", "bar", "baz/bar"]);
 
-		assert.deepEqual(oOldValue, {
+		assert.deepEqual(oOldValue0, {
 			"foo@$ui5.noData" : true,
 			"bar@$ui5.noData" : true,
+			baz : {bar : {}}
+		});
+
+		// code under test (do not create annotation)
+		_Helper.updateSelected("~mChangeListener~", "", oOldValue1,
+			{baz : {bar : {}}}, ["foo", "bar", "baz/bar"], undefined, /*bOkIfMissing*/ true);
+
+		assert.deepEqual(oOldValue1, {
 			baz : {bar : {}}
 		});
 	});
