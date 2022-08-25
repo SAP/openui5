@@ -401,6 +401,46 @@ sap.ui.define([
 			assert.notEqual(oResult.text, undefined, "then the text is correct");
 		});
 
+		QUnit.test("When _getErrorMessageText() is called with differente errors", function (assert) {
+			var oError = {
+				status: 500,
+				messageKey: "MSG_SAVE_APP_VARIANT_FAILED"
+			};
+			oError.userMessage = "The referenced object does not exist or is not unique";
+			var sErrorMessage = AppVariantUtils._getErrorMessageText(oError);
+			assert.strictEqual(sErrorMessage, oError.userMessage, "then the userMessage error is returned");
+			delete oError.userMessage;
+
+			oError.messages = [{text: "this is"}, {text: "a test error"}];
+			sErrorMessage = AppVariantUtils._getErrorMessageText(oError);
+			assert.strictEqual(sErrorMessage, oError.messages.map(function(oError) {
+				return oError.text;
+			}).join("\n"), "then the messages error is returned");
+			delete oError.messages;
+
+			oError.iamAppId = "Test IAM error message";
+			sErrorMessage = AppVariantUtils._getErrorMessageText(oError);
+			assert.strictEqual(sErrorMessage, "IAM App Id: " + oError.iamAppId, "then the error message with IAM AppID is returned");
+			delete oError.iamAppId;
+
+			oError.stack = "Error: this is test stack message";
+			sErrorMessage = AppVariantUtils._getErrorMessageText(oError);
+			assert.strictEqual(sErrorMessage, oError.stack, "then the stack error is returned");
+			delete oError.stack;
+
+			oError.message = "This is a test message";
+			sErrorMessage = AppVariantUtils._getErrorMessageText(oError);
+			assert.strictEqual(sErrorMessage, oError.message, "then the message error is returned");
+			delete oError.message;
+
+			sErrorMessage = AppVariantUtils._getErrorMessageText(oError);
+			assert.strictEqual(sErrorMessage, oError.status, "then the status is returned");
+			delete oError.status;
+
+			sErrorMessage = AppVariantUtils._getErrorMessageText(oError);
+			assert.strictEqual(sErrorMessage, oError, "then the error object is returned");
+		});
+
 		QUnit.test("When showRelevantDialog() is called with success message and Ok button is pressed", function (assert) {
 			var oInfo = {
 				text: "Text",
