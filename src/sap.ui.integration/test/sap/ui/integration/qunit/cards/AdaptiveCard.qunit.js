@@ -442,14 +442,9 @@ sap.ui.define([
 
 			var oLoadManifestFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_loadManifestFromUrl");
 			var oFireCardRadyFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_fireCardReadyEvent");
-			var iTimeoutId;
 
 			var fnChecks = function () {
-				if (iTimeoutId) {
-					clearTimeout(iTimeoutId);
-				}
-
-				iTimeoutId = setTimeout(function () {
+				setTimeout(function () {
 					assert.ok(oLoadManifestFunctionSpy.calledOnce, "The _loadManifestFromUrl function should be called.");
 					assert.ok(oFireCardRadyFunctionSpy.callCount, "_fireCardReadyEvent should be called.");
 					assert.ok(oCard.getCardContent()._bAdaptiveCardElementsReady, "Adaptive Card elements should be rendered.");
@@ -461,12 +456,10 @@ sap.ui.define([
 					oLoadManifestFunctionSpy.restore();
 					oFireCardRadyFunctionSpy.restore();
 					done();
-				});
+				}, 100);
 			};
 
-			oCard.attachEvent("_ready", function () {
-				oCard.getCardContent().attachReady(fnChecks);
-			});
+			oCard.attachEvent("_ready", fnChecks);
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
@@ -480,14 +473,9 @@ sap.ui.define([
 
 			var oLoadManifestFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_loadManifestFromUrl");
 			var oFireCardReadyFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_fireCardReadyEvent");
-			var iTimeoutId;
 
 			var fnChecks = function () {
-				if (iTimeoutId) {
-					clearTimeout(iTimeoutId);
-				}
-
-				iTimeoutId = setTimeout(function () {
+				setTimeout(function () {
 					assert.notOk(oLoadManifestFunctionSpy.callCount, "The _loadManifestFromUrl function should not be called.");
 					assert.ok(oFireCardReadyFunctionSpy.callCount, "_fireCardReadyEvent should be called.");
 					assert.notOk(oCard.getCardContent()._oCardConfig.body, "The MS AC body not should be present in the manifest.");
@@ -500,12 +488,10 @@ sap.ui.define([
 					oFireCardReadyFunctionSpy.restore();
 					oCard.destroy();
 					done();
-				});
+				}, 100);
 			};
 
-			oCard.attachEvent("_ready", function () {
-				oCard.getCardContent().attachReady(fnChecks);
-			});
+			oCard.attachEvent("_ready", fnChecks);
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
@@ -524,14 +510,9 @@ sap.ui.define([
 
 			var oLoadManifestFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_loadManifestFromUrl");
 			var oFireCardReadyFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_fireCardReadyEvent");
-			var iTimeoutId;
 
 			var fnChecks = function () {
-				if (iTimeoutId) {
-					clearTimeout(iTimeoutId);
-				}
-
-				iTimeoutId = setTimeout(function () {
+				setTimeout(function () {
 					assert.notOk(oLoadManifestFunctionSpy.callCount, "The _loadManifestFromUrl function should not be called.");
 					assert.ok(oFireCardReadyFunctionSpy.callCount, "_fireCardReadyEvent should be called.");
 					assert.notOk(oCard.getCardContent()._oCardConfig.body, "The MS AC body not should be present in the manifest.");
@@ -544,12 +525,10 @@ sap.ui.define([
 					oFireCardReadyFunctionSpy.restore();
 					oCard.destroy();
 					done();
-				});
+				}, 100);
 			};
 
-			oCard.attachEvent("_ready", function () {
-				oCard.getCardContent().attachReady(fnChecks);
-			});
+			oCard.attachEvent("_ready", fnChecks);
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
@@ -601,14 +580,9 @@ sap.ui.define([
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
 			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "_setDataConfiguration");
 			var oDataRequestSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
-			var iTimeoutId;
 
 			var fnChecks = function () {
-				if (iTimeoutId) {
-					clearTimeout(iTimeoutId);
-				}
-
-				iTimeoutId = setTimeout(function () {
+				setTimeout(function () {
 					assert.ok(oSetupCardFunctionSpy.called, "The _setupMSCardContent function should be called.");
 					assert.ok(oRenderCardFunctionSpy.called, "The _renderMSCardContent function should be called.");
 					assert.ok(oRenderCardFunctionSpy.args[0][0].$schema, "_renderMSCardContent should be called with a MS AC card json.");
@@ -637,9 +611,7 @@ sap.ui.define([
 				}.bind(oCard), 200);
 			};
 
-			oCard.attachEvent("_ready", function () {
-				oCard.getCardContent().attachReady(fnChecks);
-			});
+			oCard.attachEvent("_ready", fnChecks);
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
@@ -656,14 +628,9 @@ sap.ui.define([
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
 			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "_setDataConfiguration");
 			var oDataRequestSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
-			var iTimeoutId;
 
 			var fnChecks = function () {
-				if (iTimeoutId) {
-					clearTimeout(iTimeoutId);
-				}
-
-				iTimeoutId = setTimeout(function () {
+				setTimeout(function () {
 					assert.ok(oSetupCardFunctionSpy.called, "The _setupMSCardContent function should be called.");
 					assert.ok(oRenderCardFunctionSpy.called, "The _renderMSCardContent function should be called.");
 					assert.ok(oRenderCardFunctionSpy.args[0][0].$schema, "_renderMSCardContent should be called with a MS AC card json.");
@@ -692,9 +659,7 @@ sap.ui.define([
 				}.bind(oCard), 300);
 			};
 
-			oCard.attachEvent("_ready", function () {
-				oCard.getCardContent().attachReady(fnChecks);
-			});
+			oCard.attachEvent("_ready", fnChecks);
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
@@ -710,14 +675,9 @@ sap.ui.define([
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
 			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "_setDataConfiguration");
 			var oDataRequestSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
-			var iTimeoutId;
 
 			var fnChecks = function () {
-				if (iTimeoutId) {
-					clearTimeout(iTimeoutId);
-				}
-
-				iTimeoutId = setTimeout(function () {
+				setTimeout(function () {
 					assert.ok(oSetupCardFunctionSpy.called, "The _setupMSCardContent function should be called.");
 					assert.ok(oRenderCardFunctionSpy.called, "The _renderMSCardContent function should be called.");
 					assert.ok(oRenderCardFunctionSpy.args[0][0].$schema, "_renderMSCardContent should be called with a MS AC card json.");
@@ -743,12 +703,10 @@ sap.ui.define([
 					oDataRequestSpy.restore();
 					oCard.destroy();
 					done();
-				}.bind(oCard), 300);
+				}.bind(oCard), 400);
 			};
 
-			oCard.attachEvent("_ready", function () {
-				oCard.getCardContent().attachReady(fnChecks);
-			});
+			oCard.attachEvent("_ready", fnChecks);
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
@@ -759,25 +717,18 @@ sap.ui.define([
 			var oCard = new Card({
 				manifest: oTemplateManifest5
 			});
-			var iTimeoutId;
 
 			var fnChecks = function () {
-				if (iTimeoutId) {
-					clearTimeout(iTimeoutId);
-				}
-
-				iTimeoutId = setTimeout(function () {
+				setTimeout(function () {
 					assert.strictEqual(document.querySelectorAll(".ac-textBlock")[0].innerText, "No ${name}", "A TextBlock element with a non-mapped text value should be present.");
 
 					// Cleanup
 					oCard.destroy();
 					done();
-				}, 300);
+				}, 500);
 			};
 
-			oCard.attachEvent("_ready", function () {
-				oCard.getCardContent().attachReady(fnChecks);
-			});
+			oCard.attachEvent("_ready", fnChecks);
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
@@ -795,14 +746,9 @@ sap.ui.define([
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
 			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "_setDataConfiguration");
 			var oDataRequestSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
-			var iTimeoutId;
 
 			var fnChecks = function () {
-				if (iTimeoutId) {
-					clearTimeout(iTimeoutId);
-				}
-
-				iTimeoutId = setTimeout(function () {
+				setTimeout(function () {
 					assert.ok(oSetupCardFunctionSpy.called, "The _setupMSCardContent function should be called.");
 					assert.ok(oRenderCardFunctionSpy.called, "The _renderMSCardContent function should be called.");
 					assert.ok(oRenderCardFunctionSpy.args[0][0].$schema, "_renderMSCardContent should be called with a MS AC card json.");
@@ -833,9 +779,7 @@ sap.ui.define([
 			};
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			oCard.attachEvent("_ready", function () {
-				oCard.getCardContent().attachReady(fnChecks);
-			});
+			oCard.attachEvent("_ready", fnChecks);
 
 			Core.applyChanges();
 		});
@@ -852,14 +796,9 @@ sap.ui.define([
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
 			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "_setDataConfiguration");
 			var oDataRequestSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
-			var iTimeoutId;
 
 			var fnChecks = function () {
-				if (iTimeoutId) {
-					clearTimeout(iTimeoutId);
-				}
-
-				iTimeoutId = setTimeout(function () {
+				setTimeout(function () {
 					assert.ok(oSetupCardFunctionSpy.called, "The _setupMSCardContent function should be called.");
 					assert.ok(oRenderCardFunctionSpy.called, "The _renderMSCardContent function should be called.");
 					assert.ok(oRenderCardFunctionSpy.args[0][0].$schema, "_renderMSCardContent should be called with a MS AC card json.");
@@ -888,9 +827,7 @@ sap.ui.define([
 			};
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			oCard.attachEvent("_ready", function () {
-				oCard.getCardContent().attachReady(fnChecks);
-			});
+			oCard.attachEvent("_ready", fnChecks);
 
 			Core.applyChanges();
 		});
@@ -906,14 +843,9 @@ sap.ui.define([
 			var oSetTemplatingFunctionSpy = sinon.spy(AdaptiveContent.prototype, "_setTemplating");
 			var oSetDataConfigurationSpy = sinon.spy(AdaptiveContent.prototype, "_setDataConfiguration");
 			var oDataRequestSpy = sinon.spy(DataProvider.prototype, "triggerDataUpdate");
-			var iTimeoutId;
 
 			var fnChecks = function () {
-				if (iTimeoutId) {
-					clearTimeout(iTimeoutId);
-				}
-
-				iTimeoutId = setTimeout(function () {
+				setTimeout(function () {
 					assert.ok(oSetupCardFunctionSpy.called, "The _setupMSCardContent function should be called.");
 					assert.ok(oRenderCardFunctionSpy.called, "The _renderMSCardContent function should be called.");
 					assert.ok(oRenderCardFunctionSpy.args[0][0].$schema, "_renderMSCardContent should be called with a MS AC card json.");
@@ -938,13 +870,11 @@ sap.ui.define([
 					oDataRequestSpy.restore();
 					oCard.destroy();
 					done();
-				}, 300);
+				}, 600);
 			};
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			oCard.attachEvent("_ready", function () {
-				oCard.getCardContent().attachReady(fnChecks);
-			});
+			oCard.attachEvent("_ready", fnChecks);
 
 			Core.applyChanges();
 		});
@@ -954,27 +884,20 @@ sap.ui.define([
 			var oCard = new Card({
 				manifest: oTemplateManifest8
 			});
-			var iTimeoutId;
 
 			var fnChecks = function () {
-				if (iTimeoutId) {
-					clearTimeout(iTimeoutId);
-				}
-
-				iTimeoutId = setTimeout(function () {
+				setTimeout(function () {
 					assert.ok(document.querySelectorAll(".ac-textBlock").length, "A TextBlock elements should be present in the DOM.");
 					assert.strictEqual(document.querySelectorAll(".ac-textBlock")[0].innerText, "George", "A TextBlock element with a correctly mapped text value should be present.");
 
 					// Cleanup
 					oCard.destroy();
 					done();
-				}, 300);
+				}, 700);
 			};
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			oCard.attachEvent("_ready", function () {
-				oCard.getCardContent().attachReady(fnChecks);
-			});
+			oCard.attachEvent("_ready", fnChecks);
 
 			Core.applyChanges();
 		});
@@ -984,27 +907,20 @@ sap.ui.define([
 			var oCard = new Card({
 				manifest: oTemplateManifest9
 			});
-			var iTimeoutId;
 
 			var fnChecks = function () {
-				if (iTimeoutId) {
-					clearTimeout(iTimeoutId);
-				}
-
-				iTimeoutId = setTimeout(function () {
+				setTimeout(function () {
 					assert.ok(document.querySelectorAll(".ac-textBlock").length, "A TextBlock elements should be present in the DOM.");
 					assert.strictEqual(document.querySelectorAll(".ac-textBlock")[0].innerText, "Diana", "A TextBlock element with a correctly mapped text value should be present.");
 
 					// Cleanup
 					oCard.destroy();
 					done();
-				}, 300);
+				}, 800);
 			};
 
 			oCard.placeAt(DOM_RENDER_LOCATION);
-			oCard.attachEvent("_ready", function () {
-				oCard.getCardContent().attachReady(fnChecks);
-			});
+			oCard.attachEvent("_ready", fnChecks);
 
 			Core.applyChanges();
 		});
