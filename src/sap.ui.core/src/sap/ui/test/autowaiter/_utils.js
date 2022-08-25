@@ -55,10 +55,22 @@ sap.ui.define([
 		}
 	}
 
+	function onElementAvailable (sSelector, fnCallback) {
+		var oElement = document.querySelector(sSelector);
+		if (oElement) {
+			fnCallback(oElement);
+		} else {
+			setTimeout(function () {
+				onElementAvailable(sSelector, fnCallback);
+			}, 100);
+		}
+	}
+
 	return {
 		resolveStackTrace: resolveStackTrace,
 		functionToString: functionToString,
-		argumentsToString: argumentsToString
+		argumentsToString: argumentsToString,
+		onElementAvailable: onElementAvailable
 	};
 
 }, true);
