@@ -2065,7 +2065,7 @@ sap.ui.define([
 		assert.ok(oWrapper.fieldHelpClose.called, "fieldHelpClose of Wrapper called");
 
 	});
-
+/*  temporarly removed: for testing if the FieldValueHelp qunit are more stable
 	QUnit.test("content changed in dialog (with async loading of Dialog)", function(assert) {
 
 		oClock.restore(); // to test async loading
@@ -2110,7 +2110,7 @@ sap.ui.define([
 		oStub.restore();
 
 	});
-
+*/
 	QUnit.test("toggleOpen in dialog", function(assert) {
 
 		oFieldHelp.toggleOpen(false); // open
