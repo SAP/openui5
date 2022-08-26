@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Card Actions</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1>ShowCard</h1>
+			<h2 id="overview">Overview</h2>
+			<p>ShowCard action type is used for showing another card with more details or additional actions.</p>
+			<p>Default behavior: opens a new card created by the given <code>manifest</code>.</p>
+
+			<div class="messageStripWarning">
+				Experimental feature since version 1.112. The API may change.
+			</div>
+
+			<h2 id="parameters">Parameters</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>manifest</td>
+						<td>string|object</td>
+						<td></td>
+						<td>Yes</td>
+						<td>URL to the manifest of the card to show. Or the manifest itself passed as an object.</td>
+						<td>1.51.0</td>
+						<td>1.112</td>
+					</tr>
+					<tr>
+						<td>parameters</td>
+						<td>object</td>
+						<td></td>
+						<td>No</td>
+						<td>Manifest parameters for the shown card.</td>
+						<td>1.51.0</td>
+						<td>1.112</td>
+					</tr>
+					<tr>
+						<td>data</td>
+						<td>object</td>
+						<td></td>
+						<td>No</td>
+						<td>A map of model names and associated data for each of them. The key is the model name and the value is the data. In the newly opened card you can refer to the model by name to reuse the data.</td>
+						<td>1.51.0</td>
+						<td>1.112</td>
+					</tr>
+					<tr>
+						<td>width</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>A CSS width for the card which will be opened.</td>
+						<td>1.51.0</td>
+						<td>1.112</td>
+					</tr>
+					<tr>
+						<td>baseUrl</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>If the manifest is provided as an object the "baseUrl" can be specified to be used for loading relative resources in the opened card. If not provided the main card's "baseUrl" will be used.</td>
+						<td>1.51.0</td>
+						<td>1.112</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="examples">Examples</h2>
+			<p>Example how to show a card with manifest "detailsManifest.json":</p>
+			<pre class="lang-json">
+{
+	"sap.app": {
+		"id": "card.explorer.actions.showHideCard",
+		"type": "card",
+		...
+	},
+	"sap.card": {
+		"type": "Object",
+		"configuration": {
+			"parameters": {
+				"orderId": {
+					"value": 10249
+				}
+			}
+		},
+		"data": {
+			...
+		},
+		"header": {
+			"data": {
+				"path": "/value/0"
+			},
+			"icon": {
+				"src": "sap-icon://sap-ui5"
+			},
+			"title": "Order for {ShipName}",
+			"subTitle": "ID {parameters>/orderId/value}"
+		},
+		"content": {
+			"groups": [
+				{
+					"items": [
+						{
+							"label": "Name",
+							"value": "{ShipName}"
+						}
+					]
+				},
+				{
+					"items": [
+						{
+							"label": "Address",
+							"value": "{ShipAddress}"
+						}
+					]
+				}
+			]
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"text": "Show More",
+					"buttonType": "Accept",
+					<mark>"actions": [
+						{
+							"type": "ShowCard",
+							"parameters": {
+								"manifest": "./detailsManifest.json",
+								"parameters": {
+									"orderId": "{parameters>/orderId/value}"
+								},
+								"data": {
+									"orderData": "{/value/0}"
+								},
+								"width": "480px"
+							}
+						}
+					]</mark>
+				}
+			]
+		}
+	}
+}</pre>
+			<a class="try-button" href="../../../index.html#/explore/cardActions/showHideCard" target="_parent">Try it Out</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Overview</a></div>
+			<div><a href="#parameters">Parameters</a></div>
+			<div><a href="#examples">Examples</a></div>
+		</div>
+	</div>
+</body>
+
+</html>

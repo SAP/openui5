@@ -210,5 +210,7 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 
 			utils.takePictureOfElement(oElement, "10_HiddenFooter_" + oCard.id);
 		});
+		utils.navigateBack();
 	});
+
 });

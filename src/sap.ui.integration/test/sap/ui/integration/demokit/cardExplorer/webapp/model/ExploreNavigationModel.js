@@ -1314,7 +1314,7 @@ sap.ui.define([
 						subSamples: [
 							{
 								title: 'Navigation',
-								key: "navigation",
+								key: 'navigation',
 								target: 'exploreSamples',
 								settings: {
 									columns: 3
@@ -1329,7 +1329,7 @@ sap.ui.define([
 							},
 							{
 								title: 'Intent-Based Navigation',
-								key: "ibn",
+								key: 'ibn',
 								target: 'exploreSamples',
 								experimental: true,
 								settings: {
@@ -1340,6 +1340,52 @@ sap.ui.define([
 										url: '/samples/actions/ibn/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Show/Hide Card',
+								key: 'showHideCard',
+								target: 'exploreSamples',
+								experimental: true,
+								settings: {
+									columns: 3
+								},
+								files: [
+									{
+										url: '/samples/actions/showHide/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/actions/showHide/detailsManifest.json',
+										name: 'detailsManifest.json',
+										key: 'detailsManifest.json'
+									}
+								]
+							},
+							{
+								title: 'Approve/Deny with popup',
+								key: 'approve',
+								target: 'exploreSamples',
+								experimental: true,
+								settings: {
+									columns: 3
+								},
+								files: [{
+										url: '/samples/actions/approve/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/actions/approve/snackManifest.json',
+										name: 'detailsManifest.json',
+										key: 'detailsManifest.json'
+									},
+									{
+										url: '/samples/actions/approve/ApproveCardExtension.js',
+										name: 'ApproveCardExtension.js',
+										key: 'ApproveCardExtension.js'
 									}
 								]
 							}
