@@ -124,6 +124,8 @@ sap.ui.define([
 			_writeAccText(oRm, sTableId, "rowexpandtext", TableUtils.getResourceText("TBL_ROW_EXPAND_KEY"));
 			// aria description for row collapse via keyboard
 			_writeAccText(oRm, sTableId, "rowcollapsetext", TableUtils.getResourceText("TBL_ROW_COLLAPSE_KEY"));
+			// aria description for column with required content
+			_writeAccText(oRm, sTableId, "ariarequired", TableUtils.getResourceText("TBL_COL_REQUIRED"));
 
 			var oSelectionMode = oTable.getSelectionMode();
 			if (oSelectionMode !== SelectionMode.None) {

@@ -929,4 +929,47 @@ sap.ui.define([
 			"multiLabels and label are set -> returned the correct multiLabel text");
 		assert.strictEqual(ColumnUtils.getHeaderText(oTable, 4), "Name", "name, multiLabels, label are set -> returned the name");
 	});
+
+	QUnit.test("getHeaderLabel", function(assert){
+		assert.strictEqual(ColumnUtils.getColumnWidth(), null, "Returned null: No parameters passed");
+		assert.strictEqual(ColumnUtils.getColumnWidth(oTable), null, "Returned null: No column index specified");
+		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, -1), null, "Returned null: Column index out of bound");
+		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, oTable.getColumns().length), null, "Returned null: Column index out of bound");
+
+		var oLabelA = new TableQUnitUtils.HeightTestControl(),
+			oLabelB = new TableQUnitUtils.TestControl({text: "Column2Label1"}),
+			oLabelC = new TableQUnitUtils.TestControl({text: "Column2Label2"}),
+			oLabelD = new TableQUnitUtils.TestControl({text: "Column3Label1"}),
+			oLabelE = new TableQUnitUtils.TestControl({text: "Column3Label2"});
+
+		oTable.removeAllColumns();
+		oTable.addColumn(new Column());
+		oTable.addColumn(new Column({
+			label: oLabelA, // has no text property
+			headerSpan: [1, 1]
+		}));
+		oTable.addColumn(new Column({
+			label: "Label1",
+			headerSpan: [2, 1]
+		}));
+		oTable.addColumn(new Column({
+			label: "Label2",
+			headerSpan: [1, 1],
+			multiLabels: [oLabelB, oLabelC]
+		}));
+		oTable.addColumn(new Column({
+			label: "Label3",
+			headerSpan: [1, 1],
+			multiLabels: [oLabelD, oLabelE],
+			name: "Name"
+		}));
+
+		assert.strictEqual(ColumnUtils.getHeaderLabel(oTable, 0), null, "name, multiLabels, label are not set -> returned null");
+		assert.strictEqual(ColumnUtils.getHeaderLabel(oTable, 1), oLabelA,
+			"name, multiLabels are not set, label is set to a control that doesn't implement the #getText method -> returned label instance A");
+		assert.strictEqual(ColumnUtils.getHeaderLabel(oTable, 2).getText(), "Label1", "name and multiLabels are not set -> returned the default label instance");
+		assert.strictEqual(ColumnUtils.getHeaderLabel(oTable, 3), oLabelC,
+			"multiLabels and label are set -> returned the correct label instance C");
+		assert.strictEqual(ColumnUtils.getHeaderLabel(oTable, 4), oLabelE, "name, multiLabels, label are set -> returned the label instance E");
+	});
 });

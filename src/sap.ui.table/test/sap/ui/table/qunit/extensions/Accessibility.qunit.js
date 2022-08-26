@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/m/IllustratedMessage"
+	"sap/m/IllustratedMessage",
+	"sap/m/Label"
 ], function(
 	TableQUnitUtils,
 	TableUtils,
@@ -37,7 +38,8 @@ sap.ui.define([
 	FilterOperator,
 	jQuery,
 	oCore,
-	IllustratedMessage
+	IllustratedMessage,
+	Label
 ) {
 	"use strict";
 
@@ -120,7 +122,7 @@ sap.ui.define([
 			TableQUnitUtils.addColumn(_oTable, "B Label", "B");
 			TableQUnitUtils.addColumn(_oTable, "C Label", "C", true).setTooltip("tooltip");
 			TableQUnitUtils.addColumn(_oTable, "D Label", "D", false, true, true).getTemplate().setVisible(false);
-			TableQUnitUtils.addColumn(_oTable, "E Label", "E", false, true, true);
+			TableQUnitUtils.addColumn(_oTable, "E Label", "E", false, true, true).setLabel(new Label({text: "E Label", required: true}));
 
 			var oColumn = _oTable.getColumns()[1];
 			oColumn.setSortProperty("SomeSortProperty");
@@ -661,6 +663,10 @@ sap.ui.define([
 			aLabels.push(sTableId + "-cellacc"); // Column 2 has tooltip see TableQUnitUtils.js
 		}
 
+		if (bFocus && iCol == 4) {
+			aLabels.push(sTableId + "-ariarequired");
+		}
+
 		assert.strictEqual(
 			($Cell.attr("aria-labelledby") || "").trim(),
 			aLabels.join(" "),
@@ -729,6 +735,23 @@ sap.ui.define([
 			assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of column header " + i);
 		}
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
+	});
+
+	QUnit.test("required state of multi column header with Focus", function(assert) {
+		var $Cell;
+		var sTableId = oTable.getId();
+		var oCell = oTable._getVisibleColumns()[1].getDomRef();
+		$Cell = jQuery(oCell);
+		oTable.getColumns()[1].setLabel(null);
+		oTable.getColumns()[1].addMultiLabel(new TestControl());
+		oTable.getColumns()[1].addMultiLabel(new TestControl());
+		oTable.getColumns()[1].addMultiLabel(new Label({required: true, text: "Test Text"}));
+		oTable.getColumns()[1].setHeaderSpan([3, 2, 1]);
+		oCore.applyChanges();
+
+		oCell.focus();
+
+		assert.ok($Cell.attr("aria-labelledby").includes(sTableId + "-ariarequired"), "aria-required");
 	});
 
 	QUnit.test("Other ARIA Attributes of Column Header", function(assert) {
@@ -1706,7 +1729,7 @@ sap.ui.define([
 			"ariacount", "toggleedit", "ariaselectall", "ariarowgrouplabel", "ariagrandtotallabel",
 			"ariagrouptotallabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu",
 			"ariacolspan", "ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes", "ariafixedcolumn", "ariainvalid", "ariaselection",
-			"ariashowcolmenu", "ariahidecolmenu", "rowexpandtext", "rowcollapsetext", "rownavigatedtext"
+			"ariashowcolmenu", "ariahidecolmenu", "rowexpandtext", "rowcollapsetext", "rownavigatedtext", "ariarequired"
 		];
 		var $Elem = oTable.$().find(".sapUiTableHiddenTexts");
 		assert.strictEqual($Elem.length, 1, "Hidden Text Area available");

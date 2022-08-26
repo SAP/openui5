@@ -502,6 +502,7 @@ sap.ui.define([
 			var oTable = this.getTable();
 			var $Cell = oCellInfo.cell;
 			var oColumn = sap.ui.getCore().byId($Cell.attr("data-sap-ui-colid"));
+			var oColumnLabel = TableUtils.Column.getHeaderLabel(oTable, oCellInfo.columnIndex);
 			var mAttributes = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.COLUMNHEADER, {
 					headerId: $Cell.attr("id"),
 					column: oColumn,
@@ -510,6 +511,10 @@ sap.ui.define([
 			var sText = ExtensionHelper.getColumnTooltip(oColumn);
 			var aLabels = [oTable.getId() + "-colnumberofcols"].concat(mAttributes["aria-labelledby"]);
 			var iSpan = oCellInfo.columnSpan;
+
+			if (TableUtils.isA(oColumnLabel, "sap.m.Label") && oColumnLabel.getRequired()) {
+				aLabels.push(oTable.getId() + "-ariarequired");
+			}
 
 			if (iSpan > 1) {
 				aLabels.push(oTable.getId() + "-ariacolspan");
