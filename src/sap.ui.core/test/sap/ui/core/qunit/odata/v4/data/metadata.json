@@ -812,7 +812,7 @@
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Salary/MONTHLY_BASIC_SALARY_AMOUNT" : {
 				"@com.sap.vocabularies.Common.v1.Label" : "Planned basic salary amount per month",
 				"@Org.OData.Measures.V1.ISOCurrency" : {
-					"$Path" : "BASIC_SALARY_CURR"
+					"$Path" : "SALARY/BASIC_SALARY_CURR"
 				}
 			},
 			"com.sap.gateway.default.iwbep.tea_busi.v0001.ComplexType_Salary/BASIC_SALARY_CURR" : {

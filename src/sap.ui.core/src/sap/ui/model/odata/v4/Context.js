@@ -430,6 +430,8 @@ sap.ui.define([
 	 * @param {boolean} [bSkipRetry]
 	 *   Whether to skip retries of failed PATCH requests and instead fail accordingly, but still
 	 *   fire "patchSent" and "patchCompleted" events
+	 * @param {boolean} [bUpdating]
+	 *   Whether the given property will not be overwritten by a creation POST(+GET) response
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure, for example if the annotation belongs to
@@ -438,7 +440,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Context.prototype.doSetProperty = function (sPath, vValue, oGroupLock, bSkipRetry) {
+	Context.prototype.doSetProperty = function (sPath, vValue, oGroupLock, bSkipRetry, bUpdating) {
 		var oModel = this.oModel,
 			oMetaModel = oModel.getMetaModel(),
 			oPromise,
@@ -457,7 +459,7 @@ sap.ui.define([
 			if (oPromise instanceof Promise) {
 				oGroupLock.unlock();
 				oGroupLock = oGroupLock.getUnlockedCopy();
-				this.doSetProperty(sPath, vValue, null, true) // early UI update
+				this.doSetProperty(sPath, vValue, null, true, true) // early UI update
 					.catch(this.oModel.getReporter());
 
 				return oPromise.then(function (bSuccess) {
@@ -518,7 +520,8 @@ sap.ui.define([
 					}
 
 					if (!oGroupLock) {
-						return oCache.setProperty(oResult.propertyPath, vValue, sEntityPath);
+						return oCache.setProperty(oResult.propertyPath, vValue, sEntityPath,
+							bUpdating);
 					}
 
 					if (that.isInactive()) {

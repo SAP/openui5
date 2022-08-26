@@ -38,7 +38,7 @@ sap.ui.define([
 				i;
 
 			function createEmptyRow() {
-				var oContext = oBinding.create({}, true, true, /*bInactive*/true);
+				var oContext = oBinding.create({}, false, true, /*bInactive*/true);
 
 				oContext.created().catch(function (oError) {
 					if (!oError.canceled) {

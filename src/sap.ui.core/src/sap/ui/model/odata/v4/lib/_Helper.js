@@ -635,6 +635,33 @@ sap.ui.define([
 		},
 
 		/**
+		 * Deletes within the given entity and property path the property annotation
+		 * "@$ui5.updating".
+		 *
+		 * @param {string} sPropertyPath
+		 *   The path of the property in the entity which might be annotated with "@$ui5.updating"
+		 * @param {object} oEntity
+		 *   The entity
+		 *
+		 */
+		deleteUpdating : function (sPropertyPath, oEntity) {
+			var oData = oEntity;
+
+			sPropertyPath.split("/").some(function (sSegment) {
+				var vValue = oData[sSegment];
+
+				if (vValue === null || Array.isArray(vValue)) {
+					return true;
+				}
+				if (typeof vValue === "object") {
+					oData = vValue;
+					return false;
+				}
+				delete oData[sSegment + "@$ui5.updating"];
+			});
+		},
+
+		/**
 		 * Drills down into the given object according to the given path.
 		 *
 		 * @param {object} oObject
@@ -1859,6 +1886,41 @@ sap.ui.define([
 		},
 
 		/**
+		 * Searches all properties in oOld annotated with "@$ui5.updating" and restores the property
+		 * value in oNew.
+		 *
+		 * @param {object} oOld
+		 *   The old element
+		 * @param {object} oNew
+		 *   The new element
+		 * @returns {object}
+		 *   The new element with the restored properties
+		 *
+		 */
+		restoreUpdatingProperties : function (oOld, oNew) {
+			var oTempNew = oNew || {};
+
+			Object.keys(oOld || {}).forEach(function (sProperty) {
+				if (sProperty.startsWith("@")) {
+					return; // skip annotations
+				}
+				if (Array.isArray(oOld[sProperty])) {
+					return; // skip arrays
+				}
+				if (typeof oOld[sProperty] === "object") {
+					oTempNew[sProperty]
+						= _Helper.restoreUpdatingProperties(oOld[sProperty], oTempNew[sProperty]);
+				}
+				if (oOld[sProperty + "@$ui5.updating"]) {
+					oTempNew[sProperty] = oOld[sProperty];
+					oTempNew[sProperty + "@$ui5.updating"] = oOld[sProperty + "@$ui5.updating"];
+					oNew = oTempNew;
+				}
+			});
+			return oNew;
+		},
+
+		/**
 		 * Adds the key properties of the given entity type to $select of the given query options.
 		 *
 		 * @param {object} mQueryOptions
@@ -2194,8 +2256,9 @@ sap.ui.define([
 				// annotations
 				Object.keys(oTarget).forEach(function (sProperty) {
 					if (!(sProperty in oSource) && sProperty.includes("@")
-							&& !sProperty.startsWith("@$ui5.")
-							&& getSelect(vSelect, sProperty)) {
+							&& !sProperty.startsWith("@$ui5.") && getSelect(vSelect, sProperty)
+							&& !sProperty.endsWith("@$ui5.updating")
+						) {
 						delete oTarget[sProperty];
 						_Helper.fireChange(mChangeListeners, _Helper.buildPath(sPath, sProperty),
 							undefined);
@@ -2233,7 +2296,8 @@ sap.ui.define([
 							&& !sProperty.includes("@")) {
 						oTarget[sProperty] = update(sPropertyPath, vSelected, vTargetProperty || {},
 							vSourceProperty);
-					} else if (vTargetProperty !== vSourceProperty) {
+					} else if (vTargetProperty !== vSourceProperty
+							&& !oTarget[sProperty + "@$ui5.updating"]) {
 						oTarget[sProperty] = vSourceProperty;
 						if (vTargetProperty && typeof vTargetProperty === "object") {
 							// a complex property is replaced by null

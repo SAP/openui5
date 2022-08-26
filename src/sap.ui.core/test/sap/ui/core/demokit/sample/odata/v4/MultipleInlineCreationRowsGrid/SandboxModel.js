@@ -10,7 +10,19 @@ sap.ui.define([
 ], function (SandboxModelHelper, ODataModel, TestUtils) {
 	"use strict";
 
-	var bPart101Persisted,
+	var oPart99 = {
+			ID : 99,
+			description : null,
+			quantity : null,
+			_Product_ID : 10
+		},
+		oPart101 = {
+			ID : 101,
+			description : null,
+			quantity : null,
+			_Product_ID : 10
+		},
+		bPart101Persisted,
 		oMockData = {
 			sFilterBase : "/MyProducts/",
 			mFixture : {
@@ -29,6 +41,12 @@ sap.ui.define([
 				}, {
 					source : "Product_10_Parts.json"
 				}],
+				"Products(ID=10,IsActiveEntity=false)/_Parts(99)?$select=ID,description,quantity" : {
+					message : oPart99
+				},
+				"Products(ID=10,IsActiveEntity=false)/_Parts(101)?$select=ID,description,quantity" : {
+					message : oPart101
+				},
 				"Products(ID=20,IsActiveEntity=false)/_Parts?$count=true&$select=ID,description,quantity&$skip=0&$top=120" : {
 					source : "Product_20_Parts.json"
 				},
@@ -37,12 +55,7 @@ sap.ui.define([
 				},
 				"POST Products(ID=10,IsActiveEntity=false)/_Parts" : [{
 					ifMatch : /"ID":99/,
-					message : {
-						ID : 99,
-						description : null,
-						quantity : null,
-						_Product_ID : 10
-					}
+					message : oPart99
 				}, {
 					code : 400,
 					ifMatch : /"ID":100/,
@@ -58,12 +71,7 @@ sap.ui.define([
 						bPart101Persisted = true;
 						return true;
 					},
-					message : {
-						ID : 101,
-						description : null,
-						quantity : null,
-						_Product_ID : 10
-					}
+					message : oPart101
 				}]
 			},
 			sSourceBase : "sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/data"

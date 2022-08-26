@@ -257,7 +257,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(oEntityPromise));
 		oEntityPromise.then(function () {
 			that.mock(_Cache).expects("makeUpdateData")
-				.withExactArgs(["Address", "City"], "Walldorf")
+				.withExactArgs(["Address", "City"], "Walldorf", "~bUpdating~")
 				.returns(oUpdateData);
 			that.mock(_Helper).expects("updateAll")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
@@ -265,7 +265,7 @@ sap.ui.define([
 		});
 
 		// code under test
-		return oCache.setProperty("Address/City", "Walldorf", "path/to/entity");
+		return oCache.setProperty("Address/City", "Walldorf", "path/to/entity", "~bUpdating~");
 	});
 
 	//*********************************************************************************************
@@ -2241,6 +2241,8 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to/entity")
 					.returns(SyncPromise.resolve(oEntity));
 				this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("group");
+				this.mock(_Helper).expects("deleteUpdating")
+					.withExactArgs("ProductInfo/Amount", sinon.match.same(oEntity));
 				oStaticCacheMock.expects("makeUpdateData")
 					.withExactArgs(["ProductInfo", "Amount"], "123")
 					.returns(oUpdateData);
@@ -3764,6 +3766,8 @@ sap.ui.define([
 			.exactly(bTransient ? 1 : 0)
 			.withExactArgs(sinon.match.same(oElement), "transientPredicate",
 				sTransientPredicate);
+		this.mock(_Helper).expects("restoreUpdatingProperties")
+			.withExactArgs(sinon.match.same(oOldElement), sinon.match.same(oElement));
 		this.mock(_Helper).expects("buildPath")
 			.withExactArgs("/TEAMS", "TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS")
 			.returns("/TEAMS/TEAM_2_EMPLOYEES('23')/EMPLOYEE_2_EQUIPMENTS");
@@ -3799,6 +3803,8 @@ sap.ui.define([
 		aElements.$byPredicate = {doNotTouch : aElements[0], "('42')" : oOldElement};
 
 		this.mock(_Cache).expects("getElementIndex").never();
+		this.mock(_Helper).expects("restoreUpdatingProperties")
+			.withExactArgs(sinon.match.same(oOldElement), sinon.match.same(oNewElement));
 		this.mock(_Helper).expects("buildPath").withExactArgs("/TEAMS", "~")
 			.returns("~path~");
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("~path~")
@@ -11648,6 +11654,17 @@ sap.ui.define([
 		assert.deepEqual(_Cache.makeUpdateData(["Age"], 42), {Age : 42});
 		assert.deepEqual(_Cache.makeUpdateData(["Address", "City"], "Walldorf"),
 			{Address : {City : "Walldorf"}});
+		assert.deepEqual(_Cache.makeUpdateData(["Age"], 42, /*bUpdating*/true), {
+				Age : 42,
+				"Age@$ui5.updating" : true
+			});
+		assert.deepEqual(_Cache.makeUpdateData(["Address", "City"], "Walldorf", /*bUpdating*/true),
+			{
+				Address : {
+					City : "Walldorf",
+					"City@$ui5.updating" : true
+				}
+			});
 	});
 
 	//*********************************************************************************************
