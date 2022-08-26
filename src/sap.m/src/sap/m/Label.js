@@ -205,7 +205,8 @@ function(
 		}
 
 		return {
-			description: sDescription
+			description: sDescription,
+			required: this.isRequired()
 		};
 	};
 

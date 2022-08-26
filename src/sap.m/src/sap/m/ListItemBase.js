@@ -210,6 +210,9 @@ function(
 		var sText = oAccInfo.type + " " + oAccInfo.description + " ",
 			sTooltip = oControl.getTooltip_AsString();
 
+		if (oAccInfo.required === true) {
+			sText += oBundle.getText("CONTROL_REQUIRED") + " ";
+		}
 		if (oAccInfo.enabled === false) {
 			sText += oBundle.getText("CONTROL_DISABLED") + " ";
 		}
