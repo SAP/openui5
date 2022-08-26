@@ -118,12 +118,14 @@ sap.ui.define([
 	 *
 	 * @param {string} sURL A string containing the URL to which the request is sent
 	 * @param {object | string} [oParameters] A map of parameters or a single parameter string that is sent to the server with the request
-	 * @param {boolean} [bAsync=true] By default, all requests are sent asynchronous.
-	 * <b>Do not use <code>bAsync=false</code></b> because synchronous requests may temporarily lock
-	 * the browser, disabling any actions while the request is active. Cross-domain requests do not
-	 * support synchronous operation.
+	 * @param {boolean} [bAsync=true] <b>Deprecated as of Version 1.107</b>; always use asynchronous
+	 * loading for performance reasons. By default, all requests are sent asynchronously.
+	 * Synchronous requests may temporarily lock the browser, disabling any actions while
+	 * the request is active. Cross-domain requests do not support synchronous operations.
 	 * @param {string} [sType=GET] HTTP method of request
-	 * @param {string} [bCache=false] Force no caching if false
+	 * @param {string} [bCache=true] <b>Deprecated as of Version 1.107</b>; always use the cache
+	 * headers from the back-end system for performance reasons. Disables caching if set to
+	 * <code>false</code>.
 	 * @param {object} [mHeaders] An object of additional header key/value pairs to send along with the request
 	 *
 	 * @public
