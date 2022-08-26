@@ -2921,12 +2921,10 @@ sap.ui.define([
 
 	QUnit.test("Scenario 'EVENT_VALUE_PASTE': CTRL+V 'Algeria' ", function(assert) {
 		// system under test
-		var oItem;
 		var oMultiComboBox = new MultiComboBox({
-			items : [oItem = new Item({
-				key : "DZ",
-				text : "Algeria"
-			})]
+			items: [
+				new Item({key : "DZ",text : "Algeria"})
+			]
 		});
 
 		// arrange
@@ -2949,10 +2947,47 @@ sap.ui.define([
 		});
 
 		// assertions
-		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
-		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
+		assert.deepEqual(oMultiComboBox.getSelectedItems().length, 0, "A token should not be created");
 
-		assert.deepEqual(oMultiComboBox.getSelectedItems(), [oItem]);
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
+
+	QUnit.test("Paste clipboard data from excel from several rows and columns info multiple tokens", function(assert) {
+		var oMultiComboBox = new MultiComboBox({
+			items: [
+				new Item({key : "1",text : "1"}),
+				new Item({key : "2",text : "2"}),
+				new Item({key : "3",text : "3"}),
+				new Item({key : "4",text : "4"})
+			]
+		});
+		oMultiComboBox.syncPickerContent();
+		oMultiComboBox.placeAt("MultiComboBoxContent");
+		Core.applyChanges();
+
+		var sPastedString = '1\t\t2\r\n\t\t\r\n3\t\t4\r\n';
+		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
+		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
+
+		//act
+		qutils.triggerEvent("paste", oMultiComboBox.getFocusDomRef(), {
+			originalEvent: {
+				clipboardData: {
+					getData: function () {
+						return sPastedString;
+					}
+				}
+			}
+		});
+
+		// assert
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 4, "The selection change event was fired");
+		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 4, "The selection finish event was fired");
+		assert.equal(oMultiComboBox.getSelectedItems().length, 4, "4 tokens should be added to MultiComboBox");
 
 		// cleanup
 		oMultiComboBox.destroy();

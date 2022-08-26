@@ -2295,20 +2295,16 @@ function(
 		var bItemSelected = false;
 		var aSelectedItems = this.getSelectedItems();
 
-		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
-		if (window.clipboardData) {
 
-			// IE
-			sOriginalText = window.clipboardData.getData("Text");
-		} else {
+		sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
 
-			// Chrome, Firefox, Safari
-			sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
+		if (sOriginalText.length && sOriginalText.endsWith("\r\n")) {
+			sOriginalText = sOriginalText.substring(0, sOriginalText.lastIndexOf("\r\n"));
 		}
 
-		var aSeparatedText = sOriginalText.split(/\r\n|\r|\n/g);
+		var aSeparatedText = sOriginalText.split(/\r\n|\r|\n|\t/g);
 
-		if (aSeparatedText && aSeparatedText.length > 0) {
+		if (aSeparatedText && aSeparatedText.length > 1) {
 			ListHelpers.getSelectableItems(this.getItems())
 				.filter(function (oItem) {
 					return aSelectedItems.indexOf(oItem) === -1;
