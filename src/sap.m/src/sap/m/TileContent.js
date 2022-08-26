@@ -165,6 +165,11 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 						thisRef.attr("title",  sCntTooltip);
 				}
 
+				//It applies a style class to the elements inside the FormattedText
+				if (this.getParent() && this.getParent().isA("sap.m.ActionTile") && this.getContent().isA("sap.m.FormattedText") && this.getContent().getDomRef()) {
+					this._applyStyleClassesOnContent(this.getContent().getDomRef());
+				}
+
 			// removing all inner elements tooltip om every mouse enter
 			aTooltipEments.removeAttr("title").off("mouseenter");
 		}
@@ -234,6 +239,9 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 			} else if (oContent.getTooltip_AsString()) {
 				sAltText += oContent.getTooltip_AsString();
 				bIsFirst = false;
+			} else if (oParent && oParent.isA("sap.m.ActionTile") && oContentDom) {
+				sAltText += (bIsFirst ? "" : "\n") + this._getInnerText(oContentDom);
+				bIsFirst = false;
 			} else if (oParent && oParent.isA("sap.m.GenericTile") && oParent.getMode() === GenericTileMode.ActionMode) {
 				if (oContent.isA("sap.m.Text")){
 					sAltText += (bIsFirst ? "" : "\n") + oContent.getText();
@@ -253,6 +261,21 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 			sAltText += (bIsFirst ? "" : "\n") + this.getFooter();
 		}
 		return sAltText;
+	};
+
+	/**
+	 * Fetches the text within the tile content when rendered inside an ActionTile
+	 * @param {Element} oContentDom It gives the control inside the tile content
+	 * @returns {string} Returns the text inside the tile content when wrapped around a ActionTile
+	 * @private
+	 */
+	TileContent.prototype._getInnerText = function(oContentDom) {
+		var sAriaTooltipText = "";
+		var aHTMLCollection = [].slice.call(oContentDom.children);
+		aHTMLCollection.forEach(function(oElement) {
+			sAriaTooltipText += (oElement.innerText + "\n");
+		});
+		return sAriaTooltipText.trim();
 	};
 
 	TileContent.prototype.getTooltip_AsString = function() { //eslint-disable-line
@@ -285,6 +308,33 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 	TileContent.prototype.setRenderContent = function(value) {
 		this._bRenderContent = value;
 		return this;
+	};
+
+	/**
+	 * This control applies the style class if there is a <br> tag inside a <p> tag
+	 * @param {Object} oContent Determines whether the control's content is rendered or not
+	 * @private
+	 */
+	 TileContent.prototype._applyStyleClassesOnContent = function(oContent) {
+		var aElements = this._filterElements(oContent.childNodes);
+		aElements.forEach(function(oElement) {
+			var bIsPTagWithBreak = oElement.tagName === "P" && oElement.innerHTML.includes("br");
+			if (bIsPTagWithBreak) {
+				oElement.classList.add("sapMbrPresent");
+			}
+		});
+	};
+
+	/**
+	 * Filters the element that has a nodetype one
+	 * @param {object} oChildElements It displays all the ChildElements inside the formattedText
+	 * @returns {string} Returns the elements that has a nodeType one
+	 * @private
+	 */
+	TileContent.prototype._filterElements = function(oChildElements) {
+		return [].slice.call(oChildElements).filter(function(oElement) {
+			return oElement.nodeType === 1;
+		});
 	};
 
 	return TileContent;

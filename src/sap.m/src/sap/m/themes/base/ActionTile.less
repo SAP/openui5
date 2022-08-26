@@ -1,0 +1,239 @@
+/* ================================== */
+/* CSS for control sap.m/ActionTile  */
+/* Base theme                         */
+/* ================================== */
+
+.sapMAT{
+    width: 20rem;
+    height: 21.875rem;
+    position: relative;
+    padding: 1rem;
+    box-shadow: @sapContent_Shadow0;
+    background-color: @sapTile_Background;
+    display: inline-block;
+    box-sizing: border-box;
+    user-select: none;
+    vertical-align: top;
+    cursor: pointer;
+    .sapMGTHdrContent {
+        padding: 0;
+        height: 3rem;
+        overflow: hidden;
+        .sapMText{
+            font-size: 1rem;
+            font-weight: 700;
+            color: @sapTile_TitleTextColor;
+            line-height: 1.5rem;
+            cursor: pointer;
+        }
+    }
+}
+
+.sapMAT:hover {
+    background-color: @sapTile_Hover_Background;
+    box-shadow:  @sapContent_Shadow2;
+}
+
+.sapMAT:active {
+    background-color: @sapTile_Active_Background;
+    box-shadow: none;
+    outline: 0.0625rem solid @sapTile_Interactive_BorderColor;
+}
+
+.sapMAT:focus-visible {
+    outline: none;
+}
+
+// ToDo card Styles
+
+.sapMAT.sapMToDoCard {
+    border-radius: 1rem;
+    .sapMGTHdrContent {
+        margin-bottom: 0.75rem;
+    }
+    .sapMATC {
+     overflow: hidden;
+     .sapMTilePriorityValue {
+         font-size: 0.875rem;
+         font-weight: 400;
+         margin-bottom: 0.75rem;
+         &.High {
+             color: @sapNegativeTextColor;
+             }
+         &.Medium {
+                 color: @sapCriticalTextColor;
+             }
+         &.Low {
+             color: @sapPositiveTextColor;
+             }
+         &.VeryHigh {
+                 color: @sapIndicationColor_1_BorderColor;
+             }
+     }
+     .sapMContainer {
+             display: flex;
+             flex-direction: column;
+             gap: 0.875rem;
+         .sapMElementWrapper {
+             display: flex;
+             flex-direction: column;
+             gap: 0.25rem;
+             font-weight: 400;
+             font-size: 0.875rem;
+             white-space: nowrap;
+             overflow: hidden;
+             text-overflow: ellipsis;
+             .sapMATCLabel {
+                 color: @sapContent_LabelColor;
+                 white-space: nowrap;
+                 overflow: hidden;
+                 text-overflow: ellipsis;
+                 font-size: 14px;
+                    font-weight: 400;
+                    line-height: 1rem;
+             }
+             .sapMATCValue {
+                 color: @sapTextColor;
+                 white-space: nowrap;
+                 overflow: hidden;
+                 text-overflow: ellipsis;
+                 font-size: 14px;
+                    font-weight: 400;
+                    line-height: 1rem;
+             }
+         }
+     }
+    }
+    .sapMATActionModeContainer {
+     position: absolute;
+     bottom: 1rem;
+     right: 1rem;
+    }
+ }
+
+ .sapMAT.sapMToDoCard:focus {
+    .sapMATFocusDiv{
+        position: absolute;
+        border: 2px solid @sapContent_FocusColor;
+        border-radius:  1rem;
+        inset: 0px;
+    }
+ }
+
+// Situation Card Styles
+
+.sapMAT.sapMATSituationCard{
+    border-radius: 1.25rem;
+    .sapMGTHdrContent {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        height: 2.75rem;
+        .sapMGTHdrIconImage.Neutral {
+            color:  @sapUiNeutralText;
+        }
+        .sapMGTHdrIconImage.Good {
+            color: @sapUiPositiveText;
+        }
+        .sapMGTHdrIconImage.Critical {
+            color: @sapUiCriticalElement;
+        }
+        .sapMGTHdrIconImage.Error {
+            color: @sapUiNegativeText;
+        }
+        .sapMGTHdrIconImage.None {
+            color: @sapUiTileIconColor
+        }
+        .sapMGTHdrIconImage.sapUiIcon{
+            &::before {
+                height: 2.75rem;
+                font-weight: 400;
+                font-size: 2.25rem;
+                line-height: 2.4375rem;
+                display: flex;
+                align-items: end;
+                text-align: center;
+            }
+        }
+    }
+    .sapMGTContent {
+        height: 17.4rem;
+        overflow: visible;
+        .sapMTileCnt{
+            display: flex;
+            flex-direction: column;
+            height: inherit;
+            .sapMTileCntContent{
+                margin-top: 0;
+                height: fit-content;
+                padding: 0;
+                .sapMFT{
+                    span{
+                        color: @sapTextColor;
+                        white-space: pre-wrap;
+                        display: -webkit-box;
+                        -webkit-line-clamp: 3;
+                        -webkit-box-orient: vertical;
+                        height: 3rem;
+                        line-height: 1rem;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        font-weight: 400;
+                        font-size: 0.875rem;
+                        margin-bottom: 0.75rem;
+                    }
+                    p + span {
+                        margin-bottom: 1rem;
+                    }
+                    p {
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        color: @sapTextColor;
+                        font-weight: 400;
+                        font-size: 0.875rem;
+                        margin: 0 0 1rem 0;
+                        line-height: 1.125rem;
+                    }
+                    p.sapMbrPresent::first-line {
+                        color: @sapContent_LabelColor;
+                    }
+                    p:not(.sapMbrPresent) {
+                        margin-bottom: 0.75rem;
+                    }
+                }
+            }
+            .sapMTileFtrCnt {
+                position: absolute;
+                bottom: 1rem;
+                right: 0rem;
+            }
+        }
+    }
+}
+
+.sapMAT.sapMATSituationCard:focus {
+    .sapMGTFocusDiv{
+        position: absolute;
+        border: 2px solid @sapContent_FocusColor;
+        border-radius:  1.25rem;
+        inset: 0px;
+    }
+ }
+
+//Loading State Styles
+
+.sapMAT.sapMATStateLoading {
+    .sapMGTContentShimmerPlaceholderItem {
+        padding: 0;
+        height: 20rem;
+        align-items: initial;
+        flex-direction: column;
+        justify-content: space-around;
+        .sapMGTContentShimmerPlaceholderRows {
+            flex-grow: 0;
+        }
+    }
+}
