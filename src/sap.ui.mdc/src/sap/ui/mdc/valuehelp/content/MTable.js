@@ -204,13 +204,12 @@ sap.ui.define([
 	};
 
 	MTable.prototype._handleSelectionChange = function (oEvent) {
-		var sModelName = oEvent.getSource().getBindingInfo("items").model;
 		var bIsTypeahead = this.isTypeahead();
 		if (!bIsTypeahead || !this._isSingleSelect()) {
 			var oParams = oEvent.getParameters();
 			var aListItems = oParams.listItems || oParams.listItem && [oParams.listItem];
 			var aConditions = aListItems.map(function (oItem) {
-				var oItemContext = oItem.getBindingContext(sModelName);
+				var oItemContext = this._getListItemBindingContext(oItem);
 				var oValues = this._getItemFromContext(oItemContext);
 				return oValues && this._createCondition(oValues.key, oValues.description, oValues.payload);
 			}.bind(this));
@@ -222,9 +221,8 @@ sap.ui.define([
 	};
 
 	MTable.prototype._handleItemPress = function (oEvent) {
-		var sModelName = oEvent.getSource().getBindingInfo("items").model;
 		var oItem = oEvent.getParameter("listItem");
-		var oItemContext = oItem.getBindingContext(sModelName);
+		var oItemContext = this._getListItemBindingContext(oItem);
 		var oValues = this._getItemFromContext(oItemContext);
 		var bIsSingleSelect = this._isSingleSelect();
 		var bSelected = bIsSingleSelect ? true : !oItem.getSelected();
@@ -411,13 +409,10 @@ sap.ui.define([
 			return;
 		}
 
-		var oBindingInfo = this._getListBindingInfo();
-		var sModelName = oBindingInfo.model;
-
 		var _getFilterValue = function(oItem, sPath) {
-			var oBindingContext = oItem.isA("sap.ui.model.Context") ? oItem : oItem.getBindingContext(sModelName);
+			var oBindingContext = oItem.isA("sap.ui.model.Context") ? oItem : this._getListItemBindingContext(oItem);
 			return oBindingContext.getProperty(sPath);
-		};
+		}.bind(this);
 
 		var aInParameters;
 		var aOutParameters;
@@ -426,7 +421,7 @@ sap.ui.define([
 
 		var aFilteredItems = FilterProcessor.apply(aItems, oFilter, _getFilterValue);
 		if (aFilteredItems.length === 1) {
-			var oBindingContext = aFilteredItems[0].getBindingContext(sModelName);
+			var oBindingContext = this._getListItemBindingContext(aFilteredItems[0]);
 			var oValue = this._getItemFromContext(oBindingContext, {inParameters: aInParameters, outParameters: aOutParameters});
 			return {key: oValue.key, description: oValue.description, payload: oValue.payload};
 		} else if (aFilteredItems.length > 1) {
@@ -644,9 +639,7 @@ sap.ui.define([
 					oItem.$().trigger("focusin");
 				}
 
-				var oBindingInfo = this._getListBindingInfo();
-				var sModelName = oBindingInfo.model;
-				var oItemContext = oItem.getBindingContext(sModelName);
+				var oItemContext = this._getListItemBindingContext(oItem);
 				var oValues = this._getItemFromContext(oItemContext);
 				oCondition = oValues && this._createCondition(oValues.key, oValues.description, oValues.payload);
 				this.setProperty("conditions", [oCondition], true);
