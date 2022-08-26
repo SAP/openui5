@@ -29,6 +29,7 @@ module.exports = [
 	"IconTabBarBadges.spec.js",
 	"IconTabBarCompact.spec.js",
 	"IconTabBarCozy.spec.js",
+	"IconTabBarFioriLaunchpad.spec.js",
 	"IconTabBarGeneric3.spec.js",
 	"IconTabBarInheritCompact.spec.js",
 	"IconTabBarInheritCozy.spec.js",

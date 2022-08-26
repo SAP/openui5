@@ -303,12 +303,20 @@
 				]
 			}).addStyleClass('sapUshellShellTabBar');
 
+			var oLabel = new sap.m.Label({text: "Empty IconTabHeader for testing of the min height"}).addStyleClass("sapUiMediumMarginTop");
+
+			var oIconTabHeaderEmpty = new sap.m.IconTabHeader({
+				items: []
+			}).addStyleClass('sapUshellShellTabBar');
+
 			var oPage = new sap.m.Page("page", {
 				showHeader: false,
 				content: [
 					oShellBar,
 					oIconTabBar,
-					oIconTabBarWithIcons
+					oIconTabBarWithIcons,
+					oLabel,
+					oIconTabHeaderEmpty
 				]
 			}).addStyleClass('sapUshellShell');
 
