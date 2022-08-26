@@ -193,8 +193,7 @@ sap.ui.define([
 
 				aButtons.forEach(function (oRadioButton, i) {
 					oRadioButton._setEditableParent(bEditable);
-
-					if (i === this.getSelectedIndex() && this._iSelectionNumber > iCurrentSelectedButtonSelectionNumber) {
+					if (i === this.getSelectedIndex() && this._iSelectionNumber > iCurrentSelectedButtonSelectionNumber && oRadioButton.isPropertyInitial("selected")) {
 						oRadioButton.setSelected(true);
 					}
 				}, this);
