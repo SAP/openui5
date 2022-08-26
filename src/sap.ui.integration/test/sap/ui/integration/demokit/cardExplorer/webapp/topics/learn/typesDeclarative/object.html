@@ -814,32 +814,6 @@
 					</tr>
 				</table>
 			</div>
-			<h2 id="messages">"messages" Model</h2>
-			<p>For each Card a "messages" model is created. It contains records for
-				all validation errors, warnings or informations. Here is the "messages" model structure:</p>
-			<ul>
-				<li>messages>/hasErrors - if some control has a validation record with type "error"</li>
-				<li>messages>/hasWarnings - if some control has a validation record with type "warning"</li>
-				<li>messages>/records - all validation records</li>
-			</ul>
-			<p>Here is an example how the "messages" model
-				can be used to disable the "Submit" button if there are any validation errors:</p>
-	<pre class="lang-json">"footer": {
-	"actionsStrip": [
-		{
-			"text": "Submit",
-			"buttonType": "Accept",
-			"actions": [
-				{
-					"enabled": "{= !${messages>/hasErrors}}",
-					"type": "Submit"
-				}
-			]
-		}
-	]
-}</pre>
-			<a class="try-button" href="../../../index.html#/explore/object/formWithValidation" target="_parent">Try it Out</a>
-
 			<h2 id="example">Example</h2>
 			<p>Define the type and data for the card:
 			</p>
@@ -1096,13 +1070,18 @@
 	&lt;w:Card manifest="./manifest.json" width="400px" height="auto" /&gt;
 &lt;/mvc:View&gt;</pre>
 			<a class="try-button" href="../../../index.html#/explore/object" target="_parent">Try it Out</a>
+
+			<h2 id="validate">Validate Input Fields</h2>
+			<p>
+				The user input provided in the form fields can be validated. More info <a href="../../../index.html#/learn/features/inputValidation" target="_parent">here</a>.
+			</p>
 		</div>
 		<div class="navigation">
 			<h4>Table of Contents</h4>
 			<div><a href="#overview">Object Card</a></div>
 			<div><a href="#properties">Properties</a></div>
-			<div><a href="#messages">"messages" Model</a></div>
 			<div><a href="#example">Example</a></div>
+			<div><a href="#validate">Validate Input Fields</a></div>
 		</div>
 	</div>
 </body>
