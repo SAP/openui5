@@ -324,6 +324,7 @@ sap.ui.define([
 				}.bind(this));
 		},
 		afterEach: function() {
+			this.oRta.destroy();
 			this.oComponent.destroy();
 			this.oContainer.destroy();
 			sandbox.restore();

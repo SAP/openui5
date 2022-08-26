@@ -14,7 +14,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/TranslationAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -41,7 +43,9 @@ sap.ui.define([
 	FlexRuntimeInfoAPI,
 	Version,
 	Settings,
+	ContextBasedAdaptationsAPI,
 	ControlPersonalizationWriteAPI,
+	FeaturesAPI,
 	TranslationAPI,
 	Layer,
 	FlexUtils,
@@ -128,8 +132,6 @@ sap.ui.define([
 			});
 			whenNoAppDescriptorChangesExist(this.oRta);
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
-
-			return this.oRta._initVersioning();
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -277,24 +279,6 @@ sap.ui.define([
 			var sMessage = this.oRta._onUnload();
 			assert.equal(sMessage, undefined, "then the function returns no message");
 		});
-
-		QUnit.test("when getSelection is called with no designtime available", function(assert) {
-			var aSelection = this.oRta.getSelection();
-			assert.ok(Array.isArray(aSelection), "then it still returns an array");
-			assert.equal(aSelection.length, 0, "and the array is empty");
-		});
-
-		QUnit.test("when _showMessageToast is called", function(assert) {
-			var oMessageToastStub = sandbox.stub(MessageToast, "show");
-			sandbox.stub(this.oRta, "_getTextResources").returns({
-				getText: function() {
-					return "myMessage";
-				}
-			});
-			this.oRta._showMessageToast("myMessage");
-			assert.equal(oMessageToastStub.callCount, 1, "then one message toast was opened");
-			assert.equal(oMessageToastStub.lastCall.args[0], "myMessage", "and the message was set correctly");
-		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started", {
@@ -363,14 +347,9 @@ sap.ui.define([
 				return new Promise(function(resolve) {
 					fnResolve2 = resolve;
 
-					var oEvent = {
-						getParameter: function(sParameter) {
-							if (sParameter === "command") {
-								return new BaseCommand();
-							}
-						}
-					};
-					this.oRta._handleElementModified(oEvent);
+					this.oRta.getPluginManager().getDefaultPlugins()["rename"].fireElementModified({
+						command: new BaseCommand()
+					});
 
 					fnResolve();
 				}.bind(this));
@@ -494,6 +473,19 @@ sap.ui.define([
 							assert.ok(oMessageToastSpy.notCalled, "then the toast is only shown once");
 						});
 				});
+		});
+
+		QUnit.test("when saveAsContextBasedAdaptation event is fired from the toolbar", function(assert) {
+			var fnDone = assert.async();
+			var oParams = {foo: "bar"};
+			sandbox.stub(ContextBasedAdaptationsAPI, "create").callsFake(function(mPropertyBag) {
+				assert.strictEqual(mPropertyBag.control.getId(), "someId", "the correct root control is passed");
+				assert.strictEqual(mPropertyBag.layer, this.oRta.getLayer(), "the correct layer is passed");
+				assert.deepEqual(mPropertyBag.parameters, oParams, "the parameters from the event are passed");
+				fnDone();
+			}.bind(this));
+
+			this.oRta.getToolbar().fireEvent("saveAsContextBasedAdaptation", oParams);
 		});
 	});
 
@@ -620,12 +612,13 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		function stubToolbarButtonsVisibility(bPublish, bSaveAs) {
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").returns(bPublish);
+			sandbox.stub(AppVariantFeature, "isSaveAsAvailable").returns(bSaveAs);
+		}
+
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", function(assert) {
-			sandbox.stub(this.oRta, "_getToolbarButtonsVisibility").resolves({
-				publishAvailable: true,
-				saveAsAvailable: true,
-				draftAvailable: false
-			});
+			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(false);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
 
@@ -640,11 +633,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP) developer but the manifest of an app is not supported", function(assert) {
-			sandbox.stub(this.oRta, "_getToolbarButtonsVisibility").resolves({
-				publishAvailable: true,
-				saveAsAvailable: true,
-				draftAvailable: false
-			 });
+			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantFeature, "isOverviewExtended").returns(true);
 			sandbox.stub(AppVariantFeature, "isManifestSupported").resolves(false);
 
@@ -663,12 +652,13 @@ sap.ui.define([
 			var oPromise = new Promise(function(resolve) {
 				fnResolve = resolve;
 			});
-			var oSerializeStub = sandbox.stub(this.oRta, "_serializeAndSave").resolves();
 			var oCallbackStub = sandbox.stub().callsFake(function() {
 				fnResolve();
 			});
+			var oSerializeStub;
 
 			return this.oRta.start().then(function() {
+				oSerializeStub = sandbox.stub(this.oRta._oSerializer, "saveCommands").resolves();
 				sandbox.stub(this.oRta._oSerializer, "needsReload").resolves(true);
 				this.oRta.getToolbar().fireSave({
 					callback: oCallbackStub
@@ -680,17 +670,6 @@ sap.ui.define([
 				assert.strictEqual(oSerializeStub.callCount, 1, "the serialize function was called once");
 				assert.strictEqual(oCallbackStub.callCount, 1, "the callback function was called once");
 			}.bind(this));
-		});
-
-		QUnit.test("when _serializeAndSave is triggered with condense parameter", function(assert) {
-			var oSaveStub;
-			return this.oRta.start().then(function() {
-				oSaveStub = sandbox.stub(this.oRta._oSerializer, "saveCommands");
-				return this.oRta._serializeAndSave(null, true);
-			}.bind(this))
-			.then(function() {
-				assert.strictEqual(oSaveStub.lastCall.args[0].condenseAnyLayer, true, "the parameter is passed");
-			});
 		});
 
 		QUnit.test("when save is triggered via the toolbar with a translatable change", function(assert) {

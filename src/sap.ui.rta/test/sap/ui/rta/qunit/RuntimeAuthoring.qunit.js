@@ -11,9 +11,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/command/BaseCommand",
@@ -34,9 +32,7 @@ sap.ui.define([
 	KeyCodes,
 	SmartVariantManagementApplyAPI,
 	FlexRuntimeInfoAPI,
-	Change,
 	PersistenceWriteAPI,
-	VersionsAPI,
 	ChangesWriteAPI,
 	QUnitUtils,
 	RTABaseCommand,
@@ -121,10 +117,7 @@ sap.ui.define([
 						this.oElement2Overlay = OverlayRegistry.getOverlay(oElement2);
 						this.oCommandStack.pushAndExecute(oRemoveCommand);
 					}.bind(this))
-					.then(fnDone)
-					.catch(function(oError) {
-						assert.ok(false, "catch must never be called - Error: " + oError);
-					});
+					.then(fnDone);
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -184,7 +177,7 @@ sap.ui.define([
 			triggerKeydown(this.oRootControlOverlay.getDomRef(), KeyCodes.Z, false, false, true, false);
 		});
 
-		QUnit.test("when _handleElementModified is called if a create container command was executed on a simple form", function(assert) {
+		QUnit.test("when handleElementModified is called if a create container command was executed on a simple form", function(assert) {
 			var done = assert.async();
 			var fnFireElementModifiedSpy = sandbox.spy(this.oRta.getPluginManager().getDefaultPlugins()["createContainer"], "fireElementModified");
 
@@ -206,7 +199,7 @@ sap.ui.define([
 			oCore.applyChanges();
 		});
 
-		QUnit.test("when _handleElementModified is called if a create container command was executed on a smart form", function(assert) {
+		QUnit.test("when handleElementModified is called if a create container command was executed on a smart form", function(assert) {
 			var done = assert.async();
 
 			var fnFireElementModifiedSpy = sinon.spy(this.oRta.getPluginManager().getDefaultPlugins()["createContainer"], "fireElementModified");
@@ -228,7 +221,7 @@ sap.ui.define([
 			oCore.applyChanges();
 		});
 
-		QUnit.test("when _handleElementModified is called if a create container command was executed on an empty form", function(assert) {
+		QUnit.test("when handleElementModified is called if a create container command was executed on an empty form", function(assert) {
 			var done = assert.async();
 
 			// An existing empty Form is used for the test
@@ -246,7 +239,7 @@ sap.ui.define([
 			oCore.applyChanges();
 		});
 
-		QUnit.test("when calling '_handleElementModified' and the command fails because of dependencies", function(assert) {
+		QUnit.test("when handleElementModified is called and the command fails because of dependencies", function(assert) {
 			assert.expect(2);
 			var oLogStub = sandbox.stub(Log, "error");
 			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox");
@@ -256,20 +249,16 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(this.oRta, "getCommandStack").returns(oCommandStack);
-			var oEvent = {
-				getParameter: function(sParameter) {
-					if (sParameter === "command") {
-						return new RTABaseCommand();
-					}
-				}
-			};
-			return this.oRta._handleElementModified(oEvent).then(function() {
+			this.oRta.getPluginManager().getDefaultPlugins()["rename"].fireElementModified({
+				command: new RTABaseCommand()
+			});
+			return this.oRta._pElementModified.then(function() {
 				assert.equal(oLogStub.callCount, 1, "one error got logged");
 				assert.equal(oMessageBoxStub.callCount, 1, "one MessageBox got shown");
 			});
 		});
 
-		QUnit.test("when calling '_handleElementModified' and the command fails, but not because of dependencies", function(assert) {
+		QUnit.test("when handleElementModified is called and the command fails, but not because of dependencies", function(assert) {
 			assert.expect(2);
 			var oLogStub = sandbox.stub(Log, "error");
 			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox");
@@ -279,14 +268,10 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(this.oRta, "getCommandStack").returns(oCommandStack);
-			var oEvent = {
-				getParameter: function(sParameter) {
-					if (sParameter === "command") {
-						return new RTABaseCommand();
-					}
-				}
-			};
-			return this.oRta._handleElementModified(oEvent).then(function() {
+			this.oRta.getPluginManager().getDefaultPlugins()["rename"].fireElementModified({
+				command: new RTABaseCommand()
+			});
+			return this.oRta._pElementModified.then(function() {
 				assert.equal(oLogStub.callCount, 1, "one error got logged");
 				assert.equal(oMessageBoxStub.callCount, 0, "no MessageBox got shown");
 			});
@@ -388,22 +373,6 @@ sap.ui.define([
 				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
 				assert.equal(oAppVariantRunningStub.callCount, 1, "then isApplicationVariant() got called");
 				assert.equal(fnGetResetAndPublishInfoStub.callCount, 1, "then the status of publish and reset button is evaluated");
-			});
-		});
-
-		QUnit.test("When publishVersion function is called and publicVersion returns Promise.resolve() ", function(assert) {
-			sandbox.stub(VersionsAPI, "publish").resolves();
-			var oMessageToastStub = sandbox.stub(MessageToast, "show");
-			return this.oRta._onPublishVersion().then(function() {
-				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
-			});
-		});
-
-		QUnit.test("When publishVersion function is called and publicVersion returns Cancel or Error", function(assert) {
-			sandbox.stub(VersionsAPI, "publish").resolves("Cancel");
-			var oMessageToastStub = sandbox.stub(MessageToast, "show");
-			return this.oRta._onPublishVersion().then(function() {
-				assert.equal(oMessageToastStub.callCount, 0, "then no messageToast was shown");
 			});
 		});
 	});

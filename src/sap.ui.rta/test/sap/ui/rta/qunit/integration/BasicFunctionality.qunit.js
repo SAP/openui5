@@ -168,14 +168,13 @@ sap.ui.define([
 			this.bMacintoshOriginal = Device.os.macintosh;
 			Device.os.macintosh = false;
 
-			this.fnUndoSpy = sandbox.spy(RuntimeAuthoring.prototype, "_onUndo");
-			this.fnRedoSpy = sandbox.spy(RuntimeAuthoring.prototype, "_onRedo");
+			this.fnUndoSpy = sandbox.spy(RuntimeAuthoring.prototype, "undo");
+			this.fnRedoSpy = sandbox.spy(RuntimeAuthoring.prototype, "redo");
 
 			// Start RTA
 			var oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
-				showToolbars: true,
 				flexSettings: {
 					developerMode: false
 				}

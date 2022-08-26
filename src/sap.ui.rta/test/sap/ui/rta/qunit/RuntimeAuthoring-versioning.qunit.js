@@ -3,13 +3,11 @@
 sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/m/MessageBox",
-	"sap/ui/base/Event",
+	"sap/m/MessageToast",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Utils",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
@@ -17,13 +15,11 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	MessageBox,
-	Event,
+	MessageToast,
 	PersistenceWriteAPI,
-	ReloadInfoAPI,
 	Version,
 	VersionsAPI,
 	FlexUtils,
-	JSONModel,
 	ReloadManager,
 	RuntimeAuthoring,
 	Utils,
@@ -62,55 +58,6 @@ sap.ui.define([
 		});
 	}
 
-	function whenUserConfirmsMessage(sExpectedMessageKey, assert) {
-		return sandbox.stub(Utils, "showMessageBox").callsFake(
-			function(oMessageType, sMessageKey) {
-				assert.equal(sMessageKey, sExpectedMessageKey, "then expected message is shown");
-				return Promise.resolve();
-			}
-		);
-	}
-
-	function mockStateCallIsDraftAvailableAndCheckResult(assert, oRta, bIsVersioningEnabled, bIsDraftAvailable, bCanUndo, bExpectedResult) {
-		oRta._bVersioningEnabled = bIsVersioningEnabled;
-		sandbox.stub(VersionsAPI, "isDraftAvailable").returns(bIsDraftAvailable);
-		sandbox.stub(oRta, "canUndo").returns(bCanUndo);
-		assert.equal(oRta._isDraftAvailable(), bExpectedResult);
-	}
-
-	QUnit.module("Given that RuntimeAuthoring wants to determine if a draft is available", {
-		beforeEach: function() {
-			this.oRta = new RuntimeAuthoring({
-				rootControl: oComp,
-				showToolbars: false
-			});
-		},
-		afterEach: function() {
-			this.oRta.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("and versioning is not available", function(assert) {
-			return mockStateCallIsDraftAvailableAndCheckResult(assert, this.oRta, false, false, false, false);
-		});
-
-		QUnit.test("and versioning is available but no draft and no undo is available", function(assert) {
-			return mockStateCallIsDraftAvailableAndCheckResult(assert, this.oRta, true, false, false, false);
-		});
-
-		QUnit.test("and versioning and a draft is available", function(assert) {
-			return mockStateCallIsDraftAvailableAndCheckResult(assert, this.oRta, true, true, false, true);
-		});
-
-		QUnit.test("and versioning and a undo is available", function(assert) {
-			return mockStateCallIsDraftAvailableAndCheckResult(assert, this.oRta, true, false, true, false);
-		});
-
-		QUnit.test("and versioning, a draft and undo is available", function(assert) {
-			return mockStateCallIsDraftAvailableAndCheckResult(assert, this.oRta, true, true, true, true);
-		});
-	});
-
 	QUnit.module("Given that RuntimeAuthoring gets a switch version event from the toolbar in the FLP", {
 		beforeEach: function() {
 			this.oRestartFlpStub = sandbox.stub();
@@ -119,7 +66,7 @@ sap.ui.define([
 				rootControl: oComp
 			});
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
-			this.oSwitchVersionStub = sandbox.stub(this.oRta, "_switchVersion");
+			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
 			return this.oRta.start();
 		},
 		afterEach: function() {
@@ -128,62 +75,43 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when something can be undone", function(assert) {
-			var oEvent = new Event("someEventId", undefined, {
-				version: "1"
-			});
-
 			sandbox.stub(this.oRta, "canUndo").returns(true);
 			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
 
-			this.oRta._onSwitchVersion(oEvent);
+			this.oRta.getToolbar().fireSwitchVersion({
+				version: "1"
+			});
 
 			assert.equal(oShowMessageBoxStub.callCount, 1, "a MessageBox was opened");
 			assert.equal(this.oEnableRestartStub.callCount, 0, "then no restart is enabled");
 		});
 
 		QUnit.test("when the displayed version and the in the event are the same", function(assert) {
-			var oEvent = new Event("someEventId", undefined, {
+			this.oRta._oVersionsModel.setProperty("/displayedVersion", "1");
+			this.oRta.getToolbar().fireSwitchVersion({
 				version: "1"
 			});
-
-			this.oRta._oVersionsModel.setProperty("/displayedVersion", "1");
-			this.oRta._onSwitchVersion(oEvent);
 
 			assert.equal(this.oEnableRestartStub.callCount, 0, "then no restart is enabled");
 		});
 
 		QUnit.test("when no version is in the url and the app", function(assert) {
-			var fnDone = assert.async();
-			var oEvent = new Event("someEventId", undefined, {
+			var oReloadStub = sandbox.stub(ReloadManager, "triggerReload").resolves();
+
+			this.oRta.getToolbar().fireSwitchVersion({
 				version: "1"
 			});
-
-			var oReloadStub = sandbox.stub(ReloadManager, "triggerReload").resolves();
-			var oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
-
-			this.oSwitchVersionStub.callsFake(function() {
-				this.oRta._switchVersion.wrappedMethod.apply(this.oRta, arguments);
-				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
-				assert.equal(oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
-				var oLoadVersionArguments = oLoadVersionStub.getCall(0).args[0];
-				assert.equal(oLoadVersionArguments.control, oComp, "with the control");
-				assert.equal(oLoadVersionArguments.version, "1", ", the version number");
-				assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
-				assert.equal(oReloadStub.callCount, 1, "a navigation was triggered");
-				fnDone();
-			}.bind(this));
-
-			this.oRta._onSwitchVersion(oEvent);
+			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
+			assert.equal(this.oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
+			var oLoadVersionArguments = this.oLoadVersionStub.getCall(0).args[0];
+			assert.equal(oLoadVersionArguments.control, oComp, "with the control");
+			assert.equal(oLoadVersionArguments.version, "1", ", the version number");
+			assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
+			assert.equal(oReloadStub.callCount, 1, "a navigation was triggered");
 		});
 
 		QUnit.test("when a version is in the url and the same version should be loaded again (i.e. loaded the app with " +
 			"the 'Original App' version, create a draft and switch to 'Original Version' again)", function(assert) {
-			var fnDone = assert.async();
-			var oEvent = new Event("someEventId", undefined, {
-				version: Version.Number.Original
-			});
-
-			var oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
 			var mParsedUrlHash = {
 				params: {}
 			};
@@ -191,19 +119,17 @@ sap.ui.define([
 			mParsedUrlHash.params["sap-ui-fl-version"] = [Version.Number.Original.toString()];
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedUrlHash);
 
-			this.oSwitchVersionStub.callsFake(function() {
-				this.oRta._switchVersion.wrappedMethod.apply(this.oRta, arguments);
-				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is mentioned");
-				assert.equal(oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
-				var oLoadVersionArguments = oLoadVersionStub.getCall(0).args[0];
-				assert.equal(oLoadVersionArguments.control, oComp, "with the control");
-				assert.equal(oLoadVersionArguments.version, Version.Number.Original, ", the version number");
-				assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
-				assert.equal(this.oRestartFlpStub.callCount, 1, "a app restart was triggered");
-				fnDone();
-			}.bind(this));
 
-			this.oRta._onSwitchVersion(oEvent);
+			this.oRta.getToolbar().fireSwitchVersion({
+				version: Version.Number.Original
+			});
+			assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is mentioned");
+			assert.equal(this.oLoadVersionStub.callCount, 1, "a reload for versions as triggered");
+			var oLoadVersionArguments = this.oLoadVersionStub.getCall(0).args[0];
+			assert.equal(oLoadVersionArguments.control, oComp, "with the control");
+			assert.equal(oLoadVersionArguments.version, Version.Number.Original, ", the version number");
+			assert.equal(oLoadVersionArguments.layer, this.oRta.getLayer(), "and the layer");
+			assert.equal(this.oRestartFlpStub.callCount, 1, "a app restart was triggered");
 		});
 	});
 
@@ -215,8 +141,8 @@ sap.ui.define([
 			});
 			sandbox.stub(this.oRta, "canUndo").returns(true);
 			this.oSerializeStub = sandbox.stub(this.oRta, "_serializeToLrep").resolves();
-			this.oSwitchVersionStub = sandbox.stub(this.oRta, "_switchVersion");
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
+			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
 			this.nVersionParameter = 1;
 			return this.oRta.start();
 		},
@@ -229,52 +155,43 @@ sap.ui.define([
 			var fnDone = assert.async();
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.YES);
 
-			var oEvent = new Event("someEventId", undefined, {
-				version: this.nVersionParameter
-			});
-
-			this.oSwitchVersionStub.callsFake(function() {
-				this.oRta._switchVersion.wrappedMethod.apply(this.oRta, arguments);
+			this.oLoadVersionStub.callsFake(function(mPropertyBag) {
+				assert.equal(mPropertyBag.version, this.nVersionParameter, "the version parameter was passed correct");
 				assert.equal(this.oSerializeStub.callCount, 1, "the changes were saved");
-				assert.equal(this.oSwitchVersionStub.callCount, 1, "the version switch was triggered");
-				var aSwitchVersionArguments = this.oSwitchVersionStub.getCall(0).args;
-				assert.equal(aSwitchVersionArguments[0], this.nVersionParameter, "the version parameter was passed correct");
 				fnDone();
 			}.bind(this));
-
-			this.oRta._onSwitchVersion(oEvent);
+			this.oRta.getToolbar().fireSwitchVersion({
+				version: this.nVersionParameter
+			});
 		});
 
 		QUnit.test("when changes should not be saved", function(assert) {
 			var fnDone = assert.async();
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.NO);
 
-			var oEvent = new Event("someEventId", undefined, {
-				version: this.nVersionParameter
-			});
-
-			this.oSwitchVersionStub.callsFake(function() {
-				this.oRta._switchVersion.wrappedMethod.apply(this.oRta, arguments);
+			this.oLoadVersionStub.callsFake(function(mPropertyBag) {
+				assert.equal(mPropertyBag.version, this.nVersionParameter, "the version parameter was passed correct");
 				assert.equal(this.oSerializeStub.callCount, 0, "the changes were not saved");
-				assert.equal(this.oSwitchVersionStub.callCount, 1, "the version switch was triggered");
-				var aSwitchVersionArguments = this.oSwitchVersionStub.getCall(0).args;
-				assert.equal(aSwitchVersionArguments[0], this.nVersionParameter, "the version parameter was passed correct");
 				fnDone();
 			}.bind(this));
 
-			this.oRta._onSwitchVersion(oEvent);
+			this.oRta.getToolbar().fireSwitchVersion({
+				version: this.nVersionParameter
+			});
 		});
 
 		QUnit.test("when cancel was called", function(assert) {
+			var fnDone = assert.async();
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
 
-			var oEvent = new Event("someEventId", undefined, {
+			this.oRta.getToolbar().fireSwitchVersion({
 				version: this.nVersionParameter
 			});
-
-			this.oRta._onSwitchVersion(oEvent);
-			assert.equal(this.oSerializeStub.callCount, 0, "the changes were not saved");
-			assert.equal(this.oSwitchVersionStub.callCount, 0, "the version switch was not triggered");
+			setTimeout(function() {
+				assert.equal(this.oSerializeStub.callCount, 0, "the changes were not saved");
+				assert.equal(this.oLoadVersionStub.callCount, 0, "the version switch was not triggered");
+				fnDone();
+			}.bind(this));
 		});
 	});
 
@@ -285,15 +202,15 @@ sap.ui.define([
 				rootControl: oComp
 			});
 
-			sandbox.stub(this.oRta, "_setVersionsModel").callsFake(function(oModel) {
-				oModel.setProperty("/versions", [{
+			this.oActivateStub = sandbox.stub(VersionsAPI, "activate").resolves(true);
+			return this.oRta.start().then(function() {
+				this.oRta._oVersionsModel.setProperty("/versions", [{
 					version: Version.Number.Draft,
 					type: Version.Type.Draft
 				}]);
-				oModel.setProperty("/backendDraft", true);
-				oModel.setProperty("/versioningEnabled", true);
-				this.oRta._oVersionsModel = oModel;
-				return Promise.resolve();
+				this.oRta._oVersionsModel.setProperty("/backendDraft", true);
+				this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
+				this.oSaveStub = sandbox.stub(this.oRta._oSerializer, "saveCommands").resolves();
 			}.bind(this));
 		},
 		afterEach: function() {
@@ -301,90 +218,66 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when _onActivate is called on draft", function(assert) {
-			var oActivateStub;
-			var oShowMessageToastStub;
+		QUnit.test("when onActivate is called on draft", function(assert) {
+			var fnDone = assert.async();
 			var sVersionTitle = "aVersionTitle";
-			var oEvent = {
-				getParameter: function() {
-					return sVersionTitle;
-				}
-			};
 
-			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
+			var oShowMessageToastStub = sandbox.stub(MessageToast, "show");
 
-			return this.oRta
-				.start()
-				.then(function() {
-					oActivateStub = sandbox.stub(VersionsAPI, "activate").resolves(true);
-					oShowMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
-					return this.oRta._onActivate(oEvent);
-				}.bind(this))
-				.then(function() {
-					assert.equal(oActivateStub.callCount, 1, "then the activate() method is called once");
-					var oActivationCallPropertyBag = oActivateStub.getCall(0).args[0];
-					assert.equal(oActivationCallPropertyBag.control, this.oRta.getRootControlInstance(), "with the correct control");
-					assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
-					assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
-					assert.equal(this.oRta.bInitialResetEnabled, true, "and the initialRestEnabled is true");
-					assert.equal(this.oRta.getToolbar().getModel("controls").getProperty("/restoreEnabled"), true, "RestoreEnabled is correctly set in Model");
-					assert.equal(oShowMessageToastStub.callCount, 1, "and a message is shown");
-				}.bind(this));
+			sandbox.stub(this.oRta.getCommandStack(), "removeAllCommands").callsFake(function() {
+				assert.strictEqual(this.oSaveStub.callCount, 1, "the commands were saved");
+				assert.equal(this.oActivateStub.callCount, 1, "then the activate() method is called once");
+				var oActivationCallPropertyBag = this.oActivateStub.getCall(0).args[0];
+				assert.equal(oActivationCallPropertyBag.control, this.oRta.getRootControlInstance(), "with the correct control");
+				assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
+				assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
+				assert.equal(this.oRta.bInitialResetEnabled, true, "and the initialRestEnabled is true");
+				assert.equal(this.oRta.getToolbar().getModel("controls").getProperty("/restoreEnabled"), true, "RestoreEnabled is correctly set in Model");
+				assert.equal(oShowMessageToastStub.callCount, 1, "and a message is shown");
+				fnDone();
+			}.bind(this));
+
+			this.oRta.getToolbar().fireActivate({
+				versionTitle: sVersionTitle
+			});
 		});
 
-		QUnit.test("when _onActivate is called on an older version with backend draft", function(assert) {
+		QUnit.test("when onActivate is called on an older version with backend draft", function(assert) {
+			var fnDone = assert.async();
 			var sVersionTitle = "aVersionTitle";
-			var oEvent = {
-				getParameter: function() {
-					return sVersionTitle;
-				}
-			};
 
-			sandbox.stub(this.oRta, "_isOldVersionDisplayed").returns(true);
-			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
+			sandbox.stub(VersionsAPI, "isOldVersionDisplayed").returns(true);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			sandbox.stub(PersistenceWriteAPI, "save").resolves();
-			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
-			var oSerializeAndSaveSpy = sandbox.spy(this.oRta, "_serializeAndSave");
-			var oActivateStub = sandbox.stub(VersionsAPI, "activate").resolves(true);
-			var oShowMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);
+			var oShowMessageToastStub = sandbox.stub(MessageToast, "show");
 
-			return this.oRta
-				.start()
-				.then(function() {
-					return this.oRta._onActivate(oEvent);
-				}.bind(this))
-				.then(function() {
-					assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown and click on CANCEL");
-					assert.equal(oShowMessageBoxStub.lastCall.args[1], "MSG_DRAFT_DISCARD_ON_REACTIVATE_DIALOG", "the message text is correct");
-					assert.equal(oSerializeAndSaveSpy.callCount, 0, "serializeAndSave was not called");
-					assert.equal(oActivateStub.callCount, 0, "activate() method was not called");
+			sandbox.stub(this.oRta.getCommandStack(), "removeAllCommands").callsFake(function() {
+				assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown and click on OK");
+				assert.equal(this.oSaveStub.callCount, 1, "serializeAndSave is called once");
+				assert.equal(this.oActivateStub.callCount, 1, "activate() method is called once");
+				assert.equal(this.oSaveStub.calledBefore(this.oActivateStub), true, "serialize was called before activating the verison");
+				assert.ok(this.oSaveStub.getCall(0).args[0].version, "serialize was called with the version");
+				var oActivationCallPropertyBag = this.oActivateStub.getCall(0).args[0];
+				assert.equal(oActivationCallPropertyBag.control, this.oRta.getRootControlInstance(), "with the correct control");
+				assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
+				assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
+				assert.equal(this.oRta.bInitialResetEnabled, true, "and the initialRestEnabled is true");
+				assert.equal(this.oRta.getToolbar().getModel("controls").getProperty("/restoreEnabled"), true, "RestoreEnabled is correctly set in Model");
+				assert.equal(oShowMessageToastStub.callCount, 1, "and a message is shown");
+				fnDone();
+			}.bind(this));
 
-					oShowMessageBoxStub.reset();
-					oShowMessageBoxStub.resolves(MessageBox.Action.OK);
-					return this.oRta._onActivate(oEvent);
-				}.bind(this))
-				.then(function() {
-					assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown and click on OK");
-					assert.equal(oSerializeAndSaveSpy.callCount, 1, "serializeAndSave is called once");
-					assert.equal(oActivateStub.callCount, 1, "activate() method is called once");
-					assert.equal(oSerializeAndSaveSpy.calledBefore(oActivateStub), true, "serialize was called before activating the verison");
-					assert.equal(oSerializeAndSaveSpy.getCall(0).args[0], true, "serialize was called with bActivateVersion=true");
-					var oActivationCallPropertyBag = oActivateStub.getCall(0).args[0];
-					assert.equal(oActivationCallPropertyBag.control, this.oRta.getRootControlInstance(), "with the correct control");
-					assert.equal(oActivationCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
-					assert.equal(oActivationCallPropertyBag.title, sVersionTitle, "and version title");
-					assert.equal(this.oRta.bInitialResetEnabled, true, "and the initialRestEnabled is true");
-					assert.equal(this.oRta.getToolbar().getModel("controls").getProperty("/restoreEnabled"), true, "RestoreEnabled is correctly set in Model");
-					assert.equal(oShowMessageToastStub.callCount, 1, "and a message is shown");
-				}.bind(this));
+			this.oRta.getToolbar().fireActivate({
+				versionTitle: sVersionTitle
+			});
 		});
 
 		QUnit.test("when the draft activation fails", function(assert) {
 			var done = assert.async();
-			var oEvent = {
-				versionTitle: "VersionTitle"
-			};
-			sandbox.stub(VersionsAPI, "activate").rejects("myFancyError");
+			this.oActivateStub.reset();
+			this.oActivateStub.rejects("myFancyError");
 			sandbox.stub(Utils, "showMessageBox").callsFake(function(sIconType, sMessage, mPropertyBag) {
 				assert.equal(sIconType, "error", "the error message box is used");
 				assert.equal(mPropertyBag.error, "myFancyError", "and a message box shows the error to the user");
@@ -392,146 +285,68 @@ sap.ui.define([
 				done();
 			});
 
-			this.oRta.start().then(function() {
-				this.oRta.getToolbar().fireEvent("activate", oEvent);
-			}.bind(this));
+			this.oRta.getToolbar().fireEvent("activate", {
+				versionTitle: "VersionTitle"
+			});
 		});
 
-		QUnit.test("when _onDiscardDraft is called", function(assert) {
+		QUnit.test("when onDiscardDraft is called", function(assert) {
+			var fnDone = assert.async();
 			var oDiscardDraftStub = sandbox.stub(VersionsAPI, "discardDraft").resolves();
-			var oHandleDiscardDraftStub = sandbox.spy(this.oRta, "_handleDiscard");
 			var oRemoveAllCommandsStub = sandbox.stub(this.oRta.getCommandStack(), "removeAllCommands");
-			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves("MessageBox.Action.CANCEL");
-			var oStopStub = sandbox.stub(this.oRta, "stop");
+			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);
 			var oReloadStub = sandbox.stub(ReloadManager, "triggerReload").resolves();
 			var mParsedHash = {
 				params: {
 					"sap-ui-fl-version": [Version.Number.Draft]
 				}
 			};
-			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
+			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
-			return this.oRta.start()
-				.then(this.oRta._onDiscardDraft.bind(this.oRta, false))
-				.then(function() {
-					assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
-					assert.equal(oHandleDiscardDraftStub.callCount, 0, "then _handleDiscard was not called");
-					assert.equal(oDiscardDraftStub.callCount, 0, "then VersionsAPI was not called");
+			sandbox.stub(this.oRta, "stop").callsFake(function() {
+				assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
+				assert.equal(oShowMessageBoxStub.lastCall.args[1], "MSG_DRAFT_DISCARD_DIALOG", "then the message is correct");
+				assert.equal(oDiscardDraftStub.callCount, 1, "then the discardDraft() method is called once");
+				assert.equal(oRemoveAllCommandsStub.callCount, 1, "and all commands were removed");
+				var oDiscardCallPropertyBag = oDiscardDraftStub.getCall(0).args[0];
+				assert.equal(oDiscardCallPropertyBag.control, this.oRta.getRootControlInstance(), "with the correct control");
+				assert.equal(oDiscardCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
+				assert.equal(oReloadStub.callCount, 1, "a restart was triggered");
+				fnDone();
+			}.bind(this));
 
-					oShowMessageBoxStub.reset();
-					oShowMessageBoxStub.resolves(MessageBox.Action.OK);
-					return this.oRta._onDiscardDraft(false);
-				}.bind(this))
-				.then(function() {
-					assert.equal(oShowMessageBoxStub.callCount, 1, "then the message box was shown");
-					assert.equal(oShowMessageBoxStub.lastCall.args[1], "MSG_DRAFT_DISCARD_DIALOG", "then the message is correct");
-					assert.equal(oDiscardDraftStub.callCount, 1, "then the discardDraft() method is called once");
-					assert.equal(oHandleDiscardDraftStub.callCount, 1, "then _handleDiscard was called");
-					assert.equal(oRemoveAllCommandsStub.callCount, 1, "and all commands were removed");
-					var oDiscardCallPropertyBag = oDiscardDraftStub.getCall(0).args[0];
-					assert.equal(oDiscardCallPropertyBag.control, this.oRta.getRootControlInstance(), "with the correct control");
-					assert.equal(oDiscardCallPropertyBag.layer, this.oRta.getLayer(), "and layer");
-					assert.equal(oStopStub.callCount, 1, "then stop was called");
-					assert.equal(oReloadStub.callCount, 1, "a restart was triggered");
-				}.bind(this));
-		});
-
-		QUnit.test("when save is called with bActivateVersion=true", function(assert) {
-			var oSaveStub = sandbox.stub().resolves();
-			this.oRta._oSerializer = {
-				saveCommands: oSaveStub
-			};
-			this.oRta._oToolbarControlsModel = new JSONModel({
-				translationEnabled: false
-			});
-			this.oRta._oVersionsModel = new JSONModel({
-				versioningEnabled: true,
-				displayedVersion: Version.Number.Draft
-			});
-
-			return this.oRta._serializeAndSave(true).then(function() {
-				assert.strictEqual(oSaveStub.callCount, 1, "save was triggered");
-				assert.strictEqual(oSaveStub.lastCall.args[0].saveAsDraft, true, "the draft flag is set to true");
-				assert.strictEqual(oSaveStub.lastCall.args[0].version, Version.Number.Draft, "the version is set correct");
+			this.oRta.getToolbar().fireEvent("discardDraft", {
+				versionTitle: "VersionTitle"
 			});
 		});
 
-		QUnit.test("when save is called and layer is not customer", function(assert) {
-			var oSaveStub = sandbox.stub().resolves();
-			this.oRta._oSerializer = {
-				saveCommands: oSaveStub
-			};
-			this.oRta.setFlexSettings({layer: "OTHER_LAYER"});
-			this.oRta._oToolbarControlsModel = new JSONModel({
-				translationEnabled: false
+		QUnit.test("When publishVersion function is called and publicVersion returns Promise.resolve() ", function(assert) {
+			var fnDone = assert.async();
+			var oPublishStub = sandbox.stub(VersionsAPI, "publish").resolves();
+			var oMessageToastStub = sandbox.stub(MessageToast, "show").callsFake(function() {
+				assert.strictEqual(oPublishStub.callCount, 1, "then the publish API was called");
+				assert.strictEqual(oMessageToastStub.callCount, 1, "then the messageToast was shown");
+				fnDone();
 			});
-			this.oRta._oVersionsModel = new JSONModel({
-				versioningEnabled: true
-			});
+			this.oRta.getToolbar().fireEvent("publishVersion");
+		});
 
-			return this.oRta._serializeAndSave().then(function() {
-				assert.strictEqual(oSaveStub.callCount, 1, "save was triggered");
-				assert.strictEqual(oSaveStub.lastCall.args[0].saveAsDraft, false, "the draft flag is set to false");
+		QUnit.test("When publishVersion function is called and publicVersion returns Cancel or Error", function(assert) {
+			var fnDone = assert.async();
+			sandbox.stub(VersionsAPI, "publish").resolves("Cancel");
+			var oMessageToastStub = sandbox.stub(MessageToast, "show");
+			this.oRta.getToolbar().fireEvent("publishVersion");
+			setTimeout(function() {
+				assert.strictEqual(oMessageToastStub.callCount, 0, "then no messageToast was shown");
+				fnDone();
 			});
 		});
 	});
 
-	QUnit.module("Given that RuntimeAuthoring gets a switch version event from the toolbar in standalone", {
+	QUnit.module("Given onStackModified", {
 		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
-				rootControl: oComp,
-				showToolbars: false
-			});
-			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
-			this.oSwitchVersionStub = sandbox.stub(this.oRta, "_switchVersion");
-			this.oReloadStub = sandbox.stub(ReloadManager, "triggerReload").resolves();
-			return this.oRta.start();
-		},
-		afterEach: function() {
-			this.oRta.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when no version is in the url and the app", function(assert) {
-			var fnDone = assert.async();
-			var oEvent = new Event("someEventId", undefined, {
-				version: "1"
-			});
-
-			this.oSwitchVersionStub.callsFake(function() {
-				this.oRta._switchVersion.wrappedMethod.apply(this.oRta, arguments);
-				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
-				assert.equal(this.oReloadStub.callCount, 1, "triggerReload was called");
-				fnDone();
-			}.bind(this));
-
-			this.oRta._onSwitchVersion(oEvent);
-		});
-
-		QUnit.test("when version parameter is in the url no hard reload is triggered", function(assert) {
-			var fnDone = assert.async();
-			var oEvent = new Event("someEventId", undefined, {
-				version: "1"
-			});
-
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
-
-			this.oSwitchVersionStub.callsFake(function() {
-				this.oRta._switchVersion.wrappedMethod.apply(this.oRta, arguments);
-				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
-				assert.equal(this.oReloadStub.callCount, 1, "triggerReload was called");
-				fnDone();
-			}.bind(this));
-
-			this.oRta._onSwitchVersion(oEvent);
-		});
-	});
-
-	QUnit.module("Given _onStackModified", {
-		beforeEach: function() {
-			this.oRta = new RuntimeAuthoring({
-				rootControl: oComp,
-				showToolbars: true
+				rootControl: oComp
 			});
 			return this.oRta.start();
 		},
@@ -551,6 +366,18 @@ sap.ui.define([
 				backendDraft: true,
 				canUndo: true,
 				userConfirmedDiscard: false
+			},
+			expectation: {
+				dialogCreated: true
+			}
+		}, {
+			testName: "when the stack was modified and a new draft is created, an old draft exists and the user has not yet confirmed the discarding of the old draft and clicks on OK",
+			input: {
+				versionDisplayed: Version.Number.Original,
+				backendDraft: true,
+				canUndo: true,
+				userConfirmedDiscard: false,
+				discardConfirmed: true
 			},
 			expectation: {
 				dialogCreated: true
@@ -601,7 +428,8 @@ sap.ui.define([
 			}
 		}].forEach(function(mSetup) {
 			QUnit.test(mSetup.testName, function(assert) {
-				var oUserAction = mSetup.input.userConfirmedDiscard ? MessageBox.Action.OK : MessageBox.Action.CANCEL;
+				var fnDone = assert.async();
+				var oUserAction = mSetup.input.discardConfirmed || mSetup.input.userConfirmedDiscard ? MessageBox.Action.OK : MessageBox.Action.CANCEL;
 				var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(oUserAction);
 				this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
 				this.oRta._oVersionsModel.setProperty("/displayedVersion", mSetup.input.versionDisplayed);
@@ -609,63 +437,19 @@ sap.ui.define([
 				this.oRta._bUserDiscardedDraft = mSetup.input.userConfirmedDiscard ? true : undefined;
 				sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(mSetup.input.canUndo);
 
-				return this.oRta._onStackModified()
-				// eslint-disable-next-line max-nested-callbacks
-				.then(function() {
+				function doAssertions() {
 					assert.equal(oShowMessageBoxStub.callCount, mSetup.expectation.dialogCreated ? 1 : 0, "the message box display was handled correct");
-				});
+					fnDone();
+				}
+
+				if (mSetup.expectation.dialogCreated && mSetup.input.discardConfirmed || !mSetup.expectation.dialogCreated) {
+					this.oRta.attachEventOnce("undoRedoStackModified", doAssertions);
+				} else {
+					sandbox.stub(this.oRta, "undo").callsFake(doAssertions);
+				}
+
+				this.oRta.getCommandStack().fireEvent("modified");
 			});
-		});
-	});
-
-	QUnit.module("Given a draft discarding warning dialog is openend", {
-		beforeEach: function() {
-			this.oRta = new RuntimeAuthoring({
-				rootControl: oComp,
-				showToolbars: true
-			});
-
-			this.oUndoStub = sandbox.stub(this.oRta, "undo");
-
-			return this.oRta.start()
-				.then(function() {
-					this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
-					this.oRta._oVersionsModel.setProperty("/displayedVersion", Version.Number.Original);
-					this.oRta._oVersionsModel.setProperty("/backendDraft", true);
-					sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(true);
-				}.bind(this));
-		},
-		afterEach: function() {
-			delete this.oRta._bUserDiscardedDraft;
-			this.oRta.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when the user modifies the stack while the displayed version is the Original App", function(assert) {
-			whenUserConfirmsMessage.call(this, "MSG_DRAFT_DISCARD_AND_CREATE_NEW_DIALOG", assert);
-			return this.oRta._onStackModified();
-		});
-
-		QUnit.test("when the user confirms the discarding", function(assert) {
-			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);
-			var oModifyStackStub = sandbox.stub(this.oRta, "_modifyStack");
-			return this.oRta._onStackModified()
-			.then(function() {
-				assert.equal(this.oRta._bUserDiscardedDraft, true, "the flag that the user confirmed the discarding is set");
-				assert.equal(oModifyStackStub.callCount, 1, "the modify stack function was called");
-				assert.equal(this.oUndoStub.callCount, 0, "the undo was NOT called");
-			}.bind(this));
-		});
-
-		QUnit.test("when the user cancels the discarding", function(assert) {
-			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
-			var oModifyStackStub = sandbox.stub(this.oRta, "_modifyStack");
-			return this.oRta._onStackModified()
-			.then(function() {
-				assert.equal(this.oRta._bUserDiscardedDraft, undefined, "the flag that the user confirmed the discarding is NOT set");
-				assert.equal(oModifyStackStub.callCount, 0, "the modify stack function was NOT called");
-				assert.equal(this.oUndoStub.callCount, 1, "the undo was called");
-			}.bind(this));
 		});
 	});
 
