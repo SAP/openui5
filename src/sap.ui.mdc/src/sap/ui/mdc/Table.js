@@ -2551,8 +2551,7 @@ sap.ui.define([
 	 */
 	Table.prototype._onDataReceived = function() {
 		this._bIgnoreChange = false;
-		this._updateHeaderText();
-		this._updateExportState();
+		this._updateTableHeaderState();
 	};
 
 	/**
@@ -2566,7 +2565,17 @@ sap.ui.define([
 		if (this._bIgnoreChange) {
 			return;
 		}
+		this._updateTableHeaderState();
+	};
+
+	/**
+	 * Updates the table header states, like the header text and the export button.
+	 *
+	 * @private
+	 */
+	Table.prototype._updateTableHeaderState = function() {
 		this._updateHeaderText();
+		this._updateExportState();
 	};
 
 	Table.prototype._updateHeaderText = function() {
