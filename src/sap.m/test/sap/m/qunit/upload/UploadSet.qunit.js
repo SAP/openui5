@@ -716,30 +716,21 @@ sap.ui.define([
 	QUnit.test("Drag and drop of multiple files with multiple property", function(assert) {
 
 		// arrange
-		var oFileList = { // dummy files list used to simulate drag drop files
-			0: {
-				name: "Sample Drop File",
-				size: 1,
-				type: "type"
-			},
-			1: {
-				name: "Sample Drop File 2",
-				size: 1,
-				type: "type"
-			},
-			length: 2
-		};
+		var oDataTransfer = new DataTransfer();
+		oDataTransfer.items.add(new File([new Blob([])], "sample Drop File" ));
+		oDataTransfer.items.add(new File([new Blob([])], "Sample Drop File 2" ));
+
 		var oEvent = new EventBase("drop", {}, { // using BaseEvent to create sample drop event to simulate drag and drop
 			browserEvent: {
-				dataTransfer: {
-					files: oFileList
-				}
+				dataTransfer: oDataTransfer
 			}
 		});
 
-		this.stub(this.oUploadSet, "_processNewFileObjects").callsFake(function() {
+		this.stub(this.oUploadSet, "_getFilesFromDataTransferItems").callsFake(function() {
 			// creating fake function since this function makes xhr call to upload files
-			return true;
+			return new Promise(function(resolve, reject){
+				resolve(true);
+			});
 		});
 		this.stub(MessageBox, "error").returns("Dummy Error message");
 
@@ -747,7 +738,7 @@ sap.ui.define([
 		this.oUploadSet._onDropFile(oEvent); // method invoked on uploadSet when dropping files to upload
 
 		// assert
-		assert.ok(this.oUploadSet._processNewFileObjects.notCalled, "Multiple files are not uploaded with multiple property set to false");
+		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.notCalled, "Multiple files are not uploaded with multiple property set to false");
 
 		// act
 		this.oUploadSet.setMultiple(true);
@@ -755,7 +746,7 @@ sap.ui.define([
 		this.oUploadSet._onDropFile(oEvent); // method invoked on uploadSet when dropping files to upload
 
 		// assert
-		assert.ok(this.oUploadSet._processNewFileObjects.called, "Multiple files are uploaded with multiple property set to true");
+		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.called, "Multiple files are uploaded with multiple property set to true");
 
 	});
 
@@ -901,6 +892,193 @@ sap.ui.define([
 				assert.ok(oItem.getTitle().length > 0, "The group item has title property");
 			}
 		});
+	});
+
+	QUnit.module("Directory Uploads", {
+		beforeEach: function () {
+			this.oUploadSet = new UploadSet("uploadSet", {
+				items: {
+					path: "/items",
+					template: TestUtils.createItemTemplate(),
+					templateShareable: false
+				}
+			}).setModel(new JSONModel(getData1()));
+			this.oUploadSet.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function () {
+			this.oUploadSet.destroy();
+			this.oUploadSet = null;
+		}
+	});
+
+	QUnit.test("Directory uploads setter/getter test", function(assert) {
+		//Assert
+		assert.equal(this.oUploadSet.getDirectory(), false, "By default directory uploads are set to false");
+
+		//act
+		this.oUploadSet.setDirectory(true);
+
+		//assert
+		assert.equal(this.oUploadSet.getDirectory(), true, "Directory uploads are now enabled with setter");
+	});
+
+	QUnit.test("Upload files from directory using directory feature", function(assert) {
+
+		//act
+		this.oUploadSet.setDirectory(true);
+
+		var oInput = document.querySelector("[type='file']");
+
+		//assert
+		assert.ok(oInput.hasAttribute("webkitdirectory"), "Attribute properly set");
+
+		//arrange
+		var oProcessNewFileObjects = this.spy(this.oUploadSet, '_processNewFileObjects');
+		var oFileUploader = this.oUploadSet.getDefaultFileUploader();
+		var oFileList = {
+			0: {
+				name: "Sample File 1",
+				size: 1,
+				type: "type"
+			},
+			1: {
+				name: "Sample File 2",
+				size: 1,
+				type: "type"
+			},
+			length: 2
+		};
+
+		//act
+		oFileUploader.fireChange({id:'directory-uploads', newValue:'', files:oFileList});
+
+		//assert
+		assert.ok(oProcessNewFileObjects.calledWith(oFileList), "Uploadset will upload files from directory");
+	});
+
+	QUnit.test("Upload files from directory & sub directories using directory uploads", function(assert) {
+		//arrange
+		var oProcessNewFileObjects = this.spy(this.oUploadSet, '_processNewFileObjects');
+		var oFileUploader = this.oUploadSet.getDefaultFileUploader();
+		var oFileList = { // Files with webKitrelative path to simulate directory and sub directories
+			0: {
+				name: "Sample File 1",
+				size: 1,
+				type: "text/plain",
+				webkitRelativePath: "uploadset-samples/Sample File 1.txt"
+			},
+			1: {
+				name: "Sample File 2",
+				size: 1,
+				type: "text/plain",
+				webkitRelativePath: "uploadset-samples/Sample File 2.txt"
+			},
+			2: {
+				name: "Sample File 3",
+				size: 1,
+				type: "text/plain",
+				webkitRelativePath: "uploadset-samples/samples-set2/Sample File 3.txt"
+			},
+			3: {
+				name: "Sample File 4",
+				size: 1,
+				type: "text/plain",
+				webkitRelativePath: "uploadset-samples/samples-set2/Sample File 4.txt"
+			},
+			4: {
+				name: "Sample File 5",
+				size: 1,
+				type: "text/plain",
+				webkitRelativePath: "uploadset-samples/samples-set2/Sample File 5.txt"
+			},
+			length: 5
+		};
+
+		//act
+		oFileUploader.fireChange({id:'directory-uploads', newValue:'', files:oFileList});
+
+		//assert
+		assert.ok(oProcessNewFileObjects.calledWith(oFileList), "Uploadset will upload files from directories & sub directories");
+	});
+
+	QUnit.test("Directory uploads aborted with mismatch file/files types of selected directory files", function(assert) {
+		//arrange
+		var oFileUploaderChangeSpy = this.spy(this.oUploadSet, '_onFileUploaderChange');
+		var oFileUploader = this.oUploadSet.getDefaultFileUploader();
+		var oFileList = { // Files with webKitrelative path to simulate directory and sub directories
+			0: {
+				name: "Sample File 1.txt",
+				size: 1,
+				type: "text/plain",
+				webkitRelativePath: "uploadset-samples/Sample File 1.txt"
+			},
+			1: {
+				name: "Sample File 2.txt",
+				size: 1,
+				type: "text/plain",
+				webkitRelativePath: "uploadset-samples/Sample File 2.txt"
+			},
+			2: {
+				name: "Sample File 3.txt",
+				size: 1,
+				type: "text/plain",
+				webkitRelativePath: "uploadset-samples/samples-set2/Sample File 3.txt"
+			},
+			3: {
+				name: "Sample File 4.txt",
+				size: 1,
+				type: "text/plain",
+				webkitRelativePath: "uploadset-samples/samples-set2/Sample File 4.txt"
+			},
+			4: {
+				name: "Sample File 5.pdf",
+				size: 1,
+				type: "application/pdf",
+				webkitRelativePath: "uploadset-samples/samples-set2/Sample File 5.pdf"
+			},
+			length: 5
+		};
+
+		//act
+		oFileUploader.handlechange({
+			target: {
+				files: oFileList
+			}
+		});
+
+		//assert
+		assert.ok(oFileUploaderChangeSpy.notCalled, "Directory uploads aborted with restrited file types");
+	});
+
+	QUnit.test("Drag and drop of directory files with directory property", function(assert) {
+
+		// arrange
+		var oDataTransfer = new DataTransfer();
+		oDataTransfer.items.add(new File([new Blob([])], "sample Drop File" ));
+
+		var oEvent = new EventBase("drop", {}, { // using BaseEvent to create sample drop event to simulate drag and drop
+			browserEvent: {
+				dataTransfer: oDataTransfer
+			}
+		});
+
+		this.stub(this.oUploadSet, "_getFilesFromDataTransferItems").callsFake(function() {
+			// creating fake function since this function makes xhr call to upload files
+			return new Promise(function(resolve, reject){
+				resolve(true);
+			});
+		});
+		this.stub(MessageBox, "error").returns("Dummy Error message");
+
+		// act
+		this.oUploadSet.setDirectory(true);
+
+		this.oUploadSet._onDropFile(oEvent); // method invoked on uploadSet when dropping files to upload
+
+		// assert
+		assert.ok(this.oUploadSet._getFilesFromDataTransferItems.called, "Directory files are uploaded with directory property set to true");
+
 	});
 
 	return Core.loadLibrary("sap.suite.ui.commons", { async: true })
