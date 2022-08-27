@@ -31,18 +31,19 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: function(oRm, oControl) {
-			oRm.write("<input");
-			oRm.writeControlData(oControl);
-			oRm.addStyle("width", oControl.getWidth());
-			oRm.addStyle("height", oControl.getHeight());
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.voidStart("input", oControl);
+				oRm.style("width", oControl.getWidth());
+				oRm.style("height", oControl.getHeight());
 
-			// normalize user agent stylesheet
-			oRm.addStyle("border-width", "2px");
-			oRm.addStyle("box-sizing", "border-box");
-			oRm.addStyle("vertical-align", "top");
-			oRm.writeStyles();
-			oRm.write(">");
+				// normalize user agent stylesheet
+				oRm.style("border-width", "2px");
+				oRm.style("box-sizing", "border-box");
+				oRm.style("vertical-align", "top");
+				oRm.voidEnd();
+			}
 		}
 	});
 
@@ -63,17 +64,18 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: function(oRm, oControl) {
-			oRm.write("<button");
-			oRm.writeControlData(oControl);
-			oRm.addStyle("width", oControl.getWidth());
-			oRm.addStyle("height", oControl.getHeight());
-			oRm.addStyle("box-sizing", "border-box");
-			oRm.addStyle("vertical-align", "top");
-			oRm.writeStyles();
-			oRm.write(">");
-			oRm.writeEscaped(oControl.getText());
-			oRm.write("</button>");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.openStart("button", oControl);
+				oRm.style("width", oControl.getWidth());
+				oRm.style("height", oControl.getHeight());
+				oRm.style("box-sizing", "border-box");
+				oRm.style("vertical-align", "top");
+				oRm.openEnd();
+				oRm.text(oControl.getText());
+				oRm.close("button");
+			}
 		}
 	});
 
@@ -90,20 +92,21 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: function(oRm, oControl) {
-			oRm.write("<textarea");
-			oRm.writeControlData(oControl);
-			oRm.addStyle("width", oControl.getWidth());
-			oRm.addStyle("height", oControl.getHeight());
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.openStart("textarea", oControl);
+				oRm.style("width", oControl.getWidth());
+				oRm.style("height", oControl.getHeight());
 
-			// normalize user agent stylesheet
-			oRm.addStyle("box-sizing", "border-box");
-			oRm.addStyle("vertical-align", "top");
-			oRm.addStyle("margin", "0");
-			oRm.addStyle("padding", "0");
-			oRm.writeStyles();
-			oRm.write(">");
-			oRm.write("</textarea>");
+				// normalize user agent stylesheet
+				oRm.style("box-sizing", "border-box");
+				oRm.style("vertical-align", "top");
+				oRm.style("margin", "0");
+				oRm.style("padding", "0");
+				oRm.openEnd();
+				oRm.close("textarea");
+			}
 		}
 	});
 

@@ -10,24 +10,24 @@ sap.ui.define([
 			}
 		},
 
-		renderer: function(oRm, oControl) {
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addClass("myColorPreview");
-			if (oControl.getColor() !== undefined){
-				oRm.addClass("sapThemeForegroundBorderColor-asBorderColor");
-				oRm.addClass("myColorPreviewBorder");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.openStart("div", oControl);
+				oRm.class("myColorPreview");
+				if (oControl.getColor() !== undefined){
+					oRm.class("sapThemeForegroundBorderColor-asBorderColor");
+					oRm.class("myColorPreviewBorder");
 
-				if (oControl.getColor() === "transparent") {
-					oRm.addClass("myTransparentPreview");
-				} else {
-					oRm.addStyle("background-color", oControl.getColor());
+					if (oControl.getColor() === "transparent") {
+						oRm.class("myTransparentPreview");
+					} else {
+						oRm.style("background-color", oControl.getColor());
+					}
 				}
+				oRm.openEnd();
+				oRm.close("div");
 			}
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
-			oRm.write("</div>");
 		}
 	});
 });

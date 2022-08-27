@@ -11,7 +11,9 @@ sap.ui.define(function() {
 	 * @version ${version}
 	 * @namespace
 	 */
-	var TableRenderer = {};
+	var TableRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -20,20 +22,13 @@ sap.ui.define(function() {
 	 * @param {sap.ui.dt.enablement.report.Table} oTable An object representation of the control that should be rendered.
 	 */
 	TableRenderer.render = function(rm, oTable) {
-		rm.addClass("sapUiDtTableReport");
-
-		rm.write("<div");
-		rm.writeControlData(oTable);
-
-		rm.writeStyles();
-
-		rm.writeClasses();
-
-		rm.write(">");
+		rm.openStart("div", oTable);
+		rm.class("sapUiDtTableReport");
+		rm.openEnd(">");
 
 		rm.renderControl(oTable._getTable());
 
-		rm.write("</div>");
+		rm.close("div");
 	};
 
 	return TableRenderer;

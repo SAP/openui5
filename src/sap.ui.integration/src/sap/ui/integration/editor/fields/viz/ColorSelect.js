@@ -57,7 +57,9 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: VizBase.getMetadata().getRenderer()
+		renderer: {
+			apiVersion: 2
+		}
 	});
 
 	var mEnumColors = {};
@@ -130,14 +132,14 @@ sap.ui.define([
 
 	// add style class to the render manager
 	ColorSelect.prototype.applyStyle = function (oRm) {
-		oRm.addClass("sapUiIntegrationColorSelect");
+		oRm.class("sapUiIntegrationColorSelect");
 		if (!this._colorValue || this._colorValue === "transparent") {
-			oRm.addClass("noColorValueOrTransparentValue");
+			oRm.class("noColorValueOrTransparentValue");
 		} else {
-			oRm.addClass("hasColorValue");
+			oRm.class("hasColorValue");
 		}
 		if (this._colorValue) {
-			oRm.addStyle("--colorValue", this._colorValue);
+			oRm.style("--colorValue", this._colorValue);
 		}
 	};
 

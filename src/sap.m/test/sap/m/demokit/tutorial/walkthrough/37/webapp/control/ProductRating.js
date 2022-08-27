@@ -96,20 +96,21 @@ sap.ui.define([
 			});
 		},
 
-		renderer: function (oRM, oControl) {
-			oRM.write("<div");
-			oRM.writeControlData(oControl);
-			oRM.addClass("myAppDemoWTProductRating");
-			oRM.writeClasses();
-			oRM.write(">");
-			oRM.renderControl(oControl.getAggregation("_rating"));
-			oRM.renderControl(oControl.getAggregation("_label"));
-			oRM.renderControl(oControl.getAggregation("_button"));
-			oRM.renderControl(oControl.getAggregation("_invText1"));
-			oRM.renderControl(oControl.getAggregation("_invText2"));
-			oRM.renderControl(oControl.getAggregation("_invText3"));
-			oRM.renderControl(oControl.getAggregation("_invText4"));
-			oRM.write("</div>");
+		renderer: {
+			apiVersion: 2,
+			render: function (oRM, oControl) {
+				oRM.openStart("div", oControl);
+				oRM.class("myAppDemoWTProductRating");
+				oRM.openEnd();
+				oRM.renderControl(oControl.getAggregation("_rating"));
+				oRM.renderControl(oControl.getAggregation("_label"));
+				oRM.renderControl(oControl.getAggregation("_button"));
+				oRM.renderControl(oControl.getAggregation("_invText1"));
+				oRM.renderControl(oControl.getAggregation("_invText2"));
+				oRM.renderControl(oControl.getAggregation("_invText3"));
+				oRM.renderControl(oControl.getAggregation("_invText4"));
+				oRM.close("div");
+			}
 		}
 	});
 

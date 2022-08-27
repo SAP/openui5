@@ -30,7 +30,7 @@ sap.ui.define(['./library'],
          */
         ChartRenderer.render = function(oRm, oMDCChart) {
                 oRm.openStart("div", oMDCChart);
-                //TODO: Clarify why writeControlData doesn't work on rerender
+                //TODO: Clarify why providing the control in openStart doesn't work on rerender
                 oRm.attr("id", oMDCChart.getId());
                 oRm.class(ChartRenderer.CSS_CLASS);
                 //oRm.class("sapUiFixFlex");

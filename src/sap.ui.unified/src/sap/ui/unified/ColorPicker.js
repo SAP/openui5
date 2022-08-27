@@ -752,23 +752,22 @@ sap.ui.define([
 				saturation: (1 - iY / iBoxHeight) * 100
 			};
 		},
-		renderer: function(oRm, oControl) {
-			// Control container div
-			oRm.write("<div");
-			oRm.addClass(CONSTANTS.CPBoxClass);
-			oRm.writeControlData(oControl);
-			oRm.writeClasses();
-			oRm.write(">");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				// Control container div
+				oRm.openStart("div", oControl);
+				oRm.class(CONSTANTS.CPBoxClass);
+				oRm.openEnd();
 
-			// Handle
-			oRm.write("<div");
-			oRm.writeAttribute("id", oControl.getId() + "-cpCur");
-			oRm.addClass(CONSTANTS.CPCircleClass);
-			oRm.writeClasses();
-			oRm.write("></div>");
+				// Handle
+				oRm.openStart("div", oControl.getId() + "-cpCur");
+				oRm.class(CONSTANTS.CPCircleClass);
+				oRm.openEnd().close("div");
 
-			// Close control container div
-			oRm.write("</div>");
+				// Close control container div
+				oRm.close("div");
+			}
 		}
 	});
 

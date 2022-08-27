@@ -128,80 +128,75 @@ sap.ui.define([
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
 		 * @param {sap.ui.core.Control} oTitle an object representation of the control that should be rendered
 		 */
-		renderer: function (oRm, oTitle) {
-			var oAssoTitle = oTitle._getTitle(),
-				sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oTitle.getLevel()) || coreLibrary.TitleLevel.Auto,
-				bAutoLevel = sLevel == TitleLevel.Auto,
-				sTag = bAutoLevel ? "div" : sLevel,
-				sTextAlign = Renderer.getTextAlign(oTitle.getTextAlign());
+		renderer: {
+			apiVersion: 2,
+			render: function (oRm, oTitle) {
+				var oAssoTitle = oTitle._getTitle(),
+					sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oTitle.getLevel()) || coreLibrary.TitleLevel.Auto,
+					bAutoLevel = sLevel == TitleLevel.Auto,
+					sTag = bAutoLevel ? "div" : sLevel.toLowerCase(),
+					sTextAlign = Renderer.getTextAlign(oTitle.getTextAlign());
 
-			oRm.write("<", sTag);
-			oRm.writeControlData(oTitle);
-			oRm.addClass("sapUiDocTitleLink");
-			oRm.addClass("sapMTitle");
-			oRm.addClass("sapMTitleStyle" + (oTitle.getTitleStyle() || coreLibrary.TitleLevel.Auto));
-			oRm.addClass("sapUiSelectable");
+				oRm.openStart(sTag, oTitle)
+					.class("sapUiDocTitleLink")
+					.class("sapMTitle")
+					.class("sapMTitleStyle" + (oTitle.getTitleStyle() || coreLibrary.TitleLevel.Auto))
+					.class("sapUiSelectable");
 
-			// adding wrap functionality begin
-			if (oTitle.getWrap()) {
-				oRm.addClass("wrap");
-			} else {
-				oRm.addClass("sapMTitleNoWrap");
+				// adding wrap functionality begin
+				if (oTitle.getWrap()) {
+					oRm.class("wrap");
+				} else {
+					oRm.class("sapMTitleNoWrap");
+				}
+				// adding wrap functionality end
+
+				var sWidth = oTitle.getWidth();
+				if (!sWidth) {
+					oRm.class("sapMTitleMaxWidth");
+				} else {
+					oRm.style("width", sWidth);
+				}
+
+				if (sTextAlign) {
+					oRm.style("text-align", sTextAlign);
+				}
+
+				if (oTitle.getParent() instanceof Toolbar) {
+					oRm.class("sapMTitleTB");
+				}
+
+				var sTooltip = oAssoTitle ? oAssoTitle.getTooltip_AsString() : oTitle.getTooltip_AsString();
+				if (sTooltip) {
+					oRm.attr("title", sTooltip);
+				}
+
+				if (bAutoLevel) {
+					oRm.attr("role", "heading");
+				}
+
+				oRm.openEnd();
+
+					// adding link functionality begin
+					oRm.openStart("a")
+						.class("sapMLnk")
+						.attr("tabindex", oTitle.getText() ? "0" : "-1")
+						.attr("href", oTitle.getHref());
+
+					if (oTitle.getTarget()) {
+						oRm.attr("target", oTitle.getTarget());
+					}
+					oRm.openEnd();
+					// adding link functionality end
+
+						oRm.openStart("span", oTitle.getId() + "-inner")
+							.openEnd()
+							.text(oAssoTitle ? oAssoTitle.getText() : oTitle.getText())
+							.close("span");
+
+					oRm.close("a");
+				oRm.close(sTag);
 			}
-			// adding wrap functionality end
-
-			var sWidth = oTitle.getWidth();
-			if (!sWidth) {
-				oRm.addClass("sapMTitleMaxWidth");
-			} else {
-				oRm.addStyle("width", sWidth);
-			}
-
-			if (sTextAlign) {
-				oRm.style("text-align", sTextAlign);
-			}
-
-			if (oTitle.getParent() instanceof Toolbar) {
-				oRm.addClass("sapMTitleTB");
-			}
-
-			var sTooltip = oAssoTitle ? oAssoTitle.getTooltip_AsString() : oTitle.getTooltip_AsString();
-			if (sTooltip) {
-				oRm.writeAttributeEscaped("title", sTooltip);
-			}
-
-			if (bAutoLevel) {
-				oRm.writeAttribute("role", "heading");
-			}
-
-			oRm.writeClasses();
-			oRm.writeStyles();
-
-			oRm.write(">");
-
-			// adding link functionality begin
-			oRm.write("<a");
-			oRm.addClass("sapMLnk");
-			if (oTitle.getText()) {
-				oRm.writeAttribute("tabindex", "0");
-			} else {
-				oRm.writeAttribute("tabindex", "-1");
-			}
-			oRm.writeAttributeEscaped("href", oTitle.getHref());
-			if (oTitle.getTarget()) {
-				oRm.writeAttributeEscaped("target", oTitle.getTarget());
-			}
-			oRm.writeClasses();
-			oRm.write(">");
-			// adding link functionality end
-
-			oRm.write("<span");
-			oRm.writeAttribute("id", oTitle.getId() + "-inner");
-			oRm.write(">");
-			oRm.writeEscaped(oAssoTitle ? oAssoTitle.getText() : oTitle.getText());
-			oRm.write("</span></", sTag, ">");
-
-			oRm.write("</a>");
 		}
 	});
 

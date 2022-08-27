@@ -47,7 +47,9 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: VizBase.getMetadata().getRenderer()
+		renderer: {
+			apiVersion: 2
+		}
 	});
 
 	IconSelect.prototype._initIconModel = function () {
@@ -225,9 +227,9 @@ sap.ui.define([
 
 	// add style class to the render manager
 	IconSelect.prototype.applyStyle = function (oRm) {
-		oRm.addClass("sapUiIntegrationIconSelect");
+		oRm.class("sapUiIntegrationIconSelect");
 		if (this._oControl && this._oControl.getWidth) {
-			oRm.addStyle("width", this._oControl.getWidth());
+			oRm.style("width", this._oControl.getWidth());
 		}
 	};
 

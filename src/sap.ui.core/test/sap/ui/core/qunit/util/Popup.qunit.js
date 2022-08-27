@@ -3333,18 +3333,23 @@ sap.ui.define([
 		return pPromise;
 	});
 
+	/**
+	 * @deprecated Since 1.92 as string based rendering has been deprecated
+	 * @todo-semantic-rendering discuss whether test really can be deprecated together with string based rendering
+	 */
 	QUnit.test("Global within set with a control and check after the control is rendered", function(assert) {
 		// need to create a custom control to create new DOM element after the control is rendered because most of the
 		// sap.m controls use the rendering api version 2 in which the DOM element is not deleted but only updated
 		var MyCustomControl = Control.extend("MyCustomControl", {
-			renderer: function(oRM, oControl) {
-				oRM.write("<div");
-				oRM.writeControlData(oControl);
-				oRM.addStyle("width", "400px");
-				oRM.addStyle("height", "400px");
-				oRM.writeStyles();
-				oRM.write(">");
-				oRM.write("</div>");
+			renderer: {
+				apiVersion: 1, // legacy-relevant: test requires string based rendering
+				render: function(oRM, oControl) {
+					oRM.openStart("div", oControl);
+					oRM.style("width", "400px");
+					oRM.style("height", "400px");
+					oRM.openEnd();
+					oRM.close("div");
+				}
 			}
 		});
 

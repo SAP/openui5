@@ -46,8 +46,7 @@ sap.ui.define([
 				moduleName: "sap/ui/unified/calendar/CustomYearPicker"
 			},
 			"sap.ui.unified._ColorPickerBox": {
-				moduleName: "sap/ui/unified/ColorPicker",
-				apiVersion: 1
+				moduleName: "sap/ui/unified/ColorPicker"
 			}
 		}
 	});

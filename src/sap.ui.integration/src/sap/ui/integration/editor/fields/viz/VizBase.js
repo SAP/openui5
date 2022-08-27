@@ -43,14 +43,21 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: function (oRm, oVizControl) {
-			var oControl = oVizControl.getAggregation("_control");
-			oRm.openStart("div");
-			oVizControl.applyStyle(oRm);
-			oRm.writeElementData(oVizControl);
-			oRm.openEnd();
-			oRm.renderControl(oControl);
-			oRm.close("div");
+		renderer: {
+			/*
+			 * Custom subclasses typically reuse the VizBase renderer 'as is', but still might use
+			 * legacy rendering APIs in their applyStyle method. Therefore, the apiVersion cannot
+			 * be switched to '2'.
+			 */
+			apiVersion: 1, // @todo-semantic-rendering for backward compatibility
+			render: function (oRm, oVizControl) {
+				var oControl = oVizControl.getAggregation("_control");
+				oRm.openStart("div", oVizControl);
+				oVizControl.applyStyle(oRm);
+				oRm.openEnd();
+				oRm.renderControl(oControl);
+				oRm.close("div");
+			}
 		}
 	});
 

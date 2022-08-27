@@ -11,8 +11,10 @@ sap.ui.define([
 
 	var AdaptationRenderer = BaseRenderer.extend("sap.ui.rta.toolbar.AdaptationRenderer");
 
+	AdaptationRenderer.apiVersion = 1; // @todo-semantic-rendering out of order .class() call before openStart
+
 	AdaptationRenderer.render = function (oRM, oControl) {
-		oRM.addClass("sapUiRtaToolbarAdaptation");
+		oRM.class("sapUiRtaToolbarAdaptation");
 
 		BaseRenderer.render(oRM, oControl);
 	};
