@@ -833,9 +833,6 @@ sap.ui.define([
 			right : 0
 		});
 
-		assert.strictEqual(oTB.$().css("padding-left"), "0px", "The toolbar had the correct left padding");
-		assert.strictEqual(oTB.$().css("padding-right"), "4px", "The toolbar had the correct right padding");
-
 		// Cleanup
 		oTB.destroy();
 	});

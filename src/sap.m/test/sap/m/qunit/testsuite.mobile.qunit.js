@@ -1616,7 +1616,13 @@ sap.ui.define([
 				title: "Test Page for sap.m.Tokenizer"
 			},
 			Toolbar: {
-				title: "Test Page for sap.m.Toolbar"
+				title: "Test Page for sap.m.Toolbar",
+				sinon: {
+					version: 'edge'
+				},
+				qunit: {
+					version: "edge"
+				}
 			},
 			ToolbarSeparator: {
 				title: "Test Page for sap.m.ToolbarSeparator"
