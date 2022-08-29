@@ -191,7 +191,7 @@ sap.ui.define([
 
 			// wait till component is started
 			var oComponentStartedOptions = createWaitForObjectWithoutDefaults();
-			oComponentStartedOptions.errorMessage = "Unable to load the component with the name: " + oOptions.name;
+			oComponentStartedOptions.errorMessage = "Unable to load the component with the name: " + oOptions.componentConfig.name;
 			oComponentStartedOptions.check = function () {
 				return bComponentLoaded;
 			};
