@@ -320,16 +320,11 @@ sap.ui.define([
 				]
 			}).addStyleClass("sapFCardObjectItemPairContainer");
 
-			var oAvatar = this._createGroupItemAvatar(oItem.icon);
-			oAvatar.setLayoutData(new FlexItemData({
-				shrinkFactor: 0
-			}));
-
 			var oHBox = new HBox({
 				visible: vVisible,
 				renderType: FlexRendertype.Bare,
 				items: [
-					oAvatar,
+					this._createGroupItemAvatar(oItem.icon),
 					oVbox
 				]
 			}).addStyleClass("sapFCardObjectItemLabel");
