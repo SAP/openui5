@@ -424,10 +424,7 @@ sap.ui.define([
 			)
 
 			.then(function(oSettingsCommand) {
-				return oSettingsCommand.prepare()
-					.then(function() {
-						return this.oCommandStack.pushAndExecute(oSettingsCommand);
-					}.bind(this));
+				return this.oCommandStack.pushAndExecute(oSettingsCommand);
 			}.bind(this))
 
 			.then(function() {
@@ -453,20 +450,13 @@ sap.ui.define([
 			}.bind(this))
 
 			.then(function(oSettingsCommand) {
-				return oSettingsCommand.prepare()
-					.then(function() {
-						return this.oCommandStack.pushAndExecute(oSettingsCommand);
-					}.bind(this));
+				return this.oCommandStack.pushAndExecute(oSettingsCommand);
 			}.bind(this))
 
 			.then(function() {
 				var aUnsavedChanges = this.oSettingsPlugin._getUnsavedChanges("stableNavPopoverId", ["changeSettings"]);
 				assert.equal(aUnsavedChanges.length, 2, "these commands are returned by _getUnsavedChanges");
-			}.bind(this))
-
-			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
-			});
+			}.bind(this));
 		});
 
 		QUnit.test("when the handle settings function is called and the handler returns a change object with an app descriptor change,", function(assert) {
@@ -591,9 +581,11 @@ sap.ui.define([
 			aMenuItems[0].handler([oButtonOverlay]);
 
 			bIsAvailable = false;
-			assert.equal(this.oSettingsPlugin.getMenuItems([oButtonOverlay]).length,
+			assert.equal(
+				this.oSettingsPlugin.getMenuItems([oButtonOverlay]).length,
 				0,
-				"and if plugin is not available for the overlay, no menu items are returned");
+				"and if plugin is not available for the overlay, no menu items are returned"
+			);
 		});
 
 		QUnit.test("when retrieving the context menu item for single 'settings' action with a submenu", function(assert) {
