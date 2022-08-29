@@ -456,6 +456,54 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Check amount of search events triggered on multiple changes in one appliance", function(assert){
+		var done = assert.async(2);
+		this.prepareTestSetup(true);
+
+		sinon.stub(Engine.getInstance(), "waitForChanges").returns(Promise.resolve());
+
+		oAdaptationFilterBar.setP13nData({
+			items: [
+				{
+					name: "key1"
+				},
+				{
+					name: "key2"
+				},
+				{
+					name: "key3"
+				}
+			]
+		});
+
+		Promise.all([
+			//1) Init Parent (Delegate + PropertyHelper)
+			this.oParent.initPropertyHelper(),
+			this.oParent.initControlDelegate()
+		])
+		.then(function(){
+
+			var iCount = 0;
+			oAdaptationFilterBar.attachSearch(function(){
+				iCount++;
+				assert.equal(iCount, 1,"Only one search event has been fired during change processing");
+				done(1);
+			});
+
+			//mock multiple calls which would happen on multiple filter changes created
+			oAdaptationFilterBar.applyConditionsAfterChangesApplied(this.oParent);
+			oAdaptationFilterBar.applyConditionsAfterChangesApplied(this.oParent);
+			oAdaptationFilterBar.applyConditionsAfterChangesApplied(this.oParent);
+
+			Engine.getInstance().waitForChanges(this.oParent)
+			.then(function(){
+				done(2);
+				Engine.getInstance().waitForChanges.restore();
+			});
+
+		}.bind(this));
+	});
+
 	QUnit.test("Test '_checkFunctionality' - check 'remove' hook executions, but change the selection before", function(assert){
 		var done = assert.async(1);
 		this.prepareTestSetup(true);
