@@ -6,7 +6,7 @@ sap.ui.define([
 ], function (QUnitUtils, QuickActionBase, library) {
 	"use strict";
 
-	QUnit.module("Plain ItemBase", {
+	QUnit.module("Plain QuickActionbase", {
 		beforeEach: function () {
 			this.oQuickActionBase = new QuickActionBase();
 		},
@@ -17,6 +17,9 @@ sap.ui.define([
 
 	QUnit.test("Return effective items", function(assert) {
 		assert.deepEqual(this.oQuickActionBase.getEffectiveQuickActions(), [this.oQuickActionBase]);
+
+		this.oQuickActionBase.setVisible(false);
+		assert.deepEqual(this.oQuickActionBase.getEffectiveQuickActions(), [], "No effective actions returned");
 	});
 
 	QUnit.test("Category", function(assert) {

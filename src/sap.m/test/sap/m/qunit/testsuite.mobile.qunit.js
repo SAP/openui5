@@ -1516,6 +1516,13 @@ sap.ui.define([
 					resourceroot: "test-resources/sap/m/qunit/table/columnmenu"
 				}
 			},
+			"table.columnmenu.ItemContainer": {
+				title: "Test Page for sap.m.table.columnmenu.ItemContainer",
+				module: "test-resources/sap/m/qunit/table/columnmenu/ItemContainer.qunit",
+				paths: {
+					resourceroot: "test-resources/sap/m/qunit/table/columnmenu"
+				}
+			},
 			"table.columnmenu.QuickAction": {
 				title: "Test Page for sap.m.table.columnmenu.QuickAction",
 				module: "test-resources/sap/m/qunit/table/columnmenu/QuickAction.qunit",
@@ -1526,6 +1533,13 @@ sap.ui.define([
 			"table.columnmenu.QuickActionBase": {
 				title: "Test Page for sap.m.table.columnmenu.QuickActionBase",
 				module: "test-resources/sap/m/qunit/table/columnmenu/QuickActionBase.qunit",
+				paths: {
+					resourceroot: "test-resources/sap/m/qunit/table/columnmenu"
+				}
+			},
+			"table.columnmenu.QuickActionContainer": {
+				title: "Test Page for sap.m.table.columnmenu.QuickActionContainer",
+				module: "test-resources/sap/m/qunit/table/columnmenu/QuickActionContainer.qunit",
 				paths: {
 					resourceroot: "test-resources/sap/m/qunit/table/columnmenu"
 				}

@@ -27,4 +27,13 @@ sap.ui.define([
 			assert.equal(error.message, this.oItemBase + " does not implement #getIcon");
 		}
 	});
+
+	QUnit.test("Visibility for effective items", function(assert) {
+		var oEffectiveItem = this.oItemBase.getEffectiveItems();
+		assert.deepEqual(oEffectiveItem, [this.oItemBase], "Effective item is returned");
+
+		this.oItemBase.setVisible(false);
+		oEffectiveItem = this.oItemBase.getEffectiveItems();
+		assert.deepEqual(oEffectiveItem, [], "No effective items are returned for invisible item");
+	});
 });

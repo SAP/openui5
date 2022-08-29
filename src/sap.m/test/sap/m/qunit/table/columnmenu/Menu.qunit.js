@@ -173,6 +173,27 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("_getAllEffectiveQuickActions", function(assert) {
+		this.createMenu(true, true, false, false);
+		var aQuickActions = this.oColumnMenu._getAllEffectiveQuickActions();
+		assert.equal(aQuickActions.length, 1, "QuickAction is returned as effective action");
+
+		this.oColumnMenu.getQuickActions()[0].setVisible(false);
+		aQuickActions = this.oColumnMenu._getAllEffectiveQuickActions();
+		assert.equal(aQuickActions.length, 0, "No QuickAction returned for effective actions");
+	});
+
+	QUnit.test("_getAllEffectiveItems", function(assert) {
+		this.createMenu(true, true, false, false);
+		this.oColumnMenu.openBy(this.oButton);
+		var aItems = this.oColumnMenu._getAllEffectiveItems();
+		assert.equal(aItems.length, 2, "2 Items are returned as effective items");
+
+		this.oColumnMenu.getItems()[0].setVisible(false);
+		aItems = this.oColumnMenu._getAllEffectiveItems();
+		assert.deepEqual(aItems, [this.oColumnMenu.getItems()[1]], "Only second item is returned as effective item");
+	});
+
 	QUnit.test("isOpen", function(assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
@@ -375,6 +396,37 @@ sap.ui.define([
 
 		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 1, "One quick action is visible");
 		assert.equal(getActiveItems(this.oColumnMenu).length, 1, "One item is visible");
+
+		// Check Visibility when using a QuickActionContainer
+		var oQuickAction1 = new QuickAction({label: sText, content: new Button({text: sText})});
+		var oQuickAction2 = new QuickAction({label: sText, content: new Button({text: sText})});
+		var oQuickActionContainer = new QuickActionContainer({quickActions: [oQuickAction1, oQuickAction2]});
+		this.oColumnMenu.addQuickAction(oQuickActionContainer);
+
+		// Case A: Both QuickActions in the container should be visible
+		this.oColumnMenu.openBy(this.oButton);
+		oCore.applyChanges();
+
+		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 3, "Three quick actions are visible");
+
+		this.oColumnMenu.close();
+
+		// Case B: Container should not be visible
+		oQuickActionContainer.setVisible(false);
+		this.oColumnMenu.openBy(this.oButton);
+		oCore.applyChanges();
+
+		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 1, "One quick actions is visible");
+
+		this.oColumnMenu.close();
+
+		// Case C: One QuickAction in the container is hidden
+		oQuickActionContainer.setVisible(true);
+		oQuickAction1.setVisible(false);
+		this.oColumnMenu.openBy(this.oButton);
+		oCore.applyChanges();
+
+		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 2, "Two quick actions are visible");
 	});
 
 	QUnit.test("Add menu item", function (assert) {
