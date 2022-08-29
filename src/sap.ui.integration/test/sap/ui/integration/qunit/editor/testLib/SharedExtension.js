@@ -50,7 +50,7 @@ sap.ui.define(["sap/ui/integration/editor/Extension"], function (Extension) {
 			oParameters = oEditor.getParameters();
 
 		return oEditor.request({
-			"url": "{{destinations.northwind}}/Employees",
+			"url": "{{destinations.mock_request}}/Employees",
 			"parameters": {
 				"$format": "json",
 				"$top": oParameters.maxItems
