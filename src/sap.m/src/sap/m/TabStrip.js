@@ -755,7 +755,7 @@ function(
 				this.fireItemPress({
 					item: oItem
 				});
-			} else if (oEvent && !oEvent.isDefaultPrevented()) {
+			} else if (oEvent instanceof jQuery.Event && !oEvent.isDefaultPrevented()) {
 				oEvent.preventDefault();
 			}
 		};
