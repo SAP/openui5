@@ -407,7 +407,6 @@ sap.ui.define([
 				oRm.openStart("div");
 				oRm.attr("role", "gridcell");
 				oRm.class("sapMSinglePCRow");
-				oRm.style("height", oControl._getRowHeight() + "rem");
 				if (!oControl._isVisibleHour(i)) {
 					oRm.class("sapMSinglePCNonWorkingRow");
 				}
