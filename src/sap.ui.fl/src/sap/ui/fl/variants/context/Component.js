@@ -32,6 +32,11 @@ sap.ui.define([
 		metadata: {
 			manifest: "json"
 		},
+		onInit: function() {
+			var oSelectedContextsModel = this.getModel("selectedContexts");
+			oSelectedContextsModel.setProperty("/selected", []);
+			oSelectedContextsModel.setProperty("/showMessageStrip", true);
+		},
 
 		/**
 		 * Returns flexObject of selected contexts from a given context sharing component.
@@ -82,6 +87,16 @@ sap.ui.define([
 		 */
 		hasErrorsAndShowErrorMessage: function() {
 			return false;
+		},
+
+		/**
+		 * Sets if message strip is shown
+		 * @param {boolean} bShowMessageStrip - Visibility of the message strip
+		 */
+		showMessageStrip: function(bShowMessageStrip) {
+			var oRoleSelectionModel = this.getModel("selectedContexts");
+			oRoleSelectionModel.setProperty("/showMessageStrip", bShowMessageStrip);
+			oRoleSelectionModel.refresh(true);
 		}
 	});
 });

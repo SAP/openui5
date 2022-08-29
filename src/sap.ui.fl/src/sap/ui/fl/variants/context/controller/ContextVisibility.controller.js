@@ -203,8 +203,8 @@ sap.ui.define([
 			return aSelectedRoleIds.length !== 0;
 		},
 
-		isMessageStripVisible: function(aSelectedRoles) {
-			return aSelectedRoles.length === 0;
+		isMessageStripVisible: function(aSelectedRoles, bShowMessageStrip) {
+			return bShowMessageStrip && aSelectedRoles.length === 0;
 		}
 	});
 });

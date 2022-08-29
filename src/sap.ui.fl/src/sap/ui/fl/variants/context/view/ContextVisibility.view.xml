@@ -10,10 +10,10 @@
 			</Toolbar>
 		</headerToolbar>
 		<content>
-			<MessageStrip 
-				id="visibilityMessageStrip" 
-				text="{i18n>VISIBILITY}" 
-				visible="{path: 'selectedContexts>/selected', formatter: '.isMessageStripVisible'}"
+			<MessageStrip
+				id="visibilityMessageStrip"
+				text="{i18n>VISIBILITY}"
+				visible="{parts: [{path: 'selectedContexts>/selected'}, {path: 'selectedContexts>/showMessageStrip'} ], formatter: '.isMessageStripVisible'}"
 				type="Information"
 				showIcon="true"/>
 			<List

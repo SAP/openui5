@@ -59,14 +59,17 @@ sap.ui.define([
 				}
 			}).then(function (oDialog) {
 				this._oAddAdaptationDialog = oDialog;
+				this._oAddAdaptationDialog.attachBeforeClose(_clearComponent.bind(this));
 				oDialog.addStyleClass(Utils.getRtaStyleClassName());
 				this.getToolbar().addDependent(this._oAddAdaptationDialog);
-				createContextSharingComponent.call(this, sLayer);
 			}.bind(this));
 		} else {
 			this.getToolbar().getControl("addAdaptationDialog--saveContextBasedAdaptation-title-input").setValue("");
 		}
 		return this._oAddAdaptationDialogPromise.then(function () {
+			return createContextSharingComponent.call(this, sLayer);
+		}.bind(this)).then(function () {
+			this._oContextComponentInstance.showMessageStrip(false);
 			return this._oAddAdaptationDialog.open();
 		}.bind(this));
 	};
@@ -77,7 +80,6 @@ sap.ui.define([
 	}
 
 	function _onCancelContextBasedAdaptationDialog() {
-		_clearContexts.call(this);
 		this._oAddAdaptationDialog.close();
 	}
 
@@ -110,13 +112,10 @@ sap.ui.define([
 		this.getToolbar().getControl("addAdaptationDialog--saveContextBasedAdaptation-saveButton").setEnabled(bEnable);
 	}
 
-	function _clearContexts() {
+	function _clearComponent() {
 		if (this._oContextComponentInstance) {
-			if (this._oContextComponent.isDestroyed()) {
-				return createContextSharingComponent.call(this);
-			}
+			this._oContextComponentInstance.showMessageStrip(true);
 			this._oContextComponentInstance.resetSelectedContexts();
-			this._oAddAdaptationDialog.addContent(this._oContextComponent);
 		}
 	}
 	return SaveAsContextBasedAdaptation;
