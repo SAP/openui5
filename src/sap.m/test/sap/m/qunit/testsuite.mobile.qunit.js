@@ -1619,7 +1619,13 @@ sap.ui.define([
 				title: "Test Page for sap.m.Toolbar"
 			},
 			ToolbarSeparator: {
-				title: "Test Page for sap.m.ToolbarSeparator"
+				title: "Test Page for sap.m.ToolbarSeparator",
+				qunit: {
+					version: 'edge'
+				},
+				sinon: {
+					version: 'edge'
+				}
 			},
 			ToolbarSpacer: {
 				title: "Test Page for sap.m.ToolbarSpacer"
