@@ -346,9 +346,9 @@ sap.ui.define([
 						this.close();
 					}.bind(this)
 				});
-
-				this.setAggregation("_closeButton", closeButton);
 			}
+
+			this.setAggregation("_closeButton", closeButton);
 
 			return closeButton;
 		};
@@ -459,6 +459,7 @@ sap.ui.define([
 
 		NotificationListBase.prototype._arrangeButtons = function () {
 			this._destroyCloseBtnAndSeparator();
+			this._createCloseButton();
 
 			if (this._isSmallSize()) {
 				this._arrangeSSizeButtons();
@@ -472,8 +473,6 @@ sap.ui.define([
 				buttons = this.getButtons(),
 				buttonOverflowPriorityType = buttons.length > 1 ? OverflowToolbarPriority.AlwaysOverflow : OverflowToolbarPriority.NeverOverflow;
 
-			this._createCloseButton();
-
 			for (var i = 0; i < buttons.length; i++) {
 				button = buttons[i];
 
@@ -485,7 +484,7 @@ sap.ui.define([
 
 		NotificationListBase.prototype._arrangeSSizeButtons = function () {
 			var overflowToolbar = this._getOverflowToolbar(),
-				closeButton = this._createCloseButton(),
+				closeButton = this._getCloseButton(),
 				isNotificationListGroup = this.isA("sap.m.NotificationListGroup"),
 				buttonText = isNotificationListGroup ? closeAllText : closeText,
 				isCollapsed = isNotificationListGroup && this.getCollapsed(),
