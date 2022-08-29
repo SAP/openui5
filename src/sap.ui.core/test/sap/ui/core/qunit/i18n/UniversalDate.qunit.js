@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/core/date/Gregorian",
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Japanese",
-	"sap/ui/core/CalendarType"
-], function(Core, UniversalDate, Gregorian, Islamic, Japanese, CalendarType) {
+	"sap/ui/core/CalendarType",
+	"sap/ui/core/Configuration"
+], function(Core, UniversalDate, Gregorian, Islamic, Japanese, CalendarType, Configuration) {
 	"use strict";
 
 	//next values must not overlap each other!
@@ -28,7 +29,7 @@ sap.ui.define([
 
 	function prepare() {
 		this.sandbox = sinon.sandbox.create();
-		this.oStubCalendarType = this.sandbox.stub(sap.ui.getCore().getConfiguration(), "getCalendarType");
+		this.oStubCalendarType = this.sandbox.stub(Configuration, "getCalendarType");
 		this.oStubCalendarType.returns(CalendarType.Gregorian);
 		this.dateSpy = this.sandbox.spy(window, 'Date');
 	}

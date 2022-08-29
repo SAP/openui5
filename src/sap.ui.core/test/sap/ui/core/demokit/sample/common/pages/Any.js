@@ -11,9 +11,10 @@ sap.ui.define([
 	"sap/ui/test/Opa",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils",
-	"sap/ui/test/matchers/Properties"
+	"sap/ui/test/matchers/Properties",
+	"sap/ui/core/Configuration"
 ], function (Log, Helper, _Requestor, QUnitUtils, RuleAnalyzer, Press, Opa, Opa5, TestUtils,
-		Properties) {
+		Properties, Configuration) {
 	"use strict";
 
 	/*
@@ -148,11 +149,11 @@ sap.ui.define([
 
 							Opa5.assert.ok(true, "Test: " + mParameter.title);
 							if (mParameter.deleteCache) { // game starts here
-								sap.ui.getCore().getConfiguration()
+								Configuration
 									.setSecurityTokenHandlers([function () {
 										oOpaContext.iExpectedSpies = 0;
 										createSpies();
-										sap.ui.getCore().getConfiguration()
+										Configuration
 											.setSecurityTokenHandlers([createSpies]);
 										return undefined; // default securityToken handling
 									}]);
@@ -234,7 +235,7 @@ sap.ui.define([
 							oOpaContext.fnSecond.restore();
 							oOpaContext.fnProcessSecurityTokenHandlersSpy.restore();
 							if (bCleanUp) {
-								sap.ui.getCore().getConfiguration().setSecurityTokenHandlers([]);
+								Configuration.setSecurityTokenHandlers([]);
 							}
 						}
 					});

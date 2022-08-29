@@ -4,8 +4,9 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/testrecorder/CommunicationBus"
-], function (Log, ManagedObject, CommunicationBus) {
+	"sap/ui/testrecorder/CommunicationBus",
+	"sap/ui/core/Configuration"
+], function (Log, ManagedObject, CommunicationBus, Configuration) {
 	"use strict";
 
 	var oUIContextInjector = null;
@@ -30,7 +31,7 @@ sap.ui.define([
 		}
 
 		this._hasStarted = true;
-		this._testRecorderConfig = aTestRecorderConfig || sap.ui.getCore().getConfiguration().getTestRecorderMode();
+		this._testRecorderConfig = aTestRecorderConfig || Configuration.getTestRecorderMode();
 
 		// eslint-disable-next-line no-unsafe-negation
 		if (this._testRecorderConfig && !this._testRecorderConfig.indexOf("silent") > -1 && !this._isInIframe()) {

@@ -24,7 +24,8 @@ sap.ui.define([
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
 	'sap/ui/model/json/JSONModel',
-	'sap/m/SearchField'
+	'sap/m/SearchField',
+	'sap/ui/core/Configuration'
 ],
 	function(
 		Text,
@@ -47,7 +48,8 @@ sap.ui.define([
 		Filter,
 		FilterOperator,
 		JSONModel,
-		SearchField
+		SearchField,
+		Configuration
 	) {
 	"use strict";
 
@@ -142,7 +144,7 @@ sap.ui.define([
 			} else {
 				var sMsg = "adding TablePersoDialog with duplicate id '" + sId + "'";
 				// duplicate ID detected => fail or at least log a warning
-				if (sap.ui.getCore().getConfiguration().getNoDuplicateIds()) {
+				if (Configuration.getNoDuplicateIds()) {
 					Log.error(sMsg);
 					throw new Error("Error: " + sMsg);
 				} else {

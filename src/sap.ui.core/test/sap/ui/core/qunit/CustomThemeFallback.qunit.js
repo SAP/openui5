@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(Parameters, themeApplied) {
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/core/Configuration"
+], function(Parameters, themeApplied, Configuration) {
 	"use strict";
 	/* global QUnit */
 
@@ -37,7 +38,7 @@ sap.ui.define([
 
 		// check precondition for test
 		assert.equal(
-			sap.ui.getCore().getConfiguration().getTheme(),
+			Configuration.getTheme(),
 			"customcss",
 			"[precondition] initial theme must be 'customcss'");
 

@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/core/InvisibleMessage'
+	'sap/ui/core/InvisibleMessage',
+	"sap/ui/core/Configuration"
 ], function(
 	Control,
 	Device,
@@ -38,7 +39,8 @@ sap.ui.define([
 	containsOrEquals,
 	KeyCodes,
 	jQuery,
-	InvisibleMessage
+	InvisibleMessage,
+	Configuration
 ) {
 	"use strict";
 
@@ -252,7 +254,7 @@ sap.ui.define([
 	Month.prototype.init = function(){
 
 		// set default calendar type from configuration
-		var sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+		var sCalendarType = Configuration.getCalendarType();
 		this.setProperty("primaryCalendarType", sCalendarType);
 		this.setProperty("secondaryCalendarType", sCalendarType);
 
@@ -544,7 +546,7 @@ sap.ui.define([
 		if (oParent && oParent.getLocale) {
 			return oParent.getLocale();
 		} else if (!this._sLocale) {
-			this._sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
+			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
 		}
 
 		return this._sLocale;

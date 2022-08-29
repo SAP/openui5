@@ -11,7 +11,8 @@ sap.ui.define([
     'sap/ui/core/ResizeHandler',
     'sap/ui/core/delegate/ItemNavigation',
     './SplitterRenderer',
-    'sap/ui/core/library'
+    'sap/ui/core/library',
+    'sap/ui/core/Configuration'
 ],
 	function(
 	    jQuery,
@@ -21,7 +22,8 @@ sap.ui.define([
 		ResizeHandler,
 		ItemNavigation/* , jQuerySap, jQuerySap1 */,
 		SplitterRenderer,
-		coreLibrary
+		coreLibrary,
+		Configuration
 	) {
 	"use strict";
 
@@ -152,7 +154,7 @@ sap.ui.define([
 		this.sBarPosition = parseFloat(this.sBarPosition);
 
 		// in hcb mode set splitter bar width to 6 px
-		if (sap.ui.getCore().getConfiguration().getTheme() == "sap_hcb") {
+		if (Configuration.getTheme() == "sap_hcb") {
 			this.sbSize = 6;
 		} else {
 			this.sbSize = 4;
@@ -434,7 +436,7 @@ sap.ui.define([
 
 		var newSbPosition, spHeight, spWidth;
 		var splitterBarGhost = document.getElementById(this.getId() + "_ghost");
-		var rtl = sap.ui.getCore().getConfiguration().getRTL();
+		var rtl = Configuration.getRTL();
 
 		if ( this.spOrientation == Orientation.Vertical) {
 
@@ -479,7 +481,7 @@ sap.ui.define([
 		var splitterBarGhost = document.getElementById(this.getId() + "_ghost");
 		var max;
 		var min;
-		var rtl = sap.ui.getCore().getConfiguration().getRTL();
+		var rtl = Configuration.getRTL();
 
 		var leftFirstPane = jQuery(this.firstPane).offset().left;
 		var w = jQuery(this.splitterDIV).width();
@@ -646,7 +648,7 @@ sap.ui.define([
 		if (this.checkModifierKey(oEvent, false, false, true)) {
 			if (oEvent.target == this.splitterBar) {
 				if (this.spOrientation == Orientation.Vertical) {
-					var rtl = sap.ui.getCore().getConfiguration().getRTL();
+					var rtl = Configuration.getRTL();
 					if (rtl) {
 						this.onArrowKeys(oEvent,"true");
 					} else {
@@ -671,7 +673,7 @@ sap.ui.define([
 		if (this.checkModifierKey(oEvent, false, false, true)) {
 			if (oEvent.target == this.splitterBar) {
 				if (this.spOrientation == Orientation.Vertical) {
-					var rtl = sap.ui.getCore().getConfiguration().getRTL();
+					var rtl = Configuration.getRTL();
 					if (rtl) {
 						this.onArrowKeys(oEvent,"false");
 					} else {

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/Device'],
-	function(Renderer, Core, coreLibrary, ValueStateSupport, Device) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/Device', 'sap/ui/core/Configuration'],
+	function(Renderer, Core, coreLibrary, ValueStateSupport, Device, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -34,7 +34,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 		var sValueState = oControl.getValueState(),
 			sTextDir = oControl.getTextDirection(),
 			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir),
-			bAccessibility = sap.ui.getCore().getConfiguration().getAccessibility(),
+			bAccessibility = Configuration.getAccessibility(),
 			aBeginIcons = oControl.getAggregation("_beginIcon") || [],
 			aEndIcons = oControl.getAggregation("_endIcon") || [],
 			aVisibleBeginIcons, aVisibleEndIcons;

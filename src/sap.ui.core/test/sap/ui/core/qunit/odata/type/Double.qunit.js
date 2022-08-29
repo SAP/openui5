@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
@@ -11,13 +12,13 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Double",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (Log, Control, NumberFormat, FormatException, ParseException, ValidateException, Double,
-		ODataType, TestUtils) {
+], function (Log, Configuration, Control, NumberFormat, FormatException, ParseException,
+		ValidateException, Double, ODataType, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
 	/*eslint no-warning-comments: 0 */
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Double", {
@@ -25,10 +26,10 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -150,7 +151,7 @@ sap.ui.define([
 		// Swedish is interesting because it uses a different decimal separator, non-breaking
 		// space as grouping separator and _not_ the 'E' for the exponential format.
 		// TODO The 'e' is not replaced because NumberFormat doesn't care either (esp. in parse).
-		sap.ui.getCore().getConfiguration().setLanguage("sv");
+		Configuration.setLanguage("sv");
 
 		assert.strictEqual(oType.formatValue("-1.234e+3", "string"), "<1\u00a0234",
 			"check modification");
@@ -240,7 +241,7 @@ sap.ui.define([
 		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 		assert.strictEqual(oType.formatValue("1.234e3", "string"), "1,234",
 			"before language change");
-		sap.ui.getCore().getConfiguration().setLanguage("de-CH");
+		Configuration.setLanguage("de-CH");
 		assert.strictEqual(oType.formatValue("1.234e3", "string"), "1’234",
 			"adjusted to changed language");
 	});

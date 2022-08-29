@@ -30,8 +30,8 @@ sap.ui.define([
 	"./upload/UploaderHttpRequestMethod",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/LocaleData",
-	// referenced here to enable the Support feature
-	"./Support"
+	"sap/ui/core/Configuration",
+	"./Support" // referenced here to enable the Support feature
 ],
 	function(
 	Device,
@@ -56,7 +56,8 @@ sap.ui.define([
 	IllustratedMessageType,
 	UploaderHttpRequestMethod,
 	Parameters,
-	LocaleData
+	LocaleData,
+	Configuration
 ) {
 
 	"use strict";
@@ -4806,7 +4807,7 @@ sap.ui.define([
 	 * @since 1.10
 	 */
 	thisLib.getLocale = function() {
-		var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+		var oLocale = Configuration.getFormatSettings().getFormatLocale();
 
 		thisLib.getLocale = function() {
 			return oLocale;

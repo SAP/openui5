@@ -3,13 +3,14 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/util/Properties",
-	"sap/base/util/merge"
-], function(Log, ResourceBundle, Properties, merge) {
+	"sap/base/util/merge",
+	"sap/ui/core/Configuration"
+], function(Log, ResourceBundle, Properties, merge, Configuration) {
 	"use strict";
 
 	QUnit.module("sap/base/i18n/ResourceBundle", {
 		beforeEach: function () {
-			var oConfiguration = sap.ui.getCore().getConfiguration();
+			var oConfiguration = Configuration;
 			var aSupportedLanguages = oConfiguration.getSupportedLanguages();
 			this.oSupportedLanguagesStub = this.stub(oConfiguration, "getSupportedLanguages");
 			this.oSupportedLanguagesStub.returns(aSupportedLanguages);

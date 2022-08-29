@@ -4,15 +4,16 @@
 sap.ui.define([
 	'sap/ui/core/Component',
 	"sap/ui/core/ComponentContainer",
-	"sap/base/util/UriParameters"
-], function (Component, ComponentContainer, UriParameters) {
+	"sap/base/util/UriParameters",
+	"sap/ui/core/Configuration"
+], function (Component, ComponentContainer, UriParameters, Configuration) {
 	"use strict";
 
 	var oUriParameters = UriParameters.fromQuery(window.location.search);
 
 	// set the default language to "de" if parameter is not present
 	if (!oUriParameters.get("sap-ui-language")) {
-		sap.ui.getCore().getConfiguration().setLanguage("de");
+		Configuration.setLanguage("de");
 	}
 
 	// set the manifest used

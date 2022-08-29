@@ -2041,7 +2041,7 @@ sap.ui.define([
 		var oSection = this.oCore.byId(sId),
 			iSnapPosition,
 			oTargetSubSection,
-			bAnimationsEnabled = (sap.ui.getCore().getConfiguration().getAnimationMode()
+			bAnimationsEnabled = (Configuration.getAnimationMode()
 				!== Configuration.AnimationMode.none),
 			bSuppressLazyLoadingDuringScroll;
 

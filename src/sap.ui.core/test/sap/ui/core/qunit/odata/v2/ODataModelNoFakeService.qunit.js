@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/_Helper",
 	"sap/ui/model/Context",
@@ -24,8 +25,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, SyncPromise, Message, _Helper, BaseContext, FilterProcessor, Model,
-		_ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser, ODataMetaModel,
+], function (Log, SyncPromise, Configuration, Message, _Helper, BaseContext, FilterProcessor,
+		Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser, ODataMetaModel,
 		ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context, ODataAnnotations,
 		ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, TestUtils
 ) {
@@ -133,8 +134,7 @@ sap.ui.define([
 		this.mock(oMetadata.oMetadata).expects("isLoaded").withExactArgs().returns(true);
 		this.mock(ODataAnnotations.prototype).expects("addSource")
 			.withExactArgs(["~annotationURI"]);
-		this.mock(sap.ui.getCore().getConfiguration()).expects("getLanguageTag").withExactArgs()
-			.returns("~languageTag");
+		this.mock(Configuration).expects("getLanguageTag").withExactArgs().returns("~languageTag");
 		if (oFixture.sExpectedRequestedWithHeader) {
 			oExpectedHeaders["X-Requested-With"] = oFixture.sExpectedRequestedWithHeader;
 		}

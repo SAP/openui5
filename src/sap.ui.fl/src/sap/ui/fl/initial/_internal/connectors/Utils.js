@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/base/security/encodeURLParameters"
+	"sap/base/security/encodeURLParameters",
+	"sap/ui/core/Configuration"
 ], function (
-	encodeURLParameters
+	encodeURLParameters,
+	Configuration
 ) {
 	"use strict";
 
@@ -56,7 +58,7 @@ sap.ui.define([
 			if (!mParameters) {
 				mParameters = {};
 			}
-			mParameters["sap-language"] = sap.ui.getCore().getConfiguration().getLanguage();
+			mParameters["sap-language"] = Configuration.getLanguage();
 		},
 
 		/**
@@ -69,7 +71,7 @@ sap.ui.define([
 			if (!mParameters) {
 				mParameters = {};
 			}
-			mParameters["sap-language"] = sap.ui.getCore().getConfiguration().getSAPLogonLanguage();
+			mParameters["sap-language"] = Configuration.getSAPLogonLanguage();
 		},
 
 		/**

@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/base/SyncPromise",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/ui/core/Configuration"
 ],
 function(
 	Applier,
@@ -19,7 +20,8 @@ function(
 	Utils,
 	JsControlTreeModifier,
 	SyncPromise,
-	merge
+	merge,
+	Configuration
 ) {
 	"use strict";
 
@@ -115,7 +117,7 @@ function(
 		oRegistryPromise: Promise.resolve(),
 
 		registerExtensionPoint: function (mExtensionPointInfo) {
-			if (sap.ui.getCore().getConfiguration().getDesignMode()) {
+			if (Configuration.getDesignMode()) {
 				if (Processor.oExtensionPointRegistry) {
 					Processor.oExtensionPointRegistry.registerExtensionPoint(mExtensionPointInfo);
 					return SyncPromise.resolve();

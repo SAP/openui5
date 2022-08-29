@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/util/ObjectPath",
 	"sap/base/assert",
-	"sap/base/util/extend"
-], function(Log, isPlainObject, ObjectPath, assert, extend) {
+	"sap/base/util/extend",
+	"sap/ui/core/Configuration"
+], function(Log, isPlainObject, ObjectPath, assert, extend, Configuration) {
 	"use strict";
 
 	/**
@@ -235,7 +236,7 @@ sap.ui.define([
 		var TextDirection = sapUiCore.TextDirection;
 
 		var sTextAlign = "",
-			bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			bRTL = Configuration.getRTL();
 
 		switch (oTextAlign) {
 		case TextAlign.End:

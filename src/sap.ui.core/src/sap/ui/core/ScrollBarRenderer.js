@@ -3,8 +3,8 @@
  */
 
 // A renderer for the ScrollBar control
-sap.ui.define(['sap/ui/Device', "sap/ui/dom/getScrollbarSize"],
-	function(Device, getScrollbarSize) {
+sap.ui.define(['sap/ui/Device', "sap/ui/dom/getScrollbarSize", "sap/ui/core/Configuration"],
+	function(Device, getScrollbarSize, Configuration) {
 	"use strict";
 
 
@@ -25,7 +25,7 @@ sap.ui.define(['sap/ui/Device', "sap/ui/dom/getScrollbarSize"],
 	 * @param {sap.ui.core.ScrollBar} oControl Object representation of the control that should be rendered
 	 */
 	ScrollBarRenderer.render = function(oRM, oScrollBar){
-		var bRTL = sap.ui.getCore().getConfiguration().getRTL();
+		var bRTL = Configuration.getRTL();
 
 		oRM.openStart("div", oScrollBar);
 		oRM.class("sapUiScrollBar");

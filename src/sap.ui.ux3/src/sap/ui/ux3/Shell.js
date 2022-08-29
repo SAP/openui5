@@ -27,6 +27,7 @@ sap.ui.define([
     'sap/ui/Device',
     'sap/base/Log',
     'sap/base/assert',
+    'sap/ui/core/Configuration',
     // jQuery Plugin 'firstFocusableDomRef'
 	'sap/ui/dom/jquery/Focusable'
 ],
@@ -53,7 +54,8 @@ sap.ui.define([
 		BaseObject,
 		Device,
 		Log,
-		assert
+		assert,
+		Configuration
 	) {
 	"use strict";
 
@@ -450,7 +452,7 @@ sap.ui.define([
 		this._adaptContentHeight();
 
 		// remember RTL mode to avoid repeated checks
-		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRtl = Configuration.getRTL();
 
 		if (this._getPersonalization().hasChanges()) {
 			this._getPersonalization().applySettings(this._getPersonalization().oSettings);

@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.Accordion
-sap.ui.define(['./AccordionSection'],
-	function(AccordionSection) {
+sap.ui.define(['./AccordionSection', "sap/ui/core/Configuration"],
+	function(AccordionSection, Configuration) {
 	"use strict";
 
 
@@ -25,7 +25,7 @@ sap.ui.define(['./AccordionSection'],
 		rm.write("<div");
 		rm.writeControlData(oAccordion);
 
-		if ( sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if ( Configuration.getAccessibility()) {
 			rm.writeAttribute('role', 'tablist');
 		}
 
@@ -69,7 +69,7 @@ sap.ui.define(['./AccordionSection'],
 
 
 	AccordionRenderer.renderSection = function(rm, oControl) {
-		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
+		var accessibility = Configuration.getAccessibility();
 
 		var heightSet = AccordionSection._isSizeSet(oControl.getMaxHeight());
 		var widthSet = AccordionSection._isSizeSet(oControl.getParent().getWidth());
@@ -201,7 +201,7 @@ sap.ui.define(['./AccordionSection'],
 				rm.write(" style='position:relative;top:0px;'");
 			}
 
-			if ( sap.ui.getCore().getConfiguration().getAccessibility()) {
+			if ( Configuration.getAccessibility()) {
 				rm.writeAttribute('role', 'tabpanel');
 			}
 

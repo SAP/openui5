@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Locale",
-	"sap/ui/core/LocaleData"
-], function(CalendarType, Locale, LocaleData) {
+	"sap/ui/core/LocaleData",
+	"sap/ui/core/Configuration"
+], function(CalendarType, Locale, LocaleData, Configuration) {
 	"use strict";
 
 	//var aUSDSymbols = ["US$", "$", "$", "$", "$", "US$", "$", "US$", "$", "US$", , "$", "$US", "$\u00a0US", "$US", "$", "US$", "US$", "$",
@@ -598,7 +599,7 @@ sap.ui.define([
 	QUnit.module("Generic LocaleData");
 
 	// Run generic test for configured locales, run custom test where it is defined
-	var sLocale = sap.ui.getCore().getConfiguration().getLanguage();
+	var sLocale = Configuration.getLanguage();
 	QUnit.test("Locale " + sLocale, function(assert) {
 		var oLocale = new Locale(sLocale),
 			oLocaleData = new LocaleData(oLocale),

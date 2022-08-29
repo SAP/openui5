@@ -16,9 +16,10 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/Core",
 	"sap/m/Panel",
-	"sap/m/GenericTile"
+	"sap/m/GenericTile",
+	"sap/ui/core/Configuration"
 ], function(jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, PseudoEvents, Mobile, mobileLibrary,
-			Log, Text, oCore, Panel, GenericTile) {
+			Log, Text, oCore, Panel, GenericTile, Configuration) {
 	"use strict";
 
 	// shortcut for sap.m.BackgroundDesign
@@ -1445,7 +1446,7 @@ sap.ui.define([
 	});
 	QUnit.module("HeaderContainer with RTL", {
 		beforeEach: function () {
-		sap.ui.getCore().getConfiguration().setRTL(true);
+		Configuration.setRTL(true);
 		sap.ui.getCore().applyChanges();
 		this.initializeMobileView(320);
 		this.oHeaderContainer = new HeaderContainer({
@@ -1463,7 +1464,7 @@ sap.ui.define([
 			if (this.initialScreenWidth && this.initialWidth) {
 				this.resetMobileView();
 			}
-			sap.ui.getCore().getConfiguration().setRTL(false);
+			Configuration.setRTL(false);
 			sap.ui.getCore().applyChanges();
 		},
 		initializeMobileView: function(iScreenWidth) {

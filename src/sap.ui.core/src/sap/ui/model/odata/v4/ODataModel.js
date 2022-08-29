@@ -34,6 +34,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/cache/CacheManager",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/BindingMode",
@@ -43,8 +44,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI"
 ], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
 		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
-		SyncPromise, CacheManager, coreLibrary, Message, BindingMode, BaseContext, Model,
-		OperationMode, URI) {
+		SyncPromise, CacheManager, Configuration, coreLibrary, Message, BindingMode, BaseContext,
+		Model, OperationMode, URI) {
 	"use strict";
 
 	var rApplicationGroupID = /^\w+$/,
@@ -243,7 +244,7 @@ sap.ui.define([
 	function constructor(mParameters) {
 		var sGroupId,
 			oGroupProperties,
-			sLanguageTag = sap.ui.getCore().getConfiguration().getLanguageTag(),
+			sLanguageTag = Configuration.getLanguageTag(),
 			sODataVersion,
 			sParameter,
 			sServiceUrl,
@@ -284,7 +285,7 @@ sap.ui.define([
 		mUriParameters = this.buildQueryOptions(oUri.query(true), false, true);
 		// BEWARE: these are shared across all bindings!
 		this.mUriParameters = mUriParameters;
-		if (sap.ui.getCore().getConfiguration().getStatistics()) {
+		if (Configuration.getStatistics()) {
 			// Note: this way, "sap-statistics" is not sent within $batch
 			mUriParameters = Object.assign({"sap-statistics" : true}, mUriParameters);
 		}

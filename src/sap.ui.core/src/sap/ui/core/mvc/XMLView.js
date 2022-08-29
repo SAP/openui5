@@ -4,45 +4,46 @@
 
 // Provides control sap.ui.core.mvc.XMLView.
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"./View",
-	"./XMLViewRenderer",
 	"./ViewType",
+	"./XMLViewRenderer",
+	"sap/base/Log",
+	"sap/base/strings/hash",
+	"sap/base/util/LoaderExtensions",
 	"sap/base/util/merge",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
 	"sap/ui/core/RenderManager",
+	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/Global",
 	"sap/ui/VersionInfo",
-	"sap/base/strings/hash",
-	"sap/base/Log",
-	"sap/base/util/LoaderExtensions",
 	"sap/ui/performance/trace/Interaction",
-	"sap/ui/core/Core" // to ensure correct behaviour of sap.ui.getCore()
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
-		jQuery,
 		View,
-		XMLViewRenderer,
 		ViewType,
+		XMLViewRenderer,
+		Log,
+		hash,
+		LoaderExtensions,
 		merge,
 		ManagedObject,
-		XMLTemplateProcessor,
+		Configuration,
 		Control,
 		RenderManager,
+		XMLTemplateProcessor,
 		Cache,
 		ResourceModel,
 		XMLHelper,
 		Global,
 		VersionInfo,
-		hash,
-		Log,
-		LoaderExtensions,
-		Interaction
+		Interaction,
+		jQuery
 	) {
 	"use strict";
 
@@ -280,7 +281,7 @@ sap.ui.define([
 	 * @private
 	 * @since 1.44
 	 */
-	XMLView._bUseCache = sap.ui.getCore().getConfiguration().getViewCache() && Cache._isSupportedEnvironment();
+	XMLView._bUseCache = Configuration.getViewCache() && Cache._isSupportedEnvironment();
 
 	function validatexContent(xContent) {
 		if (xContent.parseError.errorCode !== 0) {
@@ -420,7 +421,7 @@ sap.ui.define([
 		return [
 			sComponentName || window.location.host + window.location.pathname,
 			oView.getId(),
-			sap.ui.getCore().getConfiguration().getLanguageTag()
+			Configuration.getLanguageTag()
 		].concat(oRootComponent && oRootComponent.getActiveTerminologies() || []);
 	}
 

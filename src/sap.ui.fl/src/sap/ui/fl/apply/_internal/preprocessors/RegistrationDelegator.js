@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/core/Configuration",
 	// the lower 2 are set as a callback in the "register...Processors" which are not detected as dependencies from the preload-building
 	"sap/ui/fl/apply/_internal/preprocessors/ControllerExtension",
 	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor"
@@ -31,7 +32,8 @@ sap.ui.define([
 	DelegateMadiatorAPI,
 	ChangeHandlerRegistration,
 	ChangePersistenceFactory,
-	FlexControllerFactory
+	FlexControllerFactory,
+	Configuration
 ) {
 	"use strict";
 
@@ -83,7 +85,7 @@ sap.ui.define([
 		if (ManifestUtils.isFlexExtensionPointHandlingEnabled(oView)) {
 			return "sap/ui/fl/apply/_internal/extensionPoint/Processor";
 		}
-		if (sap.ui.getCore().getConfiguration().getDesignMode()) {
+		if (Configuration.getDesignMode()) {
 			return "sap/ui/fl/write/_internal/extensionPoint/Processor";
 		}
 		return undefined;

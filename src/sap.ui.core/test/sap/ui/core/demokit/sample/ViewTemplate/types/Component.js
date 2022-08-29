@@ -8,6 +8,7 @@
 sap.ui.define([
 	"sap/m/FlexItemData",
 	"sap/m/MessageBox",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/mvc/View", // sap.ui.view()
@@ -18,8 +19,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (FlexItemData, MessageBox, library, LocaleData, View, _XMLView, BaseComponent,
-		BindingMode, JSONModel, ODataModelV2, ODataModelV4, TestUtils) {
+], function (FlexItemData, MessageBox, Configuration, library, LocaleData, View, _XMLView,
+		BaseComponent, BindingMode, JSONModel, ODataModelV2, ODataModelV4, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -28,7 +29,7 @@ sap.ui.define([
 	return BaseComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
 		metadata : "json",
 		createContent : function () {
-			var oLocaleData = new LocaleData(sap.ui.getCore().getConfiguration().getLocale()),
+			var oLocaleData = new LocaleData(Configuration.getLocale()),
 				oModelV2,
 				oModelV4,
 				bRealOData = TestUtils.isRealOData(),

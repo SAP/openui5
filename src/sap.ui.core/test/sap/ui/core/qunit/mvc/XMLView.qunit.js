@@ -13,8 +13,9 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Panel',
 	'./AnyView.qunit',
-	'sap/ui/thirdparty/jquery'
-], function(Log, ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery) {
+	'sap/ui/thirdparty/jquery',
+	"sap/ui/core/Configuration"
+], function(Log, ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -93,14 +94,14 @@ sap.ui.define([
 	}, /* bCheckViewData = */ true);
 
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	QUnit.module("Apply settings", {
 		beforeEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 

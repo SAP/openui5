@@ -22,9 +22,11 @@ sap.ui.define([
 	'sap/ui/core/ListItem',
 	'sap/ui/events/KeyCodes',
 	'sap/ui/dom/containsOrEquals',
-	'sap/ui/dom/jquery/rect', // jQuery Plugin "rect"
-	'sap/ui/dom/jquery/getSelectedText' // jQuery.fn.getSelectedText
-
+	'sap/ui/core/Configuration',
+	// jQuery Plugin "rect"
+	'sap/ui/dom/jquery/rect',
+	// jQuery.fn.getSelectedText
+	'sap/ui/dom/jquery/getSelectedText'
 ],
 	function(
 		jQuery,
@@ -44,7 +46,8 @@ sap.ui.define([
 		SeparatorItem,
 		ListItem,
 		KeyCodes,
-		containsOrEquals
+		containsOrEquals,
+		Configuration
 	) {
 	"use strict";
 
@@ -291,7 +294,7 @@ sap.ui.define([
 	SearchField.prototype.onAfterRendering = function(){
 		if (this.getShowExternalButton()) {
 			var iButtonWidth = this._btn.$().outerWidth(true);
-			this._ctrl.$().css(sap.ui.getCore().getConfiguration().getRTL() ? "left" : "right", iButtonWidth + "px");
+			this._ctrl.$().css(Configuration.getRTL() ? "left" : "right", iButtonWidth + "px");
 	    }
 		_setClearTooltip(this);
 	};
@@ -648,7 +651,7 @@ sap.ui.define([
 		oRM.write("<div");
 		oRM.writeAttributeEscaped('id', oCtrl.getId() + '-searchico');
 		oRM.writeAttribute('unselectable', 'on');
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (Configuration.getAccessibility()) {
 			oRM.writeAttribute("role", "presentation");
 		}
 		oRM.addClass("sapUiSearchFieldIco");
@@ -1023,7 +1026,7 @@ sap.ui.define([
 					oRM.write("<div");
 					oRM.writeAttributeEscaped('id', oCtrl.getId() + '-providerico');
 					oRM.writeAttribute('unselectable', 'on');
-					if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+					if (Configuration.getAccessibility()) {
 						oRM.writeAttribute("role", "presentation");
 					}
 					oRM.addClass("sapUiSearchFieldProvIco");

@@ -13,9 +13,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/Opa5",
-	"sap/base/strings/capitalize"
+	"sap/base/strings/capitalize",
+	"sap/ui/core/Configuration"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
-		_navigationContainerWaiter, FlexibleColumnLayout, NavContainer, App, Page, Button, opaTest, Opa5, capitalize) {
+		_navigationContainerWaiter, FlexibleColumnLayout, NavContainer, App, Page, Button, opaTest, Opa5, capitalize, Configuration) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();
@@ -245,7 +246,7 @@ sap.ui.define([
 			this.oXHRWaiterStub.returns(false);
 			this.oPromiseWaiterStub.returns(false);
 			this.oNavigationContainerWaiterStub.returns(false);
-			sap.ui.getCore().getConfiguration().setAnimationMode("full");
+			Configuration.setAnimationMode("full");
 
 			this.oFcl = new FlexibleColumnLayout({
 				beginColumnPages: [new Page()],

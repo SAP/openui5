@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/strings/formatMessage",
 	"sap/base/Log",
-	"sap/base/util/extend"
+	"sap/base/util/extend",
+	"sap/ui/core/Configuration"
 ],
 	function(
 		CalendarType,
@@ -23,7 +24,8 @@ sap.ui.define([
 		deepEqual,
 		formatMessage,
 		Log,
-		extend
+		extend,
+		Configuration
 	) {
 	"use strict";
 
@@ -496,7 +498,7 @@ sap.ui.define([
 
 		// Get Locale and LocaleData to use
 		if (!oLocale) {
-			oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+			oLocale = Configuration.getFormatSettings().getFormatLocale();
 		}
 		oFormat.oLocale = oLocale;
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);
@@ -520,7 +522,7 @@ sap.ui.define([
 		oFormat.type = oInfo.type;
 
 		if (!oFormat.oFormatOptions.calendarType) {
-			oFormat.oFormatOptions.calendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+			oFormat.oFormatOptions.calendarType = Configuration.getCalendarType();
 		}
 
 		if (oFormat.oFormatOptions.firstDayOfWeek === undefined && oFormat.oFormatOptions.minimalDaysInFirstWeek !== undefined
@@ -1925,7 +1927,7 @@ sap.ui.define([
 
 		sResult = aBuffer.join("");
 
-		if (sap.ui.getCore().getConfiguration().getOriginInfo()) {
+		if (Configuration.getOriginInfo()) {
 			// String object is created on purpose and must not be a string literal
 			// eslint-disable-next-line no-new-wrappers
 			sResult = new String(sResult);
@@ -1981,7 +1983,7 @@ sap.ui.define([
 		}
 
 		// default the timezone to the local timezone to always enforce the conversion
-		sTimezone = sTimezone || sap.ui.getCore().getConfiguration().getTimezone();
+		sTimezone = sTimezone || Configuration.getTimezone();
 
 		if (Array.isArray(vJSDate)) {
 			if (!this.oFormatOptions.interval) {
@@ -2420,7 +2422,7 @@ sap.ui.define([
 		var sCalendarType = this.oFormatOptions.calendarType;
 
 		// default the timezone to the local timezone to always enforce the conversion
-		sTimezone = sTimezone || sap.ui.getCore().getConfiguration().getTimezone();
+		sTimezone = sTimezone || Configuration.getTimezone();
 
 		if (bStrict === undefined) {
 			bStrict = this.oFormatOptions.strictParsing;

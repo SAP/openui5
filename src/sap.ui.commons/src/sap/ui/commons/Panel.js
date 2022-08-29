@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.Panel.
-sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/ui/core/Control', './PanelRenderer', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Title', "sap/ui/dom/jquery/scrollLeftRTL" ], // jQuery Plugin "scrollLeftRTL"
-	function(jQuery, assert, library, Control, PanelRenderer, ResizeHandler, Title) {
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/ui/core/Control', './PanelRenderer', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Title', "sap/ui/core/Configuration", "sap/ui/dom/jquery/scrollLeftRTL" ], // jQuery Plugin "scrollLeftRTL"
+	function(jQuery, assert, library, Control, PanelRenderer, ResizeHandler, Title, Configuration) {
 	"use strict";
 
 
@@ -271,7 +271,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	 * @private
 	 */
 	Panel.prototype._initializeSizes = function() {
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var bRtl = Configuration.getRTL();
 
 		// maximum width of a toolbar item -> min toolbar width
 		var aButtons = this.getButtons();
@@ -449,7 +449,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {
 			// after Panel has been rendered
-			var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
+			var accessibility = Configuration.getAccessibility();
 			if (bCollapsed) {
 				// collapsing
 				if (!this.getWidth()) {
@@ -569,7 +569,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	Panel.prototype.getScrollLeft = function () {
 		var scrollLeft = 0;
 		if (this._oScrollDomRef) {
-			if (sap.ui.getCore().getConfiguration().getRTL()) {
+			if (Configuration.getRTL()) {
 				// jQuery Plugin "scrollLeftRTL"
 				scrollLeft = jQuery(this._oScrollDomRef).scrollLeftRTL();
 			} else {
@@ -593,7 +593,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	Panel.prototype.setScrollLeft = function (iPosition) {
 		this.setProperty("scrollLeft", iPosition, true);
 		if (this._oScrollDomRef) {
-			if (sap.ui.getCore().getConfiguration().getRTL()) {
+			if (Configuration.getRTL()) {
 				// jQuery Plugin "scrollLeftRTL"
 				jQuery(this._oScrollDomRef).scrollLeftRTL(iPosition);
 			} else {

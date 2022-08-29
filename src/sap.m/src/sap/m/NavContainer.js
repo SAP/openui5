@@ -255,7 +255,7 @@ sap.ui.define([
 	};
 
 	var fnGetDelay = function (iDelay) {
-		var sAnimationMode = sap.ui.getCore().getConfiguration().getAnimationMode(),
+		var sAnimationMode = Configuration.getAnimationMode(),
 			bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
 		return bUseAnimations ? iDelay : 0;
@@ -1817,7 +1817,7 @@ sap.ui.define([
 	NavContainer.prototype.showPlaceholder = function(mSettings) {
 		var pLoaded;
 
-		if (!sap.ui.getCore().getConfiguration().getPlaceholder()) {
+		if (!Configuration.getPlaceholder()) {
 			return;
 		}
 

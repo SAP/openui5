@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/Scenario",
 	"sap/ui/thirdparty/hasher",
-	"sap/ui/core/mvc/View"
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/Configuration"
 ], function(
 	formatMessage,
 	ObjectPath,
@@ -29,7 +30,8 @@ sap.ui.define([
 	Component,
 	Scenario,
 	hasher,
-	View
+	View,
+	Configuration
 ) {
 	"use strict";
 
@@ -410,7 +412,7 @@ sap.ui.define([
 		},
 
 		getLrepUrl: function() {
-			var aFlexibilityServices = sap.ui.getCore().getConfiguration().getFlexibilityServices();
+			var aFlexibilityServices = Configuration.getFlexibilityServices();
 			var oLrepConfiguration = aFlexibilityServices.find(function(oServiceConfig) {
 				return oServiceConfig.connector === "LrepConnector";
 			});
@@ -427,7 +429,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.fl
 		 */
 		getCurrentLanguage: function() {
-			var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+			var sLanguage = Configuration.getLanguage();
 			return Utils.convertBrowserLanguageToISO639_1(sLanguage);
 		},
 

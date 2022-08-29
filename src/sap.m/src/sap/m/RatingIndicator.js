@@ -10,9 +10,10 @@ sap.ui.define([
 	'./RatingIndicatorRenderer',
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ],
-	function(library, Control, Parameters, RatingIndicatorRenderer, KeyCodes, Log, jQuery) {
+	function(library, Control, Parameters, RatingIndicatorRenderer, KeyCodes, Log, jQuery, Configuration) {
 	"use strict";
 
 
@@ -532,7 +533,7 @@ sap.ui.define([
 			oControlRoot = this.$(),
 			fControlPadding = (oControlRoot.innerWidth() - oControlRoot.width()) / 2,
 			oEventPosition,
-			bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			bRtl = Configuration.getRTL();
 
 		if (oEvent.targetTouches) {
 			oEventPosition = oEvent.targetTouches[0];

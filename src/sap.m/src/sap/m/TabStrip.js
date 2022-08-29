@@ -24,10 +24,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
-	// jQuery Plugin "control"
-	"sap/ui/dom/jquery/control",
-	// jQuery Plugin "scrollLeftRTL"
-	"sap/ui/dom/jquery/scrollLeftRTL"
+	"sap/ui/core/Configuration",
+	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
+	"sap/ui/dom/jquery/scrollLeftRTL" // jQuery Plugin "scrollLeftRTL"
 ],
 function(
 	Control,
@@ -50,7 +49,8 @@ function(
 	TabStripRenderer,
 	Log,
 	jQuery,
-	KeyCodes
+	KeyCodes,
+	Configuration
 ) {
 		"use strict";
 
@@ -233,7 +233,7 @@ function(
 		 *
 		 * @type {number}
 		 */
-		TabStrip.SCROLL_ANIMATION_DURATION = sap.ui.getCore().getConfiguration().getAnimation() ? 500 : 0;
+		TabStrip.SCROLL_ANIMATION_DURATION = Configuration.getAnimation() ? 500 : 0;
 
 
 		/**
@@ -244,7 +244,7 @@ function(
 		 */
 		TabStrip.prototype.init = function () {
 			this._bDoScroll = !Device.system.phone;
-			this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			this._bRtl = Configuration.getRTL();
 			this._iCurrentScrollLeft = 0;
 			this._iMaxOffsetLeft = null;
 			this._scrollable = null;
@@ -1338,7 +1338,7 @@ function(
 
 
 			oPicker.setOffsetX(Math.round(
-				sap.ui.getCore().getConfiguration().getRTL() ?
+				Configuration.getRTL() ?
 					this.getPicker().$().width() - this.$().width() :
 					this.$().width() - this.getPicker().$().width()
 			)); // LTR or RTL mode considered

@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
@@ -12,12 +13,12 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Int",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (Log, ObjectPath, Control, NumberFormat, FormatException, ParseException,
-		ValidateException, Int, ODataType, TestUtils) {
+], function (Log, ObjectPath, Configuration, Control, NumberFormat, FormatException,
+		ParseException, ValidateException, Int, ODataType, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	function anyInt(sName, iMin, iMax) {
 		var oType;
@@ -44,11 +45,11 @@ sap.ui.define([
 				this.oLogMock = this.mock(Log);
 				this.oLogMock.expects("warning").never();
 				this.oLogMock.expects("error").never();
-				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+				Configuration.setLanguage("en-US");
 				oType = createType();
 			},
 			afterEach : function () {
-				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+				Configuration.setLanguage(sDefaultLanguage);
 			}
 		});
 
@@ -75,7 +76,7 @@ sap.ui.define([
 
 			oType.formatValue(1234, "string"); // ensure that there is a formatter to remove
 			oControl.bindProperty("tooltip", {path : "/unused", type : oType});
-			sap.ui.getCore().getConfiguration().setLanguage("de-CH");
+			Configuration.setLanguage("de-CH");
 			assert.strictEqual(oType.oFormat, null, "localization change resets formatter");
 			oType.formatValue(1234, "int");
 			assert.strictEqual(oType.oFormat, null, "no formatter for int");
@@ -131,7 +132,7 @@ sap.ui.define([
 			assert.strictEqual(oType.parseValue("", "foo"), null,
 				"empty string becomes null for any type");
 
-			sap.ui.getCore().getConfiguration().setLanguage("de-DE");
+			Configuration.setLanguage("de-DE");
 			oType = new (ObjectPath.get(sName))();
 			assert.strictEqual(oType.parseValue(1234.001, "float"), 1234,
 				"don't parse float as string");

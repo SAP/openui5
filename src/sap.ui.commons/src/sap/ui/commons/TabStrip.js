@@ -17,9 +17,13 @@ sap.ui.define([
     'sap/ui/core/Title',
     './Tab',
     'sap/ui/events/KeyCodes',
-    'sap/ui/dom/jquery/parentByAttribute', // jQuery.fn.parentByAttribute
-    'sap/ui/dom/jquery/zIndex', // jQuery.fn.zIndex
-    'sap/ui/thirdparty/jqueryui/jquery-ui-position' // jQuery.fn.position
+    'sap/ui/core/Configuration',
+    // jQuery.fn.parentByAttribute
+    'sap/ui/dom/jquery/parentByAttribute',
+    // jQuery.fn.zIndex
+    'sap/ui/dom/jquery/zIndex',
+    // jQuery.fn.position
+    'sap/ui/thirdparty/jqueryui/jquery-ui-position'
 ],
 	function(
 	    jQuery,
@@ -34,7 +38,8 @@ sap.ui.define([
 		ResizeHandler,
 		Title,
 		Tab,
-		KeyCodes
+		KeyCodes,
+		Configuration
 	) {
 	"use strict";
 
@@ -133,14 +138,14 @@ sap.ui.define([
 	}});
 
 	TabStrip.SCROLL_SIZE = 320;
-	TabStrip.ANIMATION_DURATION = sap.ui.getCore().getConfiguration().getAnimation() ? 200 : 0;
-	TabStrip.SCROLL_ANIMATION_DURATION = sap.ui.getCore().getConfiguration().getAnimation() ? 500 : 0;
+	TabStrip.ANIMATION_DURATION = Configuration.getAnimation() ? 200 : 0;
+	TabStrip.SCROLL_ANIMATION_DURATION = Configuration.getAnimation() ? 500 : 0;
 
 	TabStrip.prototype.init = function() {
 
 		this._bInitialized = true;
 
-		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRtl = Configuration.getRTL();
 		this._iCurrentScrollLeft = 0;
 		this._iMaxOffsetLeft = null;
 		this._scrollable = null;
@@ -811,7 +816,7 @@ sap.ui.define([
 			bReorder,
 			$children = this.$().find('.sapUiTabBarCnt').children(),
 			aMovedTabIndexes = this._aMovedTabIndexes,
-			bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			bRTL = Configuration.getRTL();
 
 		for (var i = 0; i < $children.length; i++) {
 

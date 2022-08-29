@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBaseRenderer', 'sap/m/library'],
-	function(InvisibleText, Renderer, InputBaseRenderer, library) {
+sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBaseRenderer', 'sap/m/library', 'sap/ui/core/Configuration'],
+	function(InvisibleText, Renderer, InputBaseRenderer, library, Configuration) {
 	"use strict";
 
 
@@ -54,7 +54,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 		if (oControl.getType() == InputType.Number) {
 			oRm.attr("step", "any");
 		}
-		if (oControl.getType() == InputType.Number && sap.ui.getCore().getConfiguration().getRTL()) {
+		if (oControl.getType() == InputType.Number && Configuration.getRTL()) {
 			oRm.attr("dir", "ltr").style("text-align", "right");
 		}
 
@@ -110,7 +110,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 			this.writeDescription(oRm, oControl);
 		}
 
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (Configuration.getAccessibility()) {
 			if (oControl.getShowSuggestion() && oControl.getEnabled() && oControl.getEditable()) {
 				oRm.openStart("span", oControl.getId() + "-SuggDescr").class("sapUiPseudoInvisibleText")
 					.attr("role", "status").attr("aria-live", "polite")

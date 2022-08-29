@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.ApplicationHeader
-sap.ui.define(['sap/ui/core/theming/Parameters'],
-	function(Parameters) {
+sap.ui.define(['sap/ui/core/theming/Parameters', "sap/ui/core/Configuration"],
+	function(Parameters, Configuration) {
 	"use strict";
 
 
@@ -62,7 +62,7 @@ sap.ui.define(['sap/ui/core/theming/Parameters'],
 			sSrc = Parameters._getThemeImage(); // theme logo
 		}
 		if (!sSrc) {
-			sSrc = sap.ui.resource("sap.ui.commons", "themes/" + sap.ui.getCore().getConfiguration().getTheme() + "/img/applicationheader/SAPLogo.png");
+			sSrc = sap.ui.resource("sap.ui.commons", "themes/" + Configuration.getTheme() + "/img/applicationheader/SAPLogo.png");
 		}
 
 		oAppHeader.oLogo.setSrc(sSrc);
@@ -91,7 +91,7 @@ sap.ui.define(['sap/ui/core/theming/Parameters'],
 
 			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
-			var padding = sap.ui.getCore().getConfiguration().getRTL() ? "padding-left" : "padding-right";
+			var padding = Configuration.getRTL() ? "padding-left" : "padding-right";
 
 			//Add the user name if provided
 			if (oAppHeader.getUserName() != "") {

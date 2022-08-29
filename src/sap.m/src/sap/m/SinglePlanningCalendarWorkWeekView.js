@@ -7,9 +7,10 @@ sap.ui.define([
 	'./SinglePlanningCalendarView',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
-	'sap/ui/core/LocaleData'
+	'sap/ui/core/LocaleData',
+	'sap/ui/core/Configuration'
 ],
-function (library, SinglePlanningCalendarView, CalendarDate, CalendarUtils, LocaleData) {
+function (library, SinglePlanningCalendarView, CalendarDate, CalendarUtils, LocaleData, Configuration) {
 	"use strict";
 
 	/**
@@ -93,7 +94,7 @@ function (library, SinglePlanningCalendarView, CalendarDate, CalendarUtils, Loca
 	 * @private
 	 */
 	SinglePlanningCalendarWorkWeekView.prototype._getFormatSettingsLocaleData = function () {
-		return LocaleData.getInstance(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale());
+		return LocaleData.getInstance(Configuration.getFormatSettings().getFormatLocale());
 	};
 
 	return SinglePlanningCalendarWorkWeekView;

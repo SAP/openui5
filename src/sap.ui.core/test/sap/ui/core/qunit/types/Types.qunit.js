@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
@@ -19,9 +20,10 @@ sap.ui.define([
 	"sap/ui/model/type/TimeInterval",
 	"sap/ui/model/type/Unit",
 	"sap/ui/test/TestUtils"
-], function (Log, NumberFormat, FormatException, ParseException, ValidateException, BooleanType,
-		CurrencyType, DateType, DateIntervalType, DateTimeType, DateTimeIntervalType, FileSizeType,
-		FloatType, IntegerType, StringType, TimeType, TimeIntervalType, UnitType, TestUtils) {
+], function (Log, Configuration, NumberFormat, FormatException, ParseException, ValidateException,
+		BooleanType, CurrencyType, DateType, DateIntervalType, DateTimeType, DateTimeIntervalType,
+		FileSizeType, FloatType, IntegerType, StringType, TimeType, TimeIntervalType, UnitType,
+		TestUtils) {
 	"use strict";
 
 	function checkValidateException(oEx) {
@@ -75,15 +77,15 @@ sap.ui.define([
 		});
 	}
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Boolean", {
 		beforeEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -121,10 +123,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Currency", {
 		beforeEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -725,10 +727,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Date", {
 		beforeEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -888,10 +890,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.DateInterval", {
 		beforeEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1065,10 +1067,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.DateTime", {
 		beforeEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1136,10 +1138,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.DateTimeInterval", {
 		beforeEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1191,10 +1193,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.FileSize", {
 		beforeEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1367,10 +1369,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Float", {
 		beforeEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1575,10 +1577,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Integer", {
 		beforeEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1737,10 +1739,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.String", {
 		beforeEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1881,10 +1883,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Time", {
 		beforeEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1951,10 +1953,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.TimeInterval", {
 		beforeEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -2005,10 +2007,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Unit", {
 		beforeEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function() {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -2229,7 +2231,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("unit format and parse - custom units (global)", function (assert) {
-		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"lebkuchen": {
 				"unitPattern-count-one": "{0} LK",
@@ -2253,7 +2255,7 @@ sap.ui.define([
 
 	QUnit.test("unit format and parse - custom units (global & local)", function (assert) {
 		// global config
-		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"lebkuchen": {
 				"unitPattern-count-one": "{0} LK",
@@ -2464,7 +2466,7 @@ sap.ui.define([
 
 	QUnit.test("Unit: Dynamic values & unit overdefiniton via Configuration (decimals)", function (assert) {
 		// overwrite the length-meter unit, and define a decimals value
-		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"length-meter": {
 				"unitPattern-count-one": "{0} m",
@@ -2523,7 +2525,7 @@ sap.ui.define([
 
 	QUnit.test("Unit: Dynamic values & unit overdefiniton via Configuration (precision)", function (assert) {
 		// overwrite the length-meter unit, and define a decimals value
-		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"length-meter": {
 				"unitPattern-count-one": "{0} m",

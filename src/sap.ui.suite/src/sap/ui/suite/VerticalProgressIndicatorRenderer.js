@@ -3,7 +3,7 @@
  */
 
 // provides default renderer for sap.ui.suite.VerticalProgressIndicator
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/core/Configuration"], function(Configuration) {
 	"use strict";
 
 
@@ -49,7 +49,7 @@ sap.ui.define(function() {
 		}
 
 	    //ARIA
-	    if ( sap.ui.getCore().getConfiguration().getAccessibility()) {
+	    if ( Configuration.getAccessibility()) {
 		  rm.writeAttribute('role', 'progressbar');
 	      rm.writeAccessibilityState(oControl, {valuemin: '0%'});
 		  rm.writeAccessibilityState(oControl, {valuemax: '100%'});

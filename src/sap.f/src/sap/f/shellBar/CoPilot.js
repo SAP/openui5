@@ -50,7 +50,7 @@ sap.ui.define([
 	};
 
 	CoPilot.prototype.getAnimation = function () {
-		return sap.ui.getCore().getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none;
+		return Configuration.getAnimationMode() !== Configuration.AnimationMode.none;
 	};
 
 	return CoPilot;

@@ -12,9 +12,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/MaskInputRule",
-	// jQuery Plugin "cursorPos"
-	"sap/ui/dom/jquery/cursorPos"
-], function(Control, InputBase, Device, coreLibrary, IconPool, KeyCodes, Log, jQuery, MaskInputRule) {
+	"sap/ui/core/Configuration",
+	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
+], function(Control, InputBase, Device, coreLibrary, IconPool, KeyCodes, Log, jQuery, MaskInputRule, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -1425,7 +1425,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether the current control is in RTL mode
 		 */
 		this._isRtlMode = function () {
-			return sap.ui.getCore().getConfiguration().getRTL() || (this.getTextDirection() === TextDirection.RTL);
+			return Configuration.getRTL() || (this.getTextDirection() === TextDirection.RTL);
 		};
 
 		/**

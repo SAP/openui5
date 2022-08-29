@@ -3,9 +3,10 @@
  */
 sap.ui.define([
 	'sap/ui/unified/library',
-	"sap/base/security/encodeXML"
+	"sap/base/security/encodeXML",
+	"sap/ui/core/Configuration"
 ],
-	function(library, encodeXML) {
+	function(library, encodeXML, Configuration) {
 	"use strict";
 
 
@@ -31,7 +32,7 @@ sap.ui.define([
 	ContentSwitcherRenderer.render = function(oRm, oControl){
 		var sId            = oControl.getId();
 		var sAnimation     = oControl.getAnimation();
-		if (!sap.ui.getCore().getConfiguration().getAnimation()) {
+		if (!Configuration.getAnimation()) {
 			sAnimation = ContentSwitcherAnimation.None;
 		}
 

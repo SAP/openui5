@@ -1,20 +1,15 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/model/StaticBinding",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Configuration",
 	"sap/ui/model/CompositeBinding",
-	"sap/ui/model/type/Float",
+	"sap/ui/model/StaticBinding",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/base/ManagedObject"
-], function(
-	StaticBinding,
-	CompositeBinding,
-	TypeFloat,
-	JSONModel,
-	ManagedObject
-) {
+	"sap/ui/model/type/Float"
+], function(ManagedObject, Configuration, CompositeBinding, StaticBinding, JSONModel, TypeFloat) {
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+	var sDefaultLanguage = Configuration.getLanguage(),
 		MyObject = ManagedObject.extend("MyObject", {
 		metadata: {
 			properties: {
@@ -32,7 +27,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.model.StaticBinding", {
 		beforeEach: function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 			this.static = new StaticBinding("test");
 			this.staticWithFormatter = new StaticBinding("test");
 			this.staticWithFormatter.setFormatter(function(sValue) {
@@ -46,7 +41,7 @@ sap.ui.define([
 			this.staticWithFormatter = null;
 			this.staticWithType = null;
 			// reset the language
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 

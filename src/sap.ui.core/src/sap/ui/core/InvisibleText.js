@@ -4,11 +4,12 @@
 
 // Provides control sap.ui.core.InvisibleText.
 sap.ui.define([
-	"./Control",
 	"sap/base/Log",
 	"sap/base/security/encodeXML",
+	"./Configuration",
+	"./Control",
 	"./library" // ensure loading of CSS
-], function(Control, Log, encodeXML) {
+], function(Log, encodeXML, Configuration, Control) {
 	"use strict";
 
 
@@ -177,7 +178,7 @@ sap.ui.define([
 	InvisibleText.getStaticId = function(sLibrary, sTextKey) {
 		var sTextId = "", sKey, oBundle, oText;
 
-		if ( sap.ui.getCore().getConfiguration().getAccessibility() && sTextKey ) {
+		if ( Configuration.getAccessibility() && sTextKey ) {
 			// Note: identify by lib and text key, not by text to avoid conflicts after a language change
 			sKey = sLibrary + "|" + sTextKey;
 			sTextId = mTextIds[sKey];

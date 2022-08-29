@@ -1,5 +1,11 @@
 /*global QUnit, sinon */
-sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/core/LocaleData", "sap/base/Log"], function (NumberFormat, Locale, LocaleData, Log) {
+sap.ui.define([
+	"sap/ui/core/format/NumberFormat",
+	"sap/ui/core/Locale",
+	"sap/ui/core/LocaleData",
+	"sap/base/Log",
+	"sap/ui/core/Configuration"
+], function (NumberFormat, Locale, LocaleData, Log, Configuration) {
 	"use strict";
 
 	/*eslint no-floating-decimal:0 */
@@ -1654,7 +1660,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 
 			//ensure custom unit mappings and custom units are reset
-			this.oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+			this.oFormatSettings = Configuration.getFormatSettings();
 			this.oFormatSettings.setUnitMappings();
 			this.oFormatSettings.setCustomUnits();
 
@@ -1674,7 +1680,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 
 
 	QUnit.test("Unit format custom pattern in config", function (assert) {
-		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"unitPattern-count-one": "{0} H",
@@ -1732,7 +1738,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	});
 
 	QUnit.test("Unit format with private FormatOptions parameter unitOptional active", function (assert) {
-		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
@@ -1752,7 +1758,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 
 
 	QUnit.test("Unit parse with private FormatOptions parameter unitOptional active", function (assert) {
-		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
@@ -1771,7 +1777,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	});
 
 	QUnit.test("Unit parse custom pattern in config", function (assert) {
-		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
@@ -1831,7 +1837,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	});
 
 	QUnit.test("Unit format showNumber false custom Units from global configuration with only other pattern", function (assert) {
-		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
@@ -1849,7 +1855,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	});
 
 	QUnit.test("Unit format showNumber false custom Units from global configuration", function (assert) {
-		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"electric-inductance": {
 				"displayName": "H",
@@ -2253,7 +2259,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	});
 
 	QUnit.test("Unit format with global configuration overwritten by format instance", function (assert) {
-		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oFormatSettings = Configuration.getFormatSettings();
 		var oConfigObject = {
 			"steven": {
 				"unitPattern-count-one": "{0} tylr",
@@ -3251,7 +3257,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	QUnit.module("General");
 
 	QUnit.test("origin info", function (assert) {
-		sap.ui.getCore().getConfiguration().originInfo = true;
+		Configuration.originInfo = true;
 		var oOriginNumber = NumberFormat.getIntegerInstance(),
 			sValue = oOriginNumber.format(123),
 			oInfo = sValue.originInfo;

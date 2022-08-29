@@ -1,19 +1,13 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/ResourceBundle",
 	"sap/ui/Device",
+	"sap/ui/core/Configuration",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/base/i18n/ResourceBundle",
 	"sap/ui/testlib/TestButton"
-], function(
-	Log,
-	Device,
-	BindingMode,
-	ResourceModel,
-	ResourceBundle,
-	TestButton
-) {
+], function(Log, ResourceBundle, Device, Configuration, BindingMode, ResourceModel, TestButton) {
 	/*eslint no-new: 0 */
 	"use strict";
 	//add divs for control tests
@@ -227,7 +221,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.model.resource.ResourceModel: Resources bundle passed as parameter", {
 		prepare: function(opts) {
-			sap.ui.getCore().getConfiguration().setLanguage("en");
+			Configuration.setLanguage("en");
 
 			// Load the bundle beforehand
 			this.oBundle = ResourceBundle.create({url: sMessagesProperties});
@@ -324,7 +318,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.resource.ResourceModel: Resources bundle passed as parameter -"
 			+ "Language change on enhanced model", {
 		prepare: function(opts) {
-			sap.ui.getCore().getConfiguration().setLanguage("en");
+			Configuration.setLanguage("en");
 
 			// Load the bundle beforehand
 			if (opts && typeof opts.bundle === "function") {
@@ -366,7 +360,7 @@ sap.ui.define([
 			// Reset the ResourceBundle.create callCount
 			this.fnResBundleCreateSpy.resetHistory();
 
-			sap.ui.getCore().getConfiguration().setLanguage("de");
+			Configuration.setLanguage("de");
 
 			assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
 			assert.equal(this.fnResBundleCreateSpy.callCount, 2, "ResourceBundle.create should be called twice after changing the language");
@@ -389,7 +383,7 @@ sap.ui.define([
 			// Reset the ResourceBundle.create callCount
 			this.fnResBundleCreateSpy.resetHistory();
 
-			sap.ui.getCore().getConfiguration().setLanguage("it");
+			Configuration.setLanguage("it");
 
 			assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
 			assert.equal(this.fnResBundleCreateSpy.callCount, 2, "ResourceBundle.create should not be called after changing the language");
@@ -423,7 +417,7 @@ sap.ui.define([
 		// Reset the ResourceBundle.create callCount
 		this.fnResBundleCreateSpy.resetHistory();
 
-		sap.ui.getCore().getConfiguration().setLanguage("de");
+		Configuration.setLanguage("de");
 
 		assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
 		assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called after changing the language");
@@ -507,7 +501,7 @@ sap.ui.define([
 		// Reset the ResourceBundle.create callCount
 		this.fnResBundleCreateSpy.resetHistory();
 
-		sap.ui.getCore().getConfiguration().setLanguage("it");
+		Configuration.setLanguage("it");
 
 		assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
 		assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called after changing the language");
@@ -583,7 +577,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.resource.ResourceModel: Async -"
 			+ "Resources bundle passed as parameter", {
 		prepare: function(opts) {
-			sap.ui.getCore().getConfiguration().setLanguage("en");
+			Configuration.setLanguage("en");
 
 			// Load the bundle beforehand
 			return ResourceBundle.create({
@@ -702,7 +696,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.resource.ResourceModel Async: Resources bundle passed as parameter -"
 			+ " Language change on enhanced model", {
 		prepare: function(opts) {
-			sap.ui.getCore().getConfiguration().setLanguage("en");
+			Configuration.setLanguage("en");
 
 			// Load the bundle beforehand
 			var p;
@@ -753,7 +747,7 @@ sap.ui.define([
 				// Reset the ResourceBundle.create callCount
 				this.fnResBundleCreateSpy.resetHistory();
 
-				sap.ui.getCore().getConfiguration().setLanguage("de");
+				Configuration.setLanguage("de");
 
 				assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
 
@@ -791,7 +785,7 @@ sap.ui.define([
 				// Reset the ResourceBundle.create callCount
 				this.fnResBundleCreateSpy.resetHistory();
 
-				sap.ui.getCore().getConfiguration().setLanguage("it");
+				Configuration.setLanguage("it");
 
 				assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
 
@@ -837,7 +831,7 @@ sap.ui.define([
 				// Reset the ResourceBundle.create callCount
 				this.fnResBundleCreateSpy.resetHistory();
 
-				sap.ui.getCore().getConfiguration().setLanguage("de");
+				Configuration.setLanguage("de");
 
 				assert.equal(this.localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
 				assert.equal(this.fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called after changing the language");
@@ -938,7 +932,7 @@ sap.ui.define([
 			// Reset the ResourceBundle.create callCount
 			fnResBundleCreateSpy.resetHistory();
 
-			sap.ui.getCore().getConfiguration().setLanguage("it");
+			Configuration.setLanguage("it");
 
 			assert.equal(localizationChangeSpy.callCount, 1, "_handleLocalizationChange should be called after changing the language");
 			assert.equal(fnResBundleCreateSpy.callCount, 0, "ResourceBundle.create should not be called after changing the language");
@@ -951,7 +945,7 @@ sap.ui.define([
 			assert.equal(oModelBundle, oBundle, "The passed bundle is still returned by the model");
 
 			oModel.destroy();
-			sap.ui.getCore().getConfiguration().setLanguage("en");
+			Configuration.setLanguage("en");
 		});
 	});
 
@@ -1176,7 +1170,7 @@ sap.ui.define([
 		oBtn.getBinding("text").attachChange(function() {
 			if (iChangeCount++ === 0) {
 				assert.equal(oBtn.getText(), "A text en", "Binding Change: Texts available after sync load");
-				sap.ui.getCore().getConfiguration().setLanguage("de");
+				Configuration.setLanguage("de");
 			} else {
 				assert.equal(oBtn.getText(), "Ein Text de", "Binding Change: Texts available after sync load");
 
@@ -1189,7 +1183,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("OneWay Binding and Language Change (Synchronous)", function(assert) {
-		sap.ui.getCore().getConfiguration().setLanguage("en");
+		Configuration.setLanguage("en");
 
 		var oBtn = new TestButton({
 			text: "{sync5>TEST_TEXT}"
@@ -1203,7 +1197,7 @@ sap.ui.define([
 		sap.ui.getCore().setModel(oSyncModel, "sync5");
 
 		assert.equal(oBtn.getText(), "A text en", "Binding Change: Texts available after sync load");
-		sap.ui.getCore().getConfiguration().setLanguage("de");
+		Configuration.setLanguage("de");
 
 		assert.equal(oBtn.getText(), "Ein Text de", "Binding Change: Texts available after sync load");
 		oBtn.destroy();

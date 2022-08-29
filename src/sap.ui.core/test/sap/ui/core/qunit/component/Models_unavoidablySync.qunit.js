@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/core/Component",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/ui/model/xml/XMLModel",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/test/v2models/parent/CustomModel"
-], function(jQuery, UriParameters, Log, Component) {
+], function(jQuery, UriParameters, Log, Component, Configuration) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -59,9 +60,9 @@ sap.ui.define([
 				get: oGetParameterStub
 			});
 
-			var sSAPLanguage = sap.ui.getCore().getConfiguration().getSAPLogonLanguage();
+			var sSAPLanguage = Configuration.getSAPLogonLanguage();
 
-			this.oConfigurationStub = sinon.stub(sap.ui.getCore().getConfiguration(), 'getSAPParam');
+			this.oConfigurationStub = sinon.stub(Configuration, 'getSAPParam');
 			this.oConfigurationStub.withArgs('sap-language').returns(mMockParams && mMockParams.sapLanguage || sSAPLanguage);
 			this.oConfigurationStub.withArgs('sap-client').returns(mMockParams && mMockParams.sapClient || 'foo');
 			this.oConfigurationStub.withArgs('sap-server').returns(mMockParams && mMockParams.sapServer || 'bar');

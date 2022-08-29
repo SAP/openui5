@@ -14,12 +14,13 @@ sap.ui.define([
     './CarouselRenderer',
     'sap/ui/Device',
     'sap/ui/events/KeyCodes',
+    "sap/ui/core/Configuration",
     // jQuery custom selectors ":sapFocusable"
     "sap/ui/dom/jquery/Selectors",
     // jQuery Plugin "firstFocusableDomRef"
     "sap/ui/dom/jquery/Focusable"
 ],
-	function(jQuery, Log, capitalize, containsOrEquals, library, Control, ResizeHandler, ItemNavigation, CarouselRenderer, Device, KeyCodes) {
+	function(jQuery, Log, capitalize, containsOrEquals, library, Control, ResizeHandler, ItemNavigation, CarouselRenderer, Device, KeyCodes, Configuration) {
 	"use strict";
 
 
@@ -173,7 +174,7 @@ sap.ui.define([
 		if (this.getOrientation() == "vertical") {
 			this._sAnimationAttribute = 'margin-top';
 		} else {
-			if (sap.ui.getCore().getConfiguration().getRTL()) {
+			if (Configuration.getRTL()) {
 				this._sAnimationAttribute = 'margin-right';
 			} else {
 				this._sAnimationAttribute = 'margin-left';
@@ -223,7 +224,7 @@ sap.ui.define([
 					}
 				}
 
-				if (sap.ui.getCore().getConfiguration().getRTL()) {
+				if (Configuration.getRTL()) {
 					$ContentArea.scrollLeft($ScrollList.width()  - $ContentArea.width());
 				} else {
 					$ContentArea.scrollLeft(0);

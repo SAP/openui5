@@ -3,8 +3,8 @@
  */
 
 // A core plugin that bundles debug features and connects with an embedding testsuite
-sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree', './LogViewer', './PropertyList', "sap/base/Log", "sap/ui/thirdparty/jquery"],
-	function(Interface, ControlTree, LogViewer, PropertyList, Log, jQuery) {
+sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree', './LogViewer', './PropertyList', "sap/base/Log", "sap/ui/thirdparty/jquery", "sap/ui/core/Configuration"],
+	function(Interface, ControlTree, LogViewer, PropertyList, Log, jQuery, Configuration) {
 	"use strict";
 
 
@@ -71,7 +71,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree'
 		this.oControlTreeWindow = this.bRunsEmbedded ? this.oWindow : (top.document.getElementById("sap-ui-ControlTreeWindow") || top.frames["sap-ui-ControlTreeWindow"] || top);
 		this.oPropertyListWindow = this.bRunsEmbedded ? this.oWindow : (top.document.getElementById("sap-ui-PropertyListWindow") || top.frames["sap-ui-PropertyListWindow"] || top);
 
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var bRtl = Configuration.getRTL();
 
 		/* TODO enable switch to testsuite
 		if ( this.bRunsEmbedded ) {

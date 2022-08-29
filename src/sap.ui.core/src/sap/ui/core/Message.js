@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.Message.
-sap.ui.define(['./Element', './library', "sap/base/Log"],
-	function(Element, library, Log) {
+sap.ui.define(['./Element', './library', "sap/base/Log", "sap/ui/core/Configuration"],
+	function(Element, library, Log, Configuration) {
 	"use strict";
 
 	// shortcut
@@ -71,7 +71,7 @@ sap.ui.define(['./Element', './library', "sap/base/Log"],
 	 * @public
 	 */
 	Message.prototype.getDefaultIcon = function(sSize) {
-		var sModulePath = sap.ui.require.toUrl("sap/ui/core/themes/" + sap.ui.getCore().getConfiguration().getTheme());
+		var sModulePath = sap.ui.require.toUrl("sap/ui/core/themes/" + Configuration.getTheme());
 
 		var sImagesPath = sModulePath + "/img/message/";
 		if (sSize && sSize == "32x32") {

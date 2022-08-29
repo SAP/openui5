@@ -9,11 +9,12 @@ sap.ui.define([
 	'./FormLayoutRenderer',
 	'sap/ui/core/theming/Parameters',
 	'sap/ui/thirdparty/jquery',
+	"sap/ui/core/Configuration",
 	// jQuery custom selectors ":sapFocusable"
 	'sap/ui/dom/jquery/Selectors',
 	// jQuery Plugin "control"
 	'sap/ui/dom/jquery/control'
-], function(Control, library, FormLayoutRenderer, Parameters, jQuery) {
+], function(Control, library, FormLayoutRenderer, Parameters, jQuery, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.BackgroundDesign
@@ -140,7 +141,7 @@ sap.ui.define([
 	FormLayout.prototype.onsapright = function(oEvent){
 
 		if (library.form.FormHelper.bArrowKeySupport) {
-			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			var bRtl = Configuration.getRTL();
 
 			if (!bRtl) {
 				this.navigateForward(oEvent);
@@ -154,7 +155,7 @@ sap.ui.define([
 	FormLayout.prototype.onsapleft = function(oEvent){
 
 		if (library.form.FormHelper.bArrowKeySupport) {
-			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			var bRtl = Configuration.getRTL();
 
 			if (!bRtl) {
 				this.navigateBack(oEvent);

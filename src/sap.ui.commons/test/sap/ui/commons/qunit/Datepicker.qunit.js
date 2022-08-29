@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Date",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Configuration"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -16,7 +17,8 @@ sap.ui.define([
 	JSONModel,
 	TypeDate,
 	jQuery,
-	KeyCodes
+	KeyCodes,
+	Configuration
 ) {
 	"use strict";
 
@@ -205,8 +207,8 @@ sap.ui.define([
 	QUnit.test("DataBindingTest", function(assert) {
 		var oDatePicker;
 
-		assert.equal(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString(), "en-US", "locale of page");
-		if (sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString() == "en-US"){
+		assert.equal(Configuration.getFormatSettings().getFormatLocale().toString(), "en-US", "locale of page");
+		if (Configuration.getFormatSettings().getFormatLocale().toString() == "en-US"){
 			// test makes no sense if locale is wrong
 			oDatePicker = sap.ui.getCore().byId("myDatePicker4");
 			assert.equal( oDatePicker.getValue(), "Feb 29, 2012", "Value with default pattern" );

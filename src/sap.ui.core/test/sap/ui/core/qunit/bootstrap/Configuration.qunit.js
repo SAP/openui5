@@ -869,12 +869,12 @@ sap.ui.define([
 			window["sap-ui-config"] = {};
 			Configuration.setCore(oRealCore);
 			this.getConfiguration = function () {
-				return sap.ui.getCore().getConfiguration();
+				return Configuration;
 			};
 		},
 		afterEach: function() {
 			// Restore default animation mode
-			sap.ui.getCore().getConfiguration().setAnimationMode(AnimationMode.full);
+			Configuration.setAnimationMode(AnimationMode.full);
 		}
 	});
 

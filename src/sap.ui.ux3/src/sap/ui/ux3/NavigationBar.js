@@ -17,6 +17,7 @@ sap.ui.define([
 	'sap/ui/util/ActivityDetection',
 	'sap/ui/Device',
 	'sap/base/assert',
+	'sap/ui/core/Configuration',
 	// jQuery Plugin 'scrollRightRTL'
 	'sap/ui/dom/jquery/scrollRightRTL',
 	// jQuery Plugin 'scrollLeftRTL'
@@ -35,7 +36,8 @@ sap.ui.define([
 		denormalizeScrollLeftRTL,
 		ActivityDetection,
 		Device,
-		assert
+		assert,
+		Configuration
 	) {
 	"use strict";
 
@@ -141,7 +143,7 @@ sap.ui.define([
 		this._bPreviousScrollForward = false; // remember the item overflow state
 		this._bPreviousScrollBack = false;
 		this._iLastArrowPos = -100; // this property is always read and applied as "left"/"right" depending on RTL configuration
-		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRtl = Configuration.getRTL();
 
 		this.allowTextSelection(false);
 
@@ -545,7 +547,7 @@ sap.ui.define([
 		var li = jQuery(item.parentNode);
 		var ul = li.parent();
 		var targetPos;
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var bRtl = Configuration.getRTL();
 
 		// special handling for first and last item to not only scroll them into view but to scroll to the very start/end
 		var index = li.index() - 1; // -1 because of leading dummy item

@@ -14,11 +14,15 @@ sap.ui.define([
     './DialogRenderer',
     'sap/ui/core/library',
     'sap/ui/core/ResizeHandler',
-    "sap/ui/dom/jquery/rect", // jQuery Plugin "rect"
-    'sap/ui/dom/jquery/control', // jQuery.fn.control
-    'sap/ui/dom/jquery/Selectors' // sapTabbable
+    "sap/ui/core/Configuration",
+    // jQuery Plugin "rect"
+    "sap/ui/dom/jquery/rect",
+    // jQuery.fn.control
+    'sap/ui/dom/jquery/control',
+    // sapTabbable
+    'sap/ui/dom/jquery/Selectors'
 ],
-	function(jQuery, Log, containsOrEquals, library, Control, Popup, RenderManager, DialogRenderer, coreLibrary, ResizeHandler) {
+	function(jQuery, Log, containsOrEquals, library, Control, Popup, RenderManager, DialogRenderer, coreLibrary, ResizeHandler, Configuration) {
 		"use strict";
 
 
@@ -814,7 +818,7 @@ sap.ui.define([
 			var oSource = oEvent.target,
 				sId = this.getId();
 
-			this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL(); // remember the RTL mode for the starting resize operation
+			this._bRtlMode = Configuration.getRTL(); // remember the RTL mode for the starting resize operation
 			var oDomRef = this.getDomRef();
 			if (containsOrEquals(this.getDomRef("hdr"), oSource)) {
 				if (oSource.id != (sId + "-close")) {

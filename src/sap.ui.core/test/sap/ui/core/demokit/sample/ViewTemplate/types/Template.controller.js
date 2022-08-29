@@ -3,11 +3,12 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Configuration",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/sample/common/Controller"
-], function (LocaleData, Controller) {
+], function (Configuration, LocaleData, Controller) {
 	"use strict";
-	var oLocaleData = new LocaleData(sap.ui.getCore().getConfiguration().getLocale()),
+	var oLocaleData = new LocaleData(Configuration.getLocale()),
 		datePattern = oLocaleData.getDatePattern("medium"),
 		dateTimePattern = oLocaleData.getCombinedDateTimePattern("medium", "medium"),
 		timePattern = oLocaleData.getTimePattern("medium");

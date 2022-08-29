@@ -1,32 +1,22 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
+	"sap/m/Label",
+	"sap/m/Input",
+	"sap/ui/core/Configuration",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/BindingMode",
-	"sap/ui/model/SimpleType",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
+	"sap/ui/model/SimpleType",
 	"sap/ui/model/ValidateException",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Float",
-	"sap/ui/model/type/Date",
-	"sap/m/Label",
-	"sap/m/Input"
-], function(
-	JSONModel,
-	ChangeReason,
-	BindingMode,
-	SimpleType,
-	FormatException,
-	ParseException,
-	ValidateException,
-	FloatType,
-	DateType,
-	Label,
-	Input
-) {
+	"sap/ui/model/type/Date"
+], function(Label, Input, Configuration, ChangeReason, BindingMode, FormatException, ParseException,
+		SimpleType, ValidateException, JSONModel, FloatType, DateType) {
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	//add divs for control tests
 	var oTarget1 = document.createElement("div");
@@ -114,12 +104,12 @@ sap.ui.define([
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
 			sap.ui.getCore().setModel(this.oModel);
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach: function() {
 			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		},
 		createPropertyBindings: function(path, property, context) {
 			// create bindings
@@ -303,12 +293,12 @@ sap.ui.define([
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.currentTestData);
 			sap.ui.getCore().setModel(this.oModel);
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach: function() {
 			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		},
 		createPropertyBindings: function(path, property, context) {
 			// create bindings

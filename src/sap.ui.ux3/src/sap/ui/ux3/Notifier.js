@@ -11,9 +11,10 @@ sap.ui.define([
     'sap/ui/core/library',
     'sap/ui/Device',
     'sap/base/Log',
-    "sap/ui/base/EventProvider"
+    "sap/ui/base/EventProvider",
+    "sap/ui/core/Configuration"
 ],
-	function(jQuery, Callout, Element, library, coreLibrary, Device, Log, EventProvider) {
+	function(jQuery, Callout, Element, library, coreLibrary, Device, Log, EventProvider, Configuration) {
 	"use strict";
 
 
@@ -186,7 +187,7 @@ sap.ui.define([
 				 * and must be corrected for LTR only a manipulation of the arrow's
 				 * position is needed if LTR is active
 				 */
-				var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+				var bRtl = Configuration.getRTL();
 				if (!bRtl) {
 					$arrow.css("left", "6px");
 				}

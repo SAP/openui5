@@ -26,7 +26,8 @@ sap.ui.define([
 	"./rowmodes/AutoRowMode",
 	"./plugins/SelectionModelSelection",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Configuration"
 ], function(
 	Device,
 	Control,
@@ -51,7 +52,8 @@ sap.ui.define([
 	AutoRowMode,
 	SelectionModelSelectionPlugin,
 	jQuery,
-	Log
+	Log,
+	Configuration
 ) {
 	"use strict";
 
@@ -958,7 +960,7 @@ sap.ui.define([
 		/*
 		 * Flag indicating whether the text direction is RTL. If <code>false</code>, the text direction is LTR.
 		 */
-		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRtlMode = Configuration.getRTL();
 
 		/*
 		 * Flag indicating whether the rows are currently being bound. This is the time between #bindRows and the actual instantiation of the
@@ -1150,7 +1152,7 @@ sap.ui.define([
 		var pUpdateLocalizationInfo = Promise.resolve();
 
 		if (bRtlChanged) {
-			this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
+			this._bRtlMode = Configuration.getRTL();
 		}
 
 		if (bLangChanged) {
@@ -2613,7 +2615,7 @@ sap.ui.define([
 		var $this = this.$();
 		var sTableId = this.getId();
 
-		if (sap.ui.getCore().getConfiguration().getAnimation()) {
+		if (Configuration.getAnimation()) {
 			jQuery(document.body).on("webkitTransitionEnd." + sTableId + " transitionend." + sTableId,
 				function(oEvent) {
 					if (jQuery(oEvent.target).has($this).length > 0) {

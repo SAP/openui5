@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.unified.ShellOverlay
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/core/Configuration"],
+	function(Configuration) {
 	"use strict";
 
 
@@ -33,7 +33,7 @@ sap.ui.define([],
 			rm.addClass("sapUiUfdShellOvrlyAnim");
 		}
 		rm.writeClasses();
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (Configuration.getAccessibility()) {
 			rm.writeAccessibilityState(oControl, {
 				role: "dialog"
 			});
@@ -43,7 +43,7 @@ sap.ui.define([],
 		rm.write("<header class='sapUiUfdShellOvrlyHead'>");
 		rm.write("<hr class='sapUiUfdShellOvrlyBrand'>");
 		rm.write("<div class='sapUiUfdShellOvrlyHeadCntnt'");
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (Configuration.getAccessibility()) {
 			rm.writeAttribute("role", "toolbar");
 		}
 		rm.write("><div id='" + oControl.getId() + "-hdr-center' class='sapUiUfdShellOvrlyHeadCenter'>");
@@ -53,7 +53,7 @@ sap.ui.define([],
 			sCloseTxt = rb.getText("SHELL_OVERLAY_CLOSE");
 		rm.write("<a tabindex='0' href='#' id='" + oControl.getId() + "-close' class='sapUiUfdShellOvrlyHeadClose'");
 		rm.writeAttributeEscaped("title", sCloseTxt);
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (Configuration.getAccessibility()) {
 			rm.writeAttribute("role", "button");
 		}
 		rm.write(">");

@@ -3,20 +3,16 @@
  */
 sap.ui.define([
 	'sap/ui/core/message/Message',
-	'sap/ui/core/message/MessageManager'
-], function(Message, MessageManager) {
+	'sap/ui/core/message/MessageManager',
+	'sap/ui/core/Configuration'
+], function(Message, MessageManager, Configuration) {
 	/*global QUnit */
 	"use strict";
 
 	QUnit.module("sap/ui/core/message/MessageManager", {
 		beforeEach : function () {
-			var oConfiguration = {getHandleValidation : function () {}},
-				oCore = {getConfiguration : function () {}};
-
 			// avoid attaching to validation events on UI5 core
-			this.mock(sap.ui).expects("getCore").returns(oCore);
-			this.mock(oCore).expects("getConfiguration").returns(oConfiguration);
-			this.mock(oConfiguration).expects("getHandleValidation").returns(false);
+			this.mock(Configuration).expects("getHandleValidation").returns(false);
 
 			this.oMessageManager = new MessageManager();
 		}

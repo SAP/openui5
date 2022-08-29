@@ -12,10 +12,13 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/ui/events/KeyCodes',
-	'sap/ui/dom/jquery/cursorPos', // jQuery.fn.cursorPos
-	'sap/ui/dom/jquery/selectText' // jQuery.fn.selectText
+	'sap/ui/core/Configuration',
+	// jQuery.fn.cursorPos
+	'sap/ui/dom/jquery/cursorPos',
+	// jQuery.fn.selectText
+	'sap/ui/dom/jquery/selectText'
 ],
-	function(jQuery, library, Control, ValueStateSupport, TextFieldRenderer, coreLibrary, Device, KeyCodes) {
+	function(jQuery, library, Control, ValueStateSupport, TextFieldRenderer, coreLibrary, Device, KeyCodes, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.core.AccessibleRole
@@ -281,7 +284,7 @@ sap.ui.define([
 	//Special handling for TextFields in ItemNavigation
 
 	TextField.prototype._checkCursorPosForNav = function(oEvent, bForward) {
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var bRtl = Configuration.getRTL();
 		var bBack = bForward ? bRtl : !bRtl;
 		var $input = jQuery(this.getInputDomRef());
 		var iPos = $input.cursorPos();

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.AccordionSection.
-sap.ui.define(['./library', 'sap/ui/core/Element'],
-	function(library, Element) {
+sap.ui.define(['./library', 'sap/ui/core/Element', "sap/ui/core/Configuration"],
+	function(library, Element, Configuration) {
 	"use strict";
 
 
@@ -248,7 +248,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 	AccordionSection.prototype._setCollapsedState = function(bCollapsed) {
 		var tb = this.getDomRef("tb"),
 			cont = this.getDomRef("cont"),
-			accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
+			accessibility = Configuration.getAccessibility();
 		if (this.getDomRef()) {
 			// after AccordionSection has been rendered
 			if (bCollapsed) {

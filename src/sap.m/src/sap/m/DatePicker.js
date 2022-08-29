@@ -31,6 +31,7 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CustomYearPicker",
 	"sap/ui/core/LabelEnablement",
 	"sap/ui/unified/library",
+	"sap/ui/core/Configuration",
 	"sap/ui/dom/jquery/cursorPos"
 ],
 	function(
@@ -59,7 +60,8 @@ sap.ui.define([
 		CustomMonthPicker,
 		CustomYearPicker,
 		LabelEnablement,
-		unifiedLibrary
+		unifiedLibrary,
+		Configuration
 	) {
 	"use strict";
 
@@ -1438,7 +1440,7 @@ sap.ui.define([
 	};
 
 	DatePicker.prototype._getTimezone = function(bUseDefaultAsFallback) {
-		return sap.ui.getCore().getConfiguration().getTimezone();
+		return Configuration.getTimezone();
 	};
 
 	/* sets cursor inside the input in order to focus it */

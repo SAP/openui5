@@ -1,5 +1,11 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/core/LocaleData", "sap/base/Log"], function (NumberFormat, Locale, LocaleData, Log) {
+sap.ui.define([
+	"sap/ui/core/format/NumberFormat",
+	"sap/ui/core/Locale",
+	"sap/ui/core/LocaleData",
+	"sap/base/Log",
+	"sap/ui/core/Configuration"
+], function (NumberFormat, Locale, LocaleData, Log, Configuration) {
 	"use strict";
 
 	var getCurrencyInstance = function(options, oLocale) {
@@ -264,7 +270,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.79", "123456.79 BTC");
 
 		// set custom currency digits
-		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies({
+		Configuration.getFormatSettings().setCustomCurrencies({
 			"EUR": { "digits": 1 },
 			"JPY": { "digits": 3 },
 			"CZK": { "digits": 3 },
@@ -280,7 +286,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.78900", "123456.789 BTC");
 
 		// add custom currencies
-		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies({
+		Configuration.getFormatSettings().addCustomCurrencies({
 			"DEFAULT": { "digits": 6 }
 		});
 		oFormat = getCurrencyInstance({
@@ -290,7 +296,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format(123456.789, "MON"), "MON\xa0" + "123,456.789000", "123456.789 MON");
 
 		// reset custom currencies
-		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+		Configuration.getFormatSettings().setCustomCurrencies();
 
 		oFormat = getCurrencyInstance({
 			currencyCode: false
@@ -314,7 +320,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	QUnit.module("Custom currencies - Unknown currencies", {
 		afterEach: function() {
 			// reset global configuration
-			sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+			Configuration.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
@@ -356,7 +362,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	QUnit.module("Custom currencies - simple formatting", {
 		afterEach: function() {
 			// reset global configuration
-			sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+			Configuration.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
@@ -532,7 +538,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	QUnit.module("Custom currencies - currencyCode: false", {
 		afterEach: function() {
 			// reset global configuration
-			sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+			Configuration.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
@@ -552,7 +558,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	});
 
 	QUnit.test("Format with currency symbol with isoCode lookup", function (assert) {
-		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies({
+		Configuration.getFormatSettings().addCustomCurrencies({
 			"BTC": {
 				"symbol": "Ƀ",
 				"decimals": 5
@@ -590,7 +596,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	});
 
 	QUnit.test("Format with currencies with symbol from global config", function (assert) {
-		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies({
+		Configuration.getFormatSettings().addCustomCurrencies({
 			"BTC": {
 				symbol: "Ƀ"
 			},
@@ -618,7 +624,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	});
 
 	QUnit.test("Format with currencies from global config", function (assert) {
-		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies({
+		Configuration.getFormatSettings().addCustomCurrencies({
 			"BTC": {
 				symbol: "Ƀ"
 			},
@@ -648,13 +654,13 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	QUnit.module("Custom currencies - exclusive behaviour", {
 		afterEach: function() {
 			// reset global configuration
-			sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+			Configuration.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
 	QUnit.test("Custom Currencies instance overwrites global configuration", function (assert) {
 		// global configuration
-		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies({
+		Configuration.getFormatSettings().addCustomCurrencies({
 			"DOLLAR": {
 				"symbol": "$",
 				"digits": 5
@@ -691,7 +697,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	QUnit.module("Custom currencies - complex cases", {
 		afterEach: function() {
 			// reset global configuration
-			sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+			Configuration.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
@@ -1063,7 +1069,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	QUnit.module("Custom currencies - Ambiguous currency information", {
 		afterEach: function() {
 			// reset global configuration
-			sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+			Configuration.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
@@ -1109,7 +1115,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	});
 
 	QUnit.test("Duplicated symbol defined via custom currency", function(assert) {
-		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies({
+		Configuration.getFormatSettings().setCustomCurrencies({
 			"EURO": {
 				"digits": 5,
 				"isoCode": "EUR"
@@ -1201,7 +1207,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	QUnit.module("Custom currencies - parseAsString: true", {
 		afterEach: function() {
 			// reset global configuration
-			sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+			Configuration.getFormatSettings().setCustomCurrencies();
 		}
 	});
 
@@ -1310,7 +1316,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 	QUnit.module("Standard Currency Formatting", {
 		afterEach: function() {
 			// reset global configuration
-			sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+			Configuration.getFormatSettings().setCustomCurrencies();
 		}
 	});
 

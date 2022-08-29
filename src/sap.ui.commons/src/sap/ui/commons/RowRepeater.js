@@ -11,9 +11,10 @@ sap.ui.define([
     './Toolbar',
     './Paginator',
     './Button',
-    'sap/ui/model/FilterType'
+    'sap/ui/model/FilterType',
+    'sap/ui/core/Configuration'
 ],
-	function(jQuery, library, Control, RowRepeaterRenderer, Toolbar, Paginator, Button, FilterType) {
+	function(jQuery, library, Control, RowRepeaterRenderer, Toolbar, Paginator, Button, FilterType, Configuration) {
 	"use strict";
 
 
@@ -1086,7 +1087,7 @@ sap.ui.define([
 
 		// create UL for new page
 		var sDirection;
-		if (sap.ui.getCore() && sap.ui.getCore().getConfiguration() && sap.ui.getCore().getConfiguration().getRTL()) {
+		if (sap.ui.getCore() && Configuration && Configuration.getRTL()) {
 			sDirection = (iPageTo < iPageFrom) ? "left" : "right";
 		} else {
 			sDirection = (iPageTo < iPageFrom) ? "right" : "left";
@@ -1144,7 +1145,7 @@ sap.ui.define([
 
 		// remove positioning from new UL
 		var sDirection;
-		if (sap.ui.getCore() && sap.ui.getCore().getConfiguration() && sap.ui.getCore().getConfiguration().getRTL()) {
+		if (sap.ui.getCore() && Configuration && Configuration.getRTL()) {
 			sDirection = (this.getCurrentPage() < this.iPreviousPage) ? "left" : "right";
 		} else {
 			sDirection = (this.getCurrentPage() < this.iPreviousPage) ? "right" : "left";

@@ -8,8 +8,9 @@ sap.ui.define([
 	'sap/ui/core/_IconRegistry',
 	'sap/base/util/fetch',
 	'sap/ui/dom/includeScript',
-	'sap/ui/dom/includeStylesheet'
-	], function(jQuery, ManagedObject, AppCacheBuster, Control, _IconRegistry, fetch, includeScript, includeStylesheet) {
+	'sap/ui/dom/includeStylesheet',
+	'sap/ui/core/Configuration'
+	], function(jQuery, ManagedObject, AppCacheBuster, Control, _IconRegistry, fetch, includeScript, includeStylesheet, Configuration) {
 		"use strict";
 
 	// create a control with an URI property to validate URI replacement
@@ -562,7 +563,7 @@ sap.ui.define([
 		assert.expect(4);
 
 		var that = this;
-		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		var sLanguage = Configuration.getLanguage();
 		var sBaseUrl = "http://anyserver.company.corp:4711/anyapp/";
 		var sCacheBusterUrl = sBaseUrl + "sap-ui-cachebuster-info.json?sap-ui-language=" + sLanguage;
 
@@ -584,7 +585,7 @@ sap.ui.define([
 	QUnit.test("check AppCacheBuster.onIndexLoad(ed) hook (override)", function(assert) {
 		assert.expect(4);
 
-		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		var sLanguage = Configuration.getLanguage();
 		var sBaseUrl = "http://anyserver.company.corp:4711/anyapp/";
 		var sCacheBusterUrl = sBaseUrl + "sap-ui-cachebuster-info.json?sap-ui-language=" + sLanguage;
 

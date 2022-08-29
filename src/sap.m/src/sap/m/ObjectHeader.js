@@ -15,7 +15,8 @@ sap.ui.define([
 	'./ObjectHeaderRenderer',
 	'./ObjectMarker',
 	'./ObjectNumber',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ],
 	function(
 		library,
@@ -29,7 +30,8 @@ sap.ui.define([
 		ObjectHeaderRenderer,
     ObjectMarker,
     ObjectNumber,
-		jQuery
+		jQuery,
+		Configuration
 	) {
 	"use strict";
 
@@ -1093,7 +1095,7 @@ sap.ui.define([
 
 	ObjectHeader.prototype.onAfterRendering = function() {
 		var oObjectNumber = this.getAggregation("_objectNumber");
-		var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
+		var bPageRTL = Configuration.getRTL();
 		var $titleArrow = this.$("titleArrow");
 
 		$titleArrow.attr("role", "button");
@@ -1148,7 +1150,7 @@ sap.ui.define([
 	ObjectHeader.prototype._adjustNumberDiv = function() {
 		var sId = this.getId();
 		var oObjectNumber = this.getAggregation("_objectNumber");
-		var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
+		var bPageRTL = Configuration.getRTL();
 
 		if (oObjectNumber && oObjectNumber.getNumber()) {
 			var $numberDiv = jQuery(document.getElementById(sId + "-number"));

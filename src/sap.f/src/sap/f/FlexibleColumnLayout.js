@@ -1186,8 +1186,8 @@ sap.ui.define([
 		var iPercentWidth,
 			iAvailableWidth,
 			aColumns = FlexibleColumnLayout.COLUMN_ORDER.slice(),
-			bRtl = sap.ui.getCore().getConfiguration().getRTL(),
-			sAnimationMode = sap.ui.getCore().getConfiguration().getAnimationMode(),
+			bRtl = Configuration.getRTL(),
+			sAnimationMode = Configuration.getAnimationMode(),
 			bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal,
 			aActiveColumns,
 			iVisibleColumnsCount,
@@ -2306,7 +2306,7 @@ sap.ui.define([
 	 * @since 1.91
 	 */
 	FlexibleColumnLayout.prototype.showPlaceholder = function(mSettings) {
-		if (!sap.ui.getCore().getConfiguration().getPlaceholder()) {
+		if (!Configuration.getPlaceholder()) {
 			return;
 		}
 

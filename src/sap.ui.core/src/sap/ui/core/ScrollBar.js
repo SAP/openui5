@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/performance/trace/Interaction",
 	"sap/base/Log",
 	"sap/ui/events/jquery/EventSimulation",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ],
 	function(
 		Device,
@@ -21,7 +22,8 @@ sap.ui.define([
 		Interaction,
 		Log,
 		EventSimulation,
-		jQuery
+		jQuery,
+		Configuration
 	) {
 	"use strict";
 
@@ -143,7 +145,7 @@ sap.ui.define([
 		this._bScrollPosIsChecked = false;
 
 		// RTL mode
-		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRTL = Configuration.getRTL();
 
 		// suppress scroll event
 		this._bSuppressScroll = false;

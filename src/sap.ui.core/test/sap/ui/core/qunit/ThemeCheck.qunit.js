@@ -1,8 +1,9 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/ThemeCheck",
-	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(ThemeCheck, themeApplied) {
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/core/Configuration"
+], function(ThemeCheck, themeApplied, Configuration) {
 	"use strict";
 
 	// Wait until the theme is changed
@@ -157,14 +158,14 @@ sap.ui.define([
 
 	QUnit.test("RTL switch doesn't use suppress FOUC feature", function(assert) {
 
-		sap.ui.getCore().getConfiguration().setRTL(true);
+		Configuration.setRTL(true);
 		aLibraries.forEach(function(lib) {
 			var oLibraryCss = document.getElementById("sap-ui-theme-" + lib);
 			assert.ok(oLibraryCss, "Link for " + lib + " stylesheet should be available.");
 			var oOldLibraryCss = document.querySelectorAll("link[data-sap-ui-foucmarker='sap-ui-theme-" + lib + "']");
 			assert.equal(oOldLibraryCss && oOldLibraryCss.length || 0, 0, "Old stylesheet for library " + lib + " has been removed.");
 		});
-		sap.ui.getCore().getConfiguration().setRTL(false);
+		Configuration.setRTL(false);
 
 	});
 

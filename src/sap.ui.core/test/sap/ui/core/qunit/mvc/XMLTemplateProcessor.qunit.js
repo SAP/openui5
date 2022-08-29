@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/util/XMLHelper",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
-], function (coreLibrary, XMLTemplateProcessor, XMLView, XMLHelper, Log, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
+], function (coreLibrary, XMLTemplateProcessor, XMLView, XMLHelper, Log, jQuery, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -171,15 +172,15 @@ sap.ui.define([
 	QUnit.module("General");
 
 	QUnit.test("on design mode create Controls and fragment with correct declarativeSourceInfo", function (assert) {
-		var fnOrigGetDesignMode = sap.ui.getCore().getConfiguration().getDesignMode;
-		sap.ui.getCore().getConfiguration().getDesignMode = function () {
+		var fnOrigGetDesignMode = Configuration.getDesignMode;
+		Configuration.getDesignMode = function () {
 			return true;
 		};
 		var oView = sap.ui.view({
 			viewName: "my.View",
 			type: ViewType.XML
 		});
-		sap.ui.getCore().getConfiguration().getDesignMode = fnOrigGetDesignMode;
+		Configuration.getDesignMode = fnOrigGetDesignMode;
 		return oView.loaded().then(function () {
 			var oButton = oView.byId("button");
 			assert.ok(oButton, "button control is created");

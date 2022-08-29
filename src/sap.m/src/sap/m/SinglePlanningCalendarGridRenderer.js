@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/core/InvisibleText',
 	'./PlanningCalendarLegend',
-	'sap/ui/unified/library'
+	'sap/ui/unified/library',
+	'sap/ui/core/Configuration'
 	],
 	function(
 		CalendarDate,
@@ -18,7 +19,8 @@ sap.ui.define([
 		IconPool,
 		InvisibleText,
 		PlanningCalendarLegend,
-		unifiedLibrary) {
+		unifiedLibrary,
+		Configuration) {
 		"use strict";
 
 		var iVerticalPaddingBetweenAppointments = 0.125;
@@ -184,7 +186,7 @@ sap.ui.define([
 				aAriaLabels = oControl.getAriaLabelledBy(),
 				iLeftPosition = iStartDayDiff * (100 / iColumns),
 				iRightPosition = (iColumns - iEndDayDiff - 1) * (100 / iColumns),
-				bIsRTL = sap.ui.getCore().getConfiguration().getRTL(),
+				bIsRTL = Configuration.getRTL(),
 				aClasses;
 
 			if (aAriaLabels.length > 0) {
@@ -225,7 +227,7 @@ sap.ui.define([
 				oRm.class("sapUiCalendarApp" + sType);
 			}
 			if (sColor) {
-				if (sap.ui.getCore().getConfiguration().getRTL()) {
+				if (Configuration.getRTL()) {
 					oRm.style("border-right-color", sColor);
 				} else {
 					oRm.style("border-left-color", sColor);
@@ -541,7 +543,7 @@ sap.ui.define([
 				oRm.class("sapUiCalendarApp" + sType);
 			}
 			if (sColor) {
-				if (sap.ui.getCore().getConfiguration().getRTL()) {
+				if (Configuration.getRTL()) {
 					oRm.style("border-right-color", sColor);
 				} else {
 					oRm.style("border-left-color", sColor);
@@ -549,7 +551,7 @@ sap.ui.define([
 			}
 			oRm.style("top", iAppTop + "rem");
 			oRm.style("bottom", iAppBottom + "rem");
-			oRm.style(sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left", iAppChunkWidth * iAppointmentLevel + "%");
+			oRm.style(Configuration.getRTL() ? "right" : "left", iAppChunkWidth * iAppointmentLevel + "%");
 			oRm.style("width", iAppChunkWidth * iAppointmentWidth + "%"); // TODO: take into account the levels
 			oRm.openEnd();
 

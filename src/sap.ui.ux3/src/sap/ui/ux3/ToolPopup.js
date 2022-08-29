@@ -16,6 +16,7 @@ sap.ui.define([
     'sap/ui/core/library',
     'sap/base/assert',
     'sap/base/Log',
+    'sap/ui/core/Configuration',
     // jQuery Plugin 'rect'
     'sap/ui/dom/jquery/rect',
     // jQuery Plugin 'control'
@@ -35,7 +36,8 @@ sap.ui.define([
 		ResizeHandler,
 		coreLibrary,
 		assert,
-		Log
+		Log,
+		Configuration
 	) {
         "use strict";
 
@@ -890,7 +892,7 @@ sap.ui.define([
                     iVal = 0,
                     iZero = 0, // this is the 0 of the  relative position between ToolPopup and Opener
                     iHalfArrow = oThis.iArrowHeight / 2,
-                    isRTL = sap.ui.getCore().getConfiguration().getRTL(),
+                    isRTL = Configuration.getRTL(),
                     sArrowDir,
                     oPopRect = oThis.$().rect(),
                     oOpener = jQuery(document.getElementById(oThis.getOpener())),
@@ -1137,7 +1139,7 @@ sap.ui.define([
                     this._bFocusSet = false;
                 }
 
-                this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
+                this._bRTL = Configuration.getRTL();
             };
 
             ToolPopup.prototype._ensurePopup = function () {

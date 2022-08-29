@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/ui/events/PseudoEvents",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/Configuration"
 ], function (
 	library,
 	Control,
@@ -39,7 +40,8 @@ sap.ui.define([
 	PseudoEvents,
 	Parameters,
 	jQuery,
-	coreLibrary
+	coreLibrary,
+	Configuration
 ) {
 	"use strict";
 
@@ -841,7 +843,7 @@ sap.ui.define([
 			bLineBreak = this.$().is(":not(:first-child)") && iLines > 1,
 			$LineBreak = jQuery("<span><br></span>"),
 			i = 0,
-			bRTL = sap.ui.getCore().getConfiguration().getRTL(),
+			bRTL = Configuration.getRTL(),
 			oEndMarkerPosition = $End.position();
 
 		if (bLineBreak) { //tile does not fit in line without breaking --> add line-break before tile

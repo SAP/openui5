@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library"],
-	function(library) {
+sap.ui.define(["./library", "sap/ui/core/Configuration"],
+	function(library, Configuration) {
 	"use strict";
 
 
@@ -35,7 +35,7 @@ sap.ui.define(["./library"],
 		// result: <div id="<id>" data-sap-ui="<id>" class="sapUiUx3ActionBar" role="toolbar">
 		rm.openStart("div", oControl);
 		rm.class("sapUiUx3ActionBar");
-		if ( sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if ( Configuration.getAccessibility()) {
 			rm.attr('role', 'toolbar');
 		}
 		rm.openEnd();

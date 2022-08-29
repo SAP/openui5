@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for the sap.m.FeedListItem
-sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"],
-	function(ListItemBaseRenderer, Renderer, Device) {
+sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device", "sap/ui/core/Configuration"],
+	function(ListItemBaseRenderer, Renderer, Device, Configuration) {
 	"use strict";
 
 
@@ -124,7 +124,7 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"
 			if (oControl.getInfo() || oControl.getTimestamp()) {
 				// info and date
 				oRm.openStart('p').class("sapMFeedListItemFooter").class("sapUiSelectable").openEnd();
-				if (!sap.ui.getCore().getConfiguration().getRTL()) {
+				if (!Configuration.getRTL()) {
 					if (oControl.getInfo()) {
 						this._writeInfo(oRm, oControl, sMyId);
 						// Write Interpunct separator if necessary (with spaces before and after)

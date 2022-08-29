@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/thirdparty/jquery"
-], function(Log, InvisibleText, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
+], function(Log, InvisibleText, jQuery, Configuration) {
 	"use strict";
 
 	var oDIV = document.createElement("div");
@@ -58,7 +59,7 @@ sap.ui.define([
 		assert.equal(textId2, textId, "retrieving text ID a second time must return the same ID");
 
 		// switch language
-		sap.ui.getCore().getConfiguration().setLanguage("de");
+		Configuration.setLanguage("de");
 		sap.ui.getCore().applyChanges();
 		var sExpectedTextDE = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
 		assert.notEqual(sExpectedTextEN, sExpectedTextDE, "texts should differ between 'en' and 'de'");

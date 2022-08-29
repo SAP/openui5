@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement", "sap/ui/Global"],
-	function(Log, Measurement, Global) {
+sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement", "sap/ui/Global", "sap/ui/core/Configuration"],
+	function(Log, Measurement, Global, Configuration) {
 		"use strict";
 
 		/**
@@ -924,11 +924,11 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement", "sap/ui/Global"
 		}
 
 		function isSerializationSupportOn() {
-			return sap.ui.getCore().getConfiguration().isUI5CacheSerializationSupportOn();
+			return Configuration.isUI5CacheSerializationSupportOn();
 		}
 
 		function getExcludedKeys() {
-			return sap.ui.getCore().getConfiguration().getUI5CacheExcludedKeys();
+			return Configuration.getUI5CacheExcludedKeys();
 		}
 
 		/**

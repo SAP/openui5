@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/_Helper",
 	"sap/ui/model/CompositeType",
@@ -12,14 +13,14 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/test/TestUtils"
-], function (Log, DateFormat, _Helper, CompositeType, FormatException, ParseException,
-		DateTimeWithTimezone, DecimalType, StringType, TestUtils) {
+], function (Log, Configuration, DateFormat, _Helper, CompositeType, FormatException,
+		ParseException, DateTimeWithTimezone, DecimalType, StringType, TestUtils) {
 	/*global sinon, QUnit*/
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.type.DateTimeWithTimezone",
-		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		sDefaultLanguage = Configuration.getLanguage(),
 		// TODO Timezone Configuration: Configuration#setTimezone currently does not change the
 		// timezone configuration.
 		// sDefaultTimezone = sap.ui.getCore().getConfiguration().getTimezone(),
@@ -39,13 +40,13 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 			// TODO Timezone Configuration: Configuration#setTimezone currently does not change the
 			// timezone configuration.
 			// sap.ui.getCore().getConfiguration().setTimezone("Europe/London");
 		},
 		afterEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 			// TODO Timezone Configuration: Configuration#setTimezone currently does not change the
 			// timezone configuration.
 			// sap.ui.getCore().getConfiguration().setTimezone(sDefaultTimezone);

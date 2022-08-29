@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/util/merge",
 	"sap/base/util/uid",
+	"sap/ui/core/Configuration",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
 	"sap/ui/model/FilterProcessor",
@@ -38,8 +39,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI"
 ], function(CountMode, ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding,
 		ODataTreeBinding, ODataUtils, assert, Log, encodeURL, each, extend, isEmptyObject,
-		isPlainObject, merge, uid, BindingMode, Context, FilterProcessor, Model, ODataAnnotations,
-		ODataMetaModel, OData, URI) {
+		isPlainObject, merge, uid, Configuration, BindingMode, Context, FilterProcessor, Model,
+		ODataAnnotations, ODataMetaModel, OData, URI) {
 	"use strict";
 
 	/**
@@ -166,7 +167,7 @@ sap.ui.define([
 				}
 			}
 
-			if (sap.ui.getCore().getConfiguration().getStatistics()) {
+			if (Configuration.getStatistics()) {
 				// add statistics parameter to every request (supported only on Gateway servers)
 				this.aUrlParams.push("sap-statistics=true");
 			}
@@ -191,7 +192,7 @@ sap.ui.define([
 			this.sUser = sUser;
 			this.sPassword = sPassword;
 
-			this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguageTag();
+			this.oHeaders["Accept-Language"] = Configuration.getLanguageTag();
 
 			if (!this.oServiceData.oMetadata) {
 				//create Metadata object

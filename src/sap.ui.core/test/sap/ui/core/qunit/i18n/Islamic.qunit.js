@@ -1,7 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/date/Islamic"
-], function(Islamic) {
+	"sap/ui/core/date/Islamic", "sap/ui/core/Configuration"
+], function(Islamic, Configuration) {
 	"use strict";
 
 	//@formatter:off
@@ -888,8 +888,8 @@ sap.ui.define([
 	function prepare() {
 		this.sandbox = sinon.sandbox.create();
 		// set to "1" and it will fall-back to "A"
-		this.sandbox.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getLegacyDateFormat").returns("1");
-		this.oSpyFormatSettings = this.sandbox.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getLegacyDateCalendarCustomizing");
+		this.sandbox.stub(Configuration.getFormatSettings(), "getLegacyDateFormat").returns("1");
+		this.oSpyFormatSettings = this.sandbox.stub(Configuration.getFormatSettings(), "getLegacyDateCalendarCustomizing");
 		this.oSpyFormatSettings.returns(customizingInfo);
 	}
 	function cleanup() {

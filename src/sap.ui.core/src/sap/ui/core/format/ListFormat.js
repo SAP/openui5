@@ -8,9 +8,10 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	"sap/base/Log",
 	"sap/base/util/extend",
-	"sap/base/util/isEmptyObject"
+	"sap/base/util/isEmptyObject",
+	"sap/ui/core/Configuration"
 ],
-	function(Locale, LocaleData, Log, extend, isEmptyObject) {
+	function(Locale, LocaleData, Log, extend, isEmptyObject, Configuration) {
 	"use strict";
 
 	/**
@@ -64,7 +65,7 @@ sap.ui.define([
 		}
 
 		if (!oLocale) {
-			oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+			oLocale = Configuration.getFormatSettings().getFormatLocale();
 		}
 		oFormat.oLocale = oLocale;
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);

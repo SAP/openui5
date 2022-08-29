@@ -19,7 +19,8 @@ sap.ui.define([
     'sap/ui/commons/MenuButton',
     'sap/ui/commons/Button',
     'sap/ui/Device',
-    'sap/base/Log'
+    'sap/base/Log',
+    "sap/ui/core/Configuration"
 ],
 	function(
 	    jQuery,
@@ -37,7 +38,8 @@ sap.ui.define([
 		MenuButton,
 		Button,
 		Device,
-		Log
+		Log,
+		Configuration
 	) {
 	"use strict";
 
@@ -455,7 +457,7 @@ sap.ui.define([
 				};
 				//populates the menu of the 'Follow' actionBar button depending on the 'FollowState' property
 				oResult._fnPrepareFollowMenu = function( oEvent, oActionBar ) {
-					var imagePath = sap.ui.resource("sap.ui.ux3", "themes/" + sap.ui.getCore().getConfiguration().getTheme());
+					var imagePath = sap.ui.resource("sap.ui.ux3", "themes/" + Configuration.getTheme());
 					if (oActionBar.mActionMap[oActionBar.mActionKeys.Follow]) {
 						if (!oActionBar._oUnFollowItem) {
 							oActionBar._oUnFollowItem = new MenuItem({

@@ -18,9 +18,11 @@ sap.ui.define([
     'sap/ui/core/LocaleData',
     'sap/ui/core/Popup',
     'sap/ui/dom/containsOrEquals',
-    'sap/ui/dom/jquery/cursorPos' // jQuery.fn.cursorPos
+    'sap/ui/core/Configuration',
+    // jQuery.fn.cursorPos
+    'sap/ui/dom/jquery/cursorPos'
 ],
-	function(jQuery, Log, TextField, TypeDate, UniversalDate, library, DatePickerRenderer, DateFormat, coreLibrary, Device, Locale, LocaleData, Popup, containsOrEquals) {
+	function(jQuery, Log, TextField, TypeDate, UniversalDate, library, DatePickerRenderer, DateFormat, coreLibrary, Device, Locale, LocaleData, Popup, containsOrEquals, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.core.Popup.Dock
@@ -559,7 +561,7 @@ sap.ui.define([
 				oLocale = _getUsedLocale(oThis);
 				var oLocaleData = LocaleData.getInstance(oLocale);
 				sPattern = oLocaleData.getDatePattern("medium");
-				sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+				sCalendarType = Configuration.getCalendarType();
 			}
 
 			if (sPattern != oThis._sUsedPattern || sCalendarType != oThis._sUsedCalendarType) {
@@ -585,7 +587,7 @@ sap.ui.define([
 			if (sLocale) {
 				oLocale = oThis._oLocale;
 			} else {
-				oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+				oLocale = Configuration.getFormatSettings().getFormatLocale();
 			}
 
 			return oLocale;
@@ -743,7 +745,7 @@ sap.ui.define([
 				if (oBinding && oBinding.oType && (oBinding.oType instanceof TypeDate)) {
 					sCalendarType = oBinding.oType.oOutputFormat.oFormatOptions.calendarType;
 				} else {
-					sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+					sCalendarType = Configuration.getCalendarType();
 				}
 				var oDate = UniversalDate.getInstance(new Date(oOldDate.getTime()), sCalendarType);
 				oOldDate = UniversalDate.getInstance(new Date(oOldDate.getTime()), sCalendarType);

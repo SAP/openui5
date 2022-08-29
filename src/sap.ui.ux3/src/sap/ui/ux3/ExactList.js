@@ -19,7 +19,8 @@ sap.ui.define([
     'sap/ui/dom/containsOrEquals',
     'sap/ui/events/ControlEvents',
     'sap/ui/Device',
-    'sap/base/security/encodeXML'
+    'sap/base/security/encodeXML',
+    'sap/ui/core/Configuration'
 ],
 	function(
 	    jQuery,
@@ -38,7 +39,8 @@ sap.ui.define([
 		containsOrEquals,
 		ControlEvents,
 		Device,
-		encodeXML
+		encodeXML,
+		Configuration
 	) {
 	"use strict";
 
@@ -318,7 +320,7 @@ sap.ui.define([
 			return;
 		}
 
-		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRTL = Configuration.getRTL();
 
 		//Init the open animation (like expand, no Open Animation when the control is the top list)
 		if (!this._isTop()) {

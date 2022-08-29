@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nColumnsPanel.
 sap.ui.define([
-	'sap/ui/core/library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/IconPool', './library', './Table', './Column', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Text', './Button', './OverflowToolbar', './OverflowToolbarLayoutData', './OverflowToolbarButton', './ToolbarSpacer', "sap/ui/thirdparty/jquery"
-], function(CoreLibrary, ChangeReason, JSONModel, BindingMode, IconPool, library, Table, Column, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, Text, Button, OverflowToolbar, OverflowToolbarLayoutData, OverflowToolbarButton, ToolbarSpacer, jQuery) {
+	'sap/ui/core/library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/IconPool', './library', './Table', './Column', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Text', './Button', './OverflowToolbar', './OverflowToolbarLayoutData', './OverflowToolbarButton', './ToolbarSpacer', "sap/ui/thirdparty/jquery", "sap/ui/core/Configuration"
+], function(CoreLibrary, ChangeReason, JSONModel, BindingMode, IconPool, library, Table, Column, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, Text, Button, OverflowToolbar, OverflowToolbarLayoutData, OverflowToolbarButton, ToolbarSpacer, jQuery, Configuration) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -719,7 +719,7 @@ sap.ui.define([
 		var oCollator;
 		var sLanguage;
 		try {
-			sLanguage = sap.ui.getCore().getConfiguration().getLocale().toString();
+			sLanguage = Configuration.getLocale().toString();
 			if (typeof window.Intl !== 'undefined') {
 				oCollator = window.Intl.Collator(sLanguage, {
 					numeric: true

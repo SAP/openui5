@@ -9,13 +9,13 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/ListItem',
 	'sap/ui/core/library',
-	"sap/ui/core/Renderer",
+	'sap/ui/core/Renderer',
 	'sap/ui/core/message/MessageMixin',
 	'sap/m/DynamicDateFormat',
 	'sap/m/DynamicDateUtil',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/Icon',
-	"sap/ui/core/LabelEnablement",
+	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/base/ManagedObjectObserver',
@@ -36,8 +36,9 @@ sap.ui.define([
 	'./StandardDynamicDateOption',
 	'./library',
 	'sap/ui/thirdparty/jquery',
-	'sap/ui/dom/jquery/Focusable'], // provides jQuery.fn.firstFocusableDomRef
-	function(
+	'sap/ui/core/Configuration',
+	'sap/ui/dom/jquery/Focusable' // provides jQuery.fn.firstFocusableDomRef
+], function(
 		InvisibleText,
 		Element,
 		Control,
@@ -69,7 +70,8 @@ sap.ui.define([
 		DynamicDateRangeRenderer,
 		StandardDynamicDateOption,
 		library,
-		jQuery
+		jQuery,
+		Configuration
 	) {
 		"use strict";
 
@@ -731,7 +733,7 @@ sap.ui.define([
 
 		DynamicDateRange.prototype._convertDate = function(oDate, bUTCTimezone) {
 			var sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
-			var sFormatTimezone = bUTCTimezone ? "UTC" : sap.ui.getCore().getConfiguration().getTimezone();
+			var sFormatTimezone = bUTCTimezone ? "UTC" : Configuration.getTimezone();
 			var oParts = this._getPickerParser().parse(
 				sFormattedDate,
 				sFormatTimezone
@@ -744,7 +746,7 @@ sap.ui.define([
 		DynamicDateRange.prototype._reverseConvertDate = function(oDate) {
 			var sFormattedDate = this._getPickerParser().format(
 				oDate,
-				sap.ui.getCore().getConfiguration().getTimezone()
+				Configuration.getTimezone()
 			);
 			var oParts = this._getPickerParser().parse(
 				sFormattedDate,

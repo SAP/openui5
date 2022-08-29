@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/ui/events/F6Navigation",
 	"sap/ui/events/isMouseEventDelayed",
 	"sap/ui/base/EventProvider",
+	"sap/ui/core/Configuration",
 	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
 	"sap/ui/dom/jquery/Focusable", // jQuery Plugin "firstFocusableDomRef"
 	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
@@ -51,7 +52,8 @@ sap.ui.define([
 	jQuery,
 	F6Navigation,
 	isMouseEventDelayed,
-	EventProvider
+	EventProvider,
+	Configuration
 	//control
 	//Focusable
 	//rect
@@ -1750,7 +1752,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype._applyPosition = function(oPosition) {
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var bRtl = Configuration.getRTL();
 		var $Ref = this._$();
 
 		if ($Ref.length) {

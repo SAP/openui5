@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
-	"sap/base/util/values"
+	"sap/base/util/values",
+	"sap/ui/core/Configuration"
 ], function(
 	Plugin,
 	DtUtil,
 	FlUtils,
 	ManifestUtils,
 	ExtensionPointRegistryAPI,
-	values
+	values,
+	Configuration
 ) {
 	"use strict";
 
@@ -79,7 +81,7 @@ sap.ui.define([
 	}
 
 	function isDesignMode() {
-		return sap.ui.getCore().getConfiguration().getDesignMode();
+		return Configuration.getDesignMode();
 	}
 
 	AddXMLAtExtensionPoint.prototype.bAppDescriptorCommandAlreadyAvailable = false;

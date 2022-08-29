@@ -12,9 +12,10 @@ sap.ui.define([
     'sap/ui/core/Control',
     'sap/ui/core/EnabledPropagator',
     'sap/ui/core/ResizeHandler',
-    './SliderRenderer'
+    './SliderRenderer',
+    'sap/ui/core/Configuration'
 ],
-	function(jQuery, Log, containsOrEquals, ControlEvents, library, Control, EnabledPropagator, ResizeHandler, SliderRenderer) {
+	function(jQuery, Log, containsOrEquals, ControlEvents, library, Control, EnabledPropagator, ResizeHandler, SliderRenderer, Configuration) {
 	"use strict";
 
 
@@ -194,8 +195,8 @@ sap.ui.define([
 		this.oGrip = this.getDomRef("grip");
 		this.oBar  = this.getDomRef("bar");
 		this.oHiLi = this.getDomRef("hili");
-		this.bRtl  = sap.ui.getCore().getConfiguration().getRTL();
-		this.bAcc  = sap.ui.getCore().getConfiguration().getAccessibility();
+		this.bRtl  = Configuration.getRTL();
+		this.bAcc  = Configuration.getAccessibility();
 		this.bTextLabels = (this.getLabels() && this.getLabels().length > 0);
 		this.oMovingGrip = this.oGrip;
 
