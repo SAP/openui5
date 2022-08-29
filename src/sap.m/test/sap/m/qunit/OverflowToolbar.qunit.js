@@ -2647,6 +2647,43 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	QUnit.test("'_minWidthChange' event is fired with correct parameter", function (assert) {
+		// Arrange
+		var oNeverOveflowButton = getButton('3', OverflowToolbarPriority.NeverOverflow),
+			aDefaultContent = [
+				getButton('1'),
+				getButton('2'),
+				getButton('3', OverflowToolbarPriority.NeverOverflow),
+				getButton('4'),
+				getButton('5')
+			],
+		fnCheckMinWidth = function(oEvent) {
+			var iMinWidth = oEvent.getParameter("minWidth");
+
+			// Assert
+			assert.ok(true, "'_minWidthChange' event is fired");
+			assert.strictEqual(iMinWidth, oOverflowTB._iToolbarOnlyContentSize + oOverflowTB._getOverflowButtonSize(),
+				"Required min-width is equal to the width of the never overflowing content and the OverflowButton size");
+
+			// Clean up
+			oOverflowTB.destroy();
+			done();
+
+			oNeverOveflowButton.getLayoutData().setPriority("High");
+			oOverflowTB.attachEventOnce("_minWidthChange", fnCheckMinWidth);
+		},
+		oOverflowTB = new OverflowToolbar({
+			content: aDefaultContent
+		}),
+		done = assert.async();
+
+		assert.expect(2);
+
+		oOverflowTB.attachEventOnce("_minWidthChange", fnCheckMinWidth);
+		oOverflowTB.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+	});
+
 	QUnit.test("Popover can listen to private interaction events from associative controls", function (assert) {
 		var oOverflowTB = new OverflowToolbar({width: 'auto'}),
 			oPopover = oOverflowTB._getPopover(),

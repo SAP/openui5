@@ -216,6 +216,9 @@ sap.ui.define([
 		// Overflow Button clone, it helps to calculate correct size of the button
 		this._oOverflowToolbarButtonClone = null;
 
+		// Width of the content with "NeverOverflow" priority
+		this._iToolbarOnlyContentSize = 0;
+
 		this._aMovableControls = []; // Controls that can be in the toolbar or Popover
 		this._aToolbarOnlyControls = []; // Controls that can't go to the Popover (inputs, labels, buttons with special layout, etc...)
 		this._aPopoverOnlyControls = []; // Controls that are forced to stay in the Popover (buttons with layout)
@@ -477,13 +480,22 @@ sap.ui.define([
 		var aVisiblePopoverOnlyControls,
 			bHasVisiblePopoverOnlyControls,
 			iLeftPadding = parseInt(this.$().css("padding-right")) || 0,
-			iRightPadding =  parseInt(this.$().css("padding-left")) || 0;
+			iRightPadding =  parseInt(this.$().css("padding-left")) || 0,
+			iOverflowButtonSize = this._getOverflowButtonSize(),
+			iToolbarOnlyContentSize = this._iToolbarOnlyContentSize;
 
 		this._iOldContentSize = this._iContentSize;
 		this._iContentSize = 0; // The total *optimal* size of all controls in the toolbar
+		this._iToolbarOnlyContentSize = 0;
 		this._bNeedUpdateOnControlsCachedSizes = false;
 
 		this.getContent().forEach(this._updateControlsCachedSizes, this);
+
+		if (iToolbarOnlyContentSize !== this._iToolbarOnlyContentSize) {
+			this.fireEvent("_minWidthChange", {
+				minWidth: this._iToolbarOnlyContentSize > 0 ? this._iToolbarOnlyContentSize + iOverflowButtonSize : 0
+			});
+		}
 
 		// If the system is a phone sometimes due to specificity in the flex the content can be rendered 1px larger that it should be.
 		// This causes an overflow of the last element/button
@@ -500,7 +512,7 @@ sap.ui.define([
 
 			if (bHasVisiblePopoverOnlyControls) {
 				// At least one control will be in the Popover, so the overflow button is required within content
-				this._iContentSize += this._getOverflowButtonSize();
+				this._iContentSize += iOverflowButtonSize;
 			}
 		}
 
@@ -536,6 +548,10 @@ sap.ui.define([
 		// Only add up the size of controls that can be shown in the toolbar, hence this addition is here
 		if (sPriority !== OverflowToolbarPriority.AlwaysOverflow) {
 			this._iContentSize += iControlSize;
+		}
+
+		if (sPriority === OverflowToolbarPriority.NeverOverflow) {
+			this._iToolbarOnlyContentSize += iControlSize;
 		}
 	};
 
