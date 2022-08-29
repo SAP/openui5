@@ -31,6 +31,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -39,6 +40,7 @@
 					<tr>
 						<td>type</td>
 						<td>string</td>
+						<td></td>
 						<td>No</td>
 						<td>The type of the header. Should be set to "Default" or omitted.</td>
 						<td>1.14.0</td>
@@ -47,6 +49,7 @@
 					<tr>
 						<td>title</td>
 						<td>string</td>
+						<td></td>
 						<td>Yes</td>
 						<td>The title.</td>
 						<td>1.14.0</td>
@@ -55,22 +58,16 @@
 					<tr>
 						<td>subTitle</td>
 						<td>string</td>
+						<td></td>
 						<td>No</td>
 						<td>The subtitle.</td>
 						<td>1.14.0</td>
 						<td>1.64</td>
 					</tr>
 					<tr>
-						<td>actions</td>
-						<td>array</td>
-						<td>No</td>
-						<td>Represents description of actions that can be applied on a part of a card.</td>
-						<td>1.15.0</td>
-						<td>1.65</td>
-					</tr>
-					<tr>
 						<td>icon</td>
 						<td><a href="#iconApi">Icon</a></td>
+						<td></td>
 						<td>No</td>
 						<td>Represents the icon of the card.</td>
 						<td>1.14.0</td>
@@ -78,6 +75,7 @@
 					</tr>
 					<tr>
 						<td>status</td>
+						<td></td>
 						<td></td>
 						<td>No</td>
 						<td>Represents the status of the card.</td>
@@ -87,6 +85,7 @@
 					<tr>
 						<td>actions</td>
 						<td><a href="../../../index.html#/learn/actions" target="_parent">Actions[]</a></td>
+						<td></td>
 						<td>No</td>
 						<td>Actions that are triggered when the header is pressed.</td>
 						<td>1.15.0</td>
@@ -95,6 +94,7 @@
 					<tr>
 						<td>dataTimestamp</td>
 						<td>string</td>
+						<td></td>
 						<td>No</td>
 						<td>
 							Defines the timestamp of the oldest data in the card. Use this to show to the end user how fresh the information in the card is.<br>
@@ -104,6 +104,20 @@
 						</td>
 						<td>1.33.0</td>
 						<td>1.89</td>
+					</tr>
+					<tr>
+						<td>visible</td>
+						<td>boolean</td>
+						<td>true</td>
+						<td>No</td>
+						<td>
+							Visibility of the card header.<br>
+							If the header is hidden, the menu that holds custom extension or host actions will also be hidden.
+							Therefore, the header should only be hidden in special cases and when it doesn't bring important information.<br>
+							<b>Note:</b> This property is experimental and may change!
+						</td>
+						<td>1.47.0</td>
+						<td>1.107</td>
 					</tr>
 				</table>
 			</div>

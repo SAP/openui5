@@ -13,6 +13,12 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"separator1": {
 						"type": "separator"
 					},
+					"headerVisibility": {
+						"manifestpath": "/sap.card/header/visible",
+						"type": "boolean",
+						"label": "Visible Header",
+						"cols": 1
+					},
 					"title": {
 						"manifestpath": "/sap.card/configuration/parameters/title/value",
 						"type": "string",

@@ -115,6 +115,38 @@
 				"type": "List",
 				"content": {}
 			}
+		},
+		"hiddenHeader": {
+			"sap.app": {
+				"id": "cardsdemo.defaultHeader.hiddenHeader",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"header": {
+					"title": "Card Title (should be hidden)",
+					"visible": false
+				},
+				"type": "List",
+				"content": {
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": "{Name}",
+						"description": "{Description}",
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
 		}
 	},
 	"splitter": {
@@ -750,6 +782,43 @@
 					"unitOfMeasurement": "EUR"
 				},
 				"type": "List"
+			}
+		},
+		"hiddenHeader": {
+			"sap.app": {
+				"id": "cardsdemo.kpiManifests.hiddenHeader",
+				"type": "card"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "./cardcontent/someitems.json"
+					}
+				},
+				"header": {
+					"visible": false,
+					"type": "Numeric",
+					"title": "Numeric Header (should be hidden)",
+					"mainIndicator": {
+						"number": "15.6"
+					},
+					"unitOfMeasurement": "EUR"
+				},
+				"type": "List",
+				"content": {
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": "{Name}",
+						"description": "{Description}",
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
 			}
 		}
 	},
