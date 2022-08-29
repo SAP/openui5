@@ -1,0 +1,12 @@
+{
+  "1.107.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "52b706bfad5b35545b4e0c0bca7f28d7ddf74ed5",
+        "type": "FEATURE",
+        "text": " Table: Using the new ColumnMenu when the headerMenu association is set"
+      }
+    ]
+  }
+}

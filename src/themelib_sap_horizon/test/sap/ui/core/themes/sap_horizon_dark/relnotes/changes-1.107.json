@@ -1,0 +1,40 @@
+{
+  "1.107.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "03a6d051bcef9efbfcd60dcfbee5375c36d92b56",
+        "type": "FIX",
+        "text": " sap.m.Slider: Start/end dot position adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280159201"
+          }
+        ]
+      },
+      {
+        "id": "58c57d08a13c9af7859db35cb25f39c359c49a37",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Width adjustment for not editable input controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280159028"
+          }
+        ]
+      },
+      {
+        "id": "d6f35e51fbeb74bde61db219b8c55230d5b2a838",
+        "type": "FIX",
+        "text": " Integration cards: Button group in Object card is now aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280135973"
+          }
+        ]
+      }
+    ]
+  }
+}

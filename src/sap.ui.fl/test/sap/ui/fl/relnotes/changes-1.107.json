@@ -1,0 +1,33 @@
+{
+  "1.107.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "f2fd96b44b2f563073d2449471754186559da5bc",
+        "type": "FEATURE",
+        "text": " sap.ui.fl: enable condensing for ObjectStorageConnector"
+      },
+      {
+        "id": "94ae6a5a905de338b9a898f1c7ecd57ca06a2592",
+        "type": "FIX",
+        "text": " sap.ui.fl: remove obsolete registration of diagnostics plugin",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280155010"
+          }
+        ]
+      },
+      {
+        "id": "7bb8be64f64e69c534c6be65553ebea3c0e9f761",
+        "type": "FEATURE",
+        "text": " sap.ui.fl - enable sharing of control variants on CF"
+      },
+      {
+        "id": "f066ae92beed86211d1f547ab5fb08f1eae1aec6",
+        "type": "FIX",
+        "text": " adapt return types to textual description"
+      }
+    ]
+  }
+}

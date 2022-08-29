@@ -1,0 +1,45 @@
+{
+  "1.107.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "8a45b8962080a42f978ab68f26d02a69fadbda1e",
+        "type": "FIX",
+        "text": " Demo Kit: Steps samples loading fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280161513"
+          }
+        ]
+      },
+      {
+        "id": "dfef3033b63aa91e8714d62a0b59956ba3586a70",
+        "type": "FIX",
+        "text": " Demo Kit: Table column width fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280157738"
+          }
+        ]
+      },
+      {
+        "id": "d4d997090fc0e984847b3aadf1c74a4f1c089a94",
+        "type": "FEATURE",
+        "text": " Demo Kit: UX surveys integrated"
+      },
+      {
+        "id": "4579bf2255ba04c44a62032a3b668897106e3f60",
+        "type": "FIX",
+        "text": " Demo Kit: Binding in samples fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
+  }
+}

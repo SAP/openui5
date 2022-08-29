@@ -1,0 +1,51 @@
+{
+  "1.107.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "45902b2e165ee593c51c8ab7d38c03ef5c052a7c",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: adjust week selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280164558"
+          }
+        ]
+      },
+      {
+        "id": "3fbd8e2e589a41f3d3e17df10f9a33c4da5c0fa0",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: firstWeekDay now works in different locales",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004751872022"
+          }
+        ]
+      },
+      {
+        "id": "90aaecf6980a7bfc390119985e652f91aaf32323",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: adjust enabled property setter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280114722"
+          }
+        ]
+      },
+      {
+        "id": "8b8a6dbf186d7bd6c1c35a716bead8501650a616",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.MonthPicker: fixed one-row month navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270108525"
+          }
+        ]
+      }
+    ]
+  }
+}
