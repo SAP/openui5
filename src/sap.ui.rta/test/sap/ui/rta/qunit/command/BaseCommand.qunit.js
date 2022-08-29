@@ -283,7 +283,7 @@ sap.ui.define([
 				assert.ok(this.stack.isEmpty(), "and the command stack is still empty");
 				assert.strictEqual(oError, ERROR_INTENTIONALLY, "an error is rejected and caught");
 				assert.strictEqual(oError.command, this.failingCommand, "and the command is part of the error");
-				assert.equal(fnStackModifiedSpy.callCount, 2, " the modify stack listener is called twice, once for push and once for pop");
+				assert.equal(fnStackModifiedSpy.callCount, 0, "the modify stack listener is not called");
 			}.bind(this));
 		});
 
@@ -302,7 +302,7 @@ sap.ui.define([
 				assert.equal(oError.message, oStandardError.message, "an error is rejected and caught");
 				assert.strictEqual(oError.command, this.failingCommand, "and the command is part of the error");
 				assert.equal(oError.index, 0, "and the index is part of the error");
-				assert.equal(fnStackModifiedSpy.callCount, 2, " the modify stack listener is called twice, once for push and once for pop");
+				assert.equal(fnStackModifiedSpy.callCount, 0, "the modify stack listener is not called");
 			}.bind(this));
 		});
 
@@ -796,12 +796,11 @@ sap.ui.define([
 		QUnit.test("After pushing one command and executing the top of stack", function(assert) {
 			var fnStackModified = sinon.spy(this.stack, "fireModified");
 			this.stack.push(this.command);
-			assert.equal(fnStackModified.callCount, 1, " the modify stack listener called on push");
 
 			return this.stack.execute()
 
 			.then(function() {
-				assert.equal(fnStackModified.callCount, 2, " the modify stack listener is called on execute");
+				assert.equal(fnStackModified.callCount, 1, " the modify stack listener is called on execute");
 				assert.equal(this.stack._toBeExecuted, -1, " nothing is to be executed");
 			}.bind(this))
 
@@ -813,12 +812,8 @@ sap.ui.define([
 		QUnit.test("After pushing one command and calling pushAndExecute the top of stack, then", function(assert) {
 			var done = assert.async();
 			var fnStackModified = sinon.spy(function() {
-				if (fnStackModified.calledOnce) {
-					assert.equal(this.stack._toBeExecuted, 0, "command pushed but not executed");
-				} else if (fnStackModified.calledTwice) {
-					assert.equal(this.stack._toBeExecuted, -1, " nothing is to be executed");
-					done();
-				}
+				assert.equal(this.stack._toBeExecuted, -1, " nothing is to be executed");
+				done();
 			}.bind(this));
 			this.stack.attachModified(fnStackModified);
 			this.stack.pushAndExecute(this.command);
