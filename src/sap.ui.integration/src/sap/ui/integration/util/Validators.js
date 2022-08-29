@@ -112,10 +112,10 @@ sap.ui.define([], function () {
 				return !b || !!v.value;
 			},
 			requiredTxt: "EDITOR_VAL_FIELDREQ",
-			resrictToPredefinedOptions: function (v, b) {
+			restrictToPredefinedOptions: function (v, b) {
 				return (b && !v.value && !v.key) || (b && !!v.key);
 			},
-			resrictToPredefinedOptionsTxt: "EDITOR_ONLY_LISTED_VALUES_ALLOWED"
+			restrictToPredefinedOptionsTxt: "EDITOR_ONLY_LISTED_VALUES_ALLOWED"
 		}
 	};
 

@@ -105,7 +105,7 @@
 									"required": true
 								},
 								{
-									"resrictToPredefinedOptions": true,
+									"restrictToPredefinedOptions": true,
 									"message": "{i18n>ONLY_LISTED_VALUES_ALLOWED}"
 								}
 							]

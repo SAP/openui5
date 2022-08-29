@@ -129,7 +129,7 @@
 									"required": true
 								},
 								{
-									"resrictToPredefinedOptions": true
+									"restrictToPredefinedOptions": true
 								}
 							]
 						},
@@ -147,7 +147,7 @@
 							},
 							"validations": [
 								{
-									"resrictToPredefinedOptions": true
+									"restrictToPredefinedOptions": true
 								}
 							]
 						},
