@@ -361,14 +361,17 @@ sap.ui.define([
 	};
 
 	ODataContextBinding.prototype._fireChange = function(mParameters, bForceUpdate, bUpdated) {
+		var bOldUpdated;
+
 		if (this.oElementContext) {
+			bOldUpdated = this.oElementContext.isUpdated();
 			this.oElementContext.setForceRefresh(bForceUpdate);
 			this.oElementContext.setUpdated(bUpdated);
 		}
 		ContextBinding.prototype._fireChange.call(this, mParameters);
 		if (this.oElementContext) {
 			this.oElementContext.setForceRefresh(false);
-			this.oElementContext.setUpdated(false);
+			this.oElementContext.setUpdated(bOldUpdated);
 		}
 	};
 

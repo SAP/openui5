@@ -1120,6 +1120,57 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_importData: handling of preliminary contexts", function (assert) {
+		var fnCallAfterUpdate,
+			mChangedEntities = {},
+			oContext = {
+				isPreliminary : function () {},
+				setPreliminary : function () {},
+				setUpdated : function () {}
+			},
+			oContextMock = this.mock(oContext),
+			oData = {},
+			oModel = {
+				_getEntity : function () {},
+				_getKey : function () {},
+				_updateChangedEntities : function () {},
+				_writePathCache : function () {},
+				callAfterUpdate : function () {},
+				getContext : function () {},
+				hasContext : function () {},
+				resolveFromCache : function () {}
+			},
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("_getKey").withExactArgs(sinon.match.same(oData)).returns("key");
+		oModelMock.expects("_getEntity").withExactArgs("key").returns("entry");
+		oModelMock.expects("hasContext").withExactArgs("/key").returns(true);
+		oModelMock.expects("getContext").withExactArgs("/key").returns(oContext);
+		oContextMock.expects("isPreliminary").withExactArgs().returns(true);
+		oContextMock.expects("setUpdated").withExactArgs(true);
+		oModelMock.expects("callAfterUpdate").callsFake(function (fnCallAfterUpdate0) {
+			fnCallAfterUpdate = fnCallAfterUpdate0;
+		});
+		oContextMock.expects("setPreliminary").withExactArgs(false);
+		oModelMock.expects("getContext").withExactArgs("/key").returns(oContext);
+		oModelMock.expects("_updateChangedEntities").withExactArgs({key : "entry"});
+		oModelMock.expects("resolveFromCache").withExactArgs("sDeepPath").returns("canonicalPath");
+		oModelMock.expects("_writePathCache").withExactArgs("sPath", "/key", undefined);
+		oModelMock.expects("_writePathCache").withExactArgs("sDeepPath", "/key", undefined, true);
+
+		// code under test
+		ODataModel.prototype._importData.call(oModel, oData, mChangedEntities,
+			/*oResponse; not relevant*/ undefined, "sPath", "sDeepPath");
+
+		assert.strictEqual(mChangedEntities["key"], true);
+
+		oContextMock.expects("setUpdated").withExactArgs(false);
+
+		// code under test: simulate _processAfterUpdate
+		fnCallAfterUpdate();
+	});
+
+	//*********************************************************************************************
 ["requestKey", undefined].forEach(function (sRequestKey) {
 	[
 		{entityType : "entityType", isFunction : "isFunction"},
