@@ -1,0 +1,70 @@
+{
+  "1.107.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "44d3379b7da0a4e7284da4b8ec378726c630b992",
+        "type": "FIX",
+        "text": " Integration cards: Binding exception is handled correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280156190"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280156722"
+          }
+        ]
+      },
+      {
+        "id": "ec346f6d1ee0700b70da4c9e70178f23e3897580",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Filters error message is now localized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280158254"
+          }
+        ]
+      },
+      {
+        "id": "4216c03144b27475e601a4bd2a1ffb2bac45ff9c",
+        "type": "FEATURE",
+        "text": " Integration card: Timeline card now has loading placeholder"
+      },
+      {
+        "id": "296df40f25753660342a6aaddf0a22c2098cd420",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Visibility of List card item attributes is now configurable"
+      },
+      {
+        "id": "3f65d0a9b79fbee352dbbed80b11ff3a471929c7",
+        "type": "FEATURE",
+        "text": " Integration cards: Added experimental 'titleMaxLines' and 'labelWrapping' properties for Object card"
+      },
+      {
+        "id": "7f727c868a595aed700a8fe3d1e07205f7888514",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Prevent hidden icons due to overflow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280149730"
+          }
+        ]
+      },
+      {
+        "id": "d6f35e51fbeb74bde61db219b8c55230d5b2a838",
+        "type": "FIX",
+        "text": " Integration cards: Button group in Object card is now aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280135973"
+          }
+        ]
+      }
+    ]
+  }
+}

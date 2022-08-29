@@ -1,0 +1,18 @@
+{
+  "1.107.0": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "8dadbae2699b9702b11c3efb9345f2462baac307",
+        "type": "FIX",
+        "text": " sap.ui.webc.main.Panel: Fix RTA undo action",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280145016"
+          }
+        ]
+      }
+    ]
+  }
+}
