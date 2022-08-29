@@ -20,6 +20,7 @@ sap.ui.define([
 	 *     descendant: "object" // where "object" is a declarative matcher for the descendant
 	 * }
 	 * </code></pre>
+	 * The declarative matcher for Descendant does not support the <b>bDirect</b> parameter.
 	 *
 	 * @param {object|string} vDescendantControl The descendant control to check. If undefined,
 	 * it validates every control to true. Can be a control or a control ID
