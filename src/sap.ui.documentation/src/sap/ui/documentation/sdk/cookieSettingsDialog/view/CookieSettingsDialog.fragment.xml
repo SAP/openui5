@@ -7,10 +7,8 @@
 	<Dialog title="{i18n>COOKIE_SETTINGS_DIALOG_TITLE}" contentWidth="45rem">
 		<content>
 			<html:div class="sapUiSmallMargin">
-				<Text text="{i18n>COOKIE_SETTINGS_DIALOG_SUMMARY}"
-					  visible="{= !${cookieData>/showCookieDetails} &amp;&amp; ${cookieData>/supportsUsageTracking} }"/>
 				<Text text="{i18n>COOKIE_SETTINGS_DIALOG_REQUIRED_COOKIES_TEXT}"
-					  visible="{= !${cookieData>/showCookieDetails} &amp;&amp; !${cookieData>/supportsUsageTracking} }"/>
+					  visible="{= !${cookieData>/showCookieDetails} }"/>
 				<f:GridList visible="{cookieData>/showCookieDetails}">
 					<f:customLayout>
 						<grid:GridBasicLayout gridTemplateColumns="1fr" gridGap="1rem"/>
@@ -28,20 +26,6 @@
 							<Text text="{i18n>COOKIE_SETTINGS_DIALOG_REQUIRED_COOKIES_TEXT}"/>
 						</Panel>
 					</f:GridListItem>
-
-					<f:GridListItem>
-						<HBox justifyContent="SpaceBetween" class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop">
-							<VBox>
-								<Title text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_TITLE}"/>
-								<Text text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_SUMMARY}"/>
-							</VBox>
-							<Switch id="functionalCookiesSwitch" class="sapUiSmallMarginBegin"
-								state="{path: 'cookieData>/dk_allow_usage_tracking', type: 'sap.ui.model.type.Boolean', formatter: '.formatCookieValue'}"/>
-						</HBox>
-						<Panel headerText="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_MORE_INFO}" expandable="true" class="sapUiTinyMarginTop">
-							<Text text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_TEXT}"/>
-						</Panel>
-					</f:GridListItem>
 				</f:GridList>
 			</html:div>
 		</content>
@@ -51,7 +35,7 @@
 				<OverflowToolbarLayoutData priority="NeverOverflow"/>
 			</layoutData>
 		</Button>
-		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_SET_PREFERENCES}" id="btnSetPreferences" type="Ghost" press="showCookieDetails" visible="{= !${cookieData>/showCookieDetails} &amp;&amp; ${cookieData>/supportsUsageTracking} }"></Button>
+		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_SET_PREFERENCES}" id="btnSetPreferences" type="Ghost" press="showCookieDetails" visible="{= !${cookieData>/showCookieDetails} &amp;&amp; ${cookieData>/enableAdvancedSettings} }"></Button>
 		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_REJECT_ALL}" press="onRejectAllCookies" visible="{=! ${cookieData>/showCookieDetails} }">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="NeverOverflow"/>
