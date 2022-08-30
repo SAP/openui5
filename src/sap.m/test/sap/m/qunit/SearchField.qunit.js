@@ -268,6 +268,15 @@ sap.ui.define([
 		assert.strictEqual(bHasAutocorrect, true, "Should be rendered when on Safari");
 	});
 
+	QUnit.test("Default 'aria-describedby'", function (assert) {
+		// arrange
+		var sAriaDescribedByAttr = this.oSearchField.$("I").attr("aria-describedby");
+		var sDefaultDescrId = InvisibleText.getStaticId("sap.m", "SEARCHFIELD_ARIA_DESCRIBEDBY");
+
+		// assert
+		assert.ok(sAriaDescribedByAttr.includes(sDefaultDescrId), "Default text should be part of 'aria-describedby'");
+	});
+
 	QUnit.test("When refresh button is added invisible text should be set", function (assert) {
 		// arrange
 		var ariaDescribedByAttr = this.oSearchField.$("I").attr('aria-describedby');
