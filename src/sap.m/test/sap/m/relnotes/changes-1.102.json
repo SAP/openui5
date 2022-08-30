@@ -1031,5 +1031,36 @@
         ]
       }
     ]
+  },
+  "1.102.7": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "3372a5b2a20a78796750b61ffd1e3068eed33e09",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Clock is not mirrored in rtl languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270092628"
+          }
+        ]
+      },
+      {
+        "id": "1191ba6ebb00154adf9191ef38b445a86ddf55ce",
+        "type": "FIX",
+        "text": " sap.m.Input: Type-ahead with dynamic suggestions enabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005963762022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005849042022"
+          }
+        ]
+      }
+    ]
   }
 }

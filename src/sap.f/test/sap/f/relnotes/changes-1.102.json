@@ -82,5 +82,25 @@
         ]
       }
     ]
+  },
+  "1.102.7": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "3008b024f4801feca32b35b2e244d4517a0609ff",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Corrected positioning issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270108645"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280157315"
+          }
+        ]
+      }
+    ]
   }
 }

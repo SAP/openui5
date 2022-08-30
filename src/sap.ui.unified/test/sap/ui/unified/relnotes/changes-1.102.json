@@ -148,5 +148,21 @@
         ]
       }
     ]
+  },
+  "1.102.7": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "402f500ddfaccf147adccc1e1d8ed0c39db9fb0a",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust second calendar type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280140219"
+          }
+        ]
+      }
+    ]
   }
 }

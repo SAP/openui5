@@ -314,5 +314,58 @@
         ]
       }
     ]
+  },
+  "1.102.7": {
+    "date": "August 2022",
+    "notes": [
+      {
+        "id": "5e9c3133a0e8505d8b253e5fc25affee27d0dc0e",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataContextBinding#_fireChange: Reset context's updated flag to initial value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002462642022"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280102826"
+          }
+        ]
+      },
+      {
+        "id": "ea44d36ed42c58e271962f0eebc9c5e5758580af",
+        "type": "FIX",
+        "text": " core.Popup: correctly align Blocklayer with within area in RTL mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280154052"
+          }
+        ]
+      },
+      {
+        "id": "dae22e7e5e4bfbe5dcd851634b3a1fc17d9a0538",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context#doSetProperty: report error although context is destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280150835"
+          }
+        ]
+      },
+      {
+        "id": "e96940b0ba149be28e63dd78a4d9046ee047861e",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataTreeBindingFlat#_calcIndexDelta: fix index delta calculation to always return the correct binding length",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005773722022"
+          }
+        ]
+      }
+    ]
   }
 }
