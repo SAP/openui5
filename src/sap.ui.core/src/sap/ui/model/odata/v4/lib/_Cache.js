@@ -620,7 +620,8 @@ sap.ui.define([
 		 *   special cases.
 		 */
 		function missingValue(oValue, sSegment, iPathLength, bAgain) {
-			var sPropertyName,
+			var vPermissions,
+				sPropertyName,
 				sPropertyPath = aSegments.slice(0, iPathLength).join("/"),
 				sPropertyMetaPath = _Helper.getMetaPath(sPropertyPath),
 				sReadLink;
@@ -645,11 +646,15 @@ sap.ui.define([
 				}
 			}
 
+			vPermissions = oValue[_Helper.getAnnotationKey(oValue, ".Permissions", sSegment)];
+			if (vPermissions === 0 || vPermissions === "None") {
+				return undefined;
+			}
+
 			return that.oRequestor.getModelInterface()
 				.fetchMetadata(that.sMetaPath + "/" + sPropertyMetaPath)
 				.then(function (oProperty) {
-					var vPermissions,
-						vResult = false;
+					var vResult = false;
 
 					if (!oProperty) {
 						return invalidSegment(sSegment);
@@ -667,11 +672,6 @@ sap.ui.define([
 						}
 					}
 					if (!bTransient) {
-						vPermissions = oValue[
-							_Helper.getAnnotationKey(oValue, ".Permissions", sSegment)];
-						if (vPermissions === 0 || vPermissions === "None") {
-							return undefined;
-						}
 						// If there is no entity with a key predicate, try it with the cache root
 						// object (in case of SimpleCache, the root object of CollectionCache is an
 						// array)
