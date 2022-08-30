@@ -174,15 +174,17 @@ sap.ui.define([
 	 * Data that is sent to the server is appended to the URL as a query string.
 	 * If the value of the data parameter is an object (map), it is converted to a string and
 	 * url-encoded before it is appended to the URL.
-	 * @param {boolean} [bAsync=true] By default, all requests are sent asynchronous.
-	 * <b>Do not use <code>bAsync=false</code></b> because synchronous requests may temporarily lock
-	 * the browser, disabling any actions while the request is active. Cross-domain requests do not
-	 * support synchronous operation.
+	 * @param {boolean} [bAsync=true] <b>Deprecated as of Version 1.107</b>; always use asynchronous
+	 * loading for performance reasons. By default, all requests are sent asynchronously.
+	 * Synchronous requests may temporarily lock the browser, disabling any actions while
+	 * the request is active. Cross-domain requests do not support synchronous operations.
 	 * @param {string} [sType=GET] The type of request to make ("POST" or "GET"), default is "GET".
 	 * Note: Other HTTP request methods, such as PUT and DELETE, can also be used here, but
 	 * they are not supported by all browsers.
 	 * @param {boolean} [bMerge=false] Whether the data should be merged instead of replaced
-	 * @param {boolean} [bCache=true] Disables caching if set to false. Default is true.
+	 * @param {boolean} [bCache=true] <b>Deprecated as of Version 1.107</b>; always use the cache
+	 * headers from the back-end system for performance reasons. Disables caching if set to
+	 * <code>false</code>.
 	 * @param {object} [mHeaders] An object of additional header key/value pairs to send along with the request
 	 *
 	 * @return {Promise|undefined} in case bAsync is set to true a Promise is returned; this promise resolves/rejects based on the request status
