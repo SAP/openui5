@@ -418,12 +418,15 @@ sap.ui.define([
 
 					setTimeout(function () {
 						assert.equal(oCustomerComoboBox.getItems().length, 4, "Field: Customer origin lenght is OK");
+						var oModel = oCustomerComoboBox.getModel();
+						oModel.attachPropertyChange(function () {
+							setTimeout(function () {
+								assert.equal(oCustomerComoboBox.getItems().length, 2, "Field: Customer lenght is OK");
+								resolve();
+							}, 2 * iWaitTimeout);
+						});
 						oCustomerComoboBox.focus();
 						EditorQunitUtils.setInputValue(oCustomerComoboBox, "c");
-						setTimeout(function () {
-							assert.equal(oCustomerComoboBox.getItems().length, 2, "Field: Customer lenght is OK");
-							resolve();
-						}, iWaitTimeout);
 					}, iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
@@ -448,12 +451,15 @@ sap.ui.define([
 
 					setTimeout(function () {
 						assert.equal(oCustomerComoboBox.getItems().length, 4, "Field: Customer origin lenght is OK");
+						var oModel = oCustomerComoboBox.getModel();
+						oModel.attachPropertyChange(function () {
+							setTimeout(function () {
+								assert.equal(oCustomerComoboBox.getItems().length, 2, "Field: Customer lenght is OK");
+								resolve();
+							}, 2 * iWaitTimeout);
+						});
 						oCustomerComoboBox.focus();
 						EditorQunitUtils.setInputValue(oCustomerComoboBox, "c");
-						setTimeout(function () {
-							assert.equal(oCustomerComoboBox.getItems().length, 2, "Field: Customer lenght is OK");
-							resolve();
-						}, iWaitTimeout);
 					}, iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
@@ -685,12 +691,15 @@ sap.ui.define([
 
 					setTimeout(function () {
 						assert.equal(oCustomersMultiComboBox.getItems().length, 5, "Field: Customers origin lenght is OK");
+						var oModel = oCustomersMultiComboBox.getModel();
+						oModel.attachPropertyChange(function () {
+							setTimeout(function () {
+								assert.equal(oCustomersMultiComboBox.getItems().length, 3, "Field: Customers lenght is OK");
+								resolve();
+							}, 2 * iWaitTimeout);
+						});
 						oCustomersMultiComboBox.focus();
 						EditorQunitUtils.setInputValue(oCustomersMultiComboBox, "c");
-						setTimeout(function () {
-							assert.equal(oCustomersMultiComboBox.getItems().length, 3, "Field: Customers lenght is OK");
-							resolve();
-						}, iWaitTimeout);
 					}, iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
@@ -715,12 +724,15 @@ sap.ui.define([
 
 					setTimeout(function () {
 						assert.equal(oCustomersMultiComboBox.getItems().length, 5, "Field: Customers origin lenght is OK");
+						var oModel = oCustomersMultiComboBox.getModel();
+						oModel.attachPropertyChange(function () {
+							setTimeout(function () {
+								assert.equal(oCustomersMultiComboBox.getItems().length, 3, "Field: Customers lenght is OK");
+								resolve();
+							}, 2 * iWaitTimeout);
+						});
 						oCustomersMultiComboBox.focus();
 						EditorQunitUtils.setInputValue(oCustomersMultiComboBox, "c");
-						setTimeout(function () {
-							assert.equal(oCustomersMultiComboBox.getItems().length, 3, "Field: Customers lenght is OK");
-							resolve();
-						}, iWaitTimeout);
 					}, iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
@@ -948,13 +960,17 @@ sap.ui.define([
 					assert.ok(oCustomersMultiInput.isA("sap.m.MultiInput"), "Field: Customers is MultiInput");
 
 					setTimeout(function () {
+						var oModel = oCustomersMultiInput.getModel();
+						assert.deepEqual(oModel.getData(), {},  "Field: Customers ori lenght is OK");
+						oModel.attachPropertyChange(function () {
+							setTimeout(function () {
+								assert.equal(oModel.getData().value.length, 2,  "Field: Customers lenght is OK");
+								resolve();
+							}, 2 * iWaitTimeout);
+						});
 						oCustomersMultiInput.focus();
 						EditorQunitUtils.setInputValue(oCustomersMultiInput, "c");
-						setTimeout(function () {
-							assert.equal(oCustomersMultiInput._getSuggestionsList().getItems().length, 3, "Field: Customers lenght is OK");
-							resolve();
-						}, 2 * iWaitTimeout);
-					}, 2 * iWaitTimeout);
+					}, iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
 		});
@@ -977,13 +993,17 @@ sap.ui.define([
 					assert.ok(oCustomersMultiInput.isA("sap.m.MultiInput"), "Field: Customers is MultiInput");
 
 					setTimeout(function () {
+						var oModel = oCustomersMultiInput.getModel();
+						assert.deepEqual(oModel.getData(), {},  "Field: Customers ori lenght is OK");
+						oModel.attachPropertyChange(function () {
+							setTimeout(function () {
+								assert.equal(oModel.getData().value.length, 2,  "Field: Customers lenght is OK");
+								resolve();
+							}, 2 * iWaitTimeout);
+						});
 						oCustomersMultiInput.focus();
 						EditorQunitUtils.setInputValue(oCustomersMultiInput, "c");
-						setTimeout(function () {
-							assert.equal(oCustomersMultiInput._getSuggestionsList().getItems().length, 3, "Field: Customers lenght is OK");
-							resolve();
-						}, 2 * iWaitTimeout);
-					}, 2 * iWaitTimeout);
+					}, iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
 		});
@@ -1021,13 +1041,17 @@ sap.ui.define([
 					assert.equal(oTokens[1].getText(), "B Company", "Field: token2 text is OK");
 					assert.equal(oTokens[2].getText(), "C2 Company", "Field: token3 text is OK");
 					setTimeout(function () {
+						var oModel = oCustomersMultiInput.getModel();
+						assert.deepEqual(oModel.getData(), {},  "Field: Customers ori lenght is OK");
+						oModel.attachPropertyChange(function () {
+							setTimeout(function () {
+								assert.equal(oModel.getData().value.length, 4,  "Field: Customers lenght is OK");
+								resolve();
+							}, 2 * iWaitTimeout);
+						});
 						oCustomersMultiInput.focus();
 						EditorQunitUtils.setInputValue(oCustomersMultiInput, "c");
-						setTimeout(function () {
-							assert.equal(oCustomersMultiInput._getSuggestionsList().getItems().length, 6, "Field: Customers lenght is OK");
-							resolve();
-						}, 2 * iWaitTimeout);
-					}, 2 * iWaitTimeout);
+					}, iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
 		});
