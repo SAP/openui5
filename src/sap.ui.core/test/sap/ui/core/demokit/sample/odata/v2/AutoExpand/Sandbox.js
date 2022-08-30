@@ -43,19 +43,7 @@ sap.ui.define([
 		"/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/");
 	}
 
-	function adaptModelConstructor() {
-		oSandbox.stub(sap.ui.model.odata.v2, "ODataModel", function (mParameters) {
-			// clone: do not modify constructor call parameter
-			mParameters = Object.assign({}, mParameters, {
-				serviceUrl : TestUtils.proxy(mParameters.serviceUrl)
-			});
-			return new ODataModel(mParameters);
-		});
-	}
-
-	if (TestUtils.isRealOData()) {
-		adaptModelConstructor();
-	} else {
+	if (!TestUtils.isRealOData()) {
 		setupMockServer();
 	}
 
