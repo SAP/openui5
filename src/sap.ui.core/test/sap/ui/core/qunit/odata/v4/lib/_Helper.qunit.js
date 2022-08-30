@@ -546,6 +546,30 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("addQueryOptions", function (assert) {
+		var oHelperMock = this.mock(_Helper),
+			mOptions = {"sap-language" : "en", "sap-client" : "123"};
+
+		assert.strictEqual(_Helper.addQueryOptions("/url?foo=bar", undefined), "/url?foo=bar");
+		assert.strictEqual(_Helper.addQueryOptions("/url?foo=bar", {}), "/url?foo=bar");
+
+		oHelperMock.expects("buildQuery").twice().withExactArgs(mOptions).returns("?~");
+
+		assert.strictEqual(_Helper.addQueryOptions("/url", mOptions), "/url?~");
+		assert.strictEqual(_Helper.addQueryOptions("/url?foo=bar", mOptions), "/url?foo=bar&~");
+
+		oHelperMock.expects("buildQuery").twice().withExactArgs({"sap-client" : "123"})
+			.returns("?~");
+
+		assert.strictEqual(_Helper.addQueryOptions("/url?sap-language=d%C3%A4", mOptions),
+			"/url?sap-language=d%C3%A4&~");
+		assert.strictEqual(_Helper.addQueryOptions("/url?sap-language", mOptions),
+			"/url?sap-language&~");
+
+		assert.deepEqual(mOptions, {"sap-language" : "en", "sap-client" : "123"}, "unchanged");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("isSafeInteger", function (assert) {
 		function localTest(sNumber, bValue) {
 			assert.strictEqual(_Helper.isSafeInteger(sNumber), bValue, sNumber);

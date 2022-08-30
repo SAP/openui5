@@ -29609,10 +29609,16 @@ sap.ui.define([
 	// automatic determination.
 	// No own test as unit value list is cached in a private cache
 	// JIRA: CPOUI5MODELS-302
+	// BCP: 2280162910: pass on metadataUrlParams
 	QUnit.test("OData Unit type considering unit customizing", function (assert) {
 		var oControl,
-			oModel = this.createSalesOrdersModel({autoExpandSelect : true}, {
-				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata"
+			oModel = this.createSalesOrdersModel({
+				autoExpandSelect : true,
+				metadataUrlParams : {"sap-language" : "en", "sap-context-token" : "foo"}
+			}, {
+				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata?sap-language=en&sap-context-token=foo"
+					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
+				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata?sap-language=en&sap-context-token=foo"
 					: {source : "odata/v4/data/metadata_codelist.xml"}
 			}),
 			sView = '\
@@ -29648,7 +29654,8 @@ sap.ui.define([
 				WeightMeasure : "12.34",
 				WeightUnit : "KG"
 			})
-			.expectRequest("UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode", {
+			.expectRequest("UnitsOfMeasure?sap-language=en"
+				+ "&$select=ExternalCode,DecimalPlaces,Text,ISOCode", {
 				value : [{
 					DecimalPlaces : 5,
 					ExternalCode : "KG",
@@ -29924,9 +29931,17 @@ sap.ui.define([
 	// Scenario: Request value list information for an action's parameter.
 	// BCP: 1970116818
 	// JIRA: CPOUI5UISERVICESV3-1744
+	// BCP: 2280162910: pass on metadataUrlParams
 	QUnit.test("Value help at action parameter", function (assert) {
-		var oModel = this.createSpecialCasesModel({}, {
-				"/special/countryoforigin/$metadata"
+		var oModel = this.createSpecialCasesModel({
+					metadataUrlParams : {
+						"sap-language" : "en",
+						"sap-context-token" : "foo"
+					}
+				}, {
+				"/special/cases/$metadata?sap-language=en&sap-context-token=foo"
+					: {source : "odata/v4/data/metadata_special_cases.xml"},
+				"/special/countryoforigin/$metadata?sap-language=en&sap-context-token=foo"
 					: {source : "odata/v4/data/metadata_countryoforigin.xml"}
 			}),
 			sPropertyPath = "/Artists/special.cases.Create/Countryoforigin";

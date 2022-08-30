@@ -3,14 +3,55 @@
  */
 // SandboxModelHelper functions used within sap.ui.core.sample.common namespace
 sap.ui.define([
+	"sap/base/strings/escapeRegExp",
 	"sap/base/util/UriParameters",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/sinon-4"
-], function (UriParameters, ODataModel, TestUtils, sinon) {
+], function (escapeRegExp, UriParameters, ODataModel, TestUtils, sinon) {
 	"use strict";
 
 	var SandboxModelHelper = {
+			/**
+			 * Adds a RegExp for the service's metadata and converts all explicit requests for
+			 * $metadata files w/o sap-language and all requests containing "sap-language=EN" to
+			 * RegExp requests, so that they work for any sap-language.
+			 *
+			 * @param {object} oMockData
+			 *   The mock data used to setup a mock server, {@see #createModel}
+			 * @returns {object}
+			 *   The converted mock data
+			 */
+			adaptMetadataRequests : function (oMockData) {
+				var mFixture = {},
+					aRegExps = oMockData.aRegExps ? oMockData.aRegExps.slice() : [];
+
+				// The service's metadata request
+				aRegExps.push({
+					regExp : new RegExp("^GET " + escapeRegExp(oMockData.sFilterBase)
+						+ "\\$metadata\\?[-\\w&=]*sap-language=..$"),
+					response : {source : "metadata.xml"}
+				});
+				Object.keys(oMockData.mFixture).forEach(function (sUrl) {
+					if (sUrl.endsWith("/$metadata")) {
+						aRegExps.push({
+							regExp : new RegExp("^GET " + escapeRegExp(sUrl)
+								+ "\\?sap-language=..$"),
+							response : oMockData.mFixture[sUrl]
+						});
+					} else if (sUrl.includes("sap-language=EN")) {
+						aRegExps.push({
+							regExp : new RegExp("^GET "
+								+ escapeRegExp(sUrl).replace("sap-languge=EN", "sap-language=..")
+								+ "$"),
+							response : oMockData.mFixture[sUrl]
+						});
+					} else {
+						mFixture[sUrl] = oMockData.mFixture[sUrl];
+					}
+				});
+				return Object.assign({}, oMockData, {mFixture : mFixture, aRegExps : aRegExps});
+			},
 			/**
 			 * Adapts OData V4 Model parameters taking certain constructor parameters from URL
 			 * parameters.
@@ -62,7 +103,8 @@ sap.ui.define([
 			 *   The fixture, - see {@link sap.ui.test.TestUtils.setupODataV4Server}
 			 * @param {string} oMockData.sFilterBase
 			 *   The base path for relative filter URLs in <code>oMockData.mFixture</code>, see
-			 *   {@link sap.ui.test.TestUtils.setupODataV4Server}
+			 *   {@link sap.ui.test.TestUtils.setupODataV4Server}; this is also assumed to be the
+			 *   URL of the main service
 			 * @param {object[]} [oMockData.aRegExps]
 			 *   The regular expression array for {@link sap.ui.test.TestUtils.setupODataV4Server}
 			 * @param {string} oMockData.sSourceBase
@@ -76,10 +118,7 @@ sap.ui.define([
 					oSandbox;
 
 				if (!TestUtils.isRealOData()) {
-					oMockData.aRegExps = oMockData.aRegExps || [{
-						regExp : /^GET [\w\/.]+\$metadata[\w?&\-=]+sap-language=..$/,
-						response : {source : "metadata.xml"}
-					}];
+					oMockData = SandboxModelHelper.adaptMetadataRequests(oMockData);
 					oSandbox = sinon.sandbox.create();
 					TestUtils.setupODataV4Server(oSandbox, oMockData.mFixture,
 						oMockData.sSourceBase, oMockData.sFilterBase, oMockData.aRegExps);
