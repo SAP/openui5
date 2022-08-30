@@ -19,16 +19,6 @@
 						<Switch id="requiredCookiesSwitch" class="cookieStateSwitch"
 							state="{path: 'cookieData>/dk_allow_required_cookies', type: 'sap.ui.model.type.Boolean', formatter: '.formatter.formatCookieValue'}"/>
 					</CustomListItem>
-
-					<CustomListItem class="cookieSetting sapUiSmallMarginTop">
-						<Title text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_TITLE}"/>
-						<Text class="cookieSummaryText"  text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_SUMMARY}"/>
-						<Panel headerText="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_MORE_INFO}" expandable="true" class="sapUiTinyMarginTop">
-							<Text text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_TEXT}"/>
-						</Panel>
-						<Switch id="functionalCookiesSwitch" class="cookieStateSwitch"
-							state="{path: 'cookieData>/dk_allow_usage_tracking', type: 'sap.ui.model.type.Boolean', formatter: '.formatter.formatCookieValue'}"/>
-					</CustomListItem>
 				</List>
 			</html:div>
 		</content>

@@ -13,8 +13,7 @@ sap.ui.define([
 
 		"COOKIE_NAMES": {
 			"APPROVAL_REQUESTED": "dk_approval_requested",
-			"ALLOW_REQUIRED_COOKIES": "dk_allow_required_cookies",
-			"ALLOW_USAGE_TRACKING": "dk_allow_usage_tracking"
+			"ALLOW_REQUIRED_COOKIES": "dk_allow_required_cookies"
 		},
 
 		constructor : function (oComponent) {
@@ -62,10 +61,6 @@ sap.ui.define([
 			}
 
 			return "";
-		},
-
-		enableUsageTracking: function() {
-			window["swa"] && window["swa"].enable();
 		},
 
 		_getMasterTargetName: function(sRouteName) {

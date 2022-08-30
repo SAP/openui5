@@ -83,24 +83,20 @@ sap.ui.define([
 
 			onAcceptAllCookies: function () {
 				this._saveCookiePreference(this._oCookieNames.ALLOW_REQUIRED_COOKIES, true);
-				this._saveCookiePreference(this._oCookieNames.ALLOW_USAGE_TRACKING, true);
 
 				this._oCookieSettingsDialog.close();
 			},
 
 			onRejectAllCookies: function () {
 				this._saveCookiePreference(this._oCookieNames.ALLOW_REQUIRED_COOKIES, false);
-				this._saveCookiePreference(this._oCookieNames.ALLOW_USAGE_TRACKING, false);
 
 				this._oCookieSettingsDialog.close();
 			},
 
 			onSaveCookies: function() {
-				var bHasConsentRequiredCookies = Core.byId("requiredCookiesSwitch").getState(),
-					bHasConsentFunctionalCookies = Core.byId("functionalCookiesSwitch").getState();
+				var bHasConsentRequiredCookies = Core.byId("requiredCookiesSwitch").getState();
 
 				this._saveCookiePreference(this._oCookieNames.ALLOW_REQUIRED_COOKIES, bHasConsentRequiredCookies);
-				this._saveCookiePreference(this._oCookieNames.ALLOW_USAGE_TRACKING, bHasConsentFunctionalCookies);
 
 				this._oCookieSettingsDialog.close();
 			},
@@ -122,17 +118,10 @@ sap.ui.define([
 			onCancelEditCookies: function() {
 				this._oCookieSettingsDialog.close();
 				Core.byId("requiredCookiesSwitch").setState(this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1");
-				Core.byId("functionalCookiesSwitch").setState(this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_USAGE_TRACKING) === "1");
 			},
 
 			_saveCookiePreference: function(sCookieName, bEnable) {
 				var sValue = bEnable ? "1" : "0";
-
-				if ((sCookieName === this._oCookieNames.ALLOW_USAGE_TRACKING)
-					&& bEnable
-					&& this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_USAGE_TRACKING) !== "1") {
-					this._oConfigUtil.enableUsageTracking();
-				}
 
 				this._oConfigUtil.setCookie(sCookieName, sValue);
 				this._oModel.setProperty("/" + sCookieName, sValue);
@@ -154,10 +143,8 @@ sap.ui.define([
 					// when the user opens the edit dialog for a first time, show the cookies enabled
 					// the user will then edit and save his choice
 					oData[this._oCookieNames.ALLOW_REQUIRED_COOKIES] = "1";
-					oData[this._oCookieNames.ALLOW_USAGE_TRACKING] = "1";
 				} else {
 					oData[this._oCookieNames.ALLOW_REQUIRED_COOKIES] = this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES);
-					oData[this._oCookieNames.ALLOW_USAGE_TRACKING] = this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_USAGE_TRACKING);
 				}
 
 				this._oModel.setData(oData, true /* merge */);
