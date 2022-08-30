@@ -1424,6 +1424,130 @@ sap.ui.define([
 		this.oCard.setManifest(oManifest_EmptyLabelWithBinding);
 	});
 
+	[
+		"{/emptyObject}",
+		"{/emptyArray}",
+		"{= ${name} !== 'DonnaMoore'}",
+		"{falsyValue}",
+		false,
+		null,
+		[],
+		{}
+	].forEach(function (hasDataValue) {
+		QUnit.test("Negative cases - 'No data' message when 'hasData' is " + JSON.stringify(hasDataValue), function (assert) {
+			var done = assert.async();
+			var oManifest = {
+				"sap.app": {
+					"id": "test.object.card.hasData"
+				},
+				"sap.card": {
+					"type": "Object",
+					"data": {
+						"json": {
+							"emptyObject": {},
+							"emptyArray": [],
+							"name": "DonnaMoore",
+							"falsyValue": false
+						}
+					},
+					"header": {
+						"title": "Object card"
+					},
+					"content": {
+						"hasData": hasDataValue,
+						"groups": [
+							{
+								"title": "Contact Details",
+								"items": [
+									{
+										"label": "First Name",
+										"value": "{firstName}"
+									}
+								]
+							}
+						]
+					}
+				}
+			};
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oContent = this.oCard.getCardContent();
+
+				// Assert
+				assert.ok(oContent.getDomRef().querySelector(".sapMIllustratedMessage"), "'No data' message should be shown when 'hasData' is " + JSON.stringify(hasDataValue));
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest);
+		});
+	});
+
+	[
+		"{/nonEmptyObject}",
+		"{/nonEmptyArray}",
+		"{= ${name} === 'DonnaMoore'}",
+		"{truthyValue}",
+		true,
+		5,
+		{ key: "value"},
+		[{}]
+	].forEach(function (hasDataValue) {
+		QUnit.test("Positive cases - 'No data' message when 'hasData' is " + JSON.stringify(hasDataValue), function (assert) {
+			var done = assert.async();
+			var oManifest = {
+				"sap.app": {
+					"id": "test.object.card.hasData"
+				},
+				"sap.card": {
+					"type": "Object",
+					"data": {
+						"json": {
+							"nonEmptyObject": {
+								"key": "value"
+							},
+							"nonEmptyArray": [{}],
+							"name": "DonnaMoore",
+							"truthyValue": true
+						}
+					},
+					"header": {
+						"title": "Object card"
+					},
+					"content": {
+						"hasData": hasDataValue,
+						"groups": [
+							{
+								"title": "Contact Details",
+								"items": [
+									{
+										"label": "First Name",
+										"value": "{firstName}"
+									}
+								]
+							}
+						]
+					}
+				}
+			};
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oContent = this.oCard.getCardContent();
+
+				// Assert
+				assert.notOk(oContent.getDomRef().querySelector(".sapMIllustratedMessage"), "'No data' message should NOT be shown when 'hasData' is " + JSON.stringify(hasDataValue));
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest);
+		});
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
 			this.oCard = new Card({
