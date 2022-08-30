@@ -19,6 +19,7 @@ sap.ui.define([
 	 *     sibling: "object" // where "object" is a declarative matcher for the sibling
 	 * }
 	 * </code></pre>
+	 * The declarative matcher for Sibling does not support <b>oOptions</b> parameters.
 	 *
 	 * @param {object|string} vSibling the sibling control to check. Can be a control or a control ID. If undefined, the result will always be true.
 	 * @param {object} [oOptions] specifies how to match
