@@ -34810,20 +34810,25 @@ sap.ui.define([
 	// "Prefer:handling=strict" HTTP header set. bConfirm controls how the callback is resolved.
 	//
 	// JIRA: CPOUI5ODATAV4-943
+	// BCP: 2280172148 more than one action in change set + check that the right callback is called
 [true, false].forEach(function (bConfirm) {
 	QUnit.test("CPOUI5ODATAV4-943: handling=strict, confirm=" + bConfirm, function (assert) {
-		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
-			oActionPromise,
+		var sAction0 = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+			sAction1 = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Cancel",
+			oAction0Promise,
 			oError = createErrorInsideBatch({
 				code : "STRICT",
+				"@SAP__core.ContentID" : "0.0",
 				details : [{
 					"@Common.numericSeverity" : 3,
 					code : "CODE1",
+					"@SAP__core.ContentID" : "0.0",
 					message : "Note is empty",
 					target : "SalesOrder/Note"
 				}, {
 					"@Common.numericSeverity" : 2,
 					code : "CODE2",
+					"@SAP__core.ContentID" : "0.0",
 					message : "Some unbound info"
 				}],
 				message : "Strict Handling"
@@ -34833,7 +34838,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Text id="status" text="{LifecycleStatus}"/>\
-	<FlexBox id="action" binding="{' + sAction + '(...)}"/>\
+	<FlexBox id="action" binding="{' + sAction0 + '(...)}"/>\
 </FlexBox>',
 			that = this;
 
@@ -34860,26 +34865,45 @@ sap.ui.define([
 			.expectChange("status", "N");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to execute /SalesOrderList('2')/" + sAction1 + "(...)",
+					sinon.match("Strict Handling"), sODCB);
+
 			that.expectRequest({
 					headers : {
 						Prefer : "handling=strict"
 					},
 					method : "POST",
-					url : "SalesOrderList('1')/" + sAction,
+					url : "SalesOrderList('1')/" + sAction0,
 					payload : {}
 				}, oError, {
 					"Preference-Applied" : "handling=strict"
-				});
+				})
+				.expectRequest({
+					headers : {
+						Prefer : "handling=strict"
+					},
+					method : "POST",
+					url : "SalesOrderList('2')/" + sAction1,
+					payload : {}
+				}/*response does not matter*/);
 
-			oActionPromise = that.oView.byId("action").getObjectBinding()
+			oAction0Promise = that.oView.byId("action").getObjectBinding()
 				.execute("$auto", false, onStrictHandlingFailed);
+
+			that.oModel.bindContext("/SalesOrderList('2')/" + sAction1 + "(...)")
+				.execute("$auto", false, "~mustNotBeCalled~")
+				.then(mustFail(assert), function (oError) {
+					assert.strictEqual(oError.message, "Strict Handling");
+					assert.notOk(oError.strictHandlingFailed);
+				});
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			if (bConfirm) {
 				that.expectRequest({
 						method : "POST",
-						url : "SalesOrderList('1')/" + sAction,
+						url : "SalesOrderList('1')/" + sAction0,
 						payload : {}
 					}, {
 						LifecycleStatus : "C",
@@ -34887,7 +34911,7 @@ sap.ui.define([
 					})
 					.expectChange("status", "C");
 			} else {
-				that.expectCanceledError("Failed to execute /SalesOrderList('1')/" + sAction
+				that.expectCanceledError("Failed to execute /SalesOrderList('1')/" + sAction0
 						+ "(...)", "Action canceled due to strict handling");
 			}
 
@@ -34895,7 +34919,7 @@ sap.ui.define([
 			fnResolve(bConfirm);
 
 			return Promise.all([
-				oActionPromise.then(function () {
+				oAction0Promise.then(function () {
 					assert.ok(bConfirm);
 				}, function (oError) {
 					assert.notOk(bConfirm);
