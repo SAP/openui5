@@ -57,6 +57,7 @@ sap.ui.define([
 			DISCARD: "/flex/versions/draft/",
 			PUBLISH: "/flex/versions/publish/"
 		},
+		CONTEXT_BASED_ADAPTATION: "/flex/app/",
 		MANI_FIRST_SUPPORTED: "/sap/bc/ui2/app_index/ui5_app_mani_first_supported"
 	};
 
@@ -74,6 +75,7 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.isContextSharing] Indicator whether this is a request for context sharing
 	 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped. This is S4/Hana specific flag passed by only Smart Business
 	 * @param {boolean} [mPropertyBag.isCondensingEnabled] Indicator whether this is a request for condensing
+	 * @param {boolean} [mPropertyBag.isContextBasedAdaptationEnabled] Indicator whether this is an context based adaptation
 	 * @param {boolean} [mPropertyBag.parentVersion] Indicates if changes should be written as a draft and on which version the changes should be based on
 	 * @private
 	 * @returns {Promise} Promise resolves as soon as the writing was completed
@@ -88,6 +90,8 @@ sap.ui.define([
 			sRoute = ROUTES.CONTEXTS;
 		} else if (mPropertyBag.isCondensingEnabled) {
 			sRoute = ROUTES.CONDENSE;
+		} else if (mPropertyBag.isContextBasedAdaptationEnabled) {
+			sRoute = ROUTES.CONTEXT_BASED_ADAPTATION + mPropertyBag.flexObject.reference + "/adaptations";
 		} else {
 			sRoute = ROUTES.CHANGES;
 		}
@@ -598,6 +602,13 @@ sap.ui.define([
 					"application/json; charset=utf-8", "json"
 				);
 				return WriteUtils.sendRequest(sAppVarOverviewUrl, "GET", oRequestOption);
+			}
+		},
+		contextBasedAdaptation: {
+			create: function(mPropertyBag) {
+				mPropertyBag.isContextBasedAdaptationEnabled = true;
+				mPropertyBag.method = "POST";
+				return _doWrite(mPropertyBag);
 			}
 		},
 		ui2Personalization: {

@@ -177,6 +177,11 @@ sap.ui.define([
 			return Promise.reject("loadFeatures is not implemented");
 		},
 
+		contextBasedAdaptation: {
+			create: function() {
+				return Promise.reject("contextBasedAdaptation.create is not implemented");
+			}
+		},
 		versions: {
 			/**
 			 * Interface called to get the flex versions.

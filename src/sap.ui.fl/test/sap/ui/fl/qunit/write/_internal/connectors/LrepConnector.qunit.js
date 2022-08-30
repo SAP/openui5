@@ -1321,6 +1321,45 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("LrepConnector.contextBasedAdaptation", {
+		beforeEach: function () {
+			sandbox.useFakeServer();
+			sandbox.server.autoRespond = true;
+			this.oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+		},
+		afterEach: function () {
+			WriteUtils.sendRequest.restore();
+			sandbox.verifyAndRestore();
+		}
+	}, function () {
+		QUnit.test("Given a mock server, when contextBasedAdaptation.create is triggered", function (assert) {
+			var contextBasedAdaptationData = {
+				id: "__fiori0",
+				reference: "ZDEMOTE_ST",
+				title: "test title",
+				description: "test description",
+				contexts: {
+					role: ["/GRVTY/TEST", "/FLX/TSTRL_01"]
+				}
+			};
+
+			var mPropertyBag = {
+				flexObject: contextBasedAdaptationData,
+				layer: "CUSTOMER",
+				parentVersion: "4124001231923DHS91231230",
+				url: "/sap/bc/lrep"
+			};
+
+			return WriteLrepConnector.contextBasedAdaptation.create(mPropertyBag).then(function () {
+				assert.equal(this.oStubSendRequest.callCount, 1, "one call was sent");
+				var oCallArguments = this.oStubSendRequest.getCall(0).args;
+				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/app/" + mPropertyBag.flexObject.reference + "/adaptations?parentVersion=" + mPropertyBag.parentVersion + "&sap-language=EN", "the correct url was passed");
+				assert.strictEqual(oCallArguments[1], "POST", "the correct http method was passed");
+				assert.deepEqual(oCallArguments[2].payload, JSON.stringify(contextBasedAdaptationData), "the correct payload was passed");
+			}.bind(this));
+		});
+	});
+
 	QUnit.module("LrepConnector.ui2personalization", {
 		beforeEach: function () {
 			sandbox.useFakeServer();

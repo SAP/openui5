@@ -366,6 +366,12 @@ sap.ui.define([
 		return _executeActionByName("publish", mPropertyBag);
 	};
 
+	Storage.contextBasedAdaptation = {
+		create: function(mPropertyBag) {
+			return _getWriteConnectors()
+				.then(_executeActionByName.bind(undefined, "contextBasedAdaptation.create", mPropertyBag));
+		}
+	};
 	Storage.versions = {
 		/**
 		 * Loads the versions for a given application and layer.

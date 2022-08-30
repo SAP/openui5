@@ -61,6 +61,7 @@ sap.ui.define([
 				activate: {},
 				discardDraft: {},
 				switchVersion: {},
+				saveAsContextBasedAdaptation: {},
 				openChangeCategorySelectionPopover: {}
 			}
 		}

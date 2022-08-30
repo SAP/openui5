@@ -51,6 +51,11 @@ sap.ui.define([
 		 */
 		getContexts: function(/* mPropertyBag */) {
 			return Promise.reject("getContexts is not implemented");
+		},
+		contextBasedAdaptation: {
+			create: function() {
+				return Promise.reject("contextBasedAdaptation.create is not implemented");
+			}
 		}
 	});
 });
