@@ -596,7 +596,7 @@ sap.ui.define([
 								},
 								"validations": [
 									{
-										"resrictToPredefinedOptions": true
+										"restrictToPredefinedOptions": true
 									}
 								]
 							},

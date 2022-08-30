@@ -1684,7 +1684,7 @@
              }
            ]
          },
-         "resrictToPredefinedOptions": {
+         "restrictToPredefinedOptions": {
            "description": "Defines whether the value is restricted to predefined options",
            "oneOf": [
              {
