@@ -351,7 +351,9 @@ sap.ui.define([
 		var aDependentElements = this._oChangeIndicatorRegistry.getRegisteredChange(sChangeId).visualizationInfo.dependentElementIds;
 		aDependentElements.forEach(function(sElementId) {
 			var oOverlayDomRef = OverlayRegistry.getOverlay(sElementId).getDomRef();
-			oOverlayDomRef.scrollIntoViewIfNeeded();
+			oOverlayDomRef.scrollIntoView({
+				block: "nearest"
+			});
 			oOverlayDomRef.classList.add("sapUiRtaChangeIndicatorDependent");
 			oOverlayDomRef.addEventListener("animationend", function() {
 				oOverlayDomRef.classList.remove("sapUiRtaChangeIndicatorDependent");
