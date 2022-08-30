@@ -12,16 +12,15 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-     * @param {sap.ui.core.Control} mSettings.control The control instance to be personalized by this controller
+     * @param {sap.ui.core.Control} mSettings.control The control instance that is personalized by this controller
 	 *
 	 * @class
-	 * The <code>SortController</code> serves as base class to create sort specific personalization implementations.
+	 * The <code>SortController</code> entity serves as a base class to create personalization implementations that are specific to sorting.
 	 *
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 *
 	 * @public
 	 * @experimental Since 1.104. Please note that the API of this control is not yet finalized!
 	 * @alias sap.m.p13n.SortController

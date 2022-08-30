@@ -14,7 +14,7 @@ sap.ui.define([
 
     /**
 	 * @class This class offers <code>sap.ui.fl</code> capabilities.
-     * It should be used as the persistence layer in the {@link sap.m.p13n.Engine#register Engine#register}process.
+     * It should be used as the persistence layer in the {@link sap.m.p13n.Engine#register Engine#register} process.
 	 *
 	 * @author SAP SE
 	 * @public

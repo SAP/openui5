@@ -7,6 +7,14 @@ sap.ui.define([
 ], function (BaseObject) {
 	"use strict";
 
+    /**
+     * The <code>MetadataHelper</code> entity offers utility functionality for providing service metadata during the <code>Engine#register</code> process.
+     *
+	 * @author SAP SE
+	 * @public
+     * @experimental Since 1.104.
+	 * @alias sap.m.p13n.MetadataHelper
+     */
     var MetadataHelper = BaseObject.extend("sap.m.p13n.MetadataHelper", {
         constructor: function(aProperties) {
 			BaseObject.apply(this, arguments);
