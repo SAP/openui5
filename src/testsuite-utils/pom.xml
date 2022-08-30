@@ -102,4 +102,22 @@
 	</dependencies>
 
 
+	<!--**************************************************************************
+	* POM SECTION: Profiles Settings
+	***************************************************************************-->
+
+	<profiles>
+		<!-- JDK 16 and higher require at least Maven Compiler Level 1.7 -->
+		<profile>
+			<id>jdk16plus.build</id>
+			<activation>
+				<jdk>[16,)</jdk>
+			</activation>
+			<properties>
+				<maven.compiler.source>1.7</maven.compiler.source>
+				<maven.compiler.target>1.7</maven.compiler.target>
+			</properties>
+		</profile>
+	</profiles>
+
 </project>

@@ -113,19 +113,17 @@ var parse = context.parse = function(sData, sPath, bCompress, bCompressJSON, sLi
 		if (sLibraryName) {
 			var sParameters = JSON.stringify(mVariables);
 
-			// escape all chars that could cause problems with css parsers using URI-Encoding (% + HEX-Code)
-			var sEscapedChars = "\\%{}()'\"";
-			for (var i = 0; i < sEscapedChars.length; i++) {
-				var sChar = sEscapedChars.charAt(i);
-				var sHex = sChar.charCodeAt(0).toString(16).toUpperCase();
-				sParameters = sParameters.replace(new RegExp("\\" + sChar, "g"), "%" + sHex);
-			}
+			// properly escape the parameters to be part of a data-uri
+			// + escaping single quote (') as it is used to surround the data-uri: url('...')
+			var sEscapedParameters = encodeURIComponent(sParameters).replace(/'/g, function(char) {
+				return escape(char);
+			});
 
 			// embed parameter variables as plain-text string into css
 			oResult.parameterStyleRule =
 				"\n/* Inline theming parameters */\n#sap-ui-theme-" +
 				sLibraryName.replace(/\./g, "\\.") +
-				"{background-image:url('data:text/plain;utf-8," + sParameters + "')}";
+				"{background-image:url('data:text/plain;utf-8," + sEscapedParameters + "')}";
 		}
 
 	});
