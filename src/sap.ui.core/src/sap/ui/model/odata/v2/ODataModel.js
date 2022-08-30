@@ -7405,9 +7405,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Setting request groups as deferred.
+	 * Setting request groups as deferred. <b>Note:</b> This will overwrite existing deferred
+	 * groups, including the default group "changes".
 	 *
-	 * Requests that belong to a deferred group will be sent by explicitly calling {@link #submitChanges}.
+	 * Requests that belong to a deferred group will be sent by explicitly calling
+	 * {@link #submitChanges}.
 	 *
 	 * @param {array} aGroupIds Array of group IDs that should be set as deferred
 	 * @public
