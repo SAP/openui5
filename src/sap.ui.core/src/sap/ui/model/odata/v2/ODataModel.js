@@ -2167,7 +2167,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v2.ODataTreeBinding}
 	 *   The new tree binding
 	 * @public
-	 * @see {@link https://github.com/SAP/odata-vocabularies/blob/main/docs/v2-annotations.md
+	 * @see {@link http://www.sap.com/protocols/SAPData
 	 *   "SAP Annotations for OData Version 2.0" Specification}
 	 */
 	ODataModel.prototype.bindTree = function(sPath, oContext, vFilters, mParameters, vSorters) {
