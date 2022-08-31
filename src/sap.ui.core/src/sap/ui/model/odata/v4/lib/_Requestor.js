@@ -531,6 +531,13 @@ sap.ui.define([
 		 */
 		function addToChangeSet(oChange) {
 			if (!mergePatch(oChange)) {
+				if (oChange.method === "DELETE" && oChange.headers["If-Match"]
+						&& oChange.headers["If-Match"]["@odata.etag"]
+						&& aChangeSet.find(function (oCandidate) {
+							return oCandidate.headers["If-Match"] === oChange.headers["If-Match"];
+						})) {
+					oChange.headers["If-Match"] = {"@odata.etag" : "*"};
+				}
 				aChangeSet.push(oChange);
 			}
 		}

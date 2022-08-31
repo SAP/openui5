@@ -16987,34 +16987,38 @@ sap.ui.define([
 	// hierarchy is ODLB - ODCB - ODCB both ODCB with empty path. The deletion has to use the ETag
 	// of the context for which Context#delete is called.
 	// JIRA CPOUI5UISERVICESV3-1917
-	QUnit.test("delete context of binding with empty path, delegate to ODLB", function (assert) {
+	// JIRA: CPOUI5ODATAV4-1670: Use "If-Match: *" if a PATCH is in the same changeset
+[false, true].forEach(function (bChange) {
+	var sTitle = "delete context of binding with empty path, delegate to ODLB, change=" + bChange;
+
+	QUnit.test(sTitle, function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <t:Table id="table" rows="{/SalesOrderList}">\
-	<Text id="note" text="{Note}"/>\
+	<Text id="lang" text="{NoteLanguage}"/>\
 </t:Table>\
 <FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="form">\
 	<Text id="netAmount" text="{NetAmount}"/>\
 	<FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="form2">\
-		<Text id="salesOrderID" text="{SalesOrderID}"/>\
+		<Input id="note" value="{Note}"/>\
 	</FlexBox>\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=110", {
+		this.expectRequest("SalesOrderList?$select=NoteLanguage,SalesOrderID&$skip=0&$top=110", {
 				value : [{
 					"@odata.etag" : "ETag1",
 					SalesOrderID : "0500000000",
-					Note : "Row1"
+					NoteLanguage : "de"
 				}, {
 					"@odata.etag" : "ETag2",
 					SalesOrderID : "0500000001",
-					Note : "Row2"
+					NoteLanguage : "en"
 				}]
 			})
-			.expectChange("note", ["Row1", "Row2"])
+			.expectChange("lang", ["de", "en"])
 			.expectChange("netAmount")
-			.expectChange("salesOrderID");
+			.expectChange("note");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContextBinding = that.oView.byId("form").getElementBinding(),
@@ -17025,26 +17029,39 @@ sap.ui.define([
 					SalesOrderID : "0500000000",
 					NetAmount : "10"
 				})
-				.expectRequest("SalesOrderList('0500000000')?$select=SalesOrderID", {
+				.expectRequest("SalesOrderList('0500000000')?$select=Note,SalesOrderID", {
 					"@odata.etag" : "ETag4",
+					Note : "Note",
 					SalesOrderID : "0500000000"
 				})
 				.expectChange("netAmount", "10.00")
-				.expectChange("salesOrderID", "0500000000");
+				.expectChange("note", "Note");
 
 			oContextBinding.setContext(oListBinding.getCurrentContexts()[0]);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			if (bChange) {
+				that.expectChange("note", "Note (changed)")
+					.expectRequest({
+						headers : {"If-Match" : "ETag4"},
+						method : "PATCH",
+						url : "SalesOrderList('0500000000')",
+						payload : {Note : "Note (changed)"}
+					});
+			}
 			that.expectRequest({
-					headers : {"If-Match" : "ETag4"},
+					headers : {"If-Match" : bChange ? "*" : "ETag4"},
 					method : "DELETE",
 					url : "SalesOrderList('0500000000')"
 				})
-				.expectChange("note", ["Row2"])
+				.expectChange("lang", ["en"])
 				.expectChange("netAmount", null)
-				.expectChange("salesOrderID", null);
+				.expectChange("note", null);
 
+			if (bChange) {
+				that.oView.byId("note").getBinding("value").setValue("Note (changed)");
+			}
 			return Promise.all([
 				// code under test
 				that.oView.byId("form2").getBindingContext().delete(),
@@ -17052,10 +17069,12 @@ sap.ui.define([
 			]);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Deferred deletion of a bound context with a dependent list
 	// JIRA: CPOUI5ODATAV4-1629
+	// JIRA: CPOUI5ODATAV4-1670: Use "If-Match: *" if a PATCH is in the same changeset
 [
 	{desc : "submit"},
 	{desc : "reset via model", resetViaModel : true},
@@ -17070,24 +17089,33 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Text id="id" text="{SalesOrderID}"/>\
+	<Input id="note" value="{Note}"/>\
 	<Table items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
 		<Text id="pos" text="{ItemPosition}"/>\
 	</Table>\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderList('1')", {SalesOrderID : "1"})
+		this.expectRequest("SalesOrderList('1')", {
+				"@odata.etag" : "etag",
+				Note : "Note",
+				SalesOrderID : "1"
+			})
 			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$skip=0&$top=100",
 				{value : [{ItemPosition : "0010", SalesOrderID : "1"}]})
 			.expectChange("id", "1")
+			.expectChange("note", "Note")
 			.expectChange("pos", ["0010"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectChange("id", null)
+			that.expectChange("note", "Note (changed)")
+				.expectChange("id", null)
+				.expectChange("note", null)
 				.expectChange("pos", []);
 
 			oBinding = that.oView.byId("form").getObjectBinding();
 			oContext = oBinding.getBoundContext();
+			that.oView.byId("note").getBinding("value").setValue("Note (changed)");
 			oPromise = oContext.delete();
 
 			assert.ok(oContext.isDeleted());
@@ -17098,12 +17126,25 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			if (bReset) {
+				that.expectCanceledError("Failed to update path /SalesOrderList('1')/Note",
+					"Request canceled: PATCH SalesOrderList('1'); group: update");
 				that.expectCanceledError("Failed to delete /SalesOrderList('1');deleted",
 					"Request canceled: DELETE SalesOrderList('1'); group: update");
 				that.expectChange("id", "1")
+					.expectChange("note", "Note")
 					.expectChange("pos", ["0010"]);
 			} else {
-				that.expectRequest({method : "DELETE", url : "SalesOrderList('1')"});
+				that.expectRequest({
+						headers : {"If-Match" : "etag"},
+						method : "PATCH",
+						url : "SalesOrderList('1')",
+						payload : {Note : "Note (changed)"}
+					})
+					.expectRequest({
+						headers : {"If-Match" : "*"},
+						method : "DELETE",
+						url : "SalesOrderList('1')"
+					});
 			}
 
 			if (oFixture.resetViaModel) {
