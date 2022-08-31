@@ -9,10 +9,12 @@ sap.ui.define([
   'sap/ui/core/Control',
   './MessageToastRenderer',
   'sap/ui/core/Popup',
+  'sap/ui/core/Configuration',
   'sap/ui/thirdparty/jqueryui/jquery-ui-core',
-  'sap/ui/thirdparty/jqueryui/jquery-ui-position' // jQuery.fn.position
+  // jQuery.fn.position
+  'sap/ui/thirdparty/jqueryui/jquery-ui-position'
 ],
-	function(jQuery, library, Control, MessageToastRenderer, Popup) {
+	function(jQuery, library, Control, MessageToastRenderer, Popup, Configuration) {
 	"use strict";
 
 
@@ -105,7 +107,7 @@ sap.ui.define([
 	  // (That allows us to position the down-arrow without moving the MessageToast.)
 	  // The MessageToast Arrow aligns towards the proper MessageBar Icon.
 
-	  var rtl = sap.ui.getCore().getConfiguration().getRTL();
+	  var rtl = Configuration.getRTL();
 
 	  // 1) Calculating the distance between the Icon and the right side of its MessageBar container:
 	  var jIcon = jQuery(this.sAnchorId ? document.getElementById(this.sAnchorId) : null); // Anchor against which our Arrow has to align
@@ -136,7 +138,7 @@ sap.ui.define([
 									: (defaultArrowRightOffset - targetRightOffset - 2) + "px";
 			if (defaultArrowRightOffset >= targetRightOffset) {
 			var jArrow = jQuery(document.getElementById(this.getId() + "Arrow"));
-			if (sap.ui.getCore().getConfiguration().getRTL()) {
+			if (Configuration.getRTL()) {
 				jArrow.css('marginRight', moveRightOffset); // Positive padding
 			} else {
 				jArrow.css('marginLeft', moveRightOffset); // Positive padding
@@ -174,7 +176,7 @@ sap.ui.define([
 		// Toast start (allows for no interruption):
 	  this.bIdle = false;
 
-	  var rtl = sap.ui.getCore().getConfiguration().getRTL();
+	  var rtl = Configuration.getRTL();
 
 		// Defining or fetching the Popup attributes:
 	  var popupSnapPoint  = rtl ? Dock.LeftBottom : Dock.RightBottom;

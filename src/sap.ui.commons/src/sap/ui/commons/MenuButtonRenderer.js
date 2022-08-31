@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.MenuButton
-sap.ui.define(['./ButtonRenderer', 'sap/ui/core/Renderer'],
-	function(ButtonRenderer, Renderer) {
+sap.ui.define(['./ButtonRenderer', 'sap/ui/core/Renderer', "sap/ui/core/Configuration"],
+	function(ButtonRenderer, Renderer, Configuration) {
 	"use strict";
 
 
@@ -27,7 +27,7 @@ sap.ui.define(['./ButtonRenderer', 'sap/ui/core/Renderer'],
 	 */
 	MenuButtonRenderer.renderButtonAttributes = function(rm, oControl) {
 		//Add specific ARIA information for MenuButton
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (Configuration.getAccessibility()) {
 			rm.writeAttribute("aria-haspopup", "true");
 		}
 	};

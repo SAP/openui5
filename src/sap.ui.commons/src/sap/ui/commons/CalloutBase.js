@@ -12,10 +12,13 @@ sap.ui.define([
     'sap/ui/core/Popup',
     'sap/ui/events/ControlEvents',
     'sap/ui/events/KeyCodes',
-    'sap/ui/dom/jquery/control', // jQuery.fn.control
-    'sap/ui/dom/jquery/Focusable' // jQuery.fn.firstFocusableDomRef, jQuery.fn.lastFocusableDomRef,
+    "sap/ui/core/Configuration",
+    // jQuery.fn.control
+    'sap/ui/dom/jquery/control',
+    // jQuery.fn.firstFocusableDomRef, jQuery.fn.lastFocusableDomRef,
+    'sap/ui/dom/jquery/Focusable'
 ],
-	function(jQuery, library, TooltipBase, CalloutBaseRenderer, Popup, ControlEvents, KeyCodes) {
+	function(jQuery, library, TooltipBase, CalloutBaseRenderer, Popup, ControlEvents, KeyCodes, Configuration) {
 	"use strict";
 
 
@@ -259,7 +262,7 @@ sap.ui.define([
 
 		if (dock.y) { // pointer on the top or bottom border
 			// switch right to left in case of RTL for the relevant docking (begin & end):
-			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			var bRtl = Configuration.getRTL();
 			if (bRtl) { myPosition.replace("begin", "right").replace("end", "left"); }
 			var hPos = 0;
 

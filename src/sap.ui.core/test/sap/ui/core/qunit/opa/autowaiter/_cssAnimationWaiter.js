@@ -9,9 +9,10 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/Button",
 	"sap/ui/test/opaQunit",
-	"sap/ui/test/Opa5"
+	"sap/ui/test/Opa5",
+	"sap/ui/core/Configuration"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
-		DynamicPage,  Toolbar, Button, opaTest, Opa5) {
+		DynamicPage,  Toolbar, Button, opaTest, Opa5, Configuration) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();
@@ -24,7 +25,7 @@ sap.ui.define([
 			this.oTimeoutWaiterStub.returns(false);
 			this.oXHRWaiterStub.returns(false);
 			this.oPromiseWaiterStub.returns(false);
-			sap.ui.getCore().getConfiguration().setAnimationMode("full");
+			Configuration.setAnimationMode("full");
 
 			this.oDynamicPage = new DynamicPage({
 				footer: [new Toolbar()]

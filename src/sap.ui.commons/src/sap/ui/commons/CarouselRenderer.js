@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.Carousel
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/core/Configuration"],
+	function(Configuration) {
 	"use strict";
 
 
@@ -24,7 +24,7 @@ sap.ui.define([],
 	 */
 	CarouselRenderer.render = function(rm, oControl) {
 
-		var bRTL = sap.ui.getCore().getConfiguration().getRTL();
+		var bRTL = Configuration.getRTL();
 
 		rm.write("<div");
 		rm.addClass("sapUiCrsl");

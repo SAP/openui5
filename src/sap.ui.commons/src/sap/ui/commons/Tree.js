@@ -10,8 +10,9 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'./TreeRenderer',
-	'./Button'
-], function(jQuery, Log, isEmptyObject, library, Control, TreeRenderer, Button) {
+	'./Button',
+	'sap/ui/core/Configuration'
+], function(jQuery, Log, isEmptyObject, library, Control, TreeRenderer, Button, Configuration) {
 	"use strict";
 
 
@@ -331,9 +332,9 @@ sap.ui.define([
 	 * @returns {string} The icon path prefix
 	 */
 	Tree.prototype.getIconPrefix = function() {
-		var sIconPrefix = "themes/" + sap.ui.getCore().getConfiguration().getTheme() + "/";
+		var sIconPrefix = "themes/" + Configuration.getTheme() + "/";
 
-		if (!sap.ui.getCore().getConfiguration().getRTL()) {
+		if (!Configuration.getRTL()) {
 			sIconPrefix		+= "img/tree/";
 		} else {
 			sIconPrefix		+= "img-RTL/tree/";

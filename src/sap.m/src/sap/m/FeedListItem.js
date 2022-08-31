@@ -13,7 +13,8 @@ sap.ui.define([
 	"./FeedListItemRenderer",
 	"sap/m/Avatar",
 	"sap/m/AvatarShape",
-	"sap/m/AvatarSize"
+	"sap/m/AvatarSize",
+	"sap/ui/core/Configuration"
 ],
 function(
 	ListItemBase,
@@ -26,7 +27,8 @@ function(
 	FeedListItemRenderer,
 	Avatar,
 	AvatarShape,
-	AvatarSize
+	AvatarSize,
+	Configuration
 	) {
 	"use strict";
 
@@ -322,7 +324,7 @@ function(
 			return;
 		}
 
-		sTheme = sap.ui.getCore().getConfiguration().getTheme();
+		sTheme = Configuration.getTheme();
 		oActionSheetPopover = event.getSource().getParent();
 		oActionSheetPopover.removeStyleClass("sapContrast sapContrastPlus");
 

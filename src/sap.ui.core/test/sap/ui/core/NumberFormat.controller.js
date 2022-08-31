@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel"
-], function(FormatHelper, deepEqual, JSTokenizer, NumberFormat, Locale, LocaleData, Controller, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Configuration"
+], function(FormatHelper, deepEqual, JSTokenizer, NumberFormat, Locale, LocaleData, Controller, JSONModel, Configuration) {
 	"use strict";
 
 	return Controller.extend("DateFormat", {
@@ -182,7 +183,7 @@ sap.ui.define([
 				};
 
 
-			var oCurrentLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+			var oCurrentLocale = Configuration.getFormatSettings().getFormatLocale();
 			var sLocale = oCurrentLocale.getLanguage();
 			if (oCurrentLocale.getRegion()) {
 				sLocale += "-" + oCurrentLocale.getRegion();

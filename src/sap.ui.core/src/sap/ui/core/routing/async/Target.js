@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Placeholder",
-	"sap/ui/core/library"
-], function(Log, ManagedObjectMetadata, ComponentContainer, Placeholder, coreLib) {
+	"sap/ui/core/library",
+	"sap/ui/core/Configuration"
+], function(Log, ManagedObjectMetadata, ComponentContainer, Placeholder, coreLib, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ComponentLifecycle
@@ -476,7 +477,7 @@ sap.ui.define([
 					});
 				}
 
-				if (oPlaceholderConfig.placeholder && sap.ui.getCore().getConfiguration().getPlaceholder()) {
+				if (oPlaceholderConfig.placeholder && Configuration.getPlaceholder()) {
 					pPlaceholder = this.showPlaceholder(oPlaceholderConfig);
 				}
 			}

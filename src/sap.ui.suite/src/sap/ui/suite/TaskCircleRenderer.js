@@ -3,8 +3,8 @@
  */
 
 // provides default renderer for sap.ui.suite.TaskCircle
-sap.ui.define(['sap/ui/core/Core', './library'],
-	function(Core, library) {
+sap.ui.define(['sap/ui/core/Core', './library', "sap/ui/core/Configuration"],
+	function(Core, library, Configuration) {
 	"use strict";
 
 
@@ -96,7 +96,7 @@ sap.ui.define(['sap/ui/core/Core', './library'],
 		}
 
 	    //ARIA
-	    if ( sap.ui.getCore().getConfiguration().getAccessibility()) {
+	    if ( Configuration.getAccessibility()) {
 		  rm.writeAttribute('role', 'progressbar');
 	      rm.writeAccessibilityState(oControl, {valuemin: minvalue});
 		  rm.writeAccessibilityState(oControl, {valuemax: maxvalue});

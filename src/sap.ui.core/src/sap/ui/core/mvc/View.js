@@ -4,31 +4,33 @@
 
 // Provides control sap.ui.core.mvc.View.
 sap.ui.define([
-	"sap/base/util/isEmptyObject",
-	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Control",
-	"sap/ui/core/mvc/Controller",
-	"sap/base/util/merge",
-	"./ViewType",
-	"./ViewRenderer",
-	"./XMLProcessingMode",
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/extend",
-	"sap/ui/core/Core" // to ensure correct behaviour of sap.ui.getCore()
-],
-	function(
-		isEmptyObject,
-		ManagedObject,
-		Control,
-		Controller,
-		merge,
-		ViewType,
-		ViewRenderer,
-		XMLProcessingMode,
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/merge",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Control",
+	"sap/ui/core/Element",
+	"./Controller",
+	"./ViewRenderer",
+	"./ViewType",
+	"./XMLProcessingMode"
+], function(
 		assert,
 		Log,
-		extend
+		extend,
+		isEmptyObject,
+		merge,
+		ManagedObject,
+		Configuration,
+		Control,
+		Element,
+		Controller,
+		ViewRenderer,
+		ViewType,
+		XMLProcessingMode
 	) {
 	"use strict";
 
@@ -438,7 +440,7 @@ sap.ui.define([
 	 */
 	var createAndConnectController = function(oThis, mSettings) {
 
-		if (!sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
+		if (!Configuration.getControllerCodeDeactivated()) {
 			// only set when used internally
 			var oController = mSettings.controller,
 				sName = oController && typeof oController.getMetadata === "function" && oController.getMetadata().getName(),
@@ -664,7 +666,7 @@ sap.ui.define([
 	 * @public
 	 */
 	View.prototype.byId = function(sId) {
-		return sap.ui.getCore().byId(this.createId(sId));
+		return Element.registry.get(this.createId(sId));
 	};
 
 	/**

@@ -15,9 +15,8 @@ sap.ui.define([
 	'sap/base/util/mixedFetch',
 	'sap/base/strings/escapeRegExp',
 	'sap/ui/core/_IconRegistry',
-	'./Core' // provides sap.ui.getCore()
-],
-	function(ManagedObject, URI, Log, extend, mixedFetch, escapeRegExp, _IconRegistry/*, Core */) {
+	'sap/ui/core/Configuration'
+], function(ManagedObject, URI, Log, extend, mixedFetch, escapeRegExp, _IconRegistry, Configuration) {
 	"use strict";
 
 	/*
@@ -53,7 +52,7 @@ sap.ui.define([
 	//   indexOf check in convertURL will not work here!
 
 	// determine the language and loading mode from the configuration
-	var oConfiguration = sap.ui.getCore().getConfiguration();
+	var oConfiguration = Configuration;
 	var sLanguage = oConfiguration.getLanguage();
 	var bSync = oConfiguration.getAppCacheBusterMode() === "sync";
 	var bBatch = oConfiguration.getAppCacheBusterMode() === "batch";

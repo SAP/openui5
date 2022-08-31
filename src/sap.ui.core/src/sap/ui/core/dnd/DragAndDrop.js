@@ -6,9 +6,10 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Element",
 	"../UIArea",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ],
-function(lib, Device, Element, UIArea, jQuery) {
+function(lib, Device, Element, UIArea, jQuery, Configuration) {
 	"use strict";
 
 	var RelativeDropPosition = lib.dnd.RelativeDropPosition;
@@ -352,7 +353,7 @@ function(lib, Device, Element, UIArea, jQuery) {
 					sRelativePosition = RelativeDropPosition.On;
 				}
 			}
-			if (sRelativePosition != RelativeDropPosition.On && sap.ui.getCore().getConfiguration().getRTL()) {
+			if (sRelativePosition != RelativeDropPosition.On && Configuration.getRTL()) {
 				sRelativePosition = (sRelativePosition == RelativeDropPosition.After) ? RelativeDropPosition.Before : RelativeDropPosition.After;
 			}
 		} else {

@@ -17,7 +17,8 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	"./YearPickerRenderer",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ], function(
 	Control,
 	Device,
@@ -32,7 +33,8 @@ sap.ui.define([
 	LocaleData,
 	YearPickerRenderer,
 	KeyCodes,
-	jQuery
+	jQuery,
+	Configuration
 ) {
 	"use strict";
 
@@ -149,7 +151,7 @@ sap.ui.define([
 	YearPicker.prototype.init = function(){
 
 		// set default calendar type from configuration
-		var sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+		var sCalendarType = Configuration.getCalendarType();
 		this.setProperty("primaryCalendarType", sCalendarType);
 
 		// to format year with era in Japanese
@@ -547,7 +549,7 @@ sap.ui.define([
 		if (oParent && oParent._getLocale) {
 			return oParent._getLocale();
 		} else if (!this._sLocale) {
-			this._sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
+			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
 		}
 
 		return this._sLocale;

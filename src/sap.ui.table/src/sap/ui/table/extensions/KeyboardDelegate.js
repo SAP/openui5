@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery"
-], function(TableUtils, library, BaseObject, Device, KeyCodes, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
+], function(TableUtils, library, BaseObject, Device, KeyCodes, jQuery, Configuration) {
 	"use strict";
 
 	// Shortcuts
@@ -247,7 +248,7 @@ sap.ui.define([
 		}
 
 		var oCellInfo = TableUtils.getCellInfo(TableUtils.getCell(oTable, oEvent.target));
-		var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
+		var bIsRTL = Configuration.getRTL();
 
 		if (!oCellInfo.isOfType(CellType.COLUMNHEADER) || !bIsRTL) {
 			return;
@@ -1553,7 +1554,7 @@ sap.ui.define([
 		}
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
-		var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
+		var bIsRTL = Configuration.getRTL();
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
 
@@ -1632,7 +1633,7 @@ sap.ui.define([
 		}
 
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
-		var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
+		var bIsRTL = Configuration.getRTL();
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
 			/* Range Selection */

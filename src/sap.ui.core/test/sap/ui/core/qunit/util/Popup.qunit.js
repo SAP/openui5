@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Configuration"
 ], function(
 	Popup,
 	Log,
@@ -31,7 +32,8 @@ sap.ui.define([
 	Text,
 	ResizeHandler,
 	containsOrEquals,
-	KeyCodes
+	KeyCodes,
+	Configuration
 ){
 	"use strict";
 
@@ -2766,7 +2768,7 @@ sap.ui.define([
 		oPopup2.destroy();
 	});
 
-	if (!sap.ui.getCore().getConfiguration().getRTL()) {
+	if (!Configuration.getRTL()) {
 		// The test checks for "right" CSS proprety explicitly which isn't set in RTL mode
 		QUnit.test("Align the popup correctly in cases where position is more precisely than one pixel", function(assert){
 			var done = assert.async();
@@ -3223,7 +3225,7 @@ sap.ui.define([
 		return pPromise;
 	});
 
-	if (!sap.ui.getCore().getConfiguration().getRTL()) {
+	if (!Configuration.getRTL()) {
 		// in RTL mode, the "top" CSS between blocklayer and within area has a difference of "0.5px", need further debug
 		// to check what causes the "0.5px"
 		// The test is currently disabled in RTL mode

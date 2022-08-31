@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/JSONView",
 	"sap/ui/base/ManagedObject",
 	"./AnyViewAsync.qunit",
-	"sap/base/Log"
-], function(ResourceBundle, View, JSONView, ManagedObject, asyncTestsuite, Log) {
+	"sap/base/Log",
+	"sap/ui/core/Configuration"
+], function(ResourceBundle, View, JSONView, ManagedObject, asyncTestsuite, Log, Configuration) {
 	"use strict";
 
 	// setup test config with generic factory
@@ -51,14 +52,14 @@ sap.ui.define([
 		});
 	});
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	QUnit.module("Apply settings", {
 		beforeEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 

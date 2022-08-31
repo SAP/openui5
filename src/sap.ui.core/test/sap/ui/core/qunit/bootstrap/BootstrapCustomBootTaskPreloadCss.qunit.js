@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/core/Configuration"], function(Configuration) {
 	"use strict";
 
 	/**
@@ -15,7 +15,7 @@ sap.ui.define([], function() {
 	 * take the configured "themeroots" into account.
 	 */
 	QUnit.test("Theme Modulepath should be registered accordingly", function(assert) {
-		var sTheme = sap.ui.getCore().getConfiguration().getTheme();
+		var sTheme = Configuration.getTheme();
 
 		assert.equal(sap.ui.require.toUrl("sap/ui/core/themes/" + sTheme), "foo/bar/sap/ui/core/themes/" + sTheme,
 			"Modulepath of 'sap/ui/core/themes/" + sTheme + "' should be set to themeroot.");

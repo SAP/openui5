@@ -4,8 +4,10 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Control",
 	"sap/ui/qunit/QUnitUtils",
-	"jquery.sap.keycodes" // provides jQuery.sap.keyCodes
-], function(jQuery, Device, Control, qutils) {
+	"sap/ui/core/Configuration",
+	// provides jQuery.sap.keyCodes
+	"jquery.sap.keycodes"
+], function(jQuery, Device, Control, qutils, Configuration) {
 	"use strict";
 
 	// Initialization
@@ -37,7 +39,7 @@ sap.ui.define([
 	oTestControl1.setChild(oTestControl2);
 	oTestControl1.placeAt("uiArea");
 
-	var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+	var bRtl = Configuration.getRTL();
 
 	//see jQuery.sap.ControlEvents
 	var aBasicBrowserEvents = ["click", "dblclick", "contextmenu", "focusin", "focusout", "keydown", "keypress", "keyup", "mousedown", "mouseout", "mouseover",

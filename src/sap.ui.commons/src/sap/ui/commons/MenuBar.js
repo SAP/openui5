@@ -14,9 +14,10 @@ sap.ui.define([
     'sap/ui/core/ResizeHandler',
     'sap/ui/core/Popup',
     'sap/ui/events/checkMouseEnterOrLeave',
-    'sap/ui/events/KeyCodes'
+    'sap/ui/events/KeyCodes',
+    'sap/ui/core/Configuration'
 ],
-	function(jQuery, Menu, MenuItem, MenuItemBase, library, Control, MenuBarRenderer, ResizeHandler, Popup, checkMouseEnterOrLeave, KeyCodes) {
+	function(jQuery, Menu, MenuItem, MenuItemBase, library, Control, MenuBarRenderer, ResizeHandler, Popup, checkMouseEnterOrLeave, KeyCodes, Configuration) {
 	"use strict";
 
 
@@ -449,7 +450,7 @@ sap.ui.define([
 		var jAreaRef = oThis.$("area");
 		var jItems = jAreaRef.children();
 
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var bRtl = Configuration.getRTL();
 		var lastOffsetLeft = (bRtl ? 100000 : 0);
 
 		jItems.each(function(iIdx) {
@@ -522,7 +523,7 @@ sap.ui.define([
 					}
 				}
 			}
-			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			if (Configuration.getAccessibility()) {
 				jItems.attr("aria-setsize", _iVisibleItems + 1);
 				jOvrFlwRef.attr("aria-posinset", _iVisibleItems + 1);
 			}
@@ -532,7 +533,7 @@ sap.ui.define([
 				oThis.oOvrFlwMnu.destroyItems();
 			}
 			oThis.sLastVisibleItemId = null;
-			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			if (Configuration.getAccessibility()) {
 				jItems.attr("aria-setsize", _iVisibleItems);
 				jOvrFlwRef.attr("aria-posinset", 0);
 			}

@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/Binding",
@@ -20,9 +21,9 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/core/library"
-], function (Log, SyncPromise, CacheManager, Message, Binding, BindingMode, BaseContext, Model,
-		OperationMode, Context, ODataMetaModel, ODataModel, SubmitMode, _Helper, _MetadataRequestor,
-		_Parser, _Requestor, library) {
+], function (Log, SyncPromise, Configuration, CacheManager, Message, Binding, BindingMode,
+		BaseContext, Model, OperationMode, Context, ODataMetaModel, ODataModel, SubmitMode,
+		_Helper, _MetadataRequestor, _Parser, _Requestor, library) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -36,8 +37,7 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			this.mock(sap.ui.getCore().getConfiguration()).expects("getLanguageTag").atLeast(0)
-				.returns("ab-CD");
+			this.mock(Configuration).expects("getLanguageTag").atLeast(0).returns("ab-CD");
 		},
 
 		/**
@@ -103,8 +103,7 @@ sap.ui.define([
 
 		this.mock(ODataModel.prototype).expects("buildQueryOptions")
 			.withExactArgs({}, false, true).returns({"sap-client" : "279"});
-		this.mock(sap.ui.getCore().getConfiguration()).expects("getStatistics").withExactArgs()
-			.returns(bStatistics);
+		this.mock(Configuration).expects("getStatistics").withExactArgs().returns(bStatistics);
 		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", bStatistics
 				? {"sap-client" : "279", "sap-statistics" : true}
@@ -430,8 +429,7 @@ sap.ui.define([
 			},
 			fnSubmitAuto = function () {};
 
-		this.mock(sap.ui.getCore().getConfiguration()).expects("getStatistics").withExactArgs()
-			.returns(bStatistics);
+		this.mock(Configuration).expects("getStatistics").withExactArgs().returns(bStatistics);
 		oExpectedCreate
 			.withExactArgs(sServiceUrl, {
 					fetchEntityContainer : "~fnFetchEntityContainer~",

@@ -62,9 +62,9 @@ sap.ui.define([
 			// We need a call through as UriParameters could be used by other modules and needs the full interface
 			}).callThrough();
 
-			var sSAPLanguage = sap.ui.getCore().getConfiguration().getSAPLogonLanguage();
+			var sSAPLanguage = Configuration.getSAPLogonLanguage();
 
-			this.oConfigurationStub = sinon.stub(sap.ui.getCore().getConfiguration(), 'getSAPParam');
+			this.oConfigurationStub = sinon.stub(Configuration, 'getSAPParam');
 			this.oConfigurationStub.withArgs('sap-language').returns(mMockParams && mMockParams.sapLanguage || sSAPLanguage);
 			this.oConfigurationStub.withArgs('sap-client').returns(mMockParams && mMockParams.sapClient || 'foo');
 			this.oConfigurationStub.withArgs('sap-server').returns(mMockParams && mMockParams.sapServer || 'bar');

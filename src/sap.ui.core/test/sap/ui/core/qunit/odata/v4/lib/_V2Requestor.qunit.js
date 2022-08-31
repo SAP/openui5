@@ -5,14 +5,15 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/CalendarType",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/lib/_V2Requestor"
-], function (Log, SyncPromise, CalendarType, DateFormat, ODataUtils, _Helper, _Parser, _Requestor,
-		asV2Requestor0) {
+], function (Log, SyncPromise, CalendarType, Configuration, DateFormat, ODataUtils, _Helper,
+		_Parser, _Requestor, asV2Requestor0) {
 	"use strict";
 
 	function asV2Requestor(oRequestor) {
@@ -23,13 +24,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._V2Requestor", {
 		beforeEach : function () {
-			this.sDefaultCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+			this.sDefaultCalendarType = Configuration.getCalendarType();
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 		afterEach : function () {
-			sap.ui.getCore().getConfiguration().setCalendarType(this.sDefaultCalendarType);
+			Configuration.setCalendarType(this.sDefaultCalendarType);
 		}
 	});
 
@@ -522,7 +523,7 @@ sap.ui.define([
 
 		asV2Requestor(oRequestor);
 
-		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+		Configuration.setCalendarType(CalendarType.Japanese);
 		asV2Requestor0._setDateTimeFormatter();
 
 		// code under test
@@ -595,7 +596,7 @@ sap.ui.define([
 
 			asV2Requestor(oRequestor);
 
-			sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+			Configuration.setCalendarType(CalendarType.Japanese);
 			asV2Requestor0._setDateTimeFormatter();
 
 			// code under test
@@ -1138,7 +1139,7 @@ sap.ui.define([
 			// {value : "13:47:26.123", type : "Edm.TimeOfDay", v2type: "Edm.Time",
 			//     result : "time'PT13H47M26.123S'"},
 		].forEach(function (oFixture) {
-			sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+			Configuration.setCalendarType(CalendarType.Japanese);
 			asV2Requestor0._setDateTimeFormatter();
 
 			assert.strictEqual(oRequestor.formatPropertyAsLiteral(oFixture.value, {

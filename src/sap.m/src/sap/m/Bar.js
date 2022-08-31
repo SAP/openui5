@@ -10,9 +10,10 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/Device',
 	'./BarRenderer',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ],
-	function(BarInPageEnabler, library, Control, ResizeHandler, Device, BarRenderer, jQuery) {
+	function(BarInPageEnabler, library, Control, ResizeHandler, Device, BarRenderer, jQuery, Configuration) {
 	"use strict";
 
 
@@ -328,7 +329,7 @@ sap.ui.define([
 	 */
 	Bar.prototype._getMidBarCss = function(iRightBarWidth, iBarWidth, iLeftBarWidth) {
 		var iMidBarPlaceholderWidth = this._$MidBarPlaceHolder.outerWidth(true),
-			bRtl = sap.ui.getCore().getConfiguration().getRTL(),
+			bRtl = Configuration.getRTL(),
 			sLeftOrRight = bRtl ? "right" : "left",
 			sRightOrLeft = bRtl ? "left" : "right",
 			oMidBarCss = { visibility : "" },

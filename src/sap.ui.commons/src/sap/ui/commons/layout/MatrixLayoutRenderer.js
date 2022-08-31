@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.layout.MatrixLayout
-sap.ui.define(['sap/base/assert', 'sap/ui/commons/library'],
-	function(assert, commonsLibrary) {
+sap.ui.define(['sap/base/assert', 'sap/ui/commons/library', 'sap/ui/core/Configuration'],
+	function(assert, commonsLibrary, Configuration) {
     "use strict";
 
 
@@ -41,7 +41,7 @@ sap.ui.define(['sap/base/assert', 'sap/ui/commons/library'],
 	 */
 	MatrixLayoutRenderer.render = function(rm, oMatrixLayout) {
 		// some convenience variables.
-		var bRTL = sap.ui.getCore().getConfiguration().getRTL();
+		var bRTL = Configuration.getRTL();
 		var i = 0;
 		var j = 0;
 		var index = 0;

@@ -4,17 +4,19 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/base/util/LoaderExtensions"
+	"sap/base/util/LoaderExtensions",
+	"sap/ui/core/Configuration"
 ], function(
 	Log,
-	LoaderExtensions
+	LoaderExtensions,
+	Configuration
 ) {
 	"use strict";
 
 	function _getBundle(sReference, sBundleName) {
 		var sBundleResourcePath = sReference.replace(/\./g, "/") + "/changes/" + sBundleName + ".json";
 		var bBundleLoaded = !!sap.ui.loader._.getModuleState(sBundleResourcePath);
-		var oConfiguration = sap.ui.getCore().getConfiguration();
+		var oConfiguration = Configuration;
 		// the bundle is usually part of the component-preload
 		// if the preload is suppressed, we send a potentially failing request
 		if (bBundleLoaded || oConfiguration.getDebug() || oConfiguration.getComponentPreload() === "off") {

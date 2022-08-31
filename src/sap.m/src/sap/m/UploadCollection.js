@@ -35,6 +35,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
+	"sap/ui/core/Configuration",
 	"sap/ui/dom/jquery/selectText" // jQuery Plugin "selectText"
 ], function(
 	Library,
@@ -68,7 +69,8 @@ sap.ui.define([
 	UploadCollectionRenderer,
 	jQuery,
 	KeyCodes,
-	Log
+	Log,
+	Configuration
 ) {
 	"use strict";
 
@@ -2958,7 +2960,7 @@ sap.ui.define([
 		// set application language to request headers
 		oLangRequestHeader = {
 			name: this._headerParamConst.acceptLanguage,
-			value: sap.ui.getCore().getConfiguration().getLanguage()
+			value: Configuration.getLanguage()
 		};
 		event.getParameter("requestHeaders").push(oLangRequestHeader);
 

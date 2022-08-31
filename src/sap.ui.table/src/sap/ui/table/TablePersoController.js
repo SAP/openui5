@@ -9,9 +9,10 @@ sap.ui.define([
 	"sap/ui/core/syncStyleClass",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	'./utils/TableUtils'
+	'./utils/TableUtils',
+	"sap/ui/core/Configuration"
 ],
-	function(Library, ManagedObject, syncStyleClass, Log, jQuery, TableUtils) {
+	function(Library, ManagedObject, syncStyleClass, Log, jQuery, TableUtils, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.table.ResetAllMode
@@ -423,7 +424,7 @@ sap.ui.define([
 		var sPersoKey = oControl.data(this.getCustomDataKey());
 		if (!sPersoKey) {
 			sPersoKey = oControl.getId();
-			if (sPersoKey.indexOf(sap.ui.getCore().getConfiguration().getUIDPrefix()) === 0) {
+			if (sPersoKey.indexOf(Configuration.getUIDPrefix()) === 0) {
 				Log.warning("Generated IDs should not be used as personalization keys! The stability cannot be ensured! (Control: \"" + oControl.getId() + "\")");
 			}
 		}

@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/UniversalDate",
-	"sap/ui/core/CalendarType"
-], function(Japanese, UniversalDate, CalendarType) {
+	"sap/ui/core/CalendarType",
+	"sap/ui/core/Configuration"
+], function(Japanese, UniversalDate, CalendarType, Configuration) {
 	"use strict";
 
 	// Test data
@@ -345,7 +346,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getWeek (de)", function (assert) {
-		sap.ui.getCore().getConfiguration().setLanguage("de");
+		Configuration.setLanguage("de");
 		assert.deepEqual(new Japanese([236, 4],0,1).getWeek(), {
 			"week": 51,
 			"year": 3
@@ -354,7 +355,7 @@ sap.ui.define([
 			"week": 0,
 			"year": 4
 		}, "Jan 3rd 2022 is CW 1");
-		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+		Configuration.setLanguage("en_US");
 	});
 
 	// --------------------------- HELPERS -------------------------------------------------------------------------

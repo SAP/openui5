@@ -17,10 +17,13 @@ sap.ui.define([
 	'sap/ui/dom/containsOrEquals',
 	'sap/ui/events/jquery/EventExtension',
 	'sap/ui/events/KeyCodes',
-	'sap/ui/dom/jquery/cursorPos', // jQuery.fn.cursorPos
-	'sap/ui/dom/jquery/selectText' // jQuery.fn.selectText
+	"sap/ui/core/Configuration",
+	// jQuery.fn.cursorPos
+	'sap/ui/dom/jquery/cursorPos',
+	// jQuery.fn.selectText
+	'sap/ui/dom/jquery/selectText'
 ],
-	function(jQuery, Log, ComboBox, library, History, SeparatorItem, DropdownBoxRenderer, Device, TextField, ListItem, containsOrEquals, EventExtension, KeyCodes) {
+	function(jQuery, Log, ComboBox, library, History, SeparatorItem, DropdownBoxRenderer, Device, TextField, ListItem, containsOrEquals, EventExtension, KeyCodes, Configuration) {
 	"use strict";
 
 
@@ -771,7 +774,7 @@ sap.ui.define([
 			return;
 		}
 
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var bRtl = Configuration.getRTL();
 		if (!bRtl) {
 			this._updateSelection(1);
 		} else {
@@ -796,7 +799,7 @@ sap.ui.define([
 			return;
 		}
 
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var bRtl = Configuration.getRTL();
 		if (!bRtl) {
 			this._updateSelection( -1);
 		} else {

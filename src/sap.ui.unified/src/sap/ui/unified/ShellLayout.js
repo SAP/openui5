@@ -14,6 +14,7 @@ sap.ui.define([
 	'sap/ui/dom/containsOrEquals',
 	'sap/base/Log',
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration",
 	// jQuery Plugin "firstFocusableDomRef"
 	'sap/ui/dom/jquery/Focusable'
 ], function(
@@ -26,7 +27,8 @@ sap.ui.define([
 	ShellLayoutRenderer,
 	containsOrEquals,
 	Log,
-	jQuery
+	jQuery,
+	Configuration
 ) {
 	"use strict";
 
@@ -118,8 +120,8 @@ sap.ui.define([
 	}
 
 	ShellLayout.prototype.init = function(){
-		this._rtl = sap.ui.getCore().getConfiguration().getRTL();
-		this._animation = sap.ui.getCore().getConfiguration().getAnimation();
+		this._rtl = Configuration.getRTL();
+		this._animation = Configuration.getAnimation();
 		this._showHeader = true;
 		this._showCurtain = false;
 		this._iHeaderHidingDelay = 3000; /*Currently hidden but maybe a property later (see getter and setter below)*/
@@ -127,7 +129,7 @@ sap.ui.define([
 
 		this._cont = new SplitContainer(this.getId() + "-container");
 		this._cont._bRootContent = true; // see e.g. sap.m.App#onAfterRendering
-		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (Configuration.getAccessibility()) {
 			var that = this;
 			this._cont.addEventDelegate({
 				onAfterRendering : function() {

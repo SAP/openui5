@@ -11,9 +11,11 @@ sap.ui.define([
 	'sap/ui/core/theming/Parameters',
 	'./ShellOverlayRenderer',
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/dom/jquery/rect', // jQuery Plugin "rect"
-	'sap/ui/dom/jquery/Selectors' // jQuery custom selectors ":sapTabbable"
-],
+	"sap/ui/core/Configuration",
+	// jQuery Plugin "rect"
+	'sap/ui/dom/jquery/rect',
+	// jQuery custom selectors ":sapTabbable"
+	'sap/ui/dom/jquery/Selectors' ],
 	function(
 		Device,
 		Control,
@@ -21,7 +23,8 @@ sap.ui.define([
 		library,
 		Parameters,
 		ShellOverlayRenderer,
-		jQuery
+		jQuery,
+		Configuration
 	) {
 	"use strict";
 
@@ -202,7 +205,7 @@ sap.ui.define([
 		this._animOpenDuration = -1;
 		this._animCloseDuration = -1;
 		this._animBlockLayerDuration = -1;
-		this._animation = sap.ui.getCore().getConfiguration().getAnimation();
+		this._animation = Configuration.getAnimation();
 		this._opening = false;
 
 		var that = this;

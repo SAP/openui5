@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"./TitlePropagationSupport",
 	"./PageRenderer",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ],
 function(
 	library,
@@ -31,7 +32,8 @@ function(
 	Element,
 	TitlePropagationSupport,
 	PageRenderer,
-	jQuery
+	jQuery,
+	Configuration
 ) {
 		"use strict";
 
@@ -429,7 +431,7 @@ function(
 			}
 
 			var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last(),
-				useAnimation = sap.ui.getCore().getConfiguration().getAnimation();
+				useAnimation = Configuration.getAnimation();
 
 			if (!this.getFloatingFooter()) {
 				this.setProperty("showFooter", bShowFooter);

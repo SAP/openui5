@@ -8,9 +8,10 @@ sap.ui.define([
     './library',
     'sap/ui/core/Control',
     'sap/ui/core/Popup',
-    './MessageListRenderer'
+    './MessageListRenderer',
+    'sap/ui/core/Configuration'
 ],
-	function(jQuery, library, Control, Popup, MessageListRenderer) {
+	function(jQuery, library, Control, Popup, MessageListRenderer, Configuration) {
 	"use strict";
 
 
@@ -128,7 +129,7 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageList.prototype.open = function() {
-		var rtl = sap.ui.getCore().getConfiguration().getRTL();
+		var rtl = Configuration.getRTL();
 
 		// Defining or fetching the Popup attributes:
 		var animationDuration = 200;

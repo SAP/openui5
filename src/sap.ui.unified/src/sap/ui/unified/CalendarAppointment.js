@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.unified.CalendarAppointment.
-sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/format/NumberFormat', 'sap/ui/core/format/TimezoneUtil', 'sap/ui/core/Core', './calendar/CalendarUtils', './library', "sap/base/Log"],
-	function(DateTypeRange, DateFormat, NumberFormat, TimezoneUtil, Core, CalendarUtils, library, Log) {
+sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/format/NumberFormat', 'sap/ui/core/format/TimezoneUtil', 'sap/ui/core/Core', './calendar/CalendarUtils', './library', "sap/base/Log", "sap/ui/core/Configuration"],
+	function(DateTypeRange, DateFormat, NumberFormat, TimezoneUtil, Core, CalendarUtils, library, Log, Configuration) {
 	"use strict";
 
 	/**
@@ -132,10 +132,10 @@ sap.ui.define(['./DateTypeRange', 'sap/ui/core/format/DateFormat', 'sap/ui/core/
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			oHourFormat = NumberFormat.getUnitInstance({
 				allowedUnits: ["duration-hour"]
-			}, sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()),
+			}, Configuration.getFormatSettings().getFormatLocale()),
 			oMinuteFormat = NumberFormat.getUnitInstance({
 				allowedUnits: ["duration-minute"]
-			}, sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()),
+			}, Configuration.getFormatSettings().getFormatLocale()),
 			iHour, iMinute, sHour, sMinute;
 
 		//have no intersection with the given day

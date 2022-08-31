@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'./ObjectMarker',
 	'./Text',
-	'./ObjectListItemRenderer'
+	'./ObjectListItemRenderer',
+	'sap/ui/core/Configuration'
 ],
 function(
 	ManagedObjectObserver,
@@ -23,7 +24,8 @@ function(
 	coreLibrary,
 	ObjectMarker,
 	Text,
-	ObjectListItemRenderer
+	ObjectListItemRenderer,
+	Configuration
 	) {
 		"use strict";
 
@@ -237,7 +239,7 @@ function(
 
 		ObjectListItem.prototype.onAfterRendering = function() {
 			var oObjectNumber = this.getAggregation("_objectNumber"),
-				bPageRTL = sap.ui.getCore().getConfiguration().getRTL(),
+				bPageRTL = Configuration.getRTL(),
 				sTextAlign = bPageRTL ? TextAlign.Left : TextAlign.Right;
 
 			if (oObjectNumber && oObjectNumber.getNumber()) { // adjust alignment according the design specification

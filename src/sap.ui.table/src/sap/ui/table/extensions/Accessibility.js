@@ -9,8 +9,9 @@ sap.ui.define([
 	"../utils/TableUtils",
 	"../library",
 	"sap/ui/core/Control",
-	"sap/ui/thirdparty/jquery"
-], function(ExtensionBase, AccRenderExtension, TableUtils, library, Control, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
+], function(ExtensionBase, AccRenderExtension, TableUtils, library, Control, jQuery, Configuration) {
 	"use strict";
 
 	// shortcuts
@@ -938,7 +939,7 @@ sap.ui.define([
 		 * @returns {string} The name of this extension.
 		 */
 		_init: function(oTable, sTableType, mSettings) {
-			this._accMode = sap.ui.getCore().getConfiguration().getAccessibility();
+			this._accMode = Configuration.getAccessibility();
 			this._busyCells = [];
 
 			TableUtils.addDelegate(oTable, this);

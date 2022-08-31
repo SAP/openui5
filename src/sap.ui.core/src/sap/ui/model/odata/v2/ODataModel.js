@@ -31,6 +31,7 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/util/UriParameters",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/message/MessageParser",
@@ -53,10 +54,10 @@ sap.ui.define([
 	"sap/ui/util/isCrossOriginURL"
 ], function(_CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding,
 		ODataTreeBinding, assert, Log, encodeURL, deepEqual, deepExtend, each, extend,
-		isEmptyObject, isPlainObject, merge, uid, UriParameters, SyncPromise, coreLibrary, Message,
-		MessageParser, _Helper, BindingMode, BaseContext, FilterProcessor, Model, CountMode,
-		MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser, ODataPropertyBinding,
-		ODataUtils, OperationMode, UpdateMethod, OData, URI, isCrossOriginURL
+		isEmptyObject, isPlainObject, merge, uid, UriParameters, SyncPromise, Configuration,
+		coreLibrary, Message, MessageParser, _Helper, BindingMode, BaseContext, FilterProcessor,
+		Model, CountMode, MessageScope, ODataMetadata, ODataMetaModel, ODataMessageParser,
+		ODataPropertyBinding, ODataUtils, OperationMode, UpdateMethod, OData, URI, isCrossOriginURL
 ) {
 
 	"use strict";
@@ -384,7 +385,7 @@ sap.ui.define([
 			this.sUser = sUser;
 			this.sPassword = sPassword;
 
-			if (sap.ui.getCore().getConfiguration().getStatistics()) {
+			if (Configuration.getStatistics()) {
 				// add statistics parameter to every request (supported only on Gateway servers)
 				this.aUrlParams.push("sap-statistics=true");
 			}
@@ -484,7 +485,7 @@ sap.ui.define([
 					this.securityTokenAvailable();
 				}
 			}
-			this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguageTag();
+			this.oHeaders["Accept-Language"] = Configuration.getLanguageTag();
 
 			// set version to 2.0 because 1.0 does not support e.g. skip/top, inlinecount...
 			// states the version of the Open Data Protocol used by the client to generate the request.

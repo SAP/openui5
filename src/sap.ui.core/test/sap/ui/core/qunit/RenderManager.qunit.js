@@ -11,8 +11,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeXML",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/base/Log"
-], function(Device, Control, RenderManager, Element, HTML, IconPool, XMLView, jQuery, encodeXML, createAndAppendDiv, Log) {
+	"sap/base/Log",
+	"sap/ui/core/Configuration"
+], function(Device, Control, RenderManager, Element, HTML, IconPool, XMLView, jQuery, encodeXML, createAndAppendDiv, Log, Configuration) {
 	"use strict";
 
 	// prepare DOM
@@ -210,7 +211,7 @@ sap.ui.define([
 
 	QUnit.test("RenderManager.getConfiguration", function(assert) {
 		var rm = new RenderManager();
-		assert.strictEqual(rm.getConfiguration(), sap.ui.getCore().getConfiguration(), "getConfiguration should return the same like Core.getConfiguration");
+		assert.strictEqual(rm.getConfiguration(), Configuration, "getConfiguration should return the same like Core.getConfiguration");
 	});
 
 	/**

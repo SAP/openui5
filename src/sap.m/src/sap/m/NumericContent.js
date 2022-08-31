@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/m/Image",
 	"./NumericContentRenderer",
 	"sap/ui/events/KeyCodes",
-	"sap/base/util/deepEqual"
-], function (library, Control, IconPool, ResizeHandler, Image, NumericContentRenderer, KeyCodes, deepEqual) {
+	"sap/base/util/deepEqual",
+	"sap/ui/core/Configuration"
+], function (library, Control, IconPool, ResizeHandler, Image, NumericContentRenderer, KeyCodes, deepEqual, Configuration) {
 	"use strict";
 
 	var LANG_MAP = { // keys are compared in lowercase
@@ -233,7 +234,7 @@ sap.ui.define([
 
 	NumericContent.prototype._getMaxDigitsData = function () {
 		var sFontClass = null,
-			sLang = sap.ui.getCore().getConfiguration().getLanguage().toLowerCase(),
+			sLang = Configuration.getLanguage().toLowerCase(),
 			iMaxLength = LANG_MAP[sLang] || 4;
 
 		if (this.getAdaptiveFontSize()) {

@@ -25,7 +25,8 @@ sap.ui.define([
 		"sap/ui/thirdparty/jquery",
 		'./PlanningCalendarLegend',
 		'sap/ui/core/InvisibleMessage',
-		'sap/ui/core/library'
+		'sap/ui/core/library',
+		"sap/ui/core/Configuration"
 	],
 	function (
 		SinglePlanningCalendarUtilities,
@@ -49,7 +50,8 @@ sap.ui.define([
 		jQuery,
 		PlanningCalendarLegend,
 		InvisibleMessage,
-		coreLibrary
+		coreLibrary,
+		Configuration
 	) {
 		"use strict";
 
@@ -1930,7 +1932,7 @@ sap.ui.define([
 		 */
 		SinglePlanningCalendarGrid.prototype._getCoreLocaleId = function () {
 			if (!this._sLocale) {
-				this._sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
+				this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
 			}
 
 			return this._sLocale;

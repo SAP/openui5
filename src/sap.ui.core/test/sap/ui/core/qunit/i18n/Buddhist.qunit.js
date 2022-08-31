@@ -1,7 +1,7 @@
 /*global QUnit, sinon*/
 sap.ui.define([
-	"sap/ui/core/date/Buddhist"
-], function(Buddhist) {
+	"sap/ui/core/date/Buddhist", "sap/ui/core/Configuration"
+], function(Buddhist, Configuration) {
 	"use strict";
 
 	// Test data
@@ -255,7 +255,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getWeek (de)", function (assert) {
-		sap.ui.getCore().getConfiguration().setLanguage("de");
+		Configuration.setLanguage("de");
 		assert.deepEqual(new Buddhist(2565,0,1).getWeek(), {
 			"week": 51,
 			"year": 2564
@@ -264,7 +264,7 @@ sap.ui.define([
 			"week": 0,
 			"year": 2565
 		}, "Jan 3rd 2022 is CW 1");
-		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+		Configuration.setLanguage("en_US");
 	});
 
 

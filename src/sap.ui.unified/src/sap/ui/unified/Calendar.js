@@ -25,7 +25,8 @@ sap.ui.define([
 	"./CalendarRenderer",
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Configuration"
 ], function(
 	CalendarType,
 	Control,
@@ -49,7 +50,8 @@ sap.ui.define([
 	CalendarRenderer,
 	containsOrEquals,
 	deepEqual,
-	Log
+	Log,
+	Configuration
 ) {
 	"use strict";
 
@@ -326,7 +328,7 @@ sap.ui.define([
 		this._iBreakPointLargeDesktop = Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[2];
 
 		// set default calendar type from configuration
-		var sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+		var sCalendarType = Configuration.getCalendarType();
 		this.setProperty("primaryCalendarType", sCalendarType);
 		this.setProperty("secondaryCalendarType", sCalendarType);
 
@@ -674,7 +676,7 @@ sap.ui.define([
 	Calendar.prototype.getLocale = function(){
 
 		if (!this._sLocale) {
-			this._sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
+			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
 		}
 
 		return this._sLocale;

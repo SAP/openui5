@@ -1,7 +1,8 @@
 sap.ui.define([
 	'sap/ui/core/Manifest',
-	'sap/ui/thirdparty/URI'
-], function(Manifest, URI) {
+	'sap/ui/thirdparty/URI',
+	"sap/ui/core/Configuration"
+], function(Manifest, URI, Configuration) {
 
 	"use strict";
 	/*global QUnit */
@@ -200,8 +201,8 @@ sap.ui.define([
 
 	QUnit.test("Replace text placeholders with content from Terminologies", function (assert) {
 
-		var sOldLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-		sap.ui.getCore().getConfiguration().setLanguage("en");
+		var sOldLanguage = Configuration.getLanguage();
+		Configuration.setLanguage("en");
 
 		this.oManifest = new Manifest({
 			"sap.app": {
@@ -239,6 +240,6 @@ sap.ui.define([
 		assert.equal(oJson["sap.app"].title, "Octane Fuel Station", "Title should be correct");
 		assert.equal(oJson["sap.app"].description, "Cheap oil prices guaranteed", "App description should be correct");
 
-		sap.ui.getCore().getConfiguration().setLanguage(sOldLanguage);
+		Configuration.setLanguage(sOldLanguage);
 	});
 });

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/mvc/Controller",
@@ -29,14 +30,15 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper"
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, uid, Input, Device, ManagedObjectObserver, SyncPromise, coreLibrary, Message,
-		Controller, View, BindingMode, Filter, FilterOperator, Model, Sorter, JSONModel, MessageModel,
-		CountMode, MessageScope, Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
+], function (Log, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration,
+		coreLibrary, Message, Controller, View, BindingMode, Filter, FilterOperator, Model, Sorter,
+		JSONModel, MessageModel, CountMode, MessageScope, Context, ODataModel, XMLModel, TestUtils,
+		datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+	var sDefaultLanguage = Configuration.getLanguage(),
 		// TODO Timezone Configuration: Configuration#setTimezone currently does not change the
 		// timezone configuration.
 		// sDefaultTimezone = sap.ui.getCore().getConfiguration().getTimezone(),
@@ -409,7 +411,7 @@ sap.ui.define([
 			// We use a formatter to check for property changes. However before the formatter is
 			// called, the value is passed through the type's formatValue
 			// (see PropertyBinding#_toExternalValue). Ensure that this result is predictable.
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core", {
@@ -490,7 +492,7 @@ sap.ui.define([
 				this.oModel.destroy();
 			}
 			// reset the language
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 			// reset the time zone
 			// TODO Timezone Configuration: Configuration#setTimezone currently does not change the
 			// timezone configuration.
@@ -7814,7 +7816,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </FlexBox>',
 		that = this;
 
-		sap.ui.getCore().getConfiguration().setTimezone("Europe/London");
+		Configuration.setTimezone("Europe/London");
 
 		this.expectHeadRequest()
 			.expectRequest("DateTimeWithTimezoneSet('1')", {

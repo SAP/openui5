@@ -12,7 +12,9 @@ sap.ui.define([
   './MessageToast',
   './MessageList',
   './MessageBarRenderer',
-  'sap/ui/dom/jquery/rect' // jQuery Plugin "rect"
+  'sap/ui/core/Configuration',
+  // jQuery Plugin "rect"
+  'sap/ui/dom/jquery/rect'
 ],
 	function(
 	  jQuery,
@@ -22,7 +24,8 @@ sap.ui.define([
 	  Popup,
 	  MessageToast,
 	  MessageList,
-	  MessageBarRenderer
+	  MessageBarRenderer,
+	  Configuration
 	) {
 	"use strict";
 
@@ -459,7 +462,7 @@ sap.ui.define([
 	MessageBar.prototype.getSnapPoint = function() {
 	  if (!this.snapPoint) {
 		  this.snapPoint = this.getAnchorSnapPoint();
-		  if (sap.ui.getCore().getConfiguration().getRTL()) {
+		  if (Configuration.getRTL()) {
 			this.snapPoint = this.snapPoint.replace("begin", "right").replace("end", "left");
 		  } else {
 			this.snapPoint = this.snapPoint.replace("begin", "left").replace("end", "right");

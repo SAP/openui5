@@ -36,7 +36,7 @@ sap.ui.define(["sap/ui/core/library",
 			sTextDirectionLowerCase = oControl.getTextDirection().toLowerCase(),
 			sControlId = oControl.getId(),
 			bEnabled = oControl.getEnabled(),
-			sAnimationMode = sap.ui.getCore().getConfiguration().getAnimationMode(),
+			sAnimationMode = Configuration.getAnimationMode(),
 			bAnimate = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal
 				&& oControl.getDisplayAnimation();
 

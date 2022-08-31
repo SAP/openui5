@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for the sap.ui.ux3.ExactListRenderer
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/core/Configuration"],
+	function(Configuration) {
 	"use strict";
 
 
@@ -169,7 +169,7 @@ sap.ui.define([],
 	 */
 	ExactListRenderer.getExpanderSymbol = function(bExpanded, bHorizontal){
 		if (bHorizontal) {
-			if (sap.ui.getCore().getConfiguration().getRTL()) {
+			if (Configuration.getRTL()) {
 				return bExpanded ? "&#9654;" : "&#9664;";
 			} else {
 				return bExpanded ? "&#9664;" : "&#9654;";

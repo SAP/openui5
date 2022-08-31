@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/events/jquery/EventSimulation",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(ScrollBar, Device, EventSimulation, jQuery, createAndAppendDiv) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/core/Configuration"
+], function(ScrollBar, Device, EventSimulation, jQuery, createAndAppendDiv, Configuration) {
 	"use strict";
 
 	// create page content
@@ -99,7 +100,7 @@ sap.ui.define([
 		var bScrolled = false;
 		this.oHSB.attachScroll(function() {bScrolled = true;});
 		assert.notEqual(bScrolled, true, "Scroll event was not fired yet");
-		if ( sap.ui.getCore().getConfiguration().getRTL() && Device.browser.firefox){
+		if ( Configuration.getRTL() && Device.browser.firefox){
 			jQuery('#' + this.oHSB.getId() + ' > div').scrollLeft(-15);
 		} else {
 			jQuery('#' + this.oHSB.getId() + ' > div').scrollLeft(15);

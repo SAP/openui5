@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/core/Configuration"],
+	function(Configuration) {
 	"use strict";
 
 
@@ -23,7 +23,7 @@ sap.ui.define([],
 	 */
 	ImageMapRenderer.render = function(rm, oImageMap){
 	    // convenience variable
-		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
+		var accessibility = Configuration.getAccessibility();
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
 		rm.write('<span id="' + oImageMap.getId() + '-Descr" style="visibility: hidden; display: none; outline: none;">');

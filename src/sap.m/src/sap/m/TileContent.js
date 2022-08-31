@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './TileContentRenderer'],
-	function(library, Core, Control, TileContentRenderer) {
+sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './TileContentRenderer', 'sap/ui/core/Configuration'],
+	function(library, Core, Control, TileContentRenderer, Configuration) {
 	"use strict";
 
 	var Priority = library.Priority;
@@ -197,7 +197,7 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 		var sUnit = this.getUnit();
 		if (sUnit) {
 			if (sFooter) {
-				if (sap.ui.getCore().getConfiguration().getRTL()) {
+				if (Configuration.getRTL()) {
 					return resourceBundle.getText('TILECONTENT_FOOTER_TEXT', [sFooter, sUnit]);
 				} else {
 					return resourceBundle.getText('TILECONTENT_FOOTER_TEXT', [sUnit, sFooter]);

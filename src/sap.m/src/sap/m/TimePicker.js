@@ -28,7 +28,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/InvisibleText",
 	'./Button',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ],
 function(
 	InputBase,
@@ -55,7 +56,8 @@ function(
 	Log,
 	InvisibleText,
 	Button,
-	jQuery
+	jQuery,
+	Configuration
 ) {
 		"use strict";
 
@@ -618,7 +620,7 @@ function(
 			oClocks.setValue(sDisplayFormattedValue);
 
 			sFormattedDate = this._getPickerParser().format(oDateValue || new Date(),
-				sap.ui.getCore().getConfiguration().getTimezone());
+				Configuration.getTimezone());
 			oDateValue = this._getPickerParser().parse(sFormattedDate, TimezoneUtil.getLocalTimezone())[ 0 ];
 			oDateValue.setMilliseconds(iDateValueMilliseconds);
 
@@ -1163,7 +1165,7 @@ function(
 		TimePicker.prototype._getLocale = function () {
 			var sLocaleId = this.getLocaleId();
 
-			return sLocaleId ? new Locale(sLocaleId) : sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+			return sLocaleId ? new Locale(sLocaleId) : Configuration.getFormatSettings().getFormatLocale();
 		};
 
 		/**
@@ -1689,7 +1691,7 @@ function(
 				sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
 
 			oDate = this._getPickerParser()
-				.parse(sFormattedDate, sap.ui.getCore().getConfiguration().getTimezone())[0];
+				.parse(sFormattedDate, Configuration.getTimezone())[0];
 
 			this._isClockPicker = true;
 			this._isNumericPicker = false;
@@ -1723,7 +1725,7 @@ function(
 				sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
 
 			oDate = this._getPickerParser()
-				.parse(sFormattedDate, sap.ui.getCore().getConfiguration().getTimezone())[0];
+				.parse(sFormattedDate, Configuration.getTimezone())[0];
 
 			this._isClockPicker = false;
 			this._isNumericPicker = true;
@@ -1751,7 +1753,7 @@ function(
 		 */
 		 TimePicker.prototype._getLocaleBasedPattern = function (sPlaceholder) {
 			return LocaleData.getInstance(
-				sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
+				Configuration.getFormatSettings().getFormatLocale()
 			).getTimePattern(sPlaceholder);
 		};
 
@@ -2298,7 +2300,7 @@ function(
 		};
 
 		function getDefaultDisplayFormat() {
-			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
+			var oLocale = Configuration.getFormatSettings().getFormatLocale(),
 				oLocaleData = LocaleData.getInstance(oLocale);
 
 			return oLocaleData.getTimePattern(TimeFormatStyles.Medium);

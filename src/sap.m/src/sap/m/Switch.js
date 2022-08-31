@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/core/theming/Parameters',
 	'sap/ui/events/KeyCodes',
 	'./SwitchRenderer',
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/core/Configuration"
 ],
 function(
 	library,
@@ -21,7 +22,8 @@ function(
 	Parameters,
 	KeyCodes,
 	SwitchRenderer,
-	assert
+	assert,
+	Configuration
 	) {
 		"use strict";
 
@@ -152,7 +154,7 @@ function(
 			}
 
 			this._iCurrentPosition = iPosition;
-			this.getDomRef("inner").style[sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left"] = iPosition + "px";
+			this.getDomRef("inner").style[Configuration.getRTL() ? "right" : "left"] = iPosition + "px";
 			this._setTempState(Math.abs(iPosition) < Switch._SWAPPOINT);
 		};
 
@@ -339,7 +341,7 @@ function(
 			iPosition = ((this._iStartPressPosX - oTouch.pageX) * -1) + this._iPosition;
 
 			// RTL mirror
-			if (sap.ui.getCore().getConfiguration().getRTL()) {
+			if (Configuration.getRTL()) {
 				iPosition = -iPosition;
 			}
 

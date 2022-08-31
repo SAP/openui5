@@ -9,9 +9,10 @@ sap.ui.define([
 	'sap/ui/core/dnd/DragInfo',
 	'sap/ui/core/dnd/DropInfo',
 	"sap/ui/events/KeyCodes",
-	'sap/ui/core/library'
+	'sap/ui/core/library',
+	'sap/ui/core/Configuration'
 ],
-	function(DragInfo, DropInfo, KeyCodes, coreLibrary) {
+	function(DragInfo, DropInfo, KeyCodes, coreLibrary, Configuration) {
 		"use strict";
 
 		// shortcut for sap.ui.core.dnd.DropPosition
@@ -91,7 +92,7 @@ sap.ui.define([
 				var iBeginDragIndex = oContext.indexOfItem(oDraggedControl),
 					iDropIndex = oContext.indexOfItem(oDroppedControl),
 					iAggregationDropIndex = 0,
-					bRtl = sap.ui.getCore().getConfiguration().getRTL(),
+					bRtl = Configuration.getRTL(),
 					bIsDropPositionBefore = sDropPosition === INSERT_POSITION_BEFORE,
 					//_getNestedLevel returns 1 there is no nesting
 					currentNestedLevel = oDroppedControl._getNestedLevel() - 1;
@@ -261,7 +262,7 @@ sap.ui.define([
 			moveItem: function (oDraggedControl, iKeyCode, iMaxIndex) {
 				var aItems = this.getItems(),
 					iBeginDragIndex = this.indexOfItem(oDraggedControl),
-					bRtl = sap.ui.getCore().getConfiguration().getRTL(),
+					bRtl = Configuration.getRTL(),
 					iNewDropIndex,
 					bPrevent;
 

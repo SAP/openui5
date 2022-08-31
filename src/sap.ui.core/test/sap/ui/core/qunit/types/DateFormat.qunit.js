@@ -5,8 +5,9 @@ sap.ui.define([
 		"sap/ui/core/Locale",
 		"sap/ui/core/LocaleData",
 		"sap/ui/core/date/UniversalDate",
-		"sap/ui/core/library"],
-	function (extend, DateFormat, Locale, LocaleData, UniversalDate, library) {
+		"sap/ui/core/library",
+		"sap/ui/core/Configuration"],
+	function (extend, DateFormat, Locale, LocaleData, UniversalDate, library, Configuration) {
 		"use strict";
 
 		// shortcut for sap.ui.core.CalendarType
@@ -18,7 +19,7 @@ sap.ui.define([
 				getTimezoneStub.restore();
 			}
 			if (sTimezoneID) {
-				getTimezoneStub = sinon.stub(sap.ui.getCore().getConfiguration(), "getTimezone").returns(sTimezoneID);
+				getTimezoneStub = sinon.stub(Configuration, "getTimezone").returns(sTimezoneID);
 			}
 		};
 
@@ -1764,7 +1765,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("format and parse weekYear/weekInYear pattern with 2 digits", function (assert) {
-			sap.ui.getCore().getConfiguration().setLanguage("de_DE");
+			Configuration.setLanguage("de_DE");
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: "YY'-'ww"
 			});
@@ -1777,11 +1778,11 @@ sap.ui.define([
 			assert.equal(oDateFormat.format(new Date(2015, 0, 5)), "15-02", "Date can be correctly formatted to '15-02'");
 			assert.equal(oDateFormat.parse("15-02").valueOf(), new Date(2015, 0, 5).valueOf(), "'15-02' can be correctly parsed");
 
-			sap.ui.getCore().getConfiguration().setLanguage("en_US");
+			Configuration.setLanguage("en_US");
 		});
 
 		QUnit.test("format and parse weekYear/weekInYear pattern with language en-AU", function (assert) {
-			sap.ui.getCore().getConfiguration().setLanguage("en_AU");
+			Configuration.setLanguage("en_AU");
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: "YYYY'-'ww'-'EE"
 			});
@@ -1796,7 +1797,7 @@ sap.ui.define([
 			assert.equal(oDateFormat.format(oMondayDate), "2022-08-Mon", "Date can be correctly formatted to '2022-08-Mon'");
 			assert.deepEqual(oDateFormat.parse("2022-08-Mon"), oMondayDate, "'2022-08-Mon' can be correctly parsed");
 
-			sap.ui.getCore().getConfiguration().setLanguage("en_US");
+			Configuration.setLanguage("en_US");
 		});
 
 		QUnit.test("format and parse weekYear/weekInYear pattern", function (assert) {
@@ -1808,7 +1809,7 @@ sap.ui.define([
 			// and the last week of the year always ends with December 31st.
 			aLocales = ["en_US"];
 			aLocales.forEach(function(sLocale) {
-				sap.ui.getCore().getConfiguration().setLanguage(sLocale);
+				Configuration.setLanguage(sLocale);
 				oDateFormat = DateFormat.getDateInstance({
 					pattern: "Y-w"
 				});
@@ -1831,7 +1832,7 @@ sap.ui.define([
 			// and the first Saturday of a year is in calendar week 1 (minDays=1)
 			aLocales = ["en"];
 			aLocales.forEach(function(sLocale) {
-				sap.ui.getCore().getConfiguration().setLanguage(sLocale);
+				Configuration.setLanguage(sLocale);
 				oDateFormat = DateFormat.getDateInstance({
 					pattern: "Y-w"
 				});
@@ -1855,7 +1856,7 @@ sap.ui.define([
 			// The week starts with Monday
 			aLocales = ["de_DE", "en_GB"];
 			aLocales.forEach(function(sLocale) {
-				sap.ui.getCore().getConfiguration().setLanguage(sLocale);
+				Configuration.setLanguage(sLocale);
 				oDateFormat = DateFormat.getDateInstance({
 					pattern: "Y-w"
 				});
@@ -1873,7 +1874,7 @@ sap.ui.define([
 				assert.deepEqual(oDateFormat.parse("2016-52"), new Date(2016, 11, 26), "Date can be correctly parsed to 29th of December 2016");
 			});
 
-			sap.ui.getCore().getConfiguration().setLanguage("en_US");
+			Configuration.setLanguage("en_US");
 		});
 
 		QUnit.test("format and parse weekYear/weekInYear with configuration (ISO8601)", function (assert) {
@@ -1929,14 +1930,14 @@ sap.ui.define([
 				"only firstDayOfWeek is provided without minimalDaysInFirstWeek");
 
 
-			sap.ui.getCore().getConfiguration().setLanguage("en_US");
+			Configuration.setLanguage("en_US");
 		});
 
 		QUnit.test("format and parse weekInYear and dayNumberOfWeek", function (assert) {
 			var oDate = new Date(2016, 10, 13); // 13th, November, 2016, Sunday
 			var sPattern = "Y/ww/u";
 
-			sap.ui.getCore().getConfiguration().setLanguage("en_US");
+			Configuration.setLanguage("en_US");
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: sPattern
 			});
@@ -1945,7 +1946,7 @@ sap.ui.define([
 			assert.equal(oDateFormat.format(oDate), sFormatted, "13th, November 2016 Sunday is the first day of week 46 in en-US");
 			assert.deepEqual(oDateFormat.parse(sFormatted), oDate, "The formatted string can be correctly parsed to the same date");
 
-			sap.ui.getCore().getConfiguration().setLanguage("de_DE");
+			Configuration.setLanguage("de_DE");
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: sPattern
 			});
@@ -1954,14 +1955,14 @@ sap.ui.define([
 			assert.equal(oDateFormat.format(oDate), sFormatted, "13th, November 2016 Sunday is the 7th day of week 45 in de-DE");
 			assert.deepEqual(oDateFormat.parse(sFormatted), oDate, "The formatted string can be correctly parsed to the same date");
 
-			sap.ui.getCore().getConfiguration().setLanguage("en_US");
+			Configuration.setLanguage("en_US");
 		});
 
 		QUnit.test("format and parse dayName", function (assert) {
 			var oDate = new Date(2018, 2, 23); // 23th, March, 2018, Friday
 			var sPattern = "yyyy-MM-dd EEEE";
 
-			sap.ui.getCore().getConfiguration().setLanguage("en_US");
+			Configuration.setLanguage("en_US");
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: sPattern
 			});
@@ -1970,7 +1971,7 @@ sap.ui.define([
 			assert.equal(oDateFormat.format(oDate), sFormatted, "23th, March, 2018, Friday in en-US");
 			assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed to the same date");
 
-			sap.ui.getCore().getConfiguration().setLanguage("de_DE");
+			Configuration.setLanguage("de_DE");
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: sPattern
 			});
@@ -1979,7 +1980,7 @@ sap.ui.define([
 			assert.equal(oDateFormat.format(oDate), sFormatted, "2018-03-23 Freitag in de-DE");
 			assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed to the same date");
 
-			sap.ui.getCore().getConfiguration().setLanguage("en_US");
+			Configuration.setLanguage("en_US");
 		});
 
 		QUnit.test("Parse precedence: day (d) over dayName (E)", function (assert) {
@@ -2046,7 +2047,7 @@ sap.ui.define([
 			assert.equal(oDateFormat.format(oDate), sFormatted, "2018-12 Freitag in de-DE");
 			assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
 
-			sap.ui.getCore().getConfiguration().setLanguage("en_US");
+			Configuration.setLanguage("en_US");
 		});
 
 
@@ -2070,7 +2071,7 @@ sap.ui.define([
 			assert.equal(oDateFormat.format(oDate).toString(), sFormatted, "2016 Week 52 Sonntag in de-DE");
 			assert.deepEqual(oDateFormat.parse(sFormatted), oDate, "The formatted string can be correctly parsed");
 
-			sap.ui.getCore().getConfiguration().setLanguage("en_US");
+			Configuration.setLanguage("en_US");
 		});
 
 		QUnit.test("origin info", function (assert) {
@@ -2354,10 +2355,10 @@ sap.ui.define([
 
 		QUnit.module("Islamic Date in other locales", {
 			beforeEach: function () {
-				sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Islamic);
+				Configuration.setCalendarType(CalendarType.Islamic);
 			},
 			afterEach: function () {
-				sap.ui.getCore().getConfiguration().setCalendarType(null);
+				Configuration.setCalendarType(null);
 			}
 		});
 

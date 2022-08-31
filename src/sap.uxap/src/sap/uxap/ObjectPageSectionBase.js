@@ -11,9 +11,10 @@ sap.ui.define([
 	"./library",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/core/Configuration",
 	// jQuery Plugin "firstFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
-], function(InvisibleText, jQuery, Control, coreLibrary, library, Log, KeyCodes) {
+], function(InvisibleText, jQuery, Control, coreLibrary, library, Log, KeyCodes, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -114,7 +115,7 @@ sap.ui.define([
 		//hidden status
 		this._isHidden = false;
 
-		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		this._bRtl = Configuration.getRTL();
 	};
 
 	ObjectPageSectionBase.prototype.onAfterRendering = function () {

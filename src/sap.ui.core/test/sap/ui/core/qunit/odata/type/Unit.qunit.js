@@ -3,16 +3,17 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/odata/type/Unit",
 	"sap/ui/model/odata/type/UnitMixin",
 	"sap/ui/model/type/Unit"
-], function (Log, NumberFormat, Unit, applyUnitMixin, BaseUnit) {
+], function (Log, Configuration, NumberFormat, Unit, applyUnitMixin, BaseUnit) {
 	/*global QUnit*/
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Unit", {
@@ -20,10 +21,10 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		}
 	});
 

@@ -15,7 +15,7 @@ sap.ui.define([
 		QUnit.test("Configuration Accessors", function (assert) {
 			assert.expect(3);
 
-			var oConfig = sap.ui.getCore().getConfiguration();
+			var oConfig = Configuration;
 			assert.equal(oConfig.getDesignMode(), true, "Design Mode is on");
 			assert.equal(oConfig.getSuppressDeactivationOfControllerCode(), false, "SuppressDeactivationOfControllerCode is false");
 			assert.equal(oConfig.getControllerCodeDeactivated(), true, "getControllerCodeDeactivated is true");
@@ -48,7 +48,7 @@ sap.ui.define([
 		QUnit.test("Configuration Accessors", function (assert) {
 			assert.expect(3);
 
-			var oConfig = sap.ui.getCore().getConfiguration();
+			var oConfig = Configuration;
 			assert.equal(oConfig.getDesignMode(), true, "Design Mode is on");
 			assert.equal(oConfig.getSuppressDeactivationOfControllerCode(), true, "SuppressDeactivationOfControllerCode is true");
 			assert.equal(oConfig.getControllerCodeDeactivated(), false, "getControllerCodeDeactivated is false");

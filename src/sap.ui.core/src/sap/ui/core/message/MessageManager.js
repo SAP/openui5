@@ -12,7 +12,8 @@ sap.ui.define([
 	'sap/ui/core/message/MessageProcessor',
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	'sap/base/util/merge'
+	'sap/base/util/merge',
+	"sap/ui/core/Configuration"
 ],
 	function(
 		EventProvider,
@@ -23,7 +24,8 @@ sap.ui.define([
 		MessageProcessor,
 		deepEqual,
 		Log,
-		merge
+		merge,
+		Configuration
 	) {
 
 	"use strict";
@@ -58,7 +60,7 @@ sap.ui.define([
 			this.mObjects = {};
 			this.mMessages = {};
 
-			var bHandleValidation = sap.ui.getCore().getConfiguration().getHandleValidation();
+			var bHandleValidation = Configuration.getHandleValidation();
 			if (bHandleValidation) {
 				sap.ui.getCore().attachValidationSuccess(bHandleValidation, this._handleSuccess, this);
 				sap.ui.getCore().attachValidationError(bHandleValidation, this._handleError, this);

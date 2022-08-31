@@ -102,7 +102,7 @@ sap.ui.require([
 
 	QUnit.module("loadLibraries (from server)", {
 		beforeEach: function(assert) {
-			assert.notOk(sap.ui.getCore().getConfiguration().getDebug(), "debug mode must be deactivated to properly test library loading");
+			assert.notOk(Configuration.getDebug(), "debug mode must be deactivated to properly test library loading");
 		},
 		afterEach: function(assert) {
 			delete window.testlibs;
@@ -414,7 +414,7 @@ sap.ui.require([
 
 	QUnit.module("loadLibraries", {
 		beforeEach: function(assert) {
-			assert.notOk(sap.ui.getCore().getConfiguration().getDebug(), "debug mode must be deactivated to properly test library loading");
+			assert.notOk(Configuration.getDebug(), "debug mode must be deactivated to properly test library loading");
 			this.server = sinon.fakeServer.create();
 			this.server.autoRespond = true;
 		},
@@ -551,7 +551,7 @@ sap.ui.require([
 
 	QUnit.module("loadLibrary", {
 		beforeEach: function(assert) {
-			assert.notOk(sap.ui.getCore().getConfiguration().getDebug(), "debug mode must be deactivated to properly test library loading");
+			assert.notOk(Configuration.getDebug(), "debug mode must be deactivated to properly test library loading");
 		},
 		afterEach: function(assert) {
 			delete window.testlibs;

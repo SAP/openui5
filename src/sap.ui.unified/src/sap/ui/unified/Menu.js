@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/events/ControlEvents",
 	"sap/ui/events/PseudoEvents",
-	"sap/ui/events/checkMouseEnterOrLeave"
+	"sap/ui/events/checkMouseEnterOrLeave",
+	"sap/ui/core/Configuration"
 ], function(
 	Element,
 	Control,
@@ -34,7 +35,8 @@ sap.ui.define([
 	Log,
 	ControlEvents,
 	PseudoEvents,
-	checkMouseEnterOrLeave
+	checkMouseEnterOrLeave,
+	Configuration
 ) {
 	"use strict";
 
@@ -478,7 +480,7 @@ sap.ui.define([
 				this._iY = oEvent.top || 0;
 			}
 
-			bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			bRTL = Configuration.getRTL();
 			eDock = Dock;
 
 			if (bRTL) {
@@ -503,7 +505,7 @@ sap.ui.define([
 		iCalcedY = this._iY;
 		iRight = $Window.scrollLeft() + $Window.width();
 		iBottom = $Window.scrollTop() + $Window.height();
-		bRTL = sap.ui.getCore().getConfiguration().getRTL();
+		bRTL = Configuration.getRTL();
 		bRecalculate = false;
 		iMenuWidth = $Menu.width();
 		iMenuHeight = $Menu.height();

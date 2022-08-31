@@ -9,9 +9,10 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ],
-	function(InstanceManager, Popup, coreLibrary, Control, Device, Log, jQuery) {
+	function(InstanceManager, Popup, coreLibrary, Control, Device, Log, jQuery, Configuration) {
 		"use strict";
 
 		// shortcut for sap.ui.core.Dock
@@ -222,7 +223,7 @@ sap.ui.define([
 
 			oMessageToastDomRef.className = CSSCLASS + " " + ENABLESELECTIONCLASS + " " + BELIZECONTRAST + " " + BELIZECONTRASTPLUS;
 
-			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			if (Configuration.getAccessibility()) {
 				oMessageToastDomRef.setAttribute("role", "alert");
 			}
 
@@ -322,7 +323,7 @@ sap.ui.define([
 			var sCssTransition = "opacity " + mSettings.animationTimingFunction + " " + mSettings.animationDuration + "ms",
 				sTransitionEnd = "webkitTransitionEnd." + CSSCLASS + " transitionend." + CSSCLASS;
 
-			if (sap.ui.getCore().getConfiguration().getAnimation() && mSettings.animationDuration > 0) {
+			if (Configuration.getAnimation() && mSettings.animationDuration > 0) {
 				$MessageToastDomRef[0].style.webkitTransition = sCssTransition;
 				$MessageToastDomRef[0].style.transition = sCssTransition;
 				$MessageToastDomRef[0].style.opacity = 0;

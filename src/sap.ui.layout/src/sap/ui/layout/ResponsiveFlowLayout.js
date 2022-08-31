@@ -4,19 +4,21 @@
 
 // Provides control sap.ui.layout.ResponsiveFlowLayout.
 sap.ui.define([
+	'sap/ui/core/Configuration',
 	'sap/ui/core/Control',
-	'./ResponsiveFlowLayoutData',
-	'./library',
 	'sap/ui/core/ResizeHandler',
+	'./library',
+	'./ResponsiveFlowLayoutData',
 	'./ResponsiveFlowLayoutRenderer',
-	"sap/ui/thirdparty/jquery",
+	'sap/ui/thirdparty/jquery',
 	'sap/ui/dom/jquery/rect' // jQuery Plugin "rect"
 ],
 	function(
+		Configuration,
 		Control,
-		ResponsiveFlowLayoutData,
-		library,
 		ResizeHandler,
+		library,
+		ResponsiveFlowLayoutData,
 		ResponsiveFlowLayoutRenderer,
 		jQuery
 	) {
@@ -205,7 +207,7 @@ sap.ui.define([
 			};
 
 			// Find out the "rows" within a row
-			if (sap.ui.getCore().getConfiguration().getRTL()) {
+			if (Configuration.getRTL()) {
 				// for RTL-mode the elements have to be checked the other way round
 				for (var i = oRow.cont.length - 1; i >= 0; i--) {
 					fnCurrentWrapping(i);

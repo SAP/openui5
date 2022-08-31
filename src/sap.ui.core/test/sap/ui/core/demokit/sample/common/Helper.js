@@ -8,8 +8,9 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Interactable",
-	"sap/ui/test/TestUtils"
-], function (Log, Opa5, EnterText, Press, Interactable, TestUtils) {
+	"sap/ui/test/TestUtils",
+	"sap/ui/core/Configuration"
+], function (Log, Opa5, EnterText, Press, Interactable, TestUtils, Configuration) {
 	"use strict";
 	var Helper;
 
@@ -446,20 +447,20 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The desired timeout in seconds for one QUnit.test() within the current QUnit module.
 		 */
 		qUnitModule : function (sName, iTestTimeout) {
-			var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+			var sDefaultLanguage = Configuration.getLanguage(),
 				iTimeoutBefore,
 				bSetTimeout = TestUtils.isRealOData() && iTestTimeout;
 
 			QUnit.module(sName, {
 				before : function () {
-					sap.ui.getCore().getConfiguration().setLanguage("en-US");
+					Configuration.setLanguage("en-US");
 					if (bSetTimeout) {
 						iTimeoutBefore = QUnit.config.testTimeout;
 						QUnit.config.testTimeout = iTestTimeout * 1000;
 					}
 				},
 				after : function () {
-					sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+					Configuration.setLanguage(sDefaultLanguage);
 					if (bSetTimeout) {
 						QUnit.config.testTimeout = iTimeoutBefore;
 					}

@@ -16,7 +16,8 @@ sap.ui.define([
 	"./MonthsRowRenderer",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/unified/DateRange"
+	"sap/ui/unified/DateRange",
+	"sap/ui/core/Configuration"
 ], function(
 	Control,
 	LocaleData,
@@ -30,7 +31,8 @@ sap.ui.define([
 	MonthsRowRenderer,
 	containsOrEquals,
 	jQuery,
-	DateRange
+	DateRange,
+	Configuration
 ) {
 	"use strict";
 
@@ -352,7 +354,7 @@ sap.ui.define([
 		if (oParent && oParent.getLocale) {
 			return oParent.getLocale();
 		} else if (!this._sLocale) {
-			this._sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
+			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
 		}
 
 		return this._sLocale;

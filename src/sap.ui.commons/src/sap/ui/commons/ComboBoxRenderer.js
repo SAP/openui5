@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.ComboBox
-sap.ui.define(['./TextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/library'],
-	function(TextFieldRenderer, Renderer, coreLibrary) {
+sap.ui.define(['./TextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/core/Configuration'],
+	function(TextFieldRenderer, Renderer, coreLibrary, Configuration) {
 	"use strict";
 
 
@@ -47,7 +47,7 @@ sap.ui.define(['./TextFieldRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/libra
 		rm.write("<div");
 		rm.writeAttributeEscaped('id', oCmb.getId() + '-icon');
 		rm.writeAttribute('unselectable', 'on');
-		if ( sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if ( Configuration.getAccessibility()) {
 			rm.writeAttribute("role", "presentation");
 		}
 		rm.addClass("sapUiTfComboIcon");

@@ -3,20 +3,21 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/UriParameters",
 	"./highlighter",
-	"./formatter"
-], function (Controller, JSONModel, UriParameters, highlighter, formatter) {
+	"./formatter",
+	"sap/ui/core/Configuration"
+], function (Controller, JSONModel, UriParameters, highlighter, formatter, Configuration) {
 	"use strict";
 	return Controller.extend("sap.ui.demo.terminologies.App", {
 		formatter: formatter,
 		onInit : function () {
-			var aActiveTerminologies = sap.ui.getCore().getConfiguration().getActiveTerminologies();
+			var aActiveTerminologies = Configuration.getActiveTerminologies();
 			var sActiveTerminology = "none";
 			if (aActiveTerminologies) {
 				sActiveTerminology = aActiveTerminologies[0];
 			}
 			var oUriParameters = UriParameters.fromQuery(window.location.search);
 			var sManifest = oUriParameters.get("manifest") || "base";
-			var sLanguage = sap.ui.getCore().getConfiguration().getLanguage() || "de";
+			var sLanguage = Configuration.getLanguage() || "de";
 
 			this.getView().setModel(new JSONModel({
 				terminologies: [

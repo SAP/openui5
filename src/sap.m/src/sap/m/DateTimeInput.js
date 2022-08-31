@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/model/odata/type/ODataType',
 	'sap/ui/core/library',
 	'sap/ui/Device',
-	"./DateTimeInputRenderer"
+	"./DateTimeInputRenderer",
+	"sap/ui/core/Configuration"
 ],
 function(
 	jQuery,
@@ -31,7 +32,8 @@ function(
 	ODataType,
 	coreLibrary,
 	Device,
-	DateTimeInputRenderer
+	DateTimeInputRenderer,
+	Configuration
 ) {
 	"use strict";
 
@@ -283,7 +285,7 @@ function(
 
 			case DateTimeInputType.Time:
 				oPicker = new TimePicker(this.getId() + "-Picker",
-					{localeId: sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString()});
+					{localeId: Configuration.getFormatSettings().getFormatLocale().toString()});
 				break;
 
 			default: // default is date

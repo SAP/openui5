@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.date.UniversalDate
-sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
-	function(BaseObject, LocaleData, _Calendars) {
+sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars', 'sap/ui/core/Configuration'],
+	function(BaseObject, LocaleData, _Calendars, Configuration) {
 	"use strict";
 
 
@@ -79,7 +79,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
 		}
 
 		if (!sCalendarType) {
-			sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+			sCalendarType = Configuration.getCalendarType();
 		}
 		clDate = UniversalDate.getClass(sCalendarType);
 		oInstance = Object.create(clDate.prototype);
@@ -97,7 +97,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
 	 */
 	UniversalDate.getClass = function(sCalendarType) {
 		if (!sCalendarType) {
-			sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
+			sCalendarType = Configuration.getCalendarType();
 		}
 		return _Calendars.get(sCalendarType);
 	};
@@ -269,7 +269,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
 	 * @private
 	 */
 	UniversalDate.getWeekByDate = function(sCalendarType, iYear, iMonth, iDay, oLocale, oWeekConfig) {
-		oLocale = oLocale || sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+		oLocale = oLocale || Configuration.getFormatSettings().getFormatLocale();
 		var oLocaleData = LocaleData.getInstance(oLocale);
 		var clDate = this.getClass(sCalendarType);
 		var oFirstDay = getFirstDayOfFirstWeek(clDate, iYear, oLocale, oWeekConfig);
@@ -318,7 +318,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
 	 * @private
 	 */
 	UniversalDate.getFirstDateOfWeek = function(sCalendarType, iYear, iWeek, oLocale, oWeekConfig) {
-		oLocale = oLocale || sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+		oLocale = oLocale || Configuration.getFormatSettings().getFormatLocale();
 		var oLocaleData = LocaleData.getInstance(oLocale);
 		var clDate = this.getClass(sCalendarType);
 		var oFirstDay = getFirstDayOfFirstWeek(clDate, iYear, oLocale, oWeekConfig);
@@ -365,7 +365,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
 	 * @private
 	 */
 	function getFirstDayOfFirstWeek(clDate, iYear, oLocale, oWeekConfig) {
-		oLocale = oLocale || sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+		oLocale = oLocale || Configuration.getFormatSettings().getFormatLocale();
 		var oLocaleData = LocaleData.getInstance(oLocale);
 		var iMinDays;
 		var iFirstDayOfWeek;
@@ -436,7 +436,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars'],
 	};
 
 	function getEras(sCalendarType) {
-		var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
+		var oLocale = Configuration.getFormatSettings().getFormatLocale(),
 			oLocaleData = LocaleData.getInstance(oLocale),
 			aEras = mEras[sCalendarType];
 		if (!aEras) {

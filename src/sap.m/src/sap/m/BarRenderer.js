@@ -3,8 +3,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBox'],
-	function(BarInPageEnabler, Device, Log, HBox) {
+sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBox', "sap/ui/core/Configuration"],
+	function(BarInPageEnabler, Device, Log, HBox, Configuration) {
 	"use strict";
 
 
@@ -118,7 +118,7 @@ sap.ui.define(['./BarInPageEnabler', 'sap/ui/Device', "sap/base/Log", 'sap/m/HBo
 		oRM.openStart("div", oControl.getId() + "-BarRight");
 		oRM.class("sapMBarRight");
 		oRM.class("sapMBarContainer");
-		if (sap.ui.getCore().getConfiguration().getRTL()) {
+		if (Configuration.getRTL()) {
 			oRM.class("sapMRTL");
 		}
 		writeWidthIfContentOccupiesWholeArea("right", oRM, oControl);

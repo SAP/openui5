@@ -1,11 +1,12 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/ui/core/CalendarType",
+	"sap/ui/core/Configuration",
 	'sap/ui/model/odata/ODataUtils',
 	'sap/ui/model/Filter',
 	'sap/ui/model/odata/Filter',
-	'sap/ui/model/FilterOperator',
-	"sap/ui/core/CalendarType"
-], function(ODataUtils, Filter, ODataFilter, FilterOperator, CalendarType) {
+	'sap/ui/model/FilterOperator'
+], function(CalendarType, Configuration, ODataUtils, Filter, ODataFilter, FilterOperator) {
 
 	"use strict";
 
@@ -59,10 +60,10 @@ sap.ui.define([
 
 	QUnit.test("formatValue with different CalendarType", function(assert) {
 		var oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26)),
-			sOldCalendarType = sap.ui.getCore().getConfiguration().getCalendarType(),
+			sOldCalendarType = Configuration.getCalendarType(),
 			oTime = time(49646000);
 
-		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+		Configuration.setCalendarType(CalendarType.Japanese);
 		[
 			// t: the tested type
 			// v: the value to format
@@ -78,7 +79,7 @@ sap.ui.define([
 		].forEach(function (oFixture) {
 			assert.equal(ODataUtils.formatValue(oFixture.v, oFixture.t), oFixture.r, oFixture.t + " format " + oFixture.d);
 		});
-		sap.ui.getCore().getConfiguration().setCalendarType(sOldCalendarType);
+		Configuration.setCalendarType(sOldCalendarType);
 	});
 
 	//*********************************************************************************************
@@ -148,10 +149,10 @@ sap.ui.define([
 	QUnit.test("parseValue with different CalendarType", function(assert) {
 		var oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26)),
 			oDateTimeMs = new Date(Date.UTC(2015, 4, 30, 13, 47, 26, 253)),
-			sOldCalendarType = sap.ui.getCore().getConfiguration().getCalendarType(),
+			sOldCalendarType = Configuration.getCalendarType(),
 			oTime = time(49646000);
 
-		sap.ui.getCore().getConfiguration().setCalendarType(CalendarType.Japanese);
+		Configuration.setCalendarType(CalendarType.Japanese);
 
 		// v: value to format; r: expected result; t: tested type; d: test description
 		[
@@ -170,7 +171,7 @@ sap.ui.define([
 			assert.deepEqual(ODataUtils.formatValue(ODataUtils.parseValue(oFixture.v), oFixture.t),
 				oFixture.v, oFixture.t + " " + (oFixture.d || ""));
 		});
-		sap.ui.getCore().getConfiguration().setCalendarType(sOldCalendarType);
+		Configuration.setCalendarType(sOldCalendarType);
 	});
 
 	QUnit.test("compare", function (assert) {

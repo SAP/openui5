@@ -10,7 +10,8 @@ sap.ui.define([
 	'./SlideTileRenderer',
 	"sap/ui/events/KeyCodes",
 	"sap/ui/events/PseudoEvents",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ],
 	function(
 		library,
@@ -20,7 +21,8 @@ sap.ui.define([
 		SlideTileRenderer,
 		KeyCodes,
 		PseudoEvents,
-		jQuery
+		jQuery,
+		Configuration
 	) {
 	"use strict";
 
@@ -500,7 +502,7 @@ sap.ui.define([
 	SlideTile.prototype._scrollToTile = function (tileIndex) {
 		if (tileIndex >= 0) {
 			var oWrapperTo = this.$("wrapper-" + tileIndex);
-			var sDir = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
+			var sDir = Configuration.getRTL() ? "right" : "left";
 
 			this._changeSizeTo(tileIndex);
 			oWrapperTo.css(sDir, "0rem");
@@ -543,7 +545,7 @@ sap.ui.define([
 		}
 
 		oWrapperTo = this.$("wrapper-" + this._iCurrentTile);
-		sDir = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
+		sDir = Configuration.getRTL() ? "right" : "left";
 
 		var oCurrentTile = this.getTiles()[this._iCurrentTile];
 		if (oCurrentTile && oCurrentTile._isNavigateActionEnabled()) {

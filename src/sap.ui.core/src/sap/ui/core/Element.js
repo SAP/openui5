@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/F6Navigation",
-	"./RenderManager"
+	"./RenderManager",
+	"sap/ui/core/Configuration"
 ],
 	function(
 		DataType,
@@ -29,7 +30,8 @@ sap.ui.define([
 		assert,
 		jQuery,
 		F6Navigation,
-		RenderManager
+		RenderManager,
+		Configuration
 	) {
 	"use strict";
 
@@ -210,7 +212,7 @@ sap.ui.define([
 			} else {
 				var sMsg = "adding element with duplicate id '" + sId + "'";
 				// duplicate ID detected => fail or at least log a warning
-				if (sap.ui.getCore().getConfiguration().getNoDuplicateIds()) {
+				if (Configuration.getNoDuplicateIds()) {
 					Log.error(sMsg);
 					throw new Error("Error: " + sMsg);
 				} else {

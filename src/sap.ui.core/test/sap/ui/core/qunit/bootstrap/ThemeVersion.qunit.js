@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/thirdparty/URI",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(URI, Parameters, waitForThemeApplied) {
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/core/Configuration"
+], function(URI, Parameters, waitForThemeApplied, Configuration) {
 	"use strict";
 
 	// use options and version info as determined by ThemeVersion.beforeBootstrap.qunit.js
@@ -44,7 +45,7 @@ sap.ui.define([
 		} else {
 			sExpectedHref = sap.ui.require.toUrl("sap/ui/core/themes/");
 		}
-		sExpectedHref += sap.ui.getCore().getConfiguration().getTheme() + "/library.css";
+		sExpectedHref += Configuration.getTheme() + "/library.css";
 
 		if (mOptions.versionedLibCss) {
 			assert.equal(
@@ -72,7 +73,7 @@ sap.ui.define([
 		var sHref = oLink.getAttribute("href");
 		var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
 
-		var sExpectedHref = "test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/" + sap.ui.getCore().getConfiguration().getTheme() + "/custom.css";
+		var sExpectedHref = "test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/" + Configuration.getTheme() + "/custom.css";
 
 		assert.equal(
 			sHref,
@@ -91,7 +92,7 @@ sap.ui.define([
 		// trigger loading library-parameters.json files
 		Parameters.get();
 
-		if (sap.ui.getCore().getConfiguration().getTheme() === "customcss") {
+		if (Configuration.getTheme() === "customcss") {
 			// the following asserts are relevant for the 'withCredentials' probing.
 			// Since the requests goes against the UI5 bootstrap origin, the first request is done without credentials.
 			// The second request re-tries with credentials.
@@ -156,7 +157,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("RTL Change", function(assert) {
-		sap.ui.getCore().getConfiguration().setRTL(true);
+		Configuration.setRTL(true);
 
 		var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
 		var sHref = oLink.getAttribute("href");
@@ -178,7 +179,7 @@ sap.ui.define([
 			);
 		}
 
-		sap.ui.getCore().getConfiguration().setRTL(false);
+		Configuration.setRTL(false);
 	});
 
 	return waitForThemeApplied();

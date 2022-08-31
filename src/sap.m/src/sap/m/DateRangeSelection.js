@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/base/assert",
+	"sap/ui/core/Configuration",
 	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
 ],
 	function(
@@ -32,7 +33,8 @@ sap.ui.define([
 		CustomYearPicker,
 		deepEqual,
 		Log,
-		assert
+		assert,
+		Configuration
 	) {
 	"use strict";
 
@@ -232,7 +234,7 @@ sap.ui.define([
 
 		if (!sPlaceholder) {
 			oBinding = this.getBinding("value");
-			oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+			oLocale = Configuration.getFormatSettings().getFormatLocale();
 			oLocaleData = LocaleData.getInstance(oLocale);
 
 			if (oBinding && oBinding.getType() && oBinding.getType().isA("sap.ui.model.type.DateInterval")) {
@@ -822,7 +824,7 @@ sap.ui.define([
 			if (!this._oDateRange.getEndDate() || this._oDateRange.getEndDate().getTime() !== oEndDate.getTime()) {
 				sFormattedEndDate = this._getPickerParser().format(
 					oEndDate,
-					sap.ui.getCore().getConfiguration().getTimezone()
+					Configuration.getTimezone()
 				);
 				oEndDate = this._getPickerParser().parse(sFormattedEndDate, TimezoneUtil.getLocalTimezone())[0];
 
@@ -839,7 +841,7 @@ sap.ui.define([
 	DateRangeSelection.prototype._selectDate = function () {
 		var aSelectedDates = this._getCalendar().getSelectedDates();
 		var sFormattedDate, oParts;
-		var sTimezone = sap.ui.getCore().getConfiguration().getTimezone();
+		var sTimezone = Configuration.getTimezone();
 
 		if (aSelectedDates.length > 0) {
 			var oDate1 = aSelectedDates[0].getStartDate();
@@ -1162,7 +1164,7 @@ sap.ui.define([
 
 		if (!sDelimiter) {
 			if (!this._sLocaleDelimiter) {
-				var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+				var oLocale = Configuration.getFormatSettings().getFormatLocale();
 				var oLocaleData = LocaleData.getInstance(oLocale);
 				var sPattern = oLocaleData.getIntervalPattern();
 				var iIndex1 = sPattern.indexOf("{0}") + 3;

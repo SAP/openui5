@@ -14,7 +14,8 @@ sap.ui.define([
     'sap/ui/dom/containsOrEquals',
     'sap/ui/core/ResizeHandler',
     'sap/ui/core/Element',
-    'sap/ui/events/KeyCodes'
+    'sap/ui/events/KeyCodes',
+    'sap/ui/core/Configuration'
 ],
 	function(
 	    jQuery,
@@ -27,7 +28,8 @@ sap.ui.define([
 		containsOrEquals,
 		ResizeHandler,
 		Element,
-		KeyCodes
+		KeyCodes,
+		Configuration
 	) {
 		"use strict";
 
@@ -119,7 +121,7 @@ sap.ui.define([
 			this.bHasRightItems = false;
 			this._bRendering = false;
 
-			this.bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			this.bRtl = Configuration.getRTL();
 
 			// for resize detection
 			this._detectVisibleItemCountChangeTimer = null;
@@ -381,7 +383,7 @@ sap.ui.define([
 
 				var aElements = bIncludeItemsWithAPIPropertyVisibleFalse ? this.oInnerRef.childNodes :
 					this.oInnerRef.parentNode.querySelectorAll("#" + this.oInnerRef.id + ' > :not(.sapUiHiddenPlaceholder)');
-				this.bRtl = sap.ui.getCore().getConfiguration().getRTL();
+				this.bRtl = Configuration.getRTL();
 
 				/* Check for each item how far it is from the parent's left border:
 				 * As long as the items are in the same row, this offset increases, but

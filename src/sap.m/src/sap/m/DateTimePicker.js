@@ -22,9 +22,10 @@ sap.ui.define([
 	'./SegmentedButtonItem',
 	'./ResponsivePopover',
 	'./Button',
-	"sap/ui/core/IconPool",
-	"sap/ui/qunit/utils/waitForThemeApplied",
-	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
+	'sap/ui/core/IconPool',
+	'sap/ui/qunit/utils/waitForThemeApplied',
+	'sap/ui/core/Configuration',
+	'sap/ui/dom/jquery/cursorPos' // provides jQuery.fn.cursorPos
 ], function(
 	jQuery,
 	InputBase,
@@ -45,7 +46,8 @@ sap.ui.define([
 	ResponsivePopover,
 	Button,
 	IconPool,
-	waitForThemeApplied
+	waitForThemeApplied,
+	Configuration
 ) {
 	"use strict";
 
@@ -659,7 +661,7 @@ sap.ui.define([
 		if (oFormatOptions.calendarType === undefined) {
 			oFormatOptions.calendarType = bDisplayFormat
 				? this.getDisplayFormatType()
-				: sap.ui.getCore().getConfiguration().getCalendarType();
+				: Configuration.getCalendarType();
 		}
 
 		if (oFormatOptions.strictParsing === undefined) {

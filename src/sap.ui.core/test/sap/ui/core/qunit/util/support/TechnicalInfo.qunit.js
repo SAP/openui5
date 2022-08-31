@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/core/support/techinfo/TechnicalInfo",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/core/date/Gregorian",
-	"sap/ui/model/ValidateException"
-], function (Device, TechnicalInfo, ResourceModel, Gregorian, ValidateException) {
+	"sap/ui/model/ValidateException",
+	"sap/ui/core/Configuration"
+], function (Device, TechnicalInfo, ResourceModel, Gregorian, ValidateException, Configuration) {
 	"use strict";
 
 	QUnit.module("Parsing and formatting");
@@ -225,7 +226,7 @@ sap.ui.define([
 			assert.strictEqual(oViewModel.getProperty("/UserAgent"), navigator.userAgent, "The user agent is equal to the 'navigator.userAgent' property");
 			assert.strictEqual(typeof oViewModel.getProperty("/DebugMode"), "boolean", "The debug mode is a boolean");
 			assert.strictEqual(typeof oViewModel.getProperty("/OpenSupportAssistantInNewWindow"), "boolean", "The open support assistant in new window is a boolean");
-			assert.strictEqual(oViewModel.getProperty("/DebugMode"), sap.ui.getCore().getConfiguration().getDebug(), "The debug mode is equal to the UI5 core value");
+			assert.strictEqual(oViewModel.getProperty("/DebugMode"), Configuration.getDebug(), "The debug mode is equal to the UI5 core value");
 
 			TechnicalInfo._oDialog.destroy();
 		});

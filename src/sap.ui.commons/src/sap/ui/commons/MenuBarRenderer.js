@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.commons.MenuBar
-sap.ui.define(['sap/ui/commons/library'],
-	function(library) {
+sap.ui.define(['sap/ui/commons/library', 'sap/ui/core/Configuration'],
+	function(library, Configuration) {
 	"use strict";
 
 
@@ -100,7 +100,7 @@ sap.ui.define(['sap/ui/commons/library'],
 			rm.writeAttributeEscaped("title", sText);
 		}
 
-		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (!Configuration.getAccessibility()) {
 			return;
 		}
 

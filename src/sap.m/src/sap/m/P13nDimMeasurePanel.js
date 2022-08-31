@@ -28,7 +28,8 @@ sap.ui.define([
 	'sap/ui/core/Item',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/IconPool',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ], function(
 	library,
 	P13nPanel,
@@ -54,7 +55,8 @@ sap.ui.define([
 	Item,
 	InvisibleText,
 	IconPool,
-	jQuery
+	jQuery,
+	Configuration
 ) {
 	"use strict";
 
@@ -884,7 +886,7 @@ sap.ui.define([
 	P13nDimMeasurePanel.prototype._sortModelItemsByPersistentIndex = function(aModelItems) {
         // BCP 0020751294 0000593415 2018
         var oCollator;
-        var sLanguage = sap.ui.getCore().getConfiguration().getLocale().toString();
+        var sLanguage = Configuration.getLocale().toString();
         try {
             if (typeof window.Intl !== 'undefined') {
                 oCollator = window.Intl.Collator(sLanguage, {

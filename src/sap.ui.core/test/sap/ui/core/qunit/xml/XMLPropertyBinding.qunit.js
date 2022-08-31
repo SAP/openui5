@@ -1,13 +1,14 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/m/Input",
+	"sap/ui/core/Configuration",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/type/Float",
-	"sap/ui/model/xml/XMLModel",
-	"sap/m/Input"
-], function(ChangeReason, TypeFloat, XMLModel, Input) {
+	"sap/ui/model/xml/XMLModel"
+], function(Input, Configuration, ChangeReason, TypeFloat, XMLModel) {
 	"use strict";
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	var sDefaultLanguage = Configuration.getLanguage();
 
 	var testData =
 		"<root>" +
@@ -42,12 +43,12 @@ sap.ui.define([
 			this.oModel = new XMLModel();
 			this.oModel.setXML(testData);
 			sap.ui.getCore().setModel(this.oModel);
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 		},
 		afterEach: function() {
 			sap.ui.getCore().setModel(null);
 			this.oModel.destroy();
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			Configuration.setLanguage(sDefaultLanguage);
 		},
 		createPropertyBindings: function(path, property, context) {
 			// create bindings

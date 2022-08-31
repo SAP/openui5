@@ -16,7 +16,8 @@ sap.ui.define([
 	'sap/ui/commons/Tab',
 	'sap/ui/core/Item',
 	'sap/ui/Device',
-	'sap/base/security/encodeXML'
+	'sap/base/security/encodeXML',
+	'sap/ui/core/Configuration'
 ],
 	function(
 		jQuery,
@@ -31,7 +32,8 @@ sap.ui.define([
 		Tab,
 		Item,
 		Device,
-		encodeXML
+		encodeXML,
+		Configuration
 	) {
 	"use strict";
 
@@ -125,7 +127,7 @@ sap.ui.define([
 	ShellPersonalization.TRANSPARENT_1x1 = sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif');
 
 	ShellPersonalization.IMAGE_FOLDER_PATH = sap.ui.require.toUrl(
-		"sap/ui/ux3/themes/" + sap.ui.getCore().getConfiguration().getTheme() + "/img/shell/");
+		"sap/ui/ux3/themes/" + Configuration.getTheme() + "/img/shell/");
 
 	ShellPersonalization.getOriginalSettings = function() {
 		// buffer the settings
@@ -644,7 +646,7 @@ sap.ui.define([
 	};
 	ShellPersonalization.prototype.applyLogoAlign = function(sLogoAlign) {
 		var sRealAlign = sLogoAlign;
-		if (sap.ui.getCore().getConfiguration().getRTL() && (sRealAlign == "right")) {
+		if (Configuration.getRTL() && (sRealAlign == "right")) {
 			sRealAlign = "left"; // need to use left/right, as "begin" is not supported by IE8
 		}
 		this.shell.$("hdr").css("text-align", sRealAlign);

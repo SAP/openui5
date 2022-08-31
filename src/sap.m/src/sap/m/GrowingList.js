@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.GrowingList.
-sap.ui.define(['./List', './library', './GrowingListRenderer'],
-	function(List, library, GrowingListRenderer) {
+sap.ui.define(['./List', './library', './GrowingListRenderer', 'sap/ui/core/Configuration'],
+	function(List, library, GrowingListRenderer, Configuration) {
 	"use strict";
 
 
@@ -59,7 +59,7 @@ sap.ui.define(['./List', './library', './GrowingListRenderer'],
 
 	// checks if control is not compatible anymore
 	GrowingList.prototype._isIncompatible = function() {
-		return sap.ui.getCore().getConfiguration().getCompatibilityVersion("sapMGrowingList").compareTo("1.16") >= 0;
+		return Configuration.getCompatibilityVersion("sapMGrowingList").compareTo("1.16") >= 0;
 	};
 
 	//sets growing property to true on init

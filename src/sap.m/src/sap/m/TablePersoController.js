@@ -10,9 +10,10 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectRegistry',
 	"sap/ui/core/syncStyleClass",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration"
 ],
-	function(library, TablePersoDialog, ManagedObject, ManagedObjectRegistry, syncStyleClass, Log, jQuery) {
+	function(library, TablePersoDialog, ManagedObject, ManagedObjectRegistry, syncStyleClass, Log, jQuery, Configuration) {
 	"use strict";
 
 	// shortcut for sap.m.ResetAllMode
@@ -114,7 +115,7 @@ sap.ui.define([
 			} else {
 				var sMsg = "adding TablePersoController with duplicate id '" + sId + "'";
 				// duplicate ID detected => fail or at least log a warning
-				if (sap.ui.getCore().getConfiguration().getNoDuplicateIds()) {
+				if (Configuration.getNoDuplicateIds()) {
 					Log.error(sMsg);
 					throw new Error("Error: " + sMsg);
 				} else {
@@ -689,7 +690,7 @@ sap.ui.define([
 	TablePersoController.prototype._isStatic = function (sId) {
 		// SUGGESTED IMPROVEMENT: make this an inline function of '_getPersoColumnMap'
 		// it is only used there
-		var sUidPrefix = sap.ui.getCore().getConfiguration().getUIDPrefix();
+		var sUidPrefix = Configuration.getUIDPrefix();
 		var rGeneratedPrefix = new RegExp("^" + sUidPrefix);
 		return !rGeneratedPrefix.test(sId);
 	};

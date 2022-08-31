@@ -10,9 +10,11 @@ sap.ui.define([
   'sap/ui/core/Control',
   './MessageRenderer',
   './Button',
-  'sap/ui/dom/jquery/rect' // jQuery Plugin "rect"
+  "sap/ui/core/Configuration",
+    // jQuery Plugin "rect"
+  'sap/ui/dom/jquery/rect'
 ],
-	function(jQuery, Dialog, library, Control, MessageRenderer, Button) {
+	function(jQuery, Dialog, library, Control, MessageRenderer, Button, Configuration) {
 	"use strict";
 
 
@@ -66,7 +68,7 @@ sap.ui.define([
 
 	Message.prototype.init = function(){
 		// Defining some private data...
-		this.isRTL = sap.ui.getCore().getConfiguration().getRTL();
+		this.isRTL = Configuration.getRTL();
 
 		// The "Details" related Controls.
 	  this.fnCallBack    = null; // Supplied only if a longText is to be provided on demand.

@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.layout.DynamicSideContent
-sap.ui.define(["sap/ui/layout/library", "sap/ui/Device"],
-	function(library, Device) {
+sap.ui.define(["sap/ui/layout/library", "sap/ui/Device", "sap/ui/core/Configuration"],
+	function(library, Device, Configuration) {
 		"use strict";
 
 		// shortcut for sap.ui.layout.SideContentPosition
@@ -36,7 +36,7 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/Device"],
 		DynamicSideContentRenderer.renderSubControls = function (oRm, oSideControl) {
 			var iSideContentId = oSideControl.getId(),
 				bShouldSetHeight = oSideControl._shouldSetHeight(),
-				bPageRTL = sap.ui.getCore().getConfiguration().getRTL(),
+				bPageRTL = Configuration.getRTL(),
 				position = oSideControl.getSideContentPosition();
 
 			if ((position === SideContentPosition.Begin && !bPageRTL) || (bPageRTL && position === SideContentPosition.End)) {

@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/documentation/sdk/util/Resources",
 	"./config/sampleForwardingConfig",
-	"sap/base/strings/capitalize"
+	"sap/base/strings/capitalize",
+	"sap/ui/core/Configuration"
 ], function(
 	SampleBaseController,
 	JSONModel,
@@ -36,7 +37,8 @@ sap.ui.define([
 	Fragment,
 	ResourcesUtil,
 	sampleForwardingConfig,
-	capitalize
+	capitalize,
+	Configuration
 ) {
 		"use strict";
 
@@ -54,7 +56,7 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
-				var oConfiguration = sap.ui.getCore().getConfiguration();
+				var oConfiguration = Configuration;
 				SampleBaseController.prototype.onInit.call(this);
 
 				this.getRouter().getRoute("sample").attachPatternMatched(this._onSampleMatched, this);
@@ -551,7 +553,7 @@ sap.ui.define([
 
 					// combine namespace with the file name again
 					this.sIFrameUrl = (sap.ui.require.toUrl((sIframePath + "/" + sIframeWithoutUI5Ending).replace(/\./g, "/")) + sFileEnding || ".html")
-					+ "?sap-ui-theme=" + sap.ui.getCore().getConfiguration().getTheme();
+					+ "?sap-ui-theme=" + Configuration.getTheme();
 					this._oHtmlControl.getDomRef().src = this.sIFrameUrl;
 				}
 				this._oHtmlControl.getDomRef().contentWindow.postMessage({
@@ -599,7 +601,7 @@ sap.ui.define([
 			setDefaultSampleTheme: function() {
 				var sSampleVersion = ResourcesUtil.getResourcesVersion();
 				this._sDefaultSampleTheme = sSampleVersion && parseInt(sSampleVersion.slice(3,5)) < 68 ?
-					"sap_belize" : sap.ui.getCore().getConfiguration().getTheme();
+					"sap_belize" : Configuration.getTheme();
 			},
 
 			onDemoKitThemeChanged: function(sChannelId, sEventId, oData) {

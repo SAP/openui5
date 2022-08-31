@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/base/EventProvider",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/Filter",
@@ -25,19 +26,19 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ValueListType",
 	"sap/ui/test/TestUtils",
 	"sap/ui/util/XMLHelper",
-	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
+    // load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
 ], function (Log, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text, Device,
-		EventProvider, SyncPromise, Controller, View, Filter, FilterOperator, FilterType, Sorter,
-		OperationMode, AnnotationHelper, ODataListBinding, ODataModel, ValueListType, TestUtils,
-		XMLHelper) {
+		EventProvider, SyncPromise, Configuration, Controller, View, Filter, FilterOperator,
+		FilterType, Sorter, OperationMode, AnnotationHelper, ODataListBinding, ODataModel,
+		ValueListType, TestUtils, XMLHelper) {
 	/*eslint no-sparse-arrays: 0, "max-len": ["error", {"code": 100,
 		"ignorePattern": "/sap/opu/odata4/|\" :$|\" : \\{$|\\{meta>"}], */
 	"use strict";
 
 	var sContext = "sap.ui.model.odata.v4.Context",
 		rCountTrue = /[?&]\$count=true/, // $count=true, but not inside $expand
-		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		sDefaultLanguage = Configuration.getLanguage(),
 		fnFireEvent = EventProvider.prototype.fireEvent,
 		sODCB = "sap.ui.model.odata.v4.ODataContextBinding",
 		sODLB = "sap.ui.model.odata.v4.ODataListBinding",
@@ -462,7 +463,7 @@ sap.ui.define([
 			// We use a formatter to check for property changes. However before the formatter is
 			// called, the value is passed through the type's formatValue
 			// (see PropertyBinding#_toExternalValue). Ensure that this result is predictable.
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			Configuration.setLanguage("en-US");
 
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning")
@@ -527,7 +528,7 @@ sap.ui.define([
 				}
 				sap.ui.getCore().getMessageManager().removeAllMessages();
 				// reset the language
-				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+				Configuration.setLanguage(sDefaultLanguage);
 			}
 
 			if (getGroupLocks().length) {
@@ -2144,7 +2145,7 @@ sap.ui.define([
 			dRetryAfter = new Date(),
 			sView = '<Text text="{/EMPLOYEES(\'1\')/ID}"/>';
 
-		this.mock(sap.ui.getCore().getConfiguration()).expects("getStatistics").withExactArgs()
+		this.mock(Configuration).expects("getStatistics").withExactArgs()
 			.returns(true);
 		oModel = this.createModel("/sap/statistics/", {groupId : "$direct"}, {
 			"/sap/statistics/$metadata?sap-statistics=true"
@@ -2207,8 +2208,7 @@ sap.ui.define([
 	QUnit.test("sap-statistics for $batch", function (assert) {
 		var oModel;
 
-		this.mock(sap.ui.getCore().getConfiguration()).expects("getStatistics").withExactArgs()
-			.returns(true);
+		this.mock(Configuration).expects("getStatistics").withExactArgs().returns(true);
 		oModel = this.createModel("/sap/statistics/", {earlyRequests : true}, {
 			"HEAD /sap/statistics/?sap-statistics=true" : {},
 			"/sap/statistics/$metadata?sap-statistics=true"
@@ -33486,7 +33486,7 @@ sap.ui.define([
 		}
 
 		// code under test
-		sap.ui.getCore().getConfiguration().setSecurityTokenHandlers([
+		Configuration.setSecurityTokenHandlers([
 			securityTokenHandler0,
 			securityTokenHandler1,
 			securityTokenHandler2
@@ -33510,7 +33510,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).finally(function () {
-			sap.ui.getCore().getConfiguration().setSecurityTokenHandlers([]);
+			Configuration.setSecurityTokenHandlers([]);
 		});
 	});
 });

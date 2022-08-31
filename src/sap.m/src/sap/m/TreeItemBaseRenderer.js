@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer"],
-	function(ListItemBaseRenderer, Renderer) {
+sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/core/Configuration"],
+	function(ListItemBaseRenderer, Renderer, Configuration) {
 	"use strict";
 
 	/**
@@ -26,7 +26,7 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer"],
 		}
 
 		var iIndentation = oLI._getPadding();
-		if (sap.ui.getCore().getConfiguration().getRTL()){
+		if (Configuration.getRTL()){
 			rm.style("padding-right", iIndentation + "rem");
 		} else {
 			rm.style("padding-left", iIndentation + "rem");

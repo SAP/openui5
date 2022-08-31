@@ -5,14 +5,15 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/model/odata/v4/lib/_Batch",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, SyncPromise, CacheManager, _Batch, _GroupLock, _Helper, _Requestor,
-		TestUtils) {
+], function (jQuery, Log, SyncPromise, Configuration, CacheManager, _Batch, _GroupLock, _Helper,
+		_Requestor, TestUtils) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Requestor",
@@ -1477,7 +1478,7 @@ sap.ui.define([
 			return Promise.resolve({"This should change" : "nothing!"});
 		}
 
-		this.mock(sap.ui.getCore().getConfiguration()).expects("getSecurityTokenHandlers")
+		this.mock(Configuration).expects("getSecurityTokenHandlers")
 			.withExactArgs()
 			.returns([securityTokenHandler0, securityTokenHandler1, securityTokenHandler2]);
 		this.mock(_Requestor.prototype).expects("checkHeaderNames")
@@ -1504,7 +1505,7 @@ sap.ui.define([
 			return Promise.reject("foo");
 		}
 
-		this.mock(sap.ui.getCore().getConfiguration()).expects("getSecurityTokenHandlers")
+		this.mock(Configuration).expects("getSecurityTokenHandlers")
 			.withExactArgs()
 			.returns([securityTokenHandler]);
 		this.oLogMock.expects("error")
@@ -1532,7 +1533,7 @@ sap.ui.define([
 			return Promise.resolve(mNotAllowedHeaders);
 		}
 
-		this.mock(sap.ui.getCore().getConfiguration()).expects("getSecurityTokenHandlers")
+		this.mock(Configuration).expects("getSecurityTokenHandlers")
 			.withExactArgs()
 			.returns([securityTokenHandler]);
 

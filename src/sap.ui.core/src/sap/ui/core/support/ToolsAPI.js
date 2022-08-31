@@ -24,8 +24,6 @@ sap.ui.define([
 	) {
 		'use strict';
 
-		var configurationInfo = sap.ui.getCore().getConfiguration();
-
 		// ================================================================================
 		// Technical Information
 		// ================================================================================
@@ -99,17 +97,17 @@ sap.ui.define([
 				configurationBootstrap: window['sap-ui-config'] || Object.create(null),
 
 				configurationComputed: {
-					theme: configurationInfo.getTheme(),
-					language: configurationInfo.getLanguage(),
-					formatLocale: configurationInfo.getFormatLocale(),
-					accessibility: configurationInfo.getAccessibility(),
-					animation: (configurationInfo.getAnimationMode() !== Configuration.AnimationMode.minimal &&
-								configurationInfo.getAnimationMode() !== Configuration.AnimationMode.none),
-					rtl: configurationInfo.getRTL(),
-					debug: configurationInfo.getDebug(),
-					inspect: configurationInfo.getInspect(),
-					originInfo: configurationInfo.getOriginInfo(),
-					noDuplicateIds: configurationInfo.getNoDuplicateIds()
+					theme: Configuration.getTheme(),
+					language: Configuration.getLanguage(),
+					formatLocale: Configuration.getFormatLocale(),
+					accessibility: Configuration.getAccessibility(),
+					animation: (Configuration.getAnimationMode() !== Configuration.AnimationMode.minimal &&
+								Configuration.getAnimationMode() !== Configuration.AnimationMode.none),
+					rtl: Configuration.getRTL(),
+					debug: Configuration.getDebug(),
+					inspect: Configuration.getInspect(),
+					originInfo: Configuration.getOriginInfo(),
+					noDuplicateIds: Configuration.getNoDuplicateIds()
 				},
 
 				libraries: _getLibraries(),

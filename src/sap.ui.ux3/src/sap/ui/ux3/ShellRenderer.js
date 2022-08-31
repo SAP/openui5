@@ -6,9 +6,10 @@
 sap.ui.define([
     'sap/ui/core/IconPool',
     'sap/ui/core/theming/Parameters',
-    'sap/base/security/encodeXML'
+    'sap/base/security/encodeXML',
+    'sap/ui/core/Configuration'
 ],
-	function(IconPool, Parameters, encodeXML) {
+	function(IconPool, Parameters, encodeXML, Configuration) {
 	"use strict";
 
 
@@ -36,7 +37,7 @@ sap.ui.define([
 		// convenience variable
 		var bPaneOpen = oControl.isPaneOpen();
 		var iPaneWidthPlus = oControl.getPaneWidth() + Shell.SIDE_BAR_BASE_WIDTH; // width of pane plus how far it is from the edge
-		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var bRtl = Configuration.getRTL();
 		var sId = oControl.getId();
 
 		if (Shell.FIRST_RENDERING) {

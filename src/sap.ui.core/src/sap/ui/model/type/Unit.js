@@ -8,14 +8,15 @@ sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/CompositeType",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException"
-], function(hash, each, extend, isEmptyObject, LocaleData, NumberFormat, CompositeType,
-		FormatException, ParseException, ValidateException) {
+], function(hash, each, extend, isEmptyObject, Configuration, LocaleData, NumberFormat,
+		CompositeType, FormatException, ParseException, ValidateException) {
 	"use strict";
 
 
@@ -112,7 +113,7 @@ sap.ui.define([
 		// might overwrite the given dynamic format options of the type.
 		if (sUnitToBeFormatted && !this.oFormatOptions.customUnits && !oFormatArgs.customUnits) {
 			// checks the global Configuration and CLDR for Units/UnitMappings
-			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+			var oLocale = Configuration.getFormatSettings().getFormatLocale();
 			var oLocaleData = LocaleData.getInstance(oLocale);
 			var sLookupMeasure = oLocaleData.getUnitFromMapping(sUnitToBeFormatted) || sUnitToBeFormatted;
 			var mUnitPatterns = oLocaleData.getUnitFormat(sLookupMeasure);

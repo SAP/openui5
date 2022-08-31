@@ -11,8 +11,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/cache/CacheManager",
+	"sap/ui/core/Configuration",
 	"sap/ui/thirdparty/jquery"
-], function (_Batch, _GroupLock, _Helper, asV2Requestor, Log, SyncPromise, CacheManager, jQuery) {
+], function (_Batch, _GroupLock, _Helper, asV2Requestor, Log, SyncPromise, CacheManager,
+		Configuration, jQuery) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
@@ -1463,7 +1465,7 @@ sap.ui.define([
 
 		this.oSecurityTokenPromise = null;
 
-		sap.ui.getCore().getConfiguration().getSecurityTokenHandlers().some(function (fnHandler) {
+		Configuration.getSecurityTokenHandlers().some(function (fnHandler) {
 			var oSecurityTokenPromise = fnHandler(that.sServiceUrl);
 
 			if (oSecurityTokenPromise !== undefined) {

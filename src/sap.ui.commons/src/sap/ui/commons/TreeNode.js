@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.TreeNode.
-sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/CustomStyleClassSupport', 'sap/ui/core/Element', './Tree'],
-	function(jQuery, library, CustomStyleClassSupport, Element, Tree) {
+sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/CustomStyleClassSupport', 'sap/ui/core/Element', './Tree', 'sap/ui/core/Configuration'],
+	function(jQuery, library, CustomStyleClassSupport, Element, Tree, Configuration) {
 	"use strict";
 
 
@@ -461,7 +461,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/CustomStyle
 	* @param {Object} oEvent Browser event
 	*/
 	TreeNode.prototype.onsapleft = function(oEvent){
-		if (sap.ui.getCore().getConfiguration().getRTL()) {
+		if (Configuration.getRTL()) {
 			this.expand();
 		} else {
 			this.collapse();
@@ -476,7 +476,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', './library', 'sap/ui/core/CustomStyle
 	* @param {Object} oEvent Browser event
 	*/
 	TreeNode.prototype.onsapright = function(oEvent){
-		if (sap.ui.getCore().getConfiguration().getRTL()) {
+		if (Configuration.getRTL()) {
 			this.collapse();
 		} else {
 			this.expand();
