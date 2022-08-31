@@ -449,7 +449,8 @@ sap.ui.define(["sap/ui/base/DataType",
 	 *
 	 * @returns {sap.f.cards.IHeader} The header of the card
 	 * @since 1.62
-	 * @public
+	 * @ui5-restricted
+	 * @private
 	 * @function
 	 * @name sap.f.ICard.getCardHeader
 	 */
@@ -459,7 +460,8 @@ sap.ui.define(["sap/ui/base/DataType",
 	 *
 	 * @returns {sap.ui.core.Control} The content of the card
 	 * @since 1.62
-	 * @public
+	 * @ui5-restricted
+	 * @private
 	 * @function
 	 * @name sap.f.ICard.getCardContent
 	 */
@@ -469,7 +471,8 @@ sap.ui.define(["sap/ui/base/DataType",
 	 *
 	 * @returns {sap.f.cards.HeaderPosition} The position of the header of the card
 	 * @since 1.65
-	 * @public
+	 * @ui5-restricted
+	 * @private
 	 * @function
 	 * @name sap.f.ICard.getCardHeaderPosition
 	 */

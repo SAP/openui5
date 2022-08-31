@@ -70,6 +70,7 @@ sap.ui.define([
 			aFilters.concat([
 				["/sap.card/content", oCard.getCardContent()],
 				["/sap.card/header", oCard.getCardHeader()],
+				["/sap.card/footer", oCard.getCardFooter()],
 				["/sap.card", oCard]
 			]).filter(function (aPathAndContext) {
 				return !!oCard.getManifestEntry(aPathAndContext[0]); // only resolve existing sections

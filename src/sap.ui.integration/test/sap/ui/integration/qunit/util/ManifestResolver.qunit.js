@@ -1083,6 +1083,79 @@ sap.ui.define([
 			});
 	});
 
+
+	QUnit.test("List with pagination", function (assert) {
+		var oManifest = {
+				"sap.app": {
+					"id": "manifestResolver.test.card",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "List",
+					"content": {
+						"data": {
+							"json": [
+								{
+									"Name": "Comfort Easy"
+								},
+								{
+									"Name": "ITelO Vault"
+								},
+								{
+									"Name": "Product 3"
+								}
+							]
+						},
+						"item": {
+							"title": "{Name}"
+						}
+					},
+					"footer": {
+						"paginator": {
+							"pageSize": 2
+						}
+					}
+				}
+			};
+
+		var oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		return oCard.resolveManifest()
+			.then(JSON.parse)
+			.then(function (oRes) {
+				var oExpectedContent = {
+						"groups": [
+							{
+								"items": [
+									{
+										"title": "Comfort Easy"
+									},
+									{
+										"title": "ITelO Vault"
+									}
+								]
+							}
+						]
+					},
+					oExpectedPaginator = {
+						"paginator": {
+							"pageCount": 2,
+							"pageIndex": 0
+						}
+					};
+
+				// Assert
+				assert.deepEqual(oRes["sap.card"].content, oExpectedContent, "content for first page is resolved correctly");
+				assert.deepEqual(oRes["sap.card"].footer, oExpectedPaginator, "paginator is resolved correctly");
+
+				oCard.destroy();
+			});
+	});
+
 	QUnit.test("Table item template", function (assert) {
 		var oManifest = {
 			"sap.app": {

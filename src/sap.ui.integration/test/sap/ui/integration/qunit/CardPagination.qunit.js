@@ -167,7 +167,7 @@ sap.ui.define([
 
 			assert.strictEqual(oList.getItems().length, oPaginator.getPageSize(), "list items number is correct");
 
-			oPaginator._next();
+			oPaginator.next();
 			Core.applyChanges();
 
 			assert.strictEqual(oCard.getCardContent().getInnerList().getItems().length, oPaginator.getPageSize(), "list items number is correct");
@@ -242,7 +242,7 @@ sap.ui.define([
 				done();
 			});
 
-			oPaginator._next();
+			oPaginator.next();
 		});
 	});
 
@@ -274,7 +274,7 @@ sap.ui.define([
 			});
 
 			// Act
-			oPaginator._next();
+			oPaginator.next();
 			Core.applyChanges();
 		});
 

@@ -27,6 +27,16 @@ sap.ui.define([
 			this.byId("card1").refreshData();
 		},
 
+		onPreviousPage: function () {
+			var oCard = this.byId("card1");
+			oCard.getCardFooter().getPaginator().previous();
+		},
+
+		onNextPage: function () {
+			var oCard = this.byId("card1");
+			oCard.getCardFooter().getPaginator().next();
+		},
+
 		resolveManifest: function () {
 			var oCard = this.byId("card1"),
 				oCodeEditor = this.byId("output");

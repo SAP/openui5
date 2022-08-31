@@ -1646,8 +1646,9 @@ sap.ui.define([
 	/**
 	 * Implements sap.f.ICard interface.
 	 *
+	 * @ui5-restricted
+	 * @private
 	 * @returns {sap.f.cards.IHeader} The header of the card
-	 * @protected
 	 */
 	Card.prototype.getCardHeader = function () {
 		return this.getAggregation("_header");
@@ -1656,8 +1657,9 @@ sap.ui.define([
 	/**
 	 * Implements sap.f.ICard interface.
 	 *
+	 * @ui5-restricted
+	 * @private
 	 * @returns {sap.f.cards.HeaderPosition} The position of the header of the card.
-	 * @protected
 	 */
 	Card.prototype.getCardHeaderPosition = function () {
 		if (!this._oCardManifest) {
@@ -1669,11 +1671,21 @@ sap.ui.define([
 	/**
 	 * Implements sap.f.ICard interface.
 	 *
+	 * @ui5-restricted
+	 * @private
 	 * @returns {sap.ui.core.Control} The content of the card
-	 * @protected
 	 */
 	Card.prototype.getCardContent = function () {
 		return this.getAggregation("_content");
+	};
+
+	/**
+	 * @ui5-restricted
+	 * @private
+	 * @returns {sap.ui.integration.cards.Footer} The footer of the card
+	 */
+	 Card.prototype.getCardFooter = function () {
+		return this.getAggregation("_footer");
 	};
 
 	/**

@@ -17,6 +17,8 @@
 		<VBox renderType="Bare" height="100%">
 			<Button text="Refresh Card" press=".onRefresh" />
 			<Button text="Refresh Card Data" press=".onRefreshData" />
+			<Button text="Previous Page" press=".onPreviousPage" />
+			<Button text="Next Page" press=".onNextPage" />
 			<HBox>
 				<layoutData>
 					<FlexItemData minHeight="0" growFactor="1"></FlexItemData>
