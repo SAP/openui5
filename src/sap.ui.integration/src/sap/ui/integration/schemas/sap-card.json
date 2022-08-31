@@ -1262,7 +1262,21 @@
         },
         "hasData": {
           "description": "Represents flag for no data",
-          "type": "string"
+          "oneOf": [
+            {
+                "type": "boolean"
+            },
+            {
+                "type": "object"
+            },
+            {
+                "type": "array"
+            },
+            {
+                "$ref": "#/definitions/simpleBinding"
+            }
+          ],
+          "default": true
         }
       }
     },

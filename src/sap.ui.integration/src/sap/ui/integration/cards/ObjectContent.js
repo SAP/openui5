@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/m/TextArea",
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
+	"sap/base/util/isPlainObject",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/layout/AlignedFlowLayout",
 	"sap/ui/dom/units/Rem",
@@ -52,6 +53,7 @@ sap.ui.define([
 	TextArea,
 	Log,
 	isEmptyObject,
+	isPlainObject,
 	ResizeHandler,
 	AlignedFlowLayout,
 	Rem,
@@ -128,7 +130,10 @@ sap.ui.define([
 	 * Handler for when data is changed.
 	 */
 	ObjectContent.prototype.onDataChanged = function () {
-		this._handleNoItemsError(this.getParsedConfiguration().hasData);
+		if (!this._hasData()) {
+			this.getParent()._handleError("No items available", true);
+		}
+
 		this._validateInputFields(false);
 	};
 
@@ -152,23 +157,21 @@ sap.ui.define([
 		oControl._oItem = oItem;
 	};
 
-	/**
-	 * Used to show the illustrated message when there is empty data retrieved.
-	 *
-	 * @protected
-	 * @param {String} sValue value to resolve data.
-	 */
-	ObjectContent.prototype._handleNoItemsError = function (sValue) {
-		if (!sValue) {
-			return;
+	ObjectContent.prototype._hasData = function () {
+		var oConfiguration = this.getConfiguration();
+
+		if (!oConfiguration.hasOwnProperty("hasData")) {
+			return true;
 		}
 
-		var oResolvedValue = BindingResolver.resolveValue(sValue, this, this.getBindingContext().getPath());
+		var vResolvedValue = BindingResolver.resolveValue(oConfiguration.hasData, this, this.getBindingContext().getPath());
 
-		// check for falsy value, empty array or an empty object
-		if (!oResolvedValue || Array.isArray(oResolvedValue) && !oResolvedValue.length || isEmptyObject(oResolvedValue)) {
-			this.getParent()._handleError("No items available", true);
+		// check for empty array or an empty object
+		if (Array.isArray(vResolvedValue) && !vResolvedValue.length || isPlainObject(vResolvedValue) && isEmptyObject(vResolvedValue)) {
+			return false;
 		}
+
+		return !!vResolvedValue;
 	};
 
 	ObjectContent.prototype.setConfiguration = function (oConfiguration) {

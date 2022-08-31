@@ -26,6 +26,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
+						<th>Default Value</th>
 						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
@@ -34,6 +35,7 @@
 					<tr>
 						<td>groups</td>
 						<td><a href="#objectGroupProperties">ObjectGroup[]</a></td>
+						<td></td>
 						<td>Yes</td>
 						<td>An array of groups.</td>
 						<td>1.15.0</td>
@@ -42,6 +44,7 @@
 					<tr>
 						<td>actions</td>
 						<td><a href="../../../index.html#/learn/actions" target="_parent">Actions[]</a></td>
+						<td></td>
 						<td>No</td>
 						<td>Actions that are triggered when the content is pressed.</td>
 						<td>1.15.0</td>
@@ -49,10 +52,14 @@
 					</tr>
 					<tr>
 						<td>hasData</td>
-						<td>string</td>
+						<td>boolean|object|array</td>
+						<td>true</td>
 						<td>No</td>
-						<td>If assigned to a falsy value, empty object or empty array the content will show the message for "No data"</td>
-						<td>1.29.0</td>
+						<td>
+							Whether the card has data. If it doesn't, the message for "No data" will be shown.
+							Empty object or empty array mean that the card has no data.
+						</td>
+						<td>1.45.0</td>
 						<td>1.105</td>
 					</tr>
 				</table>
