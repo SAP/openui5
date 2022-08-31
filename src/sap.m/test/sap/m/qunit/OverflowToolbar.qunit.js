@@ -386,7 +386,46 @@ sap.ui.define([
 					asyncMode: true
 				}, aDefaultContent),
 				done = assert.async(),
-				iVisibleButtons;
+				iVisibleButtons,
+				oFirstRerenderingDelegate = {
+					onAfterRendering: function () {
+						oOverflowTB.removeEventDelegate(oFirstRerenderingDelegate);
+
+						// Assert - after the width change there should be less buttons visible on the toolbar
+						iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
+						assert.strictEqual(iVisibleButtons < aDefaultContent.length, true, "After the resize, the number of visible buttons should have decreased");
+
+						// There should be an overflow button and it should be visible
+						var oOverflowButton = oOverflowTB._getOverflowButton();
+						assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
+
+						// Act - resize the button back
+						aDefaultContent[4].setWidth("100px");
+						oOverflowTB.attachEventOnce("_controlWidthChanged", fnSecondWidthChange);
+					}
+				},
+				oSecondRenderingDelegate =  {
+					onAfterRendering: function () {
+						oOverflowTB.removeEventDelegate(oSecondRenderingDelegate);
+
+						var oOverflowButton = oOverflowTB._getOverflowButton();
+						// Assert - there should be no overflow button, no overflow area, all buttons visible again
+						assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
+						iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
+						assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
+
+						// Clean up
+						oOverflowTB.destroy();
+						done();
+					}
+				},
+				fnFirstWidthChange =  function () {
+					oOverflowTB.addEventDelegate(oFirstRerenderingDelegate);
+
+				},
+				fnSecondWidthChange = function () {
+					oOverflowTB.addEventDelegate(oSecondRenderingDelegate);
+				};
 
 		assert.expect(5);
 		this.clock.restore();
@@ -398,32 +437,7 @@ sap.ui.define([
 
 			// Act - change the width of a button
 			aDefaultContent[4].setWidth("500px");
-			oCore.applyChanges();
-
-			setTimeout(function () {
-				// Assert - after the width change there should be less buttons visible on the toolbar
-				iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-				assert.strictEqual(iVisibleButtons < aDefaultContent.length, true, "After the resize, the number of visible buttons should have decreased");
-
-				// There should be an overflow button and it should be visible
-				var oOverflowButton = oOverflowTB._getOverflowButton();
-				assert.strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
-
-				// Act - resize the button back
-				aDefaultContent[4].setWidth("100px");
-				oCore.applyChanges();
-
-				setTimeout(function () {
-					// Assert - there should be no overflow button, no overflow area, all buttons visible again
-					assert.strictEqual(oOverflowButton.$().is(":visible"), false, "The overflow button is not visible after resizing the button back");
-					iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
-					assert.strictEqual(iVisibleButtons, aDefaultContent.length, "Again all buttons should be visible");
-
-					// Clean up
-					oOverflowTB.destroy();
-					done();
-				}, 500);
-			}, 200);
+			oOverflowTB.attachEventOnce("_controlWidthChanged", fnFirstWidthChange);
 		}, 200);
 	});
 
@@ -3246,6 +3260,7 @@ sap.ui.define([
 			oApplyFocusSpy;
 
 		oOverflowTBbar.setAsyncMode(true);
+		oCore.applyChanges();
 		assert.expect(2);
 
 		setTimeout(function () {
@@ -3255,12 +3270,12 @@ sap.ui.define([
 			oOverflowTBbar.setWidth("1000px");
 			oCore.applyChanges();
 
-			setTimeout(function () {
+			window.requestAnimationFrame(function () {
 				// Assert
 				assert.ok(oApplyFocusSpy.calledOnce, "Method _applyFocus called upon button focus.");
 				assert.strictEqual(document.activeElement, oButtonUnderTest.getDomRef(), "Button is focused correctly :: " + oButtonUnderTest.getId());
 				done();
-			}, 200);
+			});
 		}, 200);
 	});
 
@@ -3473,36 +3488,34 @@ sap.ui.define([
 	});
 
 	QUnit.test("Set invalidation-triggering property of a control inside OTB Popover", function (assert) {
+		// Arrange
 		var done = assert.async(),
-			oOverflowButton,
-			oButtonWithPressFunc;
+		   oOverflowButton,
+		   oButtonWithPressFunc;
+
 		assert.expect(1);
 
-
-
-		// Click the overflow button
 		oOverflowButton = this.otb._getOverflowButton();
+		oOverflowButton.focus = function () {
+			// Assert
+		   assert.ok(true, "After closing the Popover by changed property of a content control the focus is back to OTB button");
+		   done();
+		};
+
 		oButtonWithPressFunc = new Button({
-			text: "Test text 1",
-			press: function() {
-				this.setText("Test text 2");
-			}
+		   text: "Test text 1",
+		   press: function() {
+			  this.setText("Test text 2");
+		   }
 		});
 		this.otb.addContent(oButtonWithPressFunc);
-
-
 		this.otb.setWidth('200px');
 		oCore.applyChanges();
 
+		// Act - click the overflow button
 		oOverflowButton.firePress();
 		oButtonWithPressFunc.firePress();
-
-		setTimeout(function() {
-			assert.equal(document.activeElement, oOverflowButton.getDomRef(), "After closing the Popover by changed property" +
-				"of a content control the focus is back to OTB button");
-			done();
-		}, 1000);
-	});
+	 });
 
 	QUnit.test("Clone button tooltip not anounced, when control used in List based conrols", function (assert) {
 
