@@ -26,7 +26,6 @@ sap.ui.define([
 		var PlacementType = library.PlacementType;
 
 		/**
-		 *
 		 * Constructor for a new <code>ColorPalettePopover</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
@@ -38,7 +37,6 @@ sap.ui.define([
 		 * @extends sap.ui.core.Control
 		 * @version ${version}
 		 *
-		 * @constructor
 		 * @public
 		 * @since 1.54
 		 * @alias sap.m.ColorPalettePopover
@@ -56,7 +54,7 @@ sap.ui.define([
 					defaultColor: {type: "sap.ui.core.CSSColor", group: "Appearance", defaultValue: null},
 
 					/**
-					 * Defines the List of colors displayed in the palette. Minimum is 2 colors, maximum is 15 colors.
+					 * Defines the list of colors displayed in the palette. Minimum is 2 colors, maximum is 15 colors.
 					 */
 					colors: {
 						type: "sap.ui.core.CSSColor[]", group: "Appearance",
@@ -85,7 +83,8 @@ sap.ui.define([
 					showDefaultColorButton: {type: "boolean", group: "Appearance", defaultValue: true},
 
 					/**
-					 * Denotes if the color has been chosen by selecting the "Default Color" button (true or false)
+					 * Whether the popover shows a "More colors..." button that opens an additional color picker
+					 * for the user to choose specific colors, not present in the predefined range.
 					 */
 					showMoreColorsButton: {type: "boolean", group: "Appearance", defaultValue: true},
 
@@ -109,7 +108,7 @@ sap.ui.define([
 					colorSelect: {
 						parameters: {
 							/**
-							 * The color that is returned when user chooses the "Default Color" button.
+							 * The selected color value.
 							 */
 							"value": {type: "sap.ui.core.CSSColor"},
 							/**
@@ -185,7 +184,7 @@ sap.ui.define([
 		/**
 		 * Keeps reference to all API properties and/or methods that are about to be forwarded to either a
 		 * <code>ColorPalette</code> or <code>Popover</code>. The value contains the name of the method at the target
-		 * instance. If empty, the the key is used as target name.
+		 * instance. If empty, then the key is used as target name.
 		 */
 		var FORWARDABLE = {
 			COLOR_PALETTE_PROPS: {
@@ -223,13 +222,18 @@ sap.ui.define([
 
 		/**
 		 * Opens the <code>ColorPalettePopover</code>.
-		 * The popover is positioned relative to the control parameter on tablet or desktop and is full screen on phone.
-		 * Therefore the control parameter is only used on tablet or desktop and is ignored on phone.
 		 *
-		 * @param {Object} openBy When this control is displayed on tablet or desktop, the <code>ColorPalettePopover</code>
-		 * is positioned relative to this control
-		 * @returns {Object} Reference to the opening control
+		 * On table or desktop devices, the popover is positioned relative to the given <code>oControl</code>
+		 * parameter. On phones, it is shown full screen, the <code>oControl</code> parameter is ignored.
+		 *
+		 * @param {sap.ui.core.Control} oCpntrol
+		 *    When displayed on a tablet or desktop device, the <code>ColorPalettePopover</code> is positioned
+		 *    relative to this control
+		 * @returns {sap.ui.core.Control}
+		 *    Reference to the opened control
 		 * @public
+		 * @name sap.m.ColorPalettePopover#openBy
+		 * @function
 		 */
 
 
@@ -238,15 +242,16 @@ sap.ui.define([
 		 *
 		 * @name sap.m.ColorPalettePopover#close
 		 * @function
-		 * @type sap.ui.core.Control
+		 * @returns {sap.ui.core.Control} Reference to the closed control
 		 * @public
 		 */
 
 		/**
 		 * Sets a selected color for the ColorPicker control.
+		 *
 		 * @param {sap.ui.core.CSSColor} color the selected color
 		 * @public
-		 * @return {this} <code>this</code> for method chaining
+		 * @returns {this} <code>this</code> for method chaining
 		 */
 		ColorPalettePopover.prototype.setColorPickerSelectedColor = function (color) {
 			this._getPalette().setColorPickerSelectedColor(color);
@@ -274,7 +279,8 @@ sap.ui.define([
 
 		/**
 		 * Creates a popover that wraps the ColorPalette.
-		 * @return {sap.m.ResponsivePopover} the popover containing the ColorPalette.
+		 *
+		 * @returns {sap.m.ResponsivePopover} the popover containing the ColorPalette.
 		 * @private
 		 */
 		ColorPalettePopover.prototype._createPopover = function () {
@@ -343,10 +349,10 @@ sap.ui.define([
 		/**
 		 * Creates a ColorPalette that reflects the current API properties for colors,
 		 * defaultColor, showDefaultColorButton, showMoreColors button.
-		 * @return {sap.m.ColorPalette} the ColorPalette.
+		 *
+		 * @returns {sap.m.ColorPalette} the ColorPalette.
 		 * @private
 		 */
-
 		ColorPalettePopover.prototype._createColorPalette = function () {
 			var oColorPalette = new ColorPalette(this.getId() + "-palette", {
 				liveChange: function (oEvent) {
@@ -364,7 +370,7 @@ sap.ui.define([
 		/**
 		 * Should be called once the ColorPalette is closed to determine if the TAB/SHIFT+TAB should be prevented or not.
 		 *
-		 * @param oEvent
+		 * @param {sap.ui.base.Event} oEvent
 		 * @private
 		 */
 		ColorPalettePopover.prototype._handleNextOrPreviousUponPaletteClose = function (oEvent) {
