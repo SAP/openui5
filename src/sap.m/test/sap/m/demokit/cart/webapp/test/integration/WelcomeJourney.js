@@ -2,16 +2,26 @@
  global QUnit
  */
 sap.ui.define([
+	"sap/ui/core/Configuration",
 	"sap/ui/test/opaQunit",
 	"./pages/Home",
 	"./pages/Welcome",
 	"./pages/Product",
 	"./pages/Category",
 	"./pages/Cart"
-], function (opaTest) {
+], function (Configuration, opaTest) {
 	"use strict";
 
-	QUnit.module("Welcome Journey");
+	var sDefaultLanguage = Configuration.getLanguage();
+
+	QUnit.module("Welcome Journey", {
+		before : function () {
+			Configuration.setLanguage("en-US");
+		},
+		after : function () {
+			Configuration.setLanguage(sDefaultLanguage);
+		}
+	});
 
 	opaTest("Should start the app and see the right number of featured products and an avatar button", function (Given, When, Then) {
 		// Arrangements

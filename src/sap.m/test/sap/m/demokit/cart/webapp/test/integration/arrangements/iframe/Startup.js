@@ -26,8 +26,9 @@ sap.ui.define([
 			// start the app with a minimal delay to make tests fast but still async to discover basic timing issues
 			oOptions.delay = oOptions.delay || 1;
 
-			return this.iStartMyAppInAFrame('../../index.html?sap-ui-language=en&sap-ui-animation=false&serverDelay=' + oOptions.delay +
-				(oOptions.hash ? "#/" + oOptions.hash : ""));
+			return this.iStartMyAppInAFrame('../../index.html?sap-ui-language=en-US'
+				+ '&sap-ui-animation=false&serverDelay=' + oOptions.delay
+				+ (oOptions.hash ? "#/" + oOptions.hash : ""));
 		}
 	});
 });

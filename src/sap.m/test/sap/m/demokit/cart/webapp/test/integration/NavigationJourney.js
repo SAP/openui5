@@ -1,16 +1,26 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Configuration",
 	"sap/ui/test/opaQunit",
 	"./pages/Home",
 	"./pages/Category",
 	"./pages/Welcome",
 	"./pages/Product",
 	"./pages/Cart"
-], function (opaTest) {
+], function (Configuration, opaTest) {
 	"use strict";
 
-	QUnit.module("Navigation Journey");
+	var sDefaultLanguage = Configuration.getLanguage();
+
+	QUnit.module("Navigation Journey", {
+		before : function () {
+			Configuration.setLanguage("en-US");
+		},
+		after : function () {
+			Configuration.setLanguage(sDefaultLanguage);
+		}
+	});
 
 	opaTest("Should start the app and go to the speaker category view", function (Given, When, Then) {
 		// Arrangements

@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Configuration",
 	"sap/ui/test/opaQunit",
 	"./pages/Home",
 	"./pages/Category",
@@ -9,10 +10,19 @@ sap.ui.define([
 	"./pages/Checkout",
 	"./pages/OrderCompleted",
 	"./pages/Welcome"
-], function (opaTest) {
+], function (Configuration, opaTest) {
 	"use strict";
 
-	QUnit.module("Buy Product Journey");
+	var sDefaultLanguage = Configuration.getLanguage();
+
+	QUnit.module("Buy Product Journey", {
+		before : function () {
+			Configuration.setLanguage("en-US");
+		},
+		after : function () {
+			Configuration.setLanguage(sDefaultLanguage);
+		}
+	});
 
 	opaTest("Should see the category list", function (Given, When, Then) {
 		// Arrangements

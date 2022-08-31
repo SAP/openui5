@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Configuration",
 	"sap/ui/test/opaQunit",
 	"./pages/Home",
 	"./pages/Category",
@@ -8,15 +9,23 @@ sap.ui.define([
 	"./pages/Comparison",
 	"./pages/Cart",
 	"./pages/Welcome"
-], function (opaTest) {
+], function (Configuration, opaTest) {
 	"use strict";
 
-	//List of product ids used
-	var productOne = "HT-1254",
+	var sDefaultLanguage = Configuration.getLanguage(),
+		//List of product ids used
+		productOne = "HT-1254",
 		productTwo = "HT-1255",
 		productThree = "HT-1137";
 
-	QUnit.module("Comparison Journey");
+	QUnit.module("Comparison Journey", {
+		before : function () {
+			Configuration.setLanguage("en-US");
+		},
+		after : function () {
+			Configuration.setLanguage(sDefaultLanguage);
+		}
+	});
 
 	//We are still on the second category
 	opaTest("Should see the product list with Compare link", function (Given, When, Then) {
