@@ -1387,6 +1387,16 @@ sap.ui.define([
      * @private
      */
     ChartDelegate._addInnerDimension = function(oMDCChart, oMDCChartItem, oPropertyInfo) {
+        var oDimension = this.innerDimensionFactory(oMDCChart, oMDCChartItem, oPropertyInfo);
+        this._getChart(oMDCChart).addDimension(oDimension);
+    };
+
+    /**
+     *
+     * @private
+     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     */
+    ChartDelegate.innerDimensionFactory = function (oMDCChart, oMDCChartItem, oPropertyInfo) {
         var oDimension = new Dimension({
             name: this.getInternalChartNameFromPropertyNameAndKind(oMDCChartItem.getName(), "groupable", oMDCChart),
             role: oMDCChartItem.getRole() ? oMDCChartItem.getRole() : "category",
@@ -1399,16 +1409,25 @@ sap.ui.define([
         }
 
         if (oPropertyInfo.textFormatter){
-            oDimension.setTextFormatter(this._formatText.bind(oPropertyInfo));
+            oDimension.setTextFormatter(this.formatText.bind(oPropertyInfo));
         }
-
-        this._getChart(oMDCChart).addDimension(oDimension);
+        return oDimension;
     };
 
     /**
      * @private
      */
     ChartDelegate._addInnerMeasure = function(oMDCChart, oMDCChartItem, oPropertyInfo) {
+        var oMeasure = this.innerMeasureFactory(oMDCChart, oMDCChartItem, oPropertyInfo);
+        this._getChart(oMDCChart).addMeasure(oMeasure);
+    };
+
+     /**
+     *
+     * @private
+     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     */
+    ChartDelegate.innerMeasureFactory = function(oMDCChart, oMDCChartItem, oPropertyInfo) {
         var aggregationMethod = oPropertyInfo.aggregationMethod;
         var propertyPath = oPropertyInfo.propertyPath;
 
@@ -1426,8 +1445,7 @@ sap.ui.define([
         }
 
 
-        var oMeasure = new Measure(oMeasureSettings);
-        this._getChart(oMDCChart).addMeasure(oMeasure);
+        return new Measure(oMeasureSettings);
     };
 
     /**
@@ -1756,7 +1774,7 @@ sap.ui.define([
      * @private
      * @ui5-restricted Fiori Elements, sap.ui.mdc
      */
-    ChartDelegate._formatText = function(sKey, SDesc) {
+    ChartDelegate.formatText = function(sKey, SDesc) {
         return sKey;
     };
 
