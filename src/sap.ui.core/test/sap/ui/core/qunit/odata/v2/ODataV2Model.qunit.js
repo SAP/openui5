@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Text",
 	"sap/ui/core/message/Message",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ClientModel",
 	"sap/ui/model/Context",
@@ -30,23 +31,21 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService"
 ], function(Log, encodeURL, each, isEmptyObject, isPlainObject, Button, ListItem, HBox, Input,
-	Label, List, Panel, Text, Message, ChangeReason, ClientModel, Context, Filter, FilterOperator,
-	Sorter, JSONModel, MessageScope, ODataUtils, ODataModel, Column, Table, jQuery, fakeService) {
+		Label, List, Panel, Text, Message, XMLView, ChangeReason, ClientModel, Context, Filter,
+		FilterOperator, Sorter, JSONModel, MessageScope, ODataUtils, ODataModel, Column, Table,
+		jQuery, fakeService) {
 	"use strict";
 
 	//some view
-	var sView = '\<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form" xmlns="sap.m" controllerName="my.Controller">\
-		<List id="myList" items="{path: \'/Categories\', suspended: true}">\
-			<InputListItem>\
-				<content>\
-					<Input value="{path: \'CategoryName\', suspended: true}"/>\
-				</content>\
-			</InputListItem>\
-		</List>\
-	</mvc:View>';
-
-	var Filter = Filter;
-	var FilterOperator = FilterOperator;
+	var sView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">\
+			<List id="myList" items="{path: \'/Categories\', suspended: true}">\
+				<InputListItem>\
+					<content>\
+						<Input value="{path: \'CategoryName\', suspended: true}"/>\
+					</content>\
+				</InputListItem>\
+			</List>\
+		</mvc:View>';
 
 	//add divs for control tests
 	var oTarget1 = document.createElement("div");
@@ -2460,31 +2459,32 @@ sap.ui.define([
 
 	QUnit.test("Declarative property and list binding with suspend",function(assert) {
 		var done = assert.async();
-		sap.ui.controller("my.Controller", {});
-		var oView = sap.ui.xmlview("xmlview", {viewContent: sView});
-		var oModel = initModel(sURI, {json:false});
-		oView.setModel(oModel);
-		oView.placeAt("target1");
-		var oList = oView.byId('myList');
-		var oBinding = oList.getBinding('items');
-		var handler1 = function() {
-			var oItem = oView.byId('myList').getItems()[0];
-			var oPropBinding = oItem.getContent()[0].getBinding('value');
-			assert.ok(!oBinding.isSuspended(), "suspended flag should be false");
-			assert.ok(oPropBinding.isSuspended(), "suspended flag should be true");
-			oBinding.detachChange(handler1);
-			oView.destroy();
-			done();          // resume normal testing
-		};
-		var handler2 = function() {
-			assert.ok(!oBinding.isSuspended(), "suspended flag should be false");
-			oBinding.detachChange(handler2);
-		};
-		oBinding.attachChange(this,handler1);
-		oBinding.attachRefresh(this,handler2);
-			assert.ok(oBinding.isSuspended(), "suspended flag should be true");
-			oBinding.resume();
-		oModel.attachMetadataLoaded(function() {
+
+		return XMLView.create({definition: sView}).then(function(oView) {
+			var oBinding, handler1, handler2,
+				oModel = initModel(sURI, {json:false});
+
+			oView.setModel(oModel);
+			oView.placeAt("target1");
+			oBinding = oView.byId('myList').getBinding('items');
+			handler1 = function () {
+				var oItem = oView.byId('myList').getItems()[0],
+					oPropBinding = oItem.getContent()[0].getBinding('value');
+
+				assert.ok(!oBinding.isSuspended(), "suspended flag should be false");
+				assert.ok(oPropBinding.isSuspended(), "suspended flag should be true");
+				oBinding.detachChange(handler1);
+				oView.destroy();
+				done(); // resume normal testing
+			};
+			handler2 = function () {
+				assert.ok(!oBinding.isSuspended(), "suspended flag should be false");
+				oBinding.detachChange(handler2);
+			};
+			oBinding.attachChange(this,handler1);
+			oBinding.attachRefresh(this,handler2);
+				assert.ok(oBinding.isSuspended(), "suspended flag should be true");
+				oBinding.resume();
 		});
 	});
 

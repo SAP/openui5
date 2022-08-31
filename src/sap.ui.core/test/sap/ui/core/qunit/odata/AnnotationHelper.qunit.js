@@ -7,18 +7,18 @@ sap.ui.define([
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/AnnotationHelper",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/_AnnotationHelperExpression",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (Log, ObjectPath, BindingParser, ManagedObject, JSONModel, Basics, Expression,
-		ODataModel, TestUtils) {
+], function (Log, ObjectPath, BindingParser, ManagedObject, JSONModel, AnnotationHelper, Basics,
+		Expression, ODataModel, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
 
-	var AnnotationHelper = sap.ui.model.odata.AnnotationHelper, // Note: lazy require in place!
-		oCIRCULAR = {},
+	var oCIRCULAR = {},
 		oBoolean = {
 			name : "sap.ui.model.odata.type.Boolean",
 			constraints : {"nullable" : false}

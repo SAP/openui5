@@ -2,10 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/message/Message',
-	'sap/ui/core/message/MessageManager',
-	'sap/ui/core/Configuration'
-], function(Message, MessageManager, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageManager"
+], function(Configuration, Message, MessageManager) {
 	/*global QUnit */
 	"use strict";
 

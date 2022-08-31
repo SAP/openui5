@@ -2243,11 +2243,4 @@ sap.ui.define([
 			"Invalid operators in multi-filter are unsupported"
 		);
 	});
-
-	QUnit.test("_getAnnotationParser: sap.ui.requireSync is not called", function () {
-		this.mock(sap.ui).expects("requireSync").never();
-
-		// code under test
-		ODataModel.prototype._getAnnotationParser.call({});
-	});
 });

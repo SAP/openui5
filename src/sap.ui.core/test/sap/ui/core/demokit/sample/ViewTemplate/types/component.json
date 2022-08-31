@@ -13,5 +13,6 @@
 	"description": "Component for XMLView sample with UI5 core primitive OData types",
 	"name": "sap.ui.core.demokit.sample.ViewTemplate.Types",
 	"version": "1.27.0-SNAPSHOT",
+	"interfaces" : ["sap.ui.core.IAsyncContentCreation"],
 	"handleValidation": true
 }
