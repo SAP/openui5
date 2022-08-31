@@ -25,7 +25,7 @@
 							press="backToSearch"
 							visible="false"/>
 					<m:Button
-							visible="{= ${versionData>/isOpenUI5} &amp;&amp; !${versionData>/isURLVersioned}}"
+							visible="{= !${versionData>/isURLVersioned}}"
 							icon="sap-icon://edit"
 							type="Transparent"
 							text="{i18n>TOPIC_DETAIL_EDIT_GITHUB}"

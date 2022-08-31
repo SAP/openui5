@@ -73,10 +73,16 @@ sap.ui.define(["sap/ui/thirdparty/jquery"],
 				json['html'] =  wrapperContainer.innerHTML;
 			};
 
-			var json = {};
+			var json = {}, mdEditLink;
 			aSingles.forEach(function(singleNode, idx){
 				json[singleNode] = processSingleNode(singleNode);
 			});
+
+			mdEditLink = xmlDom.querySelector(".mdeditlink");
+
+			if (mdEditLink) {
+				json.mdEditLink = mdEditLink.getAttribute("href");
+			}
 
 			processSections();
 

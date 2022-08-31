@@ -20,7 +20,8 @@ sap.ui.define([
 		"sap/m/Button",
 		"sap/m/MessageToast",
 		"sap/ui/dom/includeStylesheet",
-		"sap/ui/dom/includeScript"
+		"sap/ui/dom/includeScript",
+		"sap/ui/util/openWindow"
 	],
 	function (
 		jQuery,
@@ -40,7 +41,8 @@ sap.ui.define([
 		Button,
 		MessageToast,
 		includeStylesheet,
-		includeScript
+		includeScript,
+		openWindow
 	) {
 		"use strict";
 
@@ -509,10 +511,7 @@ sap.ui.define([
 			},
 
 			onEditGitHubPress: function(oEvent) {
-				var sUrl = this.jsonDefModel.getProperty("/topicURL"),
-					sTitle = this.jsonDefModel.getProperty("/topictitle1"),
-					sGitHubUrl = this._formatToGitHubUrl(sUrl, sTitle);
-				window.open(sGitHubUrl, "_blank");
+				openWindow(this.jsonDefModel.getProperty("/mdEditLink"));
 			},
 
 			/**
@@ -529,6 +528,7 @@ sap.ui.define([
 			 * @param {string} sTitle the title of the file
 			 * @returns {string} the url of the file in the GitHub repo
 			 * @private
+			 * @deprecated since v1.107.0
 			 */
 			_formatToGitHubUrl: function(sUrl, sTitle) {
 				var sGitHubFileName = sTitle.trim()
