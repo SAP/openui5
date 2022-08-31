@@ -279,7 +279,8 @@ sap.ui.define([
 	 * immediately, even if {@link sap.ui.model.odata.v4.SubmitMode.API} is used, and the request is
 	 * only sent later when {@link sap.ui.model.odata.v4.ODataModel#submitBatch} is called. As long
 	 * as the context is deleted on the client, but not yet on the server, {@link #isDeleted}
-	 * returns <code>true</code>.
+	 * returns <code>true</code>. The context must not be used, e.g. as a binding context, while
+	 * {@link #isDeleted} returns <code>true</code>.
 	 *
 	 * Since 1.105 such a pending deletion is a pending change. It causes
 	 * <code>hasPendingChanges</code> to return <code>true</code> for the context, the binding
