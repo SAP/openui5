@@ -554,8 +554,8 @@ sap.ui.define([
 		var that = this;
 
 		return this.oLoadedPromiseSync.then(function () {
-			var sCacheKey, oCodeListModel, oCodeListModelCache, sCollectionPath, oMappingPromise,
-				sMetaDataUrl, oPromise, oReadPromise,
+			var sCacheKey, sCacheKeyWithModel, oCodeListModel, oCodeListModelCache, sCollectionPath,
+				oMappingPromise, sMetaDataUrl, oPromise, oReadPromise,
 				sCodeListAnnotation = "com.sap.vocabularies.CodeList.v1." + sTerm,
 				oCodeListAnnotation = that.getODataEntityContainer()[sCodeListAnnotation];
 
@@ -576,7 +576,14 @@ sap.ui.define([
 			sCollectionPath = oCodeListAnnotation.CollectionPath.String;
 			sMetaDataUrl = that.oDataModel.getMetadataUrl();
 			sCacheKey = sMetaDataUrl + "#" + sCollectionPath;
+			// check for global cache entry
 			oPromise = mCodeListUrl2Promise.get(sCacheKey);
+			if (oPromise) {
+				return oPromise;
+			}
+			// check for an ODataModel related cache entry
+			sCacheKeyWithModel = sCacheKey + "#" + that.getId();
+			oPromise = mCodeListUrl2Promise.get(sCacheKeyWithModel);
 			if (oPromise) {
 				return oPromise;
 			}
@@ -605,6 +612,9 @@ sap.ui.define([
 				var aData = aResults[0].results,
 					mMapping = aResults[1];
 
+				mCodeListUrl2Promise.set(sCacheKey, oPromise);
+				mCodeListUrl2Promise.delete(sCacheKeyWithModel); // not needed any more
+
 				return aData.reduce(function (mCode2Customizing, oEntity) {
 					var sCode = oEntity[mMapping.code],
 						oCustomizing = {
@@ -631,6 +641,7 @@ sap.ui.define([
 				if (oCodeListModel.bDestroyed) {
 					// do not cache rejected Promise caused by a destroyed code list model
 					mCodeListUrl2Promise.delete(sCacheKey);
+					mCodeListUrl2Promise.delete(sCacheKeyWithModel);
 				} else {
 					Log.error("Couldn't load code list: " + sCollectionPath + " for "
 							+ that.oDataModel.getCodeListModelParameters().serviceUrl,
@@ -647,7 +658,7 @@ sap.ui.define([
 					oCodeListModelCache.bFirstCodeListRequested = true;
 				}
 			});
-			mCodeListUrl2Promise.set(sCacheKey, oPromise);
+			mCodeListUrl2Promise.set(sCacheKeyWithModel, oPromise);
 
 			return oPromise;
 		});
