@@ -626,6 +626,8 @@ sap.ui.define([
 
 				if (!isRelevant(oClone.error, sTopLevelContentID)) {
 					oClone.error.$ignoreTopLevel = true;
+				} else {
+					oClone.strictHandlingFailed = oError.strictHandlingFailed;
 				}
 				if (oClone.error.details) {
 					oClone.error.details = oClone.error.details.filter(function (oDetail, i) {

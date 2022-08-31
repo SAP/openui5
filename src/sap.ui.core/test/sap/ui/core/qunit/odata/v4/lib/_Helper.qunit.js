@@ -23,8 +23,10 @@ sap.ui.define([
 	 * @param {object} oExpectedInnerError - The expected inner error
 	 * @param {string} sUrl - The expected request URL
 	 * @param {string} sResourcePath - The expected resource path
+	 * @param {boolean} bStrictHandlingFailed - The expected value for oClone.strictHandlingFailed
 	 */
-	function checkClonedError(assert, oOriginal, oClone, oExpectedInnerError, sUrl, sResourcePath) {
+	function checkClonedError(assert, oOriginal, oClone, oExpectedInnerError, sUrl, sResourcePath,
+			bStrictHandlingFailed) {
 		assert.notStrictEqual(oClone, oOriginal);
 		assert.ok(oClone instanceof Error);
 		assert.strictEqual(oClone.message, "Message");
@@ -34,6 +36,7 @@ sap.ui.define([
 		assert.strictEqual(oClone.statusText, "Internal Server Error");
 		assert.notStrictEqual(oClone.error, oOriginal.error);
 		assert.deepEqual(oClone.error, oExpectedInnerError);
+		assert.strictEqual(oClone.strictHandlingFailed, bStrictHandlingFailed);
 	}
 
 	/**
@@ -3756,6 +3759,7 @@ sap.ui.define([
 		oError.error = {message : "Top level message"};
 		oError.status = 500;
 		oError.statusText = "Internal Server Error";
+		oError.strictHandlingFailed = "~strictHandlingFailed~";
 
 		this.mock(_Helper).expects("getContentID").withExactArgs(sinon.match.same(oError.error))
 			.returns(undefined);
@@ -3774,11 +3778,11 @@ sap.ui.define([
 		assert.strictEqual(aErrors.length, 2);
 		checkClonedError(assert, oError, aErrors[0], {
 				message : "Top level message"
-			}, "~serviceURL~/~url0~", "~path0~");
+			}, "~serviceURL~/~url0~", "~path0~", "~strictHandlingFailed~");
 		checkClonedError(assert, oError, aErrors[1], {
 				message : "Top level message",
 				$ignoreTopLevel : true
-			}, "~serviceURL~/~url1~", "~path1~");
+			}, "~serviceURL~/~url1~", "~path1~", undefined);
 	});
 
 	//*********************************************************************************************
@@ -3878,6 +3882,7 @@ sap.ui.define([
 		};
 		oError.status = 500;
 		oError.statusText = "Internal Server Error";
+		oError.strictHandlingFailed = "~strictHandlingFailed~";
 		oHelperMock.expects("getContentID").withExactArgs(sinon.match.same(oError.error))
 			.callThrough();
 		oHelperMock.expects("getContentID").withExactArgs(oError.error.details[0])
@@ -3908,7 +3913,7 @@ sap.ui.define([
 					message : "A message",
 					"@SAP__core.ContentID" : "1.0"
 				}]
-			}, "~serviceURL~/~url1~", "~path1~");
+			}, "~serviceURL~/~url1~", "~path1~", "~strictHandlingFailed~");
 	});
 
 	//*********************************************************************************************
