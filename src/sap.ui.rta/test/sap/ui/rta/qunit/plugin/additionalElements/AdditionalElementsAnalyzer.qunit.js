@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
+	"sap/ui/comp/designtime/smartfield/SmartField.designtime",
 	"./TestUtils",
 	"sap/ui/core/Core"
 ], function(
@@ -12,6 +13,7 @@ sap.ui.define([
 	BindingsExtractor,
 	DesignTime,
 	DelegateMediatorAPI,
+	SmartFieldDesignTime,
 	TestUtils,
 	oCore
 ) {
@@ -146,12 +148,39 @@ sap.ui.define([
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject).then(function(aAdditionalElements) {
 				// We expect only one element to be returned with a correct navigation property
-				assert.equal(aAdditionalElements.length, 2, "then there are 1 additional Elements available");
+				assert.equal(aAdditionalElements.length, 2, "then there are 2 additional Elements available");
 				assert.equal(aAdditionalElements[0].label, oGroupElement1.getLabel(), "the element with correct navigation binding should be in the list");
 				assert.equal(aAdditionalElements[0].tooltip, oGroupElement1.getLabel(), "the label is used as tooltip for elements with navigation binding");
 				assert.equal(aAdditionalElements[1].label, oGroupElement3.getLabel(), "the element with absolute binding should be in the list");
 				assert.equal(aAdditionalElements[1].tooltip, oGroupElement3.getLabel(), "the label is used as tooltip for elements with absolute binding");
 			});
+		});
+
+		QUnit.test("check the label of an invisible field that should come from OData", function(assert) {
+			var fnDone = assert.async();
+			var oGroupElement1 = this.oView.byId("EntityType01.CommonProperty");
+			var oSmartField = oGroupElement1.getFields()[0];
+			var oActionsObject = {
+				aggregation: "formElements",
+				reveal: {
+					elements: [{
+						element: oGroupElement1,
+						action: {} //nothing relevant for the analyzer tests
+					}]
+				}
+			};
+
+			// Because "start" is not part of a promise chain, we need to use setTimeout to wait for its execution
+			setTimeout(function() {
+				AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroupElement1.getParent(), oActionsObject)
+					.then(function(aAdditionalElements) {
+						assert.equal(aAdditionalElements[0].label, oGroupElement1.getDataSourceLabel(), "the displayed label is the data source label");
+						fnDone();
+					});
+			});
+
+			// The method inside the "start" property is where the label is retrieved from oData (SmartField.designtime.js)
+			SmartFieldDesignTime.tool.start(oSmartField);
 		});
 
 		QUnit.test("when asking for the invisible sections of an object page layout", function(assert) {
