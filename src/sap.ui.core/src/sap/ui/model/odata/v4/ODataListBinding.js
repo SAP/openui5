@@ -13,7 +13,6 @@ sap.ui.define([
 	"./lib/_Helper",
 	"./lib/_Parser",
 	"sap/base/Log",
-	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
@@ -25,7 +24,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode"
 ], function (Context, asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache,
-		_GroupLock, _Helper, _Parser, Log, uid, SyncPromise, Binding, ChangeReason, Filter,
+		_GroupLock, _Helper, _Parser, Log, SyncPromise, Binding, ChangeReason, Filter,
 		FilterOperator, FilterProcessor, FilterType, ListBinding, Sorter, OperationMode) {
 	"use strict";
 
@@ -842,7 +841,7 @@ sap.ui.define([
 			sGroupId = this.getUpdateGroupId(),
 			oGroupLock,
 			sResolvedPath = this.getResolvedPath(),
-			sTransientPredicate = "($uid=" + uid() + ")",
+			sTransientPredicate = "($uid=" + _Helper.uid() + ")",
 			sTransientPath = sResolvedPath + sTransientPredicate,
 			i,
 			that = this;
