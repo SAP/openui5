@@ -801,6 +801,10 @@ sap.ui.define([
 														success: function(aComboBoxes) {
 															var oComboBox = aComboBoxes[0];
 															var oItem = aItems.find(function(oItem) {
+																if (bIsMDC){
+																	//Account for templates
+																	return oComboBox.getSelectedItem() ? oComboBox.getSelectedItem().getText() === oItem.key : undefined;
+																}
 																return oComboBox.getSelectedKey() === oItem.key;
 															});
 															var bItemIsPresent = !!oItem;

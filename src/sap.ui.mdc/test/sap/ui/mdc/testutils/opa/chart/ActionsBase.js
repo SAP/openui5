@@ -136,7 +136,7 @@ sap.ui.define([
          * @param {string} sId The id of the mdc chart
          */
         iClickOnZoomIn : function(sId){
-            waitForMDCChartWithId.call(this, sId, {
+            return waitForMDCChartWithId.call(this, sId, {
                 success: function(oMDCChart){
                     iClickOnOverflowToolbarButtonWithIcon.call(this, oMDCChart, "sap-icon://zoom-in");
                 }
@@ -148,7 +148,7 @@ sap.ui.define([
          * @param {string} sId The id of the mdc chart
          */
         iClickOnZoomOut : function(sId){
-            waitForMDCChartWithId.call(this, sId, {
+            return waitForMDCChartWithId.call(this, sId, {
                 success: function(oMDCChart){
                     iClickOnOverflowToolbarButtonWithIcon.call(this, oMDCChart, "sap-icon://zoom-out");
                 }
@@ -160,7 +160,7 @@ sap.ui.define([
          * @param {string} sId The id of the mdc chart
          */
         iClickOnTheLegendToggleButton : function(sId){
-            waitForMDCChartWithId.call(this, sId, {
+            return waitForMDCChartWithId.call(this, sId, {
                 success: function(oMDCChart){
                     iClickOnOverflowToolbarToggleButtonWithIcon.call(this, oMDCChart, "sap-icon://legend");
                 }
@@ -173,7 +173,7 @@ sap.ui.define([
          */
         iClickOnTheSelectionDetailsButton: function(sId){
 
-            waitForMDCChartWithId.call(this, sId, {
+            return waitForMDCChartWithId.call(this, sId, {
                 success: function(oMDCChart){
                     this.waitFor({
                         controlType: "sap.m.Button",
@@ -189,7 +189,7 @@ sap.ui.define([
          * @param {string} sId The id of the mdc chart.
          */
         iClickOnTheDrillDownButton: function(sId){
-            waitForMDCChartWithId.call(this, sId, {
+            return waitForMDCChartWithId.call(this, sId, {
                 success: function(oMDCChart){
                     iClickOnButtonWithText.call(this, oMDCChart, oCore.getLibraryResourceBundle("sap.ui.mdc").getText("chart.CHART_DRILLDOWN_TITLE"));
                 }
@@ -201,7 +201,7 @@ sap.ui.define([
          * @param {string} sId The id of the mdc chart.
          */
         iClickOnTheChartTypeButton: function(sId, oSettings){
-            waitForMDCChartWithId.call(this, sId, {
+            return waitForMDCChartWithId.call(this, sId, {
                 success: function(oMDCChart){
                     this.waitFor({
                         controlType: "sap.ui.mdc.chart.ChartTypeButton",
@@ -222,7 +222,7 @@ sap.ui.define([
          * @param {string} sId The id of the mdc chart.
          */
         iClickOnThePersonalisationButton: function(sId){
-            waitForMDCChartWithId.call(this, sId, {
+            return waitForMDCChartWithId.call(this, sId, {
                 success: function(oMDCChart){
                     iClickOnOverflowToolbarButtonWithIcon.call(this, oMDCChart, "sap-icon://action-settings");
                 }
@@ -259,7 +259,7 @@ sap.ui.define([
          */
         iClickOnTheBreadcrumbWithName: function(sName, sId){
 
-            waitForMDCChartWithId.call(this, sId, {
+            return waitForMDCChartWithId.call(this, sId, {
                 success: function(oMDCChart){
                     this.waitFor({
                         controlType: "sap.m.Link",
@@ -307,7 +307,7 @@ sap.ui.define([
          * @param {string} sDrillName Name of the Dimension which should be drilled-down.
          */
          iDrillDownInDimension: function(sId, sDrillName) {
-            waitForMDCChartWithId.call(this, sId, {
+            return waitForMDCChartWithId.call(this, sId, {
                 success: function(oMDCChart){
                     iClickOnButtonWithText.call(this, oMDCChart, oCore.getLibraryResourceBundle("sap.ui.comp").getText("CHART_DRILLDOWNBTN_TEXT"), {
                         success: function(){
@@ -324,7 +324,7 @@ sap.ui.define([
          * @param {string} sChartTypeName Name of the Dimension which should be drilled-down.
          */
         iSelectAChartType: function(sId, sChartTypeName) {
-            waitForMDCChartWithId.call(this, sId, {
+           return waitForMDCChartWithId.call(this, sId, {
                 success: function(oMDCChart){
                     this.iClickOnTheChartTypeButton.call(this, sId, {
                         success: function(){

@@ -1,0 +1,64 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"ach": "CA-UI5-CMP",
+		"applicationVersion": {
+			"version": "${version}"
+		},
+		"description": "{{sap.app.description}}",
+		"id": "appUnderTestChart",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{sap.app.title}}",
+		"type": "application",
+		"dataSources": {
+			"default": {
+				"uri": "/tenant(MDCChartP13nOpaTestApplication)/catalog/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"deviceTypes": {
+			"desktop": true,
+			"phone": true,
+			"tablet": true
+		},
+		"technology": "UI5"
+	},
+	"sap.ui5": {
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"dependencies": {
+			"minUI5Version": "1.61",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.ui.mdc": {},
+				"sap.ui.fl": {}
+			}
+		},
+		"handleValidation": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"operationMode": "Server",
+					"synchronizationMode": "None",
+					"updateGroupId": "update"
+				}
+			}
+		},
+		"rootView": {
+			"type": "XML",
+			"viewName": "view.Main",
+			"id": "IDViewOfAppUnderTestChart",
+			"async": true
+		}
+	}
+}

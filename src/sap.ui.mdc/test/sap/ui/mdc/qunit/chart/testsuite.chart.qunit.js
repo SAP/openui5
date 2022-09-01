@@ -67,7 +67,16 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
                 sinon: {
                     qunitBridge: true
                 }
-            }
+            },
+            "OPA Test: Basic Tests": {
+				autostart: false,
+				module: "./OpaTests/basicValidation/TestStarter.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
+			}
         }
     };
     return mConfig;
