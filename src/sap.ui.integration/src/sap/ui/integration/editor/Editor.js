@@ -455,6 +455,9 @@ sap.ui.define([
 							var oLayout = oItem._layout;
 							if (oItem.isA("sap.m.Label")) {
 								oItem.addStyleClass("sapUiIntegrationEditorItemLabel");
+								if (oItem.getRequired()) {
+									oItem.addStyleClass("sapUiIntegrationEditorItemLabelWithRequired");
+								}
 								if (oLayout && !deepEqual(oLayout, {})) {
 									if (oLayout.alignment && oLayout.alignment.label === "end") {
 										oItem.setTextAlign("End");

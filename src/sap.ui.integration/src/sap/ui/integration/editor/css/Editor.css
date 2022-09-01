@@ -188,6 +188,10 @@
 	padding-right: 10px;
 }
 
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemLabelWithRequired .sapMLabelTextWrapper {
+	max-width: 100% !important;
+}
+
 .sapUiIntegrationEditor .sapUiIntegrationEditorDescriptionIcon {
 	vertical-align: top;
 	padding-top: 9px;
