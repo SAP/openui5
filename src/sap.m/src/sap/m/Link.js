@@ -200,7 +200,7 @@ function(
 
 			/**
 			 * Describes the accessibility role of the link:<ul>
-			 * <li><code>LinkAccessibleRole.Default</code> - a navagation is expected to the location given in <code>href</code> property</li>
+			 * <li><code>LinkAccessibleRole.Default</code> - a navigation is expected to the location given in <code>href</code> property</li>
 			 * <li><code>LinkAccessibleRole.Button</code> - there will be <code>role</code> attribute with value "Button" rendered. In this scenario the <code>href</code>
 			 * property value shouldn't be set as navigation isn't expected to occur.</li></ul>
 			 *
