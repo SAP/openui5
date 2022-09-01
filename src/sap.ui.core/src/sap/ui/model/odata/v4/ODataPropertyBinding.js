@@ -758,7 +758,7 @@ sap.ui.define([
 			throw reportError(new Error("Must not specify a group ID (" + sGroupId
 				+ ") with $$noPatch"));
 		}
-		this.oModel.checkGroupId(sGroupId);
+		_Helper.checkGroupId(sGroupId);
 		if (typeof vValue === "function" || (vValue && typeof vValue === "object")) {
 			throw reportError(new Error("Not a primitive value"));
 		}

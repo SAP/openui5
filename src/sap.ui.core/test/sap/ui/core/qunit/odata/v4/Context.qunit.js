@@ -1124,7 +1124,6 @@ sap.ui.define([
 				getGroupId : function () {}
 			},
 			oModel = {
-				checkGroupId : function () {},
 				getAllBindings : function () {},
 				isApiGroup : function () {}
 			},
@@ -1134,7 +1133,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(bTransient);
-		this.mock(oModel).expects("checkGroupId").exactly(bTransient ? 0 : 1)
+		this.mock(_Helper).expects("checkGroupId").exactly(bTransient ? 0 : 1)
 			.withExactArgs("myGroup");
 		this.mock(oBinding).expects("lockGroup").exactly(bTransient ? 0 : 1)
 			.withExactArgs("myGroup", true, true).returns(oGroupLock);
@@ -1183,7 +1182,6 @@ sap.ui.define([
 				unlock : function () {}
 			},
 			oModel = {
-				checkGroupId : function () {},
 				isApiGroup : function () {},
 				reportError : function () {}
 			},
@@ -1191,7 +1189,7 @@ sap.ui.define([
 			oContextMock = this.mock(oContext);
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("myGroup");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup", true, true)
 			.returns(oGroupLock);
 		oContextMock.expects("checkUpdate").never();
@@ -1295,14 +1293,12 @@ sap.ui.define([
 		var oBinding = {
 				checkSuspended : function () {}
 			},
-			oModel = {
-				checkGroupId : function () {}
-			},
+			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
 			oError = new Error("invalid group");
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oModel).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
 
 		assert.throws(function () {
 			oContext.delete("$invalid");
@@ -1670,14 +1666,13 @@ sap.ui.define([
 			oBindingMock = this.mock(oBinding),
 			oGroupLock = {},
 			oModel = {
-				checkGroupId : function () {},
 				withUnresolvedBindings : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
 			oPromise,
 			bRefreshed = false;
 
-		this.mock(oModel).expects("checkGroupId");
+		this.mock(_Helper).expects("checkGroupId");
 		oBindingMock.expects("lockGroup").withExactArgs("myGroup", true).returns(oGroupLock);
 		oBindingMock.expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(false);
@@ -1717,7 +1712,6 @@ sap.ui.define([
 				},
 				oBindingMock = this.mock(oBinding),
 				oModel = {
-					checkGroupId : function () {},
 					withUnresolvedBindings : function () {}
 				},
 				oModelMock = this.mock(oModel),
@@ -1735,7 +1729,7 @@ sap.ui.define([
 				});
 			}
 
-			oModelMock.expects("checkGroupId").withExactArgs("myGroup");
+			this.mock(_Helper).expects("checkGroupId").withExactArgs("myGroup");
 			oBindingMock.expects("checkSuspended").withExactArgs();
 			oContextMock.expects("hasPendingChanges").withExactArgs().returns(false);
 			if (bReturnValueContext) {
@@ -1769,12 +1763,10 @@ sap.ui.define([
 		var oBinding = {
 				checkSuspended : function () {}
 			},
-			oModel = {
-				checkGroupId : function () {}
-			},
+			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
-		this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("myGroup");
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(false);
 
@@ -1789,11 +1781,9 @@ sap.ui.define([
 		var oBinding = {},
 			oError = new Error(),
 			sGroupId = "$foo",
-			oModel = {
-				checkGroupId : function () {}
-			};
+			oModel = {};
 
-		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId).throws(oError);
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(sGroupId).throws(oError);
 
 		assert.throws(function () {
 			// code under test
@@ -1807,12 +1797,10 @@ sap.ui.define([
 				checkSuspended : function () {}
 			},
 			sGroupId = "myGroup",
-			oModel = {
-				checkGroupId : function () {}
-			},
+			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
-		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId);
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(sGroupId);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(true);
 
@@ -1920,7 +1908,6 @@ sap.ui.define([
 				getObject : function () { assert.ok(false, "use only when mocked"); }
 			},
 			oModel = {
-				checkGroupId : function () {},
 				getMetaModel : function () { return oMetaModel; }
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
@@ -1957,7 +1944,6 @@ sap.ui.define([
 				}
 			},
 			oModel = {
-				checkGroupId : function () {},
 				getMetaModel : function () { return oMetaModel; }
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
@@ -2054,7 +2040,6 @@ sap.ui.define([
 			},
 			oMetaModelMock = this.mock(oMetaModel),
 			oModel = {
-				checkGroupId : function () {},
 				isAutoGroup : function () {},
 				getMetaModel : function () { return oMetaModel; },
 				oRequestor : {
@@ -2099,7 +2084,7 @@ sap.ui.define([
 			]);
 		}
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oModel).expects("checkGroupId").withExactArgs(oFixture.group);
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(oFixture.group);
 		this.mock(oRootBinding).expects("getResolvedPath").withExactArgs().returns("/base");
 		this.mock(oMetaModel).expects("getObject").withExactArgs("/$EntityContainer")
 			.returns("~container~");
@@ -2167,13 +2152,12 @@ sap.ui.define([
 			sGroupId = "$invalid",
 			oError = new Error("Invalid group ID: " + sGroupId),
 			oModel = {
-				checkGroupId : function () {},
 				getMetaModel : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId).throws(oError);
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(sGroupId).throws(oError);
 		this.mock(oContext).expects("requestSideEffectsInternal").never();
 
 		assert.throws(function () {
@@ -2224,7 +2208,6 @@ sap.ui.define([
 				getObject : function () {}
 			},
 			oModel = {
-				checkGroupId : function () {},
 				getMetaModel : function () { return oMetaModel; },
 				isAutoGroup : function () {},
 				oRequestor : {
@@ -2238,7 +2221,7 @@ sap.ui.define([
 			oResult;
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oModel).expects("checkGroupId").withExactArgs(undefined);
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(undefined);
 		this.mock(oRootBinding).expects("getResolvedPath").withExactArgs().returns("/base");
 		this.mock(oMetaModel).expects("getObject").withExactArgs("/$EntityContainer")
 			.returns("~container~");
@@ -2610,7 +2593,6 @@ sap.ui.define([
 				checkSuspended : function () {}
 			},
 			oModel = {
-				checkGroupId : function () {},
 				getMetaModel : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
@@ -2633,7 +2615,6 @@ sap.ui.define([
 				isResolved : function () { return false; }
 			},
 			oModel = {
-				checkGroupId : function () {},
 				getMetaModel : function () {}
 			},
 			oHeaderContext = Context.create(oModel, oBinding, "/EMPLOYEES");
@@ -3299,15 +3280,13 @@ sap.ui.define([
 				checkSuspended : function () {},
 				lockGroup : function () {}
 			},
-			oModel = {
-				checkGroupId : function () {}
-			},
+			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
 			oGroupLock = {},
 			vWithCacheResult = {};
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oModel).expects("checkGroupId").withExactArgs("group");
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("group");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("group", true, true)
 			.returns(oGroupLock);
 		this.mock(oContext).expects("doSetProperty")
@@ -3349,7 +3328,6 @@ sap.ui.define([
 				lockGroup : function () {}
 			},
 			oModel = {
-				checkGroupId : function () {},
 				reportError : function () {},
 				resolve : function () {}
 			},
@@ -3362,7 +3340,7 @@ sap.ui.define([
 			oPromise;
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oModel).expects("checkGroupId").withExactArgs("group");
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("group");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("group", true, true)
 			.returns(oGroupLock);
 		oGroupLockMock.expects("unlock").never(); // not yet
@@ -3607,7 +3585,6 @@ sap.ui.define([
 			oModel = {
 				bAutoExpandSelect : true,
 				getMetaModel : function () { return oMetaModel; },
-				getPredicateIndex : function () {},
 				getReporter : function () {
 					return function (oError0) {
 						assert.strictEqual(oError0, oError);
@@ -3618,7 +3595,7 @@ sap.ui.define([
 			oContext = Context.create(oModel, oBinding, "/path");
 
 		this.mock(oContext).expects("isTransient").exactly(3).withExactArgs().returns(false);
-		this.mock(oModel).expects("getPredicateIndex").exactly(3).withExactArgs("/path");
+		this.mock(_Helper).expects("getPredicateIndex").exactly(3).withExactArgs("/path");
 		this.mock(oBinding).expects("checkKeepAlive").exactly(3)
 			.withExactArgs(sinon.match.same(oContext));
 
@@ -3655,14 +3632,12 @@ sap.ui.define([
 		var oBinding = {
 				checkKeepAlive : function () {}
 			},
-			oModel = {
-				getPredicateIndex : function () {}
-			},
+			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/path"),
 			oError = new Error();
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oModel).expects("getPredicateIndex").withExactArgs("/path");
+		this.mock(_Helper).expects("getPredicateIndex").withExactArgs("/path");
 		this.mock(oBinding).expects("checkKeepAlive")
 			.withExactArgs(sinon.match.same(oContext)).throws(oError);
 
@@ -3694,13 +3669,12 @@ sap.ui.define([
 				checkKeepAlive : function () {}
 			},
 			oModel = {
-				bAutoExpandSelect : false,
-				getPredicateIndex : function () {}
+				bAutoExpandSelect : false
 			},
 			oContext = Context.create(oModel, oBinding, "/path");
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oModel).expects("getPredicateIndex").withExactArgs("/path");
+		this.mock(_Helper).expects("getPredicateIndex").withExactArgs("/path");
 		this.mock(oBinding).expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext));
 		this.mock(_Helper).expects("getMetaPath").never();
 
@@ -3723,7 +3697,6 @@ sap.ui.define([
 			},
 			oModel = {
 				bAutoExpandSelect : true,
-				getPredicateIndex : function () {},
 				getMetaModel : function () { return oMetaModel; },
 				getReporter : function () {
 					return function (oError) {
@@ -3736,7 +3709,7 @@ sap.ui.define([
 			oContext = Context.create(oModel, oBinding, "/path");
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oModel).expects("getPredicateIndex").withExactArgs("/path");
+		this.mock(_Helper).expects("getPredicateIndex").withExactArgs("/path");
 		this.mock(oBinding).expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext));
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("/path").returns("/meta/path");
 		this.mock(oMetaModel).expects("fetchObject")
@@ -3761,7 +3734,6 @@ sap.ui.define([
 			oModel = {
 				bAutoExpandSelect : true,
 				getMetaModel : function () { return oMetaModel; },
-				getPredicateIndex : function () {},
 				getReporter : function () {
 					return function (oError0) {
 						assert.strictEqual(oError0, oError);
@@ -3772,7 +3744,7 @@ sap.ui.define([
 			oContext = Context.create(oModel, oBinding, "/path");
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
-		this.mock(oModel).expects("getPredicateIndex").withExactArgs("/path");
+		this.mock(_Helper).expects("getPredicateIndex").withExactArgs("/path");
 		this.mock(oBinding).expects("checkKeepAlive").withExactArgs(sinon.match.same(oContext));
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("/path").returns("/meta/path");
 		this.mock(oMetaModel).expects("fetchObject")

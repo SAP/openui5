@@ -14,11 +14,13 @@ sap.ui.define([
 	"use strict";
 
 	var rAmpersand = /&/g,
+		rApplicationGroupID = /^\w+$/,
 		sClassName = "sap.ui.model.odata.v4.lib._Helper",
 		rEquals = /\=/g,
 		rEscapedCloseBracket = /%29/g,
 		rEscapedOpenBracket = /%28/g,
 		rEscapedTick = /%27/g,
+		rGroupID = /^(\$auto(\.\w+)?|\$direct|\w+)$/,
 		rHash = /#/g,
 		// matches the rest of a segment after '(' and any segment that consists only of a number
 		rNotMetaContext = /\([^/]*|\/-?\d+/g,
@@ -333,6 +335,31 @@ sap.ui.define([
 			});
 
 			return oSelect;
+		},
+
+		/**
+		 * Checks whether the given group ID is valid, which means it is either undefined, '$auto',
+		 * '$auto.*', '$direct' or an application group ID as specified in
+		 * {@link sap.ui.model.odata.v4.ODataModel}.
+		 *
+		 * @param {string} sGroupId
+		 *   The group ID
+		 * @param {boolean} [bApplicationGroup]
+		 *   Whether only an application group ID is considered valid
+		 * @param {string} [sErrorMessage]
+		 *   The error message to be used if group ID is not valid; the group ID will be appended
+		 * @throws {Error}
+		 *   For invalid group IDs
+		 *
+		 * @private
+		 */
+		checkGroupId : function (sGroupId, bApplicationGroup, sErrorMessage) {
+			if (!bApplicationGroup && sGroupId === undefined
+					|| typeof sGroupId === "string"
+						&& (bApplicationGroup ? rApplicationGroupID : rGroupID).test(sGroupId)) {
+				return;
+			}
+			throw new Error((sErrorMessage || "Invalid group ID: ") + sGroupId);
 		},
 
 		/**
@@ -1298,6 +1325,27 @@ sap.ui.define([
 				sPath = "/" + sPath;
 			}
 			return sPath.replace(rNotMetaContext, "").slice(1);
+		},
+
+		/**
+		 * Returns the index of the key predicate in the last segment of the given path.
+		 *
+		 * @param {string} sPath - The path
+		 * @returns {number} The index of the key predicate
+		 * @throws {Error} If no path is given or the last segment contains no key predicate
+		 *
+		 * @private
+		 */
+		getPredicateIndex : function (sPath) {
+			var iPredicateIndex = sPath
+				? sPath.indexOf("(", sPath.lastIndexOf("/"))
+				: -1;
+
+			if (iPredicateIndex < 0 || !sPath.endsWith(")")) {
+				throw new Error("Not a list context path to an entity: " + sPath);
+			}
+
+			return iPredicateIndex;
 		},
 
 		/**

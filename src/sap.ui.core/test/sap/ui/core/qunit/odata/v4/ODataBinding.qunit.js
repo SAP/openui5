@@ -301,9 +301,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestRefresh: success", function (assert) {
 		var oBinding = new ODataBinding({
-				oModel : {
-					checkGroupId : function () {}
-				},
+				oModel : {},
 				refreshInternal : function () {}
 			}),
 			oPromise,
@@ -311,7 +309,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
-		this.mock(oBinding.oModel).expects("checkGroupId").withExactArgs("groupId");
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "groupId", true)
 			.callsFake(function () {
 				return new SyncPromise(function (resolve) {
@@ -334,16 +332,14 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestRefresh: reject", function (assert) {
 		var oBinding = new ODataBinding({
-				oModel : {
-					checkGroupId : function () {}
-				},
+				oModel : {},
 				refreshInternal : function () {}
 			}),
 			oError = new Error();
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
-		this.mock(oBinding.oModel).expects("checkGroupId").withExactArgs("groupId");
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "groupId", true)
 			.rejects(oError);
 
@@ -418,15 +414,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestRefresh: invalid group ID", function (assert) {
 		var oBinding = new ODataBinding({
-				oModel : {
-					checkGroupId : function () {}
-				}
+				oModel : {}
 			}),
 			oError = new Error();
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs(true).returns(false);
-		this.mock(oBinding.oModel).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
 
 		assert.throws(function () {
 			oBinding.requestRefresh("$invalid");
@@ -2411,9 +2405,7 @@ sap.ui.define([
 		QUnit.test("checkBindingParameters, " + sParameter, function (assert) {
 			var aAllowedParams = [sParameter],
 				oBinding = new ODataBinding({
-					oModel : {
-						checkGroupId : function () {}
-					}
+					oModel : {}
 				}),
 				oBindingParameters = {
 					custom : "foo"
@@ -2421,7 +2413,7 @@ sap.ui.define([
 
 			oBindingParameters[sParameter] = "$auto";
 
-			this.mock(oBinding.oModel).expects("checkGroupId")
+			this.mock(_Helper).expects("checkGroupId")
 				.withExactArgs("$auto", false,
 					"Unsupported value for binding parameter '" + sParameter + "': ");
 

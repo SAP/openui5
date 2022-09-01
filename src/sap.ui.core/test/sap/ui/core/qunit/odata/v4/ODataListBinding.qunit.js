@@ -1465,7 +1465,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", true).returns(oGroupLock);
 		this.mock(oBinding).expects("fetchContexts")
 			.withExactArgs(1, 2, 0, sinon.match.same(oGroupLock))
@@ -1494,7 +1494,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(this.oModel).expects("checkGroupId").withExactArgs(undefined);
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(undefined);
 		this.mock(oBinding).expects("lockGroup").withExactArgs(undefined, true).returns(oGroupLock);
 		this.mock(oBinding).expects("fetchContexts")
 			.withExactArgs(0, this.oModel.iSizeLimit, 0, sinon.match.same(oGroupLock))
@@ -1518,7 +1518,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(this.oModel).expects("checkGroupId").withExactArgs(undefined);
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(undefined);
 		this.mock(oBinding).expects("lockGroup").withExactArgs(undefined, true).returns(oGroupLock);
 		this.mock(oBinding).expects("fetchContexts")
 			.withExactArgs(1, 2, 0, sinon.match.same(oGroupLock))
@@ -1570,7 +1570,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(this.oModel).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
 		this.mock(oBinding).expects("fetchContexts").never();
 
 		assert.throws(function () {
@@ -8879,9 +8879,9 @@ sap.ui.define([
 
 		oBinding.oCachePromise = bAsync ? Promise.resolve(oCache) : SyncPromise.resolve(oCache);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(this.oModel).expects("checkGroupId").withExactArgs(sGroupId);
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(sGroupId);
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/EMPLOYEES");
-		this.mock(this.oModel).expects("getPredicateIndex").withExactArgs(sPath).returns(10);
+		this.mock(_Helper).expects("getPredicateIndex").withExactArgs(sPath).returns(10);
 		this.mock(Context).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding), sPath)
 			.returns(oContext);
@@ -8945,7 +8945,7 @@ sap.ui.define([
 			sPath = "/TEAMS('1')";
 
 		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/EMPLOYEES");
-		this.mock(this.oModel).expects("getPredicateIndex").withExactArgs(sPath).returns(6);
+		this.mock(_Helper).expects("getPredicateIndex").withExactArgs(sPath).returns(6);
 
 		assert.throws(function () {
 			// code under test

@@ -1231,7 +1231,7 @@ sap.ui.define([
 		this.mock(ODataContextBinding.prototype).expects("createReadGroupLock").never();
 		oBinding = this.bindContext(sPath);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", true)
 			.returns(oGroupLock);
 		this.mock(_Helper).expects("publicClone")
@@ -1274,7 +1274,7 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oContext));
 			}
 			this.mock(oBinding).expects("checkSuspended").withExactArgs();
-			this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
+			this.mock(_Helper).expects("checkGroupId").withExactArgs("groupId");
 			this.mock(oBinding).expects("lockGroup")
 				.withExactArgs("groupId", true).returns(oGroupLock);
 			this.mock(_Helper).expects("publicClone")
@@ -1308,7 +1308,7 @@ sap.ui.define([
 			};
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
 		this.mock(oParentBinding).expects("checkKeepAlive")
 			.withExactArgs(sinon.match.same(oContext)).throws(oError);
@@ -1328,7 +1328,7 @@ sap.ui.define([
 			oBinding = this.bindContext("schema.Operation(...)", oContext);
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(oBinding).expects("_execute").never();
 
 		assert.throws(function () {
@@ -1342,7 +1342,7 @@ sap.ui.define([
 		var oBinding = this.bindContext("/OperationImport(...)");
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(oBinding).expects("_execute").never();
 
 		assert.throws(function () {
@@ -1356,7 +1356,7 @@ sap.ui.define([
 		var oBinding = this.bindContext("/OperationImport(...)"),
 			oError = new Error("Invalid");
 
-		this.mock(oBinding.oModel).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
 
 		assert.throws(function () {
 			oBinding.execute("$invalid");

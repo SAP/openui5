@@ -48,14 +48,12 @@ sap.ui.define([
 		Model, OperationMode, URI) {
 	"use strict";
 
-	var rApplicationGroupID = /^\w+$/,
-		sClassName = "sap.ui.model.odata.v4.ODataModel",
+	var sClassName = "sap.ui.model.odata.v4.ODataModel",
 		// system query options allowed within a $expand query option
 		aExpandQueryOptions = ["$count", "$expand", "$filter", "$levels", "$orderby", "$search",
 			"$select"],
 		// binding-specific parameters allowed in getKeepAliveContext
 		aGetKeepAliveParameters = ["$$groupId", "$$patchWithoutSideEffects", "$$updateGroupId"],
-		rGroupID = /^(\$auto(\.\w+)?|\$direct|\w+)$/,
 		MessageType = coreLibrary.MessageType,
 		aMessageTypes = [
 			undefined,
@@ -297,11 +295,11 @@ sap.ui.define([
 		if (this.sGroupId !== "$auto" && this.sGroupId !== "$direct") {
 			throw new Error("Group ID must be '$auto' or '$direct'");
 		}
-		this.checkGroupId(mParameters.updateGroupId, false, "Invalid update group ID: ");
+		_Helper.checkGroupId(mParameters.updateGroupId, false, "Invalid update group ID: ");
 		this.sUpdateGroupId = mParameters.updateGroupId || this.getGroupId();
 		this.mGroupProperties = {};
 		for (sGroupId in mParameters.groupProperties) {
-			that.checkGroupId(sGroupId, true);
+			_Helper.checkGroupId(sGroupId, true);
 			oGroupProperties = mParameters.groupProperties[sGroupId];
 			if (typeof oGroupProperties !== "object"
 					|| Object.keys(oGroupProperties).length !== 1
@@ -1193,35 +1191,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.checkBatchGroupId = function (sGroupId) {
-		this.checkGroupId(sGroupId);
+		_Helper.checkGroupId(sGroupId);
 		if (this.isDirectGroup(sGroupId)) {
 			throw new Error("Group ID does not use batch requests: " + sGroupId);
 		}
-	};
-
-	/**
-	 * Checks whether the given group ID is valid, which means it is either undefined, '$auto',
-	 * '$auto.*', '$direct' or an application group ID as specified in
-	 * {@link sap.ui.model.odata.v4.ODataModel}.
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID
-	 * @param {boolean} [bApplicationGroup]
-	 *   Whether only an application group ID is considered valid
-	 * @param {string} [sErrorMessage]
-	 *   The error message to be used if group ID is not valid; the group ID will be appended
-	 * @throws {Error}
-	 *   For invalid group IDs
-	 *
-	 * @private
-	 */
-	ODataModel.prototype.checkGroupId = function (sGroupId, bApplicationGroup, sErrorMessage) {
-		if (!bApplicationGroup && sGroupId === undefined
-				|| typeof sGroupId === "string"
-					&& (bApplicationGroup ? rApplicationGroupID : rGroupID).test(sGroupId)) {
-			return;
-		}
-		throw new Error((sErrorMessage || "Invalid group ID: ") + sGroupId);
 	};
 
 	/**
@@ -1448,7 +1421,7 @@ sap.ui.define([
 		if (sCanonicalPath[0] !== "/") {
 			throw new Error("Invalid path: " + sCanonicalPath);
 		}
-		this.checkGroupId(sGroupId);
+		_Helper.checkGroupId(sGroupId);
 		sGroupId = sGroupId || this.getUpdateGroupId();
 		if (this.isApiGroup(sGroupId)) {
 			throw new Error("Illegal update group ID: " + sGroupId);
@@ -1860,7 +1833,7 @@ sap.ui.define([
 				throw new Error("Invalid parameter: " + sParameter);
 			}
 		});
-		sListPath = sPath.slice(0, this.getPredicateIndex(sPath));
+		sListPath = sPath.slice(0, _Helper.getPredicateIndex(sPath));
 		oListBinding = this.mKeepAliveBindingsByPath[sListPath];
 		if (!oListBinding) {
 			aListBindings = this.aAllBindings.filter(function (oBinding) {
@@ -1881,27 +1854,6 @@ sap.ui.define([
 		}
 
 		return oListBinding.getKeepAliveContext(sPath, bRequestMessages, mParameters.$$groupId);
-	};
-
-	/**
-	 * Returns the index of the key predicate in the last segment of the given path.
-	 *
-	 * @param {string} sPath - The path
-	 * @returns {number} The index of the key predicate
-	 * @throws {Error} If no path is given or the last segment contains no key predicate
-	 *
-	 * @private
-	 */
-	ODataModel.prototype.getPredicateIndex = function (sPath) {
-		var iPredicateIndex = sPath
-				? sPath.indexOf("(", sPath.lastIndexOf("/"))
-				: -1;
-
-		if (iPredicateIndex < 0 || !sPath.endsWith(")")) {
-			throw new Error("Not a list context path to an entity: " + sPath);
-		}
-
-		return iPredicateIndex;
 	};
 
 	/**
@@ -2099,7 +2051,7 @@ sap.ui.define([
 		if (typeof sGroupId === "boolean") {
 			throw new Error("Unsupported parameter bForceUpdate");
 		}
-		this.checkGroupId(sGroupId);
+		_Helper.checkGroupId(sGroupId);
 
 		// Note: getBindings() returns an array that contains all bindings with change listeners
 		// (owned by Model)

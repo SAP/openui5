@@ -360,7 +360,7 @@ sap.ui.define([
 		if (sGroupId === null) {
 			bDoNotRequestCount = true;
 		} else {
-			oModel.checkGroupId(sGroupId);
+			_Helper.checkGroupId(sGroupId);
 			oGroupLock = this.oBinding.lockGroup(sGroupId, true, true);
 		}
 
@@ -1242,7 +1242,7 @@ sap.ui.define([
 	Context.prototype.requestRefresh = function (sGroupId, bAllowRemoval) {
 		var oPromise;
 
-		this.oModel.checkGroupId(sGroupId);
+		_Helper.checkGroupId(sGroupId);
 		this.oBinding.checkSuspended();
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot refresh entity due to pending changes: " + this);
@@ -1396,7 +1396,7 @@ sap.ui.define([
 		}
 
 		this.oBinding.checkSuspended();
-		this.oModel.checkGroupId(sGroupId);
+		_Helper.checkGroupId(sGroupId);
 		if (this.isTransient()) {
 			throw new Error("Unsupported context: " + this);
 		}
@@ -1615,7 +1615,7 @@ sap.ui.define([
 		if (this.isTransient()) {
 			throw new Error("Unsupported transient context " + this);
 		}
-		this.oModel.getPredicateIndex(this.sPath);
+		_Helper.getPredicateIndex(this.sPath);
 		this.oBinding.checkKeepAlive(this);
 
 		if (bKeepAlive && bRequestMessages) {
@@ -1701,7 +1701,7 @@ sap.ui.define([
 			throw new Error("Not a primitive value");
 		}
 		if (sGroupId !== null) {
-			this.oModel.checkGroupId(sGroupId);
+			_Helper.checkGroupId(sGroupId);
 			oGroupLock = this.oBinding.lockGroup(sGroupId, true, true);
 		}
 

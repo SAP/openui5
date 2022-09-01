@@ -1887,7 +1887,7 @@ sap.ui.define([
 		oBinding.vValue = ""; // simulate a read - intentionally use a falsy value
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(this.oModel).expects("checkGroupId").withExactArgs("up");
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("up");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("up", true, true)
 			.returns(oGroupLock);
 		this.mock(oContext).expects("doSetProperty")
