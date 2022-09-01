@@ -121,7 +121,6 @@ sap.ui.define([
 				oRm.openEnd();
 				oRm.renderControl(oField);
 				oRm.close("span");
-				oRm.close("span");
 				if (oControl._hasDynamicValue()) {
 					oRm.openStart("span");
 					oRm.addClass("sapUiIntegrationEditorSettings");
@@ -132,6 +131,7 @@ sap.ui.define([
 					oRm.addStyle("opacity", "1");
 					oRm.openEnd();
 					oRm.renderControl(oDynamicField);
+					oRm.close("span");
 					oRm.close("span");
 				}
 				oRm.openStart("div");
