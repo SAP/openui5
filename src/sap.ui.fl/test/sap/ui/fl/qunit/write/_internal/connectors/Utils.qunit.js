@@ -37,13 +37,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("getRequestOptions", function (assert) {
-			var sToken = "token";
 			var sTokenUrl = "tokenUrl";
 			var oInitialConnector = {
-				xsrfToken: sToken
 			};
 			var oExpectedOptions = {
-				xsrfToken: sToken,
 				tokenUrl: sTokenUrl,
 				initialConnector: oInitialConnector
 			};
@@ -89,12 +86,10 @@ sap.ui.define([
 			oStubSendRequest.onCall(2).resolves({response: "something"});
 			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function (oResponse) {
 				assert.deepEqual(oResponse, {response: "something"}, "correct response is returned");
-				assert.equal(oInitialConnector.xsrfToken, "newToken", "new token is stored in apply connector");
 				assert.equal(oStubSendRequest.callCount, 3, "there are 3 requests sent in total");
 				assert.ok(oStubSendRequest.getCall(0).calledWith(sUrl, sMethod, mPropertyBag), "first request has correct parameters");
 				assert.ok(oStubSendRequest.getCall(1).calledWith(sTokenUrl, "HEAD"), "second request has correct parameters");
 				assert.ok(oStubSendRequest.getCall(2).calledWith(sUrl, sMethod, mPropertyBag), "third request has correct parameters");
-				assert.equal(oStubSendRequest.getCall(2).args[2].xsrfToken, "newToken", "new token is passed in the mPropertyBag of third sendRequest");
 			});
 		});
 
@@ -117,12 +112,10 @@ sap.ui.define([
 			oStubSendRequest.onCall(2).rejects({status: 500});
 			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function (oError) {
 				assert.equal(oError.status, 500, "correct error is returned");
-				assert.equal(oInitialConnector.xsrfToken, "newToken", "new token is stored in apply connector");
 				assert.equal(oStubSendRequest.callCount, 3, "there are 3 requests sent in total");
 				assert.ok(oStubSendRequest.getCall(0).calledWith(sUrl, sMethod, mPropertyBag), "first request has correct parameters");
 				assert.ok(oStubSendRequest.getCall(1).calledWith(sTokenUrl, "HEAD"), "second request has correct parameters");
 				assert.ok(oStubSendRequest.getCall(2).calledWith(sUrl, sMethod, mPropertyBag), "third request has correct parameters");
-				assert.equal(oStubSendRequest.getCall(2).args[2].xsrfToken, "newToken", "new token is passed in the mPropertyBag of third sendRequest");
 			});
 		});
 

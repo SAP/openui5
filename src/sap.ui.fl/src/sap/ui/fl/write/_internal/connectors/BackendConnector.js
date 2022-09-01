@@ -185,7 +185,7 @@ sap.ui.define([
 				return Promise.resolve({response: this.initialConnector.settings});
 			}
 			var sFeaturesUrl = InitialUtils.getUrl(this.ROUTES.SETTINGS, mPropertyBag);
-			return InitialUtils.sendRequest(sFeaturesUrl).then(function (oResult) {
+			return InitialUtils.sendRequest(sFeaturesUrl, "GET", {initialConnector: InitialConnector}).then(function (oResult) {
 				return oResult.response;
 			});
 		}

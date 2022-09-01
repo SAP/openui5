@@ -46,7 +46,6 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "with correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], sExpectedMethod, "with correct method");
 				assert.equal(oStubSendRequest.getCall(0).args[2].payload, "{}", "with correct payload");
-				assert.equal(oStubSendRequest.getCall(0).args[2].xsrfToken, "123", "with correct token");
 				assert.equal(oStubSendRequest.getCall(0).args[2].contentType, "application/json; charset=utf-8", "with correct contentType");
 				assert.equal(oStubSendRequest.getCall(0).args[2].dataType, "json", "with correct dataType");
 				assert.ok(Array.isArray(oResponse.response));
@@ -64,7 +63,6 @@ sap.ui.define([
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 			return WritePersonalizationConnector.update(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken: InitialPersonalizationConnector.xsrfToken,
 					tokenUrl: "/flexPersonalization/flex/personalization/v1/actions/getcsrftoken",
 					initialConnector: InitialPersonalizationConnector,
 					contentType: "application/json; charset=utf-8",
@@ -91,7 +89,6 @@ sap.ui.define([
 
 			return WritePersonalizationConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: InitialPersonalizationConnector.xsrfToken,
 					tokenUrl: "/flexPersonalization/flex/personalization/v1/actions/getcsrftoken",
 					initialConnector: InitialPersonalizationConnector,
 					contentType: "application/json; charset=utf-8",
@@ -185,8 +182,6 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the first request was a POST request");
 				assert.equal(oStubSendRequest.getCall(1).args[1], "HEAD", "the second request was a HEAD request");
 				assert.equal(oStubSendRequest.getCall(2).args[1], "POST", "the third request was a POST request");
-				assert.equal(InitialPersonalizationConnector.xsrfToken, newToken, "a new token was stored in the apply connector");
-				assert.equal(oStubSendRequest.getCall(2).args[2].xsrfToken, newToken, "and the new token was used to resend the request");
 			});
 		});
 
@@ -203,10 +198,7 @@ sap.ui.define([
 			return WritePersonalizationConnector.write(mPropertyBag).then(function () {
 				assert.equal(oStubSendRequest.callCount, 2, "two request were sent");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "HEAD", "the first request was a HEAD request");
-				assert.equal(oStubSendRequest.getCall(1).args[2].xsrfToken, newToken, "and the new token was used to resend the request");
 				assert.equal(oStubSendRequest.getCall(1).args[1], "POST", "the second request was a POST request");
-				assert.equal(InitialPersonalizationConnector.xsrfToken, newToken, "a new token was stored in the apply connector");
-				assert.equal(oStubSendRequest.getCall(1).args[2].xsrfToken, newToken, "and the new token was used to resend the request");
 			});
 		});
 	});

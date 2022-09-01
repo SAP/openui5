@@ -39,11 +39,11 @@ sap.ui.define([
 				InitialUtils.addLanguageInfo(mParameters);
 			}
 			var sDataUrl = InitialUtils.getUrl(this.ROUTES.DATA, mPropertyBag, mParameters);
-			return InitialUtils.sendRequest(sDataUrl, "GET", { xsrfToken: this.xsrfToken}).then(function (oResult) {
+			return InitialUtils.sendRequest(sDataUrl, "GET", {
+				initialConnector: this,
+				xsrfToken: this.xsrfToken}
+			).then(function (oResult) {
 				var oResponse = oResult.response;
-				if (oResult.xsrfToken) {
-					this.xsrfToken = oResult.xsrfToken;
-				}
 				if (oResult.etag) {
 					oResponse.cacheKey = oResult.etag;
 				}

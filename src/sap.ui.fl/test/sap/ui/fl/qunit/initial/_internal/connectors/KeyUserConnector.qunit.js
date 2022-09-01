@@ -57,7 +57,6 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "with correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "with correct method");
 				assert.equal(oStubSendRequest.getCall(0).args[2].xsrfToken, undefined, "with correct token");
-				assert.equal(KeyUserConnector.xsrfToken, "newToken", "new token is set");
 				assert.deepEqual(KeyUserConnector.settings, { isKeyUser: true, isVariantSharingEnabled: true}, "new settings is stored");
 				assert.equal(oFlexData.changes.length, 2, "two entries are in the change section");
 				assert.equal(oFlexData.changes[0], 1, "the change entry is contained");

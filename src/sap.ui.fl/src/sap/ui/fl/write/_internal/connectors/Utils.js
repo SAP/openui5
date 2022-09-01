@@ -19,30 +19,9 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.write._internal.connectors, sap.ui.fl.write._internal.transport
 	 */
 
-	/**
-	 * Gets new X-CSRF token from the back end and update token value in the PropertyBag and apply connector.
-	 *
-	 * @param {object} mPropertyBag Object with parameters as properties
-	 * @param {sap.ui.fl.connector.BaseConnector} mPropertyBag.initialConnector Corresponding apply connector which stores an existing X-CSRF token
-	 * @param {string} mPropertyBag.tokenUrl The url to be called when new token fetching is necessary
-	 * @private
-	 * @returns {Promise} Promise resolves when new token is retrieved from response header
-	 */
-	function updateTokenInPropertyBagAndConnector (mPropertyBag) {
-		return Utils.sendRequest(mPropertyBag.tokenUrl, "HEAD").then(function (oResult) {
-			if (oResult && oResult.xsrfToken) {
-				if (mPropertyBag.initialConnector) {
-					mPropertyBag.initialConnector.xsrfToken = oResult.xsrfToken;
-				}
-				mPropertyBag.xsrfToken = oResult.xsrfToken;
-				return mPropertyBag;
-			}
-		});
-	}
-
-	function updateTokenInPropertyBagAndConnectorAndSendRequest (mPropertyBag, sUrl, sMethod) {
-		return updateTokenInPropertyBagAndConnector(mPropertyBag)
-			.then(Utils.sendRequest.bind(undefined, sUrl, sMethod));
+	function updateTokenInConnectorAndSendRequest (mPropertyBag, sUrl, sMethod) {
+		return Utils.sendRequest(mPropertyBag.tokenUrl, "HEAD", {initialConnector: mPropertyBag.initialConnector})
+            .then(Utils.sendRequest.bind(undefined, sUrl, sMethod, mPropertyBag));
 	}
 
 	/**
@@ -89,7 +68,6 @@ sap.ui.define([
 		 */
 		getRequestOptions: function (oInitialConnector, sTokenUrl, vFlexObjects, sContentType, sDataType) {
 			var oOptions = {
-				xsrfToken: oInitialConnector.xsrfToken,
 				tokenUrl: sTokenUrl,
 				initialConnector: oInitialConnector
 			};
@@ -128,7 +106,7 @@ sap.ui.define([
 					&& !(sMethod === 'HEAD')
 				)
 			) {
-				return updateTokenInPropertyBagAndConnectorAndSendRequest(mPropertyBag, sUrl, sMethod);
+				return updateTokenInConnectorAndSendRequest(mPropertyBag, sUrl, sMethod);
 			}
 
 			return Utils.sendRequest(sUrl, sMethod, mPropertyBag).then(function(oResult) {
@@ -137,7 +115,7 @@ sap.ui.define([
 			.catch(function (oFirstError) {
 				if (oFirstError.status === 403) {
 					//token is invalid, get a new token and retry
-					return updateTokenInPropertyBagAndConnectorAndSendRequest(mPropertyBag, sUrl, sMethod);
+					return updateTokenInConnectorAndSendRequest(mPropertyBag, sUrl, sMethod);
 				}
 				throw oFirstError;
 			});

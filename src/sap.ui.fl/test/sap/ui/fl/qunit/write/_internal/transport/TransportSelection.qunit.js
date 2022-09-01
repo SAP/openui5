@@ -46,8 +46,7 @@ sap.ui.define([
 				200,
 				{
 					"Content-Type": "application/json",
-					"Content-Length": 13,
-					"X-CSRF-Token": "0987654321"
+					"Content-Length": 13
 				},
 				"{ \"localonly\":false, \"transports\":[{\"transportId\":\"4711\",\"owner\":\"TESTUSER\",\"description\":\"test transport1\",\"locked\" : true}] }"
 			]);
@@ -75,8 +74,7 @@ sap.ui.define([
 				200,
 				{
 					"Content-Type": "application/json",
-					"Content-Length": 13,
-					"X-CSRF-Token": "0987654321"
+					"Content-Length": 13
 				},
 				"{ \"localonly\":true, \"transports\":[{\"transportId\":\"4711\",\"owner\":\"TESTUSER\",\"description\":\"test transport1\",\"locked\" : true}] }"
 			]);

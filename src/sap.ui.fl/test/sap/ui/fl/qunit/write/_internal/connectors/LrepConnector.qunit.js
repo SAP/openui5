@@ -393,7 +393,6 @@ sap.ui.define([
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
 				assert.deepEqual(oResponse, oAdjustedResponse, "expected Response");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
@@ -466,7 +465,6 @@ sap.ui.define([
 			}).then(function() {
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
@@ -553,7 +551,6 @@ sap.ui.define([
 			}).then(function() {
 				assert.equal(fnOpenTransportSelectionStub.callCount, 3, "then openTransportSelection called three times");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
@@ -585,7 +582,6 @@ sap.ui.define([
 				selectorIds: aControlIds
 			}).then(function() {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
@@ -619,7 +615,6 @@ sap.ui.define([
 			}).then(function() {
 				assert.equal(oTransportStub.callCount, 0, "no transport data was requested");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
@@ -691,7 +686,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.write(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
@@ -712,7 +706,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.write(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
@@ -737,7 +730,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.update(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
@@ -763,7 +755,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.update(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
@@ -791,7 +782,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
@@ -819,7 +809,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
@@ -846,7 +835,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
@@ -874,7 +862,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
@@ -921,7 +908,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.getManifest(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(mPropertyBag.appVarUrl, "GET", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
@@ -940,7 +926,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.load(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "GET", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
@@ -973,7 +958,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
@@ -1008,7 +992,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
@@ -1046,7 +1029,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					contentType: "application/json; charset=utf-8",
@@ -1067,7 +1049,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.assignCatalogs(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					dataType: "json",
@@ -1086,7 +1067,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.unassignCatalogs(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					dataType: "json",
@@ -1107,7 +1087,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.update(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					dataType: "json",
@@ -1144,7 +1123,6 @@ sap.ui.define([
 				assert.ok(oStubOpenTransportSelection.calledOnce);
 				assert.equal(oStubOpenTransportSelection.getCalls()[0].args[0].getPackage(), "", "no package information is sent to get transport info");
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					dataType: "json",
@@ -1196,7 +1174,6 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport";
 			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					dataType: "json",
@@ -1231,7 +1208,6 @@ sap.ui.define([
 			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function () {
 				assert.ok(oStubOpenTransportSelection.calledOnce);
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 					initialConnector: InitialLrepConnector,
 					dataType: "json",
@@ -1311,7 +1287,6 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.list(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "GET", {
-					xsrfToken: InitialLrepConnector.xsrfToken,
 					tokenUrl: undefined,
 					initialConnector: InitialLrepConnector,
 					dataType: "json",
@@ -1422,7 +1397,6 @@ sap.ui.define([
 			};
 			assert.equal(mPropertyBag.limit, 10);
 			var mExpectedPropertyBag = {
-				xsrfToken: undefined,
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app"
 			};
@@ -1456,7 +1430,6 @@ sap.ui.define([
 				reference: "com.sap.test.app"
 			};
 			var mExpectedPropertyBag = {
-				xsrfToken: undefined,
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app"
 			};
@@ -1485,7 +1458,6 @@ sap.ui.define([
 
 			var sExpectedUrl = "/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=EN";
 			var mExpectedPropertyBag = {
-				xsrfToken: undefined,
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app",
 				contentType: "application/json; charset=utf-8",
@@ -1517,7 +1489,6 @@ sap.ui.define([
 
 			var sExpectedUrl = "/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=EN";
 			var mExpectedPropertyBag = {
-				xsrfToken: undefined,
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app",
 				contentType: "application/json; charset=utf-8",
@@ -1549,7 +1520,6 @@ sap.ui.define([
 
 			var sExpectedUrl = "/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=EN";
 			var mExpectedPropertyBag = {
-				xsrfToken: undefined,
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app",
 				contentType: "application/json; charset=utf-8",
@@ -1587,7 +1557,6 @@ sap.ui.define([
 
 			var sExpectedUrl = "/sap/bc/lrep/flex/versions/publish/sampleComponent?transport=transportId&version=versionToPublish";
 			var mExpectedPropertyBag = {
-				xsrfToken: undefined,
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 				contentType: "application/json; charset=utf-8",
@@ -1624,7 +1593,6 @@ sap.ui.define([
 
 			var sExpectedUrl = "/sap/bc/lrep/flex/versions/publish/sampleComponent?transport=ATO_NOTIFICATION&version=versionToPublish";
 			var mExpectedPropertyBag = {
-				xsrfToken: undefined,
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
 				contentType: "application/json; charset=utf-8",

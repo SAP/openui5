@@ -22,8 +22,7 @@ sap.ui.define([
 		var oObject;
 		this.oServer.respondWith([200, {
 			"Content-Type": "application/json",
-			"Content-Length": 13,
-			"X-CSRF-Token": "0987654321"
+			"Content-Length": 13
 		}, '{ "localonly":false, "transports":[{"transportId":"4711","owner":"TESTUSER","description":"test transport1"}] }']);
 		this.oServer.autoRespond = true;
 

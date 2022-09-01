@@ -165,7 +165,6 @@ sap.ui.define([
 				assert.equal(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
 				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
 				assert.equal(oSendRequestCallArgs[2].payload, "[{}]", "with correct payload");
-				assert.equal(oSendRequestCallArgs[2].xsrfToken, "123", "with correct token");
 				assert.equal(oSendRequestCallArgs[2].contentType, "application/json; charset=utf-8", "with correct contentType");
 				assert.equal(oSendRequestCallArgs[2].dataType, "json", "with correct dataType");
 			});

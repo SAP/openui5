@@ -325,7 +325,7 @@ sap.ui.define([
 			InitialConnector._addClientInfo(mParameters);
 
 			var sDataUrl = InitialUtils.getUrl(ROUTES.FLEX_INFO, mPropertyBag, mParameters);
-			return InitialUtils.sendRequest(sDataUrl).then(function (oResult) {
+			return InitialUtils.sendRequest(sDataUrl, "GET", {initialConnector: InitialConnector}).then(function (oResult) {
 				return oResult.response;
 			});
 		},
@@ -346,7 +346,7 @@ sap.ui.define([
 			InitialConnector._addClientInfo(mParameters);
 
 			var sContextsUrl = InitialUtils.getUrl(ROUTES.CONTEXTS, mPropertyBag, mParameters);
-			return InitialUtils.sendRequest(sContextsUrl).then(function (oResult) {
+			return InitialUtils.sendRequest(sContextsUrl, "GET", {initialConnector: InitialConnector}).then(function (oResult) {
 				return oResult.response;
 			});
 		},
@@ -391,7 +391,7 @@ sap.ui.define([
 			InitialConnector._addClientInfo(mParameters);
 
 			var sFeaturesUrl = InitialUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
-			return InitialUtils.sendRequest(sFeaturesUrl).then(function (oResult) {
+			return InitialUtils.sendRequest(sFeaturesUrl, "GET", {initialConnector: InitialConnector}).then(function (oResult) {
 				oResult.response.isVariantAdaptationEnabled = !!oResult.response.isPublicLayerAvailable;
 				return oResult.response;
 			});
@@ -488,7 +488,7 @@ sap.ui.define([
 		appVariant: {
 			getManifirstSupport: function (mPropertyBag) {
 				var sManifirstUrl = ROUTES.MANI_FIRST_SUPPORTED + "/?id=" + mPropertyBag.appId;
-				return InitialUtils.sendRequest(sManifirstUrl).then(function (oResponse) {
+				return InitialUtils.sendRequest(sManifirstUrl, "GET", {initialConnector: InitialConnector}).then(function (oResponse) {
 					return oResponse.response;
 				});
 			},
