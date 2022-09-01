@@ -508,7 +508,7 @@ sap.ui.define([
 				})
 				.then(function(aResponses) {
 					var aFlexObjectsFileContent = aResponses[0].changes.concat(aResponses[0].variantChanges, aResponses[0].variantManagementChanges, aResponses[0].variants);
-					assert.strictEqual(aFlexObjectsFileContent.length, 9, "there is one more change in the storage");
+					assert.strictEqual(aFlexObjectsFileContent.length, 9, "there are 9 more changes in the storage");
 
 					var aIds = aFlexObjectsFileContent.map(function(oFlexObjectFileContent) {
 						return oFlexObjectFileContent.fileName;
@@ -539,6 +539,57 @@ sap.ui.define([
 
 					return removeListFromStorage(oConnector.storage, values(oTestData).concat([oNewChange2, oNewChange1, oNewVarChange2, oNewVarChange1]));
 				});
+			});
+		});
+
+		QUnit.test("when condense is called with a single create", function(assert) {
+			var oNewChange1 = {
+				creation: "2022-05-05T12:57:32.229Z",
+				fileName: "oChange5",
+				fileType: "change",
+				reference: "sap.ui.fl.test",
+				layer: Layer.CUSTOMER,
+				selector: {
+					id: "selector1"
+				},
+				changeType: "type1"
+			};
+			var aFlexObjects = [
+				oNewChange1
+			].map(function(oChangeJson) {
+				return FlexObjectFactory.createFromFileContent(oChangeJson);
+			});
+			var mPropertyBag = {
+				allChanges: aFlexObjects,
+				condensedChanges: aFlexObjects,
+				flexObjects: {
+					namespace: "",
+					layer: "",
+					create: {
+						change: [
+							{
+								oChange5: oNewChange1
+							}
+						]
+					}
+				}
+			};
+
+			return oConnector.condense(mPropertyBag)
+
+			.then(function() {
+				return oConnector.loadFlexData({reference: "sap.ui.fl.test"});
+			})
+			.then(function(aResponses) {
+				var aFlexObjectsFileContent = aResponses[0].changes;
+				assert.strictEqual(aFlexObjectsFileContent.length, 1, "there is one more change in the storage");
+
+				var aIds = aFlexObjectsFileContent.map(function(oFlexObjectFileContent) {
+					return oFlexObjectFileContent.fileName;
+				});
+				assert.ok(aIds.indexOf("oChange5") > -1, "the change was added");
+
+				return removeListFromStorage(oConnector.storage, values(oTestData).concat([oNewChange1]));
 			});
 		});
 	}

@@ -106,7 +106,20 @@ sap.ui.define([
 		return Promise.resolve();
 	}
 
-	function evaluateCondensing(mPropertyBag) {
+	// The index is taken from the condensedChanges to ensure that the changes in the "create" section
+	// are in the same order (avoiding an unnecessary "reorder" section)
+	function findChangeCreateIndex(oCurrentChange, aCondensedChanges) {
+		var aNewChanges = aCondensedChanges.filter(function(oInnerChange) {
+			return oInnerChange.getState() === States.NEW
+				&& oInnerChange.getFileType() === oCurrentChange.getFileType();
+		});
+		var iChangeCreateIndex = aNewChanges.findIndex(function(oNewChange) {
+			return oNewChange.getId() === oCurrentChange.getId();
+		});
+		return iChangeCreateIndex;
+	}
+
+	function prepareCondensingForConnector(mPropertyBag) {
 		var mCondense;
 		if (
 			mPropertyBag.allChanges
@@ -115,62 +128,82 @@ sap.ui.define([
 		) {
 			mCondense = {
 				namespace: mPropertyBag.allChanges[0].convertToFileContent().namespace,
-				layer: mPropertyBag.layer,
-				"delete": {
-					change: []
-				},
-				update: {
-					change: []
-				},
-				reorder: {
-					change: []
-				},
-				create: {
-					change: [],
-					ctrl_variant_change: [],
-					ctrl_variant_management_change: []
-				}
+				layer: mPropertyBag.layer
 			};
 
 			var iOffset = 0;
 			var bAlreadyReordered = false;
 			mPropertyBag.allChanges.forEach(function(oChange, index) {
-				if (oChange.getFileType() === "ctrl_variant") {
+				var sFileType = oChange.getFileType();
+				if (sFileType === "ctrl_variant") {
 					return;
 				}
-				var iChangeCreateIndex = mCondense.create[oChange.getFileType()].length;
+				var iChangeCreateIndex = findChangeCreateIndex(oChange, mPropertyBag.condensedChanges);
 				if (oChange.condenserState) {
 					var bDifferentOrder = false;
 					if (oChange.condenserState === "delete") {
 						if (oChange.getState() === States.PERSISTED) {
-							mCondense.delete.change.push(oChange.getId());
+							if (!mCondense.delete) {
+								mCondense.delete = {};
+							}
+							if (!mCondense.delete[sFileType]) {
+								mCondense.delete[sFileType] = [];
+							}
+							mCondense.delete[sFileType].push(oChange.getId());
 						}
 						iOffset++;
 					} else if (mPropertyBag.condensedChanges.length) {
 						bDifferentOrder = mPropertyBag.allChanges[index].getId() !== mPropertyBag.condensedChanges[index - iOffset].getId();
 					}
-					if ((oChange.condenserState === "select" || oChange.condenserState === "update") && bDifferentOrder && !bAlreadyReordered) {
+					if ((
+						(oChange.condenserState === "select" && oChange.getState() !== States.NEW)
+						|| oChange.condenserState === "update"
+					) && bDifferentOrder && !bAlreadyReordered) {
 						var aReorderedChanges = mPropertyBag.condensedChanges.slice(index - iOffset).map(function(oChange) {
 							return oChange.getId();
 						});
-						mCondense.reorder.change = aReorderedChanges;
+						if (!mCondense.reorder) {
+							mCondense.reorder = {};
+						}
+						if (!mCondense.reorder[sFileType]) {
+							mCondense.reorder[sFileType] = [];
+						}
+						mCondense.reorder[sFileType] = aReorderedChanges;
 						bAlreadyReordered = true;
 					}
 					if (oChange.condenserState === "select" && oChange.getState() === States.NEW) {
-						mCondense.create.change[iChangeCreateIndex] = {};
-						mCondense.create.change[iChangeCreateIndex][oChange.getId()] = oChange.convertToFileContent();
+						if (!mCondense.create) {
+							mCondense.create = {};
+						}
+						if (!mCondense.create[sFileType]) {
+							mCondense.create[sFileType] = [];
+						}
+						mCondense.create[sFileType][iChangeCreateIndex] = {};
+						mCondense.create[sFileType][iChangeCreateIndex][oChange.getId()] = oChange.convertToFileContent();
 					} else if (oChange.condenserState === "update") {
-						var iChangeUpdateIndex = mCondense.update.change.length;
-						mCondense.update.change[iChangeUpdateIndex] = {};
-						mCondense.update.change[iChangeUpdateIndex][oChange.getId()] = {
+						if (!mCondense.update) {
+							mCondense.update = {};
+						}
+						if (!mCondense.update[sFileType]) {
+							mCondense.update[sFileType] = [];
+						}
+						var iChangeUpdateIndex = mCondense.update[sFileType].length;
+						mCondense.update[sFileType][iChangeUpdateIndex] = {};
+						mCondense.update[sFileType][iChangeUpdateIndex][oChange.getId()] = {
 							content: oChange.getContent()
 						};
 					}
 
 					delete oChange.condenserState;
 				} else if (oChange.getState() === States.NEW) {
-					mCondense.create[oChange.getFileType()][iChangeCreateIndex] = {};
-					mCondense.create[oChange.getFileType()][iChangeCreateIndex][oChange.getId()] = oChange.convertToFileContent();
+					if (!mCondense.create) {
+						mCondense.create = {};
+					}
+					if (!mCondense.create[sFileType]) {
+						mCondense.create[sFileType] = [];
+					}
+					mCondense.create[sFileType][iChangeCreateIndex] = {};
+					mCondense.create[sFileType][iChangeCreateIndex][oChange.getId()] = oChange.convertToFileContent();
 				}
 			});
 		}
@@ -217,14 +250,20 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag._transport] - The transport ID which will be handled internally, so there is no need to be passed
 	 * @param {boolean} [mPropertyBag.isLegacyVariant] - Whether the update data has file type .variant or not
 	 * @param {number} [nParentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
-	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
+	 * @returns {Promise} Promise resolving as soon as the writing was completed or was not needed; or rejects in case of an error
 	 */
 	Storage.condense = function(mPropertyBag) {
-		mPropertyBag.flexObjects = evaluateCondensing(mPropertyBag);
-		if (!mPropertyBag.flexObjects) {
+		var mCondense = prepareCondensingForConnector(mPropertyBag);
+		if (!mCondense) {
 			return Promise.reject("No changes were provided");
 		}
-		return _executeActionByName("condense", mPropertyBag);
+		if (
+			mCondense.create || mCondense.reorder || mCondense.update || mCondense.delete
+		) {
+			mPropertyBag.flexObjects = mCondense;
+			return _executeActionByName("condense", mPropertyBag);
+		}
+		return Promise.resolve();
 	};
 
 	/**

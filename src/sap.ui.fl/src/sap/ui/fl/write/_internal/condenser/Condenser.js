@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/condenser/Utils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
-	"sap/ui/performance/Measurement"
+	"sap/ui/performance/Measurement",
+	"sap/base/util/restricted/_isEqual"
 ], function(
 	each,
 	isPlainObject,
@@ -35,7 +36,8 @@ sap.ui.define([
 	CondenserUtils,
 	Change,
 	FlUtils,
-	Measurement
+	Measurement,
+	_isEqual
 ) {
 	"use strict";
 
@@ -146,6 +148,22 @@ sap.ui.define([
 	}
 
 	/**
+	 * Adds a non-index related change to the map.
+	 * @param {Map} mClassifications - Map of properties that holds key-value pairs. A key is a unique identifier. A value is an array object that contains changes
+	 * @param {object} oCondenserInfo - Condenser specific information that is delivered by the change handler
+	 * @param {sap.ui.fl.Change} oChange - Change instance that will be added to the array
+	 * @returns {Promise} returns when change is added to the map
+	 */
+	function addNonIndexRelatedChange(mClassifications, oCondenserInfo, oChange) {
+		if (!mClassifications[oCondenserInfo.classification]) {
+			mClassifications[oCondenserInfo.classification] = {};
+		}
+		var mProperties = mClassifications[oCondenserInfo.classification];
+		NON_INDEX_RELEVANT[oCondenserInfo.classification].addToChangesMap(mProperties, oCondenserInfo, oChange);
+		return Promise.resolve();
+	}
+
+	/**
 	 * Adds a classified change to the data structures.
 	 *
 	 * @param {Map} mTypes - Map of classification types that holds key-value pairs. A key is a unique identifier. A value is a nested map which contains non-index-related and index-related reduced changes
@@ -162,13 +180,9 @@ sap.ui.define([
 		var mClassifications = mTypes[oCondenserInfo.type];
 
 		if (oCondenserInfo.type === CondenserUtils.NOT_INDEX_RELEVANT) {
-			if (!mClassifications[oCondenserInfo.classification]) {
-				mClassifications[oCondenserInfo.classification] = {};
-			}
-			var mProperties = mClassifications[oCondenserInfo.classification];
-			NON_INDEX_RELEVANT[oCondenserInfo.classification].addToChangesMap(mProperties, oCondenserInfo, oChange);
-			return Promise.resolve();
+			return addNonIndexRelatedChange(mClassifications, oCondenserInfo, oChange);
 		}
+
 		aIndexRelatedChanges.push(oChange);
 		return addIndexRelatedChange(mClassifications, mUIReconstructions, oCondenserInfo, oChange);
 	}
@@ -466,7 +480,13 @@ sap.ui.define([
 	function handleChangeUpdate(aCondenserInfos, aReducedChanges) {
 		aCondenserInfos.forEach(function(oCondenserInfo) {
 			var oUpdateChange = oCondenserInfo.updateChange;
-			if (oUpdateChange && oUpdateChange.getState() !== Change.states.NEW) {
+			if (
+				oUpdateChange
+				// "Update" only modifies the change content. If we support other
+				// updates on a change, this code has to be adjusted.
+				&& !_isEqual(oUpdateChange.getContent(), oCondenserInfo.change.getContent())
+				&& oUpdateChange.getState() !== Change.states.NEW
+			) {
 				var oCondensedChange = oCondenserInfo.change;
 				if (oUpdateChange.getId() !== oCondensedChange.getId()) {
 					var oNewContent = oCondensedChange.getContent();
