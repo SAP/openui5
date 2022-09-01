@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/f/semantic/PrintAction",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Text",
-	"sap/m/VBox"
+	"sap/m/VBox",
+	"sap/ui/Device"
 ],
 function (
 	SemanticUtil,
@@ -27,7 +28,8 @@ function (
 	PrintAction,
 	InvisibleText,
 	Text,
-	VBox
+	VBox,
+	Device
 ) {
 	"use strict";
 
@@ -1297,7 +1299,8 @@ function (
 	QUnit.test("Ctrl+Shift+S to open share action sheet", function(assert) {
 		var done = assert.async(),
 			oSemanticPageTitle,
-			oActionSheet;
+			oActionSheet,
+			bMacOS = Device.os.macintosh;
 
 		// Arrange
 		this.oSemanticPage = oFactory.getSemanticPage();
@@ -1312,7 +1315,7 @@ function (
 		this.oSemanticPage.addDelegate({"onAfterRendering": function () {
 			// Act - QUtils.triggerKeyEvent does not dispatch this
 			oSemanticPageTitle.getDomRef().dispatchEvent(new KeyboardEvent("keydown", {
-				bubbles: true, key: "S", shiftKey: true, ctrlKey: true
+				bubbles: true, key: "S", shiftKey: true, ctrlKey: !bMacOS, metaKey: bMacOS
 			}));
 
 			// Assert
