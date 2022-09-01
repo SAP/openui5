@@ -18,9 +18,7 @@ sap.ui.define([
 	}
 
 	//*****************************************************************************
-	[
-		"myAutoGroup", "$auto", "$auto.foo", "myDirectGroup", "$direct"
-	].forEach(function (sGroupId) {
+	["myAutoGroup", "myDirectGroup"].forEach(function (sGroupId) {
 		opaTest("POST/PATCH SalesOrder via group: " + sGroupId,
 			WriteNonDeferredGroupTest.writeNonDeferredGroup.bind(null, sGroupId, ""));
 	});
