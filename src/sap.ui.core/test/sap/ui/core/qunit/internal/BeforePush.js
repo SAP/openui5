@@ -189,19 +189,22 @@
 		// runs a test: creates its frame (out of sight), registers first at the frame's page, then
 		// at the frame's QUnit to observe the progress and notice when it's finished
 		function runTest(oTest) {
-			function onLoad() {
+			function invalid(sText) {
+				oTest.element.firstChild.classList.remove("running");
+				oTest.element.firstChild.classList.add("failed");
+				oTest.infoNode.data = sText;
+				if (bVisible && oTest === oSelectedTest) {
+					select(oTest); // unselect the test to make it invisible
+				}
+				iRunningTests -= 1;
+				next();
+			}
+
+			function observe() {
 				var oQUnit = oTest.frame.contentWindow.QUnit;
 
-				oTest.frame.removeEventListener("load", onLoad);
-				if (!(oQUnit && oQUnit.on)) {
-					oTest.element.firstChild.classList.remove("running");
-					oTest.element.firstChild.classList.add("failed");
-					oTest.infoNode.data = oQUnit ? ": no QUnit V2 found" : ": no QUnit found";
-					if (bVisible && oTest === oSelectedTest) {
-						select(oTest); // unselect the test to make it invisible
-					}
-					iRunningTests -= 1;
-					next();
+				if (!oQUnit.on) {
+					invalid("no QUnit V2 found");
 					return;
 				}
 				// see https://github.com/js-reporters/js-reporters (@since QUnit 2)
@@ -233,6 +236,20 @@
 					iRunningTests -= 1;
 					next();
 				});
+			}
+
+			function onLoad() {
+				var oQUnit = oTest.frame.contentWindow.QUnit;
+
+				oTest.frame.removeEventListener("load", onLoad);
+				if (!oQUnit) {
+					invalid(oTest, "no QUnit found");
+				} else if (!oQUnit.on) {
+					// Test.qunit.html needs some time when using "coverage"
+					setTimeout(observe, 1000);
+				} else {
+					observe();
+				}
 			}
 
 			oTest.top = iTop;
