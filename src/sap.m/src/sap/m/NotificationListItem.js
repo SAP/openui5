@@ -143,15 +143,6 @@ function(
 		}
 	};
 
-	/**
-	 * Handles the internal event onBeforeRendering.
-	 *
-	 * @private
-	 */
-	NotificationListItem.prototype.onBeforeRendering = function() {
-		NotificationListBase.prototype.onBeforeRendering.call(this);
-	};
-
 	NotificationListItem.prototype.onAfterRendering = function() {
 		NotificationListBase.prototype.onAfterRendering.call(this);
 

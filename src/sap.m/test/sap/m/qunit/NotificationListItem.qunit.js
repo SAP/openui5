@@ -557,4 +557,24 @@ sap.ui.define([
 		assert.strictEqual(closeButton.getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'close button overflow priority is ok');
 		assert.notOk(toolbarSeparator.getVisible(), 'toolbar separator is not visible');
 	});
+
+	QUnit.test("Close button should still be visible after details are expanded", function (assert) {
+		// arrange
+		var nli = new NotificationListItem({
+			title: 'Notification List Item Title Title TitleNotification List Item Title Title TitleNotification List Item Title Title TitleNotification List Item Title Title Title',
+			description: 'Notification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item DescriptionNotification List Item Description'
+		});
+		this.list.addItem(nli);
+		Core.applyChanges();
+
+		var showMoreButton = nli.$("showMoreButton").control(0);
+		var closeButton = nli.$("closeButtonX").control(0);
+
+		// act
+		showMoreButton.firePress();
+		Core.applyChanges();
+
+		// assert
+		assert.ok(closeButton.$().is(":visible"), "Close button should be visible after details are expanded");
+	});
 });
