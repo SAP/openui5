@@ -61,7 +61,7 @@ sap.ui.define([
 
 		// Act
 		// shrinking the OTB resulting in oSeparator2 going in the overflow area
-		oOverflowTB.setWidth('169px');
+		oOverflowTB.setWidth('173px');
 		this.clock.tick(1000);
 
 		// Click the overflow button
