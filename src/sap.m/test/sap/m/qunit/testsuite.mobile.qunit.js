@@ -476,6 +476,12 @@ sap.ui.define([
 				},
 				ui5: {
 					language: "en"
+				},
+				qunit: {
+					version: 'edge'
+				},
+				sinon: {
+					version: 'edge'
 				}
 			},
 			GenericTile: {

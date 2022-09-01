@@ -784,7 +784,7 @@ sap.ui.define([
 		oOverflowTB.placeAt("qunit-fixture");
 		oCore.applyChanges();
 		// set small width that causes all content to move to the OverflowToolbar
-		oOverflowTB.setWidth("1rem");
+		oOverflowTB.setWidth("2rem");
 		this.clock.tick(1000);
 
 		assert.strictEqual(
