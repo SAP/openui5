@@ -93,6 +93,7 @@ sap.ui.define([
 	QUnit.test("destroy", function (assert) {
 		var oBinding = new ODataBinding(),
 			oCache = {
+				deregisterChangeListener : function () {},
 				setActive : function () {}
 			},
 			// we might become asynchronous due to auto $expand/$select reading $metadata
@@ -104,6 +105,8 @@ sap.ui.define([
 		oBinding.mCacheQueryOptions = {};
 		oBinding.oContext = {}; // @see sap.ui.model.Binding's c'tor
 		oBinding.oFetchCacheCallToken = {};
+		this.mock(oCache).expects("deregisterChangeListener")
+			.withExactArgs("", sinon.match.same(oBinding));
 		this.mock(oCache).expects("setActive").withExactArgs(false);
 
 		// code under test
@@ -1621,6 +1624,7 @@ sap.ui.define([
 			},
 			mMergedQueryOptions = {},
 			oOldCache = {
+				deregisterChangeListener : function () {},
 				setActive : function () {},
 				setLateQueryOptions : function () {}
 			},
@@ -1635,6 +1639,8 @@ sap.ui.define([
 			.withExactArgs("/resource/path", sinon.match.same(mMergedQueryOptions), undefined,
 				undefined, "~sGroupId~", sinon.match.same(oOldCache))
 			.returns(oNewCache);
+		this.mock(oOldCache).expects("deregisterChangeListener").exactly(bOldCacheIsReused ? 0 : 1)
+			.withExactArgs("", sinon.match.same(oBinding));
 		this.mock(oOldCache).expects("setActive").exactly(bOldCacheIsReused ? 0 : 1)
 			.withExactArgs(false);
 		this.mock(oOldCache).expects("setLateQueryOptions")
@@ -1684,6 +1690,7 @@ sap.ui.define([
 			oContext = {},
 			mMergedQueryOptions = {},
 			oOldCache = {
+				deregisterChangeListener : function () {},
 				setActive : function () {}
 			},
 			mQueryOptions = {},
@@ -1714,6 +1721,8 @@ sap.ui.define([
 			.returns(oCache);
 		this.mock(oCache).expects("setLateQueryOptions").exactly(bHasLateQueryOptions ? 1 : 0)
 			.withExactArgs(sinon.match.same(mLateQueryOptions));
+		this.mock(oOldCache).expects("deregisterChangeListener")
+			.withExactArgs("", sinon.match.same(oBinding));
 		this.mock(oOldCache).expects("setActive").withExactArgs(false);
 
 		assert.strictEqual(
@@ -1845,6 +1854,7 @@ sap.ui.define([
 			},
 			mMergedQueryOptions = {},
 			oOldCache = {
+				deregisterChangeListener : function () {},
 				setActive : function () {}
 			},
 			mQueryOptions = {};
@@ -1863,6 +1873,8 @@ sap.ui.define([
 				sinon.match.same(oContext), "deep/resource/path", "~sGroupId~",
 				sinon.match.same(oOldCache))
 			.returns(oCache1);
+		this.mock(oOldCache).expects("deregisterChangeListener")
+			.withExactArgs("", sinon.match.same(oBinding));
 		this.mock(oOldCache).expects("setActive").withExactArgs(false);
 
 		assert.strictEqual(

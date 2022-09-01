@@ -557,7 +557,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deregisters the given change listener. Note: shared caches have no listeners anyway.
+	 * Deregisters the given change listener. Note: shared caches only have listeners for the empty
+	 * path.
 	 *
 	 * @param {string} sPath
 	 *   The path
@@ -567,7 +568,7 @@ sap.ui.define([
 	 * @public
 	 */
 	_Cache.prototype.deregisterChangeListener = function (sPath, oListener) {
-		if (!this.bSharedRequest) {
+		if (!(this.bSharedRequest && sPath)) {
 			_Helper.removeByPath(this.mChangeListeners, sPath, oListener);
 		}
 	};
@@ -1441,8 +1442,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Registers the listener for the path. Shared caches do not register listeners because they are
-	 * read-only.
+	 * Registers the listener for the path. Shared caches do not register listeners except for the
+	 * empty path, because they are read-only.
 	 *
 	 * @param {string} sPath The path
 	 * @param {object} [oListener] The listener
@@ -1450,7 +1451,7 @@ sap.ui.define([
 	 * @private
 	 */
 	_Cache.prototype.registerChangeListener = function (sPath, oListener) {
-		if (!this.bSharedRequest) {
+		if (!(this.bSharedRequest && sPath)) {
 			_Helper.addByPath(this.mChangeListeners, sPath, oListener);
 		}
 	};
@@ -1692,8 +1693,8 @@ sap.ui.define([
 			this.iActiveUsages -= 1;
 			if (!this.iActiveUsages) {
 				this.iInactiveSince = Date.now();
+				this.mChangeListeners = {};
 			}
-			this.mChangeListeners = {}; // Note: shared caches have no listeners anyway
 		}
 	};
 
@@ -3236,6 +3237,10 @@ sap.ui.define([
 		aKeptElementPredicates.forEach(function (sPredicate) {
 			that.aElements.$byPredicate[sPredicate] = mByPredicate[sPredicate];
 		});
+		if (mChangeListeners[""]) {
+			this.mChangeListeners[""] = mChangeListeners[""];
+			_Helper.fireChange(this.mChangeListeners, "");
+		}
 	};
 
 	/**
