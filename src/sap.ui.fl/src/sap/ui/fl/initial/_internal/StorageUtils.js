@@ -66,10 +66,16 @@ sap.ui.define([
 		connector: "StaticFileConnector"
 	};
 
-	function _filterValidLayers(aLayers, aValidLayers) {
-		return aLayers.filter(function (sLayer) {
-			return aValidLayers.indexOf(sLayer) !== -1 || aValidLayers[0] === "ALL";
-		});
+	function _filterValidLayers(aLayers, aConnectorLayers) {
+		var aValidLayers = [];
+		if (!aLayers) {
+			aValidLayers = aConnectorLayers;
+		} else {
+			aValidLayers = aLayers.filter(function (sLayer) {
+				return aConnectorLayers.indexOf(sLayer) !== -1 || aConnectorLayers[0] === "ALL";
+			});
+		}
+		return aValidLayers;
 	}
 
 	function _getConnectorConfigurations(sNameSpace, bLoadConnectors, mConnectors) {
@@ -98,16 +104,11 @@ sap.ui.define([
 		return new Promise(function (resolve) {
 			sap.ui.require(aConnectors, function () {
 				Array.from(arguments).forEach(function (oConnector, iIndex) {
-					if (!mConnectors[iIndex].layers) {
-						mConnectors[iIndex].layers = oConnector.layers;
-					} else {
-						mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
-					}
-
 					if (bLoadConnectors) {
 						mConnectors[iIndex].loadConnectorModule = oConnector;
 					} else {
 						mConnectors[iIndex].writeConnectorModule = oConnector;
+						mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
 					}
 				});
 

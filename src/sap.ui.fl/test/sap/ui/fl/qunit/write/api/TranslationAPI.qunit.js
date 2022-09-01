@@ -144,7 +144,7 @@ sap.ui.define([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
-			var sUrl = "/flexKeyUser/flex/keyuser/v1/translation/sourcelanguages/reference";
+			var sUrl = "/flexKeyUser/flex/keyuser/v2/translation/sourcelanguages/reference";
 			var oStubSendRequest = sandbox.stub(InitialConnector, "sendRequest").resolves({response: aReturnedLanguages});
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("reference");
@@ -171,7 +171,7 @@ sap.ui.define([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
-			var sUrl = "/flexKeyUser/flex/keyuser/v1/translation/texts/reference?sourceLanguage=en-US&targetLanguage=de-DE";
+			var sUrl = "/flexKeyUser/flex/keyuser/v2/translation/texts/reference?sourceLanguage=en-US&targetLanguage=de-DE";
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("reference");
 			var oStubSendRequest = sandbox.stub(InitialConnector, "sendRequest").resolves({response: {}});
 			return TranslationAPI.getTexts(mPropertyBag).then(function () {
@@ -190,7 +190,7 @@ sap.ui.define([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
-			var sUrl = "/flexKeyUser/flex/keyuser/v1/translation/texts";
+			var sUrl = "/flexKeyUser/flex/keyuser/v2/translation/texts";
 			var oStubSendRequest = sandbox.stub(InitialConnector, "sendRequest").resolves({response: {}});
 			return TranslationAPI.uploadTranslationTexts(mPropertyBag).then(function () {
 				assert.equal(oStubSendRequest.getCall(0).args[0], sUrl, "the request has the correct url");

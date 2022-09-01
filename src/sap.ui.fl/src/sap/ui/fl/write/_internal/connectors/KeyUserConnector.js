@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/connectors/BackendConnector",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/FlexInfoSession"
 ], function (
 	merge,
+	Layer,
 	BackendConnector,
 	InitialConnector,
 	InitialUtils,
@@ -22,10 +24,6 @@ sap.ui.define([
 	"use strict";
 
 	var PREFIX = "/flex/keyuser";
-	var API_VERSION = {
-		V1: "/v1",
-		V2: "/v2"
-	};
 
 	/**
 	 * Connector for saving and deleting data from SAPUI5 Flexibility KeyUser service.
@@ -37,29 +35,29 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */
 	var KeyUserConnector = merge({}, BackendConnector, /** @lends sap.ui.fl.write._internal.connectors.KeyUserConnector */ {
-		layers: InitialConnector.layers,
-
+		layers: [
+			Layer.CUSTOMER,
+			Layer.PUBLIC
+		],
 		ROUTES: {
-			CHANGES: PREFIX + API_VERSION.V1 + "/changes/",
-			SETTINGS: PREFIX + API_VERSION.V1 + "/settings",
-			TOKEN: PREFIX + API_VERSION.V1 + "/settings",
+			CHANGES: PREFIX + InitialConnector.API_VERSION + "/changes/",
+			SETTINGS: PREFIX + InitialConnector.API_VERSION + "/settings",
+			TOKEN: PREFIX + InitialConnector.API_VERSION + "/settings",
 			VERSIONS: {
-				GET: PREFIX + API_VERSION.V2 + "/versions/",
-				ACTIVATE: PREFIX + API_VERSION.V1 + "/versions/activate/",
-				DISCARD: PREFIX + API_VERSION.V1 + "/versions/draft/"
+				GET: PREFIX + InitialConnector.API_VERSION + "/versions/",
+				ACTIVATE: PREFIX + InitialConnector.API_VERSION + "/versions/activate/",
+				DISCARD: PREFIX + InitialConnector.API_VERSION + "/versions/draft/"
 			},
 			TRANSLATION: {
-				UPLOAD: PREFIX + API_VERSION.V1 + "/translation/texts",
-				DOWNLOAD: PREFIX + API_VERSION.V1 + "/translation/texts/",
-				GET_SOURCELANGUAGE: PREFIX + API_VERSION.V1 + "/translation/sourcelanguages/"
+				UPLOAD: PREFIX + InitialConnector.API_VERSION + "/translation/texts",
+				DOWNLOAD: PREFIX + InitialConnector.API_VERSION + "/translation/texts/",
+				GET_SOURCELANGUAGE: PREFIX + InitialConnector.API_VERSION + "/translation/sourcelanguages/"
 			},
-			CONTEXTS: PREFIX + API_VERSION.V1 + "/contexts/"
+			CONTEXTS: PREFIX + InitialConnector.API_VERSION + "/contexts/"
 		},
 		isLanguageInfoRequired: true,
 		loadFeatures: function (mPropertyBag) {
 			return BackendConnector.loadFeatures.call(KeyUserConnector, mPropertyBag).then(function (oFeatures) {
-				// in case the variants can be adapted via RTA, the public option should not be offered
-				oFeatures.isPublicLayerAvailable = oFeatures.isPublicLayerAvailable && !oFeatures.isVariantAdaptationEnabled;
 				oFeatures.isContextSharingEnabled = true;
 				return oFeatures;
 			});
