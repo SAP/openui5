@@ -7,11 +7,20 @@ sap.ui.define([
 	"use strict";
 
 	var fnLoadManifest = function() {
-		var oDefaultManifest = LoaderExtensions.loadResource("sap/ui/v4demo/manifest.json");
+		var oDefaultManifest;
+		// TODO: remove this handling after adoption in sapui5.runtime
+		try {
+			oDefaultManifest = LoaderExtensions.loadResource("sap/ui/v4demo/templateManifest.json");
+		} catch (e) {
+			if (e.status === "Not Found") {
+				oDefaultManifest = LoaderExtensions.loadResource("sap/ui/v4demo/manifest.json");
+			}
+		}
 
 		var oUriParams = new UriParameters(window.location.href);
 		if (oUriParams.get("service") === "tenant") {
-			oDefaultManifest["sap.app"].dataSources.default.uri = "/tenant(mdcmanagedbooks)/catalog-test/";
+			var sRandomString = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+			oDefaultManifest["sap.app"].dataSources.default.uri = "/tenant(" + sRandomString + ")/catalog-test/";
 		}
 
 		return oDefaultManifest;
