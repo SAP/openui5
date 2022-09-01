@@ -2054,6 +2054,58 @@ sap.ui.define([
 	//    set of (non-binding) parameter names" is unique.
 
 	//*********************************************************************************************
+	QUnit.test("getPredicateIndex", function (assert) {
+		function success(sPath, sPredicate) {
+			assert.strictEqual(sPath.slice(_Helper.getPredicateIndex(sPath)), sPredicate);
+		}
+
+		function fail(sPath) {
+			assert.throws(function () {
+				_Helper.getPredicateIndex(sPath);
+			}, new Error("Not a list context path to an entity: " + sPath));
+		}
+
+		success("foo('bar')", "('bar')");
+		success("foo('bar()')", "('bar()')");
+		success("foo('bar')/baz('qux')", "('qux')");
+		fail();
+		fail("foo");
+		fail("foo('bar'");
+		fail("foo('bar')/baz)");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkGroupId", function (assert) {
+		// valid group IDs
+		_Helper.checkGroupId("myGroup");
+		_Helper.checkGroupId("$auto");
+		_Helper.checkGroupId("$auto.foo");
+		_Helper.checkGroupId("$auto.1");
+		_Helper.checkGroupId("$direct");
+		_Helper.checkGroupId(undefined);
+		_Helper.checkGroupId("myGroup", true);
+
+		// invalid group IDs
+		["", "$invalid", 42, null].forEach(function (vGroupId) {
+			assert.throws(function () {
+				_Helper.checkGroupId(vGroupId);
+			}, new Error("Invalid group ID: " + vGroupId));
+		});
+
+		// invalid application group IDs
+		["", "$invalid", 42, "$auto", "$direct", undefined].forEach(function (vGroupId) {
+			assert.throws(function () {
+				_Helper.checkGroupId(vGroupId, true);
+			}, new Error("Invalid group ID: " + vGroupId));
+		});
+
+		// invalid group with custom message
+		assert.throws(function () {
+			_Helper.checkGroupId("$invalid", false, "Custom error message: ");
+		}, new Error("Custom error message: $invalid"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("clone", function (assert) {
 		var oResult,
 			oSource = {k1 : "v1", k2 : "v2"};

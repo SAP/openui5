@@ -528,6 +528,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("refresh", function (assert) {
 		var oError = new Error(),
+			oHelperMock = this.mock(_Helper),
 			oModel = this.createModel(),
 			oModelMock = this.mock(oModel),
 			oBaseContext = oModel.createBindingContext("/TEAMS('42')"),
@@ -560,12 +561,12 @@ sap.ui.define([
 		// check: no refresh on binding with relative path
 		this.mock(oRelativeContextBinding).expects("refresh").never();
 		this.mock(oPropertyBinding).expects("refresh").never();
-		oModelMock.expects("checkGroupId").withExactArgs("myGroup");
+		oHelperMock.expects("checkGroupId").withExactArgs("myGroup");
 
 		// code under test
 		oModel.refresh("myGroup");
 
-		oModelMock.expects("checkGroupId").never();
+		oHelperMock.expects("checkGroupId").never();
 		oModelMock.expects("getBindings").never();
 
 		// code under test
@@ -573,14 +574,14 @@ sap.ui.define([
 			oModel.refresh(true);
 		}, new Error("Unsupported parameter bForceUpdate"));
 
-		oModelMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
+		oHelperMock.expects("checkGroupId").withExactArgs("$Invalid").throws(oError);
 
 		// code under test
 		assert.throws(function () {
 			oModel.refresh("$Invalid");
 		}, oError);
 
-		oModelMock.expects("checkGroupId").withExactArgs("myGroup2");
+		oHelperMock.expects("checkGroupId").withExactArgs("myGroup2");
 		oModelMock.expects("getBindings").withExactArgs().returns([oListBinding, oListBinding3,
 			oPropertyBinding, oPropertyBinding2, oRelativeContextBinding]);
 		oPropertyBinding2Mock.expects("refresh").withExactArgs("myGroup2");
@@ -1305,44 +1306,11 @@ sap.ui.define([
 	// TODO allow v4.Context and return v4.Context
 
 	//*********************************************************************************************
-	QUnit.test("checkGroupId", function (assert) {
-		var oModel = this.createModel();
-
-		// valid group IDs
-		oModel.checkGroupId("myGroup");
-		oModel.checkGroupId("$auto");
-		oModel.checkGroupId("$auto.foo");
-		oModel.checkGroupId("$auto.1");
-		oModel.checkGroupId("$direct");
-		oModel.checkGroupId(undefined);
-		oModel.checkGroupId("myGroup", true);
-
-		// invalid group IDs
-		["", "$invalid", 42, null].forEach(function (vGroupId) {
-			assert.throws(function () {
-				oModel.checkGroupId(vGroupId);
-			}, new Error("Invalid group ID: " + vGroupId));
-		});
-
-		// invalid application group IDs
-		["", "$invalid", 42, "$auto", "$direct", undefined].forEach(function (vGroupId) {
-			assert.throws(function () {
-				oModel.checkGroupId(vGroupId, true);
-			}, new Error("Invalid group ID: " + vGroupId));
-		});
-
-		// invalid group with custom message
-		assert.throws(function () {
-			oModel.checkGroupId("$invalid", false, "Custom error message: ");
-		}, new Error("Custom error message: $invalid"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("checkBatchGroupId: success", function () {
 		var sGroupId = {/*string*/},
 			oModel = this.createModel();
 
-		this.mock(oModel).expects("checkGroupId").withExactArgs(sinon.match.same(sGroupId));
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(sinon.match.same(sGroupId));
 		this.mock(oModel).expects("isDirectGroup").withExactArgs(sinon.match.same(sGroupId))
 			.returns(false);
 
@@ -1356,7 +1324,7 @@ sap.ui.define([
 			sGroupId = {/*string*/},
 			oModel = this.createModel();
 
-		this.mock(oModel).expects("checkGroupId").withExactArgs(sinon.match.same(sGroupId))
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(sinon.match.same(sGroupId))
 			.throws(oError);
 		this.mock(oModel).expects("isDirectGroup").never();
 
@@ -1370,7 +1338,7 @@ sap.ui.define([
 	QUnit.test("checkBatchGroupId: fails due to isDirectGroup", function (assert) {
 		var oModel = this.createModel();
 
-		this.mock(oModel).expects("checkGroupId").withExactArgs("foo");
+		this.mock(_Helper).expects("checkGroupId").withExactArgs("foo");
 		this.mock(oModel).expects("isDirectGroup").withExactArgs("foo").returns(true);
 
 		assert.throws(function () {
@@ -2615,29 +2583,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getPredicateIndex", function (assert) {
-		var oModel = this.createModel();
-
-		function success(sPath, sPredicate) {
-			assert.strictEqual(sPath.slice(oModel.getPredicateIndex(sPath)), sPredicate);
-		}
-
-		function fail(sPath) {
-			assert.throws(function () {
-				oModel.getPredicateIndex(sPath);
-			}, new Error("Not a list context path to an entity: " + sPath));
-		}
-
-		success("foo('bar')", "('bar')");
-		success("foo('bar()')", "('bar()')");
-		success("foo('bar')/baz('qux')", "('qux')");
-		fail();
-		fail("foo");
-		fail("foo('bar'");
-		fail("foo('bar')/baz)");
-	});
-
-	//*********************************************************************************************
 [false, true].forEach(function (bFound) {
 	[undefined, {}, {$$groupId : "group"}].forEach(function (mParameters) {
 		var sTitle = "getKeepAliveContext: " + (bFound ? "one" : "no")
@@ -2673,7 +2618,8 @@ sap.ui.define([
 			this.mock(oMatch).expects("isKeepAliveBindingFor")
 				.withExactArgs("/SalesOrders('1')/Items").returns(true);
 		}
-		this.mock(oModel).expects("getPredicateIndex").withExactArgs("/SalesOrders('1')/Items('2')")
+		this.mock(_Helper).expects("getPredicateIndex")
+				.withExactArgs("/SalesOrders('1')/Items('2')")
 			.returns(23);
 		this.mock(oNoMatch2).expects("removeCachesAndMessages")
 			.withExactArgs("SalesOrders('1')/Items", true);
@@ -2752,7 +2698,8 @@ sap.ui.define([
 		}
 		oModel.aAllBindings = [oNoMatch];
 		oModel.mKeepAliveBindingsByPath["/SalesOrders('1')/Items"] = oMatch;
-		this.mock(oModel).expects("getPredicateIndex").withExactArgs("/SalesOrders('1')/Items('2')")
+		this.mock(_Helper).expects("getPredicateIndex")
+				.withExactArgs("/SalesOrders('1')/Items('2')")
 			.returns(23);
 		this.mock(oNoMatch).expects("isKeepAliveBindingFor").never();
 		this.mock(oModel).expects("bindList").never();
@@ -3149,7 +3096,7 @@ sap.ui.define([
 			oPromise;
 
 		oModel.aAllBindings = aAllBindings;
-		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId);
+		this.mock(_Helper).expects("checkGroupId").withExactArgs(sGroupId);
 		this.mock(oModel).expects("getUpdateGroupId").exactly(sGroupId ? 0 : 1)
 			.withExactArgs().returns("group");
 		this.mock(oModel).expects("isApiGroup").withExactArgs("group").returns(false);

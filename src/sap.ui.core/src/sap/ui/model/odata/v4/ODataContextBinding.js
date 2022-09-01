@@ -952,7 +952,7 @@ sap.ui.define([
 		var sResolvedPath = this.getResolvedPath();
 
 		this.checkSuspended();
-		this.oModel.checkGroupId(sGroupId);
+		_Helper.checkGroupId(sGroupId);
 		if (!this.oOperation) {
 			throw new Error("The binding must be deferred: " + this.sPath);
 		}

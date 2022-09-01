@@ -134,7 +134,7 @@ sap.ui.define([
 					break;
 				case "$$groupId":
 				case "$$updateGroupId":
-					that.oModel.checkGroupId(vValue, false,
+					_Helper.checkGroupId(vValue, false,
 						"Unsupported value for binding parameter '" + sKey + "': ");
 					break;
 				case "$$ignoreMessages":
@@ -1233,7 +1233,7 @@ sap.ui.define([
 		if (this.hasPendingChanges(true)) {
 			throw new Error("Cannot refresh due to pending changes");
 		}
-		this.oModel.checkGroupId(sGroupId);
+		_Helper.checkGroupId(sGroupId);
 
 		// The actual refresh is specific to the binding and is implemented in each binding class.
 		return Promise.resolve(this.refreshInternal("", sGroupId, true)).then(function () {
