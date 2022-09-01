@@ -86,8 +86,8 @@ sap.ui.define([
 	 */
 	MobileColumnHeaderMenuAdapter.prototype.removeMenuItems = function(oMenu) {
 		delete this._oColumn;
-		oMenu.removeAllAggregation("_quickActions");
-		oMenu.removeAllAggregation("_items");
+		oMenu.removeAggregation("_quickActions", this._oQuickActionContainer);
+		oMenu.removeAggregation("_items", this._oItemContainer);
 	};
 
 	/**
