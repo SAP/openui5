@@ -328,7 +328,7 @@ sap.ui.define([
 
 			// Remove registered changes which no longer exist
 			difference(aRegisteredChangeIds, aCurrentChangeIds).forEach(function(sChangeIdToRemove) {
-				this._oChangeIndicatorRegistry.removeChange(sChangeIdToRemove);
+				this._oChangeIndicatorRegistry.removeRegisteredChange(sChangeIdToRemove);
 			}.bind(this));
 
 			var aPromises = [];
