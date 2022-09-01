@@ -34,8 +34,10 @@ sap.ui.define([
 			this.oControl.updateVariant = oUpdateControlStub;
 			var oSetModifiedStub = sandbox.stub();
 			this.oControl.setModified = oSetModifiedStub;
-
-			var oUpdateFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "updateVariant");
+			this.oControl.getModified = function () {
+				return true;
+			};
+			var oUpdateFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "saveVariantContent");
 			var oUndoVariantFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "revert");
 
 			return CommandFactory.getCommandFor(this.oControl, "compVariantUpdate", {
@@ -62,6 +64,7 @@ sap.ui.define([
 				};
 				assert.deepEqual(oUpdateFlAPIStub.lastCall.args[0], mExpectedProperties, "the FL API was called with the correct properties");
 				assert.equal(oSetModifiedStub.callCount, 1, "the setModified was called..");
+				assert.equal(oUpdateCommand.getIsModifiedBefore(), true, "isModifiedBefore value stored correctly");
 				assert.equal(oSetModifiedStub.lastCall.args[0], false, "and set to false");
 
 				return oUpdateCommand.undo();
@@ -82,6 +85,7 @@ sap.ui.define([
 				};
 				assert.deepEqual(oUpdateFlAPIStub.lastCall.args[0], mExpectedProperties, "the FL API was called with the correct properties");
 				assert.equal(oSetModifiedStub.callCount, 3, "the setModified was called again..");
+				assert.equal(oUpdateCommand.getIsModifiedBefore(), true, "isModifiedBefore value stored correctly");
 				assert.equal(oSetModifiedStub.lastCall.args[0], false, "and set to false");
 			}.bind(this));
 		});
@@ -99,7 +103,7 @@ sap.ui.define([
 			this.oControl.setDefaultVariantId = oSetDefaultControlStub;
 			var oSetModifiedStub = sandbox.stub();
 			this.oControl.setModified = oSetModifiedStub;
-			var oUpdateFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "updateVariant").callsFake(function(mPropertyBag) {
+			var oUpdateFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "updateVariantMetadata").callsFake(function(mPropertyBag) {
 				return mPropertyBag.id;
 			});
 			var oSetDefaultFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "setDefaultVariantId");
@@ -178,6 +182,7 @@ sap.ui.define([
 
 				return oUpdateCommand.undo();
 			}.bind(this)).then(function() {
+				assert.equal(oUpdateCommand.getIsModifiedBefore(), undefined, "isModifiedBefore value is stored in case of metadata update");
 				assert.equal(oRevertFlAPIStub.callCount, 3, "the revert function was called thrice");
 				assert.equal(oRevertFlAPIStub.getCall(0).args[0].id, "variant1", "the correct variant id was passed 1");
 				assert.equal(oRevertFlAPIStub.getCall(1).args[0].id, "variant2", "the correct variant id was passed 2");

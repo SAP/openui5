@@ -41,6 +41,9 @@ sap.ui.define([
 				},
 				onlySave: {
 					type: "boolean"
+				},
+				isModifiedBefore: {
+					type: "boolean"
 				}
 			}
 		}
@@ -75,16 +78,17 @@ sap.ui.define([
 	 */
 	CompVariantUpdate.prototype.execute = function() {
 		if (this.getOnlySave()) {
+			this.setIsModifiedBefore(this.getElement().getModified());
 			this.getElement().setModified(false);
 			var sKey = Object.keys(this.getNewVariantProperties())[0];
-			callFlAPIFunction.call(this, "updateVariant", sKey, this.getNewVariantProperties()[sKey]);
+			callFlAPIFunction.call(this, "saveVariantContent", sKey, this.getNewVariantProperties()[sKey]);
 		} else {
 			each(this.getNewVariantProperties(), function(sVariantId, oValue) {
 				if (oValue.deleted) {
 					callFlAPIFunction.call(this, "removeVariant", sVariantId, {});
 					this.getElement().removeVariant({variantId: sVariantId});
 				} else {
-					var oVariant = callFlAPIFunction.call(this, "updateVariant", sVariantId, oValue);
+					var oVariant = callFlAPIFunction.call(this, "updateVariantMetadata", sVariantId, oValue);
 					this.getElement().updateVariant(oVariant);
 				}
 			}.bind(this));
@@ -103,9 +107,9 @@ sap.ui.define([
 	 */
 	CompVariantUpdate.prototype.undo = function() {
 		if (this.getOnlySave()) {
-			this.getElement().setModified(true);
 			var sVariantId = Object.keys(this.getNewVariantProperties())[0];
 			callFlAPIFunction.call(this, "revert", sVariantId, {});
+			this.getElement().setModified(this.getIsModifiedBefore());
 		} else {
 			each(this.getNewVariantProperties(), function(sVariantId, oValue) {
 				var oVariant = callFlAPIFunction.call(this, "revert", sVariantId, {});
