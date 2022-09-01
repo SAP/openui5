@@ -512,7 +512,7 @@ sap.ui.define([
 				rootElements: [this.oCheckBox]
 			});
 			this.oDesignTime.attachEventOnce("synced", function() {
-				this.oOverlay = OverlayRegistry.getOverlay(this.oCheckBox);
+				this.oCheckboxOverlay = OverlayRegistry.getOverlay(this.oCheckBox);
 				fnDone();
 			}.bind(this));
 		},
@@ -523,12 +523,12 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when the control's text is modified...", function(assert) {
 			var fnDone = assert.async();
-			this.oCheckBox.setText("This is a very long text");
-			sandbox.stub(this.oOverlay, "applyStyles").callsFake(function() {
+			sandbox.stub(this.oCheckboxOverlay, "applyStyles").callsFake(function() {
 				assert.ok(true, "applyStyles is called");
 				fnDone();
 				return Promise.resolve();
 			});
+			this.oCheckBox.setText("This is a very long text");
 			oCore.applyChanges();
 		});
 	});
