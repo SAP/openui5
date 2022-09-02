@@ -48,42 +48,44 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: function (oRm, oControl) {
-			if (oControl._getCurrentMode() === "None") {
-				oRm.openStart("div", oControl);
-				oRm.openEnd();
-				return;
-			}
-			oRm.openStart("div", oControl);
-			oRm.addClass("sapUiIntegrationDTPreview");
-			if (isDark()) {
-				oRm.addClass("sapUiIntegrationDTPreviewDark");
-			}
-			if (oControl.getSettings().preview.position && (oControl.getSettings().preview.position === "top" || oControl.getSettings().preview.position === "bottom")) {
-				var sLanguge = Core.getConfiguration().getLanguage().replaceAll('_', '-');
-				// for the languages "ar-SA"(Arabic) and "he-IL"(Hebrew) which write from right to left, use spec style
-				if (sLanguge.startsWith("ar") || sLanguge.startsWith("he")) {
-					oRm.addClass("sapUiIntegrationDTPreviewMarginForAlignTopAndBottomSpec");
-				} else {
-					oRm.addClass("sapUiIntegrationDTPreviewMarginForAlignTopAndBottom");
+		renderer: {
+			apiVersion: 2,
+			render: function (oRm, oControl) {
+				if (oControl._getCurrentMode() === "None") {
+					oRm.openStart("div", oControl);
+					oRm.openEnd();
+					return;
 				}
-			}
-			oRm.openEnd();
-			oRm.openStart("div");
-			oRm.addClass("before");
-			oRm.writeAttribute("tabindex", "-1");
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-before");
-			oRm.addStyle("z-index", oControl.getParent()._iZIndex + 1);
-			oRm.openEnd();
-			oRm.close("div");
-			oRm.renderControl(oControl._getCardPreview());
-			oRm.openStart("div");
-			oRm.writeAttribute("tabindex", "-1");
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-after");
-			oRm.openEnd();
-			oRm.close("div");
-			if (oControl._getModes().indexOf("Live") > -1 && oControl._getModes().indexOf("Abstract") > -1) {
-				oRm.renderControl(oControl._getModeToggleButton());
+				oRm.openStart("div", oControl);
+				oRm.class("sapUiIntegrationDTPreview");
+				if (isDark()) {
+					oRm.class("sapUiIntegrationDTPreviewDark");
+				}
+				if (oControl.getSettings().preview.position && (oControl.getSettings().preview.position === "top" || oControl.getSettings().preview.position === "bottom")) {
+					var sLanguge = Core.getConfiguration().getLanguage().replaceAll('_', '-');
+					// for the languages "ar-SA"(Arabic) and "he-IL"(Hebrew) which write from right to left, use spec style
+					if (sLanguge.startsWith("ar") || sLanguge.startsWith("he")) {
+						oRm.class("sapUiIntegrationDTPreviewMarginForAlignTopAndBottomSpec");
+					} else {
+						oRm.class("sapUiIntegrationDTPreviewMarginForAlignTopAndBottom");
+					}
+				}
+				oRm.openEnd();
+				oRm.openStart("div", oControl.getId() + "-before");
+				oRm.class("before");
+				oRm.attr("tabindex", "-1");
+				oRm.style("z-index", oControl.getParent()._iZIndex + 1);
+				oRm.openEnd();
+				oRm.close("div");
+				oRm.renderControl(oControl._getCardPreview());
+				oRm.openStart("div", oControl.getId() + "-after");
+				oRm.attr("tabindex", "-1");
+				oRm.openEnd();
+				oRm.close("div");
+				// TODO unsupported DOM structure: button is not a child of the root element
+				if (oControl._getModes().indexOf("Live") > -1 && oControl._getModes().indexOf("Abstract") > -1) {
+					oRm.renderControl(oControl._getModeToggleButton());
+				}
 			}
 		}
 	});

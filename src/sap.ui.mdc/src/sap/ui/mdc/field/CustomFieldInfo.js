@@ -92,19 +92,21 @@ sap.ui.define([
 				metadata : {
 				},
 
-				renderer : function(oRm, oBox) {
+				renderer : {
+					apiVersion: 2,
+					render: function(oRm, oBox) {
 
-					var oContent = oBox._oInfo.getAggregation("content");
+						var oContent = oBox._oInfo.getAggregation("content");
 
-					oRm.write("<div");
-					oRm.writeControlData(oBox);
-					oRm.write(">");
+						oRm.openStart("div", oBox);
+						oRm.openEnd();
 
-					if (oContent) {
-						oRm.renderControl(oContent);
+						if (oContent) {
+							oRm.renderControl(oContent);
+						}
+
+						oRm.close("div");
 					}
-
-					oRm.write("</div>");
 				}
 
 			});

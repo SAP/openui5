@@ -32,7 +32,9 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: VizBase.getMetadata().getRenderer()
+		renderer: {
+			apiVersion: 2
+		}
 	});
 
 	// create this._oControl and set up it
@@ -53,7 +55,7 @@ sap.ui.define([
 
 	// add style class to the render manager
 	ShapeSelect.prototype.applyStyle = function (oRm) {
-		oRm.addClass("sapUiIntegrationShapeSelect");
+		oRm.class("sapUiIntegrationShapeSelect");
 	};
 
 	// bind propeties to this._oControl

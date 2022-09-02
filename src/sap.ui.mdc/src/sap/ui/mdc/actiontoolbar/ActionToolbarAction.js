@@ -56,9 +56,9 @@ sap.ui.define([
                     type: "sap.ui.core.Control",
 					multiple: false
                 }
-            },
-            renderer: ActionToolbarActionRenderer
-        }
+            }
+        },
+        renderer: ActionToolbarActionRenderer
     });
 
     /**

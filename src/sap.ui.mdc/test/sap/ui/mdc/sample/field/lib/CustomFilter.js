@@ -129,22 +129,22 @@ sap.ui.define([
 			publicMethods: [],
 			defaultProperty: "value"
 		},
-		renderer : function(oRm, oControl) {
+		renderer : {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
 
-			var aButtons = oControl.getAggregation("_buttons", []);
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addStyle("width", "100%");
+				var aButtons = oControl.getAggregation("_buttons", []);
+				oRm.openStart("div", oControl);
+				oRm.style("width", "100%");
+				oRm.openEnd();
 
-			oRm.writeStyles();
-			oRm.write(">");
+				for (var i = 0; i < aButtons.length; i++) {
+					var oButton = aButtons[i];
+					oRm.renderControl(oButton);
+				}
 
-			for (var i = 0; i < aButtons.length; i++) {
-				var oButton = aButtons[i];
-				oRm.renderControl(oButton);
+				oRm.close("div");
 			}
-
-			oRm.write("</div>");
 		}
 	});
 

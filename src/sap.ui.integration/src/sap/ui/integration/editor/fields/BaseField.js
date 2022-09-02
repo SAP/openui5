@@ -96,52 +96,53 @@ sap.ui.define([
 				validateFailed: {}
 			}
 		},
-		renderer: function (oRm, oControl) {
-			var oField = oControl.getAggregation("_field"),
-				oDynamicField = oControl._getDynamicField();
-			oRm.openStart("div");
-			oRm.addClass("sapUiIntegrationEditorItemField");
-			if (oField && oField.getWidth) {
-				//oRm.addStyle("width", oField.getWidth());
-			}
-			if (!oControl.getVisible()) {
-				oRm.addStyle("display", "none");
-			}
-			oRm.writeElementData(oControl);
-			oRm.openEnd();
-			if (oControl.getVisible()) {
-				oRm.openStart("span");
-				oRm.addClass("sapUiIntegrationEditorEditor");
-				if (oControl._hasDynamicValue()) {
-					oRm.addStyle("width", "1px");
-					oRm.addStyle("opacity", "0");
-				} else {
-					oRm.addStyle("width", "100%");
+		renderer: {
+			apiVersion: 2,
+			render: function (oRm, oControl) {
+				var oField = oControl.getAggregation("_field"),
+					oDynamicField = oControl._getDynamicField();
+				oRm.openStart("div", oControl);
+				oRm.class("sapUiIntegrationEditorItemField");
+				if (oField && oField.getWidth) {
+					//oRm.style("width", oField.getWidth());
+				}
+				if (!oControl.getVisible()) {
+					oRm.style("display", "none");
 				}
 				oRm.openEnd();
-				oRm.renderControl(oField);
-				oRm.close("span");
-				if (oControl._hasDynamicValue()) {
+				if (oControl.getVisible()) {
 					oRm.openStart("span");
-					oRm.addClass("sapUiIntegrationEditorSettings");
+					oRm.class("sapUiIntegrationEditorEditor");
+					if (oControl._hasDynamicValue()) {
+						oRm.style("width", "1px");
+						oRm.style("opacity", "0");
+					} else {
+						oRm.style("width", "100%");
+					}
 					oRm.openEnd();
-					oRm.openStart("span");
-					oRm.addClass("sapUiIntegrationEditorSettingsField");
-					oRm.addStyle("width", "100%");
-					oRm.addStyle("opacity", "1");
+					oRm.renderControl(oField);
+					oRm.close("span");
+					if (oControl._hasDynamicValue()) {
+						oRm.openStart("span");
+						oRm.class("sapUiIntegrationEditorSettings");
+						oRm.openEnd();
+						oRm.openStart("span");
+						oRm.class("sapUiIntegrationEditorSettingsField");
+						oRm.style("width", "100%");
+						oRm.style("opacity", "1");
+						oRm.openEnd();
+						oRm.renderControl(oDynamicField);
+						oRm.close("span");
+						oRm.close("span");
+					}
+					oRm.openStart("div", oControl.getId() + "-ms");
+					oRm.style("height", "0");
 					oRm.openEnd();
-					oRm.renderControl(oDynamicField);
-					oRm.close("span");
-					oRm.close("span");
+					oRm.close("div");
 				}
-				oRm.openStart("div");
-				oRm.writeAttribute("id", oControl.getId() + "-ms");
-				oRm.addStyle("height", "0");
-				oRm.openEnd();
 				oRm.close("div");
-			}
-			oRm.close("div");
 
+			}
 		}
 	});
 
