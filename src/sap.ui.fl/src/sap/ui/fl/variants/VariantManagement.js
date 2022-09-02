@@ -639,7 +639,7 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype.setShowExecuteOnSelection = function(bValue) {
-		this.setProperty("showExecuteOnSelection", bValue);
+		//this.setProperty("showExecuteOnSelection", bValue);
 		this._oVM.setSupportApplyAutomatically(bValue);
 		return this;
 	};

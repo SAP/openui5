@@ -58,12 +58,6 @@ sap.ui.define([
 
 	return {
 
-		/**
-		 * Presses the button for a given ID.
-		 * @public
-		 * @param {string} sId The control ID of the button
-		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
-		 */
 		iPressButtonWithID: function(sId) {
 			return this.waitFor({
 				id: sId,
@@ -72,54 +66,6 @@ sap.ui.define([
 			});
 		},
 
-		/**
-		 * Opens/Closes the My Views popup.
-		 * @public
-		 * @param {string} sFlVMId The fl variant management control ID.
-		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
-		 */
-		iOpenMyView: function (sFlVMId) {
-			return this.iPressButtonWithID(sFlVMId + "-vm-trigger");
-		},
-
-		/**
-		 * Opens the Save View dialog.
-		 * @public
-		 * @param {string} sFlVMId The fl variant management control ID
-		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
-		 */
-		iOpenSaveView: function (sFlVMId) {
-			return this.iPressButtonWithID(sFlVMId + "-vm-saveas");
-		},
-
-		/**
-		 * Opens the Manage Views dialog.
-		 * @public
-		 * @param {string} sFlVMId The fl variant management control ID
-		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
-		 */
-		iOpenManageViews: function (sFlVMId) {
-			return this.iPressButtonWithID(sFlVMId + "-vm-manage");
-		},
-
-		/**
-		 * Presses the Save button inside the Manage Views dialog.
-		 * @public
-		 * @param {string} sFlVMId The fl variant management control ID
-		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
-		 */
-		iPressTheManageViewsSave: function (sFlVMId) {
-			return this.iPressButtonWithID(sFlVMId + "-vm-managementsave");
-		},
-
-		/**
-		 * Handles the Favorite checkbox.
-		 * Prerequisite is an open Manage Views dialog.
-		 * @public
-		 * @param {string} sVariantName The name of a variant
-		 * @param {boolean} bValue The state of the Favorite checkbox
-		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
-		 */
 		iSetFavoriteVariant: function (sVariantName, bValue) {
 			return waitForEditableVariantItemByVariantName.call(this, sVariantName, {
 				actions: function(oManageVariantItem) {
@@ -139,14 +85,6 @@ sap.ui.define([
 			});
 		},
 
-		/**
-		 * Renames a variant.
-		 * Prerequisite is an open Manage Views dialog.
-		 * @public
-		 * @param {string} sOriginalVariantName The previous name of a variant
-		 * @param {string} sNewVariantName The new name of a variant
-		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
-		 */
 		iRenameVariant: function (sOriginalVariantName, sNewVariantName) {
 			return waitForEditableVariantItemByVariantName.call(this, sOriginalVariantName, {
 				actions: function(oManageVariantItem) {
@@ -168,13 +106,6 @@ sap.ui.define([
 			});
 		},
 
-		/**
-		 * Sets the default for a variant.
-		 * Prerequisite is an open Manage Views dialog.
-		 * @public
-		 * @param {string} sVariantName The name of the new default variant
-		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
-		 */
 		iSetDefaultVariant: function (sVariantName) {
 			return waitForEditableVariantItemByVariantName.call(this, sVariantName, {
 				actions: function(oManageVariantItem) {
@@ -189,13 +120,6 @@ sap.ui.define([
 			});
 		},
 
-		/**
-		 * Removes a variant.
-		 * Prerequisite is an open Manage Views dialog.
-		 * @public
-		 * @param {string} sVariantName The name of the new default variant
-		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
-		 */
 		iRemoveVariant: function (sVariantName) {
 			return waitForEditableVariantItemByVariantName.call(this, sVariantName, {
 				actions: function(oManageVariantItem) {
@@ -214,14 +138,6 @@ sap.ui.define([
 			});
 		},
 
-		/**
-		 * Handles the Apply Automatically checkbox for a variant
-		 * Prerequisite is an open Manage Views dialog.
-		 * @public
-		 * @param {string} sVariantName The name of the variant
-		 * @param {boolean} bApplyAuto The Apply Automatically checkbox for the variant
-		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
-		 */
 		iApplyAutomaticallyVariant: function (sVariantName, bApplyAuto) {
 			return waitForEditableVariantItemByVariantName.call(this, sVariantName, {
 				actions: function(oManageVariantItem) {
@@ -241,16 +157,7 @@ sap.ui.define([
 			});
 		},
 
-		/**
-		 * Creates a new variant.
-		 * @public
-		 * @param {string} sFlVMId The fl variant management control ID
-		 * @param {string} sVariantTitle The name of the new variant
-		 * @param {boolean} bDefault Default checkbox for the variant
-		 * @param {boolean} bApplyAuto The Apply Automatically checkbox for the variant
-		 * @returns {object} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
-		 */
-		iCreateNewVariant: function (sFlVMId, sVariantTitle, bDefault, bApplyAuto) {
+		iCreateNewVariant: function (sFlVMId, sVariantTitle, bDefault, bApplyAuto, bPublic) {
 			return this.waitFor({
 				id: sFlVMId + "-vm-name",
 				success: function (oInput) {
@@ -268,6 +175,13 @@ sap.ui.define([
 					if (bApplyAuto) {
 						this.waitFor({
 							id: sFlVMId + "-vm-execute",
+							actions: new Press()
+						});
+					}
+
+					if (bPublic) {
+						this.waitFor({
+							id: sFlVMId + "-vm-public",
 							actions: new Press()
 						});
 					}
