@@ -67,7 +67,7 @@ sap.ui.define([
 
 	function _startApplyScenario(sControlId, fnAddControls) {
 		FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
-		var aControlsToBeChanged = fnAddControls(sControlId);
+		var aControlsToBeChanged = [].concat(fnAddControls(sControlId));
 		return FlexRuntimeInfoAPI.waitForChanges({ selectors: aControlsToBeChanged })
 		.then(function() {
 			FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
@@ -90,7 +90,7 @@ sap.ui.define([
 	 *		Layout (verticalLayout)
 	 *			initialLabel (label) -- will be added as selector to apply rename changes
 	 */
-	function _createControlsForRename(sControlId) {
+	function _createControlForRename(sControlId) {
 		var oLayout = oCore.byId("idMain1--Layout");
 		var oControl = new Label(sControlId, {text: sControlId});
 		oLayout.addContent(oControl);
@@ -148,7 +148,7 @@ sap.ui.define([
 	}
 
 	function _startRenameScenario() {
-		return _startApplyScenario("idMain1--initialLabel", _createControlsForRename);
+		return _startApplyScenario("idMain1--initialLabel", _createControlForRename);
 	}
 
 	function _startDiverseScenario() {

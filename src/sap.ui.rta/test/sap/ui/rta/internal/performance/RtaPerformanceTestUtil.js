@@ -33,8 +33,8 @@ sap.ui.define([
 				//will result in custom timer in webPageTest
 				window.performance.mark("rta.start.ends");
 				window.performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
-				window.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
-				Log.info(sMeasureName, window.startTime + "ms");
+				window.wpp.customMetrics.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
+				Log.info(sMeasureName, window.wpp.customMetrics.startTime + "ms");
 				//visual change at the end
 				var oOverlay = OverlayRegistry.getOverlay(oHorizontalLayout);
 				oOverlay.setSelected(true);
@@ -59,8 +59,8 @@ sap.ui.define([
 				//will result in custom timer in webPageTest
 				window.performance.mark("rta.start.ends");
 				window.performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
-				window.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
-				Log.info(sMeasureName, window.startTime + "ms");
+				window.wpp.customMetrics.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
+				Log.info(sMeasureName, window.wpp.customMetrics.startTime + "ms");
 				//visual change at the end
 				var oOverlay = OverlayRegistry.getOverlay(oRootControl);
 				oOverlay.setSelected(true);
@@ -85,8 +85,8 @@ sap.ui.define([
 			//will result in custom timer in webPageTest
 			window.performance.mark("rta.init.ends");
 			window.performance.measure(sMeasureName, "rta.init.starts", "rta.init.ends");
-			window.creationTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
-			Log.info(sMeasureName, window.creationTime + "ms");
+			window.wpp.customMetrics.creationTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
+			Log.info(sMeasureName, window.wpp.customMetrics.creationTime + "ms");
 		}
 	};
 

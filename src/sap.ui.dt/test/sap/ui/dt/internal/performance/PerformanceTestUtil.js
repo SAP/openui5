@@ -99,6 +99,10 @@ sap.ui.define([
 		},
 
 		startDesignTime: function(oRootControl, sSelectedOverlayId) {
+			window.wpp = {
+				customMetrics: {}
+			};
+
 			// Create DesignTime in other tick
 			return new Promise(function(resolve) {
 				//will result in custom timer in webPageTest
@@ -130,7 +134,8 @@ sap.ui.define([
 					//will result in custom timer in webPageTest
 					window.performance.mark("dt.synced");
 					window.performance.measure("Create DesignTime and Overlays", "dt.starts", "dt.synced");
-					Log.info("Create DesignTime and Overlays", window.performance.getEntriesByName("Create DesignTime and Overlays")[0].duration + "ms");
+					window.wpp.customMetrics["creationTime"] = window.performance.getEntriesByName("Create DesignTime and Overlays")[0].duration;
+					Log.info("Create DesignTime and Overlays", window.wpp.customMetrics["creationTime"] + "ms");
 					//visual change at the end
 					var oOverlay = OverlayRegistry.getOverlay(sSelectedOverlayId || "Control2");
 					oOverlay.setSelected(true);
