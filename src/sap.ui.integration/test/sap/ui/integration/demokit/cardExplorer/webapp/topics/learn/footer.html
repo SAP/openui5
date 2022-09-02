@@ -58,7 +58,14 @@
 						<td>string</td>
 						<td>"Button"</td>
 						<td>No</td>
-						<td>The type of the item. Set this to "ToolbarSpacer" if you wish to create a spacer.</td>
+						<td>
+							The type of the item. Possible values are:
+							<ul>
+								<li>"Button" - creates a button</li>
+								<li>"ToolbarSpacer" - creates a toolbar spacer</li>
+								<li>"Link" - creates a link with optional icon. Available since 1.107</li>
+							</ul>
+						</td>
 						<td>1.35.0</td>
 						<td>1.93</td>
 					</tr>
@@ -125,7 +132,7 @@
 						<td><a data-demokit-href="#/api/sap.m.ButtonType" target="_blank">sap.m.ButtonType</a></td>
 						<td></td>
 						<td>No</td>
-						<td>The type of the button.</td>
+						<td>The type of the button. Only used when the type is "Button".</td>
 						<td>1.35.0</td>
 						<td>1.93</td>
 					</tr>

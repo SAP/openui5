@@ -258,7 +258,7 @@ sap.ui.define([
 			}.bind(this));
 			mSettings.iconAlt = mItem.icon.alt;
 			mSettings.iconDisplayShape = mItem.icon.shape;
-			mSettings.iconInitials = mItem.icon.text;
+			mSettings.iconInitials = mItem.icon.initials || mItem.icon.text;
 
 			if (mSettings.title && mSettings.description) {
 				mSettings.iconSize = AvatarSize.S;
@@ -267,7 +267,7 @@ sap.ui.define([
 			}
 
 			mSettings.iconSize = mItem.icon.size || mSettings.iconSize;
-			mSettings.iconBackgroundColor = mItem.icon.backgroundColor || (mItem.icon.text ? undefined : AvatarColor.Transparent);
+			mSettings.iconBackgroundColor = mItem.icon.backgroundColor || (mSettings.iconInitials ? undefined : AvatarColor.Transparent);
 		}
 
 		if (mItem.attributesLayoutType) {

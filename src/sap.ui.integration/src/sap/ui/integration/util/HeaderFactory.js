@@ -122,9 +122,6 @@ sap.ui.define([
 			}.bind(this)
 		});
 
-		oButton
-			.addStyleClass("sapUiIntCardCloseButton");
-
 		return oButton;
 	};
 

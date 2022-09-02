@@ -89,7 +89,7 @@
 							"template": {
 								"icon": {
 									"src": "{photo}",
-									"text": "{= format.initials(${name})}"
+									"initials": "{= format.initials(${name})}"
 								},
 								"actions": [
 									{

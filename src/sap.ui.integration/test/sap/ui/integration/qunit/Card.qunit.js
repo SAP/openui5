@@ -428,7 +428,7 @@ sap.ui.define([
 					"title": "L3 Request list content Card",
 					"subTitle": "Card subtitle",
 					"icon": {
-						"text": "AJ",
+						"initials": "AJ",
 						"shape": "Circle",
 						"alt": "Some alternative text", // Will be ignored as its not present in the Avatar control atm.
 						"color": "#FF0000" // Will be ignored as its not present in the Avatar control atm.
@@ -1488,6 +1488,36 @@ sap.ui.define([
 			this.oCard.setManifest(oManifest_AvatarHeader);
 		});
 
+		QUnit.test("Default Header Avatar initials with deprecated 'text' property", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				var oHeader = this.oCard.getAggregation("_header");
+				assert.equal(oHeader.getAggregation("_avatar").getInitials(), "AJ", "Card header initials should be correctly set with deprecated 'text' property.");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.cardDeprecatedInitialsTextProperty"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"icon": {
+							"text": "AJ"
+						}
+					}
+				}
+			});
+		});
+
 		QUnit.test("'backgroundColor' when there is icon src", function (assert) {
 			// Arrange
 			var done = assert.async();
@@ -1540,7 +1570,7 @@ sap.ui.define([
 					"type": "List",
 					"header": {
 						"icon": {
-							"text": "SI"
+							"initials": "SI"
 						}
 					}
 				}
@@ -1574,7 +1604,7 @@ sap.ui.define([
 				var oHeader = this.oCard.getCardHeader();
 
 				// Assert
-				assert.strictEqual(oHeader.getStatusText(), oManifest["sap.card"].header.data.json.statusText, "Background should be default value when there are initials.");
+				assert.strictEqual(oHeader.getStatusText(), oManifest["sap.card"].header.data.json.statusText, "Status text binding should be resolved.");
 
 				done();
 			}.bind(this));
@@ -1685,7 +1715,7 @@ sap.ui.define([
 				var oHeader = this.oCard.getCardHeader();
 
 				// Assert
-				assert.strictEqual(oHeader.getStatusText(),  oManifest["sap.card"].header.data.json.statusText, "Background should be default value when there are initials.");
+				assert.strictEqual(oHeader.getStatusText(),  oManifest["sap.card"].header.data.json.statusText, "Status text binding should be resolved.");
 
 				done();
 			}.bind(this));

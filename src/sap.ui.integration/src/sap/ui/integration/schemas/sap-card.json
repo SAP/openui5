@@ -1616,7 +1616,11 @@
         },
         "text": {
           "type": "string",
-          "description": "Represents text that will be displayed in the icon"
+          "description": "[Deprecated] Represents text that will be displayed in the icon"
+        },
+        "initials": {
+          "type": "string",
+          "description": "Used as fallback if the 'src' property is not set or there is an issue with the resource. Up to two Latin letters can be displayed"
         },
         "alt": {
           "type": "string",
@@ -2211,16 +2215,12 @@
           ]
         },
         "text": {
-          "description": "Initials for the avatar. Up to 2 symbols. If the image provided to the 'src' property fails to load, then the text will be shown",
-          "oneOf": [
-            {
-              "type": "string",
-              "maxLength": 2
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "description": "[Deprecated] Initials for the avatar. Up to 2 symbols. If the image provided to the 'src' property fails to load, then the text will be shown",
+          "type": "string"
+        },
+        "initials": {
+          "description": "Used as fallback if the 'src' property is not set or there is an issue with the resource. Up to two Latin letters can be displayed",
+          "type": "string"
         },
         "backgroundColor": {
           "$ref": "#/definitions/iconBackgroundColor"
@@ -2272,16 +2272,12 @@
           ]
         },
         "text": {
-          "description": "Initials for the avatar. Up to 2 symbols. If the image provided to the 'src' property fails to load, then the text will be shown",
-          "oneOf": [
-            {
-              "type": "string",
-              "maxLength": 2
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "description": "[Deprecated] Initials for the avatar. Up to 2 symbols. If the image provided to the 'src' property fails to load, then the text will be shown",
+          "type": "string"
+        },
+        "initials": {
+          "description": "Used as fallback if the 'src' property is not set or there is an issue with the resource. Up to two Latin letters can be displayed",
+          "type": "string"
         },
         "size": {
           "description": "[Experimental] The size of the icon",

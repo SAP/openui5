@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/m/VBox",
 	"sap/m/Text",
-	"sap/m/Title",
 	"sap/m/Avatar",
 	"sap/m/Link",
 	"sap/m/Label",
@@ -44,7 +43,6 @@ sap.ui.define([
 	HBox,
 	VBox,
 	Text,
-	Title,
 	Avatar,
 	Link,
 	Label,
@@ -341,14 +339,14 @@ sap.ui.define([
 		var vSrc = BindingHelper.formattedProperty(oIconConfiguration.src, function (sValue) {
 			return this._oIconFormatter.formatSrc(sValue);
 		}.bind(this));
-
+		var vInitials = oIconConfiguration.initials || oIconConfiguration.text;
 		var oAvatar = new Avatar({
 			displaySize: oIconConfiguration.size || AvatarSize.XS,
 			src: vSrc,
-			initials: oIconConfiguration.text,
+			initials: vInitials,
 			displayShape: oIconConfiguration.shape,
 			tooltip: oIconConfiguration.alt,
-			backgroundColor: oIconConfiguration.backgroundColor || (oIconConfiguration.text ? undefined : AvatarColor.Transparent)
+			backgroundColor: oIconConfiguration.backgroundColor || (vInitials ? undefined : AvatarColor.Transparent)
 		}).addStyleClass("sapFCardObjectItemAvatar sapFCardIcon");
 
 		return oAvatar;
@@ -600,7 +598,7 @@ sap.ui.define([
 			src: BindingHelper.formattedProperty(oTemplateConfig.icon.src, function (sValue) {
 				return this._oIconFormatter.formatSrc(sValue);
 			}.bind(this)),
-			initials: oTemplateConfig.icon.text,
+			initials: oTemplateConfig.icon.initials || oTemplateConfig.icon.text,
 			tooltip: oTemplateConfig.icon.alt
 		});
 

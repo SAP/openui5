@@ -67,11 +67,14 @@ sap.ui.define([
 			}
 
 			if (mConfiguration.icon) {
+				var vInitials = mConfiguration.icon.initials || mConfiguration.icon.text;
+				var sBackgroundColor = mConfiguration.icon.backgroundColor || (vInitials ? AvatarColor.Accent6 : AvatarColor.Transparent);
+
 				mSettings.iconSrc = mConfiguration.icon.src;
 				mSettings.iconDisplayShape = mConfiguration.icon.shape;
-				mSettings.iconInitials = mConfiguration.icon.text;
+				mSettings.iconInitials = vInitials;
 				mSettings.iconAlt = mConfiguration.icon.alt;
-				mSettings.iconBackgroundColor = mConfiguration.icon.backgroundColor || (mConfiguration.icon.text ? AvatarColor.Accent6 : AvatarColor.Transparent);
+				mSettings.iconBackgroundColor = sBackgroundColor;
 				mSettings.iconVisible = mConfiguration.icon.visible;
 			}
 

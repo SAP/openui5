@@ -901,7 +901,7 @@ sap.ui.define([
 								"src": "{avatar}",
 								"shape": "Circle",
 								"alt": "human image",
-								"text": "IT"
+								"initials": "IT"
 							}
 						}
 					}
@@ -914,8 +914,42 @@ sap.ui.define([
 			assert.strictEqual(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Image_1.png", "Should have correct avatar src");
 			assert.strictEqual(oAvatar.getDisplayShape(), oManifest["sap.card"].content.item.icon.shape, "Should have 'Circle' shape");
 			assert.strictEqual(oAvatar.getTooltip_AsString(), oManifest["sap.card"].content.item.icon.alt, "Should have tooltip set");
-			assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.item.icon.text, "Should have initials set");
+			assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.item.icon.initials, "Should have initials set");
 			assert.ok(oAvatar.hasStyleClass("sapFCardIcon"), "'sapFCardIcon' class is added");
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
+	});
+
+	QUnit.test("Icon initials set with deprecated 'text' property", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oManifest = {
+				"sap.app": {
+					"id": "list.card.test.icon"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": [{}]
+					},
+					"content": {
+						"item": {
+							"icon": {
+								"text": "IT"
+							}
+						}
+					}
+				}
+			};
+
+		this.oCard.attachEvent("_ready", function () {
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
+
+			// Assert
+			assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.item.icon.text, "Should have initials set");
 			done();
 		}.bind(this));
 
@@ -1163,7 +1197,7 @@ sap.ui.define([
 					},
 					"item": {
 						"icon": {
-							"text": "{initials}"
+							"initials": "{initials}"
 						}
 					}
 				}

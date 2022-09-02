@@ -110,6 +110,22 @@
 		"footer": {
 			"actionsStrip": [
 				{
+					"type": "Link",
+					"text": "Agenda",
+					"icon": "sap-icon://action",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "{agendaUrl}"
+							}
+						}
+					]
+				},
+				{
+					"type": "ToolbarSpacer"
+				},
+				{
 					"text": "Approve",
 					"overflowPriority": "High",
 					"actions": [
