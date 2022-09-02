@@ -330,5 +330,16 @@ sap.ui.define([
 		this._updateVisibility();
 	};
 
+	ActionsToolbar.prototype.setEnabled = function (bValue) {
+		var oToolbar = this._getToolbar();
+
+		if (bValue) {
+			oToolbar.setEnabled(true);
+		} else {
+			this.getAggregation("_actionSheet").close();
+			oToolbar.setEnabled(false);
+		}
+	};
+
 	return ActionsToolbar;
 });

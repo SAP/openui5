@@ -147,6 +147,7 @@ sap.ui.define([
 	};
 
 	BaseContent.prototype.exit = function () {
+		this.hideLoadingPlaceholders();
 		this._oAwaitedEvents = null;
 
 		if (this._mObservers) {
@@ -403,9 +404,17 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	BaseContent.prototype.showLoadingPlaceholders = function () {
-		var oLoadingProvider = this.getAggregation("_loadingProvider");
-		if (oLoadingProvider) {
-			oLoadingProvider.setLoading(true);
+		var oLoadingProvider = this.getAggregation("_loadingProvider"),
+			oCard = this.getCardInstance();
+
+		if (!oLoadingProvider) {
+			return;
+		}
+
+		oLoadingProvider.setLoading(true);
+
+		if (oCard) {
+			oCard.addActiveLoadingProvider(oLoadingProvider);
 		}
 	};
 
@@ -414,9 +423,17 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	BaseContent.prototype.hideLoadingPlaceholders = function () {
-		var oLoadingProvider = this.getAggregation("_loadingProvider");
-		if (oLoadingProvider) {
-			oLoadingProvider.setLoading(false);
+		var oLoadingProvider = this.getAggregation("_loadingProvider"),
+			oCard = this.getCardInstance();
+
+		if (!oLoadingProvider || !oLoadingProvider.getLoading()) {
+			return;
+		}
+
+		oLoadingProvider.setLoading(false);
+
+		if (oCard) {
+			oCard.removeActiveLoadingProvider(oLoadingProvider);
 		}
 	};
 
