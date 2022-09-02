@@ -3007,6 +3007,9 @@ sap.ui.define([
 			iDataRequested = 0,
 			oFormContext,
 			oModel = this.createSalesOrdersModel123({autoExpandSelect : true}),
+			fnResolve,
+			oPromise1,
+			oPromise2,
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')/SO_2_BP}">\
 	<Text id="city" text="{Address/City}"/>\
@@ -3083,17 +3086,25 @@ sap.ui.define([
 
 			// late property request
 			that.expectRequest("SalesOrderList('1')/SO_2_BP?sap-client=123"
-					+ "&$select=BusinessPartnerID,CompanyName", {
-					"@odata.etag" : "etag",
-					BusinessPartnerID : "2",
-					CompanyName : "SAP"
-				});
+					+ "&$select=BusinessPartnerID,CompanyName",
+					new Promise(function (resolve) { fnResolve = resolve; }));
 
-			// code under test
-			return oFormContext.requestProperty("CompanyName").then(function (sValue) {
-				assert.strictEqual(sValue, "SAP");
-			});
+			oPromise1 = oFormContext.requestProperty("CompanyName");
+
+			return that.waitForChanges(assert); // so that the request has actually been sent
 		}).then(function () {
+			// code under test - must not be requested again, although the request is pending
+			oPromise2 = oFormContext.requestProperty("CompanyName");
+
+			fnResolve({
+				"@odata.etag" : "etag",
+				BusinessPartnerID : "2",
+				CompanyName : "SAP"
+			});
+
+			return Promise.all([oPromise1, oPromise2]);
+		}).then(function (aResults) {
+			assert.deepEqual(aResults, ["SAP", "SAP"]);
 			assert.strictEqual(iDataRequested, 2);
 			assert.strictEqual(iDataReceived, 2);
 
