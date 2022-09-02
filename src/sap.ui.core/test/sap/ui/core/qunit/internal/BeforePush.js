@@ -127,6 +127,13 @@
 		return JSON.parse(localStorage.getItem(sLastKey) || "{}");
 	}
 
+	// adjusts the URL to the page's base, knows where Test.qunit.html is
+	function normalizeUrl(sSimplifiedUrl) {
+		return sSimplifiedUrl.startsWith("Test.qunit.html?")
+			? "../../../../resources/sap/ui/test/starter/" + sSimplifiedUrl
+			: "test-resources/sap/ui/core/" + sSimplifiedUrl;
+	}
+
 	/**
 	 * Runs the tests.
 	 *
@@ -339,9 +346,7 @@
 		bVisible = !iFrames;
 		document.getElementById("list").classList.remove("hidden");
 		aTests = aTests.map(function (sSimplifiedUrl) {
-			var sUrl = sSimplifiedUrl.startsWith("Test.qunit.html?")
-				? "../../../../resources/sap/ui/test/starter/" + sSimplifiedUrl
-				: "test-resources/sap/ui/core/" + sSimplifiedUrl;
+			var sUrl = normalizeUrl(sSimplifiedUrl);
 
 			return createTest(sSimplifiedUrl.replace(/testsuite=.*?&/, ""), sUrl);
 		});
@@ -388,9 +393,46 @@
 		oElement.firstChild.textContent = sTitle;
 	}
 
+	// Show a list of test apps (if given). mApps must be a map from name to an array of URLs:
+	// the app, the app with realOData, the OPA and (optionally) the OPA with realOData
+	function showApps(mApps) {
+		var oTable = document.getElementById("apps");
+
+		function addCell(oRow, sText, sUrl) {
+			var oCell = document.createElement("td"),
+				oTextNode = document.createTextNode(sText),
+				oContent = oTextNode;
+
+			if (sUrl) {
+				oContent = document.createElement("a");
+				oContent.setAttribute("href", normalizeUrl(sUrl));
+				oContent.appendChild(oTextNode);
+			}
+			oCell.appendChild(oContent);
+			oRow.appendChild(oCell);
+		}
+
+		if (!mApps) {
+			return;
+		}
+		Object.keys(mApps).forEach(function (sApp) {
+			var aLinks = mApps[sApp],
+				oRow = document.createElement("tr");
+
+			addCell(oRow, sApp);
+			addCell(oRow, "App", aLinks[0]);
+			addCell(oRow, "(realOData)", aLinks[1]);
+			addCell(oRow, "OPA", aLinks[2]);
+			if (aLinks.length > 3) {
+				addCell(oRow, "(realOData)", aLinks[3]);
+			}
+			oTable.appendChild(oRow);
+		});
+	}
+
 	// Shows a list of links to the most common variants
 	function variants() {
-		var oList = document.getElementById("variants"),
+		var oList = document.getElementById("variantsList"),
 			mQueryOptions = {
 				team : mParameters.team,
 				frames : mParameters.frames || 4
@@ -410,6 +452,7 @@
 			oItem.appendChild(oAnchor);
 			oList.appendChild(oItem);
 		});
+		document.getElementById("variants").classList.remove("hidden");
 	}
 
 	// For the onload handler and the button "Run"
@@ -444,20 +487,21 @@
 			return;
 		}
 		setTitle(mParameters.team);
-		if (mParameters.variants) {
-			variants();
-			return;
-		}
-		sap.ui.require([sTestsScript], function (mTests) {
+		sap.ui.require([sTestsScript], function (oConfig) {
+			if (mParameters.variants) {
+				variants();
+				showApps(oConfig.apps);
+				return;
+			}
 			switch (mParameters.realOData) {
 				case "false":
-					runTests(mTests, false);
+					runTests(oConfig.tests, false);
 					break;
 				case "true":
-					verifyConnectionAndRun(mTests, true);
+					verifyConnectionAndRun(oConfig.tests, true);
 					break;
 				default:
-					verifyConnectionAndRun(mTests);
+					verifyConnectionAndRun(oConfig.tests);
 			}
 		});
 	});
