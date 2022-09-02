@@ -17,7 +17,9 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: VizBase.getMetadata().getRenderer()
+		renderer: {
+			apiVersion: 2
+		}
 	});
 
 	// create this._oControl and set up the ui control of this visualization

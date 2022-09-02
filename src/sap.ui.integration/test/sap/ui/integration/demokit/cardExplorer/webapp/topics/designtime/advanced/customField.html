@@ -41,7 +41,9 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: VizBase.getMetadata().getRenderer()
+		renderer: {
+			apiVersion: 2
+		}
 	});
 
 	return CustomDateRangeSelection;
