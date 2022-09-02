@@ -72,6 +72,7 @@ sap.ui.define([
 				mSettings.iconInitials = mConfiguration.icon.text;
 				mSettings.iconAlt = mConfiguration.icon.alt;
 				mSettings.iconBackgroundColor = mConfiguration.icon.backgroundColor || (mConfiguration.icon.text ? AvatarColor.Accent6 : AvatarColor.Transparent);
+				mSettings.iconVisible = mConfiguration.icon.visible;
 			}
 
 			if (mSettings.iconSrc) {
@@ -90,7 +91,9 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.integration",
 			properties: {
-				interactive: { type: "boolean", defaultValue: false }
+				interactive: { type: "boolean", defaultValue: false },
+
+				iconVisible: { type: "boolean", defaultValue: true }
 			},
 			aggregations: {
 				/**

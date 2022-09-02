@@ -2224,6 +2224,17 @@
         },
         "backgroundColor": {
           "$ref": "#/definitions/iconBackgroundColor"
+        },
+        "visible": {
+          "description": "Visibility of the icon",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },
