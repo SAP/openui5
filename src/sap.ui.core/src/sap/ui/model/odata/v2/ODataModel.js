@@ -7219,16 +7219,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * @returns {boolean} bRefreshAfterChange Whether to automatically refresh after changes
+	 * Whether all affected bindings are refreshed after a change operation.
+	 *
+	 * This flag can be overruled on request level by providing the <code>refreshAfterChange</code>
+	 * parameter to the corresponding function (for example {@link #update}).
+	 *
+	 * @returns {boolean} Whether to automatically refresh after changes
 	 * @public
 	 * @since 1.46.0
 	 */
-	ODataModel.prototype.getRefreshAfterChange = function() {
+	ODataModel.prototype.getRefreshAfterChange = function () {
 		return this.bRefreshAfterChange;
 	};
 
 	/**
-	 * Defines whether all bindings are updated after a change operation.
+	 * Defines whether all affected bindings are refreshed after a change operation.
 	 *
 	 * This flag can be overruled on request level by providing the <code>refreshAfterChange</code>
 	 * parameter to the corresponding function (for example {@link #update}).
@@ -7237,7 +7242,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.16.3
 	 */
-	ODataModel.prototype.setRefreshAfterChange = function(bRefreshAfterChange) {
+	ODataModel.prototype.setRefreshAfterChange = function (bRefreshAfterChange) {
 		this.bRefreshAfterChange = bRefreshAfterChange;
 	};
 
