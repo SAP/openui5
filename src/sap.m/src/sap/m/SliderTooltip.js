@@ -106,6 +106,7 @@ function(
 		});
 
 		SliderTooltip.prototype.init = function () {
+			SliderTooltipBase.prototype.init.apply(this, arguments);
 			this._oValueStateMessage = new ValueStateMessage(this);
 
 			this._fLastValidValue = 0;
@@ -119,8 +120,6 @@ function(
 		};
 
 		SliderTooltip.prototype.onBeforeRendering = function () {
-			SliderTooltipBase.prototype.setValue.call(this, this.getValue());
-
 			if (!this.oInvisibleMessage) {
 				this.oInvisibleMessage = InvisibleMessage.getInstance();
 			}
