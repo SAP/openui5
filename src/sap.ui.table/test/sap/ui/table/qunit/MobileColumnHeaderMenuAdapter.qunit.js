@@ -7,12 +7,15 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/Table",
 	"sap/ui/table/library",
+	"sap/ui/table/menus/MobileColumnHeaderMenuAdapter",
 	"sap/m/library",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/QuickSort",
 	"sap/m/table/columnmenu/QuickSortItem",
 	"sap/m/table/columnmenu/Item",
+	"sap/m/table/columnmenu/QuickActionContainer",
+	"sap/m/table/columnmenu/ItemContainer",
 	"sap/m/Button",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
@@ -24,12 +27,15 @@ sap.ui.define([
 	Column,
 	Table,
 	library,
+	MobileColumnHeaderMenuAdapter,
 	MLibrary,
 	ColumnMenu,
 	QuickAction,
 	QuickSort,
 	QuickSortItem,
 	Item,
+	QuickActionContainer,
+	ItemContainer,
 	Button,
 	CoreLibrary,
 	oCore,
@@ -330,5 +336,45 @@ sap.ui.define([
 			Device.support.pointer = bOriginalPointerSupport;
 			Device.support.touch = bOriginalTouchSupport;
 		});
+	});
+
+	QUnit.module("API", {
+		beforeEach: function() {
+			this.oMenu = new ColumnMenu();
+			this.oColumn = new Column();
+			this.oTable = TableQUnitUtils.createTable({
+				columns: [this.oColumn]
+			});
+
+			this.oAdapter = new MobileColumnHeaderMenuAdapter();
+			this.oAdapter._oQuickActionContainer = new QuickActionContainer();
+			this.oAdapter._oItemContainer = new ItemContainer();
+		},
+		afterEach: function() {
+			this.oMenu.destroy();
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("injectMenuItems", function(assert) {
+		var oAddAggregationSpy = sinon.spy(this.oMenu, "addAggregation");
+
+		this.oAdapter.injectMenuItems(this.oMenu, this.oColumn);
+		assert.ok(oAddAggregationSpy.calledTwice, "Menu.addAggregation is called twice");
+		assert.ok(oAddAggregationSpy.firstCall.args[0] === "_quickActions" && oAddAggregationSpy.firstCall.args[1] === this.oAdapter._oQuickActionContainer,
+			"QuickActionContainer is added to the menu");
+		assert.ok(oAddAggregationSpy.secondCall.args[0] === "_items" && oAddAggregationSpy.secondCall.args[1] === this.oAdapter._oItemContainer,
+			"ItemContainer is added to the menu");
+	});
+
+	QUnit.test("removeMenuItems", function(assert) {
+		var oRemoveAggregationSpy = sinon.spy(this.oMenu, "removeAggregation");
+
+		this.oAdapter.removeMenuItems(this.oMenu);
+		assert.ok(oRemoveAggregationSpy.calledTwice, "Menu.removeAggregation is called twice");
+		assert.ok(oRemoveAggregationSpy.firstCall.args[0] === "_quickActions" && oRemoveAggregationSpy.firstCall.args[1] === this.oAdapter._oQuickActionContainer,
+			"QuickActionContainer is removed from the menu");
+		assert.ok(oRemoveAggregationSpy.secondCall.args[0] === "_items" && oRemoveAggregationSpy.secondCall.args[1] === this.oAdapter._oItemContainer,
+			"ItemContainer is removed from the menu");
 	});
 });
