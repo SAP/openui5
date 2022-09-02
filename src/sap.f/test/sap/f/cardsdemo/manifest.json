@@ -258,6 +258,11 @@
 					"target": "manifestResolver"
 				},
 				{
+					"pattern": "stateChangedEvent",
+					"name": "stateChangedEvent",
+					"target": "stateChangedEvent"
+				},
+				{
 					"pattern": "showCardWithResolvedManifest",
 					"name": "showCardWithResolvedManifest",
 					"target": "showCardWithResolvedManifest"
@@ -482,6 +487,11 @@
 				"manifestResolver": {
 					"id": "manifestResolver",
 					"name": "ManifestResolver",
+					"level": 1
+				},
+				"stateChangedEvent": {
+					"id": "stateChangedEvent",
+					"name": "StateChangedEvent",
 					"level": 1
 				},
 				"showCardWithResolvedManifest": {

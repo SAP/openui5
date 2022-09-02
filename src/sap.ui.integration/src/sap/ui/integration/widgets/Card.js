@@ -440,7 +440,14 @@ sap.ui.define([
 				 *
 				 * @ui5-restricted
 				 */
-				manifestApplied: {}
+				manifestApplied: {},
+
+				/**
+				 * Fired when the state of the card is changed.
+				 * For example - the card is ready, new page is selected, a filter is changed or data is refreshed.
+				 * @experimental since 1.107
+				 */
+				stateChanged: {}
 			},
 			associations: {
 
@@ -619,6 +626,7 @@ sap.ui.define([
 		Promise.all(this._aReadyPromises).then(function () {
 			this._bReady = true;
 			this.fireEvent("_ready");
+			this._fireStateChanged();
 		}.bind(this));
 
 		this.attachEventOnce("_dataReady", this._fnOnDataReady);
@@ -2484,7 +2492,7 @@ sap.ui.define([
 	Card.prototype._fireConfigurationChange = function (mChanges) {
 		var oHostInstance = this.getHostInstance();
 
-		if (!this._bReady) {
+		if (!this.isReady()) {
 			return;
 		}
 
@@ -2500,8 +2508,30 @@ sap.ui.define([
 		}
 	};
 
+	Card.prototype._fireStateChanged = function () {
+		var oHostInstance = this.getHostInstance();
+
+		if (!this.isReady()) {
+			return;
+		}
+
+		this.fireStateChanged();
+
+		if (oHostInstance) {
+			oHostInstance.fireCardStateChanged({
+				card: this
+			});
+		}
+	};
+
+	Card.prototype._fireDataChange = function () {
+		this.fireEvent("_dataChange");
+		this._fireStateChanged();
+	};
+
 	Card.prototype._fireContentDataChange = function () {
 		this.fireEvent("_contentDataChange");
+		this._fireDataChange();
 	};
 
 	/**

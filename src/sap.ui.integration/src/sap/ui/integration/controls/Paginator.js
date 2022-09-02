@@ -249,7 +249,7 @@ sap.ui.define([
 	};
 
 	Paginator.prototype._clearAnimation = function () {
-		if (!this._hasAnimation()) {
+		if (!this._hasAnimation() || !this._bActiveAnimation) {
 			return;
 		}
 

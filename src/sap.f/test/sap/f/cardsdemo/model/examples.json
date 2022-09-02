@@ -129,6 +129,12 @@
 		"group": "Mobile SDK Examples"
 	},
 	{
+		"title": "stateChanged Event",
+		"description": "Play around with stateChanged event",
+		"route": "stateChangedEvent",
+		"group": "Mobile SDK Examples"
+	},
+	{
 		"title": "Default Header",
 		"description": "Example page for Card with Default Header",
 		"route": "defaultHeader",

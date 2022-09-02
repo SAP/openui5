@@ -1,0 +1,53 @@
+<mvc:View
+		controllerName="sap.f.cardsdemo.controller.StateChangedEvent"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core"
+		xmlns:w="sap.ui.integration.widgets"
+		xmlns:editor="sap.ui.codeeditor"
+		displayBlock="true">
+	<Page title="{i18n>appTitle}" enableScrolling="false">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Resolve Manifest" />
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<VBox renderType="Bare" height="100%">
+			<Button text="Refresh Card" press=".onRefresh" />
+			<Button text="Refresh Card Data" press=".onRefreshData" />
+			<HBox>
+				<layoutData>
+					<FlexItemData minHeight="0" growFactor="1"></FlexItemData>
+				</layoutData>
+				<VBox renderType="Bare">
+					<Title text="Card" class="sapUiTinyMargin" />
+					<ScrollContainer vertical="true">
+						<w:Card id="card1"
+								width="300px"
+								stateChanged=".onStateChanged"
+								class="sapUiSmallMargin"
+								manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/mobileSdk/manifest.json" />
+						<layoutData>
+							<FlexItemData growFactor="1"></FlexItemData>
+						</layoutData>
+					</ScrollContainer>
+				</VBox>
+				<VBox>
+					<Title text="Output" class="sapUiTinyMargin" />
+					<editor:CodeEditor
+							id="output"
+							type="json">
+						<editor:layoutData>
+							<FlexItemData growFactor="1"></FlexItemData>
+						</editor:layoutData>
+					</editor:CodeEditor>
+					<layoutData>
+						<FlexItemData growFactor="1"></FlexItemData>
+					</layoutData>
+				</VBox>
+			</HBox>
+		</VBox>
+	</Page>
+</mvc:View>

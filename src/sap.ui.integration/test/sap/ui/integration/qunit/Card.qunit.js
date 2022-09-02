@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/Host",
 	"sap/ui/integration/cards/BaseContent",
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/cards/filters/SelectFilter",
@@ -27,6 +28,7 @@ sap.ui.define([
 ],
 	function (
 		Card,
+		Host,
 		BaseContent,
 		Header,
 		Filter,
@@ -2637,6 +2639,61 @@ sap.ui.define([
 					}
 				}
 			});
+		});
+
+		QUnit.test("Event stateChanged is fired on refreshData", function (assert) {
+			var done = assert.async(),
+				oCard = this.oCard,
+				oHost = new Host();
+
+			assert.expect(4);
+
+			oCard.setHost(oHost);
+
+			oCard.attachEventOnce("stateChanged", function () {
+				assert.ok(true, "stateChanged is called on card ready");
+
+				oCard.attachEventOnce("stateChanged", function () {
+					assert.ok(true, "stateChanged is called after data refresh");
+				});
+			});
+
+			oHost.attachEventOnce("cardStateChanged", function () {
+				assert.ok(true, "cardStateChanged for host is called on card ready");
+
+				oHost.attachEventOnce("cardStateChanged", function () {
+					assert.ok(true, "cardStateChanged for host is called after data refresh");
+
+					// Clean up
+					oHost.destroy();
+					done();
+				});
+
+				// Act
+				oCard.refreshData();
+			});
+
+			// Act
+			oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.stateChanged"
+				},
+				"sap.card": {
+					"type": "List",
+					"content": {
+						"data": {
+							"request": {
+								"url": "items.json"
+							}
+						},
+						"item": {
+							"title": "{Name}"
+						}
+					}
+				}
+			});
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 
 		QUnit.module("Data mode", {
