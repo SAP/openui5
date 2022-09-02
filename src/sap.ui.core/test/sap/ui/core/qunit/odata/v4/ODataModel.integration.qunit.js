@@ -2145,7 +2145,7 @@ sap.ui.define([
 			dRetryAfter = new Date(),
 			sView = '<Text text="{/EMPLOYEES(\'1\')/ID}"/>';
 
-		this.mock(Configuration).expects("getStatistics").withExactArgs()
+		this.mock(Configuration).expects("getStatisticsEnabled").withExactArgs()
 			.returns(true);
 		oModel = this.createModel("/sap/statistics/", {groupId : "$direct"}, {
 			"/sap/statistics/$metadata?sap-statistics=true"
@@ -2208,7 +2208,7 @@ sap.ui.define([
 	QUnit.test("sap-statistics for $batch", function (assert) {
 		var oModel;
 
-		this.mock(Configuration).expects("getStatistics").withExactArgs().returns(true);
+		this.mock(Configuration).expects("getStatisticsEnabled").withExactArgs().returns(true);
 		oModel = this.createModel("/sap/statistics/", {earlyRequests : true}, {
 			"HEAD /sap/statistics/?sap-statistics=true" : {},
 			"/sap/statistics/$metadata?sap-statistics=true"

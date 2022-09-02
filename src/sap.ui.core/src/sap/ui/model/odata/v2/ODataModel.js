@@ -385,7 +385,7 @@ sap.ui.define([
 			this.sUser = sUser;
 			this.sPassword = sPassword;
 
-			if (Configuration.getStatistics()) {
+			if (Configuration.getStatisticsEnabled()) {
 				// add statistics parameter to every request (supported only on Gateway servers)
 				this.aUrlParams.push("sap-statistics=true");
 			}

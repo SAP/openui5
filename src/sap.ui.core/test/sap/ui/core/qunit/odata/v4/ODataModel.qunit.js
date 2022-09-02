@@ -103,7 +103,8 @@ sap.ui.define([
 
 		this.mock(ODataModel.prototype).expects("buildQueryOptions")
 			.withExactArgs({}, false, true).returns({"sap-client" : "279"});
-		this.mock(Configuration).expects("getStatistics").withExactArgs().returns(bStatistics);
+		this.mock(Configuration).expects("getStatisticsEnabled")
+			.withExactArgs().returns(bStatistics);
 		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", bStatistics
 				? {"sap-client" : "279", "sap-statistics" : true}
@@ -431,7 +432,8 @@ sap.ui.define([
 			},
 			fnSubmitAuto = function () {};
 
-		this.mock(Configuration).expects("getStatistics").withExactArgs().returns(bStatistics);
+		this.mock(Configuration).expects("getStatisticsEnabled")
+			.withExactArgs().returns(bStatistics);
 		oExpectedCreate
 			.withExactArgs(sServiceUrl, {
 					fetchEntityContainer : "~fnFetchEntityContainer~",
