@@ -462,6 +462,7 @@ sap.ui.define([
 				}
 			});
 		}
+		var sPlacement = oField.getPopoverPlacement(oControl._oValueHelpIcon);
 		if (!that._oTranslationPopover) {
 			var oList = new List({
 				//mode: "Delete",
@@ -496,7 +497,6 @@ sap.ui.define([
 					groupHeaderFactory: oField.getGroupHeader
 				}
 			});
-			var sPlacement = oField.getPreviewPosition() === "right" ? "Right" : "Left";
 			that._oTranslationPopover = new Popover({
 				placement: sPlacement,
 				contentWidth: "300px",
@@ -584,6 +584,7 @@ sap.ui.define([
 			});
 			that._oTranslationPopover.setModel(oModel, "languages");
 		} else {
+			that._oTranslationPopover.setPlacement(sPlacement);
 			oModel = that._oTranslationPopover.getModel("languages");
 			oModel.setData(aTranslatedValues);
 			oModel.checkUpdate(true);

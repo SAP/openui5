@@ -133,11 +133,13 @@ sap.ui.define([
 			var iOffsetHeight = (!oPreview || oPreview.getDomRef() === null || oPreview.getDomRef().offsetHeight === 0) ? 350 : oPreview.getDomRef().offsetHeight;
 			oPopover.setContentWidth(iOffsetWidth + "px");
 			oPopover.setContentHeight((iOffsetHeight - 50) + "px");
-			if (oParent.getPreviewPosition() === "right") {
-				oPopover.setPlacement("Right");
-			} else {
-				oPopover.setPlacement("Left");
+			var sPlacement = "Right";
+			var iX = oField.getDomRef().getBoundingClientRect().x;
+			var iWidth = document.body.offsetWidth;
+			if ( 2 * iX > iWidth) {
+				sPlacement = "Left";
 			}
+			oPopover.setPlacement(sPlacement);
 			oDynamicValueField.setValue(oField._label);
 			oPopover.openBy(oField);
 		} else {

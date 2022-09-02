@@ -828,8 +828,14 @@ sap.ui.define([
 		return oItem;
 	};
 
-	BaseField.prototype.getPreviewPosition = function () {
-		return this._settingsModel.getProperty("/preview/position");
+	BaseField.prototype.getPopoverPlacement = function (oControl) {
+		var sPlacement = "Right";
+		var iX = oControl.getDomRef().getBoundingClientRect().x;
+		var iWidth = document.body.offsetWidth;
+		if ( 2 * iX > iWidth) {
+			sPlacement = "Left";
+		}
+		return sPlacement;
 	};
 
 	return BaseField;

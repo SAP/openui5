@@ -2952,14 +2952,12 @@ sap.ui.define([
 		if (this.getMode() !== "translation") {
 			this._initPreview().then(function() {
 				Promise.all(this._aFieldReadyPromise).then(function () {
-					this.setPreviewPositionForFields();
 					this._ready = true;
 					this.fireReady();
 				}.bind(this));
 			}.bind(this));
 		} else {
 			Promise.all(this._aFieldReadyPromise).then(function () {
-				this.setPreviewPositionForFields();
 				this._ready = true;
 				this.fireReady();
 			}.bind(this));
@@ -2978,14 +2976,6 @@ sap.ui.define([
 			this.setProperty("width", sValue);
 			document.body.style.setProperty("--sapUiIntegrationEditorFormWidth", sValue);
 		}
-	};
-
-	Editor.prototype.setPreviewPositionForFields = function() {
-		var sPosition = this.hasPreview() ? this.getPreviewPosition() : "";
-		var oSettings = this._settingsModel.getData();
-		oSettings.preview = oSettings.preview || {};
-		oSettings.preview.position = sPosition;
-		this._settingsModel.setData(oSettings);
 	};
 
 	/**
