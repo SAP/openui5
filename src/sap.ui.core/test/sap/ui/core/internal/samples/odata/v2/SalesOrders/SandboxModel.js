@@ -225,12 +225,6 @@ sap.ui.define([
 	function getMockServerFixtures() {
 		return {
 			mFixture : {
-				"$metadata" : {
-					source : "metadata.xml"
-				},
-				"$metadata?sap-language=EN" : {
-					source : "metadata.xml"
-				},
 				"SalesOrderSet?$skip=0&$top=4&$orderby=SalesOrderID%20desc&$select=CurrencyCode%2cGrossAmount%2cNote%2cSalesOrderID" : {
 					source : "SalesOrdersTableData/SalesOrderSet-SalesOrderTable.json"
 				},
@@ -690,8 +684,27 @@ sap.ui.define([
 				}
 			},
 			aRegExpFixture : [{
+				regExp : /GET .*\/\$metadata/,
+				response : {
+					ifMatch : function (request) {
+						iTimesSaved = 0; // reset counter with each metadata request
 
-				/* Test Case III */
+						return true;
+					},
+					source : "metadata.xml"
+				}
+			}, {
+				regExp : /GET .*\/SAP__Currencies\?/,
+				response : {
+					source : "../../data/SAP__Currencies.json"
+				}
+			}, {
+				regExp : /GET .*\/SAP__UnitsOfMeasure\?/,
+				response : {
+					source : "../../data/SAP__UnitsOfMeasure.json"
+				}
+			}, {
+				/* Messages: Test Case III */
 				regExp :
 					/GET .*\/SalesOrderSet\('103'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])/,
 				response : [{

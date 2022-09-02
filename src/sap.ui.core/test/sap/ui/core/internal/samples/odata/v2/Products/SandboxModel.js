@@ -15,21 +15,27 @@ sap.ui.define([
 
 	var oMockData = {
 			mFixture : {
-				"$metadata?customAll='custom%2Fall'&customMeta='custom%2Fmeta'" : {
-					source : "metadata.xml"
-				},
 				"ProductSet?customAll='custom%2Fall'&customService='custom%2Fservice'&$skip=0&$top=5&$inlinecount=allpages" :
 				{
 					source : "ProductSet_0_5.json"
-				},
-				"SAP__Currencies?customAll='custom%2Fall'&customService='custom%2Fservice'&$skip=0&$top=5000" : {
-					source : "SAP__Currencies.json"
-				},
-				"SAP__UnitsOfMeasure?customAll='custom%2Fall'&customService='custom%2Fservice'&$skip=0&$top=5000" : {
-					source : "SAP__UnitsOfMeasure.json"
 				}
 			},
-			aRegExpFixture : []
+			aRegExpFixture : [{
+				regExp : /GET .*\/\$metadata/,
+				response : {
+					source : "metadata.xml"
+				}
+			}, {
+				regExp : /GET .*\/SAP__Currencies\?/,
+				response : {
+					source : "../../data/SAP__Currencies.json"
+				}
+			}, {
+				regExp : /GET .*\/SAP__UnitsOfMeasure\?/,
+				response : {
+					source : "../../data/SAP__UnitsOfMeasure.json"
+				}
+			}]
 		};
 
 	return ODataModel.extend("sap.ui.core.internal.samples.odata.v2.Products.SandboxModel", {

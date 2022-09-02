@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/util/UriParameters",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/InvisibleText",
@@ -23,10 +24,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/performance/Measurement",
 	"sap/ui/test/TestUtils"
-], function (Log, BindingParser, SyncPromise, InvisibleText, BindingMode, ClientContextBinding,
-		Context, FilterProcessor, MetaModel, Model, JSONListBinding, JSONModel, JSONPropertyBinding,
-		JSONTreeBinding, CountMode, ODataMetaModel, ODataModel1, Utils, ODataModel, Measurement,
-		TestUtils) {
+], function (Log, UriParameters, BindingParser, SyncPromise, InvisibleText, BindingMode,
+		ClientContextBinding, Context, FilterProcessor, MetaModel, Model, JSONListBinding,
+		JSONModel, JSONPropertyBinding, JSONTreeBinding, CountMode, ODataMetaModel, ODataModel1,
+		Utils, ODataModel, Measurement, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0,
 		consistent-this: 0*/
@@ -3960,6 +3961,82 @@ sap.ui.define([
 			});
 	});
 		});
+	});
+});
+
+	//*********************************************************************************************
+[{
+	sMetadataUrl : "/fake/emptySchema/$metadata",
+	mReadUrlParams : {$skip : 0, $top : 5000}
+}, {
+	sMetadataUrl : "/fake/emptySchema/$metadata?sap-client=123",
+	mReadUrlParams : {"sap-client" : "123", $skip : 0, $top : 5000}
+}, {
+	sMetadataUrl : "/fake/emptySchema/$metadata?sap-language=EN",
+	mReadUrlParams : {"sap-language" : "EN", $skip : 0, $top : 5000}
+}, {
+	sMetadataUrl : "/fake/emptySchema/$metadata?sap-language=EN&sap-documentation=heading"
+		+ "&sap-client=123",
+	mReadUrlParams : {"sap-client" : "123", "sap-language" : "EN", $skip : 0, $top : 5000}
+}].forEach(function (oFixture, i) {
+	["CurrencyCodes", "UnitsOfMeasure"].forEach(function (sCodeList) {
+	var sTitle = "fetchCodeList: consider client and language; " + sCodeList + "; #" + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var mCodeListUrl2Promise,
+			oCodeListModel = {
+				read : function () {}
+			},
+			oCodeListModelCache = {bFirstCodeListRequested : false, oModel : oCodeListModel},
+			oCodeListModelMock = this.mock(oCodeListModel),
+			oDataModel = new ODataModel("/fake/emptySchema"),
+			oDataModelMock = this.mock(oDataModel),
+			oEntityContainer = {
+				"com.sap.vocabularies.CodeList.v1.CurrencyCodes" : {
+					CollectionPath : {String : "CurrencyCodes"},
+					Url : {String : "./$metadata"}
+				},
+				"com.sap.vocabularies.CodeList.v1.UnitsOfMeasure" : {
+					CollectionPath : {String : "UnitsOfMeasure"},
+					Url : {String : "./$metadata"}
+				}
+			},
+			oMetaModel = oDataModel.getMetaModel(),
+			oMetaModelMock = this.mock(oMetaModel);
+
+		oMetaModelMock.expects("getODataEntityContainer").withExactArgs().returns(oEntityContainer);
+		oDataModelMock.expects("getMetadataUrl").withExactArgs().returns(oFixture.sMetadataUrl);
+		// A workaround to get the global cache instances as they are not visible to the test, don't
+		// mock Map.prototype as test framework uses also Map i.e. for storing uncaught promises
+		this.mock(Map.prototype).expects("get")
+			.withExactArgs(oFixture.sMetadataUrl + "#" + sCodeList)
+			.callsFake(function (sKey) {
+				mCodeListUrl2Promise = this;
+				Map.prototype.get.restore();
+
+				return undefined;
+			});
+		oMetaModelMock.expects("_getOrCreateSharedModelCache")
+			.withExactArgs()
+			.returns(oCodeListModelCache);
+		this.mock(UriParameters).expects("fromURL")
+			.withExactArgs(oFixture.sMetadataUrl)
+			.callThrough();
+		oCodeListModelMock.expects("read").withExactArgs("/" + sCodeList, sinon.match.object)
+			.callsFake(function (sPath, mParams) {
+				assert.deepEqual(mParams.urlParameters, oFixture.mReadUrlParams);
+				mParams.success({results : []});
+			});
+		oMetaModelMock.expects("_getPropertyNamesForCodeListCustomizing")
+			.withExactArgs(sCodeList)
+			.returns({});
+
+		// code under test
+		return oMetaModel.fetchCodeList(sCodeList)
+			.finally(function () {
+				mCodeListUrl2Promise.clear(); // clear promise cache
+			});
+	});
 	});
 });
 
