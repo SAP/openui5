@@ -610,6 +610,16 @@ sap.ui.define([
 				return dialog;
 			},
 
+			openSearchPicker: function() {
+				if (!this.oPicker) {
+					this.oPicker = this.createSearchPicker();
+				}
+
+				if (!this.oPicker.isOpen()) {
+					this.oPicker.open();
+				}
+			},
+
 			createSearchPickerContent: function() {
 				return Fragment.load({
 					name: "sap.ui.documentation.sdk.view.GlobalSearchPicker",
@@ -1537,13 +1547,7 @@ sap.ui.define([
 				sPreferencedCategory = oModel.getProperty("/preferencedCategory"),
 				bIncludeDeprecated = oModel.getProperty("/includeDeprecated");
 
-				if (!this.oPicker) {
-					this.oPicker = this.createSearchPicker();
-				}
-
-				if (!this.oPicker.isOpen()) {
-					this.oPicker.open();
-				}
+				this.openSearchPicker();
 
 				if (this.highlighter) {
 					this.highlighter.highlight(sQuery);
@@ -1597,7 +1601,11 @@ sap.ui.define([
 					SearchUtil.init();
 
 					setTimeout(function () {
-						this._oView.byId("searchControl").getAggregation("_searchField").getFocusDomRef().focus();
+						if (Device.system.desktop) {
+							this._oView.byId("searchControl").getAggregation("_searchField").getFocusDomRef().focus();
+						} else {
+							this.openSearchPicker();
+						}
 					}.bind(this), 0);
 
 					if (bPhoneSize) {
