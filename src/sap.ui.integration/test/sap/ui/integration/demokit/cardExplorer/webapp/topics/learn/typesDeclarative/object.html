@@ -218,17 +218,6 @@
 						<td>1.25.0</td>
 						<td>1.81</td>
 					</tr>
-					<tr>
-						<td>initials</td>
-						<td>string</td>
-						<td>No</td>
-						<td>
-							Used as fallback if the "src" property is not set or there is an issue with the resource. Up to two Latin letters can be displayed.
-							If there are more than two letters, or if there's a non-Latin character present, a default image placeholder will be created.
-						</td>
-						<td>1.47.0</td>
-						<td>1.107</td>
-					</tr>
 				</table>
 			</div>
 
@@ -405,6 +394,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
+						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
 						<th>Since</th>
@@ -412,6 +402,7 @@
 					<tr>
 						<td>icon</td>
 						<td><a href="#iconGroupIconApi">IconGroupIcon</a></td>
+						<td>Yes</td>
 						<td>Defines the properties of the icons.</td>
 						<td>1.41</td>
 						<td>1.100</td>
@@ -419,6 +410,7 @@
 					<tr>
 						<td>actions</td>
 						<td><a href="../../../index.html#/learn/actions" target="_parent">Actions[]</a></td>
+						<td>No</td>
 						<td>Actions that are triggered when the icon is pressed.</td>
 						<td>1.41</td>
 						<td>1.100</td>
@@ -432,6 +424,7 @@
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
+						<th>Required</th>
 						<th>Description</th>
 						<th>Schema Version</th>
 						<th>Since</th>
@@ -439,6 +432,7 @@
 					<tr>
 						<td>src</td>
 						<td>string</td>
+						<td>Yes</td>
 						<td>Icon name or source URL</td>
 						<td>1.41</td>
 						<td>1.100</td>
@@ -457,6 +451,7 @@
 					<tr>
 						<td>alt</td>
 						<td>string</td>
+						<td>No</td>
 						<td>Alternative text for the icon. Also shown as a tooltip. Enables you to provide meaningful alternative texts to support screen-reader users.</td>
 						<td>1.41</td>
 						<td>1.100</td>
@@ -520,6 +515,17 @@
 						</td>
 						<td>1.27.0</td>
 						<td>1.83</td>
+					</tr>
+					<tr>
+						<td>initials</td>
+						<td>string</td>
+						<td>No</td>
+						<td>
+							Used as fallback if the "src" property is not set or there is an issue with the resource. Up to two Latin letters can be displayed.
+							If there are more than two letters, or if there's a non-Latin character present, a default image placeholder will be created.
+						</td>
+						<td>1.47.0</td>
+						<td>1.107</td>
 					</tr>
 				</table>
 			</div>
