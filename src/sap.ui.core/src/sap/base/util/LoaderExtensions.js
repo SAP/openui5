@@ -286,6 +286,7 @@ sap.ui.define([
 			// data available
 			oData = convertData(oData);
 
+			fnDone();
 			if (mOptions.async) {
 				return Promise.resolve(oData);
 			} else {
