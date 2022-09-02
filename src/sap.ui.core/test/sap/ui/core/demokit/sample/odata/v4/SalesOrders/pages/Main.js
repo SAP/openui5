@@ -416,7 +416,7 @@ sap.ui.define([
 								}
 								aCreatedEntityPaths.push(sPath);
 								Opa5.assert.ok(true, "Remembered SalesOrder: " + sPath);
-							});
+							}, function () { /* ignore */ });
 						}});
 					}
 				},
