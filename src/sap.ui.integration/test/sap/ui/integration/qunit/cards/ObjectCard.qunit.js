@@ -2000,7 +2000,7 @@ sap.ui.define([
 				"records": [
 					{
 						"bindingPath": "/reason",
-						"message": "Field is required",
+						"message": oResourceBundle.getText("EDITOR_VAL_FIELDREQ"),
 						"type": "Error"
 					},
 					{
@@ -2027,7 +2027,7 @@ sap.ui.define([
 				"records": [
 					{
 						"bindingPath": "/reason",
-						"message": "Field is required",
+						"message": oResourceBundle.getText("EDITOR_VAL_FIELDREQ"),
 						"type": "Error"
 					},
 					{
@@ -2058,7 +2058,7 @@ sap.ui.define([
 					"records": [
 						{
 							"bindingPath": "/reason2",
-							"message": "Only listed values are allowed",
+							"message": oResourceBundle.getText("EDITOR_ONLY_LISTED_VALUES_ALLOWED"),
 							"type": "Error"
 						},
 						{
