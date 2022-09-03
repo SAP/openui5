@@ -22,17 +22,38 @@ sap.ui.define([
 			quantity : null,
 			_Product_ID : 10
 		},
+		oProduct100 = {
+			ID : 100,
+			amount : null,
+			categoryID : null,
+			_Category_ID : null,
+			HasActiveEntity : false,
+			HasDraftEntity : false,
+			IsActiveEntity : true,
+			name : null
+		},
 		bPart101Persisted,
 		oMockData = {
 			sFilterBase : "/MyProducts/",
 			mFixture : {
-				"Products?$filter=IsActiveEntity%20eq%20false%20or%20SiblingEntity/IsActiveEntity%20eq%20null&$select=HasDraftEntity,ID,IsActiveEntity,name&$skip=0&$top=20" : {
+				"Products?$count=true&$filter=IsActiveEntity%20eq%20false%20or%20SiblingEntity/IsActiveEntity%20eq%20null&$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,name&$skip=0&$top=20" : {
 					ifMatch : function () {
 						bPart101Persisted = false;
 						return true;
 					},
 					source : "Products.json"
 				},
+				"Products?$count=true&$filter=IsActiveEntity%20eq%20false%20or%20SiblingEntity/IsActiveEntity%20eq%20null&$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,name&$skip=0&$top=18" : {
+					source : "Products.json"
+				},
+				"Products(ID=10,IsActiveEntity=false)/_Parts?$count=true&$select=ID,description,quantity&$skip=0&$top=118" : [{
+					ifMatch : function () {
+						return bPart101Persisted;
+					},
+					source : "Product_10_Parts_with_Part_101.json"
+				}, {
+					source : "Product_10_Parts.json"
+				}],
 				"Products(ID=10,IsActiveEntity=false)/_Parts?$count=true&$select=ID,description,quantity&$skip=0&$top=120" : [{
 					ifMatch : function () {
 						return bPart101Persisted;
@@ -47,11 +68,42 @@ sap.ui.define([
 				"Products(ID=10,IsActiveEntity=false)/_Parts(101)?$select=ID,description,quantity" : {
 					message : oPart101
 				},
+				"Products(ID=20,IsActiveEntity=false)/_Parts?$count=true&$select=ID,description,quantity&$skip=0&$top=118" : {
+					source : "Product_20_Parts.json"
+				},
 				"Products(ID=20,IsActiveEntity=false)/_Parts?$count=true&$select=ID,description,quantity&$skip=0&$top=120" : {
 					source : "Product_20_Parts.json"
 				},
+				"Products(ID=20,IsActiveEntity=false)/_Parts?$count=true&$select=ID,description,quantity&$orderby=quantity&$skip=0&$top=118" : {
+					source : "Product_20_Parts_sorted.json"
+				},
 				"Products(ID=20,IsActiveEntity=false)/_Parts?$count=true&$select=ID,description,quantity&$orderby=quantity&$skip=0&$top=120" : {
 					source : "Product_20_Parts_sorted.json"
+				},
+				"Products(ID=100,IsActiveEntity=true)/_Parts?$count=true&$select=ID,description,quantity&$orderby=quantity&$skip=0&$top=120" : {
+					message : {value : []}
+				},
+				"Products(ID=100,IsActiveEntity=false)?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,name" : {
+					message : oProduct100
+				},
+				"POST Products" : [{
+					ifMatch : /"ID":100/,
+					message : {
+						ID : 100,
+						amount : null,
+						categoryID : null,
+						_Category_ID : null,
+						HasActiveEntity : false, // differs from oProduct100
+						HasDraftEntity : false,
+						IsActiveEntity : false,
+						name : null
+					}
+				}],
+				"POST Products(ID=100,IsActiveEntity=false)/SampleService.draftActivate?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,name" : {
+					message : oProduct100
+				},
+				"POST Products(ID=100,IsActiveEntity=true)/SampleService.draftEdit?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,name" : {
+					message : oProduct100
 				},
 				"POST Products(ID=10,IsActiveEntity=false)/_Parts" : [{
 					ifMatch : /"ID":99/,

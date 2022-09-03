@@ -1,130 +1,179 @@
 <mvc:View
-	class="sapUiSizeCompact"
-	controllerName="sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.Main"
-	height="100%"
-	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:f="sap.f"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:t="sap.ui.table">
+	xmlns:t="sap.ui.table"
+	xmlns="sap.m"
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.Main"
+	height="100%">
 <App>
-	<Page id="page" showHeader="false">
-		<Toolbar>
-			<Button enabled="true" icon="sap-icon://refresh" id="refresh"
-				press="onRefresh" tooltip="Refresh"/>
-			<Button id="save" text="Save" press="onSave" visible="{ui>/bAPI}"
-				tooltip="Save changes"/>
-			<Button id="cancel" text="Cancel" press="onCancel" visible="{ui>/bAPI}"
-				tooltip="Reset changes"/>
-			<BusyIndicator text="{ui>/sActivity}" visible="{= !!${ui>/sActivity} }"/>
-			<ToolbarSpacer/>
-			<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
+	<Page id="page" showHeader="true">
+		<customHeader>
+			<Toolbar>
+				<Button enabled="true" icon="sap-icon://refresh" id="refresh"
+					press="onRefresh" tooltip="Refresh"/>
+				<Button id="save" text="Save" press="onSave" visible="{ui>/bAPI}"
+					tooltip="Save changes"/>
+				<Button id="cancel" text="Cancel" press="onCancel"
+					visible="{ui>/bAPI}" tooltip="Reset changes"/>
+				<ToolbarSpacer/>
+				<Text text="Sample app for multiple inline creation rows"/>
+				<BusyIndicator text="{ui>/sActivity}" visible="{= !!${ui>/sActivity} }"/>
+				<ToolbarSpacer/>
+				<Label text="Inline Creation Rows:" labelFor="rowCount_select"/>
+				<Select tooltip="Inline creation row count" id="rowCount_select"
+						change="onChangeRowCount">
+					<items>
+						<core:Item text="1" key="1"/>
+						<core:Item text="2" key="2"/>
+						<core:Item text="3" key="3"/>
+						<core:Item text="5" key="5"/>
+					</items>
+				</Select>
+				<Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
 					press="onToggleMessagePopover" text="{ui>/iMessages}"
 					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
-		</Toolbar>
-		<content>
-			<f:FlexibleColumnLayout id="layout" layout="{ui>/sLayout}">
-				<f:beginColumnPages>
-				<Table id="products" growing="true" growingThreshold="20" items="{
-						path : '/Products',
-						parameters : {
-							$filter :
-								'IsActiveEntity eq false or SiblingEntity/IsActiveEntity eq null',
-							$$patchWithoutSideEffects : true,
-							$select : ['HasDraftEntity']
-						}
-					}" mode="SingleSelectMaster"
-					selectionChange="onSelectProduct">
-					<headerToolbar>
-						<Toolbar>
-							<Title text="Products" titleStyle="H3"/>
-						</Toolbar>
-					</headerToolbar>
-					<columns>
-						<Column width="3em">
-							<Text text="ID"/>
-						</Column>
-						<Column width="3em">
-							<Text text="Draft"/>
-						</Column>
-						<Column width="12em">
-							<Text text="Name"/>
-						</Column>
-					</columns>
-					<ColumnListItem id="highlight">
-						<Text id="productId" text="{ID}"/>
-						<CheckBox editable="false" selected="{= !%{IsActiveEntity} }"/>
-						<Text id="name" text="{name}"/>
-					</ColumnListItem>
-				</Table>
-				</f:beginColumnPages>
-				<f:midColumnPages>
-					<t:Table ariaLabelledBy="Product Parts"
-							id="parts" rows="{
+			</Toolbar>
+		</customHeader>
+			<content>
+				<f:FlexibleColumnLayout id="layout" layout="{ui>/sLayout}">
+					<f:beginColumnPages>
+						<Table id="products" growing="true" growingThreshold="20" items="{
+							path : '/Products',
+							parameters : {
+								$count : true,
+								$filter :
+									'IsActiveEntity eq false or SiblingEntity/IsActiveEntity eq null',
+								$$patchWithoutSideEffects : true,
+								$select : ['HasDraftEntity', 'HasActiveEntity']
+							}
+						}" mode="SingleSelectMaster" selectionChange="onSelectProduct">
+							<headerToolbar>
+								<Toolbar>
+									<Title id="productsTitle" level="H2"
+										   text="{headerContext0>$count} Products"/>
+								</Toolbar>
+							</headerToolbar>
+							<columns>
+								<Column width="4em">
+									<Text text="State"/>
+								</Column>
+								<Column width="4em">
+									<Text text="Draft"/>
+								</Column>
+								<Column width="5em">
+									<Text text="ID"/>
+								</Column>
+								<Column width="auto">
+									<Text text="Name"/>
+								</Column>
+								<Column width="8em">
+									<Text text="Amount"/>
+								</Column>
+								<Column width="4em"/>
+							</columns>
+							<ColumnListItem id="highlight">
+								<core:Icon id="productState"
+									src="{= %{@$ui5.context.isInactive}
+											? 'sap-icon://sys-minus'
+											: (%{@$ui5.context.isTransient}
+												? 'sap-icon://sys-add'
+												: (%{@$ui5.context.isTransient} === undefined
+													? 'sap-icon://cloud'
+													: 'sap-icon://sys-enter'
+												))}"
+									tooltip="{= %{@$ui5.context.isInactive}
+											? 'Inactive'
+											: (%{@$ui5.context.isTransient}
+												? 'Transient'
+												: (%{@$ui5.context.isTransient} === undefined
+													? 'From Server'
+													: 'Persisted'
+												))}"
+								/>
+								<CheckBox editable="false" selected="{= !%{IsActiveEntity} }"/>
+								<Input id="productId" value="{ID}"/>
+								<Input id="name" value="{name}"/>
+								<Input id="amount" value="{amount}"/>
+								<Button id="delete" enabled="{= !%{@$ui5.context.isInactive} }"
+									icon="sap-icon://delete" press="onDelete"
+									tooltip="Delete product"/>
+							</ColumnListItem>
+						</Table>
+					</f:beginColumnPages>
+					<f:midColumnPages>
+						<t:Table ariaLabelledBy="Product Parts" id="parts" rows="{
 								path : '_Parts',
 								parameters : {$count : true, $$ownRequest : true},
 								templateShareable : true
 							}"
-							selectionMode="None"
-							visibleRowCount="20">
-						<t:extension>
-							<Toolbar design="Transparent" class="sapMTBHeader-CTX">
-								<Title id="partsTitle"
-									text="Product: {ID}, {headerContext>$count} Parts"/>
-							</Toolbar>
-						</t:extension>
-						<t:columns>
-							<t:Column width="4em" hAlign="Center">
-								<Label text="State" />
-								<t:template>
-									<core:Icon
-										id="partState"
-										src="{= %{@$ui5.context.isInactive}
+							 selectionMode="None"
+							 visibleRowCount="20">
+							<t:extension>
+								<Toolbar design="Transparent" class="sapMTBHeader-CTX">
+									<Title id="partsTitle" level="H2"
+										   text="Product: {ID}, {headerContext1>$count} Parts"/>
+								</Toolbar>
+							</t:extension>
+							<t:columns>
+								<t:Column width="4em" hAlign="Center">
+									<Label text="State"/>
+									<t:template>
+										<core:Icon
+											id="partState"
+											src="{= %{@$ui5.context.isInactive}
 											? 'sap-icon://sys-minus'
 											: (%{@$ui5.context.isTransient}
 												? 'sap-icon://sys-add'
-												: 'sap-icon://sys-enter')}"
-										tooltip="{= %{@$ui5.context.isInactive}
-											? 'inactive'
+												: (%{@$ui5.context.isTransient} === undefined
+													? 'sap-icon://cloud'
+													: 'sap-icon://sys-enter'
+												))}"
+											tooltip="{= %{@$ui5.context.isInactive}
+											? 'Inactive'
 											: (%{@$ui5.context.isTransient}
-												? 'transient'
-												: 'persisted')}"
+												? 'Transient'
+												: (%{@$ui5.context.isTransient} === undefined
+													? 'From Server'
+													: 'Persisted'
+												))}"
 										/>
-								</t:template>
-							</t:Column>
-							<t:Column width="4em">
-								<Label text="ID" />
-								<t:template>
-									<Input id="partId" value="{ID}" />
-								</t:template>
-							</t:Column>
-							<t:Column width="8em">
-								<Label text="Description" />
-								<t:template>
-									<Input id="description" value="{description}"/>
-								</t:template>
-							</t:Column>
-							<t:Column width="8em">
-								<Button iconFirst="false" icon="{ui>/sSortPartsQuantityIcon}"
-									id="sortByPartsQuantity" press="onSortByPartsQuantity"
-									text="Quantity"/>
-								<t:template>
-									<Input textAlign="Right" value="{quantity}" />
-								</t:template>
-							</t:Column>
-							<t:Column width="3em">
-								<t:template>
-									<Button id="partDelete"
-										enabled="{= !%{@$ui5.context.isInactive} }"
-										icon="sap-icon://delete" press="onDelete"
-										tooltip="Delete part"/>
-								</t:template>
-							</t:Column>
-						</t:columns>
-					</t:Table>
-				</f:midColumnPages>
-			</f:FlexibleColumnLayout>
-		</content>
-	</Page>
-</App>
+									</t:template>
+								</t:Column>
+								<t:Column width="5em">
+									<Label text="ID"/>
+									<t:template>
+										<Input id="partId" value="{ID}"/>
+									</t:template>
+								</t:Column>
+								<t:Column width="auto">
+									<Label text="Description"/>
+									<t:template>
+										<Input id="description" value="{description}"/>
+									</t:template>
+								</t:Column>
+								<t:Column width="8em">
+									<Button iconFirst="false" icon="{ui>/sSortPartsQuantityIcon}"
+										id="sortByPartsQuantity" press="onSortByPartsQuantity"
+										text="Quantity"/>
+									<t:template>
+										<Input textAlign="Right" value="{quantity}"/>
+									</t:template>
+								</t:Column>
+								<t:Column width="4em">
+									<t:template>
+										<Button id="partDelete"
+											enabled="{= !%{@$ui5.context.isInactive} }"
+											icon="sap-icon://delete" press="onDelete"
+											tooltip="Delete part"/>
+									</t:template>
+								</t:Column>
+							</t:columns>
+						</t:Table>
+					</f:midColumnPages>
+				</f:FlexibleColumnLayout>
+			</content>
+		</Page>
+	</App>
 </mvc:View>
