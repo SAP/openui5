@@ -2148,17 +2148,29 @@ function(
 		 * @since 1.26.0
 		 */
 		Select.prototype.searchNextItemByText = function(sText) {
-			var aItems = this.getItems(),
-				iSelectedIndex = this.getSelectedIndex(),
-				aItemsAfterSelection = aItems.splice(iSelectedIndex + 1, aItems.length - iSelectedIndex),
-				aItemsBeforeSelection = aItems.splice(0, aItems.length - 1);
+			var oSelectedItem = this.getSelectedItem(), aItems, iSelectedIndex, aItemsAfterSelection, aItemsBeforeSelection;
+
+			// validation if sText is relevant string
+			if (!(typeof sText === "string" && sText !== "")) {
+				return null; // return null if sText is invalid
+			}
+			// if sText's length is 2 or more characters that means that the user is still typing.
+			// If the user is still typing and the string/word is the starting of the currently
+			// selected item we shouldn't move to the next one.
+			if (sText.length > 1 && oSelectedItem.getText().toLowerCase().startsWith(sText.toLowerCase())){
+				return oSelectedItem;
+			}
+
+			aItems = this.getItems();
+			iSelectedIndex = this.getSelectedIndex();
+			aItemsAfterSelection = aItems.splice(iSelectedIndex + 1, aItems.length - iSelectedIndex);
+			aItemsBeforeSelection = aItems.splice(0, aItems.length - 1);
 
 			aItems = aItemsAfterSelection.concat(aItemsBeforeSelection);
 
 			for (var i = 0, oItem; i < aItems.length; i++) {
 				oItem = aItems[i];
-				var bTextIsRelevantString = typeof sText === "string" && sText !== "";
-				if (oItem.getEnabled() && !(oItem.isA("sap.ui.core.SeparatorItem")) && oItem.getText().toLowerCase().startsWith(sText.toLowerCase()) && bTextIsRelevantString) {
+				if (oItem.getEnabled() && !(oItem.isA("sap.ui.core.SeparatorItem")) && oItem.getText().toLowerCase().startsWith(sText.toLowerCase())) {
 					return oItem;
 				}
 			}
