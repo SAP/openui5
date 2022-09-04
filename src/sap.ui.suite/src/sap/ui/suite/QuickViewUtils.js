@@ -3,8 +3,20 @@
  */
 
 // Provides
-sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/core/Control', 'sap/ui/core/Element'],
-	function(jQuery, Control, Element) {
+sap.ui.define([
+	"sap/base/util/each",
+	"sap/ui/commons/Label",
+	"sap/ui/commons/Link",
+	"sap/ui/commons/TextView",
+	"sap/ui/commons/layout/MatrixLayout",
+	"sap/ui/commons/layout/MatrixLayoutCell",
+	"sap/ui/commons/layout/MatrixLayoutRow",
+	"sap/ui/core/Control",
+	"sap/ui/core/Element",
+	"sap/ui/model/odata/ODataModel",
+	"sap/ui/ux3/QuickView"
+],
+	function(each, Label, Link, TextView, MatrixLayout, MatrixLayoutCell, MatrixLayoutRow, Control, Element, ODataModel, QuickView) {
 	"use strict";
 
 	/**
@@ -19,9 +31,14 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/core/Control', 'sap/ui/core/E
 	var QuickViewUtils = {
 		/* create a QV instance with content */
 		createQuickView: function(sServiceUrl,sConfigName,sThingKey,mFormatter) {
-			var oModel = new sap.ui.model.odata.ODataModel(sServiceUrl,false);
+			var oModel = new ODataModel(sServiceUrl,false);
 
-			var oQV = new sap.ui.ux3.QuickView({firstTitle: "{title}", firstTitleHref: "{titleLinkURL}", type:"{Thing/text}", icon:"{imageURL}"});
+			var oQV = new QuickView({
+				firstTitle: "{title}",
+				firstTitleHref: "{titleLinkURL}",
+				type:"{Thing/text}",
+				icon:"{imageURL}"
+			});
 			oQV.setModel(oModel);
 			oQV.bindObject("/QuickviewConfigs(name='" + sConfigName + "',thingKey='" + sThingKey + "')",{expand:"Thing,QVAttributes/Attribute,QVActions/Action"});
 
@@ -36,7 +53,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/core/Control', 'sap/ui/core/E
 		},
 		/* add content to an existing QV */
 		createQuickViewData: function(oQV,sServiceUrl,sConfigName,sThingKey,mFormatter) {
-			var oModel = new sap.ui.model.odata.ODataModel(sServiceUrl,false);
+			var oModel = new ODataModel(sServiceUrl,false);
 			oQV.removeAllContent();
 			oQV.setModel(oModel);
 			oQV.bindProperty("firstTitle", "title");
@@ -55,18 +72,18 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/core/Control', 'sap/ui/core/E
 		},
 		/* create a QV instance with dataset content */
 		createDataSetQuickView: function(sServiceUrl, sCollection, sType, mProperties, iSizeLimit) {
-			var oModel = new sap.ui.model.odata.ODataModel(sServiceUrl,false);
+			var oModel = new ODataModel(sServiceUrl,false);
 			if (iSizeLimit) {
 				oModel.setSizeLimit(iSizeLimit);
 			}
-			var oQV = new sap.ui.ux3.QuickView({type:sType, showActionBar:false});
+			var oQV = new QuickView({type:sType, showActionBar:false});
 			oQV.setModel(oModel);
 			oQV.addContent(this._createDSContent(oQV,sCollection,mProperties));
 			return oQV;
 		},
 		/* add dataset content to an existing QV */
 		createDataSetQuickViewData: function(oQV,sServiceUrl, sCollection, sType, mProperties, iSizeLimit) {
-			var oModel = new sap.ui.model.odata.ODataModel(sServiceUrl,false);
+			var oModel = new ODataModel(sServiceUrl,false);
 			if (iSizeLimit) {
 				oModel.setSizeLimit(iSizeLimit);
 			}
@@ -74,30 +91,31 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/core/Control', 'sap/ui/core/E
 			oQV.setType(sType);
 			oQV.setShowActionBar(false);
 			oQV.setModel(oModel);
-			oQV.addContent(this._createDSContent(oQV,sCollection,mProperties));
+			oQV.addContent(this._createDSContent(oQV, sCollection, mProperties));
 		},
 
-		_createDSContent: function(oQV,sCollection,mProperties) {
-			var oContent = new sap.ui.commons.layout.MatrixLayout();
-			var oRow = new sap.ui.commons.layout.MatrixLayoutRow();
-			jQuery.each(mProperties, function(i,oProperty){
+		_createDSContent: function(oQV, sCollection, mProperties) {
+			var oContent = new MatrixLayout();
+			var oRow = new MatrixLayoutRow();
+			each(mProperties, function(i, oProperty) {
 				var oControl;
 				if (oProperty.href) {
-					oControl = new sap.ui.commons.Link({text : oProperty.value, href: oProperty.href});
+					oControl = new Link({text : oProperty.value, href: oProperty.href});
 				} else {
-					oControl = new sap.ui.commons.TextView({text : oProperty.value});
+					oControl = new TextView({text : oProperty.value});
 				}
-				var oCell = new sap.ui.commons.layout.MatrixLayoutCell({content:[oControl]});
+				var oCell = new MatrixLayoutCell({content:[oControl]});
 				oCell.addStyleClass("quickViewDS");
 				oRow.addCell(oCell);
 			});
-			oContent.bindAggregation("rows",sCollection,oRow);
+			oContent.bindAggregation("rows", sCollection, oRow);
 			return oContent;
 		}
 	};
 
 	var QvItem = Element.extend("sap.ui.suite.hcm.QvItem", {
 		metadata : {
+			library: "sap.ui.suite",
 			properties: {
 				label: "string",
 				value: "string",
@@ -110,6 +128,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/core/Control', 'sap/ui/core/E
 
 	var QvContent = Control.extend("sap.ui.suite.hcm.QvContent", {
 		metadata : {
+			library: "sap.ui.suite",
 			aggregations: {
 				   "items" : {type : "sap.ui.suite.hcm.QvItem", multiple : true}
 			}
@@ -122,15 +141,17 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/core/Control', 'sap/ui/core/E
 				this._oML.destroy();
 			}
 		},
-		renderer : function(oRm, oControl) {      // the part creating the HTML
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.write(">");
-			oRm.renderControl(oControl._createQVContent(oControl));
-			oRm.write("</div>");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {      // the part creating the HTML
+				oRm.openStart("div", oControl);
+				oRm.openEnd();
+				oRm.renderControl(oControl._createQVContent(oControl));
+				oRm.close("div");
+			}
 		},
 		_createQVContent: function(oControl) {
-			var oML = new sap.ui.commons.layout.MatrixLayout({widths:["75px"]}),
+			var oML = new MatrixLayout({widths:["75px"]}),
 				aItems = oControl.getItems(),
 				oMLRow, oMLCell, oLabel, oTxtView, oLink;
 
@@ -139,17 +160,17 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/core/Control', 'sap/ui/core/E
 			}
 			oControl._sortItems(oControl);
 			for ( var i = 0; i < aItems.length; i++) {
-				oMLRow = new sap.ui.commons.layout.MatrixLayoutRow();
-				oMLCell = new sap.ui.commons.layout.MatrixLayoutCell({vAlign:'Top'});
-				oLabel  = new sap.ui.commons.Label({text:aItems[i].getLabel() + ':'});
+				oMLRow = new MatrixLayoutRow();
+				oMLCell = new MatrixLayoutCell({vAlign:'Top'});
+				oLabel  = new Label({text:aItems[i].getLabel() + ':'});
 				oMLCell.addContent(oLabel);
 				oMLRow.addCell(oMLCell);
-				oMLCell = new sap.ui.commons.layout.MatrixLayoutCell();
+				oMLCell = new MatrixLayoutCell();
 				if (aItems[i].getLink()) {
-					oLink = new sap.ui.commons.Link({text:aItems[i].getValue(), href:aItems[i].getLink()});
+					oLink = new Link({text:aItems[i].getValue(), href:aItems[i].getLink()});
 					oMLCell.addContent(oLink);
 				} else {
-					oTxtView = new sap.ui.commons.TextView({text:aItems[i].getValue()});
+					oTxtView = new TextView({text:aItems[i].getValue()});
 					oMLCell.addContent(oTxtView);
 				}
 				oMLRow.addCell(oMLCell);
@@ -159,14 +180,16 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/core/Control', 'sap/ui/core/E
 			return oML;
 		},
 		_sortItems: function(oControl) {
-				if (!oControl._sorted) {
-					var aItems = oControl.removeAllAggregation("items", true);
-					aItems.sort(function(a, b) {
-						return (parseInt(a.getOrder()) - parseInt(b.getOrder()));
-					});
-					jQuery.each(aItems, function(i,oItem) {oControl.addAggregation("items",oItem,false);});
-					oControl._sorted = true;
-				}
+			if (!oControl._sorted) {
+				var aItems = oControl.removeAllAggregation("items", true);
+				aItems.sort(function(a, b) {
+					return (parseInt(a.getOrder()) - parseInt(b.getOrder()));
+				});
+				aItems.forEach(function(oItem) {
+					oControl.addAggregation("items", oItem, false);
+				});
+				oControl._sorted = true;
+			}
 		}
 	});
 

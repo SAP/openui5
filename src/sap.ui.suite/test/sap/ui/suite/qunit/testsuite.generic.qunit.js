@@ -5,7 +5,18 @@ sap.ui.define([
 
 	var oConfig = GenericTestCollection.createTestsuiteConfig({
 		library: "sap.ui.suite",
-		skipTests: [GenericTestCollection.Test.EnforceSemanticRendering]
+		/*
+		 * Note: the following configuration has no effect yet as the generic test base
+		 * does not visit controls that are not listed in the library.js arrays
+		 */
+		objectCapabilities: {
+			"sap.ui.suite.hcm.QvItem": {
+				moduleName: "sap/ui/suite/QuickViewUtils"
+			},
+			"sap.ui.suite.hcm.QvContent": {
+				moduleName: "sap/ui/suite/QuickViewUtils"
+			}
+		}
 	});
 
 	return oConfig;
