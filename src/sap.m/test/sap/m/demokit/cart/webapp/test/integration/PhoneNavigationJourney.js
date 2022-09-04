@@ -1,15 +1,25 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/core/Configuration",
 	"sap/ui/test/opaQunit",
 	"./pages/Welcome",
 	"./pages/Product",
 	"./pages/Home",
 	"./pages/Category"
-], function (opaTest) {
+], function (Configuration, opaTest) {
 	"use strict";
 
-	QUnit.module("Phone navigation");
+	var sDefaultLanguage = Configuration.getLanguage();
+
+	QUnit.module("Phone navigation", {
+		before : function () {
+			Configuration.setLanguage("en-US");
+		},
+		after : function () {
+			Configuration.setLanguage(sDefaultLanguage);
+		}
+	});
 
 	opaTest("Should navigate to a product detail page by pressing the product link of the first product tile", function (Given, When, Then) {
 		// Arrangements

@@ -1,13 +1,23 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Configuration",
 	"sap/ui/test/opaQunit",
 	"./pages/Home",
 	"./pages/Category"
-], function (opaTest) {
+], function (Configuration, opaTest) {
 	"use strict";
 
-	QUnit.module("Filter Journey");
+	var sDefaultLanguage = Configuration.getLanguage();
+
+	QUnit.module("Filter Journey", {
+		before : function () {
+			Configuration.setLanguage("en-US");
+		},
+		after : function () {
+			Configuration.setLanguage(sDefaultLanguage);
+		}
+	});
 
 	opaTest("Should start the app and go to the category view I should see a filter button", function (Given, When, Then) {
 		// Arrangements
