@@ -148,7 +148,7 @@
 										<MenuItem icon="sap-icon://tree" text="{i18n>APP_INFORMATION_BTN_SITEMAP}" key="sitemap" visible="{versionData>/isOpenUI5}"/>
 										<MenuItem icon="sap-icon://hello-world" text="{i18n>APP_SETTINGS_DIALOG_LANGUAGE}" key="settings"/>
 										<MenuItem icon="sap-icon://customize" text="{i18n>APP_SETTINGS_DIALOG_COOKIE_PREFERENCES}" key="cookie_preferences"
-												visible="{= ${versionData>/supportsSWA}}"/>
+												visible="{= ${versionData>/enableAdvancedCookieSettings}}"/>
 									</items>
 								</Menu>
 							</menu>
