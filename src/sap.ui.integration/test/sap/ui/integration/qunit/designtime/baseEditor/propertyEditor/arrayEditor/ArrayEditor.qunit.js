@@ -1011,6 +1011,7 @@ sap.ui.define([
 				);
 
 				setTimeout(function () {
+					oOwnerInput.$("inner").trigger("focus");
 					assert.strictEqual(document.activeElement, oOwnerInput.$("inner").get(0));
 					fnDone();
 				});
