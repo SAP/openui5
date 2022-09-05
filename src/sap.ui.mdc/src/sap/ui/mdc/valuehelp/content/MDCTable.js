@@ -184,8 +184,8 @@ sap.ui.define([
 					}
 
 					var aRowIndices = oEvent.getParameter("rowIndices"); // rowIndices are actually context indices
-					var aContexts = MDCTableHelperConfig["Table"].getContexts().filter(function (oContext, iIndex) {
-						return aRowIndices.indexOf(iIndex) >= 0;
+					var aContexts = aRowIndices.map(function (iIndex) {
+						return oInnerTable.getContextByIndex(iIndex);
 					});
 					var aRows = MDCTableHelperConfig["Table"].getItems().filter(function (oRow, iIndex) {
 						return aContexts.indexOf(oRow.getBindingContext()) >= 0;
