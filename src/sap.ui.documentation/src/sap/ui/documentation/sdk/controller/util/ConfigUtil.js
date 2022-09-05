@@ -15,7 +15,6 @@ sap.ui.define([
 		"COOKIE_NAMES": {
 			"APPROVAL_REQUESTED": "dk_approval_requested",
 			"ALLOW_REQUIRED_COOKIES": "dk_allow_required_cookies",
-			"ALLOW_USAGE_TRACKING": "dk_allow_usage_tracking",
 			"DEMOKIT_IMPORTANT_MESSAGES_READ": "IMR"
 		},
 
