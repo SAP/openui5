@@ -66,7 +66,7 @@ sap.ui.define([
 		return oClonedValue;
 	}
 
-	QUnit.module("Basic - no value or [] as value", {
+	QUnit.module("no value or [] as value", {
 		beforeEach: function () {
 			this.oHost = new Host("host");
 			this.oContextHost = new ContextHost("contexthost");
@@ -1234,6 +1234,104 @@ sap.ui.define([
 							});
 						});
 					};
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("backward compatability", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oEditor = new Editor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.style.position = "absolute";
+				oContent.style.top = "200px";
+
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("get current settings with old values", function (assert) {
+			var oValue = [
+				{"icon": "sap-icon://add", "text": "text1", "url": "http://"},
+				{"icon": "sap-icon://add", "text": "text2", "url": "http://"},
+				{"icon": "sap-icon://add", "text": "text3", "url": "http://"},
+				{"icon": "sap-icon://add", "text": "text4", "url": "http://"}
+			];
+			var oValueInCurrentSettings = [
+				{"icon": "sap-icon://add", "text": "text1", "url": "http://", "_dt": {"_position": 1}},
+				{"icon": "sap-icon://add", "text": "text2", "url": "http://", "_dt": {"_position": 2}},
+				{"icon": "sap-icon://add", "text": "text3", "url": "http://", "_dt": {"_position": 3}},
+				{"icon": "sap-icon://add", "text": "text4", "url": "http://", "_dt": {"_position": 4}}
+			];
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/objectListWithPropertiesDefinedOnly",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"objectsWithPropertiesDefined": {
+									"value": oValue
+								}
+							},
+							"destinations": {
+								"local": {
+									"name": "local",
+									"defaultUrl": "./"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oLabel = this.oEditor.getAggregation("_formContent")[1];
+					var oField = this.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
+					assert.equal(oLabel.getText(), "Object properties defined", "Label 1: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), oValue), "Field 1: Value");
+					var oTable = oField.getAggregation("_field");
+					assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
+					assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
+					assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
+					assert.equal(oTable.getBinding().getCount(), 4, "Table: value length is 4");
+					var oToolbar = oTable.getToolbar();
+					assert.equal(oToolbar.getContent().length, 9, "Table toolbar: content length");
+					var oAddButton = oToolbar.getContent()[1];
+					assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
+					var oClearFilterButton = oToolbar.getContent()[4];
+					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
+					var oSettings = this.oEditor.getCurrentSettings();
+					assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectsWithPropertiesDefined/value"], oValueInCurrentSettings, "Editor: field 1 setting value");
+					resolve();
 				}.bind(this));
 			}.bind(this));
 		});

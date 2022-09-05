@@ -46,6 +46,20 @@ sap.ui.define([
 	};
 	var oDTNotEditable = {"_dt": {"_editable": false}};
 	var oDTNotEditableAndSelected = merge(deepClone(oDTNotEditable), oDTSelected);
+	var aObjectsParameterValue = [
+		Object.assign(deepClone(oValue2), oDTNotEditable),
+		Object.assign(deepClone(oValue3), oDTNotEditable),
+		Object.assign(deepClone(oValue5), oDTNotEditable),
+		Object.assign(deepClone(oValue7), oDTNotEditable),
+		oDefaultNewObject
+	];
+	var aObjectsParameterValueInCurrentSettings = [
+		Object.assign(deepClone(oValue2), {"_dt": {"_position": 1, "_editable": false}}),
+		Object.assign(deepClone(oValue3), {"_dt": {"_position": 2, "_editable": false}}),
+		Object.assign(deepClone(oValue5), {"_dt": {"_position": 3, "_editable": false}}),
+		Object.assign(deepClone(oValue7), {"_dt": {"_position": 4, "_editable": false}}),
+		Object.assign(deepClone(oDefaultNewObject), {"_dt": {"_position": 5}})
+	];
 	var aObjectsParameterValue2 = [
 		Object.assign(deepClone(oValue2), oDTNotEditable),
 		Object.assign(deepClone(oValue3), oDTNotEditable),
@@ -61,6 +75,33 @@ sap.ui.define([
 	var oValue6InRequestValues = Object.assign(deepClone(oValue6), oDTNotEditable);
 	var oValue7SelectedInRequestValues = Object.assign(deepClone(oValue7), oDTNotEditableAndSelected);
 	var oValue8SelectedInRequestValues = Object.assign(deepClone(oValue8), oDTNotEditableAndSelected);
+
+	var oManifestForObjectListFieldsWithOldValues = {
+		"sap.app": {
+			"id": "test.sample",
+			"i18n": "../i18n/i18n.properties"
+		},
+		"sap.card": {
+			"designtime": "designtime/objectListWithRequestValues",
+			"type": "List",
+			"configuration": {
+				"parameters": {
+					"objectListWithRequestValues": {
+						"value": aObjectsParameterValue
+					}
+				},
+				"destinations": {
+					"local": {
+						"name": "local",
+						"defaultUrl": "./"
+					},
+					"mock_request": {
+						"name": "mock_request"
+					}
+				}
+			}
+		}
+	};
 
 	var oManifestForObjectListFieldsWithRequestValues = {
 		"sap.app": {
@@ -173,6 +214,30 @@ sap.ui.define([
 			}
 		}
 	}, function () {
+		QUnit.test("get current settings with old values", function (assert) {
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: oManifestForObjectListFieldsWithOldValues
+			});
+			return new Promise(function (resolve, reject) {
+				this.oEditor.attachReady(function () {
+					assert.ok(this.oEditor.isReady(), "Editor is ready");
+					var oLabel = this.oEditor.getAggregation("_formContent")[1];
+					var oField = this.oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
+					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
+					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
+					wait().then(function () {
+						var oSettings = this.oEditor.getCurrentSettings();
+						assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectListWithRequestValues/value"], aObjectsParameterValueInCurrentSettings, "Editor: field 1 setting value");
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+
 		QUnit.test("positions, move buttons", function (assert) {
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
