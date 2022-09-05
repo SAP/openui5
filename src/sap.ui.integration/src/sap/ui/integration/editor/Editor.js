@@ -1511,6 +1511,7 @@ sap.ui.define([
 										// recount the position value
 										for (var i = 0; i < aValue.length; i++) {
 											var oValue = aValue[i];
+											oValue._dt = oValue._dt || {};
 											oValue._dt._position = i + 1;
 										}
 										mResult[oItem.manifestpath] = aValue;
