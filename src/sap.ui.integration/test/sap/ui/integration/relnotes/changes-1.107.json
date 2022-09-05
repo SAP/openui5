@@ -1,7 +1,45 @@
 {
   "1.107.0": {
-    "date": "August 2022",
+    "date": "September 2022",
     "notes": [
+      {
+        "id": "932010d607bfcf2106d2316e0057a42a5c14087e",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Added new \"visible\" property to the card header icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280138542"
+          }
+        ]
+      },
+      {
+        "id": "68eb923d7ca4b29a4ef84c54aedf301000b6f63a",
+        "type": "FIX",
+        "text": " Integration Card: hasData property of Object card now works with boolean values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280168607"
+          }
+        ]
+      },
+      {
+        "id": "ab58d5fe44edf52e7097073bce241f632c3b7ef9",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Background color of avatars in Object cards is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280162496"
+          }
+        ]
+      },
+      {
+        "id": "4b60057653c83229bb3af18437947025d44bba83",
+        "type": "FEATURE",
+        "text": " Integration Cards: Header can be hidden"
+      },
       {
         "id": "44d3379b7da0a4e7284da4b8ec378726c630b992",
         "type": "FIX",

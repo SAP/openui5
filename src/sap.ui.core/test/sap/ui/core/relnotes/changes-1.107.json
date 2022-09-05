@@ -1,11 +1,54 @@
 {
   "1.107.0": {
-    "date": "August 2022",
+    "date": "September 2022",
     "notes": [
+      {
+        "id": "20722d287421d474a1d57bf189a4af6057031628",
+        "type": "FIX",
+        "text": " LoaderExtension: loadResource must notify Interaction correctly"
+      },
+      {
+        "id": "a986510ef3be8a142c96d0301400bbd49e98181f",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#refresh: $$sharedRequest",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004766202022"
+          }
+        ]
+      },
+      {
+        "id": "6183f3be53535b59c2f0eb0f8c36fac073c8ac64",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#setDeferredGroups overwrites \"changes\""
+      },
+      {
+        "id": "a1a0027f9e81019489ae28b043d27c26cc112052",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataMetaModel: pass metadataUrlParams on to created models",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280162910"
+          }
+        ]
+      },
       {
         "id": "91d650185f13c1713c37bc64451d4907085e4ce6",
         "type": "FIX",
         "text": " mvc.Controller: Cleanup dangling fragment content before exit"
+      },
+      {
+        "id": "6f127629389fef406459c94ed6fe507909f0dd9d",
+        "type": "FIX",
+        "text": " sap.ui.text: Correct error message",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270085466"
+          }
+        ]
       },
       {
         "id": "cd520fc77edc65e638f7a7e57eae2a7ffd2e3cfb",

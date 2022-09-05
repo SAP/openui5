@@ -1,7 +1,45 @@
 {
   "1.107.0": {
-    "date": "August 2022",
+    "date": "September 2022",
     "notes": [
+      {
+        "id": "9fbe1d5d23df4ccf1a34cb894fa51f48e6a39579",
+        "type": "FIX",
+        "text": " sap.m.Link: fixed typo in JSDoc",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "f705fb6c8cbfd997125a3e3471ea6c8ec35e0532",
+        "type": "FIX",
+        "text": " sap.m.ColorPalettePopover: fix JSDoc of method openBy"
+      },
+      {
+        "id": "ed071111a5c174326bcf1534a7351d56459ca2e3",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: No preselection by default is now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005850722022"
+          }
+        ]
+      },
+      {
+        "id": "6fc5af02b53080b16bcdfdefb968f8d6f600fe0c",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Close button no longer disappears on S layout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280169647"
+          }
+        ]
+      },
       {
         "id": "7c85bfde9509335d6dc026b275d8fe31c36dee8a",
         "type": "FIX",

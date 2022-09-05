@@ -1,7 +1,34 @@
 {
   "1.107.0": {
-    "date": "August 2022",
+    "date": "September 2022",
     "notes": [
+      {
+        "id": "932010d607bfcf2106d2316e0057a42a5c14087e",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Added new \"visible\" property to the card header icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280138542"
+          }
+        ]
+      },
+      {
+        "id": "4b60057653c83229bb3af18437947025d44bba83",
+        "type": "FEATURE",
+        "text": " Integration Cards: Header can be hidden"
+      },
+      {
+        "id": "64d3d2b70478641a35f7d9cc7f154f3c23ead9e3",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Table Card without content no longer shows loading indicator",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280164806"
+          }
+        ]
+      },
       {
         "id": "4313c4b2bdaa8ae63c3bb870f85187be3461dbfb",
         "type": "FEATURE",
