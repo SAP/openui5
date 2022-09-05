@@ -12,7 +12,7 @@ sap.ui.define([
 			viewName: "sap.ui.v4demo.view.App",
 			actions: {
 				iEnterTextOnFilterField: function(sId, sValue) {
-					return this.mdcTestLibrary.iEnterTextOnTheFilterField(sId, sValue);
+					return this.mdcTestLibrary.iEnterTextOnTheFilterField({ id: sId }, sValue);
 				},
 				iPressKeyOnFilterField: function(sLabel, sValue) {
 					return this.mdcTestLibrary.iPressKeyOnFilterFieldWithLabel(sLabel, sValue);

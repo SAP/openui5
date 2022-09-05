@@ -342,7 +342,7 @@ sap.ui.define([
 		Given.iStartMyUIComponentInViewMode();
 
 		When.onTheMDCFilterBar.iPersonalizeFilter(sFilterBarID, {	Books: ["Created On"] });
-		When.onTheMDCFilterField.iEnterTextOnTheFilterField("Created On", "Feb 22, 2005, 6:24:25 PM");
+		When.onTheMDCFilterField.iEnterTextOnTheFilterField({ label: "Created On" }, "Feb 22, 2005, 6:24:25 PM");
 
 		//I press the Go button (or press enter in the search field)
 		When.onTheMDCFilterBar.iExpectSearch(sFilterBarID);

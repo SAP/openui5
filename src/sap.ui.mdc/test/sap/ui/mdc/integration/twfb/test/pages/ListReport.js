@@ -87,7 +87,7 @@ sap.ui.define([
 
 				// filter field
 				iEnterTextOnTheFilterField: function(sFieldLabelName, sValue) {
-					return this.onTheMDCFilterField.iEnterTextOnTheFilterField(sFieldLabelName, sValue);
+					return this.onTheMDCFilterField.iEnterTextOnTheFilterField({ label: sFieldLabelName }, sValue);
 				},
 
 				// p13n
@@ -163,7 +163,7 @@ sap.ui.define([
 
 				// value help
 				iPressOnTheFilterFieldValueHelpButton: function(sFieldLabelName) {
-					return this.mdcTestLibrary.iPressOnTheFilterFieldValueHelpButton(sFieldLabelName);
+					return this.mdcTestLibrary.iPressOnTheFilterFieldValueHelpButton({ label: sFieldLabelName });
 				}
 
 				// //TODO missing
@@ -247,7 +247,7 @@ sap.ui.define([
 
 				// filter field
 				iShouldSeeTheFilterFieldWithValues: function(sFieldLabelName, oValues) {
-					return this.onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues(sFieldLabelName, oValues);
+					return this.onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues({ label: sFieldLabelName }, oValues);
 				},
 
 				// p13n
