@@ -869,5 +869,11 @@ sap.ui.define([
 					assert.strictEqual(oMessage.warningType, "mixedChangesWarning", "then the show mixed change warning type is returned");
 				});
 		});
+
+		QUnit.test("when hasDirtyChanges is called", function (assert) {
+			var oStubFlexObjectStateHasDirtyObjects = sandbox.stub(FlexObjectState, "hasDirtyFlexObjects").returns(true);
+			assert.equal(PersistenceWriteAPI.hasDirtyChanges({selector: this.appComponent}), true, "hasDirtyChanges return true");
+			assert.equal(oStubFlexObjectStateHasDirtyObjects.calledOnce, true, "FlexObjectState.hasDirtyFlexObjects called one");
+		});
 	});
 });

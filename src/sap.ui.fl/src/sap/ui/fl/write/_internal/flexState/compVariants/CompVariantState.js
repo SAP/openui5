@@ -823,5 +823,25 @@ sap.ui.define([
 		return Promise.all(aPromises);
 	};
 
+	/**
+	 * Checks if dirty changes on SmartVariantManagement exist for a flex persistence associated by a reference;
+	 *
+	 * @param {string} sReference - Flex reference of the app
+	 * @returns {boolean} <code>true</code> if dirty changes exist
+	 */
+	CompVariantState.hasDirtyChanges = function (sReference) {
+		var mCompEntities = FlexState.getCompVariantsMap(sReference);
+		var aEntities = [];
+		for (var sPersistencyKey in mCompEntities) {
+			var mCompVariantsOfPersistencyKey = mCompEntities[sPersistencyKey];
+			for (var sId in mCompVariantsOfPersistencyKey.byId) {
+				aEntities.push(mCompVariantsOfPersistencyKey.byId[sId]);
+			}
+		}
+		return aEntities.some(function(oFlexObject) {
+			return oFlexObject.getState() !== States.PERSISTED && !(oFlexObject.getVariantId && oFlexObject.getVariantId() === "*standard*");
+		});
+	};
+
 	return CompVariantState;
 });
