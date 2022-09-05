@@ -335,6 +335,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check visibility", function (assert) {
+		var clock = sinon.useFakeTimers();
 		function getActiveItems(oColumnMenu) {
 			return oColumnMenu._oItemsContainer._getNavigationList().getItems().filter(function (oItem) {
 				return oItem.getVisible();
@@ -349,53 +350,31 @@ sap.ui.define([
 		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 2, "All quick actions are visible");
 		assert.equal(getActiveItems(this.oColumnMenu).length, 2, "All items are visible");
 
-		this.oColumnMenu.close();
-
 		// Public Quick Action hidden
 		this.oColumnMenu.getQuickActions()[0].setVisible(false);
-		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
-
 		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 1, "Only one quick action visible");
-
-		this.oColumnMenu.close();
 
 		// One item hidden
 		this.oColumnMenu.getItems()[0].setVisible(false);
-		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
-
 		assert.equal(getActiveItems(this.oColumnMenu).length, 1, "Only one item visible");
-
-		this.oColumnMenu.close();
 
 		// All items hidden
 		this.oColumnMenu.getItems()[1].setVisible(false);
-		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
-
 		assert.equal(getActiveItems(this.oColumnMenu).length, 0, "No items are visible");
-
-		this.oColumnMenu.close();
 
 		// All Quick Actions hidden
 		this.oColumnMenu.getAggregation("_quickActions")[0].setVisible(false);
-		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
-
 		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 0, "No quick actions are in the form");
 		assert.notOk(document.getElementById(this.oColumnMenu.getId() + "-quickActions"), "Quick Actions Container is not rendered");
-
-		this.oColumnMenu.close();
 
 		// Make 1 QuickAction and 1 item visible
 		this.oColumnMenu.getItems()[0].setVisible(true);
 		this.oColumnMenu.getAggregation("_quickActions")[0].setVisible(true);
-		this.oColumnMenu.openBy(this.oButton);
-		oCore.applyChanges();
-
 		assert.equal(this.oColumnMenu._oForm.getFormContainers()[0].getFormElements().length, 1, "One quick action is visible");
 		assert.equal(getActiveItems(this.oColumnMenu).length, 1, "One item is visible");
+
+		this.oColumnMenu.close();
+		clock.tick(500);
 
 		// Check Visibility when using a QuickActionContainer
 		var oQuickAction1 = new QuickAction({label: sText, content: new Button({text: sText})});
@@ -430,6 +409,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Add menu item", function (assert) {
+		var clock = sinon.useFakeTimers();
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
 		oCore.applyChanges();
@@ -438,6 +418,7 @@ sap.ui.define([
 		assert.equal(aItems.length, 3, "Menu has exactly 3 items");
 
 		this.oColumnMenu.close();
+		clock.tick(500);
 
 		var oItem = new Item({label: "Added Item", content: new Button({text: "Added Button"})});
 		this.oColumnMenu.addItem(oItem);
@@ -670,6 +651,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check form content", function (assert) {
+		var clock = sinon.useFakeTimers();
 		var oControl;
 		this.oColumnMenu.openBy(this.oButton);
 
@@ -726,6 +708,7 @@ sap.ui.define([
 		assert.equal(oControl.getText(), sText, "Correct button with correct button text");
 
 		this.oColumnMenu.close();
+		clock.tick(500);
 		this.oColumnMenu.addQuickAction(new QuickAction({label: "Added Action", content: [new Button({text: "Button Added"})]}));
 		oCore.applyChanges();
 
@@ -757,13 +740,21 @@ sap.ui.define([
 	});
 
 	QUnit.test("beforeOpen", function(assert) {
-		assert.expect(1);
+		var clock = sinon.useFakeTimers();
+		assert.expect(4);
 
 		this.oColumnMenu.attachBeforeOpen(function(oEvent) {
-			assert.deepEqual(oEvent.getParameters(), {id: this.oColumnMenu.getId()}, "Fired with correct parameters");
+			assert.deepEqual(oEvent.getParameter("openBy"), this.oButton, "Fired with correct parameters");
 		}, this);
 
 		this.oColumnMenu.openBy(this.oButton);
-		this.oColumnMenu.openBy(this.oButton);
+		this.oColumnMenu.close();
+		clock.tick(500);
+
+		this.oColumnMenu.openBy(this.oButton.getDomRef());
+		var oOpenSpy = sinon.spy(this.oColumnMenu._oPopover, "openBy");
+		this.oColumnMenu.openBy(this.oButton.getDomRef());
+		assert.ok(this.oColumnMenu.isOpen(), "The column menu is already open");
+		assert.ok(!oOpenSpy.called, "Popover.openBy is not called");
 	});
 });

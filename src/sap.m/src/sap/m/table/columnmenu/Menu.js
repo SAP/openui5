@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/library",
 	'sap/ui/Device',
+	"sap/ui/base/Object",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
@@ -31,6 +32,7 @@ sap.ui.define([
 	ToolbarSpacer,
 	library,
 	Device,
+	BaseObject,
 	Control,
 	Core,
 	coreLibrary,
@@ -112,7 +114,15 @@ sap.ui.define([
 				/**
 				 * Fires before the column menu is opened
 				 */
-				beforeOpen: {}
+				beforeOpen: {
+					parameters : {
+						/**
+						 * The element for which the menu is opened. If it is an <code>HTMLElement</code> the closest control is passed for this event
+						 * (if it exists).
+						 */
+						openBy : {type : "sap.ui.core.Element"}
+					}
+				}
 			}
 		},
 		renderer: MenuRenderer
@@ -147,23 +157,32 @@ sap.ui.define([
 	 * @public
 	 */
 	Menu.prototype.openBy = function(oAnchor) {
+		if (this.isOpen()) {
+			return;
+		}
+
 		if (!this.getParent()) {
 			Core.getUIArea(Core.getStaticAreaRef()).addContent(this, true);
 		}
 
+		var oControl = oAnchor;
+		if (!BaseObject.isA(oAnchor, "sap.ui.core.Element")) {
+			oControl = jQuery(oAnchor).control(0, true);
+		}
+
+		this.fireBeforeOpen({
+			openBy: oControl
+		});
+
 		this._initPopover();
 		this._createQuickActionGrids();
-
 		if (this._oItemsContainer) {
 			this._oItemsContainer.destroy();
 			this._oItemsContainer = null;
 		}
-		this._initItemsContainer();
 
-		if (!this.isOpen()) {
-			this.fireBeforeOpen();
-			this._oPopover.openBy(oAnchor);
-		}
+		this._initItemsContainer();
+		this._oPopover.openBy(oAnchor);
 
 		ControlEvents.bindAnyEvent(this.fAnyEventHandlerProxy);
 	};

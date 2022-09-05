@@ -712,11 +712,13 @@ sap.ui.define([
 	};
 
 	Table.prototype.onColumnPress = function(oColumn) {
-		var oMenu = oColumn.getColumnHeaderMenu();
+		var oMenu = oColumn._getHeaderMenuInstance();
 		oMenu && oMenu.openBy(oColumn);
-		(this.bActiveHeaders || oMenu) && this.fireEvent("columnPress", {
-			column: oColumn
-		});
+		if (this.bActiveHeaders && !oMenu) {
+			this.fireEvent("columnPress", {
+				column: oColumn
+			});
+		}
 	};
 
 	/*

@@ -106,7 +106,11 @@ sap.ui.define([
 			}.bind(this));
 		},
 		getQuickAction: function(oMenu, sType) {
-			var aQuickActions = oMenu.getAggregation("_quickActions")[0].getQuickActions().filter(function(oQuickAction) {
+			var oQuickActionContainer = oMenu.getAggregation("_quickActions")[0];
+			if (!oQuickActionContainer) {
+				return null;
+			}
+			var aQuickActions = oQuickActionContainer.getQuickActions().filter(function(oQuickAction) {
 				return oQuickAction.isA("sap.m.table.columnmenu." + sType);
 			});
 
@@ -181,6 +185,17 @@ sap.ui.define([
 			assert.equal(aQuickFreezeContent.length, 1, "Quick freeze content count");
 			assert.ok(aQuickFreezeContent[0].isA("sap.m.Button"), "Quick freeze content is a sap.m.Button");
 			assert.equal(aQuickFreezeContent[0].getText(), TableUtils.getResourceText("TBL_FREEZE"), "Quick freeze button text");
+		}).then(function() {
+			that.oColumn1.setShowSortMenuEntry(false);
+			that.oColumn1.setShowFilterMenuEntry(false);
+			that.oTable.setEnableColumnFreeze(false);
+			return that.openColumnMenu(0);
+		}).then(function() {
+			var oColumn = that.oTable.getColumns()[0];
+			var oMenu = oColumn.getHeaderMenuInstance();
+
+			assert.notOk(that.getQuickAction(oMenu, "QuickSort"), "No Quick Sort");
+			assert.notOk(that.getQuickAction(oMenu, "QuickAction"), "No Quick Filter and no Column Freeze");
 		});
 	});
 
