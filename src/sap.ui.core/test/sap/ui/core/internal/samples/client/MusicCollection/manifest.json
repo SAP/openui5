@@ -1,0 +1,56 @@
+{
+	"_version" : "1.45.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR-MOD",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "Example of a ClientTreeBinding",
+		"dataSources" : {
+			"default" : {
+				"uri" : "MusicCollection.json",
+				"type" : "JSON"
+			}
+		},
+		"id" : "sap.ui.core.internal.samples.client.MusicCollection",
+		"title" : "Example of a ClientTreeBinding",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.107",
+			"libs" : {
+				"sap.m" : {},
+				"sap.ui.core" : {},
+				"sap.ui.layout" : {},
+				"sap.ui.table" : {}
+			}
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"type" : "sap.ui.model.json.JSONModel"
+			}
+		},
+		"rootView" : {
+			"async" : true,
+			"id" : "MusicCollectionMain",
+			"type" : "XML",
+			"viewName" : "sap.ui.core.internal.samples.client.MusicCollection.Main"
+		}
+	}
+}

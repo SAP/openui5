@@ -1,0 +1,124 @@
+{
+	"root" : {
+		"name" : "MusicCollection",
+		"description" : "Music Collection",
+		"0" : {
+			"name" : "Rock",
+			"description" : "Rockmusik",
+			"0" : {
+				"name" : "Rock'n'Roll",
+				"description" : "late 1940s",
+				"children" : [
+					{
+						"name" : "Elvis Presley",
+						"description" : "*1935 - +1977"
+					},
+					{
+						"name" : "Chuck Berry",
+						"description" : "*1926"
+					}
+				],
+				"flup" : {
+					"name" : "Keith Richards",
+					"description" : "*1943"
+				}
+			},
+			"1" : {
+				"name" : "Heavy Metal",
+				"description" : "late 1960s",
+				"0" : {
+					"name" : "Black Sabbath",
+					"description" : "founded 1968"
+				},
+				"1" : {
+					"name" : "Judas Priest",
+					"description" : "founded 1969"
+				}
+			},
+			"2" : {
+				"name" : "Grunge",
+				"description" : "Mid-1980s",
+				"0" : {
+					"name" : "Nirvana",
+					"description" : "1987"
+				},
+				"1" : {
+					"name" : "Soundgarden",
+					"description" : "1984"
+				},
+				"2" : {
+					"name" : "Alice in Chains",
+					"description" : "1987"
+				}
+			}
+		},
+		"1" : {
+			"name" : "Hip-Hop",
+			"description" : "Hip-Hop",
+			"0" : {
+				"name" : "Old-School",
+				"description" : "Mid 1970s",
+				"0" : {
+					"name" : "The Sugarhill Gang",
+					"description" : "1973"
+				},
+				"1" : {
+					"name" : "Grandmaster Flash and the Furious Five",
+					"description" : "1978"
+				}
+			},
+			"1" : {
+				"name" : "Rap-Rock",
+				"description" : "early 1980s",
+				"0" : {
+					"name" : "Run-D.M.C.",
+					"description" : "1981 - 2002"
+				},
+				"1" : {
+					"name" : "Beastie Boys",
+					"description" : "1981 - 2012"
+				}
+			},
+			"2" : {
+				"name" : "Gangsta rap",
+				"description" : "mid 1980s",
+				"0" : {
+					"name" : "2Pac",
+					"description" : "1971 - 1996"
+				},
+				"1" : {
+					"name" : "N.W.A",
+					"description" : "1986 - 1991, 1998 - 2002"
+				}
+			}
+		},
+		"2" : {
+			"name" : "Swing/Big Band",
+			"description" : "1930s",
+			"0" : {
+				"name" : "Frank Sinatra",
+				"description" : "1915 - 1998"
+			},
+			"1" : {
+				"name" : "Count Basie",
+				"description" : "1904 - 1984"
+			}
+		},
+		"3" : {
+			"name" : "Schlager",
+			"description" : "Deutsche Schlager",
+			"0" : {
+				"name" : "Helene Fischer",
+				"description" : "*1984"
+			},
+			"1" : {
+				"name" : "Eric Philippi",
+				"description" : "*1997"
+			},
+			"2" : {
+				"name" : "Jürgen Drews",
+				"description" : "*1945"
+			}
+		}
+	}
+}
