@@ -1,7 +1,18 @@
 {
   "1.106.0": {
-    "date": "August 2022",
+    "date": "September 2022",
     "notes": [
+      {
+        "id": "1a32e5ad2f1187de5a6edd259a7e88862e3862e5",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Corrected instance type check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280157279"
+          }
+        ]
+      },
       {
         "id": "d699670b9d4aed15eb33f6e159ad67307f3f6f56",
         "type": "FEATURE",
