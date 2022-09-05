@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/service/index",
@@ -51,6 +52,7 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	Layer,
 	FlUtils,
+	JSONModel,
 	AppVariantFeature,
 	ReloadManager,
 	mServicesDictionary,
@@ -606,7 +608,6 @@ sap.ui.define([
 			this.fnUndoStub = sandbox.stub().resolves();
 			this.fnRedoStub = sandbox.stub().resolves();
 
-			this.oToolbarDomRef = jQuery("<input>").appendTo("#qunit-fixture").get(0);
 			this.oOverlayContainer = jQuery("<button></button>").appendTo("#qunit-fixture");
 			this.oAnyOtherDomRef = jQuery("<button></button>").appendTo("#qunit-fixture").get(0);
 			this.oContextMenu = jQuery("<button class='sapUiDtContextMenu' ></button>").appendTo("#qunit-fixture").get(0);
@@ -628,67 +629,61 @@ sap.ui.define([
 
 			sandbox.stub(Overlay, "getOverlayContainer").returns(this.oOverlayContainer);
 
-			this.mContext = {
-				getToolbar: function() {
-					return {
-						getDomRef: function() {
-							return this.oToolbarDomRef;
-						}.bind(this)
-					};
-				}.bind(this),
-				getShowToolbars: function() {
-					return true;
-				},
-				_onUndo: this.fnUndoStub,
-				_onRedo: this.fnRedoStub
-			};
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp
+			});
+			this.oUndoStub = sandbox.stub(this.oRta, "undo").resolves();
+			this.oRedoStub = sandbox.stub(this.oRta, "redo").resolves();
+
+			return this.oRta.start();
 		},
 		afterEach: function() {
 			sandbox.restore();
 			Device.os.macintosh = this.bMacintoshOriginal;
+			this.oRta.destroy();
 		}
 	}, function() {
 		QUnit.test("with focus on an overlay", function(assert) {
 			this.oOverlayContainer.get(0).focus();
 
-			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
-			assert.equal(this.fnUndoStub.callCount, 1, "then _onUndo was called once");
-			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
-			assert.equal(this.fnRedoStub.callCount, 1, "then _onRedo was called once");
+			this.oRta.fnKeyDown(this.oUndoEvent);
+			assert.equal(this.oUndoStub.callCount, 1, "then undo was called once");
+			this.oRta.fnKeyDown(this.oRedoEvent);
+			assert.equal(this.oRedoStub.callCount, 1, "then redo was called once");
 		});
 
 		QUnit.test("with focus on the toolbar", function(assert) {
-			this.oToolbarDomRef.focus();
+			this.oRta.getToolbar().focus();
 
-			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
-			assert.equal(this.fnUndoStub.callCount, 1, "then _onUndo was called once");
-			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
-			assert.equal(this.fnRedoStub.callCount, 1, "then _onRedo was called once");
+			this.oRta.fnKeyDown(this.oUndoEvent);
+			assert.equal(this.oUndoStub.callCount, 1, "then undo was called once");
+			this.oRta.fnKeyDown(this.oRedoEvent);
+			assert.equal(this.oRedoStub.callCount, 1, "then redo was called once");
 		});
 
 		QUnit.test("with focus on the context menu", function(assert) {
 			this.oContextMenu.focus();
 
-			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
-			assert.equal(this.fnUndoStub.callCount, 1, "then _onUndo was called once");
-			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
-			assert.equal(this.fnRedoStub.callCount, 1, "then _onRedo was called once");
+			this.oRta.fnKeyDown(this.oUndoEvent);
+			assert.equal(this.oUndoStub.callCount, 1, "then undo was called once");
+			this.oRta.fnKeyDown(this.oRedoEvent);
+			assert.equal(this.oRedoStub.callCount, 1, "then redo was called once");
 
 			this.oContextMenu2.focus();
 
-			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
-			assert.equal(this.fnUndoStub.callCount, 2, "then _onUndo was called once again");
-			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
-			assert.equal(this.fnRedoStub.callCount, 2, "then _onRedo was called once again");
+			this.oRta.fnKeyDown(this.oUndoEvent);
+			assert.equal(this.oUndoStub.callCount, 2, "then undo was called once again");
+			this.oRta.fnKeyDown(this.oRedoEvent);
+			assert.equal(this.oRedoStub.callCount, 2, "then redo was called once again");
 		});
 
 		QUnit.test("with focus on an outside element (e.g. dialog)", function(assert) {
 			this.oAnyOtherDomRef.focus();
 
-			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
-			assert.equal(this.fnUndoStub.callCount, 0, "then _onUndo was not called");
-			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
-			assert.equal(this.fnRedoStub.callCount, 0, "then _onRedo was not called");
+			this.oRta.fnKeyDown(this.oUndoEvent);
+			assert.equal(this.oUndoStub.callCount, 0, "then undo was not called");
+			this.oRta.fnKeyDown(this.oRedoEvent);
+			assert.equal(this.oRedoStub.callCount, 0, "then redo was not called");
 		});
 
 		QUnit.test("during rename", function(assert) {
@@ -697,17 +692,10 @@ sap.ui.define([
 				tabIndex: 1
 			}).appendTo("#qunit-fixture").get(0).focus();
 
-			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
-			assert.equal(this.fnUndoStub.callCount, 0, "then _onUndo was not called");
-			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
-			assert.equal(this.fnRedoStub.callCount, 0, "then _onRedo was not called");
-		});
-
-		QUnit.test("using the public API", function(assert) {
-			RuntimeAuthoring.prototype.undo.call(this.mContext);
-			assert.equal(this.fnUndoStub.callCount, 1, "then _onUndo was called");
-			RuntimeAuthoring.prototype.redo.call(this.mContext);
-			assert.equal(this.fnRedoStub.callCount, 1, "then _onRedo was called");
+			this.oRta.fnKeyDown(this.oUndoEvent);
+			assert.equal(this.oUndoStub.callCount, 0, "then undo was not called");
+			this.oRta.fnKeyDown(this.oRedoEvent);
+			assert.equal(this.oRedoStub.callCount, 0, "then redo was not called");
 		});
 
 		QUnit.test("macintosh support", function(assert) {
@@ -716,16 +704,16 @@ sap.ui.define([
 			this.oUndoEvent.metaKey = true;
 
 			this.oOverlayContainer.get(0).focus();
-			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
-			assert.equal(this.fnUndoStub.callCount, 1, "then _onUndo was called once");
+			this.oRta.fnKeyDown(this.oUndoEvent);
+			assert.equal(this.oUndoStub.callCount, 1, "then undo was called once");
 
 			this.oRedoEvent.keyCode = KeyCodes.Z;
 			this.oRedoEvent.ctrlKey = false;
 			this.oRedoEvent.metaKey = true;
 			this.oRedoEvent.shiftKey = true;
 
-			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
-			assert.equal(this.fnRedoStub.callCount, 1, "then _onRedo was called once");
+			this.oRta.fnKeyDown(this.oRedoEvent);
+			assert.equal(this.oRedoStub.callCount, 1, "then redo was called once");
 		});
 	});
 
@@ -883,7 +871,7 @@ sap.ui.define([
 			this.oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
 			this.oReloadPageStub = sandbox.stub(ReloadManager, "triggerReload");
-			return this.oRta._initVersioning();
+			this.oRta._oVersionsModel = new JSONModel();
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -891,7 +879,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("When restore function is called in the CUSTOMER layer", function(assert) {
-			var oDeleteChangesStub = sandbox.stub(this.oRta, "_deleteChanges").resolves();
+			var oDeleteChangesStub = sandbox.stub(PersistenceWriteAPI, "reset").resolves();
 			var sResetMessageKey = "FORM_PERS_RESET_MESSAGE";
 			var sResetTitleKey = "FORM_PERS_RESET_TITLE";
 
@@ -917,7 +905,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When restore function is called in the USER layer", function(assert) {
-			var oDeleteChangesStub = sandbox.stub(this.oRta, "_deleteChanges").resolves();
+			var oDeleteChangesStub = sandbox.stub(PersistenceWriteAPI, "reset").resolves();
 			this.oRta.setFlexSettings({
 				layer: Layer.USER
 			});
