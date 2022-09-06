@@ -1,0 +1,14 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+>
+	<TextArea
+		value="{displayValue}"
+		width="100%"
+		enabled="{config/enabled}"
+		placeholder="{config/placeholder}"
+		liveChange="_onLiveChange"
+		growing="true"
+		growingMaxLines="7"
+	/>
+</core:FragmentDefinition>

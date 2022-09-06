@@ -54,11 +54,11 @@ sap.ui.define([
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
 	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.codeEditor.CodeEditor
 	 * @author SAP SE
-	 * @since 1.88
+	 * @since 1.106
 	 * @version ${version}
 	 *
 	 * @private
-	 * @experimental 1.88
+	 * @experimental 1.106
 	 * @ui5-restricted
 	 */
 	var CodeEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.codeEditor.CodeEditor", {

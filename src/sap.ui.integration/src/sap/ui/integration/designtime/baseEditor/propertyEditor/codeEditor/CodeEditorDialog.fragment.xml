@@ -33,7 +33,7 @@
 		</content>
 		<beginButton>
 			<Button
-				text="{i18n>BASE_EDITOR.CODE.SAVE}"
+				text="{i18n>BASE_EDITOR.CODE.OK}"
 				type="Emphasized"
 				press="onSave"
 			/>
