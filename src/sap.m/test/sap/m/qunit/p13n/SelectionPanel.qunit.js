@@ -106,9 +106,10 @@ sap.ui.define([
 		assert.ok(this.oSelectionPanel._oListControl.getItems()[1].getCells()[1].getItems()[0].getVisible(), "Item is filtered (active)");
 	});
 
-	QUnit.test("Check acc information on 'active' state", function(assert){
+	QUnit.test("Check acc information on 'active' state & activeColumn is provided", function(assert){
 
 		this.oSelectionPanel.setP13nData(this.getTestData());
+		this.oSelectionPanel.setActiveColumn("Active");
 
 		this.oSelectionPanel._oListControl.getItems().forEach(function(oItem, iIndex){
 
@@ -124,6 +125,34 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Check acc information on 'active' state --> no text provided, hence no reader information", function(assert){
+
+		this.oSelectionPanel.setP13nData(this.getTestData());
+		this.oSelectionPanel.setActiveColumn("");
+
+		this.oSelectionPanel._oListControl.getItems().forEach(function(oItem, iIndex){
+
+			var aSecondCellItems = oItem.getCells()[1].getItems();
+			assert.equal(aSecondCellItems.length, 1, "Only one item, no invisible text has been created witohut column text for active information");
+
+		});
+
+	});
+
+	QUnit.test("Check 'fieldColumn' dynamic update", function(assert){
+		this.oSelectionPanel.setFieldColumn("Test");
+		assert.equal(this.oSelectionPanel.getFieldColumn(), "Test", "Text has been updated as expected");
+		this.oSelectionPanel.setFieldColumn("Test2");
+		assert.equal(this.oSelectionPanel.getFieldColumn(), "Test2", "Text has been updated as expected");
+	});
+
+	QUnit.test("Check 'activeColumn' dynamic update", function(assert){
+		this.oSelectionPanel.setActiveColumn("Test");
+		assert.equal(this.oSelectionPanel.getActiveColumn(), "Test", "Text has been updated as expected");
+		this.oSelectionPanel.setActiveColumn("Test2");
+		assert.equal(this.oSelectionPanel.getActiveColumn(), "Test2", "Text has been updated as expected");
+	});
+
 	QUnit.test("Check 'getSelectedFields' ", function(assert){
 		this.oSelectionPanel.setP13nData(this.getTestData());
 		assert.equal(this.oSelectionPanel.getSelectedFields().length, this.aVisible.length, "Amount of selected fields is equal to initially visible fields");
@@ -135,7 +164,7 @@ sap.ui.define([
 		this.oSelectionPanel._oSelectedItem = this.oSelectionPanel._oListControl.getItems()[0];
 
 		this.oSelectionPanel._addMoveButtons(this.oSelectionPanel._oSelectedItem);
-		assert.equal(this.oSelectionPanel._oSelectedItem.getCells()[1].getItems().length, 6, "Item does contain move buttons after being selected");
+		assert.equal(this.oSelectionPanel._oSelectedItem.getCells()[1].getItems().length, 5, "Item does contain move buttons after being selected");
 	});
 
 	QUnit.test("Check 'removeButtons' ", function(assert){
@@ -145,7 +174,7 @@ sap.ui.define([
 
 		this.oSelectionPanel._addMoveButtons(this.oSelectionPanel._oSelectedItem);
 		this.oSelectionPanel._removeMoveButtons();
-		assert.equal(this.oSelectionPanel._oSelectedItem.getCells()[1].getItems().length, 2, "Item does not contain move buttons");
+		assert.equal(this.oSelectionPanel._oSelectedItem.getCells()[1].getItems().length, 1, "Item does not contain move buttons");
 	});
 
 	QUnit.test("Check hover event handling", function(assert){

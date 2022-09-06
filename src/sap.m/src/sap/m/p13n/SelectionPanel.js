@@ -128,7 +128,7 @@ sap.ui.define([
 	};
 
 	SelectionPanel.prototype._getListTemplate = function() {
-		return new ColumnListItem({
+		var oColumnListItem = new ColumnListItem({
 			selected: "{" + this.P13N_MODEL + ">" + this.PRESENCE_ATTRIBUTE + "}",
 			type: ListType.Active,
 			cells: [
@@ -159,23 +159,39 @@ sap.ui.define([
 									}
 								}
 							}
-						}),
-						// The active status is visiually represented as dot icon in the tabular view, for the screen reader it needs to be ensured
-						// that a similar information is available without the UI. This InvisibleText will provide a text in the screen reader as:
-						// "Active Field is active" & "Active Field is inactive"
-						new InvisibleText({
-							text: {
-								path: this.P13N_MODEL + ">active",
-								formatter: function(bactive) {
-									return bactive ? this._getResourceText("p13n.ACTIVESTATE_ACTIVE") : this._getResourceText("p13n.ACTIVESTATE_INACTIVE");
-								}.bind(this)
-							}
 						})
 					]
 				})
 			]
 		});
+
+		if (this.getActiveColumn()) {
+			// The active status is visiually represented as dot icon in the tabular view, for the screen reader it needs to be ensured
+			// that a similar information is available without the UI. This InvisibleText will provide a text in the screen reader as:
+			// "Active Field is active" & "Active Field is inactive" --> this should only be done in case the active column is being used
+			var oActiveTextOutput = new InvisibleText({
+				text: {
+					path: this.P13N_MODEL + ">active",
+					formatter: function(bactive) {
+						return bactive ? this._getResourceText("p13n.ACTIVESTATE_ACTIVE") : this._getResourceText("p13n.ACTIVESTATE_INACTIVE");
+					}.bind(this)
+				}
+			});
+
+			oColumnListItem.getCells()[1].addItem(oActiveTextOutput);
+		}
+
+		return oColumnListItem;
 	};
+
+	SelectionPanel.prototype.setActiveColumn = function(sActiveText) {
+		this.setProperty("activeColumn", sActiveText);
+		this._setTemplate(this._getListTemplate()); //recreate template since its depending on this property
+		this._displayColumns();//update header texts in Table columns
+		return this;
+	};
+
+
 
 	SelectionPanel.prototype.setShowHeader = function(bShowHeader) {
 		if (bShowHeader){

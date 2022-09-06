@@ -418,6 +418,10 @@ sap.ui.define([
 
 	BasePanel.prototype._setTemplate = function(oTemplate) {
 		oTemplate.setType("Active");
+		var oCurrentTemplate = this.getAggregation("_template");
+		if (oCurrentTemplate) {
+			oCurrentTemplate.destroy();
+		}
 		this.setAggregation("_template", oTemplate);
 		if (oTemplate) {
 			if (this.getEnableReorder()){
