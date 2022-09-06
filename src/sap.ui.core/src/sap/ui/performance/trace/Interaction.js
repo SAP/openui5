@@ -306,8 +306,8 @@ sap.ui.define([
 					if (!sEpp || sAction && sRootContextID && oPendingInteraction.passportAction.endsWith(sAction)) {
 						this.addEventListener("readystatechange", handleResponse.bind(this,  oPendingInteraction.id));
 					}
+					this.addEventListener("readystatechange", handleInteraction.bind(this, Interaction.notifyAsyncStep()));
 				}
-				this.addEventListener("readystatechange", handleInteraction.bind(this, Interaction.notifyAsyncStep()));
 				// assign the current interaction to the xhr for later response header retrieval.
 				this.pendingInteraction = oPendingInteraction;
 			}
