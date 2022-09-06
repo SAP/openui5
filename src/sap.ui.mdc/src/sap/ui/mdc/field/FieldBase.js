@@ -2896,8 +2896,11 @@ sap.ui.define([
 					var oFocusedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 					if (oFocusedControl) {
 						if (containsOrEquals(oFieldHelp.getDomRef(), oFocusedControl.getFocusDomRef())) {
-							oEvent.stopPropagation();
-							return;
+							oEvent.stopPropagation(); // to prevent focusleave on Field itself
+							if (this.bValueHelpRequested) {
+								this.bValueHelpRequested = false; // to enable change-event after closing value help
+							}
+							return; // do not execute Inputs logic to prevent to run in Inputs own suggest-popup logic
 						} else {
 							oFieldHelp.skipOpening();
 						}
