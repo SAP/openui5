@@ -236,29 +236,6 @@ sap.ui.define([
 	function getMockServerFixtures() {
 		return {
 			mFixture : {
-				"$metadata" : {
-					ifMatch : function (request) {
-						iTimesSaved = 0; // reset counter with each metadata request
-
-						return true;
-					},
-					source : "metadata.xml"
-				},
-				"$metadata?sap-language=EN" : {
-					ifMatch : function (request) {
-						iTimesSaved = 0; // reset counter with each metadata request
-
-						return true;
-					},
-					source : "metadata.xml"
-				},
-				"SAP__Currencies?$skip=0&$top=5000" : {
-					source : "../../data/SAP__Currencies.json"
-				},
-				"SAP__UnitsOfMeasure?$skip=0&$top=5000" : {
-					source : "../../data/SAP__UnitsOfMeasure.json"
-				},
-
 				/* Messages: Test Case I */
 				"SalesOrderSet('101')" : {
 					source : "Messages/TC1/SalesOrderSet.json"
@@ -867,7 +844,26 @@ sap.ui.define([
 				}
 			},
 			aRegExpFixture : [{
+				regExp : /GET .*\/\$metadata/,
+				response : {
+					ifMatch : function (request) {
+						iTimesSaved = 0; // reset counter with each metadata request
 
+						return true;
+					},
+					source : "metadata.xml"
+				}
+			}, {
+				regExp : /GET .*\/SAP__Currencies\?/,
+				response : {
+					source : "../../data/SAP__Currencies.json"
+				}
+			}, {
+				regExp : /GET .*\/SAP__UnitsOfMeasure\?/,
+				response : {
+					source : "../../data/SAP__UnitsOfMeasure.json"
+				}
+			}, {
 				/* Messages: Test Case III */
 				regExp :
 					/GET .*\/SalesOrderSet\('103'\)\/ToLineItems\?\$skip=([0-4])&\$top=([0-4])(?:&\$inlinecount=(allpages))?/,
