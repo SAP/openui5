@@ -598,6 +598,7 @@ sap.ui.define([
 		var oCondition = Condition.createCondition("EQ", [["2022-02-25T07:06:30+01:00", "Europe/Berlin"]], undefined, undefined, ConditionValidated.NotValidated);
 		var oException;
 		sinon.spy(oValueType, "validateValue");
+		sinon.spy(oValueType2, "validateValue");
 		sinon.spy(oOriginalType, "validateValue");
 		sinon.spy(oDateTimeOffsetType, "validateValue");
 		sinon.spy(oStringType, "validateValue");
@@ -611,6 +612,23 @@ sap.ui.define([
 		assert.notOk(oException, "no exception fired");
 		assert.ok(oValueType.validateValue.calledWith([new Date(2022, 1, 25, 7, 6, 30), "Europe/Berlin"]), "validateValue of ValueType called with currentValue");
 		assert.ok(oDateTimeOffsetType.validateValue.calledWith("2022-02-25T07:06:30+01:00"), "validateValue of DateTimeOffsetType called with current Date");
+		assert.notOk(oStringType.validateValue.called, "validateValue of StringType not called called");
+		assert.notOk(oOriginalType.validateValue.called, "validateValue of originalDateType not called");
+
+		oException = undefined;
+		oValueType.validateValue.reset();
+		oDateTimeOffsetType.validateValue.reset();
+		oStringType.validateValue.reset();
+		oOriginalType.validateValue.reset();
+		try {
+			oConditionType2.validateValue(oCondition);
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.notOk(oException, "no exception fired");
+		assert.ok(oValueType2.validateValue.calledWith([new Date(2022, 1, 25, 7, 6, 30), "Europe/Berlin"]), "validateValue of ValueType called with currentValue");
+		assert.notOk(oDateTimeOffsetType.validateValue.called, "validateValue of DateTimeOffsetType not called");
 		assert.ok(oStringType.validateValue.calledWith("Europe/Berlin"), "validateValue of StringType called with current timezone");
 		assert.notOk(oOriginalType.validateValue.called, "validateValue of originalDateType not called");
 

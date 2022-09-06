@@ -749,7 +749,7 @@
 				<m:Label text="{/#Product/MatrQuantity/@sap:label}"></m:Label>
 				<mdc:Field
 					id="IOF2"
-					value="{parts: ['MatrQuantity', 'MatrUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit'}"
+					value="{parts: [{path: 'MatrQuantity', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}}, {path: 'MatrUnit', type: 'sap.ui.model.odata.type.String', formatOptions: {parseKeepsEmptyString: true}, constraints: {nullable: false}}, 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {preserveDecimals: true, emptyString: 0, parseAsString: false, unitOptional: true}}"
 					delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}"
 					placeholder="{/#Product/MatrQuantity/@sap:label}"
 					display="Value" change="handleChange"
@@ -1913,7 +1913,7 @@
 				<m:Label text="{/#Product/MatrQuantity/@sap:label}"/>
 				<mdc:Field
 					id="F6-IO2"
-					value="{parts: ['MatrQuantity', 'MatrUnit', 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit'}"
+					value="{parts: [{path: 'MatrQuantity', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}}, {path: 'MatrUnit', type: 'sap.ui.model.odata.type.String', formatOptions: {parseKeepsEmptyString: true}, constraints: {nullable: false}}, 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: {preserveDecimals: true, emptyString: 0, parseAsString: false, unitOptional: true}}"
 					delegate="{name: 'delegates/odata/v4/FieldBaseDelegate'}"
 					placeholder="{/#Product/MatrQuantity/@sap:label}"
 					display="Value" change="handleChange"

@@ -271,7 +271,7 @@ sap.ui.define([
 						assert.equal(bIsEmpty, oTest.isEmpty, "isEmpty check");
 
 						try {
-							oOperator.validate(oCondition.values, oTest.type, oTest.compositeTypes);
+							oOperator.validate(oCondition.values, oTest.type, oTest.compositeTypes, oTest.compositePart);
 						} catch (oException) {
 							assert.ok(!oTest.valid, "Exception fired in validation");
 						}
@@ -482,7 +482,8 @@ sap.ui.define([
 						isEmpty: false,
 						valid: false, // as String (for timezone) allows only 5 characters -> test for usage of this type
 						type: oDateTimeWithTimezoneType1,
-						compositeTypes: [oDateTimeOffsetType, oStringType]
+						compositeTypes: [oDateTimeOffsetType, oStringType],
+						compositePart: 0
 					},
 					{
 						formatArgs: [Condition.createCondition("EQ", [["2022-02-24T12:15:30Z", "Europe/Berlin"]]), oDateTimeWithTimezoneType2, FieldDisplay.Value, true, [oDateTimeOffsetType, oStringType]],
@@ -493,7 +494,8 @@ sap.ui.define([
 						isEmpty: false,
 						valid: false, // as String (for timezone) allows only 5 characters -> test for usage of this type
 						type: oDateTimeWithTimezoneType2,
-						compositeTypes: [oDateTimeOffsetType, oStringType]
+						compositeTypes: [oDateTimeOffsetType, oStringType],
+						compositePart: 1
 					}
 				],
 				"NE": [{

@@ -255,14 +255,15 @@ sap.ui.define([
 	function _parseConditionToConditions(oCondition) {
 
 		var bIsUnit = _isUnit(this.oFormatOptions.valueType);
+		var aConditions = bIsUnit && this.oFormatOptions.getConditions && this.oFormatOptions.getConditions();
 
-		if (bIsUnit && this.oFormatOptions.getConditions) {
+		if (bIsUnit && this.oFormatOptions.getConditions && aConditions.length > 1) { // if olny one condition exist, just take it
 			// update all conditions with unit; only if not only a unit is shown
 			// TODO better solution
 			var sUnit = oCondition && oCondition.values[0][1];
 			var oInParameters = oCondition && oCondition.inParameters;
 			var oOutParameters = oCondition && oCondition.outParameters;
-			var aConditions = this.oFormatOptions.getConditions();
+			var oPayload = oCondition && oCondition.payload;
 			for (var i = 0; i < aConditions.length; i++) {
 				aConditions[i].values[0][1] = sUnit;
 				if (sUnit === undefined) {
@@ -283,6 +284,9 @@ sap.ui.define([
 				}
 				if (oOutParameters || aConditions[i].outParameters) {
 					aConditions[i].outParameters = oOutParameters;
+				}
+				if (oPayload || aConditions[i].payload) {
+					aConditions[i].payload = oPayload;
 				}
 			}
 			if (aConditions.length === 0) {
