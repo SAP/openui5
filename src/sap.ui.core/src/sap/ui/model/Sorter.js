@@ -20,23 +20,28 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/Log"],
 	 *
 	 * @param {string} sPath the binding path used for sorting
 	 * @param {boolean} [bDescending=false] whether the sort order should be descending
-	 * @param {boolean|function} [vGroup] configure grouping of the content, can either be true to enable grouping
-	 *        based on the raw model property value, or a function which calculates the group value out of the
-	 *        context (e.g. oContext.getProperty("date").getYear() for year grouping). The control needs to
-	 *        implement the grouping behaviour for the aggregation which you want to group. In case a function
-	 *        is provided it must either return a primitive type value as the group key or an object containing
-	 *        a "key" property and additional properties needed for group visualization. This object
-	 *        or the object with the primitive type return value as "key" property is passed to
-	 *        the <code>groupHeaderFactory</code> function that has been specified to create the
-	 *        group header for the control aggregation; see
-	 *        {@link sap.ui.base.ManagedObject#bindAggregation}.
-	 *        <b>Note:</b> Grouping is only possible (and only makes sense) for the primary sort property.
-	 * @param {function} [fnComparator] A custom comparator function, which is used for client-side sorting instead
-	 *        of the default comparator method. Information about parameters and expected return values of such a
-	 *        method can be found in the {@link #.defaultComparator default comparator} documentation.
-	 *        <b>Note:</b> Custom comparator functions are meant to be used on the client. Models that implement
-	 *        sorting in the backend usually don't support custom comparator functions. Consult the documentation
-	 *        of the specific model implementation.
+	 * @param {boolean|function} [vGroup] configure grouping of the content, can either be true to
+	 *   enable grouping based on the raw model property value, or a function which calculates the
+	 *   group value out of the context (e.g. oContext.getProperty("date").getYear() for year
+	 *   grouping). The control needs to implement the grouping behaviour for the aggregation which
+	 *   you want to group. In case a function is provided it must either return a primitive type
+	 *   value as the group key or an object containing a "key" property and additional properties
+	 *   needed for group visualization. This object or the object with the primitive type return
+	 *   value as "key" property is passed to the <code>groupHeaderFactory</code> function that has
+	 *   been specified to create the group header for the control aggregation; see
+	 *   {@link sap.ui.base.ManagedObject#bindAggregation}.
+	 *   <b>Note:</b> Grouping via <code>vGroup=true<code> is only possible (and only makes sense)
+	 *   for the primary sort property. A more complicated grouping is possible by providing a
+	 *   grouping function. The sort order needs to fit to the grouping also in this case. See also
+	 *   {@link topic:ec79a5d5918f4f7f9cbc2150e66778cc Sorting, Grouping, and Filtering for List
+	 *   Binding}.
+	 * @param {function} [fnComparator] A custom comparator function, which is used for client-side
+	 *   sorting instead of the default comparator method. Information about parameters and expected
+	 *   return values of such a method can be found in the
+	 *   {@link #.defaultComparator default comparator} documentation.
+	 *   <b>Note:</b> Custom comparator functions are meant to be used on the client. Models that
+	 *   implement sorting in the backend usually don't support custom comparator functions. Consult
+	 *   the documentation of the specific model implementation.
 	 * @public
 	 * @alias sap.ui.model.Sorter
 	 * @extends sap.ui.base.Object
