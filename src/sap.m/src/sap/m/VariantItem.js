@@ -153,5 +153,11 @@ sap.ui.define([
 		}
 	});
 
+	VariantItem.prototype.setText = function(sText) {
+		this.setProperty("text", sText);
+		this.setTitle(sText);
+		return this;
+	};
+
 	return VariantItem;
 });

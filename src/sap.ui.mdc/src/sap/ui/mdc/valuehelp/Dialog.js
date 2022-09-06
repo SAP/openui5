@@ -394,7 +394,7 @@ sap.ui.define([
 		return this._retrievePromise("collectiveSearchSelect", function (){
 			return loadModules([
 				"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect",
-				"sap/ui/core/Item",
+				"sap/m/VariantItem",
 				"sap/ui/model/json/JSONModel"
 			]).then(
 				function (aModules) {
@@ -410,9 +410,7 @@ sap.ui.define([
 							this.getId() + "-collSearchItem",
 							{
 								key: "{$select>key}",
-								text: "{$select>text}",
-								enabled: true
-								/*textDirection: "{$contenthelp>textDirection}" */
+								text: "{$select>text}"
 							}
 						);
 						this._oGroupSelect = new CollectiveSearchSelect(this.getId() + "--Select",

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/core/Item"
+	"sap/m/VariantItem"
 ], function (
 	CollectiveSearchSelect,
 	createAndAppendDiv,
@@ -50,10 +50,10 @@ sap.ui.define([
 		assert.equal(this.oColSearch.getItems().length, 2, "two items exist");
 
 		this.oColSearch.setSelectedItemKey("cs2");
-		assert.equal(this.oColSearch.getProperty("_currentItemText"), "col Search 2", "long text of selected item should be correct");
+		assert.equal(this.oColSearch.getCurrentText(), "col Search 2", "long text of selected item should be correct");
 
 		this.oColSearch.setSelectedItemKey("cs1");
-		assert.equal(this.oColSearch.getProperty("_currentItemText"), "col Search 1", "long text of selected item should be correct");
+		assert.equal(this.oColSearch.getCurrentText(), "col Search 1", "long text of selected item should be correct");
 	});
 
 	QUnit.test("testing open popover and creation of list", function(assert) {
@@ -67,9 +67,9 @@ sap.ui.define([
 		this.oColSearch.addItem(new Item({key: "cs2", text: "col Search 2"}));
 
 		// Assert
-		assert.ok(!this.oColSearch.oList, "List should not exist");
+		assert.ok(!this.oColSearch.oVariantList, "List should not exist");
 		this.oColSearch.onclick();
-		assert.ok(this.oColSearch.oList, "List should exist");
+		assert.ok(this.oColSearch.oVariantList, "List should exist");
 	});
 
 	QUnit.test("testing subheader and search field visiblity", function(assert) {
@@ -85,12 +85,12 @@ sap.ui.define([
 		this.oColSearch.onclick();
 
 		// Assert
-		assert.ok(!this.oColSearch.oPage.getShowSubHeader(), "Subheader should not be visible");
+		assert.ok(!this.oColSearch.oVariantSelectionPage.getShowSubHeader(), "Subheader should not be visible");
 		for (var i = 3; i < 11; i++) {
 			this.oColSearch.addItem(new Item({key: "cs" + i, text: "col Search " + i}));
 		}
 		this.oColSearch.onclick();
-		assert.ok(this.oColSearch.oPage.getShowSubHeader(), "Subheader should be visible when more than 9 items exist");
+		assert.ok(this.oColSearch.oVariantSelectionPage.getShowSubHeader(), "Subheader should be visible when more than 9 items exist");
 	});
 
 	QUnit.test("testing search field ", function(assert) {
@@ -111,14 +111,14 @@ sap.ui.define([
 		var oFakeEvent = {
 			newValue: "10"
 		};
-		this.oColSearch.oSearchField.fireLiveChange(oFakeEvent);
-		assert.equal(this.oColSearch.oList.getItems().length, 1, "one item should be avaiable/visible after search in the list");
+		this.oColSearch._oSearchField.fireLiveChange(oFakeEvent);
+		assert.equal(this.oColSearch.oVariantList.getItems().length, 1, "one item should be avaiable/visible after search in the list");
 
 		oFakeEvent = {
 			newValue: ""
 		};
-		this.oColSearch.oSearchField.fireLiveChange(oFakeEvent);
-		assert.equal(this.oColSearch.oList.getItems().length, 10, "all items should be avaiable/visible after search in the list");
+		this.oColSearch._oSearchField.fireLiveChange(oFakeEvent);
+		assert.equal(this.oColSearch.oVariantList.getItems().length, 10, "all items should be avaiable/visible after search in the list");
 	});
 
 	QUnit.test("testing open popover via keyboard", function(assert) {
@@ -135,7 +135,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		assert.ok(this.oColSearch.oPopover.isOpen() === true, "Popover should be open!");
+		assert.ok(this.oColSearch.oVariantPopOver.isOpen() === true, "Popover should be open!");
 	});
 
 	QUnit.test("testing selection of item and event handling", function(assert) {
@@ -161,7 +161,7 @@ sap.ui.define([
 		var oFakeEvent = {
 			item: new Item({key: "cs2", text: "col Search 2"})
 		};
-		this.oColSearch.oList.fireItemPress(oFakeEvent);
+		this.oColSearch.oVariantList.fireItemPress(oFakeEvent);
 		oCore.applyChanges();
 
 		// Assert
@@ -172,7 +172,7 @@ sap.ui.define([
 		oFakeEvent = {
 			item: new Item({key: "cs3", text: "col Search 3"})
 		};
-		this.oColSearch.oList.fireItemPress(oFakeEvent);
+		this.oColSearch.oVariantList.fireItemPress(oFakeEvent);
 		oCore.applyChanges();
 
 		// Assert
@@ -182,6 +182,5 @@ sap.ui.define([
 		//Cleanup
 		delete this.bEventHandled;
 	});
-
 
 });

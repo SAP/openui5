@@ -18,6 +18,7 @@ sap.ui.define([
 	'sap/ui/model/Context',
 	'sap/ui/Device',
 	'sap/m/library',
+	'sap/m/VariantItem',
 	'sap/ui/core/library',
 	"sap/ui/mdc/util/loadModules",
 	"sap/ui/events/KeyCodes"
@@ -37,6 +38,7 @@ sap.ui.define([
 		Context,
 		Device,
 		mobileLibrary,
+		VariantItem,
 		coreLibrary,
 		loadModules,
 		KeyCodes
@@ -2754,10 +2756,9 @@ sap.ui.define([
 
 		if (!this._oCollectiveSearchSelect) {
 			// check if collective search is supported
-			var oItemTemplate = new Item(this.getId() + "-collSearchItem", {
+			var oItemTemplate = new VariantItem(this.getId() + "-collSearchItem", {
 				key: "{$help>key}",
 				text: "{$help>text}",
-				enabled: "{$help>enabled}",
 				textDirection: "{$help>textDirection}"
 			});
 

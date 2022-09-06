@@ -284,6 +284,17 @@ sap.ui.define([
 					type: "sap.ui.core.TitleLevel",
                     group: "Appearance",
                     defaultValue: TitleLevel.Auto
+				},
+
+				/**
+				 * Defines the behavior, when the same list item is selected
+                 * If set to <code>false</code> the <code>select</code> event will be ommited.
+				 */
+				_selectStategyForSameItem: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: true,
+					visibility: "hidden"
 				}
 			},
 			defaultAggregation: "items",
@@ -482,6 +493,10 @@ sap.ui.define([
 						if (!this._oObserver.isObserved(oVariantItem, {properties: ["title"]})) {
 							this._oObserver.observe(oVariantItem, {properties: ["title"]});
 						}
+
+						if (this.getSelectedKey() === oVariantItem.getKey()) {
+							this.refreshTitle();
+						}
 						break;
 					case "remove":
 						if (this._oObserver.isObserved(oVariantItem, {properties: ["title"]})) {
@@ -632,8 +647,11 @@ sap.ui.define([
 	VariantManagement.prototype.getTitle = function() {
 		return this.oVariantText;
 	};
+
 	VariantManagement.prototype.refreshTitle = function() {
-		this.oVariantText.getBinding("text").refresh(true);
+		if (this.oVariantText) {
+			this.oVariantText.getBinding("text").refresh(true);
+		}
 	};
 
 	VariantManagement.prototype._setInvisibleText = function(sText, bFlag) {
@@ -979,24 +997,26 @@ sap.ui.define([
 					}
 				}
 				if (sSelectionKey) {
-					// this.setModified(false);
-					this.setSelectedKey(sSelectionKey);
 
-					this.fireSelect({
-						key: sSelectionKey
-					});
+					var bTriggerForSameItem = this.getProperty("_selectStategyForSameItem");
+
+					if (bTriggerForSameItem || (!bTriggerForSameItem && (this.getSelectedKey() !== sSelectionKey))) {
+						this.setSelectedKey(sSelectionKey);
+
+						this.fireSelect({
+							key: sSelectionKey
+						});
+					}
 					this.oVariantPopOver.close();
 				}
 			}.bind(this)
 		});
 		this.oVariantList.setNoDataText(this._oRb.getText("VARIANT_MANAGEMENT_NODATA"));
 
-
 		var oItemTemplate = new Item({
 			key: "{$mVariants>key}",
 			text: "{$mVariants>title}"
 		});
-
 
 		this.oVariantList.bindAggregation("items", {
 			path: "/items",

@@ -39,8 +39,8 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Button",
 	"sap/m/Toolbar",
-	"sap/ui/core/Core",
-	"sap/m/ToolbarSpacer"
+	"sap/m/ToolbarSpacer",
+	"sap/ui/core/Core"
 ], function(
 		qutils,
 		FieldValueHelp,
@@ -75,6 +75,7 @@ sap.ui.define([
 		Popover,
 		Dialog,
 		Button,
+		Toolbar,
 		ToolbarSpacer,
 		oCore
 	) {
