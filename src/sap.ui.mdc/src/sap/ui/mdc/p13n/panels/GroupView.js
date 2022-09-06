@@ -147,7 +147,7 @@ sap.ui.define([
 
 	GroupView.prototype._createGroupListTemplate = function() {
 		var oList = new List({
-			keyboardMode: ListKeyboardMode.Navigation,
+			keyboardMode: ListKeyboardMode.Edit,
 			selectionChange: function(oEvent) {
 				var sPath = oEvent.getParameter("listItem").getBindingContext(this.P13N_MODEL).sPath;
 				var oItem = this._getP13nModel().getProperty(sPath);
@@ -198,6 +198,7 @@ sap.ui.define([
 
     GroupView.prototype._createInnerListControl = function() {
 		var oList =  new List(this.getId() + "-innerGroupViewList", Object.assign(this._getListControlConfig(), {
+			keyboardMode: ListKeyboardMode.Edit,
 			mode: "None",
 			infoToolbar: new Toolbar(),
 			updateStarted: function(oEvt) {
