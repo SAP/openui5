@@ -141,6 +141,10 @@ sap.ui.define([
 
         if (oPropertyAnnotations["@Org.OData.Aggregation.V1.SupportedAggregationMethods"]){
             oPropertyAnnotations["@Org.OData.Aggregation.V1.SupportedAggregationMethods"].forEach(function(sAggregationMethod){
+                if (sAggregationMethod.hasOwnProperty("$Path")) {
+					sAggregationMethod = sAggregationMethod["$Path"];
+				}
+
                 aProperties.push({
                     name: sAggregationMethod + sKey,
                     propertyPath: sKey,
