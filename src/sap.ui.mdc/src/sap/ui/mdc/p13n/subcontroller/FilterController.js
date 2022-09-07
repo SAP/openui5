@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/mdc/condition/FilterOperatorUtil', './BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/ui/mdc/p13n/FlexUtil', 'sap/base/Log', 'sap/base/util/merge'
-], function (FilterOperatorUtil, BaseController, P13nBuilder, FlexUtil, Log, merge) {
+	'sap/ui/mdc/condition/FilterOperatorUtil', './BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/ui/mdc/p13n/FlexUtil', 'sap/base/Log', 'sap/base/util/merge', 'sap/base/util/UriParameters'
+], function (FilterOperatorUtil, BaseController, P13nBuilder, FlexUtil, Log, merge, SAPUriParameters) {
 	"use strict";
 
     var FilterController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.FilterController", {
@@ -94,7 +94,7 @@ sap.ui.define([
     };
 
     FilterController.prototype._getPresenceAttribute = function(bexternalAppliance){
-        return "isFiltered";
+        return "active";
     };
 
     FilterController.prototype.getAdaptationUI = function (oPropertyHelper, oWrapper) {
@@ -110,7 +110,7 @@ sap.ui.define([
         }.bind(this));
     };
 
-    FilterController.prototype.update = function(){
+    FilterController.prototype.update = function(oPropertyHelper){
         BaseController.prototype.update.apply(this, arguments);
         var oAdaptationControl = this.getAdaptationControl();
         var oInbuiltFilter = oAdaptationControl && oAdaptationControl.getInbuiltFilter();
@@ -143,7 +143,6 @@ sap.ui.define([
 
         var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
 
-            mItem.name = oProperty.path || oProperty.name;
             var aExistingFilters = mExistingFilters[mItem.name];
             mItem.active = aExistingFilters && aExistingFilters.length > 0 ? true : false;
 
@@ -151,7 +150,7 @@ sap.ui.define([
         });
 
         P13nBuilder.sortP13nData({
-            visible: undefined,
+            visible: new SAPUriParameters(window.location.search).getAll("sap-ui-xx-filterQueryPanel")[0] === "true" ? "active" : null,//FIXME: remove with URL parameter
             position: undefined
         }, oP13nData.items);
 

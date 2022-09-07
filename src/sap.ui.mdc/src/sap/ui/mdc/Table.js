@@ -2102,6 +2102,7 @@ sap.ui.define([
 					});
 				}
 				this._oQuickActionContainer.setAssociation("column", oMDCColumn);
+				this._oItemContainer.setAssociation("column", oMDCColumn);
 
 				Promise.all([
 					this._oQuickActionContainer.initializeQuickActions(),
@@ -2155,22 +2156,15 @@ sap.ui.define([
 					}
 				}
 
-				var aFilterable = [];
 				var oDelegate = this.getControlDelegate();
 				var aHeaderItems = (oDelegate.addColumnMenuItems && oDelegate.addColumnMenuItems(this, oMDCColumn)) || [];
+				var aFilterableProperties = this.getPropertyHelper().getProperty(oMDCColumn.getDataProperty()).getFilterableProperties();
 
-				this.getPropertyHelper().getFilterableProperties(oMDCColumn.getDataProperty()).forEach(function(oProperty) {
-					aFilterable.push(new Item({
-						text: oProperty.label,
-						key: oProperty.name
-					}));
-				});
-
-				if (this.isFilteringEnabled() && aFilterable.length) {
+				if (this.isFilteringEnabled() && aFilterableProperties.length > 0) {
 					var oFilter = new ColumnPopoverSelectListItem({
 						label: oResourceBundle.getText("table.SETTINGS_FILTER"),
 						icon: "sap-icon://filter",
-						action: [onShowFilterDialog, this]
+						action: [aFilterableProperties, onShowFilterDialog, this]
 					});
 					aHeaderItems.unshift(oFilter);
 				}
@@ -2751,11 +2745,11 @@ sap.ui.define([
 	};
 
 	function onShowSettingsDialog(oEvent) {
-		TableSettings.showPanel(this, "Columns", oEvent.getSource());
+		TableSettings.showPanel(this, "Columns");
 	}
 
-	function onShowFilterDialog(oEvent) {
-		TableSettings.showPanel(this, "Filter", oEvent.getSource());
+	function onShowFilterDialog(oEvent, aFilterableProperties) {
+		TableSettings.showPanel(this, "Filter", aFilterableProperties);
 	}
 
 	// TODO: move to a base util that can be used by most aggregations

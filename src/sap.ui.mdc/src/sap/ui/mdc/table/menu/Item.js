@@ -21,9 +21,18 @@ sap.ui.define([
 
 	Item.prototype.initializeContent = function() {
 		var oTable = this.getTable();
+		var oColumn = Core.byId(this.getParent().getAssociation("column"));
 		var oEngine = oTable.getEngine();
 		var sKey = this.getKey();
 		var oController = oEngine.getController(oTable, sKey);
+
+		if (sKey === "Filter") {
+			var aFilterableProperties = oTable.getPropertyHelper().getProperty(oColumn.getDataProperty()).getFilterableProperties();
+			var aPropertyNames = aFilterableProperties.map(function(oProperty) {
+				return oProperty.name;
+			});
+			oTable.getInbuiltFilter().setVisibleFields(aPropertyNames);
+		}
 
 		return oTable.getEngine().uimanager.create(oTable, [sKey]).then(function(oDialog) {
 			var oContent = oDialog.removeContent(0);

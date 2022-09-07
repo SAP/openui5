@@ -16,7 +16,8 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.mdc",
 			associations: {
-				table: {type: "sap.ui.mdc.Table"}
+				table: {type: "sap.ui.mdc.Table"},
+				column: {type: "sap.ui.mdc.table.Column"}
 			}
 		}
 	});
