@@ -1982,9 +1982,8 @@ sap.ui.define([
 	Card.prototype._handleError = function (sLogMessage, bNoItems) {
 		if (!bNoItems) {
 			Log.error(sLogMessage, null, "sap.ui.integration.widgets.Card");
+			this.fireEvent("_error", { message: sLogMessage });
 		}
-
-		this.fireEvent("_error", { message: sLogMessage });
 
 		var oErrorConfiguration = this._oCardManifest.get(MANIFEST_PATHS.ERROR_MESSAGES),
 			oError = this._getIllustratedMessage(oErrorConfiguration, bNoItems),
@@ -2000,7 +1999,6 @@ sap.ui.define([
 		} else {
 			this.getCardHeader().setAggregation("_error", oError);
 		}
-
 	};
 
 	/**

@@ -112,9 +112,9 @@ sap.ui.define([
 						key: 'actionHandlers'
 					},
 					{
-						title: 'Custom Error Message',
+						title: 'No Data Message',
 						target: 'learnDetail',
-						key: 'customErrorMessages',
+						key: 'customNoDataMessages',
 						experimental: true
 					},
 					{

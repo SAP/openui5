@@ -1316,33 +1316,33 @@ sap.ui.define([
 						]
 					},
 					{
-						key: 'errorMessages',
+						key: 'noDataMessages',
 						target: 'exploreSamples',
-						title: 'Error Message',
+						title: 'No Data Message',
 						experimental: true,
 						subSamples: [
 							{
-								title: 'Custom Error Message',
+								title: 'Custom No Data Message',
 								key: 'custom',
 								files: [
 									{
-										url: '/samples/errorMessages/customErrorMessage/manifest.json',
+										url: '/samples/noDataMessages/customNoDataMessage/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
 									}
 								]
 							},
 							{
-								title: 'Object Card Error',
+								title: 'Object Card No Data',
 								key: 'object',
 								files: [
 									{
-										url: '/samples/errorMessages/objectErrorMessage/manifest.json',
+										url: '/samples/noDataMessages/objectNoDataMessage/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/errorMessages/objectErrorMessage/mockdata/employee.json',
+										url: '/samples/noDataMessages/objectNoDataMessage/mockdata/employee.json',
 										name: 'employee.json',
 										key: 'employee.json'
 									}
