@@ -345,19 +345,6 @@ sap.ui.define([
                                 type: "sap.m.SelectionDetailsActionLevel"
                             }
                         }
-                    },
-                    /**
-                     * This event is fired when a data load on the inner chart completes
-                     */
-                    innerChartLoadedData: {
-                        parameters: {
-                            /**
-                             * Reference to the inner chart
-                             */
-                            innerChart: {
-                                type: "sap.ui.core.Control"
-                            }
-                        }
                     }
                 }
             },
@@ -1064,10 +1051,6 @@ sap.ui.define([
             this._renderOverlay(false);
 
             this.getControlDelegate().requestToolbarUpdate(this);
-
-            this.fireEvent("innerChartLoadedData ", {
-                innerChart: this.getControlDelegate().getInnerChart(this)
-            });
         };
 
         Chart.prototype._checkStyleClassesForDimensions = function() {

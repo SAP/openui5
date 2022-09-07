@@ -1310,8 +1310,8 @@ function(
         assert.equal(ChartDelegate.getPropertyHelperClass(), ChartPropertyHelper, "Correct default class for propertyHelper");
     });
 
-    QUnit.test("_formatText", function(assert) {
-        assert.ok(ChartDelegate._formatText("ABC"), "ABC", "Must be implemented by custom delegate");
+    QUnit.test("formatText", function(assert) {
+        assert.ok(ChartDelegate.formatText("ABC"), "ABC", "Must be implemented by custom delegate");
     });
 
     QUnit.test("setNoDataText", function(assert) {
