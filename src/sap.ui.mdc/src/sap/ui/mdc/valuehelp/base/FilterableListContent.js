@@ -344,6 +344,11 @@ sap.ui.define([
 		throw new Error("FilterableListContent: Every filterable listcontent must implement this method.");
 	};
 
+	FilterableListContent.prototype._getListItemBindingContext = function (oItem) {
+		var sModelName = this._getListBindingInfo().model;
+		return oItem && oItem.getBindingContext(sModelName);
+	};
+
 	FilterableListContent.prototype._getTypesForConditions = function (oConditions) {
 		var oDelegate = this._getValueHelpDelegate();
 		var oDelegatePayload = this._getValueHelpDelegatePayload();

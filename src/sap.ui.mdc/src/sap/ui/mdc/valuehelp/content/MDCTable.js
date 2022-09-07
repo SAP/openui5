@@ -99,8 +99,7 @@ sap.ui.define([
 						oItem.setSelected(!oItem.getSelected());
 					}
 
-					var sModelName = this._getListBindingInfo().model;
-					var oItemContext = oItem.getBindingContext(sModelName);
+					var oItemContext = this._getListItemBindingContext(oItem);
 					var oValues = this._getItemFromContext(oItemContext);
 					var oCondition = oValues && this._createCondition(oValues.key, oValues.description, oValues.payload);
 
@@ -111,9 +110,8 @@ sap.ui.define([
 					if (!this.isTypeahead() || !this._isSingleSelect()) { // single-suggestion handled in this._handleItemPress
 						var oParams = oEvent.getParameters();
 						var aListItems = oParams.listItems || oParams.listItem && [oParams.listItem];
-						var sModelName = this._getListBindingInfo().model;
 						var aConditions = aListItems.map(function (oItem) {
-							var oItemContext = oItem.getBindingContext(sModelName);
+							var oItemContext = this._getListItemBindingContext(oItem);
 							var oValues = this._getItemFromContext(oItemContext);
 							return oValues && this._createCondition(oValues.key, oValues.description, oValues.payload);
 						}.bind(this));
@@ -151,10 +149,10 @@ sap.ui.define([
 				},
 				getItems: function () {
 					return oInnerTable.getRows().filter(function (oRow) {
-						var oRowBindingContext = oRow.getBindingContext();
+						var oRowBindingContext = this._getListItemBindingContext(oRow);
 						return oRowBindingContext && oRowBindingContext.getObject();	// don't return empty rows
-					});
-				},
+					}.bind(this));
+				}.bind(this),
 				getSelectedItems: function () {
 					var aSelectedIndices = _getUITableSelectionHandler().getSelectedIndices();
 					var aSelectedContexts = aSelectedIndices.reduce(function(aResult, iCurrent) {
@@ -162,11 +160,11 @@ sap.ui.define([
 						return oContext ? aResult.concat(oContext) : aResult;
 					}, []);
 					return MDCTableHelperConfig["Table"].getItems().filter(function (oRow) {
-						return aSelectedContexts.indexOf(oRow.getBindingContext()) >= 0;
-					});
-				},
+						return aSelectedContexts.indexOf(this._getListItemBindingContext(oRow)) >= 0;
+					}.bind(this));
+				}.bind(this),
 				modifySelection: function (oItem, bSelected) {
-					var oContext = oItem.getBindingContext();
+					var oContext = this._getListItemBindingContext(oItem);
 					var iContextIndex = MDCTableHelperConfig["Table"].getContexts().indexOf(oContext);
 					var bInSelectedIndices = _getUITableSelectionHandler().getSelectedIndices().indexOf(iContextIndex) >= 0;
 					if (bSelected && !bInSelectedIndices) {
@@ -188,8 +186,8 @@ sap.ui.define([
 						return aRowIndices.indexOf(iIndex) >= 0;
 					});
 					var aRows = MDCTableHelperConfig["Table"].getItems().filter(function (oRow, iIndex) {
-						return aContexts.indexOf(oRow.getBindingContext()) >= 0;
-					});
+						return aContexts.indexOf(this._getListItemBindingContext(oRow)) >= 0;
+					}.bind(this));
 					var aAddConditions = [], aRemoveConditions = [];
 					var aSelectedRows = MDCTableHelperConfig["Table"].getSelectedItems();
 					var aCurrentConditions = this.getConditions();
@@ -198,7 +196,8 @@ sap.ui.define([
 						var bIsRowSelected = aSelectedRows.indexOf(oRow) !== -1;
 						if (bIsInSelectedConditions !== bIsRowSelected) {
 							var aBucket = aSelectedRows.indexOf(oRow) !== -1 ? aAddConditions : aRemoveConditions;
-							var oValues = this._getItemFromContext(oRow.getBindingContext());
+							var oRowBindingContext = this._getListItemBindingContext(oRow);
+							var oValues = this._getItemFromContext(oRowBindingContext);
 							var oCondition = oValues && this._createCondition(oValues.key, oValues.description, oValues.payload);
 							aBucket.push(oCondition);
 						}

@@ -1,7 +1,7 @@
 // Use this test page to test the API and features of the ValueHelp.
 // The interaction with the Field is tested on the field test page.
 
-/* global QUnit */
+/* global QUnit,sinon */
 /*eslint max-nested-callbacks: [2, 5]*/
 
 sap.ui.define([
@@ -80,6 +80,27 @@ sap.ui.define([
 		oContent.setTokenizerTitle("myTitleText");
 		assert.equal(oContent.getFormattedTokenizerTitle(0), "myTitleText", "formatted TokenizerTitle");
 		assert.equal(oContent.getFormattedTokenizerTitle(1), "myTitleText", "formatted TokenizerTitle");
+
+	});
+
+	QUnit.test("_getListItemBindingContext", function(assert) {
+
+		var sModelName = "MyModel";
+
+		sinon.stub(oContent, "_getListBindingInfo").callsFake(function () {
+			return {
+				model: sModelName
+			};
+		});
+
+		var oItem = { getBindingContext: function () {}};
+		sinon.spy(oItem, "getBindingContext");
+
+		oContent._getListItemBindingContext(oItem);
+
+		assert.ok(oItem.getBindingContext.called, "getBindingContext was called");
+		assert.ok(oContent._getListBindingInfo.called, "_getListBindingInfo was called");
+		assert.equal(oItem.getBindingContext.lastCall.args[0], sModelName, "modelname was considered");
 
 	});
 
