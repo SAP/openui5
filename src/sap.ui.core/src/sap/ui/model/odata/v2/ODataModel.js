@@ -1996,31 +1996,59 @@ sap.ui.define([
 	/**
 	 * Creates a new list binding for this model.
 	 *
-	 * @param {string} sPath Binding path, either absolute or relative to a given <code>oContext</code>
-	 * @param {sap.ui.model.Context} [oContext] Binding context referring to this model
-	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters] Initial sort order, can be either a sorter or an array of sorters
-	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] Predefined filters, can be either a filter or an array of filters
-	 * @param {object} [mParameters] Map which contains additional parameters for the binding
-	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which should be included in the request
-	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which should be included in the request
-	 * @param {Object<string,string>} [mParameters.custom] Optional map of custom query parameters (name/value pairs); names of custom parameters must not start with <code>$</code>
-	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode] Count mode for this binding;
-	 *           if not specified, the default count mode for this model is used
+	 * @param {string} sPath The binding path in the model
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context which is required as base for a relative path.
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters]
+	 *   Initial sort order, can be either a sorter or an array of sorters.
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters]
+	 *   Predefined filters, can be either a filter or an array of filters.
+	 * @param {object} [mParameters] A map which contains additional parameters for the binding.
+	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode]
+	 *   Defines the count mode of the binding; if not specified, the default count mode of the
+	 *   <code>oModel</code> is applied.
 	 * @param {string} [mParameters.createdEntitiesKey=""]
 	 *   A key used in combination with the resolved path of the binding to identify the entities
-	 *   created via the binding's {@link #create} method.
+	 *   created by the binding's {@link #create} method.
 	 *
 	 *   <b>Note:</b> Different controls or control aggregation bindings to the same collection must
 	 *   have different <code>createdEntitiesKey</code> values.
-	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode] Operation mode for this binding;
-	 *           if not specified, the default operation mode of this model is used
-	 * @param {boolean} [mParameters.faultTolerant] Turns on the fault tolerance mode, data is not reset if a backend request returns an error
-	 * @param {string} [mParameters.batchGroupId] Sets the batch group ID to be used for requests originating from this binding
+	 * @param {Object<string,string>} [mParameters.custom]
+	 *   An optional map of custom query parameters. Custom parameters must not start with
+	 *   <code>$</code>.
+	 * @param {string} [mParameters.expand]
+	 *   Value for the OData <code>$expand</code> query option parameter which is included in the
+	 *   data request after URL encoding of the given value.
+	 * @param {boolean} [mParameters.faultTolerant]
+	 *   Turns on the fault tolerance mode, data is not reset if a back-end request returns an
+	 *   error.
+	 * @param {string} [mParameters.groupId]
+	 *   The group id to be used for requests originating from the binding
+	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
+	 *   The operation mode of the binding
+	 * @param {string} [mParameters.select]
+	 *   Value for the OData <code>$select</code> query option parameter which is included in the
+	 *   data request after URL encoding of the given value.
+	 * @param {boolean} [mParameters.transitionMessagesOnly]
+	 *   Whether the list binding only requests transition messages from the back end. If messages
+	 *   for entities of this collection need to be updated, use
+	 *   {@link sap.ui.model.odata.v2.ODataModel#read} on the parent entity corresponding to the
+	 *   list binding's context, with the parameter <code>updateAggregatedMessages</code> set to
+	 *   <code>true</code>.
+	 * @param {boolean} [mParameters.usePreliminaryContext]
+	 *   Whether a preliminary context is used. When set to <code>true</code>, the model can
+	 *   bundle the OData calls for dependent bindings into fewer $batch requests. For more
+	 *   information, see
+	 *   {@link topic:6c47b2b39db9404582994070ec3d57a2#loio62149734b5c24507868e722fe87a75db
+	 *   Optimizing Dependent Bindings}.
+	 * @param {string} [mParameters.batchGroupId]
+	 *   <b>Deprecated</b>, use <code>groupId</code> instead. Sets the batch group id to be used for
+	 *   requests originating from the binding.
 	 * @param {int} [mParameters.threshold]
 	 *   Deprecated since 1.102.0, as {@link sap.ui.model.odata.OperationMode.Auto} is deprecated;
 	 *   the threshold that defines how many entries should be fetched at least by the binding if
-	 *   <code>operationMode</code> is set to <code>Auto</code>
-	 * @returns {sap.ui.model.ListBinding} The new list binding
+	 *   <code>operationMode</code> is set to <code>Auto</code>.
+	 * @returns {sap.ui.model.odata.v2.ODataListBinding} The new list binding
 	 * @see sap.ui.model.Model.prototype.bindList
 	 * @public
 	 */
@@ -2649,13 +2677,35 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates new context binding for this model.
+	 * Creates a context binding for this model.
 	 *
+	 * @param {string} sPath The binding path in the model
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context which is required as base for a relative path.
+	 * @param {object} [mParameters] A map which contains additional parameters for the binding.
+	 * @param {boolean} [mParameters.createPreliminaryContext]
+	 *   Whether a preliminary context is created
+	 * @param {Object<string,string>} [mParameters.custom]
+	 *   An optional map of custom query parameters. Custom parameters must not start with
+	 *   <code>$</code>.
+	 * @param {string} [mParameters.expand]
+	 *   Value for the OData <code>$expand</code> query option parameter which is included in the
+	 *   request after URL encoding of the given value.
+	 * @param {string} [mParameters.groupId]
+	 *   The group id to be used for requests originating from the binding
+	 * @param {string} [mParameters.select]
+	 *   Value for the OData <code>$select</code> query option parameter which is included in the
+	 *   request after URL encoding of the given value.
+	 * @param {boolean} [mParameters.usePreliminaryContext]
+	 *   Whether a preliminary context is used. When set to <code>true</code>, the model can bundle
+	 *   the OData calls for dependent bindings into fewer $batch requests. For more information,
+	 *   see {@link topic:6c47b2b39db9404582994070ec3d57a2#loio62149734b5c24507868e722fe87a75db
+	 *   Optimizing Dependent Bindings}.
+	 * @param {string} [mParameters.batchGroupId]
+	 *   <b>Deprecated</b>, use <code>groupId</code> instead. Sets the batch group id to be used for
+	 *   requests originating from the binding.
+	 * @returns {sap.ui.model.odata.v2.ODataContextBinding} The new context binding
 	 * @see sap.ui.model.Model.prototype.bindContext
-	 * @param {string} sPath Resolved path
-	 * @param {sap.ui.model.Context} oContext Context object
-	 * @param {Object<string,any>} [mParameters] Map of parameters
-	 * @returns {sap.ui.model.ContextBinding} The new context binding
 	 * @public
 	 */
 	ODataModel.prototype.bindContext = function(sPath, oContext, mParameters) {
