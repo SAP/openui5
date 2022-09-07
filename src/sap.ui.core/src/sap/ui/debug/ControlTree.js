@@ -99,7 +99,7 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 	ControlTree.prototype.render = function() {
 		var oDomRef = this.oParentDomRef;
 		var oUIArea = null,
-			oUIAreas = this.oCore.mUIAreas;
+			oUIAreas = UIArea.registry.all();
 		oDomRef.innerHTML = "";
 		for (var i in oUIAreas) {
 			var oUIArea = oUIAreas[i],
@@ -359,7 +359,7 @@ sap.ui.define('sap/ui/debug/ControlTree', [
 	ControlTree.prototype.getTargetDomRef = function(oTreeNodeDomRef) {
 		var sType = oTreeNodeDomRef.getAttribute("sap-type"),
 			sId = oTreeNodeDomRef.getAttribute("sap-id"),
-			oSomething = sType === "UIArea" ? this.oCore.getUIArea(sId) : this.oCore.byId(sId);
+			oSomething = sType === "UIArea" ? UIArea.registry.get(sId) : this.oCore.byId(sId);
 
 		while (oSomething instanceof Element) {
 			var oDomRef = oSomething.getDomRef();

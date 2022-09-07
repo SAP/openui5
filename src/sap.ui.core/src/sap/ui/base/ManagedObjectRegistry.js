@@ -49,11 +49,12 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/assert"],
 		};
 
 		FNClass.prototype.deregister = function deregister() {
-			if ( mInstances[this.sId] ) {
+			var sId = this.getId();
+			if ( mInstances[sId] ) {
 				if ( fnOnDeregister ) {
-					fnOnDeregister(this.sId);
+					fnOnDeregister(sId);
 				}
-				delete mInstances[this.sId];
+				delete mInstances[sId];
 				iInstancesCount--;
 			}
 		};

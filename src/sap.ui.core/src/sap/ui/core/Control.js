@@ -5,6 +5,7 @@
 // Provides base class sap.ui.core.Control for all controls
 sap.ui.define([
 	'./CustomStyleClassSupport',
+	'./Core',
 	'./Element',
 	'./UIArea',
 	'./RenderManager',
@@ -16,6 +17,7 @@ sap.ui.define([
 ],
 	function(
 		CustomStyleClassSupport,
+		Core,
 		Element,
 		UIArea,
 		RenderManager,
@@ -616,19 +618,18 @@ sap.ui.define([
 	 * @public
 	 */
 	Control.prototype.placeAt = function(oRef, vPosition) {
-		var oCore = sap.ui.getCore();
-		if (oCore.isInitialized()) {
+		if (Core.isInitialized()) {
 			// core already initialized, do it now
 
 			// 1st try to resolve the oRef as a Container control
 			var oContainer = oRef;
 			if (typeof oContainer === "string") {
-				oContainer = oCore.byId(oRef);
+				oContainer = Core.byId(oRef);
 			}
 			// if no container control is found use the corresponding UIArea
 			var bIsUIArea = false;
 			if (!(oContainer instanceof Element)) {
-				oContainer = oCore._createUIArea(oRef);
+				oContainer = UIArea.create(oRef);
 				bIsUIArea = true;
 			}
 
@@ -680,7 +681,7 @@ sap.ui.define([
 		} else {
 			// core not yet initialized, defer execution
 			var that = this;
-			oCore.attachInit(function () {
+			Core.attachInit(function () {
 				that.placeAt(oRef, vPosition);
 			});
 		}
