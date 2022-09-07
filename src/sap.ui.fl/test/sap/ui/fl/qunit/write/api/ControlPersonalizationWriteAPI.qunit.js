@@ -62,134 +62,132 @@ sap.ui.define([
 			});
 
 			var oViewPromise;
-			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null, function(viewContent) {
-				var MockComponent = UIComponent.extend("MockController", {
-					metadata: {
-						manifest: {
-							"sap.app": {
-								applicationVersion: {
-									version: "1.2.3"
-								},
-								id: "MockController"
-							}
+			var MockComponent = UIComponent.extend("MockController", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
+							},
+							id: "MockController"
 						}
-					},
-					createContent: function() {
-						var oApp = new App(this.createId("mockapp"));
-						oViewPromise = XMLView.create({
-							id: this.createId("mockview"),
-							definition: viewContent
-						}).then(function(oView) {
-							oApp.addPage(oView);
-							return oView.loaded();
-						});
-						return oApp;
 					}
-				});
-				this.oComp = new MockComponent("testComponent");
-
-				oViewPromise.then(function() {
-					this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
-					this.oVariantModel = new VariantModel({
-						variantManagement: {
-							variants: []
-						}
-					}, {
-						flexController: this.oFlexController,
-						appComponent: this.oComp
+				},
+				createContent: function() {
+					var oApp = new App(this.createId("mockapp"));
+					oViewPromise = XMLView.create({
+						id: this.createId("mockview"),
+						viewName: "test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp"
+					}).then(function(oView) {
+						oApp.addPage(oView);
+						return oView.loaded();
 					});
-					sandbox.stub(this.oVariantModel, "addChange");
-					return this.oVariantModel.initialize();
-				}.bind(this))
+					return oApp;
+				}
+			});
+			this.oComp = new MockComponent("testComponent");
+
+			oViewPromise.then(function() {
+				this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
+				this.oVariantModel = new VariantModel({
+					variantManagement: {
+						variants: []
+					}
+				}, {
+					flexController: this.oFlexController,
+					appComponent: this.oComp
+				});
+				sandbox.stub(this.oVariantModel, "addChange");
+				return this.oVariantModel.initialize();
+			}.bind(this))
+			.then(function() {
+				this.oComp.setModel(this.oVariantModel, Utils.VARIANT_MODEL_NAME);
+				this.oCompContainer = new ComponentContainer({
+					component: this.oComp
+				}).placeAt("qunit-fixture");
+
+				this.oObjectPageLayout = Core.byId("testComponent---mockview--ObjectPageLayout");
+				this.mMoveChangeData1 = {
+					selectorElement: this.oObjectPageLayout,
+					changeSpecificData: {
+						changeType: "moveControls",
+						movedElements: [{
+							id: "testComponent---mockview--ObjectPageSection1",
+							sourceIndex: 0,
+							targetIndex: 1
+						}],
+						source: {
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
+						},
+						target: {
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
+						}
+					}
+				};
+				this.mMoveChangeData2 = {
+					selectorElement: this.oObjectPageLayout,
+					changeSpecificData: {
+						changeType: "moveControls",
+						movedElements: [{
+							id: "testComponent---mockview--ObjectPageSection3",
+							sourceIndex: 2,
+							targetIndex: 1
+						}],
+						source: {
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
+						},
+						target: {
+							id: "testComponent---mockview--ObjectPageLayout",
+							aggregation: "sections"
+						}
+					}
+				};
+				this.mRenameChangeData1 = {
+					selectorElement: Core.byId("testComponent---mockview--ObjectPageSection1"),
+					changeSpecificData: {
+						changeType: "rename",
+						renamedElement: {
+							id: "testComponent---mockview--ObjectPageSection1"
+						},
+						value: "Personalization Test"
+					}
+				};
+				this.mRenameChangeData2 = {
+					selectorElement: Core.byId("testComponent---mockview--TextTitle1"),
+					changeSpecificData: {
+						changeType: "rename",
+						renamedElement: {
+							id: "testComponent---mockview--TextTitle1"
+						},
+						value: "Change for the inner variant"
+					}
+				};
+
+				this.fnLogErrorStub = sandbox.stub(Log, "error");
+				this.fnCreateAndAddChangeSpy = sandbox.spy(this.oFlexController, "addChange");
+				this.fnApplyChangeSpy = sandbox.spy(this.oFlexController, "applyChange");
+
+				//registration is triggered by instantiation of XML View above
+				ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(function() {
+					// register all ChangeHandlers again with modified default layer permissions
+					ChangeHandlerStorage.clearAll();
+					sandbox.stub(Settings, "getDefaultLayerPermissions").returns({
+						VENDOR: true,
+						CUSTOMER_BASE: true,
+						CUSTOMER: true,
+						PUBLIC: false,
+						USER: true
+					});
+					ChangeHandlerRegistration.registerPredefinedChangeHandlers();
+					return ChangeHandlerRegistration.getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs();
+				})
 				.then(function() {
-					this.oComp.setModel(this.oVariantModel, Utils.VARIANT_MODEL_NAME);
-					this.oCompContainer = new ComponentContainer({
-						component: this.oComp
-					}).placeAt("qunit-fixture");
-
-					this.oObjectPageLayout = Core.byId("testComponent---mockview--ObjectPageLayout");
-					this.mMoveChangeData1 = {
-						selectorElement: this.oObjectPageLayout,
-						changeSpecificData: {
-							changeType: "moveControls",
-							movedElements: [{
-								id: "testComponent---mockview--ObjectPageSection1",
-								sourceIndex: 0,
-								targetIndex: 1
-							}],
-							source: {
-								id: "testComponent---mockview--ObjectPageLayout",
-								aggregation: "sections"
-							},
-							target: {
-								id: "testComponent---mockview--ObjectPageLayout",
-								aggregation: "sections"
-							}
-						}
-					};
-					this.mMoveChangeData2 = {
-						selectorElement: this.oObjectPageLayout,
-						changeSpecificData: {
-							changeType: "moveControls",
-							movedElements: [{
-								id: "testComponent---mockview--ObjectPageSection3",
-								sourceIndex: 2,
-								targetIndex: 1
-							}],
-							source: {
-								id: "testComponent---mockview--ObjectPageLayout",
-								aggregation: "sections"
-							},
-							target: {
-								id: "testComponent---mockview--ObjectPageLayout",
-								aggregation: "sections"
-							}
-						}
-					};
-					this.mRenameChangeData1 = {
-						selectorElement: Core.byId("testComponent---mockview--ObjectPageSection1"),
-						changeSpecificData: {
-							changeType: "rename",
-							renamedElement: {
-								id: "testComponent---mockview--ObjectPageSection1"
-							},
-							value: "Personalization Test"
-						}
-					};
-					this.mRenameChangeData2 = {
-						selectorElement: Core.byId("testComponent---mockview--TextTitle1"),
-						changeSpecificData: {
-							changeType: "rename",
-							renamedElement: {
-								id: "testComponent---mockview--TextTitle1"
-							},
-							value: "Change for the inner variant"
-						}
-					};
-
-					this.fnLogErrorStub = sandbox.stub(Log, "error");
-					this.fnCreateAndAddChangeSpy = sandbox.spy(this.oFlexController, "addChange");
-					this.fnApplyChangeSpy = sandbox.spy(this.oFlexController, "applyChange");
-
-					//registration is triggered by instantiation of XML View above
-					ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap").then(function() {
-						// register all ChangeHandlers again with modified default layer permissions
-						ChangeHandlerStorage.clearAll();
-						sandbox.stub(Settings, "getDefaultLayerPermissions").returns({
-							VENDOR: true,
-							CUSTOMER_BASE: true,
-							CUSTOMER: true,
-							PUBLIC: false,
-							USER: true
-						});
-						ChangeHandlerRegistration.registerPredefinedChangeHandlers();
-						return ChangeHandlerRegistration.getChangeHandlersOfLoadedLibsAndRegisterOnNewLoadedLibs();
-					})
-					.then(function() {
-						return ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap");
-					})
-					.then(done);
-				}.bind(this));
+					return ChangeHandlerRegistration.waitForChangeHandlerRegistration("sap.uxap");
+				})
+				.then(done);
 			}.bind(this));
 		},
 		afterEach: function() {

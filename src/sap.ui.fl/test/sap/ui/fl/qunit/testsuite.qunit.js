@@ -301,11 +301,6 @@ sap.ui.define([
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/controlVariants/Utils"]
-				},
-				ui5: {
-					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
-					}
 				}
 			},
 

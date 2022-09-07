@@ -1,25 +1,29 @@
 /* global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/m/List",
-	"sap/m/StandardListItem",
 	"sap/m/Button",
 	"sap/m/IconTabBar",
 	"sap/m/IconTabFilter",
-	"sap/ui/core/Core"
+	"sap/m/List",
+	"sap/m/StandardListItem",
+	"sap/ui/core/Core",
+	"sap/ui/core/library",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry"
 ], function(
-	DesignTime,
-	OverlayRegistry,
-	List,
-	StandardListItem,
 	Button,
 	IconTabBar,
 	IconTabFilter,
-	oCore
+	List,
+	StandardListItem,
+	oCore,
+	coreLibrary,
+	DesignTime,
+	OverlayRegistry
 ) {
-	'use strict';
+	"use strict";
+
+	var IconColor = coreLibrary.IconColor;
 
 	QUnit.module("Given the IconTabBar is created with 3 filters and different content..", {
 		beforeEach: function(assert) {
@@ -49,7 +53,7 @@ sap.ui.define([
 					}),
 					new IconTabFilter({
 						icon: "sap-icon://task",
-						iconColor: sap.ui.core.IconColor.Critical,
+						iconColor: IconColor.Critical,
 						count: "10",
 						key: "Open",
 						text: "Open",
@@ -59,7 +63,7 @@ sap.ui.define([
 					}),
 					new IconTabFilter({
 						icon: "sap-icon://shipping-status",
-						iconColor: sap.ui.core.IconColor.Positive,
+						iconColor: IconColor.Positive,
 						count: "5",
 						key: "Shipped",
 						text: "Shipped"
