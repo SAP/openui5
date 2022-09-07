@@ -45,7 +45,7 @@ sap.ui.define([
 				"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
 				"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 				"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor",
-				"code": "sap/ui/integration/designtime/baseEditor/propertyEditor/codeEditor/CodeEditor",
+				"textArea": "sap/ui/integration/designtime/baseEditor/propertyEditor/textAreaEditor/TextAreaEditor",
 				"json": "sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor",
 				"multiSelect": "sap/ui/integration/designtime/baseEditor/propertyEditor/multiSelectEditor/MultiSelectEditor"
 			}
