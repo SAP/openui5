@@ -1185,7 +1185,7 @@ sap.ui.define([
 		}
 
 		var oCurrentControl = this.getFieldGroupControl();
-		if ( oControl != oCurrentControl ) {
+		if ( oControl != oCurrentControl && document.activeElement && (document.activeElement.id !== "sap-ui-static-firstfe")) {
 			var aCurrentGroupIds = (oCurrentControl ? oCurrentControl._getFieldGroupIds() : []),
 				aNewGroupIds = (oControl ? oControl._getFieldGroupIds() : []),
 				aTargetFieldGroupIds = aCurrentGroupIds.filter(function(sCurrentGroupId) {
