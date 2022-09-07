@@ -60,18 +60,18 @@ sap.ui.define([
 						}
 					},
 					expand: function (oEvent) {
-						var oControl = oEvent.getSource();
 						var bExpand = oEvent.getParameter("expand");
-						// handle error message strip for field
-						var oConfig = this.getConfiguration();
-						if (!oControl._level) {
-							oControl._level = oConfig.level || 0;
-						}
-						var oMessageStrip = oControl._level === "1" ? this.getParent().getParent().getAggregation("_messageStrip") : this.getParent().getAggregation("_messageStrip");
-						if (oMessageStrip === null) {
-							oMessageStrip = Core.byId(this.getAssociation("_messageStrip"));
-						}
 						if (bExpand) {
+							var oControl = oEvent.getSource();
+							// handle error message strip for field
+							var oConfig = this.getConfiguration();
+							if (!oControl._level) {
+								oControl._level = oConfig.level || 0;
+							}
+							var oMessageStrip = oControl._level === "1" && this.getParent().getParent() ? this.getParent().getParent().getAggregation("_messageStrip") : this.getParent().getAggregation("_messageStrip");
+							if (oMessageStrip === null) {
+								oMessageStrip = Core.byId(this.getAssociation("_messageStrip"));
+							}
 							oControl.addContent(oMessageStrip);
 							oControl.focus();
 						}
