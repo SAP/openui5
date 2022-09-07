@@ -346,44 +346,43 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
-	// QUnit.test("_handlesLabels aggregation", function (assert) {
-	// 	// arrange & act
-	// 	var oResourceBundle = Core.getLibraryResourceBundle("sap.m"),
-	// 		oBoundleCalledStub = this.stub(oResourceBundle, "getText"),
-	// 		oSlider = new Slider(),
-	// 		aLabels = oSlider.getAggregation("_handlesLabels"),
-	// 		oSliderWithTickmarks = new Slider({enableTickmarks: true}),
-	// 		oSliderWithLables = new Slider({
-	// 			min: 0,
-	// 			max: 40,
-	// 			step: 5,
-	// 			enableTickmarks: true,
-	// 			showAdvancedTooltip: true,
-	// 			scale: new ResponsiveScale({
-	// 				tickmarksBetweenLabels: 1
-	// 			})
-	// 		}),
-	// 		aTickmarksLabels = oSliderWithTickmarks.getAggregation("_handlesLabels");
+	QUnit.test("_handlesLabels aggregation", function (assert) {
+		// arrange & act
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m"),
+			oSlider = new Slider(),
+			aLabels = oSlider.getAggregation("_handlesLabels"),
+			oSliderWithTickmarks = new Slider({enableTickmarks: true}),
+			oSliderWithLables = new Slider({
+				min: 0,
+				max: 40,
+				step: 5,
+				enableTickmarks: true,
+				showAdvancedTooltip: true,
+				scale: new ResponsiveScale({
+					tickmarksBetweenLabels: 1
+				})
+			}),
+			aTickmarksLabels = oSliderWithTickmarks.getAggregation("_handlesLabels");
 
-	// 	oSlider.placeAt("content");
-	// 	oSliderWithTickmarks.placeAt("content");
-	// 	oSliderWithLables.placeAt("content");
-	// 	Core.applyChanges();
+		oSlider.placeAt("content");
+		oSliderWithTickmarks.placeAt("content");
+		oSliderWithLables.placeAt("content");
+		Core.applyChanges();
 
-	// 	var sInvisibleTextId = oSliderWithLables.getDomRef("handle").getAttribute("aria-labelledby");
+		var sInvisibleTextId = oSliderWithLables.getDomRef("handle").getAttribute("aria-labelledby");
 
-	// 	// assert
-	// 	assert.strictEqual(aLabels.length, 1, "Label for handles should be added as an aggregation");
-	// 	assert.ok(oBoundleCalledStub.calledWith("SLIDER_HANDLE"), "Text should be regarding the handle");
-	// 	assert.strictEqual(oSlider.getDomRef("handle").getAttribute("aria-labelledby"), aLabels[0].getId());
-	// 	assert.strictEqual(oSliderWithTickmarks.getDomRef("handle").getAttribute("aria-labelledby"), aTickmarksLabels[0].getId());
-	// 	assert.ok(document.getElementById(sInvisibleTextId), "The InvisibleText is rendered");
+		// assert
+		assert.strictEqual(aLabels.length, 1, "Label for handles should be added as an aggregation");
+		assert.strictEqual(oResourceBundle.getText("SLIDER_HANDLE"), oSlider.getAggregation("_handlesLabels")[0].getText(), "Text should be regarding the handle");
+		assert.strictEqual(oSlider.getDomRef("handle").getAttribute("aria-labelledby"), aLabels[0].getId());
+		assert.strictEqual(oSliderWithTickmarks.getDomRef("handle").getAttribute("aria-labelledby"), aTickmarksLabels[0].getId());
+		assert.ok(document.getElementById(sInvisibleTextId), "The InvisibleText is rendered");
 
-	// 	// cleanup
-	// 	oSlider.destroy();
-	// 	oSliderWithTickmarks.destroy();
-	// 	oSliderWithLables.destroy();
-	// });
+		// cleanup
+		oSlider.destroy();
+		oSliderWithTickmarks.destroy();
+		oSliderWithLables.destroy();
+	});
 
 	QUnit.test("Aria labels forwarding to handle", function (assert) {
 		// arrange & act
