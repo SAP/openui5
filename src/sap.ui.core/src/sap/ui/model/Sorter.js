@@ -30,7 +30,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/Log"],
 	 *   value as "key" property is passed to the <code>groupHeaderFactory</code> function that has
 	 *   been specified to create the group header for the control aggregation; see
 	 *   {@link sap.ui.base.ManagedObject#bindAggregation}.
-	 *   <b>Note:</b> Grouping via <code>vGroup=true<code> is only possible (and only makes sense)
+	 *   <b>Note:</b> Grouping via <code>vGroup=true</code> is only possible (and only makes sense)
 	 *   for the primary sort property. A more complicated grouping is possible by providing a
 	 *   grouping function. The sort order needs to fit to the grouping also in this case. See also
 	 *   {@link topic:ec79a5d5918f4f7f9cbc2150e66778cc Sorting, Grouping, and Filtering for List
