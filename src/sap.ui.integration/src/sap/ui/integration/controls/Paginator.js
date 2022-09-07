@@ -59,6 +59,9 @@ sap.ui.define([
 			aggregations: {
 				_prevIcon: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
 				_nextIcon: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
+			},
+			events: {
+				animationComplete: {}
 			}
 		}
 	});
@@ -214,6 +217,13 @@ sap.ui.define([
 		this._iPreviousStartIndex = iStartIndex;
 	};
 
+	/**
+	 * Goes back to the first page
+	 */
+	Paginator.prototype.reset = function () {
+		this.setPageNumber(0).sliceData();
+	};
+
 	Paginator.prototype._prepareAnimation = function (iStartIndex) {
 		if (!this._hasAnimation() || this._isSkeletonCard()) {
 			return;
@@ -268,7 +278,9 @@ sap.ui.define([
 			oContentLoadingProvider._bAwaitPagination = false;
 			oCardLoadingProvider._bAwaitPagination = false;
 		} else {
-			oContentDomRefCloned.parentNode.removeChild(oContentDomRefCloned);
+			if (oContentDomRefCloned) {
+				oContentDomRefCloned.parentNode.removeChild(oContentDomRefCloned);
+			}
 
 			oContentDomRef.classList.remove("sapFCardContentOriginal");
 			oContentDomRef.classList.remove("sapFCardContentTransition");
@@ -278,6 +290,8 @@ sap.ui.define([
 			oCardLoadingProvider.setLoading(false);
 			this._bActiveAnimation = false;
 		}
+
+		this.fireAnimationComplete();
 	};
 
 	Paginator.prototype._listUpdateFinished = function () {
@@ -288,6 +302,10 @@ sap.ui.define([
 		var oContent = this.getCard().getCardContent(),
 			oContentDomRef = oContent.getDomRef(),
 			oContentDomRefCloned = oContentDomRef.previousSibling;
+
+		if (!oContentDomRefCloned) {
+			return;
+		}
 
 		oContentDomRefCloned.addEventListener("transitionend", function () {
 			oContentDomRefCloned.parentNode.removeChild(oContentDomRefCloned);

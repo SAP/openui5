@@ -267,7 +267,8 @@ sap.ui.define([
 		if (oCard) {
 			sManifestKey = "/sap.card/configuration/filters/" + this.getKey() + "/value";
 			mParams[sManifestKey] = oValueForModel.value;
-			this.getCardInstance()._fireConfigurationChange(mParams);
+			oCard._fireConfigurationChange(mParams);
+			oCard.resetPaginator();
 		}
 	};
 

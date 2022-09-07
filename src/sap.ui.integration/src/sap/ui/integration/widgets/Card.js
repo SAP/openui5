@@ -1107,6 +1107,8 @@ sap.ui.define([
 		if (oFilterBar) {
 			oFilterBar.refreshData();
 		}
+
+		this.resetPaginator();
 	};
 
 	/**
@@ -2660,6 +2662,16 @@ sap.ui.define([
 	Card.prototype.hasPaginator = function () {
 		var oManifestFooter = this._oCardManifest.get(MANIFEST_PATHS.FOOTER);
 		return oManifestFooter && oManifestFooter.paginator;
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 */
+	Card.prototype.resetPaginator = function () {
+		if (this.hasPaginator()) {
+			this.getCardFooter().getPaginator().reset();
+		}
 	};
 
 	/**
