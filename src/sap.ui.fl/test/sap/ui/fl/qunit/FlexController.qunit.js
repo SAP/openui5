@@ -122,15 +122,15 @@ sap.ui.define([
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
 			return this.oFlexController.saveAll(oComponent, true)
 				.then(function() {
-					assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, true), "the app component and the flag were passed");
+					assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, true), "the app component, the layer and the flag were passed");
 				});
 		});
 
 		QUnit.test("when saveAll is called with bCondenseAnyLayer", function(assert) {
 			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves();
-			return this.oFlexController.saveAll(oComponent, false, false, false, false, true)
+			return this.oFlexController.saveAll(oComponent, false, false, Layer.VENDOR, false, true)
 				.then(function() {
-					assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, false, undefined, undefined, undefined, true), "the app component and the flag were passed");
+					assert.ok(fnChangePersistenceSaveStub.calledWith(oComponent, false, undefined, undefined, undefined, true, Layer.VENDOR), "the app component and the flag were passed");
 				});
 		});
 

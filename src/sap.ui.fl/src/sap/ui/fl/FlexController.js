@@ -461,6 +461,7 @@ sap.ui.define([
 	 * @param {boolean} [bDraft=false] - Indicates if changes should be written as a draft
 	 * @param {string} [sLayer] - Layer for which the changes should be saved
 	 * @param {boolean} [bRemoveOtherLayerChanges=false] - Whether to remove changes on other layers before saving
+	 * @param {boolean} [bCondenseAnyLayer] - This will enable condensing regardless of the current layer
 	 * @returns {Promise} resolving with an array of responses or rejecting with the first error
 	 * @public
 	 */
@@ -476,7 +477,7 @@ sap.ui.define([
 			aDraftFilenames = oVersionModel.getProperty("/draftFilenames");
 		}
 		return this._removeOtherLayerChanges(oAppComponent, sLayer, bRemoveOtherLayerChanges)
-			.then(this._oChangePersistence.saveDirtyChanges.bind(this._oChangePersistence, oAppComponent, bSkipUpdateCache, undefined, sParentVersion, aDraftFilenames, bCondenseAnyLayer))
+			.then(this._oChangePersistence.saveDirtyChanges.bind(this._oChangePersistence, oAppComponent, bSkipUpdateCache, undefined, sParentVersion, aDraftFilenames, bCondenseAnyLayer, sLayer))
 			.then(function(oResult) {
 				if (bDraft && oResult && oResult.response) {
 					var vChangeDefinition = oResult.response;

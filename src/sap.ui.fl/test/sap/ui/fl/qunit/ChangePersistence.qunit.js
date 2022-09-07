@@ -2347,6 +2347,26 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("Shall call condenser without dirty changes but backend condensing enabled and condenseAnyLayer set and persisted changes available", function(assert) {
+			addTwoChanges(this.oChangePersistence, this._oComponentInstance, Layer.VENDOR);
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: function() {
+					return true;
+				}
+			});
+
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				this.oCondenserStub.resetHistory();
+
+				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, false, false, false, false, true, Layer.VENDOR);
+			}.bind(this))
+			.then(function() {
+				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+			}.bind(this));
+		});
+
 		QUnit.test("Shall not call condenser when persisted changes contain different namespaces", function (assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
