@@ -64,8 +64,10 @@ sap.ui.define([
 			this._setupCardContent();
 
 			Core.attachThemeChanged(function () {
-				this._adjustHostConfig();
-				this.invalidate();
+				if (this.getDomRef()) {
+					this._adjustHostConfig();
+					this.invalidate();
+				}
 			}.bind(this));
 		};
 
