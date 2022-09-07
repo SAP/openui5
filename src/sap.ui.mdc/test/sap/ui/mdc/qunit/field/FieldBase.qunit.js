@@ -2758,6 +2758,8 @@ sap.ui.define([
 		var oCondition = Condition.createCondition("EQ", ["Hello"], undefined, undefined, ConditionValidated.Validated);
 		oFieldHelp.fireSelect({ conditions: [oCondition] });
 		assert.equal(iCount, 1, "Change Event fired once");
+		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
+		assert.equal(sLiveValue, "Hello", "liveChange event value");
 		var aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0].values[0], "Hello", "condition value");
@@ -2765,16 +2767,30 @@ sap.ui.define([
 		assert.equal(oContent.getDOMValue(), "Hello", "value shown in inner control");
 
 		// check selecting same value updates typed value
-		iCount = 0;
+		iCount = 0; iLiveCount = 0; sLiveValue = undefined;
 		oContent.setDOMValue("X");
 		oFieldHelp.fireSelect({ conditions: [oCondition] });
 		assert.equal(iCount, 0, "no Change Event fired");
+		assert.equal(iLiveCount, 1, "LiveChange Event fired once"); // as DOM is updated
+		assert.equal(sLiveValue, "Hello", "liveChange event value");
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(oContent.getDOMValue(), "Hello", "value shown in inner control");
 
+		// check selecting same value again should not fire event
+		iCount = 0; iLiveCount = 0; sLiveValue = undefined;
+		oFieldHelp.fireSelect({ conditions: [oCondition] });
+		assert.equal(iCount, 0, "no Change Event fired");
+		assert.equal(iLiveCount, 0, "no LiveChange Event fired"); // as DOM is not updated
+		aConditions = oCM.getConditions("Name");
+		assert.equal(aConditions.length, 1, "one condition in Codition model");
+		assert.equal(oContent.getDOMValue(), "Hello", "value shown in inner control");
+
+		// check navigation
+		iCount = 0; iLiveCount = 0; sLiveValue = undefined;
 		oFieldHelp.fireNavigate({ value: "Navigate", key: "Y" });
 		assert.equal(iLiveCount, 1, "LiveChange Event fired once");
+		assert.equal(sLiveValue, "Y", "liveChange event value");
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one condition in Codition model");
 		assert.equal(aConditions[0].values[0], "Hello", "condition value");
