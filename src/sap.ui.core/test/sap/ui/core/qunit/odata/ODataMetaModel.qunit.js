@@ -3438,6 +3438,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("fetchCodeList: Error handler called; read Promise rejected", function (assert) {
 		var mCodeListUrl2Promise, oFetchCodeListPromise,
+			oCodeListCacheMock = this.mock(Map.prototype),
 			oCodeListModel = {
 				read : function () {}
 			},
@@ -3461,10 +3462,18 @@ sap.ui.define([
 		oDataModelMock.expects("getMetadataUrl").withExactArgs().returns("~sMetadataUrl");
 		// A workaround to get the global cache instance as it is not visible to the test, don't
 		// mock Map.prototype as test framework uses also Map i.e. for storing uncaught promises
-		this.mock(Map.prototype).expects("get")
+		oCodeListCacheMock.expects("get")
 			.withExactArgs("~sMetadataUrl#~Currencies")
 			.callsFake(function (sKey) {
 				mCodeListUrl2Promise = this;
+				mCodeListUrl2Promise.clear(); // start clean
+
+				return undefined;
+			});
+		oCodeListCacheMock.expects("get")
+			.withExactArgs("~sMetadataUrl#~Currencies#" + oMetaModel.getId())
+			.callsFake(function (sKey) {
+				assert.strictEqual(this, mCodeListUrl2Promise);
 				Map.prototype.get.restore();
 
 				return undefined;
@@ -3473,7 +3482,7 @@ sap.ui.define([
 			.returns(oCodeListModelCache);
 		oCodeListModelMock.expects("read").withExactArgs("/~Currencies", sinon.match.object)
 			.callsFake(function (sPath, mParams) {
-					mParams.error("~error");
+				mParams.error("~error");
 			});
 		oMetaModelMock.expects("_getPropertyNamesForCodeListCustomizing")
 			.withExactArgs("~Currencies")
@@ -3488,6 +3497,10 @@ sap.ui.define([
 		oFetchCodeListPromise = oMetaModel.fetchCodeList("Currencies");
 
 		assert.notOk(oFetchCodeListPromise.isFulfilled());
+		oMetaModel.oLoadedPromiseSync.then(function () {
+			assert.deepEqual(Array.from(mCodeListUrl2Promise.keys()),
+				["~sMetadataUrl#~Currencies#" + oMetaModel.getId()]);
+		});
 
 		return oFetchCodeListPromise.then(function () {
 			assert.ok(false);
@@ -3511,7 +3524,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchCodeList: code list Promise from cache", function (assert) {
+	QUnit.test("fetchCodeList: code list Promise from cache (global)", function (assert) {
 		var oMetaModel = new ODataModel("/fake/emptySchema", {}).getMetaModel(),
 			that = this;
 
@@ -3526,6 +3539,34 @@ sap.ui.define([
 				});
 			that.mock(Map.prototype).expects("get")
 				.withExactArgs("/fake/emptySchema/$metadata#~CollectionPath")
+				.returns("~codeListPromise");
+
+			// code under test
+			assert.strictEqual(oMetaModel.fetchCodeList("~sTerm").getResult(), "~codeListPromise");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchCodeList: code list Promise from cache (model)", function (assert) {
+		var oMetaModel = new ODataModel("/fake/emptySchema", {}).getMetaModel(),
+			that = this;
+
+		// wait for oLoadedPromiseSync to run the following test synchronously
+		return oMetaModel.oLoadedPromiseSync.then(function () {
+			var oCodeListCacheMock = that.mock(Map.prototype);
+
+			that.mock(oMetaModel).expects("getODataEntityContainer").withExactArgs()
+				.returns({
+					"com.sap.vocabularies.CodeList.v1.~sTerm" : {
+						CollectionPath : {String : "~CollectionPath"},
+						Url : {String : "./$metadata"}
+					}
+				});
+			oCodeListCacheMock.expects("get")
+				.withExactArgs("/fake/emptySchema/$metadata#~CollectionPath")
+				.returns(undefined);
+			oCodeListCacheMock.expects("get")
+				.withExactArgs("/fake/emptySchema/$metadata#~CollectionPath#" + oMetaModel.getId())
 				.returns("~codeListPromise");
 
 			// code under test
@@ -3571,7 +3612,8 @@ sap.ui.define([
 	}
 }].forEach(function (oFixture, i) {
 	QUnit.test("fetchCodeList: resolves successfully: " + i, function (assert) {
-		var mCodeListUrl2Promise, oFetchCodeListPromise, fnResolveReadCalled,
+		var oCachedPromise, mCodeListUrl2Promise, oFetchCodeListPromise, fnResolveReadCalled,
+			oCodeListCacheMock = this.mock(Map.prototype),
 			oCodeListModel = {
 				read : function() {}
 			},
@@ -3582,6 +3624,8 @@ sap.ui.define([
 				}
 			},
 			oMetaModel = new ODataModel("/fake/emptySchema", {}).getMetaModel(),
+			sMetaModelCacheKey = "/fake/emptySchema/$metadata#~CollectionPath#"
+				+ oMetaModel.getId(),
 			oMetaModelMock = this.mock(oMetaModel),
 			oReadCalledPromise = new Promise(function (resolve, reject) {
 				fnResolveReadCalled = resolve;
@@ -3608,10 +3652,18 @@ sap.ui.define([
 		oMetaModelMock.expects("getODataEntityContainer").withExactArgs().returns(oEntityContainer);
 		// A workaround to get the global cache instance as it is not visible to the test, don't
 		// mock Map.prototype as test framework uses also Map i.e. for storing uncaught promises
-		this.mock(Map.prototype).expects("get")
+		oCodeListCacheMock.expects("get")
 			.withExactArgs("/fake/emptySchema/$metadata#~CollectionPath")
 			.callsFake(function (sKey) {
 				mCodeListUrl2Promise = this;
+				mCodeListUrl2Promise.clear(); // start clean
+
+				return undefined;
+			});
+		oCodeListCacheMock.expects("get")
+			.withExactArgs(sMetaModelCacheKey)
+			.callsFake(function (sKey) {
+				assert.strictEqual(this, mCodeListUrl2Promise);
 				Map.prototype.get.restore();
 
 				return undefined;
@@ -3633,6 +3685,10 @@ sap.ui.define([
 
 		// code under test
 		oFetchCodeListPromise = oMetaModel.fetchCodeList("~sTerm");
+		oMetaModel.oLoadedPromiseSync.then(function () {
+			assert.deepEqual(Array.from(mCodeListUrl2Promise.keys()), [sMetaModelCacheKey]);
+			oCachedPromise = mCodeListUrl2Promise.get(sMetaModelCacheKey);
+		});
 
 		return oReadCalledPromise.then(function (fnReadSuccessHandler) {
 			var mCode2Customizing;
@@ -3649,6 +3705,13 @@ sap.ui.define([
 			}, function () {
 				assert.ok(false);
 			}).then(function () {
+				// if read was successful reuse the promise globally
+				assert.deepEqual(Array.from(mCodeListUrl2Promise.keys()),
+					["/fake/emptySchema/$metadata#~CollectionPath"]);
+				assert.strictEqual(
+					mCodeListUrl2Promise.get("/fake/emptySchema/$metadata#~CollectionPath"),
+					oCachedPromise);
+
 				oMetaModelMock.expects("getODataEntityContainer").withExactArgs()
 					.returns(oEntityContainer);
 
@@ -3984,6 +4047,7 @@ sap.ui.define([
 				destroy : function () {},
 				read : function () {}
 			},
+			oCodeListCacheMock = this.mock(Map.prototype),
 			oCodeListModelMock = this.mock(oCodeListModel),
 			oDataModel = new ODataModel("/fake/emptySchema"),
 			oEntityContainer = {
@@ -3994,6 +4058,7 @@ sap.ui.define([
 			},
 			oMetaModel = oDataModel.getMetaModel(),
 			oMetaModelMock = this.mock(oMetaModel),
+			sMetaModelId = oMetaModel.getId(),
 			fnReadCallbackPromise = new Promise(function (resolve, reject) {
 				fnReadCallResolve = resolve;
 			});
@@ -4002,10 +4067,17 @@ sap.ui.define([
 		this.mock(oDataModel).expects("getMetadataUrl").withExactArgs().returns("~sMetadataUrl");
 		// A workaround to get the global cache instances as they are not visible to the test, don't
 		// mock Map.prototype as test framework uses also Map i.e. for storing uncaught promises
-		this.mock(Map.prototype).expects("get")
+		oCodeListCacheMock.expects("get")
 			.withExactArgs("~sMetadataUrl#~CollectionPath")
 			.callsFake(function (sKey) {
 				mCodeListUrl2Promise = this;
+
+				return undefined;
+			});
+		oCodeListCacheMock.expects("get")
+			.withExactArgs("~sMetadataUrl#~CollectionPath#" + sMetaModelId)
+			.callsFake(function (sKey) {
+				assert.strictEqual(this, mCodeListUrl2Promise);
 				Map.prototype.get.restore();
 
 				return undefined;
@@ -4042,7 +4114,9 @@ sap.ui.define([
 		oFetchCodeListPromise = oMetaModel.fetchCodeList("~term");
 
 		return fnReadCallbackPromise.then(function (fnCallback) {
-			assert.ok(mCodeListUrl2Promise.get("~sMetadataUrl#~CollectionPath"), "cached");
+			assert.notOk(mCodeListUrl2Promise.get("~sMetadataUrl#~CollectionPath"));
+			assert.ok(mCodeListUrl2Promise.get("~sMetadataUrl#~CollectionPath#" + sMetaModelId),
+				"cached");
 
 			// reject read - no error log and cache entry removed
 			fnCallback("aborted");
@@ -4053,6 +4127,8 @@ sap.ui.define([
 					assert.strictEqual(oMetaModel.oSharedModelCache, undefined);
 					assert.notOk(mCodeListUrl2Promise.get("~sMetadataUrl#~CollectionPath"),
 						"removed from cache");
+					assert.notOk(mCodeListUrl2Promise.get("~sMetadataUrl#~CollectionPath#"
+						+ sMetaModelId), "removed from cache");
 				});
 		});
 	});
