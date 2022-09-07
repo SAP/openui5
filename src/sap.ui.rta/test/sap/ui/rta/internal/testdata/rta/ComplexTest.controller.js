@@ -85,7 +85,6 @@ sap.ui.define([
 
 						if (property === "mainService") {
 							var oModel;
-							var oView;
 
 							oModel = new ODataModel(dataSource.uri, {
 								json: true,
@@ -96,8 +95,8 @@ sap.ui.define([
 							oModel.setDefaultCountMode(CountMode.None);
 							this._oModel = oModel;
 
-							oView = this.getView();
-							oView.setModel(oModel);
+							this.oView = this.getView();
+							this.oView.setModel(oModel);
 
 							var data = {
 								readonly: false,
@@ -107,12 +106,21 @@ sap.ui.define([
 							};
 
 							var oTableModel = new JSONModel();
-							oView.setModel(oTableModel, "ProductCollection");
+							this.oView.setModel(oTableModel, "ProductCollection");
 							setTableModelData(oTableModel, this._sResourcePath);
 
 							var oStateModel = new JSONModel(data);
-							oView.setModel(oStateModel, "state");
-							oView.bindElement("/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')");
+							this.oView.setModel(oStateModel, "state");
+							this.oView.bindElement("/Headers(AccountingDocument='100015012',CompanyCode='0001',FiscalYear='2015')");
+
+							return fetch(this._sResourcePath + "/countriesExtendedCollection.json")
+								.then(function(oResponse) {
+									return oResponse.json();
+								}).then(function(oJson) {
+									var oComboBox = this.byId("ComboBox0");
+									var oCountriesModel = new JSONModel(oJson);
+									oComboBox.setModel(oCountriesModel);
+								}.bind(this));
 						} else if (property === "smartFilterService") {
 							//smartfilterbar bind
 							var oSmartFilterModel = new ODataModel("/foo", true);
