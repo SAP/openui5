@@ -30,8 +30,8 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		/**
 	 	 * Retrieves the relevant metadata for a given payload and returns the property info array.
 		 *
-		 * @param {sap.ui.mdc.Control} oControl Instance of a <code>sap.ui.mdc.Control</code>.
-		 * @returns {Promise<sap.ui.mdc.util.PropertyInfo[]>} Once resolved, an array of property info objects is returned
+		 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
+		 * @returns {Promise<object[]>} Once resolved, an array of property info objects is returned
 		 */
 		fetchProperties: function(oControl) {
 			return Promise.resolve([]);
@@ -39,19 +39,19 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 
 		/**
 		 * Creates an instance of the implementing MDC Control's default aggregation.
-		 * <b>Note:</b> The <code>addItem</code> Hook may be used during SAPUI5 flexibility change appliance and during runtime.
-		 * Consequently the parameter <code>mPropertyBag</code> is only being passed once a change is being applied
-		 * during flexibility processing. In runtime scenarios (such as opening a personalization dialog), this
+		 *
+		 * <b>Note:</b> The <code>addItem</code> hook can be used during the processing of an SAPUI5 flexibility change.
+		 * Consequently the parameter <code>mPropertyBag</code> is only passed during preprocessing. In runtime scenarios (such as opening a personalization dialog), this
 		 * method might be called without the parameter <code>mPropertyBag</code>.
 		 *
 		 * @param {string} sPropertyName The name of the property info object/JSON
-		 * @param {sap.ui.mdc.Control} oControl Instance of a <code>sap.ui.mdc.Control</code>
+		 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
 		 * @param {Object} [mPropertyBag] Instance of property bag from SAPUI5 flexibility change API
 		 *
 		 * @returns {Promise} Promise that resolves with an instance of the implementing {@link sap.ui.mdc.Control Control} default aggregation.
 		 * <b>Note:</b>
-		 * This method always expects a return value once it has been called. In case an item for a given property <code>sPropertyName</code>
-		 * has already been created it is epected to either create a new instance or return the existing instance.
+		 * This method always requires a return value once it has been called. If an item for a given property <code>sPropertyName</code>
+		 * has already been created, it is required to either return the existing instance or create a new instance.
 		 *
 		 * @public
 		 */
@@ -63,13 +63,12 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		 * Triggers any necessary follow-up steps that need to be taken after the removal of created items via <code>removeItem</code>.
 		 * The returned Boolean value inside the <code>Promise</code> can be used to prevent the default follow-up behavior of the SAPUI5 flexibility handling.
 		 *
-		 * <b>Note:</b>The <code>removeItem</code> Hook may be used during SAPUI5 flexibility change appliance and during runtime.
-		 * Consequently the parameter <code>mPropertyBag</code> is only being passed once a change is being applied
-		 * during flexibility processing. In runtime scenarios (such as opening a personalization dialog), this
-		 * method can be called without the parameter <code>mPropertyBag</code>.
+		 * <b>Note:</b> The <code>removeItem</code> hook can be used during the processing of an SAPUI5 flexibility change.
+		 * Consequently the parameter <code>mPropertyBag</code> is only passed during preprocessing. In runtime scenarios (such as opening a personalization dialog), this
+		 * method might be called without the parameter <code>mPropertyBag</code>.
 		 *
 		 * @param {sap.ui.core.Control} oItem The control instance that was removed
-		 * @param {sap.ui.mdc.Control} oControl Instance of a <code>sap.ui.mdc.Control</code>
+		 * @param {sap.ui.mdc.Control} oControl Instance of an <code>sap.ui.mdc.Control</code>
 		 * @param {Object} [mPropertyBag] Instance of property bag from SAPUI5 flexibility
 		 *
 		 * @returns {Promise} Promise that resolves with <code>true</code>, <code>false</code> to allow/prevent default behavior of the change
