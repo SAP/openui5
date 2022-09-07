@@ -57,15 +57,18 @@ sap.ui.define([
 	}
 
 	function loadChangesFromPath(sPath, assert, iNumber) {
-		return new Promise(function(resolve, reject) {
-			jQuery.getJSON("test-resources/sap/ui/fl/qunit/testResources/condenser/" + sPath).done(function(aChangeDefinitions) {
-				var aChanges = [];
-				aChangeDefinitions.forEach(function(oChangeDefinition) {
-					aChanges.push(new Change(Change.createInitialFileContent(oChangeDefinition)));
-				});
-				assert.equal(aChanges.length, iNumber, "Expected number of changes: " + iNumber);
-				resolve(aChanges);
-			}).fail(reject);
+		return fetch("test-resources/sap/ui/fl/qunit/testResources/condenser/" + sPath)
+
+		.then(function(oResponse) {
+			return oResponse.json();
+		})
+		.then(function(aChangeDefinitions) {
+			var aChanges = [];
+			aChangeDefinitions.forEach(function(oChangeDefinition) {
+				aChanges.push(new Change(Change.createInitialFileContent(oChangeDefinition)));
+			});
+			assert.equal(aChanges.length, iNumber, "Expected number of changes: " + iNumber);
+			return aChanges;
 		});
 	}
 

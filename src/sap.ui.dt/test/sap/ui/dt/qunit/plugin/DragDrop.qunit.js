@@ -1,29 +1,33 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/dt/ElementOverlay",
+	"sap/m/Button",
+	"sap/m/Page",
+	"sap/m/Panel",
+	"sap/ui/core/Core",
 	"sap/ui/dt/plugin/DragDrop",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
-	"sap/m/Button",
-	"sap/ui/Device",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/Core"
-], function (
-	ElementOverlay,
+	// "sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/Device"
+], function(
+	Button,
+	Page,
+	Panel,
+	oCore,
 	DragDrop,
 	DesignTime,
+	ElementOverlay,
 	OverlayRegistry,
 	VerticalLayout,
-	Button,
-	Device,
-	sinon,
-	jQuery,
 	QUnitUtils,
-	oCore
+	// jQuery,
+	sinon,
+	Device
 ) {
 	"use strict";
 
@@ -135,7 +139,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the touchmove is triggered on an overlay and dragenter is triggered on an element overlay", function(assert) {
-			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+			var fnElementFromPointStub = sandbox.stub(document, "elementFromPoint");
 
 			var fakeIdStub = {
 				id: this.oButtonOverlay.getId()
@@ -149,7 +153,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the touchmove is triggered on an overlay and dragover is triggered on an element overlay", function(assert) {
-			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+			var fnElementFromPointStub = sandbox.stub(document, "elementFromPoint");
 
 			var fakeIdStub = {
 				id: this.oButtonOverlay.getId()
@@ -166,7 +170,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the touchmove is triggered on an overlay and aggregationdragenter is triggered on an aggregation overlay", function(assert) {
-			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+			var fnElementFromPointStub = sandbox.stub(document, "elementFromPoint");
 
 			var fakeIdStub = {
 				id: this.oAggregationOverlay.getId()
@@ -179,7 +183,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the touchmove is triggered on an overlay and aggregationdragover is triggered on an aggregation overlay", function(assert) {
-			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+			var fnElementFromPointStub = sandbox.stub(document, "elementFromPoint");
 
 			var fakeIdStub = {
 				id: this.oAggregationOverlay.getId()
@@ -303,7 +307,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("when the touchmove is triggered on an overlay and dragenter is triggered on an element overlay (go to the parent) which is in the target zone", function(assert) {
-			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+			var fnElementFromPointStub = sandbox.stub(document, "elementFromPoint");
 
 			var fakeIdStub = {
 				id: this.oButtonOverlay.getId()
@@ -317,7 +321,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the touchmove is triggered on an overlay and dragover is triggered on an element overlay (go to the parent) which is in the target zone", function(assert) {
-			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+			var fnElementFromPointStub = sandbox.stub(document, "elementFromPoint");
 
 			var fakeIdStub = {
 				id: this.oButtonOverlay.getId()
@@ -331,7 +335,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the touchmove is triggered on an overlay and aggregationdragenter is triggered on an aggregation overlay which has a target zone", function(assert) {
-			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+			var fnElementFromPointStub = sandbox.stub(document, "elementFromPoint");
 
 			var fakeIdStub = {
 				id: this.oAggregationOverlay.getId()
@@ -345,7 +349,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the touchmove is triggered on an overlay and aggregationdragover is triggered on an aggregation overlay which has a target zone", function(assert) {
-			var fnElementFromPointStub = sandbox.stub(document, 'elementFromPoint');
+			var fnElementFromPointStub = sandbox.stub(document, "elementFromPoint");
 
 			var fakeIdStub = {
 				id: this.oAggregationOverlay.getId()
@@ -365,12 +369,11 @@ sap.ui.define([
 		 */
 		QUnit.module("Given that overlay is created for a m.Page with Panels", {
 			beforeEach: function(assert) {
-				var that = this;
 				var done = assert.async();
 				this.aPanels = [];
 				this.aPanelOverlays = [];
 				for (var i = 0; i < 10; i++) {
-					var oPanel = new sap.m.Panel();
+					var oPanel = new Panel();
 					this.aPanels.push(oPanel);
 					var oPanelOverlay = new ElementOverlay({
 						element: oPanel
@@ -378,22 +381,22 @@ sap.ui.define([
 					this.aPanelOverlays.push(oPanelOverlay);
 				}
 
-				this.oPage = new sap.m.Page({
+				this.oPage = new Page({
 					content: this.aPanels
 				}).placeAt("qunit-fixture");
 
 				this.oPage.getMetadata().loadDesignTime().then(function(oDesignTimeMetadata) {
-					that.oPageOverlay = new ElementOverlay({
-						element: that.oPage,
+					this.oPageOverlay = new ElementOverlay({
+						element: this.oPage,
 						designTimeMetadata: { data: oDesignTimeMetadata },
 						lazyRendering: false
 					});
 					oCore.applyChanges();
-					that.oDragDrop = new DragDrop();
-					var oPageContentOverlay = that.oPageOverlay.getAggregationOverlay("content");
-					that.oDragDrop.registerAggregationOverlay(oPageContentOverlay);
+					this.oDragDrop = new DragDrop();
+					var oPageContentOverlay = this.oPageOverlay.getAggregationOverlay("content");
+					this.oDragDrop.registerAggregationOverlay(oPageContentOverlay);
 					done();
-				});
+				}.bind(this));
 			},
 			afterEach: function() {
 				this.oPage.destroy();
@@ -424,10 +427,10 @@ sap.ui.define([
 			// 			iX, iY,
 			// 			iX, iY, false, false, false, false, 0, null);
 			// 	} else {
-			// 		oEvent = new MouseEvent('dragover', {
-			// 		   'view' : window,
-			// 		   'bubbles' : true,
-			// 		   'cancelable': true,
+			// 		oEvent = new MouseEvent("dragover", {
+			// 		   "view" : window,
+			// 		   "bubbles" : true,
+			// 		   "cancelable": true,
 			// 		   clientX : iX,
 			// 		   clientY : iY
 			// 		});
