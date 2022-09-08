@@ -80,7 +80,6 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new element
 	 * @class Element for the <code>FieldHelp</code> association in the {@link sap.ui.mdc.field.FieldBase FieldBase} controls.
 	 * @extends sap.ui.mdc.Element
-	 * @implements sap.ui.core.PopupInterface
 	 * @version ${version}
 	 * @constructor
 	 * @abstract

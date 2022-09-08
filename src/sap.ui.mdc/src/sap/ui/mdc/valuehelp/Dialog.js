@@ -51,7 +51,8 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.mdc",
 			interfaces: [
-				"sap.ui.mdc.valuehelp.IDialogContainer"
+				"sap.ui.mdc.valuehelp.IDialogContainer",
+				"sap.ui.core.PopupInterface"
 			],
 			properties: {
 				_selectedContentKey: {

@@ -44,7 +44,8 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			interfaces: [
 				"sap.ui.mdc.valuehelp.ITypeaheadContainer",
-				"sap.ui.mdc.valuehelp.IDialogContainer"
+				"sap.ui.mdc.valuehelp.IDialogContainer",
+				"sap.ui.core.PopupInterface"
 			],
 			properties: {
 			},
