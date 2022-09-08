@@ -24,7 +24,7 @@ sap.ui.define([
 		var oContent = sContentId ? sap.ui.getCore().byId(sContentId) : oContainer.getContent()[0];
 		sContentId = oContent && oContent.getId();
 
-		if (!oContent.getTable()) {
+		if (oContent.getTable && !oContent.getTable()) {
 			// assign table async
 			var fResolve;
 			var fReject;
