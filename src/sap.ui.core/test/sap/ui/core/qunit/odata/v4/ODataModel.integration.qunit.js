@@ -2497,7 +2497,10 @@ sap.ui.define([
 			if (bSuccess) {
 				that.expectChange("name", "Frederic Fall");
 			} else {
-				that.oLogMock.expects("error").twice(); // details do not interest
+				that.oLogMock.expects("error")
+					.withArgs("Failed to read path /EMPLOYEES('1')");
+				that.oLogMock.expects("error")
+					.withArgs("Failed to read path /EMPLOYEES('1')/Name");
 				that.expectChange("name", null) // one change event is enforced
 					.expectMessages([{
 						code : "CODE",
@@ -2562,7 +2565,9 @@ sap.ui.define([
 			if (bSuccess) {
 				that.expectChange("name", ["Frederic Fall", "Jonathan Smith"]);
 			} else {
-				that.oLogMock.expects("error"); // details do not interest
+				that.oLogMock.expects("error")
+					.withArgs("Failed to get contexts for /sap/opu/odata4/IWBEP/TEA/default/IWBEP"
+						+ "/TEA_BUSI/0001/EMPLOYEES with start index 0 and length 100");
 				that.expectMessages([{
 						code : "CODE",
 						message : "Request intentionally failed",
@@ -17102,25 +17107,46 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	// Scenario: Deferred deletion of a bound context with a dependent list, corresponding messages,
-	// are also deleted and restored if the delete is canceled. A persistent message is not
-	// affected.
+	// Scenario: Deferred deletion of a bound context with a dependent list. A corresponding state
+	// message (from the GET) and transition message (from a failed PATCH) are also deleted. Another
+	// property is updated, so that there is a PATCH in the same change set as the DELETE and the
+	// DELETE must use "If-Match: *".
+	// If the deletion is canceled via a reset, both messages are restored. If it fails, only the
+	// state message is restored while a new transition message comes with the error.
 	// JIRA: CPOUI5ODATAV4-1629
 	// JIRA: CPOUI5ODATAV4-1670: Use "If-Match: *" if a PATCH is in the same changeset
-	// JIRA: CPOUI5ODATAV4-1637
+	// JIRA: CPOUI5ODATAV4-1637: state messages
+	// JIRA: CPOUI5ODATAV4-1745: transition messages
 [
 	{desc : "submit"},
 	{desc : "reset via model", resetViaModel : true},
-	{desc : "reset via binding", resetViaBinding : true}
+	{desc : "reset via binding", resetViaBinding : true},
+	{desc : "error", error : true}
 ].forEach(function (oFixture) {
 	QUnit.test("CPOUI5ODATAV4-1629: ODCB: deferred delete, " + oFixture.desc, function (assert) {
 		var oBinding,
 			oContext,
+			sItemPath = "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')",
 			oListBinding,
 			oModel = this.createSalesOrdersModel({updateGroupId : "update"}),
-			bReset = oFixture.resetViaModel || oFixture.resetViaBinding,
 			oPromise,
+			sQuantityTarget = "/" + sItemPath + "/Quantity",
+			bReset = oFixture.resetViaModel || oFixture.resetViaBinding,
 			oRowContext,
+			oStateMessage = {
+				code : "code 1",
+				message : "Enter a minimum quantity of 2",
+				target : sQuantityTarget,
+				type : "Warning"
+			},
+			oTransitionMessage = {
+				code : "code 2",
+				message : "Only multiples of 2 are allowed",
+				target : sQuantityTarget,
+				persistent : true,
+				technical : true,
+				type : "Error"
+			},
 			oUpdatePromise,
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
@@ -17156,15 +17182,7 @@ sap.ui.define([
 			.expectChange("note", "Note")
 			.expectChange("pos", ["0010"])
 			.expectChange("quantity", ["1.000"])
-			.expectMessages([{
-				code : "code 1",
-				message : "Enter a minimum quantity of 2",
-				targets : [
-					"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
-						+ "/Quantity"
-				],
-				type : "Warning"
-			}]);
+			.expectMessages([oStateMessage]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oListBinding = that.oView.byId("table").getBinding("items");
@@ -17174,67 +17192,41 @@ sap.ui.define([
 
 			oUpdatePromise = oRowContext.setProperty("Quantity", "3", "update");
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "object page");
 		}).then(function () {
 			var oError = createErrorInsideBatch({
 					code : "code 2",
 					message : "Only multiples of 2 are allowed",
-					target : "/SalesOrderList('1')"
-						+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')/Quantity"
+					target : sQuantityTarget
 				});
 
-			that.oLogMock.expects("error"); // Details do not interest
+			that.oLogMock.expects("error")
+				.withArgs("Failed to update path " + sQuantityTarget);
 			that.expectRequest({
-				method : "PATCH",
-				payload : {Quantity : "3", QuantityUnit : "DZ"},
-				url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
+					method : "PATCH",
+					payload : {Quantity : "3", QuantityUnit : "DZ"},
+					url : sItemPath
 				}, oError)
 				.expectChange("quantity", ["1.000"])
-				.expectMessages([{
-					code : "code 2",
-					message : "Only multiples of 2 are allowed",
-					targets : [
-						"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
-							+ "/Quantity"
-					],
-					persistent : true,
-					technical : true,
-					type : "Error"
-				}, {
-					code : "code 1",
-					message : "Enter a minimum quantity of 2",
-					targets : [
-						"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
-							+ "/Quantity"
-					],
-					type : "Warning"
-				}]);
+				.expectMessages([oStateMessage, oTransitionMessage]);
 
 			return Promise.all([
 				oUpdatePromise.then(mustFail(assert), function () {}),
 				oModel.submitBatch("update"),
-				that.waitForChanges(assert)
+				that.waitForChanges(assert, "failed update for a transition message")
 			]);
 		}).then(function () {
-			that.expectChange("note", "Note (changed)")
-				.expectChange("id", null)
-				.expectChange("note", null)
-				.expectChange("pos", [])
-				.expectMessages([{
-					code : "code 2",
-					message : "Only multiples of 2 are allowed",
-					targets : [
-						"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
-							+ "/Quantity"
-					],
-					persistent : true,
-					technical : true,
-					type : "Error"
-				}]);
+			that.expectChange("note", "Note (changed)");
 
 			oBinding = that.oView.byId("form").getObjectBinding();
 			oContext = oBinding.getBoundContext();
 			that.oView.byId("note").getBinding("value").setValue("Note (changed)");
+
+			that.expectChange("id", null)
+				.expectChange("note", null)
+				.expectChange("pos", [])
+				.expectMessages([]);
+
 			oPromise = oContext.delete();
 
 			assert.ok(oContext.isDeleted());
@@ -17243,36 +17235,15 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getBoundContext(), null);
 			assert.ok(oModel.hasPendingChanges());
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "deferred update & delete in one change set");
 		}).then(function () {
 			if (bReset) {
 				that.expectCanceledError("Failed to update path /SalesOrderList('1')/Note",
 					"Request canceled: PATCH SalesOrderList('1'); group: update");
 				that.expectCanceledError("Failed to delete /SalesOrderList('1')",
 					"Request canceled: DELETE SalesOrderList('1'); group: update");
-				that.expectChange("id", "1")
-					.expectChange("note", "Note")
-					.expectChange("pos", ["0010"])
-					.expectChange("quantity", ["1.000"])
-					.expectMessages([{
-						code : "code 1",
-						message : "Enter a minimum quantity of 2",
-						targets : [
-							"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
-								+ "/Quantity"
-						],
-						type : "Warning"
-					}, {
-						code : "code 2",
-						message : "Only multiples of 2 are allowed",
-						targets : [
-							"/SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
-								+ "/Quantity"
-						],
-						persistent : true,
-						technical : true,
-						type : "Error"
-					}]);
+				that.expectChange("note", "Note")
+					.expectMessages([oStateMessage, oTransitionMessage]);
 			} else {
 				that.expectRequest({
 						headers : {"If-Match" : "etag"},
@@ -17284,7 +17255,41 @@ sap.ui.define([
 						headers : {"If-Match" : "*"},
 						method : "DELETE",
 						url : "SalesOrderList('1')"
-					});
+					}, oFixture.error
+						? createErrorInsideBatch({
+							details : [{
+								"@SAP__core.ContentID" : "1.0",
+								"@SAP__core.numericSeverity" : 4,
+								message : "Not deletable",
+								target : ""
+							}]
+						})
+						: undefined
+					);
+				if (oFixture.error) {
+					that.oLogMock.expects("error")
+						.withArgs("Failed to update path /SalesOrderList('1')/Note");
+					that.oLogMock.expects("error")
+						.withArgs("Failed to delete /SalesOrderList('1')");
+					that.expectChange("note", "Note (changed)")
+						.expectMessages([oStateMessage, {
+							code : "CODE",
+							message : "Request intentionally failed",
+							persistent : true,
+							technical : true,
+							type : "Error"
+						}, {
+							message : "Not deletable",
+							persistent : true,
+							target : "/SalesOrderList('1')",
+							type : "Error"
+						}]);
+				}
+			}
+			if (bReset || oFixture.error) {
+				that.expectChange("id", "1")
+					.expectChange("pos", ["0010"])
+					.expectChange("quantity", ["1.000"]);
 			}
 
 			if (oFixture.resetViaModel) {
@@ -17295,15 +17300,17 @@ sap.ui.define([
 
 			return Promise.all([
 				oPromise.then(function () {
-					assert.notOk(bReset);
+					assert.notOk(bReset || oFixture.error);
 				}, function (oError) {
-					assert.ok(bReset);
-					assert.ok(oError.canceled);
+					assert.ok(bReset || oFixture.error);
+					assert.strictEqual(oError.message, bReset
+						? "Request canceled: DELETE SalesOrderList('1'); group: update"
+						: "Request intentionally failed");
 					assert.notOk(oContext.isDeleted());
 					assert.strictEqual(oContext.getProperty("SalesOrderID"), "1");
 				}),
 				oModel.submitBatch("update"),
-				that.waitForChanges(assert)
+				that.waitForChanges(assert, oFixture.desc)
 			]);
 		});
 	});
@@ -26220,7 +26227,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Delete an entity with messages from an ODataListBinding
+	// Scenario: Delete an entity with a state message and a transition message from an
+	// ODataListBinding. Both messages are removed when the context is deleted.
 	// JIRA: CPOUI5UISERVICESV3-1361
 	QUnit.test("Delete an entity with messages from an ODataListBinding", function (assert) {
 		var oDeleteMessage = {
@@ -26317,7 +26325,7 @@ sap.ui.define([
 					method : "DELETE",
 					url : "EMPLOYEES('1')"
 				})
-				.expectMessages([oDeleteMessage]);
+				.expectMessages([]);
 
 			return Promise.all([
 				// code under test
@@ -34455,7 +34463,8 @@ sap.ui.define([
 					technical : true,
 					type : "Error"
 				}], true);
-			that.oLogMock.expects("error"); // details do not interest, see below
+			that.oLogMock.expects("error")
+				.withArgs("Failed to update path /MANAGERS('1')/Manager_to_Team/Name");
 
 			return Promise.all([
 				oContextBinding.getBoundContext().setProperty("Name", "Darth Vader")
@@ -40733,7 +40742,10 @@ sap.ui.define([
 			.expectChange("name", ["Team #1", "Team #2"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.oLogMock.expects("error"); // details do not interest
+			that.oLogMock.expects("error")
+				.withArgs("Failed to get contexts for "
+					+ "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/TEAMS with start index"
+					+ " 0 and length 100");
 			that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100",
 					createErrorInsideBatch())
 				.expectMessages([{

@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/model/odata/ODataUtils"
 ], function (_GroupLock, _Helper, _Requestor, Log, isEmptyObject, SyncPromise, ODataUtils) {
 	"use strict";
+	/*eslint max-nested-callbacks: 0 */
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Cache",
 		// Matches if ending with a transient key predicate:
@@ -193,14 +194,7 @@ sap.ui.define([
 			aMessages = oModelInterface.getMessagesByPath(
 				_Helper.buildPath("/", that.sResourcePath, sEntityPath), true);
 
-			if (aMessages.length) {
-				aMessages = aMessages.filter(function (oMessage) {
-					return !oMessage.persistent;
-				});
-				_Helper.setPrivateAnnotation(oEntity, "messages", aMessages);
-			}
-
-			oModelInterface.reportStateMessages(that.sResourcePath, {}, [sEntityPath]);
+			oModelInterface.fireMessageChange({oldMessages : aMessages});
 
 			oEntity["@$ui5.context.isDeleted"] = true;
 			if (Array.isArray(vCacheData)) {
@@ -223,7 +217,6 @@ sap.ui.define([
 					throw oError;
 				} // else: map 404 to 200
 			}).then(function () {
-				_Helper.deletePrivateAnnotation(oEntity, "messages");
 				if (Array.isArray(vCacheData)) {
 					vCacheData.$deleted.splice(vCacheData.$deleted.indexOf(oDeleted), 1);
 					delete vCacheData.$byPredicate[sKeyPredicate];
@@ -236,13 +229,16 @@ sap.ui.define([
 					oEntity["$ui5.deleted"] = true;
 				}
 			}, function (oError) {
-				var iDeletedIndex,
-					aMessages = _Helper.getPrivateAnnotation(oEntity, "messages");
+				var iDeletedIndex;
 
-				if (aMessages) {
+				if (aMessages.length) {
+					if (!oError.canceled) {
+						aMessages = aMessages.filter(function (oMessage) {
+							return !oMessage.persistent;
+						});
+					}
 					oModelInterface.fireMessageChange({newMessages : aMessages});
 				}
-				_Helper.deletePrivateAnnotation(oEntity, "messages");
 
 				delete oEntity["@$ui5.context.isDeleted"];
 				if (Array.isArray(vCacheData)) {

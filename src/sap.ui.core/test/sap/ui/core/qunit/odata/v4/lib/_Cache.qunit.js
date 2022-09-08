@@ -377,22 +377,17 @@ sap.ui.define([
 			oDeleted = {index : "~insert~"},
 			oError = new Error(""),
 			oHelperMock = this.mock(_Helper),
-			oMessage1 = {},
-			oMessage2 = {persistent : true},
-			aMessages = [oMessage1, oMessage2],
-			aMessagesFiltered = oFixture.bMessagesToRestore ? [oMessage1] : undefined,
+			oMessage1 = {code : "CODE1"},
+			oMessage2 = {code : "CODE2", persistent : true},
+			aMessages = oFixture.bMessagesToRestore ? [oMessage1, oMessage2] : [],
 			sPath = oFixture.sPath,
 			oPromise,
 			oRequestPromise = Promise.resolve().then(function () {
 				var iOnFailure = oFixture.iStatus === 500 ? 1 : 0;
 
-				oHelperMock.expects("getPrivateAnnotation").exactly(iOnFailure)
-					.withExactArgs(aCacheData[1], "messages").returns(aMessagesFiltered);
 				that.oModelInterfaceMock.expects("fireMessageChange")
 					.exactly(oFixture.bMessagesToRestore ? 1 : 0)
-					.withExactArgs({newMessages : aMessagesFiltered});
-				oHelperMock.expects("deletePrivateAnnotation")
-					.withExactArgs(aCacheData[1], "messages");
+					.withExactArgs({newMessages : [oMessage1]});
 				aCacheData.$count = 2; // ensure that count is updated
 				oHelperMock.expects("updateExisting").exactly(iOnFailure)
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath,
@@ -430,13 +425,11 @@ sap.ui.define([
 			.withExactArgs(aCacheData[1], "transient").callThrough();
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(aCacheData[1], "transientPredicate").callThrough();
-		that.oModelInterfaceMock.expects("getMessagesByPath")
+		this.oModelInterfaceMock.expects("getMessagesByPath")
 			.withExactArgs("/" + oCache.sResourcePath + (sPath ? "/" + sPath : "") + "('1')", true)
 			.returns(aMessages);
-		oHelperMock.expects("setPrivateAnnotation")
-			.withExactArgs(aCacheData[1], "messages", [oMessage1]);
-		that.oModelInterfaceMock.expects("reportStateMessages")
-			.withExactArgs(oCache.sResourcePath, {}, [sPath + "('1')"]);
+		this.oModelInterfaceMock.expects("fireMessageChange")
+			.withExactArgs({oldMessages : sinon.match.same(aMessages)});
 		this.mock(oCache).expects("addDeleted")
 			.withExactArgs(sinon.match.same(aCacheData), 1, "('1')", "~oGroupLock~",
 				oFixture.bCreated)
@@ -458,9 +451,8 @@ sap.ui.define([
 			.returns("~");
 		this.oRequestorMock.expects("request")
 			.withExactArgs("DELETE", "Equipments('1')?foo=bar", "~oGroupLock~",
-				{"If-Match" : sinon.match.same(oFixture.oEntity || aCacheData[1])},
-				undefined, undefined, sinon.match.func, undefined,
-				"~" + (sPath && "/" + sPath) + "('1')")
+				{"If-Match" : sinon.match.same(oFixture.oEntity || aCacheData[1])}, undefined,
+				undefined, sinon.match.func, undefined, "~" + (sPath && "/" + sPath) + "('1')")
 			.callsFake(function () {
 				return oRequestPromise;
 			});
@@ -551,10 +543,9 @@ sap.ui.define([
 		} else {
 			this.oRequestorMock.expects("request").never();
 			this.oModelInterfaceMock.expects("getMessagesByPath")
-				.withExactArgs("/" + sPath, true)
-				.returns([]);
-			this.oModelInterfaceMock.expects("reportStateMessages")
-				.withExactArgs(oCache.sResourcePath, {}, ["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"]);
+				.withExactArgs("/" + sPath, true).returns("~aMessages~");
+			this.oModelInterfaceMock.expects("fireMessageChange")
+				.withExactArgs({oldMessages : "~aMessages~"});
 		}
 		this.mock(_Cache).expects("makeUpdateData").withExactArgs(["EMPLOYEE_2_TEAM"], null)
 			.returns(oUpdateData);
@@ -587,8 +578,10 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
 			.returns(SyncPromise.resolve(aCacheData));
-		this.oModelInterfaceMock.expects("reportStateMessages")
-			.withExactArgs(oCache.sResourcePath, {}, ["('1')"]);
+		this.oModelInterfaceMock.expects("getMessagesByPath")
+			.withExactArgs("/EMPLOYEES('1')", true).returns("~aMessages~");
+		this.oModelInterfaceMock.expects("fireMessageChange")
+			.withExactArgs({oldMessages : "~aMessages~"});
 		this.oRequestorMock.expects("request")
 			.withExactArgs("DELETE", "EMPLOYEES('1')", sinon.match.same(oGroupLock), {
 					"If-Match" : "etag"
@@ -611,8 +604,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#_delete: from collection, no lock", function (assert) {
-		var that = this,
-			oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')"),
+		var oCache = new _Cache(this.oRequestor, "EMPLOYEES('42')"),
 			aCacheData = [{}, {
 				"@$ui5._" : {predicate : "('1')"}
 			}, {}],
@@ -639,8 +631,11 @@ sap.ui.define([
 		this.mock(oCache).expects("removeElement")
 			.withExactArgs(sinon.match.same(aCacheData), 1, "('1')", "EMPLOYEE_2_EQUIPMENTS")
 			.returns(1);
-		that.oModelInterfaceMock.expects("reportStateMessages")
-			.withExactArgs(oCache.sResourcePath, {}, ["EMPLOYEE_2_EQUIPMENTS('1')"]);
+		this.oModelInterfaceMock.expects("getMessagesByPath")
+			.withExactArgs("/EMPLOYEES('42')/EMPLOYEE_2_EQUIPMENTS('1')", true)
+			.returns("~aMessages~");
+		this.oModelInterfaceMock.expects("fireMessageChange")
+			.withExactArgs({oldMessages : "~aMessages~"});
 
 		// code under test
 		oPromise = oCache._delete(null, "Equipments('1')", "EMPLOYEE_2_EQUIPMENTS/1", {},
@@ -9026,7 +9021,7 @@ sap.ui.define([
 		var oRequestor = _Requestor.create("/~/", {
 				getGroupProperty : defaultGetGroupProperty,
 				getMessagesByPath : function () { return []; },
-				reportStateMessages : function () {},
+				fireMessageChange : function () {},
 				onCreateGroup : function () {}
 			}),
 			oCache = _Cache.create(oRequestor, "Employees"),
@@ -9077,8 +9072,10 @@ sap.ui.define([
 					unlock : function () {}
 				};
 
-			that.mock(oRequestor.oModelInterface).expects("reportStateMessages")
-				.withExactArgs(oCache.sResourcePath, {}, ["('4711')"]);
+			that.mock(oRequestor.oModelInterface).expects("getMessagesByPath")
+				.withExactArgs("/Employees('4711')", true).returns("~aMessages~");
+			that.mock(oRequestor.oModelInterface).expects("fireMessageChange")
+				.withExactArgs({oldMessages : "~aMessages~"});
 			that.mock(oRequestor).expects("request")
 				.withExactArgs("DELETE", sEditUrl, sinon.match.same(oDeleteGroupLock),
 					{"If-Match" : sinon.match.same(oCacheData)},
@@ -10697,9 +10694,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [
-	{lock : false, success : true},
-	{lock : true, success : true},
-	{lock : true, success : false}
+	{lock : false, error : false},
+	{lock : true, error : false},
+	{lock : true, error : true},
+	{lock : true, error : true, canceled : true}
 ].forEach(function (oFixture) {
 	var sTitle = "SingleCache#_delete, followed by _fetchValue: root entity "
 			+ JSON.stringify(oFixture);
@@ -10707,7 +10705,11 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oCache = this.createSingle("Employees('42')"),
 			oData = {"@odata.etag" : 'W/"19770724000000.0000000"'},
+			oError = new Error(),
 			oFetchGroupLock = {},
+			oMessage1 = {code : "CODE1"},
+			oMessage2 = {code : "CODE2", persistent : true},
+			aMessages = [oMessage1, oMessage2],
 			that = this;
 
 		this.oRequestorMock.expects("request")
@@ -10718,30 +10720,31 @@ sap.ui.define([
 		return oCache.fetchValue(oFetchGroupLock).then(function (oEntity) {
 			var oDeleteGroupLock = oFixture.lock ? new _GroupLock("group", "owner", true) : null;
 
-			if (oFixture.lock) {
-				that.oModelInterfaceMock.expects("reportStateMessages")
-					.withExactArgs(oCache.sResourcePath, {}, [""]);
-				that.oRequestorMock.expects("request")
-					.withExactArgs("DELETE", "Employees('42')", sinon.match.same(oDeleteGroupLock),
-						{"If-Match" : sinon.match.same(oEntity)},
-						undefined, undefined, sinon.match.func, undefined, "Employees('42')")
-					.returns(Promise.resolve().then(function () {
-						if (!oFixture.success) {
-							throw "~oError~";
-						}
-					}));
-			} else {
-				that.oRequestorMock.expects("request").never();
-				that.oModelInterfaceMock.expects("reportStateMessages")
-					.withExactArgs(oCache.sResourcePath, {}, [""]);
-			}
+			that.oModelInterfaceMock.expects("getMessagesByPath")
+				.withExactArgs("/Employees('42')", true).returns(aMessages);
+			that.oModelInterfaceMock.expects("fireMessageChange")
+				.withExactArgs({oldMessages : sinon.match.same(aMessages)});
+			that.oRequestorMock.expects("request").exactly(oFixture.lock ? 1 : 0)
+				.withExactArgs("DELETE", "Employees('42')", sinon.match.same(oDeleteGroupLock),
+					{"If-Match" : sinon.match.same(oEntity)},
+					undefined, undefined, sinon.match.func, undefined, "Employees('42')")
+				.returns(Promise.resolve().then(function () {
+					if (oFixture.error) {
+						oError.canceled = oFixture.canceled;
+						throw oError;
+					}
+				}));
+			that.oModelInterfaceMock.expects("fireMessageChange").exactly(oFixture.error ? 1 : 0)
+				.withExactArgs({
+					newMessages : oFixture.canceled ? [oMessage1, oMessage2] : [oMessage1]
+				});
 
 			// code under test
 			return oCache._delete(oDeleteGroupLock, "Employees('42')", "", null, undefined)
 				.then(function () {
 					var oGroupLock = {unlock : function () {}};
 
-					assert.ok(oFixture.success);
+					assert.notOk(oFixture.error);
 					that.mock(oGroupLock).expects("unlock").withExactArgs();
 
 					oCache.fetchValue(oGroupLock).then(function () {
@@ -10749,9 +10752,9 @@ sap.ui.define([
 					}, function (oError) {
 						assert.strictEqual(oError.message, "Cannot read a deleted entity");
 					});
-				}, function (oError) {
-					assert.notOk(oFixture.success);
-					assert.strictEqual(oError, "~oError~");
+				}, function (oError0) {
+					assert.ok(oFixture.error);
+					assert.strictEqual(oError0, oError);
 				});
 		});
 	});
