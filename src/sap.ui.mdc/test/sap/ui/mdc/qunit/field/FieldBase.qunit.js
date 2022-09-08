@@ -2678,15 +2678,25 @@ sap.ui.define([
 
 	QUnit.test("value help enabled", function(assert) {
 
+		var oDummyIcon = new Icon("I1", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content");
+
 		oField.setDisplay(FieldDisplay.DescriptionValue);
 		var oFieldHelp = oCore.byId(oField.getFieldHelp());
 		sinon.spy(oFieldHelp, "onFieldChange");
+		sinon.spy(oFieldHelp, "attachEvent");
 		oCore.applyChanges();
 		sinon.spy(oFieldHelp, "connect");
 		sinon.spy(oFieldHelp, "toggleOpen");
 
 		oField.focus(); // as FieldHelp is connected with focus
 		assert.ok(oFieldHelp.connect.calledWith(oField), "FieldHelp connected to Field");
+		assert.ok(oFieldHelp.attachEvent.calledWith("select"), "FieldHelp select-event attached to Field");
+		oFieldHelp.connect.reset();
+		oFieldHelp.attachEvent.reset();
+		oDummyIcon.focus();
+		oField.focus(); // on focus again connect called again, but events not attached twice
+		assert.ok(oFieldHelp.connect.calledWith(oField), "FieldHelp connected to Field");
+		assert.notOk(oFieldHelp.attachEvent.calledWith("select"), "FieldHelp select-event not attached again to Field");
 
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -2734,6 +2744,8 @@ sap.ui.define([
 
 		oContent.fireValueHelpRequest();
 		assert.ok(oFieldHelp.toggleOpen.calledTwice, "FieldHelp toggle open called again");
+
+		oDummyIcon.destroy();
 
 	});
 

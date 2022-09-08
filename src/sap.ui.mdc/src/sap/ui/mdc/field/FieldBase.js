@@ -2837,7 +2837,7 @@ sap.ui.define([
 	function _connectFieldhelp() {
 
 		var oFieldHelp = _getFieldHelp.call(this);
-		if (oFieldHelp && !this._bConnected) {
+		if (oFieldHelp) { // as Config or BindingContext might change, update connection on every focus
 			var oConditionModelInfo = _getConditionModelInfo.call(this);
 			var oType;
 			var bIsMeasure = this._oContentFactory.isMeasure();
@@ -2864,21 +2864,24 @@ sap.ui.define([
 					defaultOperatorName: this.getDefaultOperator ? this.getDefaultOperator() : null
 			};
 			oFieldHelp.connect(this, oConfig);
-			this._bConnected = true;
-			oFieldHelp.attachEvent("select", _handleFieldHelpSelect, this);
-			oFieldHelp.attachEvent("navigated", _handleFieldHelpNavigated, this);
-			oFieldHelp.attachEvent("disconnect", _handleDisconnect, this);
-			oFieldHelp.attachEvent("afterClose", _handleFieldHelpAfterClose, this); // TODO: remove
-			oFieldHelp.attachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
-			oFieldHelp.attachEvent("closed", _handleFieldHelpAfterClose, this);
-			var aConditions = this.getConditions();
-			_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
 
-			var oContent = this.getControlForSuggestion();
-			_setFocusHandlingForFieldHelp.call(this, oContent);
-			if (oFieldHelp._bIsDefaultHelp) {
-				// use label as default title for FilterField
-				mDefaultHelps[oFieldHelp._sDefaultHelpType].updateTitle(oFieldHelp, this.getLabel());
+			if (!this._bConnected) { // do not attach events again if already attached
+				this._bConnected = true;
+				oFieldHelp.attachEvent("select", _handleFieldHelpSelect, this);
+				oFieldHelp.attachEvent("navigated", _handleFieldHelpNavigated, this);
+				oFieldHelp.attachEvent("disconnect", _handleDisconnect, this);
+				oFieldHelp.attachEvent("afterClose", _handleFieldHelpAfterClose, this); // TODO: remove
+				oFieldHelp.attachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
+				oFieldHelp.attachEvent("closed", _handleFieldHelpAfterClose, this);
+				var aConditions = this.getConditions();
+				_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
+
+				var oContent = this.getControlForSuggestion();
+				_setFocusHandlingForFieldHelp.call(this, oContent);
+				if (oFieldHelp._bIsDefaultHelp) {
+					// use label as default title for FilterField
+					mDefaultHelps[oFieldHelp._sDefaultHelpType].updateTitle(oFieldHelp, this.getLabel());
+				}
 			}
 		}
 
