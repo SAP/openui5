@@ -2616,15 +2616,21 @@ sap.ui.define([
 					sDOMValue = this._oContentFactory.getConditionsType().formatValue(aConditions);
 				}
 
+				var fnUpdateDOMValue = function(sText) {
+					var sOldDOMValue = oContent.getDOMValue();
+					oContent.setDOMValue(""); // to overwrite it even if the text is the same -> otherwise cursor position could be wrong
+					oContent.setDOMValue(sText);
+					if (sOldDOMValue !== sText && iMaxConditions === 1) {
+						this.fireLiveChange({value: aConditions[0].values[0]}); // use the key as value, like for navigation
+					}
+				}.bind(this);
 				if (sDOMValue instanceof Promise) {
-					// text is determined async
+					// text is determined async (normally description should be delivered directly from field help)
 					sDOMValue.then(function(sText) {
-						oContent.setDOMValue(""); // to overwrite it even if the text is the same -> otherwise cursor position could be wrong
-						oContent.setDOMValue(sText);
+						fnUpdateDOMValue(sText);
 					});
 				} else {
-					oContent.setDOMValue(""); // to overwrite it even if the text is the same -> otherwise cursor position could be wrong
-					oContent.setDOMValue(sDOMValue);
+					fnUpdateDOMValue(sDOMValue);
 				}
 				this._sFilterValue = "";
 			} else if (bClose) {
