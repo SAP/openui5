@@ -40,6 +40,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
+	 * @ui5-restricted
 	 * @private
 	 * @alias sap.ui.integration.controls.Paginator
 	 */
@@ -82,14 +83,14 @@ sap.ui.define([
 			src: "sap-icon://slim-arrow-left",
 			useIconTooltip: false,
 			decorative: false,
-			press: this._previous.bind(this)
+			press: this.previous.bind(this)
 		}));
 
 		this.setAggregation("_nextIcon", new Icon({
 			src: "sap-icon://slim-arrow-right",
 			useIconTooltip: false,
 			decorative: false,
-			press: this._next.bind(this)
+			press: this.next.bind(this)
 		}));
 	};
 
@@ -345,7 +346,11 @@ sap.ui.define([
 		return oCard && oCard.hasActiveLoadingProvider();
 	};
 
-	Paginator.prototype._previous = function () {
+	/**
+	 * @ui5-restricted
+	 * @private
+	 */
+	Paginator.prototype.previous = function () {
 		if (this._bActiveAnimation || this._hasActiveLoadingProvider()) {
 			return;
 		}
@@ -354,7 +359,11 @@ sap.ui.define([
 		this.sliceData();
 	};
 
-	Paginator.prototype._next = function () {
+	/**
+	 * @ui5-restricted
+	 * @private
+	 */
+	Paginator.prototype.next = function () {
 		if (this._bActiveAnimation || this._hasActiveLoadingProvider()) {
 			return;
 		}
@@ -371,6 +380,16 @@ sap.ui.define([
 			this.setPageNumber(parseInt(sDataSlide) - 1);
 			this.sliceData();
 		}
+	};
+
+	/**
+	 * @returns {object} Paginator configuration with static values.
+	 */
+	Paginator.prototype.getStaticConfiguration = function () {
+		return {
+			pageCount: this.getPageCount(),
+			pageIndex: this.getPageNumber()
+		};
 	};
 
 	return Paginator;

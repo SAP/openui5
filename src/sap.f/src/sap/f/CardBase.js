@@ -129,8 +129,9 @@ sap.ui.define([
 	/**
 	 * Implements sap.f.ICard interface.
 	 *
+	 * @ui5-restricted
+	 * @private
 	 * @returns {sap.f.cards.IHeader} The header of the card.
-	 * @protected
 	 */
 	CardBase.prototype.getCardHeader = function () {
 		return null;
@@ -139,8 +140,9 @@ sap.ui.define([
 	/**
 	 * Implements sap.f.ICard interface.
 	 *
+	 * @ui5-restricted
+	 * @private
 	 * @returns {sap.f.cards.HeaderPosition} The position of the header of the card.
-	 * @protected
 	 * @since 1.65
 	 */
 	CardBase.prototype.getCardHeaderPosition = function () {
@@ -150,8 +152,9 @@ sap.ui.define([
 	/**
 	 * Implements sap.f.ICard interface.
 	 *
+	 * @ui5-restricted
+	 * @private
 	 * @returns {sap.ui.core.Control} The content of the card.
-	 * @protected
 	 */
 	CardBase.prototype.getCardContent = function () {
 		return null;
