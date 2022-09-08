@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/isPlainObject",
+	"sap/base/util/ObjectPath",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Core",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/write/_internal/condenser/classifications/LastOneWins",
 	"sap/ui/fl/write/_internal/condenser/classifications/Reverse",
+	"sap/ui/fl/write/_internal/condenser/classifications/Update",
 	"sap/ui/fl/write/_internal/condenser/UIReconstruction",
 	"sap/ui/fl/write/_internal/condenser/Utils",
 	"sap/ui/fl/Change",
@@ -20,6 +22,7 @@ sap.ui.define([
 ], function(
 	each,
 	isPlainObject,
+	ObjectPath,
 	Log,
 	JsControlTreeModifier,
 	Core,
@@ -27,6 +30,7 @@ sap.ui.define([
 	ChangesUtils,
 	LastOneWins,
 	Reverse,
+	Update,
 	UIReconstruction,
 	CondenserUtils,
 	Change,
@@ -54,10 +58,11 @@ sap.ui.define([
 	 */
 	var NON_INDEX_RELEVANT = {
 		lastOneWins: LastOneWins,
-		reverse: Reverse
+		reverse: Reverse,
+		update: Update
 	};
 
-	var PROPERTIES_WITH_SELECTORS = ["affectedControl", "sourceContainer", "targetContainer"];
+	var PROPERTIES_WITH_SELECTORS = ["affectedControl", "sourceContainer", "targetContainer", "updateControl"];
 
 	/**
 	 * Verify 'move' subtype has already been added to the data structure before 'create' subtype and they both belong to the same targetContainer
@@ -161,7 +166,7 @@ sap.ui.define([
 				mClassifications[oCondenserInfo.classification] = {};
 			}
 			var mProperties = mClassifications[oCondenserInfo.classification];
-			NON_INDEX_RELEVANT[oCondenserInfo.classification].addToChangesMap(mProperties, oCondenserInfo.uniqueKey, oChange);
+			NON_INDEX_RELEVANT[oCondenserInfo.classification].addToChangesMap(mProperties, oCondenserInfo, oChange);
 			return Promise.resolve();
 		}
 		aIndexRelatedChanges.push(oChange);
@@ -238,7 +243,7 @@ sap.ui.define([
 	 * Retrieves the classification types map.
 	 *
 	 * @param {Map} mReducedChanges - Map of reduced changes
-	 * @param {object} oCondenserInfo - Source index of the element
+	 * @param {object} oCondenserInfo - Condenser-specific information that is delivered by the change handler
 	 * @param {sap.ui.fl.Change} oChange - Change instance
 	 * @param {sap.ui.core.Component} oAppComponent - Application component of the control at runtime
 	 * @returns {Map} Classification types map
@@ -247,6 +252,13 @@ sap.ui.define([
 		var sAffectedControlId = oCondenserInfo !== undefined ? oCondenserInfo.affectedControl : JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), oAppComponent);
 		if (!mReducedChanges[sAffectedControlId]) {
 			mReducedChanges[sAffectedControlId] = {};
+		}
+		// If an updateControl is present, it means that the update has a different selector from the other changes
+		// (e.g. iFrame added as Section) and the changes must be brought to the same group (= same affected control)
+		if (oCondenserInfo && oCondenserInfo.updateControl) {
+			var sUpdateControlId = oCondenserInfo.updateControl;
+			mReducedChanges[sAffectedControlId] = Object.assign(mReducedChanges[sAffectedControlId], mReducedChanges[sUpdateControlId]);
+			delete mReducedChanges[sUpdateControlId];
 		}
 		return mReducedChanges[sAffectedControlId];
 	}
@@ -308,7 +320,12 @@ sap.ui.define([
 			var mTypes = getTypesMap(mReducedChanges, oCondenserInfo, oChange, oAppComponent);
 			if (oCondenserInfo !== undefined) {
 				addType(oCondenserInfo);
-				return addClassifiedChange(mTypes, mUIReconstructions, aIndexRelatedChanges, oCondenserInfo, oChange);
+				return addClassifiedChange(mTypes, mUIReconstructions, aIndexRelatedChanges, oCondenserInfo, oChange)
+					.then(function() {
+						if (oCondenserInfo.update) {
+							condenseUpdateChange(mTypes, oCondenserInfo, oChange);
+						}
+					});
 			}
 			addUnclassifiedChange(mTypes, UNCLASSIFIED, oChange);
 			mReducedChanges[UNCLASSIFIED] = true;
@@ -330,6 +347,30 @@ sap.ui.define([
 				oCondenserInfo[sPropertyName] = JsControlTreeModifier.getControlIdBySelector(oCondenserInfo[sPropertyName], oAppComponent);
 			}
 		});
+	}
+
+	/**
+	 * Handles change with specific update function on CondenserInfo (e.g. addIFrame)
+	 * The update change is marked for deletion, since the original change will be updated with its content
+	 * If the original change is marked for deletion, the update can be skipped
+	 * If the original change is already persisted, the new content is an update
+	 *
+	 * @param {Map} mTypes - Map with the changes
+	 * @param {object} oCondenserInfo - Condenser-specific information that is delivered by the change handler
+	 * @param {sap.ui.fl.Change} oChange - The change that is getting updated
+	 */
+	function condenseUpdateChange(mTypes, oCondenserInfo, oChange) {
+		var oUpdateCondenserInfo = ObjectPath.get([CondenserUtils.NOT_INDEX_RELEVANT, CondenserClassification.Update, oCondenserInfo.uniqueKey], mTypes);
+		if (oUpdateCondenserInfo) {
+			oUpdateCondenserInfo.change.condenserState = "delete";
+			if (oChange.condenserState === "delete") {
+				return;
+			}
+			oCondenserInfo.update(oChange, oUpdateCondenserInfo.updateContent);
+			if (oChange.getState() === Change.states.PERSISTED) {
+				oChange.condenserState = "update";
+			}
+		}
 	}
 
 	/**

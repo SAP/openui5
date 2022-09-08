@@ -14,14 +14,14 @@ sap.ui.define([
 		 * Adds a Reverse change to the map with reduced changes.
 		 *
 		 * @param {Map} mProperties - Map with all reduced changes
-		 * @param {string} sUniqueKey - Unique key defined in the condenser information
+		 * @param {string} oCondenserInfo - Condenser information
 		 * @param {sap.ui.fl.Change} oChange - Change instance
 		 */
-		addToChangesMap: function(mProperties, sUniqueKey, oChange) {
-			if (!mProperties[sUniqueKey]) {
-				mProperties[sUniqueKey] = [];
+		addToChangesMap: function(mProperties, oCondenserInfo, oChange) {
+			if (!mProperties[oCondenserInfo.uniqueKey]) {
+				mProperties[oCondenserInfo.uniqueKey] = [];
 			}
-			mProperties[sUniqueKey].push(oChange);
+			mProperties[oCondenserInfo.uniqueKey].push(oChange);
 		},
 
 		/**

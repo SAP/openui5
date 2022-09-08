@@ -21,7 +21,7 @@ sap.ui.define([
 		 */
 		addToReconstructionMap: function(mUIReconstructions, oCondenserInfo) {
 			var oAffectedControl = Core.byId(oCondenserInfo.affectedControl);
-			var sAggregationName = oAffectedControl && oAffectedControl.sParentAggregationName || oCondenserInfo.targetAggregation;
+			var sAggregationName = oCondenserInfo.targetAggregation || oAffectedControl && oAffectedControl.sParentAggregationName;
 			return CondenserUtils.getContainerElementIds(oCondenserInfo.targetContainer, sAggregationName)
 				.then(function (aTargetContainerElementIds) {
 					var aContainerElementIds = CondenserUtils.getInitialUIContainerElementIds(mUIReconstructions, oCondenserInfo.targetContainer, oCondenserInfo.targetAggregation, aTargetContainerElementIds);

@@ -175,6 +175,148 @@ sap.ui.define([
 		afterRedo : fnConfirmSection1IsOn2ndPosition
 	});
 
+	function fnConfirmIFrameSectionIsOn2ndPosition(oAppComponent, oViewAfterAction, assert) {
+		assert.strictEqual(oViewAfterAction.byId("iFrameSection").getId(),
+			oViewAfterAction.byId("op").getSections()[1].getId(),
+			"then the control has been moved to the right position");
+	}
+	function fnConfirmIFrameWasRemoved(oAppComponent, oViewAfterAction, assert) {
+		assert.notOk( oViewAfterAction.byId("iFrameSection"),
+			"then the iFrame is gone");
+	}
+
+	// Use elementActionTest to check if a new iFrame as a section is properly moved
+	elementActionTest("Checking the move action for a sap.uxap.ObjectPageSection control after adding iFrame", {
+		xmlView :
+		'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
+			'<uxap:ObjectPageLayout id="op">' +
+				'<uxap:sections>' +
+					'<uxap:ObjectPageSection id="section1">' +
+						'<uxap:subSections>' +
+							'<uxap:ObjectPageSubSection id="subSection1" title="Subsection with action buttons">' +
+								'<uxap:actions>' +
+									'<m:Button icon="sap-icon://synchronize" />' +
+									'<m:Button icon="sap-icon://expand" />' +
+								'</uxap:actions>' +
+								'<m:Button text="Subsection UI adaptation" />' +
+							'</uxap:ObjectPageSubSection>' +
+						'</uxap:subSections>' +
+					'</uxap:ObjectPageSection>' +
+				'</uxap:sections>' +
+			'</uxap:ObjectPageLayout>' +
+		'</mvc:View>',
+		action : {
+			name : "move",
+			controlId : "op",
+			parameter : function(oView){
+				return {
+					movedElements : [{
+						element : oView.byId("iFrameSection"),
+						sourceIndex : 0,
+						targetIndex : 1
+					}],
+					source : {
+						aggregation: "sections",
+						parent: oView.byId("op")
+					},
+					target : {
+						aggregation: "sections",
+						parent: oView.byId("op")
+					}
+				};
+			}
+		},
+		previousActions: [ // OPTIONAL
+			{
+				name : "addIFrame",
+				controlId : "op",
+				parameter : function(oView) {
+					return {
+						baseId: oView.createId("iFrameSection"),
+						targetAggregation: "sections",
+						index: 0,
+						url: "someUrl",
+						width: "10px",
+						height: "11px"
+					};
+				}
+			}
+		],
+		changesAfterCondensing: 1, // OPTIONAL
+		layer : "VENDOR",
+		afterAction : fnConfirmIFrameSectionIsOn2ndPosition,
+		afterUndo : fnConfirmIFrameWasRemoved,
+		afterRedo : fnConfirmIFrameSectionIsOn2ndPosition
+	});
+
+	// Update IFrame
+	function fnConfirmIFrameWasUpdated(oAppComponent, oViewAfterAction, assert) {
+		assert.strictEqual( oViewAfterAction.byId("iFrameSection-iframe").get_settings().url,
+			"someNewUrl",
+			"then the iFrame is updated" );
+	}
+
+	// Use elementActionTest to check if a new iFrame as Object Page Section is updated properly
+	elementActionTest("Checking the update on a new iFrame added as Object Page Section", {
+		xmlView :
+		'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+		'xmlns:m="sap.m" xmlns:uxap="sap.uxap" >' +
+			'<uxap:ObjectPageLayout id="op">' +
+				'<uxap:sections>' +
+					'<uxap:ObjectPageSection id="section1">' +
+						'<uxap:subSections>' +
+							'<uxap:ObjectPageSubSection id="subSection1" title="Subsection with action buttons">' +
+								'<uxap:actions>' +
+									'<m:Button icon="sap-icon://synchronize" />' +
+									'<m:Button icon="sap-icon://expand" />' +
+								'</uxap:actions>' +
+								'<m:Button text="Subsection UI adaptation" />' +
+							'</uxap:ObjectPageSubSection>' +
+						'</uxap:subSections>' +
+					'</uxap:ObjectPageSection>' +
+				'</uxap:sections>' +
+			'</uxap:ObjectPageLayout>' +
+		'</mvc:View>',
+		action : {
+			name : "settings",
+			control : function(oView) {
+				return oView.byId("iFrameSection-iframe");
+			},
+			parameter : function(){
+				return {
+					changeType: "updateIFrame",
+					content: {
+						height: "100%",
+						url: "someNewUrl",
+						width: "100%"
+					}
+				};
+			}
+		},
+		previousActions: [ // OPTIONAL
+			{
+				name : "addIFrame",
+				controlId : "op",
+				parameter : function(oView) {
+					return {
+						baseId: oView.createId("iFrameSection"),
+						targetAggregation: "sections",
+						index: 0,
+						url: "someUrl",
+						width: "10px",
+						height: "11px"
+					};
+				}
+			}
+		],
+		changesAfterCondensing: 1, // OPTIONAL
+		layer : "VENDOR",
+		afterAction : fnConfirmIFrameWasUpdated,
+		afterUndo : fnConfirmIFrameWasRemoved,
+		afterRedo : fnConfirmIFrameWasUpdated
+	});
+
 	// Rename action
 	var fnConfirmSectionRenamedWithNewValue = function (oUIComponent, oViewAfterAction, assert) {
 		assert.strictEqual(oViewAfterAction.byId("section").getTitle(),

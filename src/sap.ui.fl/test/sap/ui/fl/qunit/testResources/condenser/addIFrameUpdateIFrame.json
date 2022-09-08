@@ -1,0 +1,94 @@
+[
+	{
+		"id": "id_1579844823982_40_addIFrame",
+		"changeType": "addIFrame",
+		"reference": "componentId.Component",
+		"content": {
+			"baseId": "componentId---myView--id-1651835377345-98",
+			"height": "100%",
+			"index": 1,
+			"selector": {"id": "myView--id-1651835377345-98", "idIsLocal": false},
+			"targetAggregation": "headerContent",
+			"url": "https://example.com",
+			"width": "100%"
+		},
+		"selector": {
+			"id": "myView--ObjectPageLayout",
+			"idIsLocal": false
+		}
+	},
+	{
+		"id": "id_1579844823982_41_updateIFrame",
+		"changeType": "updateIFrame",
+		"reference": "componentId.Component",
+		"content": {
+			"height": "10px",
+			"url": "https://www.example.com",
+			"width": "100rem"
+		},
+		"selector": {
+			"id": "myView--id-1651835377345-98",
+			"idIsLocal": false
+		}
+	},
+	{
+		"id": "id_1579844823982_43_addIFrame",
+		"changeType": "addIFrame",
+		"reference": "componentId.Component",
+		"content": {
+			"baseId": "componentId---myView--id-1651835377345-99",
+			"height": "100%",
+			"index": 1,
+			"selector": {"id": "myView--id-1651835377345-99", "idIsLocal": false},
+			"targetAggregation": "sections",
+			"url": "https://example.com",
+			"width": "100%"
+		},
+		"selector": {
+			"id": "myView--ObjectPageLayout",
+			"idIsLocal": false
+		}
+	},
+	{
+		"id": "id_1579844823982_44_updateIFrame",
+		"changeType": "updateIFrame",
+		"reference": "componentId.Component",
+		"content": {
+			"height": "1000px",
+			"url": "https://www.example.com",
+			"width": "1000rem"
+		},
+		"selector": {
+			"id": "myView--id-1651835377345-99-iframe",
+			"idIsLocal": false
+		}
+	},
+	{
+		"id": "id_1579844823982_42_updateIFrame",
+		"changeType": "updateIFrame",
+		"reference": "componentId.Component",
+		"content": {
+			"height": "100px",
+			"url": "https://www.example.com",
+			"width": "10rem"
+		},
+		"selector": {
+			"id": "myView--id-1651835377345-98",
+			"idIsLocal": false
+		}
+	},
+	{
+		"id": "id_1579844823982_45_updateIFrame",
+		"changeType": "updateIFrame",
+		"reference": "componentId.Component",
+		"content": {
+			"height": "200px",
+			"url": "https://www.example.com",
+			"width": "16rem"
+		},
+		"selector": {
+			"id": "myView--id-1651835377345-99-iframe",
+			"idIsLocal": false
+		}
+	}
+]

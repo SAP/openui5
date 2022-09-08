@@ -1,0 +1,18 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m">
+	<ObjectPageLayout id="ObjectPageLayout">
+		<headerContent>
+			<m:Button id="button" text="myButton" />
+		</headerContent>
+		<sections>
+			<ObjectPageSection id="ObjectPageSection" title="someTitle">
+				<subSections>
+					<ObjectPageSubSection id="SubSection" mode="Expanded">
+						<blocks>
+							<m:Button id="button1" text="myInnerButton" />
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>
