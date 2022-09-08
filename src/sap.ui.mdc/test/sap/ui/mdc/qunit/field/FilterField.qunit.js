@@ -386,4 +386,39 @@ sap.ui.define([
 		oFilterField.fireChange.restore();
 	});
 
+	QUnit.test("search event handling", function(assert) {
+		oFilterField.destroy();
+		oFilterField = new FilterField("FF1", {
+			conditions: "{$filters>/conditions/$search}",
+			maxConditions: 1,
+			delegate: '{name: "delegates/odata/v4/FieldBaseDelegate", payload: {}}'
+		});
+
+		oFilterField.placeAt("content");
+		oCore.applyChanges();
+
+		sinon.spy(oFilterField._oContentFactory, "getHandleEnter");
+
+		var aContent = oFilterField.getAggregation("_content");
+		var oContent = aContent && aContent.length > 0 && aContent[0];
+
+
+		oContent.fireSearch();
+		assert.equal(oFilterField._oContentFactory.getHandleEnter.callCount, 1, "HandleEnter called once");
+
+		oContent.fireSearch();
+		assert.equal(oFilterField._oContentFactory.getHandleEnter.callCount, 2, "HandleEnter called");
+
+		oContent.fireSearch({ clearButtonPressed: true });
+		assert.equal(oFilterField._oContentFactory.getHandleEnter.callCount, 2, "HandleEnter no additonal call");
+
+		oContent.fireSearch({ clearButtonPressed: true });
+		assert.equal(oFilterField._oContentFactory.getHandleEnter.callCount, 2, "HandleEnter no additonal call");
+
+		oContent.fireSearch({ clearButtonPressed: false });
+		assert.equal(oFilterField._oContentFactory.getHandleEnter.callCount, 3, "HandleEnter called");
+
+		oFilterField._oContentFactory.getHandleEnter.restore();
+	});
+
 });
