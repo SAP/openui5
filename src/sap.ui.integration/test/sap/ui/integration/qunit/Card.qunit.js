@@ -584,22 +584,6 @@ sap.ui.define([
 			}
 		};
 
-		var oManifest_Bad_Url_List = {
-			"sap.app": {
-				"id": "test.card.badDataUrl"
-			},
-			"sap.card": {
-				"type": "List",
-				"header": {},
-				"content": {
-					"item": {}
-				},
-				"data": {
-					"json": []
-				}
-			}
-		};
-
 		var oManifest_No_Data_List = {
 			"sap.app": {
 				"id": "test.card.NoData"
@@ -2083,27 +2067,6 @@ sap.ui.define([
 			oLogSpy.restore();
 		});
 
-		QUnit.test("Bad data url", function (assert) {
-
-			// Arrange
-			var oSpy = sinon.spy(Card.prototype, "_handleError"),
-				done = assert.async();
-			this.oCard.attachEvent("_error", function () {
-
-				// Assert
-				assert.ok(oSpy.calledOnce, "Should call error handler when manifest is 'null'");
-
-				// Clean up
-				oSpy.restore();
-				done();
-			});
-
-			// Act
-			this.oCard.setManifest(oManifest_Bad_Url_List);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-		});
-
 		QUnit.test("IllustratedMessage should be set by developer", function (assert) {
 
 			// Arrange
@@ -2131,12 +2094,12 @@ sap.ui.define([
 					done();
 			}.bind(this));
 			// Act
-			this.oCard.setManifest(oManifest_Bad_Url_List);
+			this.oCard.setManifest(oManifest_No_Data_List);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		});
 
-		QUnit.test("IllustratedMessage should be used for error in List Card", function (assert) {
+		QUnit.test("IllustratedMessage should be used for no data case in List Card", function (assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -2151,7 +2114,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 			// Act
-			this.oCard.setManifest(oManifest_Bad_Url_List);
+			this.oCard.setManifest(oManifest_No_Data_List);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		});
