@@ -3240,4 +3240,81 @@ sap.ui.define([
 			);
 		}, this);
 	});
+
+	QUnit.module("ItemNavigation", {
+		beforeEach: function() {
+			var oModel = new JSONModel({
+				names: [
+					{firstName: "Peter", lastName: "Mueller"},
+					{firstName: "Petra", lastName: "Maier"},
+					{firstName: "Thomas", lastName: "Smith"},
+					{firstName: "John", lastName: "Williams"},
+					{firstName: "Maria", lastName: "Jones"}
+				]
+			});
+
+			this.oTable = new Table({
+				columns: [
+					// columns without "header" aggregation
+					new Column(),
+					new Column()
+				]
+			});
+
+			this.oTable.setModel(oModel);
+			this.oTable.bindItems({
+				path: "/names",
+				template: new ColumnListItem({
+					cells: [
+						new Text({text: "{firstName}"}),
+						new Text({text: "{lastName}"})
+					]
+				})
+			});
+
+			this.oTable.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("hidden column header row should not be included in the ItemNavigation items", function(assert) {
+		var aItems = this.oTable.getItems(),
+			oFirstItem = aItems[0],
+			oLastItem = aItems[aItems.length - 1];
+
+		assert.notOk(this.oTable.$("tblHeader").attr("tabindex"), "tabindex attribute is not added to hidden column header row");
+
+		oFirstItem.focus();
+		qutils.triggerKeydown(document.activeElement, "END", false, false, false);
+		Core.applyChanges();
+		assert.strictEqual(document.activeElement.getAttribute("id"), oLastItem.getId(), "Focus is set on the last item");
+
+		qutils.triggerKeydown(document.activeElement, "HOME", false, false, false);
+		Core.applyChanges();
+		assert.strictEqual(document.activeElement.getAttribute("id"), oFirstItem.getId(), "Focus is set on the last item");
+	});
+
+	QUnit.test("visible column header row should be included in the ItemNavigation items", function(assert) {
+		var aItems = this.oTable.getItems(),
+			oFirstItem = aItems[0],
+			oLastItem = aItems[aItems.length - 1];
+
+		var oColumn = this.oTable.getColumns()[1];
+		// add "header" aggregation to a column
+		oColumn.setHeader(new Text({text: "Last Name"}));
+		Core.applyChanges();
+
+		assert.ok(this.oTable.$("tblHeader").attr("tabindex"), "tabindex attribute is added to column header row");
+		oFirstItem.focus();
+		qutils.triggerKeydown(document.activeElement, "END", false, false, false);
+		Core.applyChanges();
+		assert.strictEqual(document.activeElement.getAttribute("id"), oLastItem.getId(), "Focus is set on the last item");
+
+		qutils.triggerKeydown(document.activeElement, "HOME", false, false, false);
+		Core.applyChanges();
+		assert.strictEqual(document.activeElement.getAttribute("id"), this.oTable.$("tblHeader").attr("id"), "Focus is set on the last item");
+	});
 });

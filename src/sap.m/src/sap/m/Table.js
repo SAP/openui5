@@ -673,7 +673,14 @@ sap.ui.define([
 		var $Footer = this.$("tblFooter");
 		var $Rows = this.$("tblBody").children(".sapMLIB");
 
-		var aItemDomRefs = $Header.add($Rows).add($Footer).get();
+		var aItemDomRefs;
+		// only :sapFocusable elements should be returned, else "sapMListTblHeaderNone" would also be focusable, which is unexpected
+		if ($Header.is(":sapFocusable")) {
+			aItemDomRefs = $Header.add($Rows).add($Footer).get();
+		} else {
+			aItemDomRefs = $Rows.add($Footer).get();
+		}
+
 		oItemNavigation.setItemDomRefs(aItemDomRefs);
 
 		// header and footer are in the item navigation but
