@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/m/library",
 	"sap/ui/Device",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/m/IllustratedMessage",
+	"sap/m/library"
 ], function(
 	Core,
 	ResponsivePopover,
@@ -20,7 +22,9 @@ sap.ui.define([
 	InvisibleText,
 	MLibrary,
 	Device,
-	Log
+	Log,
+	IllustratedMessage,
+	mLib
 ) {
 	"use strict";
 
@@ -68,15 +72,17 @@ sap.ui.define([
 	 */
 	DrillStackHandler.createDrillDownPopover = function(oMDCChart) {
 
-		var oSubHeader = new Bar();
+		//var oSubHeader = new Bar();
+		var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		var oPopover = new ResponsivePopover({
 			id: oMDCChart.getId() + "-drilldownPopover",
 			contentWidth: "25rem",
 			contentHeight: "20rem",
-			placement: PlacementType.Bottom,
-			subHeader: oSubHeader
+			placement: PlacementType.Bottom
+			//subHeader: oSubHeader
 		});
 		var oList = new List({
+			noData: new IllustratedMessage({enableVerticalResponsiveness: true, title: MDCRb.getText("chart.NO_DRILLABLE_DIMENSION"), description: MDCRb.getText("chart.NO_DRILLABLE_DIMENSION_DESC"), illustrationType: mLib.IllustratedMessageType.BeforeSearch}),
 			mode: ListMode.SingleSelectMaster,
 			selectionChange: function(oControlEvent) {
 				var oListItem = oControlEvent.getParameter("listItem");

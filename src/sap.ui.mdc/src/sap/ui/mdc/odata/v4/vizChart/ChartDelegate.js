@@ -21,7 +21,8 @@ sap.ui.define([
     "sap/ui/mdc/FilterBarDelegate",
     "sap/ui/model/Filter",
     "sap/ui/mdc/chart/PropertyHelper",
-    "sap/ui/thirdparty/jquery"
+    "sap/ui/thirdparty/jquery",
+    "sap/m/IllustratedMessage"
 ], function (
     V4ChartDelegate,
     Core,
@@ -41,7 +42,8 @@ sap.ui.define([
     FilterBarDelegate,
     Filter,
     PropertyHelper,
-    jQuery
+    jQuery,
+    IllustratedMessage
 ) {
     "use strict";
     /**
@@ -687,17 +689,18 @@ sap.ui.define([
         return new Promise(function (resolve, reject) {
 
             this._loadChart().then(function (aModules) {
+                var oNoDataCont;
 
                 this._setInnerStructure(oMDCChart, new ChartImplementationContainer(oMDCChart.getId() + "--implementationContainer", {}));
-
-                var oText = new Text();
-                oText.setText(oMDCChart.getNoDataText());
-
                 oMDCChart.addStyleClass("sapUiMDCChartTempTextOuter");
-                this._getInnerStructure(oMDCChart).addStyleClass("sapUiMDCChartTempText");
-                this._getInnerStructure(oMDCChart).setContent(oText);
 
-                //oMDCChart.addStyleClass("sapUiMDCChartGrid");
+                if (oMDCChart.getNoData()){
+                    this._getInnerStructure(oMDCChart).setChartNoDataContent(oMDCChart.getNoData());
+                } else {
+                    oNoDataCont = new Text({text: oMDCChart.getNoDataText()});
+                    this._getInnerStructure(oMDCChart).addStyleClass("sapUiMDCChartTempText");
+                    this._getInnerStructure(oMDCChart).setNoDataContent(oNoDataCont);
+                }
 
                 this._setUpChartObserver(oMDCChart);
 
@@ -715,6 +718,17 @@ sap.ui.define([
      */
     ChartDelegate.createInitialChartContent = function(oMDCChart) {
         //Not relevant for sap.chart.Chart
+    };
+
+    /**
+     * Triggers invalidation on ChartImplContainer when external noData changed.
+     * @param {sap.ui.mdc.Chart} oMDCChart reference to the MDC Chart
+     */
+    ChartDelegate.changedNoDataStruct = function(oMDCChart) {
+        if (this._getInnerStructure(oMDCChart)) {
+            this._getInnerStructure(oMDCChart).setChartNoDataContent(oMDCChart.getNoData());
+            this._getInnerStructure(oMDCChart).invalidate();
+        }
     };
 
     /**
@@ -1294,6 +1308,7 @@ sap.ui.define([
                 //this._getInnerStructure(oMDCChart).setJustifyContent(FlexJustifyContent.Start);
                 //this._getInnerStructure(oMDCChart).setAlignItems(FlexAlignItems.Stretch);
                 this._getInnerStructure(oMDCChart).setContent(this._getChart(oMDCChart));
+                this._getInnerStructure(oMDCChart).setShowNoDataStruct(false);
 
                 oState.dataLoadedCallback = fnCallbackDataLoaded;
 
@@ -1322,12 +1337,14 @@ sap.ui.define([
      */
     ChartDelegate._performInitialBind = function(oMDCChart, oBindingInfo) {
         if (oMDCChart && oBindingInfo && this._getChart(oMDCChart)) {
-            this._addBindingListener(oBindingInfo, "dataReceived", this._getState(oMDCChart).dataLoadedCallback.bind(oMDCChart));
+            this._addBindingListener(oBindingInfo, "dataReceived", this._onDataLoadComplete.bind(oMDCChart));
 
             this._getChart(oMDCChart).bindData(oBindingInfo);
             this._setBindingInfoForState(oMDCChart, oBindingInfo);
             var oState = this._getState(oMDCChart);
             oState.innerChartBound = true;
+
+            this._checkForMeasureWarning(oMDCChart);
         }
     };
 
@@ -1486,7 +1503,11 @@ sap.ui.define([
     ChartDelegate.rebind = function (oMDCChart, oBindingInfo) {
         if (oMDCChart && oBindingInfo && this._getChart(oMDCChart)) {
             //TODO: bindData sap.chart.Chart specific and therefore needs to be changed to a general API.
-            this._addBindingListener(oBindingInfo, "dataReceived", this._getState(oMDCChart).dataLoadedCallback.bind(oMDCChart));
+            this._addBindingListener(oBindingInfo, "dataReceived", this._onDataLoadComplete.bind(oMDCChart));
+
+            //Will be enabled with future BLI
+            //this._checkForMeasureWarning(oMDCChart);
+            this._getInnerStructure(oMDCChart).setShowNoDataStruct(false);
 
             //TODO: Clarify why sap.ui.model.odata.v4.ODataListBinding.destroy this.bHasAnalyticalInfo is false
             //TODO: on second call, as it leads to issues when changing layout options within the settings dialog.
@@ -1500,6 +1521,25 @@ sap.ui.define([
             this._setBindingInfoForState(oMDCChart, oBindingInfo);
             var oState = this._getState(oMDCChart);
             oState.innerChartBound = true;
+        }
+    };
+
+    //TODO: Write unit test for this!!
+    ChartDelegate._checkForMeasureWarning = function(oMDCChart) {
+
+        if (!oMDCChart.getNoData()) {
+            return;
+        }
+
+        var oMDCMeasures = oMDCChart.getItems().filter(function(oItem){
+            return oItem.getType() === "aggregatable";
+        });
+
+        if (oMDCMeasures.length === 0) {
+            this._getInnerStructure(oMDCChart).setShowNoDataStruct(true);
+            oMDCChart.setBusy(false);
+        } else {
+            this._getInnerStructure(oMDCChart).setShowNoDataStruct(false);
         }
     };
 
@@ -1792,6 +1832,21 @@ sap.ui.define([
         });
     };
 
+    /**
+     * Adds/Removes the overlay shown above the inner chart.
+     * @param {sap.ui.mdc.Chart} oMDCChart reference to the chart
+     * @param {boolean} bShow <code>true</code> to show overlay, <code>false</code> to hide
+     *
+     * @experimental
+     * @private
+     * @ui5-restricted Fiori Elements, sap.ui.mdc
+     */
+    ChartDelegate.showOverlay = function(oMDCChart, bShow) {
+        if (this._getInnerStructure(oMDCChart)) {
+            this._getInnerStructure(oMDCChart).showOverlay(bShow);
+        }
+    };
+
     //Gets internal property infos by excact property name
     ChartDelegate._getPropertyInfosByName = function(sName, oMDCChart){
         return oMDCChart._getPropertyByNameAsync(sName);
@@ -1820,12 +1875,23 @@ sap.ui.define([
         }
     };
 
-    /*
+    //This is bound to mdc chart
     ChartDelegate._onDataLoadComplete = function (mEventParams) {
-        if (mEventParams.mParameters.reason === "change" && !mEventParams.mParameters.detailedReason) {
-            this._fnDataLoadedCallback.call();
+        var oNoDataStruct = this.getControlDelegate()._getInnerStructure(this);
+
+        if (this.getNoData()){
+            if (mEventParams.getSource() && mEventParams.getSource().getCurrentContexts().length === 0) {
+                //var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+                //oNoDataStruct.setNoDataContent(new IllustratedMessage({title: this.getNoDataText(), description: MDCRb.getText("chart.NO_DATA_WITH_FILTERBAR"), illustrationType: mLib.IllustratedMessageType.BeforeSearch}));
+                oNoDataStruct.setShowNoDataStruct(true);
+            } else {
+                oNoDataStruct.setShowNoDataStruct(false);
+            }
         }
-    };*/
+
+
+        this._innerChartDataLoadComplete(mEventParams);
+    };
 
     return ChartDelegate;
 });

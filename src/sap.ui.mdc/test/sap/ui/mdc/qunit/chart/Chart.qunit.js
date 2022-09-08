@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/ui/mdc/enum/ActionToolbarActionAlignment",
 	"sap/m/ToolbarSeparator",
-	"sap/ui/fl/variants/VariantManagement"
+	"sap/ui/fl/variants/VariantManagement",
+	"sap/m/IllustratedMessage"
 ],
 function(
 	Core,
@@ -26,7 +27,8 @@ function(
 	ActionToolbarAction,
 	Alignment,
 	ToolbarSeparator,
-	VM
+	VM,
+	IllustratedMessage
 ) {
     "use strict";
 
@@ -397,7 +399,7 @@ function(
 
 	});
 
-		QUnit.test("setNoDataText", function(assert){
+	QUnit.test("setNoDataText", function(assert){
 		var done = assert.async();
 
 		this.oMDCChart.initialized().then(function(){
@@ -406,6 +408,20 @@ function(
 			this.oMDCChart.setNoDataText("Test Text 12345");
 			assert.ok(delegateSpy.calledOnce, "setNoDataText was called on delegate");
 			assert.equal(this.oMDCChart.getNoDataText(), "Test Text 12345", "No data text was updated");
+
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("setNoData", function(assert){
+		var done = assert.async();
+
+		this.oMDCChart.initialized().then(function(){
+			var delegateSpy = sinon.spy(this.oMDCChart.getControlDelegate(), "changedNoDataStruct");
+
+			this.oMDCChart.setNoData(new IllustratedMessage({title: "ABCDEFG"}));
+			assert.ok(delegateSpy.calledOnce, "changedNoDataStruct was called on delegate");
+			assert.equal(this.oMDCChart.getNoData().getTitle(), "ABCDEFG", "No data message was updated");
 
 			done();
 		}.bind(this));

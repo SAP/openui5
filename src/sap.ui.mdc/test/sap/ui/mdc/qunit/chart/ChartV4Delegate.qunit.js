@@ -10,7 +10,8 @@ sap.ui.define([
     "sap/chart/Chart",
     "sap/m/VBox",
     "delegates/odata/TypeUtil",
-    "sap/ui/mdc/chart/PropertyHelper"
+    "sap/ui/mdc/chart/PropertyHelper",
+    "sap/ui/mdc/chart/ChartImplementationContainer"
 ],
 function(
 	Core,
@@ -22,8 +23,8 @@ function(
     SapChart,
     VBox,
     TypeUtil,
-    ChartPropertyHelper
-
+    ChartPropertyHelper,
+    ChartImplementationContainer
 ) {
     "use strict";
 
@@ -800,9 +801,22 @@ function(
             assert.ok(oObserverSpy.called, "Observer was setup");
 
             var oInnerStruct = ChartDelegate._getInnerStructure(this.oMDCChart);
-            assert.equal(oInnerStruct.getContent().getText(), "ABCDEFG", "No data text was set on inner struct");
-            assert.ok(oInnerStruct.hasStyleClass("sapUiMDCChartTempText"), "Inner struct has correct style class set");
+            assert.equal(oInnerStruct.getNoDataContent().getText(), "ABCDEFG", "No data text was set on inner struct");
             assert.ok(this.oMDCChart.hasStyleClass("sapUiMDCChartTempTextOuter"), "MDC Chart has correct style class set");
+
+            done();
+        }.bind(this));
+    });
+
+    QUnit.test("initializeInnerChart with noData", function(assert) {
+        var done = assert.async();
+        this.oMDCChart.setNoData(new VBox("testID"));
+        sandbox.stub(ChartDelegate, "_loadChart").returns(Promise.resolve());
+
+        ChartDelegate.initializeInnerChart(this.oMDCChart).then(function(){
+
+            var oInnerStruct = ChartDelegate._getInnerStructure(this.oMDCChart);
+            assert.equal(oInnerStruct.getChartNoDataContent(), "testID", "Association to noData struct set");
 
             done();
         }.bind(this));
@@ -1164,7 +1178,7 @@ function(
 
     QUnit.test("_performInitialBind", function(assert) {
         var oMockChart = {bindData: function(){}};
-        ChartDelegate._setState(this.oMDCChart, {innerChart: oMockChart, dataLoadedCallback: function(){}});
+        ChartDelegate._setState(this.oMDCChart, {innerChart: oMockChart, dataLoadedCallback: function(){}, innerStructure: new ChartImplementationContainer()});
 
         var oStub = sandbox.stub(ChartDelegate, "_addBindingListener");
         var oBindSpy = sinon.spy(oMockChart, "bindData");
@@ -1236,7 +1250,7 @@ function(
 
     QUnit.test("rebind", function(assert) {
         var oMockChart = {bindData: function(){}};
-        ChartDelegate._setState(this.oMDCChart, {innerChart: oMockChart, dataLoadedCallback: function(){}});
+        ChartDelegate._setState(this.oMDCChart, {innerChart: oMockChart, dataLoadedCallback: function(){}, innerStructure: new ChartImplementationContainer()});
 
         var oStub = sandbox.stub(ChartDelegate, "_addBindingListener");
         var oBindSpy = sinon.spy(oMockChart, "bindData");
@@ -1325,6 +1339,26 @@ function(
             'NO_DATA': "ABC"
         }), "Correct noData text set on inner chart");
     });
+
+    QUnit.test("_onDataLoadComplete", function(assert){
+        var oMockImplContainer = new ChartImplementationContainer();
+        var oMockChart = { getNoData : function(){ return {};}, _innerChartDataLoadComplete : function(){}, getControlDelegate : function(){return { _getInnerStructure : function(){ return oMockImplContainer; } };}};
+        var oMockEvent = { getSource : function(){ return { getCurrentContexts : function() { return []; } }; } };
+
+        var oSetVisibleSpy = sinon.spy(oMockImplContainer, "setShowNoDataStruct");
+
+
+        ChartDelegate._onDataLoadComplete.apply(oMockChart, [oMockEvent]);
+
+        assert.ok(oSetVisibleSpy.calledWithExactly(true), "No Data text was set visible after empty data load");
+
+        oMockEvent = { getSource : function(){ return { getCurrentContexts : function() { return ["abc"]; } }; } };
+        ChartDelegate._onDataLoadComplete.apply(oMockChart, [oMockEvent]);
+
+        assert.ok(oSetVisibleSpy.calledWithExactly(false), "No Data text was set invisible after non-empty data load");
+
+    });
+
 
     QUnit.test("fetchProperties", function(assert) {
         assert.ok(true, "Must be implemented by custom delegate");

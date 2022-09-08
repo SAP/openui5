@@ -456,12 +456,12 @@
 			</f2:header>
 			<f2:content>
 				<VBox>
-					<mdc:Chart id="bookChart" filter="booksFilterBar" autoBindOnInit="false" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
+					<mdc:Chart id="bookChart" filter="booksFilterBar" autoBindOnInit="true" noDataText="This is a test noData text" p13nMode="Item,Sort,Type" delegate="{
 							'name': 'delegates/odata/v4/vizChart/ChartDelegate',
 							'payload': {
 								collectionName: 'Books'
 							}
-						}" chartType="column" header="Remake Chart" height="400px" width="100%" propertyInfo='[\{
+						}" chartType="column" header="Remake Chart with cached properties and VM" height="400px" width="100%" propertyInfo='[\{
                     "name": "language_code",
                     "propertyPath": "language_code",
                     "label": "Language",
@@ -527,6 +527,27 @@
 						<mdc:items>
 							<mdcc:Item id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
 							<mdcc:Item id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (average)"/>
+						</mdc:items>
+					</mdc:Chart>
+
+					<mdc:Chart id="bookChart-3" filter="booksFilterBar" autoBindOnInit="false" noDataText="This will be overriden" p13nMode="Type,Item,Sort" delegate="{
+							'name': 'delegates/odata/v4/vizChart/ChartDelegate',
+							'payload': {
+								collectionName: 'Books'
+							}
+						}" chartType="column" header="Remake Chart with Illustrated message (autoBindOnInit=false)" height="400px" width="100%">
+
+						<mdc:noData>
+							<IllustratedMessage enableVerticalResponsiveness="true" illustrationType="sapIllus-BeforeSearch" title="No data found" description="Try adjusting the filter settings">
+								<additionalContent>
+									<Button text="Some random button" />
+								</additionalContent>
+							</IllustratedMessage>
+						</mdc:noData>
+
+						<mdc:items>
+							<mdcc:Item id="dim1-chart3" type="groupable" name="title" role="category" label="Title"/>
+							<mdcc:Item id="meas1-chart3" type="aggregatable" name="maxmetricsWords" role="axis1" label="Words (max)"/>
 						</mdc:items>
 					</mdc:Chart>
 
