@@ -18,6 +18,9 @@ sap.ui.define(function() {
 				}
 			},
 			FieldGroup: {
+				qunit: {
+					reorder: false
+				},
 				title: "QUnit page for FieldGroup",
 				ui5: {
 					libs: "sap.ui.layout,sap.m"

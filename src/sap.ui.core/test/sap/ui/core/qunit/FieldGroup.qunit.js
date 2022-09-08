@@ -227,6 +227,35 @@ sap.ui.define([
 		}, 1);
 	}
 
+	QUnit.test("Input with valueHelp", function(assert) {
+		assert.expect(1);
+		var done = assert.async();
+		var oButton = new sap.m.Button({text: "Button"});
+		var oPopover = new sap.m.Popover({
+			fieldGroupIds: ["MyFieldGroup"],
+			showHeader: false,
+			showArrow: false,
+			content: [oButton]
+		});
+		var oInput = new sap.m.Input({
+			fieldGroupIds: ["MyFieldGroup"],
+			showValueHelp: true,
+			width: "200px",
+			validateFieldGroup: function(oEvent){
+				assert.notOk("No fieldGroupChange should be fired");
+			},
+			valueHelpRequest: function(oEvent) {
+				oPopover.openBy(oEvent.getSource());
+			}
+		}).placeAt('content');
+		sap.ui.getCore().applyChanges();
+		qutils.triggerEvent("click", oInput._getValueHelpIcon(), {});
+		oPopover.attachAfterOpen(function() {
+			assert.strictEqual(oButton.getId(), document.activeElement.id, "focus moved to popover and no fieldgroupchange must happen");
+			done();
+		});
+	});
+
 	QUnit.test("focus not focusable area", function(assert) {
 		assert.expect(1);
 		var done = assert.async();
