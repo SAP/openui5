@@ -14,5 +14,28 @@
 		"name": "Company A",
 		"address": "481 West Street, Anytown OH 45066, USA",
 		"website": "https://www.company_a.example.com"
-	}
+	},
+	"team": [
+		{
+			"firstName": "Eva",
+			"lastName": "Ewing",
+			"imageUrl": "../../images/Woman_avatar_01.png"
+		},
+		{
+			"firstName": "John",
+			"lastName": "Miller"
+		}
+	],
+	"attachments": [
+		{
+			"title": "Schedule",
+			"icon": "sap-icon://excel-attachment",
+			"url": "./somefile.csv"
+		},
+		{
+			"title": "Attachment 2",
+			"icon": "sap-icon://attachment",
+			"url": "./somefile.csv"
+		}
+	]
 }
