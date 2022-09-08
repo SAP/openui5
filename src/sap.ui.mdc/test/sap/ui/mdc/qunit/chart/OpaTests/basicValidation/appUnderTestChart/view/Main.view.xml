@@ -1,0 +1,40 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns="sap.m"
+	xmlns:chart="sap.ui.mdc.chart"
+	xmlns:fl="sap.ui.fl.variants"
+	class="sapUiSizeCompact"
+	displayBlock="true"
+	controllerName="view.Main">
+
+	<App>
+		<ScrollContainer height="100%" width="100%"
+						 horizontal="true"
+						 vertical="true">
+			<fl:VariantManagement id="IDVariantManagementOfAppUnderTestChart" for="IDChartOfAppUnderTestChart"/>
+			<VBox>
+				<items>
+					<mdc:Chart id="IDChartOfAppUnderTestChart"
+								delegate='{
+									"name": "delegates/odata/v4/vizChart/ChartDelegate",
+									"payload": {
+									   		collectionName: "Books"
+										}
+									}'
+								p13nMode="Item,Sort,Type"
+								autoBindOnInit="true" 
+								header="MDC: Chart Sample"
+								height="400px"
+								width="1000px">
+						<mdc:items>
+							<chart:Item id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
+							<chart:Item id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (average)"/>
+						</mdc:items>
+					</mdc:Chart>
+				</items>
+			</VBox>
+		</ScrollContainer>
+	</App>
+
+</mvc:View>
