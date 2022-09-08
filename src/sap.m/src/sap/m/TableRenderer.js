@@ -121,11 +121,11 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 		rm.openEnd();
 
 		rm.openStart("tr", oTable.addNavSection(idPrefix + type + "er"));
-		rm.attr("tabindex", -1);
 
 		if (bHeaderHidden) {
 			rm.class("sapMListTblHeaderNone");
 		} else {
+			rm.attr("tabindex", -1);
 			rm.class("sapMListTblRow").class("sapMListTbl" + type + "er");
 			rm.class("sapMLIBFocusable").class("sapMTableRowCustomFocus");
 		}
