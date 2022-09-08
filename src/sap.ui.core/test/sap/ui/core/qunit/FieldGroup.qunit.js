@@ -1,16 +1,18 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/m/Button",
 	"sap/m/CheckBox",
 	"sap/m/DatePicker",
 	"sap/m/Input",
 	"sap/m/Label",
+	"sap/m/Popover",
 	"sap/ui/core/UIArea",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(CheckBox, DatePicker, Input, Label, UIArea, KeyCodes, HorizontalLayout, VerticalLayout, qutils, createAndAppendDiv) {
+], function(Button, CheckBox, DatePicker, Input, Label, Popover, UIArea, KeyCodes, HorizontalLayout, VerticalLayout, qutils, createAndAppendDiv) {
 	"use strict";
 
 	// Prepare a UI
@@ -230,14 +232,14 @@ sap.ui.define([
 	QUnit.test("Input with valueHelp", function(assert) {
 		assert.expect(1);
 		var done = assert.async();
-		var oButton = new sap.m.Button({text: "Button"});
-		var oPopover = new sap.m.Popover({
+		var oButton = new Button({text: "Button"});
+		var oPopover = new Popover({
 			fieldGroupIds: ["MyFieldGroup"],
 			showHeader: false,
 			showArrow: false,
 			content: [oButton]
 		});
-		var oInput = new sap.m.Input({
+		var oInput = new Input({
 			fieldGroupIds: ["MyFieldGroup"],
 			showValueHelp: true,
 			width: "200px",
