@@ -89,13 +89,6 @@ sap.ui.define([
 
 	FilterPanel.prototype.PRESENCE_ATTRIBUTE = "active";
 
-	FilterPanel.prototype.applySettings = function() {
-		QueryPanel.prototype.applySettings.apply(this, arguments);
-		if (!(this.getItemFactory() instanceof Function)) {
-			throw new Error("Please provide an itemFactory when using the FilterPanel");
-		}
-	};
-
 	FilterPanel.prototype._createInnerListControl = function () {
 		var oList = QueryPanel.prototype._createInnerListControl.apply(this, arguments);
 		oList.setKeyboardMode(ListKeyboardMode.Edit);

@@ -44,14 +44,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("instantiate FilterPanel w/o itemFactory throws an Error since the panel can not properly be used", function(assert){
-		assert.throws(function () {
-			return new FilterPanel();
-		}, function(oError) {
-			return oError instanceof Error;
-		},  "do not use FP without factory function");
-	});
-
     QUnit.test("instantiate FilterPanel with itemFactory", function(assert){
 		assert.ok(this.oFilterPanel, "FilterPanel is instanciable");
 	});
