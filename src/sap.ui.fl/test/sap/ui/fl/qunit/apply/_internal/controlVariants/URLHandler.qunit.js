@@ -980,5 +980,22 @@ sap.ui.define([
 			assert.ok(Log.warning.notCalled, "then no warning for invalid component was produced");
 			assert.ok(oCrossAppNav.toExternal.calledWithExactly(oExpectedResult), "then the CrossAppNavigation service was called with the correct parameters");
 		});
+
+		QUnit.test("when clearAllVariantURLParameters is called without variants in the url", function(assert) {
+			var oMockedURLParser = {
+				parseShellHash: function() {
+					return {
+						params: {
+							myFancyParameter: "foo"
+						}
+					};
+				}
+			};
+			this.oGetUShellServiceStub.withArgs("URLParsing").returns(oMockedURLParser);
+
+			var oUpdateStub = sandbox.stub(URLHandler, "update");
+			URLHandler.clearAllVariantURLParameters({model: this.oModel});
+			assert.strictEqual(oUpdateStub.callCount, 0, "the update function was not called");
+		});
 	});
 });

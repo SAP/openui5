@@ -344,6 +344,16 @@ sap.ui.define([
 			this.oModel.getData()["variantMgmtId1"].updateVariantInURL = true;
 			this.oModel.getData()["variantMgmtId1"].currentVariant = "variant0";
 			var iUpdateCallCount = 0;
+			var oParams = {};
+			oParams[VariantUtil.VARIANT_TECHNICAL_PARAMETER] = "foo";
+			var oMockedURLParser = {
+				parseShellHash: function() {
+					return {
+						params: oParams
+					};
+				}
+			};
+			sandbox.stub(this.oModel, "getUShellService").withArgs("URLParsing").returns(oMockedURLParser);
 			sandbox.stub(URLHandler, "update").callsFake(function(mPropertyBag) {
 				var mExpectedParameters = {
 					parameters: [],

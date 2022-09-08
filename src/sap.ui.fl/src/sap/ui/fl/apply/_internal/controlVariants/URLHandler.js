@@ -259,6 +259,12 @@ sap.ui.define([
 		);
 	}
 
+	function isVariantParameterPresent(oModel) {
+		var oURLParsingService = oModel.getUShellService("URLParsing");
+		var oParsedHash = oURLParsingService && oURLParsingService.parseShellHash(hasher.getHash());
+		return oParsedHash && oParsedHash.params && oParsedHash.params[VariantUtil.VARIANT_TECHNICAL_PARAMETER];
+	}
+
 
 	URLHandler.variantTechnicalParameterName = "sap-ui-fl-control-variant-id";
 
@@ -525,12 +531,14 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.variants.VariantModel
 	 */
 	 URLHandler.clearAllVariantURLParameters = function(mPropertyBag) {
-		URLHandler.update({
-			updateURL: true,
-			parameters: [],
-			updateHashEntry: false,
-			model: mPropertyBag.model
-		});
+		if (isVariantParameterPresent(mPropertyBag.model)) {
+			URLHandler.update({
+				updateURL: true,
+				parameters: [],
+				updateHashEntry: false,
+				model: mPropertyBag.model
+			});
+		}
 	};
 
 	return URLHandler;
