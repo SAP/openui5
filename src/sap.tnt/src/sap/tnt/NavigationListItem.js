@@ -925,7 +925,6 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 		};
 
 		NavigationListItem.prototype.onfocusin = function(event) {
-
 			if (event.srcControl !== this) {
 				return;
 			}
@@ -934,23 +933,23 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 		};
 
 		NavigationListItem.prototype._updateAccessibilityText = function() {
-			var invisibleText = NavigationListItem._getInvisibleText(),
-				navList = this.getNavigationList(),
-				bundle = this._resourceBundleMLib,
-				$focusedItem = this._getAccessibilityItem(),
-				selected = navList._selectedItem === this ? bundle.getText("LIST_ITEM_SELECTED") : '',
-				text = selected;
+			var navList = this.getNavigationList(),
+				invisibleText = NavigationListItem._getInvisibleText();
+
+			if (!navList.getExpanded()) {
+				invisibleText.setText("");
+				return;
+			}
 
 			// for role "treeitem" we have to manually describe the role and position
-			if (navList.getExpanded()) {
-				var accType = bundle.getText("ACC_CTR_TYPE_TREEITEM"),
-					mPosition = this._getAccessibilityPosition(),
-					itemPosition = bundle.getText("LIST_ITEM_POSITION", [mPosition.index, mPosition.size]),
-					itemText = this.getText();
-
-				itemPosition = bundle.getText("LIST_ITEM_POSITION", [mPosition.index, mPosition.size]);
+			var bundle = this._resourceBundleMLib,
+				$focusedItem = this._getAccessibilityItem(),
+				selected = navList._selectedItem === this ? bundle.getText("LIST_ITEM_SELECTED") : '',
+				accType = bundle.getText("ACC_CTR_TYPE_TREEITEM"),
+				mPosition = this._getAccessibilityPosition(),
+				itemPosition = bundle.getText("LIST_ITEM_POSITION", [mPosition.index, mPosition.size]),
+				itemText = this.getText(),
 				text = accType + " " + selected + " " + itemText + " " + itemPosition;
-			}
 
 			invisibleText.setText(text);
 			$focusedItem.addAriaLabelledBy(invisibleText.getId());
