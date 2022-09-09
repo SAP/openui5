@@ -919,38 +919,39 @@ sap.ui.define([
 		assert.equal(this.multiInput1.getTokens().length, 1, "Token is not deleted");
 	});
 
-	QUnit.test("Get custom data from deleted tokens", function (assert) {
-		var oToken = new Token({
-			key: "ABC",
-			text: "Token 1"
-		}).data("my-extra-data", "data1");
+	// QUnit.test("Get custom data from deleted tokens", function (assert) {
+	// 	var oToken = new Token({
+	// 		key: "ABC",
+	// 		text: "Token 1"
+	// 	}).data("my-extra-data", "data1");
 
-		var oMI = new MultiInput({
-			tokens:[
-				oToken,
-				new Token({
-					key: "DEF",
-					text: "Token 2"
-				}).data("my-extra-data", "data2")
-			],
-			tokenUpdate: function(oEvent) {
-				var removed = oEvent.getParameter("removedTokens");
-					var data = removed[0].data("my-extra-data");
-					assert.strictEqual(data, "data1", "Custom data is correct");
-			}
-		});
+	// 	var oMI = new MultiInput({
+	// 		tokens:[
+	// 			oToken,
+	// 			new Token({
+	// 				key: "DEF",
+	// 				text: "Token 2"
+	// 			}).data("my-extra-data", "data2")
+	// 		],
+	// 		tokenUpdate: function(oEvent) {
+	// 			var removed = oEvent.getParameter("removedTokens");
+	// 			var data = removed[0].data("my-extra-data");
+	// 			assert.strictEqual(data, "data1", "Custom data is correct");
+	// 		}
+	// 	});
 
-		oMI.placeAt("qunit-fixture");
-		Core.applyChanges();
+	// 	oMI.placeAt("qunit-fixture");
+	// 	Core.applyChanges();
 
-		oToken.fireDelete({
-			byKeyboard: false,
-			backspace: false
-		});
-		Core.applyChanges();
+	// 	oToken.fireDelete({
+	// 		byKeyboard: false,
+	// 		backspace: false
+	// 	});
 
-		oMI.destroy();
-	});
+	// 	Core.applyChanges();
+
+	// 	oMI.destroy();
+	// });
 
 	QUnit.test("test keyboard navigation", function(assert){
 		var token = new Token({selected: true}),
