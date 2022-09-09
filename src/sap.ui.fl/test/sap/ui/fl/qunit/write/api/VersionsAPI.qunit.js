@@ -665,7 +665,7 @@ sap.ui.define([
 
 			var sReference = "com.sap.app";
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
-			var oClearAndInitStub = sandbox.stub(FlexState, "clearAndInitialize");
+			var oClearAndInitStub = sandbox.stub(FlexState, "clearAndInitialize").resolves();
 			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves({backendChangesDiscarded: true, dirtyChangesDiscarded: true});
 			return VersionsAPI.discardDraft(mPropertyBag)
 				.then(function(oDiscardInfo) {
@@ -685,7 +685,7 @@ sap.ui.define([
 
 			var sReference = "com.sap.app";
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
-			var oClearAndInitStub = sandbox.stub(FlexState, "clearAndInitialize");
+			var oClearAndInitStub = sandbox.stub(FlexState, "clearAndInitialize").resolves();
 			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves({backendChangesDiscarded: true, dirtyChangesDiscarded: true});
 			return VersionsAPI.discardDraft(mPropertyBag)
 				.then(function(oDiscardInfo) {
