@@ -82,6 +82,11 @@ sap.ui.define([
 
 	TestControl.prototype.getAccessibilityInfo = function() {
 		var iMode = Column.ofCell(this).getIndex();
+
+		if (this.data("CustomAccessibilityInfo")) {
+			return this.data("CustomAccessibilityInfo");
+		}
+
 		switch (iMode) {
 			case 0:
 				return {
@@ -286,10 +291,16 @@ sap.ui.define([
 			aExpected.push("DESCRIPTION_" + oCell.getText());
 		}
 		if (iIndex == 0) {
-			aExpected.push(TableUtils.getResourceBundle().getText("TBL_CTRL_STATE_READONLY"));
+			aExpected.push(TableUtils.getResourceText("TBL_CTRL_STATE_READONLY"));
 		}
 		if (iIndex == 2) {
-			aExpected.push(TableUtils.getResourceBundle().getText("TBL_CTRL_STATE_DISABLED"));
+			aExpected.push(TableUtils.getResourceText("TBL_CTRL_STATE_DISABLED"));
+			aExpected.push("CHILD1 CHILD2");
+		}
+		if (iIndex == 3 || iIndex == 5 || iIndex == 6 || iIndex == 7) {
+			aExpected.push(TableUtils.getResourceText("TBL_CTRL_STATE_EMPTY"));
+		}
+		if (iIndex == 8) {
 			aExpected.push("CHILD1 CHILD2");
 		}
 
@@ -418,6 +429,35 @@ sap.ui.define([
 	QUnit.test("ACCInfo", function(assert) {
 		var done = assert.async();
 		var $Cell;
+
+		oTable.addColumn(new Column({
+			label: "Column with empty content",
+			template: new TestControl().data("CustomAccessibilityInfo", {
+				description: ""
+			})
+		}));
+		oTable.addColumn(new Column({
+			label: "Column with invisible template",
+			template: new TestControl({
+				visible: false
+			})
+		}));
+		oTable.addColumn(new Column({
+			label: "Column with empty nested content",
+			template: new TestControl().data("CustomAccessibilityInfo", {
+				description: "",
+				children: [new TextControl(), new TextControl()]
+			})
+		}));
+		oTable.addColumn(new Column({
+			label: "Column with nested content",
+			template: new TestControl().data("CustomAccessibilityInfo", {
+				description: "",
+				children: [new TextControl({text: "CHILD1"}), new TextControl({text: "CHILD2"})]
+			})
+		}));
+		oCore.applyChanges();
+
 		for (var i = 0; i < oTable.columnCount; i++) {
 			$Cell = getCell(0, i, true, assert);
 			testACCInfoForFocusedDataCell($Cell, 0, i, assert);

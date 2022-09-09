@@ -31,18 +31,25 @@ sap.ui.define([
 		 * @see sap.ui.core.Control#getAccessibilityInfo
 		 */
 		getAccInfoOfControl: function(oControl) {
+			var oAccInfo = null;
+
 			if (oControl && typeof oControl.getAccessibilityInfo === "function") {
 				if (typeof oControl.getVisible === "function" && !oControl.getVisible()) {
-					return ACCInfoHelper._normalize({});
+					oAccInfo = ACCInfoHelper._normalize({});
+				} else {
+					var oSource = oControl.getAccessibilityInfo();
+					if (oSource) {
+						var oTarget = {};
+						ACCInfoHelper._flatten(oSource, oTarget);
+						oAccInfo = oTarget;
+					}
 				}
-				var oSource = oControl.getAccessibilityInfo();
-				if (oSource) {
-					var oTarget = {};
-					ACCInfoHelper._flatten(oSource, oTarget);
-					return oTarget;
+				if (oAccInfo && !oAccInfo.description) {
+					oAccInfo.description = TableUtils.getResourceText("TBL_CTRL_STATE_EMPTY");
 				}
 			}
-			return null;
+
+			return oAccInfo;
 		},
 
 		/*
