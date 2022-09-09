@@ -376,9 +376,16 @@ sap.ui.define([
 		// Check if an individual user or a user range is requested
 		sKey = getUserKeyFromUrl(oXhr.url);
 		if (sKey) {
-			// specific user was requested
 			iIndex = findUserIndex(sKey);
-			oResponse = getUserObject(iIndex, aSelect, aExpand, aSubSelects);
+
+			if (/People\(.+\)\/Friends/.test(oXhr.url)) {
+				// ownRequest for friends
+				oResponse = {value : []};
+				oResponse.value = createFriendsArray(aUsers[iIndex].Friends, aSelect);
+			} else {
+				// specific user was requested
+				oResponse = getUserObject(iIndex, aSelect, aExpand, aSubSelects);
+			}
 
 			if (iIndex > -1) {
 				sResponseBody = JSON.stringify(oResponse);
@@ -486,10 +493,16 @@ sap.ui.define([
 		var aArray = [],
 			iFriendIndex;
 
-		aFriends.forEach(function (sFriend) {
-			iFriendIndex = findUserIndex(sFriend);
-			aArray.push(getUserByIndex(iFriendIndex, aSubSelects));
-		});
+		if (aFriends) {
+			aFriends.forEach(function (sFriend) {
+				iFriendIndex = findUserIndex(sFriend);
+				aArray.push(getUserByIndex(iFriendIndex, aSubSelects));
+			});
+
+			aArray = aArray.filter(function (element) {
+				return element != null;
+			});
+		}
 
 		return aArray;
 	}

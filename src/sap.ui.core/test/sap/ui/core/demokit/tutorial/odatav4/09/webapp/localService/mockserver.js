@@ -334,7 +334,6 @@ sap.ui.define([
 	 */
 	function handleGetUserRequests(oXhr, bCount) {
 		var iCount,
-			sCount = "",
 			aExpand,
 			sExpand,
 			iIndex,
@@ -377,15 +376,19 @@ sap.ui.define([
 		// Check if an individual user or a user range is requested
 		sKey = getUserKeyFromUrl(oXhr.url);
 		if (sKey) {
-			// specific user was requested
-			//sKey = getUserKeyFromUrl(oXhr.url);
 			iIndex = findUserIndex(sKey);
-			oResponse = getUserObject(iIndex, aSelect, aExpand, aSubSelects);
+
+			if (/People\(.+\)\/Friends/.test(oXhr.url)) {
+				// ownRequest for friends
+				oResponse = {value : []};
+				oResponse.value = createFriendsArray(aUsers[iIndex].Friends, aSelect);
+			} else {
+				// specific user was requested
+				oResponse = getUserObject(iIndex, aSelect, aExpand, aSubSelects);
+			}
 
 			if (iIndex > -1) {
-				sResponseBody = '{"@odata.context": "' + getBaseUrl(oXhr.url) +
-					'$metadata#People(Age,FirstName,LastName,UserName)/$entity",' +
-					JSON.stringify(oResponse).slice(1);
+				sResponseBody = JSON.stringify(oResponse);
 				return getSuccessResponse(sResponseBody);
 			} else {
 				sResponseBody = invalidKeyError(sKey);
@@ -404,21 +407,17 @@ sap.ui.define([
 			aResult = applySort(oXhr, aResult);
 			aResult = applySkipTop(oXhr, aResult);
 
-			if (bCount) {
-				sCount = '"@odata.count": ' + iCount + ',';
-			}
-
 			// generate sResponse
-			oResponse = {value : []};
+			oResponse = {"@odata.count" : iCount, value : []};
+
 			aResult.forEach(function (oUser) {
 				var iUserIndex = findUserIndex(oUser.UserName);
 
 				oResponse.value.push(getUserObject(iUserIndex, aSelect, aExpand, aSubSelects));
 			});
 
-			sResponseBody = '{"@odata.context": "' + getBaseUrl(oXhr.url) +
-				'$metadata#People(Age,FirstName,LastName,UserName)",' +
-				sCount + JSON.stringify(oResponse).slice(1);
+			sResponseBody = JSON.stringify(oResponse);
+
 			return getSuccessResponse(sResponseBody);
 		}
 
@@ -429,18 +428,21 @@ sap.ui.define([
 	 * Returns a specific user in the aUsers array.
 	 * @param {Number} iIndex - index of the requested user in the aUsers array
 	 * @param {string[]} aProperties - array with properties from select parameter of request
-	 * @returns {Object} object containing the selected user information
+	 * @returns {Object} object containing the selected user information or null if user not found
 	 */
 	function getUserByIndex(iIndex, aProperties) {
 		var oHelper = {},
 			oUser = aUsers[iIndex];
 
-		aProperties.forEach(function (selectProperty) {
-			oHelper[selectProperty] = oUser[selectProperty];
+		if (oUser) {
+			aProperties.forEach(function (selectProperty) {
+				oHelper[selectProperty] = oUser[selectProperty];
+			});
 
-		});
-
-		return oHelper;
+			return oHelper;
+		} else {
+			return null;
+		}
 	}
 	/**
 	 * Returns the user with iIndex in the aUsers array with all its information
@@ -491,10 +493,16 @@ sap.ui.define([
 		var aArray = [],
 			iFriendIndex;
 
-		aFriends.forEach(function (sFriend) {
-			iFriendIndex = findUserIndex(sFriend);
-			aArray.push(getUserByIndex(iFriendIndex, aSubSelects));
-		});
+		if (aFriends) {
+			aFriends.forEach(function (sFriend) {
+				iFriendIndex = findUserIndex(sFriend);
+				aArray.push(getUserByIndex(iFriendIndex, aSubSelects));
+			});
+
+			aArray = aArray.filter(function (element) {
+				return element != null;
+			});
+		}
 
 		return aArray;
 	}
