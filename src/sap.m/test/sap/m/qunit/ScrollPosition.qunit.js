@@ -225,10 +225,8 @@ sap.ui.define([
 				app.detachAfterNavigate(goBack);
 				app.attachAfterNavigate(test);
 
-				window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
-					assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 50, "Internally stored y scrolling position should be 50");
-					app.back();
-				}, 100);
+				assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 50, "Internally stored y scrolling position should be 50");
+				app.back();
 			};
 
 			app.attachAfterNavigate(goBack);
