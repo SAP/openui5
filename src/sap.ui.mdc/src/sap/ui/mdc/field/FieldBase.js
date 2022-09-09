@@ -2683,7 +2683,7 @@ sap.ui.define([
 		var bLeaveFocus = oEvent.getParameter("leaveFocus");
 
 		if (!oCondition && vKey) {
-			oCondition = Condition.createItemCondition(vKey, sValue);
+			oCondition = Condition.createItemCondition(vKey, sValue); // TODO: delete if outdated?
 		}
 
 		var sNewValue;

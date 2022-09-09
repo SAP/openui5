@@ -38,6 +38,14 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 			module: "./{name}.qunit"
 		},
 		tests: {
+			"Condition": {
+				group: "Condition",
+				module: "./condition/Condition.qunit",
+				coverage: {
+					only: "[sap/ui/mdc/condition]"
+				},
+				sinon: false
+			},
 			"ConditionModel": {
 				group: "Condition",
 				module: "./condition/ConditionModel.qunit",

@@ -113,6 +113,25 @@ sap.ui.define([
 					return oCondition;
 				},
 
+				/**
+				 * Compares two conditions in detail
+				 *
+				 * Opposed to <code>FilterOperatorUtil.compareConditions</code> this comparison checks the whole condition object for equality except the <code>DefineConditionPanel</code> specific <code>isEmpty</code> flag.
+				 *
+				 * @param {undefined|sap.ui.mdc.condition.ConditionObject} oCondition1 Condition to check
+				 * @param {undefined|sap.ui.mdc.condition.ConditionObject} oCondition2 Condition to check
+				 * @returns {boolean} <code>true</code> if conditions are equal
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
+				 */
+				compareConditions: function(oCondition1, oCondition2) {
+					var oIgnoredKeys = {isEmpty: undefined};
+					var sCheckValue1 = JSON.stringify(Object.assign({}, oCondition1, oIgnoredKeys));
+					var sCheckValue2 = JSON.stringify(Object.assign({}, oCondition2, oIgnoredKeys));
+					return sCheckValue1 === sCheckValue2;
+
+				},
+
 				_removeEmptyConditions: function(aConditions) {
 					for (var i = aConditions.length - 1; i > -1; i--) {
 						if (aConditions[i].isEmpty) {
