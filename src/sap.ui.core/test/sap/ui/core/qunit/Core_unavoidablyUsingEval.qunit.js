@@ -145,7 +145,6 @@ sap.ui.require([
 		assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
 
 		return vResult.then(function(vResult) {
-			assert.strictEqual(vResult, undefined, "Promise should have no fulfillment value");
 			assert.isLibLoaded('testlibs.scenario1.lib1');
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib1\/library-preload\.js$/));
 			assert.isLibLoaded('testlibs.scenario1.lib2');
@@ -603,7 +602,6 @@ sap.ui.require([
 			assert.ok(vResult instanceof Promise, "async call to loadLibraries should return a promise");
 
 			return vResult.then(function(vResult) {
-				assert.strictEqual(vResult, undefined, "Promise should have no fulfillment value");
 				assert.isLibLoaded('testlibs.scenario13.lib1');
 				sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario13\/lib1\/library-preload\.js$/));
 				assert.isLibLoaded('testlibs.scenario13.lib2');

@@ -11,6 +11,7 @@
 sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/core/Configuration',
+	'sap/ui/core/Lib',
 	'sap/ui/thirdparty/URI',
 	'../Element',
 	'sap/base/util/UriParameters',
@@ -20,7 +21,7 @@ sap.ui.define([
 	'sap/ui/core/theming/ThemeManager',
 	'./ThemeHelper'
 ],
-	function(Core, Configuration, URI, Element, UriParameters, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
+	function(Core, Configuration, Library, URI, Element, UriParameters, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
 	"use strict";
 
 	var syncCallBehavior = Configuration.getSyncCallBehavior();
@@ -393,7 +394,7 @@ sap.ui.define([
 			if (mOptions.loadPendingParameters && typeof sParamValue === "undefined" && !bAsync) {
 				// Include library theme in case it's not already done, since link tag for library
 				// is added asynchronous after initLibrary has been executed
-				var aAllLibrariesRequireCss = Core.getAllLibrariesRequiringCss();
+				var aAllLibrariesRequireCss = Library.getAllInstancesRequiringCss();
 				aAllLibrariesRequireCss.forEach(function (oLibThemingInfo) {
 					ThemeManager._includeLibraryThemeAndEnsureThemeRoot(oLibThemingInfo);
 				});
