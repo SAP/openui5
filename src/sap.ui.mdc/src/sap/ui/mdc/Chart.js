@@ -305,7 +305,10 @@ sap.ui.define([
                      * Defines the custom visualization if there is no data available.
                      * <b>Note:</b> If both a <code>noDataText</code> property and a <code>noData</code> aggregation are provided, the <code>noData</code> aggregation takes priority.
                      * If the <code>noData</code> aggregation is undefined or set to null, the <code>noDataText</code> property is used instead.
-                     * @since 1.106
+                     * @since 1.107
+                     * @experimental
+                    * @private
+                    * @ui5-restricted sap.ui.mdc, sap-fe
                      */
                     noData: {
                         type: "sap.ui.core.Control",
