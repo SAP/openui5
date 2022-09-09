@@ -5649,17 +5649,44 @@ sap.ui.define([
 					TableQUnitUtils.createTextColumn()
 				]
 			});
+			oCore.applyChanges();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
+		},
+		assertNoContentMessage: function(assert, oTable, vExpectedContent) {
+			var sTitlePrefix = "The content in the NoData container is: ";
+
+			if (TableUtils.isA(vExpectedContent, "sap.ui.core.Control")) {
+				assert.strictEqual(oTable.getDomRef("noDataCnt").firstChild, vExpectedContent.getDomRef(), sTitlePrefix + vExpectedContent);
+			} else {
+				assert.strictEqual(oTable.getDomRef("noDataCnt").innerText, vExpectedContent, sTitlePrefix + "\"" + vExpectedContent + "\"");
+			}
+		},
+		waitForNoColumnsMessage: function(oTable) {
+			return new Promise(function(resolve) {
+				var oNoColumnsMessage = oTable.getAggregation("_noColumnsMessage");
+
+				if (oNoColumnsMessage) {
+					resolve(oNoColumnsMessage);
+				} else {
+					var fnSetAggregation = oTable.setAggregation;
+					oTable.setAggregation = function(sAggregationName, oElement) {
+						fnSetAggregation.apply(oTable, arguments);
+						if (sAggregationName === "_noColumnsMessage") {
+							resolve(oElement);
+						}
+					};
+				}
+			});
 		}
 	});
 
-	QUnit.test("After rendering with data and showNoData=true", function(assert) {
+	QUnit.test("With data and showNoData=true", function(assert) {
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
 	});
 
-	QUnit.test("After rendering without data and showNoData=true", function(assert) {
+	QUnit.test("Without data and showNoData=true", function(assert) {
 		this.oTable.destroy();
 		this.oTable = TableQUnitUtils.createTable({
 			rows: "{/}",
@@ -5669,9 +5696,10 @@ sap.ui.define([
 			]
 		});
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true);
+		this.assertNoContentMessage(assert, this.oTable, TableUtils.getResourceText("TBL_NO_DATA"));
 	});
 
-	QUnit.test("After rendering without data and showNoData=false", function(assert) {
+	QUnit.test("Without data and showNoData=false", function(assert) {
 		this.oTable.destroy();
 		this.oTable = TableQUnitUtils.createTable({
 			showNoData: false,
@@ -5682,6 +5710,38 @@ sap.ui.define([
 			]
 		});
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
+	});
+
+	QUnit.test("Without columns and showNoData=true", function (assert) {
+		this.oTable.destroyColumns();
+		oCore.applyChanges();
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true);
+		this.assertNoContentMessage(assert, this.oTable, TableUtils.getResourceText("TBL_NO_COLUMNS"));
+	});
+
+	QUnit.test("Without columns and showNoData=false", function (assert) {
+		this.oTable.destroyColumns();
+		this.oTable.setShowNoData(false);
+		oCore.applyChanges();
+		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true);
+		this.assertNoContentMessage(assert, this.oTable, TableUtils.getResourceText("TBL_NO_COLUMNS"));
+	});
+
+	QUnit.test("Without columns and noData=sap.m.IllustratedMessage", function(assert) {
+		var oTable = this.oTable;
+
+		oTable.setNoData(new IllustratedMessage());
+		oTable.destroyColumns();
+		oCore.applyChanges();
+		assert.strictEqual(oTable.getAggregation("_noColumnsMessage"), null, "The NoColumns IllustratedMessage is not created synchronously");
+		this.assertNoContentMessage(assert, oTable, TableUtils.getResourceText("TBL_NO_COLUMNS"));
+
+		return this.waitForNoColumnsMessage(oTable).then(function(oIllustratedMessage) {
+			oCore.applyChanges();
+			assert.ok(oIllustratedMessage.isA("sap.m.IllustratedMessage"), "The NoColumns element is a sap.m.IllustratedMessage");
+			assert.strictEqual(oIllustratedMessage.getEnableVerticalResponsiveness(), true, "Value of the 'enableVerticalResponsiveness' property");
+			this.assertNoContentMessage(assert, oTable, oIllustratedMessage);
+		}.bind(this));
 	});
 
 	QUnit.test("Change 'showNoData' property with data", function(assert) {
@@ -5725,39 +5785,112 @@ sap.ui.define([
 		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
 		var oText1 = new Text();
 		var oText2 = new Text();
+		var oIllustratedMessage = new IllustratedMessage();
 
 		this.oTable.setNoData("Hello");
-		assert.ok(oInvalidateSpy.notCalled, "Table not invalidated when changing NoData from default text to custom text");
+		assert.ok(oInvalidateSpy.notCalled, "Change from default text to custom text: Table not invalidated");
+		this.assertNoContentMessage(assert, this.oTable, "Hello");
 
 		oInvalidateSpy.resetHistory();
 		this.oTable.setNoData("Hello2");
-		assert.ok(oInvalidateSpy.notCalled, "Table not invalidated when changing NoData from text to a different text");
+		assert.ok(oInvalidateSpy.notCalled, "Change from text to a different text: Table not invalidated");
+		this.assertNoContentMessage(assert, this.oTable, "Hello2");
 
 		oInvalidateSpy.resetHistory();
 		this.oTable.setNoData("Hello2");
-		assert.ok(oInvalidateSpy.notCalled, "Table not invalidated when changing NoData from text to the same text");
+		assert.ok(oInvalidateSpy.notCalled, "Change from text to the same text: Table not invalidated");
+		this.assertNoContentMessage(assert, this.oTable, "Hello2");
 
 		oInvalidateSpy.resetHistory();
 		this.oTable.setNoData(oText1);
-		assert.equal(oInvalidateSpy.callCount, 1, "Table invalidated when changing NoData from text to control");
+		assert.equal(oInvalidateSpy.callCount, 1, "Change from text to control: Table invalidated");
+		oCore.applyChanges();
+		this.assertNoContentMessage(assert, this.oTable, oText1);
 
 		oInvalidateSpy.resetHistory();
 		this.oTable.setNoData(oText2);
-		assert.equal(oInvalidateSpy.callCount, 1, "Table invalidated when changing NoData from control to control");
+		assert.equal(oInvalidateSpy.callCount, 1, "Change from control to control: Table invalidated");
+		oCore.applyChanges();
+		this.assertNoContentMessage(assert, this.oTable, oText2);
 
 		oInvalidateSpy.resetHistory();
 		this.oTable.setNoData("Hello2");
-		assert.equal(oInvalidateSpy.callCount, 1, "Table invalidated when changing NoData from control to text");
+		assert.equal(oInvalidateSpy.callCount, 1, "Change from control to text: Table invalidated");
+		oCore.applyChanges();
+		this.assertNoContentMessage(assert, this.oTable, "Hello2");
 
-		oText1.destroy();
-		oText2.destroy();
+		oInvalidateSpy.resetHistory();
+		this.oTable.setNoData(oIllustratedMessage);
+		assert.equal(oInvalidateSpy.callCount, 1, "Change from text to sap.m.IllustratedMessage: Table invalidated");
+		oInvalidateSpy.resetHistory();
+
+		return this.waitForNoColumnsMessage(this.oTable).then(function() {
+			assert.ok(oInvalidateSpy.notCalled,
+				"Change from text to sap.m.IllustratedMessage: Table not invalidated after loading default NoColumns IllustratedMessage");
+
+			oText1.destroy();
+			oText2.destroy();
+			oIllustratedMessage.destroy();
+		});
 	});
 
-	QUnit.test("No columns", function (assert) {
-		this.oTable.removeAllColumns();
-		this.oTable.setShowNoData(false);
-		oCore.applyChanges();
-		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true);
+	QUnit.test("Change 'noData' aggregation when the table does not have columns", function(assert) {
+		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+		var oText1 = new Text();
+		var oText2 = new Text();
+		var oIllustratedMessage = new IllustratedMessage();
+
+		this.oTable.destroyColumns();
+
+		oInvalidateSpy.resetHistory();
+		this.oTable.setNoData("Hello");
+		assert.ok(oInvalidateSpy.notCalled, "Change from default text to custom text: Table not invalidated");
+
+		oInvalidateSpy.resetHistory();
+		this.oTable.setNoData("Hello2");
+		assert.ok(oInvalidateSpy.notCalled, "Change from text to a different text: Table not invalidated");
+
+		oInvalidateSpy.resetHistory();
+		this.oTable.setNoData("Hello2");
+		assert.ok(oInvalidateSpy.notCalled, "Change from text to the same text: Table not invalidated");
+
+		oInvalidateSpy.resetHistory();
+		this.oTable.setNoData(oText1);
+		assert.ok(oInvalidateSpy.notCalled, "Change from text to control: Table not invalidated");
+
+		oInvalidateSpy.resetHistory();
+		this.oTable.setNoData(oText2);
+		assert.ok(oInvalidateSpy.notCalled, "Change from control to control: Table not invalidated");
+
+		oInvalidateSpy.resetHistory();
+		this.oTable.setNoData("Hello2");
+		assert.ok(oInvalidateSpy.notCalled, "Change from control to text: Table not invalidated");
+
+		oInvalidateSpy.resetHistory();
+		this.oTable.setNoData(oIllustratedMessage);
+		this.oTable.setNoData(oIllustratedMessage); // To check whether multiple async loadings of the NoColumns message causes issues.
+		assert.ok(oInvalidateSpy.notCalled, "Change from text to sap.m.IllustratedMessage: Table not invalidated");
+
+		return this.waitForNoColumnsMessage(this.oTable).then(TableQUnitUtils.$wait() /* If NoColumns is fetched twice */).then(function() {
+			assert.equal(oInvalidateSpy.callCount, 1,
+				"Change from text to sap.m.IllustratedMessage: Table invalidated after loading default NoColumns IllustratedMessage");
+
+			oInvalidateSpy.resetHistory();
+			this.oTable.setNoData("Hello");
+			assert.equal(oInvalidateSpy.callCount, 1, "Change from sap.m.IllustratedMessage to text: Table invalidated");
+			oCore.applyChanges();
+			this.assertNoContentMessage(assert, this.oTable, TableUtils.getResourceText("TBL_NO_COLUMNS"));
+
+			this.oTable.setNoData(oIllustratedMessage);
+			this.oTable.setNoData("Hello");
+		}.bind(this)).then(TableQUnitUtils.$wait(100)).then(function() {
+			oCore.applyChanges();
+			this.assertNoContentMessage(assert, this.oTable, TableUtils.getResourceText("TBL_NO_COLUMNS"));
+
+			oText1.destroy();
+			oText2.destroy();
+			oIllustratedMessage.destroy();
+		}.bind(this));
 	});
 
 	QUnit.test("Binding change", function(assert) {
@@ -5782,22 +5915,6 @@ sap.ui.define([
 		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Bind");
 		});
-	});
-
-	QUnit.test("IllustratedMessage", function(assert) {
-		var oTable = this.oTable;
-
-		oTable.setNoData(new IllustratedMessage({
-			illustrationType: MLibrary.IllustratedMessageType.NoSearchResults,
-			title: "TABLE_NO_DATA_TITLE",
-			description: "TABLE_NO_DATA_DESCRIPTION"
-		}));
-
-		oTable.unbindRows();
-		oCore.applyChanges();
-		assert.ok(oTable.getDomRef("noDataCnt").firstChild.classList.contains("sapMIllustratedMessage"));
-		assert.equal(oTable.getDomRef("noDataCnt").querySelector("figure > svg > use").getAttribute("href"), "#sapIllus-Scene-NoSearchResults");
-		assert.equal(oTable.getDomRef("noDataCnt").innerText, "TABLE_NO_DATA_TITLE\nTABLE_NO_DATA_DESCRIPTION");
 	});
 
 	QUnit.module("Hierarchy modes", {
