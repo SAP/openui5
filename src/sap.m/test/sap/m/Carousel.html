@@ -43,6 +43,15 @@
 
 		<script>
 
+		var oOldActivePage = new sap.m.Text();
+		var oNewActivePage = new sap.m.Text();
+		var oAllActivePages = new sap.m.Text();
+
+		function updateActivePages(sOldPageId, sNewPageId, aActivePages) {
+			oOldActivePage.setText(sOldPageId);
+			oNewActivePage.setText(sNewPageId);
+			oAllActivePages.setText("[" + aActivePages + "]");
+		}
 
 		//Create demo page for mobile controls
 		function createAList(inset, id) {
@@ -452,7 +461,10 @@
 			//showPageIndicator: false,
 			loop: true,
 			//showBusyIndicator: false,
-			pages: [carouselImages[0], carouselImages[1], carouselImages[2], carouselImages[3], carouselImages[4]]
+			pages: [carouselImages[0], carouselImages[1], carouselImages[2], carouselImages[3], carouselImages[4]],
+			pageChanged: function (e) {
+				updateActivePages(e.getParameter("oldActivePageId"), e.getParameter("newActivePageId"), e.getParameter("activePages"));
+			}
 		});
 
 		// Radio button group arrowsPlacement
@@ -538,7 +550,7 @@
 			width: "320px",
 			liveChange: function (oEvent) {
 				var numberOfImages = Number(oEvent.getSource().getValue());
-				if (!numberOfImages || numberOfImages < 1 || numberOfImages > 12){
+				if (!Number.isInteger(numberOfImages) || numberOfImages < 0 || numberOfImages > carouselImages.length){
 					return;
 				}
 
@@ -554,7 +566,7 @@
 			}
 		});
 		var oNumberOfImagesInputLabel = new sap.m.Label({
-			text: "Number of images to display (Can be a number between 1 and 12)",
+			text: "Number of images to display (Can be a number between 0 and " + carouselImages.length + ")",
 			labelFor: oNumberOfImagesInput
 		});
 
@@ -631,12 +643,28 @@
 			editable : true,
 			layout : "ResponsiveGridLayout",
 			content : [
+				new sap.ui.core.Title({ text: "Active pages"}),
+				new sap.m.Label({ text: "Old active page", labelFor: oOldActivePage }),
+				oOldActivePage,
+				new sap.m.Label({ text: "New active page", labelFor: oNewActivePage }),
+				oNewActivePage,
+				new sap.m.Label({ text: "All active pages", labelFor: oNewActivePage }),
+				oAllActivePages,
+				new sap.ui.core.Title({ text: "Settings"}),
 				oRBGroupArrowsPlacementLabel,
 				oRBGroupArrowsPlacement,
 				oRBGroupPageIndicatorPlacementLabel,
 				oRBGroupPageIndicatorPlacement,
 				oRBGroupShowPageIndicatorLabel,
 				oRBGroupShowPageIndicator,
+				new sap.m.Label({ text: "Loop", labelFor: "RBLoop" }),
+				new sap.m.RadioButtonGroup("RBLoop", {
+					columns: 2,
+					buttons: [
+						new sap.m.RadioButton({ text: "true", select: function () { carousel.setLoop(true); } }),
+						new sap.m.RadioButton({ text: "false", select: function () { carousel.setLoop(false); } }),
+					]
+				}),
 				oNumberOfImagesInputLabel,
 				oNumberOfImagesInput,
 				oNumberOfIPagesToBeShownLabel,

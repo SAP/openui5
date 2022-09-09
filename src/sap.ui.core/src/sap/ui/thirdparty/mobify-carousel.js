@@ -529,10 +529,6 @@ Mobify.UI.Carousel = (function($, Utils) {
 
             self.$element.find('#' + sPageIndicatorId + ' > [data-slide=\'' + previousSlide + '\']').removeClass(self._getClass('active'));
             self.$element.find('#' + sPageIndicatorId + ' > [data-slide=\'' + nextSlide + '\']').addClass(self._getClass('active'));
-
-            if (self.$items[nextSlide - 1]) {
-                this.setAttribute('aria-activedescendant', self.$items[nextSlide - 1].id);
-            }
         });
 
 

@@ -34,32 +34,33 @@
 	min-width: @_sap_m_Carousel_MinWidth;
 }
 
-.sapMCrsl:focus {
+.sapMCrslItem:focus {
+	position: relative;
+}
+
+.sapMCrslItem:focus,
+.sapMCrslNoDataItem:focus {
 	outline: none;
 
-	&:before,
-	&:after {
+	&::before,
+	&::after {
 		position: absolute;
 		content: " ";
 		top: 0;
 		right: 0;
 		bottom: 0;
 		left: 0;
-		z-index: 2;
 		pointer-events: none;
+		z-index: 2;
 	}
 
 	&::before {
 		border: @_sap_m_Carousel_ContrastFocusBorder;
 	}
+
 	&::after {
 		border: @_sap_m_Carousel_FocusBorder;
 	}
-}
-
-//show the left and right arrows when the carousel is focused
-.sapMCrsl:focus .sapMCrslHud .sapMCrslArrow {
-	opacity: 0.3;
 }
 
 .sapMCrsl.sapMCrslLeft {
@@ -272,23 +273,54 @@ html[data-sap-ui-animation='off'] .sapMCrslInner {
 	border: 1px solid @_sap_m_Carousel_BulletInactiveBorderColor;
 }
 
-// 2rem indicator height + 1px border
-.sapMCrslTopOffset .sapMCrslItem {
-	padding-top: calc(~"2rem + 1px");
+// Page indicator at the top
+.sapMCrslTopOffset {
+	.sapMCrslItem {
+		padding-top: calc(@_sap_m_Carousel_ControlsNoArrowsHeight ~"+" 1px);
+	
+		&:focus {
+			&::before,
+			&::after {
+				top: calc(@_sap_m_Carousel_ControlsNoArrowsHeight ~"+" 1px);
+			}
+		}
+	}
+
+	&.sapMCrslTopArrowsOffset .sapMCrslItem {
+		padding-top: calc(~"3.5rem + 1px");
+	
+		&:focus {
+			&::before,
+			&::after {
+				top: calc(~"3.5rem + 1px");
+			}
+		}
+	}
 }
 
-// 3.5rem indicator height + 1px border
-.sapMCrslTopOffset.sapMCrslTopArrowsOffset .sapMCrslItem
-{
-	padding-top: calc(~"3.5rem + 1px");
-}
+// Page indicator at the bottom
+.sapMCrslBottomOffset {
+	.sapMCrslItem {
+		padding-bottom: calc(@_sap_m_Carousel_ControlsNoArrowsHeight ~"+" 1px);
+	
+		&:focus {
+			&::before,
+			&::after {
+				bottom: calc(@_sap_m_Carousel_ControlsNoArrowsHeight ~"+" 1px);
+			}
+		}
+	}
 
-.sapMCrslBottomOffset .sapMCrslItem {
-	padding-bottom: calc(@_sap_m_Carousel_ControlsNoArrowsHeight ~"+" 1px);
-}
-
-.sapMCrslBottomOffset.sapMCrslBottomArrowsOffset .sapMCrslItem {
-  padding-bottom: calc(~"3.5rem + 1px");
+	&.sapMCrslBottomArrowsOffset .sapMCrslItem {
+		padding-bottom: calc(~"3.5rem + 1px");
+	
+		&:focus {
+			&::before,
+			&::after {
+				bottom: calc(~"3.5rem + 1px");
+			}
+		}
+	}
 }
 
 .sapMCrslControlsContainer {
@@ -502,14 +534,6 @@ html[data-sap-ui-animation='off'] {
 
 /* extra bits */
 
-/* captions */
-.sapMCrslCaption {
-	margin: 0;
-	padding: 0.625rem;
-	height: auto;
-	text-align: center;
-}
-
 .sapMCrslControls.sapMCrslControlsTop,
 .sapMCrslControlsNoArrows.sapMCrslControlsTop {
 	background: @sapUiPageFooterBackground;
@@ -530,9 +554,12 @@ html[data-sap-ui-animation='off'] {
 	overflow: hidden;
 }
 
-.sapMCrsl:hover .sapMCrslHud .sapMCrslArrow {
-	opacity: 1;
-	display: block;
+.sapMCrsl:hover,
+.sapMCrslShowArrows {
+	.sapMCrslHud .sapMCrslArrow {
+		opacity: 1;
+		display: block;
+	}
 }
 
 html.sap-desktop {
@@ -566,4 +593,8 @@ html.sap-desktop {
 .sapMCrslPrev .sapUiIcon:focus,
 .sapMCrslNext .sapUiIcon:focus {
 	outline: none;
+}
+
+.sapMCrslDummyArea {
+	position: fixed;
 }
