@@ -111,7 +111,7 @@ function(
 					 * @param {function} config.promise.resolve Method to resolve promise
 					 * @param {function} config.promise.reject Method to reject promise
 					 */
-					asyncDescriptionHandler: {type: "any", group: "Behavior", defaultValue: null},
+					asyncDescriptionHandler: {type: "function", group: "Behavior", defaultValue: null},
 
 					/**
 					 * Callback function for resolving a promise after a link has been asynchronously validated inside this function.
@@ -124,7 +124,7 @@ function(
 					 * @param {function} config.promise.resolve Method to resolve promise
 					 * @param {function} config.promise.reject Method to reject promise
 					 */
-					asyncURLHandler: {type: "any", group: "Behavior", defaultValue: null},
+					asyncURLHandler: {type: "function", group: "Behavior", defaultValue: null},
 
 					/**
 					 * Determines the position, where the control will appear on the screen.

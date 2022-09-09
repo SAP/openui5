@@ -269,7 +269,6 @@ function(
 				 * @since 1.24
 				 */
 				valueLiveUpdate : {type : "boolean", group : "Behavior", defaultValue : false},
-
 				/**
 				 * Defines the key of the selected item.
 				 *
@@ -286,12 +285,12 @@ function(
 				 * Defines the display text formatter function.
 				 * @since 1.44
 				 */
-				textFormatter: {type: "any", group: "Misc", defaultValue: ""},
+				textFormatter: {type: "function", group: "Misc", defaultValue: null},
 				/**
 				 * Defines the validation callback function called when a suggestion row gets selected.
 				 * @since 1.44
 				 */
-				suggestionRowValidator: {type: "any", group: "Misc", defaultValue: ""},
+				suggestionRowValidator: {type: "function", group: "Misc", defaultValue: null},
 
 				/**
 				 * Specifies whether the suggestions highlighting is enabled.
