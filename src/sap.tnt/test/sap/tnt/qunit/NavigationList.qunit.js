@@ -454,6 +454,15 @@ sap.ui.define([
 		});
 
 		assert.equal(invisibleText.getText(), 'Tree Item Selected Child 3 3 of 3', "accessibility text is correct");
+
+		this.navigationList.setExpanded(false);
+		Core.applyChanges();
+
+		groupItem.onfocusin({
+			srcControl: groupItem
+		});
+
+		assert.equal(invisibleText.getText(), '', "accessibility text is empty");
 	});
 
 	QUnit.module('SelectedItem association', {
