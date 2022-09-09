@@ -219,7 +219,10 @@ sap.ui.define([
 			sFilterBase : sFilterBase,
 			mFixture : {
 			},
-			aRegExps : [],
+			aRegExps : [{
+				regExp : /^GET [\w\/.]+\$metadata[\w?&\-=]+sap-language=..$/,
+				response : {source : "metadata.xml"}
+			}],
 			sSourceBase : "sap/ui/core/sample/odata/v4/RecursiveHierarchy/data"
 		},
 		SandboxModel;

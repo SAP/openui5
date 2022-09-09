@@ -344,26 +344,14 @@ sap.ui.define([
 				"SalesOrderList('NEW4')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$orderby=ItemPosition&$filter=ItemPosition%20gt%20'0000000000'&$select=DeliveryDate,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$skip=0&$top=100" : {
 					message : {value : []}
 				},
-				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_tcurc-sh/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-SALESORDER.CURRENCY_CODE%27/$metadata" : {
-					source : "VH_CurrencyCode.xml"
-				},
 				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_tcurc-sh/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-SALESORDER.CURRENCY_CODE%27/H_TCURC_SH_Set?$select=LTEXT,WAERS&$skip=0&$top=20" : {
 					source : "VH_CurrencyCode.json"
-				},
-				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_epm_pd_cats-sh/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CATEGORY%27/$metadata" : {
-					source : "VH_ProductCategory.xml"
 				},
 				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_epm_pd_cats-sh/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CATEGORY%27/H_EPM_PD_CATS_SH_Set?$select=CATEGORY&$skip=0&$top=20" : {
 					source : "VH_ProductCategory.json"
 				},
-				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE%27/$metadata" : {
-					source : "VH_ProductTypeCode.xml"
-				},
 				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE%27/D_PR_TYPE_FV_Set?$select=FIELD_VALUE&$skip=0&$top=100" : {
 					source : "VH_ProductTypeCode.json"
-				},
-				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_epm_pr-sh/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-SO_ITEM.PRODUCT_ID%27/$metadata" : {
-					source : "VH_ProductID.xml"
 				},
 				"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_epm_pr-sh/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-SO_ITEM.PRODUCT_ID%27/H_EPM_PR_SH_Set?$select=LANGU,NODE_KEY,PRODUCT_ID,SUPPLIER_ID,SUPPLIER_KEY,TEXT&$skip=0&$top=20" : {
 					source : "VH_ProductID.json"
@@ -546,6 +534,22 @@ sap.ui.define([
 					message : {value : []}
 				}
 			},
+			aRegExps : [{
+				regExp : /^GET [\w\/]+\/zui5_epm_sample\/0002\/\$metadata\?custom-option=value\&sap-language=..$/,
+				response : {source : "metadata.xml"}
+			}, {
+				regExp : /^GET [-\w\/;=%.]+\.ET-SALESORDER.CURRENCY_CODE%27\/\$metadata\?sap-language=..$/,
+				response : {source : "VH_CurrencyCode.xml"}
+			}, {
+				regExp : /^GET [-\w\/;=%.]+\.ET-PRODUCT.CATEGORY%27\/\$metadata\?sap-language=..$/,
+				response : {source : "VH_ProductCategory.xml"}
+			}, {
+				regExp : /^GET [-\w\/;=%.]+\.ET-PRODUCT.TYPE_CODE%27\/\$metadata\?sap-language=..$/,
+				response : {source : "VH_ProductTypeCode.xml"}
+			}, {
+				regExp : /^GET [-\w\/;=%.]+\.ET-SO_ITEM.PRODUCT_ID%27\/\$metadata\?sap-language=..$/,
+				response : {source : "VH_ProductID.xml"}
+			}],
 			sSourceBase : "sap/ui/core/sample/odata/v4/SalesOrders/data"
 		};
 

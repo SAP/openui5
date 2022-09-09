@@ -690,19 +690,20 @@ sap.ui.define([
 	 *   Supported since 1.41.0
 	 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 	 *   The model this meta model is related to
-	 * @param {object} [mUrlParams]
-	 *   The model's metadataUrlParams
 	 * @param {boolean} [bSupportReferences=true]
 	 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives are
 	 *   supported in order to load schemas on demand from other $metadata documents and include
 	 *   them into the current service ("cross-service references").
+	 * @param {string} [sLanguage]
+	 *   The "sap-language" URL parameter
 	 */
-	function constructor(oRequestor, sUrl, vAnnotationUri, oModel, mUrlParams, bSupportReferences) {
+	function constructor(oRequestor, sUrl, vAnnotationUri, oModel, bSupportReferences, sLanguage) {
 		MetaModel.call(this);
 		this.aAnnotationUris = vAnnotationUri && !Array.isArray(vAnnotationUri)
 			? [vAnnotationUri] : vAnnotationUri;
 		this.sDefaultBindingMode = BindingMode.OneTime;
 		this.mETags = {};
+		this.sLanguage = sLanguage;
 		this.oLastModified = new Date(0);
 		this.oMetadataPromise = null;
 		this.oModel = oModel;
@@ -725,7 +726,6 @@ sap.ui.define([
 		// not support "All" and "Any" filters
 		this.mUnsupportedFilterOperators = {All : true, Any : true};
 		this.sUrl = sUrl;
-		this.mUrlParams = mUrlParams;
 	}
 
 	/**
@@ -2346,7 +2346,7 @@ sap.ui.define([
 				autoExpandSelect : bAutoExpandSelect,
 				groupId : sGroupId,
 				httpHeaders : this.oModel.getHttpHeaders(),
-				metadataUrlParams : this.mUrlParams,
+				metadataUrlParams : this.sLanguage && {"sap-language" : this.sLanguage},
 				operationMode : OperationMode.Server,
 				serviceUrl : sUrl,
 				sharedRequests : true,
@@ -2557,16 +2557,13 @@ sap.ui.define([
 
 		return this.requestObject("/@com.sap.vocabularies.CodeList.v1." + sTerm)
 			.then(function (oCodeList) {
-				var sCacheKey, oCodeListMetaModel, oCodeListModel, oPromise, sTypePath, sUrl,
-					mUrlParams;
+				var sCacheKey, oCodeListMetaModel, oCodeListModel, oPromise, sTypePath, sUrl;
 
 				if (!oCodeList) {
 					return null;
 				}
 
-				mUrlParams = Object.assign({}, that.mUrlParams);
-				delete mUrlParams["sap-context-token"];
-				sUrl = _Helper.addQueryOptions(oCodeList.Url, mUrlParams);
+				sUrl = _Helper.setLanguage(oCodeList.Url, that.sLanguage);
 				sCacheKey = that.getAbsoluteServiceUrl(sUrl) + "#" + oCodeList.CollectionPath;
 				oPromise = mCodeListUrl2Promise.get(sCacheKey);
 				if (oPromise) {

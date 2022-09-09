@@ -194,31 +194,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Builds a query string from <code>mOptions</code> using {@link #buildQuery} and adds it to
-		 * the given URL. Does not modify or duplicate already existing options.
-		 *
-		 * @param {string} sUrl - The URL
-		 * @param {object} [mOptions] - The new query options as a map of key-value pairs
-		 * @returns {string} The URL with the parameters
-		 */
-		addQueryOptions : function (sUrl, mOptions) {
-			var mExisting = new URI(sUrl).query(true),
-				sQuery;
-
-			mOptions = Object.assign({}, mOptions);
-			Object.keys(mOptions).forEach(function (sName) {
-				if (sName in mExisting) {
-					delete mOptions[sName];
-				}
-			});
-			sQuery = _Helper.buildQuery(mOptions);
-			if (sQuery && sUrl.includes("?")) {
-				sQuery = "&" + sQuery.slice(1);
-			}
-			return sUrl + sQuery;
-		},
-
-		/**
 		 * Builds a path from the given arguments (absolute or relative depending on the first
 		 * non-empty argument). Iterates over the arguments and appends them to the path if defined
 		 * and non-empty. The arguments are expected to be strings or integers, but this is not
@@ -2028,6 +2003,23 @@ sap.ui.define([
 			} else {
 				delete oObject[sAnnotation];
 			}
+		},
+
+		/**
+		 * Adds the given language as "sap-language" URL parameter to the given URL, unless such a
+		 * parameter is already present, and returns the resulting (or unchanged) URL.
+		 *
+		 * @param {string} sUrl - A URL w/o a fragment part
+		 * @param {string} [sLanguage] - An optional value for "sap-language"
+		 * @returns {string} The resulting (or unchanged) URL as described above
+		 */
+		setLanguage : function (sUrl, sLanguage) {
+			if (sLanguage && !sUrl.includes("?sap-language=") && !sUrl.includes("&sap-language=")) {
+				sUrl += (sUrl.includes("?") ? "&" : "?") + "sap-language="
+					+ _Helper.encode(sLanguage);
+			}
+
+			return sUrl;
 		},
 
 		/**

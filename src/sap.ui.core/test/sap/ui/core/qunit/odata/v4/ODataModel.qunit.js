@@ -92,6 +92,7 @@ sap.ui.define([
 			synchronizationMode : "None"});
 
 		assert.strictEqual(oModel.sOperationMode, OperationMode.Server);
+		assert.strictEqual(oModel.getMetaModel().sLanguage, undefined);
 	});
 
 	//*********************************************************************************************
@@ -155,7 +156,7 @@ sap.ui.define([
 			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", {
 				"sap-client" : "279",
 				"sap-context-token" : "20200716120000",
-				"sap-language" : "en"
+				"sap-language" : "EN"
 			});
 		this.mock(_Requestor).expects("create")
 			.withExactArgs(sServiceUrl, sinon.match.object, {"Accept-Language" : "ab-CD"},
@@ -166,14 +167,11 @@ sap.ui.define([
 		oModel = this.createModel("", {
 			metadataUrlParams : {
 				"sap-context-token" : "20200716120000",
-				"sap-language" : "en"
+				"sap-language" : "EN"
 			}
 		});
 
-		assert.deepEqual(oModel.getMetaModel().mUrlParams, {
-			"sap-context-token" : "20200716120000",
-			"sap-language" : "en"
-		});
+		assert.strictEqual(oModel.getMetaModel().sLanguage, "EN");
 	});
 
 	//*********************************************************************************************

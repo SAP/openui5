@@ -13,20 +13,11 @@ sap.ui.define([
 	var oMockData = {
 			sFilterBase : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
 			mFixture : {
-				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata" : {
-					source : "common_metadata.xml"
-				},
 				"ProductList('H-1001')?custom-option=value&$select=CurrencyCode,Messages,Name,Price,ProductID,WeightMeasure,WeightUnit" : {
 					source : "ProductList('H-1001').json"
 				},
 				"ProductList?custom-option=value&$count=true&$select=CurrencyCode,Messages,Name,Price,ProductID,WeightMeasure,WeightUnit&$skip=0&$top=5" : {
 					source : "ProductList.json"
-				},
-				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/Currencies?sap-language=EN&$select=CurrencyCode,DecimalPlaces,Text,ISOCode" : {
-					source : "Currencies.json"
-				},
-				"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/UnitsOfMeasure?sap-language=EN&$select=ExternalCode,DecimalPlaces,Text,ISOCode" : {
-					source : "UnitsOfMeasure.json"
 				},
 				"POST ProductList?custom-option=value" : [{
 					code : 400,
@@ -48,6 +39,19 @@ sap.ui.define([
 					source : "ProductList('H-1001').json"
 				}]
 			},
+			aRegExps : [{
+				regExp : /^GET [\w\/]+\/zui5_epm_sample\/0002\/\$metadata\?custom-option=value\&sap-language=..$/,
+				response : {source : "metadata.xml"}
+			}, {
+				regExp : /^GET [\w\/]+\/common\/0001\/\$metadata\?sap-language=..$/,
+				response : {source : "common_metadata.xml"}
+			}, {
+				regExp : /^GET [\w\/]+\/common\/0001\/Currencies\?sap-language=..&\$select=CurrencyCode,DecimalPlaces,Text,ISOCode$/,
+				response : {source : "Currencies.json"}
+			}, {
+				regExp : /^GET [\w\/]+\/common\/0001\/UnitsOfMeasure\?sap-language=..&\$select=ExternalCode,DecimalPlaces,Text,ISOCode$/,
+				response : {source : "UnitsOfMeasure.json"}
+			}],
 			sSourceBase : "sap/ui/core/sample/odata/v4/Products/data"
 		};
 
