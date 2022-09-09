@@ -2099,12 +2099,6 @@ sap.ui.define([
 		}
 
 		oTargetSubSection = oSection instanceof ObjectPageSubSection ? oSection : this._getFirstVisibleSubSection(oSection);
-		if (bIsTabClicked) {
-			this.fireNavigate({
-				section: ObjectPageSection._getClosestSection(oSection),
-				subSection: oTargetSubSection
-			});
-		}
 
 		if (this._bHeaderInTitleArea && !this._shouldPreserveHeaderInTitleArea() && !this._bAllContentFitsContainer) {
 			this._moveHeaderToContentArea();
@@ -2160,6 +2154,13 @@ sap.ui.define([
 			// explicitly suppress lazy-loading to avoid loading of intermediate sections during scroll on slow machines
 			bSuppressLazyLoadingDuringScroll = bAnimationsEnabled && iDuration && this.getEnableLazyLoading();
 			this._scrollTo(iScrollTo, iDuration, bSuppressLazyLoadingDuringScroll);
+
+			if (bIsTabClicked) {
+				this.fireNavigate({
+					section: ObjectPageSection._getClosestSection(oSection),
+					subSection: oTargetSubSection
+				});
+			}
 		}
 	};
 

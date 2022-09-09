@@ -294,6 +294,26 @@ sap.ui.define([
 		assert.ok(navigateSpy.calledWithMatch(sinon.match.has("subSection", oExpectedSubSection)), "Event fired has the correct subSection parameter attached");
 	});
 
+	QUnit.test("The 'navigate' event is fired after the navigation is done, so a new Section can be selected in the handler", function (assert) {
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			fnDone = assert.async();
+
+		this.oObjectPage.setUseIconTabBar(true);
+		this.oObjectPage.setShowAnchorBarPopover(false);
+		this.oObjectPage.attachNavigate(function () {
+			// On navigation to a Section, we want to programatically select another Section
+			this.oObjectPage.setSelectedSection(this.oObjectPage.getSections()[1]);
+		}.bind(this));
+		Core.applyChanges();
+
+		oAnchorBar.getContent()[0].firePress();
+
+		this.clock.tick(1000);
+		assert.strictEqual(oAnchorBar.getSelectedButton(), oAnchorBar.getContent()[1].getId(), "Selected Section is correct");
+		fnDone();
+	});
+
+
 	var oModel = new JSONModel({
 		sections: [
 			{title: "my first section"},
