@@ -215,7 +215,7 @@ sap.ui.define([
 	};
 
 	Paginator.prototype._prepareAnimation = function (iStartIndex) {
-		if (!this._hasAnimation()) {
+		if (!this._hasAnimation() || this._isSkeletonCard()) {
 			return;
 		}
 
@@ -250,7 +250,7 @@ sap.ui.define([
 	};
 
 	Paginator.prototype._clearAnimation = function () {
-		if (!this._hasAnimation() || !this._bActiveAnimation) {
+		if (!this._hasAnimation() || !this._bActiveAnimation || this._isSkeletonCard()) {
 			return;
 		}
 
@@ -281,7 +281,7 @@ sap.ui.define([
 	};
 
 	Paginator.prototype._listUpdateFinished = function () {
-		if (!this._bActiveAnimation || this.isServerSide()) {
+		if (!this._bActiveAnimation || this.isServerSide() || this._isSkeletonCard()) {
 			return;
 		}
 
@@ -303,8 +303,12 @@ sap.ui.define([
 		oContentDomRefCloned.classList.add("sapFCardContentTransition");
 	};
 
+	Paginator.prototype._isSkeletonCard = function () {
+		return this.getCard().isSkeleton();
+	};
+
 	Paginator.prototype.onPlaceholderAfterRendering = function () {
-		if (!this._oClonedContent) {
+		if (!this._oClonedContent || this._isSkeletonCard()) {
 			return;
 		}
 
