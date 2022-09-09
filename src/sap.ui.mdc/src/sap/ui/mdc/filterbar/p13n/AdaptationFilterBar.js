@@ -194,7 +194,7 @@ sap.ui.define([
 				});
 			} else {
 				//TODO: currently only required once the parent FilterBar has p13nMode 'value' disabled.
-				this._getAdaptationControlInstance()._setXConditions(mConditions, true);
+				this._getAdaptationControlInstance()._setXConditions(mConditions);
 				return Promise.resolve(null);
 			}
 			}.bind(this));
@@ -265,7 +265,7 @@ sap.ui.define([
 			var mConditions = this._bPersistValues ? this._getAdaptationControlInstance().getFilterConditions() : this._getAdaptationControlInstance()._getXConditions();
 
 			this.setFilterConditions(mConditions);
-			this._setXConditions(mConditions, true);
+			this._setXConditions(mConditions);
 
 			if (this._bFilterFieldsCreated) {
 				this._oFilterBarLayout.setP13nData(this.getP13nData());
@@ -428,7 +428,7 @@ sap.ui.define([
 					var oItem = oEvt.getParameter("item");
 					var mConditions = this._bPersistValues ? merge({}, this.getFilterConditions()) : this._getAdaptationControlInstance()._getXConditions();
 					mConditions[this.mFilterFields[oItem.name].getFieldPath()] = [];
-					this._setXConditions(mConditions, true);
+					this._setXConditions(mConditions);
 				}
 				this.fireChange();
 			}.bind(this));

@@ -82,14 +82,15 @@ sap.ui.define([
 
             sinon.stub(this.oFilterBarBase, "_getPropertyByName").returns({name: "key1", typeConfig: this.oFilterBarBase.getTypeUtil().getTypeConfig("sap.ui.model.type.String")});
 
-            this.oFilterBarBase._setXConditions(oDummyCondition);
+            this.oFilterBarBase._setXConditions(oDummyCondition)
+            .then(function(){
+                assert.deepEqual(oDummyCondition, this.oFilterBarBase.getConditions(), "Condition returned without persistence active");
+                assert.ok(!this.oFilterBarBase.getConditions()["key1"][0].hasOwnProperty("isEmpty"), "External format");
+                assert.ok(!this.oFilterBarBase._getXConditions()["key1"][0].hasOwnProperty("isEmpty"), "External format");
+                assert.ok(this.oFilterBarBase.getInternalConditions()["key1"][0].hasOwnProperty("isEmpty"), "Internal format");
 
-            assert.deepEqual(oDummyCondition, this.oFilterBarBase.getConditions(), "Condition returned without persistence active");
-            assert.ok(!this.oFilterBarBase.getConditions()["key1"][0].hasOwnProperty("isEmpty"), "External format");
-            assert.ok(!this.oFilterBarBase._getXConditions()["key1"][0].hasOwnProperty("isEmpty"), "External format");
-            assert.ok(this.oFilterBarBase.getInternalConditions()["key1"][0].hasOwnProperty("isEmpty"), "Internal format");
-            done();
-
+                done();
+            }.bind(this));
         }.bind(this));
 
     });
@@ -498,5 +499,103 @@ sap.ui.define([
 
 
     });
+
+	QUnit.test("Check _setXConditions applies a fine granular delta (Remove a condition)", function(assert){
+
+		var done = assert.async();
+
+		//mock the missing typeConfig information
+		sinon.stub(this.oFilterBarBase, "_getPropertyByName").callsFake(function(sKey){
+			return {
+				name: sKey,
+				typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
+			};
+		});
+
+		//set initial conditions
+		this.oFilterBarBase.setFilterConditions({
+			key2: [
+				{operator: "EQ", values: ["Test"]}
+			],
+			key1: [
+				{operator: "EQ", values: ["Test"]}
+			]
+		});
+
+		return this.oFilterBarBase.initialized().then(function () {
+
+			//check that only the necessary operations will be executed
+			var oCMRemoveAllSpy = sinon.spy(this.oFilterBarBase._getConditionModel(), "removeAllConditions");
+			var oCMRemoveSpy = sinon.spy(this.oFilterBarBase._getConditionModel(), "removeCondition");
+			var oCMAddSpy = sinon.spy(this.oFilterBarBase._getConditionModel(), "addCondition");
+
+			//clear the current condition
+			this.oFilterBarBase._setXConditions({
+				key1: [],
+				key2: [
+					{operator: "EQ", values: ["Test"]}
+				]
+			})
+			.then(function(){
+
+				//Only one condition has been removed, we expect no clear or no add to be executed --> only one remove
+				assert.equal(oCMRemoveAllSpy.callCount, 0, "CM has not been cleared");
+				assert.equal(oCMRemoveSpy.callCount, 1, "Remove has not been called once");
+				assert.equal(oCMAddSpy.callCount, 0, "Add has not been called");
+
+				this.oFilterBarBase._getConditionModel().removeAllConditions.restore();
+				this.oFilterBarBase._getConditionModel().removeCondition.restore();
+				this.oFilterBarBase._getConditionModel().addCondition.restore();
+				done();
+			}.bind(this));
+
+		}.bind(this));
+
+	});
+
+	QUnit.test("Check _setXConditions applies a fine granular delta (Add a condition)", function(assert){
+
+		var done = assert.async();
+
+		//mock the missing typeConfig information
+		sinon.stub(this.oFilterBarBase, "_getPropertyByName").callsFake(function(sKey){
+			return {
+				name: sKey,
+				typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
+			};
+		});
+
+		//set initial conditions
+		this.oFilterBarBase.setFilterConditions(this.oFilterBarBase._setXConditions({
+			key2: [{operator: "EQ", values: ["Test"]}]
+		}));
+
+		return this.oFilterBarBase.initialized().then(function () {
+
+			//check that only the necessary operations will be executed
+			var oCMRemoveAllSpy = sinon.spy(this.oFilterBarBase._getConditionModel(), "removeAllConditions");
+			var oCMRemoveSpy = sinon.spy(this.oFilterBarBase._getConditionModel(), "removeCondition");
+			var oCMAddSpy = sinon.spy(this.oFilterBarBase._getConditionModel(), "addCondition");
+
+			//clear the current condition
+			this.oFilterBarBase._setXConditions({
+				key1: [{operator: "EQ", values: ["Test"]}]
+			})
+			.then(function(){
+
+				//Only one condition has been removed, we expect no clear or no add to be executed --> only one remove
+				assert.equal(oCMRemoveAllSpy.callCount, 0, "CM has not been cleared");
+				assert.equal(oCMRemoveSpy.callCount, 0, "Remove has not been called once");
+				assert.equal(oCMAddSpy.callCount, 1, "Add has not been called");
+
+				this.oFilterBarBase._getConditionModel().removeAllConditions.restore();
+				this.oFilterBarBase._getConditionModel().removeCondition.restore();
+				this.oFilterBarBase._getConditionModel().addCondition.restore();
+				done();
+			}.bind(this));
+
+		}.bind(this));
+
+	});
 
 });

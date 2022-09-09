@@ -201,13 +201,14 @@ sap.ui.define([
 				name: "test-resources/sap/ui/mdc/qunit/filterbar/UnitTestMetadataDelegate"
 			},
 			filterConditions: {
-				"filter": [{
+				"key1": [{
 					operator: "EQ",
 					values: ["test"]
 				}]
 			}
 		});
 
+		sinon.stub(oFB, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
 		sinon.spy(oFB, "_applyInitialFilterConditions");
         sinon.stub(oFB, "awaitPropertyHelper").returns(Promise.resolve());
 
@@ -218,6 +219,7 @@ sap.ui.define([
 			assert.ok(oModel.isA("sap.ui.mdc.condition.ConditionModel"));
 
 			assert.ok(oFB._applyInitialFilterConditions.called);
+			oFB._getPropertyByName.restore();
 			oFB.destroy();
 		});
 	});

@@ -779,6 +779,19 @@ sap.ui.define([
 		return aResultConditions;
 	};
 
+	FilterBarBase.prototype._internalizeConditions = function(mConditionExternal) {
+		var mConditionsInternal = merge({}, mConditionExternal);
+
+		Object.keys(mConditionsInternal).forEach(function(sKey){
+			mConditionsInternal[sKey].forEach(function(oCondition, iConditionIndex){
+				var oProperty = this._getPropertyByName(sKey);
+				this._toInternal(oProperty, oCondition);
+			}, this);
+		}, this);
+
+		return mConditionsInternal;
+	};
+
 	FilterBarBase.prototype._handleAssignedFilterNames = function(bFiltersAggregationChanged) {
 		if (this._bIsBeingDestroyed) {
 			return;
@@ -1329,7 +1342,7 @@ sap.ui.define([
 			// --> no filter changes have been done
 			return Promise.resolve();
 		}
-		return this._setXConditions(this.getFilterConditions(), true).then(function(){
+		return this._setXConditions(this.getFilterConditions()).then(function(){
 			this._reportModelChange({
 				triggerSearch: false,
 				triggerFilterUpdate: true
@@ -1337,50 +1350,12 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	FilterBarBase.prototype._setXConditions = function(mConditionsData, bRemoveBeforeApplying) {
-
-		var sFieldPath, oProperty, aConditions, oConditionModel = this._getConditionModel();
-
-		var fPromiseResolve = null;
-		var oPromise = new Promise(function(resolve, reject) {
-			fPromiseResolve = resolve;
-		});
-
-		this._oConditionModel.detachPropertyChange(this._handleConditionModelPropertyChange, this);
-		var fApplyConditions = function(mConditionsData) {
-			for ( sFieldPath in mConditionsData) {
-				aConditions = mConditionsData[sFieldPath];
-				oProperty = this._getPropertyByName(sFieldPath);
-				if (oProperty) {
-
-					if (aConditions.length === 0) {
-						oConditionModel.removeAllConditions(sFieldPath);
-					} else {
-						if (oProperty.maxConditions !== -1) {
-							oConditionModel.removeAllConditions(sFieldPath);
-						}
-
-						/* eslint-disable no-loop-func */
-						aConditions.forEach(function(oCondition) {
-							this._addCondition(sFieldPath, oCondition, oConditionModel);
-						}.bind(this));
-						/* eslint-enabled no-loop-func */
-					}
-				}
-			}
-			this._oConditionModel.attachPropertyChange(this._handleConditionModelPropertyChange, this);
-			fPromiseResolve();
-		}.bind(this);
-
-		if (bRemoveBeforeApplying) {
-			oConditionModel.removeAllConditions();
-		}
-
+	FilterBarBase.prototype._setXConditions = function(mConditionsData) {
 		if (mConditionsData) {
 
 			var bAllPropertiesKnown = true;
-			for ( sFieldPath in mConditionsData) {
-				aConditions = mConditionsData[sFieldPath];
+			for (var sFieldPath in mConditionsData) {
+				var aConditions = mConditionsData[sFieldPath];
 
 				if (!this._isPathKnown(sFieldPath, aConditions)) {
 					bAllPropertiesKnown = false;
@@ -1388,16 +1363,28 @@ sap.ui.define([
 				}
 			}
 
-			if (!bAllPropertiesKnown) {
-				this._retrieveMetadata().then(function() {
-					fApplyConditions(mConditionsData);
-				});
-			} else {
-				fApplyConditions(mConditionsData);
-			}
-		}
+			var pBeforeSet = bAllPropertiesKnown ? Promise.resolve() : this._retrieveMetadata();
+			var oConditionModel = this._getConditionModel();
 
-		return oPromise;
+			return pBeforeSet.then(function(){
+				var mNewInternal = this._internalizeConditions(mConditionsData);
+				var mCurrentInternal = this._getModelConditions(this._getConditionModel(), true);
+
+				this._oConditionModel.detachPropertyChange(this._handleConditionModelPropertyChange, this);
+				return this.getEngine().diffState(this, {Filter: mCurrentInternal}, {Filter: mNewInternal}).then(function(oStateDiff){
+					Object.keys(oStateDiff.Filter).forEach(function(sDiffPath){
+						oStateDiff.Filter[sDiffPath].forEach(function(oCondition){
+							if (oCondition.filtered !== false) {
+								oConditionModel.addCondition(sDiffPath, oCondition);
+							} else {
+								oConditionModel.removeCondition(sDiffPath, oCondition);
+							}
+						});
+					});
+					oConditionModel.attachPropertyChange(this._handleConditionModelPropertyChange, this);
+				}.bind(this));
+			}.bind(this));
+		}
 	};
 
 	FilterBarBase.prototype._getXConditions = function () {
@@ -1728,7 +1715,7 @@ sap.ui.define([
 		mSettings = this.getProperty("filterConditions");
 		if (Object.keys(mSettings).length > 0) {
 			mConditionsData = merge({}, mSettings);
-			return this._setXConditions(mConditionsData, true);
+			return this._setXConditions(mConditionsData);
 		}
 
 		return Promise.resolve();

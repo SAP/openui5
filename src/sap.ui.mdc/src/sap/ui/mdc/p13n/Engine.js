@@ -558,8 +558,7 @@ sap.ui.define([
 		oOld = merge({}, oOld);
 		oNew = merge({}, oNew);
 
-		this.getRegisteredControllers(oControl).forEach(function(sKey){
-
+		Object.keys(oNew).forEach(function(sKey){
 			aDiffCreation.push(this.createChanges({
 				control: oControl,
 				stateBefore: oOld[sKey],
@@ -568,16 +567,15 @@ sap.ui.define([
 				key: sKey,
 				suppressAppliance: true
 			}));
-
 		}.bind(this));
-
 		return Promise.all(aDiffCreation)
 		.then(function(aChanges){
-			this.getRegisteredControllers(oControl).forEach(function(sKey, i){
+			Object.keys(oNew).forEach(function(sKey, i){
 
-				var aState = this.getController(oControl, sKey).changesToState(aChanges[i], oOld[sKey], oNew[sKey]);
-				oDiffState[sKey] = aState;
-
+				if (oNew[sKey]) {
+					var aState = this.getController(oControl, sKey).changesToState(aChanges[i], oOld[sKey], oNew[sKey]);
+					oDiffState[sKey] = aState;
+				}
 			}.bind(this));
 
 			return oDiffState;
