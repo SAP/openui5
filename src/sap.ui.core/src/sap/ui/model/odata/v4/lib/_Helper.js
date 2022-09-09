@@ -1817,6 +1817,23 @@ sap.ui.define([
 		},
 
 		/**
+		 * Adds the given language as "sap-language" URL parameter to the given URL, unless such a
+		 * parameter is already present, and returns the resulting (or unchanged) URL.
+		 *
+		 * @param {string} sUrl - A URL w/o a fragment part
+		 * @param {string} [sLanguage] - An optional value for "sap-language"
+		 * @returns {string} The resulting (or unchanged) URL as described above
+		 */
+		setLanguage : function (sUrl, sLanguage) {
+			if (sLanguage && !sUrl.includes("?sap-language=") && !sUrl.includes("&sap-language=")) {
+				sUrl += (sUrl.includes("?") ? "&" : "?") + "sap-language="
+					+ _Helper.encode(sLanguage);
+			}
+
+			return sUrl;
+		},
+
+		/**
 		 * Sets the new value of the private client-side instance annotation with the given
 		 * unqualified name at the given object.
 		 *

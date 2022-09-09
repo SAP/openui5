@@ -24,11 +24,12 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ValueListType",
 	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/thirdparty/URI"
 ], function (Log, JSTokenizer, uid, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
 		BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, Model, PropertyBinding,
 		Sorter, OperationMode, AnnotationHelper, Context, ODataMetaModel, ODataModel, ValueListType,
-		_Helper, URI) {
+		_Helper, _MetadataRequestor, URI) {
 	"use strict";
 
 	// Common := com.sap.vocabularies.Common.v1
@@ -1221,6 +1222,8 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+			this.mock(sap.ui.getCore().getConfiguration()).expects("getLanguageTag").atLeast(0)
+				.returns("ab-CD");
 
 			this.oModel = {
 				getReporter : function () {},
@@ -1355,7 +1358,9 @@ sap.ui.define([
 			"single annotation is wrapped");
 
 		// code under test
-		oMetaModel = new ODataMetaModel(null, null, null, oModel);
+		oMetaModel = new ODataMetaModel(null, null, null, oModel, undefined, "~sLanguage~");
+
+		assert.strictEqual(oMetaModel.sLanguage, "~sLanguage~");
 	});
 
 	//*********************************************************************************************
@@ -5302,6 +5307,7 @@ sap.ui.define([
 			oMetaModelMock = this.mock(oMetaModel),
 			oSharedModel;
 
+		oMetaModel.sLanguage = "~sLanguage~";
 		oMetaModelMock.expects("getAbsoluteServiceUrl")
 			.withExactArgs("../ValueListService/$metadata")
 			.returns("/Foo/ValueListService/");
@@ -5313,6 +5319,10 @@ sap.ui.define([
 		this.mock(oModel).expects("getHttpHeaders").withExactArgs().returns(mHeaders);
 		oMapSetExpectation = this.mock(Map.prototype).expects("set")
 			.withArgs(bAutoExpandSelect + "/Foo/ValueListService/").callThrough();
+		// observe metadataUrlParams being passed along
+		// Note: "ab-CD" is derived from Configuration#getLanguageTag here, not from mHeaders!
+		this.mock(_MetadataRequestor).expects("create")
+			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", {"sap-language" : "~sLanguage~"});
 
 		// code under test
 		oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata",
@@ -5354,6 +5364,9 @@ sap.ui.define([
 			.withExactArgs(false + "/Foo1/ValueListService/").callThrough();
 		this.mock(Map.prototype).expects("set")
 			.withArgs(false + "/Foo1/ValueListService/").callThrough();
+		// observe metadataUrlParams NOT being passed along
+		this.mock(_MetadataRequestor).expects("create")
+			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", {});
 
 		// code under test
 		oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata",
@@ -6731,6 +6744,7 @@ sap.ui.define([
 					if (bHasStandardCode) {
 						aSelect.push("ISOCode");
 					}
+					this.oMetaModel.sLanguage = "~sLanguage~";
 					this.oMetaModelMock.expects("fetchEntityContainer").twice()
 						.returns(SyncPromise.resolve(mScope));
 					this.oMetaModelMock.expects("requestObject").twice()
@@ -6739,14 +6753,16 @@ sap.ui.define([
 							CollectionPath : "UnitsOfMeasure",
 							Url : sUrl
 						});
+					this.mock(_Helper).expects("setLanguage").twice()
+						.withExactArgs(sUrl, "~sLanguage~").returns("~sUrl w/ sLanguage~");
 					this.oMetaModelMock.expects("getAbsoluteServiceUrl").twice()
-						.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
+						.withExactArgs("~sUrl w/ sLanguage~").returns(sAbsoluteServiceUrl);
 					oMapGetExpectation = this.mock(Map.prototype).expects("get").twice()
 						.withExactArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
 					oMapSetExpectation = this.mock(Map.prototype).expects("set")
 						.withArgs(sAbsoluteServiceUrl + "#UnitsOfMeasure").callThrough();
 					this.oMetaModelMock.expects("getOrCreateSharedModel")
-						.withExactArgs(sUrl, "$direct")
+						.withExactArgs("~sUrl w/ sLanguage~", "$direct")
 						.returns(oCodeListModel);
 					this.mock(oCodeListModel).expects("getMetaModel").withExactArgs()
 						.returns(oCodeListMetaModel);
@@ -6894,6 +6910,8 @@ sap.ui.define([
 					CollectionPath : "UnitsOfMeasure",
 					Url : sUrl
 				});
+			this.mock(_Helper).expects("setLanguage").twice().withExactArgs(sUrl, undefined)
+				.returns(sUrl);
 			this.oMetaModelMock.expects("getAbsoluteServiceUrl").twice()
 				.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
 			this.mock(Map.prototype).expects("get").twice()
@@ -6957,6 +6975,8 @@ sap.ui.define([
 					CollectionPath : "UnitsOfMeasure",
 					Url : sUrl
 				});
+			this.mock(_Helper).expects("setLanguage").twice().withExactArgs(sUrl, undefined)
+				.returns(sUrl);
 			this.oMetaModelMock.expects("getAbsoluteServiceUrl").twice()
 				.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
 			this.mock(Map.prototype).expects("get").twice()
@@ -7076,6 +7096,7 @@ sap.ui.define([
 				CollectionPath : "UnitsOfMeasure",
 				Url : sUrl
 			});
+		this.mock(_Helper).expects("setLanguage").withExactArgs(sUrl, undefined).returns(sUrl);
 		this.oMetaModelMock.expects("getAbsoluteServiceUrl")
 			.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
 		this.oMetaModelMock.expects("getOrCreateSharedModel").withExactArgs(sUrl, "$direct")
@@ -7120,6 +7141,7 @@ sap.ui.define([
 				CollectionPath : "UnitsOfMeasure",
 				Url : sUrl
 			});
+		this.mock(_Helper).expects("setLanguage").withExactArgs(sUrl, undefined).returns(sUrl);
 		this.oMetaModelMock.expects("getAbsoluteServiceUrl")
 			.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
 		this.oMetaModelMock.expects("getOrCreateSharedModel")
@@ -7190,6 +7212,7 @@ sap.ui.define([
 				CollectionPath : "UnitsOfMeasure",
 				Url : sUrl
 			});
+		this.mock(_Helper).expects("setLanguage").withExactArgs(sUrl, undefined).returns(sUrl);
 		this.oMetaModelMock.expects("getAbsoluteServiceUrl")
 			.withExactArgs(sUrl).returns(sAbsoluteServiceUrl);
 		this.oMetaModelMock.expects("getOrCreateSharedModel")

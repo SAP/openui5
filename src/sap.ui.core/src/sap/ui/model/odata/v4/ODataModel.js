@@ -241,6 +241,7 @@ sap.ui.define([
 			sLanguageTag = sap.ui.getCore().getConfiguration().getLanguageTag(),
 			sODataVersion,
 			sParameter,
+			mQueryParams,
 			sServiceUrl,
 			oUri,
 			mUriParameters,
@@ -317,15 +318,15 @@ sap.ui.define([
 		}
 		this.bSharedRequests = mParameters.sharedRequests === true;
 
+		// BEWARE: do not share mHeaders between _MetadataRequestor and _Requestor!
 		this.mHeaders = {"Accept-Language" : sLanguageTag};
 		this.mMetadataHeaders = {"Accept-Language" : sLanguageTag};
 
-		// BEWARE: do not share mHeaders between _MetadataRequestor and _Requestor!
+		mQueryParams = Object.assign({}, mUriParameters, mParameters.metadataUrlParams);
 		this.oMetaModel = new ODataMetaModel(
-			_MetadataRequestor.create(this.mMetadataHeaders, sODataVersion,
-				Object.assign({}, mUriParameters, mParameters.metadataUrlParams)),
+			_MetadataRequestor.create(this.mMetadataHeaders, sODataVersion, mQueryParams),
 			this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
-			mParameters.supportReferences);
+			mParameters.supportReferences, mQueryParams["sap-language"]);
 		this.oInterface = {
 			fetchEntityContainer : this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
 			fetchMetadata : this.oMetaModel.fetchObject.bind(this.oMetaModel),
