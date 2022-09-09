@@ -1050,26 +1050,33 @@ function(
 			fnOKAfterClose = null;
 
 		fnOKAfterClose = function () {
-			// reset internal selection value
-			that._sSearchFieldValue = null;
-
 			//after searching we need all the items
 			var oBindings = that._oList.getBinding("items");
-			if (oBindings && oBindings.aFilters && oBindings.aFilters.length) {
-
-				// When reset the filter, the selected items might go outside
-				// the currently visible items (outside the current growing number).
-				// Set the growing to false to prevent this.
-				that._oList.destroyItems();
+			if (oBindings && ((oBindings.getAllCurrentContexts().length > that._oList.getItems().length) || that._sSearchFieldValue)) {
+				// There are 2 cases where the model items are more that the currently visible items
+				//  - search
+				//  - not all items are currently loaded (growing=true)
+				// In that cases we need to reset the filter (filter([])) and load all the items (growing=false),
+				// so we'll have all the selected items.
+				that._oList.destroyItems(); // fixes creating list items with duplicate ids
 				that._oList.setGrowing(false);
 				oBindings.filter([]);
 				that._oList.setGrowing(that.getGrowing());
-			}
-			that._oSelectedItem = that._oList.getSelectedItem();
-			that._aSelectedItems = that._oList.getSelectedItems();
+				that._oList.attachEventOnce("updateFinished", function () {
+					that._oSelectedItem = that._oList.getSelectedItem();
+					that._aSelectedItems = that._oList.getSelectedItems();
 
-			that._oDialog.detachAfterClose(fnOKAfterClose);
-			that._fireConfirmAndUpdateSelection();
+					that._fireConfirmAndUpdateSelection();
+				});
+			} else {
+				that._oSelectedItem = that._oList.getSelectedItem();
+				that._aSelectedItems = that._oList.getSelectedItems();
+
+				that._fireConfirmAndUpdateSelection();
+			}
+
+			// reset internal selection value
+			that._sSearchFieldValue = null;
 		};
 
 		if (!this._oOkButton) {
@@ -1078,7 +1085,7 @@ function(
 				text: this.getConfirmButtonText() || this._oRb.getText("SELECT_CONFIRM_BUTTON"),
 				press: function () {
 					// attach the reset function to afterClose to hide the dialog changes from the end user
-					that._oDialog.attachAfterClose(fnOKAfterClose);
+					that._oDialog.attachEventOnce("afterClose", fnOKAfterClose);
 					that._oDialog.close();
 				}
 			});
