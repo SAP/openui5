@@ -410,7 +410,6 @@ sap.ui.define([
 					changeType: "type1"
 				};
 				var oNewVarChange1 = {
-					creation: "2021-05-05T12:57:32.241Z",
 					fileName: "oVariantChange2",
 					fileType: "ctrl_variant_change",
 					reference: "sap.ui.fl.test",
@@ -421,7 +420,6 @@ sap.ui.define([
 					}
 				};
 				var oNewVarChange2 = {
-					creation: "2021-05-05T12:57:32.242Z",
 					fileName: "oVariantChange3",
 					fileType: "ctrl_variant_change",
 					reference: "sap.ui.fl.test",

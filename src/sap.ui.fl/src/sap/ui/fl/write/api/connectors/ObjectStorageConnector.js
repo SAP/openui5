@@ -90,11 +90,19 @@ sap.ui.define([
 
 	function handleCondenseCreate(oCreateInfos, aCondensedChanges) {
 		var aReturn = [];
+		var iCounter = 0;
 		forEveryMapInArrayInMap(oCreateInfos, function(oFlexObjectFileContent, sChangeId) {
 			var sKey = ObjectStorageUtils.createFlexKey(sChangeId);
 			var oFlexObject = aCondensedChanges.find(function(oCurrentFlexObject) {
 				return oCurrentFlexObject.getId() === oFlexObjectFileContent.fileName;
 			});
+
+			if (!oFlexObject.getCreation()) {
+				// new changes get the time stamp from the backend (see setFlexObjectCreation)
+				var nCreationTimestamp = Date.now() + iCounter;
+				iCounter++;
+				oFlexObject.setCreation(new Date(nCreationTimestamp).toISOString());
+			}
 			aReturn.push({key: sKey, value: oFlexObject});
 		});
 
