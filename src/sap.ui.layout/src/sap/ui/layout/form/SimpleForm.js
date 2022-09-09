@@ -602,6 +602,7 @@ sap.ui.define([
 		var oFormElement;
 		var oParent;
 		var oLayoutData;
+		var sLayout = this.getLayout();
 
 		if (oElement.isA(["sap.ui.core.Title", "sap.ui.core.Toolbar"])) {
 			//start a new container with a title
@@ -636,7 +637,7 @@ sap.ui.define([
 					oFormContainer = oParent.getParent();
 					oFormElement = oParent;
 					oLayoutData = _getFieldLayoutData.call(this, oElement);
-					if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") &&
+					if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") && sLayout === SimpleFormLayout.ResponsiveLayout &&
 							!_isMyLayoutData.call(this, oLayoutData) && oLayoutData.getLinebreak()) {
 						oFormElement = _addFormElement.call(this, oFormContainer);
 					}
@@ -715,55 +716,55 @@ sap.ui.define([
 		var i = 0;
 		var oField;
 		var oLayoutData;
+		var sLayout = this.getLayout();
 
 		if (oElement.isA(["sap.ui.core.Title", "sap.ui.core.Toolbar"])) {
 			//start a new container with a title
+			oFormContainer = _createFormContainer.call(this, oElement);
 			if (iIndex == 0 && !(oOldElement.isA(["sap.ui.core.Title", "sap.ui.core.Toolbar"]))) {
-				// special case - index==0 and first container has no title -> just add title to Container
-				oFormContainer = oOldElement.getParent().getParent();
-				if (oElement.isA("sap.ui.core.Title")) {
-					oFormContainer.setTitle(oElement);
-				} else {
-					oFormContainer.setToolbar(oElement);
+				// special case - index==0 and first container has no title -> move FormElements to new Container and destroy old one (to have a stable ID based on Title)
+				oOldFormContainer = oOldElement.getParent().getParent();
+				aFormElements = oOldFormContainer.getFormElements();
+				for (i = 0; i < aFormElements.length; i++) {
+					oFormContainer.addFormElement(aFormElements[i]);
 				}
+				oOldFormContainer.destroy();
+				iContainerIndex = 0;
+			} else if (oOldElement.isA(["sap.ui.core.Title", "sap.ui.core.Toolbar"])) {
+				// insert before old container
+				oOldFormContainer = oOldElement.getParent();
+				iContainerIndex = oForm.indexOfFormContainer(oOldFormContainer);
 			} else {
-				oFormContainer = _createFormContainer.call(this, oElement);
-				if (oOldElement.isA(["sap.ui.core.Title", "sap.ui.core.Toolbar"])) {
-					// insert before old container
-					oOldFormContainer = oOldElement.getParent();
-					iContainerIndex = oForm.indexOfFormContainer(oOldFormContainer);
-				} else {
-					// insert after old container
-					oOldFormElement = oOldElement.getParent();
-					oOldFormContainer = oOldFormElement.getParent();
-					iContainerIndex = oForm.indexOfFormContainer(oOldFormContainer) + 1;
-					iElementIndex = oOldFormContainer.indexOfFormElement(oOldFormElement);
+				// insert after old container
+				oOldFormElement = oOldElement.getParent();
+				oOldFormContainer = oOldFormElement.getParent();
+				iContainerIndex = oForm.indexOfFormContainer(oOldFormContainer) + 1;
+				iElementIndex = oOldFormContainer.indexOfFormElement(oOldFormElement);
 
-					// check if old FormElement must be splited
-					if (!oOldElement.isA("sap.ui.core.Label")) {
-						iFieldIndex = oOldFormElement.indexOfField(oOldElement);
-						if (iFieldIndex > 0 || oOldFormElement.getLabel()) {
-							// split FormElement
-							oFormElement = _addFormElement.call(this, oFormContainer);
-							this._changedFormElements.push(oFormElement);
-							_markFormElementForUpdate(this._changedFormElements, oOldFormElement);
-							// move all Fields after index into new FormElement
-							aFields = oOldFormElement.getFields();
-							for ( i = iFieldIndex; i < aFields.length; i++) {
-								oField = aFields[i];
-								oFormElement.addField(oField);
-							}
-							iElementIndex++;
+				// check if old FormElement must be splited
+				if (!oOldElement.isA("sap.ui.core.Label")) {
+					iFieldIndex = oOldFormElement.indexOfField(oOldElement);
+					if (iFieldIndex > 0 || oOldFormElement.getLabel()) {
+						// split FormElement
+						oFormElement = _addFormElement.call(this, oFormContainer);
+						this._changedFormElements.push(oFormElement);
+						_markFormElementForUpdate(this._changedFormElements, oOldFormElement);
+						// move all Fields after index into new FormElement
+						aFields = oOldFormElement.getFields();
+						for ( i = iFieldIndex; i < aFields.length; i++) {
+							oField = aFields[i];
+							oFormElement.addField(oField);
 						}
-					}
-					// move all FormElements after the new content into the new container
-					aFormElements = oOldFormContainer.getFormElements();
-					for ( i = iElementIndex; i < aFormElements.length; i++) {
-						oFormContainer.addFormElement(aFormElements[i]);
+						iElementIndex++;
 					}
 				}
-				oForm.insertFormContainer(oFormContainer, iContainerIndex);
+				// move all FormElements after the new content into the new container
+				aFormElements = oOldFormContainer.getFormElements();
+				for ( i = iElementIndex; i < aFormElements.length; i++) {
+					oFormContainer.addFormElement(aFormElements[i]);
+				}
 			}
+			oForm.insertFormContainer(oFormContainer, iContainerIndex);
 			this._changedFormContainers.push(oFormContainer);
 		} else if (oElement.isA("sap.ui.core.Label")) {
 			if (oOldElement.isA(["sap.ui.core.Title", "sap.ui.core.Toolbar"])) {
@@ -791,22 +792,21 @@ sap.ui.define([
 				oOldFormContainer = oOldFormElement.getParent();
 				iElementIndex = oOldFormContainer.indexOfFormElement(oOldFormElement) + 1;
 				iFieldIndex = oOldFormElement.indexOfField(oOldElement);
+				aFields = oOldFormElement.getFields();
+
+				oFormElement = _insertFormElement.call(this, oOldFormContainer, oElement, iElementIndex);
+
+				// move all Fields after index into new FormElement
+				for ( i = iFieldIndex; i < aFields.length; i++) {
+					oField = aFields[i];
+					oFormElement.addField(oField);
+				}
 
 				if (iFieldIndex == 0 && !oOldFormElement.getLabel()) {
-					// special case: FormElement has no label and inserted before first Field
-					oFormElement = oOldFormElement;
-					oFormElement.setLabel(oElement);
-					_createFieldLayoutData.call(this, oElement, this._iLabelWeight, false, true, this.getLabelMinWidth());
+					// special case: FormElement has no label and inserted before first Field -> create a new one, add all Fields and destroy old one (To have stabel ID from Label)
+					oOldFormElement.destroy();
 				} else {
-					oFormElement = _insertFormElement.call(this, oOldFormContainer, oElement, iElementIndex);
 					_markFormElementForUpdate(this._changedFormElements, oOldFormElement);
-
-					// move all Fields after index into new FormElement
-					aFields = oOldFormElement.getFields();
-					for ( i = iFieldIndex; i < aFields.length; i++) {
-						oField = aFields[i];
-						oFormElement.addField(oField);
-					}
 				}
 			}
 			this._changedFormElements.push(oFormElement);
@@ -831,7 +831,7 @@ sap.ui.define([
 				if (aFormElements.length == 0) {
 					// FormContainer has no FormElements -> create one
 					oFormElement = _addFormElement.call(this, oFormContainer);
-				} else if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") &&
+				} else if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") && sLayout === SimpleFormLayout.ResponsiveLayout &&
 									 !_isMyLayoutData.call(this, oLayoutData) && oLayoutData.getLinebreak()) {
 					oFormElement = _addFormElement.call(this, oFormContainer);
 				} else {
@@ -848,7 +848,7 @@ sap.ui.define([
 				if (iElementIndex == 0) {
 					// it's already the first FormElement -> insert a new one before
 					oFormElement = _insertFormElement.call(this, oFormContainer, null, 0);
-				} else if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") &&
+				} else if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") && sLayout === SimpleFormLayout.ResponsiveLayout &&
 									 !_isMyLayoutData.call(this, oLayoutData) && oLayoutData.getLinebreak()) {
 					oFormElement = _insertFormElement.call(this, oFormContainer, null, iElementIndex);
 				} else {
@@ -860,7 +860,7 @@ sap.ui.define([
 				// insert new field into same FormElement before old field
 				oFormElement = oOldElement.getParent();
 				iFieldIndex = oFormElement.indexOfField(oOldElement);
-				if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") &&
+				if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") && sLayout === SimpleFormLayout.ResponsiveLayout &&
 						!_isMyLayoutData.call(this, oLayoutData) && oLayoutData.getLinebreak() && iFieldIndex > 0) {
 					// split FormElement
 					oFormContainer = oFormElement.getParent();
@@ -934,24 +934,31 @@ sap.ui.define([
 				oFormContainer = oElement.getParent();
 				oFormContainer.setTitle(null);
 				oFormContainer.setToolbar(null);
-				if (iIndex > 0) {
-					// if it's the first FormContainer -> just remove title
-					// remove FormContainer and add content to previous FormContainer
-					aFormElements = oFormContainer.getFormElements();
+				aFormElements = oFormContainer.getFormElements();
+				if (iIndex > 0 || aFormElements.length > 0) {
 					var iContainerIndex = oForm.indexOfFormContainer(oFormContainer);
-					var oPrevFormContainer = oForm.getFormContainers()[iContainerIndex - 1];
-					if (aFormElements.length > 0 && !aFormElements[0].getLabel()) {
-						// first FormElement has no label -> add its fields to last FormElement of previous FormContainer
-						var aPrevFormElements = oPrevFormContainer.getFormElements();
-						var oLastFormElement = aPrevFormElements[aPrevFormElements.length - 1];
-						aFields = aFormElements[0].getFields();
-						for (i = 0; i < aFields.length; i++) {
-							oLastFormElement.addField(aFields[i]);
+					var oPrevFormContainer;
+					if (iIndex === 0) {
+						// create a new FormContainer without title and add all FormElemens (To have a stable ID on FormContainer without title)
+						oPrevFormContainer = _createFormContainer.call(this);
+						oForm.insertFormContainer(oPrevFormContainer, iContainerIndex);
+					} else {
+						// remove FormContainer and add content to previous FormContainer
+						oPrevFormContainer = oForm.getFormContainers()[iContainerIndex - 1];
+
+						if (aFormElements.length > 0 && !aFormElements[0].getLabel()) {
+							// first FormElement has no label -> add its fields to last FormElement of previous FormContainer
+							var aPrevFormElements = oPrevFormContainer.getFormElements();
+							var oLastFormElement = aPrevFormElements[aPrevFormElements.length - 1];
+							aFields = aFormElements[0].getFields();
+							for (i = 0; i < aFields.length; i++) {
+								oLastFormElement.addField(aFields[i]);
+							}
+							_markFormElementForUpdate(this._changedFormElements, oLastFormElement);
+							oFormContainer.removeFormElement(aFormElements[0]);
+							aFormElements[0].destroy();
+							aFormElements.splice(0,1);
 						}
-						_markFormElementForUpdate(this._changedFormElements, oLastFormElement);
-						oFormContainer.removeFormElement(aFormElements[0]);
-						aFormElements[0].destroy();
-						aFormElements.splice(0,1);
 					}
 					for (i = 0; i < aFormElements.length; i++) {
 						oPrevFormContainer.addFormElement(aFormElements[i]);
@@ -959,7 +966,7 @@ sap.ui.define([
 					_markFormElementForUpdate(this._changedFormContainers, oPrevFormContainer);
 					oForm.removeFormContainer(oFormContainer);
 					oFormContainer.destroy();
-				} else if (oFormContainer.getFormElements().length == 0) {
+				} else {
 					// remove empty FormContainer
 					oForm.removeFormContainer(oFormContainer);
 					oFormContainer.destroy();
@@ -968,10 +975,12 @@ sap.ui.define([
 				oFormElement = oElement.getParent();
 				oFormContainer = oFormElement.getParent();
 				oFormElement.setLabel(null);
+				aFields = oFormElement.getFields();
 				var iElementIndex = oFormContainer.indexOfFormElement(oFormElement);
-				if (iElementIndex == 0) {
-					// its the first Element of the FormContainer -> just remove label
-					if (oFormElement.getFields().length == 0) {
+				var oPrevFormElement;
+				if (iElementIndex === 0) {
+					// its the first Element of the FormContainer
+					if (aFields.length === 0) {
 						// FormElement has no fields -> just delete
 						oFormContainer.removeFormElement(oFormElement);
 						oFormElement.destroy();
@@ -980,20 +989,21 @@ sap.ui.define([
 							oFormContainer.destroy();
 						}
 					} else {
-						_markFormElementForUpdate(this._changedFormElements, oFormElement);
+						// create a new FormElement, add all Fields and destroy it (To have a stable ID without Label)
+						oPrevFormElement = _insertFormElement.call(this, oFormContainer, null, 0);
 					}
 				} else {
 					// add fields to previous FormElement
 					aFormElements = oFormContainer.getFormElements();
-					var oPrevFormElement = aFormElements[iElementIndex - 1];
-					aFields = oFormElement.getFields();
-					for (i = 0; i < aFields.length; i++) {
-						oPrevFormElement.addField(aFields[i]);
-					}
+					oPrevFormElement = aFormElements[iElementIndex - 1];
 					_markFormElementForUpdate(this._changedFormElements, oPrevFormElement);
-					oFormContainer.removeFormElement(oFormElement);
-					oFormElement.destroy();
 				}
+
+				for (i = 0; i < aFields.length; i++) {
+					oPrevFormElement.addField(aFields[i]);
+				}
+				oFormContainer.removeFormElement(oFormElement);
+				oFormElement.destroy();
 			} else { // remove field
 				oFormElement = oElement.getParent();
 				oFormElement.removeField(oElement);
@@ -1618,7 +1628,7 @@ sap.ui.define([
 	 */
 	function _addFormElement(oFormContainer, oLabel) {
 
-		var oElement = _createFormElement.call(this, oLabel);
+		var oElement = _createFormElement.call(this, oLabel, oFormContainer);
 		oFormContainer.addFormElement(oElement);
 		return oElement;
 
@@ -1626,23 +1636,36 @@ sap.ui.define([
 
 	function _insertFormElement(oFormContainer, oLabel, iIndex) {
 
-		var oElement = _createFormElement.call(this, oLabel);
+		var oElement = _createFormElement.call(this, oLabel, oFormContainer);
 		oFormContainer.insertFormElement(oElement, iIndex);
 		return oElement;
 
 	}
 
-	function _createFormElement(oLabel) {
+	function _createFormElement(oLabel, oFormContainer) {
 
-		var oElement = new FormElement();
-		_createElementLayoutData.call(this, oElement);
+		var sId;
+		var mSettings = {};
+
 		if (oLabel) {
+			sId = oLabel.getId() + "--FE";
 			oLabel.addStyleClass("sapUiFormLabel-CTX");
-			oElement.setLabel(oLabel);
 			if (!_getFieldLayoutData.call(this, oLabel)) {
 				_createFieldLayoutData.call(this, oLabel, this._iLabelWeight, false, true, this.getLabelMinWidth());
 			}
+			mSettings["label"] = oLabel;
+		} else {
+			sId = oFormContainer.getId() + "--FE-NoLabel"; // There can be only one FormElement without Label in a FomContainer (first one)
+			if (sap.ui.getCore().byId(sId)) {
+				// if ResponsiveLayout and ResponsiveFlowLayoutdata with Linebreak is used multiple FormElements without Label can exist
+				// as already deprecated just keep generatied ID in this very special case.
+				sId = undefined;
+			}
 		}
+
+		var oElement = new FormElement(sId, mSettings);
+		_createElementLayoutData.call(this, oElement);
+
 		oElement.isVisible = function(){
 
 			var aFields = this.getFields();
@@ -1673,7 +1696,21 @@ sap.ui.define([
 	 */
 	function _createFormContainer(oTitle) {
 
-		var oContainer = new FormContainer();
+		var sId;
+		var mSettings = {};
+
+		if (oTitle) {
+			sId = oTitle.getId() + "--FC";
+			if (oTitle.isA("sap.ui.core.Title")) {
+				mSettings["title"] = oTitle;
+			} else if (oTitle.isA("sap.ui.core.Toolbar")) {
+				mSettings["toolbar"] = oTitle;
+			}
+		} else {
+			sId = this.getId() + "--FC-NoHead"; // There can be only one FormContainer without title (the first one)
+		}
+
+		var oContainer = new FormContainer(sId, mSettings);
 		_createContainerLayoutData.call(this, oContainer);
 
 		oContainer.getAriaLabelledBy = function() {
@@ -1686,13 +1723,6 @@ sap.ui.define([
 			}
 		};
 
-		if (oTitle) {
-			if (oTitle.isA("sap.ui.core.Title")) {
-				oContainer.setTitle(oTitle);
-			} else if (oTitle.isA("sap.ui.core.Toolbar")) {
-				oContainer.setToolbar(oTitle);
-			}
-		}
 		return oContainer;
 
 	}
