@@ -313,80 +313,84 @@ sap.ui.define([
 				null,
 				606,
 				[
-				  "0.02",
-				  "EUR"
+					"54.87",
+					"JEP"
 				],
 				3698,
-				"erotic_literature",
-				null
+				"religious_text",
+				"song"
 			],
 			"Alice's Adventures in Wonderland": [
 				"Alice's Adventures in Wonderland",
 				"Fantasy",
 				103,
 				[
-				  "87.95",
-				  "EUR"
+					"82.4",
+					"SLL"
 				],
 				525,
-				"law",
-				"natural"
+				"religious_text",
+				"scripture"
 			],
 			"Pride and Prejudice": [
 				"Pride and Prejudice",
 				"Sisters  Fiction, Courtship  Fiction, Social classes  Fiction, England  Fiction, Domestic fiction, Young women  Fiction, Love stories",
 				101,
 				[
-				  "18.57",
-				  "USD"
+					"79.84",
+					"IMP"
 				],
 				4458,
-				"history",
-				"narrative_history"
+				"religious_text",
+				"creed"
 			],
 			"The Complete Project Gutenberg Works of Jane Austen: A Linked Index of all PG Editions of Jane Austen": [
 				"The Complete Project Gutenberg Works of Jane Austen: A Linked Index of all PG Editions of Jane Austen",
 				"England  Social life and customs  Fiction, Love stories, English",
 				101,
 				[
-				  "55.55",
-				  "EUR"
+					"99.28",
+					"KES"
 				],
 				1838,
 				"religious_text",
-				"theology"
+				"lectionary"
 			],
 			"The Coral Island: A Tale of the Pacific Ocean": [
 				"The Coral Island: A Tale of the Pacific Ocean",
 				"Outdoor life  Juvenile fiction, Oceania  Juvenile fiction, Shipwrecks  Juvenile fiction, Robinsonades,Conduct of life  Juvenile fiction, Islands  Juvenile fiction, Pirates  Juvenile fiction, Survival skills  Juvenile fiction, Natural history  Juvenile fiction, Camping  Juvenile fiction, Shipwreck survival  Juvenile fiction",
 				1032,
 				[
-				  "2.69",
-				  "USD"
+					"0.04",
+					"ANG"
 				],
 				3340,
-				"speculative_fiction",
-				"science_fiction"
+				"adventure_novel",
+				"apocalyptic"
 			],
 			"The History Of The Decline And Fall Of The Roman Empire: Table of Contents with links in the HTML file to the two,  Project Gutenberg editions (12 volumes)": [
 				"The History Of The Decline And Fall Of The Roman Empire: Table of Contents with links in the HTML file to the two,  Project Gutenberg editions (12 volumes)",
 				"Rome  History  Empire, 30 B.C.-476 A.D., Byzantine Empire  History  To 527, Indexes",
-				"Gibbon, Edward",
+				246,
 				[
 					"46113",
 					"XCD"
 				],
-				9996
+				9996,
+				"children_s_literature",
+				"young_adult_fiction"
 			],
 			"The Voyage Out": [
 				"The Voyage Out",
 				"Ocean travel  Fiction, Women travelers  Fiction, Bildungsromans,Love stories, Young women  Fiction, British  South America  Fiction",
-				"Woolf, Virginia",
+				935,
 				[
 					"47209",
 					"TJS"
 				],
-				2090
+				2090,
+				"biography",
+				"memoir"
 			],
 			"Utopia": [
 				"Utopia",
@@ -403,48 +407,24 @@ sap.ui.define([
 				"Human-alien encounters  Fiction, Science fiction",
 				361,
 				[
-				  "68.5",
-				  "AUD"
+					"15373",
+					"AWG"
 				],
 				2712,
-				"manuscript",
-				null
-			],
-			"The Picture of Dorian Gray": [
-				"The Picture of Dorian Gray",
-				"London (England)  History  1800-1950  Fiction, Conduct of life  Fiction, Paranormal fiction, Portraits  Fiction, Appearance (Philosophy)  Fiction, Supernatural  Fiction, Great Britain  History  Victoria, 1837-1901  Fiction, Didactic fiction",
-				107,
-				[
-				  "99.63",
-				  "CAD"
-				],
-				5993,
 				"religious_text",
-				"theology"
+				"scripture"
 			],
-			"The Adventures of Tom Sawyer": [
-				"The Adventures of Tom Sawyer",
-				"Male friendship  Fiction, Humorous stories, Missouri  Fiction, Child witnesses  Fiction, Bildungsromans, Mississippi River Valley  Fiction, Adventure stories, Runaway children  Fiction, Boys  Fiction, Sawyer, Tom (Fictitious character)  Fiction",
-				106,
+			"The Germany and the Agricola of Tacitus": [
+				"The Germany and the Agricola of Tacitus",
+				"Agricola, Gnaeus Julius, 40-93, Germanic peoples  Early works to 1800, Statesmen  Rome  Biography  Early works to 1800",
+				902,
 				[
-					"68.8",
-					"CAD"
+				  "24.81",
+				  "CNY"
 				],
-				2234,
-				"metafiction",
-				null
-			],
-			"The Ten Books on Architecture": [
-				"The Ten Books on Architecture",
-				"Architecture  Early works to 1800",
-				273,
-				[
-					"36.46",
-					"USD"
-				],
-				4827,
-				"children_s_literature",
-				"young_adult_fiction"
+				101,
+				"religious_fiction",
+				"christian_fiction"
 			]
 		}
 	};

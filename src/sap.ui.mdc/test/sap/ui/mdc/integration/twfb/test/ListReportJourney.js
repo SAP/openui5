@@ -157,9 +157,10 @@ sap.ui.define([
 			Then.onPage.iShouldSeeARowWithData(0, ListReport.books[sBookKeyDescending]);
 		};
 
-		// Sort 2 differnt times
+		// Sort 3 different times
 		fnSortByColumnTitle("Title", "...So They Baked a Cake", "Youth");
-		fnSortByColumnTitle("SubGenre", "The Adventures of Tom Sawyer", "The Ten Books on Architecture");
+		fnSortByColumnTitle("Stock", "The Germany and the Agricola of Tacitus", "The History Of The Decline And Fall Of The Roman Empire: Table of Contents with links in the HTML file to the two,  Project Gutenberg editions (12 volumes)");
+		//fnSortByColumnTitle("Price", "The Coral Island: A Tale of the Pacific Ocean", "The Voyage Out");
 
 		Then.iTeardownMyUIComponent();
 	});
