@@ -18,8 +18,10 @@ sap.ui
 			"use strict";
 
 			/**
-			 * Creates a mocked server. This helps to mock all or some back-end calls, e.g. for OData V2/JSON Models or simple XHR calls, without
+			 * Creates a mocked server. This helps to mock some back-end calls, e.g. for OData V2/JSON Models or simple XHR calls, without
 			 * changing the application code. This class can also be used for qunit tests.
+			 *
+			 * <b>Note:</b> Not all features of mock and all properties are supported.
 			 *
 			 * @param {string} [sId] id for the new server object; generated automatically if no non-empty id is given
 			 *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
