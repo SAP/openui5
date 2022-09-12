@@ -143,6 +143,19 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 		}
 	};
 
+	ObjectAttribute.prototype.onBeforeRendering = function() {
+		var oLink,
+			sTitleId = this.getId() + "-title";
+
+		if (this._isClickable() && !this._isSimulatedLink()) {
+			oLink = this.getCustomContent();
+			oLink.setAriaHasPopup(this.getAriaHasPopup());
+			if (!oLink.getAriaLabelledBy().includes(sTitleId)) {
+				oLink.addAriaLabelledBy(sTitleId);
+			}
+		}
+	};
+
 	/**
 	 * Delivers text control with updated title, text and maxLines properties.
 	 *

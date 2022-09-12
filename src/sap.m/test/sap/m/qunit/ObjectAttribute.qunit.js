@@ -671,6 +671,7 @@ sap.ui.define([
 		// shortcut for sap.ui.core.aria.HasPopup
 		var AriaHasPopup = coreLibrary.aria.HasPopup,
 			oAttr1 = new ObjectAttribute({
+				title: "Title",
 				text: "text",
 				customContent: [
 					new Link({text: "this is sap.m.Link"})
@@ -678,6 +679,7 @@ sap.ui.define([
 				ariaHasPopup: AriaHasPopup.Dialog
 			}),
 			oAttr2 = new ObjectAttribute({
+				title: "Title",
 				active: true,
 				text: "Active text",
 				ariaHasPopup: AriaHasPopup.Dialog
@@ -694,10 +696,21 @@ sap.ui.define([
 			"Aria-haspopup attribute properly rendered"
 		);
 
+		assert.ok(
+			oAttr1.getDomRef().querySelector(".sapMLnk").getAttribute("aria-labelledby").includes(oAttr1.getId() + "-title"),
+			"Link control is referenced with the control title"
+		);
+
 		assert.equal(
 			oAttr2.getDomRef().querySelector(".sapMObjectAttributeText").getAttribute("aria-haspopup"),
 			oAttr2.getAriaHasPopup().toLowerCase(),
 			"Aria-haspopup attribute properly rendered"
+		);
+
+		assert.strictEqual(
+			oAttr2.getDomRef().querySelector(".sapMObjectAttributeText").getAttribute("aria-label"),
+			"Title Active text",
+			"Active text is properly labelled"
 		);
 
 		//Cleanup
