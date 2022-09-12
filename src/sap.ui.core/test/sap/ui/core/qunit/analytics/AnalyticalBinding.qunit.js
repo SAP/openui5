@@ -3616,4 +3616,117 @@ sap.ui.define([
 
 		assert.strictEqual(oBinding.bNeedsUpdate, true);
 	});
+
+	//*********************************************************************************************
+	// Avoid empty rows, if received data does not belong to the watermark node.
+	// BCP: 2280169612
+	QUnit.test("_processLevelMembersQueryResponse: adjust start index if data belongs to a"
+			+ " different node than the watermark node", function (assert) {
+		var oModel = {
+				_getKey : function () {},
+				getContext : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oBinding = {
+				mEntityKey : {"~group0" : "~entitykey0"},
+				mFinalLength : {"~groupMissing" : false},
+				oModel : oModel,
+				_findKeyIndex : function () {},
+				_getKeyIndexMapping : function () {},
+				_getGroupIdFromContext : function () {},
+				_getParentGroupId : function () {},
+				_getRequestId : function () {},
+				_processGroupMembersQueryResponse : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			oRequestDetails = {
+				aAggregationLevel : "~aAggregationLevel",
+				bAvoidLengthUpdate : "~bAvoidLengthUpdate",
+				oAnalyticalQueryRequest : "~oAnalyticalQueryRequest",
+				sGroupId_Missing_AtLevel : "~groupMissing",
+				bIsFlatListRequest : "~bIsFlatListRequest",
+				bIsLeafGroupsRequest : "~bIsLeafGroupsRequest",
+				iLength : 10,
+				iLevel : 3,
+				aSelectedUnitPropertyName : "~aSelectedUnitPropertyName",
+				iStartIndex : 2
+			},
+			oResponseData = {
+				results : ["~oEntry0", "~oEntry1"]
+			};
+
+		oModelMock.expects("_getKey").withExactArgs("~oEntry0").twice().returns("~key0");
+		oModelMock.expects("getContext").withExactArgs("/~key0").twice().returns("~oContext0");
+		oBindingMock.expects("_getGroupIdFromContext")
+			.withExactArgs("~oContext0", 2)
+			.twice()
+			.returns("~group0");
+		oModelMock.expects("_getKey").withExactArgs("~oEntry1").returns("~key1");
+		oModelMock.expects("getContext").withExactArgs("/~key1").returns("~oContext1");
+		oBindingMock.expects("_getGroupIdFromContext")
+			.withExactArgs("~oContext1", 2)
+			.returns("~group1");
+		// data for the first group which belongs to a different node than the watermark node
+		oBindingMock.expects("_getRequestId")
+			.withExactArgs(/*groupMembersQuery*/ 1, {groupId : "~group0"})
+			.returns("~requestId0");
+		oBindingMock.expects("_getParentGroupId").withExactArgs("~group0").returns("~group0parent");
+		oBindingMock.expects("_findKeyIndex")
+			.withExactArgs("~group0parent", "~entitykey0")
+			// the first entity in the response is the first node of a parent node next to the
+			// watermark node
+			.returns(0);
+		oBindingMock.expects("_getKeyIndexMapping")
+			.withExactArgs("~group0", 0)
+			.returns("~keyIndexMapping0");
+		oBindingMock.expects("_processGroupMembersQueryResponse")
+			.withExactArgs({
+				aAggregationLevel : "~aAggregationLevel",
+				oAnalyticalQueryRequest : "~oAnalyticalQueryRequest",
+				bAvoidLengthUpdate : "~bAvoidLengthUpdate",
+				sGroupId : "~group0",
+				bIsFlatListRequest : "~bIsFlatListRequest",
+				bIsLeafGroupsRequest : "~bIsLeafGroupsRequest",
+				oKeyIndexMapping : "~keyIndexMapping0",
+				iLength : 10,
+				sRequestId : "~requestId0",
+				iRequestType : /*groupMembersQuery*/ 1,
+				aSelectedUnitPropertyName : "~aSelectedUnitPropertyName",
+				iStartIndex : 0
+			}, {results : ["~oEntry0"]});
+		// data for further groups
+		oBindingMock.expects("_getRequestId")
+			.withExactArgs(/*groupMembersQuery*/1, {groupId : "~group1"})
+			.returns("~requestId1");
+		oBindingMock.expects("_getKeyIndexMapping")
+			.withExactArgs("~group1", 0)
+			.returns("~keyIndexMapping1");
+		oBindingMock.expects("_processGroupMembersQueryResponse")
+			.withExactArgs({
+				aAggregationLevel : "~aAggregationLevel",
+				oAnalyticalQueryRequest : "~oAnalyticalQueryRequest",
+				bAvoidLengthUpdate : "~bAvoidLengthUpdate",
+				sGroupId : "~group1",
+				bIsFlatListRequest : "~bIsFlatListRequest",
+				bIsLeafGroupsRequest : "~bIsLeafGroupsRequest",
+				oKeyIndexMapping : "~keyIndexMapping1",
+				iLength : 10,
+				sRequestId : "~requestId1",
+				iRequestType : /*groupMembersQuery*/ 1,
+				aSelectedUnitPropertyName : "~aSelectedUnitPropertyName",
+				iStartIndex : 0
+			}, {results : ["~oEntry1"]});
+
+		// code under test
+		AnalyticalBinding.prototype._processLevelMembersQueryResponse.call(oBinding,
+			oRequestDetails, oResponseData);
+
+		assert.strictEqual(oBinding.mFinalLength["~groupMissing"], true, "final length updated");
+	});
+	//TODO: _processLevelMembersQueryResponse: if the last data record belongs to a new group, then
+	// processSingleGroupFromLevelSubset is called with bIncompleteGroupMembersSet = true for the
+	// group of the second last entry which sets oGroupMembersRequestDetails.iLength to the
+	// number of entries for that group which causes in _processGroupMembersQueryResponse that the
+	// final length is not set for that group. So the watermark is set wrongly and data is requested
+	// twice.
 });
