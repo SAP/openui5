@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/security/URLListValidator",
 	"sap/base/security/sanitizeHTML",
-	"sap/ui/util/openWindow"
+	"sap/ui/util/openWindow",
+	'sap/ui/core/Core'
 ],
 function(
 	library,
@@ -23,7 +24,8 @@ function(
 	Log,
 	URLListValidator,
 	sanitizeHTML0,
-	openWindow
+	openWindow,
+	Core
 	) {
 		"use strict";
 
@@ -320,6 +322,10 @@ function(
 		// open links href using safe API
 		function openLink (oEvent) {
 			oEvent.preventDefault();
+			var oLink = Core.byId(oEvent.currentTarget.id);
+			if (oLink && oLink.isA('sap.m.Link') && oLink.getAccessibleRole() === library.LinkAccessibleRole.Button) {
+				return;
+			}
 			openWindow(oEvent.currentTarget.href, oEvent.currentTarget.target);
 		}
 
