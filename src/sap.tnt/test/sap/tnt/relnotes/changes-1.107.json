@@ -1,0 +1,18 @@
+{
+  "1.107.0": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "76b2fd20b90fc51d188e0223415f05d9fcea6a61",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Text is now read only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080355933"
+          }
+        ]
+      }
+    ]
+  }
+}
