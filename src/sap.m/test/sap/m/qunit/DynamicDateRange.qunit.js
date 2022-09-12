@@ -116,6 +116,11 @@ sap.ui.define([
 		// arrange
 		this.ddr._createPopup();
 		this.stub(this.ddr._oPopup, "isOpen").returns(true);
+		this.stub(Device, "system").value({
+			desktop: true,
+			tablet: false,
+			phone: false
+		});
 		var oPopupCloseSpy = this.spy(this.ddr._oPopup, "close");
 		this.ddr._oNavContainer = {
 			to: function() {},
