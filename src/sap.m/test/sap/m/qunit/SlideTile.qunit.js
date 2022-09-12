@@ -1187,7 +1187,9 @@ var FrameType = library.FrameType;
 			assert.equal(oTileContentAreaProperties.marginTop, "16px", "Property set Correctly");
 		}
 		for (var i = 0; i < aGenericTile.length; i++ ) {
-			assert.ok(aGenericTile[i].ariaLabel.toLowerCase(), "Property set Correctly");
+			if (aGenericTile[i] && aGenericTile[i].arialabel){
+				assert.ok(aGenericTile[i].ariaLabel.toLowerCase(), "Property set Correctly");
+			}
 		}
 		assert.equal();
 	});
@@ -1241,7 +1243,10 @@ var FrameType = library.FrameType;
 		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
 		var done = assert.async();
 		this.applyTheme("sap_horizon", function() {
+			var slideTileDomRef = this.oSlideTile.getDomRef();
+			if (this.oSlideTile && slideTileDomRef && slideTileDomRef.classList && slideTileDomRef.classList.contains("sapMST")){
 			assert.equal(getComputedStyle(document.querySelector(".sapMST")).overflow,"hidden","Overflow property should be set as hidden");
+			}
 			done();
 		});
 	});
