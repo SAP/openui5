@@ -1830,8 +1830,7 @@ html[dir="rtl"] .sapUiDemoKitTreeItemIcon {
 	border-radius: 0.125rem;
 }
 
-.sapUiTheme-sap_fiori_3.sapUiMedia-Std-Phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect,
-.sap-phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect {
+.sapUiTheme-sap_fiori_3.sapUiMedia-Std-Phone .sapTntToolHeader .sapMSlt.sapUiDocumentationSelect {
 	height: 2.75rem;
 }
 
@@ -1851,19 +1850,6 @@ html[dir="rtl"] .sapUiDemoKitTreeItemIcon {
 .sapUiDemokit .sapUiHomePage .sapMTitleStyleH1,
 .sapUiDemokit .sapUiDemoApps .sapMTitleStyleH1 {
 	font-size: 1.625rem;
-}
-
-html.sap-desktop .sapMFocus > .sapMSFF::before {
-	border: 0.125rem solid #0070f2 !important;
-	position: absolute;
-	content: " ";
-	top: 0;
-	right: 0;
-	left: 0;
-	bottom: 0;
-	border-radius: inherit;
-	z-index: 2;
-	pointer-events: none;
 }
 
 .surveyPopoverTitle {
