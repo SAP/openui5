@@ -1305,8 +1305,7 @@ sap.ui.define([
 				},
 				textResources: this._getTextResources(),
 				restore: this.restore.bind(this),
-				exit: this.stop.bind(this, false, bUserLayer),
-				save: saveOnly.bind(this)
+				exit: this.stop.bind(this, false, bUserLayer)
 			};
 
 			if (!bUserLayer) {
@@ -1322,6 +1321,7 @@ sap.ui.define([
 				oProperties.openChangeCategorySelectionPopover = this.getChangeVisualization
 					? this.getChangeVisualization().openChangeCategorySelectionPopover.bind(this.getChangeVisualization())
 					: function() {};
+				oProperties.save = saveOnly.bind(this);
 			}
 
 			var oToolbar;
