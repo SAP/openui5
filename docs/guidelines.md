@@ -233,7 +233,7 @@ UI5 Control Development Guidelines
 -   Produce clean, semantic HTML5, as compact as reasonably possible
 -   Each control instance must have exactly one root HTML element and can have any HTML element structure below that
 -   Unknown strings (e.g. values coming from string properties) need to be escaped before writing to HTML (to avoid security risks via XSS attacks)
-    -   Use `RenderManager.writeEscaped(...)` or `jQuery.sap.encodeHTML(...)`
+    -   Use `RenderManager.text(...)`
 -   Container controls (like Panel, Page, as opposed to layout controls) with a generic "content" aggregation should render the children all directly next to each other with no additional HTML or layout applied
 -   When images are needed, use the Icon Pool
 -   Provide a sufficiently large touch area for interaction on touch devices (usually 3rem/48px)
@@ -241,8 +241,7 @@ UI5 Control Development Guidelines
 -   The HTML should adhere to the basic XHTML rules; close all tags, enclose attribute values in quotes and do not use empty attributes without value
 -   Avoid &lt;table&gt;-based layouts when there is no logical table
     -   If a table is used for layout, try to use `display:table` or even `table-layout:fixed` tables
--   `RenderManager.writeControlData()` must be called in the root HTML element of the control (to make events work)
--   `RenderManager.writeClasses()` must be called in the root HTML element of a control (otherwise `addStyleClass` does not work), but does *not* need to be used in sub-elements
+-   The root HTML element of the control must be rendered with `RenderManager.openStart()` or  `RenderManager.voidStart()` calls and the control instance must be provided as a second parameter of this APIs.
 
 ### Themes/CSS
 
