@@ -17,7 +17,8 @@ sap.ui.define(["sap/ui/core/Configuration"], function (Configuration) {
 		var sTitle, bTitleVisible,
 			bAccessibilityOn = Configuration.getAccessibility(),
 			oLabelledBy = oControl.getAggregation("ariaLabelledBy"),
-			oHeading = oControl.getHeading();
+			oHeading = oControl.getHeading(),
+			bWrapTitle = oControl.getWrapTitle();
 
 		if (!oControl.getVisible() || !oControl._getInternalVisible()) {
 			return;
@@ -31,6 +32,10 @@ sap.ui.define(["sap/ui/core/Configuration"], function (Configuration) {
 
 		if (!bTitleVisible) {
 			oRm.class("sapUxAPObjectPageSectionNoTitle");
+		}
+
+		if (bWrapTitle) {
+			oRm.class("sapUxAPObjectPageSectionWrapTitle");
 		}
 
 		oRm.attr("role", "region");
