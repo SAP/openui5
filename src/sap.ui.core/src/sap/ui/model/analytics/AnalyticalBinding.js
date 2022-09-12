@@ -3368,6 +3368,8 @@ sap.ui.define([
 					oLogger.fatal("assertion failed: failed to determine position of " + oGroupMembersRequestDetails.sGroupId + " in group " + sParentGroupId);
 				} else if (!iPositionInParentGroup) {
 					that.mFinalLength[oRequestDetails.sGroupId_Missing_AtLevel] = true;
+					// iStartIndex must be reset to 0, because a new group starts
+					oGroupMembersRequestDetails.iStartIndex = 0;
 				} else if (that._getKey(sParentGroupId, iPositionInParentGroup - 1) !== undefined) {
 					var sPreviousGroupMemberKey = that._getKey(sParentGroupId, iPositionInParentGroup - 1);
 					var sPreviousGroupId = that._getGroupIdFromContext(that.oModel.getContext('/' + sPreviousGroupMemberKey),

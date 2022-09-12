@@ -1363,7 +1363,7 @@ sap.ui.define([
 			}
 			// ensure that these properties are defined (required for deepEqual)
 			if (vRequest.deepPath === undefined) {
-				vRequest.deepPath = "/" + vRequest.requestUri
+				vRequest.deepPath = "/" + vRequest.requestUri.split("?")[0]
 					+ (vRequest.created ? "('~key~')" : "");
 			}
 			vRequest.headers = vRequest.headers || {};
@@ -7787,6 +7787,242 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			// code under test: gap in front of start index
 			oTable.setFirstVisibleRow(94);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A user scrolls in an AnalyticalTable. Further data needs to be requested. The first
+	// entry of a response for a level request belongs to a different node than the watermark node.
+	// The response has to be inserted at the right position, no empty rows for missing data are
+	// displayed. To reproduce the issue we need at least 3 expanded levels and the watermark has to
+	// be on the second level after initial data load.
+	// BCP: 2280169612
+	QUnit.test("AnalyticalBinding: Second chunk of data is properly inserted even if first entry"
+			+ " does not belong to the watermark node", function (assert) {
+		var oBinding, oTable,
+			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
+			sView = '\
+<t:AnalyticalTable id="table" threshold="6" visibleRowCount="4">\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode"/>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="Customer" template="Customer"/>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="AccountingDocument"\
+		template="AccountingDocument"/>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="AccountingDocumentItem"\
+		template="AccountingDocumentItem"/>\
+	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
+		template="AmountInCompanyCodeCurrency"/>\
+</t:AnalyticalTable>',
+			that = this;
+
+		// generate a data object with the given partially optional dimension values
+		function getItem(sCompanyCode, sCustomer, sAccountingDocument, sAccountingDocumentItem) {
+			var oResult = {
+					__metadata : {
+						uri : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items("
+							+ sCompanyCode
+							+ (sCustomer ? "," + sCustomer : "")
+							+ (sAccountingDocument ? "," + sAccountingDocument : "")
+							+ (sAccountingDocumentItem ? "," + sAccountingDocumentItem : "")
+							+ ")"
+					},
+					CompanyCode : sCompanyCode,
+					AmountInCompanyCodeCurrency : "1",
+					Currency : "USD"
+				};
+
+			if (sCustomer) {
+				oResult.Customer = sCustomer;
+			}
+			if (sAccountingDocument) {
+				oResult.AccountingDocument = sAccountingDocument;
+			}
+			if (sAccountingDocumentItem) {
+				oResult.AccountingDocumentItem = sAccountingDocumentItem;
+			}
+
+			return oResult;
+		}
+
+		// extracts the texts contained in the table as a 2 dimensional array
+		function getVisibleData() {
+			return oTable.getRows().map(function(oRow) {
+				return oRow.getCells().map(function (oCell) {
+					return oCell.getText();
+				});
+			});
+		}
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectHeadRequest()
+				.expectRequest({ // count request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AccountingDocument,AccountingDocumentItem"
+						+ "&$top=0&$inlinecount=allpages"
+				}, {__count : "140", results : []})
+				// for simplicity the character of the dimension value defines the level and the
+				// number the poisition within that level
+				.expectRequest({ // first level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+					+ "$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
+					+ "&$orderby=CompanyCode%20asc&$top=3"
+				}, {
+					results : [getItem("A0"), getItem("A1"), getItem("A2")]
+				})
+				.expectRequest({ // second level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20asc,Customer%20asc&$top=3"
+				}, {
+					results : [getItem("A0", "B0"), getItem("A1", "B0"), getItem("A2", "B0")]
+				})
+				.expectRequest({ // third level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AccountingDocument,"
+							+ "AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20asc,Customer%20asc,AccountingDocument%20asc"
+						+ "&$top=4"
+				}, {
+					results : [
+						getItem("A0", "B0", "C0"),
+						getItem("A0", "B0", "C1"),
+						getItem("A1", "B0", "C0"),
+						getItem("A1", "B0", "C1")
+					]
+				})
+				.expectRequest({ // leaf request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AccountingDocument,AccountingDocumentItem,"
+							+ "AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20asc,Customer%20asc,AccountingDocument%20asc"
+							+ "&$top=6"
+				}, {
+					results : [
+						getItem("A0", "B0", "C0", "D0"),
+						getItem("A0", "B0", "C1", "D0"),
+						getItem("A1", "B0", "C0", "D0"),
+						getItem("A1", "B0", "C1", "D0"),
+						getItem("A2", "B0", "C0", "D0"),
+						getItem("A2", "B0", "C1", "D0")
+					]
+				});
+
+			// bind it lately otherwise table resets numberOfExpandedLevels to 0
+			oTable.bindRows({
+				path : "/Items",
+				parameters : {
+					numberOfExpandedLevels : 3,
+					provideGrandTotals : false,
+					useBatchRequests : true
+				}
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(getVisibleData(), [
+				["A0", "", "", "", "1"],
+				["A0", "B0", "", "", "1"],
+				["A0", "B0", "C0", "", "1"],
+				["A0", "B0", "C0", "D0", "1"]
+			]);
+
+			oBinding = oTable.getBinding("rows");
+			assert.strictEqual(oBinding._oWatermark.groupID, "/A1/B0/");
+			assert.strictEqual(oBinding._oWatermark.startIndex, 2);
+
+			that.expectRequest({ // first level request
+				encodeRequestUri : false,
+				requestUri : "Items?"
+				+ "$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
+				+ "&$filter=((((CompanyCode%20gt%20%27A1%27))))&$orderby=CompanyCode%20asc&$top=3"
+			}, {
+				results : [getItem("A2"), getItem("A3"), getItem("A4")]
+			})
+			.expectRequest({ // second level request
+				encodeRequestUri : false,
+				requestUri : "Items?"
+					+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency"
+					+ "&$filter=((((CompanyCode%20gt%20%27A1%27))"
+						+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
+							+ "%20and%20(Customer%20gt%20%27B0%27))))"
+					+ "&$orderby=CompanyCode%20asc,Customer%20asc&$top=3"
+			}, {
+				results : [getItem("A2", "B0"), getItem("A3", "B0"), getItem("A4", "B0")]
+			})
+			.expectRequest({ // third level request
+				encodeRequestUri : false,
+				requestUri : "Items?"
+					+ "$select=CompanyCode,Customer,AccountingDocument,"
+						+ "AmountInCompanyCodeCurrency,Currency"
+					+ "&$filter=((((CompanyCode%20gt%20%27A1%27))"
+						+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
+							+ "%20and%20(Customer%20gt%20%27B0%27))"
+						+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
+							+ "%20and%20(Customer%20eq%20%27B0%27)"
+							+ "%20and%20(AccountingDocument%20gt%20%27C1%27))))"
+					+ "&$orderby=CompanyCode%20asc,Customer%20asc,AccountingDocument%20asc&$top=4"
+			}, {
+				results : [
+					getItem("A2", "B0", "C0"),
+					getItem("A3", "B0", "C1"),
+					getItem("A4", "B0", "C0"),
+					getItem("A5", "B0", "C1")
+				]
+			})
+			.expectRequest({ // leaf request
+				encodeRequestUri : false,
+				requestUri : "Items?"
+					+ "$select=CompanyCode,Customer,AccountingDocument,AccountingDocumentItem,"
+						+ "AmountInCompanyCodeCurrency,Currency"
+					+ "&$filter=((((CompanyCode%20gt%20%27A1%27))"
+						+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
+							+ "%20and%20(Customer%20gt%20%27B0%27))"
+						+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
+							+ "%20and%20(Customer%20eq%20%27B0%27)"
+							+ "%20and%20(AccountingDocument%20gt%20%27C1%27))))"
+					+ "&$orderby=CompanyCode%20asc,Customer%20asc,AccountingDocument%20asc&$top=6"
+			}, {
+				results : [
+					getItem("A2", "B0", "C0", "D0"),
+					getItem("A2", "B0", "C1", "D0"),
+					getItem("A3", "B0", "C0", "D0"),
+					getItem("A3", "B0", "C1", "D0"),
+					getItem("A4", "B0", "C0", "D0"),
+					getItem("A4", "B0", "C1", "D0")
+				]
+			});
+
+			// code under test - scroll to load next chunk of data (based on the watermark)
+			oTable.setFirstVisibleRow(4);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(getVisibleData(), [
+				["A0", "B0", "C1", "", "1"],
+				["A0", "B0", "C1", "D0", "1"],
+				["A1", "", "", "", "1"],
+				["A1", "B0", "", "", "1"]
+			]);
+
+			// code under test - scroll to see first entry after the former watermark node
+			oTable.setFirstVisibleRow(11);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(getVisibleData(), [
+				["A1", "B0", "C1", "D0", "1"],
+				["A2", "", "", "", "1"],
+				["A2", "B0", "", "", "1"],
+				["A2", "B0", "C0", "", "1"] // must not be an empty row as in BCP 2280169612
+			]);
 
 			return that.waitForChanges(assert);
 		});
