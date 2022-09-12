@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Locale",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel"
-], function(FormatHelper, deepEqual, JSTokenizer, DateFormat, Locale, Controller, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/date/CalendarWeekNumbering"
+], function(FormatHelper, deepEqual, JSTokenizer, DateFormat, Locale, Controller, JSONModel, CalendarWeekNumbering) {
 	"use strict";
 
 	return Controller.extend("DateFormat", {
@@ -78,6 +79,11 @@ sap.ui.define([
 					showTimezone: {
 						type: "boolean",
 						help: "Show Timezone part"
+					},
+					calendarWeekNumbering: {
+						type: "enum",
+						values: Object.values(CalendarWeekNumbering),
+						help: "Allowed values are \"Default\", \"ISO_8601\", \"MiddleEastern\" and \"WesternTraditional\""
 					},
 					firstDayOfWeek: {
 						type: "int",

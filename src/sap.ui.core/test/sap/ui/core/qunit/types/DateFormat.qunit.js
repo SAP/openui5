@@ -1,12 +1,13 @@
 /*global QUnit, sinon */
 sap.ui.define([
-		"sap/base/util/extend",
-		"sap/ui/core/format/DateFormat",
-		"sap/ui/core/Locale",
-		"sap/ui/core/LocaleData",
-		"sap/ui/core/date/UniversalDate",
-		"sap/ui/core/library"],
-	function (extend, DateFormat, Locale, LocaleData, UniversalDate, library) {
+	"sap/base/util/extend",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/Locale",
+	"sap/ui/core/LocaleData",
+	"sap/ui/core/date/UniversalDate",
+	"sap/ui/core/library",
+	"sap/ui/core/date/CalendarWeekNumbering"
+], function (extend, DateFormat, Locale, LocaleData, UniversalDate, library, CalendarWeekNumbering) {
 		"use strict";
 
 		// shortcut for sap.ui.core.CalendarType
@@ -1913,22 +1914,6 @@ sap.ui.define([
 			assert.equal(oDateFormat.format(new Date(2022, 0, 1)), "2022-1", "For 1st of January 2022 is week 1/2022");
 			assert.equal(oDateFormat.format(new Date(2021, 11, 31)), "2022-1", "For 1st of January 2022 is week 1/2022");
 
-			assert.throws(function() {
-				DateFormat.getDateInstance({
-					pattern: "Y-w",
-					minimalDaysInFirstWeek: 4
-				});
-			}, new Error("Format options firstDayOfWeek and minimalDaysInFirstWeek need both to be set, but only one was provided."),
-				"only minimalDaysInFirstWeek is provided without firstDayOfWeek");
-			assert.throws(function() {
-				DateFormat.getDateInstance({
-					pattern: "Y-w",
-					firstDayOfWeek: 1
-				});
-			}, new Error("Format options firstDayOfWeek and minimalDaysInFirstWeek need both to be set, but only one was provided."),
-				"only firstDayOfWeek is provided without minimalDaysInFirstWeek");
-
-
 			sap.ui.getCore().getConfiguration().setLanguage("en_US");
 		});
 
@@ -2079,6 +2064,107 @@ sap.ui.define([
 			assert.equal(oInfo.locale, "en-US", "Origin Info: locale");
 			assert.equal(oInfo.style, "medium", "Origin Info: style");
 			assert.equal(oInfo.pattern, "MMM d, y", "Origin Info: pattern");
+		});
+
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		QUnit.module("Calendar Week precedence", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setLanguage("de_DE"); // ISO 8601
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			}
+		});
+
+		QUnit.test("invalid calendar week configuration", function (assert) {
+			assert.throws(function() {
+				DateFormat.getDateInstance({
+					calendarWeekNumbering: "DoesNotExist"
+				});
+			}, new TypeError("Illegal format option calendarWeekNumbering: 'DoesNotExist'"));
+
+			assert.throws(function() {
+					DateFormat.getDateInstance({
+						minimalDaysInFirstWeek: 4
+					});
+				}, new TypeError("Format options firstDayOfWeek and minimalDaysInFirstWeek need both to be set, but only one was provided."),
+				"only minimalDaysInFirstWeek is provided without firstDayOfWeek");
+			assert.throws(function() {
+					DateFormat.getDateInstance({
+						firstDayOfWeek: 1
+					});
+				}, new TypeError("Format options firstDayOfWeek and minimalDaysInFirstWeek need both to be set, but only one was provided."),
+				"only firstDayOfWeek is provided without minimalDaysInFirstWeek");
+		});
+
+		QUnit.test("calendar week configuration precedence 2021", function (assert) {
+			// Fri Jan 01 2021
+			// firstDay: 4
+			// minDays: 1
+			var oDate = new Date("2021-01-01T00:00:00Z");
+			var oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w"
+			});
+			assert.equal(oDateFormat.format(oDate), "2020-53", "2020-53");
+
+			// Default to locale
+			oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w",
+				calendarWeekNumbering: CalendarWeekNumbering.Default
+			});
+			assert.equal(oDateFormat.format(oDate), "2020-53", "2020-53");
+
+			// instance > locale
+			oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w",
+				firstDayOfWeek: 0,
+				minimalDaysInFirstWeek: 1
+			});
+			assert.equal(oDateFormat.format(oDate), "2021-1", "2021-1");
+
+			// instance > instance deprecated
+			oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w",
+				firstDayOfWeek: 0,
+				minimalDaysInFirstWeek: 1,
+				calendarWeekNumbering: CalendarWeekNumbering.ISO_8601
+			});
+			assert.equal(oDateFormat.format(oDate), "2020-53", "2020-53");
+		});
+
+		QUnit.test("calendar week configuration precedence 2022", function (assert) {
+			// Sat Jan 01 2022
+			// firstDay: 4
+			// minDays: 1
+			var oDate = new Date("2022-01-01T00:00:00Z");
+			var oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w"
+			});
+			assert.equal(oDateFormat.format(oDate), "2021-52", "2021-52");
+
+			// Default to locale
+			oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w",
+				calendarWeekNumbering: CalendarWeekNumbering.Default
+			});
+			assert.equal(oDateFormat.format(oDate), "2021-52", "2021-52");
+
+			// instance > locale
+			oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w",
+				firstDayOfWeek: 0,
+				minimalDaysInFirstWeek: 1
+			});
+			assert.equal(oDateFormat.format(oDate), "2022-1", "2022-1");
+
+			// instance > instance deprecated
+			oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w",
+				firstDayOfWeek: 0,
+				minimalDaysInFirstWeek: 1,
+				calendarWeekNumbering: CalendarWeekNumbering.ISO_8601
+			});
+			assert.equal(oDateFormat.format(oDate), "2021-52", "2021-52");
 		});
 
 		QUnit.module("Scaling: Relative Time Formatter", {
