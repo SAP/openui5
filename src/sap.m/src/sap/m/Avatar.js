@@ -60,8 +60,8 @@ sap.ui.define([
 	 *
 	 * <h3>Usage</h3>
 	 *
-	 * Up to two Latin letters can be displayed as initials in an <code>Avatar</code>. If there
-	 * are more than two letters, or if there's a non-Latin character present, a default image
+	 * Up to three Latin letters can be displayed as initials in an <code>Avatar</code>. If there
+	 * are more than three letters, or if there's a non-Latin character present, a default image
 	 * placeholder will be created.
 	 *
 	 * There are two options for how the displayed image can fit inside the
@@ -95,7 +95,7 @@ sap.ui.define([
 				 */
 				src: {type: "sap.ui.core.URI", group: "Data", defaultValue: null},
 				/**
-				 * Defines the displayed initials.
+				 * Defines the displayed initials. They should consist of only 1,2 or 3 latin letters.
 				 */
 				initials: {type: "string", group: "Data", defaultValue: null},
 				/**
@@ -270,6 +270,10 @@ sap.ui.define([
 
 		//Reference to badge hidden aggregation
 		this._badgeRef = null;
+};
+
+	Avatar.prototype.onAfterRendering = function() {
+		this._checkInitialsHolderWidth();
 	};
 
 	Avatar.prototype.exit = function () {
@@ -421,10 +425,10 @@ sap.ui.define([
 	 * @returns {boolean} The initials are valid or not
 	 * @private
 	 */
-	Avatar.prototype._areInitialsValid = function (sInitials) {
-		var validInitials = /^[a-zA-Z]{1,2}$/;
+	 Avatar.prototype._areInitialsValid = function (sInitials) {
+		var validInitials = /^[a-zA-Z]{1,3}$/;
 		if (!validInitials.test(sInitials)) {
-			Log.warning("Initials should consist of only 1 or 2 latin letters", this);
+			Log.warning("Initials should consist of only 1,2 or 3 latin letters", this);
 			this._sActualType = AvatarType.Icon;
 			this._bIsDefaultIcon = true;
 			return false;
@@ -668,6 +672,38 @@ sap.ui.define([
 		}
 
 		return sBackground;
+	};
+
+	// Checks the scrollWidth of the initials holder inside the control.
+	// This is related with the initials property and the case where there are 3 letter initials,
+	// which width is bigger than the initials holder`s width.
+
+	Avatar.prototype._checkInitialsHolderWidth = function() {
+		var $this = this.$(),
+			iAvatarWidth = $this[0].scrollWidth;
+		this.$oInitialsHolder = $this.children(".sapFAvatarInitialsHolder");
+
+		if (this.$oInitialsHolder.length !== 0 ) {
+			this.iInitialsHolderWidth = this.$oInitialsHolder[0].scrollWidth;
+
+			if (this.iInitialsHolderWidth >= iAvatarWidth) {
+				this._wideInitialsIcon();
+			}
+		}
+	};
+
+	// In case when there are 3 initials set to the avatar and they are overflowing,
+	// we want to show icon inatead of the initials.
+
+	Avatar.prototype._wideInitialsIcon = function() {
+		var $this = this.$(),
+			$oHiddenIcon = 	$this.children(".sapFAvatarHiddenIcon");
+
+		$oHiddenIcon.removeClass("sapFAvatarHiddenIcon");
+		this.$oInitialsHolder.css("display", "none");
+
+		$this.removeClass("sapFAvatarInitials");
+		$this.addClass("sapFAvatarIcon");
 	};
 
 	return Avatar;

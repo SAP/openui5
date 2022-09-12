@@ -77,6 +77,15 @@
 							text="Placeholder background"
 							class="sapUiSmallMarginTop"/>
 				</VBox>
+				<VBox alignItems="Center">
+					<Avatar
+							displaySize="XL"
+							press="onPress"
+							initials="ABC"/>
+					<Text
+							text="Circular avatar with 3 letter initials"
+							class="sapUiSmallMarginTop"/>
+				</VBox>
 			</l:content>
 		</l:Grid>
 		<Text

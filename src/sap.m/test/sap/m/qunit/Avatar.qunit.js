@@ -253,8 +253,8 @@ sap.ui.define([
 		assert.ok($oAvatar.hasClass("sapFAvatarInitials"), sPreAvatarType + "Initials");
 	});
 
-	QUnit.test("Avatar with initials consisting of three letters", function (assert) {
-		this.oAvatar.setInitials("SRL");
+	QUnit.test("Avatar with initials consisting of four letters", function (assert) {
+		this.oAvatar.setInitials("SRLA");
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
@@ -275,6 +275,14 @@ sap.ui.define([
 
 		var $oAvatar = this.oAvatar.$();
 		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), sDefaultIconRendered);
+	});
+
+	QUnit.test("Avatar with three overflowing initials", function (assert) {
+		this.oAvatar.setInitials("WWW");
+		oCore.applyChanges();
+
+		var $oAvatar = this.oAvatar.$();
+		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), "When initials inside sap.m.Avatar are overflwing, default icon should be shown.");
 	});
 
 	QUnit.module("Rendering different fit types", {
