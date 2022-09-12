@@ -52,23 +52,35 @@
 
 		var SyncedControl = Control.extend("sap.ui.table.test.SyncedControl", /** @lends sap.ui.table.test.SyncedControl.prototype */ {
 			renderer: function(oRm, oControl) {
-				oRm.write("<div style='height: 0;'"); // height=0 allows shrinking in VisibleRowCountMode=Auto
-				oRm.writeControlData(oControl);
-				oRm.write(">");
-				oRm.write("<div style='display: flex;'>");
-				oRm.write("<div style='display: flex; flex-direction: column; overflow: hidden;'>");
-				oRm.write("<div id='table' style='overflow: hidden'>");
-				oRm.write("<div id='table-header' style='width: 1000px; height:" + (oControl.state.layout.top + oControl.state.layout.headerHeight)
-						  + "px; background-color: #e8e8e8; border-bottom: 1px solid lightgray;'>head</div>");
-				oRm.write("<div id='table-content' style='width: 1000px; height:" + oControl.state.layout.contentHeight
-						  + "px; overflow: hidden;'></div>");
-				oRm.write("</div>");
-				oRm.write("<div id='table-hsb-container'></div>");
-				oRm.write("</div>");
-				oRm.write("<div id='table-vsb-container' style='margin-top:" + (oControl.state.layout.top + oControl.state.layout.headerHeight)
-						  + "px;'></div>");
-				oRm.write("</div>");
-				oRm.write("</div>");
+				oRm.openStart("div", oControl);
+				oRm.style("height", "0"); // height=0 allows shrinking in VisibleRowCountMode=Auto
+				oRm.openEnd();
+					oRm.openStart("div").style("display", "flex").openEnd();
+						oRm.openStart("div").style("display", "flex").style("flex-direction", "column").style("overflow", "hidden").openEnd();
+							oRm.openStart("div", "table").style("overflow", "hidden").openEnd()
+								oRm.openStart("div", "table-header")
+									.style("width", "1000px")
+									.style("height", (oControl.state.layout.top + oControl.state.layout.headerHeight) + "px")
+									.style("background-color", "#e8e8e8")
+									.style("border-bottom", "1px solid lightgray")
+									.openEnd()
+									.text("head")
+									.close("div");
+								oRm.openStart("div", "table-content")
+									.style("width", "1000px")
+									.style("height", oControl.state.layout.contentHeight + "px")
+									.style("overflow", "hidden")
+									.openEnd()
+									.close("div");
+							oRm.close("div");
+							oRm.openStart("div", "table-hsb-container").openEnd().close("div");
+						oRm.close("div");
+						oRm.openStart("div", "table-vsb-container")
+							.style("margin-top", (oControl.state.layout.top + oControl.state.layout.headerHeight) + "px")
+							.openEnd()
+							.close("div");
+					oRm.close("div");
+				oRm.close("div");
 			},
 			init: function() {
 				this.oSyncInterface = null;
