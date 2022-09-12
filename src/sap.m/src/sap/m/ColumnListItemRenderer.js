@@ -254,9 +254,6 @@ sap.ui.define([
 	 * @param {sap.m.Table} oTable Table control
 	 */
 	ColumnListItemRenderer.renderPopin = function(rm, oLI, oTable) {
-		// remove existing popin first
-		oLI.removePopin();
-
 		// popin row
 		rm.openStart("tr", oLI.getPopin());
 		rm.class("sapMListTblSubRow");
