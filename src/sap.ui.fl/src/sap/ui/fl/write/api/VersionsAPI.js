@@ -240,9 +240,11 @@ sap.ui.define([
 		}).then(function(oDiscardInfo) {
 			if (oDiscardInfo.backendChangesDiscarded) {
 				//invalidate flexState to trigger getFlexData for the current active version after discard
-				FlexState.clearAndInitialize({
+				return FlexState.clearAndInitialize({
 					componentId: oAppComponent.getId(),
 					reference: sReference
+				}).then(function () {
+					return oDiscardInfo;
 				});
 			}
 			return oDiscardInfo;
