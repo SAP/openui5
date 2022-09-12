@@ -1315,7 +1315,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("continues the processing if an error occurs during change applying", function(assert) {
-			var oChange2 = new Change(getLabelChangeContent("fileName", "labelId"));
+			var oChange2 = new Change(getLabelChangeContent("fileName", "hbox"));
 			this.oApplyChangeOnControlStub.resolves({success: false});
 
 			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [this.oChange, oChange2]).then(function() {
@@ -1363,9 +1363,66 @@ sap.ui.define([
 
 			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [oChange1, oChange2, oChange3]).then(function() {
 				assert.equal(this.oApplyChangeOnControlStub.callCount, 3, "the change handler was called 3 times");
-				assert.equal(this.oApplyChangeOnControlStub.firstCall.args[0].getId(), "a", "the first change was aplied first");
+				assert.equal(this.oApplyChangeOnControlStub.firstCall.args[0].getId(), "a", "the first change was applied first");
 				assert.equal(this.oApplyChangeOnControlStub.secondCall.args[0].getId(), "a2", "the second change was applied second");
 				assert.equal(this.oApplyChangeOnControlStub.thirdCall.args[0].getId(), "a3", "the third change was applied third");
+			}.bind(this));
+		});
+
+		QUnit.test("stops processing a selector if a change failed", function(assert) {
+			var oChange1 = new Change(getLabelChangeContent("a", "labelId"));
+			var oChange2 = new Change(getLabelChangeContent("a2", "labelId"));
+			var oChange3 = new Change(getLabelChangeContent("a3", "labelId"));
+			var oChange11 = new Change(getLabelChangeContent("a", "labelId"));
+			var oChange22 = new Change(getLabelChangeContent("a2", "labelId"));
+			var oChange33 = new Change(getLabelChangeContent("a3", "labelId"));
+
+			this.oApplyChangeOnControlStub
+				.onCall(0).resolves({success: true})
+				.onCall(1).rejects("error")
+				.onCall(2).resolves({success: true});
+
+			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [oChange1, oChange2, oChange3]).then(function() {
+				assert.notOk(this.mPropertyBag.failedSelectors, "the failedSelectors were removed from the propertyBag");
+				assert.strictEqual(this.oApplyChangeOnControlStub.callCount, 2, "the change handler was called 2 times");
+				assert.strictEqual(this.oApplyChangeOnControlStub.firstCall.args[0].getId(), "a", "the first change was applied first");
+				assert.strictEqual(this.oApplyChangeOnControlStub.secondCall.args[0].getId(), "a2", "the second change was applied second");
+
+				assert.strictEqual(this.oWarningStub.callCount, 2, "two warnings were logged");
+
+				this.oApplyChangeOnControlStub.reset();
+				this.oApplyChangeOnControlStub.resolves({success: true});
+
+				return Applier.applyAllChangesForXMLView(this.mPropertyBag, [oChange11, oChange22, oChange33]);
+			}.bind(this))
+			.then(function() {
+				assert.strictEqual(this.oApplyChangeOnControlStub.callCount, 3, "the change handler was called 3 more times");
+			}.bind(this));
+		});
+
+		QUnit.test("stops processing a selector if a change with a dependent selector failed", function(assert) {
+			var oChangeDef = getLabelChangeContent("a", "hbox");
+			oChangeDef.dependentSelector = {
+				myAlias: {
+					id: "labelId",
+					idIsLocal: false
+				}
+			};
+			var oChange1 = new Change(oChangeDef);
+			var oChange2 = new Change(getLabelChangeContent("a2", "labelId"));
+			var oChange3 = new Change(getLabelChangeContent("a3", "labelId"));
+
+			this.oApplyChangeOnControlStub
+				.onCall(0).rejects("error")
+				.onCall(1).resolves({success: true})
+				.onCall(2).resolves({success: true});
+
+			return Applier.applyAllChangesForXMLView(this.mPropertyBag, [oChange1, oChange2, oChange3]).then(function() {
+				assert.notOk(this.mPropertyBag.failedSelectors, "the failedSelectors were removed from the propertyBag");
+				assert.strictEqual(this.oApplyChangeOnControlStub.callCount, 1, "the change handler was called once");
+				assert.strictEqual(this.oApplyChangeOnControlStub.firstCall.args[0].getId(), "a", "the first change was applied first");
+
+				assert.strictEqual(this.oWarningStub.callCount, 3, "three warnings were logged");
 			}.bind(this));
 		});
 	});
@@ -1391,7 +1448,7 @@ sap.ui.define([
 					'<Label id="label2" />' +
 				'</mvc:View>';
 			var oView = new DOMParser().parseFromString(oXmlString, "application/xml").documentElement;
-			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl");
+			this.oApplyChangeOnControlStub = sandbox.stub(Applier, "applyChangeOnControl").resolves({success: true});
 			this.mPropertyBag = {
 				modifier: XmlTreeModifier,
 				view: oView
