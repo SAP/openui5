@@ -301,11 +301,9 @@ sap.ui.define([
 					appComponent: this.oAppComponent
 				}
 			);
-
+			sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves();
 			this.sDefaultStatus = sDefaultStatus;
-
 			this.oGetUShellServiceStub = sandbox.stub(this.oModel, "getUShellService");
-
 			this.oGetUShellServiceStub.withArgs("URLParsing").returns({
 				parseShellHash: function(oHashParams) {
 					return {
@@ -313,7 +311,6 @@ sap.ui.define([
 					};
 				}
 			});
-
 			this.oGetUShellServiceStub.withArgs("ShellNavigation").returns({
 				NavigationFilterStatus: {
 					Continue: sDefaultStatus

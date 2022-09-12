@@ -1418,6 +1418,17 @@ sap.ui.define([
 		}
 
 		this.oData[sVariantManagementReference].init = true;
+
+		// the initial changes are not applied via a variant switch
+		// to enable early variant switches to work properly they need to wait for the initial changes
+		// so the initial changes are set as a variant switch
+		var mParameters = {
+			appComponent: this.oAppComponent,
+			reference: this.sFlexReference,
+			vmReference: sVariantManagementReference,
+			flexController: this.oFlexController
+		};
+		this._oVariantSwitchPromise = this._oVariantSwitchPromise.then(VariantManagementState.waitForInitialVariantChanges.bind(undefined, mParameters));
 	};
 
 	VariantModel.prototype.waitForVMControlInit = function(sVMReference) {
