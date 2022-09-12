@@ -4160,4 +4160,39 @@ sap.ui.define([
 
 		oVSD.destroy();
 	});
+
+	QUnit.module("Misc");
+
+	QUnit.test("getSelectedFilterString() output for selected items with empty text", function (assert) {
+
+		var oVSD = new ViewSettingsDialog({
+				filterItems: [
+					new sap.m.ViewSettingsFilterItem({
+						text: "Attribute Group",
+						items: [
+							new sap.m.ViewSettingsItem({
+								key:"noEmptyString",
+								text: ""
+							}),
+							new sap.m.ViewSettingsItem({
+								key:"Contacts",
+								text: "Contacts"
+							}),
+							new sap.m.ViewSettingsItem({
+								key:"test",
+								text: "Interactions Rating"
+							})
+						]
+					})
+				]
+			});
+
+		oVSD.getFilterItems()[0].getItems()[0].setSelected(true);
+
+		// check what returns getSelectedFilterString method
+		assert.notEqual(oVSD.getSelectedFilterString(), "", "getSelectedFilterString returns non-empty string: " + oVSD.getSelectedFilterString());
+
+		oVSD.destroy();
+	});
+
 });

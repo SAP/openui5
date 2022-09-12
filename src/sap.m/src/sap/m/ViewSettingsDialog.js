@@ -1442,13 +1442,14 @@ function(
 	 * @return {string} The selected filter string
 	 */
 	ViewSettingsDialog.prototype.getSelectedFilterString = function() {
-		var sFilterString       = "",
+		var sFilterString = "",
 			sSubfilterString,
-			oPresetFilterItem   = this.getSelectedPresetFilterItem(),
-			aFilterItems        = this.getFilterItems(),
+			oPresetFilterItem = this.getSelectedPresetFilterItem(),
+			aFilterItems = this.getFilterItems(),
 			aSubFilterItems,
-			bMultiSelect        = true,
-			i                   = 0,
+			bMultiSelect = true,
+			bSelectedFilters = false,
+			i = 0,
 			j;
 
 		if (oPresetFilterItem) {
@@ -1459,6 +1460,7 @@ function(
 				if (aFilterItems[i] instanceof sap.m.ViewSettingsCustomItem) {
 					// custom filter: add "filter name,"
 					if (aFilterItems[i].getSelected()) {
+						bSelectedFilters = true;
 						sFilterString += aFilterItems[i].getText() + ", ";
 					}
 				} else if (aFilterItems[i] instanceof sap.m.ViewSettingsFilterItem) {
@@ -1469,6 +1471,7 @@ function(
 					sSubfilterString = "";
 					for (j = 0; j < aSubFilterItems.length; j++) {
 						if (aSubFilterItems[j].getSelected()) {
+							bSelectedFilters = true;
 							sSubfilterString += aSubFilterItems[j].getText() + ", ";
 							if (!bMultiSelect) {
 								break; // only first item is added to the selection
@@ -1481,7 +1484,7 @@ function(
 						sSubfilterString.length - 2);
 
 					// add surrounding brackets and comma
-					if (sSubfilterString) {
+					if (bSelectedFilters) {
 						sSubfilterString = " (" + sSubfilterString + ")";
 						sFilterString += aFilterItems[i].getText()
 						+ sSubfilterString + ", ";
@@ -1493,7 +1496,7 @@ function(
 			sFilterString = sFilterString.substring(0, sFilterString.length - 2);
 
 			// add "Filtered by: " text
-			if (sFilterString) {
+			if (bSelectedFilters) {
 				sFilterString = this._rb.getText("VIEWSETTINGS_FILTERTEXT").concat(" " + sFilterString);
 			}
 		}
