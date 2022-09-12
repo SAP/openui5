@@ -1246,7 +1246,6 @@ sap.ui.define([
 	};
 
 	Table.prototype._onFilterSearch = function(oEvent) {
-		this._bIgnoreChange = true;
 		this._bAnnounceTableUpdate = true;
 	};
 	// End: FilterIntegrationMixin hooks
