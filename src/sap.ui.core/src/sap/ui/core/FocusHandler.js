@@ -223,7 +223,12 @@ sap.ui.define([
 				});
 
 				oControl.applyFocusInfo(oEventData.info);
-				oEventData = {};
+
+				// oEventData is given to the event handler as event data, thus we can't assign it with a new empty
+				// object. We need to clear it by deleting all of its own properties
+				Object.keys(oEventData).forEach(function(sKey) {
+					delete oEventData[sKey];
+				});
 			} else {
 				Log.debug("Apply focus info of control " + oInfo.id + " not possible", null, "sap.ui.core.FocusHandler");
 			}

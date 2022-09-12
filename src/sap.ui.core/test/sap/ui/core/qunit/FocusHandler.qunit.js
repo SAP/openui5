@@ -156,6 +156,16 @@ sap.ui.define([
 		assert.ok(oApplyFocusInfoSpy.calledOnce, "Control gets focused");
 		assert.ok(oApplyFocusInfoSpy.getCall(0).args[0].hasOwnProperty("abc"), "The extended information can reach the focused control");
 
+		// trigger the focus info extender again
+		oControls.oControl1.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oSpy.callCount, 2, "focus info extender is called, again");
+		assert.equal(oDomRef, oControls.oControl1.getDomRef(), "DOM element is given to the registered focus info extender");
+
+		assert.equal(oApplyFocusInfoSpy.callCount, 2, "applyFocusInfo is called again");
+		assert.ok(oApplyFocusInfoSpy.getCall(1).args[0].hasOwnProperty("abc"), "The extended information can reach the focused control");
+
 		oSpy.resetHistory();
 		FocusHandler.removeFocusInfoExtender(oSpy);
 
