@@ -33,7 +33,10 @@ sap.ui.define([
 				var oError = oEvent.getParameter("error");
 
 				if (oError) {
-					// Ignore follow-up errors ("...because the previous request failed")
+					if (oError.cause) {
+						// Ignore follow-up errors, take the root cause error
+						oError = oError.cause;
+					}
 					if (!oUIModel.getProperty("/error")) {
 						oUIModel.setProperty("/error", oError.toString());
 						UIComponent.getRouterFor(that).navTo("error", {}, true);

@@ -415,7 +415,11 @@ sap.ui.define([
 	 * is not.
 	 *
 	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
-	 * 'error' event parameter.
+	 * 'error' event parameter.  If multiple requests are processed within a single $batch
+	 * (or even a single change set), the order of 'dataReceived' events is not guaranteed. For
+	 * requests which are not processed because a previous request failed, <code>error.cause</code>
+	 * points to the root cause error - you should either ignore those events, or unwrap the error
+	 * to access the root cause immediately.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {object} oEvent.getParameters()
