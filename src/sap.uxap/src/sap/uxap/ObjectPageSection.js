@@ -65,7 +65,12 @@ sap.ui.define([
 				/**
 				 * Determines whether the Section title is displayed in upper case.
 				 */
-				titleUppercase: {type: "boolean", group: "Appearance", defaultValue: true}
+				titleUppercase: {type: "boolean", group: "Appearance", defaultValue: true},
+
+				/**
+				* Determines whether the Section title wraps on multiple lines, when the available space is not enough.
+				*/
+				wrapTitle: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
 			defaultAggregation: "subSections",
 			aggregations: {
