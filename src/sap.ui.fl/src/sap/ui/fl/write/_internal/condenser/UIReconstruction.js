@@ -211,22 +211,25 @@ sap.ui.define([
 	 * @param {Map} mUIReconstructions - Map of UI reconstructions
 	 */
 	function updateTargetIndex(mReducedChanges, mUIReconstructions) {
-		forEveryMapInMap(mUIReconstructions, function(mUIStates, sContainerId, mUIAggregationState) {
+		function updateCondenserChange(iIndex, oCondenserChange) {
+			oCondenserChange.setTargetIndex(oCondenserChange.change, iIndex);
+		}
+
+		function adjustReconstructionMap(mUIStates, sContainerId, mUIAggregationState) {
 			mUIAggregationState[Utils.TARGET_UI].forEach(function(sTargetElementId, iIndex) {
 				if (!Utils.isUnknown(sTargetElementId)) {
 					var mTypes = mReducedChanges[sTargetElementId];
 					var mSubtypes = mTypes[Utils.INDEX_RELEVANT];
 					each(mSubtypes, function(sSubtypeKey, aCondenserChanges) {
 						if (sSubtypeKey !== CondenserClassification.Destroy) {
-							aCondenserChanges.forEach(function(oCondenserChange) {
-								oCondenserChange.setTargetIndex(oCondenserChange.change, iIndex);
-								oCondenserChange.change.condenserState = "select";
-							});
+							aCondenserChanges.forEach(updateCondenserChange.bind(this, iIndex));
 						}
 					});
 				}
 			});
-		});
+		}
+
+		forEveryMapInMap(mUIReconstructions, adjustReconstructionMap);
 	}
 
 	/**

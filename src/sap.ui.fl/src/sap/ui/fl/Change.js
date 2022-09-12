@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/base/util/restricted/_isEqual"
 ], function (
 	isPlainObject,
 	ManagedObject,
@@ -25,7 +26,8 @@ sap.ui.define([
 	Log,
 	DescriptorChangeTypes,
 	States,
-	includes
+	includes,
+	_isEqual
 ) {
 	"use strict";
 
@@ -449,8 +451,10 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.setContent = function (oContent) {
-		this._oDefinition.content = oContent;
-		this.setState(Change.states.DIRTY);
+		if (!_isEqual(this._oDefinition.content, oContent)) {
+			this._oDefinition.content = oContent;
+			this.setState(Change.states.DIRTY);
+		}
 	};
 
 	/**

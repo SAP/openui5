@@ -119,7 +119,7 @@ sap.ui.define([
 		return Reverter.revertMultipleChanges(aChanges.reverse(), mPropertyBag);
 	}
 
-	function setChangeState(aChanges, aIndicesForChangeState) {
+	function setPersistedState(aChanges, aIndicesForChangeState) {
 		aIndicesForChangeState.forEach(function(iIndex) {
 			aChanges[iIndex].setState(Change.states.PERSISTED);
 		});
@@ -130,12 +130,12 @@ sap.ui.define([
 		return loadChangesFromPath(sPath, assert, iNumberInitialChanges).then(function(aLoadedChanges) {
 			this.aChanges = this.aChanges.concat(aLoadedChanges);
 			aChanges = aLoadedChanges;
-			setChangeState(aChanges, aIndicesForChangeState || []);
+			setPersistedState(aChanges, aIndicesForChangeState || []);
 			return applyChangeSequentially(aChanges);
 		}.bind(this)).then(function() {
 			return Condenser.condense(oAppComponent, aChanges);
 		}).then(function(aRemainingChanges) {
-			assert.equal(aRemainingChanges.length, iExpectedNumberAfterCondense, "Expected number of remaining changes: " + iExpectedNumberAfterCondense);
+			assert.strictEqual(aRemainingChanges.length, iExpectedNumberAfterCondense, "Expected number of remaining changes: " + iExpectedNumberAfterCondense);
 
 			var aDeletedChanges = aChanges.filter(function(oChange) {
 				return !aRemainingChanges.some(function(oRemainingChange) {
@@ -148,7 +148,7 @@ sap.ui.define([
 					iChangesFlaggedDelete++;
 				}
 			});
-			assert.equal(aDeletedChanges.length, iChangesFlaggedDelete, "filtered out changes have state 'delete'");
+			assert.strictEqual(aDeletedChanges.length, iChangesFlaggedDelete, "filtered out changes have state 'delete'");
 
 			var iChangesFlaggedSelectOrUpdate = 0;
 			aRemainingChanges.forEach(function(oRemainingChange) {
@@ -156,7 +156,7 @@ sap.ui.define([
 					iChangesFlaggedSelectOrUpdate++;
 				}
 			});
-			assert.equal(aRemainingChanges.length, iChangesFlaggedSelectOrUpdate, "remaining changes have state 'select' or 'update'");
+			assert.strictEqual(aRemainingChanges.length, iChangesFlaggedSelectOrUpdate, "remaining changes have state 'select' or 'update'");
 
 			return aRemainingChanges;
 		});
@@ -190,9 +190,9 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("multiple rename changes on multiple controls", function(assert) {
 			return loadApplyCondenseChanges.call(this, "renameChanges.json", 9, 3, assert).then(function(aRemainingChanges) {
-				assert.equal(aRemainingChanges[0].getText("fieldLabel"), "Doc Number", "Expected renamed field label: Doc Number");
-				assert.equal(aRemainingChanges[1].getText("fieldLabel"), "Company-Code", "Expected renamed field label: Company-Code");
-				assert.equal(aRemainingChanges[2].getText("fieldLabel"), "Button", "Expected renamed field label: Button");
+				assert.strictEqual(aRemainingChanges[0].getText("fieldLabel"), "Doc Number", "Expected renamed field label: Doc Number");
+				assert.strictEqual(aRemainingChanges[1].getText("fieldLabel"), "Company-Code", "Expected renamed field label: Company-Code");
+				assert.strictEqual(aRemainingChanges[2].getText("fieldLabel"), "Button", "Expected renamed field label: Button");
 			});
 		});
 
@@ -219,7 +219,7 @@ sap.ui.define([
 
 		QUnit.test("multiple hide changes on the same control", function(assert) {
 			return loadApplyCondenseChanges.call(this, "hideChanges.json", 4, 1, assert).then(function(aRemainingChanges) {
-				assert.equal(aRemainingChanges[0].getChangeType(), HIDE_CHANGE_TYPE, sChangeTypeMsg + HIDE_CHANGE_TYPE);
+				assert.strictEqual(aRemainingChanges[0].getChangeType(), HIDE_CHANGE_TYPE, sChangeTypeMsg + HIDE_CHANGE_TYPE);
 			});
 		});
 
@@ -229,7 +229,7 @@ sap.ui.define([
 
 		QUnit.test("multiple reveal changes on the same control", function(assert) {
 			return loadApplyCondenseChanges.call(this, "unhideChanges.json", 4, 1, assert).then(function(aRemainingChanges) {
-				assert.equal(aRemainingChanges[0].getChangeType(), "unhideControl", sChangeTypeMsg + "unhideControl");
+				assert.strictEqual(aRemainingChanges[0].getChangeType(), "unhideControl", sChangeTypeMsg + "unhideControl");
 			});
 		});
 
@@ -243,35 +243,35 @@ sap.ui.define([
 
 		QUnit.test("multiple reveal and hide on the same control - 3", function(assert) {
 			return loadApplyCondenseChanges.call(this, "hideUnhideChanges_3.json", 11, 1, assert).then(function(aRemainingChanges) {
-				assert.equal(aRemainingChanges[0].getChangeType(), HIDE_CHANGE_TYPE, sChangeTypeMsg + HIDE_CHANGE_TYPE);
+				assert.strictEqual(aRemainingChanges[0].getChangeType(), HIDE_CHANGE_TYPE, sChangeTypeMsg + HIDE_CHANGE_TYPE);
 			});
 		});
 
 		QUnit.test("multiple property changes on different controls and properties", function(assert) {
 			return loadApplyCondenseChanges.call(this, "propertyChanges.json", 10, 4, assert).then(function(aRemainingChanges) {
-				assert.equal(aRemainingChanges[0].getChangeType(), PROPERTY_CHANGE_TYPE, sChangeTypeMsg + PROPERTY_CHANGE_TYPE);
-				assert.equal(aRemainingChanges[0].getContent().property, "useHorizontalLayout", sPropertyMsg + "useHorizontalLayout");
-				assert.equal(aRemainingChanges[0].getContent().newValue, false, sValueMsg + false);
+				assert.strictEqual(aRemainingChanges[0].getChangeType(), PROPERTY_CHANGE_TYPE, sChangeTypeMsg + PROPERTY_CHANGE_TYPE);
+				assert.strictEqual(aRemainingChanges[0].getContent().property, "useHorizontalLayout", sPropertyMsg + "useHorizontalLayout");
+				assert.strictEqual(aRemainingChanges[0].getContent().newValue, false, sValueMsg + false);
 
-				assert.equal(aRemainingChanges[1].getChangeType(), PROPERTY_CHANGE_TYPE, sChangeTypeMsg + PROPERTY_CHANGE_TYPE);
-				assert.equal(aRemainingChanges[1].getContent().property, "elementForLabel", sPropertyMsg + "elementForLabel");
-				assert.equal(aRemainingChanges[1].getContent().newValue, 2, sValueMsg + 2);
+				assert.strictEqual(aRemainingChanges[1].getChangeType(), PROPERTY_CHANGE_TYPE, sChangeTypeMsg + PROPERTY_CHANGE_TYPE);
+				assert.strictEqual(aRemainingChanges[1].getContent().property, "elementForLabel", sPropertyMsg + "elementForLabel");
+				assert.strictEqual(aRemainingChanges[1].getContent().newValue, 2, sValueMsg + 2);
 
-				assert.equal(aRemainingChanges[2].getChangeType(), PROPERTY_CHANGE_TYPE, sChangeTypeMsg + PROPERTY_CHANGE_TYPE);
-				assert.equal(aRemainingChanges[2].getContent().property, "elementForLabel", sPropertyMsg + "elementForLabel");
-				assert.equal(aRemainingChanges[2].getContent().newValue, 1, sValueMsg + 1);
+				assert.strictEqual(aRemainingChanges[2].getChangeType(), PROPERTY_CHANGE_TYPE, sChangeTypeMsg + PROPERTY_CHANGE_TYPE);
+				assert.strictEqual(aRemainingChanges[2].getContent().property, "elementForLabel", sPropertyMsg + "elementForLabel");
+				assert.strictEqual(aRemainingChanges[2].getContent().newValue, 1, sValueMsg + 1);
 
-				assert.equal(aRemainingChanges[3].getChangeType(), PROPERTY_CHANGE_TYPE, sChangeTypeMsg + PROPERTY_CHANGE_TYPE);
-				assert.equal(aRemainingChanges[3].getContent().property, "label", sPropertyMsg + "label");
-				assert.equal(aRemainingChanges[3].getContent().newValue, "80", sValueMsg + "80");
+				assert.strictEqual(aRemainingChanges[3].getChangeType(), PROPERTY_CHANGE_TYPE, sChangeTypeMsg + PROPERTY_CHANGE_TYPE);
+				assert.strictEqual(aRemainingChanges[3].getContent().property, "label", sPropertyMsg + "label");
+				assert.strictEqual(aRemainingChanges[3].getContent().newValue, "80", sValueMsg + "80");
 			});
 		});
 
 		QUnit.test("rename / combine / split", function(assert) {
 			return loadApplyCondenseChanges.call(this, "renameSourceSelectorCombineRenameSplitChanges.json", 4, 3, assert).then(function(aRemainingChanges) {
-				assert.equal(aRemainingChanges[0].getChangeType(), COMBINE_CHANGE_TYPE, sChangeTypeMsg + COMBINE_CHANGE_TYPE);
-				assert.equal(aRemainingChanges[1].getChangeType(), RENAME_FIELD_CHANGE_TYPE, sChangeTypeMsg + RENAME_FIELD_CHANGE_TYPE);
-				assert.equal(aRemainingChanges[2].getChangeType(), SPLIT_CHANGE_TYPE, sChangeTypeMsg + SPLIT_CHANGE_TYPE);
+				assert.strictEqual(aRemainingChanges[0].getChangeType(), COMBINE_CHANGE_TYPE, sChangeTypeMsg + COMBINE_CHANGE_TYPE);
+				assert.strictEqual(aRemainingChanges[1].getChangeType(), RENAME_FIELD_CHANGE_TYPE, sChangeTypeMsg + RENAME_FIELD_CHANGE_TYPE);
+				assert.strictEqual(aRemainingChanges[2].getChangeType(), SPLIT_CHANGE_TYPE, sChangeTypeMsg + SPLIT_CHANGE_TYPE);
 			});
 		});
 
@@ -284,18 +284,18 @@ sap.ui.define([
 				var aFirstGroupElements = aGroups[0].getGroupElements();
 				// Initial UI [ Name, Victim, Code ]
 				// Target UI [ Name, ComplexProperty01, Victim, Code ]
-				assert.equal(aFirstGroupElements.length, 4, sContainerElementsMsg + 3);
-				assert.equal(aFirstGroupElements[0].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sNameFieldId);
-				assert.equal(aFirstGroupElements[1].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 1) + sComplexProperty01FieldId);
-				assert.equal(aFirstGroupElements[2].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sVictimFieldId);
-				assert.equal(aFirstGroupElements[3].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 3) + sCompanyCodeFieldId);
+				assert.strictEqual(aFirstGroupElements.length, 4, sContainerElementsMsg + 3);
+				assert.strictEqual(aFirstGroupElements[0].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sNameFieldId);
+				assert.strictEqual(aFirstGroupElements[1].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 1) + sComplexProperty01FieldId);
+				assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sVictimFieldId);
+				assert.strictEqual(aFirstGroupElements[3].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 3) + sCompanyCodeFieldId);
 
 				// Initial UI [ Flexibility, Button35 ]
 				// Target UI [ Flexibility, Button35 ]
 				var aSecondGroupElements = aGroups[1].getGroupElements();
-				assert.equal(aSecondGroupElements.length, 2, sContainerElementsMsg + 2);
-				assert.equal(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.SpecificFlexibility"), getMessage(sAffectedControlMgs, undefined, 0) + "SpecificFlexibility");
-				assert.equal(aSecondGroupElements[1].getId(), getControlSelectorId("Dates.BoundButton35"), getMessage(sAffectedControlMgs, undefined, 1) + "BoundButton35");
+				assert.strictEqual(aSecondGroupElements.length, 2, sContainerElementsMsg + 2);
+				assert.strictEqual(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.SpecificFlexibility"), getMessage(sAffectedControlMgs, undefined, 0) + "SpecificFlexibility");
+				assert.strictEqual(aSecondGroupElements[1].getId(), getControlSelectorId("Dates.BoundButton35"), getMessage(sAffectedControlMgs, undefined, 1) + "BoundButton35");
 			});
 		});
 
@@ -308,27 +308,27 @@ sap.ui.define([
 				var aFirstGroupElements = aGroups[0].getGroupElements();
 				// Initial UI [ Name, Victim, Code ]
 				// Target UI [ Name, Victim, Code ]
-				assert.equal(aFirstGroupElements.length, 3, sContainerElementsMsg + 3);
-				assert.equal(aFirstGroupElements[0].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sNameFieldId);
-				assert.equal(aFirstGroupElements[1].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sVictimFieldId);
-				assert.equal(aFirstGroupElements[2].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sCompanyCodeFieldId);
+				assert.strictEqual(aFirstGroupElements.length, 3, sContainerElementsMsg + 3);
+				assert.strictEqual(aFirstGroupElements[0].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sNameFieldId);
+				assert.strictEqual(aFirstGroupElements[1].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sVictimFieldId);
+				assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sCompanyCodeFieldId);
 
 				// Initial UI [ Flexibility, Button35 ]
 				// Target UI [ Flexibility, ComplexProperty01, Button35 ]
 				var aSecondGroupElements = aGroups[1].getGroupElements();
-				assert.equal(aSecondGroupElements.length, 3, sContainerElementsMsg + 3);
-				assert.equal(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.SpecificFlexibility"), getMessage(sAffectedControlMgs, undefined, 0) + "SpecificFlexibility");
-				assert.equal(aSecondGroupElements[1].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 1) + sComplexProperty01FieldId);
-				assert.equal(aSecondGroupElements[2].getId(), getControlSelectorId("Dates.BoundButton35"), getMessage(sAffectedControlMgs, undefined, 2) + "BoundButton35");
+				assert.strictEqual(aSecondGroupElements.length, 3, sContainerElementsMsg + 3);
+				assert.strictEqual(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.SpecificFlexibility"), getMessage(sAffectedControlMgs, undefined, 0) + "SpecificFlexibility");
+				assert.strictEqual(aSecondGroupElements[1].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 1) + sComplexProperty01FieldId);
+				assert.strictEqual(aSecondGroupElements[2].getId(), getControlSelectorId("Dates.BoundButton35"), getMessage(sAffectedControlMgs, undefined, 2) + "BoundButton35");
 			});
 		});
 
 		QUnit.test("rename / combine / rename / split", function(assert) {
 			return loadApplyCondenseChanges.call(this, "renameCombineRenameSplitChanges.json", 4, 4, assert).then(function(aRemainingChanges) {
-				assert.equal(aRemainingChanges[0].getChangeType(), RENAME_FIELD_CHANGE_TYPE, sChangeTypeMsg + RENAME_FIELD_CHANGE_TYPE);
-				assert.equal(aRemainingChanges[1].getChangeType(), COMBINE_CHANGE_TYPE, sChangeTypeMsg + COMBINE_CHANGE_TYPE);
-				assert.equal(aRemainingChanges[2].getChangeType(), RENAME_FIELD_CHANGE_TYPE, sChangeTypeMsg + RENAME_FIELD_CHANGE_TYPE);
-				assert.equal(aRemainingChanges[3].getChangeType(), SPLIT_CHANGE_TYPE, sChangeTypeMsg + SPLIT_CHANGE_TYPE);
+				assert.strictEqual(aRemainingChanges[0].getChangeType(), RENAME_FIELD_CHANGE_TYPE, sChangeTypeMsg + RENAME_FIELD_CHANGE_TYPE);
+				assert.strictEqual(aRemainingChanges[1].getChangeType(), COMBINE_CHANGE_TYPE, sChangeTypeMsg + COMBINE_CHANGE_TYPE);
+				assert.strictEqual(aRemainingChanges[2].getChangeType(), RENAME_FIELD_CHANGE_TYPE, sChangeTypeMsg + RENAME_FIELD_CHANGE_TYPE);
+				assert.strictEqual(aRemainingChanges[3].getChangeType(), SPLIT_CHANGE_TYPE, sChangeTypeMsg + SPLIT_CHANGE_TYPE);
 			});
 		});
 
@@ -358,11 +358,34 @@ sap.ui.define([
 				var aFirstGroupElements = aGroups[0].getGroupElements();
 				// Initial UI [ Name, Victim, Code ]
 				// Target UI [ Victim, Code, Name ]
-				assert.equal(aFirstGroupElements.length, 3, sContainerElementsMsg + 3);
-				assert.equal(aFirstGroupElements[0].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sVictimFieldId);
-				assert.equal(aFirstGroupElements[1].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sCompanyCodeFieldId);
-				assert.equal(aFirstGroupElements[2].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sNameFieldId);
+				assert.strictEqual(aFirstGroupElements.length, 3, sContainerElementsMsg + 3);
+				assert.strictEqual(aFirstGroupElements[0].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sVictimFieldId);
+				assert.strictEqual(aFirstGroupElements[1].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sCompanyCodeFieldId);
+				assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sNameFieldId);
 			});
+		});
+
+		QUnit.test("move independently within one group (new move doesn't change the index of the persisted move)", function(assert) {
+			// Change (1): Move "Victim" from 1 to 0 -> persisted change
+			// Change (2): Move "Code" from 2 to 1 -> new change
+			// -> Result should not contain an "update" for Change (1), since its index doesn't change
+			return loadApplyCondenseChanges.call(this, "moveIndependentlyWithinOneGroup.json", 2, 2, assert, [0])
+			.then(function() {
+				var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
+				var aGroups = oSmartForm.getGroups();
+				var aFirstGroupElements = aGroups[0].getGroupElements();
+				// Initial UI [ Name, Victim, Code ]
+				// UI after applying persisted change [ Victim, Name, Code ]
+				// Target UI [ Victim, Code, Name ]
+				assert.strictEqual(this.aChanges[0].getState(), Change.states.PERSISTED, "then the persisted change is still persisted (not updated)");
+				assert.strictEqual(this.aChanges[0].condenserState, "select", "then the persisted change is marked as 'selected' in the condenser");
+				assert.strictEqual(this.aChanges[1].getState(), Change.states.NEW, "then the new move is a change in state NEW");
+				assert.strictEqual(this.aChanges[1].condenserState, "select", "then the new change is marked as 'select' in the condenser");
+				assert.strictEqual(aFirstGroupElements.length, 3, sContainerElementsMsg + 3);
+				assert.strictEqual(aFirstGroupElements[0].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sVictimFieldId);
+				assert.strictEqual(aFirstGroupElements[1].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sCompanyCodeFieldId);
+				assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sNameFieldId);
+			}.bind(this));
 		});
 
 		QUnit.test("move within one group - one change throwing an error in getCondenserInfo", function(assert) {
@@ -378,7 +401,7 @@ sap.ui.define([
 				return Condenser.condense(oAppComponent, this.aChanges);
 			}.bind(this))
 			.then(function(aRemainingChanges) {
-				assert.equal(aRemainingChanges.length, 8, "the broken changes cause all the move changes to be returned");
+				assert.strictEqual(aRemainingChanges.length, 8, "the broken changes cause all the move changes to be returned");
 			});
 		});
 
@@ -408,20 +431,28 @@ sap.ui.define([
 					var aSecondGroupElements = aGroups[1].getGroupElements();
 					// Initial UI [ Name, Victim, Code ]
 					// Target UI [ Code, Victim, Name ]
-					assert.equal(aFirstGroupElements.length, 3, sContainerElementsMsg + 3);
-					assert.equal(aFirstGroupElements[0].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sCompanyCodeFieldId);
-					assert.equal(aFirstGroupElements[1].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sVictimFieldId);
-					assert.equal(aFirstGroupElements[2].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sNameFieldId);
+					assert.strictEqual(aFirstGroupElements.length, 3, sContainerElementsMsg + 3);
+					assert.strictEqual(aFirstGroupElements[0].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sCompanyCodeFieldId);
+					assert.strictEqual(aFirstGroupElements[1].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sVictimFieldId);
+					assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sNameFieldId);
 					// Initial UI [ Flexibility, Button35 ]
 					// Target UI [ Button35, Flexibility ]
-					assert.equal(aSecondGroupElements.length, 2, sContainerElementsMsg + 2);
-					assert.equal(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.BoundButton35"), getMessage(sAffectedControlMgs, undefined, 0) + "BoundButton35");
-					assert.equal(aSecondGroupElements[1].getId(), getControlSelectorId("Dates.SpecificFlexibility"), getMessage(sAffectedControlMgs, undefined, 1) + "SpecificFlexibility");
+					assert.strictEqual(aSecondGroupElements.length, 2, sContainerElementsMsg + 2);
+					assert.strictEqual(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.BoundButton35"), getMessage(sAffectedControlMgs, undefined, 0) + "BoundButton35");
+					assert.strictEqual(aSecondGroupElements[1].getId(), getControlSelectorId("Dates.SpecificFlexibility"), getMessage(sAffectedControlMgs, undefined, 1) + "SpecificFlexibility");
 				}.bind(this));
 			});
 		});
 
 		QUnit.test("move within two groups with a backend change and different dependent selectors", function(assert) {
+			// Initial UI [ Name, Victim, Code ]
+			// After backend change -> [Victim, Name, Code]
+			// Change (43) -> Name from 1 to 0 -> [Name, Victim, Code]
+			// Change (46) -> Name from 1 to 2 -> [Victim, Code, Name]
+			// Change (49) -> Name from 1 to 0 -> [Name, Victim, Code]
+			// Change (62) -> Name from 1 to 0 -> [Name, Victim, Code]
+			// Change (66) -> Name from 0 to 1 -> [Victim, Name, Code] => No update compared to UI after backend change
+
 			return loadApplyCondenseChanges.call(this, "moveBetweenTwoGroupsWithDependentSelectors.json", 6, 1, assert, [0])
 			.then(revertAndApplyNew.bind(this))
 			.then(function() {
@@ -431,8 +462,8 @@ sap.ui.define([
 					aChangeStates.push(oChange.getState());
 					aCondenserStates.push(oChange.condenserState);
 				});
-				assert.propEqual(aChangeStates, [Change.states.DIRTY], "the remaining change has the correct change state");
-				assert.propEqual(aCondenserStates, ["update"], "the remaining change has the correct condenser state");
+				assert.propEqual(aChangeStates, [Change.states.NEW], "the remaining change has the correct change state");
+				assert.propEqual(aCondenserStates, ["select"], "the remaining change has the correct condenser state");
 			}.bind(this));
 		});
 
@@ -474,13 +505,13 @@ sap.ui.define([
 				var aFirstGroupElements = aGroups[0].getGroupElements();
 				// Initial UI [ Name, Victim, Code ]
 				// Target UI [ Name, ComplexProperty01, Victim, ComplexProperty02, Code, ComplexProperty03 ]
-				assert.equal(aFirstGroupElements.length, 6, sContainerElementsMsg + 6);
-				assert.equal(aFirstGroupElements[0].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sNameFieldId);
-				assert.equal(aFirstGroupElements[1].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 1) + sComplexProperty01FieldId);
-				assert.equal(aFirstGroupElements[2].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sVictimFieldId);
-				assert.equal(aFirstGroupElements[3].getId(), getControlSelectorId(sComplexProperty02FieldId), getMessage(sAffectedControlMgs, undefined, 3) + sComplexProperty02FieldId);
-				assert.equal(aFirstGroupElements[4].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 4) + sCompanyCodeFieldId);
-				assert.equal(aFirstGroupElements[5].getId(), getControlSelectorId(sComplexProperty03FieldId), getMessage(sAffectedControlMgs, undefined, 5) + sComplexProperty03FieldId);
+				assert.strictEqual(aFirstGroupElements.length, 6, sContainerElementsMsg + 6);
+				assert.strictEqual(aFirstGroupElements[0].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sNameFieldId);
+				assert.strictEqual(aFirstGroupElements[1].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 1) + sComplexProperty01FieldId);
+				assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sVictimFieldId);
+				assert.strictEqual(aFirstGroupElements[3].getId(), getControlSelectorId(sComplexProperty02FieldId), getMessage(sAffectedControlMgs, undefined, 3) + sComplexProperty02FieldId);
+				assert.strictEqual(aFirstGroupElements[4].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 4) + sCompanyCodeFieldId);
+				assert.strictEqual(aFirstGroupElements[5].getId(), getControlSelectorId(sComplexProperty03FieldId), getMessage(sAffectedControlMgs, undefined, 5) + sComplexProperty03FieldId);
 			}.bind(this));
 		}); */
 
@@ -500,8 +531,8 @@ sap.ui.define([
 							aChangeStates.push(oChange.getState());
 							aCondenserStates.push(oChange.condenserState);
 						});
-						assert.propEqual(aChangeStates, [Change.states.DIRTY, Change.states.DIRTY, Change.states.DIRTY], "all remaining changes have change state 'UPDATE'");
-						assert.propEqual(aCondenserStates, ["update", "update", "update"], "all remaining changes have condenser state 'update'");
+						assert.propEqual(aChangeStates, [Change.states.PERSISTED, Change.states.PERSISTED, Change.states.PERSISTED], "all remaining changes have change state 'PERSISTED'");
+						assert.propEqual(aCondenserStates, ["select", "select", "select"], "all remaining changes have condenser state 'select' - no position changed on the UI");
 					}
 
 					var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
@@ -509,13 +540,13 @@ sap.ui.define([
 					var aFirstGroupElements = aGroups[0].getGroupElements();
 					// Initial UI [ Name, Victim, Code ]
 					// Target UI [ Name, Victim, Code, ComplexProperty03, ComplexProperty02, ComplexProperty01 ]
-					assert.equal(aFirstGroupElements.length, 6, sContainerElementsMsg + 6);
-					assert.equal(aFirstGroupElements[0].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sNameFieldId);
-					assert.equal(aFirstGroupElements[1].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sVictimFieldId);
-					assert.equal(aFirstGroupElements[2].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sCompanyCodeFieldId);
-					assert.equal(aFirstGroupElements[3].getId(), getControlSelectorId(sComplexProperty03FieldId), getMessage(sAffectedControlMgs, undefined, 3) + sComplexProperty03FieldId);
-					assert.equal(aFirstGroupElements[4].getId(), getControlSelectorId(sComplexProperty02FieldId), getMessage(sAffectedControlMgs, undefined, 4) + sComplexProperty02FieldId);
-					assert.equal(aFirstGroupElements[5].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 5) + sComplexProperty01FieldId);
+					assert.strictEqual(aFirstGroupElements.length, 6, sContainerElementsMsg + 6);
+					assert.strictEqual(aFirstGroupElements[0].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sNameFieldId);
+					assert.strictEqual(aFirstGroupElements[1].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sVictimFieldId);
+					assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sCompanyCodeFieldId);
+					assert.strictEqual(aFirstGroupElements[3].getId(), getControlSelectorId(sComplexProperty03FieldId), getMessage(sAffectedControlMgs, undefined, 3) + sComplexProperty03FieldId);
+					assert.strictEqual(aFirstGroupElements[4].getId(), getControlSelectorId(sComplexProperty02FieldId), getMessage(sAffectedControlMgs, undefined, 4) + sComplexProperty02FieldId);
+					assert.strictEqual(aFirstGroupElements[5].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 5) + sComplexProperty01FieldId);
 				}.bind(this));
 			});
 		});
@@ -534,13 +565,13 @@ sap.ui.define([
 					var aGroupElements = aGroups[0].getGroupElements();
 					// Initial UI [ Name, Victim, Code ]
 					// Target UI [ Victim, Name, Code ]
-					assert.equal(aGroupElements.length, 3, sContainerElementsMsg + 3);
-					assert.equal(aGroupElements[0].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sVictimFieldId);
-					assert.equal(aGroupElements[1].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sNameFieldId);
-					assert.equal(aGroupElements[2].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sCompanyCodeFieldId);
+					assert.strictEqual(aGroupElements.length, 3, sContainerElementsMsg + 3);
+					assert.strictEqual(aGroupElements[0].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 0) + sVictimFieldId);
+					assert.strictEqual(aGroupElements[1].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sNameFieldId);
+					assert.strictEqual(aGroupElements[2].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sCompanyCodeFieldId);
 
-					assert.equal(aGroupElements[1].getLabel(), "Number", "Expected renamed field label: Number");
-					assert.equal(aGroupElements[2].getLabel(), "Code", "Expected renamed field label: Code");
+					assert.strictEqual(aGroupElements[1].getLabel(), "Number", "Expected renamed field label: Number");
+					assert.strictEqual(aGroupElements[2].getLabel(), "Code", "Expected renamed field label: Code");
 				});
 			});
 		});
@@ -554,13 +585,13 @@ sap.ui.define([
 				var aFirstGroupElements = aGroups[0].getGroupElements();
 				// Initial UI [ Name, Victim, Code ]
 				// Target UI [ ComplexProperty03, Victim, Name, ComplexProperty02, ComplexProperty01, Code]
-				assert.equal(aFirstGroupElements.length, 6, sContainerElementsMsg + 6);
-				assert.equal(aFirstGroupElements[0].getId(), getControlSelectorId(sComplexProperty03FieldId), getMessage(sAffectedControlMgs, undefined, 0) + sComplexProperty03FieldId);
-				assert.equal(aFirstGroupElements[1].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sVictimFieldId);
-				assert.equal(aFirstGroupElements[2].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sNameFieldId);
-				assert.equal(aFirstGroupElements[3].getId(), getControlSelectorId(sComplexProperty02FieldId), getMessage(sAffectedControlMgs, undefined, 3) + sComplexProperty02FieldId);
-				assert.equal(aFirstGroupElements[4].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 4) + sComplexProperty01FieldId);
-				assert.equal(aFirstGroupElements[5].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 5) + sCompanyCodeFieldId);
+				assert.strictEqual(aFirstGroupElements.length, 6, sContainerElementsMsg + 6);
+				assert.strictEqual(aFirstGroupElements[0].getId(), getControlSelectorId(sComplexProperty03FieldId), getMessage(sAffectedControlMgs, undefined, 0) + sComplexProperty03FieldId);
+				assert.strictEqual(aFirstGroupElements[1].getId(), getControlSelectorId(sVictimFieldId), getMessage(sAffectedControlMgs, undefined, 1) + sVictimFieldId);
+				assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sNameFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sNameFieldId);
+				assert.strictEqual(aFirstGroupElements[3].getId(), getControlSelectorId(sComplexProperty02FieldId), getMessage(sAffectedControlMgs, undefined, 3) + sComplexProperty02FieldId);
+				assert.strictEqual(aFirstGroupElements[4].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 4) + sComplexProperty01FieldId);
+				assert.strictEqual(aFirstGroupElements[5].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 5) + sCompanyCodeFieldId);
 			});
 		});
 
@@ -586,15 +617,15 @@ sap.ui.define([
 				var aContentRight = oBar.getContentRight();
 				// Initial UI: contentLeft: [lb1, lb2], contentMiddle: [mb1, mb2], contentRight: [rb1, rb2]
 				// Target UI: contentLeft: [lb1, lb2], contentMiddle: [mb2, mb1, rb2], contentRight: [rb1]
-				assert.equal(aContentLeft.length, 2, sContainerElementsMsg + 2);
-				assert.equal(aContentLeft[0].getId(), oAppComponent.createId("idMain1--lb1"), getMessage(sAffectedControlMgs, undefined, 0) + "lb1");
-				assert.equal(aContentLeft[1].getId(), oAppComponent.createId("idMain1--lb2"), getMessage(sAffectedControlMgs, undefined, 1) + "lb2");
-				assert.equal(aContentMiddle.length, 3, sContainerElementsMsg + 3);
-				assert.equal(aContentMiddle[0].getId(), oAppComponent.createId("idMain1--mb2"), getMessage(sAffectedControlMgs, undefined, 0) + "mb2");
-				assert.equal(aContentMiddle[1].getId(), oAppComponent.createId("idMain1--mb1"), getMessage(sAffectedControlMgs, undefined, 1) + "mb1");
-				assert.equal(aContentMiddle[2].getId(), oAppComponent.createId("idMain1--rb2"), getMessage(sAffectedControlMgs, undefined, 2) + "rb2");
-				assert.equal(aContentRight.length, 1, sContainerElementsMsg + 1);
-				assert.equal(aContentRight[0].getId(), oAppComponent.createId("idMain1--rb1"), getMessage(sAffectedControlMgs, undefined, 0) + "rb1");
+				assert.strictEqual(aContentLeft.length, 2, sContainerElementsMsg + 2);
+				assert.strictEqual(aContentLeft[0].getId(), oAppComponent.createId("idMain1--lb1"), getMessage(sAffectedControlMgs, undefined, 0) + "lb1");
+				assert.strictEqual(aContentLeft[1].getId(), oAppComponent.createId("idMain1--lb2"), getMessage(sAffectedControlMgs, undefined, 1) + "lb2");
+				assert.strictEqual(aContentMiddle.length, 3, sContainerElementsMsg + 3);
+				assert.strictEqual(aContentMiddle[0].getId(), oAppComponent.createId("idMain1--mb2"), getMessage(sAffectedControlMgs, undefined, 0) + "mb2");
+				assert.strictEqual(aContentMiddle[1].getId(), oAppComponent.createId("idMain1--mb1"), getMessage(sAffectedControlMgs, undefined, 1) + "mb1");
+				assert.strictEqual(aContentMiddle[2].getId(), oAppComponent.createId("idMain1--rb2"), getMessage(sAffectedControlMgs, undefined, 2) + "rb2");
+				assert.strictEqual(aContentRight.length, 1, sContainerElementsMsg + 1);
+				assert.strictEqual(aContentRight[0].getId(), oAppComponent.createId("idMain1--rb1"), getMessage(sAffectedControlMgs, undefined, 0) + "rb1");
 			});
 		});
 
@@ -608,7 +639,7 @@ sap.ui.define([
 			}.bind(this)).then(function() {
 				return Condenser.condense(oAppComponent, this.aChanges);
 			}.bind(this)).then(function(aRemainingChanges) {
-				assert.equal(aRemainingChanges.length, 7, "Expected number of remaining changes: " + 7);
+				assert.strictEqual(aRemainingChanges.length, 7, "Expected number of remaining changes: " + 7);
 			});
 		});
 
@@ -624,10 +655,10 @@ sap.ui.define([
 				aChanges.splice(30, 0, false);
 				return Condenser.condense(oAppComponent, aChanges);
 			}.bind(this)).then(function(aRemainingChanges) {
-				assert.equal(aRemainingChanges.length, 12, "Expected number of remaining changes: " + 12);
-				assert.equal(aRemainingChanges[0], "not a change", "the non UI Change was sorted correctly");
+				assert.strictEqual(aRemainingChanges.length, 12, "Expected number of remaining changes: " + 12);
+				assert.strictEqual(aRemainingChanges[0], "not a change", "the non UI Change was sorted correctly");
 				assert.deepEqual(aRemainingChanges[4], {type: "variant"}, "the non UI Change was sorted correctly");
-				assert.equal(aRemainingChanges[5], false, "the non UI Change was sorted correctly");
+				assert.strictEqual(aRemainingChanges[5], false, "the non UI Change was sorted correctly");
 			});
 		});
 
@@ -658,8 +689,8 @@ sap.ui.define([
 				})));
 				return Condenser.condense(oAppComponent, aChanges);
 			}.bind(this)).then(function(aRemainingChanges) {
-				assert.equal(aRemainingChanges.length, 11, "Expected number of remaining changes: " + 11);
-				assert.equal(aRemainingChanges[0].getId(), "idrename0", "the not applied UI Change was sorted correctly");
+				assert.strictEqual(aRemainingChanges.length, 11, "Expected number of remaining changes: " + 11);
+				assert.strictEqual(aRemainingChanges[0].getId(), "idrename0", "the not applied UI Change was sorted correctly");
 				assert.deepEqual(aRemainingChanges[4].getId(), "idrename1", "the not applied UI Change was sorted correctly");
 			});
 		});
@@ -692,11 +723,11 @@ sap.ui.define([
 			return loadApplyCondenseChanges.call(this, "templateChanges.json", 12, 5, assert).then(function(aRemainingChanges) {
 				var sRenameChangeType = "rename";
 				var sMoveChangeType = "moveControls";
-				assert.equal(aRemainingChanges[0].getChangeType(), sRenameChangeType, sChangeTypeMsg + sRenameChangeType);
-				assert.equal(aRemainingChanges[1].getChangeType(), sRenameChangeType, sChangeTypeMsg + sRenameChangeType);
-				assert.equal(aRemainingChanges[2].getChangeType(), HIDE_CHANGE_TYPE, sChangeTypeMsg + HIDE_CHANGE_TYPE);
-				assert.equal(aRemainingChanges[3].getChangeType(), sMoveChangeType, sChangeTypeMsg + sMoveChangeType);
-				assert.equal(aRemainingChanges[4].getChangeType(), sMoveChangeType, sChangeTypeMsg + sMoveChangeType);
+				assert.strictEqual(aRemainingChanges[0].getChangeType(), sRenameChangeType, sChangeTypeMsg + sRenameChangeType);
+				assert.strictEqual(aRemainingChanges[1].getChangeType(), sRenameChangeType, sChangeTypeMsg + sRenameChangeType);
+				assert.strictEqual(aRemainingChanges[2].getChangeType(), HIDE_CHANGE_TYPE, sChangeTypeMsg + HIDE_CHANGE_TYPE);
+				assert.strictEqual(aRemainingChanges[3].getChangeType(), sMoveChangeType, sChangeTypeMsg + sMoveChangeType);
+				assert.strictEqual(aRemainingChanges[4].getChangeType(), sMoveChangeType, sChangeTypeMsg + sMoveChangeType);
 			});
 		});
 	});
@@ -822,9 +853,9 @@ sap.ui.define([
 			.then(function() {
 				var oTable = oAppComponent.byId("view--mdcTable");
 				var aColumns = oTable.getColumns();
-				assert.equal(aColumns.length, 2, "Expected number of MDC columns: " + 2);
-				assert.equal(aColumns[0].getId(), "comp---view--mdcTable--column0", sValueMsg + "column0");
-				assert.equal(aColumns[1].getId(), "comp---view--mdcTable--column2", sValueMsg + "column2");
+				assert.strictEqual(aColumns.length, 2, "Expected number of MDC columns: " + 2);
+				assert.strictEqual(aColumns[0].getId(), "comp---view--mdcTable--column0", sValueMsg + "column0");
+				assert.strictEqual(aColumns[1].getId(), "comp---view--mdcTable--column2", sValueMsg + "column2");
 			});
 		});
 
@@ -836,8 +867,8 @@ sap.ui.define([
 		// MDC Table: combination of remove and add => both changes stay (ideally both changes be converted to move change)
 		QUnit.test("remove / add", function(assert) {
 			return loadApplyCondenseChanges.call(this, "mdcRemoveAddChanges.json", 2, 2, assert).then(function(aRemainingChanges) {
-				assert.equal(aRemainingChanges[0].getChangeType(), "removeColumn", "the changes are in the right order");
-				assert.equal(aRemainingChanges[1].getChangeType(), "addColumn", "the changes are in the right order");
+				assert.strictEqual(aRemainingChanges[0].getChangeType(), "removeColumn", "the changes are in the right order");
+				assert.strictEqual(aRemainingChanges[1].getChangeType(), "addColumn", "the changes are in the right order");
 			});
 		});
 	});

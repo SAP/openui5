@@ -73,7 +73,7 @@ sap.ui.define([
 			};
 
 			return Storage.write(mPropertyBag).catch(function (sErrorMessage) {
-				assert.equal(sErrorMessage, "No layer was provided", "then an Error is thrown");
+				assert.strictEqual(sErrorMessage, "No layer was provided", "then an Error is thrown");
 			});
 		});
 
@@ -90,7 +90,7 @@ sap.ui.define([
 
 			return Storage.write(mPropertyBag)
 				.catch(function (oError) {
-					assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
+					assert.strictEqual(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
 				});
 		});
 
@@ -108,7 +108,7 @@ sap.ui.define([
 
 			return Storage.write(mPropertyBag)
 				.catch(function (oError) {
-					assert.equal(oError.message, "sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: " +
+					assert.strictEqual(oError.message, "sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: " +
 						"Multiple Connector configurations were found to write into layer: VENDOR");
 				});
 		});
@@ -128,10 +128,10 @@ sap.ui.define([
 			var oWriteStub = sandbox.stub(WriteLrepConnector, "write").resolves({});
 
 			return Storage.write(mPropertyBag).then(function () {
-				assert.equal(oWriteStub.callCount, 1, "the write was triggered once");
+				assert.strictEqual(oWriteStub.callCount, 1, "the write was triggered once");
 				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
-				assert.equal(oWriteCallArgs.url, sUrl, "the url was added to the property bag");
-				assert.equal(oWriteCallArgs.flexObjects, oFlexObjects, "the flexObjects were passed in the property bag");
+				assert.strictEqual(oWriteCallArgs.url, sUrl, "the url was added to the property bag");
+				assert.strictEqual(oWriteCallArgs.flexObjects, oFlexObjects, "the flexObjects were passed in the property bag");
 			});
 		});
 
@@ -157,16 +157,16 @@ sap.ui.define([
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetUrlCallArgs[0], "/flex/personalization/v1/changes/", "with correct route path");
-				assert.equal(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the correct url was added");
+				assert.strictEqual(oStubGetUrl.callCount, 2, "getUrl is called twice");
+				assert.strictEqual(oGetUrlCallArgs[0], "/flex/personalization/v1/changes/", "with correct route path");
+				assert.strictEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
+				assert.strictEqual(oGetUrlCallArgs[1].url, sUrl, "the correct url was added");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
-				assert.equal(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
-				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-				assert.equal(oSendRequestCallArgs[2].payload, "[{}]", "with correct payload");
-				assert.equal(oSendRequestCallArgs[2].contentType, "application/json; charset=utf-8", "with correct contentType");
-				assert.equal(oSendRequestCallArgs[2].dataType, "json", "with correct dataType");
+				assert.strictEqual(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
+				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
+				assert.strictEqual(oSendRequestCallArgs[2].payload, "[{}]", "with correct payload");
+				assert.strictEqual(oSendRequestCallArgs[2].contentType, "application/json; charset=utf-8", "with correct contentType");
+				assert.strictEqual(oSendRequestCallArgs[2].dataType, "json", "with correct dataType");
 			});
 		});
 
@@ -192,15 +192,15 @@ sap.ui.define([
 				var oGetTokenUrlCallArgs = oStubGetUrl.getCall(1).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetWriteUrlCallArgs[0], "/flex/keyuser/v1/changes/", "with correct route path");
-				assert.equal(oGetWriteUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oGetWriteUrlCallArgs[1].url, sUrl, "the correct url was added");
-				assert.equal(oGetTokenUrlCallArgs[0], "/flex/keyuser/v1/settings", "with correct route path");
-				assert.equal(oGetTokenUrlCallArgs[1], mPropertyBag, "with correct property bag");
+				assert.strictEqual(oStubGetUrl.callCount, 2, "getUrl is called twice");
+				assert.strictEqual(oGetWriteUrlCallArgs[0], "/flex/keyuser/v1/changes/", "with correct route path");
+				assert.strictEqual(oGetWriteUrlCallArgs[1], mPropertyBag, "with correct property bag");
+				assert.strictEqual(oGetWriteUrlCallArgs[1].url, sUrl, "the correct url was added");
+				assert.strictEqual(oGetTokenUrlCallArgs[0], "/flex/keyuser/v1/settings", "with correct route path");
+				assert.strictEqual(oGetTokenUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
-				assert.equal(oSendRequestCallArgs[0], sExpectedWriteUrl, "with correct url");
-				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
+				assert.strictEqual(oSendRequestCallArgs[0], sExpectedWriteUrl, "with correct url");
+				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
 			});
 		});
 
@@ -219,7 +219,7 @@ sap.ui.define([
 			var oWriteStub = sandbox.stub(WriteKeyUserConnector, "write").resolves();
 
 			return Storage.write(mPropertyBag).then(function() {
-				assert.equal(oWriteStub.getCall(0).args[0].draft, true, "then the draft flag is passed");
+				assert.strictEqual(oWriteStub.getCall(0).args[0].draft, true, "then the draft flag is passed");
 			});
 		});
 
@@ -236,7 +236,7 @@ sap.ui.define([
 
 			return Storage.write(mPropertyBag)
 				.then(function () {
-					assert.equal(oIsDraftEnabledStub.callCount, 0, "then draftEnabled is not checked");
+					assert.strictEqual(oIsDraftEnabledStub.callCount, 0, "then draftEnabled is not checked");
 				});
 		});
 
@@ -253,7 +253,7 @@ sap.ui.define([
 
 			return Storage.write(mPropertyBag)
 				.catch(function (sRejectionMessage) {
-					assert.equal(sRejectionMessage, "Draft is not supported for the given layer: CUSTOMER",
+					assert.strictEqual(sRejectionMessage, "Draft is not supported for the given layer: CUSTOMER",
 						"then request is rejected with an error message");
 				});
 		});
@@ -281,13 +281,13 @@ sap.ui.define([
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetUrlCallArgs[0], "/flex/personalization/v1/changes/", "with correct route path");
-				assert.equal(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oGetUrlCallArgs[1].url, sUrl2, "the correct url was added");
-				assert.equal(oStubSendRequest.callCount, 1, "sendRequest is called once");
-				assert.equal(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
-				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
+				assert.strictEqual(oStubGetUrl.callCount, 2, "getUrl is called twice");
+				assert.strictEqual(oGetUrlCallArgs[0], "/flex/personalization/v1/changes/", "with correct route path");
+				assert.strictEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
+				assert.strictEqual(oGetUrlCallArgs[1].url, sUrl2, "the correct url was added");
+				assert.strictEqual(oStubSendRequest.callCount, 1, "sendRequest is called once");
+				assert.strictEqual(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
+				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
 			});
 		});
 
@@ -315,15 +315,15 @@ sap.ui.define([
 				var oGetTokenUrlCallArgs = oStubGetUrl.getCall(1).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetWriteUrlCallArgs[0], "/flex/keyuser/v1/changes/", "with correct route path");
-				assert.equal(oGetWriteUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oGetWriteUrlCallArgs[1].url, sUrl1, "the correct url was added");
-				assert.equal(oGetTokenUrlCallArgs[0], "/flex/keyuser/v1/settings", "with correct route path");
-				assert.equal(oGetTokenUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oStubSendRequest.callCount, 1, "sendRequest is called once");
-				assert.equal(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
-				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
+				assert.strictEqual(oStubGetUrl.callCount, 2, "getUrl is called twice");
+				assert.strictEqual(oGetWriteUrlCallArgs[0], "/flex/keyuser/v1/changes/", "with correct route path");
+				assert.strictEqual(oGetWriteUrlCallArgs[1], mPropertyBag, "with correct property bag");
+				assert.strictEqual(oGetWriteUrlCallArgs[1].url, sUrl1, "the correct url was added");
+				assert.strictEqual(oGetTokenUrlCallArgs[0], "/flex/keyuser/v1/settings", "with correct route path");
+				assert.strictEqual(oGetTokenUrlCallArgs[1], mPropertyBag, "with correct property bag");
+				assert.strictEqual(oStubSendRequest.callCount, 1, "sendRequest is called once");
+				assert.strictEqual(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
+				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
 			});
 		});
 	});
@@ -344,6 +344,11 @@ sap.ui.define([
 					prop: "some Content " + i
 				}
 			});
+			if (sState === "update") {
+				// Changes can't be directly set to "dirty" from "new"
+				aChanges[i].setState(Change.states.PERSISTED);
+				aChanges[i].setState(Change.states.DIRTY);
+			}
 			aChanges[i].condenserState = sState;
 		});
 		return aChanges;
@@ -366,7 +371,7 @@ sap.ui.define([
 			};
 
 			return Storage.condense(mPropertyBag).catch(function (sErrorMessage) {
-				assert.equal(sErrorMessage, "No layer was provided", "then an Error is thrown");
+				assert.strictEqual(sErrorMessage, "No layer was provided", "then an Error is thrown");
 			});
 		});
 
@@ -377,24 +382,18 @@ sap.ui.define([
 			};
 
 			return Storage.condense(mPropertyBag).catch(function (sErrorMessage) {
-				assert.equal(sErrorMessage, "No changes were provided", "then an Error is thrown");
+				assert.strictEqual(sErrorMessage, "No changes were provided", "then an Error is thrown");
 			});
 		});
 
 		QUnit.test("then it calls condense of the connector (persisted and dirty changes)", function(assert) {
 			var aAllChanges = createChangesAndSetState(["delete", "delete", "select"]);
-			aAllChanges[0].setState("NONE");
+			aAllChanges[0].setState(Change.states.PERSISTED);
 			var mCondenseExpected = {
 				namespace: "a.name.space",
 				layer: this.sLayer,
 				"delete": {
 					change: ["0"]
-				},
-				update: {
-					change: []
-				},
-				reorder: {
-					change: []
 				},
 				create: {
 					change: [{2: {
@@ -409,9 +408,7 @@ sap.ui.define([
 						content: {
 							prop: "some Content 2"
 						}
-					}}],
-					ctrl_variant_change: [],
-					ctrl_variant_management_change: []
+					}}]
 				}
 			};
 			var mPropertyBag = {
@@ -426,42 +423,56 @@ sap.ui.define([
 			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
 
 			return Storage.condense(mPropertyBag).then(function () {
-				assert.equal(oWriteStub.callCount, 1, "the write was triggered once");
+				assert.strictEqual(oWriteStub.callCount, 1, "the write was triggered once");
 				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
-				assert.equal(oWriteCallArgs.url, sUrl, "the url was added to the property bag");
+				assert.strictEqual(oWriteCallArgs.url, sUrl, "the url was added to the property bag");
 				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "the flexObject was passed in the property bag");
 			});
 		});
 
-		QUnit.test("and the changes are reordered by condenser", function (assert) {
+		QUnit.test("then it calls condense of the connector (persisted change that is not updated + create)", function(assert) {
+			var aAllChanges = createChangesAndSetState(["select", "select"]);
+			aAllChanges[0].setState(Change.states.PERSISTED);
+			var mCondenseExpected = {
+				namespace: "a.name.space",
+				layer: this.sLayer,
+				create: {
+					change: [{1: {
+						fileType: "change",
+						layer: this.sLayer,
+						fileName: "1",
+						namespace: "a.name.space",
+						changeType: "labelChange",
+						reference: "",
+						selector: {},
+						dependentSelector: {},
+						content: {
+							prop: "some Content 1"
+						}
+					}}]
+				}
+			};
+			var mPropertyBag = {
+				layer: this.sLayer,
+				allChanges: aAllChanges,
+				condensedChanges: aAllChanges
+			};
+
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
+
+			return Storage.condense(mPropertyBag).then(function () {
+				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
+				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "only the create is passed to the connector");
+			});
+		});
+
+		QUnit.test("and two changes are created by condenser in a certain order", function (assert) {
 			var aAllChanges = createChangesAndSetState(["delete", "select", "select"]);
 			var mCondenseExpected = {
 				namespace: "a.name.space",
 				layer: this.sLayer,
-				"delete": {
-					change: []
-				},
-				update: {
-					change: []
-				},
-				reorder: {
-					change: ["2", "1"]
-				},
 				create: {
 					change: [
-						{1: {
-							fileType: "change",
-							layer: this.sLayer,
-							fileName: "1",
-							namespace: "a.name.space",
-							changeType: "labelChange",
-							reference: "",
-							selector: {},
-							dependentSelector: {},
-							content: {
-								prop: "some Content 1"
-							}}
-						},
 						{2: {
 							fileType: "change",
 							layer: this.sLayer,
@@ -474,10 +485,21 @@ sap.ui.define([
 							content: {
 								prop: "some Content 2"
 							}}
+						},
+						{1: {
+							fileType: "change",
+							layer: this.sLayer,
+							fileName: "1",
+							namespace: "a.name.space",
+							changeType: "labelChange",
+							reference: "",
+							selector: {},
+							dependentSelector: {},
+							content: {
+								prop: "some Content 1"
+							}}
 						}
-					],
-					ctrl_variant_change: [],
-					ctrl_variant_management_change: []
+					]
 				}
 			};
 			var mPropertyBag = {
@@ -491,7 +513,142 @@ sap.ui.define([
 
 			return Storage.condense(mPropertyBag).then(function () {
 				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
-				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "then flexObject is filled correctly");
+				assert.propEqual(
+					oWriteCallArgs.flexObjects,
+					mCondenseExpected,
+					"then the 'create' changes on FlexObject are on the same order (without unnecessary 'reorder')"
+				);
+			});
+		});
+
+		QUnit.test("and create and update changes are created by condenser in a certain order", function (assert) {
+			var aAllChanges = createChangesAndSetState(["delete", "select", "update", "update", "select"]);
+			var mCondenseExpected = {
+				namespace: "a.name.space",
+				layer: this.sLayer,
+				create: {
+					change: [
+						{4: {
+							fileType: "change",
+							layer: this.sLayer,
+							fileName: "4",
+							namespace: "a.name.space",
+							changeType: "labelChange",
+							reference: "",
+							selector: {},
+							dependentSelector: {},
+							content: {
+								prop: "some Content 4"
+							}}
+						},
+						{1: {
+							fileType: "change",
+							layer: this.sLayer,
+							fileName: "1",
+							namespace: "a.name.space",
+							changeType: "labelChange",
+							reference: "",
+							selector: {},
+							dependentSelector: {},
+							content: {
+								prop: "some Content 1"
+							}}
+						}
+					]
+				},
+				update: {
+					change: [
+						{2: {
+							content: {
+								prop: "some Content 2"
+							}}
+						},
+						{3: {
+							content: {
+								prop: "some Content 3"
+							}}
+						}
+					]
+				},
+				reorder: {
+					change: ["3", "2", "1"]
+				}
+			};
+			var mPropertyBag = {
+				layer: this.sLayer,
+				allChanges: aAllChanges,
+				condensedChanges: [aAllChanges[4], aAllChanges[3], aAllChanges[2], aAllChanges[1]],
+				reference: "reference"
+			};
+
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
+
+			return Storage.condense(mPropertyBag).then(function () {
+				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
+				assert.propEqual(
+					oWriteCallArgs.flexObjects,
+					mCondenseExpected,
+					"then the necessary changes get reordered (the first create is already at the right position)"
+				);
+			});
+		});
+
+		QUnit.test("and a new change is before an already persisted change in condensedChanges array", function (assert) {
+			var aAllChanges = createChangesAndSetState(["select", "select", "select"]);
+			aAllChanges[0].setState(Change.states.PERSISTED);
+			var mCondenseExpected = {
+				namespace: "a.name.space",
+				layer: this.sLayer,
+				create: {
+					change: [
+						{2: {
+							fileType: "change",
+							layer: this.sLayer,
+							fileName: "2",
+							namespace: "a.name.space",
+							changeType: "labelChange",
+							reference: "",
+							selector: {},
+							dependentSelector: {},
+							content: {
+								prop: "some Content 2"
+							}}
+						},
+						{1: {
+							fileType: "change",
+							layer: this.sLayer,
+							fileName: "1",
+							namespace: "a.name.space",
+							changeType: "labelChange",
+							reference: "",
+							selector: {},
+							dependentSelector: {},
+							content: {
+								prop: "some Content 1"
+							}}
+						}
+					]
+				},
+				reorder: {
+					change: ["2", "1", "0"]
+				}
+			};
+			var mPropertyBag = {
+				layer: this.sLayer,
+				allChanges: aAllChanges,
+				condensedChanges: [aAllChanges[2], aAllChanges[1], aAllChanges[0]],
+				reference: "reference"
+			};
+
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
+
+			return Storage.condense(mPropertyBag).then(function () {
+				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
+				assert.propEqual(
+					oWriteCallArgs.flexObjects,
+					mCondenseExpected,
+					"then the changes get reordered (because they come before the persisted change)"
+				);
 			});
 		});
 
@@ -500,9 +657,6 @@ sap.ui.define([
 			var mCondenseExpected = {
 				namespace: "a.name.space",
 				layer: this.sLayer,
-				"delete": {
-					change: []
-				},
 				update: {
 					change: [
 						{1: {
@@ -519,11 +673,6 @@ sap.ui.define([
 				},
 				reorder: {
 					change: ["2", "1"]
-				},
-				create: {
-					change: [],
-					ctrl_variant_change: [],
-					ctrl_variant_management_change: []
 				}
 			};
 			var mPropertyBag = {
@@ -543,24 +692,6 @@ sap.ui.define([
 
 		QUnit.test("and no condensed changes are returned by condenser", function (assert) {
 			var aAllChanges = createChangesAndSetState(["delete", "delete", "delete"]);
-			var mCondenseExpected = {
-				namespace: "a.name.space",
-				layer: this.sLayer,
-				"delete": {
-					change: []
-				},
-				update: {
-					change: []
-				},
-				reorder: {
-					change: []
-				},
-				create: {
-					change: [],
-					ctrl_variant_change: [],
-					ctrl_variant_management_change: []
-				}
-			};
 			var mPropertyBag = {
 				layer: this.sLayer,
 				allChanges: aAllChanges,
@@ -568,11 +699,10 @@ sap.ui.define([
 				reference: "reference"
 			};
 
-			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense");
 
 			return Storage.condense(mPropertyBag).then(function () {
-				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
-				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "then flexObject is filled correctly");
+				assert.ok(oWriteStub.notCalled, "then the write method is not called on the connector");
 			});
 		});
 
@@ -581,9 +711,6 @@ sap.ui.define([
 			var mCondenseExpected = {
 				namespace: "a.name.space",
 				layer: this.sLayer,
-				"delete": {
-					change: []
-				},
 				update: {
 					change: [
 						{0: {
@@ -597,9 +724,6 @@ sap.ui.define([
 							}
 						}}
 					]
-				},
-				reorder: {
-					change: []
 				},
 				create: {
 					change: [
@@ -616,9 +740,7 @@ sap.ui.define([
 								prop: "some Content 2"
 							}}
 						}
-					],
-					ctrl_variant_change: [],
-					ctrl_variant_management_change: []
+					]
 				}
 			};
 			var mPropertyBag = {
@@ -641,15 +763,6 @@ sap.ui.define([
 			var mCondenseExpected = {
 				namespace: "a.name.space",
 				layer: this.sLayer,
-				"delete": {
-					change: []
-				},
-				update: {
-					change: []
-				},
-				reorder: {
-					change: []
-				},
 				create: {
 					change: [
 						{0: {
@@ -665,9 +778,7 @@ sap.ui.define([
 								prop: "some Content 0"
 							}}
 						}
-					],
-					ctrl_variant_change: [],
-					ctrl_variant_management_change: []
+					]
 				}
 			};
 			var mPropertyBag = {
@@ -758,18 +869,13 @@ sap.ui.define([
 			});
 
 			var aAllChanges = [oVariant, oChange0, oChange1, oChange2, oChange3];
+			aAllChanges = aAllChanges.map(function(oChange) {
+				oChange.condenserState = "select";
+				return oChange;
+			});
 			var mCondenseExpected = {
 				namespace: "a.name.space",
 				layer: this.sLayer,
-				"delete": {
-					change: []
-				},
-				update: {
-					change: []
-				},
-				reorder: {
-					change: []
-				},
 				create: {
 					change: [
 						{0: {
@@ -891,10 +997,10 @@ sap.ui.define([
 			var oLogResolveSpy = sandbox.spy(StorageUtils, "logAndResolveDefault");
 
 			return Storage.loadFeatures().then(function (oResponse) {
-				assert.equal(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
-				assert.equal(oJsObjectConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
-				assert.equal(oPersonalizationConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
-				assert.equal(oLogResolveSpy.callCount, 1, "the logAndResolveDefault called once");
+				assert.strictEqual(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
+				assert.strictEqual(oJsObjectConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
+				assert.strictEqual(oPersonalizationConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
+				assert.strictEqual(oLogResolveSpy.callCount, 1, "the logAndResolveDefault called once");
 				assert.deepEqual(oResponse, oExpectedResponse, "response was merged even with one connector failing");
 			});
 		});
@@ -910,10 +1016,10 @@ sap.ui.define([
 			]);
 
 			return Storage.loadFeatures().then(function () {
-				assert.equal(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
+				assert.strictEqual(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
 				var oLrepConnectorCallArgs = oLrepConnectorLoadFeaturesStub.getCall(0).args[0];
 				assert.deepEqual(oLrepConnectorCallArgs, {url: sUrl}, "the url was passed");
-				assert.equal(oJsObjectConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
+				assert.strictEqual(oJsObjectConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
 				var oJsObjectConnectorCallArgs = oJsObjectConnectorLoadFeaturesStub.getCall(0).args[0];
 				assert.deepEqual(oJsObjectConnectorCallArgs, {url: undefined}, "no url was passed");
 			});
@@ -933,8 +1039,8 @@ sap.ui.define([
 			});
 
 			return Storage.loadFeatures().then(function (mFeatures) {
-				assert.equal(mFeatures.isKeyUser, true, "the property of the LrepConnector was added");
-				assert.equal(mFeatures.system, "foo", "the property of the JsObjectConnector was added");
+				assert.strictEqual(mFeatures.isKeyUser, true, "the property of the LrepConnector was added");
+				assert.strictEqual(mFeatures.system, "foo", "the property of the JsObjectConnector was added");
 			});
 		});
 
@@ -968,8 +1074,8 @@ sap.ui.define([
 			};
 
 			return Storage.loadFeatures().then(function (mFeatures) {
-				assert.equal(Object.keys(mFeatures).length, Object.keys(DEFAULT_FEATURES).length, "only 12 feature was provided");
-				assert.equal(mFeatures.isProductiveSystem, true, "the property was overruled by the second connector");
+				assert.strictEqual(Object.keys(mFeatures).length, Object.keys(DEFAULT_FEATURES).length, "only 12 feature was provided");
+				assert.strictEqual(mFeatures.isProductiveSystem, true, "the property was overruled by the second connector");
 			});
 		});
 	});
@@ -1009,7 +1115,7 @@ sap.ui.define([
 			]);
 
 			return Storage.versions.load(mPropertyBag).catch(function (sRejectionMessage) {
-				assert.equal(sRejectionMessage, "versions.load is not implemented", "then the rejection message is passed");
+				assert.strictEqual(sRejectionMessage, "versions.load is not implemented", "then the rejection message is passed");
 			});
 		});
 	});
@@ -1049,7 +1155,7 @@ sap.ui.define([
 			]);
 
 			return Storage.versions.activate(mPropertyBag).catch(function (sRejectionMessage) {
-				assert.equal(sRejectionMessage, "versions.activate is not implemented", "then the rejection message is passed");
+				assert.strictEqual(sRejectionMessage, "versions.activate is not implemented", "then the rejection message is passed");
 			});
 		});
 	});
@@ -1072,7 +1178,7 @@ sap.ui.define([
 			var oDiscardStub = sandbox.stub(WriteKeyUserConnector.versions, "discardDraft").resolves();
 
 			return Storage.versions.discardDraft(mPropertyBag).then(function () {
-				assert.equal(oDiscardStub.callCount, 1, "the discarding of the connector was called");
+				assert.strictEqual(oDiscardStub.callCount, 1, "the discarding of the connector was called");
 			});
 		});
 
@@ -1088,7 +1194,7 @@ sap.ui.define([
 			]);
 
 			return Storage.versions.discardDraft(mPropertyBag).catch(function (sRejectionMessage) {
-				assert.equal(sRejectionMessage, "versions.discardDraft is not implemented", "then the rejection message is passed");
+				assert.strictEqual(sRejectionMessage, "versions.discardDraft is not implemented", "then the rejection message is passed");
 			});
 		});
 	});
@@ -1111,7 +1217,7 @@ sap.ui.define([
 			var oPublishStub = sandbox.stub(WriteLrepConnector.versions, "publish").resolves();
 
 			return Storage.versions.publish(mPropertyBag).then(function () {
-				assert.equal(oPublishStub.callCount, 1, "the publish of the connector was called");
+				assert.strictEqual(oPublishStub.callCount, 1, "the publish of the connector was called");
 			});
 		});
 
@@ -1151,7 +1257,7 @@ sap.ui.define([
 			};
 
 			return Storage.reset(mPropertyBag).catch(function (sErrorMessage) {
-				assert.equal(sErrorMessage, "No layer was provided", "then an Error is thrown");
+				assert.strictEqual(sErrorMessage, "No layer was provided", "then an Error is thrown");
 			});
 		});
 
@@ -1166,7 +1272,7 @@ sap.ui.define([
 
 			return Storage.reset(mPropertyBag)
 				.catch(function (oError) {
-					assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
+					assert.strictEqual(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
 				});
 		});
 
@@ -1181,7 +1287,7 @@ sap.ui.define([
 
 			return Storage.reset(mPropertyBag)
 				.catch(function (oError) {
-					assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
+					assert.strictEqual(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
 				});
 		});
 
@@ -1198,7 +1304,7 @@ sap.ui.define([
 
 			return Storage.reset(mPropertyBag)
 				.catch(function (oError) {
-					assert.equal(oError.message, "sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: " +
+					assert.strictEqual(oError.message, "sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: " +
 					"Multiple Connector configurations were found to write into layer: VENDOR");
 				});
 		});
@@ -1236,13 +1342,13 @@ sap.ui.define([
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetUrlCallArgs[0], "/changes/", "with correct route path");
+				assert.strictEqual(oStubGetUrl.callCount, 2, "getUrl is called twice");
+				assert.strictEqual(oGetUrlCallArgs[0], "/changes/", "with correct route path");
 				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the url was added");
+				assert.strictEqual(oGetUrlCallArgs[1].url, sUrl, "the url was added");
 				assert.deepEqual(oGetUrlCallArgs[1].reference, undefined, "reference was deleted from mPropertyBag");
 				assert.deepEqual(oGetUrlCallArgs[2], mParameter, "with correct parameters input");
-				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
+				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
 			});
 		});
@@ -1272,13 +1378,13 @@ sap.ui.define([
 				var oGetUrlCallArgs = oSpyGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.equal(oSpyGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetUrlCallArgs[0], "/flex/personalization/v1/changes/", "with correct route path");
+				assert.strictEqual(oSpyGetUrl.callCount, 2, "getUrl is called twice");
+				assert.strictEqual(oGetUrlCallArgs[0], "/flex/personalization/v1/changes/", "with correct route path");
 				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the url was added");
+				assert.strictEqual(oGetUrlCallArgs[1].url, sUrl, "the url was added");
 				assert.deepEqual(oGetUrlCallArgs[1].reference, undefined, "reference was deleted from mPropertyBag");
 				assert.deepEqual(oGetUrlCallArgs[2], mParameter, "with correct parameters input");
-				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
+				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
 			});
 		});
@@ -1310,13 +1416,13 @@ sap.ui.define([
 				var oGetUrlCallArgs = oSpyGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.equal(oSpyGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetUrlCallArgs[0], "/flex/personalization/v1/changes/", "with correct route path");
+				assert.strictEqual(oSpyGetUrl.callCount, 2, "getUrl is called twice");
+				assert.strictEqual(oGetUrlCallArgs[0], "/flex/personalization/v1/changes/", "with correct route path");
 				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the url was added");
+				assert.strictEqual(oGetUrlCallArgs[1].url, sUrl, "the url was added");
 				assert.deepEqual(oGetUrlCallArgs[1].reference, undefined, "reference was deleted from mPropertyBag");
 				assert.deepEqual(oGetUrlCallArgs[2], mParameter, "with correct parameters input");
-				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
+				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
 			});
 		});
@@ -1349,15 +1455,15 @@ sap.ui.define([
 				var oGetTokenUrlCallArgs = oStubGetUrl.getCall(1).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetResetUrlCallArgs[0], "/flex/keyuser/v1/changes/", "with correct route path");
-				assert.equal(oGetResetUrlCallArgs[1], mPropertyBag, "with correct property bag");
-				assert.equal(oGetResetUrlCallArgs[1].url, sUrl1, "the correct url was added");
-				assert.equal(oGetTokenUrlCallArgs[0], "/flex/keyuser/v1/settings", "with correct route path");
+				assert.strictEqual(oStubGetUrl.callCount, 2, "getUrl is called twice");
+				assert.strictEqual(oGetResetUrlCallArgs[0], "/flex/keyuser/v1/changes/", "with correct route path");
+				assert.strictEqual(oGetResetUrlCallArgs[1], mPropertyBag, "with correct property bag");
+				assert.strictEqual(oGetResetUrlCallArgs[1].url, sUrl1, "the correct url was added");
+				assert.strictEqual(oGetTokenUrlCallArgs[0], "/flex/keyuser/v1/settings", "with correct route path");
 				assert.deepEqual(oGetResetUrlCallArgs[1].reference, undefined, "reference was deleted from mPropertyBag");
 				assert.deepEqual(oGetResetUrlCallArgs[2], mParameter, "with correct parameters input");
-				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-				assert.equal(oStubSendRequest.callCount, 1, "sendRequest is called once");
+				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
+				assert.strictEqual(oStubSendRequest.callCount, 1, "sendRequest is called once");
 			});
 		});
 	});
@@ -1378,9 +1484,9 @@ sap.ui.define([
 			var oStubGetUrl = sandbox.spy(InitialUtils, "getUrl");
 
 			return Storage.getContexts(mPropertyBag).then(function (oResponse) {
-				assert.equal(oStubSendRequest.callCount, 1, "send request was called once");
-				assert.equal(oStubGetUrl.returnValues[0], "/sap/bc/lrep/flex/contexts/?type=role", "url is correct");
-				assert.equal(oResponse.lastHitReached, true, "response is as expected");
+				assert.strictEqual(oStubSendRequest.callCount, 1, "send request was called once");
+				assert.strictEqual(oStubGetUrl.returnValues[0], "/sap/bc/lrep/flex/contexts/?type=role", "url is correct");
+				assert.strictEqual(oResponse.lastHitReached, true, "response is as expected");
 			});
 		});
 
@@ -1394,10 +1500,10 @@ sap.ui.define([
 			var oStubGetUrl = sandbox.spy(InitialUtils, "getUrl");
 
 			return Storage.loadContextDescriptions(mPropertyBag).then(function (oResponse) {
-				assert.equal(oStubSendRequest.callCount, 1, "send request was called once");
-				assert.equal(oStubGetUrl.callCount, 2, "getUrl was called twice");
-				assert.equal(oStubGetUrl.returnValues[1], "/sap/bc/lrep/actions/getcsrftoken/", "token url is correct");
-				assert.equal(oStubGetUrl.returnValues[0], "/sap/bc/lrep/flex/contexts/?sap-language=EN", "post url is correct");
+				assert.strictEqual(oStubSendRequest.callCount, 1, "send request was called once");
+				assert.strictEqual(oStubGetUrl.callCount, 2, "getUrl was called twice");
+				assert.strictEqual(oStubGetUrl.returnValues[1], "/sap/bc/lrep/actions/getcsrftoken/", "token url is correct");
+				assert.strictEqual(oStubGetUrl.returnValues[0], "/sap/bc/lrep/flex/contexts/?sap-language=EN", "post url is correct");
 				assert.ok(oResponse.lastHitReached, "response is as expected");
 			});
 		});
@@ -1412,7 +1518,7 @@ sap.ui.define([
 			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([{connector: "KeyUserConnector"}, {connector: "NeoLrepConnector"}]);
 
 			return Storage.loadContextDescriptions(mPropertyBag).catch(function () {
-				assert.equal(oSpySendRequest.callCount, 0, "no request was send");
+				assert.strictEqual(oSpySendRequest.callCount, 0, "no request was send");
 			});
 		});
 
@@ -1426,7 +1532,7 @@ sap.ui.define([
 			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([{connector: "KeyUserConnector"}, {connector: "NeoLrepConnector"}]);
 
 			return Storage.getContexts(mPropertyBag).catch(function () {
-				assert.equal(oSpySendRequest.callCount, 0, "no request was send");
+				assert.strictEqual(oSpySendRequest.callCount, 0, "no request was send");
 			});
 		});
 	});
@@ -1454,7 +1560,7 @@ sap.ui.define([
 			sandbox.stub(WriteKeyUserConnector.translation, "getSourceLanguages").resolves(aReturnedLanguages);
 
 			return Storage.translation.getSourceLanguages(mPropertyBag).then(function (aLanguages) {
-				assert.equal(aLanguages, aReturnedLanguages);
+				assert.strictEqual(aLanguages, aReturnedLanguages);
 			});
 		});
 
@@ -1467,7 +1573,7 @@ sap.ui.define([
 			};
 
 			return Storage.translation.getSourceLanguages(mPropertyBag).catch(function (sRejectionMessage) {
-				assert.equal(sRejectionMessage, "translation.getSourceLanguages is not implemented", "then the rejection message is passed");
+				assert.strictEqual(sRejectionMessage, "translation.getSourceLanguages is not implemented", "then the rejection message is passed");
 			});
 		});
 	});
@@ -1506,7 +1612,7 @@ sap.ui.define([
 			};
 
 			return Storage.translation.getTexts(mPropertyBag).catch(function (sRejectionMessage) {
-				assert.equal(sRejectionMessage, "translation.getTexts is not implemented", "then the rejection message is passed");
+				assert.strictEqual(sRejectionMessage, "translation.getTexts is not implemented", "then the rejection message is passed");
 			});
 		});
 	});
@@ -1543,7 +1649,7 @@ sap.ui.define([
 			};
 
 			return Storage.translation.postTranslationTexts(mPropertyBag).catch(function (sRejectionMessage) {
-				assert.equal(sRejectionMessage, "translation.postTranslationTexts is not implemented", "then the rejection message is passed");
+				assert.strictEqual(sRejectionMessage, "translation.postTranslationTexts is not implemented", "then the rejection message is passed");
 			});
 		});
 	});
