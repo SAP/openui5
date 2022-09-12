@@ -166,10 +166,10 @@ sap.ui.define([
 			if (sAuthorId) {
 				oView.bindElement({path: "/Authors(" + sAuthorId + ")", parameters: {$expand: 'genres'}});
 			} else {
-				// unbind addtitinalValue as update dont work
-				oView.byId("fCountry").unbindProperty("additionalValue");
-				oView.byId("fRegion").unbindProperty("additionalValue");
-				oView.byId("fCity").unbindProperty("additionalValue");
+				// unbind and clear addtitinalValue as update dont work
+				oView.byId("fCountry").unbindProperty("additionalValue").setAdditionalValue();
+				oView.byId("fRegion").unbindProperty("additionalValue").setAdditionalValue();
+				oView.byId("fCity").unbindProperty("additionalValue").setAdditionalValue();
 
 				var oModel = oView.getModel(),
 					oViewModel = oView.getModel("view"),
