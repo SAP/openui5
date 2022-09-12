@@ -1097,13 +1097,8 @@
 		});
 
 		// set model & bind Aggregation
-		oTableSelectDialog14.setModel(new sap.ui.model.json.JSONModel(aData));
-		oTableSelectDialog14.bindItems("/", new sap.m.ColumnListItem({
-			cells : [
-				new sap.m.Label({text : "{text}"})
-			],
-			selected : "{selected}"
-		}));
+		oTableSelectDialog14.setModel(oModel3);
+		oTableSelectDialog14.bindAggregation("items", "/items", oItemTemplate1);
 		oTableSelectDialog14.addStyleClass("sapUiResponsivePadding--header sapUiResponsivePadding--subHeader sapUiResponsivePadding--content sapUiResponsivePadding--footer");
 
 		var oButton14 = new sap.m.Button("Button14", {
