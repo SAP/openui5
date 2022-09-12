@@ -25,11 +25,13 @@ sap.ui.define([
 	"sap/m/NewsContent",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/core/dnd/DragInfo",
+	"sap/f/dnd/GridDropInfo",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
 			Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes, oCore, GridContainerItemLayoutData,
-			GridContainerSettings, GridContainer, FormattedText, NewsContent, Parameters,qutils) {
+			GridContainerSettings, GridContainer, FormattedText, NewsContent, Parameters,qutils,DragInfo,GridDropInfo) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -4943,6 +4945,59 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 			assert.notOk(this.oSpy.callCount, "The Tile has not been Rendered upon theme change");
 			done();
 		});
+	});
+
+	QUnit.module("Test if the dragging and dropping is working on anchor tagged rendered tiles", {
+		beforeEach: function() {
+			this.oGrid1 = new GridContainer({
+				layout: new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"}),
+				items: [
+					new GenericTile({
+						header: "GenericTile",
+						subheader: "GenericTile subHeader",
+						mode: "IconMode",
+						tileIcon: "sap-icon://key",
+						frameType: "TwoByHalf",
+						url: "www.google.com",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 2",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 3",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					}),
+					new GenericTile({
+						header: "Tile 4",
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
+					})
+				],
+				dragDropConfig: [
+					new DragInfo({
+						sourceAggregation: "items"
+					})
+				]
+			});
+			this.oGrid1.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.oGrid1.destroy();
+		}
+	});
+
+	QUnit.test("Test if the tile is dragabble when it is an anchor tag", function (assert) {
+		// Arrange
+		this.oGrid1.addDragDropConfig(new GridDropInfo({
+			targetAggregation: "items",
+			dropPosition: "Between",
+			dropLayout: "Horizontal"
+		}));
+
+		//Act
+		assert.equal(this.oGrid1.getItems()[0].getDomRef().getAttribute("draggable"),"true","Tile is draggable");
 	});
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
