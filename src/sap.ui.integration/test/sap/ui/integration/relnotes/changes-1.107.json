@@ -3,6 +3,17 @@
     "date": "September 2022",
     "notes": [
       {
+        "id": "73828b320352e3c909546a8e798cf9e733a9c20a",
+        "type": "FIX",
+        "text": " Integration cards: Footer in Object card is now correctly aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280170159"
+          }
+        ]
+      },
+      {
         "id": "932010d607bfcf2106d2316e0057a42a5c14087e",
         "type": "FIX",
         "text": " sap.ui.integration.widgets.Card: Added new \"visible\" property to the card header icon",

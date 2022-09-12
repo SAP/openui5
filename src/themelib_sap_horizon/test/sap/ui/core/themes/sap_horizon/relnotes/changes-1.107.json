@@ -3,6 +3,17 @@
     "date": "September 2022",
     "notes": [
       {
+        "id": "73828b320352e3c909546a8e798cf9e733a9c20a",
+        "type": "FIX",
+        "text": " Integration cards: Footer in Object card is now correctly aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280170159"
+          }
+        ]
+      },
+      {
         "id": "03a6d051bcef9efbfcd60dcfbee5375c36d92b56",
         "type": "FIX",
         "text": " sap.m.Slider: Start/end dot position adjustments",

@@ -3,9 +3,82 @@
     "date": "September 2022",
     "notes": [
       {
+        "id": "9d133f3906a4fdb4ded7ba287779b1d700a0a4ab",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel: transport sap-language to value help and customizing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270119565"
+          }
+        ]
+      },
+      {
+        "id": "056cee0d449f3f1c5eeca409f11b0d040d60b256",
+        "type": "FIX",
+        "text": " UIArea: must not trigger fieldGroupChange when popup parks the focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270116320"
+          }
+        ]
+      },
+      {
+        "id": "e17b1b70596587cc2a3312a872e8405faf9bddf1",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMetaModel#fetchCodeList: use sap-client and sap-language for code list requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280131765"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500006108912022"
+          }
+        ]
+      },
+      {
+        "id": "c2bebfe38a7110d648499c19610d77feabb4415e",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODateMetaModel#fetchCodeList: don't reuse codelist promise over models if it is not yet resolved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280171731"
+          }
+        ]
+      },
+      {
+        "id": "5d83f60be3ad6dd75e4b7b104c9625eb61ad75e4",
+        "type": "FIX",
+        "text": " sap.ui.core.demokit.tutorial.odatav4 mockserver is complete in step 1"
+      },
+      {
         "id": "20722d287421d474a1d57bf189a4af6057031628",
         "type": "FIX",
         "text": " LoaderExtension: loadResource must notify Interaction correctly"
+      },
+      {
+        "id": "aa7b57984dd090419a5b36e3fbab25a7914e3769",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#getRefreshAfterChange: improved JSDoc"
+      },
+      {
+        "id": "d6aac69572d75cc664054784d2e57585cfc1b3a3",
+        "type": "FIX",
+        "text": " core.FocusHandler/Popup: preventScroll during focus with block layer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270033712"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280107289"
+          }
+        ]
       },
       {
         "id": "a986510ef3be8a142c96d0301400bbd49e98181f",
