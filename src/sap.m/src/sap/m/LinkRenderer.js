@@ -102,6 +102,10 @@
 			oRm.class("sapMLnkWrapping");
 		}
 
+		if (oControl.getEmptyIndicatorMode() !== EmptyIndicatorMode.Off && !oControl.getText()) {
+			oRm.class("sapMLinkContainsEmptyIdicator");
+		}
+
 		if (oControl.getTooltip_AsString()) {
 			oRm.attr("title", oControl.getTooltip_AsString());
 		}
