@@ -167,8 +167,7 @@ sap.ui.define([
             if (aP13nMode.indexOf("Sort") > -1 || aP13nMode.indexOf("Item") > -1) {
                 this._oSettingsBtn = new OverflowButton(oMDCChart.getId() + "-chart_settings", {
                     icon: "sap-icon://action-settings",//TODO the right icon for P13n chart dialog
-                    tooltip: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
-					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
+                    tooltip: MDCRb.getText('chart.SETTINGS'),
                     enabled: false,
                     press: function (oEvent) {
                         var aP13nMode = oMDCChart.getP13nMode();
