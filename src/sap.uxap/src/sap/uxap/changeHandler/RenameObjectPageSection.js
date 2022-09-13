@@ -71,31 +71,23 @@ sap.ui.define([
 	RenameObjectPageSection.applyChange = function (oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var sPropertyName = mRenameSettings.propertyName;
-		var oChangeDefinition = oChange.getDefinition();
-		var sText = oChangeDefinition.texts[mRenameSettings.changePropertyName];
-		var sValue = sText.value;
-		return RenameObjectPageSection._getControlForRename(oControl, oModifier)
-			.then(function(oControlToBeRenamed) {
-				if (typeof sValue === "string" && sValue.trim() === "") {
-					throw new Error("Change cannot be applied as ObjectPageSubSection's title cannot be empty: ["
-						+ oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
-				}
+		var sValue = oChange.getText(mRenameSettings.changePropertyName);
 
-				if (oChangeDefinition.texts && sText && typeof (sValue) === "string") {
-					return Promise.resolve()
-						.then(function(){
-							return oModifier.getPropertyBindingOrProperty(oControlToBeRenamed, sPropertyName);
-						})
+		if (sValue && typeof sValue === "string") {
+			return RenameObjectPageSection._getControlForRename(oControl, oModifier)
+				.then(function(oControlToBeRenamed) {
+					if (sValue.trim() === "") {
+						throw new Error("Change cannot be applied as ObjectPageSubSection's title cannot be empty");
+					}
+
+					return oModifier.getPropertyBindingOrProperty(oControlToBeRenamed, sPropertyName)
 						.then(function(oBindingOrProperty) {
 							oChange.setRevertData(oBindingOrProperty);
 							oModifier.setPropertyBindingOrProperty(oControlToBeRenamed, sPropertyName, sValue);
 							return true;
 						});
-				} else {
-					Log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
-					//however subsequent changes should be applied
-				}
-			});
+				});
+		}
 	};
 
 	RenameObjectPageSection.revertChange = function (oChange, oControl, mPropertyBag) {
