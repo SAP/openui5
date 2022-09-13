@@ -601,7 +601,7 @@ sap.ui.define([
 			}.bind(this))
 			.then(function(oReturn) {
 				oReloadInfo = oReturn;
-				return bSkipSave ? Promise.resolve() : this._serializeToLrep(this);
+				return bSkipSave ? Promise.resolve() : this._serializeToLrep();
 			}.bind(this))
 			.then(checkToolbarAndExecuteFunction.bind(this, "hide", bSkipSave))
 			.then(function() {
@@ -1233,7 +1233,7 @@ sap.ui.define([
 				emphasizedAction: MessageBox.Action.YES
 			}).then(function(sAction) {
 				if (sAction === MessageBox.Action.YES) {
-					this._serializeToLrep(this)
+					this._serializeToLrep()
 						.then(switchVersion.bind(this, this._sSwitchToVersion));
 				} else if (sAction === MessageBox.Action.NO) {
 					// avoids the data loss popup; a reload is triggered later and will destroy RTA & the command stack
