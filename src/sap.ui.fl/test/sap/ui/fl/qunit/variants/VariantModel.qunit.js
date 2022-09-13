@@ -1968,6 +1968,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when calling 'setModel' of VariantManagement control", function(assert) {
 			var fnRegisterToModelSpy = sandbox.spy(this.oModel, "registerToModel");
+			sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves("foo");
 			sandbox.stub(this.oModel, "getVariantManagementReferenceForControl").returns("varMgmtRef1");
 			this.oVariantManagement.setExecuteOnSelectionForStandardDefault(true);
 			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
@@ -1976,6 +1977,9 @@ sap.ui.define([
 			assert.ok(fnRegisterToModelSpy.calledWith(this.oVariantManagement), "then registerToModel called with VariantManagement control");
 			assert.ok(this.oModel.oData["varMgmtRef1"].init, "the init flag is set");
 			assert.equal(this.oModel.oData["varMgmtRef1"].showExecuteOnSelection, false, "showExecuteOnSelection is set to false");
+			return this.oModel._oVariantSwitchPromise.then(function(sValue) {
+				assert.strictEqual(sValue, "foo", "the initial changes promise was added to the variant switch promise");
+			});
 		});
 
 		QUnit.test("when waitForVMControlInit is called before the control is initialized", function(assert) {
@@ -2269,6 +2273,7 @@ sap.ui.define([
 				this.oComp = new MockComponent({id: "testComponent"});
 				this.oView = oView;
 				this.oFlexController = ChangesController.getFlexControllerInstance(this.oComp);
+				sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves();
 				this.oVariantModel = new VariantModel({}, {
 					flexController: this.oFlexController,
 					appComponent: this.oComp
@@ -2588,7 +2593,6 @@ sap.ui.define([
 			var oNewControl1 = new Button("newControl1", {text: "foo"});
 			var oNewControl2 = new Button("newControl2", {text: "foo"});
 			var oNewControl3 = new Button("newControl3", {text: "foo"});
-			sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves();
 
 			var oReturnPromise = Promise.all([
 				this.oVariantModel.attachVariantApplied({
@@ -2636,7 +2640,6 @@ sap.ui.define([
 			this.oView.byId(sVMControlId).setExecuteOnSelectionForStandardDefault(true);
 			var fnCallback1 = sandbox.stub();
 			var fnCallback2 = sandbox.stub();
-			sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves();
 			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns({});
 			VariantManagementState.getCurrentVariantReference.restore();
 
@@ -2668,7 +2671,6 @@ sap.ui.define([
 			var sVMControlId = "testComponent---" + sVMReference;
 			var fnCallback1 = sandbox.stub();
 			var fnCallback2 = sandbox.stub();
-			sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves();
 			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns({});
 			VariantManagementState.getCurrentVariantReference.restore();
 
@@ -2698,7 +2700,6 @@ sap.ui.define([
 			var sVMControlId = "testComponent---" + sVMReference;
 			var fnCallback1 = sandbox.stub();
 			var fnCallback2 = sandbox.stub();
-			sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves();
 			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns({setExecuteOnSelect: {}});
 			VariantManagementState.getCurrentVariantReference.restore();
 
@@ -2728,7 +2729,6 @@ sap.ui.define([
 			oVMControl.setExecuteOnSelectionForStandardDefault(true);
 			var fnCallback1 = sandbox.stub();
 			var fnCallback2 = sandbox.stub();
-			sandbox.stub(VariantManagementState, "waitForInitialVariantChanges").resolves();
 			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns({});
 
 			return Promise.all([
