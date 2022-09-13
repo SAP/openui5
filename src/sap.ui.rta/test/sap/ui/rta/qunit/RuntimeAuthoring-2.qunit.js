@@ -279,6 +279,25 @@ sap.ui.define([
 			var sMessage = this.oRta._onUnload();
 			assert.equal(sMessage, undefined, "then the function returns no message");
 		});
+
+		QUnit.test("when getSelection is called with a designtime started", function(assert) {
+			this.oRta._oDesignTime = {
+				getSelectionManager: function() {
+					return {
+						get: function() {
+							return "foo";
+						}
+					};
+				},
+				destroy: function() {}
+			};
+
+			assert.strictEqual(this.oRta.getSelection(), "foo", "the result of the getSelectionManager.get function is returned");
+		});
+
+		QUnit.test("when getSelection is called without a designtime started", function(assert) {
+			assert.deepEqual(this.oRta.getSelection(), [], "an empty array is returned");
+		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started", {
