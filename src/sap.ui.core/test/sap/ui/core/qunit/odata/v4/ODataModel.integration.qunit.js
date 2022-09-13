@@ -27912,9 +27912,10 @@ sap.ui.define([
 	// automatic determination.
 	// No own test as unit value list is cached in a private cache
 	// JIRA: CPOUI5MODELS-302
+	// Transport sap-language (BCP: 2270119565)
 	QUnit.test("OData Unit type considering unit customizing", function (assert) {
 		var oControl,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel,
 			sView = '\
 <FlexBox binding="{/ProductList(\'HT-1000\')}">\
 	<Input id="weight" value="{parts: [\'WeightMeasure\', \'WeightUnit\',\
@@ -27942,13 +27943,26 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("ProductList(\'HT-1000\')?$select=ProductID,WeightMeasure,WeightUnit", {
+		this.useFakeServer({
+			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata?sap-client=123&sap-context-token=foo&sap-language=EN"
+				: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
+			"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata?sap-language=EN"
+				: {source : "odata/v4/data/metadata_codelist.xml"}
+		});
+		oModel = createModel(sSalesOrderService + "?sap-client=123", {
+			autoExpandSelect : true,
+			metadataUrlParams : {"sap-context-token" : "foo", "sap-language" : "EN"}
+		});
+
+		this.expectRequest("ProductList(\'HT-1000\')?sap-client=123"
+			+ "&$select=ProductID,WeightMeasure,WeightUnit", {
 				"@odata.etag" : "ETag",
 				ProductID : "HT-1000",
 				WeightMeasure : "12.34",
 				WeightUnit : "KG"
 			})
-			.expectRequest("UnitsOfMeasure?$select=ExternalCode,DecimalPlaces,Text,ISOCode", {
+			.expectRequest("UnitsOfMeasure?sap-language=EN"
+				+ "&$select=ExternalCode,DecimalPlaces,Text,ISOCode", {
 				value : [{
 					DecimalPlaces : 5,
 					ExternalCode : "KG",
@@ -28001,7 +28015,7 @@ sap.ui.define([
 				.expectChange("weightMeasure", "23.400")
 				.expectRequest({
 					method : "PATCH",
-					url : "ProductList('HT-1000')",
+					url : "ProductList('HT-1000')?sap-client=123",
 					headers : {"If-Match" : "ETag"},
 					payload : {WeightMeasure : "23.4", WeightUnit : "KG"}
 				});
@@ -28015,7 +28029,7 @@ sap.ui.define([
 				.expectChange("weight1", "0.00000")
 				.expectRequest({
 					method : "PATCH",
-					url : "ProductList('HT-1000')",
+					url : "ProductList('HT-1000')?sap-client=123",
 					headers : {"If-Match" : "ETag"},
 					payload : {WeightMeasure : "0", WeightUnit : "KG"}
 				});
@@ -28061,9 +28075,10 @@ sap.ui.define([
 	// automatic determination.
 	// No own test as currency value list is cached in a private cache
 	// JIRA: CPOUI5MODELS-302
+	// Transport sap-language (BCP: 2270119565)
 	QUnit.test("OData Currency type considering currency customizing", function (assert) {
 		var oControl,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel,
 			sView = '\
 <FlexBox binding="{/ProductList(\'HT-1000\')}">\
 	<Input id="price" value="{parts: [\'Price\', \'CurrencyCode\',\
@@ -28090,13 +28105,26 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("ProductList(\'HT-1000\')?$select=CurrencyCode,Price,ProductID", {
+		this.useFakeServer({
+			"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/$metadata?sap-client=123&sap-context-token=foo&sap-language=EN"
+				: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"},
+			"/sap/opu/odata4/sap/zui5_testv4/default/iwbep/common/0001/$metadata?sap-language=EN"
+				: {source : "odata/v4/data/metadata_codelist.xml"}
+		});
+		oModel = createModel(sSalesOrderService + "?sap-client=123", {
+			autoExpandSelect : true,
+			metadataUrlParams : {"sap-context-token" : "foo", "sap-language" : "EN"}
+		});
+
+		this.expectRequest("ProductList(\'HT-1000\')?sap-client=123"
+			+ "&$select=CurrencyCode,Price,ProductID", {
 				"@odata.etag" : "ETag",
 				ProductID : "HT-1000",
 				Price : "12.3",
 				CurrencyCode : "EUR"
 			})
-			.expectRequest("Currencies?$select=CurrencyCode,DecimalPlaces,Text,ISOCode", {
+			.expectRequest("Currencies?sap-language=EN"
+				+ "&$select=CurrencyCode,DecimalPlaces,Text,ISOCode", {
 				value : [{
 					CurrencyCode : "EUR",
 					DecimalPlaces : 2,
@@ -28160,7 +28188,7 @@ sap.ui.define([
 				.expectChange("amount", "42")
 				.expectRequest({
 					method : "PATCH",
-					url : "ProductList('HT-1000')",
+					url : "ProductList('HT-1000')?sap-client=123",
 					headers : {"If-Match" : "ETag"},
 					payload : {Price : "42", CurrencyCode : "JPY"}
 				});
@@ -28174,7 +28202,7 @@ sap.ui.define([
 				.expectChange("price1", "0")
 				.expectRequest({
 					method : "PATCH",
-					url : "ProductList('HT-1000')",
+					url : "ProductList('HT-1000')?sap-client=123",
 					headers : {"If-Match" : "ETag"},
 					payload : {Price : "0", CurrencyCode : "JPY"}
 				});
@@ -34480,16 +34508,16 @@ sap.ui.define([
 
 		this.useFakeServer({
 			"HEAD /sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/?sap-client=279" : {},
-			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=279&sap-context-token=20200716120000&sap-language=en"
+			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata?sap-client=279&sap-context-token=20200716120000&sap-language=EN"
 				: {source : "odata/v4/data/metadata.xml"},
-			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?sap-client=279&sap-language=en"
+			"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata?sap-client=279&sap-language=EN"
 				: {source : "odata/v4/data/metadata_tea_busi_product.xml"}
 		});
 		oModel = createModel(sTeaBusi + "?sap-client=279", {
 			earlyRequests : true,
 			metadataUrlParams : {
 				"sap-context-token" : "20200716120000",
-				"sap-language" : "en"
+				"sap-language" : "EN"
 			}
 		});
 

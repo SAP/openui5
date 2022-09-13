@@ -4302,4 +4302,39 @@ sap.ui.define([
 				simple2 : true
 			});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("setLanguage", function (assert) {
+		assert.strictEqual(
+			// code under test
+			_Helper.setLanguage("/some/path"),
+			"/some/path");
+
+		assert.strictEqual(
+			// code under test
+			_Helper.setLanguage("/some/path?foo=bar&sap-language=XY", "n/a"),
+			"/some/path?foo=bar&sap-language=XY");
+
+		assert.strictEqual(
+			// code under test
+			_Helper.setLanguage("/some/path?foo=bar&sap-language=XY&baz", "n/a"),
+			"/some/path?foo=bar&sap-language=XY&baz");
+
+		this.mock(_Helper).expects("encode").thrice().withExactArgs("XY").returns("%58Y");
+
+		assert.strictEqual(
+			// code under test
+			_Helper.setLanguage("/some/path", "XY"),
+			"/some/path?sap-language=%58Y");
+
+		assert.strictEqual(
+			// code under test
+			_Helper.setLanguage("/some/path?foo=bar", "XY"),
+			"/some/path?foo=bar&sap-language=%58Y");
+
+		assert.strictEqual(
+			// code under test
+			_Helper.setLanguage("/some/path?mysap-language=bar", "XY"),
+			"/some/path?mysap-language=bar&sap-language=%58Y");
+	});
 });
