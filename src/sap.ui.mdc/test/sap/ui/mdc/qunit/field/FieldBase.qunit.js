@@ -2451,7 +2451,7 @@ sap.ui.define([
 	QUnit.test("with type currency", function(assert) {
 
 		oField.setDataType("sap.ui.model.type.Currency");
-		var oCondition = Condition.createCondition("EQ", [[123.45, "USD"]]);
+		var oCondition = Condition.createCondition("EQ", [[123.45, "USD"]], undefined, undefined, ConditionValidated.NotValidated, {payload: "X"});
 		oField.setConditions([oCondition]);
 		oCore.applyChanges();
 
@@ -2478,6 +2478,7 @@ sap.ui.define([
 			assert.equal(aConditions[0].values[0][0], undefined, "condition value0");
 			assert.equal(aConditions[0].values[0][1], "USD", "condition value1");
 			assert.equal(aConditions[0].operator, "EQ", "condition operator");
+			assert.deepEqual(aConditions[0].payload, {payload: "X"}, "condition payload");
 			aTokens = oContent1.getTokens ? oContent1.getTokens() : [];
 			assert.equal(aTokens.length, 0, "MultiInput has no Token after delete");
 		}
@@ -4414,7 +4415,7 @@ sap.ui.define([
 		assert.equal(oFieldHelp.connect.args[0][0], oField, "FieldHelp connected to Field");
 		assert.equal(oFieldHelp.connect.args[0][1].dataType, oStringType, "Type of currency part used for FieldHelp");
 		// simulate select event to see if field is updated
-		var oCondition = Condition.createCondition("EQ", ["EUR", "EUR"], {inTest: "X"}, {outTest: "Y"});
+		var oCondition = Condition.createCondition("EQ", ["EUR", "EUR"], {inTest: "X"}, {outTest: "Y"}, ConditionValidated.Validated, {payloadTest: "Z"});
 		oFieldHelp.fireSelect({ conditions: [oCondition] });
 		assert.equal(iCount, 0, "Change Event not fired");
 		var aConditions = oCM.getConditions("Price");
@@ -4426,6 +4427,8 @@ sap.ui.define([
 		assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
 		assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition has out-partameters");
 		assert.equal(aConditions[0].outParameters.outTest, "Y", "Out-parameter value");
+		assert.ok(aConditions[0].hasOwnProperty("payload"), "Condition has payload");
+		assert.equal(aConditions[0].payload.payloadTest, "Z", "payload value");
 		assert.equal(oContent2.getDOMValue(), "EUR", "value in inner control");
 
 		setTimeout(function() { // wait for Model update
@@ -4436,7 +4439,7 @@ sap.ui.define([
 
 				oCM.removeAllConditions();
 				setTimeout(function() { // wait for Model update
-					oCondition = Condition.createCondition("EQ", ["USD", "USD"], {inTest: "X"}, {outTest: "Y"});
+					oCondition = Condition.createCondition("EQ", ["USD", "USD"], {inTest: "X"}, {outTest: "Y"}, ConditionValidated.Validated, {payloadTest: "Z"});
 					oFieldHelp.fireSelect({ conditions: [oCondition] });
 					aConditions = oCM.getConditions("Price");
 					assert.equal(aConditions.length, 1, "one condition in Codition model");
@@ -4447,6 +4450,8 @@ sap.ui.define([
 					assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
 					assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition has out-partameters");
 					assert.equal(aConditions[0].outParameters.outTest, "Y", "Out-parameter value");
+					assert.ok(aConditions[0].hasOwnProperty("payload"), "Condition has payload");
+					assert.equal(aConditions[0].payload.payloadTest, "Z", "payload value");
 
 					oField._oContentFactory.setCompositeTypes();
 					oIntType.destroy();

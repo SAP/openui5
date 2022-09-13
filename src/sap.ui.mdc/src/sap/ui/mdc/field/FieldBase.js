@@ -2389,6 +2389,7 @@ sap.ui.define([
 			var aRemovedTokens = oEvent.getParameter("removedTokens");
 			var aConditions = this.getConditions();
 			var sUnit;
+			var oPayload;
 			var i;
 
 			for (i = 0; i < aRemovedTokens.length; i++) {
@@ -2401,7 +2402,9 @@ sap.ui.define([
 			for (i = aConditions.length - 1; i >= 0; i--) {
 				if (aConditions[i].delete) {
 					if (this._oContentFactory.isMeasure()) {
+						// store for dummy condition if all conditions are removed
 						sUnit = aConditions[i].values[0][1];
+						oPayload = aConditions[i].payload;
 					}
 					aConditions.splice(i, 1);
 				}
@@ -2409,7 +2412,7 @@ sap.ui.define([
 
 			if (this._oContentFactory.isMeasure() && sUnit && aConditions.length === 0) {
 				// create dummy condition for unit
-				aConditions = [Condition.createItemCondition([undefined, sUnit], undefined)];
+				aConditions = [Condition.createItemCondition([undefined, sUnit], undefined, undefined, undefined, oPayload)];
 			}
 
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole field
@@ -2491,7 +2494,7 @@ sap.ui.define([
 			for (var i = 0; i < aConditions.length; i++) {
 				var oCondition = aConditions[i];
 				if (oCondition.values[0] && oCondition.values[0][1]) {
-					var oHelpCondition = Condition.createItemCondition(oCondition.values[0][1], undefined, oCondition.inParameters, oCondition.outParameters);
+					var oHelpCondition = Condition.createItemCondition(oCondition.values[0][1], undefined, oCondition.inParameters, oCondition.outParameters, oCondition.payload);
 					aHelpConditions.push(oHelpCondition);
 				}
 			}
@@ -2564,7 +2567,7 @@ sap.ui.define([
 			} else {
 				var oOperator = FilterOperatorUtil.getEQOperator(this._getOperators());
 				var aValue = this.getControlDelegate().enhanceValueForUnit(this.getPayload(), [null, aNewConditions[0].values[0]], this._oTypeInitialization); // Delegate must be initialized right now
-				oCondition = Condition.createCondition(oOperator.name, [aValue], aNewConditions[0].inParameters, aNewConditions[0].outParameters, ConditionValidated.NotValidated);
+				oCondition = Condition.createCondition(oOperator.name, [aValue], aNewConditions[0].inParameters, aNewConditions[0].outParameters, ConditionValidated.NotValidated, aNewConditions[0].payload);
 				aConditions.push(oCondition);
 				var oConditionType = this._oContentFactory.getConditionType(true);
 				var oConditionsType = this._oContentFactory.getUnitConditionsType(true);

@@ -583,7 +583,7 @@ sap.ui.define([
 
 	QUnit.test("unit Parsing unsing condition from navigation", function(assert) {
 
-		var oNavigateCondition = Condition.createCondition("EQ", [[1, "USD"]], {testIn: "A"}, {testOut: "B"});
+		var oNavigateCondition = Condition.createCondition("EQ", [[1, "USD"]], {testIn: "A"}, {testOut: "B"}, ConditionValidated.Validated, {testPayload: "C"});
 		var oFormatOptions = oUnitConditionsType.getFormatOptions();
 		oFormatOptions.navigateCondition = oNavigateCondition;
 		oUnitConditionsType.setFormatOptions(oFormatOptions);
@@ -596,6 +596,7 @@ sap.ui.define([
 		assert.equal(aConditions[0].values[0][1], "USD", "Condition 0: Values entry 0 unit");
 		assert.deepEqual(aConditions[0].inParameters, oNavigateCondition.inParameters, "Condition 0: inParameters");
 		assert.deepEqual(aConditions[0].outParameters, oNavigateCondition.outParameters, "Condition 0: outParameters");
+		assert.deepEqual(aConditions[0].payload, oNavigateCondition.payload, "Condition 0: payload");
 		assert.equal(aConditions[1].operator, "BT", "Condition 1: Operator");
 		assert.equal(aConditions[1].values[0][0], 1, "Condition 1: Values entry 0 number");
 		assert.equal(aConditions[1].values[0][1], "USD", "Condition 1: Values entry 0 unit");
@@ -603,6 +604,7 @@ sap.ui.define([
 		assert.equal(aConditions[1].values[1][1], "USD", "Condition 1: Values entry 1 unit");
 		assert.deepEqual(aConditions[1].inParameters, oNavigateCondition.inParameters, "Condition 1: inParameters");
 		assert.deepEqual(aConditions[1].outParameters, oNavigateCondition.outParameters, "Condition 1: outParameters");
+		assert.deepEqual(aConditions[1].payload, oNavigateCondition.payload, "Condition 1: payload");
 
 	});
 

@@ -706,6 +706,7 @@ sap.ui.define([
 		var aOperators = _getOperators.call(this);
 		var bIsUnit = _isUnit(oType);
 		var aCompositeTypes = _getCompositeTypes.call(this);
+		var iCompositePart = 0;
 
 		if (oCondition === undefined || this._bDestroyed) { // if destroyed do nothing
 			return null;
@@ -741,8 +742,8 @@ sap.ui.define([
 		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 
 		if (bIsUnit) {
-			// only use unit in condition
 			oOperator = FilterOperatorUtil.getEQOperator(); // as only EQ is allowed for unit
+			iCompositePart = 1;
 		}
 
 		if (!oOperator || aOperators.indexOf(oOperator.name) === -1) {
@@ -750,13 +751,13 @@ sap.ui.define([
 		}
 
 		try {
-			oOperator.validate(oCondition.values, oType, aCompositeTypes);
+			oOperator.validate(oCondition.values, oType, aCompositeTypes, iCompositePart);
 		} catch (oException) {
 			if (oException instanceof ValidateException && oOriginalType) {
 				// As internal yyyy-MM-dd is used as pattern for dates (times similar) the
 				// ValidateException might contain this as pattern. The user should see the pattern thats shown
 				// So try to validate date with the original type to get ValidateException with right pattern.
-				oOperator.validate(oCondition.values, oOriginalType, aCompositeTypes);
+				oOperator.validate(oCondition.values, oOriginalType, aCompositeTypes, iCompositePart);
 			}
 			throw oException;
 		}
