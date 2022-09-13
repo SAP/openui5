@@ -94,19 +94,31 @@ sap.ui.define([
 																			},
 																			actions: function (oFilterField) {
 																				var oSettings = mSettings[oToolbarLabel.getText()];
-																				if (oSettings.label === oFilterFieldLabel.getText()) {
-																					oSettings.values.forEach(function(oValue) {
-																						this.waitFor({
-																							controlType: "sap.ui.mdc.field.FieldMultiInput",
-																							matchers: new Ancestor(oFilterField),
-																							actions: new EnterText({
-																								text: oValue,
-																								clearTextFirst: false,
-																								pressEnterKey: true
-																							})
-																						});
-																					}.bind(this));
-																				}
+                                                                                if (oSettings.label === oFilterFieldLabel.getText()) {
+                                                                                    if (oSettings.values && Array.isArray(oSettings.values)) {
+                                                                                        oSettings.values.forEach(function(oValue) {
+                                                                                            this.waitFor({
+                                                                                                controlType: "sap.ui.mdc.field.FieldMultiInput",
+                                                                                                matchers: new Ancestor(oFilterField),
+                                                                                                actions: new EnterText({
+                                                                                                    text: oValue,
+                                                                                                    clearTextFirst: false,
+                                                                                                    pressEnterKey: false
+                                                                                                })
+                                                                                            });
+                                                                                        }.bind(this));
+                                                                                    } else {
+                                                                                        this.waitFor({
+                                                                                            controlType: "sap.ui.mdc.field.FieldInput",
+                                                                                            matchers: new Ancestor(oFilterField),
+                                                                                            actions: new EnterText({
+                                                                                                text: oSettings.values,
+                                                                                                clearTextFirst: false,
+                                                                                                pressEnterKey: false
+                                                                                            })
+                                                                                        });
+                                                                                    }
+                                                                                }
 																			}.bind(this)
 																		});
 																	}

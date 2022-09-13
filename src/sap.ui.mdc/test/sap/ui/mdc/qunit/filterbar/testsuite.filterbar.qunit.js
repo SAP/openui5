@@ -40,6 +40,15 @@ sap.ui.define([
 			module: "./{name}.qunit"
 		},
 		tests: {
+			"FilterBar_Basics_Opa": {
+				group: "FilterBar basics",
+				module: "./sample/opa/opaTests.qunit",
+				loader: {
+					  paths: {
+					    "sap/ui/mdc/filterbar/sample": "test-resources/sap/ui/mdc/qunit/filterbar/sample"
+					  }
+				}
+			},
 			"FilterBar": {
 				group: "FilterBar",
 				module: "./FilterBar.qunit"

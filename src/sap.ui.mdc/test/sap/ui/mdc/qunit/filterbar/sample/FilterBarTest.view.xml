@@ -1,0 +1,53 @@
+<mvc:View height="100%" controllerName="sap.ui.mdc.filterbar.sample.FilterBarTest"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f" xmlns:mdc="sap.ui.mdc">
+	<App>
+		<Page id="page" class="sapUiSizeCompact">
+			<headerContent>
+			</headerContent>
+			<content>
+
+				<f:DynamicPage id="dynamicPage">
+					<f:title>
+						<f:DynamicPageTitle>
+							<f:heading>
+							</f:heading>
+					<f:snappedContent>
+						<Text id="statusTextCollapsed" />
+					</f:snappedContent>
+					<f:expandedContent>
+						<Text id="statusTextExpanded" />
+					</f:expandedContent>
+
+						</f:DynamicPageTitle>
+					</f:title>
+					<f:header>
+						<f:DynamicPageHeader>
+							<f:content>
+
+								<mdc:FilterBar id="idFilterBarCtrl"
+									delegate="{name: 'sap/ui/mdc/qunit/filterbar/sample/FilterBarTest.delegate', payload: {}}"
+									filtersChanged="onFiltersChanged"
+								    propertyInfo = '[\{"name": "prop1", "dataType": "sap.ui.model.type.Boolean", "label": "\{i18n>prop1_label\}"\}]'
+									p13nMode="Item,Value">
+									<mdc:filterItems>
+										<mdc:FilterField
+											delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate', payload: {}}"
+											id="ff1" label="{i18n>prop1_label}" conditions="{$filters>/conditions/prop1}"
+											dataType="sap.ui.model.type.Boolean" maxConditions="1"
+											required="false" />
+
+										<mdc:FilterField
+											delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate', payload: {}}"
+											id="ff2" label="String single" conditions="{$filters>/conditions/prop2}"
+											dataType="sap.ui.model.type.String" dataTypeConstraints="{maxLength : 3}"
+											maxConditions="1" required="true" display="Description" />
+									</mdc:filterItems>
+								</mdc:FilterBar>
+							</f:content>
+						</f:DynamicPageHeader>
+					</f:header>
+				</f:DynamicPage>
+			</content>
+		</Page>
+	</App>
+</mvc:View>

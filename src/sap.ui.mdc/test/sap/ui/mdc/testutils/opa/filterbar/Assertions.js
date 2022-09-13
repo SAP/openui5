@@ -50,7 +50,7 @@ sap.ui.define([
             };
         } else {
             vMatchers = [
-                new Ancestor(oFilterBarInstance, true),
+                new Ancestor(oFilterBarInstance, false),
                 new PropertyStrictEquals({
                     name: "label",
                     value: sLabel

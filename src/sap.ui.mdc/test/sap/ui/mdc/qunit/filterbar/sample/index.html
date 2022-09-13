@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>mdc.FilterBar</title>
+
+	<script src="../../../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			data-sap-ui-libs="sap.ui.mdc, sap.m"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-flexibilityServices='[{"connector": "SessionStorageConnector"}]'
+			data-sap-ui-xx-bindingSyntax="complex"
+        	data-sap-ui-resourceroots='{
+				"sap/ui/mdc/qunit/filterbar/sample": "./",
+				"delegates": "../../../delegates"        	    
+			}'			
+			src="../../../../../../../resources/sap-ui-core.js">
+	</script>
+
+	<script>
+
+		sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function(Component, ComponentContainer) {
+			return Component.create({
+				name: "sap.ui.mdc.filterbar.sample",
+				url: "./",
+				id: "Comp1"
+			}).then(function(oComponent){
+				var oCompCont = new ComponentContainer("CompCont1", {
+					component: oComponent
+				});
+				oCompCont.placeAt("target1");
+			})
+		})
+
+	</script>
+
+</head>
+
+<body class="sapUiBody sapUiSizeCompact">
+	<h2>Basic sap.ui.mdc.FilterBar Control Testing</h2>
+	<div id="target1"></div>
+</body>
+
+</html>
