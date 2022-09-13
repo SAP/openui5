@@ -3314,7 +3314,7 @@ function(
 	 * Setter for the separateSuggestions property representing whether to display separators in tabular suggestions.
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.comp.smartfield.SmartField
+	 * @ui5-restricted sap.ui.comp.providers.ValueListProvider
 	 * @param {boolean} bValue The new value for the property.
 	 * @returns {this} <code>this</code> to allow method chaining.
 	 */
