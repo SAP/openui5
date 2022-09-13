@@ -121,6 +121,10 @@ sap.ui.define([
 
 	};
 
+	CustomFieldInfo.prototype.checkDirectNavigation = function() {
+		return Promise.resolve(false);
+	};
+
 	function _observeChanges(oChanges) {
 
 		if (oChanges.object == this && !this._bIsBeingDestroyed) {
