@@ -164,7 +164,7 @@ sap.ui.define([
 	function handleCondenseDelete(oDeleteInformation) {
 		var aPromises = [];
 		if (oDeleteInformation) {
-			Object.entries(oDeleteInformation).forEach(function(aChangeIds) {
+			Object.values(oDeleteInformation).forEach(function(aChangeIds) {
 				aChangeIds.forEach(function(sChangeId) {
 					var sKey = ObjectStorageUtils.createFlexKey(sChangeId);
 					aPromises.push(this.storage.removeItem(sKey));

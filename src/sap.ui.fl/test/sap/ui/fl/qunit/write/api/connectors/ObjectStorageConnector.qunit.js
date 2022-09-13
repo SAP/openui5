@@ -89,6 +89,14 @@ sap.ui.define([
 			variantManagementReference: "variantManagement0",
 			variantReference: "variantManagement0"
 		},
+		oVariant2: {
+			fileName: "oVariant2",
+			fileType: "ctrl_variant",
+			reference: "sap.ui.fl.test",
+			layer: Layer.CUSTOMER,
+			variantManagementReference: "variantManagement0",
+			variantReference: "variantManagement0"
+		},
 		oVariantChange1: {
 			creation: "2021-05-04T12:57:32.240Z",
 			fileName: "oVariantChange1",
@@ -495,7 +503,7 @@ sap.ui.define([
 							]
 						},
 						"delete": {
-							ctrl_variant: ["oVariant1"],
+							ctrl_variant: ["oVariant1", "oVariant2"],
 							change: ["oChange21"]
 						}
 					}
@@ -519,6 +527,7 @@ sap.ui.define([
 					assert.ok(aIds.indexOf("oVariantChange3") > -1, "the second variant change was added");
 
 					assert.notOk(aIds.indexOf("oVariant1") > -1, "the variant was deleted");
+					assert.notOk(aIds.indexOf("oVariant2") > -1, "the variant was deleted");
 					assert.notOk(aIds.indexOf("oChange21") > -1, "the change was deleted");
 
 					assert.deepEqual(aFlexObjectsFileContent[aIds.indexOf("oChange1")].content, {
