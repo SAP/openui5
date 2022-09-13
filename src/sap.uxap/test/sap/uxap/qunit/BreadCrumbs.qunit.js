@@ -46,10 +46,10 @@ function($, KeyCodes, Core, QUtils, Link, Text, BreadCrumbs, Icon, Item, Select,
 			}
 		},
 		helpers = {
-			verifyFocusOnKeyDown: function (assert, iKeyCode, oItemToStartWith, oExpectedItemToBeFocused, sMessage) {
+			verifyFocusOnKeyDown: function (assert, iKeyCode, oItemToStartWith, oSpy, sMessage) {
 				oItemToStartWith.$().trigger("focus");
 				QUtils.triggerKeydown(oItemToStartWith.getId(), iKeyCode);
-				assert.ok(oExpectedItemToBeFocused.$().is(':focus'), sMessage);
+				assert.ok(oSpy.calledOnce, sMessage);
 			},
 			renderObject: function (oSapUiObject) {
 				oSapUiObject.placeAt("qunit-fixture");
@@ -287,23 +287,27 @@ function($, KeyCodes, Core, QUtils, Link, Text, BreadCrumbs, Icon, Item, Select,
 
 	QUnit.test("PAGE DOWN/PAGE UP keyboard handling", function (assert) {
 		var oBreadCrumbControl = this.oBreadCrumbs,
-			iItemSkipSize = BreadCrumbs.PAGEUP_AND_PAGEDOWN_JUMP_SIZE,
 			oItemsToNavigate = oBreadCrumbControl._getItemsToNavigate(),
-			iTotalItemCount = oItemsToNavigate.length;
+			iTotalItemCount = oItemsToNavigate.length,
+			oFirstItemSpy = this.spy(oItemsToNavigate[0], "focus"),
+			oFifthItemSpy = this.spy(oItemsToNavigate[5], "focus"),
+			oLastItemSpy = this.spy(oItemsToNavigate[10], "focus");
 
 		oBreadCrumbControl._toggleOverflowMode(false);
 
 		helpers.verifyFocusOnKeyDown(assert, KeyCodes.PAGE_DOWN, oItemsToNavigate[0],
-			oItemsToNavigate[iItemSkipSize], "5th item down should be focused after PAGE DOWN");
+			oFifthItemSpy, "5th item down should be focused after PAGE DOWN");
+
+		oFifthItemSpy.restore();
 
 		helpers.verifyFocusOnKeyDown(assert, KeyCodes.PAGE_UP, oItemsToNavigate[10],
-			oItemsToNavigate[10 - iItemSkipSize], "5th item up should be focused after PAGE UP");
+			oFifthItemSpy, "5th item up should be focused after PAGE UP");
 
 		helpers.verifyFocusOnKeyDown(assert, KeyCodes.PAGE_DOWN, oItemsToNavigate[iTotalItemCount - 3],
-			oItemsToNavigate[iTotalItemCount - 1], "Last item down should be focused after PAGE DOWN");
+			oLastItemSpy, "Last item down should be focused after PAGE DOWN");
 
 		helpers.verifyFocusOnKeyDown(assert, KeyCodes.PAGE_UP, oItemsToNavigate[3],
-			oItemsToNavigate[0], "Last item down should be focused after PAGE DOWN");
+			oFirstItemSpy, "First item down should be focused after PAGE DOWN");
 	});
 
 });
