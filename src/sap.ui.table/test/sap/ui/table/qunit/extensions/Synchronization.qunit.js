@@ -422,6 +422,7 @@ sap.ui.define([
 
 	QUnit.test("Register vertical scrolling", function(assert) {
 		var oTable = this.oTable;
+		var oSynchronizationInterface;
 		var Div1 = document.createElement("div");
 		var Div2 = document.createElement("div");
 		var Div3 = document.createElement("div");
@@ -515,7 +516,14 @@ sap.ui.define([
 			.qunit.whenRenderingFinished()
 			.then(function() {
 				return oTable._enableSynchronization().then(function(oSyncInterface) {
-					oSyncInterface.registerVerticalScrolling({
+					oSynchronizationInterface = oSyncInterface;
+
+					// Should not throw an error
+					oSynchronizationInterface.registerVerticalScrolling();
+					oSynchronizationInterface.registerVerticalScrolling({});
+					oSynchronizationInterface.registerVerticalScrolling({wheelAreas: undefined});
+
+					oSynchronizationInterface.registerVerticalScrolling({
 						wheelAreas: [Div1, Div2],
 						touchAreas: [Div1, Div3]
 					});
@@ -526,7 +534,22 @@ sap.ui.define([
 			.then(scrollWithMouseWheel(Div3, iBaseRowHeight)).then(assertScrollPositions(0)).then(resetScrollPositions)
 			.then(scrollWithTouch(Div1, iBaseRowHeight)).then(assertScrollPositions(iBaseRowHeight)).then(resetScrollPositions)
 			.then(scrollWithTouch(Div2, iBaseRowHeight)).then(assertScrollPositions(0)).then(resetScrollPositions)
-			.then(scrollWithTouch(Div3, iBaseRowHeight)).then(assertScrollPositions(iBaseRowHeight))
+			.then(scrollWithTouch(Div3, iBaseRowHeight)).then(assertScrollPositions(iBaseRowHeight)).then(resetScrollPositions)
+			.then(function() {
+				oSynchronizationInterface.registerVerticalScrolling({
+					wheelAreas: [Div1],
+					touchAreas: [Div3]
+				});
+			})
+			.then(scrollWithMouseWheel(Div1, iBaseRowHeight)).then(assertScrollPositions(iBaseRowHeight)).then(resetScrollPositions)
+			.then(scrollWithMouseWheel(Div2, iBaseRowHeight)).then(assertScrollPositions(0)).then(resetScrollPositions)
+			.then(scrollWithTouch(Div1, iBaseRowHeight)).then(assertScrollPositions(0)).then(resetScrollPositions)
+			.then(scrollWithTouch(Div3, iBaseRowHeight)).then(assertScrollPositions(iBaseRowHeight)).then(resetScrollPositions)
+			.then(function() {
+				oSynchronizationInterface.deregisterVerticalScrolling();
+			})
+			.then(scrollWithMouseWheel(Div1, iBaseRowHeight)).then(assertScrollPositions(0)).then(resetScrollPositions)
+			.then(scrollWithTouch(Div3, iBaseRowHeight)).then(assertScrollPositions(0)).then(resetScrollPositions)
 			.then(function() {
 				Device.support.pointer = bOriginalPointerSupport;
 				Device.support.touch = bOriginalTouchSupport;

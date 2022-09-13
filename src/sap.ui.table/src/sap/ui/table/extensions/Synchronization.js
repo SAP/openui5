@@ -43,12 +43,50 @@ sap.ui.define([
 
 		addVerticalScrollingListener: function(mConfig) {
 			var oTable = this.getTable();
+			var oSyncExtension = oTable._getSyncExtension();
 			var oScrollExtension = oTable._getScrollExtension();
-			var ScrollDirection = oScrollExtension.constructor.ScrollDirection;
+			var mOptions = {scrollDirection: oScrollExtension.constructor.ScrollDirection.VERTICAL};
 
-			if (mConfig) {
-				oScrollExtension.registerForMouseWheel(mConfig.wheelAreas, {scrollDirection: ScrollDirection.VERTICAL});
-				oScrollExtension.registerForTouch(mConfig.touchAreas, {scrollDirection: ScrollDirection.VERTICAL});
+			ExtensionHelper.removeVerticalScrollingListener.call(this);
+
+			if (!mConfig) {
+				return;
+			}
+
+			if (mConfig.wheelAreas) {
+				oSyncExtension._mMouseWheelEventListener = oScrollExtension.registerForMouseWheel(mConfig.wheelAreas, mOptions);
+				oSyncExtension._mMouseWheelEventListener.areas = mConfig.wheelAreas;
+			}
+
+			if (mConfig.touchAreas) {
+				oSyncExtension._mTouchEventListener = oScrollExtension.registerForTouch(mConfig.touchAreas, mOptions);
+				oSyncExtension._mTouchEventListener.areas = mConfig.touchAreas;
+			}
+		},
+
+		removeVerticalScrollingListener: function() {
+			var oTable = this.getTable();
+			var oSyncExtension = oTable._getSyncExtension();
+
+			function removeEventListener(aTargets, mEventListenerMap) {
+				for (var sEventName in mEventListenerMap) {
+					var fnListener = mEventListenerMap[sEventName];
+					if (fnListener) {
+						for (var i = 0; i < aTargets.length; i++) {
+							aTargets[i].removeEventListener(sEventName, fnListener);
+						}
+					}
+				}
+			}
+
+			if (oSyncExtension._mMouseWheelEventListener) {
+				removeEventListener(oSyncExtension._mMouseWheelEventListener.areas, oSyncExtension._mMouseWheelEventListener);
+				delete oSyncExtension._mMouseWheelEventListener;
+			}
+
+			if (oSyncExtension._mTouchEventListener) {
+				removeEventListener(oSyncExtension._mTouchEventListener.areas, oSyncExtension._mTouchEventListener);
+				delete oSyncExtension._mTouchEventListener;
 			}
 		},
 
@@ -158,6 +196,7 @@ sap.ui.define([
 				syncRowSelection: ExtensionHelper.setRowSelection.bind(this),
 				syncRowHover: ExtensionHelper.setRowHover.bind(this),
 				registerVerticalScrolling: ExtensionHelper.addVerticalScrollingListener.bind(this),
+				deregisterVerticalScrolling: ExtensionHelper.removeVerticalScrollingListener.bind(this),
 				placeVerticalScrollbarAt: ExtensionHelper.placeVerticalScrollbarAt.bind(this),
 				renderHorizontalScrollbar: ExtensionHelper.renderHorizontalScrollbar.bind(this)
 			};
@@ -178,6 +217,7 @@ sap.ui.define([
 				oTable.removeEventDelegate(this._delegate);
 			}
 
+			ExtensionHelper.removeVerticalScrollingListener.call(this);
 			this._delegate = null;
 			this._oPublicInterface = null;
 
@@ -276,6 +316,7 @@ sap.ui.define([
 	 *   <li>syncRowSelection: function(index:int, selected:boolean):void</li>
 	 *   <li>syncRowHover: function(index:int, selected:boolean):void</li>
 	 *   <li>registerVerticalScrolling: function({wheelAreas:HTMLElement[], touchAreas:HTMLElement[]}):void</li>
+	 *   <li>deregisterVerticalScrolling: function():void</li>
 	 *   <li>placeVerticalScrollbarAt: function(container:HTMLElement):void</li>
 	 *   <li>renderHorizontalScrollbar: function(renderManager:sap.ui.core.RenderManager, id:string, scrollWidth:int):void</li>
 	 * </ul>
@@ -287,8 +328,6 @@ sap.ui.define([
 	 * The <code>Synchronization</code> extension has no mechanisms to avoid infinite synchronization loops. This means that the
 	 * <code>Synchronization</code> extension can also call the corresponding hook if a synchronization method of this interface is used. It is the
 	 * responsibility of the user of the synchronization interface to avoid endless loops.
-	 * Registering HTMLElements for event handling by the table (e.g. via <code>registerVerticalScrolling</code>) can cause memory leaks. To avoid
-	 * this, make sure to avoid registering the same elements multiple times.
 	 *
 	 * @example
 	 * // Add a row selection hook.
