@@ -21,6 +21,11 @@ sap.ui.define([
 	var TEXT_SHOW_MORE = oRb.getText("EXPANDABLE_TEXT_SHOW_MORE");
 	var TEXT_SHOW_LESS = oRb.getText("EXPANDABLE_TEXT_SHOW_LESS");
 
+	var TEXT_SHOW_MORE_ARIA_LABEL = oRb.getText("EXPANDABLE_TEXT_SHOW_MORE_ARIA_LABEL");
+	var TEXT_SHOW_LESS_ARIA_LABEL = oRb.getText("EXPANDABLE_TEXT_SHOW_LESS_ARIA_LABEL");
+	var TEXT_SHOW_MORE_POPOVER_ARIA_LABEL = oRb.getText("EXPANDABLE_TEXT_SHOW_MORE_POPOVER_ARIA_LABEL");
+	var TEXT_SHOW_LESS_POPOVER_ARIA_LABEL = oRb.getText("EXPANDABLE_TEXT_SHOW_LESS_POPOVER_ARIA_LABEL");
+
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
 
@@ -58,6 +63,7 @@ sap.ui.define([
 		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText().substring(0, iMaxCharacters), "text is correct");
 		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), "... ", "Ellipsis are rendered");
 		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_MORE, "Show more is rendered");
+		assert.strictEqual(this.oExpandableText.$().find(".sapUiInvisibleText").text(), TEXT_SHOW_MORE_ARIA_LABEL, "aria-labelledby control is rendered");
 	});
 
 	QUnit.module("API", {
@@ -122,6 +128,7 @@ sap.ui.define([
 		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText(), "text is correct");
 		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), " ", "Space is rendered");
 		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_LESS, "Show less is rendered");
+		assert.strictEqual(this.oExpandableText.$().find(".sapUiInvisibleText").text(), TEXT_SHOW_LESS_ARIA_LABEL, "aria-labelledby control is rendered");
 
 		oShowMoreLink.firePress();
 		Core.applyChanges();
@@ -129,6 +136,7 @@ sap.ui.define([
 		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText().substring(0, iMaxCharacters), "text is correct");
 		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), "... ", "Ellipsis are rendered");
 		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_MORE, "Show more is rendered");
+		assert.strictEqual(this.oExpandableText.$().find(".sapUiInvisibleText").text(), TEXT_SHOW_MORE_ARIA_LABEL, "aria-labelledby control is rendered");
 	});
 
 	QUnit.test("Open popover", function (assert) {
@@ -146,7 +154,7 @@ sap.ui.define([
 		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText().substring(0, iMaxCharacters), "text is correct");
 		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), "... ", "Ellipsis are rendered");
 		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_LESS, "'Show less' text is rendered");
-
+		assert.strictEqual(this.oExpandableText.$().find(".sapUiInvisibleText").text(), TEXT_SHOW_LESS_POPOVER_ARIA_LABEL, "aria-labelledby control is rendered");
 		assert.strictEqual(jQuery(".sapMPopover").text(), this.oExpandableText.getText(), "popover is opened with the correct text");
 
 		oShowMoreLink.firePress();
@@ -154,6 +162,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_MORE, "'Show more' text is rendered");
+		assert.strictEqual(this.oExpandableText.$().find(".sapUiInvisibleText").text(), TEXT_SHOW_MORE_POPOVER_ARIA_LABEL, "aria-labelledby control is rendered");
 		assert.notOk(this.oExpandableText._oPopover.isOpen(), "popover is closed");
 	});
 

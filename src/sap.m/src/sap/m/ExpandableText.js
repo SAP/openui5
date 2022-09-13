@@ -8,6 +8,7 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
+	'sap/ui/core/InvisibleText',
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
 	'sap/m/Link',
@@ -21,6 +22,7 @@ function(library,
 		 Core,
 		 Control,
 		 coreLibrary,
+		 InvisibleText,
 		 Device,
 		 ManagedObject,
 		 Link,
@@ -58,6 +60,9 @@ function(library,
 
 	// shortcut for sap.m.EmptyIndicator
 	var EmptyIndicatorMode = library.EmptyIndicatorMode;
+
+	// shortcut for sap.m.LinkAccessibleRole
+	var LinkAccessibleRole = library.LinkAccessibleRole;
 
 	function reduceWhitespace(sText) {
 		return sText.replace(/ {2,}/g, ' ').replace(/\t{2,}/g, ' ');
@@ -169,7 +174,12 @@ function(library,
 				 * The "More" link.
 				 * @private
 				 */
-				_showMoreLink: {type: 'sap.m.Link', multiple: false, visibility: "hidden"}
+				_showMoreLink: {type: 'sap.m.Link', multiple: false, visibility: "hidden"},
+
+				/**
+				 * Screen Reader ariaLabelledBy
+				 */
+				_ariaLabelledBy: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"}
 			},
 
 			designtime: "sap/m/designtime/ExpandableText.designtime"
@@ -177,6 +187,14 @@ function(library,
 
 		renderer: ExpandableTextRenderer
 	});
+
+	ExpandableText.prototype.init = function () {
+		this.setAggregation("_ariaLabelledBy", new InvisibleText());
+	};
+
+	ExpandableText.prototype.onBeforeRendering = function() {
+		this._updateAriaLabelledByText();
+	};
 
 	/**
 	 * Gets the text.
@@ -264,7 +282,9 @@ function(library,
 
 		if (!showMoreLink) {
 			showMoreLink = new Link(this.getId() + '-showMoreLink', {
+				accessibleRole: LinkAccessibleRole.Button,
 				text: this.getProperty("expanded") ? TEXT_SHOW_LESS : TEXT_SHOW_MORE,
+				ariaLabelledBy: this.getAggregation("_ariaLabelledBy"),
 				press: function (oEvent) {
 					var oText,
 						bExpanded,
@@ -322,6 +342,8 @@ function(library,
 						oPopover.addContent(oText);
 
 						oPopover.openBy(oEvent.getSource());
+
+						this._updateAriaLabelledByText(true);
 					}
 				}.bind(this)
 			});
@@ -336,6 +358,24 @@ function(library,
 
 	ExpandableText.prototype._onPopoverBeforeClose = function () {
 		this._getShowMoreLink().setText(TEXT_SHOW_MORE);
+		this._updateAriaLabelledByText();
+	};
+
+	ExpandableText.prototype._updateAriaLabelledByText = function (bExpanded) {
+		var sAriaText;
+
+		bExpanded = bExpanded || this.getProperty("expanded");
+
+		switch (this.getOverflowMode()) {
+			case ExpandableTextOverflowMode.Popover:
+				sAriaText = oRb.getText(bExpanded ? "EXPANDABLE_TEXT_SHOW_LESS_POPOVER_ARIA_LABEL" : "EXPANDABLE_TEXT_SHOW_MORE_POPOVER_ARIA_LABEL");
+				break;
+			default:
+				sAriaText = oRb.getText(bExpanded ? "EXPANDABLE_TEXT_SHOW_LESS_ARIA_LABEL" : "EXPANDABLE_TEXT_SHOW_MORE_ARIA_LABEL");
+				break;
+		}
+
+		this.getAggregation("_ariaLabelledBy").setText(sAriaText);
 	};
 
 	/**
