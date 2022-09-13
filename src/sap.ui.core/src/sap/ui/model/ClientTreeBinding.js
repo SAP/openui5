@@ -259,7 +259,9 @@ sap.ui.define([
 	 *
 	 * @see sap.ui.model.TreeBinding.prototype.filter
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters Single filter object or an array of filter objects
-	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies
+	 * @param {sap.ui.model.FilterType} [sFilterType] Type of the filter to be adjusted; if no type
+	 *   is given, any previously configured application filters are cleared, and the given filters
+	 *   are used as control filters
 	 * @return {this} <code>this</code> to facilitate method chaining
 	 * @throws {Error} When one of the filters uses an operator that is not supported by the underlying model implementation
 	 * @public
