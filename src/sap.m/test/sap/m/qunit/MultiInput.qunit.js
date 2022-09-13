@@ -1190,19 +1190,24 @@ sap.ui.define([
 	});
 
 	QUnit.test("onsapdelete with selected tokens and focusable tokens", function(assert) {
-		var token1 = new Token({text: "Token 1", selected: true}),
+		var oMultiInput =  new MultiInput(),
+			token1 = new Token({text: "Token 1", selected: true}),
 			token2 = new Token({text: "Token 2", selected: true}),
 			token3 = new Token({text: "Token 3"});
 
-		this.multiInput1.setTokens([token1, token2, token3]);
+		oMultiInput.placeAt("content");
 		Core.applyChanges();
 
-		qutils.triggerKeydown(this.multiInput1.getAggregation("tokenizer").getDomRef(), KeyCodes.DELETE);
+		oMultiInput.setTokens([token1, token2, token3]);
 		Core.applyChanges();
+
+		qutils.triggerKeydown(token3.getDomRef(), KeyCodes.DELETE);
 
 		// assert
 		assert.strictEqual(document.activeElement, token3.getDomRef(),
 			"The focus is forwarded to the input field.");
+
+		oMultiInput.destroy();
 	});
 
 	QUnit.test("onsapdelete with selected tokens and no focusable tokens", function(assert) {
