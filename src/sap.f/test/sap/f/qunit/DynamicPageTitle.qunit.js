@@ -484,6 +484,7 @@ function (
 		// Arrange
 		var oDynamicPage = oFactory.getDynamicPage(),
 			oDynamicPageTitle = oDynamicPage.getTitle(),
+			oStub,
 			$title,
 			$focusSpan;
 
@@ -494,11 +495,19 @@ function (
 		$title  = oDynamicPageTitle.$();
 		$focusSpan = oDynamicPageTitle._getFocusSpan();
 		$focusSpan.trigger("focus");
+		// Calling explicitly the focusin handler - in case Browser focus is stolen
+		oDynamicPageTitle._addFocusClass();
 
 		// Assert
 		assert.strictEqual($title.hasClass("sapFDynamicPageTitleFocus"), true, "focus class is added");
 
 		// Act
+		oStub = this.stub(oDynamicPageTitle, "_getFocusSpan").callsFake(function() {
+			return {
+				is: function() { return true; },
+				show: function () {}
+			};
+		});
 		oDynamicPage.invalidate();
 		Core.applyChanges();
 
@@ -506,6 +515,7 @@ function (
 		assert.strictEqual($title.hasClass("sapFDynamicPageTitleFocus"), true, "focus class is set after invalidation of the parent");
 
 		// Clean up
+		oStub.restore();
 		oDynamicPage.destroy();
 	});
 
