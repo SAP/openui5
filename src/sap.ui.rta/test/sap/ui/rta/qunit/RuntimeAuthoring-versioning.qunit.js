@@ -158,6 +158,11 @@ sap.ui.define([
 			this.oLoadVersionStub.callsFake(function(mPropertyBag) {
 				assert.equal(mPropertyBag.version, this.nVersionParameter, "the version parameter was passed correct");
 				assert.equal(this.oSerializeStub.callCount, 1, "the changes were saved");
+				assert.strictEqual(
+					this.oSerializeStub.args[0].length,
+					0,
+					"then '_serializeToLrep' was called without 'bCondenseAnyLayer' parameter"
+				);
 				fnDone();
 			}.bind(this));
 			this.oRta.getToolbar().fireSwitchVersion({

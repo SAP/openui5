@@ -278,10 +278,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when trying to stop rta with error in saving changes,", function(assert) {
-			var fnStubSerialize = function() {
-				return Promise.reject();
-			};
-			sandbox.stub(this.oRta, "_serializeToLrep").callsFake(fnStubSerialize);
+			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.reject());
 
 			return this.oRta.stop(false).catch(function() {
 				assert.ok(true, "then the promise got rejected");
@@ -305,6 +302,7 @@ sap.ui.define([
 
 		QUnit.test("when stopping rta with saving changes", function(assert) {
 			var oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
+			var oSerializeToLrepSpy = sandbox.spy(this.oRta, "_serializeToLrep");
 
 			return this.oRta.stop()
 				.then(function() {
@@ -331,6 +329,11 @@ sap.ui.define([
 							aChanges[0].getRevertData(),
 							null,
 							"then the change keeps its revert data"
+						);
+						assert.strictEqual(
+							oSerializeToLrepSpy.args[0].length,
+							0,
+							"then '_serializeToLrep' was called without 'bCondenseAnyLayer' parameter"
 						);
 					});
 				}.bind(this));
