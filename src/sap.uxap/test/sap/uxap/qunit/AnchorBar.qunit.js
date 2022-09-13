@@ -604,6 +604,20 @@ sap.ui.define([
 			oSelect = oAnchorBar._getHierarchicalSelect(),
 			oDialog = oSelect.getAggregation("picker"),
 			clock = sinon.useFakeTimers(),
+			oSelectList = oSelect.getList(),
+			oOnAfterRenderingDelegate = {
+				onAfterRendering: function () {
+					// Assert
+					oSelectList.removeEventDelegate(oOnAfterRenderingDelegate);
+					assert.strictEqual(oApplyClassesSpy.callCount, 1,
+						"Hierarchy classes applied once onAfterRendering of the SelectList via _applyHierarchyLevelClasses.");
+
+					// Clean Up
+					oApplyClassesSpy.resetHistory();
+					clock.restore();
+					done();
+				}
+			},
 			done = assert.async(),
 			oApplyClassesSpy;
 
@@ -614,16 +628,7 @@ sap.ui.define([
 
 				// Act - simulate arrow down key down
 				QUnitUtils.triggerKeydown(oSelect.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, false, false);
-				clock.tick(100); // allow for re-render
-
-				// Assert
-				assert.strictEqual(oApplyClassesSpy.callCount, 1,
-					"Hierarchy classes applied once onAfterRendering of the SelectList via _applyHierarchyLevelClasses.");
-
-				// Clean Up
-				oApplyClassesSpy.resetHistory();
-				clock.restore();
-				done();
+				oSelectList.addEventDelegate(oOnAfterRenderingDelegate);
 			}.bind(this));
 
 		// Act - Open the picker
