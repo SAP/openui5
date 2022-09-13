@@ -152,11 +152,15 @@ function(
 			$arrowButtonRef.removeAttr("aria-describedby");
 		};
 
-		SplitButton.prototype._handleAction = function(bIsArrowDown) {
-			if (bIsArrowDown) {
-				this.fireArrowPress();
+		SplitButton.prototype._handleAction = function(oEvent) {
+			if (oEvent.getSource().hasStyleClass("sapMSBArrow")) {
+				this.fireArrowPress({
+					keyboard: oEvent.getParameter("keyboard")
+				});
 			} else {
-				this.firePress();
+				this.firePress({
+					keyboard: oEvent.getParameter("keyboard")
+				});
 			}
 		};
 
@@ -189,7 +193,7 @@ function(
 					width: '100%',
 					icon: this.getIcon(),
 					text: this.getText(),
-					press: this._handleAction.bind(this, false)
+					press: this._handleAction.bind(this)
 				}).addStyleClass('sapMSBText');
 
 				this.setAggregation("_textButton", oCtrl);
@@ -205,7 +209,7 @@ function(
 				oCtrl = new Button({
 					id: this.getId() + "-arrowButton",
 					icon: "sap-icon://slim-arrow-down",
-					press: this._handleAction.bind(this, true),
+					press: this._handleAction.bind(this),
 					tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SPLIT_BUTTON_ARROW_TOOLTIP"),
 					ariaHasPopup: coreLibrary.aria.HasPopup.Menu
 				}).addStyleClass("sapMSBArrow");
@@ -261,19 +265,19 @@ function(
 		};
 
 		SplitButton.prototype.onsapup = function(oEvent) {
-			this._getArrowButton().firePress();
+			this._getArrowButton().firePress({keyboard: true});
 		};
 
 		SplitButton.prototype.onsapdown = function(oEvent) {
-			this._getArrowButton().firePress();
+			this._getArrowButton().firePress({keyboard: true});
 		};
 
 		SplitButton.prototype.onsapupmodifiers = function(oEvent) {
-			this._getArrowButton().firePress();
+			this._getArrowButton().firePress({keyboard: true});
 		};
 
 		SplitButton.prototype.onsapdownmodifiers = function(oEvent) {
-			this._getArrowButton().firePress();
+			this._getArrowButton().firePress({keyboard: true});
 		};
 
 		//F4
