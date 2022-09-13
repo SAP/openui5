@@ -769,6 +769,18 @@ sap.ui.define([
 	// ---- API ----
 
 	/**
+	 * Returns the selected overlays from the DesignTime. Used by VisualEditor
+	 * @returns {sap.ui.dt.Overlay[]} Selected overlays
+	 * @public
+	 */
+	 RuntimeAuthoring.prototype.getSelection = function() {
+		if (this._oDesignTime) {
+			return this._oDesignTime.getSelectionManager().get();
+		}
+		return [];
+	};
+
+	/**
 	 * Discard all LREP changes and restores the default app state,
 	 * opens a MessageBox where the user can confirm
 	 * the restoring to the default app state
