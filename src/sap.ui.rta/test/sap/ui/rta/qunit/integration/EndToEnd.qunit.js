@@ -511,10 +511,12 @@ sap.ui.define([
 						}.bind(this)));
 
 						this.oRta._oDesignTime.attachEventOnce("synced", function () {
-							oCutPastePlugin.getElementMover().attachEventOnce("validTargetZonesActivated", function () {
-								QUnitUtils.triggerKeydown(oFieldOverlay2.getDomRef(), KeyCodes.V, false, false, true);
-							}, 0);
-							QUnitUtils.triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
+							window.requestAnimationFrame(function () {
+								oCutPastePlugin.getElementMover().attachEventOnce("validTargetZonesActivated", function () {
+									QUnitUtils.triggerKeydown(oFieldOverlay2.getDomRef(), KeyCodes.V, false, false, true);
+								}, 0);
+								QUnitUtils.triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
+							});
 						});
 					}.bind(this));
 			}.bind(this);

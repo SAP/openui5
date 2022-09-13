@@ -331,13 +331,13 @@ sap.ui.define([
 	 *
 	 * @return {Promise} Resolving to a structure with all "add/reveal" action relevant data collected
 	 */
-	ActionExtractor.getActions = function(bSibling, oSourceElementOverlay, oPlugin, bInvalidate) {
+	ActionExtractor.getActions = function(bSibling, oSourceElementOverlay, oPlugin, bInvalidate, oDesignTime) {
 		var sSiblingOrChild = bSibling ? "asSibling" : "asChild";
 		if (!bInvalidate && oSourceElementOverlay._mAddActions) {
 			return Promise.resolve(oSourceElementOverlay._mAddActions[sSiblingOrChild]);
 		}
 
-		var oRevealActionsPromise = this._getRevealActions(bSibling, oSourceElementOverlay, oPlugin);
+		var oRevealActionsPromise = this._getRevealActions(bSibling, oSourceElementOverlay, oPlugin, oDesignTime);
 		var oAddPropertyActionsPromise = this._getAddViaDelegateActions(bSibling, oSourceElementOverlay, oPlugin);
 
 		return Promise.all([
@@ -364,6 +364,9 @@ sap.ui.define([
 		return oOverlay._mAddActions && oOverlay._mAddActions[sSiblingOrChild];
 	};
 
+	var mRevealCache = {};
+	var bIsSyncRegistered = true;
+
 	/**
 	 * Returns the Reveal actions data (parameters + elements) for an Overlay
 	 * @param {boolean} bSibling - If source element overlay should be sibling or parent to the newly added fields
@@ -372,7 +375,15 @@ sap.ui.define([
 	 *
 	 * @returns {Promise<object>} Reveal action data
 	 */
-	ActionExtractor._getRevealActions = function(bSibling, oSourceElementOverlay, oPlugin) {
+	ActionExtractor._getRevealActions = function(bSibling, oSourceElementOverlay, oPlugin, oDesignTime) {
+		if (bIsSyncRegistered) {
+			bIsSyncRegistered = false;
+			oDesignTime.attachEventOnce("synced", function() {
+				mRevealCache = {};
+				bIsSyncRegistered = true;
+			}, this);
+		}
+
 		var mParents = AdditionalElementsUtils.getParents(bSibling, oSourceElementOverlay, oPlugin);
 		var aParents = [mParents.parentOverlay];
 		if (mParents.relevantContainer !== mParents.parent) {
@@ -384,6 +395,10 @@ sap.ui.define([
 		}
 		var aAggregationNames = [];
 		if (mParents.parentOverlay) {
+			var mCachedResult = mRevealCache[mParents.parentOverlay.getId()];
+			if (mCachedResult && bSibling) {
+				return mCachedResult;
+			}
 			aAggregationNames = mParents.parentOverlay.getAggregationOverlays().filter(function(oAggregationOverlay) {
 				return !oAggregationOverlay.getDesignTimeMetadata().isIgnored(mParents.parent);
 			}).map(function(oAggregationOverlay) {
@@ -393,7 +408,13 @@ sap.ui.define([
 				return oPreviousPromise.then(function(mReveal) {
 					return getRevealActionFromAggregations(aParents, mReveal, sAggregationName, aAggregationNames, oPlugin);
 				});
-			}, Promise.resolve({}));
+			}, Promise.resolve({}))
+				.then(function(mAggregatedReveal) {
+					if (bSibling) {
+						mRevealCache[mParents.parentOverlay.getId()] = mAggregatedReveal;
+					}
+					return mAggregatedReveal;
+				});
 		}
 		return Promise.resolve({});
 	};

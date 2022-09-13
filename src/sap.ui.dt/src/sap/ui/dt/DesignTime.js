@@ -376,6 +376,8 @@ function (
 			return;
 		}
 
+		this._aOverlaysCreatedInLastBatch = [];
+
 		// TODO: get rid of this temporary solution with UICSFLEX-3718 BLI
 		var iTaskId = this._oTaskManager.add({
 			type: "registerElementOverlays"
@@ -441,7 +443,6 @@ function (
 			}
 		}, this);
 
-		this._aOverlaysCreatedInLastBatch = [];
 		this._oTaskManager.complete(iTaskId);
 	};
 
