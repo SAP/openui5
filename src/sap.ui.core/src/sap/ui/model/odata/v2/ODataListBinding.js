@@ -33,43 +33,61 @@ sap.ui.define([
 
 	/**
 	 * @class
-	 * List binding implementation for OData format.
+	 * List binding for an OData V2 model.
 	 *
-	 * @param {sap.ui.model.odata.v2.ODataModel} oModel Model that this list binding belongs to
-	 * @param {string} sPath Path into the model data, relative to the given <code>oContext</code>
-	 * @param {sap.ui.model.Context} oContext Context that the <code>sPath</code> is based on
-	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters] Initial sort order, can be either a sorter or an array of sorters
-	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] Predefined filters, can be either a filter or an array of filters
-	 * @param {object} [mParameters] A map which contains additional parameters for the binding
-	 * @param {string} [mParameters.batchGroupId] Sets the batch group ID to be used for requests originating from this binding
-	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode] Defines the count mode of this binding;
-	 *           if not specified, the default count mode of the <code>oModel</code> is applied
+	 * @param {sap.ui.model.odata.v2.ODataModel} oModel The OData V2 model
+	 * @param {string} sPath The binding path in the model
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context which is required as base for a relative path.
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters]
+	 *   Initial sort order, can be either a sorter or an array of sorters.
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters]
+	 *   Predefined filters, can be either a filter or an array of filters.
+	 * @param {object} [mParameters] A map which contains additional parameters for the binding.
+	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode]
+	 *   Defines the count mode of the binding; if not specified, the default count mode of the
+	 *   <code>oModel</code> is applied.
 	 * @param {string} [mParameters.createdEntitiesKey=""]
-	 *   A key used in combination with the resolved path of this binding to identify the entities
-	 *   created by this binding's {@link #create} method.
+	 *   A key used in combination with the resolved path of the binding to identify the entities
+	 *   created by the binding's {@link #create} method.
 	 *
 	 *   <b>Note:</b> Different controls or control aggregation bindings to the same collection must
 	 *   have different <code>createdEntitiesKey</code> values.
-	 * @param {Object<string,string>} [mParameters.custom] An optional map of custom query parameters. Custom parameters must not start with <code>$</code>
-	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which is included in the request
-	 * @param {boolean} [mParameters.faultTolerant] Turns on the fault tolerance mode, data is not reset if a back-end request returns an error
-	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode] Defines the operation mode of this binding
-	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which is included in the request
+	 * @param {Object<string,string>} [mParameters.custom]
+	 *   An optional map of custom query parameters. Custom parameters must not start with
+	 *   <code>$</code>.
+	 * @param {string} [mParameters.expand]
+	 *   Value for the OData <code>$expand</code> query option parameter which is included in the
+	 *   data request after URL encoding of the given value.
+	 * @param {boolean} [mParameters.faultTolerant]
+	 *   Turns on the fault tolerance mode, data is not reset if a back-end request returns an
+	 *   error.
+	 * @param {string} [mParameters.groupId]
+	 *   The group id to be used for requests originating from the binding
+	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
+	 *   The operation mode of the binding
+	 * @param {string} [mParameters.select]
+	 *   Value for the OData <code>$select</code> query option parameter which is included in the
+	 *   data request after URL encoding of the given value.
+	 * @param {boolean} [mParameters.transitionMessagesOnly]
+	 *   Whether the list binding only requests transition messages from the back end. If messages
+	 *   for entities of this collection need to be updated, use
+	 *   {@link sap.ui.model.odata.v2.ODataModel#read} on the parent entity corresponding to the
+	 *   list binding's context, with the parameter <code>updateAggregatedMessages</code> set to
+	 *   <code>true</code>.
+	 * @param {boolean} [mParameters.usePreliminaryContext]
+	 *   Whether a preliminary context is used. When set to <code>true</code>, the model can
+	 *   bundle the OData calls for dependent bindings into fewer $batch requests. For more
+	 *   information, see
+	 *   {@link topic:6c47b2b39db9404582994070ec3d57a2#loio62149734b5c24507868e722fe87a75db
+	 *   Optimizing Dependent Bindings}.
+	 * @param {string} [mParameters.batchGroupId]
+	 *   <b>Deprecated</b>, use <code>groupId</code> instead. Sets the batch group id to be used for
+	 *   requests originating from the binding.
 	 * @param {int} [mParameters.threshold]
 	 *   Deprecated since 1.102.0, as {@link sap.ui.model.odata.OperationMode.Auto} is deprecated;
 	 *   the threshold that defines how many entries should be fetched at least by the binding if
-	 *   <code>operationMode</code> is set to <code>Auto</code>
-	 * @param {boolean} [mParameters.transitionMessagesOnly]
-	 *   Whether this list binding only requests transition messages from the back end. If messages
-	 *   for entities of this collection need to be updated, use
-	 *   {@link sap.ui.model.odata.v2.ODataModel#read} on the parent entity corresponding to this
-	 *   list binding's context with the parameter <code>updateAggregatedMessages</code> set to
-	 *   <code>true</code>.
-	 * @param {boolean} [mParameters.usePreliminaryContext]
-	 *   Whether a preliminary context will be used. When set to <code>true</code>, the model can
-	 *   bundle the OData calls for dependent bindings into fewer $batch requests. For more
-	 *   information, see
-	 *   {@link topic:6c47b2b39db9404582994070ec3d57a2#loio62149734b5c24507868e722fe87a75db Optimizing Dependent Bindings}
+	 *   <code>operationMode</code> is set to <code>Auto</code>.
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataListBinding
 	 * @extends sap.ui.model.ListBinding
