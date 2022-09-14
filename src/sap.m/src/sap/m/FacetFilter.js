@@ -499,7 +499,6 @@ sap.ui.define([
 	FacetFilter.prototype.init = function() {
 
 		this._pageSize = 5;
-		this._addDelegateFlag = false;
 		this._invalidateFlag = false;
 		this._lastCategoryFocusIndex = 0;
 		this._aDomRefs = null;
@@ -610,6 +609,7 @@ sap.ui.define([
 
 		if (sType !== FacetFilterType.Light) {
 			this._startItemNavigation();
+			this.addDelegate(this.oItemNavigation);
 		}
 
 		if (sType === FacetFilterType.Light) {
@@ -647,10 +647,8 @@ sap.ui.define([
 		}
 
 		//initialize the delegate add apply it to the control (only once)
-		if ((!this.oItemNavigation) || this._addDelegateFlag == true) {
+		if (!this.oItemNavigation) {
 			this.oItemNavigation = new ItemNavigation();
-			this.addDelegate(this.oItemNavigation);
-			this._addDelegateFlag = false;
 		}
 		this._aRows = aRows;
 		for (var i = 0; i < this.$().find(":sapTabbable").length; i++) {
@@ -1088,8 +1086,6 @@ sap.ui.define([
 					that._popoverClosing = true;
 				},
 				afterClose: function(oEvent) {
-
-					that._addDelegateFlag = true;
 
 					this._popoverClosing = false;
 
@@ -1598,7 +1594,6 @@ sap.ui.define([
 				stretch: Device.system.phone ? true : false,
 				afterClose : function() {
 
-					that._addDelegateFlag = true;
 					that._invalidateFlag = true;
 
 					// Make sure we restore the FacetFilterList back to the lists aggregation and update its active state
@@ -2016,7 +2011,6 @@ sap.ui.define([
 			icon: IconPool.getIconURI("undo"),
 			tooltip: this._bundle.getText("FACETFILTER_RESET"),
 			press: function(oEvent) {
-				this._addDelegateFlag = true;
 				this._invalidateFlag = true;
 
 				if (this._popoverClosing) {
