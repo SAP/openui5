@@ -249,13 +249,19 @@ sap.ui.define([
 
 		if (bContentLeft) {
 			this._sResizeListenerIdLeft = ResizeHandler.register(this._$LeftBar[0], jQuery.proxy(this._handleResize, this));
+		} else {
+			this._$LeftBar.addClass("sapMBarEmpty");
 		}
 
 		if (bContentMiddle) {
 			this._sResizeListenerIdMid = ResizeHandler.register(this._$MidBarPlaceHolder[0], jQuery.proxy(this._handleResize, this));
+		} else {
+			this._$MidBarPlaceHolder.addClass("sapMBarEmpty");
 		}
 		if (bContentRight) {
 			this._sResizeListenerIdRight = ResizeHandler.register(this._$RightBar[0], jQuery.proxy(this._handleResize, this));
+		} else {
+			this._$RightBar.addClass("sapMBarEmpty");
 		}
 	};
 
@@ -268,6 +274,10 @@ sap.ui.define([
 	 * @private
 	 */
 	Bar.prototype._updatePosition = function(bContentLeft, bContentMiddle, bContentRight) {
+		if (!bContentLeft && bContentMiddle && !bContentRight) {
+			return;
+		}
+
 		if (bContentLeft && !bContentMiddle && !bContentRight) {
 			return;
 		}
@@ -333,19 +343,23 @@ sap.ui.define([
 	 */
 	Bar.prototype._getMidBarCss = function(iRightBarWidth, iBarWidth, iLeftBarWidth) {
 		var iMidBarPlaceholderWidth = this._$MidBarPlaceHolder.outerWidth(true),
-			bRtl = Configuration.getRTL(),
+			bRtl = sap.ui.getCore().getConfiguration().getRTL(),
 			sLeftOrRight = bRtl ? "right" : "left",
-			sRightOrLeft = bRtl ? "left" : "right",
-			oMidBarCss = { visibility : "" },
-			iLeftContentPadding = parseInt(this._$LeftBar.css('padding-' + sLeftOrRight)),
-			iRightContentPadding = parseInt(this._$RightBar.css('padding-' + sRightOrLeft)),
-			iMidContentLeftPadding = parseInt(this._$MidBarPlaceHolder.css('padding-' + sLeftOrRight)),
-			iMidContentRightPadding = parseInt(this._$MidBarPlaceHolder.css('padding-' + sRightOrLeft)),
-			bEmptyLeftContent = !this.getContentLeft().length,
-			bEmptyRightContent = !this.getContentRight().length,
-			iLeftContentDelta = iLeftContentPadding - iMidContentLeftPadding,
-			iRightContentDelta = iRightContentPadding - iMidContentRightPadding,
-			iSpaceBetweenLeftAndRight = iBarWidth - ( bEmptyRightContent ? iRightContentDelta : iRightBarWidth) - (bEmptyLeftContent ? iLeftContentDelta : iLeftBarWidth),
+			oMidBarCss = { visibility : "" };
+
+		if (this.getEnableFlexBox()) {
+
+			iMidBarPlaceholderWidth = iBarWidth - iLeftBarWidth - iRightBarWidth - parseInt(this._$MidBarPlaceHolder.css('margin-left')) - parseInt(this._$MidBarPlaceHolder.css('margin-right'));
+
+			oMidBarCss.position = "absolute";
+			oMidBarCss.width = iMidBarPlaceholderWidth + "px";
+			oMidBarCss[sLeftOrRight] = iLeftBarWidth;
+
+			//calculation for flex is done
+			return oMidBarCss;
+		}
+
+		var iSpaceBetweenLeftAndRight = iBarWidth - iLeftBarWidth - iRightBarWidth,
 			iMidBarStartingPoint = (iBarWidth / 2) - (iMidBarPlaceholderWidth / 2),
 			bLeftContentIsOverlapping = iLeftBarWidth > iMidBarStartingPoint,
 			iMidBarEndPoint = (iBarWidth / 2) + (iMidBarPlaceholderWidth / 2),
@@ -354,19 +368,15 @@ sap.ui.define([
 
 		if ((sTitleAlignment !== TitleAlignment.None && sTitleAlignment !== TitleAlignment.Center) ||
 			(iSpaceBetweenLeftAndRight > 0 && (bLeftContentIsOverlapping || bRightContentIsOverlapping))) {
-			// Left or Right content is overlapping the Middle content or there is Title alignment "Center" or "None" set
+			//Left or Right content is overlapping the Middle content or there is Title alignment "Center" or "None" set
+
 			// place the middle positioned element directly next to the end of left content area
 			oMidBarCss.position = "absolute";
 
-			// Use the remaining space
+			//Use the remaining space
 			oMidBarCss.width = iSpaceBetweenLeftAndRight + "px";
 
-			// Set left or right depending on LTR/RTL
-			oMidBarCss[sLeftOrRight] = bEmptyLeftContent ? iLeftContentDelta : iLeftBarWidth;
-		}
-
-		if (bEmptyLeftContent && bEmptyRightContent ) {
-			oMidBarCss.width = "100%";
+			oMidBarCss.left = bRtl ? iRightBarWidth : iLeftBarWidth;
 		}
 
 		return oMidBarCss;
