@@ -291,7 +291,9 @@ function(
 				if (mSettings && mSettings.value === undefined){
 					this.setValue(this._getDefaultValue(undefined, mSettings.max, mSettings.min));
 				}
-			}
+			},
+
+			renderer: StepInputRenderer
 		});
 
 		// get resource translation bundle;

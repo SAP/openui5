@@ -132,7 +132,9 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 			},
 
 			designtime: "sap/m/designtime/Text.designtime"
-		}
+		},
+
+		renderer: TextRenderer
 	});
 
 	/**

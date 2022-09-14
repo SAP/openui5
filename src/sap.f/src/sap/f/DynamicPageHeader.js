@@ -101,7 +101,9 @@ sap.ui.define([
 					_collapseButton: {type: "sap.m.Button", multiple: false,  visibility: "hidden"}
 				},
 				designtime: "sap/f/designtime/DynamicPageHeader.designtime"
-			}
+			},
+
+			renderer: DynamicPageHeaderRenderer
 		});
 
 		/*************************************** Static members ******************************************/

@@ -208,7 +208,9 @@ sap.ui.define([
 				 */
 				"press": {}
 			}
-		}
+		},
+
+		renderer: NumericContentRenderer
 	});
 
 	/* --- Lifecycle methods --- */

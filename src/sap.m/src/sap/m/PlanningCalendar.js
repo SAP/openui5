@@ -44,8 +44,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	// jQuery Plugin "control"
-	"sap/ui/dom/jquery/control"
+	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ], function(
 	DateNavigation,
 	Control,
@@ -560,6 +559,7 @@ sap.ui.define([
 			},
 			designtime: "sap/m/designtime/PlanningCalendar.designtime"
 		},
+
 		constructor: function(vId, mSettings) {
 			Control.prototype.constructor.apply(this, arguments);
 
@@ -570,7 +570,9 @@ sap.ui.define([
 			if (mSettings && typeof mSettings.customAppointmentsSorterCallback === "function") {
 				this._fnCustomSortedAppointments = mSettings.customAppointmentsSorterCallback;
 			}
-		}
+		},
+
+		renderer: PlanningCalendarRenderer
 	});
 
 	//List of private properties controlling different intervals

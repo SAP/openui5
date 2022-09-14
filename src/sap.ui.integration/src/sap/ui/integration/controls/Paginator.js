@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Configuration",
-	'sap/ui/core/Icon',
-	'./PaginatorRenderer'
+	"sap/ui/core/Icon",
+	"./PaginatorRenderer"
 ], function (
 	library,
 	mLibrary,
@@ -18,7 +18,8 @@ sap.ui.define([
 	Core,
 	Control,
 	Configuration,
-	Icon
+	Icon,
+	PaginatorRenderer
 ) {
 	"use strict";
 
@@ -63,7 +64,9 @@ sap.ui.define([
 			events: {
 				animationComplete: {}
 			}
-		}
+		},
+
+		renderer: PaginatorRenderer
 	});
 
 	Paginator.create = function (oCard, oConfig) {

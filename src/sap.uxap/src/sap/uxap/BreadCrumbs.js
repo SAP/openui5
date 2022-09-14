@@ -99,7 +99,9 @@ sap.ui.define([
 				 */
 				_overflowSelect: {type: "sap.m.Select", multiple: false, visibility: "hidden"}
 			}
-		}
+		},
+
+		renderer: BreadCrumbsRenderer
 	});
 
 	BreadCrumbs.PAGEUP_AND_PAGEDOWN_JUMP_SIZE = 5;

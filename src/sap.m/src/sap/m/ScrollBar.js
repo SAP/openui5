@@ -28,33 +28,37 @@ function(Control, ScrollBarRenderer) {
 	 * @private
 	 * @alias sap.m.ScrollBar
 	 */
-	var ScrollBar = Control.extend("sap.m.ScrollBar", /** @lends sap.m.ScrollBar.prototype */ { metadata : {
+	var ScrollBar = Control.extend("sap.m.ScrollBar", /** @lends sap.m.ScrollBar.prototype */ {
+		metadata : {
 
-			library : "sap.m",
-			properties : {
+				library : "sap.m",
+				properties : {
 
-				/**
-				 * Defines scroll position in pixels. It is kept in sync with the current scroll value of the container.
-				 *
-				 * <b>Note:</b> If you set <code>scrollPosition</code> to negative value or bigger than the
-				 * <code>contentSize</code>, the actual <code>scrollPosition</code> would be respectively
-				 * 0 if it's negative or the maximum allowed.
-				 */
-				scrollPosition : {type : "int", group : "Behavior", defaultValue : 0},
+					/**
+					 * Defines scroll position in pixels. It is kept in sync with the current scroll value of the container.
+					 *
+					 * <b>Note:</b> If you set <code>scrollPosition</code> to negative value or bigger than the
+					 * <code>contentSize</code>, the actual <code>scrollPosition</code> would be respectively
+					 * 0 if it's negative or the maximum allowed.
+					 */
+					scrollPosition : {type : "int", group : "Behavior", defaultValue : 0},
 
-				/**
-				 * Size of the scrollable content (in pixels).
-				 */
-				contentSize : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
+					/**
+					 * Size of the scrollable content (in pixels).
+					 */
+					contentSize : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
+				},
+				events : {
+
+					/**
+					 * Scroll event.
+					 */
+					scroll : {}
+				}
 			},
-			events : {
 
-				/**
-				 * Scroll event.
-				 */
-				scroll : {}
-			}
-		}});
+		renderer: ScrollBarRenderer
+	});
 
 	ScrollBar.prototype.init = function(){
 		this._onScrollHandler = this._onscroll.bind(this);

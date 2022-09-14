@@ -43,118 +43,122 @@ sap.ui.define([
 	 * @alias sap.m.StandardListItem
 	 * @see {@link fiori:/standard-list-item/ Standard List Item}
 	 */
-	var StandardListItem = ListItemBase.extend("sap.m.StandardListItem", /** @lends sap.m.StandardListItem.prototype */ { metadata : {
+	var StandardListItem = ListItemBase.extend("sap.m.StandardListItem", /** @lends sap.m.StandardListItem.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Defines the title of the list item.
-			 */
-			title : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Defines the title of the list item.
+				 */
+				title : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Defines the additional information for the title.
-			 * <b>Note:</b> This is only visible when the <code>title</code> property is not empty.
-			 */
-			description : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Defines the additional information for the title.
+				 * <b>Note:</b> This is only visible when the <code>title</code> property is not empty.
+				 */
+				description : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Defines the list item icon.
-			 */
-			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
+				/**
+				 * Defines the list item icon.
+				 */
+				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
 
-			/**
-			 * Defines the indentation of the icon. If set to <code>false</code>, the icon will not be shown as embedded. Instead it will take the full height of the list item.
-			 */
-			iconInset : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * Defines the indentation of the icon. If set to <code>false</code>, the icon will not be shown as embedded. Instead it will take the full height of the list item.
+				 */
+				iconInset : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * By default, one or more requests are sent to get the density perfect version of the icon if the given version of the icon doesn't exist on the server.
-			 * <b>Note:</b> If bandwidth is a key factor for the application, set this value to <code>false</code>.
-			 */
-			iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * By default, one or more requests are sent to get the density perfect version of the icon if the given version of the icon doesn't exist on the server.
+				 * <b>Note:</b> If bandwidth is a key factor for the application, set this value to <code>false</code>.
+				 */
+				iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Defines the icon that is shown while the list item is pressed.
-			 */
-			activeIcon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
+				/**
+				 * Defines the icon that is shown while the list item is pressed.
+				 */
+				activeIcon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
 
-			/**
-			 * Defines an additional information text.
-			 * <b>Note:</b>
-			 * A wrapping of the information text is also supported as of version 1.95, if <code>wrapping=true</code>. Although long strings are supported for the information text, it is recommended to use short strings. For more details, see {@link #getWrapping wrapping}.
-			 */
-			info : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Defines an additional information text.
+				 * <b>Note:</b>
+				 * A wrapping of the information text is also supported as of version 1.95, if <code>wrapping=true</code>. Although long strings are supported for the information text, it is recommended to use short strings. For more details, see {@link #getWrapping wrapping}.
+				 */
+				info : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Defines the state of the information text, e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
-			 */
-			infoState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : ValueState.None},
+				/**
+				 * Defines the state of the information text, e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
+				 */
+				infoState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : ValueState.None},
 
-			/**
-			 * By default, the title size adapts to the available space and gets bigger if the description is empty. If you have list items with and without descriptions, this results in titles with different sizes. In this case, it can be better to switch the size adaption off by setting this property to <code>false</code>.
-			 * @since 1.16.3
-			 */
-			adaptTitleSize : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * By default, the title size adapts to the available space and gets bigger if the description is empty. If you have list items with and without descriptions, this results in titles with different sizes. In this case, it can be better to switch the size adaption off by setting this property to <code>false</code>.
+				 * @since 1.16.3
+				 */
+				adaptTitleSize : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * Defines the <code>title</code> text directionality with enumerated options. By default, the control inherits text direction from the DOM.
-			 * @since 1.28.0
-			 */
-			titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * Defines the <code>title</code> text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @since 1.28.0
+				 */
+				titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
-			/**
-			 * Defines the <code>info</code> directionality with enumerated options. By default, the control inherits text direction from the DOM.
-			 * @since 1.28.0
-			 */
-			infoTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * Defines the <code>info</code> directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @since 1.28.0
+				 */
+				infoTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
-			/**
-			 * Defines the wrapping behavior of title and description texts.
-			 *
-			 * <b>Note:</b>
-			 *
-			 * In the desktop mode, initial rendering of the control contains 300 characters along with a button to expand and collapse the text whereas in the phone mode, the character limit is set to 100 characters.<br>
-			 * A wrapping of the information text is supported as of 1.95. But expanding and collapsing the information text is not possible.
-			 * A wrapping of the information text is disabled if <code>infoStateInverted</code> is set to <code>true</code>.
-			 * @since 1.67
-			 */
-			wrapping : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Defines the wrapping behavior of title and description texts.
+				 *
+				 * <b>Note:</b>
+				 *
+				 * In the desktop mode, initial rendering of the control contains 300 characters along with a button to expand and collapse the text whereas in the phone mode, the character limit is set to 100 characters.<br>
+				 * A wrapping of the information text is supported as of 1.95. But expanding and collapsing the information text is not possible.
+				 * A wrapping of the information text is disabled if <code>infoStateInverted</code> is set to <code>true</code>.
+				 * @since 1.67
+				 */
+				wrapping : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Determines the inverted rendering behavior of the info text and the info state.
-			 * The color defined by the <code>infoState</code> property is rendered as the background color for the info text, if this property is set to <code>true</code>.
-			 *
-			 * @since 1.74
-			 */
-			infoStateInverted : {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * Determines the inverted rendering behavior of the info text and the info state.
+				 * The color defined by the <code>infoState</code> property is rendered as the background color for the info text, if this property is set to <code>true</code>.
+				 *
+				 * @since 1.74
+				 */
+				infoStateInverted : {type : "boolean", group : "Appearance", defaultValue : false},
 
-			/**
-			 * This property can be used to change the default character limits for the wrapping behavior.
-			 *
-			 * If this property is set to 0, then the default character limit used by the wrapping behavior is used. For details see {@link #getWrapping wrapping}.
-			 *
-			 * <b>Note:</b>
-			 *
-			 * 0 or a positive integer must be used for this property.
-			 * @since 1.94
-			 */
-			wrapCharLimit : {type : "int", group : "Behavior", defaultValue : 0}
+				/**
+				 * This property can be used to change the default character limits for the wrapping behavior.
+				 *
+				 * If this property is set to 0, then the default character limit used by the wrapping behavior is used. For details see {@link #getWrapping wrapping}.
+				 *
+				 * <b>Note:</b>
+				 *
+				 * 0 or a positive integer must be used for this property.
+				 * @since 1.94
+				 */
+				wrapCharLimit : {type : "int", group : "Behavior", defaultValue : 0}
+			},
+			aggregations : {
+				/**
+				 * A <code>sap.m.Avatar</code> control instance that, if set, is used instead of an icon or image.
+				 *
+				 * The size of the <code>Avatar</code> control depends on the <code>insetIcon</code> property of <code>StandardListItem</code>.
+				 * The <code>displaySize</code> property of the <code>Avatar</code> control is not supported. If the <code>insetIcon</code> property of <code>StandardListItem</code> is set to <code>true</code>, the size of the <code>Avatar</code> control is set to XS; if the <code>insetIcon</code> property of <code>StandardListItem</code> is set to <code>false</code>, the size of the <code>Avatar</code> control is set to "S".
+				 *
+				 * @since 1.98
+				 */
+				avatar: {type: 'sap.m.Avatar', multiple: false}
 		},
-		aggregations : {
-			/**
-			 * A <code>sap.m.Avatar</code> control instance that, if set, is used instead of an icon or image.
-			 *
-			 * The size of the <code>Avatar</code> control depends on the <code>insetIcon</code> property of <code>StandardListItem</code>.
-			 * The <code>displaySize</code> property of the <code>Avatar</code> control is not supported. If the <code>insetIcon</code> property of <code>StandardListItem</code> is set to <code>true</code>, the size of the <code>Avatar</code> control is set to XS; if the <code>insetIcon</code> property of <code>StandardListItem</code> is set to <code>false</code>, the size of the <code>Avatar</code> control is set to "S".
-			 *
-			 * @since 1.98
-			 */
-			avatar: {type: 'sap.m.Avatar', multiple: false}
-	},
-		designtime: "sap/m/designtime/StandardListItem.designtime"
-	}});
+			designtime: "sap/m/designtime/StandardListItem.designtime"
+		},
+
+		renderer: StandardListItemRenderer
+	});
 
 	StandardListItem.prototype.exit = function() {
 		if (this._oImage) {

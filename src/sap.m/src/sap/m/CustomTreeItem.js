@@ -45,7 +45,9 @@ sap.ui.define([
 					bindable: "bindable"
 				}
 			}
-		}
+		},
+
+		renderer: CustomTreeItemRenderer
 	});
 
 	CustomTreeItem.prototype.getContentAnnouncement = function() {

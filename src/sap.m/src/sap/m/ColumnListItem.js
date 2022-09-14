@@ -47,28 +47,32 @@ sap.ui.define([
 	 * @since 1.12
 	 * @alias sap.m.ColumnListItem
 	 */
-	var ColumnListItem = ListItemBase.extend("sap.m.ColumnListItem", /** @lends sap.m.ColumnListItem.prototype */ { metadata : {
+	var ColumnListItem = ListItemBase.extend("sap.m.ColumnListItem", /** @lends sap.m.ColumnListItem.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Sets the vertical alignment of all the cells within the table row (including selection and navigation).
-			 * <b>Note:</b> <code>vAlign</code> property of <code>sap.m.Column</code> overrides the property for cell vertical alignment if both are set.
-			 * @since 1.20
-			 */
-			vAlign : {type : "sap.ui.core.VerticalAlign", group : "Appearance", defaultValue : VerticalAlign.Inherit}
+				/**
+				 * Sets the vertical alignment of all the cells within the table row (including selection and navigation).
+				 * <b>Note:</b> <code>vAlign</code> property of <code>sap.m.Column</code> overrides the property for cell vertical alignment if both are set.
+				 * @since 1.20
+				 */
+				vAlign : {type : "sap.ui.core.VerticalAlign", group : "Appearance", defaultValue : VerticalAlign.Inherit}
+			},
+			defaultAggregation : "cells",
+			aggregations : {
+
+				/**
+				 * Every <code>control</code> inside the <code>cells</code> aggregation defines one cell of the row.
+				 * <b>Note:</b> The order of the <code>cells</code> aggregation must match the order of the <code>columns</code> aggregation of <code>sap.m.Table</code>.
+				 */
+				cells : {type : "sap.ui.core.Control", multiple : true, singularName : "cell", bindable : "bindable"}
+			}
 		},
-		defaultAggregation : "cells",
-		aggregations : {
 
-			/**
-			 * Every <code>control</code> inside the <code>cells</code> aggregation defines one cell of the row.
-			 * <b>Note:</b> The order of the <code>cells</code> aggregation must match the order of the <code>columns</code> aggregation of <code>sap.m.Table</code>.
-			 */
-			cells : {type : "sap.ui.core.Control", multiple : true, singularName : "cell", bindable : "bindable"}
-		}
-	}});
+		renderer: ColumnListItemRenderer
+	});
 
 	/**
 	 * TablePopin element that handles own events.

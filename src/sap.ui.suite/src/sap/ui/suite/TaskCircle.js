@@ -34,51 +34,55 @@ sap.ui.define([
 	 * The API may change. User with care.
 	 * @alias sap.ui.suite.TaskCircle
 	 */
-	var TaskCircle = Control.extend("sap.ui.suite.TaskCircle", /** @lends sap.ui.suite.TaskCircle.prototype */ { metadata : {
+	var TaskCircle = Control.extend("sap.ui.suite.TaskCircle", /** @lends sap.ui.suite.TaskCircle.prototype */ {
+		metadata : {
 
-		library : "sap.ui.suite",
-		properties : {
+			library : "sap.ui.suite",
+			properties : {
 
-			/**
-			 * Current value of the task circle to be displayed. In dependency of the parameters maxValue and minValue it controls the size of the circle.
-			 */
-			value : {type : "int", group : "Misc", defaultValue : 0},
+				/**
+				 * Current value of the task circle to be displayed. In dependency of the parameters maxValue and minValue it controls the size of the circle.
+				 */
+				value : {type : "int", group : "Misc", defaultValue : 0},
 
-			/**
-			 * Upper limit of the displayed values. Default is 100.
-			 */
-			maxValue : {type : "int", group : "Misc", defaultValue : 100},
+				/**
+				 * Upper limit of the displayed values. Default is 100.
+				 */
+				maxValue : {type : "int", group : "Misc", defaultValue : 100},
 
-			/**
-			 * Lower limit of the displayed values. Default is 0.
-			 */
-			minValue : {type : "int", group : "Misc", defaultValue : 0},
+				/**
+				 * Lower limit of the displayed values. Default is 0.
+				 */
+				minValue : {type : "int", group : "Misc", defaultValue : 0},
 
-			/**
-			 * Color of the circle. The default color is red.
-			 */
-			color : {type : "sap.ui.suite.TaskCircleColor", group : "Misc", defaultValue : TaskCircleColor.Gray}
+				/**
+				 * Color of the circle. The default color is red.
+				 */
+				color : {type : "sap.ui.suite.TaskCircleColor", group : "Misc", defaultValue : TaskCircleColor.Gray}
+			},
+			associations : {
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"},
+
+				/**
+				 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+				 */
+				ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}
+			},
+			events : {
+
+				/**
+				 * Event is fired when the user clicks the control.
+				 */
+				press : {}
+			}
 		},
-		associations : {
 
-			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-			 */
-			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"},
-
-			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
-			 */
-			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}
-		},
-		events : {
-
-			/**
-			 * Event is fired when the user clicks the control.
-			 */
-			press : {}
-		}
-	}});
+		renderer: TaskCircleRenderer
+	});
 
 
 

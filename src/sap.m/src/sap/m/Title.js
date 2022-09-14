@@ -79,113 +79,117 @@ sap.ui.define([
 	 * @alias sap.m.Title
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/title/ Title}
 	 */
-	var Title = Control.extend("sap.m.Title", /** @lends sap.m.Title.prototype */ { metadata : {
+	var Title = Control.extend("sap.m.Title", /** @lends sap.m.Title.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		interfaces : [
-			 "sap.ui.core.IShrinkable",
-			 "sap.m.IHyphenation"
-		],
-		properties : {
+			library : "sap.m",
+			interfaces : [
+				 "sap.ui.core.IShrinkable",
+				 "sap.m.IHyphenation"
+			],
+			properties : {
 
-			/**
-			 * Defines the text that should be displayed as a title.
-			 *
-			 * <b>Note:</b> this property is not used if there is a control added to the <code>content</code> aggregation
-			 * <b>Note:</b> this property will be overridden if there is title element associated and it has <code>text</code> property set.
-			 *
-			 */
-			text : {type : "string", group : "Appearance", defaultValue : null},
+				/**
+				 * Defines the text that should be displayed as a title.
+				 *
+				 * <b>Note:</b> this property is not used if there is a control added to the <code>content</code> aggregation
+				 * <b>Note:</b> this property will be overridden if there is title element associated and it has <code>text</code> property set.
+				 *
+				 */
+				text : {type : "string", group : "Appearance", defaultValue : null},
 
-			/**
-			 * Defines the semantic level of the title.
-			 * This information is e.g. used by assistive technologies like screenreaders to create a hierarchical site map for faster navigation.
-			 * Depending on this setting either an HTML h1-h6 element is used or when using level <code>Auto</code> no explicit level information is written (HTML5 header element).
-			 * This property does not influence the style of the control. Use the property <code>titleStyle</code> for this purpose instead.
-			 *
-			 * <b>Note:</b> this property will be overridden if there is title element associated and it has <code>level</code> property set.
-			 */
-			level : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.Auto},
+				/**
+				 * Defines the semantic level of the title.
+				 * This information is e.g. used by assistive technologies like screenreaders to create a hierarchical site map for faster navigation.
+				 * Depending on this setting either an HTML h1-h6 element is used or when using level <code>Auto</code> no explicit level information is written (HTML5 header element).
+				 * This property does not influence the style of the control. Use the property <code>titleStyle</code> for this purpose instead.
+				 *
+				 * <b>Note:</b> this property will be overridden if there is title element associated and it has <code>level</code> property set.
+				 */
+				level : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.Auto},
 
-			/**
-			 * Defines the style of the title.
-			 * When using the <code>Auto</code> styling, the appearance of the title depends on the current position of the title (e.g. inside a <code>Toolbar</code>).
-			 * This default behavior can be overridden by setting a different style explicitly.
-			 * The actual appearance of the title and the different styles always depends on the theme being used.
-			 */
-			titleStyle : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.Auto},
+				/**
+				 * Defines the style of the title.
+				 * When using the <code>Auto</code> styling, the appearance of the title depends on the current position of the title (e.g. inside a <code>Toolbar</code>).
+				 * This default behavior can be overridden by setting a different style explicitly.
+				 * The actual appearance of the title and the different styles always depends on the theme being used.
+				 */
+				titleStyle : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.Auto},
 
-			/**
-			 * Defines the width of the title.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+				/**
+				 * Defines the width of the title.
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
-			/**
-			 * Defines the alignment of the text within the title. <b>Note:</b> This property only has an effect if the overall width of the title control is
-			 * larger than the displayed text.
-			 *
-			 * <b>Note:</b> this property will be overridden if there is a control added to the <code>content</code> aggregation
-			 *
-			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Initial},
+				/**
+				 * Defines the alignment of the text within the title. <b>Note:</b> This property only has an effect if the overall width of the title control is
+				 * larger than the displayed text.
+				 *
+				 * <b>Note:</b> this property will be overridden if there is a control added to the <code>content</code> aggregation
+				 *
+				 */
+				textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Initial},
 
-			/**
-			 * Options for the text direction are RTL and LTR. Alternatively, the control can inherit the text direction from its parent container.
-			 *
-			 * <b>Note:</b> this property will be overridden if there is a control added to the <code>content</code> aggregation
-			 *
-			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * Options for the text direction are RTL and LTR. Alternatively, the control can inherit the text direction from its parent container.
+				 *
+				 * <b>Note:</b> this property will be overridden if there is a control added to the <code>content</code> aggregation
+				 *
+				 */
+				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
-			/**
-			 * Enables text wrapping.
-			 *
-			 * <b>Note:</b> Wrapping must only be activated if the surrounding container allows flexible heights.
-			 * <b>Note:</b> this property will be ignored if there is a control added to the <code>content</code> aggregation
-			 *
-			 * @since 1.52
-			 */
-			wrapping : {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * Enables text wrapping.
+				 *
+				 * <b>Note:</b> Wrapping must only be activated if the surrounding container allows flexible heights.
+				 * <b>Note:</b> this property will be ignored if there is a control added to the <code>content</code> aggregation
+				 *
+				 * @since 1.52
+				 */
+				wrapping : {type : "boolean", group : "Appearance", defaultValue : false},
 
-			/**
-			 * Defines the type of text wrapping to be used (hyphenated or normal).
-			 *
-			 * <b>Note:</b> This property takes effect only when the <code>wrapping</code>
-			 * property is set to <code>true</code>.
-			 * <b>Note:</b> this property will be ignored if there is a control added to the <code>content</code> aggregation
-			 *
-			 * @since 1.60
-			 */
-			wrappingType : {type: "sap.m.WrappingType", group : "Appearance", defaultValue : WrappingType.Normal}
+				/**
+				 * Defines the type of text wrapping to be used (hyphenated or normal).
+				 *
+				 * <b>Note:</b> This property takes effect only when the <code>wrapping</code>
+				 * property is set to <code>true</code>.
+				 * <b>Note:</b> this property will be ignored if there is a control added to the <code>content</code> aggregation
+				 *
+				 * @since 1.60
+				 */
+				wrappingType : {type: "sap.m.WrappingType", group : "Appearance", defaultValue : WrappingType.Normal}
+
+			},
+			defaultAggregation : "content",
+			aggregations : {
+				/**
+				 * Holds a control that implements <code>sap.ui.core.ITitleContent</code> and renders this control instead of simple text
+				 *
+				 * <b>Note:</b> if a control is placed in this aggregation, the following properties of <code>sap.m.Title</code>
+				 * will be overridden - <code>text</code>, <code>textAlign</code>, <code>textDirection</code>; the following will be ignored -
+				 * <code>wrapping</code>, <code>wrappingType</code>. The <code>title</code> association will be ignored too.
+				 *
+				 * @since 1.87
+				 */
+				content : {type : "sap.ui.core.ITitleContent", multiple : false}
+			},
+			associations : {
+
+				/**
+				 * Defines a relationship to a generic title description.
+				 *
+				 * <b>Note:</b> if a control is placed in <code>content</code> aggregation, the title element associated will be ignored;
+				 * otherwise the properties <code>text</code>, <code>level</code> and </code>tooltip</code> (text only) of this element
+				 * will override the corresponding properties of the <code>Title</code> control.
+				 */
+				title : {type : "sap.ui.core.Title", multiple : false}
+			},
+			designtime: "sap/m/designtime/Title.designtime"
 
 		},
-		defaultAggregation : "content",
-		aggregations : {
-			/**
-			 * Holds a control that implements <code>sap.ui.core.ITitleContent</code> and renders this control instead of simple text
-			 *
-			 * <b>Note:</b> if a control is placed in this aggregation, the following properties of <code>sap.m.Title</code>
-			 * will be overridden - <code>text</code>, <code>textAlign</code>, <code>textDirection</code>; the following will be ignored -
-			 * <code>wrapping</code>, <code>wrappingType</code>. The <code>title</code> association will be ignored too.
-			 *
-			 * @since 1.87
-			 */
-			content : {type : "sap.ui.core.ITitleContent", multiple : false}
-		},
-		associations : {
 
-			/**
-			 * Defines a relationship to a generic title description.
-			 *
-			 * <b>Note:</b> if a control is placed in <code>content</code> aggregation, the title element associated will be ignored;
-			 * otherwise the properties <code>text</code>, <code>level</code> and </code>tooltip</code> (text only) of this element
-			 * will override the corresponding properties of the <code>Title</code> control.
-			 */
-			title : {type : "sap.ui.core.Title", multiple : false}
-		},
-		designtime: "sap/m/designtime/Title.designtime"
-
-	}});
+		renderer: TitleRenderer
+	});
 
 	/**
 	 * Gets the currently set title.

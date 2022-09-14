@@ -96,135 +96,139 @@ function(
 	 * @alias sap.m.PlanningCalendarHeader
 	 */
 
-	var PlanningCalendarHeader = Control.extend("sap.m.PlanningCalendarHeader", /** @lends sap.m.PlanningCalendarHeader.prototype */ { metadata : {
+	var PlanningCalendarHeader = Control.extend("sap.m.PlanningCalendarHeader", /** @lends sap.m.PlanningCalendarHeader.prototype */ {
+		metadata : {
 
-		library : "sap.m",
+			library : "sap.m",
 
-		properties : {
+			properties : {
 
-			/**
-			 * Determines the title of the <code>PlanningCalendarHeader</code>.
-			 */
-			title: { type: "string", group: "Appearance", defaultValue: "" },
+				/**
+				 * Determines the title of the <code>PlanningCalendarHeader</code>.
+				 */
+				title: { type: "string", group: "Appearance", defaultValue: "" },
 
-			/**
-			 * Determines the start date used in the calendar picker, as a JavaScript date object. It is considered as a local date.
-			 * The time part will be ignored. The current date is used as default.
-			 */
-			startDate: { type : "object", group : "Data" },
+				/**
+				 * Determines the start date used in the calendar picker, as a JavaScript date object. It is considered as a local date.
+				 * The time part will be ignored. The current date is used as default.
+				 */
+				startDate: { type : "object", group : "Data" },
 
-			/**
-			 * Determines the text of the button which opens the calendar picker.
-			 */
-			pickerText : { type : "string", group : "Data" }
+				/**
+				 * Determines the text of the button which opens the calendar picker.
+				 */
+				pickerText : { type : "string", group : "Data" }
+
+			},
+
+			aggregations : {
+
+				/**
+				 * The controls to be passed to the toolbar.
+				 */
+				actions : { type : "sap.ui.core.Control", multiple: true, singularName: "action" },
+
+				/**
+				 * Hidden, for internal use only.
+				 * The toolbar which contains the title, the SegmentedButton for the views and the controls from the actions aggregation.
+				 *
+				 * @private
+				 */
+				_actionsToolbar : { type: "sap.m.OverflowToolbar", multiple: false, visibility : "hidden" },
+
+				/**
+				 * Hidden, for internal use only.
+				 * The toolbar which contains the navigation inner controls.
+				 *
+				 * @private
+				 */
+				_navigationToolbar : { type: "sap.m.Toolbar", multiple: false, visibility : "hidden" },
+
+				/**
+				 * Hidden, for internal use only.
+				 * The popup which contains the calendar for navigation.
+				 *
+				 * @private
+				 */
+				_calendarPicker : { type : "sap.ui.unified.Calendar", multiple : false, visibility : "hidden" },
+
+				/**
+				 * Hidden, for internal use only.
+				 * The popup which contains the month picker for navigation.
+				 *
+				 * @private
+				 */
+				_monthPicker : { type : "sap.ui.unified.internal.CustomMonthPicker", multiple : false, visibility : "hidden" },
+
+				/**
+				 * Hidden, for internal use only.
+				 * The popup which contains the year picker for navigation.
+				 *
+				 * @private
+				 */
+				_yearPicker : { type : "sap.ui.unified.internal.CustomYearPicker", multiple : false, visibility : "hidden" },
+
+				/**
+				 * Hidden, for internal use only.
+				 * The popup which contains the index picker for navigation.
+				 *
+				 * @private
+				 */
+				_indexPicker : { type : "sap.ui.unified.calendar.IndexPicker", multiple : false, visibility : "hidden" }
+
+			},
+
+			events : {
+
+				/**
+				 * <code>startDate</code> was changed while navigating backward in the <code>PlanningCalendarHeader</code>.
+				 * The new value can be obtained, using the <code>sap.m.PlanningCalendarHeader#getStartDate()</code> method.
+				 */
+				pressPrevious: {},
+
+				/**
+				 * <code>startDate</code> was changed while navigating through the Today button in the
+				 * <code>PlanningCalendarHeader</code>.
+				 * The new value can be obtained, using the <code>sap.m.PlanningCalendarHeader#getStartDate()</code> method.
+				 */
+				pressToday: {},
+
+				/**
+				 * <code>startDate</code> was changed while navigating forward in the <code>PlanningCalendarHeader</code>.
+				 * The new value can be obtained, using the <code>sap.m.PlanningCalendarHeader#getStartDate()</code> method.
+				 */
+				pressNext: {},
+
+				/**
+				 * A date was selected through the calendar picker.
+				 * The new value can be obtained, using the <code>sap.m.PlanningCalendarHeader#getStartDate()</code> method.
+				 */
+				dateSelect: {},
+
+				/**
+				 * The calendar picker popup was closed and no date was selected.
+				 */
+				cancel: {},
+
+				/**
+				 * The view was changed by user interaction.
+				 */
+				viewChange : {}
+			},
+
+			associations: {
+
+				/**
+				 * Association to control / ID which is shown in the picker popup.
+				 * @since 1.70.0
+				 */
+				currentPicker: { type: "sap.ui.core.Control", multiple: false }
+			}
 
 		},
 
-		aggregations : {
-
-			/**
-			 * The controls to be passed to the toolbar.
-			 */
-			actions : { type : "sap.ui.core.Control", multiple: true, singularName: "action" },
-
-			/**
-			 * Hidden, for internal use only.
-			 * The toolbar which contains the title, the SegmentedButton for the views and the controls from the actions aggregation.
-			 *
-			 * @private
-			 */
-			_actionsToolbar : { type: "sap.m.OverflowToolbar", multiple: false, visibility : "hidden" },
-
-			/**
-			 * Hidden, for internal use only.
-			 * The toolbar which contains the navigation inner controls.
-			 *
-			 * @private
-			 */
-			_navigationToolbar : { type: "sap.m.Toolbar", multiple: false, visibility : "hidden" },
-
-			/**
-			 * Hidden, for internal use only.
-			 * The popup which contains the calendar for navigation.
-			 *
-			 * @private
-			 */
-			_calendarPicker : { type : "sap.ui.unified.Calendar", multiple : false, visibility : "hidden" },
-
-			/**
-			 * Hidden, for internal use only.
-			 * The popup which contains the month picker for navigation.
-			 *
-			 * @private
-			 */
-			_monthPicker : { type : "sap.ui.unified.internal.CustomMonthPicker", multiple : false, visibility : "hidden" },
-
-			/**
-			 * Hidden, for internal use only.
-			 * The popup which contains the year picker for navigation.
-			 *
-			 * @private
-			 */
-			_yearPicker : { type : "sap.ui.unified.internal.CustomYearPicker", multiple : false, visibility : "hidden" },
-
-			/**
-			 * Hidden, for internal use only.
-			 * The popup which contains the index picker for navigation.
-			 *
-			 * @private
-			 */
-			_indexPicker : { type : "sap.ui.unified.calendar.IndexPicker", multiple : false, visibility : "hidden" }
-
-		},
-
-		events : {
-
-			/**
-			 * <code>startDate</code> was changed while navigating backward in the <code>PlanningCalendarHeader</code>.
-			 * The new value can be obtained, using the <code>sap.m.PlanningCalendarHeader#getStartDate()</code> method.
-			 */
-			pressPrevious: {},
-
-			/**
-			 * <code>startDate</code> was changed while navigating through the Today button in the
-			 * <code>PlanningCalendarHeader</code>.
-			 * The new value can be obtained, using the <code>sap.m.PlanningCalendarHeader#getStartDate()</code> method.
-			 */
-			pressToday: {},
-
-			/**
-			 * <code>startDate</code> was changed while navigating forward in the <code>PlanningCalendarHeader</code>.
-			 * The new value can be obtained, using the <code>sap.m.PlanningCalendarHeader#getStartDate()</code> method.
-			 */
-			pressNext: {},
-
-			/**
-			 * A date was selected through the calendar picker.
-			 * The new value can be obtained, using the <code>sap.m.PlanningCalendarHeader#getStartDate()</code> method.
-			 */
-			dateSelect: {},
-
-			/**
-			 * The calendar picker popup was closed and no date was selected.
-			 */
-			cancel: {},
-
-			/**
-			 * The view was changed by user interaction.
-			 */
-			viewChange : {}
-		},
-
-		associations: {
-
-			/**
-			 * Association to control / ID which is shown in the picker popup.
-			 * @since 1.70.0
-			 */
-			currentPicker: { type: "sap.ui.core.Control", multiple: false }
-		}
-
-	}});
+		renderer: PlanningCalendarHeaderRenderer
+	});
 
 	// Number of items to be skipped when removing content from actions aggregation.
 	// In the _actionsToolbar content are placed the sap.m.Title control, containing the value from the title property,

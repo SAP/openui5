@@ -20,7 +20,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/m/library",
 	"sap/m/Button",
-	'sap/m/MessageBox'],
+	'sap/m/MessageBox',
+	"./FilterBarBaseRenderer"
+],
 	function(
 		FilterController,
 		coreLibrary,
@@ -40,7 +42,9 @@ sap.ui.define([
 		ControlVariantApplyAPI,
 		mLibrary,
 		Button,
-		MessageBox) {
+		MessageBox,
+		FilterBarBaseRenderer
+	) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -245,7 +249,9 @@ sap.ui.define([
 					}
 				}
 			}
-		}
+		},
+
+		renderer: FilterBarBaseRenderer
 	});
 
 	var ButtonType = mLibrary.ButtonType;

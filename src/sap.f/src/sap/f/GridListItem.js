@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/m/ListItemBase",
 	"./GridListItemRenderer"
-], function (ListItemBase) {
+], function (ListItemBase, GridListItemRenderer) {
 	"use strict";
 
 	/**
@@ -29,18 +29,22 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.f.GridListItem
 	 */
-	var GridListItem = ListItemBase.extend("sap.f.GridListItem", /** @lends sap.f.GridListItem.prototype */ { metadata : {
+	var GridListItem = ListItemBase.extend("sap.f.GridListItem", /** @lends sap.f.GridListItem.prototype */ {
+		metadata : {
 
-		library : "sap.f",
-		defaultAggregation : "content",
-		aggregations : {
+			library : "sap.f",
+			defaultAggregation : "content",
+			aggregations : {
 
-			/**
-			 * The content of this list item
-			 */
-			content : { type : "sap.ui.core.Control", multiple : true, singularName : "content", bindable : "bindable" }
-		}
-	}});
+				/**
+				 * The content of this list item
+				 */
+				content : { type : "sap.ui.core.Control", multiple : true, singularName : "content", bindable : "bindable" }
+			}
+		},
+
+		renderer: GridListItemRenderer
+	});
 
 	/**
 	 * Returns the accessibility announcement for the content.

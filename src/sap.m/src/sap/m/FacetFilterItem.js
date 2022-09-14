@@ -25,28 +25,32 @@ sap.ui.define(['./ListItemBase', './library', './FacetFilterItemRenderer'],
 	 * @alias sap.m.FacetFilterItem
 	 * @see {@link topic:395392f30f2a4c4d80d110d5f923da77 Facet Filter Item}
 	 */
-	var FacetFilterItem = ListItemBase.extend("sap.m.FacetFilterItem", /** @lends sap.m.FacetFilterItem.prototype */ { metadata : {
+	var FacetFilterItem = ListItemBase.extend("sap.m.FacetFilterItem", /** @lends sap.m.FacetFilterItem.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Can be used as input for subsequent actions.
-			 */
-			key : {type : "string", group : "Data", defaultValue : null},
+				/**
+				 * Can be used as input for subsequent actions.
+				 */
+				key : {type : "string", group : "Data", defaultValue : null},
 
-			/**
-			 * Determines the text to be displayed for the item.
-			 */
-			text : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Determines the text to be displayed for the item.
+				 */
+				text : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Defines the number of objects that match this item in the target data set.
-			 * @deprecated as of version 1.18.11, replaced by <code>setCounter</code> method
-			 */
-			count : {type : "int", group : "Misc", defaultValue : null, deprecated: true}
-		}
-	}});
+				/**
+				 * Defines the number of objects that match this item in the target data set.
+				 * @deprecated as of version 1.18.11, replaced by <code>setCounter</code> method
+				 */
+				count : {type : "int", group : "Misc", defaultValue : null, deprecated: true}
+			}
+		},
+
+		renderer: FacetFilterItemRenderer
+	});
 
 	/*
 	 * Sets count for the FacetFilterList.

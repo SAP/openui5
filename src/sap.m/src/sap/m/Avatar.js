@@ -227,7 +227,9 @@ sap.ui.define([
 			},
 			dnd: { draggable: true, droppable: false },
 			designtime: "sap/m/designtime/Avatar.designtime"
-		}
+		},
+
+		renderer: AvatarRenderer
 	});
 
 	/**

@@ -8,7 +8,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'./SimpleFixFlexRenderer'
 ],
-function (Control, ResizeHandler, Log /**, SimpleFixFlexRenderer */) {
+function(Control, ResizeHandler, Log, SimpleFixFlexRenderer) {
 	"use strict";
 	/**
 	 * Constructor for a new <code>sap.m.SimpleFixFlex</code>.
@@ -37,7 +37,6 @@ function (Control, ResizeHandler, Log /**, SimpleFixFlexRenderer */) {
 	 * @alias sap.m.SimpleFixFlex
 	 */
 	var SimpleFixFlex = Control.extend("sap.m.SimpleFixFlex", /** @lends sap.m.SimpleFixFlex.prototype */ {
-
 		metadata: {
 			library: "sap.m",
 			aggregations: {
@@ -67,7 +66,9 @@ function (Control, ResizeHandler, Log /**, SimpleFixFlexRenderer */) {
 					defaultValue: true
 				}
 			}
-		}
+		},
+
+		renderer: SimpleFixFlexRenderer
 	});
 
 	/*************************************** Static members ******************************************/

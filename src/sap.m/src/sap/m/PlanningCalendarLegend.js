@@ -28,28 +28,32 @@ sap.ui.define(['sap/ui/unified/CalendarLegend', 'sap/ui/unified/CalendarAppointm
 		 * @since 1.50
 		 * @alias sap.m.PlanningCalendarLegend
 		 */
-		var PlanningCalendarLegend = CalendarLegend.extend("sap.m.PlanningCalendarLegend", /** @lends sap.m.PlanningCalendarLegend.prototype */ { metadata : {
+		var PlanningCalendarLegend = CalendarLegend.extend("sap.m.PlanningCalendarLegend", /** @lends sap.m.PlanningCalendarLegend.prototype */ {
+			metadata : {
 
-			library : "sap.m",
-			properties: {
-				/**
-				 * Defines the text displayed in the header of the items list. It is commonly related to the calendar days.
-				 */
-				itemsHeader: { type: "string", group: "Appearance" },
+				library : "sap.m",
+				properties: {
+					/**
+					 * Defines the text displayed in the header of the items list. It is commonly related to the calendar days.
+					 */
+					itemsHeader: { type: "string", group: "Appearance" },
 
-				/**
-				 * Defines the text displayed in the header of the appointment items list. It is commonly related to the calendar appointments.
-				 */
-				appointmentItemsHeader: { type: "string", group: "Appearance" }
+					/**
+					 * Defines the text displayed in the header of the appointment items list. It is commonly related to the calendar appointments.
+					 */
+					appointmentItemsHeader: { type: "string", group: "Appearance" }
+				},
+				aggregations : {
+					/**
+					 * The legend items which show color and type information about the calendar appointments.
+					 */
+					appointmentItems: {type: "sap.ui.unified.CalendarLegendItem", multiple: true, singularName: "appointmentItem"}
+				},
+				designtime: "sap/m/designtime/PlanningCalendarLegend.designtime"
 			},
-			aggregations : {
-				/**
-				 * The legend items which show color and type information about the calendar appointments.
-				 */
-				appointmentItems: {type: "sap.ui.unified.CalendarLegendItem", multiple: true, singularName: "appointmentItem"}
-			},
-			designtime: "sap/m/designtime/PlanningCalendarLegend.designtime"
-		}});
+
+			renderer: PlanningCalendarLegendRenderer
+		});
 
 		/** Default value for column width. */
 		PlanningCalendarLegend._COLUMN_WIDTH_DEFAULT = "auto";

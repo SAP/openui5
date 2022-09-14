@@ -100,88 +100,92 @@ sap.ui.define([
 		 * @alias sap.ui.layout.DynamicSideContent
 		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/dynamic-side-content/ Dynamic Side Content}
 		 */
-		var DynamicSideContent = Control.extend("sap.ui.layout.DynamicSideContent", /** @lends sap.ui.layout.DynamicSideContent.prototype */ { metadata : {
-			library : "sap.ui.layout",
-			properties : {
+		var DynamicSideContent = Control.extend("sap.ui.layout.DynamicSideContent", /** @lends sap.ui.layout.DynamicSideContent.prototype */ {
+			metadata : {
+				library : "sap.ui.layout",
+				properties : {
 
-				/**
-				 * Determines whether the side content is visible or hidden.
-				 *
-				 * <b>Note:</b> If both <code>showSideContent</code> and <code>showMainContent</code> properties are set to <code>true</code>,
-				 * use the <code>toggle</code> method for showing the side content on phone.
-				 */
-				showSideContent : {type : "boolean", group : "Appearance", defaultValue : true},
+					/**
+					 * Determines whether the side content is visible or hidden.
+					 *
+					 * <b>Note:</b> If both <code>showSideContent</code> and <code>showMainContent</code> properties are set to <code>true</code>,
+					 * use the <code>toggle</code> method for showing the side content on phone.
+					 */
+					showSideContent : {type : "boolean", group : "Appearance", defaultValue : true},
 
-				 /**
-				 * Determines whether the main content is visible or hidden.
-				 */
-				showMainContent : {type : "boolean", group : "Appearance", defaultValue : true},
+					 /**
+					 * Determines whether the main content is visible or hidden.
+					 */
+					showMainContent : {type : "boolean", group : "Appearance", defaultValue : true},
 
-				/**
-				 * Determines on which breakpoints the side content is visible.
-				 */
-				sideContentVisibility : {type : "sap.ui.layout.SideContentVisibility", group : "Appearance", defaultValue : SideContentVisibility.ShowAboveS},
+					/**
+					 * Determines on which breakpoints the side content is visible.
+					 */
+					sideContentVisibility : {type : "sap.ui.layout.SideContentVisibility", group : "Appearance", defaultValue : SideContentVisibility.ShowAboveS},
 
-				/**
-				 * Determines on which breakpoints the side content falls down below the main content.
-				 */
-				sideContentFallDown : {type : "sap.ui.layout.SideContentFallDown", group : "Appearance", defaultValue : SideContentFallDown.OnMinimumWidth},
+					/**
+					 * Determines on which breakpoints the side content falls down below the main content.
+					 */
+					sideContentFallDown : {type : "sap.ui.layout.SideContentFallDown", group : "Appearance", defaultValue : SideContentFallDown.OnMinimumWidth},
 
-				/**
-				 * Defines whether the control is in equal split mode. In this mode, the side and the main content
-				 * take 50:50 percent of the container on all screen sizes except for phone, where the main and
-				 * side contents are switching visibility using the toggle method.
-				 */
-				equalSplit : {type : "boolean", group : "Appearance", defaultValue : false},
+					/**
+					 * Defines whether the control is in equal split mode. In this mode, the side and the main content
+					 * take 50:50 percent of the container on all screen sizes except for phone, where the main and
+					 * side contents are switching visibility using the toggle method.
+					 */
+					equalSplit : {type : "boolean", group : "Appearance", defaultValue : false},
 
-				/**
-				 * If set to TRUE, then not the media Query (device screen size) but the size of the container, surrounding the control, defines the current range.
-				 */
-				containerQuery : {type : "boolean", group : "Behavior", defaultValue : false},
+					/**
+					 * If set to TRUE, then not the media Query (device screen size) but the size of the container, surrounding the control, defines the current range.
+					 */
+					containerQuery : {type : "boolean", group : "Behavior", defaultValue : false},
 
-				/**
-				 * Determines whether the side content is on the left or on the right side of the main content.
-				 * @since 1.36
-				 */
-				sideContentPosition : {type : "sap.ui.layout.SideContentPosition", group : "Appearance", defaultValue : SideContentPosition.End},
+					/**
+					 * Determines whether the side content is on the left or on the right side of the main content.
+					 * @since 1.36
+					 */
+					sideContentPosition : {type : "sap.ui.layout.SideContentPosition", group : "Appearance", defaultValue : SideContentPosition.End},
 
-				/**
-				 * Defiles the main content span size
-				 */
-				mcSpan: { type: "int", defaultValue: 0, visibility: "hidden" },
+					/**
+					 * Defiles the main content span size
+					 */
+					mcSpan: { type: "int", defaultValue: 0, visibility: "hidden" },
 
-				/**
-				 * Defines the side content span size
-				 */
-				scSpan: { type: "int", defaultValue: 0, visibility: "hidden" }
-			},
-			defaultAggregation : "mainContent",
-			events : {
-				/**
-				 * Fires when the current breakpoint has been changed.
-				 * @since 1.32
-				 */
-				breakpointChanged : {
-					parameters : {
-						currentBreakpoint : {type : "string"}
+					/**
+					 * Defines the side content span size
+					 */
+					scSpan: { type: "int", defaultValue: 0, visibility: "hidden" }
+				},
+				defaultAggregation : "mainContent",
+				events : {
+					/**
+					 * Fires when the current breakpoint has been changed.
+					 * @since 1.32
+					 */
+					breakpointChanged : {
+						parameters : {
+							currentBreakpoint : {type : "string"}
+						}
 					}
-				}
-			},
-			aggregations : {
+				},
+				aggregations : {
 
-				/**
-				 * Main content controls.
-				 */
-				mainContent : {type: "sap.ui.core.Control", multiple:  true},
+					/**
+					 * Main content controls.
+					 */
+					mainContent : {type: "sap.ui.core.Control", multiple:  true},
 
-				/**
-				 * Side content controls.
-				 */
-				sideContent : {type: "sap.ui.core.Control", multiple:  true}
+					/**
+					 * Side content controls.
+					 */
+					sideContent : {type: "sap.ui.core.Control", multiple:  true}
+				},
+				designTime: "sap/ui/layout/designtime/DynamicSideContent.designtime",
+				dnd: { draggable: false, droppable: true }
 			},
-			designTime: "sap/ui/layout/designtime/DynamicSideContent.designtime",
-			dnd: { draggable: false, droppable: true }
-		}});
+
+			renderer: DynamicSideContentRenderer
+		});
 
 		var	S = "S",
 			M = "M",

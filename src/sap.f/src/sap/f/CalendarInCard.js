@@ -46,9 +46,13 @@ sap.ui.define([
 	 * @since 1.84.0
 	 * @alias sap.f.CalendarInCard
 	 */
-	var CalendarInCard = Calendar.extend("sap.f.CalendarInCard", /** @lends sap.f.CalendarInCard.prototype */ { metadata : {
-			library : "sap.f"
-		}});
+	var CalendarInCard = Calendar.extend("sap.f.CalendarInCard", /** @lends sap.f.CalendarInCard.prototype */ {
+		metadata : {
+				library : "sap.f"
+			},
+
+		renderer: CalendarRenderer
+	});
 
 	/*
 	 * There are different modes (stored in this._iMode)

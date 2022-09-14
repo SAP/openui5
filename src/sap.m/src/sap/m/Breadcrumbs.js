@@ -124,7 +124,9 @@ sap.ui.define([
 					type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"
 				}
 			}
-		}
+		},
+
+		renderer: BreadcrumbsRenderer
 	});
 
 	/*

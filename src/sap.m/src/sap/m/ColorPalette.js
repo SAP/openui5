@@ -217,7 +217,9 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+
+			renderer: ColorPaletteRenderer
 		});
 
 		ColorPalette.prototype.init = function () {

@@ -28,33 +28,37 @@ sap.ui.define(['./List', './library', './GrowingListRenderer', 'sap/ui/core/Conf
 	 * Instead use "List" or "Table" control with setting "growing" property to "true"
 	 * @alias sap.m.GrowingList
 	 */
-	var GrowingList = List.extend("sap.m.GrowingList", /** @lends sap.m.GrowingList.prototype */ { metadata : {
+	var GrowingList = List.extend("sap.m.GrowingList", /** @lends sap.m.GrowingList.prototype */ {
+		metadata : {
 
-		deprecated : true,
-		library : "sap.m",
-		properties : {
+			deprecated : true,
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Number of items requested from the server. To activate this you should set growing property to "true"
-			 * @since 1.16
-			 */
-			threshold : {type : "int", group : "Misc", defaultValue : 20},
+				/**
+				 * Number of items requested from the server. To activate this you should set growing property to "true"
+				 * @since 1.16
+				 */
+				threshold : {type : "int", group : "Misc", defaultValue : 20},
 
-			/**
-			 * Text which is displayed on the trigger at the end of the list. The default is a translated text ("Load More Data") coming from the messagebundle properties.
-			 * This property can be used only if growing property is set "true" and scrollToLoad property is set "false".
-			 * @since 1.16
-			 */
-			triggerText : {type : "string", group : "Appearance", defaultValue : null},
+				/**
+				 * Text which is displayed on the trigger at the end of the list. The default is a translated text ("Load More Data") coming from the messagebundle properties.
+				 * This property can be used only if growing property is set "true" and scrollToLoad property is set "false".
+				 * @since 1.16
+				 */
+				triggerText : {type : "string", group : "Appearance", defaultValue : null},
 
-			/**
-			 * If you set this property to true then user needs to scroll end to trigger loading a new page. Default value is false which means user needs to scroll end and then click button to load new page.
-			 * NOTE: This property can be set true, if growing property is set "true" and if you only have one instance of this control inside the scroll container(e.g Page).
-			 * @since 1.16
-			 */
-			scrollToLoad : {type : "boolean", group : "Behavior", defaultValue : false}
-		}
-	}});
+				/**
+				 * If you set this property to true then user needs to scroll end to trigger loading a new page. Default value is false which means user needs to scroll end and then click button to load new page.
+				 * NOTE: This property can be set true, if growing property is set "true" and if you only have one instance of this control inside the scroll container(e.g Page).
+				 * @since 1.16
+				 */
+				scrollToLoad : {type : "boolean", group : "Behavior", defaultValue : false}
+			}
+		},
+
+		renderer: GrowingListRenderer
+	});
 
 
 	// checks if control is not compatible anymore

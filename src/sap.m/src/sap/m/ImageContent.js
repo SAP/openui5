@@ -64,7 +64,9 @@ sap.ui.define([
 				 */
 				press: {}
 			}
-		}
+		},
+
+		renderer: ImageContentRenderer
 	});
 
 	/* --- Lifecycle Handling --- */

@@ -200,7 +200,9 @@ sap.ui.define([
 				}, this);
 
 				this.data("sap-ui-fastnavgroup", "true", true);
-			}
+			},
+
+			renderer: TabContainerRenderer
 		});
 
 		/* Contains mapping between TabContainerItem properties and TabStripItem properties,

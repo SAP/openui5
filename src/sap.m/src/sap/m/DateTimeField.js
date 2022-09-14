@@ -130,7 +130,9 @@ sap.ui.define([
 					}
 				}
 			}
-		}
+		},
+
+		renderer: DateTimeFieldRenderer
 	});
 
 	DateTimeField.prototype.setValue = function (sValue) {

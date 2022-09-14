@@ -47,80 +47,84 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 	 * @since 1.12
 	 * @alias sap.m.ObjectAttribute
 	 */
-	var ObjectAttribute = Control.extend("sap.m.ObjectAttribute", /** @lends sap.m.ObjectAttribute.prototype */ { metadata : {
+	var ObjectAttribute = Control.extend("sap.m.ObjectAttribute", /** @lends sap.m.ObjectAttribute.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		designtime: "sap/m/designtime/ObjectAttribute.designtime",
-		properties : {
+			library : "sap.m",
+			designtime: "sap/m/designtime/ObjectAttribute.designtime",
+			properties : {
 
-			/**
-			 * Defines the ObjectAttribute title.
-			 */
-			title : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Defines the ObjectAttribute title.
+				 */
+				title : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Defines the ObjectAttribute text.
-			 */
-			text : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Defines the ObjectAttribute text.
+				 */
+				text : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Indicates if the <code>ObjectAttribute</code> text is selectable for the user.
-			 *
-			 * <b>Note:</b> As of version 1.48, only the value of the <code>text</code> property becomes active (styled and acts like a link) as opposed to both the <code>title</code> and <code>text</code> in the previous versions. If you set this property to <code>true</code>, you have to also set the <code>text</code> property.
-			 * <b>Note:</b> When <code>active</code> property is set to <code>true</code>, and the text direction of the <code>title</code> or the <code>text</code> does not match the text direction of the application, the <code>textDirection</code> property should be set to ensure correct display.
-			 */
-			active : {type : "boolean", group : "Misc", defaultValue : null},
+				/**
+				 * Indicates if the <code>ObjectAttribute</code> text is selectable for the user.
+				 *
+				 * <b>Note:</b> As of version 1.48, only the value of the <code>text</code> property becomes active (styled and acts like a link) as opposed to both the <code>title</code> and <code>text</code> in the previous versions. If you set this property to <code>true</code>, you have to also set the <code>text</code> property.
+				 * <b>Note:</b> When <code>active</code> property is set to <code>true</code>, and the text direction of the <code>title</code> or the <code>text</code> does not match the text direction of the application, the <code>textDirection</code> property should be set to ensure correct display.
+				 */
+				active : {type : "boolean", group : "Misc", defaultValue : null},
 
-			/**
-			 * Determines the direction of the text.
-			 * Available options for the text direction are LTR (left-to-right), RTL (right-to-left), or Inherit. By default the control inherits the text direction from its parent control.
-			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * Determines the direction of the text.
+				 * Available options for the text direction are LTR (left-to-right), RTL (right-to-left), or Inherit. By default the control inherits the text direction from its parent control.
+				 */
+				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
-			/**
-			 * Specifies the value of the <code>aria-haspopup</code> attribute
-			 *
-			 * If the value is <code>None</code>, the attribute will not be rendered. Otherwise it will be rendered with the selected value.
-			 *
-			 * NOTE: Use this property only when an <code>sap.m.ObjectAttribute</code> instance is active and related to a popover/popup.
-			 * The value needs to be equal to the main/root role of the popup - e.g. dialog,
-			 * menu or list (examples: if you have dialog -> dialog, if you have menu -> menu; if you have list -> list; if you have dialog containing a list -> dialog).
-			 * Do not use it, if you open a standard sap.m.Dialog, MessageBox or other type of modal dialogs.
-			 *
-			 * @since 1.97.0
-			 */
-			 ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None}
-		},
-		aggregations : {
+				/**
+				 * Specifies the value of the <code>aria-haspopup</code> attribute
+				 *
+				 * If the value is <code>None</code>, the attribute will not be rendered. Otherwise it will be rendered with the selected value.
+				 *
+				 * NOTE: Use this property only when an <code>sap.m.ObjectAttribute</code> instance is active and related to a popover/popup.
+				 * The value needs to be equal to the main/root role of the popup - e.g. dialog,
+				 * menu or list (examples: if you have dialog -> dialog, if you have menu -> menu; if you have list -> list; if you have dialog containing a list -> dialog).
+				 * Do not use it, if you open a standard sap.m.Dialog, MessageBox or other type of modal dialogs.
+				 *
+				 * @since 1.97.0
+				 */
+				 ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None}
+			},
+			aggregations : {
 
-			/**
-			 * When the aggregation is set, it replaces the <code>text</code>, <code>active</code> and <code>textDirection</code> properties. This also ignores the press event. The provided control is displayed as an active link in case it is a sap.m.Link.
-			 * <b>Note:</b> It will only allow sap.m.Text and sap.m.Link controls.
-			 */
-			customContent : {type : "sap.ui.core.Control", multiple : false},
+				/**
+				 * When the aggregation is set, it replaces the <code>text</code>, <code>active</code> and <code>textDirection</code> properties. This also ignores the press event. The provided control is displayed as an active link in case it is a sap.m.Link.
+				 * <b>Note:</b> It will only allow sap.m.Text and sap.m.Link controls.
+				 */
+				customContent : {type : "sap.ui.core.Control", multiple : false},
 
-			/**
-			 * Text control to display title and text property.
-			 */
-			_textControl : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
-		},
-		events : {
+				/**
+				 * Text control to display title and text property.
+				 */
+				_textControl : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
+			},
+			events : {
 
-			/**
-			 * Fires when the user clicks on active text.
-			 */
-			press : {
-				parameters : {
+				/**
+				 * Fires when the user clicks on active text.
+				 */
+				press : {
+					parameters : {
 
-					/**
-					 * DOM reference of the ObjectAttribute's text to be used for positioning.
-					 */
-					domRef : {type : "string"}
+						/**
+						 * DOM reference of the ObjectAttribute's text to be used for positioning.
+						 */
+						domRef : {type : "string"}
+					}
 				}
-			}
+			},
+			dnd: { draggable: true, droppable: false }
 		},
-		dnd: { draggable: true, droppable: false }
-	}});
+
+		renderer: ObjectAttributeRenderer
+	});
 
 	/**
 	 *  Initializes member variables.

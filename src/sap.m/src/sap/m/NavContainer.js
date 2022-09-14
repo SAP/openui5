@@ -242,7 +242,9 @@ sap.ui.define([
 					}
 				}
 			}
-		}
+		},
+
+		renderer: NavContainerRenderer
 	});
 
 	// Delegate registered by the NavContainer#showPlaceholder function

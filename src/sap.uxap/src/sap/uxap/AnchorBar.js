@@ -23,7 +23,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Configuration",
 	"sap/ui/dom/jquery/scrollLeftRTL"
-], function (jQuery, Button, MenuButton, mobileLibrary, Toolbar, IconPool, Item, ResizeHandler,	ScrollEnablement,
+], function (jQuery, Button, MenuButton, mobileLibrary, Toolbar, IconPool, Item, ResizeHandler, ScrollEnablement,
 		HorizontalLayout, Device, CustomData, Control, HierarchicalSelect, library, AnchorBarRenderer, Log, Configuration) {
 	"use strict";
 
@@ -95,7 +95,9 @@ sap.ui.define([
 				_scrollArrowLeft: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 				_scrollArrowRight: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 			}
-		}
+		},
+
+		renderer: AnchorBarRenderer
 	});
 
 	AnchorBar.ButtonDelegate = {

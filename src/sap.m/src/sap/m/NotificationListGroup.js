@@ -149,7 +149,9 @@ function(
 					}
 				}
 			}
-		}
+		},
+
+		renderer: NotificationListGroupRenderer
 	});
 
 	NotificationListGroup.prototype._getCollapseButton = function() {

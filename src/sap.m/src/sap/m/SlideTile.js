@@ -121,7 +121,9 @@ sap.ui.define([
 					}
 				}
 			}
-		}
+		},
+
+		renderer: SlideTileRenderer
 	});
 
 	/* --- Lifecycle Handling --- */

@@ -102,178 +102,182 @@ function(
 		 * @alias sap.m.Slider
 		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/slider/ Slider}
 		 */
-		var Slider = Control.extend("sap.m.Slider", /** @lends sap.m.Slider.prototype */ { metadata: {
+		var Slider = Control.extend("sap.m.Slider", /** @lends sap.m.Slider.prototype */ {
+			metadata: {
 
-			interfaces: ["sap.ui.core.IFormContent"],
-			library: "sap.m",
-			properties: {
+				interfaces: ["sap.ui.core.IFormContent"],
+				library: "sap.m",
+				properties: {
 
-				/**
-				 * Defines the width of the control.
-				 */
-				width: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "100%" },
+					/**
+					 * Defines the width of the control.
+					 */
+					width: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "100%" },
 
-				/**
-				 * Indicates whether the user can change the value.
-				 */
-				enabled: { type: "boolean", group: "Behavior", defaultValue: true },
+					/**
+					 * Indicates whether the user can change the value.
+					 */
+					enabled: { type: "boolean", group: "Behavior", defaultValue: true },
 
-				/**
-				 * The name property to be used in the HTML code for the slider (e.g. for HTML forms that send data to the server via submit).
-				 */
-				name: { type: "string", group: "Misc", defaultValue: "" },
+					/**
+					 * The name property to be used in the HTML code for the slider (e.g. for HTML forms that send data to the server via submit).
+					 */
+					name: { type: "string", group: "Misc", defaultValue: "" },
 
-				/**
-				 * The minimum value.
-				 */
-				min: { type: "float", group: "Data", defaultValue: 0 },
+					/**
+					 * The minimum value.
+					 */
+					min: { type: "float", group: "Data", defaultValue: 0 },
 
-				/**
-				 * The maximum value.
-				 */
-				max: { type: "float", group: "Data", defaultValue: 100 },
+					/**
+					 * The maximum value.
+					 */
+					max: { type: "float", group: "Data", defaultValue: 100 },
 
-				/**
-				 * Define the amount of units to change the slider when adjusting by drag and drop.
-				 *
-				 * Defines the size of the slider's selection intervals. (e.g. min = 0, max = 10, step = 5 would result in possible selection of the values 0, 5, 10).
-				 *
-				 * The step must be positive, if a negative number is provided, the default value will be used instead.
-				 * If the width of the slider converted to pixels is less than the range (max - min), the value will be rounded to multiples of the step size.
-				 */
-				step: { type: "float", group: "Data", defaultValue: 1 },
+					/**
+					 * Define the amount of units to change the slider when adjusting by drag and drop.
+					 *
+					 * Defines the size of the slider's selection intervals. (e.g. min = 0, max = 10, step = 5 would result in possible selection of the values 0, 5, 10).
+					 *
+					 * The step must be positive, if a negative number is provided, the default value will be used instead.
+					 * If the width of the slider converted to pixels is less than the range (max - min), the value will be rounded to multiples of the step size.
+					 */
+					step: { type: "float", group: "Data", defaultValue: 1 },
 
-				/**
-				 * Indicate whether a progress bar indicator is shown.
-				 */
-				progress: { type: "boolean", group: "Misc", defaultValue: true },
+					/**
+					 * Indicate whether a progress bar indicator is shown.
+					 */
+					progress: { type: "boolean", group: "Misc", defaultValue: true },
 
-				/**
-				 * Define the value.
-				 *
-				 * If the value is lower/higher than the allowed minimum/maximum, the value of the properties <code>min</code>/<code>max</code> are used instead.
-				 */
-				value: { type: "float", group: "Data", defaultValue: 0 },
+					/**
+					 * Define the value.
+					 *
+					 * If the value is lower/higher than the allowed minimum/maximum, the value of the properties <code>min</code>/<code>max</code> are used instead.
+					 */
+					value: { type: "float", group: "Data", defaultValue: 0 },
 
-				/**
-				 * Indicate whether the handle tooltip is shown.
-				 * @since 1.31
-				 *
-				 */
-				showHandleTooltip: { type: "boolean", group: "Appearance", defaultValue: true},
+					/**
+					 * Indicate whether the handle tooltip is shown.
+					 * @since 1.31
+					 *
+					 */
+					showHandleTooltip: { type: "boolean", group: "Appearance", defaultValue: true},
 
-				/**
-				 * Indicate whether the handle's advanced tooltip is shown. <b>Note:</b> Setting this option to <code>true</code>
-				 * will ignore the value set in <code>showHandleTooltip</code>. This will cause only the advanced tooltip to be shown.
-				 * @since 1.42
-				 *
-				 */
-				showAdvancedTooltip: { type: "boolean", group: "Appearance", defaultValue: false},
+					/**
+					 * Indicate whether the handle's advanced tooltip is shown. <b>Note:</b> Setting this option to <code>true</code>
+					 * will ignore the value set in <code>showHandleTooltip</code>. This will cause only the advanced tooltip to be shown.
+					 * @since 1.42
+					 *
+					 */
+					showAdvancedTooltip: { type: "boolean", group: "Appearance", defaultValue: false},
 
-				/**
-				 * Indicates whether input fields should be used as tooltips for the handles. <b>Note:</b> Setting this option to <code>true</code>
-				 * will only work if <code>showAdvancedTooltip</code> is set to <code>true</code>.
-				 * @since 1.42
-				 */
-				inputsAsTooltips: {type: "boolean", group: "Appearance", defaultValue: false},
+					/**
+					 * Indicates whether input fields should be used as tooltips for the handles. <b>Note:</b> Setting this option to <code>true</code>
+					 * will only work if <code>showAdvancedTooltip</code> is set to <code>true</code>.
+					 * @since 1.42
+					 */
+					inputsAsTooltips: {type: "boolean", group: "Appearance", defaultValue: false},
 
-				/**
-				 * Enables tickmarks visualisation
-				 *
-				 * @since 1.44
-				 */
-				enableTickmarks: {type: "boolean", group: "Appearance", defaultValue: false},
+					/**
+					 * Enables tickmarks visualisation
+					 *
+					 * @since 1.44
+					 */
+					enableTickmarks: {type: "boolean", group: "Appearance", defaultValue: false},
 
-				/**
-				 * Indicates whether a handle is pressed
-				 *
-				 * @private
-				 */
-				handlePressed: {type: "boolean", defaultValue: false, group: "Appearance", visibility: "hidden" }
-			},
-			defaultAggregation: "scale",
-			aggregations: {
-				/**
-				 * A Container popup that renders SliderTooltips
-				 * The actual type should be sap.m.SliderTooltipContainer
-				 *
-				 * @since 1.54
-				 */
-				_tooltipContainer: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" },
-				/**
-				 * Scale for visualisation of tickmarks and labels
-				 *
-				 * @since 1.46
-				 */
-				scale: { type: "sap.m.IScale", multiple: false, singularName: "scale" },
-				/**
-				 * Default scale for visualisation of tickmarks, if scale aggregation is not provided
-				 *
-				 * @since 1.56
-				 */
-				_defaultScale: { type: "sap.m.ResponsiveScale", multiple: false, visibility: "hidden" },
+					/**
+					 * Indicates whether a handle is pressed
+					 *
+					 * @private
+					 */
+					handlePressed: {type: "boolean", defaultValue: false, group: "Appearance", visibility: "hidden" }
+				},
+				defaultAggregation: "scale",
+				aggregations: {
+					/**
+					 * A Container popup that renders SliderTooltips
+					 * The actual type should be sap.m.SliderTooltipContainer
+					 *
+					 * @since 1.54
+					 */
+					_tooltipContainer: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" },
+					/**
+					 * Scale for visualisation of tickmarks and labels
+					 *
+					 * @since 1.46
+					 */
+					scale: { type: "sap.m.IScale", multiple: false, singularName: "scale" },
+					/**
+					 * Default scale for visualisation of tickmarks, if scale aggregation is not provided
+					 *
+					 * @since 1.56
+					 */
+					_defaultScale: { type: "sap.m.ResponsiveScale", multiple: false, visibility: "hidden" },
 
-				/**
-				 * Multiple Aggregation for Tooltips
-				 *
-				 * @since 1.56
-				 */
-				_defaultTooltips: { type: "sap.m.SliderTooltipBase", multiple: true, visibility: "hidden" },
+					/**
+					 * Multiple Aggregation for Tooltips
+					 *
+					 * @since 1.56
+					 */
+					_defaultTooltips: { type: "sap.m.SliderTooltipBase", multiple: true, visibility: "hidden" },
 
-				/**
-				 * Aggregation for user-defined tooltips.
-				 * <b>Note:</b> In case of Slider, only the first tooltip of the aggregation is used. In the RangeSlider case - the first two.
-				 * If no custom tooltips are provided, the default are used
-				 *
-				 * @since 1.56
-				 */
-				customTooltips: { type: "sap.m.SliderTooltipBase", multiple: true },
+					/**
+					 * Aggregation for user-defined tooltips.
+					 * <b>Note:</b> In case of Slider, only the first tooltip of the aggregation is used. In the RangeSlider case - the first two.
+					 * If no custom tooltips are provided, the default are used
+					 *
+					 * @since 1.56
+					 */
+					customTooltips: { type: "sap.m.SliderTooltipBase", multiple: true },
 
-				/**
-				 * Invisible text for handles and progress announcement
-				 *
-				 * @since 1.54
-				 */
-				_handlesLabels: { type: "sap.ui.core.InvisibleText", multiple: true, visibility: "hidden" }
-			},
-			associations: {
+					/**
+					 * Invisible text for handles and progress announcement
+					 *
+					 * @since 1.54
+					 */
+					_handlesLabels: { type: "sap.ui.core.InvisibleText", multiple: true, visibility: "hidden" }
+				},
+				associations: {
 
-				/**
-				 * Association to controls / IDs which label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
-				 * @since 1.27.0
-				 */
-				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-			},
-			events: {
+					/**
+					 * Association to controls / IDs which label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
+					 * @since 1.27.0
+					 */
+					ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+				},
+				events: {
 
-				/**
-				 * This event is triggered after the end user finishes interacting, if there is any change.
-				 */
-				change: {
-					parameters: {
+					/**
+					 * This event is triggered after the end user finishes interacting, if there is any change.
+					 */
+					change: {
+						parameters: {
 
-						/**
-						 * The current value of the slider after a change.
-						 */
-						value: { type: "float" }
+							/**
+							 * The current value of the slider after a change.
+							 */
+							value: { type: "float" }
+						}
+					},
+
+					/**
+					 * This event is triggered during the dragging period, each time the slider value changes.
+					 */
+					liveChange: {
+						parameters: {
+
+							/**
+							 * The current value of the slider after a live change.
+							 */
+							value: { type: "float" }
+						}
 					}
 				},
-
-				/**
-				 * This event is triggered during the dragging period, each time the slider value changes.
-				 */
-				liveChange: {
-					parameters: {
-
-						/**
-						 * The current value of the slider after a live change.
-						 */
-						value: { type: "float" }
-					}
-				}
+				designtime: "sap/m/designtime/Slider.designtime"
 			},
-			designtime: "sap/m/designtime/Slider.designtime"
-		}});
+
+			renderer: SliderRenderer
+		});
 
 		EnabledPropagator.apply(Slider.prototype, [true]);
 

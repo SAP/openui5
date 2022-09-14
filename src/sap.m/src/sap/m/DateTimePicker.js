@@ -149,74 +149,80 @@ sap.ui.define([
 	 * @alias sap.m.DateTimePicker
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/datetime-picker/ Date/Time Picker}
 	 */
-	var DateTimePicker = DatePicker.extend("sap.m.DateTimePicker", /** @lends sap.m.DateTimePicker.prototype */ { metadata : {
+	var DateTimePicker = DatePicker.extend("sap.m.DateTimePicker", /** @lends sap.m.DateTimePicker.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties: {
-			/**
-			 * Sets the minutes step. If the step is less than 1, it will be automatically converted back to 1.
-			 * The minutes clock is populated only by multiples of the step.
-			 * @since 1.56
-			 */
-			minutesStep: {type: "int", group: "Misc", defaultValue: 1 },
+			library : "sap.m",
+			properties: {
+				/**
+				 * Sets the minutes step. If the step is less than 1, it will be automatically converted back to 1.
+				 * The minutes clock is populated only by multiples of the step.
+				 * @since 1.56
+				 */
+				minutesStep: {type: "int", group: "Misc", defaultValue: 1 },
 
-			/**
-			 * Sets the seconds step. If the step is less than 1, it will be automatically converted back to 1.
-			 * The seconds clock is populated only by multiples of the step.
-			 * @since 1.56
-			 */
-			secondsStep: {type: "int", group: "Misc", defaultValue: 1 },
+				/**
+				 * Sets the seconds step. If the step is less than 1, it will be automatically converted back to 1.
+				 * The seconds clock is populated only by multiples of the step.
+				 * @since 1.56
+				 */
+				secondsStep: {type: "int", group: "Misc", defaultValue: 1 },
 
-			/**
-			 * Determines whether there is a shortcut navigation to current time.
-			 *
-			 * @since 1.98
-			 */
-			showCurrentTimeButton: { type: "boolean", group: "Behavior", defaultValue: false },
+				/**
+				 * Determines whether there is a shortcut navigation to current time.
+				 *
+				 * @since 1.98
+				 */
+				showCurrentTimeButton: { type: "boolean", group: "Behavior", defaultValue: false },
 
-			/**
-			 * Determines whether to show the timezone or not.
-			 * @since 1.99
-			 */
-			showTimezone: { type: "boolean", group: "Behavior" },
+				/**
+				 * Determines whether to show the timezone or not.
+				 * @since 1.99
+				 */
+				showTimezone: { type: "boolean", group: "Behavior" },
 
-			/**
-			 * The IANA timezone ID, e.g <code>"Europe/Berlin"</code>. Date and time are displayed in this timezone.
-			 * The <code>value</code> property string is treated as if it is formatted in this timezone.
-			 * The <code>dateValue</code> property should not be used as this could lead to an unpredictable results. Use <code>getValue()</code> instead.
-			 * @since 1.99
-			 */
-			timezone: { type: "string", group: "Data" }
+				/**
+				 * The IANA timezone ID, e.g <code>"Europe/Berlin"</code>. Date and time are displayed in this timezone.
+				 * The <code>value</code> property string is treated as if it is formatted in this timezone.
+				 * The <code>dateValue</code> property should not be used as this could lead to an unpredictable results. Use <code>getValue()</code> instead.
+				 * @since 1.99
+				 */
+				timezone: { type: "string", group: "Data" }
+			},
+			designtime: "sap/m/designtime/DateTimePicker.designtime",
+			dnd: { draggable: false, droppable: true }
 		},
-		designtime: "sap/m/designtime/DateTimePicker.designtime",
-		dnd: { draggable: false, droppable: true }
-	}, constructor: function(sId, mSettings, oScope) {
-		var mSortedSettings;
 
-		if ( typeof sId !== 'string' && sId !== undefined ) {
-			// shift arguments in case sId was missing, but mSettings was given
-			oScope = mSettings;
-			mSettings = sId;
-			sId = mSettings && mSettings.id;
-		}
+		constructor: function(sId, mSettings, oScope) {
+			var mSortedSettings;
 
-		mSortedSettings = mSettings ? Object.keys(mSettings)
-			.sort(function(sKey1, sKey2) {
-				if (sKey1 === "timezone") {
-					return -1;
-				} else if (sKey2 === "timezone") {
-					return 1;
-				}
+			if ( typeof sId !== 'string' && sId !== undefined ) {
+				// shift arguments in case sId was missing, but mSettings was given
+				oScope = mSettings;
+				mSettings = sId;
+				sId = mSettings && mSettings.id;
+			}
 
-				return 0;
-			})
-			.reduce(function (acc, key) {
-					acc[key] = mSettings[key];
-					return acc;
-			}, {}) : mSettings;
+			mSortedSettings = mSettings ? Object.keys(mSettings)
+				.sort(function(sKey1, sKey2) {
+					if (sKey1 === "timezone") {
+						return -1;
+					} else if (sKey2 === "timezone") {
+						return 1;
+					}
 
-		DatePicker.call(this, sId, mSortedSettings, oScope);
-	}});
+					return 0;
+				})
+				.reduce(function (acc, key) {
+						acc[key] = mSettings[key];
+						return acc;
+				}, {}) : mSettings;
+
+			DatePicker.call(this, sId, mSortedSettings, oScope);
+		},
+
+		renderer: DateTimePickerRenderer
+	});
 
 	var DateTimeFormatStyles = {
 		Short: "short",

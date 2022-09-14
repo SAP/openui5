@@ -1,11 +1,10 @@
-
 /*!
  * ${copyright}
  */
 sap.ui.define([
 	"sap/m/TreeItemBase",
 	"./DemokitTreeItemRenderer"
-], function (TreeItemBase) {
+], function (TreeItemBase, DemokitTreeItemRenderer) {
 	"use strict";
 
 	/**
@@ -24,6 +23,9 @@ sap.ui.define([
 				entityType: {type: "string", defaultValue: ""}
 			}
 		},
+
+		renderer: DemokitTreeItemRenderer,
+
 		setDeprecated: function (bDeprecated) {
 			return this.setProperty("deprecated", !!bDeprecated);
 		},

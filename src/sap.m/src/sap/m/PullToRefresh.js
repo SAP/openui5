@@ -47,40 +47,44 @@ sap.ui.define([
 	 * @since 1.9.2
 	 * @alias sap.m.PullToRefresh
 	 */
-	var PullToRefresh = Control.extend("sap.m.PullToRefresh", /** @lends sap.m.PullToRefresh.prototype */ { metadata : {
+	var PullToRefresh = Control.extend("sap.m.PullToRefresh", /** @lends sap.m.PullToRefresh.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
-			/**
-			 * Optional description. May be used to inform a user, for example, when the list has been updated last time.
-			 */
-			description : {type : "string", group : "Misc", defaultValue : null},
+			library : "sap.m",
+			properties : {
+				/**
+				 * Optional description. May be used to inform a user, for example, when the list has been updated last time.
+				 */
+				description : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Set to true to display an icon/logo. Icon must be set either in the customIcon property or in the CSS theme for the PullToRefresh control.
-			 */
-			showIcon : {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * Set to true to display an icon/logo. Icon must be set either in the customIcon property or in the CSS theme for the PullToRefresh control.
+				 */
+				showIcon : {type : "boolean", group : "Appearance", defaultValue : false},
 
-			/**
-			 * Provide a URI to a custom icon image to replace the SAP logo. Large images are scaled down to max 50px height.
-			 */
-			customIcon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
+				/**
+				 * Provide a URI to a custom icon image to replace the SAP logo. Large images are scaled down to max 50px height.
+				 */
+				customIcon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 
-			/**
-			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
-			 *
-			 * If bandwidth is the key for the application, set this value to false.
-			 */
-			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true}
+				/**
+				 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
+				 *
+				 * If bandwidth is the key for the application, set this value to false.
+				 */
+				iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true}
+			},
+			events : {
+
+				/**
+				 * Event indicates that the user has requested new data
+				 */
+				refresh : {}
+			}
 		},
-		events : {
 
-			/**
-			 * Event indicates that the user has requested new data
-			 */
-			refresh : {}
-		}
-	}});
+		renderer: PullToRefreshRenderer
+	});
 
 	PullToRefresh.ARIA_F5_REFRESH = "PULL_TO_REFRESH_ARIA_F5";
 

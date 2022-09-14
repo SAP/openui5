@@ -104,7 +104,9 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+
+			renderer: NavigationListRenderer
 		});
 
 		/**

@@ -495,7 +495,9 @@ function(
 					}
 				},
 				designtime: "sap/m/designtime/Select.designtime"
-			}
+			},
+
+			renderer: SelectRenderer
 		});
 
 		IconPool.insertFontFaceStyle();

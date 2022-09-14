@@ -87,388 +87,392 @@ sap.ui.define([
 	 * @since 1.12
 	 * @alias sap.m.ObjectHeader
 	 */
-	var ObjectHeader = Control.extend("sap.m.ObjectHeader", /** @lends sap.m.ObjectHeader.prototype */ { metadata : {
+	var ObjectHeader = Control.extend("sap.m.ObjectHeader", /** @lends sap.m.ObjectHeader.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		designtime: "sap/m/designtime/ObjectHeader.designtime",
-		properties : {
+			library : "sap.m",
+			designtime: "sap/m/designtime/ObjectHeader.designtime",
+			properties : {
 
-			/**
-			 * Determines the title of the <code>ObjectHeader</code>.
-			 */
-			title : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Determines the title of the <code>ObjectHeader</code>.
+				 */
+				title : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Determines the displayed number of the <code>ObjectHeader</code> number field.
-			 */
-			number : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Determines the displayed number of the <code>ObjectHeader</code> number field.
+				 */
+				number : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Determines the units qualifier of the <code>ObjectHeader</code> number.
-			 *
-			 * <b>Note:</b> The value of the <code>numberUnit</code> is not displayed if the
-			 * number property is set to <code>null</code>.
-			 */
-			numberUnit : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Determines the units qualifier of the <code>ObjectHeader</code> number.
+				 *
+				 * <b>Note:</b> The value of the <code>numberUnit</code> is not displayed if the
+				 * number property is set to <code>null</code>.
+				 */
+				numberUnit : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Determines the introductory text for the <code>ObjectHeader</code>.
-			 */
-			intro : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Determines the introductory text for the <code>ObjectHeader</code>.
+				 */
+				intro : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Determines whether the introductory text of the <code>ObjectHeader</code> is clickable.
-			 */
-			introActive : {type : "boolean", group : "Misc", defaultValue : null},
+				/**
+				 * Determines whether the introductory text of the <code>ObjectHeader</code> is clickable.
+				 */
+				introActive : {type : "boolean", group : "Misc", defaultValue : null},
 
-			/**
-			 * Determines whether the title of the <code>ObjectHeader</code> is clickable
-			 * and is set only if a title is provided.
-			 */
-			titleActive : {type : "boolean", group : "Misc", defaultValue : null},
+				/**
+				 * Determines whether the title of the <code>ObjectHeader</code> is clickable
+				 * and is set only if a title is provided.
+				 */
+				titleActive : {type : "boolean", group : "Misc", defaultValue : null},
 
-			/**
-			 * Defines the icon of the <code>ObjectHeader</code>.
-			 *
-			 * <b>Note:</b> Recursive resolution of binding expressions is not supported by the framework.
-			 * It works only in ObjectHeader, since it is a composite control and creates an Image control internally.
-			 */
-			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
+				/**
+				 * Defines the icon of the <code>ObjectHeader</code>.
+				 *
+				 * <b>Note:</b> Recursive resolution of binding expressions is not supported by the framework.
+				 * It works only in ObjectHeader, since it is a composite control and creates an Image control internally.
+				 */
+				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
 
-			/**
-			 * Determines whether the <code>ObjectHeader</code> icon is clickable.
-			 */
-			iconActive : {type : "boolean", group : "Misc", defaultValue : null},
+				/**
+				 * Determines whether the <code>ObjectHeader</code> icon is clickable.
+				 */
+				iconActive : {type : "boolean", group : "Misc", defaultValue : null},
 
-			/**
-			 * Determines the alternative text of the <code>ObjectHeader</code> icon. The text is
-			 * displayed if the image for the icon is not available, or cannot be displayed.
-			 *
-			 * <b>Note:</b> Provide an empty string value for the <code>iconAlt</code> property
-			 * in case you want to use the icon for decoration only.
-			 */
-			iconAlt : {type : "string", group : "Accessibility", defaultValue : null},
+				/**
+				 * Determines the alternative text of the <code>ObjectHeader</code> icon. The text is
+				 * displayed if the image for the icon is not available, or cannot be displayed.
+				 *
+				 * <b>Note:</b> Provide an empty string value for the <code>iconAlt</code> property
+				 * in case you want to use the icon for decoration only.
+				 */
+				iconAlt : {type : "string", group : "Accessibility", defaultValue : null},
 
-			/**
-			 * Determines the tooltip text of the <code>ObjectHeader</code> icon.
-			 */
-			iconTooltip : {type : "string", group : "Accessibility", defaultValue : null},
+				/**
+				 * Determines the tooltip text of the <code>ObjectHeader</code> icon.
+				 */
+				iconTooltip : {type : "string", group : "Accessibility", defaultValue : null},
 
-			/**
-			 * By default, this is set to <code>true</code> but then one or more requests are sent trying to get
-			 * the density perfect version of image if this version of image doesn't exist on the server.
-			 *
-			 * If bandwidth is the key for the application, set this value to <code>false</code>.
-			 */
-			iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * By default, this is set to <code>true</code> but then one or more requests are sent trying to get
+				 * the density perfect version of image if this version of image doesn't exist on the server.
+				 *
+				 * If bandwidth is the key for the application, set this value to <code>false</code>.
+				 */
+				iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Determines whether the picture should be displayed in a square or with a circle-shaped mask just like in {@link sap.uxap.ObjectPageHeader}.
-			 *
-			 * <b>Note:</b> This property takes effect only on Images and it is ignored for Icons.
-			 * @since 1.61
-			 */
-			imageShape: {type: "sap.m.ObjectHeaderPictureShape", group : "Appearance", defaultValue: ObjectHeaderPictureShape.Square},
+				/**
+				 * Determines whether the picture should be displayed in a square or with a circle-shaped mask just like in {@link sap.uxap.ObjectPageHeader}.
+				 *
+				 * <b>Note:</b> This property takes effect only on Images and it is ignored for Icons.
+				 * @since 1.61
+				 */
+				imageShape: {type: "sap.m.ObjectHeaderPictureShape", group : "Appearance", defaultValue: ObjectHeaderPictureShape.Square},
 
-			/**
-			 * Sets the favorite state for the <code>ObjectHeader</code>. The <code>showMarkers</code>
-			 * property must be set to <code>true</code> for this property to take effect.
-			 *
-			 * @since 1.16.0
-			 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregation.
-			 * Add {@link sap.m.ObjectMarker} with type <code>sap.m.ObjectMarkerType.Favorite</code>.
-			 * You should use either this property or the <code>markers</code> aggregation, using both may lead to unpredicted behavior.
-			 */
-			markFavorite : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
+				/**
+				 * Sets the favorite state for the <code>ObjectHeader</code>. The <code>showMarkers</code>
+				 * property must be set to <code>true</code> for this property to take effect.
+				 *
+				 * @since 1.16.0
+				 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregation.
+				 * Add {@link sap.m.ObjectMarker} with type <code>sap.m.ObjectMarkerType.Favorite</code>.
+				 * You should use either this property or the <code>markers</code> aggregation, using both may lead to unpredicted behavior.
+				 */
+				markFavorite : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
 
-			/**
-			 * Sets the flagged state for the <code>ObjectHeader</code>. The <code>showMarkers</code> property
-			 * must be set to <code>true</code> for this property to take effect.
-			 *
-			 * @since 1.16.0
-			 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregation.
-			 * Add {@link sap.m.ObjectMarker} with type <code>sap.m.ObjectMarkerType.Flagged</code>.
-			 * You should use either this property or the <code>markers</code> aggregation, using both may lead to unpredicted behavior.
-			 */
-			markFlagged : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
+				/**
+				 * Sets the flagged state for the <code>ObjectHeader</code>. The <code>showMarkers</code> property
+				 * must be set to <code>true</code> for this property to take effect.
+				 *
+				 * @since 1.16.0
+				 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregation.
+				 * Add {@link sap.m.ObjectMarker} with type <code>sap.m.ObjectMarkerType.Flagged</code>.
+				 * You should use either this property or the <code>markers</code> aggregation, using both may lead to unpredicted behavior.
+				 */
+				markFlagged : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
 
-			/**
-			 * If set to <code>true</code>, the <code>ObjectHeader</code> can be marked with icons such as favorite and flag.
-			 *
-			 * @since 1.16.0
-			 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregationv.
-			 * This property is valid only if you are using the already deprecated properties - <code>markFlagged</code> and <code>markFavorite</code>.
-			 * If you are using <code>markers</code>, the visibility of the markers depends on what is set in the aggregation itself.
-			 */
-			showMarkers : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
+				/**
+				 * If set to <code>true</code>, the <code>ObjectHeader</code> can be marked with icons such as favorite and flag.
+				 *
+				 * @since 1.16.0
+				 * @deprecated as of version 1.42.0, replaced by <code>markers</code> aggregationv.
+				 * This property is valid only if you are using the already deprecated properties - <code>markFlagged</code> and <code>markFavorite</code>.
+				 * If you are using <code>markers</code>, the visibility of the markers depends on what is set in the aggregation itself.
+				 */
+				showMarkers : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
 
-			/**
-			 * Determines whether the selector arrow icon/image is displayed and can be pressed.
-			 * @since 1.16.0
-			 */
-			showTitleSelector : {type : "boolean", group : "Misc", defaultValue : false},
+				/**
+				 * Determines whether the selector arrow icon/image is displayed and can be pressed.
+				 * @since 1.16.0
+				 */
+				showTitleSelector : {type : "boolean", group : "Misc", defaultValue : false},
 
-			/**
-			 * Determines the value state of the <code>number</code> and <code>numberUnit</code> properties.
-			 * @since 1.16.0
-			 */
-			numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : ValueState.None},
+				/**
+				 * Determines the value state of the <code>number</code> and <code>numberUnit</code> properties.
+				 * @since 1.16.0
+				 */
+				numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : ValueState.None},
 
-			/**
-			 * <code>ObjectHeader</code> with title, one attribute, number, and number unit.
-			 *
-			 * <b>Note:</b> Only applied if the <code>responsive</code> property is set to <code>false</code>.
-			 */
-			condensed : {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * <code>ObjectHeader</code> with title, one attribute, number, and number unit.
+				 *
+				 * <b>Note:</b> Only applied if the <code>responsive</code> property is set to <code>false</code>.
+				 */
+				condensed : {type : "boolean", group : "Appearance", defaultValue : false},
 
-			/**
-			 * Determines the background color of the <code>ObjectHeader</code>.
-			 *
-			 * <b>Note:</b> The different types of <code>ObjectHeader</code> come with different default background:
-			 * <ul>
-			 * <li>non responsive - Transparent</li>
-			 * <li>responsive - Translucent</li>
-			 * <li>condensed - Solid</li>
-			 * </ul>
-			 */
-			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance"},
+				/**
+				 * Determines the background color of the <code>ObjectHeader</code>.
+				 *
+				 * <b>Note:</b> The different types of <code>ObjectHeader</code> come with different default background:
+				 * <ul>
+				 * <li>non responsive - Transparent</li>
+				 * <li>responsive - Translucent</li>
+				 * <li>condensed - Solid</li>
+				 * </ul>
+				 */
+				backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance"},
 
-			/**
-			 * Determines whether the <code>ObjectHeader</code> is rendered with a different design that
-			 * reacts responsively to the screen sizes.
-			 *
-			 * When the <code>responsive</code> property is set to <code>true</code>, the
-			 * following behavior specifics for the control exist:
-			 * <ul>
-			 * <li>If an image (or an icon font) is set to the <code>icon</code> property, it is
-			 * hidden in portrait mode on phone.</li>
-			 * <li>The title is truncated to 80 characters if longer. For portrait mode on phone,
-			 * the title is truncated to 50 characters.</li>
-			 * </ul>
-			 *
-			 * @since 1.21.1
-			 */
-			responsive : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Determines whether the <code>ObjectHeader</code> is rendered with a different design that
+				 * reacts responsively to the screen sizes.
+				 *
+				 * When the <code>responsive</code> property is set to <code>true</code>, the
+				 * following behavior specifics for the control exist:
+				 * <ul>
+				 * <li>If an image (or an icon font) is set to the <code>icon</code> property, it is
+				 * hidden in portrait mode on phone.</li>
+				 * <li>The title is truncated to 80 characters if longer. For portrait mode on phone,
+				 * the title is truncated to 50 characters.</li>
+				 * </ul>
+				 *
+				 * @since 1.21.1
+				 */
+				responsive : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Optimizes the display of the elements of the <code>ObjectHeader</code>.
-			 *
-			 * Set this property to <code>true</code> if your app uses a fullscreen layout (as opposed
-			 * to a master-detail or other split-screen layout).
-			 *
-			 * <b>Note</b>: Only applied if the <code>responsive</code> property is also set to <code>true</code>.
-			 *
-			 * If set to <code>true</code>, the following situations apply:
-			 * <ul>
-			 * <li>On desktop, 1-3 attributes/statuses - positioned as a third block on the right side of the Title/Number group</li>
-			 * <li>On desktop, 4+ attributes/statuses - 4 columns below the Title/Number</li>
-			 * <li>On tablet (portrait mode), always in 2 columns below the Title/Number</li>
-			 * <li>On tablet (landscape mode), 1-2 attributes/statuses - 2 columns below the Title/Number</li>
-			 * <li>On tablet (landscape mode), 3+ attributes/statuses - 3 columns below the Title/Number</li>
-			 *</ul>
-			 * On phone, the attributes and statuses are always positioned in 1 column below the Title/Number of the <code>ObjectHeader</code>.
-			 *
-			 * If set to <code>false</code>, the attributes and statuses are being positioned below the
-			 * Title/Number of the <code>ObjectHeader</code> in 2 or 3 columns depending on their number:
-			 * <ul>
-			 * <li>On desktop, 1-4 attributes/statuses - 2 columns</li>
-			 * <li>On desktop, 5+ attributes/statuses - 3 columns</li>
-			 * <li>On tablet, always in 2 columns</li>
-			 * </ul>
-			 *
-			 * @since 1.28
-			 */
-			fullScreenOptimized : {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * Optimizes the display of the elements of the <code>ObjectHeader</code>.
+				 *
+				 * Set this property to <code>true</code> if your app uses a fullscreen layout (as opposed
+				 * to a master-detail or other split-screen layout).
+				 *
+				 * <b>Note</b>: Only applied if the <code>responsive</code> property is also set to <code>true</code>.
+				 *
+				 * If set to <code>true</code>, the following situations apply:
+				 * <ul>
+				 * <li>On desktop, 1-3 attributes/statuses - positioned as a third block on the right side of the Title/Number group</li>
+				 * <li>On desktop, 4+ attributes/statuses - 4 columns below the Title/Number</li>
+				 * <li>On tablet (portrait mode), always in 2 columns below the Title/Number</li>
+				 * <li>On tablet (landscape mode), 1-2 attributes/statuses - 2 columns below the Title/Number</li>
+				 * <li>On tablet (landscape mode), 3+ attributes/statuses - 3 columns below the Title/Number</li>
+				 *</ul>
+				 * On phone, the attributes and statuses are always positioned in 1 column below the Title/Number of the <code>ObjectHeader</code>.
+				 *
+				 * If set to <code>false</code>, the attributes and statuses are being positioned below the
+				 * Title/Number of the <code>ObjectHeader</code> in 2 or 3 columns depending on their number:
+				 * <ul>
+				 * <li>On desktop, 1-4 attributes/statuses - 2 columns</li>
+				 * <li>On desktop, 5+ attributes/statuses - 3 columns</li>
+				 * <li>On tablet, always in 2 columns</li>
+				 * </ul>
+				 *
+				 * @since 1.28
+				 */
+				fullScreenOptimized : {type : "boolean", group : "Appearance", defaultValue : false},
 
-			/**
-			 * Defines the title link target URI. Supports standard hyperlink behavior.
-			 *
-			 * <b>Note:</b> If an action should be triggered, this property should not be set, but instead
-			 * an event handler for the <code>titlePress</code> event should be registered.
-			 * @since 1.28
-			 */
-			titleHref : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
+				/**
+				 * Defines the title link target URI. Supports standard hyperlink behavior.
+				 *
+				 * <b>Note:</b> If an action should be triggered, this property should not be set, but instead
+				 * an event handler for the <code>titlePress</code> event should be registered.
+				 * @since 1.28
+				 */
+				titleHref : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
-			/**
-			 * Determines the <code>target</code> attribute for the title link. Options are <code>_self</code>,
-			 * <code>_top</code>, <code>_blank</code>, <code>_parent</code>, <code>_search</code>. Alternatively,
-			 * a frame name can be entered.
-			 * @since 1.28
-			 */
-			titleTarget : {type : "string", group : "Behavior", defaultValue : null},
+				/**
+				 * Determines the <code>target</code> attribute for the title link. Options are <code>_self</code>,
+				 * <code>_top</code>, <code>_blank</code>, <code>_parent</code>, <code>_search</code>. Alternatively,
+				 * a frame name can be entered.
+				 * @since 1.28
+				 */
+				titleTarget : {type : "string", group : "Behavior", defaultValue : null},
 
-			/**
-			 * Determines the intro link target URI. Supports standard hyperlink behavior. If an action should be triggered,
-			 * this should not be set, but instead an event handler for the <code>introPress</code> event should be registered.
-			 * @since 1.28
-			 */
-			introHref : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
+				/**
+				 * Determines the intro link target URI. Supports standard hyperlink behavior. If an action should be triggered,
+				 * this should not be set, but instead an event handler for the <code>introPress</code> event should be registered.
+				 * @since 1.28
+				 */
+				introHref : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
-			/**
-			 * Determines the <code>target</code> attribute for the intro link. Options are <code>_self</code>,
-			 * <code>_top</code>, <code>_blank</code>, <code>_parent</code>, <code>_search</code>. Alternatively,
-			 * a frame name can be entered.
-			 * @since 1.28
-			 */
-			introTarget : {type : "string", group : "Behavior", defaultValue : null},
+				/**
+				 * Determines the <code>target</code> attribute for the intro link. Options are <code>_self</code>,
+				 * <code>_top</code>, <code>_blank</code>, <code>_parent</code>, <code>_search</code>. Alternatively,
+				 * a frame name can be entered.
+				 * @since 1.28
+				 */
+				introTarget : {type : "string", group : "Behavior", defaultValue : null},
 
-			/**
-			 * Specifies the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.
-			 * @since 1.28.0
-			 */
-			titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * Specifies the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @since 1.28.0
+				 */
+				titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
-			/**
-			 * Specifies the intro text directionality with enumerated options. By default, the control inherits text direction from the DOM.
-			 * @since 1.28.0
-			 */
-			introTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * Specifies the intro text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @since 1.28.0
+				 */
+				introTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
-			/**
-			 * Specifies the number and unit text directionality with enumerated options. By default, the control inherits text direction from the DOM.
-			 * @since 1.28.0
-			 */
-			numberTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * Specifies the number and unit text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @since 1.28.0
+				 */
+				numberTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
-			/**
-			 * Determines a custom text for the tooltip of the select title arrow. If not set, a default text of the tooltip will be displayed.
-			 * @since 1.30.0
-			 */
-			titleSelectorTooltip : {type : "string", group : "Misc", defaultValue : "Options"},
+				/**
+				 * Determines a custom text for the tooltip of the select title arrow. If not set, a default text of the tooltip will be displayed.
+				 * @since 1.30.0
+				 */
+				titleSelectorTooltip : {type : "string", group : "Misc", defaultValue : "Options"},
 
-			/**
-			 * Defines the semantic level of the title.
-			 *
-			 * This information is used by assistive technologies, such as screen readers to create a hierarchical site map for faster navigation.
-			 * Depending on this setting an HTML h1-h6 element is used.
-			 */
-			titleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.H1}
+				/**
+				 * Defines the semantic level of the title.
+				 *
+				 * This information is used by assistive technologies, such as screen readers to create a hierarchical site map for faster navigation.
+				 * Depending on this setting an HTML h1-h6 element is used.
+				 */
+				titleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.H1}
 
-		},
-		defaultAggregation : "attributes",
-		aggregations : {
+			},
+			defaultAggregation : "attributes",
+			aggregations : {
 
-			/**
-			 * The list of Object Attributes
-			 */
-			attributes : {type : "sap.m.ObjectAttribute", multiple : true, singularName : "attribute"},
+				/**
+				 * The list of Object Attributes
+				 */
+				attributes : {type : "sap.m.ObjectAttribute", multiple : true, singularName : "attribute"},
 
-			/**
-			 * First status shown on the right side of the attributes above the second status.
-			 * If it is not set the first attribute will expand to take the entire row.
-			 * @deprecated as of version 1.16.0, replaced by <code>statuses</code> aggregation
-			 */
-			firstStatus : {type : "sap.m.ObjectStatus", multiple : false, deprecated: true},
+				/**
+				 * First status shown on the right side of the attributes above the second status.
+				 * If it is not set the first attribute will expand to take the entire row.
+				 * @deprecated as of version 1.16.0, replaced by <code>statuses</code> aggregation
+				 */
+				firstStatus : {type : "sap.m.ObjectStatus", multiple : false, deprecated: true},
 
-			/**
-			 * Second status shown on the right side of the attributes below the first status.
-			 * If it is not set the second attribute will expand to take the entire row.
-			 * @deprecated as of version 1.16.0, replaced by <code>statuses</code> aggregation
-			 */
-			secondStatus : {type : "sap.m.ObjectStatus", multiple : false, deprecated: true},
+				/**
+				 * Second status shown on the right side of the attributes below the first status.
+				 * If it is not set the second attribute will expand to take the entire row.
+				 * @deprecated as of version 1.16.0, replaced by <code>statuses</code> aggregation
+				 */
+				secondStatus : {type : "sap.m.ObjectStatus", multiple : false, deprecated: true},
 
-			/**
-			 * The list of Object sap.ui.core.Control. It will only allow sap.m.ObjectStatus and sap.m.ProgressIndicator controls.
-			 * @since 1.16.0
-			 */
-			statuses : {type : "sap.ui.core.Control", multiple : true, singularName : "status"},
+				/**
+				 * The list of Object sap.ui.core.Control. It will only allow sap.m.ObjectStatus and sap.m.ProgressIndicator controls.
+				 * @since 1.16.0
+				 */
+				statuses : {type : "sap.ui.core.Control", multiple : true, singularName : "status"},
 
-			/**
-			 * The object number and unit are managed in this aggregation
-			 */
-			_objectNumber : {type : "sap.m.ObjectNumber", multiple : false, visibility : "hidden"},
+				/**
+				 * The object number and unit are managed in this aggregation
+				 */
+				_objectNumber : {type : "sap.m.ObjectNumber", multiple : false, visibility : "hidden"},
 
-			/**
-			 * NOTE: Only applied if you set "responsive=false".
-			 * Additional object numbers and units are managed in this aggregation.
-			 * The numbers are hidden on tablet and phone size screens.
-			 * When only one number is provided, it is rendered with additional separator from the main ObjectHeader number.
-			 * @since 1.38.0
-			 */
-			additionalNumbers : {type : "sap.m.ObjectNumber", multiple : true, singularName : "additionalNumber"},
+				/**
+				 * NOTE: Only applied if you set "responsive=false".
+				 * Additional object numbers and units are managed in this aggregation.
+				 * The numbers are hidden on tablet and phone size screens.
+				 * When only one number is provided, it is rendered with additional separator from the main ObjectHeader number.
+				 * @since 1.38.0
+				 */
+				additionalNumbers : {type : "sap.m.ObjectNumber", multiple : true, singularName : "additionalNumber"},
 
-			/**
-			 * This aggregation takes only effect when you set "responsive" to true.
-			 * It can either be filled with an sap.m.IconTabBar or an sap.suite.ui.commons.HeaderContainer control. Overflow handling must be taken care of by the inner control. If used with an IconTabBar control, only the header will be displayed inside the object header, the content will be displayed below the ObjectHeader.
-			 * @since 1.21.1
-			 */
-			headerContainer : {type : "sap.m.ObjectHeaderContainer", multiple : false},
+				/**
+				 * This aggregation takes only effect when you set "responsive" to true.
+				 * It can either be filled with an sap.m.IconTabBar or an sap.suite.ui.commons.HeaderContainer control. Overflow handling must be taken care of by the inner control. If used with an IconTabBar control, only the header will be displayed inside the object header, the content will be displayed below the ObjectHeader.
+				 * @since 1.21.1
+				 */
+				headerContainer : {type : "sap.m.ObjectHeaderContainer", multiple : false},
 
-			/**
-			 * List of markers (icon and/or text) that can be displayed for the <code>ObjectHeader</code>, such as favorite and flagged.<br><br>
-			 * <b>Note:</b> You should use either this aggregation or the already deprecated properties - <code>markFlagged</code> and <code>markFavorite</code>. Using both can lead to unexpected results.
-			 */
-			markers : {type : "sap.m.ObjectMarker", multiple : true, singularName : "marker"}
-		},
-		associations : {
+				/**
+				 * List of markers (icon and/or text) that can be displayed for the <code>ObjectHeader</code>, such as favorite and flagged.<br><br>
+				 * <b>Note:</b> You should use either this aggregation or the already deprecated properties - <code>markFlagged</code> and <code>markFavorite</code>. Using both can lead to unexpected results.
+				 */
+				markers : {type : "sap.m.ObjectMarker", multiple : true, singularName : "marker"}
+			},
+			associations : {
 
-			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
-			 */
-			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
+				/**
+				 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+				 */
+				ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
 
-			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-			 */
-			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
-		},
-		events : {
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+			},
+			events : {
 
-			/**
-			 * Event is fired when the title is active and the user taps/clicks on it
-			 */
-			titlePress : {
-				parameters : {
+				/**
+				 * Event is fired when the title is active and the user taps/clicks on it
+				 */
+				titlePress : {
+					parameters : {
 
-					/**
-					 * Dom reference of the object header' title to be used for positioning.
-					 */
-					domRef : {type : "object"}
+						/**
+						 * Dom reference of the object header' title to be used for positioning.
+						 */
+						domRef : {type : "object"}
+					}
+				},
+
+				/**
+				 * Event is fired when the intro is active and the user taps/clicks on it
+				 */
+				introPress : {
+					parameters : {
+
+						/**
+						 * Dom reference of the object header' intro to be used for positioning.
+						 */
+						domRef : {type : "object"}
+					}
+				},
+
+				/**
+				 * Event is fired when the title icon is active and the user taps/clicks on it
+				 */
+				iconPress : {
+					parameters : {
+
+						/**
+						 * Dom reference of the object header' icon to be used for positioning.
+						 */
+						domRef : {type : "object"}
+					}
+				},
+
+				/**
+				 * Event is fired when the object header title selector (down-arrow) is pressed
+				 * @since 1.16.0
+				 */
+				titleSelectorPress : {
+					parameters : {
+
+						/**
+						 * Dom reference of the object header' titleArrow to be used for positioning.
+						 */
+						domRef : {type : "object"}
+					}
 				}
 			},
-
-			/**
-			 * Event is fired when the intro is active and the user taps/clicks on it
-			 */
-			introPress : {
-				parameters : {
-
-					/**
-					 * Dom reference of the object header' intro to be used for positioning.
-					 */
-					domRef : {type : "object"}
-				}
-			},
-
-			/**
-			 * Event is fired when the title icon is active and the user taps/clicks on it
-			 */
-			iconPress : {
-				parameters : {
-
-					/**
-					 * Dom reference of the object header' icon to be used for positioning.
-					 */
-					domRef : {type : "object"}
-				}
-			},
-
-			/**
-			 * Event is fired when the object header title selector (down-arrow) is pressed
-			 * @since 1.16.0
-			 */
-			titleSelectorPress : {
-				parameters : {
-
-					/**
-					 * Dom reference of the object header' titleArrow to be used for positioning.
-					 */
-					domRef : {type : "object"}
-				}
-			}
+			dnd: { draggable: false, droppable: true }
 		},
-		dnd: { draggable: false, droppable: true }
-	}});
+
+		renderer: ObjectHeaderRenderer
+	});
 
 
 	/**

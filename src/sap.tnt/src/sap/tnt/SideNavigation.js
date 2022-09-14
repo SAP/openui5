@@ -112,7 +112,9 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+
+			renderer: SideNavigationRenderer
 		});
 
 		SideNavigation.prototype.init = function () {

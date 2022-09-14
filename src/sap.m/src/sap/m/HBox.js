@@ -29,11 +29,15 @@ sap.ui.define(['./FlexBox', './library', './HBoxRenderer'],
 	 * @public
 	 * @alias sap.m.HBox
 	 */
-	var HBox = FlexBox.extend("sap.m.HBox", /** @lends sap.m.HBox.prototype */ { metadata : {
+	var HBox = FlexBox.extend("sap.m.HBox", /** @lends sap.m.HBox.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		designtime: "sap/m/designtime/HBox.designtime"
-	}});
+			library : "sap.m",
+			designtime: "sap/m/designtime/HBox.designtime"
+		},
+
+		renderer: HBoxRenderer
+	});
 
 
 

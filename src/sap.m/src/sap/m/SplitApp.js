@@ -42,55 +42,59 @@ sap.ui.define([
 	 * @see {@link topic:eedfe79e4c19462eafe8780aeab16a3c Split App}
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/split-screen/ Split App}
 	 */
-	var SplitApp = SplitContainer.extend("sap.m.SplitApp", /** @lends sap.m.SplitApp.prototype */ { metadata : {
+	var SplitApp = SplitContainer.extend("sap.m.SplitApp", /** @lends sap.m.SplitApp.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Represents the icon to be displayed on the home screen of iOS devices after the user does "add to home screen".
-			 * Note that only the first attempt to set the homeIcon is executed, subsequent settings are ignored.
-			 * The icon must be in PNG format. The property can either store the URL of one single icon or an object holding icon URLs for the different required sizes.
-			 * Note that if single icon is used for all devices, when scaled, its quality can regress.
-			 * A desktop icon (used for bookmarks and overriding the favicon) can also be configured. This requires an object to be given and the "icon" property of this object then defines the desktop bookmark icon.
-			 * The ICO format is supported by all browsers. ICO is also preferred for this desktop icon setting as the file can contain different images for different resolutions.
-			 *
-			 * One example is:
-			 *
-			 * app.setHomeIcon({
-			 * 'phone':'phone-icon.png',
-			 * 'phone@2':'phone-retina.png',
-			 * 'tablet':'tablet-icon.png',
-			 * 'tablet@2':'tablet-retina.png',
-			 * 'icon':'desktop.ico'
-			 * });
-			 *
-			 * The image size is 57/114 px for the phone and 72/144 px for the tablet.
-			 * If an object is given but one of the sizes is not given, the largest given icon will be used for this size.
-			 *
-			 * On Android, these icons may or may not be used by the device. Chances can be improved by adding glare effect, rounded corners, setting the file name to end with "-precomposed.png", and setting the homeIconPrecomposed property to true.
-			 */
-			homeIcon : {type : "any", group : "Misc", defaultValue : null}
-		},
-		events : {
+				/**
+				 * Represents the icon to be displayed on the home screen of iOS devices after the user does "add to home screen".
+				 * Note that only the first attempt to set the homeIcon is executed, subsequent settings are ignored.
+				 * The icon must be in PNG format. The property can either store the URL of one single icon or an object holding icon URLs for the different required sizes.
+				 * Note that if single icon is used for all devices, when scaled, its quality can regress.
+				 * A desktop icon (used for bookmarks and overriding the favicon) can also be configured. This requires an object to be given and the "icon" property of this object then defines the desktop bookmark icon.
+				 * The ICO format is supported by all browsers. ICO is also preferred for this desktop icon setting as the file can contain different images for different resolutions.
+				 *
+				 * One example is:
+				 *
+				 * app.setHomeIcon({
+				 * 'phone':'phone-icon.png',
+				 * 'phone@2':'phone-retina.png',
+				 * 'tablet':'tablet-icon.png',
+				 * 'tablet@2':'tablet-retina.png',
+				 * 'icon':'desktop.ico'
+				 * });
+				 *
+				 * The image size is 57/114 px for the phone and 72/144 px for the tablet.
+				 * If an object is given but one of the sizes is not given, the largest given icon will be used for this size.
+				 *
+				 * On Android, these icons may or may not be used by the device. Chances can be improved by adding glare effect, rounded corners, setting the file name to end with "-precomposed.png", and setting the homeIconPrecomposed property to true.
+				 */
+				homeIcon : {type : "any", group : "Misc", defaultValue : null}
+			},
+			events : {
 
-			/**
-			 * Fires when orientation (portrait/landscape) is changed.
-			 * @deprecated Since version 1.87, use {@link sap.ui.Device.orientation.attachHandler} instead.
-			 */
-			orientationChange : {
-				deprecated: true,
-				parameters : {
+				/**
+				 * Fires when orientation (portrait/landscape) is changed.
+				 * @deprecated Since version 1.87, use {@link sap.ui.Device.orientation.attachHandler} instead.
+				 */
+				orientationChange : {
+					deprecated: true,
+					parameters : {
 
-					/**
-					 * Returns true if the device is in landscape mode.
-					 */
-					landscape : {type : "boolean"}
+						/**
+						 * Returns true if the device is in landscape mode.
+						 */
+						landscape : {type : "boolean"}
+					}
 				}
-			}
+			},
+			designtime: "sap/m/designtime/SplitApp.designtime"
 		},
-		designtime: "sap/m/designtime/SplitApp.designtime"
-	}});
+
+		renderer: SplitAppRenderer
+	});
 
 
 	//**************************************************************

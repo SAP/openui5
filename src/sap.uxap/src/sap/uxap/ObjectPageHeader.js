@@ -347,7 +347,9 @@ sap.ui.define([
 				}
 			},
 			designtime: "sap/uxap/designtime/ObjectPageHeader.designtime"
-		}
+		},
+
+		renderer: ObjectPageHeaderRenderer
 	});
 
 	ObjectPageHeader.prototype._iAvailablePercentageForActions = 0.3;

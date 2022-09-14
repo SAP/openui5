@@ -136,39 +136,43 @@ sap.ui.define([
 	 * @since 1.22.0
 	 * @alias sap.m.DateRangeSelection
 	 */
-	var DateRangeSelection = DatePicker.extend("sap.m.DateRangeSelection", /** @lends sap.m.DateRangeSelection.prototype */ { metadata : {
+	var DateRangeSelection = DatePicker.extend("sap.m.DateRangeSelection", /** @lends sap.m.DateRangeSelection.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Delimiter between start and end date. Default value is "-".
-			 * If no delimiter is given, the one defined for the used locale is used.
-			 */
-			delimiter : {type : "string", group : "Misc", defaultValue : '-'},
+				/**
+				 * Delimiter between start and end date. Default value is "-".
+				 * If no delimiter is given, the one defined for the used locale is used.
+				 */
+				delimiter : {type : "string", group : "Misc", defaultValue : '-'},
 
-			/**
-			 * The end date of the range as JavaScript Date object. This is independent from any formatter.
-			 *
-			 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
-			 */
-			secondDateValue : {type : "object", group : "Data", defaultValue : null},
+				/**
+				 * The end date of the range as JavaScript Date object. This is independent from any formatter.
+				 *
+				 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
+				 */
+				secondDateValue : {type : "object", group : "Data", defaultValue : null},
 
-			/**
-			 * Start date of the range.
-			 * @deprecated since version 1.22.0, replaced by <code>dateValue</code> property of the {@link sap.m.DateTimeField}
-			 */
-			from : {type : "object", group : "Misc", defaultValue : null, deprecated: true},
+				/**
+				 * Start date of the range.
+				 * @deprecated since version 1.22.0, replaced by <code>dateValue</code> property of the {@link sap.m.DateTimeField}
+				 */
+				from : {type : "object", group : "Misc", defaultValue : null, deprecated: true},
 
-			/**
-			 * End date of the range.
-			 * @deprecated since version 1.22.0, replaced by <code>secondDateValue</code> property
-			 */
-			to : {type : "object", group : "Misc", defaultValue : null, deprecated: true}
+				/**
+				 * End date of the range.
+				 * @deprecated since version 1.22.0, replaced by <code>secondDateValue</code> property
+				 */
+				to : {type : "object", group : "Misc", defaultValue : null, deprecated: true}
+			},
+			designtime: "sap/m/designtime/DateRangeSelection.designtime",
+			dnd: { draggable: false, droppable: true }
 		},
-		designtime: "sap/m/designtime/DateRangeSelection.designtime",
-		dnd: { draggable: false, droppable: true }
-	}});
+
+		renderer: DateRangeSelectionRenderer
+	});
 
 	var HYPHEN = String.fromCharCode(45),
 		ENDASH = String.fromCharCode(8211),

@@ -101,7 +101,9 @@ sap.ui.define([
 				icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue: "" }
 
 			}
-		}
+		},
+
+		renderer: InfoLabelRenderer
 	});
 
 	InfoLabel.prototype.init = function () {

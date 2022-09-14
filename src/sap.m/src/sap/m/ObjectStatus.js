@@ -50,87 +50,91 @@ sap.ui.define([
 	 * @alias sap.m.ObjectStatus
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/object-display-elements/#-object-status Object Status}
 	 */
-	var ObjectStatus = Control.extend("sap.m.ObjectStatus", /** @lends sap.m.ObjectStatus.prototype */ { metadata : {
+	var ObjectStatus = Control.extend("sap.m.ObjectStatus", /** @lends sap.m.ObjectStatus.prototype */ {
+		metadata : {
 
-		interfaces : ["sap.ui.core.IFormContent"],
-		library : "sap.m",
-		designtime: "sap/m/designtime/ObjectStatus.designtime",
-		properties : {
+			interfaces : ["sap.ui.core.IFormContent"],
+			library : "sap.m",
+			designtime: "sap/m/designtime/ObjectStatus.designtime",
+			properties : {
 
-			/**
-			 * Defines the ObjectStatus title.
-			 */
-			title : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Defines the ObjectStatus title.
+				 */
+				title : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Defines the ObjectStatus text.
-			 */
-			text : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Defines the ObjectStatus text.
+				 */
+				text : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Indicates if the <code>ObjectStatus</code> text and icon can be clicked/tapped by the user.
-			 *
-			 * <b>Note:</b> If you set this property to <code>true</code>, you have to also set the <code>text</code> or <code>icon</code> property.
-			 *
-			 * @since 1.54
-			 */
-			active : {type : "boolean", group : "Misc", defaultValue : false},
+				/**
+				 * Indicates if the <code>ObjectStatus</code> text and icon can be clicked/tapped by the user.
+				 *
+				 * <b>Note:</b> If you set this property to <code>true</code>, you have to also set the <code>text</code> or <code>icon</code> property.
+				 *
+				 * @since 1.54
+				 */
+				active : {type : "boolean", group : "Misc", defaultValue : false},
 
-			/**
-			 * Defines the text value state. The allowed values are from the enum type
-			 * <code>sap.ui.core.ValueState</code>. Since version 1.66 the <code>state</code> property also accepts
-			 * values from enum type <code>sap.ui.core.IndicationColor</code>.
-			 */
-			state : {type : "string", group : "Misc", defaultValue : ValueState.None},
+				/**
+				 * Defines the text value state. The allowed values are from the enum type
+				 * <code>sap.ui.core.ValueState</code>. Since version 1.66 the <code>state</code> property also accepts
+				 * values from enum type <code>sap.ui.core.IndicationColor</code>.
+				 */
+				state : {type : "string", group : "Misc", defaultValue : ValueState.None},
 
-			/**
-			 * Determines whether the background color reflects the set <code>state</code> instead of the control's text.
-			 * @since 1.66
-			 */
-			inverted : {type : "boolean", group : "Misc", defaultValue : false},
+				/**
+				 * Determines whether the background color reflects the set <code>state</code> instead of the control's text.
+				 * @since 1.66
+				 */
+				inverted : {type : "boolean", group : "Misc", defaultValue : false},
 
-			/**
-			 * Icon URI. This may be either an icon font or image path.
-			 */
-			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
+				/**
+				 * Icon URI. This may be either an icon font or image path.
+				 */
+				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
 
-			/**
-			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
-			 *
-			 * If bandwidth is key for the application, set this value to false.
-			 */
-			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
+				 *
+				 * If bandwidth is key for the application, set this value to false.
+				 */
+				iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * Determines the direction of the text, not including the title.
-			 * Available options for the text direction are LTR (left-to-right) and RTL (right-to-left). By default the control inherits the text direction from its parent control.
-			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * Determines the direction of the text, not including the title.
+				 * Available options for the text direction are LTR (left-to-right) and RTL (right-to-left). By default the control inherits the text direction from its parent control.
+				 */
+				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
-			/**
-			 * Specifies if an empty indicator should be displayed when there is no text.
-			 *
-			 * @since 1.89
-			 */
-			emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off }
+				/**
+				 * Specifies if an empty indicator should be displayed when there is no text.
+				 *
+				 * @since 1.89
+				 */
+				emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off }
+			},
+			associations : {
+
+				/**
+				 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
+				 */
+				ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}
+			},
+			events : {
+
+				/**
+				 * Fires when the user clicks/taps on active text.
+				 * @since 1.54
+				 */
+				press : {}
+			},
+			dnd: { draggable: true, droppable: false }
 		},
-		associations : {
 
-			/**
-			 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
-			 */
-			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}
-		},
-		events : {
-
-			/**
-			 * Fires when the user clicks/taps on active text.
-			 * @since 1.54
-			 */
-			press : {}
-		},
-		dnd: { draggable: true, droppable: false }
-	}});
+		renderer: ObjectStatusRenderer
+	});
 
 	/**
 	 * Returns a text compliant to the sap.m.ObjectStatus control instance state

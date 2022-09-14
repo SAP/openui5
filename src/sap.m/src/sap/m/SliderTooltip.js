@@ -102,7 +102,9 @@ function(
 						}
 					}
 				}
-			}
+			},
+
+			renderer: SliderTooltipRenderer
 		});
 
 		SliderTooltip.prototype.init = function () {

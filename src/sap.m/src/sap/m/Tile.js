@@ -41,25 +41,29 @@ sap.ui.define([
 	 * @deprecated as of version 1.50, replaced by {@link sap.m.GenericTile}
 	 * @alias sap.m.Tile
 	 */
-	var Tile = Control.extend("sap.m.Tile", /** @lends sap.m.Tile.prototype */ { metadata : {
+	var Tile = Control.extend("sap.m.Tile", /** @lends sap.m.Tile.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		deprecated: true,
-		properties : {
+			library : "sap.m",
+			deprecated: true,
+			properties : {
 
-			/**
-			 * Determines whether the tile is movable within the surrounding tile container. The remove event is fired by the tile container.
-			 */
-			removable : {type : "boolean", group : "Misc", defaultValue : true}
+				/**
+				 * Determines whether the tile is movable within the surrounding tile container. The remove event is fired by the tile container.
+				 */
+				removable : {type : "boolean", group : "Misc", defaultValue : true}
+			},
+			events : {
+
+				/**
+				 * Tap event is raised if the user taps or clicks the control.
+				 */
+				press : {}
+			}
 		},
-		events : {
 
-			/**
-			 * Tap event is raised if the user taps or clicks the control.
-			 */
-			press : {}
-		}
-	}});
+		renderer: TileRenderer
+	});
 
 	/**
 	 * Initializes the control.

@@ -45,35 +45,39 @@ function(
 	 * @alias sap.m.Tree
 	 * @see {@link fiori:/tree/ Tree}
 	 */
-	var Tree = ListBase.extend("sap.m.Tree", { metadata : {
-		library : "sap.m",
-		events : {
+	var Tree = ListBase.extend("sap.m.Tree", {
+		metadata : {
+			library : "sap.m",
+			events : {
 
-			/**
-			 * Fired when an item has been expanded or collapsed by user interaction.
-			 * @since 1.50
-			 */
-			toggleOpenState : {
-				parameters : {
+				/**
+				 * Fired when an item has been expanded or collapsed by user interaction.
+				 * @since 1.50
+				 */
+				toggleOpenState : {
+					parameters : {
 
-					/**
-					 * Index of the expanded/collapsed item
-					 */
-					itemIndex : {type : "int"},
+						/**
+						 * Index of the expanded/collapsed item
+						 */
+						itemIndex : {type : "int"},
 
-					/**
-					 * Binding context of the item
-					 */
-					itemContext : {type : "object"},
+						/**
+						 * Binding context of the item
+						 */
+						itemContext : {type : "object"},
 
-					/**
-					 * Flag that indicates whether the item has been expanded or collapsed
-					 */
-					expanded : {type : "boolean"}
+						/**
+						 * Flag that indicates whether the item has been expanded or collapsed
+						 */
+						expanded : {type : "boolean"}
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: TreeRenderer
+	});
 
 	Tree.prototype.isTreeBinding = function(sName) {
 		return (sName == "items");

@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Icon",
 	"./GenericTagRenderer"
-], function(Control, KeyCodes, library, coreLibrary, Icon /* ,  GenericTagRenderer */) {
+], function(Control, KeyCodes, library, coreLibrary, Icon, GenericTagRenderer) {
 	"use strict";
 
 	//shortcut for sap.m.GenericTagValueState
@@ -115,7 +115,9 @@ sap.ui.define([
 				 */
 				press: {}
 			}
-		}
+		},
+
+		renderer: GenericTagRenderer
 	});
 
 	/**

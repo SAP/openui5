@@ -158,149 +158,153 @@ sap.ui.define([
 	 * @alias sap.m.DatePicker
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/date-picker/ Date Picker}
 	 */
-	var DatePicker = DateTimeField.extend("sap.m.DatePicker", /** @lends sap.m.DatePicker.prototype */ { metadata : {
+	var DatePicker = DateTimeField.extend("sap.m.DatePicker", /** @lends sap.m.DatePicker.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Displays date in this given type in input field. Default value is taken from locale settings.
-			 * Accepted are values of <code>sap.ui.core.CalendarType</code> or an empty string. If no type is set, the default type of the
-			 * configuration is used.
-			 * <b>Note:</b> If data binding on <code>value</code> property with type <code>sap.ui.model.type.Date</code> is used, this property will be ignored.
-			 * @since 1.28.6
-			 */
-			displayFormatType : {type : "string", group : "Appearance", defaultValue : ""},
+				/**
+				 * Displays date in this given type in input field. Default value is taken from locale settings.
+				 * Accepted are values of <code>sap.ui.core.CalendarType</code> or an empty string. If no type is set, the default type of the
+				 * configuration is used.
+				 * <b>Note:</b> If data binding on <code>value</code> property with type <code>sap.ui.model.type.Date</code> is used, this property will be ignored.
+				 * @since 1.28.6
+				 */
+				displayFormatType : {type : "string", group : "Appearance", defaultValue : ""},
 
-			/**
-			 * If set, the days in the calendar popup are also displayed in this calendar type
-			 * If not set, the dates are only displayed in the primary calendar type
-			 * @since 1.34.1
-			 */
-			secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null},
+				/**
+				 * If set, the days in the calendar popup are also displayed in this calendar type
+				 * If not set, the dates are only displayed in the primary calendar type
+				 * @since 1.34.1
+				 */
+				secondaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance", defaultValue : null},
 
-			/**
-			 * Minimum date that can be shown and selected in the <code>DatePicker</code>. This must be a JavaScript date object.
-			 *
-			 * <b>Note:</b> If the <code>minDate</code> is set to be after the <code>maxDate</code>,
-			 * the <code>maxDate</code> and the <code>minDate</code> are switched before rendering.
-			 * @since 1.38.0
-			 */
-			minDate : {type : "object", group : "Misc", defaultValue : null},
+				/**
+				 * Minimum date that can be shown and selected in the <code>DatePicker</code>. This must be a JavaScript date object.
+				 *
+				 * <b>Note:</b> If the <code>minDate</code> is set to be after the <code>maxDate</code>,
+				 * the <code>maxDate</code> and the <code>minDate</code> are switched before rendering.
+				 * @since 1.38.0
+				 */
+				minDate : {type : "object", group : "Misc", defaultValue : null},
 
-			/**
-			 * Maximum date that can be shown and selected in the <code>DatePicker</code>. This must be a JavaScript date object.
-			 *
-			 * <b>Note:</b> If the <code>maxDate</code> is set to be before the <code>minDate</code>,
-			 * the <code>maxDate</code> and the <code>minDate</code> are switched before rendering.
-			 * @since 1.38.0
-			 */
-			maxDate : {type : "object", group : "Misc", defaultValue : null},
+				/**
+				 * Maximum date that can be shown and selected in the <code>DatePicker</code>. This must be a JavaScript date object.
+				 *
+				 * <b>Note:</b> If the <code>maxDate</code> is set to be before the <code>minDate</code>,
+				 * the <code>maxDate</code> and the <code>minDate</code> are switched before rendering.
+				 * @since 1.38.0
+				 */
+				maxDate : {type : "object", group : "Misc", defaultValue : null},
 
-			/**
-			 * Hides or shows the popover's footer.
-			 *
-			 * @since 1.70
-			 */
-			showFooter : {type : "boolean", group : "Misc", defaultValue : false},
+				/**
+				 * Hides or shows the popover's footer.
+				 *
+				 * @since 1.70
+				 */
+				showFooter : {type : "boolean", group : "Misc", defaultValue : false},
 
-			/**
-			 * Determines whether there is a shortcut navigation to Today. When used in Month, Year or
-			 * Year-range picker view, the calendar navigates to Day picker view.
-			 *
-			 * Note: The Current date button appears if the <code>displayFormat</code> property allows entering day.
-			 *
-			 * @since 1.95
-			 */
-			showCurrentDateButton : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Determines whether there is a shortcut navigation to Today. When used in Month, Year or
+				 * Year-range picker view, the calendar navigates to Day picker view.
+				 *
+				 * Note: The Current date button appears if the <code>displayFormat</code> property allows entering day.
+				 *
+				 * @since 1.95
+				 */
+				showCurrentDateButton : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Determines whether the input field of the picker is hidden or visible.
-			 * When set to <code>true</code>, the input field becomes invisible and there is no way to open the picker popover.
-			 * In that case it can be opened by another control through calling of picker's <code>openBy</code> method, and
-			 * the opening control's DOM reference must be provided as parameter.
-			 *
-			 * Note: Since the picker is not responsible for accessibility attributes of the control which opens its popover,
-			 * those attributes should be added by the application developer. The following is recommended to be added to the
-			 * opening control: a text or tooltip that describes the action (example: "Open Date Picker"), and also aria-haspopup
-			 * attribute with value of <code>sap.ui.core.aria.HasPopup.Dialog</code>.
-			 *
-			 * @since 1.97
-			 */
-			 hideInput: { type: "boolean", group: "Misc", defaultValue: false }
+				/**
+				 * Determines whether the input field of the picker is hidden or visible.
+				 * When set to <code>true</code>, the input field becomes invisible and there is no way to open the picker popover.
+				 * In that case it can be opened by another control through calling of picker's <code>openBy</code> method, and
+				 * the opening control's DOM reference must be provided as parameter.
+				 *
+				 * Note: Since the picker is not responsible for accessibility attributes of the control which opens its popover,
+				 * those attributes should be added by the application developer. The following is recommended to be added to the
+				 * opening control: a text or tooltip that describes the action (example: "Open Date Picker"), and also aria-haspopup
+				 * attribute with value of <code>sap.ui.core.aria.HasPopup.Dialog</code>.
+				 *
+				 * @since 1.97
+				 */
+				 hideInput: { type: "boolean", group: "Misc", defaultValue: false }
 
-		},
-
-		aggregations : {
-
-			/**
-			 * Date Range with type to visualize special days in the Calendar.
-			 * If one day is assigned to more than one Type, only the first one will be used.
-			 *
-			 * To set a single date (instead of a range), set only the startDate property of the sap.ui.unified.DateRange class.
-			 *
-			 * <b>Note:</b> Since 1.48 you could set a non-working day via the sap.ui.unified.CalendarDayType.NonWorking
-			 * enum type just as any other special date type using sap.ui.unified.DateRangeType.
-			 *
-			 * @since 1.38.5
-			 */
-			specialDates : {type : "sap.ui.core.Element", multiple : true, singularName : "specialDate"},
-
-			/**
-			 * Internal aggregation that contains the inner picker pop-up.
-			 *
-			 * @since 1.70
-			 */
-			_popup: { type: "sap.m.ResponsivePopover", multiple : false, visibility: "hidden" }
-		},
-
-		associations: {
-
-			/**
-			 * Association to the <code>CalendarLegend</code> explaining the colors of the <code>specialDates</code>.
-			 *
-			 * <b>Note</b> The legend does not have to be rendered but must exist, and all required types must be assigned.
-			 * @since 1.38.5
-			 */
-			legend: { type: "sap.ui.core.Control", multiple: false}
-		},
-		events : {
-
-			/**
-			 * Fired when navigating in <code>Calendar</code> popup.
-			 * @since 1.46.0
-			 */
-			navigate : {
-				parameters : {
-
-					/**
-					 * Date range containing the start and end date displayed in the <code>Calendar</code> popup.
-					 */
-					dateRange : {type : "sap.ui.unified.DateRange"},
-
-					/**
-					 * Indicates if the event is fired, due to popup being opened.
-					 */
-					afterPopupOpened : {type : "boolean"}
-
-				}
 			},
 
-			/**
-			 * Fired when <code>value help</code> dialog opens.
-			 * @since 1.102.0
-			 */
-			afterValueHelpOpen : {},
+			aggregations : {
 
-			/**
-			 * Fired when <code>value help</code> dialog closes.
-			 * @since 1.102.0
-			 */
-			afterValueHelpClose : {}
+				/**
+				 * Date Range with type to visualize special days in the Calendar.
+				 * If one day is assigned to more than one Type, only the first one will be used.
+				 *
+				 * To set a single date (instead of a range), set only the startDate property of the sap.ui.unified.DateRange class.
+				 *
+				 * <b>Note:</b> Since 1.48 you could set a non-working day via the sap.ui.unified.CalendarDayType.NonWorking
+				 * enum type just as any other special date type using sap.ui.unified.DateRangeType.
+				 *
+				 * @since 1.38.5
+				 */
+				specialDates : {type : "sap.ui.core.Element", multiple : true, singularName : "specialDate"},
+
+				/**
+				 * Internal aggregation that contains the inner picker pop-up.
+				 *
+				 * @since 1.70
+				 */
+				_popup: { type: "sap.m.ResponsivePopover", multiple : false, visibility: "hidden" }
+			},
+
+			associations: {
+
+				/**
+				 * Association to the <code>CalendarLegend</code> explaining the colors of the <code>specialDates</code>.
+				 *
+				 * <b>Note</b> The legend does not have to be rendered but must exist, and all required types must be assigned.
+				 * @since 1.38.5
+				 */
+				legend: { type: "sap.ui.core.Control", multiple: false}
+			},
+			events : {
+
+				/**
+				 * Fired when navigating in <code>Calendar</code> popup.
+				 * @since 1.46.0
+				 */
+				navigate : {
+					parameters : {
+
+						/**
+						 * Date range containing the start and end date displayed in the <code>Calendar</code> popup.
+						 */
+						dateRange : {type : "sap.ui.unified.DateRange"},
+
+						/**
+						 * Indicates if the event is fired, due to popup being opened.
+						 */
+						afterPopupOpened : {type : "boolean"}
+
+					}
+				},
+
+				/**
+				 * Fired when <code>value help</code> dialog opens.
+				 * @since 1.102.0
+				 */
+				afterValueHelpOpen : {},
+
+				/**
+				 * Fired when <code>value help</code> dialog closes.
+				 * @since 1.102.0
+				 */
+				afterValueHelpClose : {}
+			},
+			designtime: "sap/m/designtime/DatePicker.designtime",
+			dnd: { draggable: false, droppable: true }
 		},
-		designtime: "sap/m/designtime/DatePicker.designtime",
-		dnd: { draggable: false, droppable: true }
-	}});
+
+		renderer: DatePickerRenderer
+	});
 
 
 	/**

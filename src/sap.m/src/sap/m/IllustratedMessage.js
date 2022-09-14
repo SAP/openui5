@@ -207,7 +207,9 @@ sap.ui.define([
 				 illustrationAriaLabelledBy: {type : "sap.ui.core.Control", multiple : true, singularName : "illustrationAriaLabelledBy"}
 			},
 			dnd: { draggable: false, droppable: true }
-		}
+		},
+
+		renderer: IllustratedMessageRenderer
 	});
 
 	/**

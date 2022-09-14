@@ -60,104 +60,108 @@ function(
 	 * @alias sap.m.ObjectIdentifier
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/object-display-elements/#-object-status Object Identifier}
 	 */
-	var ObjectIdentifier = Control.extend("sap.m.ObjectIdentifier", /** @lends sap.m.ObjectIdentifier.prototype */ { metadata : {
+	var ObjectIdentifier = Control.extend("sap.m.ObjectIdentifier", /** @lends sap.m.ObjectIdentifier.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		designtime: "sap/m/designtime/ObjectIdentifier.designtime",
-		properties : {
+			library : "sap.m",
+			designtime: "sap/m/designtime/ObjectIdentifier.designtime",
+			properties : {
 
-			/**
-			 * Defines the object title.
-			 */
-			title : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Defines the object title.
+				 */
+				title : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Defines the object text.
-			 */
-			text : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Defines the object text.
+				 */
+				text : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Indicates whether or not the notes icon is displayed.
-			 * @deprecated as of version 1.24.0. There is no replacement for the moment.
-			 */
-			badgeNotes : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
+				/**
+				 * Indicates whether or not the notes icon is displayed.
+				 * @deprecated as of version 1.24.0. There is no replacement for the moment.
+				 */
+				badgeNotes : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
 
-			/**
-			 * Indicates whether or not the address book icon is displayed.
-			 * @deprecated as of version 1.24.0. There is no replacement for the moment.
-			 */
-			badgePeople : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
+				/**
+				 * Indicates whether or not the address book icon is displayed.
+				 * @deprecated as of version 1.24.0. There is no replacement for the moment.
+				 */
+				badgePeople : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
 
-			/**
-			 * Indicates whether or not the attachments icon is displayed.
-			 * @deprecated as of version 1.24.0. There is no replacement for the moment.
-			 */
-			badgeAttachments : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
+				/**
+				 * Indicates whether or not the attachments icon is displayed.
+				 * @deprecated as of version 1.24.0. There is no replacement for the moment.
+				 */
+				badgeAttachments : {type : "boolean", group : "Misc", defaultValue : null, deprecated: true},
 
-			/**
-			 * Indicates if the ObjectIdentifier is visible. An invisible ObjectIdentifier is not being rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * Indicates if the ObjectIdentifier is visible. An invisible ObjectIdentifier is not being rendered.
+				 */
+				visible : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * Indicates if the ObjectIdentifier's title is clickable.
-			 * @since 1.26
-			 */
-			titleActive : {type : "boolean", group : "Misc", defaultValue : false},
+				/**
+				 * Indicates if the ObjectIdentifier's title is clickable.
+				 * @since 1.26
+				 */
+				titleActive : {type : "boolean", group : "Misc", defaultValue : false},
 
-			/**
-			 * Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
-			 * @since 1.28.0
-			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @since 1.28.0
+				 */
+				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
-			/**
-			 * Specifies if an empty indicator should be displayed when there is no text.
-			 *
-			 * @since 1.89
-			 */
-			emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off }
-		},
-		aggregations : {
+				/**
+				 * Specifies if an empty indicator should be displayed when there is no text.
+				 *
+				 * @since 1.89
+				 */
+				emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off }
+			},
+			aggregations : {
 
-			/**
-			 * Control to display the object title (can be either Text or Link).
-			 *
-			 * @private
-			 */
-			_titleControl : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
+				/**
+				 * Control to display the object title (can be either Text or Link).
+				 *
+				 * @private
+				 */
+				_titleControl : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
 
-			/**
-			 * Text control to display the object text.
-			 *
-			 * @private
-			 */
-			_textControl : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
-		},
-		events : {
+				/**
+				 * Text control to display the object text.
+				 *
+				 * @private
+				 */
+				_textControl : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
+			},
+			events : {
 
-			/**
-			 * Fires when the title is active and the user taps/clicks on it.
-			 * @since 1.26
-			 */
-			titlePress : {
-				parameters : {
+				/**
+				 * Fires when the title is active and the user taps/clicks on it.
+				 * @since 1.26
+				 */
+				titlePress : {
+					parameters : {
 
-					/**
-					 * DOM reference of the object identifier's title.
-					 */
-					domRef : {type : "object"}
+						/**
+						 * DOM reference of the object identifier's title.
+						 */
+						domRef : {type : "object"}
+					}
 				}
-			}
+			},
+			associations: {
+				/**
+				 * Association to controls / IDs, which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+			},
+			dnd: { draggable: true, droppable: false }
 		},
-		associations: {
-			/**
-			 * Association to controls / IDs, which label this control (see WAI-ARIA attribute aria-labelledby).
-			 */
-			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
-		},
-		dnd: { draggable: true, droppable: false }
-	}});
+
+		renderer: ObjectIdentifierRenderer
+	});
 
 
 	/**

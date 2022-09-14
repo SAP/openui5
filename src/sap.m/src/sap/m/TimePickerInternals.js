@@ -121,7 +121,9 @@ sap.ui.define([
 					 */
 					_nowButton: { type: "sap.m.Button", multiple: false, visibility: "hidden" }
 				}
-			}
+			},
+
+			renderer: TimePickerInternalsRenderer
 		});
 
 		/**

@@ -65,7 +65,9 @@ sap.ui.define([
 				 */
 				"press" : {}
 			}
-		}
+		},
+
+		renderer: NewsContentRenderer
 	});
 
 	/* --- Lifecycle methods --- */

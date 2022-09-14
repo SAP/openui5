@@ -51,7 +51,9 @@ sap.ui.define([
 				events: {
 					activeTitlePress: {}
 				}
-			}
+			},
+
+			renderer: MessageListItemRenderer
 		});
 
 		MessageListItem.prototype.onBeforeRendering = function () {

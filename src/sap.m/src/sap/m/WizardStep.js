@@ -113,7 +113,9 @@ sap.ui.define([
 				 */
 				nextStep : {type: "sap.m.WizardStep", multiple: false}
 			}
-		}
+		},
+
+		renderer: WizardStepRenderer
 	});
 
 	// shortcut for sap.m.ButtonType

@@ -50,11 +50,15 @@ sap.ui.define([
 		 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
 		 * @see {@link topic:9c9d94fd28284539a9a5a57e9caf82a8 Object Page Headers Comparison}
 		 */
-		var ObjectPageDynamicHeaderTitle = DynamicPageTitle.extend("sap.uxap.ObjectPageDynamicHeaderTitle", /** @lends sap.uxap.ObjectPageDynamicHeaderTitle.prototype */ { metadata : {
+		var ObjectPageDynamicHeaderTitle = DynamicPageTitle.extend("sap.uxap.ObjectPageDynamicHeaderTitle", /** @lends sap.uxap.ObjectPageDynamicHeaderTitle.prototype */ {
+			metadata : {
 
-			interfaces : ["sap.uxap.IHeaderTitle"],
-			library : "sap.uxap"
-		}});
+				interfaces : ["sap.uxap.IHeaderTitle"],
+				library : "sap.uxap"
+			},
+
+			renderer: ObjectPageDynamicHeaderTitleRenderer
+		});
 
 		/**
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.

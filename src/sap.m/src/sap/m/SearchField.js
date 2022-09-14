@@ -72,192 +72,196 @@ sap.ui.define([
 	* @alias sap.m.SearchField
 	* @see {@link fiori:https://experience.sap.com/fiori-design-web/search/ Search Field}
 	*/
-	var SearchField = Control.extend("sap.m.SearchField", /** @lends sap.m.SearchField.prototype */ { metadata : {
+	var SearchField = Control.extend("sap.m.SearchField", /** @lends sap.m.SearchField.prototype */ {
+		metadata : {
 
-		interfaces : [
-			"sap.ui.core.IFormContent",
-			"sap.f.IShellBar"
-		],
-		library : "sap.m",
-		properties : {
+			interfaces : [
+				"sap.ui.core.IFormContent",
+				"sap.f.IShellBar"
+			],
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Input Value.
-			 */
-			value : {type : "string", group : "Data", defaultValue : null, bindable : "bindable"},
+				/**
+				 * Input Value.
+				 */
+				value : {type : "string", group : "Data", defaultValue : null, bindable : "bindable"},
 
-			/**
-			 * Defines the CSS width of the input. If not set, width is 100%.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null },
+				/**
+				 * Defines the CSS width of the input. If not set, width is 100%.
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null },
 
-			/**
-			 * Boolean property to enable the control (default is true).
-			 */
-			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Boolean property to enable the control (default is true).
+				 */
+				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * Invisible inputs are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * Invisible inputs are not rendered.
+				 */
+				visible : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * Maximum number of characters. Value '0' means the feature is switched off.
-			 */
-			maxLength : {type : "int", group : "Behavior", defaultValue : 0},
+				/**
+				 * Maximum number of characters. Value '0' means the feature is switched off.
+				 */
+				maxLength : {type : "int", group : "Behavior", defaultValue : 0},
 
-			/**
-			 * Text shown when no value available. If no placeholder value is set, the word "Search" in the current local language (if supported) or in English will be displayed as a placeholder (property value will still be <code>null</code> in that case).
-			 */
-			placeholder : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Text shown when no value available. If no placeholder value is set, the word "Search" in the current local language (if supported) or in English will be displayed as a placeholder (property value will still be <code>null</code> in that case).
+				 */
+				placeholder : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Set to false to hide the magnifier icon.
-			 * @deprecated Since version 1.16.0.
-			 * This parameter is deprecated. Use "showSearchButton" instead.
-			 */
-			showMagnifier : {type : "boolean", group : "Misc", defaultValue : true, deprecated: true},
+				/**
+				 * Set to false to hide the magnifier icon.
+				 * @deprecated Since version 1.16.0.
+				 * This parameter is deprecated. Use "showSearchButton" instead.
+				 */
+				showMagnifier : {type : "boolean", group : "Misc", defaultValue : true, deprecated: true},
 
-			/**
-			 * Set to true to display a refresh button in place of the search icon. By pressing the refresh button or F5 key on keyboard, the user can reload the results list without changing the search string.
-			 * @since 1.16
-			 */
-			showRefreshButton : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Set to true to display a refresh button in place of the search icon. By pressing the refresh button or F5 key on keyboard, the user can reload the results list without changing the search string.
+				 * @since 1.16
+				 */
+				showRefreshButton : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Tooltip text of the refresh button. If it is not set, the  Default tooltip text is the word "Refresh" in the current local language (if supported) or in English. Tooltips are not displayed on touch devices.
-			 * @since 1.16
-			 */
-			refreshButtonTooltip : {type : "string", group : "Misc", defaultValue : null},
+				/**
+				 * Tooltip text of the refresh button. If it is not set, the  Default tooltip text is the word "Refresh" in the current local language (if supported) or in English. Tooltips are not displayed on touch devices.
+				 * @since 1.16
+				 */
+				refreshButtonTooltip : {type : "string", group : "Misc", defaultValue : null},
 
-			/**
-			 * Set to true to show the search button with the magnifier icon.
-			 * If false, both the search and refresh buttons are not displayed even if the "showRefreshButton" property is true.
-			 * @since 1.23
-			 */
-			showSearchButton : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Set to true to show the search button with the magnifier icon.
+				 * If false, both the search and refresh buttons are not displayed even if the "showRefreshButton" property is true.
+				 * @since 1.23
+				 */
+				showSearchButton : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * If true, a <code>suggest</code> event is fired when user types in the input and when the input is focused.
-			 * On a phone device, a full screen dialog with suggestions is always shown even if the suggestions list is empty.
-			 * @since 1.34
-			 */
-			enableSuggestions : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * If true, a <code>suggest</code> event is fired when user types in the input and when the input is focused.
+				 * On a phone device, a full screen dialog with suggestions is always shown even if the suggestions list is empty.
+				 * @since 1.34
+				 */
+				enableSuggestions : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Normally, search text is selected for copy when the SearchField is focused by keyboard navigation. If an application re-renders the SearchField during the liveChange event, set this property to false to disable text selection by focus.
-			 * @since 1.20
-			 * @deprecated Since version 1.38.
-			 * This parameter is deprecated and has no effect in run time. The cursor position of a focused search field is restored after re-rendering automatically.
-			 */
-			selectOnFocus : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true}
-		},
-		associations : {
-
-			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
-			 */
-			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
-
-			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-			 */
-			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
-		},
-		defaultAggregation : "suggestionItems",
-		designtime: "sap/m/designtime/SearchField.designtime",
-		aggregations : {
-
-			/**
-			 * <code>SuggestionItems</code> are the items which will be shown in the suggestions list.
-			 * The following properties can be used:
-			 * <ul>
-			 * <li><code>key</code> is not displayed and may be used as internal technical field</li>
-			 * <li><code>text</code> is displayed as normal suggestion text</li>
-			 * <li><code>icon</code></li>
-			 * <li><code>description</code> - additional text may be used to visually display search item type or category</li>
-			 * </ul>
-			 *
-			 * @since 1.34
-			 */
-			suggestionItems : {type : "sap.m.SuggestionItem", multiple : true, singularName : "suggestionItem"}
-		},
-		events : {
-
-			/**
-			 * Event which is fired when the user triggers a search.
-			 */
-			search : {
-				parameters : {
-
-					/**
-					 * The search query string.
-					 */
-					query : {type : "string"},
-
-					/**
-					 * Suggestion list item in case if the user has selected an item from the suggestions list.
-					 * @since 1.34
-					 */
-					suggestionItem : {type : "sap.m.SuggestionItem"},
-
-					/**
-					 * Indicates if the user pressed the refresh icon.
-					 * @since 1.16
-					 */
-					refreshButtonPressed : {type : "boolean"},
-					/**
-					 * Indicates if the user pressed the clear icon.
-					 * @since 1.34
-					 */
-					clearButtonPressed : {type : "boolean"}
-				}
+				/**
+				 * Normally, search text is selected for copy when the SearchField is focused by keyboard navigation. If an application re-renders the SearchField during the liveChange event, set this property to false to disable text selection by focus.
+				 * @since 1.20
+				 * @deprecated Since version 1.38.
+				 * This parameter is deprecated and has no effect in run time. The cursor position of a focused search field is restored after re-rendering automatically.
+				 */
+				selectOnFocus : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true}
 			},
+			associations : {
 
-			/**
-			 * This event is fired when the user changes the value of the search field. Unlike the <code>liveChange</code> event, the <code>change</code> event is not fired for each key press.
-			 * @since 1.77
-			 */
-			change: {
-				parameters: {
+				/**
+				 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+				 */
+				ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
 
-					/**
-					 The new value of the control.
-					 */
-					value: { type: "string" }
-				}
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 			},
+			defaultAggregation : "suggestionItems",
+			designtime: "sap/m/designtime/SearchField.designtime",
+			aggregations : {
 
-			/**
-			 * This event is fired each time when the value of the search field is changed by the user - e.g. at each key press. Do not invalidate a focused search field, especially during the liveChange event.
-			 * @since 1.9.1
-			 */
-			liveChange : {
-				parameters : {
-
-					/**
-					 * Current search string.
-					 */
-					newValue : {type : "string"}
-				}
+				/**
+				 * <code>SuggestionItems</code> are the items which will be shown in the suggestions list.
+				 * The following properties can be used:
+				 * <ul>
+				 * <li><code>key</code> is not displayed and may be used as internal technical field</li>
+				 * <li><code>text</code> is displayed as normal suggestion text</li>
+				 * <li><code>icon</code></li>
+				 * <li><code>description</code> - additional text may be used to visually display search item type or category</li>
+				 * </ul>
+				 *
+				 * @since 1.34
+				 */
+				suggestionItems : {type : "sap.m.SuggestionItem", multiple : true, singularName : "suggestionItem"}
 			},
+			events : {
 
-			/**
-			 * This event is fired when the search field is initially focused or its value is changed by the user.
-			 * This event means that suggestion data should be updated, in case if suggestions are used.
-			 * Use the value parameter to create new suggestions for it.
-			 * @since 1.34
-			 */
-			suggest : {
-				parameters : {
-					/**
-					 * Current search string of the search field.
-					 */
-					suggestValue : {type : "string"}
+				/**
+				 * Event which is fired when the user triggers a search.
+				 */
+				search : {
+					parameters : {
+
+						/**
+						 * The search query string.
+						 */
+						query : {type : "string"},
+
+						/**
+						 * Suggestion list item in case if the user has selected an item from the suggestions list.
+						 * @since 1.34
+						 */
+						suggestionItem : {type : "sap.m.SuggestionItem"},
+
+						/**
+						 * Indicates if the user pressed the refresh icon.
+						 * @since 1.16
+						 */
+						refreshButtonPressed : {type : "boolean"},
+						/**
+						 * Indicates if the user pressed the clear icon.
+						 * @since 1.34
+						 */
+						clearButtonPressed : {type : "boolean"}
+					}
+				},
+
+				/**
+				 * This event is fired when the user changes the value of the search field. Unlike the <code>liveChange</code> event, the <code>change</code> event is not fired for each key press.
+				 * @since 1.77
+				 */
+				change: {
+					parameters: {
+
+						/**
+						 The new value of the control.
+						 */
+						value: { type: "string" }
+					}
+				},
+
+				/**
+				 * This event is fired each time when the value of the search field is changed by the user - e.g. at each key press. Do not invalidate a focused search field, especially during the liveChange event.
+				 * @since 1.9.1
+				 */
+				liveChange : {
+					parameters : {
+
+						/**
+						 * Current search string.
+						 */
+						newValue : {type : "string"}
+					}
+				},
+
+				/**
+				 * This event is fired when the search field is initially focused or its value is changed by the user.
+				 * This event means that suggestion data should be updated, in case if suggestions are used.
+				 * Use the value parameter to create new suggestions for it.
+				 * @since 1.34
+				 */
+				suggest : {
+					parameters : {
+						/**
+						 * Current search string of the search field.
+						 */
+						suggestValue : {type : "string"}
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: SearchFieldRenderer
+	});
 
 	EnabledPropagator.call(SearchField.prototype);
 	IconPool.insertFontFaceStyle();

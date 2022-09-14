@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/f/ProductSwitchItemRenderer"
 ],
-	function (
+	function(
 		Control,
 		Icon,
 		library,
@@ -89,7 +89,9 @@ sap.ui.define([
 					 */
 					_title: { type: "sap.m.Text", visibility: "hidden", multiple: false }
 				}
-			}
+			},
+
+			renderer: ProductSwitchItemRenderer
 		});
 
 		ProductSwitchItem.prototype.init = function () {

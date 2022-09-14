@@ -32,7 +32,6 @@ sap.ui.define([
 		 * @alias sap.m.PagingButton
 		 */
 		var PagingButton = Control.extend("sap.m.PagingButton", {
-
 			metadata: {
 				library: "sap.m",
 				properties: {
@@ -85,7 +84,9 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+
+			renderer: PagingButtonRenderer
 		});
 
 		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");

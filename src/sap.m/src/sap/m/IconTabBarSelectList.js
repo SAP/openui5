@@ -43,31 +43,35 @@ sap.ui.define([
 	 * @since 1.42.0
 	 * @alias sap.m.IconTabBarSelectList
 	 */
-	var IconTabBarSelectList = Control.extend("sap.m.IconTabBarSelectList", /** @lends sap.m.IconTabBarSelectList.prototype */ { metadata: {
-		library: "sap.m",
-		aggregations : {
-			/**
-			 * The items displayed in the list.
-			 */
-			items : {type : "sap.m.IconTab", multiple : true, singularName : "item", dnd : true}
-		},
-		events: {
-			/**
-			 * This event is fired when the selection has changed.
-			 *
-			 * <b>Note: </b> The selection can be changed by pressing a non-selected item,
-			 * via keyboard and after the Enter or Space key is pressed.
-			 */
-			selectionChange: {
-				parameters: {
-					/**
-					 * The selected item.
-					 */
-					selectedItem: { type: "sap.m.IconTabFilter" }
+	var IconTabBarSelectList = Control.extend("sap.m.IconTabBarSelectList", /** @lends sap.m.IconTabBarSelectList.prototype */ {
+		metadata: {
+			library: "sap.m",
+			aggregations : {
+				/**
+				 * The items displayed in the list.
+				 */
+				items : {type : "sap.m.IconTab", multiple : true, singularName : "item", dnd : true}
+			},
+			events: {
+				/**
+				 * This event is fired when the selection has changed.
+				 *
+				 * <b>Note: </b> The selection can be changed by pressing a non-selected item,
+				 * via keyboard and after the Enter or Space key is pressed.
+				 */
+				selectionChange: {
+					parameters: {
+						/**
+						 * The selected item.
+						 */
+						selectedItem: { type: "sap.m.IconTabFilter" }
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: IconTabBarSelectListRenderer
+	});
 
 	/**
 	 * Initializes the control.

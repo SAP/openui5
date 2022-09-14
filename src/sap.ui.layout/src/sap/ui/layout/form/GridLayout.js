@@ -36,20 +36,24 @@ sap.ui.define(['sap/ui/layout/library', './FormLayout', './GridLayoutRenderer'],
 	 * Please use <code>ResponsiveGridLayout</code> or <code>ColumnLayout</code> instead.
 	 * @alias sap.ui.layout.form.GridLayout
 	 */
-	var GridLayout = FormLayout.extend("sap.ui.layout.form.GridLayout", /** @lends sap.ui.layout.form.GridLayout.prototype */ { metadata : {
+	var GridLayout = FormLayout.extend("sap.ui.layout.form.GridLayout", /** @lends sap.ui.layout.form.GridLayout.prototype */ {
+		metadata : {
 
-		library : "sap.ui.layout",
-		deprecated: true,
-		properties : {
+			library : "sap.ui.layout",
+			deprecated: true,
+			properties : {
 
-			/**
-			 * If set, the grid renders only one <code>FormContainer</code> per column. That means one <code>FormContainer</code> is below the other. The whole grid has 8 cells per row.
-			 *
-			 * If not set, <code>FormContainer</code> can use the full width of the grid or two <code>FormContainers</code> can be placed beside each other. In this case the whole grid has 16 cells per row.
-			 */
-			singleColumn : {type : "boolean", group : "Misc", defaultValue : false}
-		}
-	}});
+				/**
+				 * If set, the grid renders only one <code>FormContainer</code> per column. That means one <code>FormContainer</code> is below the other. The whole grid has 8 cells per row.
+				 *
+				 * If not set, <code>FormContainer</code> can use the full width of the grid or two <code>FormContainers</code> can be placed beside each other. In this case the whole grid has 16 cells per row.
+				 */
+				singleColumn : {type : "boolean", group : "Misc", defaultValue : false}
+			}
+		},
+
+		renderer: GridLayoutRenderer
+	});
 
 	GridLayout.prototype.toggleContainerExpanded = function(oContainer){
 

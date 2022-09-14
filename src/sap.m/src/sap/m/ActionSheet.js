@@ -78,102 +78,106 @@ sap.ui.define([
 	 * @alias sap.m.ActionSheet
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/action-sheet/ Action Sheet}
 	 */
-	var ActionSheet = Control.extend("sap.m.ActionSheet", /** @lends sap.m.ActionSheet.prototype */ { metadata : {
+	var ActionSheet = Control.extend("sap.m.ActionSheet", /** @lends sap.m.ActionSheet.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * The ActionSheet behaves as an sap.m.Popover in iPad and this property is the information about on which side will the popover be placed at. Possible values are sap.m.PlacementType.Left, sap.m.PlacementType.Right, sap.m.PlacementType.Top, sap.m.PlacementType.Bottom, sap.m.PlacementType.Horizontal, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Vertical, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.VerticalPreferedBottom. The default value is sap.m.PlacementType.Bottom.
-			 */
-			placement : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : PlacementType.Bottom},
+				/**
+				 * The ActionSheet behaves as an sap.m.Popover in iPad and this property is the information about on which side will the popover be placed at. Possible values are sap.m.PlacementType.Left, sap.m.PlacementType.Right, sap.m.PlacementType.Top, sap.m.PlacementType.Bottom, sap.m.PlacementType.Horizontal, sap.m.PlacementType.HorizontalPreferedLeft, sap.m.PlacementType.HorizontalPreferedRight, sap.m.PlacementType.Vertical, sap.m.PlacementType.VerticalPreferedTop, sap.m.PlacementType.VerticalPreferedBottom. The default value is sap.m.PlacementType.Bottom.
+				 */
+				placement : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : PlacementType.Bottom},
 
-			/**
-			 * If this is set to true, there will be a cancel button shown below the action buttons. There won't be any cancel button shown in iPad regardless of this property. The default value is set to true.
-			 */
-			showCancelButton : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * If this is set to true, there will be a cancel button shown below the action buttons. There won't be any cancel button shown in iPad regardless of this property. The default value is set to true.
+				 */
+				showCancelButton : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * This is the text displayed in the cancelButton. Default value is "Cancel", and it's translated according to the current locale setting. This property will be ignored when running either in iPad or showCancelButton is set to false.
-			 */
-			cancelButtonText : {type : "string", group : "Appearance", defaultValue : null},
+				/**
+				 * This is the text displayed in the cancelButton. Default value is "Cancel", and it's translated according to the current locale setting. This property will be ignored when running either in iPad or showCancelButton is set to false.
+				 */
+				cancelButtonText : {type : "string", group : "Appearance", defaultValue : null},
 
-			/**
-			 * Title will be shown in the header area in iPhone and every Android devices. This property will be ignored in tablets and desktop browser.
-			 */
-			title : {type : "string", group : "Appearance", defaultValue : null}
-		},
-		aggregations : {
-
-			/**
-			 * These buttons are added to the content area in ActionSheet control. When button is tapped, the ActionSheet is closed before the tap event listener is called.
-			 */
-			buttons : {type : "sap.m.Button", multiple : true, singularName : "button"},
-
-			/**
-			 * The internally managed cancel button.
-			 */
-			_cancelButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"},
-
-			/**
-			* Hidden texts used for accesibility
-			*/
-			_invisibleAriaTexts: {type : "sap.ui.core.InvisibleText", multiple : true, visibility : "hidden"}
-		},
-		defaultAggregation : "buttons",
-		events : {
-
-			/**
-			 * This event is fired when the cancelButton is tapped. For iPad, this event is also fired when showCancelButton is set to true, and Popover is closed by tapping outside.
-			 * @deprecated Since version 1.20.0.
-			 * This event is deprecated, use the cancelButtonPress event instead.
-			 */
-			cancelButtonTap : {deprecated: true},
-
-			/**
-			 * This event will be fired before the ActionSheet is opened.
-			 */
-			beforeOpen : {},
-
-			/**
-			 * This event will be fired after the ActionSheet is opened.
-			 */
-			afterOpen : {},
-
-			/**
-			 * This event will be fired before the ActionSheet is closed.
-			 */
-			beforeClose : {
-				parameters: {
-					/**
-					 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null. This is valid only for Phone mode of the ActionSheet
-					 *
-					 */
-					origin: {type: "sap.m.Button"}
-				}
+				/**
+				 * Title will be shown in the header area in iPhone and every Android devices. This property will be ignored in tablets and desktop browser.
+				 */
+				title : {type : "string", group : "Appearance", defaultValue : null}
 			},
+			aggregations : {
 
-			/**
-			 * This event will be fired after the ActionSheet is closed.
-			 */
-			afterClose : {
-				parameters: {
-					/**
-					 * This indicates the trigger of closing the control. If dialog is closed by either selection or closeButton (on mobile device), the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null.
-					 */
-					origin: {type: "sap.m.Button"}
-				}
+				/**
+				 * These buttons are added to the content area in ActionSheet control. When button is tapped, the ActionSheet is closed before the tap event listener is called.
+				 */
+				buttons : {type : "sap.m.Button", multiple : true, singularName : "button"},
+
+				/**
+				 * The internally managed cancel button.
+				 */
+				_cancelButton : {type : "sap.m.Button", multiple : false, visibility : "hidden"},
+
+				/**
+				* Hidden texts used for accesibility
+				*/
+				_invisibleAriaTexts: {type : "sap.ui.core.InvisibleText", multiple : true, visibility : "hidden"}
 			},
+			defaultAggregation : "buttons",
+			events : {
 
-			/**
-			 * This event is fired when the cancelButton is clicked.
-			 *
-			 * <b>Note: </b> For any device other than phones, this event would be fired always when the Popover closes. To prevent this behavior, the <code>showCancelButton</code> property needs to be set to <code>false</code>.
-			 */
-			cancelButtonPress : {}
+				/**
+				 * This event is fired when the cancelButton is tapped. For iPad, this event is also fired when showCancelButton is set to true, and Popover is closed by tapping outside.
+				 * @deprecated Since version 1.20.0.
+				 * This event is deprecated, use the cancelButtonPress event instead.
+				 */
+				cancelButtonTap : {deprecated: true},
+
+				/**
+				 * This event will be fired before the ActionSheet is opened.
+				 */
+				beforeOpen : {},
+
+				/**
+				 * This event will be fired after the ActionSheet is opened.
+				 */
+				afterOpen : {},
+
+				/**
+				 * This event will be fired before the ActionSheet is closed.
+				 */
+				beforeClose : {
+					parameters: {
+						/**
+						 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null. This is valid only for Phone mode of the ActionSheet
+						 *
+						 */
+						origin: {type: "sap.m.Button"}
+					}
+				},
+
+				/**
+				 * This event will be fired after the ActionSheet is closed.
+				 */
+				afterClose : {
+					parameters: {
+						/**
+						 * This indicates the trigger of closing the control. If dialog is closed by either selection or closeButton (on mobile device), the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null.
+						 */
+						origin: {type: "sap.m.Button"}
+					}
+				},
+
+				/**
+				 * This event is fired when the cancelButton is clicked.
+				 *
+				 * <b>Note: </b> For any device other than phones, this event would be fired always when the Popover closes. To prevent this behavior, the <code>showCancelButton</code> property needs to be set to <code>false</code>.
+				 */
+				cancelButtonPress : {}
+			},
+			designtime: "sap/m/designtime/ActionSheet.designtime"
 		},
-		designtime: "sap/m/designtime/ActionSheet.designtime"
-	}});
+
+		renderer: ActionSheetRenderer
+	});
 
 	ActionSheet.prototype.init = function() {
 		// this method is kept here empty in case some control inherits from it but forgets to check the existence of this function when chaining the call

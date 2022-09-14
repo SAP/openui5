@@ -35,9 +35,13 @@ sap.ui.define([
 	 * @since 1.42.0
 	 * @alias sap.m.TreeItemBase
 	 */
-	var TreeItemBase = ListItemBase.extend("sap.m.TreeItemBase", /** @lends sap.m.TreeItemBase.prototype */ { metadata : {
-		library : "sap.m"
-	}});
+	var TreeItemBase = ListItemBase.extend("sap.m.TreeItemBase", /** @lends sap.m.TreeItemBase.prototype */ {
+		metadata : {
+			library : "sap.m"
+		},
+
+		renderer: TreeItemBaseRenderer
+	});
 
 	TreeItemBase.prototype.ExpandedIconURI = IconPool.getIconURI("navigation-down-arrow");
 	TreeItemBase.prototype.CollapsedIconURI = IconPool.getIconURI("navigation-right-arrow");

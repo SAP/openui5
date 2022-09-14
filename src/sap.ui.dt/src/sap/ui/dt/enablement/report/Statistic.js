@@ -15,7 +15,8 @@ sap.ui.define([
 	JSONModel,
 	SimpleForm,
 	Label,
-	Text
+	Text,
+	StatisticRenderer
 ) {
 	"use strict";
 
@@ -106,7 +107,9 @@ sap.ui.define([
 
 		_getForm: function() {
 			return this.getAggregation("_form");
-		}
+		},
+
+		renderer: StatisticRenderer
 	});
 
 	return oStatistic;

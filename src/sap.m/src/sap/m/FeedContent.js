@@ -83,7 +83,9 @@ sap.ui.define([
 				 */
 				"press" : {}
 			}
-		}
+		},
+
+		renderer: FeedContentRenderer
 	});
 
 	/* --- Lifecycle Handling --- */

@@ -99,7 +99,9 @@ sap.ui.define([
 				selectedSubSection: {type: "sap.uxap.ObjectPageSubSection", multiple: false}
 			},
 			designtime: "sap/uxap/designtime/ObjectPageSection.designtime"
-		}
+		},
+
+		renderer: ObjectPageSectionRenderer
 	});
 
 	ObjectPageSection.MEDIA_RANGE = Device.media.RANGESETS.SAP_STANDARD;

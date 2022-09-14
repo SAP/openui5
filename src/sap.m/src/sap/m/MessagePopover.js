@@ -267,7 +267,9 @@ function(
 						}
 					}
 				}
-			}
+			},
+
+			renderer: MessagePopoverRenderer
 		});
 
 

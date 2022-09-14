@@ -57,133 +57,137 @@ sap.ui.define([
 	 * @alias sap.m.FacetFilterList
 	 * @see {@link topic:395392f30f2a4c4d80d110d5f923da77 Facet Filter List}
 	 */
-	var FacetFilterList = List.extend("sap.m.FacetFilterList", /** @lends sap.m.FacetFilterList.prototype */ { metadata : {
+	var FacetFilterList = List.extend("sap.m.FacetFilterList", /** @lends sap.m.FacetFilterList.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Defines the title of the facet. The facet title is displayed on the facet button when the FacetFilter type is set to <code>Simple</code>. It is also displayed as a list item in the facet page of the dialog.
-			 */
-			title : {type : "string", group : "Appearance", defaultValue : null},
-			/**
-			 * If set to <code>true</code>, the item text wraps when it is too long.
-			 */
-			 wordWrap: {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * Defines the title of the facet. The facet title is displayed on the facet button when the FacetFilter type is set to <code>Simple</code>. It is also displayed as a list item in the facet page of the dialog.
+				 */
+				title : {type : "string", group : "Appearance", defaultValue : null},
+				/**
+				 * If set to <code>true</code>, the item text wraps when it is too long.
+				 */
+				 wordWrap: {type : "boolean", group : "Appearance", defaultValue : false},
 
-			/**
-			 * Specifies whether multiple or single selection is used.
-			 * @deprecated as of version 1.20.0, replaced by <code>setMode</code> method.
-			 * <code>FacetFilterList</code> overrides the <code>setMode</code> method to restrict the possible modes to
-			 * <code>MultiSelect</code> and <code>SingleSelectMaster</code>. All other modes are ignored and will not be set.
-			 */
-			multiSelect : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true},
+				/**
+				 * Specifies whether multiple or single selection is used.
+				 * @deprecated as of version 1.20.0, replaced by <code>setMode</code> method.
+				 * <code>FacetFilterList</code> overrides the <code>setMode</code> method to restrict the possible modes to
+				 * <code>MultiSelect</code> and <code>SingleSelectMaster</code>. All other modes are ignored and will not be set.
+				 */
+				multiSelect : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true},
 
-			/**
-			 * Indicates that the list is displayed as a button when the FacetFilter type is set to <code>Simple</code>.
-			 *
-			 * <b>Note:</b> Set the <code>showPersonalization</code> property of the
-			 * <code>FacetFilter</code> to <code>true</code> when this property is set to
-			 * <code>false</code>. This is needed, as the non-active lists are not displayed,
-			 * and without a personalization button they can't be selected by the user.
-			 */
-			active : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Indicates that the list is displayed as a button when the FacetFilter type is set to <code>Simple</code>.
+				 *
+				 * <b>Note:</b> Set the <code>showPersonalization</code> property of the
+				 * <code>FacetFilter</code> to <code>true</code> when this property is set to
+				 * <code>false</code>. This is needed, as the non-active lists are not displayed,
+				 * and without a personalization button they can't be selected by the user.
+				 */
+				active : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * If set to <code>true</code>, enables case-insensitive search for OData.
-			 */
-			enableCaseInsensitiveSearch: {type : "boolean", group : "Behavior", defaultValue : false, deprecated: false},
+				/**
+				 * If set to <code>true</code>, enables case-insensitive search for OData.
+				 */
+				enableCaseInsensitiveSearch: {type : "boolean", group : "Behavior", defaultValue : false, deprecated: false},
 
-			/**
-			 * Determines the number of objects that match this item in the target data set when all filter items are selected.
-			 */
-			allCount : {type : "int", group : "Appearance", defaultValue : null},
+				/**
+				 * Determines the number of objects that match this item in the target data set when all filter items are selected.
+				 */
+				allCount : {type : "int", group : "Appearance", defaultValue : null},
 
-			/**
-			 * Sequence that determines the order in which FacetFilterList is shown on the FacetFilter. Lists are rendered by ascending order of sequence.
-			 */
-			sequence : {type : "int", group : "Behavior", defaultValue : -1},
+				/**
+				 * Sequence that determines the order in which FacetFilterList is shown on the FacetFilter. Lists are rendered by ascending order of sequence.
+				 */
+				sequence : {type : "int", group : "Behavior", defaultValue : -1},
 
-			/**
-			 * Unique identifier for this filter list.
-			 */
-			key : {type : "string", group : "Identification", defaultValue : null},
+				/**
+				 * Unique identifier for this filter list.
+				 */
+				key : {type : "string", group : "Identification", defaultValue : null},
 
-			/**
-			 * Specifies whether remove icon for facet is visible or hidden.
-			 * @since 1.20.4
-			 */
-			showRemoveFacetIcon : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * Specifies whether remove icon for facet is visible or hidden.
+				 * @since 1.20.4
+				 */
+				showRemoveFacetIcon : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Retains the list sequence if it is inactive and made active again.
-			 * @since 1.22.1
-			 */
-			retainListSequence : {type : "boolean", group : "Misc", defaultValue : false},
+				/**
+				 * Retains the list sequence if it is inactive and made active again.
+				 * @since 1.22.1
+				 */
+				retainListSequence : {type : "boolean", group : "Misc", defaultValue : false},
 
-			/**
-			 * FacetFilterList data type. Only String data type will provide search function.
-			 */
-			dataType : {type : "sap.m.FacetFilterListDataType", group : "Misc", defaultValue : FacetFilterListDataType.String}
-		},
-		events : {
-
-			/**
-			 * Fired before the filter list is opened.
-			 *
-			 * The default filtering behavior of the sap.m.FacetFilterList can be prevented by calling <code>sap.ui.base.Event.prototype.preventDefault</code> function
-			 * in the <code>listOpen</code> event handler function. If the default filtering behavior is prevented then filtering behavior has to be defined at application level
-			 * inside the <code>listOpen</code> event handler function.
-			 */
-			listOpen: {
-				allowPreventDefault: true
+				/**
+				 * FacetFilterList data type. Only String data type will provide search function.
+				 */
+				dataType : {type : "sap.m.FacetFilterListDataType", group : "Misc", defaultValue : FacetFilterListDataType.String}
 			},
+			events : {
 
-			/**
-			 * Triggered after the list of items is closed.
-			 */
-			listClose : {
-				parameters : {
+				/**
+				 * Fired before the filter list is opened.
+				 *
+				 * The default filtering behavior of the sap.m.FacetFilterList can be prevented by calling <code>sap.ui.base.Event.prototype.preventDefault</code> function
+				 * in the <code>listOpen</code> event handler function. If the default filtering behavior is prevented then filtering behavior has to be defined at application level
+				 * inside the <code>listOpen</code> event handler function.
+				 */
+				listOpen: {
+					allowPreventDefault: true
+				},
 
-					/**
-					 * Array of selected items. Items returned are only copies and therefore can only be used to read properties, not set them.
-					 */
-					selectedItems : {type : "sap.m.FacetFilterItem[]"},
+				/**
+				 * Triggered after the list of items is closed.
+				 */
+				listClose : {
+					parameters : {
 
-					/**
-					 *  <code>True</code> if the select All checkbox is selected. This will be <code>false</code> if all items are actually selected (every FacetFilterItem.selected == true). In that case selectedItems will contain all selected items.
-					 */
-					allSelected : {type : "boolean"},
+						/**
+						 * Array of selected items. Items returned are only copies and therefore can only be used to read properties, not set them.
+						 */
+						selectedItems : {type : "sap.m.FacetFilterItem[]"},
 
-					/**
-					 * Associative array containing the keys of selected FacetFilterItems. Unlike the selectedItems parameter, this contains only the keys for all selected items, not the items themselves. Being an associative array, each object property is the FacetFilterItem key value and the value of the property is the FacetFilterItem text.
-					 */
-					selectedKeys : {type : "object"}
-				}
-			},
+						/**
+						 *  <code>True</code> if the select All checkbox is selected. This will be <code>false</code> if all items are actually selected (every FacetFilterItem.selected == true). In that case selectedItems will contain all selected items.
+						 */
+						allSelected : {type : "boolean"},
 
-			/**
-			 * Triggered after the Search button is pressed or by pressing Enter in search input field.
-			 *
-			 * The default filtering behavior of the control can be prevented by calling <code>sap.ui.base.Event.prototype.preventDefault</code>
-			 * function in the <code>search</code> event handler function.
-			 * Preventing the default behavior is useful in cases when items aggregation could be taking long time fetching from the OData model.
-			 * As a result, no list items are loaded initially.
-			 * If the default filtering behavior is prevented then filtering behavior has to be defined at application level
-			 * inside the <code>search</code> event handler function.
-			 * @since 1.76
-			 */
-			search: {
-				allowPreventDefault : true,
-				parameters : {
-					/**
-					 * Value received as user input in the <code>sap.m.SearchField</code>, and taken as a JavaScript string object.
-					 */
-					term: {type: "string"}
+						/**
+						 * Associative array containing the keys of selected FacetFilterItems. Unlike the selectedItems parameter, this contains only the keys for all selected items, not the items themselves. Being an associative array, each object property is the FacetFilterItem key value and the value of the property is the FacetFilterItem text.
+						 */
+						selectedKeys : {type : "object"}
+					}
+				},
+
+				/**
+				 * Triggered after the Search button is pressed or by pressing Enter in search input field.
+				 *
+				 * The default filtering behavior of the control can be prevented by calling <code>sap.ui.base.Event.prototype.preventDefault</code>
+				 * function in the <code>search</code> event handler function.
+				 * Preventing the default behavior is useful in cases when items aggregation could be taking long time fetching from the OData model.
+				 * As a result, no list items are loaded initially.
+				 * If the default filtering behavior is prevented then filtering behavior has to be defined at application level
+				 * inside the <code>search</code> event handler function.
+				 * @since 1.76
+				 */
+				search: {
+					allowPreventDefault : true,
+					parameters : {
+						/**
+						 * Value received as user input in the <code>sap.m.SearchField</code>, and taken as a JavaScript string object.
+						 */
+						term: {type: "string"}
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: FacetFilterListRenderer
+	});
 
 	/*
 	 * Sets the title property.

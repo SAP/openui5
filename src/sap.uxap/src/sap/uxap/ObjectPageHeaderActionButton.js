@@ -59,7 +59,9 @@ sap.ui.define(["sap/m/Button", "./library", "./ObjectPageHeaderActionButtonRende
 
 			},
 			designtime: "sap/uxap/designtime/ObjectPageHeaderActionButton.designtime"
-		}
+		},
+
+		renderer: ObjectPageHeaderActionButtonRenderer
 	});
 
 	ObjectPageHeaderActionButton.prototype.init = function () {

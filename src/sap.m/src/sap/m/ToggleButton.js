@@ -37,32 +37,36 @@ sap.ui.define([
 	 * @alias sap.m.ToggleButton
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/button/ Toggle Button}
 	 */
-	var ToggleButton = Button.extend("sap.m.ToggleButton", /** @lends sap.m.ToggleButton.prototype */ { metadata : {
+	var ToggleButton = Button.extend("sap.m.ToggleButton", /** @lends sap.m.ToggleButton.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		designtime: "sap/m/designtime/ToggleButton.designtime",
-		properties : {
+			library : "sap.m",
+			designtime: "sap/m/designtime/ToggleButton.designtime",
+			properties : {
 
-			/**
-			 * The property is “true” when the control is toggled. The default state of this property is "false".
-			 */
-			pressed : {type : "boolean", group : "Data", defaultValue : false}
-		},
-		events: {
-			/**
-			 * Fired when the user clicks or taps on the control.
-			 */
-			press: {
-				parameters: {
+				/**
+				 * The property is “true” when the control is toggled. The default state of this property is "false".
+				 */
+				pressed : {type : "boolean", group : "Data", defaultValue : false}
+			},
+			events: {
+				/**
+				 * Fired when the user clicks or taps on the control.
+				 */
+				press: {
+					parameters: {
 
-					/**
-					 * The current pressed state of the control.
-					 */
-					pressed: { type: "boolean" }
+						/**
+						 * The current pressed state of the control.
+						 */
+						pressed: { type: "boolean" }
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: ToggleButtonRenderer
+	});
 
 	EnabledPropagator.call(ToggleButton.prototype);
 

@@ -61,74 +61,78 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.m.Bar
 	 */
-	var Bar = Control.extend("sap.m.Bar", /** @lends sap.m.Bar.prototype */ { metadata : {
+	var Bar = Control.extend("sap.m.Bar", /** @lends sap.m.Bar.prototype */ {
+		metadata : {
 
-		interfaces : [
-			"sap.m.IBar"
-		],
-		library : "sap.m",
-		properties : {
+			interfaces : [
+				"sap.m.IBar"
+			],
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * If this flag is set to true, contentMiddle will be rendered as a HBox and layoutData can be used to allocate available space.
-			 * @deprecated since version 1.16, replaced by <code>contentMiddle</code> aggregation.
-			 * <code>contentMiddle</code> will always occupy of the 100% width when no <code>contentLeft</code> and <code>contentRight</code> are being set.
-			 */
-			enableFlexBox : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
+				/**
+				 * If this flag is set to true, contentMiddle will be rendered as a HBox and layoutData can be used to allocate available space.
+				 * @deprecated since version 1.16, replaced by <code>contentMiddle</code> aggregation.
+				 * <code>contentMiddle</code> will always occupy of the 100% width when no <code>contentLeft</code> and <code>contentRight</code> are being set.
+				 */
+				enableFlexBox : {type : "boolean", group : "Misc", defaultValue : false, deprecated: true},
 
-			/**
-			 * Indicates whether the Bar is partially translucent.
-			 * It is only applied for touch devices.
-			 * @since 1.12
-			 * @deprecated since version 1.18.6.
-			 * This property has no effect since release 1.18.6 and should not be used. Translucent bar may overlay an input and make it difficult to edit.
-			 */
-			translucent : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
+				/**
+				 * Indicates whether the Bar is partially translucent.
+				 * It is only applied for touch devices.
+				 * @since 1.12
+				 * @deprecated since version 1.18.6.
+				 * This property has no effect since release 1.18.6 and should not be used. Translucent bar may overlay an input and make it difficult to edit.
+				 */
+				translucent : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
-			/**
-			 * Determines the design of the bar. If set to auto, it becomes dependent on the place where the bar is placed.
-			 * @since 1.22
-			 */
-			design : {type : "sap.m.BarDesign", group : "Appearance", defaultValue : BarDesign.Auto},
+				/**
+				 * Determines the design of the bar. If set to auto, it becomes dependent on the place where the bar is placed.
+				 * @since 1.22
+				 */
+				design : {type : "sap.m.BarDesign", group : "Appearance", defaultValue : BarDesign.Auto},
 
-			/**
-			 * Specifies the Title alignment (theme specific).
-			 * If set to <code>TitleAlignment.None</code>, the automatic title alignment depending on the theme settings will be disabled.
-			 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
-			 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
-			 * @since 1.85
-			 * @public
-			 */
-			titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.None}
+				/**
+				 * Specifies the Title alignment (theme specific).
+				 * If set to <code>TitleAlignment.None</code>, the automatic title alignment depending on the theme settings will be disabled.
+				 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
+				 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
+				 * @since 1.85
+				 * @public
+				 */
+				titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.None}
 
+			},
+			aggregations : {
+
+				/**
+				 * Represents the left content area, usually containing a button or an app icon. If it is overlapped by the right content, its content will disappear and the text will show an ellipsis.
+				 */
+				contentLeft : {type : "sap.ui.core.Control", multiple : true, singularName : "contentLeft"},
+
+				/**
+				 * Represents the middle content area. Controls such as label, segmented buttons or select can be placed here. The content is centrally positioned if there is enough space. If the right or left content overlaps the middle content, the middle content will be centered in the space between the left and the right content.
+				 */
+				contentMiddle : {type : "sap.ui.core.Control", multiple : true, singularName : "contentMiddle"},
+
+				/**
+				 *  Represents the right content area. Controls such as action buttons or search field can be placed here.
+				 */
+				contentRight : {type : "sap.ui.core.Control", multiple : true, singularName : "contentRight"}
+			},
+			associations : {
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+			},
+			designtime: "sap/m/designtime/Bar.designtime",
+			dnd: { draggable: false, droppable: true }
 		},
-		aggregations : {
 
-			/**
-			 * Represents the left content area, usually containing a button or an app icon. If it is overlapped by the right content, its content will disappear and the text will show an ellipsis.
-			 */
-			contentLeft : {type : "sap.ui.core.Control", multiple : true, singularName : "contentLeft"},
-
-			/**
-			 * Represents the middle content area. Controls such as label, segmented buttons or select can be placed here. The content is centrally positioned if there is enough space. If the right or left content overlaps the middle content, the middle content will be centered in the space between the left and the right content.
-			 */
-			contentMiddle : {type : "sap.ui.core.Control", multiple : true, singularName : "contentMiddle"},
-
-			/**
-			 *  Represents the right content area. Controls such as action buttons or search field can be placed here.
-			 */
-			contentRight : {type : "sap.ui.core.Control", multiple : true, singularName : "contentRight"}
-		},
-		associations : {
-
-			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-			 */
-			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
-		},
-		designtime: "sap/m/designtime/Bar.designtime",
-		dnd: { draggable: false, droppable: true }
-	}});
+		renderer: BarRenderer
+	});
 
 	Bar.prototype.onBeforeRendering = function() {
 		var sCurrentAlignment = this.getTitleAlignment(),

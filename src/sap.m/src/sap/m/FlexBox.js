@@ -68,99 +68,103 @@ function(
 	 * @see https://www.w3schools.com/css/css3_flexbox.asp
 	 * @see {@link topic:674890e6d8534eaba2eaf63242e077eb Flex Box}
 	 */
-	var FlexBox = Control.extend("sap.m.FlexBox", /** @lends sap.m.FlexBox.prototype */ { metadata : {
+	var FlexBox = Control.extend("sap.m.FlexBox", /** @lends sap.m.FlexBox.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * The height of the <code>sap.m.FlexBox</code>. Note that when a percentage is given, for the height to work as expected, the height of the surrounding container must be defined.
-			 * @since 1.9.1
-			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
+				/**
+				 * The height of the <code>sap.m.FlexBox</code>. Note that when a percentage is given, for the height to work as expected, the height of the surrounding container must be defined.
+				 * @since 1.9.1
+				 */
+				height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 
-			/**
-			 * The width of the <code>sap.m.FlexBox</code>. Note that when a percentage is given, for the width to work as expected, the width of the surrounding container must be defined.
-			 * @since 1.9.1
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
+				/**
+				 * The width of the <code>sap.m.FlexBox</code>. Note that when a percentage is given, for the width to work as expected, the width of the surrounding container must be defined.
+				 * @since 1.9.1
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 
-			/**
-			 * Determines whether the <code>sap.m.FlexBox</code> is in block or inline mode.
-			 *
-			 * @see http://www.w3.org/TR/css-flexbox-1/#flex-containers
-			 */
-			displayInline : {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * Determines whether the <code>sap.m.FlexBox</code> is in block or inline mode.
+				 *
+				 * @see http://www.w3.org/TR/css-flexbox-1/#flex-containers
+				 */
+				displayInline : {type : "boolean", group : "Appearance", defaultValue : false},
 
-			/**
-			 * Determines the direction of the layout of child elements.
-			 *
-			 * @see http://www.w3.org/TR/css-flexbox-1/#flex-direction-property
-			 */
-			direction : {type : "sap.m.FlexDirection", group : "Appearance", defaultValue : FlexDirection.Row},
+				/**
+				 * Determines the direction of the layout of child elements.
+				 *
+				 * @see http://www.w3.org/TR/css-flexbox-1/#flex-direction-property
+				 */
+				direction : {type : "sap.m.FlexDirection", group : "Appearance", defaultValue : FlexDirection.Row},
 
-			/**
-			 * Determines whether the <code>sap.m.FlexBox</code> will be sized to completely fill its container. If the <code>sap.m.FlexBox</code> is inserted into a Page, the property 'enableScrolling' of the Page needs to be set to 'false' for the FlexBox to fit the entire viewport.
-			 */
-			fitContainer : {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * Determines whether the <code>sap.m.FlexBox</code> will be sized to completely fill its container. If the <code>sap.m.FlexBox</code> is inserted into a Page, the property 'enableScrolling' of the Page needs to be set to 'false' for the FlexBox to fit the entire viewport.
+				 */
+				fitContainer : {type : "boolean", group : "Appearance", defaultValue : false},
 
-			/**
-			 * Determines whether the layout is rendered as a series of divs or as an unordered list (ul).<br>
-			 * <br>
-			 * We recommend to use <code>Bare</code> in most cases to avoid layout issues due to browser inconsistencies.
-			 */
-			renderType : {type : "sap.m.FlexRendertype", group : "Misc", defaultValue : FlexRendertype.Div},
+				/**
+				 * Determines whether the layout is rendered as a series of divs or as an unordered list (ul).<br>
+				 * <br>
+				 * We recommend to use <code>Bare</code> in most cases to avoid layout issues due to browser inconsistencies.
+				 */
+				renderType : {type : "sap.m.FlexRendertype", group : "Misc", defaultValue : FlexRendertype.Div},
 
-			/**
-			 * Determines the layout behavior along the main axis.
-			 *
-			 * @see http://www.w3.org/TR/css-flexbox-1/#justify-content-property
-			 */
-			justifyContent : {type : "sap.m.FlexJustifyContent", group : "Appearance", defaultValue : FlexJustifyContent.Start},
+				/**
+				 * Determines the layout behavior along the main axis.
+				 *
+				 * @see http://www.w3.org/TR/css-flexbox-1/#justify-content-property
+				 */
+				justifyContent : {type : "sap.m.FlexJustifyContent", group : "Appearance", defaultValue : FlexJustifyContent.Start},
 
-			/**
-			 * Determines the layout behavior of items along the cross-axis.
-			 *
-			 * @see http://www.w3.org/TR/css-flexbox-1/#align-items-property
-			 */
-			alignItems : {type : "sap.m.FlexAlignItems", group : "Appearance", defaultValue : FlexAlignItems.Stretch},
+				/**
+				 * Determines the layout behavior of items along the cross-axis.
+				 *
+				 * @see http://www.w3.org/TR/css-flexbox-1/#align-items-property
+				 */
+				alignItems : {type : "sap.m.FlexAlignItems", group : "Appearance", defaultValue : FlexAlignItems.Stretch},
 
-			/**
-			 * Determines the wrapping behavior of the flex container. This property has no effect in older browsers, e.g. Android Native 4.3 and below.
-			 *
-			 * @see http://www.w3.org/TR/css-flexbox-1/#flex-wrap-property
-			 *
-			 * @since 1.36.0
-			 */
-			wrap : {type : "sap.m.FlexWrap", group : "Appearance", defaultValue : FlexWrap.NoWrap},
+				/**
+				 * Determines the wrapping behavior of the flex container. This property has no effect in older browsers, e.g. Android Native 4.3 and below.
+				 *
+				 * @see http://www.w3.org/TR/css-flexbox-1/#flex-wrap-property
+				 *
+				 * @since 1.36.0
+				 */
+				wrap : {type : "sap.m.FlexWrap", group : "Appearance", defaultValue : FlexWrap.NoWrap},
 
-			/**
-			 * Determines the layout behavior of container lines when there's extra space along the cross-axis.
-			 *
-			 * @see http://www.w3.org/TR/css-flexbox-1/#align-content-property
-			 *
-			 * @since 1.36.0
-			 */
-			alignContent : {type : "sap.m.FlexAlignContent", group : "Appearance", defaultValue : FlexAlignContent.Stretch},
+				/**
+				 * Determines the layout behavior of container lines when there's extra space along the cross-axis.
+				 *
+				 * @see http://www.w3.org/TR/css-flexbox-1/#align-content-property
+				 *
+				 * @since 1.36.0
+				 */
+				alignContent : {type : "sap.m.FlexAlignContent", group : "Appearance", defaultValue : FlexAlignContent.Stretch},
 
-			/**
-			 * Defines the background style of the <code>sap.m.FlexBox</code>.
-			 *
-			 * @since 1.38.5
-			 */
-			backgroundDesign: {type: "sap.m.BackgroundDesign", group: "Appearance", defaultValue: BackgroundDesign.Transparent}
+				/**
+				 * Defines the background style of the <code>sap.m.FlexBox</code>.
+				 *
+				 * @since 1.38.5
+				 */
+				backgroundDesign: {type: "sap.m.BackgroundDesign", group: "Appearance", defaultValue: BackgroundDesign.Transparent}
+			},
+			defaultAggregation : "items",
+			aggregations : {
+
+				/**
+				 * Flex items within the flexible box layout
+				 */
+				items : {type : "sap.ui.core.Control", multiple : true, singularName : "item"}
+			},
+			designtime: "sap/m/designtime/FlexBox.designtime",
+			dnd: { draggable: false, droppable: true }
 		},
-		defaultAggregation : "items",
-		aggregations : {
 
-			/**
-			 * Flex items within the flexible box layout
-			 */
-			items : {type : "sap.ui.core.Control", multiple : true, singularName : "item"}
-		},
-		designtime: "sap/m/designtime/FlexBox.designtime",
-		dnd: { draggable: false, droppable: true }
-	}});
+		renderer: FlexBoxRenderer
+	});
 
 	/**
 	 * Initializes the control.

@@ -152,88 +152,92 @@ function(
 	 * @alias sap.m.MultiComboBox
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/multi-combobox/ Multi-Combo Box}
 	 */
-	var MultiComboBox = ComboBoxBase.extend("sap.m.MultiComboBox", /** @lends sap.m.MultiComboBox.prototype */ { metadata: {
+	var MultiComboBox = ComboBoxBase.extend("sap.m.MultiComboBox", /** @lends sap.m.MultiComboBox.prototype */ {
+		metadata: {
 
-		library: "sap.m",
-		designtime: "sap/m/designtime/MultiComboBox.designtime",
-		properties: {
+			library: "sap.m",
+			designtime: "sap/m/designtime/MultiComboBox.designtime",
+			properties: {
 
-			/**
-			 * Keys of the selected items. If the key has no corresponding item, no changes will apply. If duplicate keys exists the first item matching the key is used.
-			 */
-			selectedKeys: { type: "string[]", group: "Data", defaultValue: [] },
+				/**
+				 * Keys of the selected items. If the key has no corresponding item, no changes will apply. If duplicate keys exists the first item matching the key is used.
+				 */
+				selectedKeys: { type: "string[]", group: "Data", defaultValue: [] },
 
-			/**
-			 * Defines if there are selected items or not.
-			 */
-			hasSelection: { type: "boolean", visibility: "hidden", defaultValue: false },
+				/**
+				 * Defines if there are selected items or not.
+				 */
+				hasSelection: { type: "boolean", visibility: "hidden", defaultValue: false },
 
-			/**
-			 * Determines if the select all checkbox is visible on top of suggestions.
-			 */
-			showSelectAll: { type: "boolean", defaultValue: false }
-		},
-		associations: {
+				/**
+				 * Determines if the select all checkbox is visible on top of suggestions.
+				 */
+				showSelectAll: { type: "boolean", defaultValue: false }
+			},
+			associations: {
 
-			/**
-			 * Provides getter and setter for the selected items from
-			 * the aggregation named items.
-			 */
-			selectedItems: { type: "sap.ui.core.Item", multiple: true, singularName: "selectedItem" }
-		},
-		aggregations: {
-			/**
-			 * The tokenizer which displays the tokens
-			 */
-			tokenizer: {type: "sap.m.Tokenizer", multiple: false, visibility: "hidden"}
-		},
-		events: {
+				/**
+				 * Provides getter and setter for the selected items from
+				 * the aggregation named items.
+				 */
+				selectedItems: { type: "sap.ui.core.Item", multiple: true, singularName: "selectedItem" }
+			},
+			aggregations: {
+				/**
+				 * The tokenizer which displays the tokens
+				 */
+				tokenizer: {type: "sap.m.Tokenizer", multiple: false, visibility: "hidden"}
+			},
+			events: {
 
-			/**
-			 * Event is fired when selection of an item is changed.
-			 * Note: please do not use the "change" event inherited from sap.m.InputBase
-			 */
-			selectionChange: {
-				parameters: {
+				/**
+				 * Event is fired when selection of an item is changed.
+				 * Note: please do not use the "change" event inherited from sap.m.InputBase
+				 */
+				selectionChange: {
+					parameters: {
 
-					/**
-					 * Item which selection is changed
-					 */
-					changedItem: { type: "sap.ui.core.Item" },
+						/**
+						 * Item which selection is changed
+						 */
+						changedItem: { type: "sap.ui.core.Item" },
 
-					/**
-					 * Array of items whose selection has changed.
-					 */
-					changedItems : {type : "sap.ui.core.Item[]"},
+						/**
+						 * Array of items whose selection has changed.
+						 */
+						changedItems : {type : "sap.ui.core.Item[]"},
 
-					/**
-					 * Selection state: true if item is selected, false if
-					 * item is not selected
-					 */
-					selected: { type: "boolean" },
+						/**
+						 * Selection state: true if item is selected, false if
+						 * item is not selected
+						 */
+						selected: { type: "boolean" },
 
-					/**
-					 * Indicates whether the select all action is triggered or not.
-					 */
-					selectAll : {type : "boolean"}
+						/**
+						 * Indicates whether the select all action is triggered or not.
+						 */
+						selectAll : {type : "boolean"}
+					}
+				},
+
+				/**
+				 * Event is fired when user has finished a selection of items in a list box and list box has been closed.
+				 */
+				selectionFinish: {
+					parameters: {
+
+						/**
+						 * The selected items which are selected after list box has been closed.
+						 */
+						selectedItems: { type: "sap.ui.core.Item[]" }
+					}
 				}
 			},
-
-			/**
-			 * Event is fired when user has finished a selection of items in a list box and list box has been closed.
-			 */
-			selectionFinish: {
-				parameters: {
-
-					/**
-					 * The selected items which are selected after list box has been closed.
-					 */
-					selectedItems: { type: "sap.ui.core.Item[]" }
-				}
-			}
+			dnd: { draggable: false, droppable: true }
 		},
-		dnd: { draggable: false, droppable: true }
-	}});
+
+		renderer: MultiComboBoxRenderer
+	});
 
 	IconPool.insertFontFaceStyle();
 	EnabledPropagator.apply(MultiComboBox.prototype, [true]);

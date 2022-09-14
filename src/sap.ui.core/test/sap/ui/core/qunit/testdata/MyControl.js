@@ -1,4 +1,4 @@
-sap.ui.define(['sap/ui/core/Control', "./MyControlRenderer"], function(Control) {
+sap.ui.define(['sap/ui/core/Control', "./MyControlRenderer"], function(Control, MyControlRenderer) {
 	"use strict";
 
 	var MyControl = Control.extend("testdata.core.testdata.MyControl", {
@@ -7,7 +7,9 @@ sap.ui.define(['sap/ui/core/Control', "./MyControlRenderer"], function(Control) 
 				text: {type: "string", group: "Misc", defaultValue: null}
 			}
 
-		}
+		},
+
+		renderer: MyControlRenderer
 	});
 
 	return MyControl;

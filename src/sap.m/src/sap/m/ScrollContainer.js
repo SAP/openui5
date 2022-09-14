@@ -92,7 +92,9 @@ sap.ui.define([
 				},
 				dnd: { draggable: false, droppable: true },
 				designtime: "sap/m/designtime/ScrollContainer.designtime"
-			}
+			},
+
+			renderer: ScrollContainerRenderer
 		});
 
 		ScrollContainer.prototype.init = function () {

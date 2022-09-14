@@ -45,96 +45,100 @@ function(
 	 * @since 1.48.0
 	 * @alias sap.m.SelectionDetails
 	 */
-	var SelectionDetails = Control.extend("sap.m.SelectionDetails", /** @lends sap.m.SelectionDetails.prototype */ { metadata: {
-		library: "sap.m",
-		defaultAggregation: "items",
-		aggregations: {
-			/**
-			 * Contains {@link sap.m.SelectionDetailsItem items} that are displayed on the first page.
-			 */
-			"items": {type: "sap.m.SelectionDetailsItem", multiple: true, bindable: "bindable"},
+	var SelectionDetails = Control.extend("sap.m.SelectionDetails", /** @lends sap.m.SelectionDetails.prototype */ {
+		metadata: {
+			library: "sap.m",
+			defaultAggregation: "items",
+			aggregations: {
+				/**
+				 * Contains {@link sap.m.SelectionDetailsItem items} that are displayed on the first page.
+				 */
+				"items": {type: "sap.m.SelectionDetailsItem", multiple: true, bindable: "bindable"},
 
-			/**
-			 * Contains custom actions shown in the responsive toolbar below items on the first page.
-			 */
-			"actions": {type: "sap.ui.core.Item", multiple: true},
+				/**
+				 * Contains custom actions shown in the responsive toolbar below items on the first page.
+				 */
+				"actions": {type: "sap.ui.core.Item", multiple: true},
 
-			/**
-			 * Contains actions that are rendered as a dedicated {@link sap.m.StandardListItem item}.
-			 * In case an action group is pressed, a navigation should be triggered via <code>navTo</code> method.
-			 * A maximum of 5 actionGroups is displayed inside the popover, though more can be added to the aggregation.
-			 */
-			"actionGroups": {type: "sap.ui.core.Item", multiple: true},
+				/**
+				 * Contains actions that are rendered as a dedicated {@link sap.m.StandardListItem item}.
+				 * In case an action group is pressed, a navigation should be triggered via <code>navTo</code> method.
+				 * A maximum of 5 actionGroups is displayed inside the popover, though more can be added to the aggregation.
+				 */
+				"actionGroups": {type: "sap.ui.core.Item", multiple: true},
 
-			/**
-			 * Hidden aggregation that contains the popover.
-			 */
-			"_popover": {type: "sap.m.ResponsivePopover", multiple: false, visibility: "hidden"},
+				/**
+				 * Hidden aggregation that contains the popover.
+				 */
+				"_popover": {type: "sap.m.ResponsivePopover", multiple: false, visibility: "hidden"},
 
-			/**
-			 * Hidden aggregation that contains the button.
-			 */
-			"_button": {type: "sap.m.Button", multiple: false, visibility: "hidden"}
-		},
-		events: {
-			/**
-			 * Event is triggered before the popover is open.
-			 */
-			beforeOpen: {},
-
-			/**
-			 * Event is triggered before the popover is closed.
-			 */
-			beforeClose: {},
-
-			/**
-			 * Event is triggered after a list item of {@link sap.m.SelectionDetailsItem} is pressed.
-			 */
-			navigate: {
-				parameters: {
-					/**
-					 * The item on which the action has been pressed.
-					 * Can be null in case a navigation was done without item context, e.g. action press.
-					 */
-					item: {type: "sap.m.SelectionDetailsItem"},
-
-					/**
-					 * Direction of the triggered navigation, possible values are "to" and "back".
-					 */
-					direction: {type: "string"},
-					/**
-					 * The content of the currently viewed page that was previously added via {@link sap.m.SelectionDetailsFacade#navTo}.
-					 * This contains the content of the page before the navigation was triggered.
-					 * Can be null in case of first event triggering.
-					 */
-					content: {type: "sap.ui.core.Control"}
-				}
+				/**
+				 * Hidden aggregation that contains the button.
+				 */
+				"_button": {type: "sap.m.Button", multiple: false, visibility: "hidden"}
 			},
+			events: {
+				/**
+				 * Event is triggered before the popover is open.
+				 */
+				beforeOpen: {},
 
-			/**
-			 * Event is triggered when a custom action is pressed.
-			 */
-			actionPress: {
-				parameters: {
+				/**
+				 * Event is triggered before the popover is closed.
+				 */
+				beforeClose: {},
 
-					/**
-					 * The action that has to be processed once the action has been pressed
-					 */
-					action: {type: "sap.ui.core.Item"},
+				/**
+				 * Event is triggered after a list item of {@link sap.m.SelectionDetailsItem} is pressed.
+				 */
+				navigate: {
+					parameters: {
+						/**
+						 * The item on which the action has been pressed.
+						 * Can be null in case a navigation was done without item context, e.g. action press.
+						 */
+						item: {type: "sap.m.SelectionDetailsItem"},
 
-					/**
-					 * If the action is pressed on one of the {@link sap.m.SelectionDetailsItem items}, the parameter contains a reference to the pressed {@link sap.m.SelectionDetailsItem item}. If a custom action or action group of the SelectionDetails popover is pressed, this parameter refers to all {@link sap.m.SelectionDetailsItem items}
-					 */
-					items: {type: "sap.m.SelectionDetailsItem"},
+						/**
+						 * Direction of the triggered navigation, possible values are "to" and "back".
+						 */
+						direction: {type: "string"},
+						/**
+						 * The content of the currently viewed page that was previously added via {@link sap.m.SelectionDetailsFacade#navTo}.
+						 * This contains the content of the page before the navigation was triggered.
+						 * Can be null in case of first event triggering.
+						 */
+						content: {type: "sap.ui.core.Control"}
+					}
+				},
 
-					/**
-					 * The action level of action buttons. The available levels are Item, List and Group
-					 */
-					level: {type: "sap.m.SelectionDetailsActionLevel"}
+				/**
+				 * Event is triggered when a custom action is pressed.
+				 */
+				actionPress: {
+					parameters: {
+
+						/**
+						 * The action that has to be processed once the action has been pressed
+						 */
+						action: {type: "sap.ui.core.Item"},
+
+						/**
+						 * If the action is pressed on one of the {@link sap.m.SelectionDetailsItem items}, the parameter contains a reference to the pressed {@link sap.m.SelectionDetailsItem item}. If a custom action or action group of the SelectionDetails popover is pressed, this parameter refers to all {@link sap.m.SelectionDetailsItem items}
+						 */
+						items: {type: "sap.m.SelectionDetailsItem"},
+
+						/**
+						 * The action level of action buttons. The available levels are Item, List and Group
+						 */
+						level: {type: "sap.m.SelectionDetailsActionLevel"}
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: SelectionDetailsRenderer
+	});
 
 	/**
 	 * The maximum number of actionGroups that are shown in the actionGroup list.

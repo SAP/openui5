@@ -274,7 +274,9 @@ function(
 			},
 			dnd: { draggable: false, droppable: true },
 			designtime: "sap/m/designtime/semantic/SemanticPage.designtime"
-		}
+		},
+
+		renderer: SemanticPageRenderer
 	});
 
 	SemanticPage.prototype.init = function () {

@@ -29,7 +29,9 @@ function(Control, Library, SliderTooltipBaseRenderer) {
 		var SliderTooltipBase = Control.extend("sap.m.SliderTooltipBase", /** @lends sap.m.SliderTooltipBase.prototype */ {
 			metadata: {
 				library: "sap.m"
-			}
+			},
+
+			renderer: SliderTooltipBaseRenderer
 		});
 
 		SliderTooltipBase.prototype.init = function () {

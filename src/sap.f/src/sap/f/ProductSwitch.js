@@ -82,7 +82,9 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+
+			renderer: ProductSwitchRenderer
 		});
 
 		ProductSwitch.COLUMNS = {

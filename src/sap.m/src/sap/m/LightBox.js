@@ -146,7 +146,9 @@ sap.ui.define([
 			defaultAggregation: "imageContent",
 			events: {},
 			designtime: "sap/m/designtime/LightBox.designtime"
-		}
+		},
+
+		renderer: LightBoxRenderer
 	});
 
 	//================================================================================

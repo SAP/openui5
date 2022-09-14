@@ -312,7 +312,10 @@ function(
 				},
 
 				dnd: { draggable: false, droppable: true }
-		}});
+		},
+
+			renderer: TimePickerRenderer
+		});
 
 		/**
 		 * Determines the format, displayed in the input field and the picker clocks/numeric inputs.

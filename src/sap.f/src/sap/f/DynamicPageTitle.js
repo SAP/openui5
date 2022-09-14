@@ -338,7 +338,9 @@ sap.ui.define([
 				}
 			},
 			designtime: "sap/f/designtime/DynamicPageTitle.designtime"
-		}
+		},
+
+		renderer: DynamicPageTitleRenderer
 	});
 
 	function exists(vObject) {

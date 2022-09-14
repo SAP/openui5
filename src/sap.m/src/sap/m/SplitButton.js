@@ -51,92 +51,96 @@ function(
 		 * @ui5-restricted sap.m.MenuButton,sap.ui.richtextEditor.ToolbarWrapper
 		 * @alias sap.m.SplitButton
 		 */
-		var SplitButton = Control.extend("sap.m.SplitButton", /** @lends sap.m.SplitButton.prototype */ { metadata : {
+		var SplitButton = Control.extend("sap.m.SplitButton", /** @lends sap.m.SplitButton.prototype */ {
+			metadata : {
 
-			interfaces : [
-				"sap.m.IOverflowToolbarContent"
-			],
-			library : "sap.m",
-			properties : {
+				interfaces : [
+					"sap.m.IOverflowToolbarContent"
+				],
+				library : "sap.m",
+				properties : {
 
-				/**
-				 * Define the text of the button.
-				 */
-				text : {type : "string", group : "Misc", defaultValue : null},
+					/**
+					 * Define the text of the button.
+					 */
+					text : {type : "string", group : "Misc", defaultValue : null},
 
-				/**
-				 * Defines the type of the button (for example, Default, Accept, Reject, Transparent).
-				 * Values <code>Back</code>, <code>Up</code> and <code>Unstyled</code> are ignored.
-				 */
-				type : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : ButtonType.Default},
+					/**
+					 * Defines the type of the button (for example, Default, Accept, Reject, Transparent).
+					 * Values <code>Back</code>, <code>Up</code> and <code>Unstyled</code> are ignored.
+					 */
+					type : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : ButtonType.Default},
 
-				/**
-				 * Defines the width of the button.
-				 */
-				width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
+					/**
+					 * Defines the width of the button.
+					 */
+					width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
 
-				/**
-				 * Boolean property to enable the control (default is <code>true</code>).
-				 * <b>Note:</b> Depending on custom settings, the buttons that are disabled have other colors than the enabled ones.
-				 */
-				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+					/**
+					 * Boolean property to enable the control (default is <code>true</code>).
+					 * <b>Note:</b> Depending on custom settings, the buttons that are disabled have other colors than the enabled ones.
+					 */
+					enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
-				/**
-				 * Defines the icon to be displayed as graphical element within the button.
-				 * This can be an image or an icon from the icon font.
-				 */
-				icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
+					/**
+					 * Defines the icon to be displayed as graphical element within the button.
+					 * This can be an image or an icon from the icon font.
+					 */
+					icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 
-				/**
-				 * The source property of an alternative icon for the active (pressed) state of the button.
-				 * Both active and default icon properties should be defined and of the same type - image or icon font.
-				 * If the <code>icon</code> property is not set or has a different type, the active icon is not displayed.
-				 */
-				activeIcon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
+					/**
+					 * The source property of an alternative icon for the active (pressed) state of the button.
+					 * Both active and default icon properties should be defined and of the same type - image or icon font.
+					 * If the <code>icon</code> property is not set or has a different type, the active icon is not displayed.
+					 */
+					activeIcon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
 
-				/**
-				 * When set to <code>true</code (default), one or more requests are sent trying to get
-				 * the density perfect version of image if this version of image doesn't exist on the server.
-				 * If only one version of image is provided, set this value to <code>false</code> to
-				 * avoid the attempt of fetching density perfect image.
-				 */
-				iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
+					/**
+					 * When set to <code>true</code (default), one or more requests are sent trying to get
+					 * the density perfect version of image if this version of image doesn't exist on the server.
+					 * If only one version of image is provided, set this value to <code>false</code> to
+					 * avoid the attempt of fetching density perfect image.
+					 */
+					iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
 
-				/**
-				 * This property specifies the element's text directionality with enumerated options.
-				 * By default, the control inherits text direction from the DOM.
-				 */
-				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
-			},
-			aggregations: {
-				_textButton: { type: "sap.m.Button", multiple: false, visibility: "hidden" },
-				_arrowButton: { type: "sap.m.Button", multiple: false, visibility: "hidden" }
-			},
-			associations : {
+					/**
+					 * This property specifies the element's text directionality with enumerated options.
+					 * By default, the control inherits text direction from the DOM.
+					 */
+					textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
+				},
+				aggregations: {
+					_textButton: { type: "sap.m.Button", multiple: false, visibility: "hidden" },
+					_arrowButton: { type: "sap.m.Button", multiple: false, visibility: "hidden" }
+				},
+				associations : {
 
-				/**
-				 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
-				 */
-				ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+					/**
+					 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
+					 */
+					ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
 
-				/**
-				 * Association to controls / IDs, which label this control (see WAI-ARIA attribute aria-labelledby).
-				 */
-				ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
-			},
-			events : {
-				/**
-				 * Fired when the user clicks on the control.
-				 */
-				press : {},
+					/**
+					 * Association to controls / IDs, which label this control (see WAI-ARIA attribute aria-labelledby).
+					 */
+					ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+				},
+				events : {
+					/**
+					 * Fired when the user clicks on the control.
+					 */
+					press : {},
 
-				/**
-				 * Fired when the arrow button is pressed.
-				 */
-				arrowPress : {
+					/**
+					 * Fired when the arrow button is pressed.
+					 */
+					arrowPress : {
+					}
 				}
-			}
-		}});
+			},
+
+			renderer: SplitButtonRenderer
+		});
 
 		EnabledPropagator.call(SplitButton.prototype);
 

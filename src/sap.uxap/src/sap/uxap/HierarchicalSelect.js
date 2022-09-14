@@ -44,7 +44,9 @@ sap.ui.define([
 				 */
 				upperCase: {type: "boolean", group: "Appearance", defaultValue: false}
 			}
-		}
+		},
+
+		renderer: HierarchicalSelectRenderer
 	});
 
 	HierarchicalSelect.POPOVER_MIN_WIDTH_REM = 11;

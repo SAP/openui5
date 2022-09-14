@@ -66,77 +66,81 @@ sap.ui.define([
 	 * @see {@link topic:32d4b9c2b981425dbc374d3e9d5d0c2e Grid Controls}
 	 * @alias sap.ui.layout.Grid
 	 */
-	var Grid = Control.extend("sap.ui.layout.Grid", /** @lends sap.ui.layout.Grid.prototype */ { metadata : {
+	var Grid = Control.extend("sap.ui.layout.Grid", /** @lends sap.ui.layout.Grid.prototype */ {
+		metadata : {
 
-		library : "sap.ui.layout",
-		properties : {
+			library : "sap.ui.layout",
+			properties : {
 
-			/**
-			 * Optional. Defines the width of the <code>Grid</code>. If not specified, then 100%.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+				/**
+				 * Optional. Defines the width of the <code>Grid</code>. If not specified, then 100%.
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 
-			/**
-			 * Optional. Defines the vertical spacing between the rows in the <code>Grid</code>.
-			 * In rem, allowed values are 0, 0.5, 1 and 2.
-			 */
-			vSpacing : {type : "float", group : "Dimension", defaultValue : 1},
+				/**
+				 * Optional. Defines the vertical spacing between the rows in the <code>Grid</code>.
+				 * In rem, allowed values are 0, 0.5, 1 and 2.
+				 */
+				vSpacing : {type : "float", group : "Dimension", defaultValue : 1},
 
-			/**
-			 * Optional. Defines the horizontal spacing between the content in the <code>Grid</code>.
-			 * In rem, allowed values are 0, 0.5 , 1 or 2.
-			 */
-			hSpacing : {type : "float", group : "Dimension", defaultValue : 1},
+				/**
+				 * Optional. Defines the horizontal spacing between the content in the <code>Grid</code>.
+				 * In rem, allowed values are 0, 0.5 , 1 or 2.
+				 */
+				hSpacing : {type : "float", group : "Dimension", defaultValue : 1},
 
-			/**
-			 * Optional. Defines the position of the <code>Grid</code> in the window or surrounding container.
-			 */
-			position : {type : "sap.ui.layout.GridPosition", group : "Dimension", defaultValue : "Left"},
+				/**
+				 * Optional. Defines the position of the <code>Grid</code> in the window or surrounding container.
+				 */
+				position : {type : "sap.ui.layout.GridPosition", group : "Dimension", defaultValue : "Left"},
 
-			/**
-			 * Optional. A string type that represents the span values of the <code>Grid</code> for
-			 * large, medium and small screens. Allowed values are separated by space Letters L, M or S followed
-			 * by number of columns from 1 to 12 that the container has to take, for example, <code>L2 M4 S6</code>,
-			 * <code>M12</code>, <code>s10</code> or <code>l4 m4</code>.
-			 *
-			 * <b>Note:</b> The parameters must be provided in the order <large medium small>.
-			 */
-			defaultSpan : {type : "sap.ui.layout.GridSpan", group : "Behavior", defaultValue : "XL3 L3 M6 S12"},
+				/**
+				 * Optional. A string type that represents the span values of the <code>Grid</code> for
+				 * large, medium and small screens. Allowed values are separated by space Letters L, M or S followed
+				 * by number of columns from 1 to 12 that the container has to take, for example, <code>L2 M4 S6</code>,
+				 * <code>M12</code>, <code>s10</code> or <code>l4 m4</code>.
+				 *
+				 * <b>Note:</b> The parameters must be provided in the order <large medium small>.
+				 */
+				defaultSpan : {type : "sap.ui.layout.GridSpan", group : "Behavior", defaultValue : "XL3 L3 M6 S12"},
 
-			/**
-			 * Optional. Defines default for the whole Grid numbers of empty columns before the current span begins.
-			 * It can be defined for large, medium and small screens. Allowed values are separated by space Letters
-			 * L, M or S followed by number of columns from 0 to 11 that the container has to take, for example,
-			 * <code>L2 M4 S6</code>, <code>M11</code>, <code>s10</code> or <code>l4 m4</code>.
-			 *
-			 * <b>Note:</b> The parameters must be provided in the order <large medium small>.
-			 */
-			defaultIndent : {type : "sap.ui.layout.GridIndent", group : "Behavior", defaultValue : "XL0 L0 M0 S0"},
+				/**
+				 * Optional. Defines default for the whole Grid numbers of empty columns before the current span begins.
+				 * It can be defined for large, medium and small screens. Allowed values are separated by space Letters
+				 * L, M or S followed by number of columns from 0 to 11 that the container has to take, for example,
+				 * <code>L2 M4 S6</code>, <code>M11</code>, <code>s10</code> or <code>l4 m4</code>.
+				 *
+				 * <b>Note:</b> The parameters must be provided in the order <large medium small>.
+				 */
+				defaultIndent : {type : "sap.ui.layout.GridIndent", group : "Behavior", defaultValue : "XL0 L0 M0 S0"},
 
-			/**
-			 * If set to <code>true</code>, the current range (large, medium or small) is defined by the size of the
-			 * container surrounding the <code>Grid</code> instead of the device screen size (media Query).
-			 */
-			containerQuery : {type : "boolean", group : "Behavior", defaultValue : false}
+				/**
+				 * If set to <code>true</code>, the current range (large, medium or small) is defined by the size of the
+				 * container surrounding the <code>Grid</code> instead of the device screen size (media Query).
+				 */
+				containerQuery : {type : "boolean", group : "Behavior", defaultValue : false}
+			},
+			defaultAggregation : "content",
+			aggregations : {
+
+				/**
+				 * Controls that are placed into Grid layout.
+				 */
+				content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
+			},
+			associations: {
+
+				/**
+				 * Association to controls / IDs that label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
+				 * @since 1.48.7
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+			},
+			designtime: "sap/ui/layout/designtime/Grid.designtime"
 		},
-		defaultAggregation : "content",
-		aggregations : {
 
-			/**
-			 * Controls that are placed into Grid layout.
-			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
-		},
-		associations: {
-
-			/**
-			 * Association to controls / IDs that label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
-			 * @since 1.48.7
-			 */
-			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-		},
-		designtime: "sap/ui/layout/designtime/Grid.designtime"
-	}});
+		renderer: GridRenderer
+	});
 
 	(function() {
 

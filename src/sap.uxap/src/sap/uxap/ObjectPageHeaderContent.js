@@ -94,7 +94,9 @@ sap.ui.define([
 
 					_placeholder: {type: "sap.m.Avatar", multiple: false, visibility: "hidden"}
 				}
-			}
+			},
+
+			renderer: ObjectPageHeaderContentRenderer
 		});
 
 

@@ -28,16 +28,20 @@ sap.ui.define(['sap/m/PlanningCalendarLegend', 'sap/ui/unified/CalendarLegendIte
 		 * @experimental Since 1.74.
 		 * @alias sap.f.PlanningCalendarInCardLegend
 		 */
-		var PlanningCalendarInCardLegend = PlanningCalendarLegend.extend("sap.f.PlanningCalendarInCardLegend", /** @lends sap.f.PlanningCalendarInCardLegend.prototype */ { metadata : {
+		var PlanningCalendarInCardLegend = PlanningCalendarLegend.extend("sap.f.PlanningCalendarInCardLegend", /** @lends sap.f.PlanningCalendarInCardLegend.prototype */ {
+			metadata : {
 
-			library : "sap.m",
-			properties: {
-				/**
-				 * Defines the number of visible calendar and appointment items.
-				 */
-				visibleLegendItemsCount: {type : "int", group : "Data", defaultValue: 2}
-			}
-		}});
+				library : "sap.m",
+				properties: {
+					/**
+					 * Defines the number of visible calendar and appointment items.
+					 */
+					visibleLegendItemsCount: {type : "int", group : "Data", defaultValue: 2}
+				}
+			},
+
+			renderer: PlanningCalendarInCardLegendRenderer
+		});
 
 		PlanningCalendarInCardLegend.prototype.exit = function () {
 			PlanningCalendarLegend.prototype.exit.call(this, arguments);

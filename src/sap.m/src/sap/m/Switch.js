@@ -54,76 +54,80 @@ function(
 		 * @public
 		 * @alias sap.m.Switch
 		 */
-		var Switch = Control.extend("sap.m.Switch", /** @lends sap.m.Switch.prototype */ { metadata: {
+		var Switch = Control.extend("sap.m.Switch", /** @lends sap.m.Switch.prototype */ {
+			metadata: {
 
-			interfaces: [
-				"sap.ui.core.IFormContent",
-				"sap.m.IOverflowToolbarContent"
-			],
-			library: "sap.m",
-			properties: {
+				interfaces: [
+					"sap.ui.core.IFormContent",
+					"sap.m.IOverflowToolbarContent"
+				],
+				library: "sap.m",
+				properties: {
 
-				/**
-				 * A boolean value indicating whether the switch is on or off.
-				 */
-				state: { type: "boolean", group: "Misc", defaultValue: false },
+					/**
+					 * A boolean value indicating whether the switch is on or off.
+					 */
+					state: { type: "boolean", group: "Misc", defaultValue: false },
 
-				/**
-				 * Custom text for the "ON" state.
-				 *
-				 * "ON" translated to the current language is the default value.
-				 * Beware that the given text will be cut off if available space is exceeded.
-				 */
-				customTextOn: { type: "string", group: "Misc", defaultValue: "" },
+					/**
+					 * Custom text for the "ON" state.
+					 *
+					 * "ON" translated to the current language is the default value.
+					 * Beware that the given text will be cut off if available space is exceeded.
+					 */
+					customTextOn: { type: "string", group: "Misc", defaultValue: "" },
 
-				/**
-				 * Custom text for the "OFF" state.
-				 *
-				 * "OFF" translated to the current language is the default value.
-				 * Beware that the given text will be cut off if available space is exceeded.
-				 */
-				customTextOff: { type: "string", group: "Misc", defaultValue: "" },
+					/**
+					 * Custom text for the "OFF" state.
+					 *
+					 * "OFF" translated to the current language is the default value.
+					 * Beware that the given text will be cut off if available space is exceeded.
+					 */
+					customTextOff: { type: "string", group: "Misc", defaultValue: "" },
 
-				/**
-				 * Whether the switch is enabled.
-				 */
-				enabled: { type: "boolean", group: "Data", defaultValue: true },
+					/**
+					 * Whether the switch is enabled.
+					 */
+					enabled: { type: "boolean", group: "Data", defaultValue: true },
 
-				/**
-				 * The name to be used in the HTML code for the switch (e.g. for HTML forms that send data to the server via submit).
-				 */
-				name: { type: "string", group: "Misc", defaultValue: "" },
+					/**
+					 * The name to be used in the HTML code for the switch (e.g. for HTML forms that send data to the server via submit).
+					 */
+					name: { type: "string", group: "Misc", defaultValue: "" },
 
-				/**
-				 * Type of a Switch. Possibles values "Default", "AcceptReject".
-				 */
-				type: { type : "sap.m.SwitchType", group: "Appearance", defaultValue: SwitchType.Default }
-			},
-			associations: {
+					/**
+					 * Type of a Switch. Possibles values "Default", "AcceptReject".
+					 */
+					type: { type : "sap.m.SwitchType", group: "Appearance", defaultValue: SwitchType.Default }
+				},
+				associations: {
 
-				/**
-				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-				 * @since 1.27.0
-				 */
-				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-			},
-			events: {
+					/**
+					 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+					 * @since 1.27.0
+					 */
+					ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+				},
+				events: {
 
-				/**
-				 * Triggered when a switch changes the state.
-				 */
-				change: {
-					parameters: {
+					/**
+					 * Triggered when a switch changes the state.
+					 */
+					change: {
+						parameters: {
 
-						/**
-						 * The new state of the switch.
-						 */
-						state: { type: "boolean" }
+							/**
+							 * The new state of the switch.
+							 */
+							state: { type: "boolean" }
+						}
 					}
-				}
+				},
+				designtime: "sap/m/designtime/Switch.designtime"
 			},
-			designtime: "sap/m/designtime/Switch.designtime"
-		}});
+
+			renderer: SwitchRenderer
+		});
 
 		IconPool.insertFontFaceStyle();
 		EnabledPropagator.apply(Switch.prototype, [true]);
