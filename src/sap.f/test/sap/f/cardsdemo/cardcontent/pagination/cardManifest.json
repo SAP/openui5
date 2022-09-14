@@ -28,8 +28,26 @@
 	},
 	"sap.card": {
 		"type": "List",
+		"configuration": {
+			"filters": {
+				"f1": {
+					"type": "Select",
+					"value": "1",
+					"items": [
+						{
+							"title": "Filter 1",
+							"key": 1
+						},
+						{
+							"title": "Filter 2",
+							"key": 2
+						}
+					]
+				}
+			}
+		},
 		"header": {
-			"title": "Title"
+			"title": "Client-Side Pagination with Static Data"
 		},
 		"content": {
 			"data": {

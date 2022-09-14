@@ -19,7 +19,17 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
+			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/cardWithFilters.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
 			<w:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/cardManifest.json">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
+			<w:Card manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/pagination/clientSideWithDynamicData.json">
 				<w:layoutData>
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>

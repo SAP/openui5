@@ -140,6 +140,7 @@ sap.ui.define([
 	 * Sets the data settings for the <code>DataProvider</code> in json format.
 	 *
 	 * @param {string} sSettingsJson The data settings in json format.
+	 * @override
 	 */
 	DataProvider.prototype.setSettingsJson = function (sSettingsJson) {
 		this.setProperty("settingsJson", sSettingsJson);
