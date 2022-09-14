@@ -827,7 +827,7 @@ sap.ui.define([
 
 		function onSubmit() {
 			bDataRequested = true;
-			that.oRequestor.getModelInterface().fireDataRequested();
+			that.oRequestor.getModelInterface().fireDataRequested("/" + sFullResourcePath);
 		}
 
 		/*
@@ -934,11 +934,13 @@ sap.ui.define([
 				aUpdateProperties);
 			if (bDataRequested) {
 				bDataRequested = false;
-				that.oRequestor.getModelInterface().fireDataReceived();
+				that.oRequestor.getModelInterface()
+					.fireDataReceived(undefined, "/" + sFullResourcePath);
 			}
 		}).catch(function (oError) {
 			if (bDataRequested) {
-				that.oRequestor.getModelInterface().fireDataReceived(oError);
+				that.oRequestor
+					.getModelInterface().fireDataReceived(oError, "/" + sFullResourcePath);
 			}
 			throw oError;
 		}).finally(function () { // clean up only after updateSelected!

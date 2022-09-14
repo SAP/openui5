@@ -647,7 +647,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fires the 'dataReceived' event. It may be bubbled up to the model.
+	 * Fires the 'dataReceived' event. The event is bubbled up to the model, unless it is prevented.
 	 *
 	 * @param {object} oParameters
 	 *   The event parameters
@@ -656,7 +656,7 @@ sap.ui.define([
 	 * @param {Error} [oParameters.error]
 	 *   The error object if a back-end request failed.
 	 * @param {boolean} [bPreventBubbling]
-	 *   Whether the dataRequested and dataReceived events must not be bubbled up to the model
+	 *   Whether to prevent bubbling this event to the model
 	 *
 	 * @private
 	 */
@@ -667,10 +667,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fires the 'dataRequested' event. It may be bubbled up to the model.
+	 * Fires the 'dataRequested' event. The event is bubbled up to the model, unless it is
+	 * prevented.
 	 *
 	 * @param {boolean} [bPreventBubbling]
-	 *   Whether the dataRequested and dataReceived events must not be bubbled up to the model
+	 *   Whether to prevent bubbling this event to the model
 	 *
 	 * @private
 	 */

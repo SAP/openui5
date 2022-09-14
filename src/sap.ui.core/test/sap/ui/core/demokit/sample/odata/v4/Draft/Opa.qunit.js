@@ -180,7 +180,8 @@ sap.ui.getCore().attachInit(function () {
 
 				// Select part with read error
 				When.onTheListReport.selectProduct(3);
-				Then.onTheErrorPage.checkError("Error: Communication error: 500 ");
+				Then.onTheErrorPage.checkError("Entity: /Products(ID=40,IsActiveEntity=true)"
+					+ " Error: Communication error: 500 ");
 
 				Then.iTeardownMyUIComponent();
 			});
@@ -196,7 +197,8 @@ sap.ui.getCore().attachInit(function () {
 				});
 
 				When.onAnyPage.applySupportAssistant();
-				Then.onTheErrorPage.checkError("Error: Communication error: 500 ");
+				Then.onTheErrorPage.checkError("Entity: /Products(ID=40,IsActiveEntity=true)"
+					+ " Error: Communication error: 500 ");
 				Then.onAnyPage.analyzeSupportAssistant();
 
 				Then.iTeardownMyUIComponent();
