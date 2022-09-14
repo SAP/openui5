@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/m/IllustratedMessage",
 	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selectors ":sapTabbable", ":sapFocusable"
 ], function(
 	TableQUnitUtils,
@@ -31,8 +30,7 @@ sap.ui.define([
 	BaseObject,
 	ResourceBundle,
 	jQuery,
-	oCore,
-	IllustratedMessage
+	oCore
 ) {
 	"use strict";
 
@@ -799,20 +797,33 @@ sap.ui.define([
 		assert.equal(oInfo, null, "FocusedItemInfo = null");
 	});
 
-	QUnit.test("getNoDataText", function(assert) {
-		assert.equal(TableUtils.getNoDataText(oTable), TableUtils.getResourceBundle().getText("TBL_NO_DATA"));
+	QUnit.test("getNoContentMessage", function(assert) {
+		assert.strictEqual(TableUtils.getNoContentMessage(oTable), TableUtils.getResourceText("TBL_NO_DATA"), "'noData' is empty");
 
 		// eslint-disable-next-line no-new-wrappers
-		var oString = new String("Some Text");
-		oTable.setNoData(oString);
-		assert.equal(TableUtils.getNoDataText(oTable), oString);
+		oTable.setNoData(new String("Some Text"));
+		assert.strictEqual(TableUtils.getNoContentMessage(oTable), "Some Text", "'noData' is plain text");
 
 		oTable.setNoData(new Control());
-		assert.strictEqual(TableUtils.getNoDataText(oTable), null);
-		oTable.setNoData(new IllustratedMessage());
-		assert.strictEqual(TableUtils.getNoDataText(oTable), null);
-		oTable.removeAllColumns();
-		assert.strictEqual(TableUtils.getNoDataText(oTable), null);
+		assert.strictEqual(TableUtils.getNoContentMessage(oTable), oTable.getNoData(), "'noData' is a control");
+		oTable.destroyNoData();
+
+		oTable.destroyColumns();
+		assert.strictEqual(TableUtils.getNoContentMessage(oTable), TableUtils.getResourceText("TBL_NO_COLUMNS"),
+			"No columns: 'noData' and '_noColumnsMessage' are empty");
+
+		oTable.setNoData("Some Text");
+		assert.strictEqual(TableUtils.getNoContentMessage(oTable), TableUtils.getResourceText("TBL_NO_COLUMNS"),
+			"No columns: 'noData' is plain text and '_noColumnsMessage' is empty");
+
+		oTable.setNoData(new Control());
+		assert.strictEqual(TableUtils.getNoContentMessage(oTable), TableUtils.getResourceText("TBL_NO_COLUMNS"),
+			"No columns: 'noData' is a control and '_noColumnsMessage' is empty");
+
+		oTable.setAggregation("_noColumnsMessage", new Control());
+		assert.strictEqual(TableUtils.getNoContentMessage(oTable), oTable.getAggregation("_noColumnsMessage"),
+			"No columns: 'noData' and '_noColumnsMessage' are controls");
+		oTable.destroyNoData();
 	});
 
 	QUnit.test("isNoDataVisible / hasData", function(assert) {

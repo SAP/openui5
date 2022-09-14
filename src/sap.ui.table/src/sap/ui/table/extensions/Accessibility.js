@@ -8,10 +8,9 @@ sap.ui.define([
 	"./AccessibilityRender",
 	"../utils/TableUtils",
 	"../library",
-	"sap/ui/core/Control",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration"
-], function(ExtensionBase, AccRenderExtension, TableUtils, library, Control, jQuery, Configuration) {
+], function(ExtensionBase, AccRenderExtension, TableUtils, library, jQuery, Configuration) {
 	"use strict";
 
 	// shortcuts
@@ -234,7 +233,7 @@ sap.ui.define([
 			}
 
 			var oLabel = oColumn.getLabel();
-			if (oLabel instanceof Control) {
+			if (TableUtils.isA(oLabel, "sap.ui.core.Control")) {
 				sTooltip = oLabel.getTooltip_AsString();
 			}
 			if (sTooltip) {
@@ -686,7 +685,7 @@ sap.ui.define([
 
 				case AccExtension.ELEMENTTYPES.ROWACTION:
 					mAttributes["role"] = "gridcell";
-					mAttributes["aria-colindex"] = oTable._getVisibleColumns().length + 1 + (TableUtils.hasRowHeader(oTable) ? 1 : 0);
+					mAttributes["aria-colindex"] = TableUtils.getVisibleColumnCount(oTable) + 1 + (TableUtils.hasRowHeader(oTable) ? 1 : 0);
 					mAttributes["aria-labelledby"] = [sTableId + "-rowacthdr"];
 					break;
 
@@ -878,17 +877,18 @@ sap.ui.define([
 					break;
 
 				case AccExtension.ELEMENTTYPES.NODATA: //The no data container
-					mAttributes["role"] = "gridcell";
-					var oNoContentMessage = TableUtils.getNoContentMessage(oTable);
+					var vNoContentMessage = TableUtils.getNoContentMessage(oTable);
 					var aLabels = [];
 
-					if (oNoContentMessage instanceof Control) {
-						if (oNoContentMessage.isA("sap.m.IllustratedMessage")) {
-							var oAccRef = oNoContentMessage.getAccessibilityReferences();
+					mAttributes["role"] = "gridcell";
+
+					if (TableUtils.isA(vNoContentMessage, "sap.ui.core.Control")) {
+						if (vNoContentMessage.getAccessibilityReferences instanceof Function) {
+							var oAccRef = vNoContentMessage.getAccessibilityReferences();
 							aLabels.push(oAccRef.title);
 							aLabels.push(oAccRef.description);
 						} else {
-							aLabels.push(oNoContentMessage.getId());
+							aLabels.push(vNoContentMessage.getId());
 						}
 					} else {
 						aLabels.push(sTableId + "-noDataMsg");
@@ -1170,7 +1170,7 @@ sap.ui.define([
 		if (sReason !== "Focus" && sReason !== TableUtils.RowsUpdateReason.Expand && sReason !== TableUtils.RowsUpdateReason.Collapse) {
 			// when the focus stays on the same cell and only the content is replaced (e.g. on scroll or expand),
 			// to force screenreader announcements
-			if (oInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER | CellType.ROWACTION)) {
+			if (oInfo.isOfType(CellType.ANYCONTENTCELL)) {
 				oInfo.cell.attr("role", "status");
 				oInfo.cell.attr("role", "gridcell");
 			} else {
