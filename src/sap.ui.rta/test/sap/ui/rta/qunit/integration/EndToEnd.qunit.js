@@ -463,59 +463,68 @@ sap.ui.define([
 			var oFieldOverlay = OverlayRegistry.getOverlay(oFormField);
 			var oFieldOverlay2 = OverlayRegistry.getOverlay(oFormField2);
 			var oCommandStack = this.oRta.getCommandStack();
-			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 			var oCutPastePlugin = this.oRta.getPlugins().cutPaste;
-			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
+			assert.strictEqual(
+				FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length,
+				0,
+				"then there are no dirty changes in the flex persistence"
+			);
 
 			var fnCutAndPaste = function () {
-				var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
+				assert.strictEqual(
+					oCommandStack.getAllExecutedCommands()[0].getName(),
+					"move",
+					"then the move command is added to the stack"
+				);
+				fnWaitForExecutionAndSerializationBeingDone.call(this)
+					.then(function () {
+						this.oChangeVisualization = this.oRta.getChangeVisualization();
+						return startVisualization(this.oRta);
+					}.bind(this))
+					.then(function () {
+						var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
+						assert.strictEqual(aVizModel[2].count, 1, "then one move change is registered");
+						this.oRta.setMode("adaptation");
+						oCore.applyChanges();
+						// SimpleForm recreates all elements after cut&paste, thus we need to fetch them again
+						oFormContainer = oForm.getFormContainers()[0];
+						oFormField = oFormContainer.getFormElements()[0];
+						oFormField2 = oFormContainer.getFormElements()[1];
+						oFieldOverlay = OverlayRegistry.getOverlay(oFormField);
+						oFieldOverlay2 = OverlayRegistry.getOverlay(oFormField2);
 
-				if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "move") {
-					fnWaitForExecutionAndSerializationBeingDone.call(this)
-						.then(function () {
-							oCommandStack.detachModified(fnCutAndPaste);
-							this.oChangeVisualization = this.oRta.getChangeVisualization();
-							return startVisualization(this.oRta);
-						}.bind(this))
-						.then(function() {
-							var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
-							assert.strictEqual(aVizModel[2].count, 1, "then one move change is registered");
-							this.oRta.setMode("adaptation");
-							oCore.applyChanges();
-							oForm = oCore.byId("Comp1---idMain1--SimpleForm--Form");
-							oFormContainer = oForm.getFormContainers()[0];
-							oFormField = oFormContainer.getFormElements()[0];
-							oFormField2 = oFormContainer.getFormElements()[1];
-							oFieldOverlay = OverlayRegistry.getOverlay(oFormField);
-							oFieldOverlay2 = OverlayRegistry.getOverlay(oFormField2);
-							QUnitUtils.triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
+						oCommandStack.attachEventOnce("modified", (function () {
+							assert.strictEqual(
+								oCommandStack.getAllExecutedCommands()[0].getName(),
+								"move",
+								"then the second move command is added to the stack"
+							);
+							fnWaitForExecutionAndSerializationBeingDone.call(this)
+								.then(function () {
+									return startVisualization(this.oRta);
+								}.bind(this))
+								.then(function () {
+									aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
+									assert.strictEqual(aVizModel[2].count, 2, "then two move changes are registered");
+									fnDone();
+								}.bind(this));
+						}.bind(this)));
+
+						this.oRta._oDesignTime.attachEventOnce("synced", function () {
 							oCutPastePlugin.getElementMover().attachEventOnce("validTargetZonesActivated", function () {
 								QUnitUtils.triggerKeydown(oFieldOverlay2.getDomRef(), KeyCodes.V, false, false, true);
 							}, 0);
-							oCommandStack.attachModified(function () {
-								var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[1];
-								if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "move") {
-									fnWaitForExecutionAndSerializationBeingDone.call(this)
-										.then(function () {
-											return startVisualization(this.oRta);
-										}.bind(this))
-										.then(function () {
-											aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
-											assert.strictEqual(aVizModel[2].count, 2, "then two move changes are registered");
-											fnDone();
-										}.bind(this));
-								}
-							}.bind(this));
-						}.bind(this));
-				}
+							QUnitUtils.triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
+						});
+					}.bind(this));
 			}.bind(this);
 
-			oCommandStack.attachModified(fnCutAndPaste);
+			oCommandStack.attachEventOnce("modified", fnCutAndPaste);
 
-			QUnitUtils.triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
 			oCutPastePlugin.getElementMover().attachEventOnce("validTargetZonesActivated", function () {
 				QUnitUtils.triggerKeydown(oFieldOverlay2.getDomRef(), KeyCodes.V, false, false, true);
 			}, 0);
+			QUnitUtils.triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
 		});
 
 		QUnit.test("when renaming a group element via Context menu (compact context menu) and setting a new label...", function(assert) {
