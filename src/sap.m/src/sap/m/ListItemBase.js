@@ -731,7 +731,11 @@ function(
 	 * Determines whether item has any action or not.
 	 * @private
 	 */
-	ListItemBase.prototype.isActionable = function() {
+	ListItemBase.prototype.isActionable = function(bCheckDevice) {
+		if (bCheckDevice && !Device.system.desktop) {
+			return false;
+		}
+
 		return this.isIncludedIntoSelection() || (
 			this.getType() != ListItemType.Inactive &&
 			this.getType() != ListItemType.Detail
@@ -1083,7 +1087,7 @@ function(
 	ListItemBase.prototype._activeHandling = function($This) {
 		$This.toggleClass("sapMLIBActive", this._active);
 
-		if (Device.system.desktop && this.isActionable()) {
+		if (this.isActionable(true)) {
 			$This.toggleClass("sapMLIBHoverable", !this._active);
 		}
 	};

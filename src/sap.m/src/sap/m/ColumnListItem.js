@@ -88,28 +88,6 @@ sap.ui.define([
 			if (oEvent.srcControl === this || !jQuery(oEvent.target).is(":sapFocusable")) {
 				this.getParent().focus();
 			}
-		},
-
-		_onMouseEnter: function() {
-			var $this = jQuery(this),
-				$parent = $this.prev();
-
-			if (!$parent.length || !$parent.hasClass("sapMLIBHoverable") || $parent.hasClass("sapMPopinHovered")) {
-				return;
-			}
-
-			$parent.addClass("sapMPopinHovered");
-		},
-
-		_onMouseLeave: function() {
-			var $this = jQuery(this),
-				$parent = $this.prev();
-
-			if (!$parent.length || !$parent.hasClass("sapMLIBHoverable") || !$parent.hasClass("sapMPopinHovered")) {
-				return;
-			}
-
-			$parent.removeClass("sapMPopinHovered");
 		}
 	});
 
@@ -122,14 +100,22 @@ sap.ui.define([
 		this._aClonedHeaders = [];
 	};
 
+	ColumnListItem.prototype.onBeforeRendering = function() {
+		ListItemBase.prototype.onBeforeRendering.call(this);
+		if (this._oPopin && this._oDomRef) {
+			this.$Popin().off();
+		}
+	};
+
 	ColumnListItem.prototype.onAfterRendering = function() {
+		if (this._oPopin && this.isActionable(true)) {
+			this.$Popin().on("mouseenter mouseleave", function(oEvent) {
+				this.previousSibling.classList.toggle("sapMPopinHovered", oEvent.type == "mouseenter");
+			});
+		}
+
 		ListItemBase.prototype.onAfterRendering.call(this);
 		this._checkTypeColumn();
-
-		var oPopin = this.hasPopin();
-		if (oPopin) {
-			this.$Popin().on("mouseenter", oPopin._onMouseEnter).on("mouseleave", oPopin._onMouseLeave);
-		}
 	};
 
 	ColumnListItem.prototype.exit = function() {

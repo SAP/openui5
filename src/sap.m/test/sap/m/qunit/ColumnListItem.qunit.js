@@ -425,4 +425,42 @@ sap.ui.define([
 		var aTdElements = this.sut.$().children();
 		assert.notOk(aTdElements[aTdElements.length - 1].classList.contains("sapMListTblDummyCell"), "Dummy cell is rendered as the last td element");
 	});
+
+	QUnit.test("Focus should stay in the popin area", function(assert) {
+		//var done = assert.async();
+		var sut = new ColumnListItem({
+			cells : [new Input({
+				value: "Cell1"
+			}), new Text({
+				text: "Cell2"
+			})]
+		}),
+		column1 = new Column({
+			header : new Text({
+				text : "Header1"
+			}),
+			minScreenWidth : "48000px",
+			demandPopin : true
+		}),
+		column2 = new Column({
+			header : new Text({
+				text : "Header2"
+			})
+		}),
+		table = new Table({
+			columns : [column1, column2],
+			items : [sut]
+		});
+
+		table.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		sut.getCells()[0].focus();
+		assert.equal(document.activeElement, sut.getCells()[0].getFocusDomRef(), "focus is set to the input");
+
+		sut.rerender();
+		assert.equal(document.activeElement, sut.getCells()[0].getFocusDomRef(), "focus is not change and still on the input");
+
+		table.destroy();
+	});
 });

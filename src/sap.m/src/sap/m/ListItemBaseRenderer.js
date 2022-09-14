@@ -409,7 +409,7 @@ sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/Device", "sap/ui/core/In
 		rm.class("sapMLIBShowSeparator");
 		rm.class("sapMLIBType" + oLI.getType());
 
-		if (Device.system.desktop && oLI.isActionable()) {
+		if (oLI.isActionable(true)) {
 			rm.class("sapMLIBActionable");
 			rm.class("sapMLIBHoverable");
 		}
