@@ -85,7 +85,7 @@ sap.ui.define([
 			oPopover;
 
 		this.stub(sap.ui.Device.support, "touch", true);
-		oFF.placeAt("qunit-fixture");
+		oFF.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
 		oPopover = oFF._getPopover();
