@@ -29,17 +29,26 @@ sap.ui.define([
 			return Promise.reject(Error("No selector in change found or no selector ID."));
 		}
 
+		function checkFailedSelectors(oSelector) {
+			if (FlUtils.indexOfObject(mPropertyBag.failedSelectors, oSelector) > -1) {
+				throw Error("A change depending on that control already failed, so the current change is skipped");
+			}
+		}
+
 		return mPropertyBag.modifier.bySelectorTypeIndependent(oSelector, mPropertyBag.appComponent, mPropertyBag.view)
 			.then(function (oControl) {
 				if (!oControl) {
 					throw Error("A flexibility change tries to change a nonexistent control.");
 				}
+				checkFailedSelectors(oSelector);
+
 				var aDependentControlSelectorList = oChange.getDependentControlSelectorList();
-				aDependentControlSelectorList.forEach(function(sDependentControlSelector) {
-					var oDependentControl = mPropertyBag.modifier.bySelector(sDependentControlSelector, mPropertyBag.appComponent, mPropertyBag.view);
+				aDependentControlSelectorList.forEach(function(oDependentControlSelector) {
+					var oDependentControl = mPropertyBag.modifier.bySelector(oDependentControlSelector, mPropertyBag.appComponent, mPropertyBag.view);
 					if (!oDependentControl) {
 						throw new Error("A dependent selector control of the flexibility change is not available.");
 					}
+					checkFailedSelectors(oDependentControlSelector);
 				});
 				return oControl;
 			});
@@ -422,6 +431,7 @@ sap.ui.define([
 			}
 
 			var aOnAfterXMLChangeProcessingHandlers = [];
+			mPropertyBag.failedSelectors = [];
 
 			return aChanges.reduce(function(oPreviousPromise, oChange) {
 				var oControl;
@@ -456,10 +466,17 @@ sap.ui.define([
 						}
 					})
 					.catch(function(oError) {
+						oChange.getDependentSelectorList().forEach(function(oDependentControlSelector) {
+							if (FlUtils.indexOfObject(mPropertyBag.failedSelectors, oDependentControlSelector) === -1) {
+								mPropertyBag.failedSelectors.push(oDependentControlSelector);
+							}
+						});
 						_logApplyChangeError(oError, oChange);
 					});
 			}, new FlUtils.FakePromise())
 			.then(function() {
+				delete mPropertyBag.failedSelectors;
+
 				// Once all changes for a control are processed, call the
 				// onAfterXMLChangeProcessing hooks of all involved change handlers
 				aOnAfterXMLChangeProcessingHandlers.forEach(function (mHandler) {
