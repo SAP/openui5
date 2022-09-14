@@ -59,11 +59,9 @@ sap.ui.define([
 
 	AdaptationFilterBar.prototype._onModifications = function() {
 		var pModification = FilterBarBase.prototype._onModifications.apply(this, arguments);
-		var oP13nData = this.getP13nData();
+		var oP13nData = this._oFilterBarLayout.getInner().getP13nData();
 		this._updateActiveStatus(oP13nData);
-
-		this._oFilterBarLayout.setP13nData(oP13nData);
-
+		this._oFilterBarLayout.setP13nData({items: oP13nData});
 		return pModification;
 	};
 
@@ -205,18 +203,18 @@ sap.ui.define([
 	 *
 	 * Please note that the provided model should be created with sap.ui.mdc.p13n.P13nBuilder
 	 *
-	 * @param {object} oP13nData Necessary data to display and create <code>FilterColumnLayout</code> instances.
+	 * @param {object[]} aP13nData Necessary data to display and create <code>FilterColumnLayout</code> instances.
 	 *
 	 */
-	AdaptationFilterBar.prototype.setP13nData = function(oP13nData) {
-		this.oAdaptationData = oP13nData;
-		this._updateActiveStatus(this.oAdaptationData);
-		this._oFilterBarLayout.update(oP13nData);
+	AdaptationFilterBar.prototype.setP13nData = function(aP13nData) {
+		this.oAdaptationData = aP13nData;
+		this._updateActiveStatus(this.oAdaptationData.items);
+		this._oFilterBarLayout.update(aP13nData);
 	};
 
 	AdaptationFilterBar.prototype._updateActiveStatus = function(oP13nData) {
 		var mConditions = this.getFilterConditions();
-		oP13nData.items.forEach(function(oP13nItem){
+		oP13nData.forEach(function(oP13nItem){
 			var oFilterField = this.mFilterFields && this.mFilterFields[oP13nItem.name];
 			if (oFilterField) {
 				var sKey = oFilterField.getFieldPath();
