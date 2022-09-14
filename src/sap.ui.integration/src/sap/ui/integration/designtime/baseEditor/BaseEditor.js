@@ -338,9 +338,11 @@ sap.ui.define([
 			Log.error("sap.ui.integration.designtime.baseEditor.BaseEditor: unsupported data type specified in setJson()");
 		}
 
+		// since now we support functions in validations property of parameters, JSON.stringify is not suitable now, need to use deepEqual
 		if (
 			oJson
-			&& JSON.stringify(this.getProperty("json")) !== JSON.stringify(oJson)
+			//&& JSON.stringify(this.getProperty("json")) !== JSON.stringify(oJson)
+			&& !deepEqual(this.getProperty("json"), oJson, 100)
 		) {
 			this.setProperty("json", oJson);
 			this.fireJsonChange({
