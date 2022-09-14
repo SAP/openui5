@@ -64,7 +64,9 @@ function(
 					 */
 					associatedTooltips: { type: "sap.m.SliderTooltipBase", multiple: true }
 				}
-			}
+			},
+
+			renderer: SliderTooltipContainerRenderer
 		});
 
 		SliderTooltipContainer.prototype.init = function () {

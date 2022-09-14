@@ -98,126 +98,130 @@ sap.ui.define([
 	 * @alias sap.m.Button
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/button/ Button}
 	 */
-	var Button = Control.extend("sap.m.Button", /** @lends sap.m.Button.prototype */ { metadata : {
+	var Button = Control.extend("sap.m.Button", /** @lends sap.m.Button.prototype */ {
+		metadata : {
 
-		interfaces : [
-			"sap.ui.core.IFormContent",
-			"sap.ui.core.IAccessKeySupport"
-		],
-		library : "sap.m",
-		properties : {
+			interfaces : [
+				"sap.ui.core.IFormContent",
+				"sap.ui.core.IAccessKeySupport"
+			],
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Determines the text of the <code>Button</code>.
-			 */
-			text : {type : "string", group : "Misc", defaultValue: "" },
+				/**
+				 * Determines the text of the <code>Button</code>.
+				 */
+				text : {type : "string", group : "Misc", defaultValue: "" },
 
-			/**
-			 * Defines the <code>Button</code> type.
-			 */
-			type : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : ButtonType.Default},
+				/**
+				 * Defines the <code>Button</code> type.
+				 */
+				type : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : ButtonType.Default},
 
-			/**
-			 * Defines the <code>Button</code> width.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
+				/**
+				 * Defines the <code>Button</code> width.
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
 
-			/**
-			 * Determines whether the <code>Button</code> is enabled (default is set to <code>true</code>).
-			 * A disabled <code>Button</code> has different colors depending on the {@link sap.m.ButtonType ButtonType}.
-			 */
-			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Determines whether the <code>Button</code> is enabled (default is set to <code>true</code>).
+				 * A disabled <code>Button</code> has different colors depending on the {@link sap.m.ButtonType ButtonType}.
+				 */
+				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * Defines the icon to be displayed as graphical element within the <code>Button</code>.
-			 * It can be an image or an icon from the icon font.
-			 */
-			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue: "" },
+				/**
+				 * Defines the icon to be displayed as graphical element within the <code>Button</code>.
+				 * It can be an image or an icon from the icon font.
+				 */
+				icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue: "" },
 
-			/**
-			 * Determines whether the icon is displayed before the text.
-			 */
-			iconFirst : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * Determines whether the icon is displayed before the text.
+				 */
+				iconFirst : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * The source property of an alternative icon for the active (depressed) state of the button.
-			 * Both active and default icon properties should be defined and have the same type: image or icon font.
-			 * If the <code>icon</code> property is not set or has a different type, the active icon is not displayed.
-			 */
-			activeIcon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
+				/**
+				 * The source property of an alternative icon for the active (depressed) state of the button.
+				 * Both active and default icon properties should be defined and have the same type: image or icon font.
+				 * If the <code>icon</code> property is not set or has a different type, the active icon is not displayed.
+				 */
+				activeIcon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
 
-			/**
-			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
-			 *
-			 * If only one version of image is provided, set this value to false to avoid the attempt of fetching density perfect image.
-			 */
-			iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
+				 *
+				 * If only one version of image is provided, set this value to false to avoid the attempt of fetching density perfect image.
+				 */
+				iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
-			 * @since 1.28.0
-			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+				 * @since 1.28.0
+				 */
+				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
-			/**
-			 * Specifies the value of the <code>aria-haspopup</code> attribute
-			 *
-			 * If the value is <code>None</code>, the attribute will not be rendered. Otherwise it will be rendered with the selected value.
-			 *
-			 * NOTE: Use this property only when a button is related to a popover/popup. The value needs to be equal to the main/root role of the popup - e.g. dialog,
-			 * menu or list (examples: if you have dialog -> dialog, if you have menu -> menu; if you have list -> list; if you have dialog containing a list -> dialog).
-			 * Do not use it, if you open a standard sap.m.Dialog, MessageBox or other type of dialogs displayed as on overlay over the application.
-			 *
-			 * @since 1.84.0
-			 */
-			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None},
+				/**
+				 * Specifies the value of the <code>aria-haspopup</code> attribute
+				 *
+				 * If the value is <code>None</code>, the attribute will not be rendered. Otherwise it will be rendered with the selected value.
+				 *
+				 * NOTE: Use this property only when a button is related to a popover/popup. The value needs to be equal to the main/root role of the popup - e.g. dialog,
+				 * menu or list (examples: if you have dialog -> dialog, if you have menu -> menu; if you have list -> list; if you have dialog containing a list -> dialog).
+				 * Do not use it, if you open a standard sap.m.Dialog, MessageBox or other type of dialogs displayed as on overlay over the application.
+				 *
+				 * @since 1.84.0
+				 */
+				ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None},
 
-			/**
-			 * Indicates whether the access keys ref of the control should be highlighted.
-			 * NOTE: this property is used only when access keys feature is turned on.
-			 *
-			 * @private
-			 */
-			highlightAccKeysRef: { type: "boolean", defaultValue: false, visibility: "hidden" },
+				/**
+				 * Indicates whether the access keys ref of the control should be highlighted.
+				 * NOTE: this property is used only when access keys feature is turned on.
+				 *
+				 * @private
+				 */
+				highlightAccKeysRef: { type: "boolean", defaultValue: false, visibility: "hidden" },
 
-			/**
-			 * Indicates which keyboard key should be pressed to focus the access key ref
-			 * NOTE: this property is used only when access keys feature is turned on.
-			 *
-			 * @private
-			 */
-			accesskey: { type: "string", defaultValue: "", visibility: "hidden" }
+				/**
+				 * Indicates which keyboard key should be pressed to focus the access key ref
+				 * NOTE: this property is used only when access keys feature is turned on.
+				 *
+				 * @private
+				 */
+				accesskey: { type: "string", defaultValue: "", visibility: "hidden" }
 
+			},
+			associations : {
+
+				/**
+				 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+				 */
+				ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+
+			},
+			events : {
+
+				/**
+				 * Fired when the user taps the control.
+				 * @deprecated as of version 1.20, replaced by <code>press</code> event
+				 */
+				tap : {deprecated: true},
+
+				/**
+				 * Fired when the user clicks or taps on the control.
+				 */
+				press : {}
+			},
+			designtime: "sap/m/designtime/Button.designtime",
+			dnd: { draggable: true, droppable: false }
 		},
-		associations : {
 
-			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
-			 */
-			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
-
-			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-			 */
-			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
-
-		},
-		events : {
-
-			/**
-			 * Fired when the user taps the control.
-			 * @deprecated as of version 1.20, replaced by <code>press</code> event
-			 */
-			tap : {deprecated: true},
-
-			/**
-			 * Fired when the user clicks or taps on the control.
-			 */
-			press : {}
-		},
-		designtime: "sap/m/designtime/Button.designtime",
-		dnd: { draggable: true, droppable: false }
-	}});
+		renderer: ButtonRenderer
+	});
 
 
 	/**

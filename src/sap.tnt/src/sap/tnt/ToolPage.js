@@ -72,7 +72,9 @@ sap.ui.define([
 				mainContents: {type: "sap.ui.core.Control", multiple: true, singularName: "mainContent"}
 			},
 			events: {}
-		}
+		},
+
+		renderer: ToolPageRenderer
 	});
 
 	ToolPage.prototype.init = function () {

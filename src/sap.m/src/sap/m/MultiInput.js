@@ -229,7 +229,9 @@ function(
 				}
 			},
 			dnd: { draggable: false, droppable: true }
-		}
+		},
+
+		renderer: MultiInputRenderer
 	});
 
 	EnabledPropagator.apply(MultiInput.prototype, [true]);

@@ -102,7 +102,9 @@ sap.ui.define(['./InputBase', './MaskEnabler', './MaskInputRenderer'], function(
 				}
 			},
 			dnd: { draggable: false, droppable: true }
-		}
+		},
+
+		renderer: MaskInputRenderer
 	});
 
 	MaskEnabler.call(MaskInput.prototype);

@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/EnabledPropagator",
 	"./TestButtonRenderer"
-], function(library, Control, EnabledPropagator) {
+], function(library, Control, EnabledPropagator, TestButtonRenderer) {
 	"use strict";
 
 	/**
@@ -32,7 +32,6 @@ sap.ui.define([
 	 * @alias sap.ui.testlib.TestButton
 	 */
 	var TestButton = Control.extend("sap.ui.testlib.TestButton", {
-
 		metadata : {
 			library : "sap.ui.testlib",
 			properties : {
@@ -53,8 +52,9 @@ sap.ui.define([
 
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
-		}
+		},
 
+		renderer: TestButtonRenderer
 	});
 
 	EnabledPropagator.call(TestButton.prototype);

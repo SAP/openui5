@@ -31,21 +31,25 @@ sap.ui.define([
 	 * @since 1.42.0
 	 * @alias sap.m.StandardTreeItem
 	 */
-	var StandardTreeItem = TreeItemBase.extend("sap.m.StandardTreeItem", /** @lends sap.m.StandardTreeItem.prototype */ { metadata : {
+	var StandardTreeItem = TreeItemBase.extend("sap.m.StandardTreeItem", /** @lends sap.m.StandardTreeItem.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
-			/**
-			 * Defines the title of the item.
-			 */
-			title : {type : "string", group : "Misc", defaultValue : ""},
+			library : "sap.m",
+			properties : {
+				/**
+				 * Defines the title of the item.
+				 */
+				title : {type : "string", group : "Misc", defaultValue : ""},
 
-			/**
-			 * Defines the tree item icon.
-			 */
-			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null}
-		}
-	}});
+				/**
+				 * Defines the tree item icon.
+				 */
+				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null}
+			}
+		},
+
+		renderer: StandardTreeItemRenderer
+	});
 
 	/**
 	 * Gets the image control to be rendered as Icon.

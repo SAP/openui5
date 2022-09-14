@@ -58,104 +58,108 @@ sap.ui.define([
 	 * @alias sap.m.RatingIndicator
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/rating-indicator/ Rating Indicator}
 	 */
-	var RatingIndicator = Control.extend("sap.m.RatingIndicator", /** @lends sap.m.RatingIndicator.prototype */ { metadata: {
+	var RatingIndicator = Control.extend("sap.m.RatingIndicator", /** @lends sap.m.RatingIndicator.prototype */ {
+		metadata: {
 
-		interfaces: ["sap.ui.core.IFormContent"],
-		library: "sap.m",
-		properties: {
-			/**
-			 * Value "true" is required to let the user rate with this control. It is recommended to set this parameter to "false" for the "Small" size which is meant for indicating a value only
-			 */
-			enabled: {type: "boolean", group: "Behavior", defaultValue: true},
+			interfaces: ["sap.ui.core.IFormContent"],
+			library: "sap.m",
+			properties: {
+				/**
+				 * Value "true" is required to let the user rate with this control. It is recommended to set this parameter to "false" for the "Small" size which is meant for indicating a value only
+				 */
+				enabled: {type: "boolean", group: "Behavior", defaultValue: true},
 
-			/**
-			 * The number of displayed rating symbols
-			 */
-			maxValue: {type: "int", group: "Behavior", defaultValue: 5},
+				/**
+				 * The number of displayed rating symbols
+				 */
+				maxValue: {type: "int", group: "Behavior", defaultValue: 5},
 
-			/**
-			 * The indicated value of the rating
-			 */
-			value: {type: "float", group: "Behavior", defaultValue: 0, bindable: "bindable"},
+				/**
+				 * The indicated value of the rating
+				 */
+				value: {type: "float", group: "Behavior", defaultValue: 0, bindable: "bindable"},
 
-			/**
-			 * The Size of the image or icon to be displayed. The default value depends on the theme. Please be sure that the size is corresponding to a full pixel value as some browsers don't support subpixel calculations. Recommended size is 1.375rem (22px) for normal, 1rem (16px) for small, and 2rem (32px) for large icons correspondingly.
-			 */
-			iconSize: {type: "sap.ui.core.CSSSize", group: "Behavior", defaultValue: null},
+				/**
+				 * The Size of the image or icon to be displayed. The default value depends on the theme. Please be sure that the size is corresponding to a full pixel value as some browsers don't support subpixel calculations. Recommended size is 1.375rem (22px) for normal, 1rem (16px) for small, and 2rem (32px) for large icons correspondingly.
+				 */
+				iconSize: {type: "sap.ui.core.CSSSize", group: "Behavior", defaultValue: null},
 
-			/**
-			 * The URI to the icon font icon or image that will be displayed for selected rating symbols. A star icon will be used if the property is not set
-			 */
-			iconSelected: {type: "sap.ui.core.URI", group: "Behavior", defaultValue: null},
+				/**
+				 * The URI to the icon font icon or image that will be displayed for selected rating symbols. A star icon will be used if the property is not set
+				 */
+				iconSelected: {type: "sap.ui.core.URI", group: "Behavior", defaultValue: null},
 
-			/**
-			 * The URI to the icon font icon or image that will be displayed for all unselected rating symbols. A star icon will be used if the property is not set
-			 */
-			iconUnselected: {type: "sap.ui.core.URI", group: "Behavior", defaultValue: null},
+				/**
+				 * The URI to the icon font icon or image that will be displayed for all unselected rating symbols. A star icon will be used if the property is not set
+				 */
+				iconUnselected: {type: "sap.ui.core.URI", group: "Behavior", defaultValue: null},
 
-			/**
-			 * The URI to the icon font icon or image that will be displayed for hovered rating symbols. A star icon will be used if the property is not set
-			 */
-			iconHovered: {type: "sap.ui.core.URI", group: "Behavior", defaultValue: null},
+				/**
+				 * The URI to the icon font icon or image that will be displayed for hovered rating symbols. A star icon will be used if the property is not set
+				 */
+				iconHovered: {type: "sap.ui.core.URI", group: "Behavior", defaultValue: null},
 
-			/**
-			 * Defines how float values are visualized: Full, Half (see enumeration RatingIndicatorVisualMode)
-			 */
-			visualMode: {type: "sap.m.RatingIndicatorVisualMode", group: "Behavior", defaultValue: RatingIndicatorVisualMode.Half},
+				/**
+				 * Defines how float values are visualized: Full, Half (see enumeration RatingIndicatorVisualMode)
+				 */
+				visualMode: {type: "sap.m.RatingIndicatorVisualMode", group: "Behavior", defaultValue: RatingIndicatorVisualMode.Half},
 
-			/**
-			 * The RatingIndicator in displayOnly mode is not interactive, not editable, not focusable, and not in the tab chain. This setting is used for forms in review mode.
-			 * @since 1.50.0
-			 */
-			displayOnly : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * The RatingIndicator in displayOnly mode is not interactive, not editable, not focusable, and not in the tab chain. This setting is used for forms in review mode.
+				 * @since 1.50.0
+				 */
+				displayOnly : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Defines whether the user is allowed to edit the RatingIndicator. If editable is false the control is focusable, and in the tab chain but not interactive.
-			 * @since 1.52.0
-			 */
-			editable : {type : "boolean", group : "Behavior", defaultValue : true}
-		},
-		associations: {
-			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
-			 */
-			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
+				/**
+				 * Defines whether the user is allowed to edit the RatingIndicator. If editable is false the control is focusable, and in the tab chain but not interactive.
+				 * @since 1.52.0
+				 */
+				editable : {type : "boolean", group : "Behavior", defaultValue : true}
+			},
+			associations: {
+				/**
+				 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+				 */
+				ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
 
-			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-			 */
-			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
-		},
-		events: {
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+			},
+			events: {
 
-			/**
-			 * The event is fired when the user has done a rating.
-			 */
-			change: {
-				parameters: {
+				/**
+				 * The event is fired when the user has done a rating.
+				 */
+				change: {
+					parameters: {
 
-					/**
-					 * The rated value
-					 */
-					value: {type: "int"}
+						/**
+						 * The rated value
+						 */
+						value: {type: "int"}
+					}
+				},
+
+				/**
+				 * This event is triggered during the dragging period, each time the rating value changes.
+				 */
+				liveChange: {
+					parameters: {
+
+						/**
+						 * The current value of the rating after a live change event.
+						 */
+						value: {type: "float"}
+					}
 				}
 			},
-
-			/**
-			 * This event is triggered during the dragging period, each time the rating value changes.
-			 */
-			liveChange: {
-				parameters: {
-
-					/**
-					 * The current value of the rating after a live change event.
-					 */
-					value: {type: "float"}
-				}
-			}
+			designtime: "sap/m/designtime/RatingIndicator.designtime"
 		},
-		designtime: "sap/m/designtime/RatingIndicator.designtime"
-	}});
+
+		renderer: RatingIndicatorRenderer
+	});
 
 	/* =========================================================== */
 	/*           temporary flags for jslint syntax check           */

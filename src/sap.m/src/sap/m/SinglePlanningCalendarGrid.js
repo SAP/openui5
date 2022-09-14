@@ -337,7 +337,9 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+
+			renderer: SinglePlanningCalendarGridRenderer
 		});
 
 		SinglePlanningCalendarGrid.prototype.init = function () {

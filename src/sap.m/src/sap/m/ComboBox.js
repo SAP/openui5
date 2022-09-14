@@ -209,7 +209,9 @@ sap.ui.define([
 					}
 				},
 				dnd: { draggable: false, droppable: true }
-			}
+			},
+
+			renderer: ComboBoxRenderer
 		});
 
 		/* =========================================================== */

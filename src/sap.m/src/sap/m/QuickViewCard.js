@@ -51,7 +51,9 @@ sap.ui.define([
 				showVerticalScrollBar : { type : "boolean", group : "Behavior", defaultValue : true }
 			},
 			designtime: "sap/m/designtime/QuickViewCard.designtime"
-		}
+		},
+
+		renderer: QuickViewCardRenderer
 	});
 
 	/**

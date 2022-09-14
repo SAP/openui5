@@ -62,7 +62,9 @@ sap.ui.define([
 				 */
 				fallbackIcon: {type: "string", group: "Data", defaultValue: null}
 			}
-		}
+		},
+
+		renderer: AvatarGroupItemRenderer
 	});
 
 	AvatarGroupItem.prototype.onBeforeRendering = function () {

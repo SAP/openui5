@@ -173,7 +173,9 @@ function(library,
 			},
 
 			designtime: "sap/m/designtime/ExpandableText.designtime"
-		}
+		},
+
+		renderer: ExpandableTextRenderer
 	});
 
 	/**

@@ -68,7 +68,9 @@ sap.ui.define([
 					 */
 					_clocks: { type: "sap.m.TimePickerClock", multiple: true, visibility: "hidden" }
 				}
-			}
+			},
+
+			renderer: TimePickerClocksRenderer
 		});
 
 		/*********************************************************************************************************

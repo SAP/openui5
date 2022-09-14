@@ -25,7 +25,8 @@ sap.ui.define([
 	Button,
 	SearchField,
 	Text,
-	RatingIndicator
+	RatingIndicator,
+	TableRenderer
 ) {
 	"use strict";
 
@@ -253,7 +254,9 @@ sap.ui.define([
 		_onExpandSecondLevel: function() {
 			var oTable = this._getTable();
 			oTable.expandToLevel(2);
-		}
+		},
+
+		renderer: TableRenderer
 	});
 
 	return oTable;

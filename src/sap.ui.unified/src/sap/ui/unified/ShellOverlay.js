@@ -49,43 +49,47 @@ sap.ui.define([
 	 * @alias sap.ui.unified.ShellOverlay
 	 * @deprecated Since version 1.44.0.
 	 */
-	var ShellOverlay = Control.extend("sap.ui.unified.ShellOverlay", /** @lends sap.ui.unified.ShellOverlay.prototype */ { metadata : {
+	var ShellOverlay = Control.extend("sap.ui.unified.ShellOverlay", /** @lends sap.ui.unified.ShellOverlay.prototype */ {
+		metadata : {
 
-		library : "sap.ui.unified",
-		deprecated : true,
-		defaultAggregation : "content",
-		aggregations : {
+			library : "sap.ui.unified",
+			deprecated : true,
+			defaultAggregation : "content",
+			aggregations : {
 
-			/**
-			 * The content to appear in the overlay.
-			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
+				/**
+				 * The content to appear in the overlay.
+				 */
+				content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
 
-			/**
-			 * Experimental (This aggregation might change in future!): The search control which should be displayed in the overlay header.
-			 */
-			search : {type : "sap.ui.core.Control", multiple : false}
+				/**
+				 * Experimental (This aggregation might change in future!): The search control which should be displayed in the overlay header.
+				 */
+				search : {type : "sap.ui.core.Control", multiple : false}
+			},
+			associations : {
+
+				/**
+				 * Reference to the sap.ui.unified.Shell or sap.ui.unified.ShellLayout control.
+				 */
+				shell : {type : "sap.ui.unified.ShellLayout", multiple : false},
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+			},
+			events : {
+
+				/**
+				 * Fired when the overlay was closed.
+				 */
+				closed : {}
+			}
 		},
-		associations : {
 
-			/**
-			 * Reference to the sap.ui.unified.Shell or sap.ui.unified.ShellLayout control.
-			 */
-			shell : {type : "sap.ui.unified.ShellLayout", multiple : false},
-
-			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-			 */
-			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
-		},
-		events : {
-
-			/**
-			 * Fired when the overlay was closed.
-			 */
-			closed : {}
-		}
-	}});
+		renderer: ShellOverlayRenderer
+	});
 
 
 	/**** API ****/

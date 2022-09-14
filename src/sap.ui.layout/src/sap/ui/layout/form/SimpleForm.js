@@ -72,313 +72,317 @@ sap.ui.define([
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.form.SimpleForm
 	 */
-	var SimpleForm = Control.extend("sap.ui.layout.form.SimpleForm", /** @lends sap.ui.layout.form.SimpleForm.prototype */ { metadata : {
+	var SimpleForm = Control.extend("sap.ui.layout.form.SimpleForm", /** @lends sap.ui.layout.form.SimpleForm.prototype */ {
+		metadata : {
 
-		library : "sap.ui.layout",
-		properties : {
+			library : "sap.ui.layout",
+			properties : {
 
-			/**
-			 * The maximum amount of groups (<code>{@link sap.ui.layout.form.FormContainer FormContainers}</code>) per row that is used before a new row is started.
-			 *
-			 * <b>Note:</b> If <code>{@link sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout}</code> is used as <code>layout</code>, this property is not used.
-			 * Please use the properties <code>ColumnsL</code> and <code>ColumnsM</code> in this case.
-			 */
-			maxContainerCols : {type : "int", group : "Appearance", defaultValue : 2},
+				/**
+				 * The maximum amount of groups (<code>{@link sap.ui.layout.form.FormContainer FormContainers}</code>) per row that is used before a new row is started.
+				 *
+				 * <b>Note:</b> If <code>{@link sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout}</code> is used as <code>layout</code>, this property is not used.
+				 * Please use the properties <code>ColumnsL</code> and <code>ColumnsM</code> in this case.
+				 */
+				maxContainerCols : {type : "int", group : "Appearance", defaultValue : 2},
 
-			/**
-			 * The overall minimum width in pixels that is used for the <code>SimpleForm</code>.
-			 *
-			 * If the available width is below the given <code>minWidth</code> the <code>SimpleForm</code> will create a new row for the next group (<code>{@link sap.ui.layout.form.FormContainer FormContainer}</code>).
-			 * The default value is -1, meaning that inner groups (<code>{@link sap.ui.layout.form.FormContainer FormContainers}</code>) will be stacked until <code>maxContainerCols</code> is reached,
-			 * irrespective of whether a <code>width</code> is reached or the available parents width is reached.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveLayout</code> is used as a layout.
-			 */
-			minWidth : {type : "int", group : "Appearance", defaultValue : -1},
+				/**
+				 * The overall minimum width in pixels that is used for the <code>SimpleForm</code>.
+				 *
+				 * If the available width is below the given <code>minWidth</code> the <code>SimpleForm</code> will create a new row for the next group (<code>{@link sap.ui.layout.form.FormContainer FormContainer}</code>).
+				 * The default value is -1, meaning that inner groups (<code>{@link sap.ui.layout.form.FormContainer FormContainers}</code>) will be stacked until <code>maxContainerCols</code> is reached,
+				 * irrespective of whether a <code>width</code> is reached or the available parents width is reached.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveLayout</code> is used as a layout.
+				 */
+				minWidth : {type : "int", group : "Appearance", defaultValue : -1},
 
-			/**
-			 * Width of the form.
-			 * @since 1.28.0
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+				/**
+				 * Width of the form.
+				 * @since 1.28.0
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
-			/**
-			 * Applies a device-specific and theme-specific line height and label alignment to the form rows if the form has editable content.
-			 * If set, all (not only the editable) rows of the form will get the line height of editable fields.
-			 *
-			 * The labels inside the form will be rendered by default in the according mode.
-			 *
-			 * <b>Note:</b> The setting of this property does not change the content of the form.
-			 * For example, <code>Input</code> controls in a form with <code>editable</code> set to false are still editable.
-			 *
-			 * <b>Warning:</b> If this property is wrongly set, this might lead to visual issues.
-			 * The labels and fields might be misaligned, the labels might be rendered in the wrong mode,
-			 * and the spacing between the single controls might be wrong.
-			 * Also, controls that do not fit the mode might be rendered incorrectly.
-			 */
-			editable : {type : "boolean", group : "Misc", defaultValue : null},
+				/**
+				 * Applies a device-specific and theme-specific line height and label alignment to the form rows if the form has editable content.
+				 * If set, all (not only the editable) rows of the form will get the line height of editable fields.
+				 *
+				 * The labels inside the form will be rendered by default in the according mode.
+				 *
+				 * <b>Note:</b> The setting of this property does not change the content of the form.
+				 * For example, <code>Input</code> controls in a form with <code>editable</code> set to false are still editable.
+				 *
+				 * <b>Warning:</b> If this property is wrongly set, this might lead to visual issues.
+				 * The labels and fields might be misaligned, the labels might be rendered in the wrong mode,
+				 * and the spacing between the single controls might be wrong.
+				 * Also, controls that do not fit the mode might be rendered incorrectly.
+				 */
+				editable : {type : "boolean", group : "Misc", defaultValue : null},
 
-			/**
-			 * Specifies the min-width in pixels of the label in all form rows.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveLayout</code> is used as a layout.
-			 */
-			labelMinWidth : {type : "int", group : "Misc", defaultValue : 192},
+				/**
+				 * Specifies the min-width in pixels of the label in all form rows.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveLayout</code> is used as a layout.
+				 */
+				labelMinWidth : {type : "int", group : "Misc", defaultValue : 192},
 
-			/**
-			 * The <code>FormLayout</code> that is used to render the <code>SimpleForm</code>.
-			 *
-			 * We recommend using the <code>ColumnLayout</code> for rendering a <code>SimpleForm</code>,
-			 * as its responsiveness uses the space available in the best way possible.
-			 *
-			 * <b>Note</b> If possible, set the <code>layout</code> before adding content to prevent calculations for the default layout.
-			 *
-			 * <b>Note</b> The <code>ResponsiveLayout</code> has been deprecated and must no longer be used. For compatibility reasons the default could not be changed.
-			 */
-			layout : {type : "sap.ui.layout.form.SimpleFormLayout", group : "Misc", defaultValue : SimpleFormLayout.ResponsiveLayout},
+				/**
+				 * The <code>FormLayout</code> that is used to render the <code>SimpleForm</code>.
+				 *
+				 * We recommend using the <code>ColumnLayout</code> for rendering a <code>SimpleForm</code>,
+				 * as its responsiveness uses the space available in the best way possible.
+				 *
+				 * <b>Note</b> If possible, set the <code>layout</code> before adding content to prevent calculations for the default layout.
+				 *
+				 * <b>Note</b> The <code>ResponsiveLayout</code> has been deprecated and must no longer be used. For compatibility reasons the default could not be changed.
+				 */
+				layout : {type : "sap.ui.layout.form.SimpleFormLayout", group : "Misc", defaultValue : SimpleFormLayout.ResponsiveLayout},
 
-			/**
-			 * Default span for labels in extra large size.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
-			 * If the default value -1 is not overwritten with the meaningful one then the <code>labelSpanL</code> value is used (from the backward compatibility reasons).
-			 * @since 1.34.0
-			 */
-			labelSpanXL : {type : "int", group : "Misc", defaultValue : -1},
+				/**
+				 * Default span for labels in extra large size.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+				 * If the default value -1 is not overwritten with the meaningful one then the <code>labelSpanL</code> value is used (from the backward compatibility reasons).
+				 * @since 1.34.0
+				 */
+				labelSpanXL : {type : "int", group : "Misc", defaultValue : -1},
 
-			/**
-			 * Default span for labels in large size.
-			 *
-			 * <b>Note:</b> If <code>adjustLabelSpan</code> is set, this property is only used if more than 1 <code>FormContainer</code> is in one line.
-			 * If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
-			 *
-			 * <b>Note:</b> This property is only used if <code>ResponsiveGridLayout</code> or <code>ColumnLayout</code> is used as a layout.
-			 * If a <code>ColumnLayout</code> is used, this property defines the label size for large columns.
-			 * @since 1.16.3
-			 */
-			labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
+				/**
+				 * Default span for labels in large size.
+				 *
+				 * <b>Note:</b> If <code>adjustLabelSpan</code> is set, this property is only used if more than 1 <code>FormContainer</code> is in one line.
+				 * If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
+				 *
+				 * <b>Note:</b> This property is only used if <code>ResponsiveGridLayout</code> or <code>ColumnLayout</code> is used as a layout.
+				 * If a <code>ColumnLayout</code> is used, this property defines the label size for large columns.
+				 * @since 1.16.3
+				 */
+				labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
 
-			/**
-			 * Default span for labels in medium size.
-			 *
-			 * <b>Note:</b> If <code>adjustLabelSpan</code> is set, this property is used for full-size <code>FormContainers</code>.
-			 * If more than one <code>FormContainer</code> is in one line, <code>labelSpanL</code> is used.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
-			 * @since 1.16.3
-			 */
-			labelSpanM : {type : "int", group : "Misc", defaultValue : 2},
+				/**
+				 * Default span for labels in medium size.
+				 *
+				 * <b>Note:</b> If <code>adjustLabelSpan</code> is set, this property is used for full-size <code>FormContainers</code>.
+				 * If more than one <code>FormContainer</code> is in one line, <code>labelSpanL</code> is used.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+				 * @since 1.16.3
+				 */
+				labelSpanM : {type : "int", group : "Misc", defaultValue : 2},
 
-			/**
-			 * Default span for labels in small size.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
-			 * @since 1.16.3
-			 */
-			labelSpanS : {type : "int", group : "Misc", defaultValue : 12},
+				/**
+				 * Default span for labels in small size.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+				 * @since 1.16.3
+				 */
+				labelSpanS : {type : "int", group : "Misc", defaultValue : 12},
 
-			/**
-			 * If set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the number of <code>FormContainers</code> in one row.
-			 * If only one <code>FormContainer</code> is displayed in one row, <code>labelSpanM</code> is used to define the size of the label.
-			 * This is the same for medium and large <code>Forms</code>.
-			 * This is done to align the labels on forms where full-size <code>FormContainers</code> and multiple-column rows are used in the same <code>Form</code>
-			 * (because every <code>FormContainer</code> has its own grid inside).
-			 *
-			 * If not set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the <code>Form</code> size.
-			 * The number of <code>FormContainers</code> doesn't matter in this case.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
-			 * @since 1.34.0
-			 */
-			adjustLabelSpan : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * If set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the number of <code>FormContainers</code> in one row.
+				 * If only one <code>FormContainer</code> is displayed in one row, <code>labelSpanM</code> is used to define the size of the label.
+				 * This is the same for medium and large <code>Forms</code>.
+				 * This is done to align the labels on forms where full-size <code>FormContainers</code> and multiple-column rows are used in the same <code>Form</code>
+				 * (because every <code>FormContainer</code> has its own grid inside).
+				 *
+				 * If not set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the <code>Form</code> size.
+				 * The number of <code>FormContainers</code> doesn't matter in this case.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+				 * @since 1.34.0
+				 */
+				adjustLabelSpan : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Number of grid cells that are empty at the end of each line on extra large size.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
-			 * If the default value -1 is not overwritten with the meaningful one then the <code>emptySpanL</code> value is used (from the backward compatibility reasons).
-			 * @since 1.34.0
-			 */
-			emptySpanXL : {type : "int", group : "Misc", defaultValue : -1},
+				/**
+				 * Number of grid cells that are empty at the end of each line on extra large size.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+				 * If the default value -1 is not overwritten with the meaningful one then the <code>emptySpanL</code> value is used (from the backward compatibility reasons).
+				 * @since 1.34.0
+				 */
+				emptySpanXL : {type : "int", group : "Misc", defaultValue : -1},
 
-			/**
-			 * Number of grid cells that are empty at the end of each line on large size.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> or a <code>ColumnLayout</code> is used as a layout.
-			 * If a <code>ColumnLayout</code> is used, this property defines the empty cells for large columns.
-			 * @since 1.16.3
-			 */
-			emptySpanL : {type : "int", group : "Misc", defaultValue : 0},
+				/**
+				 * Number of grid cells that are empty at the end of each line on large size.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> or a <code>ColumnLayout</code> is used as a layout.
+				 * If a <code>ColumnLayout</code> is used, this property defines the empty cells for large columns.
+				 * @since 1.16.3
+				 */
+				emptySpanL : {type : "int", group : "Misc", defaultValue : 0},
 
-			/**
-			 * Number of grid cells that are empty at the end of each line on medium size.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
-			 * @since 1.16.3
-			 */
-			emptySpanM : {type : "int", group : "Misc", defaultValue : 0},
+				/**
+				 * Number of grid cells that are empty at the end of each line on medium size.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+				 * @since 1.16.3
+				 */
+				emptySpanM : {type : "int", group : "Misc", defaultValue : 0},
 
-			/**
-			 * Number of grid cells that are empty at the end of each line on small size.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
-			 * @since 1.16.3
-			 */
-			emptySpanS : {type : "int", group : "Misc", defaultValue : 0},
+				/**
+				 * Number of grid cells that are empty at the end of each line on small size.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+				 * @since 1.16.3
+				 */
+				emptySpanS : {type : "int", group : "Misc", defaultValue : 0},
 
-			/**
-			 * Form columns for extra large size.
-			 * The number of columns for extra large size must not be smaller than the number of columns for large size.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> or a <code>ColumnLayout</code> is used as a layout.
-			 * If the default value -1 is not overwritten with the meaningful one then the <code>columnsL</code> value is used (from the backward compatibility reasons).
-			 * @since 1.34.0
-			 */
-			columnsXL : {type : "int", group : "Misc", defaultValue : -1},
+				/**
+				 * Form columns for extra large size.
+				 * The number of columns for extra large size must not be smaller than the number of columns for large size.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> or a <code>ColumnLayout</code> is used as a layout.
+				 * If the default value -1 is not overwritten with the meaningful one then the <code>columnsL</code> value is used (from the backward compatibility reasons).
+				 * @since 1.34.0
+				 */
+				columnsXL : {type : "int", group : "Misc", defaultValue : -1},
 
-			/**
-			 * Form columns for large size.
-			 * The number of columns for large size must not be smaller than the number of columns for medium size.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> or a <code>ColumnLayout</code> is used as a layout.
-			 * @since 1.16.3
-			 */
-			columnsL : {type : "int", group : "Misc", defaultValue : 2},
+				/**
+				 * Form columns for large size.
+				 * The number of columns for large size must not be smaller than the number of columns for medium size.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> or a <code>ColumnLayout</code> is used as a layout.
+				 * @since 1.16.3
+				 */
+				columnsL : {type : "int", group : "Misc", defaultValue : 2},
 
-			/**
-			 * Form columns for medium size.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> or a <code>ColumnLayout</code> is used as a layout.
-			 * @since 1.16.3
-			 */
-			columnsM : {type : "int", group : "Misc", defaultValue : 1},
+				/**
+				 * Form columns for medium size.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> or a <code>ColumnLayout</code> is used as a layout.
+				 * @since 1.16.3
+				 */
+				columnsM : {type : "int", group : "Misc", defaultValue : 1},
 
-			/**
-			 * If the <code>Form</code> contains only one single <code>FormContainer</code> and this property is set,
-			 * the <code>FormContainer</code> is displayed using the full size of the <code>Form</code>.
-			 * In this case the properties <code>columnsL</code> and <code>columnsM</code> are ignored.
-			 *
-			 * In all other cases the <code>FormContainer</code> is displayed in the size of one column.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
-			 * @since 1.34.0
-			 */
-			singleContainerFullSize : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * If the <code>Form</code> contains only one single <code>FormContainer</code> and this property is set,
+				 * the <code>FormContainer</code> is displayed using the full size of the <code>Form</code>.
+				 * In this case the properties <code>columnsL</code> and <code>columnsM</code> are ignored.
+				 *
+				 * In all other cases the <code>FormContainer</code> is displayed in the size of one column.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+				 * @since 1.34.0
+				 */
+				singleContainerFullSize : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Breakpoint between Medium size and Large size.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
-			 * @since 1.34.0
-			 */
-			breakpointXL : {type : "int", group : "Misc", defaultValue : 1440},
+				/**
+				 * Breakpoint between Medium size and Large size.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+				 * @since 1.34.0
+				 */
+				breakpointXL : {type : "int", group : "Misc", defaultValue : 1440},
 
-			/**
-			 * Breakpoint between Medium size and Large size.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
-			 * @since 1.16.3
-			 */
-			breakpointL : {type : "int", group : "Misc", defaultValue : 1024},
+				/**
+				 * Breakpoint between Medium size and Large size.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+				 * @since 1.16.3
+				 */
+				breakpointL : {type : "int", group : "Misc", defaultValue : 1024},
 
-			/**
-			 * Breakpoint between Small size and Medium size.
-			 *
-			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
-			 * @since 1.16.3
-			 */
-			breakpointM : {type : "int", group : "Misc", defaultValue : 600},
+				/**
+				 * Breakpoint between Small size and Medium size.
+				 *
+				 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+				 * @since 1.16.3
+				 */
+				breakpointM : {type : "int", group : "Misc", defaultValue : 600},
 
-			/**
-			 * Specifies the background color of the <code>SimpleForm</code> content.
-			 *
-			 * The visualization of the different options depends on the used theme.
-			 *
-			 * @since 1.36.0
-			 */
-			backgroundDesign : {type : "sap.ui.layout.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Translucent}
+				/**
+				 * Specifies the background color of the <code>SimpleForm</code> content.
+				 *
+				 * The visualization of the different options depends on the used theme.
+				 *
+				 * @since 1.36.0
+				 */
+				backgroundDesign : {type : "sap.ui.layout.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Translucent}
+			},
+			defaultAggregation : "content",
+			aggregations : {
+
+				/**
+				 * The content of the form is structured in the following way:
+				 * <ul>
+				 * <li>Add a <code>sap.ui.core.Title</code> element or <code>Toolbar</code> control to start a new group (<code>{@link sap.ui.layout.form.FormContainer FormContainer}</code>).</li>
+				 * <li>Add a <code>Label</code> control to start a new row (<code>{@link sap.ui.layout.form.FormElement FormElement}</code>).</li>
+				 * <li>Add controls as input fields, text fields or other as needed.</li>
+				 * <li>Use <code>LayoutData</code> to influence the layout for special cases in the single controls.
+				 * For example, if a <code>ColumnLayout</code> is used as a layout,
+				 * the form content is weighted using 4 cells for the labels and 8 cells for the field part, for large size.
+				 * If there is only little space, the labels are above the fields and each field uses 12 cells.
+				 * If your input controls should influence their width, you can add <code>sap.ui.layout.ColumnElementData</code>
+				 * to them via <code>setLayoutData</code> method.
+				 * Ensure that the sum of the weights in the <code>ColumnElementData</code> is not more than 12,
+				 * as this is the total width of the input control part of each form row.</li>
+				 * </ul>
+				 * Example for a row where the <code>Input</code> uses 6 cells and the second <code>Input</code> uses 2 cells (using <code>ColumnElementData</code>):
+				 * <pre>
+				 * new sap.m.Label({text:"Label"});
+				 * new sap.m.Input({value:"6 cells", layoutData: new sap.ui.layout.ColumnElementData({cellsLarge: 6, cellsSmall: 8})}),
+				 * new sap.m.Input({value:"2 cells", layoutData: new sap.ui.layout.ColumnElementData({cellsLarge: 2, cellsSmall: 4})}),
+				 * </pre>
+				 *
+				 * For example, if a <code>ResponsiveGridLayout</code> is used as a layout, there are 12 cells in one row.
+				 * Depending on the screen size the labels use the defined <code>labelSpan</code>.
+				 * The remaining cells are used for the fields (and <code>emptySpan</code> if defined).
+				 * The available cells are distributed to all fields in the row. If one field should use a fixed number of cells
+				 * you can add <code>sap.ui.layout.GridData</code> to them via <code>setLayoutData</code> method.
+				 * If there are additional fields in the row they will get the remaining cells.
+				 * </ul>
+				 * Example for a row with two <code>Input</code> controls where one uses four cells on small screens,
+				 * one cell on medium screens and 2 cells on larger screens (using <code>ResponsiveGridLayout</code>):
+				 * <pre>
+				 * new sap.m.Label({text:"Label"});
+				 * new sap.m.Input({value:"auto size"}),
+				 * new sap.m.Input({value:"fix size", layoutData: new sap.ui.layout.GridData({span: "XL1 L1 M2 S4"})}),
+				 * </pre>
+				 *
+				 * <b>Warning:</b> Do not put any layout or other container controls in here. This could damage the visual layout,
+				 * keyboard support and screen-reader support. Only labels, titles, toolbars and form controls are allowed.
+				 * Views are also not supported. Allowed form controls implement the interface <code>sap.ui.core.IFormContent</code>.
+				 *
+				 * If editable controls are used as content, the <code>editable</code> property must be set to <code>true</code>,
+				 * otherwise to <code>false</code>. If the <code>editable</code> property is set incorrectly, there will be visual issues
+				 * like wrong label alignment or wrong spacing between the controls.
+				 */
+				content : {type : "sap.ui.core.Element", multiple : true, singularName : "content"},
+
+				/**
+				 * Hidden, for internal use only.
+				 */
+				form : {type : "sap.ui.layout.form.Form", multiple : false, visibility : "hidden"},
+
+				/**
+				 * Title element of the <code>SimpleForm</code>. Can either be a <code>Title</code> element, or a string.
+				 * @since 1.16.3
+				 */
+				title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false},
+
+				/**
+				 * Toolbar of the <code>SimpleForm</code>.
+				 *
+				 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
+				 * If a title is needed inside the <code>Toolbar</code> it must be added at content to the <code>Toolbar</code>.
+				 * In this case add the <code>Title</code> to the <code>ariaLabelledBy</code> association.
+				 * @since 1.36.0
+				 */
+				toolbar : {type : "sap.ui.core.Toolbar", multiple : false}
+			},
+			associations: {
+
+				/**
+				 * Association to controls / IDs which label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
+				 * @since 1.32.0
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+			},
+			designtime: "sap/ui/layout/designtime/form/SimpleForm.designtime"
 		},
-		defaultAggregation : "content",
-		aggregations : {
 
-			/**
-			 * The content of the form is structured in the following way:
-			 * <ul>
-			 * <li>Add a <code>sap.ui.core.Title</code> element or <code>Toolbar</code> control to start a new group (<code>{@link sap.ui.layout.form.FormContainer FormContainer}</code>).</li>
-			 * <li>Add a <code>Label</code> control to start a new row (<code>{@link sap.ui.layout.form.FormElement FormElement}</code>).</li>
-			 * <li>Add controls as input fields, text fields or other as needed.</li>
-			 * <li>Use <code>LayoutData</code> to influence the layout for special cases in the single controls.
-			 * For example, if a <code>ColumnLayout</code> is used as a layout,
-			 * the form content is weighted using 4 cells for the labels and 8 cells for the field part, for large size.
-			 * If there is only little space, the labels are above the fields and each field uses 12 cells.
-			 * If your input controls should influence their width, you can add <code>sap.ui.layout.ColumnElementData</code>
-			 * to them via <code>setLayoutData</code> method.
-			 * Ensure that the sum of the weights in the <code>ColumnElementData</code> is not more than 12,
-			 * as this is the total width of the input control part of each form row.</li>
-			 * </ul>
-			 * Example for a row where the <code>Input</code> uses 6 cells and the second <code>Input</code> uses 2 cells (using <code>ColumnElementData</code>):
-			 * <pre>
-			 * new sap.m.Label({text:"Label"});
-			 * new sap.m.Input({value:"6 cells", layoutData: new sap.ui.layout.ColumnElementData({cellsLarge: 6, cellsSmall: 8})}),
-			 * new sap.m.Input({value:"2 cells", layoutData: new sap.ui.layout.ColumnElementData({cellsLarge: 2, cellsSmall: 4})}),
-			 * </pre>
-			 *
-			 * For example, if a <code>ResponsiveGridLayout</code> is used as a layout, there are 12 cells in one row.
-			 * Depending on the screen size the labels use the defined <code>labelSpan</code>.
-			 * The remaining cells are used for the fields (and <code>emptySpan</code> if defined).
-			 * The available cells are distributed to all fields in the row. If one field should use a fixed number of cells
-			 * you can add <code>sap.ui.layout.GridData</code> to them via <code>setLayoutData</code> method.
-			 * If there are additional fields in the row they will get the remaining cells.
-			 * </ul>
-			 * Example for a row with two <code>Input</code> controls where one uses four cells on small screens,
-			 * one cell on medium screens and 2 cells on larger screens (using <code>ResponsiveGridLayout</code>):
-			 * <pre>
-			 * new sap.m.Label({text:"Label"});
-			 * new sap.m.Input({value:"auto size"}),
-			 * new sap.m.Input({value:"fix size", layoutData: new sap.ui.layout.GridData({span: "XL1 L1 M2 S4"})}),
-			 * </pre>
-			 *
-			 * <b>Warning:</b> Do not put any layout or other container controls in here. This could damage the visual layout,
-			 * keyboard support and screen-reader support. Only labels, titles, toolbars and form controls are allowed.
-			 * Views are also not supported. Allowed form controls implement the interface <code>sap.ui.core.IFormContent</code>.
-			 *
-			 * If editable controls are used as content, the <code>editable</code> property must be set to <code>true</code>,
-			 * otherwise to <code>false</code>. If the <code>editable</code> property is set incorrectly, there will be visual issues
-			 * like wrong label alignment or wrong spacing between the controls.
-			 */
-			content : {type : "sap.ui.core.Element", multiple : true, singularName : "content"},
-
-			/**
-			 * Hidden, for internal use only.
-			 */
-			form : {type : "sap.ui.layout.form.Form", multiple : false, visibility : "hidden"},
-
-			/**
-			 * Title element of the <code>SimpleForm</code>. Can either be a <code>Title</code> element, or a string.
-			 * @since 1.16.3
-			 */
-			title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false},
-
-			/**
-			 * Toolbar of the <code>SimpleForm</code>.
-			 *
-			 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
-			 * If a title is needed inside the <code>Toolbar</code> it must be added at content to the <code>Toolbar</code>.
-			 * In this case add the <code>Title</code> to the <code>ariaLabelledBy</code> association.
-			 * @since 1.36.0
-			 */
-			toolbar : {type : "sap.ui.core.Toolbar", multiple : false}
-		},
-		associations: {
-
-			/**
-			 * Association to controls / IDs which label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
-			 * @since 1.32.0
-			 */
-			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-		},
-		designtime: "sap/ui/layout/designtime/form/SimpleForm.designtime"
-	}});
+		renderer: SimpleFormRenderer
+	});
 
 	SimpleForm.prototype.init = function() {
 

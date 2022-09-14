@@ -294,7 +294,9 @@ sap.ui.define([
 			},
 			dnd: { draggable: false, droppable: true },
 			designtime: "sap/f/designtime/DynamicPage.designtime"
-		}
+		},
+
+		renderer: DynamicPageRenderer
 	});
 
 	function exists(vObject) {

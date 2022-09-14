@@ -1,4 +1,3 @@
-
 /*!
  * ${copyright}
  */
@@ -387,7 +386,9 @@ sap.ui.define([
 					}
 				},
 				designtime: "sap/m/designtime/Popover.designtime"
-			}
+			},
+
+			renderer: PopoverRenderer
 		});
 
 

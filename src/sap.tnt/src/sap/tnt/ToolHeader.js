@@ -134,7 +134,9 @@ sap.ui.define([
 			},
 			aggregations: {
 			}
-		}
+		},
+
+		renderer: ToolHeaderRenderer
 	});
 
 	/**

@@ -63,7 +63,9 @@ sap.ui.define([
 					 */
 					sliders: { type: "sap.m.WheelSlider", multiple: true }
 				}
-			}
+			},
+
+			renderer: WheelSliderContainerRenderer
 		});
 
 		/**

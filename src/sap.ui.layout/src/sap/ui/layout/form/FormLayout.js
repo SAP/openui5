@@ -42,20 +42,24 @@ sap.ui.define([
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.form.FormLayout
 	 */
-	var FormLayout = Control.extend("sap.ui.layout.form.FormLayout", /** @lends sap.ui.layout.form.FormLayout.prototype */ { metadata : {
+	var FormLayout = Control.extend("sap.ui.layout.form.FormLayout", /** @lends sap.ui.layout.form.FormLayout.prototype */ {
+		metadata : {
 
-		library : "sap.ui.layout",
-		properties : {
-			/**
-			 * Specifies the background color of the <code>Form</code> content.
-			 *
-			 * <b>Note:</b> The visualization of the different options depends on the theme used.
-			 *
-			 * @since 1.36.0
-			 */
-			backgroundDesign : {type : "sap.ui.layout.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Translucent}
-		}
-	}});
+			library : "sap.ui.layout",
+			properties : {
+				/**
+				 * Specifies the background color of the <code>Form</code> content.
+				 *
+				 * <b>Note:</b> The visualization of the different options depends on the theme used.
+				 *
+				 * @since 1.36.0
+				 */
+				backgroundDesign : {type : "sap.ui.layout.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Translucent}
+			}
+		},
+
+		renderer: FormLayoutRenderer
+	});
 
 	/* eslint-disable no-lonely-if */
 

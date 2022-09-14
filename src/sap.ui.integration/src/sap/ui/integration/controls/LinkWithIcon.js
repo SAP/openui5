@@ -45,7 +45,9 @@ sap.ui.define([
 			aggregations: {
 				_icon: { type: "sap.ui.core.Icon", multiple: false, visibility: "hidden" }
 			}
-		}
+		},
+
+		renderer: LinkWithIconRenderer
 	});
 
 	/**

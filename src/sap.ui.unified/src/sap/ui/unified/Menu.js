@@ -66,75 +66,79 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.unified.Menu
 	 */
-	var Menu = Control.extend("sap.ui.unified.Menu", /** @lends sap.ui.unified.Menu.prototype */ { metadata : {
-		interfaces: [
-			"sap.ui.core.IContextMenu"
-		],
-		library : "sap.ui.unified",
-		properties : {
+	var Menu = Control.extend("sap.ui.unified.Menu", /** @lends sap.ui.unified.Menu.prototype */ {
+		metadata : {
+			interfaces: [
+				"sap.ui.core.IContextMenu"
+			],
+			library : "sap.ui.unified",
+			properties : {
 
-			/**
-			 * When a menu is disabled none of its items can be selected by the user.
-			 * The enabled property of an item (@link sap.ui.unified.MenuItemBase#getEnabled) has no effect when the menu of the item is disabled.
-			 */
-			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * When a menu is disabled none of its items can be selected by the user.
+				 * The enabled property of an item (@link sap.ui.unified.MenuItemBase#getEnabled) has no effect when the menu of the item is disabled.
+				 */
+				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * Accessible label / description of the menu for assistive technologies like screenreaders.
-			 * @deprecated as of version 1.27.0, replaced by <code>ariaLabelledBy</code> association
-			 */
-			ariaDescription : {type : "string", group : "Accessibility", defaultValue : null, deprecated: true},
+				/**
+				 * Accessible label / description of the menu for assistive technologies like screenreaders.
+				 * @deprecated as of version 1.27.0, replaced by <code>ariaLabelledBy</code> association
+				 */
+				ariaDescription : {type : "string", group : "Accessibility", defaultValue : null, deprecated: true},
 
-			/**
-			 * The maximum number of items which are displayed before an overflow mechanism takes effect.
-			 * A value smaller than 1 means an infinite number of visible items.
-			 * The overall height of the menu is limited by the height of the screen. If the maximum possible height is reached, an
-			 * overflow takes effect, even if the maximum number of visible items is not yet reached.
-			 */
-			maxVisibleItems : {type : "int", group : "Behavior", defaultValue : 0},
+				/**
+				 * The maximum number of items which are displayed before an overflow mechanism takes effect.
+				 * A value smaller than 1 means an infinite number of visible items.
+				 * The overall height of the menu is limited by the height of the screen. If the maximum possible height is reached, an
+				 * overflow takes effect, even if the maximum number of visible items is not yet reached.
+				 */
+				maxVisibleItems : {type : "int", group : "Behavior", defaultValue : 0},
 
-			/**
-			 * The keyboard can be used to navigate through the items of a menu. Beside the arrow keys for single steps and the <i>Home</i> / <i>End</i> keys for jumping
-			 * to the first / last item, the <i>Page Up</i> / <i>Page Down</i> keys can be used to jump an arbitrary number of items up or down. This number can be defined via the <code>pageSize</code> property.
-			 * For values smaller than 1, paging behaves in a similar way to when using the <i>Home</i> / <i>End</i> keys. If the value equals 1, the paging behavior is similar to that of the arrow keys.
-			 * @since 1.25.0
-			 */
-			pageSize : {type : "int", group : "Behavior", defaultValue : 5}
-		},
-		defaultAggregation : "items",
-		aggregations : {
+				/**
+				 * The keyboard can be used to navigate through the items of a menu. Beside the arrow keys for single steps and the <i>Home</i> / <i>End</i> keys for jumping
+				 * to the first / last item, the <i>Page Up</i> / <i>Page Down</i> keys can be used to jump an arbitrary number of items up or down. This number can be defined via the <code>pageSize</code> property.
+				 * For values smaller than 1, paging behaves in a similar way to when using the <i>Home</i> / <i>End</i> keys. If the value equals 1, the paging behavior is similar to that of the arrow keys.
+				 * @since 1.25.0
+				 */
+				pageSize : {type : "int", group : "Behavior", defaultValue : 5}
+			},
+			defaultAggregation : "items",
+			aggregations : {
 
-			/**
-			 * The available actions to be displayed as items of the menu.
-			 */
-			items : {type : "sap.ui.unified.MenuItemBase", multiple : true, singularName : "item"}
-		},
-		associations : {
+				/**
+				 * The available actions to be displayed as items of the menu.
+				 */
+				items : {type : "sap.ui.unified.MenuItemBase", multiple : true, singularName : "item"}
+			},
+			associations : {
 
-			/**
-			 * Reference to accessible labels (ids of existing DOM elements or controls) for assistive technologies like screenreaders.
-			 * @see "WAI-ARIA Standard (attribute aria-labelledby)"
-			 * @since 1.26.3
-			 */
-			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
-		},
-		events : {
+				/**
+				 * Reference to accessible labels (ids of existing DOM elements or controls) for assistive technologies like screenreaders.
+				 * @see "WAI-ARIA Standard (attribute aria-labelledby)"
+				 * @since 1.26.3
+				 */
+				ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+			},
+			events : {
 
-			/**
-			 * Fired on the root menu of a menu hierarchy whenever a user selects an item within the menu or within one of its direct or indirect submenus.
-			 * <b>Note:</b> There is also a select event available for each single menu item. This event and the event of the menu items are redundant.
-			 */
-			itemSelect : {
-				parameters : {
+				/**
+				 * Fired on the root menu of a menu hierarchy whenever a user selects an item within the menu or within one of its direct or indirect submenus.
+				 * <b>Note:</b> There is also a select event available for each single menu item. This event and the event of the menu items are redundant.
+				 */
+				itemSelect : {
+					parameters : {
 
-					/**
-					 * The action (item) which was selected by the user.
-					 */
-					item : {type : "sap.ui.unified.MenuItemBase"}
+						/**
+						 * The action (item) which was selected by the user.
+						 */
+						item : {type : "sap.ui.unified.MenuItemBase"}
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: MenuRenderer
+	});
 
 
 

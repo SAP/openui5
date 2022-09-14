@@ -64,87 +64,91 @@ sap.ui.define([
 	 * @since 1.13.1
 	 * @alias sap.m.ProgressIndicator
 	 */
-	var ProgressIndicator = Control.extend("sap.m.ProgressIndicator", /** @lends sap.m.ProgressIndicator.prototype */ { metadata : {
+	var ProgressIndicator = Control.extend("sap.m.ProgressIndicator", /** @lends sap.m.ProgressIndicator.prototype */ {
+		metadata : {
 
-		interfaces : ["sap.ui.core.IFormContent"],
-		library : "sap.m",
-		properties : {
-			/**
-			 * Switches enabled state of the control. Disabled fields have different colors, and cannot be focused.
-			 */
-			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+			interfaces : ["sap.ui.core.IFormContent"],
+			library : "sap.m",
+			properties : {
+				/**
+				 * Switches enabled state of the control. Disabled fields have different colors, and cannot be focused.
+				 */
+				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * Specifies the state of the bar. Enumeration sap.ui.core.ValueState provides Error, Warning, Success, Information, None (default value).
-			 * The color for each state depends on the theme.
-			 */
-			state : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : ValueState.None},
+				/**
+				 * Specifies the state of the bar. Enumeration sap.ui.core.ValueState provides Error, Warning, Success, Information, None (default value).
+				 * The color for each state depends on the theme.
+				 */
+				state : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : ValueState.None},
 
-			/**
-			 * Specifies the text value to be displayed in the bar.
-			 */
-			displayValue : {type : "string", group : "Appearance", defaultValue : null},
+				/**
+				 * Specifies the text value to be displayed in the bar.
+				 */
+				displayValue : {type : "string", group : "Appearance", defaultValue : null},
 
-			/**
-			 * Specifies the numerical value in percent for the length of the progress bar.
-			 *
-			 * <b>Note:</b> If a value greater than 100 is provided, the <code>percentValue</code> is set to 100.
-			 * In other cases of invalid value, <code>percentValue</code> is set to its default of 0.
-			 */
-			percentValue : {type : "float", group : "Data", defaultValue : 0},
+				/**
+				 * Specifies the numerical value in percent for the length of the progress bar.
+				 *
+				 * <b>Note:</b> If a value greater than 100 is provided, the <code>percentValue</code> is set to 100.
+				 * In other cases of invalid value, <code>percentValue</code> is set to its default of 0.
+				 */
+				percentValue : {type : "float", group : "Data", defaultValue : 0},
 
-			/**
-			 * Indicates whether the displayValue should be shown in the ProgressIndicator.
-			 */
-			showValue : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * Indicates whether the displayValue should be shown in the ProgressIndicator.
+				 */
+				showValue : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * Specifies the width of the control.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+				/**
+				 * Specifies the width of the control.
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 
-			/**
-			 * Specifies the height of the control. The default value depends on the theme. Suggested size for normal use is 2.5rem (40px). Suggested size for small size (like for use in ObjectHeader) is 1.375rem (22px).
-			 * @since 1.15.0
-			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+				/**
+				 * Specifies the height of the control. The default value depends on the theme. Suggested size for normal use is 2.5rem (40px). Suggested size for small size (like for use in ObjectHeader) is 1.375rem (22px).
+				 * @since 1.15.0
+				 */
+				height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
-			/**
-			 * Specifies the element's text directionality with enumerated options (RTL or LTR). By default, the control inherits text direction from the DOM.
-			 * @since 1.28.0
-			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * Specifies the element's text directionality with enumerated options (RTL or LTR). By default, the control inherits text direction from the DOM.
+				 * @since 1.28.0
+				 */
+				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
-			/**
-			 * Determines whether the control is in display-only state where the control has different visualization and cannot be focused.
-			 * @since 1.50
-			 */
-			displayOnly : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Determines whether the control is in display-only state where the control has different visualization and cannot be focused.
+				 * @since 1.50
+				 */
+				displayOnly : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Determines whether a percentage change is displayed with animation.
-			 * @since 1.73
-			 */
-			displayAnimation : {type : "boolean", group : "Behavior", defaultValue : true}
+				/**
+				 * Determines whether a percentage change is displayed with animation.
+				 * @since 1.73
+				 */
+				displayAnimation : {type : "boolean", group : "Behavior", defaultValue : true}
+			},
+			aggregations: {
+				_popover: {type: "sap.m.Popover", multiple: false, visibility: "hidden"}
+			},
+			associations : {
+				/**
+				 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
+				 * @since 1.69
+				 */
+				ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+
+				/**
+				 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledBy).
+				 * @since 1.69
+				 */
+				ariaLabelledBy: {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+			},
+			designtime: "sap/m/designtime/ProgressIndicator.designtime"
 		},
-		aggregations: {
-			_popover: {type: "sap.m.Popover", multiple: false, visibility: "hidden"}
-		},
-		associations : {
-			/**
-			 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
-			 * @since 1.69
-			 */
-			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
 
-			/**
-			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledBy).
-			 * @since 1.69
-			 */
-			ariaLabelledBy: {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
-		},
-		designtime: "sap/m/designtime/ProgressIndicator.designtime"
-	}});
+		renderer: ProgressIndicatorRenderer
+	});
 
 	ProgressIndicator.RESIZE_HANDLER_ID = {
 		SELF: "_sResizeHandlerId"

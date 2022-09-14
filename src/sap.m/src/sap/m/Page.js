@@ -269,7 +269,9 @@ function(
 				},
 				dnd: { draggable: false, droppable: true },
 				designtime: "sap/m/designtime/Page.designtime"
-			}
+			},
+
+			renderer: PageRenderer
 		});
 
 		ContextMenuSupport.apply(Page.prototype);

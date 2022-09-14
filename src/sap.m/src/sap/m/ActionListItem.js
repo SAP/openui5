@@ -36,17 +36,21 @@ sap.ui.define(['./ListItemBase', './library', './ActionListItemRenderer'],
 	 * @alias sap.m.ActionListItem
 	 * @see {@link fiori:/action-list-item/ Action List Item}
 	 */
-	var ActionListItem = ListItemBase.extend("sap.m.ActionListItem", /** @lends sap.m.ActionListItem.prototype */ { metadata : {
+	var ActionListItem = ListItemBase.extend("sap.m.ActionListItem", /** @lends sap.m.ActionListItem.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Defines the text that appears in the control.
-			 */
-			text : {type : "string", group : "Misc", defaultValue : null}
-		}
-	}});
+				/**
+				 * Defines the text that appears in the control.
+				 */
+				text : {type : "string", group : "Misc", defaultValue : null}
+			}
+		},
+
+		renderer: ActionListItemRenderer
+	});
 
 
 	/**

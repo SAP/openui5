@@ -34,19 +34,23 @@ function(library, Control, ToolbarSpacerRenderer, Log) {
 	 * @since 1.16
 	 * @alias sap.m.ToolbarSpacer
 	 */
-	var ToolbarSpacer = Control.extend("sap.m.ToolbarSpacer", /** @lends sap.m.ToolbarSpacer.prototype */ { metadata : {
+	var ToolbarSpacer = Control.extend("sap.m.ToolbarSpacer", /** @lends sap.m.ToolbarSpacer.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Defines the width of the horizontal space.
-			 * Note: Empty("") value makes the space flexible which means it covers the remaining space between toolbar items.
-			 * This feature can be used to push next item to the edge of the toolbar.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : ''}
-		}
-	}});
+				/**
+				 * Defines the width of the horizontal space.
+				 * Note: Empty("") value makes the space flexible which means it covers the remaining space between toolbar items.
+				 * This feature can be used to push next item to the edge of the toolbar.
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : ''}
+			}
+		},
+
+		renderer: ToolbarSpacerRenderer
+	});
 
 	ToolbarSpacer.prototype.setLayoutData = function (oLayoutData) {
 		if (oLayoutData && oLayoutData.isA("sap.m.ToolbarLayoutData")) {

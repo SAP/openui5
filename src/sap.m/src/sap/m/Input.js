@@ -162,368 +162,372 @@ function(
 	 * @alias sap.m.Input
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/input-field/ Input}
 	 */
-	var Input = InputBase.extend("sap.m.Input", /** @lends sap.m.Input.prototype */ { metadata : {
-		interfaces : [
-			"sap.ui.core.IAccessKeySupport"
-		],
-		library : "sap.m",
-		properties : {
+	var Input = InputBase.extend("sap.m.Input", /** @lends sap.m.Input.prototype */ {
+		metadata : {
+			interfaces : [
+				"sap.ui.core.IAccessKeySupport"
+			],
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * HTML type of the internal <code>input</code> tag (e.g. Text, Number, Email, Phone).
-			 * The particular effect of this property differs depending on the browser and the current language settings,
-			 * especially for the type Number.<br>
-			 * This parameter is intended to be used with touch devices that use different soft keyboard layouts depending on the given input type.<br>
-			 * Only the default value <code>sap.m.InputType.Text</code> may be used in combination with data model formats.
-			 * <code>sap.ui.model</code> defines extended formats that are mostly incompatible with normal HTML
-			 * representations for numbers and dates.
-			 */
-			type : {type : "sap.m.InputType", group : "Data", defaultValue : InputType.Text},
+				/**
+				 * HTML type of the internal <code>input</code> tag (e.g. Text, Number, Email, Phone).
+				 * The particular effect of this property differs depending on the browser and the current language settings,
+				 * especially for the type Number.<br>
+				 * This parameter is intended to be used with touch devices that use different soft keyboard layouts depending on the given input type.<br>
+				 * Only the default value <code>sap.m.InputType.Text</code> may be used in combination with data model formats.
+				 * <code>sap.ui.model</code> defines extended formats that are mostly incompatible with normal HTML
+				 * representations for numbers and dates.
+				 */
+				type : {type : "sap.m.InputType", group : "Data", defaultValue : InputType.Text},
 
-			/**
-			 * Maximum number of characters. Value '0' means the feature is switched off.
-			 * This parameter is not compatible with the input type <code>sap.m.InputType.Number</code>.
-			 * If the input type is set to <code>Number</code>, the <code>maxLength</code> value is ignored.
-			 * If the <code>maxLength</code> is set after there is already a longer value, this value will not get truncated.
-			 * The <code>maxLength</code> property has effect only when the value is modified by user interaction.
-			 */
-			maxLength : {type : "int", group : "Behavior", defaultValue : 0},
+				/**
+				 * Maximum number of characters. Value '0' means the feature is switched off.
+				 * This parameter is not compatible with the input type <code>sap.m.InputType.Number</code>.
+				 * If the input type is set to <code>Number</code>, the <code>maxLength</code> value is ignored.
+				 * If the <code>maxLength</code> is set after there is already a longer value, this value will not get truncated.
+				 * The <code>maxLength</code> property has effect only when the value is modified by user interaction.
+				 */
+				maxLength : {type : "int", group : "Behavior", defaultValue : 0},
 
-			/**
-			 * Only used if type=date and no datepicker is available.
-			 * The data is displayed and the user input is parsed according to this format.
-			 * <b>Note:</b> The value property is always of the form RFC 3339 (YYYY-MM-dd).
-			 * @deprecated Since version 1.9.1.
-			 * <code>sap.m.DatePicker</code>, <code>sap.m.TimePicker</code> or <code>sap.m.DateTimePicker</code> should be used for date/time inputs and formating.
-			 */
-			dateFormat : {type : "string", group : "Misc", defaultValue : 'YYYY-MM-dd', deprecated: true},
+				/**
+				 * Only used if type=date and no datepicker is available.
+				 * The data is displayed and the user input is parsed according to this format.
+				 * <b>Note:</b> The value property is always of the form RFC 3339 (YYYY-MM-dd).
+				 * @deprecated Since version 1.9.1.
+				 * <code>sap.m.DatePicker</code>, <code>sap.m.TimePicker</code> or <code>sap.m.DateTimePicker</code> should be used for date/time inputs and formating.
+				 */
+				dateFormat : {type : "string", group : "Misc", defaultValue : 'YYYY-MM-dd', deprecated: true},
 
-			/**
-			 * If set to true, a value help indicator will be displayed inside the control. When clicked the event "valueHelpRequest" will be fired.
-			 * @since 1.16
-			 */
-			showValueHelp : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * If set to true, a value help indicator will be displayed inside the control. When clicked the event "valueHelpRequest" will be fired.
+				 * @since 1.16
+				 */
+				showValueHelp : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Set custom value help icon.
-			 * @since 1.84.0
-			 */
-			valueHelpIconSrc : {type : "sap.ui.core.URI", group : "Behavior", defaultValue : "sap-icon://value-help"},
+				/**
+				 * Set custom value help icon.
+				 * @since 1.84.0
+				 */
+				valueHelpIconSrc : {type : "sap.ui.core.URI", group : "Behavior", defaultValue : "sap-icon://value-help"},
 
-			/**
-			 * If this is set to true, suggest event is fired when user types in the input. Changing the suggestItems aggregation in suggest event listener will show suggestions within a popup. When runs on phone, input will first open a dialog where the input and suggestions are shown. When runs on a tablet, the suggestions are shown in a popup next to the input.
-			 * @since 1.16.1
-			 */
-			showSuggestion : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * If this is set to true, suggest event is fired when user types in the input. Changing the suggestItems aggregation in suggest event listener will show suggestions within a popup. When runs on phone, input will first open a dialog where the input and suggestions are shown. When runs on a tablet, the suggestions are shown in a popup next to the input.
+				 * @since 1.16.1
+				 */
+				showSuggestion : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * If set to true, direct text input is disabled and the control will trigger the event "valueHelpRequest" for all user interactions. The properties "showValueHelp", "editable", and "enabled" must be set to true, otherwise the property will have no effect.
-			 * In this scenario, the <code>showItems</code> API will not work.
-			 * @since 1.21.0
-			 */
-			valueHelpOnly : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * If set to true, direct text input is disabled and the control will trigger the event "valueHelpRequest" for all user interactions. The properties "showValueHelp", "editable", and "enabled" must be set to true, otherwise the property will have no effect.
+				 * In this scenario, the <code>showItems</code> API will not work.
+				 * @since 1.21.0
+				 */
+				valueHelpOnly : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Defines whether to filter the provided suggestions before showing them to the user.
-			 */
-			filterSuggests : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Defines whether to filter the provided suggestions before showing them to the user.
+				 */
+				filterSuggests : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * If set, the value of this parameter will control the horizontal size of the suggestion list to display more data. This allows suggestion lists to be wider than the input field if there is enough space available. By default, the suggestion list is always as wide as the input field.
-			 * <b>Note:</b> The value will be ignored if the actual width of the input field is larger than the specified parameter value.
-			 * @since 1.21.1
-			 */
-			maxSuggestionWidth : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
+				/**
+				 * If set, the value of this parameter will control the horizontal size of the suggestion list to display more data. This allows suggestion lists to be wider than the input field if there is enough space available. By default, the suggestion list is always as wide as the input field.
+				 * <b>Note:</b> The value will be ignored if the actual width of the input field is larger than the specified parameter value.
+				 * @since 1.21.1
+				 */
+				maxSuggestionWidth : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 
-			/**
-			 * Minimum length of the entered text in input before suggest event is fired. The default value is 1 which means the suggest event is fired after user types in input.
-			 *
-			 * <b>Note:</b> When it's set to 0, suggest event is fired when input with no text gets focus. In this case no suggestion popup will open.
-			 * @since 1.21.2
-			 */
-			startSuggestion : {type : "int", group : "Behavior", defaultValue : 1},
+				/**
+				 * Minimum length of the entered text in input before suggest event is fired. The default value is 1 which means the suggest event is fired after user types in input.
+				 *
+				 * <b>Note:</b> When it's set to 0, suggest event is fired when input with no text gets focus. In this case no suggestion popup will open.
+				 * @since 1.21.2
+				 */
+				startSuggestion : {type : "int", group : "Behavior", defaultValue : 1},
 
-			/**
-			 * For tabular suggestions, this flag will show/hide the button at the end of the suggestion table that triggers the event "valueHelpRequest" when pressed. The default value is true.
-			 *
-			 * <b>Note:</b> If suggestions are not tabular or no suggestions are used, the button will not be displayed and this flag is without effect.
-			 * @since 1.22.1
-			 */
-			showTableSuggestionValueHelp : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * For tabular suggestions, this flag will show/hide the button at the end of the suggestion table that triggers the event "valueHelpRequest" when pressed. The default value is true.
+				 *
+				 * <b>Note:</b> If suggestions are not tabular or no suggestions are used, the button will not be displayed and this flag is without effect.
+				 * @since 1.22.1
+				 */
+				showTableSuggestionValueHelp : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * The description is a text after the input field, e.g. units of measurement, currencies.
-			 */
-			description: { type: "string", group: "Misc", defaultValue: null },
+				/**
+				 * The description is a text after the input field, e.g. units of measurement, currencies.
+				 */
+				description: { type: "string", group: "Misc", defaultValue: null },
 
-			/**
-			 * This property only takes effect if the description property is set. It controls the distribution of space between the input field and the description text. The default value is 50% leaving the other 50% for the description.
-			 */
-			fieldWidth: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: '50%' },
+				/**
+				 * This property only takes effect if the description property is set. It controls the distribution of space between the input field and the description text. The default value is 50% leaving the other 50% for the description.
+				 */
+				fieldWidth: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: '50%' },
 
-			/**
-			 * Indicates when the value gets updated with the user changes: At each keystroke (true) or first when the user presses enter or tabs out (false).
-			 *
-			 * <b>Note:</b> When set to true and the value of the Input control is bound to a model, the change event becomes obsolete and will not be fired, as the value in the model will be updated each time the user provides input. In such cases, subscription to the liveChange event is more appropriate, as it corresponds to the way the underlying model gets updated.
-			 * @since 1.24
-			 */
-			valueLiveUpdate : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Indicates when the value gets updated with the user changes: At each keystroke (true) or first when the user presses enter or tabs out (false).
+				 *
+				 * <b>Note:</b> When set to true and the value of the Input control is bound to a model, the change event becomes obsolete and will not be fired, as the value in the model will be updated each time the user provides input. In such cases, subscription to the liveChange event is more appropriate, as it corresponds to the way the underlying model gets updated.
+				 * @since 1.24
+				 */
+				valueLiveUpdate : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Defines the key of the selected item.
-			 *
-			 * <b>Note:</b> If duplicate keys exist, the first item matching the key is used.
-			 * @since 1.44
-			 */
-			selectedKey: {type: "string", group: "Data", defaultValue: ""},
-			/**
-			 * Defines the display text format mode.
-			 * @since 1.44
-			 */
-			textFormatMode: {type: "sap.m.InputTextFormatMode", group: "Misc", defaultValue: InputTextFormatMode.Value},
-			/**
-			 * Defines the display text formatter function.
-			 * @since 1.44
-			 */
-			textFormatter: {type: "any", group: "Misc", defaultValue: ""},
-			/**
-			 * Defines the validation callback function called when a suggestion row gets selected.
-			 * @since 1.44
-			 */
-			suggestionRowValidator: {type: "any", group: "Misc", defaultValue: ""},
+				/**
+				 * Defines the key of the selected item.
+				 *
+				 * <b>Note:</b> If duplicate keys exist, the first item matching the key is used.
+				 * @since 1.44
+				 */
+				selectedKey: {type: "string", group: "Data", defaultValue: ""},
+				/**
+				 * Defines the display text format mode.
+				 * @since 1.44
+				 */
+				textFormatMode: {type: "sap.m.InputTextFormatMode", group: "Misc", defaultValue: InputTextFormatMode.Value},
+				/**
+				 * Defines the display text formatter function.
+				 * @since 1.44
+				 */
+				textFormatter: {type: "any", group: "Misc", defaultValue: ""},
+				/**
+				 * Defines the validation callback function called when a suggestion row gets selected.
+				 * @since 1.44
+				 */
+				suggestionRowValidator: {type: "any", group: "Misc", defaultValue: ""},
 
-			/**
-			 * Specifies whether the suggestions highlighting is enabled.
-			 * @since 1.46
-			 */
-			enableSuggestionsHighlighting: {type: "boolean", group: "Behavior", defaultValue: true},
+				/**
+				 * Specifies whether the suggestions highlighting is enabled.
+				 * @since 1.46
+				 */
+				enableSuggestionsHighlighting: {type: "boolean", group: "Behavior", defaultValue: true},
 
-			/**
-			 * Enables the <code>autoPopinMode</code> of <code>sap.m.Table</code>, when the input has tabular suggestions.
-			 * <b>Note:</b> The <code>autoPopinMode</code> overwrites the <code>demandPopin</code> and the
-			 * <code>minScreenWidth</code> properties of the <code>sap.m.Column</code>.
-			 * When setting, <code>enableTableAutoPopinMode</code>, from true to false,
-			 * the application must reconfigure the <code>demandPopin</code> and
-			 * <code>minScreenWidth</code> properties of the <code>sap.m.Column</code> control by itself.
-			 * @since 1.89
-			 */
-			 enableTableAutoPopinMode: {type: "boolean", group: "Behavior", defaultValue: false},
+				/**
+				 * Enables the <code>autoPopinMode</code> of <code>sap.m.Table</code>, when the input has tabular suggestions.
+				 * <b>Note:</b> The <code>autoPopinMode</code> overwrites the <code>demandPopin</code> and the
+				 * <code>minScreenWidth</code> properties of the <code>sap.m.Column</code>.
+				 * When setting, <code>enableTableAutoPopinMode</code>, from true to false,
+				 * the application must reconfigure the <code>demandPopin</code> and
+				 * <code>minScreenWidth</code> properties of the <code>sap.m.Column</code> control by itself.
+				 * @since 1.89
+				 */
+				 enableTableAutoPopinMode: {type: "boolean", group: "Behavior", defaultValue: false},
 
-			/**
-			 * Specifies whether autocomplete is enabled.
-			 * Works only if "showSuggestion" property is set to true.
-			 * <b>Note:</b> The autocomplete feature is disabled on Android devices due to a OS specific issue.
-			 * @since 1.61
-			 */
-			autocomplete: {type: "boolean", group: "Behavior", defaultValue: true},
+				/**
+				 * Specifies whether autocomplete is enabled.
+				 * Works only if "showSuggestion" property is set to true.
+				 * <b>Note:</b> The autocomplete feature is disabled on Android devices due to a OS specific issue.
+				 * @since 1.61
+				 */
+				autocomplete: {type: "boolean", group: "Behavior", defaultValue: true},
 
-			/**
-			 * Specifies whether clear icon is shown.
-			 * Pressing the icon will clear input's value and fire the change and liveChange events.
-			 * @since 1.94
-			 */
-			showClearIcon: { type: "boolean", defaultValue: false },
+				/**
+				 * Specifies whether clear icon is shown.
+				 * Pressing the icon will clear input's value and fire the change and liveChange events.
+				 * @since 1.94
+				 */
+				showClearIcon: { type: "boolean", defaultValue: false },
 
-			/**
-			 * Specifies whether the clear icon should be shown/hidden on user interaction.
-			 * @private
-			 */
-			effectiveShowClearIcon: { type: "boolean", defaultValue: false, visibility: "hidden" },
+				/**
+				 * Specifies whether the clear icon should be shown/hidden on user interaction.
+				 * @private
+				 */
+				effectiveShowClearIcon: { type: "boolean", defaultValue: false, visibility: "hidden" },
 
-			/**
-			 * Specifies whether to display separators in tabular suggestions.
-			 * @private
-			 */
-			separateSuggestions: { type: "boolean", defaultValue: false, visibility: "hidden" },
+				/**
+				 * Specifies whether to display separators in tabular suggestions.
+				 * @private
+				 */
+				separateSuggestions: { type: "boolean", defaultValue: false, visibility: "hidden" },
 
-			/**
-			 * Indicates whether the access keys ref of the control should be highlighted.
-			 * NOTE: this property is used only when access keys feature is turned on.
-			 *
-			 * @private
-			 */
-			highlightAccKeysRef: { type: "boolean", defaultValue: false, visibility: "hidden" },
+				/**
+				 * Indicates whether the access keys ref of the control should be highlighted.
+				 * NOTE: this property is used only when access keys feature is turned on.
+				 *
+				 * @private
+				 */
+				highlightAccKeysRef: { type: "boolean", defaultValue: false, visibility: "hidden" },
 
-			/**
-			 * Indicates which keyboard key should be pressed to focus the access key ref
-			 * NOTE: this property is used only when access keys feature is turned on.
-			 *
-			 * @private
-			 */
-			accesskey: { type: "string", defaultValue: "", visibility: "hidden" }
-		},
-		defaultAggregation : "suggestionItems",
-		aggregations : {
+				/**
+				 * Indicates which keyboard key should be pressed to focus the access key ref
+				 * NOTE: this property is used only when access keys feature is turned on.
+				 *
+				 * @private
+				 */
+				accesskey: { type: "string", defaultValue: "", visibility: "hidden" }
+			},
+			defaultAggregation : "suggestionItems",
+			aggregations : {
 
-			/**
-			 * Defines the items displayed in the suggestion popup. Changing this aggregation
-			 * (by calling <code>addSuggestionItem</code>, <code>insertSuggestionItem</code>,
-			 * <code>removeSuggestionItem</code>, <code>removeAllSuggestionItems</code>, or
-			 * <code>destroySuggestionItems</code>) after <code>Input</code> is rendered
-			 * opens/closes the suggestion popup.
-			 *
-			 * To display suggestions with two text values, add <code>sap.ui.core.ListItem</code>
-			 * as <code>SuggestionItems</code> (since 1.21.1). For the selected
-			 * <code>ListItem</code>, only the first value is returned to the input field.
-			 *
-			 * <b>Note:</b> Only <code>text</code> and <code>additionalText</code> property values
-			 * of the item are displayed. For example, if an <code>icon</code> is set, it is
-			 * ignored. To display more information per item (including icons), you can use the
-			 * <code>suggestionRows</code> aggregation.
-			 *
-			 * <b>Note:</b> Disabled items are not visualized in the list with the suggestions,
-			 * however they can still be accessed through the aggregation.
-			 * <b>Note:</b> If <code>suggestionItems</code> & <code>suggestionRows</code> are set in parallel, the last aggeragtion to come would overwrite the previous ones.
-			 *
-			 * @since 1.16.1
-			 */
-			suggestionItems : {type : "sap.ui.core.Item", multiple : true, singularName : "suggestionItem"},
+				/**
+				 * Defines the items displayed in the suggestion popup. Changing this aggregation
+				 * (by calling <code>addSuggestionItem</code>, <code>insertSuggestionItem</code>,
+				 * <code>removeSuggestionItem</code>, <code>removeAllSuggestionItems</code>, or
+				 * <code>destroySuggestionItems</code>) after <code>Input</code> is rendered
+				 * opens/closes the suggestion popup.
+				 *
+				 * To display suggestions with two text values, add <code>sap.ui.core.ListItem</code>
+				 * as <code>SuggestionItems</code> (since 1.21.1). For the selected
+				 * <code>ListItem</code>, only the first value is returned to the input field.
+				 *
+				 * <b>Note:</b> Only <code>text</code> and <code>additionalText</code> property values
+				 * of the item are displayed. For example, if an <code>icon</code> is set, it is
+				 * ignored. To display more information per item (including icons), you can use the
+				 * <code>suggestionRows</code> aggregation.
+				 *
+				 * <b>Note:</b> Disabled items are not visualized in the list with the suggestions,
+				 * however they can still be accessed through the aggregation.
+				 * <b>Note:</b> If <code>suggestionItems</code> & <code>suggestionRows</code> are set in parallel, the last aggeragtion to come would overwrite the previous ones.
+				 *
+				 * @since 1.16.1
+				 */
+				suggestionItems : {type : "sap.ui.core.Item", multiple : true, singularName : "suggestionItem"},
 
-			/**
-			 * The suggestionColumns and suggestionRows are for tabular input suggestions. This aggregation allows for binding the table columns; for more details see the aggregation "suggestionRows".
-			 * @since 1.21.1
-			 */
-			suggestionColumns : {type : "sap.m.Column", multiple : true, singularName : "suggestionColumn", bindable : "bindable", forwarding: {getter:"_getSuggestionsTable", aggregation: "columns"}},
+				/**
+				 * The suggestionColumns and suggestionRows are for tabular input suggestions. This aggregation allows for binding the table columns; for more details see the aggregation "suggestionRows".
+				 * @since 1.21.1
+				 */
+				suggestionColumns : {type : "sap.m.Column", multiple : true, singularName : "suggestionColumn", bindable : "bindable", forwarding: {getter:"_getSuggestionsTable", aggregation: "columns"}},
 
-			/**
-			 * The suggestionColumns and suggestionRows are for tabular input suggestions. This aggregation allows for binding the table cells.
-			 * The items of this aggregation are to be bound directly or to set in the suggest event method.
-			 * <b>Note:</b> If <code>suggestionItems</code> & <code>suggestionRows</code> are set in parallel, the last aggeragtion to come would overwrite the previous ones.
-			 * @since 1.21.1
-			 */
-			suggestionRows : {type : "sap.m.ColumnListItem", altTypes: ["sap.m.GroupHeaderListItem"], multiple : true, singularName : "suggestionRow", bindable : "bindable", forwarding: {getter: "_getSuggestionsTable", aggregation: "items"}},
+				/**
+				 * The suggestionColumns and suggestionRows are for tabular input suggestions. This aggregation allows for binding the table cells.
+				 * The items of this aggregation are to be bound directly or to set in the suggest event method.
+				 * <b>Note:</b> If <code>suggestionItems</code> & <code>suggestionRows</code> are set in parallel, the last aggeragtion to come would overwrite the previous ones.
+				 * @since 1.21.1
+				 */
+				suggestionRows : {type : "sap.m.ColumnListItem", altTypes: ["sap.m.GroupHeaderListItem"], multiple : true, singularName : "suggestionRow", bindable : "bindable", forwarding: {getter: "_getSuggestionsTable", aggregation: "items"}},
 
-			/**
-			 * The suggestion popup (can be a Dialog or Popover); aggregation needed to also propagate the model and bindings to the content of the popover
-			 */
-			_suggestionPopup : {type : "sap.ui.core.Control", multiple: false, visibility: "hidden"},
+				/**
+				 * The suggestion popup (can be a Dialog or Popover); aggregation needed to also propagate the model and bindings to the content of the popover
+				 */
+				_suggestionPopup : {type : "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
-			/**
-			 * The icon on the right side of the Input
-			 */
-			_valueHelpIcon : {type : "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
-		},
-		associations: {
+				/**
+				 * The icon on the right side of the Input
+				 */
+				_valueHelpIcon : {type : "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
+			},
+			associations: {
 
-			/**
-			 * Sets or retrieves the selected item from the suggestionItems.
-			 * @since 1.44
-			 */
-			selectedItem: {type: "sap.ui.core.Item", multiple: false},
+				/**
+				 * Sets or retrieves the selected item from the suggestionItems.
+				 * @since 1.44
+				 */
+				selectedItem: {type: "sap.ui.core.Item", multiple: false},
 
-			/**
-			 * Sets or retrieves the selected row from the suggestionRows.
-			 * @since 1.44
-			 */
-			selectedRow: {type: "sap.m.ColumnListItem", multiple: false}
-		},
-		events : {
+				/**
+				 * Sets or retrieves the selected row from the suggestionRows.
+				 * @since 1.44
+				 */
+				selectedRow: {type: "sap.m.ColumnListItem", multiple: false}
+			},
+			events : {
 
-			/**
-			 * Fired when the value of the input is changed by user interaction - each keystroke, delete, paste, etc.
-			 *
-			 * <b>Note:</b> Browsing autocomplete suggestions does not fire the event.
-			 */
-			liveChange : {
-				parameters : {
-					/**
-					 * The current value of the input, after a live change event.
-					 */
-					value : {type : "string"},
+				/**
+				 * Fired when the value of the input is changed by user interaction - each keystroke, delete, paste, etc.
+				 *
+				 * <b>Note:</b> Browsing autocomplete suggestions does not fire the event.
+				 */
+				liveChange : {
+					parameters : {
+						/**
+						 * The current value of the input, after a live change event.
+						 */
+						value : {type : "string"},
 
-					/**
-					 * Indicates that ESC key triggered the event. <b>Note:</b> This parameter will not be sent unless the ESC key is pressed.
-					 * @since 1.48
-					 */
-					escPressed : {type : "boolean"},
+						/**
+						 * Indicates that ESC key triggered the event. <b>Note:</b> This parameter will not be sent unless the ESC key is pressed.
+						 * @since 1.48
+						 */
+						escPressed : {type : "boolean"},
 
-					/**
-					 * The value of the input before pressing ESC key. <b>Note:</b> This parameter will not be sent unless the ESC key is pressed.
-					 * @since 1.48
-					 */
-					previousValue : {type : "string"}
+						/**
+						 * The value of the input before pressing ESC key. <b>Note:</b> This parameter will not be sent unless the ESC key is pressed.
+						 * @since 1.48
+						 */
+						previousValue : {type : "string"}
+					}
+				},
+
+				/**
+				 * When the value help indicator is clicked, this event will be fired.
+				 * @since 1.16
+				 */
+				valueHelpRequest : {
+					parameters : {
+
+						/**
+						 * The event parameter is set to true, when the button at the end of the suggestion table is clicked, otherwise false. It can be used to determine whether the "value help" trigger or the "show all items" trigger has been pressed.
+						 */
+						fromSuggestions : {type : "boolean"}
+					}
+				},
+
+				/**
+				 * This event is fired when user types in the input and showSuggestion is set to true. Changing the suggestItems aggregation will show the suggestions within a popup.
+				 * @since 1.16.1
+				 */
+				suggest : {
+					parameters : {
+
+						/**
+						 * The current value which has been typed in the input.
+						 */
+						suggestValue : {type : "string"},
+
+						/**
+						 * The suggestion list is passed to this event for convenience. If you use list-based or tabular suggestions, fill the suggestionList with the items you want to suggest. Otherwise, directly add the suggestions to the "suggestionItems" aggregation of the input control.
+						 */
+						suggestionColumns : {type : "sap.m.ListBase"}
+					}
+				},
+
+				/**
+				 * This event is fired when suggestionItem shown in suggestion popup are selected. This event is only fired when showSuggestion is set to true and there are suggestionItems shown in the suggestion popup.
+				 * @since 1.16.3
+				 */
+				suggestionItemSelected : {
+					parameters : {
+
+						/**
+						 * This is the item selected in the suggestion popup for one and two-value suggestions. For tabular suggestions, this value will not be set.
+						 */
+						selectedItem : {type : "sap.ui.core.Item"},
+
+						/**
+						 * This is the row selected in the tabular suggestion popup represented as a ColumnListItem. For one and two-value suggestions, this value will not be set.
+						 *
+						 * <b>Note:</b> The row result function to select a result value for the string is already executed at this time. To pick different value for the input field or to do follow up steps after the item has been selected.
+						 * @since 1.21.1
+						 */
+						selectedRow : {type : "sap.m.ColumnListItem"}
+					}
+				},
+
+				/**
+				 * This event is fired when user presses the <kbd>Enter</kbd> key on the input.
+				 *
+				 * <b>Notes:</b>
+				 * <ul>
+				 * <li>The event is fired independent of whether there was a change before or not. If a change was performed, the event is fired after the change event.</li>
+				 * <li>The event is also fired when an item of the select list is selected via <kbd>Enter</kbd>.</li>
+				 * <li>The event is only fired on an input which allows text input (<code>editable</code>, <code>enabled</code> and not <code>valueHelpOnly</code>).</li>
+				 * </ul>
+				 *
+				 * @since 1.33.0
+				 */
+				submit : {
+					parameters: {
+
+						/**
+						 * The new value of the input.
+						 */
+						value: { type: "string" }
+					}
 				}
 			},
-
-			/**
-			 * When the value help indicator is clicked, this event will be fired.
-			 * @since 1.16
-			 */
-			valueHelpRequest : {
-				parameters : {
-
-					/**
-					 * The event parameter is set to true, when the button at the end of the suggestion table is clicked, otherwise false. It can be used to determine whether the "value help" trigger or the "show all items" trigger has been pressed.
-					 */
-					fromSuggestions : {type : "boolean"}
-				}
-			},
-
-			/**
-			 * This event is fired when user types in the input and showSuggestion is set to true. Changing the suggestItems aggregation will show the suggestions within a popup.
-			 * @since 1.16.1
-			 */
-			suggest : {
-				parameters : {
-
-					/**
-					 * The current value which has been typed in the input.
-					 */
-					suggestValue : {type : "string"},
-
-					/**
-					 * The suggestion list is passed to this event for convenience. If you use list-based or tabular suggestions, fill the suggestionList with the items you want to suggest. Otherwise, directly add the suggestions to the "suggestionItems" aggregation of the input control.
-					 */
-					suggestionColumns : {type : "sap.m.ListBase"}
-				}
-			},
-
-			/**
-			 * This event is fired when suggestionItem shown in suggestion popup are selected. This event is only fired when showSuggestion is set to true and there are suggestionItems shown in the suggestion popup.
-			 * @since 1.16.3
-			 */
-			suggestionItemSelected : {
-				parameters : {
-
-					/**
-					 * This is the item selected in the suggestion popup for one and two-value suggestions. For tabular suggestions, this value will not be set.
-					 */
-					selectedItem : {type : "sap.ui.core.Item"},
-
-					/**
-					 * This is the row selected in the tabular suggestion popup represented as a ColumnListItem. For one and two-value suggestions, this value will not be set.
-					 *
-					 * <b>Note:</b> The row result function to select a result value for the string is already executed at this time. To pick different value for the input field or to do follow up steps after the item has been selected.
-					 * @since 1.21.1
-					 */
-					selectedRow : {type : "sap.m.ColumnListItem"}
-				}
-			},
-
-			/**
-			 * This event is fired when user presses the <kbd>Enter</kbd> key on the input.
-			 *
-			 * <b>Notes:</b>
-			 * <ul>
-			 * <li>The event is fired independent of whether there was a change before or not. If a change was performed, the event is fired after the change event.</li>
-			 * <li>The event is also fired when an item of the select list is selected via <kbd>Enter</kbd>.</li>
-			 * <li>The event is only fired on an input which allows text input (<code>editable</code>, <code>enabled</code> and not <code>valueHelpOnly</code>).</li>
-			 * </ul>
-			 *
-			 * @since 1.33.0
-			 */
-			submit : {
-				parameters: {
-
-					/**
-					 * The new value of the input.
-					 */
-					value: { type: "string" }
-				}
-			}
+			designtime: "sap/m/designtime/Input.designtime"
 		},
-		designtime: "sap/m/designtime/Input.designtime"
-	}});
+
+		renderer: InputRenderer
+	});
 
 
 	IconPool.insertFontFaceStyle();

@@ -77,7 +77,9 @@ sap.ui.define([
 					accentCells: {type: "sap.ui.layout.BlockLayoutCell", multiple: true, singularName: "accentCell"}
 				},
 				designtime: "sap/ui/layout/designtime/BlockLayoutRow.designtime"
-			}
+			},
+
+			renderer: BlockLayoutRowRenderer
 		});
 
 		BlockLayoutRow.prototype.init = function () {

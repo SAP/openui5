@@ -48,55 +48,59 @@ function(
 	 * @since 1.30
 	 * @alias sap.m.WizardProgressNavigator
 	 */
-	var WizardProgressNavigator = Control.extend("sap.m.WizardProgressNavigator", { /** @lends sap.m.WizardProgressNavigator.prototype */ metadata: {
-		properties: {
+	var WizardProgressNavigator = Control.extend("sap.m.WizardProgressNavigator", /** @lends sap.m.WizardProgressNavigator.prototype */ {
+		metadata: {
+			properties: {
 
-			/**
-			 * Sets the total number of steps.
-			 * Minimum number of steps is 3.
-			 * Maximum number of steps is 8.
-			 */
-			stepCount: {type: "int", group: "Data", defaultValue: 3},
+				/**
+				 * Sets the total number of steps.
+				 * Minimum number of steps is 3.
+				 * Maximum number of steps is 8.
+				 */
+				stepCount: {type: "int", group: "Data", defaultValue: 3},
 
-			/**
-			 * Sets a title to be displayed for each step.
-			 * The title for each step is visible on hover.
-			 * <b>Note:</b> The number of titles should equal the number of steps,
-			 * otherwise no titles will be rendered.
-			 * @since 1.32
-			 */
-			stepTitles: {type: "string[]", group: "Appearance", defaultValue: []},
+				/**
+				 * Sets a title to be displayed for each step.
+				 * The title for each step is visible on hover.
+				 * <b>Note:</b> The number of titles should equal the number of steps,
+				 * otherwise no titles will be rendered.
+				 * @since 1.32
+				 */
+				stepTitles: {type: "string[]", group: "Appearance", defaultValue: []},
 
-			/**
-			 * Sets an icon to be displayed for each step.
-			 * The icon for each step is directly visible in the WizardProgressNavigator.
-			 * <b>Note:</b> The number of icons should equal the number of steps,
-			 * otherwise no icons will be rendered.
-			 * @since 1.32
-			 */
-			stepIcons: {type: "sap.ui.core.URI[]", group: "Appearance", defaultValue: []},
+				/**
+				 * Sets an icon to be displayed for each step.
+				 * The icon for each step is directly visible in the WizardProgressNavigator.
+				 * <b>Note:</b> The number of icons should equal the number of steps,
+				 * otherwise no icons will be rendered.
+				 * @since 1.32
+				 */
+				stepIcons: {type: "sap.ui.core.URI[]", group: "Appearance", defaultValue: []},
 
-			/**
-			* Indicates that number of steps can vary.
-			* A dashed line is displayed after the last concrete step (set by the <code>stepCount</code> property).
-			*/
-			varyingStepCount: {type: "boolean", group: "Appearance", defaultValue: false}
-		},
-		events: {
+				/**
+				* Indicates that number of steps can vary.
+				* A dashed line is displayed after the last concrete step (set by the <code>stepCount</code> property).
+				*/
+				varyingStepCount: {type: "boolean", group: "Appearance", defaultValue: false}
+			},
+			events: {
 
-			/**
-			 * This event is fired when the current step changes.
-			 */
-			stepChanged: {
-				parameters: {
-					/**
-					* The number of the current step. One-based.
-					*/
-					current: {type: "int"}
+				/**
+				 * This event is fired when the current step changes.
+				 */
+				stepChanged: {
+					parameters: {
+						/**
+						* The number of the current step. One-based.
+						*/
+						current: {type: "int"}
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: WizardProgressNavigatorRenderer
+	});
 
 	WizardProgressNavigator.CONSTANTS = {
 		MINIMUM_STEPS: 3,

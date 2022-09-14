@@ -1,4 +1,4 @@
-  /*!
+/*!
  * ${copyright}
  */
 
@@ -45,136 +45,140 @@ sap.ui.define([
 	 * @since 1.22
 	 * @alias sap.m.FeedInput
 	 */
-	var FeedInput = Control.extend("sap.m.FeedInput", /** @lends sap.m.FeedInput.prototype */ { metadata : {
+	var FeedInput = Control.extend("sap.m.FeedInput", /** @lends sap.m.FeedInput.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		designtime: "sap/m/designtime/FeedInput.designtime",
-		properties : {
+			library : "sap.m",
+			designtime: "sap/m/designtime/FeedInput.designtime",
+			properties : {
 
-			/**
-			 * Set this flag to "false" to disable both text input and post button.
-			 */
-			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Set this flag to "false" to disable both text input and post button.
+				 */
+				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * Defines the number of visible text lines for the control.
-			 * <b>Note:</b> Minimum value is 2, maximum value is 15.
-			 */
-			rows : {type : "int", group : "Appearance", defaultValue : 2},
+				/**
+				 * Defines the number of visible text lines for the control.
+				 * <b>Note:</b> Minimum value is 2, maximum value is 15.
+				 */
+				rows : {type : "int", group : "Appearance", defaultValue : 2},
 
-			/**
-			 * Determines whether the characters, exceeding the maximum allowed character count, are visible in the input field.
-			 *
-			 * If set to <code>false</code>, the user is not allowed to enter more characters than what is set in the <code>maxLength</code> property.
-			 * If set to <code>true</code>, the characters exceeding the <code>maxLength</code> value are selected on paste and the counter below
-			 * the input field displays their number.
-			 */
-			showExceededText: {type: "boolean", group: "Behavior", defaultValue: false},
+				/**
+				 * Determines whether the characters, exceeding the maximum allowed character count, are visible in the input field.
+				 *
+				 * If set to <code>false</code>, the user is not allowed to enter more characters than what is set in the <code>maxLength</code> property.
+				 * If set to <code>true</code>, the characters exceeding the <code>maxLength</code> value are selected on paste and the counter below
+				 * the input field displays their number.
+				 */
+				showExceededText: {type: "boolean", group: "Behavior", defaultValue: false},
 
-			/**
-			 * The maximum length (the maximum number of characters) for the feed's input value. By default this is not limited.
-			 */
-			maxLength : {type : "int", group : "Behavior", defaultValue : 0},
+				/**
+				 * The maximum length (the maximum number of characters) for the feed's input value. By default this is not limited.
+				 */
+				maxLength : {type : "int", group : "Behavior", defaultValue : 0},
 
-			/**
-			 * Indicates the ability of the control to automatically grow and shrink dynamically with its content.
-			 */
-			growing : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Indicates the ability of the control to automatically grow and shrink dynamically with its content.
+				 */
+				growing : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Defines the maximum number of lines that the control can grow.
-			 * Value is set to 0 by default, which means an unlimited numbers of rows.
-			 * <b>Note:</b> Minimum value to set is equal to the <code>rows</code> property value, maximum value is 15.
-			 */
-			growingMaxLines : {type : "int", group : "Behavior", defaultValue : 0},
+				/**
+				 * Defines the maximum number of lines that the control can grow.
+				 * Value is set to 0 by default, which means an unlimited numbers of rows.
+				 * <b>Note:</b> Minimum value to set is equal to the <code>rows</code> property value, maximum value is 15.
+				 */
+				growingMaxLines : {type : "int", group : "Behavior", defaultValue : 0},
 
-			/**
-			 * The placeholder text shown in the input area as long as the user has not entered any text value.
-			 */
-			placeholder : {type : "string", group : "Appearance", defaultValue : "Post something here"},
+				/**
+				 * The placeholder text shown in the input area as long as the user has not entered any text value.
+				 */
+				placeholder : {type : "string", group : "Appearance", defaultValue : "Post something here"},
 
-			/**
-			 * The text value of the feed input. As long as the user has not entered any text the post button is disabled
-			 */
-			value : {type : "string", group : "Data", defaultValue : null},
+				/**
+				 * The text value of the feed input. As long as the user has not entered any text the post button is disabled
+				 */
+				value : {type : "string", group : "Data", defaultValue : null},
 
-			/**
-			 * Icon to be displayed as a graphical element within the feed input. This can be an image or an icon from the icon font.
-			 */
-			icon : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
+				/**
+				 * Icon to be displayed as a graphical element within the feed input. This can be an image or an icon from the icon font.
+				 */
+				icon : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
-			/**
-			 * Defines the shape of the icon.
-			* @since 1.88
-			*/
-			iconDisplayShape: { type: "sap.m.AvatarShape", defaultValue: AvatarShape.Circle},
+				/**
+				 * Defines the shape of the icon.
+				* @since 1.88
+				*/
+				iconDisplayShape: { type: "sap.m.AvatarShape", defaultValue: AvatarShape.Circle},
 
-			/**
-			 * Defines the initials of the icon.
-			 * @since 1.88
-			 */
-			iconInitials: { type: "string", defaultValue: "" },
+				/**
+				 * Defines the initials of the icon.
+				 * @since 1.88
+				 */
+				iconInitials: { type: "string", defaultValue: "" },
 
-			/**
-			 * Defines the size of the icon.
-			 * @since 1.88
-			 */
-			iconSize: { type: "sap.m.AvatarSize", defaultValue: AvatarSize.M},
+				/**
+				 * Defines the size of the icon.
+				 * @since 1.88
+				 */
+				iconSize: { type: "sap.m.AvatarSize", defaultValue: AvatarSize.M},
 
-			/**
-			 * If set to "true" (default), icons will be displayed. In case no icon is provided the standard placeholder will be displayed. if set to "false" icons are hidden
-			 */
-			showIcon : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * If set to "true" (default), icons will be displayed. In case no icon is provided the standard placeholder will be displayed. if set to "false" icons are hidden
+				 */
+				showIcon : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * Some mobile devices support higher resolution images while others do not. Therefore, you should provide image resources for all relevant densities.
-			 * If the property is set to "true", one or more requests are sent to the server to try and get the perfect density version of an image. If an image of a certain density is not available, the image control falls back to the default image, which should be provided.
-			 *
-			 * If you do not have higher resolution images, you should set the property to "false" to avoid unnecessary round-trips.
-			 *
-			 * Please be aware that this property is relevant only for images and not for icons.
-			 *
-			 * Deprecated as of version 1.88. Image is replaced by avatar.
-			 */
-			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * Some mobile devices support higher resolution images while others do not. Therefore, you should provide image resources for all relevant densities.
+				 * If the property is set to "true", one or more requests are sent to the server to try and get the perfect density version of an image. If an image of a certain density is not available, the image control falls back to the default image, which should be provided.
+				 *
+				 * If you do not have higher resolution images, you should set the property to "false" to avoid unnecessary round-trips.
+				 *
+				 * Please be aware that this property is relevant only for images and not for icons.
+				 *
+				 * Deprecated as of version 1.88. Image is replaced by avatar.
+				 */
+				iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * Sets a new tooltip for Submit button. The tooltip can either be a simple string (which in most cases will be rendered as the title attribute of this element)
-			 * or an instance of sap.ui.core.TooltipBase.
-			 * If a new tooltip is set, any previously set tooltip is deactivated.
-			 * The default value is set language dependent.
-			 * @since 1.28
-			 */
-			buttonTooltip : {type : "sap.ui.core.TooltipBase", group : "Accessibility", defaultValue : "Submit"},
+				/**
+				 * Sets a new tooltip for Submit button. The tooltip can either be a simple string (which in most cases will be rendered as the title attribute of this element)
+				 * or an instance of sap.ui.core.TooltipBase.
+				 * If a new tooltip is set, any previously set tooltip is deactivated.
+				 * The default value is set language dependent.
+				 * @since 1.28
+				 */
+				buttonTooltip : {type : "sap.ui.core.TooltipBase", group : "Accessibility", defaultValue : "Submit"},
 
-			/**
-			 * Text for Picture which will be read by screenreader.
-			 * If a new ariaLabelForPicture is set, any previously set ariaLabelForPicture is deactivated.
-			 * Deprecated as of version 1.88. This will not have any effect in code now.
-			 */
-			ariaLabelForPicture : {type : "string", group : "Accessibility", defaultValue : null}
-		},
-		aggregations : {
-			/**
-			* Defines the inner avatar control.
-			 */
-			_avatar: { type: "sap.m.Avatar", multiple: false, visibility: "hidden" }
-		},
-		events : {
+				/**
+				 * Text for Picture which will be read by screenreader.
+				 * If a new ariaLabelForPicture is set, any previously set ariaLabelForPicture is deactivated.
+				 * Deprecated as of version 1.88. This will not have any effect in code now.
+				 */
+				ariaLabelForPicture : {type : "string", group : "Accessibility", defaultValue : null}
+			},
+			aggregations : {
+				/**
+				* Defines the inner avatar control.
+				 */
+				_avatar: { type: "sap.m.Avatar", multiple: false, visibility: "hidden" }
+			},
+			events : {
 
-			/**
-			 * The Post event is triggered when the user has entered a value and pressed the post button. After firing this event, the value is reset.
-			 */
-			post : {
-				parameters : {
-					/**
-					 * The value of the feed input before reseting it.
-					 */
-					value : {type : "string"}
+				/**
+				 * The Post event is triggered when the user has entered a value and pressed the post button. After firing this event, the value is reset.
+				 */
+				post : {
+					parameters : {
+						/**
+						 * The value of the feed input before reseting it.
+						 */
+						value : {type : "string"}
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: FeedInputRenderer
+	});
 
 
 	/*
@@ -400,8 +404,8 @@ sap.ui.define([
 	FeedInput.prototype.setEnabled = function (bEnabled) {
 		this.setProperty("enabled", bEnabled, true);
 
-	  //Dynamically adding or removing the css
-        if (this.getDomRef("outerContainer")) {
+		//Dynamically adding or removing the css
+		if (this.getDomRef("outerContainer")) {
 			if (bEnabled) {
 				this.getDomRef("outerContainer").classList.remove("sapMFeedInDisabled");
 			} else {

@@ -156,7 +156,9 @@ sap.ui.define([
 				_popover: {type: "sap.m.Popover", multiple: false, visibility: "hidden"}
 			},
 			designtime: "sap/m/designtime/OverflowToolbar.designtime"
-		}
+		},
+
+		renderer: OverflowToolbarRenderer
 	});
 
 	/**

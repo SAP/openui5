@@ -35,7 +35,9 @@ function(
 	var NotificationList = ListBase.extend('sap.m.NotificationList', /** @lends sap.m.NotificationList.prototype */ {
 		metadata: {
 			library: 'sap.m'
-		}
+		},
+
+		renderer: NotificationListRenderer
 	});
 
 	NotificationList.prototype.onItemFocusIn = function() { };

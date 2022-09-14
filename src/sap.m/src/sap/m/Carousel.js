@@ -105,155 +105,159 @@ sap.ui.define([
 	 * @alias sap.m.Carousel
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/carousel/ Carousel}
 	 */
-	var Carousel = Control.extend("sap.m.Carousel", /** @lends sap.m.Carousel.prototype */ { metadata : {
+	var Carousel = Control.extend("sap.m.Carousel", /** @lends sap.m.Carousel.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		designtime: "sap/m/designtime/Carousel.designtime",
-		properties : {
+			library : "sap.m",
+			designtime: "sap/m/designtime/Carousel.designtime",
+			properties : {
 
-			/**
-			 * The height of the carousel. Note that when a percentage value is used, the height of the surrounding container must be defined.
-			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+				/**
+				 * The height of the carousel. Note that when a percentage value is used, the height of the surrounding container must be defined.
+				 */
+				height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 
-			/**
-			 * The width of the carousel. Note that when a percentage value is used, the height of the surrounding container must be defined.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+				/**
+				 * The width of the carousel. Note that when a percentage value is used, the height of the surrounding container must be defined.
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 
-			/**
-			 * Defines whether the carousel should loop, i.e show the first page after the last page is reached and vice versa.
-			 */
-			loop : {type : "boolean", group : "Misc", defaultValue : false},
+				/**
+				 * Defines whether the carousel should loop, i.e show the first page after the last page is reached and vice versa.
+				 */
+				loop : {type : "boolean", group : "Misc", defaultValue : false},
 
-			/**
-			 * Show or hide carousel's page indicator.
-			 */
-			showPageIndicator : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * Show or hide carousel's page indicator.
+				 */
+				showPageIndicator : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * Defines where the carousel's page indicator is displayed. Possible values are sap.m.PlacementType.Top, sap.m.PlacementType.Bottom. Other values are ignored and the default value will be applied. The default value is sap.m.PlacementType.Bottom.
-			 */
-			pageIndicatorPlacement : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : PlacementType.Bottom},
+				/**
+				 * Defines where the carousel's page indicator is displayed. Possible values are sap.m.PlacementType.Top, sap.m.PlacementType.Bottom. Other values are ignored and the default value will be applied. The default value is sap.m.PlacementType.Bottom.
+				 */
+				pageIndicatorPlacement : {type : "sap.m.PlacementType", group : "Appearance", defaultValue : PlacementType.Bottom},
 
-			/**
-			 * Show or hide busy indicator in the carousel when loading pages after swipe.
-			 * @deprecated Since version 1.18.7.
-			 * Since 1.18.7 pages are no longer loaded or unloaded. Therefore busy indicator is not necessary any longer.
-			 */
-			showBusyIndicator : {type : "boolean", group : "Appearance", defaultValue : true, deprecated: true},
+				/**
+				 * Show or hide busy indicator in the carousel when loading pages after swipe.
+				 * @deprecated Since version 1.18.7.
+				 * Since 1.18.7 pages are no longer loaded or unloaded. Therefore busy indicator is not necessary any longer.
+				 */
+				showBusyIndicator : {type : "boolean", group : "Appearance", defaultValue : true, deprecated: true},
 
-			/**
-			 * Defines where the carousel's arrows are placed. Default is <code>sap.m.CarouselArrowsPlacement.Content</code> used to
-			 * place the arrows on the sides of the carousel. Alternatively <code>sap.m.CarouselArrowsPlacement.PageIndicator</code> can
-			 * be used to place the arrows on the sides of the page indicator.
-			 */
-			arrowsPlacement : {type : "sap.m.CarouselArrowsPlacement", group : "Appearance", defaultValue : CarouselArrowsPlacement.Content}
-		},
-		defaultAggregation : "pages",
-		aggregations : {
-
-			/**
-			 * The content which the carousel displays.
-			 */
-			pages : {type : "sap.ui.core.Control", multiple : true, singularName : "page"},
-
-			/**
-			 * Defines how many pages are displayed in the visible area of the <code>Carousel</code> control.
-			 *
-			 * <b>Note:</b> When this property is used, the <code>loop</code> property is ignored.
-			 * @since 1.62
-			 */
-			customLayout: { type: "sap.m.CarouselLayout", multiple: false },
-
-			/**
-			 * Message page, that is shown when no pages are loaded or provided
-			 */
-			_emptyPage: { type: "sap.m.IllustratedMessage", multiple: false, visibility: "hidden" }
-		},
-		associations : {
-
-			/**
-			 * Provides getter and setter for the currently displayed page. For the setter, argument may be the control itself, which must be member of the carousel's page list, or the control's id.
-			 * The getter will return the control id
-			 */
-			activePage : {type : "sap.ui.core.Control", multiple : false}
-		},
-		events : {
-
-			/**
-			 * Carousel requires a new page to be loaded. This event may be used to fill the content of that page
-			 * @deprecated Since version 1.18.7.
-			 * Since 1.18.7 pages are no longer loaded or unloaded
-			 */
-			loadPage : {deprecated: true,
-				parameters : {
-
-					/**
-					 * Id of the page which will be loaded
-					 */
-					pageId : {type : "string"}
-				}
+				/**
+				 * Defines where the carousel's arrows are placed. Default is <code>sap.m.CarouselArrowsPlacement.Content</code> used to
+				 * place the arrows on the sides of the carousel. Alternatively <code>sap.m.CarouselArrowsPlacement.PageIndicator</code> can
+				 * be used to place the arrows on the sides of the page indicator.
+				 */
+				arrowsPlacement : {type : "sap.m.CarouselArrowsPlacement", group : "Appearance", defaultValue : CarouselArrowsPlacement.Content}
 			},
+			defaultAggregation : "pages",
+			aggregations : {
 
-			/**
-			 * Carousel does not display a page any longer and unloads it. This event may be used to clean up the content of that page.
-			 * @deprecated Since version 1.18.7.
-			 * Since 1.18.7 pages are no longer loaded or unloaded
-			 */
-			unloadPage : {deprecated: true,
-				parameters : {
+				/**
+				 * The content which the carousel displays.
+				 */
+				pages : {type : "sap.ui.core.Control", multiple : true, singularName : "page"},
 
-					/**
-					 * Id of the page which will be unloaded
-					 */
-					pageId : {type : "string"}
-				}
+				/**
+				 * Defines how many pages are displayed in the visible area of the <code>Carousel</code> control.
+				 *
+				 * <b>Note:</b> When this property is used, the <code>loop</code> property is ignored.
+				 * @since 1.62
+				 */
+				customLayout: { type: "sap.m.CarouselLayout", multiple: false },
+
+				/**
+				 * Message page, that is shown when no pages are loaded or provided
+				 */
+				_emptyPage: { type: "sap.m.IllustratedMessage", multiple: false, visibility: "hidden" }
 			},
+			associations : {
 
-			/**
-			 * This event is fired after a carousel swipe has been completed.
-			 * It is triggered both by physical swipe events and through API carousel manipulations such as calling
-			 * 'next', 'previous' or 'setActivePageId' functions.
-			 */
-			pageChanged : {
-				parameters : {
-
-					/**
-					 * ID of the page which was active before the page change.
-					 */
-					oldActivePageId : {type : "string"},
-
-					/**
-					 * ID of the page which will be active after the page change.
-					 */
-					newActivePageId : {type : "string"},
-
-					/**
-					 * Indexes of all active pages after the page change.
-					 * @since 1.62
-					 */
-					activePages : {type : "array"}
-				}
+				/**
+				 * Provides getter and setter for the currently displayed page. For the setter, argument may be the control itself, which must be member of the carousel's page list, or the control's id.
+				 * The getter will return the control id
+				 */
+				activePage : {type : "sap.ui.core.Control", multiple : false}
 			},
+			events : {
 
-			/**
-			 * This event is fired before a carousel swipe has been completed.
-			 * It is triggered both by physical swipe events and through API carousel manipulations such as calling
-			 * 'next', 'previous' or 'setActivePageId' functions.
-			 */
-			beforePageChanged : {
-				parameters : {
+				/**
+				 * Carousel requires a new page to be loaded. This event may be used to fill the content of that page
+				 * @deprecated Since version 1.18.7.
+				 * Since 1.18.7 pages are no longer loaded or unloaded
+				 */
+				loadPage : {deprecated: true,
+					parameters : {
 
-					/**
-					 * Indexes of all active pages after the page change.
-					 * @since 1.63
-					 */
-					activePages : {type : "array"}
+						/**
+						 * Id of the page which will be loaded
+						 */
+						pageId : {type : "string"}
+					}
+				},
+
+				/**
+				 * Carousel does not display a page any longer and unloads it. This event may be used to clean up the content of that page.
+				 * @deprecated Since version 1.18.7.
+				 * Since 1.18.7 pages are no longer loaded or unloaded
+				 */
+				unloadPage : {deprecated: true,
+					parameters : {
+
+						/**
+						 * Id of the page which will be unloaded
+						 */
+						pageId : {type : "string"}
+					}
+				},
+
+				/**
+				 * This event is fired after a carousel swipe has been completed.
+				 * It is triggered both by physical swipe events and through API carousel manipulations such as calling
+				 * 'next', 'previous' or 'setActivePageId' functions.
+				 */
+				pageChanged : {
+					parameters : {
+
+						/**
+						 * ID of the page which was active before the page change.
+						 */
+						oldActivePageId : {type : "string"},
+
+						/**
+						 * ID of the page which will be active after the page change.
+						 */
+						newActivePageId : {type : "string"},
+
+						/**
+						 * Indexes of all active pages after the page change.
+						 * @since 1.62
+						 */
+						activePages : {type : "array"}
+					}
+				},
+
+				/**
+				 * This event is fired before a carousel swipe has been completed.
+				 * It is triggered both by physical swipe events and through API carousel manipulations such as calling
+				 * 'next', 'previous' or 'setActivePageId' functions.
+				 */
+				beforePageChanged : {
+					parameters : {
+
+						/**
+						 * Indexes of all active pages after the page change.
+						 * @since 1.63
+						 */
+						activePages : {type : "array"}
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: CarouselRenderer
+	});
 
 	//Constants convenient class selections
 	Carousel._INNER_SELECTOR = ".sapMCrslInner";

@@ -58,7 +58,9 @@ sap.ui.define([
 						defaultValue: true
 					}
 				}
-			}
+			},
+
+			renderer: ComboBoxTextFieldRenderer
 		});
 
 		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");

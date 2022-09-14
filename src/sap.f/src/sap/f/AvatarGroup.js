@@ -174,7 +174,9 @@ sap.ui.define([
 					}
 				}
 			}
-		}
+		},
+
+		renderer: AvatarGroupRenderer
 	});
 
 	AvatarGroup.prototype.init = function () {

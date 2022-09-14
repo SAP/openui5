@@ -91,185 +91,189 @@ function(
 	 * @since 1.12
 	 * @alias sap.m.Link
 	 */
-	var Link = Control.extend("sap.m.Link", /** @lends sap.m.Link.prototype */ { metadata : {
+	var Link = Control.extend("sap.m.Link", /** @lends sap.m.Link.prototype */ {
+		metadata : {
 
-		interfaces : [
-			"sap.ui.core.IShrinkable",
-			"sap.ui.core.IFormContent",
-			"sap.ui.core.ITitleContent",
-			"sap.ui.core.IAccessKeySupport"
-		],
-		library : "sap.m",
-		designtime: "sap/m/designtime/Link.designtime",
-		properties : {
+			interfaces : [
+				"sap.ui.core.IShrinkable",
+				"sap.ui.core.IFormContent",
+				"sap.ui.core.ITitleContent",
+				"sap.ui.core.IAccessKeySupport"
+			],
+			library : "sap.m",
+			designtime: "sap/m/designtime/Link.designtime",
+			properties : {
 
-			/**
-			 * Defines the displayed link text.
-			 */
-			text : {type : "string", group : "Data", defaultValue : ''},
+				/**
+				 * Defines the displayed link text.
+				 */
+				text : {type : "string", group : "Data", defaultValue : ''},
 
-			/**
-			 * Determines whether the link can be triggered by the user.
-			 */
-			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Determines whether the link can be triggered by the user.
+				 */
+				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * Specifies a target where the linked content will open.
-			 *
-			 * Options are the standard values for window.open() supported by browsers:
-			 * <code>_self</code>, <code>_top</code>, <code>_blank</code>, <code>_parent</code>, <code>_search</code>.
-			 * Alternatively, a frame name can be entered. This property is only used when the <code>href</code> property is set.
-			 */
-			target : {type : "string", group : "Behavior", defaultValue : null},
+				/**
+				 * Specifies a target where the linked content will open.
+				 *
+				 * Options are the standard values for window.open() supported by browsers:
+				 * <code>_self</code>, <code>_top</code>, <code>_blank</code>, <code>_parent</code>, <code>_search</code>.
+				 * Alternatively, a frame name can be entered. This property is only used when the <code>href</code> property is set.
+				 */
+				target : {type : "string", group : "Behavior", defaultValue : null},
 
-			/**
-			 * Specifies the value of the HTML <code>rel</code> attribute.
-			 *
-			 * <b>Note:</b> A default value of <code>noopener noreferrer</code> is set only to links that have a cross-origin URL
-			 * and a specified <code>target</code> with value other than <code>_self</code>.
-			 * @since 1.84
-			 */
-			rel : {type : "string", group : "Behavior", defaultValue : null},
+				/**
+				 * Specifies the value of the HTML <code>rel</code> attribute.
+				 *
+				 * <b>Note:</b> A default value of <code>noopener noreferrer</code> is set only to links that have a cross-origin URL
+				 * and a specified <code>target</code> with value other than <code>_self</code>.
+				 * @since 1.84
+				 */
+				rel : {type : "string", group : "Behavior", defaultValue : null},
 
-			/**
-			 * Determines the width of the link (CSS-size such as % or px). When it is set, this is the exact size.
-			 * When left blank, the text defines the size.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+				/**
+				 * Determines the width of the link (CSS-size such as % or px). When it is set, this is the exact size.
+				 * When left blank, the text defines the size.
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
-			/**
-			 * Defines the link target URI. Supports standard hyperlink behavior.
-			 * <b>Note:</b> Don't set <code>href</code> property if an action should be triggered by the link. Instead set <code>accessibleRole</code>
-			 * property to <code>LinkAccessibleRole.Button</code> and register a <code>press</code> event handler.
-			 */
-			href : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
+				/**
+				 * Defines the link target URI. Supports standard hyperlink behavior.
+				 * <b>Note:</b> Don't set <code>href</code> property if an action should be triggered by the link. Instead set <code>accessibleRole</code>
+				 * property to <code>LinkAccessibleRole.Button</code> and register a <code>press</code> event handler.
+				 */
+				href : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
-			/**
-			 * Defines whether the link target URI should be validated.
-			 *
-			 * If validation fails, the value of the <code>href</code> property will still be set, but will not be applied to the DOM.
-			 *
-			 * <b>Note:</b> Additional URLs are allowed through
-			 * {@link module:sap/base/security/URLListValidator URLListValidator}.
-			 *
-			 * @since 1.54.0
-			 */
-			validateUrl : {type : "boolean", group : "Data", defaultValue : false},
+				/**
+				 * Defines whether the link target URI should be validated.
+				 *
+				 * If validation fails, the value of the <code>href</code> property will still be set, but will not be applied to the DOM.
+				 *
+				 * <b>Note:</b> Additional URLs are allowed through
+				 * {@link module:sap/base/security/URLListValidator URLListValidator}.
+				 *
+				 * @since 1.54.0
+				 */
+				validateUrl : {type : "boolean", group : "Data", defaultValue : false},
 
-			/**
-			 * Determines whether the link text is allowed to wrap when there is no sufficient space.
-			 */
-			wrapping : {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * Determines whether the link text is allowed to wrap when there is no sufficient space.
+				 */
+				wrapping : {type : "boolean", group : "Appearance", defaultValue : false},
 
-			/**
-			 * Determines the horizontal alignment of the text.
-			 * @since 1.28.0
-			 */
-			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Initial},
+				/**
+				 * Determines the horizontal alignment of the text.
+				 * @since 1.28.0
+				 */
+				textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Initial},
 
-			/**
-			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the parent DOM.
-			 * @since 1.28.0
-			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+				/**
+				 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the parent DOM.
+				 * @since 1.28.0
+				 */
+				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
-			/**
-			 * Subtle links look more like standard text than like links. They should only be used to help with visual hierarchy between large data lists of important and less important links. Subtle links should not be used in any other use case.
-			 * @since 1.22
-			 */
-			subtle : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Subtle links look more like standard text than like links. They should only be used to help with visual hierarchy between large data lists of important and less important links. Subtle links should not be used in any other use case.
+				 * @since 1.22
+				 */
+				subtle : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Emphasized links look visually more important than regular links.
-			 * @since 1.22
-			 */
-			emphasized : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Emphasized links look visually more important than regular links.
+				 * @since 1.22
+				 */
+				emphasized : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Specifies the value of the <code>aria-haspopup</code> attribute
-			 *
-			 * If the value is <code>None</code>, the attribute will not be rendered. Otherwise it will be rendered according to the selected value.
-			 *
-			 * NOTE: Use this property only when a link is related to a popover/popup. The value needs to be equal to the main/root role of the popup - e.g. dialog,
-			 * menu or list (examples: if you have dialog -> dialog, if you have menu -> menu; if you have list -> list; if you have dialog containing a list -> dialog).
-			 * Do not use it, if you open a standard sap.m.Dialog, MessageBox or other type of dialogs displayed as on overlay over the application.
-			 *
-			 * @since 1.86.0
-			 */
-			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None},
+				/**
+				 * Specifies the value of the <code>aria-haspopup</code> attribute
+				 *
+				 * If the value is <code>None</code>, the attribute will not be rendered. Otherwise it will be rendered according to the selected value.
+				 *
+				 * NOTE: Use this property only when a link is related to a popover/popup. The value needs to be equal to the main/root role of the popup - e.g. dialog,
+				 * menu or list (examples: if you have dialog -> dialog, if you have menu -> menu; if you have list -> list; if you have dialog containing a list -> dialog).
+				 * Do not use it, if you open a standard sap.m.Dialog, MessageBox or other type of dialogs displayed as on overlay over the application.
+				 *
+				 * @since 1.86.0
+				 */
+				ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None},
 
-			/**
-			 * Describes the accessibility role of the link:<ul>
-			 * <li><code>LinkAccessibleRole.Default</code> - a navigation is expected to the location given in <code>href</code> property</li>
-			 * <li><code>LinkAccessibleRole.Button</code> - there will be <code>role</code> attribute with value "Button" rendered. In this scenario the <code>href</code>
-			 * property value shouldn't be set as navigation isn't expected to occur.</li></ul>
-			 *
-			 * @since 1.104.0
-			 */
-			accessibleRole : {type : "sap.m.LinkAccessibleRole", group : "Accessibility", defaultValue : LinkAccessibleRole.Default},
+				/**
+				 * Describes the accessibility role of the link:<ul>
+				 * <li><code>LinkAccessibleRole.Default</code> - a navigation is expected to the location given in <code>href</code> property</li>
+				 * <li><code>LinkAccessibleRole.Button</code> - there will be <code>role</code> attribute with value "Button" rendered. In this scenario the <code>href</code>
+				 * property value shouldn't be set as navigation isn't expected to occur.</li></ul>
+				 *
+				 * @since 1.104.0
+				 */
+				accessibleRole : {type : "sap.m.LinkAccessibleRole", group : "Accessibility", defaultValue : LinkAccessibleRole.Default},
 
-			/**
-			 * Specifies if an empty indicator should be displayed when there is no text.
-			 *
-			 * @since 1.89
-			 */
-			emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off },
+				/**
+				 * Specifies if an empty indicator should be displayed when there is no text.
+				 *
+				 * @since 1.89
+				 */
+				emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off },
 
-			/**
-			 * Indicates whether the access keys ref of the control should be highlighted.
-			 * NOTE: this property is used only when access keys feature is turned on.
-			 *
-			 * @private
-			 */
-			highlightAccKeysRef: { type: "boolean", defaultValue: false, visibility: "hidden" },
+				/**
+				 * Indicates whether the access keys ref of the control should be highlighted.
+				 * NOTE: this property is used only when access keys feature is turned on.
+				 *
+				 * @private
+				 */
+				highlightAccKeysRef: { type: "boolean", defaultValue: false, visibility: "hidden" },
 
-			/**
-			 * Indicates which keyboard key should be pressed to focus the access key ref
-			 * NOTE: this property is used only when access keys feature is turned on.
-			 *
-			 * @private
-			 */
-			accesskey: { type: "string", defaultValue: "", visibility: "hidden" }
-		},
-		associations : {
+				/**
+				 * Indicates which keyboard key should be pressed to focus the access key ref
+				 * NOTE: this property is used only when access keys feature is turned on.
+				 *
+				 * @private
+				 */
+				accesskey: { type: "string", defaultValue: "", visibility: "hidden" }
+			},
+			associations : {
 
-			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
-			 */
-			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
+				/**
+				 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+				 */
+				ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
 
-			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-			 */
-			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
-		},
-		events : {
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 */
+				ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+			},
+			events : {
 
-			/**
-			 * Event is fired when the user triggers the link control.
-			 */
-			press : {
-				allowPreventDefault : true,
-				parameters: {
-					/**
-					 * Indicates whether the CTRL key was pressed when the link was selected.
-					 * @since 1.58
-					 */
-					ctrlKey: { type: "boolean" },
-					/**
-					 * Indicates whether the "meta" key was pressed when the link was selected.
-					 *
-					 * On Macintosh keyboards, this is the command key (⌘).
-					 * On Windows keyboards, this is the windows key (⊞).
-					 *
-					 * @since 1.58
-					 */
-					metaKey: { type: "boolean" }
+				/**
+				 * Event is fired when the user triggers the link control.
+				 */
+				press : {
+					allowPreventDefault : true,
+					parameters: {
+						/**
+						 * Indicates whether the CTRL key was pressed when the link was selected.
+						 * @since 1.58
+						 */
+						ctrlKey: { type: "boolean" },
+						/**
+						 * Indicates whether the "meta" key was pressed when the link was selected.
+						 *
+						 * On Macintosh keyboards, this is the command key (⌘).
+						 * On Windows keyboards, this is the windows key (⊞).
+						 *
+						 * @since 1.58
+						 */
+						metaKey: { type: "boolean" }
+					}
 				}
-			}
+			},
+			dnd: { draggable: true, droppable: false }
 		},
-		dnd: { draggable: true, droppable: false }
-	}});
+
+		renderer: LinkRenderer
+	});
 
 
 

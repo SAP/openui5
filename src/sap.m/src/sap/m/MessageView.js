@@ -237,7 +237,9 @@ sap.ui.define([
 					}
 				}
 			}
-		}
+		},
+
+		renderer: MessageViewRenderer
 	});
 
 	var CSS_CLASS = "sapMMsgView";

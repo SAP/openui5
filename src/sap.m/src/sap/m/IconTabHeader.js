@@ -22,7 +22,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes"
-], function (
+], function(
 	library,
 	Core,
 	Control,
@@ -82,153 +82,157 @@ sap.ui.define([
 	 * @since 1.15
 	 * @alias sap.m.IconTabHeader
 	 */
-	var IconTabHeader = Control.extend("sap.m.IconTabHeader", /** @lends sap.m.IconTabHeader.prototype */ { metadata : {
+	var IconTabHeader = Control.extend("sap.m.IconTabHeader", /** @lends sap.m.IconTabHeader.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Defines whether the current selection is visualized.
-			 * @deprecated As of 1.15.0.
-			 * Regarding to changes of this control this property is not needed anymore.
-			 */
-			showSelection : {type : "boolean", group : "Misc", defaultValue : true, deprecated: true},
+				/**
+				 * Defines whether the current selection is visualized.
+				 * @deprecated As of 1.15.0.
+				 * Regarding to changes of this control this property is not needed anymore.
+				 */
+				showSelection : {type : "boolean", group : "Misc", defaultValue : true, deprecated: true},
 
-			/**
-			 * Key of the selected item.
-			 *
-			 * If the key has no corresponding aggregated item, no changes will apply.
-			 * If duplicate keys exists the first item matching, the key is used.
-			 * @since 1.15.0
-			 */
-			selectedKey : {type : "string", group : "Data", defaultValue : null},
+				/**
+				 * Key of the selected item.
+				 *
+				 * If the key has no corresponding aggregated item, no changes will apply.
+				 * If duplicate keys exists the first item matching, the key is used.
+				 * @since 1.15.0
+				 */
+				selectedKey : {type : "string", group : "Data", defaultValue : null},
 
-			/**
-			 * Specifies whether the control is rendered.
-			 * @since 1.15.0
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
+				/**
+				 * Specifies whether the control is rendered.
+				 * @since 1.15.0
+				 */
+				visible : {type : "boolean", group : "Behavior", defaultValue : true},
 
-			/**
-			 * Specifies the header mode.
-			 *
-			 * @since 1.40
-			 */
-			mode : {type : "sap.m.IconTabHeaderMode", group : "Appearance", defaultValue : IconTabHeaderMode.Standard},
+				/**
+				 * Specifies the header mode.
+				 *
+				 * @since 1.40
+				 */
+				mode : {type : "sap.m.IconTabHeaderMode", group : "Appearance", defaultValue : IconTabHeaderMode.Standard},
 
-			/**
-			 * Specifies if the overflow select list is displayed.
-			 *
-			 * The overflow select list represents a list, where all tab filters are displayed,
-			 * so the user can select specific tab filter easier.
-			 * @deprecated as of 1.75
-			 */
-			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
+				/**
+				 * Specifies if the overflow select list is displayed.
+				 *
+				 * The overflow select list represents a list, where all tab filters are displayed,
+				 * so the user can select specific tab filter easier.
+				 * @deprecated as of 1.75
+				 */
+				showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
-			/**
-			 * Specifies the background color of the header.
-			 *
-			 * Depending on the theme, you can change the state of the background color to "Solid", "Translucent", or "Transparent".
-			 * <b>Note:</b> In SAP Belize Deep (sap_belize_plus) theme this property should be set to "Solid".
-			 * @since 1.44
-			 */
-			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Solid},
+				/**
+				 * Specifies the background color of the header.
+				 *
+				 * Depending on the theme, you can change the state of the background color to "Solid", "Translucent", or "Transparent".
+				 * <b>Note:</b> In SAP Belize Deep (sap_belize_plus) theme this property should be set to "Solid".
+				 * @since 1.44
+				 */
+				backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Solid},
 
-			/**
-			 * Specifies whether tab reordering is enabled. Relevant only for desktop devices.
-			 * The {@link sap.m.IconTabSeparator sap.m.IconTabSeparator} cannot be dragged  and dropped
-			 * Items can be moved around {@link sap.m.IconTabSeparator sap.m.IconTabSeparator}
-			 * Reordering is enabled via keyboard using <code>Ctrl</code> + arrow keys (Windows) and <code>Control</code> + arrow keys (Mac OS)
-			 * @since 1.46
-			 */
-			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Specifies whether tab reordering is enabled. Relevant only for desktop devices.
+				 * The {@link sap.m.IconTabSeparator sap.m.IconTabSeparator} cannot be dragged  and dropped
+				 * Items can be moved around {@link sap.m.IconTabSeparator sap.m.IconTabSeparator}
+				 * Reordering is enabled via keyboard using <code>Ctrl</code> + arrow keys (Windows) and <code>Control</code> + arrow keys (Mac OS)
+				 * @since 1.46
+				 */
+				enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Specifies the allowed level of tabs nesting within one another using drag and drop.
-			 * Default value is 0 which means nesting via interaction is not allowed. Maximum value is 100.
-			 * This property allows nesting via user interaction only, and does not restrict adding items
-			 * to the <code>items</code> aggregation of {@link sap.m.IconTabFilter sap.m.IconTabFilter}.
-			 * @since 1.79
-			 */
-			maxNestingLevel: { type: "int", group : "Behavior", defaultValue: 0},
+				/**
+				 * Specifies the allowed level of tabs nesting within one another using drag and drop.
+				 * Default value is 0 which means nesting via interaction is not allowed. Maximum value is 100.
+				 * This property allows nesting via user interaction only, and does not restrict adding items
+				 * to the <code>items</code> aggregation of {@link sap.m.IconTabFilter sap.m.IconTabFilter}.
+				 * @since 1.79
+				 */
+				maxNestingLevel: { type: "int", group : "Behavior", defaultValue: 0},
 
-			/**
-			 * Specifies the visual density mode of the tabs.
-			 *
-			 * The values that can be applied are <code>Cozy</code>, <code>Compact</code> and <code>Inherit</code>.
-			 * <code>Cozy</code> and <code>Compact</code> render the control in one of these modes independent of the global density settings.
-			 * The <code>Inherit</code> value follows the global density settings which are applied.
-			 * For compatibility reasons, the default value is <code>Cozy</code>.
-			 * @since 1.56
-			 */
-			tabDensityMode :{type : "sap.m.IconTabDensityMode", group : "Appearance", defaultValue : IconTabDensityMode.Cozy},
+				/**
+				 * Specifies the visual density mode of the tabs.
+				 *
+				 * The values that can be applied are <code>Cozy</code>, <code>Compact</code> and <code>Inherit</code>.
+				 * <code>Cozy</code> and <code>Compact</code> render the control in one of these modes independent of the global density settings.
+				 * The <code>Inherit</code> value follows the global density settings which are applied.
+				 * For compatibility reasons, the default value is <code>Cozy</code>.
+				 * @since 1.56
+				 */
+				tabDensityMode :{type : "sap.m.IconTabDensityMode", group : "Appearance", defaultValue : IconTabDensityMode.Cozy},
 
-			/**
-			 * Specifies optional texts for the screen reader.
-			 *
-			 * The given object can contain the following keys:
-			 * <code>headerLabel</code> - text to serve as a label for the header,
-			 * <code>headerDescription</code> - text to serve as a description for the header.
-			 * @since 1.80
-			 */
-			ariaTexts : {type : "object", group : "Accessibility", defaultValue : null},
+				/**
+				 * Specifies optional texts for the screen reader.
+				 *
+				 * The given object can contain the following keys:
+				 * <code>headerLabel</code> - text to serve as a label for the header,
+				 * <code>headerDescription</code> - text to serve as a description for the header.
+				 * @since 1.80
+				 */
+				ariaTexts : {type : "object", group : "Accessibility", defaultValue : null},
 
-			/**
-			 * Specifies the overflow mode of the header.
-			 *
-			 * The default <code>End</code> mode shows as many tabs that can fit on the screen, then shows one overflow at the end
-			 * containing the remaining items.
-			 * The <code>StartAndEnd</code> is used to keep the order of tabs intact and offers overflow tabs on both ends of the bar.
-			 * @since 1.90
-			 */
-			tabsOverflowMode: {type : "sap.m.TabsOverflowMode", group : "Behavior", defaultValue : TabsOverflowMode.End}
-		},
-		aggregations : {
+				/**
+				 * Specifies the overflow mode of the header.
+				 *
+				 * The default <code>End</code> mode shows as many tabs that can fit on the screen, then shows one overflow at the end
+				 * containing the remaining items.
+				 * The <code>StartAndEnd</code> is used to keep the order of tabs intact and offers overflow tabs on both ends of the bar.
+				 * @since 1.90
+				 */
+				tabsOverflowMode: {type : "sap.m.TabsOverflowMode", group : "Behavior", defaultValue : TabsOverflowMode.End}
+			},
+			aggregations : {
 
-			/**
-			 * The items displayed in the IconTabHeader.
-			 */
-			items : {type : "sap.m.IconTab", multiple : true, singularName : "item", dnd : {draggable: true, droppable: true, layout: "Horizontal"} },
+				/**
+				 * The items displayed in the IconTabHeader.
+				 */
+				items : {type : "sap.m.IconTab", multiple : true, singularName : "item", dnd : {draggable: true, droppable: true, layout: "Horizontal"} },
 
-			/**
-			 * Internal aggregation for managing the overflow tab.
-			 */
-			_overflow : {type : "sap.m.IconTabFilter", multiple : false, visibility : "hidden"},
+				/**
+				 * Internal aggregation for managing the overflow tab.
+				 */
+				_overflow : {type : "sap.m.IconTabFilter", multiple : false, visibility : "hidden"},
 
-			/**
-			 * Internal aggregation for managing the start overflow tab.
-			 */
-			_startOverflow : {type : "sap.m.IconTabFilter", multiple : false, visibility : "hidden"}
-		},
-		events : {
+				/**
+				 * Internal aggregation for managing the start overflow tab.
+				 */
+				_startOverflow : {type : "sap.m.IconTabFilter", multiple : false, visibility : "hidden"}
+			},
+			events : {
 
-			/**
-			 * Fires when an item is selected.
-			 */
-			select : {
-				parameters : {
+				/**
+				 * Fires when an item is selected.
+				 */
+				select : {
+					parameters : {
 
-					/**
-					 * The selected item
-					 * @since 1.15.0
-					 */
-					item : {type : "sap.m.IconTabFilter"},
+						/**
+						 * The selected item
+						 * @since 1.15.0
+						 */
+						item : {type : "sap.m.IconTabFilter"},
 
-					/**
-					 * The key of the selected item
-					 * @since 1.15.0
-					 */
-					key : {type : "string"},
+						/**
+						 * The key of the selected item
+						 * @since 1.15.0
+						 */
+						key : {type : "string"},
 
-					/**
-					 * The key of the previous selected item
-					 * @since 1.96
-					 */
-					previousKey : {type : "string"}
+						/**
+						 * The key of the previous selected item
+						 * @since 1.96
+						 */
+						previousKey : {type : "string"}
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: IconTabHeaderRenderer
+	});
 
 	/**
 	 * Library internationalization resource bundle.

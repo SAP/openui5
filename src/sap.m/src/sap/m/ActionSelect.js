@@ -25,17 +25,21 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', 'sap/ui/Device', 'sap/ui
 		 * @since 1.16
 		 * @alias sap.m.ActionSelect
 		 */
-		var ActionSelect = Select.extend("sap.m.ActionSelect", /** @lends sap.m.ActionSelect.prototype */ { metadata : {
+		var ActionSelect = Select.extend("sap.m.ActionSelect", /** @lends sap.m.ActionSelect.prototype */ {
+			metadata : {
 
-			library : "sap.m",
-			associations : {
+				library : "sap.m",
+				associations : {
 
-				/**
-				 * Buttons to be added to the ActionSelect content.
-				 */
-				buttons : {type : "sap.m.Button", multiple : true, singularName : "button"}
-			}
-		}});
+					/**
+					 * Buttons to be added to the ActionSelect content.
+					 */
+					buttons : {type : "sap.m.Button", multiple : true, singularName : "button"}
+				}
+			},
+
+			renderer: ActionSelectRenderer
+		});
 
 		ActionSelect.prototype.init = function() {
 			Select.prototype.init.call(this);

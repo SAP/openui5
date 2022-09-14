@@ -27,20 +27,24 @@ sap.ui.define(['./Tile', './library', './CustomTileRenderer'],
 	 * @deprecated As of version 1.50, use {@link sap.m.GenericTile} instead
 	 * @alias sap.m.CustomTile
 	 */
-	var CustomTile = Tile.extend("sap.m.CustomTile", /** @lends sap.m.CustomTile.prototype */ { metadata : {
+	var CustomTile = Tile.extend("sap.m.CustomTile", /** @lends sap.m.CustomTile.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		deprecated: true,
-		designtime: "sap/m/designtime/CustomTile.designtime",
-		defaultAggregation : "content",
-		aggregations : {
+			library : "sap.m",
+			deprecated: true,
+			designtime: "sap/m/designtime/CustomTile.designtime",
+			defaultAggregation : "content",
+			aggregations : {
 
-			/**
-			 * Defines the content of the CustomTile.
-			 */
-			content : {type : "sap.ui.core.Control", multiple : false}
-		}
-	}});
+				/**
+				 * Defines the content of the CustomTile.
+				 */
+				content : {type : "sap.ui.core.Control", multiple : false}
+			}
+		},
+
+		renderer: CustomTileRenderer
+	});
 
 
 

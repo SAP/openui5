@@ -45,11 +45,15 @@ sap.ui.define([
 		 * @alias sap.uxap.ObjectPageDynamicHeaderContent
 		 * @since 1.52
 		 */
-		var ObjectPageDynamicHeaderContent = DynamicPageHeader.extend("sap.uxap.ObjectPageDynamicHeaderContent", /** @lends sap.uxap.ObjectPageDynamicHeaderContent.prototype */ { metadata : {
+		var ObjectPageDynamicHeaderContent = DynamicPageHeader.extend("sap.uxap.ObjectPageDynamicHeaderContent", /** @lends sap.uxap.ObjectPageDynamicHeaderContent.prototype */ {
+			metadata : {
 
-			interfaces : ["sap.uxap.IHeaderContent"],
-			library : "sap.uxap"
-		}});
+				interfaces : ["sap.uxap.IHeaderContent"],
+				library : "sap.uxap"
+			},
+
+			renderer: ObjectPageDynamicHeaderContentRenderer
+		});
 
 		/**
 		 * Required by the {@link sap.uxap.IHeaderContent} interface.

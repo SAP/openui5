@@ -81,7 +81,9 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 				 */
 				"content" : {type : "sap.ui.core.Control", multiple : false, bindable : "bindable"}
 			}
-		}
+		},
+
+		renderer: TileContentRenderer
 	});
 
 	/* --- Lifecycle methods --- */

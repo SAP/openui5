@@ -70,182 +70,186 @@ sap.ui.define([
 	 * @alias sap.m.Table
 	 * @see {@link fiori:/responsive-table/ Responsive Table}
 	 */
-	var Table = ListBase.extend("sap.m.Table", /** @lends sap.m.Table.prototype */ { metadata : {
+	var Table = ListBase.extend("sap.m.Table", /** @lends sap.m.Table.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Sets the background style of the table. Depending on the theme, you can change the state of the background from <code>Solid</code> to <code>Translucent</code> or to <code>Transparent</code>.
-			 */
-			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Translucent},
+				/**
+				 * Sets the background style of the table. Depending on the theme, you can change the state of the background from <code>Solid</code> to <code>Translucent</code> or to <code>Transparent</code>.
+				 */
+				backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Translucent},
 
-			/**
-			 * Defines the algorithm to be used to layout the table cells, rows, and columns.
-			 * This property allows three possible values:
-			 * <ul>
-			 * <li><code>true</code></li>
-			 * <li><code>false</code></li>
-			 * <li><code>Strict</code></li>
-			 * </ul>
-			 *
-			 * By default, the table is rendered with a fixed layout algorithm (<code>fixedLayout=true</code>). This means the horizontal layout only depends on the table's width and the width of the columns, not the content of the cells. Cells in subsequent rows do not affect column width. This allows a browser to provide a faster table layout since the browser can begin to display the table once the first row has been analyzed.
-			 *
-			 * If this property is set to <code>false</code>, <code>sap.m.Table</code> is rendered with an auto layout algorithm. This means, the width of the table and its cells depends on the content of the cells. The column width is set by the widest unbreakable content inside the cells. This can make the rendering slow, since the browser needs to go through all the content in the table before determining the final layout.<br>
-			 *
-			 * If this property is set to <code>Strict</code> and the <code>width</code> property is defined for all columns (and not the expected "auto" value), then the <code>sap.m.Table</code> control renders a placeholder column which occupies the remaining width of the control to ensure the column width setting is strictly applied.<br>
-			 *
-			 * If there is only one remaining column with a width larger than the table, then this column gets the maximum width available in the table. If the column width is smaller than the table, then the column width is retained, and the remaining width of the table is occupied by the placeholder column.<br>
-			 *
-			 * The placeholder column gets rendered only if there are no columns in the pop-in area.<br>
-			 *
-			 * <b>Note:</b> Since <code>sap.m.Table</code> does not have its own scrollbars, setting <code>fixedLayout</code> to false can force the table to overflow, which may cause visual problems. It is suggested to use this property when a table has a few columns in wide screens or within the horizontal scroll container (e.g <code>sap.m.Dialog</code>) to handle overflow.
-			 * In auto layout mode the <code>width</code> property of <code>sap.m.Column</code> is taken into account as a minimum width.
-			 * @since 1.22
-			 */
-			fixedLayout : {type : "any", group : "Behavior", defaultValue : true},
+				/**
+				 * Defines the algorithm to be used to layout the table cells, rows, and columns.
+				 * This property allows three possible values:
+				 * <ul>
+				 * <li><code>true</code></li>
+				 * <li><code>false</code></li>
+				 * <li><code>Strict</code></li>
+				 * </ul>
+				 *
+				 * By default, the table is rendered with a fixed layout algorithm (<code>fixedLayout=true</code>). This means the horizontal layout only depends on the table's width and the width of the columns, not the content of the cells. Cells in subsequent rows do not affect column width. This allows a browser to provide a faster table layout since the browser can begin to display the table once the first row has been analyzed.
+				 *
+				 * If this property is set to <code>false</code>, <code>sap.m.Table</code> is rendered with an auto layout algorithm. This means, the width of the table and its cells depends on the content of the cells. The column width is set by the widest unbreakable content inside the cells. This can make the rendering slow, since the browser needs to go through all the content in the table before determining the final layout.<br>
+				 *
+				 * If this property is set to <code>Strict</code> and the <code>width</code> property is defined for all columns (and not the expected "auto" value), then the <code>sap.m.Table</code> control renders a placeholder column which occupies the remaining width of the control to ensure the column width setting is strictly applied.<br>
+				 *
+				 * If there is only one remaining column with a width larger than the table, then this column gets the maximum width available in the table. If the column width is smaller than the table, then the column width is retained, and the remaining width of the table is occupied by the placeholder column.<br>
+				 *
+				 * The placeholder column gets rendered only if there are no columns in the pop-in area.<br>
+				 *
+				 * <b>Note:</b> Since <code>sap.m.Table</code> does not have its own scrollbars, setting <code>fixedLayout</code> to false can force the table to overflow, which may cause visual problems. It is suggested to use this property when a table has a few columns in wide screens or within the horizontal scroll container (e.g <code>sap.m.Dialog</code>) to handle overflow.
+				 * In auto layout mode the <code>width</code> property of <code>sap.m.Column</code> is taken into account as a minimum width.
+				 * @since 1.22
+				 */
+				fixedLayout : {type : "any", group : "Behavior", defaultValue : true},
 
-			/**
-			 * Setting this property to <code>true</code> will show an overlay on top of the table content and prevents the user interaction with it.
-			 * @since 1.22.1
-			 */
-			showOverlay : {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * Setting this property to <code>true</code> will show an overlay on top of the table content and prevents the user interaction with it.
+				 * @since 1.22.1
+				 */
+				showOverlay : {type : "boolean", group : "Appearance", defaultValue : false},
 
-			/**
-			 * Enables alternating table row colors.
-			 * <b>Note:</b> This property can only be used with the Belize and Belize Deep themes.
-			 * Alternate row coloring is not available for the High Contrast Black/White themes.
-			 * @since 1.52
-			 */
-			alternateRowColors : {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * Enables alternating table row colors.
+				 * <b>Note:</b> This property can only be used with the Belize and Belize Deep themes.
+				 * Alternate row coloring is not available for the High Contrast Black/White themes.
+				 * @since 1.52
+				 */
+				alternateRowColors : {type : "boolean", group : "Appearance", defaultValue : false},
 
-			/**
-			 * Defines the layout in which the table pop-in rows are rendered.
-			 * <b>Note:</b> The <code>demandPopin</code> and <code>minScreenWidth</code> properties of the <code>Column</code> control must be configured appropriately.
-			 * @since 1.52
-			 */
-			popinLayout : {type : "sap.m.PopinLayout", group : "Appearance", defaultValue : PopinLayout.Block},
+				/**
+				 * Defines the layout in which the table pop-in rows are rendered.
+				 * <b>Note:</b> The <code>demandPopin</code> and <code>minScreenWidth</code> properties of the <code>Column</code> control must be configured appropriately.
+				 * @since 1.52
+				 */
+				popinLayout : {type : "sap.m.PopinLayout", group : "Appearance", defaultValue : PopinLayout.Block},
 
-			/**
-			 * Defines the contextual width for the <code>sap.m.Table</code> control. By defining this property the table adapts the pop-in behavior based on the container in which the table is placed or the configured contextual width.
-			 * By default, <code>sap.m.Table</code> renders in pop-in behavior only depending on the window size or device.
-			 *
-			 * For example, by setting the <code>contextualWidth</code> property to 600px or Tablet, the table can be placed in a container with 600px width, where the pop-in is used.
-			 * You can use specific CSS sizes (for example, 600px or 600), you can also use the <code>sap.m.ScreenSize</code> enumeration (for example, Phone, Tablet, Desktop, Small, Medium, Large, ....).
-			 * If this property is set to <code>Auto</code>, the <code>ResizeHandler</code> will manage the contextual width of the table.
-			 * <b>Note:</b> Only "Inherit", "Auto", and pixel-based CSS sizes (for example, 200, 200px) can be applied to the <code>contextualWidth</code> property. Due to the rendering cost, we recommend to use the valid value mentioned before except for "Auto".
-			 * @since 1.60
-			 */
-			contextualWidth : {type: "string", group: "Behavior", defaultValue: "Inherit"},
+				/**
+				 * Defines the contextual width for the <code>sap.m.Table</code> control. By defining this property the table adapts the pop-in behavior based on the container in which the table is placed or the configured contextual width.
+				 * By default, <code>sap.m.Table</code> renders in pop-in behavior only depending on the window size or device.
+				 *
+				 * For example, by setting the <code>contextualWidth</code> property to 600px or Tablet, the table can be placed in a container with 600px width, where the pop-in is used.
+				 * You can use specific CSS sizes (for example, 600px or 600), you can also use the <code>sap.m.ScreenSize</code> enumeration (for example, Phone, Tablet, Desktop, Small, Medium, Large, ....).
+				 * If this property is set to <code>Auto</code>, the <code>ResizeHandler</code> will manage the contextual width of the table.
+				 * <b>Note:</b> Only "Inherit", "Auto", and pixel-based CSS sizes (for example, 200, 200px) can be applied to the <code>contextualWidth</code> property. Due to the rendering cost, we recommend to use the valid value mentioned before except for "Auto".
+				 * @since 1.60
+				 */
+				contextualWidth : {type: "string", group: "Behavior", defaultValue: "Inherit"},
 
-			/**
-			 * Enables the auto pop-in behavior for the table control.
-			 *
-			 * If this property is set to <code>true</code>, the table control overwrites the <code>demandPopin</code>
-			 * and the <code>minScreenWidth</code> properties of the <code>sap.m.Column</code> control.
-			 * The pop-in behavior depends on the <code>importance</code> property of the <code>sap.m.Column</code> control.
-			 * Columns configured with this property are moved to the pop-in area in the following order:
-			 *
-			 * <ul>
-			 * 	<li>With importance <code>High</code>: moved last</li>
-			 * 	<li>With importance <code>Medium</code> or <code>None</code>: moved second</li>
-			 * 	<li>With importance <code>Low</code>: moved first</li>
-			 * </ul>
-			 *
-			 * <b>Note:</b> If this property is changed from <code>true</code> to <code>false</code>,
-			 * the application must reconfigure the <code>demandPopin</code> and <code>minScreenWidth</code>
-			 * properties of the <code>sap.m.Column</code> control by itself.
-			 * There is no automatic mechanism that restores the old values if <code>autoPopinMode</code> was set
-			 * from <code>false</code> to <code>true</code> before.
-			 *
-			 * @since 1.76
-			 */
-			autoPopinMode: {type: "boolean", group: "Behavior", defaultValue: false},
+				/**
+				 * Enables the auto pop-in behavior for the table control.
+				 *
+				 * If this property is set to <code>true</code>, the table control overwrites the <code>demandPopin</code>
+				 * and the <code>minScreenWidth</code> properties of the <code>sap.m.Column</code> control.
+				 * The pop-in behavior depends on the <code>importance</code> property of the <code>sap.m.Column</code> control.
+				 * Columns configured with this property are moved to the pop-in area in the following order:
+				 *
+				 * <ul>
+				 * 	<li>With importance <code>High</code>: moved last</li>
+				 * 	<li>With importance <code>Medium</code> or <code>None</code>: moved second</li>
+				 * 	<li>With importance <code>Low</code>: moved first</li>
+				 * </ul>
+				 *
+				 * <b>Note:</b> If this property is changed from <code>true</code> to <code>false</code>,
+				 * the application must reconfigure the <code>demandPopin</code> and <code>minScreenWidth</code>
+				 * properties of the <code>sap.m.Column</code> control by itself.
+				 * There is no automatic mechanism that restores the old values if <code>autoPopinMode</code> was set
+				 * from <code>false</code> to <code>true</code> before.
+				 *
+				 * @since 1.76
+				 */
+				autoPopinMode: {type: "boolean", group: "Behavior", defaultValue: false},
 
-			/**
-			 * Defines which columns should be hidden instead of moved into the pop-in area
-			 * depending on their importance. See {@link sap.m.Column#getImportance}
-			 *
-			 * <b>Note:</b> To hide columns based on their importance, it's mandatory to set <code>demandPopin="true"</code>
-			 * for the <code>sap.m.Column</code> control or set <code>autoPopinMode="true"</code> for the <code>sap.m.Table</code> control.
-			 * See {@link topic:38855e06486f4910bfa6f4485f7c2bac Configuring Responsive Behavior of a Table}
-			 * and {@link sap.m.Table#getAutoPopinMode}.
-			 *
-			 * @since 1.77
-			 */
-			hiddenInPopin: {type: "sap.ui.core.Priority[]", group: "Behavior"}
-		},
-		aggregations : {
+				/**
+				 * Defines which columns should be hidden instead of moved into the pop-in area
+				 * depending on their importance. See {@link sap.m.Column#getImportance}
+				 *
+				 * <b>Note:</b> To hide columns based on their importance, it's mandatory to set <code>demandPopin="true"</code>
+				 * for the <code>sap.m.Column</code> control or set <code>autoPopinMode="true"</code> for the <code>sap.m.Table</code> control.
+				 * See {@link topic:38855e06486f4910bfa6f4485f7c2bac Configuring Responsive Behavior of a Table}
+				 * and {@link sap.m.Table#getAutoPopinMode}.
+				 *
+				 * @since 1.77
+				 */
+				hiddenInPopin: {type: "sap.ui.core.Priority[]", group: "Behavior"}
+			},
+			aggregations : {
 
-			/**
-			 * Defines the columns of the table.
-			 */
-			columns : {type : "sap.m.Column", multiple : true, singularName : "column", dnd : {draggable : true, droppable : true, layout : "Horizontal"} },
+				/**
+				 * Defines the columns of the table.
+				 */
+				columns : {type : "sap.m.Column", multiple : true, singularName : "column", dnd : {draggable : true, droppable : true, layout : "Horizontal"} },
 
-			/**
-			 * Provides a message if no visible columns are available.
-			 */
-			_noColumnsMessage : {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
-		},
-		events : {
-			/**
-			 * Fired when the context menu is opened.
-			 * When the context menu is opened, the binding context of the item is set to the given <code>contextMenu</code>.
-			 * @since 1.54
-			 */
-			beforeOpenContextMenu : {
-				allowPreventDefault : true,
-				parameters : {
-					/**
-					 * Item in which the context menu was opened.
-					 */
-					listItem : {type : "sap.m.ColumnListItem"},
-					/**
-					 * Column in which the context menu was opened.
-					 * <b>Note:</b> This parameter might be undefined for the items that are not part of a column definition.
-					 */
-					column : {type : "sap.m.Column"}
+				/**
+				 * Provides a message if no visible columns are available.
+				 */
+				_noColumnsMessage : {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
+			},
+			events : {
+				/**
+				 * Fired when the context menu is opened.
+				 * When the context menu is opened, the binding context of the item is set to the given <code>contextMenu</code>.
+				 * @since 1.54
+				 */
+				beforeOpenContextMenu : {
+					allowPreventDefault : true,
+					parameters : {
+						/**
+						 * Item in which the context menu was opened.
+						 */
+						listItem : {type : "sap.m.ColumnListItem"},
+						/**
+						 * Column in which the context menu was opened.
+						 * <b>Note:</b> This parameter might be undefined for the items that are not part of a column definition.
+						 */
+						column : {type : "sap.m.Column"}
+					}
+				},
+				/**
+				 * This event gets fired when the user pastes content from the clipboard to the table.
+				 * Pasting can be done via the context menu or the standard paste keyboard shortcut, if the focus is inside the table.
+				 * @since 1.60
+				 */
+				paste : {
+					allowPreventDefault: true,
+					parameters : {
+						/**
+						 * 2D array of strings with data from the clipboard. The first dimension represents the rows, and the
+						 * second dimension represents the cells of the tabular data.
+						 */
+						data : {type : "string[][]"}
+					}
+				},
+				/**
+				 * Fired when the table pop-in has changed.
+				 * @since 1.77
+				 */
+				popinChanged: {
+					parameters: {
+						/**
+						 * Returns true if there are visible columns in the pop-in area
+						 */
+						hasPopin: {type: "boolean"},
+						/**
+						 * Returns array of all visible columns in the pop-in area.
+						 */
+						visibleInPopin: {type: "sap.m.Column[]"},
+						/**
+						 * Returns array of columns that are hidden in the pop-in based on their importance.
+						 * See {@link sap.m.Column#getImportance}
+						 */
+						hiddenInPopin: {type: "sap.m.Column[]"}
+					}
 				}
 			},
-			/**
-			 * This event gets fired when the user pastes content from the clipboard to the table.
-			 * Pasting can be done via the context menu or the standard paste keyboard shortcut, if the focus is inside the table.
-			 * @since 1.60
-			 */
-			paste : {
-				allowPreventDefault: true,
-				parameters : {
-					/**
-					 * 2D array of strings with data from the clipboard. The first dimension represents the rows, and the
-					 * second dimension represents the cells of the tabular data.
-					 */
-					data : {type : "string[][]"}
-				}
-			},
-			/**
-			 * Fired when the table pop-in has changed.
-			 * @since 1.77
-			 */
-			popinChanged: {
-				parameters: {
-					/**
-					 * Returns true if there are visible columns in the pop-in area
-					 */
-					hasPopin: {type: "boolean"},
-					/**
-					 * Returns array of all visible columns in the pop-in area.
-					 */
-					visibleInPopin: {type: "sap.m.Column[]"},
-					/**
-					 * Returns array of columns that are hidden in the pop-in based on their importance.
-					 * See {@link sap.m.Column#getImportance}
-					 */
-					hiddenInPopin: {type: "sap.m.Column[]"}
-				}
-			}
+			designtime: "sap/m/designtime/Table.designtime"
 		},
-		designtime: "sap/m/designtime/Table.designtime"
-	}});
+
+		renderer: TableRenderer
+	});
 
 	// class name for the navigation items
 	Table.prototype.sNavItemClass = "sapMListTblRow";

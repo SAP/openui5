@@ -185,7 +185,9 @@ function(
 
 				// after the tabstrip is instantiated, add the select
 				this.setProperty('hasSelect', bHasSelect, true);
-			}
+			},
+
+			renderer: TabStripRenderer
 		});
 
 		/**

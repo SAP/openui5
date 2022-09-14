@@ -245,7 +245,9 @@ function(
 					}
 				}
 			}
-		}
+		},
+
+		renderer: FeedListItemRenderer
 	});
 
 	FeedListItem._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");

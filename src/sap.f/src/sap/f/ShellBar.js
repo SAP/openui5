@@ -24,8 +24,8 @@ function(
 	Accessibility,
 	BarInPageEnabler,
 	BadgeCustomData,
-	Button
-	/*, ShellBarRenderer */
+	Button,
+	ShellBarRenderer
 ) {
 	"use strict";
 
@@ -244,7 +244,9 @@ function(
 					}
 				}
 			}
-		}
+		},
+
+		renderer: ShellBarRenderer
 	});
 
 	// Enhance the prototype with additional content aggregation support

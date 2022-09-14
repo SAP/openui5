@@ -108,365 +108,369 @@ function(
 	 * @alias sap.m.SinglePlanningCalendar
 	 */
 
-	var SinglePlanningCalendar = Control.extend("sap.m.SinglePlanningCalendar", /** @lends sap.m.SinglePlanningCalendar.prototype */ { metadata : {
+	var SinglePlanningCalendar = Control.extend("sap.m.SinglePlanningCalendar", /** @lends sap.m.SinglePlanningCalendar.prototype */ {
+		metadata : {
 
-		library : "sap.m",
+			library : "sap.m",
 
-		properties : {
+			properties : {
 
-			/**
-			 * Determines the title of the <code>SinglePlanningCalendar</code>.
-			 */
-			title: { type : "string", group : "Appearance", defaultValue : "" },
+				/**
+				 * Determines the title of the <code>SinglePlanningCalendar</code>.
+				 */
+				title: { type : "string", group : "Appearance", defaultValue : "" },
 
-			/**
-			 * Determines the start date of the grid, as a JavaScript date object. It is considered as a local date.
-			 * The time part will be ignored. The current date is used as default.
-			 */
-			startDate: { type : "object", group : "Data" },
+				/**
+				 * Determines the start date of the grid, as a JavaScript date object. It is considered as a local date.
+				 * The time part will be ignored. The current date is used as default.
+				 */
+				startDate: { type : "object", group : "Data" },
 
-			/**
-			 * Determines the start hour of the grid to be shown if the <code>fullDay</code> property is set to
-			 * <code>false</code>. Otherwise the previous hours are displayed as non-working. The passed hour is
-			 * considered as 24-hour based.
-			 */
-			startHour: {type: "int", group: "Data", defaultValue: 0},
+				/**
+				 * Determines the start hour of the grid to be shown if the <code>fullDay</code> property is set to
+				 * <code>false</code>. Otherwise the previous hours are displayed as non-working. The passed hour is
+				 * considered as 24-hour based.
+				 */
+				startHour: {type: "int", group: "Data", defaultValue: 0},
 
-			/**
-			 * Determines the end hour of the grid to be shown if the <code>fullDay</code> property is set to
-			 * <code>false</code>. Otherwise the next hours are displayed as non-working. The passed hour is
-			 * considered as 24-hour based.
-			 */
-			endHour: {type: "int", group: "Data", defaultValue: 24},
+				/**
+				 * Determines the end hour of the grid to be shown if the <code>fullDay</code> property is set to
+				 * <code>false</code>. Otherwise the next hours are displayed as non-working. The passed hour is
+				 * considered as 24-hour based.
+				 */
+				endHour: {type: "int", group: "Data", defaultValue: 24},
 
-			/**
-			 * Determines if all of the hours in a day are displayed. If set to <code>false</code>, the hours shown are
-			 * between the <code>startHour</code> and <code>endHour</code>.
-			 */
-			fullDay: {type: "boolean", group: "Data", defaultValue: true},
+				/**
+				 * Determines if all of the hours in a day are displayed. If set to <code>false</code>, the hours shown are
+				 * between the <code>startHour</code> and <code>endHour</code>.
+				 */
+				fullDay: {type: "boolean", group: "Data", defaultValue: true},
 
-			/**
-			 * Determines which part of the control will remain fixed at the top of the page during vertical scrolling
-			 * as long as the control is in the viewport.
-			 *
-			 * <b>Note:</b> Limited browser support. Browsers which do not support this feature:
-			 * <ul>
-			 * 	<li>Microsoft Internet Explorer</li>
-			 * 	<li>Microsoft Edge lower than version 41 (EdgeHTML 16)</li>
-			 * 	<li>Mozilla Firefox lower than version 59</li>
-			 * </ul>
-			 *
-			 * @since 1.62
-			 */
-			stickyMode: {type: "sap.m.PlanningCalendarStickyMode", group: "Behavior", defaultValue: PlanningCalendarStickyMode.None},
+				/**
+				 * Determines which part of the control will remain fixed at the top of the page during vertical scrolling
+				 * as long as the control is in the viewport.
+				 *
+				 * <b>Note:</b> Limited browser support. Browsers which do not support this feature:
+				 * <ul>
+				 * 	<li>Microsoft Internet Explorer</li>
+				 * 	<li>Microsoft Edge lower than version 41 (EdgeHTML 16)</li>
+				 * 	<li>Mozilla Firefox lower than version 59</li>
+				 * </ul>
+				 *
+				 * @since 1.62
+				 */
+				stickyMode: {type: "sap.m.PlanningCalendarStickyMode", group: "Behavior", defaultValue: PlanningCalendarStickyMode.None},
 
-			/**
-			 * Determines scale factor for the appointments.
-			 *
-			 * Acceptable range is from 1 to 6.
-			 * @since 1.99
-			 */
-			scaleFactor: {type: "float", group: "Data", defaultValue: 1},
+				/**
+				 * Determines scale factor for the appointments.
+				 *
+				 * Acceptable range is from 1 to 6.
+				 * @since 1.99
+				 */
+				scaleFactor: {type: "float", group: "Data", defaultValue: 1},
 
 
-			 /**
-			 * Determines whether the appointments in the grid are draggable.
-			 *
-			 * The drag and drop interaction is visualized by a placeholder highlighting the area where the
-			 * appointment can be dropped by the user.
-			 *
-			 * @since 1.64
-			 */
-			enableAppointmentsDragAndDrop: { type: "boolean", group: "Misc", defaultValue: false },
+				 /**
+				 * Determines whether the appointments in the grid are draggable.
+				 *
+				 * The drag and drop interaction is visualized by a placeholder highlighting the area where the
+				 * appointment can be dropped by the user.
+				 *
+				 * @since 1.64
+				 */
+				enableAppointmentsDragAndDrop: { type: "boolean", group: "Misc", defaultValue: false },
 
-			/**
-			 * Determines whether the appointments are resizable.
-			 *
-			 * The resize interaction is visualized by making the appointment transparent.
-			 *
-			 * The appointment snaps on every interval
-			 * of 30 minutes. After the resize is finished, the {@link #event:appointmentResize appointmentResize} event is fired, containing
-			 * the new start and end JavaScript date objects.
-			 *
-			 * @since 1.65
-			 */
-			enableAppointmentsResize: { type: "boolean", group: "Misc", defaultValue: false },
+				/**
+				 * Determines whether the appointments are resizable.
+				 *
+				 * The resize interaction is visualized by making the appointment transparent.
+				 *
+				 * The appointment snaps on every interval
+				 * of 30 minutes. After the resize is finished, the {@link #event:appointmentResize appointmentResize} event is fired, containing
+				 * the new start and end JavaScript date objects.
+				 *
+				 * @since 1.65
+				 */
+				enableAppointmentsResize: { type: "boolean", group: "Misc", defaultValue: false },
 
-			/**
-			 * Determines whether the appointments can be created by dragging on empty cells.
-			 *
-			 * See {@link #property:enableAppointmentsResize enableAppointmentsResize} for the specific points for events snapping
-			 *
-			 * @since 1.65
-			 */
-			enableAppointmentsCreate: { type: "boolean", group: "Misc", defaultValue: false },
+				/**
+				 * Determines whether the appointments can be created by dragging on empty cells.
+				 *
+				 * See {@link #property:enableAppointmentsResize enableAppointmentsResize} for the specific points for events snapping
+				 *
+				 * @since 1.65
+				 */
+				enableAppointmentsCreate: { type: "boolean", group: "Misc", defaultValue: false },
 
-			/**
-			 * If set, the first day of the displayed week is this day. Valid values are 0 to 6 starting on Sunday.
-			 * If there is no valid value set, the default of the used locale is used.
-			 *
-			 * Note: This property will only have effect in Week view and Month view of the SinglePlanningCalendar,
-			 * but it wouldn't have effect in WorkWeek view.
-			 *
-			 * @since 1.98
-			 */
-			firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1}
+				/**
+				 * If set, the first day of the displayed week is this day. Valid values are 0 to 6 starting on Sunday.
+				 * If there is no valid value set, the default of the used locale is used.
+				 *
+				 * Note: This property will only have effect in Week view and Month view of the SinglePlanningCalendar,
+				 * but it wouldn't have effect in WorkWeek view.
+				 *
+				 * @since 1.98
+				 */
+				firstDayOfWeek : {type : "int", group : "Appearance", defaultValue : -1}
+			},
+
+			aggregations : {
+
+				/**
+				 * The controls to be passed to the toolbar.
+				 */
+				actions : {
+					type : "sap.ui.core.Control",
+					multiple: true,
+					singularName: "action",
+					forwarding: {
+						getter: "_getHeader",
+						aggregation: "actions"
+					}
+				},
+
+				/**
+				 * The appointments to be displayed in the grid. Appointments outside the visible time frame are not rendered.
+				 * Appointments, longer than a day, will be displayed in all of the affected days.
+				 * To display an all-day appointment, the appointment must start at 00:00 and end on any day in the future in 00:00h.
+				 *
+				 * Note: The <code>customContent</code> functionality of the <code>CalendarAppointment</code> is not available
+				 * in the <code>SinglePlanningCalendar</code>. If set, it will not make any effect.
+				 */
+				appointments : {
+					type: "sap.ui.unified.CalendarAppointment",
+					multiple: true,
+					singularName: "appointment",
+					forwarding: {
+						getter: "_getCurrentGrid",
+						aggregation: "appointments"
+					}
+				},
+
+				/**
+				 * Views of the <code>SinglePlanningCalendar</code>.
+				 *
+				 * <b>Note:</b> If not set, the Week view is available.
+				 */
+				views : {type : "sap.m.SinglePlanningCalendarView", multiple : true, singularName : "view"},
+
+				/**
+				 * Special days in the header visualized as a date range with type.
+				 *
+				 * <b>Note:</b> If one day is assigned to more than one type, only the first type is used.
+				 * @since 1.66
+				 */
+				specialDates : {type : "sap.ui.unified.DateTypeRange",
+								multiple : true,
+								singularName : "specialDate",
+								forwarding: {
+									getter: "_getCurrentGrid",
+									aggregation: "specialDates"
+								}
+				},
+
+				/**
+				 * The header part of the <code>SinglePlanningCalendar</code>.
+				 *
+				 * @private
+				 */
+				_header : { type : "sap.m.PlanningCalendarHeader", multiple : false, visibility : "hidden" },
+
+				/**
+				 * The grid part of the <code>SinglePlanningCalendar</code>.
+				 *
+				 * @private
+				 */
+				_grid: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" },
+
+				/**
+				 * The grid part of the <code>SinglePlanningCalendar</code>.
+				 *
+				 * @private
+				 */
+				_mvgrid: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" }
+
+			},
+
+			associations: {
+
+				/**
+				 * Corresponds to the currently selected view.
+				 */
+				selectedView: { type: "sap.m.SinglePlanningCalendarView", multiple: false },
+
+				/**
+				 * Association to the <code>PlanningCalendarLegend</code> explaining the colors of the <code>Appointments</code>.
+				 *
+				 * <b>Note:</b> The legend does not have to be rendered but must exist and all required types must be assigned.
+				 * @since 1.65.0
+				 */
+				legend: { type: "sap.m.PlanningCalendarLegend", multiple: false}
+
+			},
+
+			events: {
+
+				/**
+				 * Fired when the selected state of an appointment is changed.
+				 */
+				appointmentSelect: {
+					parameters: {
+
+						/**
+						 * The appointment on which the event was triggered.
+						 */
+						appointment: {type: "sap.ui.unified.CalendarAppointment"},
+						/**
+						 * All appointments with changed selected state.
+						 * @since 1.67.0
+						 */
+						appointments : {type : "sap.ui.unified.CalendarAppointment[]"}
+
+					}
+				},
+
+				/**
+				 * Fired if an appointment is dropped.
+				 * @since 1.64
+				 */
+				appointmentDrop : {
+					parameters : {
+						/**
+						 * The dropped appointment.
+						 */
+						appointment : {type : "sap.ui.unified.CalendarAppointment"},
+
+						/**
+						 * Start date of the dropped appointment, as a JavaScript date object.
+						 */
+						startDate : {type : "object"},
+
+						/**
+						 * Dropped appointment end date as a JavaScript date object.
+						 */
+						endDate : {type : "object"},
+
+						/**
+						 * The drop type. If true - it's "Copy", if false - it's "Move".
+						 */
+						copy : {type : "boolean"}
+					}
+				},
+
+				/**
+				 * Fired when an appointment is resized.
+				 * @since 1.65
+				 */
+				appointmentResize: {
+					parameters: {
+						/**
+						 * The resized appointment.
+						 */
+						appointment: { type: "sap.ui.unified.CalendarAppointment" },
+
+						/**
+						 * Start date of the resized appointment, as a JavaScript date object.
+						 */
+						startDate: { type: "object" },
+
+						/**
+						 * End date of the resized appointment, as a JavaScript date object.
+						 */
+						endDate: { type: "object" }
+					}
+				},
+
+				/**
+				 * Fired if an appointment is created.
+				 * @since 1.65
+				 */
+				appointmentCreate: {
+					parameters: {
+						/**
+						 * Start date of the created appointment, as a JavaScript date object.
+						 */
+						startDate: {type: "object"},
+
+						/**
+						 * End date of the created appointment, as a JavaScript date object.
+						 */
+						endDate: {type: "object"}
+					}
+				},
+
+				/**
+				 * Fired if a date is selected in the calendar header.
+				 */
+				headerDateSelect: {
+					parameters: {
+
+						/**
+						 * Date of the selected header, as a JavaScript date object. It is considered as a local date.
+						 */
+						date: {type: "object"}
+
+					}
+				},
+
+				/**
+				 * <code>startDate</code> is changed while navigating in the <code>SinglePlanningCalendar</code>.
+				 */
+				startDateChange: {
+					parameters: {
+
+						/**
+						 * The new start date, as a JavaScript date object. It is considered as a local date.
+						 */
+						date: {type: "object"}
+
+					}
+				},
+
+				/**
+				 * Fired when a grid cell is pressed.
+				 * @since 1.65
+				 */
+				cellPress: {
+					parameters: {
+						/**
+						 * The start date as a JavaScript date object of the focused grid cell.
+						 */
+						startDate: {type: "object"},
+						/**
+						 * The end date as a JavaScript date object of the focused grid cell.
+						 */
+						endDate: {type: "object"}
+					}
+				},
+
+				/**
+				 * Fired when a 'more' button is pressed.
+				 * <b>Note:</b> The 'more' button appears in a month view cell
+				 * when multiple appointments exist and the available space
+				 * is not sufficient to display all of them.
+				 */
+				moreLinkPress: {
+					parameters: {
+						/**
+						 * The date as a JavaScript date object of the cell with the
+						 * pressed more link.
+						 */
+						date: { type: "object" }
+					}
+				},
+
+				/**
+				 * The view was changed by user interaction.
+				 * @since 1.71.0
+				 */
+				viewChange : {}
+			}
+
 		},
 
-		aggregations : {
-
-			/**
-			 * The controls to be passed to the toolbar.
-			 */
-			actions : {
-				type : "sap.ui.core.Control",
-				multiple: true,
-				singularName: "action",
-				forwarding: {
-					getter: "_getHeader",
-					aggregation: "actions"
-				}
-			},
-
-			/**
-			 * The appointments to be displayed in the grid. Appointments outside the visible time frame are not rendered.
-			 * Appointments, longer than a day, will be displayed in all of the affected days.
-			 * To display an all-day appointment, the appointment must start at 00:00 and end on any day in the future in 00:00h.
-			 *
-			 * Note: The <code>customContent</code> functionality of the <code>CalendarAppointment</code> is not available
-			 * in the <code>SinglePlanningCalendar</code>. If set, it will not make any effect.
-			 */
-			appointments : {
-				type: "sap.ui.unified.CalendarAppointment",
-				multiple: true,
-				singularName: "appointment",
-				forwarding: {
-					getter: "_getCurrentGrid",
-					aggregation: "appointments"
-				}
-			},
-
-			/**
-			 * Views of the <code>SinglePlanningCalendar</code>.
-			 *
-			 * <b>Note:</b> If not set, the Week view is available.
-			 */
-			views : {type : "sap.m.SinglePlanningCalendarView", multiple : true, singularName : "view"},
-
-			/**
-			 * Special days in the header visualized as a date range with type.
-			 *
-			 * <b>Note:</b> If one day is assigned to more than one type, only the first type is used.
-			 * @since 1.66
-			 */
-			specialDates : {type : "sap.ui.unified.DateTypeRange",
-							multiple : true,
-							singularName : "specialDate",
-							forwarding: {
-								getter: "_getCurrentGrid",
-								aggregation: "specialDates"
-							}
-			},
-
-			/**
-			 * The header part of the <code>SinglePlanningCalendar</code>.
-			 *
-			 * @private
-			 */
-			_header : { type : "sap.m.PlanningCalendarHeader", multiple : false, visibility : "hidden" },
-
-			/**
-			 * The grid part of the <code>SinglePlanningCalendar</code>.
-			 *
-			 * @private
-			 */
-			_grid: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" },
-
-			/**
-			 * The grid part of the <code>SinglePlanningCalendar</code>.
-			 *
-			 * @private
-			 */
-			_mvgrid: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" }
-
-		},
-
-		associations: {
-
-			/**
-			 * Corresponds to the currently selected view.
-			 */
-			selectedView: { type: "sap.m.SinglePlanningCalendarView", multiple: false },
-
-			/**
-			 * Association to the <code>PlanningCalendarLegend</code> explaining the colors of the <code>Appointments</code>.
-			 *
-			 * <b>Note:</b> The legend does not have to be rendered but must exist and all required types must be assigned.
-			 * @since 1.65.0
-			 */
-			legend: { type: "sap.m.PlanningCalendarLegend", multiple: false}
-
-		},
-
-		events: {
-
-			/**
-			 * Fired when the selected state of an appointment is changed.
-			 */
-			appointmentSelect: {
-				parameters: {
-
-					/**
-					 * The appointment on which the event was triggered.
-					 */
-					appointment: {type: "sap.ui.unified.CalendarAppointment"},
-					/**
-					 * All appointments with changed selected state.
-					 * @since 1.67.0
-					 */
-					appointments : {type : "sap.ui.unified.CalendarAppointment[]"}
-
-				}
-			},
-
-			/**
-			 * Fired if an appointment is dropped.
-			 * @since 1.64
-			 */
-			appointmentDrop : {
-				parameters : {
-					/**
-					 * The dropped appointment.
-					 */
-					appointment : {type : "sap.ui.unified.CalendarAppointment"},
-
-					/**
-					 * Start date of the dropped appointment, as a JavaScript date object.
-					 */
-					startDate : {type : "object"},
-
-					/**
-					 * Dropped appointment end date as a JavaScript date object.
-					 */
-					endDate : {type : "object"},
-
-					/**
-					 * The drop type. If true - it's "Copy", if false - it's "Move".
-					 */
-					copy : {type : "boolean"}
-				}
-			},
-
-			/**
-			 * Fired when an appointment is resized.
-			 * @since 1.65
-			 */
-			appointmentResize: {
-				parameters: {
-					/**
-					 * The resized appointment.
-					 */
-					appointment: { type: "sap.ui.unified.CalendarAppointment" },
-
-					/**
-					 * Start date of the resized appointment, as a JavaScript date object.
-					 */
-					startDate: { type: "object" },
-
-					/**
-					 * End date of the resized appointment, as a JavaScript date object.
-					 */
-					endDate: { type: "object" }
-				}
-			},
-
-			/**
-			 * Fired if an appointment is created.
-			 * @since 1.65
-			 */
-			appointmentCreate: {
-				parameters: {
-					/**
-					 * Start date of the created appointment, as a JavaScript date object.
-					 */
-					startDate: {type: "object"},
-
-					/**
-					 * End date of the created appointment, as a JavaScript date object.
-					 */
-					endDate: {type: "object"}
-				}
-			},
-
-			/**
-			 * Fired if a date is selected in the calendar header.
-			 */
-			headerDateSelect: {
-				parameters: {
-
-					/**
-					 * Date of the selected header, as a JavaScript date object. It is considered as a local date.
-					 */
-					date: {type: "object"}
-
-				}
-			},
-
-			/**
-			 * <code>startDate</code> is changed while navigating in the <code>SinglePlanningCalendar</code>.
-			 */
-			startDateChange: {
-				parameters: {
-
-					/**
-					 * The new start date, as a JavaScript date object. It is considered as a local date.
-					 */
-					date: {type: "object"}
-
-				}
-			},
-
-			/**
-			 * Fired when a grid cell is pressed.
-			 * @since 1.65
-			 */
-			cellPress: {
-				parameters: {
-					/**
-					 * The start date as a JavaScript date object of the focused grid cell.
-					 */
-					startDate: {type: "object"},
-					/**
-					 * The end date as a JavaScript date object of the focused grid cell.
-					 */
-					endDate: {type: "object"}
-				}
-			},
-
-			/**
-			 * Fired when a 'more' button is pressed.
-			 * <b>Note:</b> The 'more' button appears in a month view cell
-			 * when multiple appointments exist and the available space
-			 * is not sufficient to display all of them.
-			 */
-			moreLinkPress: {
-				parameters: {
-					/**
-					 * The date as a JavaScript date object of the cell with the
-					 * pressed more link.
-					 */
-					date: { type: "object" }
-				}
-			},
-
-			/**
-			 * The view was changed by user interaction.
-			 * @since 1.71.0
-			 */
-			viewChange : {}
-		}
-
-	}});
+		renderer: SinglePlanningCalendarRenderer
+	});
 
 	SinglePlanningCalendar.prototype.init = function() {
 		var sOPCId = this.getId();

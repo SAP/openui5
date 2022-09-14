@@ -150,183 +150,187 @@ function(
 	 * @alias sap.m.ViewSettingsDialog
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/view-settings-dialog/ View Settings Dialog}
 	 */
-	var ViewSettingsDialog = Control.extend("sap.m.ViewSettingsDialog", /** @lends sap.m.ViewSettingsDialog.prototype */ { metadata : {
+	var ViewSettingsDialog = Control.extend("sap.m.ViewSettingsDialog", /** @lends sap.m.ViewSettingsDialog.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Defines the title of the dialog. If not set and there is only one active tab, the dialog uses the default "View" or "Sort", "Group", "Filter" respectively.
-			 */
-			title : {type : "string", group : "Behavior", defaultValue : null},
+				/**
+				 * Defines the title of the dialog. If not set and there is only one active tab, the dialog uses the default "View" or "Sort", "Group", "Filter" respectively.
+				 */
+				title : {type : "string", group : "Behavior", defaultValue : null},
 
-			/**
-			 * Determines whether the sort order is descending or ascending (default).
-			 */
-			sortDescending : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Determines whether the sort order is descending or ascending (default).
+				 */
+				sortDescending : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Determines whether the group order is descending or ascending (default).
-			 */
-			groupDescending : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Determines whether the group order is descending or ascending (default).
+				 */
+				groupDescending : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Provides a string filter operator which is used when the user searches items in filter details page.
-			 * Possible operators are: <code>AnyWordStartsWith</code>, <code>Contains</code>, <code>StartsWith</code>, <code>Equals</code>.
-			 * This property will be ignored if a custom callback is provided through <code>setFilterSearchCallback</code> method.
-			 * @since 1.42
-			 */
-			filterSearchOperator: {type: "sap.m.StringFilterOperator", group: "Behavior", defaultValue: StringFilterOperator.StartsWith },
+				/**
+				 * Provides a string filter operator which is used when the user searches items in filter details page.
+				 * Possible operators are: <code>AnyWordStartsWith</code>, <code>Contains</code>, <code>StartsWith</code>, <code>Equals</code>.
+				 * This property will be ignored if a custom callback is provided through <code>setFilterSearchCallback</code> method.
+				 * @since 1.42
+				 */
+				filterSearchOperator: {type: "sap.m.StringFilterOperator", group: "Behavior", defaultValue: StringFilterOperator.StartsWith },
 
-			/**
-			 * Specifies the Title alignment (theme specific).
-			 * If set to <code>TitleAlignment.None</code>, the automatic title alignment depending on the theme settings will be disabled.
-			 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
-			 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
-			 * @since 1.72
-			 * @public
-			 */
-			titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
+				/**
+				 * Specifies the Title alignment (theme specific).
+				 * If set to <code>TitleAlignment.None</code>, the automatic title alignment depending on the theme settings will be disabled.
+				 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
+				 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
+				 * @since 1.72
+				 * @public
+				 */
+				titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
 
-		},
-		aggregations : {
-
-			/**
-			 * The list of items with key and value that can be sorted over (for example, a list of columns for a table).
-			 * @since 1.16
-			 */
-			sortItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "sortItem", bindable : "bindable"},
-
-			/**
-			 * The list of items with key and value that can be grouped on (for example, a list of columns for a table).
-			 * @since 1.16
-			 */
-			groupItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "groupItem", bindable : "bindable"},
-
-			/**
-			 * The list of items with key and value that can be filtered on (for example, a list of columns for a table). A filterItem is associated with one or more detail filters.
-			 *
-			 * <b>Note:</b> It is recommended to use the <code>sap.m.ViewSettingsFilterItem</code> as it fits best at the filter page.
-			 * @since 1.16
-			 */
-			filterItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "filterItem", bindable : "bindable"},
-
-			/**
-			 * The list of preset filter items with key and value that allows the selection of more complex or custom filters.
-			 * These entries are displayed at the top of the filter tab.
-			 * @since 1.16
-			 */
-			presetFilterItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "presetFilterItem", bindable : "bindable"},
-			/**
-			 * The list of all the custom tabs.
-			 * @since 1.30
-			 */
-			customTabs: {type: "sap.m.ViewSettingsCustomTab", multiple: true, singularName: "customTab", bindable : "bindable"}
-		},
-		associations : {
-
-			/**
-			 * The sort item that is selected. It can be set by either passing a key or the item itself to the function setSelectedSortItem.
-			 */
-			selectedSortItem : {type : "sap.m.ViewSettingsItem", multiple : false},
-
-			/**
-			 * The group item that is selected. It can be set by either passing a key or the item itself to the function setSelectedGroupItem.
-			 * By default 'None' is selected. You can restore back to 'None' by setting this association to empty value.
-			 */
-			selectedGroupItem : {type : "sap.m.ViewSettingsItem", multiple : false},
-
-			/**
-			 * The preset filter item that is selected. It can be set by either passing a key or the item itself to the function setSelectedPresetFilterItem. Note that either a preset filter OR multiple detail filters can be active at the same time.
-			 */
-			selectedPresetFilterItem : {type : "sap.m.ViewSettingsItem", multiple : false}
-		},
-		events : {
-
-			/**
-			 * Indicates that the user has pressed the OK button and the selected sort, group, and filter settings should be applied to the data on this page.
-			 * </br></br><b>Note:</b> Custom tabs are not converted to event parameters automatically. For custom tabs, you have to read the state of your controls inside the callback of this event.
-			 */
-			confirm : {
-				parameters : {
-
-					/**
-					 * The selected sort item.
-					 */
-					sortItem : {type : "sap.m.ViewSettingsItem"},
-
-					/**
-					 * The selected sort order (true = descending, false = ascending).
-					 */
-					sortDescending : {type : "boolean"},
-
-					/**
-					 * The selected group item.
-					 */
-					groupItem : {type : "sap.m.ViewSettingsItem"},
-
-					/**
-					 * The selected group order (true = descending, false = ascending).
-					 */
-					groupDescending : {type : "boolean"},
-
-					/**
-					 * The selected preset filter item.
-					 */
-					presetFilterItem : {type : "sap.m.ViewSettingsItem"},
-
-					/**
-					 * The selected filters in an array of ViewSettingsItem.
-					 */
-					filterItems : {type : "sap.m.ViewSettingsItem[]"},
-
-					/**
-					 * The selected filter items in an object notation format: { key: boolean }. If a custom control filter was displayed (for example, the user clicked on the filter item), the value for its key is set to true to indicate that there has been an interaction with the control.
-					 * @deprecated as of version 1.42, replaced by <code>filterCompoundKeys</code> event
-					 */
-					filterKeys : {type : "object", deprecated: true},
-
-					/**
-					 * The selected filter items in an object notation format: { parentKey: { key: boolean, key2: boolean, ...  }, ...}. If a custom control filter was displayed (for example, the user clicked on the filter item), the value for its key is set to true to indicate that there has been an interaction with the control.
-					 * @since 1.42
-					 */
-					filterCompoundKeys : {type : "object"},
-
-					/**
-					 * The selected filter items in a string format to display in the control's header bar in format "Filtered by: key (subkey1, subkey2, subkey3)".
-					 */
-					filterString : {type : "string"}
-				}
 			},
+			aggregations : {
 
-			/**
-			 * Called when the Cancel button is pressed. It can be used to set the state of custom filter controls.
-			 */
-			cancel : {},
+				/**
+				 * The list of items with key and value that can be sorted over (for example, a list of columns for a table).
+				 * @since 1.16
+				 */
+				sortItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "sortItem", bindable : "bindable"},
 
-			/**
-			 * Called when the filters are being reset.
-			 */
-			resetFilters : {},
+				/**
+				 * The list of items with key and value that can be grouped on (for example, a list of columns for a table).
+				 * @since 1.16
+				 */
+				groupItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "groupItem", bindable : "bindable"},
 
-			/**
-			 * Called when the Reset button is pressed. It can be used to set the state of custom tabs.
-			 */
-			reset : {},
+				/**
+				 * The list of items with key and value that can be filtered on (for example, a list of columns for a table). A filterItem is associated with one or more detail filters.
+				 *
+				 * <b>Note:</b> It is recommended to use the <code>sap.m.ViewSettingsFilterItem</code> as it fits best at the filter page.
+				 * @since 1.16
+				 */
+				filterItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "filterItem", bindable : "bindable"},
 
-			/**
-			 * Fired when the filter detail page is opened.
-			 */
-			filterDetailPageOpened: {
-				parameters: {
-					/**
-					 * The filter item for which the details are opened.
-					 */
-					parentFilterItem: {type: "sap.m.ViewSettingsFilterItem"}
+				/**
+				 * The list of preset filter items with key and value that allows the selection of more complex or custom filters.
+				 * These entries are displayed at the top of the filter tab.
+				 * @since 1.16
+				 */
+				presetFilterItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "presetFilterItem", bindable : "bindable"},
+				/**
+				 * The list of all the custom tabs.
+				 * @since 1.30
+				 */
+				customTabs: {type: "sap.m.ViewSettingsCustomTab", multiple: true, singularName: "customTab", bindable : "bindable"}
+			},
+			associations : {
+
+				/**
+				 * The sort item that is selected. It can be set by either passing a key or the item itself to the function setSelectedSortItem.
+				 */
+				selectedSortItem : {type : "sap.m.ViewSettingsItem", multiple : false},
+
+				/**
+				 * The group item that is selected. It can be set by either passing a key or the item itself to the function setSelectedGroupItem.
+				 * By default 'None' is selected. You can restore back to 'None' by setting this association to empty value.
+				 */
+				selectedGroupItem : {type : "sap.m.ViewSettingsItem", multiple : false},
+
+				/**
+				 * The preset filter item that is selected. It can be set by either passing a key or the item itself to the function setSelectedPresetFilterItem. Note that either a preset filter OR multiple detail filters can be active at the same time.
+				 */
+				selectedPresetFilterItem : {type : "sap.m.ViewSettingsItem", multiple : false}
+			},
+			events : {
+
+				/**
+				 * Indicates that the user has pressed the OK button and the selected sort, group, and filter settings should be applied to the data on this page.
+				 * </br></br><b>Note:</b> Custom tabs are not converted to event parameters automatically. For custom tabs, you have to read the state of your controls inside the callback of this event.
+				 */
+				confirm : {
+					parameters : {
+
+						/**
+						 * The selected sort item.
+						 */
+						sortItem : {type : "sap.m.ViewSettingsItem"},
+
+						/**
+						 * The selected sort order (true = descending, false = ascending).
+						 */
+						sortDescending : {type : "boolean"},
+
+						/**
+						 * The selected group item.
+						 */
+						groupItem : {type : "sap.m.ViewSettingsItem"},
+
+						/**
+						 * The selected group order (true = descending, false = ascending).
+						 */
+						groupDescending : {type : "boolean"},
+
+						/**
+						 * The selected preset filter item.
+						 */
+						presetFilterItem : {type : "sap.m.ViewSettingsItem"},
+
+						/**
+						 * The selected filters in an array of ViewSettingsItem.
+						 */
+						filterItems : {type : "sap.m.ViewSettingsItem[]"},
+
+						/**
+						 * The selected filter items in an object notation format: { key: boolean }. If a custom control filter was displayed (for example, the user clicked on the filter item), the value for its key is set to true to indicate that there has been an interaction with the control.
+						 * @deprecated as of version 1.42, replaced by <code>filterCompoundKeys</code> event
+						 */
+						filterKeys : {type : "object", deprecated: true},
+
+						/**
+						 * The selected filter items in an object notation format: { parentKey: { key: boolean, key2: boolean, ...  }, ...}. If a custom control filter was displayed (for example, the user clicked on the filter item), the value for its key is set to true to indicate that there has been an interaction with the control.
+						 * @since 1.42
+						 */
+						filterCompoundKeys : {type : "object"},
+
+						/**
+						 * The selected filter items in a string format to display in the control's header bar in format "Filtered by: key (subkey1, subkey2, subkey3)".
+						 */
+						filterString : {type : "string"}
+					}
+				},
+
+				/**
+				 * Called when the Cancel button is pressed. It can be used to set the state of custom filter controls.
+				 */
+				cancel : {},
+
+				/**
+				 * Called when the filters are being reset.
+				 */
+				resetFilters : {},
+
+				/**
+				 * Called when the Reset button is pressed. It can be used to set the state of custom tabs.
+				 */
+				reset : {},
+
+				/**
+				 * Fired when the filter detail page is opened.
+				 */
+				filterDetailPageOpened: {
+					parameters: {
+						/**
+						 * The filter item for which the details are opened.
+						 */
+						parentFilterItem: {type: "sap.m.ViewSettingsFilterItem"}
+					}
 				}
 			}
-		}
-	}});
+		},
+
+		renderer: ViewSettingsDialogRenderer
+	});
 
 
 	/* =========================================================== */

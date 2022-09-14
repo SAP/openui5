@@ -62,7 +62,9 @@ sap.ui.define([
 				 */
 				_label : {type : "sap.m.Label", multiple : false, visibility: "hidden"}
 			}
-		}
+		},
+
+		renderer: DraftIndicatorRenderer
 	});
 
 	var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");

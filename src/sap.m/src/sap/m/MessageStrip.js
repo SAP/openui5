@@ -174,7 +174,9 @@ sap.ui.define([
 				close: {}
 			},
 			dnd: { draggable: true, droppable: false }
-		}
+		},
+
+		renderer: MessageStripRenderer
 	});
 
 	MessageStrip.prototype.init = function () {

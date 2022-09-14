@@ -161,7 +161,9 @@ sap.ui.define([
 				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"}
 			},
 			designtime: "sap/uxap/designtime/ObjectPageSubSection.designtime"
-		}
+		},
+
+		renderer: ObjectPageSubSectionRenderer
 	});
 
 	// Add Title Propagation Support

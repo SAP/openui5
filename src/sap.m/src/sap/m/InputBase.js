@@ -69,146 +69,150 @@ function(
 	 * @since 1.12.0
 	 * @alias sap.m.InputBase
 	 */
-	var InputBase = Control.extend("sap.m.InputBase", /** @lends sap.m.InputBase.prototype */ { metadata: {
+	var InputBase = Control.extend("sap.m.InputBase", /** @lends sap.m.InputBase.prototype */ {
+		metadata: {
 
-		interfaces : ["sap.ui.core.IFormContent"],
-		library: "sap.m",
-		properties: {
+			interfaces : ["sap.ui.core.IFormContent"],
+			library: "sap.m",
+			properties: {
 
-			/**
-			 * Defines the value of the control.
-			 */
-			value: { type: "string", group: "Data", defaultValue: null, bindable: "bindable" },
+				/**
+				 * Defines the value of the control.
+				 */
+				value: { type: "string", group: "Data", defaultValue: null, bindable: "bindable" },
 
-			/**
-			 * Defines the width of the control.
-			 *
-			 * <b>Note:</b> If the provided width is too small, the control gets stretched to
-			 * its min width, which is needed in order for the control to be usable and well aligned.
-			 */
-			width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null },
+				/**
+				 * Defines the width of the control.
+				 *
+				 * <b>Note:</b> If the provided width is too small, the control gets stretched to
+				 * its min width, which is needed in order for the control to be usable and well aligned.
+				 */
+				width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null },
 
-			/**
-			 * Indicates whether the user can interact with the control or not.
-			 * <b>Note:</b> Disabled controls cannot be focused and they are out of the tab-chain.
-			 */
-			enabled: { type: "boolean", group: "Behavior", defaultValue: true },
+				/**
+				 * Indicates whether the user can interact with the control or not.
+				 * <b>Note:</b> Disabled controls cannot be focused and they are out of the tab-chain.
+				 */
+				enabled: { type: "boolean", group: "Behavior", defaultValue: true },
 
-			/**
-			 * Visualizes the validation state of the control, e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
-			 */
-			valueState: { type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: ValueState.None },
+				/**
+				 * Visualizes the validation state of the control, e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
+				 */
+				valueState: { type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: ValueState.None },
 
-			/**
-			 * The name to be used in the HTML code (for example, for HTML forms that send data to the server via submission).
-			 */
-			name: { type: "string", group: "Misc", defaultValue: null },
+				/**
+				 * The name to be used in the HTML code (for example, for HTML forms that send data to the server via submission).
+				 */
+				name: { type: "string", group: "Misc", defaultValue: null },
 
-			/**
-			 * Defines a short hint intended to aid the user with data entry when the control has no value.
-			 */
-			placeholder: { type: "string", group: "Misc", defaultValue: null },
+				/**
+				 * Defines a short hint intended to aid the user with data entry when the control has no value.
+				 */
+				placeholder: { type: "string", group: "Misc", defaultValue: null },
 
-			/**
-			 * Defines whether the control can be modified by the user or not.
-			 * <b>Note:</b> A user can tab to non-editable control, highlight it, and copy the text from it.
-			 * @since 1.12.0
-			 */
-			editable: { type: "boolean", group: "Behavior", defaultValue: true },
+				/**
+				 * Defines whether the control can be modified by the user or not.
+				 * <b>Note:</b> A user can tab to non-editable control, highlight it, and copy the text from it.
+				 * @since 1.12.0
+				 */
+				editable: { type: "boolean", group: "Behavior", defaultValue: true },
 
-			/**
-			 * Defines the text that appears in the value state message pop-up. If this is not specified, a default text is shown from the resource bundle.
-			 * @since 1.26.0
-			 */
-			valueStateText: { type: "string", group: "Misc", defaultValue: null },
+				/**
+				 * Defines the text that appears in the value state message pop-up. If this is not specified, a default text is shown from the resource bundle.
+				 * @since 1.26.0
+				 */
+				valueStateText: { type: "string", group: "Misc", defaultValue: null },
 
-			/**
-			 * Indicates whether the value state message should be shown or not.
-			 * @since 1.26.0
-			 */
-			showValueStateMessage: { type: "boolean", group: "Misc", defaultValue: true },
+				/**
+				 * Indicates whether the value state message should be shown or not.
+				 * @since 1.26.0
+				 */
+				showValueStateMessage: { type: "boolean", group: "Misc", defaultValue: true },
 
-			/**
-			 * Defines the horizontal alignment of the text that is shown inside the input field.
-			 * @since 1.26.0
-			 */
-			textAlign: { type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: TextAlign.Initial },
+				/**
+				 * Defines the horizontal alignment of the text that is shown inside the input field.
+				 * @since 1.26.0
+				 */
+				textAlign: { type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: TextAlign.Initial },
 
-			/**
-			 * Defines the text directionality of the input field, e.g. <code>RTL</code>, <code>LTR</code>
-			 * @since 1.28.0
-			 */
-			textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: TextDirection.Inherit },
+				/**
+				 * Defines the text directionality of the input field, e.g. <code>RTL</code>, <code>LTR</code>
+				 * @since 1.28.0
+				 */
+				textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: TextDirection.Inherit },
 
-			/**
-			 * Indicates that user input is required. This property is only needed for accessibility purposes when a single relationship between
-			 * the field and a label (see aggregation <code>labelFor</code> of <code>sap.m.Label</code>) cannot be established
-			 * (e.g. one label should label multiple fields).
-			 * @since 1.38.4
-			 */
-			required : {type : "boolean", group : "Misc", defaultValue : false}
-		},
-		associations: {
+				/**
+				 * Indicates that user input is required. This property is only needed for accessibility purposes when a single relationship between
+				 * the field and a label (see aggregation <code>labelFor</code> of <code>sap.m.Label</code>) cannot be established
+				 * (e.g. one label should label multiple fields).
+				 * @since 1.38.4
+				 */
+				required : {type : "boolean", group : "Misc", defaultValue : false}
+			},
+			associations: {
 
-			/**
-			 * Association to controls / IDs that label this control (see WAI-ARIA attribute aria-labelledby).
-			 * @since 1.27.0
-			 */
-			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" },
+				/**
+				 * Association to controls / IDs that label this control (see WAI-ARIA attribute aria-labelledby).
+				 * @since 1.27.0
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" },
 
-			/**
-			 * Association to controls / IDs that describe this control (see WAI-ARIA attribute aria-describedby).
-			 * @since 1.90
-			 */
-			ariaDescribedBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy" }
-		},
-		events: {
+				/**
+				 * Association to controls / IDs that describe this control (see WAI-ARIA attribute aria-describedby).
+				 * @since 1.90
+				 */
+				ariaDescribedBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy" }
+			},
+			events: {
 
-			/**
-			 * Is fired when the text in the input field has changed and the focus leaves the input field or the enter key is pressed.
-			 */
-			change: {
-				parameters: {
+				/**
+				 * Is fired when the text in the input field has changed and the focus leaves the input field or the enter key is pressed.
+				 */
+				change: {
+					parameters: {
 
-					/**
-					 * The new <code>value</code> of the <code>control</code>.
-					 */
-					value: { type: "string" }
+						/**
+						 * The new <code>value</code> of the <code>control</code>.
+						 */
+						value: { type: "string" }
+					}
 				}
-			}
+			},
+			aggregations: {
+				/**
+				 * Defines the formatted text that appears in the value state message pop-up.
+				 * It can include links. If both <code>valueStateText</code> and <code>formattedValueStateText</code>
+				 * are set - the latter is shown.
+				 * @experimental Since 1.78. This aggregation is experimental and provides only limited functionality. Also the API might be changed in future.
+				 * @since 1.78
+				 */
+				formattedValueStateText: { type: "sap.m.FormattedText", multiple: false, defaultValue: null },
+
+				/**
+				 * Clone of the <code>formattedValueStateText</code> aggregation created for the accessibility elements used
+				 * by screen readers.
+				 * @experimental Since 1.84. This aggregation is experimental and provides only limited functionality. Also the API might be changed in future.
+				 * @since 1.84
+				 */
+				_invisibleFormattedValueStateText: { type: "sap.m.FormattedText", multiple: false, visibility: "hidden", defaultValue: null },
+
+				/**
+				 * Icons that will be placed after the input field
+				 * @since 1.58
+				*/
+				_endIcon: { type: "sap.ui.core.Icon", multiple: true, visibility: "hidden" },
+
+				/**
+				 * Icons that will be placed before the input field
+				 * @since 1.58
+				*/
+				_beginIcon: { type: "sap.ui.core.Icon", multiple: true, visibility: "hidden" }
+			},
+			designtime: "sap/m/designtime/InputBase.designtime"
 		},
-		aggregations: {
-			/**
-			 * Defines the formatted text that appears in the value state message pop-up.
-			 * It can include links. If both <code>valueStateText</code> and <code>formattedValueStateText</code>
-			 * are set - the latter is shown.
-			 * @experimental Since 1.78. This aggregation is experimental and provides only limited functionality. Also the API might be changed in future.
-			 * @since 1.78
-			 */
-			formattedValueStateText: { type: "sap.m.FormattedText", multiple: false, defaultValue: null },
 
-			/**
-			 * Clone of the <code>formattedValueStateText</code> aggregation created for the accessibility elements used
-			 * by screen readers.
-			 * @experimental Since 1.84. This aggregation is experimental and provides only limited functionality. Also the API might be changed in future.
-			 * @since 1.84
-			 */
-			_invisibleFormattedValueStateText: { type: "sap.m.FormattedText", multiple: false, visibility: "hidden", defaultValue: null },
-
-			/**
-			 * Icons that will be placed after the input field
-			 * @since 1.58
-			*/
-			_endIcon: { type: "sap.ui.core.Icon", multiple: true, visibility: "hidden" },
-
-			/**
-			 * Icons that will be placed before the input field
-			 * @since 1.58
-			*/
-			_beginIcon: { type: "sap.ui.core.Icon", multiple: true, visibility: "hidden" }
-		},
-		designtime: "sap/m/designtime/InputBase.designtime"
-	}});
+		renderer: InputBaseRenderer
+	});
 
 	EnabledPropagator.call(InputBase.prototype);
 	IconPool.insertFontFaceStyle();

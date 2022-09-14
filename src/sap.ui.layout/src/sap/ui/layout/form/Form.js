@@ -49,81 +49,85 @@ sap.ui.define([
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.form.Form
 	 */
-	var Form = Control.extend("sap.ui.layout.form.Form", /** @lends sap.ui.layout.form.Form.prototype */ { metadata : {
+	var Form = Control.extend("sap.ui.layout.form.Form", /** @lends sap.ui.layout.form.Form.prototype */ {
+		metadata : {
 
-		library : "sap.ui.layout",
-		properties : {
+			library : "sap.ui.layout",
+			properties : {
 
-			/**
-			 * Width of the <code>Form</code>.
-			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+				/**
+				 * Width of the <code>Form</code>.
+				 */
+				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
-			/**
-			 * Applies a device-specific and theme-specific line height and label alignment to the form rows if the form has editable content.
-			 * If set, all (not only the editable) rows of the form will get the line height of editable fields.
-			 *
-			 * The labels inside the form will be rendered by default in the according mode.
-			 *
-			 * <b>Note:</b> The setting of this property does not change the content of the form.
-			 * For example, <code>Input</code> controls in a form with <code>editable</code> set to false are still editable.
-			 *
-			 * <b>Warning:</b> If this property is wrongly set, this might lead to visual issues.
-			 * The labels and fields might be misaligned, the labels might be rendered in the wrong mode,
-			 * and the spacing between the single controls might be wrong.
-			 * Also, controls that do not fit the mode might be rendered incorrectly.
-			 * @since 1.20.0
-			 */
-			editable : {type : "boolean", group : "Misc", defaultValue : false}
+				/**
+				 * Applies a device-specific and theme-specific line height and label alignment to the form rows if the form has editable content.
+				 * If set, all (not only the editable) rows of the form will get the line height of editable fields.
+				 *
+				 * The labels inside the form will be rendered by default in the according mode.
+				 *
+				 * <b>Note:</b> The setting of this property does not change the content of the form.
+				 * For example, <code>Input</code> controls in a form with <code>editable</code> set to false are still editable.
+				 *
+				 * <b>Warning:</b> If this property is wrongly set, this might lead to visual issues.
+				 * The labels and fields might be misaligned, the labels might be rendered in the wrong mode,
+				 * and the spacing between the single controls might be wrong.
+				 * Also, controls that do not fit the mode might be rendered incorrectly.
+				 * @since 1.20.0
+				 */
+				editable : {type : "boolean", group : "Misc", defaultValue : false}
+			},
+			defaultAggregation : "formContainers",
+			aggregations : {
+
+				/**
+				 * Containers with the content of the form. A <code>FormContainer</code> represents a group inside the <code>Form</code>.
+				 */
+				formContainers : {type : "sap.ui.layout.form.FormContainer", multiple : true, singularName : "formContainer"},
+
+				/**
+				 * Title of the <code>Form</code>. Can either be a <code>Title</code> element or a string.
+				 * If a <code>Title</code> element it used, the style of the title can be set.
+				 *
+				 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
+				 *
+				 * <b>Note:</b> If the title is provided as a string, the title is rendered with a theme-dependent default level.
+				 * As the <code>Form</code> control cannot know the structure of the page, this might not fit the page structure.
+				 * In this case provide the title using a <code>Title</code> element and set its {@link sap.ui.core.Title#setLevel level} to the needed value.
+				 */
+				title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false},
+
+				/**
+				 * Toolbar of the <code>Form</code>.
+				 *
+				 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
+				 * If a title is needed inside the <code>Toolbar</code> it must be added at content to the <code>Toolbar</code>.
+				 * In this case add the <code>Title</code> to the <code>ariaLabelledBy</code> association.
+				 * Use the right title level to meet the visual requirements. This might be theme-dependent.
+				 * @since 1.36.0
+				 */
+				toolbar : {type : "sap.ui.core.Toolbar", multiple : false},
+
+				/**
+				 * Layout of the <code>Form</code>. The assigned <code>Layout</code> renders the <code>Form</code>.
+				 * We recommend using the {@link sap.ui.layout.form.ColumnLayout ColumnLayout} for rendering a <code>Form</code>,
+				 * as its responsiveness allows the available space to be used in the best way possible.
+				 */
+				layout : {type : "sap.ui.layout.form.FormLayout", multiple : false}
+			},
+			associations: {
+
+				/**
+				 * Association to controls / IDs that label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
+				 * @since 1.28.0
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+			},
+			designtime: "sap/ui/layout/designtime/form/Form.designtime"
 		},
-		defaultAggregation : "formContainers",
-		aggregations : {
 
-			/**
-			 * Containers with the content of the form. A <code>FormContainer</code> represents a group inside the <code>Form</code>.
-			 */
-			formContainers : {type : "sap.ui.layout.form.FormContainer", multiple : true, singularName : "formContainer"},
-
-			/**
-			 * Title of the <code>Form</code>. Can either be a <code>Title</code> element or a string.
-			 * If a <code>Title</code> element it used, the style of the title can be set.
-			 *
-			 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
-			 *
-			 * <b>Note:</b> If the title is provided as a string, the title is rendered with a theme-dependent default level.
-			 * As the <code>Form</code> control cannot know the structure of the page, this might not fit the page structure.
-			 * In this case provide the title using a <code>Title</code> element and set its {@link sap.ui.core.Title#setLevel level} to the needed value.
-			 */
-			title : {type : "sap.ui.core.Title", altTypes : ["string"], multiple : false},
-
-			/**
-			 * Toolbar of the <code>Form</code>.
-			 *
-			 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
-			 * If a title is needed inside the <code>Toolbar</code> it must be added at content to the <code>Toolbar</code>.
-			 * In this case add the <code>Title</code> to the <code>ariaLabelledBy</code> association.
-			 * Use the right title level to meet the visual requirements. This might be theme-dependent.
-			 * @since 1.36.0
-			 */
-			toolbar : {type : "sap.ui.core.Toolbar", multiple : false},
-
-			/**
-			 * Layout of the <code>Form</code>. The assigned <code>Layout</code> renders the <code>Form</code>.
-			 * We recommend using the {@link sap.ui.layout.form.ColumnLayout ColumnLayout} for rendering a <code>Form</code>,
-			 * as its responsiveness allows the available space to be used in the best way possible.
-			 */
-			layout : {type : "sap.ui.layout.form.FormLayout", multiple : false}
-		},
-		associations: {
-
-			/**
-			 * Association to controls / IDs that label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
-			 * @since 1.28.0
-			 */
-			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-		},
-		designtime: "sap/ui/layout/designtime/form/Form.designtime"
-	}});
+		renderer: FormRenderer
+	});
 
 	Form.prototype.init = function(){
 

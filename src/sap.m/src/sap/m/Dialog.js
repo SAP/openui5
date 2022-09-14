@@ -447,7 +447,9 @@ function(
 					}
 				},
 				designtime: "sap/m/designtime/Dialog.designtime"
-			}
+			},
+
+			renderer: DialogRenderer
 		});
 
 		ResponsivePaddingsEnablement.call(Dialog.prototype, {

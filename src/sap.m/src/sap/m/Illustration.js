@@ -70,7 +70,9 @@ sap.ui.define([
 				ariaLabelledBy: {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 			},
 			dnd: { draggable: true, droppable: false }
-		}
+		},
+
+		renderer: IllustrationRenderer
 	});
 
 	/**

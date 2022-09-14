@@ -8,13 +8,14 @@ sap.ui.define([
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/delegate/ScrollEnablement",
-	"sap/ui/layout/library",
-	"./FixFlexRenderer"
-], function (
+	"./FixFlexRenderer",
+	"sap/ui/layout/library"
+], function(
 	Control,
 	EnabledPropagator,
 	ResizeHandler,
-	ScrollEnablement
+	ScrollEnablement,
+	FixFlexRenderer
 ) {
 	"use strict";
 
@@ -99,7 +100,9 @@ sap.ui.define([
 			},
 			designtime: "sap/ui/layout/designtime/FixFlex.designtime",
 			dnd: { draggable: false, droppable: true }
-		}
+		},
+
+		renderer: FixFlexRenderer
 	});
 
 	EnabledPropagator.call(FixFlex.prototype);

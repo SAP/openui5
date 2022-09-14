@@ -616,7 +616,9 @@ sap.ui.define([
 					}
 				}
 			}
-		}
+		},
+
+		renderer: UploadCollectionRenderer
 	});
 
 	UploadCollection._uploadingStatus = "uploading";

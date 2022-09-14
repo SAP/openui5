@@ -98,236 +98,240 @@ sap.ui.define([
 	 * @alias sap.m.IconTabBar
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/icontabbar/ Icon Tab Bar}
 	 */
-	var IconTabBar = Control.extend("sap.m.IconTabBar", /** @lends sap.m.IconTabBar.prototype */ { metadata : {
+	var IconTabBar = Control.extend("sap.m.IconTabBar", /** @lends sap.m.IconTabBar.prototype */ {
+		metadata : {
 
-		interfaces : [
-			"sap.m.ObjectHeaderContainer",
-			"sap.f.IDynamicPageStickyContent"
-		],
-		library : "sap.m",
-		properties : {
+			interfaces : [
+				"sap.m.ObjectHeaderContainer",
+				"sap.f.IDynamicPageStickyContent"
+			],
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Defines whether the current selection should be visualized.
-			 * @deprecated As of 1.15.0.
-			 * Regarding to changes of this control this property is not needed anymore.
-			 */
-			showSelection : {type : "boolean", group : "Misc", defaultValue : true, deprecated: true},
+				/**
+				 * Defines whether the current selection should be visualized.
+				 * @deprecated As of 1.15.0.
+				 * Regarding to changes of this control this property is not needed anymore.
+				 */
+				showSelection : {type : "boolean", group : "Misc", defaultValue : true, deprecated: true},
 
-			/**
-			 * Defines if the tabs are collapsible and expandable.
-			 * @since 1.15.0
-			 */
-			expandable : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * Defines if the tabs are collapsible and expandable.
+				 * @since 1.15.0
+				 */
+				expandable : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Indicates if the actual tab content is expanded or not.
-			 * @since 1.15.0
-			 */
-			expanded : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * Indicates if the actual tab content is expanded or not.
+				 * @since 1.15.0
+				 */
+				expanded : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Key of the selected tab item.
-			 *
-			 * If the key has no corresponding aggregated item, no changes will apply.
-			 * If duplicate keys exists the first item matching the key is used.
-			 * @since 1.15.0
-			 */
-			selectedKey : {type : "string", group : "Data", defaultValue : null},
+				/**
+				 * Key of the selected tab item.
+				 *
+				 * If the key has no corresponding aggregated item, no changes will apply.
+				 * If duplicate keys exists the first item matching the key is used.
+				 * @since 1.15.0
+				 */
+				selectedKey : {type : "string", group : "Data", defaultValue : null},
 
-			/**
-			 * Determines whether the text of the icon tab filter (not the count) is displayed in uppercase.
-			 * @since 1.22
-			 */
-			upperCase : {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * Determines whether the text of the icon tab filter (not the count) is displayed in uppercase.
+				 * @since 1.22
+				 */
+				upperCase : {type : "boolean", group : "Appearance", defaultValue : false},
 
-			/**
-			 * Determines whether the IconTabBar height is stretched to the maximum possible height
-			 * of its parent container. As a prerequisite, the height of the parent container must be
-			 * defined as a fixed value.
-			 *
-			 * @since 1.26
-			 */
-			stretchContentHeight : {type : "boolean", group : "Appearance", defaultValue : false},
+				/**
+				 * Determines whether the IconTabBar height is stretched to the maximum possible height
+				 * of its parent container. As a prerequisite, the height of the parent container must be
+				 * defined as a fixed value.
+				 *
+				 * @since 1.26
+				 */
+				stretchContentHeight : {type : "boolean", group : "Appearance", defaultValue : false},
 
-			/**
-			 * Determines whether the IconTabBar content fits to the full area.
-			 * The paddings are removed if it's set to false.
-			 *
-			 * @since 1.26
-			 */
-			applyContentPadding : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * Determines whether the IconTabBar content fits to the full area.
+				 * The paddings are removed if it's set to false.
+				 *
+				 * @since 1.26
+				 */
+				applyContentPadding : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * Specifies the background color of the IconTabBar.
-			 *
-			 * Depending on the theme, you can change the state of
-			 * the background color to "Solid", "Translucent", or "Transparent".
-			 * Default is "Solid".
-			 * @since 1.26
-			 */
-			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Solid},
+				/**
+				 * Specifies the background color of the IconTabBar.
+				 *
+				 * Depending on the theme, you can change the state of
+				 * the background color to "Solid", "Translucent", or "Transparent".
+				 * Default is "Solid".
+				 * @since 1.26
+				 */
+				backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Solid},
 
-			/**
-			 * Specifies the header mode.
-			 *
-			 * @since 1.40
-			 */
-			headerMode : {type : "sap.m.IconTabHeaderMode", group : "Appearance", defaultValue : IconTabHeaderMode.Standard},
+				/**
+				 * Specifies the header mode.
+				 *
+				 * @since 1.40
+				 */
+				headerMode : {type : "sap.m.IconTabHeaderMode", group : "Appearance", defaultValue : IconTabHeaderMode.Standard},
 
-			/**
-			 * Specifies if the overflow select list is displayed.
-			 *
-			 * The overflow select list represents a list, where all tab filters are displayed,
-			 * so the user can select specific tab filter easier.
-			 * @since 1.42
-			 * @deprecated As of 1.77
-			 */
-			showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
+				/**
+				 * Specifies if the overflow select list is displayed.
+				 *
+				 * The overflow select list represents a list, where all tab filters are displayed,
+				 * so the user can select specific tab filter easier.
+				 * @since 1.42
+				 * @deprecated As of 1.77
+				 */
+				showOverflowSelectList : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
-			/**
-			 * Specifies the background color of the header.
-			 *
-			 * Depending on the theme, you can change the state of the background color to "Solid", "Translucent", or "Transparent".
-			 * <b>Note:</b> In SAP Belize Deep (sap_belize_plus) theme this property should be set to "Solid".
-			 * @since 1.44
-			 */
-			headerBackgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Solid},
+				/**
+				 * Specifies the background color of the header.
+				 *
+				 * Depending on the theme, you can change the state of the background color to "Solid", "Translucent", or "Transparent".
+				 * <b>Note:</b> In SAP Belize Deep (sap_belize_plus) theme this property should be set to "Solid".
+				 * @since 1.44
+				 */
+				headerBackgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : BackgroundDesign.Solid},
 
-			/**
-			 * Specifies whether tab reordering is enabled. Relevant only for desktop devices.
-			 * The {@link sap.m.IconTabSeparator sap.m.IconTabSeparator} cannot be dragged and dropped
-			 * Items can be moved around {@link sap.m.IconTabSeparator sap.m.IconTabSeparator}
-			 * Reordering is enabled via keyboard using <code>Ctrl</code> + arrow keys (Windows) and <code>Control</code> + arrow keys (Mac OS)
-			 * @since 1.46
-			 */
-			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false},
+				/**
+				 * Specifies whether tab reordering is enabled. Relevant only for desktop devices.
+				 * The {@link sap.m.IconTabSeparator sap.m.IconTabSeparator} cannot be dragged and dropped
+				 * Items can be moved around {@link sap.m.IconTabSeparator sap.m.IconTabSeparator}
+				 * Reordering is enabled via keyboard using <code>Ctrl</code> + arrow keys (Windows) and <code>Control</code> + arrow keys (Mac OS)
+				 * @since 1.46
+				 */
+				enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false},
 
-			/**
-			 * Specifies the allowed level of tabs nesting within one another using drag and drop.
-			 * Default value is 0 which means nesting via interaction is not allowed. Maximum value is 100.
-			 * This property allows nesting via user interaction only, and does not restrict adding items
-			 * to the <code>items</code> aggregation of {@link sap.m.IconTabFilter sap.m.IconTabFilter}.
-			 * @since 1.79
-			 */
-			maxNestingLevel: { type: "int", group : "Behavior", defaultValue: 0},
+				/**
+				 * Specifies the allowed level of tabs nesting within one another using drag and drop.
+				 * Default value is 0 which means nesting via interaction is not allowed. Maximum value is 100.
+				 * This property allows nesting via user interaction only, and does not restrict adding items
+				 * to the <code>items</code> aggregation of {@link sap.m.IconTabFilter sap.m.IconTabFilter}.
+				 * @since 1.79
+				 */
+				maxNestingLevel: { type: "int", group : "Behavior", defaultValue: 0},
 
-			/**
-			 * Specifies the visual density mode of the tabs.
-			 *
-			 * The values that can be applied are <code>Cozy</code>, <code>Compact</code> and <code>Inherit</code>.
-			 * <code>Cozy</code> and <code>Compact</code> render the control in one of these modes independent of the global density settings.
-			 * The <code>Inherit</code> value follows the global density settings which are applied.
-			 * For compatibility reasons, the default value is <code>Cozy</code>.
-			 * @since 1.56
-			 */
-			tabDensityMode : {type : "sap.m.IconTabDensityMode", group : "Appearance", defaultValue : IconTabDensityMode.Cozy},
+				/**
+				 * Specifies the visual density mode of the tabs.
+				 *
+				 * The values that can be applied are <code>Cozy</code>, <code>Compact</code> and <code>Inherit</code>.
+				 * <code>Cozy</code> and <code>Compact</code> render the control in one of these modes independent of the global density settings.
+				 * The <code>Inherit</code> value follows the global density settings which are applied.
+				 * For compatibility reasons, the default value is <code>Cozy</code>.
+				 * @since 1.56
+				 */
+				tabDensityMode : {type : "sap.m.IconTabDensityMode", group : "Appearance", defaultValue : IconTabDensityMode.Cozy},
 
-			/**
-			 * Specifies optional texts for the screen reader.
-			 *
-			 * The given object can contain the following keys:
-			 * <code>headerLabel</code> - text to serve as a label for the header,
-			 * <code>headerDescription</code> - text to serve as a description for the header.
-			 * @since 1.78
-			 */
-			ariaTexts : {type : "object", group : "Accessibility", defaultValue : null},
+				/**
+				 * Specifies optional texts for the screen reader.
+				 *
+				 * The given object can contain the following keys:
+				 * <code>headerLabel</code> - text to serve as a label for the header,
+				 * <code>headerDescription</code> - text to serve as a description for the header.
+				 * @since 1.78
+				 */
+				ariaTexts : {type : "object", group : "Accessibility", defaultValue : null},
 
-			/**
-			 * Specifies the overflow mode of the header.
-			 *
-			 * The default <code>End</code> mode shows as many tabs that can fit on the screen, then shows one overflow at the end
-			 * containing the remaining items.
-			 * The <code>StartAndEnd</code> is used to keep the order of tabs intact and offers two overflow tabs on both ends of the bar.
-			 * @since 1.90
-			 */
-			tabsOverflowMode: {type : "sap.m.TabsOverflowMode", group : "Behavior", defaultValue : TabsOverflowMode.End}
-		},
-		aggregations : {
+				/**
+				 * Specifies the overflow mode of the header.
+				 *
+				 * The default <code>End</code> mode shows as many tabs that can fit on the screen, then shows one overflow at the end
+				 * containing the remaining items.
+				 * The <code>StartAndEnd</code> is used to keep the order of tabs intact and offers two overflow tabs on both ends of the bar.
+				 * @since 1.90
+				 */
+				tabsOverflowMode: {type : "sap.m.TabsOverflowMode", group : "Behavior", defaultValue : TabsOverflowMode.End}
+			},
+			aggregations : {
 
-			/**
-			 * The items displayed in the IconTabBar.
-			 */
-			items : {type : "sap.m.IconTab", multiple : true, singularName : "item", forwarding: {
-				getter: "_getIconTabHeader",
-				aggregation: "items",
-				forwardBinding: true
-			}},
+				/**
+				 * The items displayed in the IconTabBar.
+				 */
+				items : {type : "sap.m.IconTab", multiple : true, singularName : "item", forwarding: {
+					getter: "_getIconTabHeader",
+					aggregation: "items",
+					forwardBinding: true
+				}},
 
-			/**
-			 * Represents the contents displayed below the IconTabBar.
-			 * If there are multiple contents, they are rendered after each other.
-			 * The developer has to manage to display the right one or use the content aggregation
-			 * inside the IconTabFilter (which will be displayed instead if it is set).
-			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
+				/**
+				 * Represents the contents displayed below the IconTabBar.
+				 * If there are multiple contents, they are rendered after each other.
+				 * The developer has to manage to display the right one or use the content aggregation
+				 * inside the IconTabFilter (which will be displayed instead if it is set).
+				 */
+				content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
 
-			/**
-			 * Internal aggregation for managing the icon tab elements.
-			 */
-			_header : {type : "sap.m.IconTabHeader", multiple : false, visibility : "hidden"}
-		},
-		events : {
+				/**
+				 * Internal aggregation for managing the icon tab elements.
+				 */
+				_header : {type : "sap.m.IconTabHeader", multiple : false, visibility : "hidden"}
+			},
+			events : {
 
-			/**
-			 * Fires when an item is selected.
-			 */
-			select : {
-				parameters : {
+				/**
+				 * Fires when an item is selected.
+				 */
+				select : {
+					parameters : {
 
-					/**
-					 * The selected item
-					 * @since 1.15.0
-					 */
-					item : {type : "sap.m.IconTabFilter"},
+						/**
+						 * The selected item
+						 * @since 1.15.0
+						 */
+						item : {type : "sap.m.IconTabFilter"},
 
-					/**
-					 * The key of the selected item
-					 * @since 1.15.0
-					 */
-					key : {type : "string"},
+						/**
+						 * The key of the selected item
+						 * @since 1.15.0
+						 */
+						key : {type : "string"},
 
-					/**
-					 * The key of the previous selected item
-					 * @since 1.96
-					 */
-					previousKey : {type : "string"},
+						/**
+						 * The key of the previous selected item
+						 * @since 1.96
+						 */
+						previousKey : {type : "string"},
 
-					/**
-					 * The selected item
-					 * @deprecated As of 1.15.0, replaced by parameter <code>item</code> instead.
-					 */
-					selectedItem : {type : "sap.m.IconTabFilter"},
+						/**
+						 * The selected item
+						 * @deprecated As of 1.15.0, replaced by parameter <code>item</code> instead.
+						 */
+						selectedItem : {type : "sap.m.IconTabFilter"},
 
-					/**
-					 * The key of the selected item
-					 * @deprecated As of 1.15.0, replaced by parameter <code>key</code> instead.
-					 */
-					selectedKey : {type : "string"}
+						/**
+						 * The key of the selected item
+						 * @deprecated As of 1.15.0, replaced by parameter <code>key</code> instead.
+						 */
+						selectedKey : {type : "string"}
+					}
+				},
+
+				/**
+				 * Indicates that the tab will expand or collapse.
+				 * @since 1.15.0
+				 */
+				expand : {
+					parameters : {
+
+						/**
+						 * If the tab will expand, this is true.
+						 */
+						expand : {type : "boolean"},
+
+						/**
+						 * If the tab will collapse, this is true.
+						 */
+						collapse : {type : "boolean"}
+					}
 				}
 			},
-
-			/**
-			 * Indicates that the tab will expand or collapse.
-			 * @since 1.15.0
-			 */
-			expand : {
-				parameters : {
-
-					/**
-					 * If the tab will expand, this is true.
-					 */
-					expand : {type : "boolean"},
-
-					/**
-					 * If the tab will collapse, this is true.
-					 */
-					collapse : {type : "boolean"}
-				}
-			}
+			designtime: "sap/m/designtime/IconTabBar.designtime"
 		},
-		designtime: "sap/m/designtime/IconTabBar.designtime"
-	}});
+
+		renderer: IconTabBarRenderer
+	});
 
 	ResponsivePaddingsEnablement.call(IconTabBar.prototype, {
 		header: { selector: ".sapMITH" },

@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/m/PDFViewerRenderer",
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"./PDFViewerRenderer"
 ],
 	function(
 		library,
@@ -23,7 +24,8 @@ sap.ui.define([
 		PDFViewerRenderer,
 		Log,
 		assert,
-		jQuery
+		jQuery,
+		PDFViewerRenderer1
 	) {
 		"use strict";
 
@@ -165,7 +167,9 @@ sap.ui.define([
 						 */
 						sourceValidationFailed: {}
 					}
-				}
+				},
+
+				renderer: PDFViewerRenderer1
 			});
 
 

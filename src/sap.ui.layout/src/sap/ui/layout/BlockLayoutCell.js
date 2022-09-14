@@ -95,7 +95,9 @@ sap.ui.define([
 					titleLink: {type: "sap.ui.core.Control", multiple : false}
 				},
 				designtime: "sap/ui/layout/designtime/BlockLayoutCell.designtime"
-			}
+			},
+
+			renderer: BlockLayoutCellRenderer
 		});
 
 		BlockLayoutCell.prototype.setLayoutData = function (oLayoutData) {

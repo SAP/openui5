@@ -147,7 +147,9 @@ sap.ui.define([
 						}
 					}
 				}
-			}
+			},
+
+			renderer: TimePickerSlidersRenderer
 		});
 
 		/**

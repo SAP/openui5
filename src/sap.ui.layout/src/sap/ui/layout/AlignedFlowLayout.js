@@ -93,7 +93,9 @@ sap.ui.define([
 						multiple: true
 					}
 				}
-			}
+			},
+
+			renderer: AlignedFlowLayoutRenderer
 		});
 
 		/**

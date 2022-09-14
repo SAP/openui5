@@ -58,132 +58,136 @@ sap.ui.define([
 	 * @since 1.16.0
 	 * @alias sap.ui.layout.form.ResponsiveGridLayout
 	 */
-	var ResponsiveGridLayout = FormLayout.extend("sap.ui.layout.form.ResponsiveGridLayout", /** @lends sap.ui.layout.form.ResponsiveGridLayout.prototype */ { metadata : {
+	var ResponsiveGridLayout = FormLayout.extend("sap.ui.layout.form.ResponsiveGridLayout", /** @lends sap.ui.layout.form.ResponsiveGridLayout.prototype */ {
+		metadata : {
 
-		library : "sap.ui.layout",
-		properties : {
+			library : "sap.ui.layout",
+			properties : {
 
-			/**
-			 * Default span for labels in extra large size.
-			 *
-			 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>labelSpanL</code> value is used.
-			 * @since 1.34.0
-			 */
-			labelSpanXL : {type : "int", group : "Misc", defaultValue : -1},
+				/**
+				 * Default span for labels in extra large size.
+				 *
+				 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>labelSpanL</code> value is used.
+				 * @since 1.34.0
+				 */
+				labelSpanXL : {type : "int", group : "Misc", defaultValue : -1},
 
-			/**
-			 * Default span for labels in large size.
-			 *
-			 * <b>Note:</b> If <code>adjustLabelSpan</code> is set, this property is only used if more than 1 <code>FormContainer</code> is in one line. If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
-			 * @since 1.16.3
-			 */
-			labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
+				/**
+				 * Default span for labels in large size.
+				 *
+				 * <b>Note:</b> If <code>adjustLabelSpan</code> is set, this property is only used if more than 1 <code>FormContainer</code> is in one line. If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
+				 * @since 1.16.3
+				 */
+				labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
 
-			/**
-			 * Default span for labels in medium size.
-			 *
-			 * <b>Note:</b> If <code>adjustLabelSpan</code> is set this property is used for full-size <code>FormContainers</code>. If more than one <code>FormContainer</code> is in one line, <code>labelSpanL</code> is used.
-			 * @since 1.16.3
-			 */
-			labelSpanM : {type : "int", group : "Misc", defaultValue : 2},
+				/**
+				 * Default span for labels in medium size.
+				 *
+				 * <b>Note:</b> If <code>adjustLabelSpan</code> is set this property is used for full-size <code>FormContainers</code>. If more than one <code>FormContainer</code> is in one line, <code>labelSpanL</code> is used.
+				 * @since 1.16.3
+				 */
+				labelSpanM : {type : "int", group : "Misc", defaultValue : 2},
 
-			/**
-			 * Default span for labels in small size.
-			 * @since 1.16.3
-			 */
-			labelSpanS : {type : "int", group : "Misc", defaultValue : 12},
+				/**
+				 * Default span for labels in small size.
+				 * @since 1.16.3
+				 */
+				labelSpanS : {type : "int", group : "Misc", defaultValue : 12},
 
-			/**
-			 * If set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the number of <code>FormContainers</code> in one row.
-			 * If only one <code>FormContainer</code> is displayed in one row, <code>labelSpanM</code> is used to define the size of the label.
-			 * This is the same for medium and large <code>Forms</code>.
-			 * This is done to align the labels on forms where full-size <code>FormContainers</code> and multiple-column rows are used in the same <code>Form</code>
-			 * (because every <code>FormContainer</code> has its own <code>Grid</code> inside).
-			 *
-			 * If not set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the <code>Form</code> size.
-			 * The number of <code>FormContainers</code> doesn't matter in this case.
-			 * @since 1.34.0
-			 */
-			adjustLabelSpan : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * If set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the number of <code>FormContainers</code> in one row.
+				 * If only one <code>FormContainer</code> is displayed in one row, <code>labelSpanM</code> is used to define the size of the label.
+				 * This is the same for medium and large <code>Forms</code>.
+				 * This is done to align the labels on forms where full-size <code>FormContainers</code> and multiple-column rows are used in the same <code>Form</code>
+				 * (because every <code>FormContainer</code> has its own <code>Grid</code> inside).
+				 *
+				 * If not set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the <code>Form</code> size.
+				 * The number of <code>FormContainers</code> doesn't matter in this case.
+				 * @since 1.34.0
+				 */
+				adjustLabelSpan : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Number of grid cells that are empty at the end of each line on extra large size.
-			 *
-			 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>emptySpanL</code> value is used.
-			 * @since 1.34.0
-			 */
-			emptySpanXL : {type : "int", group : "Misc", defaultValue : -1},
+				/**
+				 * Number of grid cells that are empty at the end of each line on extra large size.
+				 *
+				 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>emptySpanL</code> value is used.
+				 * @since 1.34.0
+				 */
+				emptySpanXL : {type : "int", group : "Misc", defaultValue : -1},
 
-			/**
-			 * Number of grid cells that are empty at the end of each line on large size.
-			 * @since 1.16.3
-			 */
-			emptySpanL : {type : "int", group : "Misc", defaultValue : 0},
+				/**
+				 * Number of grid cells that are empty at the end of each line on large size.
+				 * @since 1.16.3
+				 */
+				emptySpanL : {type : "int", group : "Misc", defaultValue : 0},
 
-			/**
-			 * Number of grid cells that are empty at the end of each line on medium size.
-			 * @since 1.16.3
-			 */
-			emptySpanM : {type : "int", group : "Misc", defaultValue : 0},
+				/**
+				 * Number of grid cells that are empty at the end of each line on medium size.
+				 * @since 1.16.3
+				 */
+				emptySpanM : {type : "int", group : "Misc", defaultValue : 0},
 
-			/**
-			 * Number of grid cells that are empty at the end of each line on small size.
-			 * @since 1.16.3
-			 */
-			emptySpanS : {type : "int", group : "Misc", defaultValue : 0},
+				/**
+				 * Number of grid cells that are empty at the end of each line on small size.
+				 * @since 1.16.3
+				 */
+				emptySpanS : {type : "int", group : "Misc", defaultValue : 0},
 
-			/**
-			 * Number of columns for extra large size.
-			 *
-			 * The number of columns for extra large size must not be smaller than the number of columns for large size.
-			 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>columnsL</code> value is used (from the backward compatibility reasons).
-			 * @since 1.34.0
-			 */
-			columnsXL : {type : "int", group : "Misc", defaultValue : -1},
+				/**
+				 * Number of columns for extra large size.
+				 *
+				 * The number of columns for extra large size must not be smaller than the number of columns for large size.
+				 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>columnsL</code> value is used (from the backward compatibility reasons).
+				 * @since 1.34.0
+				 */
+				columnsXL : {type : "int", group : "Misc", defaultValue : -1},
 
-			/**
-			 * Number of columns for large size.
-			 *
-			 * The number of columns for large size must not be smaller than the number of columns for medium size.
-			 * @since 1.16.3
-			 */
-			columnsL : {type : "int", group : "Misc", defaultValue : 2},
+				/**
+				 * Number of columns for large size.
+				 *
+				 * The number of columns for large size must not be smaller than the number of columns for medium size.
+				 * @since 1.16.3
+				 */
+				columnsL : {type : "int", group : "Misc", defaultValue : 2},
 
-			/**
-			 * Number of columns for medium size.
-			 * @since 1.16.3
-			 */
-			columnsM : {type : "int", group : "Misc", defaultValue : 1},
+				/**
+				 * Number of columns for medium size.
+				 * @since 1.16.3
+				 */
+				columnsM : {type : "int", group : "Misc", defaultValue : 1},
 
-			/**
-			 * If the <code>Form</code> contains only one single <code>FormContainer</code> and this property is set,
-			 * the <code>FormContainer</code> is displayed using the full size of the <code>Form</code>.
-			 * In this case the properties <code>columnsXL</code>, <code>columnsL</code> and <code>columnsM</code> are ignored.
-			 *
-			 * In all other cases the <code>FormContainer</code> is displayed in the size of one column.
-			 * @since 1.34.0
-			 */
-			singleContainerFullSize : {type : "boolean", group : "Misc", defaultValue : true},
+				/**
+				 * If the <code>Form</code> contains only one single <code>FormContainer</code> and this property is set,
+				 * the <code>FormContainer</code> is displayed using the full size of the <code>Form</code>.
+				 * In this case the properties <code>columnsXL</code>, <code>columnsL</code> and <code>columnsM</code> are ignored.
+				 *
+				 * In all other cases the <code>FormContainer</code> is displayed in the size of one column.
+				 * @since 1.34.0
+				 */
+				singleContainerFullSize : {type : "boolean", group : "Misc", defaultValue : true},
 
-			/**
-			 * Breakpoint (in pixel) between large size and extra large (XL) size.
-			 * @since 1.34.0
-			 */
-			breakpointXL : {type : "int", group : "Misc", defaultValue : 1440},
+				/**
+				 * Breakpoint (in pixel) between large size and extra large (XL) size.
+				 * @since 1.34.0
+				 */
+				breakpointXL : {type : "int", group : "Misc", defaultValue : 1440},
 
-			/**
-			 * Breakpoint (in pixel) between Medium size and Large size.
-			 * @since 1.16.3
-			 */
-			breakpointL : {type : "int", group : "Misc", defaultValue : 1024},
+				/**
+				 * Breakpoint (in pixel) between Medium size and Large size.
+				 * @since 1.16.3
+				 */
+				breakpointL : {type : "int", group : "Misc", defaultValue : 1024},
 
-			/**
-			 * Breakpoint (in pixel) between Small size and Medium size.
-			 * @since 1.16.3
-			 */
-			breakpointM : {type : "int", group : "Misc", defaultValue : 600}
-		}
-	}});
+				/**
+				 * Breakpoint (in pixel) between Small size and Medium size.
+				 * @since 1.16.3
+				 */
+				breakpointM : {type : "int", group : "Misc", defaultValue : 600}
+			}
+		},
+
+		renderer: ResponsiveGridLayoutRenderer
+	});
 
 	/*
 	 * The ResponsiveGridLayout uses Grid controls to render the Form

@@ -139,7 +139,9 @@ sap.ui.define([
 				}
 			},
 			dnd: { draggable: true, droppable: false }
-		}
+		},
+
+		renderer: ObjectMarkerRenderer
 	});
 
 	/**

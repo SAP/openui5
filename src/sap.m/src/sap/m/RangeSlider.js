@@ -97,7 +97,9 @@ sap.ui.define([
                     endHandlePressed: { type: "boolean", visibility: "hidden" }
                 },
                 designtime: "sap/m/designtime/RangeSlider.designtime"
-            }
+            },
+
+            renderer: RangeSliderRenderer
         });
 
         RangeSlider.prototype.init = function () {

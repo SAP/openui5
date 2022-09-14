@@ -56,10 +56,14 @@ sap.ui.define([
 	 * @deprecated As of version 1.93, replaced by {@link sap.ui.layout.form.ColumnLayout ColumnLayout}
 	 * @alias sap.ui.layout.form.ResponsiveLayout
 	 */
-	var ResponsiveLayout = FormLayout.extend("sap.ui.layout.form.ResponsiveLayout", /** @lends sap.ui.layout.form.ResponsiveLayout.prototype */ { metadata : {
+	var ResponsiveLayout = FormLayout.extend("sap.ui.layout.form.ResponsiveLayout", /** @lends sap.ui.layout.form.ResponsiveLayout.prototype */ {
+		metadata : {
 
-		library : "sap.ui.layout"
-	}});
+			library : "sap.ui.layout"
+		},
+
+		renderer: ResponsiveLayoutRenderer
+	});
 
 	/*
 	 * The ResponsiveLayout for forms inside is using ResponsiveFlowLayouts to render the form.

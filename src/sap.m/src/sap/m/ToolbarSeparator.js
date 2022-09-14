@@ -28,14 +28,18 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ToolbarSeparatorRenderer']
 	 * @since 1.26
 	 * @alias sap.m.ToolbarSeparator
 	 */
-	var ToolbarSeparator = Control.extend("sap.m.ToolbarSeparator", /** @lends sap.m.ToolbarSeparator.prototype */ { metadata : {
+	var ToolbarSeparator = Control.extend("sap.m.ToolbarSeparator", /** @lends sap.m.ToolbarSeparator.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		interfaces : [
-			"sap.m.IOverflowToolbarContent"
-		]
+			library : "sap.m",
+			interfaces : [
+				"sap.m.IOverflowToolbarContent"
+			]
 
-	}});
+		},
+
+		renderer: ToolbarSeparatorRenderer
+	});
 
 	/**
 	 * Classname to be used, when the control is inside <code>OverflowToolbar</code>.

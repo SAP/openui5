@@ -152,7 +152,9 @@ function(
 					*/
 					controls: {type: "sap.m.Link", multiple: true, singularName: "control"}
 				}
-			}
+			},
+
+			renderer: FormattedTextRenderer
 		});
 
 		/*

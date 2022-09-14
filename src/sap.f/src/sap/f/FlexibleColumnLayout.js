@@ -644,7 +644,9 @@ sap.ui.define([
 					}
 				}
 			}
-		}
+		},
+
+		renderer: FlexibleColumnLayoutRenderer
 	});
 
 	FlexibleColumnLayout.DEFAULT_COLUMN_LABELS = {

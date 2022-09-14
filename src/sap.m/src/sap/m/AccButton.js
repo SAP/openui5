@@ -33,7 +33,9 @@ sap.ui.define(['./Button','./AccButtonRenderer'],
 				"ariaHidden": {type : "string", defaultValue : null, bindable : "bindable"},
 				"ariaHaspopup": {type : "string", defaultValue : null, bindable : "bindable"}
 			}
-		}
+		},
+
+		renderer: AccButtonRenderer
 	});
 
 	return AccButton;

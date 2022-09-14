@@ -82,109 +82,113 @@ function(
 	 * @public
 	 * @alias sap.m.ListItemBase
 	 */
-	var ListItemBase = Control.extend("sap.m.ListItemBase", /** @lends sap.m.ListItemBase.prototype */ { metadata : {
+	var ListItemBase = Control.extend("sap.m.ListItemBase", /** @lends sap.m.ListItemBase.prototype */ {
+		metadata : {
 
-		library : "sap.m",
-		properties : {
+			library : "sap.m",
+			properties : {
 
-			/**
-			 * Defines the visual indication and behavior of the list items, e.g. <code>Active</code>, <code>Navigation</code>, <code>Detail</code>.
-			 */
-			type : {type : "sap.m.ListType", group : "Misc", defaultValue : ListItemType.Inactive},
+				/**
+				 * Defines the visual indication and behavior of the list items, e.g. <code>Active</code>, <code>Navigation</code>, <code>Detail</code>.
+				 */
+				type : {type : "sap.m.ListType", group : "Misc", defaultValue : ListItemType.Inactive},
 
-			/**
-			 * Whether the control should be visible on the screen. If set to false, a placeholder is rendered instead of the real control.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
+				/**
+				 * Whether the control should be visible on the screen. If set to false, a placeholder is rendered instead of the real control.
+				 */
+				visible : {type : "boolean", group : "Appearance", defaultValue : true},
 
-			/**
-			 * Activates the unread indicator for the list item, if set to <code>true</code>.
-			 * <b>Note:</b> This flag is ignored when the <code>showUnread</code> property of the parent is set to <code>false</code>.
-			 */
-			unread : {type : "boolean", group : "Misc", defaultValue : false},
+				/**
+				 * Activates the unread indicator for the list item, if set to <code>true</code>.
+				 * <b>Note:</b> This flag is ignored when the <code>showUnread</code> property of the parent is set to <code>false</code>.
+				 */
+				unread : {type : "boolean", group : "Misc", defaultValue : false},
 
-			/**
-			 * Defines the selected state of the list items.
-			 * <b>Note:</b> Binding the <code>selected</code> property in single selection modes may cause unwanted results if you have more than one selected items in your binding.
-			 */
-			selected : {type : "boolean", defaultValue : false},
+				/**
+				 * Defines the selected state of the list items.
+				 * <b>Note:</b> Binding the <code>selected</code> property in single selection modes may cause unwanted results if you have more than one selected items in your binding.
+				 */
+				selected : {type : "boolean", defaultValue : false},
 
-			/**
-			 * Defines the counter value of the list items.
-			 */
-			counter : {type : "int", group : "Misc", defaultValue : null},
+				/**
+				 * Defines the counter value of the list items.
+				 */
+				counter : {type : "int", group : "Misc", defaultValue : null},
 
-			/**
-			 * Defines the highlight state of the list items.
-			 *
-			 * Valid values for the <code>highlight</code> property are values of the enumerations {@link sap.ui.core.MessageType} or
-			 * {@link sap.ui.core.IndicationColor}.
-			 *
-			 * Accessibility support is provided through the associated {@link sap.m.ListItemBase#setHighlightText highlightText} property.
-			 * If the <code>highlight</code> property is set to a value of {@link sap.ui.core.MessageType}, the <code>highlightText</code>
-			 * property does not need to be set because a default text is used. However, the default text can be overridden by setting the
-			 * <code>highlightText</code> property.
-			 * In all other cases the <code>highlightText</code> property must be set.
-			 *
-			 * @since 1.44.0
-			 */
-			highlight : {type : "string", group : "Appearance", defaultValue : "None"},
+				/**
+				 * Defines the highlight state of the list items.
+				 *
+				 * Valid values for the <code>highlight</code> property are values of the enumerations {@link sap.ui.core.MessageType} or
+				 * {@link sap.ui.core.IndicationColor}.
+				 *
+				 * Accessibility support is provided through the associated {@link sap.m.ListItemBase#setHighlightText highlightText} property.
+				 * If the <code>highlight</code> property is set to a value of {@link sap.ui.core.MessageType}, the <code>highlightText</code>
+				 * property does not need to be set because a default text is used. However, the default text can be overridden by setting the
+				 * <code>highlightText</code> property.
+				 * In all other cases the <code>highlightText</code> property must be set.
+				 *
+				 * @since 1.44.0
+				 */
+				highlight : {type : "string", group : "Appearance", defaultValue : "None"},
 
-			/**
-			 * Defines the semantics of the {@link sap.m.ListItemBase#setHighlight highlight} property for accessibility purposes.
-			 *
-			 * @since 1.62
-			 */
-			highlightText : {type : "string", group : "Misc", defaultValue : ""},
+				/**
+				 * Defines the semantics of the {@link sap.m.ListItemBase#setHighlight highlight} property for accessibility purposes.
+				 *
+				 * @since 1.62
+				 */
+				highlightText : {type : "string", group : "Misc", defaultValue : ""},
 
-			/**
-			 * The navigated state of the list item.
-			 *
-			 * If set to <code>true</code>, a navigation indicator is displayed at the end of the list item.
-			 * <b>Note:</b> This property must be set for <b>one</b> list item only.
-			 *
-			 * @since 1.72
-			 */
-			navigated : {type : "boolean", group : "Appearance", defaultValue : false}
+				/**
+				 * The navigated state of the list item.
+				 *
+				 * If set to <code>true</code>, a navigation indicator is displayed at the end of the list item.
+				 * <b>Note:</b> This property must be set for <b>one</b> list item only.
+				 *
+				 * @since 1.72
+				 */
+				navigated : {type : "boolean", group : "Appearance", defaultValue : false}
+			},
+			associations: {
+
+				/**
+				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 * @since 1.28.0
+				 */
+				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
+			},
+			events : {
+
+				/**
+				 * Fires when the user taps on the control.
+				 * @deprecated Since version 1.20.0. Instead, use <code>press</code> event.
+				 */
+				tap : {deprecated: true},
+
+				/**
+				 * Fires when the user taps on the detail button of the control.
+				 * @deprecated Since version 1.20.0. Instead, use <code>detailPress</code> event.
+				 */
+				detailTap : {deprecated: true},
+
+				/**
+				 * Fires when the user clicks on the control.
+				 * <b>Note:</b> This event is not fired when the parent <code>mode</code> is <code>SingleSelectMaster</code> or when the <code>includeItemInSelection</code> property is set to <code>true</code>.
+				 * If there is an interactive element that handles its own <code>press</code> event then the list item's <code>press</code> event is not fired.
+				 * Also see {@link sap.m.ListBase#attachItemPress}.
+				 */
+				press : {},
+
+				/**
+				 * Fires when the user clicks on the detail button of the control.
+				 */
+				detailPress : {}
+			},
+			designtime: "sap/m/designtime/ListItemBase.designtime",
+			dnd: true
 		},
-		associations: {
 
-			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
-			 * @since 1.28.0
-			 */
-			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
-		},
-		events : {
-
-			/**
-			 * Fires when the user taps on the control.
-			 * @deprecated Since version 1.20.0. Instead, use <code>press</code> event.
-			 */
-			tap : {deprecated: true},
-
-			/**
-			 * Fires when the user taps on the detail button of the control.
-			 * @deprecated Since version 1.20.0. Instead, use <code>detailPress</code> event.
-			 */
-			detailTap : {deprecated: true},
-
-			/**
-			 * Fires when the user clicks on the control.
-			 * <b>Note:</b> This event is not fired when the parent <code>mode</code> is <code>SingleSelectMaster</code> or when the <code>includeItemInSelection</code> property is set to <code>true</code>.
-			 * If there is an interactive element that handles its own <code>press</code> event then the list item's <code>press</code> event is not fired.
-			 * Also see {@link sap.m.ListBase#attachItemPress}.
-			 */
-			press : {},
-
-			/**
-			 * Fires when the user clicks on the detail button of the control.
-			 */
-			detailPress : {}
-		},
-		designtime: "sap/m/designtime/ListItemBase.designtime",
-		dnd: true
-	}});
+		renderer: ListItemBaseRenderer
+	});
 
 	ListItemBase.getAccessibilityText = function(oControl, bDetectEmpty) {
 		var oBundle = Core.getLibraryResourceBundle("sap.m");

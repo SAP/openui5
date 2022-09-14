@@ -67,7 +67,9 @@ sap.ui.define([
 					 */
 					 _texts: { type: "sap.ui.core.InvisibleText", multiple: true, visibility: "hidden" }
 				}
-			}
+			},
+
+			renderer: TimePickerInputsRenderer
 		});
 
 		/**

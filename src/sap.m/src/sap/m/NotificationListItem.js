@@ -113,7 +113,9 @@ function(
 				 */
 				_showMoreButton: {type: 'sap.m.Link', multiple: false, visibility: "hidden"}
 			}
-		}
+		},
+
+		renderer: NotificationListItemRenderer
 	});
 
 	/**
