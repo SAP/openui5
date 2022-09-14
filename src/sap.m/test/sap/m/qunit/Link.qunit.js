@@ -23,6 +23,8 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextDirection
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
+	var LinkAccessibleRole = mobileLibrary.LinkAccessibleRole;
+
 	// shortcut for library resource bundle
 	var oRb = Core.getLibraryResourceBundle("sap.m");
 
@@ -435,12 +437,12 @@ sap.ui.define([
 			"There is no role attribute if the 'accessibleRole' property of the Link is not set initially.");
 
 		// act
-		oLink.setAccessibleRole("Button");
+		oLink.setAccessibleRole(LinkAccessibleRole.Button);
 		Core.applyChanges();
 
 		// assert
-		assert.strictEqual(oLinkDomRef.getAttribute("role"), "Button",
-			"There is role attribute with value 'Button' if the 'accessibleRole' property of the Link is set to 'Button'.");
+		assert.strictEqual(oLinkDomRef.getAttribute("role"), "button",
+			"There is role attribute with value 'button' if the 'accessibleRole' property of the Link is set to 'button'.");
 
 		// act
 		oLink.setAccessibleRole("Default");

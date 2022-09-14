@@ -79,7 +79,7 @@
 
 		switch (sAccessibleRole) {
 			case LinkAccessibleRole.Button:
-				oAccAttributes.role = LinkAccessibleRole.Button;
+				oAccAttributes.role = LinkAccessibleRole.Button.toLowerCase();
 				break;
 			default:
 				// Set a valid non empty value for the href attribute representing that there is no navigation,
