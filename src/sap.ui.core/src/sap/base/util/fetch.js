@@ -149,6 +149,9 @@ sap.ui.define([], function () {
 				reject(new TypeError("Failed to execute 'fetch': Request cannot be constructed from a URL that includes credentials:" + resource));
 			}
 
+			// adding the missing protocol back to the URL string which is taken from the document.baseURI
+			resource = resource.replace(/^\/\//, oUrl.protocol + "//");
+
 			if (init.body !== null && (init.method == "GET" || init.method == "HEAD")) {
 				reject(new TypeError("Failed to execute 'fetch': Request with GET/HEAD method cannot have body."));
 			}
