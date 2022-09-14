@@ -650,6 +650,29 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
+	QUnit.test("No Preselection by Default", function(assert) {
+		// arrange
+		var oRBGroup = new RadioButtonGroup("RBG1"),
+			oRadioButton1 = new RadioButton(),
+			oRadioButton2 = new RadioButton();
+
+		oRBGroup.addButton(oRadioButton1);
+		oRBGroup.addButton(oRadioButton2);
+
+		oRadioButton1.setSelected(false);
+		oRadioButton2.setSelected(false);
+
+		oRBGroup.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// assert
+		assert.ok(!oRadioButton1.getSelected(), "RadioButton should not be selected");
+		assert.ok(!oRadioButton2.getSelected(), "RadioButton should not be selected");
+
+		// cleanup
+		oRBGroup.destroy();
+	});
+
 	QUnit.module("Navigation through Radio Button Groups");
 
 	QUnit.test("After mouse selection tab focus should be on the last pressed item.", function (assert) {
