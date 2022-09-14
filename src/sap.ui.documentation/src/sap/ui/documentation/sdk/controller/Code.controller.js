@@ -242,6 +242,8 @@ sap.ui.define([
 				switch (sFileExtension) {
 					case "js":
 						return "javascript";
+					case "ts":
+						return "typescript";
 					case "feature":
 						return "text";
 					default:
