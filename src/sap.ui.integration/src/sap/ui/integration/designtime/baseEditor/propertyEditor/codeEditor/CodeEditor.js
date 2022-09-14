@@ -171,14 +171,20 @@ sap.ui.define([
 		} else {
 			var sValue = this._oEditor.getInternalEditorInstance().getValue();
 			if (sValue && sValue !== "") {
-				switch (this._sCodeType) {
-					case "json":
-						this._oCode = JSON.parse(sValue);
-						break;
-					case "javascript":
-					default:
-						this._oCode = sValue;
-				}
+				//TODO: validate js format manually since the value maybe just as "aaa;" which will not be recognized as error by code editor itself
+				/*
+				if (this._sCodeType === "javascript") {
+					try {
+						// eslint-disable-next-line no-eval
+						eval("(" + sValue + ")");
+					} catch (vError) {
+						this._oDialog.getBeginButton().setEnabled(false);
+						return;
+					}
+				}*/
+				this._oCode = sValue;
+			} else {
+				this._oCode = undefined;
 			}
 			this._oDialog.getBeginButton().setEnabled(true);
 		}
@@ -189,19 +195,13 @@ sap.ui.define([
 		if (this._oCode && this._oCode !== "") {
 			oInput.setValueState("None");
 			if (this._oCode && this._oCode !== "") {
-				switch (this._sCodeType) {
-					case "json":
-						oInput.setValue(JSON.stringify(this._oCode));
-						break;
-					case "javascript":
-					default:
-						// eslint-disable-next-line no-eval
-						this._oCode = eval("(" + this._oCode + ")");
-						oInput.setValue(this._oCode);
-				}
+				// eslint-disable-next-line no-eval
+				this._oCode = eval("(" + this._oCode + ")");
 			}
-			this.setValue(this._oCode);
+		} else {
+			this._oCode = undefined;
 		}
+		this.setValue(this._oCode);
 		this._oDialog.close();
 	};
 
