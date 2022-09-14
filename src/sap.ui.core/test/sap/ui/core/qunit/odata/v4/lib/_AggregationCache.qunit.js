@@ -174,6 +174,13 @@ sap.ui.define([
 	hasMinOrMax : true,
 	message : "Unsupported grand totals together with min/max"
 }, {
+	oAggregation : {
+		hierarchyQualifier : "X"
+	},
+	hasGrandTotal : false,
+	hasMinOrMax : true,
+	message : "Unsupported recursive hierarchy together with min/max"
+}, {
 	groupLevels : ["BillToParty"],
 	hasGrandTotal : false,
 	hasMinOrMax : false,
@@ -203,6 +210,14 @@ sap.ui.define([
 	hasMinOrMax : false,
 	message : "Unsupported system query option: $search",
 	queryOptions : {$search : "blue OR green"}
+}, {
+	oAggregation : {
+		hierarchyQualifier : "X"
+	},
+	bIsGrouped : true,
+	hasGrandTotal : false,
+	hasMinOrMax : false,
+	message : "Unsupported grouping via sorter"
 }].forEach(function (oFixture) {
 	QUnit.test("create: " + oFixture.message, function (assert) {
 		var oAggregation = oFixture.oAggregation || {
@@ -222,7 +237,8 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			_AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
+			_AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions,
+				false, false, oFixture.bIsGrouped);
 		}, new Error(oFixture.message));
 	});
 });
