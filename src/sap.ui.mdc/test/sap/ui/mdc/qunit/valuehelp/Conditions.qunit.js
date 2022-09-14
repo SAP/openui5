@@ -397,4 +397,21 @@ sap.ui.define([
 		});
 
 	});
+
+	QUnit.test("onContainerClose", function(assert) {
+
+		var oContentPromise = oConditions.getContent();
+		var fnDone = assert.async();
+		oContentPromise.then(function(oContent) {
+			var oDefineConditionPanel = oContent.getContent()[0];
+			sinon.spy(oDefineConditionPanel, "cleanUp");
+
+			oConditions.onContainerClose();
+
+			assert.ok(oDefineConditionPanel.cleanUp.calledOnce, "DefineConditionPanel cleanUp is called");
+			fnDone();
+		});
+
+	});
+
 });

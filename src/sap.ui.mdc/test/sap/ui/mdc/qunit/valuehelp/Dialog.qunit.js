@@ -2,7 +2,7 @@
 // The interaction with the Field is tested on the field test page.
 
 /* global QUnit, sinon */
-/*eslint max-nested-callbacks: [2, 5]*/
+/*eslint max-nested-callbacks: [2, 10]*/
 
 sap.ui.define([
 	"sap/ui/mdc/ValueHelpDelegate",
@@ -413,6 +413,28 @@ sap.ui.define([
 					var oIconTabBar = aItems[0];
 					assert.equal(oIconTabBar.getSelectedKey(), "Content1", "IconTabBar selectedKey");
 
+					var oPanel = aItems[1];
+					var aPanelContent = oPanel.getContent();
+					aItems = aPanelContent[0].getItems();
+					var oTokenizer = aItems[0];
+					var aTokens = oTokenizer.getTokens();
+					var oBinding = aTokens[0].getBinding("text");
+					var oBindingType = oBinding.getType();
+					assert.ok(oBindingType.isA("sap.ui.mdc.field.ConditionType"), "Token bound using ConditionType");
+					var oFormatOptions = {
+						maxConditions: -1, // as for tokens there should not be a limit on type side
+						valueType: oType,
+						operators: ["EQ", "BT"],
+						display: FieldDisplay.Description,
+						fieldHelpID: "VH",
+						control: oField,
+						delegate: undefined,
+						delegateName: undefined,
+						payload: undefined,
+						convertWhitespaces: true
+					};
+					assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
+
 					// simulate ok-button click
 					var aButtons = oContainer.getButtons();
 					aButtons[0].firePress();
@@ -425,7 +447,51 @@ sap.ui.define([
 						assert.notOk(oContainer.isOpen(), "sap.m.Dialog is not open");
 						assert.ok(oContent.onHide.calledOnce, "Content onHide called");
 
-						fnDone();
+						// open again // config changes needs to be applied
+						oType.destroy();
+						oType = new StringType(undefined, {maxLength: 10});
+						oValueHelpConfig.dataType = oType;
+						oValueHelpConfig.operators = ["EQ", "BT", "GT", "LT"];
+						oValueHelpConfig.display = FieldDisplay.ValueDescription;
+						var oPromise = oDialog.open(Promise.resolve());
+						assert.ok(oPromise instanceof Promise, "open returns promise");
+
+						if (oPromise) {
+							oPromise.then(function() {
+								setTimeout(function() { // wait until open
+									assert.equal(iOpened, 2, "Opened event fired again");
+									assert.ok(oContainer.isOpen(), "sap.m.Dialog is open");
+									aTokens = oTokenizer.getTokens();
+									oBinding = aTokens[0].getBinding("text");
+									oBindingType = oBinding.getType();
+									assert.ok(oBindingType.isA("sap.ui.mdc.field.ConditionType"), "Token bound using ConditionType");
+									oFormatOptions = {
+										maxConditions: -1, // as for tokens there should not be a limit on type side
+										valueType: oType,
+										operators: ["EQ", "BT", "GT", "LT"],
+										display: FieldDisplay.ValueDescription,
+										fieldHelpID: "VH",
+										control: oField,
+										delegate: undefined,
+										delegateName: undefined,
+										payload: undefined,
+										convertWhitespaces: true
+									};
+									assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
+
+									oDialog.close();
+									setTimeout(function() { // wait until closed
+										assert.equal(iClosed, 2, "Closed event fired again");
+										assert.notOk(oContainer.isOpen(), "sap.m.Dialog is not open");
+										assert.ok(oContent.onHide.calledTwice, "Content onHide called again");
+										fnDone();
+									}, iDialogDuration);
+								}, iDialogDuration);
+							}).catch(function(oError) {
+								assert.notOk(true, "Promise Catch called");
+								fnDone();
+							});
+						}
 					}, iDialogDuration);
 				}, iDialogDuration);
 			}).catch(function(oError) {

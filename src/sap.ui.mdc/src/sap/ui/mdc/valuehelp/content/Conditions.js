@@ -241,6 +241,14 @@ sap.ui.define([
 		};
 	};
 
+	Conditions.prototype.onContainerClose = function() {
+
+		if (this._oDefineConditionPanel) {
+			this._oDefineConditionPanel.cleanUp();
+		}
+
+	};
+
 	function _handleOK(oEvent) {
 //		var aConditions = this.getConditions();
 //

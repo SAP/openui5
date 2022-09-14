@@ -175,8 +175,8 @@ sap.ui.define([
 		if (oContent._formatConditions) {
 			oBindingOptions.formatter = oContent._formatConditions.bind(oContent);
 		}
+		oContent.bindProperty("config", { path: "/_config", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp; Update Config first to have right type before condition update
 		oContent.bindProperty("conditions", oBindingOptions); // inherit from ValueHelp
-		oContent.bindProperty("config", { path: "/_config", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
 
 		oContent.attachConfirm(this._handleConfirmed, this);
 		oContent.attachCancel(this._handleCanceled, this);
@@ -192,9 +192,9 @@ sap.ui.define([
 	};
 
 	Container.prototype._unbindContent = function (oContent) {
-		oContent.unbindProperty("filterValue", true);
-		oContent.unbindProperty("conditions");
-		oContent.unbindProperty("config");
+		oContent.unbindProperty("filterValue", true); // don't update values in Content to prevent unneeded updates
+		oContent.unbindProperty("config", true);
+		oContent.unbindProperty("conditions", true);
 		oContent.detachConfirm(this._handleConfirmed, this);
 		oContent.detachCancel(this._handleCanceled, this);
 		oContent.detachSelect(this._handleSelect, this);

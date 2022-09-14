@@ -649,6 +649,7 @@ sap.ui.define([
 			if (bBind) {
 				if (!oBindingInfo) { // not bound -> create binding
 					var oFilter = new Filter({path:'isEmpty', operator:'NE', value1:true});
+					this._oConditionType.setFormatOptions(_getConditionFormatOptions.call(this)); // as config might be changed
 					var oTokenTemplate = new Token(this.getId() + "-Token", {text: {path: '$valueHelp>', type: this._oConditionType}});
 					this.oTokenizer.bindAggregation("tokens", {path: '/conditions', model: "$valueHelp", templateShareable: false, template: oTokenTemplate, filters: oFilter});
 				}

@@ -259,7 +259,7 @@ sap.ui.define([
 				this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");
 			}
 
-			if (this.getConditions().length === 0) {
+			if (this.getConditions().length === 0 && !this._sConditionsTimer) {
 				// as observer must not be called in the initial case
 				this.updateDefineConditions();
 			}
@@ -375,6 +375,7 @@ sap.ui.define([
 				var aConditions = this.getConditions();
 				FilterOperatorUtil.checkConditionsEmpty(aConditions, aOperators);
 				FilterOperatorUtil.updateConditionsValues(aConditions, aOperators);
+				_addStaticText.call(this, aConditions, false, false); // as updateConditionsValues removes static text
 
 				if (oEvent) {
 					// remove isInitial when the user modified the value and the condition is not Empty
@@ -622,21 +623,33 @@ sap.ui.define([
 				_updateOperatorModel.call(this);
 			}
 
-			var sType = oChanges.current && oChanges.current.valueType && oChanges.current.valueType.getMetadata().getName();
-			var sTypeOld = oChanges.old && oChanges.old.valueType && oChanges.old.valueType.getMetadata().getName();
-			if (sType !== sTypeOld && aConditions.length > 0) {
+			var oType = oChanges.current && oChanges.current.valueType;
+			var oTypeOld = oChanges.old && oChanges.old.valueType;
+			var sType = oType && oType.getMetadata().getName();
+			var sTypeOld = oTypeOld && oTypeOld.getMetadata().getName();
+			var oFormatOptions = oType && oType.getFormatOptions();
+			var oFormatOptionsOld = oTypeOld && oTypeOld.getFormatOptions();
+			var oConstraints = oType && oType.getConstraints();
+			var oConstraintsOld = oTypeOld && oTypeOld.getConstraints();
+			if (sType !== sTypeOld || !deepEqual(oFormatOptions, oFormatOptionsOld) || !deepEqual(oConstraints, oConstraintsOld)) {
 				// operators might be changed if type changed
+				// Field binding needs to be updated if type changed
 				if (!bOperatorModelUpdated) { // don't do twice
 					_updateOperatorModel.call(this);
 				}
-				this._bUpdateType = true;
-				_renderConditions.call(this);
-				this._bUpdateType = false;
-				_addStaticText.call(this, aConditions, true, true); // static text might changed if type changed
+
+				if (this._sConditionsTimer) { // already re-rendering pending
+					this._bUpdateType = true;
+				} else if (aConditions.length > 0) {
+					this._bUpdateType = true;
+					_renderConditions.call(this);
+					this._bUpdateType = false;
+					_addStaticText.call(this, aConditions, true, true); // static text might changed if type changed
+				}
 			}
 		}
 
-		if (oChanges.name === "conditions") {
+		if (oChanges.name === "conditions" && !this._bConditionUpdateRunning) { // if Conditions are updated inside Timer, no additional update needed
 			if (this._sConditionsTimer) {
 				clearTimeout(this._sConditionsTimer);
 				this._sConditionsTimer = null;
@@ -644,8 +657,11 @@ sap.ui.define([
 			this._sConditionsTimer = setTimeout(function () {
 				// on multiple changes (dummy row, static text...) perform only one update
 				this._sConditionsTimer = null;
+				this._bConditionUpdateRunning = true;
 				this.updateDefineConditions();
 				_renderConditions.call(this);
+				this._bUpdateType = false; // might be set from pending type update
+				this._bConditionUpdateRunning = false;
 			}.bind(this), 0);
 		}
 
@@ -1039,7 +1055,7 @@ sap.ui.define([
 
 	}
 
-	function _addStaticText(aConditions, bUpdateBinding, bTypeChange) {
+	function _addStaticText(aConditions, bUpdateProperty, bTypeChange) {
 
 		// for static operators add static text as value to render text control
 		var oDataType = _getType.call(this);
@@ -1062,7 +1078,7 @@ sap.ui.define([
 			}
 		}
 
-		if (aUpdate.length > 0) {
+		if (bUpdateProperty && aUpdate.length > 0) {
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
 		}
 
@@ -1319,7 +1335,7 @@ sap.ui.define([
 	function _getEditModeFromOperator(sOperator, bInvalid) {
 
 		if (!sOperator) {
-			return EditMode.Display;
+			return this.getEditMode(); // do not change edit mode to prevent update if temporary no operator
 		} else if (bInvalid) {
 			return EditMode.ReadOnly;
 		}

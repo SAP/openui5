@@ -19,10 +19,12 @@ sap.ui.define([
 	"sap/ui/mdc/enum/EditMode",
 	"sap/ui/model/type/String",
 	"sap/ui/model/type/Date",
+	"sap/ui/model/type/DateTime",
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Float",
 	"sap/m/DatePicker", // don't want to test async loading in Field here
+	"sap/m/DateTimePicker", // don't want to test async loading in Field here
 	"sap/m/Text", // don't want to test async loading in Field here
 	"sap/m/Button", // test custom control
 	"sap/ui/core/ListItem",
@@ -46,10 +48,12 @@ sap.ui.define([
 		EditMode,
 		StringType,
 		DateType,
+		DateTimeType,
 		BooleanType,
 		IntegerType,
 		FloatType,
 		DatePicker,
+		DateTimePicker,
 		Text,
 		Button,
 		ListItem,
@@ -1018,6 +1022,42 @@ sap.ui.define([
 						}, 0);
 					}, 0);
 				}, 0);
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("use date type - change to dateTimetype", function(assert) {
+
+		var oDateType = new DateType();
+		var oCondition = Condition.createCondition("EQ", [new Date(Date.UTC(2022, 8, 14, 10, 27, 30))], undefined, undefined, ConditionValidated.NotValidated);
+		oCondition.isEmpty = false; // to really have the same data
+		_initType(oDateType, oCondition, BaseType.Date);
+
+		var fnDone = assert.async();
+		setTimeout(function () { // to wait for retemplating
+			oCore.applyChanges();
+
+			var oDateTimeType = new DateTimeType();
+			_initType(oDateTimeType, oCondition, BaseType.DateTime);
+
+			setTimeout(function () { // to wait for retemplating
+				oCore.applyChanges();
+				var oGrid = oCore.byId("DCP1--conditions");
+				var aContent = oGrid.getContent();
+				var oField = aContent[2];
+
+				assert.equal(aContent.length, 5, "One row with one field created - Grid contains 5 controls");
+				aContent = oField.getAggregation("_content");
+				var oControl = aContent && aContent.length > 0 && aContent[0];
+
+				assert.equal(oField && oField.getEditMode(), EditMode.Editable, "Field is in edit mode");
+				assert.ok(oControl.isA("sap.m.DateTimePicker"), "Field uses DateTimePicker");
+				var oType = oField.getBindingInfo("value").type;
+				assert.ok(oType instanceof DateTimeType, "Type of Field binding");
+				assert.ok(oField.getValue() instanceof Date, "Value of Field is Date");
+				assert.equal(oField.getValue().getFullYear(), 2022, "Year");
+				fnDone();
 			}, 0);
 		}, 0);
 

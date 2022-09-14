@@ -297,8 +297,8 @@ sap.ui.define([
 		// remove
 		oContent.destroy();
 		// assert.equal(oContent.getFilterValue(), "", "filterValue initialized"); -> no reset on unbind anymore
-		assert.deepEqual(oContent.getConfig(), {}, "_config initialized");
-		assert.deepEqual(oContent.getConditions(), [], "conditions initialized");
+		// assert.deepEqual(oContent.getConfig(), {}, "_config initialized");
+		// assert.deepEqual(oContent.getConditions(), [], "conditions initialized");
 
 	});
 
