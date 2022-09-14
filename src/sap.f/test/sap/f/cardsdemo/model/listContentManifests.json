@@ -395,6 +395,7 @@
 							"name": "Freshhh LTD.",
 							"info": "1264",
 							"infoState": "Warning",
+							"chartValue": 60,
 							"attributes": [
 								{
 									"name": "Attribute 1",
@@ -426,6 +427,7 @@
 							"description": "Raymond, Callifornia",
 							"info": "236",
 							"infoState": "None",
+							"chartValue": 80,
 							"attributesLayoutType": "OneColumn",
 							"attributes": [
 								{
@@ -447,6 +449,7 @@
 							"description": "Raymond, Callifornia",
 							"info": "236",
 							"infoState": "None",
+							"chartValue": 623240,
 							"attributesLayoutType": "OneColumn",
 							"attributes": [
 								{
@@ -512,10 +515,82 @@
 						"minValue": 0,
 						"maxValue": 100,
 						"target": 60,
-						"value": 80,
+						"value": "{chartValue}",
 						"scale": "€",
-						"displayValue": "EUR",
+						"displayValue": "{chartValue} EUR",
 						"color": "Good"
+					}
+				}
+			}
+		}
+	},
+	"listStackedBar": {
+		"sap.app": {
+			"id": "card.explorer.stackedBar.list.card",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "List",
+			"header": {
+				"title": "Notebooks Distribution",
+				"subTitle": "By Years",
+				"status": {
+					"text": "3 of 11"
+				}
+			},
+			"content": {
+				"data": {
+					"json": {
+						"legend": {
+							"items": {
+								"Notebook13": "Notebook 13",
+								"Notebook17": "Notebook 17"
+							}
+						},
+						"maxOverYears": 1000,
+						"Notebooks": [
+							{
+								"Year": 2017,
+								"Category": "Computer system accessories",
+								"Notebook13": 10000000,
+								"Notebook17": 1000000
+							},
+							{
+								"Year": 2018,
+								"Category": "Computer system accessories",
+								"Notebook13": 996,
+								"Notebook17": 1
+							},
+							{
+								"Year": 2019,
+								"Category": "Computer system accessories",
+								"Notebook13": 996,
+								"Notebook17": 1
+							}
+						]
+					},
+					"path": "/Notebooks"
+				},
+				"maxItems": 3,
+				"item": {
+					"title": "{Year}",
+					"description": "{Category}",
+					"chart": {
+						"type": "StackedBar",
+						"displayValue": "{= ${Notebook13} + ${Notebook17}}K",
+						"maxValue": "{/maxOverYears}",
+						"bars": [
+							{
+								"value": "{Notebook13}",
+								"displayValue": "{/legend/items/Notebook13}: {Notebook13}K",
+								"legendTitle": "{/legend/items/Notebook13}"
+							},
+							{
+								"value": "{Notebook17}",
+								"displayValue": "{/legend/items/Notebook17}: {Notebook17}K",
+								"legendTitle": "{/legend/items/Notebook17}"
+							}
+						]
 					}
 				}
 			}

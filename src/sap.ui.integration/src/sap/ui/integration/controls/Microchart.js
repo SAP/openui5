@@ -94,9 +94,15 @@ sap.ui.define([
 				// chart
 				oRm.openStart("div")
 					.class("sapUiIntMicrochartChart")
+					.openEnd();
+
+				oRm.openStart("div")
+					.class("sapUiIntMicrochartChartInner")
 					.openEnd()
 					.renderControl(oMicrochart.getChart())
 					.close("div");
+
+				oRm.close("div");
 
 				// value
 				oRm.openStart("div")
