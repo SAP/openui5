@@ -21,6 +21,7 @@ sap.ui.define([
 				that = this;
 
 			this.oUIModel = oUIModel = new JSONModel({
+				sError : "",
 				iMessages : 0,
 				oProductsTable : null,
 				bShowList : true,
@@ -37,8 +38,8 @@ sap.ui.define([
 						// Ignore follow-up errors, take the root cause error
 						oError = oError.cause;
 					}
-					if (!oUIModel.getProperty("/error")) {
-						oUIModel.setProperty("/error", oError.toString());
+					if (!oUIModel.getProperty("/sError")) {
+						oUIModel.setProperty("/sError", oError.toString());
 						UIComponent.getRouterFor(that).navTo("error", {}, true);
 					}
 				}

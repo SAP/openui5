@@ -186,7 +186,7 @@ sap.ui.getCore().attachInit(function () {
 			});
 
 			//*****************************************************************************
-			opaTest("Open defective product via hash", function (Given, Any, Then) {
+			opaTest("Open defective product via hash", function (Given, When, Then) {
 				Given.iStartMyUIComponent({
 					autoWait : true,
 					componentConfig : {
@@ -195,7 +195,9 @@ sap.ui.getCore().attachInit(function () {
 					hash : "/Products(ID=40,IsActiveEntity=true)"
 				});
 
+				When.onAnyPage.applySupportAssistant();
 				Then.onTheErrorPage.checkError("Error: Communication error: 500 ");
+				Then.onAnyPage.analyzeSupportAssistant();
 
 				Then.iTeardownMyUIComponent();
 			});
