@@ -1681,4 +1681,138 @@ sap.ui.define([
 				oCard.destroy();
 			});
 	});
+
+	QUnit.test("Resolve ButtonGroup and IconGroup type items", function (assert) {
+		// Arrange
+		var oManifest = {
+			"sap.app": {
+				"id": "card.bundle.object",
+				"type": "card",
+				"i18n": "i18n/i18n.properties"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"request": {
+						"url": "./employee.json"
+					}
+				},
+				"header": {
+					"icon": {
+						"src": "{photo}"
+					},
+					"title": "{firstName} {lastName}",
+					"subTitle": "{position}"
+				},
+				"content": {
+					"groups": [{
+							"title": "{{contactDetails}}",
+							"items": [
+								{
+									"label": "Icons",
+									"type": "IconGroup",
+									"path": "team",
+									"template": {
+										"icon": {
+											"src": "{imageUrl}",
+											"initials": "{= format.initials(${firstName} + ' ' + ${lastName}) }"
+										},
+										"actions": [{
+											"type": "Navigation",
+											"parameters": {
+												"url": "{imageUrl}"
+											}
+										}]
+									}
+								},
+								{
+									"label": "Buttons",
+									"type": "ButtonGroup",
+									"path": "attachments",
+									"template": {
+										"icon": "{icon}",
+										"text": "{title}",
+										"actions": [{
+											"type": "Navigation",
+											"parameters": {
+												"url": "{url}"
+											}
+										}]
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		};
+
+		var oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(JSON.parse)
+			.then(function (oRes) {
+				var oExpectedButtonGroup = {
+					"label": "Buttons",
+					"type": "ButtonGroup",
+					"items": [{
+							"icon": "sap-icon://excel-attachment",
+							"text": "Schedule",
+							"actions": [{
+								"type": "Navigation",
+								"parameters": {
+									"url": "./somefile.csv"
+								}
+							}]
+						},
+						{
+							"icon": "sap-icon://attachment",
+							"text": "Attachment 2",
+							"actions": [{
+								"type": "Navigation",
+								"parameters": {
+									"url": "./somefile.csv"
+								}
+							}]
+						}
+					]
+				},
+					oExpectedIconGroup = {
+						"label": "Icons",
+						"type": "IconGroup",
+						"items": [
+							{
+								"icon": {
+									"src": "../../images/Woman_avatar_01.png",
+									"initials": "EE"
+								},
+								"actions": [{
+									"type": "Navigation",
+									"parameters": {
+										"url": "../../images/Woman_avatar_01.png"
+									}
+								}]
+							},
+							{
+								"icon": {
+									"initials": "JM"
+								},
+								"actions": [{
+									"type": "Navigation",
+									"parameters": {}
+								}]
+							}
+						]
+				};
+				// Assert
+				assert.deepEqual(oRes["sap.card"].content.groups[0].items[0], oExpectedIconGroup);
+				assert.deepEqual(oRes["sap.card"].content.groups[0].items[1], oExpectedButtonGroup);
+
+				oCard.destroy();
+			});
+	});
 });

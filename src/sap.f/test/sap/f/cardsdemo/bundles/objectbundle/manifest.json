@@ -42,6 +42,42 @@
 									}
 								}
 							]
+						},
+						{
+							"label": "Team",
+							"type": "IconGroup",
+							"path": "team",
+							"template": {
+								"icon": {
+									"src": "{imageUrl}",
+									"initials": "{= format.initials(${firstName} + ' ' + ${lastName}) }"
+								},
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "{imageUrl}"
+										}
+									}
+								]
+							}
+						},
+						{
+							"label": "Attachments",
+							"type": "ButtonGroup",
+							"path": "attachments",
+							"template": {
+								"icon": "{icon}",
+								"text": "{title}",
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "{url}"
+										}
+									}
+								]
+							}
 						}
 					]
 				},

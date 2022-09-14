@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/isPlainObject",
+	"sap/base/util/merge",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/layout/AlignedFlowLayout",
 	"sap/ui/dom/units/Rem",
@@ -52,6 +53,7 @@ sap.ui.define([
 	Log,
 	isEmptyObject,
 	isPlainObject,
+	merge,
 	ResizeHandler,
 	AlignedFlowLayout,
 	Rem,
@@ -187,6 +189,63 @@ sap.ui.define([
 		}
 
 		return this;
+	};
+
+	/**
+	 * @override
+	 */
+	ObjectContent.prototype.getStaticConfiguration = function () {
+		var oConfiguration = this.getParsedConfiguration(),
+			sObjectContentPath;
+
+		if (!this.getBindingContext()) {
+			return oConfiguration;
+		} else {
+			sObjectContentPath = this.getBindingContext().getPath();
+		}
+
+		if (oConfiguration.groups) {
+			oConfiguration.groups.forEach(function (oGroup) {
+				var aResolvedGroupItems = [];
+
+				if (oGroup.items) {
+					oGroup.items.forEach(function (oItem) {
+						var sFullPath = sObjectContentPath + oItem.path,
+							oResolvedGroupItem = this._resolveGroupItem(oItem, sFullPath);
+
+						aResolvedGroupItems.push(oResolvedGroupItem);
+					}.bind(this));
+				}
+
+				oGroup.items = aResolvedGroupItems;
+			}.bind(this));
+		}
+
+		return oConfiguration;
+	};
+
+	ObjectContent.prototype._resolveGroupItem = function (oItem, sFullPath) {
+		var oResolvedGroupItem = {},
+			aResolvedItems = [];
+
+		if (oItem.type === "ButtonGroup" || oItem.type === "IconGroup") {
+			var oTemplate = oItem.template,
+				aData = this.getModel().getProperty(sFullPath);
+
+			aData.forEach(function (oItemData, iIndex) {
+				var oResolvedItem = BindingResolver.resolveValue(oTemplate, this, sFullPath + "/" + iIndex + "/");
+				aResolvedItems.push(oResolvedItem);
+			}.bind(this));
+			oResolvedGroupItem = merge({}, oItem);
+			oResolvedGroupItem.items = aResolvedItems;
+
+			delete oResolvedGroupItem.path;
+			delete oResolvedGroupItem.template;
+
+			return oResolvedGroupItem;
+		} else {
+			return oItem;
+		}
 	};
 
 	ObjectContent.prototype._getRootContainer = function () {
