@@ -4981,11 +4981,12 @@ sap.ui.define([
 		QUnit.test("open() function should focus the select, before opening the picker", function (assert) {
 			//Arrange
 			var oSelect = new Select(),
-			fnOpenPicker = oSelect.getPicker().open;
+				fnOpenPicker = oSelect.getPicker().open,
+				oSpy = this.spy(oSelect, "focus");
 
 			oSelect.getPicker().open = function() {
 				//Assert
-				assert.equal(Core.getCurrentFocusedControlId(), oSelect.getId(), "Select is focused, before the popup is open");
+				assert.ok(oSpy.calledOnce, "Select is focused, before the popup is open");
 				fnOpenPicker.call(this, arguments);
 			};
 			oSelect.placeAt("qunit-fixture");
@@ -4996,7 +4997,6 @@ sap.ui.define([
 
 			//Clean
 			oSelect.destroy();
-
 		});
 
 		QUnit.module("close()");
