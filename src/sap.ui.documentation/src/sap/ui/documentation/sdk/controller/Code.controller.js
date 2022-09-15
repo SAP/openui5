@@ -79,7 +79,8 @@ sap.ui.define([
 							files: [],
 							iframe: oConfig.sample.iframe,
 							fileName: sFileName,
-							includeInDownload: oConfig.sample.additionalDownloadFiles
+							includeInDownload: oConfig.sample.additionalDownloadFiles,
+							customIndexHTML: oConfig.sample.customIndexHTML
 						};
 
 						// retrieve files

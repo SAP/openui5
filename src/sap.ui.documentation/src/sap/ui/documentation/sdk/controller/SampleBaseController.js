@@ -44,6 +44,13 @@ sap.ui.define([
 					aExtraFiles = oData.includeInDownload || [],
 					oManifestFile,
 					bHasManifest,
+					bCustomIndexHTML = oData.customIndexHTML, // samples with custom index.html (e.g. for including a custom UI5 bootstrap src)
+					sCustomPkgJson = oData.files.find(function (oFile) { // samples with custom package.json (e.g. using TS, Babel)
+						return oFile.name.includes("package.json");
+					}),
+					sCustomUI5Yaml = oData.files.find(function (oFile) { // samples with custom ui5.yaml (e.g. declaring a different webapp root)
+						return oFile.name.includes("ui5.yaml");
+					}),
 					aPromises = [],
 					fnAddMockFileToZip = function(sRawFile) {
 						var aMockFilePromises = [];
@@ -80,7 +87,7 @@ sap.ui.define([
 					aPromises.push(this._addFileToZip({
 						name: oFile.name.replace(new RegExp(/(\.\.\/)+/g), "./"),
 						url: sUrl,
-						formatter:  bChangeBootstrap ? this._changeIframeBootstrapToCloud : undefined
+						formatter:  (bChangeBootstrap && !bCustomIndexHTML) ? this._changeIframeBootstrapToCloud : undefined
 					}, oZipFile));
 
 					aPromises.push(this.fetchSourceFile(sUrl).then(fnAddMockFileToZip.bind(this)));
@@ -99,13 +106,15 @@ sap.ui.define([
 					}, oZipFile));
 
 
-					aPromises.push(this._addFileToZip({
-						name: "index.html",
-						url: TMPL_REF + "/" + (bHasManifest ? "indexevo.html.tmpl" : "index.html.tmpl"),
-						formatter: function(sIndexFile) {
-							return this._changeIframeBootstrapToCloud(this._formatIndexHtmlFile(sIndexFile, oData));
-						}.bind(this)
-					}, oZipFile, true));
+					if (!bCustomIndexHTML) {
+						aPromises.push(this._addFileToZip({
+							name: "index.html",
+							url: TMPL_REF + "/" + (bHasManifest ? "indexevo.html.tmpl" : "index.html.tmpl"),
+							formatter: function(sIndexFile) {
+								return this._changeIframeBootstrapToCloud(this._formatIndexHtmlFile(sIndexFile, oData));
+							}.bind(this)
+						}, oZipFile, true));
+					}
 
 
 					if (!bHasManifest) {
@@ -137,7 +146,7 @@ sap.ui.define([
 
 				aPromises.push(this._addFileToZip({
 					name: "ui5.yaml",
-					url: TMPL_REF + "/ui5.yaml.tmpl",
+					url: sCustomUI5Yaml ? sRef + "/" + sCustomUI5Yaml : TMPL_REF + "/ui5.yaml.tmpl",
 					formatter: function(sYamlFile) {
 						return this._formatYamlFile(sYamlFile, oData);
 					}.bind(this)
@@ -145,7 +154,7 @@ sap.ui.define([
 
 				aPromises.push(this._addFileToZip({
 					name: "package.json",
-					url: TMPL_REF + "/package.json.tmpl",
+					url: sCustomPkgJson ? sRef + "/" + sCustomPkgJson : TMPL_REF + "/package.json.tmpl",
 					formatter: function(sPackageFile) {
 						return this._formatPackageJson(sPackageFile, oManifestFile, oData);
 					}.bind(this)
@@ -169,7 +178,7 @@ sap.ui.define([
 		},
 
 		_addFileToZip: function  (oFileInfo, oZipFile, bTreatAsText) {
-			var sFileName = oFileInfo.name,
+			var sFileName = oFileInfo.name.replace(new RegExp(/(\.+\/)+/g), ""), // remove "../" etc. so one-level-up dirs are zipped properly
 				sUrl = oFileInfo.url,
 				fnFileFormatter = oFileInfo.formatter;
 

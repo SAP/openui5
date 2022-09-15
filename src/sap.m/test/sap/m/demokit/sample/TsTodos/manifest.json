@@ -1,0 +1,44 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.m.sample.TsTodos.webapp",
+		"type": "application"
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.75.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.f": {}
+			}
+		},
+		"rootView": {
+			"viewName": "sap.m.sample.TsTodos.webapp.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.m.sample.TsTodos.webapp.i18n.i18n",
+					"supportedLocales": ["en", "de"],
+					"fallbackLocale": "en"
+				}
+			},
+			"": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/todoitems.json"
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/styles.css"
+				}
+			]
+		}
+	}
+}

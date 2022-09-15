@@ -1,0 +1,32 @@
+{
+	"cwd": "test-resources/sap/m/demokit/sample/TsTodos/",
+	"files": [
+		"src/controller/App.controller.ts",
+		"src/controller/BaseController.ts",
+		"src/css/styles.css",
+		"src/i18n/i18n.properties",
+		"src/i18n/i18n_en.properties",
+		"src/i18n/i18n_de.properties",
+		"src/img/logo_ui5.png",
+		"src/model/todoitems.json",
+		"src/util/Helper.ts",
+		"src/view/App.view.xml",
+		"src/index.html",
+		"src/Component.ts",
+		"src/manifest.json",
+
+		"test/e2e/specs/todo.e2e.ts",
+		"test/e2e/tsconfig.json",
+		"test/e2e/wdio.conf.ts",
+		"test/unit/controller/App.controller.js",
+		"test/unit/AllTests.js",
+		"test/unit/unitTests.qunit.html",
+		"test/unit/unitTests.qunit.js",
+
+		".babelrc.json",
+		"ui5.yaml",
+		"tsconfig.json",
+		"manifest.json",
+		"package.json"
+	]
+}

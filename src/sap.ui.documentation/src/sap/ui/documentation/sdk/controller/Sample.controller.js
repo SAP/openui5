@@ -178,6 +178,7 @@ sap.ui.define([
 
 							oModelData.stretch = oSampleConfig.stretch;
 							oModelData.includeInDownload = oSampleConfig.additionalDownloadFiles;
+							oModelData.customIndexHTML = oSampleConfig.customIndexHTML;
 
 							// retrieve files
 							if (oSampleConfig.files) {
