@@ -157,7 +157,12 @@ sap.ui.define([
 				  * The text of the CloudFile picker button. The default text is "Upload from cloud" (translated to the respective language).
 				  * @experimental Since 1.106.
 				  */
-				 cloudFilePickerButtonText: {type: 'string', defaultValue: ""}
+				 cloudFilePickerButtonText: {type: 'string', defaultValue: ""},
+				 /**
+				  * Lets the user upload entire files from directories and sub directories.
+				  * @since 1.107.
+				  */
+				 directory: {type: "boolean", group: "Behavior", defaultValue: false}
 				},
 			defaultAggregation: "items",
 			aggregations: {
@@ -824,6 +829,17 @@ sap.ui.define([
 		return this;
 	};
 
+	UploadSet.prototype.setDirectory = function (bDirectory) {
+		if (this.getDirectory() !== bDirectory) {
+			this.setProperty("directory", bDirectory);
+			this.getDefaultFileUploader().setDirectory(bDirectory);
+			if (bDirectory) {
+				this.setProperty("multiple", false); // disable multiple files selection when directory selection is enabled.
+			}
+		}
+		return this;
+	};
+
 	UploadSet.prototype.setMode = function(sMode) {
 		if (sMode === Library.ListMode.Delete) {
 			this.setProperty("mode", Library.ListMode.None);
@@ -949,22 +965,79 @@ sap.ui.define([
 	};
 
 	UploadSet.prototype._onDropFile = function (oEvent) {
-		var oFiles;
 		this._oDragIndicator = false;
 		this._getIllustratedMessage();
 		oEvent.preventDefault();
 		if (this.getUploadEnabled()) {
-			oFiles = oEvent.getParameter("browserEvent").dataTransfer.files;
-			// Handling drag and drop of multiple files to upload with multiple property set
+			var oFiles = oEvent.getParameter("browserEvent").dataTransfer.files;
+			var oItems = oEvent.getParameter("browserEvent").dataTransfer.items;
 			if (oFiles && oFiles.length > 1 && !this.getMultiple()) {
+				// Handling drag and drop of multiple files to upload with multiple property set
 				var sMessage = this._oRb.getText("UPLOADCOLLECTION_MULTIPLE_FALSE");
 				Log.warning("Multiple files upload is retsricted for this multiple property set");
 				MessageBox.error(sMessage);
 				return;
 			}
-			this._processNewFileObjects(oFiles);
+			if (oItems && oItems.length) {
+				for (var i = 0; i < oItems.length; i++) {
+					var oItem = oItems[i].webkitGetAsEntry();
+					if (oItem && oItem.isDirectory && !this.getDirectory()) {
+						var sMessageDirectory = this._oRb.getText("UPLOAD_SET_DIRECTORY_FALSE");
+						Log.warning("Directory of files upload is retsricted for this directory property set");
+						MessageBox.error(sMessageDirectory);
+						return;
+					}
+				}
+				this._getFilesFromDataTransferItems(oItems).then(function (oFiles) {
+					if (oFiles && oFiles.length) {
+						var oFileUploaderInstance = this.getDefaultFileUploader();
+						if (oFileUploaderInstance && oFileUploaderInstance._areFilesAllowed && oFileUploaderInstance._areFilesAllowed(oFiles)) {
+							this._processNewFileObjects(oFiles);
+						}
+					}
+				}.bind(this));
+			}
 		}
 	};
+
+	UploadSet.prototype._getFilesFromDataTransferItems = function (dataTransferItems) {
+		var aFiles = [];
+		return new Promise(function (resolve, reject) {
+			var aEntriesPromises = [];
+			for (var i = 0; i < dataTransferItems.length; i++) {
+				aEntriesPromises.push(traverseFileTreePromise(dataTransferItems[i].webkitGetAsEntry()));
+			}
+			Promise.all(aEntriesPromises)
+				.then(function (entries) {
+					resolve(aFiles);
+				}, function(err) {
+					reject(err);
+				});
+		});
+
+		function traverseFileTreePromise(item) {
+			return new Promise(function (resolve, reject) {
+				if (item.isFile) {
+					item.file(function (oFile) {
+						aFiles.push(oFile);
+						resolve(oFile);
+					}, function(err){
+						reject(err);
+					});
+				} else if (item.isDirectory) {
+					var dirReader = item.createReader();
+					dirReader.readEntries(function (entries) {
+						var aEntriesPromises = [];
+						for (var i = 0; i < entries.length; i++) {
+							aEntriesPromises.push(traverseFileTreePromise(entries[i]));
+						}
+						resolve(Promise.all(aEntriesPromises));
+					});
+				}
+			});
+		}
+	};
+
 
 	UploadSet.prototype._getDragIndicator = function () {
 		return this._oDragIndicator;
@@ -1018,7 +1091,7 @@ sap.ui.define([
 				mimeType: this.getMediaTypes(),
 				icon: "",
 				iconFirst: false,
-				multiple: this.getMultiple(),
+				multiple: this.getDirectory() ? false : this.getMultiple(),
 				style: "Transparent",
 				name: "uploadSetFileUploader",
 				sameFilenameAllowed: true,
@@ -1032,7 +1105,8 @@ sap.ui.define([
 				typeMissmatch: [this._fireFileTypeMismatch, this],
 				fileSizeExceed: [this._fireFileSizeExceed, this],
 				filenameLengthExceed: [this._fireFilenameLengthExceed, this],
-				visible: !this.getUploadButtonInvisible()
+				visible: !this.getUploadButtonInvisible(),
+				directory: this.getDirectory()
 			});
 		}
 
