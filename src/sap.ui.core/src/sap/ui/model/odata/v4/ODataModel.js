@@ -564,7 +564,7 @@ sap.ui.define([
 	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
-	 * @since 1.105.0
+	 * @since 1.106.0
 	 */
 	ODataModel.prototype.attachDataReceived = function (fnFunction, oListener) {
 		return this.attachEvent("dataReceived", fnFunction, oListener);
@@ -1483,7 +1483,7 @@ sap.ui.define([
 	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
-	 * @since 1.105.0
+	 * @since 1.106.0
 	 */
 	ODataModel.prototype.detachDataReceived = function (fnFunction, oListener) {
 		return this.detachEvent("dataReceived", fnFunction, oListener);
