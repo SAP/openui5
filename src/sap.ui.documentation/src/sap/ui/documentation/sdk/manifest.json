@@ -414,7 +414,7 @@
 					"viewName": "Code",
 					"viewLevel": 2,
 					"viewId": "code",
-					"transition": "flip"
+					"transition": "slide"
 				},
 				"downloads": {
 					"viewName": "Downloads",
