@@ -215,7 +215,11 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 			if (sWidth) {
 				oRm.addStyle("width", sWidth);
 			}
-			oRm.writeAccessibilityState(null, {role: "columnheader", label: aWeekDaysWide[(i + iStartDay) % 7]});
+			oRm.writeAccessibilityState(null, {
+				role: "columnheader",
+				label: aWeekDaysWide[(i + iStartDay) % 7],
+				hidden: true
+			});
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">"); // div element
