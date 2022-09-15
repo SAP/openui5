@@ -859,6 +859,53 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 		oSubSection.destroy();
 	});
 
+	QUnit.test("Layout is updated when visibility of unstashed block is changed", function (assert) {
+		var oSubSection,
+			oInnerGrid,
+			oBlock,
+			oGridAddAggregationSpy,
+			oApplyLayoutSpy,
+			oObserverCallbackSpy,
+			done = assert.async();
+
+		XMLView.create({
+			id: "UxAP-12-ObjectPageSubSectionStashing",
+			viewName: "view.UxAP-12-ObjectPageSubSectionStashing"
+		}).then(function (oView) {
+			this.objectPageSampleView = oView;
+			this.objectPageSampleView.placeAt('qunit-fixture');
+			Core.applyChanges();
+
+			// Setup: pick a subSection and unstash its blocks
+			oSubSection = this.objectPageSampleView.byId("subsection10");
+			oSubSection.connectToModels();
+			Core.applyChanges();
+
+			oBlock = oSubSection.getBlocks()[0];
+			oInnerGrid = oSubSection._getGrid();
+			oGridAddAggregationSpy = this.spy(oInnerGrid, "addAggregation");
+			oApplyLayoutSpy = this.spy(oSubSection, "_applyLayout");
+			oObserverCallbackSpy = this.spy(oSubSection._oBlocksObserver, "_fnCallback");
+
+			// Act
+			oBlock.setVisible(false);
+
+			// Assert: check if _onBlocksChange listener and _applyLayout are called
+			assert.strictEqual(oObserverCallbackSpy.callCount, 1, "_onBlocksChange is called once, when visibility of one of the blocks is changed");
+			assert.strictEqual(oApplyLayoutSpy.callCount, 1, "_applyLayout is called from onBeforeRendering and _onBlocksChange");
+			assert.ok(oGridAddAggregationSpy.notCalled, "addAggregation is not called to inner Grid when visibility of the blocks is changed");
+
+			// Act - remove all blocks and change visibility again
+			oObserverCallbackSpy.resetHistory();
+			oSubSection.removeAllBlocks();
+			oBlock.setVisible(true);
+
+			// Assert: _onBlocksChange listener should not be called if block is removed and its visibility is changed
+			assert.strictEqual(oObserverCallbackSpy.callCount, 0, "_onBlocksChange is not called, when blocks are removed");
+			done();
+		}.bind(this));
+	});
+
 
 	QUnit.test("removeAggregation", function (assert) {
 		var sXmlView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:uxap="sap.uxap" xmlns:m="sap.m">' +
