@@ -1467,14 +1467,20 @@ function(
 		}
 
 		this.bValueHelpRequested = false;
-	};
 
-	Input.prototype.onsaptabnext = function () {
-		// There's no typeahead for mobile devices.
-		// If the popup has been focused, then the list would take care of that functionality.
-		// There should be a matching item (proposed text in order to continue)
-		if (!this.isMobileDevice() && this._sProposedItemText && !this._bAfterOpenFinisihed) {
-			// Update selections for poweruser
+		if (!this._sProposedItemText && this.isMobileDevice()) {
+			return;
+		}
+
+		if (this.getShowSuggestion() && this._bAfterOpenFinisihed) {
+			// Ensure that the selected item is going to be updated after
+			// the closing of the popup when there is a proposed item due
+			// to the typeahead, but no direct navigation is performed
+			this.setSelectionUpdatedFromList(true);
+		} else {
+			// Update selections for poweruser -
+			// the user has typed and focused out before the popup is opened,
+			// but there is a proposed item due to the typeahead
 			var oSelectedItem = this.getSuggestionItems()
 				.filter(function (oItem) {
 					return oItem.getText() === this._sProposedItemText;
