@@ -120,7 +120,7 @@ sap.ui.define([
 
 			this.oModel = new JSONModel();
 			this.oModel.setData(this.oMockupData);
-			sap.ui.getCore().setModel(this.oModel);
+			Core.setModel(this.oModel);
 
 			this.oMessageView.bindAggregation("items", {
 				path: "/messages",
@@ -128,7 +128,7 @@ sap.ui.define([
 			});
 
 			this.oButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.oButton.firePress();
 		},
@@ -196,7 +196,7 @@ sap.ui.define([
 
 		var oModel = new JSONModel();
 		oModel.setData(this.oMockupData);
-		sap.ui.getCore().setModel(oModel);
+		Core.setModel(oModel);
 
 		this.oMessageView.bindAggregation("items", {
 			path: "/messages",
@@ -263,7 +263,7 @@ sap.ui.define([
 	QUnit.test("setGroupItems() property", function(assert) {
 		this.oMessageView.setGroupItems(true);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.strictEqual(this.oMessageView._oLists.all.getItems().length, 7, "Item should be 7");
 		assert.ok(this.oMessageView._oLists.all.getItems()[0].isA("sap.m.GroupHeaderListItem"), "Item should be GroupHeaderItem");
@@ -281,7 +281,7 @@ sap.ui.define([
 
 		this.clock.tick(500);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		try {
 			oRestoreItemsTypeSpy.apply(this.oMessageView);
@@ -416,7 +416,7 @@ sap.ui.define([
 
 		this.oMessageView.setHeaderButton(customButton);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oDialog.open();
 
@@ -428,7 +428,7 @@ sap.ui.define([
 
 	QUnit.test("showDetailsPageHeader property", function(assert) {
 		this.oMessageView.setShowDetailsPageHeader(false);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oDialog.open();
 		this.clock.tick(500);
@@ -441,7 +441,7 @@ sap.ui.define([
 		var oLinkInitSpy = this.spy(Link.prototype, "init");
 
 		oFirstItem.setActiveTitle(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(oLinkInitSpy.called, "link should be initialized");
 	});
@@ -452,7 +452,7 @@ sap.ui.define([
 		var oDetailsFirstContent;
 
 		oFirstMessageItem.setActiveTitle(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oMessageView._navigateToDetails(oFirstMessageItem, oFirstListItem, "slide", false);
 		this.clock.tick(300);
@@ -470,7 +470,7 @@ sap.ui.define([
 		var oDetailsLink;
 
 		oFirstMessageItem.setActiveTitle(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oMessageView._navigateToDetails(oFirstMessageItem, oFirstListItem, "slide", false);
 		this.clock.tick(300);
@@ -489,7 +489,7 @@ sap.ui.define([
 		var oActiveTitlePressStub = this.stub(this.oMessageView, "fireActiveTitlePress");
 
 		oFirstItem.setActiveTitle(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// fire press of the link of a MessageListItem
 		this.oMessageView._oLists.all.getItems()[0].getLink().firePress();
@@ -505,7 +505,7 @@ sap.ui.define([
 		var oActiveTitlePressStub = this.stub(this.oMessageView, 'fireActiveTitlePress');
 
 		oFirstItem.setActiveTitle(true);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oFirstItem.focus();
 		qutils.triggerKeydown(this.oMessageView._oLists.all.getItems()[0], "Enter", false, true, false);
@@ -530,7 +530,7 @@ sap.ui.define([
 			markupDescription: true
 		}]);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oDialog.open();
 		this.clock.tick(500);
@@ -549,7 +549,7 @@ sap.ui.define([
 				}
 			});
 
-			sap.ui.getCore().getMessageManager().addMessages(
+			Core.getMessageManager().addMessages(
 					new Message({
 						message: "Invalid order of characters in this name!",
 						type: MessageType.Warning,
@@ -558,7 +558,7 @@ sap.ui.define([
 					})
 			);
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.oMessageView = new MessageView();
 
@@ -579,12 +579,12 @@ sap.ui.define([
 
 			this.oButton.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			this.oButton.firePress();
 		},
 		afterEach: function () {
-			sap.ui.getCore().getMessageManager().removeAllMessages();
+			Core.getMessageManager().removeAllMessages();
 
 			this.oDialog.close();
 
@@ -637,7 +637,7 @@ sap.ui.define([
 		this.oMessageView.addItem(new MessageItem({
 			title: "Short title."
 		}));
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.oDialog.open();
 
 		assert.notOk(oNavigateStub.called, "Navigation to details has not been triggered");
@@ -649,7 +649,7 @@ sap.ui.define([
 			title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
 		}));
 		this.oDialog.open();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(oNavigateStub.called, "Navigation to details had been triggered");
 
@@ -679,7 +679,7 @@ sap.ui.define([
 
 			this.oButton.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oDialog.close();
@@ -728,7 +728,7 @@ sap.ui.define([
 			title: "dummy item"
 		}));
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oDialog.open();
 		this.clock.tick(500);
@@ -758,7 +758,7 @@ sap.ui.define([
 
 		this.oMessageView.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		oFirstListItem = this.oMessageView._oLists.all.getItems()[0];
 
@@ -784,7 +784,7 @@ sap.ui.define([
 
 		this.oMessageView.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		oFirstListItem = this.oMessageView._oLists.all.getItems()[0];
 
 		this.oMessageView._navigateToDetails(oFirstMessageItem, oFirstListItem, "slide", false);
@@ -795,21 +795,91 @@ sap.ui.define([
 		assert.ok(oDetailsTitle.getAriaDescribedBy().indexOf(oFirstListItem.getId() + "-link") > -1, "Details title should be described by the item's link");
 	});
 
-	QUnit.test("MessageItem with active title - Message Bundle Texts", function (assert) {
+	QUnit.test("MessageItem with active title - Message Bundle Texts - Error", function (assert) {
 		var oFirstMessageItem = new MessageItem({
 			type: "Error"
-		}), oBundle, sMessageAnnouncement,
-			sContentAnnouncementLocation, sContentAnnouncementDescription, sAnnouncement;
+		}), oBundle, sContentAnnouncementLocation, sContentAnnouncementDescription, sAnnouncement;
 
 		this.oMessageView.addItem(oFirstMessageItem);
 		this.oMessageView.placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
-		oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		sMessageAnnouncement = oBundle.getText("MESSAGEVIEW_BUTTON_TOOLTIP_ERROR");
-		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION", [sMessageAnnouncement]);
-		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION", [sMessageAnnouncement]);
+		oBundle = Core.getLibraryResourceBundle("sap.m");
+		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_ERROR");
+		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementLocation), -1, "Message List Item should not include information for the navigation");
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
+
+		oFirstMessageItem.setActiveTitle(true);
+		Core.applyChanges();
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementLocation) > -1 , "Message List Item should include information for the navigation");
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
+
+		oFirstMessageItem.setDescription("description");
+		Core.applyChanges();
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementLocation) > -1 , "Message List Item should include information for the navigation");
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementDescription) > -1, "Message List Item should include information for description");
+	});
+
+	QUnit.test("MessageItem with active title - Message Bundle Texts - Information", function (assert) {
+		var oFirstMessageItem = new MessageItem({
+			type: "Information"
+		}), oBundle, sContentAnnouncementLocation, sContentAnnouncementDescription, sAnnouncement;
+
+		this.oMessageView.addItem(oFirstMessageItem);
+		this.oMessageView.placeAt("qunit-fixture");
+
+		Core.applyChanges();
+
+		oBundle = Core.getLibraryResourceBundle("sap.m");
+		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_INFORMATION");
+		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementLocation), -1, "Message List Item should not include information for the navigation");
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
+
+		oFirstMessageItem.setActiveTitle(true);
+		Core.applyChanges();
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementLocation) > -1 , "Message List Item should include information for the navigation");
+		assert.strictEqual(sAnnouncement.indexOf(sContentAnnouncementDescription), -1, "Message List Item should not include information for description");
+
+		oFirstMessageItem.setDescription("description");
+		Core.applyChanges();
+
+		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
+
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementLocation) > -1 , "Message List Item should include information for the navigation");
+		assert.ok(sAnnouncement.indexOf(sContentAnnouncementDescription) > -1, "Message List Item should include information for description");
+	});
+
+	QUnit.test("MessageItem with active title - Message Bundle Texts - Success", function (assert) {
+		var oFirstMessageItem = new MessageItem({
+			type: "Success"
+		}), oBundle, sContentAnnouncementLocation, sContentAnnouncementDescription, sAnnouncement;
+
+		this.oMessageView.addItem(oFirstMessageItem);
+		this.oMessageView.placeAt("qunit-fixture");
+
+		Core.applyChanges();
+
+		oBundle = Core.getLibraryResourceBundle("sap.m");
+		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_SUCCESS");
+		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
 
 		sAnnouncement =  this.oMessageView._oLists.all.getItems()[0].getContentAnnouncement(oBundle);
 
@@ -882,7 +952,7 @@ sap.ui.define([
 
 			this.oButton2.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oDialog2.close();
@@ -948,10 +1018,10 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		this.oMessageView2.getModel().setData(null);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		this.oMessageView2.getModel().setData(tempObject);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(this.oMessageView2.getItems().length);
 
@@ -972,7 +1042,7 @@ sap.ui.define([
 
 		oMessageView.setModel(new JSONModel());
 		oMessageView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		var oMessage = new Message({
@@ -984,8 +1054,8 @@ sap.ui.define([
 			references: null,
 			validation: false
 		});
-		sap.ui.getCore().getMessageManager().addMessages(oMessage);
-		sap.ui.getCore().applyChanges();
+		Core.getMessageManager().addMessages(oMessage);
+		Core.applyChanges();
 
 		//Assert
 		assert.strictEqual(oMessageView.getItems().length, 0, "If the MessagePopover is bound to a model, the MessageView should not bind to the MessageManager");
@@ -993,7 +1063,7 @@ sap.ui.define([
 		//Cleanup
 		oMessage.destroy();
 		oMessageView.destroy();
-		sap.ui.getCore().getMessageManager().removeAllMessages();
+		Core.getMessageManager().removeAllMessages();
 	});
 
 	QUnit.test("Auto bind to the sap.ui.getCore().getMessageManager() when there are items or binding", function (assert) {
@@ -1001,7 +1071,7 @@ sap.ui.define([
 		var oMessageView = new MessageView();
 
 		oMessageView.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// Act
 		var oMessage = new Message({
@@ -1013,8 +1083,8 @@ sap.ui.define([
 			references: null,
 			validation: false
 		});
-		sap.ui.getCore().getMessageManager().addMessages(oMessage);
-		sap.ui.getCore().applyChanges();
+		Core.getMessageManager().addMessages(oMessage);
+		Core.applyChanges();
 
 		//Assert
 		assert.strictEqual(oMessageView.getItems().length, 1, "If the MessagePopover is not bound to a model, the MessageView should bind to the MessageManager");
@@ -1023,7 +1093,7 @@ sap.ui.define([
 		//Cleanup
 		oMessage.destroy();
 		oMessageView.destroy();
-		sap.ui.getCore().getMessageManager().removeAllMessages();
+		Core.getMessageManager().removeAllMessages();
 	});
 
 
@@ -1040,7 +1110,7 @@ sap.ui.define([
 
 			this.oMessageView.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oMessageView.destroy();
@@ -1091,7 +1161,7 @@ sap.ui.define([
 
 			this.oMessageView.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oMessageView.destroy();
@@ -1148,7 +1218,7 @@ sap.ui.define([
 			}
 		}).placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		// act
 		oButton.firePress();
@@ -1199,7 +1269,7 @@ sap.ui.define([
 						})
 			}
 		}).setModel(oModel, "message").placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.ok(oMessageView._oLists['all'].getVisible(), "The list with all items is visible");
@@ -1207,7 +1277,7 @@ sap.ui.define([
 
 		//Act
 		oMessageView._oSegmentedButton.getButtons()[2].firePress();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.ok(!oMessageView._oLists['all'].getVisible(), "The list with all items is NOT visible");
@@ -1217,7 +1287,7 @@ sap.ui.define([
 		var aData = oMessageView.getModel("message").getData();
 		aData.pop(); //Throw out the "Warning" item
 		oMessageView.getModel("message").setData(aData);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		assert.ok(oMessageView._oLists['all'].getVisible(), "The list with all items is visible");
 		assert.ok(!oMessageView._oLists['warning'].getVisible(), "The 'Warning' list/section is NOT visible");
@@ -1271,7 +1341,7 @@ sap.ui.define([
 						})
 			}
 		}).setModel(oModel, "message").placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.strictEqual(oMessageView._oLists["all"].getAggregation('items')[2].getTitle(), "Test2", "The third item in the list should be correct");
@@ -1324,7 +1394,7 @@ sap.ui.define([
 						})
 			}
 		}).setModel(oModel, "message").placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.strictEqual(oMessageView._oLists["error"].getAggregation('items')[1].getTitle(), "Test2", "The second [error] list item should be error");
@@ -1371,7 +1441,7 @@ sap.ui.define([
 			}
 		}).setModel(oModel, "message").placeAt("qunit-fixture");
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		var oAll = oMessageView._oLists['all'],
 		oError = oMessageView._oLists['error'],
@@ -1385,7 +1455,7 @@ sap.ui.define([
 
 		//Act
 		oMessageView._oSegmentedButton.getButtons()[1].firePress();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.ok(oError.getVisible(), "The 'Error' list/section is visible");
@@ -1393,7 +1463,7 @@ sap.ui.define([
 
 		//Act
 		oMessageView._oSegmentedButton.getButtons()[2].firePress();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.ok(oWarning.getVisible(), "The 'Warning' list/section is visible");
@@ -1401,7 +1471,7 @@ sap.ui.define([
 
 		//Act
 		oMessageView._oSegmentedButton.getButtons()[1].firePress();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.ok(oError.getVisible(), "The 'Error' list/section is visible");
@@ -1409,7 +1479,7 @@ sap.ui.define([
 
 		//Act
 		oMessageView._oSegmentedButton.getButtons()[0].firePress();
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 
 		//Assert
 		assert.ok(oAll.getVisible(), "The list with all messages is visible");
