@@ -1173,7 +1173,7 @@ sap.ui.define([
 		oCache = this.getCacheAndMoveKeepAliveContexts(sResourcePath, mQueryOptions)
 			|| _AggregationCache.create(this.oModel.oRequestor, sResourcePath, sDeepResourcePath,
 				this.mParameters.$$aggregation, mQueryOptions, this.oModel.bAutoExpandSelect,
-				this.bSharedRequest);
+				this.bSharedRequest, this.isGrouped());
 		if (this.bSharedRequest) {
 			oCache.registerChangeListener("", this);
 		}
@@ -3470,6 +3470,7 @@ sap.ui.define([
 	 *     <li> <code>grandTotal</code>: An optional boolean that tells whether a grand total for
 	 *       this aggregatable property is needed (since 1.59.0); filtering by any aggregatable
 	 *       property is not supported in this case (since 1.89.0) as is "$search" (since 1.93.0)
+	 *       or the <code>vGroup</code> parameter of {@link sap.ui.model.Sorter} (since 1.107.0)
 	 *     <li> <code>subtotals</code>: An optional boolean that tells whether subtotals for this
 	 *       aggregatable property are needed
 	 *     <li> <code>with</code>: An optional string that provides the name of the method (for
@@ -3503,14 +3504,16 @@ sap.ui.define([
 	 * @param {string[]} [oAggregation.groupLevels]
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
 	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
-	 *   filtering for aggregated properties or (since 1.93.0) with "$search".
+	 *   filtering for aggregated properties or (since 1.93.0) with "$search" or (since 1.107.0) the
+	 *   <code>vGroup</code> parameter of {@link sap.ui.model.Sorter}.
 	 * @param {string} [oAggregation.hierarchyQualifier]
 	 *   The qualifier for the pair of "Org.OData.Aggregation.V1.RecursiveHierarchy" and
 	 *   "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchy" annotations at this binding's
 	 *   entity type (@experimental as of version 1.105.0). If present, a recursive hierarchy
 	 *   without data aggregation is defined, and the only other supported properties are
 	 *   <code>expandTo</code> and <code>search</code>. A recursive hierarchy cannot be combined
-	 *   with "$search".
+	 *   with "$search" or (since 1.107.0) the <code>vGroup</code> parameter of
+	 *   {@link sap.ui.model.Sorter}.
 	 * @param {string} [oAggregation.search]
 	 *   Like the <a href=
 	 *   "https://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part2-url-conventions.html#_Search_System_Query"

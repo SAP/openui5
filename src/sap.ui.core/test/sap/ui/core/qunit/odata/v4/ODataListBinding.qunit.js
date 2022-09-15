@@ -6166,10 +6166,12 @@ sap.ui.define([
 		this.mock(oBinding).expects("getCacheAndMoveKeepAliveContexts")
 			.withExactArgs("resource/path", "~mergedQueryOptions~")
 			.returns(bFromModel ? oCache : undefined);
+		this.mock(oBinding).expects("isGrouped").exactly(bFromModel ? 0 : 1).withExactArgs()
+			.returns("~isGrouped~");
 		this.mock(_AggregationCache).expects("create").exactly(bFromModel ? 0 : 1)
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
 				"deep/resource/path", sinon.match.same(oBinding.mParameters.$$aggregation),
-				"~mergedQueryOptions~", "~autoExpandSelect~", bShared)
+				"~mergedQueryOptions~", "~autoExpandSelect~", bShared, "~isGrouped~")
 			.returns(oCache);
 		this.mock(oCache).expects("registerChangeListener").exactly(bShared ? 1 : 0)
 			.withExactArgs("", sinon.match.same(oBinding));
@@ -6208,10 +6210,11 @@ sap.ui.define([
 			.returns(bDeep ? "resource/path" : "W.R.O.N.G.");
 		this.mock(oBinding).expects("inheritQueryOptions")
 			.withExactArgs("~queryOptions~", "~context~").returns("~mergedQueryOptions~");
+		this.mock(oBinding).expects("isGrouped").withExactArgs().returns("~isGrouped~");
 		this.mock(_AggregationCache).expects("create")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "resource/path",
 				"deep/resource/path", sinon.match.same(oBinding.mParameters.$$aggregation),
-				"~mergedQueryOptions~", "~autoExpandSelect~", "~sharedRequest~")
+				"~mergedQueryOptions~", "~autoExpandSelect~", "~sharedRequest~", "~isGrouped~")
 			.returns(oCache);
 
 		assert.strictEqual(

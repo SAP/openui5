@@ -26,7 +26,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ValueListType",
 	"sap/ui/test/TestUtils",
 	"sap/ui/util/XMLHelper",
-    // load Table resources upfront to avoid loading times > 1 second for the first test using Table
+	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
 ], function (Log, uid, ColumnListItem, CustomListItem, FlexBox, _MessageStrip, Text, Device,
 		EventProvider, SyncPromise, Configuration, Controller, View, Filter, FilterOperator,
