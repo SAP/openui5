@@ -11,6 +11,13 @@
 		<ToolbarSpacer/>
 	</OverflowToolbar>
 
+	<MessageStrip
+		text="Outdated - example is not using the new ValueHelp"
+		type="Error"
+		showIcon="true"
+		class="sapUiMediumMarginBottom">
+	</MessageStrip>
+
 	<form:SimpleForm id="Form1" layout="ColumnLayout" editable="true">
 		<core:Title text="FilterField"></core:Title>
 
