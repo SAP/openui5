@@ -15,8 +15,9 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/UIManager",
 	"sap/ui/mdc/p13n/modules/StateHandlerRegistry",
 	"sap/ui/mdc/p13n/modules/xConfigAPI",
-	"sap/base/util/UriParameters"
-], function (AdaptationProvider, merge, Log, PropertyHelper, FlexModificationHandler, MessageStrip, coreLibrary, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry, xConfigAPI, SAPUriParameters) {
+	"sap/base/util/UriParameters",
+	"sap/ui/mdc/enum/ProcessingStrategy"
+], function (AdaptationProvider, merge, Log, PropertyHelper, FlexModificationHandler, MessageStrip, coreLibrary, Element, DefaultProviderRegistry, UIManager, StateHandlerRegistry, xConfigAPI, SAPUriParameters, ProcessingStrategy) {
 	"use strict";
 
 	var ERROR_INSTANCING = "Engine: This class is a singleton. Please use the getInstance() method instead.";
@@ -187,7 +188,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Control} mDiffParameters.control The control instance tht should be adapted.
 	 * @param {string} mDiffParameters.key The key used to retrieve the corresponding Controller.
 	 * @param {object[]|Promise<object[]>} mDiffParameters.state The state which should be applied on the provided control instance
-	 * @param {boolean} [mDiffParameters.applyAbsolute] Decides whether unmentioned entries should be affected,
+	 * @param {sap.ui.mdc.p13n.ProcessingStrategy} [mDiffParameters.applyAbsolute] Decides about the diff mode to compare two states
 	 * @param {boolean} [mDiffParameters.stateBefore] In case the state should be diffed manually
 	 * for example if "A" is existing in the control state, but not mentioned in the new state provided in the
 	 * mDiffParameters.state then the absolute appliance decides whether to remove "A" or to keep it.
@@ -201,7 +202,6 @@ sap.ui.define([
 		var oControl = Engine.getControlInstance(mDiffParameters.control);
 		var sKey = mDiffParameters.key;
 		var vNewState = mDiffParameters.state;
-		var bApplyAbsolute = !!mDiffParameters.applyAbsolute;
 		var bSuppressCallback = !!mDiffParameters.suppressAppliance;
 
 		if (!sKey || !mDiffParameters.control || !vNewState) {
@@ -222,7 +222,7 @@ sap.ui.define([
 
 				var mDeltaConfig = {
 					existingState: mDiffParameters.stateBefore || oPriorState,
-					applyAbsolute: bApplyAbsolute,
+					applyAbsolute: mDiffParameters.applyAbsolute,
 					changedState: aNewState,
 					control: oController.getAdaptationControl(),
 					changeOperations: mChangeOperations,
@@ -564,7 +564,7 @@ sap.ui.define([
 				control: oControl,
 				stateBefore: oOld[sKey],
 				state: oNew[sKey],
-				applyAbsolute: true,
+				applyAbsolute: ProcessingStrategy.FullReplace,
 				key: sKey,
 				suppressAppliance: true
 			}));
@@ -1081,7 +1081,7 @@ sap.ui.define([
 				key: sControllerKey,
 				state: oController.getP13nData(),
 				suppressAppliance: true,
-				applyAbsolute: true
+				applyAbsolute: ProcessingStrategy.PartialReplace
 			})
 			.then(function(aItemChanges){
 

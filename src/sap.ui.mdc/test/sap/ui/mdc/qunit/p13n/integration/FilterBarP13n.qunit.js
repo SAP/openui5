@@ -294,6 +294,7 @@ sap.ui.define([
 		Engine.getInstance().createChanges({
 			control: this.oFilterBar,
 			key: "Filter",
+			applyAbsolute: "FullReplace",
 			state: mConditions
 		}).then(function(aChanges){
 			assert.ok(aChanges, "changes created");

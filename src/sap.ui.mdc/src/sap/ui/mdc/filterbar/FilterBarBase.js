@@ -457,18 +457,10 @@ sap.ui.define([
 	 * @returns {object} object containing the current status of the FilterBarBase
 	 */
 	FilterBarBase.prototype.getCurrentState = function() {
-		var mFilters = {};
 		var oState = {};
 
 		if (this._bPersistValues) {
-			var mConditions = merge({}, this.getFilterConditions());
-			for (var sKey in mConditions) {
-				if (this._getPropertyByName(sKey)) {
-					mFilters[sKey] = mConditions[sKey];
-					//mMetadata[sKey] = mConditions[sKey].metadata;
-				}
-			}
-			oState.filter = mFilters;
+			oState.filter = merge({}, this.getFilterConditions());
 		}
 
 		var aFilterItems = this.getFilterItems();
@@ -644,6 +636,7 @@ sap.ui.define([
 		this._aOngoingChangeAppliance.push(this.getEngine().createChanges({
 			control: this,
 			applySequentially: true,
+			applyAbsolute: true,
 			key: "Filter",
 			state: pConditionState
 		}));
@@ -693,6 +686,7 @@ sap.ui.define([
 		}
 
 	};
+
 
 
 	FilterBarBase.prototype._toExternal = function(oProperty, oCondition) {

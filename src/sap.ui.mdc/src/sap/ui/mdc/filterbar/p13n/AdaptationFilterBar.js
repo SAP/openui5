@@ -187,6 +187,7 @@ sap.ui.define([
 				//this._getAdaptationControlInstance(), "Filter", mConditions, true, true
 				return this.getEngine().createChanges({
 					control: this._getAdaptationControlInstance(),
+					applyAbsolute: true,
 					key: "Filter",
 					state: mConditions,
 					suppressAppliance: true

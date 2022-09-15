@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/mdc/condition/FilterOperatorUtil', './BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/ui/mdc/p13n/FlexUtil', 'sap/base/Log', 'sap/base/util/merge', 'sap/base/util/UriParameters'
-], function (FilterOperatorUtil, BaseController, P13nBuilder, FlexUtil, Log, merge, SAPUriParameters) {
+	'sap/ui/mdc/enum/ProcessingStrategy', 'sap/ui/mdc/condition/FilterOperatorUtil', './BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/ui/mdc/p13n/FlexUtil', 'sap/base/Log', 'sap/base/util/merge', 'sap/base/util/UriParameters'
+], function (ProcessingStrategy, FilterOperatorUtil, BaseController, P13nBuilder, FlexUtil, Log, merge, SAPUriParameters) {
 	"use strict";
 
     var FilterController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.FilterController", {
@@ -121,7 +121,13 @@ sap.ui.define([
     };
 
     FilterController.prototype.getDelta = function(mPropertyBag) {
-        mPropertyBag.applyAbsolute = true; //Note: currently the filter appliance is always handled as Snapshot, also via StateUtil!
+        if (mPropertyBag.applyAbsolute === ProcessingStrategy.FullReplace) {
+            Object.keys(mPropertyBag.existingState).forEach(function(sKey){
+                if (!mPropertyBag.changedState.hasOwnProperty(sKey)) {
+                    mPropertyBag.changedState[sKey] = [];
+                }
+            });
+        }
         return FlexUtil.getConditionDeltaChanges(mPropertyBag);
     };
 
@@ -162,10 +168,19 @@ sap.ui.define([
         var mStateDiff = {};
 
         aChanges.forEach(function(oChange){
-            var oDiffContent = merge({}, oChange.changeSpecificData.content);
-            var sName = oDiffContent.name;
-            mStateDiff[sName] = mNew[sName];
-        });
+            var oStateDiffContent = merge({}, oChange.changeSpecificData.content);
+            var sName = oStateDiffContent.name;
+
+            if (!mStateDiff[sName]) {
+                mStateDiff[sName] = [];
+            }
+
+            //set the presence attribute to false in case of an explicit remove
+            if (oChange.changeSpecificData.changeType === this.getChangeOperations()["remove"]) {
+                oStateDiffContent.condition.filtered = false;
+            }
+            mStateDiff[sName].push(oStateDiffContent.condition);
+        }.bind(this));
 
         return mStateDiff;
     };
