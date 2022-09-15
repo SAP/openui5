@@ -271,6 +271,7 @@ sap.ui.define([
 			}
 		},
 		destroyTestObjects: function() {
+			oFilterBar.getEngine().destroy();
 			oFilterBar.destroy();
 			MDCQUnitUtils.restorePropertyInfos(oFilterBar);
 		}
@@ -282,6 +283,7 @@ sap.ui.define([
 		sinon.spy(oFilterBar, "fireSearch");
 		sinon.stub(oFilterBar, "getAssignedFilterNames").returns([]);
 		sinon.spy(oFilterBar.getEngine(), "createChanges");
+		sinon.stub(oFilterBar.getEngine(), "_processChanges").returns(Promise.resolve([]));
         sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
 
 		var done = assert.async();
@@ -311,6 +313,7 @@ sap.ui.define([
 
 		sinon.stub(oFilterBar, "_isPersistenceSupported").returns(true);
 		sinon.spy(oFilterBar.getEngine(), "createChanges");
+		sinon.stub(oFilterBar.getEngine(), "_processChanges").returns(Promise.resolve([]));
 		sinon.stub(oFilterBar, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
         sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
 
@@ -365,6 +368,7 @@ sap.ui.define([
 
 		sinon.stub(oFilterBar, "_isPersistenceSupported").returns(true);
 		sinon.spy(oFilterBar.getEngine(), "createChanges");
+		sinon.stub(oFilterBar.getEngine(), "_processChanges").returns(Promise.resolve([]));
 		sinon.stub(oFilterBar, "_getPropertyByName").returns({name: "fieldPath1", typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")});
         sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
 
@@ -961,7 +965,8 @@ sap.ui.define([
 		var oPromise = new Promise(function (resolve) {
 			fResolve = resolve;
 		});
-		sinon.stub(FlexRuntimeInfoAPI, "waitForChanges").returns(oPromise);
+
+		sinon.stub(oFilterBar.getEngine(), "_processChanges").returns(oPromise);
         sinon.stub(oFilterBar, "awaitPropertyHelper").returns(Promise.resolve());
 
 		//--> add a personalization change
@@ -978,7 +983,6 @@ sap.ui.define([
 			fResolve();
 			oPromise.then(function () {
 				setTimeout(function () { // required for condition model....
-					FlexRuntimeInfoAPI.waitForChanges.restore();
 					assert.ok(oFilterBar._reportModelChange.calledOnce);
 					done();
 				}, 20);
