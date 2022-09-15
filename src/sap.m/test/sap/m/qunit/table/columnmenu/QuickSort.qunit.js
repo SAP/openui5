@@ -61,9 +61,9 @@ sap.ui.define([
 		});
 		this.oQuickSort.addItem(oItem);
 		aItems = this.oQuickSort.getItems();
-		sLabel = oBundle.getText("table.COLUMNMENU_SORT_BY", "A");
+		sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT", "A");
 		assert.equal(aItems[0]._getLabel(aItems.length), sLabel, "QuickSort label has been updated.");
-		sLabel = oBundle.getText("table.COLUMNMENU_SORT_BY", "B");
+		sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT", "B");
 		assert.equal(aItems[1]._getLabel(aItems.length), sLabel, "QuickSort label is correct.");
 	});
 
@@ -88,8 +88,8 @@ sap.ui.define([
 		assert.notOk(this.oQuickSort._oContent, "The content is destroyed after addItem call");
 		var aQuickActions = this.oQuickSort.getEffectiveQuickActions();
 		assert.equal(aQuickActions.length, 2, "The quick sort has 2 quick actions");
-		assert.equal(aQuickActions[0].getProperty("label"), oBundle.getText("table.COLUMNMENU_SORT_BY", "A"), "The label for the quick action is set correctly");
-		assert.equal(aQuickActions[1].getProperty("label"), oBundle.getText("table.COLUMNMENU_SORT_BY", "B"), "The label for the quick action is set correctly");
+		assert.equal(aQuickActions[0].getProperty("label"), oBundle.getText("table.COLUMNMENU_QUICK_SORT", "A"), "The label for the quick action is set correctly");
+		assert.equal(aQuickActions[1].getProperty("label"), oBundle.getText("table.COLUMNMENU_QUICK_SORT", "B"), "The label for the quick action is set correctly");
 
 		function testItems(aItems, sortOrder) {
 			assert.equal(aItems.length, 2, "The quick sort has 2 buttons");

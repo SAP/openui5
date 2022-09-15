@@ -404,7 +404,7 @@ sap.ui.define([
 				}
 			}
 			if (bForDialog) {
-				oColumnInfo.text = TableUtils.Column.getHeaderText(oTable, i) || sPersoKey;
+				oColumnInfo.text = TableUtils.Column.getHeaderText(oColumn) || sPersoKey;
 			}
 			oData.aColumns.push(oColumnInfo);
 		}

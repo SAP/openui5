@@ -346,7 +346,7 @@ sap.ui.define([
 	 */
 	ColumnMenu.prototype._createColumnVisibilityMenuItem = function(oColumn) {
 		var oTable = this._oTable;
-		var sText = TableUtils.Column.getHeaderText(oTable, oColumn.getIndex());
+		var sText = TableUtils.Column.getHeaderText(oColumn);
 
 		return new MenuItem({
 			text: sText,

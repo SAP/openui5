@@ -53,7 +53,7 @@ sap.ui.define([
 
 	QuickSortItem.prototype._getAction = function() {
 		var oQuickAction = this.getAggregation("quickAction");
-		var sLabel = this._getLabel(this.getParent().getItems().length);
+		var sLabel = this._getLabel();
 
 		if (oQuickAction) {
 			oQuickAction.setLabel(sLabel);
@@ -69,13 +69,9 @@ sap.ui.define([
 		return oQuickAction;
 	};
 
-	QuickSortItem.prototype._getLabel = function(iLength) {
+	QuickSortItem.prototype._getLabel = function() {
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		if (iLength === 1) {
-			return oBundle.getText("table.COLUMNMENU_QUICK_SORT");
-		} else {
-			return oBundle.getText("table.COLUMNMENU_SORT_BY", this.getLabel());
-		}
+		return oBundle.getText("table.COLUMNMENU_QUICK_SORT", this.getLabel());
 	};
 
 	QuickSortItem.prototype._createContent = function() {
