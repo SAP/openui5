@@ -2032,7 +2032,7 @@ sap.ui.define([
 		aConditions1 = [Condition.createItemCondition("X", "Y", undefined, undefined, {in1: "X", out1: "Y"})];
 		aConditions2 = [Condition.createItemCondition("X", "Y")];
 		bEqual = FilterOperatorUtil.compareConditionsArray(aConditions1, aConditions2);
-		assert.ok(bEqual, "2 Conditions, one with payload one withot are equal");
+		assert.notOk(bEqual, "2 Conditions, one with payload one withot are not equal");
 
 		aConditions1 = [Condition.createItemCondition("X", "Y", undefined, undefined, {in1: "X", out1: "Y"})];
 		aConditions2 = [Condition.createItemCondition("X", "Y", undefined, undefined, {in1: "X", out1: "Y"})];

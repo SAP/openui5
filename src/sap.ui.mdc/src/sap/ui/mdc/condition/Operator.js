@@ -842,8 +842,7 @@ sap.ui.define([
 					oCheckValue2.outParameters = oCondition2.outParameters;
 				}
 
-				if (oCondition1.payload && oCondition2.payload) {
-					// TODO: check payload also if only set on one condition?
+				if (oCondition1.payload || oCondition2.payload) { // check payload also if only set on one condition
 					oCheckValue1.payload = oCondition1.payload;
 					oCheckValue2.payload = oCondition2.payload;
 				}
