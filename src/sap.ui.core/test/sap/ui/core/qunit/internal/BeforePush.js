@@ -348,7 +348,12 @@
 		aTests = aTests.map(function (sSimplifiedUrl) {
 			var sUrl = normalizeUrl(sSimplifiedUrl);
 
-			return createTest(sSimplifiedUrl.replace(/testsuite=.*?&/, ""), sUrl);
+			if (sSimplifiedUrl.includes("Test.qunit.html")) {
+				sSimplifiedUrl = sSimplifiedUrl
+					.replace(/^.*Test.qunit.html\?testsuite=.*&test=/, "")
+					.replace("&supportAssistant=true", "");
+			}
+			return createTest(sSimplifiedUrl, sUrl);
 		});
 		aTests.sort(function (oTest1, oTest2) { return oTest2.last - oTest1.last; });
 		oTotal = createTest("Finished");
