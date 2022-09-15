@@ -11,13 +11,18 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			ui5: {
 				language: "en-US",
 				rtl: false, // Whether to run the tests in RTL mode
-				libs: [
-				],
+				libs: [],
 				"xx-waitForTheme": true // Whether the start of the test should be delayed until the theme is applied
 			},
 			coverage: {
 				only: "[sap/ui/mdc]", // Which files to show in the coverage report, if null, no files are excluded from coverage
 				branchCoverage: true // Whether to enable standard branch coverage
+			},
+			loader: {
+				paths: {
+					"delegates": "test-resources/sap/ui/mdc/delegates",
+					"testutils/opa": "test-resources/sap/ui/mdc/testutils/opa"
+				}
 			},
 			page: "test-resources/sap/ui/mdc/integration/teststarter.qunit.html?testsuite={suite}&test={name}",
 			autostart: true, // Whether to call QUnit.start() when the test setup is done
@@ -61,7 +66,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 						"mdc/qunit/util": "test-resources/sap/ui/mdc/qunit/util",
 						"sap/ui/mdc/integration": "test-resources/sap/ui/mdc/integration",
 						"sap/ui/v4demo": "test-resources/sap/ui/mdc/internal/TableWithFilterBar",
-						"delegates": "test-resources/sap/ui/mdc/delegates",
 						"local" : "test-resources/sap/ui/mdc/integration/twfb"
 					}
 				},
@@ -97,8 +101,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 						"mdc/qunit/util": "test-resources/sap/ui/mdc/qunit/util",
 						"sap/ui/mdc/integration": "test-resources/sap/ui/mdc/integration",
 						"sap/ui/v4demo": "test-resources/sap/ui/mdc/internal/TableWithFilterBar",
-						"local": "test-resources/sap/ui/mdc/integration/twfb",
-						"delegates": "test-resources/sap/ui/mdc/delegates"
+						"local": "test-resources/sap/ui/mdc/integration/twfb"
 					}
 				},
 				qunit: {
@@ -127,13 +130,23 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"ActionToolbar": {
 				loader: {
 					paths: {
-						"sap/ui/mdc/ActionToolbarTesting": "test-resources/sap/ui/mdc/integration/actiontoolbar",
-						"testutils/opa": "test-resources/sap/ui/mdc/testutils/opa",
-						"delegates": "test-resources/sap/ui/mdc/delegates"
+						"sap/ui/mdc/ActionToolbarTesting": "test-resources/sap/ui/mdc/integration/actiontoolbar"
 					}
 				},
 				autostart: false,
 				module: "test-resources/sap/ui/mdc/integration/actiontoolbar/opaTests.qunit",
+				sinon: false
+			},
+			"Link": {
+				loader: {
+					paths: {
+						"sap/ui/mdc/LinkIntegrationTesting": "test-resources/sap/ui/mdc/integration/link",
+						"sap/ui/mdc/qunit/link/opa/test": "test-resources/sap/ui/mdc/qunit/link/opa/test"
+					}
+				},
+				group: "TestObjects",
+				autostart: false,
+				module: "test-resources/sap/ui/mdc/integration/link/pageObject.qunit",
 				sinon: false
 			}
 		}

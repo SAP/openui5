@@ -1,0 +1,20 @@
+<mvc:View
+	height="100%"
+	class="sapUiSizeCompact"
+	xmlns="sap.m"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdcField="sap.ui.mdc.field"
+	xmlns:mdcLink="sap.ui.mdc.link"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<App id="MyApp">
+		<mdc:Field id="Field" value="LinkText" editMode="Display">
+			<mdc:fieldInfo>
+				<mdc:Link
+					delegate='{ name: "sap/ui/mdc/LinkIntegrationTesting/appUnderTestPageObject/LinkDelegate", payload: {} }'>
+				</mdc:Link>
+			</mdc:fieldInfo>
+		</mdc:Field>
+	</App>
+
+</mvc:View>
