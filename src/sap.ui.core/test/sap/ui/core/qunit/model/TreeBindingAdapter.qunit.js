@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/model/TreeBindingAdapter",
 	"sap/ui/test/TestUtils"
 ], function (Log, ChangeReason, TreeAutoExpandMode, TreeBinding, TreeBindingAdapter, TestUtils) {
-	/*global QUnit */
+	/*global QUnit,sinon*/
 	"use strict";
 
 	//*********************************************************************************************
@@ -154,6 +154,68 @@ sap.ui.define([
 
 		// code under test - parameters are not relevant for this test
 		assert.deepEqual(TreeBindingAdapter.prototype._getContextsOrNodes.call(oBinding), []);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getContextsOrNodes: iStartIndex is undefined", function (assert) {
+		var oBinding = {
+				_oRootNode : "~oRootNode",
+				_iThreshold : "~threshold",
+				oModel : {iSizeLimit : "~iSizeLimit"},
+				_buildTree : function () {},
+				_retrieveNodeSection : function () {},
+				_updateRowIndexMap : function () {},
+				isInitial : function () {},
+				isResolved : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			aNodes = [];
+
+		oBindingMock.expects("isResolved").withExactArgs().returns(true);
+		oBindingMock.expects("isInitial").withExactArgs().returns(false);
+		this.mock(Math).expects("max").withExactArgs("~threshold", 0).returns("~newThreshold");
+		oBindingMock.expects("_buildTree").withExactArgs(0, "~iSizeLimit");
+		oBindingMock.expects("_retrieveNodeSection")
+			.withExactArgs("~oRootNode", 0, "~iSizeLimit")
+			.returns(aNodes);
+		oBindingMock.expects("_updateRowIndexMap").withExactArgs(sinon.match.same(aNodes), 0);
+
+		// code under test
+		assert.deepEqual(TreeBindingAdapter.prototype._getContextsOrNodes.call(oBinding, false),
+			[]);
+
+		assert.strictEqual(oBinding._iThreshold, "~newThreshold");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getContextsOrNodes: iStartIndex is set", function (assert) {
+		var oBinding = {
+				_oRootNode : "~oRootNode",
+				_iThreshold : "~threshold",
+				_buildTree : function () {},
+				_retrieveNodeSection : function () {},
+				_updateRowIndexMap : function () {},
+				isInitial : function () {},
+				isResolved : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			aNodes = [],
+			aResult;
+
+		oBindingMock.expects("isResolved").withExactArgs().returns(true);
+		oBindingMock.expects("isInitial").withExactArgs().returns(false);
+		this.mock(Math).expects("max").withExactArgs("~threshold", 5).returns("~newThreshold");
+		oBindingMock.expects("_buildTree").withExactArgs(11, 50);
+		oBindingMock.expects("_retrieveNodeSection")
+			.withExactArgs("~oRootNode", 11, 50)
+			.returns(aNodes);
+		oBindingMock.expects("_updateRowIndexMap").withExactArgs(sinon.match.same(aNodes), 11);
+
+		// code under test
+		aResult = TreeBindingAdapter.prototype._getContextsOrNodes.call(oBinding, true, 11, 50, 5);
+
+		assert.deepEqual(aResult, []);
+		assert.strictEqual(oBinding._iThreshold, "~newThreshold");
 	});
 
 	//*********************************************************************************************
