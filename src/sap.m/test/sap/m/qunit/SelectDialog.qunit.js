@@ -1678,10 +1678,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Search", {
+	QUnit.module("Search and Growing", {
 		beforeEach: function() {
-
-			 var _handleValueHelpSearch =  function (evt) {
+			var _handleValueHelpSearch =  function (evt) {
 				var sValue = evt.getParameter("value");
 				var oFilter = new Filter(
 					"Title",
@@ -1695,6 +1694,7 @@ sap.ui.define([
 				title: "Very title",
 				multiSelect : true,
 				rememberSelections: true,
+				growingThreshold: 10,
 				contentWidth: "200px",
 				search: _handleValueHelpSearch
 			});
@@ -1742,8 +1742,14 @@ sap.ui.define([
 					{Title: "Entry26"},
 					{Title: "Entry27"},
 					{Title: "Entry28"},
-					{Title: "Entry29"},
-					{Title: "Entry30"}
+					{
+						Title: "Entry29",
+						Selected: true
+					},
+					{
+						Title: "Entry30",
+						Selected: true
+					}
 				]
 			}, path: "/items", template: createTemplateListItem() });
 			Core.applyChanges();
@@ -1751,6 +1757,30 @@ sap.ui.define([
 			// cleanup
 			this.oSelectDialog.destroy();
 		}
+	});
+
+	QUnit.test("Selected items have to be all the selected items", function (assert) {
+		// Arrange
+		var that = this,
+			done = assert.async();
+
+		this.oSelectDialog.attachConfirm(function (oEvent) {
+			var aSelectedItems = oEvent.getParameter("selectedItems");
+
+			assert.strictEqual(aSelectedItems.length, 3, '3 items where selected');
+			done();
+		});
+
+		this.oSelectDialog._oDialog.attachAfterOpen(function () {
+			// Act
+			that.oSelectDialog._getOkButton().firePress();
+			Core.applyChanges();
+			this.clock.tick(500);
+		}.bind(this));
+
+		this.oSelectDialog.open();
+		Core.applyChanges();
+		this.clock.tick(500);
 	});
 
 	QUnit.test("Selected items after search have to be all the selected items", function (assert) {
@@ -1761,7 +1791,7 @@ sap.ui.define([
 		this.oSelectDialog.attachConfirm(function (oEvent) {
 			var aSelectedItems = oEvent.getParameter("selectedItems");
 
-			assert.strictEqual(aSelectedItems.length, 2, '2 items where selected');
+			assert.strictEqual(aSelectedItems.length, 4, '4 items where selected');
 			done();
 		});
 
@@ -1787,10 +1817,9 @@ sap.ui.define([
 		this.oSelectDialog.attachConfirm(function (oEvent) {
 			var aSelectedItems = oEvent.getParameter("selectedItems");
 
-			assert.strictEqual(aSelectedItems.length, 4, '4 items where selected');
+			assert.strictEqual(aSelectedItems.length, 6, '6 items where selected');
 			done();
 		});
-
 
 		this.oSelectDialog._oDialog.attachAfterOpen(function () {
 			// Act
