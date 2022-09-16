@@ -12,6 +12,13 @@
 		<ToolbarSpacer/>
 	</OverflowToolbar>
 
+	<MessageStrip
+		text="Outdated - example is not using the new ValueHelp"
+		type="Error"
+		showIcon="true"
+		class="sapUiMediumMarginBottom">
+	</MessageStrip>
+
 	<form:SimpleForm layout="ColumnLayout" editable="true">
 		<core:Title text="Fields with 'Genre' as In-Parameter for 'Subgenre' and 'Subgenre' as out-parameter back to 'Genre'"></core:Title>
 
