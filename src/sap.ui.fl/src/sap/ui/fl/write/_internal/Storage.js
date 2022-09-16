@@ -142,7 +142,7 @@ sap.ui.define([
 				if (oChange.condenserState) {
 					var bDifferentOrder = false;
 					if (oChange.condenserState === "delete") {
-						if (oChange.getState() === States.LifecycleState.PERSISTED) {
+						if (oChange.getState() === States.LifecycleState.PERSISTED || oChange.getState() === States.LifecycleState.DELETED) {
 							if (!mCondense.delete) {
 								mCondense.delete = {};
 							}
