@@ -249,10 +249,6 @@ sap.ui.define([
 			fnDone = function() {},
 			iSyncCallBehavior;
 
-		if (LoaderExtensions.notifyResourceLoading) {
-			fnDone = LoaderExtensions.notifyResourceLoading();
-		}
-
 		if (typeof sResourceName === "string") {
 			mOptions = mOptions || {};
 		} else {
@@ -286,7 +282,6 @@ sap.ui.define([
 			// data available
 			oData = convertData(oData);
 
-			fnDone();
 			if (mOptions.async) {
 				return Promise.resolve(oData);
 			} else {
@@ -309,6 +304,10 @@ sap.ui.define([
 			}
 
 			sUrl = mOptions.url || sap.ui.loader._.getResourcePath(sResourceName);
+
+			if (LoaderExtensions.notifyResourceLoading) {
+				fnDone = LoaderExtensions.notifyResourceLoading();
+			}
 
 			var pResponse = mixedFetch(sUrl, {
 				headers: Object.assign(oHeaders, mOptions.headers)
