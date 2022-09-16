@@ -471,6 +471,10 @@ sap.ui.define([
 									text: oControlData.isClass ? "View subclasses" : "View implementations",
 									press: this._openSubclassesImplementationsPopover.bind(this)
 								});
+								oSubClassesLink.onclick = function(oEvent) {
+									oEvent.allowPreventDefault = true;
+									Link.prototype._handlePress.call(this, oEvent);
+								};
 							}
 
 							return _getHBox({
