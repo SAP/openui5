@@ -632,6 +632,41 @@ sap.ui.define([
 		clock.tick(500);
 	});
 
+	QUnit.test("Selecting Section from HierarchicalSelect focuses the selected Section", function (assert) {
+		// Arrange
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			oSelect = oAnchorBar._getHierarchicalSelect(),
+			oDialog = oSelect.getAggregation("picker"),
+			oSelectedSection = this.oObjectPage.getSections()[0],
+			clock = sinon.useFakeTimers(),
+			done = assert.async(),
+			oStub;
+
+			oDialog.attachAfterOpen(function () {
+				oStub = this.stub(oSelectedSection, "getDomRef").callsFake(function () {
+					return {
+						focus: function () {
+							assert.ok(true, "Section is focused");
+						}
+					};
+				});
+				oAnchorBar._onSelectChange({
+					getParameter: function () {
+						return oSelect.getItems()[0];
+					}
+				});
+
+				oStub.restore();
+				clock.restore();
+				done();
+			}.bind(this));
+
+		// Act - Open the picker
+		oSelect.focus();
+		QUnitUtils.triggerKeydown(oSelect.getFocusDomRef(), KeyCodes.F4);
+		clock.tick(500);
+	});
+
 	QUnit.test("Count information", function (assert) {
 		var aAnchorBarContent = this.oObjectPage.getAggregation("_anchorBar").getContent(),
 			iAnchorBarContentLength = aAnchorBarContent.length,
