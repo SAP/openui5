@@ -155,7 +155,8 @@ sap.ui.define([
 
 	UnhideForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {
 		return {
-			affectedControls: [JsControlTreeModifier.bySelector(oChange.getContent().elementSelector, oAppComponent).getParent().getId()]
+			affectedControls: [JsControlTreeModifier.bySelector(oChange.getContent().elementSelector, oAppComponent).getParent().getId()],
+			updateRequired: true
 		};
 	};
 

@@ -233,8 +233,8 @@ sap.ui.define([
 				}.bind(this))
 				.then(function() {
 					var mVisualizationInfo = this.oDefaultRenameChangeHandler.getChangeVisualizationInfo(this.oChange);
-					assert.equal(mVisualizationInfo.payload.originalLabel, "Button Old Text", "then the returned payload contains the original label");
-					assert.equal(mVisualizationInfo.payload.newLabel, "Button New Text", "then the returned payload contains the new label");
+					assert.equal(mVisualizationInfo.descriptionPayload.originalLabel, "Button Old Text", "then the returned descriptionPayload contains the original label");
+					assert.equal(mVisualizationInfo.descriptionPayload.newLabel, "Button New Text", "then the returned descriptionPayload contains the new label");
 				}.bind(this));
 		});
 	});

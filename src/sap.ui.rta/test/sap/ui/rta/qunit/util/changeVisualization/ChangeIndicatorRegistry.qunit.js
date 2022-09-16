@@ -78,7 +78,7 @@ sap.ui.define([
 			ChangesWriteAPI.getChangeHandler.resolves({
 				getChangeVisualizationInfo: function() {
 					return {
-						payload: {
+						descriptionPayload: {
 							category: "fooCategory"
 						}
 					};
@@ -94,7 +94,7 @@ sap.ui.define([
 			ChangesWriteAPI.getChangeHandler.resolves({
 				getChangeVisualizationInfo: function() {
 					return {
-						payload: {
+						descriptionPayload: {
 							category: "move123"
 						}
 					};
@@ -120,7 +120,7 @@ sap.ui.define([
 			ChangesWriteAPI.getChangeHandler.resolves({
 				getChangeVisualizationInfo: function() {
 					return {
-						payload: {
+						descriptionPayload: {
 							category: "fooCategory"
 						}
 					};
@@ -138,6 +138,33 @@ sap.ui.define([
 			this.oRegistry.registerChangeIndicator("someChangeIndicator", oIndicator);
 			assert.strictEqual(this.oRegistry.getChangeIndicator("someChangeIndicator"), oIndicator, "then the saved reference is returned");
 			assert.deepEqual(this.oRegistry.getChangeIndicators()[0], oIndicator, "then it is included in the list of change indicator references");
+		});
+
+		QUnit.test("when a registered change has the updateRequired flag and should be removed from the registry", function (assert) {
+			ChangesWriteAPI.getChangeHandler.reset();
+			ChangesWriteAPI.getChangeHandler
+				.onFirstCall()
+				.resolves({
+					getChangeVisualizationInfo: function() {
+						return {
+							updateRequired: true
+						};
+					}
+				})
+				.onSecondCall()
+				.resolves();
+			var oSpy = sandbox.spy(this.oRegistry, "removeOutdatedRegisteredChanges");
+			return Promise.all([
+				this.oRegistry.registerChange(createMockChange("fooChange"), "foo"),
+				this.oRegistry.registerChange(createMockChange("barChange"), "bar")
+			]).then(function() {
+				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 2, "then the two changes are registered correctly");
+				this.oRegistry.removeOutdatedRegisteredChanges();
+			}.bind(this)).then(function () {
+				assert.ok(oSpy.calledOnce, "then the function was called only once");
+				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 1, "then only one change is registered");
+				assert.notOk(this.oRegistry.getAllRegisteredChanges()[0].visualizationInfo.updateRequired, "then the remaining change has no updateRequired flag");
+			}.bind(this));
 		});
 	});
 

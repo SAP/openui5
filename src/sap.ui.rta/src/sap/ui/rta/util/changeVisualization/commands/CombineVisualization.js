@@ -23,7 +23,7 @@ sap.ui.define([
 	 * Creates a localized description for combine changes based on the provided
 	 * payload containing the combined elements.
 	 *
-	 * @param {object} mPayload - Change visualization payload from the change handler
+	 * @param {object} mPayload - Change visualization description payload from the change handler
 	 * @param {array.<string>} mPayload.originalSelectors - Selectors of the elements that were combined
 	 * @param {string} sLabel - Current element label
 	 * @param {object} mPropertyBag - Additional properties

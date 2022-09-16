@@ -42,10 +42,6 @@ sap.ui.define([
 		return mPropertyBag.modifier.targets === "xmlTree";
 	}
 
-	function getGroupHeader(oElement) {
-		return oElement.getTitle() || oElement.getToolbar();
-	}
-
 	/**
 	 * Hides a control.
 	 *
@@ -274,15 +270,13 @@ sap.ui.define([
 	HideForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {
 		var oSelector = oChange.getContent().elementSelector;
 		var oElement = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
-		// to show the change indicator on the correct position a stable id needs to be passed to the ChangeIndicatorRegistry
-		var oStableElementId =  oChange.getChangeType() === "hideSimpleFormField"
-			? getGroupHeader(oElement.getParent().getParent()).getId()
-			: oElement.getId();
-
+		var oDisplaySelector = oChange.getChangeType() === "removeSimpleFormGroup"
+			? oElement.getParent().getId()
+			: oElement.getParent().getParent().getId();
 		return {
 			affectedControls: [oSelector],
-			displayControls: [oStableElementId],
-			hasParentWithUnstableId: true
+			displayControls: [oDisplaySelector],
+			updateRequired: true
 		};
 	};
 

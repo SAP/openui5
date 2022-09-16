@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/changeHandler/common/ChangeCategories",
-	"sap/ui/core/Core"
+	"sap/ui/fl/changeHandler/common/ChangeCategories"
 ], function(
 	includes,
 	values,
@@ -24,8 +23,7 @@ sap.ui.define([
 	ElementUtil,
 	ChangesWriteAPI,
 	FlUtils,
-	ChangeCategories,
-	Core
+	ChangeCategories
 ) {
 	"use strict";
 
@@ -121,7 +119,7 @@ sap.ui.define([
 					id: oChangeIndicatorData.change.getId(),
 					dependent: bDependent,
 					affectedElementId: sAffectedElementId,
-					payload: oChangeIndicatorData.visualizationInfo.payload || {}
+					descriptionPayload: oChangeIndicatorData.visualizationInfo.descriptionPayload || {}
 				},
 				_omit(oChangeIndicatorData, ["visualizationInfo"])
 			));
@@ -131,16 +129,13 @@ sap.ui.define([
 			.forEach(function (oChangeIndicatorData) {
 				oChangeIndicatorData.visualizationInfo.displayElementIds
 				.forEach(function (sId, iIndex) {
-					// in some cases (like with simple forms) you have to pass the stable id of the child element because the parent id is unstable
-					if (oChangeIndicatorData.visualizationInfo.hasParentWithUnstableId) {
-						sId = Core.byId(sId).getParent().getId();
-					}
 					addSelector(sId, oChangeIndicatorData.visualizationInfo.affectedElementIds[iIndex], oChangeIndicatorData, false);
 				});
 
-				oChangeIndicatorData.visualizationInfo.dependentElementIds.forEach(function (sId) {
-					addSelector(sId, sId, oChangeIndicatorData, true);
-				});
+				oChangeIndicatorData.visualizationInfo.dependentElementIds
+					.forEach(function (sId) {
+						addSelector(sId, sId, oChangeIndicatorData, true);
+					});
 			});
 
 		return oChangeIndicators;
@@ -178,8 +173,8 @@ sap.ui.define([
 			var aCategories = this.getChangeCategories();
 			var sChangeCategory;
 			// For "settings", the control developer can choose one of the existing categories
-			if (sCommandName === "settings" && includes(Object.keys(aCategories), mChangeVisualizationInfo.payload.category)) {
-				sChangeCategory = mChangeVisualizationInfo.payload.category;
+			if (sCommandName === "settings" && includes(Object.keys(aCategories), mChangeVisualizationInfo.descriptionPayload.category)) {
+				sChangeCategory = mChangeVisualizationInfo.descriptionPayload.category;
 			} else {
 				sChangeCategory = Object.keys(aCategories).find(function (sChangeCategoryName) {
 					return includes(aCategories[sChangeCategoryName], sCommandName);
@@ -222,8 +217,8 @@ sap.ui.define([
 					affectedElementIds: aAffectedElementIds,
 					dependentElementIds: getSelectorIds(mVisualizationInfo.dependentControls) || [],
 					displayElementIds: getSelectorIds(mVisualizationInfo.displayControls) || aAffectedElementIds,
-					hasParentWithUnstableId: mVisualizationInfo.hasParentWithUnstableId,
-					payload: mVisualizationInfo.payload || {}
+					updateRequired: mVisualizationInfo.updateRequired,
+					descriptionPayload: mVisualizationInfo.descriptionPayload || {}
 				};
 			});
 	}
@@ -283,6 +278,18 @@ sap.ui.define([
 	 */
 	ChangeIndicatorRegistry.prototype.removeRegisteredChange = function (sChangeId) {
 		delete this._oRegisteredChanges[sChangeId];
+	};
+
+	/**
+	 * Removes changes with the updateRequired flag from the registry so the change can be re-registered and
+	 * the visualizationInfo is updated => if an element has an unstable id this updates the id information in the registry (e.g simple forms)
+	 */
+	ChangeIndicatorRegistry.prototype.removeOutdatedRegisteredChanges = function () {
+		this.getAllRegisteredChanges().forEach(function(oChange) {
+			if (oChange.visualizationInfo && oChange.visualizationInfo.updateRequired) {
+				this.removeRegisteredChange(oChange.change.getId());
+			}
+		}.bind(this));
 	};
 
 	return ChangeIndicatorRegistry;

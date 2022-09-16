@@ -264,7 +264,8 @@ sap.ui.define([
 						// as the FormElements in a SimpeForm don't get stable IDs, we have to cheat
 						oCore.byId("component---Label0").getParent().getId()
 					],
-					payload: {
+					updateRequired: true,
+					descriptionPayload: {
 						originalLabel: "oldLabel0",
 						newLabel:  this.sNewValue
 					}

@@ -26,8 +26,8 @@ sap.ui.define([
 		});
 		QUnit.test("when an element was moved within its parent", function(assert) {
 			var oPayloadInsideGroup = {
-				sourceParentContainer: { id: "Group1" },
-				targetParentContainer: { id: "Group1" }
+				sourceContainer: { id: "Group1" },
+				targetContainer: { id: "Group1" }
 			};
 			assert.strictEqual(
 				MoveVisualization.getDescription(oPayloadInsideGroup, "label", this.mPropertyBag).descriptionText,
@@ -42,8 +42,8 @@ sap.ui.define([
 		});
 		QUnit.test("when an element was moved outside its parent", function(assert) {
 			var oPayloadOutsideGroup = {
-				sourceParentContainer: { id: "Group1" },
-				targetParentContainer: { id: "Group2" }
+				sourceContainer: { id: "Group1" },
+				targetContainer: { id: "Group2" }
 			};
 			assert.strictEqual(
 				MoveVisualization.getDescription(oPayloadOutsideGroup, "label", this.mPropertyBag).descriptionText,
@@ -58,8 +58,8 @@ sap.ui.define([
 		});
 		QUnit.test("when an element was moved outside its parent that has no source id", function (assert) {
 			var oPayloadOutsideGroup = {
-				sourceParentContainer: { id: null },
-				targetParentContainer: { id: "Group2" }
+				sourceContainer: { id: null },
+				targetContainer: { id: "Group2" }
 			};
 			assert.strictEqual(
 				MoveVisualization.getDescription(oPayloadOutsideGroup, "label", this.mPropertyBag).descriptionText,
