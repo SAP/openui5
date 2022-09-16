@@ -5263,6 +5263,36 @@ sap.ui.define([
 
 		QUnit.module("findNextItemByFirstCharacter()");
 
+		QUnit.test("searchNextItemByText() returns the correct item", function (assert) {
+
+			// system under test
+			var oExpectedItem;
+			var oSelect = new Select({
+				items: [
+					oExpectedItem = new Item({
+						text: "Albania"
+					}),
+
+					new Item({
+						text: "Algeria"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.setSelectedItem(oSelect.getFirstItem());
+
+			// act
+			var oCurrItem = oSelect.searchNextItemByText("al");
+
+			// assert
+			assert.ok(oCurrItem === oExpectedItem,
+				"If the user is still typing and the input matches the currently selected item, we don't forward to the next one.");
+
+			// cleanup
+			oSelect.destroy();
+		});
+
 		QUnit.test("findNextItemByFirstCharacter() test case 1", function (assert) {
 
 			// system under test
