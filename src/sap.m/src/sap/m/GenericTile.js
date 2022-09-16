@@ -677,7 +677,7 @@ sap.ui.define([
 		}
 
 		//Adds Extra height to the TileContent when GenericTile is in ActionMode
-		if (this.getFrameType()  === FrameType.TwoByOne && this.getMode() === GenericTileMode.ActionMode && this.getState() === LoadState.Loaded) {
+		if (this.getFrameType()  === FrameType.TwoByOne && this.getMode() === GenericTileMode.ActionMode && this.getState() === LoadState.Loaded && !this.isA("sap.m.ActionTile")) {
 			this._applyExtraHeight();
 		}
 

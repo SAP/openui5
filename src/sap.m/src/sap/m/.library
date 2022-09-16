@@ -69,6 +69,9 @@
                 <module>sap/m/FeedInput</module>
                 <module>sap/m/FeedListItem</module>
                 <module>sap/m/UploadCollection</module>
+                <module>sap/m/ActionTile</module>
+                <module>sap/m/ActionTileContent</module>
+                <module>sap/m/CustomAttribute</module>
                 <module>sap/m/SlideTile</module>
                 <module>sap/m/GenericTile</module>
                 <module>sap/m/TileContent</module>

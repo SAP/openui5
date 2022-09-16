@@ -493,6 +493,15 @@ sap.ui.define([
 					language: "en"
 				}
 			},
+			ActionTile: {
+				title: "QUnit Test Page for sap.m.ActionTile",
+				coverage: {
+					only: "//sap\/m\/ActionTile.*/"
+				},
+				ui5: {
+					language: "en"
+				}
+			},
 			"Generic Testsuite": {
 				page: "test-resources/sap/m/qunit/testsuite.generic.qunit.html"
 			},
