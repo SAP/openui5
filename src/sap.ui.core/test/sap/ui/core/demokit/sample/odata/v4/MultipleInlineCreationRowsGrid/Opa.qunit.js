@@ -206,6 +206,25 @@ sap.ui.getCore().attachInit(function () {
 						Then.onTheObjectPage.checkPartsTableTitle("Product: 10, 4 Parts");
 						Then.onTheObjectPage.checkPart(4, "", "Inactive");
 						Then.onTheObjectPage.checkPart(5, "", "Inactive");
+
+						// switch to product 2, create row 3, keep it transient,
+						// switch products back and forth and delete it
+						When.onTheListReport.selectProduct(3);
+						When.onTheObjectPage.enterPartId(3, "222", false);
+						Then.onTheObjectPage.checkPart(3, "222", "Transient");
+						Then.onTheObjectPage.checkPart(4, "", "Inactive");
+						Then.onTheObjectPage.checkPart(5, "", "Inactive");
+						Then.onTheObjectPage.checkPartsLength(6);
+						When.onTheListReport.selectProduct(2);
+						When.onTheListReport.selectProduct(3);
+						Then.onTheObjectPage.checkPart(3, "222", "Transient");
+						Then.onTheObjectPage.checkPart(4, "", "Inactive");
+						Then.onTheObjectPage.checkPart(5, "", "Inactive");
+						When.onTheObjectPage.pressDeletePartButton(3);
+						When.onTheObjectPage.confirmDeletion();
+						Then.onTheObjectPage.checkPartsLength(5);
+						Then.onTheObjectPage.checkPart(3, "", "Inactive");
+						Then.onTheObjectPage.checkPart(4, "", "Inactive");
 					} else {
 						// activate row 6
 						When.onTheObjectPage.enterPartId(5, "101", bSubmitModeAPI);

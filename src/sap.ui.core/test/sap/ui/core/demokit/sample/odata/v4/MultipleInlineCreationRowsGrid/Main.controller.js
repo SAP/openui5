@@ -276,14 +276,12 @@ sap.ui.define([
 		setPartsContext : function (oContext) {
 			var oBinding = this.getView().byId("parts").getBinding("rows");
 
-			this.deleteInactiveRows(oBinding);
 			this.getView().byId("parts").setBindingContext(oContext);
 			this.byId("partsTitle").setBindingContext(
 				oContext ? oBinding.getHeaderContext() : null,
 				"headerContext1"
 			);
 			if (oContext) {
-				this.createInactiveParts(iEmptyRowCount);
 				this.oUIModel.setProperty("/sLayout", LayoutType.TwoColumnsMidExpanded);
 			} else {
 				this.oUIModel.setProperty("/sLayout", LayoutType.OneColumn);
