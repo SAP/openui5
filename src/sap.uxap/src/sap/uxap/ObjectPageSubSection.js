@@ -511,7 +511,8 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype._unobserveBlocks = function() {
-		this.getBlocks().forEach(function (oBlock) {
+		var aAllBlocks = this.getBlocks().concat(this.getMoreBlocks());
+		aAllBlocks.forEach(function (oBlock) {
 			oBlock && this._oBlocksObserver.unobserve(oBlock, {
 				properties: ["visible"]
 			});
@@ -790,13 +791,16 @@ sap.ui.define([
 	 ************************************************************************************/
 
 	ObjectPageSubSection.prototype._setAggregationProxy = function () {
+		var aAggregation;
 		if (this._bRenderedFirstTime) {
 			return;
 		}
 
 		//empty real aggregations and feed internal ones at first rendering only
 		jQuery.each(this._aAggregationProxy, jQuery.proxy(function (sAggregationName, aValue) {
-			this._setAggregation(sAggregationName, this.removeAllAggregation(sAggregationName, true), true);
+			aAggregation = this.removeAllAggregation(sAggregationName, true);
+			aAggregation.forEach(this._onAddBlock, this);
+			this._setAggregation(sAggregationName, aAggregation, true);
 		}, this));
 
 		this._bRenderedFirstTime = true;
@@ -841,6 +845,7 @@ sap.ui.define([
 		} else if (this.hasProxy(sAggregationName)) {
 			aAggregation = this._getAggregation(sAggregationName);
 			aAggregation.push(oObject);
+			this._onAddBlock(oObject);
 			this._setAggregation(sAggregationName, aAggregation, bSuppressInvalidate);
 
 			if (oObject instanceof BlockBase || oObject instanceof ObjectPageLazyLoader) {
@@ -870,26 +875,16 @@ sap.ui.define([
 		return this.addAggregation("blocks", oObject);
 	};
 
-	ObjectPageSubSection.prototype.addBlock = function (oBlock) {
+	ObjectPageSubSection.prototype._onAddBlock = function (oBlock) {
 		oBlock && this._oBlocksObserver.observe(oBlock, {
 			properties: ["visible"]
 		});
-
-		return this.addAggregation("blocks", oBlock);
 	};
 
-	ObjectPageSubSection.prototype.removeBlock = function (oBlock) {
+	ObjectPageSubSection.prototype._onRemoveBlock = function (oBlock) {
 		oBlock && this._oBlocksObserver.unobserve(oBlock, {
 			properties: ["visible"]
 		});
-
-		return this.removeAggregation("blocks", oBlock);
-	};
-
-	ObjectPageSubSection.prototype.removeAllBlocks = function () {
-		this._unobserveBlocks();
-
-		return this.removeAllAggregation("blocks");
 	};
 
 	/**
@@ -913,6 +908,7 @@ sap.ui.define([
 
 		if (this.hasProxy(sAggregationName)) {
 			aInternalAggregation = this._getAggregation(sAggregationName);
+			this._unobserveBlocks();
 			this._setAggregation(sAggregationName, [], bSuppressInvalidate);
 			return aInternalAggregation.slice();
 		}
@@ -928,6 +924,7 @@ sap.ui.define([
 			aInternalAggregation.forEach(function (oObjectCandidate, iIndex) {
 				if (oObjectCandidate.getId() === oObject.getId()) {
 					aInternalAggregation.splice(iIndex, 1);
+					this._onRemoveBlock(oObject);
 					this._setAggregation(sAggregationName, aInternalAggregation);
 					bRemoved = true;
 				}
