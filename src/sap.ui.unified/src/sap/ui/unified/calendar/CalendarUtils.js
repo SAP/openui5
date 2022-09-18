@@ -18,10 +18,9 @@ sap.ui.define([
 	'sap/ui/core/CalendarType',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	'sap/ui/core/format/TimezoneUtil',
 	"sap/ui/core/Configuration"
 ],
-	function(UniversalDate, CalendarDate, CalendarType, Locale, LocaleData, TimezoneUtil, Configuration) {
+	function(UniversalDate, CalendarDate, CalendarType, Locale, LocaleData, Configuration) {
 		"use strict";
 
 		// Static class
@@ -722,22 +721,6 @@ sap.ui.define([
 			var iDay = oCalDate.getDay();
 
 			return iDay === oLocaleData.getWeekendStart() || iDay === oLocaleData.getWeekendEnd();
-		};
-
-		/**
-		 * Converts a JS Date object as if the machine was in the provided timezone.
-		 * @param {object} oDate JS Date object
-		 * @param {string} sTimezone IANA timezone key
-		 * @returns {object} The corresponding JS Date object as if the machine was in the provided timezone
-		 * @private
-		 */
-		CalendarUtils._convertToTimezone = function(oDate, sTimezone) {
-			var oNewDate = new Date(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(), oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds());
-
-			oNewDate.setUTCFullYear(oDate.getUTCFullYear());
-			oNewDate = TimezoneUtil.convertToTimezone(oNewDate, sTimezone);
-
-			return oNewDate;
 		};
 
 		return CalendarUtils;

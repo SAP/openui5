@@ -7,8 +7,6 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/Device',
 	"sap/ui/core/Element",
-	"sap/ui/core/format/TimezoneUtil",
-	"sap/ui/core/format/DateFormat",
 	'./InputBase',
 	'./DateTimeField',
 	'./Button',
@@ -32,6 +30,8 @@ sap.ui.define([
 	"sap/ui/core/LabelEnablement",
 	"sap/ui/unified/library",
 	"sap/ui/core/Configuration",
+	"sap/ui/unified/calendar/CalendarUtils",
+    'sap/ui/core/date/UI5Date',
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/dom/jquery/cursorPos"
 ],
@@ -39,8 +39,6 @@ sap.ui.define([
 		jQuery,
 		Device,
 		Element,
-		TimezoneUtil,
-		DateFormat,
 		InputBase,
 		DateTimeField,
 		Button,
@@ -63,6 +61,8 @@ sap.ui.define([
 		LabelEnablement,
 		unifiedLibrary,
 		Configuration,
+		CalendarUtils,
+        UI5Date,
 		CalendarWeekNumbering
 	) {
 	"use strict";
@@ -366,9 +366,9 @@ sap.ui.define([
 
 		this._bValid = true;
 
-		this._oMinDate = new Date(1, 0, 1); // set the date to minimum possible for that day
+		this._oMinDate = UI5Date.getInstance(1, 0, 1); // set the date to minimum possible for that day
 		this._oMinDate.setFullYear(1); // otherwise year 1 will be converted to year 1901
-		this._oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 999); // set the date for the maximum possible for that day
+		this._oMaxDate = UI5Date.getInstance(9999, 11, 31, 23, 59, 59, 999); // set the date for the maximum possible for that day
 
 		var oIcon = this.addEndIcon({
 			id: this.getId() + "-icon",
@@ -705,7 +705,7 @@ sap.ui.define([
 				throw new Error("Date must be between 0001-01-01 and 9999-12-31; " + this);
 			}
 
-			this._oMinDate = new Date(oDate.getTime());
+			this._oMinDate = UI5Date.getInstance(oDate.getTime());
 			var oDateValue = this.getDateValue();
 			if (oDateValue && oDateValue.getTime() < oDate.getTime()) {
 				this._bValid = false;
@@ -713,7 +713,7 @@ sap.ui.define([
 				Log.warning("DateValue not in valid date range", this);
 			}
 		} else {
-			this._oMinDate = new Date(1, 0, 1);
+			this._oMinDate = UI5Date.getInstance(1, 0, 1);
 			this._oMinDate.setFullYear(1); // otherwise year 1 will be converted to year 1901
 		}
 
@@ -751,7 +751,7 @@ sap.ui.define([
 				throw new Error("Date must be between 0001-01-01 and 9999-12-31; " + this);
 			}
 
-			this._oMaxDate = new Date(oDate.getTime());
+			this._oMaxDate = UI5Date.getInstance(oDate.getTime());
 			var oDateValue = this.getDateValue();
 			if (oDateValue && oDateValue.getTime() > oDate.getTime()) {
 				this._bValid = false;
@@ -759,7 +759,7 @@ sap.ui.define([
 				Log.warning("DateValue not in valid date", this);
 			}
 		} else {
-			this._oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 999);
+			this._oMaxDate = UI5Date.getInstance(9999, 11, 31, 23, 59, 59, 999);
 		}
 
 		// re-render because order of parameter changes not clear -> check onBeforeRendering
@@ -785,10 +785,10 @@ sap.ui.define([
 
 		if (this._oMinDate.getTime() > this._oMaxDate.getTime()) {
 			Log.warning("minDate > MaxDate -> dates switched", this);
-			var oMaxDate = new Date(this._oMinDate.getTime());
-			var oMinDate = new Date(this._oMaxDate.getTime());
-			this._oMinDate = new Date(oMinDate.getTime());
-			this._oMaxDate = new Date(oMaxDate.getTime());
+			var oMaxDate = UI5Date.getInstance(this._oMinDate.getTime());
+			var oMinDate = UI5Date.getInstance(this._oMaxDate.getTime());
+			this._oMinDate = UI5Date.getInstance(oMinDate.getTime());
+			this._oMaxDate = UI5Date.getInstance(oMaxDate.getTime());
 			this.setProperty("minDate", oMinDate, true);
 			this.setProperty("maxDate", oMaxDate, true);
 			if (this._getCalendar()) {
@@ -1071,7 +1071,7 @@ sap.ui.define([
 				this._getCalendar().focusDate(oDate);
 				var oStartDate = this._oDateRange.getStartDate();
 				if ((!oStartDate && oDate) || (oStartDate && oDate && oStartDate.getTime() != oDate.getTime())) {
-					this._oDateRange.setStartDate(new Date(oDate.getTime()));
+					this._oDateRange.setStartDate(UI5Date.getInstance(oDate.getTime()));
 				} else if (oStartDate && !oDate) {
 					this._oDateRange.setStartDate(undefined);
 				}
@@ -1350,32 +1350,19 @@ sap.ui.define([
 	};
 
 	DatePicker.prototype._fillDateRange = function(){
-		var sFormattedDate;
 		var oDate = this.getDateValue();
 
 		if (oDate &&
 			oDate.getTime() >= this._oMinDate.getTime() &&
 			oDate.getTime() <= this._oMaxDate.getTime()) {
 
-			sFormattedDate = this._getPickerParser().format(
-				oDate,
-				this._getTimezone(true)
-			);
-			oDate = this._getPickerParser().parse(sFormattedDate, TimezoneUtil.getLocalTimezone())[0];
-
-			this._getCalendar().focusDate(new Date(oDate.getTime()));
+			this._getCalendar().focusDate(UI5Date.getInstance(oDate.getTime()));
 			if (!this._oDateRange.getStartDate() || this._oDateRange.getStartDate().getTime() != oDate.getTime()) {
-				this._oDateRange.setStartDate(new Date(oDate.getTime()));
+				this._oDateRange.setStartDate(UI5Date.getInstance(oDate.getTime()));
 			}
 		} else {
 			var oInitialFocusedDateValue = this.getInitialFocusedDateValue();
-			var oFocusDate = oInitialFocusedDateValue ? oInitialFocusedDateValue : new Date();
-
-			sFormattedDate = this._getPickerParser().format(
-				oFocusDate,
-				this._getTimezone(true)
-			);
-			oFocusDate = this._getPickerParser().parse(sFormattedDate, TimezoneUtil.getLocalTimezone())[0];
+			var oFocusDate = oInitialFocusedDateValue ? oInitialFocusedDateValue : UI5Date.getInstance();
 
 			if (oFocusDate.getTime() < this._oMinDate.getTime()) {
 				oFocusDate = this._oMinDate;
@@ -1416,16 +1403,9 @@ sap.ui.define([
 			oDate = this._getSelectedDate(),
 			sValue = "";
 
-		var sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
-		var oParts = this._getPickerParser().parse(
-			sFormattedDate,
-			this._getTimezone(true)
-		);
-		oDate = oParts && oParts[0];
-
 		// do not use this.onChange() because output pattern will change date (e.g. only last 2 number of year -> 1966 -> 2066 )
 		if (!deepEqual(oDate, oDateOld)) {
-			this.setDateValue(new Date(oDate.getTime()));
+			this.setDateValue(UI5Date.getInstance(oDate.getTime()));
 			// compare Dates because value can be the same if only 2 digits for year
 			sValue = this.getValue();
 			this.fireChangeEvent(sValue, {valid: true});
@@ -1550,8 +1530,8 @@ sap.ui.define([
 				sCalendarType = this.getDisplayFormatType();
 			}
 
-			var oDate = UniversalDate.getInstance(new Date(oOldDate.getTime()), sCalendarType);
-			oOldDate = UniversalDate.getInstance(new Date(oOldDate.getTime()), sCalendarType);
+			var oDate = UniversalDate.getInstance(UI5Date.getInstance(oOldDate.getTime()), sCalendarType);
+			oOldDate = UniversalDate.getInstance(UI5Date.getInstance(oOldDate.getTime()), sCalendarType);
 
 			switch (sUnit) {
 			case "day":
@@ -1587,7 +1567,7 @@ sap.ui.define([
 			}
 
 			if (!deepEqual(this.getDateValue(), oDate.getJSDate())) {
-				this.setDateValue(new Date(oDate.getTime()));
+				this.setDateValue(UI5Date.getInstance(oDate.getTime()));
 
 				this._curpos = iCurpos;
 				this._$input.cursorPos(this._curpos);
@@ -1674,14 +1654,6 @@ sap.ui.define([
 		}
 
 	}
-
-	DatePicker.prototype._getPickerParser = function() {
-		if (!this._calendarParser) {
-			this._calendarParser = DateFormat.getDateTimeWithTimezoneInstance({ showTimezone: false });
-		}
-
-		return this._calendarParser;
-	};
 
 	/**
 	 * Fired when the input operation has finished and the value has changed.

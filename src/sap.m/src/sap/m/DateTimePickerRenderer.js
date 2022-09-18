@@ -1,8 +1,20 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer', './InputBaseRenderer', 'sap/ui/core/library'],
-	function(Renderer, DatePickerRenderer, InputBaseRenderer, coreLibrary) {
+sap.ui.define([
+	'sap/ui/core/Renderer',
+	'./DatePickerRenderer',
+	'./InputBaseRenderer',
+	'sap/ui/core/library',
+	'sap/ui/core/date/UI5Date'
+],
+	function(
+		Renderer,
+		DatePickerRenderer,
+		InputBaseRenderer,
+		coreLibrary,
+		UI5Date
+) {
 	"use strict";
 
 	/**
@@ -59,9 +71,7 @@ sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer', './InputBaseRende
 		oRm.openEnd();
 
 		// try to choose the date that is the longest when formatted
-		oRm.text(oControl._getFormatter(true).format(
-			new Date(Date.UTC(2000, 10, 20, 10, 10, 10)),
-			"UTC"));
+		oRm.text(oControl._getFormatter(true).format(UI5Date.getInstance(2000, 10, 20, 10, 10, 10)));
 		oRm.close("span");
 	};
 

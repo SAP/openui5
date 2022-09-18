@@ -5,9 +5,10 @@
 // Provides class sap.ui.unified.calendar.CalendarDate
 sap.ui.define([
 	'sap/ui/base/Object',
-	'sap/ui/core/date/UniversalDate'
+	'sap/ui/core/date/UniversalDate',
+	'sap/ui/core/date/UI5Date'
 ],
-	function(BaseObject, UniversalDate) {
+	function(BaseObject, UniversalDate, UI5Date) {
 		"use strict";
 
 		/*
@@ -55,7 +56,7 @@ sap.ui.define([
 
 				switch (aArgs.length) {
 					case 0: // defaults to the current date
-						oNow = new Date();
+						oNow = UI5Date.getInstance();
 						return CalendarDate.call(this, oNow.getFullYear(), oNow.getMonth(), oNow.getDate());
 
 					case 1: // CalendarDate
@@ -66,7 +67,7 @@ sap.ui.define([
 						sCalendarType = aArgs[1] ? aArgs[1] : aArgs[0]._oUDate.sCalendarType;
 						//Use source.valueOf() (returns the same point of time regardless calendar type) instead of
 						//source's getters to avoid non-gregorian Year, Month and Date may be used to construct a Gregorian date
-						oJSDate = new Date(aArgs[0].valueOf());
+						oJSDate = UI5Date.getInstance(aArgs[0].valueOf());
 
 						//Make this date really local. Now getters are safe.
 						oJSDate.setFullYear(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate());
@@ -81,7 +82,7 @@ sap.ui.define([
 						checkNumericLike(aArgs[1], "Invalid month: " + aArgs[1]);
 						checkNumericLike(aArgs[2], "Invalid date: " + aArgs[2]);
 
-						oJSDate = new Date(0,0,1);
+						oJSDate = UI5Date.getInstance(0,0,1);
 						oJSDate.setFullYear(aArgs[0], aArgs[1], aArgs[2]); // 2 digits year is not supported. If so, it is considered as full year as well.
 
 						if (aArgs[3]) {
@@ -256,7 +257,7 @@ sap.ui.define([
 		CalendarDate.prototype.toLocalJSDate = function () {
 			// Use this._oUDate.getTime()(returns the same point of time regardless calendar type)  instead of
 			// this._oUDate's getters to avoid non-gregorian Year, Month and Date to be used to construct a Gregorian date
-			var oLocalDate = new Date(this._oUDate.getTime());
+			var oLocalDate = UI5Date.getInstance(this._oUDate.getTime());
 
 			//Make this date really local. Now getters are safe.
 			oLocalDate.setFullYear(oLocalDate.getUTCFullYear(), oLocalDate.getUTCMonth(), oLocalDate.getUTCDate());
@@ -273,7 +274,7 @@ sap.ui.define([
 		CalendarDate.prototype.toUTCJSDate = function () {
 			// Use this._oUDate.getTime()(returns the same point of time regardless calendar type)  instead of
 			// this._oUDate's getters to avoid non-gregorian Year, Month and Date to be used to construct a Gregorian date
-			var oUTCDate = new Date(this._oUDate.getTime());
+			var oUTCDate = UI5Date.getInstance(this._oUDate.getTime());
 			oUTCDate.setUTCHours(0, 0, 0, 0);
 
 			return oUTCDate;
@@ -344,7 +345,7 @@ sap.ui.define([
 		 * @returns {Date} JavaScript date created from the date object, but this time considered as UTC date information.
 		 */
 		function createUTCDate(oDate) {
-			var oUTCDate = new Date(Date.UTC(0, 0, 1));
+			var oUTCDate = UI5Date.getInstance(Date.UTC(0, 0, 1));
 
 			oUTCDate.setUTCFullYear(oDate.getFullYear(), oDate.getMonth(), oDate.getDate());
 

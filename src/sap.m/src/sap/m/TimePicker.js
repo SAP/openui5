@@ -19,7 +19,6 @@ sap.ui.define([
 	'./MaskEnabler',
 	'sap/ui/Device',
 	'sap/ui/core/format/DateFormat',
-	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/Locale',
 	'sap/m/library',
 	'sap/ui/core/LocaleData',
@@ -29,7 +28,8 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	'./Button',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/date/UI5Date"
 ],
 function(
 	InputBase,
@@ -47,7 +47,6 @@ function(
 	MaskEnabler,
 	Device,
 	DateFormat,
-	TimezoneUtil,
 	Locale,
 	library,
 	LocaleData,
@@ -57,7 +56,8 @@ function(
 	InvisibleText,
 	Button,
 	jQuery,
-	Configuration
+	Configuration,
+	UI5Date
 ) {
 		"use strict";
 
@@ -610,24 +610,17 @@ function(
 			/* Set the timevalues of the picker here to prevent user from seeing it */
 			var oClocks = this._getClocks(),
 				oDateValue = this.getDateValue(),
-				iDateValueMilliseconds = oDateValue ? oDateValue.getMilliseconds() : 0,
 				sFormat = this._getFormatter(true).oFormatOptions.pattern,
 				iIndexOfHH = sFormat.indexOf("HH"),
 				iIndexOfH = sFormat.indexOf("H"),
 				sInputValue = TimePickerInternals._isHoursValue24(this._$input.val(), iIndexOfHH, iIndexOfH) ?
-					TimePickerInternals._replace24HoursWithZero(this._$input.val(), iIndexOfHH, iIndexOfH) : this._$input.val(),
-				sFormattedDate;
+					TimePickerInternals._replace24HoursWithZero(this._$input.val(), iIndexOfHH, iIndexOfH) : this._$input.val();
 
 			var oCurrentDateValue = this._getFormatter(true).parse(sInputValue) || oDateValue;
 			if (oCurrentDateValue) {
 				var sDisplayFormattedValue = this._getFormatter(true).format(oCurrentDateValue);
 				oClocks.setValue(sDisplayFormattedValue);
 			}
-
-			sFormattedDate = this._getPickerParser().format(oDateValue || new Date(),
-				Configuration.getTimezone());
-			oDateValue = this._getPickerParser().parse(sFormattedDate, TimezoneUtil.getLocalTimezone())[ 0 ];
-			oDateValue.setMilliseconds(iDateValueMilliseconds);
 
 			if (this._shouldSetInitialFocusedDateValue()) {
 				oDateValue = this.getInitialFocusedDateValue() || oDateValue;
@@ -1658,11 +1651,7 @@ function(
 		 */
 		TimePicker.prototype._handleOkPress = function(oEvent) {
 			var oDate = this._getClocks().getTimeValues(),
-				sValue,
-				sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
-
-			oDate = this._getPickerParser()
-				.parse(sFormattedDate, Configuration.getTimezone())[0];
+				sValue;
 
 			this._isClockPicker = true;
 			this._isNumericPicker = false;
@@ -1692,11 +1681,7 @@ function(
 		 */
 		 TimePicker.prototype._handleNumericOkPress = function(oEvent) {
 			var oDate = this._getInputs().getTimeValues(),
-				sValue,
-				sFormattedDate = this._getPickerParser().format(oDate, TimezoneUtil.getLocalTimezone());
-
-			oDate = this._getPickerParser()
-				.parse(sFormattedDate, Configuration.getTimezone())[0];
+				sValue;
 
 			this._isClockPicker = false;
 			this._isNumericPicker = true;
@@ -1813,7 +1798,7 @@ function(
 
 			if (oOldDate && this.getEditable() && this.getEnabled()) {
 				// use a new date object to have a real updated property
-				oDate = new Date(oOldDate.getTime());
+				oDate = UI5Date.getInstance(oOldDate.getTime());
 
 				switch (sUnit) {
 					case TimeParts.Hour:
@@ -1835,7 +1820,7 @@ function(
 				if (iNumber < 0 && oDate.getTime() - oOldDate.getTime() !== iNumber * iMsOffset) { //hour stays the same
 					// so decrease it with the milliseconds offset
 					// and let the hours adjust automatically
-					oDate = new Date(oOldDate.getTime() + iNumber * iMsOffset);
+					oDate = UI5Date.getInstance(oOldDate.getTime() + iNumber * iMsOffset);
 				}
 
 				this.setDateValue(oDate);
@@ -2317,14 +2302,6 @@ function(
 			this._bCheckForLiveChange = true;
 			this.updateDomValue(this._oTempValue.toString());
 			this._setCursorPosition(Math.max(this._iUserInputStartPosition, iStart));
-		};
-
-		TimePicker.prototype._getPickerParser = function() {
-			if (!this._clocksParser) {
-				this._clocksParser = DateFormat.getDateTimeWithTimezoneInstance({ showTimezone: false });
-			}
-
-			return this._clocksParser;
 		};
 
 		/**
