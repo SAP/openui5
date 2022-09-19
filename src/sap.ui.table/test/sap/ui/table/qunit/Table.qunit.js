@@ -3040,7 +3040,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Initial rendering with OData binding", function(assert) {
+	QUnit.skip("Initial rendering with OData binding", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
 		var oMockServer = startMockServer();
