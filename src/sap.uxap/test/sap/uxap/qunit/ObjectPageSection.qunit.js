@@ -991,4 +991,12 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 		assert.equal(oSpy.callCount, 1, "parent section is invalidated");
 	});
 
+	QUnit.test("destroyed section does not recreate the grid", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oSection = oObjectPage.getSections()[0];
+
+		oSection.destroy();
+
+		assert.equal(oSection._getGrid(), null, "destroyed section does not recreate the grid");
+	});
 });
