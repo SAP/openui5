@@ -376,8 +376,8 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 		rm.openEnd();
 
 		if (!oControl.shouldRenderItems()) {
-			var vNoData = oControl.getNoData();
-			if (vNoData && typeof vNoData !== "string" && vNoData.isA("sap.m.IllustratedMessage")) {
+			if (oControl.getAggregation("_noColumnsMessage")) {
+				// If _noColumnsMessage is set, there is for sure an IllustratedMessage used for no data visualization
 				rm.renderControl(oControl.getAggregation("_noColumnsMessage"));
 			} else {
 				rm.text(Core.getLibraryResourceBundle("sap.m").getText("TABLE_NO_COLUMNS"));
