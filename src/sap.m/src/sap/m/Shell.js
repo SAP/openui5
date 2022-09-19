@@ -92,6 +92,7 @@ sap.ui.define([
 
 					/**
 					 * Determines whether the background image (if configured) should be proportionally stretched to cover the whole Shell (false, default) or whether it should be tiled (true).
+					 * Note: the image will not be displayed when the <code>sap.m.Shell</code> content is fully overlapping the <code>sap.m.Shell</code> background (e.g. when "appWidthLimited" is set to "false").
 					 * @since 1.11.2
 					 */
 					backgroundRepeat : {type : "boolean", group : "Appearance", defaultValue : false},
