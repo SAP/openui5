@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"./Actions",
 	"./Assertions",
-	"../p13n/Actions"
+	"../p13n/Actions",
+	"../p13n/Assertions"
 ], function(
 	Opa5,
 	filterBarActions,
 	filterBarAssertions,
-	p13nActions
+	p13nActions,
+	p13nAssertions
 ) {
 	"use strict";
 
@@ -194,6 +196,11 @@ sap.ui.define([
 				 */
 				iShouldSeeTheAdaptFiltersButton: function() {
 					return filterBarAssertions.iShouldSeeTheAdaptFiltersButton.apply(this, arguments);
+				},
+
+
+				iCheckAvailableFilters: function(oControl, aFilters) {
+					return p13nAssertions.iCheckAvailableFilters.call(this, oControl, aFilters, filterBarActions.iOpenThePersonalizationDialog);
 				}
 			}
 		}

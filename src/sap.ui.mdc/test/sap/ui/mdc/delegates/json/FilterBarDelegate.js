@@ -7,8 +7,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/FilterBarDelegate", 'sap/base/util/merge', 'sap/ui/mdc/util/IdentifierUtil'
-	], function (FilterBarDelegate, merge, IdentifierUtil) {
+	"sap/ui/mdc/FilterBarDelegate", 'sap/base/util/merge', 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/core/util/reflection/JsControlTreeModifier', 	"sap/ui/fl/Utils"
+	], function (FilterBarDelegate, merge, IdentifierUtil, JsControlTreeModifier, FlUtils) {
 	"use strict";
 
 	/**
@@ -25,7 +25,10 @@ sap.ui.define([
 
 
 	JSONFilterBarDelegate._createFilterField = function(oProperty, oFilterBar, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
+		var oModifier = mPropertyBag ? mPropertyBag.modifier : JsControlTreeModifier;
+		var oAppComponent = mPropertyBag ? mPropertyBag.appComponent : FlUtils.getAppComponentForControl(oFilterBar);
+		var oView = (mPropertyBag && mPropertyBag.view ) ? mPropertyBag.view : FlUtils.getViewForControl(oFilterBar);
+		var sViewId = mPropertyBag ? mPropertyBag.viewId : null;
 		var sName = oProperty.path || oProperty.name;
 		var oSelector = {};
 
@@ -34,11 +37,17 @@ sap.ui.define([
 		} else {
 			oSelector.id = oFilterBar.id;
 		}
-		var sSelectorId = oModifier.getControlIdBySelector(oSelector, mPropertyBag.appComponent);
+		var sSelectorId = oModifier.getControlIdBySelector(oSelector, oAppComponent);
 		var sId = sSelectorId +  "--filter--" + IdentifierUtil.replace(sName);
 		var oFilterField;
 
-		return oModifier.createControl("sap.ui.mdc.FilterField", mPropertyBag.appComponent, mPropertyBag.view, sId, {
+		var oExistingFilterField = sap.ui.getCore().byId(sId);
+
+		if (oExistingFilterField) {
+			return Promise.resolve(oExistingFilterField);
+		}
+
+		return oModifier.createControl("sap.ui.mdc.FilterField", oAppComponent, oView, sId, {
 			dataType: oProperty.typeConfig.className,
 			conditions: "{$filters>/conditions/" + sName + '}',
 			required: oProperty.required,
@@ -50,10 +59,10 @@ sap.ui.define([
 			oFilterField = oCreatedFilterField;
 			if (oProperty.fieldHelp) {
 				var sFieldHelp = oProperty.fieldHelp;
-				if (mPropertyBag.view.getId) {
-					sFieldHelp = mPropertyBag.view.getId() + "--" + oProperty.fieldHelp;
+				if (!sViewId) { // viewId is only set during xmlTree processing
+					sFieldHelp = oView.createId(oProperty.fieldHelp);
 				} else {
-					sFieldHelp = mPropertyBag.viewId + "--" + oProperty.fieldHelp;
+					sFieldHelp = sViewId + "--" + oProperty.fieldHelp;
 				}
 				oModifier.setAssociation(oFilterField, "fieldHelp", sFieldHelp);
 			}
@@ -104,17 +113,8 @@ sap.ui.define([
 		});
 	};
 
-	/**
-	 * Can be used to trigger any necessary follow-up steps on removal of filter items. The returned boolean value inside the Promise can be used to
-	 * prevent default follow-up behaviour of Flex.
-	 *
-	 * @param {sap.ui.mdc.FilterField} oFilterField The mdc.FilterField that was removed
-	 * @param {sap.ui.mdc.FilterBar} oFilterBar - the instance of filter bar
-	 * @param {Object} mPropertyBag Instance of property bag from Flex change API
-	 * @returns {Promise} Promise that resolves with true/false to allow/prevent default behavour of the change
-	 */
-	JSONFilterBarDelegate.removeItem =  function(oFilterField, oFilterBar, mPropertyBag) {
-		// return true within the Promise for default behaviour
+
+	JSONFilterBarDelegate.removeItem =  function(sPropertyName, oFilterBar, mPropertyBag) {
 		return Promise.resolve(true);
 	};
 
