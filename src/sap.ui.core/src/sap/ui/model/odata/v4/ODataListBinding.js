@@ -171,12 +171,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @since 1.98.0
 	 */
 	ODataListBinding.prototype.attachCreateActivate = function (fnFunction, oListener) {
-		this.attachEvent("createActivate", fnFunction, oListener);
+		return this.attachEvent("createActivate", fnFunction, oListener);
 	};
 
 	/**
@@ -184,12 +185,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @since 1.98.0
 	 */
 	ODataListBinding.prototype.detachCreateActivate = function (fnFunction, oListener) {
-		this.detachEvent("createActivate", fnFunction, oListener);
+		return this.detachEvent("createActivate", fnFunction, oListener);
 	};
 
 	/**
@@ -197,12 +199,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @since 1.66.0
 	 */
 	ODataListBinding.prototype.attachCreateCompleted = function (fnFunction, oListener) {
-		this.attachEvent("createCompleted", fnFunction, oListener);
+		return this.attachEvent("createCompleted", fnFunction, oListener);
 	};
 
 	/**
@@ -211,12 +214,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @since 1.66.0
 	 */
 	ODataListBinding.prototype.detachCreateCompleted = function (fnFunction, oListener) {
-		this.detachEvent("createCompleted", fnFunction, oListener);
+		return this.detachEvent("createCompleted", fnFunction, oListener);
 	};
 
 	/**
@@ -224,12 +228,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @since 1.66.0
 	 */
 	ODataListBinding.prototype.attachCreateSent = function (fnFunction, oListener) {
-		this.attachEvent("createSent", fnFunction, oListener);
+		return this.attachEvent("createSent", fnFunction, oListener);
 	};
 
 	/**
@@ -238,12 +243,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @since 1.66.0
 	 */
 	ODataListBinding.prototype.detachCreateSent = function (fnFunction, oListener) {
-		this.detachEvent("createSent", fnFunction, oListener);
+		return this.detachEvent("createSent", fnFunction, oListener);
 	};
 
 	/**

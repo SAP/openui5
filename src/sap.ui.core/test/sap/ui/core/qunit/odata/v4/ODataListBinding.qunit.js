@@ -7674,62 +7674,62 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("attachCreateActivate/detachCreateActivate", function () {
+	QUnit.test("attachCreateActivate/detachCreateActivate", function (assert) {
 		var oBinding = this.bindList("/Set");
 
 		this.mock(oBinding).expects("attachEvent")
-			.withExactArgs("createActivate", "~function~", "~listener~");
+			.withExactArgs("createActivate", "~function~", "~listener~")
+			.returns(oBinding);
 
 		// code under test
-		oBinding.attachCreateActivate("~function~", "~listener~");
+		assert.strictEqual(oBinding.attachCreateActivate("~function~", "~listener~"), oBinding);
 
 		this.mock(oBinding).expects("detachEvent")
-			.withExactArgs("createActivate", "~function~", "~listener~");
+			.withExactArgs("createActivate", "~function~", "~listener~")
+			.returns(oBinding);
 
 		// code under test
-		oBinding.detachCreateActivate("~function~", "~listener~");
+		assert.strictEqual(oBinding.detachCreateActivate("~function~", "~listener~"), oBinding);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("attachCreateCompleted/detachCreateCompleted", function () {
+	QUnit.test("attachCreateCompleted/detachCreateCompleted", function (assert) {
 		var oBinding = this.bindList("/Set"),
-			oBindingMock = this.mock(oBinding),
-			fnFunction = {},
-			oListener = {};
+			oBindingMock = this.mock(oBinding);
 
 		oBindingMock.expects("attachEvent")
-			.withExactArgs("createCompleted", sinon.match.same(fnFunction),
-				sinon.match.same(oListener));
+			.withExactArgs("createCompleted", "~function~", "~listener~")
+			.returns(oBinding);
 
 		// code under test
-		oBinding.attachCreateCompleted(fnFunction, oListener);
+		assert.strictEqual(oBinding.attachCreateCompleted("~function~", "~listener~"), oBinding);
 
 		oBindingMock.expects("detachEvent")
-			.withExactArgs("createCompleted", sinon.match.same(fnFunction),
-				sinon.match.same(oListener));
+			.withExactArgs("createCompleted", "~function~", "~listener~")
+			.returns(oBinding);
 
 		// code under test
-		oBinding.detachCreateCompleted(fnFunction, oListener);
+		assert.strictEqual(oBinding.detachCreateCompleted("~function~", "~listener~"), oBinding);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("attachCreateSent/detachCreateSent", function () {
+	QUnit.test("attachCreateSent/detachCreateSent", function (assert) {
 		var oBinding = this.bindList("/Set"),
-			oBindingMock = this.mock(oBinding),
-			fnFunction = {},
-			oListener = {};
+			oBindingMock = this.mock(oBinding);
 
 		oBindingMock.expects("attachEvent")
-			.withExactArgs("createSent", sinon.match.same(fnFunction), sinon.match.same(oListener));
+			.withExactArgs("createSent", "~function~", "~listener~")
+			.returns(oBinding);
 
 		// code under test
-		oBinding.attachCreateSent(fnFunction, oListener);
+		assert.strictEqual(oBinding.attachCreateSent("~function~", "~listener~"), oBinding);
 
 		oBindingMock.expects("detachEvent")
-			.withExactArgs("createSent", sinon.match.same(fnFunction), sinon.match.same(oListener));
+			.withExactArgs("createSent", "~function~", "~listener~")
+			.returns(oBinding);
 
 		// code under test
-		oBinding.detachCreateSent(fnFunction, oListener);
+		assert.strictEqual(oBinding.detachCreateSent("~function~", "~listener~"), oBinding);
 	});
 
 	//*********************************************************************************************

@@ -52,11 +52,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @since 1.59.0
 	 */
 	ODataParentBinding.prototype.attachPatchCompleted = function (fnFunction, oListener) {
-		this.attachEvent("patchCompleted", fnFunction, oListener);
+		return this.attachEvent("patchCompleted", fnFunction, oListener);
 	};
 
 	/**
@@ -64,11 +66,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @since 1.59.0
 	 */
 	ODataParentBinding.prototype.detachPatchCompleted = function (fnFunction, oListener) {
-		this.detachEvent("patchCompleted", fnFunction, oListener);
+		return this.detachEvent("patchCompleted", fnFunction, oListener);
 	};
 
 	/**
@@ -136,11 +140,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @since 1.59.0
 	 */
 	ODataParentBinding.prototype.attachPatchSent = function (fnFunction, oListener) {
-		this.attachEvent("patchSent", fnFunction, oListener);
+		return this.attachEvent("patchSent", fnFunction, oListener);
 	};
 
 	/**
@@ -148,11 +154,13 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @since 1.59.0
 	 */
 	ODataParentBinding.prototype.detachPatchSent = function (fnFunction, oListener) {
-		this.detachEvent("patchSent", fnFunction, oListener);
+		return this.detachEvent("patchSent", fnFunction, oListener);
 	};
 
 	/**
