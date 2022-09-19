@@ -80,7 +80,7 @@ sap.ui.define([
 				this.setDefaultSampleTheme();
 				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
 
-				this.getOwnerComponent()._sSampleIframeOrigin = ResourcesUtil.getConfig() !== "." ? ResourcesUtil.getConfig() : window.origin;
+				this.getOwnerComponent()._sSampleIframeOrigin = ResourcesUtil.getConfig() !== "." ? ResourcesUtil.getResourceOrigin() : window.origin;
 			},
 
 			/* =========================================================== */

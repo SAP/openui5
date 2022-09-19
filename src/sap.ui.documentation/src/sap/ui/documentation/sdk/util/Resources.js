@@ -43,7 +43,7 @@
 			return self['sap-ui-documentation-config'] && self['sap-ui-documentation-config'].demoKitResourceOrigin || ".";
 		},
 		getResourceOrigin: function() {
-			return this.getConfig().replace("/sapui5", "").replace("/openui5", "");
+			return this.getConfig().replace("/sapui5/", "").replace("/openui5/", "");
 		},
 		_formatPath: function(sPath) {
 			sPath = sPath.replace(/^\.\//, '/');
