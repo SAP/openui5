@@ -29,7 +29,7 @@ sap.ui.define([
 			_Category_ID : null,
 			HasActiveEntity : false,
 			HasDraftEntity : false,
-			IsActiveEntity : true,
+			IsActiveEntity : false,
 			name : null
 		},
 		bPart101Persisted,
@@ -80,7 +80,7 @@ sap.ui.define([
 				"Products(ID=20,IsActiveEntity=false)/_Parts?$count=true&$select=ID,description,quantity&$orderby=quantity&$skip=0&$top=120" : {
 					source : "Product_20_Parts_sorted.json"
 				},
-				"Products(ID=100,IsActiveEntity=true)/_Parts?$count=true&$select=ID,description,quantity&$orderby=quantity&$skip=0&$top=120" : {
+				"Products(ID=100,IsActiveEntity=false)/_Parts?$count=true&$select=ID,description,quantity&$orderby=quantity&$skip=0&$top=120" : {
 					message : {value : []}
 				},
 				"Products(ID=100,IsActiveEntity=false)?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,name" : {
@@ -88,23 +88,8 @@ sap.ui.define([
 				},
 				"POST Products" : [{
 					ifMatch : /"ID":100/,
-					message : {
-						ID : 100,
-						amount : null,
-						categoryID : null,
-						_Category_ID : null,
-						HasActiveEntity : false, // differs from oProduct100
-						HasDraftEntity : false,
-						IsActiveEntity : false,
-						name : null
-					}
+					message : oProduct100
 				}],
-				"POST Products(ID=100,IsActiveEntity=false)/SampleService.draftActivate?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,name" : {
-					message : oProduct100
-				},
-				"POST Products(ID=100,IsActiveEntity=true)/SampleService.draftEdit?$select=HasActiveEntity,HasDraftEntity,ID,IsActiveEntity,amount,name" : {
-					message : oProduct100
-				},
 				"POST Products(ID=10,IsActiveEntity=false)/_Parts" : [{
 					ifMatch : /"ID":99/,
 					message : oPart99

@@ -52,18 +52,8 @@ sap.ui.define([
 				oContext = oBinding.create({}, false, bAtEnd, /*bInactive*/ true);
 				oContext.created().then(function () {
 					oView.setBusy(true);
-
-					return oView.getModel()
-						.bindContext("SampleService.draftActivate(...)", oContext,
-							{$$inheritExpandSelect : true})
-						.execute(undefined, false, false, true);
-				}).then(function (oRVC0) {
-					return oView.getModel().bindContext("SampleService.draftEdit(...)", oRVC0,
-							{$$inheritExpandSelect : true})
-						.execute(undefined, false, false, true);
-				}).then(function (oRVC1) {
-					oProductTable.setSelectedItem(oProductTable.getItems()[oRVC1.getIndex()]);
-					that.setPartsContext(oRVC1);
+					oProductTable.setSelectedItem(oProductTable.getItems()[oContext.getIndex()]);
+					that.setPartsContext(oContext);
 				}).catch(function (oError) {
 					if (!oError.canceled) {
 						throw oError; // unexpected error
@@ -249,7 +239,7 @@ sap.ui.define([
 				oProduct = oProductContext.getObject();
 				if (oProductContext.isInactive()
 					|| oProductContext.isTransient()
-					|| !(oProduct && (oProduct.HasActiveEntity || oProduct.IsActiveEntity))) {
+					|| !oProduct) {
 					this.setPartsContext(null);
 				} else if (oProduct.IsActiveEntity) {
 					this.createAndSetDraft(oProductContext);
