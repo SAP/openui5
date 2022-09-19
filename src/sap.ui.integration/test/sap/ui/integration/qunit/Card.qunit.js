@@ -1655,6 +1655,110 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("header icon when visible property is set to false", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.notOk(this.oCard.getCardHeader().getIconVisible(), "Card Header icon is hidden.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.hiddenHeader"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"data": {
+							"json": {
+								"iconVisible": false
+							}
+						},
+						"title": "Card title",
+						"icon": {
+							"src": "",
+							"visible": "{iconVisible}",
+							"shape": "Circle"
+						}
+					}
+				}
+			});
+		});
+
+
+		QUnit.test("header icon when visible property is not set", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.ok(this.oCard.getCardHeader().getIconVisible(), "Card Header icon is not hidden.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.hiddenHeader"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"title": "Card title",
+						"icon": {
+							"src": "",
+							"shape": "Circle"
+						}
+					}
+				}
+			});
+		});
+
+
+		QUnit.test("hidden header icon if visible property is set to true", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.ok(this.oCard.getCardHeader().getIconVisible(), "Card Header icon is not hidden.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.hiddenHeader"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"data": {
+							"json": {
+								"iconVisible": true
+							}
+						},
+						"title": "Card title",
+						"icon": {
+							"src": "",
+							"visible": "{iconVisible}",
+							"shape": "Circle"
+						}
+					}
+				}
+			});
+		});
+
 		QUnit.module("Numeric Header", {
 			beforeEach: function () {
 				this.oCard = new Card("somecard", {

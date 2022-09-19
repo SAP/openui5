@@ -163,7 +163,8 @@
 		  "title": "{title}",
 		  "text": "{text}",
 		  "icon": {
-			"src": "{icon}"
+			"src": "{icon}",
+			"visible": true
 		  },
 		  "type": "{type}",
 		  "actions": [

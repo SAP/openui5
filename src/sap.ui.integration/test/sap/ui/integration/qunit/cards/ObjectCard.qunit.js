@@ -1243,6 +1243,47 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Icon visible property", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oGroup = this.oCard.getCardContent()._getRootContainer().getItems()[0].getContent()[0],
+				bAvatarVisible = oGroup.getItems()[1].getItems()[0];
+
+			assert.strictEqual(bAvatarVisible.getVisible(), false, "avatar is not visible when visible property is set to false");
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card.icon"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"json": {
+						"iconVisible": false,
+						"title": "Company Details"
+					}
+				},
+				"content": {
+					"groups": [{
+						"title": "{title}",
+						"items": [{
+							"icon": {
+								"src": "sap-icon://error",
+								"visible": "{iconVisible}"
+							}
+						}]
+					}]
+				}
+			}
+		});
+	});
+
 	QUnit.test("Group title is not rendered when missing from manifest", function (assert) {
 		var done = assert.async();
 

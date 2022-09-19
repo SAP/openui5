@@ -273,6 +273,24 @@ function (
 		Core.applyChanges();
 	});
 
+	QUnit.test("Default Header with iconVisibility false", function (assert) {
+		// Arrange
+		var oHeader = new CardHeader({
+			iconSrc: "sap-icon://accept",
+			iconVisible: false
+		});
+
+		// Act
+		oHeader.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(!!oHeader.$().find(".sapFCardHeaderImage").length, false, "Icon is not visible");
+
+		// Clean up
+		oHeader.destroy();
+	});
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("Header", function (assert) {

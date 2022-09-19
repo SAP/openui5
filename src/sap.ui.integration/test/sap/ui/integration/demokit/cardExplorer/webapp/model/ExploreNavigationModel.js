@@ -178,6 +178,17 @@ sap.ui.define([
 									name: 'manifest.json',
 									key: 'manifest.json'
 								}]
+							},
+							{
+								title: 'Icon Visibility',
+								key: 'iconVisibility',
+								files: [
+									{
+										url: '/samples/list/iconVisibility.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},
@@ -311,6 +322,20 @@ sap.ui.define([
 								},
 								files: [{
 										url: '/samples/object/titleMaxLinesAndLabelWrapping/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Icon Visibility',
+								key: 'iconVisibility',
+								settings: {
+									columns: 5
+								},
+								files: [
+									{
+										url: '/samples/object/iconVisibility.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
 									}

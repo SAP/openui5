@@ -871,4 +871,43 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Icon 'visible' property", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
+
+			// Assert
+			assert.strictEqual(oAvatar.getVisible(), false, "Icon is not visible.");
+
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"id": "testTableCard"
+			},
+			"sap.card": {
+				"type": "Table",
+				"content": {
+					"data": {
+						"json": [{
+							"initials": "AC",
+							"iconVisible": false
+						}]
+					},
+					"row": {
+						"columns": [{
+							"icon": {
+								"initials": "{initials}",
+								"visible": "{iconVisible}"
+							}
+						}]
+					}
+				}
+			}
+		});
+	});
+
 });

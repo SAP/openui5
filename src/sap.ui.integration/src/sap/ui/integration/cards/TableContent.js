@@ -410,7 +410,8 @@ sap.ui.define([
 				displaySize: oColumn.icon.size || AvatarSize.XS,
 				tooltip: oColumn.icon.alt,
 				initials: vInitials,
-				backgroundColor: oColumn.icon.backgroundColor || (vInitials ? undefined : AvatarColor.Transparent)
+				backgroundColor: oColumn.icon.backgroundColor || (vInitials ? undefined : AvatarColor.Transparent),
+				visible: oColumn.icon.visible
 			}).addStyleClass("sapFCardIcon");
 		}
 
