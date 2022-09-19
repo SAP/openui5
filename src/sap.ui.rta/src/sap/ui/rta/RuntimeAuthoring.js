@@ -510,7 +510,7 @@ sap.ui.define([
 			.then(function() {
 				if (this.getShowToolbars()) {
 					// Create ToolsMenu
-					return getToolbarButtonsVisibility(this.getRootControlInstance(), this.getLayer())
+					return getToolbarButtonsVisibility(this.getRootControlInstance(), this.getLayer(), this._oSerializer)
 						.then(createToolsMenu.bind(this));
 				}
 				return undefined;
@@ -972,12 +972,13 @@ sap.ui.define([
 	 *
 	 * @param {object} oRootControl - Root control instance
 	 * @param {sap.ui.fl.Layer} sLayer - Active layer
+	 * @param {sap.ui.rta.command.LREPSerializer} oSerializer - LREP Serializer
 	 * @returns {Promise<map>} with publishAvailable, publishAppVariantSupported and draftAvailable values
 	 */
-	function getToolbarButtonsVisibility(oRootControl, sLayer) {
+	function getToolbarButtonsVisibility(oRootControl, sLayer, oSerializer) {
 		return Promise.all([
 			FeaturesAPI.isPublishAvailable(),
-			RtaAppVariantFeature.isSaveAsAvailable(oRootControl, sLayer),
+			RtaAppVariantFeature.isSaveAsAvailable(oRootControl, sLayer, oSerializer),
 			FeaturesAPI.isContextBasedAdaptationAvailable(sLayer)
 		]).then(function(aRtaFeaturesAvailability) {
 			var bIsPublishAvailable = aRtaFeaturesAvailability[0];
