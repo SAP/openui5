@@ -2444,8 +2444,9 @@ sap.ui.define([
 	 * @param {string} sPropertyPath
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {string|undefined}
-	 *   The path of the property's unit or currency relative to the property's entity, or
-	 *   <code>undefined</code> in case the property has no associated unit or currency
+	 *   The path of the property's unit or currency relative to the (entity or complex) type which
+	 *   contains the original property, or <code>undefined</code> in case the property has no
+	 *   associated unit or currency
 	 *
 	 * @private
 	 */

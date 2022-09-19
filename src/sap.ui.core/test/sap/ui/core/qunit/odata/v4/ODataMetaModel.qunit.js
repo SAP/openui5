@@ -7598,8 +7598,10 @@ forEach({
 		sExpectedPath : "CurrencyCode",
 		sPathInEntity : "GrossAmount"
 	}, {
+		// Note: this annotation is found only via target "xyz.ProductInfo/WeightMeasure", not via
+		// "/SalesOrderList/SO_2_SOITEM/ProductInfo/WeightMeasure"
 		mAnnotations : {
-			"@Org.OData.Measures.V1.Unit" : {$Path : "WeightUnit"}
+			"@Org.OData.Measures.V1.Unit" : {$Path : "WeightUnit"} // relative to ProductInfo!
 		},
 		sExpectedPath : "WeightUnit",
 		sPathInEntity : "ProductInfo/WeightMeasure"
