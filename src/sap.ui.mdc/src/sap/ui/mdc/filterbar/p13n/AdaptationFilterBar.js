@@ -49,6 +49,7 @@ sap.ui.define([
 		FilterBarBase.prototype.init.apply(this,arguments);
 		this.addStyleClass("sapUIAdaptationFilterBar");
 		this._bPersistValues = true;
+		this._bUseQueryPanel = new SAPUriParameters(window.location.search).getAll("sap-ui-xx-filterQueryPanel")[0] === "true";
 
 		this.getEngine().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
 		this._fnResolveAdaptationControlPromise = null;
@@ -59,9 +60,11 @@ sap.ui.define([
 
 	AdaptationFilterBar.prototype._onModifications = function() {
 		var pModification = FilterBarBase.prototype._onModifications.apply(this, arguments);
-		var oP13nData = this._oFilterBarLayout.getInner().getP13nData();
-		this._updateActiveStatus(oP13nData);
-		this._oFilterBarLayout.setP13nData({items: oP13nData});
+		if (this._bUseQueryPanel) {
+			var oP13nData = this._oFilterBarLayout.getInner().getP13nData();
+			this._updateActiveStatus(oP13nData);
+			this._oFilterBarLayout.setP13nData({items: oP13nData});
+		}
 		return pModification;
 	};
 
@@ -414,9 +417,7 @@ sap.ui.define([
 		this.setAssociation("adaptationControl", oControl, bSuppressInvalidate);
 
 		//FIXME: remove once the UI has been decided
-		var bUseQueryPanel = new SAPUriParameters(window.location.search).getAll("sap-ui-xx-filterQueryPanel")[0] === "true";
-		this._cLayoutItem = bUseQueryPanel || this._checkAdvancedParent(oControl) ? FilterGroupLayout : FilterColumnLayout; //Note: once the URL parameter is removed, FilterColumnLayout can be deleted
-
+		this._cLayoutItem = this._bUseQueryPanel || this._checkAdvancedParent(oControl) ? FilterGroupLayout : FilterColumnLayout; //Note: once the URL parameter is removed, FilterColumnLayout can be deleted
 		this._oFilterBarLayout = this._checkAdvancedParent(oControl) ? new GroupContainer() : new TableContainer();
 
 		this._oFilterBarLayout.getInner().setParent(this);
@@ -453,6 +454,7 @@ sap.ui.define([
 		for (var sKey in this._mOriginalsForClone) {
 			this._mOriginalsForClone[sKey].destroy();
 		}
+		this._bUseQueryPanel = null;
 		this._mOriginalsForClone = null;
 		this.oAdaptationData = null;
 		this.mFilterFields = null;
