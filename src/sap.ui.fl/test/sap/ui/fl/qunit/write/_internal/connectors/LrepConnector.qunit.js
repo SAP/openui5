@@ -626,6 +626,8 @@ sap.ui.define([
 			var oServerResponse = {
 				isKeyUser: true,
 				isVersioningEnabled: false,
+				isContextSharingEnabled: true,
+				isContextSharingEnabledForComp: true,
 				isPublicLayerAvailable: false
 			};
 
@@ -647,6 +649,8 @@ sap.ui.define([
 			var oServerResponse = {
 				isKeyUser: true,
 				isVersioningEnabled: false,
+				isContextSharingEnabled: true,
+				isContextSharingEnabledForComp: true,
 				isPublicLayerAvailable: true
 			};
 

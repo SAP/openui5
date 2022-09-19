@@ -3,13 +3,15 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/variants/context/Component",
-	"sap/ui/core/ComponentContainer"
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/registry/Settings"
 ], function(
-	FeaturesAPI,
 	ContextSharingComponent,
-	ComponentContainer
+	ComponentContainer,
+	Layer,
+	Settings
 ) {
 	"use strict";
 
@@ -33,12 +35,18 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} [mPropertyBag.layer] - Layer
+		 * @param {string} [mPropertyBag.isComp=true] - Flag if the control owning the Component is the comp.VariantManagement
 		 * @returns {Promise<sap.ui.core.ComponentContainer>} Promise resolving with the ComponentContainer or nothing depending on the availability of the feature in the used back end
 		 * @private
 		 * @ui5-restricted sap.ui.comp, sap.ui.fl
 		 */
 		createComponent: function(mPropertyBag) {
-			return FeaturesAPI.isContextSharingEnabled(mPropertyBag.layer).then(function(bIsEnabled) {
+			if (mPropertyBag.layer !== Layer.CUSTOMER) {
+				return Promise.resolve();
+			}
+			return Settings.getInstance().then(function(oSettings) {
+				return (mPropertyBag.isComp) ? oSettings.isContextSharingEnabledForComp() : oSettings.isContextSharingEnabled();
+			}).then(function(bIsEnabled) {
 				if (bIsEnabled) {
 					if (!oComponentContainer || oComponentContainer.bIsDestroyed) {
 						var oComponent = new ContextSharingComponent("contextSharing");

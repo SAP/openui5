@@ -370,8 +370,9 @@ sap.ui.define([
 		 * Check if context sharing is enabled in the backend.
 		 *
 		 * @returns {Promise<boolean>} Promise resolves with true
+		 * @deprecated
 		 */
-		isContextSharingEnabled: function () {
+		 isContextSharingEnabled: function () {
 			return Promise.resolve(true);
 		},
 
@@ -393,6 +394,8 @@ sap.ui.define([
 			var sFeaturesUrl = InitialUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sFeaturesUrl, "GET", {initialConnector: InitialConnector}).then(function (oResult) {
 				oResult.response.isVariantAdaptationEnabled = !!oResult.response.isPublicLayerAvailable;
+				oResult.response.isContextSharingEnabled = true;
+				oResult.response.isContextSharingEnabledForComp = true;
 				return oResult.response;
 			});
 		},

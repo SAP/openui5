@@ -4,14 +4,14 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FeaturesAPI,
 	Settings,
 	Layer,
-	sinon,
-	oCore
+	oCore,
+	sinon
 ) {
 	"use strict";
 
@@ -111,6 +111,11 @@ sap.ui.define([
 				sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
 					bValueToBeSet ? {connector: "LrepConnector"} : {connector: "NeoLrepConnector"}
 				]);
+				sandbox.stub(Settings, "getInstance").resolves({
+					isContextSharingEnabled: function () {
+						return bValueToBeSet;
+					}
+				});
 
 				var aSetupForLayers = [];
 				for (var layer in Layer) {

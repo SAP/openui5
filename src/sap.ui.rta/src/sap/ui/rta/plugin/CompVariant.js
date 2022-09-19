@@ -93,9 +93,10 @@ sap.ui.define([
 	// ------ configure ------
 	function configureVariants(aOverlays) {
 		var oVariantManagementControl = aOverlays[0].getElement();
+		var mSettings = Object.assign({isComp: true}, this.getCommandFactory().getFlexSettings());
 		var mPropertyBag = {
 			layer: this.getCommandFactory().getFlexSettings().layer,
-			contextSharingComponentContainer: ContextSharingAPI.createComponent(this.getCommandFactory().getFlexSettings()),
+			contextSharingComponentContainer: ContextSharingAPI.createComponent(mSettings),
 			rtaStyleClass: Utils.getRtaStyleClassName()
 		};
 		oVariantManagementControl.openManageViewsDialogForKeyUser(mPropertyBag, function(oData) {
@@ -145,7 +146,8 @@ sap.ui.define([
 	// ------ save as ------
 	function saveAsNewVariant(aOverlays) {
 		var oVariantManagementControl = aOverlays[0].getElement();
-		var oContextSharingComponentContainer = ContextSharingAPI.createComponent(this.getCommandFactory().getFlexSettings());
+		var mSettings = Object.assign({isComp: true}, this.getCommandFactory().getFlexSettings());
+		var oContextSharingComponentContainer = ContextSharingAPI.createComponent(mSettings);
 		return new Promise(function(resolve) {
 			oVariantManagementControl.openSaveAsDialogForKeyUser(Utils.getRtaStyleClassName(), function(oReturn) {
 				if (oReturn) {
