@@ -5,6 +5,7 @@ sap.ui.define([
 	"./BaseListContent",
 	"./ListContentRenderer",
 	"sap/ui/util/openWindow",
+	"sap/ui/core/ResizeHandler",
 	"sap/m/library",
 	"sap/m/List",
 	"sap/m/ObjectStatus",
@@ -19,6 +20,7 @@ sap.ui.define([
 	BaseListContent,
 	ListContentRenderer,
 	openWindow,
+	ResizeHandler,
 	mLibrary,
 	List,
 	ObjectStatus,
@@ -119,6 +121,18 @@ sap.ui.define([
 			this._oItemTemplate.destroy();
 			this._oItemTemplate = null;
 		}
+
+		if (this._iMicrochartsResizeHandler) {
+			ResizeHandler.deregister(this._iMicrochartsResizeHandler);
+			this._iMicrochartsResizeHandler = undefined;
+		}
+	};
+
+	/**
+	 * @override
+	 */
+	ListContent.prototype.onAfterRendering = function () {
+		this._resizeMicrocharts();
 	};
 
 	/**
@@ -343,6 +357,28 @@ sap.ui.define([
 		}
 
 		return oChart;
+	};
+
+	/**
+	 * @private
+	 */
+	 ListContent.prototype._resizeMicrocharts = function () {
+		var $charts = this.$().find(".sapUiIntMicrochartChart"),
+			iShortestWidth = Number.MAX_VALUE;
+
+		if ($charts.length === 0) {
+			return;
+		}
+
+		$charts.each(function (iIndex, oChartWrapper) {
+			iShortestWidth = Math.min(iShortestWidth, oChartWrapper.offsetWidth);
+		});
+
+		$charts.find(".sapUiIntMicrochartChartInner").css("max-width", iShortestWidth + "px");
+
+		if (!this._iMicrochartsResizeHandler) {
+			this._iMicrochartsResizeHandler = ResizeHandler.register(this, this._resizeMicrocharts.bind(this));
+		}
 	};
 
 	/**

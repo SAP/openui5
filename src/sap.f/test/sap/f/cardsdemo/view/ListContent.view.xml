@@ -75,6 +75,11 @@
 					<f:GridContainerItemLayoutData columns="4" />
 				</w:layoutData>
 			</w:Card>
+			<w:Card id="card8" baseUrl="{cardsPlayground>/playgroundBaseUrl}" manifest="{listContentManifests>/listStackedBar}">
+				<w:layoutData>
+					<f:GridContainerItemLayoutData columns="4" />
+				</w:layoutData>
+			</w:Card>
 		</f:GridContainer>
 	</Page>
 </mvc:View>
