@@ -332,13 +332,13 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @public
-	 * @see {#hasPendingChanges}
-	 * @see {sap.ui.model.odata.v4.ODataContextBinding#hasPendingChanges}
-	 * @see {sap.ui.model.odata.v4.ODataListBinding#hasPendingChanges}
-	 * @see {sap.ui.model.odata.v4.ODataModel#hasPendingChanges}
-	 * @see {sap.ui.model.odata.v4.ODataContextBinding#resetChanges}
-	 * @see {sap.ui.model.odata.v4.ODataListBinding#resetChanges}
-	 * @see {sap.ui.model.odata.v4.ODataModel#resetChanges}
+	 * @see #hasPendingChanges
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#hasPendingChanges
+	 * @see sap.ui.model.odata.v4.ODataListBinding#hasPendingChanges
+	 * @see sap.ui.model.odata.v4.ODataModel#hasPendingChanges
+	 * @see sap.ui.model.odata.v4.ODataContextBinding#resetChanges
+	 * @see sap.ui.model.odata.v4.ODataListBinding#resetChanges
+	 * @see sap.ui.model.odata.v4.ODataModel#resetChanges
 	 * @since 1.41.0
 	 */
 	Context.prototype.delete = function (sGroupId, bDoNotRequestCount/*, bRejectIfNotFound*/) {
