@@ -61,5 +61,21 @@
         ]
       }
     ]
+  },
+  "1.84.28": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "79833f97bddc4a2dabfb878bdeabdca806d53935",
+        "type": "FIX",
+        "text": " sap.ui.rta - SaveAs button is disabled for unsupported apps",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280165895"
+          }
+        ]
+      }
+    ]
   }
 }

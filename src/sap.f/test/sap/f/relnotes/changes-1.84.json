@@ -210,5 +210,25 @@
         ]
       }
     ]
+  },
+  "1.84.28": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "9b6b1fb36f687fdfc24170318093d0deba7f6224",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Set min-width of content/actions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180408155"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280128308"
+          }
+        ]
+      }
+    ]
   }
 }

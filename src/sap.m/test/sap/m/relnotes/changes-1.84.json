@@ -1509,5 +1509,95 @@
         ]
       }
     ]
+  },
+  "1.84.28": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "59b095e7788ce34f7e76f3b1084bac93d2cb9c26",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Enhanced active title description",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280115924"
+          }
+        ]
+      },
+      {
+        "id": "a3b8e98fe9e1952e069d1893374813ac1cf9d897",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: navigation steps issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180211364"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280156615"
+          }
+        ]
+      },
+      {
+        "id": "87e4c95120c6e9ff4b2da1fb211f6a223f772f87",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: adjust unit tests on IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280143134"
+          }
+        ]
+      },
+      {
+        "id": "ed1d7f2c5bb0d197df9292a79c2ad8fcd7ea824a",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: No preselection by default is now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005850722022"
+          }
+        ]
+      },
+      {
+        "id": "4a8a837efbc99f8f1559c4f8b283360275a51c43",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Improved aria-describedby",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170128516"
+          }
+        ]
+      },
+      {
+        "id": "9b6b1fb36f687fdfc24170318093d0deba7f6224",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Set min-width of content/actions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180408155"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280128308"
+          }
+        ]
+      },
+      {
+        "id": "e15e0eb3f0cb3924fea6dc4b5a6f052343c66687",
+        "type": "FIX",
+        "text": " P13nConditionPanel now respects upperCase format on field switch",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002594982022"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -670,5 +670,32 @@
         ]
       }
     ]
+  },
+  "1.84.28": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "b3222b0522f3b4a4c14489ad647a411f880f7a0a",
+        "type": "FIX",
+        "text": " core.Popup: correctly align Blocklayer with within area in RTL mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280154052"
+          }
+        ]
+      },
+      {
+        "id": "31003887d4bce8c9ce752b29d4569bbf779cd578",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataTreeBindingFlat#_calcIndexDelta: fix index delta calculation to always return the correct binding length",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005773722022"
+          }
+        ]
+      }
+    ]
   }
 }
