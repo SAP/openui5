@@ -120,7 +120,7 @@ sap.ui.define([
 		this.oTable.bindRows("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
 	});
 
-	QUnit.test("Expand and Collapse", function(assert) {
+	QUnit.skip("Expand and Collapse", function(assert) {
 		var done = assert.async();
 		this.oTable = createTable.call(this, {
 			rootLevel: 1,
