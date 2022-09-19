@@ -1652,7 +1652,7 @@ sap.ui.define([
 		assert.strictEqual(
 			oModel.resolve(undefined, new BaseContext(oModel, "/")),
 			"/");
-		// Note: we do not go this far; JsDoc of @return wins: (string|undefined), nothing else!
+		// Note: we do not go this far; JsDoc of @returns wins: (string|undefined), nothing else!
 		assert.strictEqual(Model.prototype.resolve(null), null);
 	});
 

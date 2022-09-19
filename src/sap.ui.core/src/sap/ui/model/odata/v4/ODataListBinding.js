@@ -3203,7 +3203,7 @@ sap.ui.define([
 		 * cancellations.
 		 *
 		 * @param {Promise} oPromise - A promise
-		 * @return {Promise} A promise including an error handler
+		 * @returns {Promise} A promise including an error handler
 		 */
 		function reportError(oPromise) {
 			return oPromise.catch(function (oError) {

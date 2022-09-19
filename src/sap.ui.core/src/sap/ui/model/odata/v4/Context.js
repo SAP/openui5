@@ -1717,11 +1717,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a string representation of this object including the {@link #getPath binding path),
+	 * Returns a string representation of this object including the {@link #getPath binding path},
 	 * {@link #getIndex index}, and state (see also "Context states" of
 	 * {@link topic:c9723f8265f644af91c0ed941e114d46 Creating an Entity}).
 	 *
-	 * @return {string} A string description of this binding
+	 * @returns {string} A string description of this binding
 	 *
 	 * @public
 	 * @see #destroy

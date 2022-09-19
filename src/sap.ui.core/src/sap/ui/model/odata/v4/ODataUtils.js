@@ -74,7 +74,7 @@ sap.ui.define([
 			 *   corresponding number of milliseconds since 1 January, 1970 UTC.
 			 *   Otherwise the values are compared with the JavaScript operators <code>===</code>
 			 *   and <code>></code>.
-			 * @return {number}
+			 * @returns {number}
 			 *   The result of the comparison: <code>0</code> if the values are equal,
 			 *   <code>1</code> if the first value is larger, <code>-1</code> if the second value
 			 *   is larger, <code>NaN</code> if they cannot be compared

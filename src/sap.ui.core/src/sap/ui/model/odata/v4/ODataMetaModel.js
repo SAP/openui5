@@ -3424,7 +3424,7 @@ sap.ui.define([
 	 * Returns a string representation of this object including the URL to the $metadata document of
 	 * the service.
 	 *
-	 * @return {string} A string description of this model
+	 * @returns {string} A string description of this model
 	 *
 	 * @public
 	 * @since 1.37.0
