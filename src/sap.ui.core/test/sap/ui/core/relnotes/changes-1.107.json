@@ -3,6 +3,17 @@
     "date": "September 2022",
     "notes": [
       {
+        "id": "3f3b2dc1ef17cbdb7189cdda76949656a53ed8ab",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: avoid emtpy rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280169612"
+          }
+        ]
+      },
+      {
         "id": "9d133f3906a4fdb4ded7ba287779b1d700a0a4ab",
         "type": "FIX",
         "text": " sap.ui.model.odata.v4.ODataModel: transport sap-language to value help and customizing",
@@ -23,6 +34,11 @@
             "reference": "2270116320"
           }
         ]
+      },
+      {
+        "id": "2f1d3bf69d33bc843ea5e531750ce490c5c1e2e0",
+        "type": "FIX",
+        "text": " LoaderExtension: loadResource must notify Interaction correctly"
       },
       {
         "id": "e17b1b70596587cc2a3312a872e8405faf9bddf1",

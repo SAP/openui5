@@ -3,6 +3,22 @@
     "date": "September 2022",
     "notes": [
       {
+        "id": "20d2cef961402feab42a9a008d35519b72053b4a",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Layout of unstashed blocks fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270125052"
+          }
+        ]
+      },
+      {
+        "id": "1ea56d66602d74c55dcd60a6168653f66a00dd1e",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageSection: wrapTitle property added"
+      },
+      {
         "id": "f7268aef73f91f7b5ff4bad48251420c62898860",
         "type": "FEATURE",
         "text": " sap.uxap.ObjectPageSection: Introduced new heading aggregation"

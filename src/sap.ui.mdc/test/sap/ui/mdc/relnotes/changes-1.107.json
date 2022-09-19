@@ -3,6 +3,17 @@
     "date": "September 2022",
     "notes": [
       {
+        "id": "375d8cf9d00fc10dfc0445c7c0b14a13ecd8d752",
+        "type": "FIX",
+        "text": " Field: error after entering number",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280171152"
+          }
+        ]
+      },
+      {
         "id": "b10a6f169945d6f69eb1c25754bd2934d93af6cd",
         "type": "FIX",
         "text": " Field: update BindingContext on ValueHelp on focus",
