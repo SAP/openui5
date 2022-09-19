@@ -3,6 +3,92 @@
     "date": "September 2022",
     "notes": [
       {
+        "id": "e79b1fae2f07bee15689d60db12f76fb7a50e44f",
+        "type": "FEATURE",
+        "text": " To support folder uploads, the UploadSet control is now enhanced"
+      },
+      {
+        "id": "eec8e2dc35a4be8b6aca782fcb89c829b981b35c",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Adjust failing QUnit test in Safari and FF",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111932"
+          }
+        ]
+      },
+      {
+        "id": "418a650d6761a4393555d0e2de1f21c3430a1a64",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust button role text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111933"
+          }
+        ]
+      },
+      {
+        "id": "c93e9962c000f4fcd4a1a05a18b41c7b4076c66f",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: All selected items are considered as selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270116285"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280165471"
+          }
+        ]
+      },
+      {
+        "id": "1c3c4e72cac57544aa8235fb83ac7cf936f10501",
+        "type": "FIX",
+        "text": " sap.m.Link: disable pointer events",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280164461"
+          }
+        ]
+      },
+      {
+        "id": "463f63c56c2f1f0584435b33d4cd1aa752881741",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: fixed unwanted popup close on combi device",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280097708"
+          }
+        ]
+      },
+      {
+        "id": "8e8893588f83aabc392e901b5a2d9bbfd5454efa",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: prevent itemSelect event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980097573"
+          }
+        ]
+      },
+      {
+        "id": "7f767ec600fd98554ad4966e3efabe3ba1afc216",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed incorrect typing behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280171879"
+          }
+        ]
+      },
+      {
         "id": "9fbe1d5d23df4ccf1a34cb894fa51f48e6a39579",
         "type": "FIX",
         "text": " sap.m.Link: fixed typo in JSDoc",
@@ -26,6 +112,17 @@
           {
             "type": "BCP",
             "reference": "002075129500005850722022"
+          }
+        ]
+      },
+      {
+        "id": "f76bb8ed15c54f7af4f6ff2af2620d04fe1621e2",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: fire appointment select",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280116927"
           }
         ]
       },
