@@ -23,11 +23,9 @@ sap.ui.define([
 	var Opa5Utils = Opa5.getUtils();
 
     return {
-		iEnterTextOnTheFilterField: function(sLabelName, sValue, oConfig) {
+		iEnterTextOnTheFilterField: function(oProperties, sValue, oConfig) {
 			return waitForFilterField.call(this, {
-				properties: {
-					label: sLabelName
-				},
+				properties: oProperties,
 				actions: new EnterText(oConfig ? {
 					text: sValue
 				} : Object.assign({
@@ -54,11 +52,9 @@ sap.ui.define([
 			});
 		},
 
-		iPressOnTheFilterFieldValueHelpButton: function(sLabelName) {
+		iPressOnTheFilterFieldValueHelpButton: function(oProperties) {
 			return waitForFilterFieldValueHelpButton.call(this, {
-				properties: {
-					label: sLabelName
-				},
+				properties: oProperties,
 				actions: new Press(),
 				success: function(oValueHelpIconButton) {
 					Opa5.assert.ok(oValueHelpIconButton, "The filter field value help button was pressed");

@@ -15,6 +15,7 @@ sap.ui.define([
 		return this.waitFor({
 			controlType: "sap.ui.mdc.FilterField",
 			properties: oSettings.properties,
+			matchers: oSettings.machters,
 			// matchers: {
 			// 	ancestor: {
 			// 		controlType: "sap.ui.mdc.FilterBar"

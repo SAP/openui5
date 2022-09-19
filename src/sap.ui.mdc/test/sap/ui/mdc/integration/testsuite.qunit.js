@@ -130,11 +130,12 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"ActionToolbar": {
 				loader: {
 					paths: {
-						"sap/ui/mdc/ActionToolbarTesting": "test-resources/sap/ui/mdc/integration/actiontoolbar"
+						"sap/ui/mdc/ActionToolbarTesting": "test-resources/sap/ui/mdc/integration/actiontoolbar",
+						"testutils/opa": "test-resources/sap/ui/mdc/testutils/opa"
 					}
 				},
 				autostart: false,
-				module: "test-resources/sap/ui/mdc/integration/actiontoolbar/opaTests.qunit",
+				page: "test-resources/sap/ui/mdc/integration/actiontoolbar/opaTests.qunit.html",
 				sinon: false
 			},
 			"Link": {
@@ -147,6 +148,11 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				group: "TestObjects",
 				autostart: false,
 				module: "test-resources/sap/ui/mdc/integration/link/pageObject.qunit",
+				sinon: false
+			},
+			"Field": {
+				autostart: false,
+				page: "test-resources/sap/ui/mdc/integration/Field/testsuite.qunit.html",
 				sinon: false
 			}
 		}
