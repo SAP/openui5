@@ -145,7 +145,7 @@ sap.ui.define([
 	};
 
 	ObjectPageSectionBase.prototype._getGrid = function () {
-		if (!this.getAggregation("_grid")) {
+		if (!this.getAggregation("_grid") && !this._bIsBeingDestroyed) {
 			this.setAggregation("_grid", new Grid({
 				id: this.getId() + "-innerGrid",
 				defaultSpan: "XL12 L12 M12 S12",
