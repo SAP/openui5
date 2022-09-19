@@ -296,5 +296,91 @@
         ]
       }
     ]
+  },
+  "1.105.1": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "30e6ac285bbffd5040bf478f925d9daac0cac0a2",
+        "type": "FIX",
+        "text": " util/fetch: add protocol back to protocol-relative URL string",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005263542022"
+          }
+        ]
+      },
+      {
+        "id": "2d76e45b29f28425a59441fecf072d3450d87b5d",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#refresh: $$sharedRequest",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004766202022"
+          }
+        ]
+      },
+      {
+        "id": "582b0845d977f8736e6eebd637d25ab299733d5c",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMetaModel#fetchCodeList: use sap-client and sap-language for code list requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280131765"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500006108912022"
+          }
+        ]
+      },
+      {
+        "id": "c2365d31ee9f8d1e799f1d247ea99422e06b90d5",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODateMetaModel#fetchCodeList: don't reuse codelist promise over models if it is not yet resolved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280171731"
+          }
+        ]
+      },
+      {
+        "id": "5306f54d161b847c063ebd129f5d275f4ef0420a",
+        "type": "FIX",
+        "text": " core.Popup: correctly align Blocklayer with within area in RTL mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280154052"
+          }
+        ]
+      },
+      {
+        "id": "08e2490411d134e0e8893fee97d9095d6a7a4f48",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataTreeBindingFlat#_calcIndexDelta: fix index delta calculation to always return the correct binding length",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005773722022"
+          }
+        ]
+      },
+      {
+        "id": "f41ca5333493a7f44481cfe911d35baf692647b5",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#filter: allow removal for FilterType.Control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280148151"
+          }
+        ]
+      }
+    ]
   }
 }

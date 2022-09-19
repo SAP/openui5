@@ -19,5 +19,21 @@
         "text": " fl.VariantManagement: Adjustable Header Level"
       }
     ]
+  },
+  "1.105.1": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "6d14c6ff91c5d89e6206cb08705ed56d7e3265fb",
+        "type": "FIX",
+        "text": " sap.ui.fl: remove obsolete registration of diagnostics plugin",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280155010"
+          }
+        ]
+      }
+    ]
   }
 }

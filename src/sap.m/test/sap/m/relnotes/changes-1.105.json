@@ -468,5 +468,70 @@
         ]
       }
     ]
+  },
+  "1.105.1": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "30e35ce8eae7ddf02a5f50c2741ebf9819849d2a",
+        "type": "FIX",
+        "text": " sap.m.Link: adjust link type announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270112994"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280119447"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070055617"
+          }
+        ]
+      },
+      {
+        "id": "49aee2efc010cd8d5d3e2d1ad0d2f3438d4970ec",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: adjust link navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006029272022"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280124825"
+          }
+        ]
+      },
+      {
+        "id": "dfa652ed42f63989d5e0403a05381dbe449e45c3",
+        "type": "FIX",
+        "text": " sap.m.Input: Type-ahead with dynamic suggestions enabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005963762022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005849042022"
+          }
+        ]
+      },
+      {
+        "id": "f4c8001452ea0cc6f0702a2d0aceeb121f680e66",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Corrected use of instance type check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280157279"
+          }
+        ]
+      }
+    ]
   }
 }
