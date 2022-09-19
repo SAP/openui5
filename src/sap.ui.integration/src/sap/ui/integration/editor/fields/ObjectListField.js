@@ -292,6 +292,7 @@ sap.ui.define([
 			oModel.setProperty("/_allSelected", false);
 		}
 		oModel.checkUpdate();
+		that.updateTable();
 	};
 
 	ObjectListField.prototype.onChangeOfTextArea = function (oEvent) {

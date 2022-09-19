@@ -986,7 +986,7 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
-			"editor/objectListField/RequestValuesWiithFilter": {
+			"editor/objectListField/RequestValuesWithFilter": {
 				group: "Runtime Editor",
 				coverage: {
 					only: [
