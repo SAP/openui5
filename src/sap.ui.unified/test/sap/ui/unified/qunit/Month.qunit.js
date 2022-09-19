@@ -569,6 +569,13 @@ sap.ui.define([
 
 			// Assert
 			assert.notOk(this.oSut.$().attr("aria-readonly"), "Month doesn't have aria-readonly on it");
+
+			// Assert
+			assert.strictEqual(
+				this.oSut.getDomRef().querySelector("[data-sap-day='20151227']").getAttribute("aria-describedby"),
+				"__month0-WH0",
+				"Day of the week is properly referenced"
+			);
 		});
 
 		QUnit.test("First DOM element with role='rowheader' has week label set", function (assert) {

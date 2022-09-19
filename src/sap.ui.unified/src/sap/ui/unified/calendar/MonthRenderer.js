@@ -217,7 +217,11 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 			if (sWidth) {
 				oRm.style("width", sWidth);
 			}
-			oRm.accessibilityState(null, {role: "columnheader", label: aWeekDaysWide[(i + iStartDay) % 7]});
+			oRm.accessibilityState(null, {
+				role: "columnheader",
+				label: aWeekDaysWide[(i + iStartDay) % 7],
+				hidden: true
+			});
 			oRm.openEnd(); // div element
 			oRm.text(aWeekDays[(i + iStartDay) % 7]);
 			oRm.close("div");
@@ -386,6 +390,12 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		// Days before 0001.01.01 should be disabled.
 		if (bBeforeFirstYear) {
 			bEnabled = false;
+		}
+
+		if (!bDayName) {
+			mAccProps["describedby"] = iNumber < 0
+				? oHelper.sId + "-WH" + iWeekDay
+				: oHelper.sId + "-WH" + iNumber;
 		}
 
 		oRm.openStart("div", oHelper.sId + "-" + sYyyymmdd);
