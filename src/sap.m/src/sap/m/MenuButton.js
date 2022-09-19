@@ -394,10 +394,10 @@ sap.ui.define([
 
 		/**
 		 * Handles the <code>buttonPress</code> event and opens the menu.
-		 * @param {boolean} bWithKeyboard If keyboard is used
+		 * @param {boolean} oEvent event object
 		 * @private
 		 */
-		MenuButton.prototype._handleButtonPress = function(bWithKeyboard) {
+		MenuButton.prototype._handleButtonPress = function(oEvent) {
 			var oMenu = this.getMenu(),
 				oOffset = {
 					zero: "0 0",
@@ -413,7 +413,7 @@ sap.ui.define([
 				return;
 			}
 
-			if (this._bPopupOpen) {
+			if (this._bPopupOpen && !oEvent.getParameter("keyboard")) {
 				this.getMenu().close();
 				this._bPopupOpen = false;
 				return;
@@ -423,7 +423,7 @@ sap.ui.define([
 				oMenu.setTitle(this.getText());
 			}
 
-			var aParam = [this, bWithKeyboard];
+			var aParam = [this, oEvent.getParameter("keyboard")];
 
 			switch (this.getMenuPosition()) {
 				case Dock.BeginTop:
@@ -501,8 +501,6 @@ sap.ui.define([
 		MenuButton.prototype._menuClosed = function() {
 			var oButtonControl = this._getButtonControl(),
 				bOpeningMenuButton = oButtonControl;
-
-			this._bPopupOpen = false;
 
 			if (this._isSplitButton()) {
 				oButtonControl.setArrowState(false);
@@ -757,7 +755,13 @@ sap.ui.define([
 
 		MenuButton.prototype.openMenuByKeyboard = function() {
 			if (!this._isSplitButton()) {
-				this._handleButtonPress(true);
+				this._handleButtonPress(Object.create(null, {
+						getParameter: {
+							value: function() {
+								return true;
+							}
+						}
+					}));
 			}
 		};
 

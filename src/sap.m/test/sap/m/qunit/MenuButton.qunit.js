@@ -673,9 +673,17 @@ sap.ui.define([
 		// act
 		// simulate event handlers in the expected order
 		oMenuButton.ontouchstart();
-		oMenuButton._handleButtonPress();
+		oMenuButton._handleButtonPress({
+			getParameter: function() {
+				return false;
+			}
+		});
 		oMenuButton.ontouchstart();
-		oMenuButton._handleButtonPress();
+		oMenuButton._handleButtonPress({
+			getParameter: function() {
+				return false;
+			}
+		});
 
 		// assert
 		assert.strictEqual(oCloseSpy.callCount, 1, "the close method of Menu is called");
@@ -692,7 +700,11 @@ sap.ui.define([
 		// simulate event handlers in the expected order
 		// open
 		oMenuButton.ontouchstart();
-		oMenuButton._handleButtonPress();
+		oMenuButton._handleButtonPress({
+			getParameter: function() {
+				return false;
+			}
+		});
 
 		// focus leave
 		qutils.triggerEvent("mousedown", oMenuButton2.getId());
@@ -701,9 +713,19 @@ sap.ui.define([
 
 		// check again if opened
 		oMenuButton.ontouchstart();
-		oMenuButton._handleButtonPress();
+		oMenuButton._handleButtonPress({
+			getParameter: function() {
+				return {
+					keyboard: false
+				};
+			}
+		});
 		oMenuButton.ontouchstart();
-		oMenuButton._handleButtonPress();
+		oMenuButton._handleButtonPress({
+			getParameter: function() {
+				return false;
+			}
+		});
 
 		// assert
 		assert.strictEqual(this.sut.getMenu()._getMenu().getPopup().isOpen(), false, "the Popup is closed");
@@ -720,7 +742,11 @@ sap.ui.define([
 		// simulate event handlers in the expected order
 		// open
 		oMenuButton.ontouchstart();
-		oMenuButton._handleButtonPress();
+		oMenuButton._handleButtonPress({
+			getParameter: function() {
+				return false;
+			}
+		});
 
 		// select an item
 		qutils.triggerEvent("mousedown", oMenuButton.getMenu().getItems()[0].getId() + "-unifiedmenu");
@@ -729,9 +755,17 @@ sap.ui.define([
 
 		// check again if opened
 		oMenuButton.ontouchstart();
-		oMenuButton._handleButtonPress();
+		oMenuButton._handleButtonPress({
+			getParameter: function() {
+				return false;
+			}
+		});
 		oMenuButton.ontouchstart();
-		oMenuButton._handleButtonPress();
+		oMenuButton._handleButtonPress({
+			getParameter: function() {
+				return false;
+			}
+		});
 
 		// assert
 		assert.strictEqual(oCloseSpy.callCount, 1, "the close method of Menu is called");
@@ -744,26 +778,33 @@ sap.ui.define([
 			oEvent = {
 				stopPropagation: function() {}
 			},
-			fnStopPropagationSpy = sinon.spy(oEvent, "stopPropagation");
+			fnStopPropagationSpy = sinon.spy(oEvent, "stopPropagation"),
+			oProps = Object.create(null, {
+				getParameter: {
+					value: function() {
+						return true;
+					}
+				}
+			});
 
 		this.sut.onsapup(oEvent);
 
-		assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapup' event.");
+		assert.ok(fnHandleButtonPress.calledWith(oProps), "Button press handler invoked after 'onsapup' event.");
 
 		fnHandleButtonPress.restore();
 		fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
 		this.sut.onsapdown(oEvent);
-		assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapdown' event.");
+		assert.ok(fnHandleButtonPress.calledWith(oProps), "Button press handler invoked after 'onsapdown' event.");
 
 		fnHandleButtonPress.restore();
 		fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
 		this.sut.onsapupmodifiers(oEvent);
-		assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapupmodifiers' event.");
+		assert.ok(fnHandleButtonPress.calledWith(oProps), "Button press handler invoked after 'onsapupmodifiers' event.");
 
 		fnHandleButtonPress.restore();
 		fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
 		this.sut.onsapdownmodifiers(oEvent);
-		assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapdownmodifiers' event.");
+		assert.ok(fnHandleButtonPress.calledWith(oProps), "Button press handler invoked after 'onsapdownmodifiers' event.");
 
 		fnHandleButtonPress.restore();
 		fnHandleButtonPress = sinon.spy(this.sut, "_handleButtonPress");
@@ -771,7 +812,7 @@ sap.ui.define([
 		assert.equal(fnStopPropagationSpy.callCount, 4, "'stopPropagation' called for each keyboard arrow interaction event");
 
 		this.sut.onsapshow();
-		assert.strictEqual(fnHandleButtonPress.calledWith(true), true, "Button press handler invoked after 'onsapshow' event.");
+		assert.ok(fnHandleButtonPress.calledWith(oProps), "Button press handler invoked after 'onsapshow' event.");
 
 		fnStopPropagationSpy.restore();
 	});
@@ -949,7 +990,11 @@ sap.ui.define([
 			oSpyMenuOpenBy = this.spy(Menu.prototype, "openBy");
 
 		//Act
-		this.sut._handleButtonPress(false);
+		this.sut._handleButtonPress({
+			getParameter: function() {
+				return false;
+			}
+		});
 
 		//Assert
 		assert.ok(oSpySetArrowState.calledOnce, "SplitButton's setArrowState called exactly once");
@@ -965,7 +1010,11 @@ sap.ui.define([
 
 		//Act
 		this.sut.destroyMenu();
-		this.sut._handleButtonPress(false);
+		this.sut._handleButtonPress({
+			getParameter: function() {
+				return false;
+			}
+		});
 
 		//Assert
 		assert.ok(!oSpySetArrowState.called, "SplitButton's setArrowState not called");
@@ -978,7 +1027,11 @@ sap.ui.define([
 		this.sut.setMenuPosition(Dock.EndTop);
 
 		//Act
-		this.sut._handleButtonPress(false);
+		this.sut._handleButtonPress({
+			getParameter: function() {
+				return false;
+			}
+		});
 
 		//Assert
 		assert.equal(oSpyMenuOpenBy.args[0][2], Dock.EndBottom, "Menu's openBy default parameter sDockMy is EndBottom");
