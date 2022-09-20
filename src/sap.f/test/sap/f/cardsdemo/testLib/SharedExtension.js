@@ -1,4 +1,9 @@
-sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinition", "sap/base/Log"], function (Extension, ActionDefinition, Log) {
+sap.ui.define([
+	"sap/ui/integration/Extension",
+	"sap/ui/integration/ActionDefinition",
+	"sap/base/Log",
+	"sap/ui/core/Core"
+], function (Extension, ActionDefinition, Log, Core) {
 	"use strict";
 
 	// function that adjusts the data
@@ -35,6 +40,39 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinit
 					// handle press here
 				}
 			}));
+		},
+		loadDependencies: function() {
+			var oCard = this.getCard(),
+				sType = oCard.getManifestEntry("/sap.card/type");
+
+			if (sType !== "Analytical") {
+				return Promise.resolve();
+			}
+
+			return Core.loadLibrary("sap.viz", { async: true })
+				.then(function () {
+					return new Promise(function (resolve) {
+						// registers custom viz formatter only for analytical cards
+						// if the sap.ui.require happens before the viz library is loaded, the library-preload will never be used and this will affect the performance
+						sap.ui.require([
+							"sap/viz/library",
+							"sap/viz/ui5/format/ChartFormatter",
+							"sap/viz/ui5/api/env/Format"
+						], function (
+							vizLibrary,
+							ChartFormatter,
+							Format
+						) {
+							var oChartFormatter = ChartFormatter.getInstance();
+							oChartFormatter.registerCustomFormatter("prefix_customFormat1", function(value) {
+								return "formatted " + value;
+							});
+							Format.numericFormatter(oChartFormatter);
+
+							resolve();
+						});
+					});
+				});
 		},
 		getData: function () {
 			var oCard = this.getCard();

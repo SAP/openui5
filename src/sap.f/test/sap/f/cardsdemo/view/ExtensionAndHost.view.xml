@@ -51,6 +51,11 @@
 						<f:GridContainerItemLayoutData columns="4"/>
 					</w:layoutData>
 				</w:Card>
+				<w:Card id="card5" manifest="{cardsPlayground>/playgroundBaseUrl}/bundles/cardWithSharedExtension/manifest3.json">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="6"/>
+					</w:layoutData>
+				</w:Card>
 			</f:GridContainer>
 		</VBox>
 	</Page>
