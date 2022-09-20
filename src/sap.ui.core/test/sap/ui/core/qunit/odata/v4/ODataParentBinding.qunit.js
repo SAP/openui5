@@ -2931,51 +2931,49 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("attachPatchCompleted/detachPatchCompleted", function () {
+	QUnit.test("attachPatchCompleted/detachPatchCompleted", function (assert) {
 		var oBinding = new ODataParentBinding({
 				attachEvent : function () {},
 				detachEvent : function () {}
 			}),
-			oBindingMock = this.mock(oBinding),
-			fnFunction = {},
-			oListener = {};
+			oBindingMock = this.mock(oBinding);
 
 		oBindingMock.expects("attachEvent")
-			.withExactArgs("patchCompleted", sinon.match.same(fnFunction),
-				sinon.match.same(oListener));
+			.withExactArgs("patchCompleted", "~function~", "~listener~")
+			.returns(oBinding);
 
 		// code under test
-		oBinding.attachPatchCompleted(fnFunction, oListener);
+		assert.strictEqual(oBinding.attachPatchCompleted("~function~", "~listener~"), oBinding);
 
 		oBindingMock.expects("detachEvent")
-			.withExactArgs("patchCompleted", sinon.match.same(fnFunction),
-				sinon.match.same(oListener));
+			.withExactArgs("patchCompleted", "~function~", "~listener~")
+			.returns(oBinding);
 
 		// code under test
-		oBinding.detachPatchCompleted(fnFunction, oListener);
+		assert.strictEqual(oBinding.detachPatchCompleted("~function~", "~listener~"), oBinding);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("attachPatchSent/detachPatchSent", function () {
+	QUnit.test("attachPatchSent/detachPatchSent", function (assert) {
 		var oBinding = new ODataParentBinding({
 				attachEvent : function () {},
 				detachEvent : function () {}
 			}),
-			oBindingMock = this.mock(oBinding),
-			fnFunction = {},
-			oListener = {};
+			oBindingMock = this.mock(oBinding);
 
 		oBindingMock.expects("attachEvent")
-			.withExactArgs("patchSent", sinon.match.same(fnFunction), sinon.match.same(oListener));
+			.withExactArgs("patchSent", "~function~", "~listener~")
+			.returns(oBinding);
 
 		// code under test
-		oBinding.attachPatchSent(fnFunction, oListener);
+		assert.strictEqual(oBinding.attachPatchSent("~function~", "~listener~"), oBinding);
 
 		oBindingMock.expects("detachEvent")
-			.withExactArgs("patchSent", sinon.match.same(fnFunction), sinon.match.same(oListener));
+			.withExactArgs("patchSent", "~function~", "~listener~")
+			.returns(oBinding);
 
 		// code under test
-		oBinding.detachPatchSent(fnFunction, oListener);
+		assert.strictEqual(oBinding.detachPatchSent("~function~", "~listener~"), oBinding);
 	});
 
 	//*********************************************************************************************
