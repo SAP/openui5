@@ -1024,7 +1024,7 @@ sap.ui.define([
 	 *   The group lock
 	 *
 	 * @private
-	 * @see {sap.ui.model.odata.v4.ODataModel#lockGroup}
+	 * @see sap.ui.model.odata.v4.ODataModel#lockGroup
 	 */
 	ODataBinding.prototype.lockGroup = function (sGroupId, bLocked, bModifying, fnCancel) {
 		sGroupId = sGroupId || (bModifying ? this.getUpdateGroupId() : this.getGroupId());
