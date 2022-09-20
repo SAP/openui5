@@ -141,7 +141,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bReturnNodes
 	 *   Whether to return node objects or contexts
-	 * @param {number} iStartIndex
+	 * @param {number} [iStartIndex=0]
 	 *   The index of the first requested node or context
 	 * @param {number} [iLength]
 	 *   The maximum number of returned nodes or contexts; if not given the model's size limit is
@@ -158,12 +158,10 @@ sap.ui.define([
 		if (!this.isResolved()) {
 			return [];
 		}
-		if (!iLength) {
-			iLength = this.oModel.iSizeLimit;
-		}
-		if (!iThreshold) {
-			iThreshold = 0;
-		}
+
+		iStartIndex = iStartIndex || 0;
+		iLength = iLength || this.oModel.iSizeLimit;
+		iThreshold = iThreshold || 0;
 
 		this._iPageSize = iLength;
 		this._iThreshold = Math.max(this._iThreshold, iThreshold);

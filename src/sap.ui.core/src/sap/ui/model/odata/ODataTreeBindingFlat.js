@@ -154,7 +154,6 @@ sap.ui.define([
 			return [];
 		}
 
-		// make sure the input parameters are not undefined
 		iStartIndex = iStartIndex || 0;
 		iLength = iLength || this.oModel.iSizeLimit;
 		iThreshold = iThreshold || 0;

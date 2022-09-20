@@ -518,13 +518,9 @@ sap.ui.define([
 				return [];
 			}
 
-			if (!iLength) {
-				iLength = this.oModel.iSizeLimit;
-			}
-
-			if (!iThreshold) {
-				iThreshold = 0;
-			}
+			iStartIndex = iStartIndex || 0;
+			iLength = iLength || this.oModel.iSizeLimit;
+			iThreshold = iThreshold || 0;
 
 			// test if the pagesize has increased -> used to optimise "too small" node sections, see _loadChildContexts
 			if (iLength > this._iPageSize) {
