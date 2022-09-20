@@ -1,0 +1,35 @@
+/* ================================ */
+/* CSS for control sap.f/SidePanel  */
+/* Belize High Contrast White theme */
+/* ================================ */
+
+.sapFSP {
+	.sapFSPSide {
+		.sapFSPSideInner {
+			border: 0.0625rem solid @sapUiGroupContentBorderColor;
+			box-sizing: content-box;
+
+			.sapFSPActionBar {
+
+				.sapFSPActionItem {
+					&.sapFSPSelected {
+						.sapUiIcon {
+							background-color: @sapUiContentSelectedBackground;
+							border-width: 0.125rem;
+						}
+
+						&::before {
+							width: 0.25rem;
+						}
+					}
+
+					&:focus {
+						&::after {
+							border: 0.125rem dotted @sapUiContentFocusColor;
+						}
+					}
+				}
+			}
+		}
+	}
+}

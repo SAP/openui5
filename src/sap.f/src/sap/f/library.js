@@ -88,6 +88,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.ProductSwitch",
 			"sap.f.ProductSwitchItem",
 			"sap.f.ShellBar",
+			"sap.f.SidePanel",
 			"sap.f.Illustration"
 		],
 		elements: [
@@ -117,7 +118,8 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.semantic.SendMessageAction",
 			"sap.f.semantic.ShareInJamAction",
 			"sap.f.semantic.TitleMainAction",
-			"sap.f.SearchManager"
+			"sap.f.SearchManager",
+			"sap.f.SidePanelActionItem"
 		],
 		extensions: {
 			flChangeHandlers: {

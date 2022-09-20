@@ -1,0 +1,30 @@
+/* =============================== */
+/* CSS for control sap.f/SidePanel */
+/* Evening Horizon theme           */
+/* =============================== */
+
+.sapFSP {
+	.sapFSPSide {
+		.sapFSPSideInner {
+			.sapFSPActionBar {
+
+				.sapFSPActionItem {
+					.sapUiIcon {
+						border-width: 0.125rem;
+					}
+					&.sapFSPSelected {
+						&::before {
+							width: 0.25rem;
+						}
+					}
+
+					&:focus {
+						&::after {
+							border: 0.125rem solid @sapUiContentSelectedForegroundColor;
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -99,18 +99,29 @@
 		  ]
 		},
 		{
-		  "id": "sap.f.ShellBar",
-		  "name": "Shell Bar",
-		  "category": "Display",
-		  "since": "1.63",
+			"id": "sap.f.ShellBar",
+			"name": "Shell Bar",
+			"category": "Display",
+			"since": "1.63",
+			  "samples": [
+				  "sap.f.sample.ShellBar",
+				  "sap.f.sample.ShellBarProductSwitch",
+				  "sap.f.sample.ShellBarWithMenuButton",
+				  "sap.f.sample.ShellBarWithSearch",
+				  "sap.f.sample.ShellBarWithFlexibleColumnLayout",
+				  "sap.f.sample.ShellBarWithSplitApp"
+			  ]
+		},
+		{
+			"id": "sap.f.SidePanel",
+			"name": "Side Panel",
+			"category": "Display",
+			"since": "1.107",
 			"samples": [
-				"sap.f.sample.ShellBar",
-				"sap.f.sample.ShellBarProductSwitch",
-				"sap.f.sample.ShellBarWithMenuButton",
-				"sap.f.sample.ShellBarWithSearch",
-				"sap.f.sample.ShellBarWithFlexibleColumnLayout",
-				"sap.f.sample.ShellBarWithSplitApp"
-			]
+				"sap.f.sample.SidePanel",
+				"sap.f.sample.SidePanelSingle",
+				"sap.f.sample.SidePanelOverflow"
+			  ]
 		},
 		{
 		  "id": "sap.f.Card",
@@ -289,6 +300,21 @@
 		  "id": "sap.f.sample.ShellBarWithSplitApp",
 		  "name": "Shell Bar with Split App",
 		  "description": "Example of Shell Bar in combination with Split App."
+		},
+		{
+			"id": "sap.f.sample.SidePanel",
+			"name": "Side Panel",
+			"description": "Demonstrates the basic usage of Side Panel."
+		},
+		{
+			"id": "sap.f.sample.SidePanelSingle",
+			"name": "Side Panel with single action item",
+			"description": "Demonstrates the usage of Side Panel with single action item."
+		},
+		{
+			"id": "sap.f.sample.SidePanelOverflow",
+			"name": "Side Panel with overflow menu",
+			"description": "Demonstrates the usage of Side Panel with overflow menu."
 		},
 		{
 		  "id": "sap.f.sample.Card",

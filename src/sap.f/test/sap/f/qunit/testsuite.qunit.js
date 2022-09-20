@@ -225,6 +225,11 @@ sap.ui.define(function () {
 					language: "en"
 				}
 			},
+			"SidePanel": {
+				coverage: {
+					only: ["sap/f/SidePanel"]
+				}
+			},
 			"TargetHandler": {
 				coverage: {
 					only: ["sap/f/routing/TargetHanlder"]
