@@ -25,7 +25,7 @@ sap.ui.define([
 				if (e.shiftKey && e.altKey && e.ctrlKey && e.keyCode === KEY_CODE.T && bLeftAlt) {
 					e.preventDefault();
 					sap.ui.require(["sap/ui/testrecorder/Bootstrap"], function (Bootstrap) {
-						Bootstrap.init(["true", "window"]);
+						Bootstrap.init(["true"]);
 					}, function (oError) {
 						/*eslint-disable no-console */
 						console.warn("Could not load module 'sap/ui/testrecorder/Bootstrap'! Details: " + oError);
