@@ -88,10 +88,10 @@ sap.ui.define([
 		this.mock(_Requestor.prototype).expects("sendOptimisticBatch").never();
 
 		// code under test: operation mode Server must not throw an error
-		oModel = this.createModel("", {operationMode : OperationMode.Server, serviceUrl : "/foo/",
-			synchronizationMode : "None"});
+		oModel = this.createModel("", {operationMode : OperationMode.Server});
 
 		assert.strictEqual(oModel.sOperationMode, OperationMode.Server);
+		assert.strictEqual(oModel.getServiceUrl(), sServiceUrl);
 		assert.strictEqual(oModel.getMetaModel().sLanguage, undefined);
 	});
 

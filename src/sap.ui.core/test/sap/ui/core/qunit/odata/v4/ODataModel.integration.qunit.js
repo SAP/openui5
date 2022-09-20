@@ -2246,6 +2246,8 @@ sap.ui.define([
 <Text id="name" text="{/BusinessPartnerList(\'1\')/CompanyName}"/>',
 			that = this;
 
+		assert.strictEqual(oModel.getServiceUrl(), sSalesOrderService);
+
 		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
 				value : [
 					{SalesOrderID : "1", Note : "Note 1"},

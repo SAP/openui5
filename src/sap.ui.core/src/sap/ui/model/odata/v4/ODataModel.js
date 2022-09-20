@@ -1896,6 +1896,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns this model's root URL of the service to request data from (as defined by the
+	 * "serviceUrl" model parameter, see {@link sap.ui.model.odata.v4.ODataModel#constructor}),
+	 * without query options.
+	 *
+	 * @returns {string} The service URL
+	 *
+	 * @public
+	 * @since 1.107.0
+	 */
+	ODataModel.prototype.getServiceUrl = function () {
+		return this.sServiceUrl;
+	};
+
+	/**
 	 * Returns <code>true</code> if there are pending changes, meaning updates or created entities
 	 * (see {@link sap.ui.model.odata.v4.ODataListBinding#create}) that have not yet been
 	 * successfully sent to the server. Since 1.98.0,
