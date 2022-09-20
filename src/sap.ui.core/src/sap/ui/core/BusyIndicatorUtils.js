@@ -3,8 +3,8 @@
  */
 
 // Provides utility class sap.ui.core.BusyIndicatorUtils
-sap.ui.define(['./BlockLayerUtils'], //require of sap/ui/core/library not possible due to cyclic dependencies
-	function(BlockLayerUtils) {
+sap.ui.define(['./BlockLayerUtils', 'sap/ui/core/library'],
+	function(BlockLayerUtils, coreLibrary) {
 	"use strict";
 
 	// Static class
@@ -16,6 +16,8 @@ sap.ui.define(['./BlockLayerUtils'], //require of sap/ui/core/library not possib
 	 * @ui5-restricted sap.ui.core, sap.chart
 	 */
 	var BusyIndicatorUtils = function() {};
+
+	var BusyIndicatorSize = coreLibrary.BusyIndicatorSize;
 
 	/**
 	 * Returns the HTML content for the busy indicator
@@ -82,10 +84,7 @@ sap.ui.define(['./BlockLayerUtils'], //require of sap/ui/core/library not possib
 	 * @see sap.ui.core.BusyIndicatorSize
 	 */
 	BusyIndicatorUtils.addHTML = function (oBusyBlockState, sSize) {
-		// Note: to avoid the cycle (Core -> Control -> BusyIndicatorUtils -> library -> Core),
-		//       this cannot be modeled as a top-level dependency
-		var BusyIndicatorSize = sap.ui.require("sap/ui/core/library").BusyIndicatorSize,
-			sSizeClass = "sapUiLocalBusyIndicatorSizeMedium",
+		var sSizeClass = "sapUiLocalBusyIndicatorSizeMedium",
 			sAnimationSizeClass;
 
 		switch (sSize) {
