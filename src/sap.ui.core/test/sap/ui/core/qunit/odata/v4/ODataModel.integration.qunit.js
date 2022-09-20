@@ -105,7 +105,7 @@ sap.ui.define([
 		});
 		assert.deepEqual(aRows.map(function (oRow) {
 			return oRow.getCells().map(function (oCell) {
-				return oCell.getText();
+				return oCell.getText ? oCell.getText() : oCell.getValue();
 			});
 		}), aExpectedContent, sTitle);
 	}
@@ -22035,6 +22035,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1643
 	//
 	// Use a sort order (JIRA: CPOUI5ODATAV4-1675).
+	//
+	// Edit name as a non-hierarchy property (JIRA: CPOUI5ODATAV4-1742).
 	QUnit.test("Recursive Hierarchy: expand to 2, collapse & expand root etc.", function (assert) {
 		var oCollapsed,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
@@ -22053,33 +22055,42 @@ sap.ui.define([
 	<Text text="{= %{@$ui5.node.level} }"/>\
 	<Text text="{ID}"/>\
 	<Text text="{MANAGER_ID}"/>\
+	<Input value="{Name}"/>\
+	<Text text="{AGE}"/>\
 </t:Table>',
 			that = this;
 
 		this.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
 				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
 					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
-				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID"
+				+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
 				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "6",
 				value : [{
+					AGE : 60,
 					DescendantCount : 5,
 					DistanceFromRoot : 0,
 					DrillState : "expanded",
 					ID : "0",
-					MANAGER_ID : null
+					MANAGER_ID : null,
+					Name : "Alpha"
 				}, {
+					AGE : 55,
 					DescendantCount : 0,
 					DistanceFromRoot : 1,
 					DrillState : "collapsed",
 					ID : "1",
-					MANAGER_ID : "0"
+					MANAGER_ID : "0",
+					Name : "Beta"
 				}, {
+					"@odata.etag" : "etag_kappa",
+					AGE : 56,
 					DescendantCount : 0,
 					DistanceFromRoot : 1,
 					DrillState : "leaf",
 					ID : "2",
-					MANAGER_ID : "0"
+					MANAGER_ID : "0",
+					Name : "Kappa"
 				}]
 			});
 
@@ -22092,22 +22103,52 @@ sap.ui.define([
 				"/EMPLOYEES('1')",
 				"/EMPLOYEES('2')"
 			], [
-				[true, 1, "0", ""],
-				[false, 2, "1", "0"],
-				[undefined, 2, "2", "0"]
+				[true, 1, "0", "", "Alpha", 60],
+				[false, 2, "1", "0", "Beta", 55],
+				[undefined, 2, "2", "0", "Kappa", 56]
 			], 6);
 			assert.deepEqual(oRoot.getObject(), {
 					"@$ui5.node.isExpanded" : true,
 					"@$ui5.node.level" : 1,
+					AGE : 60,
 					ID : "0",
-					MANAGER_ID : null
+					MANAGER_ID : null,
+					Name : "Alpha"
 				}, "technical properties have been removed");
 			assert.deepEqual(oTable.getRows()[2].getBindingContext().getObject(), {
+					"@odata.etag" : "etag_kappa",
 					// "@$ui5.node.isExpanded" : undefined, // lost by _Helper.publicClone?!
 					"@$ui5.node.level" : 2,
+					AGE : 56,
 					ID : "2",
-					MANAGER_ID : "0"
+					MANAGER_ID : "0",
+					Name : "Kappa"
 				}, "technical properties have been removed");
+
+			that.expectRequest({
+					method : "PATCH",
+					headers : {"If-Match" : "etag_kappa"},
+					url : "EMPLOYEES('2')",
+					payload : {Name : "κ (Kappa)"}
+				}, {
+					AGE : 66, // artificial side effect
+					Name : "Kappa: κ"
+				});
+
+			// code under test
+			oTable.getRows()[2].getCells()[4].getBinding("value").setValue("κ (Kappa)");
+
+			return that.waitForChanges(assert, "edit Kappa");
+		}).then(function () {
+			checkTable("edit Kappa", assert, oTable, [
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')"
+			], [
+				[true, 1, "0", "", "Alpha", 60],
+				[false, 2, "1", "0", "Beta", 55],
+				[undefined, 2, "2", "0", "Kappa: κ", 66]
+			], 6);
 
 			// code under test
 			oRoot.collapse();
@@ -22117,9 +22158,9 @@ sap.ui.define([
 			checkTable("root collapsed", assert, oTable, [
 				"/EMPLOYEES('0')"
 			], [
-				[false, 1, "0", ""],
-				["", "", "", ""],
-				["", "", "", ""]
+				[false, 1, "0", "", "Alpha", 60],
+				["", "", "", "", "", ""],
+				["", "", "", "", "", ""]
 			]);
 
 			that.oLogMock.expects("error").withArgs(
@@ -22138,26 +22179,30 @@ sap.ui.define([
 				"/EMPLOYEES('1')",
 				"/EMPLOYEES('2')"
 			], [
-				[true, 1, "0", ""],
-				[false, 2, "1", "0"],
-				[undefined, 2, "2", "0"]
+				[true, 1, "0", "", "Alpha", 60],
+				[false, 2, "1", "0", "Beta", 55],
+				[undefined, 2, "2", "0", "Kappa: κ", 66]
 			], 6);
-		}).then(function () {
+
 			oCollapsed = oTable.getRows()[1].getBindingContext();
 
 			that.expectRequest("EMPLOYEES"
 					+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '1'),1)"
 					+ "/orderby(AGE desc)"
-					+ "&$select=DrillState,ID,MANAGER_ID&$count=true&$skip=0&$top=3", {
+					+ "&$select=AGE,DrillState,ID,MANAGER_ID,Name&$count=true&$skip=0&$top=3", {
 					"@odata.count" : "2",
 					value : [{
+						AGE : 41,
 						DrillState : "collapsed",
 						ID : "1.1",
-						MANAGER_ID : "1"
+						MANAGER_ID : "1",
+						Name : "Gamma"
 					}, {
+						AGE : 42,
 						DrillState : "collapsed",
 						ID : "1.2",
-						MANAGER_ID : "1"
+						MANAGER_ID : "1",
+						Name : "Zeta"
 					}]
 				});
 
@@ -22173,41 +22218,49 @@ sap.ui.define([
 				"/EMPLOYEES('1.2')",
 				"/EMPLOYEES('2')"
 			], [
-				[true, 1, "0", ""],
-				[true, 2, "1", "0"],
-				[false, 3, "1.1", "1"]
+				[true, 1, "0", "", "Alpha", 60],
+				[true, 2, "1", "0", "Beta", 55],
+				[false, 3, "1.1", "1", "Gamma", 41]
 			], 8);
 			assert.deepEqual(oCollapsed.getObject(), {
 					"@$ui5.node.groupLevelCount" : 2,
 					"@$ui5.node.isExpanded" : true,
 					"@$ui5.node.level" : 2,
+					AGE : 55,
 					ID : "1",
-					MANAGER_ID : "0"
+					MANAGER_ID : "0",
+					Name : "Beta"
 				}, "technical properties have been removed");
 
 			that.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
 					+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
 						+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
-					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID"
+					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
 					+ "&$skip=3&$top=3", {
 					value : [{
+						AGE : 57,
 						DescendantCount : 0,
 						DistanceFromRoot : 1,
 						DrillState : "leaf",
 						ID : "3",
-						MANAGER_ID : "0"
+						MANAGER_ID : "0",
+						Name : "Lambda"
 					}, {
+						AGE : 58,
 						DescendantCount : 1,
 						DistanceFromRoot : 1,
 						DrillState : "collapsed",
 						ID : "4",
-						MANAGER_ID : "0"
+						MANAGER_ID : "0",
+						Name : "Mu"
 					}, {
+						AGE : 59,
 						DescendantCount : 1,
 						DistanceFromRoot : 1,
 						DrillState : "collapsed",
 						ID : "5",
-						MANAGER_ID : "0"
+						MANAGER_ID : "0",
+						Name : "Xi"
 					}]
 				});
 
@@ -22226,9 +22279,9 @@ sap.ui.define([
 				"/EMPLOYEES('4')",
 				"/EMPLOYEES('5')"
 			], [
-				[undefined, 2, "3", "0"],
-				[false, 2, "4", "0"],
-				[false, 2, "5", "0"]
+				[undefined, 2, "3", "0", "Lambda", 57],
+				[false, 2, "4", "0", "Mu", 58],
+				[false, 2, "5", "0", "Xi", 59]
 			]);
 
 			// code under test
@@ -22242,9 +22295,9 @@ sap.ui.define([
 			checkTable("root collapsed", assert, oTable, [
 				"/EMPLOYEES('0')"
 			], [
-				[false, 1, "0", ""],
-				["", "", "", ""],
-				["", "", "", ""]
+				[false, 1, "0", "", "Alpha", 60],
+				["", "", "", "", "", ""],
+				["", "", "", "", "", ""]
 			]);
 		});
 	});

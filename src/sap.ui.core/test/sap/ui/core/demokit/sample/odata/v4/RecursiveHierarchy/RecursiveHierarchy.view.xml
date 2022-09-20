@@ -41,8 +41,11 @@
 		<Column template="MANAGER_ID">
 			<m:Label text="Manager's ID"/>
 		</Column>
-		<Column template="Name">
+		<Column>
 			<m:Label text="Name"/>
+			<template>
+				<m:Input value="{Name}"/>
+			</template>
 		</Column>
 		<Column template="AGE">
 			<m:Label text="Age"/>

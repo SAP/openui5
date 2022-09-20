@@ -27,7 +27,7 @@ sap.ui.define([
 		if (oExpected === null) {
 			aCells.forEach(function (oCell, i) {
 				// Note: don't care about invisible icon in 2nd column here
-				Opa5.assert.strictEqual(oCell.getText(), "",
+				Opa5.assert.strictEqual(oCell.getText ? oCell.getText() : oCell.getValue(), "",
 					"Row " + iRowIndex + ", cell " + i + " is empty");
 			});
 			return;
@@ -46,9 +46,9 @@ sap.ui.define([
 		Opa5.assert.strictEqual(aCells[3].getText(),
 			oExpected.MANAGER_ID || "",
 			"Row " + iRowIndex + ": Manager's ID is " + aCells[3].getText());
-		Opa5.assert.strictEqual(aCells[4].getText(),
+		Opa5.assert.strictEqual(aCells[4].getValue(),
 			oExpected.Name,
-			"Row " + iRowIndex + ": Name is " + aCells[4].getText());
+			"Row " + iRowIndex + ": Name is " + aCells[4].getValue());
 		Opa5.assert.strictEqual(aCells[5].getText(),
 			oExpected.AGE.toString(),
 			"Row " + iRowIndex + ": Age is "
