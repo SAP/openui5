@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/util/openWindow"
 ], function(
 	Plugin,
 	ElementUtil,
@@ -25,7 +26,8 @@ sap.ui.define([
 	Log,
 	merge,
 	DelegateMediatorAPI,
-	JsControlTreeModifier
+	JsControlTreeModifier,
+	openWindow
 ) {
 	"use strict";
 
@@ -734,7 +736,7 @@ sap.ui.define([
 						entityType : this._oCurrentFieldExtInfo.EntityType
 					}
 				}));
-				Utils.openNewWindow(sHrefForFieldExtensionUi);
+				openWindow(sHrefForFieldExtensionUi, "_blank");
 			}.bind(this), ["CrossApplicationNavigation"]);
 		},
 
