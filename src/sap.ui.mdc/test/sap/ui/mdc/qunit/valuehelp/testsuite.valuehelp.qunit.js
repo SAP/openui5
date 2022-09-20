@@ -121,6 +121,18 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 					only: "[sap/ui/mdc/valuehelp]"
 				}
 			},
+			"MDCTable": {
+				module: "./MDCTable.qunit",
+				ui5: {
+					animationMode: "none"
+				},
+				sinon: {
+					qunitBridge: true
+				},
+				coverage: {
+					only: "[sap/ui/mdc/valuehelp]"
+				}
+			},
 			"Popover": {
 				module: "./Popover.qunit",
 				ui5: {
