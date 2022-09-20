@@ -3,11 +3,13 @@
  */
 
 sap.ui.define([
+	"sap/ui/util/openWindow",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ServiceValidation"
 ], function(
+	openWindow,
 	Settings,
 	Utils,
 	ABAPExtensibilityVariantFactory,
@@ -96,21 +98,10 @@ sap.ui.define([
 		return getExtensibilityVariant().then(function(oExtensibilityVariant) {
 			return oExtensibilityVariant.getNavigationUri().then(function(sNavigationUri) {
 				if (sNavigationUri) {
-					ABAPAccess.openNewWindow(sNavigationUri);
+					openWindow(sNavigationUri, "_blank");
 				}
 			});
 		});
-	};
-
-	/**
-	 * Allows <code>window.open</code> to be stubbed in tests.
-	 *
-	 * @public
-	 * @param {string} sUrl - URL string
-	 * @return {void}
-	 */
-	ABAPAccess.openNewWindow = function(sUrl) {
-		window.open(sUrl, "_blank", "noopener noreferrer");
 	};
 
 	/**
