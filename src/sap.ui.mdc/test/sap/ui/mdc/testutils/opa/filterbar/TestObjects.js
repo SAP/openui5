@@ -137,6 +137,22 @@ sap.ui.define([
 				 */
 				iPressOnTheAdaptFiltersButton: function() {
 					return filterBarActions.iPressOnTheAdaptFiltersButton.apply(this, arguments);
+				},
+				/**
+				 * OPA5 test action
+				 * Searches for an open "Adapt Filters" dialog and presses the "Ok" button on it
+				 * @returns {Promise} OPA waitFor
+				 */
+				iCloseTheAdaptFiltersDialogWithOk: function() {
+					return filterBarActions.iCloseTheAdaptFiltersDialogWithOk.apply(this, arguments);
+				},
+				/**
+				 * OPA5 test action
+				 * Searches for an open "Adapt Filters" dialog and presses the "Ok" button on it
+				 * @returns {Promise} OPA waitFor
+				 */
+				iCloseTheAdaptFiltersDialogWithCancel: function() {
+					return filterBarActions.iCloseTheAdaptFiltersDialogWithCancel.apply(this, arguments);
 				}
 			},
 			assertions: {

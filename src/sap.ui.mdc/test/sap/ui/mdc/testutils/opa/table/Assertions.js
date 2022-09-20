@@ -205,6 +205,30 @@ sap.ui.define([
 					});
 				}
 			});
+		},
+
+		/**
+		  * Checks whether the MDC Table has an active overlay
+		  * @returns {Promise} OPA waitFor
+		  */
+		iShouldSeeAnOverlay: function() {
+			return waitForTable.call(this, {
+				success: function(oTable) {
+					QUnit.assert.equal(oTable.$().find(".sapUiOverlay").length, 1, "Overlay was found on MDC Table");
+				}
+			});
+		},
+
+		/**
+		  * Checks whether the MDC Table has no active overlay
+		  * @returns {Promise} OPA waitFor
+		  */
+		iShouldSeeNoOverlay: function() {
+			return waitForTable.call(this, {
+				success: function(oTable) {
+					QUnit.assert.equal(oTable.$().find(".sapUiOverlay").length, 0, "No overlay was found on MDC Table");
+				}
+			});
 		}
 	};
 });

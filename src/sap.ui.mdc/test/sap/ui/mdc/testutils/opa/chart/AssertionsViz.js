@@ -129,6 +129,36 @@ sap.ui.define([
 					});
 				}
 			});
+		},
+
+		/**
+		  * Checks whether the MDC Chart has an active overlay
+		  * @param {string} sId Id of the MDC Chart
+		  * @returns {Promise} OPA waitFor
+		  */
+		iShouldSeeAnOverlay: function(sId) {
+			return this.waitFor({
+				controlType: "sap.ui.mdc.Chart",
+				id: sId,
+				success: function(oChart){
+					Opa5.assert.equal(oChart.$().find(".sapUiOverlay").length, 1, "Overlay was found on MDC Chart");
+				}
+			});
+		},
+
+		/**
+		 * Checks whether the MDC Chart has no active overlay
+		 * @param {string} sId Id of the MDC Chart
+		 * @returns {Promise} OPA waitFor
+		 */
+		iShouldSeeNoOverlay: function(sId) {
+			return this.waitFor({
+				controlType: "sap.ui.mdc.Chart",
+				id: sId,
+				success: function(oChart){
+					Opa5.assert.equal(oChart.$().find(".sapUiOverlay").length, 0, "No overlay was found on MDC Chart");
+				}
+			});
 		}
 
     };
