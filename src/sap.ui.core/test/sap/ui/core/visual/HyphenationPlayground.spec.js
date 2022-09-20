@@ -5,11 +5,10 @@ describe("sap.ui.core.HyphenationPlayground", function() {
 
 	browser.testrunner.currentSuite.meta.controlName = 'sap.ui.core.hyphenation.Hyphenation'; // Hyphenation API
 
-	var aLangCodes = [
+	var aLangCodesWithThirdPartySupport = [
 		"bg",
 		"ca",
 		"hr",
-		"cs",
 		"da",
 		"nl",
 		"en-us",
@@ -23,10 +22,8 @@ describe("sap.ui.core.HyphenationPlayground", function() {
 		"it",
 		"lt",
 		"nb-no",
-		"pl",
 		"pt",
 		"ru",
-		"sr",
 		"sl",
 		"es",
 		"sv",
@@ -39,7 +36,6 @@ describe("sap.ui.core.HyphenationPlayground", function() {
 		"bg": "300px",
 		"ca" : "350px",
 		"hr" : "350px",
-		"cs" : "280px",
 		"da": "350px",
 		"nl" : "320px",
 		"en-us": "280px",
@@ -53,10 +49,8 @@ describe("sap.ui.core.HyphenationPlayground", function() {
 		"it" : "350px",
 		"lt" : "320px",
 		"nb-no": "320px",
-		"pl" : "350px",
 		"pt" : "350px",
 		"ru" : "350px",
-		"sr" : "320px",
 		"sl" : "350px",
 		"es" : "350px",
 		"sv" : "350px",
@@ -67,16 +61,16 @@ describe("sap.ui.core.HyphenationPlayground", function() {
 
 	var fnTakePictures = function(sLang, n) {
 		it("should visualize hyphenation for language: " + sLang, function () {
-			var oForm = element(by.id("formWithTexts-" + sLang));
+			var oText = element(by.id("hyph-" + sLang));
 
 			browser.executeScript("sap.ui.getCore().byId('formWithTexts-" + sLang + "').setWidth('" + aFormWidth[sLang] + "')");
 			browser.executeScript("document.getElementById('formWithTexts-" + sLang + "').scrollIntoView()");
 
-			expect(takeScreenshot(oForm)).toLookAs(n + "_language_" + sLang);
+			expect(takeScreenshot(oText)).toLookAs(n + "_thirdParty_language_" + sLang);
 		});
 	};
 
-	for (var index = 0; index < aLangCodes.length; index++) {
-		fnTakePictures(aLangCodes[index], index + 1);
+	for (var index = 0; index < aLangCodesWithThirdPartySupport.length; index++) {
+		fnTakePictures(aLangCodesWithThirdPartySupport[index], index + 1);
 	}
 });
