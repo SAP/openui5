@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/FormattedText",
 	"sap/m/Illustration",
+	"sap/base/Log",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	'sap/ui/core/library',
@@ -21,6 +22,7 @@ sap.ui.define([
 	Title,
 	FormattedText,
 	Illustration,
+	Log,
 	Control,
 	Core,
 	coreLibrary,
@@ -269,17 +271,21 @@ sap.ui.define([
 	IllustratedMessage.BREAK_POINTS = {
 		DIALOG: 679,
 		SPOT: 319,
-		BASE: 259
+		DOT: 259,
+		BASE: 159
 	};
 
 	IllustratedMessage.BREAK_POINTS_HEIGHT = {
 		DIALOG: 451,
 		SPOT: 296,
-		BASE: 154
+		DOT: 154,
+		BASE: 87
 	};
 
+	// The medias should always be in ascending order (smaller to bigger)
 	IllustratedMessage.MEDIA = {
 		BASE: "sapMIllustratedMessage-Base",
+		DOT: "sapMIllustratedMessage-Dot",
 		SPOT: "sapMIllustratedMessage-Spot",
 		DIALOG: "sapMIllustratedMessage-Dialog",
 		SCENE: "sapMIllustratedMessage-Scene"
@@ -296,6 +302,7 @@ sap.ui.define([
 	IllustratedMessage.prototype.init = function () {
 		this._sLastKnownMedia = null;
 		this._updateInternalIllustrationSetAndType(this.getIllustrationType());
+		Core.getEventBus().subscribe("sapMIllusPool-assetLdgFailed", this._handleMissingAsset.bind(this));
 	};
 
 	IllustratedMessage.prototype.onBeforeRendering = function () {
@@ -506,8 +513,8 @@ sap.ui.define([
 				this._updateMedia(oDomRef.getBoundingClientRect().width, oDomRef.getBoundingClientRect().height);
 			} else {
 				sCustomSize = IllustratedMessage.MEDIA[sSize.toUpperCase()];
-				this._updateMediaStyle(sCustomSize);
 				this._updateSymbol(sCustomSize);
+				this._updateMediaStyle(sCustomSize);
 			}
 		}
 
@@ -552,6 +559,8 @@ sap.ui.define([
 
 		if (iWidth <= IllustratedMessage.BREAK_POINTS.BASE || (iHeight <= IllustratedMessage.BREAK_POINTS_HEIGHT.BASE && bVertical)) {
 			sNewMedia = IllustratedMessage.MEDIA.BASE;
+		} else if (iWidth <= IllustratedMessage.BREAK_POINTS.DOT || (iHeight <= IllustratedMessage.BREAK_POINTS_HEIGHT.DOT && bVertical)) {
+			sNewMedia = IllustratedMessage.MEDIA.DOT;
 		} else if (iWidth <= IllustratedMessage.BREAK_POINTS.SPOT || (iHeight <= IllustratedMessage.BREAK_POINTS_HEIGHT.SPOT && bVertical)) {
 			sNewMedia = IllustratedMessage.MEDIA.SPOT;
 		} else if (iWidth <= IllustratedMessage.BREAK_POINTS.DIALOG || (iHeight <= IllustratedMessage.BREAK_POINTS_HEIGHT.DIALOG && bVertical)) {
@@ -560,8 +569,8 @@ sap.ui.define([
 			sNewMedia = IllustratedMessage.MEDIA.SCENE;
 		}
 
-		this._updateMediaStyle(sNewMedia);
 		this._updateSymbol(sNewMedia);
+		this._updateMediaStyle(sNewMedia);
 	};
 
 	/**
@@ -589,10 +598,53 @@ sap.ui.define([
 	IllustratedMessage.prototype._updateSymbol = function (sCurrentMedia) {
 		var sIdMedia = sCurrentMedia.substring(sCurrentMedia.indexOf('-') + 1);
 
-		if (sCurrentMedia !== IllustratedMessage.MEDIA.BASE) { // No need to require a resource for BASE illustrationSize, since there is none
+		if (sCurrentMedia !== this._sLastKnownMedia && sCurrentMedia !== IllustratedMessage.MEDIA.BASE) { // No need to require a resource for BASE illustrationSize, since there is none
 			this._getIllustration().setSet(this._sIllustrationSet, true)
 				.setMedia(sIdMedia, true)
 				.setType(this._sIllustrationType);
+		}
+	};
+
+	/**
+	 * Returns a fallback media size, for cases when the initially requested asset is not found.
+	 * Chooses the illustration breakpoint bigger than the current one (e.g. Dot -> Spot).
+	 *
+	 * @since 1.108.0
+	 * @return {string} The fallback media size
+	 * @private
+	 */
+	 IllustratedMessage.prototype._getFallbackMedia = function () {
+		var sMedia = this._sLastKnownMedia,
+			aMediaValues = Object.values(IllustratedMessage.MEDIA),
+			iIndexOfMedia = aMediaValues.indexOf(sMedia);
+
+		if (iIndexOfMedia > -1 && iIndexOfMedia < aMediaValues.length - 1) {
+			return aMediaValues[iIndexOfMedia + 1];
+		} else {
+			return aMediaValues[aMediaValues.length - 1];
+		}
+	};
+
+	/**
+	 * Handles missing assets by setting the media to a larger size.
+	 * Once no larger media size is available, displays no SVG.
+	 *
+	 * @since 1.108.0
+	 * @static
+	 * @private
+	 */
+	IllustratedMessage.prototype._handleMissingAsset = function () {
+		var oIllustration,
+			aMediaValues = Object.values(IllustratedMessage.MEDIA),
+			sFallbackMedia = "";
+
+		if (this._sLastKnownMedia !== aMediaValues[aMediaValues.length - 1]) {
+			oIllustration = this._getIllustration();
+			sFallbackMedia = this._getFallbackMedia();
+			oIllustration.setMedia(sFallbackMedia.substring(sFallbackMedia.indexOf('-') + 1));
+			Log.warning(this._sLastKnownMedia + " is unavailable, retrying with larger size...", this);
+		} else {
+			Log.warning("No larger fallback asset available, no SVG will be displayed.", this);
 		}
 	};
 

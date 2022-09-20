@@ -444,7 +444,7 @@ function (
 
 	QUnit.test("_updateMedia (horizontal)", function (assert) {
 		// Assert
-		assert.expect(16);
+		assert.expect(20);
 
 		// Arrange
 		var fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle");
@@ -472,7 +472,7 @@ function (
 
 	QUnit.test("_updateMedia (vertical) with enableVerticalResponsiveness property", function (assert) {
 		// Assert
-		assert.expect(20);
+		assert.expect(24);
 
 		// Arrange
 		var fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle");
@@ -524,7 +524,7 @@ function (
 
 	QUnit.test("_updateMediaStyle", function (assert) {
 		// Assert
-		assert.expect(19);
+		assert.expect(28);
 
 		// Arrange
 		var sIdMedia, sCurrStyleClass,
@@ -556,7 +556,7 @@ function (
 		}, this);
 
 		// Assert
-		assert.strictEqual(fnUpdateInternalSpy.callCount, 16, 'toggleStyleClass method of the IM is called four times for each media');
+		assert.strictEqual(fnUpdateInternalSpy.callCount, 25, 'toggleStyleClass method of the IM is called five times for each media');
 		assert.strictEqual(this.oIllustratedMessage._sLastKnownMedia, sCurrTestMedia, '_sLastKnownMedia private var of IM is correct');
 
 		// Act
@@ -569,7 +569,7 @@ function (
 
 	QUnit.test("_updateSymbol", function (assert) {
 		// Assert
-		assert.expect(4);
+		assert.expect(5);
 
 		// Arrange
 		var sIdMedia, sNewSymbolId,
@@ -580,6 +580,7 @@ function (
 			sIdMedia = sMedia.charAt(0) + sMedia.slice(1).toLowerCase();
 
 			// Act
+			this.oIllustratedMessage._sLastKnownMedia = null; // the method compares the proposed media to _sLastKnownMedia, to update only when necessary
 			this.oIllustratedMessage._updateSymbol(IllustratedMessage.MEDIA[sMedia]);
 			Core.applyChanges();
 			sNewSymbolId = this.oIllustratedMessage._sIllustrationSet + "-" + sIdMedia + "-" + this.oIllustratedMessage._sIllustrationType;
@@ -593,6 +594,27 @@ function (
 				"symbolId ( " + sNewSymbolId + " ) of the IllustratedMessage's illustration is correctly set according to the current media (" + sIdMedia + ")");
 			}
 		}, this);
+	});
+
+	QUnit.test("_getFallbackMedia", function (assert) {
+		// Arrange
+		var sExpectedFallbackMedia;
+
+		// Act
+		this.oIllustratedMessage._updateMedia(IllustratedMessage.BREAK_POINTS.DOT);
+		Core.applyChanges();
+		sExpectedFallbackMedia = this.oIllustratedMessage._getFallbackMedia();
+
+		// Assert
+		assert.strictEqual(sExpectedFallbackMedia, IllustratedMessage.MEDIA.SPOT, "returns Spot as fallback Media when current is Dot");
+
+		// Act
+		this.oIllustratedMessage._updateMedia(IllustratedMessage.BREAK_POINTS.DIALOG);
+		Core.applyChanges();
+		sExpectedFallbackMedia = this.oIllustratedMessage._getFallbackMedia();
+
+		// Assert
+		assert.strictEqual(sExpectedFallbackMedia, IllustratedMessage.MEDIA.SCENE, "returns Scene as fallback Media when current is Dialog");
 	});
 
 	/* --------------------------- IllustratedMessage Accessibility -------------------------------------- */
