@@ -1137,10 +1137,12 @@ function (
 			overlayId: oElementOverlay.getId()
 		}, "overlayId");
 
+		// Destroyed Overlays should not be left over in the syncing batch
+		this._removeOverlayFromSyncingBatch(oElementOverlay);
+
 		// FIXME: workaround. Overlays should not kill themselves (see ElementOverlay@_onElementDestroyed).
 		var sElementId = oElementOverlay.getAssociation("element");
 		if (sElementId in this._mPendingOverlays) { // means that the overlay was destroyed during initialization process
-			this._removeOverlayFromSyncingBatch(oElementOverlay);
 			delete this._mPendingOverlays[sElementId];
 			return;
 		}

@@ -184,6 +184,10 @@ sap.ui.define([
 		};
 	};
 
+	AddSimpleFormField.getCondenserInfo = function() {
+		return undefined;
+	};
+
 	return AddSimpleFormField;
 },
 /* bExport= */true);

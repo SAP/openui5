@@ -235,5 +235,9 @@ sap.ui.define([
 		};
 	};
 
+	AddSimpleFormGroup.getCondenserInfo = function() {
+		return undefined;
+	};
+
 	return AddSimpleFormGroup;
 }, /* bExport= */true);
