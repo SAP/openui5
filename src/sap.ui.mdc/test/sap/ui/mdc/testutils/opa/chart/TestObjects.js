@@ -395,6 +395,7 @@ sap.ui.define([
 				iCheckAvailableFilters: function(oControl, aFilters) {
 					return p13nAssertions.iCheckAvailableFilters.call(this, oControl, aFilters, chartActions.iOpenThePersonalizationDialog);
 				}
+
 			}
 		}
 	});

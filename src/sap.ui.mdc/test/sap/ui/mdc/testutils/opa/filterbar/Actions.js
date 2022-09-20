@@ -16,7 +16,8 @@ sap.ui.define([
 	"../p13n/Util",
 	"../p13n/waitForP13nButtonWithMatchers",
 	"../p13n/waitForP13nDialog",
-	"./waitForAdaptFiltersButton"
+	"./waitForAdaptFiltersButton",
+	"../Utils"
 ], function(
 	Opa5,
 	Matcher,
@@ -31,7 +32,8 @@ sap.ui.define([
 	p13nUtil,
 	waitForP13nButtonWithMatchers,
 	waitForP13nDialog,
-	waitForAdaptFiltersButton
+	waitForAdaptFiltersButton,
+	TestUtils
 ) {
 	"use strict";
 
@@ -326,6 +328,60 @@ sap.ui.define([
 				actions: new Press(),
 				success: function onAdaptFiltersButtonFound(oAdaptFiltersButton) {
 					Opa5.assert.ok(true, 'The "Adapt Filters" button was pressed');
+				}
+			});
+		},
+
+		iCloseTheAdaptFiltersDialogWithOk: function() {
+			return this.waitFor({
+				controlType: "sap.m.Dialog",
+				matchers: {
+					ancestor: {
+						controlType: "sap.ui.mdc.FilterBar",
+						visible: false
+					}
+				},
+				success:function(aAdaptFiltersPanel) {
+					Opa5.assert.equal(aAdaptFiltersPanel.length, 1, "Adapt Filters Panel found");
+					var sAdaptFiltersResourceBundleButtonText = TestUtils.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.OK");
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						properties: {
+							text: sAdaptFiltersResourceBundleButtonText
+						},
+						matchers: new Ancestor(aAdaptFiltersPanel[0]),
+						actions: new Press(),
+						success : function(aBtn) {
+							Opa5.assert.equal(aBtn.length, 1, "One OK button pressed");
+						}
+					});
+				}
+			});
+		},
+
+		iCloseTheAdaptFiltersDialogWithCancel: function() {
+			return this.waitFor({
+				controlType: "sap.m.Dialog",
+				matchers: {
+					ancestor: {
+						controlType: "sap.ui.mdc.FilterBar",
+						visible: false
+					}
+				},
+				success:function(aAdaptFiltersPanel) {
+					Opa5.assert.equal(aAdaptFiltersPanel.length, 1, "Adapt Filters Panel found");
+					var sAdaptFiltersResourceBundleButtonText = TestUtils.getTextFromResourceBundle("sap.ui.mdc", "p13nDialog.CANCEL");
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						properties: {
+							text: sAdaptFiltersResourceBundleButtonText
+						},
+						matchers: new Ancestor(aAdaptFiltersPanel[0]),
+						actions: new Press(),
+						success : function(aBtn) {
+							Opa5.assert.equal(aBtn.length, 1, "One Cancel button pressed");
+						}
+					});
 				}
 			});
 		}
