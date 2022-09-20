@@ -747,6 +747,14 @@ sap.ui.define([
 					]
 				}
 			},
+			"util/changeVisualization/commands/CreateContainerVisualization": {
+				group: "Change visualization",
+				coverage: {
+					only: [
+						"sap/ui/rta/util/changeVisualization/commands/CreateContainerVisualization"
+					]
+				}
+			},
 			"util/changeVisualization/commands/MoveVisualization": {
 				group: "Change visualization",
 				coverage: {

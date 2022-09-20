@@ -228,10 +228,12 @@ sap.ui.define([
 	AddSimpleFormGroup.getChangeVisualizationInfo = function(oChange, oAppComponent) {
 		var oSelector = oChange.getContent().group.selector;
 		var oAffectedGroup = JsControlTreeModifier.bySelector(oSelector, oAppComponent).getParent().getId();
+		var sGroupLabel = oChange.getText("groupLabel");
 
 		return {
 			affectedControls: [oAffectedGroup],
-			updateRequired: true
+			updateRequired: true,
+			descriptionPayload: { originalLabel: sGroupLabel }
 		};
 	};
 
