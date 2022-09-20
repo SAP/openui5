@@ -176,7 +176,10 @@ sap.ui.define([
 		QUnit.test("onTriggerCreateExtensionData", function(assert) {
 			var done = assert.async();
 
-			var oOpenNewWindowStub = oSandbox.stub(ABAPAccess, "openNewWindow");
+			var oOpenNewWindowStub = oSandbox.stub(window, "open")
+				.onFirstCall()
+				.returns()
+				.callThrough();
 
 			var oExpectedParams = {
 				target: {
@@ -311,7 +314,10 @@ sap.ui.define([
 			var done = assert.async();
 
 			var oControl = this.oView.byId("EntityType01.Prop2");
-			var oOpenNewWindowStub = oSandbox.stub(ABAPAccess, "openNewWindow");
+			var oOpenNewWindowStub = oSandbox.stub(window, "open")
+				.onFirstCall()
+				.returns()
+				.callThrough();
 
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
