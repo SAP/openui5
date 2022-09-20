@@ -58,7 +58,7 @@ sap.ui.define([
 	 *   the  value for "$count", remains unset if undefined
 	 * @param {boolean} [bKeyPredicates]
 	 *   add a property "@$ui5._/predicate" with a key predicate
-	 * @return {object}
+	 * @returns {object}
 	 *   the data
 	 */
 	function createData(iLength, iStart, bDrillDown, iCount, bKeyPredicates) {
