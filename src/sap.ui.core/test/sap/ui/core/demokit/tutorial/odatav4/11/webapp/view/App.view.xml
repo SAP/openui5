@@ -144,7 +144,7 @@
 													</VBox>
 													<VBox class="sapUiMediumMarginBegin">
 														<ObjectAttribute text="{i18n>ageLabelText}"/>
-														<ObjectNumber number="{Age}" numberUnit="Years"/>
+														<ObjectNumber number="{Age}" unit="Years"/>
 													</VBox>
 												</FlexBox>
 										</semantic:headerContent>
