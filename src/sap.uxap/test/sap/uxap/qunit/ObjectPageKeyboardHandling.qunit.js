@@ -203,25 +203,22 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 			oFirstAnchor = aAnchors[0].getDomRef(),
 			oSecondAnchor = aAnchors[1].getDomRef(),
 			oSeventhAnchor = aAnchors[6].getDomRef();
+			oFirstAnchor.focus = function () {
+				// Check if focus function is called on firstAnchor
+				assert.ok(true, "The first anchor should be focused");
+			};
 
 		// Focus the first anchor within the anchorbar and trigger PAGE UP
 		jQuery(oFirstAnchor).trigger("focus");
 		QUtils.triggerKeydown(oFirstAnchor, KeyCodes.PAGE_UP);
-		assert.strictEqual(jQuery(oFirstAnchor).is(":focus"),
-			true, "The first anchor should remain focused");
 
 		// Focus the second anchor within the anchorbar and trigger PAGE UP
 		jQuery(oSecondAnchor).trigger("focus");
 		QUtils.triggerKeydown(oSecondAnchor, KeyCodes.PAGE_UP);
-		assert.strictEqual(jQuery(oFirstAnchor).is(":focus"),
-			true, "The first anchor should be focused");
 
 		// Focus the seventh anchor within the anchorbar and trigger PAGE UP
 		jQuery(oSeventhAnchor).trigger("focus");
 		QUtils.triggerKeydown(oSeventhAnchor, KeyCodes.PAGE_UP);
-		assert.strictEqual(jQuery(oFirstAnchor).is(":focus"),
-			true, "Five anchors should be skipped over and the first anchor should be focused"
-		);
 	});
 
 	QUnit.test("PAGE DOWN: Anchor level", function (assert) {
@@ -230,22 +227,22 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 			oLastAnchor = aAnchors[aAnchors.length - 1].getAggregation("_button").getDomRef(),
 			oSecondLastAnchor = aAnchors[aAnchors.length - 2].getDomRef(),
 			oSeventhLastAnchor = aAnchors[aAnchors.length - 7].getDomRef();
+			oLastAnchor.focus = function () {
+				// Check if focus function is called on firstAnchor
+				assert.ok(true, "The last anchor should be focused");
+			};
 
 		// Focus the last anchor and trigger PAGE DOWN
 		jQuery(oLastAnchor).trigger("focus");
 		QUtils.triggerKeydown(oLastAnchor, KeyCodes.PAGE_DOWN);
-		assert.strictEqual(jQuery(oLastAnchor).is(":focus"), true, "The last anchor should remain focused");
 
 		// Focus the second last anchor and trigger PAGE DOWN
 		jQuery(oSecondLastAnchor).trigger("focus");
 		QUtils.triggerKeydown(oSecondLastAnchor, KeyCodes.PAGE_DOWN);
-		assert.strictEqual(jQuery(oLastAnchor).is(":focus"), true, "The last anchor should be focused");
 
 		// Focus the seventh anchor from the end and trigger PAGE DOWN
 		jQuery(oSeventhLastAnchor).trigger("focus");
 		QUtils.triggerKeydown(oSeventhLastAnchor, KeyCodes.PAGE_DOWN);
-		assert.strictEqual(jQuery(oLastAnchor).is(":focus"), true,
-			"Five anchors should be skipped over and the last anchor should be focused");
 	});
 
 	QUnit.test("Focus of stickyAnchorBar menu buttons", function (assert) {
@@ -429,44 +426,105 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 	 ******************************************************************************/
 
 	QUnit.test("ObjectPageSection F7 - interactive control inside Section with only one SubSection", function (assert) {
-		var $btn = Core.byId("UxAP-70_KeyboardHandling--interactive-el-single-sub-section").$(),
-			$section = Core.byId("UxAP-70_KeyboardHandling--section-with-single-sub-section").$();
+		var oBtn = Core.byId("UxAP-70_KeyboardHandling--interactive-el-single-sub-section"),
+			$btn = oBtn.$(),
+			oSection = Core.byId("UxAP-70_KeyboardHandling--section-with-single-sub-section"),
+			$section = oSection.$();
+
+		oSection.$ = function () {
+			return {
+				trigger: function (sMethod) {
+					if (sMethod === "focus") {
+						assert.ok(true, "Section must be focused");
+					}
+				}
+			};
+		};
+		oBtn.$ = function () {
+			return {
+				off: function () {},
+				trigger: function (sMethod) {
+					if (sMethod === "focus") {
+						assert.ok(true, "Interactive element must be focused back again");
+					}
+				}
+			};
+		};
 
 		$section.attr("tabindex", 0);
 		QUtils.triggerKeydown($btn, KeyCodes.F7);
-		assert.strictEqual($section.is(":focus"), true, "Section must be focused");
 
 		QUtils.triggerKeydown($section, KeyCodes.F7);
-		assert.strictEqual($btn.is(":focus"), true, "Interactiove element must be focused back again");
 	});
 
 	QUnit.test("ObjectPageSection F7 - interactive control inside Section with only one SubSection", function (assert) {
-		var $btn = Core.byId("UxAP-70_KeyboardHandling--interactive-el-multiple-sub-section").$(),
-			$subSection = Core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-2").$();
+		var oBtn = Core.byId("UxAP-70_KeyboardHandling--interactive-el-multiple-sub-section"),
+			$btn = oBtn.$(),
+			oSubSection = Core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-2"),
+			$subSection = oSubSection.$();
+
+		oSubSection.$ = function () {
+			return {
+				trigger: function (sMethod) {
+					if (sMethod === "focus") {
+						assert.ok(true, "SubSection must be focused");
+					}
+				}
+			};
+		};
+		oBtn.$ = function () {
+			return {
+				off: function () {},
+				trigger: function (sMethod) {
+					if (sMethod === "focus") {
+						assert.ok(true, "Interactive element must be focused back again");
+					}
+				}
+			};
+		};
 
 		$subSection.attr("tabindex", 0);
 		QUtils.triggerKeydown($btn, KeyCodes.F7);
-		assert.strictEqual($subSection.is(":focus"), true, "Section must be focused");
 
 		QUtils.triggerKeydown($subSection, KeyCodes.F7);
-		assert.strictEqual($btn.is(":focus"), true, "Interactiove element must be focused back again");
 	});
 
 	QUnit.test("ObjectPageSection F7 - from toolbar move focus to coresponding section", function (assert) {
 		var $btnToolbar = Core.byId("UxAP-70_KeyboardHandling--button-toolbar").$(),
-			$subSection = Core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-1").$();
+			oSubSection = Core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-1"),
+			$subSection = oSubSection.$();
+
+		oSubSection.$ = function () {
+			return {
+				trigger: function (sMethod) {
+					if (sMethod === "focus") {
+						assert.ok(true, "SubSection must be focused");
+					}
+				}
+			};
+		};
 
 		$subSection.attr("tabindex", 0);
 		QUtils.triggerKeydown($btnToolbar, KeyCodes.F7);
-		assert.strictEqual($subSection.is(":focus"), true, "SubSection must be focused");
 	});
 
 	QUnit.test("ObjectPageSection F7 - from section move focus to toolbar", function (assert) {
-		var $btnToolbar = Core.byId("UxAP-70_KeyboardHandling--button-toolbar").$(),
-			$subSection = Core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-1").$();
+		var oSubSection = Core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-1"),
+			$subSection = oSubSection.$();
+
+		oSubSection.$ = function () {
+			return {
+				firstFocusableDomRef: function () {
+					return {
+						focus: function () {
+							assert.ok(true, "Button must be focused");
+						}
+					};
+				}
+			};
+		};
 
 		QUtils.triggerKeydown($subSection, KeyCodes.F7);
-		assert.strictEqual($btnToolbar.is(":focus"), true, "Button must be focused");
 	});
 
 	QUnit.test("ObjectPageSection F7 - from toolbar move focus to coresponding section upon Space press", function (assert) {
@@ -474,22 +532,27 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 		var fDone = assert.async(),
 			sSectionId = this.oObjectPage.getSections()[1].sId,
 			sButtonId = "UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-" + sSectionId + "-anchor",
-			sKeyPressed = "SPACE";
+			sKeyPressed = "SPACE",
+			oStub;
 
 		setTimeout(function () {
 			var oAnchorBarButtonControl = Core.byId(sButtonId),
 			$anchorBarButton = oAnchorBarButtonControl.$(),
-			$subSection = Core.byId(sSectionId).$();
+			oSubSection = Core.byId(sSectionId);
 
+			oStub = this.stub(oSubSection, "getDomRef").callsFake(function () {
+				return {
+					focus: function () {
+						assert.ok(true, "SubSection must be focused");
+						oStub.restore();
+						fDone();
+					}
+				};
+			});
 			$anchorBarButton.trigger("focus");
 
 			QUtils.triggerKeyup($anchorBarButton, sKeyPressed);
-
-			setTimeout(function () {
-				assert.strictEqual($subSection.is(":focus"), true, "SubSection must be focused");
-				fDone();
-			}, 1000);
-		}, 0);
+		}.bind(this), 0);
 	});
 
 	QUnit.test("ObjectPageSection F7 - from toolbar move focus to coresponding section upon Enter press", function (assert) {
@@ -497,44 +560,55 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 		var fDone = assert.async(),
 			sSectionId = this.oObjectPage.getSections()[2].sId,
 			sButtonId = "UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-" + sSectionId + "-anchor",
-			sKeyPressed = "ENTER";
+			sKeyPressed = "ENTER",
+			oStub;
 
 		setTimeout(function () {
 			var oAnchorBarButtonControl = Core.byId(sButtonId),
 			$anchorBarButton = oAnchorBarButtonControl.$(),
-			$subSection = Core.byId(sSectionId).$();
+			oSubSection = Core.byId(sSectionId);
 
+			oStub = this.stub(oSubSection, "getDomRef").callsFake(function () {
+				return {
+					focus: function () {
+						assert.ok(true, "SubSection must be focused");
+						oStub.restore();
+						fDone();
+					}
+				};
+			});
 			$anchorBarButton.trigger("focus");
 
 			QUtils.triggerKeydown($anchorBarButton, sKeyPressed);
-
-			setTimeout(function () {
-				assert.strictEqual($subSection.is(":focus"), true, "SubSection must be focused");
-				fDone();
-			}, 1000);
-		}, 0);
+		}.bind(this), 0);
 	});
 
 	QUnit.test("ObjectPageSection F7 - from toolbar move focus to coresponding section upon mouse click", function (assert) {
 		assert.expect(1);
 		var fDone = assert.async(),
 			sSectionId = this.oObjectPage.getSections()[5].sId,
-			sButtonId = "UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-" + sSectionId + "-anchor";
+			sButtonId = "UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar-" + sSectionId + "-anchor",
+			oStub;
 
 		setTimeout(function () {
 			var oAnchorBarButtonControl = Core.byId(sButtonId),
 			$anchorBarButton = oAnchorBarButtonControl.$(),
-			$subSection = Core.byId(sSectionId).$();
+			oSubSection = Core.byId(sSectionId);
+
+			oStub = this.stub(oSubSection, "getDomRef").callsFake(function () {
+				return {
+					focus: function () {
+						assert.ok(true, "SubSection must be focused");
+						oStub.restore();
+						fDone();
+					}
+				};
+			});
 
 			$anchorBarButton.trigger("focus");
 
 			oAnchorBarButtonControl.firePress();
-
-			setTimeout(function () {
-				assert.strictEqual($subSection.is(":focus"), true, "SubSection must be focused");
-				fDone();
-			}, 1000);
-		}, 0);
+		}.bind(this), 0);
 	});
 
 	QUnit.test("ObjectPageSection SPACE - browser scrolling is prevented", function (assert) {
