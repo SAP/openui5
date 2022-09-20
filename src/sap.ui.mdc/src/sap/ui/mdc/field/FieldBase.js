@@ -1626,15 +1626,20 @@ sap.ui.define([
 	};
 
 	function _createInternalContent() {
+
+		if (this._bIsBeingDestroyed || this.bIsDestroyed) {
+			return; // for destroyed field do nothing on internal control
+		}
+
 		var sEditMode = this.getEditMode();
 		var oContent = this.getContent();
 
 		this._oContentFactory._setUsedConditionType(oContent, sEditMode); // if external content use it's conditionType
-		_checkFieldHelpExist.call(this, this.getFieldHelp()); // as FieldHelp might be greated after ID is assigned to Field
+		_checkFieldHelpExist.call(this, this.getFieldHelp()); // as FieldHelp might be created after ID is assigned to Field
 		_setAriaAttributes.call(this, false);
 
 
-		if (oContent || this._bIsBeingDestroyed ||
+		if (oContent ||
 			(sEditMode === EditMode.Display && this.getContentDisplay()) ||
 			(sEditMode !== EditMode.Display && this.getContentEdit())) {
 			this._destroyInternalContent();
