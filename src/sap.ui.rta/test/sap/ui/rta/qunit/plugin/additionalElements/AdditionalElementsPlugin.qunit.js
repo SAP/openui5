@@ -1267,11 +1267,17 @@ sap.ui.define([
 			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
 			sandbox.stub(RTAUtils, "isCustomFieldAvailable").resolves(this.STUB_EXTENSIBILITY_BUSINESS_CTXT);
 
-			sandbox.stub(RTAUtils, "openNewWindow").callsFake(function(sUrl) {
-				assert.equal(sUrl, that.STUB_EXTENSIBILITY_USHELL_URL,
-					"then we are calling the extensibility tool with the correct parameter");
-				done();
-			});
+			sandbox.stub(window, "open")
+				.onFirstCall()
+				.callsFake(function (sUrl) {
+					assert.strictEqual(
+						sUrl,
+						that.STUB_EXTENSIBILITY_USHELL_URL,
+						"then we are calling the extensibility tool with the correct parameter"
+					);
+					done();
+				})
+				.callThrough();
 
 			return createOverlayWithAggregationActions.call(this, {
 				addODataProperty : {
@@ -1291,7 +1297,7 @@ sap.ui.define([
 					assert.equal(this.oDialog._oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
 					assert.equal(this.oDialog._oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
 
-					//Simulate custom field button pressed, should trigger openNewWindow
+					//Simulate custom field button pressed, should trigger window.open
 					this.oDialog.fireOpenCustomField();
 				}.bind(this));
 		});
@@ -1304,11 +1310,20 @@ sap.ui.define([
 			var onOpenCustomFieldSpy = sandbox.spy(this.oPlugin, "_onOpenCustomField");
 			var showAvailableElementsSpy = sandbox.spy(this.oPlugin, "showAvailableElements");
 
-			sandbox.stub(RTAUtils, "openNewWindow").callsFake(function () {
-				assert.ok(onOpenCustomFieldSpy.calledOnce, "then the Custom Field Handler is only called once");
-				assert.ok(showAvailableElementsSpy.calledThrice, "then showAvailableElements is called 3 times");
-				done();
-			});
+			sandbox.stub(window, "open")
+				.onFirstCall()
+				.callsFake(function () {
+					assert.ok(
+						onOpenCustomFieldSpy.calledOnce,
+						"then the Custom Field Handler is only called once"
+					);
+					assert.ok(
+						showAvailableElementsSpy.calledThrice,
+						"then showAvailableElements is called 3 times"
+					);
+					done();
+				})
+				.callThrough();
 
 			return createOverlayWithAggregationActions.call(this, {
 				addODataProperty : {
@@ -1329,8 +1344,8 @@ sap.ui.define([
 						.then(function() {
 							return this.oPlugin.showAvailableElements(false, [oOverlay]);
 						}.bind(this))
-						.then(function() {
-							//Simulate custom field button pressed, should trigger openNewWindow
+						.then(function () {
+							//Simulate custom field button pressed, should trigger window.open
 							this.oDialog.fireOpenCustomField();
 						}.bind(this));
 				}.bind(this));

@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/core/StashedControlSupport",
 	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/util/openWindow"
 ], function(
 	jQuery,
 	Plugin,
@@ -23,7 +24,8 @@ sap.ui.define([
 	DtUtils,
 	StashedControlSupport,
 	ElementDesignTimeMetadata,
-	Log
+	Log,
+	openWindow
 ) {
 	"use strict";
 
@@ -642,7 +644,7 @@ sap.ui.define([
 					entityType : this._oCurrentFieldExtInfo.EntityType
 				}
 			}));
-			Utils.openNewWindow(sHrefForFieldExtensionUi);
+			openWindow(sHrefForFieldExtensionUi, "_blank");
 		},
 
 		_createCommands : function(mParents, oSiblingElement, mActions, iIndex) {
