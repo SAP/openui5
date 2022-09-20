@@ -257,7 +257,7 @@
 										titleStyle="H2"
 										target="_blank"/>
 									<Image
-										src="./resources/sap/ui/documentation/sdk/images/sap.png"
+										src="./resources/sap/ui/documentation/sdk/images/link-sap.png"
 										tooltip="{i18n>LEGAL_DISCLAIMER_EXTERNAL_TOOLTIP}"
 										width="1.25rem"
 										press="onDisclaimerLinkPress"/>
