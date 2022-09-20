@@ -118,17 +118,20 @@ sap.ui.define([
 		var that = this;
 
 		return this.openColumnMenu(0).then(function() {
-			var oMenu = that.oTable.getColumns()[0].getHeaderMenuInstance();
+			var oColumn = that.oTable.getColumns()[0];
+			var oMenu = oColumn.getHeaderMenuInstance();
 
 			var oQuickSort = that.getQuickAction(oMenu, "QuickSort");
 			var oQuickSortItems = oQuickSort.getItems();
 			assert.equal(oQuickSortItems.length, 1, "Quick sort item count");
 			assert.strictEqual(oQuickSortItems[0].getKey(), undefined, "Quick sort 'key'");
-			assert.strictEqual(oQuickSortItems[0].getLabel(), "", "Quick sort 'label'");
+			assert.strictEqual(oQuickSortItems[0].getLabel(), oColumn.getLabel().getText(), "Quick sort 'label'");
 			assert.strictEqual(oQuickSortItems[0].getSortOrder(), CoreLibrary.SortOrder.Descending, "Quick sort 'sortOrder'");
 
 			var oQuickFilter = that.getQuickAction(oMenu, "QuickAction")[0];
 			var aQuickFilterContent = oQuickFilter.getContent();
+			var sQuickFilterLabel = oCore.getLibraryResourceBundle("sap.m").getText("table.COLUMNMENU_QUICK_FILTER", oColumn.getLabel().getText());
+			assert.strictEqual(oQuickFilter.getLabel(), sQuickFilterLabel, "Quick filter 'label'");
 			assert.equal(aQuickFilterContent.length, 1, "Quick filter content count");
 			assert.ok(aQuickFilterContent[0].isA("sap.m.Input"), "Quick filter content is a sap.m.Input");
 			assert.strictEqual(aQuickFilterContent[0].getValue(), "initial filter value", "Quick filter value");
@@ -137,7 +140,7 @@ sap.ui.define([
 			var oQuickGroupItems = oQuickGroup.getItems();
 			assert.equal(oQuickGroupItems.length, 1, "Quick group item count");
 			assert.strictEqual(oQuickGroupItems[0].getKey(), undefined, "Quick group 'key'");
-			assert.strictEqual(oQuickGroupItems[0].getLabel(), "", "Quick group 'label'");
+			assert.strictEqual(oQuickGroupItems[0].getLabel(), oColumn.getLabel().getText(), "Quick group 'label'");
 			assert.strictEqual(oQuickGroupItems[0].getGrouped(), false, "Quick group 'grouped'");
 
 			var oQuickFreeze = that.getQuickAction(oMenu, "QuickAction")[1];
@@ -148,17 +151,20 @@ sap.ui.define([
 		}).then(function() {
 			return that.openColumnMenu(1);
 		}).then(function() {
-			var oMenu = that.oTable.getColumns()[1].getHeaderMenuInstance();
+			var oColumn = that.oTable.getColumns()[1];
+			var oMenu = oColumn.getHeaderMenuInstance();
 
 			var oQuickSort = that.getQuickAction(oMenu, "QuickSort");
 			var oQuickSortItems = oQuickSort.getItems();
 			assert.equal(oQuickSortItems.length, 1, "Quick sort item count");
 			assert.strictEqual(oQuickSortItems[0].getKey(), undefined, "Quick sort 'key'");
-			assert.strictEqual(oQuickSortItems[0].getLabel(), "", "Quick sort 'label'");
+			assert.strictEqual(oQuickSortItems[0].getLabel(), oColumn.getLabel().getText(), "Quick sort 'label'");
 			assert.strictEqual(oQuickSortItems[0].getSortOrder(), CoreLibrary.SortOrder.None, "Quick sort 'sortOrder'");
 
 			var oQuickFilter = that.getQuickAction(oMenu, "QuickAction")[0];
 			var aQuickFilterContent = oQuickFilter.getContent();
+			var sQuickFilterLabel = oCore.getLibraryResourceBundle("sap.m").getText("table.COLUMNMENU_QUICK_FILTER", oColumn.getLabel().getText());
+			assert.strictEqual(oQuickFilter.getLabel(), sQuickFilterLabel, "Quick filter 'label'");
 			assert.equal(aQuickFilterContent.length, 1, "Quick filter content count");
 			assert.ok(aQuickFilterContent[0].isA("sap.m.Input"), "Quick filter content is a sap.m.Input");
 			assert.strictEqual(aQuickFilterContent[0].getValue(), "", "Quick filter value");
@@ -167,7 +173,7 @@ sap.ui.define([
 			var oQuickGroupItems = oQuickGroup.getItems();
 			assert.equal(oQuickGroupItems.length, 1, "Quick group item count");
 			assert.strictEqual(oQuickGroupItems[0].getKey(), undefined, "Quick group 'key'");
-			assert.strictEqual(oQuickGroupItems[0].getLabel(), "", "Quick group 'label'");
+			assert.strictEqual(oQuickGroupItems[0].getLabel(), oColumn.getLabel().getText(), "Quick group 'label'");
 			assert.strictEqual(oQuickGroupItems[0].getGrouped(), false, "Quick group 'grouped'");
 
 			var oQuickFreeze = that.getQuickAction(oMenu, "QuickAction")[1];

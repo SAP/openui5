@@ -546,6 +546,7 @@ sap.ui.define([
 
 	Menu.prototype._createQuickActionGrids = function () {
 		var oFormContainer;
+
 		if (this._oForm) {
 			oFormContainer = this._oForm.getFormContainers()[0];
 			oFormContainer.destroyFormElements();
@@ -562,28 +563,38 @@ sap.ui.define([
 				editable: true,
 				formContainers: oFormContainer
 			});
+			this._oForm.addEventDelegate({
+				onAfterRendering: function() {
+					this.getDomRef().classList.remove("sapUiFormLblColon");
+				}
+			}, this._oForm);
 		}
 
-		var aEffectiveQuickActions = this._getAllEffectiveQuickActions();
-		aEffectiveQuickActions.forEach(function (oEffectiveQuickAction) {
-			if (!oEffectiveQuickAction.getVisible()) {
+		this._getAllEffectiveQuickActions().forEach(function(oQuickAction) {
+			if (!oQuickAction.getVisible()) {
 				return;
 			}
+
 			// Create label
 			var oGridData = new GridData({span: "XL4 L4 M4 S12"});
+			var sQuickActionLabel = oQuickAction.getLabel();
 			var oLabel = new Label({
-				text: oEffectiveQuickAction.getLabel(),
+				text: sQuickActionLabel,
 				layoutData: oGridData,
 				vAlign: VerticalAlign.Middle,
-				wrapping: true
-			}).setWidth("100%");
+				wrapping: true,
+				width: "100%",
+				showColon: sQuickActionLabel !== ""
+						   && !(oQuickAction.getParent() && oQuickAction.getParent().isA("sap.m.table.columnmenu.QuickSortItem"))
+						   && oQuickAction._bHideLabelColon !== true
+			});
 			oLabel.addStyleClass("sapMTCMenuQALabel");
 
 			// Create content
 			var aControls = [];
-			var aContent = oEffectiveQuickAction.getContent();
+			var aContent = oQuickAction.getContent();
 
-			aContent.forEach(function (oItem) {
+			aContent.forEach(function(oItem) {
 				if (oItem.getLayoutData()) {
 					oGridData = oItem.getLayoutData().clone();
 				} else {

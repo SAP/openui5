@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Input",
 	"sap/ui/core/library",
+	"sap/ui/core/Core",
 	"sap/ui/Device"
 ], function(
 	ColumnHeaderMenuAdapter,
@@ -41,6 +42,7 @@ sap.ui.define([
 	Button,
 	Input,
 	CoreLibrary,
+	oCore,
 	Device
 ) {
 	"use strict";
@@ -72,10 +74,10 @@ sap.ui.define([
 		this._oColumn = oColumn;
 		this._oMenu = oMenu;
 
-		this._prepareQuickActions(oMenu, oColumn);
+		this._prepareQuickActions(oColumn);
 		oMenu.addAggregation("_quickActions", this._oQuickActionContainer);
 
-		this._prepareItems(oMenu, oColumn);
+		this._prepareItems(oColumn);
 		oMenu.addAggregation("_items", this._oItemContainer);
 	};
 
@@ -122,19 +124,19 @@ sap.ui.define([
 		delete this._oColumn;
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._prepareQuickActions = function(oMenu, oColumn) {
+	MobileColumnHeaderMenuAdapter.prototype._prepareQuickActions = function(oColumn) {
 		var oTable = oColumn._getTable();
 
-		this._prepareQuickSort(oMenu, oColumn);
+		this._prepareQuickSort(oColumn);
 
 		if (!oTable.getEnableCustomFilter()) {
-			this._prepareQuickFilter(oMenu, oColumn);
+			this._prepareQuickFilter(oColumn);
 		}
 
-		this._prepareQuickGroup(oMenu, oColumn);
-		this._prepareQuickTotal(oMenu, oColumn);
-		this._prepareQuickFreeze(oMenu, oColumn);
-		this._prepareQuickResize(oMenu, oColumn);
+		this._prepareQuickGroup(oColumn);
+		this._prepareQuickTotal(oColumn);
+		this._prepareQuickFreeze(oColumn);
+		this._prepareQuickResize(oColumn);
 
 		if (!this._oQuickActionContainer) {
 			this._oQuickActionContainer = new QuickActionContainer();
@@ -148,11 +150,11 @@ sap.ui.define([
 		this._oQuickActionContainer.addQuickAction(this._oQuickResize);
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._prepareItems = function(oMenu, oColumn) {
+	MobileColumnHeaderMenuAdapter.prototype._prepareItems = function(oColumn) {
 		var oTable = oColumn._getTable();
 
 		if (oTable.getEnableCustomFilter()) {
-			this._prepareCustomFilterItem(oMenu, oColumn);
+			this._prepareCustomFilterItem(oColumn);
 		}
 
 		if (!this._oItemContainer) {
@@ -184,19 +186,19 @@ sap.ui.define([
 		delete this._oCustomFilterItem;
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._prepareQuickSort = function(oMenu, oColumn) {
+	MobileColumnHeaderMenuAdapter.prototype._prepareQuickSort = function(oColumn) {
 		if (oColumn.isSortableByMenu()) {
 			if (!this._oQuickSort) {
-				this._oQuickSort = this._createQuickSort(oMenu);
+				this._oQuickSort = this._createQuickSort();
 			}
-			this._oQuickSort.getItems()[0].setSortOrder(oColumn.getSorted() ? oColumn.getSortOrder() : CoreLibrary.SortOrder.None);
+			this._updateQuickSort(oColumn);
 		} else if (this._oQuickSort) {
 			this._oQuickSort.destroy(); // TODO: Should be kept for reuse
 			delete this._oQuickSort;
 		}
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._createQuickSort = function(oMenu) {
+	MobileColumnHeaderMenuAdapter.prototype._createQuickSort = function() {
 		return new QuickSort({
 			items: new QuickSortItem(),
 			change: [function(oEvent) {
@@ -211,25 +213,28 @@ sap.ui.define([
 		});
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._prepareQuickFilter = function(oMenu, oColumn) {
+	MobileColumnHeaderMenuAdapter.prototype._updateQuickSort = function(oColumn) {
+		var oItem = this._oQuickSort.getItems()[0];
+
+		oItem.setLabel(TableUtils.Column.getHeaderText(oColumn));
+		oItem.setSortOrder(oColumn.getSorted() ? oColumn.getSortOrder() : CoreLibrary.SortOrder.None);
+	};
+
+	MobileColumnHeaderMenuAdapter.prototype._prepareQuickFilter = function(oColumn) {
 		if (oColumn.getShowFilterMenuEntry() && oColumn.isFilterableByMenu()) {
 			if (!this._oQuickFilter) {
-				this._oQuickFilter = this._createQuickFilter(oMenu, oColumn);
+				this._oQuickFilter = this._createQuickFilter();
+				this._oQuickFilter._bHideLabelColon = true;
 			}
-			var oFilterField = this._oQuickFilter.getContent()[0];
-			oFilterField.setValue(oColumn.getFilterValue());
-			oFilterField.setValueState(oColumn._getFilterState());
+			this._updateQuickFilter(oColumn);
 		} else if (this._oQuickFilter) {
 			this._oQuickFilter.destroy(); // TODO: Should be kept for reuse
 			delete this._oQuickFilter;
 		}
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._createQuickFilter = function(oMenu, oColumn) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
+	MobileColumnHeaderMenuAdapter.prototype._createQuickFilter = function() {
 		return new QuickAction({
-			label: oBundle.getText("table.COLUMNMENU_QUICK_FILTER"),
 			content: new Input({
 				submit: [function(oEvent) {
 					this._oColumn.setFilterValue(oEvent.getSource().getValue());
@@ -247,19 +252,28 @@ sap.ui.define([
 		});
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._prepareQuickGroup = function(oMenu, oColumn) {
+	MobileColumnHeaderMenuAdapter.prototype._updateQuickFilter = function(oColumn) {
+		var oSapMResourceBundle = oCore.getLibraryResourceBundle("sap.m");
+		var oFilterField = this._oQuickFilter.getContent()[0];
+
+		this._oQuickFilter.setLabel(oSapMResourceBundle.getText("table.COLUMNMENU_QUICK_FILTER", TableUtils.Column.getHeaderText(oColumn)));
+		oFilterField.setValue(oColumn.getFilterValue());
+		oFilterField.setValueState(oColumn._getFilterState());
+	};
+
+	MobileColumnHeaderMenuAdapter.prototype._prepareQuickGroup = function(oColumn) {
 		if (oColumn.isGroupableByMenu()) {
 			if (!this._oQuickGroup) {
-				this._oQuickGroup = this._createQuickGroup(oMenu);
+				this._oQuickGroup = this._createQuickGroup();
 			}
-			this._oQuickGroup.getItems()[0].setGrouped(oColumn.getGrouped());
+			this._updateQuickGroup(oColumn);
 		} else if (this._oQuickGroup) {
 			this._oQuickGroup.destroy(); // TODO: Should be kept for reuse
 			delete this._oQuickGroup;
 		}
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._createQuickGroup = function(oMenu, oColumn) {
+	MobileColumnHeaderMenuAdapter.prototype._createQuickGroup = function() {
 		return new QuickGroup({
 			items: new QuickGroupItem(),
 			change: [function(oEvent) {
@@ -268,19 +282,26 @@ sap.ui.define([
 		});
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._prepareQuickTotal = function(oMenu, oColumn) {
+	MobileColumnHeaderMenuAdapter.prototype._updateQuickGroup = function(oColumn) {
+		var oItem = this._oQuickGroup.getItems()[0];
+
+		oItem.setLabel(TableUtils.Column.getHeaderText(oColumn));
+		oItem.setGrouped(oColumn.getGrouped());
+	};
+
+	MobileColumnHeaderMenuAdapter.prototype._prepareQuickTotal = function(oColumn) {
 		if (oColumn._isAggregatableByMenu()) {
 			if (!this._oQuickTotal) {
-				this._oQuickTotal = this._createQuickTotal(oMenu);
+				this._oQuickTotal = this._createQuickTotal();
 			}
-			this._oQuickTotal.getItems()[0].setTotaled(oColumn.getSummed());
+			this._updateQuickTotal(oColumn);
 		} else if (this._oQuickTotal) {
 			this._oQuickTotal.destroy(); // TODO: Should be kept for reuse
 			delete this._oQuickTotal;
 		}
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._createQuickTotal = function(oMenu, oColumn) {
+	MobileColumnHeaderMenuAdapter.prototype._createQuickTotal = function() {
 		return new QuickTotal({
 			items: new QuickTotalItem(),
 			change: [function(oEvent) {
@@ -289,24 +310,26 @@ sap.ui.define([
 		});
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._prepareQuickFreeze = function(oMenu, oColumn) {
-		var oTable = oColumn._getTable();
+	MobileColumnHeaderMenuAdapter.prototype._updateQuickTotal = function(oColumn) {
+		var oItem = this._oQuickTotal.getItems()[0];
 
-		if (oTable.getEnableColumnFreeze()) {
-			var bIsLastFixedColumn = oColumn.getIndex() + TableUtils.Column.getHeaderSpan(oColumn) === oTable.getComputedFixedColumnCount();
-			var sResourceTextKey = bIsLastFixedColumn ? "TBL_UNFREEZE" : "TBL_FREEZE";
+		oItem.setLabel(TableUtils.Column.getHeaderText(oColumn));
+		oItem.setTotaled(oColumn.getSummed());
+	};
 
+	MobileColumnHeaderMenuAdapter.prototype._prepareQuickFreeze = function(oColumn) {
+		if (oColumn._getTable().getEnableColumnFreeze()) {
 			if (!this._oQuickFreeze) {
-				this._oQuickFreeze = this._createQuickFreeze(oMenu, oColumn);
+				this._oQuickFreeze = this._createQuickFreeze();
 			}
-			this._oQuickFreeze.getContent()[0].setText(TableUtils.getResourceText(sResourceTextKey));
+			this._updateQuickFreeze(oColumn);
 		} else if (this._oQuickFreeze) {
 			this._oQuickFreeze.destroy(); // TODO: Should be kept for reuse
 			delete this._oQuickFreeze;
 		}
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._createQuickFreeze = function(oMenu, oColumn) {
+	MobileColumnHeaderMenuAdapter.prototype._createQuickFreeze = function() {
 		return new QuickAction({
 			content: new Button({
 				press: [function(oEvent) {
@@ -331,10 +354,17 @@ sap.ui.define([
 		});
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._prepareQuickResize = function(oMenu, oColumn) {
+	MobileColumnHeaderMenuAdapter.prototype._updateQuickFreeze = function(oColumn) {
+		var bIsLastFixedColumn = oColumn.getIndex() + TableUtils.Column.getHeaderSpan(oColumn) === oColumn._getTable().getComputedFixedColumnCount();
+		var sResourceTextKey = bIsLastFixedColumn ? "TBL_UNFREEZE" : "TBL_FREEZE";
+
+		this._oQuickFreeze.getContent()[0].setText(TableUtils.getResourceText(sResourceTextKey));
+	};
+
+	MobileColumnHeaderMenuAdapter.prototype._prepareQuickResize = function(oColumn) {
 		if (Device.support.touch && oColumn.getResizable()) {
 			if (!this._oQuickResize) {
-				this._oQuickResize = this._createQuickResize(oMenu, oColumn);
+				this._oQuickResize = this._createQuickResize(oColumn);
 			}
 		} else if (this._oQuickResize) {
 			this._oQuickResize.destroy();
@@ -342,7 +372,7 @@ sap.ui.define([
 		}
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._createQuickResize = function(oMenu, oColumn) {
+	MobileColumnHeaderMenuAdapter.prototype._createQuickResize = function(oColumn) {
 		return new QuickAction({
 			content: new Button({
 				icon: "sap-icon://resize-horizontal",
@@ -369,10 +399,10 @@ sap.ui.define([
 		}
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._prepareCustomFilterItem = function(oMenu, oColumn) {
+	MobileColumnHeaderMenuAdapter.prototype._prepareCustomFilterItem = function(oColumn) {
 		if (oColumn.getShowFilterMenuEntry()) {
 			if (!this._oCustomFilterItem) {
-				this._oCustomFilterItem = this._createCustomFilterItem(oMenu);
+				this._oCustomFilterItem = this._createCustomFilterItem();
 			}
 		} else if (this._oCustomFilterItem) {
 			this._oCustomFilterItem.destroy(); // TODO: Should be kept for reuse
@@ -380,7 +410,7 @@ sap.ui.define([
 		}
 	};
 
-	MobileColumnHeaderMenuAdapter.prototype._createCustomFilterItem = function(oMenu, oColumn) {
+	MobileColumnHeaderMenuAdapter.prototype._createCustomFilterItem = function() {
 		return new ActionItem({
 			label: TableUtils.getResourceText("TBL_FILTER_ITEM"),
 			icon: "sap-icon://filter",

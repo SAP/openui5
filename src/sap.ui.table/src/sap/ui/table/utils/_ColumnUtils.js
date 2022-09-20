@@ -728,25 +728,18 @@ sap.ui.define([
 		 * <li>label</li>
 		 * </ul>
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {int} iColumnIndex The index of a column
+		 * @param {sap.ui.table.Column} oColumn Instance of the column
 		 * @returns {string} Returns the column header text
 		 */
-		getHeaderText: function(oTable, iColumnIndex) {
-			if (!oTable ||
-				iColumnIndex == null || iColumnIndex < 0) {
-				return null;
-			}
-
-			var aColumns = oTable.getColumns();
-			if (iColumnIndex >= aColumns.length) {
+		getHeaderText: function(oColumn) {
+			if (!oColumn) {
 				return null;
 			}
 
 			function getLabelText(oLabel) {
 				return oLabel && oLabel.getText && oLabel.getText() || "";
 			}
-			var oColumn = aColumns[iColumnIndex];
+
 			var sText = oColumn.getName();
 
 			if (!sText) {
@@ -763,8 +756,10 @@ sap.ui.define([
 			if (!sText) {
 				sText = getLabelText(oColumn.getLabel());
 			}
+
 			return sText;
 		},
+
 		/**
 		 * Returns one of the following starting with highest priority:
 		 * <ul>
@@ -772,22 +767,14 @@ sap.ui.define([
 		 * <li>label control</li>
 		 * </ul>
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {int} iColumnIndex The index of a column
+		 * @param {sap.ui.table.Column} oColumn Instance of the column
 		 * @returns {sap.ui.core.Control} Returns the column header label
 		 */
-		getHeaderLabel: function (oTable, iColumnIndex) {
-			if (!oTable ||
-				iColumnIndex == null || iColumnIndex < 0) {
+		getHeaderLabel: function (oColumn) {
+			if (!oColumn) {
 				return null;
 			}
 
-			var aColumns = oTable.getColumns();
-			if (iColumnIndex >= aColumns.length) {
-				return null;
-			}
-
-			var oColumn = aColumns[iColumnIndex];
 			var oLabel;
 			var aMultiLabels = oColumn.getMultiLabels();
 
@@ -801,6 +788,7 @@ sap.ui.define([
 			if (!oLabel) {
 				oLabel = oColumn.getLabel();
 			}
+
 			return oLabel;
 		}
 	};

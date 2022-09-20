@@ -509,7 +509,7 @@ sap.ui.define([
 			var oTable = this.getTable();
 			var $Cell = oCellInfo.cell;
 			var oColumn = sap.ui.getCore().byId($Cell.attr("data-sap-ui-colid"));
-			var oColumnLabel = TableUtils.Column.getHeaderLabel(oTable, oCellInfo.columnIndex);
+			var oColumnLabel = TableUtils.Column.getHeaderLabel(oColumn);
 			var mAttributes = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.COLUMNHEADER, {
 					headerId: $Cell.attr("id"),
 					column: oColumn,

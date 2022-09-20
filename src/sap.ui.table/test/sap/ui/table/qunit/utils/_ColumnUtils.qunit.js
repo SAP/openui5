@@ -895,9 +895,6 @@ sap.ui.define([
 
 	QUnit.test("getHeaderText", function(assert){
 		assert.strictEqual(ColumnUtils.getColumnWidth(), null, "Returned null: No parameters passed");
-		assert.strictEqual(ColumnUtils.getColumnWidth(oTable), null, "Returned null: No column index specified");
-		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, -1), null, "Returned null: Column index out of bound");
-		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, oTable.getColumns().length), null, "Returned null: Column index out of bound");
 
 		oTable.removeAllColumns();
 		oTable.addColumn(new Column());
@@ -921,20 +918,19 @@ sap.ui.define([
 			name: "Name"
 		}));
 
-		assert.strictEqual(ColumnUtils.getHeaderText(oTable, 0), "", "name, multiLabels, label are not set -> returned empty string");
-		assert.strictEqual(ColumnUtils.getHeaderText(oTable, 1), "",
+		var aColumns = oTable.getColumns();
+
+		assert.strictEqual(ColumnUtils.getHeaderText(aColumns[0]), "", "name, multiLabels, label are not set -> returned empty string");
+		assert.strictEqual(ColumnUtils.getHeaderText(aColumns[1]), "",
 			"name, multiLabels are not set, label is set to a control that doesn't implement the #getText method -> returned empty string");
-		assert.strictEqual(ColumnUtils.getHeaderText(oTable, 2), "Label1", "name and multiLabels are not set -> returned the label text");
-		assert.strictEqual(ColumnUtils.getHeaderText(oTable, 3), "Column2Label2",
+		assert.strictEqual(ColumnUtils.getHeaderText(aColumns[2]), "Label1", "name and multiLabels are not set -> returned the label text");
+		assert.strictEqual(ColumnUtils.getHeaderText(aColumns[3]), "Column2Label2",
 			"multiLabels and label are set -> returned the correct multiLabel text");
-		assert.strictEqual(ColumnUtils.getHeaderText(oTable, 4), "Name", "name, multiLabels, label are set -> returned the name");
+		assert.strictEqual(ColumnUtils.getHeaderText(aColumns[4]), "Name", "name, multiLabels, label are set -> returned the name");
 	});
 
 	QUnit.test("getHeaderLabel", function(assert){
 		assert.strictEqual(ColumnUtils.getColumnWidth(), null, "Returned null: No parameters passed");
-		assert.strictEqual(ColumnUtils.getColumnWidth(oTable), null, "Returned null: No column index specified");
-		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, -1), null, "Returned null: Column index out of bound");
-		assert.strictEqual(ColumnUtils.getColumnWidth(oTable, oTable.getColumns().length), null, "Returned null: Column index out of bound");
 
 		var oLabelA = new TableQUnitUtils.HeightTestControl(),
 			oLabelB = new TableQUnitUtils.TestControl({text: "Column2Label1"}),
@@ -964,12 +960,15 @@ sap.ui.define([
 			name: "Name"
 		}));
 
-		assert.strictEqual(ColumnUtils.getHeaderLabel(oTable, 0), null, "name, multiLabels, label are not set -> returned null");
-		assert.strictEqual(ColumnUtils.getHeaderLabel(oTable, 1), oLabelA,
+		var aColumns = oTable.getColumns();
+
+		assert.strictEqual(ColumnUtils.getHeaderLabel(aColumns[0]), null, "name, multiLabels, label are not set -> returned null");
+		assert.strictEqual(ColumnUtils.getHeaderLabel(aColumns[1]), oLabelA,
 			"name, multiLabels are not set, label is set to a control that doesn't implement the #getText method -> returned label instance A");
-		assert.strictEqual(ColumnUtils.getHeaderLabel(oTable, 2).getText(), "Label1", "name and multiLabels are not set -> returned the default label instance");
-		assert.strictEqual(ColumnUtils.getHeaderLabel(oTable, 3), oLabelC,
+		assert.strictEqual(ColumnUtils.getHeaderLabel(aColumns[2]).getText(), "Label1",
+			"name and multiLabels are not set -> returned the default label instance");
+		assert.strictEqual(ColumnUtils.getHeaderLabel(aColumns[3]), oLabelC,
 			"multiLabels and label are set -> returned the correct label instance C");
-		assert.strictEqual(ColumnUtils.getHeaderLabel(oTable, 4), oLabelE, "name, multiLabels, label are set -> returned the label instance E");
+		assert.strictEqual(ColumnUtils.getHeaderLabel(aColumns[4]), oLabelE, "name, multiLabels, label are set -> returned the label instance E");
 	});
 });
