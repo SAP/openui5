@@ -573,7 +573,7 @@ sap.ui.define([
 			// Assert
 			assert.strictEqual(
 				this.oSut.getDomRef().querySelector("[data-sap-day='20151227']").getAttribute("aria-describedby"),
-				"__month0-WH0",
+				this.oSut.getId() + "-WH0",
 				"Day of the week is properly referenced"
 			);
 		});
