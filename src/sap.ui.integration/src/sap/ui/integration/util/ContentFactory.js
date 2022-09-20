@@ -69,6 +69,15 @@ sap.ui.define([
 
 			oContent.loadDependencies(mConfig.cardManifest)
 				.then(function () {
+					var oExtension = oCard.getAggregation("_extension");
+
+					if (!oExtension) {
+						return Promise.resolve();
+					}
+
+					return oExtension.loadDependencies();
+				})
+				.then(function () {
 					if ((mConfig.cardManifest && mConfig.cardManifest.isDestroyed()) ||
 						(mConfig.dataProviderFactory && mConfig.dataProviderFactory.isDestroyed())) {
 						// reject creating of the content if a new manifest is loaded meanwhile

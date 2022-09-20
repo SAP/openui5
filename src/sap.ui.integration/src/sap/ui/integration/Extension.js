@@ -145,6 +145,17 @@ sap.ui.define([
 	Extension.prototype.onCardReady = function () { };
 
 	/**
+	 * Override this method to lazy load dependencies for the extension.
+	 *
+	 * @private
+	 * @ui5-restricted sap/insights
+	 * @returns {Promise} Returns a promise. The card will wait for this promise to be resolved before continuing with the initialization.
+	 */
+	Extension.prototype.loadDependencies = function () {
+		return Promise.resolve();
+	};
+
+	/**
 	 * Returns an interface to the card, which uses this extension.
 	 * @public
 	 * @returns {sap.ui.integration.widgets.CardFacade} An interface to the card.
