@@ -717,8 +717,22 @@ sap.ui.define([
 
 		// arrange
 		var oDataTransfer = new DataTransfer();
-		oDataTransfer.items.add(new File([new Blob([])], "sample Drop File" ));
-		oDataTransfer.items.add(new File([new Blob([])], "Sample Drop File 2" ));
+		function webkitGetAsEntry() {
+			return {
+				isFile: true,
+				isDirectory:false
+			};
+		}
+		var oFileItem1 = new File([new Blob([])], "sample Drop File.txt", {type: "text/plain"} );
+
+		var oFileItem2 = new File([new Blob([])], "sample Drop File.txtSample Drop File 2.txt", {type: "text/plain"} );
+		oDataTransfer.items.add(oFileItem1);
+		oDataTransfer.items.add(oFileItem2);
+
+		for (var i = 0; i < oDataTransfer.items.length; i++) {
+			var oItemPrototype = Object.getPrototypeOf(oDataTransfer.items[i]);
+			oItemPrototype.webkitGetAsEntry = webkitGetAsEntry;
+		}
 
 		var oEvent = new EventBase("drop", {}, { // using BaseEvent to create sample drop event to simulate drag and drop
 			browserEvent: {
@@ -1056,6 +1070,17 @@ sap.ui.define([
 		// arrange
 		var oDataTransfer = new DataTransfer();
 		oDataTransfer.items.add(new File([new Blob([])], "sample Drop File" ));
+
+		function webkitGetAsEntry() {
+			return {
+				isFile: false,
+				isDirectory:true
+			};
+		}
+
+		var oItemPrototype = Object.getPrototypeOf(oDataTransfer.items[0]);
+
+		oItemPrototype.webkitGetAsEntry = webkitGetAsEntry;
 
 		var oEvent = new EventBase("drop", {}, { // using BaseEvent to create sample drop event to simulate drag and drop
 			browserEvent: {
