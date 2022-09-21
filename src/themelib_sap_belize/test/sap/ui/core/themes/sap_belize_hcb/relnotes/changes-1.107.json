@@ -1,0 +1,12 @@
+{
+  "1.107.0": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "b108d6b6b530eec11146786be4d8092c341526bd",
+        "type": "FEATURE",
+        "text": " sap.f.SidePanel: new control (initial implementation)"
+      }
+    ]
+  }
+}
