@@ -5342,7 +5342,17 @@ sap.ui.define([
 			assert.equal(this.oTable._bAnnounceTableUpdate, true, "Table internal flag _bAnnounceTableUpdate is set to true");
 
 			this.oTable.getRowBinding().fireDataReceived(); // invoke event handler manually since we have a JSONModel
-			assert.ok(fnAnnounceTableUpdate.calledOnce, "Function _announceTableUpdate is called once.");
+			assert.ok(fnAnnounceTableUpdate.calledOnce, "_announceTableUpdate is called once.");
+
+			this.oTable.getRowBinding().fireDataReceived();
+			assert.ok(fnAnnounceTableUpdate.calledOnce, "_announceTableUpdate is not called if the dataReceived is not caused by a filterbar search.");
+
+			oFilter.fireSearch();
+			assert.ok(true, "Search is triggered.");
+			assert.equal(this.oTable._bAnnounceTableUpdate, true, "Table internal flag _bAnnounceTableUpdate is set to true");
+			this.oTable.getRowBinding()._fireChange();
+			// in some cases OData V4 doesn't trigger a data request, but the binding context changes and the item count has to be announced
+			assert.ok(fnAnnounceTableUpdate.calledTwice, "_announceTableUpdate is called on binding change even if no data request is sent.");
 			MDCQUnitUtils.restorePropertyInfos(this.oTable);
 		}.bind(this));
 	});
