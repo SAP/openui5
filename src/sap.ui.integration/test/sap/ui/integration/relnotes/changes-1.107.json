@@ -3,6 +3,11 @@
     "date": "September 2022",
     "notes": [
       {
+        "id": "af275cdef3b59b580c3b005da15308a3c65754ba",
+        "type": "FIX",
+        "text": " Integration Cards: Align bar charts in list card"
+      },
+      {
         "id": "89669bdb809b44d9941cdc4a412c69c5b384c087",
         "type": "FIX",
         "text": " Integration Cards: Fix misalignment in Object Content Numeric Indicator",

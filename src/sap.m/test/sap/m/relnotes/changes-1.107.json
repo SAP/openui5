@@ -3,6 +3,64 @@
     "date": "September 2022",
     "notes": [
       {
+        "id": "631e954f011da75af1479d242debb25ed2531e96",
+        "type": "FEATURE",
+        "text": " To support folder uploads, the UploadSet control is now enhanced"
+      },
+      {
+        "id": "8d4519d0cb2ccb777198b872842c185b920b6048",
+        "type": "FIX",
+        "text": " sap.m.Bar: Align resizing funcitons",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270121447"
+          }
+        ]
+      },
+      {
+        "id": "32e2e1769db10ea8d270cbdad28b2dcc438d7a15",
+        "type": "FIX",
+        "text": "sap.m.Input, sap.m.MessagePopover, sap.m.MessageView: Documentation fixes"
+      },
+      {
+        "id": "e1041575436e9466ad5e66b2ffb14fb8ee1f8648",
+        "type": "FIX",
+        "text": " sap.m.Page: Correct offset is applied to the content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111870"
+          }
+        ]
+      },
+      {
+        "id": "583720da1d6faa5d24b062987ee3fc7098faac88",
+        "type": "FIX",
+        "text": " sap.m.Input: suggestionItemSelected is now fired correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270121964"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270121963"
+          }
+        ]
+      },
+      {
+        "id": "06ced3524842b3c5a6f968327295348d66c719d7",
+        "type": "FIX",
+        "text": " sap.m.Shell: update documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280138262"
+          }
+        ]
+      },
+      {
         "id": "e79b1fae2f07bee15689d60db12f76fb7a50e44f",
         "type": "FEATURE",
         "text": " To support folder uploads, the UploadSet control is now enhanced"
@@ -26,6 +84,17 @@
           {
             "type": "BCP",
             "reference": "2270111933"
+          }
+        ]
+      },
+      {
+        "id": "0c4dc036fdb2dd6e344b84f59c3ab69faf21d236",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: adjust menu opening via mouse",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270112697"
           }
         ]
       },

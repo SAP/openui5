@@ -3,6 +3,11 @@
     "date": "September 2022",
     "notes": [
       {
+        "id": "b108d6b6b530eec11146786be4d8092c341526bd",
+        "type": "FEATURE",
+        "text": " sap.f.SidePanel: new control (initial implementation)"
+      },
+      {
         "id": "f5c2f180eb00402b4ad2c6e5411bbf2e84c0ccda",
         "type": "FIX",
         "text": " sap.m.MessageView: Correct activeTitle truncation on Horizon",
@@ -10,6 +15,17 @@
           {
             "type": "BCP",
             "reference": "2280158307"
+          }
+        ]
+      },
+      {
+        "id": "e1041575436e9466ad5e66b2ffb14fb8ee1f8648",
+        "type": "FIX",
+        "text": " sap.m.Page: Correct offset is applied to the content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111870"
           }
         ]
       },
