@@ -3845,6 +3845,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 
 	QUnit.module("Article Mode Tests", {
 		beforeEach: function() {
+			this._navigateEventHandlerStub = sinon.stub(GenericTile.prototype, "_navigateEventHandler");
 			this.oGenericTile = new GenericTile("generic-tile", {
 				mode: GenericTileMode.ArticleMode,
 				subheader: "Expenses By Region",
@@ -3875,6 +3876,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		afterEach: function() {
 			this.oGenericTile.destroy();
 			this.oGenericTile = null;
+			this._navigateEventHandlerStub.restore();
 		},
 
 		fnWithRenderAsserts: function(assert) {
