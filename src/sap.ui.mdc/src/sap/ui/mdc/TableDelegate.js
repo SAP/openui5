@@ -190,26 +190,26 @@ sap.ui.define([
 			},
 
 			/**
-			 * This methods is called during the appliance of the add condition change.
-			 * This intention is to update the propertyInfo property.
+			 * This method is called during the appliance of the add condition change.
+			 * The intention is to update the propertyInfo property.
 			 *
-			 * @param {string} sPropertyName The name of a property.
+			 * @param {string} sPropertyName The name of a property
 			 * @param {sap.ui.mdc.Control} oControl - the instance of the mdc control
-			 * @param {Object} mPropertyBag Instance of property bag from Flex change API
-			 * @returns {Promise} Promise that resolves once the properyInfo property was updated
+			 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility change API
+			 * @returns {Promise} Promise that is resolved once the propertyInfo property has been updated
 			 */
 			addCondition: function(sPropertyName, oControl, mPropertyBag) {
 				return Promise.resolve();
 			},
 
 			/**
-			 * This methods is called during the appliance of the remove condition change.
-			 * This intention is to update the propertyInfo property.
+			 * This method is called during the appliance of the remove condition change.
+			 * The intention is to update the propertyInfo property.
 			 *
-			 * @param {string} sPropertyName The name of a property.
+			 * @param {string} sPropertyName The name of a property
 			 * @param {sap.ui.mdc.Control} oControl - the instance of the mdc control
-			 * @param {Object} mPropertyBag Instance of property bag from Flex change API
-			 * @returns {Promise} Promise that resolves once the properyInfo property was updated
+			 * @param {Object} mPropertyBag Instance of a property bag from the SAPUI5 flexibility change API
+			 * @returns {Promise} Promise that is resolved once the propertyInfo property has been updated
 			 */
 			removeCondition: function(sPropertyName, oControl, mPropertyBag) {
 				return Promise.resolve();
