@@ -6951,6 +6951,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Read and modify an entity with key aliases
+	// CPOUI5ODATAV4-1580: show usage of ODataModel#getKeyPredicate
 	QUnit.test("Entity with key aliases", function (assert) {
 		var sView = '\
 <Table id="table" items="{/EntitiesWithComplexKey}">\
@@ -6961,9 +6962,9 @@ sap.ui.define([
 
 		this.expectRequest("EntitiesWithComplexKey?$select=Key/P1,Key/P2,Value&$skip=0&$top=100", {
 				value : [{
-					Key : {
-						P1 : "foo",
-						P2 : 42
+					Key : { // reverse key ordering
+						P2 : 42,
+						P1 : "foo"
 					},
 					Value : "Old",
 					"@odata.etag" : "ETag"
@@ -6984,6 +6985,14 @@ sap.ui.define([
 				.setValue("New");
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			var oEntity = that.oView.byId("table").getItems()[0].getBindingContext().getObject();
+
+			assert.strictEqual(
+				// code under test
+				oModel.getKeyPredicate("/EntitiesWithComplexKey", oEntity),
+				"(Key1='foo',Key2=42)"
+			);
 		});
 	});
 
@@ -24546,19 +24555,25 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Execute bound action with context for which no data has been read yet.
+	// CPOUI5ODATAV4-1580: show usage of ODataModel#request+getKeyPredicate
 	QUnit.test("bound operation: execute bound action on context w/o read", function (assert) {
-		var oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
-			oParentContext = oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
-				.getBoundContext(),
+		var oEntity = {IsActiveEntity : true, ArtistID : "4/2"}, // reverse key odering
+			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+			oParentContext,
 			that = this;
 
-		return this.createView(assert, "", oModel).then(function () {
+		 // code under test (CPOUI5ODATAV4-1580)
+		return oModel.requestKeyPredicate("/Artists", oEntity).then(function (sKeyPredicate) {
+			oParentContext = oModel.bindContext("/Artists" + sKeyPredicate).getBoundContext();
+
+			return that.createView(assert, "", oModel);
+		}).then(function () {
 			that.expectRequest({
 					method : "POST",
-					url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
+					url : "Artists(ArtistID='4%2F2',IsActiveEntity=true)/special.cases.EditAction",
 					payload : {}
 				}, {
-					ArtistID : "42",
+					ArtistID : "4/2",
 					IsActiveEntity : false
 				});
 
@@ -24571,6 +24586,12 @@ sap.ui.define([
 			var oInactiveArtistContext = aPromiseResults[0];
 
 			assert.strictEqual(oInactiveArtistContext.getProperty("IsActiveEntity"), false);
+			assert.strictEqual(
+				// code under test (CPOUI5ODATAV4-1580)
+				oModel.getKeyPredicate("/Artists",
+					oInactiveArtistContext.getObject()), // use back-end key odering
+				"(ArtistID='4%2F2',IsActiveEntity=false)"
+			);
 		});
 	});
 

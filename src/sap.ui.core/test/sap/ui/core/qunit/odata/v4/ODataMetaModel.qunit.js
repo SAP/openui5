@@ -26,11 +26,12 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ValueListType",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
+	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
 ], function (Log, JSTokenizer, uid, SyncPromise, Configuration, BindingMode, ChangeReason,
 		ClientListBinding, BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, Model,
 		PropertyBinding, Sorter, OperationMode, AnnotationHelper, Context, ODataMetaModel,
-		ODataModel, ValueListType, _Helper, _MetadataRequestor, URI) {
+		ODataModel, ValueListType, _Helper, _MetadataRequestor, TestUtils, URI) {
 	"use strict";
 
 	// Common := com.sap.vocabularies.Common.v1
@@ -1071,79 +1072,6 @@ sap.ui.define([
 			mSupplierScope,
 			mXServiceScope
 		];
-
-	/**
-	 * Checks the "get*" and "request*" methods corresponding to the named "fetch*" method,
-	 * using the given arguments.
-	 *
-	 * @param {object} oTestContext
-	 *   the QUnit "this" object
-	 * @param {object} assert
-	 *   the QUnit "assert" object
-	 * @param {string} sMethodName
-	 *   method name "fetch*"
-	 * @param {object[]} aArguments
-	 *   method arguments
-	 * @param {boolean} [bThrow]
-	 *   whether the "get*" method throws if the promise is not fulfilled
-	 * @returns {Promise}
-	 *   the "request*" method's promise
-	 */
-	function checkGetAndRequest(oTestContext, assert, sMethodName, aArguments, bThrow) {
-		var oExpectation,
-			sGetMethodName = sMethodName.replace("fetch", "get"),
-			oMetaModel = oTestContext.oMetaModel,
-			oPromiseMock = oTestContext.mock(Promise),
-			oReason = new Error("rejected"),
-			oRejectedPromise = Promise.reject(oReason),
-			sRequestMethodName = sMethodName.replace("fetch", "request"),
-			oResult = {},
-			oSyncPromise = SyncPromise.resolve(oRejectedPromise);
-
-		// resolve...
-		oExpectation = oTestContext.mock(oMetaModel).expects(sMethodName).exactly(4);
-		oExpectation = oExpectation.withExactArgs.apply(oExpectation, aArguments);
-		oExpectation.returns(SyncPromise.resolve(oResult));
-
-		// get: fulfilled
-		assert.strictEqual(oMetaModel[sGetMethodName].apply(oMetaModel, aArguments), oResult);
-
-		// reject...
-		oExpectation.returns(oSyncPromise);
-		oPromiseMock.expects("resolve")
-			.withExactArgs(sinon.match.same(oSyncPromise))
-			.returns(oRejectedPromise); // return any promise (this is not unwrapping!)
-
-		// request (promise still pending!)
-		assert.strictEqual(oMetaModel[sRequestMethodName].apply(oMetaModel, aArguments),
-			oRejectedPromise);
-
-		// restore early so that JS coding executed from Selenium Webdriver does not cause
-		// unexpected calls on the mock when it uses Promise.resolve and runs before automatic
-		// mock reset in afterEach
-		oPromiseMock.restore();
-
-		// get: pending
-		if (bThrow) {
-			assert.throws(function () {
-				oMetaModel[sGetMethodName].apply(oMetaModel, aArguments);
-			}, new Error("Result pending"));
-		} else {
-			assert.strictEqual(oMetaModel[sGetMethodName].apply(oMetaModel, aArguments), undefined,
-				"pending");
-		}
-		return oSyncPromise.catch(function () {
-			// get: rejected
-			if (bThrow) {
-				assert.throws(function () {
-					oMetaModel[sGetMethodName].apply(oMetaModel, aArguments);
-				}, oReason);
-			} else {
-				assert.strictEqual(oMetaModel[sGetMethodName].apply(oMetaModel, aArguments),
-					undefined, "rejected");
-			}
-		});
-	}
 
 	/**
 	 * Returns a clone, that is a deep copy, of the given object.
@@ -2902,7 +2830,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getObject, requestObject", function (assert) {
-		return checkGetAndRequest(this, assert, "fetchObject", ["sPath", {/*oContext*/}]);
+		return TestUtils.checkGetAndRequest(this, this.oMetaModel, assert, "fetchObject",
+			["sPath", {/*oContext*/}]);
 	});
 
 	//*********************************************************************************************
@@ -3325,7 +3254,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getUI5Type, requestUI5Type", function (assert) {
-		return checkGetAndRequest(this, assert, "fetchUI5Type", ["sPath"], true);
+		return TestUtils.checkGetAndRequest(this, this.oMetaModel, assert, "fetchUI5Type",
+			["sPath"], true);
 	});
 
 	//*********************************************************************************************
@@ -5509,7 +5439,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getValueListType, requestValueListType", function (assert) {
-		return checkGetAndRequest(this, assert, "fetchValueListType", ["sPath"], true);
+		return TestUtils.checkGetAndRequest(this, this.oMetaModel, assert, "fetchValueListType",
+			["sPath"], true);
 	});
 
 	//*********************************************************************************************
@@ -6653,7 +6584,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getData, requestData", function (assert) {
-		return checkGetAndRequest(this, assert, "fetchData");
+		return TestUtils.checkGetAndRequest(this, this.oMetaModel, assert, "fetchData");
 	});
 
 	//*********************************************************************************************
