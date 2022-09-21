@@ -7,20 +7,13 @@ sap.ui.getCore().attachInit(function () {
 	"use strict";
 
 	sap.ui.require([
+		"sap/ui/core/sample/common/Helper",
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/ServerDrivenPaging/pages/Main",
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/TestUtils"
-	], function (Any, Main, opaTest, TestUtils) {
-		QUnit.module("sap.ui.core.sample.odata.v4.ServerDrivenPaging", {
-			before : function () {
-				this.sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-				sap.ui.getCore().getConfiguration().setLanguage("en-US");
-			},
-			after : function () {
-				sap.ui.getCore().getConfiguration().setLanguage(this.sDefaultLanguage);
-			}
-		});
+	], function (Helper, Any, Main, opaTest, TestUtils) {
+		Helper.qUnitModule("sap.ui.core.sample.odata.v4.ServerDrivenPaging");
 
 		//*****************************************************************************
 		[false, true].forEach(function (bCount) {
