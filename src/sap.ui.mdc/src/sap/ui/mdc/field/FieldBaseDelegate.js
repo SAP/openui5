@@ -7,9 +7,9 @@
 // ---------------------------------------------------------------------------------------
 
 sap.ui.define([
-	'sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/odata/TypeUtil'/* TODO: FieldBase & Field currently expect odata types in default delegate! */, 'sap/ui/model/FormatException'
+	'sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/odata/TypeUtil'/* TODO: FieldBase & Field currently expect odata types in default delegate! */, 'sap/ui/model/FormatException', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/enum/ConditionValidated'
 ], function(
-	BaseDelegate, TypeUtil, FormatException
+	BaseDelegate, TypeUtil, FormatException, Condition, ConditionValidated
 ) {
 	"use strict";
 
@@ -28,6 +28,44 @@ sap.ui.define([
 	 * @alias module:sap/ui/mdc/field/FieldBaseDelegate
 	 */
 	var FieldBaseDelegate = Object.assign({}, BaseDelegate);
+
+	/**
+	 * Provides the possibility to convey custom data in conditions.
+	 * This enables an application to enhance conditions with data relevant for combined key or outparameter scenarios.
+	 *
+	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.core.Control} [oControl] Instance of the calling control
+	 * @param {any[]} aValues key, description pair for the condition which is to be created.
+	 * @returns {undefined|object} Optionally returns a serializeable object to be stored in the condition payload field.
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @since 1.107.0
+	 */
+	FieldBaseDelegate.createConditionPayload = function (oPayload, oControl, aValues) {
+		return undefined;
+	};
+
+	/**
+	 * Enables applications to control condition updates based on <code>value</code> / <code>additionalvalue</code> property changes.
+	 *
+	 * <b>Note:</b> Use with care! Custom implementations of this method may lead to intransparency as a field's condition may then differ from the state of the <code>value</code> / <code>additionalvalue</code> properties. Please also avoid expensive operations!
+	 *
+	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.core.Control} [oControl] Instance of the calling control
+	 * @param {any[]} aValues key, description pair for the condition which is to be created.
+	 * @param {undefined|sap.ui.mdc.condition.ConditionObject} oCurrentCondition currently available condition before the property change
+ 	 * @returns {undefined|sap.ui.mdc.condition.ConditionObject} Returns a condition object to be set on the control
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @MDC_PUBLIC_CANDIDATE
+	 * @since 1.107.0
+	 */
+	FieldBaseDelegate.createCondition = function (oPayload, oControl, aValues, oCurrentCondition) {
+		var oNextCondition = Condition.createItemCondition(aValues[0], aValues[1], undefined, undefined, this.createConditionPayload(oPayload, oControl, aValues));
+		oNextCondition.validated = ConditionValidated.Validated;
+		return oNextCondition;
+	};
 
 	/**
 	 * Maps the Edm type names to real type names

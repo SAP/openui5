@@ -331,6 +331,42 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("setValue / setAdditionalValue consider Delegate.createCondition", function(assert) {
+
+		var oTestPayload = {
+			"payloadKey" : "payloadValue"
+		};
+
+		var oDelegate = sap.ui.require("sap/ui/mdc/field/FieldBaseDelegate");
+		sinon.stub(oDelegate, "createConditionPayload").returns(oTestPayload);
+		sinon.spy(oDelegate, "createCondition");
+
+		oFieldEdit.setValue("Test");
+		oFieldEdit.setAdditionalValue("Hello");
+
+		return new Promise(function (resolve) {
+			setTimeout(function() { // async set of condition
+				assert.ok(oDelegate.createCondition.called, "createCondition was called");
+				assert.ok(oDelegate.createConditionPayload.called, "createConditionPayload was called");
+				assert.equal(oDelegate.createCondition.lastCall.args[1], oFieldEdit, "Correct control instance was given");
+				assert.deepEqual(oDelegate.createCondition.lastCall.args[2], ["Test", "Hello"], "Correct value configuration was given");
+				assert.deepEqual(oDelegate.createCondition.lastCall.args[3], {
+					"operator": "EQ",
+					"values": [
+						"Test"
+					],
+					"isEmpty": null,
+					"validated": "Validated",
+					"payload": oTestPayload
+				}, "Correct current condition was given");
+				assert.deepEqual(oFieldEdit.getConditions()[0].payload, oTestPayload, "Correct payload found on updated condition");
+				oDelegate.createConditionPayload.restore();
+				oDelegate.createCondition.restore();
+				resolve();
+			}, 0);
+		});
+	});
+
 	QUnit.test("multipleLines", function(assert) {
 
 		oFieldEdit.setValue("Test");

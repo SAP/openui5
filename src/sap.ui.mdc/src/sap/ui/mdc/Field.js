@@ -2,31 +2,27 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/mdc/field/FieldBase',
 	'sap/ui/mdc/field/FieldBaseRenderer',
 	'sap/ui/mdc/enum/FieldDisplay',
-	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/enum/BaseType',
-	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/base/util/deepEqual',
 	'sap/base/util/merge',
 	'sap/ui/model/BindingMode',
-	'sap/ui/model/Context'
+	'sap/ui/model/Context',
+	'sap/ui/mdc/condition/Condition'
 ], function(
-	ManagedObjectObserver,
 	FieldBase,
 	FieldBaseRenderer,
 	FieldDisplay,
-	Condition,
 	FilterOperatorUtil,
 	BaseType,
-	ConditionValidated,
 	deepEqual,
 	merge,
 	BindingMode,
-	Context
+	Context,
+	Condition
 ) {
 	"use strict";
 
@@ -338,14 +334,16 @@ sap.ui.define([
 				this.setConditions([]);
 			}
 		} else {
-			var vOldValue = aConditions[0] && aConditions[0].values[0];
-			var sOldAdditionalValue = aConditions[0] && aConditions[0].values[1] ? aConditions[0].values[1] : null; // to compare with default value
-			if (!aConditions[0] || aConditions[0].operator !== "EQ" || !_compareValues.call(this, vOldValue, vValue) ||
-				sOldAdditionalValue !== vAdditionalValue) {
-				// update conditions only if changed (keep out-parameter)
-				var oCondition = Condition.createItemCondition(vValue, vAdditionalValue);
-				oCondition.validated = ConditionValidated.Validated; // see every value set from outside as validated (to determine description, if needed)
-				this.setConditions([oCondition]);
+			var oCurrentCondition = aConditions[0];
+			var vOldValue = oCurrentCondition && oCurrentCondition.values[0];
+			var sOldAdditionalValue = oCurrentCondition && oCurrentCondition.values[1] ? oCurrentCondition.values[1] : null; // to compare with default value
+			if (!oCurrentCondition || oCurrentCondition.operator !== "EQ" || !_compareValues.call(this, vOldValue, vValue) || sOldAdditionalValue !== vAdditionalValue) {
+				var oDelegate = this.getControlDelegate();
+				var oDelegatePayload = this.getPayload();
+				var oNextCondition = oDelegate.createCondition(oDelegatePayload, this, [vValue, vAdditionalValue], oCurrentCondition);
+				if (!Condition.compareConditions(oCurrentCondition, oNextCondition)) { // We do a full comparison here as FilterOperatorUtils.compareConditions may ignore text changes
+					this.setConditions(oNextCondition ? [oNextCondition] : []);
+				}
 			}
 		}
 
