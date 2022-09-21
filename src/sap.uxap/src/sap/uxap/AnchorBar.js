@@ -347,7 +347,9 @@ sap.ui.define([
 	 * @private
 	 */
 	AnchorBar.prototype._onSelectChange = function (oEvent) {
-		var oSelectedItem = oEvent.getParameter("selectedItem"), oSelectedSection;
+		var oSelectedItem = oEvent.getParameter("selectedItem"),
+			oSelectedSection,
+			oSelectedSectionDomRef;
 
 		if (!oSelectedItem) {
 			Log.warning("AnchorBar :: no selected hierarchicalSelect item");
@@ -357,8 +359,12 @@ sap.ui.define([
 		oSelectedSection = sap.ui.getCore().byId(oSelectedItem.getKey());
 
 		if (oSelectedSection) {
-
 			this.fireEvent("_anchorPress", { sectionBaseId: oSelectedSection.getId() });
+			oSelectedSectionDomRef = oSelectedSection.getDomRef();
+
+			if (oSelectedSectionDomRef) {
+				oSelectedSectionDomRef.focus();
+			}
 		} else {
 			Log.error("AnchorBar :: cannot find corresponding section", oSelectedItem.getKey());
 		}
