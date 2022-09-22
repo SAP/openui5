@@ -1058,4 +1058,46 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(JSONTreeBinding.prototype.getRootContexts.call(oBinding, 1, 1), []);
 	});
+
+	//**********************************************************************************************
+	QUnit.test("getCount: integration tests", function(assert) {
+		var oBinding;
+
+		// tree with objects
+		createTreeBinding("/orgStructure");
+		oBinding = bindings[0];
+
+		// code under test
+		assert.strictEqual(oBinding.getCount(), 7, "All nodes; root is an object");
+
+		// tree with arrays and objects
+		createTreeBinding("/orgStructure2");
+		oBinding = bindings[0];
+
+		// code under test
+		assert.strictEqual(oBinding.getCount(), 6, "All nodes; root is an array");
+
+		// tree reduced via arrayNames
+		createTreeBinding("/orgStructure", undefined, undefined, {arrayNames : ["0"]});
+		oBinding = bindings[0];
+
+		// code under test
+		assert.strictEqual(oBinding.getCount(), 3, "using array names");
+
+		// adding an array will count all inner objects
+		// checkUpdate of #setProperty is only called if the binding has a change handler
+		oBinding.attachChange(function () {});
+		oBinding.oModel.setProperty("/orgStructure/0/0/0/0", [{name : "foo"}, {name : "bar"}]);
+
+		// code under test
+		assert.strictEqual(oBinding.getCount(), 5, "update count after changing the date");
+
+		// filtered tree
+		createTreeBinding("/orgStructure");
+		oBinding = bindings[0];
+
+		// code under test
+		oBinding.filter(new Filter("name", FilterOperator.Contains, "in"));
+		assert.strictEqual(oBinding.getCount(), 3, "filtered data");
+	});
 });

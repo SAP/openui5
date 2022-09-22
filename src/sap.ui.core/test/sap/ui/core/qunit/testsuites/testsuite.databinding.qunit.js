@@ -51,6 +51,10 @@ sap.ui.define(function() {
 					language: "en-US"
 				}
 			},
+			ClientTreeBinding: {
+				title: "sap.ui.model.ClientTreeBinding - QUnit Tests",
+				module: ["test-resources/sap/ui/core/qunit/model/ClientTreeBinding.qunit"]
+			},
 			ClientTreeBindingAdapter: {
 				title: "sap.ui.model.ClientTreeBindingAdapter - QUnit Tests",
 				module: [
