@@ -343,7 +343,7 @@ sap.ui.define([
 	 */
 	Bar.prototype._getMidBarCss = function(iRightBarWidth, iBarWidth, iLeftBarWidth) {
 		var iMidBarPlaceholderWidth = this._$MidBarPlaceHolder.outerWidth(true),
-			bRtl = sap.ui.getCore().getConfiguration().getRTL(),
+			bRtl = Configuration.getRTL(),
 			sLeftOrRight = bRtl ? "right" : "left",
 			oMidBarCss = { visibility : "" };
 
