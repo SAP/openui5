@@ -76,15 +76,6 @@
 				return sTest.includes("realOData=true");
 			});
 		}
-		if (bIntegration) {
-			// ensure that each URL has the query property "coverage"
-			aTests = aTests.map(function (sUrl) {
-				if (!sUrl.includes("coverage")) {
-					sUrl = sUrl + (sUrl.includes("?") ? "&" : "?") + "coverage";
-				}
-				return sUrl;
-			});
-		}
 		return aTests;
 	}
 
