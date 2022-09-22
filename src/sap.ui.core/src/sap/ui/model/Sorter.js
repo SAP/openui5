@@ -3,10 +3,12 @@
  */
 /*eslint-disable max-len */
 // Provides the concept of a sorter for list bindings
-sap.ui.define(['sap/ui/base/Object', "sap/base/Log"],
-	function(BaseObject, Log) {
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/base/Object",
+	"sap/ui/core/Configuration"
+], function(Log, BaseObject, Configuration) {
 	"use strict";
-
 
 	/**
 	 *
@@ -139,7 +141,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/Log"],
 			return 1;
 		}
 		if (typeof a == "string" && typeof b == "string") {
-			return a.localeCompare(b);
+			return a.localeCompare(b, Configuration.getLanguageTag());
 		}
 		if (a < b) {
 			return -1;

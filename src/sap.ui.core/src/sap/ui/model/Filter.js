@@ -4,11 +4,11 @@
 /*eslint-disable max-len */
 // Provides a filter for list bindings
 sap.ui.define([
-	'sap/ui/base/Object',
-	'./FilterOperator',
-	"sap/base/Log"
-],
-	function(BaseObject, FilterOperator, Log) {
+	"./FilterOperator",
+	"sap/base/Log",
+	"sap/ui/base/Object",
+	"sap/ui/core/Configuration"
+], function(FilterOperator, Log, BaseObject, Configuration) {
 	"use strict";
 
 	/**
@@ -606,7 +606,7 @@ sap.ui.define([
 			return NaN;
 		}
 		if (typeof a == "string" && typeof b == "string") {
-			return a.localeCompare(b);
+			return a.localeCompare(b, Configuration.getLanguageTag());
 		}
 		if (a < b) {
 			return -1;

@@ -39,8 +39,6 @@ sap.ui.require([
 		//TODO: get test running in 1RingModels.qunit; test has to be refactored
 		// "sap/ui/core/qunit/DataBinding.qunit",
 		"sap/ui/core/qunit/DataState.qunit",
-		"sap/ui/core/qunit/Filter.qunit",
-		"sap/ui/core/qunit/FilterProcessor.qunit",
 		//TODO: get test running in 1RingModels.qunit; test has to be refactored
 		// "sap/ui/core/qunit/ListBinding.qunit",
 		//TODO: get test running in 1RingModels.qunit; test has to be refactored
@@ -54,8 +52,11 @@ sap.ui.require([
 		"sap/ui/core/qunit/model/CompositeDataState.qunit",
 		"sap/ui/core/qunit/model/Context.qunit",
 		"sap/ui/core/qunit/model/ContextBinding.qunit",
+		"sap/ui/core/qunit/model/Filter.qunit",
+		"sap/ui/core/qunit/model/FilterProcessor.qunit",
 		"sap/ui/core/qunit/model/ListBinding.qunit",
 		"sap/ui/core/qunit/model/Model.qunit",
+		"sap/ui/core/qunit/model/Sorter.qunit",
 		"sap/ui/core/qunit/model/TreeBindingAdapter.qunit",
 
 		// ***************************************************************************************
