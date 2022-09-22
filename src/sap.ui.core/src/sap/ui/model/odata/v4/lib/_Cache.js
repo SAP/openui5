@@ -1278,7 +1278,8 @@ sap.ui.define([
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise which resolves without a defined result when it is updated in the cache.
+	 *   A promise which resolves without a defined result when it is updated in the cache; it
+	 *   rejects with an error when no key predicate is known.
 	 * @throws {Error} If the cache is shared
 	 *
 	 * @public
@@ -1295,6 +1296,9 @@ sap.ui.define([
 
 			if (iIndex !== undefined) {
 				sPredicate = _Helper.getPrivateAnnotation(aElements[iIndex], "predicate");
+			}
+			if (!sPredicate) { // Note: no need to give path here, error is wrapped by ODLB!
+				throw new Error("No key predicate known");
 			}
 			sReadUrl = _Helper.buildPath(that.sResourcePath, sPath, sPredicate);
 			if (bKeepAlive && that.mLateQueryOptions) {
@@ -1352,7 +1356,7 @@ sap.ui.define([
 	 *   <code>false</code>
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with <code>undefined</code> when the entity is updated in
-	 *   the cache.
+	 *   the cache; it rejects with an error when no key predicate is known.
 	 * @throws {Error} If the cache is shared
 	 *
 	 * @private
@@ -1382,6 +1386,9 @@ sap.ui.define([
 			if (iIndex !== undefined) {
 				oEntity = aElements[iIndex];
 				sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate");
+				if (!sPredicate) { // Note: no need to give path here, error is wrapped by ODLB!
+					throw new Error("No key predicate known");
+				}
 			} else {
 				oEntity = aElements.$byPredicate[sPredicate];
 			}

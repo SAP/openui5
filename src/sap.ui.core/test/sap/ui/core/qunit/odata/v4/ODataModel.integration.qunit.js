@@ -1248,7 +1248,7 @@ sap.ui.define([
 		 * @param {string} [sViewXML=""] The view content as XML
 		 * @param {sap.ui.model.odata.v4.ODataModel} [oModel] The model; it is attached to the view
 		 *   and to the test instance.
-		 *   If no model is given, <code>createTeaBusiModel</code> is used -  unless
+		 *   If no model is given, <code>createTeaBusiModel</code> is used - unless
 		 *   <code>null</code> is explicitly given.
 		 * @param {object} [oController]
 		 *   An object defining the methods and properties of the controller
@@ -6343,7 +6343,7 @@ sap.ui.define([
 	// Scenario: Delete multiple entities in a table. Ensure that the request to fill the gap uses
 	// the correct index.
 	// JIRA: CPOUI5UISERVICESV3-1769
-	// BCP:  1980007571
+	// BCP: 1980007571
 	QUnit.test("multiple delete: index for gap-filling read requests", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -6399,7 +6399,7 @@ sap.ui.define([
 	// Scenario: Delete in a growing table and then let it grow. Ensure that the gap caused by the
 	// delete is filled.
 	// JIRA: CPOUI5UISERVICESV3-1769
-	// BCP:  1980007571
+	// BCP: 1980007571
 	QUnit.test("growing while deleting: index for gap-filling read request", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			oTable,
@@ -40112,6 +40112,88 @@ sap.ui.define([
 			that.oView.setBindingContext(oContext);
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A newly created entity does not get a key predicate - the "refreshSingle" must
+	// fail, but the POST's response is still used! Show that "refreshSingleWithRemove" also fails.
+	// BCP: 2270132669
+	QUnit.test("BCP: 2270132669", function (assert) {
+		var oContext,
+			oMessage = {
+				message : "No key predicate known",
+				persistent : true,
+				technical : true,
+				type : "Error"
+			},
+			that = this;
+
+		return this.createView(assert).then(function () {
+			var oBinding = that.oModel.bindList("/EMPLOYEES");
+
+			that.expectRequest({
+					method : "POST",
+					payload : {AGE : 42},
+					url : "EMPLOYEES"
+				}, {
+					AGE : 42,
+					// intentionally no ID!
+					Name : "John Doe"
+				});
+			that.oLogMock.expects("error")
+				.withExactArgs(sinon.match(function (sMessage) {
+					return normalizeUID(sMessage)
+						=== "Failed to refresh entity: /EMPLOYEES($uid=...)[-1;transient]";
+				}), sinon.match("No key predicate known"), sODLB);
+			that.expectMessages([oMessage]);
+
+			// code under test
+			oContext = oBinding.create({AGE : 42});
+
+			return Promise.all([
+				that.waitForChanges(assert),
+				oContext.created().catch(function (oError) {
+					assert.strictEqual(oError.message, "No key predicate known");
+				})
+			]);
+		}).then(function () {
+			assert.deepEqual(oContext.getObject(), {
+				"@$ui5.context.isTransient" : false,
+				AGE : 42,
+				Name : "John Doe"
+			});
+			assert.strictEqual(normalizeUID(oContext.toString()),
+				"/EMPLOYEES($uid=...)[-1;createdPersisted]");
+			assert.strictEqual(oContext.hasPendingChanges(), false);
+			assert.strictEqual(oContext.getBinding().hasPendingChanges(), false);
+			assert.strictEqual(oContext.getModel().hasPendingChanges(), false);
+
+			that.oLogMock.expects("error")
+				.withExactArgs(sinon.match(function (sMessage) {
+					return normalizeUID(sMessage)
+						=== "Failed to refresh entity: /EMPLOYEES($uid=...)[-1;createdPersisted]";
+				}), sinon.match("No key predicate known"), sODLB);
+			that.expectMessages([oMessage, oMessage]);
+
+			return Promise.all([
+				// code under test
+				oContext.requestRefresh(undefined, /*bAllowRemoval*/true).catch(function (oError) {
+					assert.strictEqual(oError.message, "No key predicate known");
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.deepEqual(oContext.getObject(), {
+				"@$ui5.context.isTransient" : false,
+				AGE : 42,
+				Name : "John Doe"
+			});
+			assert.strictEqual(normalizeUID(oContext.toString()),
+				"/EMPLOYEES($uid=...)[-1;createdPersisted]");
+			assert.strictEqual(oContext.hasPendingChanges(), false);
+			assert.strictEqual(oContext.getBinding().hasPendingChanges(), false);
+			assert.strictEqual(oContext.getModel().hasPendingChanges(), false);
 		});
 	});
 
