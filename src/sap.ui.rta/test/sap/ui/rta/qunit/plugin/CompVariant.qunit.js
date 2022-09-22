@@ -2,6 +2,8 @@
 
 sap.ui.define([
 	"sap/m/Button",
+	"sap/m/HBox",
+	"sap/m/MessageBox",
 	"sap/ui/comp/smartvariants/SmartVariantManagement",
 	"sap/ui/core/Core",
 	"sap/ui/dt/DesignTime",
@@ -17,6 +19,8 @@ sap.ui.define([
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Button,
+	HBox,
+	MessageBox,
 	SmartVariantManagement,
 	Core,
 	DesignTime,
@@ -35,7 +39,6 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 	var oComp = RtaQunitUtils.createAndStubAppComponent(sinon);
-
 
 	function waitForCommandToBeCreated(oPlugin) {
 		return new Promise(function(resolve) {
@@ -281,10 +284,10 @@ sap.ui.define([
 			var sType = "myType";
 			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
 			sandbox.stub(this.oVariantManagementControl, "getDefaultVariantId").returns(sPreviousDefaultVarId);
-			sandbox.stub(this.oVariantManagementControl, "openSaveAsDialogForKeyUser").callsFake(function(sStyleClass, fCallback, oCompCont) {
+			sandbox.stub(this.oVariantManagementControl, "openSaveAsDialogForKeyUser").callsFake(function(sStyleClass, fnCallback, oCompCont) {
 				assert.strictEqual(sStyleClass, Utils.getRtaStyleClassName(), "the style class is set");
 				assert.notEqual(oCompCont, undefined, "the component container is set");
-				fCallback({
+				fnCallback({
 					"default": true,
 					executeOnSelection: false,
 					content: oContent,
@@ -321,11 +324,11 @@ sap.ui.define([
 			var sNewDefaultVarId = "newDefaultVar";
 			sandbox.stub(this.oVariantManagementControl, "getDefaultVariantId").returns(sPreviousDefaultVarId);
 			var oNewVariantProperties = {foo: "bar"};
-			sandbox.stub(this.oVariantManagementControl, "openManageViewsDialogForKeyUser").callsFake(function(mPropertyBag, fCallback) {
+			sandbox.stub(this.oVariantManagementControl, "openManageViewsDialogForKeyUser").callsFake(function(mPropertyBag, fnCallback) {
 				assert.strictEqual(mPropertyBag.rtaStyleClass, Utils.getRtaStyleClassName(), "the style class is set");
 				assert.notEqual(mPropertyBag.contextSharingComponentContainer, undefined, "the component container is set");
 				assert.strictEqual(mPropertyBag.layer, Layer.CUSTOMER, "the layer is passed");
-				fCallback(Object.assign({}, oNewVariantProperties, {"default": sNewDefaultVarId}));
+				fnCallback(Object.assign({}, oNewVariantProperties, {"default": sNewDefaultVarId}));
 			});
 
 			var pReturn = waitForCommandToBeCreated(this.oPlugin).then(function(oParameters) {
@@ -347,6 +350,9 @@ sap.ui.define([
 				persistencyKey: "myPersistencyKey"
 			});
 			this.oControl = new Button("stableId");
+			this.oHBox = new HBox("box", {
+				items: [this.oControl, this.oVariantManagementControl]
+			});
 			this.oControl.getVariantManagement = function() {
 				return this.oVariantManagementControl;
 			}.bind(this);
@@ -361,11 +367,24 @@ sap.ui.define([
 				commandFactory: new CommandFactory()
 			});
 
-			this.oControl.placeAt("qunit-fixture");
+			this.oVariant = SmartVariantManagementWriteAPI.addVariant({
+				changeSpecificData: {
+					id: "id1",
+					texts: {
+						variantName: "text1"
+					},
+					layer: Layer.CUSTOMER
+				},
+				control: this.oVariantManagementControl
+			});
+			sandbox.stub(this.oVariantManagementControl, "getAllVariants").returns([this.oVariant]);
+			sandbox.stub(this.oVariantManagementControl, "getPresentVariantId").returns("id1");
+
+			this.oHBox.placeAt("qunit-fixture");
 			Core.applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements: [this.oControl],
+				rootElements: [this.oHBox],
 				plugins: [this.oPlugin]
 			});
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -391,8 +410,7 @@ sap.ui.define([
 			this.oDesignTime.destroy();
 		},
 		after: function() {
-			this.oControl.destroy();
-			this.oVariantManagementControl.destroy();
+			this.oHBox.destroy();
 		}
 	}, function() {
 		QUnit.test("getMenuItems", function(assert) {
@@ -444,6 +462,125 @@ sap.ui.define([
 			return oMenuItem.handler([this.oOverlay]).then(function() {
 				assert.strictEqual(oGetCommandSpy.callCount, 0, "no command was created");
 			});
+		});
+
+		QUnit.test("when the current variant is read only and the content gets changed and a new variant is created", function(assert) {
+			var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			sandbox.stub(this.oVariant, "isEditEnabled").returns(false);
+			this.oDTHandlerStub.resolves([
+				{
+					changeSpecificData: {
+						content: {
+							key: "id1",
+							content: {foo: "myContent"},
+							persistencyKey: "myPersistencyKey"
+						}
+					}
+				}
+			]);
+			sandbox.stub(this.oVariantManagementControl, "openSaveAsDialogForKeyUser").callsFake(function(sStyleClass, fnCallback, oCompCont) {
+				assert.strictEqual(sStyleClass, Utils.getRtaStyleClassName(), "the style class is set");
+				assert.notEqual(oCompCont, undefined, "the component container is set");
+				fnCallback({
+					"default": true,
+					executeOnSelection: false,
+					content: {foo: "bar"},
+					type: "sType",
+					text: "sName",
+					contexts: []
+				});
+			});
+			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
+			sandbox.stub(this.oVariantManagementControl, "getDefaultVariantId").returns("id1");
+			sandbox.stub(MessageBox, "warning").callsFake(function(sMessage, oParameters) {
+				assert.strictEqual(sMessage, oLibraryBundle.getText("MSG_CHANGE_READONLY_VARIANT"), "the message is correct");
+				assert.strictEqual(oParameters.styleClass, Utils.getRtaStyleClassName(), "the style class is set");
+				oParameters.onClose(oParameters.emphasizedAction);
+			});
+
+			var pReturn = waitForCommandToBeCreated(this.oPlugin).then(function(oParameters) {
+				var oCommand = oParameters.command;
+				var oNewVariantProperties = {
+					"default": true,
+					executeOnSelection: false,
+					content: {foo: "bar"},
+					type: "sType",
+					text: "sName",
+					contexts: []
+				};
+				assert.deepEqual(oCommand.getNewVariantProperties(), oNewVariantProperties, "the newVariantProperties is set");
+				assert.deepEqual(oCommand.getPreviousDirtyFlag(), true, "the previous dirty flag is set");
+				assert.strictEqual(oCommand.getPreviousVariantId(), "id1", "the previous variant id is set");
+				assert.strictEqual(oCommand.getPreviousDefault(), "id1", "the previous default is set");
+			});
+
+			this.oPlugin.getMenuItems([this.oOverlay])[0].handler([this.oOverlay]);
+			return pReturn;
+		});
+
+		QUnit.test("when the current variant is read only and the content gets changed and the save as is canceled", function(assert) {
+			var fnDone = assert.async();
+			sandbox.stub(this.oVariant, "isEditEnabled").returns(false);
+			this.oDTHandlerStub.resolves([
+				{
+					changeSpecificData: {
+						content: {
+							key: "id1",
+							content: {foo: "myContent"},
+							persistencyKey: "myPersistencyKey"
+						}
+					}
+				}
+			]);
+			sandbox.stub(this.oVariantManagementControl, "openSaveAsDialogForKeyUser").callsFake(function(sStyleClass, fnCallback) {
+				fnCallback();
+			});
+			sandbox.stub(MessageBox, "warning").callsFake(function(sMessage, oParameters) {
+				oParameters.onClose(oParameters.emphasizedAction);
+			});
+			sandbox.stub(this.oVariantManagementControl, "activateVariant").callsFake(function(sVariantId) {
+				assert.strictEqual(sVariantId, "id1", "the variant is set back (activated)");
+				fnDone();
+			});
+			this.oPlugin.getMenuItems([this.oOverlay])[0].handler([this.oOverlay]);
+		});
+
+		QUnit.test("when the current variant is read only and the warning popup is canceled", function(assert) {
+			var fnDone = assert.async();
+			sandbox.stub(this.oVariant, "isEditEnabled").returns(false);
+			this.oDTHandlerStub.resolves([
+				{
+					changeSpecificData: {
+						content: {
+							key: "id1",
+							content: {foo: "myContent"},
+							persistencyKey: "myPersistencyKey"
+						}
+					}
+				}
+			]);
+			sandbox.stub(this.oVariantManagementControl, "openSaveAsDialogForKeyUser").callsFake(function(sStyleClass, fnCallback, oCompCont) {
+				assert.strictEqual(sStyleClass, Utils.getRtaStyleClassName(), "the style class is set");
+				assert.notEqual(oCompCont, undefined, "the component container is set");
+				fnCallback({
+					"default": true,
+					executeOnSelection: false,
+					content: {foo: "bar"},
+					type: "sType",
+					text: "sName",
+					contexts: []
+				});
+			});
+			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
+			sandbox.stub(this.oVariantManagementControl, "getDefaultVariantId").returns("id1");
+			sandbox.stub(MessageBox, "warning").callsFake(function(sMessage, oParameters) {
+				oParameters.onClose(MessageBox.Action.CANCEL);
+			});
+			sandbox.stub(this.oVariantManagementControl, "activateVariant").callsFake(function(sVariantId) {
+				assert.strictEqual(sVariantId, "id1", "the variant is set back (activated)");
+				fnDone();
+			});
+			this.oPlugin.getMenuItems([this.oOverlay])[0].handler([this.oOverlay]);
 		});
 	});
 
