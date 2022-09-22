@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/base/ManagedObject",
@@ -26,6 +27,7 @@ sap.ui.define([
 	DtUtil,
 	flUtils,
 	Layer,
+	ControlVariantApplyAPI,
 	VariantManagement,
 	ContextSharingAPI,
 	ManagedObject,
@@ -178,7 +180,7 @@ sap.ui.define([
 
 	ControlVariant.prototype._getVariantModel = function(oElement) {
 		var oAppComponent = flUtils.getAppComponentForControl(oElement);
-		return oAppComponent ? oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME) : undefined;
+		return oAppComponent ? oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName()) : undefined;
 	};
 
 	/**

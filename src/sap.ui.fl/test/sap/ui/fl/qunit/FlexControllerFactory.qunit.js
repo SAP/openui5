@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/changes/Applier",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/Layer",
@@ -17,6 +18,7 @@ sap.ui.define([
 	FlexState,
 	ManifestUtils,
 	Applier,
+	ControlVariantApplyAPI,
 	FlexControllerFactory,
 	ChangePersistence,
 	Layer,
@@ -128,7 +130,7 @@ sap.ui.define([
 			var oAppComponent = {
 				name: "appComponent",
 				getModel: function(sModelName) {
-					assert.strictEqual(sModelName, Utils.VARIANT_MODEL_NAME, "then variant model called on the app component");
+					assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then variant model called on the app component");
 					return oExistingModel;
 				},
 				addPropagationListener: function() {
@@ -141,7 +143,7 @@ sap.ui.define([
 			var oComponent = {
 				name: "embeddedComponent",
 				setModel: function(oModelSet, sModelName) {
-					assert.strictEqual(sModelName, Utils.VARIANT_MODEL_NAME, "then VariantModel was set on the embedded component with the correct name");
+					assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then VariantModel was set on the embedded component with the correct name");
 					assert.deepEqual(oModelSet, oExistingModel, "then the correct model was set");
 				},
 				getManifestObject: function() {},
@@ -183,7 +185,7 @@ sap.ui.define([
 			var oAppComponent = {
 				name: "appComponent",
 				setModel: function(oModel, sModelName) {
-					assert.strictEqual(sModelName, Utils.VARIANT_MODEL_NAME, "then VariantModel was set on the embedded component with the correct name");
+					assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then VariantModel was set on the embedded component with the correct name");
 					if (oExistingModel) {
 						assert.notOk(true, "should only go here once");
 					}
@@ -191,7 +193,7 @@ sap.ui.define([
 				},
 				getManifestObject: function() {},
 				getModel: function(sModelName) {
-					assert.strictEqual(sModelName, Utils.VARIANT_MODEL_NAME, "then variant model called on the app component");
+					assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then variant model called on the app component");
 					return oExistingModel;
 				},
 				addPropagationListener: sandbox.stub(),
@@ -202,7 +204,7 @@ sap.ui.define([
 			var oComponent = {
 				name: "embeddedComponent",
 				setModel: function(oModel, sModelName) {
-					assert.strictEqual(sModelName, Utils.VARIANT_MODEL_NAME, "then VariantModel was set on the embedded component with the correct name");
+					assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then VariantModel was set on the embedded component with the correct name");
 					assert.deepEqual(oModel, oExistingModel, "then the correct model was set");
 				},
 				getManifestObject: function() {},
@@ -252,9 +254,9 @@ sap.ui.define([
 
 			var oComponent = {
 				setModel: function(oModelSet, sModelName) {
-					assert.ok(oAppComponent.setModel.calledWith(sinon.match.instanceOf(VariantModel), Utils.VARIANT_MODEL_NAME), "then app component's VariantModel was set");
+					assert.ok(oAppComponent.setModel.calledWith(sinon.match.instanceOf(VariantModel), ControlVariantApplyAPI.getVariantModelName()), "then app component's VariantModel was set");
 					assert.ok(oAppComponent.addPropagationListener.calledOnce, "then addPropagationListener was called for the app component");
-					assert.strictEqual(sModelName, Utils.VARIANT_MODEL_NAME, "then VariantModel was set on the embedded component with the correct name");
+					assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then VariantModel was set on the embedded component with the correct name");
 				},
 				getManifestObject: function() {},
 				addPropagationListener: function() {
@@ -265,7 +267,7 @@ sap.ui.define([
 			};
 			sandbox.stub(Utils, "getAppComponentForControl").withArgs(oComponent).returns(oAppComponent);
 
-			assert.notOk(oAppComponent.getModel(Utils.VARIANT_MODEL_NAME), "then initially no variant model exists for the app component");
+			assert.notOk(oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName()), "then initially no variant model exists for the app component");
 
 			return FlexControllerFactory.getChangesAndPropagate(oComponent, {})
 				.then(function() {

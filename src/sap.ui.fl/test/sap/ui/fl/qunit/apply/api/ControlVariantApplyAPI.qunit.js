@@ -128,7 +128,7 @@ sap.ui.define([
 			});
 			return this.oModel.initialize()
 				.then(function() {
-					this.oAppComponent.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+					this.oAppComponent.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 					this.oComponent = new Component("EmbeddedComponent");
 					sandbox.stub(this.oModel, "waitForVMControlInit").resolves();
 					sandbox.stub(Utils, "getAppComponentForControl")
@@ -266,7 +266,7 @@ sap.ui.define([
 
 		QUnit.test("when calling 'activateVariant' with a control with an invalid variantModel", function(assert) {
 			stubUpdateCurrentVariant.call(this);
-			this.oAppComponent.setModel(null, Utils.VARIANT_MODEL_NAME);
+			this.oAppComponent.setModel(null, ControlVariantApplyAPI.getVariantModelName());
 
 			return ControlVariantApplyAPI.activateVariant({
 				element: this.oDummyControl,

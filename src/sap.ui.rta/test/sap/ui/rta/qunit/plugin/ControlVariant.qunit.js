@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/Layer",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/layout/VerticalLayout",
@@ -44,7 +44,7 @@ sap.ui.define([
 	KeyCodes,
 	VariantManagement,
 	ChangesWriteAPI,
-	flUtils,
+	ControlVariantApplyAPI,
 	Layer,
 	FlexTestAPI,
 	VerticalLayout,
@@ -133,7 +133,7 @@ sap.ui.define([
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
 				sandbox.stub(VariantManagement.prototype, "_updateWithSettingsInfo").resolves(true);
 				this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
-				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
+				this.oVariantManagementControl.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 				this.oObjectPageLayout = new ObjectPageLayout("objPage", {
 					headerContent: [this.oVariantManagementControl],
 					sections: [this.oObjectPageSection]
@@ -585,7 +585,7 @@ sap.ui.define([
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
 				this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
-				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
+				this.oVariantManagementControl.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 				this.oButton1 = new Button("button1");
 				this.oButton2 = new Button("button2");
 				this.oFlexBox1 = new FlexBox("flexbox1", {
@@ -664,7 +664,7 @@ sap.ui.define([
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
 				this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("qunit-fixture");
-				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
+				this.oVariantManagementControl.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 
 				var oVariantManagementDesignTimeMetadata = {
 					"sap.ui.fl.variants.VariantManagement": {
@@ -976,7 +976,7 @@ sap.ui.define([
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
 				this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("qunit-fixture");
-				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
+				this.oVariantManagementControl.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 
 				var oVariantManagementDesignTimeMetadata = {
 					"sap.ui.fl.variants.VariantManagement": {
@@ -1169,7 +1169,7 @@ sap.ui.define([
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
 				this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
-				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
+				this.oVariantManagementControl.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 				this.oVariantManagementControl.addAssociation("for", "objPage", true);
 
 				var oVariantManagementDesignTimeMetadata = {

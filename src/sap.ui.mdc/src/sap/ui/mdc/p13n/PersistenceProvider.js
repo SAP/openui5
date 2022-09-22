@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control", 	"sap/ui/fl/variants/VariantManagement", "sap/ui/fl/Utils", "sap/ui/mdc/enum/PersistenceMode", "sap/ui/layout/VerticalLayout"
-], function(CoreControl, VariantManagement, Utils, mode, VerticalLayout) {
+	"sap/ui/core/Control", 	"sap/ui/fl/variants/VariantManagement", "sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/mdc/enum/PersistenceMode", "sap/ui/layout/VerticalLayout"
+], function(CoreControl, VariantManagement, ControlVariantApplyAPI, mode, VerticalLayout) {
 	"use strict";
 
 	/**
@@ -65,7 +65,7 @@ sap.ui.define([
 
 	PersistenceProvider.prototype._setModel = function () {
 
-		var oModel = this.getModel(Utils.VARIANT_MODEL_NAME);
+		var oModel = this.getModel(ControlVariantApplyAPI.getVariantModelName());
 		if (oModel) {
 			this._fnResolveModel(oModel);
 		}
@@ -78,7 +78,7 @@ sap.ui.define([
 		if (this.getMode() === mode.Transient) {
 			var oVM = new VariantManagement(this.getId() + "--vm", {"for": this.getAssociation("for")});
 			this._oModelPromise.then(function (oModel) {
-				oVM.setModel(oModel, Utils.VARIANT_MODEL_NAME);
+				oVM.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 			});
 			this._oWrapper = new VerticalLayout(this.getId() + "--accWrapper", {
 				visible: false,//FIXME: reference not properly provided in DPR

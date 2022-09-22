@@ -4,12 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/base/Log"
 ],
 function(
 	FlexState,
-	Utils,
+	ControlVariantApplyAPI,
 	Log
 ) {
 	"use strict";
@@ -119,7 +119,7 @@ function(
 			})
 			.then(function(sCacheKey) {
 				// concat current control variant ids to cachekey if available
-				var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
+				var oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 				var aCurrentControlVariantIds = oVariantModel ? oVariantModel.getCurrentControlVariantIds() : [];
 				return _concatControlVariantIdWithCacheKey(sCacheKey, aCurrentControlVariantIds.join("-"));
 			});

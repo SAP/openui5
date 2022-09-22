@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/base/Log",
 	"sap/ui/performance/Measurement"
@@ -19,6 +20,7 @@ sap.ui.define([
 	Applier,
 	FlexState,
 	ManifestUtils,
+	ControlVariantApplyAPI,
 	VariantModel,
 	Log,
 	Measurement
@@ -160,7 +162,7 @@ sap.ui.define([
 					oInitialPromise = FlexControllerFactory._componentInstantiationPromises.get(oAppComponent);
 				}
 				return oInitialPromise.then(function() {
-					var oExistingVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
+					var oExistingVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 					if (!oExistingVariantModel) {
 						// If variant model is not present on the app component
 						// then a new variant model should be set on it.
@@ -171,7 +173,7 @@ sap.ui.define([
 					return oExistingVariantModel;
 				}).then(function (oVariantModel) {
 					// set app component's variant model on the embedded component
-					oComponent.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
+					oComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
 				});
 			}
 			return Promise.resolve();
@@ -204,7 +206,7 @@ sap.ui.define([
 			return oVariantModel.initialize();
 		})
 		.then(function() {
-			oAppComponent.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);
+			oAppComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
 			Measurement.end("flexProcessing");
 			return oVariantModel;
 		}).then(function (oResult) {

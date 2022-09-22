@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/changeHandler/HideControl",
 	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
@@ -36,6 +37,7 @@ sap.ui.define([
 	Utils,
 	HideControl,
 	ChangePersistenceFactory,
+	ControlVariantApplyAPI,
 	URLHandler,
 	Applier,
 	FlexCustomData,
@@ -342,7 +344,7 @@ sap.ui.define([
 			};
 			var oAppComponent = {
 				getModel: function(sModel) {
-					assert.strictEqual(sModel, Utils.VARIANT_MODEL_NAME, "then variant model called on the app component");
+					assert.strictEqual(sModel, ControlVariantApplyAPI.getVariantModelName(), "then variant model called on the app component");
 					return oModel;
 				}
 			};

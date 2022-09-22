@@ -9,18 +9,18 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/m/VariantItem",
 	"sap/m/VariantManagement",
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
-	'sap/base/Log'
+	"sap/base/Log"
 ], function(
 	Context,
 	Filter,
 	FilterOperator,
 	VariantItem,
 	MVariantManagement,
-	flUtils,
+	ControlVariantApplyAPI,
 	flSettings,
 	Control,
 	coreLibrary,
@@ -308,7 +308,7 @@ sap.ui.define([
 		this.addStyleClass("sapUiFlVarMngmt"); // required for finding the control by RTA/FL
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 
-		this.setModelName(flUtils.VARIANT_MODEL_NAME);
+		this.setModelName(ControlVariantApplyAPI.getVariantModelName());
 
 		this.attachModelContextChange(this._setModel, this);
 
@@ -869,7 +869,7 @@ sap.ui.define([
 		if (!sModelName) {
 			return null;
 		}
-		if (sModelName !== flUtils.VARIANT_MODEL_NAME) {
+		if (sModelName !== ControlVariantApplyAPI.getVariantModelName()) {
 			return this.getId();
 		}
 

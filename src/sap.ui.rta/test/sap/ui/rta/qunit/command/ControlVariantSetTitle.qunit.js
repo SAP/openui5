@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/library",
 	"sap/ui/thirdparty/sinon-4",
@@ -12,7 +12,7 @@ sap.ui.define([
 ], function(
 	VariantManagement,
 	Layer,
-	flUtils,
+	ControlVariantApplyAPI,
 	CommandFactory,
 	rtaLibrary,
 	sinon,
@@ -46,7 +46,7 @@ sap.ui.define([
 			}).then(function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 				this.oVariantManagement = new VariantManagement("variantMgmtId1");
-				this.oVariantManagement.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
+				this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 				sandbox.stub(oMockedAppComponent, "getModel").returns(this.oModel);
 			}.bind(this));
 		},

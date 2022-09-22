@@ -1,10 +1,10 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/layout/Grid",
 	"sap/m/OverflowToolbar",
@@ -15,10 +15,10 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
+	ControlVariantApplyAPI,
 	VariantManagement,
 	VariantModel,
 	Layer,
-	flUtils,
 	flSettings,
 	Grid,
 	OverflowToolbar,
@@ -242,7 +242,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Check title", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this.oVariantManagement.setCurrentVariantKey("2");
 			sap.ui.getCore().applyChanges();
@@ -267,7 +267,7 @@ sap.ui.define([
 			assert.ok(aItems);
 			assert.equal(aItems.length, 0);
 
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			aItems = this.oVariantManagement.getVariants();
 			assert.ok(aItems);
@@ -287,7 +287,7 @@ sap.ui.define([
 
 			this.oVariantManagement._oRb = oCore.getLibraryResourceBundle("sap.ui.fl");
 
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			assert.equal(this._oVM.oVariantInvisibleText.getText(), "View Standard. To select view, press spacebar.");
 
@@ -303,13 +303,13 @@ sap.ui.define([
 			this.oVariantManagement.attachInitialized(function() {
 				bInitialized = true;
 			});
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			assert.ok(bInitialized);
 		});
 
 		QUnit.test("Check setDefaultVariantKey", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			assert.equal(this.oVariantManagement.getDefaultVariantKey(), "Standard");
 
@@ -321,7 +321,7 @@ sap.ui.define([
 		QUnit.test("Check _checkVariantNameConstraints", function(assert) {
 			var oInput = new Input();
 
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			oInput.setValue("New");
 			this._oVM._checkVariantNameConstraints(oInput, "1");
@@ -341,7 +341,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Create Variants List", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			assert.ok(!this._oVM.oVariantPopOver);
 			this._oVM._createVariantList();
@@ -378,7 +378,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Create Variants List with favorited Standard", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			assert.ok(!this._oVM.oVariantPopOver);
 			this._oVM._createVariantList();
@@ -401,7 +401,7 @@ sap.ui.define([
 		QUnit.test("Create Variants List with non favorited Standard", function(assert) {
 			oModel.oData.One.variants[0].favorite = false;
 
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			assert.ok(!this._oVM.oVariantPopOver);
 			this._oVM._createVariantList();
@@ -417,12 +417,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("Check 'variantsEditable'", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 			this._oVM._openVariantList();
 
 			assert.ok(this._oVM.oVariantSelectionPage.getShowFooter());
 
-			var oData = this.oVariantManagement.getBindingContext(flUtils.VARIANT_MODEL_NAME).getObject();
+			var oData = this.oVariantManagement.getBindingContext(ControlVariantApplyAPI.getVariantModelName()).getObject();
 			oData.variantsEditable = !oData.variantsEditable;
 
 			oModel.checkUpdate(true);
@@ -435,12 +435,12 @@ sap.ui.define([
 
 			this.oVariantManagement.addAssociation("for", oInput);
 
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 			this.oVariantManagement._openVariantList();
 
 			assert.ok(!oInput.getBusy());
 
-			var oData = this.oVariantManagement.getBindingContext(flUtils.VARIANT_MODEL_NAME).getObject();
+			var oData = this.oVariantManagement.getBindingContext(ControlVariantApplyAPI.getVariantModelName()).getObject();
 			oData.variantBusy = !oData.variantBusy;
 
 			oModel.checkUpdate(true);
@@ -458,7 +458,7 @@ sap.ui.define([
 		QUnit.test("Check 'editable'", function(assert) {
 			assert.ok(this.oVariantManagement.getEditable());
 
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 			this._oVM._openVariantList();
 
 			assert.ok(this._oVM.oVariantSelectionPage.getShowFooter());
@@ -569,7 +569,7 @@ sap.ui.define([
 
 		QUnit.test("Checking _handleVariantSaveAs", function(assert) {
 			sinon.stub(oModel, "_handleSave");
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			var bCalled = false;
 			this.oVariantManagement.attachSave(function(oEvent) {
@@ -603,7 +603,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking _handleVariantSaveAs with cancel", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			var bCalled = false;
 			this.oVariantManagement.attachCancel(function() {
@@ -623,7 +623,7 @@ sap.ui.define([
 
 		QUnit.test("Checking _handleVariantSave", function(assert) {
 			sinon.stub(oModel, "_handleSave");
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			var bCalled = false;
 			this.oVariantManagement.attachSave(function() {
@@ -665,7 +665,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking create management dialog", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this._oVM._createManagementDialog();
 
@@ -673,7 +673,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking create management dialog, when dialog already exists", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this._oVM._createManagementDialog();
 
@@ -683,7 +683,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking create management dialog, when dialog is already destroyed", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this._oVM._createManagementDialog();
 
@@ -722,7 +722,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking _handleManageDefaultVariantChange, ensure favorites are flagged for default variant", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			var oItem = this._oVM._getItemByKey("1");
 
@@ -759,7 +759,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking _handleManageCancelPressed", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			var oItemDel = this._oVM._getItemByKey("1");
 			var oItemRen = this._oVM._getItemByKey("3");
@@ -801,12 +801,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking _handleManageSavePressed; deleted item is NOT selected", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this.oVariantManagement.attachManage(function() {
 				var aDelItems = [];
 				var aRenamedItems = [];
-				var oData = this.oVariantManagement.getBindingContext(flUtils.VARIANT_MODEL_NAME).getObject();
+				var oData = this.oVariantManagement.getBindingContext(ControlVariantApplyAPI.getVariantModelName()).getObject();
 
 				oData["variants"].forEach(function(oItem) {
 					if (!oItem.visible) {
@@ -855,7 +855,7 @@ sap.ui.define([
 				getParameters: function() { return { newValue: "One" }; }
 			};
 
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this._oVM._createManagementDialog();
 			assert.ok(this._oVM.oManagementDialog);
@@ -899,14 +899,14 @@ sap.ui.define([
 
 
 		QUnit.test("Checking _handleManageSavePressed; deleted item is selected", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this.oVariantManagement.attachManage(function() {
 				var aDelItems = [];
 				var aRenamedItems = [];
 				var aFavItems = [];
 
-				var oData = this.oVariantManagement.getBindingContext(flUtils.VARIANT_MODEL_NAME).getObject();
+				var oData = this.oVariantManagement.getBindingContext(ControlVariantApplyAPI.getVariantModelName()).getObject();
 
 				oData["variants"].forEach(function(oItem) {
 					if (!oItem.visible) {
@@ -976,7 +976,7 @@ sap.ui.define([
 				}
 			};
 
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 			this._oVM._createVariantList();
 			var aItems = this._oVM.oVariantList.getItems();
 			assert.ok(aItems);
@@ -1088,7 +1088,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking _triggerSearchInManageDialog", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			assert.ok(!this._oVM._bDeleteOccured);
 
@@ -1115,7 +1115,7 @@ sap.ui.define([
 			oModel.oData.One.currentVariant = "1";
 			oModel.oData.One.defaultVariant = "1";
 
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this._oVM._createManagementDialog();
 			assert.ok(this._oVM.oManagementDialog);
@@ -1180,7 +1180,7 @@ sap.ui.define([
 			oModel.oData.One.currentVariant = "1";
 			oModel.oData.One.defaultVariant = "1";
 
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this._oVM._createManagementDialog();
 			assert.ok(this._oVM.oManagementDialog);
@@ -1240,7 +1240,7 @@ sap.ui.define([
 
 			oConfiguration.setLanguage("en_EN");
 
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this._oVM._openManagementDialog();
 			var aRows = this._oVM.oManagementTable.getItems();
@@ -1262,7 +1262,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking the apply automatic text for standard", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this.oVariantManagement.setDisplayTextForExecuteOnSelectionForStandardVariant("TEST");
 
@@ -1280,7 +1280,7 @@ sap.ui.define([
 			var nCount = 0;
 			var fCallBack = function(oVariant) { assert.ok(oVariant); nCount++; return true; };
 
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			assert.equal(nCount, 0);
 			var oStdVariant = this.oVariantManagement._getInnerItemByKey("Standard");
@@ -1303,7 +1303,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking management dialog with roles component", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			var done = assert.async();
 
@@ -1364,7 +1364,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Checking save as dialog with roles component", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			var done = assert.async();
 

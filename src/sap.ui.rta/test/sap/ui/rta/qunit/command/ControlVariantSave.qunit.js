@@ -120,7 +120,6 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when calling command factory for save variants and undo", function(assert) {
 			var oOverlay = new ElementOverlay({element: this.oVariantManagement});
-			sandbox.stub(this.oModel.oFlexController, "applyChange");
 			sandbox.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 			sandbox.stub(oOverlay, "getVariantManagement").returns("idMain1--variantManagementOrdersTable");
 

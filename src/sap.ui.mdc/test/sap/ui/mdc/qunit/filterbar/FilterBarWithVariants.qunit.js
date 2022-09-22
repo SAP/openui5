@@ -726,7 +726,7 @@ var oVariantMap = {
 		}];
 		return oModel.initialize()
 		.then(function() {
-			oVM.setModel(oModel, FlUtils.VARIANT_MODEL_NAME);
+			oVM.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			oFB = new FilterBar({
 				variantBackreference: oVM.getId(),

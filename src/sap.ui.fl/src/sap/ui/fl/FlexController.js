@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
@@ -26,6 +27,7 @@ sap.ui.define([
 	Applier,
 	Reverter,
 	URLHandler,
+	ControlVariantApplyAPI,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	Component,
@@ -48,7 +50,7 @@ sap.ui.define([
 			}.bind(this))
 			.then(function () {
 				if (oComponent) {
-					var oModel = oComponent.getModel(Utils.VARIANT_MODEL_NAME);
+					var oModel = oComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 					if (oModel) {
 						aChanges.forEach(function (oChange) {
 							var sVariantReference = oChange.getVariantReference();
@@ -292,7 +294,7 @@ sap.ui.define([
 	FlexController.prototype.addPreparedChange = function(oChange, oAppComponent) {
 		if (oChange.getVariantReference()) {
 			// variant model is always associated with the app component
-			var oModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
+			var oModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 			oModel.addChange(oChange);
 		}
 
@@ -317,7 +319,7 @@ sap.ui.define([
 	FlexController.prototype.deleteChange = function(oChange, oAppComponent) {
 		this._oChangePersistence.deleteChange(oChange);
 		if (oChange.getVariantReference()) {
-			oAppComponent.getModel(Utils.VARIANT_MODEL_NAME).removeChange(oChange);
+			oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName()).removeChange(oChange);
 		}
 	};
 

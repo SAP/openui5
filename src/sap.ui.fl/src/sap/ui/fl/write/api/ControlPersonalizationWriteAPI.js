@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/registry/Settings",
@@ -22,6 +23,7 @@ sap.ui.define([
 	Element,
 	FlexState,
 	VariantUtils,
+	ControlVariantApplyAPI,
 	FlexRuntimeInfoAPI,
 	ChangeHandlerStorage,
 	Settings,
@@ -124,7 +126,7 @@ sap.ui.define([
 			var oAppComponent = Utils.getAppComponentForControl(oReferenceControl);
 			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oReferenceControl});
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-			var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
+			var oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 			var sLayer = Layer.USER;
 			var aSuccessfulChanges = [];
 
@@ -287,7 +289,7 @@ sap.ui.define([
 				return logAndReject("App Component could not be determined");
 			}
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-			var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
+			var oVariantModel = oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 			var aVariantManagementReferences = getAllVariantManagementReferences(oAppComponent);
 
 			if (FlexState.isInitialized({control: oAppComponent})) {

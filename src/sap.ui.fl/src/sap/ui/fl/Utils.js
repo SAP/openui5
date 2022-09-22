@@ -48,7 +48,6 @@ sap.ui.define([
 	 */
 	var Utils = {
 		APP_ID_AT_DESIGN_TIME: "${pro" + "ject.art" + "ifactId}", //avoid replaced by content of ${project.artifactId} placeholder at build steps
-		VARIANT_MODEL_NAME: "$FlexVariants",
 
 		/**
 		 * Formats the log message by replacing placeholders with values and logging the message.

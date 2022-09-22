@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
@@ -16,7 +16,7 @@ sap.ui.define([
 	JSONModel,
 	ChangesWriteAPI,
 	Layer,
-	FlUtils,
+	ControlVariantApplyAPI,
 	CommandFactory,
 	sinon,
 	RtaQunitUtils
@@ -101,7 +101,7 @@ sap.ui.define([
 				oVariantModel.getCurrentVariantReference = function(sVariantManagementReference) {
 					return sVariantManagementReference;
 				};
-				this.oMockedAppComponent.setModel(oVariantModel, FlUtils.VARIANT_MODEL_NAME);
+				this.oMockedAppComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
 				sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 				this.oCreateStub = sandbox.stub(ChangesWriteAPI, "create").resolves();
 				this.oControl = new Control("myFancyControlId");

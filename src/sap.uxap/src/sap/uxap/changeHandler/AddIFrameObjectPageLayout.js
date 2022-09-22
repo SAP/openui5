@@ -3,14 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Utils",
-	"sap/base/Log",
 	"sap/ui/fl/changeHandler/AddIFrame",
 	"sap/ui/fl/changeHandler/common/getTargetAggregationIndex",
 	"sap/ui/fl/changeHandler/common/createIFrame"
 ], function (
-	Utils,
-	Log,
 	BaseAddIFrame,
 	getTargetAggregationIndex,
 	createIFrame

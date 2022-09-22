@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/FlexControllerFactory",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Core"
 ], function(
+	ControlVariantApplyAPI,
 	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
 	FlexControllerFactory,
@@ -251,7 +253,7 @@ sap.ui.define([
 	};
 
 	FlexPerformanceTestUtil.updateVariant = function (oComponent) {
-		var oVariantModel = oComponent.getModel(FlUtils.VARIANT_MODEL_NAME);
+		var oVariantModel = oComponent.getModel(ControlVariantApplyAPI.getVariantModelName());
 		return oVariantModel.updateCurrentVariant({
 			variantManagementReference: "idMain1--variantManagementOrdersTable",
 			newVariantReference: "id_1570801327284_11",
