@@ -1290,8 +1290,29 @@ sap.ui.define([
 			ariaHasPopup: "listbox",
 			roleDescription: null
 		};
-		var oAttributes = oMTable.getAriaAttributes();
-		assert.ok(oAttributes, "Aria attributes returned");
+		var oAttributes = oMTable.getAriaAttributes(1);
+		assert.ok(oAttributes, "Aria attributes returned for SingleSelect");
+		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
+
+		var oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // sap.m is always loaded
+
+		oCheckAttributes = {
+			contentId: oTable.getId(),
+			ariaHasPopup: "listbox",
+			roleDescription: oResourceBundleM.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION")
+		};
+		oAttributes = oMTable.getAriaAttributes(-1);
+		assert.ok(oAttributes, "Aria attributes returned for MultiSelect");
+		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
+
+		oMTable.setUseAsValueHelp(false);
+		oCheckAttributes = {
+			contentId: oTable.getId(),
+			ariaHasPopup: "listbox",
+			roleDescription: null
+		};
+		oAttributes = oMTable.getAriaAttributes(-1);
+		assert.ok(oAttributes, "Aria attributes returned for MultiSelect with typeahead only");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
 	});
