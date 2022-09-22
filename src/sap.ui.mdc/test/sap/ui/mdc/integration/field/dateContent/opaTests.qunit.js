@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/mdc/integration/Field/DateContent/test/Journey",
+	"sap/ui/mdc/integration/field/dateContent/test/Journey",
     "testutils/opa/TestLibrary"
 ], function(
 	Opa5
@@ -18,7 +18,7 @@ sap.ui.define([
 		},
 		testLibs: {
 			mdcTestLibrary: {
-				viewName: "sap.ui.mdc.integration.Field.DateContent.view.App"
+				viewName: "sap.ui.mdc.integration.field.dateContent.view.App"
 			}
 		}
 	});

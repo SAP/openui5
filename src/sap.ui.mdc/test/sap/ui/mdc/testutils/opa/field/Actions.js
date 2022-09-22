@@ -5,46 +5,43 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
-	"sap/ui/test/actions/Press",
 	"./waitForField",
-	"./waitForFieldValueHelpButton"
+	"../Utils",
+	"sap/ui/events/KeyCodes",
+	"../actions/TriggerEvent"
 ], function(
 	Opa5,
 	EnterText,
-	Press,
 	waitForField,
-	waitForFieldValueHelpButton
+	Utils,
+	KeyCodes,
+	TriggerEvent
 ) {
     "use strict";
 
     return {
-		iEnterTextOnTheField: function(sId, sValue) {
-			return waitForField.call(this, {
-				properties: {
-					id: sId
-				},
+		iEnterTextOnTheField: function(vIdentifier, sValue) {
+			return waitForField.call(this, Utils.enhanceWaitFor(vIdentifier, {
 				actions: new EnterText({
 					text: sValue
 				}),
-				success: function(oFilterField) {
+				success: function() {
 					Opa5.assert.ok(true, 'The text "' + sValue + '" was entered into the field');
 				},
 				errorMessage: 'The text "' + sValue + '" could not be entered into the field'
-			});
+			}));
 		},
-
-		//TODO
-		iPressOnTheFieldValueHelpButton: function(sId) {
-			return waitForFieldValueHelpButton.call(this, {
-				properties: {
-					id: sId
-				},
-				actions: new Press(),
-				success: function(oValueHelpIconButton) {
-					Opa5.assert.ok(oValueHelpIconButton, "The field value help button was pressed");
-				},
-				errorMessage: "The field value help button could not be press"
-			});
-		}
+		iPressKeyOnTheField: function(vIdentifier, keyCode) {
+			return waitForField.call(this, Utils.enhanceWaitFor(vIdentifier, {
+				success:function(oField) {
+					oField.focus();
+					new TriggerEvent({event: "keydown", payload: {which: keyCode, keyCode: keyCode}}).executeOn(oField._getContent()[0]); // doesnt work with focusdomref
+					Opa5.assert.ok(oField, "Key '" + keyCode + "' pressed on FilterField '" + oField.getId() + "'");
+				}
+			}));
+		},
+		iOpenTheValueHelpForField: function (vIdentifier) {
+            return this.iPressKeyOnTheField(vIdentifier, KeyCodes.F4);
+        }
 	};
 });

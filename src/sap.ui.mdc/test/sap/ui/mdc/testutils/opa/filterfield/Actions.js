@@ -5,62 +5,44 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
-	"sap/ui/test/actions/Press",
 	"./waitForFilterField",
-	"./waitForFilterFieldValueHelpButton",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"../Utils",
+	"../actions/TriggerEvent"
 ], function(
 	Opa5,
 	EnterText,
-	Press,
 	waitForFilterField,
-	waitForFilterFieldValueHelpButton,
-	KeyCodes
+	KeyCodes,
+	Utils,
+	TriggerEvent
 ) {
     "use strict";
 
-
-	var Opa5Utils = Opa5.getUtils();
-
     return {
-		iEnterTextOnTheFilterField: function(oProperties, sValue, oConfig) {
-			return waitForFilterField.call(this, {
-				properties: oProperties,
-				actions: new EnterText(oConfig ? {
+		iEnterTextOnTheFilterField: function(vIdentifier, sValue) {
+			return waitForFilterField.call(this, Utils.enhanceWaitFor(vIdentifier, {
+				actions: new EnterText({
 					text: sValue
-				} : Object.assign({
-					text: sValue
-				}), oConfig ),
+				}),
 				success: function(oFilterField) {
 					Opa5.assert.ok(true, 'The text "' + sValue + '" was entered into the filter field');
 				},
 				errorMessage: 'The text "' + sValue + '" could not be entered into the filter field'
-			});
+			}));
 		},
 
-		iPressKeyOnFilterFieldWithLabel: function(sLabelName, sValue) {
-			return waitForFilterField.call(this, {
-				properties: {
-					label: sLabelName
-				},
-				success: function(oFilterField) {
-					var oContent = oFilterField.getAggregation("_content")[0];
-					Opa5Utils.triggerKeydown(oContent.getDomRef(), KeyCodes[sValue]);
-					Opa5.assert.ok(oContent, "Key '" + sValue + "' pressed on FilterField with label '" + sLabelName + "'");
-				},
-				errorMessage: 'The key "' + sValue + " could not be pressed on the FilterField with label '" + sLabelName + "'"
-			});
+		iPressKeyOnTheFilterField: function(vIdentifier, keyCode) {
+			return waitForFilterField.call(this,  Utils.enhanceWaitFor(vIdentifier, {
+				success:function(oFilterField) {
+					oFilterField.focus();
+					new TriggerEvent({event: "keydown", payload: {which: keyCode, keyCode: keyCode}}).executeOn(oFilterField._getContent()[0]); // doesnt work with focusdomref
+					Opa5.assert.ok(oFilterField, "Key '" + keyCode + "' pressed on FilterField '" + oFilterField.getId() + "'");
+				}
+			}));
 		},
-
-		iPressOnTheFilterFieldValueHelpButton: function(oProperties) {
-			return waitForFilterFieldValueHelpButton.call(this, {
-				properties: oProperties,
-				actions: new Press(),
-				success: function(oValueHelpIconButton) {
-					Opa5.assert.ok(oValueHelpIconButton, "The filter field value help button was pressed");
-				},
-				errorMessage: "The filter field value help button could not be press"
-			});
-		}
+		iOpenTheValueHelpForFilterField: function (vIdentifier) {
+            return this.iPressKeyOnTheFilterField(vIdentifier, KeyCodes.F4);
+        }
 	};
 });

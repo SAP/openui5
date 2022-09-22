@@ -84,29 +84,20 @@ sap.ui.define([
 
 		When.onTheMDCFilterField.iEnterTextOnTheFilterField({label: "String single"}, "rtx");
 
-		var mValue = {
-			conditions: [{
-				validated: "NotValidated",
-				isEmpty: false,
-				operator: "EQ",
-				values: ["rtx"]
-			}]
-		};
-
-		Then.onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues({label: "String single"}, mValue);
+		Then.onTheMDCFilterField.iShouldSeeTheFilterFieldWithValues({label: "String single"}, "=rtx");
 	});
 
 	opaTest("4. expected filter bar with two filters (Boolean, 'String single') displayed", function(Given, When, Then) {
 
 		Then.onTheMDCFilterBar.iShouldSeeFilters(sFBId, {
 			"Boolean": [{
-					operator: "EQ",
-					values: [ false ]
-				}],
-				"String single": [{
-					operator: "EQ",
-					values: [ "rtx" ]
-				}]
+				operator: "EQ",
+				values: [ false ]
+			}],
+			"String single": [{
+				operator: "EQ",
+				values: [ "rtx" ]
+			}]
 		});
 	});
 

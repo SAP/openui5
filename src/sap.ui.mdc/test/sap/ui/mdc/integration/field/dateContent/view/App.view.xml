@@ -7,7 +7,7 @@
 	xmlns:form="sap.ui.layout.form"
 	xmlns:m="sap.m"
 	xmlns:c="sap.ui.core"
-	controllerName="sap.ui.mdc.integration.Field.DateContent.controller.App">
+	controllerName="sap.ui.mdc.integration.field.dateContent.controller.App">
 	<App id="app">
 		<Page id="pageId">
 			<headerContent></headerContent>
