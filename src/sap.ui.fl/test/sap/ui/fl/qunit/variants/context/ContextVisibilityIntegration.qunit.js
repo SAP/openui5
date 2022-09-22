@@ -26,6 +26,7 @@ sap.ui.define([
 
 	function renderComponent(aSelectedRoles) {
 		this.oComp = new ContextVisibilityComponent("test");
+		this.oComp.showMessageStrip(true);
 		this.oComp.setSelectedContexts({role: aSelectedRoles});
 		this.oCompCont = new ComponentContainer({ component: this.oComp, id: "comp"});
 		this.oCompCont.placeAt("qunit-fixture");
@@ -130,6 +131,16 @@ sap.ui.define([
 			assert.equal(this.oVisibilityMessageStrip.getVisible(), true, "message strip is visible");
 			assert.equal(this.oAddBtn.getEnabled(), true, "add context button is enabled");
 			assert.equal(this.oRemoveAllBtn.getEnabled(), false, "remove all context button is disabled");
+		});
+
+		QUnit.test("when showMessageStrip is called with false", function (assert) {
+			this.oComp.showMessageStrip(false);
+			assert.equal(this.oVisibilityMessageStrip.getVisible(), false, "message strip is not visible");
+		});
+
+		QUnit.test("when showMessageStrip is called with true", function (assert) {
+			this.oComp.showMessageStrip(true);
+			assert.equal(this.oVisibilityMessageStrip.getVisible(), true, "message strip is visible");
 		});
 
 		QUnit.test("when pressing add contexts button, select roles dialog is opened, no items are pre-selected", function (assert) {
