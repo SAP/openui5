@@ -7,20 +7,12 @@ sap.ui.getCore().attachInit(function () {
 	"use strict";
 
 	sap.ui.require([
+		"sap/ui/core/sample/common/Helper",
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/LateProperties/pages/Main",
 		"sap/ui/test/opaQunit"
-	], function (Any, Main, opaTest) {
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-
-		QUnit.module("sap.ui.core.sample.odata.v4.LateProperties", {
-			before : function () {
-				sap.ui.getCore().getConfiguration().setLanguage("en-US");
-			},
-			after : function () {
-				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-			}
-		});
+	], function (Helper, Any, Main, opaTest) {
+		Helper.qUnitModule("sap.ui.core.sample.odata.v4.LateProperties");
 
 		//*****************************************************************************
 		opaTest("Start late properties app, check UI, check log", function (Given, When, Then) {

@@ -7,22 +7,14 @@ sap.ui.getCore().attachInit(function () {
 	"use strict";
 
 	sap.ui.require([
+		"sap/ui/core/sample/common/Helper",
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/Products/pages/Main",
 		"sap/base/Log",
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/TestUtils"
-	], function (Any, Main, Log, opaTest, TestUtils) {
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-
-		QUnit.module("sap.ui.core.sample.odata.v4.Products", {
-			before : function () {
-				sap.ui.getCore().getConfiguration().setLanguage("en-US");
-			},
-			after : function () {
-				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-			}
-		});
+	], function (Helper, Any, Main, Log, opaTest, TestUtils) {
+		Helper.qUnitModule("sap.ui.core.sample.odata.v4.Products");
 
 		//*****************************************************************************
 		if (TestUtils.isRealOData()) {

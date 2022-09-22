@@ -7,19 +7,11 @@ sap.ui.getCore().attachInit(function () {
 	"use strict";
 
 	sap.ui.require([
+		"sap/ui/core/sample/common/Helper",
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/test/opaQunit"
-	], function (Any, opaTest) {
-		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-
-		QUnit.module("sap.ui.core.sample.odata.v4.ListBindingTemplate", {
-			before : function () {
-				sap.ui.getCore().getConfiguration().setLanguage("en-US");
-			},
-			after : function () {
-				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-			}
-		});
+	], function (Helper, Any, opaTest) {
+		Helper.qUnitModule("sap.ui.core.sample.odata.v4.ListBindingTemplate");
 
 		//*****************************************************************************
 		opaTest("Start list binding template app and check log", function (Given, When, Then) {
