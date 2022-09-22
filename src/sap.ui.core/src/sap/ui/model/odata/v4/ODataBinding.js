@@ -20,7 +20,7 @@ sap.ui.define([
 	 * Tells whether the first given change reason has precedence over the second one.
 	 *
 	 * @param {string} sChangeReason0 - A change reason
-	 * @param {string} sChangeReason1  - A change reason
+	 * @param {string} sChangeReason1 - A change reason
 	 * @returns {boolean} Whether the first given change reason has precedence over the second one
 	 */
 	function hasPrecedenceOver(sChangeReason0, sChangeReason1) {

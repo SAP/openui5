@@ -103,7 +103,7 @@ sap.ui.define([
 		 *       <li> when "constant": {any} the constant value (not escaped if string)
 		 *       <li> when "expression": {string} the expression unwrapped (no "{=" and "}")
 		 *     </ul>
-		 *   <li> <code>type</code>:  the EDM data type (like "Edm.String") if it could be
+		 *   <li> <code>type</code>: the EDM data type (like "Edm.String") if it could be
 		 *      determined
 		 *   <li> <code>constraints</code>: {object} type constraints if result is "binding"
 		 *   <li> <code>formatOptions</code>: {object} format options if result is "binding"

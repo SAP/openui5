@@ -334,7 +334,7 @@ sap.ui.define([
 			sUrl = "/foo/$metadata";
 
 		this.mock(jQuery).expects("ajax")
-			.returns(createMock(jqXHR, true)); // true  = fail
+			.returns(createMock(jqXHR, true)); // true = fail
 		this.mock(_Helper).expects("createError")
 			.withExactArgs(sinon.match.same(jqXHR), "Could not load metadata")
 			.returns(oExpectedError);

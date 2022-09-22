@@ -1689,7 +1689,7 @@ sap.ui.define([
 						<Annotation Term="f.Invalid" Invalid="foo" />\
 						<Annotation Term="f.Baz" Qualifier="Employee"/>\
 					</Annotations>\
-					<Annotations xmlns="' + sXmlnsEdm4 + '"  Target="f.Bar/Abc" \
+					<Annotations xmlns="' + sXmlnsEdm4 + '" Target="f.Bar/Abc" \
 							Qualifier="Employee">\
 						<Annotation Term="f.Baz"/>\
 					</Annotations>\

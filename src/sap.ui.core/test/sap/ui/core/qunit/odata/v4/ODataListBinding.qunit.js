@@ -55,7 +55,7 @@ sap.ui.define([
 	 * @param {boolean} [bDrillDown]
 	 *   simulate drill-down, i.e. resolve with unwrapped array
 	 * @param {number} [iCount]
-	 *   the  value for "$count", remains unset if undefined
+	 *   the value for "$count", remains unset if undefined
 	 * @param {boolean} [bKeyPredicates]
 	 *   add a property "@$ui5._/predicate" with a key predicate
 	 * @returns {object}
@@ -5986,7 +5986,7 @@ sap.ui.define([
 	split : [new Filter("a", FilterOperator.GT, 42), new Filter("b", FilterOperator.EQ, "before")],
 	result : ["a gt 42", "b eq 'before'"]
 }].forEach(function (oFixture, i) {
-	QUnit.test("fetchFilter:  list binding aggregates data " + i, function (assert) {
+	QUnit.test("fetchFilter: list binding aggregates data " + i, function (assert) {
 		var oAggregation = {},
 			oBinding = this.bindList("Set"),
 			oContext = {},

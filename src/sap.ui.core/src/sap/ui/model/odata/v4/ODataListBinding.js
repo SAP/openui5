@@ -259,7 +259,7 @@ sap.ui.define([
 	 *   A lock for the group ID to be used for the DELETE request; w/o a lock, no DELETE is sent.
 	 *   For a transient entity, the lock is ignored (use NULL)!
 	 * @param {string} sEditUrl
-	 *   The entity's edit URL to be used for the DELETE request;  w/o a lock, this is mostly
+	 *   The entity's edit URL to be used for the DELETE request; w/o a lock, this is mostly
 	 *   ignored.
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context to be deleted
@@ -329,7 +329,7 @@ sap.ui.define([
 						oContext0.iIndex = i - that.iCreatedContexts;
 					});
 				} else if (that.bLengthFinal) {
-					// a kept-alive context is not in aContexts  -> read the count afterwards
+					// a kept-alive context is not in aContexts -> read the count afterwards
 					bReadCount = true;
 				}
 			}
