@@ -388,6 +388,111 @@ sap.ui.define([
 		assert.ok(document.querySelector(".sapMUCNoDataPage"), "No Data template is visible");
 	});
 
+	function getData1() {
+		return {
+			items: [
+				{
+					fileName: "Alice.mp4",
+					"markers": [
+						{
+							"type": "Locked",
+							"visibility": "IconAndText"
+						}
+					]
+				},
+				{
+					fileName: "Test.mp4",
+					"markers": [
+						{
+							"type": "Locked",
+							"visibility": "IconAndText"
+						}
+					]
+				},
+				{
+					fileName: "Brenda.mp4",
+					enabledRemove: false,
+					enabledEdit: false,
+					visibleRemove: false,
+					visibleEdit: false
+				}
+			]
+		};
+	}
+
+	QUnit.module("UploadSet general functionality", {
+		beforeEach: function () {
+			this.oUploadSet = new UploadSet("uploadSet", {
+				fileTypes:"txt,doc,png",
+				mediaTypes:"text/plain,application/msword,image/jpeg,image/png",
+				items: {
+					path: "/items",
+					template: TestUtils.createItemTemplate(),
+					templateShareable: false
+				}
+			}).setModel(new JSONModel(getData1()));
+			this.oUploadSet.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oUploadSet.destroy();
+			this.oUploadSet = null;
+		}
+	});
+
+	QUnit.test("Test for invalid file type, media type files upload attempt", function(assert) {
+		//arrange
+		var oFileUploader = this.oUploadSet.getDefaultFileUploader();
+		var oFileList = { // Files with webKitrelative path to simulate directory and sub directories
+			0: {
+				name: "Sample File 1.txt",
+				size: 1,
+				type: "text/plain"
+			},
+			1: {
+				name: "Sample File 2.txt",
+				size: 1,
+				type: "text/plain"
+			},
+			2: {
+				name: "Sample File 3.txt",
+				size: 1,
+				type: "text/plain"
+			},
+			3: {
+				name: "Sample File 4.txt",
+				size: 1,
+				type: "text/plain"
+			},
+			4: {
+				name: "Sample File 5.pdf",
+				size: 1,
+				type: "application/pdf"
+			},
+			length: 5
+		};
+
+		var done = assert.async();
+
+		this.oUploadSet.attachEventOnce("mediaTypeMismatch",function(oEvent){
+			//Assert
+			assert.ok(oEvent.getParameter("item"), "mismatch item is present");
+
+			var oItem = oEvent.getParameter("item");
+			if (oItem) {
+				assert.equal(oItem.getMetadata().getName(), "sap.m.upload.UploadSetItem", "mismatched UploadSetItem received");
+			}
+			done();
+		});
+
+		//act
+		oFileUploader.handlechange({
+			target: {
+				files: oFileList
+			}
+		});
+	});
+
 	QUnit.module("Drag and drop", {
 		beforeEach: function () {
 			this.$RootNode = jQuery(document.body);
