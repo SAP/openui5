@@ -3198,7 +3198,7 @@ sap.ui.define([
 				mTypeForMetaPathExpected = mTypeForMetaPath;
 				return typeof mTypeForMetaPath === "object";
 			}), "~metaPath~")
-			.returns(SyncPromise.resolve("~fetchTypeResult~"));
+			.returns(SyncPromise.resolve());
 		this.mock(_Helper).expects("getKeyPredicate")
 			.withExactArgs("~oEntity~", "~metaPath~",
 				sinon.match(function (mTypeForMetaPath) {

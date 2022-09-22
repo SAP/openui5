@@ -2398,7 +2398,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @public
-	 * @see #getKeyPredicates
+	 * @see #getKeyPredicate
 	 * @since 1.107.0
 	 */
 	ODataModel.prototype.requestKeyPredicate = _Helper.createRequestMethod("fetchKeyPredicate");
