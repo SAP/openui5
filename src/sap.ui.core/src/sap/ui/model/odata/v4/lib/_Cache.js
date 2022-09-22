@@ -1853,7 +1853,8 @@ sap.ui.define([
 	 * @param {string} [sEntityPath]
 	 *   Path of the entity, relative to the cache (as used by change listeners)
 	 * @param {string} [sUnitOrCurrencyPath]
-	 *   Path of the unit or currency for the property, relative to the entity
+	 *   Path of the unit or currency for the property, relative to the (entity or complex) type
+	 *   which contains the property to update
 	 * @param {boolean} [bPatchWithoutSideEffects]
 	 *   Whether the PATCH response is ignored, except for a new ETag
 	 * @param {function} fnPatchSent
@@ -2071,6 +2072,8 @@ sap.ui.define([
 			// write the changed value into the cache
 			_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
 			if (sUnitOrCurrencyPath) {
+				sUnitOrCurrencyPath
+					= _Helper.buildPath(aPropertyPath.slice(0, -1).join("/"), sUnitOrCurrencyPath);
 				aUnitOrCurrencyPath = sUnitOrCurrencyPath.split("/");
 				sUnitOrCurrencyPath = _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath);
 				sUnitOrCurrencyValue = that.getValue(sUnitOrCurrencyPath);

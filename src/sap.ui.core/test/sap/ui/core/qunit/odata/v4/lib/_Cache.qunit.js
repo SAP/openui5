@@ -2280,17 +2280,18 @@ sap.ui.define([
 				oStaticCacheMock.expects("makeUpdateData")
 					.withExactArgs(["ProductInfo", "Amount"], "123")
 					.returns("n/a"); // not used in this test
-				oCacheMock.expects("getValue").withExactArgs("path/to/entity/Pricing/Currency")
+				oCacheMock.expects("getValue")
+					.withExactArgs("path/to/entity/ProductInfo/Pricing/Currency")
 					.returns(sUnitOrCurrencyValue);
 				if (sUnitOrCurrencyValue === undefined) {
-					this.oLogMock.expects("debug").withExactArgs(
-						"Missing value for unit of measure path/to/entity/Pricing/Currency "
-							+ "when updating path/to/entity/ProductInfo/Amount",
+					this.oLogMock.expects("debug").withExactArgs("Missing value for unit of measure"
+							+ " path/to/entity/ProductInfo/Pricing/Currency"
+							+ " when updating path/to/entity/ProductInfo/Amount",
 						oCache.toString(),
 						sClassName);
 				} else {
 					oStaticCacheMock.expects("makeUpdateData")
-						.withExactArgs(["Pricing", "Currency"], sUnitOrCurrencyValue)
+						.withExactArgs(["ProductInfo", "Pricing", "Currency"], sUnitOrCurrencyValue)
 						.returns(oUnitUpdateData);
 					this.mock(_Helper).expects("merge")
 						.withExactArgs(sinon.match.same(bTransient ? oPostBody : oUpdateData),
