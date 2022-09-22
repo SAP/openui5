@@ -1688,10 +1688,21 @@ sap.ui.define([
 		var bMediaRestricted = (!!aMediaTypes && (aMediaTypes.length > 0) && !!sMediaType && aMediaTypes.indexOf(sMediaType) === -1);
 		var bFileRestricted = (!!aFileTypes && (aFileTypes.length > 0) && !!sFileType && aFileTypes.indexOf(sFileType) === -1);
 
+		var parts = [new Blob([])];
+			var oFileMetaData = {
+				type: oItem.getParameter('fileType'),
+				webkitRelativePath: '',
+				name: oItem.getParameter('fileName')
+			};
+		var oFileObject = new File(parts, oItem.getParameter('fileName'), oFileMetaData);
+		var oMismatchItem = new UploadSetItem();
+		oMismatchItem._setFileObject(oFileObject);
+		oMismatchItem.setFileName(oFileObject.name);
+
 		if (bMediaRestricted){
-			this.fireMediaTypeMismatch({item: oItem});
+			this.fireMediaTypeMismatch({item: oMismatchItem});
 		} else if (bFileRestricted){
-			this.fireFileTypeMismatch({item: oItem});
+			this.fireFileTypeMismatch({item: oMismatchItem});
 		}
 	};
 
