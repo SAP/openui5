@@ -122,7 +122,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				this.renderShadowList(oRm, oList);
 			}
 
-			this.renderAccessibilityDomNodes(oRm, oSelect);
 			oRm.close("div");
 		};
 
@@ -351,14 +350,12 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.writeAccessibilityState = function(oRm, oSelect) {
-			var sValueState = oSelect.getValueState(),
-				oSelectedItem = oSelect.getSelectedItem(),
+			var oSelectedItem = oSelect.getSelectedItem(),
 				bIconOnly = oSelect.getType() === SelectType.IconOnly,
 				oValueIcon = oSelect._getValueIcon(),
 				aLabels = [],
 				aAriaLabelledBy = [],
 				oAriaLabelledBy,
-				sAriaDescribedBy,
 				sActiveDescendant,
 				sDesc;
 
@@ -377,10 +374,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				if (oIconInfo) {
 					sDesc = oIconInfo.text || oIconInfo.name;
 				}
-			}
-
-			if (sValueState !== ValueState.None) {
-				sAriaDescribedBy = oSelect.getValueStateMessageId() + "-sr";
 			}
 
 			if (sDesc && oValueIcon) {
@@ -403,34 +396,9 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				expanded: oSelect.isOpen(),
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
 				labelledby: (bIconOnly || oAriaLabelledBy.value === "") ? undefined : oAriaLabelledBy,
-				describedby: sAriaDescribedBy,
 				activedescendant: sActiveDescendant,
 				haspopup: "listbox"
 			});
-		};
-
-		/**
-		 * Render value state accessibility DOM nodes for screen readers.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-		 */
-		SelectRenderer.renderAccessibilityDomNodes = function (oRm, oControl) {
-			var sValueState = oControl.getValueState(),
-				sValueStateText;
-
-			if (sValueState === ValueState.None) {
-				return;
-			}
-
-			sValueStateText = oControl._getValueStateText();
-
-			oRm.openStart("div", oControl.getValueStateMessageId() + "-sr")
-				.class("sapUiPseudoInvisibleText")
-				.attr("aria-hidden", true)
-				.openEnd()
-				.text(sValueStateText)
-				.close("div");
 		};
 
 		return SelectRenderer;
