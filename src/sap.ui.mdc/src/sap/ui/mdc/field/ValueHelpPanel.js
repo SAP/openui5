@@ -8,7 +8,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/base/strings/formatMessage',
 	'sap/ui/model/resource/ResourceModel',
-	'sap/m/Tokenizer',
+	'sap/m/MultiInput',
 	'sap/ui/mdc/enum/ConditionValidated'
 	], function(
 			XMLComposite,
@@ -17,7 +17,7 @@ sap.ui.define([
 			ManagedObjectObserver,
 			formatMessage,
 			ResourceModel,
-			Tokenizer,
+			MUltiInput,
 			ConditionValidated
 		) {
 	"use strict";
@@ -121,9 +121,23 @@ sap.ui.define([
 			oManagedObjectModel.setSizeLimit(1000000); // TOTO: better solution to allow more than 100 Tokens
 
 			if (!this._oTokenizer) {
-				this._oTokenizer = this.byId("VHPTokenizer");
-				this._oTokenizer.addAriaDescribedBy( this._oTokenizer.getTokensInfoId());
-				this._oTokenizer._oScroller.setHorizontal(true);
+				this._oTokenizer = this.byId("VHPTokenizer"); // the VHPTokenizer is a MultiInput
+
+				// Overwrite the setValueVisible to make the input part not visible (transparent).
+				// Problem: you can still enter a value into the $input dom ref and this will be shown when you remove all tokens. this can be solved inside the afterRender handler.
+				// ACC issue: the screenreader is still reading this control as input field and that the user can enter a value - which is not correct.
+				this._oTokenizer._setValueVisible = function (bVisible) {
+					this.$("inner").css("opacity", "0");
+				};
+
+				var org = this._oTokenizer.onAfterRendering;
+				this._oTokenizer.onAfterRendering = function() {
+					org.apply(this._oTokenizer, arguments);
+
+					this._oTokenizer._setValueVisible();  // make the input always invisible
+					this._oTokenizer.setValue(""); // set the value to empty string
+				}.bind(this);
+
 			}
 			this._oTokenizerPanel = this.byId("VHPTokenizerPanel");
 
@@ -322,8 +336,8 @@ sap.ui.define([
 
 		_handleTokenDelete: function(oEvent) {
 
-			if (oEvent.getParameter("tokens")) {
-				var aRemovedTokens = oEvent.getParameter("tokens");
+			if (oEvent.getParameter("removedTokens")) {
+				var aRemovedTokens = oEvent.getParameter("removedTokens");
 				var aConditions = this.getConditions();
 				var i;
 

@@ -28,7 +28,7 @@ sap.ui.define([
 	"use strict";
 
 	var MDialog, MLibrary, Button, ManagedObjectModel, IconTabBar, IconTabFilter;
-	var Panel, HBox, Tokenizer, Token, Filter;
+	var Panel, HBox, MultiInput, Token, Filter;
 
 	/**
 	 * Constructor for a new <code>Dialog</code> container.
@@ -507,7 +507,7 @@ sap.ui.define([
 				'sap/m/Panel',
 				'sap/m/HBox',
 				'sap/m/VBox',
-				'sap/m/Tokenizer',
+				'sap/ui/mdc/field/FieldMultiInput',
 				'sap/m/Token',
 				'sap/ui/model/Filter',
 				'sap/ui/mdc/field/ConditionType'
@@ -516,7 +516,7 @@ sap.ui.define([
 				Panel = aModules[0];
 				HBox = aModules[1];
 				VBox = aModules[2];
-				Tokenizer = aModules[3];
+				MultiInput = aModules[3];
 				Token = aModules[4];
 				Filter = aModules[5];
 				var ConditionType = aModules[6];
@@ -559,11 +559,14 @@ sap.ui.define([
 				var oFormatOptions = _getConditionFormatOptions.call(this);
 				this._oConditionType = new ConditionType(oFormatOptions);
 				this._oConditionType._bVHTokenizer = true; // just help for debugging
-				this.oTokenizer = new Tokenizer(this.getId() + "-Tokenizer", {
+				this.oTokenizer = new MultiInput(this.getId() + "-Tokenizer", {
 					width: "100%",
-					tokenDelete: function(oEvent) {
-						if (oEvent.getParameter("tokens")) {
-							var aRemovedTokens = oEvent.getParameter("tokens");
+					showValueHelp: false,
+					editable: true,
+					ariaAttributes: { role: "listbox", aria : { readonly: true, roledescription: this._oResourceBundle.getText("valuehelp.TOKENIZER_ARIA_ROLE_DESCRIPTION")}},
+					tokenUpdate: function(oEvent) {
+						if (oEvent.getParameter("removedTokens")) {
+							var aRemovedTokens = oEvent.getParameter("removedTokens");
 							var aConditions = this.getModel("$valueHelp").getObject("/conditions");
 							var aRemovedConditions = [];
 
@@ -579,8 +582,22 @@ sap.ui.define([
 					}.bind(this),
 					layoutData: new FlexItemData({growFactor: 1, maxWidth: "calc(100% - 2rem)"})
 				});
-				this.oTokenizer.addAriaDescribedBy( this.oTokenizer.getTokensInfoId());
-				this.oTokenizer.addStyleClass("sapMdcTokenizer");
+
+				// Overwrite the setValueVisible to make the input part not visible (transparent).
+				// Problem: you can still enter a value into the $input dom ref and this will be shown when you remove all tokens. this can be solved inside the afterRender handler.
+				// ACC issue: the screenreader is still reading this control as input field and that the user can enter a value - which is not correct.
+				this.oTokenizer._setValueVisible = function (bVisible) {
+					this.$("inner").css("opacity", "0");
+				};
+
+				var org = this.oTokenizer.onAfterRendering;
+				this.oTokenizer.onAfterRendering = function() {
+					org.apply(this.oTokenizer, arguments);
+
+					this.oTokenizer._setValueVisible();  // make the input always invisible
+					this.oTokenizer.setValue(""); // set the value to empty string
+				}.bind(this);
+
 				_bindTokenizer.call(this, true);
 
 				this.oRemoveAllBtn = new Button(this.getId() + "-TokenRemoveAll", {
