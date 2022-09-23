@@ -94,129 +94,129 @@
 								];
 
 					var oSidePanel = new SidePanel("mySidePanel", {
-						mainContent: [
-							new Button({ text: "Button 1" }),
-							new Button({ text: "Button 2" }),
-							new VBox({
-								items: [
-									new Label({ text: "Prevent next EXPAND event" }),
-									new Switch("preventExpand", { type: "AcceptReject"}),
-									new Label({ text: "Prevent next COLLAPSE event" }),
-									new Switch("preventCollapse", { type: "AcceptReject" }).addStyleClass("sapUiSmallMarginBottom")
-								]
-							}).addStyleClass("sapUiSmallMarginTopBottom"),
-							new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
-							new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
-							new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
-							new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
-							new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
-							new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
-							new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
-							new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
-							new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
-							new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" })
-						],
-						actionItems: [
-							new SidePanelActionItem({
-								icon: "sap-icon://physical-activity",
-								text: "Run"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://addresses",
-								text: "Go home"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://building",
-								text: "Go to the office"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://bed",
-								text: "Go to sleep"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://flight",
-								text: "Fly abroad"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://cargo-train",
-								text: "Travel"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://cart",
-								text: "Go to the mall"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://car-rental",
-								text: "Drive your car"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://create-leave-request",
-								text: "Go on vacation"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://family-protection",
-								text: "Meet your family"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://lab",
-								text: "Do a research"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://theater",
-								text: "Go to the theater"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://taxi",
-								text: "Take a taxi"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://vehicle-repair",
-								text: "Repair your car"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://wounds-doc",
-								text: "Visit a doctor"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://umbrella",
-								text: "Take an umbrella"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://puzzle",
-								text: "Solve a puzzle"
-							}),
-							new SidePanelActionItem({
-								icon: "sap-icon://picture",
-								text: "Draw a picture"
-							})
-						],
-						toggle: function(e) {
-							var oSP = Core.byId("mySidePanel"),
-								oPreventExpand = Core.byId("preventExpand"),
-								oPreventCollapse = Core.byId("preventCollapse"),
-								oItem = e.getParameter("actionItem"),
-								iItemIndex = oItem ? parseInt(oItem.getId().replace( /^\D+/g, '')) : -1,
-								bExpanded = e.getParameter("expanded");
+							mainContent: [
+								new Button({ text: "Button 1" }),
+								new Button({ text: "Button 2" }),
+								new VBox({
+									items: [
+										new Label({ text: "Prevent next EXPAND event" }),
+										new Switch("preventExpand", { type: "AcceptReject"}),
+										new Label({ text: "Prevent next COLLAPSE event" }),
+										new Switch("preventCollapse", { type: "AcceptReject" }).addStyleClass("sapUiSmallMarginBottom")
+									]
+								}).addStyleClass("sapUiSmallMarginTopBottom"),
+								new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
+								new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
+								new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
+								new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
+								new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
+								new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
+								new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
+								new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
+								new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
+								new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" })
+							],
+							actionItems: [
+								new SidePanelActionItem({
+									icon: "sap-icon://physical-activity",
+									text: "Run"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://addresses",
+									text: "Go home"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://building",
+									text: "Go to the office"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://bed",
+									text: "Go to sleep"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://flight",
+									text: "Fly abroad"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://cargo-train",
+									text: "Travel"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://cart",
+									text: "Go to the mall"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://car-rental",
+									text: "Drive your car"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://create-leave-request",
+									text: "Go on vacation"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://family-protection",
+									text: "Meet your family"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://lab",
+									text: "Do a research"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://theater",
+									text: "Go to the theater"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://taxi",
+									text: "Take a taxi"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://vehicle-repair",
+									text: "Repair your car"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://wounds-doc",
+									text: "Visit a doctor"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://umbrella",
+									text: "Take an umbrella"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://puzzle",
+									text: "Solve a puzzle"
+								}),
+								new SidePanelActionItem({
+									icon: "sap-icon://picture",
+									text: "Draw a picture"
+								})
+							],
+							toggle: function(e) {
+								var oSP = Core.byId("mySidePanel"),
+									oPreventExpand = Core.byId("preventExpand"),
+									oPreventCollapse = Core.byId("preventCollapse"),
+									oItem = e.getParameter("actionItem"),
+									iItemIndex = oItem ? parseInt(oItem.getId().replace( /^\D+/g, '')) : -1,
+									bExpanded = e.getParameter("expanded");
 
-							if (!bExpanded) {
-								if (oPreventCollapse.getState()) {
-									MessageToast.show("I am prevented COLLAPSE event");
-									oPreventCollapse.setState(false);
-									e.preventDefault();
-								}
-							} else {
-								if (oPreventExpand.getState()) {
-									MessageToast.show("I am prevented EXPAND event");
-									oPreventExpand.setState(false);
-									e.preventDefault();
+								if (!bExpanded) {
+									if (oPreventCollapse.getState()) {
+										MessageToast.show("I am prevented COLLAPSE event");
+										oPreventCollapse.setState(false);
+										e.preventDefault();
+									}
 								} else {
-									oSP.addSideContentItem(new VBox({
-										items: aContent[iItemIndex % 3]
-									}));
+									if (oPreventExpand.getState()) {
+										MessageToast.show("I am prevented EXPAND event");
+										oPreventExpand.setState(false);
+										e.preventDefault();
+									} else {
+										oSP.addSideContentItem(new VBox({
+											items: aContent[iItemIndex % 3]
+										}));
+									}
 								}
 							}
-						}
-					});
+						});
 
 					var oPage = new Page("page", {
 						title: "SidePanel",

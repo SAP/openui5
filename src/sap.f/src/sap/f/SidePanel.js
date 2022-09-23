@@ -89,7 +89,7 @@ sap.ui.define([
 	 *
 	 * Screen width > 1440 px
 	 *
-	 * <ul><li>When expanded, the side content shrinks the main content.</li>
+	 * <ul><li>When expanded, the side content shrinks the main content.</li></ul>
 	 *
 	 * Screen width <= 1440 px
 	 *
@@ -152,7 +152,7 @@ sap.ui.define([
 				 * otherwise it's calculated in absolute units.
 				 * @private
 				 */
-				sidePanelMinWidth: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "20rem", visibility: "hidden" },
+				sidePanelMinWidth: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "10%", visibility: "hidden" },
 
 				/**
 				 * Determines the maximum side panel width (Side Content width + Action Bar width).
@@ -160,7 +160,7 @@ sap.ui.define([
 				 * otherwise it's calculated in absolute units.
 				 * @private
 				 */
-				sidePanelMaxWidth: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "50rem", visibility: "hidden" },
+				sidePanelMaxWidth: { type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "90%", visibility: "hidden" },
 
 				/**
 				 * Description for aria-label.
@@ -381,8 +381,6 @@ sap.ui.define([
 			oEvent.preventDefault();
 			if (bSideContentExpanded) {
 				this._focusSideContent();
-			} else if (this._bOverflowMenuOpened && this._focusedMenuItem) {
-				this._focusedMenuItem.focus();
 			}
 		} else if (bCtrlOrCmd && oEvent.which === KeyCodes.ARROW_RIGHT && bSideContentExpanded) {
 			if (bSideContentExpanded) {
@@ -511,7 +509,8 @@ sap.ui.define([
 			this.setSelectedActionItem(null);
 			if (this._isSingleActionItem()) {
 				setTimeout(function() {
-					this.getAggregation("_arrowButton").focus();
+					var oArrowButton = this.getAggregation("_arrowButton");
+					oArrowButton && oArrowButton.focus();
 				}.bind(this), 0);
 			}
 		}
@@ -612,7 +611,7 @@ sap.ui.define([
 				});
 
 			this.addDelegate(this._oItemNavigation);
-			this._announceSelected = true;
+			this._bAnnounceSelected = true;
 		}
 
 		// reinitialize the ItemNavigation after rendering
@@ -629,16 +628,11 @@ sap.ui.define([
 	SidePanel.prototype._onItemNavigationAfterFocus = function(oEvent) {
 		var oSelectedActionItem = this.getSelectedActionItem();
 
-		this._lastFocusedItem = this._oItemNavigation.getFocusedIndex();
-		if (!this._oItemNavigation.getFocusedDomRef().classList.contains("sapFSPOverflowActionItem")) {
-			this._closeOverflowMenu();
-		}
-
-		// also announce "selected" for selected item here
-		if (oSelectedActionItem === this._oItemNavigation.getFocusedDomRef().id && this._announceSelected) {
+		// announce "selected" for selected item here
+		if (oSelectedActionItem === this._oItemNavigation.getFocusedDomRef().id && this._bAnnounceSelected) {
 			this._oInvisibleMessage.announce(oResourceBundle.getText("SIDEPANEL_NAV_ITEM_SELECTED"), InvisibleMessageMode.Polite);
 		}
-		this._announceSelected = true;
+		this._bAnnounceSelected = true;
 	};
 
 	SidePanel.prototype._attachResizeHandlers = function () {
@@ -725,14 +719,6 @@ sap.ui.define([
 		// and then directly in the DOM element in order to achieve correct screen reader announcement
 		oOverflowItem.setText(sOverflowActionItemText, false);
 		oOverflowItem.$().find(".sapFSPActionItemText").text(sOverflowActionItemText);
-
-		if (bState) {
-			oOverflowItem.getDomRef().classList.add("sapFSPSelected");
-			oOverflowItem.getDomRef().setAttribute("aria-expanded", "true");
-		} else {
-			oOverflowItem.getDomRef().classList.remove("sapFSPSelected");
-			oOverflowItem.getDomRef().setAttribute("aria-expanded", "false");
-		}
 	};
 
 	SidePanel.prototype._getAriaLabelText = function() {
@@ -758,7 +744,6 @@ sap.ui.define([
 			bSkipPrevent = true;
 
 		if (oItemDomRef && oItemDomRef.classList.contains("sapFSPOverflowActionItem")) {
-			oSelectedActionItem && this._toggleItemSelection(Core.byId(oSelectedActionItem));
 			this._toggleOverflowMenu(oItemDomRef);
 			return;
 		}
@@ -783,7 +768,7 @@ sap.ui.define([
 
 		// fire 'toggle' event for expanded action item
 		if (oNewSelectedActionItem) {
-			this._announceSelected = false;
+			this._bAnnounceSelected = false;
 
 			// empty the side content aggregation before firing the event
 			this.removeAllAggregation("sideContent");
@@ -835,10 +820,11 @@ sap.ui.define([
 
 	// handler for overflow menu keyboard interactions
 	SidePanel.prototype._overflowMenuOnkeydown = function(oEvent) {
+		var oOverflowItem = this.getAggregation("_overflowItem");
 		oEvent.preventDefault();
 		if (oEvent.which === KeyCodes.ARROW_RIGHT) {
 			this._closeOverflowMenu();
-			this.getAggregation("_overflowItem").focus();
+			oOverflowItem && oOverflowItem.focus();
 		} else if (oEvent.which === KeyCodes.ARROW_LEFT && !(oEvent.ctrlKey || oEvent.metaKey)) {
 			this._closeOverflowMenu();
 			this.setActionBarExpanded(false);
@@ -906,14 +892,16 @@ sap.ui.define([
 				tooltip: oResourceBundle.getText("SIDEPANEL_CLOSE_BUTTON_TEXT"),
 				icon: sIcon,
 				press: function() {
-					var oSelectedActionItem = this.getSelectedActionItem();
+					var sSelectedActionItem = this.getSelectedActionItem(),
+						oSelectedActionItem = Core.byId(sSelectedActionItem),
+						oOverflowItem = this.getAggregation("_overflowItem");
 
-					this._announceSelected = false;
+					this._bAnnounceSelected = false;
 					// set proper focus
-					if (this.$().find("#" + oSelectedActionItem).css("display") === "none") {
-						this.getAggregation("_overflowItem").focus();
+					if (this.$().find("#" + sSelectedActionItem).css("display") === "none") {
+						oOverflowItem && oOverflowItem.focus();
 					} else {
-						Core.byId(oSelectedActionItem).focus();
+						oSelectedActionItem && oSelectedActionItem.focus();
 					}
 					this._closeSideContent();
 				}.bind(this)
