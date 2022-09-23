@@ -57,6 +57,21 @@ sap.ui.define(function() {
 				}
 			},
 			// *************************************************************************
+			// Tests considering CLDR / LocaleData
+			// *************************************************************************
+			// contained in testsuite.i18n.qunit.js
+			"LocaleData" : {
+				// not in 1RingModels.qunit because test has to be refactored
+				title : "sap.ui.core.LocalData",
+				module : ["test-resources/sap/ui/core/qunit/i18n/LocaleData.qunit"],
+				qunit : {
+					reorder : false // currency digits test seems to depend on execution order
+				},
+				ui5 : {
+					language : "en-US"
+				}
+			},
+			// *************************************************************************
 			// Tests considering model base types
 			// *************************************************************************
 			// contained in testsuite.databinding.qunit.js

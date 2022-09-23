@@ -7,6 +7,8 @@ sap.ui.define([
 ], function(CalendarType, Locale, LocaleData, Configuration) {
 	"use strict";
 
+	var sDefaultLanguage = Configuration.getLanguage();
+
 	//var aUSDSymbols = ["US$", "$", "$", "$", "$", "US$", "$", "US$", "$", "US$", , "$", "$US", "$\u00a0US", "$US", "$", "US$", "US$", "$",
 	//	"US$", "US$", "$", "$", "$", "US$", "US$", "USD", "US$", "US$", "$", "US$", "$", "USD"];
 
@@ -596,17 +598,30 @@ sap.ui.define([
 	};
 
 
-	QUnit.module("Generic LocaleData");
+	QUnit.module("Generic LocaleData", {
+		afterEach : function () {
+			Configuration.setLanguage(sDefaultLanguage);
+		}
+	});
 
-	// Run generic test for configured locales, run custom test where it is defined
-	var sLocale = Configuration.getLanguage();
-	QUnit.test("Locale " + sLocale, function(assert) {
-		var oLocale = new Locale(sLocale),
-			oLocaleData = new LocaleData(oLocale),
-			fnCustomTests = customTests[sLocale];
+[
+	"ar_SA", "de_AT", "de_CH", "de_DE", "da_DK", "en_AU", "en_CA", "en_GB", "en_US", "en_ZA",
+	"es_MX", "es_ES", "fa_IR", "fr_FR", "fr_CA", "fr_BE", "ja_JP", "id_ID", "it_IT", "ru_RU",
+	"sr_Latn", "sr", "pt_BR", "pt_PT", "hi_IN", "he_IL", "tr_TR", "nl_BE", "nl_NL", "pl_PL",
+	"ko_KR", "th_TH", "zh_SG", "zh_TW", "zh_CN", "de_XX", "xx_XX"
+].forEach(function (sLanguage) {
+	QUnit.test("Locale " + sLanguage, function(assert) {
+		var fnCustomTests, sLocale, oLocaleData;
+
+		Configuration.setLanguage(sLanguage);
+		sLocale = Configuration.getLanguage();
+		oLocaleData = new LocaleData(new Locale(sLocale));
+		fnCustomTests = customTests[sLocale];
+
 		genericTests(assert, oLocaleData, sLocale);
 		if (fnCustomTests) {
 			fnCustomTests(assert, oLocaleData);
 		}
 	});
+});
 });
