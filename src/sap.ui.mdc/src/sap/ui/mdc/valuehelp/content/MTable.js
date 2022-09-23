@@ -688,13 +688,28 @@ sap.ui.define([
 	MTable.prototype.getAriaAttributes = function(iMaxConditions) {
 
 		var oTable = this.getTable();
+		var bIsTypeahead = this.isTypeahead();
+		var bUseAsValueHelp = this.getUseAsValueHelp();
+		var sRoleDescription = null;
+
+		if (iMaxConditions !== 1 && ((bIsTypeahead && bUseAsValueHelp) || !bIsTypeahead)) {
+			var sapMResourceBundle = _getSAPMResourceBundle.apply(this);
+			sRoleDescription = sapMResourceBundle.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION");
+		}
 
 		return { // return default values, but needs to be implemented by specific content
 			contentId: oTable && oTable.getId(), // if open, table should be there; if closed, not needed
 			ariaHasPopup: "listbox",
-			roleDescription: null // TODO: no multi-selection
+			roleDescription: sRoleDescription
 		};
 	};
+
+	function _getSAPMResourceBundle () {
+		if (!this._oResourceBundleM) {
+			this._oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // sap.m is always loaded
+		}
+		return this._oResourceBundleM;
+	}
 
 	MTable.prototype.getContainerConfig = function () {
 		return {
