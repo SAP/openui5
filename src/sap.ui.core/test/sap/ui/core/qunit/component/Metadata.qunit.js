@@ -1,12 +1,12 @@
 sap.ui.define([
-	"sap/ui/core/Manifest",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/core/Component",
 	"sap/base/Log",
 	"sap/base/util/deepClone",
+	"sap/ui/core/_UrlResolver",
 	"require",
 	"sap/ui/core/Configuration"
-], function(Manifest, URI, Component, Log, deepClone, require, Configuration) {
+], function(URI, Component, Log, deepClone, _UrlResolver, require, Configuration) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -466,7 +466,7 @@ sap.ui.define([
 				var oBaseTag = document.querySelector("base"),
 					sOldHRef = oBaseTag.href;
 				oBaseTag.href = "./";
-				var sActual = Manifest._resolveUriRelativeTo(new URI(sInput), new URI(sBase)).toString();
+				var sActual = _UrlResolver._resolveUri(sInput, sBase).toString();
 				oBaseTag.href = sOldHRef;
 				assert.equal(sActual, sExpected, "Resolved URI is correct!");
 			};

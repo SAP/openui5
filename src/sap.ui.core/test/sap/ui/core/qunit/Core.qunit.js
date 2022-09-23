@@ -369,6 +369,7 @@ sap.ui.define([
 
 		this.stub(LoaderExtensions, 'loadResource').returns({
 			"_version": "1.9.0",
+			"name": "sap.test1",
 			"sap.ui5": {
 				"library": {
 					"i18n": false
@@ -392,6 +393,7 @@ sap.ui.define([
 			if (typeof sURL === "string" && sURL.indexOf("manifest.json") !== -1) {
 				return {
 					"_version": "1.9.0",
+					"name": "sap.test.i18ntrue",
 					"sap.ui5": {
 						"library": {
 							"i18n": true
@@ -409,7 +411,7 @@ sap.ui.define([
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
-		assert.equal(oSpySapUiRequireToUrl.callCount, 1, "sap.ui.require.toUrl is called");
+		assert.equal(oSpySapUiRequireToUrl.callCount, 2, "sap.ui.require.toUrl is called twice");
 
 		oSpyCall = oSpySapUiRequireToUrl.getCall(0);
 
@@ -431,7 +433,7 @@ sap.ui.define([
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
-		assert.equal(oSpySapUiRequireToUrl.callCount, 1, "sap.ui.require.toUrl is called");
+		assert.equal(oSpySapUiRequireToUrl.callCount, 2, "sap.ui.require.toUrl is called twice");
 
 		oSpyCall = oSpySapUiRequireToUrl.getCall(0);
 
@@ -452,6 +454,7 @@ sap.ui.define([
 			if (typeof sURL === "string" && sURL.indexOf("manifest.json") !== -1) {
 				return {
 					"_version": "1.9.0",
+					"name": "sap.test.i18nstring",
 					"sap.ui5": {
 						"library": {
 							"i18n": "i18n.properties"
@@ -469,7 +472,7 @@ sap.ui.define([
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
-		assert.equal(oSpySapUiRequireToUrl.callCount, 1, "sap.ui.require.toUrl is called");
+		assert.equal(oSpySapUiRequireToUrl.callCount, 2, "sap.ui.require.toUrl is called twice");
 
 		oSpyCall = oSpySapUiRequireToUrl.getCall(0);
 
@@ -482,13 +485,29 @@ sap.ui.define([
 	});
 
 	QUnit.test("async: testGetLibraryResourceBundle with a given i18n object in manifest.json", function(assert) {
+		var mLibraryManifest = {
+			"_version": "1.9.0",
+			"name": "sap.test.i18nobject",
+			"sap.ui5": {
+				"library": {
+					"i18n": {
+						"bundleUrl": "i18n.properties",
+						"supportedLocales": [
+							"en",
+							"de"
+						]
+					}
+				}
+			}
+		};
 		var oResourceBundleCreateMock = this.mock(ResourceBundle).expects('create').once().withExactArgs({
 			async: true,
 			fallbackLocale: undefined,
 			locale: "en",
 			supportedLocales: ["en", "de"],
-			url: "resources/sap/test/i18nobject/i18n.properties"
-		});
+			bundleUrl: "resources/sap/test/i18nobject/i18n.properties",
+			activeTerminologies: undefined
+		}).callThrough();
 
 		this.stub(sap.ui.loader._, 'getModuleState').returns(true);
 
@@ -496,20 +515,7 @@ sap.ui.define([
 
 		this.stub(LoaderExtensions, 'loadResource').callsFake(function(sURL) {
 			if (typeof sURL === "string" && sURL.indexOf("manifest.json") !== -1) {
-				return {
-					"_version": "1.9.0",
-					"sap.ui5": {
-						"library": {
-							"i18n": {
-								"bundleUrl": "i18n.properties",
-								"supportedLocales": [
-									"en",
-									"de"
-								]
-							}
-						}
-					}
-				};
+				return mLibraryManifest;
 			} else {
 				fnOrigLoadResource.apply(this, arguments);
 			}
@@ -521,7 +527,7 @@ sap.ui.define([
 			oSpyCall;
 
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
-		assert.equal(oSpySapUiRequireToUrl.callCount, 1, "sap.ui.require.toUrl is called");
+		assert.equal(oSpySapUiRequireToUrl.callCount, 2, "sap.ui.require.toUrl is called twice");
 
 		oSpyCall = oSpySapUiRequireToUrl.getCall(0);
 

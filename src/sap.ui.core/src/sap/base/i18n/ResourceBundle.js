@@ -892,6 +892,9 @@ sap.ui.define([
 			mParams.url = mParams.url || ResourceBundle._getUrl(mParams.bundleUrl, mParams.bundleName);
 		}
 
+		// Hook implemented by Core.js; adds missing terminology information from the library manifest, if available
+		mParams = ResourceBundle._enrichBundleConfig(mParams);
+
 		// Note: ResourceBundle constructor returns a Promise in async mode!
 		var vResourceBundle = new ResourceBundle(mParams.url, mParams.locale, mParams.includeInfo, !!mParams.async, mParams.supportedLocales, mParams.fallbackLocale);
 
@@ -923,6 +926,13 @@ sap.ui.define([
 		return vResourceBundle;
 	};
 
+	/**
+	 * Hook called by sap.ui.core.Core to enrich bundle config with terminologies
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.core.Core
+	 */
+	ResourceBundle._enrichBundleConfig = function() {};
 
 	// ---- handling of supported locales and fallback chain ------------------------------------------
 

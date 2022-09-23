@@ -34,9 +34,12 @@ sap.ui.define([
 	'sap/ui/performance/trace/initTraces',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/isEmptyObject',
+	'sap/base/util/deepExtend',
 	'sap/base/util/each',
 	'sap/base/util/mixedFetch',
+	'./_UrlResolver',
 	'sap/ui/VersionInfo',
+	'sap/ui/thirdparty/URI',
 	'sap/ui/events/jquery/EventSimulation'
 ],
 	function(
@@ -70,9 +73,12 @@ sap.ui.define([
 		initTraces,
 		LoaderExtensions,
 		isEmptyObject,
+		deepExtend,
 		each,
 		mixedFetch,
-		VersionInfo
+		_UrlResolver,
+		VersionInfo,
+		URI
 		/* ,EventSimulation */
 	) {
 
@@ -98,6 +104,20 @@ sap.ui.define([
 	 * by getLoadedLibraries())
 	 */
 	var mLoadedLibraries = {};
+
+	/**
+	 * Bookkeeping for the guessing of library names.
+	 *
+	 * Set of bundleUrls from which a library name has been derived or not, see #getLibraryNameForBundle
+	 * If no library name can be derived, the result will also be tracked with 'false' as value.
+	 *
+	 * Example:
+	 *   mGuessedLibraries = {
+	 *     "my/simple/library/i18n/i18n.properties": "my.simple.library",
+	 *     "no/library/i18n/i18n.properties": false
+	 *   }
+	 */
+	var mGuessedLibraries = {};
 
 	/**
 	 * Bookkeeping for the preloading of libraries.
@@ -2505,6 +2525,52 @@ sap.ui.define([
 	};
 
 	/**
+	 *
+	 * @param {any} vInfo bundle information. Can be:
+	 * <ul>
+	 *     <li>false - library has no resource bundle</li>
+	 *     <li>true|null|undefined - use default settings: bundle is 'messageBundle.properties',
+	 *       fallback and supported locales are not defined (defaulted by ResourceBundle)</li>
+	 *     <li>typeof string - string is the url of the bundle,
+	 *       fallback and supported locales are not defined (defaulted by ResourceBundle)</li>
+	 *     <li>typeof object - object can contain bundleUrl, supportedLocales, fallbackLocale</li>
+	 * </ul>
+	 * @returns {Object|undefined} either normalized bundle information or undefined;
+	 *                             The normalized bundle information is either the object defined in the library manifest.json,
+	 *                             or an object with a 'bundleUrl' property holding the default bundle url.
+	 *                             If undefined is returned, the library does not no have resource bundle (vInfo == false).
+	 */
+	function normalizeBundleInfo(vInfo) {
+		if ( vInfo == null || vInfo === true ) {
+			return {
+				bundleUrl: "messagebundle.properties"
+			};
+		}
+		if ( typeof vInfo === "string" ) {
+			return {
+				bundleUrl: vInfo
+			};
+		}
+		if ( typeof vInfo === "object" ) {
+			return deepExtend({}, vInfo);
+		}
+		// return undefined
+	}
+
+	function getLibraryI18n(sLibrary) {
+		var vI18n;
+		var oManifest = getManifest(sLibrary);
+
+		if (oManifest && Version(oManifest._version).compareTo("1.9.0") >= 0) {
+			vI18n = oManifest["sap.ui5"] && oManifest["sap.ui5"].library && oManifest["sap.ui5"].library.i18n;
+		} // else vI18n = undefined
+
+		vI18n = normalizeBundleInfo(vI18n);
+
+		return vI18n;
+	}
+
+	/**
 	 * Retrieves a resource bundle for the given library and locale.
 	 *
 	 * If only one argument is given, it is assumed to be the libraryName. The locale
@@ -2548,10 +2614,10 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.getLibraryResourceBundle = function(sLibraryName, sLocale, bAsync) {
-		var oManifest,
-			sKey,
+		var sKey,
 			vResult,
-			vI18n;
+			vI18n,
+			bLibraryManifestIsAvailable;
 
 		if (typeof sLibraryName === "boolean") {
 			bAsync = sLibraryName;
@@ -2564,36 +2630,6 @@ sap.ui.define([
 			sLocale = undefined;
 		}
 
-		/**
-		 *
-		 * @param {Object} vInfo bundle information. Can be:
-		 * <ul>
-		 *     <li>false - library has no resource bundle</li>
-		 *     <li>true|null|undefined - use default settings: bundle is 'messageBundle.properties',
-		 *       fallback and supported locales are not defined (defaulted by ResourceBundle)</li>
-		 *     <li>typeof string - string is the url of the bundle,
-		 *       fallback and supported locales are not defined (defaulted by ResourceBundle)</li>
-		 *     <li>typeof object - object can contain bundleUrl, supportedLocales, fallbackLocale</li>
-		 * </ul>
-		 * @returns {Object} bundle information
-		 */
-		function normalizeBundleInfo(vInfo) {
-			if ( vInfo == null || vInfo === true ) {
-				return {
-					bundleUrl: "messagebundle.properties"
-				};
-			}
-			if ( typeof vInfo === "string" ) {
-				return {
-					bundleUrl: vInfo
-				};
-			}
-			if ( typeof vInfo === "object" ) {
-				return vInfo;
-			}
-			// return undefined
-		}
-
 		assert((sLibraryName === undefined && sLocale === undefined) || typeof sLibraryName === "string", "sLibraryName must be a string or there is no argument given at all");
 		assert(sLocale === undefined || typeof sLocale === "string", "sLocale must be a string or omitted");
 
@@ -2601,21 +2637,39 @@ sap.ui.define([
 		sLocale = sLocale || this.getConfiguration().getLanguage();
 		sKey = sLibraryName + "/" + sLocale;
 
+		// A library ResourceBundle can be requested before its owning library is preloaded.
+		// In this case we do not have the library's manifest yet and the default bundle (messagebundle.properties) is requested.
+		// We still cache this default bundle for as long as the library remains "not-preloaded".
+		// When the library is preloaded later on, a new ResourceBundle needs to be requested, since we need to take the
+		// "sap.ui5/library/i18n" section of the library's manifest into account.
+		bLibraryManifestIsAvailable = mLibraryManifests.has(sLibraryName);
+		var sNotLoadedCacheKey = sKey + "/manifest-not-available";
+
+		// If the library was loaded in the meantime (or the first time around), we can delete the old ResourceBundle
+		if (bLibraryManifestIsAvailable) {
+			delete this.mResourceBundles[sNotLoadedCacheKey];
+		} else {
+			// otherwise we use the temporary cache-key
+			sKey = sNotLoadedCacheKey;
+		}
+
 		vResult = this.mResourceBundles[sKey];
 		if (!vResult || (!bAsync && vResult instanceof Promise)) {
-			oManifest = getManifest(sLibraryName);
-			if ( oManifest && Version(oManifest._version).compareTo("1.9.0") >= 0 ) {
-				vI18n = oManifest["sap.ui5"] && oManifest["sap.ui5"].library && oManifest["sap.ui5"].library.i18n;
-			} // else vI18n = undefined
-			vI18n = normalizeBundleInfo(vI18n);
+			vI18n = getLibraryI18n(sLibraryName);
 
 			if (vI18n) {
+				var sBundleUrl = getModulePath(sLibraryName + "/", vI18n.bundleUrl);
+
+				// add known library name to cache to avoid later guessing
+				mGuessedLibraries[sBundleUrl] = sLibraryName;
+
 				vResult = ResourceBundle.create({
-					url : getModulePath(sLibraryName + "/", vI18n.bundleUrl),
+					bundleUrl: sBundleUrl,
 					supportedLocales: vI18n.supportedLocales,
 					fallbackLocale: vI18n.fallbackLocale,
-					locale : sLocale,
-					async: bAsync
+					locale: sLocale,
+					async: bAsync,
+					activeTerminologies: this.getConfiguration().getActiveTerminologies()
 				});
 
 				if (vResult instanceof Promise) {
@@ -2646,6 +2700,56 @@ sap.ui.define([
 			oControl.placeAt(oDomRef, "only");
 		}
 	}
+
+	/**
+	 * Implementation of the ResourceBundle._enrichBundleConfig hook.
+	 * Guesses if the given bundleUrl is pointing to a library's ResourceBundle and adapts the given bundle definition accordingly
+	 * based on the infered library's manifest.
+	 *
+	 * @param {module:sap/base/i18n/ResourceBundle.Configuration} mParams Map containing the arguments of the sap.base.i18n.ResourceBundle.create call
+	 * @returns {module:sap/base/i18n/ResourceBundle.Configuration} mParams The enriched config object
+	 * @private
+	 */
+	ResourceBundle._enrichBundleConfig = function (mParams) {
+		if (!mParams.terminologies || !mParams.enhanceWith) {
+
+			var sLibraryName;
+			if (mGuessedLibraries.hasOwnProperty(mParams.url)) {
+				sLibraryName = mGuessedLibraries[mParams.url];
+			} else {
+				sLibraryName = getLibraryNameForBundle(mParams.url);
+			}
+
+			if (sLibraryName) {
+				// look up i18n information in library manifest
+				// (can be undefined if the lib defines "sap.ui5/library/i18n" with <false>)
+				var vI18n = getLibraryI18n(sLibraryName);
+
+				// enrich i18n information
+				if (vI18n) {
+					// resolve bundleUrls relative to library path
+					var sLibraryPath = sLibraryName.replace(/\./g, "/");
+					sLibraryPath = sLibraryPath.endsWith("/") ? sLibraryPath : sLibraryPath + "/"; // add trailing slash if missing
+					sLibraryPath = sap.ui.require.toUrl(sLibraryPath);
+
+					_UrlResolver._processResourceConfiguration(vI18n, {
+						alreadyResolvedOnRoot: true,
+						relativeTo: sLibraryPath
+					});
+
+					// basic i18n information
+					mParams.fallbackLocale = mParams.fallbackLocale || vI18n.fallbackLocale;
+					mParams.supportedLocales = mParams.supportedLocales || vI18n.supportedLocales;
+
+					// text verticalization information
+					mParams.terminologies = mParams.terminologies || vI18n.terminologies;
+					mParams.enhanceWith = mParams.enhanceWith || vI18n.enhanceWith;
+					mParams.activeTerminologies = mParams.activeTerminologies || Configuration.getActiveTerminologies();
+				}
+			}
+		}
+		return mParams;
+	};
 
 	/**
 	 * Implicitly creates a new <code>UIArea</code> (or reuses an exiting one) for the given DOM reference and
@@ -3984,6 +4088,50 @@ sap.ui.define([
 		_oEventProvider.destroy();
 		BaseObject.prototype.destroy.call(this);
 	};
+
+	/**
+	 * Tries to derive a library name from a bundle URL by guessing the resource name first,
+	 * then trying to match with the (known) loaded libraries.
+	 *
+	 * @param {string} sBundleUrl The bundleURL from which the library name needs to be derived.
+	 * @returns {string|undefined} Returns the corresponding library name if found or 'undefined'.
+	 */
+	function getLibraryNameForBundle(sBundleUrl) {
+		if (sBundleUrl) {
+			// [1] Guess ResourceName
+			var sBundleName = sap.ui.loader._.guessResourceName(sBundleUrl);
+			if (sBundleName) {
+
+				// [2] Guess library name
+				for (var sLibrary in mLoadedLibraries) {
+					var sLibraryName = sLibrary.replace(/\./g, "/");
+					if (sLibraryName !== "" && sBundleName.startsWith(sLibraryName + "/")) {
+						var sBundlePath = sBundleName.replace(sLibraryName + "/", "");
+
+						// [3] Retrieve i18n from manifest for looking up the base bundle
+						//     (can be undefined if the lib defines "sap.ui5/library/i18n" with <false>)
+						var vI18n = getLibraryI18n(sLibraryName);
+
+						if (vI18n) {
+							// Resolve bundle paths relative to library before comparing
+							var sManifestBaseBundlePath = getModulePath(sLibraryName, "/" + vI18n.bundleUrl);
+								sBundlePath = getModulePath(sLibraryName, "/" + sBundlePath);
+
+							// the input bundle-path and the derived library bundle-path must match,
+							// otherwise we would enhance the wrong bundle with terminologies etc.
+							if (sBundlePath === sManifestBaseBundlePath) {
+								// [4.1] Cache matching result
+								mGuessedLibraries[sBundleUrl] = sLibrary;
+								return sLibrary;
+							}
+							// [4.2] Cache none-matching result
+							mGuessedLibraries[sBundleUrl] = false;
+						}
+					}
+				}
+			}
+		}
+	}
 
 	/**
 	 * @name sap.ui.core.CorePlugin

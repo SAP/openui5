@@ -21,6 +21,7 @@ sap.ui.define([
 	'sap/base/util/UriParameters',
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions',
+	'sap/ui/core/_UrlResolver',
 	'sap/ui/VersionInfo',
 	'sap/ui/core/mvc/ViewType',
 	'sap/ui/core/Configuration'
@@ -42,6 +43,7 @@ sap.ui.define([
 	UriParameters,
 	isPlainObject,
 	LoaderExtensions,
+	_UrlResolver,
 	VersionInfo,
 	ViewType,
 	Configuration
@@ -1759,7 +1761,7 @@ sap.ui.define([
 
 							// resolve relative to component, ui5:// URLs are already resolved upfront
 							var oAnnotationSourceManifest = mConfig.origin.dataSources[aAnnotations[i]] || oManifest;
-							var sAnnotationUri = oAnnotationSourceManifest._resolveUri(oAnnotationUri).toString();
+							var sAnnotationUri = oAnnotationSourceManifest.resolveUri(oAnnotationUri.toString());
 
 							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
 							oModelConfig.settings = oModelConfig.settings || {};
@@ -1805,7 +1807,7 @@ sap.ui.define([
 
 				// resolve URI relative to component which defined it
 				var oUriSourceManifest = (bIsDataSourceUri ? mConfig.origin.dataSources[oModelConfig.dataSource] : mConfig.origin.models[sModelName]) || oManifest;
-				oUri = oUriSourceManifest._resolveUri(oUri);
+				oUri = new URI(oUriSourceManifest.resolveUri(oModelConfig.uri));
 
 				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)
 				if (oModelConfig.dataSource) {
@@ -1939,7 +1941,13 @@ sap.ui.define([
 				if (aActiveTerminologies) {
 					oModelConfig.settings.activeTerminologies = aActiveTerminologies;
 				}
-				oManifest._processResourceConfiguration(oModelConfig.settings, /*bundleUrlRelativeTo=*/undefined, /*alreadyResolvedOnRoot=*/true);
+
+				_UrlResolver._processResourceConfiguration(oModelConfig.settings, {
+					alreadyResolvedOnRoot: true,
+					baseURI: oManifest._oBaseUri,
+					manifestBaseURI: oManifest._oManifestBaseUri,
+					relativeTo: undefined
+				});
 			}
 
 			// normalize settings object to array
@@ -2458,6 +2466,15 @@ sap.ui.define([
 	 */
 	function componentFactory(vConfig, bLegacy) {
 		var oOwnerComponent = Component.get(ManagedObject._sOwnerId);
+
+		if (Array.isArray(vConfig.activeTerminologies) && vConfig.activeTerminologies.length &&
+			Array.isArray(Configuration.getActiveTerminologies()) && Configuration.getActiveTerminologies().length) {
+			if (JSON.stringify(vConfig.activeTerminologies) !== JSON.stringify(Configuration.getActiveTerminologies())) {
+				Log.warning(bLegacy ? "sap.ui.component: " : "Component.create: " +
+					"The 'activeTerminolgies' passed to the component factory differ from the ones defined on the global 'sap.ui.core.Configuration#getActiveTerminologies';" +
+					"This might lead to inconsistencies; ResourceModels that are not defined in the manifest and created by the component will use the globally configured terminologies.");
+			}
+		}
 		// get terminologies information: API -> Owner Component -> Configuration
 		var aActiveTerminologies = vConfig.activeTerminologies || (oOwnerComponent && oOwnerComponent.getActiveTerminologies()) || Configuration.getActiveTerminologies();
 
