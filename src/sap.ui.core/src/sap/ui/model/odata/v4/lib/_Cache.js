@@ -22,9 +22,9 @@ sap.ui.define([
 		rInactive = /^\$inactive\./,
 		sMessagesAnnotation = "@com.sap.vocabularies.Common.v1.Messages",
 		rNumber = /^-?\d+$/,
-		// Matches two cases:  segment with predicate or simply predicate:
+		// Matches two cases: segment with predicate or simply predicate:
 		//   EMPLOYEE(ID='42') -> aMatches[1] === "EMPLOYEE", aMatches[2] === "(ID='42')"
-		//   (ID='42') ->  aMatches[1] === "",  aMatches[2] === "(ID='42')"
+		//   (ID='42') -> aMatches[1] === "", aMatches[2] === "(ID='42')"
 		rSegmentWithPredicate = /^([^(]*)(\(.*\))$/;
 
 	/**
@@ -134,7 +134,7 @@ sap.ui.define([
 	 *   A lock for the group ID to be used for the DELETE request; w/o a lock, no DELETE is sent.
 	 *   For a transient entity, the lock is ignored (use NULL)!
 	 * @param {string} sEditUrl
-	 *   The entity's edit URL to be used for the DELETE request;  w/o a lock, this is mostly
+	 *   The entity's edit URL to be used for the DELETE request; w/o a lock, this is mostly
 	 *   ignored.
 	 * @param {string} sPath
 	 *   The entity's path within the cache (as used by change listeners)

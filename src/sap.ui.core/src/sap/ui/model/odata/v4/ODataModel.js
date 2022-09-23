@@ -417,7 +417,7 @@ sap.ui.define([
 	 * is not.
 	 *
 	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
-	 * 'error' event parameter.  If multiple requests are processed within a single $batch
+	 * 'error' event parameter. If multiple requests are processed within a single $batch
 	 * (or even a single change set), the order of 'dataReceived' events is not guaranteed. For
 	 * requests which are not processed because a previous request failed, <code>error.cause</code>
 	 * points to the root cause error - you should either ignore those events, or unwrap the error
@@ -1208,7 +1208,7 @@ sap.ui.define([
 	 * Note: The parameters <code>mParameters</code>, <code>fnCallBack</code>, and
 	 * <code>bReload</code> from {@link sap.ui.model.Model#createBindingContext} are not supported.
 	 *
-	 * It is possible to create binding contexts pointing to metadata.  A '##' is recognized
+	 * It is possible to create binding contexts pointing to metadata. A '##' is recognized
 	 * as separator in the resolved path and splits it into two parts; note that '#' may also be
 	 * used as separator but is deprecated since 1.51.
 	 * The part before the separator is transformed into a metadata context (see

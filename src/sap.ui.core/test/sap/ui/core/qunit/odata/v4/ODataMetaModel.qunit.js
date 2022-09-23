@@ -1742,7 +1742,7 @@ sap.ui.define([
 		// annotations at properties of return type - - - - - - - - - - - - - - - - - - - - - - - -
 		"/T€AMS/tea_busi.NewAction/Name@" : mScope.$Annotations["tea_busi.TEAM/Name"],
 		"/T€AMS/tea_busi.NewAction//Team_Id@" : mScope.$Annotations["tea_busi.TEAM/Team_Id"],
-		// inline annotations  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		// inline annotations - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		"/T€AMS/TEAM_2_EMPLOYEES/$OnDelete@Common.Label" : "None of my business",
 		"/T€AMS/TEAM_2_MANAGER/$ReferentialConstraint/foo@Common.Label" : "Just a Gigolo",
 		"/T€AMS/@UI.LineItem/0/Label@Common.Label" : "Team ID's Label",

@@ -448,7 +448,7 @@ sap.ui.define([
 							<Member Name="_1" />\
 							<Member Name="_2" />\
 						</EnumType>\
-						<EnumType Name="Baz1"  IsFlags="false" UnderlyingType="Edm.Int64">\
+						<EnumType Name="Baz1" IsFlags="false" UnderlyingType="Edm.Int64">\
 							<Member Name="_1" Value="9007199254740991" />\
 							<Member Name="_2" Value="9007199254740992" />\
 						</EnumType>\

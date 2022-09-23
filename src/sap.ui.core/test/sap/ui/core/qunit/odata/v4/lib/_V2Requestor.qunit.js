@@ -809,7 +809,7 @@ sap.ui.define([
 		}
 	}, { // test nested $expand structure
 		// def at root and baz in foo are complex properties for which two nested simple properties
-		// are selected in V4  -> In V2 these complex properties have to be selected once
+		// are selected in V4 -> In V2 these complex properties have to be selected once
 		expectedResultHandlerCalls : [
 			{key : "$expand", value : "foo,foo/bar,baz"},
 			{key : "$orderby", value : "foo,bar"},
