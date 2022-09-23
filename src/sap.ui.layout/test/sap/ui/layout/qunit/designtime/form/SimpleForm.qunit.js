@@ -132,6 +132,46 @@ sap.ui.define([
 				afterRedo: fnConfirmGroup1IsOn1stPosition
 			});
 
+			// When moving headerless group to second position
+			function fnConfirmGroup0IsOn2ndPosition(oUiComponent, oViewAfterAction, assert) {
+				assert.strictEqual(getSimpleForm(oViewAfterAction).getContent()[4].getId(),
+					oViewAfterAction.byId("label00").getId(),
+					"then the label is the first element of the second group");
+			}
+			function fnConfirmGroupIsAgainHeaderless(oUiComponent, oViewAfterAction, assert) {
+				assert.strictEqual(getSimpleForm(oViewAfterAction).getContent()[0].getId(),
+					oViewAfterAction.byId("label00").getId(),
+					"then the label is the first element of the headerless group again");
+			}
+
+			elementActionTest("Checking the move action for SimpleForm with Layout=" + sSimpleFormLayout + " when moving headerless group to second position", {
+				xmlView: buildXMLForSimpleForm(),
+				action: {
+					name: "move",
+					controlId: "simpleForm",
+					parameter: function(oView) {
+						return {
+							movedElements: [{
+								element: oView.byId("comp---view--simpleForm--FC-NoHead"),
+								sourceIndex: 0,
+								targetIndex: 1
+							}],
+							source: {
+								aggregation: "form",
+								parent: oView.byId("simpleForm")
+							},
+							target: {
+								aggregation: "form",
+								parent: oView.byId("simpleForm")
+							}
+						};
+					}
+				},
+				afterAction: fnConfirmGroup0IsOn2ndPosition,
+				afterUndo: fnConfirmGroupIsAgainHeaderless,
+				afterRedo: fnConfirmGroup0IsOn2ndPosition
+			});
+
 			// when moving within group0 label00 to position of label01
 			function fnConfirmElement00IsOn2ndPosition(oUiComponent, oViewAfterAction, assert) {
 				assert.strictEqual(getSimpleForm(oViewAfterAction).getContent()[2].getId(),

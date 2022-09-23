@@ -416,7 +416,11 @@ sap.ui.define([
 			oChange.addDependentControl(mStableChangeInfo.source, "sourceParent", mPropertyBag);
 			oChange.addDependentControl(mStableChangeInfo.target, "targetParent", mPropertyBag);
 		}
-		oChange.addDependentControl([mStableChangeInfo.movedControl], "movedElements", mPropertyBag);
+
+		// Headerless groups will get a Title during apply
+		if (mStableChangeInfo.movedControl) {
+			oChange.addDependentControl([mStableChangeInfo.movedControl], "movedElements", mPropertyBag);
+		}
 	};
 
 	/**
