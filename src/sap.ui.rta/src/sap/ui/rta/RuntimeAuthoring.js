@@ -1049,7 +1049,7 @@ sap.ui.define([
 				TranslationAPI.hasTranslationRelevantDirtyChanges({layer: Layer.CUSTOMER, selector: this.getRootControlInstance()});
 
 			// TODO: move to the setter to the ChangesState
-			this._oVersionsModel.setDirtyChanges(bCanUndo);
+			this._oVersionsModel.setDirtyChanges(PersistenceWriteAPI.hasDirtyChanges({selector: this.getRootControlInstance()}));
 			this._oToolbarControlsModel.setProperty("/undoEnabled", bCanUndo);
 			this._oToolbarControlsModel.setProperty("/redoEnabled", bCanRedo);
 			this._oToolbarControlsModel.setProperty("/publishEnabled", this.bInitialPublishEnabled || bCanUndo);

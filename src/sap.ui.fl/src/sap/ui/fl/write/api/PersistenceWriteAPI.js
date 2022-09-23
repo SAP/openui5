@@ -79,6 +79,17 @@ sap.ui.define([
 	}
 
 	/**
+	 * Checks if dirty changes exist for the flex persistence associated with the selector control;
+	 *
+	 * @param {object} mPropertyBag Object with parameters as properties
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector To retrieve the associated flex persistence
+	 * @returns {boolean} <code>true</code> if dirty changes exist
+	 */
+	PersistenceWriteAPI.hasDirtyChanges = function(mPropertyBag) {
+		return FlexObjectState.hasDirtyFlexObjects(mPropertyBag);
+	};
+
+	/**
 	 * Determines if user-specific changes or variants are present in the flex persistence.
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties

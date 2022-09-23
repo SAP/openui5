@@ -347,7 +347,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("Given persist is called with all kind of objects (variants, changes, defaultVariant) are present", function(assert) {
 			var sPersistencyKey = "persistency.key";
-
+			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), false, "hasDirtyChanges is false at beginning");
 			var oVariant = CompVariantState.addVariant({
 				changeSpecificData: {
 					type: "pageVariant",
@@ -356,6 +356,7 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
 			});
+			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), true, "hasDirtyChanges is true after add a new variant");
 			CompVariantState.updateVariant({
 				id: oVariant.getVariantId(),
 				isUserDependent: true,
@@ -363,13 +364,14 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
 			});
+			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), true, "hasDirtyChanges is true after update variant");
 			CompVariantState.setDefault({
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey,
 				defaultVariantId: "id_123_pageVariant",
 				conntent: {}
 			});
-
+			assert.equal(CompVariantState.hasDirtyChanges(sComponentId), true, "hasDirtyChanges is true after setDefault variant");
 			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(sPersistencyKey);
 
 			var oWriteStub = sandbox.stub(Storage, "write").resolves();
@@ -382,6 +384,7 @@ sap.ui.define([
 				persistencyKey: sPersistencyKey
 			})
 			.then(function () {
+				assert.equal(CompVariantState.hasDirtyChanges(sComponentId), false, "hasDirtyChanges is false after persisting all changes");
 				assert.strictEqual(oWriteStub.callCount, 3, "then the write method was called 3 times,");
 				assert.strictEqual(oUpdateStub.callCount, 0, "no update was called");
 				assert.strictEqual(oRemoveStub.callCount, 0, "and no delete was called");
@@ -412,7 +415,6 @@ sap.ui.define([
 
 		QUnit.test("Given persist is called for a variant that was created and removed before persisting", function(assert) {
 			var sPersistencyKey = "persistency.key";
-
 			var oVariant = CompVariantState.addVariant({
 				changeSpecificData: {
 					type: "pageVariant",
@@ -421,7 +423,6 @@ sap.ui.define([
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
 			});
-
 			CompVariantState.removeVariant({
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey,
