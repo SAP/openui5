@@ -722,6 +722,8 @@ sap.ui.define([
 						startDate: newPos.startDate,
 						endDate: newPos.endDate
 					});
+
+					setTimeout(function() {this.invalidate();}.bind(this), 0);
 				}.bind(this)
 			});
 
