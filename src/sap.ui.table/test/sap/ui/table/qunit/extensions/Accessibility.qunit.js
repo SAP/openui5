@@ -1,4 +1,4 @@
-/*global QUnit, oTable, oTreeTable */
+/*global QUnit, oTable, oTreeTable, sinon */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/m/IllustratedMessage",
-	"sap/m/Label"
+	"sap/m/Label",
+	"sap/ui/core/Configuration"
 ], function(
 	TableQUnitUtils,
 	TableUtils,
@@ -39,7 +40,8 @@ sap.ui.define([
 	jQuery,
 	oCore,
 	IllustratedMessage,
-	Label
+	Label,
+	Configuration
 ) {
 	"use strict";
 
@@ -2069,6 +2071,8 @@ sap.ui.define([
 
 	QUnit.test("No Acc Mode", function(assert) {
 		oTable._getAccExtension()._accMode = false;
+		var oConfigStub = sinon.stub(Configuration, "getAccessibility");
+		oConfigStub.returns(false);
 		oTable.invalidate();
 		oCore.applyChanges();
 
@@ -2086,6 +2090,8 @@ sap.ui.define([
 		}
 
 		assert.strictEqual(oTable.$().find(".sapUiTableHiddenTexts").length, 0, "No Hidden Texts");
+
+		oConfigStub.restore();
 	});
 
 	QUnit.module("Destruction", {

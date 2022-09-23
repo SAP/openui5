@@ -116,6 +116,8 @@ sap.ui.define([
 				sDesc = sDesc + " " + TableUtils.getResourceText("TBL_CTRL_STATE_DISABLED");
 			} else if (oInfo.editable === false) {
 				sDesc = sDesc + " " + TableUtils.getResourceText("TBL_CTRL_STATE_READONLY");
+			} else if (oInfo.required === true) {
+				sDesc = sDesc + " " + TableUtils.getResourceText("TBL_CTRL_STATE_REQUIRED");
 			}
 			return sDesc.trim();
 		}

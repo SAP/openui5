@@ -9,9 +9,10 @@ sap.ui.define([
 	'sap/ui/core/Renderer',
 	'sap/ui/core/library',
 	'sap/ui/Device',
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/InvisibleText"
 ],
-	function(library, Element, Renderer, coreLibrary, Device, jQuery) {
+	function(library, Element, Renderer, coreLibrary, Device, jQuery, InvisibleText) {
 	"use strict";
 
 
@@ -728,6 +729,34 @@ sap.ui.define([
 	 */
 	Column.prototype._getHeaderMenuInstance = function () {
 		return sap.ui.getCore().byId(this.getAssociation("headerMenu"));
+	};
+
+	Column.prototype.setHeader = function (oControl) {
+		var oOldHeader = this.getHeader();
+		if (oOldHeader && oOldHeader.isA("sap.m.Label")) {
+			oOldHeader.detachEvent("_change", this._onLabelPropertyChange, this);
+			oOldHeader.setIsInColumnHeaderContext(false);
+		}
+
+		this.setAggregation("header", oControl);
+
+		var oNewHeader = this.getHeader();
+		if (oNewHeader && oNewHeader.isA("sap.m.Label")) {
+			oNewHeader.attachEvent("_change", this._onLabelPropertyChange, this);
+			oNewHeader.setIsInColumnHeaderContext(true);
+		}
+
+		return this;
+	};
+
+	Column.prototype._onLabelPropertyChange = function (oEvent) {
+		if (oEvent.getParameter("name") != "required") {
+			return;
+		}
+
+		if (this.getTable().bActiveHeaders || this.getColumnHeaderMenu()) {
+			this.$("ah")[oEvent.getSource().getRequired() ? "addAriaDescribedBy" : "removeAriaDescribedBy"](InvisibleText.getStaticId("sap.m", "CONTROL_IN_COLUMN_REQUIRED"));
+		}
 	};
 
 	return Column;

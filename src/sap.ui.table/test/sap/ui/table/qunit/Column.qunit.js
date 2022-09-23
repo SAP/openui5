@@ -219,10 +219,21 @@ sap.ui.define([
 
 		oOldCustomLabel = oCustomLabel;
 		oCustomLabel = new TableQUnitUtils.TestControl({text: "newlabelinstance"});
+
+		oCustomLabel.setIsInColumnHeaderContext = function (bIsInColumnHeaderContext) {
+			oCustomLabel._isInColumnHeaderContext = !!bIsInColumnHeaderContext;
+		};
+		oOldCustomLabel.setIsInColumnHeaderContext = function (bIsInColumnHeaderContext) {
+			oOldCustomLabel._isInColumnHeaderContext = !!bIsInColumnHeaderContext;
+		};
+
 		this._oColumn.setLabel(oCustomLabel);
 		assert.equal(this._oColumn.getLabel(), oCustomLabel, "Set control: New custom label added to the aggregation");
 		assert.strictEqual(oCustomLabel.getText(), "newlabelinstance", "Text of the custom label");
 		assert.notOk(oOldCustomLabel.isDestroyed(), "Old custom label not destroyed");
+
+		assert.strictEqual(oCustomLabel._isInColumnHeaderContext, true, "Label is marked as column header label");
+		assert.strictEqual(oOldCustomLabel._isInColumnHeaderContext, false, "Label is not marked as column header label");
 
 		this._oColumn.setLabel("labelstring");
 		oDefaultLabel = this._oColumn.getLabel();

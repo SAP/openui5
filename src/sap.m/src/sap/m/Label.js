@@ -204,10 +204,6 @@ function(
 	Label.prototype.getAccessibilityInfo = function() {
 		var sDescription = this.getText();
 
-		if (this.isRequired()) {
-			sDescription += " *";
-		}
-
 		return {
 			description: sDescription,
 			required: this.isRequired()
@@ -311,6 +307,16 @@ function(
 		return {
 			"main": this.$("bdi")[0]
 		};
+	};
+
+	/**
+	 * Marks the Label to be in a column header context.
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.Table, sap.ui.table.Table
+	 */
+	 Label.prototype.setIsInColumnHeaderContext = function (bIsInColumnHeaderContext) {
+		this._isInColumnHeaderContext = !!bIsInColumnHeaderContext;
 	};
 
 	// enrich Label functionality

@@ -378,7 +378,7 @@ sap.ui.define([
 		this.label.setRequired(true);
 
 		var oInfo = this.label.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Label *", "Description");
+		assert.strictEqual(oInfo.description, "Label", "Description");
 		assert.ok(oInfo.required, "Required");
 
 		this.label.setRequired(false);
@@ -386,22 +386,7 @@ sap.ui.define([
 
 	QUnit.test("Label rendering when no labelFor association is set", function (assert) {
 		assert.strictEqual(this.label.getDomRef() instanceof HTMLSpanElement, true, "Should be rendered as a span element");
-	});
-
-	QUnit.test("aria-label should be updated on setText", function (assert) {
-		this.oLabel.setLabelFor("someid");
-		oCore.applyChanges();
-		var sAriaLabel = this.oLabel.$().attr('aria-label');
-
-		assert.strictEqual(sAriaLabel, "Selected: 1", "aria-label should be 'Selected: 1'");
-
-		this.oLabel.setText("Selected: 2");
-
-		oCore.applyChanges();
-
-		sAriaLabel = this.oLabel.$().attr('aria-label');
-
-		assert.strictEqual(sAriaLabel, "Selected: 2", "aria-label should be 'Selected: 2'");
+		assert.ok(!this.label.$().find(".sapMLabelColonAndRequired").attr("aria-hidden"), "aria-hdden not set on : and *");
 	});
 
 	QUnit.test("Label rendering when labelFor association is set", function (assert) {
@@ -411,6 +396,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		assert.strictEqual(this.label.getDomRef() instanceof HTMLLabelElement, true, "Should be rendered as a label element");
+		assert.strictEqual(this.label.$().find(".sapMLabelColonAndRequired").attr("aria-hidden"), "true", "aria-hdden correctly set on : and *");
 
 		oInput.destroy();
 	});
@@ -424,19 +410,23 @@ sap.ui.define([
 
 		assert.strictEqual(this.label.getDomRef() instanceof HTMLSpanElement, true,
 				"Should be rendered as a span element when the labelFor points to a non-labelable control");
+		assert.ok(!this.label.$().find(".sapMLabelColonAndRequired").attr("aria-hidden"), "aria-hdden not set on : and *");
 
 		oLink.destroy();
 	});
 
-	QUnit.test("'aria-label' attribute should be set when label element is rendered", function (assert) {
-		this.label.setLabelFor("someid");
+	QUnit.test("Label in column header", function (assert) {
+		assert.ok(!this.label.$().find(".sapMLabelColonAndRequired").attr("aria-hidden"), "aria-hdden not set on : and *");
+		this.label.setIsInColumnHeaderContext(true);
+		this.label.invalidate();
 		oCore.applyChanges();
-
-		assert.ok(this.label.getDomRef().hasAttribute("aria-label"), "'aria-label' attribute should be set on label element");
-	});
-
-	QUnit.test("'aria-label' attribute should NOT be set when span element is rendered", function (assert) {
-		assert.notOk(this.label.getDomRef().hasAttribute("aria-label"), "'aria-label' attribute should NOT be set on label element");
+		assert.ok(this.label._isInColumnHeaderContext, "Label is marked as column header label");
+		assert.strictEqual(this.label.$().find(".sapMLabelColonAndRequired").attr("aria-hidden"), "true", "aria-hdden correctly set on : and *");
+		this.label.setIsInColumnHeaderContext(false);
+		this.label.invalidate();
+		oCore.applyChanges();
+		assert.ok(!this.label._isInColumnHeaderContext, "Label is not marked as column header label");
+		assert.ok(!this.label.$().find(".sapMLabelColonAndRequired").attr("aria-hidden"), "aria-hdden not set on : and *");
 	});
 
 	QUnit.module("DisplayOnly mode", {

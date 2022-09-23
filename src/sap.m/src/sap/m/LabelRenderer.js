@@ -71,9 +71,6 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/Renderer', 'sap/ui/core/AccessKe
 
 		if (sLabelForRendering) {
 			LabelEnablement.writeLabelForAttribute(rm, oLabel);
-			rm.accessibilityState({
-				label: oLabel.getText()
-			});
 		} else if (oLabel.getParent() && oLabel.getParent().isA("sap.m.Toolbar")) {
 			rm.class("sapMLabelTBHeader");
 		}
@@ -149,6 +146,11 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/Renderer', 'sap/ui/core/AccessKe
 		rm.openStart("span");
 		rm.class("sapMLabelColonAndRequired");
 		rm.attr("data-colon", Core.getLibraryResourceBundle("sap.m").getText("LABEL_COLON"));
+		if (sLabelForRendering || oLabel._isInColumnHeaderContext) {
+			rm.accessibilityState({
+				hidden: "true"
+			});
+		}
 		rm.openEnd();
 		rm.close("span");
 

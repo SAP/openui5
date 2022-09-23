@@ -1152,12 +1152,13 @@ function(
 	 * @protected
 	 */
 	InputBase.prototype.getAccessibilityInfo = function() {
-		var sRequired = this.getRequired() ? 'Required' : '',
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sRequired = this.getRequired() ? oRb.getText("ELEMENT_REQUIRED") : '',
 			oRenderer = this.getRenderer();
 
 		return {
 			role: oRenderer.getAriaRole(this),
-			type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_INPUT"),
+			type: oRb.getText("ACC_CTR_TYPE_INPUT"),
 			description: [this.getValueDescriptionInfo(), oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this), sRequired].join(" ").trim(),
 			focusable: this.getEnabled(),
 			enabled: this.getEnabled(),
