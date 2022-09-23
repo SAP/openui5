@@ -516,7 +516,8 @@ sap.ui.define([
 				name: "a new name",
 				content: {},
 				favorite: false,
-				executeOnSelection: false
+				executeOnSelection: false,
+				action: CompVariantState.updateActionType.UPDATE_METADATA
 			}
 		}, {
 			details: "a new content",
@@ -547,7 +548,37 @@ sap.ui.define([
 					someProperty: "someValue"
 				},
 				executeOnSelection: false,
-				favorite: false
+				favorite: false,
+				action: CompVariantState.updateActionType.UPDATE
+			}
+		}, {
+			details: "save variant content",
+			propertyBag: {
+				id: "test_variant"
+			},
+			mockedVariant: {
+				fileName: "test_variant",
+				layer: Layer.CUSTOMER,
+				selector: {
+					persistencyKey: sPersistencyKey
+				},
+				content: {
+					someOld: "content"
+				},
+				texts: {
+					variantName: {
+						value: ""
+					}
+				}
+			},
+			expected: {
+				name: "",
+				content: {
+					someOld: "content"
+				},
+				executeOnSelection: false,
+				favorite: false,
+				action: CompVariantState.updateActionType.SAVE
 			}
 		}, {
 			details: "a new executeOnSelection flag",
@@ -576,7 +607,8 @@ sap.ui.define([
 					someOld: "content"
 				},
 				executeOnSelection: true,
-				favorite: false
+				favorite: false,
+				action: CompVariantState.updateActionType.UPDATE_METADATA
 			}
 		}, {
 			details: "a new favorite flag",
@@ -605,7 +637,8 @@ sap.ui.define([
 					someOld: "content"
 				},
 				executeOnSelection: false,
-				favorite: true
+				favorite: true,
+				action: CompVariantState.updateActionType.UPDATE_METADATA
 			}
 		}, {
 			details: "a new executeOnSelection flag overwriting an old one",
@@ -634,7 +667,8 @@ sap.ui.define([
 					someOld: "content"
 				},
 				executeOnSelection: true,
-				favorite: false
+				favorite: false,
+				action: CompVariantState.updateActionType.UPDATE_METADATA
 			}
 		}, {
 			details: "a new favorite flag overwriting an old one",
@@ -663,7 +697,8 @@ sap.ui.define([
 					someOld: "content"
 				},
 				executeOnSelection: false,
-				favorite: true
+				favorite: true,
+				action: CompVariantState.updateActionType.UPDATE_METADATA
 			}
 		}, {
 			details: "a new content and existing flags for executeOnSelection and favorite",
@@ -695,7 +730,8 @@ sap.ui.define([
 					someProperty: "someValue"
 				},
 				executeOnSelection: true,
-				favorite: false
+				favorite: false,
+				action: undefined
 			}
 		}].forEach(function (testData) {
 			QUnit.test("When updateVariant is called with " + testData.details, function (assert) {
@@ -725,7 +761,25 @@ sap.ui.define([
 					componentData: {}
 				}).then(Settings.getInstance)
 				.then(function () {
-					SmartVariantManagementWriteAPI.updateVariant(testData.propertyBag);
+					switch (testData.details) {
+						case "a new name for a variant":
+						case "a new executeOnSelection flag":
+						case "a new favorite flag":
+						case "a new executeOnSelection flag overwriting an old one":
+						case "a new favorite flag overwriting an old one":
+							SmartVariantManagementWriteAPI.updateVariantMetadata(testData.propertyBag);
+							break;
+						case "a new content":
+							SmartVariantManagementWriteAPI.updateVariantContent(testData.propertyBag);
+							break;
+						case "save variant content":
+							SmartVariantManagementWriteAPI.saveVariantContent(testData.propertyBag);
+							break;
+						case "a new content and existing flags for executeOnSelection and favorite":
+							SmartVariantManagementWriteAPI.updateVariant(testData.propertyBag);
+							break;
+						default:
+					}
 
 					var oVariant = FlexState.getCompVariantsMap(sReference)[testData.propertyBag.persistencyKey].byId[testData.propertyBag.id];
 
@@ -733,7 +787,7 @@ sap.ui.define([
 					assert.deepEqual(oVariant.getContent(), testData.expected.content, "the content is correct");
 					assert.equal(oVariant.getFavorite(), testData.expected.favorite, "the favorite flag is correct");
 					assert.equal(oVariant.getExecuteOnSelection(), testData.expected.executeOnSelection, "the executeOnSelection flag is correct");
-					assert.equal(oVariant.getState(), States.DIRTY, "the variant is marked for an update");
+					assert.equal(oVariant.getRevertData()[0].getContent().previousAction, testData.expected.action, "the action type is correct");
 				});
 			});
 		});
@@ -908,6 +962,35 @@ sap.ui.define([
 				assert.equal(aRevertData.length, 0, "after a revert... the revert data is no longer available");
 				assert.equal(oRemovedVariant.getState(), States.PERSISTED, "and the change is flagged as new");
 			});
+		});
+	});
+
+	QUnit.module("discardVariantContent", {
+		beforeEach: function() {
+			if (oControl) {
+				oControl.destroy();
+			}
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("discardVariantContent function calls CompVariantState.discardVariantContent", function(assert) {
+			var sReference = "an.app";
+			var sPersistencyKey = "persistency.key";
+			oControl = new Control("controlId1");
+			oControl.getPersistencyKey = function() {
+				return sPersistencyKey;
+			};
+			var oCompVariantStateDiscardVariantStub = sandbox.stub(CompVariantState, "discardVariantContent");
+			SmartVariantManagementWriteAPI.discardVariantContent({
+				reference: sReference,
+				persistencyKey: sPersistencyKey,
+				id: "test_variant",
+				control: oControl
+			});
+			assert.equal(oCompVariantStateDiscardVariantStub.calledOnce, true, "function was called");
+			assert.equal(oCompVariantStateDiscardVariantStub.getCall(0).args[0].action, CompVariantState.updateActionType.DISCARD, "with correct action type");
 		});
 	});
 

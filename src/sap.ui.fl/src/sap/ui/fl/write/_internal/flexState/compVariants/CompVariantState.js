@@ -437,7 +437,8 @@ sap.ui.define([
 					previousFavorite: oVariant.getFavorite(),
 					previousExecuteOnSelection: oVariant.getExecuteOnSelection(),
 					previousContexts: oVariant.getContexts(),
-					previousName: oVariant.getName()
+					previousName: oVariant.getName(),
+					previousAction: mPropertyBag.action
 				}
 			};
 			oVariant.addRevertData(new CompVariantRevertData(oRevertData));
@@ -556,6 +557,54 @@ sap.ui.define([
 			}
 		}
 		return oVariant;
+	};
+
+	/**
+	 * Discards the variant content to the original or last saved content;
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.reference - Flex reference of the application
+	 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+	 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+	 * 			sap.ui.comp.smarttable.SmartTable|
+	 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variant should be updated
+	 * @param {string} mPropertyBag.id - ID of the variant
+	 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the save of variant content takes place
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The discarded variant
+	 */
+	CompVariantState.discardVariantContent = function(mPropertyBag) {
+		var oVariant = getVariantById(mPropertyBag);
+		var aVariantRevertData = oVariant.getRevertData();
+		if (aVariantRevertData.length !== 0) {
+			//Look at revert data backward, to find the content of last save action
+			var bIsVariantSaved = aVariantRevertData.slice().reverse().some(function (oRevertData) {
+				if (oRevertData.getContent().previousAction === CompVariantState.updateActionType.SAVE) {
+					mPropertyBag.content = oRevertData.getContent().previousContent;
+					mPropertyBag.action = CompVariantState.updateActionType.DISCARD;
+					return true;
+				}
+			});
+
+			if (!bIsVariantSaved) {
+				mPropertyBag.content = aVariantRevertData[0].getContent().previousContent;
+				mPropertyBag.action = CompVariantState.updateActionType.DISCARD;
+			}
+			//Update variant content to the last saved or original content
+			CompVariantState.updateVariant(mPropertyBag);
+		}
+		return oVariant;
+	};
+
+	/**
+	 * Defines the different types of actions lead to a variant got update.
+	 *
+	 * @enum {string}
+	 */
+	CompVariantState.updateActionType = {
+		UPDATE: "update",
+		SAVE: "save",
+		DISCARD: "discard",
+		UPDATE_METADATA: "update_metadata"
 	};
 
 	/**

@@ -817,6 +817,304 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("discardVariantContent", {
+		beforeEach: function() {
+			this.sPersistencyKey = "persistency.key";
+			this.oVariantData = {
+				changeSpecificData: {
+					type: "pageVariant",
+					layer: Layer.CUSTOMER,
+					texts: {
+						variantName: {
+							value: "initialName",
+							type: "XFLD"
+						}
+					},
+					content: {},
+					favorite: true
+				},
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			};
+			this.newVariantData = {
+				changeSpecificData: {
+					type: "pageVariant",
+					layer: Layer.CUSTOMER,
+					texts: {
+						variantName: "Variant1"
+					},
+					content: {},
+					favorite: true
+				},
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			};
+			return FlexState.initialize({
+				componentId: sComponentId,
+				reference: sComponentId
+			}).then(Settings.getInstance);
+		},
+		afterEach: function() {
+			FlexState.clearState(sComponentId);
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("Given discardVariantContent is called and changes are made on the initial variant", function (assert) {
+			sandbox.stub(Storage, "write").resolves();
+			var oVariant = CompVariantState.addVariant(this.oVariantData);
+			var sVariantId = oVariant.getVariantId();
+
+			// ensure a persisted state and empty revertData aggregation
+			return CompVariantState.persist({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			}).then(function () {
+				assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data is present");
+				assert.strictEqual(oVariant.getState(), States.PERSISTED, "the variant has the correct state");
+				assert.strictEqual(oVariant.getFavorite(), true, "the favorite flag was set correctly");
+
+				assert.ok(true, "STEP: <<UPDATE>>, update, discard");
+				CompVariantState.updateVariant({
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey,
+					layer: Layer.CUSTOMER,
+					favorite: false,
+					executeOnSelection: true,
+					contexts: {
+						role: ["someRole"]
+					},
+					name: "myNewName",
+					action: CompVariantState.updateActionType.UPDATE_METADATA
+				});
+				assert.strictEqual(oVariant.getRevertData().length, 1, "one revert data entry is present");
+				assert.strictEqual(oVariant.getState(), States.DIRTY, "the variant has the correct state");
+				assert.strictEqual(oVariant.getName(), "myNewName", "and the name is updated");
+				assert.strictEqual(oVariant.getFavorite(), false, "the favorite flag was set correctly");
+				assert.strictEqual(oVariant.getExecuteOnSelection(), true, "the executeOnSelect flag was set correctly");
+				assert.strictEqual(oVariant.getContexts().role[0], "someRole", "the variant has the correct contexts");
+
+				assert.ok(true, "STEP: update, <<update>>, discard");
+				CompVariantState.updateVariant({
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey,
+					layer: Layer.CUSTOMER,
+					content: {
+						someKey: "someValue"
+					},
+					action: CompVariantState.updateActionType.UPDATE
+				});
+
+				assert.strictEqual(oVariant.getRevertData().length, 2, "two revert data entries are present");
+				assert.strictEqual(oVariant.getState(), States.DIRTY, "the variant has the correct state");
+				assert.deepEqual(oVariant.getContent(), {
+					someKey: "someValue"
+				}, "the content is correct");
+
+				assert.ok(true, "STEP: update, update, <<DISCARD>>");
+				CompVariantState.discardVariantContent({
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey
+				});
+				assert.strictEqual(oVariant.getRevertData().length, 3, "one revert data entry is present");
+				assert.strictEqual(oVariant.getState(), States.DIRTY, "the variant has the correct state");
+				assert.strictEqual(oVariant.getName(), "myNewName", "and the name is updated");
+				assert.strictEqual(oVariant.getFavorite(), false, "the favorite flag was set correctly");
+				assert.strictEqual(oVariant.getExecuteOnSelection(), true, "the executeOnSelect flag was set correctly");
+				assert.deepEqual(oVariant.getContent(), {}, "the content is correct");
+			}.bind(this));
+		});
+
+		QUnit.test("Given discardVariantContent is called and changes are made on as saved variant", function (assert) {
+			sandbox.stub(Storage, "write").resolves();
+			var oVariant = CompVariantState.addVariant(this.newVariantData);
+			var sNewVariantId = oVariant.getVariantId();
+			// ensure a persisted state and empty revertData aggregation
+			return CompVariantState.persist({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			}).then(function () {
+				assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data is present");
+				assert.strictEqual(oVariant.getState(), States.PERSISTED, "the variant has the correct state");
+				assert.strictEqual(oVariant.getFavorite(), true, "the favorite flag was set correctly");
+
+				assert.ok(true, "STEP: <<UPDATE>>, save, update, discard");
+				CompVariantState.updateVariant({
+					id: sNewVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey,
+					layer: Layer.CUSTOMER,
+					content: {
+						someKey: "someValue"
+					},
+					action: CompVariantState.updateActionType.UPDATE
+				});
+				assert.strictEqual(oVariant.getRevertData().length, 1, "1 revert data is present");
+				assert.deepEqual(oVariant.getContent(), {
+					someKey: "someValue"
+				}, "the content is correct");
+
+				assert.ok(true, "STEP: update, <<SAVE>>, update, discard");
+				CompVariantState.updateVariant({
+					id: sNewVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey,
+					layer: Layer.CUSTOMER,
+					action: CompVariantState.updateActionType.SAVE
+				});
+				assert.deepEqual(oVariant.getContent(), {
+					someKey: "someValue"
+				}, "the content is correct");
+				assert.strictEqual(oVariant.getRevertData().length, 2, "2 revert data entry is present");
+
+				assert.ok(true, "STEP: update, save, <<UPDATE>>, discard");
+				CompVariantState.updateVariant({
+					id: sNewVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey,
+					layer: Layer.CUSTOMER,
+					content: {
+						someKey: "someNewValue"
+					},
+					action: CompVariantState.updateActionType.UPDATE
+				});
+				assert.deepEqual(oVariant.getContent(), {
+					someKey: "someNewValue"
+				}, "the content is correct");
+				assert.strictEqual(oVariant.getRevertData().length, 3, "3 revert data entries are present");
+
+				assert.ok(true, "STEP: update, save, update, <<DISCARD>>");
+				CompVariantState.discardVariantContent({
+					id: sNewVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey
+				});
+				assert.strictEqual(oVariant.getRevertData().length, 4, "4 revert data entry is present");
+				assert.deepEqual(oVariant.getContent(), {
+					someKey: "someValue"
+				}, "the content is correct");
+			}.bind(this));
+		});
+
+		QUnit.test("Given discardVariantContent is called when no changes were made", function (assert) {
+			sandbox.stub(Storage, "write").resolves();
+			var oVariant = CompVariantState.addVariant(this.newVariantData);
+			var sNewVariantId = oVariant.getVariantId();
+			// ensure a persisted state and empty revertData aggregation
+			return CompVariantState.persist({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			}).then(function () {
+				assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data is present");
+				assert.strictEqual(oVariant.getState(), States.PERSISTED, "the variant has the correct state");
+				assert.strictEqual(oVariant.getFavorite(), true, "the favorite flag was set correctly");
+
+				assert.ok(true, "STEP: <<DISCARD>>");
+				CompVariantState.discardVariantContent({
+					id: sNewVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey
+				});
+				assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data entry is present");
+				assert.deepEqual(oVariant.getContent(), {}, "still empty");
+				assert.deepEqual(oVariant.getName(), "Variant1", "name is still the same");
+			}.bind(this));
+		});
+
+		QUnit.test("Given discardVariantContent is called and changes are made on a variant with multiple saves before", function (assert) {
+			sandbox.stub(Storage, "write").resolves();
+			var oVariant = CompVariantState.addVariant(this.newVariantData);
+			var sNewVariantId = oVariant.getVariantId();
+			// ensure a persisted state and empty revertData aggregation
+			return CompVariantState.persist({
+				reference: sComponentId,
+				persistencyKey: this.sPersistencyKey
+			}).then(function () {
+				assert.strictEqual(oVariant.getRevertData().length, 0, "no revert data is present");
+				assert.strictEqual(oVariant.getState(), States.PERSISTED, "the variant has the correct state");
+				assert.strictEqual(oVariant.getFavorite(), true, "the favorite flag was set correctly");
+
+				assert.ok(true, "STEP: <<UPDATE>>, save, update, save, discard");
+				CompVariantState.updateVariant({
+					id: sNewVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey,
+					layer: Layer.CUSTOMER,
+					favorite: false,
+					content: {
+						someKey: "someValue"
+					},
+					executeOnSelection: true,
+					name: "myNewName"
+				});
+
+				assert.ok(true, "STEP: update, <<save>>, update, save, discard");
+				CompVariantState.updateVariant({
+					id: sNewVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey,
+					layer: Layer.CUSTOMER,
+					action: CompVariantState.updateActionType.SAVE
+				});
+				assert.deepEqual(oVariant.getContent(), {
+					someKey: "someValue"
+				}, "the content is correct");
+				assert.strictEqual(oVariant.getRevertData().length, 2, "one revert data entry is present");
+				assert.strictEqual(oVariant.getState(), States.DIRTY, "the variant has the correct state");
+				assert.strictEqual(oVariant.getFavorite(), false, "the favorite flag was set correctly");
+				assert.strictEqual(oVariant.getExecuteOnSelection(), true, "the executeOnSelect flag was set correctly");
+				assert.strictEqual(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
+
+				assert.ok(true, "STEP: update, save, <<update>>, save, discard");
+				CompVariantState.updateVariant({
+					id: sNewVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey,
+					layer: Layer.CUSTOMER,
+					content: {
+						someKey: "newValue"
+					},
+					favorite: false,
+					contexts: {
+						role: ["someRole"]
+					}
+				});
+
+				assert.strictEqual(oVariant.getRevertData().length, 3, "two revert data entries are present");
+				assert.strictEqual(oVariant.getState(), States.DIRTY, "the variant has the correct state");
+				assert.strictEqual(oVariant.getFavorite(), false, "the favorite flag was set correctly");
+				assert.strictEqual(oVariant.getName(), "myNewName", "and the name is updated");
+				assert.strictEqual(oVariant.getContexts().role[0], "someRole", "the variant has the correct contexts");
+
+				assert.ok(true, "STEP: update, save, update, <<save>>, discard");
+				CompVariantState.updateVariant({
+					id: sNewVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey,
+					layer: Layer.CUSTOMER,
+					action: CompVariantState.updateActionType.SAVE
+				});
+
+				assert.ok(true, "STEP: update, save, update, save, <<discard>>");
+				CompVariantState.discardVariantContent({
+					id: sNewVariantId,
+					reference: sComponentId,
+					persistencyKey: this.sPersistencyKey
+				});
+				assert.strictEqual(oVariant.getRevertData().length, 5, "5 revert data entries are present");
+				assert.strictEqual(oVariant.getState(), States.DIRTY, "the variant has the correct state");
+				assert.strictEqual(oVariant.getFavorite(), false, "the favorite flag was set correctly");
+				assert.strictEqual(oVariant.getExecuteOnSelection(), true, "the executeOnSelect flag was set correctly");
+				assert.deepEqual(oVariant.getContent(), {
+					someKey: "newValue"
+				}, "the content is correct");
+				assert.strictEqual(oVariant.getContexts().role[0], "someRole", "the variant has the correct contexts");
+			}.bind(this));
+		});
+	});
+
 	QUnit.module("revert", {
 		beforeEach: function () {
 			this.sPersistencyKey = "persistency.key";
@@ -1513,7 +1811,8 @@ sap.ui.define([
 			CompVariantState.addVariant({
 				changeSpecificData: {
 					type: "pageVariant",
-					content: {}
+					content: {},
+					layer: Layer.CUSTOMER
 				},
 				reference: sComponentId,
 				persistencyKey: this.sPersistencyKey
