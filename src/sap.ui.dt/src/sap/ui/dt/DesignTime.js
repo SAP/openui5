@@ -991,7 +991,6 @@ function (
 		if (bIsTemplateAggregation && !bIsPartOfTemplate) {
 			return Promise.resolve();
 		}
-
 		return Promise.all(
 			aAggregationNames.map(function (sAggregationName) {
 				var oElement = oElementOverlay.getElement();
@@ -1016,17 +1015,21 @@ function (
 				}
 
 				return Promise.all(
-					aChildrenElements.map(function (sParentElementClassName, oElement) {
+					aChildrenElements.map(function (sParentElementClassName, oChildElement) {
 						return this.createOverlay({
-							element: oElement,
+							element: oChildElement,
 							root: false,
 							parentMetadata: mAggregationMetadata,
 							isPartOfTemplate: bIsPartOfTemplate
 						})
 							// If creation of one of the children is aborted, we still continue our execution
 							.catch(function (oError) {
-								var mError = this._enrichChildCreationError(oError, oElement, sParentElementClassName, sAggregationName);
-								Log[mError.severity](mError.message);
+								var mError = this._enrichChildCreationError(oError, oChildElement, sParentElementClassName, sAggregationName);
+								// Omit error message if the parent was already destroyed
+								// e.g. SimpleForm move where many elements are created/destroyed in a row
+								if (!oElement.isDestroyed() && !oElementOverlay.isDestroyed()) {
+									Log[mError.severity](mError.message);
+								}
 								return mError.errorObject;
 							}.bind(this));
 					}.bind(this, sElementClassName))

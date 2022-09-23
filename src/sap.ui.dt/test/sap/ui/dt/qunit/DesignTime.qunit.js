@@ -480,7 +480,7 @@ sap.ui.define([
 			fnResolveLoadDesigntime({});
 		});
 
-		QUnit.test("when an element overlay is created and in the meanwhile it is take out of the then afterwards destroyed parent", function (assert) {
+		QUnit.test("when an element overlay is created and in the meanwhile it is removed from the afterwards destroyed parent", function (assert) {
 			var fnDone = assert.async();
 			var oButton = new Button("newButton");
 			var fnResolveLoadDesigntime;
@@ -501,7 +501,6 @@ sap.ui.define([
 			this.oInnerLayout.addContent(oButton);
 			assert.strictEqual(this.oDesignTime.getStatus(), DesignTimeStatus.SYNCING);
 
-
 			// In between "syncing" and "synced" events
 			// 1. control is removed from parent
 			// 2. the parent overlay is destroyed
@@ -517,6 +516,43 @@ sap.ui.define([
 
 			// Continue execution (this will fire sync)
 			fnResolveLoadDesigntime({});
+		});
+
+		QUnit.test("when a parent is destroyed while overlays were being created for its children", function (assert) {
+			var fnDone = assert.async();
+			var oButton21 = new Button("innerButton21");
+			var oButton22 = new Button("innerButton22");
+
+			var oInnerLayout2 = new Panel({
+				id: "innerPanel",
+				content: [
+					oButton21,
+					oButton22
+				]
+			});
+
+			sandbox.stub(this.oDesignTime, "_createChildren").callsFake(function(oElementOverlay) {
+				return this.oDesignTime._createChildren.wrappedMethod.apply(this.oDesignTime, arguments)
+					.then(function() {
+						if (oElementOverlay.getElement().getId() === "innerButton21") {
+							oElementOverlay.getElement().getParent().destroy();
+						}
+					});
+			}.bind(this));
+
+			var fnLogErrorSpy = sandbox.spy(Log, "error");
+			var oElementOverlayAddedSpy = sandbox.spy();
+			this.oDesignTime.attachEventOnce("elementOverlayAdded", oElementOverlayAddedSpy);
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.ok(oElementOverlayAddedSpy.notCalled, "then event listeners is not called");
+				assert.ok(fnLogErrorSpy.notCalled, "then no error message is shown");
+				fnDone();
+			});
+
+			// Set DesignTime in syncing state
+			this.oOuterLayout.addContent(oInnerLayout2);
+			assert.strictEqual(this.oDesignTime.getStatus(), DesignTimeStatus.SYNCING);
 		});
 
 		QUnit.test("when a new element overlay's editable property is changed during synchronization process", function (assert) {
