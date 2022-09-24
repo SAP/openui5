@@ -341,6 +341,36 @@ sap.ui.define([
 		oPatchingControl.destroy();
 	});
 
+	QUnit.test("Invalidation in the onBeforeRendering", function(assert) {
+		var oPatchingControl = new PatchingControl({
+			items: new PatchingControl()
+		});
+		var onBeforeRenderingSpy = sinon.spy();
+		var done = assert.async();
+
+		oPatchingControl.addEventDelegate({
+			onBeforeRendering: function() {
+				oPatchingControl.invalidate();
+				oPatchingControl.getItems()[0].invalidate();
+			}
+		}).addEventDelegate({
+			onBeforeRendering: onBeforeRenderingSpy
+		});
+
+		setTimeout(function() {
+			assert.equal(onBeforeRenderingSpy.callCount, 1, "onBeforeRendering is called only once");
+			onBeforeRenderingSpy.resetHistory();
+			setTimeout(function() {
+				assert.equal(onBeforeRenderingSpy.callCount, 1, "onBeforeRendering is called only once");
+				done();
+			});
+			oPatchingControl.invalidate();
+			Core.applyChanges();
+		});
+		oPatchingControl.placeAt("qunit-fixture");
+		Core.applyChanges();
+	});
+
 	QUnit.test("Rerendering mutations", function(assert) {
 		var oRemovedChild = null;
 		var fnCreateRenderManager = function() {
