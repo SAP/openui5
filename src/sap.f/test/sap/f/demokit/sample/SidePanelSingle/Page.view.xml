@@ -6,8 +6,7 @@
 	height="100%"
 	controllerName="sap.f.sample.SidePanelSingle.Page">
 
-	<Page
-		class="sapUiContentPadding" >
+	<Page>
 		<content>
 			<f:SidePanel id="mySidePanel" toggle="onToggle">
 				<f:mainContent>

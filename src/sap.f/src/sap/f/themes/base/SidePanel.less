@@ -26,6 +26,7 @@
 		margin: 0.5rem 0 0.5rem 1rem;
 		min-width: 4.25rem;
 		width: 4.25rem;
+		min-height: 14rem;
 		z-index: 1;
 
 		.sapFSPSideInner {
@@ -182,13 +183,33 @@
 					&:focus::after {
 						border-left-color: transparent;
 					}
+
+					&.sapFSPOverflowActionItem {
+						&::before {
+							display: none;
+						}
+
+						.sapUiIcon {
+							border: 0.125rem solid @sapNeutralColor;
+							background-color: @sapNeutralColor;
+							color: @sapUiContentContrastIconColor;
+						}
+					}
 				}
 
 				&.sapFSPOverflowActionItem {
 					visibility: hidden;
 
-					.sapUiIcon:not(:hover) {
-						border: none;
+					.sapUiIcon {
+						color: @sapNeutralColor;
+
+						&:not(:hover) {
+							border: none;
+						}
+
+						&:hover {
+							border-color: @sapNeutralColor;
+						}
 					}
 				}
 			}
@@ -257,6 +278,7 @@
 		.sapFSPSide {
 			min-width: 4rem;
 			width: 4rem;
+			min-height: 13rem;
 
 			.sapFSPSideInner {
 				min-width: 4rem;
@@ -318,6 +340,7 @@ html.sap-phone {
 			flex-direction: column;
 			width: 100%;
 			height: 6.125rem;
+			min-height: initial;
 			overflow: hidden;
 			flex: 0 0 4.125rem;
 

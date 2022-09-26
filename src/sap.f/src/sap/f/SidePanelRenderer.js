@@ -41,8 +41,7 @@ sap.ui.define([ "sap/ui/Device",
 			!bActionBarExpanded && oRm.attr("title", sItemText);
 			oRm.class("sapFSPActionItem");
 
-			if ((!bOverflowActionItem && bItemSelected) || (bOverflowActionItem && oControl._overflowMenuOpened)) {
-				!bPhone && !bOverflowActionItem && oControl._setOverflowItemSelection(false);
+			if ((!bOverflowActionItem && bItemSelected) || (bOverflowActionItem && oControl._bOverflowMenuOpened)) {
 				oRm.class("sapFSPSelected");
 				oRm.attr(sAriaAttribute, "true");
 			} else {
