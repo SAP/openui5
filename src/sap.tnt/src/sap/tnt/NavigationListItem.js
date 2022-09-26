@@ -567,6 +567,11 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 
 			rm.openStart('a', this.getId() + '-a');
 			rm.attr('tabindex', '-1');
+			rm.accessibilityState({role: 'link'});
+
+			if (!isListExpanded) {
+				rm.accessibilityState({hidden: true});
+			}
 
 			if (href) {
 				rm.attr('href', href);
@@ -718,6 +723,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 
 			rm.openStart('a', this.getId() + '-a');
 			rm.attr('tabindex', '-1');
+			rm.accessibilityState({role: 'link'});
 
 			if (href) {
 				rm.attr('href', href);
