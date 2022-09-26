@@ -1,19 +1,22 @@
 /* global  QUnit */
 sap.ui.define([
-	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator'
-], function(
-	Filter,
-	FilterOperator
-) {
+	"sap/ui/core/Configuration",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function(Configuration, Filter, FilterOperator) {
 	"use strict";
 
-	var sVariableError = "When using the filter operators 'Any' or 'All', a string has to be given as argument 'variable'.";
-	var sConditionError = "When using the filter operator 'Any' or 'All', a valid instance of sap.ui.model.Filter has to be given as argument 'condition'.";
-	var sOneMissing = "When using the filter operator 'Any', a lambda variable and a condition have to be given or neither.";
-	var sLegacyAnyAll = "The filter operators 'Any' and 'All' are only supported with the parameter object notation.";
+	var sDefaultLanguage = Configuration.getLanguage();
 
-	QUnit.module("sap.ui.model.Filter: Basics");
+	QUnit.module("sap.ui.model.Filter", {
+		beforeEach : function () {
+			Configuration.setLanguage("en-US");
+		},
+
+		afterEach : function () {
+			Configuration.setLanguage(sDefaultLanguage);
+		}
+	});
 
 	QUnit.test("Filter getters", function (assert) {
 		var bAnd = "~truthy~",
@@ -83,7 +86,30 @@ sap.ui.define([
 		}).getFilters(), undefined);
 	});
 
-	QUnit.module("sap.ui.model.Filter: Unsupported Filter Operators");
+	//*********************************************************************************************
+	QUnit.test("defaultComparator: localeCompare with language tag", function (assert) {
+		this.mock(Configuration).expects("getLanguageTag").withExactArgs().returns("foo");
+		this.mock(String.prototype).expects("localeCompare")
+			.withExactArgs("~b", "foo")
+			.on("~a")
+			.returns("bar");
+
+		// code under test
+		assert.strictEqual(Filter.defaultComparator("~a", "~b"), "bar");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("defaultComparator: localeCompare for different locales", function (assert) {
+		Configuration.setLanguage("de");
+
+		// code under test
+		assert.strictEqual(Filter.defaultComparator("ä", "z"), -1);
+
+		Configuration.setLanguage("sv");
+
+		// code under test
+		assert.strictEqual(Filter.defaultComparator("ä", "z"), 1);
+	});
 
 	QUnit.test("constructor - create Filter Any/All - ok", function (assert) {
 		// "Any", object syntax
@@ -105,6 +131,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("constructor - wrong args", function (assert) {
+		var sLegacyAnyAll = "The filter operators 'Any' and 'All' are only supported with the "
+				+ "parameter object notation.";
+
 		//"Any" and "All" with legacy syntax
 		assert.throws(
 			function() {
@@ -137,7 +166,8 @@ sap.ui.define([
 					variable: "blub"
 				});
 			},
-			new Error(sOneMissing),
+			new Error("When using the filter operator 'Any', a lambda variable and a condition have"
+				+ " to be given or neither."),
 			"Error thrown if condition is Missing in 'Any'."
 		);
 
@@ -150,7 +180,8 @@ sap.ui.define([
 					variable: "blub"
 				});
 			},
-			new Error(sConditionError),
+			new Error("When using the filter operator 'Any' or 'All', a valid instance of "
+				+ "sap.ui.model.Filter has to be given as argument 'condition'."),
 			"Error thrown if condition is Missing in 'All'."
 		);
 
@@ -162,12 +193,11 @@ sap.ui.define([
 					operator: FilterOperator.All
 				});
 			},
-			new Error(sVariableError),
+			new Error("When using the filter operators 'Any' or 'All', a string has to be given as "
+				+ "argument 'variable'."),
 			"Error thrown if no args are given with 'All' operator"
 		);
 	});
-
-	QUnit.module("sap.ui.model.Filter: Filter AST generation");
 
 	QUnit.test("Simple filters", function (assert) {
 

@@ -81,15 +81,6 @@ sap.ui.define(function() {
 					only : "sap/ui/base/ExpressionParser"
 				}
 			},
-			Filter: {
-				title: "sap.ui.model.Filter - QUnit Tests",
-				ui5: {
-					language: "en-US"
-				}
-			},
-			FilterProcessor: {
-				title: "sap.ui.model.FilterProcessor - QUnit Tests"
-			},
 			ListBinding: {
 				title: "sap.ui.model.ListBinding - QUnit Tests"
 			},
@@ -274,11 +265,20 @@ sap.ui.define(function() {
 			"model/ContextBinding": {
 				title: "sap.ui.model.ContextBinding"
 			},
+			"model/Filter": {
+				title: "sap.ui.model.Filter"
+			},
+			"model/FilterProcessor": {
+				title: "sap.ui.model.FilterProcessor"
+			},
 			"model/ListBinding": {
 				title: "sap.ui.model.ListBinding"
 			},
 			"model/Model": {
 				title: "sap.ui.model.Model"
+			},
+			"model/Sorter": {
+				title: "sap.ui.model.Sorter"
 			},
 			"odata/AnnotationHelper": {
 				coverage : {
