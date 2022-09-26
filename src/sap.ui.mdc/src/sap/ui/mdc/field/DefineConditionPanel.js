@@ -78,7 +78,6 @@ sap.ui.define([
 	var ButtonType = mLibrary.ButtonType;
 	var ValueState = coreLibrary.ValueState;
 	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
-	var aFieldHelpSupportedOperators = ["EQ", "NE"]; // only for this operators we use the FieldHelp on the value fields
 
 	/**
 	 * Constructor for a new <code>DefineConditionPanel</code>.
@@ -667,6 +666,12 @@ sap.ui.define([
 
 	}
 
+	function _operatorSupportsValueHelp(sKey) {
+		return true;
+		// var aFieldHelpSupportedOperators = ["EQ", "NE"]; // only for this operators we use the FieldHelp on the value fields
+		// return aFieldHelpSupportedOperators.length === 0 || aFieldHelpSupportedOperators.indexOf(sKey) >= 0;
+	}
+
 	function _operatorChanged(oField, sKey, sOldKey) {
 
 		oField._sOldKey = sOldKey; // to know in change event
@@ -704,7 +709,7 @@ sap.ui.define([
 				oValue0Field = undefined;
 			}
 
-			if (aFieldHelpSupportedOperators.length === 0 || aFieldHelpSupportedOperators.indexOf(sKey) >= 0) {
+			if (_operatorSupportsValueHelp(sKey)) {
 				// enable the fieldHelp for the used value fields
 				var sFiedHelp = this.getFieldHelp();
 				oValue0Field && oValue0Field.setFieldHelp && oValue0Field.setFieldHelp(sFiedHelp);
@@ -785,7 +790,7 @@ sap.ui.define([
 				editMode: {parts: [{path: "$condition>operator"}, {path: "$condition>invalid"}], formatter: _getEditModeFromOperator},
 				multipleLines: false,
 				width: "100%",
-				fieldHelp: (aFieldHelpSupportedOperators.length === 0 || aFieldHelpSupportedOperators.indexOf(oCondition.operator) >= 0) ? this.getFieldHelp() : null
+				fieldHelp: _operatorSupportsValueHelp(oCondition.operator) ? this.getFieldHelp() : null
 				//display: should always be FieldDisplay.Value
 			});
 		}
