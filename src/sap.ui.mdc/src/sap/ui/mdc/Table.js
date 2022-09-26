@@ -1048,12 +1048,7 @@ sap.ui.define([
 	};
 
 	function updateP13nSettings(oTable) {
-		if (oTable._oToolbar) {
-			oTable._oToolbar.destroyEnd();
-			oTable._getP13nButtons().forEach(function(oButton) {
-				oTable._oToolbar.addEnd(oButton);
-			});
-		}
+		oTable._updateP13nButton();
 
 		if (oTable._oTable) {
 			var oDnDColumns = oTable._oTable.getDragDropConfig()[0];
@@ -1525,6 +1520,27 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Controls the visibility of the settings button.
+	 *
+	 * <b>Note:</b>
+	 * <ul>
+	 * <li>This setting only takes effect when the given <code>p13nMode</code> makes the button visible.</li>
+	 * <li>Hiding the button also removes the option for the user to open the personalization dialog. This can lead to situations
+	 * in which the user can't adjust certain settings although it is required, for example, show some columns again when all columns are hidden.</li>
+	 * </ul>
+	 *
+	 * @param {boolean} bShowP13nButton
+	 * @@experimental This setting is only temporary and will be replaced with an alternative API in future releases.
+	 * @since 1.108
+	 * @private
+	 * @ui5-restricted sap.fe
+	 */
+	Table.prototype._setShowP13nButton = function(bShowP13nButton) {
+		this._bHideP13nButton = !bShowP13nButton;
+		this._updateP13nButton();
+	};
+
 	Table.prototype._createToolbar = function() {
 		if (this.isDestroyStarted() || this.isDestroyed()) {
 			return;
@@ -1545,7 +1561,7 @@ sap.ui.define([
 				],
 				end: [
 					this._getPasteButton(),
-					this._getP13nButtons(),
+					this._getP13nButton(),
 					this._getExportButton()
 				]
 			});
@@ -1730,17 +1746,22 @@ sap.ui.define([
 		return aP13nModes;
 	};
 
-	Table.prototype._getP13nButtons = function() {
-		var aP13nMode = this.getActiveP13nModes();
-		var aButtons = [];
-
-		// Note: 'Aggregate' does not have a p13n UI, if only 'Aggregate' is enabled no settings icon is necessary
-		var bAggregateP13nOnly = aP13nMode.length === 1 && aP13nMode[0] === "Aggregate";
-		if (aP13nMode.length > 0 && !bAggregateP13nOnly) {
-			aButtons.push(TableSettings.createSettingsButton(this.getId(), [onShowSettingsDialog, this]));
+	Table.prototype._getP13nButton = function() {
+		if (!this._oP13nButton) {
+			this._oP13nButton = TableSettings.createSettingsButton(this.getId(), [onShowSettingsDialog, this]);
 		}
+		this._updateP13nButton();
+		return this._oP13nButton;
+	};
 
-		return aButtons;
+	Table.prototype._updateP13nButton = function() {
+		if (this._oP13nButton) {
+			var aP13nMode = this.getActiveP13nModes();
+
+			// Note: 'Aggregate' does not have a p13n UI, if only 'Aggregate' is enabled no settings icon is necessary
+			var bAggregateP13nOnly = aP13nMode.length === 1 && aP13nMode[0] === "Aggregate";
+			this._oP13nButton.setVisible(aP13nMode.length > 0 && !bAggregateP13nOnly && !this._bHideP13nButton);
+		}
 	};
 
 	Table.prototype._getPasteButton = function() {
@@ -1927,9 +1948,8 @@ sap.ui.define([
 
 		if ((oEvent.metaKey || oEvent.ctrlKey) && oEvent.which === KeyCodes.COMMA) {
 			// CTRL (or Cmd) + COMMA key combination to open the table personalisation dialog
-			var oSettingsBtn =  Core.byId(this.getId() + "-settings");
-			if (oSettingsBtn && oSettingsBtn.getEnabled() && oSettingsBtn.getVisible()) {
-				oSettingsBtn.firePress();
+			if (this._oP13nButton && this._oP13nButton.getVisible()) {
+				this._oP13nButton.firePress();
 
 				// Mark the event to ensure that parent handlers (e.g. FLP) can skip their processing if needed. Also prevent potential browser defaults
 				// (e.g. Cmd+, opens browser settings on Mac).
@@ -2820,6 +2840,7 @@ sap.ui.define([
 		this._oTableReady = null;
 		this._oFullInitialize = null;
 		this._oPasteButton = null;
+		this._oP13nButton = null;
 
 		if (this._oFilterInfoBarInvisibleText) {
 			this._oFilterInfoBarInvisibleText.destroy();
