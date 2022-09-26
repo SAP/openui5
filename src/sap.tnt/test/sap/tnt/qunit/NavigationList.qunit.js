@@ -528,6 +528,24 @@ sap.ui.define([
 		spy.restore();
 	});
 
+	QUnit.test('Anchors inside NavigationListItems should have correct roles and aria-role', function (assert) {
+		var groupItem = this.navigationList.getItems()[0];
+
+		var groupItemAnchorElement = groupItem.getDomRef().getElementsByTagName("a")[0];
+		assert.equal(groupItemAnchorElement.getAttribute("role"), 'link', "The anchor is with correct role");
+
+		var secondLevelItemAnchorElement = groupItem.getDomRef().getElementsByTagName("a")[1];
+		assert.equal(secondLevelItemAnchorElement.getAttribute("role"), 'link', "The anchor is with correct role");
+
+		this.navigationList.setExpanded(false);
+		Core.applyChanges();
+
+		groupItem = this.navigationList.getItems()[0];
+		groupItemAnchorElement = groupItem.getDomRef().getElementsByTagName("a")[0];
+		assert.equal(groupItemAnchorElement.getAttribute("role"), 'link', "The anchor is with correct role");
+		assert.ok(groupItemAnchorElement.getAttribute("aria-hidden"), "The anchor is with correct value of aria-hidden attribute");
+	});
+
 	QUnit.module('SelectedItem association', {
 		beforeEach: function () {
 			this.navigationList = getNavigationList();
