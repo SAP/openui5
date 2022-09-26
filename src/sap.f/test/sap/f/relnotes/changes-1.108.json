@@ -1,0 +1,49 @@
+{
+  "1.108.0": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "b108d6b6b530eec11146786be4d8092c341526bd",
+        "type": "FEATURE",
+        "text": " sap.f.SidePanel: new control (initial implementation)"
+      },
+      {
+        "id": "af275cdef3b59b580c3b005da15308a3c65754ba",
+        "type": "FIX",
+        "text": " Integration Cards: Align bar charts in list card"
+      },
+      {
+        "id": "a086896d58ec9dc2d16b24076931370f978159a1",
+        "type": "FIX",
+        "text": " Integration Cards: Page number is reset after data refresh or filtering"
+      },
+      {
+        "id": "73828b320352e3c909546a8e798cf9e733a9c20a",
+        "type": "FIX",
+        "text": " Integration cards: Footer in Object card is now correctly aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280170159"
+          }
+        ]
+      },
+      {
+        "id": "932010d607bfcf2106d2316e0057a42a5c14087e",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Added new \"visible\" property to the card header icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280138542"
+          }
+        ]
+      },
+      {
+        "id": "4b60057653c83229bb3af18437947025d44bba83",
+        "type": "FEATURE",
+        "text": " Integration Cards: Header can be hidden"
+      }
+    ]
+  }
+}

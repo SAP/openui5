@@ -1,0 +1,62 @@
+{
+  "1.108.0": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "6c8f12d81441271b40db09bfd6494acc2f5cee31",
+        "type": "FIX",
+        "text": " FilterField: wrong anouncement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270097410"
+          }
+        ]
+      },
+      {
+        "id": "375d8cf9d00fc10dfc0445c7c0b14a13ecd8d752",
+        "type": "FIX",
+        "text": " Field: error after entering number",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280171152"
+          }
+        ]
+      },
+      {
+        "id": "b10a6f169945d6f69eb1c25754bd2934d93af6cd",
+        "type": "FIX",
+        "text": " Field: update BindingContext on ValueHelp on focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280170107"
+          }
+        ]
+      },
+      {
+        "id": "2ec8ce340f52ce146a800292cf9e0d013bb29e57",
+        "type": "FIX",
+        "text": " Field: liveChange not fired after selection from help",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280171252"
+          }
+        ]
+      },
+      {
+        "id": "9b54cee4efb88ee9b35b35e0c13922322ec886fe",
+        "type": "FIX",
+        "text": " Field: no Change event after value help",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280144406"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "1.108.0": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "8a45b8962080a42f978ab68f26d02a69fadbda1e",
+        "type": "FIX",
+        "text": " Demo Kit: Steps samples loading fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280161513"
+          }
+        ]
+      }
+    ]
+  }
+}

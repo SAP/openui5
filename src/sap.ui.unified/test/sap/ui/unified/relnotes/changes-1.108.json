@@ -1,0 +1,29 @@
+{
+  "1.108.0": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "a9e590b668c9dfd51c3ab7eb0bcf7b1fcb52e9b0",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust day of the week announcement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004825022022"
+          }
+        ]
+      },
+      {
+        "id": "45902b2e165ee593c51c8ab7d38c03ef5c052a7c",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: adjust week selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280164558"
+          }
+        ]
+      }
+    ]
+  }
+}

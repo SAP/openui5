@@ -1,0 +1,12 @@
+{
+  "1.108.0": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "f2fd96b44b2f563073d2449471754186559da5bc",
+        "type": "FEATURE",
+        "text": " sap.ui.fl: enable condensing for ObjectStorageConnector"
+      }
+    ]
+  }
+}
