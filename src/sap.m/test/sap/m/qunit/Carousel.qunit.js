@@ -1148,8 +1148,7 @@ sap.ui.define([
 
 	QUnit.test("TAB", function (assert) {
 		// Arrange
-		var oImage = this.oCarousel.getPages()[5],
-			iActivePage = 5;
+		var oImage = this.oCarousel.getPages()[5];
 
 		this.oCarousel.setActivePage(oImage);
 
@@ -1157,7 +1156,7 @@ sap.ui.define([
 		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.TAB);
 
 		// Assert
-		assert.strictEqual(this.oCarousel._lastActivePageNumber, iActivePage, "Last active page index should be preserved.");
+		assert.strictEqual(this.oCarousel._bDirection, true, "Focus direction should be set to 'true'.");
 	});
 
 	QUnit.test("F6", function (assert) {
