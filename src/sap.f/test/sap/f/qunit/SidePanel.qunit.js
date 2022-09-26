@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/VBox",
 	"sap/f/SidePanel",
-	"sap/f/SidePanelActionItem",
+	"sap/f/SidePanelItem",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function(
@@ -22,13 +22,13 @@ sap.ui.define([
 	Text,
 	VBox,
 	SidePanel,
-	SidePanelActionItem,
+	SidePanelItem,
 	KeyCodes,
 	oCore
 ) {
 	"use strict";
 
-	var aActionItems = [
+	var aItems = [
 		{
 			icon: "sap-icon://physical-activity",
 			text: "Run"
@@ -109,19 +109,19 @@ sap.ui.define([
 	// Helper Functions
 
 	// Adds specified amount of action items to the side panel
-	function addActionItems(oSidePanel, iCount) {
+	function addItems(oSidePanel, iCount) {
 		var iAdded = 0;
 
 		if (!iCount) {
-			iCount = aActionItems.length;
+			iCount = aItems.length;
 		}
 		do {
-			oSidePanel.addActionItem(new SidePanelActionItem({
-				text: aActionItems[iAdded].text,
-				icon: aActionItems[iAdded].icon
+			oSidePanel.addItem(new SidePanelItem({
+				text: aItems[iAdded].text,
+				icon: aItems[iAdded].icon
 			}));
 			iAdded++;
-		} while (iAdded < iCount && iAdded < aActionItems.length);
+		} while (iAdded < iCount && iAdded < aItems.length);
 	}
 
 	// Tests
@@ -129,7 +129,7 @@ sap.ui.define([
 	QUnit.module("Public API", {
 		beforeEach : function() {
 			this.oSP = new SidePanel();
-			addActionItems(this.oSP, 3);
+			addItems(this.oSP, 3);
 			this.oSP.placeAt("test-parent");
 			oCore.applyChanges();
 			this.oSPDomRef = this.oSP.getDomRef();
@@ -137,28 +137,6 @@ sap.ui.define([
 		afterEach : function() {
 			this.oSP.destroy();
 		}
-	});
-
-	QUnit.test("sideContentExpanded", function (assert) {
-		// assert
-		assert.notOk(this.oSPDomRef.querySelector(".sapFSPSideContent"), "Side content is not expanded initially");
-		assert.notOk(this.oSPDomRef.classList.contains("sapFSPSideContentExpanded"), "CSS class for side content expansion is not added");
-
-		// act
-		this.oSP.setSideContentExpanded(true);
-		oCore.applyChanges();
-
-		// assert
-		assert.ok(this.oSPDomRef.querySelector(".sapFSPSideContent"), "Side content is expanded");
-		assert.ok(this.oSPDomRef.classList.contains("sapFSPSideContentExpanded"), "CSS class for side content expansion is added");
-
-		// act
-		this.oSP.setSideContentExpanded(false);
-		oCore.applyChanges();
-
-		// assert
-		assert.notOk(this.oSPDomRef.querySelector(".sapFSPSideContent"), "Side content is not expanded");
-		assert.notOk(this.oSP.getDomRef().classList.contains("sapFSPSideContentExpanded"), "CSS class for side content expansion is not added");
 	});
 
 	QUnit.test("actionBarExpanded", function (assert) {
@@ -203,39 +181,39 @@ sap.ui.define([
 
 		// act
 		this.oSP.setActionBarExpanded(false);
-		this.oSP.setSideContentExpanded(true);
+		this.oSP._setSideContentExpanded(true);
 		oCore.applyChanges();
 
 		// assert
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPSideInner").clientWidth, 400, "The width of expanded side content is proper");
 	});
 
-	QUnit.test("selectActionItem", function (assert) {
-		var	oSelectedActionItem = this.oSP.getActionItems()[1], // action item with index '1' will be selected later
+	QUnit.test("setSelectedItem", function (assert) {
+		var	oSelectedItem = this.oSP.getItems()[1], // action item with index '1' will be selected later
 			sSideContentHeaderId = this.oSP.getId() + "-header";
 
 		// assert
-		assert.notOk(this.oSP.getSelectedActionItem(), "There is no selected action item");
-		assert.notOk(this.oSP.getSideContentExpanded(), "The side content is not expanded");
+		assert.notOk(this.oSP.getSelectedItem(), "There is no selected action item");
+		assert.notOk(this.oSP._getSideContentExpanded(), "The side content is not expanded");
 		assert.notOk(document.getElementById(sSideContentHeaderId), "Side content title doesn't exists");
 
 		// act - select action item
-		this.oSP.selectActionItem(oSelectedActionItem.getId());
+		this.oSP.setSelectedItem(oSelectedItem.getId());
 		oCore.applyChanges();
 
 		// assert
-		assert.strictEqual(this.oSP.getSelectedActionItem(), oSelectedActionItem.getId(), "Proper action item is selected");
-		assert.ok(this.oSP.getSideContentExpanded(), "The side content is expanded");
+		assert.strictEqual(this.oSP.getSelectedItem(), oSelectedItem.getId(), "Proper action item is selected");
+		assert.ok(this.oSP._getSideContentExpanded(), "The side content is expanded");
 		assert.ok(document.getElementById(sSideContentHeaderId), "Side content title exists");
-		assert.strictEqual(document.getElementById(sSideContentHeaderId).querySelector(".sapMTitle > span").innerText, oSelectedActionItem.getText(), "Proper title is placed in the header side content");
+		assert.strictEqual(document.getElementById(sSideContentHeaderId).querySelector(".sapMTitle > span").innerText, oSelectedItem.getText(), "Proper title is placed in the header side content");
 
 		// act - deselect action item
-		this.oSP.selectActionItem();
+		this.oSP.setSelectedItem();
 		oCore.applyChanges();
 
 		// assert
-		assert.notOk(this.oSP.getSelectedActionItem(), "There is no selected action item");
-		assert.notOk(this.oSP.getSideContentExpanded(), "The side content is not expanded");
+		assert.notOk(this.oSP.getSelectedItem(), "There is no selected action item");
+		assert.notOk(this.oSP._getSideContentExpanded(), "The side content is not expanded");
 		assert.notOk(document.getElementById(sSideContentHeaderId), "Side content title doesn't exists");
 	});
 
@@ -254,7 +232,7 @@ sap.ui.define([
 			this.mEventParameters = [];
 			this.bPreventExpand = false;
 			this.bPreventCollapse = false;
-			addActionItems(this.oSP, 3);
+			addItems(this.oSP, 3);
 			this.oSP.placeAt("test-parent");
 			oCore.applyChanges();
 			this.oSPDomRef = this.oSP.getDomRef();
@@ -283,50 +261,50 @@ sap.ui.define([
 	});
 
 	QUnit.test("toggle event firing without preventing", function (assert) {
-		var	oSelectedActionItem = this.oSP.getActionItems()[1]; // action item with index '1' will be selected later
+		var	oSelectedItem = this.oSP.getItems()[1]; // action item with index '1' will be selected later
 
 		// act - select action item
-		this.oSP.selectActionItem(oSelectedActionItem.getId());
+		this.oSP.setSelectedItem(oSelectedItem.getId());
 		oCore.applyChanges();
 
 		// assert
-		assert.strictEqual(this.oSP.getSelectedActionItem(), oSelectedActionItem.getId(), "Proper action item is selected");
-		assert.ok(this.oSP.getSideContentExpanded(), "The side content is expanded");
+		assert.strictEqual(this.oSP.getSelectedItem(), oSelectedItem.getId(), "Proper action item is selected");
+		assert.ok(this.oSP._getSideContentExpanded(), "The side content is expanded");
 
 		// act - deselect action item
-		this.oSP.selectActionItem();
+		this.oSP.setSelectedItem();
 		oCore.applyChanges();
 
 		// assert
-		assert.notOk(this.oSP.getSelectedActionItem(), "There is no action item selected");
-		assert.notOk(this.oSP.getSideContentExpanded(), "The side content is collapsed");
+		assert.notOk(this.oSP.getSelectedItem(), "There is no action item selected");
+		assert.notOk(this.oSP._getSideContentExpanded(), "The side content is collapsed");
 	});
 
 	QUnit.test("toggle event firing with preventing", function (assert) {
-		var	oSelectedActionItem = this.oSP.getActionItems()[1]; // action item with index '1' will be selected later
+		var	oSelectedItem = this.oSP.getItems()[1]; // action item with index '1' will be selected later
 
 		// act - select action item and prevent the event
 		this.bPreventExpand = true;
-		this.oSP.selectActionItem(oSelectedActionItem.getId());
+		this.oSP.setSelectedItem(oSelectedItem.getId());
 		oCore.applyChanges();
 
 		// assert
-		assert.strictEqual(this.oSP.getSelectedActionItem(), oSelectedActionItem.getId(), "Proper action item is selected");
-		assert.notOk(this.oSP.getSideContentExpanded(), "The side content is not expanded because of prevention");
+		assert.strictEqual(this.oSP.getSelectedItem(), oSelectedItem.getId(), "Proper action item is selected");
+		assert.notOk(this.oSP._getSideContentExpanded(), "The side content is not expanded because of prevention");
 
 		// act - select the same action item now without preventing the event
-		this.oSP.selectActionItem();
-		this.oSP.selectActionItem(oSelectedActionItem.getId());
+		this.oSP.setSelectedItem();
+		this.oSP.setSelectedItem(oSelectedItem.getId());
 		oCore.applyChanges();
 
 		// act - deselect action item and prevent the event
 		this.bPreventCollapse = true;
-		this.oSP.selectActionItem();
+		this.oSP.setSelectedItem();
 		oCore.applyChanges();
 
 		// assert
-		assert.strictEqual(this.oSP.getSelectedActionItem(), oSelectedActionItem.getId(), "Selected action item is not deselected because of prevention");
-		assert.ok(this.oSP.getSideContentExpanded(), "The side content is not collapsed because of prevention");
+		assert.strictEqual(this.oSP.getSelectedItem(), oSelectedItem.getId(), "Selected action item is not deselected because of prevention");
+		assert.ok(this.oSP._getSideContentExpanded(), "The side content is not collapsed because of prevention");
 	});
 
 	QUnit.module("Rendering", {
@@ -352,16 +330,16 @@ sap.ui.define([
 			oExpandCollapseButton = this.oSP.getAggregation("_arrowButton"),
 			sSideContentHeaderId = this.oSP.getId() + "-header",
 			oCloseButton,
-			oSelectedActionItem;
+			oSelectedItem;
 
-		addActionItems(this.oSP, 1);
+		addItems(this.oSP, 1);
 		this.oSP.placeAt("test-parent");
 		oCore.applyChanges();
 
-		oSelectedActionItem = this.oSP.getActionItems()[0]; // first/only action item
+		oSelectedItem = this.oSP.getItems()[0]; // first/only action item
 
 		// Assert
-		assert.notOk(oSPDomRef.querySelector(".sapFSPActionItem"), "There is no action item rendered");
+		assert.notOk(oSPDomRef.querySelector(".sapFSPItem"), "There is no action item rendered");
 
 		// Act
 		oExpandCollapseButton.firePress();
@@ -369,9 +347,9 @@ sap.ui.define([
 		oCloseButton = this.oSP.getAggregation("_closeButton");
 
 		// Assert
-		assert.ok(this.oSP.getSideContentExpanded(), "Pressing the Expand/Collapse button expands side content");
+		assert.ok(this.oSP._getSideContentExpanded(), "Pressing the Expand/Collapse button expands side content");
 		assert.ok(document.getElementById(sSideContentHeaderId), "Side content title exists");
-		assert.strictEqual(document.getElementById(sSideContentHeaderId).querySelector(".sapMTitle > span").innerText, oSelectedActionItem.getText(), "Proper title is placed in the header side content");
+		assert.strictEqual(document.getElementById(sSideContentHeaderId).querySelector(".sapMTitle > span").innerText, oSelectedItem.getText(), "Proper title is placed in the header side content");
 		assert.strictEqual(window.getComputedStyle(oExpandCollapseButton.getDomRef())["display"], "none", "Expand/Collapse button is not visible");
 		assert.strictEqual(oCloseButton.getIcon(), "sap-icon://navigation-right-arrow", "Close button have the same icon as Expand/Collapse button should have");
 	});
@@ -383,7 +361,7 @@ sap.ui.define([
 			oSPDomRef,
 			iOverflowMenuItems;
 
-		addActionItems(this.oSP);
+		addItems(this.oSP);
 		this.oSP.placeAt("test-parent");
 		oCore.applyChanges();
 		oSPDomRef = this.oSP.getDomRef();
@@ -399,7 +377,7 @@ sap.ui.define([
 		iOverflowMenuItems = oOverflowMenu.getItems().length;
 
 		// Get visible action items
-		oSPDomRef.querySelectorAll(".sapFSPActionItem:not(.sapFSPOverflowActionItem)").forEach(function(item) {
+		oSPDomRef.querySelectorAll(".sapFSPItem:not(.sapFSPOverflowItem)").forEach(function(item) {
 			if (item.style.display !== 'none') {
 				iVisibleItems++;
 			}
@@ -408,13 +386,13 @@ sap.ui.define([
 		// Assert
 		assert.ok(oOverflowItemDomRef, "Overflow item exists");
 		assert.strictEqual(window.getComputedStyle(oOverflowItemDomRef)["visibility"], "visible", "Overflow item is visible");
-		assert.strictEqual(this.oSP.getActionItems().length - iVisibleItems, iOverflowMenuItems, "All invisible action items are added as overflow menu items");
+		assert.strictEqual(this.oSP.getItems().length - iVisibleItems, iOverflowMenuItems, "All invisible action items are added as overflow menu items");
 	});
 
 	QUnit.module("Accessibility", {
 		beforeEach : function() {
 			this.oSP = new SidePanel();
-			addActionItems(this.oSP);
+			addItems(this.oSP);
 			this.oSP.placeAt("test-parent");
 			oCore.applyChanges();
 			this.oSPDomRef = this.oSP.getDomRef();
@@ -430,7 +408,7 @@ sap.ui.define([
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPSide").getAttribute("data-sap-ui-fastnavgroup"), "true", "Side panel is included in fast navigation");
 
 		// Act - open side content
-		this.oSP.selectActionItem(this.oSP.getActionItems()[1].getId());
+		this.oSP.setSelectedItem(this.oSP.getItems()[1].getId());
 		oCore.applyChanges();
 
 		// Assert
@@ -444,11 +422,11 @@ sap.ui.define([
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPSide").getAttribute("role"), "region", "Side panel has proper role");
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPActionBarWrapper").getAttribute("role"), "toolbar", "Action bar wrapper has proper role");
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPActionBar").getAttribute("role"), "listbox", "Action bar has proper role");
-		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPActionItem").getAttribute("role"), "option", "Action item has proper role");
+		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPItem").getAttribute("role"), "option", "Action item has proper role");
 		assert.strictEqual(oOverflowItemDomRef.getAttribute("role"), "button", "Overflow button has proper role");
 
 		// Act - open side content
-		this.oSP.selectActionItem(this.oSP.getActionItems()[1].getId());
+		this.oSP.setSelectedItem(this.oSP.getItems()[1].getId());
 		oCore.applyChanges();
 
 		// Assert
@@ -458,7 +436,7 @@ sap.ui.define([
 	QUnit.test("ARIA attributes", function (assert) {
 		var oResourceBundle = oCore.getLibraryResourceBundle("sap.f"),
 			oOverflowItemDomRef = this.oSP.getAggregation("_overflowItem").getDomRef(),
-			aActionItems = this.oSP.getActionItems(),
+			aItems = this.oSP.getItems(),
 			sSPId = this.oSP.getId();
 
 		// Assert
@@ -474,26 +452,26 @@ sap.ui.define([
 		assert.strictEqual(this.oSPDomRef.querySelector("#" + sSPId + "-expandCollapseButton").getAttribute("aria-expanded"), "true", "Expand/Collapse button has proper aria-expanded attribute when the action bar is expanded");
 
 		// Act - open side content
-		this.oSP.selectActionItem(aActionItems[1].getId());
+		this.oSP.setSelectedItem(aItems[1].getId());
 		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPSide").getAttribute("aria-label"), oResourceBundle.getText("SIDEPANEL_DEFAULT_ARIA_LABEL"), "Side panel has default aria-label");
-		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPSideContent").getAttribute("aria-label"), aActionItems[1].getText(), "Side content has default aria-label");
+		assert.strictEqual(this.oSPDomRef.querySelector(".sapFSPSideContent").getAttribute("aria-label"), aItems[1].getText(), "Side content has default aria-label");
 		assert.strictEqual(oOverflowItemDomRef.getAttribute("aria-haspopup"), "menu", "Overflow button has proper aria-haspopup attribute");
 		assert.strictEqual(oOverflowItemDomRef.getAttribute("aria-expanded"), "false", "Overflow button has proper aria-expanded attribute when overflow menu is closed");
 	});
 
 	QUnit.test("Action items title attributes", function (assert) {
 		// Assert
-		assert.strictEqual(this.oSPDomRef.querySelectorAll(".sapFSPActionItem")[0].getAttribute("title"), this.oSP.getActionItems()[0].getText(), "When action bar is not expanded, action items should have title");
+		assert.strictEqual(this.oSPDomRef.querySelectorAll(".sapFSPItem")[0].getAttribute("title"), this.oSP.getItems()[0].getText(), "When action bar is not expanded, action items should have title");
 
 		// Act - expand action bar
 		this.oSP.setActionBarExpanded(true);
 		oCore.applyChanges();
 
 		// Assert
-		assert.notOk(this.oSPDomRef.querySelectorAll(".sapFSPActionItem")[0].getAttribute("title"), "When action bar is expanded, action items shouldn't have title");
+		assert.notOk(this.oSPDomRef.querySelectorAll(".sapFSPItem")[0].getAttribute("title"), "When action bar is expanded, action items shouldn't have title");
 	});
 
 });

@@ -8,5 +8,6 @@ module.exports = [
 	"GridListItem.spec.js",
 	"GridListVisualTests.spec.js",
 	"FlexibleColumnLayout.spec.js",
-	"ShellBarVT.spec.js"
+	"ShellBarVT.spec.js",
+	"SidePanelVisual.spec.js"
 ];

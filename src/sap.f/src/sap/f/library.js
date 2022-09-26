@@ -119,7 +119,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.semantic.ShareInJamAction",
 			"sap.f.semantic.TitleMainAction",
 			"sap.f.SearchManager",
-			"sap.f.SidePanelActionItem"
+			"sap.f.SidePanelItem"
 		],
 		extensions: {
 			flChangeHandlers: {
