@@ -282,6 +282,17 @@ sap.ui.define([
 		oSemanticPage.destroy();
 	});
 
+	QUnit.test("destroyed semantic page does not recreate the page", function (assert) {
+		var oConfig = {
+			title: "This is a title",
+			showNavButton: true
+		};
+		var oSemanticPage = createSemanticPageFactory(null, oConfig);
+
+		oSemanticPage.destroy();
+		assert.strictEqual(oSemanticPage._getPage(), null, "destroyed semantic page does not recreate the page");
+	});
+
 	QUnit.module("Aggregations", {
 		beforeEach: function () {
 

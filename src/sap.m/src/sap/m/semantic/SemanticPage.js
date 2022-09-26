@@ -734,7 +734,7 @@ function(
 	SemanticPage.prototype._getPage = function () {
 
 		var oPage = this.getAggregation("_page");
-		if (!oPage) {
+		if (!oPage && !this._bIsBeingDestroyed) {
 			this.setAggregation("_page", new Page(this.getId() + "-page"));
 			oPage = this.getAggregation("_page");
 		}
