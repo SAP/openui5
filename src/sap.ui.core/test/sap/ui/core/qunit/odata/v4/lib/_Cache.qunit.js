@@ -3950,6 +3950,30 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("_Cache#refreshSingle: No key predicate known", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Employees('31')");
+
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
+			// Note: CollectionCache#fetchValue may be async, $cached just sends no new request!
+			.returns(SyncPromise.resolve(Promise.resolve([{/* "No key predicate known" here */}])));
+		this.mock(_Helper).expects("aggregateExpandSelect").never();
+		this.mock(oCache).expects("fetchTypes").never();
+		this.mock(this.oRequestor).expects("buildQueryString").never();
+		this.mock(this.oRequestor).expects("request").never();
+
+		// code under test
+		return oCache.refreshSingle({/*oGroupLock*/}, "EMPLOYEE_2_EQUIPMENTS", 0, "($uid=id-1-23)")
+			.then(function () {
+				assert.ok(false, "Unexpected success");
+			}, function (oError) {
+				assert.strictEqual(oError.message, "No key predicate known");
+			});
+	});
+
+	//*********************************************************************************************
 [{
 	mBindingQueryOptions : {
 		$apply : "A.P.P.L.E.",
@@ -4319,6 +4343,32 @@ sap.ui.define([
 			}, function (oError) {
 				assert.strictEqual(oError.message,
 					"Unexpected server response, more than one entity returned.");
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#refreshSingleWithRemove: No key predicate known", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Employees('31')");
+
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
+			// Note: CollectionCache#fetchValue may be async, $cached just sends no new request!
+			.returns(SyncPromise.resolve(Promise.resolve([{/* "No key predicate known" here */}])));
+		this.mock(oCache).expects("fetchTypes").withExactArgs()
+			.returns(SyncPromise.resolve());
+		this.mock(_Helper).expects("getKeyFilter").never();
+		this.mock(_Helper).expects("aggregateExpandSelect").never();
+		this.mock(this.oRequestor).expects("buildQueryString").never();
+		this.mock(this.oRequestor).expects("request").never();
+
+		// code under test
+		return oCache.refreshSingleWithRemove({/*oGroupLock*/}, "EMPLOYEE_2_EQUIPMENTS", 0, "~")
+			.then(function () {
+				assert.ok(false, "Unexpected success");
+			}, function (oError) {
+				assert.strictEqual(oError.message, "No key predicate known");
 			});
 	});
 
