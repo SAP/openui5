@@ -1,0 +1,38 @@
+.sapMBtn .sapMBtnAdditionalTextContent .sapMBtnText {
+    flex-direction: column;
+    font-size: 0.875rem;
+}
+
+.sapMBtnAdditionalTextContent .sapMBtnContentAddText:not(.sapMBtnActive) {
+    width: 100%;
+    float: left;
+    color: @sapUiContentLabelColor;
+    font-size: @sapMFontSmallSize;
+}
+
+ .sapMBtn:hover > .sapMBtnAdditionalTextContent.sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) .sapMBtnContentAddText {
+    color: @sapUiContentLabelColor;
+}
+
+.sapMBtnAdditionalTextContent .sapMBtnContent {
+    line-height: 1.125rem;
+}
+
+:not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive .sapMBtnContentAddText {
+	background-image: none;
+	background-color: @sapUiButtonActiveBackground;
+	border-color:     @sapUiButtonActiveBorderColor;
+	color:            @sapUiButtonActiveTextColor;
+	text-shadow:      none;
+}
+
+.sapMBtnAdditionalTextContent .sapMBtnContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: normal;
+}
+
+.sapUiSizeCompact .sapMBtnAdditionalTextContent .sapMBtnContent {
+    line-height: 0.8125rem;
+}

@@ -698,6 +698,19 @@
 		text: "עברית 123 (now English in the brackets 456)"
 	});
 
+	var oButtonWithTwoYearsText = new sap.m.AdditionalTextButton("myBottonWithTwoYears",{
+		type: sap.m.ButtonType.Transparent,
+		text : "1424 AH – 1431 AH",
+		additionalText: "2003 – 2010"
+	});
+
+
+	var oButtonWithTwoMonthsText = new sap.m.AdditionalTextButton("myBottonWithTwoMoths",{
+		type: sap.m.ButtonType.Transparent,
+		text : "Jumada I",
+		additionalText: "Dec – Jan"
+	});
+
 	oPage1.addContent(oBar2)
 	      .addContent(new sap.ui.core.HTML("myEmptyLine1", {content: "<br>"}))
 				.addContent(new sap.ui.core.HTML("myHtmlBarDefault", {content: ""}))
@@ -815,7 +828,11 @@
 				.addContent(new sap.ui.core.HTML("myHtmloButtonBdi", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
 				.addContent(oButtonBdi)
 				.addContent(new sap.ui.core.HTML("myHtmloButtonBdi2", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
-				.addContent(oButtonBdi2);
+				.addContent(oButtonBdi2)
+				.addContent(new sap.ui.core.HTML("myHtmloButtonWithSecondTextYears", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
+				.addContent(oButtonWithTwoYearsText)
+				.addContent(new sap.ui.core.HTML("myHtmloButtonWithSecondTextMonths", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
+				.addContent(oButtonWithTwoMonthsText);
 
 	oApp.addPage(oPage1);
 	oApp.placeAt("body");

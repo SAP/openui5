@@ -71,7 +71,6 @@ sap.ui.define([
 		// button container style class
 		if (!oButton._isUnstyled()) {
 			oRm.class("sapMBtn");
-
 			// extend  minimum button size if icon is set without text for button types back and up
 			if ((sType === ButtonType.Back || sType === ButtonType.Up) && oButton._getAppliedIcon() && !sText) {
 				oRm.class("sapMBtnBack");
@@ -193,28 +192,7 @@ sap.ui.define([
 
 		// write button text
 		if (sText) {
-			oRm.openStart("span", sButtonId + "-content");
-			oRm.class("sapMBtnContent");
-			// check if textDirection property is not set to default "Inherit" and add "dir" attribute
-			if (sTextDir !== TextDirection.Inherit) {
-				oRm.attr("dir", sTextDir.toLowerCase());
-			}
-
-			if (oButton.getProperty("highlightAccKeysRef")) {
-				oRm.class(AccessKeysEnablement.CSS_CLASS);
-			}
-
-			oRm.openEnd();
-
-			if (bRenderBDI) {
-				oRm.openStart("bdi", sButtonId + "-BDI-content");
-				oRm.openEnd();
-			}
-			oRm.text(sText);
-			if (bRenderBDI) {
-				oRm.close("bdi");
-			}
-			oRm.close("span");
+			this.writeButtonText(oRm, oButton, sTextDir, bRenderBDI);
 		}
 
 		// write icon
@@ -283,6 +261,31 @@ sap.ui.define([
 	 */
 	ButtonRenderer.writeInternalIconPoolHtml = function(oRm, oButton, sURI) {
 		oRm.renderControl(oButton._getInternalIconBtn((oButton.getId() + "-iconBtn"), sURI));
+	};
+
+	ButtonRenderer.writeButtonText = function(oRm, oButton, sTextDir, bRenderBDI){
+		oRm.openStart("span", oButton.getId() + "-content");
+		oRm.class("sapMBtnContent");
+		// check if textDirection property is not set to default "Inherit" and add "dir" attribute
+		if (sTextDir !== TextDirection.Inherit) {
+			oRm.attr("dir", sTextDir.toLowerCase());
+		}
+
+		if (oButton.getProperty("highlightAccKeysRef")) {
+			oRm.class(AccessKeysEnablement.CSS_CLASS);
+		}
+
+		oRm.openEnd();
+
+		if (bRenderBDI) {
+			oRm.openStart("bdi", oButton.getId() + "-BDI-content");
+			oRm.openEnd();
+		}
+		oRm.text(oButton.getText());
+		if (bRenderBDI) {
+			oRm.close("bdi");
+		}
+		oRm.close("span");
 	};
 
 	/**
