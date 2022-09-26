@@ -188,7 +188,7 @@
 
 				var fnApplyConfig = function (evt) {
 					var lang = evt.getParameters().id.split("button-")[1];
-					hyph.initialize(lang).then(function (lang) {
+					hyph.initialize(lang).then(function () {
 						var sNewText = sap.ui.getCore().byId("inpChTxt-" + lang).getValue();
 						sap.ui.getCore().byId("txt-" + lang).setContent("<div style='font-size: 14px; 'lang='" + lang +
 							"' class='sapUiHyphenation' >" + sNewText + "</div>");
