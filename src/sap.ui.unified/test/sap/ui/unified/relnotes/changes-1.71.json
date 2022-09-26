@@ -513,5 +513,21 @@
         ]
       }
     ]
+  },
+  "1.71.48": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "8bcddbd0538c64a1622ec59159d86db778334246",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust second calendar type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280140219"
+          }
+        ]
+      }
+    ]
   }
 }

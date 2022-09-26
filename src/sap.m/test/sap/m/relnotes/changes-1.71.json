@@ -3324,5 +3324,32 @@
         ]
       }
     ]
+  },
+  "1.71.48": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "c002157f700a987c59400749a786525add6e8749",
+        "type": "FIX",
+        "text": " P13nConditionPanel now respects upperCase format on field switch",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002594982022"
+          }
+        ]
+      },
+      {
+        "id": "22002609362dd064c3b7493cb8b5450efff7d0ac",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: No preselection by default is now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005850722022"
+          }
+        ]
+      }
+    ]
   }
 }

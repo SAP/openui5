@@ -1392,5 +1392,21 @@
         ]
       }
     ]
+  },
+  "1.71.48": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "edba06d397d5758496a844272f01e44d764a3330",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataTreeBindingFlat#_calcIndexDelta: fix index delta calculation to always return the correct binding length",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005773722022"
+          }
+        ]
+      }
+    ]
   }
 }
