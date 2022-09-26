@@ -5,6 +5,7 @@
 /*eslint max-nested-callbacks: [2, 10]*/
 
 sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/mdc/valuehelp/Dialog",
 	"sap/ui/mdc/valuehelp/base/Content",
@@ -20,6 +21,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Core"
 ], function (
+		jQuery,
 		ValueHelpDelegate,
 		Dialog,
 		Content,
@@ -304,8 +306,8 @@ sap.ui.define([
 				};
 				assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
 				var oButton = aItems[1];
-				assert.ok(oTokenizer.isA("sap.m.Tokenizer"), "Tokenizer is first HBox item");
-				assert.ok(oButton.isA("sap.m.Button"), "Button is first HBox item");
+				assert.ok(oTokenizer.isA("sap.m.MultiInput"), "MultiInput is first HBox item");
+				assert.ok(oButton.isA("sap.m.Button"), "Button is second HBox item");
 				assert.equal(oButton.getType(), mLibrary.ButtonType.Transparent, "Button type");
 				assert.equal(oButton.getIcon(), "sap-icon://decline", "Button icon");
 				assert.equal(oButton.getTooltip(), oResourceBundle.getText("valuehelp.REMOVEALLTOKEN"), "Button tooltip");
@@ -434,6 +436,10 @@ sap.ui.define([
 						convertWhitespaces: true
 					};
 					assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
+
+					// the inner input element has to been set to transparent.
+					assert.ok(oTokenizer.isA("sap.m.MultiInput"), "MultiInput is first HBox item");
+					assert.equal(jQuery(oTokenizer.getDomRef("inner")).css("opacity"), "0", "input part of multiInput is not visible");
 
 					// simulate ok-button click
 					var aButtons = oContainer.getButtons();
@@ -680,7 +686,7 @@ sap.ui.define([
 				var oTokenizer = aItems[0];
 				var aTokens = oTokenizer.getTokens();
 
-				oTokenizer.fireTokenDelete({tokens: aTokens});
+				oTokenizer.fireTokenUpdate({removedTokens: aTokens});
 				assert.equal(iSelect, 1, "select event fired");
 				assert.deepEqual(aConditions, [Condition.createItemCondition("X", "Text")], "select event conditions");
 				assert.equal(sType, SelectType.Remove, "select event type");

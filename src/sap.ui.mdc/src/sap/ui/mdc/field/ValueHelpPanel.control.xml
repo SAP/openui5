@@ -45,15 +45,19 @@
 			headerText="{parts: ['$i18n>valuehelp.TOKENIZERTITLE', '$this>/conditions'], formatter: '._formatTokenizerTitle'}">
 			<HBox fitContainer="true" width="100%">
 				<items>
-					<Tokenizer id="VHPTokenizer" class="sapMdcTokenizer" width="100%"
+					<MultiInput id="VHPTokenizer" width="100%"
 						visible="{path: '$this>/showTokenizer'}"
-						tokenDelete="_handleTokenDelete"
+						showValueHelp= "false"
+						editable= "true"
+						tokenUpdate="_handleTokenDelete"
 						tokens="{path: '$this>/conditions', filters:[{path:'isEmpty', operator:'NE', value1:true}], templateShareable: false}">
-						<Token id="VHPToken" text="{path: '$this>', type: 'sap.ui.mdc.field.ConditionType'}"/>
+						<tokens>
+							<Token id="VHPToken" text="{path: '$this>', type: 'sap.ui.mdc.field.ConditionType'}"/>
+						</tokens>
 						<layoutData>
 							<FlexItemData growFactor="1" maxWidth="calc(100% - 2rem)"/>
 						</layoutData>
-					</Tokenizer>
+					</MultiInput>
 					<Button id="removeAllBtn" press="_onRemoveAllConditions" type="Transparent" icon="sap-icon://decline" tooltip="{$i18n>valuehelp.REMOVEALLTOKEN}" class="sapUiTinyMarginBegin">
 						<layoutData>
 							<FlexItemData growFactor="0" baseSize="2rem"/>
