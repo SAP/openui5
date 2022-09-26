@@ -367,5 +367,92 @@
         ]
       }
     ]
+  },
+  "1.102.8": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "aa22f585d286e060e9119ff3a85beda18a0a6ff4",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: avoid empty rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280169612"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270130789"
+          }
+        ]
+      },
+      {
+        "id": "c8b42fe62458439a5165b7ec947d99a3f4f439be",
+        "type": "FIX",
+        "text": " core.FocusHandler/Popup: preventScroll during focus with block layer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270033712"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280107289"
+          }
+        ]
+      },
+      {
+        "id": "e81d17982283191a19b9ce90e04b5a358a896e44",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataModel: transport sap-language to value help and customizing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270119565"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280160914"
+          }
+        ]
+      },
+      {
+        "id": "32717d140acee3ee44cee1b95f7035c1c587dad0",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMetaModel#fetchCodeList: use sap-client and sap-language for code list requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280131765"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500006108912022"
+          }
+        ]
+      },
+      {
+        "id": "6a1a91d09655dec52ba7b2cce63e17eab0a05a79",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODateMetaModel#fetchCodeList: don't reuse codelist promise over models if it is not yet resolved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280171731"
+          }
+        ]
+      },
+      {
+        "id": "9fab6eda472ef9bf29eb8808d779ee8fe78b5404",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#refresh: $$sharedRequest",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004766202022"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -198,5 +198,21 @@
         ]
       }
     ]
+  },
+  "1.102.8": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "575fb9d2073128b8e64dffaeb1bfff27c6983718",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Width adjustment for not editable input controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280159028"
+          }
+        ]
+      }
+    ]
   }
 }

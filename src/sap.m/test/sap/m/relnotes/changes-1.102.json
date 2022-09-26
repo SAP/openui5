@@ -1062,5 +1062,55 @@
         ]
       }
     ]
+  },
+  "1.102.8": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "a51a63f8950a6c3fe2ffad6e562bf931023ee607",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Adjust failing QUnit test in Safari and FF",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111932"
+          }
+        ]
+      },
+      {
+        "id": "1d4136a077146068ed9ace503b354ab0ab4bcb82",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: adjust link navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006029272022"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280124825"
+          }
+        ]
+      },
+      {
+        "id": "547d9c308c98e6bc5dcc2eaf9b8bc2a0ef296dc9",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: render link properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280124643"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270015352"
+          },
+          {
+            "type": "BCP",
+            "reference": "2270035836"
+          }
+        ]
+      }
+    ]
   }
 }
