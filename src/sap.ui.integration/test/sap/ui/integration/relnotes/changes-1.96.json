@@ -132,5 +132,21 @@
         ]
       }
     ]
+  },
+  "1.96.12": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "ee03ff6903ba16b1b20187b430c74169e769f210",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Filters error message is now localized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280158254"
+          }
+        ]
+      }
+    ]
   }
 }

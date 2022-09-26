@@ -62,5 +62,21 @@
         ]
       }
     ]
+  },
+  "1.96.12": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "7675ee5cea5de7d8e86fb202c659553980a4389e",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Text is now read only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080355933"
+          }
+        ]
+      }
+    ]
   }
 }

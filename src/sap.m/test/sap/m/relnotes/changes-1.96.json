@@ -1143,5 +1143,84 @@
         ]
       }
     ]
+  },
+  "1.96.12": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "dddba2ca3aad2ac20f049a9b600bf47ad3da53ca",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Adjust failing QUnit test in Safari and FF",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111932"
+          }
+        ]
+      },
+      {
+        "id": "2ac440c07fcdce13bd74c448f5a1bc51bf0d75aa",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: scroll arrows work",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270119496"
+          }
+        ]
+      },
+      {
+        "id": "43525d07a6e0a20325cf1836973d29103bf39701",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Enhanced active title description",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280115924"
+          }
+        ]
+      },
+      {
+        "id": "85122e27ecb5093fa466840a70141408b18414ea",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: No preselection by default is now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005850722022"
+          }
+        ]
+      },
+      {
+        "id": "9664be3092c161db729c4a3aa42c08f9816e77fc",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Set min-width of content/actions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180408155"
+          },
+          {
+            "type": "BCP",
+            "reference": "2280128308"
+          }
+        ]
+      },
+      {
+        "id": "a5e4f2da426d5f434a8d0fd3c7e1ee65c6672257",
+        "type": "FIX",
+        "text": " sap.m.Input: Type-ahead with dynamic suggestions enabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005963762022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005849042022"
+          }
+        ]
+      }
+    ]
   }
 }

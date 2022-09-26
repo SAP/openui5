@@ -106,5 +106,36 @@
         ]
       }
     ]
+  },
+  "1.96.12": {
+    "date": "September 2022",
+    "notes": [
+      {
+        "id": "d7605636b401fb9290077328006d4bfe1935e2b9",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust second calendar type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280140219"
+          }
+        ]
+      },
+      {
+        "id": "d4c20880c0ac64e746e4c874291b850bcdc063bd",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: count information for text field items is conveyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280154945"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180165975"
+          }
+        ]
+      }
+    ]
   }
 }
