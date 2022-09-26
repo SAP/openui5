@@ -26,7 +26,7 @@
 					"sap/m/VBox",
 					"sap/m/MessageToast",
 					"sap/f/SidePanel",
-					"sap/f/SidePanelActionItem"
+					"sap/f/SidePanelItem"
 				], function (
 					Core,
 					Page,
@@ -39,60 +39,8 @@
 					VBox,
 					MessageToast,
 					SidePanel,
-					SidePanelActionItem
+					SidePanelItem
 				) {
-					var oSideContentFiller = new Text({
-						text: 	"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
-								"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
-								"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" +
-								"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
-					});
-
-					var aContent = [
-									[
-										new Label({ text: "Label 1" }),
-										new Input(),
-										new Label({ text: "Label 2" }),
-										new Input(),
-										new Label({ text: "Label 3" }),
-										new Input(),
-										new Label({ text: "Label 4" }),
-										new Input(),
-										new Label({ text: "Label 5" }),
-										new Input(),
-										new Label({ text: "Label 6" }),
-										new Input(),
-										new Label({ text: "Label 7" }),
-										new Input(),
-										new Label({ text: "Label 8" }),
-										new Input(),
-										new Label({ text: "Label 9" }),
-										new Input(),
-										new Label({ text: "Label 10" }),
-										new Input(),
-										new Label({ text: "Label 11" }),
-										new Input(),
-										new Label({ text: "Label 12" }),
-										new Input(),
-										new Label({ text: "Label 13" }),
-										new Input(),
-										new Label({ text: "Label 14" }),
-										new Input(),
-										new Label({ text: "Label 15" }),
-										new Input()
-									],
-									[
-										new Text({ text: "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." }),
-										new Button({ text: "Press me"}),
-										new Button({ text: "Hit me" })
-									],
-									[
-										new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." }),
-										new Switch({}),
-										new Button({ text: "Save" })
-									],
-								];
-
 					var oSidePanel = new SidePanel("mySidePanel", {
 							mainContent: [
 								new Button({ text: "Button 1" }),
@@ -116,85 +64,142 @@
 								new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" }),
 								new Text({ text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" })
 							],
-							actionItems: [
-								new SidePanelActionItem({
+							items: [
+								new SidePanelItem({
 									icon: "sap-icon://physical-activity",
-									text: "Run"
+									text: "Run",
+									content: [
+										new Text({ text: "This is static content for 'Run' action item" })
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://addresses",
-									text: "Go home"
+									text: "Go home",
+									content: [
+
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://building",
-									text: "Go to the office"
+									text: "Go to the office",
+									content: [
+
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://bed",
-									text: "Go to sleep"
+									text: "Go to sleep",
+									content: [
+
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://flight",
-									text: "Fly abroad"
+									text: "Fly abroad",
+									content: [
+										new Text({ text: "(Static content) The flight is scheduled for tomorrow." })
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://cargo-train",
-									text: "Travel"
+									text: "Travel",
+									content: [
+
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://cart",
-									text: "Go to the mall"
+									text: "Go to the mall",
+									content: [ new VBox({
+										items: [
+											new Text({ text: "Static content" }),
+											new Button({ text: "Buy now" })
+										]})
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://car-rental",
-									text: "Drive your car"
+									text: "Drive your car",
+									content: [
+
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://create-leave-request",
-									text: "Go on vacation"
+									text: "Go on vacation",
+									content: [
+
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://family-protection",
-									text: "Meet your family"
+									text: "Meet your family",
+									content: [
+
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://lab",
-									text: "Do a research"
+									text: "Do a research",
+									content: [
+
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://theater",
-									text: "Go to the theater"
+									text: "Go to the theater",
+									content: [
+
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://taxi",
-									text: "Take a taxi"
+									text: "Take a taxi",
+									content: [
+
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://vehicle-repair",
-									text: "Repair your car"
+									text: "Repair your car",
+									content: [
+
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://wounds-doc",
-									text: "Visit a doctor"
+									text: "Visit a doctor",
+									content: [
+
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://umbrella",
-									text: "Take an umbrella"
+									text: "Take an umbrella",
+									content: [
+
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://puzzle",
-									text: "Solve a puzzle"
+									text: "Solve a puzzle",
+									content: [
+
+									]
 								}),
-								new SidePanelActionItem({
+								new SidePanelItem({
 									icon: "sap-icon://picture",
-									text: "Draw a picture"
+									text: "Draw a picture",
+									content: [
+
+									]
 								})
 							],
 							toggle: function(e) {
 								var oSP = Core.byId("mySidePanel"),
 									oPreventExpand = Core.byId("preventExpand"),
 									oPreventCollapse = Core.byId("preventCollapse"),
-									oItem = e.getParameter("actionItem"),
+									oItem = e.getParameter("item"),
 									iItemIndex = oItem ? parseInt(oItem.getId().replace( /^\D+/g, '')) : -1,
 									bExpanded = e.getParameter("expanded");
 
@@ -204,16 +209,16 @@
 										oPreventCollapse.setState(false);
 										e.preventDefault();
 									}
-								} else {
-									if (oPreventExpand.getState()) {
+								} else if (oPreventExpand.getState()) {
 										MessageToast.show("I am prevented EXPAND event");
 										oPreventExpand.setState(false);
 										e.preventDefault();
-									} else {
-										oSP.addSideContentItem(new VBox({
-											items: aContent[iItemIndex % 3]
-										}));
-									}
+								} else {
+									!oItem.getContent().length && oItem.addContent(new VBox({
+										items: [
+											new Text({ text: "Dynamic content generated for item '" + oItem.getText() + "'" })
+										]
+									}));
 								}
 							}
 						});

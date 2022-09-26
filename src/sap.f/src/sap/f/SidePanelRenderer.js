@@ -2,9 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define([ "sap/ui/Device",
-	"sap/ui/core/IconPool" ],
-	function (Device, IconPool) {
+sap.ui.define([
+	"sap/ui/Device",
+	"sap/ui/core/IconPool"
+], function (Device, IconPool) {
 		"use strict";
 
 		var SidePanelRenderer = {
@@ -13,44 +14,44 @@ sap.ui.define([ "sap/ui/Device",
 
 		SidePanelRenderer.render = function(oRm, oControl) {
 			var bActionBarExpanded = oControl.getActionBarExpanded(),
-				bSideContentExpanded = oControl._getSideContentExpanded();
+				bSideContentExpanded = oControl._isSideContentExpanded();
 
 			oRm.openStart("div", oControl);
 			oRm.class("sapFSP");
-			oControl._isSingleActionItem() && oRm.class("sapFSPSingleActionItem");
-			bActionBarExpanded && oControl.getActionItems().length !== 1 && oRm.class("sapFSPActionBarExpanded");
+			oControl._isSingleItem() && oRm.class("sapFSPSingleItem");
+			bActionBarExpanded && oControl.getItems().length !== 1 && oRm.class("sapFSPActionBarExpanded");
 			bSideContentExpanded && oRm.class("sapFSPSideContentExpanded");
 			oRm.openEnd();
 
 			SidePanelRenderer.renderMain(oRm, oControl);
-			oControl.getActionItems().length && SidePanelRenderer.renderSide(oRm, oControl);
+			oControl.getItems().length && SidePanelRenderer.renderSide(oRm, oControl);
 
 			oRm.close("div");
 		};
 
-		SidePanelRenderer.renderActionItem = function(oRm, oControl, oItem, iIndex, bActionBarExpanded) {
-			var sSelectedItemId = oControl.getSelectedActionItem(),
-				bSingleItem = oControl._isSingleActionItem(),
+		SidePanelRenderer.renderItem = function(oRm, oControl, oItem, iIndex, bActionBarExpanded) {
+			var sSelectedItemId = oControl.getSelectedItem(),
+				bSingleItem = oControl._isSingleItem(),
 				bPhone = Device.system.phone,
-				bOverflowActionItem = iIndex === null,
+				bOverflowItem = iIndex === null,
 				bItemSelected = sSelectedItemId === oItem.getId(),
-				sAriaAttribute = bOverflowActionItem ? "aria-expanded" : "aria-selected",
-				sItemText = bOverflowActionItem ? oControl._getOverflowActionItemText() : oItem.getText();
+				sAriaAttribute = bOverflowItem ? "aria-expanded" : "aria-selected",
+				sItemText = bOverflowItem ? oControl._getOverflowItemText() : oItem.getText();
 
 			oRm.openStart("li", oItem);
 			!bActionBarExpanded && oRm.attr("title", sItemText);
-			oRm.class("sapFSPActionItem");
+			oRm.class("sapFSPItem");
 
-			if ((!bOverflowActionItem && bItemSelected) || (bOverflowActionItem && oControl._bOverflowMenuOpened)) {
+			if ((!bOverflowItem && bItemSelected) || (bOverflowItem && oControl._bOverflowMenuOpened)) {
 				oRm.class("sapFSPSelected");
 				oRm.attr(sAriaAttribute, "true");
 			} else {
 				oRm.attr(sAriaAttribute, "false");
 			}
 
-			bOverflowActionItem && oRm.class("sapFSPOverflowActionItem") && oRm.attr("aria-haspopup", "menu");
-			oRm.attr("role", bOverflowActionItem ? "button" : "option"); // listitem (as in spec) + aria-selected doesn't work
-			!bOverflowActionItem && oRm.attr("aria-posinset", iIndex + 1);
+			bOverflowItem && oRm.class("sapFSPOverflowItem") && oRm.attr("aria-haspopup", "menu");
+			oRm.attr("role", bOverflowItem ? "button" : "option"); // listitem (as in spec) + aria-selected doesn't work
+			!bOverflowItem && oRm.attr("aria-posinset", iIndex + 1);
 			oRm.openEnd();
 
 			oRm.renderControl(IconPool.createControlByURI({
@@ -60,7 +61,7 @@ sap.ui.define([ "sap/ui/Device",
 			if ((bSingleItem && bPhone)
 				|| (!bSingleItem && bActionBarExpanded)) {
 				oRm.openStart("span");
-				oRm.class("sapFSPActionItemText");
+				oRm.class("sapFSPItemText");
 				oRm.openEnd();
 
 				oRm.text(sItemText);
@@ -88,7 +89,7 @@ sap.ui.define([ "sap/ui/Device",
 		};
 
 		SidePanelRenderer.renderSide = function(oRm, oControl) {
-			var bSideExpanded = oControl.getActionBarExpanded() || oControl.getSideContentExpanded(),
+			var bSideExpanded = oControl.getActionBarExpanded() || oControl._getSideContentExpanded(),
 				bPhone = Device.system.phone,
 				sSidePanelWidth = oControl._getSidePanelWidth();
 			oRm.openStart("aside");
@@ -107,7 +108,7 @@ sap.ui.define([ "sap/ui/Device",
 			oRm.openEnd();
 
 			SidePanelRenderer.renderActionBar(oRm, oControl);
-			SidePanelRenderer.renderSideContent(oRm, oControl);
+			oControl.getSelectedItem() && SidePanelRenderer.renderSideContent(oRm, oControl);
 
 			oRm.close("div");
 
@@ -115,8 +116,8 @@ sap.ui.define([ "sap/ui/Device",
 		};
 
 		SidePanelRenderer.renderSideContent = function(oRm, oControl) {
-			var aSide = oControl.getSideContent(),
-				bSideContentExpanded = oControl._getSideContentExpanded(),
+			var aSide = oControl._getSelectedItem().getContent(),
+				bSideContentExpanded = oControl._isSideContentExpanded(),
 				i;
 
 			if (bSideContentExpanded) {
@@ -157,21 +158,21 @@ sap.ui.define([ "sap/ui/Device",
 		};
 
 		SidePanelRenderer.renderActionBar = function(oRm, oControl) {
-			var aActionItems = oControl.getActionItems(),
+			var aItems = oControl.getItems(),
 				bActionBarExpanded = oControl.getActionBarExpanded(),
-				bSingleItem = aActionItems.length === 1,
+				bSingleItem = aItems.length === 1,
 				bPhone = Device.system.phone,
 				oExpandCollapseButton = oControl.getAggregation("_arrowButton"),
 				i;
 
 			if (!bPhone) {
 				// expand/collapse button
-				bSingleItem && oExpandCollapseButton.setTooltip(oControl.getActionItems()[0].getText());
+				bSingleItem && oExpandCollapseButton.setTooltip(oControl.getItems()[0].getText());
 				oRm.renderControl(oExpandCollapseButton);
 			}
 
 			// action bar
-			if (aActionItems.length) {
+			if (aItems.length) {
 
 				oRm.openStart("div");
 				oRm.class("sapFSPActionBarWrapper");
@@ -181,20 +182,20 @@ sap.ui.define([ "sap/ui/Device",
 
 				oRm.openStart("ul", oControl.getId() + "-ActionBar");
 				oRm.class("sapFSPActionBar");
-				aActionItems.length < 4 && oRm.class("sapFSPCenteredItems");
+				aItems.length < 4 && oRm.class("sapFSPCenteredItems");
 				oRm.attr("aria-multiselectable", "false");
 				oRm.attr("aria-label", "Actions");
 				oRm.attr("role", "listbox");
 				oRm.openEnd();
 
-				if (bPhone || aActionItems.length > 1) {
-					for (i = 0; i < aActionItems.length; i++) {
-						SidePanelRenderer.renderActionItem(oRm, oControl, aActionItems[ i ], i, bActionBarExpanded);
+				if (bPhone || aItems.length > 1) {
+					for (i = 0; i < aItems.length; i++) {
+						SidePanelRenderer.renderItem(oRm, oControl, aItems[ i ], i, bActionBarExpanded);
 					}
 
 					// add overflow nav item if not phone
 					if (!bPhone) {
-						SidePanelRenderer.renderActionItem(oRm, oControl, oControl.getAggregation("_overflowItem"), null, bActionBarExpanded);
+						SidePanelRenderer.renderItem(oRm, oControl, oControl.getAggregation("_overflowItem"), null, bActionBarExpanded);
 					}
 				}
 
