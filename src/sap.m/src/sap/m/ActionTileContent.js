@@ -56,13 +56,15 @@ sap.ui.define([
         var sAltText = "";
         var sPriority = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TEXT_CONTENT_PRIORITY");
         var sPriorityText = this.getPriorityText();
+        var aCustomAttributes = this.getAggregation("attributes");
         if (this.getPriority() !== Priority.None && sPriorityText) {
             sAltText += (sPriorityText + " " + sPriority) + "\n";
         }
-        this.getAggregation("attributes").forEach(function(ocustomAttribute){
-            sAltText += ocustomAttribute.getLabel() + "\n" + ocustomAttribute.getValue() + "\n";
-        });
-        return sAltText;
+        // //Returns the first four attributes to display in the tooltip,aria-label on the ActionTile
+        for (var iIndex = 0; iIndex < 4; iIndex++) {
+            sAltText += aCustomAttributes[iIndex].getLabel() + "\n" + aCustomAttributes[iIndex].getValue() + "\n";
+        }
+        return sAltText.trim();
     };
 
     return ActionTileContent;

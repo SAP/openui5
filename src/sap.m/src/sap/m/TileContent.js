@@ -274,7 +274,7 @@ sap.ui.define(['./library', 'sap/ui/core/library', 'sap/ui/core/Control', './Til
 	TileContent.prototype._getInnerText = function(oContentDom) {
 		var sAriaTooltipText = "";
 		var aHTMLCollection = [].slice.call(oContentDom.children);
-		aHTMLCollection.forEach(function(oElement) {
+		aHTMLCollection.forEach(function(oElement,iIndex) {
 			sAriaTooltipText += (oElement.innerText + "\n");
 		});
 		return sAriaTooltipText.trim();

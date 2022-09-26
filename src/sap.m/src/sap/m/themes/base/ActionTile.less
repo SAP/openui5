@@ -14,7 +14,6 @@
     box-sizing: border-box;
     user-select: none;
     vertical-align: top;
-    cursor: pointer;
     .sapMGTHdrContent {
         padding: 0;
         height: 3rem;
@@ -22,7 +21,7 @@
         .sapMText{
             font-size: 1rem;
             font-weight: 700;
-            color: @sapTile_TitleTextColor;
+            color: @sapTile_TitleTextColor !important;
             line-height: 1.5rem;
             cursor: pointer;
         }
@@ -44,6 +43,11 @@
     outline: none;
 }
 
+.sapMAT.sapMATAutoPointer {
+    .sapMText {
+        cursor: auto !important;
+    }
+}
 // ToDo card Styles
 
 .sapMAT.sapMToDoCard {
@@ -52,6 +56,7 @@
         margin-bottom: 0.75rem;
     }
     .sapMATC {
+    height: 13.375rem;
      overflow: hidden;
      .sapMTilePriorityValue {
          font-size: 0.875rem;
@@ -117,6 +122,7 @@
         border: 2px solid @sapContent_FocusColor;
         border-radius:  1rem;
         inset: 0px;
+        pointer-events: none;
     }
  }
 
@@ -124,6 +130,7 @@
 
 .sapMAT.sapMATSituationCard{
     border-radius: 1.25rem;
+    overflow: hidden;
     .sapMGTHdrContent {
         display: flex;
         flex-direction: row;
@@ -167,25 +174,29 @@
             height: inherit;
             .sapMTileCntContent{
                 margin-top: 0;
-                height: fit-content;
                 padding: 0;
                 .sapMFT{
+                    height: inherit;
                     span{
                         color: @sapTextColor;
-                        white-space: pre-wrap;
+                        white-space: initial;
+                        word-break: break-all;
                         display: -webkit-box;
-                        -webkit-line-clamp: 3;
+                        -webkit-line-clamp: 16;
                         -webkit-box-orient: vertical;
-                        height: 3rem;
+                        height: fit-content;
                         line-height: 1rem;
                         overflow: hidden;
                         text-overflow: ellipsis;
                         font-weight: 400;
                         font-size: 0.875rem;
                         margin-bottom: 0.75rem;
+                        max-height: 16rem;
                     }
                     p + span {
                         margin-bottom: 1rem;
+                        -webkit-line-clamp: 14;
+                        max-height: 14rem;
                     }
                     p {
                         white-space: nowrap;
@@ -202,6 +213,8 @@
                     }
                     p:not(.sapMbrPresent) {
                         margin-bottom: 0.75rem;
+                        white-space: initial;
+                        word-break: break-all;
                     }
                 }
             }
@@ -220,6 +233,7 @@
         border: 2px solid @sapContent_FocusColor;
         border-radius:  1.25rem;
         inset: 0px;
+        pointer-events: none;
     }
  }
 

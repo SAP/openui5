@@ -33,6 +33,12 @@ sap.ui.define(["./library","sap/base/security/encodeCSS"],
 		oRm.class("sapMToDoCard");
 		oRm.class(sStateClass);
 		if (sState !== LoadState.Disabled) {
+			if (!oControl.isInActionRemoveScope() && oControl.getPressEnabled()) {
+				oRm.class("sapMPointer");
+			}
+			if (!oControl.getPressEnabled()) {
+				oRm.class("sapMATAutoPointer");
+			}
 			oRm.attr("tabindex", "0");
 		}
 		if (sAriaRoleDescription) {
@@ -42,6 +48,9 @@ sap.ui.define(["./library","sap/base/security/encodeCSS"],
 			oRm.attr("role", sAriaRole);
 		} else {
 			oRm.attr("role", bHasPress ? "button" : "presentation");
+		}
+		if (oControl.getWidth()) {
+			oRm.style("width", oControl.getWidth());
 		}
 		oRm.openEnd();
 		if (sState === LoadState.Loading) {
