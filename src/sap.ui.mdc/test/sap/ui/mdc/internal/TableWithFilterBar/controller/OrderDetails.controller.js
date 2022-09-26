@@ -126,6 +126,7 @@ sap.ui.define([
 
 		_onRouteMatched : function (oEvent) {
 			var oView = this.getView(),
+				oViewModel = oView.getModel("view"),
 				oArgs = oEvent.getParameter("arguments"),
 				sOrderId = oArgs.orderId != "add" && oArgs.orderId;
 
@@ -133,9 +134,9 @@ sap.ui.define([
 
 			if (sOrderId) {
 				oView.bindElement("/Orders(" + sOrderId + ")");
+				oViewModel.setProperty("/addMode", false);
 			} else {
 				var oModel = oView.getModel(),
-					oViewModel = oView.getModel("view"),
 					oListBinding = oModel.bindList("/Orders", undefined, undefined, undefined, { $$updateGroupId: "booksGroup" }),
 					oProperties = {
 						"ID": uuidv4(),
