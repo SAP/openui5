@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/mdc/p13n/subcontroller/FilterController', 'sap/ui/mdc/p13n/subcontroller/AdaptFiltersController', "sap/ui/mdc/filterbar/aligned/FilterContainer", "sap/ui/mdc/filterbar/aligned/FilterItemLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", 'sap/m/library', 'sap/m/Button', "sap/ui/mdc/p13n/StateUtil", "sap/base/util/merge", "sap/ui/mdc/filterbar/p13n/AdaptationFilterBar", "sap/ui/core/library"
-], function(FilterController, AdaptFiltersController, FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, StateUtil, merge, AdaptationFilterBar, CoreLibrary) {
+	'sap/ui/mdc/p13n/subcontroller/FilterController', 'sap/ui/mdc/p13n/subcontroller/AdaptFiltersController', "sap/ui/mdc/filterbar/aligned/FilterContainer", "sap/ui/mdc/filterbar/aligned/FilterItemLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", 'sap/m/library', 'sap/m/Button', "sap/base/util/merge", 'sap/base/Log', "sap/ui/core/library"
+], function(FilterController, AdaptFiltersController, FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, merge, Log, CoreLibrary) {
 	"use strict";
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
@@ -39,6 +39,15 @@ sap.ui.define([
 				showAdaptFiltersButton: {
 					type: "boolean",
 					defaultValue: true
+				},
+
+				/**
+				 * Determines whether the Clear button is visible in the filter bar.
+				 * @since 1.108
+				 */
+				showClearButton: {
+					type: "boolean",
+					defaultValue: false
 				},
 
 				/**
@@ -191,9 +200,35 @@ sap.ui.define([
 			});
 			this._btnSearch.addStyleClass("sapUiMdcFilterBarBaseButtonPaddingRight");
 
+			this._btnClear = new Button(this.getId() + "-btnClear", {
+				type: ButtonType.Transparent,
+				visible: "{" + FilterBarBase.INNER_MODEL_NAME + ">/showClearButton}",
+				text: this._oRb.getText("filterbar.CLEAR"),
+				press: function(oEvent) {
+					this.onClear();
+				}.bind(this)
+			});
+			this._btnClear.setModel(this._oModel, FilterBarBase.INNER_MODEL_NAME);
+			//this._btnClear.addStyleClass("sapUiMdcFilterBarBaseButtonPaddingRight");
+
 			this._oFilterBarLayout.addButton(this._btnSearch);
+			this._oFilterBarLayout.addButton(this._btnClear);
 			this._oFilterBarLayout.addButton(this._btnAdapt);
 		}
+	};
+
+	FilterBar.prototype.onClear = function() {
+		this._btnClear.setEnabled(false);
+		this.awaitControlDelegate().then(function(oDelegate) {
+			oDelegate.clearFilters(this)
+			.catch(function(oEx) {
+				Log.error(oEx);
+			})
+			.finally(function() {
+				this._btnClear.setEnabled(true);
+			}.bind(this));
+
+		}.bind(this));
 	};
 
 	FilterBar.prototype.retrieveInbuiltFilter = function() {
@@ -227,8 +262,14 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @returns {sap.ui.mdc.FilterField} Returns the first filter field in error state
 	 */
-	FilterBarBase.prototype.setFocusOnFirstErroneousField = function() {
+	FilterBar.prototype.setFocusOnFirstErroneousField = function() {
 		return this._setFocusOnFirstErroneousField();
+	};
+
+	FilterBar.prototype.exit = function() {
+		FilterBarBase.prototype.exit.apply(this, arguments);
+
+		this._btnClear = undefined;
 	};
 
 	return FilterBar;

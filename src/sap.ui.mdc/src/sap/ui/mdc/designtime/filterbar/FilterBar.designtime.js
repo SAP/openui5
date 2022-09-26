@@ -35,6 +35,9 @@ sap.ui.define([
 			showAdaptFiltersButton: {
 				ignore: false
 			},
+			showClearButton: {
+				ignore: false
+			},
 			p13nMode: {
 				ignore: false
 			}
