@@ -1092,6 +1092,20 @@ sap.ui.define([
 								key: 'HideCardExtension.js'
 							}
 						]
+					},
+					{
+						title: 'Hidden Footer',
+						key: 'hiddenFooter',
+						settings: {
+							columns: 6
+						},
+						files: [
+							{
+								url: '/samples/footer/hiddenFooter/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							}
+						]
 					}
 				]
 			},
