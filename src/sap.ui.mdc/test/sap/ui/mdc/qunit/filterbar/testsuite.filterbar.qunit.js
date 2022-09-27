@@ -47,8 +47,7 @@ sap.ui.define([
 					  paths: {
 					    "sap/ui/mdc/filterbar/sample": "test-resources/sap/ui/mdc/qunit/filterbar/sample"
 					  }
-				},
-				autostart: false // as module uses sap.ui.require
+				}
 			},
 			"FilterBar": {
 				group: "FilterBar",
