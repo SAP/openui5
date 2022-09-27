@@ -3,16 +3,20 @@
  */
 
 sap.ui.define([
+	"sap/m/MessageBox",
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/isEmptyObject",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/RenameHandler",
 	"sap/ui/rta/Utils",
 	"sap/ui/fl/write/api/ContextSharingAPI"
 ], function(
+	MessageBox,
 	_omit,
 	isEmptyObject,
+	OverlayRegistry,
 	DtUtil,
 	Plugin,
 	RenameHandler,
@@ -142,36 +146,74 @@ sap.ui.define([
 	function saveAsNewVariant(aOverlays) {
 		var oVariantManagementControl = aOverlays[0].getElement();
 		var oContextSharingComponentContainer = ContextSharingAPI.createComponent(this.getCommandFactory().getFlexSettings());
-		oVariantManagementControl.openSaveAsDialogForKeyUser(Utils.getRtaStyleClassName(), function(oReturn) {
-			if (oReturn) {
-				createCommandAndFireEvent.call(this, aOverlays[0], "compVariantSaveAs", {
-					newVariantProperties: {
-						"default": oReturn.default,
-						executeOnSelection: oReturn.executeOnSelection,
-						content: oReturn.content,
-						type: oReturn.type,
-						text: oReturn.text,
-						contexts: oReturn.contexts
-					},
-					previousDirtyFlag: oVariantManagementControl.getModified(),
-					previousVariantId: oVariantManagementControl.getPresentVariantId(),
-					previousDefault: oVariantManagementControl.getDefaultVariantId()
-				});
-			}
-		}.bind(this), oContextSharingComponentContainer);
+		return new Promise(function(resolve) {
+			oVariantManagementControl.openSaveAsDialogForKeyUser(Utils.getRtaStyleClassName(), function(oReturn) {
+				if (oReturn) {
+					createCommandAndFireEvent.call(this, aOverlays[0], "compVariantSaveAs", {
+						newVariantProperties: {
+							"default": oReturn.default,
+							executeOnSelection: oReturn.executeOnSelection,
+							content: oReturn.content,
+							type: oReturn.type,
+							text: oReturn.text,
+							contexts: oReturn.contexts
+						},
+						previousDirtyFlag: oVariantManagementControl.getModified(),
+						previousVariantId: oVariantManagementControl.getPresentVariantId(),
+						previousDefault: oVariantManagementControl.getDefaultVariantId()
+					});
+				}
+				resolve(oReturn);
+			}.bind(this), oContextSharingComponentContainer);
+		}.bind(this));
 	}
 
 	// ------ change content ------
+	function onWarningClose(oVariantManagementControl, sVariantId, sAction) {
+		var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		if (sAction === oLibraryBundle.getText("BTN_CREATE_NEW_VIEW")) {
+			saveAsNewVariant.call(this, [OverlayRegistry.getOverlay(oVariantManagementControl)]).then(function(oReturn) {
+				// in case the user cancels the save as the original variant is applied again and the changes are gone
+				if (!oReturn) {
+					oVariantManagementControl.activateVariant(sVariantId);
+				}
+			});
+		} else {
+			oVariantManagementControl.activateVariant(sVariantId);
+		}
+	}
+
 	function changeContent(aOverlays) {
-		var oControl = aOverlays[0].getElementInstance();
-		var oAction = this.getAction(aOverlays[0]);
-		return oAction.handler(oControl, {styleClass: Utils.getRtaStyleClassName()}).then(function(aData) {
-			if (aData && aData.length) {
-				createCommandAndFireEvent.call(this, aOverlays[0], "compVariantContent", {
-					variantId: aData[0].changeSpecificData.content.key,
-					newContent: aData[0].changeSpecificData.content.content,
-					persistencyKey: aData[0].changeSpecificData.content.persistencyKey
-				}, oControl.getVariantManagement());
+		var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var oElementOverlay = aOverlays[0];
+		var oControl = oElementOverlay.getElementInstance();
+		var oAction = this.getAction(oElementOverlay);
+
+		return oAction.handler(oControl, {styleClass: Utils.getRtaStyleClassName()}).then(function(aChangeContentData) {
+			if (aChangeContentData && aChangeContentData.length) {
+				var sPersistencyKey = aChangeContentData[0].changeSpecificData.content.persistencyKey;
+				var oVariantManagementControl = oControl.getVariantManagement();
+				var aVariants = oVariantManagementControl.getAllVariants();
+				var oCurrentVariant = aVariants.find(function(oVariant) {
+					return oVariant.getVariantId() === oVariantManagementControl.getPresentVariantId();
+				});
+
+				// a variant that can't be overwritten must never get dirty,
+				// instead the user needs to save the changes to a new variant
+				if (oCurrentVariant.isEditEnabled(this.getCommandFactory().getFlexSettings().layer)) {
+					createCommandAndFireEvent.call(this, oElementOverlay, "compVariantContent", {
+						variantId: aChangeContentData[0].changeSpecificData.content.key,
+						newContent: aChangeContentData[0].changeSpecificData.content.content,
+						persistencyKey: sPersistencyKey
+					}, oControl.getVariantManagement());
+				} else {
+					MessageBox.warning(oLibraryBundle.getText("MSG_CHANGE_READONLY_VARIANT"), {
+						onClose: onWarningClose.bind(this, oVariantManagementControl, oCurrentVariant.getVariantId()),
+						actions: [oLibraryBundle.getText("BTN_CREATE_NEW_VIEW"), MessageBox.Action.CANCEL],
+						emphasizedAction: oLibraryBundle.getText("BTN_CREATE_NEW_VIEW"),
+						styleClass: Utils.getRtaStyleClassName()
+					});
+				}
 			}
 		}.bind(this));
 	}
