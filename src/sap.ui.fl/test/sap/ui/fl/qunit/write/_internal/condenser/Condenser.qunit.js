@@ -414,6 +414,7 @@ sap.ui.define([
 				return loadApplyCondenseChanges.call(this, "moveWithinTwoGroupsWithoutUnknowns.json", 30, 5, assert, aBackendChanges)
 				.then(revertAndApplyNew.bind(this))
 				.then(function() {
+					var aExpectedChangeOrder;
 					if (aBackendChanges.length) {
 						var aChangeStates = [];
 						var aCondenserStates = [];
@@ -421,9 +422,30 @@ sap.ui.define([
 							aChangeStates.push(oChange.getState());
 							aCondenserStates.push(oChange.condenserState);
 						});
-						assert.propEqual(aChangeStates, [Change.states.NEW, Change.states.NEW, Change.states.DIRTY, Change.states.DIRTY, Change.states.DIRTY], "all remaining changes have the correct change state");
-						assert.propEqual(aCondenserStates, ["select", "select", "update", "update", "update"], "all remaining changes have the correct condenser state");
+						assert.propEqual(aChangeStates, [Change.states.DIRTY, Change.states.DIRTY, Change.states.DIRTY, Change.states.NEW, Change.states.NEW], "all remaining changes have the correct change state");
+						assert.propEqual(aCondenserStates, ["update", "update", "update", "select", "select"], "all remaining changes have the correct condenser state");
+						aExpectedChangeOrder = [
+							"id_1579608138773_42_moveControls",
+							"id_1579608136945_41_moveControls",
+							"id_1579608135402_40_moveControls",
+							"id_1579608174158_69_moveControls",
+							"id_1579608172989_68_moveControls"
+						];
+					} else {
+						aExpectedChangeOrder = [
+							"id_1579608171665_67_moveControls",
+							"id_1579608169292_65_moveControls",
+							"id_1579608170397_66_moveControls",
+							"id_1579608174158_69_moveControls",
+							"id_1579608172989_68_moveControls"
+						];
 					}
+
+					var aActualChangeOrder = this.aChanges.map(function(oChange) {
+						return oChange.getFileName();
+					});
+					// the changes on the groups are independent - the changes done first should also come first
+					assert.deepEqual(aActualChangeOrder, aExpectedChangeOrder, "the order is correct");
 
 					var oSmartForm = oAppComponent.byId(sLocalSmartFormId);
 					var aGroups = oSmartForm.getGroups();
@@ -762,13 +784,13 @@ sap.ui.define([
 				return loadApplyCondenseChanges.call(this, "addIFrameUpdateIFrame.json", 6, 2, assert, aPersistedChanges).then(function(aRemainingChanges) {
 					assert.strictEqual(aRemainingChanges[0].condenserState, bPersistedChanges ? "update" : "select", "the condenser state is set correctly");
 					assert.strictEqual(aRemainingChanges[0].getContent().url, "https://www.example.com", "the url got updated");
-					assert.strictEqual(aRemainingChanges[0].getContent().height, "200px", "the height got updated");
-					assert.strictEqual(aRemainingChanges[0].getContent().width, "16rem", "the width got updated");
+					assert.strictEqual(aRemainingChanges[0].getContent().height, "100px", "the height got updated");
+					assert.strictEqual(aRemainingChanges[0].getContent().width, "10rem", "the width got updated");
 
 					assert.strictEqual(aRemainingChanges[1].condenserState, bPersistedChanges ? "update" : "select", "the condenser state is set correctly");
 					assert.strictEqual(aRemainingChanges[1].getContent().url, "https://www.example.com", "the url got updated");
-					assert.strictEqual(aRemainingChanges[1].getContent().height, "100px", "the height got updated");
-					assert.strictEqual(aRemainingChanges[1].getContent().width, "10rem", "the width got updated");
+					assert.strictEqual(aRemainingChanges[1].getContent().height, "200px", "the height got updated");
+					assert.strictEqual(aRemainingChanges[1].getContent().width, "16rem", "the width got updated");
 				});
 			});
 		});

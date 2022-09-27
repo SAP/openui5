@@ -572,10 +572,10 @@ sap.ui.define([
 				var bSuccess = true;
 				var aCondenserInfos = getCondenserInfos(mReducedChanges, []);
 				sortCondenserInfosByInitialOrder(aChanges, aCondenserInfos);
-				var aReducedIndexRelatedChanges;
+				var aReducedIndexRelatedChangesPerContainer;
 				try {
 					Measurement.start("Condenser_sort", "sort index related changes - CondenserClass", ["sap.ui.fl", "Condenser"]);
-					aReducedIndexRelatedChanges = UIReconstruction.sortIndexRelatedChanges(mUIReconstructions, aCondenserInfos);
+					aReducedIndexRelatedChangesPerContainer = UIReconstruction.sortIndexRelatedChanges(mUIReconstructions, aCondenserInfos);
 				} catch (oError) {
 					// an error here has to be treated similar to if there were some unclassified changes
 					// TODO: could be improved to only add all the changes of that specific container
@@ -585,7 +585,10 @@ sap.ui.define([
 				Measurement.end("Condenser_sort");
 
 				if (bSuccess) {
-					UIReconstruction.swapChanges(aReducedIndexRelatedChanges, aReducedChanges);
+					// sort the different containers independently
+					aReducedIndexRelatedChangesPerContainer.forEach(function(aReducedIndexRelatedChanges) {
+						UIReconstruction.swapChanges(aReducedIndexRelatedChanges, aReducedChanges);
+					});
 					aReducedChanges = handleChangeUpdate(aCondenserInfos, aReducedChanges);
 				} else {
 					aAllIndexRelatedChanges.forEach(function(oChange) {

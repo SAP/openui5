@@ -301,14 +301,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sorts the index-related changes until the look and feel of the UI fits the target UI reconstruction.
+	 * Sorts the index-related changes per container until the look and feel of the UI fits the target UI reconstruction.
 	 *
 	 * @param {Map} mUIReconstructions - Map of UI reconstructions
 	 * @param {object[]} aCondenserInfos - Array of condenser info objects
 	 * @returns {sap.ui.fl.Change[]} Sorted array of index-related changes
 	 */
 	UIReconstruction.sortIndexRelatedChanges = function(mUIReconstructions, aCondenserInfos) {
-		var aSortedIndexRelatedChanges = [];
+		var aSortedIndexRelatedChangesPerContainer = [];
 		var mContainers = defineContainersMap(mUIReconstructions, aCondenserInfos);
 
 		forEveryMapInMap(mContainers, function(mAggregations, sContainerKey, aCondenserInfos, sAggregationName) {
@@ -343,12 +343,12 @@ sap.ui.define([
 				throw Error("no correct sorting found for the container: " + sContainerKey);
 			}
 
-			aCondenserInfos.forEach(function(oCondenserInfo) {
-				aSortedIndexRelatedChanges = aSortedIndexRelatedChanges.concat(oCondenserInfo.change);
-			});
+			aSortedIndexRelatedChangesPerContainer.push(aCondenserInfos.map(function(oCondenserInfo) {
+				return oCondenserInfo.change;
+			}));
 		});
 
-		return aSortedIndexRelatedChanges;
+		return aSortedIndexRelatedChangesPerContainer;
 	};
 
 	UIReconstruction.addChange = function(mUIReconstructions, oCondenserInfo) {
