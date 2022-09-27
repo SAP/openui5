@@ -1193,7 +1193,7 @@ sap.ui.define([
 	 *   The relative path of a binding; must not end with '/'
 	 * @param {boolean} [bIgnoreKeptAlive]
 	 *   Whether to ignore changes which will not be lost by APIs like sort or filter because they
-	 *   relate to a context which is kept alive
+	 *   relate to a deleted context or a context which is kept alive
 	 * @param {boolean} [bIgnoreTransient]
 	 *   Whether to ignore transient elements on top level which will not be lost by APIs like sort
 	 *   or filter
@@ -1210,8 +1210,9 @@ sap.ui.define([
 		return Object.keys(this.mChangeRequests).some(function (sRequestPath) {
 			return _Helper.hasPathPrefix(sRequestPath, sPath)
 				&& !(bIgnoreKeptAlive
-					&& that.mChangeRequests[sRequestPath].every(function (oPatchPromise) {
-						return oPatchPromise.$isKeepAlive();
+					&& that.mChangeRequests[sRequestPath].every(function (oChangePromise) {
+						// w/o $isKeepAlive it is a DELETE
+						return !oChangePromise.$isKeepAlive || oChangePromise.$isKeepAlive();
 					}));
 		}) || Object.keys(this.mPostRequests).some(function (sRequestPath) {
 			return bIgnoreTransient && !sRequestPath
@@ -3295,6 +3296,9 @@ sap.ui.define([
 			this.mChangeListeners[""] = mChangeListeners[""];
 			_Helper.fireChange(this.mChangeListeners, "");
 		}
+		Object.values(this.aElements.$deleted || {}).forEach(function (oDeleted) {
+			oDeleted.index = undefined;
+		});
 	};
 
 	/**

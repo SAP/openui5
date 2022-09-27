@@ -1112,7 +1112,8 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
-				lockGroup : function () {}
+				lockGroup : function () {},
+				mParameters : {}
 			},
 			aBindings = [
 				{removeCachesAndMessages : function () {}},
@@ -1174,7 +1175,8 @@ sap.ui.define([
 	QUnit.test("delete: failure", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {},
-				lockGroup : function () {}
+				lockGroup : function () {},
+				mParameters : {}
 			},
 			oError = new Error(),
 			oGroupLock = {
@@ -1217,7 +1219,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("delete: failure w/o lock", function (assert) {
 		var oBinding = {
-				checkSuspended : function () {}
+				checkSuspended : function () {},
+				mParameters : {}
 			},
 			oError = new Error(),
 			oModel = {
@@ -1243,9 +1246,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("delete: $$aggregation", function (assert) {
+		var oBinding = {
+				mParameters : {
+					$$aggregation : {}
+				}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42);
+
+		assert.throws(function () {
+			// code under test
+			oContext.delete();
+		}, new Error("Cannot delete " + oContext + " when using data aggregation"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("delete: no lock, but not a kept-alive context", function (assert) {
 		var oBinding = {
-				checkSuspended : function () {}
+				checkSuspended : function () {},
+				mParameters : {}
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42);
 
@@ -1260,7 +1279,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("delete: no lock, but kept-alive context in the collection", function (assert) {
 		var oBinding = {
-				checkSuspended : function () {}
+				checkSuspended : function () {},
+				mParameters : {}
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/0", 0);
 
@@ -1276,7 +1296,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("delete: error in checkSuspended", function (assert) {
 		var oBinding = {
-				checkSuspended : function () {}
+				checkSuspended : function () {},
+				mParameters : {}
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42),
 			oError = new Error("suspended");
@@ -1291,7 +1312,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("delete: error in checkGroupId", function (assert) {
 		var oBinding = {
-				checkSuspended : function () {}
+				checkSuspended : function () {},
+				mParameters : {}
 			},
 			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
@@ -1610,6 +1632,22 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("replaceWith: deleted context", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('1')");
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oContext.replaceWith();
+		}, new Error("Cannot replace " + oContext));
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bWrongBinding) {
 	var sTitle = "replaceWith: "
 			+ (bWrongBinding ? "not the same list binding" : "already in the collection");
@@ -1634,16 +1672,18 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("replaceWith: other context not kept alive", function (assert) {
+[
+	{bDeleted : false, bKeepAlive : false},
+	{bDeleted : true, bKeepAlive : true}
+].forEach(function (oOtherContext) {
+	QUnit.test("replaceWith: other context = " + JSON.stringify(oOtherContext), function (assert) {
 		var oBinding = {
 				checkSuspended : function () {}
 			},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES($uid=1)", 0,
-					SyncPromise.resolve(Promise.resolve())),
-			oOtherContext = {
-				bKeepAlive : false
-			};
+					SyncPromise.resolve(Promise.resolve()));
 
+		oOtherContext.oBinding = oBinding;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
 
@@ -1652,6 +1692,7 @@ sap.ui.define([
 			oContext.replaceWith(oOtherContext);
 		}, new Error("Cannot replace with " + oOtherContext));
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("requestRefresh, list binding", function (assert) {
@@ -2598,6 +2639,26 @@ sap.ui.define([
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oContext).expects("requestSideEffectsInternal").never();
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects();
+		}, new Error("Unsupported context: " + oContext));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: error on deleted context", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oModel = {
+				getMetaModel : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
+
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(true);
 		this.mock(oContext).expects("requestSideEffectsInternal").never();
 
 		assert.throws(function () {
@@ -3594,9 +3655,9 @@ sap.ui.define([
 			},
 			oContext = Context.create(oModel, oBinding, "/path");
 
-		this.mock(oContext).expects("isTransient").exactly(3).withExactArgs().returns(false);
-		this.mock(_Helper).expects("getPredicateIndex").exactly(3).withExactArgs("/path");
-		this.mock(oBinding).expects("checkKeepAlive").exactly(3)
+		this.mock(oContext).expects("isTransient").exactly(4).withExactArgs().returns(false);
+		this.mock(_Helper).expects("getPredicateIndex").exactly(4).withExactArgs("/path");
+		this.mock(oBinding).expects("checkKeepAlive").exactly(4)
 			.withExactArgs(sinon.match.same(oContext));
 
 		// code under test
@@ -3625,6 +3686,13 @@ sap.ui.define([
 		oContext.setKeepAlive(true, "fnOnBeforeDestroy", true);
 		assert.strictEqual(oContext.isKeepAlive(), true);
 		assert.strictEqual(oContext.fnOnBeforeDestroy, "fnOnBeforeDestroy");
+
+		oContext.bDeleted = true;
+
+		// code under test - reset kept-alive on a deleted context
+		oContext.setKeepAlive(false);
+
+		assert.strictEqual(oContext.isKeepAlive(), false);
 	});
 
 	//*********************************************************************************************
@@ -3658,7 +3726,22 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			oContext.setKeepAlive(true);
-		}, new Error("Unsupported transient context " + oContext));
+		}, new Error("Unsupported context " + oContext));
+
+		assert.strictEqual(oContext.isKeepAlive(), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setKeepAlive: deleted", function (assert) {
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/path");
+
+		this.mock(oContext).expects("isTransient").withExactArgs().returns(false);
+		this.mock(oContext).expects("isDeleted").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test
+			oContext.setKeepAlive(true);
+		}, new Error("Unsupported context " + oContext));
 
 		assert.strictEqual(oContext.isKeepAlive(), false);
 	});

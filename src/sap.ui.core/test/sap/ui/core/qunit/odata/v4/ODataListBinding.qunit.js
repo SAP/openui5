@@ -2753,18 +2753,6 @@ sap.ui.define([
 		assert.ok(oBinding.refreshInternal("", "myGroup", /*_bCheckUpdate*/true).isFulfilled());
 	});
 
-	//*********************************************************************************************
-	QUnit.test("refreshInternal: pending deletes", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES");
-
-		oBinding.iDeletedContexts = 1;
-
-		assert.throws(function () {
-			// code under test
-			oBinding.refreshInternal();
-		}, new Error("Cannot refresh when delete requests are pending"));
-	});
-
 //*********************************************************************************************
 [false, true].forEach(function (bSuspended) {
 	[false, true].forEach(function (bShared) {
@@ -3309,20 +3297,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("sort: pending deletes", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES", null, null, null,
-				{$$operationMode : OperationMode.Server});
-
-		oBinding.aSorters.push("~initial sorters~");
-		oBinding.iDeletedContexts = 1;
-
-		assert.throws(function () {
-			// code under test
-			oBinding.sort();
-		}, new Error("Cannot sort when delete requests are pending"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("sort: same sorters skips processing", function (assert) {
 		var oBinding,
 			oBindingMock = this.mock(ODataListBinding.prototype),
@@ -3512,23 +3486,6 @@ sap.ui.define([
 		assert.throws(function () {
 			oBinding.filter();
 		}, new Error("Cannot filter due to pending changes"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("filter: pending deletes", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
-			{$$operationMode : OperationMode.Server});
-
-		oBinding.iDeletedContexts = 1;
-		this.mock(_Helper).expects("toArray").withExactArgs(undefined).returns([]);
-		this.mock(_Helper).expects("deepEqual")
-			.withExactArgs([], sinon.match.same(oBinding.aApplicationFilters))
-			.returns(false);
-
-		// code under test
-		assert.throws(function () {
-			oBinding.filter();
-		}, new Error("Cannot filter when delete requests are pending"));
 	});
 
 	//*********************************************************************************************
@@ -6118,7 +6075,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doCreateCache w/ old cache, iCreatedContexts", function (assert) {
+["iCreatedContexts", "iDeletedContexts"].forEach(function (sProperty) {
+	QUnit.test("doCreateCache w/ old cache, " + sProperty, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oOldCache = {
 				$deepResourcePath : "deep/resource/path",
@@ -6127,7 +6085,7 @@ sap.ui.define([
 				setQueryOptions : function () {}
 			};
 
-		oBinding.iCreatedContexts = 1;
+		oBinding[sProperty] = 1;
 		this.mock(oOldCache).expects("getResourcePath").withExactArgs().returns("resource/path");
 		this.mock(oOldCache).expects("reset").withExactArgs([], "myGroup");
 		this.mock(oOldCache).expects("setQueryOptions").withExactArgs("~queryOptions~", true);
@@ -6139,6 +6097,7 @@ sap.ui.define([
 				"deep/resource/path", "myGroup", oOldCache),
 			oOldCache);
 	});
+});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bWithOld) {
