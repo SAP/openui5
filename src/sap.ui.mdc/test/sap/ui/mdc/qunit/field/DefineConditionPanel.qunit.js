@@ -1357,7 +1357,8 @@ sap.ui.define([
 							var oField3 = oCore.byId("DCP1--2-values0");
 							assert.equal(oField1.getFieldHelp(), "MyTestValueHelp", "fieldHelp on field is set");
 							assert.equal(oField2.getFieldHelp(), "MyTestValueHelp", "fieldHelp on field is set");
-							assert.equal(oField3.getFieldHelp(), null, "fieldHelp on field is NOT set");
+							assert.equal(oField3.getFieldHelp(), "MyTestValueHelp", "fieldHelp on field is set");
+							// assert.equal(oField3.getFieldHelp(), null, "fieldHelp on field is NOT set");
 
 							fnDone();
 						}, 0);
