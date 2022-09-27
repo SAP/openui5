@@ -259,7 +259,8 @@ sap.ui.define([
 		this.createPanel({ expanded: false });
 		this.oPanel.attachExpand(fnEventSpy);
 		this.oPanel.onsapspace({
-			target: this.oPanel._oExpandButton.getDomRef()
+			target: this.oPanel._oExpandButton.getDomRef(),
+			preventDefault: function () {}
 		});
 
 		assert.ok(bPassedArg, "Event should be triggered by an user interaction");
