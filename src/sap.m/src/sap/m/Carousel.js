@@ -872,7 +872,6 @@ sap.ui.define([
 	 */
 	Carousel.prototype.onsaptabprevious = function(oEvent) {
 		this._bDirection = false;
-		this._fnOnTabPress(oEvent);
 	};
 
 	/**
@@ -884,7 +883,6 @@ sap.ui.define([
 	 */
 	Carousel.prototype.onsaptabnext = function(oEvent) {
 		this._bDirection = true;
-		this._fnOnTabPress(oEvent);
 	};
 
 	/**
@@ -950,23 +948,6 @@ sap.ui.define([
 			case KeyCodes.NUMPAD_PLUS:
 				this._fnSkipToIndex(oEvent, 1);
 				break;
-		}
-	};
-
-	/**
-	 * Set carousel back to the first position it had.
-	 *
-	 * @param {Object} oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype.onsapescape = function(oEvent) {
-		var lastActivePageNumber;
-
-		if (oEvent.target === this.$()[0] && this._lastActivePageNumber) {
-			lastActivePageNumber = this._lastActivePageNumber + 1;
-
-			this._oMobifyCarousel.move(lastActivePageNumber);
-			this._changePage(undefined, lastActivePageNumber);
 		}
 	};
 
@@ -1103,20 +1084,6 @@ sap.ui.define([
 	 */
 	Carousel.prototype.onsappagedown = function(oEvent) {
 		this._fnSkipToIndex(oEvent, -Carousel._MODIFIERNUMBERFORKEYBOARDHANDLING);
-	};
-
-	/**
-	 * Called on tab or shift+tab key press
-	 *
-	 * @param {Object} oEvent - key event
-	 * @private
-	 */
-	Carousel.prototype._fnOnTabPress = function(oEvent) {
-		// Check if the focus is received form the Carousel
-		if (oEvent.target === this.$()[0]) {
-			// Save reference for [ESC]
-			this._lastActivePageNumber = this._getPageNumber(this.getActivePage());
-		}
 	};
 
 	/**
