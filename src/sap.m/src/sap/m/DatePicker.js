@@ -600,6 +600,7 @@ sap.ui.define([
 			var oDateValue = this.getDateValue();
 			if (oDateValue && oDateValue.getTime() < oDate.getTime()) {
 				this._bValid = false;
+				this._bOutOfAllowedRange = true;
 				Log.warning("DateValue not in valid date range", this);
 			}
 		} else {
@@ -640,6 +641,7 @@ sap.ui.define([
 			var oDateValue = this.getDateValue();
 			if (oDateValue && oDateValue.getTime() > oDate.getTime()) {
 				this._bValid = false;
+				this._bOutOfAllowedRange = true;
 				Log.warning("DateValue not in valid date", this);
 			}
 		} else {
