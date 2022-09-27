@@ -22,6 +22,14 @@ sap.ui.require([
 		"sap/ui/core/qunit/ExpressionParser.qunit",
 
 		// ***************************************************************************************
+		// sap.ui.core.* - tests are contained in testsuite.i18.qunit.js
+		// ***************************************************************************************
+		"sap/ui/core/qunit/i18n/GenericLocaleData.qunit",
+		//TODO: get test running in 1RingModels.qunit; tests don't run independently - refactoring
+		// needed
+		// "sap/ui/core/qunit/i18n/LocaleData.qunit",
+
+		// ***************************************************************************************
 		// sap.ui.core.rules.Model.support - tests are contained in testsuite.rule.qunit.js
 		// ***************************************************************************************
 		//TODO: get test running in 1RingModels.qunit; breaks ODataModel.integration.qunit when
