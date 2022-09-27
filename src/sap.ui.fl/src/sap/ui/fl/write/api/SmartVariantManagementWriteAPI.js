@@ -34,7 +34,7 @@ sap.ui.define([
 	 * @experimental
 	 * @since 1.69.0
 	 * @private
-	 * @ui5-restricted sap.ui.comp
+	 * @ui5-restricted sap.ui.comp, sap.ui.rta
 	 */
 	var SmartVariantManagementWriteAPI = /** @lends sap.ui.fl.write.api.SmartVariantManagementWriteAPI */{
 		/**
@@ -87,7 +87,7 @@ sap.ui.define([
 		 * @param {object} [mPropertyBag.content] - Content of the new change
 		 * @param {object} [mPropertyBag.favorite] - Flag if the variant should be flagged as a favorite
 		 * @param {object} [mPropertyBag.executeOnSelection] - Flag if the variant should be executed on selection
-		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the variant removal takes place
+		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the variant update takes place
 		 * @param {boolean} [mPropertyBag.changeSpecificData.isUserDependent] - Flag if the variant is personalization only
 		 * this either updates the variant from the layer or writes a change to that layer.
 		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The updated variant
@@ -98,6 +98,89 @@ sap.ui.define([
 			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.updateVariant);
 		},
 
+		/**
+		 * Updates content of a variant; this may result in an update of the variant or the creation of a change.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {string} mPropertyBag.reference - Flex reference of the application
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variant should be updated
+		 * @param {string} mPropertyBag.id - ID of the variant
+		 * @param {object} mPropertyBag.content - New content of the variant
+		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the variant content update takes place
+		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The updated variant
+		 * @private
+		 * @ui5-restricted sap.ui.rta.command
+		 */
+		updateVariantContent: function (mPropertyBag) {
+			mPropertyBag.action = CompVariantState.updateActionType.UPDATE;
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.updateVariant);
+		},
+
+		/**
+		 * Saves the current content of a variant; this does not trigger the back end call to persist the variant.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {string} mPropertyBag.reference - Flex reference of the application
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variant should be updated
+		 * @param {string} mPropertyBag.id - ID of the variant
+		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the save of variant content takes place
+		 * @private
+		 * @ui5-restricted sap.ui.rta.command
+		 */
+		saveVariantContent: function (mPropertyBag) {
+			mPropertyBag.action = CompVariantState.updateActionType.SAVE;
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.updateVariant);
+		},
+
+		/**
+		 * Discards the variant content to the original or last saved content.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {string} mPropertyBag.reference - Flex reference of the application
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variant should be updated
+		 * @param {string} mPropertyBag.id - ID of the variant
+		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the save of variant content takes place
+		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The discarded variant
+		 * @private
+		 * @ui5-restricted sap.ui.rta.command
+		 */
+		discardVariantContent: function (mPropertyBag) {
+			mPropertyBag.action = CompVariantState.updateActionType.DISCARD;
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.discardVariantContent);
+		},
+
+		/**
+		 * Updates the metadata of a variant; this may result in an update of the variant or the creation of a change.
+		 * The metadata includes variant name and favorite, automatic apply on selection, default, contexts statuses.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {string} mPropertyBag.reference - Flex reference of the application
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variant should be updated
+		 * @param {string} mPropertyBag.id - ID of the variant
+		 * @param {object} [mPropertyBag.name] - Title of the variant
+		 * @param {object} [mPropertyBag.favorite] - Flag if the variant should be flagged as a favorite
+		 * @param {object} [mPropertyBag.executeOnSelection] - Flag if the variant should be executed on selection
+		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the variant metadata update takes place
+		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The updated variant
+		 * @private
+		 * @ui5-restricted sap.ui.rta.command
+		 */
+		updateVariantMetadata: function (mPropertyBag) {
+			mPropertyBag.action = CompVariantState.updateActionType.UPDATE_METADATA;
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.updateVariant);
+		},
 
 		/**
 		 * Removes a variant; this may result in an deletion of the variant or the creation of a change.
