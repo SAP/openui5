@@ -405,7 +405,7 @@ sap.ui.define([
 				};
 				assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
 				var oButton = aItems[1];
-				assert.ok(oTokenizer.isA("sap.m.Tokenizer"), "Tokenizer is first HBox item");
+				assert.ok(oTokenizer.isA("sap.m.MultiInput"), "Tokenizer is first HBox item");
 				assert.ok(oButton.isA("sap.m.Button"), "Button is first HBox item");
 				assert.equal(oButton.getType(), mLibrary.ButtonType.Transparent, "Button type");
 				assert.equal(oButton.getIcon(), "sap-icon://decline", "Button icon");
