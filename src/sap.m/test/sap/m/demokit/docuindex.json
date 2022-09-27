@@ -110,6 +110,18 @@
 				"ref": "test-resources/sap/m/demokit/theming/webapp/index.html",
 				"category": "Tool",
 				"config": "test-resources/sap/m/demokit/theming/demoapp.json"
+			},
+			{
+				"icon": "activities",
+				"text": "TypeScript To-Do List",
+				"ref": "test-resources/sap/m/demokit/sample/TsTodos/webapp/index.html",
+				"desc": "This to-do app demonstrates a TypeScript setup for developing UI5 applications.",
+				"links": {
+					"View TypeScript Code": "entity/sap.m.sample.TsTodos/sample/sap.m.sample.TsTodos.webapp",
+					"Run Unit Tests": "test-resources/sap/m/demokit/sample/TsTodos/test/unit/unitTests.qunit.html"
+				},
+				"category": "Showcase",
+				"config": "test-resources/sap/m/demokit/sample/TsTodos/demoapp.json"
 			}
 		]
 	},
@@ -1672,7 +1684,18 @@
 			"Extending the Detail Page",
 			"Adding a Comments Section"
 		  ]
-		}
+		},
+		{
+			"id": "sap.m.sample.TsTodos",
+			"name": "TypeScript To-Do List",
+			"category": "Showcase",
+			"since": "1.108",
+			"formFactors": "-",
+			"description": "This to-do app demonstrates a TypeScript setup for developing UI5 applications.",
+			"samples" : [
+				"sap.m.sample.TsTodos.webapp"
+			]
+		  }
 	  ],
 	  "samples": [
 		{
@@ -3712,7 +3735,12 @@
 		  "id": "sap.m.sample.ColorPalette",
 		  "name": "Color Palette in a form",
 		  "description": "The standalone ColorPalette in a container (<code>sap.ui.layout.SimpleForm</code>)."
-		 }
+		},
+		{
+		  "id": "sap.m.sample.TsTodos.webapp",
+		  "name": "TypeScript To-Do List",
+		  "description": "This to-do app demonstrates a TypeScript setup for developing UI5 applications."
+		}
 		]
 	}
 }

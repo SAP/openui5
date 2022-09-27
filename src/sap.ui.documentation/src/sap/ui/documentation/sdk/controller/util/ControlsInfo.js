@@ -43,6 +43,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 					"Popup",
 					"Tile",
 					"User Input",
+					"Showcase",
 					"Testing",
 					"Theming",
 					"Tutorial",
