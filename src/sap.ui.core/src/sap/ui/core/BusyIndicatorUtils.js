@@ -23,17 +23,28 @@ sap.ui.define(['./BlockLayerUtils', 'sap/ui/core/library'],
 	 * Returns the HTML content for the busy indicator
 	 * styling + animation: LocalBusyIndicator.less
 	 *
-	 * @param {string} sSize either "Large" or "Medium". Other sizes will be mapped to "Medium"
+	 * @param {string} sSize either "Large", "Medium" or "Section". Other sizes will be mapped to "Medium"
 	 * @returns {Element} the element for the busy indicator
 	 * @private
 	 * @ui5-restricted sap.ui.core, sap.chart
 	 */
 	BusyIndicatorUtils.getElement = function(sSize) {
-		//default size is medium
-		var sSizeClass = "sapUiLocalBusyIndicatorSizeMedium";
+		var sSizeClass;
 
-		if (sSize === "Large") {
-			sSizeClass = "sapUiLocalBusyIndicatorSizeBig";
+		switch (sSize) {
+			case BusyIndicatorSize.Large:
+				sSizeClass = "sapUiLocalBusyIndicatorSizeBig sapUiLocalBusyIndicatorShowContainer";
+				break;
+			case BusyIndicatorSize.Medium:
+				sSizeClass = "sapUiLocalBusyIndicatorSizeMedium";
+				break;
+			case BusyIndicatorSize.Section:
+				sSizeClass = "sapUiLocalBusyIndicatorSizeSection sapUiLocalBusyIndicatorShowContainer";
+				break;
+			default:
+				//default size is medium
+				sSizeClass = "sapUiLocalBusyIndicatorSizeMedium";
+				break;
 		}
 
 		var oContainer = document.createElement("div");
@@ -84,16 +95,19 @@ sap.ui.define(['./BlockLayerUtils', 'sap/ui/core/library'],
 	 * @see sap.ui.core.BusyIndicatorSize
 	 */
 	BusyIndicatorUtils.addHTML = function (oBusyBlockState, sSize) {
-		var sSizeClass = "sapUiLocalBusyIndicatorSizeMedium",
-			sAnimationSizeClass;
+		var sSizeClass, sAnimationSizeClass;
 
 		switch (sSize) {
 			case BusyIndicatorSize.Small:
 				sSizeClass = "sapUiLocalBusyIndicatorSizeMedium";
 				sAnimationSizeClass = "sapUiLocalBusyIndicatorAnimSmall";
 				break;
+			case BusyIndicatorSize.Section:
+				sSizeClass = "sapUiLocalBusyIndicatorSizeSection sapUiLocalBusyIndicatorShowContainer";
+				sAnimationSizeClass = "sapUiLocalBusyIndicatorAnimStandard ";
+				break;
 			case BusyIndicatorSize.Large:
-				sSizeClass = "sapUiLocalBusyIndicatorSizeBig";
+				sSizeClass = "sapUiLocalBusyIndicatorSizeBig sapUiLocalBusyIndicatorShowContainer";
 				sAnimationSizeClass = "sapUiLocalBusyIndicatorAnimStandard";
 				break;
 			case BusyIndicatorSize.Auto:

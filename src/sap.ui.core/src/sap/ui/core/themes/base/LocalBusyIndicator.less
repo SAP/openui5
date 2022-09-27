@@ -63,7 +63,8 @@
 }
 
 /* Class for medium sized indicator in control overlay */
-.sapUiLocalBusyIndicatorSizeMedium {
+.sapUiLocalBusyIndicatorSizeMedium,
+.sapUiLocalBusyIndicatorSizeSection {
 	font-size: @_sap_ui_core_LocalBusyIndicator_SizeMedium;
 }
 
@@ -80,6 +81,7 @@
 	width: 3em;
 	top: 50%;
 	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 /* indicator bubble */
@@ -91,8 +93,6 @@
 	float: left;
 	margin: 0px;
 	position: relative;
-	top: -0.5em;
-	left: -1.5em;
 	text-indent: 1px;
 }
 

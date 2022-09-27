@@ -811,7 +811,13 @@ sap.ui.define([
 		 * Type: Large size
 		 * @public
 		 */
-		Large : "Large"
+		Large : "Large",
+
+		/**
+		 * Type: Medium size, specifically if the BusyIndicator is displayed over a page section
+		 * @public
+		 */
+		Section : "Section"
 	};
 
 	// Note: the imported module sap/ui/core/CalendarType already defines the global sap.ui.core.CalendarType,

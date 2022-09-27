@@ -29,7 +29,7 @@ sap.ui.define([
 			var oClientRects = $Animation.get(0).getClientRects()[0];
 
 			// this is the position where the animation is
-			var iAnimationRight = parseInt(oClientRects.right);
+			var iAnimationRight = parseInt(oClientRects.right) - (oClientRects.width / 2);
 
 			var iDocWidth = document.body.offsetWidth;
 			// this is the position where the animation should be
