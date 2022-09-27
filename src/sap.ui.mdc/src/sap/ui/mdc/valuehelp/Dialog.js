@@ -454,10 +454,8 @@ sap.ui.define([
 						visible: {parts : ['$help>/_selectableContents'], formatter:
 							function(aContent) {
 								if (aContent && aContent.length == 1) {
-									this.addStyleClass("sapMdcNoHeader"); // hide the IconTabBar header
 									oDialog.removeStyleClass("sapMdcValueHelpTitleShadow"); // make the Header border visible
 								} else {
-									this.removeStyleClass("sapMdcNoHeader");
 									oDialog.addStyleClass("sapMdcValueHelpTitleShadow"); // make the Header border invisible
 								}
 								return true;
@@ -466,6 +464,17 @@ sap.ui.define([
 					});
 					// this._oIconTabBar.setModel(this._oManagedObjectModel, "$help");
 					this._oIconTabBar.addStyleClass("sapUiNoContentPadding");
+					var oIconTabHeader = this._oIconTabBar._getIconTabHeader();
+					oIconTabHeader.bindProperty("visible", {parts : ['$help>/_selectableContents'], formatter:
+						function(aContent) {
+							if (aContent && aContent.length === 1) {
+								return false;
+							} else {
+								return true;
+							}
+						}
+					});
+
 
 					var oITF = new IconTabFilter(this.getId() + "-ITF", {
 						key: {path: "$help>id"},

@@ -238,7 +238,7 @@ sap.ui.define([
 		afterEach: _teardown
 	});
 
-	QUnit.test("_getContainer with content for multi-select", function(assert) {
+	QUnit.test("_getContainer with single content for multi-select", function(assert) {
 
 		oDialog.setTitle("Test");
 		sinon.spy(oContent,"getFormattedTitle");
@@ -258,6 +258,8 @@ sap.ui.define([
 				var oPanel = aItems[1];
 				//assert.notOk(oIconTabBar.getSelectedKey(), "IconTabBar selectedKey"); // as only set on opening
 				assert.equal(oIconTabBar.getItems().length, 1, "item assigned");
+				var oIconTabHeader = oIconTabBar._getIconTabHeader();
+				assert.notOk(oIconTabHeader.getVisible(), "IconTabHeader not visible");
 				var oIconTabFilter = oIconTabBar.getItems()[0];
 				assert.equal(oIconTabFilter.getKey(), "Content1", "oIconTabFilter key");
 				var aIconTabContent = oIconTabFilter.getContent();
@@ -322,6 +324,102 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("_getContainer with multiple content for multi-select", function(assert) {
+
+		var oContentField2 = new Icon("I3", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
+		var oContent2 = new Content("Content2", {title: "Content title2", shortTitle: "ShortTitle2", tokenizerTitle: "TokenizerTitle2"});
+		sinon.stub(oContent2, "getContent").returns(oContentField2);
+		oContent2.setAggregation("displayContent", oContentField2);
+		sinon.stub(oContent2, "getCount").callsFake(function (aConditions) { return aConditions.length;});
+
+		oDialog.setTitle("Test");
+		sinon.spy(oContent,"getFormattedTitle");
+		sinon.spy(oContent2,"getFormattedTitle");
+		oDialog.addContent(oContent2);
+		var oContainer = oDialog._getContainer();
+//		assert.ok(oContainer instanceof Promise, "Promise returned");
+
+		if (oContainer) {
+			var fnDone = assert.async();
+			oContainer.then(function(oContainer) {
+				assert.equal(oContainer.getTitle(), "Test", "sap.m.Dilaog title");
+				var aButtons = oContainer.getButtons();
+				assert.ok(aButtons[0].getVisible(), "OK-Button visible");
+
+				var aDialogContent = oContainer.getContent();
+				var aItems = aDialogContent[0].getItems();
+				var oIconTabBar = aItems[0];
+				var oPanel = aItems[1];
+				//assert.notOk(oIconTabBar.getSelectedKey(), "IconTabBar selectedKey"); // as only set on opening
+				assert.equal(oIconTabBar.getItems().length, 2, "items assigned");
+				var oIconTabHeader = oIconTabBar._getIconTabHeader();
+				assert.ok(oIconTabHeader.getVisible(), "IconTabHeader visible");
+				var oIconTabFilter = oIconTabBar.getItems()[0];
+				assert.equal(oIconTabFilter.getKey(), "Content1", "oIconTabFilter key");
+				var aIconTabContent = oIconTabFilter.getContent();
+				assert.equal(aIconTabContent.length, 1, "IconTabFilter content length");
+				assert.ok(aIconTabContent[0].isA("sap.ui.mdc.valuehelp.base.DialogTab"), "Content of IconTabFilter");
+				assert.equal(aIconTabContent[0].getContent(), oContentField, "Content control");
+				assert.equal(oIconTabFilter.getText(), "Content title", "IconTabFilter text");
+				assert.ok(oContent.getFormattedTitle.calledWith(1), "Content getFormattedTitle called with Count");
+
+				// second content
+				oIconTabFilter = oIconTabBar.getItems()[1];
+				assert.equal(oIconTabFilter.getKey(), "Content2", "oIconTabFilter key");
+				aIconTabContent = oIconTabFilter.getContent();
+				assert.equal(aIconTabContent.length, 1, "IconTabFilter content length");
+				assert.ok(aIconTabContent[0].isA("sap.ui.mdc.valuehelp.base.DialogTab"), "Content of IconTabFilter");
+				assert.equal(aIconTabContent[0].getContent(), oContentField2, "Content control");
+				assert.equal(oIconTabFilter.getText(), "Content title2", "IconTabFilter text");
+				assert.ok(oContent2.getFormattedTitle.calledWith(1), "Content2 getFormattedTitle called with Count");
+
+				assert.ok(oPanel.isA("sap.m.Panel"), "Panel is second VBox item");
+				assert.ok(oPanel.getVisible, "Panel is visible");
+				assert.equal(oPanel.getHeaderText(), formatMessage(oResourceBundle.getText("valuehelp.TOKENIZERTITLE"), 1), "Panel headerText");
+				assert.equal(oPanel.getBackgroundDesign(), mLibrary.BackgroundDesign.Transparent, "Panel backgroundDesign");
+				assert.ok(oPanel.getExpanded(), "Panel expanded");
+				assert.notOk(oPanel.getExpandable(), "Panel expandable");
+				var aPanelContent = oPanel.getContent();
+				assert.equal(aPanelContent.length, 1, "Panel content length");
+				assert.ok(aPanelContent[0].isA("sap.m.HBox"), "HBox is inside Panel");
+				aItems = aPanelContent[0].getItems();
+				assert.equal(aItems.length, 2, "HBox content length");
+				var oTokenizer = aItems[0];
+				var aTokens = oTokenizer.getTokens();
+				assert.equal(aTokens.length, 1, "number of tokens");
+				assert.equal(aTokens[0].getText(), "Text", "Token text");
+				var oBinding = aTokens[0].getBinding("text");
+				var oBindingType = oBinding.getType();
+				assert.ok(oBindingType.isA("sap.ui.mdc.field.ConditionType"), "Token bound using ConditionType");
+				var oFormatOptions = {
+					maxConditions: -1, // as for tokens there should not be a limit on type side
+					valueType: oType,
+					operators: ["EQ", "BT"],
+					display: FieldDisplay.Description,
+					fieldHelpID: "VH",
+					control: oField,
+					delegate: undefined,
+					delegateName: undefined,
+					payload: undefined,
+					convertWhitespaces: true
+				};
+				assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
+				var oButton = aItems[1];
+				assert.ok(oTokenizer.isA("sap.m.Tokenizer"), "Tokenizer is first HBox item");
+				assert.ok(oButton.isA("sap.m.Button"), "Button is first HBox item");
+				assert.equal(oButton.getType(), mLibrary.ButtonType.Transparent, "Button type");
+				assert.equal(oButton.getIcon(), "sap-icon://decline", "Button icon");
+				assert.equal(oButton.getTooltip(), oResourceBundle.getText("valuehelp.REMOVEALLTOKEN"), "Button tooltip");
+
+				fnDone();
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
+
+	});
+
 	QUnit.test("_getContainer with content for single-select", function(assert) {
 
 		oDialog.removeAllContent(); // remove and add again to update quickSelect
@@ -344,6 +442,8 @@ sap.ui.define([
 				var oIconTabBar = aItems[0];
 				//assert.notOk(oIconTabBar.getSelectedKey(), "IconTabBar selectedKey"); // as only set on opening
 				assert.equal(oIconTabBar.getItems().length, 1, "item assigned");
+				var oIconTabHeader = oIconTabBar._getIconTabHeader();
+				assert.notOk(oIconTabHeader.getVisible(), "IconTabHeader not visible");
 				var oIconTabFilter = oIconTabBar.getItems()[0];
 				assert.equal(oIconTabFilter.getKey(), "Content1", "oIconTabFilter key");
 				var aIconTabContent = oIconTabFilter.getContent();
