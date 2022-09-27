@@ -24,7 +24,6 @@ sap.ui.define(function() {
 			},
 			loader: {},
 			page: "test-resources/sap/ui/mdc/qunit/teststarter.qunit.html?testsuite={suite}&test={name}",
-			autostart: false,
 			module: "./{name}.qunit"
 		},
 		tests: {

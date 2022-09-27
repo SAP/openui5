@@ -1,11 +1,7 @@
 /*!
  * ${copyright}
  */
-
-/* global QUnit */
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/mdc/LinkIntegrationTesting/test/PageObjectJourney",
 	"testutils/opa/TestLibrary"
@@ -27,7 +23,5 @@ sap.ui.require([
 			}
 		}
 	});
-
-	QUnit.start();
 
 });

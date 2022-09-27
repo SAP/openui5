@@ -1,11 +1,8 @@
 /*!
  * ${copyright}
  */
-
 /* global QUnit */
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/test/Opa5",
 	"mdc/qunit/util/V4ServerHelper",
 	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary",

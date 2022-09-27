@@ -1,33 +1,15 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
+		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
 		<meta charset="utf-8">
-		<title>OPA Tests for mdc.ActionToolbar</title>
-
-		<script
-			id="sap-ui-bootstrap"
-			src="../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-async="true"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-resourceroots='{
-				"sap.ui.mdc.ActionToolbarTesting": "./",
-				"mdc.qunit.util": "../../qunit/util",
-				"sap.ui.mdc.integration": "../../integration",
-				"delegates": "../../delegates",
-				"test-resources": "../../../../../../test-resources",
-                "sap.ui.rta.test": "../../../../../sap/ui/rta",
-				"testutils.opa": "../../testutils/opa"
-			}'>
-		</script>
-		<script src="../../../../../../resources/sap/ui/qunit/qunit-2-css.js"></script>
-		<script src="../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
-		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script src="./opaTests.qunit.js"></script>
+		<base href="../../../../../../">
+		<script src="resources/sap/ui/test/starter/runTest.js"
+			data-sap-ui-testsuite="test-resources/sap/ui/mdc/integration/testsuite.qunit"
+			data-sap-ui-test="ActionToolbar"></script>
 	</head>
-<body>
-	<div id="qunit" class="sapUiBody"></div>
-	<div id="qunit-fixture"></div>
-</body>
+
+	<body>
+		<div id="qunit"></div>
+	</body>
 </html>
