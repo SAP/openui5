@@ -108,7 +108,7 @@ sap.ui.define([
 		if (oBinding && oBinding.addSelectionInterval) {
 			if (this._getSelectionMode() === SelectionMode.Single) {
 				iIndexFrom = iIndexTo;
-				oBinding.setSelectionInterval(iIndexFrom, iIndexTo);
+				this.setSelectionInterval(iIndexFrom, iIndexTo);
 			}
 			oBinding.addSelectionInterval(iIndexFrom, iIndexTo);
 		}
@@ -133,7 +133,7 @@ sap.ui.define([
 	BindingSelection.prototype.getSelectedIndex = function() {
 		var oBinding = this.getTableBinding();
 
-		if (oBinding && oBinding.findNode) {
+		if (oBinding && oBinding.getSelectedIndex) {
 			return oBinding.getSelectedIndex();
 		} else {
 			return -1;
@@ -157,7 +157,7 @@ sap.ui.define([
 			return [iSelectedIndex];
 		}
 
-		if (oBinding && oBinding.findNode && oBinding.getSelectedIndices) {
+		if (oBinding && oBinding.getSelectedIndices) {
 			return oBinding.getSelectedIndices();
 		} else {
 			return [];
@@ -201,7 +201,8 @@ sap.ui.define([
 	 */
 	BindingSelection.prototype.isIndexSelectable = function(iIndex) {
 		var oBinding = this.getTableBinding();
-		if (oBinding) {
+
+		if (oBinding && oBinding.isIndexSelectable) {
 			return oBinding.isIndexSelectable(iIndex);
 		} else {
 			// if there is no binding the selection can't be handled, therefore the row is not selectable
@@ -238,7 +239,7 @@ sap.ui.define([
 	BindingSelection.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
 		var oBinding = this.getTableBinding();
 
-		if (oBinding && oBinding.findNode && oBinding.removeSelectionInterval) {
+		if (oBinding && oBinding.removeSelectionInterval) {
 			oBinding.removeSelectionInterval(iIndexFrom, iIndexTo);
 		}
 	};
