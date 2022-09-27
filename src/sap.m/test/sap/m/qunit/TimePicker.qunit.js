@@ -1142,6 +1142,21 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	QUnit.test("picker icon does not have a tooltip", function (assert) {
+		// arrange
+		var oTimePicker = new TimePicker();
+
+		// act
+		oTimePicker.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assert
+		assert.notOk(oTimePicker.$("icon").control(0).getTooltip(), "icon tooltip is disabled");
+
+		// cleanup
+		oTimePicker.destroy();
+	});
+
 	QUnit.module("data binding");
 
 	QUnit.test("binding to value property is correct", function(assert) {
@@ -1655,7 +1670,6 @@ sap.ui.define([
 		//arrange
 		var oInfo;
 		this.oTP.setValue("Value");
-		this.oTP.setTooltip("Tooltip");
 		this.oTP.setPlaceholder("Placeholder");
 		//assert
 		assert.ok(!!this.oTP.getAccessibilityInfo, "TimePicker has a getAccessibilityInfo function");

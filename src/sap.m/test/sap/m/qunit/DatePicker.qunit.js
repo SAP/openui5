@@ -313,17 +313,16 @@ sap.ui.define([
 		oDatePicker.destroy();
 	});
 
-	QUnit.test("title is set to the icon", function (assert) {
+	QUnit.test("icon does not have a tooltip", function (assert) {
 		// arrange
-		var oDatePicker = new DatePicker(),
-			sExpected = oCore.getLibraryResourceBundle("sap.m").getText("OPEN_PICKER_TEXT");
+		var oDatePicker = new DatePicker();
 
 		// act
 		oDatePicker.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		// assert
-		assert.equal(oDatePicker.$("icon").control(0).getTooltip(), sExpected, "icon has its tooltip property set");
+		assert.notOk(oDatePicker.$("icon").control(0).getTooltip(), "icon tooltip is disabled");
 
 		// cleanup
 		oDatePicker.destroy();
@@ -2098,7 +2097,6 @@ sap.ui.define([
 	QUnit.test("getAccessibilityInfo", function(assert) {
 		var oInput = new DatePicker({
 			value: "Value",
-			tooltip: "Tooltip",
 			placeholder: "Placeholder"
 		});
 

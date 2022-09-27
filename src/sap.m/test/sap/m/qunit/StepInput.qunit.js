@@ -83,7 +83,7 @@ sap.ui.define([
 		assert.strictEqual(oIncrementButton.getMetadata().getName(), "sap.ui.core.Icon",
 			"the picker aggregation holds an instance of an icon");
 
-		assert.equal(oIncrementButton.getTooltip(), StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP, "The tooltip is correct");
+		assert.notOk(oIncrementButton.getTooltip(), "increment button should not have a tooltip");
 
 		//act
 		oIncrementButton.firePress();
@@ -103,7 +103,7 @@ sap.ui.define([
 		assert.strictEqual(oDecrementButton.getMetadata().getName(), "sap.ui.core.Icon",
 			"the step input _decrementButton aggregation holds an instance of an icon");
 
-		assert.equal(oDecrementButton.getTooltip(), StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP, "The tooltip is correct");
+		assert.notOk(oDecrementButton.getTooltip(), "decrement button should not have a tooltip");
 
 		//act
 		oDecrementButton.firePress();
@@ -1799,7 +1799,6 @@ sap.ui.define([
 		assert.notOk($Input.is("[aria-valuemin]"), "Internal Input doesn't have 'aria-valuemin' attribute");
 		assert.notOk($Input.is("[aria-valuemax]"), "Internal Input doesn't have 'aria-valuemax' attribute");
 		/* Inherited InputBase aria properties */
-		assert.notOk(oInput.$().is("[title]"), "Internal Input wrapper doesn't have 'title' attribute");
 		assert.notOk($Input.is("[name]"), "Internal Input doesn't have 'name' attribute");
 		assert.notOk($Input.is("[placeholder]"), "Internal Input doesn't have 'placeholder' attribute");
 		assert.notOk($Input.is("[aria-invalid]"), "Internal Input doesn't have 'aria-invalid' attribute");
@@ -1848,7 +1847,6 @@ sap.ui.define([
 				editable: false,
 				enabled: false,
 				placeholder: 'useful placeholder',
-				tooltip: 'useful tooltip',
 				min: 0,
 				max: 10,
 				value: 15
@@ -1867,8 +1865,6 @@ sap.ui.define([
 		assert.ok($Input.is("[aria-valuemax]"), "Internal Input has 'aria-valuemax' attribute");
 		assert.strictEqual($Input.attr("aria-valuemax"), "10", "Internal input's 'aria-valuemax' attribute has correct value");
 		/* Inherited InputBase aria properties */
-		assert.ok(oInput.$().is("[title]"), "Internal Input wrapper has 'title' attribute");
-		assert.strictEqual(oInput.$().attr("title"), 'useful tooltip', "Internal input's wrapper 'title' attribute has correct value");
 		assert.ok($Input.is("[name]"), "Internal Input has 'name' attribute");
 		assert.strictEqual($Input.attr("name"), 'useful name', "Internal input's 'name' attribute has correct value");
 		assert.ok($Input.is("[placeholder]"), "Internal Input has 'placeholder' attribute");

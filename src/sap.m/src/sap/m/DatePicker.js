@@ -365,7 +365,8 @@ sap.ui.define([
 			id: this.getId() + "-icon",
 			src: this.getIconSrc(),
 			noTabStop: true,
-			tooltip: oResourceBundle.getText("OPEN_PICKER_TEXT")
+			decorative: false,
+			useIconTooltip: false
 		});
 
 		// idicates whether the picker is still open
