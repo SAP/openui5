@@ -47,13 +47,6 @@ sap.ui.define([
 			this._openWindow();
 		}
 
-		// beforeunload will only work if the page was loaded and received; it is not guarateed to fire
-		window.communicationWindows.testRecorder.addEventListener("beforeunload", function () {
-			if (!this._dockStarted && !this._closeTriggered) {
-				this.close();
-			}
-		}.bind(this));
-
 		CommunicationBus.subscribe(CommunicationChannels.MINIMIZE_IFRAME, this.minimizeFrame.bind(this));
 		CommunicationBus.subscribe(CommunicationChannels.SHOW_IFRAME, this.unminimizeFrame.bind(this));
 		CommunicationBus.subscribe(CommunicationChannels.CLOSE_IFRAME, this.close.bind(this));
@@ -136,6 +129,24 @@ sap.ui.define([
 		this._isInIframe = false;
 		this._dockStarted = false;
 		this._closeTriggered = false;
+
+		setTimeout(function () {
+			var fnBeforeUnloadListener = function () {
+				window.communicationWindows.testRecorder.removeEventListener("beforeunload", fnBeforeUnloadListener);
+				if (!this._dockStarted && !this._closeTriggered) {
+					this.close();
+				}
+			}.bind(this);
+
+			// beforeunload will only work if the page was loaded and received; it is not guarateed to fire
+			if (window.communicationWindows.testRecorder.closed) {
+				if (!this._dockStarted && !this._closeTriggered) {
+					this.close();
+				}
+			} else {
+				window.communicationWindows.testRecorder.addEventListener("beforeunload", fnBeforeUnloadListener);
+			}
+		}.bind(this), 1000);
 	};
 
 	UIContextInjector.prototype._openFrame = function () {
