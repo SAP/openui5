@@ -5,13 +5,16 @@
 	xmlns:core="sap.core"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
-	<f:SimpleForm binding="{/ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)}"
+	<f:SimpleForm binding="{path: '/ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)',
+			parameters : {$$patchWithoutSideEffects : true}}"
 			editable="true" id="contact" layout="columnLayout" title="Field Groups"
 			validateFieldGroup="onValidateFieldGroup">
 		<Label labelFor="firstName" text="First Name"/>
-		<Input fieldGroupIds="firstNameGroup" id="firstName" value="{FirstName}"/>
+		<Input fieldGroupIds="nameGroup" id="firstName" value="{FirstName}"
+			description="{FirstName}"/>
 		<Label labelFor="lastName" text="Last Name"/>
-		<Input fieldGroupIds="lastNameGroup" id="lastName" value="{LastName}"/>
+		<Input fieldGroupIds="nameGroup" id="lastName" value="{LastName}"
+			description="{LastName}"/>
 		<Label labelFor="emailAddress" text="Email Address"/>
 		<Input fieldGroupIds="emailAddressGroup" id="emailAddress" value="{EmailAddress}"/>
 	</f:SimpleForm>

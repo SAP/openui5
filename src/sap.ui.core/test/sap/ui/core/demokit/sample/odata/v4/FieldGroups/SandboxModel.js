@@ -26,8 +26,8 @@ sap.ui.define([
 				},
 				"ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)?$select=FirstName,LastName" : {
 					message : {
-						FirstName : "Karl*",
-						LastName : "Müller*"
+						FirstName : "Karl**",
+						LastName : "Müller**"
 					}
 				}
 			},

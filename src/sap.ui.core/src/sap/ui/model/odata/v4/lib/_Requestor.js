@@ -452,7 +452,7 @@ sap.ui.define([
 		}
 
 		function isUsingStrictHandling(oRequest) {
-			return oRequest.headers["Prefer"] === "handling=strict";
+			return oRequest.headers.Prefer === "handling=strict";
 		}
 
 		// do not look past aRequests.iChangeSet because these cannot be change sets
@@ -1039,6 +1039,32 @@ sap.ui.define([
 		}
 
 		return this.lockGroup("$auto", oGroupLock.getOwner());
+	};
+
+	/**
+	 * Tells whether there are only PATCH requests with the "Prefer" header set to "return=minimal"
+	 * (results from using $$patchWithoutSideEffects=true) enqueued in the batch queue with the
+	 * given group ID.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @returns {boolean}
+	 *   Returns <code>true</code> if only PATCHes are enqueued in the batch queue with the given
+	 *   group ID
+	 *
+	 * @private
+	 */
+	_Requestor.prototype.hasOnlyPatchesWithoutSideEffects = function (sGroupId) {
+		return this.getGroupSubmitMode(sGroupId) === "Auto"
+			&& !!this.mBatchQueue[sGroupId]
+			&& this.mBatchQueue[sGroupId].every(function (vChangeSetOrRequest) {
+				// PATCH requests must be in a change set which is modeled as an array
+				return Array.isArray(vChangeSetOrRequest)
+					&& vChangeSetOrRequest.every(function (oRequest) {
+					return oRequest.method === "PATCH"
+						&& oRequest.headers.Prefer === "return=minimal";
+				});
+			});
 	};
 
 	/**
@@ -2038,7 +2064,10 @@ sap.ui.define([
 
 	/**
 	 * Waits until all group locks for the given group ID have been unlocked and submits the
-	 * requests associated with this group ID in one batch request.
+	 * requests associated with this group ID in one batch request. If only PATCH requests are
+	 * enqueued (see {@link #hasOnlyPatchesWithoutSideEffects}), this will delay the execution to
+	 * wait for potential side effect requests triggered by
+	 * {@link sap.ui.core.Control#event:validateFieldGroup}.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
@@ -2062,7 +2091,19 @@ sap.ui.define([
 		if (bBlocked) {
 			Log.info("submitBatch('" + sGroupId + "') is waiting for locks", null, sClassName);
 		}
+
 		return oPromise.then(function () {
+			if (that.hasOnlyPatchesWithoutSideEffects(sGroupId)) {
+				bBlocked = true;
+				Log.info("submitBatch('" + sGroupId
+					+ "') is waiting for potential side effect requests", null, sClassName);
+				return new Promise(function (fnResolve) {
+					setTimeout(function () {
+						fnResolve();
+					}, 0);
+				});
+			}
+		}).then(function () {
 			if (bBlocked) {
 				Log.info("submitBatch('" + sGroupId + "') continues", null, sClassName);
 			}

@@ -19,7 +19,7 @@ sap.ui.getCore().attachInit(function () {
 			QUnit.skip("Test runs only with realOData=false");
 		} else {
 			//*****************************************************************************
-			opaTest("Enter a name and request side effects", function (Given, When, Then) {
+			opaTest("Enter a name and stay in field group", function (Given, When, Then) {
 				When.onAnyPage.applySupportAssistant();
 				Given.iStartMyUIComponent({
 					autoWait : true,
@@ -30,16 +30,43 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheMainPage.checkField("firstName", "Karl");
 				Then.onTheMainPage.checkField("lastName", "Müller");
 
-				When.onTheMainPage.resetRequestCount();
+				When.onTheMainPage.observeRequests();
 				When.onTheMainPage.selectField("firstName");
 				When.onTheMainPage.enterValue("firstName", "Karl*");
 				When.onTheMainPage.selectField("lastName");
-				Then.onTheMainPage.checkField("firstName", "Karl*");
-				Then.onTheMainPage.checkField("lastName", "Müller*");
-				Then.onTheMainPage.checkRequestCount(1);
+				Then.onTheMainPage.expectRequest([
+					"PATCH ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)"
+				]);
 
 				Then.onAnyPage.checkLog();
 				Then.onAnyPage.analyzeSupportAssistant();
+				Then.iTeardownMyUIComponent();
+			});
+
+			opaTest("Enter a last name, leave field group and request side effects",
+					function (Given, When, Then) {
+				Given.iStartMyUIComponent({
+					autoWait : true,
+					componentConfig : {
+						name : "sap.ui.core.sample.odata.v4.FieldGroups"
+					}
+				});
+				Then.onTheMainPage.checkField("firstName", "Karl");
+				Then.onTheMainPage.checkField("lastName", "Müller");
+
+				When.onTheMainPage.observeRequests();
+				When.onTheMainPage.selectField("lastName");
+				When.onTheMainPage.enterValue("lastName", "Müller*");
+				When.onTheMainPage.selectField("emailAddress");
+				Then.onTheMainPage.checkField("firstName", "Karl**");
+				Then.onTheMainPage.checkField("lastName", "Müller**");
+				Then.onTheMainPage.expectRequest([
+					"PATCH ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)",
+					"GET ContactList(42010aef-0de5-1eea-af8f-5bce865f0879)?"
+					+ "$select=FirstName,LastName"
+				]);
+
+				Then.onAnyPage.checkLog();
 				Then.iTeardownMyUIComponent();
 			});
 

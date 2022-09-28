@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/test/TestUtils"
 ], function (Opa5, EnterText, Press, TestUtils) {
 	"use strict";
-	var sViewName = "sap.ui.core.sample.odata.v4.FieldGroups.FieldGroups";
+	var sCurrentRequestBody,
+		sViewName = "sap.ui.core.sample.odata.v4.FieldGroups.FieldGroups";
 
 	Opa5.createPageObjects({
 		onTheMainPage : {
@@ -21,10 +22,13 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				resetRequestCount : function () {
+				observeRequests : function () {
 					this.waitFor({
 						success : function () {
-							TestUtils.resetRequestCount();
+							TestUtils.onRequest(function (sRequestBody) {
+								sCurrentRequestBody = sRequestBody;
+								TestUtils.onRequest(null); // remove listener
+							});
 						},
 						viewName : sViewName
 					});
@@ -50,13 +54,26 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
-				checkRequestCount : function (iRequestCount) {
+				expectRequest : function (aExpectedMessages) {
+					var bDocumentHasFocus = false;
+
 					this.waitFor({
-						success : function () {
-							Opa5.assert.strictEqual(TestUtils.getRequestCount(), iRequestCount,
-								iRequestCount + " requests");
+						check : function () {
+							// check not possible when document lost focus
+							bDocumentHasFocus = document.hasFocus();
+							return sCurrentRequestBody !== undefined || !bDocumentHasFocus;
 						},
-						viewName : sViewName
+						success : function () {
+							if (!bDocumentHasFocus) {
+								Opa5.assert.ok(true, "Document lost focus, check skipped");
+							} else {
+								aExpectedMessages.forEach(function (sExpectedMessage) {
+									Opa5.assert.ok(sCurrentRequestBody.includes(sExpectedMessage),
+										sExpectedMessage);
+								});
+								sCurrentRequestBody = undefined;
+							}
+						}
 					});
 				}
 			}

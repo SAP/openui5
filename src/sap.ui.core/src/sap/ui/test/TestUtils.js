@@ -32,6 +32,7 @@ sap.ui.define([
 		rODataHeaders = /^(OData-Version|DataServiceVersion)$/,
 		bRealOData = sRealOData === "true" || sRealOData === "direct",
 		iRequestCount = 0,
+		fnOnRequest = null,
 		sOptimisticBatch = oUriParameters.get("optimisticBatch"),
 		bOptimisticBatch = sOptimisticBatch === null ? undefined : sOptimisticBatch === "true",
 		bSupportAssistant = oUriParameters.get("supportAssistant") === "true",
@@ -377,6 +378,10 @@ sap.ui.define([
 					mODataHeaders = getODataHeaders(oRequest);
 
 				iRequestCount += 1;
+				if (fnOnRequest) {
+					fnOnRequest(oRequest.requestBody);
+				}
+
 				oRequest.respond(200,
 					jQuery.extend({}, mODataHeaders, {
 						"Content-Type" : "multipart/mixed;boundary=" + oMultipart.boundary
@@ -739,6 +744,9 @@ sap.ui.define([
 				var oResponse = getResponseFromFixture(oRequest);
 
 				iRequestCount += 1;
+				if (fnOnRequest) {
+					fnOnRequest(oRequest.requestBody);
+				}
 				oRequest.respond(oResponse.code, oResponse.headers, oResponse.message);
 			}
 
@@ -937,6 +945,18 @@ sap.ui.define([
 		 */
 		getRequestCount : function () {
 			return iRequestCount;
+		},
+
+		/**
+		 * Sets a callback function which is called when the fake server responds with a fake
+		 * request. The function will be called with the request body as first parameter.
+		 *
+		 * Pass <code>null</code> to remove the listener.
+		 *
+		 * @param {function(string)} [fnCallback] - The function
+		 */
+		onRequest : function (fnCallback) {
+			fnOnRequest = fnCallback;
 		},
 
 		/**

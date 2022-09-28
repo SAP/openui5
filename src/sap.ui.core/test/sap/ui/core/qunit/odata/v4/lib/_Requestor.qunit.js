@@ -4521,6 +4521,7 @@ sap.ui.define([
 
 		this.oLogMock.expects("info")
 			.withExactArgs("submitBatch('foo') is waiting for locks", null, sClassName);
+		this.mock(window).expects("setTimeout").never();
 
 		// code under test
 		oFooPromise = oRequestor.submitBatch("foo");
@@ -4529,15 +4530,21 @@ sap.ui.define([
 
 		this.oLogMock.expects("info")
 			.withExactArgs("submitBatch('bar') is waiting for locks", null, sClassName);
+		oRequestorMock.expects("hasOnlyPatchesWithoutSideEffects").withExactArgs("bar")
+			.returns(false);
 
 		// code under test
 		oBarPromise = oRequestor.submitBatch("bar");
 
+		oRequestorMock.expects("hasOnlyPatchesWithoutSideEffects").withExactArgs("baz")
+			.returns(false);
 		oRequestorMock.expects("processBatch").withExactArgs("baz").returns(Promise.resolve());
 
 		// code under test
 		oBazPromise = oRequestor.submitBatch("baz");
 
+		oRequestorMock.expects("hasOnlyPatchesWithoutSideEffects").withExactArgs("foo")
+			.returns(false);
 		this.oLogMock.expects("info")
 			.withExactArgs("submitBatch('foo') continues", null, sClassName);
 		oRequestorMock.expects("processBatch").withExactArgs("foo").returns(Promise.resolve());
@@ -4561,7 +4568,38 @@ sap.ui.define([
 				assert.deepEqual(oRequestor.aLockedGroupLocks, []);
 			}),
 			oBazPromise
-		]);
+		]).finally(function () {
+			window.setTimeout.restore();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch: delay $batch", function () {
+		var oPromise,
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
+			oRequestorMock = this.mock(oRequestor),
+			oSetTimeoutExpectation;
+
+		oRequestorMock.expects("hasOnlyPatchesWithoutSideEffects").withExactArgs("bay")
+			.returns(true);
+		this.oLogMock.expects("info")
+			.withExactArgs("submitBatch('bay') is waiting for potential side effect requests",
+				null, sClassName);
+		oSetTimeoutExpectation = this.mock(window).expects("setTimeout")
+			.withExactArgs(sinon.match.func, 0);
+		this.oLogMock.expects("info")
+			.withExactArgs("submitBatch('bay') continues", null, sClassName);
+		oRequestorMock.expects("processBatch").never();
+
+		// code under test
+		oPromise = oRequestor.submitBatch("bay");
+
+		oSetTimeoutExpectation.args[0][0]();
+		oRequestorMock.expects("processBatch").withExactArgs("bay").returns(Promise.resolve());
+
+		return oPromise.finally(function () {
+			window.setTimeout.restore();
+		});
 	});
 
 	//*********************************************************************************************
@@ -5300,6 +5338,87 @@ sap.ui.define([
 		assert.strictEqual(oRequestor.processOptimisticBatch("~requests~", "~group~"), undefined);
 
 		assert.strictEqual(oRequestor.oOptimisticBatch, null);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("hasOnlyPatchesWithoutSideEffects", function (assert) {
+		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
+			oRequestorMock = this.mock(oRequestor);
+
+		oRequestorMock.expects("getGroupSubmitMode").withExactArgs("myGroup").returns("API");
+
+		// code under test
+		assert.strictEqual(oRequestor.hasOnlyPatchesWithoutSideEffects("myGroup"), false);
+
+		oRequestorMock.expects("getGroupSubmitMode").withExactArgs("$auto").returns("Auto");
+
+		// code under test - mBatchQueue empty
+		assert.strictEqual(oRequestor.hasOnlyPatchesWithoutSideEffects("$auto"), false);
+
+		oRequestor.mBatchQueue["$auto"] = [[], {/* not a changeset */}];
+		oRequestorMock.expects("getGroupSubmitMode").withExactArgs("$auto").returns("Auto");
+
+		// code under test - not a changeset
+		assert.strictEqual(oRequestor.hasOnlyPatchesWithoutSideEffects("$auto"), false);
+
+		oRequestor.mBatchQueue["$auto"] = [[{
+			method : "~VERB~"
+		}]];
+		oRequestorMock.expects("getGroupSubmitMode").withExactArgs("$auto").returns("Auto");
+
+		// code under test - not a PATCH
+		assert.strictEqual(oRequestor.hasOnlyPatchesWithoutSideEffects("$auto"), false);
+
+		oRequestor.mBatchQueue["$auto"] = [[{
+			headers : {
+				Prefer : "~foo~"
+			},
+			method : "PATCH"
+		}]];
+		oRequestorMock.expects("getGroupSubmitMode").withExactArgs("$auto").returns("Auto");
+
+		// code under test - PATCH, header mismatch
+		assert.strictEqual(oRequestor.hasOnlyPatchesWithoutSideEffects("$auto"), false);
+
+		oRequestor.mBatchQueue["$auto"] = [[{
+			headers : {
+				Prefer : "return=minimal"
+			},
+			method : "PATCH"
+		}]];
+		oRequestorMock.expects("getGroupSubmitMode").withExactArgs("$auto").returns("Auto");
+
+		// code under test - single PATCH, correct header
+		assert.strictEqual(oRequestor.hasOnlyPatchesWithoutSideEffects("$auto"), true);
+
+		oRequestor.mBatchQueue["$auto"] = [[{
+			headers : {
+				Prefer : "return=minimal"
+			},
+			method : "PATCH"
+		}, {
+			headers : {
+				Prefer : "return=minimal"
+			},
+			method : "PATCH"
+		}]];
+		oRequestorMock.expects("getGroupSubmitMode").withExactArgs("$auto").returns("Auto");
+
+		// code under test - multiple PATCHes, correct header
+		assert.strictEqual(oRequestor.hasOnlyPatchesWithoutSideEffects("$auto"), true);
+
+		oRequestor.mBatchQueue["$auto"] = [[{
+			headers : {
+				Prefer : "return=minimal"
+			},
+			method : "PATCH"
+		}, {
+			method : "GET"
+		}]];
+		oRequestorMock.expects("getGroupSubmitMode").withExactArgs("$auto").returns("Auto");
+
+		// code under test - PATCH with correct header, GET
+		assert.strictEqual(oRequestor.hasOnlyPatchesWithoutSideEffects("$auto"), false);
 	});
 });
 // TODO: continue-on-error? -> flag on model
