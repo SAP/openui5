@@ -29,26 +29,40 @@
 					<Text text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" />
 					<Text text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" />
 				</f:mainContent>
-				<f:actionItems>
-					<f:SidePanelActionItem icon="sap-icon://physical-activity" text="Run" />
-					<f:SidePanelActionItem icon="sap-icon://addresses" text="Go home" />
-					<f:SidePanelActionItem icon="sap-icon://building" text="Go to the office" />
-					<f:SidePanelActionItem icon="sap-icon://bed" text="Go to sleep" />
-					<f:SidePanelActionItem icon="sap-icon://flight" text="Fly abroad" />
-					<f:SidePanelActionItem icon="sap-icon://cargo-train" text="Travel" />
-					<f:SidePanelActionItem icon="sap-icon://cart" text="Go to the mall" />
-					<f:SidePanelActionItem icon="sap-icon://car-rental" text="Drive your car" />
-					<f:SidePanelActionItem icon="sap-icon://create-leave-request" text="Go on vacation" />
-					<f:SidePanelActionItem icon="sap-icon://family-protection" text="Meet your family" />
-					<f:SidePanelActionItem icon="sap-icon://lab" text="Do a research" />
-					<f:SidePanelActionItem icon="sap-icon://theater" text="Go to the theater" />
-					<f:SidePanelActionItem icon="sap-icon://taxi" text="Take a taxi" />
-					<f:SidePanelActionItem icon="sap-icon://vehicle-repair" text="Repair your car" />
-					<f:SidePanelActionItem icon="sap-icon://wounds-doc" text="Visit a doctor" />
-					<f:SidePanelActionItem icon="sap-icon://umbrella" text="Take an umbrella" />
-					<f:SidePanelActionItem icon="sap-icon://puzzle" text="Solve a puzzle" />
-					<f:SidePanelActionItem icon="sap-icon://picture" text="Draw a picture" />
-				</f:actionItems>
+				<f:items>
+					<f:SidePanelItem icon="sap-icon://physical-activity" text="Run">
+						<VBox>
+							<Text text="Static Content" class="sapUiSmallMarginBottom" />
+							<Text text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." />
+							<Switch />
+							<Button text="Press me" />
+						</VBox>
+					</f:SidePanelItem>
+					<f:SidePanelItem icon="sap-icon://addresses" text="Go home">
+						<VBox>
+							<Text text="Static Content" class="sapUiSmallMarginBottom" />
+							<Button text="Press me" />
+							<Button text="Hit me" />
+							<Button text="Touch me" />
+						</VBox>
+					</f:SidePanelItem>
+					<f:SidePanelItem icon="sap-icon://building" text="Go to office" />
+					<f:SidePanelItem icon="sap-icon://bed" text="Go to sleep" />
+					<f:SidePanelItem icon="sap-icon://flight" text="Fly abroad" />
+					<f:SidePanelItem icon="sap-icon://cargo-train" text="Travel" />
+					<f:SidePanelItem icon="sap-icon://cart" text="Go to the mall" />
+					<f:SidePanelItem icon="sap-icon://car-rental" text="Drive your car" />
+					<f:SidePanelItem icon="sap-icon://create-leave-request" text="Go on vacation" />
+					<f:SidePanelItem icon="sap-icon://family-protection" text="Meet your family" />
+					<f:SidePanelItem icon="sap-icon://lab" text="Do a research" />
+					<f:SidePanelItem icon="sap-icon://theater" text="Go to the theater" />
+					<f:SidePanelItem icon="sap-icon://taxi" text="Take a taxi" />
+					<f:SidePanelItem icon="sap-icon://vehicle-repair" text="Repair your car" />
+					<f:SidePanelItem icon="sap-icon://wounds-doc" text="Visit a doctor" />
+					<f:SidePanelItem icon="sap-icon://umbrella" text="Take an umbrella" />
+					<f:SidePanelItem icon="sap-icon://puzzle" text="Solve a puzzle" />
+					<f:SidePanelItem icon="sap-icon://picture" text="Draw a picture" />
+				</f:items>
 			</f:SidePanel>
 		</content>
 	</Page>

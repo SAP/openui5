@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides control sap.f.SidePanelActionItem.
+// Provides control sap.f.SidePanelItem.
 sap.ui.define([
 	"sap/ui/core/Item"
 ], function(
@@ -11,7 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new <code>SidePanelActionItem</code>.
+	 * Constructor for a new <code>SidePanelItem</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
@@ -20,7 +20,7 @@ sap.ui.define([
 	 *
 	 * <h3>Overview</h3>
 	 *
-	 * The SidePanel Navigation Item.
+	 * The SidePanel Action Item.
 	 *
 	 * @extends sap.ui.core.Item
 	 *
@@ -30,11 +30,11 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.107
-	 * @alias sap.f.SidePanelActionItem
+	 * @alias sap.f.SidePanelItem
 	 * @experimental Since 1.107. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	 var SidePanelActionItem = Item.extend("sap.f.SidePanelActionItem", {
+	 var SidePanelItem = Item.extend("sap.f.SidePanelItem", {
 		metadata: {
 			library: "sap.f",
 			properties: {
@@ -42,9 +42,16 @@ sap.ui.define([
 				* Specifies the icon for the item.
 				*/
 				icon: { type: "sap.ui.core.URI", group: "Misc", defaultValue: '' }
+			},
+			defaultAggregation: "content",
+			aggregations: {
+				/**
+				 * The list of controls for side content of the action item.
+				 */
+				content: { type: "sap.ui.core.Control", multiple: true }
 			}
 		}
 	});
 
-	return SidePanelActionItem;
+	return SidePanelItem;
 });
