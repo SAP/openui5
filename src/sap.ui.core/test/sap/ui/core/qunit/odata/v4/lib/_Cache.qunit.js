@@ -12126,7 +12126,7 @@ sap.ui.define([
 		assert.strictEqual(this.oRequestor.$mSingletonCacheByPath, undefined);
 
 		// code under test
-		oCache = new _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/baz", oQueryOptions);
+		oCache = _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/baz", oQueryOptions);
 
 		oSingleton0 = oCache.oSingleton;
 		assert.ok(oCache instanceof _Cache);
@@ -12139,7 +12139,7 @@ sap.ui.define([
 			, oSingleton0);
 
 		// code under test (same singleton, other property, equal query options)
-		oCache = new _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/bas",
+		oCache = _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/bas",
 			{custom : "query"});
 
 		oSingleton1 = oCache.oSingleton;
@@ -12151,7 +12151,7 @@ sap.ui.define([
 		assert.deepEqual(oCache.mQueryOptions, {});
 
 		// code under test (same singleton, same property, other query options)
-		oCache = new _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/baz",
+		oCache = _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/baz",
 			oOtherQueryOptions);
 
 		oSingleton1 = oCache.oSingleton;
@@ -12167,7 +12167,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_SingletonPropertyCache#reset", function () {
-		var oCache = new _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/baz");
+		var oCache = _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/baz");
 
 		this.mock(oCache.oSingleton).expects("resetProperty").withExactArgs("foo/bar/baz");
 
@@ -12219,7 +12219,7 @@ sap.ui.define([
 	}
 }].forEach(function (oFixture) {
 	QUnit.test("_SingleCache#resetProperty: sPath: " + oFixture.sPath, function (assert) {
-		var oCache = new _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/baz");
+		var oCache = _Cache.createProperty(this.oRequestor, "Singleton/foo/bar/baz");
 
 		oCache.oSingleton.oPromise = SyncPromise.resolve(oFixture.oData);
 
@@ -12237,7 +12237,7 @@ sap.ui.define([
 			aPromises = [],
 			oSingletonMock;
 
-		oCache = new _Cache.createProperty(this.oRequestor, "Singleton/foo");
+		oCache = _Cache.createProperty(this.oRequestor, "Singleton/foo");
 		oSingletonMock = this.mock(oCache.oSingleton);
 
 		this.oModelInterfaceMock.expects("fetchMetadata")
@@ -12264,7 +12264,7 @@ sap.ui.define([
 				assert.strictEqual(oResult, "~fooResult~");
 		}));
 
-		oCache = new _Cache.createProperty(this.oRequestor, "Singleton/bar");
+		oCache = _Cache.createProperty(this.oRequestor, "Singleton/bar");
 
 		this.oModelInterfaceMock.expects("fetchMetadata")
 			.withExactArgs("/Singleton/bar")
