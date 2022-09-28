@@ -43,22 +43,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				module: "./v4server/V4ServerIntegration.qunit",
 				sinon: false
 			},
-			// "ListReportOPATests": {
-			// 	loader: {
-			// 		paths: {
-			// 			"mdc/qunit/util": "test-resources/sap/ui/mdc/qunit/util",
-			// 			"sap/ui/mdc/integration": "test-resources/sap/ui/mdc/integration",
-			// 			"sap/ui/v4demo": "test-resources/sap/ui/mdc/integration/ListReport",
-			// 			"delegates": "test-resources/sap/ui/mdc/delegates"
-			// 		}
-			// 	},
-			// 	qunit: {
-			// 		reorder: false
-			// 	},
-			// 	autostart: false, // tests are added asynchronously because the V4 server needs to be found first
-			// 	module: "test-resources/sap/ui/mdc/integration/ListReport/opaTests.qunit",
-			// 	sinon: false
-			// },
 			"ListReportFLVM": {
 				group: "TWFB",
 				loader: {
@@ -134,8 +118,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 						"testutils/opa": "test-resources/sap/ui/mdc/testutils/opa"
 					}
 				},
-				autostart: false,
-				page: "test-resources/sap/ui/mdc/integration/actiontoolbar/opaTests.qunit.html",
+				module: "test-resources/sap/ui/mdc/integration/actiontoolbar/opaTests.qunit",
 				sinon: false
 			},
 			"Link": {
@@ -145,13 +128,11 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 						"sap/ui/mdc/qunit/link/opa/test": "test-resources/sap/ui/mdc/qunit/link/opa/test"
 					}
 				},
-				group: "TestObjects",
-				autostart: false,
+				group: "PageObjects",
 				module: "test-resources/sap/ui/mdc/integration/link/pageObject.qunit",
 				sinon: false
 			},
 			"Field": {
-				autostart: false,
 				page: "test-resources/sap/ui/mdc/integration/Field/testsuite.qunit.html",
 				sinon: false
 			}
