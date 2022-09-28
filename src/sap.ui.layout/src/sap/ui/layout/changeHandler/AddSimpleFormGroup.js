@@ -227,7 +227,7 @@ sap.ui.define([
 
 	AddSimpleFormGroup.getChangeVisualizationInfo = function(oChange, oAppComponent) {
 		var oSelector = oChange.getContent().group.selector;
-		var oAffectedGroup = JsControlTreeModifier.bySelector(oSelector, oAppComponent).getId();
+		var oAffectedGroup = JsControlTreeModifier.bySelector(oSelector, oAppComponent).getParent().getId();
 
 		return {
 			affectedControls: [oAffectedGroup],
