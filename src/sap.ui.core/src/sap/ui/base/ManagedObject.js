@@ -4196,7 +4196,7 @@ sap.ui.define([
 	 * refers to the default model.
 	 *
 	 * @param {string} [sModelName] name of the model to be retrieved
-	 * @return {sap.ui.model.Model} oModel
+	 * @return {sap.ui.model.Model | undefined} oModel or undefined when there is no such model
 	 * @public
 	 */
 	ManagedObject.prototype.getModel = function(sModelName) {
