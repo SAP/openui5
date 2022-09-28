@@ -143,7 +143,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 				rm.class(clsPrefix + "SelCol");
 				rm.attr("role", "presentation");
 				rm.openEnd();
-				rm.renderControl(oTable.getMultiSelectMode() == MultiSelectMode.Default ? oTable._getSelectAllCheckbox() : oTable._getClearAllButton());
+				rm.renderControl(oTable.getMultiSelectMode() == MultiSelectMode.ClearAll ? oTable._getClearAllButton() : oTable._getSelectAllCheckbox());
 				rm.close("th");
 				index++;
 			} else {

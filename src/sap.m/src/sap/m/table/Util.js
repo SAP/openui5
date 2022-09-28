@@ -28,7 +28,8 @@ sap.ui.define([
 	// local privates
 	var sDefaultFont = "";
 	var fBaseFontSize = parseFloat(MLibrary.BaseFontSize);
-
+	var oSelectAllNotificationPopover = null;
+	var pGetSelectAllPopover = null;
 	/**
 	 * Measures the given text width in a canvas and returns the value in rem.
 	 *
@@ -289,6 +290,102 @@ sap.ui.define([
 		}
 
 		return oIllustratedMessage;
+	};
+
+	/**
+	 * Creates or returns the existing popover
+	 *
+	 * @returns {Promise} A promise that resolves when the popover is created
+	 * @private
+	 * @since 1.109
+	 */
+	Util.getSelectAllPopover = function() {
+		if (pGetSelectAllPopover) {
+			return pGetSelectAllPopover;
+		}
+
+		pGetSelectAllPopover = Promise.all(
+            [new Promise(function(fnResolve) {
+				sap.ui.require([
+					"sap/m/Popover",
+					"sap/m/Bar",
+					"sap/m/HBox",
+					"sap/m/Title",
+					"sap/ui/core/library",
+					"sap/m/Text"
+				], function(Popover, Bar, HBox, Title, coreLib, Text) {
+					fnResolve({
+						Popover: Popover,
+						Bar: Bar,
+						HBox: HBox,
+						Title: Title,
+						coreLib: coreLib,
+						Text: Text
+					});
+				});
+			}),
+            Core.getLibraryResourceBundle('sap.m', true)
+		]).then(function(aResult) {
+			var oModules = aResult[0];
+			var oResourceBundle = aResult[1];
+			var sIconColor = oModules.coreLib.IconColor.Critical,
+			sTitleLevel = oModules.coreLib.TitleLevel.H2;
+
+			oSelectAllNotificationPopover = new oModules.Popover({
+				customHeader: new oModules.Bar({
+					contentMiddle: [
+						new oModules.HBox({
+							items: [
+								new oModules.coreLib.Icon({src: "sap-icon://message-warning", color: sIconColor})
+									.addStyleClass("sapUiTinyMarginEnd"),
+								new oModules.Title({text: oResourceBundle.getText("TABLE_SELECT_LIMIT_TITLE"), level: sTitleLevel})
+							],
+							renderType: "Bare",
+							justifyContent: "Center",
+							alignItems: "Center"
+						})
+					]
+				}),
+				content: [new oModules.Text()]
+			}).addStyleClass("sapUiContentPadding");
+			return {
+				oSelectAllNotificationPopover: oSelectAllNotificationPopover,
+				oResourceBundle: oResourceBundle
+			};
+		});
+		return pGetSelectAllPopover;
+	};
+
+	/**
+	 * Opens the Popover and sets the appropriate message.
+	 *
+	 * @param {int} iLimit The selectable items length
+	 * @param {object} oSelectAllDomRef Control object where the popOver is opened
+	 * @private
+	 * @since 1.109
+	 */
+	Util.showSelectionLimitPopover = function(iLimit, oSelectAllDomRef) {
+		Util.getSelectAllPopover().then(function(oResult) {
+			var oPopover = oResult.oSelectAllNotificationPopover;
+			var oResourceBundle = oResult.oResourceBundle;
+			var sMessage = oResourceBundle.getText("TABLE_SELECT_LIMIT", [iLimit]);
+			oPopover.getContent()[0].setText(sMessage); //Content contains a single text element
+			if (oSelectAllDomRef) {
+				oPopover.openBy(oSelectAllDomRef);
+			}
+		});
+	};
+
+	/**
+	 * Closes the popover if opened
+	 *
+	 * @private
+	 * @since 1.109
+	 */
+	Util.hideSelectionLimitPopover = function() {
+		if (oSelectAllNotificationPopover && oSelectAllNotificationPopover.isOpen()) {
+			oSelectAllNotificationPopover.close();
+		}
 	};
 
 	return Util;

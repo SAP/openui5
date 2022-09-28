@@ -4744,7 +4744,15 @@ sap.ui.define([
 		 * Renders the <code>clearAll</code> icon.
 		 * @public
 		 */
-		 ClearAll: "ClearAll"
+		ClearAll: "ClearAll",
+
+		/**
+		 * Renders the <code>selectAll</code> checkbox with warning popover.
+		 * Availble for sap.m.Table control
+		 * @public
+		 * @since 1.109
+		 */
+		SelectAll: "SelectAll"
 	};
 
 	/**
