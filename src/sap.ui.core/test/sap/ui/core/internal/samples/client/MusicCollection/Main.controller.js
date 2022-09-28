@@ -13,7 +13,7 @@ sap.ui.define([
 				oUiModel = this.getView().getModel("ui");
 
 			if (oItemsBinding) {
-				iCount = oItemsBinding.getLength(); // shall be replaced by "getCount"
+				iCount = oItemsBinding.getCount();
 				oUiModel.setProperty("/itemsCount", iCount === undefined ? "??" : iCount);
 			}
 		}

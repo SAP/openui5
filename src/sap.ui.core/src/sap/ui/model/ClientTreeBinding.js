@@ -47,9 +47,11 @@ sap.ui.define([
 				this.oContext = "";
 			}
 			this._mLengthsCache = {};
-			this.filterInfo = {};
-			this.filterInfo.aFilteredContexts = [];
-			this.filterInfo.oParentContext = {};
+			this.filterInfo = {
+				aFilteredContexts : [],
+				iMatches : 0,
+				oParentContext : {}
+			};
 			this.oCombinedFilter = null;
 			this.mNormalizeCache = {};
 
@@ -303,9 +305,10 @@ sap.ui.define([
 	 * Apply the current defined filters on the existing dataset.
 	 * @private
 	 */
-	ClientTreeBinding.prototype.applyFilter = function(){
+	ClientTreeBinding.prototype.applyFilter = function () {
 		// reset previous stored filter contexts
 		this.filterInfo.aFilteredContexts = [];
+		this.filterInfo.iMatches = 0;
 		this.filterInfo.oParentContext = {};
 		this._applyFilterRecursive();
 	};
@@ -353,6 +356,7 @@ sap.ui.define([
 					this.filterInfo.aFilteredContexts.concat(aFilteredContexts);
 				this.filterInfo.aFilteredContexts.push(oParentContext);
 				this.filterInfo.oParentContext = oParentContext;
+				this.filterInfo.iMatches += aFilteredContexts.length;
 			}
 			// push additionally parentcontexts if any children are already included in filtered contexts
 			if (aUnfilteredContexts.indexOf(this.filterInfo.oParentContext) != -1) {
@@ -423,7 +427,58 @@ sap.ui.define([
 		this._fireChange();
 	};
 
+	/**
+	 * Returns the count of entries in the tree, or <code>undefined</code> if it is unknown. If the
+	 * tree is filtered, the count of all entries matching the filter conditions is returned. The
+	 * entries required only for the tree structure are not counted.
+	 *
+	 * @returns {number|undefined} The count of entries in the tree, or <code>undefined</code> if it
+	 *   is unknown, for example because the binding is not resolved
+	 * @public
+	 * @since 1.108.0
+	 */
+	 ClientTreeBinding.prototype.getCount = function () {
+		if (!this.isResolved()) {
+			return undefined;
+		}
+
+		if (this.oCombinedFilter) {
+			return this.filterInfo.iMatches;
+		}
+
+		return ClientTreeBinding._getTotalNodeCount(this.oModel.getObject(this.getResolvedPath()),
+			this.mParameters && this.mParameters.arrayNames, true);
+	};
+
+	/**
+	 * Returns the count of objects in the given data by iterating recursively over the given array
+	 * names, or if not given over all object keys.
+	 *
+	 * @param {any} vData
+	 *   The root of the data to count objects
+	 * @param {string[]} [aArrayNames]
+	 *   The array of property names to consider when counting the child objects in the given data
+	 * @param {boolean} [bRoot]
+	 *   Whether the given data is the root of the tree
+	 * @returns {number}
+	 *   The total count of objects in the given data
+	 * @private
+	 */
+	ClientTreeBinding._getTotalNodeCount = function (vData, aArrayNames, bRoot) {
+		if (vData === null || typeof vData !== "object") {
+			return 0; // null and non-objects do not count
+		}
+
+		if (Array.isArray(vData)) {
+			return vData.reduce(function (iCount, vItem) {
+				return iCount + ClientTreeBinding._getTotalNodeCount(vItem, aArrayNames);
+			}, 0);
+		}
+
+		return (aArrayNames || Object.keys(vData)).reduce(function (iCount, sKey) {
+			return iCount + ClientTreeBinding._getTotalNodeCount(vData[sKey], aArrayNames);
+		}, bRoot ? 0 /*root object doesn't count*/ : 1);
+	};
 
 	return ClientTreeBinding;
-
 });
