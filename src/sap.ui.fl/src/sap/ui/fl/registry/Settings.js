@@ -112,6 +112,7 @@ sap.ui.define([
 						isCondensingEnabled: false,
 						isProductiveSystem: true,
 						isPublicLayerAvailable: false,
+						isLocalResetEnabled: false,
 						isVariantAdaptationEnabled: false,
 						versioning: {},
 						_bFlexChangeMode: false,
@@ -363,6 +364,15 @@ sap.ui.define([
 	 */
 	Settings.prototype.isProductiveSystemWithTransports = function() {
 		return this.isProductiveSystem() && this.isSystemWithTransports();
+	};
+
+	/**
+	 * Returns the information if a back end supports local reset.
+	 *
+	 * @returns {boolean} <code>true</code> if the local reset is supported
+	 */
+	 Settings.prototype.isLocalResetEnabled = function() {
+		return this._getBooleanProperty("isLocalResetEnabled");
 	};
 
 	/**

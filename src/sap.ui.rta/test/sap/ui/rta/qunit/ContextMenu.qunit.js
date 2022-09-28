@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/PropertyChange",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/FieldExtensibility",
+	"sap/ui/fl/registry/Settings",
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/ui/rta/RuntimeAuthoring",
@@ -24,6 +25,7 @@ sap.ui.define([
 	PropertyChange,
 	ChangesWriteAPI,
 	FieldExtensibility,
+	Settings,
 	Page,
 	Button,
 	RuntimeAuthoring,
@@ -87,6 +89,14 @@ sap.ui.define([
 					fnDone();
 				}
 			}.bind(this));
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isVariantAdaptationEnabled: function() {
+					return true;
+				},
+				isLocalResetEnabled: function() {
+					return true;
+				}
+			});
 		},
 		afterEach: function() {
 			sandbox.restore();

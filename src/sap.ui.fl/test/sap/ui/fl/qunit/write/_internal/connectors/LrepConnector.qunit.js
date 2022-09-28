@@ -628,7 +628,8 @@ sap.ui.define([
 				isVersioningEnabled: false,
 				isContextSharingEnabled: true,
 				isContextSharingEnabledForComp: true,
-				isPublicLayerAvailable: false
+				isPublicLayerAvailable: false,
+				isLocalResetEnabled: true
 			};
 
 			var oExpectedResponse = Object.assign({isVariantAdaptationEnabled: false}, oServerResponse);
@@ -651,7 +652,8 @@ sap.ui.define([
 				isVersioningEnabled: false,
 				isContextSharingEnabled: true,
 				isContextSharingEnabledForComp: true,
-				isPublicLayerAvailable: true
+				isPublicLayerAvailable: true,
+				isLocalResetEnabled: true
 			};
 
 			var oExpectedResponse = Object.assign({isVariantAdaptationEnabled: true}, oServerResponse);

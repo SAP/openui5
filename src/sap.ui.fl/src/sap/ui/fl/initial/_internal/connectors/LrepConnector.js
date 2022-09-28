@@ -123,6 +123,7 @@ sap.ui.define([
 					this.settings.isVariantAdaptationEnabled = !!this.settings.isPublicLayerAvailable;
 					this.settings.isContextSharingEnabled = true;
 					this.settings.isContextSharingEnabledForComp = true;
+					this.settings.isLocalResetEnabled = true;
 				}
 				if (!oResponse.loadModules) {
 					return oResponse;
