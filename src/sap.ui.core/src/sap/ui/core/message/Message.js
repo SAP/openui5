@@ -291,7 +291,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sTarget The message target
 	 *
-	 * @deprecated As a message may have multiple targets, use {@link #setTargets} instead
+	 * @deprecated since 1.79.0; As a message may have multiple targets, use {@link #setTargets}
+	 *   instead
 	 * @public
 	 */
 	Message.prototype.setTarget = function(sTarget) {
@@ -303,7 +304,8 @@ sap.ui.define([
 	 *
 	 * @returns {string} The message target
 	 *
-	 * @deprecated As a message may have multiple targets, use {@link #getTargets} instead
+	 * @deprecated since 1.79.0; As a message may have multiple targets, use {@link #getTargets}
+	 *   instead
 	 * @public
 	 */
 	Message.prototype.getTarget = function() {

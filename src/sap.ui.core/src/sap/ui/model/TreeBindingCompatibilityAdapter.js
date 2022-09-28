@@ -23,7 +23,7 @@ sap.ui.define(["sap/base/util/each"],
 		 * @class
 		 * @protected
 		 *
-		 * @deprecated use {@link sap.ui.model.TreeBindingAdapter} instead
+		 * @deprecated since 1.96.0; use {@link sap.ui.model.TreeBindingAdapter} instead
 		 */
 		var TreeBindingCompatibilityAdapter = function (oBinding, oControl) {
 			// Code necessary for ClientTreeBinding
