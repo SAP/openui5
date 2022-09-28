@@ -1607,7 +1607,7 @@ sap.ui.define([
 		}
 		_Helper.restoreUpdatingProperties(oOldElement, oElement);
 
-		// Note: iStart is not needed here because we know we have key predicates
+		// Note: iStart is not needed here because we know we have a key predicate
 		this.visitResponse(oElement, mTypeForMetaPath,
 			_Helper.getMetaPath(_Helper.buildPath(this.sMetaPath, sPath)), sPath + sPredicate);
 	};

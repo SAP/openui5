@@ -1509,7 +1509,7 @@ sap.ui.define([
 		 *
 		 * Note: In case the meta path <code>sRootMetaPath</code> points to a single-valued
 		 * navigation property, for example "/SalesOrderList/SO_2_BP", this methods adds the key
-		 * properties of the related entity type to the "$select" query options. Although this
+		 * properties of the related entity type to the "$select" query options. Although this is
 		 * not needed in order to obtain the correct nested entity it enables
 		 * {@link sap.ui.model.odata.v4.Context#requestSideEffects}) to check the consistency of the
 		 * key predicates.
