@@ -2004,6 +2004,85 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.module("Footer", {
+			beforeEach: function () {
+				this.oCard = new Card("somecard", {
+					width: "400px",
+					height: "600px"
+				});
+
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+				Core.applyChanges();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("hidden footer", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.notOk(this.oCard.getCardFooter().getVisible(), "Card Footer is hidden.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.hiddenHeader"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"title": "Card title"
+					},
+					"footer": {
+						"visible": false
+					}
+				}
+			});
+		});
+
+		QUnit.test("hidden footer with binding", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.notOk(this.oCard.getCardFooter().getVisible(), "Card Footer is hidden.");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.hiddenHeader"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": {
+							"footerVisible": false
+						}
+					},
+					"header": {
+						"title": "Card title"
+					},
+					"footer": {
+						"visible": "{/footerVisible}"
+					}
+				}
+			});
+		});
+
 		QUnit.module("Card Accessibility", {
 			beforeEach: function () {
 				this.oRb = Core.getLibraryResourceBundle("sap.f");

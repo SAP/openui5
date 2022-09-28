@@ -28,7 +28,7 @@ sap.ui.define([
 				oRm.class("sapUiIntCardAnalytical");
 			}
 
-			if (oCard.getAggregation("_footer")) {
+			if (oCard.getCardFooter() && oCard.getCardFooter().getVisible()) {
 				oRm.class("sapUiIntCardWithFooter");
 			}
 		},

@@ -42,7 +42,8 @@
         "1.29.0",
         "1.30.0",
         "1.31.0",
-        "1.32.0"
+        "1.32.0",
+        "1.33.0"
       ]
     },
     "designtime": {
@@ -201,6 +202,18 @@
               ]
             }
           }
+        },
+        "visible": {
+          "description": "[Experimental] Visibility of the footer",
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": true
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         }
       }
     },

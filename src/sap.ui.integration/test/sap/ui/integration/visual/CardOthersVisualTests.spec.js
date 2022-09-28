@@ -189,4 +189,26 @@ describe("sap.ui.integration.CardOthersVisualTests", function () {
 
 		utils.navigateBack();
 	});
+
+	it("Hidden Footer", function () {
+		utils.navigateTo("Footer (experimental)");
+
+		var aCards = [
+			{ id: "card1" },
+			{ id: "card2" }
+		];
+
+		aCards.forEach(function (oCard) {
+			var oElement = {
+				control: {
+					viewNamespace: "sap.f.cardsdemo.view.",
+					viewName: "Footer",
+					interaction: "root",
+					id: oCard.id
+				}
+			};
+
+			utils.takePictureOfElement(oElement, "10_HiddenFooter_" + oCard.id);
+		});
+	});
 });

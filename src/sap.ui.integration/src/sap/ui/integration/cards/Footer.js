@@ -165,7 +165,8 @@ sap.ui.define([
 			configuration: oConfiguration,
 			card: oCard,
 			actionsStrip: ActionsStrip.create(oCard, oConfiguration.actionsStrip, true),
-			paginator: Paginator.create(oCard, oConfiguration.paginator)
+			paginator: Paginator.create(oCard, oConfiguration.paginator),
+			visible: oConfiguration.visible
 		});
 	};
 
