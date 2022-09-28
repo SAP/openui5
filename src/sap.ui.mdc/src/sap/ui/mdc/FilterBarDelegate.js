@@ -129,5 +129,15 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate"], function(AggregationBaseDe
 		return AggregationBaseDelegate.fetchProperties(oControl);
 	};
 
+	/**
+	 * This method is called when the 'Clear' button was pressed.
+	 *
+	 * @param {sap.ui.mdc.Control} oControl - The instance of a filter bar
+	 * @returns {Promise} Promise that is resolved once the action completes.
+	 */
+	FilterBarDelegate.clearFilters = function(oControl) {
+		return Promise.resolve();
+    };
+
 	return FilterBarDelegate;
 });

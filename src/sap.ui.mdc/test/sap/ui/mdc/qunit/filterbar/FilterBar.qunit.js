@@ -3,41 +3,42 @@
 /*eslint max-nested-callbacks: [2, 5]*/
 
 sap.ui.define([
-	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	'sap/ui/qunit/QUnitUtils',
+	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/mdc/FilterBar",
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/FilterField",
 	'sap/ui/model/json/JSONModel',
-	"sap/ui/model/type/String",
 	"sap/ui/mdc/p13n/FlexUtil",
 	"sap/ui/mdc/odata/TypeUtil",
 	"sap/ui/mdc/util/FilterUtil",
 	'sap/base/util/merge',
 	"sap/ui/core/library",
-	"../QUnitUtils",
-	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler",
 	"sap/ui/core/Core",
-	"sap/ui/fl/variants/VariantManagement"
+	"../QUnitUtils",
+	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler"
 ], function (
-	FlexRuntimeInfoAPI,
+	QUnitUtils,
+	createAndAppendDiv,
 	FilterBar,
 	FilterBarBase,
 	Condition,
 	FilterField,
 	JSONModel,
-	ModelString,
 	FlexUtil,
 	TypeUtil,
 	FilterUtil,
 	merge,
 	CoreLibrary,
-	MDCQUnitUtils,
-	TestModificationHandler,
 	oCore,
-	VariantManagement
+	MDCQUnitUtils,
+	TestModificationHandler
 ) {
 	"use strict";
+
+	// prepare DOM
+	createAndAppendDiv("qunit-fixture-visible");
 
 	var oFilterBar;
 	var HasPopup = CoreLibrary.aria.HasPopup;
@@ -131,6 +132,43 @@ sap.ui.define([
 		} else {
 			assert.ok(!oButton.getVisible());
 		}
+	});
+
+
+	QUnit.test("check Clear button visibility", function (assert) {
+		var oButton = oFilterBar._btnClear;
+		assert.ok(oButton);
+		assert.ok(!oButton.getVisible(), "Clear by default not visible");
+
+		oFilterBar.setShowClearButton(true);
+		assert.ok(oButton.getVisible(), "Clear is now visible");
+	});
+
+	QUnit.test("check Clear delegate call", function (assert) {
+		var done = assert.async();
+		sinon.spy(oFilterBar,"onClear");
+
+		oFilterBar.initControlDelegate().then(function(oDelegate) {
+			sinon.stub(oDelegate, "clearFilters" ).callsFake(function() {
+				assert.ok(oFilterBar.onClear.called, "onClear called");
+				assert.ok(true, "'clearFilters' on delegate called");
+				done();
+				return Promise.resolve();
+			});
+		});
+
+		oFilterBar.placeAt("qunit-fixture-visible");
+
+		oFilterBar.setShowClearButton(true);
+		oCore.applyChanges();
+
+		var oButton = oFilterBar._btnClear;
+		assert.ok(oButton, "clear button available");
+		var oTarget = oButton.getFocusDomRef();
+		assert.ok(oTarget, "clear button dom-ref available");
+		QUnitUtils.triggerTouchEvent("tap", oTarget, {
+			srcControl: null
+		});
 	});
 
 	QUnit.test("check p13nMode property", function (assert) {
