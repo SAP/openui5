@@ -1448,7 +1448,7 @@ function(
 			aFilterItems = this.getFilterItems(),
 			aSubFilterItems,
 			bMultiSelect = true,
-			bSelectedFilters = false,
+			bSelectedFilters,
 			i = 0,
 			j;
 
@@ -1457,6 +1457,7 @@ function(
 			sFilterString = this._rb.getText("VIEWSETTINGS_FILTERTEXT").concat(" " + Core.byId(oPresetFilterItem).getText());
 		} else { // standard & custom filters
 			for (; i < aFilterItems.length; i++) {
+				bSelectedFilters = false;
 				if (aFilterItems[i] instanceof sap.m.ViewSettingsCustomItem) {
 					// custom filter: add "filter name,"
 					if (aFilterItems[i].getSelected()) {
@@ -1496,7 +1497,7 @@ function(
 			sFilterString = sFilterString.substring(0, sFilterString.length - 2);
 
 			// add "Filtered by: " text
-			if (bSelectedFilters) {
+			if (sFilterString) {
 				sFilterString = this._rb.getText("VIEWSETTINGS_FILTERTEXT").concat(" " + sFilterString);
 			}
 		}
