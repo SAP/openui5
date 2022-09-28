@@ -531,6 +531,8 @@ function(
 			this._initTitlePropagationSupport();
 
 			this._initResponsivePaddingsEnablement();
+
+			this._oAriaDescribedbyText = new InvisibleText({id: this.getId() + "-ariaDescribedbyText"});
 		};
 
 		Dialog.prototype.onBeforeRendering = function () {
@@ -580,6 +582,8 @@ function(
 				oHeader._setRootAccessibilityRole("heading");
 				oHeader._setRootAriaLevel("2");
 			}
+
+			this._oAriaDescribedbyText.setText(this._getAriaDescribedByText());
 		};
 
 		Dialog.prototype.onAfterRendering = function () {
@@ -628,6 +632,11 @@ function(
 			if (this._toolbarSpacer) {
 				this._toolbarSpacer.destroy();
 				this._toolbarSpacer = null;
+			}
+
+			if (this._oAriaDescribedbyText) {
+				this._oAriaDescribedbyText.destroy();
+				this._oAriaDescribedbyText = null;
 			}
 		};
 		/* =========================================================== */
@@ -1450,7 +1459,7 @@ function(
 				return null;
 			}
 
-			return this.$().find('header.sapMDialogTitle')[0];
+			return this.$().find('header.sapMDialogTitle .sapMDialogTitleGroup')[0];
 		};
 
 		/**
@@ -1745,6 +1754,24 @@ function(
 		 */
 		Dialog.prototype._isDraggableOrResizable = function () {
 			return !this.getStretch() && (this.getDraggable() || this.getResizable());
+		};
+
+		/**
+		 * Returns the correct message to be read by the aria-describedby attribute
+		 * @private
+		 */
+		Dialog.prototype._getAriaDescribedByText = function () {
+			var oRb = Core.getLibraryResourceBundle("sap.m");
+			if (this.getResizable() && this.getDraggable()) {
+				return oRb.getText("DIALOG_HEADER_ARIA_DESCRIBEDBY_DRAGGABLE_RESIZABLE");
+			}
+			if (this.getDraggable()) {
+				return oRb.getText("DIALOG_HEADER_ARIA_DESCRIBEDBY_DRAGGABLE");
+			}
+			if (this.getResizable()) {
+				return oRb.getText("DIALOG_HEADER_ARIA_DESCRIBEDBY_RESIZABLE");
+			}
+			return "";
 		};
 
 		/* =========================================================== */
