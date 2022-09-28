@@ -44,6 +44,8 @@ sap.ui.define([
 	"sap/m/DynamicDateRange",
 	"sap/m/Button",
 	"sap/m/Link",
+	"sap/m/Tokenizer",
+	"sap/m/Token",
 	"sap/ui/mdc/condition/ConditionModel",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
@@ -106,6 +108,8 @@ sap.ui.define([
 	DynamicDateRange,
 	Button,
 	Link,
+	Tokenizer,
+	Token,
 	ConditionModel,
 	Condition,
 	FilterOperatorUtil,
@@ -2396,7 +2400,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with external content", function(assert) {
+	QUnit.test("with external content single value", function(assert) {
 
 		var fnDone = assert.async();
 		var oCondition = Condition.createCondition("EQ", [70]);
@@ -2444,6 +2448,55 @@ sap.ui.define([
 				oSlider.destroy();
 			}
 			fnDone();
+		}, 0);
+
+	});
+
+	QUnit.test("with external content multi value", function(assert) {
+
+		var fnDone = assert.async();
+		var oToken = new Token("T1");
+		var oConditionType = new ConditionType();
+		oToken.bindProperty("text", { path: '$field>', type: oConditionType});
+		var oTokenizer = new Tokenizer("TZ1");
+		oTokenizer.bindAggregation("tokens", { path: '$field>/conditions', template: oToken });
+		var oStub = sinon.stub(oTokenizer, "isA");
+		oStub.withArgs("sap.ui.core.IFormContent").returns(true); // fake form content
+		oStub.callThrough();
+		oField.setContentEdit(oTokenizer);
+		var oCondition = Condition.createCondition("EQ", ["A"], undefined, undefined, ConditionValidated.Validated);
+		oCM.addCondition("Name", oCondition);
+		oCondition = Condition.createCondition("EQ", ["B"], undefined, undefined, ConditionValidated.Validated);
+		oCM.addCondition("Name", oCondition);
+		oField.placeAt("content");
+		oCore.applyChanges();
+
+		setTimeout(function() { // to update ConditionModel
+			assert.ok(oTokenizer.getDomRef(), "Tokenizer is rendered");
+			var aTokens = oTokenizer.getTokens();
+			assert.equal(aTokens.length, 2, "Tokenizer has 2 tokens");
+
+			// simulate deletion of token
+			aTokens[0].fireDelete();
+			assert.equal(iCount, 1, "change event fired once");
+			assert.equal(sId, "F1", "change event fired on Field");
+			assert.equal(sValue, "B", "change event value");
+			assert.ok(bValid, "change event valid");
+			assert.ok(oPromise, "Promise returned");
+			assert.equal(iSubmitCount, 0, "submit event not fired");
+			oPromise.then(function(vResult) {
+				assert.ok(vResult, "Promise resolved");
+				var aConditions = oCM.getConditions("Name");
+				assert.deepEqual(vResult, aConditions, "Promise result");
+				assert.equal(aConditions.length, 1, "one condition in Codition model");
+				assert.equal(aConditions[0].values[0], "B", "condition value");
+				assert.equal(aConditions[0].operator, "EQ", "condition operator");
+				aTokens = oTokenizer.getTokens();
+				assert.equal(aTokens.length, 1, "Tokenizer has one Token");
+				assert.equal(aTokens[0].getText(), "B", "Text of Token0");
+
+				fnDone();
+			});
 		}, 0);
 
 	});
