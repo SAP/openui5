@@ -40,7 +40,9 @@
 					"sap.ui.mdc.sample.FieldOtherFeature",
 					"sap.ui.mdc.sample.FieldValueHelp",
 					"sap.ui.mdc.sample.FilterFieldTypes",
-					"sap.ui.mdc.sample.FieldInOutParameter"
+					"sap.ui.mdc.sample.FieldInOutParameter",
+					"sap.ui.mdc.sample.FieldCustomContent",
+					"sap.ui.mdc.sample.FilterFieldCustomContent"
 				]
 			},
 			{
@@ -104,9 +106,17 @@
 				"name": "1.6 Fields with in/out parameter",
 				"description": "in/out parameter between fields and valuehelp"
 			}, {
+				"id": "sap.ui.mdc.sample.FieldCustomContent",
+				"name": "1.7 Fields with custom content",
+				"description": "custom content controls used to render Fields"
+			}, {
 				"id": "sap.ui.mdc.sample.FilterFieldTypes",
 				"name": "2.1  FilterFields with different Types",
 				"description": "shows some FilterFields with different types bound to a condition model"
+			}, {
+				"id": "sap.ui.mdc.sample.FilterFieldCustomContent",
+				"name": "2.2 FilterFields with custom content",
+				"description": "custom content controls used to render FilterFields"
 			}, {
 				"id": "sap.ui.mdc.sample.FilterBar",
 				"name": "3.1 FilterBar",
