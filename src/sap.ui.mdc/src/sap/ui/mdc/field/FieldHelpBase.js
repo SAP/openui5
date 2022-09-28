@@ -1493,6 +1493,11 @@ sap.ui.define([
 		}
 	};
 
+	// for compatibility reasons
+	FieldHelpBase.prototype.isNavigationEnabled = function() {
+		return true;
+	};
+
 	return FieldHelpBase;
 
 });

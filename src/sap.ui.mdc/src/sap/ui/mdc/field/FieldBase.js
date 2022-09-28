@@ -515,10 +515,13 @@ sap.ui.define([
 	MessageMixin.call(FieldBase.prototype);
 
 	var oContentEventDelegateBefore = {
-		onsapprevious: _handleKeybordEvent,
-		onsapnext: _handleKeybordEvent,
 		onsapup: _handleKeybordEvent,
 		onsapdown: _handleKeybordEvent,
+		onsaphome: _handleKeybordEvent,
+		onsapend: _handleKeybordEvent,
+		onsappageup: _handleKeybordEvent,
+		onsappagedown: _handleKeybordEvent,
+
 		onsapbackspace: _handleKeybordEvent
 	};
 
@@ -751,36 +754,45 @@ sap.ui.define([
 		}
 
 	}
-
 	FieldBase.prototype.onsapup = function(oEvent) {
-
-		if (this.getEditMode() === EditMode.Editable) {
-			var oFieldHelp = _getFieldHelp.call(this);
-			var oSource = oEvent.srcControl;
-
-			if (oFieldHelp && (!oFieldHelp.valueHelpEnabled || oFieldHelp.valueHelpEnabled() || oFieldHelp.isOpen()) && (!this._getContentFactory().isMeasure() || oSource.getShowValueHelp())) {
-				// if only type-ahead but no real value help, only navigate if open TODO: remove function check
-				oEvent.preventDefault();
-				oEvent.stopPropagation();
-				oFieldHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value
-				oFieldHelp.navigate(-1);
-			}
-		}
-
+		this._handleNavigate(oEvent, -1);
 	};
 
 	FieldBase.prototype.onsapdown = function(oEvent) {
+		this._handleNavigate(oEvent, 1);
+	};
+
+	FieldBase.prototype.onsaphome = function(oEvent) {
+		this._handleNavigate(oEvent, -9999); // iStep are relative and can not be set to the last item
+	};
+
+	FieldBase.prototype.onsappageup = function(oEvent) {
+		this._handleNavigate(oEvent, -10);
+	};
+
+	FieldBase.prototype.onsappagedown = function(oEvent) {
+		this._handleNavigate(oEvent, 10);
+	};
+
+	FieldBase.prototype.onsapend = function(oEvent) {
+		this._handleNavigate(oEvent, 9999); // iStep are relative and can not be set to the last item
+	};
+
+	FieldBase.prototype._handleNavigate = function(oEvent, iStep) {
 
 		if (this.getEditMode() === EditMode.Editable) {
 			var oFieldHelp = _getFieldHelp.call(this);
 			var oSource = oEvent.srcControl;
 
-			if (oFieldHelp && (!oFieldHelp.valueHelpEnabled || oFieldHelp.valueHelpEnabled() || oFieldHelp.isOpen()) && (!this._getContentFactory().isMeasure() || oSource.getShowValueHelp())) {
-				// if only type-ahead but no real value help, only navigate if open TODO: remove function check
-				oEvent.preventDefault();
-				oEvent.stopPropagation();
-				oFieldHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value
-				oFieldHelp.navigate(1);
+			if (oFieldHelp) {
+				if (oFieldHelp.isNavigationEnabled(iStep) && // if open let ValueHelp decide if and how to navigate
+					(!this._getContentFactory().isMeasure() || oSource.getShowValueHelp())) { // for Currenncy/Unit field navigate only in part with valueHelp
+					// if only type-ahead but no real value help, only navigate if open
+					oEvent.preventDefault();
+					oEvent.stopPropagation();
+					oFieldHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value
+					oFieldHelp.navigate(iStep);
+				}
 			}
 		}
 
@@ -1791,27 +1803,29 @@ sap.ui.define([
 
 		if (!oFieldHelp) {
 			return; // no FieldHelp -> just use logic of content control
-		} else if (oFieldHelp.isOpen()) {
-			// FieldHelp open, navigate always in FieldHelp
-			bPrevent = true;
-		} else {
-			// FieldHelp closed, prevent only arrow up and down as used to navigate
+		} else { // not if only type-ahead
+			// FieldHelp closed, but enabled, prevent only arrow up and down as used to navigate
 			switch (oEvent.type) {
-				case "sapprevious":
 				case "sapup":
-					if (oEvent.keyCode === KeyCodes.ARROW_UP) {
-						bPrevent = true;
-					}
-
+					bPrevent = oFieldHelp.isNavigationEnabled(-1);
 					break;
-				case "sapnext":
 				case "sapdown":
-					if (oEvent.keyCode === KeyCodes.ARROW_DOWN) {
-						bPrevent = true;
-					}
-
+					bPrevent = oFieldHelp.isNavigationEnabled(1);
+					break;
+				case "saphome":
+					bPrevent = oFieldHelp.isNavigationEnabled(-9999);
+					break;
+				case "sapend":
+					bPrevent = oFieldHelp.isNavigationEnabled(9999);
+					break;
+				case "sappageup":
+					bPrevent = oFieldHelp.isNavigationEnabled(-10);
+					break;
+				case "sappagedown":
+					bPrevent = oFieldHelp.isNavigationEnabled(10);
 					break;
 				default:
+					bPrevent = oFieldHelp.isOpen();
 					break;
 			}
 		}
@@ -1820,16 +1834,27 @@ sap.ui.define([
 			oEvent.stopPropagation();
 			oEvent.stopImmediatePropagation(true);
 
-			// call up and down handler directly
+			// call handler directly
 			switch (oEvent.type) {
 				case "sapup":
 					this.onsapup(oEvent);
-
 					break;
 				case "sapdown":
 					this.onsapdown(oEvent);
-
 					break;
+				case "saphome":
+					this.onsaphome(oEvent);
+					break;
+				case "sapend":
+					this.onsapend(oEvent);
+					break;
+				case "sappageup":
+					this.onsappageup(oEvent);
+					break;
+				case "sappagedown":
+					this.onsappagedown(oEvent);
+					break;
+
 				default:
 					break;
 			}
@@ -2377,12 +2402,16 @@ sap.ui.define([
 							var oFocusedElement = document.activeElement;
 							if (this._bConnected && this._getContent()[0] && vOpenByTyping /*&& !(vOpenByTyping instanceof Promise)*/ && //TODO: isTypeaheadsupported always returns a promise now
 								oFocusedElement && (containsOrEquals(this.getDomRef(), oFocusedElement))) { // only if still connected and focussed
-								oFieldHelp.setFilterValue(this._sFilterValue);
-								if (this.getMaxConditionsForHelp() === 1 && oFieldHelp.getConditions().length > 0) {
-									// While single-suggestion no item is selected
-									oFieldHelp.setConditions([]);
+								if (!this._sFilterValue && oFieldHelp.isOpen()) {
+									oFieldHelp.close(); // close if no filter
+								} else if (this._sFilterValue) {
+									oFieldHelp.setFilterValue(this._sFilterValue);
+									if (this.getMaxConditionsForHelp() === 1 && oFieldHelp.getConditions().length > 0) {
+										// While single-suggestion no item is selected
+										oFieldHelp.setConditions([]);
+									}
+									oFieldHelp.open(true);
 								}
-								oFieldHelp.open(true);
 								_setAriaAttributes.call(this, true);
 								delete this._vLiveChangeValue;
 							}

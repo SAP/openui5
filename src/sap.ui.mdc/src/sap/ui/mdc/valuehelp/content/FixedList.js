@@ -95,6 +95,8 @@ sap.ui.define([
 
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
+		this._iNavigateIndex = -1; // initially nothing is navigated
+
 	};
 
 	FixedList.prototype.exit = function() {
@@ -152,9 +154,11 @@ sap.ui.define([
 						itemPress: _handleItemPress.bind(this) // as selected item can be pressed
 					}).addStyleClass("sapMComboBoxBaseList").addStyleClass("sapMComboBoxList");
 
+					oList.applyAriaRole("listbox"); // needed if List of ComboBox or similar
 					oList.setModel(this._oManagedObjectModel, "$help");
 //					oList.bindElement({ path: "/", model: "$help" });
 					this.setAggregation("displayContent", oList, true); // to have in control tree
+					_updateSelection.call(this);
 
 					return oList;
 				}.bind(this));
@@ -209,6 +213,10 @@ sap.ui.define([
 
 	function _updateFilter() {
 
+		if (this._iNavigateIndex >= 0) { // initialize navigation
+			this.setProperty("conditions", [], true);
+			this._iNavigateIndex = -1;
+		}
 		var oList = _getList.call(this);
 		if (oList) {
 			var oBinding = oList.getBinding("items");
@@ -246,18 +254,20 @@ sap.ui.define([
 			var aItems = oList.getItems();
 			for (var i = 0; i < aItems.length; i++) {
 				var oItem = aItems[i];
+				if (i === this._iNavigateIndex) {
+					oItem.addStyleClass("sapMLIBFocused").addStyleClass("sapMListFocus");
+				} else {
+					oItem.removeStyleClass("sapMLIBFocused").removeStyleClass("sapMListFocus");
+				}
 				if (oItem.isA("sap.m.DisplayListItem")) { // not for group headers
 					var oOriginalItem = _getOriginalItem.call(this, oItem);
 					if (aConditions.length > 0 && _getKey.call(this, oOriginalItem) === vSelectedKey) {
 						// conditions given -> use them to show selected items
 						oItem.setSelected(true);
-					} else if (aConditions.length === 0 && bUseFirstMatch && sFilterValue && !bFistFilterItemSelected && _filterText.call(this, oItem.getLabel(), sFilterValue)) {
-						// filter value used -> show first match as selected
+					} else if (aConditions.length === 0 && this._iNavigateIndex < 0 && bUseFirstMatch && sFilterValue && !bFistFilterItemSelected && _filterText.call(this, oItem.getLabel(), sFilterValue)) {
+						// filter value used -> show first match as selected (not of group header selected)
 						oItem.setSelected(true);
 						bFistFilterItemSelected = true;
-					} else if (this.hasOwnProperty("_iNavigateIndex") && i === this._iNavigateIndex) { // TODO: better solution
-						// let navigated item be selected
-						oItem.setSelected(true);
 					} else {
 						oItem.setSelected(false);
 					}
@@ -370,13 +380,14 @@ sap.ui.define([
 
 		oList.addStyleClass("sapMListFocus"); // to show focus outline on navigated item
 
-		var oSelectedItem = oList.getSelectedItem();
 		var aItems = oList.getItems();
 		var iItems = aItems.length;
+		var oSelectedItem = this._iNavigateIndex >= 0 ? aItems[this._iNavigateIndex] : oList.getSelectedItem();
 		var iSelectedIndex = 0;
 		var bFilterList = this.getFilterList();
 		var sFilterValue = this.getFilterValue();
 		var bLeaveFocus = false;
+		var bIsOpen = this.getParent().isOpen();
 
 		if (!bFilterList && !oSelectedItem) {
 			// try to find item that matches Filter
@@ -405,6 +416,13 @@ sap.ui.define([
 			iSelectedIndex = iItems + iStep;
 		}
 
+		if (iStep === 9999) {
+			iSelectedIndex = iItems - 1;
+		}
+		if (iStep === -9999) {
+			iSelectedIndex = 0;
+		}
+
 		var bSearchForNext;
 		if (iSelectedIndex < 0) {
 			iSelectedIndex = 0;
@@ -417,18 +435,7 @@ sap.ui.define([
 			bSearchForNext = iStep >= 0;
 		}
 
-		while (aItems[iSelectedIndex] && aItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) { // ignore group headers
-			if (bSearchForNext) {
-				iSelectedIndex++;
-			} else {
-				iSelectedIndex--;
-			}
-		}
-		if (iSelectedIndex < 0 || iSelectedIndex > iItems - 1) {
-			// find last not groupable item
-			bSearchForNext = !bSearchForNext;
-			bLeaveFocus = iSelectedIndex < 0;
-			iSelectedIndex = iSelectedIndex < 0 ? 0 : iItems - 1;
+		var fSkipGroupHeader = function() {
 			while (aItems[iSelectedIndex] && aItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) { // ignore group headers
 				if (bSearchForNext) {
 					iSelectedIndex++;
@@ -436,30 +443,45 @@ sap.ui.define([
 					iSelectedIndex--;
 				}
 			}
+		};
+
+		if (!bIsOpen) { // if closed, ignore headers
+			fSkipGroupHeader();
+			if (iSelectedIndex < 0 || iSelectedIndex > iItems - 1) {
+				// find last not groupable item
+				bSearchForNext = !bSearchForNext;
+				bLeaveFocus = iSelectedIndex < 0;
+				iSelectedIndex = iSelectedIndex < 0 ? 0 : iItems - 1;
+				fSkipGroupHeader();
+			}
 		}
 
 		var oItem = aItems[iSelectedIndex];
 		if (oItem) {
 			var bUseFirstMatch = this.getUseFirstMatch(); // if item for first match is selected, navigate to it needs to fire the event
 			if (oItem !== oSelectedItem || (bUseFirstMatch && !bLeaveFocus)) {
-				var oOriginalItem = _getOriginalItem.call(this, oItem);
-				var vKey = _getKey.call(this, oOriginalItem);
-				var sDescription = oOriginalItem.getText();
+				var oOriginalItem, vKey, sDescription;
 
-				if (this.getParent().isOpen()) {
+				this._iNavigateIndex = iSelectedIndex;
+
+				oItem.setSelected(true); // does nothing for GroupHeader
+
+				if (bIsOpen) {
 					oList.scrollToIndex(iSelectedIndex); // only possible if open
-				} else {
-					this._iNavigateIndex = iSelectedIndex; // TODO: better solution
-				}
-
-				// in case of a single value field trigger the focusin on the new selected item to update the screenreader invisible text
-				if (this.getParent().isOpen()) {
+					// in case of a single value field trigger the focusin on the new selected item to update the screenreader invisible text
 					oItem.$().trigger("focusin");
 				}
 
-				oItem.setSelected(true);
-				var oCondition = _setConditions.call(this, vKey, sDescription);
-				this.fireNavigated({condition: oCondition, itemId: oItem.getId(), leaveFocus: false});
+				if (oItem.isA("sap.m.GroupHeaderListItem")) {
+					this.setProperty("conditions", [], true); // no condition navigated
+					this.fireNavigated({condition: undefined, itemId: oItem.getId(), leaveFocus: false});
+				} else {
+					oOriginalItem = _getOriginalItem.call(this, oItem);
+					vKey = _getKey.call(this, oOriginalItem);
+					sDescription = oOriginalItem.getText();
+					var oCondition = _setConditions.call(this, vKey, sDescription);
+					this.fireNavigated({condition: oCondition, itemId: oItem.getId(), leaveFocus: false});
+				}
 			} else if (bLeaveFocus) {
 				this.fireNavigated({condition: undefined, itemId: undefined, leaveFocus: bLeaveFocus});
 			}
@@ -484,14 +506,13 @@ sap.ui.define([
 			oList.scrollToIndex(iSelectedIndex);
 		}
 
-		if (this.hasOwnProperty("_iNavigateIndex")) { // initialize after opening
-			delete this._iNavigateIndex;
-		}
 	};
 
 	FixedList.prototype.onHide = function () {
 
 		this.removeFocus();
+
+		this._iNavigateIndex = -1; // initialize after closing
 
 	};
 
@@ -536,6 +557,18 @@ sap.ui.define([
 	FixedList.prototype.shouldOpenOnNavigate = function() {
 
 		return !ListContent.prototype._isSingleSelect.apply(this);
+
+	};
+
+	FixedList.prototype.isNavigationEnabled = function(iStep) {
+
+		return this.getItems().length > 0; // always enabled if items
+
+	};
+
+	FixedList.prototype.onConnectionChange = function () {
+
+		this._iNavigateIndex = -1; // initially nothing is navigated
 
 	};
 

@@ -162,7 +162,6 @@ sap.ui.define([
 			var oContent = oChanges.child;
 			if (oChanges.mutation === "remove") {
 				this._unbindContent(oContent);
-
 			// } else {
 			// 	this._bindContent(oContent);
 			}
@@ -170,41 +169,47 @@ sap.ui.define([
 	};
 
 	Container.prototype._bindContent = function (oContent) {
-		oContent.bindProperty("filterValue", { path: "/filterValue", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
-		var oBindingOptions = { path: "/conditions", model: "$valueHelp", mode: BindingMode.OneWay};
-		if (oContent._formatConditions) {
-			oBindingOptions.formatter = oContent._formatConditions.bind(oContent);
-		}
-		oContent.bindProperty("config", { path: "/_config", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp; Update Config first to have right type before condition update
-		oContent.bindProperty("conditions", oBindingOptions); // inherit from ValueHelp
+		if (oContent && !oContent._bContentBound) { // to prevent multiple event handlers
+			oContent.bindProperty("filterValue", { path: "/filterValue", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
+			var oBindingOptions = { path: "/conditions", model: "$valueHelp", mode: BindingMode.OneWay};
+			if (oContent._formatConditions) {
+				oBindingOptions.formatter = oContent._formatConditions.bind(oContent);
+			}
+			oContent.bindProperty("config", { path: "/_config", model: "$valueHelp", mode: BindingMode.OneWay}); // inherit from ValueHelp
+			oContent.bindProperty("conditions", oBindingOptions); // inherit from ValueHelp
 
-		oContent.attachConfirm(this._handleConfirmed, this);
-		oContent.attachCancel(this._handleCanceled, this);
-		oContent.attachSelect(this._handleSelect, this);
+			oContent.attachConfirm(this._handleConfirmed, this);
+			oContent.attachCancel(this._handleCanceled, this);
+			oContent.attachSelect(this._handleSelect, this);
 
-		if (oContent.attachNavigated) {
-			oContent.attachNavigated(this._handleNavigated, this);
-		}
+			if (oContent.attachNavigated) {
+				oContent.attachNavigated(this._handleNavigated, this);
+			}
 
-		if (oContent.attachRequestSwitchToDialog) {
-			oContent.attachRequestSwitchToDialog(this._handleRequestSwitchToDialog, this);
+			if (oContent.attachRequestSwitchToDialog) {
+				oContent.attachRequestSwitchToDialog(this._handleRequestSwitchToDialog, this);
+			}
+			oContent._bContentBound = true;
 		}
 	};
 
 	Container.prototype._unbindContent = function (oContent) {
-		oContent.unbindProperty("filterValue", true); // don't update values in Content to prevent unneeded updates
-		oContent.unbindProperty("config", true);
-		oContent.unbindProperty("conditions", true);
-		oContent.detachConfirm(this._handleConfirmed, this);
-		oContent.detachCancel(this._handleCanceled, this);
-		oContent.detachSelect(this._handleSelect, this);
+		if (oContent._bContentBound) {
+			oContent.unbindProperty("filterValue", true); // don't update values in Content to prevent unneeded updates
+			oContent.unbindProperty("config", true);
+			oContent.unbindProperty("conditions", true);
+			oContent.detachConfirm(this._handleConfirmed, this);
+			oContent.detachCancel(this._handleCanceled, this);
+			oContent.detachSelect(this._handleSelect, this);
 
-		if (oContent.detachNavigated) {
-			oContent.detachNavigated(this._handleNavigated, this);
-		}
+			if (oContent.detachNavigated) {
+				oContent.detachNavigated(this._handleNavigated, this);
+			}
 
-		if (oContent.detachRequestSwitchToDialog) {
-			oContent.detachRequestSwitchToDialog(this._handleRequestSwitchToDialog, this);
+			if (oContent.detachRequestSwitchToDialog) {
+				oContent.detachRequestSwitchToDialog(this._handleRequestSwitchToDialog, this);
+			}
+			oContent._bContentBound = false;
 		}
 	};
 
@@ -420,7 +425,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.ValueHelp
 	 */
 	Container.prototype.navigate = function(iStep) { // pass through to content
-		return Promise.all([this._getContainer()]).then(function (aResults) {
+		return Promise.all([this._getContainer()]).then(function (aResults) { // TODO: Container control needed if navigated without opening?
 			return this._placeContent(aResults[0]);
 		}.bind(this)).then(function(oContainer) {
 				this._navigate(iStep);
@@ -635,6 +640,23 @@ sap.ui.define([
 		return false;
 	};
 
+	/**
+	 * Determines if navigation via arrow keys should be possible.
+	 *
+	 * In ComboBox-like case keyboard-navigation should be anabled if closed and if open.
+	 * If only typeahead is used (and maybe an value help dialog) keyboard-navigation schould be enabled only if typeahed is open.
+	 *
+	 * As not all rowas might be loaded navigation with home, end, page up or dowm might be disabled, depending of the used content.
+	 *
+	 * @param {int} iStep Number of steps for navigation (e.g. 1 means next item, -1 means previous item)
+	 *
+	 * @returns {boolean} If <code>true</code>, the navigation should be enabled if value help is closed
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.ValueHelp
+	 */
+	Container.prototype.isNavigationEnabled = function(iStep) {
+		return false; // enable only for Popover and supported Content
+	};
 
 	/**
 	 * Determines if the focus is set in the value help or stays in the calling control.
@@ -690,6 +712,17 @@ sap.ui.define([
 	Container.prototype.getSelectedContent = function () {
 		var oContent = this.getContent();
 		return oContent && oContent[0];
+	};
+
+	/**
+	 * called if ValueHelp connection to Field changed
+	 */
+	Container.prototype.onConnectionChange = function () {
+		var aContent = this.getContent();
+		for (var i = 0; i < aContent.length; i++) { // for Dialog overwrite to only bind shown content
+			this._unbindContent(aContent[i]); // in navigation case binding might still exist
+			aContent[i].onConnectionChange();
+		}
 	};
 
 	Container.prototype.exit = function() {

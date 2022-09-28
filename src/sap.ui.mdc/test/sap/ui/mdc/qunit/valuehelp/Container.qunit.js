@@ -92,6 +92,7 @@ sap.ui.define([
 		assert.notOk(oContainer.getUseAsValueHelp(), "getUseAsValueHelp");
 		assert.notOk(oContainer.shouldOpenOnClick(), "shouldOpenOnClick");
 		assert.notOk(oContainer.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
+		assert.notOk(oContainer.isNavigationEnabled(1), "isNavigationEnabled");
 		assert.ok(oContainer.isFocusInHelp(), "isFocusInHelp");
 		assert.notOk(oContainer.isValidationSupported(), "isValidationSupported");
 
@@ -120,6 +121,18 @@ sap.ui.define([
 		oContainer.setAggregation("_container", oField, true);
 
 		assert.equal(oContainer.getScrollDelegate(), "X", "ScrollDelegate of Content returned");
+
+	});
+
+	QUnit.test("onConnectionChange", function(assert) {
+
+		var oContent = new Content("Content1");
+		sinon.spy(oContent, "onConnectionChange");
+		sinon.spy(oContainer, "_unbindContent");
+		oContainer.addContent(oContent);
+		oContainer.onConnectionChange();
+		assert.ok(oContainer._unbindContent.calledWith(oContent), "_unbindContent called for Content");
+		assert.ok(oContent.onConnectionChange.calledOnce, "onConnectionChange called on Content");
 
 	});
 

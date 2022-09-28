@@ -101,6 +101,8 @@ sap.ui.define([
 		this._addPromise("listBinding");
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		this._oMResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+		this._iNavigateIndex = -1; // initially nothing is navigated
 	};
 
 	MTable.prototype.getValueHelpIcon = function() {
@@ -124,10 +126,20 @@ sap.ui.define([
 				var oItem = aItems[iId];
 				var bSelected = bHideSelection ? false : this._isItemSelected(oItem, aConditions);
 				oItem.setSelected(bSelected);
+				if (this._oTable.indexOfItem(oItem) === this._iNavigateIndex) {
+					oItem.addStyleClass("sapMLIBFocused").addStyleClass("sapMListFocus");
+				} else {
+					oItem.removeStyleClass("sapMLIBFocused").removeStyleClass("sapMListFocus");
+				}
 			}
 		}
 	}
 	MTable.prototype.applyFilters = function(sFieldSearch) {
+		if (this._iNavigateIndex >= 0) { // initialize navigation
+			this.setProperty("conditions", [], true);
+			this._iNavigateIndex = -1;
+		}
+
 		var oListBinding = this.getListBinding();
 		var bValueHelpDelegateInitialized = this._isValueHelpDelegateInitialized();
 
@@ -241,6 +253,18 @@ sap.ui.define([
 
 	MTable.prototype._handleUpdateFinished = function () {
 		_updateSelection.apply(this);
+
+		if (this._bScrollToSelectedItem) {
+			var oTable = this._getTable();
+			if (oTable && this.isTypeahead() && this._isSingleSelect()) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
+				var oSelectedItem = this._iNavigateIndex >= 0 ? oTable.getItems()[this._iNavigateIndex] : oTable.getSelectedItem();
+				if (oSelectedItem) {
+					this._handleScrolling(oSelectedItem);
+				}
+			}
+			this._bScrollToSelectedItem = false;
+		}
+
 		this.fireContentUpdated();
 	};
 
@@ -248,7 +272,7 @@ sap.ui.define([
 		return this._oTable;
 	};
 
-	MTable.prototype.onShow = function () {
+	MTable.prototype.onShow = function (bInitial) {
 		var oTable = this._getTable();
 		if (oTable) {
 			if (!oTable.hasStyleClass("sapMComboBoxList")) { // TODO: only in typeahead case?
@@ -268,6 +292,15 @@ sap.ui.define([
 		}
 
 		FilterableListContent.prototype.onShow.apply(this, arguments);
+
+		if (oTable && this.isTypeahead() && this._isSingleSelect()) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
+			var oSelectedItem = this._iNavigateIndex >= 0 ? oTable.getItems()[this._iNavigateIndex] : oTable.getSelectedItem();
+			if (oSelectedItem) {
+				this._handleScrolling(oSelectedItem);
+			} else {
+				this._bScrollToSelectedItem = true;
+			}
+		}
 	};
 
 	MTable.prototype.onHide = function () {
@@ -279,6 +312,9 @@ sap.ui.define([
 				oTable.removeStyleClass("sapMComboBoxList");
 			}
 		}
+
+		this._iNavigateIndex = -1; // initialize after closing
+		this._bScrollToSelectedItem = false;
 	};
 
 	MTable.prototype._handleConditionsUpdate = function(oChanges) {
@@ -556,6 +592,12 @@ sap.ui.define([
 
 	MTable.prototype.navigate = function (iStep) {
 
+		var bIsOpen = this.getParent().isOpen();
+
+		if (!bIsOpen && this._iNavigateIndex < 0) {
+			this.onShow(true); // to force loading of data
+		}
+
 		var oListBinding = this.getListBinding();
 
 		if (!oListBinding || !oListBinding.getLength()) {
@@ -569,8 +611,8 @@ sap.ui.define([
 
 		var oTable = this._getTable();
 
-		var aItems = this._oTable.getItems();
-		var oSelectedItem = oTable.getSelectedItem();
+		var aItems = oTable.getItems();
+		var oSelectedItem = this._iNavigateIndex >= 0 ? aItems[this._iNavigateIndex] : oTable.getSelectedItem();
 		var iItems = aItems.length;
 		var iSelectedIndex = 0;
 		var bLeaveFocus = false;
@@ -584,9 +626,18 @@ sap.ui.define([
 			iSelectedIndex = iItems + iStep;
 		}
 
+		if (iStep === 9999) {
+			// this will only move the selection to the last known item
+			iSelectedIndex = iItems - 1;
+		}
+		if (iStep === -9999) {
+			iSelectedIndex = 0;
+		}
+
 		if (this._getMaxConditions() !== 1) {
 			// in case of multiToken field the focus can be set to the table and the navigation will be handled by the focused table control.
 			if (this.getParent().isOpen()) {
+				//TODO cursorUp and the new iSelectedIndex will not be handled correct when we give the focus to the table.
 				oTable.focus();
 				return;
 			}
@@ -595,7 +646,7 @@ sap.ui.define([
 		oTable.addStyleClass("sapMListFocus"); // to show focus outline on navigated item
 
 		var bSearchForNext;
-		if (iSelectedIndex < 0) {
+		if (iSelectedIndex < 0) { //TODO on a single value mTable we only navigate up to index 0. We can not set the focus on the captions/header
 			iSelectedIndex = 0;
 			bSearchForNext = true;
 			bLeaveFocus = true;
@@ -606,24 +657,24 @@ sap.ui.define([
 			bSearchForNext = iStep >= 0;
 		}
 
-		while (aItems[iSelectedIndex] && aItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) { // ignore group headers
-			if (bSearchForNext) {
-				iSelectedIndex++;
-			} else {
-				iSelectedIndex--;
-			}
-		}
-		if (iSelectedIndex < 0 || iSelectedIndex > iItems - 1) {
-			// find last not groupable item
-			bSearchForNext = !bSearchForNext;
-			bLeaveFocus = iSelectedIndex < 0;
-			iSelectedIndex = iSelectedIndex < 0 ? 0 : iItems - 1;
+		var fSkipGroupHeader = function() {
 			while (aItems[iSelectedIndex] && aItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) { // ignore group headers
 				if (bSearchForNext) {
 					iSelectedIndex++;
 				} else {
 					iSelectedIndex--;
 				}
+			}
+		};
+
+		if (!bIsOpen) { // if closed, ignore headers
+			fSkipGroupHeader();
+			if (iSelectedIndex < 0 || iSelectedIndex > iItems - 1) {
+				// find last not groupable item
+				bSearchForNext = !bSearchForNext;
+				bLeaveFocus = iSelectedIndex < 0;
+				iSelectedIndex = iSelectedIndex < 0 ? 0 : iItems - 1;
+				fSkipGroupHeader();
 			}
 		}
 
@@ -632,26 +683,40 @@ sap.ui.define([
 
 			var oCondition;
 			if (oItem !== oSelectedItem) {
+				this._iNavigateIndex = iSelectedIndex;
 				oItem.setSelected(true);
 
 				// in case of a single value field trigger the focusin on the new selected item to update the screenreader invisible text
-				if (this.getParent().isOpen()) {
+				if (bIsOpen) {
+					this._handleScrolling(oItem);
 					oItem.$().trigger("focusin");
 				}
 
-				var oItemContext = this._getListItemBindingContext(oItem);
-				var oValues = this._getItemFromContext(oItemContext);
-				oCondition = oValues && this._createCondition(oValues.key, oValues.description, oValues.payload);
-				this.setProperty("conditions", [oCondition], true);
-
-				if (this._bVisible) {
-					this._handleScrolling(oItem);
+				if (oItem.isA("sap.m.GroupHeaderListItem")) {
+					this.setProperty("conditions", [], true); // no condition navigated
+					this.fireNavigated({condition: undefined, itemId: oItem.getId(), leaveFocus: false});
+				} else {
+					var oItemContext = this._getListItemBindingContext(oItem);
+					var oValues = this._getItemFromContext(oItemContext);
+					oCondition = oValues && this._createCondition(oValues.key, oValues.description, oValues.payload);
+					this.setProperty("conditions", [oCondition], true);
+					this.fireNavigated({condition: oCondition, itemId: oItem.getId(), leaveFocus: false});
 				}
-				this.fireNavigated({condition: oCondition, itemId: oItem.getId(), leaveFocus: false});
+
 			} else if (bLeaveFocus) {
 				this.fireNavigated({condition: undefined, itemId: undefined, leaveFocus: bLeaveFocus});
 			}
 		}
+	};
+
+	MTable.prototype.isNavigationEnabled = function(iStep) {
+
+		if (iStep === 1 || iStep === -1) {
+			return true;
+		} else {
+			return false; // TODO: check if everything already loaded?
+		}
+
 	};
 
 	MTable.prototype._handleScrolling = function (oItem) {
@@ -839,15 +904,11 @@ sap.ui.define([
 		return true;
 	};
 
-	MTable.prototype.shouldOpenOnNavigate = function() {
-		return true;
-	};
-
 	MTable.prototype._isSingleSelect = function() {
 
 		// use selection mode of table if set
 		var oTable = this._getTable();
-		if (oTable) {
+		if (oTable && oTable.getMode() !== ListMode.None) { // as automatic determination happens later in onShow
 			if (oTable.getMode() === ListMode.MultiSelect) {
 				return false;
 			} else {
@@ -856,6 +917,12 @@ sap.ui.define([
 		} else {
 			return FilterableListContent.prototype._isSingleSelect.apply(this, arguments);
 		}
+
+	};
+
+	MTable.prototype.onConnectionChange = function () {
+
+		this._iNavigateIndex = -1; // initially nothing is navigated
 
 	};
 

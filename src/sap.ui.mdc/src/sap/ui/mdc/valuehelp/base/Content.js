@@ -399,7 +399,6 @@ sap.ui.define([
 	 * <b>Note:</b> This function must only be called by the <code>Container</code> element.
 	 *
 	 * @param {int} iStep Number of steps for navigation (e.g. 1 means next item, -1 means previous item)
-	 * @returns {Promise<object>} Promise returning object of navigated item (condition and itemId)
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Container
@@ -564,6 +563,23 @@ sap.ui.define([
 		return !this._isSingleSelect();
 	};
 
+	/**
+	 * Determines if navigation via arrow keys should be possible.
+	 *
+	 * In ComboBox-like case keyboard-navigation should be anabled if closed and if open.
+	 * If only typeahead is used (and maybe an value help dialog) keyboard-navigation schould be enabled only if typeahed is open.
+	 *
+	 * As not all rowas might be loaded navigation with home, end, page up or dowm might be disabled, depending of the used content.
+	 *
+	 * @param {int} iStep Number of steps for navigation (e.g. 1 means next item, -1 means previous item)
+	 *
+	 * @returns {boolean} If <code>true</code>, the navigation should be enabled if value help is closed
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 */
+	Content.prototype.isNavigationEnabled = function(iStep) {
+		return false; // enable only for supported Content
+	};
 
 	/**
 	 * Determines if the focus is set in the value help or stays in the calling control.
@@ -696,6 +712,12 @@ sap.ui.define([
 
 	Content.prototype.onContainerOpen = function() {
 
+	};
+
+	/**
+	 * called if ValueHelp connection to Field changed
+	 */
+	Content.prototype.onConnectionChange = function () {
 	};
 
 	PromiseMixin.call(Content.prototype);
