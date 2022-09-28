@@ -54,6 +54,7 @@
 				<li>minLength – defines the minimum number of characters the user can enter into the input</li>
 				<li>maxLength - defines the maximum number of characters the user can enter into the input</li>
 				<li>restrictToPredefinedOptions – defines whether the value is restricted to predefined options</li>
+				<li>pattern – defines the regular expression pattern that should match the value</li>
 			</ul>
 
 			<p>Here is an example of adding multiple validation functions in a single validation:</p>
@@ -77,6 +78,17 @@
 		"maxLength": 200,
 		"message": "Your comment should be between 10 and 200 characters.",
 		"type": "Warning"
+	}
+]</pre>
+			<p>Here is an example of adding a regular expression pattern to a single input:</p>
+			<pre class="lang-json">
+"validations": [
+	{
+		"required": true
+	},
+	{
+		"pattern": "^\\w+[\\w-+\\.]*\\@\\w+([-\\.]\\w+)*\\.[a-zA-Z]{2,}$",
+		"message": "You should enter a valid e-mail."
 	}
 ]</pre>
 			<a class="try-button sapUiSmallMarginTop" href="../../../index.html#/explore/object/formWithValidation" target="_parent">Try

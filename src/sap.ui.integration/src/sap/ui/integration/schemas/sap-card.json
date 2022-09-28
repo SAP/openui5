@@ -1726,6 +1726,10 @@
                "$ref": "#/definitions/simpleBinding"
              }
            ]
+         },
+          "pattern": {
+           "description": "Sets the regular expression pattern that should match the value",
+           "type": "string"
          }
        }
     },

@@ -127,6 +127,22 @@
 									"type": "Warning"
 								}
 							]
+						},
+						{
+							"id": "e-mail",
+							"label": "E-mail",
+							"type": "TextArea",
+							"rows": 1,
+							"placeholder": "e-mail",
+							"validations": [
+								{
+									"required": true
+								},
+								{
+									"pattern": "^\\w+[\\w-+\\.]*\\@\\w+([-\\.]\\w+)*\\.[a-zA-Z]{2,}+$",
+									"message": "You should enter a valid e-mail."
+								}
+							]
 						}
 					]
 				}
