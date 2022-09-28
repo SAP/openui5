@@ -60,13 +60,49 @@ sap.ui.define(function() {
 			// Tests considering CLDR / LocaleData
 			// *************************************************************************
 			// contained in testsuite.i18n.qunit.js
-			"LocaleData" : {
+			LocaleData : {
 				// not in 1RingModels.qunit because test has to be refactored
 				title : "sap.ui.core.LocalData",
 				module : ["test-resources/sap/ui/core/qunit/i18n/LocaleData.qunit"],
 				qunit : {
 					reorder : false // currency digits test seems to depend on execution order
 				},
+				ui5 : {
+					language : "en-US"
+				}
+			},
+			// *************************************************************************
+			// Tests considering Formatters
+			// *************************************************************************
+			// contained in testsuite.types.qunit.js
+			DateFormat : {
+				// not in 1RingModels.qunit because test has to be refactored
+				title : "sap.ui.core.format.DateFormat",
+				module : ["test-resources/sap/ui/core/qunit/types/DateFormat.qunit"],
+				ui5 : {
+					language : "en-US"
+				}
+			},
+			NumberFormat : {
+				// not in 1RingModels.qunit because test has to be refactored
+				title : "sap.ui.core.format.NumberFormat",
+				module : ["test-resources/sap/ui/core/qunit/types/NumberFormat.qunit"],
+				ui5 : {
+					language : "en-US"
+				}
+			},
+			NumberFormatCurrencies : {
+				// not in 1RingModels.qunit because test has to be refactored
+				title : "sap.ui.core.format.NumberFormatCurrencies",
+				module : ["test-resources/sap/ui/core/qunit/types/NumberFormatCurrencies.qunit"],
+				ui5 : {
+					language : "en-US"
+				}
+			},
+			NumberFormatCurrenciesTrailing : {
+				// not in 1RingModels.qunit because test has to be refactored
+				title : "sap.ui.core.format.NumberFormatCurrenciesTrailing",
+				module : ["test-resources/sap/ui/core/qunit/types/NumberFormatCurrenciesTrailing.qunit"],
 				ui5 : {
 					language : "en-US"
 				}

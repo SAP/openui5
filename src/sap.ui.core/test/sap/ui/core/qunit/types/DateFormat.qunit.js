@@ -2075,11 +2075,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("origin info", function (assert) {
+			var oOriginInfoStub = this.stub(Configuration, "getOriginInfo").returns(true);
 			var oOriginDate = DateFormat.getInstance(), sValue = oOriginDate.format(oDateTime), oInfo = sValue.originInfo;
 			assert.equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source");
 			assert.equal(oInfo.locale, "en-US", "Origin Info: locale");
 			assert.equal(oInfo.style, "medium", "Origin Info: style");
 			assert.equal(oInfo.pattern, "MMM d, y", "Origin Info: pattern");
+			oOriginInfoStub.restore();
 		});
 
 		QUnit.module("Scaling: Relative Time Formatter", {
