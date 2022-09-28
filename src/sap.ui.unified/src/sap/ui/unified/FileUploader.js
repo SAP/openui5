@@ -1044,7 +1044,7 @@ sap.ui.define([
 	FileUploader.prototype.setEnabled = function(bEnabled){
 		var $oFileUpload = jQuery(this.oFileUpload);
 
-		this.setProperty("enabled", bEnabled);
+		this.setProperty("enabled", bEnabled, false);
 		this.oFilePath.setEnabled(bEnabled);
 		this.oBrowse.setEnabled(bEnabled);
 
@@ -1059,7 +1059,7 @@ sap.ui.define([
 
 	FileUploader.prototype.setValueState = function(sValueState) {
 
-		this.setProperty("valueState", sValueState, true);
+		this.setProperty("valueState", sValueState, false);
 		//as of 1.23.1 oFilePath can be an sap.ui.commons.TextField or an sap.m.Input, which both have a valueState
 		if (this.oFilePath.setValueState) {
 			this.oFilePath.setValueState(sValueState);
@@ -1096,7 +1096,7 @@ sap.ui.define([
 			Log.warning("Setting the valueStateText property with the combination of libraries used is not supported.", this);
 		}
 
-		return this.setProperty("valueStateText", sValueStateText, true);
+		return this.setProperty("valueStateText", sValueStateText, false);
 	};
 
 	FileUploader.prototype.setStyle = function(sStyle) {

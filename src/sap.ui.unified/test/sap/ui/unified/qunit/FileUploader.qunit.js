@@ -87,12 +87,19 @@ sap.ui.define([
 
 		// assert default
 		fnTestDisabledClass($fileUploader, false);
+		// prepare
+		var oAfterRenderingHookSpy = this.spy(oFileUploader, "onAfterRendering");
 
 		// act
 		oFileUploader.setEnabled(false);
 		oCore.applyChanges();
+
 		// assert
 		fnTestDisabledClass($fileUploader, true);
+		assert.ok(oAfterRenderingHookSpy.calledOnce, "The enabled property setter causes invalidation");
+
+		// cleanup
+		oAfterRenderingHookSpy.restore();
 
 		// act
 		oFileUploader.setEnabled(true);
@@ -635,6 +642,44 @@ sap.ui.define([
 
 		// cleanup
 		oFileUploader.destroy();
+	});
+
+	QUnit.test("Test valueState property - setter", function (assert) {
+		//prepare
+		var oFileUploader = new FileUploader();
+		oFileUploader.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		var oAfterRenderingHookSpy = this.spy(oFileUploader, "onAfterRendering");
+
+		// act
+		oFileUploader.setValueState("Error");
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(oAfterRenderingHookSpy.calledOnce, "ValueState stter causes invalidation");
+
+		// clean
+		oFileUploader.destroy();
+		oAfterRenderingHookSpy.restore();
+	});
+
+	QUnit.test("Test valueStateText property - setter", function (assert) {
+		//prepare
+		var oFileUploader = new FileUploader();
+		oFileUploader.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		var oAfterRenderingHookSpy = this.spy(oFileUploader, "onAfterRendering");
+
+		// act
+		oFileUploader.setValueStateText("Error text");
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(oAfterRenderingHookSpy.calledOnce, "ValueStateText stter causes invalidation");
+
+		// clean
+		oFileUploader.destroy();
+		oAfterRenderingHookSpy.restore();
 	});
 
 	QUnit.module("'title' attribute of the internal <input type='file'>");
