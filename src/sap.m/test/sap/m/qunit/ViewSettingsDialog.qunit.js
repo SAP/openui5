@@ -4168,7 +4168,24 @@ sap.ui.define([
 		var oVSD = new ViewSettingsDialog({
 				filterItems: [
 					new sap.m.ViewSettingsFilterItem({
-						text: "Attribute Group",
+						text: "Filter 1",
+						items: [
+							new sap.m.ViewSettingsItem({
+								key:"noEmptyString",
+								text: ""
+							}),
+							new sap.m.ViewSettingsItem({
+								key:"Contacts",
+								text: "Contacts"
+							}),
+							new sap.m.ViewSettingsItem({
+								key:"test",
+								text: "Interactions Rating"
+							})
+						]
+					}),
+					new sap.m.ViewSettingsFilterItem({
+						text: "Filter 2",
 						items: [
 							new sap.m.ViewSettingsItem({
 								key:"noEmptyString",
@@ -4185,12 +4202,47 @@ sap.ui.define([
 						]
 					})
 				]
-			});
+			}),
+			sSelectedFilterString,
+			aFilterItems = oVSD.getFilterItems();
 
-		oVSD.getFilterItems()[0].getItems()[0].setSelected(true);
+		// act
+		aFilterItems[0].getItems()[0].setSelected(true);
+		oCore.applyChanges();
+		sSelectedFilterString = oVSD.getSelectedFilterString();
 
-		// check what returns getSelectedFilterString method
-		assert.notEqual(oVSD.getSelectedFilterString(), "", "getSelectedFilterString returns non-empty string: " + oVSD.getSelectedFilterString());
+		// assert
+		assert.notEqual(sSelectedFilterString, "", "getSelectedFilterString returns non-empty string: " + oVSD.getSelectedFilterString());
+		assert.notEqual(sSelectedFilterString.indexOf(aFilterItems[0].getText()), -1, "The string returned by getSelectedFilterString contains the text of the filter that have sub-filters selected");
+		assert.equal(sSelectedFilterString.indexOf(aFilterItems[1].getText()), -1, "The string returned by getSelectedFilterString doesn't contain the text of the filter that don't have sub-filters selected");
+
+		// act
+		aFilterItems[1].getItems()[0].setSelected(true);
+		oCore.applyChanges();
+		sSelectedFilterString = oVSD.getSelectedFilterString();
+
+		// assert
+		assert.notEqual(sSelectedFilterString, "", "getSelectedFilterString returns non-empty string: " + oVSD.getSelectedFilterString());
+		assert.notEqual(sSelectedFilterString.indexOf(aFilterItems[0].getText()), -1, "The string returned by getSelectedFilterString contains the text of the first filter (that have sub-filters selected)");
+		assert.notEqual(sSelectedFilterString.indexOf(aFilterItems[1].getText()), -1, "The string returned by getSelectedFilterString contains the text of the second filter (that have sub-filters selected)");
+
+		// act
+		aFilterItems[0].getItems()[0].setSelected(false);
+		oCore.applyChanges();
+		sSelectedFilterString = oVSD.getSelectedFilterString();
+
+		// assert
+		assert.notEqual(sSelectedFilterString, "", "getSelectedFilterString returns non-empty string: " + oVSD.getSelectedFilterString());
+		assert.equal(sSelectedFilterString.indexOf(aFilterItems[0].getText()), -1, "The string returned by getSelectedFilterString doesn't contain the text of the filter that don't have sub-filters selected");
+		assert.notEqual(sSelectedFilterString.indexOf(aFilterItems[1].getText()), -1, "The string returned by getSelectedFilterString contains the text of the filter that have sub-filters selected");
+
+		// act
+		aFilterItems[1].getItems()[0].setSelected(false);
+		oCore.applyChanges();
+		sSelectedFilterString = oVSD.getSelectedFilterString();
+
+		// assert
+		assert.equal(sSelectedFilterString, "", "getSelectedFilterString returns empty string when there are no filtes and subfilters selected");
 
 		oVSD.destroy();
 	});
