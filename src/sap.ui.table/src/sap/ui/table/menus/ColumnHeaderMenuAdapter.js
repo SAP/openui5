@@ -17,7 +17,8 @@ sap.ui.define([
 
 	var oAdapterRegistry = new window.Map();
 	var mAdapterMapping = {
-		"sap.m.table.columnmenu.Menu": "MobileColumnHeaderMenuAdapter"
+		"sap.m.table.columnmenu.Menu": "MobileColumnHeaderMenuAdapter",
+		"sap.m.table.columnmenu.test.TestMenu": "test/TestAdapter" // needed for qunit tests
 	};
 
 	/**

@@ -192,9 +192,9 @@ sap.ui.define([
 				this._oQuickSort = this._createQuickSort();
 			}
 			this._updateQuickSort(oColumn);
+			this._oQuickSort.setVisible(true);
 		} else if (this._oQuickSort) {
-			this._oQuickSort.destroy(); // TODO: Should be kept for reuse
-			delete this._oQuickSort;
+			this._oQuickSort.setVisible(false);
 		}
 	};
 
@@ -227,9 +227,9 @@ sap.ui.define([
 				this._oQuickFilter._bHideLabelColon = true;
 			}
 			this._updateQuickFilter(oColumn);
+			this._oQuickFilter.setVisible(true);
 		} else if (this._oQuickFilter) {
-			this._oQuickFilter.destroy(); // TODO: Should be kept for reuse
-			delete this._oQuickFilter;
+			this._oQuickFilter.setVisible(false);
 		}
 	};
 
@@ -267,9 +267,9 @@ sap.ui.define([
 				this._oQuickGroup = this._createQuickGroup();
 			}
 			this._updateQuickGroup(oColumn);
+			this._oQuickGroup.setVisible(true);
 		} else if (this._oQuickGroup) {
-			this._oQuickGroup.destroy(); // TODO: Should be kept for reuse
-			delete this._oQuickGroup;
+			this._oQuickGroup.setVisible(false);
 		}
 	};
 
@@ -295,9 +295,9 @@ sap.ui.define([
 				this._oQuickTotal = this._createQuickTotal();
 			}
 			this._updateQuickTotal(oColumn);
+			this._oQuickTotal.setVisible(true);
 		} else if (this._oQuickTotal) {
-			this._oQuickTotal.destroy(); // TODO: Should be kept for reuse
-			delete this._oQuickTotal;
+			this._oQuickTotal.setVisible(false);
 		}
 	};
 
@@ -323,9 +323,9 @@ sap.ui.define([
 				this._oQuickFreeze = this._createQuickFreeze();
 			}
 			this._updateQuickFreeze(oColumn);
+			this._oQuickFreeze.setVisible(true);
 		} else if (this._oQuickFreeze) {
-			this._oQuickFreeze.destroy(); // TODO: Should be kept for reuse
-			delete this._oQuickFreeze;
+			this._oQuickFreeze.setVisible(false);
 		}
 	};
 
@@ -366,9 +366,9 @@ sap.ui.define([
 			if (!this._oQuickResize) {
 				this._oQuickResize = this._createQuickResize(oColumn);
 			}
+			this._oQuickResize.setVisible(true);
 		} else if (this._oQuickResize) {
-			this._oQuickResize.destroy();
-			delete this._oQuickResize;
+			this._oQuickResize.setVisible(false);
 		}
 	};
 
@@ -404,9 +404,9 @@ sap.ui.define([
 			if (!this._oCustomFilterItem) {
 				this._oCustomFilterItem = this._createCustomFilterItem();
 			}
+			this._oCustomFilterItem.setVisible(true);
 		} else if (this._oCustomFilterItem) {
-			this._oCustomFilterItem.destroy(); // TODO: Should be kept for reuse
-			delete this._oCustomFilterItem;
+			this._oCustomFilterItem.setVisible(false);
 		}
 	};
 

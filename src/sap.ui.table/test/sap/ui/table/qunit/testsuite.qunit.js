@@ -81,7 +81,14 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.ui.unified"]
 				}
 			},
+			// Menus
+			"ColumnHeaderMenuAdapter": {
+				group: "Menus",
+				module: "./menus/{name}.qunit"
+			},
 			"MobileColumnHeaderMenuAdapter": {
+				group: "Menus",
+				module: "./menus/{name}.qunit",
 				ui5: {
 					// Test has dependency to sap.m module
 					libs: ["sap.m"]
