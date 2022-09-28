@@ -267,12 +267,14 @@ sap.ui.define([
 			};
 
 		if (mItem.icon) {
+
 			mSettings.icon = BindingHelper.formattedProperty(mItem.icon.src, function (sValue) {
 				return this._oIconFormatter.formatSrc(sValue);
 			}.bind(this));
 			mSettings.iconAlt = mItem.icon.alt;
 			mSettings.iconDisplayShape = mItem.icon.shape;
 			mSettings.iconInitials = mItem.icon.initials || mItem.icon.text;
+			mSettings.iconVisible = mItem.icon.visible;
 
 			if (mSettings.title && mSettings.description) {
 				mSettings.iconSize = AvatarSize.S;

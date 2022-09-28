@@ -2296,6 +2296,10 @@
         },
         "backgroundColor": {
           "$ref": "#/definitions/iconBackgroundColor"
+        },
+        "visible": {
+          "description": "Represents the visibility state of the icon",
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -2307,6 +2311,10 @@
         "src": {
           "type": "string",
           "description": "Represents icon name or source URL"
+        },
+        "visible": {
+          "description": "Represents the visibility state of the icon",
+          "$ref": "#/definitions/visibility"
         }
       }
     },

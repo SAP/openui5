@@ -94,9 +94,7 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.integration",
 			properties: {
-				interactive: { type: "boolean", defaultValue: false },
-
-				iconVisible: { type: "boolean", defaultValue: true }
+				interactive: { type: "boolean", defaultValue: false }
 			},
 			aggregations: {
 				/**

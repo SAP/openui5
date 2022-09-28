@@ -41,30 +41,36 @@
 		},
 		"content": {
 			"data": {
-				"json": [{
+				"json": [
+					{
 						"Name": "Comfort Easy",
 						"Description": "32 GB Digital Assistant with high-resolution color screen",
-						"Icon": "sap-icon://iphone"
+						"Icon": "sap-icon://iphone",
+						"Visible": true
 					},
 					{
 						"Name": "ITelO Vault",
 						"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
-						"Icon": "sap-icon://iphone"
+						"Icon": "sap-icon://iphone",
+						"Visible": true
 					},
 					{
 						"Name": "Notebook Professional 15",
 						"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
-						"Icon": "sap-icon://laptop"
+						"Icon": "sap-icon://laptop",
+						"Visible": true
 					},
 					{
 						"Name": "Ergo Screen E-I",
 						"Description": "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
-						"Icon": "sap-icon://sys-monitor"
+						"Icon": "sap-icon://sys-monitor",
+						"Visible": false
 					},
 					{
 						"Name": "Laser Professional Eco",
 						"Description": "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
-						"Icon": "sap-icon://print"
+						"Icon": "sap-icon://print",
+						"Visible": true
 					}
 				]
 			},
@@ -73,7 +79,8 @@
 				"title": "{Name}",
 				"description": "{Description}",
 				"icon": {
-					"src": "{Icon}"
+					"src": "{Icon}",
+					"visible": "{Visible}"
 				}
 			}
 		}

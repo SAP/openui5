@@ -934,6 +934,44 @@ sap.ui.define([
 		this.oCard.setManifest(oManifest);
 	});
 
+	QUnit.test("Icon visible property", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oManifest = {
+				"sap.app": {
+					"id": "list.card.test.icon"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": [{
+							"avatar": "images/Image_1.png",
+							"iconVisible": false
+						}]
+					},
+					"content": {
+						"item": {
+							"icon": {
+								"src": "{avatar}",
+								"shape": "Circle",
+								"visible": "{iconVisible}"
+							}
+						}
+					}
+				}
+			};
+
+		this.oCard.attachEvent("_ready", function () {
+			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0]._getAvatar();
+			assert.strictEqual(oAvatar.getVisible(), false, "Should not have an icon when visible is set to false");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
+	});
+
 	QUnit.test("Icon initials set with deprecated 'text' property", function (assert) {
 		// Arrange
 		var done = assert.async(),

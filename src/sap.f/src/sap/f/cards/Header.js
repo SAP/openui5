@@ -111,7 +111,14 @@ sap.ui.define([
 				 *
 				 * @experimental Since 1.83 this feature is experimental and the API may change.
 				 */
-				iconBackgroundColor: { type: "sap.m.AvatarColor", defaultValue: AvatarColor.Transparent }
+				iconBackgroundColor: { type: "sap.m.AvatarColor", defaultValue: AvatarColor.Transparent },
+
+				/**
+				 * Defines whether the card icon is visible.
+				 *
+				 * @experimental Since 1.83 this feature is experimental and the API may change.
+				 */
+				iconVisible: { type: "boolean", defaultValue: true }
 			},
 			aggregations: {
 
