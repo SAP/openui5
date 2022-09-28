@@ -58,6 +58,10 @@ sap.ui.define([
 					{
 						label: "Attribute four",
 						value: "Value four"
+					},
+					{
+						label: "Attribute five",
+						value: "Value five"
 					}
 				]
 			});
@@ -109,7 +113,7 @@ sap.ui.define([
 	QUnit.test("ToDo Card Tests", function(assert) {
         assert.equal(this.oToDo.getTileContent()[0].getPriority(), Priority.VeryHigh, "Priority has been set at Very High");
         assert.ok(document.getElementById("tileCont1-priority-value"),"Text has been rendered successfully");
-        assert.equal(document.querySelector(".sapMContainer").children.length, 4, "All 4 custom attributes has been rendered successfully");
+        assert.equal(document.querySelector(".sapMContainer").children.length, 5, "All 5 custom attributes has been rendered successfully");
 	});
 
     QUnit.test("Situation card tests", function(assert) {
@@ -129,7 +133,7 @@ sap.ui.define([
 		tabUp.keyCode = KeyCodes.TAB;
 		this.oToDo.$().trigger(tabUp);
 		//Act
-		assert.equal(this.oToDo.getDomRef().getAttribute("aria-label"),"Comparative Annual Totals\nVery High Priority\nAgreement Type:\nSA with release doc(LPA)\nSupplier\nDomestic US Supplier 1\nTarget Net Value:\n1.500,00 EUR\nAttribute four\nValue four\n","Aria-Label has been rendered Successfully");
+		assert.equal(this.oToDo.getDomRef().getAttribute("aria-label"),"Comparative Annual Totals\nVery High Priority\nAgreement Type:\nSA with release doc(LPA)\nSupplier\nDomestic US Supplier 1\nTarget Net Value:\n1.500,00 EUR\nAttribute four\nValue four","Aria-Label has rendered successfully first four attributes");
 	});
 
 	QUnit.test("Aria-Label Properties for Situation Tiles", function(assert) {
@@ -145,5 +149,20 @@ sap.ui.define([
 		this.oSituation.$().trigger(tabUp);
 		//Act
 		assert.equal(this.oSituation.getDomRef().getAttribute("aria-label"),"Comparative Annual Totals\nThis would be a situation long text description. it would have 3 lines of space, as a maximum else get truncated\nSupplier\nDomestic US Supplier 1\nDue On:\n28.09.2022\nCreated On:\n01.09.2022","Aria-Label has been rendered Successfully");
+	});
+
+	QUnit.test("Setting the width through property", function(assert) {
+		//Arrange
+		this.oToDo.setWidth("25rem");
+		oCore.applyChanges();
+		//Assert
+		assert.equal(getComputedStyle(this.oToDo.getDomRef()).width,"400px","Width set correctly");
+	});
+
+	QUnit.test("Setting pressEnabled property", function(assert) {
+		assert.ok(this.oToDo.getDomRef().classList.contains("sapMPointer"),"Hand icon would be visible");
+		this.oToDo.setPressEnabled(false);
+		oCore.applyChanges();
+		assert.ok(this.oToDo.getDomRef().classList.contains("sapMATAutoPointer"),"Hand icon won't be visible");
 	});
 });
