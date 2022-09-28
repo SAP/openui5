@@ -696,6 +696,8 @@ sap.ui.define([
 			this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainerFooterVisible", bShow);
 		}
 
+		this.$().toggleClass("sapFDynamicPageFooterVisible", bShow);
+
 		if (bUseAnimations) {
 			this._toggleFooterAnimation(bShow, oFooter);
 		} else {

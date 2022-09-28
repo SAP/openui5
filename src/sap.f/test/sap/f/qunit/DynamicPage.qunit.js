@@ -957,6 +957,20 @@ function (
 		this.oDynamicPage.setShowFooter(false);
 	});
 
+	QUnit.test("When footer is visible, CSS class is applied to the DynamicPage", function (assert) {
+		// Assert - when footer is visible, CSS class is applied
+		assert.ok(this.oDynamicPage.$().hasClass("sapFDynamicPageFooterVisible"), "DynamicPage has CSS class");
+		assert.strictEqual(this.oDynamicPage.$wrapper.css("scroll-padding-bottom"), "58px", "58px scroll padding bottom on the wrapper");
+
+		// Act - toggle to 'false'
+		this.oDynamicPage.setShowFooter(false);
+
+		// Assert - when footer is not visible, CSS class is not applied
+		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPageFooterVisible"), "DynamicPage does not have CSS class");
+		assert.strictEqual(this.oDynamicPage.$wrapper.css("scroll-padding-bottom"), "auto", "No scroll padding bottom on the wrapper");
+	});
+
+
 	/* --------------------------- DynamicPage Mobile Rendering ---------------------------------- */
 	QUnit.module("DynamicPage - Rendering - Mobile", {
 		before: function() {
