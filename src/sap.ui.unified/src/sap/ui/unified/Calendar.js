@@ -2744,9 +2744,6 @@ sap.ui.define([
 				this._setPrimaryHeaderMonthButtonText();
 				this._toggleTwoMonthsInTwoColumnsCSS();
 			}
-		} else if (_getMonths.call(this) > 1) {
-			// on rerendering focus might be set on wrong month
-			this._focusDate(this._getFocusedDate(), true, true);
 		}
 
 	}
