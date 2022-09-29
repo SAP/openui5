@@ -3257,12 +3257,13 @@ sap.ui.define([
 	QUnit.module("General");
 
 	QUnit.test("origin info", function (assert) {
-		Configuration.originInfo = true;
+		var oOriginInfoStub = this.stub(Configuration, "getOriginInfo").returns(true);
 		var oOriginNumber = NumberFormat.getIntegerInstance(),
 			sValue = oOriginNumber.format(123),
 			oInfo = sValue.originInfo;
 		assert.equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source");
 		assert.equal(oInfo.locale, "en-US", "Origin Info: locale");
+		oOriginInfoStub.restore();
 	});
 
 	QUnit.test("Private method NumberFormat._shiftDecimalPoint", function (assert) {

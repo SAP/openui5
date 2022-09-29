@@ -30,6 +30,20 @@ sap.ui.require([
 		// "sap/ui/core/qunit/i18n/LocaleData.qunit",
 
 		// ***************************************************************************************
+		// sap.ui.core.* - tests are contained in testsuite.types.qunit.js
+		// ***************************************************************************************
+		//TODO: get test running in 1RingModels.qunit; tests don't run independently - refactoring
+		// needed, currently they depend on the language en_US
+		// "sap/ui/core/qunit/types/DateFormat.qunit",
+		// "sap/ui/core/qunit/types/NumberFormat.qunit",
+		// "sap/ui/core/qunit/types/NumberFormatCurrencies.qunit",
+		// "sap/ui/core/qunit/types/NumberFormatCurrenciesTrailing.qunit",
+		"sap/ui/core/qunit/types/DateFormatTimezones.qunit",
+		"sap/ui/core/qunit/types/FileSizeFormat.qunit",
+		"sap/ui/core/qunit/types/ListFormat.qunit",
+		"sap/ui/core/qunit/types/TimezoneUtil.qunit",
+
+		// ***************************************************************************************
 		// sap.ui.core.rules.Model.support - tests are contained in testsuite.rule.qunit.js
 		// ***************************************************************************************
 		//TODO: get test running in 1RingModels.qunit; breaks ODataModel.integration.qunit when

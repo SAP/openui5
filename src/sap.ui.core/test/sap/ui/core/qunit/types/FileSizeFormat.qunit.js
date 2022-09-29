@@ -87,6 +87,9 @@ sap.ui.define(["sap/ui/core/format/FileSizeFormat", "sap/ui/core/Locale"], funct
 		}
 	}
 
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.format.FileSizeFormat");
+
 	QUnit.test("format binary", function (assert) {
 		for (var i = 1; i < 9; i++) {
 			checkFormat("binary", 2 * Math.pow(1024, i), "2 " + aBinaryUnits[i - 1]);
