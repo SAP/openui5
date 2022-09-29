@@ -97,6 +97,22 @@
 									"required": true
 								}
 							]
+						},
+						{
+							"id": "age",
+							"label": "Age",
+							"type": "TextArea",
+							"rows": 1,
+							"placeholder": "Age",
+							"validations": [
+								{
+									"required": true
+								},
+								{
+									"validate": "extension.validateAge",
+									"message": "You should be 18 or older to submit."
+								}
+							]
 						}
 					]
 				}
