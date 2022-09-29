@@ -1236,10 +1236,12 @@ sap.ui.define([
 		var oSuggestControl = this.getControlForSuggestion();
 		var aIcons = oSuggestControl && oSuggestControl.getMetadata().getAllPrivateAggregations()._endIcon && oSuggestControl.getAggregation("_endIcon", []);
 		var oIcon;
-		for (var i = 0; i < aIcons.length; i++) { // as MultiInput can have a invisible icon before visible icon
-			if (aIcons[i].getVisible()) {
-				oIcon = aIcons[i];
-				break;
+		if (aIcons) {
+			for (var i = 0; i < aIcons.length; i++) { // as MultiInput can have a invisible icon before visible icon
+				if (aIcons[i].getVisible()) {
+					oIcon = aIcons[i];
+					break;
+				}
 			}
 		}
 		return bTypahead || !oIcon ? oSuggestControl : oIcon;
@@ -1465,6 +1467,12 @@ sap.ui.define([
 			if (!this._oContentFactory.getContentConditionTypes()[sName]) {
 				this._oContentFactory.getContentConditionTypes()[sName] = {};
 			}
+			this.awaitControlDelegate().then(function() {
+				if (!this.bIsDestroyed) {
+					this._oContentFactory.setHideOperator(_isOnlyOneSingleValue.call(this, this._getOperators())); // in single value eq Field hide operator
+					this._oContentFactory.updateConditionType();
+				}
+			}.bind(this));
 
 			// find out what is bound to conditions
 			var oBindingInfo;
@@ -1556,6 +1564,10 @@ sap.ui.define([
 			// content has valueHelpRequest event -> attach handler
 			oContent.attachEvent("valueHelpRequest", _handleValueHelpRequest, this);
 		}
+		if (oContent.getMetadata().getEvents().tokenUpdate) {
+			// content has tokenUpdate event -> attach handler
+			oContent.attachEvent("tokenUpdate", _handleTokenUpdate, this);
+		}
 	}
 
 	function _detachContentHandlers(oContent) {
@@ -1575,6 +1587,10 @@ sap.ui.define([
 		if (oContent.getMetadata().getEvents().valueHelpRequest) {
 			// oldContent has valueHelpRequest event -> detach handler
 			oContent.detachEvent("valueHelpRequest", _handleValueHelpRequest, this);
+		}
+		if (oContent.getMetadata().getEvents().tokenUpdate) {
+			// content has tokenUpdate event -> deattach handler
+			oContent.detachEvent("tokenUpdate", _handleTokenUpdate, this);
 		}
 	}
 
@@ -2325,9 +2341,9 @@ sap.ui.define([
 							}
 
 							var vOpenByTyping = this.hasOwnProperty("_bOpenByTyping") ? this._bOpenByTyping : oFieldHelp.isTypeaheadSupported();
+							var oFocusedElement = document.activeElement;
 							if (this._bConnected && this._getContent()[0] && vOpenByTyping /*&& !(vOpenByTyping instanceof Promise)*/ && //TODO: isTypeaheadsupported always returns a promise now
-								(sap.ui.getCore().getCurrentFocusedControlId() === this._getContent()[0].getId() ||
-									(this._getContent()[1] && sap.ui.getCore().getCurrentFocusedControlId() === this._getContent()[1].getId()))) { // only if still connected and focussed
+								oFocusedElement && (containsOrEquals(this.getDomRef(), oFocusedElement))) { // only if still connected and focussed
 								oFieldHelp.setFilterValue(this._sFilterValue);
 								if (this.getMaxConditionsForHelp() === 1 && oFieldHelp.getConditions().length > 0) {
 									// While single-suggestion no item is selected
@@ -2758,7 +2774,9 @@ sap.ui.define([
 				}
 			}
 			oContent.setDOMValue(sDOMValue);
-			oContent._doSelect();
+			if (oContent._doSelect) {
+				oContent._doSelect();
+			}
 			if (oFieldHelp.isOpen()) {
 				oContent.removeStyleClass("sapMFocus"); // to have focus outline on navigated item only
 			}
