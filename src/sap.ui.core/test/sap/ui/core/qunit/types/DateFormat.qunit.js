@@ -29,6 +29,24 @@ sap.ui.define([
 			oDefaultDateTime = DateFormat.getDateTimeInstance(),
 			oDefaultTime = DateFormat.getTimeInstance();
 
+	//*********************************************************************************************
+	QUnit.module("DateFormat instantiation and parseCldrDatePattern");
+
+	//*********************************************************************************************
+	QUnit.test("instance fields day periods", function (assert) {
+		var oDateFormatInstance = DateFormat.getInstance(new Locale("ko"));
+
+		assert.deepEqual(oDateFormatInstance.aDayPeriodsAbbrev, ["AM", "PM"]);
+		assert.deepEqual(oDateFormatInstance.aDayPeriodsNarrow, ["AM", "PM"]);
+		assert.deepEqual(oDateFormatInstance.aDayPeriodsWide, ["오전", "오후"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("pattern 'aaaa'", function (assert) {
+		assert.deepEqual(DateFormat.getInstance().parseCldrDatePattern("aaaa"),
+			[{digits : 4, symbol : "a", type : "amPmMarker"}]);
+	});
+
 		QUnit.module("DateFormat format", {
 			beforeEach: function (assert) {
 				stubTimezone("Europe/Berlin");
@@ -1244,8 +1262,10 @@ sap.ui.define([
 				// 2 digit years require the current year to be fixed
 				// e.g. for pattern: "yyyy-MM-dd" with input "04-03-12" the result depends on the current year
 				this.clock = sinon.useFakeTimers(Date.UTC(2018, 7, 2, 11, 37));
+				stubTimezone("Europe/Berlin");
 			},
 			afterEach: function () {
+				stubTimezone(null);
 				this.clock.restore();
 			}
 		});
@@ -1574,8 +1594,8 @@ sap.ui.define([
 				"am.", "pm.",
 				"A.M.", "P.M.",
 				"AM.", "PM.",
-				"a. m.", "p. m.", // With default space
-				"a." + "\xA0" + "m.", "p." + "\xA0" + "m." // with non-breaking space (nbsp)
+				"a. m.", "p. m.", // with SPACE (\x20)
+				"a." + "\xA0" + "m.", "p." + "\xA0" + "m." // with NO-BREAK SPACE (\xa0)
 			];
 			var oFormat = DateFormat.getTimeInstance({
 				pattern: "a"
@@ -1615,6 +1635,16 @@ sap.ui.define([
 			});
 		});
 
+	//*********************************************************************************************
+	QUnit.test("parse with invalid am/pm", function (assert) {
+		var oFormat = DateFormat.getTimeInstance({pattern : "hh:mm a"}, new Locale("pt_PT"));
+
+		assert.strictEqual(oFormat.parse("11:14 invalid"), null,
+			"The formatted date string cannot be parsed");
+		assert.strictEqual(oFormat.parse("11:14 a"), null,
+			"The formatted date string cannot be parsed");
+	});
+
 		QUnit.test("format and parse time with am/pm in locale pt_PT", function(assert) {
 			// the dayPeriod pattern is defined as the following in pt_PT
 			// ["a.m.", "p.m."]
@@ -1630,6 +1660,58 @@ sap.ui.define([
 			assert.equal(oParsedDate.getHours(), oDate.getHours(), "The hours can be correctly parsed");
 			assert.equal(oParsedDate.getMinutes(), oDate.getMinutes(), "The minutes can be correctly parsed");
 		});
+
+	//*********************************************************************************************
+[
+	{pattern : "hh:mm a", formatted : "01:37 PM"},
+	{pattern : "hh:mm aa", formatted : "01:37 PM"},
+	{pattern : "hh:mm aaa", formatted : "01:37 PM"},
+	{pattern : "hh:mm aaaa", formatted : "01:37 오후"},
+	{pattern : "hh:mm aaaaa", formatted : "01:37 PM"}
+].forEach(function (oFixture, i) {
+	QUnit.test("format/parse time with day period, abbreviated pattern differs #" + i,
+			function (assert) {
+		var oDate = new Date(Date.UTC(2018, 7, 2, 11, 37)),
+			// in ko: pattern wide (aaaa) is different from the other patterns
+			oFormat = DateFormat.getTimeInstance({pattern : oFixture.pattern}, new Locale("ko")),
+			sFormattedTime = oFormat.format(oDate),
+			oParsedDate = oFormat.parse(sFormattedTime);
+
+		assert.equal(sFormattedTime, oFixture.formatted,
+			"The formatted date string is correct for pattern '" + oFixture.pattern + "'");
+		assert.ok(oParsedDate instanceof Date,
+			"The formatted date string '" + sFormattedTime + "' can be parsed");
+		assert.equal(oParsedDate.getHours(), oDate.getHours(), "The hours can be correctly parsed");
+		assert.equal(oParsedDate.getMinutes(), oDate.getMinutes(),
+			"The minutes can be correctly parsed");
+	});
+});
+
+	//*********************************************************************************************
+[
+	{pattern : "hh:mm a", formatted : "07:37 priešpiet"},
+	{pattern : "hh:mm aa", formatted : "07:37 priešpiet"},
+	{pattern : "hh:mm aaa", formatted : "07:37 priešpiet"},
+	{pattern : "hh:mm aaaa", formatted : "07:37 priešpiet"},
+	{pattern : "hh:mm aaaaa", formatted : "07:37 pr.\xa0p."}
+].forEach(function (oFixture, i) {
+	QUnit.test("format/parse time with day period, narrow pattern differs #" + i,
+			function (assert) {
+		var oDate = new Date(Date.UTC(2022, 7, 15, 5, 37)),
+			// in lt: pattern narrow (aaaaa) is different from the other patterns
+			oFormat = DateFormat.getTimeInstance({pattern : oFixture.pattern}, new Locale("lt")),
+			sFormattedTime = oFormat.format(oDate),
+			oParsedDate = oFormat.parse(sFormattedTime);
+
+		assert.equal(sFormattedTime, oFixture.formatted,
+			"the formatted date string is correct for pattern '" + oFixture.pattern + "'");
+		assert.ok(oParsedDate instanceof Date,
+			"The formatted date string '" + sFormattedTime + "' can be parsed");
+		assert.equal(oParsedDate.getHours(), oDate.getHours(), "The hours can be correctly parsed");
+		assert.equal(oParsedDate.getMinutes(), oDate.getMinutes(),
+			"The minutes can be correctly parsed");
+	});
+});
 
 		QUnit.test("parse with tolerance for the number of spaces", function (assert) {
 			var oFormat = DateFormat.getDateInstance({

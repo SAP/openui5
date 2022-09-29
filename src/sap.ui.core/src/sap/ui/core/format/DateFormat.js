@@ -648,7 +648,9 @@ sap.ui.define([
 		this.aErasNarrow = this.oLocaleData.getEras("narrow", sCalendarType);
 		this.aErasAbbrev = this.oLocaleData.getEras("abbreviated", sCalendarType);
 		this.aErasWide = this.oLocaleData.getEras("wide", sCalendarType);
-		this.aDayPeriods = this.oLocaleData.getDayPeriods("abbreviated", sCalendarType);
+		this.aDayPeriodsAbbrev = this.oLocaleData.getDayPeriods("abbreviated", sCalendarType);
+		this.aDayPeriodsNarrow = this.oLocaleData.getDayPeriods("narrow", sCalendarType);
+		this.aDayPeriodsWide = this.oLocaleData.getDayPeriods("wide", sCalendarType);
 		this.aFormatArray = this.parseCldrDatePattern(this.oFormatOptions.pattern);
 		this.sAllowedCharacters = this.getAllowedCharacters(this.aFormatArray);
 	};
@@ -868,7 +870,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Pattern elements
+	 * Provides functionality to format and parse a given pattern symbol.
+	 * @see https://unicode.org/reports/tr35/tr35-dates.html#table-date-field-symbol-table
 	 */
 	DateFormat.prototype.oSymbols = {
 		"": {
@@ -1453,48 +1456,114 @@ sap.ui.define([
 		},
 		"a": {
 			name: "amPmMarker",
-			format: function(oField, oDate, bUTC, oFormat) {
+			/**
+			 * Formats the day period.
+			 *
+			 * @param {Object<string, any>} oField
+			 *   The date pattern field as parsed by {@link DateFormat#parseCldrDatePattern}
+			 * @param {number} oField.digits
+			 *   The number of repetitions of the pattern symbol, e.g. <code>3</code> for "aaa"
+			 * @param {string} oField.symbol
+			 *   The pattern symbol "a"
+			 * @param {string} oField.type
+			 *   The symbol name "amPmMarker"
+			 * @param {sap.ui.core.date.UniversalDate} oDate
+			 *   The date to format
+			 * @param {boolean} [bUTC]
+			 *   Whether the UTC option is set; not used
+			 * @param {sap.ui.core.format.DateFormat} oFormat
+			 *   The <code>DateFormat</code> instance
+			 * @returns {string}
+			 *   The formatted day period, e.g. "AM" for symbol "a"
+			 */
+			format : function (oField, oDate, bUTC, oFormat) {
 				var iDayPeriod = oDate.getUTCDayPeriod();
 
-				return oFormat.aDayPeriods[iDayPeriod];
+				if (oField.digits <= 3) {
+					return oFormat.aDayPeriodsAbbrev[iDayPeriod];
+				} else if (oField.digits === 4) {
+					return oFormat.aDayPeriodsWide[iDayPeriod];
+				} else {
+					return oFormat.aDayPeriodsNarrow[iDayPeriod];
+				}
 			},
-			parse: function(sValue, oPart, oFormat, oConfig) {
-				var bPM;
-				var iLength;
-				var sAM = oFormat.aDayPeriods[0],
-					sPM = oFormat.aDayPeriods[1];
 
-				// check whether the value is one of the ASCII variants for AM/PM
-				// for example: "am", "a.m.", "am.", "a. m." (and their case variants)
-				// if true, remove the '.', the spaces and compare with the defined am/pm case
-				// insensitive
-				var rAMPM = /[aApP](?:\.)?[\x20\xA0]?[mM](?:\.)?/;
-				var aMatch = sValue.match(rAMPM);
-				var bVariant = (aMatch && aMatch.index === 0);
+			/**
+			 * Parses the day period from a given input string.
+			 *
+			 * @param {string} sValue
+			 *   The given input, e.g. "am 13:37"
+			 * @param {Object<string, any>} oPart
+			 *   The date pattern field as parsed by {@link DateFormat#parseCldrDatePattern}
+			 * @param {number} oPart.digits
+			 *   The number of repetitions of the pattern symbol, e.g. <code>3</code> for "aaa"
+			 * @param {string} oPart.symbol
+			 *   The pattern symbol "a"
+			 * @param {string} oPart.type
+			 *   The symbol name "amPmMarker"
+			 * @param {sap.ui.core.format.DateFormat} oFormat
+			 *   The <code>DateFormat</code> instance
+			 * @param {Object<string, any>} [oConfig]
+			 *   The configuration object for parsing the value
+			 * @param {object[]} [oConfig.formatArray]
+			 *   The complete format array as parsed by {@link DateFormat#parseCldrDatePattern}
+			 * @param {object} [oConfig.dateValue]
+			 *   The already parsed date fields
+			 * @param {number} [oConfig.index]
+			 *   The index in the format array
+			 * @param {boolean} [oConfig.strict]
+			 *   Whether to use the strict option
+			 * @param {string} [sTimezone]
+			 *   The IANA timezone ID
+			 * @returns {{length : number, pm : boolean}|{}}
+			 *   An object with the <code>length</code> of the match and the parsed <code>pm</code>
+			 *   value; or an object with property valid <code>false</code> if it could not be
+			 *   parsed correctly
+			 */
+			parse : function (sValue, oPart, oFormat, oConfig, sTimezone) {
+				// process longer patterns first to find the longest match
+				// wide > abbreviated > narrow
+				var rAMPM, bAMPMAlternativeCase, oEntry, i, aMatch, normalize, aVariants,
+					aDayPeriodsVariants = [oFormat.aDayPeriodsWide, oFormat.aDayPeriodsAbbrev,
+						oFormat.aDayPeriodsNarrow];
 
-				if (bVariant) {
-					sValue = aMatch[0];
-
-					// Remove normal and non-breaking spaces
-					sAM = sAM.replace(/[\x20\xA0]/g, "");
-					sPM = sPM.replace(/[\x20\xA0]/g, "");
-					sValue = sValue.replace(/[\x20\xA0]/g, "");
-
-					// Remove dots and make it lowercase
-					sAM = sAM.replace(/\./g, "").toLowerCase();
-					sPM = sPM.replace(/\./g, "").toLowerCase();
-					sValue = sValue.replace(/\./g, "").toLowerCase();
+				// Support ASCII alternative writings for AM/PM (when the locale has am/pm in its
+				// patterns), e.g. "am", "a.m.", "am.", "a. m." (and their case alternatives)
+				// see: https://unicode.org/reports/tr35/tr35-dates.html#Parsing_Dates_Times
+				rAMPM = /[aApP](?:\.)?[\x20\xA0]?[mM](?:\.)?/;
+				aMatch = sValue.match(rAMPM);
+				bAMPMAlternativeCase = aMatch && aMatch.index === 0;
+				function normalize (sValue) {
+					// Remove normal and non-breaking spaces and remove dots
+					return sValue.replace(/[\x20\xA0]/g, "").replace(/\./g, "");
 				}
-				if (sValue.indexOf(sAM) === 0) {
-					bPM = false;
-					iLength = (bVariant ? aMatch[0].length : sAM.length);
-				} else if (sValue.indexOf(sPM) === 0) {
-					bPM = true;
-					iLength = (bVariant ? aMatch[0].length : sPM.length);
+				if (bAMPMAlternativeCase) {
+					sValue = normalize(sValue);
 				}
+
+				for (i = 0; i < aDayPeriodsVariants.length; i += 1) {
+					aVariants = aDayPeriodsVariants[i];
+
+					if (bAMPMAlternativeCase) {
+						// check normalized match for alternative case of am/pm
+						aVariants = aVariants.map(normalize);
+					}
+					// check exact and case-insensitive match
+					oEntry = oParseHelper.findEntry(sValue, aVariants,
+						oFormat.oLocaleData.sCLDRLocaleId);
+					if (oEntry.index !== -1) {
+						return {
+							pm : oEntry.index === 1,
+							// am/pm alternative may include an additional dot, e.g. "am."
+							// therefore the length for the am/pm alternative is the length of the
+							// match
+							length : bAMPMAlternativeCase ? aMatch[0].length : oEntry.length
+						};
+					}
+				}
+
 				return {
-					pm: bPM,
-					length: iLength
+					valid: false
 				};
 			}
 		},
