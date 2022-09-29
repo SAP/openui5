@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/enablement/Test",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/enablement/Util",
@@ -12,7 +11,6 @@ sap.ui.define([
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	jQuery,
 	Test,
 	DesignTime,
 	EnablementUtil,
@@ -160,13 +158,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ElementEnablementTest.prototype._getTestArea = function() {
-		if (!this._$TestAreaDomRef) {
-			this._$TestAreaDomRef = jQuery("<div id='" + this.getId() + "--testArea" + "'></div>").css({
-				height: "500px",
-				width: "1000px"// test area needs a height, so that some controls render correctly
-			}).appendTo("body");
+		if (!this._oTestAreaDomRef) {
+			this._oTestAreaDomRef = document.createElement("div");
+			this._oTestAreaDomRef.id = this.getId() + "--testArea";
+			this._oTestAreaDomRef.style.height = "500px";
+			this._oTestAreaDomRef.style.width = "1000px";
+			document.body.append(this._oTestAreaDomRef);
 		}
-		return this._$TestAreaDomRef;
+		return this._oTestAreaDomRef;
 	};
 
 
@@ -190,7 +189,7 @@ sap.ui.define([
 
 				if (!this._bNoRenderer) {
 					try {
-						this._oElement.placeAt(this._getTestArea().get(0));
+						this._oElement.placeAt(this._getTestArea());
 						sap.ui.getCore().applyChanges();
 					} catch (oError) {
 						this._bErrorDuringRendering = true;

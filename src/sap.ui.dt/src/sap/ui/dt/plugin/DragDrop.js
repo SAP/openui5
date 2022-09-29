@@ -101,8 +101,6 @@ sap.ui.define([
 	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay which should be registered
 	 */
 	DragDrop.prototype.registerElementOverlay = function(oOverlay) {
-		// this._checkMovable(oOverlay);
-
 		oOverlay.attachEvent("movableChange", this._onMovableChange, this);
 
 		if (oOverlay.isMovable()) {
@@ -146,7 +144,7 @@ sap.ui.define([
 
 		if (!Device.browser.webkit) {
 			this._removeDragScrollHandler(oAggregationOverlay);
-			this._clearScrollIntervalFor(oAggregationOverlay.$().attr("id"));
+			this._clearScrollIntervalFor(oAggregationOverlay.getDomRef().getAttribute("id"));
 		}
 	};
 
@@ -240,15 +238,6 @@ sap.ui.define([
 	 * @protected
 	 */
 	DragDrop.prototype.onAggregationDrop = function() { };
-
-	/**
-	 * @private
-	 */
-	DragDrop.prototype._checkMovable = function(oOverlay) {
-		if (oOverlay.isMovable() || DOMUtil.getDraggable(oOverlay.$()) !== undefined) {
-			DOMUtil.setDraggable(oOverlay.$(), oOverlay.isMovable());
-		}
-	};
 
 	/**
 	 * @private
@@ -432,18 +421,18 @@ sap.ui.define([
 	DragDrop.prototype.showGhost = function(oOverlay, oEvent) {
 		if (oEvent && oEvent.originalEvent && oEvent.originalEvent.dataTransfer) {
 			if (oEvent.originalEvent.dataTransfer.setDragImage) {
-				this._$ghost = this.createGhost(oOverlay, oEvent);
+				this._oGhost = this.createGhost(oOverlay, oEvent);
 
 				// ghost should be visible to set it as dragImage
-				this._$ghost.appendTo("#overlay-container");
+				document.getElementById("overlay-container").append(this._oGhost);
 				// if ghost will be removed without timeout, setDragImage won't work
 				setTimeout(function() {
 					this._removeGhost();
 				}.bind(this), 0);
 				oEvent.originalEvent.dataTransfer.setDragImage(
-					this._$ghost.get(0),
-					oEvent.originalEvent.pageX - oOverlay.$().offset().left,
-					oEvent.originalEvent.pageY - oOverlay.$().offset().top
+					this._oGhost,
+					oEvent.originalEvent.pageX - DOMUtil.getOffset(oOverlay.getDomRef()).left,
+					oEvent.originalEvent.pageY - DOMUtil.getOffset(oOverlay.getDomRef()).top
 				);
 			}
 		}
@@ -454,16 +443,16 @@ sap.ui.define([
 	 */
 	DragDrop.prototype._removeGhost = function() {
 		this.removeGhost();
-		delete this._$ghost;
+		delete this._oGhost;
 	};
 
 	/**
 	 * @protected
 	 */
 	DragDrop.prototype.removeGhost = function() {
-		var $ghost = this.getGhost();
-		if ($ghost) {
-			$ghost.remove();
+		var oGhost = this.getGhost();
+		if (oGhost) {
+			oGhost.remove();
 		}
 	};
 
@@ -474,39 +463,42 @@ sap.ui.define([
 	 */
 	DragDrop.prototype.createGhost = function(oOverlay) {
 		var $GhostDom = oOverlay.getAssociatedDomRef();
-		var $ghost;
+		var oGhost;
 		if (!$GhostDom) {
 			$GhostDom = this._getAssociatedDomCopy(oOverlay);
-			$ghost = $GhostDom;
+			oGhost = $GhostDom.get(0);
 		} else {
-			$ghost = jQuery("<div></div>");
-			jQuery.makeArray($GhostDom).forEach(function(oNode) {
-				DOMUtil.cloneDOMAndStyles(oNode, $ghost);
+			oGhost = document.createElement("div");
+			[].slice.call($GhostDom).forEach(function(oNode) {
+				DOMUtil.cloneDOMAndStyles(oNode, oGhost);
 			});
 		}
 
-		var $ghostWrapper = jQuery("<div></div>").addClass("sapUiDtDragGhostWrapper");
-		return $ghostWrapper.append($ghost.addClass("sapUiDtDragGhost"));
+		var oGhostWrapper = document.createElement("div");
+		oGhostWrapper.classList.add("sapUiDtDragGhostWrapper");
+		oGhost.classList.add("sapUiDtDragGhost");
+		oGhostWrapper.append(oGhost);
+		return oGhostWrapper;
 	};
 
 	/**
 	 * @private
 	 */
 	DragDrop.prototype._getAssociatedDomCopy = function(oOverlay) {
-		var $DomCopy = jQuery("<div></div>");
+		var oDomCopy = document.createElement("div");
 
 		oOverlay.getAggregationOverlays().forEach(function(oAggregationOverlay) {
 			oAggregationOverlay.getChildren().forEach(function(oChildOverlay) {
 				var oChildDom = oChildOverlay.getAssociatedDomRef();
 				if (oChildDom) {
-					DOMUtil.cloneDOMAndStyles(oChildDom, $DomCopy);
+					DOMUtil.cloneDOMAndStyles(oChildDom, oDomCopy);
 				} else {
-					DOMUtil.cloneDOMAndStyles(this._getAssociatedDomCopy(oChildOverlay), $DomCopy);
+					DOMUtil.cloneDOMAndStyles(this._getAssociatedDomCopy(oChildOverlay).get(0), oDomCopy);
 				}
 			}, this);
 		}, this);
 
-		return $DomCopy;
+		return jQuery(oDomCopy);
 	};
 
 	/**
@@ -514,7 +506,7 @@ sap.ui.define([
 	 * @return {jQuery} jQuery ghost object
 	 */
 	DragDrop.prototype.getGhost = function() {
-		return this._$ghost;
+		return this._oGhost;
 	};
 
 

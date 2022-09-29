@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/m/Panel",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core"
 ], function(
@@ -21,7 +20,6 @@ sap.ui.define([
 	Page,
 	Button,
 	Panel,
-	jQuery,
 	sinon,
 	oCore
 ) {
@@ -188,8 +186,8 @@ sap.ui.define([
 			this.oAggregationOverlay.attachEventOnce('scrollSynced', fnDone);
 			this.oAggregationOverlay.applyStyles();
 
-			this.$PageContentOverlay = this.oAggregationOverlay.$();
-			this.$PageContent = jQuery(this.oAggregationOverlay.getGeometry().domRef);
+			this.oPageContentOverlay = this.oAggregationOverlay.getDomRef();
+			this.oPageContent = this.oAggregationOverlay.getGeometry().domRef;
 		},
 		afterEach: function() {
 			this.oPage.destroy();
@@ -200,25 +198,25 @@ sap.ui.define([
 		QUnit.test("when AggregationOverlay is scrolled", function(assert) {
 			var done = assert.async();
 
-			assert.strictEqual(this.$PageContent.scrollTop(), this.$PageContentOverlay.scrollTop(), "initial scroll position is equal");
+			assert.strictEqual(this.oPageContent.scrollTop, this.oPageContentOverlay.scrollTop, "initial scroll position is equal");
 
-			this.$PageContent.on("scroll", function() {
-				assert.strictEqual(this.$PageContent.scrollTop(), 100, "page content is also scrolled to same position");
+			this.oPageContent.addEventListener("scroll", function() {
+				assert.strictEqual(this.oPageContent.scrollTop, 100, "page content is also scrolled to same position");
 				done();
 			}.bind(this));
 
-			this.$PageContentOverlay.scrollTop(100);
+			this.oPageContentOverlay.scrollTop = 100;
 		});
 
 		QUnit.test("when aggregation dom is scrolled", function(assert) {
 			var done = assert.async();
 
-			this.$PageContentOverlay.on("scroll", function() {
-				assert.strictEqual(this.$PageContentOverlay.scrollTop(), 20, "page content overlay is also scrolled to same position");
+			this.oPageContentOverlay.addEventListener("scroll", function() {
+				assert.strictEqual(this.oPageContentOverlay.scrollTop, 20, "page content overlay is also scrolled to same position");
 				done();
 			}.bind(this));
 
-			this.$PageContent.scrollTop(20);
+			this.oPageContent.scrollTop = 20;
 		});
 	});
 

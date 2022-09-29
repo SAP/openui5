@@ -3,12 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/DesignTimeStatus"
 ], function(
-	jQuery,
 	Device,
 	ManagedObject,
 	DesignTimeStatus
@@ -171,17 +169,6 @@ sap.ui.define([
 			return typeof aArgs[iIndex] !== "undefined"
 				? aArgs[iIndex]
 				: sMatch;
-		});
-	};
-
-	/**
-	 * Gets values of specified object
-	 * @param {object} mObject - Any plain JavaScript object
-	 * @return {array.<*>} - An array of values of specified object
-	 */
-	Util.objectValues = function (mObject) {
-		return jQuery.map(mObject, function(vValue) {
-			return vValue;
 		});
 	};
 

@@ -196,19 +196,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("objectValues()", function () {
-		QUnit.test("objectValues()", function(assert) {
-			var sValue1 = "test1";
-			var sValue2 = "test2";
-			var mObject = {
-				value1: sValue1,
-				value2: sValue2
-			};
-
-			assert.deepEqual(Util.objectValues(mObject), [sValue1, sValue2], "the correct object values were returned");
-		});
-	});
-
 	QUnit.module("isInteger()", function () {
 		QUnit.test("basic functionality", function(assert) {
 			assert.ok(Util.isInteger(0), "zero is an integer");

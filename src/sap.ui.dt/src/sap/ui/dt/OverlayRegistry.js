@@ -54,7 +54,7 @@ function(
 	};
 
 	OverlayRegistry.getOverlays = function () {
-		return Util.objectValues(mOverlays);
+		return Object.values(mOverlays);
 	};
 
 	/**
