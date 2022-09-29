@@ -202,6 +202,12 @@ sap.ui.define(function() {
 					language: "en-US"
 				}
 			},
+			TreeBinding: {
+				title: "sap.ui.model.TreeBinding",
+				module: [
+					"test-resources/sap/ui/core/qunit/model/TreeBinding.qunit"
+				]
+			},
 			TreeBindingAdapter: {
 				title: "sap.ui.model.TreeBindingAdapter - QUnit Tests",
 				module: [
