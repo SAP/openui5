@@ -50,9 +50,9 @@ sap.ui.define([
 
 	QUnit.test("Label", function(assert) {
 		var oBundle = oCore.getLibraryResourceBundle("sap.m");
-		var sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT");
+		var sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT", "A");
 		var aItems = this.oQuickSort.getItems();
-		assert.equal(aItems[0]._getLabel(aItems.length), sLabel, "QuickSort label is correct.");
+		assert.equal(aItems[0]._getLabel(aItems.length), sLabel, "QuickSort label of single item is correct.");
 
 		var oItem = new QuickSortItem({
 			key: "propertyB",
@@ -62,9 +62,9 @@ sap.ui.define([
 		this.oQuickSort.addItem(oItem);
 		aItems = this.oQuickSort.getItems();
 		sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT", "A");
-		assert.equal(aItems[0]._getLabel(aItems.length), sLabel, "QuickSort label has been updated.");
+		assert.equal(aItems[0]._getLabel(aItems.length), sLabel, "QuickSort label of first of two items is correct.");
 		sLabel = oBundle.getText("table.COLUMNMENU_QUICK_SORT", "B");
-		assert.equal(aItems[1]._getLabel(aItems.length), sLabel, "QuickSort label is correct.");
+		assert.equal(aItems[1]._getLabel(aItems.length), sLabel, "QuickSort label of second of two items correct.");
 	});
 
 	QUnit.test("Content", function(assert) {
