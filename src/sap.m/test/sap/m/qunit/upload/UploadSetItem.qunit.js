@@ -455,4 +455,10 @@ sap.ui.define([
 		assert.ok(this.fnSpy.calledWith("Alice"), "Method setTooltip called with the correct text");
 	});
 
+	QUnit.test("Upload set item description read out", function (assert) {
+		//Assert
+		var oItem = this.oUploadSet.getItems()[0];
+		oItem._oListItem.focus();
+		assert.ok(oItem._oListItem.getDomRef().getAttribute("aria-labelledby"), "The description is being read out");
+	});
 });

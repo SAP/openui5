@@ -172,8 +172,8 @@ sap.ui.define([
 				if (this._bInEditMode) {
 					oRm.class("sapMUCEditMode");
 				}
+				oRm.attr("id", oControl.getId());
 				oRm.openEnd();
-
 				oRm.openStart("div").class("sapMUSTextInnerContainer").openEnd();
 				oRm.renderControl(oItem._bInEditMode ? oItem._getFileNameEdit() : oItem._getFileNameLink());
 				oItem._renderMarkers(oRm);
@@ -522,7 +522,9 @@ sap.ui.define([
 				this._oIcon.addStyleClass("sapMUCItemImage sapMUCItemIcon");
 			} else {
 				this._oIcon = new Icon(this.getId() + "-icon", {
-					src: this._getIconByMimeType(this.getMediaType())
+					src: this._getIconByMimeType(this.getMediaType()),
+					decorative: false,
+					useIconTooltip: false
 				});
 				this._oIcon.addStyleClass("sapMUCItemIcon");
 			}
