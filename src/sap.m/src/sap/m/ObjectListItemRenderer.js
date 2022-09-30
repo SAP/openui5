@@ -154,7 +154,7 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/li
 
 			// Title container displayed to the left of the number and number units container.
 			rm.openStart("div"); // Start Title container
-			rm.style("display", "-webkit-box");
+			rm.style("display", "flex");
 			rm.style("overflow", "hidden");
 			rm.openEnd();
 			var oTitleText = oLI._getTitleText();
