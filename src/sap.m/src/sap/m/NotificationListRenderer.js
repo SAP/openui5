@@ -9,7 +9,7 @@ sap.ui.define(['sap/ui/core/Renderer',
 		"use strict";
 
 		/**
-		 * Tree renderer.
+		 * NotificationList renderer.
 		 * @namespace
 		 *
 		 */
