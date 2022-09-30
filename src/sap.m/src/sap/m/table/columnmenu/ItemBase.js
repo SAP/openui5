@@ -9,26 +9,27 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new ItemBase.
+	 * Constructor for a new <code>ItemBase</code>.
 	 *
-	 * @param {string} [sId] ID for the new ItemBase, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new ItemBase
+	 * @param {string} [sId] ID for the new <code>ItemBase</code>, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new <code>ItemBase</code>
 	 *
 	 * @class
-	 * The ItemBase serves as a base class for menu items for the sap.m.table.columnmenu.Menu.
-	 * This base class is faceless and should be inherited by menu items for the sap.m.table.columnmenu.Menu.
+	 * The <code>ItemBase</code> class is used as a base class for menu items for the <code>sap.m.table.columnmenu.Menu</code>.
+	 * This faceless class can be used to specify control- and application-specific menu items.
 	 *
 	 * @extends sap.m.table.columnmenu.Entry
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @experimental
+	 * @public
+	 * @since 1.110
 	 *
 	 * @alias sap.m.table.columnmenu.ItemBase
 	 */
 	var ItemBase = Entry.extend("sap.m.table.columnmenu.ItemBase", {
+
 		metadata: {
 			"abstract": true,
 			library: "sap.m"
@@ -44,7 +45,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used to retrieve the effective items of the item.
+	 * Retrieves the effective items of the item.
 	 *
 	 * This method allows subclasses to return composition of other items, if they contain multiple items or controls.
 	 * @returns {sap.m.table.columnmenu.ItemBase[]} A composition of effective items
@@ -56,7 +57,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used to retrieve the set icon for a item.
+	 * Retrieves the icon specified for an item.
 	 *
 	 * @returns {sap.ui.core.URI} The specified icon
 	 *
@@ -70,9 +71,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used as an event handler for a press event.
+	 * Event handler for a press event.
 	 *
-	 * @param {jQuery.Event} oEvent The emitted event
+	 * @param {jQuery.Event} oEvent The event
 	 *
 	 * @protected
 	 */
@@ -80,9 +81,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used as an event handler for a back event.
+	 * Event handler for a back event.
 	 *
-	 * @param {jQuery.Event} oEvent The emitted event
+	 * @param {jQuery.Event} oEvent The event
 	 *
 	 * @protected
 	 */
@@ -90,9 +91,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used as an event handler for a confirm event.
+	 * Event handler for a confirm event.
 	 *
-	 * @param {jQuery.Event} oEvent The emitted event
+	 * @param {jQuery.Event} oEvent The event
 	 *
 	 * @protected
 	 */
@@ -100,9 +101,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used as an event handler for a cancel event.
+	 * Event handler for a cancel event.
 	 *
-	 * @param {jQuery.Event} oEvent The emitted event
+	 * @param {jQuery.Event} oEvent The event
 	 *
 	 * @protected
 	 */
@@ -110,9 +111,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used as an event handler for a reset event.
+	 * Event handler for a reset event.
 	 *
-	 * @param {jQuery.Event} oEvent The emitted event
+	 * @param {jQuery.Event} oEvent The event
 	 *
 	 * @protected
 	 */
@@ -120,7 +121,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used to retrieve the button settings.
+	 * Retrieves the button settings.
+	 *
+	 * @returns {object} The button settings
 	 *
 	 * @protected
 	 */
@@ -129,7 +132,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used to change the button settings of an item.
+	 * Changes the button settings of an item.
 	 *
 	 * @param {object} oButtonSettings Object containing button settings
 	 *

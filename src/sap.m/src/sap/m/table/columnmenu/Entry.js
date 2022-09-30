@@ -9,40 +9,44 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new Entry.
+	 * Constructor for a new <code>Entry</code>.
 	 *
-	 * @param {string} [sId] ID for the new Entry, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new Entry
+	 * @param {string} [sId] ID for the new <code>Entry</code>, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new <code>Entry</code>
 	 *
 	 * @class
-	 * The Entry serves as a base class for elements residing inside the sap.m.table.columnmenu.Menu.
-	 * This base class is faceless and should be inherited to implement Menu items and quick actions.
+	 * The <code>Entry</code> class is used as a base class for elements residing inside the <code>sap.m.table.columnmenu.Menu</code>.
+	 * This faceless class can be used to specify control- and application-specific menu items and quick actions.
 	 *
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @experimental
+	 * @public
+	 * @since 1.110
 	 *
 	 * @alias sap.m.table.columnmenu.Entry
 	 */
 	var Entry = Element.extend("sap.m.table.columnmenu.Entry", {
+
 		metadata: {
 			"abstract": true,
 			library: "sap.m",
 			properties: {
+				/**
+				 * Determines whether the entry is visible.
+				 */
 				visible: {type: "boolean", defaultValue: true}
 			}
 		}
 	});
 
 	/**
-	 * This method can be used to retrieve the Menu, in which the entry resides in.
+	 * Retrieves the <code>Menu</code> in which the entry resides.
 	 *
-	 * If an entry is internally creating entries that use #getMenu or #getParent,
-	 * and returns them in #getEffectiveItems or #getEffectiveQuickActions, they
+	 * If an entry is internally creating entries that use {@link #getMenu} or {@link #getParent},
+	 * and returns them in {@link #getEffectiveItems} or {@link #getEffectiveQuickActions}, they
 	 * must be its children in the control tree.
 	 *
 	 * @returns {sap.m.table.columnmenu.Menu} The menu of the entry
@@ -60,7 +64,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used to retrieve the label of an entry.
+	 * Retrieves the label of an entry.
 	 *
 	 * @returns {string} The label property specified in the control
 	 * @abstract
@@ -73,7 +77,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * This method can be used to retrieve the content of an entry.
+	 * Retrieves the content of an entry.
 	 *
 	 * @returns {sap.ui.core.Control} The control specified in the content aggregation
 	 * @abstract

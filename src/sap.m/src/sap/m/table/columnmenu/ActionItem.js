@@ -9,31 +9,32 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new ActionItem.
+	 * Constructor for a new <code>ActionItem</code>.
 	 *
-	 * @param {string} [sId] ID for the new ActionItem, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new ActionItem
+	 * @param {string} [sId] ID for the new <code>ActionItem</code>, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new <code>ActionItem</code>
 	 *
 	 * @class
-	 * The ActionItem serves as a menu action item for the sap.m.table.columnmenu.Menu.
-	 * It can be used to specify control- and application-specific items which should solely serve as actions.
+	 * The <code>ActionItem</code> class is used for action items for the <code>sap.m.table.columnmenu.Menu</code>.
+	 * This faceless class can be used to specify control- and application-specific items that should solely serve as actions.
 	 *
 	 * @extends sap.m.table.columnmenu.ItemBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @experimental
+	 * @public
+	 * @since 1.110
 	 *
 	 * @alias sap.m.table.columnmenu.ActionItem
 	 */
 	var ActionItem = ItemBase.extend("sap.m.table.columnmenu.ActionItem", {
+
 		metadata: {
 			library: "sap.m",
 			properties: {
 				/**
-				 * Defines the label, which should be used for the buttons.
+				 * Defines the label that is used for the item.
 				 */
 				label: {type: "string"},
 				/**
@@ -43,7 +44,7 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * This event will be fired, when the action was pressed.
+				 * This event is fired when the action item is pressed.
 				 */
 				press: {}
 			}

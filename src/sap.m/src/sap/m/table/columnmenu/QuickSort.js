@@ -10,25 +10,27 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new QuickSort.
+	 * Constructor for a new <code>QuickSort</code>.
 	 *
-	 * @param {string} [sId] ID for the new QuickSort, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new QuickSort
+	 * @param {string} [sId] ID for the new <code>QuickSort</code>, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new <code>QuickSort</code>
 	 *
 	 * @class
-	 * Quick action - sort
+	 * The <code>QuickSort</code> class is used for quick sorting for the <code>sap.m.table.columnmenu.Menu</code>.
+	 * It can be used to specify control- and application-specific quick actions for sorting.
 	 *
 	 * @extends sap.m.table.columnmenu.QuickActionBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @experimental
+	 * @public
+	 * @since 1.110
 	 *
 	 * @alias sap.m.table.columnmenu.QuickSort
 	 */
 	var QuickSort = QuickActionBase.extend("sap.m.table.columnmenu.QuickSort", {
+
 		metadata: {
 			library: "sap.m",
 			aggregations: {
@@ -44,7 +46,7 @@ sap.ui.define([
 				change: {
 					parameters: {
 						/**
-						 * The key of the property to be sorted.
+						 * The key of the property that is sorted.
 						 */
 						key: { type: "string" },
 						/**

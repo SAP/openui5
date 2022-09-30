@@ -20,32 +20,39 @@ sap.ui.define([
 	var SortOrder = CoreLibrary.SortOrder;
 
 	/**
-	 * Constructor for a new QuickSortItem.
+	 * Constructor for a new <code>QuickSortItem</code>.
 	 *
-	 * @param {string} [sId] ID for the new QuickSortItem, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new QuickSortItem
+	 * @param {string} [sId] ID for the new <code>QuickSortItem</code>, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new <code>QuickSortItem</code>
 	 *
 	 * @class
-	 * This element serves as a quick sort item.
-	 * It can be used to specify control- and application specific quick sort items.
+	 * The <code>QuickSortItem</code> class is used for items for the <code>sap.m.table.columnmenu.QuickSort</code>.
+	 * It can be used to specify control- and application-specific items for sorting.
 	 *
 	 * @extends sap.m.table.columnmenu.QuickActionItem
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @experimental
+	 * @public
+	 * @since 1.110
 	 *
 	 * @alias sap.m.table.columnmenu.QuickSortItem
 	 */
 	var QuickSortItem = QuickActionItem.extend("sap.m.table.columnmenu.QuickSortItem", {
+
 		metadata: {
 			library: "sap.m",
 			properties: {
+				/**
+				 * Specifies the sort order that is applied for the respective column.
+				 */
 				sortOrder: { type: "sap.ui.core.SortOrder", defaultValue: CoreLibrary.SortOrder.None }
 			},
 			aggregations: {
+				/**
+				 * Defines the quick action of the quick sort item.
+				 */
 				quickAction: { type: "sap.m.table.columnmenu.QuickAction", multiple: false, visibility: "hidden" }
 			}
 		}

@@ -14,25 +14,27 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new QuickGroup.
+	 * Constructor for a new <code>QuickGroup</code>.
 	 *
-	 * @param {string} [sId] ID for the new QuickGroup, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new QuickGroup
+	 * @param {string} [sId] ID for the new <code>QuickGroup</code>, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new <code>QuickGroup</code>
 	 *
 	 * @class
-	 * Quick action - group
+	 * The <code>QuickGroup</code> class is used for quick grouping for the <code>sap.m.table.columnmenu.Menu</code>.
+	 * It can be used to specify control- and application-specific quick actions for grouping.
 	 *
 	 * @extends sap.m.table.columnmenu.QuickActionBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @experimental
+	 * @public
+	 * @since 1.110
 	 *
 	 * @alias sap.m.table.columnmenu.QuickGroup
 	 */
 	var QuickGroup = QuickActionBase.extend("sap.m.table.columnmenu.QuickGroup", {
+
 		metadata: {
 			library: "sap.m",
 			aggregations: {

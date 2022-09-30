@@ -9,71 +9,72 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new Item.
+	 * Constructor for a new <code>Item</code>.
 	 *
-	 * @param {string} [sId] ID for the new Item, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new Item
+	 * @param {string} [sId] ID for the new <code>Item</code>, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new <code>Item</code>
 	 *
 	 * @class
-	 * This Item serves as a menu item for the sap.m.table.columnmenu.Menu.
-	 * It can be used to specify control- and application-specific items.
+	 * The <code>Item</code> class is used for menu items for the <code>sap.m.table.columnmenu.Menu</code>.
+	 * It can be used to specify control- and application-specific menu items.
 	 *
 	 * @extends sap.m.table.columnmenu.ItemBase
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @private
-	 * @experimental
+	 * @public
+	 * @since 1.110
 	 *
 	 * @alias sap.m.table.columnmenu.Item
 	 */
 	var Item = ItemBase.extend("sap.m.table.columnmenu.Item", {
+
 		metadata: {
 			library: "sap.m",
 			properties: {
 				/**
-				 * Defines the label, which should be used for the buttons.
+				 * Defines the label that is used for the item.
 				 */
 				label: {type: "string"},
 				/**
-				 * Defines the icon for the menu item.
+				 * Defines the icon for the item.
 				 */
 				icon: {type: "sap.ui.core.URI"},
 				/**
-				 * Defines whether the reset button should be shown, when navigating to the item.
+				 * Defines whether the Reset button is shown when navigating to the item.
 				 */
 				showResetButton: {type: "boolean", defaultValue: true},
 				/**
-				 * Defines whether the reset button should be enabled, when navigating to the item.
+				 * Defines whether the Reset button is enabled when navigating to the item.
 				 */
 				resetButtonEnabled: {type: "boolean", defaultValue: true},
 				/**
-				 * Defines whether the confirm button should be shown, when navigating to the item.
+				 * Defines whether the Confirm button is shown when navigating to the item.
 				 */
 				showConfirmButton: {type: "boolean", defaultValue: true},
 				/**
-				 * Defines whether the cancel button should be shown, when navigating to the item.
+				 * Defines whether the Cancel button is shown when navigating to the item.
 				 */
 				showCancelButton: {type: "boolean", defaultValue: true}
 			},
 			aggregations: {
 				/**
-				 * Defines the content, which should be shown when navigating to the item.
+				 * Defines the content that is shown when navigating to the item.
 				 */
 				content: {type: "sap.ui.core.Control", multiple: false}
 			},
 			events: {
 				/**
-				 * This event will be fired, when the reset button was pressed.
+				 * This event is fired when the Reset button is pressed.
 				 */
 				reset: {},
 				/**
-				 * This event will be fired, when the confirm button was pressed.
+				 * This event is fired when the Confirm button is pressed.
 				 */
 				confirm: {},
 				/**
-				 * This event will be fired, when the cancel button was pressed.
+				 * This event is fired when the Cancel button is pressed.
 				 */
 				cancel: {}
 			}
