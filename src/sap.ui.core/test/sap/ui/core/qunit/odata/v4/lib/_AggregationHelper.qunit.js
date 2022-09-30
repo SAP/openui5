@@ -22,6 +22,121 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bAsLeaf) {
+	QUnit.test("beforeOverwritePlaceholder: success; marked as leaf: " + bAsLeaf, function () {
+		var oCache = {},
+			oElement = {
+				"@$ui5._" : { // not present at oPlaceholder => must be ignored
+					descendants : 42,
+					filter : "~filter~",
+					predicate : "('0')"
+				},
+				"@$ui5.node.level" : 9
+			},
+			oPlaceholder = _AggregationHelper.createPlaceholder(9, 42, oCache);
+
+		if (bAsLeaf) { // must not make a difference
+			oElement["@$ui5.node.isExpanded"] = undefined;
+			oPlaceholder["@$ui5.node.isExpanded"] = undefined;
+		}
+		this.mock(_Helper).expects("copyPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
+
+		// code under test
+		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("beforeOverwritePlaceholder: success; top pyramid", function () {
+		var oCache = {},
+			oElement = {
+				"@$ui5._" : { // not present at oPlaceholder => must be ignored
+					descendants : 42,
+					filter : "~filter~",
+					predicate : "('0')"
+				},
+				"@$ui5.node.level" : 9
+			},
+			// Note: level 1 is used for initial placeholders of 1st level cache!
+			oPlaceholder = _AggregationHelper.createPlaceholder(1, 42, oCache);
+
+		this.mock(_Helper).expects("copyPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
+
+		// code under test
+		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("beforeOverwritePlaceholder: wrong placeholder; top pyramid", function (assert) {
+		var oCache = {},
+			// Note: level 1 is used for initial placeholders of 1st level cache!
+			oPlaceholder = _AggregationHelper.createPlaceholder(1, 42, oCache);
+
+		// Note: this is not done by _AggregationHelper.createPlaceholder, but only by
+		// _AggregationCache#replaceByPlaceholder!
+		oPlaceholder["@$ui5.node.isExpanded"] = undefined; // value must not matter
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, {"@$ui5.node.level" : 9},
+				oCache, 42);
+		}, new Error("Wrong placeholder"), "not an initial placeholder");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("beforeOverwritePlaceholder: isExpanded", function (assert) {
+		var oCache = {},
+			oElement = {
+				"@$ui5.node.isExpanded" : "~new~",
+				"@$ui5.node.level" : 9
+			},
+			oPlaceholder = _AggregationHelper.createPlaceholder(9, 42, oCache);
+
+		assert.notOk("@$ui5.node.isExpanded" in oPlaceholder);
+		this.mock(_Helper).expects("copyPrivateAnnotation").twice()
+			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
+
+		// code under test
+		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
+
+		assert.strictEqual(oElement["@$ui5.node.isExpanded"], "~new~", "unchanged");
+
+		oPlaceholder["@$ui5.node.isExpanded"] = "~old~";
+
+		// code under test
+		_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
+
+		assert.strictEqual(oElement["@$ui5.node.isExpanded"], "~old~");
+	});
+
+	//*********************************************************************************************
+[
+	[false, undefined], [true, undefined], [undefined, false], [undefined, true]
+].forEach(function (aIsExpandedValues, i) {
+	var sTitle = "beforeOverwritePlaceholder: Not a leaf anymore (or vice versa); #" + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = {},
+			oElement = {
+				"@$ui5.node.isExpanded" : aIsExpandedValues[0],
+				"@$ui5.node.level" : 9
+			},
+			oPlaceholder = _AggregationHelper.createPlaceholder(9, 42, oCache);
+
+		oPlaceholder["@$ui5.node.isExpanded"] = aIsExpandedValues[1];
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
+		}, new Error("Not a leaf anymore (or vice versa)"));
+
+		assert.strictEqual(oElement["@$ui5.node.isExpanded"], aIsExpandedValues[0], "unchanged");
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("beforeOverwritePlaceholder: unexpected element", function (assert) {
 		assert.throws(function () {
 			// code under test
@@ -31,24 +146,44 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("beforeOverwritePlaceholder: wrong placeholder", function (assert) {
-		var oCache = {};
+		var oCache = {},
+			oPlaceholder = _AggregationHelper.createPlaceholder(9, 42, oCache);
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.beforeOverwritePlaceholder(
-				_AggregationHelper.createPlaceholder(NaN, 42, oCache), null, {/*not oCache*/}, 42);
-		}, new Error("Wrong placeholder"));
+			_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, null, {/*not oCache*/}, 42);
+		}, new Error("Wrong placeholder"), "parent");
 
 		assert.throws(function () {
 			// code under test
-			_AggregationHelper.beforeOverwritePlaceholder(
-				_AggregationHelper.createPlaceholder(NaN, 42, oCache), null, oCache, 41);
-		}, new Error("Wrong placeholder"));
+			_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, null, oCache, 41);
+		}, new Error("Wrong placeholder"), "index");
 
-		// code under test
-		_AggregationHelper.beforeOverwritePlaceholder(
-			_AggregationHelper.createPlaceholder(NaN, 42, oCache), null, oCache, 42);
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, {"@$ui5.node.level" : 99},
+				oCache, 42);
+		}, new Error("Wrong placeholder"), "level");
 	});
+
+	//*********************************************************************************************
+["descendants", "filter", "predicate"].forEach(function (sAnnotation) {
+	var sTitle = "beforeOverwritePlaceholder: Unexpected structural change: " + sAnnotation;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = {},
+			oElement = {"@$ui5.node.level" : 9},
+			oPlaceholder = _AggregationHelper.createPlaceholder(9, 42, oCache);
+
+		_Helper.setPrivateAnnotation(oElement, sAnnotation, 0);
+		_Helper.setPrivateAnnotation(oPlaceholder, sAnnotation, false);
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, oElement, oCache, 42);
+		}, new Error("Unexpected structural change: " + sAnnotation));
+	});
+});
 
 	//*********************************************************************************************
 	[{
@@ -1553,6 +1688,7 @@ sap.ui.define([
 		assert.strictEqual(oPlaceholder["@$ui5.node.level"], 3);
 		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "index"), 5);
 		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "parent"), oParentCache);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "placeholder"), true);
 	});
 
 	//*********************************************************************************************
@@ -1949,5 +2085,24 @@ sap.ui.define([
 			SalesAmountSum : 123,
 			"SalesAmountSum@odata.type" : "#Decimal"
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("markSplicedStale", function (assert) {
+		var oElement = {},
+			aSpliced = [];
+
+		// code under test
+		_AggregationHelper.markSplicedStale(oElement);
+
+		assert.deepEqual(oElement, {}, "unchanged");
+
+		_Helper.setPrivateAnnotation(oElement, "spliced", aSpliced);
+
+		// code under test
+		_AggregationHelper.markSplicedStale(oElement);
+
+		assert.strictEqual(aSpliced.$stale, true);
+		assert.deepEqual(oElement, {"@$ui5._" : {spliced : []}}, "nothing else");
 	});
 });

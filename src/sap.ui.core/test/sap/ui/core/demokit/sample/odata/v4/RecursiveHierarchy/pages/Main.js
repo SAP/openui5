@@ -2,9 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/SandboxModel",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press"
-], function (Opa5, Press) {
+], function (SandboxModel, Opa5, Press) {
 	"use strict";
 
 	var mIcon2DrillState = {
@@ -117,6 +118,17 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				synchronize : function (sComment) {
+					this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : bTreeTable ? "synchronizeTreeTable" : "synchronize",
+						success : function () {
+							Opa5.assert.ok(true, "Synchronize (" + sComment + ")");
+						},
+						viewName : sViewName
+					});
+				},
 				toggleExpandInRow : function (iRow, sComment) {
 					if (bTreeTable) {
 						this.waitFor({
@@ -162,7 +174,8 @@ sap.ui.define([
 						controlType : getTableType(),
 						id : getTableId(),
 						success : function (oTable) {
-							aExpected.forEach(checkRow.bind(null, oTable, bTreeTable0, mDefaults));
+							SandboxModel.update(aExpected)
+								.forEach(checkRow.bind(null, oTable, bTreeTable0, mDefaults));
 						},
 						viewName : sViewName
 					});

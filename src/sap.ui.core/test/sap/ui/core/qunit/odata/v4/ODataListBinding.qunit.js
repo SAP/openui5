@@ -7348,11 +7348,24 @@ sap.ui.define([
 			oExpectedFilterInfo);
 	});
 
+[false, true].forEach(function (bRecursiveHierarchy) { //******************************************
+	function bindList(that, sPath, oContext) { // eslint-disable-line consistent-this
+		var oListBinding = that.bindList(sPath, oContext);
+
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		if (bRecursiveHierarchy) {
+			oListBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+		}
+
+		return oListBinding;
+	}
+
 	//*********************************************************************************************
 [false, true].forEach(function (bHeader) {
 	QUnit.test("requestSideEffects: refresh needed, refresh fails, " + bHeader, function (assert) {
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
-			oBinding = this.bindList("/Set"),
+			oBinding = bindList(this, "/Set"),
 			oContext = bHeader ? oBinding.getHeaderContext() : undefined,
 			oError = new Error(),
 			sGroupId = "group";
@@ -7378,7 +7391,7 @@ sap.ui.define([
 	QUnit.test("requestSideEffects: refreshSingle needed, refreshSingle fails", function (assert) {
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oContext = {},
-			oBinding = this.bindList("/Set"),
+			oBinding = bindList(this, "/Set"),
 			oError = new Error(),
 			sGroupId = "group",
 			oGroupLock = {};
@@ -7402,7 +7415,7 @@ sap.ui.define([
 [false, true].forEach(function (bHeader) {
 	QUnit.test("requestSideEffects: deleting in other group, " + bHeader, function (assert) {
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
-			oBinding = this.bindList("/Set"),
+			oBinding = bindList(this, "/Set"),
 			oContext = bHeader ? oBinding.getHeaderContext() : undefined;
 
 		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs("group").returns(true);
@@ -7419,7 +7432,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: call refreshInternal for relative binding", function (assert) {
-		var oBinding = this.bindList("relative", this.oModel.createBindingContext("/")),
+		var oBinding = bindList(this, "relative", this.oModel.createBindingContext("/")),
 			oContext = oBinding.getHeaderContext(),
 			oResult = {};
 
@@ -7436,7 +7449,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: call refreshSingle for relative binding", function (assert) {
-		var oBinding = this.bindList("relative", this.oModel.createBindingContext("/")),
+		var oBinding = bindList(this, "relative", this.oModel.createBindingContext("/")),
 			oContext = Context.create(this.oModel, {}, "/EMPLOYEES('42')"),
 			oGroupLock = {},
 			oResult = {};
@@ -7462,7 +7475,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
-			oBinding = this.bindList("/Set"),
+			oBinding = bindList(this, "/Set"),
 			oCanceledError = new Error(),
 			oContext = bHeader
 				? oBinding.getHeaderContext()
@@ -7553,7 +7566,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: transient context", function (assert) {
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
-			oBinding = this.bindList("/Set"),
+			oBinding = bindList(this, "/Set"),
 			sGroupId = "group",
 			oGroupLock = {},
 			aPaths = ["A"],
@@ -7593,7 +7606,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: fallback to refresh", function (assert) {
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
-			oBinding = this.bindList("/Set"),
+			oBinding = bindList(this, "/Set"),
 			oError = new Error(),
 			sGroupId = "group",
 			aPaths = ["A"];
@@ -7621,7 +7634,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: no data read => no refresh", function (assert) {
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
-			oBinding = this.bindList("/Set");
+			oBinding = bindList(this, "/Set");
 
 		oCacheMock.expects("isDeletingInOtherGroup").withExactArgs("group").returns(false);
 		this.mock(oBinding).expects("lockGroup").never();
@@ -7634,6 +7647,7 @@ sap.ui.define([
 			SyncPromise.resolve()
 		);
 	});
+}); // END of forEach: bRecursiveHierarchy ********************************************************
 
 	//*********************************************************************************************
 [false, true].forEach(function (bRefresh) {
@@ -7643,7 +7657,7 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/Set", undefined, undefined, undefined, {
-				$$aggregation : {}
+				$$aggregation : {} // Note: no hierarchyQualifier!
 			}),
 			oContext = bHeaderContext ? oBinding.getHeaderContext() : undefined,
 			aFilters = [],
@@ -7677,7 +7691,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects with $$aggregation and row context", function (assert) {
 		var oBinding = this.bindList("/Set", undefined, undefined, undefined, {
-				$$aggregation : {}
+				$$aggregation : {} // Note: no hierarchyQualifier!
 			});
 
 		this.mock(oBinding.oCache).expects("requestSideEffects").never();
