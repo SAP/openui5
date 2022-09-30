@@ -1881,46 +1881,113 @@ html[data-sap-ui-browser*='ff'] {
 	}
 }
 
-@media (min-width:320px) and (max-width:599px){
-    .sapMGT.sapMGTOneByOne {
-        width: 9rem;
-        height: 9rem;
+@media (min-width:320px) and (max-width:600px){
+		.sapMGT.sapMGTOneByOne {
+			width: 12.875rem;
+			height: 7.8125rem;
+			.sapMGTSubHdrTxt {
+				.sapMTextMaxLine {
+					-webkit-line-clamp: 1 !important;
+				}
+			}
+		}
 		.sapMBtnBase.sapMGTMoreIcon{
 			.sapMBtnIcon{
 				bottom: 0.7rem;
 			}
 		}
-    }
-}
+	}
+
 @media (min-width:600px) {
-    .sapMGT.sapMGTOneByOne {
-        width: 7rem;
-        height: 7rem;
+	.sapMGT.sapMGTOneByOne {
+		width: 11.875rem;
+		height: 8rem;
 		.sapMBtnBase.sapMGTMoreIcon{
 			.sapMBtnIcon{
 				bottom: 0.3rem;
 			}
 		}
-    }
+	}
 }
 .sapMGT.sapMGTOneByOne {
-    border-radius: @sapTile_BorderCornerRadius;
-    border: none;
+	border-radius: @sapTile_BorderCornerRadius;
+	border: none;
+	.sapMGTIconWrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin-bottom: 0.5rem;
+		.sapMGTHdrContent {
+			padding: 0 0.5rem;
+			display: flex;
+			flex-direction: column;
+			height: fit-content;
+			align-items: center;
+			.sapMGTHdrTxt {
+				max-height: 2.74rem;
+				height: 2rem;
+				display: flex;
+				align-items: end;
+				line-height: 1rem;
+				word-break: break-word;
+			}
+		}
+	}
+	.sapMGTSubHdrTxt {
+		margin: 0 0.5rem 0 0.5rem;
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		white-space: initial;
+		.sapMText {
+			font-weight: 400;
+			color: @sapTile_TitleTextColor;
+			white-space: initial;
+			text-align: center !important;
+		}
+	}
 }
 
-.sapMGTHdrContent.sapMGTOneByOne {
-    height: 3.625rem;
-	padding-top: 0;
-	display: flex;
-    align-items: center;
-    justify-content: center;
-    vertical-align: middle;
+.sapMGT.sapMGTOneByOne.sapMGTNoSubHeader {
+	.sapMGTIconWrapper {
+		.sapMGTHdrContent {
+			&::marker {
+				color: transparent;
+			}
+			height: 2rem;
+			position: relative;
+			display: list-item;
+			line-height: 0.6;
+			.sapMGTHdrTxt {
+				height: inherit;
+				max-height: none;
+				overflow: visible;
+				justify-content: center;
+			}
+		}
+	}
+}
+
+.sapMGT.sapMGTOneByOne.sapMGTNoSubHeader.sapMTileSmallPhone {
+	.sapMGTIconWrapper {
+		.sapMGTHdrContent {
+			overflow: initial;
+			.sapMGTHdrTxt {
+				.sapMTextMaxLine {
+					-webkit-line-clamp: 3 !important;
+					max-height: 3rem !important;
+				}
+			}
+		}
+	}
 }
 
 .sapMGTHdrContent.sapMGTOneByOne > .sapMGTHdrTxt > .sapMText{
 	font-size: 0.875rem;
-	color: @sapUiContentContrastTextColor;
-    text-align: center !important;
+	color: @sapTile_TitleTextColor;
+	text-align: center !important;
+	white-space: initial;
+	font-weight: 700;
 }
 
 .sapMGTArticleMode {
@@ -2109,7 +2176,7 @@ html[data-sap-ui-browser*='ff'] {
 		padding: 0 0.5rem;
 	}
 	.sapMGTHdrTxt > .sapMText {
-		text-shadow: @sapUiContentContrastTextShadow;
+		text-shadow: none;
 	}
 	.sapMGTOneByOneIconLoaded {
 		margin-top: -1rem;
@@ -2173,6 +2240,10 @@ html[data-sap-ui-browser*='ff'] {
 	align-items: flex-end;
 	padding-top: 1rem;
 	justify-content: center;
+	.sapUiIcon {
+		font-size: 1.25rem !important;
+		color: @sapContent_ContrastIconColor;
+	}
 }
 
 .sapMGTTwoByHalfIcon {
@@ -2207,22 +2278,45 @@ html[data-sap-ui-browser*='ff'] {
 	.sapMGTHdrContent {
 		height:auto;
 		overflow: auto;
-		justify-content: start;
-		padding: 1rem 0.5rem 1rem 0;
+		padding-right: 0;
 	}
 }
 
 .sapMGTOneByOne.sapMGTIconMode.sapMTileSmallPhone,
 .sapMGTOneByOne.sapMGTIconMode.sapMTResponsiveIconMode {
-	width: 9rem;
+	width: 14.5rem;
+	height: 5.375rem;
 	display: flex;
-	align-items: center;
-	.sapMGTOneByOneIcon{
-		padding: 0;
-		margin: 0 0.75rem 0 1rem;
+	flex-direction: column;
+	.sapMGTIconWrapper {
+		margin: 1rem 0.5rem 0.5rem 0.5rem;
+		align-items: center;
+		flex-direction: row;
+		gap: 0;
+		.sapMGTOneByOneIcon{
+			padding: 0;
+		}
+		.sapMGTHdrTxt{
+			align-items: center;
+			.sapMText {
+				text-align: left !important;
+			}
+		}
 	}
-	.sapMGTHdrContent .sapMText {
-		text-align: left !important;
+	.sapMGTSubHdrTxt {
+		padding: 0 0.5rem;
+		margin: 0;
+		flex-direction: row;
+		align-items: flex-start;
+		.sapMText {
+			color: @sapTile_TitleTextColor;
+			font-weight: 400;
+			white-space: initial;
+			text-align: left !important;
+			.sapMTextMaxLine {
+				-webkit-line-clamp: 1 !important;
+			}
+		}
 	}
 }
 

@@ -47,6 +47,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 		var sAriaRole = oControl.getAriaRole();
 		var isHalfFrame = frameType === frameTypes.OneByHalf || frameType === frameTypes.TwoByHalf;
 		var sBGColor = oControl._sBGColor;
+		var bIsIconModeOneByOne = oControl._isIconMode() && frameType === frameTypes.OneByOne;
 
 		// Render a link when URL is provided, not in action scope and the state is enabled
 		var bRenderLink = oControl.getUrl() && (!oControl._isInActionScope() || oControl.getMode() === GenericTileMode.IconMode) && sState !== LoadState.Disabled && !oControl._isNavigateActionEnabled() && !oControl._isActionMode();
@@ -83,6 +84,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 		if (oControl._isIconMode()){
 			if (frameType === frameTypes.OneByOne) {
 				var sClass = "sapMGTOneByOne";
+				if (!oControl.getSubheader()) {
+					oRm.class("sapMGTNoSubHeader");
+				}
 			} else if (frameType === frameTypes.TwoByHalf) {
 				var sClass = "TwoByHalf";
 			}
@@ -251,6 +255,11 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 				if (!oControl.getIconLoaded()) {
 					renderLoadingShimmerIconMode(oRm, false);
 				} else {
+					if (frameType === frameTypes.OneByOne) {
+						oRm.openStart("div");
+						oRm.class("sapMGTIconWrapper");
+						oRm.openEnd();
+					}
 					oRm.openStart("div");
 					if (frameType === frameTypes.OneByOne) {
 						oRm.class("sapMGTOneByOneIcon");
@@ -315,6 +324,10 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 			}
 
 			this._renderHeader(oRm, oControl);
+			if (bIsIconModeOneByOne) {
+				oRm.close("div");
+				oRm.close("div");
+			}
 			for (var i = 0; i < iLength; i++) {
 				isFooterPresent = oControl._checkFooter(aTileContent[i], oControl) && (aTileContent[i].getFooter() ||  aTileContent[i].getUnit());
 				var oAggregationContent = aTileContent[i].getContent();
@@ -328,16 +341,12 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 				}
 			}
 
-			if (!(isHalfFrame && isContentPresent)) {
-				if (oControl.getSubheader()) {
-					//Restrict creation of SubHeader for IconMode & OneByOne frameType
-					if (!(oControl._isIconMode() && oControl.getFrameType() == frameTypes.OneByOne)) {
-						this._renderSubheader(oRm, oControl);
-					}
-				}
+			if (!(isHalfFrame && isContentPresent) && oControl.getSubheader()) {
+				this._renderSubheader(oRm, oControl);
 			}
-
-			oRm.close("div");
+			if (!bIsIconModeOneByOne) {
+				oRm.close("div");
+			}
 
 			if ( !oControl._isIconMode() ) { //Restrict creation of Footer for IconMode
 				oRm.openStart("div", oControl.getId() + "-content");

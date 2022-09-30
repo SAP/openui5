@@ -1267,12 +1267,16 @@ sap.ui.define([
 
 		var frameType = this.getFrameType();
 		if (this._isIconMode()) {
-			if (bSubheader) {
-				this._oTitle.setProperty("maxLines", 1, true);
-			} else {
-				this._oTitle.setProperty("maxLines", 2, true);
+			var iHeaderLines,iSubHeaderLines;
+			iSubHeaderLines = (frameType === FrameType.TwoByHalf) ? 1 : 2;
+			if (frameType === FrameType.OneByOne) {
+				iHeaderLines = (bSubheader) ? 2 : 4;
+			} else if (frameType === FrameType.TwoByHalf) {
+				iHeaderLines = (bSubheader) ? 1 : 2;
 			}
-        } else if (frameType === FrameType.TwoByOne && this.getMode() === GenericTileMode.ActionMode) {
+			this._oTitle.setProperty("maxLines", iHeaderLines, true);
+			this._oSubTitle.setProperty("maxLines", iSubHeaderLines, true);
+		} else if (frameType === FrameType.TwoByOne && this.getMode() === GenericTileMode.ActionMode) {
 			this._oTitle.setProperty("maxLines", 2, true);
 		} else if (frameType === FrameType.OneByHalf || frameType === FrameType.TwoByHalf) {
 			this._oTitle.setProperty("maxLines", 2, true);

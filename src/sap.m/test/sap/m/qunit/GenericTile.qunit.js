@@ -3795,7 +3795,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 				assert.ok(this.oGenericTile._oIcon.isA("sap.ui.core.Icon"), "Icon Created");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
-				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 0, "SubHeader Text is not created.");
+				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 1, "SubHeader Text is created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTContent").length, 0, "No Content Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 0, "No Footer Text Created.");
 				assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
@@ -3813,7 +3813,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 					assert.ok(this.oGenericTile._oIcon.isA("sap.m.Image"), "Image Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrContent").length, 1, "Header Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTHdrTxt").length, 1, "Header Text Created.");
-					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 0, "SubHeader Text is not created.");
+					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTSubHdrTxt").length, 1, "SubHeader Text is created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTContent").length, 0, "No Content Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMTileCntFtrTxt").length, 0, "No Footer Text Created.");
 					assert.equal(this.oGenericTile.getDomRef().querySelectorAll(".sapMGTTInfoContainer").length, 0, "No InfoContainer Created.");
@@ -4659,8 +4659,8 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		this.oGenericTile.setIconLoaded(true);
 		oCore.applyChanges();
 		//Act
-		var oIconDomRef = this.oGenericTile.getDomRef().children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		var oIconDomRef = this.oGenericTile.getDomRef().children[0].children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[0].children[1];
 		//Assert
 		assert.notOk(oIconDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is not present when state is loaded");
 		assert.ok(oIconDomRef.classList.contains("sapMGTOneByOneIcon"), "Icon div is present when state is loaded");
@@ -4710,8 +4710,8 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 		this.oGenericTile.setIconLoaded(true);
 		oCore.applyChanges();
 		//Act
-		var oIconDomRef = this.oGenericTile.getDomRef().children[0];
-		var oContentDomRef = this.oGenericTile.getDomRef().children[1];
+		var oIconDomRef = this.oGenericTile.getDomRef().children[0].children[0];
+		var oContentDomRef = this.oGenericTile.getDomRef().children[0].children[1];
 		//Assert
 		assert.notOk(oIconDomRef.classList.contains("sapMGTContentShimmerPlaceholderItemOneByOne"), "Placeholder div is not present when state is loaded");
 		assert.ok(oIconDomRef.classList.contains("sapMGTOneByOneIcon"), "Icon div is present when state is loaded");
