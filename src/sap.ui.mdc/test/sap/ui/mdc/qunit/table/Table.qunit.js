@@ -3331,6 +3331,39 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Open the p13n dialog via button and shortcut", function(assert) {
+		return this.oTable.initialized().then(function() {
+			this.oTable.setP13nMode(["Column", "Sort"]);
+			Core.applyChanges();
+
+			var oTableSettingsShowPanelSpy = sinon.stub(TableSettings, "showPanel");
+
+			this.oTable._oP13nButton.firePress();
+			assert.ok(oTableSettingsShowPanelSpy.calledOnceWithExactly(this.oTable, "Columns"), "TableSettings.showPanel called");
+			oTableSettingsShowPanelSpy.reset();
+
+			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.COMMA, false, false, true);
+			assert.ok(oTableSettingsShowPanelSpy.calledOnceWithExactly(this.oTable, "Columns"), "TableSettings.showPanel called");
+			oTableSettingsShowPanelSpy.reset();
+
+			this.oTable._setShowP13nButton(false);
+			Core.applyChanges();
+
+			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.COMMA, false, false, true);
+			assert.ok(oTableSettingsShowPanelSpy.notCalled, "TableSettings.showPanel not called");
+			oTableSettingsShowPanelSpy.reset();
+
+			this.oTable.setP13nMode([]);
+			this.oTable._setShowP13nButton(true);
+			Core.applyChanges();
+
+			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.COMMA, false, false, true);
+			assert.ok(oTableSettingsShowPanelSpy.notCalled, "TableSettings.showPanel not called");
+
+			oTableSettingsShowPanelSpy.restore();
+		}.bind(this));
+	});
+
 	QUnit.test("Focus Function", function(assert) {
 		this.oTable.addColumn(new Column({
 			header: "Test",
@@ -4625,23 +4658,10 @@ sap.ui.define([
 			var aModes = oTable.getP13nMode();
 			var sTitlePrefix = sTitle ? sTitle + ": " : "";
 
-			if (aModes.length === 0) {
-				assert.equal(oTable._oToolbar.getEnd().length, 0, sTitlePrefix + "No toolbar buttons");
-				return;
-			}
-
-			function findButton(sIcon) {
-				return oTable._oToolbar.getEnd().filter(function(oButton) {
-					return oButton.getIcon && oButton.getIcon() === "sap-icon://" + sIcon;
-				});
-			}
-
-			var oButton;
-			if (aModes.length > 0) {
-				oButton = findButton("action-settings")[0];
-				assert.ok(oButton, sTitlePrefix + "Table settings button exists");
-				assert.equal(oButton.getAriaHasPopup(), HasPopup.Dialog, "button has correct ariaHasPopup value");
-			}
+			assert.ok(oTable._oP13nButton, sTitlePrefix + " - Table settings button exists");
+			assert.equal(oTable._oP13nButton.getAriaHasPopup(), HasPopup.Dialog, "button has correct ariaHasPopup value");
+			assert.ok(oTable._oToolbar.indexOfEnd(oTable._oP13nButton) >= 0, sTitlePrefix + " - Table settings button is contained in the toolbar");
+			assert.equal(oTable._oP13nButton.getVisible(), aModes.length > 0 && !oTable._bHideP13nButton, sTitlePrefix + " - Table settings button is visible");
 		},
 		assertAPI: function(assert, oMDCTable) {
 			var oTable = oMDCTable || this.oTable;
@@ -4699,6 +4719,24 @@ sap.ui.define([
 
 		this.oTable.setP13nMode();
 		this.assertToolbarButtons(assert, "Deactivate 'Sort' and 'Filter'");
+		this.assertAPI(assert);
+		this.assertColumnDnD(assert);
+
+		this.oTable.setP13nMode();
+		this.oTable._setShowP13nButton(false);
+		this.assertToolbarButtons(assert, "_setShowP13nButton = false + No P13n");
+		this.assertAPI(assert);
+		this.assertColumnDnD(assert);
+
+		this.oTable.setP13nMode(["Sort"]);
+		this.oTable._setShowP13nButton(false);
+		this.assertToolbarButtons(assert, "_setShowP13nButton = false + P13n");
+		this.assertAPI(assert);
+		this.assertColumnDnD(assert);
+
+		this.oTable.setP13nMode(["Sort"]);
+		this.oTable._setShowP13nButton(true);
+		this.assertToolbarButtons(assert, "_setShowP13nButton = true + P13n");
 		this.assertAPI(assert);
 		this.assertColumnDnD(assert);
 	});
@@ -4930,9 +4968,10 @@ sap.ui.define([
 			clock.tick(1);
 			assert.notOk(this.oType.getShowDetailsButton(), "showDetailsButton = false");
 			bButtonAddedToToolbar = this.oTable._oTable.getHeaderToolbar().getEnd().some(function(oControl) {
-				return oControl.getId() === this.oType._oShowDetailsButton.getId();
+				return this.oType._oShowDetailsButton && oControl.getId() === this.oType._oShowDetailsButton.getId();
 			}, this);
 			assert.notOk(bButtonAddedToToolbar, "Button is removed from the table header toolbar");
+			assert.ok(!this.oType._oShowDetailsButton, "Button does not exist anymore");
 
 			clock.restore();
 		}.bind(this));
