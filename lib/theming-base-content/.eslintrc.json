@@ -4,7 +4,7 @@
 		"browser": false
 	},
 	"parserOptions": {
-		"ecmaVersion": 8
+		"ecmaVersion": 2021
 	},
 	"rules": {
 		"strict": ["error", "never"],
