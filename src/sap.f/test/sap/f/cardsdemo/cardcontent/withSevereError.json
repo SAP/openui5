@@ -1,0 +1,6 @@
+{
+	"sap.app": {
+		"id": "card.demo.withSevereError",
+		"type": "card"
+	}
+}

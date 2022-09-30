@@ -30,10 +30,12 @@
 							<core:Item text="Card with Dynamic Status Text" key="dynamicStatusText" />
 							<core:Item text="List Card with Bullet Graph and Actions" key="listCardBulletGraphActions" />
 							<core:Item text="List Card with Stacked Bar Chart" key="stackedBar" />
+							<core:Item text="List Card with Data Error" key="withDataError" />
 							<core:Item text="Table Card 1" key="tableCard1" />
 							<core:Item text="Table Card 2" key="tableCard2" />
 							<core:Item text="Table Card with Grouping" key="tableCardGroups" />
 							<core:Item text="Table Card No Data" key="tableCardNoData" />
+							<core:Item text="Card with Severe Error" key="cardWithSevereError" />
 						</items>
 					</Select>
 				</HBox>

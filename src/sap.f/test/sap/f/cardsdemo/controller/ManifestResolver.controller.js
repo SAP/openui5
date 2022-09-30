@@ -33,6 +33,10 @@ sap.ui.define([
 			path: "sap/f/cardsdemo/cardcontent/listContent/stackedBar.json",
 			baseUrl: "sap/f/cardsdemo/cardcontent/listContent/"
 		},
+		"withDataError": {
+			path: "sap/f/cardsdemo/cardcontent/listContent/withDataError.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/listContent/"
+		},
 		"tableCard1": {
 			path: "sap/f/cardsdemo/bundles/tablebundle/manifest.json",
 			baseUrl: "sap/f/cardsdemo/bundles/tablebundle/"
@@ -48,6 +52,10 @@ sap.ui.define([
 		"tableCardNoData": {
 			path: "sap/f/cardsdemo/cardcontent/tableContent/noData.json",
 			baseUrl: "sap/f/cardsdemo/cardcontent/tableContent/"
+		},
+		"cardWithSevereError": {
+			path: "sap/f/cardsdemo/cardcontent/withSevereError.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/"
 		}
 	};
 
@@ -87,22 +95,14 @@ sap.ui.define([
 			errorOutput.setVisible(false);
 			output.setValue("");
 
-			oCard.resolveManifest()
-				.then(function (sRes) {
-					output.setValue(JSON.stringify(JSON.parse(sRes), null, "\t"));
-				})
-				.catch(function (sError) {
-					output.setValue("");
-					errorOutput
-						.setVisible(true)
-						.setText("Fundamental error: " + sError);
-				});
-
-			oCard.attachEvent("_error", function (oEvent) {
-				errorOutput
-					.setVisible(true)
-					.setText(oEvent.getParameter("message"));
+			oCard.attachStateChanged(function () {
+				oCard.resolveManifest()
+					.then(function (sRes) {
+						output.setValue(JSON.stringify(JSON.parse(sRes), null, "\t"));
+					});
 			});
+
+			oCard.startManifestProcessing();
 		}
 	});
 });

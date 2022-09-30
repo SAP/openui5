@@ -1,9 +1,11 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/integration/util/ManifestResolver",
 	"sap/ui/integration/util/SkeletonCard"
 ], function (
+	Core,
 	ManifestResolver,
 	SkeletonCard
 ) {
@@ -325,22 +327,91 @@ sap.ui.define([
 			});
 	});
 
-	QUnit.test("Promise is rejected if there was a fundamental error in the card", function (assert) {
+	QUnit.test("Resolve with a severe error in the card", function (assert) {
 		// Arrange
-		var oManifest = {};
+		var oManifest = {},
+			oCard = new SkeletonCard({
+				manifest: oManifest,
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+			}),
+			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 		assert.expect(1);
 
-		var oCard = new SkeletonCard({
-			manifest: oManifest,
-			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
-		});
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(JSON.parse)
+			.then(function (oRes) {
+				var oExpectedResult = {
+					"message": {
+						"type": "error",
+						"title": oResourceBundle.getText("CARD_ERROR_OCCURED"),
+						"description": "Card sap.app/id entry in the manifest is mandatory There must be a 'sap.card' section in the manifest.",
+						"illustrationType": "sapIllus-SimpleError",
+						"illustrationSize": "Spot"
+					}
+				};
+
+				// Assert
+				assert.deepEqual(oRes["sap.card"].content, oExpectedResult, "The content contains a message when there is a severe error.");
+
+				oCard.destroy();
+			});
+	});
+
+	QUnit.test("Resolve with data loading error", function (assert) {
+		// Arrange
+		var oManifest = {
+				"sap.app": {
+					"id": "manifestResolver.test.card.errorData",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "Object",
+					"data": {
+						"request": {
+							"url": "./wrong_url.json"
+						}
+					},
+					"header": {
+						"title": "Error in data loading"
+					},
+					"content": {
+						"groups": [
+							{
+								"title": "Contact Details",
+								"items": [
+									{
+										"label": "First name",
+										"value": "{firstName}"
+									}
+								]
+							}
+						]
+					}
+				}
+			},
+			oCard = new SkeletonCard({
+				manifest: oManifest,
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+			}),
+			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.catch(function (sError) {
+			.then(JSON.parse)
+			.then(function (oRes) {
+				var oExpectedResult = {
+					"message": {
+						"type": "error",
+						"title": oResourceBundle.getText("CARD_DATA_LOAD_ERROR"),
+						"illustrationType": "sapIllus-UnableToLoad",
+						"illustrationSize": "Spot"
+					}
+				};
+
 				// Assert
-				assert.ok(true, "Promise is rejected with '" + sError + "'if manifest is empty.");
+				assert.deepEqual(oRes["sap.card"].content, oExpectedResult, "The content contains a message when there is error with data loading.");
 
 				oCard.destroy();
 			});
@@ -475,38 +546,39 @@ sap.ui.define([
 
 	QUnit.test("List item template - 'no data' ", function (assert) {
 		var oManifest = {
-			"sap.app": {
-				"id": "manifestResolver.test.card",
-				"type": "card"
-			},
-			"sap.card": {
-				"type": "List",
-				"content": {
-					"data": {
-						"json": []
-					},
-					"item": {
-						"title": "{Name}"
+				"sap.app": {
+					"id": "manifestResolver.test.card",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "List",
+					"content": {
+						"data": {
+							"json": []
+						},
+						"item": {
+							"title": "{Name}"
+						}
 					}
 				}
-			}
-		};
-
-		var oCard = new SkeletonCard({
-			manifest: oManifest,
-			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
-		});
+			},
+			oCard = new SkeletonCard({
+				manifest: oManifest,
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+			}),
+			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
 			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
-					"groups": [
-						{
-							"items": []
-						}
-					]
+					"message": {
+						"illustrationSize": "Spot",
+						"illustrationType": "sapIllus-NoData",
+						"title": oResourceBundle.getText("CARD_NO_ITEMS_ERROR_LISTS"),
+						"type": "noData"
+					}
 				};
 
 				// Assert
@@ -1280,46 +1352,44 @@ sap.ui.define([
 
 	QUnit.test("Table item template - 'no data' ", function (assert) {
 		var oManifest = {
-			"sap.app": {
-				"id": "manifestResolver.test.card",
-				"type": "card"
-			},
-			"sap.card": {
-				"type": "Table",
-				"content": {
-					"data": {
-						"json": []
-					},
-					"row": {
-						"columns": [
-							{
-								"value": "{{value}}",
-								"title": "Title"
-							}
-						]
+				"sap.app": {
+					"id": "manifestResolver.test.card",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "Table",
+					"content": {
+						"data": {
+							"json": []
+						},
+						"row": {
+							"columns": [
+								{
+									"value": "{{value}}",
+									"title": "Title"
+								}
+							]
+						}
 					}
 				}
-			}
-		};
-
-		var oCard = new SkeletonCard({
-			manifest: oManifest,
-			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
-		});
+			},
+			oCard = new SkeletonCard({
+				manifest: oManifest,
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+			}),
+			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
 			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
-					"headers": [{
-						"title": "Title"
-					}],
-					"groups": [
-						{
-							"rows": []
-						}
-					]
+					"message": {
+						"illustrationSize": "Spot",
+						"illustrationType": "sapIllus-NoEntries",
+						"title": oResourceBundle.getText("CARD_NO_ITEMS_ERROR_LISTS"),
+						"type": "noData"
+					}
 				};
 
 				// Assert
@@ -1675,9 +1745,10 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.catch(function () {
+			.then(JSON.parse)
+			.then(function (oRes) {
 				// Assert
-				assert.ok(true, "an exception is thrown");
+				assert.strictEqual(oRes["sap.card"].content.message.type, "error", "an error message is returned");
 				oCard.destroy();
 			});
 	});

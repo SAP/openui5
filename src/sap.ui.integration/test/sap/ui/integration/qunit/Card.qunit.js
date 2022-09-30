@@ -948,13 +948,13 @@ sap.ui.define([
 			oModel.destroy();
 		});
 
-		QUnit.test("Fundamental errors are logged", function (assert) {
+		QUnit.test("Severe errors are logged", function (assert) {
 			// Arrange
 			var done = assert.async(),
 				oCard = new Card();
 
 			oCard.attachEvent("_ready", function () {
-				var aErrors = oCard.getFundamentalErrors();
+				var aErrors = oCard.getSevereErrors();
 
 				// Assert
 				assert.ok(aErrors.length, "Error that the section 'sap.card' is missing is logged.");
