@@ -5,6 +5,22 @@
 	<Popover
 		showHeader="false"
 		placement="Bottom">
+		<SegmentedButton selectedKey="satellite" width="420px" selectionChange=".onVersioningCategoryChange">
+			<items>
+				<SegmentedButtonItem 
+					text="{i18n>BUT_CHANGEVISUALIZATION_VERSIONING_ALL}" 
+					key="all"/>
+				<SegmentedButtonItem 
+					text="{i18n>BUT_CHANGEVISUALIZATION_VERSIONING_DRAFT}" 
+					key="draft" 
+					visible="{visualizationModel>/versioningAvailable}" 
+					enabled="{= ${visualizationModel>/hasDraftChanges} ||  ${visualizationModel>/hasDirtyChanges}}"/>
+				<SegmentedButtonItem 
+					text="{i18n>BUT_CHANGEVISUALIZATION_VERSIONING_DIRTY}"
+					key="dirty" 
+					enabled="{visualizationModel>/hasDirtyChanges}"/>
+			</items>
+		</SegmentedButton>
 		<MessageStrip
 			text="{visualizationModel>/popupInfoMessage}"
 			type="Information"

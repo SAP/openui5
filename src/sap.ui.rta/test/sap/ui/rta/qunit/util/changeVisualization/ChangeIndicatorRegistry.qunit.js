@@ -4,22 +4,26 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry",
+	"sap/ui/rta/util/changeVisualization/ChangeStates",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
 	JsControlTreeModifier,
 	Control,
+	FlStates,
 	ChangesWriteAPI,
 	ChangeIndicatorRegistry,
+	ChangeStates,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
-	function createMockChange(sId) {
+	function createMockChange(sId, sState) {
 		return {
 			getId: function() {
 				return sId;
@@ -30,7 +34,22 @@ sap.ui.define([
 				};
 			},
 			getLayer: function() {},
-			getChangeType: function() {}
+			getFileName: function() {
+				return sId;
+			},
+			getChangeType: function() {},
+			getState: function() {
+				return sState;
+			}
+		};
+	}
+	function createMockVersioning(aDraftChangeFileNames) {
+		return {
+			getData: function() {
+				return {
+					draftFilenames: aDraftChangeFileNames
+				};
+			}
 		};
 	}
 
@@ -57,13 +76,18 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when changes with valid command types are registered", function(assert) {
+			var oVersionsModel = createMockVersioning(["draftChange"]);
 			return Promise.all([
-				this.oRegistry.registerChange(createMockChange("fooChange"), "foo"),
-				this.oRegistry.registerChange(createMockChange("barChange"), "bar")
+				this.oRegistry.registerChange(createMockChange("fooChange", FlStates.NEW), "foo", oVersionsModel),
+				this.oRegistry.registerChange(createMockChange("barChange", FlStates.PERSISTED), "bar", oVersionsModel),
+				this.oRegistry.registerChange(createMockChange("draftChange", FlStates.PERSISTED), "bar", oVersionsModel)
 			]).then(function() {
-				assert.deepEqual(this.oRegistry.getRegisteredChangeIds(), ["fooChange", "barChange"], "then the change ids are registered");
-				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 2, "then the changes are added to the registry");
+				assert.deepEqual(this.oRegistry.getRegisteredChangeIds(), ["fooChange", "barChange", "draftChange"], "then the change ids are registered");
+				assert.strictEqual(this.oRegistry.getAllRegisteredChanges().length, 3, "then the changes are added to the registry");
 				assert.strictEqual(this.oRegistry.getRegisteredChange("fooChange").changeCategory, "fooCategory", "then the command categories are properly classified");
+				assert.deepEqual(this.oRegistry.getRegisteredChange("fooChange").changeStates, [ChangeStates.DIRTY, ChangeStates.DRAFT], "then the change state is properly classified (Dirty)");
+				assert.deepEqual(this.oRegistry.getRegisteredChange("barChange").changeStates, [ChangeStates.ACTIVATED], "then the change state is properly classified (Activated)");
+				assert.deepEqual(this.oRegistry.getRegisteredChange("draftChange").changeStates, [ChangeStates.DRAFT], "then the change state is properly classified (Draft)");
 			}.bind(this));
 		});
 

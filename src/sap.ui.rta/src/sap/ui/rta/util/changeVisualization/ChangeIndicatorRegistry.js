@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/changeHandler/common/ChangeCategories"
+	"sap/ui/fl/changeHandler/common/ChangeCategories",
+	"sap/ui/rta/util/changeVisualization/ChangeStates"
 ], function(
 	includes,
 	values,
@@ -23,7 +24,8 @@ sap.ui.define([
 	ElementUtil,
 	ChangesWriteAPI,
 	FlUtils,
-	ChangeCategories
+	ChangeCategories,
+	ChangeStates
 ) {
 	"use strict";
 
@@ -165,9 +167,10 @@ sap.ui.define([
 	 *
 	 * @param {object} oChange - The change to register
 	 * @param {string} sCommandName - Command name of the change
+	 * @param {string} oVersionsModel - Model with versioning data
 	 * @returns {Promise<undefined>} Resolves as soon as the change is registered
 	 */
-	ChangeIndicatorRegistry.prototype.registerChange = function(oChange, sCommandName) {
+	ChangeIndicatorRegistry.prototype.registerChange = function(oChange, sCommandName, oVersionsModel) {
 		var oAppComponent = FlUtils.getAppComponentForControl(ElementUtil.getElementInstance(this.getRootControlId()));
 		return getVisualizationInfo(oChange, oAppComponent).then(function(mChangeVisualizationInfo) {
 			var aCategories = this.getChangeCategories();
@@ -183,11 +186,25 @@ sap.ui.define([
 					sChangeCategory = ChangeCategories.OTHER;
 				}
 			}
+			var aChangeStates;
+			var aDraftChangesList = [];
+			if (oVersionsModel) {
+				aDraftChangesList = oVersionsModel.getData().draftFilenames;
+			}
+
+			if (oChange.getState() === "NEW") {
+				aChangeStates = [ChangeStates.DIRTY, ChangeStates.DRAFT];
+			} else if (aDraftChangesList && aDraftChangesList.includes(oChange.getFileName())) {
+				aChangeStates = [ChangeStates.DRAFT];
+			} else {
+				aChangeStates = [ChangeStates.ACTIVATED];
+			}
 
 			this._oRegisteredChanges[oChange.getId()] = {
 				change: oChange,
 				commandName: sCommandName,
 				changeCategory: sChangeCategory,
+				changeStates: aChangeStates,
 				visualizationInfo: mChangeVisualizationInfo
 			};
 		}.bind(this));
