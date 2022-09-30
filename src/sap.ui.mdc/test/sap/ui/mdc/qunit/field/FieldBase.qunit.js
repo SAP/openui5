@@ -4541,6 +4541,8 @@ sap.ui.define([
 				return oFHPromise;
 			} else if (oConfig.value === "USD") {
 				return oFHPromise;
+			} else if (oConfig.value === "JPY") {
+				return oFHPromise;
 			}
 			return null;
 		};
@@ -4595,7 +4597,45 @@ sap.ui.define([
 							setTimeout(function() { // update of Input
 								assert.equal(aConditions[0].outParameters.outTest, "Y", "Out-parameter value");
 
-								fnDone();
+								// validation error
+								iCount = 0; oPromise = undefined;
+
+								oFHPromise = new Promise(function(fResolve, fReject) {
+									fnResolve = fResolve;
+								});
+								var oConditionsType = oContent2.getBinding("value").getType();
+								sinon.stub(oConditionsType, "validateValue").callsFake(function(aConditions) {
+									if (aConditions && aConditions[0] && aConditions[0].values[0][1] === "JPY") {
+										throw new ValidateException("MyError");
+									}
+								});
+								oContent2._$input.val("JPY");
+								qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+								assert.equal(iCount, 1, "Change Event fired");
+								assert.ok(oPromise, "Promise returned");
+								fnResolve({key: "JPY", description: "¥", inParameters: {inTest: "O"}, outParameters: {outTest: "P"}});
+
+								oPromise.then(function(vResult) {
+									assert.notOk(vResult, "Promise must not be resolved");
+									fnDone();
+								}).catch(function(oException) {
+									assert.ok(true, "Promise must be rejected");
+									assert.equal(oException.message, "MyError");
+									// Conditions and OutParameters must not be updated
+									aConditions = oCM.getConditions("Price");
+									assert.equal(aConditions.length, 1, "one condition in Codition model");
+									assert.equal(aConditions[0].values[0][0], 123.45, "condition value0");
+									assert.equal(aConditions[0].values[0][1], "USD", "condition value1");
+									assert.equal(aConditions[0].operator, "EQ", "condition operator");
+									assert.ok(aConditions[0].hasOwnProperty("inParameters"), "Condition has in-partameters");
+									assert.equal(aConditions[0].inParameters.inTest, "X", "In-parameter value");
+									assert.ok(aConditions[0].hasOwnProperty("outParameters"), "Condition has out-partameters");
+									setTimeout(function() { // update of Input
+										assert.equal(aConditions[0].outParameters.outTest, "Y", "Out-parameter value");
+
+										fnDone();
+									}, 0);
+								});
 							}, 0);
 						}).catch(function(oException) {
 							assert.notOk(true, "Promise must not be rejected");
