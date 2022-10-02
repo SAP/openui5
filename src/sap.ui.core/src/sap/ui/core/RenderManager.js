@@ -691,107 +691,6 @@ sap.ui.define([
 			return this;
 		};
 
-		/**
-		 * Collects accessibility related attributes for an <code>Element</code> and renders them as part of
-		 * the currently rendered DOM element.
-		 *
-		 * See the WAI-ARIA specification for a general description of the accessibility related attributes.
-		 * Attributes are only rendered when the accessibility feature is activated in the UI5 runtime configuration.
-		 *
-		 * The values for the attributes are collected from the following sources (last one wins):
-		 * <ol>
-		 * <li>from the properties and associations of the given <code>oElement</code>, using a heuristic mapping
-		 *     (described below)</li>
-		 * <li>from the <code>mProps</code> parameter, as provided by the caller</li>
-		 * <li>from the parent of the given <code>oElement</code>, if it has a parent and if the parent implements
-		 *     the method {@link sap.ui.core.Element#enhanceAccessibilityState enhanceAccessibilityState}</li>
-		 * </ol>
-		 * If no <code>oElement</code> is given, only <code>mProps</code> will be taken into account.
-		 *
-		 *
-		 * <h3>Heuristic Mapping</h3>
-		 * The following mapping from properties/values to ARIA attributes is used (if the element does have such properties):
-		 * <ul>
-		 * <li><code>editable===false</code> => <code>aria-readonly="true"</code></li>
-		 * <li><code>enabled===false</code> => <code>aria-disabled="true"</code></li>
-		 * <li><code>visible===false</code> => <code>aria-hidden="true"</code></li>
-		 * <li><code>required===true</code> => <code>aria-required="true"</code></li>
-		 * <li><code>selected===true</code> => <code>aria-selected="true"</code></li>
-		 * <li><code>checked===true</code> => <code>aria-checked="true"</code></li>
-		 * </ul>
-		 *
-		 * In case of the <code>required</code> property, all label controls which reference the given element
-		 * in their <code>labelFor</code> relation are additionally taken into account when determining the
-		 * value for the <code>aria-required</code> attribute.
-		 *
-		 * Additionally, the associations <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code> are used to
-		 * determine the lists of IDs for the ARIA attributes <code>aria-describedby</code> and
-		 * <code>aria-labelledby</code>.
-		 *
-		 * Label controls that reference the given element in their <code>labelFor</code> relation are automatically
-		 * added to the <code>aria-labelledby</code> attribute.
-		 *
-		 * Note: This function is only a heuristic of a control property to ARIA attribute mapping. Control developers
-		 * have to check whether it fulfills their requirements. In case of problems (for example the <code>RadioButton</code> has a
-		 * <code>selected</code> property but must provide an <code>aria-checked</code> attribute) the auto-generated
-		 * result of this function can be influenced via the parameter <code>mProps</code> as described below.
-		 *
-		 * The parameter <code>mProps</code> can be used to either provide additional attributes which should be rendered
-		 * and/or to avoid the automatic generation of single ARIA attributes. The 'aria-' prefix will be prepended
-		 * automatically to the keys (Exception: Attribute <code>role</code> does not get the prefix 'aria-').
-		 *
-		 *
-		 * Examples:<br>
-		 * <code>{hidden : true}</code> results in <code>aria-hidden="true"</code> independent of the presence or
-		 * absence of the visibility property.<br>
-		 * <code>{hidden : null}</code> ensures that no <code>aria-hidden</code> attribute is written independent
-		 * of the presence or absence of the visibility property.<br>
-		 *
-		 * The function behaves in the same way for the associations <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code>.
-		 * To append additional values to the auto-generated <code>aria-describedby</code> and <code>aria-labelledby</code>
-		 * attributes, the following format can be used:
-		 * <pre>
-		 *   {describedby : {value: "id1 id2", append: true}} =>  aria-describedby = "ida idb id1 id2"
-		 * </pre>
-		 * (assuming that "ida idb" is the auto-generated part based on the association <code>ariaDescribedBy</code>).
-		 *
-		 * @param {sap.ui.core.Element}
-		 *            [oElement] The <code>Element</code> whose accessibility state should be rendered
-		 * @param {object}
-		 *            [mProps] A map of additional properties that should be added or changed.
-		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
-		 * @public
-		 * @function
-		 */
-		this.accessibilityState = this.writeAccessibilityState;
-
-		/**
-		 * Writes either an &lt;img&gt; tag for normal URI or a &lt;span&gt; tag with needed properties for an icon URI.
-		 *
-		 * Additional classes and attributes can be added to the tag with the second and third parameter.
-		 * All of the given attributes are escaped when necessary for security consideration.
-		 *
-		 * When an &lt;img&gt; tag is rendered, the following two attributes are added by default
-		 * and can be overwritten with corresponding values in the <code>mAttributes</code> parameter:
-		 * <ul>
-		 * <li><code>role: "presentation"</code></Li>
-		 * <li><code>alt: ""</code></li>
-		 * </ul>
-		 *
-		 * <b>Note:</b> This function requires the {@link sap.ui.core.IconPool} module. Ensure that the module is
-		 * loaded before this function is called to avoid syncXHRs.
-		 *
-		 * @param {sap.ui.core.URI} sURI URI of an image or of an icon registered in {@link sap.ui.core.IconPool}
-		 * @param {array|string} [aClasses] Additional classes that are added to the rendered tag
-		 * @param {object} [mAttributes] Additional attributes that will be added to the rendered tag.
-		 * Currently the attributes <code>class</code> and <code>style</code> are not allowed
-		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
-		 * @public
-		 * @function
-		 */
-		this.icon = this.writeIcon;
-
-
 		//#################################################################################################
 		// Semantic Rendering Interface for DOM Based Rendering
 		//#################################################################################################
@@ -1723,7 +1622,7 @@ sap.ui.define([
 	 * <code>aria-labelledby</code>.
 	 *
 	 * Label controls that reference the given element in their <code>labelFor</code> relation are automatically
-	 * added to the <code>aria-labelledby</code> attributes.
+	 * added to the <code>aria-labelledby</code> attribute.
 	 *
 	 * Note: This function is only a heuristic of a control property to ARIA attribute mapping. Control developers
 	 * have to check whether it fulfills their requirements. In case of problems (for example the <code>RadioButton</code> has a
@@ -1755,9 +1654,8 @@ sap.ui.define([
 	 *            [mProps] A map of additional properties that should be added or changed.
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
-	 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#accessibilityState} of the {@link sap.ui.core.RenderManager Semantic Rendering API}.
 	 */
-	RenderManager.prototype.writeAccessibilityState = function(oElement, mProps) {
+	RenderManager.prototype.accessibilityState = function(oElement, mProps) {
 		if (!Configuration.getAccessibility()) {
 			return this;
 		}
@@ -1855,12 +1753,87 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Collects accessibility related attributes for an <code>Element</code> and renders them as part of
+	 * the currently rendered DOM element.
+	 *
+	 * See the WAI-ARIA specification for a general description of the accessibility related attributes.
+	 * Attributes are only rendered when the accessibility feature is activated in the UI5 runtime configuration.
+	 *
+	 * The values for the attributes are collected from the following sources (last one wins):
+	 * <ol>
+	 * <li>from the properties and associations of the given <code>oElement</code>, using a heuristic mapping
+	 *     (described below)</li>
+	 * <li>from the <code>mProps</code> parameter, as provided by the caller</li>
+	 * <li>from the parent of the given <code>oElement</code>, if it has a parent and if the parent implements
+	 *     the method {@link sap.ui.core.Element#enhanceAccessibilityState enhanceAccessibilityState}</li>
+	 * </ol>
+	 * If no <code>oElement</code> is given, only <code>mProps</code> will be taken into account.
+	 *
+	 *
+	 * <h3>Heuristic Mapping</h3>
+	 * The following mapping from properties/values to ARIA attributes is used (if the element does have such properties):
+	 * <ul>
+	 * <li><code>editable===false</code> => <code>aria-readonly="true"</code></li>
+	 * <li><code>enabled===false</code> => <code>aria-disabled="true"</code></li>
+	 * <li><code>visible===false</code> => <code>aria-hidden="true"</code></li>
+	 * <li><code>required===true</code> => <code>aria-required="true"</code></li>
+	 * <li><code>selected===true</code> => <code>aria-selected="true"</code></li>
+	 * <li><code>checked===true</code> => <code>aria-checked="true"</code></li>
+	 * </ul>
+	 *
+	 * In case of the <code>required</code> property, all label controls which reference the given element
+	 * in their <code>labelFor</code> relation are additionally taken into account when determining the
+	 * value for the <code>aria-required</code> attribute.
+	 *
+	 * Additionally, the associations <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code> are used to
+	 * determine the lists of IDs for the ARIA attributes <code>aria-describedby</code> and
+	 * <code>aria-labelledby</code>.
+	 *
+	 * Label controls that reference the given element in their <code>labelFor</code> relation are automatically
+	 * added to the <code>aria-labelledby</code> attribute.
+	 *
+	 * Note: This function is only a heuristic of a control property to ARIA attribute mapping. Control developers
+	 * have to check whether it fulfills their requirements. In case of problems (for example the <code>RadioButton</code> has a
+	 * <code>selected</code> property but must provide an <code>aria-checked</code> attribute) the auto-generated
+	 * result of this function can be influenced via the parameter <code>mProps</code> as described below.
+	 *
+	 * The parameter <code>mProps</code> can be used to either provide additional attributes which should be rendered
+	 * and/or to avoid the automatic generation of single ARIA attributes. The 'aria-' prefix will be prepended
+	 * automatically to the keys (Exception: Attribute <code>role</code> does not get the prefix 'aria-').
+	 *
+	 *
+	 * Examples:<br>
+	 * <code>{hidden : true}</code> results in <code>aria-hidden="true"</code> independent of the presence or
+	 * absence of the visibility property.<br>
+	 * <code>{hidden : null}</code> ensures that no <code>aria-hidden</code> attribute is written independent
+	 * of the presence or absence of the visibility property.<br>
+	 *
+	 * The function behaves in the same way for the associations <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code>.
+	 * To append additional values to the auto-generated <code>aria-describedby</code> and <code>aria-labelledby</code>
+	 * attributes, the following format can be used:
+	 * <pre>
+	 *   {describedby : {value: "id1 id2", append: true}} =>  aria-describedby = "ida idb id1 id2"
+	 * </pre>
+	 * (assuming that "ida idb" is the auto-generated part based on the association <code>ariaDescribedBy</code>).
+	 *
+	 * @param {sap.ui.core.Element}
+	 *            [oElement] The <code>Element</code> whose accessibility state should be rendered
+	 * @param {object}
+	 *            [mProps] A map of additional properties that should be added or changed.
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+	 * @public
+	 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#accessibilityState} of the {@link sap.ui.core.RenderManager Semantic Rendering API}.
+	 * @function
+	 */
+	RenderManager.prototype.writeAccessibilityState = RenderManager.prototype.accessibilityState;
+
 
 	/**
 	 * Writes either an &lt;img&gt; tag for normal URI or a &lt;span&gt; tag with needed properties for an icon URI.
 	 *
 	 * Additional classes and attributes can be added to the tag with the second and third parameter.
-	 * All of the given attributes are escaped for security consideration.
+	 * All of the given attributes are escaped when necessary for security consideration.
 	 *
 	 * When an &lt;img&gt; tag is rendered, the following two attributes are added by default
 	 * and can be overwritten with corresponding values in the <code>mAttributes</code> parameter:
@@ -1869,14 +1842,17 @@ sap.ui.define([
 	 * <li><code>alt: ""</code></li>
 	 * </ul>
 	 *
+	 * <b>Note:</b> This function requires the {@link sap.ui.core.IconPool} module. Ensure that the module is
+	 * loaded before this function is called to avoid syncXHRs.
+	 *
 	 * @param {sap.ui.core.URI} sURI URI of an image or of an icon registered in {@link sap.ui.core.IconPool}
 	 * @param {array|string} [aClasses] Additional classes that are added to the rendered tag
-	 * @param {object} [mAttributes] Additional attributes that will be added to the rendered tag
+	 * @param {object} [mAttributes] Additional attributes that will be added to the rendered tag.
+	 * Currently the attributes <code>class</code> and <code>style</code> are not allowed
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
-	 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#icon} of the {@link sap.ui.core.RenderManager Semantic Rendering API}.
 	 */
-	RenderManager.prototype.writeIcon = function(sURI, aClasses, mAttributes){
+	RenderManager.prototype.icon = function(sURI, aClasses, mAttributes){
 		var IconPool = sap.ui.require("sap/ui/core/IconPool");
 		if (!IconPool) {
 			Log.warning("Synchronous loading of IconPool due to sap.ui.core.RenderManager#icon call. " +
@@ -1991,6 +1967,30 @@ sap.ui.define([
 
 		return this;
 	};
+
+	/**
+	 * Writes either an &lt;img&gt; tag for normal URI or a &lt;span&gt; tag with needed properties for an icon URI.
+	 *
+	 * Additional classes and attributes can be added to the tag with the second and third parameter.
+	 * All of the given attributes are escaped for security consideration.
+	 *
+	 * When an &lt;img&gt; tag is rendered, the following two attributes are added by default
+	 * and can be overwritten with corresponding values in the <code>mAttributes</code> parameter:
+	 * <ul>
+	 * <li><code>role: "presentation"</code></Li>
+	 * <li><code>alt: ""</code></li>
+	 * </ul>
+	 *
+	 * @param {sap.ui.core.URI} sURI URI of an image or of an icon registered in {@link sap.ui.core.IconPool}
+	 * @param {array|string} [aClasses] Additional classes that are added to the rendered tag
+	 * @param {object} [mAttributes] Additional attributes that will be added to the rendered tag
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+	 * @public
+	 * @deprecated Since 1.92. Instead use {@link sap.ui.core.RenderManager#icon} of the {@link sap.ui.core.RenderManager Semantic Rendering API}.
+	 * @function
+	 */
+	RenderManager.prototype.writeIcon = RenderManager.prototype.icon;
+
 
 	/**
 	 * Returns the renderer class for a given control instance
