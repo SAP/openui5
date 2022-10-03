@@ -219,7 +219,7 @@ sap.ui.define([
 		},
 		metadata: {
 			// ---- object ----
-			publicMethods : ["setRootNode", "getRootNode", "setRootControl", "getRootControl", "lock","unlock", "isLocked", "_handleEvent"],
+			publicMethods : ["setRootNode", "getRootNode", "setRootControl", "getRootControl", "lock","unlock", "isLocked"],
 			aggregations : {
 				/**
 				 * Content that is displayed in the UIArea.
@@ -855,6 +855,7 @@ sap.ui.define([
 	 * registered event handlers.
 	 * @param {jQuery.Event} oEvent the jQuery event object
 	 * @private
+	 * @ui5-restricted sap.ui.core.dnd.DragAndDrop, sap.ui.core.FocusHandler
 	 */
 	UIArea.prototype._handleEvent = function(/**event*/oEvent) {
 		// execute the registered event handlers
@@ -1328,6 +1329,7 @@ sap.ui.define([
 	 * @returns {Element} the static, hidden area DOM element belonging to this core instance.
 	 * @throws {Error} an Error if the document is not yet ready
 	 * @private
+	 * @ui5-restricted sap.ui.core
 	 */
 	UIArea.getStaticAreaRef = function() {
 		if (!bDomReady) {
