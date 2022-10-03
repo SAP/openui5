@@ -1,7 +1,23 @@
 {
   "1.108.0": {
-    "date": "September 2022",
+    "date": "October 2022",
     "notes": [
+      {
+        "id": "874eb80e36f99137540fb2fc31cc060dcd9aa842",
+        "type": "FEATURE",
+        "text": " For GenericTile, sub headers can now be added in the IconMode tile for OneByOne frametype"
+      },
+      {
+        "id": "b9ea05171ca4752fe52923aa5079113455bad3f1",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: fixed getSelectedFilterString() output",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270135361"
+          }
+        ]
+      },
       {
         "id": "e87f814435b1e16178467bd55e4ff91ebc1c3081",
         "type": "FIX",
@@ -33,6 +49,17 @@
         "id": "631e954f011da75af1479d242debb25ed2531e96",
         "type": "FEATURE",
         "text": " To support folder uploads, the UploadSet control is now enhanced"
+      },
+      {
+        "id": "459df77a5ab940d43168fd77c87531c5f15d7d17",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Fixed issue with a single symbol title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280119279"
+          }
+        ]
       },
       {
         "id": "8d4519d0cb2ccb777198b872842c185b920b6048",

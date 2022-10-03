@@ -1,7 +1,28 @@
 {
   "1.108.0": {
-    "date": "September 2022",
+    "date": "October 2022",
     "notes": [
+      {
+        "id": "1d2539f34ced97a80c0cbdb41514321a9afba065",
+        "type": "FEATURE",
+        "text": " sap.ui.model.ClientTreeBinding#getCount"
+      },
+      {
+        "id": "166f2dc05599e4dd94097e76dad3738832bbd780",
+        "type": "FIX",
+        "text": " sap/ui/core/format/DateFormat: wide and narrow dayperiods",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280139024"
+          }
+        ]
+      },
+      {
+        "id": "776e551f590c02d6499a294a3921b31a899d3e89",
+        "type": "FIX",
+        "text": " sap.ui.model.(Filter|Sorter).defaultComparator: Use configured locale for comparison"
+      },
       {
         "id": "3f3b2dc1ef17cbdb7189cdda76949656a53ed8ab",
         "type": "FIX",
