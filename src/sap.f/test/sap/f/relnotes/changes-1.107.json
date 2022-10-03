@@ -1,7 +1,18 @@
 {
   "1.107.0": {
-    "date": "September 2022",
+    "date": "October 2022",
     "notes": [
+      {
+        "id": "8b48792dfb9350bdc5a088d3d2fb2cdf5d7a00d0",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: bugfixes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270135871"
+          }
+        ]
+      },
       {
         "id": "b108d6b6b530eec11146786be4d8092c341526bd",
         "type": "FEATURE",
