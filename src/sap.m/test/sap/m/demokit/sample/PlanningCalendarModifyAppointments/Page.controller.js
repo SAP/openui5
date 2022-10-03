@@ -638,7 +638,7 @@ sap.ui.define([
 					oModel = this.getView().getModel();
 
 				if (bIsIntervalAppointment) {
-					this._convertToHeader(oAppointment, iPersonId, oNewAppointmentDialog);
+					this._convertToHeader(oAppointment, oNewAppointmentDialog);
 				} else {
 					if (this.sPath !== sAppointmentPath) {
 						this._addNewAppointment(oNewAppointmentDialog.getModel().getProperty(this.sPath));
