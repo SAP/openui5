@@ -44,7 +44,7 @@ describe("sap.ui.core.HyphenationPlayground", function() {
 		"fr" : "340px",
 		"de" : "350px",
 		"el-monoton" : "350px",
-		"hi" : "280px",
+		"hi" : "150px",
 		"hu" : "350px",
 		"it" : "350px",
 		"lt" : "320px",
