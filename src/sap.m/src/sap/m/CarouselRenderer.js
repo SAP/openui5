@@ -40,9 +40,10 @@ sap.ui.define([
 			iPageCount = aPages.length,
 			sPageIndicatorPlacement = oCarousel.getPageIndicatorPlacement(),
 			sArrowsPlacement = oCarousel.getArrowsPlacement(),
-			iIndex = oCarousel._getPageNumber(oCarousel.getActivePage());
+			iIndex = oCarousel._getPageIndex(oCarousel.getActivePage());
 
 		this._renderOpeningDiv(oRM, oCarousel);
+		this._renderDummyArea(oRM, oCarousel, "before");
 
 		//visual indicator
 		if (sPageIndicatorPlacement === PlacementType.Top) {
@@ -72,6 +73,7 @@ sap.ui.define([
 			});
 		}
 
+		this._renderDummyArea(oRM, oCarousel, "after");
 		oRM.close("div");
 		//page-wrap ends
 	};
@@ -86,7 +88,6 @@ sap.ui.define([
 			.style("width", oCarousel.getWidth())
 			.style("height", oCarousel.getHeight())
 			.attr("data-sap-ui-customfastnavgroup", true) // custom F6 handling
-			.attr("tabindex", 0)
 			.accessibilityState(oCarousel, {
 				role: "listbox"
 			});
@@ -124,28 +125,51 @@ sap.ui.define([
 
 		oRM.openEnd();
 
-		var fnRenderPage = function (oPage, iIndex, aArray) {
-			//item div
-			oRM.openStart("div", oCarousel.getId() + "-" + oPage.getId() + "-slide")
-				.class("sapMCrslItem")
-				.accessibilityState(oPage, {
-					role: "option",
-					posinset: iIndex + 1,
-					setsize: aArray.length,
-					selected: oCarousel.getActivePage() === oPage.getId() ? true : false
-				}).openEnd();
-
-			CarouselRenderer._renderPageInScrollContainer(oRM, oCarousel, oPage);
-
-			oRM.close("div");
-		};
-
 		// Render Pages
 		if (aPages.length) {
-			aPages.forEach(fnRenderPage);
+			aPages.forEach(function (oPage, iIndex, aArray) {
+				CarouselRenderer._renderPage(oRM, oPage, oCarousel, iIndex, aArray);
+			});
 		} else {
-			oRM.renderControl(oCarousel._getEmptyPage());
+			CarouselRenderer._renderNoData(oRM, oCarousel);
 		}
+
+		oRM.close("div");
+	};
+
+	CarouselRenderer._renderPage = function (oRM, oPage, oCarousel, iIndex, aArray) {
+		var bSelected = oCarousel.getActivePage() === oPage.getId();
+
+		oRM.openStart("div", oCarousel.getId() + "-" + oPage.getId() + "-slide")
+			.class("sapMCrslItem")
+			.accessibilityState(oPage, {
+				role: "option",
+				posinset: iIndex + 1,
+				setsize: aArray.length,
+				selected: bSelected,
+				hidden: !oCarousel._isPageDisplayed(iIndex)
+			})
+			.attr("tabindex", bSelected ? 0 : -1)
+			.openEnd();
+
+		CarouselRenderer._renderPageInScrollContainer(oRM, oCarousel, oPage);
+
+		oRM.close("div");
+	};
+
+	CarouselRenderer._renderNoData = function (oRM, oCarousel) {
+		var oEmptyPage = oCarousel._getEmptyPage();
+		var oAccInfo = oEmptyPage.getAccessibilityInfo();
+
+		oRM.openStart("div", oCarousel.getId() + "-noData")
+			.attr("tabindex", 0)
+			.class("sapMCrslNoDataItem")
+			.accessibilityState({
+				label: oAccInfo.type + " " + oAccInfo.description
+			})
+			.openEnd();
+
+		oRM.renderControl(oCarousel._getEmptyPage());
 
 		oRM.close("div");
 	};
@@ -345,6 +369,14 @@ sap.ui.define([
 
 		oRM.close("div");
 		// end wrapping in scroll container
+	};
+
+	CarouselRenderer._renderDummyArea = function(oRM, oControl, sAreaId) {
+		oRM.openStart("div", oControl.getId() + "-" + sAreaId)
+			.class("sapMCrslDummyArea")
+			.attr("tabindex", 0)
+			.openEnd()
+			.close("div");
 	};
 
 	return CarouselRenderer;

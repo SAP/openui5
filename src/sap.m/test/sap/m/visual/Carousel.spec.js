@@ -22,6 +22,8 @@ describe("sap.m.Carousel", function() {
 		} else {
 			browser.actions().mouseMove(element(by.id('myCarousel'))).perform();
 		}
+
+		browser.executeScript("document.getElementById('myCarousel').scrollIntoView()");
 	};
 
 	// initial loading"

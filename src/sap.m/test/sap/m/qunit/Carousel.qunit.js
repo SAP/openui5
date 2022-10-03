@@ -67,7 +67,9 @@ sap.ui.define([
 
 	// Waiting for CSS transitions to complete is time consuming and not working when tests are run in background tab
 	function forceTransitionComplete (oCarousel) {
-		oCarousel._oMobifyCarousel.onTransitionComplete();
+		if (oCarousel._oMobifyCarousel._hasActiveTransition) {
+			oCarousel._oMobifyCarousel.onTransitionComplete();
+		}
 		Core.applyChanges();
 	}
 
@@ -75,6 +77,42 @@ sap.ui.define([
 		oCarousel._oMobifyCarousel._needsUpdate = true;
 		oCarousel._oMobifyCarousel._update();
 		Core.applyChanges();
+	}
+
+	function pressArrowPrev(oCarousel) {
+		var $arrowPrev = oCarousel.$().find(".sapMCrslPrev");
+
+		oCarousel.ontouchstart({
+			target: $arrowPrev[0],
+			preventDefault: function () {},
+			isMarked: function () {}
+		});
+
+		$arrowPrev.trigger("click");
+
+		oCarousel.ontouchend({
+			target: $arrowPrev[0],
+			preventDefault: function () {},
+			isMarked: function () {}
+		});
+	}
+
+	function pressArrowNext(oCarousel) {
+		var $arrowNext = oCarousel.$().find(".sapMCrslNext");
+
+		oCarousel.ontouchstart({
+			target: $arrowNext[0],
+			preventDefault: function () {},
+			isMarked: function () {}
+		});
+
+		$arrowNext.trigger("click");
+
+		oCarousel.ontouchend({
+			target: $arrowNext[0],
+			preventDefault: function () {},
+			isMarked: function () {}
+		});
 	}
 
 	//================================================================================
@@ -185,7 +223,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_5", "The active page should be 'keyTestPage_5'");
 	});
 
-	QUnit.test("#setLoop(true) should move from last to first page", function (assert) {
+	QUnit.test("#setLoop(true) should move from last to first page with #next", function (assert) {
 		// Arrange
 		this.oCarousel.setActivePage("keyTestPage_6");
 		this.oCarousel.setLoop(true);
@@ -200,7 +238,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_1", "The active page should be 'keyTestPage_1'");
 	});
 
-	QUnit.test("#setLoop(true) should move from first to last page", function (assert) {
+	QUnit.test("#setLoop(true) should move from first to last page with #previous", function (assert) {
 		// Arrange
 		this.oCarousel.setActivePage("keyTestPage_1");
 		this.oCarousel.setLoop(true);
@@ -213,6 +251,40 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_6", "The active page should be 'keyTestPage_6'");
+	});
+
+	QUnit.test("#setLoop(true) should move from last to first page when 'Next Page' arrow is pressed", function (assert) {
+		// Arrange
+		this.oCarousel.getFocusDomRef().focus();
+		this.oCarousel.setActivePage("keyTestPage_6");
+		this.oCarousel.setLoop(true);
+		Core.applyChanges();
+		forceTransitionComplete(this.oCarousel);
+
+		// Act
+		pressArrowNext(this.oCarousel);
+		forceTransitionComplete(this.oCarousel);
+
+		// Assert
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_1", "The active page should be 'keyTestPage_1'");
+		assert.strictEqual(document.activeElement, this.oCarousel.getFocusDomRef(), "The focused page should be 'keyTestPage_1'");
+	});
+
+	QUnit.test("#setLoop(true) should move from first to last page when 'Previous Page' arrow is pressed", function (assert) {
+		// Arrange
+		this.oCarousel.getFocusDomRef().focus();
+		this.oCarousel.setActivePage("keyTestPage_1");
+		this.oCarousel.setLoop(true);
+		Core.applyChanges();
+		forceTransitionComplete(this.oCarousel);
+
+		// Act
+		pressArrowPrev(this.oCarousel);
+		forceTransitionComplete(this.oCarousel);
+
+		// Assert
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_6", "The active page should be 'keyTestPage_6'");
+		assert.strictEqual(document.activeElement, this.oCarousel.getFocusDomRef(), "The focused page should be 'keyTestPage_6'");
 	});
 
 	QUnit.test("#setShowPageIndicator(false) should make Page Indicator invisible", function (assert) {
@@ -241,7 +313,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// Assert
-		assert.ok(this.oCarousel.$().children().first().hasClass('sapMCrslControlsTop'), "Page Indicator should be on top");
+		assert.ok(this.oCarousel.$().children().eq(1).hasClass('sapMCrslControlsTop'), "Page Indicator should be on top");
 	});
 
 	QUnit.test("#setPageIndicatorPlacement() to 'bottom' position", function (assert) {
@@ -249,7 +321,7 @@ sap.ui.define([
 		this.oCarousel.setPageIndicatorPlacement(PlacementType.Bottom);
 
 		// Assert
-		assert.ok(this.oCarousel.$().children().last().hasClass('sapMCrslControlsBottom'), "Page Indicator should be at bottom");
+		assert.ok(this.oCarousel.$().children().eq(-2).hasClass('sapMCrslControlsBottom'), "Page Indicator should be at bottom");
 	});
 
 	QUnit.test("#setArrowsPlacement() to 'Content' position", function (assert) {
@@ -384,7 +456,7 @@ sap.ui.define([
 		assert.ok(oSetWidthOfPagesSpy.notCalled, "_setWidthOfPages is not called");
 	});
 
-	QUnit.test("#onAfterRendering() _setWidthOfPages is called with corect number of items to be shown", function (assert) {
+	QUnit.test("#onAfterRendering() _setWidthOfPages is called with correct number of items to be shown", function (assert) {
 		// Set up
 		var iPagesToShow = 4,
 			oSetWidthOfPagesSpy = this.spy(this.oCarousel, "_setWidthOfPages");
@@ -431,36 +503,6 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(this.oCarousel.$('hud').length, 0, "Hud arrows are not rendered");
-	});
-
-	QUnit.test("#_updateFocusedPagesOrder('keyTestPage_2') _aOrderOfFocusedElements collection is updated correctly when " +
-		"the currently active page has already been focused before", function (assert) {
-			// Set up
-			this.oCarousel._aOrderOfFocusedElements = ["keyTestPage_3", "keyTestPage_4", "keyTestPage_2"];
-
-			// Act
-			this.oCarousel._updateFocusedPagesOrder("keyTestPage_2");
-
-			// Assert
-			assert.strictEqual(this.oCarousel._aOrderOfFocusedElements[0], "keyTestPage_2",
-				"'keyTestPage_2' is on the first place of _aOrderOfFocusedElements collection");
-			assert.strictEqual(this.oCarousel._aOrderOfFocusedElements[2], "keyTestPage_4",
-			"'keyTestPage_2' is on the last place of _aOrderOfFocusedElements collection");
-	});
-
-	QUnit.test("#_updateFocusedPagesOrder('keyTestPage_2') _aOrderOfFocusedElements collection is updated correctly when " +
-		"the currently active page has never been focused before", function (assert) {
-			// Set up
-			this.oCarousel._aOrderOfFocusedElements = ["keyTestPage_3", "keyTestPage_4"];
-
-			// Act
-			this.oCarousel._updateFocusedPagesOrder("keyTestPage_2");
-
-			// Assert
-			assert.strictEqual(this.oCarousel._aOrderOfFocusedElements[0], "keyTestPage_2",
-				"'keyTestPage_2' is on the first place of _aOrderOfFocusedElements collection");
-			assert.strictEqual(this.oCarousel._aOrderOfFocusedElements[2], "keyTestPage_4",
-				"'keyTestPage_2' is on the last place of _aOrderOfFocusedElements collection");
 	});
 
 	QUnit.test("#_updateActivePages('keyTestPage_4') active pages are correct, depending on numberOfPagesToShow and the new active page",
@@ -513,51 +555,6 @@ sap.ui.define([
 
 			// Clean up
 			oCarousel.destroy();
-	});
-
-	QUnit.test("#_getLastFocusedActivePage() when the last focused page is still active ", function (assert) {
-		// Set up
-		var sResult;
-
-		this.oCarousel._aOrderOfFocusedElements = ["keyTestPage_3", "keyTestPage_4"];
-		this.oCarousel._aAllActivePages = ["keyTestPage_2", "keyTestPage_3"];
-
-		// Act
-		sResult = this.oCarousel._getLastFocusedActivePage();
-
-		// Assert
-		assert.strictEqual(sResult, "keyTestPage_3", "'keyTestPage_3' is the last focused page which is still active");
-	});
-
-	QUnit.test("#_getLastFocusedActivePage() when all focused pages are currently not active ", function (assert) {
-		// Set up
-		var sResult;
-
-		this.oCarousel._aOrderOfFocusedElements = ["keyTestPage_3", "keyTestPage_4"];
-		this.oCarousel._aAllActivePages = ["keyTestPage_1", "keyTestPage_2"];
-
-		// Act
-		sResult = this.oCarousel._getLastFocusedActivePage();
-
-		// Assert
-		assert.strictEqual(sResult, "keyTestPage_1", "'keyTestPage_1' is the first currently active page");
-	});
-
-	QUnit.test("#_getActivePageLastFocusedElement()", function (assert) {
-		// Set up
-		var sResult,
-			sFocusedPage = "keyTestPage_3",
-			oFocusedElement = {};
-
-		this.stub(this.oCarousel, "_getLastFocusedActivePage").callsFake(function() { return sFocusedPage; });
-		this.oCarousel._lastFocusablePageElement = {};
-		this.oCarousel._lastFocusablePageElement[sFocusedPage] = oFocusedElement;
-
-		// Act
-		sResult = this.oCarousel._getActivePageLastFocusedElement();
-
-		// Assert
-		assert.strictEqual(sResult, oFocusedElement, "The correct last focused HTML element is returned for the last focused still active page");
 	});
 
 	QUnit.test("#setVisible(false) should delete Carousel from DOM", function (assert) {
@@ -729,7 +726,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Arrange
-		oChangePageSpy = spy(this.oCarousel, "_changePage");
+		oChangePageSpy = spy(this.oCarousel, "_changeActivePage");
 		oUpdateActivePagesSpy = spy(this.oCarousel, "_updateActivePages");
 
 		// Act
@@ -853,7 +850,7 @@ sap.ui.define([
 
 			Core.applyChanges();
 
-			this.oCarousel.$().trigger("focus");
+			this.oCarousel.getFocusDomRef().focus();
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
@@ -866,7 +863,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage2-slide"), KeyCodes.ARROW_RIGHT);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -879,7 +876,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_RIGHT);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage12-slide"), KeyCodes.ARROW_RIGHT);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -892,24 +889,24 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage2-slide"), KeyCodes.ARROW_UP);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
-		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage3", "active page is keyTestPage1");
 	});
 
-	QUnit.test("Arrow Down last page", function (assert) {
+	QUnit.test("Arrow Down first page", function (assert) {
 		// Arrange
-		this.oCarousel.setActivePage("keyTestPage12");
+		this.oCarousel.setActivePage("keyTestPage1");
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage1-slide"), KeyCodes.ARROW_DOWN);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
-		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage12", "active page stays keyTestPage12");
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page stays keyTestPage1");
 	});
 
 	QUnit.test("Arrow Left", function (assert) {
@@ -918,7 +915,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage2-slide"), KeyCodes.ARROW_LEFT);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -931,7 +928,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_LEFT);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage1-slide"), KeyCodes.ARROW_LEFT);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -944,11 +941,11 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage2-slide"), KeyCodes.ARROW_DOWN);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
-		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage3", "active page is keyTestPage3");
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage3");
 	});
 
 	QUnit.test("Arrow Up on first page", function (assert) {
@@ -957,10 +954,11 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_UP);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage1-slide"), KeyCodes.ARROW_UP);
+		forceTransitionComplete(this.oCarousel);
 
 		// Assert
-		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page stays keyTestPage1");
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage2", "active page stays keyTestPage1");
 	});
 
 	QUnit.test("HOME", function (assert) {
@@ -969,7 +967,20 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.HOME);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage2-slide"), KeyCodes.HOME);
+		forceTransitionComplete(this.oCarousel);
+
+		// Assert
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage1");
+	});
+
+	QUnit.test("HOME when loop is activated", function (assert) {
+		// Arrange
+		this.oCarousel.setLoop(true).setActivePage("keyTestPage2");
+		forceTransitionComplete(this.oCarousel);
+
+		// Act
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage2-slide"), KeyCodes.HOME);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -982,7 +993,20 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.END);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage12-slide"), KeyCodes.END);
+		forceTransitionComplete(this.oCarousel);
+
+		// Assert
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage12", "active page is keyTestPage12");
+	});
+
+	QUnit.test("END when loop is activated", function (assert) {
+		// Arrange
+		this.oCarousel.setLoop(true).setActivePage("keyTestPage2");
+		forceTransitionComplete(this.oCarousel);
+
+		// Act
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage12-slide"), KeyCodes.END);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -995,7 +1019,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_RIGHT, false, false, true);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage1-slide"), KeyCodes.ARROW_RIGHT, false, false, true);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -1008,7 +1032,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_RIGHT, false, false, true);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage5-slide"), KeyCodes.ARROW_RIGHT, false, false, true);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -1021,7 +1045,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_UP, false, false, true);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage1-slide"), KeyCodes.ARROW_UP, false, false, true);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -1034,7 +1058,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_UP, false, false, true);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage5-slide"), KeyCodes.ARROW_UP, false, false, true);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -1047,7 +1071,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.PAGE_UP);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage1-slide"), KeyCodes.PAGE_UP);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -1060,7 +1084,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.PAGE_UP);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage5-slide"), KeyCodes.PAGE_UP);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -1073,7 +1097,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_LEFT, false, false, true);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage12-slide"), KeyCodes.ARROW_LEFT, false, false, true);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -1086,7 +1110,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_LEFT, false, false, true);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage5-slide"), KeyCodes.ARROW_LEFT, false, false, true);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -1099,7 +1123,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_DOWN, false, false, true);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage2-slide"), KeyCodes.ARROW_DOWN, false, false, true);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -1112,7 +1136,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.ARROW_DOWN, false, false, true);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage5-slide"), KeyCodes.ARROW_DOWN, false, false, true);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -1125,7 +1149,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.PAGE_DOWN);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage12-slide"), KeyCodes.PAGE_DOWN);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -1138,7 +1162,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.PAGE_DOWN);
+		qutils.triggerKeydown(this.oCarousel.$("keyTestPage5-slide"), KeyCodes.PAGE_DOWN);
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
@@ -1148,35 +1172,168 @@ sap.ui.define([
 
 	QUnit.test("TAB", function (assert) {
 		// Arrange
-		var oImage = this.oCarousel.getPages()[5];
+		var oImage = this.oCarousel.getPages()[5],
+			spy = this.spy(this.oCarousel, "_forwardTab");
 
 		this.oCarousel.setActivePage(oImage);
+		forceTransitionComplete(this.oCarousel);
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.TAB);
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.TAB);
 
 		// Assert
-		assert.strictEqual(this.oCarousel._bDirection, true, "Focus direction should be set to 'true'.");
+		assert.ok(spy.calledOnceWithExactly(true), "Focus should be forwarded after the carousel");
+	});
+
+	QUnit.test("TAB on page with interactive content", function (assert) {
+		// Arrange
+		var spy = this.spy(this.oCarousel, "_forwardTab");
+
+		this.oCarousel.setActivePage("keyTestPage2");
+		forceTransitionComplete(this.oCarousel);
+
+		// Act
+		qutils.triggerKeydown(document.activeElement, KeyCodes.TAB);
+
+		// Assert
+		assert.ok(spy.notCalled, "Focus should NOT be forwarded after the carousel");
+	});
+
+	QUnit.test("TAB on last interactive element within page", function (assert) {
+		// Arrange
+		var spy = this.spy(this.oCarousel, "_forwardTab");
+		this.oCarousel.setActivePage("keyTestPage2");
+
+		var oLastInteractiveElement = this.oCarousel.getPages()[1].getContent()[2].getDomRef();
+		forceTransitionComplete(this.oCarousel);
+		oLastInteractiveElement.focus();
+
+		// Act
+		qutils.triggerKeydown(oLastInteractiveElement, KeyCodes.TAB);
+
+		// Assert
+		assert.ok(spy.calledOnceWithExactly(true), "Focus should be forwarded after the carousel");
+	});
+
+	QUnit.test("Shift + TAB on the active page", function (assert) {
+		// Arrange
+		var spy = this.spy(this.oCarousel, "_forwardTab");
+
+		forceTransitionComplete(this.oCarousel);
+
+		// Act
+		qutils.triggerKeydown(document.activeElement, KeyCodes.TAB, /* shift */ true);
+
+		// Assert
+		assert.ok(spy.calledOnceWithExactly(false), "Focus should be forwarded before the carousel");
+	});
+
+	QUnit.test("Shift + TAB on the element after the carousel", function (assert) {
+		// Arrange
+		var spy = this.spy(this.oCarousel, "_focusPrevious");
+		var focusSpy = this.spy(this.oCarousel.getFocusDomRef(), "focus");
+
+		forceTransitionComplete(this.oCarousel);
+		var oBtn = document.createElement("button");
+		this.oCarousel.getDomRef().insertAdjacentElement("afterend", oBtn);
+		oBtn.focus();
+
+		// Act
+		qutils.triggerKeydown(oBtn, KeyCodes.TAB, /* shift */ true);
+		this.oCarousel.onfocusin(new jQuery.Event("focusin", {
+			target: this.oCarousel.getDomRef("after"),
+			relatedTarget: oBtn
+		}));
+
+		// Assert
+		assert.ok(spy.called, "Should try to focus the last interactive element");
+		assert.ok(focusSpy.called, "Last interactive element in the carousel should be focused");
+
+		// Clean up
+		oBtn.remove();
 	});
 
 	QUnit.test("F6", function (assert) {
 		var oSpy = this.spy(F6Navigation, "handleF6GroupNavigation");
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.F6);
+		qutils.triggerKeydown(this.oCarousel.$(this.oCarousel.getActivePage() + "-slide"), KeyCodes.F6);
 
 		// Assert
 		assert.ok(oSpy.callCount >= 1, "Last active page index should be preserved.");
 	});
 
 	QUnit.test("F6 focusing on next focusable group", function (assert) {
+		var oActivePageDomRef = this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide");
+
 		// Assert
-		assert.ok(this.oCarousel.getDomRef() === document.activeElement, "Current focus is on the Carousel");
+		assert.ok(oActivePageDomRef === document.activeElement, "Current focus is on the Carousel");
 
 		// Act
-		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.F6);
+		qutils.triggerKeydown(oActivePageDomRef, KeyCodes.F6);
 
 		// Assert
-		assert.ok(this.oCarousel.getDomRef() !== document.activeElement, "F6 is focusing on the next group");
+		assert.ok(oActivePageDomRef !== document.activeElement, "F6 is focusing on the next group");
+	});
+
+	QUnit.test("Shift + F6 focusing on previous focusable group", function (assert) {
+		var oActivePageDomRef = this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide");
+
+		// Assert
+		assert.ok(oActivePageDomRef === document.activeElement, "Current focus is on the Carousel");
+
+		// Act
+		qutils.triggerKeydown(oActivePageDomRef, KeyCodes.F6, /* shift */ true);
+
+		// Assert
+		assert.ok(oActivePageDomRef !== document.activeElement, "Shift + F6 is focusing on the previous group");
+	});
+
+	QUnit.test("F7", function (assert) {
+		// Arrange
+		this.oCarousel.setActivePage("keyTestPage2");
+		forceTransitionComplete(this.oCarousel);
+		Core.applyChanges();
+		var oInteractiveElementInsidePage = this.oCarousel.getPages()[1].getContent()[2].getDomRef();
+		qutils.triggerKeydown(document.activeElement, KeyCodes.TAB);
+		qutils.triggerEvent("focusin", oInteractiveElementInsidePage);
+
+		// Act
+		qutils.triggerKeydown(oInteractiveElementInsidePage, KeyCodes.F7);
+
+		// Assert
+		assert.strictEqual(document.activeElement, this.oCarousel.getFocusDomRef(), "After F7 focus is on the page");
+
+		// Act
+		qutils.triggerKeydown(document.activeElement, KeyCodes.F7);
+
+		// Assert
+		assert.strictEqual(document.activeElement, oInteractiveElementInsidePage, "After F7 focus is back to the last focused element inside the page");
+	});
+
+	QUnit.test("Numpad Minus", function (assert) {
+		// Arrange
+		this.oCarousel.setActivePage("keyTestPage2");
+		forceTransitionComplete(this.oCarousel);
+
+		// Act
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.NUMPAD_MINUS);
+		forceTransitionComplete(this.oCarousel);
+
+		// Assert
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage1", "active page is keyTestPage3");
+	});
+
+	QUnit.test("Numpad Plus", function (assert) {
+		// Arrange
+		this.oCarousel.setActivePage("keyTestPage1");
+		forceTransitionComplete(this.oCarousel);
+
+		// Act
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.NUMPAD_PLUS);
+		forceTransitionComplete(this.oCarousel);
+
+		// Assert
+		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage3");
 	});
 
 	//================================================================================
@@ -1267,8 +1424,8 @@ sap.ui.define([
 		// Act
 		oPopup.openBy(oButton);
 		assert.strictEqual(oCarousel.getActivePage(), "image2", "active page is with id 'image2'");
-		oCarousel.$().find('a.sapMCrslNext').trigger("focus");
-		oCarousel._changePage(undefined, 3);
+		oCarousel.$().find('.sapMCrslNext').trigger("focus");
+		oCarousel._changeActivePage(2);
 		// Assert
 		assert.strictEqual(oCarousel.getActivePage(), "image3", "active page is with id 'image3'");
 
@@ -1352,11 +1509,9 @@ sap.ui.define([
 
 	QUnit.test("Simulate click on image within slide should prevent it's drag event resulting in normal swiping behaviour", function (assert) {
 		// Arrange
-		var preventDefaultSpy = this.spy(),
-			oImageElement = document.createElement("img"),
+		var oImageElement = document.createElement("img"),
 			oFakeEvent = {
 				target: oImageElement,
-				preventDefault: preventDefaultSpy,
 				isMarked: function() {}
 			};
 
@@ -1364,7 +1519,7 @@ sap.ui.define([
 		this.oCarousel.ontouchstart(oFakeEvent);
 
 		// Assert
-		assert.ok(preventDefaultSpy.calledOnce, "Prevent Default on the Event with target image should have been called once");
+		assert.strictEqual(oImageElement.draggable, false, "Image shouldn't be draggable");
 	});
 
 	QUnit.module("Change pages", {
@@ -1393,11 +1548,6 @@ sap.ui.define([
 
 	QUnit.test("Simulate right arrow twice", function (assert) {
 		// arrange
-		var oFakeEvent = {
-			target: this.oCarousel.getDomRef(),
-			preventDefault: function () {}
-		};
-
 		var aPageChangedParameters = [];
 		forceTransitionComplete(this.oCarousel);
 
@@ -1406,8 +1556,15 @@ sap.ui.define([
 		});
 
 		// act
-		this.oCarousel.onsapright(oFakeEvent);
-		this.oCarousel.onsapright(oFakeEvent);
+		this.oCarousel.onsapright({
+			target: this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide"),
+			preventDefault: function () {}
+		});
+
+		this.oCarousel.onsapright({
+			target: this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide"),
+			preventDefault: function () {}
+		});
 		forceTransitionComplete(this.oCarousel);
 
 		// assert
@@ -1422,11 +1579,6 @@ sap.ui.define([
 
 	QUnit.test("Simulate left arrow twice", function (assert) {
 		// arrange
-		var oFakeEvent = {
-			target: this.oCarousel.getDomRef(),
-			preventDefault: function () {}
-		};
-
 		var aPageChangedParameters = [];
 		forceTransitionComplete(this.oCarousel);
 
@@ -1435,8 +1587,14 @@ sap.ui.define([
 		});
 
 		// act
-		this.oCarousel.onsapleft(oFakeEvent);
-		this.oCarousel.onsapleft(oFakeEvent);
+		this.oCarousel.onsapleft({
+			target: this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide"),
+			preventDefault: function () {}
+		});
+		this.oCarousel.onsapleft({
+			target: this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide"),
+			preventDefault: function () {}
+		});
 		forceTransitionComplete(this.oCarousel);
 
 		// assert
@@ -1457,20 +1615,20 @@ sap.ui.define([
 		}));
 
 		var oFakeEvent = {
-			target: this.oCarousel.getDomRef(),
+			target: this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide"),
 			preventDefault: function () {}
 		};
-		var oLastActivePage = this.oCarousel.getPages()[this.oCarousel.getPages().length - 2];
+		var oLastPage = this.oCarousel.getPages()[this.oCarousel.getPages().length - 1];
 		forceTransitionComplete(this.oCarousel);
 
-		// act - press right arrow 10 times
+		// act - press right arrow 5 times
 		for (var i = 0; i < 5; i++) {
 			this.oCarousel.onsapright(oFakeEvent);
 		}
 		forceTransitionComplete(this.oCarousel);
 
 		// assert
-		assert.strictEqual(this.oCarousel.getActivePage(), oLastActivePage.getId(), "Active page should be keyTestPage_1 and a loop should NOT have happened.");
+		assert.strictEqual(this.oCarousel.getActivePage(), oLastPage.getId(), "Active page should be keyTestPage_9 and a loop should NOT have happened.");
 	});
 
 	QUnit.test("Looping left with keys when visiblePagesCount is different than 1", function (assert) {
@@ -1481,10 +1639,10 @@ sap.ui.define([
 		}));
 
 		var oFakeEvent = {
-			target: this.oCarousel.getDomRef(),
+			target: this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide"),
 			preventDefault: function () {}
 		};
-		var oFirstActivePage = this.oCarousel.getPages()[0];
+		var oFirstPage = this.oCarousel.getPages()[0];
 
 		forceTransitionComplete(this.oCarousel);
 
@@ -1495,7 +1653,7 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// assert
-		assert.strictEqual(this.oCarousel.getActivePage(), oFirstActivePage.getId(), "Active page should be keyTestPage_1 and a loop should NOT have happened.");
+		assert.strictEqual(this.oCarousel.getActivePage(), oFirstPage.getId(), "Active page should still be keyTestPage_1 and loop should NOT have happened.");
 	});
 
 	QUnit.test("Looping right with mouse when visiblePagesCount is different than 1", function (assert) {
@@ -1504,18 +1662,18 @@ sap.ui.define([
 		this.oCarousel.setCustomLayout(new CarouselLayout({
 			visiblePagesCount: 2
 		}));
-		var oLastActivePage = this.oCarousel.getPages()[this.oCarousel.getPages().length - 2];
-		this.oCarousel.setActivePage(oLastActivePage);
+		var oLastPage = this.oCarousel.getPages()[this.oCarousel.getPages().length - 1];
+		this.oCarousel.setActivePage(oLastPage);
 		Core.applyChanges();
 
 		forceTransitionComplete(this.oCarousel);
 
 		// act - press right arrow
-		this.oCarousel.$().find("a.sapMCrslNext").trigger("click");
+		pressArrowNext(this.oCarousel);
 		forceTransitionComplete(this.oCarousel);
 
 		// assert
-		assert.strictEqual(this.oCarousel.getActivePage(), oLastActivePage.getId(), "Active page should be keyTestPage_8 and a loop should NOT have happened.");
+		assert.strictEqual(this.oCarousel.getActivePage(), oLastPage.getId(), "Active page should still be keyTestPage_9 and loop should NOT have happened.");
 	});
 
 	QUnit.test("Looping left with mouse when visiblePagesCount is different than 1", function (assert) {
@@ -1524,34 +1682,27 @@ sap.ui.define([
 		this.oCarousel.setCustomLayout(new CarouselLayout({
 			visiblePagesCount: 2
 		}));
-		var oFirstActivePage = this.oCarousel.getPages()[0];
-		this.oCarousel.setActivePage(oFirstActivePage);
+		var oFirstPage = this.oCarousel.getPages()[0];
+		this.oCarousel.setActivePage(oFirstPage);
 		Core.applyChanges();
 
 		forceTransitionComplete(this.oCarousel);
 
 		// act - press left arrow
-		this.oCarousel.$().find("a.sapMCrslPrev").trigger("click");
+		pressArrowPrev(this.oCarousel);
 		forceTransitionComplete(this.oCarousel);
 
 		// assert
-		assert.strictEqual(this.oCarousel.getActivePage(), oFirstActivePage.getId(), "Active page should be keyTestPage_1 and a loop should NOT have happened.");
+		assert.strictEqual(this.oCarousel.getActivePage(), oFirstPage.getId(), "Active page should be keyTestPage_1 and a loop should NOT have happened.");
 	});
 
 	QUnit.test("Simulate right arrow fast click twice", function (assert) {
 		// arrange
-		var oFakeEvent = {
-			target: this.oCarousel.getDomRef(),
-			preventDefault: function () {}
-		};
-
 		forceTransitionComplete(this.oCarousel);
 
 		// act
-		this.oCarousel.$().find(".sapMCrslNext").trigger("click");
-		this.oCarousel.ontouchend(oFakeEvent);
-		this.oCarousel.$().find(".sapMCrslNext").trigger("click");
-		this.oCarousel.ontouchend(oFakeEvent);
+		pressArrowNext(this.oCarousel);
+		pressArrowNext(this.oCarousel);
 		forceTransitionComplete(this.oCarousel);
 
 		// assert
@@ -1560,18 +1711,11 @@ sap.ui.define([
 
 	QUnit.test("Simulate left arrow fast click twice", function (assert) {
 		// arrange
-		var oFakeEvent = {
-			target: this.oCarousel.getDomRef(),
-			preventDefault: function () {}
-		};
-
 		forceTransitionComplete(this.oCarousel);
 
 		// act
-		this.oCarousel.$().find(".sapMCrslPrev").trigger("click");
-		this.oCarousel.ontouchend(oFakeEvent);
-		this.oCarousel.$().find(".sapMCrslPrev").trigger("click");
-		this.oCarousel.ontouchend(oFakeEvent);
+		pressArrowPrev(this.oCarousel);
+		pressArrowPrev(this.oCarousel);
 
 		forceTransitionComplete(this.oCarousel);
 
@@ -1579,6 +1723,113 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_2", "Should have the active page set to page #2...");
 	});
 
+	QUnit.test("Focusing page child with mouse should make the page the active page", function (assert) {
+		// arrange
+		var oButton = new Button();
+		this.oCarousel.insertPage(oButton, 2);
+		var aPages = this.oCarousel.getPages();
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: 3
+		}));
+		this.oCarousel.setActivePage(aPages[0]);
+		Core.applyChanges();
+		forceTransitionComplete(this.oCarousel);
+
+		// act
+		oButton.$().trigger("focusin");
+
+		// assert
+		assert.strictEqual(this.oCarousel.getActivePage(), oButton.getId(), "Active page should have changed");
+	});
+
+	QUnit.test("Changing page by clicking 'Next Page' arrow shouldn't change the active page if it is still displayed", function (assert) {
+		// arrange
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: 3
+		}));
+		Core.applyChanges();
+		var sMiddlePageId = this.oCarousel._aAllActivePages[1];
+		var sNextPageId = this.oCarousel._aAllActivePages[2];
+		forceTransitionComplete(this.oCarousel);
+
+		// act
+		this.oCarousel.$(sMiddlePageId + "-slide").trigger("focusin"); // focus the middle page to make it active
+
+		// assert
+		assert.strictEqual(this.oCarousel.getActivePage(), sMiddlePageId);
+
+		// act
+		pressArrowNext(this.oCarousel);
+
+		// assert
+		assert.strictEqual(this.oCarousel.getActivePage(), sMiddlePageId, "Active page should NOT have changed");
+
+		// act
+		pressArrowNext(this.oCarousel);
+		forceTransitionComplete(this.oCarousel);
+
+		// assert
+		assert.strictEqual(this.oCarousel.getActivePage(), sNextPageId, "Active page should have changed");
+	});
+
+	QUnit.test("Changing page by clicking 'Previous Page' arrow shouldn't change the active page if it is still displayed", function (assert) {
+		// arrange
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: 3
+		}));
+		Core.applyChanges();
+		var sMiddlePageId = this.oCarousel._aAllActivePages[1];
+		var sPrevPageId = this.oCarousel._aAllActivePages[0];
+		forceTransitionComplete(this.oCarousel);
+
+		// act
+		this.oCarousel.$(sMiddlePageId + "-slide").trigger("focusin"); // focus the middle page to make it active
+
+		// assert
+		assert.strictEqual(this.oCarousel.getActivePage(), sMiddlePageId);
+
+		// act
+		pressArrowPrev(this.oCarousel);
+
+		// assert
+		assert.strictEqual(this.oCarousel.getActivePage(), sMiddlePageId, "Active page should NOT have changed");
+
+		// act
+		pressArrowPrev(this.oCarousel);
+		forceTransitionComplete(this.oCarousel);
+
+		// assert
+		assert.strictEqual(this.oCarousel.getActivePage(), sPrevPageId, "Active page should have changed");
+	});
+
+	QUnit.test("Dragging 'Next Page' arrow shouldn't be considered as swipe", function (assert) {
+		// arrange
+		var touchstartSpy = this.spy(this.oCarousel._oMobifyCarousel, "touchstart"),
+			touchmoveSpy = this.spy(this.oCarousel._oMobifyCarousel, "touchmove"),
+			touchendSpy = this.spy(this.oCarousel._oMobifyCarousel, "touchend"),
+			$arrowNext = this.oCarousel.$().find(".sapMCrslNext");
+
+		// act
+		this.oCarousel.ontouchstart({
+			target: $arrowNext[0],
+			preventDefault: function () {}
+		});
+
+		this.oCarousel.ontouchmove({
+			target: $arrowNext[0],
+			preventDefault: function () {}
+		});
+
+		this.oCarousel.ontouchend({
+			target: $arrowNext[0],
+			preventDefault: function () {}
+		});
+
+		// assert
+		assert.ok(touchstartSpy.notCalled, "'touchstart' on arrow shouldn't start a swipe'");
+		assert.ok(touchmoveSpy.notCalled, "'touchmove' on arrow shouldn't swipe'");
+		assert.ok(touchendSpy.notCalled, "'touchend' on arrow shouldn't end a swipe'");
+	});
 
 	QUnit.module("No pages", {
 		beforeEach: function () {
@@ -1649,10 +1900,10 @@ sap.ui.define([
 		assert.strictEqual(this.oInnerCarousel.$().find(sContentSelector).length > 0, true, "Inner carousel has visible active page");
 
 		// act
-		this.oOuterCarousel.$().find("a.sapMCrslNext").trigger("click");
+		pressArrowNext(this.oOuterCarousel);
 		forceTransitionComplete(this.oOuterCarousel);
 
-		this.oOuterCarousel.$().find("a.sapMCrslPrev").trigger("click");
+		pressArrowPrev(this.oOuterCarousel);
 		forceTransitionComplete(this.oOuterCarousel);
 
 		// assert
@@ -1664,25 +1915,23 @@ sap.ui.define([
 			this.oCarousel = new Carousel({
 				id: "crsl",
 				height: '25%',
-				width: '50%'
+				width: '50%',
+				pages: [
+					new Text({
+						id: "text1",
+						text: 'text1'
+					}),
+					new Text({
+						id: "text2",
+						text: 'text2'
+					}),
+					new Text({
+						id: "text3",
+						text: 'text3'
+					})
+				]
 			});
 
-			var text1 = new Text({
-				id: "text1",
-				text: 'text1'
-			});
-			var text2 = new Text({
-				id: "text2",
-				text: 'text2'
-			});
-			var text3 = new Text({
-				id: "text3",
-				text: 'text3'
-			});
-
-			this.oCarousel.insertPage(text1);
-			this.oCarousel.insertPage(text3);
-			this.oCarousel.insertPage(text2);
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
@@ -1693,10 +1942,11 @@ sap.ui.define([
 
 	QUnit.test("aria-selected should be set correctly", function (assert) {
 		// Assert
-		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-selected"), "true", "Active page should have aria-selected = true");
-		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("role"), "option", "Role of a carousel item should be option");
-		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-posinset"), "1", "Posinset should be 1");
-		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-setsize"), "3", "Setsize should be 3");
+		assert.strictEqual(document.getElementById("crsl-text1-slide").getAttribute("aria-selected"), "true", "Active page should have aria-selected = true");
+		assert.strictEqual(document.getElementById("crsl-text1-slide").getAttribute("role"), "option", "Role of a carousel item should be option");
+		assert.strictEqual(document.getElementById("crsl-text1-slide").getAttribute("aria-posinset"), "1", "Posinset should be 1");
+		assert.strictEqual(document.getElementById("crsl-text1-slide").getAttribute("aria-setsize"), "3", "Setsize should be 3");
+		assert.strictEqual(document.getElementById("crsl-text1-slide").getAttribute("aria-hidden"), "false", "Displayed page should have aria-hidden = false");
 
 
 		// Act
@@ -1704,10 +1954,172 @@ sap.ui.define([
 		forceTransitionComplete(this.oCarousel);
 
 		// Assert
-		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-selected"), "false", "Non active page should have aria-selected = false");
-		assert.strictEqual(document.getElementById("crsl-text3-slide").getAttribute("aria-selected"), "true", "Active page should have aria-selected = true");
-		assert.strictEqual(document.getElementById("crsl-text3-slide").getAttribute("aria-posinset"), "2", "Posinset should be 2");
-
-
+		assert.strictEqual(document.getElementById("crsl-text1-slide").getAttribute("aria-selected"), "false", "Non active page should have aria-selected = false");
+		assert.strictEqual(document.getElementById("crsl-text1-slide").getAttribute("aria-hidden"), "true", "Not displayed page should have aria-hidden = true");
+		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-selected"), "true", "Active page should have aria-selected = true");
+		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-posinset"), "2", "Posinset should be 2");
+		assert.strictEqual(document.getElementById("crsl-text2-slide").getAttribute("aria-hidden"), "false", "Displayed page should have aria-hidden = false");
 	});
+
+	QUnit.test("When there are no pages, 'No Data' element is rendered with correct aria attributes", function (assert) {
+		// arrange
+		this.oCarousel.destroyPages();
+		Core.applyChanges();
+		var oNoData = this.oCarousel.getDomRef("noData");
+		var oAccInfo = this.oCarousel._getEmptyPage().getAccessibilityInfo();
+		var sExpectedLabel = oAccInfo.type + " " + oAccInfo.description;
+
+		// assert
+		assert.strictEqual(oNoData.getAttribute("tabIndex"), "0", "'No Data' element should be focusable");
+		assert.strictEqual(oNoData.getAttribute("aria-label"), sExpectedLabel, "'aria-label' should be correct");
+	});
+
+	QUnit.module("Multiple pages", {
+		beforeEach: function () {
+			this.oCarousel = new Carousel("myCrsl", {
+				customLayout: new CarouselLayout({
+					visiblePagesCount: 3
+				}),
+				pages: [
+					new Page("page1"),
+					new Page("page2"),
+					new Page("page3"),
+					new Page("page4"),
+					new Page("page5"),
+					new Page("page6"),
+					new Page("page7"),
+					new Page("page8"),
+					new Page("page9")
+				]
+			});
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCarousel.destroy();
+		}
+	});
+
+	QUnit.test("Page indicator text updates after keyboard navigation when multiple pages are displayed", function (assert) {
+		// arrange
+		var $pageIndicator = this.oCarousel.$("pageIndicator");
+		var rb = Core.getLibraryResourceBundle("sap.m");
+
+		// assert
+		assert.strictEqual($pageIndicator.text(), rb.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [1, 7]), "Page indicator text should be correct");
+
+		// act
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.ARROW_RIGHT); // go to page2
+		forceTransitionComplete(this.oCarousel);
+
+		// assert
+		assert.strictEqual($pageIndicator.text(), rb.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [1, 7]), "Page indicator text should be correct");
+
+		// act
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.ARROW_RIGHT); // go to page3
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.ARROW_RIGHT); // go to page4
+		forceTransitionComplete(this.oCarousel);
+
+		// assert
+		assert.strictEqual($pageIndicator.text(), rb.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [2, 7]), "Page indicator text should be correct");
+
+		// act
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.END); // go to the last page 9
+		forceTransitionComplete(this.oCarousel);
+
+		// assert
+		assert.strictEqual($pageIndicator.text(), rb.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [7, 7]), "Page indicator text should be correct");
+
+		// act - go backwards
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.ARROW_LEFT); // go to page8
+		forceTransitionComplete(this.oCarousel);
+
+		// assert
+		assert.strictEqual($pageIndicator.text(), rb.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [7, 7]), "Page indicator text should be correct");
+
+		// act
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.ARROW_LEFT); // go to page7
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.ARROW_LEFT); // go to page6
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.ARROW_LEFT); // go to page5
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.ARROW_LEFT); // go to page4
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.ARROW_LEFT); // go to page3
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.ARROW_LEFT); // go to page2
+		forceTransitionComplete(this.oCarousel);
+
+		// assert
+		assert.strictEqual($pageIndicator.text(), rb.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [2, 7]), "Page indicator text should be correct");
+
+		// act - go backwards
+		qutils.triggerKeydown(this.oCarousel.getFocusDomRef(), KeyCodes.ARROW_LEFT); // go to page1
+		forceTransitionComplete(this.oCarousel);
+
+		// assert
+		assert.strictEqual($pageIndicator.text(), rb.getText("CAROUSEL_PAGE_INDICATOR_TEXT", [1, 7]), "Page indicator text should be correct");
+	});
+
+	QUnit.test("HUD arrows visibility when multiple pages are displayed", function (assert) {
+		// assert
+		assert.ok(this.oCarousel.$("hud").hasClass(Carousel._LEFTMOST_CLASS), "Left arrow should be hidden");
+		assert.notOk(this.oCarousel.$("hud").hasClass(Carousel._RIGHTMOST_CLASS), "Right arrow should be visible");
+
+		// act
+		this.oCarousel.setActivePage("page4");
+		forceTransitionComplete(this.oCarousel);
+
+		// assert
+		assert.notOk(this.oCarousel.$("hud").hasClass(Carousel._LEFTMOST_CLASS), "Left arrow should be visible");
+		assert.notOk(this.oCarousel.$("hud").hasClass(Carousel._RIGHTMOST_CLASS), "Right arrow should be visible");
+
+		// act
+		this.oCarousel.setActivePage("page9");
+		forceTransitionComplete(this.oCarousel);
+
+		// assert
+		assert.notOk(this.oCarousel.$("hud").hasClass(Carousel._LEFTMOST_CLASS), "Left arrow should be visible");
+		assert.ok(this.oCarousel.$("hud").hasClass(Carousel._RIGHTMOST_CLASS), "Right arrow should be hidden");
+	});
+
+	QUnit.test("setActivePage() leads to 'pageChanged' event when multiple pages are displayed", function (assert) {
+		// arrange
+		assert.expect(3);
+
+		this.oCarousel.attachPageChanged(function (oEvent) {
+			assert.strictEqual(oEvent.getParameter("oldActivePageId"), "page1");
+			assert.strictEqual(oEvent.getParameter("newActivePageId"), "page2");
+			assert.deepEqual(oEvent.getParameter("activePages"), [0, 1, 2]);
+		});
+
+		// act
+		this.oCarousel.setActivePage("page2");
+		forceTransitionComplete(this.oCarousel);
+	});
+
+	QUnit.test("Attributes of active page are correctly set on initial rendering,s when multiple pages are displayed", function (assert) {
+		// arrange
+		var oPage2 = new Page();
+		var oCarousel = new Carousel({
+			customLayout: new CarouselLayout({
+				visiblePagesCount: 2
+			}),
+			pages: [
+				new Page(),
+				oPage2,
+				new Page(),
+				new Page(),
+				new Page()
+			],
+			activePage: oPage2
+		});
+		oCarousel.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+		forceTransitionComplete(oCarousel);
+		var oPage2DomRef = oCarousel.getDomRef(oPage2.getId() + "-slide");
+
+		// assert
+		assert.strictEqual(oPage2DomRef.tabIndex, 0, "tabIndex is correctly set");
+
+		// clean up
+		oCarousel.destroy();
+	});
+
 });
