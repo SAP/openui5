@@ -15,10 +15,14 @@
 			</Toolbar>
 		</subHeader>
 		<VBox renderType="Bare" height="100%">
-			<Button text="Refresh Card" press=".onRefresh" />
-			<Button text="Refresh Card Data" press=".onRefreshData" />
-			<Button text="Previous Page" press=".onPreviousPage" />
-			<Button text="Next Page" press=".onNextPage" />
+			<OverflowToolbar>
+				<Button text="Refresh Card" press=".onRefresh" type="Emphasized" />
+				<Button text="Refresh Card Data" press=".onRefreshData" />
+				<Button text="Previous Page" press=".onPreviousPage" />
+				<Button text="Next Page" press=".onNextPage" />
+				<Button text="Change Filter" press=".onChangeSelectFilter" />
+				<Button text="Initial Filter" press=".onInitialSelectFilter" />
+			</OverflowToolbar>
 			<HBox>
 				<layoutData>
 					<FlexItemData minHeight="0" growFactor="1"></FlexItemData>

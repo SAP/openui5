@@ -1542,7 +1542,56 @@ sap.ui.define([
 			});
 	});
 
-	QUnit.test("Filter item template", function (assert) {
+	QUnit.test("Filters - static items", function (assert) {
+		var oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Table",
+				"configuration": {
+					"filters": {
+						"withStaticItems": {
+							"value": "two",
+							"type": "Select",
+							"items": [
+								{ "key": "one", "title": "Option one" },
+								{ "key": "two", "title": "Option two" },
+								{ "key": "three", "title": "Option three" }
+							]
+						}
+					}
+				}
+			}
+		};
+
+		var oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(function (oRes) {
+				// Assert
+				assert.strictEqual(
+					oRes["sap.card"].configuration.filters.withStaticItems.items[0].title,
+					oManifest["sap.card"].configuration.filters.withStaticItems.items[0].title,
+					"Static filter items should be resolved"
+				);
+
+				assert.strictEqual(
+					oRes["sap.card"].configuration.filters.withStaticItems.value,
+					oManifest["sap.card"].configuration.filters.withStaticItems.items[1].key,
+					"Filter's selected key is available"
+				);
+
+				oCard.destroy();
+			});
+	});
+
+	QUnit.test("Filter item template - with JSON in data section", function (assert) {
 		var oManifest = {
 			"sap.app": {
 				"id": "manifestResolver.test.card",
@@ -1552,7 +1601,7 @@ sap.ui.define([
 				"type": "List",
 				"configuration": {
 					"filters": {
-						"myFilter": {
+						"withJSONInSection": {
 							"value": "1",
 							"type": "Select",
 							"item": {
@@ -1564,8 +1613,8 @@ sap.ui.define([
 							"data": {
 								"json": [
 									{
-										"ShipperID": 1,
-										"CompanyName": 1
+										"ShipperID": "1",
+										"CompanyName": "SAP"
 									}
 								]
 							}
@@ -1585,9 +1634,15 @@ sap.ui.define([
 			.then(function (oRes) {
 				// Assert
 				assert.strictEqual(
-					oRes["sap.card"].configuration.filters.myFilter.items[0].title,
-					oManifest["sap.card"].configuration.filters.myFilter.data.json[0].Name,
+					oRes["sap.card"].configuration.filters.withJSONInSection.items[0].title,
+					oManifest["sap.card"].configuration.filters.withJSONInSection.data.json[0].CompanyName,
 					"Item should be created from the template"
+				);
+
+				assert.strictEqual(
+					oRes["sap.card"].configuration.filters.withJSONInSection.value,
+					oManifest["sap.card"].configuration.filters.withJSONInSection.data.json[0].ShipperID,
+					"Filter's selected key is available"
 				);
 
 				oCard.destroy();

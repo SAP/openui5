@@ -3,12 +3,14 @@
  */
 sap.ui.define([
 	"./BaseFilter",
+	"sap/base/Log",
 	"sap/ui/core/library",
 	"sap/m/DynamicDateRange",
 	"sap/m/DynamicDateUtil",
 	"sap/ui/integration/util/BindingResolver"
 ], function (
 	BaseFilter,
+	Log,
 	coreLibrary,
 	DynamicDateRange,
 	DynamicDateUtil,
@@ -116,6 +118,13 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
+	DateRangeFilter.prototype.setValueFromOutside = function (vValue) {
+		Log.error("Setting a filter value programatically on a DateRangeFilter is currently unsupported.", null, "sap.ui.integration.widgets.Card");
+	};
+
+	/**
+	 * @override
+	 */
 	DateRangeFilter.prototype.getValueForModel = function () {
 		var oDateRangeValue = this._getDdr().getValue();
 		var oValue;
@@ -208,7 +217,7 @@ sap.ui.define([
 		oDdr.attachChange(function (oEvent) {
 			if (oEvent.getParameter("valid")) {
 				oDdr.setValueState(ValueState.None);
-				this._setValue();
+				this._syncValue();
 			} else {
 				oDdr.setValueState(ValueState.Error);
 			}
