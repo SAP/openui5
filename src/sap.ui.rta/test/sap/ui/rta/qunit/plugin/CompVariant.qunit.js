@@ -312,6 +312,7 @@ sap.ui.define([
 				assert.strictEqual(oCommand.getPreviousVariantId(), this.oVariantId, "the previousVariantId property is set");
 				assert.strictEqual(oCommand.getPreviousDefault(), sPreviousDefaultVarId, "the previousDefault property is set");
 				assert.strictEqual(oCommand.getElement().getId(), "svm", "the SVM is passed as element key is set");
+				assert.strictEqual(oCommand.getActivateAfterUndo(), false, "the activateAfterUndo is not set");
 			}.bind(this));
 
 			var oMenuItem = getContextMenuEntryById.call(this, "CTX_COMP_VARIANT_SAVE_AS");
@@ -512,6 +513,7 @@ sap.ui.define([
 				assert.deepEqual(oCommand.getPreviousDirtyFlag(), true, "the previous dirty flag is set");
 				assert.strictEqual(oCommand.getPreviousVariantId(), "id1", "the previous variant id is set");
 				assert.strictEqual(oCommand.getPreviousDefault(), "id1", "the previous default is set");
+				assert.strictEqual(oCommand.getActivateAfterUndo(), true, "the activateAfterUndo is set");
 			});
 
 			this.oPlugin.getMenuItems([this.oOverlay])[0].handler([this.oOverlay]);
