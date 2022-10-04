@@ -60,8 +60,8 @@ sap.ui.define([
         if (this.getPriority() !== Priority.None && sPriorityText) {
             sAltText += (sPriorityText + " " + sPriority) + "\n";
         }
-        // //Returns the first four attributes to display in the tooltip,aria-label on the ActionTile
-        for (var iIndex = 0; iIndex < 4; iIndex++) {
+        // Returns the first four attributes to display in the tooltip,aria-label on the ActionTile
+        for (var iIndex = 0; iIndex < aCustomAttributes.length && iIndex < 4; iIndex++) {
             sAltText += aCustomAttributes[iIndex].getLabel() + "\n" + aCustomAttributes[iIndex].getValue() + "\n";
         }
         return sAltText.trim();
