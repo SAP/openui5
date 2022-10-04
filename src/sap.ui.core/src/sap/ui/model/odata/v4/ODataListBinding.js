@@ -304,7 +304,7 @@ sap.ui.define([
 			function (iIndex, iOffset) {
 				if (iIndex !== undefined) {
 					// An entity can only be deleted when its key predicate is known. So we can be
-					// sure to have key predicates and the contexts a related to entities and not
+					// sure to have key predicates and the contexts are related to entities and not
 					// rows. -> Shift them and adjust the indexes
 					if (iOffset > 0) { // we're re-inserting
 						delete that.mPreviousContextsByPath[oContext.getPath()];

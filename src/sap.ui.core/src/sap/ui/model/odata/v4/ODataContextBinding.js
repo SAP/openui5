@@ -1180,7 +1180,7 @@ sap.ui.define([
 	 * @returns {string}
 	 *   The resolved path with replaced transient predicates
 	 * @throws {Error}
-	 *   If an entity related to a segment with a transient predicate does not have key predicates
+	 *   If an entity related to a segment with a transient predicate does not have a key predicate
 	 *
 	 * @private
 	 */

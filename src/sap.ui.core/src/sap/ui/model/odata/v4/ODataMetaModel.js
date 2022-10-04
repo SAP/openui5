@@ -1674,7 +1674,7 @@ sap.ui.define([
 	 * @param {string} sPropertyPath
 	 *   A path of a property in the OData data model, absolute or relative to <code>oContext</code>
 	 * @param {sap.ui.model.odata.v4.Context} oContext
-	 *   A context, used for building the path and for fetching key predicates
+	 *   A context, used for building the path and for determining the key predicate
 	 * @param {boolean} [bNoEditUrl]
 	 *   Whether no edit URL is required
 	 * @returns {sap.ui.base.SyncPromise}
