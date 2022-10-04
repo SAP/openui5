@@ -13,8 +13,8 @@ sap.ui.define(function() {
 	* @enum {string}
 	* @public
 	* @alias sap.ui.model.odata.v2.BatchMode
-	* @deprecated Use {@link sap.ui.model.odata.CountMode} to specify how the count of collections
-	*   is retrieved. Use the <code>useBatch</code> parameter of the
+	* @deprecated since 1.74.0; Use {@link sap.ui.model.odata.CountMode} to specify how the count of
+	    collections is retrieved. Use the <code>useBatch</code> parameter of the
 	*   {@link sap.ui.model.odata.v2.ODataModel} constructor to specify whether requests are sent in
 	*   $batch.
 	*/
