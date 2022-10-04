@@ -28,13 +28,20 @@ sap.ui.define([], function() {
 		Auto : "Auto",
 
 		/**
-		 * Base <code>Illustration</code> size (XS breakpoint). Suitable for cards (two columns).
+		 * Base <code>Illustration</code> size. Suitable for cards (two columns).
 		 *
 		 * <b>Note:</b> When <code>Base</code> is in use, no illustration is displayed.
 		 *
 		 * @public
 		 */
 		Base : "Base",
+
+		/**
+		 * Dot <code>Illustration</code> size (XS breakpoint). Suitable for spaces with little vertical space.
+		 * @public
+		 * @since 1.108
+		 */
+		Dot : "Dot",
 
 		/**
 		 * Spot <code>Illustration</code> size (S breakpoint). Suitable for cards (four columns).

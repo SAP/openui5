@@ -34,12 +34,18 @@ sap.ui.define([], function () {
 		}
 		oRm.openEnd();
 
+			oRm.openStart("div");
+			oRm.class("sapMIllustratedMessageMainContent"); // wrapper div to allow horizontal layout for Dot breakpoint
+			oRm.openEnd();
+
 			oRm.renderControl(oIllustratedMessageIllustration);
 
 			oRm.openStart("figcaption").openEnd();
 				oRm.renderControl(sIllustratedMessageTitle);
 				oRm.renderControl(sIllustratedMessageDescription.addStyleClass("sapMIllustratedMessageDescription"));
 			oRm.close("figcaption");
+
+			oRm.close("div"); // main content container end
 
 			oRm.openStart("div");
 			oRm.class("sapMIllustratedMessageAdditionalContent"); // helper class in order to hide the additional content when on Base breakpoint
