@@ -2,13 +2,19 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
-	"sap/ui/integration/util/Utils"
+	"sap/ui/integration/util/Utils",
+	"sap/m/IllustratedMessageType",
+	"sap/m/IllustratedMessageSize"
 ], function (
+	Core,
 	BindingHelper,
 	BindingResolver,
-	Utils
+	Utils,
+	IllustratedMessageType,
+	IllustratedMessageSize
 ) {
 	"use strict";
 
@@ -35,9 +41,18 @@ sap.ui.define([
 		oCard.startManifestProcessing();
 
 		return ManifestResolver._awaitReadyEvent(oCard)
-			.then(ManifestResolver._handleCardReady);
+			.then(ManifestResolver._handleCardReady)
+			.catch(function (oError) {
+				return ManifestResolver._handleCardSevereError(oCard, oError);
+			});
 	};
 
+	/**
+	 * Waits for the _ready event of the card
+	 * @private
+	 * @param {sap.ui.integration.widgets.Card} oCard The card.
+	 * @returns {Promise} A promise which is resolved when the _ready event is fired.
+	 */
 	ManifestResolver._awaitReadyEvent = function (oCard) {
 		if (oCard.isReady()) {
 			return Promise.resolve(oCard);
@@ -50,10 +65,17 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Resolves the manifest when the card is ready.
+	 * @private
+	 * @param {sap.ui.integration.widgets.Card} oCard The card.
+	 * @returns {string} Stringified version of the resolved manifest.
+	 */
 	ManifestResolver._handleCardReady = function (oCard) {
-		var oManifest = oCard.getManifestEntry("/");
-		var aFilters = [];
-		var aErrors = oCard.getFundamentalErrors();
+		var oManifest = oCard.getManifestEntry("/"),
+			aFilters = [],
+			aErrors = oCard.getSevereErrors(),
+			oContentMessage = oCard.getContentMessage();
 
 		if (aErrors.length) {
 			return Promise.reject(aErrors.join(" "));
@@ -80,10 +102,12 @@ sap.ui.define([
 				var oSubConfig;
 				var sDataPath;
 
-				if (oContext.getStaticConfiguration) {
+				if (oContentMessage && sManifestPath === "/sap.card/content") {
+					oSubConfig = {
+						message: oContentMessage
+					};
+				} else if (oContext.getStaticConfiguration) {
 					oSubConfig = oContext.getStaticConfiguration();
-				} else if (oContext._oCardOriginalContent && oContext._oCardOriginalContent.getStaticConfiguration) {
-					oSubConfig = oContext._oCardOriginalContent.getStaticConfiguration();
 				} else {
 					oSubConfig = Utils.getNestedPropertyValue(oManifest, sManifestPath);
 				}
@@ -102,6 +126,32 @@ sap.ui.define([
 		} catch (ex) {
 			return Promise.reject(ex);
 		}
+	};
+
+	/**
+	 * Resolves the manifest if there is a severe error. This function makes sure that we always return a manifest.
+	 * @private
+	 * @param {sap.ui.integration.widgets.Card} oCard The card.
+	 * @param {object} oError The error which was caught.
+	 * @returns {string} Stringified version of the resolved manifest.
+	 */
+	ManifestResolver._handleCardSevereError = function (oCard, oError) {
+		var oManifest = oCard.getManifestEntry("/"),
+			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+
+		oManifest["sap.card"] = {
+			content: {
+				message: {
+					type: "error",
+					title: oResourceBundle.getText("CARD_ERROR_OCCURED"),
+					description: oError.toString(),
+					illustrationType: IllustratedMessageType.SimpleError,
+					illustrationSize: IllustratedMessageSize.Spot
+				}
+			}
+		};
+
+		return JSON.stringify(oManifest);
 	};
 
 	return ManifestResolver;

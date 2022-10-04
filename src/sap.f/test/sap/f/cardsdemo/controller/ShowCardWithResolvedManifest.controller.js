@@ -31,14 +31,7 @@ sap.ui.define([
 				oChildCard.resolveManifest()
 					.then(function (sRes) {
 						oOutput2.setValue(JSON.stringify(JSON.parse(sRes), null, "\t"));
-					})
-					.catch(function (sError) {
-						// ...
 					});
-
-				oMainCard.attachEvent("_error", function (oEvent) {
-					// ...
-				});
 
 				// you can ignore oOriginalParameters, not really needed currently
 			}.bind(this);
@@ -54,14 +47,7 @@ sap.ui.define([
 			oMainCard.resolveManifest()
 				.then(function (sRes) {
 					oOutput1.setValue(JSON.stringify(JSON.parse(sRes), null, "\t"));
-				})
-				.catch(function (sError) {
-					// ...
 				});
-
-			oMainCard.attachEvent("_error", function (oEvent) {
-				// ...
-			});
 		},
 
 		simulateShowCardButtonPress: function () {

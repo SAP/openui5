@@ -483,7 +483,7 @@ sap.ui.define([
 		this._oContentFactory = new ContentFactory(this);
 		this._oCardObserver = new CardObserver(this);
 		this._bFirstRendering = true;
-		this._aFundamentalErrors = [];
+		this._aSevereErrors = [];
 		this._sPerformanceId = "UI5 Integration Cards - " + this.getId() + "---";
 		this._aActiveLoadingProviders = [];
 		this._fnOnDataReady = function () {
@@ -689,7 +689,7 @@ sap.ui.define([
 	 */
 	Card.prototype.startManifestProcessing = function () {
 		if (!Utils.isBindingSyntaxComplex()) {
-			this._logFundamentalError(
+			this._logSevereError(
 				"Cannot parse manifest. Complex binding syntax is not enabled - " +
 				"To enable it, set the 'compatVersion' configuration option to 'edge', e.g.: data-sap-ui-compatVersion='edge' - " +
 				"sap.ui.integration.widgets.Card"
@@ -838,7 +838,7 @@ sap.ui.define([
 					return;
 				}
 
-				this._logFundamentalError(e.message);
+				this._logSevereError(e.message);
 				this._applyManifest();
 			}.bind(this));
 	};
@@ -869,7 +869,7 @@ sap.ui.define([
 
 				resolve();
 			}.bind(this), function (vErr) {
-				this._logFundamentalError("Failed to load " + sFullExtensionPath + ". Check if the path is correct. Reason: " + vErr);
+				this._logSevereError("Failed to load " + sFullExtensionPath + ". Check if the path is correct. Reason: " + vErr);
 				reject(vErr);
 			}.bind(this));
 		}.bind(this));
@@ -877,22 +877,22 @@ sap.ui.define([
 
 	/**
 	 * Logs an error which does not allow the card to be rendered.
-	 * Use <code>getFundamentalErrors()</code> method to retrieve a list of such errors.
+	 * Use <code>getSevereErrors()</code> method to retrieve a list of such errors.
 	 * @param {string} sMessage The error message.
 	 */
-	Card.prototype._logFundamentalError = function (sMessage) {
+	Card.prototype._logSevereError = function (sMessage) {
 		Log.error(sMessage);
-		this._aFundamentalErrors.push(sMessage);
+		this._aSevereErrors.push(sMessage);
 	};
 
 	/**
-	 * Retrieves a list of fundamental errors which appeared during card initialization.
+	 * Retrieves a list of severe errors that appeared during card initialization.
 	 * @private
 	 * @ui5-restricted sap.ui.integration
-	 * @returns {array} A list of fundamental errors if there are any. Empty array otherwise.
+	 * @returns {array} A list of severe errors if there are any. Empty array otherwise.
 	 */
-	Card.prototype.getFundamentalErrors = function () {
-		return this._aFundamentalErrors;
+	Card.prototype.getSevereErrors = function () {
+		return this._aSevereErrors;
 	};
 
 	/**
@@ -918,7 +918,7 @@ sap.ui.define([
 		var oCardManifest = this._oCardManifest;
 
 		if (!oCardManifest.get("/sap.card")) {
-			this._logFundamentalError("There must be a 'sap.card' section in the manifest.");
+			this._logSevereError("There must be a 'sap.card' section in the manifest.");
 		}
 
 		if (oCardManifest && oCardManifest.getResourceBundle()) {
@@ -1152,6 +1152,7 @@ sap.ui.define([
 		this._bFirstRendering = null;
 		this._oIntegrationRb = null;
 		this._aActiveLoadingProviders = null;
+		this._oContentMessage = null;
 
 		if (this._oActionsToolbar) {
 			this._oActionsToolbar.destroy();
@@ -1233,7 +1234,7 @@ sap.ui.define([
 		if (this._sAppId) {
 			LoaderExtensions.registerResourcePath(this._sAppId.replace(/\./g, "/"), this._oCardManifest.getUrl() || "/");
 		} else {
-			this._logFundamentalError("Card sap.app/id entry in the manifest is mandatory");
+			this._logSevereError("Card sap.app/id entry in the manifest is mandatory");
 		}
 	};
 
@@ -1859,7 +1860,7 @@ sap.ui.define([
 			bHasContent = !!oContentManifest;
 
 		if (bHasContent && !sCardType) {
-			this._logFundamentalError("Card type property is mandatory!");
+			this._logSevereError("Card type property is mandatory!");
 			return null;
 		}
 
@@ -2001,11 +2002,9 @@ sap.ui.define([
 
 		var oErrorConfiguration = this._oCardManifest.get(MANIFEST_PATHS.ERROR_MESSAGES),
 			oError = this._getIllustratedMessage(oErrorConfiguration, bNoItems),
-			oContentSection = this._oCardManifest.get(MANIFEST_PATHS.CONTENT),
-			oCardContent = merge({}, this.getCardContent());
+			oContentSection = this._oCardManifest.get(MANIFEST_PATHS.CONTENT);
 
 		if (oContentSection) {
-			this._handleNoDataItems(oCardContent, oError, bNoItems);
 			this._destroyPreviousContent(this.getCardContent());
 			this._preserveMinHeightInContent(oError);
 			this.setAggregation("_content", oError);
@@ -2025,7 +2024,7 @@ sap.ui.define([
 	Card.prototype._getIllustratedMessage = function (oErrorConfiguration, bNoItems) {
 		var sIllustratedMessageType = IllustratedMessageType.UnableToLoad,
 			sIllustratedMessageSize = IllustratedMessageSize.Spot,
-			sTitle,
+			sTitle = this._oIntegrationRb.getText("CARD_DATA_LOAD_ERROR"),
 			sDescription;
 
 		//no item from request default messages, for some card types
@@ -2060,6 +2059,13 @@ sap.ui.define([
 				sDescription = oErrorData.description;
 		}
 
+		this._oContentMessage = {
+			type: bNoItems ? "noData" : "error",
+			illustrationType: sIllustratedMessageType,
+			illustrationSize: sIllustratedMessageSize,
+			title: sTitle,
+			description: sDescription
+		};
 
 		var oIllustratedMessage = new IllustratedMessage({
 			illustrationType: sIllustratedMessageType,
@@ -2079,17 +2085,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handle when there is no data in error cases for manifest resolver.
-	 *
-	 * @param {object} oCardContent clone of the original card content before it is destroyed.
-	 * @param {object} oError IllustratedMessage used for the error content.
-	 * @param {boolean} bNoItems No items are available after request.
+	 * @ui5-restricted sap.ui.integration
 	 * @private
+	 * @returns {object} The content message if any.
 	 */
-	Card.prototype._handleNoDataItems = function (oCardContent, oError, bNoItems) {
-		if (bNoItems) {
-			oError._oCardOriginalContent = oCardContent;
-		}
+	Card.prototype.getContentMessage = function () {
+		return this._oContentMessage;
 	};
 
 	Card.prototype._getTemporaryContent = function (sCardType, oContentManifest) {
