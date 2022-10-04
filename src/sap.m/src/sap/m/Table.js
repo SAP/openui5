@@ -1291,8 +1291,8 @@ sap.ui.define([
 			return sType === "Detail" || sType === "DetailAndActive" || sType === "Navigation";
 		}) ? iThemeDensityWidth : 0;
 
-		// Inset + HighlightCol + NavigatedIndicatorCol + borders = ~0.65rem
-		return iInset + iSelectionWidth + iActionWidth + 0.65;
+		// borders = ~0.25rem
+		return iInset + iSelectionWidth + iActionWidth + 0.25;
 	};
 
 	/**
@@ -1313,7 +1313,7 @@ sap.ui.define([
 			// check for column width unit
 			if (sUnit === "px") {
 				// column has a fixed width -> convert column width from px into float rem value
-				fAccumulatedWidth += parseFloat((parseFloat(sWidth).toFixed(2) / sBaseFontSize).toFixed(2));
+				fAccumulatedWidth += parseFloat(sWidth) / sBaseFontSize;
 			} else if (sUnit === "em" || sUnit === "rem") {
 				// column has a fixed width -> convert to float in any case to get only the column width value
 				fAccumulatedWidth += parseFloat(sWidth);
@@ -1323,7 +1323,7 @@ sap.ui.define([
 			}
 
 			oColumn.setDemandPopin(oColumn !== oMostImportantColumn);
-			oColumn.setMinScreenWidth(oColumn !== oMostImportantColumn ? fAccumulatedWidth + "rem" : "");
+			oColumn.setMinScreenWidth(oColumn !== oMostImportantColumn ? parseFloat(fAccumulatedWidth).toFixed(2) + "rem" : "");
 		});
 
 		return fAccumulatedWidth;
