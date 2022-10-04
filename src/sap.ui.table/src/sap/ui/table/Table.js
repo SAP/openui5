@@ -499,7 +499,7 @@ sap.ui.define([
 			 * Defines the message strip to display binding-related messages.
 			 * @since 1.73
 			 */
-			_messageStrip: {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
+			_messageStrip : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
 
 			/**
 			 * Hidden dependents are dependents that are not cloned. But like for normal dependents, their data binding context and

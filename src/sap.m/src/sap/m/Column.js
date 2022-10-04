@@ -721,13 +721,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the <code>sap.ui.core.IColumnHeaderMenu<\code>, which is the current target of the association <code>headerMenu</code>, or null.
+	 * Returns the column header menu instance that this column is associated with via the <code>headerMenu</code> association.
 	 *
-	 * @returns {sap.ui.core.IColumnHeaderMenu}
-	 * @since 1.98.0
-	 * @public
+	 * @returns {sap.ui.core.IColumnHeaderMenu | undefined} The column header menu instance
+	 * @private
 	 */
-	Column.prototype.getColumnHeaderMenu = function () {
+	Column.prototype._getHeaderMenuInstance = function () {
 		return sap.ui.getCore().byId(this.getAssociation("headerMenu"));
 	};
 

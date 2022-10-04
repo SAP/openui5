@@ -673,12 +673,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("Open menu", function (assert) {
-		var oSpy = this.spy(this.oMenu, "openBy");
+		var oOpenSpy = this.spy(this.oMenu, "openBy");
+		var oColumnPressSpy = this.spy(this.sut.getTable(), "fireEvent");
 
 		this.sut.$().trigger("tap");
 		Core.applyChanges();
 
-		assert.equal(oSpy.callCount, 1, "openBy called exactly once");
-		assert.ok(oSpy.calledWith(this.sut), "openBy called with correct column");
+		assert.equal(oOpenSpy.callCount, 1, "openBy called exactly once");
+		assert.ok(oOpenSpy.calledWith(this.sut), "openBy called with correct column");
+		assert.notOk(oColumnPressSpy.calledWithExactly("columnPress"), "The columnPress event is not fired");
 	});
 });

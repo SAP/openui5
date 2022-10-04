@@ -209,7 +209,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "sap/ui/core/Invisibl
 					rm.openStart("div");
 					rm.class("sapMColumnHeader");
 
-					var oMenu = oColumn.getColumnHeaderMenu();
+					var oMenu = oColumn._getHeaderMenuInstance();
 					if ((oTable.bActiveHeaders || oMenu)  && !control.isA("sap.ui.core.InvisibleText")) {
 						// add active header attributes and style class
 						rm.attr("tabindex", 0);
