@@ -432,8 +432,8 @@ sap.ui.define([
 	 * tree is filtered, the count of all entries matching the filter conditions is returned. The
 	 * entries required only for the tree structure are not counted.
 	 *
-	 * @returns {number|undefined} The count of entries in the tree, or <code>undefined</code> if it
-	 *   is unknown, for example because the binding is not resolved
+	 * @returns {number|undefined} The count of entries in the tree, or <code>undefined</code> if
+	 *   the binding is not resolved
 	 * @public
 	 * @since 1.108.0
 	 */
