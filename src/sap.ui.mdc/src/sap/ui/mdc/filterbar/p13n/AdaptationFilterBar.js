@@ -60,7 +60,7 @@ sap.ui.define([
 
 	AdaptationFilterBar.prototype._onModifications = function() {
 		var pModification = FilterBarBase.prototype._onModifications.apply(this, arguments);
-		if (this._bUseQueryPanel) {
+		if (this._oFilterBarLayout.getInner().isA("sap.ui.mdc.p13n.panels.FilterPanel")) {
 			var oP13nData = this._oFilterBarLayout.getInner().getP13nData();
 			this._updateActiveStatus(oP13nData);
 			this._oFilterBarLayout.setP13nData({items: oP13nData});
