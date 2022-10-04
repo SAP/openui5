@@ -619,6 +619,38 @@ sap.ui.define([
 										"type": "Warning"
 									}
 								]
+							},
+							{
+								"id": "e-mail",
+								"label": "E-mail",
+								"type": "TextArea",
+								"rows": 1,
+								"placeholder": "e-mail",
+								"validations": [{
+										"required": true,
+										"message": "Value is required"
+									},
+									{
+										"pattern": "^\\w+[\\w-+\\.]*\\@\\w+([-\\.]\\w+)*\\.[a-zA-Z]{2,}+$",
+										"message": "You should enter a valid e-mail."
+									}
+								]
+							},
+							{
+								"id": "path",
+								"label": "path",
+								"type": "TextArea",
+								"rows": 1,
+								"placeholder": "path",
+								"validations": [{
+										"required": true,
+										"message": "Value is required"
+									},
+									{
+										"pattern": "^\\w+\\\\[\\w+\\.]+$",
+										"message": "You should enter a valid path."
+									}
+								]
 							}
 						]
 					}
@@ -2116,7 +2148,10 @@ sap.ui.define([
 				aItems = oLayout.getItems(),
 				oComboBox1 = aItems[1],
 				oComboBox2 = aItems[3],
-				oTextArea = aItems[5];
+				oTextArea = aItems[5],
+				oTextArea2 = aItems[7],
+				oTextArea3 = aItems[9];
+
 
 			assert.strictEqual(oComboBox1.getValueState(), ValueState.None, "Control has no error");
 
@@ -2133,6 +2168,16 @@ sap.ui.define([
 						"bindingPath": "/comment",
 						"message": "Value is required",
 						"type": "Error"
+					},
+					{
+						"bindingPath": "/e-mail",
+						"message": "Value is required",
+						"type": "Error"
+					},
+					{
+						"bindingPath": "/path",
+						"message": "Value is required",
+						"type": "Error"
 					}
 				]
 			}, "messages model is correct");
@@ -2147,6 +2192,9 @@ sap.ui.define([
 			assert.strictEqual(oTextArea.getValueState(), ValueState.Error, "Control has an error");
 			assert.strictEqual(oTextArea.getValueStateText(), "Value is required", "Error text is correct");
 
+			assert.strictEqual(oTextArea2.getValueState(), ValueState.Error, "Control has an error");
+			assert.strictEqual(oTextArea2.getValueStateText(), "Value is required", "Error text is correct");
+
 			assert.deepEqual(oCard.getModel("messages").getData(), {
 				"hasErrors": true,
 				"hasWarnings": false,
@@ -2160,6 +2208,16 @@ sap.ui.define([
 						"bindingPath": "/comment",
 						"message": "Value is required",
 						"type": "Error"
+					},
+					{
+						"bindingPath": "/e-mail",
+						"message": "Value is required",
+						"type": "Error"
+					},
+					{
+						"bindingPath": "/path",
+						"message": "Value is required",
+						"type": "Error"
 					}
 				]
 			}, "messages model is correct");
@@ -2167,6 +2225,9 @@ sap.ui.define([
 			oComboBox1.setValue("Text");
 			oComboBox2.setValue("Text");
 			oTextArea.setValue("Text");
+			oTextArea2.setValue("Text");
+			oTextArea3.setValue("Text");
+
 
 			Core.applyChanges();
 			oCard.validateControls();
@@ -2176,6 +2237,9 @@ sap.ui.define([
 			assert.strictEqual(oComboBox2.getValueStateText(), oResourceBundle.getText("EDITOR_ONLY_LISTED_VALUES_ALLOWED"), "Error text is correct");
 			assert.strictEqual(oTextArea.getValueState(), ValueState.Warning, "ComboBox has an warning");
 			assert.strictEqual(oTextArea.getValueStateText(), "Your comment should be between 10 and 200 characters.", "Text is correct");
+			assert.strictEqual(oTextArea2.getValueState(), ValueState.Error, "TextArea has an error");
+			assert.strictEqual(oTextArea2.getValueStateText(), "You should enter a valid e-mail.", "Text is correct");
+			assert.strictEqual(oTextArea3.getValueStateText(), "You should enter a valid path.", "Text is correct");
 
 			assert.deepEqual(oCard.getModel("messages").getData(),
 				{
@@ -2191,17 +2255,32 @@ sap.ui.define([
 							"bindingPath": "/comment",
 							"message": "Your comment should be between 10 and 200 characters.",
 							"type": "Warning"
+						},
+						{
+							"bindingPath": "/e-mail",
+							"message": "You should enter a valid e-mail.",
+							"type": "Error"
+						},
+						{
+							"bindingPath": "/path",
+							"message": "You should enter a valid path.",
+							"type": "Error"
 						}
 					]
 				}, "messages model is correct");
 
 			oComboBox2.setSelectedKey("reason1");
 			oTextArea.setValue("TextTextTextTextTextTextTextTextText");
+			oTextArea2.setValue("my@mymail.com");
+			oTextArea3.setValue("Folder\\file.pdf");
+
 			Core.applyChanges();
 			oCard.validateControls();
 
 			assert.strictEqual(oComboBox2.getValueState(), ValueState.None, "Control doesn't have an error");
 			assert.strictEqual(oTextArea.getValueState(), ValueState.None, "Control doesn't have an error");
+			assert.strictEqual(oTextArea2.getValueState(), ValueState.None, "Control doesn't have an error");
+			assert.strictEqual(oTextArea3.getValueState(), ValueState.None, "Control doesn't have an error and backslashes are escaped correctly");
 
 			assert.deepEqual(oCard.getModel("messages").getData(), {
 				"hasErrors": false,

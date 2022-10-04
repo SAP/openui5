@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/merge",
+	"sap/base/util/deepExtend",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/layout/AlignedFlowLayout",
 	"sap/ui/dom/units/Rem",
@@ -54,6 +55,7 @@ sap.ui.define([
 	isEmptyObject,
 	isPlainObject,
 	merge,
+	deepExtend,
 	ResizeHandler,
 	AlignedFlowLayout,
 	Rem,
@@ -151,10 +153,22 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	ObjectContent.prototype._prepareValidationControl = function (oControl, oItem, sChangeFunction) {
+	ObjectContent.prototype._prepareValidationControl = function (oControl, oItem, sChangeFunction, sPath) {
+		var oClonedItem = deepExtend({}, oItem);
+
 		oControl.attachEvent(sChangeFunction, this._validationControlChanged.bind(this));
 		this._aValidationControls.push(oControl);
-		oControl._oItem = oItem;
+
+		// this is needed in order to skip binding for "pattern"
+		if (oClonedItem.validations) {
+			oClonedItem.validations.forEach(function (oValidation, iIndex) {
+				if (oValidation.pattern) {
+					oValidation.pattern = this.getCardInstance().getManifestEntry(sPath + "/validations/" + iIndex)["pattern"];
+				}
+			}.bind(this));
+		}
+
+		oControl._oItem = oClonedItem;
 	};
 
 	ObjectContent.prototype._hasData = function () {
@@ -271,7 +285,7 @@ sap.ui.define([
 		this._formElementsIds = new Set();
 
 		aGroups.forEach(function (oGroupConfiguration, i) {
-			var oGroup = this._createGroup(oGroupConfiguration);
+			var oGroup = this._createGroup(oGroupConfiguration, "/sap.card/content/groups/" + i);
 
 			if (oGroupConfiguration.alignment === "Stretch") {
 				oGroup.setLayoutData(new FlexItemData({
@@ -302,7 +316,7 @@ sap.ui.define([
 		});
 	};
 
-	ObjectContent.prototype._createGroup = function (oGroupConfiguration) {
+	ObjectContent.prototype._createGroup = function (oGroupConfiguration, sPath) {
 		var vVisible;
 
 		if (typeof oGroupConfiguration.visible == "string") {
@@ -325,15 +339,15 @@ sap.ui.define([
 			oGroup.addStyleClass("sapFCardObjectGroupWithTitle");
 		}
 
-		oGroupConfiguration.items.forEach(function (oItem) {
+		oGroupConfiguration.items.forEach(function (oItem, iIndex) {
 			oItem.labelWrapping = oGroupConfiguration.labelWrapping;
-			this._createGroupItems(oItem).forEach(oGroup.addItem, oGroup);
+			this._createGroupItems(oItem, sPath + "/items/" + iIndex).forEach(oGroup.addItem, oGroup);
 		}, this);
 
 		return oGroup;
 	};
 
-	ObjectContent.prototype._createGroupItems = function (oItem) {
+	ObjectContent.prototype._createGroupItems = function (oItem, sPath) {
 		var vLabel = oItem.label,
 			oLabel,
 			vVisible,
@@ -364,7 +378,7 @@ sap.ui.define([
 			});
 		}
 
-		oControl = this._createItem(oItem, vVisible, oLabel);
+		oControl = this._createItem(oItem, vVisible, oLabel, sPath);
 
 		if (oControl) {
 			oControl.addStyleClass("sapFCardObjectItemValue");
@@ -412,7 +426,7 @@ sap.ui.define([
 		return oAvatar;
 	};
 
-	ObjectContent.prototype._createItem = function (oItem, vVisible, oLabel) {
+	ObjectContent.prototype._createItem = function (oItem, vVisible, oLabel, sPath) {
 		var oControl,
 			vValue = oItem.value,
 			vTooltip = oItem.tooltip,
@@ -432,10 +446,10 @@ sap.ui.define([
 				oControl = this._createButtonGroupItem(oItem, vVisible);
 				break;
 			case "ComboBox":
-				oControl = this._createComboBoxItem(oItem, vVisible, oLabel);
+				oControl = this._createComboBoxItem(oItem, vVisible, oLabel, sPath);
 				break;
 			case "TextArea":
-				oControl = this._createTextAreaItem(oItem, vVisible, oLabel);
+				oControl = this._createTextAreaItem(oItem, vVisible, oLabel, sPath);
 				break;
 
 			// deprecated types
@@ -682,7 +696,7 @@ sap.ui.define([
 		}
 	};
 
-	ObjectContent.prototype._createComboBoxItem = function (oItem, vVisible, oLabel) {
+	ObjectContent.prototype._createComboBoxItem = function (oItem, vVisible, oLabel, sPath) {
 		var oCard = this.getCardInstance(),
 			oFormModel = oCard.getModel("form"),
 			oSettings = {
@@ -739,12 +753,12 @@ sap.ui.define([
 		oControl.addEventDelegate({
 			onAfterRendering: fnUpdateValue
 		});
-		this._prepareValidationControl(oControl, oItem, "change");
+		this._prepareValidationControl(oControl, oItem, "change", sPath);
 
 		return oControl;
 	};
 
-	ObjectContent.prototype._createTextAreaItem = function (oItem, vVisible, oLabel) {
+	ObjectContent.prototype._createTextAreaItem = function (oItem, vVisible, oLabel, sPath) {
 		var oCard = this.getCardInstance(),
 			oFormModel = oCard.getModel("form"),
 			oControl = new TextArea({
@@ -777,7 +791,7 @@ sap.ui.define([
 		oControl.addEventDelegate({
 			onAfterRendering: fnUpdateValue
 		});
-		this._prepareValidationControl(oControl, oItem, "liveChange");
+		this._prepareValidationControl(oControl, oItem, "liveChange", sPath);
 
 		return oControl;
 	};
