@@ -13,7 +13,7 @@
 	margin: 0;
 
 	.sapFSPMain {
-		flex: 1 1 auto;
+		flex: 1 1;
 		padding: 0.5rem;
 		overflow: hidden auto;
 	}
@@ -73,7 +73,7 @@
 
 					.sapMTitle {
 						flex-grow: 2;
-						font-family: @sapUiFontFamily;
+						font-family: @sapUiFontBoldFamily;
 						font-size: @sapMFontHeader6Size;
 						font-style: normal;
 						font-weight: 700;
@@ -117,7 +117,7 @@
 				cursor: pointer;
 
 				.sapFSPItemText {
-					font-family: @sapUiFontFamily;
+					font-family: @sapUiFontSemiboldDuplexFamily;
 					font-size: @sapMFontHeader6Size;
 					font-style: normal;
 					font-weight: 600;
@@ -132,7 +132,7 @@
 					flex-shrink: 0;
 					align-items: center;
 					justify-content: center;
-					font-size: @sapMFontHeader5Size;
+					font-size: @sapMFontHeader4Size;
 					background-color: @sapUiGroupContentBackground;
 					color: @sapUiContentSelectedForegroundColor;
 					width: 2.75rem;
@@ -141,6 +141,32 @@
 					border-radius: 50%;
 					border: 0.0625rem solid @sapUiContentSelectedForegroundColor;
 					cursor: pointer;
+				}
+
+				&.sapFSPOverflowItem {
+					visibility: hidden;
+
+					.sapUiIcon {
+						color: @sapUiContentSelectedForegroundColor;
+					}
+
+					&:not(.sapFSPSelected):not(:hover) {
+						.sapUiIcon {
+							border: none;
+						}
+					}
+
+					&.sapFSPSelected {
+						&::before {
+							display: none;
+						}
+
+						.sapUiIcon {
+							border-color: @sapUiContentSelectedForegroundColor;
+							background-color: @sapUiListSelectionBackgroundColor;
+							color: @sapUiContentSelectedForegroundColor;
+						}
+					}
 				}
 
 				&:focus {
@@ -161,6 +187,10 @@
 
 				&:hover {
 					background-color: @sapUiListHoverBackground;
+
+					&.sapFSPOverflowItem .sapUiIcon {
+						border-color: @sapUiContentSelectedForegroundColor;
+					}
 				}
 
 				&.sapFSPSelected {
@@ -175,41 +205,13 @@
 					}
 
 					.sapUiIcon {
-						border: 0.125rem solid @sapUiContentSelectedForegroundColor;
+						border-color: @sapUiContentSelectedForegroundColor;
 						background-color: @sapUiContentSelectedForegroundColor;
 						color: @sapUiContentContrastIconColor;
 					}
 
 					&:focus::after {
 						border-left-color: transparent;
-					}
-
-					&.sapFSPOverflowItem {
-						&::before {
-							display: none;
-						}
-
-						.sapUiIcon {
-							border: 0.125rem solid @sapNeutralColor;
-							background-color: @sapNeutralColor;
-							color: @sapUiContentContrastIconColor;
-						}
-					}
-				}
-
-				&.sapFSPOverflowItem {
-					visibility: hidden;
-
-					.sapUiIcon {
-						color: @sapNeutralColor;
-
-						&:not(:hover) {
-							border: none;
-						}
-
-						&:hover {
-							border-color: @sapNeutralColor;
-						}
 					}
 				}
 			}
@@ -295,7 +297,7 @@
 					}
 
 					.sapUiIcon {
-						font-size: @sapMFontHeader4Size;
+						font-size: @sapMFontHeader5Size;
 						width: 2rem;
 						height: 2rem;
 						line-height: 1.75rem;
