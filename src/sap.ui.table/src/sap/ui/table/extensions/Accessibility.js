@@ -434,11 +434,6 @@ sap.ui.define([
 				if (TableUtils.getInteractiveElements($Cell) !== null) {
 					aLabels.push(sTableId + "-toggleedit");
 				}
-
-				if (TableUtils.Grouping.isInTreeMode(oTable) && $Cell.parent().attr("aria-selected") === "true") {
-					// aria-selected on the row seems not be enough for treegrids
-					aLabels.push(sTableId + "-ariarowselected");
-				}
 			}
 
 			var sText = oInfo ? oInfo.description : " ";
@@ -586,10 +581,6 @@ sap.ui.define([
 				aLabels.push(sTableId + "-ariagrandtotallabel");
 			} else if (oRow.isGroupSummary()) {
 				aLabels.push(sTableId + "-ariagrouptotallabel");
-			}
-
-			if (!oRow.isSummary() && !oRow.isGroupHeader() && $Cell.attr("aria-selected") === "true") {
-				aLabels.push(sTableId + "-ariarowselected");
 			}
 
 			if (TableUtils.hasRowHighlights(oTable) && !oRow.isGroupHeader() && !oRow.isSummary()) {
@@ -1283,7 +1274,7 @@ sap.ui.define([
 				sTextKeyboard = mTooltipTexts.keyboard["rowSelect"];
 				sTextMouse = mTooltipTexts.mouse["rowSelect"];
 			} else {
-				sTextKeyboard = TableUtils.getResourceText("TBL_ROW_DESC_SELECTED") + " " + mTooltipTexts.keyboard["rowDeselect"];
+				sTextKeyboard = mTooltipTexts.keyboard["rowDeselect"];
 				sTextMouse = mTooltipTexts.mouse["rowDeselect"];
 			}
 		}
