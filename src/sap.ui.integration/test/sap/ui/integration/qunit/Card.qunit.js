@@ -601,6 +601,44 @@ sap.ui.define([
 				}
 			}
 		};
+
+		var oManifest_List_Simple = {
+			"sap.app": {
+				"id": "my.card.qunit.test.ListCardSimple"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "L3 Request list content Card",
+					"subTitle": "Card subtitle"
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 15"
+							},
+							{
+								"Name": "Notebook Basic 17"
+							},
+							{
+								"Name": "Notebook Basic 18"
+							},
+							{
+								"Name": "Notebook Basic 19"
+							}
+						]
+					},
+					"item": {
+						"title": {
+							"label": "Title",
+							"value": "{Name}"
+						}
+					}
+				}
+			}
+		};
+
 		var oManifest_No_Data_Object = {
 			"sap.app": {
 				"id": "test.card.NoData"
@@ -2408,6 +2446,36 @@ sap.ui.define([
 				oLogSpy.calledWith(sinon.match(/^Cannot parse manifest. Complex binding syntax is not enabled.*/)),
 				"Error message should be logged"
 			);
+		});
+
+		QUnit.test("Height of the Card should not change when error message is shown", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+				var initialCardHeight = this.oCard.getCardContent().getDomRef().offsetHeight + "px";
+
+				var oErrorConfiguration = {
+					"noData": {
+						"type": "NoEntries",
+						"title": "No new products",
+						"description": "Please review later",
+						"size": "Auto"
+					}
+				};
+				var oFlexBox = this.oCard._getIllustratedMessage(oErrorConfiguration, true);
+
+				// Assert
+				assert.strictEqual(initialCardHeight, oFlexBox.getHeight(), "Height of the card content is not changed (Illustrated message is with the same height as the card before the error)");
+
+				// Clean up
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_List_Simple);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 
 		QUnit.module("Component Card");
