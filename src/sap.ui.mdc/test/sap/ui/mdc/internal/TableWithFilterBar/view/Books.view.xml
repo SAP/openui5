@@ -866,7 +866,7 @@
 								</mdc:Field>
 							</mdc:table.Column>
 							<mdc:table.Column id="id4" header="Price" dataProperty="price">
-								<mdc:Field id="F_price" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'price'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" editMode="Display" width="100%" multipleLines="false"/>
+								<mdc:Field id="F_price" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path:'price', type:'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}, {path:'currency_code', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, {mode:'OneTime', path:'/##@@requestCurrencyCodes', targetType:'any'}], type:'sap.ui.model.odata.type.Currency', mode:'TwoWay'}" editMode="Display" width="100%" multipleLines="false"/>
 							</mdc:table.Column>
 							<mdc:table.Column id="id5" header="Stock" dataProperty="stock" importance="High">
 								<mdc:Field id="F_stock" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'stock', type:'sap.ui.model.odata.type.Int32'}" editMode="Display" width="100%" multipleLines="false"/>

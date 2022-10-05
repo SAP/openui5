@@ -88,7 +88,7 @@ sap.ui.define([
 		};
 
 		if (oProperty.name === "total") {
-			oCtrlProperties.value = "{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}";
+			oCtrlProperties.value = {parts: [{path:'total', type: new sap.ui.model.odata.type.Decimal(undefined, {precision: 9, scale: 2})}, {path:'currency_code', type: new sap.ui.model.odata.type.String(undefined, {maxLength: 3})}, {path:'/##@@requestCurrencyCodes', mode:'OneTime', targetType:'any'}], type: new sap.ui.model.odata.type.Currency(), mode:'TwoWay'};
 		} else if (oProperty.name === "customer_ID") {
 			oCtrlProperties.additionalValue = "{customer/name}";
 			oCtrlProperties.display = FieldDisplay.Description;

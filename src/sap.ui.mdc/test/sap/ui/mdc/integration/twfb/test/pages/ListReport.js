@@ -294,7 +294,8 @@ sap.ui.define([
 			  "Gilman, Charlotte Perkins",
 			  [
 				"15.54",
-				"MXN"
+				"MXN",
+				null
 			  ],
 			  815
 			],
@@ -304,7 +305,8 @@ sap.ui.define([
 				"Gilman, Charlotte Perkins",
 				[
 					"35.14",
-					"CUP"
+					"CUP",
+					null
 				],
 				5589
 			],
@@ -314,7 +316,8 @@ sap.ui.define([
 				606,
 				[
 					"54.87",
-					"JEP"
+					"JEP",
+					null
 				],
 				3698,
 				"religious_text",
@@ -326,7 +329,8 @@ sap.ui.define([
 				103,
 				[
 					"82.4",
-					"SLL"
+					"SLL",
+					null
 				],
 				525,
 				"religious_text",
@@ -338,7 +342,8 @@ sap.ui.define([
 				101,
 				[
 					"79.84",
-					"IMP"
+					"IMP",
+					null
 				],
 				4458,
 				"religious_text",
@@ -350,7 +355,8 @@ sap.ui.define([
 				101,
 				[
 					"99.28",
-					"KES"
+					"KES",
+					null
 				],
 				1838,
 				"religious_text",
@@ -362,7 +368,8 @@ sap.ui.define([
 				1032,
 				[
 					"0.04",
-					"ANG"
+					"ANG",
+					null
 				],
 				3340,
 				"adventure_novel",
@@ -374,7 +381,8 @@ sap.ui.define([
 				246,
 				[
 					"46113",
-					"XCD"
+					"XCD",
+					null
 				],
 				9996,
 				"children_s_literature",
@@ -386,7 +394,8 @@ sap.ui.define([
 				935,
 				[
 					"47209",
-					"TJS"
+					"TJS",
+					null
 				],
 				2090,
 				"biography",
@@ -398,7 +407,8 @@ sap.ui.define([
 				"More, Thomas, Saint",
 				[
 					"86.19",
-					"GEL"
+					"GEL",
+					null
 				],
 				19
 			],
@@ -408,7 +418,8 @@ sap.ui.define([
 				361,
 				[
 					"15373",
-					"AWG"
+					"AWG",
+					null
 				],
 				2712,
 				"religious_text",
@@ -420,7 +431,8 @@ sap.ui.define([
 				902,
 				[
 				  "24.81",
-				  "CNY"
+				  "CNY",
+				  null
 				],
 				101,
 				"religious_fiction",
