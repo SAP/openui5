@@ -1209,7 +1209,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// Assert
-		var dialogTitleId = oDialog.$().find('header > .sapMBar .sapMTitle').attr('id');
+		var dialogTitleId = oDialog.$().find('header .sapMDialogTitleGroup > .sapMBar .sapMTitle').attr('id');
 		var subHeaderId = oDialog.$().find('.sapMDialogSubHeader > .sapMBar .sapMTitle').attr('id');
 		var dialogAriaLabelledBy = oDialog.getAriaLabelledBy();
 		assert.strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogTitleId + ' ' + TEXT_ID);
@@ -1689,9 +1689,68 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// assert
-		var dialogTitleId = oDialog.$().find('header > .sapMBar .sapMTitle').attr('id');
+		var dialogTitleId = oDialog.$().find('header .sapMDialogTitleGroup > .sapMBar .sapMTitle').attr('id');
 		var titleInSubHeaderId = oDialog.$().find('.sapMDialogSubHeader > .sapMBar .sapMTitle').attr('id');
 		assert.strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogTitleId + ' ' + titleInSubHeaderId);
+
+		// cleanup
+		oDialog.destroy();
+	});
+
+	QUnit.test("Draggale/resizable dialog should have correct aria-roledescription for header", function(assert) {
+		// arrange
+		var oDialog = new Dialog({
+			draggable: true,
+			resizable: true
+		});
+
+		// act
+		oDialog.open();
+		this.clock.tick(500);
+
+		// assert
+		var sRenderedRoleDescription = oDialog.$().find('header .sapMDialogTitleGroup').attr('aria-roledescription');
+		var oRb = Core.getLibraryResourceBundle("sap.m");
+		var sExpectedRoleDescription = oRb.getText("DIALOG_HEADER_ARIA_ROLE_DESCRIPTION");
+		assert.ok(sRenderedRoleDescription, "The aria-roledescription attrbute is present on a draggable/resizable dialog");
+		assert.strictEqual(sRenderedRoleDescription, sExpectedRoleDescription, "Aria-roledescription text has the correct value");
+
+		// cleanup
+		oDialog.destroy();
+	});
+
+	QUnit.test("Header should not have the aria-roledescription and aria-describedby attributes if dialog is not draggable/resizable", function(assert) {
+		// arrange
+		var oDialog = new Dialog();
+
+		// act
+		oDialog.open();
+		this.clock.tick(500);
+
+		// assert
+		assert.notOk(oDialog.$().find('header .sapMDialogTitleGroup').attr('aria-roledescription'), "Aria-roledescription attribute is not set");
+		assert.notOk(oDialog.$().find('header .sapMDialogTitleGroup').attr('aria-describedby'), "Aria-describedby attribute is not set");
+
+		// cleanup
+		oDialog.destroy();
+	});
+
+	QUnit.test("Dialog should have aria-describedby pointing to the correct text", function(assert) {
+		// arrange
+		var oDialog = new Dialog({
+			title: "Qunit test",
+			draggable: true,
+			resizable: true
+		});
+
+		// act
+		oDialog.open();
+		this.clock.tick(500);
+
+		// assert
+		var sAriaDescribedbyText = oDialog.$().find('header .sapMDialogTitleGroup > #' + oDialog.getId() + '-ariaDescribedbyText').attr('id');
+		assert.ok(oDialog.$().find('header .sapMDialogTitleGroup').attr('aria-describedby'), "The aria-describedby attrbute is present on a draggable/resizable dialog");
+		assert.strictEqual(oDialog.$().find('header .sapMDialogTitleGroup').attr('aria-describedby'), sAriaDescribedbyText, "The aria-describedby attrbute points to the correct span");
 
 		// cleanup
 		oDialog.destroy();
