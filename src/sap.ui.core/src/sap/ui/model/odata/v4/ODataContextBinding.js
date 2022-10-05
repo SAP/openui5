@@ -1099,7 +1099,7 @@ sap.ui.define([
 			oEntity = oContext.getValue();
 
 			// avoid problems in fetchCanonicalPath (leading to an ODM#reportError)
-			if (oEntity && _Helper.getPrivateAnnotation(oEntity, "predicate")) {
+			if (oEntity && _Helper.hasPrivateAnnotation(oEntity, "predicate")) {
 				oPromise = oContext.fetchCanonicalPath();
 				oPromise.caught();
 				if (oPromise.getResult() === sCanonicalPath) {

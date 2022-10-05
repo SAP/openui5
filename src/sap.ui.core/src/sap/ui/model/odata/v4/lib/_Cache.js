@@ -2978,7 +2978,7 @@ sap.ui.define([
 							mStillAliveElements[sPredicate]);
 					} else {
 						oElement = that.aElements.$byPredicate[sPredicate];
-						if (_Helper.getPrivateAnnotation(oElement, "transientPredicate")) {
+						if (_Helper.hasPrivateAnnotation(oElement, "transientPredicate")) {
 							iIndex = that.removeElement(that.aElements, -1, sPredicate, "");
 						} else {
 							delete that.aElements.$byPredicate[sPredicate];
