@@ -5,10 +5,12 @@
 sap.ui.define([
 	"sap/ui/core/library",
 	"./Validators",
-	"./BindingResolver"],
+	"./BindingResolver",
+	"sap/base/Log"],
 	function (coreLibrary,
 			  Validators,
-			  BindingResolver) {
+			  BindingResolver,
+			  Log) {
 		"use strict";
 
 		var ValueState = coreLibrary.ValueState;
@@ -66,6 +68,29 @@ sap.ui.define([
 			}));
 		}
 
+		function getExtensionFunctionName (sValue, oExtension) {
+			var sValidationFunctionName;
+
+			if (!sValue.startsWith("extension.")) {
+				Log.error("Validation function should start with 'extension.'");
+				return false;
+			}
+
+			if (!oExtension) {
+				Log.error("Extension is not defined.");
+				return false;
+			}
+
+			sValidationFunctionName = sValue.replace("extension.", "");
+
+			if (!oExtension[sValidationFunctionName]) {
+				Log.error("No such function.", sValidationFunctionName, "sap.ui.integration.widgets.Card");
+				return false;
+			}
+
+			return sValidationFunctionName;
+		}
+
 		/**
 		 * Utility class helping with form validation.
 		 *
@@ -80,6 +105,7 @@ sap.ui.define([
 				var oValue = _getValidationValue(oControl),
 					oMessagesModel = oCard.getModel("messages"),
 					oResourceBundle = oCard.getModel("i18n").getResourceBundle(),
+					oExtension = oCard.getAggregation("_extension"),
 					oItem = oControl._oItem,
 					sInputType,
 					oValidator,
@@ -104,13 +130,22 @@ sap.ui.define([
 				oValidator = Validators[sInputType];
 
 				aResolvedValidations.forEach(function (mValidationConfig) {
-					if (bHasErrorSet) {
-						return;
-					}
 
 					for (var sKey in mValidationConfig) {
-						fnValidationFunc = oValidator[sKey];
+						if (bHasErrorSet) {
+							return;
+						}
 						oValidationValue = mValidationConfig[sKey];
+
+						if (sKey === "validate") {
+							var sValidationFunctionName = getExtensionFunctionName(oValidationValue, oExtension);
+
+							if (sValidationFunctionName) {
+								fnValidationFunc = oExtension[sValidationFunctionName];
+							}
+						} else {
+							fnValidationFunc = oValidator[sKey];
+						}
 
 						if (typeof fnValidationFunc !== "function") {
 							continue;

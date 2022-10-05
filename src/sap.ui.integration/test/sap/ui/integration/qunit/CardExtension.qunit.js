@@ -618,4 +618,71 @@ sap.ui.define([
 		// act
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
+
+	QUnit.module("Validation", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
+				manifest: {
+					"sap.app": {
+						"id": "sap.ui.integration.test"
+					},
+					"sap.card": {
+						"type": "Object",
+						"extension": "./extensions/Extension1",
+						"data": {
+							"extension": {
+								"method": "getData"
+							}
+						},
+						"content": {
+							"groups": [{
+								"items": [{
+									"id": "e-mail",
+									"label": "E-mail",
+									"type": "TextArea",
+									"rows": 1,
+									"placeholder": "e-mail",
+									"validations": [{
+											"required": true
+										},
+										{
+											"validate": "extension.validateEmail",
+											"message": "You should enter valid e-mail.",
+											"type": "Warning"
+										}
+									]
+								}]
+							}]
+						}
+					}
+				}
+			});
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+
+	QUnit.test("validation method", function (assert) {
+		// arrange
+		var done = assert.async();
+		var bValid = false;
+
+		this.oCard.attachEvent("_ready", function () {
+
+			bValid = this.oCard.getAggregation("_extension").validateEmail("Text");
+			assert.strictEqual(bValid, false, "E-mail is not valid");
+
+			bValid = this.oCard.getAggregation("_extension").validateEmail("my@mail.com");
+			assert.strictEqual(bValid, true, "E-mail is valid");
+
+			done();
+		}.bind(this));
+
+		// act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
 });

@@ -1727,11 +1727,15 @@
              }
            ]
          },
-          "pattern": {
+         "pattern": {
            "description": "Sets the regular expression pattern that should match the value",
            "type": "string"
+         },
+         "validate": {
+           "description": "An extension function used to validate the value",
+           "type": "string"
          }
-       }
+      }
     },
     "ContentType.Table": {
       "description": "Represents table content attributes",

@@ -43,5 +43,9 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 		});
 	};
 
+	SampleExtension.prototype.validateAge = function (sValue) {
+		return parseInt(sValue) >= 18;
+	};
+
 	return SampleExtension;
 });

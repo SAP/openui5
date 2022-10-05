@@ -2375,4 +2375,84 @@ sap.ui.define([
 			}
 		});
 	});
+
+	QUnit.module("Forms Extension Validation", {
+
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+
+	QUnit.test("Function", function (assert) {
+		var done = assert.async(),
+			oCard = this.oCard;
+
+		oCard.attachEvent("_ready", function () {
+			var oObjectContent = oCard.getCardContent(),
+				oTextArea = oObjectContent.getAggregation("_content").getItems()[0].getContent()[0].getItems()[1];
+
+			oTextArea.setValue("Text");
+
+			Core.applyChanges();
+			oCard.validateControls();
+
+			assert.strictEqual(oTextArea.getValueState(), ValueState.Warning, "Input field has a warning");
+			assert.strictEqual(oTextArea.getValueStateText(), "You should enter valid e-mail.", "Validation warning message is correct");
+
+			oTextArea.setValue("my@mail.com");
+			Core.applyChanges();
+			oCard.validateControls();
+
+			assert.strictEqual(oTextArea.getValueState(), ValueState.None, "Validation passed");
+
+			done();
+		});
+
+		oCard.setManifest({
+			"sap.app": {
+				"id": "sap.ui.integration.test"
+			},
+			"sap.card": {
+				"type": "Object",
+				"extension": "./extensions/Extension1",
+				"data": {
+					"extension": {
+						"method": "getData"
+					}
+				},
+				"content": {
+					"groups": [{
+						"items": [{
+							"id": "e-mail",
+							"label": "E-mail",
+							"type": "TextArea",
+							"rows": 1,
+							"placeholder": "e-mail",
+							"validations": [{
+									"required": true
+								},
+								{
+									"validate": "extension.validateEmail",
+									"message": "You should enter valid e-mail.",
+									"type": "Warning"
+								}
+							]
+						}]
+					}]
+				}
+			}
+		});
+
+		Core.applyChanges();
+	});
 });

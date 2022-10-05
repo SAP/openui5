@@ -63,5 +63,10 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinit
 		return Promise.resolve({ title: "Berlin" });
 	};
 
+	Extension1.prototype.validateEmail = function (oValue) {
+		var mailRegex = /^\w+[\w-+\.]*\@\w+([-\.]\w+)*\.[a-zA-Z]{2,}$/;
+		return mailRegex.test(oValue);
+	};
+
 	return Extension1;
 });
