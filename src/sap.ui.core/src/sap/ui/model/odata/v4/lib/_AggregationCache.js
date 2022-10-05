@@ -684,7 +684,7 @@ sap.ui.define([
 			for (i = iIndex, n = Math.min(iIndex + iLength, this.aElements.length); i < n; i += 1) {
 				oCurrentParent = _Helper.getPrivateAnnotation(this.aElements[i], "parent");
 				if (oCurrentParent !== oGapParent) {
-					if (iGapStart) { // end of gap
+					if (iGapStart !== undefined) { // end of gap
 						readGap(iGapStart, i);
 						oGapParent = iGapStart = undefined;
 					}
@@ -694,7 +694,7 @@ sap.ui.define([
 					}
 				}
 			}
-			if (iGapStart) { // gap at end
+			if (iGapStart !== undefined) { // gap at end
 				readGap(iGapStart, i);
 			}
 			oGroupLock.unlock();

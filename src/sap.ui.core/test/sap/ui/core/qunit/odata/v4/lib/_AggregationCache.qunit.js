@@ -1320,6 +1320,58 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[1, 2].forEach(function (iLength) {
+	QUnit.test("read: gap at start, iLength = " + iLength, function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["group"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			oFirstLeaf = {},
+			oGroupLock = {
+				getUnlockedCopy : function () {},
+				unlock : function () {}
+			},
+			oReadResult = {value : [{}]};
+
+		oCache.aElements = [
+			_AggregationHelper.createPlaceholder(0, 0, oCache.oFirstLevel),
+			oFirstLeaf
+		];
+		oCache.aElements.$byPredicate = {};
+		oCache.aElements.$count = 42;
+
+		this.mock(oCache.oFirstLevel).expects("getQueryOptions").withExactArgs()
+			.returns({$count : true, foo : "bar"});
+		this.mock(oCache.oFirstLevel).expects("setQueryOptions").withExactArgs({foo : "bar"}, true);
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
+			.returns("~oGroupLockCopy~");
+		this.mock(oCache.oFirstLevel).expects("read")
+			.withExactArgs(0, 1, 0, "~oGroupLockCopy~", "~fnDataRequested~")
+			.returns(SyncPromise.resolve(Promise.resolve(oReadResult)));
+		this.mock(oCache).expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult.value), 0,
+				sinon.match.same(oCache.oFirstLevel), 0)
+			.callsFake(addElements); // so that oCache.aElements is actually filled
+		this.mock(oGroupLock).expects("unlock").withExactArgs();
+
+		// code under test
+		return oCache.read(0, iLength, 0, oGroupLock, "~fnDataRequested~").then(function (oResult) {
+			assert.strictEqual(oResult.value.length, iLength);
+			assert.strictEqual(oResult.value[0], oReadResult.value[0]);
+			if (iLength > 1) {
+				assert.strictEqual(oResult.value[1], oFirstLeaf);
+			}
+			assert.strictEqual(oResult.value.$count, 42);
+
+			assert.strictEqual(oCache.aElements[0], oReadResult.value[0]);
+			assert.strictEqual(oCache.aElements[1], oFirstLeaf);
+		});
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("read: intersecting reads", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
