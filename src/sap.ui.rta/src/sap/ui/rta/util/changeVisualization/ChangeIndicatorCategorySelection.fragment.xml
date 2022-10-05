@@ -4,20 +4,21 @@
 	xmlns:l="sap.ui.layout">
 	<Popover
 		showHeader="false"
-		placement="Bottom">
+		placement="Bottom"
+		id="popover">
 		<SegmentedButton selectedKey="satellite" width="420px" selectionChange=".onVersioningCategoryChange">
 			<items>
-				<SegmentedButtonItem 
-					text="{i18n>BUT_CHANGEVISUALIZATION_VERSIONING_ALL}" 
+				<SegmentedButtonItem
+					text="{i18n>BUT_CHANGEVISUALIZATION_VERSIONING_ALL}"
 					key="all"/>
-				<SegmentedButtonItem 
-					text="{i18n>BUT_CHANGEVISUALIZATION_VERSIONING_DRAFT}" 
-					key="draft" 
-					visible="{visualizationModel>/versioningAvailable}" 
+				<SegmentedButtonItem
+					text="{i18n>BUT_CHANGEVISUALIZATION_VERSIONING_DRAFT}"
+					key="draft"
+					visible="{visualizationModel>/versioningAvailable}"
 					enabled="{= ${visualizationModel>/hasDraftChanges} ||  ${visualizationModel>/hasDirtyChanges}}"/>
-				<SegmentedButtonItem 
+				<SegmentedButtonItem
 					text="{i18n>BUT_CHANGEVISUALIZATION_VERSIONING_DIRTY}"
-					key="dirty" 
+					key="dirty"
 					enabled="{visualizationModel>/hasDirtyChanges}"/>
 			</items>
 		</SegmentedButton>
