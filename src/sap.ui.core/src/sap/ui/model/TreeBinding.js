@@ -125,8 +125,8 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * overwritten by subclasses.
 	 *
 	 * @returns {number|undefined} The count of entries in the tree, or <code>undefined</code> if it
-	 *   is unknown, for example because the binding is not resolved, or this feature is not
-	 *   supported
+	 *   is unknown, for example because the binding is not resolved or because this feature is not
+	 *   supported.
 	 * @public
 	 * @since 1.108.0
 	 */
