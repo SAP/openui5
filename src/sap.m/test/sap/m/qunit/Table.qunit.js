@@ -2203,24 +2203,22 @@ sap.ui.define([
 
 		// expected value is 6, 3(rem) for selection column and 3(rem) for the navigation column
 		var fInitAccumulatedWidth = oTable._getInitialAccumulatedWidth(aItems);
-		assert.strictEqual(fInitAccumulatedWidth, 6.65, "Initial accumulated width based on table setup is 6.65rem");
+		assert.strictEqual(fInitAccumulatedWidth, 6.25, "Initial accumulated width based on table setup is " + fInitAccumulatedWidth + "rem");
 
-		// expected value is 21.81
-		// (125px / 16) + (6 ->fInitAccumulatedWidth + 8 ->default column autoPopinWidth)
 		var fAccumulatedWidth = Table._updateAccumulatedWidth(aColumns, false, fInitAccumulatedWidth);
 		var fAutoPopinWidth = (parseFloat((parseFloat(aColumns[0].getWidth()).toFixed(2) / sBaseFontSize).toFixed(2))) + (fInitAccumulatedWidth + aColumns[1].getAutoPopinWidth());
-		assert.ok(fAccumulatedWidth === fAutoPopinWidth, "Expected autoPopinWidth for next column in pop-in area is " + fAccumulatedWidth + "rem");
+		assert.ok(parseFloat(parseFloat(fAccumulatedWidth).toFixed(2)) === fAutoPopinWidth, "Expected autoPopinWidth for next column in pop-in area is " + fAccumulatedWidth + "rem");
 
 		oTable.setInset(true);
 		Core.applyChanges();
 		fInitAccumulatedWidth = oTable._getInitialAccumulatedWidth(aItems);
-		assert.strictEqual(fInitAccumulatedWidth, 10.65, "Initial accumulated width is " + fAccumulatedWidth + "rem");
+		assert.strictEqual(fInitAccumulatedWidth, 10.25, "Initial accumulated width is " + fAccumulatedWidth + "rem");
 
 		document.getElementById("qunit-fixture").classList.add("sapUiSizeCompact");
 		oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
 		fInitAccumulatedWidth = oTable._getInitialAccumulatedWidth(aItems);
-		assert.strictEqual(fInitAccumulatedWidth, 8.65, "Initial accumulated width is " + fInitAccumulatedWidth + "rem. Since compact theme density is applied");
+		assert.strictEqual(fInitAccumulatedWidth, 8.25, "Initial accumulated width is " + fInitAccumulatedWidth + "rem. Since compact theme density is applied");
 	});
 
 	QUnit.test("Spy on _configureAutoPopin - autoPopinMode=true", function (assert) {
