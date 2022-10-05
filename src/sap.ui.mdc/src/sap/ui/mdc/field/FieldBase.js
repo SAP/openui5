@@ -2003,6 +2003,19 @@ sap.ui.define([
 		var vValue = oEvent.getParameter("newValue");
 		var bFound = false;
 		var i = 0;
+		var bIsMeasure = this._oContentFactory.isMeasure();
+		var iPart = 0;
+
+		if (bIsMeasure) { // check on what part the error occurs and compare only this value
+			var oControl = oEvent.getParameter("element");
+			var aContent = this._getContent();
+			for (i = 0; i < aContent.length; i++) {
+				if (oControl === aContent[i]) {
+					iPart = i;
+				}
+			}
+		}
+
 		for (i = 0; i < this._aAsyncChanges.length; i++) {
 			var oChange = this._aAsyncChanges[i];
 			if (oChange.waitForUpdate && Array.isArray(oChange.result)) {
@@ -2013,7 +2026,13 @@ sap.ui.define([
 				} else {
 					for (var j = 0; j < oChange.result.length; j++) {
 						var oCondition = oChange.result[j];
-						if (deepEqual(oCondition.values[0], vValue) || (oCondition.operator === "BT" && deepEqual(oCondition.values[1], vValue))) {
+						var vCompare = oCondition.values[0];
+						var vCompareBT = oCondition.operator === "BT" && oCondition.values[1];
+						if (bIsMeasure) {
+							vCompare = vCompare[iPart];
+							vCompareBT = oCondition.operator === "BT" && vCompareBT[iPart];
+						}
+						if (deepEqual(vCompare, vValue) || (oCondition.operator === "BT" && deepEqual(vCompareBT, vValue))) {
 							oChange.reject(oEvent.getParameter("exception"));
 							bFound = true;
 							break;
