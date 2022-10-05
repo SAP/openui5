@@ -376,8 +376,6 @@ sap.ui.define([
 			fnCallback = this.spy(),
 			oDeleted = {index : "~insert~"},
 			oError = new Error(""),
-			oGroupLock = new _GroupLock("group", "owner", true),
-			oGroupLockCopy = {},
 			oHelperMock = this.mock(_Helper),
 			oMessage1 = {},
 			oMessage2 = {persistent : true},
@@ -440,7 +438,7 @@ sap.ui.define([
 		that.oModelInterfaceMock.expects("reportStateMessages")
 			.withExactArgs(oCache.sResourcePath, {}, [sPath + "('1')"]);
 		this.mock(oCache).expects("addDeleted")
-			.withExactArgs(sinon.match.same(aCacheData), 1, "('1')", sinon.match.same(oGroupLock),
+			.withExactArgs(sinon.match.same(aCacheData), 1, "('1')", "~oGroupLock~",
 				oFixture.bCreated)
 			.callsFake(function () {
 				bAddDeleted = true;
@@ -455,31 +453,26 @@ sap.ui.define([
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/EMPLOYEES", sinon.match.same(mQueryOptions), true)
 			.returns("?foo=bar");
-		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy);
 		this.mock(oCache).expects("getOriginalResourcePath")
 			.withExactArgs(sinon.match.same(aCacheData[1]))
 			.returns("~");
 		this.oRequestorMock.expects("request")
-			.withExactArgs("DELETE", "Equipments('1')?foo=bar",
-				sinon.match.same(oGroupLockCopy),
+			.withExactArgs("DELETE", "Equipments('1')?foo=bar", "~oGroupLock~",
 				{"If-Match" : sinon.match.same(oFixture.oEntity || aCacheData[1])},
 				undefined, undefined, sinon.match.func, undefined,
 				"~" + (sPath && "/" + sPath) + "('1')")
 			.callsFake(function () {
-				assert.ok(oGroupLock.isLocked(), "still locked");
 				return oRequestPromise;
 			});
 		this.mock(_Helper).expects("addByPath")
 			.withExactArgs(sinon.match.same(oCache.mChangeRequests), sPath + "('1')",
 				sinon.match.same(oRequestPromise));
-		this.mock(oCache).expects("requestCount").never();
 
 		// code under test
-		oPromise = oCache._delete(oGroupLock, "Equipments('1')",
-			(sPath && sPath + "/") + (oFixture.bCreated ? "-1" : "0"), oFixture.oEntity, false,
+		oPromise = oCache._delete("~oGroupLock~", "Equipments('1')",
+			(sPath && sPath + "/") + (oFixture.bCreated ? "-1" : "0"), oFixture.oEntity,
 			fnCallback);
 
-		assert.notOk(oGroupLock.isLocked(), "unlocked synchronously");
 		assert.strictEqual(aCacheData[1]["@$ui5.context.isDeleted"], true);
 		sinon.assert.calledOnce(fnCallback);
 		sinon.assert.calledWithExactly(fnCallback, 1, -1);
@@ -541,8 +534,7 @@ sap.ui.define([
 					"@odata.etag" : sEtag
 				}
 			},
-			oGroupLock = bLock ? new _GroupLock("group", "owner", true) : null,
-			oGroupLockCount = {},
+			oGroupLock = bLock ? "~oGroupLock~" : null,
 			sPath = "Equipments(Category='foo',ID='0815')/EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM",
 			oUpdateData = {};
 
@@ -551,26 +543,19 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EQUIPMENT_2_EMPLOYEE")
 			.returns(SyncPromise.resolve(oCacheData));
 		if (bLock) {
-			this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
-				.returns("~oGroupLockCopy~");
 			this.oRequestorMock.expects("request")
-				.withExactArgs("DELETE", "TEAMS('23')", "~oGroupLockCopy~", {
+				.withExactArgs("DELETE", "TEAMS('23')", oGroupLock, {
 						"If-Match" : sinon.match.same(oCacheData["EMPLOYEE_2_TEAM"])
 					}, undefined, undefined, sinon.match.func, undefined, sPath)
 				.returns(Promise.resolve());
-			oGroupLockCount = oGroupLock;
 		} else {
 			this.oRequestorMock.expects("request").never();
-			this.oRequestorMock.expects("lockGroup")
-				.withExactArgs("$auto", sinon.match.same(oCache))
-				.returns(oGroupLockCount);
 			this.oModelInterfaceMock.expects("getMessagesByPath")
 				.withExactArgs("/" + sPath, true)
 				.returns([]);
 			this.oModelInterfaceMock.expects("reportStateMessages")
 				.withExactArgs(oCache.sResourcePath, {}, ["EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM"]);
 		}
-		this.mock(oCache).expects("requestCount").withExactArgs(sinon.match.same(oGroupLockCount));
 		this.mock(_Cache).expects("makeUpdateData").withExactArgs(["EMPLOYEE_2_TEAM"], null)
 			.returns(oUpdateData);
 		this.mock(_Helper).expects("updateExisting")
@@ -579,22 +564,17 @@ sap.ui.define([
 
 		// code under test
 		return oCache._delete(oGroupLock, "TEAMS('23')", "EQUIPMENT_2_EMPLOYEE/EMPLOYEE_2_TEAM",
-			null, false, undefined);
+			null, undefined);
 	});
 });
 
 	//*********************************************************************************************
-[false, true].forEach(function (bDoNotRequestCount) {
-	var sTitle = "_Cache#_delete: kept-alive context not in collection, bDoNotRequestCount="
-			+ bDoNotRequestCount;
-
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test("_Cache#_delete: kept-alive context not in collection", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
 			aCacheData = [],
 			fnCallback = this.spy(),
 			bDeleted = false,
-			oGroupLock = new _GroupLock("group", "owner", true),
-			oGroupLockCopy = {};
+			oGroupLock = new _GroupLock("group", "owner", true);
 
 		aCacheData.$byPredicate = {
 			"('1')" : {
@@ -609,30 +589,25 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(aCacheData));
 		this.oModelInterfaceMock.expects("reportStateMessages")
 			.withExactArgs(oCache.sResourcePath, {}, ["('1')"]);
-		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oGroupLockCopy);
 		this.oRequestorMock.expects("request")
-			.withExactArgs("DELETE", "EMPLOYEES('1')", sinon.match.same(oGroupLockCopy), {
+			.withExactArgs("DELETE", "EMPLOYEES('1')", sinon.match.same(oGroupLock), {
 					"If-Match" : "etag"
 				}, undefined, undefined, sinon.match.func, undefined, "EMPLOYEES('1')")
 			.returns(Promise.resolve().then(function () {
 				bDeleted = true;
 			}));
-		this.mock(oCache).expects("requestCount").exactly(bDoNotRequestCount ? 0 : 1)
-			.withExactArgs(sinon.match.same(oGroupLock));
 		this.mock(oCache).expects("removeElement").withExactArgs(aCacheData, undefined, "('1')", "")
 			// symbolic value would lead to a stronger test, but the value is checked internally
 			.returns(undefined);
 
 		// code under test
-		return oCache._delete(oGroupLock, "EMPLOYEES('1')", "('1')", "etag", bDoNotRequestCount,
-				fnCallback)
+		return oCache._delete(oGroupLock, "EMPLOYEES('1')", "('1')", "etag", fnCallback)
 			.then(function () {
 				assert.strictEqual(bDeleted, true);
 				sinon.assert.calledOnce(fnCallback);
 				sinon.assert.calledWithExactly(fnCallback, undefined, -1);
 			});
 	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#_delete: from collection, no lock", function (assert) {
@@ -668,7 +643,7 @@ sap.ui.define([
 			.withExactArgs(oCache.sResourcePath, {}, ["EMPLOYEE_2_EQUIPMENTS('1')"]);
 
 		// code under test
-		oPromise = oCache._delete(null, "Equipments('1')", "EMPLOYEE_2_EQUIPMENTS/1", {}, false,
+		oPromise = oCache._delete(null, "Equipments('1')", "EMPLOYEE_2_EQUIPMENTS/1", {},
 			fnCallback);
 
 		assert.ok(oPromise.isFulfilled());
@@ -679,46 +654,31 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#_delete: kept-alive context not in collection, no lock", function () {
-		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
-			aCacheData = [],
-			fnCallback = this.spy();
-
-		aCacheData.$byPredicate = {
-			"('1')" : {
-				"@$ui5._" : {predicate : "('1')"},
-				"@odata.etag" : "etag"
-			}
-		};
-
-		oCache.fetchValue = function () {};
-		this.mock(oCache).expects("fetchValue")
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
-			.returns(SyncPromise.resolve(aCacheData));
-		this.oRequestorMock.expects("request").never();
-		this.mock(oCache).expects("requestCount").never();
-		this.mock(oCache).expects("removeElement")
-			.withExactArgs(sinon.match.same(aCacheData), undefined, "('1')", "");
-
-		// code under test
-		return oCache._delete(null, "EMPLOYEES('1')", "('1')", "etag", true, fnCallback)
-			.then(function () {
-				sinon.assert.calledOnce(fnCallback);
-				sinon.assert.calledWithExactly(fnCallback, undefined, -1);
-			});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("Cache#addDeleted", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "EMPLOYEES"),
+			oDeleted0,
 			oDeleted1,
 			oDeleted2,
 			oDeleted3,
 			oDeleted4,
+			oDeleted5,
 			aElements = [],
 			oGroupLock = {
 				getGroupId : function () { return "group"; }
 			};
+
+		// code under test
+		oDeleted0 = oCache.addDeleted(aElements, undefined, "('42')", oGroupLock);
+
+		assert.deepEqual(oDeleted0, {
+			created : undefined,
+			groupId : "group",
+			predicate : "('42')",
+			index : undefined
+		});
+		assert.deepEqual(aElements, []); // to satisfy ESLint
+		assert.deepEqual(aElements.$deleted, [oDeleted0]);
+		assert.strictEqual(aElements.$deleted[0], oDeleted0);
 
 		// code under test
 		oDeleted1 = oCache.addDeleted(aElements, 5, "('5')", oGroupLock);
@@ -729,9 +689,8 @@ sap.ui.define([
 			predicate : "('5')",
 			index : 5
 		});
-		assert.deepEqual(aElements, []); // to satisfy ESLint
-		assert.deepEqual(aElements.$deleted, [oDeleted1]);
-		assert.strictEqual(aElements.$deleted[0], oDeleted1);
+		assert.deepEqual(aElements.$deleted, [oDeleted0, oDeleted1]);
+		assert.strictEqual(aElements.$deleted[1], oDeleted1);
 
 		// code under test
 		oDeleted2 = oCache.addDeleted(aElements, 0, "('0')", undefined, true);
@@ -742,8 +701,8 @@ sap.ui.define([
 			predicate : "('0')",
 			index : 0
 		});
-		assert.deepEqual(aElements.$deleted, [oDeleted2, oDeleted1]);
-		assert.strictEqual(aElements.$deleted[0], oDeleted2);
+		assert.deepEqual(aElements.$deleted, [oDeleted0, oDeleted2, oDeleted1]);
+		assert.strictEqual(aElements.$deleted[1], oDeleted2);
 
 		// code under test
 		oDeleted3 = oCache.addDeleted(aElements, 3, "('3')");
@@ -754,8 +713,8 @@ sap.ui.define([
 			predicate : "('3')",
 			index : 3
 		});
-		assert.deepEqual(aElements.$deleted, [oDeleted2, oDeleted3, oDeleted1]);
-		assert.strictEqual(aElements.$deleted[1], oDeleted3);
+		assert.deepEqual(aElements.$deleted, [oDeleted0, oDeleted2, oDeleted3, oDeleted1]);
+		assert.strictEqual(aElements.$deleted[2], oDeleted3);
 
 		// code under test
 		oDeleted4 = oCache.addDeleted(aElements, 3, "('4')");
@@ -766,8 +725,15 @@ sap.ui.define([
 			predicate : "('4')",
 			index : 3
 		});
-		assert.deepEqual(aElements.$deleted, [oDeleted2, oDeleted3, oDeleted4, oDeleted1]);
-		assert.strictEqual(aElements.$deleted[2], oDeleted4);
+		assert.deepEqual(aElements.$deleted,
+			[oDeleted0, oDeleted2, oDeleted3, oDeleted4, oDeleted1]);
+		assert.strictEqual(aElements.$deleted[3], oDeleted4);
+
+		// code under test
+		oDeleted5 = oCache.addDeleted(aElements, undefined, "('23')", oGroupLock);
+
+		assert.deepEqual(aElements.$deleted,
+			[oDeleted5, oDeleted0, oDeleted2, oDeleted3, oDeleted4, oDeleted1]);
 	});
 
 	//*********************************************************************************************
@@ -5288,17 +5254,24 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Cache#requestCount: nothing to do", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "Employees");
+		var oRequestor = this.oRequestor,
+			oCache = new _Cache(oRequestor, "Employees");
 
-		this.mock(this.oRequestor).expects("request").never();
-
-		// code under test
-		assert.strictEqual(oCache.requestCount({}, "", undefined), undefined);
-
-		oCache = new _Cache(this.oRequestor, "Employees", {});
+		oCache.iLimit = 42;
+		this.mock(oRequestor).expects("request").never();
 
 		// code under test
-		assert.strictEqual(oCache.requestCount({}, "", undefined), undefined);
+		return oCache.requestCount({}, "", undefined).then(function (iCount) {
+			assert.strictEqual(iCount, 42);
+
+			oCache = new _Cache(oRequestor, "Employees", {});
+			oCache.iLimit = 42;
+
+			// code under test
+			return oCache.requestCount({}, "", undefined).then(function (iCount) {
+				assert.strictEqual(iCount, 42);
+			});
+		});
 	});
 
 	//*********************************************************************************************
@@ -5328,6 +5301,15 @@ sap.ui.define([
 			{iStart : 9, iEnd : 15},
 			{iStart : 22, iEnd : 27}
 		]);
+
+		// code under test
+		oCache.adjustIndexes("", oCache.aElements, undefined, -1);
+
+		assert.deepEqual(oCache.aReadRequests, [
+			{iStart : 5, iEnd : 7},
+			{iStart : 9, iEnd : 15},
+			{iStart : 22, iEnd : 27}
+		]);
 	});
 
 	//*********************************************************************************************
@@ -5335,18 +5317,29 @@ sap.ui.define([
 		var oCache = new _Cache(this.oRequestor, "Employees"),
 			aElements = [];
 
-		aElements.$deleted = [{index : 0}, {index : 6}, {index : 7}, {index : 8}];
+		aElements.$deleted = [
+			{index : undefined}, {index : 0}, {index : 6}, {index : 7}, {index : 8}
+		];
 
 		// code under test
 		oCache.adjustIndexes("foo", aElements, 6, -1);
 
-		assert.deepEqual(aElements.$deleted, [{index : 0}, {index : 6}, {index : 6}, {index : 7}],
+		assert.deepEqual(aElements.$deleted,
+			[{index : undefined}, {index : 0}, {index : 6}, {index : 6}, {index : 7}],
 			"remove: a previously removed entity at the same index must not be moved");
 
 		// code under test
-		oCache.adjustIndexes("foo", aElements, 6, 1, 1);
+		oCache.adjustIndexes("foo", aElements, undefined, -1);
 
-		assert.deepEqual(aElements.$deleted, [{index : 0}, {index : 6}, {index : 7}, {index : 8}],
+		assert.deepEqual(aElements.$deleted,
+			[{index : undefined}, {index : 0}, {index : 6}, {index : 6}, {index : 7}],
+			"remove: an element outside the collection");
+
+		// code under test
+		oCache.adjustIndexes("foo", aElements, 6, 1, 2);
+
+		assert.deepEqual(aElements.$deleted,
+			[{index : undefined}, {index : 0}, {index : 6}, {index : 7}, {index : 8}],
 			"re-insert: observe position in $deleted");
 
 		aElements.$deleted = [{index : 0, created : true}, {index : 2}];
@@ -5946,19 +5939,16 @@ sap.ui.define([
 					getUnlockedCopy : function () {},
 					unlock : function () {}
 				},
-				oDeleteGroupLockCopy0 = {},
 				oDeleteGroupLock1 = {
 					getGroupId : function () { return "delete"; },
 					getUnlockedCopy : function () {},
 					unlock : function () {}
 				},
-				oDeleteGroupLockCopy1 = {},
 				oDeleteGroupLock2 = {
 					getGroupId : function () { return "delete"; },
 					getUnlockedCopy : function () {},
 					unlock : function () {}
 				},
-				oDeleteGroupLockCopy2 = {},
 				oGroupLock = {
 					getUnlockedCopy : function () {},
 					unlock : function () {}
@@ -5967,24 +5957,18 @@ sap.ui.define([
 					getGroupId : function () { return "$auto"; }
 				};
 
-			that.mock(oDeleteGroupLock0).expects("getUnlockedCopy").withExactArgs()
-				.returns(oDeleteGroupLockCopy0);
 			that.oRequestorMock.expects("request")
-				.withArgs("DELETE", "Employees('b')", sinon.match.same(oDeleteGroupLockCopy0))
+				.withArgs("DELETE", "Employees('b')", sinon.match.same(oDeleteGroupLock0))
 				.resolves();
-			that.mock(oDeleteGroupLock1).expects("getUnlockedCopy").withExactArgs()
-				.returns(oDeleteGroupLockCopy1);
 			that.oRequestorMock.expects("request")
-				.withArgs("DELETE", "Employees('c')", sinon.match.same(oDeleteGroupLockCopy1))
+				.withArgs("DELETE", "Employees('c')", sinon.match.same(oDeleteGroupLock1))
 				.callsFake(function () { // a simple .resolves() resolves too early
 					return new Promise(function (resolve) {
 						setTimeout(resolve);
 					});
 				});
-			that.mock(oDeleteGroupLock2).expects("getUnlockedCopy").withExactArgs()
-				.returns(oDeleteGroupLockCopy2);
 			that.oRequestorMock.expects("request")
-				.withArgs("DELETE", "Employees('d')", sinon.match.same(oDeleteGroupLockCopy2))
+				.withArgs("DELETE", "Employees('d')", sinon.match.same(oDeleteGroupLock2))
 				.rejects(new Error());
 			that.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oUnlockedCopy);
 			that.oRequestorMock.expects("request")
@@ -5994,12 +5978,11 @@ sap.ui.define([
 
 			// code under test
 			return Promise.all([
-				oCache._delete(oDeleteGroupLock0, "Employees('b')", "1", null, false,
-					function () {}),
-				oCache._delete(oDeleteGroupLock1, "Employees('c')", "1", null, false,
-					function () {}),
-				oCache._delete(oDeleteGroupLock2, "Employees('d')", "1", null, false,
-					function () {}).catch(function () {}),
+				oCache._delete(oDeleteGroupLock0, "Employees('b')", "1", null, function () {}),
+				oCache._delete(oDeleteGroupLock1, "Employees('c')", "1", null, function () {}),
+				oCache._delete(
+					oDeleteGroupLock2, "Employees('d')", "1", null, function () {}
+				).catch(function () {}),
 				oCache.read(3, 2, 0, oGroupLock)
 			]).then(function () {
 				assert.deepEqual(
@@ -7724,13 +7707,11 @@ sap.ui.define([
 						unlock : function () {}
 					};
 
-				that.mock(oDeleteGroupLock).expects("getUnlockedCopy")
-					.returns("~oDeleteGroupLockCopy~");
 				that.oRequestorMock.expects("request")
-					.withArgs("DELETE", "Employees('42')", "~oDeleteGroupLockCopy~")
+					.withArgs("DELETE", "Employees('42')", sinon.match.same(oDeleteGroupLock))
 					.resolves();
 				that.spy(_Helper, "updateExisting");
-				return oCache._delete(oDeleteGroupLock, "Employees('42')", "3", null, false,
+				return oCache._delete(oDeleteGroupLock, "Employees('42')", "3", null,
 						function () {})
 					.then(function () {
 						var oReadGroupLock = {unlock : function () {}};
@@ -7775,16 +7756,13 @@ sap.ui.define([
 					getGroupId : function () { return "group"; },
 					getUnlockedCopy : function () {},
 					unlock : function () {}
-				},
-				oDeleteGroupLockCopy;
+				};
 
-			that.mock(oDeleteGroupLock).expects("getUnlockedCopy")
-				.returns(oDeleteGroupLockCopy);
 			that.oRequestorMock.expects("request")
-				.withArgs("DELETE", "Employees('b')", sinon.match.same(oDeleteGroupLockCopy))
+				.withArgs("DELETE", "Employees('b')", sinon.match.same(oDeleteGroupLock))
 				.resolves();
 			that.spy(_Helper, "updateExisting");
-			return oCache._delete(oDeleteGroupLock, "Employees('b')", "0/list/1", null, false,
+			return oCache._delete(oDeleteGroupLock, "Employees('b')", "0/list/1", null,
 					function () {})
 				.then(function () {
 					var oFetchValueGroupLock = {unlock : function () {}};
@@ -9097,21 +9075,19 @@ sap.ui.define([
 					getGroupId : function () { return sGroupId; },
 					getUnlockedCopy : function () {},
 					unlock : function () {}
-				},
-				oDeleteGroupLockCopy;
+				};
 
 			that.mock(oRequestor.oModelInterface).expects("reportStateMessages")
 				.withExactArgs(oCache.sResourcePath, {}, ["('4711')"]);
-			that.mock(oDeleteGroupLock).expects("getUnlockedCopy").returns(oDeleteGroupLockCopy);
 			that.mock(oRequestor).expects("request")
-				.withExactArgs("DELETE", sEditUrl, sinon.match.same(oDeleteGroupLockCopy),
+				.withExactArgs("DELETE", sEditUrl, sinon.match.same(oDeleteGroupLock),
 					{"If-Match" : sinon.match.same(oCacheData)},
 					undefined, undefined, sinon.match.func, undefined, "Employees('4711')")
 				.returns(Promise.resolve());
 
 			// code under test
 			return oCache._delete(oDeleteGroupLock, sEditUrl, /*TODO sTransientPredicate*/"-1",
-					null, false, fnCallback)
+					null, fnCallback)
 				.then(function () {
 					sinon.assert.calledOnce(fnCallback);
 					assert.strictEqual(oCache.aElements.length, 0);
@@ -9837,6 +9813,7 @@ sap.ui.define([
 		var oCache = this.createCache("Employees"),
 			oInactive = {"@$ui5.context.isInactive" : true}, // "inline creation row"
 			oCreated = {}, // ordinary created persisted => not kept!
+			oDeleted = {"@$ui5.context.isDeleted" : true},
 			oActive = {"@$ui5.context.isInactive" : false}, // "inline creation row"
 			mChangeListeners = {
 				"($uid=id-1-23)/bar" : "~listener[]~2~",
@@ -9845,7 +9822,8 @@ sap.ui.define([
 				"('1')/b" : "~listener[]~5~",
 				"('2')/c" : "~listener[]~6~",
 				"('3')/bar/baz" : "~listener[]~0~",
-				"('3')/foo" : "~listener[]~1~"
+				"('3')/foo" : "~listener[]~1~",
+				"('6')/foo" : "~listener[]~7~"
 			},
 			oElement0 = {},
 			oElement1 = {},
@@ -9859,7 +9837,8 @@ sap.ui.define([
 				"('0')" : oInactive,
 				"('1')" : oCreated,
 				"('2')" : oActive,
-				"('3')" : oElement0
+				"('3')" : oElement0,
+				"('6')" : oDeleted
 			},
 			aElements = [
 				oInactive, oTransient0, oCreated, oTransient1, oActive, // created on client
@@ -9883,6 +9862,7 @@ sap.ui.define([
 		_Helper.setPrivateAnnotation(oElement0, "predicate", "('3')");
 		_Helper.setPrivateAnnotation(oElement1, "predicate", "('4')");
 		_Helper.setPrivateAnnotation(oElement2, "predicate", "('5')");
+		_Helper.setPrivateAnnotation(oDeleted, "predicate", "('6')");
 		oCache.iActiveElements = 4;
 		assert.strictEqual(oCache.oBackup, null, "be nice to V8");
 		oCache.oBackup = "~oBackup~";
@@ -9988,7 +9968,8 @@ sap.ui.define([
 				"('1')/b" : "~listener[]~5~",
 				"('2')/c" : "~listener[]~6~",
 				"('3')/bar/baz" : "~listener[]~0~",
-				"('3')/foo" : "~listener[]~1~"
+				"('3')/foo" : "~listener[]~1~",
+				"('6')/foo" : "~listener[]~7~"
 			});
 			assert.strictEqual(oCache.sContext, "foo");
 			assert.strictEqual(oCache.aElements, aElements, "reference unchanged");
@@ -10012,7 +9993,8 @@ sap.ui.define([
 				"('2')" : oActive,
 				"('3')" : oElement0,
 				"('4')" : oElement1,
-				"('5')" : oElement2
+				"('5')" : oElement2,
+				"('6')" : oDeleted
 			});
 			assert.strictEqual(oCache.iLimit, 42);
 		}
@@ -10024,9 +10006,12 @@ sap.ui.define([
 	QUnit.test("CollectionCache#reset, shared cache", function (assert) {
 		var oCache = this.createCache("Employees"),
 			mChangeListeners = {"" : "~listeners~", path1 : "~listeners1~", path2 : "~listeners2~"},
-			aElements = ["~0~", "~1~", "~2~"];
+			oElement0 = {id : 0},
+			oElement1 = {id : 1},
+			oElement2 = {id : 2},
+			aElements = [oElement0, oElement1, oElement2];
 
-		aElements.$byPredicate = {"(0)" : "~0~", "(1)" : "~1~", "(2)" : "~2~"};
+		aElements.$byPredicate = {"(0)" : oElement0, "(1)" : oElement1, "(2)" : oElement2};
 		oCache.aElements = aElements;
 		oCache.mChangeListeners = mChangeListeners;
 		oCache.sContext = "~context~";
@@ -10731,16 +10716,13 @@ sap.ui.define([
 			.resolves(oData);
 
 		return oCache.fetchValue(oFetchGroupLock).then(function (oEntity) {
-			var oCountGroupLock,
-				oDeleteGroupLock = oFixture.lock ? new _GroupLock("group", "owner", true) : null;
+			var oDeleteGroupLock = oFixture.lock ? new _GroupLock("group", "owner", true) : null;
 
 			if (oFixture.lock) {
 				that.oModelInterfaceMock.expects("reportStateMessages")
 					.withExactArgs(oCache.sResourcePath, {}, [""]);
-				that.mock(oDeleteGroupLock).expects("getUnlockedCopy").withExactArgs()
-					.returns("~oDeleteGroupLockCopy~");
 				that.oRequestorMock.expects("request")
-					.withExactArgs("DELETE", "Employees('42')", "~oDeleteGroupLockCopy~",
+					.withExactArgs("DELETE", "Employees('42')", sinon.match.same(oDeleteGroupLock),
 						{"If-Match" : sinon.match.same(oEntity)},
 						undefined, undefined, sinon.match.func, undefined, "Employees('42')")
 					.returns(Promise.resolve().then(function () {
@@ -10748,20 +10730,14 @@ sap.ui.define([
 							throw "~oError~";
 						}
 					}));
-				oCountGroupLock = oDeleteGroupLock;
 			} else {
-				that.oRequestorMock.expects("lockGroup")
-					.withExactArgs("$auto", sinon.match.same(oCache))
-					.returns(oCountGroupLock);
 				that.oRequestorMock.expects("request").never();
 				that.oModelInterfaceMock.expects("reportStateMessages")
 					.withExactArgs(oCache.sResourcePath, {}, [""]);
 			}
-			that.mock(oCache).expects("requestCount")
-				.withExactArgs(sinon.match.same(oCountGroupLock));
 
 			// code under test
-			return oCache._delete(oDeleteGroupLock, "Employees('42')", "", null, false, undefined)
+			return oCache._delete(oDeleteGroupLock, "Employees('42')", "", null, undefined)
 				.then(function () {
 					var oGroupLock = {unlock : function () {}};
 

@@ -142,10 +142,6 @@ sap.ui.define([
 	 *   An entity with the ETag of the binding for which the deletion was requested. This is
 	 *   provided if the deletion is delegated from a context binding with empty path to a list
 	 *   binding. W/o a lock, this is ignored.
-	 * @param {boolean} [bDoNotRequestCount]
-	 *   Whether not to request the new count from the server; useful in case of
-	 *   {@link sap.ui.model.odata.v4.Context#replaceWith} where it is known that the count remains
-	 *   unchanged; only used when deleting from an entity collection
 	 * @param {function} [fnCallback]
 	 *   A function which is called immediately when an entity has been deleted from the cache, or
 	 *   when it was re-inserted due to an error; only used when deleting from an entity collection,
@@ -158,8 +154,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_Cache.prototype._delete = function (oGroupLock, sEditUrl, sPath, oETagEntity,
-			bDoNotRequestCount, fnCallback) {
+	_Cache.prototype._delete = function (oGroupLock, sEditUrl, sPath, oETagEntity, fnCallback) {
 		var aSegments = sPath.split("/"),
 			vDeleteProperty = aSegments.pop(),
 			sParentPath = aSegments.join("/"),
@@ -218,22 +213,16 @@ sap.ui.define([
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			// the existence of an onCancel callback causes a pending change in the requestor
 			oRequestPromise = oGroupLock
-				? that.oRequestor.request("DELETE", sEditUrl, oGroupLock.getUnlockedCopy(),
-					mHeaders, undefined, undefined, /*onCancel*/function () {}, undefined,
+				? that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders, undefined,
+					undefined, /*onCancel*/function () {}, undefined,
 					_Helper.buildPath(that.getOriginalResourcePath(oEntity), sEntityPath))
 				: SyncPromise.resolve();
 			_Helper.addByPath(that.mChangeRequests, sEntityPath, oRequestPromise);
-			return SyncPromise.all([
-				oRequestPromise.catch(function (oError) {
-					if (oError.status !== 404) {
-						throw oError;
-					} // else: map 404 to 200
-				}),
-				iIndex === undefined // single element or kept-alive not in list
-					&& !bDoNotRequestCount
-					&& that.requestCount(oGroupLock || that.oRequestor.lockGroup("$auto", that)),
-				oGroupLock && oGroupLock.unlock() // unlock when all requests have been queued
-			]).then(function () {
+			return oRequestPromise.catch(function (oError) {
+				if (oError.status !== 404) {
+					throw oError;
+				} // else: map 404 to 200
+			}).then(function () {
 				_Helper.deletePrivateAnnotation(oEntity, "messages");
 				if (Array.isArray(vCacheData)) {
 					vCacheData.$deleted.splice(vCacheData.$deleted.indexOf(oDeleted), 1);
@@ -280,11 +269,12 @@ sap.ui.define([
 
 	/**
 	 * Adds an entry about a deleted entity to <code>aElements.$deleted</code>. Ensures that the
-	 * entries are ordered by entity index and deletion order (if two entities were deleted on the
-	 * same index, the second one must be behind).
+	 * entries are ordered ascending by entity index and deletion order (if two entities were
+	 * deleted on the same index, the second one must be behind). Entities w/o index are placed at
+	 * the start.
 	 *
 	 * @param {object[]} aElements - The elements collection
-	 * @param {number} iIndex - The entity's index
+	 * @param {number} [iIndex] - The entity's index, undefined if it was not in the collection
 	 * @param {string} sPredicate - The entity's key predicate
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock|undefined} oGroupLock - The deletion group lock
 	 * @param {boolean} bCreated - Whether the entity was created
@@ -302,12 +292,16 @@ sap.ui.define([
 			i;
 
 		aElements.$deleted = aElements.$deleted || [];
-		for (i = 0; i < aElements.$deleted.length; i += 1) {
-			if (iIndex < aElements.$deleted[i].index) {
-				break;
+		if (iIndex === undefined) {
+			aElements.$deleted.unshift(oDeleted);
+		} else {
+			for (i = 0; i < aElements.$deleted.length; i += 1) {
+				if (iIndex < aElements.$deleted[i].index) {
+					break;
+				}
 			}
+			aElements.$deleted.splice(i, 0, oDeleted);
 		}
-		aElements.$deleted.splice(i, 0, oDeleted);
 		return oDeleted;
 	};
 
@@ -334,7 +328,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath The path of the collection in the cache
 	 * @param {object[]} aElements The collection
-	 * @param {number} iIndex The index at which the element has been inserted or removed
+	 * @param {number} [iIndex]
+	 *   The index at which the element has been inserted or removed; undefined if not in the list
 	 * @param {number} iOffset The offset (1 = insert, -1 = remove)
 	 * @param {number} iDeletedIndex The element's index in $deleted (only for re-insertion)
 	 * @param {boolean} bCreate Whether the insert is a create (and not reverting a delete)
@@ -343,6 +338,9 @@ sap.ui.define([
 	 */
 	_Cache.prototype.adjustIndexes = function (sPath, aElements, iIndex, iOffset, iDeletedIndex,
 			bCreate) {
+		if (iIndex === undefined) {
+			return; // not in the list -> nothing to adjust
+		}
 		if (!sPath) {
 			// If the path is empty, we are in a _CollectionCache and aReadRequest exists
 			this.aReadRequests.forEach(function (oReadRequest) {
@@ -1617,11 +1615,10 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID
-	 * @returns {Promise|undefined}
-	 *   A promise that resolves if the count has been determined or <code>undefined</code> if no
-	 *   request needed
+	 * @returns {Promise<number>}
+	 *   A promise that resolves with the count regardless whether a request was needed
 	 *
-	 * @private
+	 * @public
 	 */
 	_Cache.prototype.requestCount = function (oGroupLock) {
 		var sExclusiveFilter, mQueryOptions, sReadUrl,
@@ -1656,8 +1653,11 @@ sap.ui.define([
 
 					setCount(that.mChangeListeners, "", that.aElements, iCount);
 					that.iLimit = iCount;
+					return iCount;
 				});
 		}
+
+		return Promise.resolve(that.iLimit);
 	};
 
 	/**
@@ -3203,7 +3203,7 @@ sap.ui.define([
 	/**
 	 * Resets this cache to its initial state, but keeps certain elements and their change listeners
 	 * alive: all kept-alive elements identified by the given key predicates as well as all
-	 * transient elements on top level.
+	 * transient and deleted elements on top level.
 	 *
 	 * @param {string[]} aKeptElementPredicates
 	 *   The key predicates for all kept-alive elements
@@ -3252,6 +3252,11 @@ sap.ui.define([
 				this.iActiveElements -= 1;
 			}
 		}
+		Object.keys(mByPredicate).forEach(function (sPredicate) {
+			if ("@$ui5.context.isDeleted" in mByPredicate[sPredicate]) {
+				aKeptElementPredicates.push(sPredicate);
+			}
+		});
 		this.mChangeListeners = {};
 		this.sContext = undefined;
 		this.aElements.length = this.aElements.$created = iCreated;

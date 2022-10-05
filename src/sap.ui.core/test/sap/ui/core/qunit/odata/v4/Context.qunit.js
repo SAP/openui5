@@ -1201,8 +1201,8 @@ sap.ui.define([
 			}));
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 		this.mock(oModel).expects("reportError")
-			.withExactArgs("Failed to delete /EMPLOYEES/42[42;deleted]",
-				"sap.ui.model.odata.v4.Context", oError);
+			.withExactArgs("Failed to delete /EMPLOYEES/42", "sap.ui.model.odata.v4.Context",
+				oError);
 
 		// code under test
 		return oContext.delete("myGroup", "~bDoNotRequestCount~").then(function () {
@@ -1230,7 +1230,7 @@ sap.ui.define([
 		this.mock(oContext).expects("_delete").withExactArgs(null, null, true).rejects(oError);
 		this.mock(oContext).expects("checkUpdate").withExactArgs();
 		this.mock(oModel).expects("reportError")
-			.withExactArgs("Failed to delete /EMPLOYEES('1');deleted",
+			.withExactArgs("Failed to delete /EMPLOYEES('1')",
 				"sap.ui.model.odata.v4.Context", oError);
 
 		// code under test

@@ -289,18 +289,12 @@ sap.ui.define([
 				// context is not in aContexts -> use the predicate
 				? _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())
 				: String(oContext.iIndex),
-			bReadCount = false,
+			bReset = false,
 			that = this;
-
-		if (oGroupLock && oContext.iIndex === undefined
-				&& this.oModel.isApiGroup(oGroupLock.getGroupId())) {
-			throw new Error("Cannot delete a kept-alive context in an API group when it is not in"
-				+ " the collection");
-		}
 
 		this.iDeletedContexts += 1;
 
-		return this.deleteFromCache(oGroupLock, sEditUrl, sPath, oETagEntity, bDoNotRequestCount,
+		return this.deleteFromCache(oGroupLock, sEditUrl, sPath, oETagEntity,
 			function (iIndex, iOffset) {
 				if (iIndex !== undefined) {
 					// An entity can only be deleted when its key predicate is known. So we can be
@@ -328,37 +322,45 @@ sap.ui.define([
 					that.aContexts.forEach(function (oContext0, i) {
 						oContext0.iIndex = i - that.iCreatedContexts;
 					});
-				} else if (that.bLengthFinal) {
-					// a kept-alive context is not in aContexts -> read the count afterwards
-					bReadCount = true;
+				} else if (iOffset > 0) { // trying to reinsert an element w/o index
+					bReset = true;
+				} else if (that.bLengthFinal && !bDoNotRequestCount) {
+					// a kept-alive context is not in aContexts -> request the count
+					that.oCache.requestCount(
+						oGroupLock && !that.oModel.isApiGroup(oGroupLock.getGroupId())
+							? oGroupLock.getUnlockedCopy()
+							: that.lockGroup("$auto")
+					).then(function (iCount) {
+						var iOldMaxLength = that.iMaxLength;
+
+						that.iMaxLength = iCount - that.iActiveContexts;
+						// Note: Although we know that oContext is not in aContexts, a "change"
+						// event needs to be fired in order to notify the control about the new
+						// length, for example, to update the 'More' button or the scrollbar.
+						if (iOldMaxLength !== that.iMaxLength) {
+							that._fireChange({reason : ChangeReason.Remove});
+						}
+					});
 				}
 			}
 		).then(function () {
-			var iOldMaxLength = that.iMaxLength;
-
 			that.iDeletedContexts -= 1;
 			if (!that.iDeletedContexts && !that.iCreatedContexts) {
 				// all (created) contexts finally gone -> free to create at any end
 				that.bFirstCreateAtEnd = undefined;
 			}
 			oContext.resetKeepAlive();
-			if (bReadCount) {
-				that.iMaxLength = that.fetchValue("$count", undefined, true).getResult()
-					- that.iActiveContexts;
-
-				// Note: Although we know that oContext is not in aContexts, a "change" event needs
-				// to be fired in order to notify the control about the new length, for example, to
-				// update the 'More' button or the scrollbar.
-				if (iOldMaxLength !== that.iMaxLength) {
-					that._fireChange({reason : ChangeReason.Remove});
-				}
-			}
 			oContext.iIndex = Context.VIRTUAL; // prevent further cache access via this context
 			that.oModel.addPrerenderingTask(
 				that.destroyPreviousContexts.bind(that, [oContext.getPath()]));
 		}, function (oError) {
 			that.iDeletedContexts -= 1;
-			that._fireChange({reason : ChangeReason.Insert});
+			if (bReset) {
+				that.oCache.reset(that.getKeepAlivePredicates());
+				that.reset(ChangeReason.Change);
+			} else {
+				that._fireChange({reason : ChangeReason.Add});
+			}
 			throw oError;
 		});
 	};
@@ -1150,22 +1152,14 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext,
 			sDeepResourcePath, sGroupId, oOldCache) {
-		var sBindingPath,
-			oCache,
-			aKeptElementPaths,
-			that = this;
+		var oCache,
+			aKeepAlivePredicates;
 
 		if (oOldCache && oOldCache.getResourcePath() === sResourcePath
 				&& oOldCache.$deepResourcePath === sDeepResourcePath) {
-			sBindingPath = this.oHeaderContext.getPath();
-			aKeptElementPaths = Object.keys(this.mPreviousContextsByPath).filter(function (sPath) {
-				return that.mPreviousContextsByPath[sPath].isKeepAlive();
-			});
-
-			if (this.iCreatedContexts || aKeptElementPaths.length) {
-				oOldCache.reset(aKeptElementPaths.map(function (sPath) {
-					return _Helper.getRelativePath(sPath, sBindingPath);
-				}), sGroupId);
+			aKeepAlivePredicates = this.getKeepAlivePredicates();
+			if (this.iCreatedContexts || aKeepAlivePredicates.length) {
+				oOldCache.reset(aKeepAlivePredicates, sGroupId);
 				// Note: #inheritQueryOptions as called below should not matter in case of own
 				// requests, which are a precondition for kept-alive elements
 				oOldCache.setQueryOptions(mQueryOptions, true);
@@ -2480,6 +2474,24 @@ sap.ui.define([
 
 		oContext.setKeepAlive(true, oContext.fnOnBeforeDestroy, bRequestMessages);
 		return oContext;
+	};
+
+	/**
+	 * Returns a list of key predicates of all kept-alive contexts.
+	 *
+	 * @returns {string[]} The list of key predicates
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.getKeepAlivePredicates = function () {
+		var sBindingPath = this.getHeaderContext().getPath();
+
+		return Object.values(this.mPreviousContextsByPath).concat(this.aContexts)
+			.filter(function (oContext) {
+				return oContext.isKeepAlive();
+			}).map(function (oContext) {
+				return _Helper.getRelativePath(oContext.getPath(), sBindingPath);
+			});
 	};
 
 	/**

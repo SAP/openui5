@@ -744,11 +744,11 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.setValue = function (vValue, sGroupId) {
 		var oGroupLock,
+			sResolvedPath = this.getResolvedPath(),
 			that = this;
 
 		function reportError(oError) {
-			that.oModel.reportError("Failed to update path " + that.getResolvedPath(), sClassName,
-				oError);
+			that.oModel.reportError("Failed to update path " + sResolvedPath, sClassName, oError);
 
 			return oError;
 		}

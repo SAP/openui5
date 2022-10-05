@@ -1961,6 +1961,8 @@ sap.ui.define([
 
 		// code under test
 		oPropertyBinding.setValue("foo", "up");
+		// must still report the correct path (setContext avoided due to side effects)
+		oPropertyBinding.oContext = null;
 
 		return oUpdatePromise.catch(function () {}); // wait, but do not fail
 	});
