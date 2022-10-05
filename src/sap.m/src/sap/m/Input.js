@@ -333,8 +333,9 @@ function(
 				/**
 				 * Specifies whether to display separators in tabular suggestions.
 				 * @private
+				 * @ui5-restricted sap.ui.comp.smartfield.SmartField
 				 */
-				separateSuggestions: { type: "boolean", defaultValue: false, visibility: "hidden" },
+				separateSuggestions: { type: "boolean", defaultValue: true, visibility: "hidden" },
 
 				/**
 				 * Indicates whether the access keys ref of the control should be highlighted.
