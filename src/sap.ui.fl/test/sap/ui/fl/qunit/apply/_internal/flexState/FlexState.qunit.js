@@ -69,11 +69,15 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when initialize is called with complete information", function(assert) {
+			assert.equal(FlexState.isInitialized({reference: sReference}), false, "FlexState is not initialized at beginning");
+			assert.equal(FlexState.isInitialized({control: this.oAppComponent}), false, "FlexState is not initialized at beginning");
 			return FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
 			})
 			.then(function(oReturn) {
+				assert.equal(FlexState.isInitialized({reference: sReference}), true, "FlexState has been initialized");
+				assert.equal(FlexState.isInitialized({control: this.oAppComponent}), false, "FlexState is not initialized at beginning");
 				assert.equal(oReturn, undefined, "the function resolves without value");
 				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the FlexState made a call to load the flex data");
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 0, "no prepare function was called");
