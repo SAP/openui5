@@ -29,6 +29,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
 	"sap/ui/mdc/library",
+	"sap/m/library",
 	"sap/ui/mdc/odata/TypeUtil",
 	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
@@ -71,6 +72,7 @@ sap.ui.define([
 	Control,
 	CoreLibrary,
 	MdcLibrary,
+	MLibrary,
 	TypeUtil,
 	TestModificationHandler,
 	ActionToolbarAction,
@@ -3934,6 +3936,47 @@ sap.ui.define([
 		}.bind(this)).then(function() {
 			assert.strictEqual(this.oTable._oToolbar.getStyle(), "Standard", "Toolbar style updated after table type is changed to Responsive table");
 		}.bind(this));
+	});
+
+	QUnit.test("Export Button ButtonType for different Themes", function (assert) {
+		var done = assert.async();
+		//Default theme must not be first
+		var aThemes = ["sap_bluecrystal", "sap_belize", "sap_horizon", "sap_horizon_dark", "sap_horizon_hcb", "sap_horizon_hcw", "sap_fiori_3"];
+		var fnGetExpectedTheme = function (sTheme) {
+			switch (sTheme) {
+				case "sap_horizon":
+				case "sap_horizon_dark":
+				case "sap_horizon_hcw":
+				case "sap_horizon_hcb":
+					return MLibrary.ButtonType["Transparent"];
+				default:
+					return MLibrary.ButtonType["Ghost"];
+			}
+		};
+
+		assert.expect(aThemes.length);
+
+		this.oTable.destroy();
+		this.oTable = new Table({
+			enableExport: true
+		});
+		this.oTable._createToolbar();
+
+		var fnThemeChanged = function (oEvent) {
+			var sTheme = oEvent.getParameter("theme");
+			assert.deepEqual(this.oTable._oExportButton.getType(), fnGetExpectedTheme(sTheme), "Export button ButtonType equals to expected Theme styling, Theme: " + sTheme);
+			if (sTheme === aThemes.at(-1)){
+				Core.detachThemeChanged(fnThemeChanged);
+				done();
+			} else {
+				var iPosition = aThemes.indexOf(sTheme);
+				Core.applyTheme(aThemes[iPosition + 1]);
+			}
+		}.bind(this);
+
+		Core.attachThemeChanged(fnThemeChanged);
+
+		Core.applyTheme(aThemes[0]);
 	});
 
 	QUnit.test("Export button state should be checked for bindingChange, if a row is added to the table", function(assert) {

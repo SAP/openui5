@@ -41,7 +41,8 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/ColumnWidthController",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/ui/mdc/table/menu/QuickActionContainer",
-	"sap/ui/mdc/table/menu/ItemContainer"
+	"sap/ui/mdc/table/menu/ItemContainer",
+	"sap/ui/core/theming/Parameters"
 ], function(
 	Control,
 	ActionToolbar,
@@ -81,7 +82,8 @@ sap.ui.define([
 	ColumnWidthController,
 	ActionToolbarAction,
 	QuickActionContainer,
-	ItemContainer
+	ItemContainer,
+	ThemeParameters
 ) {
 	"use strict";
 
@@ -2858,6 +2860,16 @@ sap.ui.define([
 		}
 
 		return Control.prototype.addAggregation.apply(this, ["actions", oControl]);
+	};
+
+	/**
+	 * Handler for theme changes
+	 */
+	Table.prototype.onThemeChanged = function () {
+		if (this._oExportButton) {
+			var sButtonType = MLibrary.ButtonType[ThemeParameters.get({name: "_sap_ui_mdc_Table_ExportButtonType"})];
+			this._oExportButton.setType(sButtonType);
+		}
 	};
 
 	return Table;
