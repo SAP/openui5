@@ -102,8 +102,6 @@ sap.ui.define([
 			_writeAccText(oRm, sTableId, "colnumberofcols");
 			// aria description for table cell content
 			_writeAccText(oRm, sTableId, "cellacc");
-			// aria description for selected row
-			_writeAccText(oRm, sTableId, "ariarowselected", TableUtils.getResourceText("TBL_ROW_DESC_SELECTED"));
 			// aria description for column menu
 			_writeAccText(oRm, sTableId, "ariacolmenu", TableUtils.getResourceText("TBL_COL_DESC_MENU"));
 			// aria description for column header span

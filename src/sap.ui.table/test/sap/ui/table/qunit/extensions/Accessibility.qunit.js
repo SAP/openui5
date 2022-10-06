@@ -229,10 +229,6 @@ sap.ui.define([
 			}
 		}
 
-		if (oTable.isIndexSelected(iRow) && TableUtils.Grouping.isInTreeMode(oTable)) {
-			aLabels.push(sTableId + "-ariarowselected");
-		}
-
 		if (bFirstTime || bRowChange) {
 			aLabels.push(sTableId + "-rownavigatedtext");
 		}
@@ -1182,9 +1178,6 @@ sap.ui.define([
 				aLabels.push(sTableId + "-rownumberofrows");
 				aLabels.push(sTableId + "-colnumberofcols");
 				aLabels.push(sTableId + "-rowacthdr");
-				if (iRow == 0) {
-					aLabels.push(sTableId + "-ariarowselected");
-				}
 				if (!bGroup && !bSum) {
 					aLabels.push(sRowId + "-highlighttext");
 				}
@@ -1767,7 +1760,7 @@ sap.ui.define([
 	QUnit.test("HiddenTexts", function(assert) {
 		var aHiddenTexts = [
 			"ariacount", "toggleedit", "ariaselectall", "ariarowgrouplabel", "ariagrandtotallabel",
-			"ariagrouptotallabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu",
+			"ariagrouptotallabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariacolmenu",
 			"ariacolspan", "ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes", "ariafixedcolumn", "ariainvalid", "ariaselection",
 			"ariashowcolmenu", "ariahidecolmenu", "rowexpandtext", "rowcollapsetext", "rownavigatedtext", "ariarequired"
 		];
