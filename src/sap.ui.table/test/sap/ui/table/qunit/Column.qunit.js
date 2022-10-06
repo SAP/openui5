@@ -1271,39 +1271,46 @@ sap.ui.define([
 
 	QUnit.test("_openHeaderMenu", function(assert) {
 		var done = assert.async();
+		assert.expect(6);
 		var oColumn = this.oColumn1;
 		var oActivateSpy = sinon.spy(ColumnHeaderMenuAdapter, "activateFor");
 		var oUnlinkSpy = sinon.spy(ColumnHeaderMenuAdapter, "unlink");
+		var oHeaderMenu = oColumn.getHeaderMenuInstance();
+
+		oHeaderMenu.attachBeforeOpen(function() {
+			setTimeout(function() {
+				assert.ok(oColumn._isMenuOpen(), "The ColumnMenu is open");
+				oColumn.destroy();
+				assert.ok(oUnlinkSpy.calledOnce, "unlink is called");
+				assert.ok(oUnlinkSpy.calledWithExactly(oColumn), "unlink is called with the correct parameter");
+				done();
+			}, 200);
+		});
 
 		assert.ok(!oColumn._isMenuOpen(), "the ColumnMenu is not open");
 
 		this.openColumnMenu(0);
 		assert.ok(oActivateSpy.calledOnce, "activateFor is called");
 		assert.ok(oActivateSpy.calledWithExactly(oColumn), "activateFor is called with the correct parameters");
-
-		setTimeout(function() {
-			assert.ok(oColumn._isMenuOpen(), "The ColumnMenu is open");
-			oColumn.destroy();
-			assert.ok(oUnlinkSpy.calledOnce, "unlink is called");
-			assert.ok(oUnlinkSpy.calledWithExactly(oColumn), "unlink is called with the correct parameter");
-			done();
-		}, 500);
 	});
 
 	QUnit.test("_isMenuOpen", function(assert) {
 		var done = assert.async();
+		assert.expect(3);
 		var oColumn = this.oColumn1;
+		var oHeaderMenu = oColumn.getHeaderMenuInstance();
+
+		oHeaderMenu.attachBeforeOpen(function() {
+			setTimeout(function() {
+				var oIsOpenSpy = sinon.spy(oHeaderMenu, "isOpen");
+				assert.ok(oColumn._isMenuOpen(), "The ColumnMenu is open");
+				assert.ok(oIsOpenSpy.calledOnce);
+				done();
+			}, 200);
+		});
 
 		assert.ok(!oColumn._isMenuOpen(), "The ColumnMenu is not open");
 		this.openColumnMenu(0);
-
-		setTimeout(function() {
-			var oHeaderMenu = oColumn.getHeaderMenuInstance();
-			var oIsOpenSpy = sinon.spy(oHeaderMenu, "isOpen");
-			assert.ok(oColumn._isMenuOpen(), "The ColumnMenu is open");
-			assert.ok(oIsOpenSpy.calledOnce);
-			done();
-		}, 500);
 	});
 
 	QUnit.test("aria-haspopup", function (assert) {
