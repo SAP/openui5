@@ -42,15 +42,15 @@ sap.ui.define([
 			baseUrl: "sap/f/cardsdemo/bundles/tablebundle/"
 		},
 		"tableCard2": {
-			path: "sap/f/cardsdemo/cardcontent/tableContent/bindings.json",
+			path: "sap/f/cardsdemo/cardcontent/tablecontent/bindings.json",
 			baseUrl: "sap/f/cardsdemo/cardcontent/tableContent/"
 		},
 		"tableCardGroups": {
-			path: "sap/f/cardsdemo/cardcontent/tableContent/groups.json",
+			path: "sap/f/cardsdemo/cardcontent/tablecontent/groups.json",
 			baseUrl: "sap/f/cardsdemo/cardcontent/tableContent/"
 		},
 		"tableCardNoData": {
-			path: "sap/f/cardsdemo/cardcontent/tableContent/noData.json",
+			path: "sap/f/cardsdemo/cardcontent/tablecontent/noData.json",
 			baseUrl: "sap/f/cardsdemo/cardcontent/tableContent/"
 		},
 		"cardWithSevereError": {
