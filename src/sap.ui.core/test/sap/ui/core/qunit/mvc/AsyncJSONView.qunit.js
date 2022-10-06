@@ -110,8 +110,14 @@ sap.ui.define([
 			JSONView.create({
 				definition: json
 			}).then(function(oJsonView) {
-				assert.equal(oExtractBindingInfoSpy.callCount, 7, "ManagedObject#extractBindingInfo called seven times");
-				assert.equal(oExtractBindingInfoSpy.getCall(5).returnValue, undefined, "ManagedObject#extractBindingInfo should return undefined");
+				var aExtractBindingInfoCalls = oExtractBindingInfoSpy.getCalls();
+
+				for (var i = 0; i < aExtractBindingInfoCalls.length; i++) {
+					var oCall = aExtractBindingInfoCalls[i];
+					if (typeof oCall.args[0] === 'object' && oCall.args[0].Type) {
+						assert.equal(oCall.returnValue, undefined, "ManagedObject#extractBindingInfo should return undefined");
+					}
+				}
 				done();
 			});
 		});
