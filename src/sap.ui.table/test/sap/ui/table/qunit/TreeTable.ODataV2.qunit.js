@@ -97,9 +97,9 @@ sap.ui.define([
 			var oBinding = this.oTable.getBinding();
 
 			// test some defaults
-			assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels is 0");
+			assert.notOk(oBinding.mParameters.numberOfExpandedLevels, "Number of expanded levels is not in parameters when not set explicitly");
 			assert.equal(oBinding.mParameters.rootLevel, 1, "RootLevel is 1");
-			assert.ok(oBinding.mParameters.collapseRecursive, "Collapse recursive is false");
+			assert.notOk(oBinding.mParameters.collapseRecursive, "Collapse recursive is not existing when it is not set explicitly");
 			assert.ok(!this.oTable.getExpandFirstLevel(), "Expand first Level is false");
 			assert.ok(!this.oTable.getUseGroupMode(), "useGroupMode is false");
 
@@ -366,7 +366,7 @@ sap.ui.define([
 		var fnHandler1 = function() {
 			// test some defaults
 			oBinding = this.oTable.getBinding();
-			assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels is 0");
+			assert.notOk(oBinding.mParameters.numberOfExpandedLevels, "Number of expanded levels is not set");
 			assert.equal(oBinding.mParameters.rootLevel, 2, "RootLevel is 2");
 			assert.ok(!this.oTable.getExpandFirstLevel(), "Expand first Level is false");
 			var aRows = this.oTable.getRows();

@@ -341,14 +341,18 @@ sap.ui.define([
 	function attachToBinding(oPlugin, oBinding) {
 		if (oBinding) {
 			oBinding.attachChange(oPlugin._onBindingChange, oPlugin);
-			oBinding.attachSelectionChanged(oPlugin._onSelectionChange, oPlugin);
+			if (oBinding.attachSelectionChanged) {
+				oBinding.attachSelectionChanged(oPlugin._onSelectionChange, oPlugin);
+			}
 		}
 	}
 
 	function detachFromBinding(oPlugin, oBinding) {
 		if (oBinding) {
 			oBinding.detachChange(oPlugin._onBindingChange, oPlugin);
-			oBinding.detachSelectionChanged(oPlugin._onSelectionChange, oPlugin);
+			if (oBinding.detachSelectionChanged) {
+				oBinding.detachSelectionChanged(oPlugin._onSelectionChange, oPlugin);
+			}
 		}
 	}
 

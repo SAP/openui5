@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/ui/model/TreeBindingCompatibilityAdapter',
 	'./TreeRenderer',
 	"sap/base/Log",
-	"sap/base/assert"
+	"sap/base/assert",
+	"sap/ui/table/proxies/TreeBindingProxy"
 ],
 function(
 	ListBase,
@@ -19,7 +20,8 @@ function(
 	TreeBindingCompatibilityAdapter,
 	TreeRenderer,
 	Log,
-	assert
+	assert,
+	TreeBindingProxy
 ) {
 	"use strict";
 
@@ -79,6 +81,10 @@ function(
 		renderer: TreeRenderer
 	});
 
+	Tree.prototype.init = function() {
+		this._oProxy = new TreeBindingProxy(this, "items");
+	};
+
 	Tree.prototype.isTreeBinding = function(sName) {
 		return (sName == "items");
 	};
@@ -112,7 +118,6 @@ function(
 
 		// Reuse the ListBinding from ManagedObject.updataAggregation
 		var oBindingInfo = this.getBindingInfo("items"),
-			oBinding = this.getBinding("items"),
 			fnFactory = oBindingInfo.factory,
 			aContexts;
 
@@ -144,7 +149,7 @@ function(
 		}
 
 		// Context length will be filled by model.
-		aContexts = oBinding.getContexts(0);
+		aContexts = this._oProxy.getContexts(0);
 
 		// If factory function is used without extended change detection, destroy aggregation
 		if (!oBindingInfo.template) {
@@ -191,16 +196,15 @@ function(
 			// make sure when rendering is called, the padding calc uses the correct deepest level
 			this._updateDeepestLevel(oItem);
 
-			var oBinding = this.getBinding("items");
 			if (bExpand == undefined) {
-				oBinding.toggleIndex(iIndex);
+				this._oProxy.toggleExpandedState(iIndex);
 			} else if (bExpand) {
-				oBinding.expand(iIndex);
+				this._oProxy.expand(iIndex);
 			} else {
-				oBinding.collapse(iIndex);
+				this._oProxy.collapse(iIndex);
 			}
 
-			bExpandedAfterPress = oBinding.isExpanded(iIndex);
+			bExpandedAfterPress = this._oProxy.isExpanded(iIndex);
 			if (bExpandedBeforePress !== bExpandedAfterPress && !oItem.isLeaf()) {
 				this.fireToggleOpenState({
 					itemIndex: iIndex,
@@ -290,17 +294,7 @@ function(
 	 * @since 1.48.0
 	 */
 	Tree.prototype.expandToLevel = function (iLevel) {
-		var oBinding = this.getBinding("items");
-
-		assert(oBinding && oBinding.expandToLevel, "Tree.expandToLevel is not supported with your current Binding. Please check if you are running on an ODataModel V2.");
-
-		if (oBinding && oBinding.expandToLevel && oBinding.getNumberOfExpandedLevels) {
-			if (oBinding.getNumberOfExpandedLevels() > iLevel) {
-				oBinding.collapseToLevel(0);
-			}
-			oBinding.expandToLevel(iLevel);
-		}
-
+		this._oProxy.expandToLevel(iLevel);
 		return this;
 	};
 
@@ -324,14 +318,7 @@ function(
 	 * @since 1.48.0
 	 */
 	Tree.prototype.collapseAll = function () {
-		var oBinding = this.getBinding("items");
-
-		assert(oBinding && oBinding.expandToLevel, "Tree.collapseAll is not supported with your current Binding. Please check if you are running on an ODataModel V2.");
-
-		if (oBinding) {
-			oBinding.collapseToLevel(0);
-		}
-
+		this._oProxy.collapseAll();
 		return this;
 	};
 
@@ -384,27 +371,7 @@ function(
 	 * @since 1.56.0
 	 */
 	Tree.prototype.expand = function(vParam) {
-		var oBinding = this.getBinding("items");
-
-		if (oBinding && oBinding.expand) {
-			var aIndices = this._preExpand(vParam),
-				oItem;
-			if (aIndices.length > 0) {
-				for (var i = 0; i < aIndices.length - 1; i++) {
-					oItem = this.getItems()[aIndices[i]];
-					this._updateDeepestLevel(oItem);
-					oBinding.expand(aIndices[i], true);
-				}
-
-				oItem = this.getItems()[aIndices[aIndices.length - 1]];
-				this._updateDeepestLevel(oItem);
-
-				// trigger change
-				oBinding.expand(aIndices[aIndices.length - 1], false);
-			}
-
-		}
-
+		this._oProxy.expand(vParam);
 		return this;
 	};
 
@@ -418,17 +385,7 @@ function(
 	 * @since 1.56.0
 	 */
 	Tree.prototype.collapse = function(vParam) {
-		var oBinding = this.getBinding("items");
-
-		if (oBinding && oBinding.collapse) {
-			var aIndices = this._preExpand(vParam);
-			for (var i = 0; i < aIndices.length - 1; i++) {
-				oBinding.collapse(aIndices[i], true);
-			}
-			// trigger change
-			oBinding.collapse(aIndices[aIndices.length - 1], false);
-		}
-
+		this._oProxy.collapse(vParam);
 		return this;
 	};
 
@@ -437,26 +394,15 @@ function(
 	};
 
 	Tree.prototype.getAccessbilityPosition = function(oItem) {
-		var iSetSize,
-			iPosInset,
-			oNodeContext = oItem.getItemNodeContext();
-
-		if (oNodeContext.parent) {
-			iSetSize = oNodeContext.parent.children.length;
-		}
-		if (oNodeContext.positionInParent != undefined) {
-			iPosInset = oNodeContext.positionInParent + 1;
-		}
-
+		var iIndex = this.indexOfItem(oItem);
 		return {
-			setSize: iSetSize,
-			posInset: iPosInset
+			setSize: this._oProxy.getSiblingCount(iIndex),
+			posInset: this._oProxy.getPositionInParent(iIndex) + 1
 		};
 	};
 
 	Tree.prototype.onItemLongDragOver = function(oItem) {
 		var iIndex = this.indexOfItem(oItem),
-			oBinding = this.getBinding("items"),
 			oBindingInfo = this.getBindingInfo("items"),
 			oItemContext = oItem && oItem.getBindingContext(oBindingInfo.model);
 
@@ -464,11 +410,11 @@ function(
 		if (oItem) {
 			this._updateDeepestLevel(oItem);
 			if (!oItem.isLeaf()) {
-				oBinding.expand(iIndex);
+				this._oProxy.expand(iIndex);
 				this.fireToggleOpenState({
 					itemIndex: iIndex,
 					itemContext: oItemContext,
-					expanded: oBinding.isExpanded(iIndex)
+					expanded: this._oProxy.isExpanded(iIndex)
 				});
 			}
 		}
