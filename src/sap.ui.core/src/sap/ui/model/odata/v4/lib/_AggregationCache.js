@@ -326,7 +326,7 @@ sap.ui.define([
 
 				if (sPredicate) {
 					that.aElements.$byPredicate[sPredicate] = oElement;
-					if (_Helper.getPrivateAnnotation(oElement, "expanding")) {
+					if (_Helper.hasPrivateAnnotation(oElement, "expanding")) {
 						_Helper.deletePrivateAnnotation(oElement, "expanding");
 						iCount += that.expand(_GroupLock.$cached, oElement).getResult();
 					}
@@ -474,7 +474,7 @@ sap.ui.define([
 		}
 
 		aAllElements = this.aElements.map(function (oElement) {
-			return _Helper.getPrivateAnnotation(oElement, "parent") ? undefined : oElement;
+			return _Helper.hasPrivateAnnotation(oElement, "parent") ? undefined : oElement;
 		});
 		aAllElements.$count = this.aElements.$count;
 
