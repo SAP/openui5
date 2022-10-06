@@ -1187,7 +1187,7 @@ function($, Core, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPa
 		}
 	});
 
-    QUnit.test("Test aria-labelledby attribute", function(assert) {
+	QUnit.test("Test aria-labelledby attribute", function(assert) {
 		var oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
 			sSubSectionWithoutTitleAriaLabelledBy = oSubSectionWithoutTitle.$().attr("aria-labelledby"),
 			oSubSectionWithTitle = this.ObjectPageSectionView.byId("subsection1"),

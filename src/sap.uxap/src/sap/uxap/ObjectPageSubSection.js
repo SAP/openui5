@@ -242,6 +242,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @private
+	 */
+	 ObjectPageSubSection.prototype._getShouldLabelTitle = function () {
+		if (this._sBorrowedTitleDomId) {
+			// in case section is promoted the title is not displayed
+			// on the subsection level - we don't need to include it in the aria label
+			return false;
+		}
+
+		return true;
+	};
+
+	/**
 	 * Returns Title DOM ID of the Title of this SubSection
 	 * @returns {string|boolean} DOM ID
 	 * @private
