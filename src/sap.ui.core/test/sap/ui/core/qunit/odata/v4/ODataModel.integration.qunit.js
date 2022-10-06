@@ -22229,9 +22229,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2. Collapse and
-	// expand the root node. Expand an initially collapsed node. Scroll to the end and collapse the
-	// root node again.
+	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2; first visible
+	// row starts at 1 and then we scroll up. Collapse and expand the root node. Expand an initially
+	// collapsed node. Scroll to the end and collapse the root node again.
 	// JIRA: CPOUI5ODATAV4-1643
 	//
 	// Use a sort order (JIRA: CPOUI5ODATAV4-1675).
@@ -22243,7 +22243,7 @@ sap.ui.define([
 			oRoot,
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{path : \'/EMPLOYEES\',\
+<t:Table firstVisibleRow="1" id="table" rows="{path : \'/EMPLOYEES\',\
 		parameters : {\
 			$$aggregation : {\
 				expandTo : 2,\
@@ -22264,17 +22264,9 @@ sap.ui.define([
 				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
 					+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
 				+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
-				+ "&$count=true&$skip=0&$top=3", {
+				+ "&$count=true&$skip=1&$top=3", {
 				"@odata.count" : "6",
 				value : [{
-					AGE : 60,
-					DescendantCount : 5,
-					DistanceFromRoot : 0,
-					DrillState : "expanded",
-					ID : "0",
-					MANAGER_ID : null,
-					Name : "Alpha"
-				}, {
 					AGE : 55,
 					DescendantCount : 0,
 					DistanceFromRoot : 1,
@@ -22291,17 +22283,67 @@ sap.ui.define([
 					ID : "2",
 					MANAGER_ID : "0",
 					Name : "Kappa"
+				}, {
+					AGE : 57,
+					DescendantCount : 0,
+					DistanceFromRoot : 1,
+					DrillState : "leaf",
+					ID : "3",
+					MANAGER_ID : "0",
+					Name : "Lambda"
 				}]
 			});
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
-			oRoot = oTable.getRows()[0].getBindingContext();
 
 			checkTable("initial page", assert, oTable, [
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')"
+			], [
+				[false, 2, "1", "0", "Beta", 55],
+				[undefined, 2, "2", "0", "Kappa", 56],
+				[undefined, 2, "3", "0", "Lambda", 57]
+			], 6);
+			assert.deepEqual(oTable.getRows()[1].getBindingContext().getObject(), {
+					"@odata.etag" : "etag_kappa",
+					// "@$ui5.node.isExpanded" : undefined, // lost by _Helper.publicClone?!
+					"@$ui5.node.level" : 2,
+					AGE : 56,
+					ID : "2",
+					MANAGER_ID : "0",
+					Name : "Kappa"
+				}, "technical properties have been removed");
+
+			that.expectRequest("EMPLOYEES?$apply=orderby(AGE desc)"
+					+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
+						+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
+					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+					+ "&$skip=0&$top=1", {
+					value : [{
+						AGE : 60,
+						DescendantCount : 5,
+						DistanceFromRoot : 0,
+						DrillState : "expanded",
+						ID : "0",
+						MANAGER_ID : null,
+						Name : "Alpha"
+					}]
+				});
+
+			// code under test
+			oTable.setFirstVisibleRow(0);
+
+			return that.waitForChanges(assert, "scroll up");
+		}).then(function () {
+			oRoot = oTable.getRows()[0].getBindingContext();
+
+			checkTable("scrolled up", assert, oTable, [
 				"/EMPLOYEES('0')",
 				"/EMPLOYEES('1')",
-				"/EMPLOYEES('2')"
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')"
 			], [
 				[true, 1, "0", "", "Alpha", 60],
 				[false, 2, "1", "0", "Beta", 55],
@@ -22314,15 +22356,6 @@ sap.ui.define([
 					ID : "0",
 					MANAGER_ID : null,
 					Name : "Alpha"
-				}, "technical properties have been removed");
-			assert.deepEqual(oTable.getRows()[2].getBindingContext().getObject(), {
-					"@odata.etag" : "etag_kappa",
-					// "@$ui5.node.isExpanded" : undefined, // lost by _Helper.publicClone?!
-					"@$ui5.node.level" : 2,
-					AGE : 56,
-					ID : "2",
-					MANAGER_ID : "0",
-					Name : "Kappa"
 				}, "technical properties have been removed");
 
 			that.expectRequest({
@@ -22343,7 +22376,8 @@ sap.ui.define([
 			checkTable("edit Kappa", assert, oTable, [
 				"/EMPLOYEES('0')",
 				"/EMPLOYEES('1')",
-				"/EMPLOYEES('2')"
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')"
 			], [
 				[true, 1, "0", "", "Alpha", 60],
 				[false, 2, "1", "0", "Beta", 55],
@@ -22377,7 +22411,8 @@ sap.ui.define([
 			checkTable("root expanded", assert, oTable, [
 				"/EMPLOYEES('0')",
 				"/EMPLOYEES('1')",
-				"/EMPLOYEES('2')"
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')"
 			], [
 				[true, 1, "0", "", "Alpha", 60],
 				[false, 2, "1", "0", "Beta", 55],
@@ -22416,7 +22451,8 @@ sap.ui.define([
 				"/EMPLOYEES('1')",
 				"/EMPLOYEES('1.1')",
 				"/EMPLOYEES('1.2')",
-				"/EMPLOYEES('2')"
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')"
 			], [
 				[true, 1, "0", "", "Alpha", 60],
 				[true, 2, "1", "0", "Beta", 55],
@@ -22436,16 +22472,8 @@ sap.ui.define([
 					+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/EMPLOYEES"
 						+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=2)"
 					+ "&$select=AGE,DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
-					+ "&$skip=3&$top=3", {
+					+ "&$skip=4&$top=2", {
 					value : [{
-						AGE : 57,
-						DescendantCount : 0,
-						DistanceFromRoot : 1,
-						DrillState : "leaf",
-						ID : "3",
-						MANAGER_ID : "0",
-						Name : "Lambda"
-					}, {
 						AGE : 58,
 						DescendantCount : 1,
 						DistanceFromRoot : 1,
