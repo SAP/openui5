@@ -129,7 +129,8 @@ function() {
 
 	Highlighter.prototype._processNode = function (oNode) {
 		var sText, oRegEx, i, j, oMatches, sCurrentMatch,
-			oCurrentMatch, aBlockedIndices, iCurrMatchIndex;
+			oCurrentMatch, aBlockedIndices, iCurrMatchIndex,
+			oHighligtedNode;
 
 		if (oNode.nodeName === "IFRAME") {
 			this._highlightSubTree(oNode.contentDocument.body);
@@ -166,8 +167,8 @@ function() {
 			}
 
 			if (Object.keys(oMatches).length !== 0) {
-				sText = this._highlightTerms(oMatches, sText);
-				this._replaceNode(oNode, sText);
+				oHighligtedNode = this._createHighlightedNode(oMatches, sText);
+				this._replaceNode(oNode, oHighligtedNode);
 			}
 		}
 	};
@@ -193,17 +194,13 @@ function() {
 		});
 	};
 
-	Highlighter.prototype._replaceNode = function (oNode, sHtml) {
-		var oWrapper;
+	Highlighter.prototype._replaceNode = function (oNode, oHighligtedNode) {
 
 		if (oNode.parentNode) {
-			oWrapper = document.createElement('span');
-			oWrapper.innerHTML = sHtml;
-
-			oNode.parentNode.replaceChild(oWrapper, oNode);
+			oNode.parentNode.replaceChild(oHighligtedNode, oNode);
 
 			// we cache which nodes are replaced with such as highlighted spans
-			this._aPreviouslyHighlightedNodes.push(oWrapper); // Highlighted Node with span
+			this._aPreviouslyHighlightedNodes.push(oHighligtedNode); // Highlighted Node with span
 			this._aPreviouslyOriginalNodes.push(oNode); // Original Node
 		}
 	};
@@ -228,27 +225,50 @@ function() {
 		this._toggleMutationObserver(true);
 	};
 
-	Highlighter.prototype._highlightTerms = function (oMatches, sText) {
-		var sOpeningTag = this._bUseExternalStyles ? '<span class="highlightedText">'
-			: '<span class="defaultHighlightedText">',
-			sClosingTag = '</span>',
-			sCurrMatch,
-			iUpdatedIndex,
-			iCounter = 0,
-			iIndex;
+	Highlighter.prototype._createHighlightedNode = function (oTokensToHighlight, sText) {
+		var oRootNode = document.createElement("span"),
+			aAllTokens = [],
+			fnSort = function(a, b) {return a > b;},
+			aIndices = Object.keys(oTokensToHighlight).sort(fnSort),
+			iIndex,
+			iStartIndex = 0;
 
-		for (iIndex in oMatches) {
-			iUpdatedIndex = +iIndex + (iCounter * (sOpeningTag.length + sClosingTag.length));
+		// split the <code>sText</code> into tokens,
+		// including both the tokens to highlight
+		// and the remaing parts of the <code>sText</code> string
+		for (var i = 0; i < aIndices.length; i++) {
+			var iTokenIndex = Number(aIndices[i]),
+				sToken = oTokensToHighlight[iTokenIndex],
+				iTokenLength = sToken.length,
+				sBeforeToken = sText.substring(iStartIndex, iTokenIndex);
 
-			sCurrMatch = oMatches[iIndex];
-			sText = sText.substring(0, iUpdatedIndex)
-					+ sOpeningTag + sCurrMatch + sClosingTag
-					+ sText.substring(iUpdatedIndex + sCurrMatch.length);
+			if (sBeforeToken.length) {
+				aAllTokens.push(sBeforeToken);
+			}
+			aAllTokens.push(sToken);
 
-			iCounter++;
+			// shift the <code>iStartIndex</code> to the
+			// remaining part of the <code>sText</code> string
+			iStartIndex = iTokenIndex + iTokenLength;
 		}
 
-		return sText;
+		if (iStartIndex < sText.length) {
+			aAllTokens.push(sText.substring(iStartIndex));
+		}
+
+		// wrap each token in a span
+		// and append to the root span
+		for (iIndex in aAllTokens) {
+			var oNextNode = document.createElement("span");
+			oNextNode.innerText = aAllTokens[iIndex];
+			if (Object.values(oTokensToHighlight).indexOf(aAllTokens[iIndex]) > -1) {
+				oNextNode.classList.add("defaultHighlightedText");
+			}
+
+			oRootNode.appendChild(oNextNode);
+		}
+
+		return oRootNode;
 	};
 
 	Highlighter.prototype._addMutationObserver = function () {
