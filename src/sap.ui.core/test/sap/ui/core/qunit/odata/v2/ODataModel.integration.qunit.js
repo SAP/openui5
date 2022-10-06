@@ -229,6 +229,44 @@ sap.ui.define([
 	}
 
 	/**
+	 * Gets a far customer line item as contained in the server response.
+	 *
+	 * @param {string} sCompanyCode The company code
+	 * @param {string} [sCustomer] The customer
+	 * @param {string} [sAccountingDocument] The accounting document ID
+	 * @param {string} [sAccountingDocumentItem] The accounting document item ID
+	 * @returns {object} A far customer line item as contained in the server response
+	 */
+	function getFarCustomerLineItem(sCompanyCode, sCustomer, sAccountingDocument,
+			sAccountingDocumentItem) {
+		var oResult = {
+				__metadata : {
+					uri : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items("
+						+ sCompanyCode
+						+ (sCustomer ? "," + sCustomer : "")
+						+ (sAccountingDocument ? "," + sAccountingDocument : "")
+						+ (sAccountingDocumentItem ? "," + sAccountingDocumentItem : "")
+						+ ")"
+				},
+				CompanyCode : sCompanyCode,
+				AmountInCompanyCodeCurrency : "1",
+				Currency : "USD"
+			};
+
+		if (sCustomer) {
+			oResult.Customer = sCustomer;
+		}
+		if (sAccountingDocument) {
+			oResult.AccountingDocument = sAccountingDocument;
+		}
+		if (sAccountingDocumentItem) {
+			oResult.AccountingDocumentItem = sAccountingDocumentItem;
+		}
+
+		return oResult;
+	}
+
+	/**
 	 * Gets a string representation of the given messages to be used in "sap-message" response
 	 * header. In case of multiple messages, the first message is the outer message and the other
 	 * messages are stored as inner messages in the "details" property.
@@ -245,6 +283,20 @@ sap.ui.define([
 		return JSON.stringify(Object.assign(
 			oMessage, {details : bIsArray ? vMessage.slice(1) : []}
 		));
+	}
+
+	/**
+	 * Extracts the content of the visible cells of the given table.
+	 *
+	 * @param {sap.ui.table.Table} oTable The table
+	 * @returns {(string[])[]} A 2 dimensional array of the visible table content
+	 */
+	function getTableContent(oTable) {
+		return oTable.getRows().map(function(oRow) {
+			return oRow.getCells().map(function (oCell) {
+				return oCell.getText();
+			});
+		});
 	}
 
 	/**
@@ -7816,44 +7868,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </t:AnalyticalTable>',
 			that = this;
 
-		// generate a data object with the given partially optional dimension values
-		function getItem(sCompanyCode, sCustomer, sAccountingDocument, sAccountingDocumentItem) {
-			var oResult = {
-					__metadata : {
-						uri : "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items("
-							+ sCompanyCode
-							+ (sCustomer ? "," + sCustomer : "")
-							+ (sAccountingDocument ? "," + sAccountingDocument : "")
-							+ (sAccountingDocumentItem ? "," + sAccountingDocumentItem : "")
-							+ ")"
-					},
-					CompanyCode : sCompanyCode,
-					AmountInCompanyCodeCurrency : "1",
-					Currency : "USD"
-				};
-
-			if (sCustomer) {
-				oResult.Customer = sCustomer;
-			}
-			if (sAccountingDocument) {
-				oResult.AccountingDocument = sAccountingDocument;
-			}
-			if (sAccountingDocumentItem) {
-				oResult.AccountingDocumentItem = sAccountingDocumentItem;
-			}
-
-			return oResult;
-		}
-
-		// extracts the texts contained in the table as a 2 dimensional array
-		function getVisibleData() {
-			return oTable.getRows().map(function(oRow) {
-				return oRow.getCells().map(function (oCell) {
-					return oCell.getText();
-				});
-			});
-		}
-
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
 
@@ -7872,7 +7886,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					+ "$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
 					+ "&$orderby=CompanyCode%20asc&$top=3"
 				}, {
-					results : [getItem("A0"), getItem("A1"), getItem("A2")]
+					results : [
+						getFarCustomerLineItem("A0"),
+						getFarCustomerLineItem("A1"),
+						getFarCustomerLineItem("A2")
+					]
 				})
 				.expectRequest({ // second level request
 					encodeRequestUri : false,
@@ -7880,7 +7898,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency"
 						+ "&$orderby=CompanyCode%20asc,Customer%20asc&$top=3"
 				}, {
-					results : [getItem("A0", "B0"), getItem("A1", "B0"), getItem("A2", "B0")]
+					results : [
+						getFarCustomerLineItem("A0", "B0"),
+						getFarCustomerLineItem("A1", "B0"),
+						getFarCustomerLineItem("A2", "B0")
+					]
 				})
 				.expectRequest({ // third level request
 					encodeRequestUri : false,
@@ -7891,10 +7913,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						+ "&$top=4"
 				}, {
 					results : [
-						getItem("A0", "B0", "C0"),
-						getItem("A0", "B0", "C1"),
-						getItem("A1", "B0", "C0"),
-						getItem("A1", "B0", "C1")
+						getFarCustomerLineItem("A0", "B0", "C0"),
+						getFarCustomerLineItem("A0", "B0", "C1"),
+						getFarCustomerLineItem("A1", "B0", "C0"),
+						getFarCustomerLineItem("A1", "B0", "C1")
 					]
 				})
 				.expectRequest({ // leaf request
@@ -7906,12 +7928,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 							+ "&$top=6"
 				}, {
 					results : [
-						getItem("A0", "B0", "C0", "D0"),
-						getItem("A0", "B0", "C1", "D0"),
-						getItem("A1", "B0", "C0", "D0"),
-						getItem("A1", "B0", "C1", "D0"),
-						getItem("A2", "B0", "C0", "D0"),
-						getItem("A2", "B0", "C1", "D0")
+						getFarCustomerLineItem("A0", "B0", "C0", "D0"),
+						getFarCustomerLineItem("A0", "B0", "C1", "D0"),
+						getFarCustomerLineItem("A1", "B0", "C0", "D0"),
+						getFarCustomerLineItem("A1", "B0", "C1", "D0"),
+						getFarCustomerLineItem("A2", "B0", "C0", "D0"),
+						getFarCustomerLineItem("A2", "B0", "C1", "D0")
 					]
 				});
 
@@ -7927,7 +7949,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			assert.deepEqual(getVisibleData(), [
+			assert.deepEqual(getTableContent(oTable), [
 				["A0", "", "", "", "1"],
 				["A0", "B0", "", "", "1"],
 				["A0", "B0", "C0", "", "1"],
@@ -7938,86 +7960,97 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(oBinding._oWatermark.groupID, "/A1/B0/");
 			assert.strictEqual(oBinding._oWatermark.startIndex, 2);
 
-			that.expectRequest({ // first level request
-				encodeRequestUri : false,
-				requestUri : "Items?"
-				+ "$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
-				+ "&$filter=((((CompanyCode%20gt%20%27A1%27))))&$orderby=CompanyCode%20asc&$top=3"
-			}, {
-				results : [getItem("A2"), getItem("A3"), getItem("A4")]
-			})
-			.expectRequest({ // second level request
-				encodeRequestUri : false,
-				requestUri : "Items?"
-					+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency"
-					+ "&$filter=((((CompanyCode%20gt%20%27A1%27))"
-						+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
-							+ "%20and%20(Customer%20gt%20%27B0%27))))"
-					+ "&$orderby=CompanyCode%20asc,Customer%20asc&$top=3"
-			}, {
-				results : [getItem("A2", "B0"), getItem("A3", "B0"), getItem("A4", "B0")]
-			})
-			.expectRequest({ // third level request
-				encodeRequestUri : false,
-				requestUri : "Items?"
-					+ "$select=CompanyCode,Customer,AccountingDocument,"
-						+ "AmountInCompanyCodeCurrency,Currency"
-					+ "&$filter=((((CompanyCode%20gt%20%27A1%27))"
-						+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
-							+ "%20and%20(Customer%20gt%20%27B0%27))"
-						+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
-							+ "%20and%20(Customer%20eq%20%27B0%27)"
-							+ "%20and%20(AccountingDocument%20gt%20%27C1%27))))"
-					+ "&$orderby=CompanyCode%20asc,Customer%20asc,AccountingDocument%20asc&$top=4"
-			}, {
-				results : [
-					getItem("A2", "B0", "C0"),
-					getItem("A3", "B0", "C1"),
-					getItem("A4", "B0", "C0"),
-					getItem("A5", "B0", "C1")
-				]
-			})
-			.expectRequest({ // leaf request
-				encodeRequestUri : false,
-				requestUri : "Items?"
-					+ "$select=CompanyCode,Customer,AccountingDocument,AccountingDocumentItem,"
-						+ "AmountInCompanyCodeCurrency,Currency"
-					+ "&$filter=((((CompanyCode%20gt%20%27A1%27))"
-						+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
-							+ "%20and%20(Customer%20gt%20%27B0%27))"
-						+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
-							+ "%20and%20(Customer%20eq%20%27B0%27)"
-							+ "%20and%20(AccountingDocument%20gt%20%27C1%27))))"
-					+ "&$orderby=CompanyCode%20asc,Customer%20asc,AccountingDocument%20asc&$top=6"
-			}, {
-				results : [
-					getItem("A2", "B0", "C0", "D0"),
-					getItem("A2", "B0", "C1", "D0"),
-					getItem("A3", "B0", "C0", "D0"),
-					getItem("A3", "B0", "C1", "D0"),
-					getItem("A4", "B0", "C0", "D0"),
-					getItem("A4", "B0", "C1", "D0")
-				]
-			});
-
 			// code under test - scroll to load next chunk of data (based on the watermark)
 			oTable.setFirstVisibleRow(4);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			assert.deepEqual(getVisibleData(), [
+			assert.deepEqual(getTableContent(oTable), [
 				["A0", "B0", "C1", "", "1"],
 				["A0", "B0", "C1", "D0", "1"],
 				["A1", "", "", "", "1"],
 				["A1", "B0", "", "", "1"]
 			]);
 
+			that.expectRequest({ // first level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+					+ "$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
+					+ "&$filter=((((CompanyCode%20gt%20%27A1%27))))&$orderby=CompanyCode%20asc"
+					+ "&$top=3"
+				}, {
+					results : [
+						getFarCustomerLineItem("A2"),
+						getFarCustomerLineItem("A3"),
+						getFarCustomerLineItem("A4")
+					]
+				})
+				.expectRequest({ // second level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency"
+						+ "&$filter=((((CompanyCode%20gt%20%27A1%27))"
+							+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
+								+ "%20and%20(Customer%20gt%20%27B0%27))))"
+						+ "&$orderby=CompanyCode%20asc,Customer%20asc&$top=3"
+				}, {
+					results : [
+						getFarCustomerLineItem("A2", "B0"),
+						getFarCustomerLineItem("A3", "B0"),
+						getFarCustomerLineItem("A4", "B0")
+					]
+				})
+				.expectRequest({ // third level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AccountingDocument,"
+							+ "AmountInCompanyCodeCurrency,Currency"
+						+ "&$filter=((((CompanyCode%20gt%20%27A1%27))"
+							+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
+								+ "%20and%20(Customer%20gt%20%27B0%27))"
+							+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
+								+ "%20and%20(Customer%20eq%20%27B0%27)"
+								+ "%20and%20(AccountingDocument%20gt%20%27C1%27))))"
+						+ "&$orderby=CompanyCode%20asc,Customer%20asc,AccountingDocument%20asc"
+						+ "&$top=4"
+				}, {
+					results : [
+						getFarCustomerLineItem("A2", "B0", "C0"),
+						getFarCustomerLineItem("A3", "B0", "C1"),
+						getFarCustomerLineItem("A4", "B0", "C0"),
+						getFarCustomerLineItem("A5", "B0", "C1")
+					]
+				})
+				.expectRequest({ // leaf request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AccountingDocument,AccountingDocumentItem,"
+							+ "AmountInCompanyCodeCurrency,Currency"
+						+ "&$filter=((((CompanyCode%20gt%20%27A1%27))"
+							+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
+								+ "%20and%20(Customer%20gt%20%27B0%27))"
+							+ "%20or%20((CompanyCode%20eq%20%27A1%27)"
+								+ "%20and%20(Customer%20eq%20%27B0%27)"
+								+ "%20and%20(AccountingDocument%20gt%20%27C1%27))))"
+						+ "&$orderby=CompanyCode%20asc,Customer%20asc,AccountingDocument%20asc"
+						+ "&$top=6"
+				}, {
+					results : [
+						getFarCustomerLineItem("A2", "B0", "C0", "D0"),
+						getFarCustomerLineItem("A2", "B0", "C1", "D0"),
+						getFarCustomerLineItem("A3", "B0", "C0", "D0"),
+						getFarCustomerLineItem("A3", "B0", "C1", "D0"),
+						getFarCustomerLineItem("A4", "B0", "C0", "D0"),
+						getFarCustomerLineItem("A4", "B0", "C1", "D0")
+					]
+				});
+
 			// code under test - scroll to see first entry after the former watermark node
 			oTable.setFirstVisibleRow(11);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			assert.deepEqual(getVisibleData(), [
+			assert.deepEqual(getTableContent(oTable), [
 				["A1", "B0", "C1", "D0", "1"],
 				["A2", "", "", "", "1"],
 				["A2", "B0", "", "", "1"],
@@ -8025,6 +8058,271 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			]);
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: An analytical table is expanded to level 2. On root level there are only few
+	// entries but the first node of the first level has a lot of children. Avoid loading all
+	// children if it is not necessary because there is enough data on the client for the table
+	// BCP: 2270125832
+	QUnit.test("AnalyticalBinding: Avoid loading all nodes for a watermark", function (assert) {
+		var oBinding, oTable,
+			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
+			sView = '\
+<t:AnalyticalTable id="table" threshold="1" visibleRowCount="4">\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode"/>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="Customer" template="Customer"/>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="AccountingDocument"\
+		template="AccountingDocument"/>\
+	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
+		template="AmountInCompanyCodeCurrency"/>\
+</t:AnalyticalTable>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectHeadRequest()
+				.expectRequest({ // count request
+					encodeRequestUri : false,
+					requestUri : "Items?$select=CompanyCode,Customer,AccountingDocument"
+						+ "&$top=0&$inlinecount=allpages"
+				}, {__count : "140", results : []})
+				// for simplicity the character of the dimension value defines the level and the
+				// number the poisition within that level
+				.expectRequest({ // first level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+					+ "$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
+					+ "&$orderby=CompanyCode%20asc&$top=3"
+				}, {
+					results : [getFarCustomerLineItem("A0"), getFarCustomerLineItem("A1")]
+				})
+				.expectRequest({ // second level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20asc,Customer%20asc&$top=3"
+				}, {
+					results : [
+						getFarCustomerLineItem("A0", "B0"),
+						getFarCustomerLineItem("A0", "B1"),
+						getFarCustomerLineItem("A0", "B2")
+					]
+				})
+				.expectRequest({ // leaf request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AccountingDocument,"
+							+ "AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20asc,Customer%20asc,AccountingDocument%20asc"
+							+ "&$top=5"
+				}, {
+					results : [
+						getFarCustomerLineItem("A0", "B0", "C0"),
+						getFarCustomerLineItem("A0", "B1", "C0"),
+						getFarCustomerLineItem("A0", "B2", "C0"),
+						getFarCustomerLineItem("A0", "B3", "C0"),
+						getFarCustomerLineItem("A0", "B4", "C0")
+					]
+				});
+
+			// bind it lately otherwise table resets numberOfExpandedLevels to 0
+			oTable.bindRows({
+				path : "/Items",
+				parameters : {
+					numberOfExpandedLevels : 2,
+					provideGrandTotals : false,
+					useBatchRequests : true
+				}
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(getTableContent(oTable), [
+				["A0", "", "", "1"],
+				["A0", "B0", "", "1"],
+				["A0", "B0", "C0", "1"],
+				["A0", "B1", "", "1"]
+			]);
+
+			oBinding = oTable.getBinding("rows");
+			assert.strictEqual(oBinding._oWatermark.groupID, "/A0/");
+			assert.strictEqual(oBinding._oWatermark.startIndex, 3);
+
+			that.expectRequest({ // first level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+					+ "$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
+					+ "&$filter=((((CompanyCode%20gt%20%27A0%27))))&$orderby=CompanyCode%20asc"
+					+ "&$top=3"
+				}, {
+					results : [getFarCustomerLineItem("A1")]
+				})
+				.expectRequest({ // second level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency"
+						+ "&$filter=((((CompanyCode%20gt%20%27A0%27))"
+							+ "%20or%20((CompanyCode%20eq%20%27A0%27)"
+								+ "%20and%20(Customer%20gt%20%27B2%27))))"
+						+ "&$orderby=CompanyCode%20asc,Customer%20asc&$top=3"
+				}, {
+					results : [
+						getFarCustomerLineItem("A0", "B3"),
+						getFarCustomerLineItem("A0", "B4"),
+						getFarCustomerLineItem("A0", "B5")
+					]
+				})
+				.expectRequest({ // leaf request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AccountingDocument,"
+							+ "AmountInCompanyCodeCurrency,Currency"
+						+ "&$filter=((((CompanyCode%20gt%20%27A0%27))"
+							+ "%20or%20((CompanyCode%20eq%20%27A0%27)"
+								+ "%20and%20(Customer%20gt%20%27B2%27))))"
+						+ "&$orderby=CompanyCode%20asc,Customer%20asc,AccountingDocument%20asc"
+						+ "&$top=5"
+				}, {
+					results : [
+						getFarCustomerLineItem("A0", "B3", "C0"),
+						getFarCustomerLineItem("A0", "B4", "C0"),
+						getFarCustomerLineItem("A0", "B5", "C0"),
+						getFarCustomerLineItem("A0", "B6", "C0"),
+						getFarCustomerLineItem("A0", "B7", "C0")
+					]
+				});
+
+			// code under test - scroll to end
+			oTable.setFirstVisibleRow(oBinding.getLength() - 4);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(getTableContent(oTable), [
+				["A0", "B2", "", "1"],
+				["A0", "B2", "C0", "1"],
+				["A0", "B3", "", "1"],
+				["A0", "B3", "C0", "1"]
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: An analytical table is expanded to level 2. The entries in front of the watermark
+	// node are displayed properly
+	// BCP: 2270125832
+	QUnit.test("AnalyticalBinding: nodes in front of the watermark", function (assert) {
+		var oBinding, oTable,
+			oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS"),
+			sView = '\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode" template="CompanyCode"/>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="Customer" template="Customer"/>\
+	<t:AnalyticalColumn grouped="true" leadingProperty="AccountingDocument"\
+		template="AccountingDocument"/>\
+	<t:AnalyticalColumn leadingProperty="AmountInCompanyCodeCurrency" summed="true"\
+		template="AmountInCompanyCodeCurrency"/>\
+</t:AnalyticalTable>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectHeadRequest()
+				.expectRequest({ // count request
+					encodeRequestUri : false,
+					requestUri : "Items?$select=CompanyCode,Customer,AccountingDocument"
+						+ "&$top=0&$inlinecount=allpages"
+				}, {__count : "140", results : []})
+				// for simplicity the character of the dimension value defines the level and the
+				// number the poisition within that level
+				.expectRequest({ // first level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+					+ "$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
+					+ "&$orderby=CompanyCode%20asc&$top=5"
+				}, {
+					results : [
+						getFarCustomerLineItem("A0"),
+						getFarCustomerLineItem("A1"),
+						getFarCustomerLineItem("A2"),
+						getFarCustomerLineItem("A3")
+					]
+				})
+				.expectRequest({ // second level request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20asc,Customer%20asc&$top=6"
+				}, {
+					results : [
+						getFarCustomerLineItem("A0", "B0"),
+						getFarCustomerLineItem("A1", "B0"),
+						getFarCustomerLineItem("A2", "B0"),
+						getFarCustomerLineItem("A3", "B0"),
+						getFarCustomerLineItem("A3", "B1"),
+						getFarCustomerLineItem("A3", "B2")
+					]
+				})
+				.expectRequest({ // leaf request
+					encodeRequestUri : false,
+					requestUri : "Items?"
+						+ "$select=CompanyCode,Customer,AccountingDocument,"
+							+ "AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20asc,Customer%20asc,AccountingDocument%20asc"
+							+ "&$top=11"
+				}, {
+					results : [
+						getFarCustomerLineItem("A0", "B0", "C0"),
+						getFarCustomerLineItem("A1", "B0", "C0"),
+						getFarCustomerLineItem("A2", "B0", "C0"),
+						getFarCustomerLineItem("A3", "B0", "C0"),
+						getFarCustomerLineItem("A3", "B0", "C1"),
+						getFarCustomerLineItem("A3", "B0", "C2"),
+						getFarCustomerLineItem("A3", "B0", "C3"),
+						getFarCustomerLineItem("A3", "B0", "C4"),
+						getFarCustomerLineItem("A3", "B0", "C5"),
+						getFarCustomerLineItem("A3", "B0", "C6"),
+						getFarCustomerLineItem("A3", "B0", "C7")
+					]
+				});
+
+			// bind it lately otherwise table resets numberOfExpandedLevels to 0
+			oTable.bindRows({
+				path : "/Items",
+				parameters : {
+					numberOfExpandedLevels : 2,
+					provideGrandTotals : false,
+					useBatchRequests : true
+				}
+			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(getTableContent(oTable), [
+				["A0", "", "", "1"],
+				["A0", "B0", "", "1"],
+				["A0", "B0", "C0", "1"],
+				["A1", "", "", "1"]
+			]);
+
+			oBinding = oTable.getBinding("rows");
+			assert.strictEqual(oBinding._oWatermark.groupID, "/A3/B0/");
+			assert.strictEqual(oBinding._oWatermark.startIndex, 8);
+
+			// code under test - scroll to end
+			oTable.setFirstVisibleRow(3);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.deepEqual(getTableContent(oTable), [
+				["A1", "", "", "1"],
+				["A1", "B0", "", "1"],
+				["A1", "B0", "C0", "1"],
+				["A2", "", "", "1"]
+			]);
 		});
 	});
 
