@@ -1331,17 +1331,32 @@ function($, Core, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, 
 	});
 
     QUnit.test("Test aria-labelledby attribute", function(assert) {
+		// Arrange
 		var oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
 			sSubSectionWithoutTitleAriaLabelledBy = oSubSectionWithoutTitle.$().attr("aria-labelledby"),
 			oSubSectionWithTitle = this.ObjectPageSectionView.byId("subsection1"),
 			sSubSectionWithTitleAriaLabelledBy = oSubSectionWithTitle.$().attr("aria-labelledby"),
 			sSubSectionControlName = ObjectPageSubSectionClass._getLibraryResourceBundle().getText("SUBSECTION_CONTROL_NAME");
 
+		// Assert
 		assert.strictEqual(Core.byId(sSubSectionWithoutTitleAriaLabelledBy).getText(),
 			sSubSectionControlName, "Subsections without titles should have aria-label='Subsection'");
 
+		// Assert
 		assert.strictEqual(Core.byId(sSubSectionWithTitleAriaLabelledBy).getText(),
 			oSubSectionWithTitle.getTitle(), "Subsection title is properly labelled");
+
+		// Act
+		oSubSectionWithTitle.setShowTitle(false);
+		Core.applyChanges();
+
+		// Arrange
+		sSubSectionWithTitleAriaLabelledBy = oSubSectionWithTitle.$().attr("aria-labelledby");
+
+		// Assert
+		assert.strictEqual(Core.byId(sSubSectionWithTitleAriaLabelledBy).getText(),
+			sSubSectionControlName, "Subsection with hidden title should not not contain its title in aria-labelledby");
+
 	});
 
 	QUnit.module("Title ID propagation");
