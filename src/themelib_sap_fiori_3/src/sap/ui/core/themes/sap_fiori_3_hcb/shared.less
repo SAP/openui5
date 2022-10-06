@@ -186,15 +186,17 @@
  * U+1EF4-1EF7: Y and y with diacritics that are not supported by the font and combination of multiple diacritics
  *
  *
- * Moreover, the caron has a special vertical form used on tall characters:
+ * Moreover, the Caron has a special vertical form used on tall characters:
  *
- * U+010F: small letter d with caron
- * U+013D: capital letter L with caron
- * U+013E: small letter l with caron
- * U+0165: small letter t with caron
+ * U+010C: C with Caron
+ * U+010F: d with Caron
+ * U+013D: L with Caron
+ * U+013E: l with Caron
+ * U+0158: R with Caron
+ * U+0165: t with Caron
  *
- * Those characters aren't covered by the font '72' but some browser simply combine the letter without diacritics with the
- * standard combining caron (U+030C) which leads to the wrong display of those 4 characters. Because those 4 characters
+ * Those characters aren't covered by the font '72' but some browser simply combine the letter without diacritics with
+ * the standard combining Caron (U+030C) which leads to the wrong display of those characters. Because those characters
  * are covered by the '72-full' font, they are redirected to that font as well for being correctly displayed.
  *
  */
@@ -202,7 +204,7 @@
 	font-family: '72';
 	font-style: normal;
 	font-weight: 400;
-	unicode-range: U+0102-0103, U+010F, U+013D, U+013E, U+0165, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EB7, U+1EB8-1EC7, U+1EC8-1ECB, U+1ECC-1EE3, U+1EE4-1EF1, U+1EF4-1EF7;
+	unicode-range: U+0102-0103, U+010C, U+010F, U+013D, U+013E, U+0158, U+0165, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EB7, U+1EB8-1EC7, U+1EC8-1ECB, U+1ECC-1EE3, U+1EE4-1EF1, U+1EF4-1EF7;
 	src: url('fonts/72-Regular-full.woff2') format('woff2');
 }
 
@@ -210,7 +212,7 @@
 	font-family: '72';
 	font-style: normal;
 	font-weight: 700;
-	unicode-range: U+0102-0103, U+010F, U+013D, U+013E, U+0165, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EB7, U+1EB8-1EC7, U+1EC8-1ECB, U+1ECC-1EE3, U+1EE4-1EF1, U+1EF4-1EF7;
+	unicode-range: U+0102-0103, U+010C, U+010F, U+013D, U+013E, U+0158, U+0165, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EB7, U+1EB8-1EC7, U+1EC8-1ECB, U+1ECC-1EE3, U+1EE4-1EF1, U+1EF4-1EF7;
 	src: url('fonts/72-Bold-full.woff2') format('woff2');
 }
 
@@ -218,33 +220,33 @@
 	font-family: '72';
 	font-style: normal;
 	font-weight: 300;
-	unicode-range: U+0102-0103, U+010F, U+013D, U+013E, U+0165, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EB7, U+1EB8-1EC7, U+1EC8-1ECB, U+1ECC-1EE3, U+1EE4-1EF1, U+1EF4-1EF7;
+	unicode-range: U+0102-0103, U+010C, U+010F, U+013D, U+013E, U+0158, U+0165, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EB7, U+1EB8-1EC7, U+1EC8-1ECB, U+1ECC-1EE3, U+1EE4-1EF1, U+1EF4-1EF7;
 	src: url('fonts/72-Light-full.woff2') format('woff2');
 }
 
 @font-face {
 	font-family: '72-Bold';
 	font-style: normal;
-	unicode-range: U+0102-0103, U+010F, U+013D, U+013E, U+0165, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EB7, U+1EB8-1EC7, U+1EC8-1ECB, U+1ECC-1EE3, U+1EE4-1EF1, U+1EF4-1EF7;
+	unicode-range: U+0102-0103, U+010C, U+010F, U+013D, U+013E, U+0158, U+0165, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EB7, U+1EB8-1EC7, U+1EC8-1ECB, U+1ECC-1EE3, U+1EE4-1EF1, U+1EF4-1EF7;
 	src: url('fonts/72-Bold-full.woff2') format('woff2');
 }
 
 @font-face {
 	font-family: '72-Light';
 	font-style: normal;
-	unicode-range: U+0102-0103, U+010F, U+013D, U+013E, U+0165, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EB7, U+1EB8-1EC7, U+1EC8-1ECB, U+1ECC-1EE3, U+1EE4-1EF1, U+1EF4-1EF7;
+	unicode-range: U+0102-0103, U+010C, U+010F, U+013D, U+013E, U+0158, U+0165, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EB7, U+1EB8-1EC7, U+1EC8-1ECB, U+1ECC-1EE3, U+1EE4-1EF1, U+1EF4-1EF7;
 	src: url('fonts/72-Light-full.woff2') format('woff2');
 }
 
 @font-face {
 	font-family: '72Mono';
-	unicode-range: U+0102-0103, U+010F, U+013D, U+013E, U+0165, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EB7, U+1EB8-1EC7, U+1EC8-1ECB, U+1ECC-1EE3, U+1EE4-1EF1, U+1EF4-1EF7;
+	unicode-range: U+0102-0103, U+010C, U+010F, U+013D, U+013E, U+0158, U+0165, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EB7, U+1EB8-1EC7, U+1EC8-1ECB, U+1ECC-1EE3, U+1EE4-1EF1, U+1EF4-1EF7;
 	src: url('fonts/72Mono-Regular-full.woff2') format('woff2');
 }
 
 @font-face {
 	font-family: '72Mono-Bold';
-	unicode-range: U+0102-0103, U+010F, U+013D, U+013E, U+0165, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EB7, U+1EB8-1EC7, U+1EC8-1ECB, U+1ECC-1EE3, U+1EE4-1EF1, U+1EF4-1EF7;
+	unicode-range: U+0102-0103, U+010C, U+010F, U+013D, U+013E, U+0158, U+0165, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EB7, U+1EB8-1EC7, U+1EC8-1ECB, U+1ECC-1EE3, U+1EE4-1EF1, U+1EF4-1EF7;
 	src: url('fonts/72Mono-Bold-full.woff2') format('woff2');
 }
 
