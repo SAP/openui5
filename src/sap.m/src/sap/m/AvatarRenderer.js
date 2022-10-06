@@ -44,7 +44,8 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 				aDescribedBy = oAvatar.getAriaDescribedBy(),
 				aHasPopup = oAvatar.getAriaHasPopup(),
 				oBadge = oAvatar.hasListeners("press") ?  oAvatar._getBadge() : null,
-				sDefaultTooltip = oAvatar._getDefaultTooltip();
+				sDefaultTooltip = oAvatar._getDefaultTooltip(),
+				sInitialsLength = sInitials.length;
 
 			oRm.openStart("span", oAvatar);
 			oRm.class(sAvatarClass);
@@ -97,12 +98,19 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			oRm.openEnd();
 			if (sActualDisplayType === AvatarType.Icon || sImageFallbackType === AvatarType.Icon) {
 				oRm.renderControl(oAvatar._getIcon().addStyleClass(sAvatarClass + "TypeIcon"));
-			} else if (sActualDisplayType === AvatarType.Initials || sImageFallbackType === AvatarType.Initials){
+			} else if ((sActualDisplayType === AvatarType.Initials || sImageFallbackType === AvatarType.Initials) ){
+				if (sInitialsLength === 3) {
+				//we render both icon and avatar, for the case where we have 3 initials set to the avatar and they are overflowing,
+				//in this case we want to show icon instead of the initials after the rendering of the control
+					oRm.renderControl(oAvatar._getIcon().addStyleClass(sAvatarClass + "TypeIcon").addStyleClass(sAvatarClass + "HiddenIcon"));
+				}
+
 				oRm.openStart("span");
 				oRm.class(sAvatarClass + "InitialsHolder");
 				oRm.openEnd();
 				oRm.text(sInitials);
 				oRm.close("span");
+
 			}
 			if (sActualDisplayType === AvatarType.Image) {
 				oRm.openStart("span");
