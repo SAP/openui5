@@ -565,7 +565,7 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 	});
 
 	QUnit.test("Test aria-labelledby attribute", function (assert) {
-		assert.expect(5);
+		assert.expect(6);
 
 		var done = assert.async(),
 			oFirstSection = this.ObjectPageSectionView.byId("SectionWithSubSection"),
@@ -600,6 +600,16 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 		// assert
 		assert.strictEqual(Core.byId(sFirstSectionAriaLabelledBy).getText(),
 			oFirstSection._getTitle(), "aria-labelledby is updated properly");
+
+		// act
+		// setShowTitle = false should remove the title from the aria-labelledby attribute
+		oFirstSection.setShowTitle(false);
+		Core.applyChanges();
+		sFirstSectionAriaLabelledBy = oFirstSection.$().attr("aria-labelledby");
+
+		// assert
+		assert.strictEqual(Core.byId(sFirstSectionAriaLabelledBy).getText(),
+			sSectionText, "sections without title are labelled by 'Section' texts");
 
 		// arrange
 		oLastSection.addEventDelegate(oRenderingAfterTitleUpdate);
