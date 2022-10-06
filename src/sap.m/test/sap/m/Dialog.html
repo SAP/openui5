@@ -446,9 +446,7 @@
 			var oDialogWithResponsivePadding = new sap.m.Dialog("dialogResponsivePadding", {
 				title: "Dialog with Responsive Padding",
 				resizable: true,
-				content: new sap.m.OverflowToolbar({
-					content: new sap.m.Text({ text: "Only on SAP Quartz and Horizon themes." })
-				}),
+				content: new sap.m.Text({ text: "Only on SAP Quartz and Horizon themes." }).addStyleClass("sapUiSmallMarginTop"),
 				beginButton: new sap.m.Button("dialogResponsivePaddingOKButton", {
 					text: "OK",
 					press: function () {
