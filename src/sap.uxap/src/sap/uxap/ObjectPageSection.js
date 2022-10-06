@@ -132,6 +132,10 @@ sap.ui.define([
 
 	ObjectPageSection.prototype.exit = function () {
 		this._detachMediaContainerWidthChange(this._updateImportance, this);
+
+		if (ObjectPageSectionBase.prototype.exit) {
+			ObjectPageSectionBase.prototype.exit.call(this);
+		}
 	};
 
 	ObjectPageSection.prototype._getImportanceLevelToHide = function (oCurrentMedia) {
