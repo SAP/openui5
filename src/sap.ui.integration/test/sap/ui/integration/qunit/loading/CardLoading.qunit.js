@@ -1583,7 +1583,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Analytical - Loading indicator should be present - content level request", function (assert) {
-			isLoadingIndicatorShowingContentDataReady(oManifest_AnalyticalCard, this.oCard, "Analytical content has a loading placeholder", false, ".sapFCardContentGenericPlaceholder", assert);
+			isLoadingIndicatorShowingContentDataReady(oManifest_AnalyticalCard, this.oCard, "Analytical content has a loading placeholder", false, ".sapFCardContentAnalyticalPlaceholder", assert);
 		});
 
 		QUnit.test("Object - Loading indicator should be present - content level request", function (assert) {
@@ -1770,7 +1770,7 @@ sap.ui.define([
 		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {
 			var sType = "Analytical";
 
-			isLoadingPlaceholderCorrectType(this.oLoadingProvider, {}, sType, "Generic", "Loading placeholder is of type GenericPlaceholder", assert);
+			isLoadingPlaceholderCorrectType(this.oLoadingProvider, {}, sType, "Analytical", "Loading placeholder is of type GenericPlaceholder", assert);
 		});
 
 		QUnit.test("setConfiguration of BaseContent should be called with sType as a parameter", function (assert) {
@@ -1984,7 +1984,7 @@ sap.ui.define([
 			});
 
 			QUnit.test("Analytical - Loading indicator should be present - content level request", function (assert) {
-				isLoadingIndicatorShowingContent(oManifest_AnalyticalCard, this.oCard, "Analytical content has a loading placeholder", true, ".sapFCardContentGenericPlaceholder", assert);
+				isLoadingIndicatorShowingContent(oManifest_AnalyticalCard, this.oCard, "Analytical content has a loading placeholder", true, ".sapFCardContentAnalyticalPlaceholder", assert);
 			});
 
 		}).catch(function () {
