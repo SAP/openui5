@@ -1944,8 +1944,10 @@ function(
 			if (oTimePicker._checkStyle(sDisplayFormat)) {
 				sMask = LocaleData.getInstance(oLocale).getTimePattern(sDisplayFormat);
 			} else {
-				sDisplayFormat = sDisplayFormat.replace(/'/g, ""); // single quotes (like 'ч') are irrelevant for DateFormat, so they are for the mask
-				sMask = sDisplayFormat;
+				sMask = sDisplayFormat
+					.replace(/hh/ig, "h")
+					.replace(/h(?!')/ig, "h9")
+					.replace(/'h(?=')/ig, "'^h"); // add escape caret character for the mask before the hour character surrounded by single quotes
 			}
 
 			this._oTimePicker = oTimePicker;
@@ -1968,7 +1970,6 @@ function(
 			oTimePicker.setPlaceholderSymbol(PLACEHOLDER_SYMBOL);
 
 			//set hours allowed chars in the mask
-			sMask = sMask.replace(/hh/ig, "h").replace(/h/ig, "h9");
 			if (this.b24H) {
 				sAllowedHourChars = "[" + this.sLeadingRegexChar + "012]";
 			} else {
@@ -1985,9 +1986,14 @@ function(
 
 			//set minutes and seconds allowed chars in the mask
 			this.iMinuteNumber1Index = sMask.indexOf("mm");
-			sMask = sMask.replace(/mm/g, "59");
 			this.iSecondNumber1Index = sMask.indexOf("ss");
-			sMask = sMask.replace(/ss/g, "59");
+
+			sMask = sMask
+				.replace(/'mm(?=')/g, "'^mm")
+				.replace(/mm(?!')/g, "59")
+				.replace(/'ss(?=')/g, "'^ss")
+				.replace(/ss(?!')/g, "59")
+				.replace(/'/g, ""); // single quotes (like 'ч') are irrelevant for DateFormat, so they are for the mask
 
 			this._maskRuleMinSec = new MaskInputRule({
 				maskFormatSymbol: "5",

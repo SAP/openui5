@@ -2456,6 +2456,23 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Hours, minutes and seconds characters from the displayFormat are escaped when setting the mask ", function(assert) {
+		//prepare
+		var oTp = new TimePicker({
+			displayFormat: "H 'h' mm 'mm' ss 'ss'"
+		});
+
+		oTp.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		//act
+		//assert
+		assert.equal(oTp._oTempValue.toString(), "-- h -- mm -- ss", "The mask is proeprly set");
+
+		// destroy
+		oTp.destroy();
+	});
+
 	QUnit.module("maskMode property", {
 		beforeEach: function () {
 			this.oTp = new TimePicker();
