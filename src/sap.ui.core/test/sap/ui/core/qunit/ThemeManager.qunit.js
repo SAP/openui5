@@ -1,9 +1,9 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/ThemeCheck",
+	"sap/ui/core/theming/ThemeManager",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/core/Configuration"
-], function(ThemeCheck, themeApplied, Configuration) {
+], function(ThemeManager, themeApplied, Configuration) {
 	"use strict";
 
 	// Wait until the theme is changed
@@ -39,20 +39,20 @@ sap.ui.define([
 		});
 
 		// for the test we need to delay the theme changed event to avoid the cleanup
-		// of the old stylesheet which will be performed by the ThemeCheck
-		var fnFireThemeChangedEvent = ThemeCheck.prototype.fireThemeChangedEvent;
-		ThemeCheck.prototype.fireThemeChangedEvent = function(bOnlyOnInitFail) {
-			setTimeout(fnFireThemeChangedEvent.bind(this, bOnlyOnInitFail), 0);
+		// of the old stylesheet which will be performed by the ThemeManager
+		var fncheckThemeChanged = ThemeManager.checkThemeChanged;
+		ThemeManager.checkThemeChanged = function(bOnlyOnInitFail) {
+			aLibraryCss.forEach(function(lib) {
+				assert.equal(lib.domRef.parentNode, document.head, "Old stylesheet for library " + lib.name + " still exits in the DOM.");
+				assert.equal(lib.domRef.getAttribute("data-sap-ui-foucmarker"), "sap-ui-theme-" + lib.name, "Attribute for ThemeManager has been added to old stylesheet.");
+			});
+
+			setTimeout(fncheckThemeChanged.bind(this, bOnlyOnInitFail), 0);
 		};
 
 		sap.ui.getCore().applyTheme(sTheme);
 
-		aLibraryCss.forEach(function(lib) {
-			assert.equal(lib.domRef.parentNode, document.head, "Old stylesheet for library " + lib.name + " still exits in the DOM.");
-			assert.equal(lib.domRef.getAttribute("data-sap-ui-foucmarker"), "sap-ui-theme-" + lib.name, "Attribute for ThemeCheck has been added to old stylesheet.");
-		});
-
-		ThemeCheck.prototype.fireThemeChangedEvent = fnFireThemeChangedEvent;
+		ThemeManager.checkThemeChanged = fncheckThemeChanged;
 
 	}
 
@@ -64,7 +64,7 @@ sap.ui.define([
 		});
 	}
 
-	function testThemeCheckCleanup(assert) {
+	function testThemeManagerCleanup(assert) {
 		aLibraries.forEach(function(lib) {
 			var oOldLibraryCss = document.querySelectorAll("link[data-sap-ui-foucmarker='sap-ui-theme-" + lib + "']");
 			assert.equal(oOldLibraryCss && oOldLibraryCss.length || 0, 0, "Old stylesheet for library " + lib + " has been removed.");
@@ -72,7 +72,7 @@ sap.ui.define([
 	}
 
 
-	QUnit.test("Initial theme theck", function(assert) {
+	QUnit.test("Initial theme check", function(assert) {
 		var done = assert.async();
 
 		themeApplied().then(function() {
@@ -93,7 +93,7 @@ sap.ui.define([
 			testThemeLoaded(assert);
 
 			// Check if the old stylesheets have been removed again
-			testThemeCheckCleanup(assert);
+			testThemeManagerCleanup(assert);
 
 			// Check if the custom.css has been included
 			var oCustomCss = document.getElementById("sap-ui-core-customcss");
@@ -119,7 +119,7 @@ sap.ui.define([
 			testThemeLoaded(assert);
 
 			// Check if the old stylesheets have been removed again
-			testThemeCheckCleanup(assert);
+			testThemeManagerCleanup(assert);
 
 			// Check if the custom.css has been included
 			var oCustomCss = document.getElementById("sap-ui-core-customcss");
@@ -145,7 +145,7 @@ sap.ui.define([
 			testThemeLoaded(assert);
 
 			// Check if the old stylesheets have been removed again
-			testThemeCheckCleanup(assert);
+			testThemeManagerCleanup(assert);
 
 			// Check if the custom.css has been included
 			var oCustomCss = document.getElementById("sap-ui-core-customcss");
@@ -262,7 +262,7 @@ sap.ui.define([
 			testThemeLoaded(assert);
 
 			// Check if the old stylesheets have been removed again
-			testThemeCheckCleanup(assert);
+			testThemeManagerCleanup(assert);
 
 			sinon.assert.neverCalledWithMatch(Log.error, sinon.match("Error during check styles"));
 

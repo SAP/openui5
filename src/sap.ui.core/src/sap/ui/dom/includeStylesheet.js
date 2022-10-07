@@ -52,7 +52,7 @@ sap.ui.define(["sap/base/assert"],
 				// matches the id of the new link the new link will be put
 				// before the old link into the document and the id attribute
 				// will be removed from the old link (to avoid FOUC)
-				// => sap/ui/core/ThemeCheck removes these old links again once
+				// => sap/ui/core/theming/ThemeManager removes these old links again once
 				//    the new theme has been fully loaded
 				if (oOld.getAttribute("data-sap-ui-foucmarker") === sId) {
 					oOld.removeAttribute("id");
@@ -63,7 +63,7 @@ sap.ui.define(["sap/base/assert"],
 			} else if (oOld.getAttribute("data-sap-ui-foucmarker") === sId) {
 				// in case of using without callbacks and applying the same URL
 				// the foucmarker has to be removed as the link will not be
-				// replaced with another link - otherwise the ThemeCheck would
+				// replaced with another link - otherwise the ThemeManager would
 				// remove this link
 				oOld.removeAttribute("data-sap-ui-foucmarker");
 			}

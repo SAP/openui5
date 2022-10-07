@@ -9,17 +9,18 @@
  */
 
 sap.ui.define([
+	'sap/ui/core/Core',
+	'sap/ui/core/Configuration',
 	'sap/ui/thirdparty/URI',
 	'../Element',
 	'sap/base/util/UriParameters',
 	'sap/base/Log',
 	'sap/base/util/extend',
 	'sap/base/util/syncFetch',
-	'sap/ui/core/ThemeCheck',
-	'./ThemeHelper',
-	'sap/ui/core/Configuration'
+	'sap/ui/core/theming/ThemeManager',
+	'./ThemeHelper'
 ],
-	function(URI, Element, UriParameters, Log, extend, syncFetch, ThemeCheck, ThemeHelper, Configuration) {
+	function(Core, Configuration, URI, Element, UriParameters, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
 	"use strict";
 
 	var syncCallBehavior = Configuration.getSyncCallBehavior();
@@ -117,7 +118,7 @@ sap.ui.define([
 		function parseParameters(sId) {
 			var oUrl = getThemeBaseUrlForId(sId);
 
-			var bThemeApplied = ThemeCheck.checkStyle(sId);
+			var bThemeApplied = ThemeHelper.checkStyle(sId);
 
 			if (!bThemeApplied) {
 				Log.warning("Parameters have been requested but theme is not applied, yet.", "sap.ui.core.theming.Parameters");
@@ -300,7 +301,7 @@ sap.ui.define([
 
 				forEachStyleSheet(function (sId) {
 					if (bAsync) {
-						if (ThemeCheck.checkStyle(sId)) {
+						if (ThemeHelper.checkStyle(sId)) {
 							parseParameters(sId);
 						} else {
 							aParametersToLoad.push(sId);
@@ -319,7 +320,7 @@ sap.ui.define([
 
 			aParametersToLoad.forEach(function (sId) {
 				// Only parse parameters in case theme is already applied. Else keep parameter ID for later
-				if (ThemeCheck.checkStyle(sId)) {
+				if (ThemeHelper.checkStyle(sId)) {
 					parseParameters(sId);
 				} else {
 					aPendingThemes.push(sId);
@@ -390,6 +391,13 @@ sap.ui.define([
 
 			// Sync: Fallback path for when parameter could not be found so far, library.css MIGHT be not loaded
 			if (mOptions.loadPendingParameters && typeof sParamValue === "undefined" && !bAsync) {
+				// Include library theme in case it's not already done, since link tag for library
+				// is added asynchronous after initLibrary has been executed
+				var aAllLibrariesRequireCss = Core.getAllLibrariesRequiringCss();
+				aAllLibrariesRequireCss.forEach(function (oLibThemingInfo) {
+					ThemeManager._includeLibraryThemeAndEnsureThemeRoot(oLibThemingInfo);
+				});
+
 				loadPendingLibraryParameters();
 				sParamValue = getParam({
 					parameterName: mOptions.parameterName,
@@ -600,7 +608,7 @@ sap.ui.define([
 			var sParamName, fnAsyncCallback, bAsync, aNames, iIndex;
 			var findRegisteredCallback = function (oCallbackInfo) { return oCallbackInfo.callback === fnAsyncCallback; };
 
-			if (!sap.ui.getCore().isInitialized()) {
+			if (!Core.isInitialized()) {
 				Log.warning("Called sap.ui.core.theming.Parameters.get() before core has been initialized. " +
 					"Consider using the API only when required, e.g. onBeforeRendering.");
 			}
@@ -687,9 +695,9 @@ sap.ui.define([
 			}
 
 			if (bAsync && fnAsyncCallback && Object.keys(vResult).length !== aNames.length) {
-				if (!sap.ui.getCore().isThemeApplied()) {
+				if (!ThemeManager.themeLoaded) {
 					resolveWithParameter = function () {
-						sap.ui.getCore().detachThemeChanged(resolveWithParameter);
+						ThemeManager.detachEvent("ThemeChanged", resolveWithParameter);
 						var vParams = this.get({ // Don't pass callback again
 							name: vName.name,
 							scopeElement: vName.scopeElement
@@ -706,12 +714,12 @@ sap.ui.define([
 					// Check if identical callback is already registered and reregister with current parameters
 					iIndex = aCallbackRegistry.findIndex(findRegisteredCallback);
 					if (iIndex >= 0) {
-						sap.ui.getCore().detachThemeChanged(aCallbackRegistry[iIndex].eventHandler);
+						ThemeManager.detachEvent("ThemeChanged", aCallbackRegistry[iIndex].eventHandler);
 						aCallbackRegistry[iIndex].eventHandler = resolveWithParameter;
 					} else {
 						aCallbackRegistry.push({ callback: fnAsyncCallback, eventHandler: resolveWithParameter });
 					}
-					sap.ui.getCore().attachThemeChanged(resolveWithParameter);
+					ThemeManager.attachEvent("ThemeChanged", resolveWithParameter);
 					return undefined; // Don't return partial result in case we expect themeChanged event.
 				} else {
 					Log.error("One or more parameters could not be found.", "sap.ui.core.theming.Parameters");
@@ -757,6 +765,17 @@ sap.ui.define([
 		 * @deprecated since 1.92
 		 */
 		Parameters.reset = function() {
+			this._reset.apply(this, arguments);
+		};
+
+		/**
+		 * Resets the CSS parameters which finally will reload the parameters
+		 * the next time they are queried via the method <code>get</code>.
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.core.theming
+		 */
+		Parameters._reset = function() {
 			// hidden parameter {boolean} bOnlyWhenNecessary
 			var bOnlyWhenNecessary = arguments[0] === true;
 			if ( !bOnlyWhenNecessary || Configuration.getTheme() !== sTheme ) {

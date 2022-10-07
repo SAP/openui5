@@ -47,7 +47,7 @@ sap.ui.define([
 
 		var sMetaData = aDataUriMatch[1];
 
-		// [COMPATIBILITY]: The following lines of code are moved unchanged from ThemeCheck in order to not introduce any regressions but
+		// [COMPATIBILITY]: The following lines of code are moved unchanged from ThemeManager in order to not introduce any regressions but
 		// neverteheless it's not fully clear if detection of URI encoding and URI decoding itself (especially manual encoding of spaces)
 		// is necessary
 
@@ -75,6 +75,61 @@ sap.ui.define([
 			Log.error("Could not parse theme metadata for library " + sLibName + ".");
 		}
 		return oMetadata;
+	};
+
+	ThemeHelper.checkStyle = function(sId, bLog) {
+		var oStyle = document.getElementById(sId);
+
+		try {
+
+			var bNoLinkElement = false,
+				bLinkElementFinishedLoading = false,
+				bSheet = false,
+				bInnerHtml = false;
+
+			// Check if <link> element is missing (e.g. misconfigured library)
+			bNoLinkElement = !oStyle;
+
+			// Check if <link> element has finished loading (see sap/ui/dom/includeStyleSheet)
+			bLinkElementFinishedLoading = !!(oStyle && (oStyle.getAttribute("data-sap-ui-ready") === "true" || oStyle.getAttribute("data-sap-ui-ready") === "false"));
+
+			// Check for "sheet" object and if rules are available
+			bSheet = !!(oStyle && oStyle.sheet && oStyle.sheet.href === oStyle.href && ThemeHelper.hasSheetCssRules(oStyle.sheet));
+
+			// Check for "innerHTML" content
+			bInnerHtml = !!(oStyle && oStyle.innerHTML && oStyle.innerHTML.length > 0);
+
+			// One of the previous four checks need to be successful
+			var bResult = bNoLinkElement || bSheet || bInnerHtml || bLinkElementFinishedLoading;
+
+			if (bLog) {
+				Log.debug("ThemeHelper: " + sId + ": " + bResult + " (noLinkElement: " + bNoLinkElement + ", sheet: " + bSheet + ", innerHtml: " + bInnerHtml + ", linkElementFinishedLoading: " + bLinkElementFinishedLoading + ")");
+			}
+
+			return bResult;
+
+		} catch (e) {
+			if (bLog) {
+				Log.error("ThemeHelper: " + sId + ": Error during check styles '" + sId + "'", e);
+			}
+		}
+
+		return false;
+	};
+	ThemeHelper.safeAccessSheetCssRules = function(sheet) {
+		try {
+			return sheet.cssRules;
+		} catch (e) {
+			// Firefox throws a SecurityError or InvalidAccessError if "sheet.cssRules"
+			// is accessed on a stylesheet with 404 response code.
+			// Most browsers also throw when accessing from a different origin (CORS).
+			return null;
+		}
+	};
+
+	ThemeHelper.hasSheetCssRules = function(sheet) {
+		var aCssRules = ThemeHelper.safeAccessSheetCssRules(sheet);
+		return !!aCssRules && aCssRules.length > 0;
 	};
 
 	return ThemeHelper;

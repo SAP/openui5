@@ -1,8 +1,8 @@
-/*global QUnit*/
+/*global QUnit, sinon*/
 
 sap.ui.define([
-	"sap/ui/support/supportRules/report/DataCollector", "sap/ui/core/Component"
-], function (DataCollector, Component) {
+	"sap/ui/core/Core", "sap/ui/support/supportRules/report/DataCollector", "sap/ui/core/Component", "sap/ui/core/Configuration", "sap/ui/core/theming/ThemeManager"
+], function (Core, DataCollector, Component, Configuration, ThemeManager) {
 		"use strict";
 
 		QUnit.module("Data collector", {
@@ -110,24 +110,16 @@ sap.ui.define([
 
 		QUnit.test("Technical Info", function (assert) {
 			// Arrange
-			this.DataCollector._oCore = {
-				getLoadedLibraries: function(){
-					return ["sap.m"];
-				},
-				_getThemePath: function(){
-					return "http://www.example.com/";
-				},
-				getConfiguration: function() {
-					return {
-						getTheme: function() {
-							return "fiori_3";
-						}
-					};
-				}
-			};
+			var oGetLoadedLibrariesMock = sinon.stub(Core, "getLoadedLibraries").returns(["sap.m"]);
+			var oGetThemePathMock = sinon.stub(ThemeManager, "_getThemePath").returns("http://www.example.com/");
+			var oGetThemeMock = sinon.stub(Configuration, "getTheme").returns("fiori_3");
 
 			// Assert
 			assert.equal(this.DataCollector.getTechInfoJSON().themePaths[0].theme, "fiori_3", "Theme string is correctly set");
 			assert.equal(this.DataCollector.getTechInfoJSON().themePaths[0].relativePath, "http://www.example.com/", "Theme path is correctly set");
+
+			oGetLoadedLibrariesMock.restore();
+			oGetThemePathMock.restore();
+			oGetThemeMock.restore();
 		});
 });
