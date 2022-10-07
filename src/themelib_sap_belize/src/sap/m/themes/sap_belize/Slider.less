@@ -11,6 +11,9 @@
 .sapMSliderInner {
 	background: @_sap_m_Slider_Background;
 }
+.sapMSliderTickmarks {
+	top: -0.8125em;
+}
 
 .sapMSliderInner,
 .sapMSliderProgress {
@@ -39,4 +42,11 @@
 /* disabled */
 .sapMSliderDisabled {
 	opacity: 0.5;
+}
+
+.sapUiSizeCompact {
+	.sapMSliderTickmarks {
+		height: 1rem;
+		top: -0.4375rem;
+	}
 }
