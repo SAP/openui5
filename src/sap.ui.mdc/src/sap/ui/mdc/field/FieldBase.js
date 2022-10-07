@@ -589,20 +589,34 @@ sap.ui.define([
 
 		this._bPreventGetDescription = false; // set in navigate or select from field help
 
-		this._oContentFactory = new ContentFactory(this.getId() + "-contentFactory", {
-			field: this,
-			handleTokenUpdate: _handleTokenUpdate.bind(this),
-			handleContentChange: _handleContentChange.bind(this),
-			handleContentLiveChange: _handleContentLiveChange.bind(this),
-			handleValueHelpRequest: _handleValueHelpRequest.bind(this),
-			handleEnter: _handleEnter.bind(this),
-			handleContentPress: _handleContentPress.bind(this)
-		});
+		this._oContentFactory = this._getContentFactory();
 
 		this._oCreateContentPromise = undefined;
 
 		this._sFilterValue = "";
 
+	};
+
+	/**
+	 * @private
+	 * @returns {sap.ui.mdc.field.content.ContentFactory} oContentFactory the ContentFactory of the Field
+	 */
+	 FieldBase.prototype._getContentFactory = function() {
+		if (this._bIsBeingDestroyed || this.bIsDestroyed) {
+			return;
+		}
+		if (!this._oContentFactory) {
+			this._oContentFactory = new ContentFactory(this.getId() + "-contentFactory", {
+				field: this,
+				handleTokenUpdate: _handleTokenUpdate.bind(this),
+				handleContentChange: _handleContentChange.bind(this),
+				handleContentLiveChange: _handleContentLiveChange.bind(this),
+				handleValueHelpRequest: _handleValueHelpRequest.bind(this),
+				handleEnter: _handleEnter.bind(this),
+				handleContentPress: _handleContentPress.bind(this)
+			});
+		}
+		return this._oContentFactory;
 	};
 
 	FieldBase.prototype.exit = function() {
@@ -744,7 +758,7 @@ sap.ui.define([
 			var oFieldHelp = _getFieldHelp.call(this);
 			var oSource = oEvent.srcControl;
 
-			if (oFieldHelp && (!oFieldHelp.valueHelpEnabled || oFieldHelp.valueHelpEnabled() || oFieldHelp.isOpen()) && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
+			if (oFieldHelp && (!oFieldHelp.valueHelpEnabled || oFieldHelp.valueHelpEnabled() || oFieldHelp.isOpen()) && (!this._getContentFactory().isMeasure() || oSource.getShowValueHelp())) {
 				// if only type-ahead but no real value help, only navigate if open TODO: remove function check
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
@@ -761,7 +775,7 @@ sap.ui.define([
 			var oFieldHelp = _getFieldHelp.call(this);
 			var oSource = oEvent.srcControl;
 
-			if (oFieldHelp && (!oFieldHelp.valueHelpEnabled || oFieldHelp.valueHelpEnabled() || oFieldHelp.isOpen()) && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
+			if (oFieldHelp && (!oFieldHelp.valueHelpEnabled || oFieldHelp.valueHelpEnabled() || oFieldHelp.isOpen()) && (!this._getContentFactory().isMeasure() || oSource.getShowValueHelp())) {
 				// if only type-ahead but no real value help, only navigate if open TODO: remove function check
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
@@ -799,7 +813,7 @@ sap.ui.define([
 				oFieldHelp.open(true);
 			}
 			var oSource = oEvent.srcControl;
-			if (oFieldHelp.isOpen(true) && (!this._oContentFactory.isMeasure() || (oSource.getShowValueHelp && oSource.getShowValueHelp()))) {
+			if (oFieldHelp.isOpen(true) && (!this._getContentFactory().isMeasure() || (oSource.getShowValueHelp && oSource.getShowValueHelp()))) {
 				oSource.addStyleClass("sapMFocus"); // to show focus outline again after navigation
 				oFieldHelp.removeFocus();
 			}
@@ -942,31 +956,31 @@ sap.ui.define([
 
 	// to be enhanced by Field
 	FieldBase.prototype._initDataType = function() {
-		if (this._oContentFactory.getDataType()) {
-			this._oContentFactory.getDataType().destroy();
-			this._oContentFactory.setDataType(undefined);
+		if (this._getContentFactory().getDataType()) {
+			this._getContentFactory().getDataType().destroy();
+			this._getContentFactory().setDataType(undefined);
 		}
 
-		if (this._oContentFactory.getDateOriginalType()) {
-			if (this._oContentFactory.getDateOriginalType()._bCreatedByField) {
+		if (this._getContentFactory().getDateOriginalType()) {
+			if (this._getContentFactory().getDateOriginalType()._bCreatedByField) {
 				// do not destroy if used in Field binding
-				this._oContentFactory.getDateOriginalType().destroy();
+				this._getContentFactory().getDateOriginalType().destroy();
 			}
-			this._oContentFactory.setDateOriginalType(undefined);
+			this._getContentFactory().setDateOriginalType(undefined);
 		}
 
-		if (this._oContentFactory.getUnitOriginalType()) {
-			if (this._oContentFactory.getUnitOriginalType()._bCreatedByField) {
+		if (this._getContentFactory().getUnitOriginalType()) {
+			if (this._getContentFactory().getUnitOriginalType()._bCreatedByField) {
 				// do not destroy if used in Field binding
-				this._oContentFactory.getUnitOriginalType().destroy();
+				this._getContentFactory().getUnitOriginalType().destroy();
 			}
-			this._oContentFactory.getUnitOriginalType(undefined);
+			this._getContentFactory().getUnitOriginalType(undefined);
 		}
 	};
 
 	function _getDataTypeName() {
-		if (this._oContentFactory.getDataType() && typeof this._oContentFactory.getDataType() === "object") {
-			return this._oContentFactory.getDataType().getMetadata().getName();
+		if (this._getContentFactory().getDataType() && typeof this._getContentFactory().getDataType() === "object") {
+			return this._getContentFactory().getDataType().getMetadata().getName();
 		} else if (this.bDelegateInitialized) {
 			return this.getControlDelegate().getDataTypeClass(this.getPayload(), this.getDataType());
 		} else {
@@ -975,7 +989,7 @@ sap.ui.define([
 	}
 
 	function _getDataTypeConstraints() {
-		var oDataType = this._oContentFactory.getDataType();
+		var oDataType = this._getContentFactory().getDataType();
 		if (oDataType && typeof oDataType === "object" && oDataType.getConstraints()) {
 			return oDataType.getConstraints();
 		} else {
@@ -984,7 +998,7 @@ sap.ui.define([
 	}
 
 	function _getDataTypeFormatOptions() {
-		var oDataType = this._oContentFactory.getDataType();
+		var oDataType = this._getContentFactory().getDataType();
 		if (oDataType && typeof oDataType === "object" && oDataType.getFormatOptions()) {
 			return oDataType.getFormatOptions();
 		} else {
@@ -1065,14 +1079,14 @@ sap.ui.define([
 
 		if (oChanges.name === "dataType") {
 			// check only if different type (in Field type might be already taken from binding)
-			if (this._oContentFactory.getDataType()) {
+			if (this._getContentFactory().getDataType()) {
 				var fnCheck = function(sType) {
 					var oTypeClass = this.getTypeUtil().getDataTypeClass(oChanges.current);
-					if (!(this._oContentFactory.getDataType() instanceof oTypeClass)) {
+					if (!(this._getContentFactory().getDataType() instanceof oTypeClass)) {
 						// TODO: also compare FormatOptions and Constraints
 						this._initDataType();
 						this.destroyAggregation("_content");
-						this._oContentFactory.updateConditionType();
+						this._getContentFactory().updateConditionType();
 					}
 				}.bind(this);
 				if (!this.bDelegateInitialized) {
@@ -1086,10 +1100,10 @@ sap.ui.define([
 
 		if (oChanges.name === "dataTypeFormatOptions" || oChanges.name === "dataTypeConstraints") {
 			// if type is not created right now nothing to do
-			if (this._oContentFactory.getDataType()) {
+			if (this._getContentFactory().getDataType()) {
 				this._initDataType();
 				this.destroyAggregation("_content");
-				this._oContentFactory.updateConditionType();
+				this._getContentFactory().updateConditionType();
 			}
 		}
 
@@ -1124,12 +1138,12 @@ sap.ui.define([
 
 		if (oChanges.name === "display") {
 			this._destroyInternalContent(); // as bound property can change
-			this._oContentFactory.updateConditionType();
+			this._getContentFactory().updateConditionType();
 		}
 
 		if (oChanges.name === "fieldHelp" && oChanges.ids) {
 			_fieldHelpChanged.call(this, oChanges.ids, oChanges.mutation);
-			this._oContentFactory.updateConditionType();
+			this._getContentFactory().updateConditionType();
 		}
 
 		if (oChanges.name === "fieldInfo" && oChanges.child) {
@@ -1169,7 +1183,7 @@ sap.ui.define([
 	FieldBase.prototype._updateInternalContent = function() {
 		if (this.getAggregation("_content", []).length > 0) {
 			_createInternalContentWrapper.call(this);
-			this._oContentFactory.updateConditionType(); // if control is not excanged at least ConditionType needs to be updated
+			this._getContentFactory().updateConditionType(); // if control is not excanged at least ConditionType needs to be updated
 		}
 	};
 
@@ -1221,7 +1235,7 @@ sap.ui.define([
 
 		var aContent = this._getContent();
 		if (aContent.length > 0) {
-			if (this._oContentFactory.isMeasure()) {
+			if (this._getContentFactory().isMeasure()) {
 				return aContent[1];
 			} else {
 				return aContent[0];
@@ -1257,7 +1271,7 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.getMaxConditionsForHelp = function() {
 
-		if (this._oContentFactory.isMeasure()) {
+		if (this._getContentFactory().isMeasure()) {
 			return 1; // only one unit allowed in help
 		} else {
 			return this.getMaxConditions();
@@ -1278,16 +1292,16 @@ sap.ui.define([
 				this._oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			}
 			return this._oResourceBundleM.getText("EMPTY_INDICATOR"); // TODO: clarify accessibility support for semantic conected fields
-		} else if (this._oContentFactory.isMeasure() && this._oContentFactory.getUnitOriginalType()) {
+		} else if (this._getContentFactory().isMeasure() && this._getContentFactory().getUnitOriginalType()) {
 			// in unit case use original data type for formatting (as internal type hides unit)
 			var aValue = aConditions.length > 0 ? aConditions[0].values[0] : [0, null]; // TODO: support multiple conditions or other operator than EQ?
-			return this._oContentFactory.getUnitOriginalType().formatValue(aValue, "string");
-		} else if (this._oContentFactory.getDateOriginalType()) {
+			return this._getContentFactory().getUnitOriginalType().formatValue(aValue, "string");
+		} else if (this._getContentFactory().getDateOriginalType()) {
 			// in date case use original data type for formatting (as internal type formats to ISO format)
 			var vValue = aConditions.length > 0 ? aConditions[0].values[0] : null; // TODO: support multiple conditions or other operator than EQ?
-			return this._oContentFactory.getDateOriginalType().formatValue(vValue, "string");
+			return this._getContentFactory().getDateOriginalType().formatValue(vValue, "string");
 		} else {
-			var oConditionsType = this._oContentFactory.getConditionsType();
+			var oConditionsType = this._getContentFactory().getConditionsType();
 			return oConditionsType.formatValue(aConditions);
 		}
 
@@ -1441,8 +1455,8 @@ sap.ui.define([
 			_restoreKeyboardHandler.call(this, oContent);
 			_restoreFieldGroupHandler.call(this, oContent);
 
-			if (this._oContentFactory.getContentConditionTypes()) {
-				delete this._oContentFactory.getContentConditionTypes()[sName];
+			if (this._getContentFactory().getContentConditionTypes()) {
+				delete this._getContentFactory().getContentConditionTypes()[sName];
 			}
 			oContent.setModel(null, "$field"); // remove binding to Field
 			// let the internal control be created on rendering
@@ -1461,11 +1475,11 @@ sap.ui.define([
 			}
 
 			// as for edit and display different Types are possible switch them with edit mode
-			if (!this._oContentFactory.getContentConditionTypes()) {
-				this._oContentFactory.setContentConditionTypes({});
+			if (!this._getContentFactory().getContentConditionTypes()) {
+				this._getContentFactory().setContentConditionTypes({});
 			}
-			if (!this._oContentFactory.getContentConditionTypes()[sName]) {
-				this._oContentFactory.getContentConditionTypes()[sName] = {};
+			if (!this._getContentFactory().getContentConditionTypes()[sName]) {
+				this._getContentFactory().getContentConditionTypes()[sName] = {};
 			}
 			this.awaitControlDelegate().then(function() {
 				if (!this.bIsDestroyed) {
@@ -1481,9 +1495,9 @@ sap.ui.define([
 				if (oContent.getBindingPath(sProperty) === "/conditions") {
 					oBindingInfo = oContent.getBindingInfo(sProperty);
 					if (oBindingInfo && oBindingInfo.type && oBindingInfo.type instanceof ConditionsType) {
-						this._oContentFactory.getContentConditionTypes()[sName].oConditionsType = oBindingInfo.type;
+						this._getContentFactory().getContentConditionTypes()[sName].oConditionsType = oBindingInfo.type;
 					}
-					this._oContentFactory.setBoundProperty(sProperty);
+					this._getContentFactory().setBoundProperty(sProperty);
 				}
 				if (sProperty === "editable" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
 					oContent.bindProperty(sProperty, { path: "$field>/editMode", formatter: ContentFactory._getEditable });
@@ -1527,7 +1541,7 @@ sap.ui.define([
 						for (sProperty in oBindingInfo.template.getMetadata().getAllProperties()) {
 							var oTemplateBindingInfo = oBindingInfo.template.getBindingInfo(sProperty);
 							if (oTemplateBindingInfo && oTemplateBindingInfo.type && oTemplateBindingInfo.type instanceof ConditionType) {
-								this._oContentFactory.getContentConditionTypes()[sName].oConditionType = oTemplateBindingInfo.type;
+								this._getContentFactory().getContentConditionTypes()[sName].oConditionType = oTemplateBindingInfo.type;
 								break;
 							}
 						}
@@ -1540,7 +1554,7 @@ sap.ui.define([
 			}
 
 			if (oContent.getMetadata().getAllAssociations().ariaLabelledBy) {
-				this._oContentFactory.setAriaLabelledBy(oContent);
+				this._getContentFactory().setAriaLabelledBy(oContent);
 			}
 		}
 
@@ -1618,7 +1632,7 @@ sap.ui.define([
 	 */
 	FieldBase.prototype._checkCreateInternalContent = function() {
 
-		if (!this.bIsDestroyed && this.getVisible() && this._oContentFactory.getDataType()) {
+		if (!this.bIsDestroyed && this.getVisible() && this._getContentFactory().getDataType()) {
 			_createInternalContentWrapper.call(this);
 		}
 
@@ -1650,7 +1664,7 @@ sap.ui.define([
 		var sEditMode = this.getEditMode();
 		var oContent = this.getContent();
 
-		this._oContentFactory._setUsedConditionType(oContent, sEditMode); // if external content use it's conditionType
+		this._getContentFactory()._setUsedConditionType(oContent, sEditMode); // if external content use it's conditionType
 		_checkFieldHelpExist.call(this, this.getFieldHelp()); // as FieldHelp might be created after ID is assigned to Field
 		_setAriaAttributes.call(this, false);
 
@@ -1676,18 +1690,18 @@ sap.ui.define([
 
 		var bMultipleLines = this.getMultipleLines();
 		var bIsTriggerable = this._bTriggerable;
-		var oContentType = this._oContentFactory.getContentType(this.getBaseType(), this.getMaxConditions(), bIsTriggerable);
+		var oContentType = this._getContentFactory().getContentType(this.getBaseType(), this.getMaxConditions(), bIsTriggerable);
 
 		if (aContentOld.length > 0) {
 			oContentOld = aContentOld[0];
 			sControlNameOld = oContentOld.getMetadata().getName().replace(/\./g, "/");
 		}
 
-		var sContentMode = this._oContentFactory.getContentMode(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators);
+		var sContentMode = this._getContentFactory().getContentMode(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators);
 		var aControlNames = oContentType.getControlNames(sContentMode, aOperators[0]);
 		sControlName = aControlNames[0];
 		if (sControlName !== sControlNameOld) {
-			this._oContentFactory.setHideOperator(_isOnlyOneSingleValue.call(this, aOperators)); // in single value eq Field hide operator
+			this._getContentFactory().setHideOperator(_isOnlyOneSingleValue.call(this, aOperators)); // in single value eq Field hide operator
 
 			if (oContentOld) {
 				this._destroyInternalContent();
@@ -1697,7 +1711,7 @@ sap.ui.define([
 					this._initDataType();
 				}
 
-				this._oContentFactory.updateConditionType();
+				this._getContentFactory().updateConditionType();
 			}
 
 			if (_useDefaultFieldHelp.call(this, oContentType, aOperators, sEditMode, iMaxConditions)) {
@@ -1708,7 +1722,7 @@ sap.ui.define([
 			}
 
 			var sId = _getIdForInternalControl.call(this);
-			this._oCreateContentPromise = this._oContentFactory.createContent(oContentType, sContentMode, sId);
+			this._oCreateContentPromise = this._getContentFactory().createContent(oContentType, sContentMode, sId);
 			this._oCreateContentPromise.then(function(aControls) {
 				for (var iIndex = 0; iIndex < aControls.length; iIndex++) {
 					var oControl = aControls[iIndex];
@@ -1718,7 +1732,7 @@ sap.ui.define([
 					_modifyKeyboardHandler.call(this, oControl, oContentType.getUseDefaultEnterHandler());
 					_modifyFieldGroupHandler.call(this, oControl, false);
 					_setModelOnContent.call(this, oControl);
-					if (this._bConnected && ((iIndex === 0 && !this._oContentFactory.isMeasure()) || (iIndex === 1 && this._oContentFactory.isMeasure()))) {
+					if (this._bConnected && ((iIndex === 0 && !this._getContentFactory().isMeasure()) || (iIndex === 1 && this._getContentFactory().isMeasure()))) {
 						_setFocusHandlingForFieldHelp.call(this, oControl);
 					}
 					this.addAggregation("_content", oControl);
@@ -1742,12 +1756,12 @@ sap.ui.define([
 		// so new creation of control is using original data
 		this.destroyAggregation("_content");
 
-		if (this._oContentFactory.getDateOriginalType()) {
-			this._oContentFactory.setDataType(this._oContentFactory.getDateOriginalType());
-			this._oContentFactory.setDateOriginalType(undefined);
-		} else if (this._oContentFactory.getUnitOriginalType()) {
-			this._oContentFactory.setDataType(this._oContentFactory.getUnitOriginalType());
-			this._oContentFactory.setUnitOriginalType(undefined);
+		if (this._getContentFactory().getDateOriginalType()) {
+			this._getContentFactory().setDataType(this._getContentFactory().getDateOriginalType());
+			this._getContentFactory().setDateOriginalType(undefined);
+		} else if (this._getContentFactory().getUnitOriginalType()) {
+			this._getContentFactory().setDataType(this._getContentFactory().getUnitOriginalType());
+			this._getContentFactory().setUnitOriginalType(undefined);
 		}
 
 		if (this._bParseError) {
@@ -1756,8 +1770,8 @@ sap.ui.define([
 			this._removeUIMessage();
 		}
 
-		if (this._oContentFactory.isMeasure()) {
-			this._oContentFactory.setIsMeasure(false);
+		if (this._getContentFactory().isMeasure()) {
+			this._getContentFactory().setIsMeasure(false);
 		}
 
 	};
@@ -2097,7 +2111,7 @@ sap.ui.define([
 
 		// use parsed value of the condition, if possible
 		var bUpdateConditions = false;
-		var sBoundProperty = this._oContentFactory.getBoundProperty();
+		var sBoundProperty = this._getContentFactory().getBoundProperty();
 		var oBinding = sBoundProperty && oSource.getBinding(sBoundProperty);
 		if (oBinding && oBinding.getBindingMode() !== BindingMode.OneWay && oBinding.getPath() === "/conditions" && bValid) {
 			oCondition = aConditions[0];
@@ -2141,7 +2155,7 @@ sap.ui.define([
 					// this happens after an invalid input was just cleared
 					return null;
 				} else {
-					oConditionType = this._oContentFactory.getConditionType();
+					oConditionType = this._getContentFactory().getConditionType();
 					var vResult = oConditionType.parseValue(vValue);
 					var iLength = this._aAsyncChanges.length;
 
@@ -2203,7 +2217,7 @@ sap.ui.define([
 
 		if (this._oNavigateCondition) {
 			this._oNavigateCondition = undefined; // navigation now finished
-			this._oContentFactory.updateConditionType();
+			this._getContentFactory().updateConditionType();
 		}
 
 		if (oChange.resolve) {
@@ -2234,7 +2248,7 @@ sap.ui.define([
 
 		if (bValid) {
 			if (oCondition) {
-				if (this._oContentFactory.isMeasure() && aConditions.length === 1 && aConditions[0].values[0][0] === undefined) {
+				if (this._getContentFactory().isMeasure() && aConditions.length === 1 && aConditions[0].values[0][0] === undefined) {
 					// remove empty condition
 					aConditions.length = 0;
 				}
@@ -2286,7 +2300,7 @@ sap.ui.define([
 		var oSource = oEvent.getSource();
 
 		this._oNavigateCondition = undefined; // navigation item is not longer valid
-		this._oContentFactory.updateConditionType();
+		this._getContentFactory().updateConditionType();
 
 		if ("value" in oEvent.getParameters()) {
 			vValue = oEvent.getParameter("value");
@@ -2308,7 +2322,7 @@ sap.ui.define([
 
 		var oFieldHelp = _getFieldHelp.call(this);
 
-		if (oFieldHelp && (!this._oContentFactory.isMeasure() || oSource.getShowValueHelp())) {
+		if (oFieldHelp && (!this._getContentFactory().isMeasure() || oSource.getShowValueHelp())) {
 			if (bEscPressed) {
 				// close FieldHelp if escape pressed and not repoen it for last typed characters
 				if (oFieldHelp.isOpen(true)) {
@@ -2441,7 +2455,7 @@ sap.ui.define([
 
 			for (i = aConditions.length - 1; i >= 0; i--) {
 				if (aConditions[i].delete) {
-					if (this._oContentFactory.isMeasure()) {
+					if (this._getContentFactory().isMeasure()) {
 						// store for dummy condition if all conditions are removed
 						sUnit = aConditions[i].values[0][1];
 						oPayload = aConditions[i].payload;
@@ -2450,7 +2464,7 @@ sap.ui.define([
 				}
 			}
 
-			if (this._oContentFactory.isMeasure() && sUnit && aConditions.length === 0) {
+			if (this._getContentFactory().isMeasure() && sUnit && aConditions.length === 0) {
 				// create dummy condition for unit
 				aConditions = [Condition.createItemCondition([undefined, sUnit], undefined, undefined, undefined, oPayload)];
 			}
@@ -2528,7 +2542,7 @@ sap.ui.define([
 			oFieldHelp = _getFieldHelp.call(this);
 		}
 
-		if (this._oContentFactory.isMeasure()) {
+		if (this._getContentFactory().isMeasure()) {
 			// for unit or curreny add only the unit/currency to FieldHelp
 			var aHelpConditions = [];
 			for (var i = 0; i < aConditions.length; i++) {
@@ -2579,7 +2593,7 @@ sap.ui.define([
 		var sDOMValue;
 		var i = 0;
 
-		if (this._oContentFactory.isMeasure()) {
+		if (this._getContentFactory().isMeasure()) {
 			if (aNewConditions.length > 1) {
 				throw new Error("Only one item must be selected! " + this);
 			}
@@ -2609,8 +2623,8 @@ sap.ui.define([
 				var aValue = this.getControlDelegate().enhanceValueForUnit(this.getPayload(), [null, aNewConditions[0].values[0]], this._oTypeInitialization); // Delegate must be initialized right now
 				oCondition = Condition.createCondition(oOperator.name, [aValue], aNewConditions[0].inParameters, aNewConditions[0].outParameters, ConditionValidated.NotValidated, aNewConditions[0].payload);
 				aConditions.push(oCondition);
-				var oConditionType = this._oContentFactory.getConditionType(true);
-				var oConditionsType = this._oContentFactory.getUnitConditionsType(true);
+				var oConditionType = this._getContentFactory().getConditionType(true);
+				var oConditionsType = this._getContentFactory().getUnitConditionsType(true);
 				// TODO: format once to update current value in type (as empty condtions are not displayed as token)
 				if (oConditionType) {
 					sDOMValue = oConditionType.formatValue(oCondition);
@@ -2651,12 +2665,12 @@ sap.ui.define([
 				// the focus is still in the Field. The update of the inner control is done via ManagedObjectModel binding.
 				// The inner Input is configured to prefer user input in this case.
 				// so we need to set the DOM value here. Otherwise it is not updated or, if empty, selected.
-				if (this._oContentFactory.isMeasure() && this._oContentFactory.getUnitConditionsType()) {
-					sDOMValue = this._oContentFactory.getUnitConditionsType().formatValue(aConditions);
-				} else if (this._oContentFactory.getConditionType(true)) {
-					sDOMValue = this._oContentFactory.getConditionType().formatValue(aConditions[0]);
-				} else if (this._oContentFactory.getConditionsType(true)) {
-					sDOMValue = this._oContentFactory.getConditionsType().formatValue(aConditions);
+				if (this._getContentFactory().isMeasure() && this._getContentFactory().getUnitConditionsType()) {
+					sDOMValue = this._getContentFactory().getUnitConditionsType().formatValue(aConditions);
+				} else if (this._getContentFactory().getConditionType(true)) {
+					sDOMValue = this._getContentFactory().getConditionType().formatValue(aConditions[0]);
+				} else if (this._getContentFactory().getConditionsType(true)) {
+					sDOMValue = this._getContentFactory().getConditionsType().formatValue(aConditions);
 				}
 
 				var fnUpdateDOMValue = function(sText) {
@@ -2677,7 +2691,7 @@ sap.ui.define([
 				}
 				this._sFilterValue = "";
 			} else if (bClose) {
-				if (this.getMaxConditions() !== 1 && !this._oContentFactory.getBoundProperty() && oContent.getMetadata().hasProperty("value") && oContent.getProperty("value")) {
+				if (this.getMaxConditions() !== 1 && !this._getContentFactory().getBoundProperty() && oContent.getMetadata().hasProperty("value") && oContent.getProperty("value")) {
 					// clear "value" property of MultiInput as there might be an old value from a invalid input before
 					oContent.setValue();
 				}
@@ -2700,7 +2714,7 @@ sap.ui.define([
 
 		if (!deepEqual(aConditions, aConditionsOld)) {
 			this._oNavigateCondition = undefined;
-			this._oContentFactory.updateConditionType();
+			this._getContentFactory().updateConditionType();
 
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole field
 
@@ -2749,7 +2763,7 @@ sap.ui.define([
 			this._oNavigateCondition = Condition.createCondition(oOperator.name, [vKey, sValue],undefined, undefined, ConditionValidated.Validated);
 		}
 
-		if (this._oContentFactory.isMeasure()) {
+		if (this._getContentFactory().isMeasure()) {
 			var aConditions = this.getConditions();
 			// use number of first condition. In Multicase all conditions must be updated in change event
 			if (aConditions.length > 0) {
@@ -2766,7 +2780,7 @@ sap.ui.define([
 		}
 
 		this._bPreventGetDescription = true; // if no description in navigated condition, no description exist. Don't try to read one
-		this._oContentFactory.updateConditionType();
+		this._getContentFactory().updateConditionType();
 
 		// take what ever comes from field help as valid - even if it is an empty key
 		// TODO: what if field is required?
@@ -2782,12 +2796,12 @@ sap.ui.define([
 
 		if (oContent && oContent.setDOMValue) {
 			if (!sDOMValue) {
-				if (this._oContentFactory.isMeasure() && this._oContentFactory.getUnitConditionsType() && this._oNavigateCondition) {
-					sDOMValue = this._oContentFactory.getUnitConditionsType().formatValue([this._oNavigateCondition]);
-				} else if (this._oContentFactory.getConditionType(true) && this._oNavigateCondition) {
-					sDOMValue = this._oContentFactory.getConditionType().formatValue(this._oNavigateCondition);
-				} else if (this._oContentFactory.getConditionsType(true) && this._oNavigateCondition) {
-					sDOMValue = this._oContentFactory.getConditionsType().formatValue([this._oNavigateCondition]);
+				if (this._getContentFactory().isMeasure() && this._getContentFactory().getUnitConditionsType() && this._oNavigateCondition) {
+					sDOMValue = this._getContentFactory().getUnitConditionsType().formatValue([this._oNavigateCondition]);
+				} else if (this._getContentFactory().getConditionType(true) && this._oNavigateCondition) {
+					sDOMValue = this._getContentFactory().getConditionType().formatValue(this._oNavigateCondition);
+				} else if (this._getContentFactory().getConditionsType(true) && this._oNavigateCondition) {
+					sDOMValue = this._getContentFactory().getConditionsType().formatValue([this._oNavigateCondition]);
 				} else {
 					sDOMValue = sValue || vKey;
 				}
@@ -2802,7 +2816,7 @@ sap.ui.define([
 		}
 
 		this._bPreventGetDescription = false; // back to default
-		this._oContentFactory.updateConditionType();
+		this._getContentFactory().updateConditionType();
 
 		_setAriaAttributes.call(this, true, sItemId);
 
@@ -2819,7 +2833,7 @@ sap.ui.define([
 			this._bIgnoreInputValue = false;
 			oContent.setDOMValue("");
 			this._sFilterValue = "";
-			if (this.getMaxConditions() !== 1 && !this._oContentFactory.getBoundProperty() && oContent.getMetadata().hasProperty("value") && oContent.getProperty("value")) {
+			if (this.getMaxConditions() !== 1 && !this._getContentFactory().getBoundProperty() && oContent.getMetadata().hasProperty("value") && oContent.getProperty("value")) {
 				// clear "value" property of MultiInput as there might be an old value from a invalid input before
 				oContent.setValue();
 			}
@@ -2891,16 +2905,16 @@ sap.ui.define([
 		if (oFieldHelp) { // as Config or BindingContext might change, update connection on every focus
 			var oConditionModelInfo = _getConditionModelInfo.call(this);
 			var oType;
-			var bIsMeasure = this._oContentFactory.isMeasure();
+			var bIsMeasure = this._getContentFactory().isMeasure();
 
 			if (bIsMeasure) {
 				// for value help, use the basic type of the unit part, not the unit type. (As ony this part is tranfered, not the composite-array.)
-				var aCompositeTypes = this._oContentFactory.getCompositeTypes();
+				var aCompositeTypes = this._getContentFactory().getCompositeTypes();
 				if (aCompositeTypes && aCompositeTypes.length > 1) { // if no type is defined the default (String) will be used
 					oType = aCompositeTypes[1];
 				}
 			} else {
-				oType = this._oContentFactory.getDataType(); // use data type of Field
+				oType = this._getContentFactory().getDataType(); // use data type of Field
 			}
 			var oConfig = { // TODO: only what is needed (also for DefineConditions and Tokenizer)
 					maxConditions: this.getMaxConditions(), // TODO: in unit case only 1?
@@ -3024,14 +3038,14 @@ sap.ui.define([
 		var oConditionModelInfo = _getConditionModelInfo.call(this);
 
 		return {
-			valueType: this._oContentFactory.retrieveDataType(),
-			originalDateType: this._oContentFactory.getDateOriginalType() || this._oContentFactory.getUnitOriginalType(),
-			additionalType: this._oContentFactory.getUnitType(), // only set if unit or timezone
-			compositeTypes: this._oContentFactory.getCompositeTypes(), // only set if CompositeType used
-			display: this._oContentFactory.isMeasure() ? FieldDisplay.Value : this.getDisplay(),
-			fieldHelpID: this._oContentFactory.isMeasure() ? undefined : this.getFieldHelp() || this._sDefaultFieldHelp,
+			valueType: this._getContentFactory().retrieveDataType(),
+			originalDateType: this._getContentFactory().getDateOriginalType() || this._getContentFactory().getUnitOriginalType(),
+			additionalType: this._getContentFactory().getUnitType(), // only set if unit or timezone
+			compositeTypes: this._getContentFactory().getCompositeTypes(), // only set if CompositeType used
+			display: this._getContentFactory().isMeasure() ? FieldDisplay.Value : this.getDisplay(),
+			fieldHelpID: this._getContentFactory().isMeasure() ? undefined : this.getFieldHelp() || this._sDefaultFieldHelp,
 			operators: this._getOperators(),
-			hideOperator: this._oContentFactory.getHideOperator(),
+			hideOperator: this._getContentFactory().getHideOperator(),
 			maxConditions: this.getMaxConditions(),
 			bindingContext: this.getBindingContext(), // to dertmine text and key usding in/out-parameter using correct bindingContext (In Table FieldHelp might be connected to other row)
 			asyncParsing: this._asyncParsingCall,
@@ -3066,7 +3080,7 @@ sap.ui.define([
 		}
 
 		if (vValue === "" || (typeof (vValue) === "string" && vValue.match(/^0+$/))) { // if String is dig-sequence, initial value contains only "0"s
-			var oType = this._oContentFactory.retrieveDataType();
+			var oType = this._getContentFactory().retrieveDataType();
 			var vResult = oType.parseValue("", "string");
 			if (vResult === vValue) {
 				return true; // it's initial value
@@ -3102,10 +3116,10 @@ sap.ui.define([
 		var oConditionModelInfo = _getConditionModelInfo.call(this);
 
 		return {
-			valueType: this._oContentFactory.getUnitType(),
-			originalDateType: this._oContentFactory.getDateOriginalType() || this._oContentFactory.getUnitOriginalType(),
-			additionalType: this._oContentFactory.retrieveDataType(), // use type of measure for currentValue
-			compositeTypes: this._oContentFactory.getCompositeTypes(),
+			valueType: this._getContentFactory().getUnitType(),
+			originalDateType: this._getContentFactory().getDateOriginalType() || this._getContentFactory().getUnitOriginalType(),
+			additionalType: this._getContentFactory().retrieveDataType(), // use type of measure for currentValue
+			compositeTypes: this._getContentFactory().getCompositeTypes(),
 			display: this.getDisplay(),
 			fieldHelpID: this.getFieldHelp() || this._sDefaultFieldHelp,
 			operators: ["EQ"],
