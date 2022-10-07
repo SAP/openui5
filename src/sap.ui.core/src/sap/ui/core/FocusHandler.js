@@ -13,9 +13,9 @@ sap.ui.define([
 	function(EventProvider, BaseObject, Log, jQuery, _ready) {
 	"use strict";
 
-		// Element, Core module references, lazily probed when needed
+		// Element, UIArea module references, lazily probed when needed
 		var Element;
-		var Core;
+		var UIArea;
 
 		var oFocusInfoEventProvider = new EventProvider();
 		var FOCUS_INFO_EVENT = "focusInfo";
@@ -408,24 +408,22 @@ sap.ui.define([
 				var oRelatedControl = getControlById(sRelatedControlId);
 				oEvent.relatedControlId = oRelatedControl ? oRelatedControl.getId() : null;
 				oEvent.relatedControlFocusInfo = oRelatedControl ? oRelatedControl.getFocusInfo() : null;
-				// TODO: Recheck how focus handling works together with the Popup and different UIAreas
-				// soft dependency to Core to prevent cyclic dependencies
-				Core = Core || sap.ui.require("sap/ui/core/Core");
-				if (Core) {
+				// TODO: Re-check how focus handling works together with the Popup and different UIAreas
+				// soft dependency to UIArea to prevent cyclic dependencies (FocusHandler -> UIArea -> FocusHandler)
+				UIArea = UIArea || sap.ui.require("sap/ui/core/UIArea");
+				if (UIArea) {
 					var oControlUIArea = oControl.getUIArea();
-					var oUiArea = null;
+					var oUIArea = null;
 					if (oControlUIArea) {
-						oUiArea = Core.getUIArea(oControlUIArea.getId());
+						oUIArea = UIArea.registry.get(oControlUIArea.getId());
 					} else {
-						var oPopupUIAreaDomRef = Core.getStaticAreaRef();
+						var oPopupUIAreaDomRef = UIArea.getStaticAreaRef();
 						if (oPopupUIAreaDomRef.contains(oEvent.target)) {
-							oUiArea = Core.getUIArea(oPopupUIAreaDomRef.id);
+							oUIArea = UIArea.registry.get(oPopupUIAreaDomRef.id);
 						}
 					}
-					if (oUiArea) {
-						// if rendering moves to the UIArea and the UIArea will have a ManagedObjectRegistry
-						// the _handleElement does not need to be "public" on the UIArea's interface
-						oUiArea._handleEvent(oEvent);
+					if (oUIArea) {
+						oUIArea._handleEvent(oEvent);
 					}
 				}
 			}

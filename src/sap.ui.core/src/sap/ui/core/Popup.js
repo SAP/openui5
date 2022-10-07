@@ -17,6 +17,7 @@ sap.ui.define([
 	'./IntervalTrigger',
 	'./RenderManager',
 	'./ResizeHandler',
+	'./UIArea',
 	'./library',
 	"sap/base/assert",
 	"sap/base/Log",
@@ -45,6 +46,7 @@ sap.ui.define([
 	IntervalTrigger,
 	RenderManager,
 	ResizeHandler,
+	UIArea,
 	library,
 	assert,
 	Log,
@@ -112,9 +114,9 @@ sap.ui.define([
 
 		var oStaticAreaRef, oControl;
 		try {
-			oStaticAreaRef = sap.ui.getCore().getStaticAreaRef();
+			oStaticAreaRef = UIArea.getStaticAreaRef();
 			// only a facade of the static UIArea is returned that contains only the public methods
-			oStaticUIArea = sap.ui.getCore().getUIArea(oStaticAreaRef);
+			oStaticUIArea = UIArea.registry.get(oStaticAreaRef.id);
 		} catch (e) {
 			Log.error(e);
 			throw new Error("Popup cannot be opened because static UIArea cannot be determined.");
@@ -1332,8 +1334,8 @@ sap.ui.define([
 			if (this._bContentAddedToStatic ) {
 				//Fix for RTE in PopUp
 				sap.ui.getCore().getEventBus().publish("sap.ui","__beforePopupClose", { domNode : this._$().get(0) });
-				var oStatic = sap.ui.getCore().getStaticAreaRef();
-				oStatic = sap.ui.getCore().getUIArea(oStatic);
+				var oStatic = UIArea.getStaticAreaRef();
+				oStatic = UIArea.registry.get(oStatic.id);
 				oStatic.removeContent(oStatic.indexOfContent(this.oContent), true);
 			} else if (this._bUIAreaPatched) { // if the getUIArea function is patched, delete it
 				delete this.oContent.getUIArea;

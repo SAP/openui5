@@ -1,8 +1,9 @@
 /* global QUnit */
 sap.ui.define([
 	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/UIArea",
 	"sap/ui/thirdparty/jquery"
-], function (BusyIndicator, jQuery) {
+], function (BusyIndicator, UIArea, jQuery) {
 	"use strict";
 
 	QUnit.module("BusyIndicatorTests", {
@@ -51,8 +52,8 @@ sap.ui.define([
 		var $Container = jQuery(BusyIndicator.oDomRef.children[0]);
 		assert.ok($Container.hasClass("sapUiBusy"), "DOM contains the busy container");
 
-		var oStatic = sap.ui.getCore().getStaticAreaRef();
-		oStatic = sap.ui.getCore().getUIArea(oStatic);
+		var oStatic = UIArea.getStaticAreaRef();
+		oStatic = UIArea.registry.get(oStatic.id);
 		// first parent -> root node of BusyIndicator
 		// second parent -> UI-area
 		assert.equal(oStatic.getRootNode(), $Container.parent().parent().get(0), "Busy indicator attached to static UI-area");
