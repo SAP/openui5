@@ -2,9 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/rta/command/BaseCommand"
+	"sap/ui/rta/command/BaseCommand",
+	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
+	"sap/ui/rta/library"
 ], function(
-	BaseCommand
+	BaseCommand,
+	SmartVariantManagementWriteAPI,
+	rtaLibrary
 ) {
 	"use strict";
 
@@ -30,51 +34,69 @@ sap.ui.define([
 				persistencyKey: {
 					type: "string"
 				},
-				oldContent: {
-					type: "object"
-				},
 				newContent: {
 					type: "object"
+				},
+				isModifiedBefore: {
+					type: "boolean"
 				}
 			}
 		}
 	});
 
-	CompVariantContent.prototype.execute = function() {
-		this.setOldContent(getCurrentVariantContent.call(this));
-		setVariantContent.call(this, this.getNewContent());
+	function callFlAPIFunction(sFunctionName, sKey, oValue) {
+		var mPropertyBag = Object.assign({}, oValue, this.mInformation, {
+			id: sKey,
+			control: this.getElement()
+		});
+		return SmartVariantManagementWriteAPI[sFunctionName](mPropertyBag);
+	}
 
+	// private function of the SmartVariantManagement are approved and documented to be used from here
+	function setVariantContent(oContent) {
+		var oVariantManagementControl = this.getElement();
+		var oCurrentVariantContent = oVariantManagementControl._getVariantContent(this.getVariantId());
+		var oNewVariantContent = Object.assign({}, oCurrentVariantContent);
+		if (oVariantManagementControl.isPageVariant()) {
+			var oContentToBeSet = {};
+			oContentToBeSet[this.getPersistencyKey()] = oContent;
+			oVariantManagementControl._applyVariantByPersistencyKey(this.getPersistencyKey(), oContentToBeSet, "KEY_USER");
+			oNewVariantContent[this.getPersistencyKey()] = oContent;
+		} else {
+			oVariantManagementControl._applyVariant(oVariantManagementControl._getPersoController(), oContent, "KEY_USER");
+			oNewVariantContent = oContent;
+		}
+		return oNewVariantContent;
+	}
+
+	CompVariantContent.prototype.prepare = function(mFlexSettings, sVariantManagementReference, sCommand) {
+		this.mInformation = {
+			layer: mFlexSettings.layer,
+			command: sCommand, // used for ChangeVisualization and should end up in the support object in change definition
+			generator: rtaLibrary.GENERATOR_NAME // also to be saved in the support section
+		};
+		return true;
+	};
+
+	CompVariantContent.prototype.execute = function() {
+		this.setIsModifiedBefore(this.getElement().getModified());
+		this.getElement().setModified(true);
+		var oNewVariantContent = setVariantContent.call(this, this.getNewContent());
+		callFlAPIFunction.call(this, "updateVariantContent", this.getVariantId(), {content: oNewVariantContent});
 		return Promise.resolve();
 	};
 
 	CompVariantContent.prototype.undo = function() {
-		setVariantContent.call(this, this.getOldContent());
-
+		var oVariant = callFlAPIFunction.call(this, "revert", this.getVariantId(), {});
+		this.getElement().setModified(this.getIsModifiedBefore());
+		var oVariantManagementControl = this.getElement();
+		if (oVariantManagementControl.isPageVariant()) {
+			setVariantContent.call(this, oVariant.getContent()[this.getPersistencyKey()]);
+		} else {
+			setVariantContent.call(this, oVariant.getContent());
+		}
 		return Promise.resolve();
 	};
-
-	// private function of the SmartVariantManagement are approved and documented to be used from here
-	function setVariantContent(oContent) {
-		var oContentToBeSet = {};
-		var oVariantManagementControl = this.getElement();
-		if (oVariantManagementControl.isPageVariant()) {
-			oContentToBeSet[this.getPersistencyKey()] = oContent;
-			oVariantManagementControl._applyVariantByPersistencyKey(this.getPersistencyKey(), oContentToBeSet, "KEY_USER");
-		} else {
-			oContentToBeSet = oContent;
-			oVariantManagementControl._applyVariant(oVariantManagementControl._getPersoController(), oContentToBeSet, "KEY_USER");
-		}
-	}
-
-	// private function of the SmartVariantManagement are approved and documented to be used from here
-	function getCurrentVariantContent() {
-		var oVariantManagementControl = this.getElement();
-		var oOldContent = oVariantManagementControl._getVariantContent(this.getVariantId());
-		if (oVariantManagementControl.isPageVariant()) {
-			oOldContent = oOldContent && oOldContent[this.getPersistencyKey()];
-		}
-		return oOldContent;
-	}
 
 	return CompVariantContent;
 });
