@@ -143,7 +143,7 @@ sap.ui.define([
 	}
 
 	// ------ save as ------
-	function saveAsNewVariant(aOverlays) {
+	function saveAsNewVariant(aOverlays, bImplicitSaveAs) {
 		var oVariantManagementControl = aOverlays[0].getElement();
 		var oContextSharingComponentContainer = ContextSharingAPI.createComponent(this.getCommandFactory().getFlexSettings());
 		return new Promise(function(resolve) {
@@ -160,7 +160,8 @@ sap.ui.define([
 						},
 						previousDirtyFlag: oVariantManagementControl.getModified(),
 						previousVariantId: oVariantManagementControl.getPresentVariantId(),
-						previousDefault: oVariantManagementControl.getDefaultVariantId()
+						previousDefault: oVariantManagementControl.getDefaultVariantId(),
+						activateAfterUndo: !!bImplicitSaveAs
 					});
 				}
 				resolve(oReturn);
@@ -172,7 +173,8 @@ sap.ui.define([
 	function onWarningClose(oVariantManagementControl, sVariantId, sAction) {
 		var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		if (sAction === oLibraryBundle.getText("BTN_CREATE_NEW_VIEW")) {
-			saveAsNewVariant.call(this, [OverlayRegistry.getOverlay(oVariantManagementControl)]).then(function(oReturn) {
+			saveAsNewVariant.call(this, [OverlayRegistry.getOverlay(oVariantManagementControl)], true)
+			.then(function(oReturn) {
 				// in case the user cancels the save as the original variant is applied again and the changes are gone
 				if (!oReturn) {
 					oVariantManagementControl.activateVariant(sVariantId);

@@ -39,6 +39,9 @@ sap.ui.define([
 				},
 				previousDefault: {
 					type: "string"
+				},
+				activateAfterUndo: {
+					type: "boolean"
 				}
 			}
 		}
@@ -124,6 +127,12 @@ sap.ui.define([
 			previousDefault: this.getPreviousDefault(),
 			variantId: this._oVariant.getVariantId()
 		});
+
+		// when changing a read only variant a new variant has to be created.
+		// on undo the changes have to be reverted via the activateVariant call
+		if (this.getActivateAfterUndo()) {
+			this.getElement().activateVariant(this.getPreviousVariantId());
+		}
 
 		return Promise.resolve();
 	};
