@@ -5,8 +5,9 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
-	'sap/ui/Device'
-], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device) {
+	'sap/ui/Device',
+	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
+], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device, TestLibrary) {
 	'use strict';
 
 	Opa5.extendConfig({
@@ -17,19 +18,8 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	var aFilterItems = [
-		{p13nItem: "artistUUID", value: null},
-		{p13nItem: "Breakout Year", value: null},
-		{p13nItem: "Changed By", value: null},
-		{p13nItem: "Changed On", value: null},
-		{p13nItem: "City of Origin", value: null},
-		{p13nItem: "Country", value: null},
-		{p13nItem: "Created By", value: null},
-		{p13nItem: "Created On", value: null},
-		{p13nItem: "Founding Year", value: null},
-		{p13nItem: "Name", value: null},
-		{p13nItem: "regionOfOrigin_code", value: null}
-	];
+	var aAvailableFilters = ["artistUUID", "Breakout Year", "Changed By", "Changed On", "City of Origin", "Country", "Created By", "Created On", "Founding Year", "Name", "regionOfOrigin_code"];
+	var sTableID = "IDTableOfInternalSampleApp_01";
 
 	opaTest("Open TableOpaApp", function (Given, When, Then) {
 		//insert application
@@ -52,105 +42,45 @@ sap.ui.define([
 	});
 
 	opaTest("Open the filter personalization dialog", function (Given, When, Then) {
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Filter");
-
-		Then.thePersonalizationDialogOpens();
-
-		Then.iShouldSeeP13nFilterItems(aFilterItems);
-	});
-
-	opaTest("Open the filter personalization dialog using column header", function (Given, When, Then) {
-		//close Dialog
-		When.iPressDialogOk();
-
-		When.iClickOnColumn("Founding Year");
-
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
-
-		Then.thePersonalizationDialogOpens();
-
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
-
-		Then.iShouldSeeP13nFilterItems(aFilterItems);
+		//Intially, all filters are available and no filters are set in Standard variant
+		Then.onTheMDCTable.iCheckAvailableFilters(sTableID, aAvailableFilters);
+		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, []);
 	});
 
 	opaTest("Open the filter personalization dialog and enter a value", function (Given, When, Then) {
-		//close Dialog
-		When.iPressDialogOk();
 
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Filter");
+		//add two filters
+		When.onTheMDCTable.iPersonalizeFilter(sTableID, [
+			{key : "Founding Year", values: ["1989"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
+			{key : "Country", values: ["DE"], inputControl: "IDTableOfInternalSampleApp_01--filter--countryOfOrigin_code"}
+		]);
 
-		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
+		//reopen the dialog and assert filters
+		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, [
+			{key : "Founding Year", values: ["1989"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
+			{key : "Country", values: ["DE"], inputControl: "IDTableOfInternalSampleApp_01--filter--countryOfOrigin_code"}
+		]);
 
-		When.iEnterTextInFilterDialog("Founding Year", "1989");
-		When.iEnterTextInFilterDialog("Country", "DE");
+		//the combobox in the panel should NOT contain Country & Founding Year anymore
+		Then.onTheMDCTable.iCheckAvailableFilters(sTableID, ["artistUUID", "Breakout Year", "Changed By", "Changed On", "City of Origin", "Created By", "Created On", "Name", "regionOfOrigin_code"]);
 
-		aFilterItems[5].value = ["DE"];
-		aFilterItems[8].value = ["1989"];
-
-		Then.iShouldSeeP13nFilterItems(aFilterItems);
+		//Clear all filters
+		When.onTheMDCTable.iPersonalizeFilter(sTableID, []);
 	});
 
 	opaTest("Cancel and open the filter dialog to check if the values have been discarded", function (Given, When, Then) {
-		//close Dialog
-		When.iPressDialogCancel();
+		When.onTheMDCTable.iPersonalizeFilter(sTableID, [
+			{key : "Founding Year", values: ["1989"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
+			{key : "Country", values: ["DE"], inputControl: "IDTableOfInternalSampleApp_01--filter--countryOfOrigin_code"}
+		], undefined, true/** This flag will cancel the dialog instead of confirming it*/);
 
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Filter");
-
-		Then.thePersonalizationDialogOpens();
-		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.settings);
-
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Country",
-			index: 5,
-			values: [undefined]
-		});
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Founding Year",
-			index: 8,
-			values: [undefined]
-		});
-
-	});
-
-	opaTest("Confirm and open the filter dialog to check if the value is still there", function (Given, When, Then) {
-
-		When.iEnterTextInFilterDialog("Founding Year", "1989");
-		When.iEnterTextInFilterDialog("Country", "DE");
-
-		//close Dialog
-		When.iPressDialogOk();
-
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Filter");
-
-		Then.thePersonalizationDialogOpens();
-
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Country",
-			index: 5,
-			values: ["DE"]
-		});
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Founding Year",
-			index: 8,
-			values: ["1989"]
-		});
+		//Dialog cancelled --> no filters added
+		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, []);
+		Then.onTheMDCTable.iCheckAvailableFilters(sTableID, aAvailableFilters);
 
 		//shut down app frame for next test
 		Given.enableAndDeleteLrepLocalStorage();
 		Then.iTeardownMyAppFrame();
 	});
+
 });

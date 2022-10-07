@@ -5,8 +5,8 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
-	'sap/ui/Device'
-], function(Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device) {
+	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
+], function(Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, TestLibrary) {
 	'use strict';
 
 	if (window.blanket) {
@@ -23,22 +23,7 @@ sap.ui.define([
 		timeout: 45
 	});
 
-	var aFilterItems = [
-		{p13nItem: "Author ID", value: null},
-		{p13nItem: "Classification", value: null},
-		{p13nItem: "DetailGenre", value: null},
-		{p13nItem: "Genre", value: null},
-		{p13nItem: "Language", value: null},
-		{p13nItem: "Price (average)", value: null},
-		{p13nItem: "Price (max)", value: null},
-		{p13nItem: "Price (min)", value: null},
-		{p13nItem: "SubGenre", value: null},
-		{p13nItem: "Title", value: null},
-		{p13nItem: "Words (average)", value: null},
-		{p13nItem: "Words (max)", value: null},
-		{p13nItem: "Words (min)", value: null}
-	];
-
+	var sChartID = "__component0---IDViewOfAppUnderTestChart--IDChartOfAppUnderTestChart";
 	var sViewSettings = Arrangement.P13nDialog.Titles.settings;
 
 	// Apply a variant and switch back to the standard
@@ -303,21 +288,10 @@ sap.ui.define([
 	};
 
 	opaTest("Open the filter personalization dialog and save some conditions as variant 'FilterVariantTest'", function (Given, When, Then) {
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Filter");
-
-		Then.thePersonalizationDialogOpens();
-
-		//check filter field creation
-		Then.iShouldSeeP13nFilterItems(aFilterItems);
-
-		//enter some filter values
-		When.iEnterTextInFilterDialog("Title", "*Pride*");
-
-		When.iPressDialogOk();
-
+		When.onTheMDCChart.iPersonalizeFilter(sChartID, [
+			{key : "Title", values: ["*Pride*"], inputControl: "__component0---IDViewOfAppUnderTestChart--IDChartOfAppUnderTestChart--filter--title"}
+		]);
+		Then.onTheMDCChart.iCheckAvailableFilters(sChartID,  ["Author ID", "Classification", "DetailGenre", "Genre", "Language", "Price (average)", "Price (max)", "Price (min)", "SubGenre", /*"Title",*/ "Words (average)", "Words (max)", "Words (min)"]);
 
 		//create a new variant 'FilterVariantTest'
 		When.iSaveVariantAs("Sorted by Price (average)", "FilterVariantTest");
@@ -360,21 +334,9 @@ sap.ui.define([
 	});
 
 	opaTest("Reopen the filter personalization dialog to validate 'FilterVariantTest'", function (Given, When, Then) {
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Filter");
-
-		Then.thePersonalizationDialogOpens();
-
-		//check values from variant
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Title",
-			index: 9,
-			values: ["Pride"]
-		});
-
-		When.iPressDialogOk();
+		Then.onTheMDCChart.iCheckFilterPersonalization(sChartID, [
+			{key : "Title", values: ["Pride"], inputControl: "__component0---IDViewOfAppUnderTestChart--IDChartOfAppUnderTestChart--filter--title"}
+		]);
 
 		//Check chart conditions
 		Then.iShouldSeeConditons("sap.ui.mdc.Chart",oChartConditions);
@@ -394,19 +356,8 @@ sap.ui.define([
 		//no filters on standard
 		Then.iShouldSeeConditons("sap.ui.mdc.Chart",{filter: {}});
 
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Filter");
-
-		//check values from variant
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Title",
-			index: 9,
-			values: [undefined]
-		});
-
-		When.iPressDialogOk();
+		//Standard variant does not contain any filters
+		Then.onTheMDCChart.iCheckFilterPersonalization(sChartID, []);
 
 		Then.theVariantManagementIsDirty(false);
 	});
@@ -416,21 +367,10 @@ sap.ui.define([
 		//Switch back to check condition appliance in filter dialog
 		When.iSelectVariant("FilterVariantTest");
 
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'filter' tab
-		When.iSwitchToP13nTab("Filter");
-
-		Then.thePersonalizationDialogOpens();
-
-		//check values persisted in variant --> values should be present again
-		Then.iShouldSeeP13nFilterItem({
-			itemText: "Title",
-			index: 9,
-			values: ["Pride"]
-		});
-		//close dialogs
-		When.iPressDialogOk();
+		//check filter value presence in filtered variant
+		Then.onTheMDCChart.iCheckFilterPersonalization(sChartID, [
+			{key : "Title", values: ["Pride"], inputControl: "__component0---IDViewOfAppUnderTestChart--IDChartOfAppUnderTestChart--filter--title"}
+		]);
 
 		//tear down app
 		Then.iTeardownMyAppFrame();

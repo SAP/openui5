@@ -5,8 +5,8 @@ sap.ui.define([
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action',
 	'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion',
-	'sap/ui/Device'
-], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, Device) {
+	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
+], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, TestLibrary) {
 	'use strict';
 
 	if (window.blanket) {
@@ -21,6 +21,8 @@ sap.ui.define([
 		viewNamespace: "view.",
 		autoWait: true
 	});
+
+	var sTableID = "IDTableOfInternalSampleApp_01";
 
 	opaTest("When I start the 'appUnderTestTable' app, the table should appear and contain some columns", function (Given, When, Then) {
 		//insert application
@@ -49,14 +51,9 @@ sap.ui.define([
     });
 
     opaTest("Open Table inbuilt 'Filters' dialog to enter condition values", function(Given, When, Then){
-		//open Dialog
-		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Icon);
-		//open 'Filter' tab
-		When.iSwitchToP13nTab("Filter");
-
-        When.iEnterTextInFilterDialog("Founding Year", "*6");
-
-        When.iPressDialogOk();
+		When.onTheMDCTable.iPersonalizeFilter(sTableID, [
+			{key : "Founding Year", values: ["*6"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"}
+		]);
 
         //Table should be filtered and take both filters into consideration, 'Go' not required here
         Then.iShouldSeeVisibleItemsInTable(3);
