@@ -2780,25 +2780,63 @@ sap.ui.define([
 	 * Identify the longest match between a sub string of <code>sValue</code>
 	 * and one of the values of the <code>mCollection</code> map.
 	 *
-	 * @param {string} sValue the string value which is checked for all currency codes/symbols during a parse call
-	 * @param {object} mCollection a collection of currency codes or symbols
-	 *
-	 * @return {object} returns object containing matched symbol/ code
+	 * @param {string} sValue
+	 *   The string value which is checked for all currency codes/symbols
+	 * @param {Object<string, string>} mCollection
+	 *   An object mapping a currency code to a either a currency symbol or the currency code itself
+	 * @param {boolean} bCaseInsensitive Whether case insensitive matches are allowed
+	 * @return {{code: string, recognizedCurrency: string, symbol: string}}
+	 *   An object with the code, the recognized currency and the symbol found in the given value;
+	 *   an empty object in case of either conflicting case insensitive matches, or no match
 	 */
-	function findLongestMatch(sValue, mCollection) {
-		var sSymbol = "", sCode, sCurSymbol;
+	function findLongestMatch(sValue, mCollection, bCaseInsensitive) {
+		var sCode, sCurCode, sCurSymbol, sCurSymbolToUpperCase, iIndex, sLanguageTag,
+			sRecognizedCurrency, sValueSubStr,
+			bDuplicate = false,
+			bExactMatch = false,
+			sSymbol = "";
 
-		for (var sCurCode in mCollection) {
+		for (sCurCode in mCollection) {
 			sCurSymbol = mCollection[sCurCode];
-			if (sValue.indexOf(sCurSymbol) >= 0 && sSymbol.length < sCurSymbol.length) {
-				sSymbol = sCurSymbol;
+			if (!sCurSymbol) {
+				continue;
+			}
+			if (sValue.indexOf(sCurSymbol) >= 0 && sSymbol.length <= sCurSymbol.length) {
 				sCode = sCurCode;
+				bDuplicate = false;
+				bExactMatch = true;
+				sSymbol = sCurSymbol;
+				sRecognizedCurrency = sCurSymbol;
+			} else if (bCaseInsensitive) {
+				sLanguageTag = Configuration.getLanguageTag();
+				sCurSymbolToUpperCase = sCurSymbol.toLocaleUpperCase(sLanguageTag);
+				iIndex = sValue.toLocaleUpperCase(sLanguageTag).indexOf(sCurSymbolToUpperCase);
+				if (iIndex >= 0) {
+					if (sSymbol.length === sCurSymbol.length && !bExactMatch) {
+						bDuplicate = true;
+					} else if (sSymbol.length < sCurSymbol.length) {
+						sValueSubStr = sValue.substring(iIndex, iIndex + sCurSymbol.length);
+						if (sValueSubStr.toLocaleUpperCase(sLanguageTag)
+								=== sCurSymbolToUpperCase) {
+							sCode = sCurCode;
+							bDuplicate = false;
+							bExactMatch = false;
+							sSymbol = sCurSymbol;
+							sRecognizedCurrency = sValueSubStr;
+						}
+					}
+				}
 			}
 		}
 
+		if (bDuplicate || !sCode) {
+			return {};
+		}
+
 		return {
-			symbol: sSymbol,
-			code: sCode
+			code : sCode,
+			recognizedCurrency : sRecognizedCurrency,
+			symbol : sSymbol
 		};
 	}
 
@@ -2821,7 +2859,8 @@ sap.ui.define([
 	 * @returns {object|undefined} returns object containing numberValue and currencyCode or undefined
 	 */
 	function parseNumberAndCurrency(oConfig) {
-		var sValue = oConfig.value;
+		var aIsoMatches,
+			sValue = oConfig.value;
 
 		// Search for known symbols (longest match)
 		// no distinction between default and custom currencies
@@ -2831,26 +2870,28 @@ sap.ui.define([
 		if (!oMatch.code) {
 			// before falling back to the default regex for ISO codes we check the
 			// codes for custom currencies (if defined)
-			oMatch = findLongestMatch(sValue, oConfig.customCurrencyCodes);
+			oMatch = findLongestMatch(sValue, oConfig.customCurrencyCodes, true);
 
 			if (!oMatch.code && !oConfig.customCurrenciesAvailable) {
 				// Match 3-letter iso code
-				var aIsoMatches = sValue.match(/(^[A-Z]{3}|[A-Z]{3}$)/);
-				oMatch.code = aIsoMatches && aIsoMatches[0];
+				aIsoMatches = sValue.match(/(^[A-Z]{3}|[A-Z]{3}$)/i);
+				oMatch.code = aIsoMatches
+					&& aIsoMatches[0].toLocaleUpperCase(Configuration.getLanguageTag());
+				oMatch.recognizedCurrency = aIsoMatches && aIsoMatches[0];
 			}
 		}
 
 		// Remove symbol/code from value
 		if (oMatch.code) {
-			var iLastCodeIndex = oMatch.code.length - 1;
-			var sLastCodeChar = oMatch.code.charAt(iLastCodeIndex);
+			var iLastCodeIndex = oMatch.recognizedCurrency.length - 1;
+			var sLastCodeChar = oMatch.recognizedCurrency.charAt(iLastCodeIndex);
 			var iDelimiterPos;
 			var rValidDelimiters = /[\-\s]+/;
 
 			// Check whether last character of matched code is a number
 			if (/\d$/.test(sLastCodeChar)) {
 				// Check whether parse string starts with the matched code
-				if (sValue.startsWith(oMatch.code)) {
+				if (sValue.startsWith(oMatch.recognizedCurrency)) {
 					iDelimiterPos = iLastCodeIndex + 1;
 					// \s matching any whitespace character including
 					// non-breaking ws and invisible non-breaking ws
@@ -2859,16 +2900,16 @@ sap.ui.define([
 					}
 				}
 			// Check whether first character of matched code is a number
-			} else if (/^\d/.test(oMatch.code)) {
+			} else if (/^\d/.test(oMatch.recognizedCurrency)) {
 				// Check whether parse string ends with the matched code
-				if (sValue.endsWith(oMatch.code)) {
-					iDelimiterPos = sValue.indexOf(oMatch.code) - 1;
+				if (sValue.endsWith(oMatch.recognizedCurrency)) {
+					iDelimiterPos = sValue.indexOf(oMatch.recognizedCurrency) - 1;
 					if (!rValidDelimiters.test(sValue.charAt(iDelimiterPos))) {
 						return undefined;
 					}
 				}
 			}
-			sValue = sValue.replace(oMatch.symbol || oMatch.code, "");
+			sValue = sValue.replace(oMatch.recognizedCurrency, "");
 		}
 
 		// Set currency code to undefined, as the defined custom currencies

@@ -1964,4 +1964,83 @@ sap.ui.define([
 		assert.ok(NumberFormat.getCurrencyInstance(), "instantiation without options should succeed");
 	});
 
+	QUnit.module("Support case insensitive input of currency codes", {
+		beforeEach : function () {
+			this.defaultLanguage = Configuration.getLanguage();
+			this.oFormat = getCurrencyInstance({
+				customCurrencies : {
+					BTC : {digits : 2},
+					CZK : {digits : 2},
+					EUR : {digits : 2, symbol : "€"},
+					EU : {digits : 2},
+					dem : {digits : 2},
+					DEM : {digits : 2},
+					DEM3 : {digits : 2},
+					Dem4 : {digits : 2},
+					dem4 : {digits : 2},
+					IPSS : {digits : 2},
+					IPß : {digits : 2},
+					JPY : {digits : 2},
+					USD : {digits : 2, symbol : "$"},
+					BJC : {digits : 2, symbol : "$"}
+				}
+			});
+			Configuration.setLanguage("de-DE");
+		},
+		afterEach : function () {
+			Configuration.setLanguage(this.defaultLanguage);
+		}
+	});
+
+	QUnit.test("Parse currencies (CLDR case)", function (assert) {
+		var oFormat = getCurrencyInstance();
+
+		assert.deepEqual(oFormat.parse("2000 euR"), [2000, "EUR"]);
+		assert.deepEqual(oFormat.parse("2000 jPy"), [2000, "JPY"]);
+		assert.deepEqual(oFormat.parse("inr 2000"), [2000, "INR"]);
+		assert.deepEqual(oFormat.parse("UsD 2000"), [2000, "USD"]);
+		assert.deepEqual(oFormat.parse("$ 2000"), [2000, "USD"]);
+		assert.deepEqual(oFormat.parse("öS 2000"), [2000, "ATS"]);
+		assert.deepEqual(oFormat.parse("ÖS 2000"), null, "Symbols have to be case sensitive");
+	});
+
+	QUnit.test("Parse currency symbols with custom currencies", function (assert) {
+		assert.deepEqual(this.oFormat.parse("2000 €"), [2000, "EUR"]);
+		assert.deepEqual(this.oFormat.parse("€ 2000"), [2000, "EUR"]);
+		assert.deepEqual(this.oFormat.parse("2000 $"), [2000, undefined],
+			"Duplicate symbol is not parsed");
+		assert.deepEqual(this.oFormat.parse("$ 2000"), [2000, undefined],
+			"Duplicate symbol is not parsed");
+		assert.deepEqual(this.oFormat.parse("‡ 2000"), null, "Unknown symbol is not parsed");
+	});
+
+	QUnit.test("Parse currency codes with custom currencies", function (assert) {
+		assert.deepEqual(this.oFormat.parse("2000 euR"), [2000, "EUR"]);
+		assert.deepEqual(this.oFormat.parse("2000 eu"), [2000, "EU"]);
+		assert.deepEqual(this.oFormat.parse("2000 EU"), [2000, "EU"]);
+		assert.deepEqual(this.oFormat.parse("2000 jPy"), [2000, "JPY"]);
+		assert.deepEqual(this.oFormat.parse("czk 2000"), [2000, "CZK"]);
+		assert.deepEqual(this.oFormat.parse("btc 2000"), [2000, "BTC"]);
+		assert.deepEqual(this.oFormat.parse("2000 XYZ"), null, "No match found");
+	});
+
+	QUnit.test("Parse exact currency code or the longest case insensitive match",
+			function (assert) {
+		assert.deepEqual(this.oFormat.parse("2000 dem"), [2000, "dem"]);
+		assert.deepEqual(this.oFormat.parse("2000 DEM"), [2000, "DEM"]);
+		assert.deepEqual(this.oFormat.parse("2000 DEM3"), [2000, "DEM3"]);
+		assert.deepEqual(this.oFormat.parse("2000 dem3"), [2000, "DEM3"]);
+		assert.deepEqual(this.oFormat.parse("2000 dEm"), null,
+			"No clear match, 2 case insensitive matches");
+		assert.deepEqual(this.oFormat.parse("2000 dEm3"), [2000, "DEM3"],
+			"Duplicate was set to false");
+		assert.deepEqual(this.oFormat.parse("2000 Dem4"), [2000, "Dem4"]);
+		assert.deepEqual(this.oFormat.parse("2000 DEM4"), null);
+	});
+
+	QUnit.test("Parse case insensitive matches with differing lengths due to special characters",
+			function (assert) {
+		assert.deepEqual(this.oFormat.parse("ipß 2000"), [2000, "IPß"]);
+		assert.deepEqual(this.oFormat.parse("ipss 2000"), [2000, "IPSS"]);
+	});
 });
