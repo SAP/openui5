@@ -296,11 +296,6 @@ function(
 			renderer: StepInputRenderer
 		});
 
-		// get resource translation bundle;
-		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP = oLibraryResourceBundle.getText("STEP_INPUT_INCREASE_BTN");
-		StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP = oLibraryResourceBundle.getText("STEP_INPUT_DECREASE_BTN");
-
 		StepInput.INITIAL_WAIT_TIMEOUT = 500;
 		StepInput.ACCELLERATION = 0.8;
 		StepInput.MIN_WAIT_TIMEOUT = 50;
@@ -345,7 +340,6 @@ function(
 
 			this._getInput().setValue(this._getFormattedValue(vValue));
 			this._getInput().setValueState(this.getValueState());
-			this._getInput().setTooltip(this.getTooltip());
 			this._getOrCreateDecrementButton().setVisible(bEditable);
 			this._getOrCreateIncrementButton().setVisible(bEditable);
 
@@ -509,7 +503,7 @@ function(
 					noTabStop: true,
 					decorative: false,
 					press: this._handleButtonPress.bind(this, 1),
-					tooltip: StepInput.STEP_INPUT_INCREASE_BTN_TOOLTIP
+					useIconTooltip: false
 				});
 
 			oIcon.getEnabled = function () {
@@ -542,7 +536,7 @@ function(
 					noTabStop: true,
 					decorative: false,
 					press: this._handleButtonPress.bind(this, -1),
-					tooltip: StepInput.STEP_INPUT_DECREASE_BTN_TOOLTIP
+					useIconTooltip: false
 				});
 
 			oIcon.getEnabled = function () {

@@ -353,7 +353,8 @@ sap.ui.define([
 				}
 			};
 
-			this._oInput._getValueHelpIcon().setTooltip(oResourceBundle.getText("INPUT_VALUEHELP_BUTTON"));
+			this._oInput._getValueHelpIcon().setDecorative(false);
+			this._oInput._getValueHelpIcon().resetProperty("alt");
 			this._oInput.addDelegate(this._onBeforeInputRenderingDelegate, this);
 
 			this.setAggregation("_input", this._oInput, false);

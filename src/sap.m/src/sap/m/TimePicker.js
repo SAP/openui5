@@ -413,7 +413,8 @@ function(
 				src: this.getIconSrc(),
 				noTabStop: true,
 				title: "",
-				tooltip: this._oResourceBundle.getText("OPEN_PICKER_TEXT")
+				decorative: false,
+				useIconTooltip: false
 			});
 
 			// indicates whether the clock picker is still open
@@ -1062,40 +1063,6 @@ function(
 		 TimePicker.prototype.setDateValue = function(oDate) {
 			this._initMask();
 			return DateTimeField.prototype.setDateValue.apply(this, arguments);
-		};
-
-		/**
-		 * Sets tooltip of the control.
-		 *
-		 * @public
-		 * @override
-		 * @param {string|sap.ui.core.TooltipBase} vTooltip
-		 * @returns {this} A reference to <code>this</code> instance to allow method chaining.
-		 */
-		TimePicker.prototype.setTooltip = function(vTooltip) {
-			/*
-			 * We need this override the default setter from <code>sap.m.Input</code> because the super class method
-			 * doesn't respect the custom role id of the TimePicker which we add in 'aria-describedby' internally.
-			 */
-			var oDomRef = this.getDomRef(),
-				sTooltip;
-
-			this._refreshTooltipBaseDelegate(vTooltip);
-			this.setAggregation("tooltip", vTooltip, true);
-
-			if (!oDomRef) {
-				return this;
-			}
-
-			sTooltip = this.getTooltip_AsString();
-
-			if (sTooltip) {
-				oDomRef.setAttribute("title", sTooltip);
-			} else {
-				oDomRef.removeAttribute("title");
-			}
-
-			return this;
 		};
 
 		/**

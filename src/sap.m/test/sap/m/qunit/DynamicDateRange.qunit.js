@@ -1193,4 +1193,19 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	QUnit.test("picker icon does not have a tooltip", function (assert) {
+		// arrange
+		var oDynamicDateRange = new DynamicDateRange();
+
+		// act
+		oDynamicDateRange.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assert
+		assert.notOk(oDynamicDateRange.$("input").control(0)._getValueHelpIcon().getTooltip(), "icon tooltip is disabled");
+
+		// cleanup
+		oDynamicDateRange.destroy();
+	});
+
 });
