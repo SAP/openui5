@@ -119,7 +119,7 @@ sap.ui.define([
 					.removeAttr('aria-haspopup');
 			}
 			// set ARIA attributes of main buttons
-			oButton.$().attr("aria-controls", this.data("sectionId")).attr("aria-checked", bSelected);
+			oButton.$().attr("aria-controls", this.data("sectionId")).attr("aria-selected", bSelected);
 		}
 	};
 
@@ -327,9 +327,9 @@ sap.ui.define([
 		if (oButton && oButton.toggleStyleClass) {
 			oButton.toggleStyleClass("sapUxAPAnchorBarButtonSelected", bAdd);
 			if (oButton instanceof MenuButton) {
-				oButton._getButtonControl().$().attr("aria-checked", bAdd);
+				oButton._getButtonControl().$().attr("aria-selected", bAdd);
 			} else {
-				oButton.$().attr("aria-checked", bAdd);
+				oButton.$().attr("aria-selected", bAdd);
 			}
 		}
 	};
