@@ -3,11 +3,13 @@
  */
 
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
-	'sap/ui/test/Opa',
+	'sap/base/Log',
+	'sap/base/util/deepExtend',
+	'sap/base/util/isEmptyObject',
+	'sap/base/util/ObjectPath',
 	'sap/ui/base/Object',
-	"sap/base/Log"
-], function($, Opa, Ui5Object, Log) {
+	'sap/ui/test/Opa'
+], function(Log, deepExtend, isEmptyObject, ObjectPath, Ui5Object, Opa) {
 		"use strict";
 
 		/**
@@ -37,7 +39,7 @@ sap.ui.define([
 			var mPageObjects = {};
 
 			for (var sPageObjectName in mPageDefinitions) {
-				if (mPageDefinitions.hasOwnProperty(sPageObjectName) && $.isEmptyObject(mPageObjects[sPageObjectName])) {
+				if (mPageDefinitions.hasOwnProperty(sPageObjectName) && isEmptyObject(mPageObjects[sPageObjectName])) {
 
 					mPageObjects[sPageObjectName] =  PageObjectFactory._createPageObject({
 						name: sPageObjectName,
@@ -95,7 +97,7 @@ sap.ui.define([
 		// create class name for an operation object
 		function _createClassName(sNamespace, sPageObjectName, sOperationType) {
 			var sClassName = sNamespace + "." + sPageObjectName + "." + sOperationType;
-			var oObj = $.sap.getObject(sClassName,NaN);
+			var oObj = ObjectPath.get(sClassName);
 			if (oObj){
 				Log.error("Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name '" + sClassName + "'. " +
 					"To prevent override, specify the namespace parameter.");
@@ -105,10 +107,10 @@ sap.ui.define([
 
 		// add default values to the waitFor method of an operation instance
 		function _configureWaitFor(oOperation, mView){
-			if (!$.isEmptyObject(mView) && oOperation.waitFor) {
+			if (!isEmptyObject(mView) && oOperation.waitFor) {
 				var fnOriginalWaitFor = oOperation.waitFor;
 				oOperation.waitFor = function (oOptions) {
-					return fnOriginalWaitFor.call(this, $.extend(true, {}, mView, oOptions));
+					return fnOriginalWaitFor.call(this, deepExtend({}, mView, oOptions));
 				};
 			}
 		}
@@ -135,7 +137,7 @@ sap.ui.define([
 		function _mixinTestLibraries(oOperation, sOperationType) {
 			if (Opa.config.testLibs) {
 				for (var sTestLib in Opa.config.testLibs) { // the test library is configured by the test
-					if (Opa.config.testLibBase && !$.isEmptyObject(Opa.config.testLibBase[sTestLib])) { // the test library exposes methods
+					if (Opa.config.testLibBase && !isEmptyObject(Opa.config.testLibBase[sTestLib])) { // the test library exposes methods
 						// add a plain object property to the operation prototype, that will contain all methods of the desired type
 						// the property name is with the same as the test library name
 						var oOperationPrototype = Object.getPrototypeOf(oOperation);

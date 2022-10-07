@@ -8,7 +8,7 @@ sap.ui.define(['sap/ui/base/Object'],function(Ui5Object) {
 
     /*
     var oLogger = _OpaLogger.getLogger("sap.ui.test.OpaExtension",
-        $.sap.log.Level.DEBUG);
+        Log.Level.DEBUG);
     */
 
     /**
