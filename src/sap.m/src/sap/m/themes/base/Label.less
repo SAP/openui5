@@ -4,6 +4,7 @@
 /* ============================ */
 
 @_sap_m_Label_AsteriskWidth: 6px;
+@_sap_m_Label_ColonWidth: 4px;
 
 .sapMLabel {
 	color: @sapUiContentLabelColor;
@@ -30,6 +31,10 @@
 
 .sapMLabel.sapMLabelRequired:not(.sapMLabelWrapped) .sapMLabelTextWrapper {
 	max-width: calc(~"100% - 0.125rem - @{_sap_m_Label_AsteriskWidth}");
+}
+
+.sapMLabel.sapMLabelRequired.sapMLabelShowColon:not(.sapMLabelWrapped) .sapMLabelTextWrapper {
+	max-width: calc(~"100% - 0.125rem - @{_sap_m_Label_AsteriskWidth} - @{_sap_m_Label_ColonWidth}");
 }
 
 .sapMLabelBold,

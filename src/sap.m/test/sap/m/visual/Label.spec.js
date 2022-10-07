@@ -176,4 +176,12 @@ describe("sap.m.Label", function() {
 			changeLanguage("en");
 		});
 	});
+
+	it("should visualize label with fixed width, asterisk and colon", function () {
+		var lbl = element(by.id('lblcolonrequired'));
+
+		browser.executeScript("document.getElementById('lblcolonrequired').scrollIntoView()").then(function () {
+			expect(takeScreenshot(lbl)).toLookAs("28_label_required_colon");
+		});
+	});
 });
