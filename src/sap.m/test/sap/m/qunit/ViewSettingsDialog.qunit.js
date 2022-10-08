@@ -4126,6 +4126,21 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Focus is handled after reset", function(assert) {
+		// Prepare
+		this.oVSD.open();
+		var oFocusHandlingSpy = this.spy(this.oVSD, "_focusFirstListItem");
+
+		// Act
+		this.oVSD._getResetButton().firePress();
+
+		// Assert
+		assert.ok(oFocusHandlingSpy.calledOnce, "focus is set in the list");
+
+		// Clean
+		oFocusHandlingSpy.restore();
+	});
+
 	QUnit.module("Title Alignment");
 
 	QUnit.test("setTitleAlignment test", function (assert) {
