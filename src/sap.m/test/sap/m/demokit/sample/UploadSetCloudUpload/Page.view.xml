@@ -1,6 +1,6 @@
 <mvc:View
 		height="100%"
-		controllerName="sap.m.sample.UploadSet.Page"
+		controllerName="sap.m.sample.UploadSetCloudUpload.Page"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
 		xmlns:upload="sap.m.upload">
@@ -18,23 +18,11 @@
 				uploadUrl="../../../../upload"
 				items="{path: '/items', templateShareable: false}"
 				mode="MultiSelect"
-				selectionChanged="onSelectionChange">
+				cloudFilePickerEnabled="true"
+				cloudFilePickerServiceUrl="/sap/opu/odata4/sap/ui_cmis_myfiles_04/srvd/sap/cmis_myfiles/0001/">
 			<upload:toolbar>
 				<OverflowToolbar>
 					<ToolbarSpacer/>
-					<Button
-							id="uploadSelectedButton"
-							text="Upload selected"
-							press="onUploadSelectedButton"/>
-					<Button
-							id="downloadSelectedButton"
-							text="Download selected"
-							press="onDownloadSelectedButton"/>
-					<Button
-							id="versionButton"
-							enabled="false"
-							text="Upload a new version"
-							press="onVersionUpload"/>
 					<upload:UploadSetToolbarPlaceholder />
 				</OverflowToolbar>
 			</upload:toolbar>
