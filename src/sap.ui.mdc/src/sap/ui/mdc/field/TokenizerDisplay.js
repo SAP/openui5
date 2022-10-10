@@ -72,6 +72,15 @@ sap.ui.define([
 
 	};
 
+	TokenizerDisplay.prototype.getAccessibilityInfo = function () {
+		// just concatenate token texts and return it as description
+		var sText = this.getTokens().map(function (oToken) {
+			return oToken.getText();
+		}).join(" ");
+
+		return { description: sText };
+	};
+
 	return TokenizerDisplay;
 
 });
