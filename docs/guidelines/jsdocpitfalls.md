@@ -81,6 +81,8 @@ Example | Description
 `{@link some.Class#method}` | the name of an instance method or property in the specified class, class name must be fully qualified
 `{@link some.ObjectOrClass.staticMethod}` | the name of a static method or property in the specified class, class name must be fully qualified
 `{@link topic:*guid*}` | a topic in the developer guide (identified by the GUID of the topic)
+`{@link fiori:*concept*}` | an SAP Fiori design guideline for the respective concept on https://experience.sap.com/fiori-design-web/, e.g. `{@link fiori:flexible-column-layout}`
+`{@link demo:*path*}` | a demo application in the UI5 Development Toolkit relative to the `/test-resources/` folder, which hosts all sources put into the `test` folders of all single libraries
 `{@link https://...}` | a standard URL using the https:// or http:// protocol
 
 In any case, a text (caption) can be added within the curly braces, separated from the reference by a whitespace.
