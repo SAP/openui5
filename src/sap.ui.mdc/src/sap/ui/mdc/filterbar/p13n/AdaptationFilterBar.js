@@ -211,6 +211,7 @@ sap.ui.define([
 	 */
 	AdaptationFilterBar.prototype.setP13nData = function(aP13nData) {
 		this.oAdaptationData = aP13nData;
+		this._getConditionModel().checkUpdate(true);
 		this._updateActiveStatus(this.oAdaptationData.items);
 		this._oFilterBarLayout.update(aP13nData);
 	};
