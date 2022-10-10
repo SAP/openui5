@@ -105,9 +105,13 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 }
 
 .sapMListTblSubCntSpr,
-.sapMListTblSubCntHdr,
 .sapMListTblSubCntVal {
-	display: inline-flex;
+    display: inline;
+}
+
+// the header could have a FlexBox control which will occupy 100% width, thus corrupting the popin layout
+.sapMListTblSubCntHdr {
+    display: inline-flex;
 }
 
 .sapMListTblSubCntValBlock {
