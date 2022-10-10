@@ -272,7 +272,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 				oRm.openEnd();
 
 				if (bWeekNum) {
-					this._renderWeekNumber(oRm, aDays[i], oHelper);
+					this._renderWeekNumber(oRm, aDays[i], oHelper, oMonth);
 				}
 			}
 
@@ -562,8 +562,8 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		return sText;
 	};
 
-	MonthRenderer._renderWeekNumber = function(oRm, oDay, oHelper) {
-		var iWeekNumber = CalendarUtils.calculateWeekNumber(oDay.toUTCJSDate(), oHelper.iYear, oHelper.sLocale, oHelper.oLocaleData),
+	MonthRenderer._renderWeekNumber = function(oRm, oDay, oHelper, oMonth) {
+		var iWeekNumber = oMonth._calculateWeekNumber(oDay),
 			sId = oHelper.sId + "-WNum-" + iWeekNumber;
 
 		// add week number - inside first day of the week to allow better position and make it easier for ItemNavigation
