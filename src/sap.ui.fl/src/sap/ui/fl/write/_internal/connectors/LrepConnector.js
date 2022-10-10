@@ -57,7 +57,7 @@ sap.ui.define([
 			DISCARD: "/flex/versions/draft/",
 			PUBLISH: "/flex/versions/publish/"
 		},
-		CONTEXT_BASED_ADAPTATION: "/flex/app/",
+		CONTEXT_BASED_ADAPTATION: "/flex/apps/",
 		MANI_FIRST_SUPPORTED: "/sap/bc/ui2/app_index/ui5_app_mani_first_supported"
 	};
 
@@ -91,7 +91,7 @@ sap.ui.define([
 		} else if (mPropertyBag.isCondensingEnabled) {
 			sRoute = ROUTES.CONDENSE;
 		} else if (mPropertyBag.isContextBasedAdaptationEnabled) {
-			sRoute = ROUTES.CONTEXT_BASED_ADAPTATION + mPropertyBag.flexObject.reference + "/adaptations";
+			sRoute = ROUTES.CONTEXT_BASED_ADAPTATION + mPropertyBag.flexObject.reference + "/adaptations/";
 		} else {
 			sRoute = ROUTES.CHANGES;
 		}
