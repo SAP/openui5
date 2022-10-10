@@ -633,6 +633,14 @@ sap.ui.define([
 
 
 	FilterBarBase.prototype._addConditionChange = function(pConditionState) {
+
+		if (!this._oApplyingChanges) {
+			this._fResolveApplyingChanges = undefined;
+			this._oApplyingChanges = new Promise(function(resolve) {
+				this._fResolveApplyingChanges  = resolve;
+			}.bind(this));
+		}
+
 		this._aOngoingChangeAppliance.push(this.getEngine().createChanges({
 			control: this,
 			applySequentially: true,
@@ -1069,6 +1077,10 @@ sap.ui.define([
             var aChangePromises = this._aOngoingChangeAppliance.slice();
             this._aOngoingChangeAppliance = [];
 
+            if (this._oApplyingChanges) {
+				aChangePromises.push(this._oApplyingChanges);
+            }
+
 			Promise.all(aChangePromises).then(function() {
 				this._validate(bFireSearch);
 			}.bind(this), function() {
@@ -1347,6 +1359,11 @@ sap.ui.define([
 				triggerSearch: false,
 				triggerFilterUpdate: true
 			});
+
+			if (this._oApplyingChanges) {
+				this._fResolveApplyingChanges();
+				this._oApplyingChanges = null;
+			}
 		}.bind(this));
 	};
 
@@ -1384,6 +1401,9 @@ sap.ui.define([
 					oConditionModel.attachPropertyChange(this._handleConditionModelPropertyChange, this);
 				}.bind(this));
 			}.bind(this));
+
+		} else {
+			return Promise.resolve();
 		}
 	};
 
