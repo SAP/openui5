@@ -3,8 +3,9 @@ sap.ui.define([
 	'sap/ui/test/matchers/_Busy',
 	'sap/m/Button',
 	'sap/m/Toolbar',
-	'sap/m/Page'
-], function (_Busy, Button, Toolbar, Page) {
+	'sap/m/Page',
+	'sap/m/VBox'
+], function (_Busy, Button, Toolbar, Page, VBox) {
 	"use strict";
 
 	QUnit.module("_Busy", {
@@ -44,5 +45,61 @@ sap.ui.define([
 		assert.ok(!this.oBusyMatcher.isMatching(this.oButton));
 		assert.ok(!this.oBusyMatcher.isMatching(this.oPage));
 		sinon.assert.notCalled(this.oSpy);
+	});
+
+	QUnit.module("_Busy in ComponentContainer");
+
+	QUnit.test("Should match when parent is ComponentContainer", function (assert) {
+		// Arrange
+		var oButton = new Button({text: "Hello World"}),
+			oVBox = new VBox({
+				items: [oButton]
+			}),
+			oBusy = new _Busy(),
+			fnDone = assert.async();
+
+		sap.ui.define("my/Component", [
+			"sap/ui/core/UIComponent"
+		], function(UIComponent) {
+
+			return UIComponent.extend("my.Component", {
+
+				metadata: {
+					manifest: {}
+				},
+
+				createContent: function() {
+					return oVBox;
+				}
+
+			});
+
+		});
+
+		sap.ui.require([
+			"my/Component", "sap/ui/core/ComponentContainer"
+		], function(MyComponent, ComponentContainer) {
+
+			var oContainer = new ComponentContainer({
+				//name: "my"
+				component: new MyComponent()
+			});
+
+			oContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.strictEqual(oBusy.isMatching(oButton), false, "Button is not busy");
+
+			// Act
+			oContainer.setBusy(true);
+
+			// Assert
+			assert.strictEqual(oBusy.isMatching(oButton), true, "Button is busy");
+
+			// Clean up
+			oContainer.destroy();
+			fnDone();
+		});
 	});
 });

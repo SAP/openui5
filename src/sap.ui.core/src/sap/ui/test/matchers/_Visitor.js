@@ -26,7 +26,8 @@ sap.ui.define([
 				if (fnMatch(oParent)) {
 					return true;
 				}
-				oParent = oParent.getParent();
+				oParent = oParent.isA("sap.ui.core.UIComponent")
+					? oParent.oContainer : oParent.getParent();
 			}
 
 			return false;
