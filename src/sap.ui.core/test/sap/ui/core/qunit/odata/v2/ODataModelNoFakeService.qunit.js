@@ -696,7 +696,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_processChange: ", function (assert) {
-		var oData = {__metadata : {etag : "~changedETag"}},
+		var oContext = {hasSubContexts : function () {}},
+			oData = {__metadata : {etag : "~changedETag"}},
 			sDeepPath = "~deepPath",
 			sETag = "~etag",
 			mHeaders = "~headers",
@@ -708,6 +709,7 @@ sap.ui.define([
 				_getHeaders : function () {},
 				_getObject : function () {},
 				_removeReferences : function () {},
+				getContext : function () {},
 				getETag : function () {},
 				mChangedEntities : {},
 				oMetadata : {
@@ -742,12 +744,14 @@ sap.ui.define([
 			.returns(oPayload);
 		this.mock(oModel).expects("_getHeaders").withExactArgs().returns(mHeaders);
 		this.mock(oModel).expects("getETag").withExactArgs(oPayload).returns(sETag);
-
+		this.mock(oModel).expects("getContext").withExactArgs("/" + sKey).returns(oContext);
 		this.mock(oModel).expects("_createRequestUrl")
 			.withExactArgs("/~key", null, undefined, "~useBatch")
 			.returns(sUrl);
+		this.mock(oContext).expects("hasSubContexts").withExactArgs().returns("~hasSubContexts");
 		this.mock(oModel).expects("_createRequest")
-			.withExactArgs(sUrl, sDeepPath, "MERGE", mHeaders, oPayload, sETag, undefined, true)
+			.withExactArgs(sUrl, sDeepPath, "MERGE", mHeaders, oPayload, sETag, undefined, true,
+				"~hasSubContexts")
 			.returns(oRequest);
 
 		// code under test
@@ -1311,7 +1315,8 @@ sap.ui.define([
 			oModelMock.expects("_importData").withExactArgs(oResponse.data,
 			/*mLocalGetEntities*/ {}, sinon.match.same(oResponse), sinon.match.same(oRequest),
 			/*sPath*/ undefined, /*sDeepPath*/ undefined, /*sKey*/ undefined,
-			oEntityType && "isFunction");
+			oEntityType && "isFunction", /*sPathFromCanonicalParent*/undefined,
+			/*bSideEffects*/undefined);
 		} else {
 			oModelMock.expects("_importData").withExactArgs(oResponse.data,
 			/*mLocalGetEntities*/ {}, sinon.match.same(oResponse), sinon.match.same(oRequest),
@@ -1734,7 +1739,8 @@ sap.ui.define([
 				deepPath : "/entity(id-0-0)",
 				key : "key('id-0-0')",
 				method : "POST",
-				requestUri : "/service/path"
+				requestUri : "/service/path",
+				sideEffects : "~sideEffects"
 			},
 			oResponse = {
 				data : {},
@@ -1753,7 +1759,8 @@ sap.ui.define([
 		oModelMock.expects("_importData")
 			.withExactArgs({/*copy of oResponse.data*/},  {/*mLocalGetEntities*/},
 				sinon.match.same(oResponse), sinon.match.same(oRequest), /*sPath*/undefined,
-				/*sDeepPath*/undefined, /*sKey*/undefined, /*bIsFunction*/undefined);
+				/*sDeepPath*/undefined, /*sKey*/undefined, /*bIsFunction*/undefined,
+				/*sPathFromCanonicalParent*/undefined, "~sideEffects");
 		oModelMock.expects("_getEntity").withExactArgs("key('id-0-0')").returns({__metadata : {}});
 		oModelMock.expects("_removeEntity").withExactArgs("key('id-0-0')");
 		oModelMock.expects("_parseResponse")
@@ -2491,7 +2498,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_processChange: restore expandRequest", function (assert) {
-		var oData = {
+		var oContext = {hasSubContexts : function () {}},
+			oData = {
 				__metadata : {
 					created : {
 						contentID : "~contentID",
@@ -2508,11 +2516,13 @@ sap.ui.define([
 					_getEntityTypeByPath : function () {},
 					_getNavigationPropertyNames : function () {}
 				},
+				_addSubEntitiesToPayload : function () {},
 				_createRequest : function () {},
 				_createRequestUrl : function () {},
 				_getHeaders : function () {},
 				_getObject : function () {},
 				_removeReferences : function () {},
+				getContext : function () {},
 				getETag : function () {}
 			},
 			oRequest = {},
@@ -2532,13 +2542,17 @@ sap.ui.define([
 			.returns("~oPayload");
 		this.mock(oModel).expects("_getHeaders").withExactArgs(undefined).returns("~mHeaders");
 		this.mock(oModel).expects("getETag").withExactArgs("~oPayload").returns("~sETag");
+		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
 		this.mock(oModel).expects("_createRequestUrl")
 			.withExactArgs("/~createdKey", null, undefined, undefined)
 			.returns("~sUrl");
+		this.mock(oContext).expects("hasSubContexts").withExactArgs().returns("~hasSubContexts");
 		this.mock(oModel).expects("_createRequest")
 			.withExactArgs("~sUrl", "~deepPath", "POST", "~mHeaders", "~oPayload", "~sETag",
-				undefined, true)
+				undefined, true, "~hasSubContexts")
 			.returns(oRequest);
+		this.mock(oModel).expects("_addSubEntitiesToPayload")
+			.withExactArgs(sinon.match.same(oContext), "~oPayload");
 
 		// code under test
 		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "POST");
@@ -2552,15 +2566,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[undefined, "~functionMetadata"].forEach(function (sFunctionMetadata, i) {
-	var sTitle = "_processChange: restore functionTarget for function imports; " + i;
-
-	QUnit.test(sTitle, function (assert) {
-		var oData = {
+	QUnit.test("_processChange: restore functionTarget for function imports", function (assert) {
+		var oContext = {hasSubContexts : function () {}},
+			oData = {
 				__metadata : {
 					created : {
 						functionImport : true,
-						functionMetadata : sFunctionMetadata,
+						functionMetadata : "~functionMetadata",
 						key : "~createdKey"
 					}
 				}
@@ -2579,6 +2591,7 @@ sap.ui.define([
 				_getHeaders : function () {},
 				_getObject : function () {},
 				_removeReferences : function () {},
+				getContext : function () {},
 				getETag : function () {}
 			},
 			oRequest = {},
@@ -2594,30 +2607,86 @@ sap.ui.define([
 			.returns("~aUrlParams");
 		this.mock(oModel).expects("_getHeaders").withExactArgs(undefined).returns("~mHeaders");
 		this.mock(oModel).expects("getETag").withExactArgs("~payload").returns("~sETag");
+		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
+		this.mock(oContext).expects("hasSubContexts").withExactArgs().returns("~hasSubContexts");
 		this.mock(oModel).expects("_createRequestUrl")
 			.withExactArgs("/~createdKey", null, "~aUrlParams", undefined).returns("~sUrl");
 		this.mock(oModel).expects("_createRequest")
 			.withExactArgs("~sUrl", "~deepPath", "POST", "~mHeaders", "~payload", "~sETag",
-				undefined, true)
+				undefined, true, "~hasSubContexts")
 			.returns(oRequest);
 		this.mock(oModel.oMetadata).expects("_getCanonicalPathOfFunctionImport")
-			.withExactArgs(sFunctionMetadata, "~urlParameters").exactly(sFunctionMetadata ? 1 : 0)
+			.withExactArgs("~functionMetadata", "~urlParameters")
 			.returns("~functionTarget");
 
 		// code under test
 		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "POST");
 
-		assert.deepEqual(oResult, sFunctionMetadata
-			? {
+		assert.deepEqual(oResult, {
 				created : true,
 				functionTarget : "~functionTarget"
-			}
-			: {
-				created : true
 			});
 		assert.strictEqual(oResult, oRequest);
 	});
-});
+
+	//*********************************************************************************************
+	QUnit.test("_processChange: create, enhance payload for deep create", function (assert) {
+		var oContext = {hasSubContexts : function () {}},
+			oData = {
+				__metadata : {
+					created : {
+						key : "~createdKey"
+					}
+				}
+			},
+			oModel = {
+				mChangedEntities : {
+					"~sKey" : {__metadata : {deepPath : "~deepPath"}}
+				},
+				oMetadata : {
+					_getEntityTypeByPath : function () {},
+					_getNavigationPropertyNames : function () {}
+				},
+				_addSubEntitiesToPayload : function () {},
+				_createRequest : function () {},
+				_createRequestUrl : function () {},
+				_getHeaders : function () {},
+				_getObject : function () {},
+				_removeReferences : function () {},
+				getContext : function () {},
+				getETag : function () {}
+			},
+			oRequest = {},
+			oResult;
+
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath").withExactArgs("~sKey")
+			.returns("~oEntityType");
+		this.mock(oModel).expects("_getObject").withExactArgs("/~sKey", true).returns({foo : 7});
+		this.mock(oModel.oMetadata).expects("_getNavigationPropertyNames")
+			.withExactArgs("~oEntityType")
+			.returns([]);
+		this.mock(oModel).expects("_removeReferences")
+			.withExactArgs({__metadata : {}, foo : 7})
+			.returns("~payload");
+		this.mock(oModel).expects("_getHeaders").withExactArgs(undefined).returns("~mHeaders");
+		this.mock(oModel).expects("getETag").withExactArgs("~payload").returns("~sETag");
+		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
+		this.mock(oModel).expects("_createRequestUrl")
+			.withExactArgs("/~createdKey", null, undefined, undefined).returns("~sUrl");
+		this.mock(oContext).expects("hasSubContexts").withExactArgs().returns("~hasSubContexts");
+		this.mock(oModel).expects("_createRequest")
+			.withExactArgs("~sUrl", "~deepPath", "POST", "~mHeaders", "~payload", "~sETag",
+				undefined, true, "~hasSubContexts")
+			.returns(oRequest);
+		this.mock(oModel).expects("_addSubEntitiesToPayload")
+			.withExactArgs(sinon.match.same(oContext), "~payload");
+
+		// code under test
+		oResult = ODataModel.prototype._processChange.call(oModel, "~sKey", oData, "POST");
+
+		assert.deepEqual(oRequest, {created : true});
+		assert.strictEqual(oResult, oRequest);
+	});
 
 	//*********************************************************************************************
 [false, true].forEach(function (bExpandRequest, i) {
@@ -2690,18 +2759,9 @@ sap.ui.define([
 		var oModel = {
 				oMetadata : {
 					isLoaded : function () {}
-				},
-				_isCanonicalRequestNeeded : function () {},
-				_normalizePath : function () {},
-				resolveDeep : function () {}
+				}
 			};
 
-		this.mock(oModel).expects("_isCanonicalRequestNeeded").withExactArgs(undefined)
-			.returns(false);
-		this.mock(oModel).expects("_normalizePath").withExactArgs("/~path", undefined, false)
-			.returns("sNormalizedPath");
-		this.mock(oModel).expects("resolveDeep").withExactArgs("/~path", undefined)
-			.returns("~sDeepPath");
 		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(false);
 		this.oLogMock.expects("error")
 			.withExactArgs("Tried to use createEntry without created-callback, before metadata is"
@@ -2961,6 +3021,7 @@ sap.ui.define([
 			oRequestHandle, oResult, fnSuccess, sUid,
 			oCreatedContext = {
 				fetchActivated : function () {},
+				hasSubContexts : function () {},
 				resetCreatedPromise : function () {}
 			},
 			oCreatedContextCache = {getCacheInfo : function () {}},
@@ -3019,6 +3080,7 @@ sap.ui.define([
 			.withExactArgs("~path", "~context", "~bCanonical")
 			.returns("/~sNormalizedPath");
 		oModelMock.expects("resolveDeep").withExactArgs("~path", "~context").returns("~sDeepPath");
+		oMetadataMock.expects("_isCollection").withExactArgs("~sDeepPath").returns(true);
 		oMetadataMock.expects("isLoaded").withExactArgs().returns(true);
 		// function create()
 		oModelMock.expects("_resolveGroup")
@@ -3033,7 +3095,6 @@ sap.ui.define([
 		oMetadataMock.expects("_getEntitySetByType")
 			.withExactArgs(sinon.match.same(oEntityMetadata))
 			.returns({name : "~entitySetName"});
-		oMetadataMock.expects("_isCollection").withExactArgs("~sDeepPath").returns(true);
 		oModelMock.expects("_addEntity")
 			.withExactArgs(sinon.match(function (oEntity0) {
 				sUid = rTemporaryKey.exec(oEntity0.__metadata.deepPath)[1];
@@ -3122,7 +3183,7 @@ sap.ui.define([
 					assert.ok(pCreate instanceof SyncPromise);
 
 					return true;
-				}), bInactive)
+				}), bInactive, undefined)
 			.returns(oCreatedContext);
 		this.mock(oModel.oMetadata).expects("loaded").withExactArgs()
 			.returns({then : function (fnFunc) {
@@ -3211,6 +3272,7 @@ sap.ui.define([
 			that.mock(oCreatedContext).expects("resetCreatedPromise")
 				.withExactArgs()
 				.exactly(bFromODLBcreate ? 0 : 1);
+			that.mock(oCreatedContext).expects("hasSubContexts").withExactArgs().returns(false);
 		}
 		return fnTestEventHandlers.call(this, assert, oEventHandlersMock, fnAbort, fnError,
 			fnSuccess, pCreate, fnExpectResetCreatePromise);
@@ -3261,6 +3323,9 @@ sap.ui.define([
 		this.mock(oModel).expects("resolveDeep")
 			.withExactArgs("/~path", undefined)
 			.returns("~sDeepPath");
+		this.mock(oModel.oMetadata).expects("_isCollection")
+			.withExactArgs("~sDeepPath")
+			.returns(false);
 		this.mock(ODataUtils).expects("_createUrlParamsArray")
 			.withExactArgs(undefined)
 			.returns("~aUrlParams");
@@ -3278,9 +3343,6 @@ sap.ui.define([
 		this.mock(oModel.oMetadata).expects("_getEntitySetByType")
 			.withExactArgs(sinon.match.same(oEntityMetadata))
 			.returns({name : "~entitySetName"});
-		this.mock(oModel.oMetadata).expects("_isCollection")
-			.withExactArgs("~sDeepPath")
-			.returns(false);
 		this.mock(oModel).expects("_addEntity").callsFake(function (oEntity0) {
 				assert.strictEqual(oEntity0.__metadata.created.changeSetId, "~defaultChangeSetId");
 				assert.strictEqual(oEntity0.__metadata.created.groupId, "~defaultGroupId");
@@ -3299,7 +3361,7 @@ sap.ui.define([
 			}), undefined)
 			.returns(oRequest);
 		this.mock(oModel).expects("getContext")
-			.withExactArgs("/~sKey", "~sDeepPath", sinon.match.object, undefined)
+			.withExactArgs("/~sKey", "~sDeepPath", sinon.match.object, undefined, undefined)
 			.returns(oCreatedContext);
 		this.mock(oModel.oMetadata).expects("loaded").withExactArgs()
 			.returns({then : function (fnFunc) {
@@ -3325,6 +3387,382 @@ sap.ui.define([
 
 		// code under test
 		fnAfterContextActivated();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createEntry: deep create", function (assert) {
+		var oChangedEntity,
+			oContext = {
+				addSubContext : function () {},
+				getPath : function () {},
+				isInactive : function () {},
+				isTransient : function () {}
+			},
+			oContextMock = this.mock(oContext),
+			oCreatedContext = {},
+			oEntityMetadata = {entityType : "~entityType"},
+			oModel = {
+				mChangedEntities : {},
+				oMetadata : {
+					_getEntitySetByType : function () {},
+					_getEntityTypeByPath : function () {},
+					_getNavigationPropertyNames : function () {},
+					_isCollection : function () {},
+					isLoaded : function () {}
+				},
+				sServiceUrl : "~sServiceUrl",
+				_addEntity : function () {},
+				_getObject : function () {},
+				_isCanonicalRequestNeeded : function () {},
+				_normalizePath : function () {},
+				getContext : function () {},
+				resolveDeep : function () {}
+			},
+			oMetadataMock = this.mock(oModel.oMetadata);
+
+		oContextMock.expects("isTransient").returns(true);
+		oContextMock.expects("isInactive").returns(false);
+		oMetadataMock.expects("isLoaded").withExactArgs().returns(true);
+		// function create()
+		oContextMock.expects("getPath").withExactArgs().returns("/~sContextPath");
+		oMetadataMock.expects("_getEntityTypeByPath")
+			.withExactArgs("/~sContextPath")
+			.returns("~oSourceEntityMetadata");
+		oMetadataMock.expects("_getNavigationPropertyNames")
+			.withExactArgs("~oSourceEntityMetadata")
+			.returns(["~path"]);
+		this.mock(oModel).expects("_isCanonicalRequestNeeded")
+			.withExactArgs(undefined)
+			.returns("~bCanonical");
+		this.mock(ODataUtils).expects("_createUrlParamsArray")
+			.withExactArgs(undefined)
+			.returns("~aUrlParams");
+		this.mock(oModel).expects("_normalizePath")
+			.withExactArgs("~path", sinon.match.same(oContext), "~bCanonical")
+			.returns("/~sNormalizedPath");
+		this.mock(oModel).expects("resolveDeep")
+			.withExactArgs("~path", sinon.match.same(oContext))
+			.returns("~sDeepPath");
+		oMetadataMock.expects("_isCollection")
+			.withExactArgs("~sDeepPath")
+			.returns("~bIsCollection");
+		oMetadataMock.expects("_getEntityTypeByPath")
+			.withExactArgs("/~sNormalizedPath")
+			.returns(oEntityMetadata);
+		oMetadataMock.expects("_getEntitySetByType")
+			.withExactArgs(sinon.match.same(oEntityMetadata))
+			.returns({name : "~entitySetName"});
+		oContextMock.expects("getPath").withExactArgs().returns("/~sContextPath");
+		this.mock(oModel).expects("_getObject").withExactArgs("/~sContextPath").returns({
+				__metadata : {
+					created : {
+						changeSetId : "~changeSetIdFromRoot",
+						groupId : "~groupIdFromRoot"
+					}
+				}
+			});
+		this.mock(oModel).expects("_addEntity").callsFake(function (oEntity0) {
+				assert.strictEqual(oEntity0.__metadata.created.changeSetId, "~changeSetIdFromRoot");
+				assert.strictEqual(oEntity0.__metadata.created.groupId, "~groupIdFromRoot");
+
+				return "~sKey";
+			});
+		this.mock(oModel).expects("getContext")
+			.withExactArgs("/~sKey", sinon.match.string /*deep path not relevant for deep create*/,
+				undefined, undefined, sinon.match.same(oContext))
+			.returns(oCreatedContext);
+		this.mock(oContext).expects("addSubContext")
+			.withExactArgs("~path", oCreatedContext, "~bIsCollection");
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.createEntry.call(oModel, "~path",
+			{context : oContext, properties : {foo : "bar"}}), oCreatedContext);
+
+		assert.strictEqual(Object.keys(oModel.mChangedEntities).length, 1);
+		oChangedEntity = oModel.mChangedEntities[Object.keys(oModel.mChangedEntities)[0]];
+		assert.strictEqual(oChangedEntity.foo, "bar");
+		assert.strictEqual(oChangedEntity.__metadata.type, "~entityType");
+		assert.ok(oChangedEntity.__metadata.uri.startsWith("~sServiceUrl/~entitySetName('"));
+		assert.strictEqual(oChangedEntity.__metadata.created.changeSetId, "~changeSetIdFromRoot");
+		assert.strictEqual(oChangedEntity.__metadata.created.groupId, "~groupIdFromRoot");
+		assert.strictEqual(oChangedEntity.__metadata.created.error, undefined);
+		assert.strictEqual(oChangedEntity.__metadata.created.headers, undefined);
+		assert.strictEqual(oChangedEntity.__metadata.created.key, undefined);
+		assert.strictEqual(oChangedEntity.__metadata.created.refreshAfterChange, undefined);
+		assert.strictEqual(oChangedEntity.__metadata.created.success, undefined);
+		assert.strictEqual(oChangedEntity.__metadata.created.urlParameters, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createEntry: reset changes on sub contexts after deep create", function (assert) {
+		var fnAfterContextActivated,
+			oCreatedContext = {
+				fetchActivated : function () {},
+				getSubContextsAsPath : function () {},
+				hasSubContexts : function () {}
+			},
+			oEntityMetadata = {entityType : "~entityType"},
+			oModel = {
+				mChangedEntities : {},
+				oCreatedContextsCache : {
+					getCacheInfo : function () {}
+				},
+				mDeferredGroups : {},
+				oMetadata : {
+					_getEntitySetByType : function () {},
+					_getEntityTypeByPath : function () {},
+					_isCollection : function () {},
+					isLoaded : function () {},
+					loaded : function () {}
+				},
+				mRequests : "~mRequests",
+				sServiceUrl : "~sServiceUrl",
+				_addEntity : function () {},
+				_createRequest : function () {},
+				_createRequestUrlWithNormalizedPath : function () {},
+				_getRefreshAfterChange : function () {},
+				_isCanonicalRequestNeeded : function () {},
+				_normalizePath : function () {},
+				_pushToRequestQueue : function () {},
+				_processRequestQueueAsync : function () {},
+				_resolveGroup : function () {},
+				getContext : function () {},
+				resetChanges : function () {},
+				resolveDeep : function () {}
+			},
+			fnMetadataLoaded,
+			oMetadataMock = this.mock(oModel.oMetadata),
+			oRequest = {},
+			fnSuccess;
+
+		oMetadataMock.expects("isLoaded").withExactArgs().returns(true);
+		// function create()
+		this.mock(oModel).expects("_isCanonicalRequestNeeded")
+			.withExactArgs(undefined)
+			.returns("~bCanonical");
+		this.mock(ODataUtils).expects("_createUrlParamsArray")
+			.withExactArgs(undefined)
+			.returns("~aUrlParams");
+		this.mock(oModel).expects("_normalizePath")
+			.withExactArgs("/~path", undefined, "~bCanonical")
+			.returns("/~sNormalizedPath");
+		this.mock(oModel).expects("resolveDeep")
+			.withExactArgs("/~path", undefined)
+			.returns("~sDeepPath");
+		oMetadataMock.expects("_isCollection").withExactArgs("~sDeepPath").returns(false);
+		oMetadataMock.expects("_getEntityTypeByPath")
+			.withExactArgs("/~sNormalizedPath")
+			.returns(oEntityMetadata);
+		oMetadataMock.expects("_getEntitySetByType")
+			.withExactArgs(sinon.match.same(oEntityMetadata))
+			.returns({name : "~entitySetName"});
+		this.mock(oModel).expects("_resolveGroup")
+			.withExactArgs("/~sNormalizedPath")
+			.returns({groupId : "~groupId", changeSetId : "~changeSetId"});
+		this.mock(oModel).expects("_getRefreshAfterChange")
+			.withExactArgs(undefined, "~groupId")
+			.returns("~bRefreshAfterChange");
+		this.mock(oModel).expects("_addEntity")
+			.withExactArgs(sinon.match.object/*aspect already tested*/)
+			.returns("~sKey");
+		this.mock(oModel).expects("getContext")
+			.withExactArgs("/~sKey", sinon.match.string /*deep path not relevant for deep create*/,
+				sinon.match.object/*aspect already tested*/, undefined, undefined)
+			.returns(oCreatedContext);
+		this.mock(oModel).expects("_createRequestUrlWithNormalizedPath")
+			.withExactArgs("/~sNormalizedPath", "~aUrlParams", undefined)
+			.returns("~sUrl");
+		this.mock(oModel).expects("_createRequest")
+			.withExactArgs("~sUrl", "~sDeepPath", "POST", {},
+				sinon.match.object/*aspect already tested*/, undefined)
+			.returns(oRequest);
+		oMetadataMock.expects("loaded").withExactArgs()
+			.returns({then : function (fnFunc) {
+				fnMetadataLoaded = fnFunc;
+			}});
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.createEntry.call(oModel, "/~path",
+			{properties : {foo : "bar"}}), oCreatedContext);
+
+		this.mock(oCreatedContext).expects("fetchActivated").withExactArgs()
+			.returns({then : function (fnFunc) {
+				fnAfterContextActivated = fnFunc;
+			}});
+
+		// code under test
+		fnMetadataLoaded();
+
+		this.mock(oModel).expects("_pushToRequestQueue")
+			.withExactArgs("~mRequests", "~groupId", "~changeSetId", sinon.match.same(oRequest),
+				sinon.match(function (fnSuccess0) {
+					fnSuccess = fnSuccess0;
+
+					return true;
+				}), undefined, sinon.match.object, "~bRefreshAfterChange");
+		this.mock(oModel).expects("_processRequestQueueAsync").withExactArgs("~mRequests");
+
+		// code under test
+		fnAfterContextActivated();
+
+		this.mock(oModel.oCreatedContextsCache).expects("getCacheInfo")
+			.withExactArgs(sinon.match.same(oCreatedContext))
+			.returns(true);
+		this.mock(oCreatedContext).expects("hasSubContexts").withExactArgs().returns(true);
+		this.mock(oCreatedContext).expects("getSubContextsAsPath")
+			.withExactArgs()
+			.returns("~subContextPaths");
+		this.mock(oModel).expects("resetChanges")
+			.withExactArgs("~subContextPaths", undefined, true);
+
+		// code under test
+		fnSuccess();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createEntry: deep create, :1 nav property is not supported", function (assert) {
+		var oContext = {
+				getPath : function () {},
+				isInactive : function () {},
+				isTransient : function () {}
+			},
+			oModel = {
+				oMetadata : {
+					_getEntityTypeByPath : function () {},
+					_getNavigationPropertyNames : function () {},
+					_isCollection : function () {},
+					isLoaded : function () {}
+				},
+				_isCanonicalRequestNeeded : function () {},
+				_normalizePath : function () {},
+				resolveDeep : function () {}
+			};
+
+		this.mock(oContext).expects("isTransient").returns(true);
+		this.mock(oContext).expects("isInactive").returns(false);
+		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
+		// create()
+		this.mock(oModel).expects("_isCanonicalRequestNeeded")
+			.withExactArgs(undefined)
+			.returns("~bCanonical");
+		this.mock(ODataUtils).expects("_createUrlParamsArray")
+			.withExactArgs(undefined)
+			.returns("~aUrlParams");
+		this.mock(oModel).expects("_normalizePath")
+			.withExactArgs("~path", sinon.match.same(oContext), "~bCanonical")
+			.returns("~sNormalizedPath");
+		this.mock(oModel).expects("resolveDeep")
+			.withExactArgs("~path", sinon.match.same(oContext))
+			.returns("~sDeepPath");
+		this.mock(oModel.oMetadata).expects("_isCollection")
+			.withExactArgs("~sDeepPath")
+			.returns(false);
+		// checkDeepCreatePreconditions()
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/~sContextPath");
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("/~sContextPath")
+			.returns("~oSourceEntityMetadata");
+		this.mock(oModel.oMetadata).expects("_getNavigationPropertyNames")
+			.withExactArgs(sinon.match.same("~oSourceEntityMetadata"))
+			.returns(["~path"]);
+
+		// code under test
+		assert.throws(function () {
+			ODataModel.prototype.createEntry.call(oModel, "~path", {context : oContext});
+		}, new Error("Cannot create entity; deep create on navigation property '~path' with "
+			+ "single cardinality is not supported"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createEntry: deep create, path is not a navigation property", function (assert) {
+		var oContext = {
+				getPath : function () {},
+				isInactive : function () {},
+				isTransient : function () {}
+			},
+			oModel = {
+				oMetadata : {
+					_getEntityTypeByPath : function () {},
+					_getNavigationPropertyNames : function () {},
+					_isCollection : function () {},
+					isLoaded : function () {}
+				},
+				_isCanonicalRequestNeeded : function () {},
+				_normalizePath : function () {},
+				resolveDeep : function () {}
+			},
+			oSourceEntityMetadata = {name : "~sourceTypeName"};
+
+		this.mock(oContext).expects("isTransient").returns(true);
+		this.mock(oContext).expects("isInactive").returns(false);
+		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
+		// create()
+		this.mock(oModel).expects("_isCanonicalRequestNeeded")
+			.withExactArgs(undefined)
+			.returns("~bCanonical");
+		this.mock(ODataUtils).expects("_createUrlParamsArray")
+			.withExactArgs(undefined)
+			.returns("~aUrlParams");
+		this.mock(oModel).expects("_normalizePath")
+			.withExactArgs("~invalid", sinon.match.same(oContext), "~bCanonical")
+			.returns("~sNormalizedPath");
+		this.mock(oModel).expects("resolveDeep")
+			.withExactArgs("~invalid", sinon.match.same(oContext))
+			.returns("~sDeepPath");
+		this.mock(oModel.oMetadata).expects("_isCollection")
+			.withExactArgs("~sDeepPath")
+			.returns("~bIsCollection");
+		// checkDeepCreatePreconditions()
+		this.mock(oContext).expects("getPath").withExactArgs().returns("/~sContextPath");
+		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("/~sContextPath")
+			.returns(oSourceEntityMetadata);
+		this.mock(oModel.oMetadata).expects("_getNavigationPropertyNames")
+			.withExactArgs(sinon.match.same(oSourceEntityMetadata))
+			.returns(["~path"]);
+
+		// code under test
+		assert.throws(function () {
+			ODataModel.prototype.createEntry.call(oModel, "~invalid", {context : oContext});
+		}, new Error("Cannot create entity; path '~invalid' is not a navigation property of "
+			+ "'~sourceTypeName'"));
+	});
+
+	//*********************************************************************************************
+["batchGroupId", "changeSetId", "created", "error", "expand", "groupId", "headers", "inactive",
+ "refreshAfterChange", "success", "urlParameters", "invalid"].forEach(function (sParameter) {
+	QUnit.test("createEntry: deep create, unsupported parameter " + sParameter, function (assert) {
+		var oContext = {isTransient : function () {}},
+			oModel = {bUseBatch : true},
+			mParameters = {context : oContext};
+
+		this.mock(oContext).expects("isTransient").returns(true);
+
+		mParameters[sParameter] = "foo";
+
+		// code under test
+		assert.throws(function () {
+			ODataModel.prototype.createEntry.call(oModel, "~path", mParameters);
+		}, new Error("deep create, unsupported parameter: " + sParameter));
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("createEntry: deep create, error on inactive context", function (assert) {
+		var oContext = {
+				isInactive : function () {},
+				isTransient : function () {}
+			},
+			oModel = {bUseBatch : true},
+			mParameters = {context : oContext};
+
+		this.mock(oContext).expects("isTransient").returns(true);
+		this.mock(oContext).expects("isInactive").returns(true);
+
+		// code under test
+		assert.throws(function () {
+			ODataModel.prototype.createEntry.call(oModel, "~path", mParameters);
+		}, new Error("deep create, context must not be inactive"));
 	});
 
 	//*********************************************************************************************
@@ -4607,7 +5045,8 @@ sap.ui.define([
 		functionTarget : "~functionTarget",
 		headers : "~headers",
 		method : "POST",
-		requestUri : "~requestUri"
+		requestUri : "~requestUri",
+		sideEffects : undefined
 	}
 }].forEach(function (oFixture, i) {
 	var sTitle = "_pushToRequestQueue: restore functionTarget and requestUri for function imports; "
@@ -4640,6 +5079,37 @@ sap.ui.define([
 		assert.deepEqual(mRequests["~sGroupId"].map["~key"].request, oFixture.expectedRequest);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_pushToRequestQueue: restore POST request properties", function (assert) {
+		var oModel = {},
+			oNewRequest = {
+				data : "~newData",
+				headers : "~newHeaders",
+				key : "~key",
+				method : "POST",
+				sideEffects : "~sideEffects"
+			},
+			oStoredRequest = {},
+			mRequests = {
+				"~sGroupId" : {
+					map : {
+						"~key" : {request : oStoredRequest}
+					}
+				}
+			};
+
+		// code under test
+		ODataModel.prototype._pushToRequestQueue.call(oModel, mRequests, "~sGroupId", undefined,
+			oNewRequest);
+
+		assert.deepEqual(oStoredRequest, {
+			data : "~newData",
+			headers : "~newHeaders",
+			method : "POST",
+			sideEffects : "~sideEffects"
+		});
+	});
 
 	//*********************************************************************************************
 	QUnit.test("_parseResponse, message parser exists", function (assert) {
@@ -5570,6 +6040,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getContext: transient parent", function (assert) {
+		var oContext,
+			oModel = {mContexts : {}};
+
+		// code under test
+		oContext = ODataModel.prototype.getContext.call(oModel, "/~sPath", "/~sDeepPath",
+			"~createPromise", "~inactive", "~transientParent");
+
+		assert.strictEqual(oModel.mContexts["/~sPath"], oContext);
+		// constructor cannot be mocked so check internal member
+		assert.strictEqual(oContext.oTransientParent, "~transientParent");
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bAll) {
 	[false, true].forEach(function (bDeleteCreatedEntities) {
 	var sTitle = "resetChanges: no paths; bAll=" + bAll + ", bDeleteCreatedEntities="
@@ -5636,14 +6120,18 @@ sap.ui.define([
 	QUnit.test(sTitle, function (assert) {
 		var oBarMetadata = {},
 			oBarEntity = {__metadata : oBarMetadata, P : "prop0", Q : "prop1"},
+			oContext0 = {getSubContextsAsKey : function () {}},
+			oContext1 = {getSubContextsAsKey : function () {}},
 			oFooEntity = {__metadata : {}, S : "prop3"},
 			oODataModelMock = this.mock(ODataModel),
 			oQuxEntity = {__metadata : oFixture.oQuxMetadata, R : "prop2"},
+			oXyzEntity = {__metadata : {created : {}}, X : "prop4"},
 			oModel = {
 				mChangedEntities : {
 					"key('Bar')" : oBarEntity,
 					"key('Foo')" : oFooEntity,
-					"key('Qux')" : oQuxEntity
+					"key('Qux')" : oQuxEntity,
+					"key('Xyz')" : oXyzEntity
 				},
 				mDeferredGroups : {
 					deferred0 : {},
@@ -5656,6 +6144,7 @@ sap.ui.define([
 				abortInternalRequest : function () {},
 				checkUpdate : function () {},
 				getBindings : function () {},
+				getContext : function () {},
 				getEntityByPath : function () {}
 			},
 			oModelMock = this.mock(oModel),
@@ -5711,8 +6200,6 @@ sap.ui.define([
 		oODataModelMock.expects("_isChangedEntityEmpty")
 			.withExactArgs(sinon.match.same(oQuxEntity))
 			.returns(false);
-		oModelMock.expects("_discardEntityChanges")
-			.withExactArgs("key('Qux')", oFixture.bDeleteEntity);
 		oModelMock.expects("getEntityByPath")
 			.withExactArgs("/Foo/S", null, {})
 			.callsFake(function (sPath, oContext, oEntityInfo) {
@@ -5723,8 +6210,20 @@ sap.ui.define([
 		oODataModelMock.expects("_isChangedEntityEmpty")
 			.withExactArgs(sinon.match.same(oFooEntity))
 			.returns(true);
+		oModelMock.expects("getContext").withExactArgs("/key('Qux')").returns(oContext0);
+		this.mock(oContext0).expects("getSubContextsAsKey")
+			.withExactArgs(true)
+			.returns(["key('Foo')", "key('Xyz')"]);
+		oModelMock.expects("getContext").withExactArgs("/key('Foo')").returns(oContext1);
+		this.mock(oContext1).expects("getSubContextsAsKey")
+			.withExactArgs(true)
+			.returns(["key('Xyz')"]);
+		oModelMock.expects("_discardEntityChanges")
+			.withExactArgs("key('Qux')", oFixture.bDeleteEntity);
 		oModelMock.expects("_discardEntityChanges")
 			.withExactArgs("key('Foo')", undefined);
+		oModelMock.expects("_discardEntityChanges")
+			.withExactArgs("key('Xyz')", bDeleteCreatedEntities);
 		oModelMock.expects("getBindings").withExactArgs().returns([]);
 		oModelMock.expects("checkUpdate").withExactArgs(true);
 
@@ -5808,6 +6307,7 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oFindAndRemoveContext, oRemoveEntity, fnResolve,
+			oContext = {removeFromTransientParent : function () {}},
 			oMessageManagerMock = this.mock(sap.ui.getCore().getMessageManager()),
 			oMetadata = {
 				loaded : function () {}
@@ -5817,7 +6317,6 @@ sap.ui.define([
 					foo : "bar",
 					"~sKey" : {__metadata : oFixture.oEntityMetadata}
 				},
-				mContexts : { "/~sKey" : "~oContext"},
 				oCreatedContextsCache : {
 					findAndRemoveContext : function () {}
 				},
@@ -5826,6 +6325,7 @@ sap.ui.define([
 				_removeEntity : function () {},
 				_resolveGroup : function () {},
 				abortInternalRequest : function () {},
+				getContext : function () {},
 				getMessagesByEntity : function () {}
 			},
 			oModelMock = this.mock(oModel),
@@ -5835,9 +6335,16 @@ sap.ui.define([
 
 		oModelMock.expects("_resolveGroup").withExactArgs("~sKey").returns({groupId : "~groupId"});
 		this.mock(oMetadata).expects("loaded").withExactArgs().returns(oPromise);
+		this.mock(oModel).expects("getContext")
+			.withExactArgs("/~sKey")
+			.exactly(bDeleteEntity ? 1 : 0)
+			.returns(oContext);
+		this.mock(oContext).expects("removeFromTransientParent")
+			.withExactArgs()
+			.exactly(bDeleteEntity ? 1 : 0);
 		oFindAndRemoveContext = this.mock(oModel.oCreatedContextsCache)
 			.expects("findAndRemoveContext")
-			.withExactArgs("~oContext")
+			.withExactArgs(sinon.match.same(oContext))
 			.exactly(bDeleteEntity ? 1 : 0);
 		oRemoveEntity = oModelMock.expects("_removeEntity")
 			.withExactArgs("~sKey")
@@ -5881,10 +6388,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_discardEntityChanges: no changes for key", function (assert) {
-		var fnResolve,
+		var oContext = {removeFromTransientParent : function () {}},
+			fnResolve,
 			oModel = {
 				mChangedEntities : {},
-				mContexts : { "/~sKey" : "~oContext"},
 				oCreatedContextsCache : {
 					findAndRemoveContext : function () {}
 				},
@@ -5892,6 +6399,7 @@ sap.ui.define([
 				_removeEntity : function () {},
 				_resolveGroup : function () {},
 				abortInternalRequest : function () {},
+				getContext : function () {},
 				getMessagesByEntity : function () {}
 			},
 			oModelMock = this.mock(oModel),
@@ -5903,9 +6411,11 @@ sap.ui.define([
 			.withExactArgs("~sKey")
 			.returns({groupId : "~groupId"});
 		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oPromise);
+		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
+		this.mock(oContext).expects("removeFromTransientParent").withExactArgs();
 		this.mock(oModel.oCreatedContextsCache)
 			.expects("findAndRemoveContext")
-			.withExactArgs("~oContext");
+			.withExactArgs(sinon.match.same(oContext));
 		this.mock(oModel).expects("_removeEntity").withExactArgs("~sKey");
 		this.mock(oModel).expects("getMessagesByEntity")
 			.withExactArgs("~sKey", false)
@@ -6019,7 +6529,8 @@ sap.ui.define([
 	expectedSuccess : undefined
 }].forEach(function (oFixture, i) {
 	QUnit.test("submitChanges: restore parameters for created entities; #" + i, function (assert) {
-		var oGroupInfo = {changeSetId : "~changeSetId", groupId : "~groupId"},
+		var oContext = {hasTransientParent : function () {}},
+			oGroupInfo = {changeSetId : "~changeSetId", groupId : "~groupId"},
 			oMetadataPromise = Promise.resolve(),
 			oModel = {
 				mChangedEntities : {
@@ -6033,6 +6544,7 @@ sap.ui.define([
 				},
 				bRefreshAfterChange : "~bRefreshAfterChangeFromModel",
 				getBindings : function () {},
+				getContext : function () {},
 				_processChange : function () {},
 				_processRequestQueue : function () {},
 				_pushToRequestQueue : function () {},
@@ -6048,6 +6560,8 @@ sap.ui.define([
 
 		// async, after metadata loaded promise is resolved
 		this.mock(oModel).expects("_resolveGroup").withExactArgs("~sKey").returns(oGroupInfo);
+		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
+		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(false);
 		this.mock(oModel).expects("_processChange")
 			.withExactArgs("~sKey", /*copy of*/oFixture.oData, "~sDefaultUpdateMethod")
 			.returns(oRequest);
@@ -6069,6 +6583,7 @@ sap.ui.define([
 	QUnit.test("submitChanges: calls _submitChanges on ODataTreeBindingFlat; w/o given parameters",
 			function (assert) {
 		var aBindings = [{_submitChanges : function () {}}, {}, {_submitChanges : function () {}}],
+			oContext = {hasTransientParent : function () {}},
 			oMetadataPromise = Promise.resolve(),
 			oModel = {
 				mChangedEntities : {"~sKey" : {}},
@@ -6080,6 +6595,7 @@ sap.ui.define([
 				},
 				bRefreshAfterChange : "~bRefreshAfterChangeFromModel",
 				getBindings : function () {},
+				getContext : function () {},
 				_processChange : function () {},
 				_processRequestQueue : function () {},
 				_pushToRequestQueue : function () {},
@@ -6119,6 +6635,8 @@ sap.ui.define([
 		this.mock(oModel).expects("_resolveGroup")
 			.withExactArgs("~sKey")
 			.returns({changeSetId : "~changeSetId", groupId : "~groupId"});
+		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
+		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(false);
 		this.mock(oModel).expects("_processChange")
 			.withExactArgs("~sKey", {}, "~sDefaultUpdateMethod")
 			.returns(oRequest);
@@ -6147,6 +6665,7 @@ sap.ui.define([
 	QUnit.test("submitChanges: calls _submitChanges on ODataTreeBindingFlat; w/ given parameters",
 			function (assert) {
 		var aBindings = [{_submitChanges : function () {}}, {_submitChanges : function () {}}],
+			oContext = {hasTransientParent : function () {}},
 			oMetadataPromise = Promise.resolve(),
 			oModel = {
 				mChangedEntities : {"~sKey" : {}},
@@ -6158,6 +6677,7 @@ sap.ui.define([
 				},
 				bRefreshAfterChange : "~bRefreshAfterChangeFromModel",
 				getBindings : function () {},
+				getContext : function () {},
 				_processChange : function () {},
 				_processRequestQueue : function () {},
 				_pushToRequestQueue : function () {},
@@ -6199,6 +6719,8 @@ sap.ui.define([
 		this.mock(oModel).expects("_resolveGroup")
 			.withExactArgs("~sKey")
 			.returns({changeSetId : "~changeSetId", groupId : "~groupId"});
+		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
+		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(false);
 		this.mock(oModel).expects("_processChange")
 			.withExactArgs("~sKey", {}, "~sDefaultUpdateMethod")
 			.returns(oRequest);
@@ -6226,6 +6748,40 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("submitChanges: skip changed entities for deep create", function (assert) {
+		var oContext = {hasTransientParent : function () {}},
+			oMetadataPromise = Promise.resolve(),
+			oModel = {
+				mChangedEntities : {"~sKey" : {}},
+				mDeferredRequests : {},
+				oMetadata : {loaded : function () {}},
+				_processRequestQueue : function () {},
+				_resolveGroup : function () {},
+				getBindings : function () {},
+				getContext : function () {}
+			};
+
+		this.mock(oModel).expects("getBindings").withExactArgs().returns([]);
+		this.mock(oModel.oMetadata).expects("loaded").withExactArgs().returns(oMetadataPromise);
+
+		// code under test
+		ODataModel.prototype.submitChanges.call(oModel);
+
+		// async, after metadata loaded promise is resolved
+		this.mock(oModel).expects("_resolveGroup").withExactArgs("~sKey").returns(/*not relevant*/);
+		this.mock(oModel).expects("getContext").withExactArgs("/~sKey").returns(oContext);
+		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(true);
+		this.mock(oModel).expects("_processRequestQueue")
+			.withExactArgs(sinon.match(function (mDeferredRequests) {
+				assert.deepEqual(mDeferredRequests, {});
+
+				return oModel.mDeferredRequests === mDeferredRequests;
+			}), undefined, undefined, undefined);
+
+		return oMetadataPromise;
+	});
+
+	//*********************************************************************************************
 [{
 	createdContextFound : false,
 	entryMetadata : {},
@@ -6245,6 +6801,7 @@ sap.ui.define([
 }].forEach(function (oFixture, i) {
 	QUnit.test("setProperty: activate inactive context; " + i, function (assert) {
 		var oActivateCall, oMetadataLoadedCall, oRequestQueuedPromise,
+			oContext = {hasTransientParent : function () {}},
 			oEntry = {
 				__metadata : oFixture.entryMetadata
 			},
@@ -6282,11 +6839,12 @@ sap.ui.define([
 			oOriginalValue = {};
 
 		oModelMock.expects("resolve")
-			.withExactArgs("~sPath", "~oContext")
+			.withExactArgs("~sPath", sinon.match.same(oContext))
 			.returns("/resolved/path");
 		oModelMock.expects("resolveDeep")
-			.withExactArgs("~sPath", "~oContext")
+			.withExactArgs("~sPath", sinon.match.same(oContext))
 			.returns("deepPath");
+		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(false);
 		oModelMock.expects("getEntityByPath")
 			.withExactArgs("/resolved/path", null, /*by ref oEntityInfo*/{})
 			.callsFake(function (sResolvedPath, oContext, oEntityInfo) { // fill reference parameter
@@ -6299,7 +6857,7 @@ sap.ui.define([
 			.withExactArgs("/key", null, true)
 			.returns(oOriginalEntry);
 		oModelMock.expects("_getObject")
-			.withExactArgs("~sPath", "~oContext", true)
+			.withExactArgs("~sPath", sinon.match.same(oContext), true)
 			.returns(oOriginalValue);
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
 			.withExactArgs("key")
@@ -6339,7 +6897,7 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(
-			ODataModel.prototype.setProperty.call(oModel, "~sPath", "~oValue", "~oContext",
+			ODataModel.prototype.setProperty.call(oModel, "~sPath", "~oValue", oContext,
 				"~bAsyncUpdate"),
 			true);
 
@@ -6359,19 +6917,22 @@ sap.ui.define([
 	bMergeRequired : true,
 	vNewValue : {ms : 0, __edmType : "Edm.Time"},
 	vNewValueClone : {ms : 0, __edmType : "Edm.Time"},
-	vOriginalValue : {ms : 0, __edmType : "Edm.Time"}
+	vOriginalValue : {ms : 0, __edmType : "Edm.Time"},
+	oContext : {hasTransientParent : function () {}}
 }, {
 	vChangedValue : new Date(120000),
 	bMergeRequired : false,
 	vNewValue : new Date(60000),
 	vNewValueClone : new Date(60000),
-	vOriginalValue : new Date(60000)
+	vOriginalValue : new Date(60000),
+	oContext : {hasTransientParent : function () {}}
 }, {
 	vChangedValue : 13,
 	bMergeRequired : false,
 	vNewValue : 42,
 	vNewValueClone : 42,
-	vOriginalValue : 42
+	vOriginalValue : 42,
+	oContext : undefined
 }].forEach(function (oFixture, i) {
 	QUnit.test("setProperty: revert pending change; #" + i, function (assert) {
 		var oClonedChangedEntry = {
@@ -6409,10 +6970,10 @@ sap.ui.define([
 			};
 
 		oModelMock.expects("resolve")
-			.withExactArgs("~sPath", "~oContext")
+			.withExactArgs("~sPath", sinon.match.same(oFixture.oContext))
 			.returns("/resolved/~propertyPath");
 		oModelMock.expects("resolveDeep")
-			.withExactArgs("~sPath", "~oContext")
+			.withExactArgs("~sPath", sinon.match.same(oFixture.oContext))
 			.returns("/deepPath/~propertyPath");
 		oModelMock.expects("getEntityByPath")
 			.withExactArgs("/resolved/~propertyPath", null, /*by ref oEntityInfo*/{})
@@ -6426,7 +6987,7 @@ sap.ui.define([
 			.withExactArgs("/~entityKey", null, true)
 			.returns(oOriginalEntry);
 		oModelMock.expects("_getObject")
-			.withExactArgs("~sPath", "~oContext", true)
+			.withExactArgs("~sPath", sinon.match.same(oFixture.oContext), true)
 			.returns(oFixture.vOriginalValue);
 		oHelperMock.expects("isPlainObject")
 			.withExactArgs(sinon.match.same(oFixture.vNewValue))
@@ -6435,6 +6996,11 @@ sap.ui.define([
 			.withExactArgs({}, sinon.match.same(oFixture.vNewValue))
 			.exactly(oFixture.bMergeRequired ? 1 : 0)
 			.callThrough();
+		if (oFixture.oContext) {
+			this.mock(oFixture.oContext).expects("hasTransientParent")
+				.withExactArgs()
+				.returns(false);
+		}
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
 			.withExactArgs("~entityKey")
 			.returns("~oEntityType");
@@ -6455,8 +7021,8 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(
-			ODataModel.prototype.setProperty.call(oModel, "~sPath", oFixture.vNewValue, "~oContext",
-				"~bAsyncUpdate"),
+			ODataModel.prototype.setProperty.call(oModel, "~sPath", oFixture.vNewValue,
+				oFixture.oContext, "~bAsyncUpdate"),
 			true);
 
 		assert.deepEqual(oModel.mChangedEntities, {});
@@ -6492,6 +7058,55 @@ sap.ui.define([
 		}, new Error(
 			"Setting a value for an instance annotation starting with '@$ui5' is not allowed: "
 				+ "@$ui5.~annotation"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setProperty: skip request creation for deep create", function (assert) {
+		var oContext = {hasTransientParent : function () {}},
+			oEntry = {__metadata : {}},
+			oModel = {
+				mChangedEntities : {"~key" : {}},
+				checkUpdate : function () {},
+				getEntityByPath : function () {},
+				_getObject : function () {},
+				resolve : function () {},
+				resolveDeep : function () {}
+			},
+			oModelMock = this.mock(oModel),
+			oOriginalEntry = {__metadata : {}},
+			oOriginalValue = {};
+
+		oModelMock.expects("resolve")
+			.withExactArgs("~sPath", sinon.match.same(oContext))
+			.returns("/~SalesOrderSet(42)/Note");
+		oModelMock.expects("resolveDeep")
+			.withExactArgs("~sPath", sinon.match.same(oContext))
+			.returns("~deepPath");
+		oModelMock.expects("getEntityByPath")
+			.withExactArgs("/~SalesOrderSet(42)/Note", null, /*by ref oEntityInfo*/{})
+			.callsFake(function (sResolvedPath, oContext, oEntityInfo) { // fill reference parameter
+				oEntityInfo.key = "~key";
+				oEntityInfo.propertyPath = "~propertyPath";
+
+				return oEntry;
+			});
+		oModelMock.expects("_getObject")
+			.withExactArgs("/~key", null, true)
+			.returns(oOriginalEntry);
+		oModelMock.expects("_getObject")
+			.withExactArgs("~sPath", oContext, true)
+			.returns(oOriginalValue);
+		this.mock(oContext).expects("hasTransientParent").withExactArgs().returns(true);
+		oModelMock.expects("checkUpdate")
+			.withExactArgs(false, "~bAsyncUpdate", {"~key" : true});
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype.setProperty.call(oModel, "~sPath", "~oValue", oContext,
+				"~bAsyncUpdate"),
+			true);
+
+		assert.deepEqual(oModel.mChangedEntities, {"~key" : {"Note" : "~oValue"}});
 	});
 
 	//*********************************************************************************************
@@ -7083,5 +7698,83 @@ sap.ui.define([
 
 		// code under test
 		assert.deepEqual(ODataModel.prototype.getPendingChanges.call(oModel), {foo : "bar"});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_addSubEntitiesToPayload", function (assert) {
+		var oContextBusinessPartner = createContext(),
+			oContextContact0 = createContext(),
+			oContextContact1 = createContext(),
+			oContextLineItem0 = createContext(),
+			oContextLineItem1 = createContext(),
+			oContextProduct = createContext(),
+			oContextSalesOrder = createContext(),
+			oHelperMock = this.mock(_Helper),
+			oModel = {
+				_getObject : function () {},
+				// allow recursive calls within _addSubEntitiesToPayload
+				_addSubEntitiesToPayload : ODataModel.prototype._addSubEntitiesToPayload
+			},
+			oModelMock = this.mock(oModel),
+			oPayload = {__metadata : "~metadata-SalesOrder", key : "SalesOrder"},
+			that = this;
+
+		function createContext() {
+			return {getPath : function () {}, getSubContexts : function () {}};
+		}
+
+		function expectContextAccess(oContext, sEntityKey) {
+			var oEntity = {__metadata : "~metadata-" + sEntityKey, key : sEntityKey},
+				sPath = "/~" + sEntityKey;
+
+			that.mock(oContext).expects("getPath").withExactArgs().returns(sPath);
+			oModelMock.expects("_getObject").withExactArgs(sPath).returns(oEntity);
+			oHelperMock.expects("merge").withExactArgs({}, sinon.match.same(oEntity)).callThrough();
+		}
+
+		this.mock(oContextSalesOrder).expects("getSubContexts")
+			.withExactArgs()
+			.returns({
+				toBusinessPartner : oContextBusinessPartner,
+				toLineItems : [oContextLineItem0, oContextLineItem1]
+			});
+		expectContextAccess(oContextBusinessPartner, "BusinessPartner");
+		this.mock(oContextBusinessPartner).expects("getSubContexts")
+			.withExactArgs()
+			.returns({toContacts : [oContextContact0, oContextContact1]});
+		expectContextAccess(oContextContact0, "Contact0");
+		this.mock(oContextContact0).expects("getSubContexts").withExactArgs().returns();
+		expectContextAccess(oContextContact1, "Contact1");
+		this.mock(oContextContact1).expects("getSubContexts").withExactArgs().returns();
+		expectContextAccess(oContextLineItem0, "LineItem0");
+		this.mock(oContextLineItem0).expects("getSubContexts")
+			.withExactArgs()
+			.returns({toProduct : oContextProduct});
+		expectContextAccess(oContextProduct, "Product");
+		this.mock(oContextProduct).expects("getSubContexts").withExactArgs().returns();
+		expectContextAccess(oContextLineItem1, "LineItem1");
+		this.mock(oContextLineItem1).expects("getSubContexts").withExactArgs().returns();
+
+		// code under test
+		ODataModel.prototype._addSubEntitiesToPayload.call(oModel, oContextSalesOrder, oPayload);
+
+		assert.deepEqual(oPayload, {
+			__metadata : "~metadata-SalesOrder",
+			key : "SalesOrder",
+			toBusinessPartner : {
+				key : "BusinessPartner",
+				toContacts : [
+					{key : "Contact0"},
+					{key : "Contact1"}
+				]
+			},
+			toLineItems : [
+				{
+					key : "LineItem0",
+					toProduct : {key : "Product"}
+				},
+				{key : "LineItem1"}
+			]
+		});
 	});
 });

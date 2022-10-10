@@ -212,7 +212,7 @@
 									<ToolbarLayoutData shrinkable="false" />
 								</layoutData>
 							</Title>
-							<Button enabled="{= !!${SalesOrderID}}" icon="sap-icon://add"
+							<Button icon="sap-icon://add"
 								id="createItem::ToLineItems" press="onCreateItem"
 								tooltip="Create a sales order item"
 								visible="{= !${ui>/inlineCreationRows} }" />

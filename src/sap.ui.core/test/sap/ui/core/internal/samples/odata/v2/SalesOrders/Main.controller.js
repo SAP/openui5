@@ -119,9 +119,28 @@ sap.ui.define([
 		},
 
 		onCreateItem : function () {
-			var oBindingContext = this.byId("objectPage").getBindingContext(),
-				oCreatedContext,
+			var oCreatedContext, bDeepCreate, mParameters,
+				oBindingContext = this.byId("objectPage").getBindingContext(),
 				oCreateDialog = this.byId("createSalesOrderItemDialog");
+
+			if (!oBindingContext) {
+				return; // TODO: can we disable the button if no context is set?
+			}
+
+			bDeepCreate = oBindingContext.isTransient();
+			if (!bDeepCreate) {
+				mParameters = {
+					error : function (oError) {
+						Log.info("Error Handler: Failed to created sales order item",
+							JSON.stringify(oError), sClassname);
+					},
+					expand : "ToProduct,ToHeader",
+					success : function (/*oData, oResponse*/) {
+						Log.info("Success Handler: Sales order item creation was successful",
+							oCreatedContext.getPath(), sClassname);
+					}
+				};
+			}
 
 			oCreatedContext = this.byId("ToLineItems").getBinding("rows").create({
 				DeliveryDate : new Date(Date.now() + 14 * 24 * 3600000),
@@ -129,22 +148,18 @@ sap.ui.define([
 				ProductID : "HT-1000",
 				Quantity : "1",
 				QuantityUnit : "EA",
-				SalesOrderID : oBindingContext.getProperty("SalesOrderID")
-			}, /*bAtEnd*/true, {
-				error : function (oError) {
-					Log.info("Error Handler: Failed to created sales order item",
-						JSON.stringify(oError), sClassname);
-				},
-				expand : "ToProduct,ToHeader",
-				success : function (/*oData, oResponse*/) {
-					Log.info("Success Handler: Sales order item creation was successful",
-						oCreatedContext.getPath(), sClassname);
-				}
-			});
+				SalesOrderID : bDeepCreate ? undefined : oBindingContext.getProperty("SalesOrderID")
+			}, /*bAtEnd*/true, mParameters);
 
 			oCreatedContext.created().then(function () {
-				var sMessage = "Created sales order item '"
-						+ oCreatedContext.getProperty("ItemPosition") + "'";
+				var sMessage;
+
+				if (bDeepCreate) {
+					return; //deep create sub-contexts are not updated
+				}
+
+				sMessage = "Created sales order item '"
+					+ oCreatedContext.getProperty("ItemPosition") + "'";
 
 				Log.info(sMessage, oCreatedContext.getPath(), sClassname);
 				MessageBox.success(sMessage);

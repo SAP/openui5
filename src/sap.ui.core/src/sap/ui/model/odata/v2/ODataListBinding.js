@@ -292,7 +292,7 @@ sap.ui.define([
 			bKeepCurrent) {
 		var aContexts, aContextData, oSkipAndTop;
 
-		if (this.bInitial || this._hasTransientParentContext()) {
+		if (this.bInitial) {
 			return [];
 		}
 
@@ -331,7 +331,9 @@ sap.ui.define([
 			}
 		}
 		aContexts = this._getContexts(iStartIndex, iLength);
-		if (this.useClientMode()) {
+		if (this._hasTransientParentContext()) {
+			// skip #loadData
+		} else if (this.useClientMode()) {
 			if (!this.aAllKeys && !this.bPendingRequest && this.oModel.getServiceMetadata()) {
 				this.loadData();
 				aContexts.dataRequested = true;
@@ -503,7 +505,8 @@ sap.ui.define([
 			return;
 		}
 		if (Context.hasChanged(this.oContext, oContext)) {
-			bHadNonTransientContext = this.isResolved() && !this._hasTransientParentContext();
+			bHadNonTransientContext = this.isResolved()
+				&& !this._hasTransientParentWithoutSubContexts();
 			this.oContext = oContext;
 			sResolvedPath = this.getResolvedPath(); // resolved path with the new context
 			this.sDeepPath = this.oModel.resolveDeep(this.sPath, this.oContext);
@@ -512,12 +515,12 @@ sap.ui.define([
 			}
 			// ensure that data state is updated with each change of the context
 			this.checkDataState();
-			// If path does not resolve or parent context is created, reset current list
-			if (!sResolvedPath || this._hasTransientParentContext()) {
+			if (!sResolvedPath || this._hasTransientParentWithoutSubContexts()) {
 				this.aAllKeys = null;
 				this.aKeys = [];
 				this.iLength = 0;
 				this.bLengthFinal = true;
+				this.abortPendingRequest();
 				if (bHadNonTransientContext) {
 					this._fireChange({reason : ChangeReason.Context});
 				}
@@ -1108,7 +1111,7 @@ sap.ui.define([
 		var oEntityType, sResolvedPath,
 			bChangeDetected = false;
 
-		if (this._hasTransientParentContext()) {
+		if (this._hasTransientParentWithoutSubContexts()) {
 			return;
 		}
 		if (!bForceUpdate) {
@@ -1227,7 +1230,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.initialize = function() {
 		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial
-				&& !this._hasTransientParentContext()) {
+				&& !this._hasTransientParentWithoutSubContexts()) {
 			if (!this._checkPathType()) {
 				Log.error("List Binding is not bound against a list for " + this.getResolvedPath());
 			}
@@ -1876,6 +1879,10 @@ sap.ui.define([
 	 * Note: This method requires that the model metadata has been loaded; see
 	 * {@link sap.ui.model.odata.v2.ODataModel#metadataLoaded}.
 	 *
+	 * Since 1.108.0, this method supports deep create, which means it may be called if this
+	 * binding's context is transient. The restrictions specified for
+	 * {@link sap.ui.model.odata.v2.ODataModel#createEntry} regarding deep create apply.
+	 *
 	 * @param {object} [oInitialData={}]
 	 *   The initial data for the created entity; see the <code>mParameters.properties</code>
 	 *   parameter of {@link sap.ui.model.odata.v2.ODataModel#createEntry}
@@ -1886,8 +1893,9 @@ sap.ui.define([
 	 *   the binding does not necessarily correspond to the order of the resulting back end creation
 	 *   requests.
 	 * @param {object} mParameters
-	 *   A map of parameters as specified for {@link sap.ui.model.odata.v2.ODataModel#createEntry}
-	 *   where only the following subset of these is supported.
+	 *   A map of parameters as specified for {@link sap.ui.model.odata.v2.ODataModel#createEntry},
+	 *   where only the subset given below is supported. In case of deep create, <b>none</b> of the
+	 *   parameters in <code>mParameters</code> must be set.
 	 * @param {string} [mParameters.changeSetId]
 	 *   The ID of the <code>ChangeSet</code> that this request should belong to
 	 * @param {function} [mParameters.error]
@@ -1912,7 +1920,8 @@ sap.ui.define([
 	 *   If
 	 *   <ul>
 	 *   <li>a relative binding is unresolved,</li>
-	 *   <li>the binding's context is transient,</li>
+	 *   <li>the binding's context is transient and any parameter is set in
+	 *     <code>mParameters</code>,</li>
 	 *   <li><code>bAtEnd</code> is truthy and the binding's length is not final,</li>
 	 *   <li>the collection data has been read via <code>$expand</code> together with the parent
 	 *     entity,</li>
@@ -1928,8 +1937,7 @@ sap.ui.define([
 		var oCreatedContext, oCreatedContextsCache, sResolvedPath,
 			mCreateParameters = {
 				context : this.oContext,
-				properties : oInitialData,
-				refreshAfterChange : false
+				properties : oInitialData
 			},
 			bCreationAreaAtEnd = this.isFirstCreateAtEnd(),
 			that = this;
@@ -1946,9 +1954,6 @@ sap.ui.define([
 				throw new Error("Parameter '" + sParameterKey + "' is not supported");
 			}
 		});
-		if (this._hasTransientParentContext()) {
-			throw new Error("Parent context is transient");
-		}
 		if (this.bUseExpandedList) {
 			throw new Error("The collection has been read via $expand while reading the parent"
 				+ " entity");
@@ -1960,8 +1965,11 @@ sap.ui.define([
 		sResolvedPath = this.getResolvedPath();
 		oCreatedContextsCache = this.oModel._getCreatedContextsCache();
 		Object.assign(mCreateParameters, mParameters);
-		if (!("expand" in mCreateParameters) && this.mParameters) {
-			mCreateParameters.expand = this.mParameters.expand;
+		if (!this._hasTransientParentContext()) {
+			mCreateParameters.refreshAfterChange = false;
+			if (!("expand" in mCreateParameters) && this.mParameters) {
+				mCreateParameters.expand = this.mParameters.expand;
+			}
 		}
 		oCreatedContext = this.oModel.createEntry(this.sPath, mCreateParameters);
 		oCreatedContextsCache.addContext(oCreatedContext, sResolvedPath,
@@ -2151,6 +2159,20 @@ sap.ui.define([
 	ODataListBinding.prototype._hasTransientParentContext = function () {
 		return this.isRelative()
 			&& !!(this.oContext && this.oContext.isTransient && this.oContext.isTransient());
+	};
+
+	/**
+	 * Returns whether this binding is relative and has a transient parent context which has no
+	 * sub-contexts for this binding.
+	 *
+	 * @returns {boolean}
+	 *   Whether this binding is relative and has a transient parent context which has no
+	 *   sub-contexts for this binding
+	 *
+	 * @private
+	 */
+	 ODataListBinding.prototype._hasTransientParentWithoutSubContexts = function () {
+		return this._hasTransientParentContext() && !this._getCreatedContexts().length;
 	};
 
 	/**
