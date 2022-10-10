@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
+	"sap/ui/fl/write/_internal/connectors/BackendConnector",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/NeoLrepConnector"
 ], function(
 	merge,
+	BackendConnector,
 	LrepConnector,
 	InitialConnector
 ) {
@@ -56,6 +58,12 @@ sap.ui.define([
 			create: function() {
 				return Promise.reject("contextBasedAdaptation.create is not implemented");
 			}
+		},
+		loadFeatures: function (mPropertyBag) {
+			return BackendConnector.loadFeatures.call(InitialConnector, mPropertyBag).then(function (oFeatures) {
+				oFeatures.isContextSharingEnabled = false;
+				return oFeatures;
+			});
 		}
 	});
 });

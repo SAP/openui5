@@ -106,6 +106,8 @@ sap.ui.define([
 						isAtoAvailable: false,
 						isAtoEnabled: false,
 						isAppVariantSaveAsEnabled: false,
+						isContextSharingEnabled: true,
+						isContextSharingEnabledForComp: true,
 						isContextBasedAdaptationEnabled: false,
 						isCondensingEnabled: false,
 						isProductiveSystem: true,
@@ -304,6 +306,26 @@ sap.ui.define([
 	 */
 	Settings.prototype.isPublicFlVariantEnabled = function() {
 		return this._getBooleanProperty("isPublicFlVariantEnabled");
+	};
+
+
+	/**
+	 * Checks whether sharing of <code>sap.ui.fl</code> variants can be based on contexts.
+	 *
+	 * @returns {boolean} <code>true</code> if context based sharing of <code>sap.ui.fl</code> variants is enabled
+	 */
+	Settings.prototype.isContextSharingEnabled = function() {
+		return this._getBooleanProperty("isContextSharingEnabled");
+	};
+
+
+	/**
+	 * Checks whether sharing of <code>sap.ui.comp</code> variants can be based on contexts.
+	 *
+	 * @returns {boolean} <code>true</code> if context based sharing of <code>sap.ui.comp</code> variants is enabled
+	 */
+	Settings.prototype.isContextSharingEnabledForComp = function() {
+		return this._getBooleanProperty("isContextSharingEnabledForComp");
 	};
 
 	/**

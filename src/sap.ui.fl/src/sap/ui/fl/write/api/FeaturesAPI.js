@@ -4,11 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer"
 ], function(
 	Settings,
-	Storage,
 	Layer
 ) {
 	"use strict";
@@ -141,13 +139,17 @@ sap.ui.define([
 		 * @param {string} sLayer - Layer to get correct connector
 		 * @returns {Promise<boolean>} Resolves to a boolean indicating if context sharing is enabled
 		 * @private
+		 * @deprecated
 		 * @ui5-restricted sap.ui.fl.write.api.ContextSharingAPI
 		 */
 		isContextSharingEnabled: function (sLayer) {
 			if (sLayer !== Layer.CUSTOMER) {
 				return Promise.resolve(false);
 			}
-			return Storage.isContextSharingEnabled({layer: sLayer});
+			return Settings.getInstance()
+			.then(function (oSettings) {
+				return oSettings.isContextSharingEnabled({layer: sLayer});
+			});
 		}
 	};
 

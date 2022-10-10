@@ -370,7 +370,7 @@ sap.ui.define([
 			};
 			sandbox.stub(InitialUtils, "sendRequest").resolves({response: {someFeature: true}});
 			return KeyUserConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
-				assert.deepEqual(oResponse, {someFeature: true, isPublicLayerAvailable: undefined}, "the settings object is returned correctly");
+				assert.deepEqual(oResponse, {isContextSharingEnabled: true, someFeature: true, isPublicLayerAvailable: undefined}, "the settings object is returned correctly");
 			});
 		});
 

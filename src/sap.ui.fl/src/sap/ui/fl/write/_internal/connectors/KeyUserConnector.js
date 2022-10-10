@@ -60,6 +60,7 @@ sap.ui.define([
 			return BackendConnector.loadFeatures.call(KeyUserConnector, mPropertyBag).then(function (oFeatures) {
 				// in case the variants can be adapted via RTA, the public option should not be offered
 				oFeatures.isPublicLayerAvailable = oFeatures.isPublicLayerAvailable && !oFeatures.isVariantAdaptationEnabled;
+				oFeatures.isContextSharingEnabled = true;
 				return oFeatures;
 			});
 		},
@@ -85,7 +86,13 @@ sap.ui.define([
 			return WriteUtils.sendRequest(sContextsUrl, "POST", mPropertyBag);
 		},
 
-		isContextSharingEnabled: function () {
+		/**
+		 * Check if context sharing is enabled in the backend.
+		 *
+		 * @returns {Promise<boolean>} Promise resolves with true
+		 * @deprecated
+		 */
+		 isContextSharingEnabled: function () {
 			return Promise.resolve(true);
 		},
 

@@ -23,6 +23,8 @@ sap.ui.define([
 				isKeyUser: false,
 				isKeyUserTranslationEnabled: false,
 				isVariantSharingEnabled: false,
+				isContextSharingEnabled: true,
+				isContextSharingEnabledForComp: true,
 				isPublicFlVariantEnabled: false,
 				isVariantPersonalizationEnabled: true,
 				isAtoAvailable: false,
@@ -48,7 +50,8 @@ sap.ui.define([
 			};
 			var oResponse2 = {
 				layers: [],
-				features: {isAtoAvailable: true, isKeyUser: true, isKeyUserTranslationEnabled: true}
+				features: {isAtoAvailable: true, isKeyUser: true, isKeyUserTranslationEnabled: true},
+				isContextSharingEnabled: true
 			};
 			var oResponse3 = {
 				layers: [],
@@ -63,6 +66,8 @@ sap.ui.define([
 			assert.equal(oResult.isAtoAvailable, true, "isAtoAvailable to true");
 			assert.equal(oResult.isProductiveSystem, false, "isProductiveSystem is false");
 			assert.equal(oResult.isKeyUserTranslationEnabled, true, "isKeyUserTranslationEnabled is true");
+			assert.equal(oResult.isContextSharingEnabled, true, "isContextSharingEnabled is true");
+			assert.equal(oResult.isContextSharingEnabledForComp, true, "isContextSharingEnabledForComp is true");
 		});
 
 		QUnit.test("mergeResults handles the versioning flags", function (assert) {

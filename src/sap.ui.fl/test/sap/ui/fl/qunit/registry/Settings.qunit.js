@@ -25,6 +25,8 @@ sap.ui.define([
 				isPublicLayerAvailable: false,
 				isVariantPersonalizationEnabled: true,
 				isAppVariantSaveAsEnabled: false,
+				isContextSharingEnabled: false,
+				isContextSharingEnabledForComp: false,
 				isCondensingEnabled: false,
 				features: {
 					addField: [Layer.CUSTOMER, Layer.VENDOR],
@@ -61,6 +63,18 @@ sap.ui.define([
 			assert.equal(this.cut._oSettings.isAppVariantSaveAsEnabled, false);
 			var bIsAppVariantSaveAsEnabled = this.cut.isAppVariantSaveAsEnabled();
 			assert.equal(bIsAppVariantSaveAsEnabled, false);
+		});
+
+		QUnit.test("isContextSharingEnabled", function(assert) {
+			assert.equal(this.cut._oSettings.isContextSharingEnabled, false);
+			var bIsContextSharingEnabled = this.cut.isContextSharingEnabled();
+			assert.equal(bIsContextSharingEnabled, false);
+		});
+
+		QUnit.test("isContextSharingEnabledForComp", function(assert) {
+			assert.equal(this.cut._oSettings.isContextSharingEnabledForComp, false);
+			var bIsContextSharingEnabledForComp = this.cut.isContextSharingEnabledForComp();
+			assert.equal(bIsContextSharingEnabledForComp, false);
 		});
 
 		QUnit.test("isCondensingEnabled", function(assert) {
