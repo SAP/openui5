@@ -467,7 +467,7 @@ sap.ui.define([
 
 		function updateChange(mPropertyBag, oVariant, oChange) {
 			var aRevertData = oChange.getRevertData() || [];
-			var oChangeContent = oChange.getContent();
+			var oChangeContent = Object.assign({}, oChange.getContent());
 			var oRevertData = {
 				previousContent: Object.assign({}, oChangeContent),
 				previousState: oChange.getState(),
