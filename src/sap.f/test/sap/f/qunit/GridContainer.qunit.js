@@ -976,7 +976,8 @@ function (
 						}),
 						this.oCard = new IntegrationCard({
 							manifest: oIntegrationCardManifest,
-							layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
+							layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 }),
+							dataMode: "Active"
 						})
 					]
 				})
@@ -1759,7 +1760,8 @@ function (
 					}),
 					new IntegrationCard({
 						manifest: oIntegrationCardManifest,
-						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 })
+						layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 2 }),
+						dataMode: "Active"
 					})
 				]
 			});

@@ -1292,6 +1292,7 @@ sap.ui.define([
 					height: "600px"
 				});
 				this.oCard.placeAt(DOM_RENDER_LOCATION);
+				Core.applyChanges();
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -1481,7 +1482,6 @@ sap.ui.define([
 				done();
 			}.bind(this));
 			this.oCard.setManifest(oManifest_Header);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 
 			// Assert
@@ -1847,6 +1847,7 @@ sap.ui.define([
 			}.bind(this));
 
 			this.oCard.setManifest(oManifest);
+			Core.applyChanges();
 		});
 
 		QUnit.test("Numeric Header generic", function (assert) {
@@ -1873,7 +1874,6 @@ sap.ui.define([
 				done();
 			}.bind(this));
 			this.oCard.setManifest(oManifest_NumericHeader);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		});
 
@@ -1899,7 +1899,6 @@ sap.ui.define([
 				done();
 			}.bind(this));
 			this.oCard.setManifest(oManifest_NumericHeader);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		});
 
@@ -1925,7 +1924,6 @@ sap.ui.define([
 				done();
 			}.bind(this));
 			this.oCard.setManifest(oManifest_NumericHeader2);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		});
 
@@ -1955,7 +1953,6 @@ sap.ui.define([
 				done();
 			}.bind(this));
 			this.oCard.setManifest(oManifest_NumericHeader);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		});
 
@@ -1977,7 +1974,6 @@ sap.ui.define([
 				done();
 			});
 			this.oCard.setManifest(oManifest_NumericHeader_OnlyTitleAndSubtitle);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		});
 
@@ -2190,7 +2186,7 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 
 		QUnit.test("Generic Interactive", function (assert) {
@@ -2219,7 +2215,7 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest(oManifest_AvatarHeader);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 
 		QUnit.test("Numeric Header", function (assert) {
@@ -2254,7 +2250,7 @@ sap.ui.define([
 
 			// Act
 			this.oNumericHeaderCard.setManifest(oManifest_NumericHeader);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 
 		QUnit.module("Error handling", {
@@ -2275,11 +2271,13 @@ sap.ui.define([
 				sLogMessage = "Log this error in the console.";
 
 			this.oCard.setManifest(oManifest_ListCard);
+			this.oCard.setDataMode("Active");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 
 			// Act
 			this.oCard._handleError(sLogMessage);
+			Core.applyChanges();
 
 			// Assert
 			assert.ok(oLogSpy.calledOnceWith(sLogMessage), "Provided message should be logged to the console.");
@@ -2975,13 +2973,12 @@ sap.ui.define([
 
 			// Arrange
 			var done = assert.async(),
-				oApplyManifestSpy = sinon.spy(Card.prototype, "_applyManifestSettings"),
-				oRefreshSpy = sinon.spy(Card.prototype, "refresh");
+				oApplyManifestSpy = sinon.spy(Card.prototype, "_applyManifestSettings");
 
 			this.oCard.attachEventOnce("_ready", function () {
 
 				// Assert
-				assert.ok(oApplyManifestSpy.calledOnce, "Card with default 'Active' state should try to apply the manifest settings.");
+				assert.ok(oApplyManifestSpy.calledOnce, "Card with default 'Auto' state should try to apply the manifest settings.");
 
 				// Act
 				oApplyManifestSpy.reset();
@@ -2991,14 +2988,18 @@ sap.ui.define([
 				assert.ok(oApplyManifestSpy.notCalled, "Card with 'Inactive' state should NOT try to apply the manifest settings.");
 
 				// Act
+				oApplyManifestSpy.reset();
+
+				this.oCard.attachEventOnce("_ready", function () {
+					// Assert
+					assert.ok(oApplyManifestSpy.calledOnce, "Should call refresh when turning to 'Active' mode.");
+					// Cleanup
+					oApplyManifestSpy.restore();
+					done();
+				});
+
 				this.oCard.setDataMode("Active");
-
-				// Assert
-				assert.ok(oRefreshSpy.calledOnce, "Should call refresh when turning to 'Active' mode.");
-
-				// Cleanup
-				oApplyManifestSpy.restore();
-				done();
+				Core.applyChanges();
 
 			}.bind(this));
 
@@ -3656,6 +3657,7 @@ sap.ui.define([
 				done = assert.async();
 
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/listCard.manifest.json");
+			this.oCard.setDataMode("Active");
 			Core.applyChanges();
 
 			assert.ok(this.oCard._oCardManifest, "There is Manifest instance");

@@ -235,7 +235,7 @@ sap.ui.define([
 				dataMode: {
 					type: "sap.ui.integration.CardDataMode",
 					group: "Behavior",
-					defaultValue: CardDataMode.Active
+					defaultValue: CardDataMode.Auto
 				},
 
 				/**
@@ -482,7 +482,6 @@ sap.ui.define([
 
 		this._oContentFactory = new ContentFactory(this);
 		this._oCardObserver = new CardObserver(this);
-		this._bFirstRendering = true;
 		this._aSevereErrors = [];
 		this._sPerformanceId = "UI5 Integration Cards - " + this.getId() + "---";
 		this._aActiveLoadingProviders = [];
@@ -673,11 +672,11 @@ sap.ui.define([
 
 		var oCardDomRef = this.getDomRef();
 
-		if (this.getDataMode() === CardDataMode.Auto && this._bFirstRendering) {
-			this._oCardObserver.oObserver.observe(oCardDomRef);
+		if (this.getDataMode() === CardDataMode.Auto) {
+			this._oCardObserver.observe(oCardDomRef);
+		} else {
+			this._oCardObserver.unobserve(oCardDomRef);
 		}
-
-		this._bFirstRendering = false;
 	};
 
 	/**
@@ -1149,7 +1148,6 @@ sap.ui.define([
 		this._oCardObserver.destroy();
 		this._oCardObserver = null;
 		this._oContentFactory = null;
-		this._bFirstRendering = null;
 		this._oIntegrationRb = null;
 		this._aActiveLoadingProviders = null;
 		this._oContentMessage = null;
@@ -2141,18 +2139,10 @@ sap.ui.define([
 			this._oDataProviderFactory = null;
 		}
 
-		// refresh will trigger re-rendering
-		this.setProperty("dataMode", sMode, true);
+		this.setProperty("dataMode", sMode);
 
 		if (this.getProperty("dataMode") === CardDataMode.Active) {
 			this.refresh();
-		}
-
-		if (this.getProperty("dataMode") === CardDataMode.Auto) {
-			this._oCardObserver.createObserver(this);
-			if (!this._bFirstRendering) {
-				this._oCardObserver.oObserver.observe(this.getDomRef());
-			}
 		}
 
 		return this;

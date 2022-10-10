@@ -422,6 +422,7 @@ sap.ui.define([
 				host: "contexthost",
 				manifest: oManifestForExtension
 			});
+
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
