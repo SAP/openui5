@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/base/util/UriParameters",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils"
 ], function(
+	UriParameters,
 	CompVariantMerger,
 	CompVariantUtils,
 	FlexState,
@@ -172,7 +174,9 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		isVariantDownport: function() {
-			return SmartVariantManagementApplyAPI.isVendorLayer() && Utils.isHotfixMode();
+			var oUriParams = UriParameters.fromQuery(window.location.search);
+			var sIsHotfixMode = oUriParams.get("hotfix");
+			return SmartVariantManagementApplyAPI.isVendorLayer() && (sIsHotfixMode === "true");
 		},
 
 		/**

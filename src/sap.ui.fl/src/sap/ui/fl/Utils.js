@@ -395,21 +395,6 @@ sap.ui.define([
 		_getUriParameters: function() {
 			return UriParameters.fromQuery(window.location.search);
 		},
-		/**
-		 * Returns whether the hot fix mode is active (url parameter hotfix=true)
-		 *
-		 * @private
-		 * @ui5-restricted sap.ui.fl.apply.api.SmartVariantManagementApplyAPI
-		 *
-		 * @returns {boolean} is hotfix mode active, or not
-		 */
-		isHotfixMode: function() {
-			var oUriParams;
-			var sIsHotfixMode;
-			oUriParams = this._getUriParameters();
-			sIsHotfixMode = oUriParams.get("hotfix");
-			return (sIsHotfixMode === "true");
-		},
 
 		getLrepUrl: function() {
 			var aFlexibilityServices = Configuration.getFlexibilityServices();

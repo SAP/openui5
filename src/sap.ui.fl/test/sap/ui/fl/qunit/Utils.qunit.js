@@ -174,18 +174,6 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("Utils.isHotfixMode shall return the hotfix url parameter", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("hotfix").returns("true");
-			var bIsHotfix = Utils.isHotfixMode();
-			assert.strictEqual(bIsHotfix, true);
-		});
-
-		QUnit.test("isHotfixMode shall return false if there is no hotfix url parameter", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("hotfix").returns("null");
-			var bIsHotfix = Utils.isHotfixMode();
-			assert.strictEqual(bIsHotfix, false);
-		});
-
 		QUnit.test('getFirstAncestorOfControlWithControlType', function(assert) {
 			var button1 = new Button('button1');
 			var hLayout1 = new HorizontalLayout('hLayout1');

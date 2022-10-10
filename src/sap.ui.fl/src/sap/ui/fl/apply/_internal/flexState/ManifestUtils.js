@@ -98,7 +98,6 @@ function(
 			if (oFlAsyncHint) {
 				return false;
 			}
-
 			return true;
 		},
 
