@@ -426,6 +426,32 @@ sap.ui.define([
 			oDynamicPage.destroy();
 		});
 
+		QUnit.module("DynamicPage with preservedHeaderStateOnScroll on parent rerendering");
+
+		QUnit.test("DynamicPage with header and title", function (assert) {
+			var oDynamicPage = oLibraryFactory.getDynamicPageWithStickySubheader(
+				true /*preserveHeaderStateOnScroll*/,
+				true /*has header*/,
+				true /*header visible*/,
+				true /*has title*/),
+				$stickySubHeader,
+				$stickyPlaceholder;
+
+			oUtil.renderObject(oDynamicPage);
+
+			// verify API updated correctly
+			assert.ok(oDynamicPage.getContent()._getStickySubheaderSticked(), "Sticky content is in sticky area");
+
+			// check DOM also updated correctly
+			$stickySubHeader = oDynamicPage._oStickySubheader.$();
+			$stickyPlaceholder = oDynamicPage.$("stickyPlaceholder");
+			assert.strictEqual($stickySubHeader.get(0).parentElement, $stickyPlaceholder.get(0),
+				"Sticky content DOM is in the sticky area");
+
+			// Cleanup
+			oDynamicPage.destroy();
+		});
+
 		QUnit.module("DynamicPage with preservedHeaderStateOnScroll sticky content position while scrolling and snap/expand header");
 
 		QUnit.test("DynamicPage which has header and title", function (assert) {
