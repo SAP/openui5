@@ -1553,6 +1553,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Resets all pending changes of this context, see {@link #hasPendingChanges}. Resets also
+	 * invalid user input.
+	 *
+	 * Note: This is an experimental API. Currently only PATCH changes for row contexts of an
+	 * absolute {@link sap.ui.model.odata.v4.ODataListBinding} are supported.
+	 *
+	 * @returns {Promise}
+	 *   A promise which is resolved without a defined result as soon as all changes in the context
+	 *   itself are canceled
+	 * @throws {Error}
+	 *   If the binding's root binding is suspended or if there is a change of this context which
+	 *   has been sent to the server and for which there is no response yet
+	 *
+	 * @experimental As of version 1.109.0
+	 * @public
+	 */
+	Context.prototype.resetChanges = function () {
+		var aPromises = [];
+
+		this.oBinding.checkSuspended();
+		this.oBinding.resetChangesForPath(this.sPath, aPromises);
+		return Promise.all(aPromises).then(function () {});
+	};
+
+	/**
 	 * Sets the <code>bKeepAlive</code> flag of this content to <code>false</code> without
 	 * touching the callback function <code>fnOnBeforeDestroy</code>.
 	 *
