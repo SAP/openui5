@@ -1,0 +1,63 @@
+{
+	"namespacesToInterfaces": {
+		"BusyIndicator": true,
+		"RuleEngineOpaAssertions": true
+	},
+
+	"badSymbols": [
+
+		/**
+		 * The followong namespaces don't exist at runtime. They're only documented
+		 * to document the relationship between module and implemented jQuery plugin.
+		 *
+		 * To avoid dtslint errors ('no-empty-interfaces'), they're suppressed 
+		 * in the dtslint generation.
+		 */
+		"module:sap/ui/dom/jquery/Aria",
+		"module:sap/ui/dom/jquery/control",
+		"module:sap/ui/dom/jquery/cursorPos",
+		"module:sap/ui/dom/jquery/Focusable",
+		"module:sap/ui/dom/jquery/getSelectedText",
+		"module:sap/ui/dom/jquery/hasTabIndex",
+		"module:sap/ui/dom/jquery/parentByAttribute",
+		"module:sap/ui/dom/jquery/rect",
+		"module:sap/ui/dom/jquery/rectContains",
+		"module:sap/ui/dom/jquery/scrollLeftRTL",
+		"module:sap/ui/dom/jquery/scrollRightRTL",
+		"module:sap/ui/dom/jquery/Selection",
+		"module:sap/ui/dom/jquery/Selectors",
+		"module:sap/ui/dom/jquery/selectText",
+		"module:sap/ui/dom/jquery/zIndex"
+	],
+
+	"typeTyposMap": {
+		"jQuery": "Object",
+		"jQuery.Event": "Object",
+		"jQuery.promise": "Object",
+
+		"DomNode": "Element",
+		"DOMNode": "Element",
+		"DOMRef": "Element",
+		"DomRef": "Element",
+		"domRef": "Element",
+		"DOMElement": "Element",
+
+		"Generator": "any"
+	},
+
+	"overlays": {
+		"sap.ui.core": [
+			{
+				"name": "sap.ui.core.UIArea",
+				"methods": [
+					{
+						"name": "getId",
+						"returnValue": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		]
+	}
+}
