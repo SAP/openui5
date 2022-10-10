@@ -847,4 +847,33 @@ sap.ui.define([
 		);
 	});
 
+	QUnit.module("Nested Splitters");
+
+	QUnit.test("Styles of parent horizontal splitter shouldn't affect child vertical splitter", function (assert) {
+		// arrange
+		var oVerticalSplitter = new Splitter({
+			orientation: Orientation.Vertical,
+			contentAreas: [
+				new Button()
+			]
+		});
+		var oHorizontalSplitter = new Splitter({
+			contentAreas: [
+				oVerticalSplitter
+			]
+		});
+		oHorizontalSplitter.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(
+			getComputedStyle(oVerticalSplitter.getDomRef("content-0")).display,
+			"block",
+			"'display' property of nested vertical splitter should be 'block'"
+		);
+
+		// clean up
+		oHorizontalSplitter.destroy();
+	});
+
 });

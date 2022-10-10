@@ -94,9 +94,6 @@ sap.ui.define([], function() {
 				}
 			},
 			"ResponsiveSplitter": {
-				ui5: {
-					"xx-waitForTheme": "init"
-				},
 				sinon: {
 					useFakeTimers: true
 				},
