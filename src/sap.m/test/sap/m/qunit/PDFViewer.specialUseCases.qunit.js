@@ -216,6 +216,10 @@ sap.ui.define( [
 		this.stub(Device, "system").value({desktop: true});
 		this.stub(window.navigator, "pdfViewerEnabled").value(false);
 
+		if (navigator && navigator.pdfViewerEnabled) {
+			this.stub(navigator, "pdfViewerEnabled").value(false);
+		}
+
 		oPDFViewer = TestUtils.createPdfViewer({
 			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
 		});
