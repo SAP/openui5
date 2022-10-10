@@ -480,40 +480,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Converts ASCII coding into a string. Required for restoring stored code extensions
-		 *
-		 * @param {string} ascii string containing ascii code valid numbers separated by ','
-		 * @returns {string} parsedString parsed string
-		 */
-		asciiToString: function(ascii) {
-			var asciiArray = ascii.split(",");
-			var parsedString = "";
-			for (var i = 0; i < asciiArray.length; i++) {
-				parsedString += String.fromCharCode(asciiArray[i]);
-			}
-			return parsedString;
-		},
-
-		/**
-		 * Converts a string into ASCII coding. Required for restoring stored code extensions
-		 *
-		 * @param {string} string string which has to be encoded
-		 * @returns {string} ascii imput parsed to ascii numbers separated by ','
-		 */
-		stringToAscii: function(string) {
-			var ascii = "";
-
-			for (var i = 0; i < string.length; i++) {
-				ascii += string.charCodeAt(i) + ",";
-			}
-
-			// remove last ","
-			ascii = ascii.substring(0, ascii.length - 1);
-
-			return ascii;
-		},
-
-		/**
 		 * See {@link sap.ui.core.BaseTreeModifier#checkControlId} method
 		 */
 		checkControlId: function(vControl, oAppComponent) {

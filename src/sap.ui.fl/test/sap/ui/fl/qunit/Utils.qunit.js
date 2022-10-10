@@ -241,24 +241,6 @@ sap.ui.define([
 			assert.ok(oGetComponentStub.called);
 		});
 
-		QUnit.test("encodes a string into ascii", function(assert) {
-			var string = "Hallo Welt!";
-			var expectedString = "72,97,108,108,111,32,87,101,108,116,33";
-
-			var encodedString = Utils.stringToAscii(string);
-
-			assert.equal(encodedString, expectedString);
-		});
-
-		QUnit.test("decodes ascii into a string", function(assert) {
-			var string = "72,97,108,108,111,32,87,101,108,116,33";
-			var expectedString = "Hallo Welt!";
-
-			var decodedString = Utils.asciiToString(string);
-
-			assert.equal(decodedString, expectedString);
-		});
-
 		QUnit.test("getAppComponentForControl can determine the smart template special case", function(assert) {
 			var oComponent = new UIComponent();
 			var oAppComponent = new UIComponent();

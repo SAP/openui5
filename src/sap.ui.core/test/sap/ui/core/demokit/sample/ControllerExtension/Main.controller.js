@@ -19,7 +19,20 @@ sap.ui.define([
 		MessageBox,
 		jQuery
 	) {
-	"use strict";
+		"use strict";
+
+	function stringToAscii(string) {
+		var ascii = "";
+
+		for (var i = 0; i < string.length; i++) {
+			ascii += string.charCodeAt(i) + ",";
+		}
+
+		// remove last ","
+		ascii = ascii.substring(0, ascii.length - 1);
+
+		return ascii;
+	}
 
 	return Controller.extend("sap.ui.core.sample.ControllerExtension.Main", {
 		onInit: function() {
@@ -142,7 +155,7 @@ sap.ui.define([
 				content: {
 					targetAggregation: "content",
 					index: 1,
-					fragment: FlexUtils.stringToAscii(sFragment)
+					fragment: stringToAscii(sFragment)
 				},
 				selector: {
 					id: this.getTableToolbar().getId(),
@@ -161,7 +174,7 @@ sap.ui.define([
 				changeType: "codeExt",
 				content: {
 					codeRef: sProjectId + "my.code.ref.doesnt.matter.in.simulation.js",
-					code: FlexUtils.stringToAscii(sCode)
+					code: stringToAscii(sCode)
 				},
 				selector: {
 					controllerName : "sap.ui.core.sample.ControllerExtension.Main"
