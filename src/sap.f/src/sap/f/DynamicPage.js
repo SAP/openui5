@@ -406,6 +406,7 @@ sap.ui.define([
 		this._oHeaderObserver = null;
 		this._oSubHeaderAfterRenderingDelegate = {onAfterRendering: function() {
 				this._bStickySubheaderInTitleArea = false; // reset the flag as the stickySubHeader is freshly rerendered with the iconTabBar
+				this._cacheDomElements();
 				this._adjustStickyContent();
 			}};
 
