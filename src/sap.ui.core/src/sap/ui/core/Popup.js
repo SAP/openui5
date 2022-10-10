@@ -2134,12 +2134,20 @@ sap.ui.define([
 
 		var createDelegate = function (oElement) {
 			return {
+				/**
+				 * @this {sap.ui.core.Popup}
+				 * @private
+				 */
 				onBeforeRendering: function() {
 					var oDomRef = oElement.getDomRef();
 					if (oDomRef && this.isOpen()) {
 						oDomRef.removeEventListener("blur", this.fnEventHandler, true);
 					}
 				},
+				/**
+				 * @this {sap.ui.core.Popup}
+				 * @private
+				 */
 				onAfterRendering: function() {
 					var oDomRef = oElement.getDomRef();
 					if (oDomRef && this.isOpen()) {

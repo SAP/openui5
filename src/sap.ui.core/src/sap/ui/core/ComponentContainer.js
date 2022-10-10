@@ -254,6 +254,10 @@ sap.ui.define([
 
 	// Delegate registered by the ComponentContainer#showPlaceholder function
 	var oPlaceholderDelegate = {
+		/**
+		 * @this {sap.ui.core.ComponentContainer}
+		 * @private
+		 */
 		"onAfterRendering": function() {
 			// check whether the placeholder is still active. If yes, show the placeholder again
 			if (this._placeholder) {

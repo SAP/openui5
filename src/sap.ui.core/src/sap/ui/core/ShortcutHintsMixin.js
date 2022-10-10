@@ -410,6 +410,10 @@ sap.ui.define([
 	oHintRegistry.mDOMNodes = {};
 
 	var oHintsEventDelegate = {
+		/**
+		 * @type {sap.ui.core.Control}
+		 * @private
+		 */
 		"onfocusin": function(oEvent) {
 			var oShortcutHintRefs = this._findShortcutOptionsForRef(oEvent.target);
 
@@ -422,6 +426,10 @@ sap.ui.define([
 			this._updateShortcutHintAccLabel(oShortcutHintRefs[0]);
 			this.showShortcutHint(oShortcutHintRefs);
 		},
+		/**
+		 * @type {sap.ui.core.Control}
+		 * @private
+		 */
 		"onfocusout": function(oEvent) {
 			var oShortcutHintRefs = this._findShortcutOptionsForRef(oEvent.target);
 
@@ -431,6 +439,10 @@ sap.ui.define([
 
 			this.hideShortcutHint();
 		},
+		/**
+		 * @type {sap.ui.core.Control}
+		 * @private
+		 */
 		"onmouseover": function(oEvent) {
 			var oShortcutHintRefs = this._findShortcutOptionsForRef(oEvent.target),
 				oDOMRef;
@@ -451,6 +463,10 @@ sap.ui.define([
 				this.showShortcutHint(oShortcutHintRefs);
 			}
 		},
+		/**
+		 * @type {sap.ui.core.Control}
+		 * @private
+		 */
 		"onmouseout": function(oEvent) {
 			var oShortcutHintRefs = this._findShortcutOptionsForRef(oEvent.target);
 
@@ -467,6 +483,10 @@ sap.ui.define([
 				this.hideShortcutHint();
 			}
 		},
+		/**
+		 * @type {sap.ui.core.Control}
+		 * @private
+		 */
 		"onAfterRendering": function() {
 			var aInfos = this.getRegisteredShortcutInfos(),
 				oElement,

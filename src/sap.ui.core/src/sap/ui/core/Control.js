@@ -790,10 +790,18 @@ sap.ui.define([
 
 	// ---- local busy indicator handling ---------------------------------------------------------------------------------------
 	var oRenderingDelegate = {
+		/**
+		 * @this {sap.ui.core.Control}
+		 * @private
+		 */
 		onBeforeRendering: function() {
 			// remove all block-layers to prevent leftover DOM elements and eventhandlers
 			fnRemoveAllBlockLayers.call(this);
 		},
+		/**
+		 * @this {sap.ui.core.Control}
+		 * @private
+		 */
 		onAfterRendering: function () {
 			if (this.getBlocked() && this.getDomRef() && !this.getDomRef("blockedLayer")) {
 				this._oBlockState = BlockLayerUtils.block(this, this.getId() + "-blockedLayer", this._sBlockSection);
