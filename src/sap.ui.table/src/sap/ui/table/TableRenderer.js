@@ -1336,6 +1336,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		if (sId) {
 			rm.attr("id", sId);
 		}
+		rm.attr("role", "none");
 		rm.attr("tabindex", sTabIndex == null ? "0" : sTabIndex);
 		rm.openEnd().close("div");
 	};
