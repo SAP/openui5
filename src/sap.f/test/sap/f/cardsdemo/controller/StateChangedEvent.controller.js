@@ -41,8 +41,8 @@ sap.ui.define([
 			var oCard = this.byId("card1"),
 				oCodeEditor = this.byId("output");
 
-			ManifestResolver.resolveCard(oCard).then(function (sRes) {
-				oCodeEditor.setValue(JSON.stringify(JSON.parse(sRes), null, "\t"));
+			ManifestResolver.resolveCard(oCard).then(function (oRes) {
+				oCodeEditor.setValue(JSON.stringify(oRes, null, "\t"));
 			});
 		}
 	});

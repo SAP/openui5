@@ -97,8 +97,8 @@ sap.ui.define([
 
 			oCard.attachStateChanged(function () {
 				oCard.resolveManifest()
-					.then(function (sRes) {
-						output.setValue(JSON.stringify(JSON.parse(sRes), null, "\t"));
+					.then(function (res) {
+						output.setValue(JSON.stringify(res, null, "\t"));
 					});
 			});
 
