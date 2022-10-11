@@ -690,6 +690,7 @@ sap.ui.define([
 		QUnit.test("when scrolling happens right before renaming starts", function(assert) {
 			var fnDone = assert.async();
 
+			this.oInnerButtonOverlay.setSelectable(true);
 			this.oScrollContainer.getDomRef().scrollTo(100, 0);
 			triggerAndWaitForStartEdit(this.oRenamePlugin, this.oInnerButtonOverlay).then(function() {
 				this.oScrollContainerOverlay.getAggregationOverlays()[0].attachEventOnce("scrollSynced", function() {
@@ -697,6 +698,15 @@ sap.ui.define([
 						this.oRenamePlugin._$oEditableControlDomRef.offset(),
 						this.oRenamePlugin._$editableField.offset(),
 						"then the position of the editable control is still correct"
+					);
+					assert.deepEqual(
+						this.oRenamePlugin._$editableField.get(0),
+						document.activeElement,
+						"then the editable control has focus"
+					);
+					assert.ok(
+						this.oRenamePlugin._oEditedOverlay.getSelected(),
+						"then the overlay being edited is still selected"
 					);
 					fnDone();
 				}.bind(this));
