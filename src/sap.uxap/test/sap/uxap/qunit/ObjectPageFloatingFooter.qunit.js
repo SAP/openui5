@@ -167,6 +167,19 @@ function (Core, Configuration, XMLView, OverflowToolbar, HBox, ObjectPageLayout,
 		assert.equal(!this.oObjectPage._bIsFooterAanimationGoing, true, "Footer is visible");
 	});
 
+	QUnit.test("When footer is visible, CSS class is applied to the ObjectPageLayout", function (assert) {
+		// Assert - when footer is not visible, CSS class is not applied
+		assert.notOk(this.oObjectPage.$().hasClass("sapUxAPObjectPageLayoutFooterVisible"), "ObjectPage does not have CSS class");
+		assert.strictEqual(this.oObjectPage._$opWrapper.css("scroll-padding-bottom"), "auto", "No scroll padding bottom on the wrapper");
+
+		// Act - toggle to 'true'
+		this.oObjectPage.setShowFooter(true);
+
+		// Assert - when footer is visible, CSS class is applied
+		assert.ok(this.oObjectPage.$().hasClass("sapUxAPObjectPageLayoutFooterVisible"), "ObjectPage has CSS class");
+		assert.strictEqual(this.oObjectPage._$opWrapper.css("scroll-padding-bottom"), "58px", "58px scroll padding bottom on the wrapper");
+	});
+
 	QUnit.module("ObjectPage - Setter");
 
 	QUnit.test("Setting 'footer' aggregation and 'showFooter' property", function (assert) {
