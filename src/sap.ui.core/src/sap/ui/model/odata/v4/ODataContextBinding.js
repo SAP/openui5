@@ -928,7 +928,7 @@ sap.ui.define([
 	 *   control's property bindings use the return value context as binding context.
 	 * @throws {Error} If
 	 *   <ul>
-	 *     <li>the binding's root binding is suspended,
+	 *     <li> the binding's root binding is suspended,
 	 *     <li> the given group ID is invalid,
 	 *     <li> the binding is not a deferred operation binding (see
 	 *       {@link sap.ui.model.odata.v4.ODataContextBinding}),

@@ -1381,13 +1381,13 @@ sap.ui.define([
 
 	/**
 	 * This function has two tasks:
-	 *   <ul>
-	 *     <li>We are in the 1st app start, no optimistic batch payload stored so far. If optimistic
-	 *       batch handling is enabled via
-	*        {@link sap.ui.model.odata.v4.ODataModel#setOptimisticBatchEnabler}, this function
-	 *       stores the current batch requests in cache.
-	 *     <li>If an optimistic batch was already sent, it returns its result promise.
-	 *   </ul>
+	 * <ul>
+	 *   <li> We are in the 1st app start, no optimistic batch payload stored so far. If optimistic
+	 *     batch handling is enabled via
+	 *     {@link sap.ui.model.odata.v4.ODataModel#setOptimisticBatchEnabler}, this function stores
+	 *     the current batch requests in cache.
+	 *   <li> If an optimistic batch was already sent, it returns its result promise.
+	 * </ul>
 	 *
 	 * @param {object[]} aRequests The requests of the current batch
 	 * @param {string} sGroupId The group ID
@@ -1395,12 +1395,12 @@ sap.ui.define([
 	 *   The optimistic batch result or <code>undefined</code> if the batch should be sent
 	 *   normally. <code>undefined</code> can have the following reasons:
 	 *   <ul>
-	 *     <li>We are in the 1st app start, no optimistic batch payload stored so far, or
-	 *     <li>the optimistic batch was sent, but its payload did not match to the current one, or
-	 *     <li>we are not in the first #sendBatch call within the _Requestors lifecycle, or
-	 *     <li>#sendBatch was called before first batch payload could be read via CacheManager or
-	 *     <li>we are in the first #sendBatch but the batch is modifying, means contains others than
-	 *       GET requests.
+	 *     <li> We are in the 1st app start, no optimistic batch payload stored so far, or
+	 *     <li> the optimistic batch was sent, but its payload did not match to the current one, or
+	 *     <li> we are not in the first #sendBatch call within the _Requestors lifecycle, or
+	 *     <li> #sendBatch was called before first batch payload could be read via CacheManager or
+	 *     <li> we are in the first #sendBatch but the batch is modifying, means contains others
+	 *       than GET requests.
 	 *   </ul>
 	 *
 	 * @private
