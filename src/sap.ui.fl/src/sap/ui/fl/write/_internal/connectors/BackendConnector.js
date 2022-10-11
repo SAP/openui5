@@ -154,12 +154,16 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Property bag
 		 * @param {object} mPropertyBag.flexObject - Flex Object to be deleted
 		 * @param {string} mPropertyBag.url - Configured url for the connector
+		 * @param {string} [mPropertyBag.parentVersion] - Indicates if changes should be written as a draft and on which version the changes should be based on
 		 * @returns {Promise} Resolves as soon as the deletion is completed without data
 		 */
 		remove: function (mPropertyBag) {
 			var mParameters = {
 				namespace: mPropertyBag.flexObject.namespace
 			};
+			if (mPropertyBag.parentVersion !== undefined) {
+				mParameters.parentVersion = mPropertyBag.parentVersion;
+			}
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
 			var sDeleteUrl = InitialUtils.getUrl(this.ROUTES.CHANGES, mPropertyBag, mParameters);
 			delete mPropertyBag.fileName;

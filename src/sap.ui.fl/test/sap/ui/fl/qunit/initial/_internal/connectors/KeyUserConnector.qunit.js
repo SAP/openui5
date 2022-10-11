@@ -33,12 +33,19 @@ sap.ui.define([
 				version: Version.Number.Draft,
 				"sap-language": "en"
 			};
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?version=" + Version.Number.Draft;
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v2/data/reference?version=" + Version.Number.Draft;
 			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
 				response: {
-					changes: [1],
-					compVariants: [2],
+					contents: [
+						{
+							changes: [1],
+							compVariants: [3]
+						},
+						{
+							compVariants: [2]
+						}
+					],
 					settings: {
 						isKeyUser: true,
 						isVariantSharingEnabled: true
@@ -50,7 +57,7 @@ sap.ui.define([
 			});
 			return KeyUserConnector.loadFlexData(mPropertyBag).then(function (oFlexData) {
 				assert.ok(oStubGetUrlWithQueryParameters.calledOnce, "getUrl is called once");
-				assert.equal(oStubGetUrlWithQueryParameters.getCall(0).args[0], "/flex/keyuser/v1/data/", "with correct route path");
+				assert.equal(oStubGetUrlWithQueryParameters.getCall(0).args[0], "/flex/keyuser/v2/data/", "with correct route path");
 				assert.deepEqual(oStubGetUrlWithQueryParameters.getCall(0).args[1], mPropertyBag, "with correct property bag");
 				assert.deepEqual(oStubGetUrlWithQueryParameters.getCall(0).args[2], mParameter, "with correct parameters input");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
@@ -58,9 +65,11 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "with correct method");
 				assert.equal(oStubSendRequest.getCall(0).args[2].xsrfToken, undefined, "with correct token");
 				assert.deepEqual(KeyUserConnector.settings, { isKeyUser: true, isVariantSharingEnabled: true}, "new settings is stored");
-				assert.equal(oFlexData.changes.length, 2, "two entries are in the change section");
-				assert.equal(oFlexData.changes[0], 1, "the change entry is contained");
-				assert.equal(oFlexData.changes[1], 2, "the compVariant entry is contained");
+				assert.equal(oFlexData[0].changes.length, 2, "two entries are in the customer change section");
+				assert.equal(oFlexData[0].changes[0], 1, "the change entry is contained");
+				assert.equal(oFlexData[0].changes[1], 3, "the compVariant entry is contained");
+				assert.equal(oFlexData[1].changes.length, 1, "one entries are in the public change section");
+				assert.equal(oFlexData[1].changes[0], 2, "the compVariant entry is contained");
 				assert.equal(oFlexData.cacheKey, "abc123", "the cacheKey value is returned");
 			});
 		});
@@ -76,7 +85,12 @@ sap.ui.define([
 			sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
 				response: {
-					changes: []
+					contents: [
+						{
+							changes: [],
+							compVariants: []
+						}
+					]
 				},
 				xsrfToken: "newToken",
 				status: "200",

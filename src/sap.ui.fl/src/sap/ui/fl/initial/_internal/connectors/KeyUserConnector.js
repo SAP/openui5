@@ -4,17 +4,15 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/fl/initial/_internal/connectors/BackendConnector",
-	"sap/ui/fl/Layer"
+	"sap/ui/fl/initial/_internal/connectors/BackendConnector"
 ], function(
 	merge,
-	BackendConnector,
-	Layer
+	BackendConnector
 ) {
 	"use strict";
 
 	var PREFIX = "/flex/keyuser";
-	var API_VERSION = "/v1";
+	var API_VERSION = "/v2";
 
 	/**
 	 * Connector for requesting data from SAPUI5 Flexibility KeyUser service.
@@ -25,13 +23,20 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.initial._internal.Storage, sap.ui.fl.write._internal.Storage
 	 */
 	var KeyUserConnector = merge({}, BackendConnector, { /** @lends sap.ui.fl.initial._internal.connectors.KeyUserConnector */
-		layers: [
-			Layer.CUSTOMER
-		],
+		API_VERSION: API_VERSION,
 		ROUTES: {
 			DATA: PREFIX + API_VERSION + "/data/"
 		},
-		isLanguageInfoRequired: true
+		isLanguageInfoRequired: true,
+		loadFlexData: function(mPropertyBag) {
+			return BackendConnector.sendRequest.call(KeyUserConnector, mPropertyBag).then(function (oResult) {
+				oResult.contents.map(function(oContent, iIndex, oResult) {
+					oResult[iIndex].changes = (oContent.changes || []).concat(oContent.compVariants);
+				});
+				oResult.contents.cacheKey = oResult.cacheKey;
+				return oResult.contents;
+			});
+		}
 	});
 
 	return KeyUserConnector;
