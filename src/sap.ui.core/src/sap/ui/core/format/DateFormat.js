@@ -230,7 +230,7 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.pattern] a data pattern in LDML format. It is not verified whether the pattern represents only a date.
 	 * @param {string} [oFormatOptions.style] can be either 'short, 'medium', 'long' or 'full'. If no pattern is given, a locale dependent default date pattern of that style is used from the LocaleData class.
 	 * @param {boolean} [oFormatOptions.strictParsing] if true, by parsing it is checked if the value is a valid date
-	 * @param {boolean} [oFormatOptions.relative] if true, the date is formatted relatively to todays date if it is within the given day range, e.g. "today", "yesterday", "in 5 days"
+	 * @param {boolean} [oFormatOptions.relative] if true, the date is formatted relatively to todays date if it is within the given day range, e.g. "today", "1 day ago", "in 5 days"
 	 * @param {int[]} [oFormatOptions.relativeRange] the day range used for relative formatting. If <code>oFormatOptions.relativeScale</code> is set to default value 'day', the relativeRange is by default [-6, 6], which means only the last 6 days, today and the next 6 days are formatted relatively. Otherwise when <code>oFormatOptions.relativeScale</code> is set to 'auto', all dates are formatted relatively.
 	 * @param {string} [oFormatOptions.relativeScale="day"] if 'auto' is set, new relative time format is switched on for all Date/Time Instances. The relative scale is chosen depending on the difference between the given date and now.
 	 * @param {string} [oFormatOptions.relativeStyle="wide"] @since 1.32.10, 1.34.4 the style of the relative format. The valid values are "wide", "short", "narrow"
@@ -260,7 +260,7 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.pattern] a datetime pattern in LDML format. It is not verified whether the pattern represents a full datetime.
 	 * @param {string} [oFormatOptions.style] can be either 'short, 'medium', 'long' or 'full'. For datetime you can also define mixed styles, separated with a slash, where the first part is the date style and the second part is the time style (e.g. "medium/short"). If no pattern is given, a locale dependent default datetime pattern of that style is used from the LocaleData class.
 	 * @param {boolean} [oFormatOptions.strictParsing] if true, by parsing it is checked if the value is a valid datetime
-	 * @param {boolean} [oFormatOptions.relative] if true, the date is formatted relatively to today's date if it is within the given day range, e.g. "today", "yesterday", "in 5 days"
+	 * @param {boolean} [oFormatOptions.relative] if true, the date is formatted relatively to today's date if it is within the given day range, e.g. "today", "1 day ago", "in 5 days"
 	 * @param {int[]} [oFormatOptions.relativeRange] the day range used for relative formatting. If <code>oFormatOptions.relativeScale</code> is set to default value 'day', the relativeRange is by default [-6, 6], which means only the last 6 days, today and the next 6 days are formatted relatively. Otherwise when <code>oFormatOptions.relativeScale</code> is set to 'auto', all dates are formatted relatively.
 	 * @param {string} [oFormatOptions.relativeScale="day"] if 'auto' is set, new relative time format is switched on for all Date/Time Instances. The relative scale is chosen depending on the difference between the given date and now.
 	 * @param {string} [oFormatOptions.relativeStyle="wide"] @since 1.32.10, 1.34.4 the style of the relative format. The valid values are "wide", "short", "narrow"
@@ -397,7 +397,7 @@ sap.ui.define([
 	 *   It is ignored for formatting when an options pattern or a format are supplied.
 	 * @param {string} [oFormatOptions.style] Can be either 'short, 'medium', 'long' or 'full'. For datetime you can also define mixed styles, separated with a slash, where the first part is the date style and the second part is the time style (e.g. "medium/short"). If no pattern is given, a locale-dependent default datetime pattern of that style from the LocaleData class is used.
 	 * @param {boolean} [oFormatOptions.strictParsing] Whether to check by parsing if the value is a valid datetime
-	 * @param {boolean} [oFormatOptions.relative] Whether the date is formatted relatively to today's date if it is within the given day range, e.g. "today", "yesterday", "in 5 days"
+	 * @param {boolean} [oFormatOptions.relative] Whether the date is formatted relatively to today's date if it is within the given day range, e.g. "today", "1 day ago", "in 5 days"
 	 * @param {int[]} [oFormatOptions.relativeRange] The day range used for relative formatting. If <code>oFormatOptions.relativeScale</code> is set to the default value 'day', the <code>relativeRange<code> is by default [-6, 6], which means that only the previous 6 and the following 6 days are formatted relatively. If <code>oFormatOptions.relativeScale</code> is set to 'auto', all dates are formatted relatively.
 	 * @param {string} [oFormatOptions.relativeScale] If 'auto' is set, a new relative time format is switched on for all Date/Time instances. The default value depends on <code>showDate</code> and <code>showTime</code> options.
 	 * @param {string} [oFormatOptions.relativeStyle="wide"] The style of the relative format. The valid values are "wide", "short", "narrow"
@@ -449,7 +449,7 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.pattern] a time pattern in LDML format. It is not verified whether the pattern only represents a time.
 	 * @param {string} [oFormatOptions.style] can be either 'short, 'medium', 'long' or 'full'. If no pattern is given, a locale dependent default time pattern of that style is used from the LocaleData class.
 	 * @param {boolean} [oFormatOptions.strictParsing] if true, by parsing it is checked if the value is a valid time
-	 * @param {boolean} [oFormatOptions.relative] if true, the date is formatted relatively to todays date if it is within the given day range, e.g. "today", "yesterday", "in 5 days"
+	 * @param {boolean} [oFormatOptions.relative] if true, the date is formatted relatively to todays date if it is within the given day range, e.g. "today", "1 day ago", "in 5 days"
 	 * @param {int[]} [oFormatOptions.relativeRange] the day range used for relative formatting. If <code>oFormatOptions.relativeScale</code> is set to default value 'day', the relativeRange is by default [-6, 6], which means only the last 6 days, today and the next 6 days are formatted relatively. Otherwise when <code>oFormatOptions.relativeScale</code> is set to 'auto', all dates are formatted relatively.
 	 * @param {string} [oFormatOptions.relativeScale="day"] if 'auto' is set, new relative time format is switched on for all Date/Time Instances. The relative scale is chosen depending on the difference between the given date and now.
 	 * @param {string} [oFormatOptions.relativeStyle="wide"] @since 1.32.10, 1.34.4 the style of the relative format. The valid values are "wide", "short", "narrow"
