@@ -11,7 +11,10 @@
 	box-sizing: border-box;
 
 	.sapMIllustratedMessageMainContent {
-		margin: 0 auto;
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		min-height: 0;
 	}
 
 	figcaption {
@@ -53,6 +56,7 @@
 		.sapMIllustratedMessageMainContent {
 			display: inline-flex;
 			justify-content: center;
+			flex-direction: row;
 		}
 
 		figcaption {

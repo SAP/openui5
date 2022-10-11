@@ -522,6 +522,25 @@ function (
 		}, this);
 	});
 
+	QUnit.test("IllustratedMessage should fit its container height when enableVerticalResponsiveness property is true", function (assert) {
+		var oFixtureDOM = document.getElementById("qunit-fixture"),
+			sFixtureOriginalHeight = oFixtureDOM.style.height,
+			sFixtureTargetHeight = '160px',
+			oIMDOMRef = this.oIllustratedMessage.getDomRef();
+
+		// Act Enable vertical responsiveness in order to test the height breakpoints
+		this.oIllustratedMessage.setEnableVerticalResponsiveness(true);
+		oFixtureDOM.style.height = sFixtureTargetHeight;
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(oIMDOMRef.getBoundingClientRect().height > oIMDOMRef.querySelector('.sapMIllustratedMessageMainContent').getBoundingClientRect().height,
+			'IllustratedMessage sapMIllustratedMessageMainContent is not overflowing when enableVerticalResponsiveness property is true');
+
+		// Clear
+		oFixtureDOM.style.height = sFixtureOriginalHeight;
+	});
+
 	QUnit.test("_updateMediaStyle", function (assert) {
 		// Assert
 		assert.expect(28);
