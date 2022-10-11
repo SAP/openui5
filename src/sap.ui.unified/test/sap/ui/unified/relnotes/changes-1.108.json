@@ -3,6 +3,17 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "45109b020b66c55edd009cdc973a29ffd663f8a0",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: adjust property setters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270125938"
+          }
+        ]
+      },
+      {
         "id": "a9e590b668c9dfd51c3ab7eb0bcf7b1fcb52e9b0",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: adjust day of the week announcement",

@@ -3,6 +3,22 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "e3f9181804cefa564b860725134704c7bb55dd76",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: Improve keyboard navigation"
+      },
+      {
+        "id": "b6b3972e10f1e15d7031afc8965855888880ae47",
+        "type": "FIX",
+        "text": " Add information since when classes/methods are deprecated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270138504"
+          }
+        ]
+      },
+      {
         "id": "1d2539f34ced97a80c0cbdb41514321a9afba065",
         "type": "FEATURE",
         "text": " sap.ui.model.ClientTreeBinding#getCount"
