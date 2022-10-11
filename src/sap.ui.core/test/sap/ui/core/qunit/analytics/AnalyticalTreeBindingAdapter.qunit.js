@@ -37,18 +37,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_getContextsOrNodes: iStartIndex is undefined", function (assert) {
+	QUnit.test("_getContextsOrNodes: iStartIndex is undefined, no watermark", function (assert) {
 		var oBinding = {
 				_oRootNode : {groupID : "changes"},
 				_iThreshold : "~threshold",
-				_oWatermark : {groupID : "changes"},
+				_oWatermark : undefined,
 				oModel : {iSizeLimit : "~iSizeLimit"},
-				_autoExpandPaging : function () {},
 				_buildTree : function () {},
-				_isRunningInAutoExpand : function () {},
 				_retrieveNodeSection : function () {},
 				_updateRowIndexMap : function () {},
-				getLength : function () {},
 				isResolved : function () {}
 			},
 			oBindingMock = this.mock(oBinding),
@@ -61,11 +58,6 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oBinding._oRootNode), 0, "~iSizeLimit")
 			.returns(aNodes);
 		oBindingMock.expects("_updateRowIndexMap").withExactArgs(sinon.match.same(aNodes), 0);
-		oBindingMock.expects("_isRunningInAutoExpand")
-			.withExactArgs(TreeAutoExpandMode.Bundled)
-			.returns(true);
-		oBindingMock.expects("getLength").withExactArgs().returns(2);
-		oBindingMock.expects("_autoExpandPaging").withExactArgs();
 
 		// code under test
 		assert.deepEqual(
@@ -77,16 +69,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_getContextsOrNodes: iStartIndex is set", function (assert) {
+	QUnit.test("_getContextsOrNodes: iStartIndex is set, no watermark", function (assert) {
 		var oBinding = {
 				_oRootNode : {groupID : "changes"},
 				_iThreshold : "~threshold",
-				_oWatermark : {groupID : "changes"},
+				_oWatermark : undefined,
 				_buildTree : function () {},
-				_isRunningInAutoExpand : function () {},
 				_retrieveNodeSection : function () {},
 				_updateRowIndexMap : function () {},
-				getLength : function () {},
 				isResolved : function () {}
 			},
 			oBindingMock = this.mock(oBinding),
@@ -100,10 +90,6 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oBinding._oRootNode), 11, 50)
 			.returns(aNodes);
 		oBindingMock.expects("_updateRowIndexMap").withExactArgs(sinon.match.same(aNodes), 11);
-		oBindingMock.expects("_isRunningInAutoExpand")
-			.withExactArgs(TreeAutoExpandMode.Bundled)
-			.returns(true);
-		oBindingMock.expects("getLength").withExactArgs().returns(15);
 
 		// code under test
 		aResult = AnalyticalTreeBindingAdapter.prototype._getContextsOrNodes.call(oBinding, true,
@@ -113,4 +99,114 @@ sap.ui.define([
 		assert.strictEqual(oBinding._iPageSize, 50);
 		assert.strictEqual(oBinding._iThreshold, "~newThreshold");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_getContextsOrNodes: with watermark, no paging needed", function (assert) {
+		var oBinding = {
+				_oRootNode : {groupID : "changes"},
+				_iThreshold : "~threshold",
+				_oWatermark : {groupID : "~groupID"},
+				_buildTree : function () {},
+				_retrieveNodeSection : function () {},
+				_updateRowIndexMap : function () {},
+				isResolved : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			aNodes = [
+				{context : "~oContext0", groupID : "~otherGroupID"},
+				{context : "~oContext1", groupID : "~groupID"}
+			],
+			aResult;
+
+		oBindingMock.expects("isResolved").withExactArgs().returns(true);
+		oBindingMock.expects("_buildTree").withExactArgs(3, 2);
+		this.mock(Math).expects("max").withExactArgs("~threshold", 0).returns("~newThreshold");
+		oBindingMock.expects("_retrieveNodeSection")
+			.withExactArgs(sinon.match.same(oBinding._oRootNode), 3, 2)
+			.returns(aNodes);
+		oBindingMock.expects("_updateRowIndexMap")
+			.withExactArgs(sinon.match.same(aNodes).and(sinon.match([
+				{context : "~oContext0", groupID : "~otherGroupID"},
+				{context : "~oContext1", groupID : "~groupID"}
+			])), 3);
+
+		// code under test
+		aResult = AnalyticalTreeBindingAdapter.prototype._getContextsOrNodes.call(oBinding, true,
+			3, 2);
+
+		assert.deepEqual(aResult, [
+			{context : "~oContext0", groupID : "~otherGroupID"},
+			{context : "~oContext1", groupID : "~groupID"}
+		]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getContextsOrNodes: with watermark, paging needed", function (assert) {
+		var oBinding = {
+				_oRootNode : {groupID : "changes"},
+				_iThreshold : "~threshold",
+				_oWatermark : {groupID : "~groupID"},
+				_autoExpandPaging : function () {},
+				_buildTree : function () {},
+				_retrieveNodeSection : function () {},
+				_updateRowIndexMap : function () {},
+				isResolved : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			aNodes = [
+				{context : "~oContext0", groupID : "~groupID"},
+				{context : "~oContext1", groupID : "~otherGroupID"}
+			],
+			aResult;
+
+		oBindingMock.expects("isResolved").withExactArgs().returns(true);
+		oBindingMock.expects("_buildTree").withExactArgs(3, 2);
+		this.mock(Math).expects("max").withExactArgs("~threshold", 0).returns("~newThreshold");
+		oBindingMock.expects("_retrieveNodeSection")
+			.withExactArgs(sinon.match.same(oBinding._oRootNode), 3, 2)
+			.returns(aNodes);
+		oBindingMock.expects("_updateRowIndexMap")
+			.withExactArgs(sinon.match.same(aNodes).and(sinon.match([
+				{context : "~oContext0", groupID : "~groupID"},
+				{context : "~oContext1", groupID : "~otherGroupID"}
+		])), 3);
+		oBindingMock.expects("_autoExpandPaging").withExactArgs();
+
+		// code under test
+		aResult = AnalyticalTreeBindingAdapter.prototype._getContextsOrNodes.call(oBinding, true,
+			3, 2);
+
+		assert.strictEqual(aResult, aNodes);
+		assert.deepEqual(aResult, [{context : "~oContext0", groupID : "~groupID"}]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getLength: no root node", function (assert) {
+		// code under test
+		assert.strictEqual(
+			AnalyticalTreeBindingAdapter.prototype.getLength.call({/*oBinding*/}),
+			0);
+	});
+
+	//*********************************************************************************************
+[{
+	oBinding : {
+		_oRootNode : {magnitude : 42, numberOfTotals : 13},
+		_oWatermark : undefined
+	},
+	iResult : 55
+}, {
+	oBinding : {
+		_oRootNode : {magnitude : 123, numberOfTotals : 15},
+		_oWatermark : {/*any watermark*/}
+	},
+	iResult : 139
+}].forEach(function (oFixture, i) {
+	QUnit.test("getLength: with root node, #" + i, function (assert) {
+		// code under test
+		assert.strictEqual(
+			AnalyticalTreeBindingAdapter.prototype.getLength.call(oFixture.oBinding),
+			oFixture.iResult);
+	});
+});
 });
