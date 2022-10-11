@@ -3,6 +3,37 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "292a5d8f07ebbc577c560ad054f00b7ec3dd4254",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker: Removed existing tooltips"
+      },
+      {
+        "id": "5d91ddd17a552101d42d360c325af215e4aab277",
+        "type": "FIX",
+        "text": " sap.m.Dialog: ARIA announcements for draggable/resizable dialog behavior improved"
+      },
+      {
+        "id": "17b57b510b10317281dac94ab1af7965595935ea",
+        "type": "FEATURE",
+        "text": " sap.m.IllustratedMessage: Dot size breakpoint introduced"
+      },
+      {
+        "id": "e3f9181804cefa564b860725134704c7bb55dd76",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: Improve keyboard navigation"
+      },
+      {
+        "id": "f33f3e33bd266bea280af54a8a894aafb44c110b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fixed Demokit sample",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270123401"
+          }
+        ]
+      },
+      {
         "id": "874eb80e36f99137540fb2fc31cc060dcd9aa842",
         "type": "FEATURE",
         "text": " For GenericTile, sub headers can now be added in the IconMode tile for OneByOne frametype"

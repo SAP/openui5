@@ -3,6 +3,17 @@
     "date": "October 2022",
     "notes": [
       {
+        "id": "18c5cc8bfdc9e193cd8d0e57354d2e3dbbdc66c6",
+        "type": "FIX",
+        "text": " Field: Change-Promise pending if validation error on unit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270123293"
+          }
+        ]
+      },
+      {
         "id": "6c8f12d81441271b40db09bfd6494acc2f5cee31",
         "type": "FIX",
         "text": " FilterField: wrong anouncement",
