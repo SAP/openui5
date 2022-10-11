@@ -37,13 +37,15 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @experimental Since version 1.2.
-	 * The API may change. User with care.
+	 * The API may change. Use with care.
 	 * @alias sap.ui.suite.VerticalProgressIndicator
+	 * @deprecated as of version 1.108, there's no replacement for this functionality as no active use cases are known
 	 */
 	var VerticalProgressIndicator = Control.extend("sap.ui.suite.VerticalProgressIndicator", /** @lends sap.ui.suite.VerticalProgressIndicator.prototype */ {
 		metadata : {
 
 			library : "sap.ui.suite",
+			deprecated: true,
 			properties : {
 
 				/**

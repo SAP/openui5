@@ -31,13 +31,15 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @experimental Since version 1.2.
-	 * The API may change. User with care.
+	 * The API may change. Use with care.
 	 * @alias sap.ui.suite.TaskCircle
+	 * @deprecated as of version 1.108, there's no replacement for this functionality as no active use cases are known
 	 */
 	var TaskCircle = Control.extend("sap.ui.suite.TaskCircle", /** @lends sap.ui.suite.TaskCircle.prototype */ {
 		metadata : {
 
 			library : "sap.ui.suite",
+			deprecated: true,
 			properties : {
 
 				/**
@@ -105,9 +107,9 @@ sap.ui.define([
 	 * @private
 	 */
 	TaskCircle.prototype.onclick = function(oEvent){
-	  this.firePress({});
-	  oEvent.preventDefault();
-	  oEvent.stopPropagation();
+		this.firePress({});
+		oEvent.preventDefault();
+		oEvent.stopPropagation();
 	};
 
 

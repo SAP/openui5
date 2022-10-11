@@ -19,6 +19,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], // library dependency
 	 * @version ${version}
 	 * @since 1.1
 	 * @public
+	 * @deprecated as of version 1.108
 	 */
 	var thisLibrary = sap.ui.getCore().initLibrary({
 		name : "sap.ui.suite",
