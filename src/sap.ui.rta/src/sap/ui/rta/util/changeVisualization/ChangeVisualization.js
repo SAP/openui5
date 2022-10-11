@@ -245,7 +245,7 @@ sap.ui.define([
 					oPopover.openBy(this._oToolbarButton);
 					this.setPopover(oPopover);
 					//Currently required because of an binding issue from the control
-					//At the first opening of the popover the controls doesn't get updated when the bound
+					//At the first opening of the popover the controls don't get updated when the bound
 					//model changes. With the reopening this Problem gets fixed
 					//TODO Remove once control owners have fixed the issue
 					oPopover.close();
