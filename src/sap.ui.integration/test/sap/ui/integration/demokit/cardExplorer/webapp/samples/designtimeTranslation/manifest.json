@@ -17,15 +17,15 @@
 		}
 	},
 	"sap.card": {
-		"type": "List",
+		"type": "Object",
 		"configuration": {
 			"editor": "./dt/Configuration",
 			"parameters": {
 				"translatableLabel": {
-					"value": "{i18n>TRANSLATED_LABEL}"
+					"value": "{{TRANSLATED_LABEL}}"
 				},
 				"translatableText": {
-					"value": "{i18n>TRANSLATED_TEXT}"
+					"value": "{{TRANSLATED_TEXT}}"
 				},
 				"untranslatableLabel": {
 					"value": "Untranslatable Label and Text"
@@ -54,24 +54,20 @@
 			}
 		},
 		"content": {
-			"data": {
-				"json": [
-					{
-						"title": "{{parameters.translatableLabel}}",
-						"description": "{{parameters.translatableText}}"
-					},
-					{
-						"title": "Untranslatable Label and Text",
-						"description": "The translator cannot edit destinations and change the icon. He uses {{LANGUAGE_VALUE}}"
-					}
-				],
-				"path": "/"
-			},
-			"item": {
-				"title": "{title}",
-				"description": "{description}"
-			},
-			"maxItems": 3
+			"groups": [
+				{
+					"items": [
+						{
+							"label": "{parameters>/translatableLabel/value}",
+							"value": "{parameters>/translatableText/value}"
+						},
+						{
+							"label": "{parameters>/untranslatableLabel/value}",
+							"value": "{parameters>/untranslatableText/value}"
+						}
+					]
+				}
+			]
 		}
 	}
 }
