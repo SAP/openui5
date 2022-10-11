@@ -26,6 +26,7 @@ sap.ui.define([
 	 * @param {string} sConfigName
 	 * @param {string} sThingKey
 	 * @returns {sap.ui.ux3.QuickView}
+	 * @deprecated as of version 1.108, there's no replacement for this functionality as no active use cases are known
 	 */
 
 	var QuickViewUtils = {

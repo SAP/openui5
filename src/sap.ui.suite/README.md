@@ -3,6 +3,9 @@
 # @openui5/sap.ui.suite
 Runtime resources of the [OpenUI5](https://github.com/SAP/openui5) UI Library **sap.ui.suite**.
 
+## Deprecation
+**This library is deprecated and should not be used for new projects.**
+
 ## Usage
 Add this library as a dependency to your UI5 project by using [UI5 Tooling](https://sap.github.io/ui5-tooling/):
 

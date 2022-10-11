@@ -2,6 +2,7 @@
 specVersion: "2.0"
 type: library
 metadata:
+  deprecated: true
   name: sap.ui.suite
   copyright: |-
    OpenUI5
