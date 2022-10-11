@@ -1332,7 +1332,7 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.create(mPropertyBag).then(function () {
 				assert.equal(this.oStubSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/app/" + mPropertyBag.flexObject.reference + "/adaptations?parentVersion=" + mPropertyBag.parentVersion + "&sap-language=EN", "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + mPropertyBag.flexObject.reference + "/adaptations/?parentVersion=" + mPropertyBag.parentVersion + "&sap-language=EN", "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "POST", "the correct http method was passed");
 				assert.deepEqual(oCallArguments[2].payload, JSON.stringify(contextBasedAdaptationData), "the correct payload was passed");
 			}.bind(this));
