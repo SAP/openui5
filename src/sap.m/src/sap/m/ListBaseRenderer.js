@@ -344,7 +344,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	};
 
 	ListBaseRenderer.renderDummyArea = function(rm, oControl, sAreaId, iTabIndex) {
-		rm.openStart("div", oControl.getId(sAreaId)).attr("tabindex", iTabIndex);
+		rm.openStart("div", oControl.getId(sAreaId)).attr("role", "none").attr("tabindex", iTabIndex); // role = none because focusable elements must have a role
 
 		if (Device.system.desktop) {
 			rm.class("sapMListDummyArea");

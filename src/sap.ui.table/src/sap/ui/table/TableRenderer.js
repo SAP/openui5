@@ -1319,6 +1319,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		if (sId) {
 			rm.attr("id", sId);
 		}
+		rm.attr("role", "none");
 		rm.attr("tabindex", sTabIndex == null ? "0" : sTabIndex);
 		rm.openEnd().close("div");
 	};
