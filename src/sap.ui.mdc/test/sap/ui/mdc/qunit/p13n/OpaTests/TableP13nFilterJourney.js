@@ -68,10 +68,20 @@ sap.ui.define([
 		When.onTheMDCTable.iPersonalizeFilter(sTableID, []);
 	});
 
-	opaTest("Cancel and open the filter dialog to check if the values have been discarded", function (Given, When, Then) {
+	opaTest("Cancel and open the filter dialog to check if the values have been discarded --> Correct values", function (Given, When, Then) {
 		When.onTheMDCTable.iPersonalizeFilter(sTableID, [
 			{key : "Founding Year", values: ["1989"], inputControl: "IDTableOfInternalSampleApp_01--filter--foundingYear"},
 			{key : "Country", values: ["DE"], inputControl: "IDTableOfInternalSampleApp_01--filter--countryOfOrigin_code"}
+		], undefined, true/** This flag will cancel the dialog instead of confirming it*/);
+
+		//Dialog cancelled --> no filters added
+		Then.onTheMDCTable.iCheckFilterPersonalization(sTableID, []);
+		Then.onTheMDCTable.iCheckAvailableFilters(sTableID, aAvailableFilters);
+	});
+
+	opaTest("Cancel and open the filter dialog to check if the values have been discarded --> Erroneous values", function (Given, When, Then) {
+		When.onTheMDCTable.iPersonalizeFilter(sTableID, [
+			{key : "artistUUID", values: ["asd"], inputControl: "IDTableOfInternalSampleApp_01--filter--artistUUID"}
 		], undefined, true/** This flag will cancel the dialog instead of confirming it*/);
 
 		//Dialog cancelled --> no filters added
