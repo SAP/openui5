@@ -30,7 +30,18 @@ sap.ui.require([
 		// "sap/ui/core/qunit/i18n/LocaleData.qunit",
 
 		// ***************************************************************************************
-		// sap.ui.core.* - tests are contained in testsuite.types.qunit.js
+		// sap.ui.core.date.* - tests are contained in testsuite.i18.qunit.js
+		// ***************************************************************************************
+		"sap/ui/core/qunit/i18n/Buddhist.qunit",
+		"sap/ui/core/qunit/i18n/CalendarUtils.qunit",
+		"sap/ui/core/qunit/i18n/Islamic.qunit",
+		"sap/ui/core/qunit/i18n/Japanese.qunit",
+		"sap/ui/core/qunit/i18n/Persian.qunit",
+		"sap/ui/core/qunit/i18n/UniversalDate.qunit",
+		"sap/ui/core/qunit/i18n/UniversalDateUtils.qunit",
+
+		// ***************************************************************************************
+		// sap.ui.core.format.* - tests are contained in testsuite.types.qunit.js
 		// ***************************************************************************************
 		//TODO: get test running in 1RingModels.qunit; tests don't run independently - refactoring
 		// needed, currently they depend on the language en_US
