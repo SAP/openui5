@@ -1603,6 +1603,24 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Calendar grid doesn't receive focus after control invalidation", function(assert) {
+		// Prepare
+		var oCalendar = new Calendar({ months: 2 });
+		var oFocusSpy = this.spy(oCalendar, "_focusDate");
+		oCalendar.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oCalendar.rerender();
+
+		// assert
+		assert.ok(oFocusSpy.notCalled, "Focus isn't set after rendering");
+
+		// Clean
+		oFocusSpy.restore();
+		oCalendar.destroy();
+	});
+
 	QUnit.module("Other");
 
 	QUnit.test("interval selection feedback", function(assert) {
