@@ -56,4 +56,39 @@ sap.ui.define([
 		assert.ok(!oResultingConditions["Filter4"]);
 	});
 
+	QUnit.test("check getRequiredFieldNamesWithoutValues method", function(assert) {
+		var aReturns = {"A": {}, "B":{}};
+		var oFilterBar = {
+				_getRequiredPropertyNames: function() {
+					return ["A", "B"];
+				},
+				_getConditionModel: function() {
+					return {
+						getConditions: function(s) {
+							return (s === "A") ? aReturns["A"] : aReturns["B"];
+						}
+					};
+				}
+		};
+
+		var aMissingRequiredNames = FilterUtil.getRequiredFieldNamesWithoutValues(oFilterBar);
+		assert.equal(aMissingRequiredNames.length, 0);
+
+		aReturns = {"A": {}};
+		aMissingRequiredNames = FilterUtil.getRequiredFieldNamesWithoutValues(oFilterBar);
+		assert.equal(aMissingRequiredNames.length, 1);
+		assert.equal(aMissingRequiredNames[0], "B");
+
+		aReturns = {"B": {}};
+		aMissingRequiredNames = FilterUtil.getRequiredFieldNamesWithoutValues(oFilterBar);
+		assert.equal(aMissingRequiredNames.length, 1);
+		assert.equal(aMissingRequiredNames[0], "A");
+
+		aReturns = {};
+		aMissingRequiredNames = FilterUtil.getRequiredFieldNamesWithoutValues(oFilterBar);
+		assert.equal(aMissingRequiredNames.length, 2);
+		assert.equal(aMissingRequiredNames[0], "A");
+		assert.equal(aMissingRequiredNames[1], "B");
+	});
+
 });

@@ -130,6 +130,12 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	AdaptationFilterBar.prototype.awaitControlDelegate = function() {
+		return this._oAdaptationControlPromise.then(function() {
+			return this._getAdaptationControlInstance().awaitControlDelegate();
+		}.bind(this));
+	};
+
 	AdaptationFilterBar.prototype.initPropertyHelper = function() {
 		return this._oAdaptationControlPromise.then(function() {
 			return this._getAdaptationControlInstance().initPropertyHelper();
@@ -183,7 +189,7 @@ sap.ui.define([
 	};
 
 	AdaptationFilterBar.prototype.createConditionChanges = function() {
-		return Promise.all([this._oAdaptationControlPromise, this._getAdaptationControlInstance().awaitControlDelegate()]).then(function() {
+		return Promise.all([this._oAdaptationControlPromise, this.awaitControlDelegate()]).then(function() {
 			var mConditions = this._getModelConditions(this._getConditionModel(), false, true);
 			if (this._bPersistValues) {
 				//this._getAdaptationControlInstance(), "Filter", mConditions, true, true

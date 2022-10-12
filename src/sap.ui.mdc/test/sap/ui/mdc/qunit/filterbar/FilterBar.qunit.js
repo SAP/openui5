@@ -1410,7 +1410,7 @@ sap.ui.define([
 			assert.ok(oFilterBar._handleOngoingChangeAppliance.calledOnce);
 			oFilterBar._handleOngoingChangeAppliance.reset();
 
-			assert.ok(oFilterBar._validate.calledTwice);
+			assert.ok(oFilterBar._validate.calledOnce);
 			oFilterBar._validate.reset();
 
 
