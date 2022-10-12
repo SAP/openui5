@@ -1,0 +1,48 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	height="100%"
+	controllerName="sap.f.sample.SidePanelResizable.Page">
+
+	<Page>
+		<content>
+			<f:SidePanel id="mySidePanel" sidePanelResizable="true" toggle="onToggle">
+				<f:mainContent>
+					<Button text="Button 1" />
+					<Button text="Button 2" />
+					<VBox class="sapUiSmallMarginTopBottom">
+						<Label text="Prevent next toggle (expand) event" />
+						<Switch id="preventExpand" type="AcceptReject" class="sapUiSmallMarginBottom" />
+						<Label text="Prevent next toggle (collapse) event" />
+						<Switch id="preventCollapse" type="AcceptReject" class="sapUiSmallMarginBottom" />
+						<Text text="On desktop or tablet devices Side Panel can be resized while the side content is expanded. There are several different resize methods:" class="sapUiSmallMarginBottom" />
+						<Text text="By mouse: drag resize splitter to set the desired width." class="sapUiSmallMarginBottom" />
+						<Text text="By Keyboard: focus the resize splitter, then resize with Arrow Keys (small step), Shift + Arrow Keys (large step), Home (minimum width), End (maximum width) or Enter (default width)." class="sapUiSmallMarginBottom" />
+						<Text text="By context menu: press Context Menu key or Shift + F10 and select one of the predefined widths (minimum, maximum or default)." class="sapUiSmallMarginBottom" />
+					</VBox>
+				</f:mainContent>
+				<f:items>
+					<f:SidePanelItem icon="sap-icon://physical-activity" text="Run">
+						<VBox>
+							<Text text="Static Content" class="sapUiSmallMarginBottom" />
+							<Text text="Do some physical activity as it will greatly improve your health." />
+							<Switch />
+							<Button text="Press me" />
+						</VBox>
+					</f:SidePanelItem>
+					<f:SidePanelItem icon="sap-icon://addresses" text="Go home">
+						<VBox>
+							<Text text="Static Content" class="sapUiSmallMarginBottom" />
+							<Button text="Press me" />
+							<Button text="Hit me" />
+							<Button text="Touch me" />
+						</VBox>
+					</f:SidePanelItem>
+					<f:SidePanelItem icon="sap-icon://building" text="Go to office" />
+				</f:items>
+			</f:SidePanel>
+		</content>
+	</Page>
+</mvc:View>

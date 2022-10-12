@@ -120,7 +120,8 @@
 			"samples": [
 				"sap.f.sample.SidePanel",
 				"sap.f.sample.SidePanelSingle",
-				"sap.f.sample.SidePanelOverflow"
+				"sap.f.sample.SidePanelOverflow",
+				"sap.f.sample.SidePanelResizable"
 			  ]
 		},
 		{
@@ -314,7 +315,12 @@
 		{
 			"id": "sap.f.sample.SidePanelOverflow",
 			"name": "Side Panel with overflow menu",
-			"description": "Demonstrates the usage of Side Panel with overflow menu."
+			"description": "Demonstrates the usage of Side Panel with overflow menu on desktop and tablet devices."
+		},
+		{
+			"id": "sap.f.sample.SidePanelResizable",
+			"name": "Resizable Side Panel",
+			"description": "Demonstrates the usage of resizable Side Panel."
 		},
 		{
 		  "id": "sap.f.sample.Card",

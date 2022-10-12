@@ -13,18 +13,18 @@ sap.ui.define([
 		};
 
 		SidePanelRenderer.render = function(oRm, oControl) {
-			var bActionBarExpanded = oControl.getActionBarExpanded(),
-				bSideContentExpanded = oControl._isSideContentExpanded();
+			var bActionBarExpanded = oControl.getActionBarExpanded();
 
 			oRm.openStart("div", oControl);
 			oRm.class("sapFSP");
 			oControl._isSingleItem() && oRm.class("sapFSPSingleItem");
 			bActionBarExpanded && oControl.getItems().length !== 1 && oRm.class("sapFSPActionBarExpanded");
-			bSideContentExpanded && oRm.class("sapFSPSideContentExpanded");
+			oControl._getSideContentExpanded() && oRm.class("sapFSPSideContentExpanded");
 			oRm.openEnd();
 
 			SidePanelRenderer.renderMain(oRm, oControl);
 			oControl.getItems().length && SidePanelRenderer.renderSide(oRm, oControl);
+			!Device.system.phone && SidePanelRenderer.renderMeasureHelpers(oRm, oControl);
 
 			oRm.close("div");
 		};
@@ -89,38 +89,35 @@ sap.ui.define([
 		};
 
 		SidePanelRenderer.renderSide = function(oRm, oControl) {
-			var bSideExpanded = oControl.getActionBarExpanded() || oControl._getSideContentExpanded(),
-				bPhone = Device.system.phone,
-				sSidePanelWidth = oControl._getSidePanelWidth();
+			var bPhone = Device.system.phone,
+				bRenderSplitter = oControl.getSidePanelResizable() && oControl._getSideContentExpanded() && !bPhone;
+
 			oRm.openStart("aside");
 			oRm.class("sapFSPSide");
+			bRenderSplitter && oRm.class("sapFSPResizable");
 			oRm.attr("data-sap-ui-fastnavgroup", "true");
 			oRm.attr("role", "region");
 			oRm.attr("aria-label", oControl._getAriaLabelText());
-			bSideExpanded && !bPhone && oRm.style("width", sSidePanelWidth);
+			oControl._getSideContentExpanded() && !bPhone && oRm.style("width", oControl._getSidePanelWidth());
 			oRm.openEnd();
 
 			oRm.openStart("div");
 			oRm.class("sapFSPSideInner");
-
-			bSideExpanded && !bPhone && oRm.style("width", sSidePanelWidth);
-
 			oRm.openEnd();
 
 			SidePanelRenderer.renderActionBar(oRm, oControl);
 			oControl.getSelectedItem() && SidePanelRenderer.renderSideContent(oRm, oControl);
+			bRenderSplitter && SidePanelRenderer.renderSplitterBar(oRm, oControl);
 
 			oRm.close("div");
-
 			oRm.close("aside");
 		};
 
 		SidePanelRenderer.renderSideContent = function(oRm, oControl) {
 			var aSide = oControl._getSelectedItem().getContent(),
-				bSideContentExpanded = oControl._isSideContentExpanded(),
 				i;
 
-			if (bSideContentExpanded) {
+			if (oControl._getSideContentExpanded()) {
 				oRm.openStart("div");
 				oRm.class("sapFSPSideContent");
 				oRm.attr("data-sap-ui-fastnavgroup", "true");
@@ -140,7 +137,6 @@ sap.ui.define([
 				}
 
 				oRm.close("div");
-
 				oRm.close("div");
 			}
 		};
@@ -165,6 +161,10 @@ sap.ui.define([
 				oExpandCollapseButton = oControl.getAggregation("_arrowButton"),
 				i;
 
+			oRm.openStart("div");
+			oRm.class("sapFSPActionBar");
+			oRm.openEnd();
+
 			if (!bPhone) {
 				// expand/collapse button
 				bSingleItem && oExpandCollapseButton.setTooltip(oControl.getItems()[0].getText());
@@ -173,15 +173,14 @@ sap.ui.define([
 
 			// action bar
 			if (aItems.length) {
-
 				oRm.openStart("div");
-				oRm.class("sapFSPActionBarWrapper");
+				oRm.class("sapFSPActionBarListWrapper");
 				bActionBarExpanded && oRm.class("sapFSPExpanded");
 				oRm.attr("role", "toolbar");
 				oRm.openEnd();
 
-				oRm.openStart("ul", oControl.getId() + "-ActionBar");
-				oRm.class("sapFSPActionBar");
+				oRm.openStart("ul", oControl.getId() + "-ActionBarList");
+				oRm.class("sapFSPActionBarList");
 				aItems.length < 4 && oRm.class("sapFSPCenteredItems");
 				oRm.attr("aria-multiselectable", "false");
 				oRm.attr("aria-label", "Actions");
@@ -200,9 +199,53 @@ sap.ui.define([
 				}
 
 				oRm.close("ul");
-
 				oRm.close("div");
 			}
+
+			oRm.close("div");
+		};
+
+		SidePanelRenderer.renderSplitterBar = function(oRm, oControl) {
+			oRm.openStart("div", oControl.getId() + "-resizeSplitter");
+			oRm.class("sapFSPSplitterBar");
+			oRm.attr("tabindex", 0);
+			oRm.attr("role", "separator");
+			oRm.attr("aria-orientation", "vertical");
+			oRm.attr("aria-roledescription", "splitter separator");
+			oRm.attr("title", oControl._getSplitterTitle());
+			oRm.openEnd();
+
+			oRm.openStart("div");
+			oRm.class("sapFSPSplitterBarDecorationBefore");
+			oRm.openEnd();
+			oRm.close("div");
+
+			oRm.openStart("div");
+			oRm.class("sapFSPSplitterBarGrip");
+			oRm.openEnd();
+			oRm.icon("sap-icon://vertical-grip", ["sapFSPSplitterBarGripIcon"]);
+			oRm.close("div");
+
+			oRm.openStart("div");
+			oRm.class("sapFSPSplitterBarDecorationAfter");
+			oRm.openEnd();
+			oRm.close("div");
+
+			oRm.close("div");
+		};
+
+		SidePanelRenderer.renderMeasureHelpers = function(oRm, oControl) {
+			oRm.openStart("div");
+			oRm.class("sapFSPMinWidth");
+			oRm.style("width", oControl.getSidePanelMinWidth());
+			oRm.openEnd();
+			oRm.close("div");
+
+			oRm.openStart("div");
+			oRm.class("sapFSPMaxWidth");
+			oRm.style("width", oControl.getSidePanelMaxWidth());
+			oRm.openEnd();
+			oRm.close("div");
 		};
 
 		return SidePanelRenderer;
