@@ -916,7 +916,7 @@ sap.ui.define([
 		assert.deepEqual(oCondition.inParameters, {in1: "I2"} , "in-parameters returned");
 		assert.deepEqual(oCondition.outParameters, {out1: "I2"} , "out-parameters returned");
 		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
-		assert.ok(oFieldHelp.getItemForValue.calledWith({value: "I2", parsedValue: "I2", dataType: oConditionType._oDefaultType, inParameters: undefined, outParameters: undefined, bindingContext: "BC", checkKeyFirst: true, checkKey: true, checkDescription: true, conditionModel: "CM", conditionModelName: "Name", exception: ParseException, control: "Control"}), "getItemForValue called");
+		assert.ok(oFieldHelp.getItemForValue.calledWith({value: "I2", parsedValue: "I2", dataType: oConditionType._oDefaultType, inParameters: undefined, outParameters: undefined, bindingContext: "BC", checkKey: true, checkDescription: true, conditionModel: "CM", conditionModelName: "Name", exception: ParseException, control: "Control"}), "getItemForValue called");
 
 		oCondition = oConditionType.parseValue("Item3");
 		assert.ok(oCondition, "Result returned");
@@ -3028,7 +3028,6 @@ sap.ui.define([
 			parsedValue: "I2",
 			dataType: oValueType,
 			checkKey: true,
-			checkKeyFirst: true,
 			checkDescription: true,
 			inParameters: undefined, // TODO: needed?
 			outParameters: undefined, // TODO: needed?

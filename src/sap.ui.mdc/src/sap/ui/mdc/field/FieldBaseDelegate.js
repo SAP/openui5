@@ -213,7 +213,6 @@ sap.ui.define([
 	 * @param {any} oConfig.value Value as entered by user
 	 * @param {any} oConfig.parsedValue Value parsed by data type to fit the data type of the key
 	 * @param {sap.ui.model.Context} oConfig.bindingContext <code>BindingContext</code> of the checked field. Inside a table the <code>FieldHelp</code> element might be connected to a different row.
-	 * @param {boolean} oConfig.checkKeyFirst If set, it first should be checked if the value fits a key
 	 * @param {boolean} oConfig.checkKey If set, it should be checked if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
 	 * @param {boolean} oConfig.checkDescription If set, it should be checked if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oConfig.conditionModel] <code>ConditionModel</code>, if bound to one
@@ -226,13 +225,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 */
-//	FieldBaseDelegate.getItemForValue = function(oPayload, oFieldHelp, vValue, vParsedValue, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
-//
-//		if (oFieldHelp) {
-//			return oFieldHelp.getItemForValue(vValue, vParsedValue, undefined, undefined, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
-//		}
-//
-//	};
 	FieldBaseDelegate.getItemForValue = function(oPayload, oFieldHelp, oConfig) {
 
 		if (oFieldHelp) {

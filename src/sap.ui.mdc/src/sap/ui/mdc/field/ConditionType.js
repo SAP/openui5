@@ -506,7 +506,6 @@ sap.ui.define([
 		var vKey;
 		var vDescription;
 		var bCheckKey = true;
-		var bCheckKeyFirst = true;
 		var bCheckDescription = false;
 		var vCheckValue;
 		var vCheckParsedValue;
@@ -525,8 +524,7 @@ sap.ui.define([
 			vKey = bFirstCheck ? aValues[0] : aValues[1];
 			vDescription = bFirstCheck ? aValues[1] : aValues[0]; // in second run, use second value for check
 			bCheckDescription = sDisplay !== FieldDisplay.Value;
-			bCheckKeyFirst = sDisplay === FieldDisplay.Value || sDisplay === FieldDisplay.ValueDescription;
-			vCheckValue = bCheckKeyFirst ? vKey || vDescription : vDescription || vKey; // just check input
+			vCheckValue = vKey || vDescription; // just check input
 		}
 
 		// handle sync case and async case similar
@@ -619,12 +617,11 @@ sap.ui.define([
 				throw oException;
 			}
 			bCheckKey = false; // cannot be a valid key
-			bCheckKeyFirst = false;
 			vCheckParsedValue = undefined;
 		}
 
 		return SyncPromise.resolve().then(function() {
-			return _getItemForValue.call(this, vCheckValue, vCheckParsedValue, oType, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
+			return _getItemForValue.call(this, vCheckValue, vCheckParsedValue, oType, oBindingContext, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
 		}.bind(this)).then(function(oResult) {
 			return fnGetResult.call(this, oResult, fnSuccess);
 		}.bind(this)).catch(function(oException) {
@@ -969,7 +966,7 @@ sap.ui.define([
 
 	}
 
-	function _getItemForValue(vValue, vParsedValue, oType, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
+	function _getItemForValue(vValue, vParsedValue, oType, oBindingContext, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
 
 		var oFieldHelp = _getFieldHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
@@ -982,7 +979,6 @@ sap.ui.define([
 				inParameters: undefined, // TODO: needed?
 				outParameters: undefined, // TODO: needed?
 				bindingContext: oBindingContext,
-				checkKeyFirst: bCheckKeyFirst, // TODO: not longer needed?
 				checkKey: bCheckKey,
 				checkDescription: bCheckDescription,
 				conditionModel: oConditionModel,
@@ -992,10 +988,8 @@ sap.ui.define([
 		};
 
 		if (oDelegate) {
-//			return oDelegate.getItemForValue(oPayload, oFieldHelp, vValue, vParsedValue, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
 			return oDelegate.getItemForValue(oPayload, oFieldHelp, oConfig);
 		} else if (oFieldHelp) {
-//			return oFieldHelp.getItemForValue(vValue, vParsedValue, undefined, undefined, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
 			return oFieldHelp.getItemForValue(oConfig);
 		}
 
