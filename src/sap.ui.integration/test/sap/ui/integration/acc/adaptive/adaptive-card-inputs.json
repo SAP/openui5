@@ -12,7 +12,6 @@
 				{
 					"type": "Input.Text",
 					"label": "Your Name",
-					"isRequired": true,
 					"placeholder": "Last, First",
 					"style": "text",
 					"id": "SimpleVal"
@@ -20,7 +19,6 @@
 				{
 					"type": "Input.Text",
 					"label": "Email address",
-					"isRequired": true,
 					"placeholder": "youremail@example.com",
 					"style": "email",
 					"id": "EmailVal"
@@ -28,7 +26,6 @@
 				{
 					"type": "Input.Number",
 					"label": "Age",
-					"isRequired": true,
 					"id": "NumVal",
 					"min": 0,
 					"max": 110,
@@ -82,7 +79,6 @@
 								"id": "SingleSelectVal",
 								"label": "Do you have a driver's license?",
 								"style": "expanded",
-								"isRequired": true,
 								"choices": [
 									{
 										"title": "Yes",
@@ -99,7 +95,6 @@
 								"id": "MultiSelectVal",
 								"label": "How do you want to be notified?",
 								"isMultiSelect": true,
-								"isRequired": true,
 								"choices": [
 									{
 										"title": "Via mail",
