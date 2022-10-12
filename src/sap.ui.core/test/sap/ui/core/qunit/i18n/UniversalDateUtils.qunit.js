@@ -6,25 +6,6 @@ sap.ui.define([
 ], function(UniversalDateUtils, UniversalDate, CalendarType) {
 	"use strict";
 
-	// Add asserts for comparison of numeric values
-	QUnit.assert.greaterOrEqual = function greaterOrEqual(actual, expected, message) {
-		this.pushResult({
-			result: actual >= expected,
-			actual: actual,
-			expected: expected,
-			message: message
-		});
-	};
-
-	QUnit.assert.lessOrEqual = function greaterOrEqual(actual, expected, message) {
-		this.pushResult({
-			result: actual <= expected,
-			actual: actual,
-			expected: expected,
-			message: message
-		});
-	};
-
 	var testDate = function(assert, oDate, iDuration, sUnit, iFullYear, iMonth, iDate, iHours, iMinutes, iSecond, iMilliseconds) {
 		assert.strictEqual(oDate.getFullYear(), iFullYear, "getRange " + iDuration +  " " + sUnit + ": year set correctly");
 		assert.strictEqual(oDate.getMonth(), iMonth, "getRange " + iDuration +  " " + sUnit + ": month set correctly");
@@ -34,6 +15,8 @@ sap.ui.define([
 		assert.strictEqual(oDate.getSeconds(), iSecond, "getRange " + iDuration +  " " + sUnit + ": seconds set correctly");
 		assert.strictEqual(oDate.getMilliseconds(), iMilliseconds, "getRange " + iDuration +  " " + sUnit + ": milliseconds set correctly");
 	};
+
+	QUnit.module("sap.ui.core.date.UniversalDateUtils");
 
 	QUnit.test("Static Methods Test", function (assert) {
 		var oUDate = UniversalDateUtils.resetStartTime(new UniversalDate());
@@ -206,11 +189,11 @@ sap.ui.define([
 	QUnit.test("Checking ranges", function (assert) {
 		var oDate1 = UniversalDateUtils.getWeekStartDate(new UniversalDate());
 		var oDate2 = UniversalDateUtils.getWeekStartDate();
-		assert.greaterOrEqual(oDate2.getTime() - oDate1.getTime(), 0, "UniversalDateUtils.getWeekStartDate without date");
+		assert.ok(oDate2.getTime() - oDate1.getTime() >= 0, "UniversalDateUtils.getWeekStartDate without date");
 
 		oDate1 = UniversalDateUtils.getMonthStartDate(new UniversalDate());
 		oDate2 = UniversalDateUtils.getMonthStartDate();
-		assert.greaterOrEqual(oDate2.getTime() - oDate1.getTime(), 0, "UniversalDateUtils.getMonthStartDate without date");
+		assert.ok(oDate2.getTime() - oDate1.getTime() >= 0, "UniversalDateUtils.getMonthStartDate without date");
 
 		oDate1 = UniversalDateUtils.getQuarterStartDate(new UniversalDate(2000, 8, 12));
 		assert.strictEqual(oDate1.getMonth(), 6, "UniversalDateUtils.getQuarterStartDate returns Month 6");
