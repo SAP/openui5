@@ -3939,6 +3939,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Export Button ButtonType for different Themes", function (assert) {
+		var iTimeout = QUnit.config.testTimeout;
+		QUnit.config.testTimeout = 50000; //BCP: 2270148312
 		var done = assert.async();
 		//Default theme must not be first
 		var aThemes = ["sap_bluecrystal", "sap_belize", "sap_horizon", "sap_horizon_dark", "sap_horizon_hcb", "sap_horizon_hcw", "sap_fiori_3"];
@@ -3967,6 +3969,7 @@ sap.ui.define([
 			assert.deepEqual(this.oTable._oExportButton.getType(), fnGetExpectedTheme(sTheme), "Export button ButtonType equals to expected Theme styling, Theme: " + sTheme);
 			if (sTheme === aThemes.at(-1)){
 				Core.detachThemeChanged(fnThemeChanged);
+				QUnit.config.testTimeout = iTimeout;
 				done();
 			} else {
 				var iPosition = aThemes.indexOf(sTheme);
