@@ -3,8 +3,23 @@
  */
 
 // Provides class sap.ui.core.date.UniversalDate
-sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars', 'sap/ui/core/Configuration'],
-	function(BaseObject, LocaleData, _Calendars, Configuration) {
+sap.ui.define([
+	'sap/ui/base/Object',
+	'sap/ui/core/Configuration',
+	'sap/ui/core/Locale',
+	'sap/ui/core/LocaleData',
+	'./_Calendars',
+	'./CalendarUtils',
+	'./CalendarWeekNumbering'
+], function(
+	BaseObject,
+	Configuration,
+	Locale,
+	LocaleData,
+	_Calendars,
+	CalendarUtils,
+	CalendarWeekNumbering
+) {
 	"use strict";
 
 
@@ -155,60 +170,96 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars', '
 	/**
 	 * Retrieves the calendar week
 	 *
-	 * @param {sap.ui.core.Locale} oLocale the locale used to get the calendar week calculation properties, defaults to the formatLocale
-	 * @param {{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} oWeekConfig calendar week calculation parameters,
-	 *   defaults to oLocale but has precedence over oLocale if both are provided.
-	 * @returns {{week: number, year: number}} resulting calendar week, note: week index starts with <code>0</code>
+	 * @param {sap.ui.core.Locale} [oLocale] the locale used to get the calendar week calculation properties, defaults to the formatLocale
+	 * @param {sap.ui.core.date.CalendarWeekNumbering|{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [vCalendarWeekNumbering]
+	 *   calendar week numbering or object with fields <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code>,
+	 *   the default is derived from <code>oLocale</code> but this parameter has precedence over oLocale if both are provided.
+	 *   In case an object is provided, both properties <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code> must be set, otherwise an error is thrown.
+	 *   If calendar week numbering is not determined from the locale then {@link LocaleData#firstDayStartsFirstWeek} is ignored.
+	 *   e.g. <code>{firstDayOfWeek: 1, minimalDaysInFirstWeek: 4}</code>
+	 * @returns {{week: int, year: int}} resulting calendar week, note: week index starts with <code>0</code>
 	 * @private
+	 * @throws {TypeError} If:
+	 * <ul>
+	 *   <li>vCalendarWeekNumbering is an object and the fields <code>firstDayOfWeek</code> or <code>minimalDaysInFirstWeek</code>) are missing or have a non-numeric value</li>
+	 *   <li>vCalendarWeekNumbering is a string and has an invalid week numbering value</li>
+	 * </ul>
 	 */
-	UniversalDate.prototype.getWeek = function(oLocale, oWeekConfig) {
-		checkWeekConfig(oWeekConfig);
-		return UniversalDate.getWeekByDate(this.sCalendarType, this.getFullYear(), this.getMonth(), this.getDate(), oLocale, oWeekConfig);
+	UniversalDate.prototype.getWeek = function(oLocale, vCalendarWeekNumbering) {
+		checkWeekConfig(vCalendarWeekNumbering);
+		return UniversalDate.getWeekByDate(this.sCalendarType, this.getFullYear(), this.getMonth(), this.getDate(), oLocale, vCalendarWeekNumbering);
 	};
 
 	/**
 	 * Sets the calendar week
 	 *
-	 * @param {{week: number, year: number}} oWeek the calendar week, note: week index starts with <code>0</code>,
+	 * @param {{week: int, year: int}} oWeek the calendar week, note: week index starts with <code>0</code>,
 	 *   <code>oWeek.year</code> is optional and defaults to {@link sap.ui.core.date.UniversalDate#getFullYear}
-	 * @param {sap.ui.core.Locale} oLocale the locale used to get the calendar week calculation properties, defaults to the formatLocale
-	 * @param {{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} oWeekConfig calendar week calculation parameters,
-	 *   defaults to oLocale but has precedence over oLocale if both are provided.
+	 * @param {sap.ui.core.Locale} [oLocale] the locale used to get the calendar week calculation properties, defaults to the formatLocale
+	 * @param {sap.ui.core.date.CalendarWeekNumbering|{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [vCalendarWeekNumbering]
+	 *   calendar week numbering or object with fields <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code>,
+	 *   the default is derived from <code>oLocale</code> but this parameter has precedence over oLocale if both are provided.
+	 *   In case an object is provided, both properties <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code> must be set, otherwise an error is thrown.
+	 *   If calendar week numbering is not determined from the locale then {@link LocaleData#firstDayStartsFirstWeek} is ignored.
+	 *   e.g. <code>{firstDayOfWeek: 1, minimalDaysInFirstWeek: 4}</code>
 	 * @private
+	 * @throws {TypeError} If:
+	 * <ul>
+	 *   <li>vCalendarWeekNumbering is an object and the fields <code>firstDayOfWeek</code> or <code>minimalDaysInFirstWeek</code>) are missing or have a non-numeric value</li>
+	 *   <li>vCalendarWeekNumbering is a string and has an invalid week numbering value</li>
+	 * </ul>
 	 */
-	UniversalDate.prototype.setWeek = function(oWeek, oLocale, oWeekConfig) {
-		checkWeekConfig(oWeekConfig);
-		var oDate = UniversalDate.getFirstDateOfWeek(this.sCalendarType, oWeek.year || this.getFullYear(), oWeek.week, oLocale, oWeekConfig);
+	UniversalDate.prototype.setWeek = function(oWeek, oLocale, vCalendarWeekNumbering) {
+		checkWeekConfig(vCalendarWeekNumbering);
+		var oDate = UniversalDate.getFirstDateOfWeek(this.sCalendarType, oWeek.year || this.getFullYear(), oWeek.week, oLocale, vCalendarWeekNumbering);
 		this.setFullYear(oDate.year, oDate.month, oDate.day);
 	};
 
 	/**
 	 * Retrieves the UTC calendar week
 	 *
-	 * @param {sap.ui.core.Locale} oLocale the locale used to get the calendar week calculation properties, defaults to the formatLocale
-	 * @param {{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} oWeekConfig calendar week calculation parameters,
-	 *   defaults to oLocale but has precedence over oLocale if both are provided.
-	 * @returns {{week: number, year: number}} resulting calendar week, note: week index starts with <code>0</code>
+	 * @param {sap.ui.core.Locale} [oLocale] the locale used to get the calendar week calculation properties, defaults to the formatLocale
+	 * @param {sap.ui.core.date.CalendarWeekNumbering|{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [vCalendarWeekNumbering]
+	 *   calendar week numbering or object with fields <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code>,
+	 *   the default is derived from <code>oLocale</code> but this parameter has precedence over oLocale if both are provided.
+	 *   In case an object is provided, both properties <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code> must be set, otherwise an error is thrown.
+	 *   If calendar week numbering is not determined from the locale then {@link LocaleData#firstDayStartsFirstWeek} is ignored.
+	 *   e.g. <code>{firstDayOfWeek: 1, minimalDaysInFirstWeek: 4}</code>
+	 * @returns {{week: int, year: int}} resulting calendar week, note: week index starts with <code>0</code>
 	 * @private
+	 * @throws {TypeError} If:
+	 * <ul>
+	 *   <li>vCalendarWeekNumbering is an object and the fields <code>firstDayOfWeek</code> or <code>minimalDaysInFirstWeek</code>) are missing or have a non-numeric value</li>
+	 *   <li>vCalendarWeekNumbering is a string and has an invalid week numbering value</li>
+	 * </ul>
 	 */
-	UniversalDate.prototype.getUTCWeek = function(oLocale, oWeekConfig) {
-		checkWeekConfig(oWeekConfig);
-		return UniversalDate.getWeekByDate(this.sCalendarType, this.getUTCFullYear(), this.getUTCMonth(), this.getUTCDate(), oLocale, oWeekConfig);
+	UniversalDate.prototype.getUTCWeek = function(oLocale, vCalendarWeekNumbering) {
+		checkWeekConfig(vCalendarWeekNumbering);
+		return UniversalDate.getWeekByDate(this.sCalendarType, this.getUTCFullYear(), this.getUTCMonth(), this.getUTCDate(), oLocale, vCalendarWeekNumbering);
 	};
 
 	/**
 	 * Sets the UTC calendar week
 	 *
-	 * @param {{week: number, year: number}} oWeek the calendar week, note: week index starts with <code>0</code>,
+	 * @param {{week: int, year: int}} oWeek the calendar week, note: week index starts with <code>0</code>,
 	 *   <code>oWeek.year</code> is optional and defaults to {@link sap.ui.core.date.UniversalDate#getFullYear}
-	 * @param {sap.ui.core.Locale} oLocale the locale used to get the calendar week calculation properties, defaults to the formatLocale
-	 * @param {{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} oWeekConfig calendar week calculation parameters,
-	 *   defaults to oLocale but has precedence over oLocale if both are provided.
+	 * @param {sap.ui.core.Locale} [oLocale] the locale used to get the calendar week calculation properties, defaults to the formatLocale
+	 * @param {sap.ui.core.date.CalendarWeekNumbering|{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [vCalendarWeekNumbering]
+	 *   calendar week numbering or object with fields <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code>,
+	 *   the default is derived from <code>oLocale</code> but this parameter has precedence over oLocale if both are provided.
+	 *   In case an object is provided, both properties <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code> must be set, otherwise an error is thrown.
+	 *   If calendar week numbering is not determined from the locale then {@link LocaleData#firstDayStartsFirstWeek} is ignored.
+	 *   e.g. <code>{firstDayOfWeek: 1, minimalDaysInFirstWeek: 4}</code>
 	 * @private
+	 * @throws {TypeError} If:
+	 * <ul>
+	 *   <li>vCalendarWeekNumbering is an object and the fields <code>firstDayOfWeek</code> or <code>minimalDaysInFirstWeek</code>) are missing or have a non-numeric value</li>
+	 *   <li>vCalendarWeekNumbering is a string and has an invalid week numbering value</li>
+	 * </ul>
 	 */
-	UniversalDate.prototype.setUTCWeek = function(oWeek, oLocale, oWeekConfig) {
-		checkWeekConfig(oWeekConfig);
-		var oDate = UniversalDate.getFirstDateOfWeek(this.sCalendarType, oWeek.year || this.getFullYear(), oWeek.week, oLocale, oWeekConfig);
+	UniversalDate.prototype.setUTCWeek = function(oWeek, oLocale, vCalendarWeekNumbering) {
+		checkWeekConfig(vCalendarWeekNumbering);
+		var oDate = UniversalDate.getFirstDateOfWeek(this.sCalendarType, oWeek.year || this.getFullYear(), oWeek.week, oLocale, vCalendarWeekNumbering);
 		this.setUTCFullYear(oDate.year, oDate.month, oDate.day);
 	};
 	UniversalDate.prototype.getQuarter = function() {
@@ -260,31 +311,35 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars', '
 	 * @param {int} iDay the date, e.g. <code>3</code>
 	 * @param {sap.ui.core.Locale} [oLocale] the locale used for the week calculation, if oWeekConfig is not provided (falls back to the formatLocale)
 	 *   e.g. <code>new Locale("de-DE")</code>
-	 * @param {{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [oWeekConfig] calendar week calculation parameters,
-	 *   defaults to oLocale but has precedence over oLocale if both are provided.
-	 *   Both properties firstDayOfWeek and minimalDaysInFirstWeek must be provided, otherwise it will be ignored.
-	 *   If provided US split week is ignored.
+	 * @param {sap.ui.core.date.CalendarWeekNumbering|{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [vCalendarWeekNumbering]
+	 *   calendar week numbering or object with fields <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code>,
+	 *   the default is derived from <code>oLocale</code> but this parameter has precedence over oLocale if both are provided.
+	 *   In case an object is provided, both properties <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code> must be set, otherwise an error is thrown.
+	 *   If calendar week numbering is not determined from the locale then {@link LocaleData#firstDayStartsFirstWeek} is ignored.
 	 *   e.g. <code>{firstDayOfWeek: 1, minimalDaysInFirstWeek: 4}</code>
-	 * @returns {{week: number, year: number}} resulting calendar week, note: week index starts with <code>0</code>, e.g. <code>{year: 2016, week: 8}</code>
+	 * @returns {{week: int, year: int}} resulting calendar week, note: week index starts with <code>0</code>, e.g. <code>{year: 2016, week: 8}</code>
 	 * @private
+	 * @throws {TypeError} If:
+	 * <ul>
+	 *   <li>vCalendarWeekNumbering is an object and the fields <code>firstDayOfWeek</code> or <code>minimalDaysInFirstWeek</code>) are missing or have a non-numeric value</li>
+	 *   <li>vCalendarWeekNumbering is a string and has an invalid week numbering value</li>
+	 * </ul>
 	 */
-	UniversalDate.getWeekByDate = function(sCalendarType, iYear, iMonth, iDay, oLocale, oWeekConfig) {
+	UniversalDate.getWeekByDate = function(sCalendarType, iYear, iMonth, iDay, oLocale, vCalendarWeekNumbering) {
+		checkWeekConfig(vCalendarWeekNumbering);
 		oLocale = oLocale || Configuration.getFormatSettings().getFormatLocale();
-		var oLocaleData = LocaleData.getInstance(oLocale);
 		var clDate = this.getClass(sCalendarType);
-		var oFirstDay = getFirstDayOfFirstWeek(clDate, iYear, oLocale, oWeekConfig);
+		var oFirstDay = getFirstDayOfFirstWeek(clDate, iYear, oLocale, vCalendarWeekNumbering);
 		var oDate = new clDate(clDate.UTC(iYear, iMonth, iDay));
 		var iWeek, iLastYear, iNextYear, oLastFirstDay, oNextFirstDay;
-		// If region is US, always calculate the week for the current year, otherwise
-		// the week might be the last week of the previous year or first week of next year
-		var bSplitWeek = (!oWeekConfig || oWeekConfig.minimalDaysInFirstWeek === undefined || oWeekConfig.firstDayOfWeek === undefined) && oLocaleData.firstDayStartsFirstWeek();
+		var bSplitWeek = isSplitWeek(vCalendarWeekNumbering, oLocale);
 		if (bSplitWeek) {
 			iWeek = calculateWeeks(oFirstDay, oDate);
 		} else {
 			iLastYear = iYear - 1;
 			iNextYear = iYear + 1;
-			oLastFirstDay = getFirstDayOfFirstWeek(clDate, iLastYear, oLocale, oWeekConfig);
-			oNextFirstDay = getFirstDayOfFirstWeek(clDate, iNextYear, oLocale, oWeekConfig);
+			oLastFirstDay = getFirstDayOfFirstWeek(clDate, iLastYear, oLocale, vCalendarWeekNumbering);
+			oNextFirstDay = getFirstDayOfFirstWeek(clDate, iNextYear, oLocale, vCalendarWeekNumbering);
 			if (oDate >= oNextFirstDay) {
 				iYear = iNextYear;
 				iWeek = 0;
@@ -309,23 +364,27 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars', '
 	 * @param {int} iWeek the calendar week index, e.g. <code>8</code>
 	 * @param {sap.ui.core.Locale} [oLocale] the locale used for the week calculation, if oWeekConfig is not provided (falls back to the formatLocale)
 	 *   e.g. <code>new Locale("de-DE")</code>
-	 * @param {{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [oWeekConfig] calendar week calculation parameters,
-	 *   defaults to oLocale but has precedence over oLocale if both are provided.
-	 *   Both properties firstDayOfWeek and minimalDaysInFirstWeek must be provided, otherwise it will be ignored.
-	 *   If provided US split week is ignored.
+	 * @param {sap.ui.core.date.CalendarWeekNumbering|{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [vCalendarWeekNumbering]
+	 *   calendar week numbering or object with fields <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code>,
+	 *   the default is derived from <code>oLocale</code> but this parameter has precedence over oLocale if both are provided.
+	 *   In case an object is provided, both properties <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code> must be set, otherwise an error is thrown.
+	 *   If calendar week numbering is not determined from the locale then {@link LocaleData#firstDayStartsFirstWeek} is ignored.
 	 *   e.g. <code>{firstDayOfWeek: 1, minimalDaysInFirstWeek: 4}</code>
-	 * @returns {{month: number, year: number, day: number}} the resulting date, e.g. <code>{year: 2016, month: 1, day: 29}</code>
+	 * @returns {{month: int, year: int, day: int}} the resulting date, e.g. <code>{year: 2016, month: 1, day: 29}</code>
 	 * @private
+	 * @throws {TypeError} If:
+	 * <ul>
+	 *   <li>vCalendarWeekNumbering is an object and the fields <code>firstDayOfWeek</code> or <code>minimalDaysInFirstWeek</code>) are missing or have a non-numeric value</li>
+	 *   <li>vCalendarWeekNumbering is a string and has an invalid week numbering value</li>
+	 * </ul>
 	 */
-	UniversalDate.getFirstDateOfWeek = function(sCalendarType, iYear, iWeek, oLocale, oWeekConfig) {
+	UniversalDate.getFirstDateOfWeek = function(sCalendarType, iYear, iWeek, oLocale, vCalendarWeekNumbering) {
+		checkWeekConfig(vCalendarWeekNumbering);
 		oLocale = oLocale || Configuration.getFormatSettings().getFormatLocale();
-		var oLocaleData = LocaleData.getInstance(oLocale);
 		var clDate = this.getClass(sCalendarType);
-		var oFirstDay = getFirstDayOfFirstWeek(clDate, iYear, oLocale, oWeekConfig);
+		var oFirstDay = getFirstDayOfFirstWeek(clDate, iYear, oLocale, vCalendarWeekNumbering);
 		var oDate = new clDate(oFirstDay.valueOf() + iWeek * iMillisecondsInWeek);
-		//If first day of week is in last year and region is US, return the
-		//1st of January instead for symmetric behaviour
-		var bSplitWeek = (!oWeekConfig || oWeekConfig.minimalDaysInFirstWeek === undefined || oWeekConfig.firstDayOfWeek === undefined) && oLocaleData.firstDayStartsFirstWeek();
+		var bSplitWeek = isSplitWeek(vCalendarWeekNumbering, oLocale);
 		if (bSplitWeek && iWeek === 0 && oFirstDay.getUTCFullYear() < iYear) {
 			return {
 				year: iYear,
@@ -340,13 +399,84 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars', '
 		};
 	};
 
-	function checkWeekConfig(oWeekConfig) {
-		if (oWeekConfig) {
-			if (oWeekConfig.firstDayOfWeek === undefined && oWeekConfig.minimalDaysInFirstWeek !== undefined
-			|| oWeekConfig.firstDayOfWeek !== undefined && oWeekConfig.minimalDaysInFirstWeek === undefined) {
-				throw new Error("Week config requires both firstDayOfWeek and minimalDaysInFirstWeek to be set");
+	/**
+	 * Determines if the split week algorithm should be applied (the first day of the first calendar
+	 * week of the year is January 1st).
+	 *
+	 * @param {sap.ui.core.date.CalendarWeekNumbering|{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [vCalendarWeekNumbering]
+	 *   calendar week numbering or object with fields <code>firstDayOfWeek</code> and
+	 *   <code>minimalDaysInFirstWeek</code>
+	 * @param {sap.ui.core.Locale} [oLocale] the locale used for the week calculation
+	 * @returns {boolean} if the split week should be applied
+	 * @private
+	 */
+	function isSplitWeek(vCalendarWeekNumbering, oLocale) {
+		oLocale = oLocale || Configuration.getFormatSettings().getFormatLocale();
+		var oLocaleData = LocaleData.getInstance(oLocale);
+		return (!isCalendarWeekConfigurationDefined(vCalendarWeekNumbering) ||
+			vCalendarWeekNumbering === CalendarWeekNumbering.Default)
+			&& oLocaleData.firstDayStartsFirstWeek();
+	}
+
+	/**
+	 * Checks the calendar week configuration
+	 *
+	 * @param {sap.ui.core.date.CalendarWeekNumbering|{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [vCalendarWeekNumbering]
+	 *   calendar week numbering or object with fields <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code>
+	 * @throws {TypeError} If:
+	 * <ul>
+	 *   <li>vCalendarWeekNumbering is an object and the fields <code>firstDayOfWeek</code> or <code>minimalDaysInFirstWeek</code>) are missing or have a non-numeric value</li>
+	 *   <li>vCalendarWeekNumbering is a string and has an invalid week numbering value</li>
+	 * </ul>
+	 * @private
+	 */
+	function checkWeekConfig(vCalendarWeekNumbering) {
+		if (typeof vCalendarWeekNumbering === "object") {
+			if (!isCalendarWeekConfigurationDefined(vCalendarWeekNumbering)) {
+				throw new TypeError("Week config requires firstDayOfWeek and minimalDaysInFirstWeek to be set");
 			}
+		} else if (vCalendarWeekNumbering && !Object.values(CalendarWeekNumbering).includes(vCalendarWeekNumbering)) {
+			throw new TypeError("Illegal format option calendarWeekNumbering: '" + vCalendarWeekNumbering + "'");
 		}
+	}
+
+	/**
+	 * Checks if the calendar week configuration is defined
+	 *
+	 * @param {sap.ui.core.date.CalendarWeekNumbering|{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [vCalendarWeekNumbering]
+	 *   the parameter which is checked
+	 * @returns {boolean} if the parameter vCalendarWeekNumbering is defined and in case of an
+	 *   object has the required properties <code>firstDayOfWeek</code> and
+	 *   <code>minimalDaysInFirstWeek</code> defined with a numeric value
+	 * @private
+	 */
+	function isCalendarWeekConfigurationDefined (vCalendarWeekNumbering) {
+		if (typeof vCalendarWeekNumbering === "object") {
+			return typeof vCalendarWeekNumbering.firstDayOfWeek === "number"
+				&& typeof vCalendarWeekNumbering.minimalDaysInFirstWeek === "number";
+		} else if (vCalendarWeekNumbering) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Resolves the calendar week configuration
+	 *
+	 * @param {sap.ui.core.date.CalendarWeekNumbering|{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [vCalendarWeekNumbering]
+	 *   calendar week numbering or object with fields <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code>
+	 * @param {sap.ui.core.Locale} [oLocale] locale to be used
+	 * @returns {{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} calendar week calculation configuration
+	 * @private
+	 */
+	 function resolveCalendarWeekConfiguration (vCalendarWeekNumbering, oLocale) {
+		// be backward compatible
+		if (typeof vCalendarWeekNumbering === "object"
+				&& typeof vCalendarWeekNumbering.firstDayOfWeek === "number"
+				&& typeof vCalendarWeekNumbering.minimalDaysInFirstWeek === "number") {
+			return vCalendarWeekNumbering;
+		}
+		return CalendarUtils.getWeekConfigurationValues(vCalendarWeekNumbering, oLocale);
 	}
 
 	/**
@@ -356,26 +486,20 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData', './_Calendars', '
 	 * @param {int} iYear year, e.g. <code>2016</code>
 	 * @param {sap.ui.core.Locale} [oLocale] the locale used for the week calculation, if oWeekConfig is not provided (falls back to the formatLocale)
 	 *   e.g. <code>new Locale("de-DE")</code>
-	 * @param {{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [oWeekConfig] calendar week calculation parameters,
-	 *   defaults to oLocale but has precedence over oLocale if both are provided.
-	 *   Both properties firstDayOfWeek and minimalDaysInFirstWeek must be provided, otherwise it will be ignored.
-	 *   If provided US split week is ignored.
+	 * @param {sap.ui.core.date.CalendarWeekNumbering|{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [vCalendarWeekNumbering]
+	 *   calendar week numbering or object with fields <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code>,
+	 *   the default is derived from <code>oLocale</code> but this parameter has precedence over oLocale if both are provided.
 	 *   e.g. <code>{firstDayOfWeek: 1, minimalDaysInFirstWeek: 4}</code>
 	 * @returns {Date} first day of the first week in the given year, e.g. <code>Mon Jan 04 2016 01:00:00 GMT+0100</code>
 	 * @private
 	 */
-	function getFirstDayOfFirstWeek(clDate, iYear, oLocale, oWeekConfig) {
+	function getFirstDayOfFirstWeek(clDate, iYear, oLocale, vCalendarWeekNumbering) {
 		oLocale = oLocale || Configuration.getFormatSettings().getFormatLocale();
-		var oLocaleData = LocaleData.getInstance(oLocale);
-		var iMinDays;
-		var iFirstDayOfWeek;
-		if (oWeekConfig && oWeekConfig.minimalDaysInFirstWeek !== undefined && oWeekConfig.firstDayOfWeek !== undefined) {
-			iMinDays = oWeekConfig.minimalDaysInFirstWeek;
-			iFirstDayOfWeek = oWeekConfig.firstDayOfWeek;
-		} else {
-			iMinDays = oLocaleData.getMinimalDaysInFirstWeek();
-			iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
-		}
+
+		var oWeekConfig = resolveCalendarWeekConfiguration(vCalendarWeekNumbering, oLocale);
+		var iMinDays = oWeekConfig.minimalDaysInFirstWeek;
+		var iFirstDayOfWeek = oWeekConfig.firstDayOfWeek;
+
 		var oFirstDay = new clDate(clDate.UTC(iYear, 0, 1));
 		var iDayCount = 7;
 
