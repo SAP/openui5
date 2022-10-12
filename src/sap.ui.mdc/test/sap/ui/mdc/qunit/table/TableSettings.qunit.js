@@ -234,7 +234,7 @@ sap.ui.define([
 				iCalled = 0;
 
 				// Two RowActionItems with only one pressed
-				oRowSettings.getRowActions()[0].detachEvent("press", testOnFirePress);
+				oRowSettings.getRowActions()[0].detachEvent("press", testOnFirePress, this);
 				that.oTable.setRowSettings(oRowSettings);
 				Core.applyChanges();
 
