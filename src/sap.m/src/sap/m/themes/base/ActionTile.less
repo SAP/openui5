@@ -28,6 +28,10 @@
     }
 }
 
+.sapMAT.sapMATHideActionButton {
+    height: 19.625rem;
+ }
+
 .sapMAT:hover {
     background-color: @sapTile_Hover_Background;
     box-shadow:  @sapContent_Shadow2;
@@ -56,7 +60,7 @@
         margin-bottom: 0.75rem;
     }
     .sapMATC {
-    height: 13.375rem;
+    height: 14.375rem;
      overflow: hidden;
      .sapMTilePriorityValue {
          font-size: 0.875rem;
@@ -78,7 +82,7 @@
      .sapMContainer {
              display: flex;
              flex-direction: column;
-             gap: 0.875rem;
+             gap: 1rem;
          .sapMElementWrapper {
              display: flex;
              flex-direction: column;
@@ -111,12 +115,17 @@
     }
     .sapMATActionModeContainer {
      position: absolute;
-     bottom: 1rem;
+     bottom: 0.9rem;
      right: 1rem;
+    }
+    &.sapMATHideActionButton {
+        .sapMATActionModeContainer {
+            display: none;
+        }
     }
  }
 
- .sapMAT.sapMToDoCard:focus {
+ .sapMAT:focus {
     .sapMATFocusDiv{
         position: absolute;
         border: 2px solid @sapContent_FocusColor;
@@ -225,6 +234,21 @@
             }
         }
     }
+    &.sapMATHideActionButton {
+        .sapMTileCntContent {
+            .sapMFT {
+                span {
+                    -webkit-line-clamp: 14 !important;
+                }
+                p + span {
+                    -webkit-line-clamp: 12 !important;
+                }
+            }
+        }
+        .sapMGTActionModeContainer {
+            display: none;
+        }
+    }
 }
 
 .sapMAT.sapMATSituationCard:focus {
@@ -234,6 +258,9 @@
         border-radius:  1.25rem;
         inset: 0px;
         pointer-events: none;
+    }
+    .sapMATFocusDiv{
+        border-radius:  1.25rem;
     }
  }
 
@@ -251,3 +278,19 @@
         }
     }
 }
+
+.sapMAT.sapMATStateLoading.sapMATHideActionButton {
+    .sapMGTContentShimmerPlaceholderItem {
+        height: 17.5rem;
+        justify-content: space-evenly;
+        padding: 0px;
+        .sapMGTContentShimmerPlaceholderRows {
+                .sapMGTContentShimmerPlaceholderItemHeader,.sapMGTContentShimmerPlaceholderItemText {
+                    margin-top: 0;
+                }
+                .sapMGTContentShimmerPlaceholderItemText {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }

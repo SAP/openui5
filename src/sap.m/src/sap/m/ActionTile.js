@@ -65,6 +65,11 @@ sap.ui.define([
         if (this.getHeaderImage()) {
             this.addStyleClass("sapMATSituationCard");
         }
+        if (this.getEnableNavigationButton()) {
+            this.removeStyleClass("sapMATHideActionButton");
+        } else {
+            this.addStyleClass("sapMATHideActionButton");
+        }
         GenericTile.prototype.onBeforeRendering.apply(this, arguments);
     };
 

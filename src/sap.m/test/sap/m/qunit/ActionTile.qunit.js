@@ -190,4 +190,19 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.ok(this.oToDo.getDomRef().classList.contains("sapMATAutoPointer"),"Hand icon won't be visible");
 	});
+
+	QUnit.test("Setting enableNavigationButton property", function(assert) {
+		//Assert
+		assert.notOk(this.oToDo.getEnableNavigationButton(),"By default enableActionButton property has been set to false");
+		assert.ok(this.oToDo.hasStyleClass("sapMATHideActionButton"),"Style class has been added sucessfully");
+		assert.notOk(this.oSituation.getEnableNavigationButton(),"By default enableActionButton property has been set to false");
+		assert.ok(this.oSituation.hasStyleClass("sapMATHideActionButton"),"Style class has been added sucessfully");
+		//Arrange
+		this.oToDo.setEnableNavigationButton(true);
+		this.oSituation.setEnableNavigationButton(true);
+		oCore.applyChanges();
+		//Assert
+		assert.notOk(this.oToDo.hasStyleClass("sapMATHideActionButton"),"Style class should not get added");
+		assert.notOk(this.oSituation.hasStyleClass("sapMATHideActionButton"),"Style class should not get added");
+	});
 });
