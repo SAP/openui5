@@ -149,22 +149,26 @@ sap.ui.define([
 		}, 500);
 	});
 
+	QUnit.test("Default aria roles on the slide tile", function(assert) {
+		assert.equal(this.oSlideTile.getDomRef().getAttribute("aria-roledescription"), "SlideTile", "SlideTile has been set as the default aria-roledescription");
+		assert.equal(this.oSlideTile.getDomRef().getAttribute("role"), "application", "Application has been set as the default role");
+	});
+
 	QUnit.test("Test ARIA label for single content in Display scope", function(assert) {
 		//Arrange
-		var sExpectedText = "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+		var sExpectedText = "1 of 1 "  + this.oSlideTile._oRb.getText("SLIDETILE_NORMAL")  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
 		oCore.applyChanges();
 
 		//Assert
-		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
+		assert.equal(this.oSlideTile.getAggregation("_invisibleText").getText(), sExpectedText, "SlideTile contains expected ARIA-label attribute");
 	});
 
 	QUnit.test("Test ARIA label for single content in Actions scope", function(assert) {
 		//Arrange
-		var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" +
-			"Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+		var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" + "1 of 1 "  + this.oSlideTile._oRb.getText("SLIDETILE_NORMAL")  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2"  + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
 		this.oSlideTile.setScope(GenericTileScope.Actions);
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
@@ -172,23 +176,25 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		//Assert
-		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
+		assert.equal(this.oSlideTile.getAggregation("_invisibleText").getText(), sExpectedText, "SlideTile contains expected ARIA-label attribute");
+		assert.equal(this.oSlideTile.getDomRef().getAttribute("aria-describedby"),this.oSlideTile.getAggregation("_invisibleText").getId(), "ARIA-describedby has invisible text id");
 	});
 
 	QUnit.test("Test ARIA label for multiple contents in Display scope, Tile is sliding", function(assert) {
 		//Arrange
-		var sExpectedText = "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+		var sExpectedText = "1 of 3 "  + this.oSlideTile._oRb.getText("SLIDETILE_NORMAL")  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
 
 		//Assert
-		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
+		assert.equal(this.oSlideTile.getAggregation("_invisibleText").getText(), sExpectedText, "SlideTile contains expected ARIA-label attribute");
+		assert.equal(this.oSlideTile.getDomRef().getAttribute("aria-describedby"),this.oSlideTile.getAggregation("_invisibleText").getId(), "ARIA-describedby has invisible text id");
 	});
 
 	QUnit.test("Test ARIA label for multiple contents in Display scope, sliding is stopped", function(assert) {
 		//Arrange
-		var sExpectedText = "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+		var sExpectedText = "1 of 3 "  + this.oSlideTile._oRb.getText("SLIDETILE_PAUSE")  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_MULTIPLE_CONTENT") + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_TOGGLE_SLIDING") + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_SCROLL_BACK") + "\n" +
@@ -197,19 +203,18 @@ sap.ui.define([
 		this.oSlideTile._toggleAnimation();
 
 		//Assert
-		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
+		assert.equal(this.oSlideTile.getAggregation("_invisibleText").getText(), sExpectedText, "SlideTile contains expected ARIA-label attribute");
 	});
 
 	QUnit.test("Test ARIA label for multiple content in Actions scope", function(assert) {
 		//Arrange
-		var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" +
-			"Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
+		var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" + "1 of 3 "  + this.oSlideTile._oRb.getText("SLIDETILE_NORMAL")  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2"  + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
 		this.oSlideTile.setScope(GenericTileScope.Actions);
 		oCore.applyChanges();
 
 		//Assert
-		assert.equal(this.oSlideTile.$().attr("aria-label"), sExpectedText, "SlideTile contains expected ARIA-label attribute");
+		assert.equal(this.oSlideTile.getAggregation("_invisibleText").getText(), sExpectedText, "SlideTile contains expected ARIA-label attribute");
 	});
 
 	QUnit.test("Test sliding active per default", function(assert) {
@@ -549,11 +554,11 @@ sap.ui.define([
 				oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
 				oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
 				oResBundle.getText("SLIDETILE_ACTIVATE"),
-			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\n" + sAdditionalText;
+			sAriaLabelExpected = "3 of 3 "  + this.oSlideTile._oRb.getText("SLIDETILE_PAUSE") + "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6" + "\n" + sAdditionalText;
 		this.oSlideTile._toggleAnimation();
 		//Act
 		this.oSlideTile._scrollToNextTile(true, true);
-		sAriaLabel = this.oSlideTile.$().attr("aria-label");
+		sAriaLabel = this.oSlideTile.getAggregation("_invisibleText").getText();
 
 		//Assert
 		assert.equal(sAriaLabel, sAriaLabelExpected, "Expected backward animation done");
@@ -567,11 +572,11 @@ sap.ui.define([
 				oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
 				oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
 				oResBundle.getText("SLIDETILE_ACTIVATE"),
-			sAriaLabelExpected = "Tile 2 30 Neutral Footer 3 40 Neutral Footer 4\n" + sAdditionalText;
+			sAriaLabelExpected = "2 of 3 "  + this.oSlideTile._oRb.getText("SLIDETILE_PAUSE") + "Tile 2 30 Neutral Footer 3 40 Neutral Footer 4" + "\n" + sAdditionalText;
 		this.oSlideTile._toggleAnimation();
 		//Act
 		this.oSlideTile._scrollToNextTile(true, false);
-		sAriaLabel = this.oSlideTile.$().attr("aria-label");
+		sAriaLabel = this.oSlideTile.getAggregation("_invisibleText").getText();
 
 		//Assert
 		assert.equal(sAriaLabel, sAriaLabelExpected, "Expected forward animation done");
@@ -585,12 +590,12 @@ sap.ui.define([
 				oResBundle.getText("SLIDETILE_SCROLL_BACK") + "\n" +
 				oResBundle.getText("SLIDETILE_SCROLL_FORWARD") + "\n" +
 				oResBundle.getText("SLIDETILE_ACTIVATE"),
-			sAriaLabelExpected = "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6\n" + sAdditionalText;
+			sAriaLabelExpected = "3 of 3 "  + this.oSlideTile._oRb.getText("SLIDETILE_PAUSE") + "Tile 3 50 Neutral Footer 5 60 Neutral Footer 6"  + "\n" + sAdditionalText;
 		this.oSlideTile._toggleAnimation();
 		//Act
 		this.oSlideTile._scrollToNextTile(true, false);
 		this.oSlideTile._scrollToNextTile(true, false);
-		sAriaLabel = this.oSlideTile.$().attr("aria-label");
+		sAriaLabel = this.oSlideTile.getAggregation("_invisibleText").getText();
 		//Assert
 		assert.equal(sAriaLabel, sAriaLabelExpected, "Expected forward animation done");
 	});
@@ -1090,6 +1095,26 @@ var FrameType = library.FrameType;
 			document.querySelector("html").classList.add("sap-desktop");
 		}
 	});
+
+	QUnit.test("Slide Tile should get paused when the it gets focus on it", function(assert) {
+		var bForward = true;
+		this.oTile1 = this.createTile().placeAt("qunit-fixture");
+		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		document.getElementById(this.oTile1.getId()).focus();
+		assert.equal(document.activeElement.id, this.oTile1.getId(), "Focus on Tile1");
+
+		qutils.triggerKeydown(this.oTile1.getDomRef(), KeyCodes.TAB);
+
+		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], bForward);
+		if ($Tabbables.length) {
+			$Tabbables.get(!bForward ? $Tabbables.length - 1 : 0).focus();
+		}
+		assert.equal(document.activeElement.id, this.oSlideTile.getId(), "Focus on Slide Tile");
+		assert.ok(this.oSlideTile._bAnimationPause,"Tile has been paused on focus");
+	});
+
 	QUnit.test("Checking if the correct width has been applied when the gap is 1rem", function (assert) {
 		// Arrange
 		this.fnCreateGridContainer("1rem");

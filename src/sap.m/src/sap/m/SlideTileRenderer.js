@@ -55,8 +55,11 @@ sap.ui.define(['./library', "sap/base/security/encodeCSS"],
 		if (iLength > 1) {
 			oRm.attr("tabindex", "0");
 		}
-		oRm.attr("role", "presentation");
+		oRm.attr("role", "application");
+		oRm.attr("aria-roledescription", oControl._oRb.getText("SLIDETILE"));
 		oRm.openEnd();
+		oControl.getAggregation("_invisibleText");
+		oRm.renderControl(oControl.getAggregation("_invisibleText"));
 		if (iLength > 1 && sScope === GenericTileScope.Display) {
 			this._renderPausePlayIcon(oRm, oControl);
 			this._renderTilesIndicator(oRm, oControl);
@@ -75,6 +78,7 @@ sap.ui.define(['./library', "sap/base/security/encodeCSS"],
 	SlideTileRenderer._renderTiles = function(oRm, oControl, iLength) {
 		oRm.openStart("div");
 		oRm.class("sapMSTOverflowHidden");
+		oRm.attr("aria-hidden","true");
 		oRm.openEnd();
 		for (var i = 0; i < iLength; i++) {
 			oRm.openStart("div", oControl.getId() + "-wrapper-" + i );

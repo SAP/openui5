@@ -84,5 +84,16 @@ sap.ui.define([
         this.getDomRef().classList.remove("TwoByOne");
         this.getDomRef().classList.remove("sapMGTActionMode");
 	};
+
+    /**
+     * Returns the size description of the tile that is announced by the screen reader
+     *
+     * @returns {string} Text for the size description
+     * @private
+     */
+    ActionTile.prototype._getSizeDescription = function () {
+        return this._oRb.getText("ACTION_TILE_SIZE");
+    };
+
     return ActionTile;
 });

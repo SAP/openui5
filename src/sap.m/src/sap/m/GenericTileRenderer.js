@@ -17,8 +17,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 
 	var ValueColor = library.ValueColor;
 
-	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
 	/**
 	 * GenericTile renderer.
 	 * @namespace
@@ -134,11 +132,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 		}
 		if (sState === LoadState.Loaded) {
 			oRm.attr("aria-label", sAriaText);
-				}
+		}
 		if (sAriaRoleDescription) {
 			oRm.attr("aria-roledescription", sAriaRoleDescription );
-		} else {
-			oRm.attr("aria-roledescription", oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"));
 		}
 		if (sState !== LoadState.Disabled) {
 			if (!oControl.isInActionRemoveScope() && oControl.getPressEnabled()) {
@@ -165,6 +161,10 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/core/Conf
 			oRm.class("sapMGTNewsContent");
 		}
 		oRm.openEnd();
+		if (sTooltipText) {
+			oControl.getAggregation("_invisibleText").setText(sTooltipText);
+			oRm.renderControl(oControl.getAggregation("_invisibleText"));
+		}
 		var isFooterPresent = false;
 		var isContentPresent = false;
 		function renderLoadingShimmerIconMode(oRm, bIsLoading) {

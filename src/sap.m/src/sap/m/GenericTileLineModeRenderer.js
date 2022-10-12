@@ -12,8 +12,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 	// shortcut for sap.m.LoadState
 	var LoadState = library.LoadState;
 
-	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
 	/**
 	 * GenericTileLineMode renderer.
 	 * @namespace
@@ -72,8 +70,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 		oRm.attr("aria-label", sAriaText);
 		if (sAriaRoleDescription) {
 			oRm.attr("aria-roledescription", sAriaRoleDescription );
-		} else {
-			oRm.attr("aria-roledescription", oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"));
 		}
 		if (sAriaRole) {
 			oRm.attr("role", sAriaRole);
@@ -115,6 +111,10 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			oRm.class("sapMGTFailed");
 		}
 		oRm.openEnd();
+		if (sTooltipText) {
+			oControl.getAggregation("_invisibleText").setText(sTooltipText);
+			oRm.renderControl(oControl.getAggregation("_invisibleText"));
+		}
 		// focus div was only getting rendered when screen size was small
 		// which in turn was not rendering active state when screen size was large and thus default browser active state would suffice
 		// in the new line tile visualisation we need active state same as other generic tiles
