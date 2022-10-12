@@ -680,10 +680,12 @@ sap.ui.define([
 
 	Avatar.prototype._checkInitialsHolderWidth = function() {
 		var $this = this.$(),
-			iAvatarWidth = $this[0].scrollWidth;
+			iAvatarWidth = $this[0].scrollWidth,
+			iInitials = this.getInitials().length;
+
 		this.$oInitialsHolder = $this.children(".sapFAvatarInitialsHolder");
 
-		if (this.$oInitialsHolder.length !== 0 ) {
+		if (this.$oInitialsHolder.length !== 0 && iInitials === 3) {
 			this.iInitialsHolderWidth = this.$oInitialsHolder[0].scrollWidth;
 
 			if (this.iInitialsHolderWidth >= iAvatarWidth) {
