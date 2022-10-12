@@ -893,7 +893,8 @@ sap.ui.define([
 	 *   are combined with min/max or with grouping via sorter, or if the system query options
 	 *   "$expand" or "$select" are combined with pure data aggregation (no recursive hierarchy), or
 	 *   if the system query option "$search" is combined with grand totals or group levels or a
-	 *   recursive hierarchy
+	 *   recursive hierarchy, or if shared requests are combined with min/max or with grand totals
+	 *   or group levels or recursive hierarchy
 	 *
 	 * @public
 	 */
@@ -924,6 +925,9 @@ sap.ui.define([
 				if (oAggregation.hierarchyQualifier) {
 					throw new Error("Unsupported recursive hierarchy together with min/max");
 				}
+				if (bSharedRequest) {
+					throw new Error("Unsupported $$sharedRequest together with min/max");
+				}
 				checkExpandSelect();
 
 				return _MinMaxHelper.createCache(oRequestor, sResourcePath, oAggregation,
@@ -945,6 +949,9 @@ sap.ui.define([
 				}
 				if (bIsGrouped) {
 					throw new Error("Unsupported grouping via sorter");
+				}
+				if (bSharedRequest) {
+					throw new Error("Unsupported $$sharedRequest");
 				}
 
 				return new _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions,

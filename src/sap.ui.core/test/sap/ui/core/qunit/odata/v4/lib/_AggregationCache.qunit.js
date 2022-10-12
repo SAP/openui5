@@ -166,7 +166,6 @@ sap.ui.define([
 	//*********************************************************************************************
 [{
 	groupLevels : ["BillToParty"],
-	hasGrandTotal : false,
 	hasMinOrMax : true,
 	message : "Unsupported group levels together with min/max"
 }, {
@@ -177,37 +176,32 @@ sap.ui.define([
 	oAggregation : {
 		hierarchyQualifier : "X"
 	},
-	hasGrandTotal : false,
 	hasMinOrMax : true,
 	message : "Unsupported recursive hierarchy together with min/max"
 }, {
+	hasMinOrMax : true,
+	message : "Unsupported $$sharedRequest together with min/max",
+	bSharedRequest : true
+}, {
 	groupLevels : ["BillToParty"],
-	hasGrandTotal : false,
-	hasMinOrMax : false,
 	message : "Unsupported system query option: $filter",
 	queryOptions : {$filter : "answer eq 42"}
 }, {
 	hasGrandTotal : true,
-	hasMinOrMax : false,
 	message : "Unsupported system query option: $filter",
 	queryOptions : {$filter : "answer eq 42"}
 }, {
 	hasGrandTotal : true,
-	hasMinOrMax : false,
 	message : "Unsupported system query option: $search",
 	queryOptions : {$search : "blue OR green"}
 }, {
 	groupLevels : ["BillToParty"],
-	hasGrandTotal : false,
-	hasMinOrMax : false,
 	message : "Unsupported system query option: $search",
 	queryOptions : {$search : "blue OR green"}
 }, {
 	oAggregation : {
 		hierarchyQualifier : "X"
 	},
-	hasGrandTotal : false,
-	hasMinOrMax : false,
 	message : "Unsupported system query option: $search",
 	queryOptions : {$search : "blue OR green"}
 }, {
@@ -215,9 +209,21 @@ sap.ui.define([
 		hierarchyQualifier : "X"
 	},
 	bIsGrouped : true,
-	hasGrandTotal : false,
-	hasMinOrMax : false,
 	message : "Unsupported grouping via sorter"
+}, {
+	hasGrandTotal : true,
+	message : "Unsupported $$sharedRequest",
+	bSharedRequest : true
+}, {
+	groupLevels : ["BillToParty"],
+	message : "Unsupported $$sharedRequest",
+	bSharedRequest : true
+}, {
+	oAggregation : {
+		hierarchyQualifier : "X"
+	},
+	message : "Unsupported $$sharedRequest",
+	bSharedRequest : true
 }].forEach(function (oFixture) {
 	QUnit.test("create: " + oFixture.message, function (assert) {
 		var oAggregation = oFixture.oAggregation || {
@@ -238,7 +244,7 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			_AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions,
-				false, false, oFixture.bIsGrouped);
+				false, oFixture.bSharedRequest, oFixture.bIsGrouped);
 		}, new Error(oFixture.message));
 	});
 });
