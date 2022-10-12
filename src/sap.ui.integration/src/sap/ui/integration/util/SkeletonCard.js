@@ -35,7 +35,7 @@ sap.ui.define([
 	 * Resolves the card manifest to a static manifest.
 	 * Processes all bindings and translations then returns the result as a static manifest in which bindings and translations are resolved.
 	 *
-	 * @returns {Promise<string>} Promise which resolves with stringified manifest with resolved bindings and translations or rejects with an error message if there is an error.
+	 * @returns {Promise<object>} Promise which resolves with manifest with resolved bindings and translations or rejects with an error message if there is an error.
 	 */
 	SkeletonCard.prototype.resolveManifest = function () {
 		return ManifestResolver.resolveCard(this);

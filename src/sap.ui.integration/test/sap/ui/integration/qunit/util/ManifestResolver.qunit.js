@@ -58,7 +58,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 				assert.strictEqual(oRes["sap.card"].header.title, "Donna Moore", "Binding is resolved in the header");
@@ -114,7 +113,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 				assert.strictEqual(oRes["sap.card"].header.title, "Donna Moore", "Binding is resolved in the header");
@@ -169,7 +167,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 				assert.strictEqual(oRes["sap.card"].header.title, "Contact Details", "Double curly bracket translation syntax is resolved");
@@ -215,7 +212,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 				assert.strictEqual(oRes["sap.card"].header.title, "Contact Details", "Double curly bracket translation syntax is resolved");
@@ -278,7 +274,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 
@@ -317,7 +312,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 				assert.ok(true, "No error were thrown");
@@ -340,7 +334,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"message": {
@@ -399,7 +392,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"message": {
@@ -412,6 +404,65 @@ sap.ui.define([
 
 				// Assert
 				assert.deepEqual(oRes["sap.card"].content, oExpectedResult, "The content contains a message when there is error with data loading.");
+
+				oCard.destroy();
+			});
+	});
+
+	QUnit.test("There should be no 'undefined' values", function (assert) {
+		// Arrange
+		var oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"json": [
+						{
+							"training": "Scrum"
+						}
+					]
+				},
+				"content": {
+					"item": {
+						"title": "{ formatter: '' }"
+					}
+				}
+			}
+		};
+		var oCard = new SkeletonCard({
+				manifest: oManifest,
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+			});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(function (oRes) {
+				function hasUndefined(obj) {
+					var bFound = false;
+
+					for (var key in obj) {
+						if (obj[key] === undefined) {
+							bFound = true;
+						} else if (Array.isArray(obj[key])) {
+
+							bFound = obj[key].some(hasUndefined);
+						} else if (typeof obj[key] === 'object') {
+							bFound = hasUndefined(obj[key]);
+						}
+
+						if (bFound) {
+							return true;
+						}
+					}
+
+					return false;
+				}
+
+				// Assert
+				assert.notOk(hasUndefined(oRes), "The resolved manifest shouldn't contain any 'undefined' value.");
 
 				oCard.destroy();
 			});
@@ -468,7 +519,6 @@ sap.ui.define([
 	QUnit.test("Content binding is resolved against its own data", function (assert) {
 		// Act
 		return ManifestResolver.resolveCard(this.oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 				assert.strictEqual(oRes["sap.card"].content.groups[0].title, "value from content", "Value should be taken from the closest data section");
@@ -478,7 +528,6 @@ sap.ui.define([
 	QUnit.test("Header binding is resolved against its own data", function (assert) {
 		// Act
 		return ManifestResolver.resolveCard(this.oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 				assert.strictEqual(oRes["sap.card"].header.title, "value from header", "Value should be taken from the closest data section");
@@ -520,7 +569,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"groups": [
@@ -570,7 +618,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"message": {
@@ -657,7 +704,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"groups": [
@@ -818,7 +864,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"groups": [
@@ -1074,7 +1119,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"groups": [
@@ -1219,7 +1263,6 @@ sap.ui.define([
 
 		// Act
 		return oCard.resolveManifest()
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 				assert.deepEqual(oRes["sap.card"].content.groups[0].items, oExpectedItemsPage1, "content for first page is resolved correctly");
@@ -1230,7 +1273,6 @@ sap.ui.define([
 
 				return oCard.resolveManifest();
 			})
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 				assert.deepEqual(oRes["sap.card"].content.groups[0].items, oExpectedItemsPage2, "content for second page is resolved correctly");
@@ -1241,7 +1283,6 @@ sap.ui.define([
 
 				return oCard.resolveManifest();
 			})
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 				assert.deepEqual(oRes["sap.card"].content.groups[0].items, oExpectedItemsPage1, "content for first page is resolved correctly");
@@ -1300,7 +1341,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"headers": [
@@ -1381,7 +1421,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"message": {
@@ -1452,7 +1491,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"headers": [
@@ -1544,7 +1582,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 				assert.strictEqual(
@@ -1598,7 +1635,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 				assert.strictEqual(oRes["sap.card"].header.title, "Header: showing 2 of 5 items", "Should have correctly resolved predefined formatter");
@@ -1639,7 +1675,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 				assert.strictEqual(oRes["sap.card"].content.groups[0].items[0].title, "Training: Scrum", "Should have correctly resolved predefined formatter");
@@ -1681,7 +1716,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedResult = {
 					"groups": [
@@ -1745,7 +1779,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				// Assert
 				assert.strictEqual(oRes["sap.card"].content.message.type, "error", "an error message is returned");
@@ -1825,7 +1858,6 @@ sap.ui.define([
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
-			.then(JSON.parse)
 			.then(function (oRes) {
 				var oExpectedButtonGroup = {
 					"label": "Buttons",

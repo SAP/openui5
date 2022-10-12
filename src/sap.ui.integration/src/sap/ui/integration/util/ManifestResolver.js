@@ -33,7 +33,7 @@ sap.ui.define([
 	 * @memberof sap.ui.integration.util.ManifestResolver
 	 * @alias sap.ui.integration.util.ManifestResolver.resolveCard
 	 * @param {sap.ui.integration.widgets.Card} oCard The card to resolve.
-	 * @returns {Promise<string>} Promise which resolves with stringified manifest with resolved bindings and translations or rejects with an error message if there is an error.
+	 * @returns {Promise<object>} Promise which resolves with manifest with resolved bindings and translations or rejects with an error message if there is an error.
 	 * @private
 	 * @ui5-restricted Mobile SDK
 	 */
@@ -69,7 +69,7 @@ sap.ui.define([
 	 * Resolves the manifest when the card is ready.
 	 * @private
 	 * @param {sap.ui.integration.widgets.Card} oCard The card.
-	 * @returns {string} Stringified version of the resolved manifest.
+	 * @returns {Promise<object>} Resolved manifest.
 	 */
 	ManifestResolver._handleCardReady = function (oCard) {
 		var oManifest = oCard.getManifestEntry("/"),
@@ -122,7 +122,7 @@ sap.ui.define([
 				Utils.setNestedPropertyValue(oManifest, sManifestPath, oSubConfig);
 			});
 
-			return JSON.stringify(oManifest);
+			return Promise.resolve(JSON.parse(JSON.stringify(oManifest))); // remove undefined values
 		} catch (ex) {
 			return Promise.reject(ex);
 		}
@@ -133,7 +133,7 @@ sap.ui.define([
 	 * @private
 	 * @param {sap.ui.integration.widgets.Card} oCard The card.
 	 * @param {object} oError The error which was caught.
-	 * @returns {string} Stringified version of the resolved manifest.
+	 * @returns {object} Resolved manifest.
 	 */
 	ManifestResolver._handleCardSevereError = function (oCard, oError) {
 		var oManifest = oCard.getManifestEntry("/"),
@@ -151,7 +151,7 @@ sap.ui.define([
 			}
 		};
 
-		return JSON.stringify(oManifest);
+		return JSON.parse(JSON.stringify(oManifest)); // remove undefined values
 	};
 
 	return ManifestResolver;

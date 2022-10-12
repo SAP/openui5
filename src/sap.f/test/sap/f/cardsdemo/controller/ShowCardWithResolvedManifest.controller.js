@@ -29,8 +29,8 @@ sap.ui.define([
 				this._oChildCard = oChildCard;
 				// show oChildCard somewhere in mobile SDK
 				oChildCard.resolveManifest()
-					.then(function (sRes) {
-						oOutput2.setValue(JSON.stringify(JSON.parse(sRes), null, "\t"));
+					.then(function (oRes) {
+						oOutput2.setValue(JSON.stringify(oRes, null, "\t"));
 					});
 
 				// you can ignore oOriginalParameters, not really needed currently
@@ -45,8 +45,8 @@ sap.ui.define([
 			this._mainCard = oMainCard;
 
 			oMainCard.resolveManifest()
-				.then(function (sRes) {
-					oOutput1.setValue(JSON.stringify(JSON.parse(sRes), null, "\t"));
+				.then(function (oRes) {
+					oOutput1.setValue(JSON.stringify(oRes, null, "\t"));
 				});
 		},
 
