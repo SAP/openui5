@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/rta/plugin/RTAElementMover",
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/thirdparty/sinon-4',
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/dom/getFirstEditableInput"
 ], function (
 	elementActionTest,
 	ObjectPageLayout,
@@ -29,7 +30,8 @@ sap.ui.define([
 	RTAElementMover,
 	OverlayRegistry,
 	sinon,
-	oCore
+	oCore,
+	getFirstEditableInput
 ) {
 	"use strict";
 
@@ -504,5 +506,65 @@ sap.ui.define([
 		assert.equal(iWidth, 0, "The width of the DOM Element is calculated correctly");
 		//returning visibility of the parent element
 		oParentNode.style.display = "block";
+	});
+
+	QUnit.module("getFirstEditableInput method", {
+		beforeEach : function() {
+			var oSubSection = new ObjectPageSubSection("subsection", {});
+
+			this.oObjectPageSection = new ObjectPageSection("section", {
+				subSections: [oSubSection]
+			});
+
+			this.oObjectPageLayout = new ObjectPageLayout("layout", {
+				sections : [this.oObjectPageSection],
+				height: "150px"
+			});
+
+			this.btn = new Button("btn",{});
+
+			this.input1 = new sap.m.Input("I1",{
+				enabled:true,
+				editable:true,
+				showValueHelp:true,
+				valueHelpOnly:true
+			});
+
+			this.input2 = new sap.m.Input("I2", {});
+
+			oSubSection.addBlock(this.btn);
+			oSubSection.addBlock(this.input1);
+			oSubSection.addBlock(this.input2);
+
+			this.oObjectPageLayout.placeAt("content");
+			oCore.applyChanges();
+		},
+		afterEach : function() {
+			this.oObjectPageLayout.destroy();
+		}
+
+	});
+
+	QUnit.test("getFirstEditableInput method should return readOnly inputs when includeReadOnlyInputs is set to true", function (assert) {
+		//Arrange
+		var oContainer = document.getElementById("content"),
+			oEvent = getFirstEditableInput(oContainer, {includeReadOnly: true}).focus();
+		//Act
+		this.btn.firePress(oEvent);
+
+		//Assert
+		assert.strictEqual(document.activeElement.id, this.input1.getId() + "-inner", "the correct input is focused");
+	});
+
+	QUnit.test("getFirstEditableInput method should not return readOnly inputs without the additional includeReadOnlyInputs parameter", function (assert) {
+		//Arrange
+			var oContainer = document.getElementById("content"),
+				oEvent = getFirstEditableInput(oContainer).focus();
+
+		//Act
+		this.btn.firePress(oEvent);
+
+		//Assert
+		assert.strictEqual(document.activeElement.id, this.input2.getId() + "-inner", "the correct input is focused");
 	});
 });
