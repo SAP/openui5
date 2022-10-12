@@ -968,6 +968,7 @@ sap.ui.define([
 	 * Checks the publish button, draft buttons(activate and delete) and app variant support (i.e. Save As and Overview of App Variants) availability
 	 * The publish button shall not be available if the system is productive and if a merge error occurred during merging changes into the view on startup
 	 * The app variant support shall not be available if the system is productive and if the platform is not enabled (See Feature.js) to show the app variant tooling
+	 * The app variant support shall also not be available if the current app is a home page
 	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
 	 *
 	 * @param {object} oRootControl - Root control instance
@@ -979,15 +980,23 @@ sap.ui.define([
 		return Promise.all([
 			FeaturesAPI.isPublishAvailable(),
 			RtaAppVariantFeature.isSaveAsAvailable(oRootControl, sLayer, oSerializer),
-			FeaturesAPI.isContextBasedAdaptationAvailable(sLayer)
+			FeaturesAPI.isContextBasedAdaptationAvailable(sLayer),
+			FlexUtils.getUShellService("AppLifeCycle").then(function(oAppLifeCycle) {
+				if (oAppLifeCycle) {
+					var mRunningApp = oAppLifeCycle.getCurrentApplication();
+					return mRunningApp ? mRunningApp.homePage : false;
+				}
+				return false;
+			})
 		]).then(function(aRtaFeaturesAvailability) {
 			var bIsPublishAvailable = aRtaFeaturesAvailability[0];
 			var bIsSaveAsAvailable = aRtaFeaturesAvailability[1];
 			var bIsContextBasedAdaptationAvailable = aRtaFeaturesAvailability[2];
+			var bIsHomePage = aRtaFeaturesAvailability[3];
 			return {
 				publishAvailable: bIsPublishAvailable,
-				saveAsAvailable: bIsPublishAvailable && bIsSaveAsAvailable,
-				contextBasedAdaptationAvailable: bIsContextBasedAdaptationAvailable
+				saveAsAvailable: !bIsHomePage && bIsPublishAvailable && bIsSaveAsAvailable,
+				contextBasedAdaptationAvailable: !bIsHomePage && bIsContextBasedAdaptationAvailable
 			};
 		});
 	}

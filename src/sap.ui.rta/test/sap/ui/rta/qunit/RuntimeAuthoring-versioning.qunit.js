@@ -52,7 +52,8 @@ sap.ui.define([
 					unregisterNavigationFilter: function() {},
 					registerNavigationFilter: function() {},
 					reloadCurrentApp: fnFLPReloadStub,
-					getUser: function() {}
+					getUser: function() {},
+					getCurrentApplication: function() {}
 				});
 			}
 		});

@@ -666,6 +666,54 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the current app is a home page", function(assert) {
+			stubToolbarButtonsVisibility(true, true);
+			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
+			sandbox.stub(FlexUtils, "getUShellService")
+			.callThrough()
+			.withArgs("AppLifeCycle")
+			.resolves({
+				getCurrentApplication: function() {
+					return {
+						homePage: true
+					};
+				}
+			});
+
+			return this.oRta.start().then(function() {
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewEnabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewVisible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/manageAppsEnabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/manageAppsVisible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/saveAsEnabled"), false, "then the saveAs Button is not enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/saveAsVisible"), false, "then the saveAs Button is not visible");
+			}.bind(this));
+		});
+
+		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the current app cannot be detected for home page check", function(assert) {
+			stubToolbarButtonsVisibility(true, true);
+			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
+			sandbox.stub(FlexUtils, "getUShellService")
+			.callThrough()
+			.withArgs("AppLifeCycle")
+			.resolves({
+				getCurrentApplication: function() {
+					return undefined;
+				}
+			});
+
+			return this.oRta.start().then(function() {
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewEnabled"), true, "then the 'AppVariant Overview' Menu Button is enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantsOverviewVisible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/manageAppsEnabled"), true, "then the 'AppVariant Overview' Icon Button is enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/manageAppsVisible"), true, "then the 'AppVariant Overview' Icon Button is visible");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/saveAsEnabled"), true, "then the saveAs Button is enabled");
+				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/saveAsVisible"), true, "then the saveAs Button is visible");
+			}.bind(this));
+		});
+
 		QUnit.test("when save is triggered via the toolbar with an appdescriptor change", function(assert) {
 			var fnResolve;
 			var oPromise = new Promise(function(resolve) {
