@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/fl/changeHandler/BaseAddViaDelegate",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/layout/form/Form",
@@ -12,7 +12,7 @@ sap.ui.define([
 ], function(
 	BaseAddViaDelegate,
 	DelegateMediatorAPI,
-	Change,
+	UIChange,
 	Utils,
 	JsControlTreeModifier,
 	Form,
@@ -59,7 +59,7 @@ sap.ui.define([
 				}
 			});
 
-			this.oChange = new Change({
+			this.oChange = new UIChange({
 				selector: JsControlTreeModifier.getSelector(this.oForm, oComponent)
 			});
 		},

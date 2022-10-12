@@ -3,9 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change"
-], function (
-	Change
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange"
+], function(
+	UIChange
 ) {
 	"use strict";
 
@@ -14,16 +14,17 @@ sap.ui.define([
 	 * This class also be updated as well as reverted.
 	 *
 	 * @class sap.ui.fl.apply._internal.flexObjects.UpdatableChange
-	 * @extends sap.ui.fl.Change
+	 * @extends sap.ui.fl.apply._internal.flexObjects.UIChange
+	 * @alias sap.ui.fl.apply._internal.flexObjects.UpdatableChange
 	 * @private
 	 * @ui5-restricted
 	 * @experimental Since 1.90.0
 	 */
-	var UpdatableChange = Change.extend("sap.ui.fl.apply._internal.flexObjects.UpdatableChange", /** @lends sap.ui.fl.apply._internal.flexObjects.UpdatableChange.prototype */ {
+	var UpdatableChange = UIChange.extend("sap.ui.fl.apply._internal.flexObjects.UpdatableChange", /** @lends sap.ui.fl.apply._internal.flexObjects.UpdatableChange.prototype */ {
 		metadata: {
 			aggregations: {
 				revertInfo: {
-					type: "sap.ui.fl.apply._internal.flexObjects.RevertData",
+					type: "sap.ui.base.ManagedObject", // "sap.ui.fl.apply._internal.flexObjects.RevertData"
 					multiple: true,
 					singularName: "revertInfo",
 					defaultValue: []
@@ -31,6 +32,15 @@ sap.ui.define([
 			}
 		}
 	});
+
+	/**
+	 * Returns the mapping between flex object properties and file content properties in the back-end response.
+	 * @returns {object} Mapping information
+	 * @static
+	 */
+	UpdatableChange.getMappingInfo = function() {
+		return Object.assign(UIChange.getMappingInfo(), {});
+	};
 
 	UpdatableChange.prototype.popLatestRevertInfo = function () {
 		var oLatestRevertInfo = this.getRevertInfo().pop();

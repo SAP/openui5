@@ -237,7 +237,7 @@ sap.ui.define([
 
 	/**
 	 * @private
-	 * @param {sap.ui.fl.Change|Object} vChange Change object or map containing the change object
+	 * @param {sap.ui.fl.apply._internal.flexObjects.UIChange|Object} vChange Change object or map containing the change object
 	 * @returns {Promise} Returns an empty promise
 	 */
 	FlexCommand.prototype._applyChange = function(vChange) {

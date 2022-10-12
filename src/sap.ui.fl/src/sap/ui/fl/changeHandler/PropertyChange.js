@@ -129,7 +129,7 @@ sap.ui.define([
 	/**
 	 * Retrieves the condenser-specific information.
 	 *
-	 * @param {sap.ui.fl.Change} oChange - Change object with instructions to be applied on the control map
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change object with instructions to be applied on the control map
 	 * @returns {object} - Condenser-specific information
 	 * @public
 	 */

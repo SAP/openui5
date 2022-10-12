@@ -25,7 +25,7 @@ sap.ui.define([
 	/**
 	 * Unhides a control.
 	 *
-	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag - property bag
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
@@ -47,7 +47,7 @@ sap.ui.define([
 	/**
 	 * Reverts previously applied change
 	 *
-	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag - property bag
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
@@ -67,7 +67,7 @@ sap.ui.define([
 	/**
 	 * Completes the change by adding change handler specific content
 	 *
-	 * @param {sap.ui.fl.Change} oChange change object to be completed
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change object to be completed
 	 * @param {object} oSpecificChangeInfo as an empty object since no additional attributes are required for this operation
 	 * @public
 	 */
@@ -77,7 +77,7 @@ sap.ui.define([
 	/**
 	 * Retrieves the condenser specific information
 	 *
-	 * @param {sap.ui.fl.Change} oChange - Change object with instructions to be applied on the control map
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change object with instructions to be applied on the control map
 	 * @returns {object} - Condenser specific information
 	 * @public
 	 */

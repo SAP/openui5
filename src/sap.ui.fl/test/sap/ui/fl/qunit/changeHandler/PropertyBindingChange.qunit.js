@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/changeHandler/PropertyBindingChange",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
 	"sap/m/Input",
@@ -14,7 +14,7 @@ sap.ui.define([
 ], function(
 	sinon,
 	PropertyBindingChange,
-	Change,
+	UIChange,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	Input,
@@ -86,10 +86,9 @@ sap.ui.define([
 			};
 			this.mSpecificShowValueHelpChangeData = {
 				selector: this.mExpectedSelector,
-				changeType: "propertyBindingChange",
 				content: this.mExpectedShowValueHelpChangeContent
 			};
-			this.oShowValueHelpChange = new Change(this.mSpecificShowValueHelpChangeData);
+			this.oShowValueHelpChange = new UIChange(this.mSpecificShowValueHelpChangeData);
 
 			this.mExpectedValueChangeContent = {
 				property: "value",
@@ -98,10 +97,9 @@ sap.ui.define([
 			};
 			this.mSpecificValueChangeData = {
 				selector: this.mExpectedSelector,
-				changeType: "propertyBindingChange",
 				content: this.mExpectedValueChangeContent
 			};
-			this.oValueChange = new Change(this.mSpecificValueChangeData);
+			this.oValueChange = new UIChange(this.mSpecificValueChangeData);
 
 			this.mExpectedValueChangeContent1 = {
 				property: "text",
@@ -109,14 +107,12 @@ sap.ui.define([
 			};
 			this.mSpecificValueChangeData1 = {
 				selector: this.mExpectedSelector1,
-				changeType: "propertyBindingChange",
 				content: this.mExpectedValueChangeContent1
 			};
-			this.oTextChange = new Change(this.mSpecificValueChangeData1);
+			this.oTextChange = new UIChange(this.mSpecificValueChangeData1);
 
-			this.oChange = new Change({
-				selector: this.mExpectedSelector,
-				changeType: "propertyBindingChange"
+			this.oChange = new UIChange({
+				selector: this.mExpectedSelector
 			});
 		},
 		afterEach: function() {
@@ -131,7 +127,6 @@ sap.ui.define([
 			assert.deepEqual(this.oChange.getSelector(), this.mExpectedSelector, "the change SELECTOR is filled correctly");
 			assert.deepEqual(this.oChange.getContent(), this.mExpectedValueChangeContent,
 				"the change CONTENT is filled correctly");
-			assert.equal(this.oChange.getChangeType(), "propertyBindingChange", "the change TYPE is filled correctly");
 		});
 
 		QUnit.test('When providing change data for a change with previous set value, Then', function(assert) {
@@ -139,7 +134,6 @@ sap.ui.define([
 			assert.deepEqual(this.oChange.getSelector(), this.mExpectedSelector, "the change SELECTOR is filled correctly");
 			assert.deepEqual(this.oChange.getContent(), this.mExpectedShowValueHelpChangeContent,
 				"the change CONTENT is filled correctly");
-			assert.equal(this.oChange.getChangeType(), "propertyBindingChange", "the change TYPE is filled correctly");
 		});
 
 		QUnit.test("When calling completeChangeContent without content", function(assert) {
@@ -223,9 +217,8 @@ sap.ui.define([
 
 		// TODO: enable again when apps have adapted
 		QUnit.skip("When applying a change without binding on js control tree", function(assert) {
-			var oChange = new Change({
+			var oChange = new UIChange({
 				selector: this.mExpectedSelector,
-				changeType: "propertyBindingChange",
 				content: {
 					property: "value",
 					newBinding: "Foo"
@@ -270,9 +263,8 @@ sap.ui.define([
 
 		// TODO: enable again when apps have adapted
 		QUnit.skip("When applying a change without binding on xml control tree", function(assert) {
-			var oChange = new Change({
+			var oChange = new UIChange({
 				selector: this.mExpectedSelector,
-				changeType: "propertyBindingChange",
 				content: {
 					property: "value",
 					newBinding: "Foo"

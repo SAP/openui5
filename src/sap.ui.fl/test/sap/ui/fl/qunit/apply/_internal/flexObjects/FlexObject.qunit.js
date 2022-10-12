@@ -130,13 +130,13 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("when setting the content", function(assert) {
-			this.oFlexObject.setState(States.PERSISTED);
+			this.oFlexObject.setState(States.LifecycleState.PERSISTED);
 			this.oFlexObject.setContent({
 				foo: "bar"
 			});
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.DIRTY,
+				States.LifecycleState.DIRTY,
 				"then the flexObject is marked as DIRTY"
 			);
 		});
@@ -150,7 +150,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling setText", function(assert) {
-			this.oFlexObject.setState(States.PERSISTED);
+			this.oFlexObject.setState(States.LifecycleState.PERSISTED);
 			this.oFlexObject.setText("originalText", "My new text");
 			assert.strictEqual(
 				this.oFlexObject.getText("originalText"),
@@ -159,7 +159,7 @@ sap.ui.define([
 			);
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.DIRTY,
+				States.LifecycleState.DIRTY,
 				"then the flexObject is marked as DIRTY"
 			);
 		});
@@ -172,7 +172,7 @@ sap.ui.define([
 			});
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.PERSISTED,
+				States.LifecycleState.PERSISTED,
 				"then the state changes to PERSISTED"
 			);
 			assert.strictEqual(
@@ -187,7 +187,7 @@ sap.ui.define([
 			this.oFlexObject.setResponse({});
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.NEW,
+				States.LifecycleState.NEW,
 				"then the state is not changed"
 			);
 			assert.deepEqual(
@@ -262,25 +262,25 @@ sap.ui.define([
 		QUnit.test("FlexObject.getState", function(assert) {
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.NEW,
+				States.LifecycleState.NEW,
 				"then initially the state is NEW"
 			);
-			this.oFlexObject.setState(States.PERSISTED);
+			this.oFlexObject.setState(States.LifecycleState.PERSISTED);
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.PERSISTED,
+				States.LifecycleState.PERSISTED,
 				"then the state can be changed to PERSISTED"
 			);
 			this.oFlexObject.setContent({});
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.DIRTY,
+				States.LifecycleState.DIRTY,
 				"then the state changes to DIRTY when content is set"
 			);
 			this.oFlexObject.markForDeletion();
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.DELETED,
+				States.LifecycleState.DELETED,
 				"then the state changes to DELETED when calling markForDeletion"
 			);
 		});
@@ -289,59 +289,59 @@ sap.ui.define([
 			this.oFlexObject.setState("anInvalidState");
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.NEW,
+				States.LifecycleState.NEW,
 				"then the state is not updated"
 			);
 		});
 
 		QUnit.test("FlexObject.setState to DIRTY when current state is NEW", function(assert) {
-			this.oFlexObject.setState(States.DIRTY);
+			this.oFlexObject.setState(States.LifecycleState.DIRTY);
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.NEW,
+				States.LifecycleState.NEW,
 				"then the state is not updated"
 			);
 		});
 
 		QUnit.test("FlexObject.setState to DIRTY when current state is PERSISTED", function(assert) {
-			this.oFlexObject.setState(States.PERSISTED);
-			this.oFlexObject.setState(States.DIRTY);
+			this.oFlexObject.setState(States.LifecycleState.PERSISTED);
+			this.oFlexObject.setState(States.LifecycleState.DIRTY);
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.DIRTY,
+				States.LifecycleState.DIRTY,
 				"then the state is changed"
 			);
 		});
 
 		QUnit.test("FlexObject.restorePreviousState after change from DIRTY to PERSISTED", function(assert) {
-			this.oFlexObject.setState(States.PERSISTED);
+			this.oFlexObject.setState(States.LifecycleState.PERSISTED);
 			this.oFlexObject.restorePreviousState();
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.NEW,
+				States.LifecycleState.NEW,
 				"then the state is changed back to dirty"
 			);
 		});
 
 		QUnit.test("FlexObject.restorePreviousState after setting the state twice", function(assert) {
-			this.oFlexObject.setState(States.PERSISTED);
-			this.oFlexObject.setState(States.PERSISTED);
+			this.oFlexObject.setState(States.LifecycleState.PERSISTED);
+			this.oFlexObject.setState(States.LifecycleState.PERSISTED);
 			this.oFlexObject.restorePreviousState();
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.NEW,
+				States.LifecycleState.NEW,
 				"then the state is changed back to the previous distinct state"
 			);
 		});
 
 		QUnit.test("FlexObject.restorePreviousState twice", function(assert) {
-			this.oFlexObject.setState(States.PERSISTED);
-			this.oFlexObject.setState(States.DIRTY);
+			this.oFlexObject.setState(States.LifecycleState.PERSISTED);
+			this.oFlexObject.setState(States.LifecycleState.DIRTY);
 			this.oFlexObject.restorePreviousState();
 			this.oFlexObject.restorePreviousState();
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.PERSISTED,
+				States.LifecycleState.PERSISTED,
 				"then the restore still only goes back to the previous state"
 			);
 		});
@@ -350,7 +350,7 @@ sap.ui.define([
 			this.oFlexObject.markForDeletion();
 			assert.strictEqual(
 				this.oFlexObject.getState(),
-				States.DELETED,
+				States.LifecycleState.DELETED,
 				"then the state is changed to DELETED"
 			);
 		});
@@ -407,11 +407,11 @@ sap.ui.define([
 		QUnit.test("when exporting file content of a FlexObject", function (assert) {
 			// fileName is assigned to the id upon creation
 			var oExpectedFileContent = Object.assign({}, oFileContent);
-			oExpectedFileContent.id = oExpectedFileContent.fileName;
-			delete oExpectedFileContent.fileName;
+			oExpectedFileContent.selector = {};
+			oExpectedFileContent.dependentSelector = {};
 			assert.deepEqual(
 				this.oFlexObject.convertToFileContent(),
-				oFileContent,
+				oExpectedFileContent,
 				"then the output should have the same information as the original file content"
 			);
 		});

@@ -1,6 +1,6 @@
 [
 	{
-		"id": "id_1579844823982_40_addFields",
+		"fileName": "id_1579844823982_40_addFields",
 		"changeType": "addFields",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -27,7 +27,7 @@
 		}
 	},
 	{
-		"id": "id_1579844823982_41_addFields",
+		"fileName": "id_1579844823982_41_addFields",
 		"changeType": "addFields",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -54,7 +54,7 @@
 		}
 	},
 	{
-		"id": "id_1579844828912_42_addFields",
+		"fileName": "id_1579844828912_42_addFields",
 		"changeType": "addFields",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -81,7 +81,7 @@
 		}
 	},
 	{
-		"id": "id_1579844828912_43_addFields",
+		"fileName": "id_1579844828912_43_addFields",
 		"changeType": "addFields",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -108,7 +108,7 @@
 		}
 	},
 	{
-		"id": "id_1579844834534_44_addFields",
+		"fileName": "id_1579844834534_44_addFields",
 		"changeType": "addFields",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -135,7 +135,7 @@
 		}
 	},
 	{
-		"id": "id_1579844834534_45_addFields",
+		"fileName": "id_1579844834534_45_addFields",
 		"changeType": "addFields",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {

@@ -155,7 +155,7 @@ sap.ui.define([
 		/**
 		 * Determines if the passed change is related to control variants.
 		 * @see sap.ui.fl.variants.VariantManagement
-		 * @param {sap.ui.fl.Change} oChange Change object
+		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange Change object
 		 * @returns {boolean} If the passed change is a variant management change
 		 * @name sap.ui.fl.Utils.isChangeRelatedToVariants
 		 *
@@ -841,7 +841,7 @@ sap.ui.define([
 		 *
 		 * @param {map} mChanges Map of all changes
 		 * @param {string} sChangeId Id of the change that should be retrieved
-		 * @returns {sap.ui.fl.Change | undefined} Returns the change if it is in the map, otherwise undefined
+		 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject | undefined} Returns the change if it is in the map, otherwise undefined
 		 */
 		getChangeFromChangesMap: function(mChanges, sChangeId) {
 			var oResult;

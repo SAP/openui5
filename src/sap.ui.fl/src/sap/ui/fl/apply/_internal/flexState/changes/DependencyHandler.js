@@ -243,7 +243,7 @@ sap.ui.define([
 	/**
 	 * Adds a change to the map and adds the dependencies to the changes map
 	 *
-	 * @param {sap.ui.fl.changeObject} oChange - Change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
 	 * @param {sap.ui.core.UIComponent} oAppComponent - Component instance to get the whole ID for the control
 	 * @param {object} mChangesMap - Map with changes and dependencies
 	 */
@@ -255,9 +255,9 @@ sap.ui.define([
 	/**
 	 * Insert Change into changes map positioned right after the referenced change
 	 *
-	 * @param {sap.ui.fl.changeObject} oChange - Change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
 	 * @param {object} mChangesMap - Map with changes and dependencies
-	 * @param {sap.ui.fl.changeObject} oReferenceChange - Refernce change. New change is positioned right after this one in the changes map
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oReferenceChange - Refernce change. New change is positioned right after this one in the changes map
 	 */
 	DependencyHandler.insertChange = function(oChange, mChangesMap, oReferenceChange) {
 		var iIndex = mChangesMap && mChangesMap.aChanges && mChangesMap.aChanges.indexOf(oReferenceChange);
@@ -269,7 +269,7 @@ sap.ui.define([
 	/**
 	 * Adds a change to the map during runtime and adds the dependencies to the initial changes map
 	 *
-	 * @param {sap.ui.fl.changeObject} oChange - Change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
 	 * @param {sap.ui.core.UIComponent} oAppComponent - Component instance to get the whole ID for the control
 	 * @param {object} mChangesMap - Map with changes and dependencies
 	 * @param {object} mInitialChangesMap - Initial map with changes and dependencies
@@ -299,7 +299,7 @@ sap.ui.define([
 	 * Saves a function in the dependency that will be called as soon as the dependency is resolved.
 	 *
 	 * @param {object} mChangesMap - Changes map
-	 * @param {sap.ui.fl.Change} sChangeId - Change ID
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} sChangeId - Change ID
 	 * @param {function} fnCallback - Function that will be saved in the dependency
 	 */
 	DependencyHandler.addChangeApplyCallbackToDependency = function(mChangesMap, sChangeId, fnCallback) {
@@ -415,7 +415,7 @@ sap.ui.define([
 	 * @param {object} mChangesMap - Map with changes and dependencies
 	 * @param {object} sControlId - ID of the control
 	 * @param {sap.ui.core.Component} oAppComponent - Application component instance that is currently loading
-	 * @returns {sap.ui.fl.Change[]} Array of all open dependent changes for the control
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of all open dependent changes for the control
 	 */
 	DependencyHandler.getOpenDependentChangesForControl = function(mChangesMap, sControlId, oAppComponent) {
 		var aDependentChanges = [];

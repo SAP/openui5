@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/Change",
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/DatePicker",
@@ -24,7 +23,6 @@ sap.ui.define([
 	Layer,
 	FlUtils,
 	ChangePersistenceFactory,
-	Change,
 	Button,
 	Label,
 	DatePicker,
@@ -46,7 +44,7 @@ sap.ui.define([
 		var sComponent = Object.keys(oInstanceCache)[0];
 		var aChanges = oInstanceCache[sComponent]._mChanges.aChanges;
 		return !aChanges.some(function(oChange) {
-			return oChange.getApplyState() !== Change.applyState.APPLY_SUCCESSFUL;
+			return !oChange.isSuccessfullyApplied();
 		});
 	}
 

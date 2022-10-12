@@ -3,9 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change"
 ], function(
-	Change
 ) {
 	"use strict";
 
@@ -21,16 +19,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag - Contains additional data needed for preparing the map
 	 * @param {object} mPropertyBag.storageResponse - Storage response with the flex data
-	 * @returns {object} The prepared map for changes
 	 */
-	return function(mPropertyBag) {
-		var aChangeDefinitions = mPropertyBag.storageResponse.changes.changes;
-		var aChanges = aChangeDefinitions.map(function(oChangeDefinition) {
-			return new Change(oChangeDefinition);
-		});
-		// TODO create dependency map and return it
-		return {
-			changes: aChanges
-		};
+	return function(/* mPropertyBag */) {
 	};
 });

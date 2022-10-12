@@ -1,6 +1,6 @@
 [
 	{
-		"id": "id_1579844823982_40_addIFrame",
+		"fileName": "id_1579844823982_40_addIFrame",
 		"changeType": "addIFrame",
 		"reference": "componentId.Component",
 		"content": {
@@ -18,7 +18,7 @@
 		}
 	},
 	{
-		"id": "id_1579844823982_41_updateIFrame",
+		"fileName": "id_1579844823982_41_updateIFrame",
 		"changeType": "updateIFrame",
 		"reference": "componentId.Component",
 		"content": {
@@ -32,7 +32,7 @@
 		}
 	},
 	{
-		"id": "id_1579844823982_43_addIFrame",
+		"fileName": "id_1579844823982_43_addIFrame",
 		"changeType": "addIFrame",
 		"reference": "componentId.Component",
 		"content": {
@@ -50,7 +50,7 @@
 		}
 	},
 	{
-		"id": "id_1579844823982_44_updateIFrame",
+		"fileName": "id_1579844823982_44_updateIFrame",
 		"changeType": "updateIFrame",
 		"reference": "componentId.Component",
 		"content": {
@@ -64,7 +64,7 @@
 		}
 	},
 	{
-		"id": "id_1579844823982_42_updateIFrame",
+		"fileName": "id_1579844823982_42_updateIFrame",
 		"changeType": "updateIFrame",
 		"reference": "componentId.Component",
 		"content": {
@@ -78,7 +78,7 @@
 		}
 	},
 	{
-		"id": "id_1579844823982_45_updateIFrame",
+		"fileName": "id_1579844823982_45_updateIFrame",
 		"changeType": "updateIFrame",
 		"reference": "componentId.Component",
 		"content": {

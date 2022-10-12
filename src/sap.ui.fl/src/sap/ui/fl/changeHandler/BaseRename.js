@@ -36,7 +36,7 @@ sap.ui.define([
 				/**
 				 * Renames a control.
 				 *
-				 * @param {sap.ui.fl.Change} oChange change wrapper object with instructions to be applied on the control map
+				 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change wrapper object with instructions to be applied on the control map
 				 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
 				 * @param {object} mPropertyBag property bag
 				 * @param {object} mPropertyBag.modifier modifier for the controls
@@ -64,7 +64,7 @@ sap.ui.define([
 				/**
 				 * Reverts a Rename Change
 				 *
-				 * @param {sap.ui.fl.Change} oChange change wrapper object with instructions to be applied on the control map
+				 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change wrapper object with instructions to be applied on the control map
 				 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
 				 * @param {object} mPropertyBag property bag
 				 * @param {object} mPropertyBag.modifier modifier for the controls
@@ -87,7 +87,7 @@ sap.ui.define([
 				/**
 				 * Completes the change by adding change handler specific content
 				 *
-				 * @param {sap.ui.fl.Change} oChange change wrapper object to be completed
+				 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change wrapper object to be completed
 				 * @param {object} mSpecificChangeInfo with attribute (e.g. textLabel) to be included in the change
 				 * @param {object} mPropertyBag - Property bag
 				 * @param {object} mPropertyBag.modifier - Modifier for the controls
@@ -118,7 +118,7 @@ sap.ui.define([
 				/**
 				 * Retrieves the condenser-specific information.
 				 *
-				 * @param {sap.ui.fl.Change} oChange - Change object with instructions to be applied on the control map
+				 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change object with instructions to be applied on the control map
 				 * @returns {object} - Condenser-specific information
 				 * @public
 				 */
@@ -133,7 +133,7 @@ sap.ui.define([
 				/**
 				 * Retrieves the information required for the change visualization.
 				 *
-				 * @param {sap.ui.fl.Change} oChange - Object with change data
+				 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Object with change data
 				 * @returns {object} Object with a description payload containing the information required for the change visualization
 				 * @public
 				 */

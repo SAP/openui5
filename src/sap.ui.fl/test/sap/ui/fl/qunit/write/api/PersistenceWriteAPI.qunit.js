@@ -7,9 +7,9 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
@@ -19,7 +19,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/ChangePersistence",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
@@ -32,9 +31,9 @@ sap.ui.define([
 	UIComponent,
 	DescriptorChangeTypes,
 	FlexCustomData,
-	VariantManagementState,
 	FlexState,
 	ManifestUtils,
+	FlexObjectFactory,
 	ChangesController,
 	Settings,
 	Condenser,
@@ -44,7 +43,6 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	ChangePersistenceFactory,
 	ChangePersistence,
-	Change,
 	Layer,
 	Utils,
 	sinon,
@@ -122,7 +120,7 @@ sap.ui.define([
 				}
 			};
 
-			this.oUIChange = new Change(this.oUIChangeSpecificData);
+			this.oUIChange = FlexObjectFactory.createFromFileContent(this.oUIChangeSpecificData);
 
 			window.sessionStorage.removeItem("sap.ui.fl.info." + this.oAppComponent.getId());
 		},
@@ -278,14 +276,14 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
 			var oChangePersistence = new ChangePersistence(oComp);
 			oChangePersistence.addDirtyChange(
-				new Change({
-					selector: "someControl",
+				FlexObjectFactory.createFromFileContent({
+					selector: {id: "someControl"},
 					layer: Layer.CUSTOMER
 				})
 			);
 			oChangePersistence.addDirtyChange(
-				new Change({
-					selector: "someControl",
+				FlexObjectFactory.createFromFileContent({
+					selector: {id: "someControl"},
 					layer: Layer.USER
 				})
 			);
@@ -768,7 +766,7 @@ sap.ui.define([
 		QUnit.test("when _condense is called  with wrong selector", function(assert) {
 			var oCondenserStub = sandbox.stub(Condenser, "condense").returns("foo");
 			var mPropertyBag = {
-				selector: "notExisting",
+				selector: {id: "notExisting"},
 				changes: ["a", "b", "c"]
 			};
 			return PersistenceWriteAPI._condense(mPropertyBag).catch(function(oError) {
@@ -813,7 +811,7 @@ sap.ui.define([
 
 		QUnit.test("when getChangesWarning is called without mixed changes", function (assert) {
 			var aChanges = [
-				new Change({})
+				FlexObjectFactory.createFromFileContent({})
 			];
 			var mPropertyBag = {};
 
@@ -850,9 +848,9 @@ sap.ui.define([
 
 		QUnit.test("when getChangesWarning is called with changes from other system", function (assert) {
 			var aChanges = [
-				new Change({sourceSystem: "qSystem", sourceClient: "test"}),
-				new Change({}),
-				new Change({})
+				FlexObjectFactory.createFromFileContent({sourceSystem: "qSystem", sourceClient: "test"}),
+				FlexObjectFactory.createFromFileContent({}),
+				FlexObjectFactory.createFromFileContent({})
 			];
 			var mPropertyBag = {};
 

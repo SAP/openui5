@@ -715,25 +715,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("Smart Business: When prepareUpdate is called and variant was already published", function(assert) {
-			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
-				response: JSON.stringify({
-					id: "a.id",
-					reference: "a.reference",
-					layer: Layer.CUSTOMER,
-					packageName: "YY1_DEFAULT_123"
-				})
-			});
-			return AppVariantFactory.prepareUpdate({
-				id: "a.id"
-			}).then(function(oVariant) {
-				return oVariant.submit();
-			}).then(function(oResponse) {
-				assert.notEqual(oResponse, null);
-				assert.equal(oNewConnectorStub.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION&sap-language=EN');
-			});
-		});
-
 		QUnit.test("When prepareDelete is called to prepare a delete app variant config and submit is called to delete an app variant saved as local object", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({

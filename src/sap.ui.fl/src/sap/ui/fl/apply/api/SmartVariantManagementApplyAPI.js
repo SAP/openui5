@@ -66,10 +66,10 @@ sap.ui.define([
 	 * Object containing data for a SmartVariantManagement control.
 	 *
 	 * @typedef {object} sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.Response
-	 * @property {sap.ui.fl.Change[]} variants - Variants for the control
-	 * @property {sap.ui.fl.Change[]} changes - Changes on variants for the control
-	 * @property {sap.ui.fl.Change | undefined} defaultVariant - DefaultVariant change to be applied
-	 * @property {sap.ui.fl.Change | undefined} standardVariant - StandardVariant change to be applied
+	 * @property {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} variants - Variants for the control
+	 * @property {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} changes - Changes on variants for the control
+	 * @property {sap.ui.fl.apply._internal.flexObjects.FlexObject | undefined} defaultVariant - DefaultVariant change to be applied
+	 * @property {sap.ui.fl.apply._internal.flexObjects.FlexObject | undefined} standardVariant - StandardVariant change to be applied
 	 * @since 1.83
 	 * @private
 	 * @ui5-restricted
@@ -101,7 +101,7 @@ sap.ui.define([
 		 */
 
 		/**
-		 * Calls the back end asynchronously and fetches all {@link sap.ui.fl.Change}s and variants pointing to this control.
+		 * Calls the back end asynchronously and fetches all {@link sap.ui.fl.apply._internal.flexObjects.FlexObject}s and variants pointing to this control.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|

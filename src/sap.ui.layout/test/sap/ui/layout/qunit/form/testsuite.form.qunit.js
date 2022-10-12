@@ -211,7 +211,7 @@ sap.ui.define([
 				group: "Change Handler",
 				title: "QUnit - sap.ui.layout.changes.AddSimpleFormGroup",
 				ui5: {
-					libs: ["sap.ui.layout", "sap.m"]
+					libs: ["sap.ui.layout", "sap.m", "sap.ui.rta"]
 				},
 				coverage: {
 					only: "[sap/ui/layout/changeHandlers, sap/ui/layout/form]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
@@ -224,7 +224,7 @@ sap.ui.define([
 				group: "Change Handler",
 				title: "QUnit - sap.ui.layout.changes.HideSimpleForm",
 				ui5: {
-					libs: ["sap.ui.layout", "sap.m"]
+					libs: ["sap.ui.layout", "sap.m", "sap.ui.rta"]
 				},
 				module: "./changes/HideSimpleForm.qunit"
 			},
@@ -233,7 +233,7 @@ sap.ui.define([
 				group: "Change Handler",
 				title: "QUnit - sap.ui.layout.changes.RenameSimpleForm",
 				ui5: {
-					libs: ["sap.ui.layout", "sap.m"]
+					libs: ["sap.ui.layout", "sap.m", "sap.ui.rta"]
 				},
 				coverage: {
 					only: "[sap/ui/layout/changeHandlers, sap/ui/layout/form]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
@@ -246,7 +246,7 @@ sap.ui.define([
 				group: "Change Handler",
 				title: "QUnit - sap.ui.layout.changes.UnhideSimpleForm",
 				ui5: {
-					libs: ["sap.ui.layout", "sap.m"]
+					libs: ["sap.ui.layout", "sap.m", "sap.ui.rta"]
 				},
 				coverage: {
 					only: "[sap/ui/layout/changeHandlers, sap/ui/layout/form]",	// Which files to show in the coverage report, if null, no files are excluded from coverage

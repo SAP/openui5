@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/StashedControlSupport",
 	"sap/ui/fl/changeHandler/StashControl",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/Layer",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/sinon-4"
@@ -25,7 +25,7 @@ sap.ui.define([
 	UIComponent,
 	StashedControlSupport,
 	StashControlChangeHandler,
-	Change,
+	UIChange,
 	Layer,
 	VerticalLayout,
 	sinon
@@ -45,12 +45,10 @@ sap.ui.define([
 				selector: {
 					id: "key"
 				},
-				content: {},
-				texts: {},
 				layer: Layer.CUSTOMER_BASE
 			};
 
-			this.oChange = new Change(oChangeJson);
+			this.oChange = new UIChange(oChangeJson);
 
 			// the following aggregation describes the runtime state
 			// the "ToBeStashed" control will also be part of the aggregation after the XML-Tree modification
@@ -86,8 +84,6 @@ sap.ui.define([
 			this.oXmlNodeToBeStashed = this.oXmlLayout.childNodes[0].childNodes[2];
 
 			this.oSetStashedSpy = sandbox.spy(JsControlTreeModifier, "setStashed");
-
-			this.oChange = new Change(oChangeJson);
 		},
 		afterEach: function() {
 			this.oChange = null;
@@ -100,14 +96,12 @@ sap.ui.define([
 				selector: {
 					id: "key"
 				},
-				content: {},
-				texts: {},
 				layer: sLayer
 			};
 
 			var sMsg = "applyChange on a JsControlTreeModifier for a change in the Layer: " + sLayer;
 			QUnit.test(sMsg, function(assert) {
-				var oChange = new Change(oChangeDefinition);
+				var oChange = new UIChange(oChangeDefinition);
 				return this.oChangeHandler.applyChange(oChange, this.oControl2, {modifier: JsControlTreeModifier})
 					.then(function() {
 						if (sLayer === Layer.CUSTOMER) {
@@ -122,7 +116,7 @@ sap.ui.define([
 
 			sMsg = "revertChange on an initially visible control using JsControlTreeModifier in the Layer: " + sLayer;
 			QUnit.test(sMsg, function(assert) {
-				var oChange = new Change(oChangeDefinition);
+				var oChange = new UIChange(oChangeDefinition);
 				return this.oChangeHandler.applyChange(oChange, this.oControl1, {modifier: JsControlTreeModifier})
 					.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, oChange, this.oControl1, {modifier: JsControlTreeModifier}))
 					.then(function() {
@@ -137,7 +131,7 @@ sap.ui.define([
 
 			sMsg = "revertChange on an initially invisible control using JsControlTreeModifier in the Layer: " + sLayer;
 			QUnit.test(sMsg, function(assert) {
-				var oChange = new Change(oChangeDefinition);
+				var oChange = new UIChange(oChangeDefinition);
 				return this.oChangeHandler.applyChange(oChange, this.oControlInvisible, {modifier: JsControlTreeModifier})
 					.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, oChange, this.oControlInvisible, {modifier: JsControlTreeModifier}))
 					.then(function() {
@@ -152,7 +146,7 @@ sap.ui.define([
 
 			sMsg = "applyChange on a XMLTreeModifier for a change in the Layer: " + sLayer;
 			QUnit.test(sMsg, function(assert) {
-				var oChange = new Change(oChangeDefinition);
+				var oChange = new UIChange(oChangeDefinition);
 				return this.oChangeHandler.applyChange(oChange, this.oXmlNodeControl0, {modifier: XmlTreeModifier})
 					.then(function() {
 						if (sLayer === Layer.CUSTOMER) {
@@ -166,7 +160,7 @@ sap.ui.define([
 
 			sMsg = "revertChange on an XMLTreeModifier in the Layer: " + sLayer;
 			QUnit.test(sMsg, function(assert) {
-				var oChange = new Change(oChangeDefinition);
+				var oChange = new UIChange(oChangeDefinition);
 				return this.oChangeHandler.applyChange(oChange, this.oXmlNodeControl0, {modifier: XmlTreeModifier})
 					.then(this.oChangeHandler.revertChange.bind(this.oChangeHandler, oChange, this.oXmlNodeControl0, {modifier: XmlTreeModifier}))
 					.then(function() {

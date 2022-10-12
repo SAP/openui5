@@ -2,17 +2,19 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeInbound",
-	"sap/ui/fl/Change"
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange"
 ], function (
 	ChangeInbound,
-	Change
+	AppDescriptorChange
 ) {
 	"use strict";
 
 	QUnit.module("applyChange", {
 		beforeEach: function () {
-			this.oChangeArray = new Change({
-				changeType: "appdescr_app_changeInbound",
+			this.oChangeArray = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
 				content: {
 					inboundId: "Risk-configure",
 					entityPropertyChange: [
@@ -30,8 +32,10 @@ sap.ui.define([
 				}
 			});
 
-			this.oChangeSingle = new Change({
-				changeType: "appdescr_app_changeInbound",
+			this.oChangeSingle = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
 				content: {
 					inboundId: "Risk-configure",
 					entityPropertyChange:
@@ -43,8 +47,10 @@ sap.ui.define([
 				}
 			});
 
-			this.oChangeUnsupportedChange = new Change({
-				changeType: "appdescr_app_changeInbound",
+			this.oChangeUnsupportedChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
 				content: {
 					inboundId: "Risk-configure",
 					entityPropertyChange:
@@ -56,8 +62,10 @@ sap.ui.define([
 				}
 			});
 
-			this.oChangeUnsupportedOperation = new Change({
-				changeType: "appdescr_app_changeInbound",
+			this.oChangeUnsupportedOperation = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
 				content: {
 					inboundId: "Risk-configure",
 					entityPropertyChange:
@@ -69,8 +77,10 @@ sap.ui.define([
 				}
 			});
 
-			this.oChangeNoId = new Change({
-				changeType: "appdescr_app_changeInbound",
+			this.oChangeNoId = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
 				content: {
 					inboundId: "",
 					entityPropertyChange:
@@ -82,16 +92,20 @@ sap.ui.define([
 				}
 			});
 
-			this.oChangeNoChanges = new Change({
-				changeType: "appdescr_app_changeInbound",
+			this.oChangeNoChanges = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
 				content: {
 					inboundId: "Risk-configure",
 					entityPropertyChange: ""
 				}
 			});
 
-			this.oChangeInvalidFormat = new Change({
-				changeType: "appdescr_app_changeInbound",
+			this.oChangeInvalidFormat = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
 				content: {
 					inboundId: "Risk-configure",
 					entityPropertyChange: [
@@ -104,8 +118,10 @@ sap.ui.define([
 				}
 			});
 
-			this.oChangeNoValue = new Change({
-				changeType: "appdescr_app_changeInbound",
+			this.oChangeNoValue = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_app_changeInbound"
+				},
 				content: {
 					inboundId: "Risk-configure",
 					entityPropertyChange:

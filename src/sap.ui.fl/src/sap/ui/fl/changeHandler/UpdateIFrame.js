@@ -69,7 +69,7 @@ sap.ui.define([
 	/**
 	 * Update the IFrame control settings.
 	 *
-	 * @param {sap.ui.fl.Change} oChange Change object with instructions to be applied on the control map
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange Change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
@@ -97,7 +97,7 @@ sap.ui.define([
 	/**
 	 * Reverts previously applied change.
 	 *
-	 * @param {sap.ui.fl.Change} oChange Change object with instructions to be applied on the control map
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange Change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
@@ -126,7 +126,7 @@ sap.ui.define([
 	/**
 	 * Completes the change by adding change handler specific content.
 	 *
-	 * @param {sap.ui.fl.Change} oChange Change object to be completed
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange Change object to be completed
 	 * @param {object} oSpecificChangeInfo Must contain settings with IFrame properties to update
 	 * @param {object} oSpecificChangeInfo.content IFrame settings
 	 * @param {string} oSpecificChangeInfo.content.width Width

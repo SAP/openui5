@@ -1,6 +1,6 @@
 [
 	{
-		"id": "id_1_moveControls",
+		"fileName": "id_1_moveControls",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -37,7 +37,7 @@
 		}
 	},
 	{
-		"id": "id_2_hideControl",
+		"fileName": "id_2_hideControl",
 		"changeType": "hideControl",
 		"reference": "sap.ui.rta.test.Component",
 		"selector": {
@@ -46,7 +46,7 @@
 		}
 	},
 	{
-		"id": "id_3_unhideControl",
+		"fileName": "id_3_unhideControl",
 		"changeType": "unhideControl",
 		"reference": "sap.ui.rta.test.Component",
 		"selector": {

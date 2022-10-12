@@ -1,6 +1,6 @@
 [
 	{
-		"id": "id_01_rename",
+		"fileName": "id_01_rename",
 		"changeType": "rename",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -27,7 +27,7 @@
 		"creation": "2021-09-01T08:29:16.261Z"
 	},
 	{
-		"id": "id_02_rename",
+		"fileName": "id_02_rename",
 		"changeType": "rename",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -54,7 +54,7 @@
 		"creation": "2021-09-02T08:29:16.261Z"
 	},
 	{
-		"id": "id_03_rename",
+		"fileName": "id_03_rename",
 		"changeType": "rename",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -81,7 +81,7 @@
 		"creation": "2021-09-03T08:29:16.261Z"
 	},
 	{
-		"id": "id_04_rename",
+		"fileName": "id_04_rename",
 		"changeType": "rename",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -108,7 +108,7 @@
 		"creation": "2021-09-04T08:29:16.261Z"
 	},
 	{
-		"id": "id_05_rename",
+		"fileName": "id_05_rename",
 		"changeType": "rename",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -135,7 +135,7 @@
 		"creation": "2021-09-05T08:29:16.261Z"
 	},
 	{
-		"id": "id_06_rename",
+		"fileName": "id_06_rename",
 		"changeType": "rename",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -162,7 +162,7 @@
 		"creation": "2021-09-06T08:29:16.261Z"
 	},
 	{
-		"id": "id_01_hideControl",
+		"fileName": "id_01_hideControl",
 		"changeType": "hideControl",
 		"content": {
 			"boundAggregation": "items"
@@ -182,7 +182,7 @@
 		"creation": "2021-09-07T08:29:16.261Z"
 	},
 	{
-		"id": "id_02_unhideControl",
+		"fileName": "id_02_unhideControl",
 		"changeType": "unhideControl",
 		"content": {
 			"boundAggregation": "items"
@@ -202,7 +202,7 @@
 		"creation": "2021-09-08T08:29:16.261Z"
 	},
 	{
-		"id": "id_03_hideControl",
+		"fileName": "id_03_hideControl",
 		"changeType": "hideControl",
 		"content": {
 			"boundAggregation": "items"
@@ -222,7 +222,7 @@
 		"creation": "2021-09-09T08:29:16.261Z"
 	},
 	{
-		"id": "id_01_move",
+		"fileName": "id_01_move",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -267,7 +267,7 @@
 		"creation": "2021-09-10T08:29:16.261Z"
 	},
 	{
-		"id": "id_02_move",
+		"fileName": "id_02_move",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -312,7 +312,7 @@
 		"creation": "2021-09-11T08:29:16.261Z"
 	},
 	{
-		"id": "id_03_move",
+		"fileName": "id_03_move",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {

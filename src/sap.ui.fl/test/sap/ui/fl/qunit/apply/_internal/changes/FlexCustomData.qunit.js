@@ -6,8 +6,8 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/Layer"
 ], function(
 	sinon,
@@ -15,8 +15,8 @@ sap.ui.define([
 	CustomData,
 	UIComponent,
 	JsControlTreeModifier,
-	Change,
 	FlexCustomData,
+	FlexObjectFactory,
 	Layer
 ) {
 	"use strict";
@@ -66,7 +66,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oAppComponent = new UIComponent();
 			this.oControl = new Control("control");
-			this.oChange = new Change(getChangeContent("a1", "control"));
+			this.oChange = FlexObjectFactory.createFromFileContent(getChangeContent("a1", "control"));
 			this.mPropertyBag = {
 				modifier: JsControlTreeModifier,
 				appComponent: this.oAppComponent
@@ -125,12 +125,12 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oAppComponent = new UIComponent();
 			this.oControl = new Control("control");
-			this.oChange = new Change(getChangeContent("a1", "control"));
-			this.oChange2 = new Change(getChangeContent("a2", "control"));
-			this.oChange3 = new Change(getChangeContent("a3", "control"));
-			this.oChange4 = new Change(getChangeContent("a4", "control"));
-			this.oChangeNoValidCustomData = new Change(getChangeContent("a5", "control"));
-			this.oChangeWithoutCustomData = new Change(getChangeContent("a6", "control"));
+			this.oChange = FlexObjectFactory.createFromFileContent(getChangeContent("a1", "control"));
+			this.oChange2 = FlexObjectFactory.createFromFileContent(getChangeContent("a2", "control"));
+			this.oChange3 = FlexObjectFactory.createFromFileContent(getChangeContent("a3", "control"));
+			this.oChange4 = FlexObjectFactory.createFromFileContent(getChangeContent("a4", "control"));
+			this.oChangeNoValidCustomData = FlexObjectFactory.createFromFileContent(getChangeContent("a5", "control"));
+			this.oChangeWithoutCustomData = FlexObjectFactory.createFromFileContent(getChangeContent("a6", "control"));
 
 			var oCustomData = new CustomData({
 				key: createCustomDataKey(this.oChange, sAppliedKey)

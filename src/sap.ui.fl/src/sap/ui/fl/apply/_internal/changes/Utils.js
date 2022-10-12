@@ -36,7 +36,7 @@ sap.ui.define([
 		/**
 		 * Returns the control map containing control, controlType, bTemplateAffected and originalControl
 		 *
-		 * @param {sap.ui.fl.Change} oChange - Change to be evaluated if template is affected
+		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change to be evaluated if template is affected
 		 * @param {sap.ui.core.Control} oControl - Control that is the target of the passed change
 		 * @param {object} mPropertyBag - Contains additional data that are needed for reading of changes
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
@@ -67,7 +67,7 @@ sap.ui.define([
 		 * Fetches the change handler for a specific change and control;
 		 * if the change handler is currently being registered the function waits for the registration.
 		 *
-		 * @param {sap.ui.fl.Change} oChange - Change for which the change handler should be fetched
+		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change for which the change handler should be fetched
 		 * @param {object} mControl - Object with information about the control
 		 * @param {sap.ui.core.Control} mControl.control - Control instance
 		 * @param {string} mControl.controlType - Type of the control
@@ -114,7 +114,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag.modifier - Reuse operations handling the changes on the given view type
 		 * @param {object} mPropertyBag.appComponent - Application component for the view
 		 * @param {object} mPropertyBag.viewId - ID of the view
-		 * @param {sap.ui.fl.Change} oChange - Change instance to check
+		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance to check
 		 * @returns {boolean} <code>true</code> if the change belongs to the given view
 		 */
 		filterChangeByView: function(mPropertyBag, oChange) {

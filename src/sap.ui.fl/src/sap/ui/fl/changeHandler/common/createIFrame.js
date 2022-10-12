@@ -11,7 +11,7 @@ sap.ui.define([
 	/**
 	 * Create an IFrame control and set its properties
 	 *
-	 * @param {sap.ui.fl.Change} oChange Change object with instructions to be applied on the control map
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange Change object with instructions to be applied on the control map
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @param {object} [oSelector] Selector to calculate the ID for the control that is created

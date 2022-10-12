@@ -76,7 +76,7 @@ sap.ui.define([
 	AddXMLAtExtensionPoint.prototype._applyChange = function(vChange) {
 		// preload the module to be applicable in this session
 		var mModulePreloads = {};
-		mModulePreloads[vChange.getModuleName()] = this.getFragment();
+		mModulePreloads[vChange.getFlexObjectMetadata().moduleName] = this.getFragment();
 		sap.ui.require.preload(mModulePreloads);
 
 		var oChange = vChange.change || vChange;

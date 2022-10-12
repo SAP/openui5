@@ -20,7 +20,6 @@ sap.ui.define([
 	 *
 	 * @class FlVariant instance
 	 * @extends sap.ui.fl.apply._internal.flexObjects.Variant
-	 * @namespace sap.ui.fl.apply._internal.flexObjects.FlVariant
 	 * @alias sap.ui.fl.apply._internal.flexObjects.FlVariant
 	 * @since 1.104
 	 * @version ${version}

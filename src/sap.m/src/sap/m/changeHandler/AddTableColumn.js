@@ -80,7 +80,7 @@ sap.ui.define([
 			var oChange = mPropertyBag.change;
 			var oRevertData = oChange.getRevertData();
 			var oChangeContent = oChange.getContent();
-			var oChangeODataInformation = oChange.getODataInformation();
+			var oChangeODataInformation = oChange.getSupportInformation().oDataInformation;
 			var iIndex = oChangeContent.newFieldIndex;
 			var mFieldSelector = oChangeContent.newFieldSelector;
 

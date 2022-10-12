@@ -1,38 +1,38 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base/util/LoaderExtensions",
-	"sap/base/util/values",
-	"sap/base/util/merge",
 	"sap/base/util/includes",
+	"sap/base/util/LoaderExtensions",
+	"sap/base/util/merge",
+	"sap/base/util/values",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/Change",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/prepareVariantsMap",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	LoaderExtensions,
-	values,
-	merge,
 	includes,
+	LoaderExtensions,
+	merge,
+	values,
 	Log,
 	JsControlTreeModifier,
-	Change,
-	Layer,
-	Utils,
 	VariantUtil,
 	FlexObjectFactory,
-	VariantManagementState,
+	States,
 	prepareVariantsMap,
+	VariantManagementState,
 	FlexState,
 	StorageUtils,
+	Layer,
+	Utils,
 	sinon
 ) {
 	"use strict";
@@ -64,6 +64,13 @@ sap.ui.define([
 			visible: mVariantProperties.visible,
 			executeOnSelection: mVariantProperties.executeOnSelect,
 			contexts: mVariantProperties.contexts
+		});
+	}
+
+	function createUIChange(mFileContent) {
+		return FlexObjectFactory.createUIChange({
+			id: mFileContent.fileName,
+			layer: mFileContent.layer
 		});
 	}
 
@@ -340,7 +347,7 @@ sap.ui.define([
 
 		QUnit.test("when 'getControlChangesForVariant' is called with includeDirtyChanges parameter", function(assert) {
 			merge(this.oVariantsMap, prepareVariantsMap(this.mPropertyBag));
-			var oDirtyChange = new Change({
+			var oDirtyChange = createUIChange({
 				fileName: "dirtyChange",
 				layer: Layer.CUSTOMER
 			});
@@ -491,15 +498,15 @@ sap.ui.define([
 								]
 							},
 							controlChanges: [
-								new Change({
+								createUIChange({
 									fileName: "controlChange1",
 									layer: Layer.VENDOR
 								}),
-								new Change({
+								createUIChange({
 									fileName: "controlChange2",
 									layer: Layer.VENDOR
 								}),
-								new Change({
+								createUIChange({
 									fileName: "controlChange3",
 									layer: Layer.CUSTOMER
 								})
@@ -606,8 +613,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'addChangeToVariant' is called", function(assert) {
-			var oChangeToBeAdded1 = new Change({fileName: "newChange"});
-			var oChangeToBeAdded2 = new Change({fileName: "controlChange1"});
+			var oChangeToBeAdded1 = createUIChange({fileName: "newChange"});
+			var oChangeToBeAdded2 = createUIChange({fileName: "controlChange1"});
 			var bSuccess1 = VariantManagementState.addChangeToVariant({change: oChangeToBeAdded1, vmReference: this.sVMReference, vReference: "variant0", reference: this.sReference});
 			var bSuccess2 = VariantManagementState.addChangeToVariant({change: oChangeToBeAdded2, vmReference: this.sVMReference, vReference: "variant0", reference: this.sReference});
 
@@ -620,8 +627,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'removeChangeFromVariant' is called", function(assert) {
-			var oChangeToBeRemoved1 = new Change({fileName: "controlChange1"});
-			var oChangeToBeRemoved2 = new Change({fileName: "nonExistentChange"});
+			var oChangeToBeRemoved1 = createUIChange({fileName: "controlChange1"});
+			var oChangeToBeRemoved2 = createUIChange({fileName: "nonExistentChange"});
 			var bSuccess1 = VariantManagementState.removeChangeFromVariant({change: oChangeToBeRemoved1, vmReference: this.sVMReference, vReference: "variant0", reference: this.sReference});
 			var bSuccess2 = VariantManagementState.removeChangeFromVariant({change: oChangeToBeRemoved2, vmReference: this.sVMReference, vReference: "variant0", reference: this.sReference});
 
@@ -664,7 +671,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'addVariantToVariantManagement' is called on CUSTOMER layer and a variant reference from a VENDOR layer variant, with 2 VENDOR and one CUSTOMER change", function(assert) {
-			var oChangeContent0 = new Change({fileName: "change0"});
+			var oChangeContent0 = createUIChange({fileName: "change0"});
 			VariantManagementState.getControlChangesForVariant({vReference: "variant0", vmReference: this.sVMReference, reference: this.sReference});
 
 			var oFakeVariantData = {
@@ -692,7 +699,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'addVariantToVariantManagement' is called on USER layer and a variant reference from a VENDOR layer variant with 2 VENDOR and one CUSTOMER change", function(assert) {
-			var oChangeContent0 = new Change({fileName: "change0"});
+			var oChangeContent0 = createUIChange({fileName: "change0"});
 			VariantManagementState.getControlChangesForVariant({vReference: "variant0", vmReference: "vmReference1", reference: this.sReference});
 
 			var oFakeVariantData = {
@@ -765,7 +772,7 @@ sap.ui.define([
 			VariantManagementState.removeUpdateStateListener("reference2", oStub2);
 
 			var oVariantDependentControlChange = {
-				getState: function() {return Change.states.NEW;},
+				getState: function() {return States.LifecycleState.NEW;},
 				convertToFileContent: function() {
 					return {fileType: "change"};
 				}
@@ -780,7 +787,7 @@ sap.ui.define([
 			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 
 			var oVariant = {
-				getState: function() {return Change.states.NEW;},
+				getState: function() {return States.LifecycleState.NEW;},
 				convertToFileContent: function() {
 					return {fileType: "ctrl_variant"};
 				}
@@ -795,7 +802,7 @@ sap.ui.define([
 			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 
 			var oVariantManagementChange = {
-				getState: function() {return Change.states.NEW;},
+				getState: function() {return States.LifecycleState.NEW;},
 				convertToFileContent: function() {
 					return {fileType: "ctrl_variant_management_change"};
 				}
@@ -810,7 +817,7 @@ sap.ui.define([
 			assert.strictEqual(oStub2.callCount, 0, "the added and removed listener was not called");
 
 			var oVariantChange = {
-				getState: function() {return Change.states.NEW;},
+				getState: function() {return States.LifecycleState.NEW;},
 				convertToFileContent: function() {
 					return {fileType: "ctrl_variant_change"};
 				}
@@ -826,7 +833,7 @@ sap.ui.define([
 
 			VariantManagementState.removeUpdateStateListener(this.sReference);
 			var oVariantDependentControlChange1 = {
-				getState: function() {return Change.states.NEW;},
+				getState: function() {return States.LifecycleState.NEW;},
 				convertToFileContent: function() {
 					return {fileType: "change"};
 				}
@@ -843,7 +850,7 @@ sap.ui.define([
 
 		QUnit.test("when 'updateVariantsState' is called to delete variant related changes", function(assert) {
 			var oVariantDependentControlChange = {
-				getState: function() {return Change.states.DELETE;},
+				getState: function() {return States.LifecycleState.DELETE;},
 				convertToFileContent: function() {
 					return {
 						fileType: "change",
@@ -860,7 +867,7 @@ sap.ui.define([
 			assert.equal(this.oResponse.variantDependentControlChanges.length, 0, "then the variants related change was deleted from the flex state response");
 
 			var oVariant = {
-				getState: function() {return Change.states.DELETE;},
+				getState: function() {return States.LifecycleState.DELETE;},
 				convertToFileContent: function() {
 					return {
 						fileType: "ctrl_variant",
@@ -877,7 +884,7 @@ sap.ui.define([
 			assert.equal(this.oResponse.variants.length, 0, "then the variants related change was deleted from the flex state response");
 
 			var oVariantManagementChange = {
-				getState: function() {return Change.states.DELETE;},
+				getState: function() {return States.LifecycleState.DELETE;},
 				convertToFileContent: function() {
 					return {
 						fileType: "ctrl_variant_management_change",
@@ -894,7 +901,7 @@ sap.ui.define([
 			assert.equal(this.oResponse.variantManagementChanges.length, 0, "then the variants related change was deleted from the flex state response");
 
 			var oVariantChange = {
-				getState: function() {return Change.states.DELETE;},
+				getState: function() {return States.LifecycleState.DELETE;},
 				convertToFileContent: function() {
 					return {
 						fileType: "ctrl_variant_change",

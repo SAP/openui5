@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
@@ -18,7 +18,7 @@ sap.ui.define([
 	ChangeUtils,
 	FlexCustomData,
 	Reverter,
-	Change,
+	UIChange,
 	sinon
 ) {
 	"use strict";
@@ -29,15 +29,13 @@ sap.ui.define([
 
 	QUnit.module("revertChangeOnControl", {
 		beforeEach: function () {
-			this.oChange = new Change({
-				content: {},
+			this.oChange = new UIChange({
 				selector: {
 					id: sControlId,
 					isIsLocal: false
 				}
 			});
-			this.oAppliedChange = new Change({
-				content: {},
+			this.oAppliedChange = new UIChange({
 				selector: {
 					id: sControlId,
 					isIsLocal: false
@@ -177,29 +175,25 @@ sap.ui.define([
 
 	QUnit.module("revertMultipleChanges", {
 		beforeEach: function () {
-			this.oChange = new Change({
-				content: {},
+			this.oChange = new UIChange({
 				selector: {
 					id: sControlId,
 					isIsLocal: false
 				}
 			});
-			this.oFailingChange = new Change({
-				content: {},
+			this.oFailingChange = new UIChange({
 				selector: {
 					id: "unavailable",
 					isIsLocal: false
 				}
 			});
-			this.oAppliedChange0 = new Change({
-				content: {},
+			this.oAppliedChange0 = new UIChange({
 				selector: {
 					id: sControlId,
 					isIsLocal: false
 				}
 			});
-			this.oAppliedChange1 = new Change({
-				content: {},
+			this.oAppliedChange1 = new UIChange({
 				selector: {
 					id: sControlId,
 					isIsLocal: false
@@ -233,16 +227,15 @@ sap.ui.define([
 		QUnit.test("with applied changes and one unapplied and one pointing to an unavailable control", function(assert) {
 			var aChanges = [this.oChange, this.oAppliedChange0, this.oFailingChange, this.oAppliedChange1];
 			return Reverter.revertMultipleChanges(aChanges, this.mPropertyBag).then(function() {
-				assert.ok(true, "the function resolves");
 				assert.equal(this.oDeleteChangeInMapStub.callCount, 2, "deleteChangeInMap was called for both applied changes");
 				assert.equal(this.oDeleteChangeInMapStub.firstCall.args[0].getId(), this.oAppliedChange0.getId(), "the first change was reverted first");
 				assert.equal(this.oDeleteChangeInMapStub.secondCall.args[0].getId(), this.oAppliedChange1.getId(), "the second change was reverted second");
 
-				assert.equal(this.oDestroyCustomDataStub.callCount, 3, "destroyAppliedCustomData was called for both applied changes");
+				assert.equal(this.oDestroyCustomDataStub.callCount, 3, "destroyAppliedCustomData was called for all non failing changes");
 				assert.equal(this.oDestroyCustomDataStub.firstCall.args[0].getId(), this.oControl.getId(), "the correct value is passed");
-				assert.equal(this.oDestroyCustomDataStub.firstCall.args[1].getId(), this.oAppliedChange0.getId(), "the first change' CustomData was destroyed");
+				assert.equal(this.oDestroyCustomDataStub.firstCall.args[1].getId(), this.oChange.getId(), "the first change' CustomData was destroyed");
 				assert.equal(this.oDestroyCustomDataStub.secondCall.args[0], true, "the correct value is passed");
-				assert.equal(this.oDestroyCustomDataStub.secondCall.args[1].getId(), this.oAppliedChange1.getId(), "the second change' CustomData was destroyed");
+				assert.equal(this.oDestroyCustomDataStub.secondCall.args[1].getId(), this.oAppliedChange0.getId(), "the second change' CustomData was destroyed");
 				assert.equal(this.oDestroyCustomDataStub.thirdCall.args[0].getId(), this.oControl.getId(), "the correct value is passed");
 				assert.equal(this.oDestroyCustomDataStub.thirdCall.args[1].getId(), this.oAppliedChange1.getId(), "the third change' CustomData was destroyed");
 

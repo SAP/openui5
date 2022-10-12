@@ -1,6 +1,6 @@
 [
 	{
-		"id": "id_1_hideControl",
+		"fileName": "id_1_hideControl",
 		"changeType": "hideControl",
 		"reference": "sap.ui.rta.test.Component",
 		"selector": {
@@ -10,7 +10,7 @@
 		"creation": "2019-12-16T12:37:17.294Z"
 	},
 	{
-		"id": "id_2_hideControl",
+		"fileName": "id_2_hideControl",
 		"changeType": "hideControl",
 		"reference": "sap.ui.rta.test.Component",
 		"selector": {
@@ -20,7 +20,7 @@
 		"creation": "2019-12-16T12:37:17.294Z"
 	},
 	{
-		"id": "id_3_hideControl",
+		"fileName": "id_3_hideControl",
 		"changeType": "hideControl",
 		"reference": "sap.ui.rta.test.Component",
 		"selector": {
@@ -30,7 +30,7 @@
 		"creation": "2019-12-16T12:37:17.294Z"
 	},
 	{
-		"id": "id_4_hideControl",
+		"fileName": "id_4_hideControl",
 		"changeType": "hideControl",
 		"reference": "sap.ui.rta.test.Component",
 		"selector": {

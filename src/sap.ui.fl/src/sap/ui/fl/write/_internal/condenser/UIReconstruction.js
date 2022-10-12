@@ -212,7 +212,12 @@ sap.ui.define([
 	 */
 	function updateTargetIndex(mReducedChanges, mUIReconstructions) {
 		function updateCondenserChange(iIndex, oCondenserChange) {
+			// setting the target index will most likely make the change dirty,
+			// but the condenser needs the current state of the change.
+			// so in this function the state should not change
+			var sOldState = oCondenserChange.change.getState();
 			oCondenserChange.setTargetIndex(oCondenserChange.change, iIndex);
+			oCondenserChange.change.setState(sOldState);
 		}
 
 		function adjustReconstructionMap(mUIStates, sContainerId, mUIAggregationState) {
@@ -288,8 +293,8 @@ sap.ui.define([
 	 * Sorts the index relevant changes in the list of all reduced changes.
 	 * The index relevant changes are already in order, this order has to be taken over to the other list.
 	 *
-	 * @param {sap.ui.fl.Change[]} aSortedIndexRelatedChanges - Array of sorted reduced index related changes
-	 * @param {sap.ui.fl.Change[]} aAllReducedChanges - Array of all reduced changes
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aSortedIndexRelatedChanges - Array of sorted reduced index related changes
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aAllReducedChanges - Array of all reduced changes
 	 */
 	UIReconstruction.swapChanges = function(aSortedIndexRelatedChanges, aAllReducedChanges) {
 		var aIndexes = aSortedIndexRelatedChanges.map(function(oChange) {
@@ -305,7 +310,7 @@ sap.ui.define([
 	 *
 	 * @param {Map} mUIReconstructions - Map of UI reconstructions
 	 * @param {object[]} aCondenserInfos - Array of condenser info objects
-	 * @returns {sap.ui.fl.Change[]} Sorted array of index-related changes
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Sorted array of index-related changes
 	 */
 	UIReconstruction.sortIndexRelatedChanges = function(mUIReconstructions, aCondenserInfos) {
 		var aSortedIndexRelatedChangesPerContainer = [];

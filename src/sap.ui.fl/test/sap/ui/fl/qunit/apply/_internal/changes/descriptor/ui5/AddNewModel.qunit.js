@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModel",
-	"sap/ui/fl/Change"
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange"
 ],
 function (
 	AddNewModel,
-	Change
+	AppDescriptorChange
 ) {
 	"use strict";
 
@@ -40,8 +40,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						"customer.fancy_dataSource": {
@@ -109,8 +111,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					model: {
 						i18n: {
@@ -147,8 +151,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						equipmentanno: {
@@ -195,8 +201,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					model: {
 						equipment: {
@@ -236,8 +244,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					model: {
 						equipment: {
@@ -288,8 +298,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					model: {
 						equipment: {
@@ -314,8 +326,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						"customer.fancy_dataSource": {
@@ -363,8 +377,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						inaDataSource: {
@@ -402,8 +418,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						xmlDataSource: {
@@ -441,8 +459,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						jsonDataSource: {
@@ -480,8 +500,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						fhirDataSource: {
@@ -519,8 +541,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						notSupportedDataSource: {
@@ -571,8 +595,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						equipmentAnnotation: {
@@ -606,8 +632,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						"customer.fancy_annotation1": {
@@ -682,8 +710,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						"customer.fancy_annotation1": {
@@ -733,8 +763,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						notSupportedDataSource: {
@@ -759,8 +791,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						notUsedDataSource: {
@@ -797,8 +831,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					model: {
 						equipment: {
@@ -836,8 +872,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					model: {
 						equipment: {
@@ -873,8 +911,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					model: {
 						equipment1: {
@@ -905,8 +945,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						httpDataSource: {
@@ -944,8 +986,10 @@ function (
 				}
 			};
 
-			var oChange = new Change({
-				changeType: "appdescr_ui5_addNewModel",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ui5_addNewModel"
+				},
 				content: {
 					dataSource: {
 						webSocketDataSource: {

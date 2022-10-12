@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/api/LocalResetAPI",
 	"sap/ui/rta/command/CommandFactory",
@@ -10,10 +9,10 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/core/Control",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Log,
-	Change,
 	Layer,
 	LocalResetAPI,
 	CommandFactory,
@@ -21,7 +20,8 @@ sap.ui.define([
 	OverlayRegistry,
 	ElementOverlay,
 	Control,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -40,25 +40,25 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("when calling command factory for localReset ...", function(assert) {
-			var oChange1 = new Change({
+			var oChange1 = RtaQunitUtils.createUIChange({
 				fileName: "change1",
 				fileType: "change",
 				layer: Layer.CUSTOMER,
 				selector: {id: "id1"}
 			});
-			var oChange2 = new Change({
+			var oChange2 = RtaQunitUtils.createUIChange({
 				fileName: "change2",
 				fileType: "change",
 				layer: Layer.CUSTOMER,
 				selector: {id: "id2"}
 			});
-			var oChange3 = new Change({
+			var oChange3 = RtaQunitUtils.createUIChange({
 				fileName: "change3",
 				fileType: "change",
 				layer: Layer.CUSTOMER,
 				selector: {id: "id3"}
 			});
-			var oChange4 = new Change({
+			var oChange4 = RtaQunitUtils.createUIChange({
 				fileName: "change4",
 				fileType: "change",
 				layer: Layer.CUSTOMER,

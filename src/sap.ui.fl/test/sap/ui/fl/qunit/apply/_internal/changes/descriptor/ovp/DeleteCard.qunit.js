@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ovp/DeleteCard",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	DeleteCard,
-	Change,
+	AppDescriptorChange,
 	sinon
 ) {
 	"use strict";
@@ -15,8 +15,10 @@ sap.ui.define([
 
 	QUnit.module("applyChange", {
 		beforeEach: function () {
-			this.oChange = new Change({
-				changeType: "appdescr_ovp_removeCard",
+			this.oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ovp_removeCard"
+				},
 				content: {
 					cardId: "card1"
 				}

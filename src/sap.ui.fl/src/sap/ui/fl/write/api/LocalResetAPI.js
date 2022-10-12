@@ -3,18 +3,18 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/base/util/restricted/_union"
 ], function(
+	States,
 	PersistenceWriteAPI,
 	ChangesWriteAPI,
 	JsControlTreeModifier,
-	Change,
 	Utils,
 	ChangePersistenceFactory,
 	union
@@ -39,10 +39,10 @@ sap.ui.define([
 		};
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
 		return oChangePersistence.getAllUIChanges(mPropertyBag)
-			.filter(function (oChange) {
+			.filter(function(oChange) {
 				return (
-					oChange.getState() !== Change.states.DELETED
-					&& oChange.getVariantReference() === (sCurrentVariant || "")
+					oChange.getState() !== States.LifecycleState.DELETED
+					&& oChange.getVariantReference() === (sCurrentVariant || undefined)
 				);
 			});
 	}
@@ -112,7 +112,7 @@ sap.ui.define([
 					change: oChange,
 					selector: oControl
 				});
-				if (oChange.getState() === Change.states.PERSISTED) {
+				if (oChange.getState() === States.LifecycleState.PERSISTED) {
 					var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
 					var aDirtyChanges = oChangePersistence.getDirtyChanges();
 					var iIndex = aDirtyChanges.indexOf(oChange);

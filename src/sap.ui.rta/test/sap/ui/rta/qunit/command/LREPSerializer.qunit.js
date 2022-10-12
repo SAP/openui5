@@ -754,8 +754,10 @@ sap.ui.define([
 				.then(function() {
 					var aUIChanges = [oRemoveCommand1.getPreparedChange(), oRemoveCommand2.getPreparedChange()];
 					aUIChanges.forEach(function(oChange) {
-						oChange.setNamespace("APP_VARIANT_NAMESPACE");
-						oChange.setComponent("APP_VARIANT_REFERENCE");
+						var oFlexObjectMetadata = oChange.getFlexObjectMetadata();
+						oFlexObjectMetadata.namespace = "APP_VARIANT_NAMESPACE";
+						oFlexObjectMetadata.reference = "APP_VARIANT_REFERENCE";
+						oChange.setFlexObjectMetadata(oFlexObjectMetadata);
 					});
 
 					return PersistenceWriteAPI.save({selector: oMockedAppComponent, skipUpdateCache: true});

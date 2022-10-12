@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/layout/changeHandler/HideSimpleForm",
 	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/fl/Change",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Title",
@@ -11,27 +10,25 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Toolbar",
 	"sap/m/Title",
-	"sap/base/Log",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	HideSimpleForm,
 	SimpleForm,
-	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	Title,
 	Label,
 	Input,
 	Toolbar,
-	mobileTitle,
-	Log,
-	oCore
+	MobileTitle,
+	oCore,
+	FlexTestAPI
 ) {
 	"use strict";
 
 	QUnit.module("using HideSimpleForm with old change format", {
 		beforeEach: function () {
-
 			this.oTitle0 = new Title({id : "Title0", text : "Title 0"});
 			this.oLabel0 = new Label({id : "Label0",  text : "Label 0", visible : true});
 			this.oLabel1 = new Label({id : "Label1",  text : "Label 1"});
@@ -52,30 +49,29 @@ sap.ui.define([
 			this.mPropertyBag = {
 				appComponent: this.oMockedComponent
 			};
-
-			var oLegacyChange = {
-				"selector": {
-					"id": "SimpleForm"
+			return FlexTestAPI.createFlexObject({
+				changeSpecificData: {
+					changeType: "hideSimpleFormField",
+					removedElement: {id: this.oLabel0.getId()}
 				},
-				"content": {
-					"elementSelector": this.oLabel0.getId()
-				},
-				"changeType": "hideSimpleFormField"
-			};
-
-			this.oChangeWrapper = new Change(oLegacyChange);
-			this.oChangeHandler = HideSimpleForm;
+				selector: this.oSimpleForm,
+				appComponent: this.oMockedComponent
+			}).then(function(oChange) {
+				var oContent = oChange.getContent();
+				oContent.sHideId = oContent.elementSelector;
+				delete oContent.elementSelector;
+				oChange.setContent(oContent);
+				this.oChange = oChange;
+			}.bind(this));
 		},
-
 		afterEach: function () {
 			this.oSimpleForm.destroy();
 		}
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
-		//Call CUT
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		return this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag)
+		return HideSimpleForm.applyChange(this.oChange, this.oSimpleForm, this.mPropertyBag)
 			.then(function(){
 				assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
 			}.bind(this));
@@ -83,7 +79,6 @@ sap.ui.define([
 
 	QUnit.module("using HideSimpleForm with a new change format", {
 		beforeEach: function () {
-
 			this.oTitle0 = new Title({id : "component---Title0",  text : "Title 0"});
 			this.oLabel0 = new Label({id : "component---Label0",  text : "Label 0", visible : true});
 			this.oLabel1 = new Label({id : "component---Label1",  text : "Label 1"});
@@ -105,84 +100,31 @@ sap.ui.define([
 				appComponent: this.oMockedComponent,
 				modifier: JsControlTreeModifier
 			};
-
-			var oChange = {
-				"selector": {
-					"id": "component---SimpleForm"
+			return FlexTestAPI.createFlexObject({
+				changeSpecificData: {
+					changeType: "hideSimpleFormField",
+					removedElement: {id: this.oLabel0.getId()}
 				},
-				"content": {
-					"elementSelector": {
-						"id": this.oLabel0.getId()
-					}
-				},
-				"changeType": "hideSimpleFormField"
-			};
-			this.oChangeWrapper = new Change(oChange);
-
-			var oChangeWithLocalIds = {
-				"selector": {
-					"id": "SimpleForm",
-					"idIsLocal": true
-				},
-				"content": {
-					"elementSelector": {
-						"id" : "Label0",
-						"idIsLocal": true
-					}
-				},
-				"changeType": "hideSimpleFormField"
-			};
-			this.oChangeWithLocalIdsWrapper = new Change(oChangeWithLocalIds);
-
-			var oChangeWithGlobalIds = {
-				"selector": {
-					"id": "component---SimpleForm"
-				},
-				"content": {
-					"elementSelector": {
-						id : this.oLabel0.getId(),
-						idIsLocal: false
-					}
-				},
-				"changeType": "hideSimpleFormField"
-			};
-
-			this.oChangeWithGlobalIdsWrapper = new Change(oChangeWithGlobalIds);
-			this.oChangeHandler = HideSimpleForm;
-			this.oXmlTreeModifier = XmlTreeModifier;
-			this.JsControlTreeModifier = JsControlTreeModifier;
+				selector: this.oSimpleForm,
+				appComponent: this.oMockedComponent
+			}).then(function(oChange) {
+				this.oChange = oChange;
+			}.bind(this));
 		},
-
 		afterEach: function () {
 			this.oSimpleForm.destroy();
 		}
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier", function (assert) {
-		//Call CUT
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		return this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag)
-			.then(function(){
-				assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
-			}.bind(this));
-	});
-
-	QUnit.test("when calling applyChange with JsControlTreeModifier and a change containing local ids", function (assert) {
-		//Call CUT
-		this.mPropertyBag.modifier = JsControlTreeModifier;
-		return this.oChangeHandler.applyChange(this.oChangeWithLocalIdsWrapper, this.oSimpleForm, this.mPropertyBag)
-			.then(function() {
-				assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
-			}.bind(this));
-	});
-
-	QUnit.test("when calling applyChange with JsControlTreeModifier and a change containing global ids", function (assert) {
-		//Call CUT
-		this.mPropertyBag.modifier = JsControlTreeModifier;
-		return this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, this.oSimpleForm, this.mPropertyBag)
-			.then(function(){
-				assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
-			}.bind(this));
+		return HideSimpleForm.applyChange(this.oChange, this.oSimpleForm, this.mPropertyBag)
+		.then(function(){
+			assert.equal(this.oChange.getContent().elementSelector.id, "Label0", "elementSelector.id has been added to the change");
+			assert.ok(this.oChange.getContent().elementSelector.idIsLocal, "elementSelector.idIsLocal has been added to the change");
+			assert.equal(this.oChange.getDependentControl("elementSelector", this.mPropertyBag).getId(), this.oLabel0.getId(), "elementSelector is part of dependent selector");
+			assert.notOk(this.oLabel0.getVisible(), "the FormElement is hidden");
+		}.bind(this));
 	});
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
@@ -210,58 +152,19 @@ sap.ui.define([
 		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
-		return this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, this.oXmlSimpleForm, {
-			modifier : this.oXmlTreeModifier,
+		return HideSimpleForm.applyChange(this.oChange, this.oXmlSimpleForm, {
+			modifier : XmlTreeModifier,
 			appComponent: this.oMockedComponent,
 			view : this.oXmlDocument
 		})
-			.catch(function (vError){
-				assert.strictEqual(vError.message, "Change cannot be applied in XML. Retrying in JS.");
-			});
-	});
-
-	QUnit.test("applyChange shall fail if the control is invalid", function (assert) {
-		var fnLogErrorSpy = this.spy(Log, "error");
-
-		return this.oChangeHandler.applyChange(this.oChangeWithGlobalIdsWrapper, {}, {modifier : this.JsControlTreeModifier})
-			.then(function() {
-				assert.ok(fnLogErrorSpy.calledOnce, "then an error is raised on the log");
-			});
-	});
-
-	QUnit.test('when calling completeChangeContent', function (assert) {
-		var oChange = {
-			"selector": {
-				"id": "SimpleForm",
-				"idIsLocal": true
-			},
-			"changeType": "hideSimpleFormField",
-			"content": {
-			}
-		};
-		var oChangeWrapper = new Change(oChange);
-		var oSpecificChangeInfo = { removedElement: { id : "component---Label1" } };
-
-		this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo, this.mPropertyBag);
-
-		assert.equal(oChange.content.elementSelector.id, "Label1", "elementSelector.id has been added to the change");
-		assert.ok(oChange.content.elementSelector.idIsLocal, "elementSelector.idIsLocal has been added to the change");
-		assert.equal(oChangeWrapper.getDependentControl("elementSelector", this.mPropertyBag).getId(), this.oLabel1.getId(), "elementSelector is part of dependent selector");
+		.catch(function (vError){
+			assert.strictEqual(vError.message, "Change cannot be applied in XML. Retrying in JS.");
+		});
 	});
 
 	QUnit.test('when calling completeChangeContent without removedElement.id', function (assert) {
-		var oChangeWrapper = new Change({
-			"selector": {
-				"id": "SimpleForm",
-				"idIsLocal": true
-			},
-			"changeType": "hideSimpleFormField",
-			"content": {
-			}
-		});
-
 		assert.throws(function() {
-			this.oChangeHandler.completeChangeContent(oChangeWrapper, this.oSimpleForm, this.mPropertyBag);
+			HideSimpleForm.completeChangeContent({}, this.oSimpleForm, this.mPropertyBag);
 			},
 			new Error("oSpecificChangeInfo.removedElement.id attribute required"),
 			"the undefined value raises an error message"
@@ -270,9 +173,8 @@ sap.ui.define([
 
 	QUnit.module("using HideSimpleForm with a simpleform with toolbar", {
 		beforeEach: function () {
-
 			this.oToolbar0 = new Toolbar({id : "Toolbar0"});
-			var oTitle0 = new mobileTitle("Title0", {text : "Title 0"});
+			var oTitle0 = new MobileTitle("Title0", {text : "Title 0"});
 			this.oToolbar0.addContent(oTitle0);
 			this.oLabel0 = new Label({id : "Label0",  text : "Label 0", visible : true});
 			this.oLabel1 = new Label({id : "Label1",  text : "Label 1"});
@@ -280,7 +182,7 @@ sap.ui.define([
 			this.oInput1 = new Input({id : "Input1"});
 
 			this.oToolbar1 = new Toolbar({id : "Toolbar1"});
-			var oTitle1 = new mobileTitle("Title1", {text : "Title 1"});
+			var oTitle1 = new MobileTitle("Title1", {text : "Title 1"});
 			this.oToolbar1.addContent(oTitle1);
 			this.oLabel10 = new Label({id : "Label10",  text : "Label 10", visible : true});
 			this.oLabel11 = new Label({id : "Label11",  text : "Label 11"});
@@ -302,40 +204,25 @@ sap.ui.define([
 			this.mPropertyBag = {
 				appComponent: this.oMockedComponent
 			};
-
-			var oChange = {
-				"selector": {
-					"id": "SimpleForm"
+			return FlexTestAPI.createFlexObject({
+				changeSpecificData: {
+					changeType: "removeSimpleFormGroup",
+					removedElement: {id: this.oToolbar1.getId()}
 				},
-				"content": {
-					"elementSelector": this.oToolbar1.getId()
-				},
-				"changeType": "removeSimpleFormGroup"
-			};
-
-			this.oChangeWrapper = new Change(oChange);
-			this.oChangeHandler = HideSimpleForm;
-			this.oXmlTreeModifier = XmlTreeModifier;
+				selector: this.oSimpleForm,
+				appComponent: this.oMockedComponent
+			}).then(function(oChange) {
+				this.oChange = oChange;
+			}.bind(this));
 		},
-
 		afterEach: function () {
 			this.oSimpleForm.destroy();
-			this.oLabel0.destroy();
-			this.oLabel1.destroy();
-			this.oInput0.destroy();
-			this.oInput1.destroy();
-			this.oToolbar0.destroy();
-			this.oToolbar1.destroy();
-			this.oLabel10.destroy();
-			this.oLabel11.destroy();
-			this.oInput10.destroy();
-			this.oInput11.destroy();
 		}
 	});
 
 	QUnit.test("when removing a FormContainer in SimpleForm with Toolbars", function(assert) {
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		return this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag)
+		return HideSimpleForm.applyChange(this.oChange, this.oSimpleForm, this.mPropertyBag)
 			.then(function(){
 				assert.ok(this.oLabel0.getVisible(), "the label of first FormElement is visible");
 				assert.ok(this.oLabel1.getVisible(), "the label of first FormElement is visible");
@@ -345,7 +232,7 @@ sap.ui.define([
 				assert.notOk(this.oLabel11.getVisible(), "the label of second FormElement is hidden");
 				assert.notOk(this.oInput10.getVisible(), "the input of second FormElement is hidden");
 				assert.notOk(this.oInput11.getVisible(), "the input of second FormElement is hidden");
-				assert.equal(this.oSimpleForm.getDependents()[0].getId(), this.oChangeWrapper.getContent().elementSelector, "then removed element was added to the dependents aggregation");
+				assert.equal(this.oChange.getDependentControl("elementSelector", this.mPropertyBag).getId(), this.oSimpleForm.getDependents()[0].getId(), "then removed element was added to the dependents aggregation");
 			}.bind(this));
 	});
 
@@ -379,31 +266,26 @@ sap.ui.define([
 		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 		var mPropertyBag = {
-			modifier : this.oXmlTreeModifier,
-				appComponent : this.oMockedComponent,
-				view : this.oXmlDocument
+			modifier: XmlTreeModifier,
+			appComponent: this.oMockedComponent,
+			view: this.oXmlDocument
 		};
 
-		return this.oChangeHandler.applyChange(
-			this.oChangeWrapper,
-			this.oXmlSimpleForm,
-			mPropertyBag
-		)
-			.catch(function (vError){
-				assert.strictEqual(vError.message, "Change cannot be applied in XML. Retrying in JS.");
-			});
+		return HideSimpleForm.applyChange(this.oChange, this.oXmlSimpleForm, mPropertyBag )
+		.catch(function (vError){
+			assert.strictEqual(vError.message, "Change cannot be applied in XML. Retrying in JS.");
+		});
 	});
 
 	QUnit.module("using HideSimpleForm with a simpleform with toolbar", {
 		beforeEach: function () {
-
 			this.oLabel0 = new Label({id : "Label30",  text : "Label 0", visible : true});
 			this.oLabel1 = new Label({id : "Label31",  text : "Label 1"});
 			this.oInput0 = new Input({id : "Input30", visible : true});
 			this.oInput1 = new Input({id : "Input31"});
 
 			this.oToolbar1 = new Toolbar({id : "Toolbar31"});
-			var oTitle1 = new mobileTitle("Title31", {text : "Title 1"});
+			var oTitle1 = new MobileTitle("Title31", {text : "Title 1"});
 			this.oToolbar1.addContent(oTitle1);
 			this.oLabel10 = new Label({id : "Label130",  text : "Label 10", visible : true});
 			this.oLabel11 = new Label({id : "Label311",  text : "Label 11"});
@@ -425,32 +307,31 @@ sap.ui.define([
 			this.mPropertyBag = {
 				appComponent: this.oMockedComponent
 			};
-
-			var oChange = {
-				"selector": {
-					"id": "SimpleForm"
-				},
-				"content": {
-					"elementSelector": this.oToolbar1.getId()
-				},
-				"changeType": "removeSimpleFormGroup"
-			};
-
-			var oChange1 = {
-				"selector": {
-					"id": "SimpleForm"
-				},
-				"content": {
-					"elementSelector": null
-				},
-				"changeType": "removeSimpleFormGroup"
-			};
-
-			this.oChangeWrapper = new Change(oChange);
-			this.oChangeWrapper1 = new Change(oChange1);
-			this.oChangeHandler = HideSimpleForm;
+			return Promise.all([
+				FlexTestAPI.createFlexObject({
+					changeSpecificData: {
+						changeType: "removeSimpleFormGroup",
+						removedElement: {id: this.oToolbar1.getId()}
+					},
+					selector: this.oSimpleForm,
+					appComponent: this.oMockedComponent
+				}),
+				FlexTestAPI.createFlexObject({
+					changeSpecificData: {
+						changeType: "removeSimpleFormGroup",
+						removedElement: {id: this.oToolbar1.getId()}
+					},
+					selector: this.oSimpleForm,
+					appComponent: this.oMockedComponent
+				})]
+			).then(function(aChanges) {
+				this.oChange = aChanges[0];
+				this.oChange1 = aChanges[1];
+				this.oChange1.setContent({
+					elementSelector: null
+				});
+			}.bind(this));
 		},
-
 		afterEach: function () {
 			this.oSimpleForm.destroy();
 			this.oToolbar1.destroy();
@@ -459,7 +340,7 @@ sap.ui.define([
 
 	QUnit.test("when removing a FormContainer in SimpleForm with Toolbars, and the first FormContainer has no Toolbar", function(assert) {
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		return this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag)
+		return HideSimpleForm.applyChange(this.oChange, this.oSimpleForm, this.mPropertyBag)
 			.then(function() {
 				assert.ok(this.oLabel0.getVisible(), "the label of first FormElement is visible");
 				assert.ok(this.oLabel1.getVisible(), "the label of first FormElement is visible");
@@ -474,7 +355,7 @@ sap.ui.define([
 
 	QUnit.test("when removing the first FormContainer (without Toolbar) in SimpleForm with Toolbars", function(assert) {
 		this.mPropertyBag.modifier = JsControlTreeModifier;
-		return this.oChangeHandler.applyChange(this.oChangeWrapper1, this.oSimpleForm, this.mPropertyBag)
+		return HideSimpleForm.applyChange(this.oChange1, this.oSimpleForm, this.mPropertyBag)
 			.then(function() {
 				assert.notOk(this.oLabel0.getVisible(), "the label of first FormElement is hidden");
 				assert.notOk(this.oLabel1.getVisible(), "the label of first FormElement is hidden");

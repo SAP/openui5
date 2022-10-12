@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/ObjectAttribute",
 	"sap/m/ObjectHeader",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/thirdparty/sinon-4",
@@ -19,7 +19,7 @@ sap.ui.define([
 	ObjectAttribute,
 	ObjectHeader,
 	VerticalLayout,
-	Change,
+	UIChange,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	sinon,
@@ -189,7 +189,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("When applying the single move change on jsControlTree with local id, Then", function(assert) {
-		var oChange = new Change({
+		var oChange = new UIChange({
 			selector: this.mSelectorWithLocalId,
 			content: this.mSingleMoveChangeContentWithLocalId
 		});
@@ -205,7 +205,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("When applying the single move change on jsControlTree with global id, Then", function(assert) {
-		var oChange = new Change({
+		var oChange = new UIChange({
 			selector: this.mSelectorWithGlobalId,
 			content: this.mSingleMoveChangeContentWithGlobalId
 		});
@@ -221,7 +221,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("When applying the multi move change on jsControlTree with local id, Then", function(assert) {
-		var oChange = new Change({
+		var oChange = new UIChange({
 			selector: this.mSelectorWithLocalId,
 			content: this.mMultiMoveChangeContentWithLocalId
 		});
@@ -237,7 +237,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("When applying the multi move change on jsControlTree with global id, Then", function(assert) {
-		var oChange = new Change({
+		var oChange = new UIChange({
 			selector: this.mSelectorWithGlobalId,
 			content: this.mMultiMoveChangeContentWithGlobalId
 		});
@@ -253,7 +253,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("When applying broken changes (functionality independent of modifier), Then", function(assert) {
-		var oChange = new Change({
+		var oChange = new UIChange({
 			selector: {
 				id: this.oObjectHeader.getId()
 			},
@@ -263,7 +263,7 @@ sap.ui.define([
 		return MoveElements.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier})
 			.catch(function(oError) {
 				assert.equal(oError.message, "No source aggregation supplied via selector for move", "missing source aggregation error captured");
-				oChange = new Change({
+				oChange = new UIChange({
 					selector: this.mSelectorWithGlobalId,
 					content: {
 						movedElements: [{
@@ -280,7 +280,7 @@ sap.ui.define([
 			}.bind(this))
 			.catch(function(oError) {
 				assert.equal(oError.message, "No target supplied for move", "missing target error captured");
-				oChange = new Change({
+				oChange = new UIChange({
 					selector: this.mSelectorWithGlobalId,
 					content: {
 						movedElements: [{
@@ -302,7 +302,7 @@ sap.ui.define([
 			}.bind(this))
 			.catch(function(oError) {
 				assert.equal(oError.message, "Move target parent not found", "unkown target error captured");
-				oChange = new Change({
+				oChange = new UIChange({
 					selector: this.mSelectorWithGlobalId,
 					content: {
 						movedElements: [{
@@ -323,7 +323,7 @@ sap.ui.define([
 			}.bind(this))
 			.catch(function(oError) {
 				assert.equal(oError.message, "No target aggregation supplied for move", "missing target aggregation error captured");
-				oChange = new Change({
+				oChange = new UIChange({
 					selector: this.mSelectorWithGlobalId,
 					content: {
 						target: {
@@ -338,7 +338,7 @@ sap.ui.define([
 			}.bind(this))
 			.catch(function(oError) {
 				assert.equal(oError.message, "Change format invalid", "missing moved elements error captured");
-				oChange = new Change({
+				oChange = new UIChange({
 					selector: this.mSelectorWithGlobalId,
 					content: {
 						movedElements: [{
@@ -367,7 +367,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("When applying the single move change on xmlControlTree with local id, Then", function(assert) {
-		var oChange = new Change({
+		var oChange = new UIChange({
 			selector: this.mSelectorWithLocalId,
 			content: this.mSingleMoveChangeContentWithLocalId
 		});
@@ -383,7 +383,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("When applying the single move change on xmlControlTree with global id, Then", function(assert) {
-		var oChange = new Change({
+		var oChange = new UIChange({
 			selector: this.mSelectorWithGlobalId,
 			content: this.mSingleMoveChangeContentWithGlobalId
 		});
@@ -399,7 +399,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("When applying the multi move change on xmlControlTree with local id, Then", function(assert) {
-		var oChange = new Change({
+		var oChange = new UIChange({
 			selector: this.mSelectorWithLocalId,
 			content: this.mMultiMoveChangeContentWithLocalId
 		});
@@ -415,7 +415,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("When applying the multi move change on xmlControlTree with global id, Then", function(assert) {
-		var oChange = new Change({
+		var oChange = new UIChange({
 			selector: this.mSelectorWithGlobalId,
 			content: this.mMultiMoveChangeContentWithGlobalId
 		});

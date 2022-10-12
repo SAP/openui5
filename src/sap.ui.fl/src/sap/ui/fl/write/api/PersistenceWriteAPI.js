@@ -38,7 +38,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Provides an API for tools to query, provide, save or reset {@link sap.ui.fl.Change}s.
+	 * Provides an API for tools to query, provide, save or reset {@link sap.ui.fl.apply._internal.flexObjects.FlexObject}s.
 	 *
 	 * @namespace sap.ui.fl.write.api.PersistenceWriteAPI
 	 * @experimental Since 1.68
@@ -52,7 +52,7 @@ sap.ui.define([
 	/**
 	 * Retrieves the changes from the flex persistence for the selector.
 	 *
-	 * @param {sap.ui.fl.Change} oChange - Change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
 	 *
 	 * @returns {boolean} Returns a boolean value if it is a descriptor change
 	 */
@@ -246,9 +246,9 @@ sap.ui.define([
 	 * If it's a descriptor change, a transport request is set.
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
-	 * @param {sap.ui.fl.Change} mPropertyBag.change - Change instance
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} mPropertyBag.change - Change instance
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
-	 * @returns {sap.ui.fl.Change} The change instance
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} The change instance
 	 *
 	 * @private
 	 * @ui5-restricted
@@ -265,7 +265,7 @@ sap.ui.define([
 	 * Removes a change from from the applied changes on a control and from the flex persistence map.
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
-	 * @param {sap.ui.fl.Change} mPropertyBag.change - Change to be removed
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} mPropertyBag.change - Change to be removed
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
 	 * @returns {Promise} resolves when changes are removed
 	 * @private
@@ -342,8 +342,8 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Retrieves the associated flex persistence
-	 * @param {sap.ui.fl.Change[]} mPropertyBag.changes - Array of changes
-	 * @returns {Promise<sap.ui.fl.Change[]>} Resolves with all necessary changes
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} mPropertyBag.changes - Array of changes
+	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Resolves with all necessary changes
 	 * @private
 	 * @ui5-restricted sap.ui.rta.test
 	 */
@@ -378,7 +378,7 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.invalidateCache] - Indicates whether the cache is to be invalidated
 	 * @param {boolean} [mPropertyBag.onlyCurrentVariants] - Whether only changes for the currently active variants should be considered
 	 *
-	 * @returns {Promise} Promise resolves with an array of all change instances {@see sap.ui.fl.Change}
+	 * @returns {Promise} Promise resolves with an array of all change instances {@see sap.ui.fl.apply._internal.flexObjects.FlexObject}
 	 * @private
 	 */
 	PersistenceWriteAPI._getUIChanges = function(mPropertyBag) {

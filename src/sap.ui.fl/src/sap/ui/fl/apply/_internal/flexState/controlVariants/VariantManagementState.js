@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
 ], function(
@@ -27,7 +26,6 @@ sap.ui.define([
 	VariantsApplyUtil,
 	States,
 	FlexState,
-	Change,
 	LayerUtils,
 	Utils
 ) {
@@ -170,7 +168,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.reference - Component reference
 	 * @param {boolean} [mPropertyBag.includeDirtyChanges] - Whether dirty changes of the current session should be included, <code>true</code> by default
 	 *
-	 * @returns {object[]|sap.ui.fl.Change[]} All changes of the variant
+	 * @returns {object[]|sap.ui.fl.apply._internal.flexObjects.FlexObject[]} All changes of the variant
 	 * @private
 	 * @ui5-restricted
 	 */
@@ -181,7 +179,7 @@ sap.ui.define([
 			aResult = oVariant.controlChanges.filter(function(oChange) {
 				return (
 					mPropertyBag.includeDirtyChanges !== false
-					|| oChange.getState() === Change.states.PERSISTED
+					|| oChange.getState() === States.LifecycleState.PERSISTED
 				);
 			});
 		}
@@ -285,7 +283,7 @@ sap.ui.define([
 	 * Removes a variant from a variant management reference.
 	 *
 	 * @param {object} mPropertyBag - Object with the necessary properties
-	 * @param {sap.ui.fl.Variant} mPropertyBag.variant - Variant to be removed
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlVariant} mPropertyBag.variant - Variant to be removed
 	 * @param {string} mPropertyBag.vmReference - Variant management reference
 	 * @param {string} mPropertyBag.reference - Component reference
 	 *
@@ -348,7 +346,7 @@ sap.ui.define([
 	 * Add a control change to a variant.
 	 *
 	 * @param {object} mPropertyBag - Object with the necessary properties
-	 * @param {sap.ui.fl.Change} mPropertyBag.change - Control change
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} mPropertyBag.change - Control change
 	 * @param {string} mPropertyBag.vmReference - Variant management reference
 	 * @param {string} mPropertyBag.vReference - Variant reference
 	 * @param {string} mPropertyBag.reference - Component reference
@@ -375,7 +373,7 @@ sap.ui.define([
 	 * Removes a control change from a variant.
 	 *
 	 * @param {object} mPropertyBag - Object with the necessary properties
-	 * @param {sap.ui.fl.Change} mPropertyBag.change - Control change
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} mPropertyBag.change - Control change
 	 * @param {string} mPropertyBag.vmReference - Variant management reference
 	 * @param {string} mPropertyBag.vReference - Variant reference
 	 * @param {string} mPropertyBag.reference - Component reference
@@ -531,7 +529,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with the necessary properties
 	 * @param {string} mPropertyBag.reference - Flex reference
 	 * @param {string} mPropertyBag.content - Variant section content
-	 * @param {sap.ui.fl.Change | sap.ui.fl.Variant} mPropertyBag.changeToBeAddedOrDeleted - Flex object to be added or deleted
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject | sap.ui.fl.apply._internal.flexObjects.FlVariant} mPropertyBag.changeToBeAddedOrDeleted - Flex object to be added or deleted
 	 *
 	 * @private
 	 * @ui5-restricted
@@ -551,10 +549,10 @@ sap.ui.define([
 
 		if (mPropertyBag.changeToBeAddedOrDeleted) {
 			switch (mPropertyBag.changeToBeAddedOrDeleted.getState()) {
-				case States.NEW:
+				case States.LifecycleState.NEW:
 					addChange(mPropertyBag.changeToBeAddedOrDeleted.convertToFileContent(), oFlexObjects);
 					break;
-				case States.DELETE:
+				case States.LifecycleState.DELETE:
 					deleteChange(mPropertyBag.changeToBeAddedOrDeleted.convertToFileContent(), oFlexObjects);
 					break;
 				default:

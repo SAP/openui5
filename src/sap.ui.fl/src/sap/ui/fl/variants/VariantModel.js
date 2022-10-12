@@ -16,10 +16,10 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
@@ -39,10 +39,10 @@ sap.ui.define([
 	Reverter,
 	URLHandler,
 	FlexObjectFactory,
+	States,
 	Switcher,
 	VariantManagementState,
 	VariantUtil,
-	Change,
 	Layer,
 	LayerUtils,
 	Utils,
@@ -121,7 +121,7 @@ sap.ui.define([
 	/**
 	 * Removes passed control changes which are in DIRTY state from the variant state and flex controller.
 	 * @param {object} mPropertyBag - Object with properties
-	 * @param {sap.ui.fl.Change[]} mPropertyBag.changes - Array of control changes
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} mPropertyBag.changes - Array of control changes
 	 * @param {string} mPropertyBag.vmReference - Variant management reference
 	 * @param {string} mPropertyBag.vReference - Variant reference to remove dirty changes from
 	 * @param {sap.ui.fl.variants.VariantModel} mPropertyBag.model - Variant model instance
@@ -573,7 +573,7 @@ sap.ui.define([
 		var sVariantReference = oChange.getVariantReference();
 		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference).variantManagementReference;
 		//*marker for VariantManagement control
-		if (oChange.getState() === Change.states.NEW) {
+		if (oChange.getState() === States.LifecycleState.NEW) {
 			this.oData[sVariantManagementReference].modified = true;
 		}
 		this.checkUpdate(true);
@@ -662,7 +662,6 @@ sap.ui.define([
 		aVariantChanges = oDuplicateVariant.controlChanges.slice();
 
 		var oDuplicateChangeData = {};
-		var oDuplicateChangeContent;
 		oDuplicateVariant.controlChanges = aVariantChanges.reduce(function(aSameLayerChanges, oChange) {
 			// copy all changes in the same layer and higher layers (PUBLIC variant can copy USER layer changes)
 			if (LayerUtils.compareAgainstCurrentLayer(oChange.layer, mPropertyBag.layer) >= 0) {
@@ -676,8 +675,7 @@ sap.ui.define([
 				oDuplicateChangeData.support.sourceChangeFileName = oChange.fileName;
 				// For new change instances the package name needs to be reset to $TMP, BCP: 1870561348
 				oDuplicateChangeData.packageName = "$TMP";
-				oDuplicateChangeContent = Change.createInitialFileContent(oDuplicateChangeData);
-				aSameLayerChanges.push(new Change(oDuplicateChangeContent));
+				aSameLayerChanges.push(FlexObjectFactory.createFromFileContent(oDuplicateChangeData));
 			}
 			return aSameLayerChanges;
 		}, []);
@@ -874,7 +872,7 @@ sap.ui.define([
 	 * Sets the variant properties and adds a variant change
 	 * @param {string} sVariantManagementReference - Variant management reference
 	 * @param {object} mPropertyBag - Map of properties
-	 * @returns {sap.fl.Change} Created Change object
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject} Created Change object
 	 */
 	VariantModel.prototype.addVariantChange = function(sVariantManagementReference, mPropertyBag) {
 		var mAdditionalChangeContent = this.setVariantProperties(sVariantManagementReference, mPropertyBag);
@@ -918,7 +916,7 @@ sap.ui.define([
 	 * Sets the variant properties and deletes a variant change
 	 * @param {string} sVariantManagementReference - Variant management reference
 	 * @param {object} mPropertyBag - Property bag
-	 * @param {sap.fl.Change} oChange - Variant change to be deleted
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Variant change to be deleted
 	 */
 	VariantModel.prototype.deleteVariantChange = function(sVariantManagementReference, mPropertyBag, oChange) {
 		var mUpdateVariantsStateParams = {
@@ -1450,8 +1448,8 @@ sap.ui.define([
 
 	/**
 	 * Checks if the passed changes exist as dirty changes.
-	 * @param {sap.ui.fl.Change[]} aControlChanges - Array of changes to be checked
-	 * @returns {sap.ui.fl.Change[]} Array of filtered changes
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aControlChanges - Array of changes to be checked
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of filtered changes
 	 * @private
 	 */
 	VariantModel.prototype._getDirtyChangesFromVariantChanges = function(aControlChanges) {

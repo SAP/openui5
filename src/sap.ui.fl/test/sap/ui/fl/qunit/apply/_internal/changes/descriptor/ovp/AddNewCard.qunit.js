@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ovp/AddNewCard",
-	"sap/ui/fl/Change",
+	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	AddNewCard,
-	Change,
+	AppDescriptorChange,
 	sinon
 ) {
 	"use strict";
@@ -29,8 +29,10 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when calling '_applyChange' with a change to add new key user card", function (assert) {
-			var oChange = new Change({
-				changeType: "appdescr_ovp_addNewCard",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ovp_addNewCard"
+				},
 				content: {
 					card: {
 						customercard: {
@@ -48,8 +50,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_applyChange' with a change to add no card", function (assert) {
-			var oChange = new Change({
-				changeType: "appdescr_ovp_addNewCard",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ovp_addNewCard"
+				},
 				content: {}
 			});
 			assert.throws(function() {
@@ -59,8 +63,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_applyChange' with a change to add new empty card", function (assert) {
-			var oChange = new Change({
-				changeType: "appdescr_ovp_addNewCard",
+			var oChange = new AppDescriptorChange({
+				flexObjectMetadata: {
+					changeType: "appdescr_ovp_addNewCard"
+				},
 				content: {
 					card: {}
 				}

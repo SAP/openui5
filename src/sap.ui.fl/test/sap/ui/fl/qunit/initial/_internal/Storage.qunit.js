@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
@@ -12,9 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
-	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
 	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
@@ -22,6 +21,7 @@ sap.ui.define([
 	merge,
 	Core,
 	ObjectStorageUtils,
+	FlexObjectFactory,
 	KeyUserConnector,
 	LrepConnector,
 	PersonalizationConnector,
@@ -30,9 +30,7 @@ sap.ui.define([
 	StorageUtils,
 	JsObjectConnector,
 	ObjectPathConnector,
-	FlVariant,
 	Version,
-	Change,
 	Layer,
 	Utils,
 	sinon
@@ -118,7 +116,7 @@ sap.ui.define([
 			JsObjectConnector.storage.setItem(ObjectStorageUtils.createFlexObjectKey(mVariant1), mVariant1);
 
 			var sChangeId1 = "change1";
-			var oChange1 = new Change({
+			var oChange1 = FlexObjectFactory.createFromFileContent({
 				fileName: sChangeId1,
 				fileType: "change",
 				layer: Layer.VENDOR,
@@ -134,7 +132,7 @@ sap.ui.define([
 			JsObjectConnector.storage.setItem(ObjectStorageUtils.createFlexObjectKey(mChange1), mChange1);
 
 			var sChangeId2 = "change2";
-			var oChange2 = new Change({
+			var oChange2 = FlexObjectFactory.createFromFileContent({
 				fileName: sChangeId2,
 				fileType: "change",
 				layer: Layer.CUSTOMER,
@@ -472,7 +470,7 @@ sap.ui.define([
 			var oStaticFileConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
 			var oLrepConnectorResponse = StorageUtils.getEmptyFlexDataResponse();
 
-			var oChange1 = new Change({
+			var oChange1 = FlexObjectFactory.createFromFileContent({
 				fileName: "rename_id_123",
 				fileType: "ctrl_variant",
 				layer: Layer.VENDOR,
@@ -481,7 +479,7 @@ sap.ui.define([
 			});
 			oStaticFileConnectorResponse.changes = [oChange1.convertToFileContent()];
 
-			var oChange2 = new Change({
+			var oChange2 = FlexObjectFactory.createFromFileContent({
 				fileName: "rename_id_123",
 				fileType: "ctrl_variant",
 				layer: Layer.VENDOR,

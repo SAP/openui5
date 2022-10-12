@@ -5,15 +5,19 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/FlexControllerFactory"
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/Layer"
 ], function(
 	FlexState,
 	ChangesController,
+	ChangesWriteAPI,
 	VariantModel,
 	ChangePersistenceFactory,
-	FlexControllerFactory
+	FlexControllerFactory,
+	Layer
 ) {
 	"use strict";
 
@@ -68,6 +72,27 @@ sap.ui.define([
 			.then(function() {
 				return oModel;
 			});
+	};
+
+	/**
+	 * Creates a FlexObject with the given data and calls the complete change content function
+	 *
+	 * @param {object} mPropertyBag - Object with additional information
+	 * @param {object} mPropertyBag.changeSpecificData - Change Information
+	 * @param {sap.ui.core.Control} mPropertyBag.selector - Control instance for which the flex object should be created
+	 * @param {sap.ui.core.Component} [mPropertyBag.appComponent] - App component instance
+	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject>} FlexObject instance
+	 */
+	FlexTestAPI.createFlexObject = function(mPropertyBag) {
+		// TODO: this logs an error when there is no proper app component
+		if (mPropertyBag.appComponent) {
+			mPropertyBag.selector.appComponent = mPropertyBag.appComponent;
+		}
+		mPropertyBag.changeSpecificData.layer = mPropertyBag.changeSpecificData.layer || Layer.CUSTOMER;
+		return ChangesWriteAPI.create({
+			changeSpecificData: mPropertyBag.changeSpecificData,
+			selector: mPropertyBag.selector
+		});
 	};
 
 	return FlexTestAPI;

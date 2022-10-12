@@ -1,6 +1,6 @@
 [
 	{
-		"id": "id_1580042266646_40_renameField",
+		"fileName": "id_1580042266646_40_renameField",
 		"changeType": "renameField",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -19,7 +19,7 @@
 		"creation": "2020-01-26T12:40:25.530Z"
 	},
 	{
-		"id": "id_1580042289311_48_renameField",
+		"fileName": "id_1580042289311_48_renameField",
 		"changeType": "renameField",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -38,7 +38,7 @@
 		"creation": "2020-01-26T12:40:25.534Z"
 	},
 	{
-		"id": "id_1580042301621_52_renameField",
+		"fileName": "id_1580042301621_52_renameField",
 		"changeType": "renameField",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -57,7 +57,7 @@
 		"creation": "2020-01-26T12:40:25.538Z"
 	},
 	{
-		"id": "id_1580042307367_53_renameField",
+		"fileName": "id_1580042307367_53_renameField",
 		"changeType": "renameField",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -76,7 +76,7 @@
 		"creation": "2020-01-26T12:40:25.539Z"
 	},
 	{
-		"id": "id_1580042325452_69_renameField",
+		"fileName": "id_1580042325452_69_renameField",
 		"changeType": "renameField",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -95,7 +95,7 @@
 		"creation": "2020-01-26T12:40:25.544Z"
 	},
 	{
-		"id": "id_1580048931092_47_moveControls",
+		"fileName": "id_1580048931092_47_moveControls",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -133,7 +133,7 @@
 		"creation": "2020-01-26T14:29:07.087Z"
 	},
 	{
-		"id": "id_1580048931092_48_moveControls",
+		"fileName": "id_1580048931092_48_moveControls",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -171,7 +171,7 @@
 		"creation": "2020-01-26T14:29:07.087Z"
 	},
 	{
-		"id": "id_1580042336531_70_renameField",
+		"fileName": "id_1580042336531_70_renameField",
 		"changeType": "renameField",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {

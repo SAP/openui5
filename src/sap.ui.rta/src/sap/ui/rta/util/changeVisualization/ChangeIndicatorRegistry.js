@@ -194,7 +194,7 @@ sap.ui.define([
 
 			if (oChange.getState() === "NEW") {
 				aChangeStates = [ChangeStates.DIRTY, ChangeStates.DRAFT];
-			} else if (aDraftChangesList && aDraftChangesList.includes(oChange.getFileName())) {
+			} else if (aDraftChangesList && aDraftChangesList.includes(oChange.getId())) {
 				aChangeStates = [ChangeStates.DRAFT];
 			} else {
 				aChangeStates = [ChangeStates.ACTIVATED];

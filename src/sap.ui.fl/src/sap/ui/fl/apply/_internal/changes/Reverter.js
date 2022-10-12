@@ -49,7 +49,7 @@ sap.ui.define([
 	/**
 	 * Reverts a specific change on the passed control if it is currently applied.
 	 *
-	 * @param {sap.ui.fl.Change} oChange - Change object that should be reverted on the passed control
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change object that should be reverted on the passed control
 	 * @param {sap.ui.core.Control} oControl - Control which is the target of the passed change
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Component instance that is currently loading
@@ -96,7 +96,7 @@ sap.ui.define([
 	/**
 	 * Reverts all given changes in one app component.
 	 *
-	 * @param {sap.ui.fl.Change[]} aChanges - Array of changes to be reverted
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges - Array of changes to be reverted
 	 * @param {object} mPropertyBag - Object with additional properties
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Component instance that is currently loading
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Polymorph reuse operations handling the changes on the given view type

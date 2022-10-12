@@ -7,9 +7,9 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -19,9 +19,9 @@ sap.ui.define([
 	UIComponent,
 	FlexCustomData,
 	ChangeUtils,
+	UIChange,
 	ChangeHandlerRegistration,
 	ChangeHandlerStorage,
-	Change,
 	FlUtils,
 	sinon
 ) {
@@ -41,11 +41,11 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when calling 'getControlIfTemplateAffected' with a change containing the parameter boundAggregation", function (assert) {
-			var oChange = new Change({
+			var oChange = new UIChange({
 				content: {
 					boundAggregation: true
 				},
-				dependentSelector: {
+				dependentSelectors: {
 					originalSelector: "original"
 				}
 			});
@@ -69,7 +69,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'getControlIfTemplateAffected' with a change without containing the parameter boundAggregation", function (assert) {
-			var oChange = new Change({
+			var oChange = new UIChange({
 				content: {}
 			});
 			var mPropertyBag = {
@@ -91,7 +91,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'getControlIfTemplateAffected' without a control and a change without containing the parameter boundAggregation", function (assert) {
-			var oChange = new Change({
+			var oChange = new UIChange({
 				content: {}
 			});
 			var mPropertyBag = {
@@ -115,8 +115,10 @@ sap.ui.define([
 
 	QUnit.module("getChangeHandler", {
 		beforeEach: function() {
-			this.oChange = new Change({
-				changeType: "type",
+			this.oChange = new UIChange({
+				flexObjectMetadata: {
+					changeType: "type"
+				},
 				layer: "layer"
 			});
 			this.oControl = new Control("control");
@@ -153,7 +155,7 @@ sap.ui.define([
 
 	QUnit.module("checkIfDependencyIsStillValid", {
 		beforeEach: function() {
-			this.oChange = new Change({});
+			this.oChange = new UIChange({});
 			sandbox.stub(FlUtils, "getChangeFromChangesMap").returns(this.oChange);
 			this.oModifier = {
 				bySelector: function() {}
@@ -195,31 +197,31 @@ sap.ui.define([
 				appComponent: this.oAppComponent,
 				viewId: "app---view1"
 			};
-			var oChange1 = new Change({
+			var oChange1 = new UIChange({
 				selector: {
 					id: "view1--controlId",
 					idIsLocal: true
 				}
 			});
-			var oChange2 = new Change({
+			var oChange2 = new UIChange({
 				selector: {
 					id: "app---view1--controlId",
 					idIsLocal: false
 				}
 			});
-			var oChange3 = new Change({
+			var oChange3 = new UIChange({
 				selector: {
 					id: "app---view1--controlId",
 					idIsLocal: true
 				}
 			});
-			var oChange4 = new Change({
+			var oChange4 = new UIChange({
 				selector: {
 					id: "view1--view2--controlId",
 					idIsLocal: true
 				}
 			});
-			var oChange5 = new Change({
+			var oChange5 = new UIChange({
 				selector: {
 					id: "view2--controlId",
 					idIsLocal: true
@@ -240,7 +242,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("without proper selector", function(assert) {
-			var oChange1 = new Change({});
+			var oChange1 = new UIChange({});
 			assert.strictEqual(ChangeUtils.filterChangeByView({}, oChange1), false, "the changes does not belong to the view");
 
 			oChange1.setSelector({});
@@ -253,7 +255,7 @@ sap.ui.define([
 				appComponent: this.oAppComponent,
 				viewId: "app---view1"
 			};
-			var oChange1 = new Change({
+			var oChange1 = new UIChange({
 				selector: {
 					viewSelector: {
 						id: "view1",
@@ -261,7 +263,7 @@ sap.ui.define([
 					}
 				}
 			});
-			var oChange2 = new Change({
+			var oChange2 = new UIChange({
 				selector: {
 					viewSelector: {
 						id: "app---view1",
@@ -269,7 +271,7 @@ sap.ui.define([
 					}
 				}
 			});
-			var oChange3 = new Change({
+			var oChange3 = new UIChange({
 				selector: {
 					viewSelector: {
 						id: "view2",

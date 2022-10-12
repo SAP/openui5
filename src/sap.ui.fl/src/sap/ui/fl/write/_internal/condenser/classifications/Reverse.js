@@ -15,7 +15,7 @@ sap.ui.define([
 		 *
 		 * @param {Map} mProperties - Map with all reduced changes
 		 * @param {string} oCondenserInfo - Condenser information
-		 * @param {sap.ui.fl.Change} oChange - Change instance
+		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
 		 */
 		addToChangesMap: function(mProperties, oCondenserInfo, oChange) {
 			if (!mProperties[oCondenserInfo.uniqueKey]) {
@@ -29,7 +29,7 @@ sap.ui.define([
 		 *
 		 * @param {Map} mObjects - Map with all reduced changes
 		 * @param {string} sUniqueKey - Unique key defined in the condenser information
-		 * @returns {sap.ui.fl.Change[]} All necessary reverse changes
+		 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} All necessary reverse changes
 		 */
 		getChangesFromMap: function(mObjects, sUniqueKey) {
 			var aChanges = [];

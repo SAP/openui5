@@ -5,8 +5,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
+	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/changeHandler/PropertyChange",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier"
 ], function(
@@ -14,8 +14,8 @@ sap.ui.define([
 	Button,
 	JSONModel,
 	Log,
+	UIChange,
 	PropertyChange,
-	Change,
 	JsControlTreeModifier,
 	XmlTreeModifier
 ) {
@@ -51,11 +51,10 @@ sap.ui.define([
 
 			this.mSpecificChangeData = {
 				selector: this.mExpectedSelector,
-				changeType: "propertyChange",
 				content: this.mExpectedChangeContent
 			};
 
-			this.oChange = new Change(this.mSpecificChangeData);
+			this.oChange = new UIChange(this.mSpecificChangeData);
 		},
 		afterEach: function() {
 			this.oButton.destroy();
@@ -67,7 +66,6 @@ sap.ui.define([
 
 			assert.deepEqual(this.oChange.getSelector(), this.mExpectedSelector, "the change SELECTOR is filled correctly");
 			assert.deepEqual(this.oChange.getContent(), this.mExpectedChangeContent, "the change CONTENT is filled correctly");
-			assert.equal(this.oChange.getChangeType(), "propertyChange", "the change TYPE is filled correctly");
 		});
 
 		QUnit.test("When calling completeChangeContent without content", function(assert) {
@@ -140,11 +138,10 @@ sap.ui.define([
 
 			this.mSpecificChangeData = {
 				selector: this.mExpectedSelector,
-				changeType: "propertyChange",
 				content: this.mExpectedChangeContent
 			};
 
-			this.oChange = new Change(this.mSpecificChangeData);
+			this.oChange = new UIChange(this.mSpecificChangeData);
 
 			return this.oChangeHandler.applyChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier})
 				.catch(function(oError) {
@@ -171,11 +168,10 @@ sap.ui.define([
 
 			this.mSpecificChangeData = {
 				selector: this.mExpectedSelector,
-				changeType: "propertyChange",
 				content: this.mExpectedChangeContent
 			};
 
-			this.oChange = new Change(this.mSpecificChangeData);
+			this.oChange = new UIChange(this.mSpecificChangeData);
 
 			return this.oChangeHandler.applyChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier})
 				.then(function() {
@@ -202,11 +198,10 @@ sap.ui.define([
 
 			this.mSpecificChangeData = {
 				selector: this.mExpectedSelector,
-				changeType: "propertyChange",
 				content: this.mExpectedChangeContent
 			};
 
-			this.oChange = new Change(this.mSpecificChangeData);
+			this.oChange = new UIChange(this.mSpecificChangeData);
 
 			return this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier})
 				.catch(function(oError) {
@@ -229,11 +224,10 @@ sap.ui.define([
 
 			this.mSpecificChangeData = {
 				selector: this.mExpectedSelector,
-				changeType: "propertyChange",
 				content: this.mExpectedChangeContent
 			};
 
-			this.oChange = new Change(this.mSpecificChangeData);
+			this.oChange = new UIChange(this.mSpecificChangeData);
 
 			return this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier})
 				.then(function() {

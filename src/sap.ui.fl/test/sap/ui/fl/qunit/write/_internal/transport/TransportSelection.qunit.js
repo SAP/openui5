@@ -1,24 +1,22 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/write/_internal/transport/TransportDialog",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/write/_internal/appVariant/AppVariant",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
 	"sap/ui/fl/write/_internal/transport/Transports",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Control",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Storage,
-	TransportDialog,
+	FlexObjectFactory,
+	AppVariant,
 	TransportSelection,
 	Transports,
 	WriteUtils,
-	Change,
 	Layer,
 	FlUtils,
 	Control,
@@ -148,76 +146,28 @@ sap.ui.define([
 				packageName: "$TMP",
 				transport: "transportId"
 			};
-			var oMockTransportedChange = {
-				packageName: "aPackage",
-				fileType: "change",
-				id: "changeId1",
-				namespace: "namespace",
-				getId: function() {
-					return this.id;
-				},
-				getNamespace: function() {
-					return this.namespace;
-				},
-				setResponse: function(oDefinition) {
-					this.packageName = oDefinition.packageName;
-				},
-				getPackage: function() {
-					return this.packageName;
-				},
-				getFileType: function() {
-					return this.fileType;
-				},
-				setPackage: function(sPackageName) {
-					this.packageName = sPackageName;
-				},
-				convertToFileContent: function() {
-					return {
-						packageName: this.packageName,
-						fileType: this.fileType
-					};
-				}
-			};
-			var oMockNewChange = {
+			var oNewChange = FlexObjectFactory.createFromFileContent({
 				packageName: "$TMP",
 				fileType: "change",
-				id: "changeId2",
-				namespace: "namespace",
-				getId: function() {
-					return this.id;
-				},
-				getNamespace: function() {
-					return this.namespace;
-				},
-				setResponse: function(oDefinition) {
-					this.packageName = oDefinition.packageName;
-				},
-				getPackage: function() {
-					return this.packageName;
-				},
-				getFileType: function() {
-					return this.fileType;
-				},
-				setPackage: function(sPackageName) {
-					this.packageName = sPackageName;
-				},
-				convertToFileContent: function() {
-					return {
-						packageName: this.packageName,
-						fileType: this.fileType
-					};
-				}
-			};
-			var aMockLocalChanges = [oMockTransportedChange, oMockNewChange];
-			sandbox.stub(FlUtils, "getClient").returns('');
+				fileName: "changeId2",
+				namespace: "namespace"
+			});
+			var oTransportedChange = FlexObjectFactory.createFromFileContent({
+				packageName: "aPackage",
+				fileType: "change",
+				fileName: "changeId1",
+				namespace: "namespace"
+			});
+			var aMockLocalChanges = [oTransportedChange, oNewChange];
+			sandbox.stub(FlUtils, "getClient").returns("");
 			sandbox.stub(WriteUtils, "sendRequest").resolves();
 
 			assert.ok(this.oTransportSelection.checkTransportInfo(oMockTransportInfo), "then true is returned for a valid transport info");
 			assert.notOk(this.oTransportSelection.checkTransportInfo(oMockTransportInfoInvalid), "then false is returned for an invalid transport info");
 
 			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, null, {reference: "aReference"}).then(function() {
-				assert.equal(aMockLocalChanges[0].packageName, "aPackage", "then the transported local change is not updated");
-				assert.equal(aMockLocalChanges[1].packageName, oMockTransportInfo.packageName, "but the new local change is updated");
+				assert.equal(aMockLocalChanges[0].getFlexObjectMetadata().packageName, "aPackage", "then the transported local change is not updated");
+				assert.equal(aMockLocalChanges[1].getFlexObjectMetadata().packageName, oMockTransportInfo.packageName, "but the new local change is updated");
 			});
 		});
 
@@ -226,67 +176,28 @@ sap.ui.define([
 				packageName: "PackageName",
 				transport: "transportId"
 			};
-			var oAppVariantDescriptor = {
+			var oAppVariantDescriptor = new AppVariant({
 				packageName: "$TMP",
 				fileType: "appdescr_variant",
 				fileName: "manifest",
 				id: "customer.app.var.id",
-				namespace: "namespace1",
-				getDefinition: function() {
-					return {
-						fileType: this.fileType,
-						fileName: this.fileName
-					};
-				},
-				getNamespace: function() {
-					return this.namespace;
-				},
-				getPackage: function() {
-					return this.packageName;
-				},
-				getFileType: function() {
-					return this.fileType;
-				}
-			};
-			var oMockNewChange = {
+				namespace: "namespace1"
+			});
+			var oNewChange = FlexObjectFactory.createFromFileContent({
 				packageName: "$TMP",
 				fileType: "change",
-				id: "changeId2",
-				namespace: "namespace2",
-				getId: function() {
-					return this.id;
-				},
-				getNamespace: function() {
-					return this.namespace;
-				},
-				setResponse: function(oDefinition) {
-					this.packageName = oDefinition.packageName;
-				},
-				getPackage: function() {
-					return this.packageName;
-				},
-				getFileType: function() {
-					return this.fileType;
-				},
-				setPackage: function(sPackageName) {
-					this.packageName = sPackageName;
-				},
-				convertToFileContent: function() {
-					return {
-						packageName: this.packageName,
-						fileType: this.fileType
-					};
-				}
-			};
-			var aMockLocalChanges = [oMockNewChange];
+				fileName: "changeId2",
+				namespace: "namespace"
+			});
+			var aMockLocalChanges = [oNewChange];
 			var aAppVariantDescriptors = [oAppVariantDescriptor];
 
 			sandbox.stub(FlUtils, "getClient").returns('');
 			sandbox.stub(WriteUtils, "sendRequest").resolves();
 			assert.ok(this.oTransportSelection.checkTransportInfo(oMockTransportInfo), "then true is returned for a valid transport info");
 			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, {reference: "aReference"}).then(function() {
-				assert.equal(aAppVariantDescriptors[0].packageName, "$TMP", "but the app variant descriptor should not be updated");
-				assert.equal(aMockLocalChanges[0].packageName, oMockTransportInfo.packageName, "but the new local change is updated");
+				assert.equal(aAppVariantDescriptors[0].getPackage(), "$TMP", "but the app variant descriptor should not be updated");
+				assert.equal(aMockLocalChanges[0].getFlexObjectMetadata().packageName, oMockTransportInfo.packageName, "but the new local change is updated");
 			});
 		});
 
@@ -389,17 +300,17 @@ sap.ui.define([
 
 		QUnit.test('setTransports should set the same transport for all (non-$TMP) changes after a transport popup', function (assert) {
 			var oRootControl = new Control();
-			var oChange = new Change({
+			var oChange = FlexObjectFactory.createFromFileContent({
 				namespace: "testns",
 				fileName: "change1",
 				fileType: "change"
 			});
-			var oChange2 = new Change({
+			var oChange2 = FlexObjectFactory.createFromFileContent({
 				namespace: "testns",
 				fileName: "change2",
 				fileType: "change"
 			});
-			var oChange3 = new Change({
+			var oChange3 = FlexObjectFactory.createFromFileContent({
 				namespace: "testns",
 				fileName: "change3",
 				fileType: "change"
@@ -424,7 +335,7 @@ sap.ui.define([
 
 		QUnit.test('setTransports should set a transport for non-$TMP changes without transport popup if a package name is already within the change', function (assert) {
 			var oRootControl = new Control();
-			var oChange = new Change({
+			var oChange = FlexObjectFactory.createFromFileContent({
 				namespace: "testns",
 				fileName: "change1",
 				fileType: "change",
@@ -457,7 +368,7 @@ sap.ui.define([
 		QUnit.test('should open the transport dialog if a customer wants to transport a change which is not locked on any transport', function (assert) {
 			var done = assert.async();
 			var oRootControl = new Control();
-			var oChange = new Change({
+			var oChange = FlexObjectFactory.createFromFileContent({
 				namespace: "testns",
 				fileName: "change1",
 				fileType: "change"
@@ -507,17 +418,17 @@ sap.ui.define([
 
 		QUnit.test('setTransports should set a transport for all (non-$TMP) changes without transport popup if they are already locked within a open transport', function (assert) {
 			var oRootControl = new Control();
-			var oChange = new Change({
+			var oChange = FlexObjectFactory.createFromFileContent({
 				namespace: "testns",
 				fileName: "change1",
 				fileType: "change"
 			});
-			var oChange2 = new Change({
+			var oChange2 = FlexObjectFactory.createFromFileContent({
 				namespace: "testns",
 				fileName: "change2",
 				fileType: "change"
 			});
-			var oChange3 = new Change({
+			var oChange3 = FlexObjectFactory.createFromFileContent({
 				namespace: "testns",
 				fileName: "change3",
 				fileType: "change"
@@ -551,26 +462,10 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test('setTransports should NOT set a transport for $TMP changes without transport popup', function (assert) {
-			var oRootControl = new Control();
-			var oChange = new Change({
-				namespace: "testns",
-				fileName: "change1",
-				fileType: "change"
-			});
-
-			sandbox.stub(oChange, "getPackage").returns("$TMP");
-			var oSetRequestSpy = sandbox.stub(oChange, "setRequest");
-
-			return this.oTransportSelection.setTransports([oChange], oRootControl).then(function () {
-				assert.ok(!oSetRequestSpy.called);
-			});
-		});
-
 		QUnit.test('setTransports should rejects with a "cancel" string if the transport dialog is cancelled', function (assert) {
 			var oRootControl = new Control();
 			var aChanges = [
-				new Change({
+				FlexObjectFactory.createFromFileContent({
 					namespace: "testns",
 					fileName: "change1",
 					fileType: "change"

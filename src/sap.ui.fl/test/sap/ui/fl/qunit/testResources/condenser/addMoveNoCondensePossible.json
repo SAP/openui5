@@ -1,6 +1,6 @@
 [
 	{
-		"id": "id_1579844823982_41_addFields",
+		"fileName": "id_1579844823982_41_addFields",
 		"changeType": "addFields",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -28,7 +28,7 @@
 		"creation": "2020-01-24T05:47:21.558Z"
 	},
 	{
-		"id": "id_1579855106890_41_moveControls",
+		"fileName": "id_1579855106890_41_moveControls",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -66,7 +66,7 @@
 		"creation": "2020-01-24T08:39:32.292Z"
 	},
 	{
-		"id": "id_1579855106890_40_moveControls",
+		"fileName": "id_1579855106890_40_moveControls",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {

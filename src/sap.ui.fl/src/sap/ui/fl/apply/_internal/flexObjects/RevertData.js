@@ -10,8 +10,9 @@ sap.ui.define([
 	/**
 	 * Class for storing information about reverting variants.
 	 *
-	 * @class sap.ui.fl.apply._internal.flexObjects.RevertData
+	 * @class
 	 * @extends sap.ui.base.ManagedObject
+	 * @alias sap.ui.fl.apply._internal.flexObjects.RevertData
 	 * @private
 	 * @ui5-restricted
 	 * @since 1.90.0

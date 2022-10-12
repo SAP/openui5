@@ -1,6 +1,6 @@
 [
 	{
-		"id": "id_1579610058534_40_moveControls",
+		"fileName": "id_1579610058534_40_moveControls",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -38,7 +38,7 @@
 		"creation": "2020-01-21T12:34:33.515Z"
 	},
 	{
-		"id": "id_1579610059606_41_moveControls",
+		"fileName": "id_1579610059606_41_moveControls",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -76,7 +76,7 @@
 		"creation": "2020-01-21T12:34:33.516Z"
 	},
 	{
-		"id": "id_1579610060878_42_moveControls",
+		"fileName": "id_1579610060878_42_moveControls",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -114,7 +114,7 @@
 		"creation": "2020-01-21T12:34:33.517Z"
 	},
 	{
-		"id": "id_1579610062247_43_moveControls",
+		"fileName": "id_1579610062247_43_moveControls",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -152,7 +152,7 @@
 		"creation": "2020-01-21T12:34:33.518Z"
 	},
 	{
-		"id": "id_1579610064790_44_moveControls",
+		"fileName": "id_1579610064790_44_moveControls",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -190,7 +190,7 @@
 		"creation": "2020-01-21T12:34:33.519Z"
 	},
 	{
-		"id": "id_1579610067407_45_moveControls",
+		"fileName": "id_1579610067407_45_moveControls",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {
@@ -228,7 +228,7 @@
 		"creation": "2020-01-21T12:34:33.520Z"
 	},
 	{
-		"id": "id_1579610068549_46_moveControls",
+		"fileName": "id_1579610068549_46_moveControls",
 		"changeType": "moveControls",
 		"reference": "sap.ui.rta.test.Component",
 		"content": {

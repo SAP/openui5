@@ -154,7 +154,7 @@ function(
 	/**
 	 * Moves an element from one aggregation to another.
 	 *
-	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oRelevantContainer control that matches the change selector for applying the change, which is the source of the move
 	 * @param {object} mPropertyBag - map of properties
 	 * @param {object} mPropertyBag.view - xml node representing a ui5 view
@@ -256,7 +256,7 @@ function(
 	/**
 	 * Reverts the Change MoveControls.
 	 *
-	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oRelevantContainer control that matches the change selector for applying the change, which is the source of the move
 	 * @param {object} mPropertyBag - map of properties
 	 * @param {object} mPropertyBag.view - xml node representing a ui5 view
@@ -338,7 +338,7 @@ function(
 	/**
 	 * Completes the change by adding change handler specific content.
 	 *
-	 * @param {sap.ui.fl.Change} oChange change object to be completed
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change object to be completed
 	 * @param {object} mSpecificChangeInfo as an empty object since no additional attributes are required for this operation
 	 * @param {object} mPropertyBag - map of properties
 	 * @param {sap.ui.core.UiComponent} mPropertyBag.appComponent component in which the change should be applied
@@ -394,7 +394,7 @@ function(
 	/**
 	 * Retrieves the condenser-specific information.
 	 *
-	 * @param {sap.ui.fl.Change} oChange - Change object with instructions to be applied on the control map
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change object with instructions to be applied on the control map
 	 * @returns {object} - Condenser-specific information
 	 * @public
 	 */

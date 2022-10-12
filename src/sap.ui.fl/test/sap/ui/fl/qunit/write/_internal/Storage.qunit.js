@@ -6,7 +6,9 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
+	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
@@ -14,7 +16,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/sinon-4"
@@ -24,7 +25,9 @@ sap.ui.define([
 	InitialLrepConnector,
 	InitialPersonalizationConnector,
 	InitialUtils,
+	FlexObjectFactory,
 	FlVariant,
+	States,
 	WriteUtils,
 	JsObjectConnector,
 	WriteKeyUserConnector,
@@ -32,7 +35,6 @@ sap.ui.define([
 	WritePersonalizationConnector,
 	Storage,
 	FeaturesAPI,
-	Change,
 	Layer,
 	oCore,
 	sinon
@@ -364,14 +366,12 @@ sap.ui.define([
 	function createChangesAndSetState(aStates, aDependentSelectors) {
 		var aChanges = [];
 		aStates.forEach(function(sState, i) {
-			aChanges[i] = new Change({
+			aChanges[i] = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.CUSTOMER,
-				fileName: i.toString(),
+				fileName: "c" + i.toString(),
 				namespace: "a.name.space",
 				changeType: "labelChange",
-				reference: "",
-				selector: {},
 				dependentSelector: aDependentSelectors && aDependentSelectors[i] || {},
 				content: {
 					prop: "some Content " + i
@@ -379,8 +379,8 @@ sap.ui.define([
 			});
 			if (sState === "update") {
 				// Changes can't be directly set to "dirty" from "new"
-				aChanges[i].setState(Change.states.PERSISTED);
-				aChanges[i].setState(Change.states.DIRTY);
+				aChanges[i].setState(States.LifecycleState.PERSISTED);
+				aChanges[i].setState(States.LifecycleState.DIRTY);
 			}
 			aChanges[i].condenserState = sState;
 		});
@@ -421,27 +421,15 @@ sap.ui.define([
 
 		QUnit.test("then it calls condense of the connector (persisted and dirty changes)", function(assert) {
 			var aAllChanges = createChangesAndSetState(["delete", "delete", "select"]);
-			aAllChanges[0].setState(Change.states.PERSISTED);
+			aAllChanges[0].setState(States.LifecycleState.PERSISTED);
 			var mCondenseExpected = {
 				namespace: "a.name.space",
 				layer: this.sLayer,
 				"delete": {
-					change: ["0"]
+					change: ["c0"]
 				},
 				create: {
-					change: [{2: {
-						fileType: "change",
-						layer: this.sLayer,
-						fileName: "2",
-						namespace: "a.name.space",
-						changeType: "labelChange",
-						reference: "",
-						selector: {},
-						dependentSelector: {},
-						content: {
-							prop: "some Content 2"
-						}
-					}}]
+					change: [{c2: aAllChanges[2].convertToFileContent()}]
 				}
 			};
 			var mPropertyBag = {
@@ -465,24 +453,12 @@ sap.ui.define([
 
 		QUnit.test("then it calls condense of the connector (persisted change that is not updated + create)", function(assert) {
 			var aAllChanges = createChangesAndSetState(["select", "select"]);
-			aAllChanges[0].setState(Change.states.PERSISTED);
+			aAllChanges[0].setState(States.LifecycleState.PERSISTED);
 			var mCondenseExpected = {
 				namespace: "a.name.space",
 				layer: this.sLayer,
 				create: {
-					change: [{1: {
-						fileType: "change",
-						layer: this.sLayer,
-						fileName: "1",
-						namespace: "a.name.space",
-						changeType: "labelChange",
-						reference: "",
-						selector: {},
-						dependentSelector: {},
-						content: {
-							prop: "some Content 1"
-						}
-					}}]
+					change: [{c1: aAllChanges[1].convertToFileContent()}]
 				}
 			};
 			var mPropertyBag = {
@@ -506,31 +482,11 @@ sap.ui.define([
 				layer: this.sLayer,
 				create: {
 					change: [
-						{2: {
-							fileType: "change",
-							layer: this.sLayer,
-							fileName: "2",
-							namespace: "a.name.space",
-							changeType: "labelChange",
-							reference: "",
-							selector: {},
-							dependentSelector: {},
-							content: {
-								prop: "some Content 2"
-							}}
+						{
+							c2: aAllChanges[2].convertToFileContent()
 						},
-						{1: {
-							fileType: "change",
-							layer: this.sLayer,
-							fileName: "1",
-							namespace: "a.name.space",
-							changeType: "labelChange",
-							reference: "",
-							selector: {},
-							dependentSelector: {},
-							content: {
-								prop: "some Content 1"
-							}}
+						{
+							c1: aAllChanges[1].convertToFileContent()
 						}
 					]
 				}
@@ -561,42 +517,22 @@ sap.ui.define([
 				layer: this.sLayer,
 				create: {
 					change: [
-						{4: {
-							fileType: "change",
-							layer: this.sLayer,
-							fileName: "4",
-							namespace: "a.name.space",
-							changeType: "labelChange",
-							reference: "",
-							selector: {},
-							dependentSelector: {},
-							content: {
-								prop: "some Content 4"
-							}}
+						{
+							c4: aAllChanges[4].convertToFileContent()
 						},
-						{1: {
-							fileType: "change",
-							layer: this.sLayer,
-							fileName: "1",
-							namespace: "a.name.space",
-							changeType: "labelChange",
-							reference: "",
-							selector: {},
-							dependentSelector: {},
-							content: {
-								prop: "some Content 1"
-							}}
+						{
+							c1: aAllChanges[1].convertToFileContent()
 						}
 					]
 				},
 				update: {
 					change: [
-						{2: {
+						{c2: {
 							content: {
 								prop: "some Content 2"
 							}}
 						},
-						{3: {
+						{c3: {
 							content: {
 								prop: "some Content 3"
 							}}
@@ -604,7 +540,7 @@ sap.ui.define([
 					]
 				},
 				reorder: {
-					change: ["3", "2", "1"]
+					change: ["c3", "c2", "c1"]
 				}
 			};
 			var mPropertyBag = {
@@ -628,42 +564,22 @@ sap.ui.define([
 
 		QUnit.test("and a new change is before an already persisted change in condensedChanges array", function (assert) {
 			var aAllChanges = createChangesAndSetState(["select", "select", "select"]);
-			aAllChanges[0].setState(Change.states.PERSISTED);
+			aAllChanges[0].setState(States.LifecycleState.PERSISTED);
 			var mCondenseExpected = {
 				namespace: "a.name.space",
 				layer: this.sLayer,
 				create: {
 					change: [
-						{2: {
-							fileType: "change",
-							layer: this.sLayer,
-							fileName: "2",
-							namespace: "a.name.space",
-							changeType: "labelChange",
-							reference: "",
-							selector: {},
-							dependentSelector: {},
-							content: {
-								prop: "some Content 2"
-							}}
+						{
+							c2: aAllChanges[2].convertToFileContent()
 						},
-						{1: {
-							fileType: "change",
-							layer: this.sLayer,
-							fileName: "1",
-							namespace: "a.name.space",
-							changeType: "labelChange",
-							reference: "",
-							selector: {},
-							dependentSelector: {},
-							content: {
-								prop: "some Content 1"
-							}}
+						{
+							c1: aAllChanges[1].convertToFileContent()
 						}
 					]
 				},
 				reorder: {
-					change: ["2", "1", "0"]
+					change: ["c2", "c1", "c0"]
 				}
 			};
 			var mPropertyBag = {
@@ -692,20 +608,24 @@ sap.ui.define([
 				layer: this.sLayer,
 				update: {
 					change: [
-						{1: {
-							content: {
-								prop: "some Content 1"
-							}}
+						{
+							c1: {
+								content: {
+									prop: "some Content 1"
+								}
+							}
 						},
-						{2: {
-							content: {
-								prop: "some Content 2"
-							}}
+						{
+							c2: {
+								content: {
+									prop: "some Content 2"
+								}
+							}
 						}
 					]
 				},
 				reorder: {
-					change: ["2", "1"]
+					change: ["c2", "c1"]
 				}
 			};
 			var mPropertyBag = {
@@ -746,32 +666,26 @@ sap.ui.define([
 				layer: this.sLayer,
 				update: {
 					change: [
-						{0: {
-							content: {
-								prop: "some Content 0"
+						{
+							c0: {
+								content: {
+									prop: "some Content 0"
+								}
 							}
-						}},
-						{1: {
-							content: {
-								prop: "some Content 1"
+						},
+						{
+							c1: {
+								content: {
+									prop: "some Content 1"
+								}
 							}
-						}}
+						}
 					]
 				},
 				create: {
 					change: [
-						{2: {
-							fileType: "change",
-							layer: this.sLayer,
-							fileName: "2",
-							namespace: "a.name.space",
-							changeType: "labelChange",
-							reference: "",
-							selector: {},
-							dependentSelector: {},
-							content: {
-								prop: "some Content 2"
-							}}
+						{
+							c2: aAllChanges[2].convertToFileContent()
 						}
 					]
 				}
@@ -798,18 +712,8 @@ sap.ui.define([
 				layer: this.sLayer,
 				create: {
 					change: [
-						{0: {
-							fileType: "change",
-							layer: this.sLayer,
-							fileName: "0",
-							namespace: "a.name.space",
-							changeType: "labelChange",
-							reference: "",
-							selector: {},
-							dependentSelector: {},
-							content: {
-								prop: "some Content 0"
-							}}
+						{
+							c0: aAllChanges[0].convertToFileContent()
 						}
 					]
 				}
@@ -830,64 +734,52 @@ sap.ui.define([
 		});
 
 		QUnit.test("and changes belonging to a variant are provided", function (assert) {
-			var oChange0 = new Change({
+			var oChange0 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.CUSTOMER,
-				fileName: "0",
+				fileName: "c0",
 				namespace: "a.name.space",
 				changeType: "labelChange",
-				reference: "",
 				variantReference: "variant_0",
-				selector: {},
-				dependentSelector: {},
 				content: {
 					prop: "some Content 0"
 				}
 			});
-			var oChange1 = new Change({
+			var oChange1 = FlexObjectFactory.createFromFileContent({
 				fileType: "ctrl_variant_change",
 				layer: Layer.CUSTOMER,
-				fileName: "1",
+				fileName: "c1",
 				namespace: "a.name.space",
 				changeType: "setTitle",
-				reference: "",
 				variantReference: "variant_0",
-				selector: {},
-				dependentSelector: {},
 				content: {
 					prop: "some Content 1"
 				}
 			});
-			var oChange2 = new Change({
+			var oChange2 = FlexObjectFactory.createFromFileContent({
 				fileType: "ctrl_variant_management_change",
 				layer: Layer.CUSTOMER,
-				fileName: "2",
+				fileName: "c2",
 				namespace: "a.name.space",
 				changeType: "setDefault",
-				reference: "",
 				variantReference: "variant_0",
 				variantManagementReference: "variantManagementId",
-				selector: {},
-				dependentSelector: {},
 				content: {
 					prop: "some Content 2"
 				}
 			});
-			var oChange3 = new Change({
+			var oChange3 = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.CUSTOMER,
-				fileName: "3",
+				fileName: "c3",
 				namespace: "a.name.space",
 				changeType: "labelChange",
-				reference: "",
 				variantReference: "variant_0",
-				selector: {},
-				dependentSelector: {},
 				content: {
 					prop: "some Content 3"
 				}
 			});
-			oChange3.setState(Change.states.PERSISTED);
+			oChange3.setState(States.LifecycleState.PERSISTED);
 			var oVariant = new FlVariant({
 				layer: Layer.CUSTOMER,
 				id: "newVariant",
@@ -911,52 +803,18 @@ sap.ui.define([
 				layer: this.sLayer,
 				create: {
 					change: [
-						{0: {
-							fileType: "change",
-							layer: this.sLayer,
-							fileName: "0",
-							namespace: "a.name.space",
-							changeType: "labelChange",
-							reference: "",
-							variantReference: "variant_0",
-							selector: {},
-							dependentSelector: {},
-							content: {
-								prop: "some Content 0"
-							}}
+						{
+							c0: oChange0.convertToFileContent()
 						}
 					],
 					ctrl_variant_change: [
-						{1: {
-							fileType: "ctrl_variant_change",
-							layer: this.sLayer,
-							fileName: "1",
-							namespace: "a.name.space",
-							changeType: "setTitle",
-							reference: "",
-							variantReference: "variant_0",
-							selector: {},
-							dependentSelector: {},
-							content: {
-								prop: "some Content 1"
-							}}
+						{
+							c1: oChange1.convertToFileContent()
 						}
 					],
 					ctrl_variant_management_change: [
-						{2: {
-							fileType: "ctrl_variant_management_change",
-							layer: this.sLayer,
-							fileName: "2",
-							namespace: "a.name.space",
-							changeType: "setDefault",
-							reference: "",
-							variantManagementReference: "variantManagementId",
-							variantReference: "variant_0",
-							selector: {},
-							dependentSelector: {},
-							content: {
-								prop: "some Content 2"
-							}}
+						{
+							c2: oChange2.convertToFileContent()
 						}
 					]
 				}

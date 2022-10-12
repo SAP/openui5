@@ -38,7 +38,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Provides an API for tools like {@link sap.ui.rta} to create, apply and revert {@link sap.ui.fl.Change}.
+	 * Provides an API for tools like {@link sap.ui.rta} to create, apply and revert {@link sap.ui.fl.apply._internal.flexObjects.FlexObject}.
 	 *
 	 * @namespace sap.ui.fl.write.api.ChangesWriteAPI
 	 * @experimental Since 1.68
@@ -51,11 +51,11 @@ sap.ui.define([
 		 * Creates a change on the flex persistence.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {object} mPropertyBag.changeSpecificData - Property bag holding the change information, see {@link sap.ui.fl.Change#createInitialFileContent}
+		 * @param {object} mPropertyBag.changeSpecificData - Property bag holding the change information
 		 * The property <code>mPropertyBag.changeSpecificData.packageName</code> is set to <code>$TMP</code> and internally since flex changes are always local when they are created.
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Managed object or selector object
 		 *
-		 * @returns {Promise|sap.ui.fl.Change} In case of a descriptor change, promise resolves to the created change.
+		 * @returns {Promise|sap.ui.fl.apply._internal.flexObjects.FlexObject} In case of a descriptor change, promise resolves to the created change.
 		 * In case of a flex change, the created change object is returned.
 		 * @private
 		 * @ui5-restricted
@@ -122,7 +122,7 @@ sap.ui.define([
 		 * Applies a specific change on the passed control if it is not already applied.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change object that should be applied to the passed control
+		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} mPropertyBag.change - Change object that should be applied to the passed control
 		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance to which the change should be applied
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} [mPropertyBag.modifier] - Modifier used to apply the change; if not provided, {@link sap.ui.core.util.reflection.JsControlTreeModifier} is used
 		 * @param {object} mPropertyBag.appDescriptor - App descriptor containing the metadata of the current application
@@ -169,7 +169,7 @@ sap.ui.define([
 		 * Reverting a specific change on the passed control if it has already been applied or is in the process of being applied.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change object that should be reverted from the passed element
+		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} mPropertyBag.change - Change object that should be reverted from the passed element
 		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance on which the change should be reverted
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise<sap.ui.core.Element|false>} Promise or fake promise resolving to the control on which change was reverted successfully or false when unsuccessful
 		 * @private
@@ -196,7 +196,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance or XML node
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer to be considered when getting the change handlers
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Control tree modifier
-		 * @param {string} mPropertyBag.changeType - Change type of a <code>sap.ui.fl.Change</code> change
+		 * @param {string} mPropertyBag.changeType - Change type of a <code>sap.ui.fl.apply._internal.flexObjects.FlexObject</code> change
 		 * @param {string} [mPropertyBag.controlType] - Type of the control. If not given will be derived from the element
 		 * @returns {Promise.<object>} Change handler object wrapped in a Promise
 		 */

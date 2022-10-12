@@ -117,8 +117,10 @@ sap.ui.define([
 			reference: oAppVariant.getId()
 		};
 		var sChangesNamespace = Utils.createNamespace(oPropertyBag, "changes");
-		oChange.setNamespace(sChangesNamespace);
-		oChange.setComponent(oAppVariant.getId());
+		var oFlexObjectMetadata = oChange.getFlexObjectMetadata();
+		oFlexObjectMetadata.namespace = sChangesNamespace;
+		oFlexObjectMetadata.reference = oAppVariant.getId();
+		oChange.setFlexObjectMetadata(oFlexObjectMetadata);
 	}
 
 	function _inlineDescriptorChanges(aAllInlineChanges, oAppVariant) {

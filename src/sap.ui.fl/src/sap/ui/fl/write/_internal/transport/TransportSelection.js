@@ -241,7 +241,7 @@ sap.ui.define([
 	/**
 	 * Sets the transports for all changes.
 	 *
-	 * @param {array} aChanges - Array of {sap.ui.fl.Change}
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges - Array of change instances
 	 * @param {object} oControl - Object of the root control for the transport
 	 * @returns {Promise} Promise that resolves without parameters or rejects with "cancel" value in case escape/cancel is triggered from the transport dialog
 	 * @public
@@ -260,7 +260,7 @@ sap.ui.define([
 					// if the request has been set by the transport dialog already,
 					// do not bring up the transport dialog a second time, but use this transport instead
 					// if the change is locked on another transport, this will be resolved in the back end when the DELETE request is send
-					if (oCurrentChange.getPackage() !== "$TMP") {
+					if (oCurrentChange.getFlexObjectMetadata().packageName !== "$TMP") {
 						oCurrentChange.setRequest(sTransport);
 					}
 					iChangeIdx--;
@@ -268,8 +268,14 @@ sap.ui.define([
 					return fnSetTransports(aChanges, iChangeIdx, oControl, sTransport, bFromDialog);
 				}
 				// bring up the transport dialog to get the transport information for a change
-				if (oCurrentChange.getPackage() !== "$TMP") {
-					return that.openTransportSelection(oCurrentChange, oControl).then(function(oTransportInfo) {
+				if (oCurrentChange.getFlexObjectMetadata().packageName !== "$TMP") {
+					var oTransportInfo = {
+						name: oCurrentChange.getId(),
+						type: oCurrentChange.getFileType(),
+						"package": oCurrentChange.getFlexObjectMetadata().packageName,
+						namespace: oCurrentChange.getNamespace()
+					};
+					return that.openTransportSelection(oTransportInfo, oControl).then(function(oTransportInfo) {
 						if (oTransportInfo === "cancel") {
 							return Promise.reject("cancel");
 						}
@@ -302,14 +308,14 @@ sap.ui.define([
 	/**
 	 * Opens the transport selection dialog
 	 *
-	 * @param {sap.ui.fl.Change} [oChange] - Change for which the transport information should be retrieved
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} [oTransportInfo] - Transport Information
 	 * @param {object} oControl - Object of the root control for the transport dialog
 	 * @param {string} sStyleClass - CSS style class that should be added to any dialogs
 	 * @param {boolean} bLocalObjectVisible - Flag if the "Local Object" button should be visible in the transport dialog
 	 * @returns {Promise} Promise that resolves
 	 * @public
 	 */
-	TransportSelection.prototype.openTransportSelection = function(oChange, oControl, sStyleClass, bLocalObjectVisible) {
+	TransportSelection.prototype.openTransportSelection = function(oTransportInfo, oControl, sStyleClass, bLocalObjectVisible) {
 		var that = this;
 
 		return new Promise(function(resolve, reject) {
@@ -335,15 +341,7 @@ sap.ui.define([
 					reject(oError);
 				}
 			};
-			var oObject = {}; // no restriction on package, name or name space
-			if (oChange) {
-				oObject["package"] = oChange.getPackage();
-				oObject.namespace = oChange.getNamespace();
-				oObject.name = oChange.getId();
-				oObject.type = oChange.getFileType();
-			}
-
-			that.selectTransport(oObject, fnOkay, fnError, false, oControl, sStyleClass, bLocalObjectVisible);
+			that.selectTransport(oTransportInfo || {}, fnOkay, fnError, false, oControl, sStyleClass, bLocalObjectVisible);
 		});
 	};
 
@@ -387,9 +385,10 @@ sap.ui.define([
 			// remove the $TMP package from all changes; has been done on the server as well,
 			// but is not reflected in the client cache until the application is reloaded
 			aAllLocalChanges.forEach(function(oChange) {
-				if (oChange.getPackage() === '$TMP') {
-					oChange.setPackage(oTransportInfo.packageName);
-					oChange.setResponse(oChange.convertToFileContent());
+				var oFlexObjectMetadata = oChange.getFlexObjectMetadata();
+				if (oFlexObjectMetadata.packageName === "$TMP") {
+					oFlexObjectMetadata.packageName = oTransportInfo.packageName;
+					oChange.setFlexObjectMetadata(oFlexObjectMetadata);
 				}
 			});
 		});
