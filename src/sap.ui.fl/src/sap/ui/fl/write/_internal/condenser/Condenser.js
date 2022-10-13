@@ -585,11 +585,14 @@ sap.ui.define([
 				Measurement.end("Condenser_sort");
 
 				if (bSuccess) {
+					// until now aReducedChanges still has the newer changes.
+					// after replacing them with the older change they have to be sorted again
+					aReducedChanges = handleChangeUpdate(aCondenserInfos, aReducedChanges);
+					sortByInitialOrder(aChanges, aReducedChanges);
 					// sort the different containers independently
 					aReducedIndexRelatedChangesPerContainer.forEach(function(aReducedIndexRelatedChanges) {
 						UIReconstruction.swapChanges(aReducedIndexRelatedChanges, aReducedChanges);
 					});
-					aReducedChanges = handleChangeUpdate(aCondenserInfos, aReducedChanges);
 				} else {
 					aAllIndexRelatedChanges.forEach(function(oChange) {
 						oChange.condenserState = "select";
