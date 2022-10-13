@@ -508,7 +508,7 @@ sap.ui.define([
 			monthSpy = this.spy(month[0], "_isMonthNameLong");
 
 		//arrange
-		oCalM.placeAt("content");
+		oCalM.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		//act
@@ -666,7 +666,7 @@ sap.ui.define([
 
 	QUnit.test("Month Button appearance on two months in two columns", function (assert) {
 		// arrange
-		var oCal3 = new Calendar("Cal_3",{ months: 2 }).placeAt("content"),
+		var oCal3 = new Calendar("Cal_3",{ months: 2 }).placeAt("qunit-fixture"),
 			oMP = oCal3.getAggregation("monthPicker");
 			oCore.applyChanges();
 
@@ -819,7 +819,7 @@ sap.ui.define([
 				minDate: new Date("2016", "10", "1"),
 				startDateChange: handleStartDateChange,
 				singleSelection: false
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
 		afterEach: function () {
@@ -927,7 +927,7 @@ sap.ui.define([
 		//Prepare
 		var oCal5 = new Calendar("Cal5");
 		oCal5.setLocale("en-US");
-		oCal5.placeAt("content");
+		oCal5.placeAt("qunit-fixture");
 		oCore.applyChanges();
 		oCal5.displayDate(new Date(2017, 3, 1));
 
@@ -1467,7 +1467,7 @@ sap.ui.define([
 			oSecondYearButton;
 
 		// initial setup
-		oCal.placeAt("content");
+		oCal.placeAt("qunit-fixture");
 		oCore.applyChanges();
 		oFirstYearButton = jQuery("#" + oCalId + "--Head-B2");
 		oSecondYearButton = jQuery("#" + oCalId + "--Head-B4");
@@ -1503,7 +1503,7 @@ sap.ui.define([
 			oSecondYearButton;
 
 		// initial setup
-		oCal.placeAt("content");
+		oCal.placeAt("qunit-fixture");
 		oCore.applyChanges();
 		oFirstYearButton = jQuery("#" + oCalId + "--Head-B2");
 		oSecondYearButton = jQuery("#" + oCalId + "--Head-B4");
@@ -1642,7 +1642,7 @@ sap.ui.define([
 					type: "Type04"
 				})
 			]
-		}).placeAt("content");
+		}).placeAt("qunit-fixture");
 
 		//act
 		oCal.focusDate(new Date(1969, 11, 1));
@@ -1832,7 +1832,7 @@ sap.ui.define([
 		//arrange
 		var $selectedDate,
 			oCal6 = new Calendar("Cal6");
-		oCal6.placeAt("content");
+		oCal6.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		//act
@@ -1851,7 +1851,7 @@ sap.ui.define([
 		var oCal7 = new Calendar("Cal7", {
 			months: 2
 		});
-		oCal7.placeAt("content");
+		oCal7.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		//act
@@ -2620,7 +2620,7 @@ sap.ui.define([
 
 	QUnit.test("F4 doesnt open month picker, when year picker is already opened", function(assert) {
 		// prepare
-		var oCalendar = new Calendar().placeAt("content"),
+		var oCalendar = new Calendar().placeAt("qunit-fixture"),
 			oFakeEvent = {
 				which: 115,
 				defaultPrevented: false,
@@ -2646,7 +2646,7 @@ sap.ui.define([
 
 	QUnit.test("displayDate shows the given date always in the first rendered month", function(assert) {
 		// prepare
-		var oCalendar = new Calendar("cal", {months: 2}).placeAt("content"),
+		var oCalendar = new Calendar("cal", {months: 2}).placeAt("qunit-fixture"),
 			aMonths, aDays;
 
 		oCalendar.displayDate(new Date(2021, 4, 1));
@@ -2667,42 +2667,54 @@ sap.ui.define([
 
 	QUnit.test("Dummy cell above week numbers is rendered only when necessary", function(assert) {
 		// prepare
-		var oCalM = new Calendar("CalM", {
-				showWeekNumbers: false,
-				primaryCalendarType: CalendarType.Gregorian
-			}),
-			dummyCellSpy = this.spy(MonthRenderer, "renderDummyCell");
+		var oCalM = new Calendar({
+			showWeekNumbers: false,
+			primaryCalendarType: CalendarType.Gregorian
+		}),
+		onBeforeRendering = this.spy(oCalM.getAggregation("month")[0], "onBeforeRendering"),
+		onAfterRendering = this.spy(oCalM.getAggregation("month")[0], "onAfterRendering"),
+		dummyCellSpy = this.spy(MonthRenderer, "renderDummyCell");
 
 		//arrange
-		oCalM.placeAt("content");
+		oCalM.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
 		//act
-		assert.equal(dummyCellSpy.callCount, 0, "The function wasn't called when calendar type is Gregorian and showWeekNumber=false");
+		assert.notOk(
+			dummyCellSpy.calledAfter(onBeforeRendering) && dummyCellSpy.calledBefore(onAfterRendering),
+			"The function wasn't called when calendar type is Gregorian and showWeekNumber=false"
+		);
 
 		//arrange
 		oCalM.setShowWeekNumbers(true);
 		oCore.applyChanges();
 
 		//act
-		assert.equal(dummyCellSpy.callCount, 1, "The function was called when calendar type is Gregorian and showWeekNumber=true");
+		assert.ok(dummyCellSpy.calledAfter(onBeforeRendering) && dummyCellSpy.calledBefore(onAfterRendering),
+		"The function was called when calendar type is Gregorian and showWeekNumber=true");
+
+		// clean up
+		dummyCellSpy.resetHistory();
+		onBeforeRendering.resetHistory();
+		onAfterRendering.resetHistory();
 
 		//arrange
 		oCalM.setPrimaryCalendarType(CalendarType.Islamic);
 		oCore.applyChanges();
 
 		//act
-		assert.equal(dummyCellSpy.callCount, 1, "The function wasn't called when calendar type is Islamic and showWeekNumber=true");
+		assert.ok(dummyCellSpy.notCalled, "The function wasn't called when calendar type is Islamic and showWeekNumber=true");
 
 		//arrange
 		oCalM.setShowWeekNumbers(false);
 		oCore.applyChanges();
 
 		//act
-		assert.equal(dummyCellSpy.callCount, 1, "The function wasn't called when calendar type is Islamic and showWeekNumber=false");
+		assert.ok(dummyCellSpy.notCalled, "The function wasn't called when calendar type is Islamic and showWeekNumber=false");
 
 		// clean up
 		oCalM.destroy();
+		dummyCellSpy.restore();
 	});
 
 	//================================================================================
@@ -2714,7 +2726,7 @@ sap.ui.define([
 	QUnit.test("When there is one month, the label of the button must contain only one month name", function (assert) {
 		// arrange
 		var iAugust = 7,
-			oCal1 = new Calendar("Cal_1").placeAt("content");
+			oCal1 = new Calendar("Cal_1").placeAt("qunit-fixture");
 
 		oCore.applyChanges();
 
@@ -2739,7 +2751,7 @@ sap.ui.define([
 			o1June2021 = new Date(2021, 5, 1),
 			oCal2 = new Calendar("Cal_2", {
 				months: 2
-			}).placeAt("content");
+			}).placeAt("qunit-fixture");
 
 		oCal2.addSelectedDate(new DateRange({
 			startDate: o1June2021
@@ -2777,7 +2789,7 @@ sap.ui.define([
 		// setup
 		iMonthCount = 4;
 		iStartMonth = 11; // December
-		oCal = new Calendar("Cal",{ months: iMonthCount }).placeAt("content");
+		oCal = new Calendar("Cal",{ months: iMonthCount }).placeAt("qunit-fixture");
 		oMP = oCal.getAggregation("monthPicker");
 		oLocaleData = oCal._getLocaleData();
 		sPattern = oLocaleData.getIntervalPattern();
