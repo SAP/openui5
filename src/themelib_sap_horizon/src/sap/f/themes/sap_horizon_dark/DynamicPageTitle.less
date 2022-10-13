@@ -84,7 +84,7 @@
 // Delta Styles for Horizon
 // =====================================
 
-.sapFDynamicPageTitleMain>.sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle {
+.sapFDynamicPageTitleMain>.sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle:not(.sapUICompVarMngmtTitle) {
 	font-size: @sapObjectHeader_Title_FontSize;
 	font-family: @sapFontBlackFamily;
 }
@@ -92,7 +92,7 @@
 
 // Expanded Header title is small on small screens
 
-.sapFDynamicPage-Std-Phone .sapFDynamicPageTitleMain>.sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle {
+.sapFDynamicPage-Std-Phone .sapFDynamicPageTitleMain>.sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle:not(.sapUICompVarMngmtTitle) {
 	font-size: @sapObjectHeader_Title_SnappedFontSize;
 	font-family: @sapFontBlackFamily;
 }
@@ -100,7 +100,7 @@
 
 // Snapped Header title is small on all screen sizes
 
-.sapFDynamicPageTitleSnapped .sapFDynamicPageTitleMain>.sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle {
+.sapFDynamicPageTitleSnapped .sapFDynamicPageTitleMain>.sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle:not(.sapUICompVarMngmtTitle) {
 	font-size: @sapObjectHeader_Title_SnappedFontSize;
 	font-family: @sapFontBlackFamily;
 }
