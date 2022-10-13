@@ -552,6 +552,24 @@ sap.ui.define([
 		assert.ok(this.oUploadSet._oUploadButton && !this.oUploadSet._oUploadButton.getVisible(), "Upload button on illustrated message section is hidden when uploadButtonInvisible is set to true");
 	});
 
+	QUnit.test("Test for cleaner aggregations destruction", function(assert){
+		//arrange
+		var oItemsList = this.oUploadSet.getItems();
+		oItemsList.forEach(function(oItem){
+			assert.ok(!oItem.isDestroyed(), "Item aggregation controls are active.");
+			assert.ok(oItem && oItem.getDependents().length, "Item dependents are active.");
+		});
+
+		//act
+		this.oUploadSet.destroyItems();
+
+		//assert
+		oItemsList.forEach(function(oItem){
+			assert.ok(oItem && !oItem.getDependents().length, "Item dependents destroyed completely.");
+			assert.ok(oItem.isDestroyed(), "Item aggregation controls are destroyed completely.");
+		});
+	});
+
 	QUnit.module("UploadSet general functionality", {
 		beforeEach: function () {
 			this.oUploadSet = new UploadSet("uploadSet", {
@@ -743,16 +761,14 @@ sap.ui.define([
 
 	QUnit.test("Remove Aggregation destroys supplied control object", function (assert) {
 		//Arrange
-		var uploadSetItem = new UploadSetItem();
-		this.spy(uploadSetItem, "_getListItem");
+		var uploadSetItem = this.oUploadSet.getItems()[0];
 
 		//Act
-		this.oUploadSet.removeAllAggregation("items");
 		this.oUploadSet.removeAggregation("items", uploadSetItem);
 		oCore.applyChanges();
 
 		//Assert
-		assert.equal(uploadSetItem._getListItem.callCount, 0, "List Item not created for empty list");
+		assert.equal(this.oUploadSet.getList().getItems().length, 1, "List Item removed successfully");
 	});
 
 	QUnit.module("Drag and drop", {
