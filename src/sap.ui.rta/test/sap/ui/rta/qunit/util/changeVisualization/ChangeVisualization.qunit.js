@@ -364,11 +364,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("With changes (Not all visible) - Check if Menu is bound correctly to the model", function(assert) {
-			this.aMockChanges.push(createMockChange("testRename2", "rename", "Comp1---idMain1--test"));
+			this.aMockChanges.push(createMockChange("testRename2", "rename", "Comp1---idMain1--lb2"));
 			prepareChanges(this.aMockChanges);
 			this.oCheckModelAll.title = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_ALL", [3]);
 			this.oCheckModelAll.count = 3;
 			this.oCheckModelAll.tooltip = oRtaResourceBundle.getText("TOOLTIP_CHANGEVISUALIZATION_OVERVIEW_ADDITIONAL_CHANGES");
+			OverlayRegistry.getOverlay("Comp1---idMain1--lb2").destroy();
 			return startVisualization(this.oRta)
 				.then(function() {
 					oCore.applyChanges();
