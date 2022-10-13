@@ -82,6 +82,9 @@ sap.ui.define(function() {
 					useFakeTimers: false
 				}
 			},
+			/**
+			 * @deprecated as of version 1.56
+			 */
 			ScrollBar: {
 				title: "sap.ui.core.ScrollBar",
 				sinon: {

@@ -26,13 +26,22 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		},
 		tests: {
 			AsyncHintsHelper: {},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"jQuery.sap.Version": {},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"jquery.sap.logger": {
 				group: "jQuery plugins",
 				ui5: {
 					logLevel: "WARNING"
 				}
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"jquery.sap.properties": {
 				// Skip the execution of this test, if running with Karma Runner, as the current UI5 tooling middleware leads to test failure
 				// Issue reported with BCP incident 2070146288
@@ -46,6 +55,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					}
 				}
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"jquery.sap.resources": {
 				group: "jQuery plugins",
 				ui5: {
@@ -57,6 +69,9 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					}
 				}
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"jquery.sap.xml": {
 				group: "jQuery plugins"
 			},
@@ -115,7 +130,13 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					language: "EN"
 				}
 			},
+			/**
+			 * @deprecated since 1.73
+			 */
 			Export: {},
+			/**
+			 * @deprecated since 1.73
+			 */
 			ExportTypeCSV: {},
 			PasteHelper: {},
 			ResponsivePaddingsEnablement: {},

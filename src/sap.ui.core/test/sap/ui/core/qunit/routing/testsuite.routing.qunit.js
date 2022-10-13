@@ -41,6 +41,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			"async/TitleHistory": {
 				title: "QUnit Page for sap.ui.core.routing.TitleHistory (async)"
 			},
+			/**
+			 * @deprecated Since 1.90
+			 */
 			"sync/Route": {
 				title: "QUnit Page for sap.ui.core.routing.Route (sync)",
 				sinon: {
@@ -48,6 +51,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					useFakeTimers:true
 				}
 			},
+			/**
+			 * @deprecated Since 1.90
+			 */
 			"sync/Router": {
 				title: "QUnit Page for sap.ui.core.routing.Router (sync)",
 				sinon: {
@@ -55,6 +61,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					useFakeTimers:true
 				}
 			},
+			/**
+			 * @deprecated Since 1.90
+			 */
 			"sync/Target": {
 				title: "QUnit Page for sap.ui.core.routing.Target (sync)",
 				sinon: {
@@ -62,6 +71,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					useFakeTimers:true
 				}
 			},
+			/**
+			 * @deprecated Since 1.90
+			 */
 			"sync/Targets": {
 				title: "QUnit Page for sap.ui.core.routing.Targets (sync)",
 				sinon: {
@@ -69,6 +81,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					useFakeTimers:true
 				}
 			},
+			/**
+			 * @deprecated Since 1.90
+			 */
 			"sync/Views": {
 				title: "QUnit Page for sap.ui.core.routing.Views (sync)"
 			},

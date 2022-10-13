@@ -25,6 +25,9 @@ sap.ui.define(function() {
 			"sap.ui.Global": {
 				title: "sap.ui.Global"
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"util/jquery.sap.dom": {
 				title: "QUnit Page for jquery.sap.dom",
 				group: "jQuery plugins",
@@ -37,18 +40,30 @@ sap.ui.define(function() {
 					}
 				}
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"util/jquery.sap.encoder": {
 				title: "QUnit Page for jquery.sap.encoder",
 				group: "jQuery plugins"
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"util/jquery.sap.script": {
 				title: "QUnit Page for jquery.sap.script",
 				group: "jQuery plugins"
 			},
+			/**
+			 * @deprecated since 1.108
+			 */
 			"util/jquery.sap.storage": {
 				title: "QUnit Page for jquery.sap.storage",
 				group: "jQuery plugins"
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"util/jquery.sap.strings": {
 				title: "QUnit Page for jquery.sap.strings",
 				group: "jQuery plugins"

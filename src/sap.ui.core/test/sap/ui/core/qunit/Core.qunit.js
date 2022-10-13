@@ -96,7 +96,8 @@ sap.ui.define([
 	});
 
 	/**
-	 * Tests creation of an UIArea instance and afterwards checks whether it can be found via getUIAreaMethod
+	 * Tests creation of an UIArea instance and afterwards checks whether it can be found via getUIArea method
+	 * @deprecated As of version 1.1
 	 */
 	QUnit.test("testCreateUIArea", function(assert) {
 		createAndAppendDiv("uiArea1");

@@ -12,6 +12,9 @@ sap.ui.define(function() {
 			}
 		},
 		tests: {
+			/**
+			 * @deprecated Since 1.56
+			 */
 			Template: {
 				page: "test-resources/sap/ui/core/qunit/tmpl/Template.qunit.html"
 				/*

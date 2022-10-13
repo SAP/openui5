@@ -39,27 +39,42 @@ sap.ui.define(function() {
 			"base/security/URLListValidator": {
 				title: "sap.base.security.URLListValidator"
 			},
+			/**
+			 * @deprecated since 1.85
+			 */
 			"base/security/URLWhitelist": {
 				title: "Deprecated API: sap.base.security.URLWhitelist"
 			},
 			"security/FrameOptions": {
 				title: "sap.ui.security.FrameOptions"
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"util/jQuery.sap.FrameOptions-meta-tag-override-mode": {
 				beforeBootstrap: "test-resources/sap/ui/core/qunit/util/beforeBootstrap/jQuery.sap.FrameOptions-meta-tag",
 				ui5: {
 					frameOptions: "deny"
 				}
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"util/jQuery.sap.FrameOptions-meta-tag-override-service": {
 				beforeBootstrap: "test-resources/sap/ui/core/qunit/util/beforeBootstrap/jQuery.sap.FrameOptions-meta-tag",
 				ui5: {
 					allowlistService: "/url/to/service/via/ui5/config"
 				}
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"util/jQuery.sap.FrameOptions-meta-tag": {
 				beforeBootstrap: "test-resources/sap/ui/core/qunit/util/beforeBootstrap/jQuery.sap.FrameOptions-meta-tag"
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"util/jQuery.sap.FrameOptions": {
 				sinon: {
 					useFakeTimers: true

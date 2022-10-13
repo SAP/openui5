@@ -3,6 +3,7 @@ sap.ui.define([
 	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Control",
+	"sap/ui/core/UIArea",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel"
@@ -10,6 +11,7 @@ sap.ui.define([
 	fakeService,
 	ManagedObject,
 	Control,
+	UIArea,
 	ContextBinding,
 	JSONModel,
 	ODataModel
@@ -60,7 +62,7 @@ sap.ui.define([
 			var oDiv = document.createElement("div");
 			oUIAreas.appendChild(oDiv);
 			new Control().placeAt(oDiv).destroy();
-			this.uiArea = sap.ui.getCore().getUIArea(oDiv);
+			this.uiArea = UIArea.registry.get(oDiv.id);
 
 			this.mPropagationInfo = {};
 
@@ -150,7 +152,7 @@ sap.ui.define([
 			var oDiv = document.createElement("div");
 			oUIAreas.appendChild(oDiv);
 			new Control().placeAt(oDiv).destroy();
-			this.uiArea = sap.ui.getCore().getUIArea(oDiv);
+			this.uiArea = UIArea.registry.get(oDiv.id);
 
 			this.mPropagationInfo = {};
 
@@ -568,7 +570,7 @@ sap.ui.define([
 		beforeEach : function() {
 			sap.ui.getCore().setModel(oModel1);
 			new Control().placeAt("content").destroy();
-			this.uiArea = sap.ui.getCore().getUIArea("content");
+			this.uiArea = UIArea.registry.get("content");
 			this.uiArea.setModel(null);
 			this.child = new TestControl({
 				value : { parts : [ "/value", "m2>/value" ], formatter : function(a,b) { return a + ":" + b; } },
@@ -689,7 +691,7 @@ sap.ui.define([
 				 }
 			}.bind(this);
 			new Control().placeAt("content").destroy();
-			this.uiArea = sap.ui.getCore().getUIArea("content");
+			this.uiArea =  UIArea.registry.get("content");
 			this.uiArea.attachModelContextChange(this.fnChange);
 
 			sap.ui.getCore().setModel(oModel4);
