@@ -45,7 +45,7 @@
 
 		<!-- TODO Do we have a currency code list on the server?-->
 		<Label text="currency Field"></Label>
-		<mdc:Field id="F10" value="{parts: [{path:'price', type:'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}, {path:'currency_code', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, {mode:'OneTime', path:'/##@@requestCurrencyCodes', targetType:'any'}], type:'sap.ui.model.odata.type.Currency'}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"></mdc:Field>
+		<mdc:Field id="F10" value="{parts: [{path:'price', type:'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}, {path:'currency_code', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, {mode:'OneTime', path:'/##@@requestCurrencyCodes', targetType:'any'}], type:'sap.ui.model.odata.type.Currency', mode: 'TwoWay'}" delegate="{name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}"></mdc:Field>
 
 	</form:SimpleForm>
 </mvc:View>
