@@ -595,14 +595,20 @@ sap.ui.define([
 	 * @param {string} sCurrentMedia
 	 * @private
 	 */
-	IllustratedMessage.prototype._updateSymbol = function (sCurrentMedia) {
+
+	 IllustratedMessage.prototype._updateSymbol = function (sCurrentMedia) {
+		// No need to require a resource for BASE illustrationSize, since there is none
+		if (sCurrentMedia === IllustratedMessage.MEDIA.BASE) {
+			return;
+		}
+
 		var sIdMedia = sCurrentMedia.substring(sCurrentMedia.indexOf('-') + 1);
 
-		if (sCurrentMedia !== this._sLastKnownMedia && sCurrentMedia !== IllustratedMessage.MEDIA.BASE) { // No need to require a resource for BASE illustrationSize, since there is none
-			this._getIllustration().setSet(this._sIllustrationSet, true)
-				.setMedia(sIdMedia, true)
-				.setType(this._sIllustrationType);
-		}
+		this._getIllustration()
+			.setSet(this._sIllustrationSet, true)
+			.setMedia(sIdMedia, true)
+			.setType(this._sIllustrationType);
+
 	};
 
 	/**
