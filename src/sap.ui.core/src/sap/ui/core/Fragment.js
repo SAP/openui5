@@ -904,7 +904,10 @@ function(
 
 
 	// ###   HTML Fragments   ###
-
+	/**
+	 * @deprecated As of version 1.108, together with the HTMLView. If you need declarative fragments,
+	 *    use XML fragments instead.
+	 */
 	(function() {
 
 		/**

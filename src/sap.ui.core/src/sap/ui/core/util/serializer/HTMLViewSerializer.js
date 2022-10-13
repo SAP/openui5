@@ -22,6 +22,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Serializer', './delegate/HTML', '
 	 * @alias sap.ui.core.util.serializer.HTMLViewSerializer
 	 * @private
 	 * @ui5-restricted sap.watt, com.sap.webide
+	 * @deprecated As of 1.108, together with the HTMLView
 	 */
 	var HTMLViewSerializer = EventProvider.extend("sap.ui.core.util.serializer.HTMLViewSerializer", /** @lends sap.ui.core.util.serializer.HTMLViewSerializer.prototype */
 	{

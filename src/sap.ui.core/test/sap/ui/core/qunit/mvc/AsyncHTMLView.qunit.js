@@ -39,7 +39,7 @@ sap.ui.define([
 		var done = assert.async();
 		var that = this;
 		this.oLogMock = this.mock(Log);
-		this.oLogMock.expects("warning").never();
+		this.oLogMock.expects("warning").once().withArgs(sinon.match("Usage of deprecated class"));
 
 		HTMLView.create({
 			viewName : "testdata.mvc.Async"
