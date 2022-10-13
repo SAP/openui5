@@ -4587,6 +4587,37 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Previous selected row should be cleared, when the new input value does not match an item", function (assert) {
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionColumns: [
+				new Column({})
+			],
+			suggestionRows: [
+				new ColumnListItem({
+					cells: [
+						new Text({text:"Item"})
+					]
+				})
+			]
+		}).placeAt("content");
+
+		oInput.setSelectedRow(oInput.getSuggestionRows()[0]);
+		oCore.applyChanges();
+
+		// Act
+		oInput.getFocusDomRef().focus();
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.A });
+		oInput._$input.trigger("focus").trigger(oFakeKeydown).val("A").trigger("input");
+		this.clock.tick(300);
+		oInput.getFocusDomRef().blur();
+		this.clock.tick(300);
+
+		assert.notOk(oInput.getSelectedRow(), "Focusleave should have cleared the previous selected row");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Focus handling - pseudo focus should return to the input after selection from the list", function(assert) {
 		// Setup
 		var oInput = new Input({
