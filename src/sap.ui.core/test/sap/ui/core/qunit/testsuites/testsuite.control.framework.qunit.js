@@ -14,6 +14,9 @@ sap.ui.define(function() {
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},
 		tests: {
+			/**
+			 * @deprecated since 1.58
+			 */
 			"jquery.sap.ui": {
 				page: "test-resources/sap/ui/core/qunit/jquery.sap.ui.qunit.html",
 				title: "jquery.sap.ui"

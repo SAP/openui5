@@ -439,6 +439,9 @@ sap.ui.define(function() {
 				title: "Test Page for the getComputedStyle polyfill functionality",
 				module: "polyfill/ComputedStyle.qunit"
 			},
+			/**
+			 * @deprecated since 1.85
+			 */
 			"polyfill/es6-object-assign": {
 				group: "Polyfills",
 				title: "Test Page for shallow object extension using Object.assign (polyfill)",

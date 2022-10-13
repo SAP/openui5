@@ -1,14 +1,15 @@
 
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/UIArea",
-	"sap/ui/core/Control",
-	"sap/ui/testlib/TestButton",
-	"sap/ui/core/HTML",
 	"sap/base/Log",
+	"sap/ui/core/Control",
+	"sap/ui/core/Core",
+	"sap/ui/core/HTML",
+	"sap/ui/core/UIArea",
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/testlib/TestButton",
 	"sap/ui/thirdparty/jquery"
-], function(createAndAppendDiv, UIArea, Control, TestButton, HTML, Log, jQuery) {
+], function(Log, Control, oCore, HTML, UIArea, createAndAppendDiv, TestButton, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("uiArea1");
@@ -17,8 +18,6 @@ sap.ui.define([
 	innerSpan.textContent = "Before";
 	createAndAppendDiv("uiArea2");
 	jQuery("#uiArea2")[0].appendChild(innerSpan);
-
-	var oCore = sap.ui.getCore();
 
 	QUnit.module("Rendering", {
 		before: function () {
@@ -59,7 +58,7 @@ sap.ui.define([
 	 * UIArea must be empty after the rendering
 	 */
 	QUnit.test("removeAllContent", function(assert) {
-		oCore.getUIArea("uiArea1").removeAllContent();
+		UIArea.registry.get("uiArea1").removeAllContent();
 		oCore.applyChanges();
 		assert.equal(jQuery("#uiArea1").children().length, 0, "no more content");
 		assert.ok(oCore.byId("text1"), "remove must not destroy child 1");
@@ -86,7 +85,7 @@ sap.ui.define([
 		assert.equal(jQuery($currentDom.get(1)).text(), "Text 1", "first span shows first text");
 		assert.equal(jQuery($currentDom.get(2)).text(), "Text 2", "second span shows second text");
 
-		oCore.getUIArea("uiArea2").removeAllContent();
+		UIArea.registry.get("uiArea2").removeAllContent();
 		oCore.applyChanges();
 		$currentDom = jQuery("#uiArea2").children();
 		assert.equal($currentDom.length, 1, "initial DOM still exists in UIArea");
@@ -126,7 +125,7 @@ sap.ui.define([
 		assert.equal(jQuery($currentDom.get(4)).text(), "After", "last span shows dynamically added end");
 
 		// now remove controls, check that the remainigs are as expected
-		oCore.getUIArea("uiArea2").removeAllContent();
+		UIArea.registry.get("uiArea2").removeAllContent();
 		oCore.applyChanges();
 		$currentDom = jQuery("#uiArea2").children();
 		assert.equal($currentDom.length, 3, "initial DOM still exists in UIArea");
@@ -179,7 +178,7 @@ sap.ui.define([
 		// ---- aspect 3: remove all content must not delete the preserved dOM ----
 
 		// remove content and rerender
-		oCore.getUIArea("uiArea1").removeAllContent();
+		UIArea.registry.get("uiArea1").removeAllContent();
 		oCore.applyChanges();
 
 		// check that UIArea is empoty, but preserved content still exists
@@ -272,7 +271,7 @@ sap.ui.define([
 		beforeEach: function() {
 			new Control().placeAt("uiArea1").destroy();
 			var oControl = new Control();
-			oCore.getUIArea("uiArea1").addDependent(oControl);
+			UIArea.registry.get("uiArea1").addDependent(oControl);
 			this.uiArea = oControl.getUIArea();
 			this.uiArea.addDependent(new Control());
 			this.spy(this.uiArea, "invalidate");

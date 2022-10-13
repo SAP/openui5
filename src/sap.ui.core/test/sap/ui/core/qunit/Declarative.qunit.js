@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/DeclarativeSupport",
+	"sap/ui/core/UIArea",
 	"sap/ui/model/json/JSONModel"
-], function(jQuery, oCore, DeclarativeSupport, JSONModel) {
+], function(jQuery, oCore, DeclarativeSupport, UIArea, JSONModel) {
 	"use strict";
 	QUnit.config.reorder = false;
 	QUnit.module("Basic");
@@ -143,7 +144,7 @@ sap.ui.define([
 
 	QUnit.test("UIArea", function(assert) {
 		assert.expect(7);
-		var oUIArea = oCore.getUIArea("uiAreaSimple");
+		var oUIArea = UIArea.registry.get("uiAreaSimple");
 		assert.equal(!!oUIArea, false, 'No control with id "uiAreaSimple" found.');
 
 		var oButton1 = oCore.byId("uiAreaSimpleButton2");
@@ -154,7 +155,7 @@ sap.ui.define([
 
 		DeclarativeSupport.compile(jQuery("#ui-area-simple"));
 
-		var oUIArea = oCore.getUIArea("uiAreaSimple");
+		var oUIArea = UIArea.registry.get("uiAreaSimple");
 		assert.ok(!!oUIArea, 'UIArea with id "uiAreaSimple" found.');
 
 		var oButton1 = oCore.byId("uiAreaSimpleButton2");
@@ -169,8 +170,8 @@ sap.ui.define([
 
 	QUnit.test("Complex Declaration", function(assert) {
 		assert.expect(8);
-		var oUIArea = oCore.getUIArea("complexDeclarationUIArea");
-		assert.equal(!!oUIArea, false, 'No control with id "complexDeclarationUIArea" found.');
+		var oUIArea = UIArea.registry.get("complexDeclarationUIArea");
+		assert.equal(!!oUIArea, false, 'No UIArea with id "complexDeclarationUIArea" found.');
 
 		var oPanel1 = oCore.byId("complexDeclarationPanel1");
 		assert.equal(!!oPanel1, false, 'No control with id "complexDeclarationPanel1" found.');
@@ -187,8 +188,8 @@ sap.ui.define([
 
 		DeclarativeSupport.compile(jQuery("#complex-declaration"));
 
-		var oUIArea = oCore.getUIArea("complexDeclarationUIArea");
-		assert.ok(!!oUIArea, 'Control with id "complexDeclarationUIArea" found.');
+		var oUIArea = UIArea.registry.get("complexDeclarationUIArea");
+		assert.ok(!!oUIArea, 'UIArea with id "complexDeclarationUIArea" found.');
 
 		var oPanel1 = oCore.byId("complexDeclarationPanel1");
 		assert.ok(!!oPanel1, 'Control with id "complexDeclarationPanel1" found.');

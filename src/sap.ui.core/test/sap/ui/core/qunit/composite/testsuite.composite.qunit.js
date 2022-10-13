@@ -6,6 +6,9 @@ sap.ui.define(function() {
 		defaults: {
 		},
 		tests: {
+			/**
+			 * @deprecated As of version 1.88
+			 */
 			"XMLComposite": {
 				title: "QUnit: XMLComposite - sap.ui.core",
 				ui5: {
@@ -32,6 +35,9 @@ sap.ui.define(function() {
 					only: "sap/ui/core/XMLComposite.js"
 				}
 			},
+			/**
+			 * @deprecated As of version 1.88
+			 */
 			XMLCompositeMemoryLeak: {
 				title: "QUnit Page for sap.ui.core.XMLComposite Memory Leaks",
 				ui5: {

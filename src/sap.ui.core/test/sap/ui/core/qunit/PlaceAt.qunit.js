@@ -2,8 +2,11 @@
 sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Button",
+	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/core/UIArea",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Panel, Button, createAndAppendDiv) {
+], function(Panel, Button, oCore, Element, UIArea, createAndAppendDiv) {
 	"use strict";
 
 	createAndAppendDiv(["uiArea1", "uiArea2", "uiArea3", "uiArea4"]);
@@ -30,7 +33,7 @@ sap.ui.define([
 				oControl.placeAt(oContainerRef);
 			}
 
-			var oCont = bIsUiArea ? sap.ui.getCore().getUIArea(sContainerId) : sap.ui.getCore().byId(sContainerId);
+			var oCont = bIsUiArea ? UIArea.registry.get(sContainerId) : Element.registry.get(sContainerId);
 			return [oControl.getId(), oCont];
 		}
 
@@ -53,7 +56,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.core.Control.placeAt");
 
 	QUnit.test("Deferred call", function(assert) {
-		doCheckPlaceAtResult(assert, ["myPanel", sap.ui.getCore().getUIArea("uiArea1")], 1, 0, "deferred call");
+		doCheckPlaceAtResult(assert, ["myPanel", UIArea.registry.get("uiArea1")], 1, 0, "deferred call");
 	});
 
 	QUnit.test("UIArea via ID", function(assert) {
@@ -78,7 +81,7 @@ sap.ui.define([
 	(function() {
 
 		var oPanel2 = new Panel("myPanel2");
-		sap.ui.getCore().setRoot("uiArea3", oPanel2);
+		oCore.setRoot("uiArea3", oPanel2);
 
 		function doCheckSetRootResult(assert, aCallResult) {
 			var oContainer = aCallResult[1];
@@ -92,8 +95,8 @@ sap.ui.define([
 		function doTestSetRoot(assert, oContainerRef, sContainerId, bIsUiArea) {
 			function setRoot() {
 				var oControl = new Button();
-				sap.ui.getCore().setRoot(oContainerRef, oControl);
-				var oCont = bIsUiArea ? sap.ui.getCore().getUIArea(sContainerId) : sap.ui.getCore().byId(sContainerId);
+				oCore.setRoot(oContainerRef, oControl);
+				var oCont = bIsUiArea ? UIArea.registry.get(sContainerId) : Element.registry.get(sContainerId);
 				return [oControl.getId(), oCont];
 			}
 
@@ -106,7 +109,7 @@ sap.ui.define([
 		QUnit.module("sap.ui.core.Core.setRoot");
 
 		QUnit.test("Deferred call", function(assert) {
-			doCheckSetRootResult(assert, ["myPanel2", sap.ui.getCore().getUIArea("uiArea3")]);
+			doCheckSetRootResult(assert, ["myPanel2", UIArea.registry.get("uiArea3")]);
 		});
 
 		QUnit.test("UIArea via ID", function(assert) {

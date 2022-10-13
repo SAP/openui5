@@ -70,6 +70,9 @@ sap.ui.define(function() {
 			"base/util/fetch": {
 				title: "QUnit Page for fetch"
 			},
+			/**
+			 * @deprecated as of version 1.90
+			 */
 			"base/util/includes": {
 				title: "QUnit Page for includes",
 				sinon: {
@@ -103,6 +106,9 @@ sap.ui.define(function() {
 			"base/util/UriParameters": {
 				title: "QUnit Page for UriParameters"
 			},
+			/**
+			 * @deprecated as of version 1.90
+			 */
 			"base/util/values": {
 				title: "QUnit Page for values",
 				sinon: {

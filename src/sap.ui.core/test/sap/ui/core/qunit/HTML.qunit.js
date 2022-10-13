@@ -1,15 +1,17 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/HTML",
-	"sap/ui/core/Core",
+	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
+	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/core/HTML",
 	"sap/ui/core/RenderManager",
+	"sap/ui/core/UIArea",
+	"sap/ui/core/UIComponent",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/testlib/TestButton",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/UIComponent",
-	"sap/ui/core/ComponentContainer"
-], function(HTML, oCore, Control, RenderManager, VerticalLayout, TestButton, jQuery, UIComponent, ComponentContainer) {
+	"sap/ui/thirdparty/jquery"
+], function(ComponentContainer, Control, oCore, Element, HTML, RenderManager, UIArea, UIComponent, VerticalLayout, TestButton, jQuery) {
 	"use strict";
 
 	var normalize = (function() {
@@ -190,27 +192,27 @@ sap.ui.define([
 	});
 
 	QUnit.test("invalidate UIArea", function(assert) {
-		var oldDomRef = oCore.byId("html2").getDomRef();
-		oCore.byId("html2").getUIArea().invalidate();
+		var oldDomRef = Element.registry.get("html2").getDomRef();
+		Element.registry.get("html2").getUIArea().invalidate();
 
 		return afterRerendering(function() {
 			okFragment(assert, FRAGMENT_2, "uiAreaA", "UIArea contains expected HTML fragment");
-			assert.notEqual(oCore.byId("html2").getDomRef(), oldDomRef, "node has changed");
+			assert.notEqual(Element.registry.get("html2").getDomRef(), oldDomRef, "node has changed");
 		});
 	});
 
 	QUnit.test("invalidate parent control", function(assert) {
-		var oldDomRef = oCore.byId("html2").getDomRef();
-		oCore.byId("html2").getParent().invalidate();
+		var oldDomRef = Element.registry.get("html2").getDomRef();
+		Element.registry.get("html2").getParent().invalidate();
 
 		return afterRerendering(function() {
 			okFragment(assert, FRAGMENT_2, "uiAreaA", "UIArea contains expected HTML fragment");
-			assert.notEqual(oCore.byId("html2").getDomRef(), oldDomRef, "node has changed");
+			assert.notEqual(Element.registry.get("html2").getDomRef(), oldDomRef, "node has changed");
 		});
 	});
 
 	QUnit.test("invalidate HTML control", function(assert) {
-		oCore.byId("html2").invalidate();
+		Element.registry.get("html2").invalidate();
 
 		return afterRerendering(function() {
 			okFragment(assert, FRAGMENT_2, "uiAreaA", "UIArea contains expected HTML fragment");
@@ -218,11 +220,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("setting content", function(assert) {
-		oCore.byId("html2").setContent("");
+		Element.registry.get("html2").setContent("");
 		oCore.applyChanges();
 		assert.equal(jQuery("#html2").length, 0, "html2 DOM must be empty");
 
-		oCore.byId("html2").setContent(FRAGMENT_1.content);
+		Element.registry.get("html2").setContent(FRAGMENT_1.content);
 		oCore.applyChanges();
 
 		assert.equal(jQuery("#html2").length, 1, "content must have length 1");
@@ -230,24 +232,24 @@ sap.ui.define([
 		assert.equal(jQuery("#html2").css("height"), "64px", "fragment height");
 		assert.equal(normalize(jQuery("#html2").css("background-color")), "rgb(255,0,0)", "fragment bg color");
 
-		oCore.byId("html2").setContent("someLeadingText" + FRAGMENT_2.content + "someTrailingText");
+		Element.registry.get("html2").setContent("someLeadingText" + FRAGMENT_2.content + "someTrailingText");
 		oCore.applyChanges();
 		okFragment(assert, FRAGMENT_2, "uiAreaA", "html2 DOM must be equal to FRAGMENT_2");
 		assert.ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someLeadingText") < 0, "rendered HTML does not contain leading text");
 		assert.ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someTrailingText") < 0, "rendered HTML does not contain trailing text");
 
-		oCore.byId("html2").setContent(FRAGMENT_1.content);
+		Element.registry.get("html2").setContent(FRAGMENT_1.content);
 		oCore.applyChanges();
 		assert.equal(jQuery("#html2").length, 1, "content must have length 1");
 		assert.equal(jQuery("#html2").css("width"), "64px", "fragment width");
 		assert.equal(jQuery("#html2").css("height"), "64px", "fragment height");
 		assert.equal(normalize(jQuery("#html2").css("background-color")), "rgb(255,0,0)", "fragment bg color");
 
-		oCore.byId("html2").setContent("somePureText");
+		Element.registry.get("html2").setContent("somePureText");
 		oCore.applyChanges();
 		assert.equal(jQuery("#html2").length, 0, "html2 DOM must be empty");
 
-		oCore.byId("html2").setContent(FRAGMENT_2.content);
+		Element.registry.get("html2").setContent(FRAGMENT_2.content);
 		oCore.applyChanges();
 		okFragment(assert, FRAGMENT_2, "uiAreaA", "html2 DOM must be equal to FRAGMENT_2");
 	});
@@ -256,8 +258,8 @@ sap.ui.define([
 	QUnit.test("destroy", function(assert) {
 		assert.equal(jQuery("#html1").length, 1, "html1 DOM should exist");
 		assert.equal(jQuery("#html2").length, 1, "html2 DOM should exist");
-		oCore.byId("html1").destroy();
-		oCore.byId("html2").destroy();
+		Element.registry.get("html1").destroy();
+		Element.registry.get("html2").destroy();
 		assert.equal(jQuery("#html1").length, 0, "html2 DOM should have been deleted");
 		assert.equal(jQuery("#html2").length, 0, "html2 DOM should have been deleted");
 	});
@@ -268,7 +270,7 @@ sap.ui.define([
 
 	QUnit.test("content property + preferDOM, initial rendering", function(assert) {
 		//Cleanup UIArea because placeAt only adds new control to UIArea
-		oCore.getUIArea("uiAreaA").removeAllContent();
+		UIArea.registry.get("uiAreaA").removeAllContent();
 		new VerticalLayout({
 			content: [
 				new HTML("html3", {
@@ -283,52 +285,52 @@ sap.ui.define([
 	});
 
 	QUnit.test("content property + preferDOM, rerendering", function(assert) {
-		var oldDomRef = oCore.byId("html3").getDomRef();
+		var oldDomRef = Element.registry.get("html3").getDomRef();
 
-		oCore.byId("html3").invalidate();
+		Element.registry.get("html3").invalidate();
 
 		return afterRerendering(function() {
 			okFragment(assert, FRAGMENT_1, "uiAreaA", "UIArea contains expected HTML fragment");
-			assert.equal(oCore.byId("html3").getDomRef(), oldDomRef, "node after rendering is the same as before");
+			assert.equal(Element.registry.get("html3").getDomRef(), oldDomRef, "node after rendering is the same as before");
 		});
 	});
 
 	QUnit.test("setting content", function(assert) {
-		oCore.byId("html3").setContent("");
+		Element.registry.get("html3").setContent("");
 		oCore.applyChanges();
 		assert.equal(jQuery("#html3").length, 0, "html3 DOM must be empty");
 
-		oCore.byId("html3").setContent(FRAGMENT_1.content);
+		Element.registry.get("html3").setContent(FRAGMENT_1.content);
 		oCore.applyChanges();
 		assert.equal(jQuery("#html3").length, 1, "content must have length 1");
 		assert.equal(jQuery("#html3").css("width"), "64px", "fragment width");
 		assert.equal(jQuery("#html3").css("height"), "64px", "fragment height");
 		assert.equal(normalize(jQuery("#html3").css("background-color")), "rgb(255,0,0)", "fragment bg color");
 
-		oCore.byId("html3").setContent("someLeadingText" + FRAGMENT_2.content + "someTrailingText");
+		Element.registry.get("html3").setContent("someLeadingText" + FRAGMENT_2.content + "someTrailingText");
 		oCore.applyChanges();
 		okFragment(assert, FRAGMENT_2, "uiAreaA", "html3 DOM must be equal to FRAGMENT_2");
 		assert.ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someLeadingText") < 0, "rendered HTML does not contain leading text");
 		assert.ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someTrailingText") < 0, "rendered HTML does not contain trailing text");
 
-		oCore.byId("html3").setContent(FRAGMENT_1.content);
+		Element.registry.get("html3").setContent(FRAGMENT_1.content);
 		oCore.applyChanges();
 		assert.equal(jQuery("#html3").length, 1, "content must have length 1");
 		assert.equal(jQuery("#html3").css("width"), "64px", "fragment width");
 		assert.equal(jQuery("#html3").css("height"), "64px", "fragment height");
 		assert.equal(normalize(jQuery("#html3").css("background-color")), "rgb(255,0,0)", "fragment bg color");
 
-		oCore.byId("html3").setContent("somePureText");
+		Element.registry.get("html3").setContent("somePureText");
 		oCore.applyChanges();
 		assert.equal(jQuery("#html3").length, 0, "html3 DOM must be empty");
 
-		oCore.byId("html3").setContent(FRAGMENT_2.content);
+		Element.registry.get("html3").setContent(FRAGMENT_2.content);
 		oCore.applyChanges();
 		okFragment(assert, FRAGMENT_2, "uiAreaA", "html3 DOM must be equal to FRAGMENT_2");
 	});
 
 	QUnit.test("remove & rerender", function(assert) {
-		var oHtml3 = oCore.byId("html3");
+		var oHtml3 = Element.registry.get("html3");
 		var oHtml3Dom = oHtml3.getDomRef();
 		var oParent = oHtml3.getParent();
 		oParent.removeContent(0);
@@ -398,26 +400,26 @@ sap.ui.define([
 
 	QUnit.test("survive removal", function(assert) {
 		// check preconditions
-		assert.ok(oCore.byId("html3").getUIArea(), "html3 must be part of UIArea");
+		assert.ok(Element.registry.get("html3").getUIArea(), "html3 must be part of UIArea");
 		assert.equal(jQuery("#html3").length, 1, "html3 DOM should exist");
 		var oldDomRef = jQuery("#html3")[0];
 
 		// remove from control tree and rerender
-		oCore.getUIArea("uiAreaA").removeAllContent();
+		UIArea.registry.get("uiAreaA").removeAllContent();
 		oCore.applyChanges();
 
 		// check that DOM still exists
-		assert.ok(!oCore.byId("html3").getUIArea(), "html3 must no longer be part of UIArea");
+		assert.ok(!Element.registry.get("html3").getUIArea(), "html3 must no longer be part of UIArea");
 		assert.equal(jQuery("#html3").length, 1, "html3 DOM must still exist");
 		assert.equal(jQuery("#html3")[0], oldDomRef, "html3 DOM must be the same as before the removal");
 		assert.ok(RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must have been moved to preserve area");
 		assert.equal(jQuery("#sap-ui-dummy-html3").length, 0, "no dummy must exist");
 
 		// add it again to an UIArea and rerender
-		oCore.byId("html3").placeAt("uiAreaB");
+		Element.registry.get("html3").placeAt("uiAreaB");
 		oCore.applyChanges();
-		assert.ok(oCore.byId("html3").getUIArea(), "html3 must be part of UIArea");
-		assert.equal(oCore.byId("html3").getUIArea().getId(), "uiAreaB", "html3 must be part of UIArea uiAreaB");
+		assert.ok(Element.registry.get("html3").getUIArea(), "html3 must be part of UIArea");
+		assert.equal(Element.registry.get("html3").getUIArea().getId(), "uiAreaB", "html3 must be part of UIArea uiAreaB");
 		assert.equal(jQuery("#html3").length, 1, "html3 DOM must exist");
 		assert.equal(jQuery("#html3")[0], oldDomRef, "html3 DOM still must be the same as before the removal");
 		assert.ok(!RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must no longer be part of preserve area");
@@ -427,7 +429,7 @@ sap.ui.define([
 
 	QUnit.test("destroy", function(assert) {
 		assert.equal(jQuery("#html3").length, 1, "html3 DOM should exist");
-		oCore.byId("html3").destroy();
+		Element.registry.get("html3").destroy();
 		assert.equal(jQuery("#html3").length, 0, "html3 DOM should have been deleted");
 		assert.equal(jQuery("#sap-ui-dummy-html3").length, 0, "no dummy must exist");
 	});
@@ -447,7 +449,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("predefined content, invalidate UIArea", function(assert) {
-		oCore.byId("html4").getUIArea().invalidate();
+		Element.registry.get("html4").getUIArea().invalidate();
 
 		return afterRerendering(function() {
 			okFragment(assert, FRAGMENT_3, "uiAreaB", "UIArea contains expected HTML fragment");
@@ -455,7 +457,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("predefined content, invalidate HTMLControl", function(assert) {
-		oCore.byId("html4").invalidate();
+		Element.registry.get("html4").invalidate();
 
 		return afterRerendering(function() {
 			okFragment(assert, FRAGMENT_3, "uiAreaB", "UIArea contains expected HTML fragment");
@@ -463,7 +465,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("predefined content, rerender HTMLControl", function(assert) {
-		oCore.byId("html4").rerender();
+		Element.registry.get("html4").rerender();
 		// rerender is not async -> check immediately
 		okFragment(assert, FRAGMENT_3, "uiAreaB", "UIArea contains expected HTML fragment");
 	});
@@ -482,7 +484,7 @@ sap.ui.define([
 	// multiple roots test
 	QUnit.test("content property, multiple roots", function(assert) {
 		// Cleanup UIArea because placeAt only adds new control to UIArea
-		oCore.getUIArea("uiAreaA").removeAllContent();
+		UIArea.registry.get("uiAreaA").removeAllContent();
 		new HTML("html6", {
 			content : "<div style='width:200px;height:64px;background-color:rgb(0, 0, 0);'></div><div style='width:200px;height:64px;background-color:rgb(255, 0, 0);'></div><div style='width:200px;height:64px;background-color:rgb(255, 255, 0);'></div>"
 		}).placeAt("uiAreaA");
@@ -513,7 +515,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("predefined content, multiple roots, nested controls, rerendering", function(assert) {
-		var layout = oCore.byId("layout7");
+		var layout = Element.registry.get("layout7");
 		var oldLayoutDomRef = layout.getDomRef();
 		assert.ok(oldLayoutDomRef != undefined, "layout has a domref");
 

@@ -42,6 +42,9 @@ sap.ui.define(function() {
 			IntervalTrigger: {
 				title: "Test Page for IntervalTrigger Class"
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"jquery.sap.events": {
 				/* own page kept because of custom styles and DOM (but uses runTest.js) */
 				page: "test-resources/sap/ui/core/qunit/jquery.sap.events.qunit.html",

@@ -1,17 +1,18 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/ui/core/util/serializer/ViewSerializer",
-	"sap/ui/core/mvc/HTMLView",
-	"sap/ui/core/mvc/XMLView",
+	"sap/base/Log",
 	"sap/m/Button",
 	"sap/m/Image",
 	"sap/m/Label",
-	"sap/base/Log",
+	"sap/ui/core/Core",
+	"sap/ui/core/UIArea",
+	"sap/ui/core/mvc/HTMLView",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/util/serializer/ViewSerializer",
 	"sap/ui/qunit/utils/createAndAppendDiv"
 ],
-	function (Core, ViewSerializer, HTMLView, XMLView, Button, Image, Label, Log, createAndAppendDiv) {
+	function (Log, Button, Image, Label, Core, UIArea, HTMLView, XMLView, ViewSerializer, createAndAppendDiv) {
 		"use strict";
 
 		createAndAppendDiv(["htmlViewArea", "xmlViewArea", "xmlViewWithoutControllerArea"]);
@@ -69,7 +70,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Serialize, Re-Instantiate and Check an HTML View", function (assert) {
-			var oViewSerializer = new ViewSerializer(Core.getUIArea("htmlViewArea"), null, "sap.m");
+			var oViewSerializer = new ViewSerializer(UIArea.registry.get("htmlViewArea"), null, "sap.m");
 
 			var mHTMLViews = oViewSerializer.serializeToHTML();
 			var sHTMLResult = mHTMLViews["serializer.view.TestHtml"];
@@ -89,7 +90,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Serialize, Re-Instantiate and Check an XML View", function (assert) {
-			var oViewSerializer = new ViewSerializer(Core.getUIArea("xmlViewArea"), null, "sap.m");
+			var oViewSerializer = new ViewSerializer(UIArea.registry.get("xmlViewArea"), null, "sap.m");
 
 			var mHTMLViews = oViewSerializer.serializeToHTML();
 			var sHTMLResult = mHTMLViews["serializer.view.TestXml"];
@@ -109,7 +110,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Serialize, Check if nested XMLView within the HTML View doesn't get converted", function (assert) {
-			var oViewSerializer = new ViewSerializer(Core.getUIArea("htmlViewArea"), null, "sap.m");
+			var oViewSerializer = new ViewSerializer(UIArea.registry.get("htmlViewArea"), null, "sap.m");
 
 			var mXMLViews = oViewSerializer.serialize();
 			var sResult = mXMLViews["serializer.view.TestHtml"];
@@ -120,7 +121,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Serialize, Check if nested HTMLView within the XML View doesn't get converted", function (assert) {
-			var oViewSerializer = new ViewSerializer(Core.getUIArea("xmlViewArea"), null, "sap.m");
+			var oViewSerializer = new ViewSerializer(UIArea.registry.get("xmlViewArea"), null, "sap.m");
 
 			var mXMLViews = oViewSerializer.serialize();
 			var sResult = mXMLViews["serializer.view.TestXml"];
@@ -131,7 +132,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Serialize, Check conversion of nested XMLView within the HTML View", function (assert) {
-			var oViewSerializer = new ViewSerializer(Core.getUIArea("htmlViewArea"), null, "sap.m");
+			var oViewSerializer = new ViewSerializer(UIArea.registry.get("htmlViewArea"), null, "sap.m");
 
 			var mXMLViews = oViewSerializer.serializeToXML();
 			var sResult = mXMLViews["serializer.view.TestHtml"];
@@ -142,7 +143,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Serialize, Check conversion of nested HTMLView within the XML View", function (assert) {
-			var oViewSerializer = new ViewSerializer(Core.getUIArea("xmlViewArea"), null, "sap.m");
+			var oViewSerializer = new ViewSerializer(UIArea.registry.get("xmlViewArea"), null, "sap.m");
 
 			var mXMLViews = oViewSerializer.serializeToHTML();
 			var sResult = mXMLViews["serializer.view.TestXml"];
@@ -153,7 +154,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Serialize, Check if a view that has no controller is still serializable", function (assert) {
-			var oViewSerializer = new ViewSerializer(Core.getUIArea("xmlViewWithoutControllerArea"), null, "sap.m");
+			var oViewSerializer = new ViewSerializer(UIArea.registry.get("xmlViewWithoutControllerArea"), null, "sap.m");
 
 			var mXMLViews = oViewSerializer.serializeToHTML();
 			var sResult = mXMLViews["serializer.view.TestViewWithoutController"];

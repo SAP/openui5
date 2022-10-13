@@ -7,6 +7,9 @@ sap.ui.define([], function() {
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},
 		tests: {
+			/**
+			 * @deprecated since 1.58
+			 */
 			"util/jQuery.sap.measure": {
 				loader: {
 					map: {
@@ -24,6 +27,9 @@ sap.ui.define([], function() {
 				},
 				title: "jQuery.sap.measure"
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"util/jquery.sap.trace": {
 				title: "jQuery.sap.trace",
 				beforeBootstrap: "test-resources/sap/ui/core/qunit/util/beforeBootstrap/jQuery.sap.trace"

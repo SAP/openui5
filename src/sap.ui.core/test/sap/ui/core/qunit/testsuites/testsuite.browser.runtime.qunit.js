@@ -36,18 +36,27 @@ sap.ui.define(function() {
 			"util/Mobile": {
 				title: "sap.ui.util.Mobile"
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"jquery.sap.mobile": {
 				title: "jquery.sap.mobile: 1",
 				ui5: {
 					theme: "base"
 				}
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"jquery.sap.mobile2": {
 				title: "jquery.sap.mobile: 2",
 				ui5: {
 					theme: "base"
 				}
 			},
+			/**
+			 * @deprecated since 1.58
+			 */
 			"jquery.sap.mobile3": {
 				title: "jquery.sap.mobile: 3",
 				ui5: {
