@@ -18,7 +18,8 @@ sap.ui.define([
 				Implicit: "AppUnderTestTable.view.Implicit",
 				Transient: "AppUnderTestTable.view.Transient",
 				AutoImplicit: "AppUnderTestTable.view.AutoImplicit",
-				State: "AppUnderTestTable.view.State"
+				State: "AppUnderTestTable.view.State",
+				Responsive: "AppUnderTestTable.view.ResponsiveTable"
 			};
 
 			this.setFragment(mViews[sSubView]);

@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"./TableTypeBase",
+	"./utils/Personalization",
 	"../library",
 	"sap/m/Button",
 	"sap/m/plugins/ColumnResizer",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ], function(
 	TableTypeBase,
+	PersonalizationUtils,
 	library,
 	Button,
 	ColumnResizer,
@@ -192,14 +194,6 @@ sap.ui.define([
 	ResponsiveTableType.prototype._onSelectionChange = function(oEvent) {
 		var oTable = this.getTable();
 		var bSelectAll = oEvent.getParameter("selectAll");
-
-		if (bSelectAll) {
-			var oBinding = this.getRowBinding();
-
-			if (!oBinding) {
-				return;
-			}
-		}
 
 		this.callHook("SelectionChange", oTable, {
 			bindingContext: oEvent.getParameter("listItem").getBindingContext(),
@@ -418,8 +412,10 @@ sap.ui.define([
 
 		if (this.bHideDetails) {
 			oResponsiveTable.setHiddenInPopin(this._getImportanceToHide());
+			this._oShowDetailsButton.setSelectedKey("hideDetails");
 		} else {
 			oResponsiveTable.setHiddenInPopin([]);
+			this._oShowDetailsButton.setSelectedKey("showDetails");
 		}
 	};
 
@@ -597,6 +593,23 @@ sap.ui.define([
 
 		if (oResponsiveTable) {
 			oResponsiveTable.removeSelections(true);
+		}
+	};
+
+	/**
+	 * Called when column is inserted
+	 * @param {object} oColumn - the mdc column instance.
+	 *
+	 * @private
+	 */
+	ResponsiveTableType.prototype._onColumnInsert = function(oColumn) {
+		var oTable = this.getTable();
+		var oResponsiveTable = this.getInnerTable();
+
+		if (PersonalizationUtils.isUserPersonalizationActive(oTable)
+		&& oResponsiveTable.getHiddenInPopin().includes(oColumn.getImportance())
+		&& (oTable.getColumns().pop() === oColumn)) {
+			this._toggleShowDetails(false);
 		}
 	};
 

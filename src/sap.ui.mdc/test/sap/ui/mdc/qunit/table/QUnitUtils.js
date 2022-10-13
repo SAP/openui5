@@ -152,14 +152,6 @@ sap.ui.define([
 				resolve();
 			});
 			oTable._oColumnHeaderMenu.close();
-
-			// TODO: Delete after sap.m.table.columnmenu.Menu got the "afterClose" event
-			oTable._oColumnHeaderMenu._oPopover.attachEventOnce("afterClose", function() {
-				oTable._oColumnHeaderMenu.fireEvent("afterClose");
-			});
-			if (oTable._oColumnHeaderMenu.getMetadata().hasEvent("afterClose")) {
-				throw new Error("Don't forget to delete this code! :)");
-			}
 		});
 	};
 

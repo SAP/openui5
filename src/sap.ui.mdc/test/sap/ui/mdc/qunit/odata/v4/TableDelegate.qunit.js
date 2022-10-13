@@ -219,6 +219,7 @@ sap.ui.define([
 
 		this.resetFetchPropertyCalls();
 		this.oTable.setType(TableType.ResponsiveTable);
+
 		return this.oTable._fullyInitialized().then(function() {
 			assert.notOk(that.oTable._oTable.getDependents().find(function(oDependent) {
 				return oDependent.isA("sap.ui.table.plugins.V4Aggregation");
