@@ -344,6 +344,34 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("getWeek (de)", function (assert) {
+		sap.ui.getCore().getConfiguration().setLanguage("de");
+
+		// era 236 Reiwa
+		assert.deepEqual(new Japanese([236, 4],0,1).getWeek(), {
+			"week": 51,
+			"year": 2021
+		}, "Jan 1st 2022 is CW 51");
+		assert.deepEqual(new Japanese([236, 4], 0, 3).getWeek(), {
+			"week": 0,
+			"year": 2022
+		}, "Jan 3rd 2022 is CW 1");
+
+		// era 235 Heisei
+		assert.deepEqual(new Japanese([235, 28],0,1).getWeek(), {
+			"week": 52,
+			"year": 2015
+		}, "Jan 1st 2015 is CW 53");
+		assert.deepEqual(new Japanese([235, 28], 0, 3).getWeek(), {
+			"week": 52,
+			"year": 2015
+		}, "Jan 3rd 2015 is CW 53");
+		assert.deepEqual(new Japanese([235, 28], 0, 4).getWeek(), {
+			"week": 0,
+			"year": 2016
+		}, "Jan 4th 2016 is CW 1");
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+	});
 
 	// --------------------------- HELPERS -------------------------------------------------------------------------
 	function verifyDateWithTestDate(assert, sMessage, oDate, oExpectedTestDate, bUTC) {
