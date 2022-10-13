@@ -3009,17 +3009,17 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		assert.equal(oInput9.getProperty("separateSuggestions"), false, "The separateSuggestions property initially set to false");
+		assert.equal(oInput9.getProperty("separateSuggestions"), true, "The separateSuggestions property initially set to true");
 
-		assert.equal(oInput9._getSuggestionsTable().getShowSeparators(), "None", "The showSeparators property of the suggestionsTable initially set to sap.m.ListSeparators.None");
+		assert.equal(oInput9._getSuggestionsTable().getShowSeparators(), "Inner", "The showSeparators property of the suggestionsTable initially set to sap.m.ListSeparators.Inner");
 
 		// Act
-		oInput9._setSeparateSuggestions(true);
+		oInput9._setSeparateSuggestions(false);
 
 		// Assert
-		assert.equal(oInput9.getProperty("separateSuggestions"), true, "The separateSuggestions property set to true");
+		assert.equal(oInput9.getProperty("separateSuggestions"), false, "The separateSuggestions property set to false");
 
-		assert.equal(oInput9._getSuggestionsTable().getShowSeparators(), "Inner", "The showSeparators property of the suggestionsTable set to sap.m.ListSeparators.Inner");
+		assert.equal(oInput9._getSuggestionsTable().getShowSeparators(), "None", "The showSeparators property of the suggestionsTable set to sap.m.ListSeparators.None");
 
 		// Clean
 		oInput9.destroy();
