@@ -341,7 +341,7 @@
 		"type": "Numeric",
 		"data": {
 		  "request": {
-			"url": "sap/ui/integration/sample/CardsLoading/manifests/analitycalData.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/analyticalData.json"
 		  },
 		  "path": "/header"
 		},
@@ -395,7 +395,7 @@
 		"dimensionAxis": "categoryAxis",
 		"data": {
 		  "request": {
-			"url": "sap/ui/integration/sample/CardsLoading/manifests/analitycalData.json"
+			"url": "sap/ui/integration/sample/CardsLoading/manifests/analyticalData.json"
 		  },
 		  "path": "/list"
 		},

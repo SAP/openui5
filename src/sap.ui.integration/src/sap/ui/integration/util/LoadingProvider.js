@@ -11,8 +11,10 @@ sap.ui.define([
 	"sap/f/cards/loading/ObjectPlaceholder",
 	"sap/f/cards/loading/TablePlaceholder",
 	"sap/f/cards/loading/TimelinePlaceholder",
+	"sap/f/cards/loading/AnalyticalPlaceholder",
 	"../cards/TableContentRenderer",
-	"../cards/TimelineContentRenderer"
+	"../cards/TimelineContentRenderer",
+	"../cards/AnalyticalContentRenderer"
 ], function (
 	ListContentRenderer,
 	library,
@@ -23,8 +25,10 @@ sap.ui.define([
 	ObjectPlaceholder,
 	TablePlaceholder,
 	TimelinePlaceholder,
+	AnalyticalPlaceholder,
 	TableContentRenderer,
-	TimelineContentRenderer
+	TimelineContentRenderer,
+	AnalyticalContentRenderer
 ) {
 	"use strict";
 
@@ -120,6 +124,13 @@ sap.ui.define([
 					maxItems: oCard ? oCard.getContentPageSize(oConfiguration) || 2 : 2,
 					item: oConfiguration.item,
 					itemHeight: TimelineContentRenderer.getItemMinHeight(oConfiguration, oCard || this) + "rem"
+				});
+				break;
+
+			case "Analytical":
+				this._oContentPlaceholder = new AnalyticalPlaceholder({
+					chartType: oConfiguration.chartType,
+					minHeight: AnalyticalContentRenderer.getMinHeight(oConfiguration)
 				});
 				break;
 

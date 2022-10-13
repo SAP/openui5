@@ -53,6 +53,11 @@ sap.ui.define([
 			"key": "timeline1",
 			"columns": 5,
 			"manifest": "sap/ui/integration/sample/LazyLoading/manifests/timelineManifest.json"
+		},
+		{
+			"key": "analytical1",
+			"columns": 5,
+			"manifest": "sap/ui/integration/sample/LazyLoading/manifests/analyticalManifest.json"
 		}
 	];
 

@@ -114,21 +114,28 @@
 			pointer-events: none;
 		}
 
-		.sapFCardContentGenericPlaceholder {
+		.sapFCardContentGenericPlaceholder,
+		.sapFCardContentAnalyticalPlaceholder {
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			width: 100%;
 			height: 100%;
 
+			.sapFCardSVG {
+				fill: @sapUiTileBackground;
+			}
+		}
+
+		.sapFCardContentAnalyticalPlaceholder > div {
+			padding: 0.5rem;
+		}
+
+		.sapFCardContentGenericPlaceholder {
 			.sapFCardLoadingShimmer {
 				max-width: 144px;
 				max-height: 144px;
 				height: ~"calc(100% - 4px)"; /* leave place for the focus */
-			}
-
-			.sapFCardSVG {
-				fill: @sapUiTileBackground;
 			}
 		}
 	}
@@ -141,7 +148,7 @@
 		background-color: @sap_f_Card_Background_Placeholder_Color;
 		background-image: @sap_f_Card_Placeholder_Gradient;
 		background-repeat: no-repeat;
-		background-size: 800px 144px;
+		background-size: 800px 100%;
 		position: relative;
 		border-radius: 0.25rem;
 
