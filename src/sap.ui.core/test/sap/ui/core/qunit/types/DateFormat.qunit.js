@@ -1,6 +1,13 @@
 /*global QUnit, sinon */
-sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/core/LocaleData", "sap/ui/core/date/UniversalDate", "sap/ui/core/library"],
-	function (DateFormat, Locale, LocaleData, UniversalDate, library) {
+sap.ui.define([
+	"sap/base/util/extend",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/Locale",
+	"sap/ui/core/LocaleData",
+	"sap/ui/core/date/UniversalDate",
+	"sap/ui/core/library",
+	"sap/ui/core/date/CalendarWeekNumbering"
+], function (extend, DateFormat, Locale, LocaleData, UniversalDate, library, CalendarWeekNumbering) {
 		"use strict";
 
 		// shortcut for sap.ui.core.CalendarType
@@ -106,7 +113,7 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 
 			for (sCustomPattern in oCustomDatePatterns) {
 				oCustomDate = DateFormat.getDateTimeInstance({ pattern: sCustomPattern });
-				assert.equal(oCustomDate.format(oDate), oCustomDatePatterns[sCustomPattern], sCustomPattern);
+				assert.equal(oCustomDate.format(oDate), oCustomDatePatterns[sCustomPattern], "pattern:" + sCustomPattern + ", date: " + oDate);
 			}
 		});
 
@@ -688,12 +695,22 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 					pattern: "Y-w"
 				});
 				assert.equal(oDateFormat.format(new Date(2014, 0, 1)), "2014-1", "For " + sLocale + " 1st of January is always week 1");
+				assert.deepEqual(oDateFormat.parse("2014-1"), new Date(2014, 0, 1), "Date can be correctly parsed to 1st of January 2014");
+
 				assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "2015-1", "For " + sLocale + " 1st of January is always week 1");
+				assert.deepEqual(oDateFormat.parse("2015-1"), new Date(2015, 0, 1), "Date can be correctly parsed to 1st of January 2015");
+
 				assert.equal(oDateFormat.format(new Date(2016, 0, 1)), "2016-1", "For " + sLocale + " 1st of January is always week 1");
+				assert.deepEqual(oDateFormat.parse("2016-1"), new Date(2016, 0, 1), "Date can be correctly parsed to 1st of January 2016");
+
 				assert.equal(oDateFormat.format(new Date(2014, 11, 31)), "2014-53", "For " + sLocale + " 31st of December is always week 53");
+				assert.deepEqual(oDateFormat.parse("2014-53"), new Date(2014, 11, 28), "Date can be correctly parsed to 28th of December 2014");
+
 				assert.equal(oDateFormat.format(new Date(2015, 11, 31)), "2015-53", "For " + sLocale + " 31st of December is always week 53");
+				assert.deepEqual(oDateFormat.parse("2015-53"), new Date(2015, 11, 27), "Date can be correctly parsed to 27th of December 2015");
+
 				assert.equal(oDateFormat.format(new Date(2016, 11, 31)), "2016-53", "For " + sLocale + " 31st of December is always week 53");
-				assert.equal(oDateFormat.parse("2015-1").valueOf(), new Date(2015, 0, 1).valueOf(), "Date can be correctly parsed to 1st of January 2015");
+				assert.deepEqual(oDateFormat.parse("2016-53"), new Date(2016, 11, 25), "Date can be correctly parsed to 25th of December 2016");
 			});
 
 			// Western Traditional
@@ -730,12 +747,22 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 					pattern: "Y-w"
 				});
 				assert.equal(oDateFormat.format(new Date(2014, 0, 1)), "2014-1", "For " + sLocale + " 1st of January 2014 is week 1/2014");
+				assert.deepEqual(oDateFormat.parse("2014-1"), new Date(2013, 11, 30), "Date can be correctly parsed to 1st of January 2014");
+
 				assert.equal(oDateFormat.format(new Date(2015, 0, 1)), "2015-1", "For " + sLocale + " 1st of January 2015 is week 1/2015");
+				assert.deepEqual(oDateFormat.parse("2015-1"), new Date(2014, 11, 29), "Date can be correctly parsed to 1st of January 2015");
+
 				assert.equal(oDateFormat.format(new Date(2016, 0, 1)), "2015-53", "For " + sLocale + " 1st of January 2016 is week 53/2015");
+				assert.deepEqual(oDateFormat.parse("2016-1"), new Date(2016, 0, 4), "Date can be correctly parsed to 1st of January 2016");
+
 				assert.equal(oDateFormat.format(new Date(2014, 11, 31)), "2015-1", "For " + sLocale + " 31st of December 2014 is week 1/2015");
+				assert.deepEqual(oDateFormat.parse("2015-1"), new Date(2014, 11, 29), "Date can be correctly parsed to 29th of December 2014");
+
 				assert.equal(oDateFormat.format(new Date(2015, 11, 31)), "2015-53", "For " + sLocale + " 31st of December 2015 is week 53/2015");
+				assert.deepEqual(oDateFormat.parse("2015-53"), new Date(2015, 11, 28), "Date can be correctly parsed to 29th of December 2014");
+
 				assert.equal(oDateFormat.format(new Date(2016, 11, 31)), "2016-52", "For " + sLocale + " 31st of December 2016 is week 52/2016");
-				assert.equal(oDateFormat.parse("2015-1").valueOf(), new Date(2014, 11, 29).valueOf(), "Date can be correctly parsed to 29th of December 2014");
+				assert.deepEqual(oDateFormat.parse("2016-52"), new Date(2016, 11, 26), "Date can be correctly parsed to 29th of December 2016");
 			});
 
 			sap.ui.getCore().getConfiguration().setLanguage("en_US");
@@ -752,7 +779,7 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			var sFormatted = "2016/47/1";
 
 			assert.equal(oDateFormat.format(oDate), sFormatted, "13th, November 2016 Sunday is the first day of week 46 in en-US");
-			assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed to the same date");
+			assert.deepEqual(oDateFormat.parse(sFormatted), oDate, "The formatted string can be correctly parsed to the same date");
 
 			sap.ui.getCore().getConfiguration().setLanguage("de_DE");
 			oDateFormat = DateFormat.getDateInstance({
@@ -761,7 +788,7 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			sFormatted = "2016/45/7";
 
 			assert.equal(oDateFormat.format(oDate), sFormatted, "13th, November 2016 Sunday is the 7th day of week 45 in de-DE");
-			assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed to the same date");
+			assert.deepEqual(oDateFormat.parse(sFormatted), oDate, "The formatted string can be correctly parsed to the same date");
 
 			sap.ui.getCore().getConfiguration().setLanguage("en_US");
 		});
@@ -826,9 +853,9 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 					}, new Locale(sLanguage));
 
 					sFormattedDate = oDateFormat.format(oDate).toString();
-					assert.ok(sFormattedDate, "Formatted: " + sFormattedDate + " using pattern " + sPattern);
+					assert.ok(sFormattedDate, "Format (" + sLanguage + "): " + sFormattedDate + " using pattern " + sPattern);
 					oParsedDate = oDateFormat.parse(sFormattedDate);
-					assert.equal(oParsedDate.getTime(), oDate.getTime(), "Pattern " + sPattern + " Formatting and parsing of date in " + sLanguage + " differs: " + oParsedDate + " vs. " + oDate);
+					assert.deepEqual(oParsedDate, oDate, "Parse (" + sLanguage + "): " + sPattern);
 
 				});
 			});
@@ -859,25 +886,25 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 		});
 
 
-		QUnit.test("format and parse week and dayName first week of year", function (assert) {
-			var oDate = new Date(2017, 0, 1); // 1st Jan 2017
-			var sPattern = "yyyy 'Week' ww EEEE";
+		QUnit.test("format and parse week and dayName Jan 1st, 2017", function (assert) {
+			var oDate = new Date(2017, 0, 1);
+			var sPattern = "YYYY 'Week' ww EEEE";
 
 			var oDateFormat = DateFormat.getDateInstance({
 				pattern: sPattern
 			}, new Locale("en_US"));
 			var sFormatted = "2017 Week 01 Sunday";
 
-			assert.equal(oDateFormat.format(oDate).toString(), sFormatted, "2018-12 Friday, Friday in en-US");
-			assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
+			assert.equal(oDateFormat.format(oDate).toString(), sFormatted, "2017 Week 01 Sunday in en-US");
+			assert.deepEqual(oDateFormat.parse(sFormatted), oDate, "The formatted string can be correctly parsed");
 
 			oDateFormat = DateFormat.getDateInstance({
 				pattern: sPattern
 			}, new Locale("de_DE"));
-			sFormatted = "2017 Week 01 Sonntag";
+			sFormatted = "2016 Week 52 Sonntag";
 
-			assert.equal(oDateFormat.format(oDate).toString(), sFormatted, "2018-12 Freitag in de-DE");
-			assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
+			assert.equal(oDateFormat.format(oDate).toString(), sFormatted, "2016 Week 52 Sonntag in de-DE");
+			assert.deepEqual(oDateFormat.parse(sFormatted), oDate, "The formatted string can be correctly parsed");
 
 			sap.ui.getCore().getConfiguration().setLanguage("en_US");
 		});
@@ -890,7 +917,75 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(oInfo.pattern, "MMM d, y", "Origin Info: pattern");
 		});
 
-		QUnit.module("Scaling: Relative Time Formater", {
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		QUnit.module("Calendar Week precedence", {
+			beforeEach: function () {
+				sap.ui.getCore().getConfiguration().setLanguage("de_DE"); // ISO 8601
+			},
+			afterEach: function () {
+				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			}
+		});
+
+		QUnit.test("invalid calendar week configuration", function (assert) {
+			assert.throws(function() {
+				DateFormat.getDateInstance({
+					calendarWeekNumbering: "DoesNotExist"
+				});
+			}, new TypeError("Illegal format option calendarWeekNumbering: 'DoesNotExist'"));
+		});
+
+		QUnit.test("calendar week configuration precedence 2021", function (assert) {
+			// Fri Jan 01 2021
+			// firstDay: 4
+			// minDays: 1
+			var oDate = new Date("2021-01-01T00:00:00Z");
+			var oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w"
+			});
+			assert.equal(oDateFormat.format(oDate), "2020-53", "2020-53");
+
+			// Default to locale
+			oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w",
+				calendarWeekNumbering: CalendarWeekNumbering.Default
+			});
+			assert.equal(oDateFormat.format(oDate), "2020-53", "2020-53");
+
+			// instance
+			oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w",
+				calendarWeekNumbering: CalendarWeekNumbering.ISO_8601
+			});
+			assert.equal(oDateFormat.format(oDate), "2020-53", "2020-53");
+		});
+
+		QUnit.test("calendar week configuration precedence 2022", function (assert) {
+			// Sat Jan 01 2022
+			// firstDay: 4
+			// minDays: 1
+			var oDate = new Date("2022-01-01T00:00:00Z");
+			var oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w"
+			});
+			assert.equal(oDateFormat.format(oDate), "2021-52", "2021-52");
+
+			// Default to locale
+			oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w",
+				calendarWeekNumbering: CalendarWeekNumbering.Default
+			});
+			assert.equal(oDateFormat.format(oDate), "2021-52", "2021-52");
+
+			// instance
+			oDateFormat = DateFormat.getDateInstance({
+				pattern: "Y-w",
+				calendarWeekNumbering: CalendarWeekNumbering.ISO_8601
+			});
+			assert.equal(oDateFormat.format(oDate), "2021-52", "2021-52");
+		});
+
+		QUnit.module("Scaling: Relative Time Formatter", {
 			beforeEach: function () {
 				this.clock = sinon.useFakeTimers(1444724476000); // Tue Oct 13 2015 10:21:16 GMT+0200 (CEST)
 				var oDate = new Date();
@@ -1420,6 +1515,22 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(oDateFormat.format(this.oDate), "Jul 4, 2544 BE", "Date is formatted in Buddhist calendar");
 		});
 
+		QUnit.test("format date to Buddhist type with locale en and calendar week", function (assert) {
+			var oDateFormat = DateFormat.getDateInstance({
+				calendarType: CalendarType.Buddhist,
+				pattern: "YYYY'/'ww"
+			});
+
+			assert.equal(oDateFormat.format(this.oDate), "2544/27", "Date is formatted in Buddhist calendar");
+
+
+			oDateFormat = DateFormat.getDateInstance({
+				calendarType: CalendarType.Buddhist,
+				pattern: "yyyy"
+			});
+			assert.equal(oDateFormat.format(this.oDate), "2544", "Date is formatted in Buddhist calendar");
+		});
+
 		QUnit.test("format date to Buddhist type with relative and locale en", function (assert) {
 			doTestRelative(assert, true, { pattern: "yyyy-MM-dd", calendarType: CalendarType.Buddhist }, "en", "yyyy-MM-dd, default range, en with calendar type Buddhist");
 			doTestRelative(assert, true, { relativeRange: [-9, 0], calendarType: CalendarType.Buddhist }, "en", "default style, range [-9, 0], en with calendar type Buddhist");
@@ -1705,6 +1816,31 @@ sap.ui.define(["sap/ui/core/format/DateFormat", "sap/ui/core/Locale", "sap/ui/co
 			assert.equal(sResult, "May 1, 1 Heisei – May 1, 1 Reiwa");
 			assert.deepEqual(oIntervalFormat.parse(sResult), [oDate1, oDate2]);
 
+		});
+
+		QUnit.test("format date to Japanese type with locale de and calendar week", function (assert) {
+
+			var oDateFormatYearWeek = DateFormat.getDateInstance({
+				calendarType: CalendarType.Japanese,
+				pattern: "YYYY'/'ww"
+			}, new Locale("de"));
+
+			var oDateFormatCalendarYear = DateFormat.getDateInstance({
+				calendarType: CalendarType.Japanese,
+				pattern: "yyyy"
+			}, new Locale("de"));
+
+
+			// 2022 Reiwa
+			var oDate = new Date(2022, 0, 1);
+			assert.equal(oDateFormatYearWeek.format(oDate), "2021/52", "Date is formatted in Japanese calendar");
+			assert.equal(oDateFormatCalendarYear.format(oDate), "0004", "Date is formatted in Japanese calendar");
+
+
+			// 2016 (Heisei 28)
+			oDate = new Date(2016, 0, 1);
+			assert.equal(oDateFormatYearWeek.format(oDate), "2015/53", "Date is formatted in Japanese calendar");
+			assert.equal(oDateFormatCalendarYear.format(oDate), "0028", "Date is formatted in Japanese calendar");
 		});
 
 		QUnit.test("Interval format with Date instance, Japanese calendar, different eras, ja-JA", function (assert) {

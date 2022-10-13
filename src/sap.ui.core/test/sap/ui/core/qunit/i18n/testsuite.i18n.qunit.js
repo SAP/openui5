@@ -15,6 +15,11 @@ sap.ui.define(function() {
 			}
 		},
 		tests: {
+			"CalendarUtils": {
+				coverage : {
+					only : "sap/ui/core/date/CalendarUtils"
+				}
+			},
 			"Buddhist": {
 				coverage : {
 					only : "sap/ui/core/date/Buddhist"

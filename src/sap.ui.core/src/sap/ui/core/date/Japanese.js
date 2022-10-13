@@ -228,11 +228,49 @@ sap.ui.define(['./UniversalDate', '../CalendarType'],
 		}
 		return this._setUTCJapanese(oJapanese);
 	};
-	Japanese.prototype.getWeek = function() {
-		return UniversalDate.getWeekByDate(this.sCalendarType, this.oDate.getFullYear(), this.getMonth(), this.getDate());
+
+	/**
+	 * Retrieves the calendar week
+	 *
+	 * @param {sap.ui.core.Locale} [oLocale] the locale used to get the calendar week calculation
+	 *   properties, defaults to the formatLocale
+	 * @param {sap.ui.core.date.CalendarWeekNumbering} [sCalendarWeekNumbering]
+	 *   calendar week numbering, the default is derived from <code>oLocale</code> but this
+	 *   parameter has precedence over oLocale if both are provided. If calendar week numbering is
+	 *   not determined from the locale then {@link LocaleData#firstDayStartsFirstWeek} is ignored.
+	 * @returns {{week: int, year: int}} resulting calendar week, note: week index starts with
+	 *   <code>0</code>, the year is the Gregorian year
+	 * @private
+	 * @throws {TypeError} If <code>sCalendarWeekNumbering</code> has an invalid week numbering
+	 *   value
+	 */
+	Japanese.prototype.getWeek = function(oLocale, sCalendarWeekNumbering) {
+		// use the full year of the Gregorian date (this.oDate) because the Japanese constructor is
+		// able to calculate the era and emperor year from it.
+		return UniversalDate.getWeekByDate(this.sCalendarType, this.oDate.getFullYear(),
+			this.getMonth(), this.getDate(), oLocale, sCalendarWeekNumbering);
 	};
-	Japanese.prototype.getUTCWeek = function() {
-		return UniversalDate.getWeekByDate(this.sCalendarType, this.oDate.getUTCFullYear(), this.getUTCMonth(), this.getUTCDate());
+
+	/**
+	 * Retrieves the UTC calendar week
+	 *
+	 * @param {sap.ui.core.Locale} [oLocale] the locale used to get the calendar week calculation
+	 *   properties, defaults to the formatLocale
+	 * @param {sap.ui.core.date.CalendarWeekNumbering} [sCalendarWeekNumbering]
+	 *   calendar week numbering, the default is derived from <code>oLocale</code> but this
+	 *   parameter has precedence over oLocale if both are provided. If calendar week numbering is
+	 *   not determined from the locale then {@link LocaleData#firstDayStartsFirstWeek} is ignored.
+	 * @returns {{week: int, year: int}} resulting calendar week, note: week index starts with
+	 *   <code>0</code>, the year is the Gregorian year
+	 * @private
+	 * @throws {TypeError} If <code>sCalendarWeekNumbering</code> has an invalid week numbering
+	 *   value
+	 */
+	Japanese.prototype.getUTCWeek = function(oLocale, sCalendarWeekNumbering) {
+		// use the full year of the Gregorian date (this.oDate) because the Japanese constructor is
+		// able to calculate the era and emperor year from it.
+		return UniversalDate.getWeekByDate(this.sCalendarType, this.oDate.getUTCFullYear(),
+			this.getUTCMonth(), this.getUTCDate(), oLocale, sCalendarWeekNumbering);
 	};
 
 	return Japanese;
