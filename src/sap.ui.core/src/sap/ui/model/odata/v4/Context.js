@@ -288,9 +288,6 @@ sap.ui.define([
 	 * containing it, and the model. <code>resetChanges</code> in binding or model cancels the
 	 * deletion and restores the context.
 	 *
-	 * The usage of a group ID with {@link sap.ui.model.odata.v4.SubmitMode.API} is possible since
-	 * 1.105 - this is an experimental API.
-	 *
 	 * If the DELETE request succeeds, the context is destroyed and must not be used anymore. If it
 	 * fails, the context is restored, reinserted into the list, and fully functional again.
 	 *
@@ -300,7 +297,8 @@ sap.ui.define([
 	 *   is transient (see {@link #isTransient}), no group ID needs to be specified. Since 1.98.0,
 	 *   you can use <code>null</code> to prevent the DELETE request in case of a kept-alive context
 	 *   that is not in the collection and of which you know that it does not exist on the server
-	 *   anymore (for example, a draft after activation).
+	 *   anymore (for example, a draft after activation). Since 1.108.0 the usage of a group ID with
+	 *   {@link sap.ui.model.odata.v4.SubmitMode.API} is possible.
 	 * @param {boolean} [bDoNotRequestCount]
 	 *   Whether not to request the new count from the server; useful in case of
 	 *   {@link #replaceWith} where it is known that the count remains unchanged (since 1.97.0).
@@ -1343,6 +1341,10 @@ sap.ui.define([
 	 *   effects fails. Use it to set fields affected by side effects to read-only before
 	 *   {@link #requestSideEffects} and make them editable again when the promise resolves; in the
 	 *   error handler, you can repeat the loading of side effects.
+	 *   <br>
+	 *   The promise is rejected if the call wants to refresh a whole list binding (via header
+	 *   context or an absolute path), but the deletion of a row context (see {@link #delete}) is
+	 *   pending with a different group ID.
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> metadata has not yet been loaded

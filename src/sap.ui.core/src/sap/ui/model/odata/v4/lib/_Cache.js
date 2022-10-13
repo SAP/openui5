@@ -2790,6 +2790,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns whether there are pending deletions in any group but the given one.
+	 *
+	 * @param {string} sGroupId - The ID of the allowed group
+	 * @returns {boolean} Whether there are such pending deletions
+	 *
+	 * @public
+	 */
+	_CollectionCache.prototype.isDeletingInOtherGroup = function (sGroupId) {
+		return Object.values(this.aElements.$deleted || {}).some(function (oDeleted) {
+			return oDeleted.sGroupId !== sGroupId;
+		});
+	};
+
+	/**
 	 * Returns a promise to be resolved with an OData object for a range of the requested data.
 	 * Calculates the key predicates for all entities in the result before the promise is resolved.
 	 *

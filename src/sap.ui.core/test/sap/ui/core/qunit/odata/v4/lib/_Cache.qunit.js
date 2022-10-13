@@ -10082,6 +10082,22 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache#isDeletingInOtherGroup", function (assert) {
+		var oCache = this.createCache("Employees");
+
+		assert.strictEqual(oCache.isDeletingInOtherGroup("group"), false);
+
+		oCache.aElements.$deleted = {};
+		assert.strictEqual(oCache.isDeletingInOtherGroup("group"), false);
+
+		oCache.aElements.$deleted = {a : {sGroupId : "group"}, b : {sGroupId : "group"}};
+		assert.strictEqual(oCache.isDeletingInOtherGroup("group"), false);
+
+		oCache.aElements.$deleted = {a : {sGroupId : "group"}, b : {sGroupId : "otherGroup"}};
+		assert.strictEqual(oCache.isDeletingInOtherGroup("group"), true);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("SingleCache", function (assert) {
 		var oCache,
 			fnGetOriginalResourcePath = {},
