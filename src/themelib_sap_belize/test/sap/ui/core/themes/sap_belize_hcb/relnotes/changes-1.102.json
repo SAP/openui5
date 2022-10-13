@@ -57,5 +57,21 @@
         "text": " DragAndDrop: The mobile support is now enabled"
       }
     ]
+  },
+  "1.102.10": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "a9589ee67fed384052b1e6471769937114805c58",
+        "type": "FIX",
+        "text": "sap.m.Button: visual alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270143444"
+          }
+        ]
+      }
+    ]
   }
 }

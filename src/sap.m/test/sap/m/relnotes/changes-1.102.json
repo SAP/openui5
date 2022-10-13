@@ -1112,5 +1112,21 @@
         ]
       }
     ]
+  },
+  "1.102.10": {
+    "date": "October 2022",
+    "notes": [
+      {
+        "id": "d093b051d9280505a0c3755093810cb299e5bc6c",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: adjust mask initialization",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270142822"
+          }
+        ]
+      }
+    ]
   }
 }
