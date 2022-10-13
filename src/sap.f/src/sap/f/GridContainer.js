@@ -1146,11 +1146,6 @@ sap.ui.define([
 			return null;
 		}
 
-		var mGridStyles = window.getComputedStyle(this.getDomRef()),
-			aCssRows = mGridStyles.gridTemplateRows.split(/\s+/),
-			aCssColumns = mGridStyles.gridTemplateColumns.split(/\s+/),
-			oLayoutSettings = this.getActiveLayoutSettings();
-
 		var aItemsDomRefs = this.getItems().reduce(function (aAcc, oItem) {
 			if (oItem.getVisible()) {
 				aAcc.push(GridContainerUtils.getItemWrapper(oItem));
@@ -1158,11 +1153,7 @@ sap.ui.define([
 			return aAcc;
 		}, []);
 
-		return GridNavigationMatrix.create(this.getDomRef(), aItemsDomRefs, {
-					gap: oLayoutSettings.getGapInPx(),
-					rows: aCssRows,
-					columns: aCssColumns
-				});
+		return GridNavigationMatrix.create(this.getDomRef(), aItemsDomRefs);
 	};
 
 	GridContainer.prototype._isItemWrapper = function (oElement) {
