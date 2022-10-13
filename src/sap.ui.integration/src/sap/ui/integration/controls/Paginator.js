@@ -213,7 +213,7 @@ sap.ui.define([
 					oCard.getAggregation("_loadingProvider")._bAwaitPagination = true;
 				}
 			}
-		} else {
+		} else if (oContent.isA("sap.ui.integration.cards.BaseContent")) {
 			oContent.sliceData(iStartIndex, iStartIndex + this.getPageSize());
 		}
 
