@@ -45,6 +45,9 @@ sap.ui.define(function() {
 			"Data Binding": {
 				page: "test-resources/sap/ui/core/qunit/testsuites/testsuite.databinding.qunit.html"
 			},
+			"Dom": {
+				page: "test-resources/sap/ui/core/qunit/testsuites/testsuite.dom.qunit.html"
+			},
 			"Eventing": {
 				page: "test-resources/sap/ui/core/qunit/testsuites/testsuite.eventing.qunit.html"
 			},

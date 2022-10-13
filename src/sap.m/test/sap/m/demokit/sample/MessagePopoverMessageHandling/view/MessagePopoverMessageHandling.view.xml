@@ -87,15 +87,6 @@
 						<Label text="Pay Grade" />
 						<Input value="{payGrade}">
 						</Input>
-						<Label text="Unit" />
-						<Input value="{unit}">
-						</Input>
-						<core:Title text="Rating" />
-						<Label text="Employee Class" />
-						<Input value="{class}"/>
-						<Label text="FTE" />
-						<Input value="{fte}">
-						</Input>
 						<Label text="Standard Weekly Hours" />
 						<Input change="onChange" value="{
 							path: 'weeklyHours',
@@ -104,6 +95,15 @@
 								maximum: 40
 							}
 						}">
+						</Input>
+						<core:Title text="Rating" />
+						<Label text="Unit" />
+						<Input value="{unit}">
+						</Input>
+						<Label text="Employee Class" />
+						<Input value="{class}"/>
+						<Label text="FTE" />
+						<Input value="{fte}">
 						</Input>
 					</f:content>
 				</f:SimpleForm>

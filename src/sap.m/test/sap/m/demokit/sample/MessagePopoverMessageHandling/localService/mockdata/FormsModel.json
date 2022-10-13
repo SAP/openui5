@@ -149,10 +149,10 @@
 	{
 		"jobTitle": "Senior UI Developer (UIDEV-SR)",
 		"payGrade": "Salary Grade 18 (GR-14",
+		"weeklyHours": 0,
 		"unit": "ABC",
 		"class": "Employee",
-		"fte": 1,
-		"weeklyHours": 0
+		"fte": 1
 	}
   ]
 }
