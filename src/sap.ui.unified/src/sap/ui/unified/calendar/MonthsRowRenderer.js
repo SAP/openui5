@@ -186,18 +186,19 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		CalendarUtils._checkCalendarDate(oDate);
 
 		var oHelper = {};
+		var sPrimaryCalendarType = oMonthsRow.getProperty("primaryCalendarType");
 
 		oHelper.sLocale = oMonthsRow._getLocale();
 		oHelper.oLocaleData = oMonthsRow._getLocaleData();
-		oHelper.oToday = new CalendarDate();
+		oHelper.oToday = CalendarDate.fromLocalJSDate(new Date(), sPrimaryCalendarType);
 		oHelper.sCurrentMonth = oMonthsRow._rb.getText("CALENDAR_CURRENT_MONTH");
 		oHelper.sId = oMonthsRow.getId();
 		oHelper.oFormatLong = oMonthsRow._getFormatLong();
 		if (oMonthsRow._bLongMonth || !oMonthsRow._bNamesLengthChecked) {
-			oHelper.aMonthNames = oHelper.oLocaleData.getMonthsStandAlone("wide");
+			oHelper.aMonthNames = oHelper.oLocaleData.getMonthsStandAlone("wide", sPrimaryCalendarType);
 		} else {
-			oHelper.aMonthNames = oHelper.oLocaleData.getMonthsStandAlone("abbreviated");
-			oHelper.aMonthNamesWide = oHelper.oLocaleData.getMonthsStandAlone("wide");
+			oHelper.aMonthNames = oHelper.oLocaleData.getMonthsStandAlone("abbreviated", sPrimaryCalendarType);
+			oHelper.aMonthNamesWide = oHelper.oLocaleData.getMonthsStandAlone("wide", sPrimaryCalendarType);
 		}
 
 

@@ -113,7 +113,7 @@ sap.ui.define([
 		if (this.iMode === 2) {
 			return 31;
 		} else {
-			return CalendarUtils._daysInMonth(CalendarDate.fromLocalJSDate(this.getStartDate()));
+			return CalendarUtils._daysInMonth(CalendarDate.fromLocalJSDate(this.getStartDate(), this.getPrimaryCalendarType()));
 		}
 	};
 

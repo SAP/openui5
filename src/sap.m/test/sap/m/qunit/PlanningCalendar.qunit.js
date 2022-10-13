@@ -937,6 +937,7 @@ sap.ui.define([
 
 		oEndDate = new Date(oPCStartDate.getTime());
 		oEndDate.setMonth(oEndDate.getMonth() + iVisibleIntervals - 1);
+
 		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
 
 		assert.equal(this.oPC.getVisibleIntervalsCount(), 3, "correct number of shown intervals");
@@ -2780,6 +2781,7 @@ sap.ui.define([
 		} else if (jQuery("#PC1").outerWidth() < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
 			oExpectedDate = new Date("2015", "0", "1", "02", "00");
 		}
+
 		assert.equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
 
 		bStartDateChange = false;

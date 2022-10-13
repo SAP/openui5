@@ -1096,6 +1096,13 @@ sap.ui.define([
 					language: "en_GB"
 				}
 			},
+			PlanningCalendarIslamic: {
+				title: "PlanningCalendar Islamic - sap.m",
+				ui5: {
+					libs: "sap.m, sap.ui.unified",
+					language: "en_GB"
+				}
+			},
 			PlanningCalendarHeader: {
 				title: "PlanningCalendarHeader - sap.m",
 				ui5: {
