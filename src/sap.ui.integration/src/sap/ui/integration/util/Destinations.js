@@ -70,7 +70,7 @@ sap.ui.define([
 		return Promise.all(aPromises).then(function () {
 			return oConfig;
 		}).catch(function (sMessage) {
-			Log.error(sMessage);
+			Log.error(sMessage, "sap.ui.integration.util.Destinations");
 			return oConfig;
 		});
 	};
@@ -168,7 +168,7 @@ sap.ui.define([
 
 		if (sDefaultUrl) {
 			return pResult.catch(function (sMessage) {
-				Log.error(sMessage + " Fallback to default url.");
+				Log.info(sMessage + " Fallback to default url.", "sap.ui.integration.util.Destinations");
 				return sDefaultUrl;
 			});
 		}
