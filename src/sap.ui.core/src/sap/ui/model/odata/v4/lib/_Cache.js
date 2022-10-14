@@ -1537,7 +1537,7 @@ sap.ui.define([
 	 * @public
 	 */
 	_Cache.prototype.removeMessages = function () {
-		if (this.sReportedMessagesPath) {
+		if (this.sReportedMessagesPath) { // Note: never set if the cache shares requests
 			this.oRequestor.getModelInterface().reportStateMessages(this.sReportedMessagesPath, {});
 			this.sReportedMessagesPath = undefined;
 		}
@@ -2127,6 +2127,8 @@ sap.ui.define([
 	 * @param {number} [iStart]
 	 *    The index in the collection where "oRoot.value" needs to be inserted or undefined if
 	 *    "oRoot" references a single entity
+	 * @throws {Error}
+	 *   If the cache is shared and OData messages would be reported
 	 *
 	 * @private
 	 */
@@ -2147,6 +2149,7 @@ sap.ui.define([
 		function addMessages(aMessages, sInstancePath, sContextUrl) {
 			bHasMessages = true;
 			if (aMessages && aMessages.length) {
+				that.checkSharedRequest();
 				mPathToODataMessages[sInstancePath] = aMessages;
 				aMessages.forEach(function (oMessage) {
 					if (oMessage.longtextUrl) {
@@ -2286,7 +2289,7 @@ sap.ui.define([
 		} else if (oRoot && typeof oRoot === "object") {
 			visitInstance(oRoot, sRootMetaPath || this.sMetaPath, sRootPath || "", sRequestUrl);
 		}
-		if (bHasMessages) {
+		if (bHasMessages && !this.bSharedRequest) {
 			this.sReportedMessagesPath = this.getOriginalResourcePath(oRoot);
 			this.oRequestor.getModelInterface().reportStateMessages(this.sReportedMessagesPath,
 				mPathToODataMessages, aCachePaths);
