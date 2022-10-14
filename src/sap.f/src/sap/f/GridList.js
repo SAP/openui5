@@ -257,7 +257,7 @@ sap.ui.define([
 			return aAcc;
 		}, []);
 
-		return GridNavigationMatrix.create(this.getItemsContainerDomRef(), aItemsDomRefs, this._getActiveLayoutSizes());
+		return GridNavigationMatrix.create(this.getItemsContainerDomRef(), aItemsDomRefs);
 	};
 
 	/**
@@ -374,16 +374,6 @@ sap.ui.define([
 	 */
 	GridList.prototype.onLayoutDataChange = function (oEvent) {
 		GridLayoutBase.setItemStyles(oEvent.srcControl);
-	};
-
-	GridList.prototype._getActiveLayoutSizes = function () {
-		var oGridDomRef = this.getItemsContainerDomRef(),
-			mGridStyles = window.getComputedStyle(oGridDomRef);
-		return {
-			gap: parseFloat(mGridStyles.rowGap),
-			rows: mGridStyles.gridTemplateRows.split(/\s+/),
-			columns: mGridStyles.gridTemplateColumns.split(/\s+/)
-		};
 	};
 
 	return GridList;
