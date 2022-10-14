@@ -19,6 +19,44 @@
 		"creation": "2020-01-26T12:40:25.530Z"
 	},
 	{
+		"id": "id_1579612178492_42_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--Dates.BoundButton35",
+						"idIsLocal": true
+					},
+					"sourceIndex": 1,
+					"targetIndex": 1
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--Dates",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--Dates",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-21T13:10:18.804Z"
+	},
+	{
 		"id": "id_1580042272565_42_addFields",
 		"changeType": "addFields",
 		"reference": "sap.ui.rta.test.Component",
@@ -902,6 +940,44 @@
 			"idIsLocal": true
 		},
 		"creation": "2020-01-26T12:40:25.563Z"
+	},
+	{
+		"id": "id_1579612178493_42_moveControls",
+		"changeType": "moveControls",
+		"reference": "sap.ui.rta.test.Component",
+		"content": {
+			"movedElements": [
+				{
+					"selector": {
+						"id": "idMain1--Dates.BoundButton35",
+						"idIsLocal": true
+					},
+					"sourceIndex": 0,
+					"targetIndex": 0
+				}
+			],
+			"source": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--Dates",
+					"idIsLocal": true
+				}
+			},
+			"target": {
+				"selector": {
+					"aggregation": "formElements",
+					"type": "sap.ui.comp.smartform.Group",
+					"id": "idMain1--Dates",
+					"idIsLocal": true
+				}
+			}
+		},
+		"selector": {
+			"id": "idMain1--MainForm",
+			"idIsLocal": true
+		},
+		"creation": "2020-01-21T13:10:18.804Z"
 	},
 	{
 		"id": "id_1580048918319_43_hideControl",
