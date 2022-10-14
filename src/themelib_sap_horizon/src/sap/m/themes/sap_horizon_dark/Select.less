@@ -152,14 +152,15 @@ div.sapMSltPicker .sapMSltPickerValueState {
 
 .sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState),
 .sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState) {
-    background: @sapUiFieldFocusBackground;
+	background: @sapUiFieldBackground;
     border: none;
-    box-shadow: inset 0px 0px 0px @sapUiContentFocusWidth @sapUiFieldActiveBorderColor;
+    &:not(.sapMSltExpanded) {
+        box-shadow: inset 0px 0px 0px @sapUiContentFocusWidth @sapUiFieldActiveBorderColor;
+    }
 }
 
 .sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):active {
     border:none;
-    box-shadow: inset 0px 0px 0px 2px @sapUiFieldActiveBorderColor;
 }
 
 .sapMSltArrow {
@@ -176,9 +177,9 @@ div.sapMSltPicker .sapMSltPickerValueState {
     margin-right: 2px;
 }
 
-.sapMSltPressed >.sapMSltArrow {
+.sapMSltPressed >.sapMSltArrow,
+.sapMSlt:hover > .sapMSltArrow {
     background-color: @sapUiButtonActiveBackground;
-    color: @sapUiButtonActiveTextColor;
     box-shadow: @sapUiContentInteractionShadow;
     overflow: none;
     border-radius: 0.125rem;

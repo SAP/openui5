@@ -121,20 +121,14 @@ div.sapMSltPicker {
 	}
 }
 
-/* hover */
-
-.sapMSltHoverable:not(.sapMSltPressed):hover > .sapMSltArrow {
+.sapMSlt > .sapMSltArrow {
 	border-left: 0.0625rem solid @sapUiListSelectionBorderColor;
 }
 
 /* pressed */
 
-.sapMSltPressed > .sapMSltArrow {
-	border-left: 0.0625rem solid @sapUiListSelectionBorderColor;
-
-	&:hover {
-		background: @sapUiButtonLiteHoverBackground;
-	}
+.sapMSltPressed > .sapMSltArrow:hover {
+	background: @sapUiButtonLiteHoverBackground;
 }
 
 /* ====================================================== */
