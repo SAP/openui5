@@ -171,6 +171,18 @@ function (
 		assert.ok(fnUpdateInternalSpy.calledOnce, "_updateInternalIllustrationSetAndType called once on setIllustrationType");
 		assert.ok(fnUpdateInternalSpy.calledWithExactly(sNewType),
 			"_updateInternalIllustrationSetAndType called with the new IllustratedMessageType.UnableToLoad illustrationType");
+
+		this.oIllustratedMessage.setIllustrationType("sapIllus-Connection");
+		Core.applyChanges();
+
+		var sUseHrefValue = this.oIllustratedMessage
+			.getDomRef()
+			.querySelector("use")
+			.getAttribute("href");
+
+		assert.ok(sUseHrefValue.includes("Connection"),
+			"The new expected illustration type " + "Connection" + " IS reflected in the reference to illustration via href: " + sUseHrefValue
+		);
 	});
 
 	QUnit.test("_getDescription - sap.m.FormattedText", function (assert) {
@@ -587,11 +599,8 @@ function (
 	});
 
 	QUnit.test("_updateSymbol", function (assert) {
-		// Assert
-		assert.expect(5);
-
 		// Arrange
-		var sIdMedia, sNewSymbolId,
+		var sIdMedia, sExpectedNewSymbolId, sUseHrefValue,
 			aIllustratedMessageMediaKeys = Object.keys(IllustratedMessage.MEDIA);
 
 		aIllustratedMessageMediaKeys.forEach(function (sMedia) {
@@ -602,15 +611,26 @@ function (
 			this.oIllustratedMessage._sLastKnownMedia = null; // the method compares the proposed media to _sLastKnownMedia, to update only when necessary
 			this.oIllustratedMessage._updateSymbol(IllustratedMessage.MEDIA[sMedia]);
 			Core.applyChanges();
-			sNewSymbolId = this.oIllustratedMessage._sIllustrationSet + "-" + sIdMedia + "-" + this.oIllustratedMessage._sIllustrationType;
+
+			sExpectedNewSymbolId = this.oIllustratedMessage._sIllustrationSet + "-" + sIdMedia + "-" + this.oIllustratedMessage._sIllustrationType;
+			sUseHrefValue = this.oIllustratedMessage
+                .getDomRef()
+                .querySelector("use")
+                .getAttribute("href");
 
 			// Assert
 			if (sMedia === "BASE") {
-				assert.notEqual(this.oIllustratedMessage._getIllustration()._sSymbolId, sNewSymbolId,
-				"symbolId ( " + sNewSymbolId + " ) of the IllustratedMessage's illustration is untouched according to the current media (" + sIdMedia + ")");
+				assert.notEqual(this.oIllustratedMessage._getIllustration()._sSymbolId, sExpectedNewSymbolId,
+				"symbolId ( " + sExpectedNewSymbolId + " ) of the IllustratedMessage's illustration is untouched according to the current media (" + sIdMedia + ")");
+
+				assert.notEqual(sUseHrefValue.replace("#", ""), sExpectedNewSymbolId,
+                "The new expected illustration symbol id " + sExpectedNewSymbolId + " IS NOT reflected in the reference to illustration via href: " + sUseHrefValue);
 			} else {
-				assert.strictEqual(this.oIllustratedMessage._getIllustration()._sSymbolId, sNewSymbolId,
-				"symbolId ( " + sNewSymbolId + " ) of the IllustratedMessage's illustration is correctly set according to the current media (" + sIdMedia + ")");
+				assert.strictEqual(this.oIllustratedMessage._getIllustration()._sSymbolId, sExpectedNewSymbolId,
+				"symbolId ( " + sExpectedNewSymbolId + " ) of the IllustratedMessage's illustration is correctly set according to the current media (" + sIdMedia + ")");
+
+				assert.strictEqual(sExpectedNewSymbolId, sUseHrefValue.replace("#", ""),
+				"The new expected illustration symbol id " + sExpectedNewSymbolId + " IS reflected in the reference to illustration via href: " + sUseHrefValue);
 			}
 		}, this);
 	});
