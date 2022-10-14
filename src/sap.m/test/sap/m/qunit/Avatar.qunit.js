@@ -279,10 +279,20 @@ sap.ui.define([
 
 	QUnit.test("Avatar with three overflowing initials", function (assert) {
 		this.oAvatar.setInitials("WWW");
+		this.oAvatar.setDisplaySize("XL");
 		oCore.applyChanges();
 
 		var $oAvatar = this.oAvatar.$();
-		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), "When initials inside sap.m.Avatar are overflwing, default icon should be shown.");
+		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), "When initials inside sap.m.Avatar are overflwing, default icon should be shown after redering");
+	});
+
+	QUnit.test("Avatar with three overflowing initials", function (assert) {
+		this.oAvatar.setInitials("WWW");
+		this.oAvatar.setDisplaySize("XL");
+		this.oAvatar.onThemeChanged();
+
+		var $oAvatar = this.oAvatar.$();
+		assert.ok($oAvatar.hasClass("sapFAvatarIcon"), "When initials inside sap.m.Avatar are overflwing, default icon should be shown after theme is changed");
 	});
 
 	QUnit.module("Rendering different fit types", {

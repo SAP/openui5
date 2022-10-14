@@ -270,9 +270,13 @@ sap.ui.define([
 
 		//Reference to badge hidden aggregation
 		this._badgeRef = null;
-};
+	};
 
 	Avatar.prototype.onAfterRendering = function() {
+		this._checkInitialsHolderWidth();
+	};
+
+	Avatar.prototype.onThemeChanged = function() {
 		this._checkInitialsHolderWidth();
 	};
 
@@ -680,18 +684,18 @@ sap.ui.define([
 
 	Avatar.prototype._checkInitialsHolderWidth = function() {
 		var $this = this.$(),
-			iAvatarWidth = $this[0].scrollWidth,
 			iInitials = this.getInitials().length;
 
 		this.$oInitialsHolder = $this.children(".sapFAvatarInitialsHolder");
 
-		if (this.$oInitialsHolder.length !== 0 && iInitials === 3) {
-			this.iInitialsHolderWidth = this.$oInitialsHolder[0].scrollWidth;
+			if (this.$oInitialsHolder.length !== 0 && iInitials === 3) {
+				var iAvatarWidth = $this[0].offsetWidth,
+				iInitialsHolderWidth = this.$oInitialsHolder[0].offsetWidth;
 
-			if (this.iInitialsHolderWidth >= iAvatarWidth) {
-				this._wideInitialsIcon();
+				if (iInitialsHolderWidth > iAvatarWidth) {
+					this._wideInitialsIcon();
+				}
 			}
-		}
 	};
 
 	// In case when there are 3 initials set to the avatar and they are overflowing,
