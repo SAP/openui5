@@ -3507,12 +3507,14 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1746 See that every GET request for late property requests is causing
 	//   dataRequested/dataReceived events. The additional GET request for late properties
 	//   is achieved by requesting an additional entity with the path
-	//   "TEAMS('1')/TEAM_2_EMPLOYEES('3')".
+	//   "TEAMS('1')/TEAM_2_EMPLOYEES('3')". The path from the GET request is attached to the event
+	//   parameter, no matter whether the request failed or succeeded.
 	QUnit.test("ODLB: late property", function (assert) {
 		var bChange = false,
 			iDataReceived = 0,
 			iDataRequested = 0,
 			oModel,
+			sPath,
 			oRowContext,
 			oTable,
 			sView = '\
@@ -3566,14 +3568,32 @@ sap.ui.define([
 				assert.strictEqual(oEvent.getSource().getValue(), "1");
 				assert.strictEqual(oTeam.getValue(), "1");
 			});
-			oModel.attachDataRequested(function () {
+			oModel.attachDataRequested(function (oEvent) {
+				sPath = oEvent.getParameter("path");
+
 				iDataRequested += 1;
+				if (iDataRequested === 1) {
+					assert.strictEqual(sPath, "/TEAMS('1')/TEAM_2_EMPLOYEES('2')");
+				} else if (iDataRequested === 2) {
+					assert.strictEqual(sPath, "/TEAMS('1')/TEAM_2_EMPLOYEES('3')");
+				} else if (iDataRequested === 3) {
+					assert.strictEqual(sPath, "/TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_TEAM");
+				}
 			}).attachDataReceived(function (oEvent) {
+				sPath = oEvent.getParameter("path");
+
 				iDataReceived += 1;
 				assert.deepEqual(oEvent.getParameter("data"), {});
 
-				// only interesting for "TEAMS('1')/TEAM_2_EMPLOYEES('2')"
-				assert.strictEqual(bChange, iDataReceived >= 2, "fired after change event");
+				if (iDataReceived === 1) {
+					assert.strictEqual(sPath, "/TEAMS('1')/TEAM_2_EMPLOYEES('3')");
+					assert.strictEqual(bChange, false, "change event not yet fired");
+				} else if (iDataReceived === 2) {
+					assert.strictEqual(sPath, "/TEAMS('1')/TEAM_2_EMPLOYEES('2')");
+					assert.strictEqual(bChange, true, "fired after change event");
+				} else if (iDataReceived === 3) {
+					assert.strictEqual(sPath, "/TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_TEAM");
+				}
 			});
 
 			// code under test - count is not requested
