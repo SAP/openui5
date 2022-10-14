@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define(['sap/ui/core/InvisibleText'],
+	function(InvisibleText) {
 	"use strict";
 
 
@@ -53,7 +53,10 @@ sap.ui.define([],
 		oRm.writeAccessibilityState(oMP, {
 			role: "grid",
 			readonly: "true",
-			multiselectable: "false"
+			multiselectable: "false",
+			describedby: oMP._bCalendar
+				? InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_YEAR_PICKER_OPEN_HINT")
+				: ""
 		});
 
 		oRm.write(">"); // div element

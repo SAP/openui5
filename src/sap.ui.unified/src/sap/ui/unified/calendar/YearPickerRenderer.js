@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/UniversalDate'],
-	function(CalendarDate, UniversalDate) {
+sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/UniversalDate', 'sap/ui/core/InvisibleText'],
+	function(CalendarDate, UniversalDate, InvisibleText) {
 	"use strict";
 
 	/*
@@ -46,7 +46,10 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 		oRm.writeAccessibilityState(oYP, {
 			role: "grid",
 			readonly: "true",
-			multiselectable: "false"
+			multiselectable: "false",
+			describedby: oYP._bCalendar
+				? InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_YEAR_RANGE_PICKER_OPEN_HINT")
+				: ""
 		});
 
 		oRm.write(">"); // div element

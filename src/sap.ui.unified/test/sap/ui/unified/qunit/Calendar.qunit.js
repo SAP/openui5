@@ -1453,21 +1453,20 @@ QUnit.module("Misc");
 		var oCalendar = new Calendar(),
 			oCurrentDate = new Date(2017, 5, 2),
 			oNewFocusedDate = new Date(2018, 6, 3),
-			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
 			sExpectedAriaLabel;
 
 		oCalendar.displayDate(oCurrentDate);
 		oCalendar.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		sExpectedAriaLabel = oCalendar.$("-Head-B2").text() + ". " + oRb.getText("CALENDAR_YEAR_PICKER_OPEN_HINT");
+		sExpectedAriaLabel = oCalendar.$("-Head-B2").text();
 		assert.equal(oCalendar.$("-Head-B2").attr("aria-label"),sExpectedAriaLabel, "aria-label should be equal to the text of the button");
 
 		// act
 		oCalendar.displayDate(oNewFocusedDate);
 
 		// assert
-		sExpectedAriaLabel = oCalendar.$("-Head-B2").text() + ". " + oRb.getText("CALENDAR_YEAR_PICKER_OPEN_HINT");
+		sExpectedAriaLabel = oCalendar.$("-Head-B2").text();
 		assert.equal(oCalendar.$("-Head-B2").attr("aria-label"),sExpectedAriaLabel, "aria-label should be equal to the text of the button");
 
 		// cleanup
@@ -1481,21 +1480,20 @@ QUnit.module("Misc");
 		var oCalendar = new Calendar(),
 			oCurrentDate = new Date(2017, 5, 2),
 			oNewFocusedDate = new Date(2017, 6, 3),
-			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
 			sExpectedAriaLabel;
 
 		oCalendar.displayDate(oCurrentDate);
 		oCalendar.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		sExpectedAriaLabel = oCalendar.$("-Head-B1").text() + ". " + oRb.getText("CALENDAR_MONTH_PICKER_OPEN_HINT");
+		sExpectedAriaLabel = oCalendar.$("-Head-B1").text();
 		assert.equal(oCalendar.$("-Head-B1").attr("aria-label"), sExpectedAriaLabel, "aria-label should be equal to the text of the button");
 
 		// act
 		oCalendar.focusDate(oNewFocusedDate);
 
 		// assert
-		sExpectedAriaLabel = oCalendar.$("-Head-B1").text() + ". " + oRb.getText("CALENDAR_MONTH_PICKER_OPEN_HINT");
+		sExpectedAriaLabel = oCalendar.$("-Head-B1").text();
 		assert.equal(oCalendar.$("-Head-B1").attr("aria-label"), sExpectedAriaLabel, "aria-label should be equal to the text of the button");
 
 		// cleanup
@@ -1511,14 +1509,13 @@ QUnit.module("Misc");
 			}),
 			oCurrentDate = new Date(2017, 5, 2),
 			oNewFocusedDate = new Date(2018, 6, 3),
-			sHint = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_YEAR_PICKER_OPEN_HINT"),
 			sExpectedAriaLabel;
 
 		oCalendar.displayDate(oCurrentDate);
 		oCalendar.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		sExpectedAriaLabel = oCalendar.$("-Head-B2-Text").text() + ", " + oCalendar.$("-Head-B2-AddText").text() + ". " + sHint;
+		sExpectedAriaLabel = oCalendar.$("-Head-B2-Text").text() + ", " + oCalendar.$("-Head-B2-AddText").text();
 		assert.equal(oCalendar.$("-Head-B2").attr("aria-label"), sExpectedAriaLabel,
 			"aria-label should contain info for both primary and secondary year");
 
@@ -1526,7 +1523,7 @@ QUnit.module("Misc");
 		oCalendar.displayDate(oNewFocusedDate);
 
 		// assert
-		sExpectedAriaLabel = oCalendar.$("-Head-B2-Text").text() + ", " + oCalendar.$("-Head-B2-AddText").text() + ". " + sHint;
+		sExpectedAriaLabel = oCalendar.$("-Head-B2-Text").text() + ", " + oCalendar.$("-Head-B2-AddText").text();
 		assert.equal(oCalendar.$("-Head-B2").attr("aria-label"), sExpectedAriaLabel,
 			"aria-label should contain info for the updated primary and secondary year");
 
@@ -1543,7 +1540,6 @@ QUnit.module("Misc");
 			}),
 			oCurrentDate = new Date(2017, 5, 2),
 			oNewFocusedDate = new Date(2018, 6, 3),
-			sHint = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_MONTH_PICKER_OPEN_HINT"),
 			sExpectedSecondaryInfo,
 			sExpectedAriaLabel;
 
@@ -1552,7 +1548,7 @@ QUnit.module("Misc");
 		sap.ui.getCore().applyChanges();
 
 		sExpectedSecondaryInfo = getExpectedSecondaryMonthARIAInfo(oCalendar, "Islamic", "Gregorian");
-		sExpectedAriaLabel = oCalendar.$("-Head-B1-Text").text() + ", " +  sExpectedSecondaryInfo + ". " + sHint;
+		sExpectedAriaLabel = oCalendar.$("-Head-B1-Text").text() + ", " +  sExpectedSecondaryInfo;
 		assert.equal(oCalendar.$("-Head-B1").attr("aria-label"), sExpectedAriaLabel,
 			"aria-label should contain info for both primary and secondary month");
 
@@ -1561,7 +1557,7 @@ QUnit.module("Misc");
 
 		// assert
 		sExpectedSecondaryInfo = getExpectedSecondaryMonthARIAInfo(oCalendar, "Islamic", "Gregorian");
-		sExpectedAriaLabel = oCalendar.$("-Head-B1-Text").text() + ", " + sExpectedSecondaryInfo + ". " + sHint;
+		sExpectedAriaLabel = oCalendar.$("-Head-B1-Text").text() + ", " + sExpectedSecondaryInfo;
 		assert.equal(oCalendar.$("-Head-B1").attr("aria-label"), sExpectedAriaLabel,
 			"aria-label should contain info for the updated primary and secondary month");
 
@@ -1935,7 +1931,7 @@ QUnit.module("Misc");
 	QUnit.test("_updateHeadersYearPrimaryText should call header and secondMonthHeader methods with proper value", function (assert) {
 		// arrange
 		var sYear = "2018",
-			sExpectedValue = sYear + ". " + sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_YEAR_PICKER_OPEN_HINT"),
+			sExpectedValue = sYear,
 			oHeader = { setTextButton2: this.spy(), setAriaLabelButton2: this.spy(), _setTextButton4: this.spy(), _setAriaLabelButton4: this.spy() },
 			oSecondMonthHeader = { setTextButton2: this.spy(), setAriaLabelButton2: this.spy() },
 			oCalendar = new Calendar(),

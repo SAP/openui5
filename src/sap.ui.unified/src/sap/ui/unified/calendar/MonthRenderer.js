@@ -63,7 +63,12 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		oRm.writeAccessibilityState(oMonth, {
 			role: "grid",
 			multiselectable: !oMonth.getSingleSelection() || oMonth.getIntervalSelection(),
-			labelledby: oAriaLabel
+			labelledby: oAriaLabel,
+			describedby: oMonth._bCalendar
+				? InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_MONTH_PICKER_OPEN_HINT")
+					+ " "
+					+ InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_YEAR_PICKER_OPEN_HINT")
+				: ""
 		});
 
 		oRm.write(">"); // div element
