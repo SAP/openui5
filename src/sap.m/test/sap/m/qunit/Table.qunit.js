@@ -1864,6 +1864,65 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
+	QUnit.test("Active headers keyboard handling - F2 & F7", function(assert) {
+		var oTable = new Table({
+			keyboardMode: "Edit",
+			columns: [
+				new Column({
+					header: new Label({text: "Column 1"})
+				}),
+				new Column({
+					header: new Label({text: "Column 2"})
+				})
+			]
+		});
+
+		oTable.bActiveHeaders = true;
+
+		oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// focus the first active header
+		var $TblHeader = oTable.$("tblHeader");
+		var oFirstColumnActiveHeader = $TblHeader.find(".sapMColumnHeader")[0];
+		oFirstColumnActiveHeader.focus();
+
+		// trigger F2
+		qutils.triggerKeydown(oFirstColumnActiveHeader, KeyCodes.F2);
+		assert.strictEqual(document.activeElement, $TblHeader[0], "focus is set on the table header row");
+		assert.strictEqual(oTable.getKeyboardMode(), "Navigation", "keyboardMode changed since F2 was pressed");
+
+		// trigger F2
+		qutils.triggerKeydown(document.activeElement, KeyCodes.F2);
+		assert.strictEqual(document.activeElement, oFirstColumnActiveHeader, "focus is set on the first active column header");
+		assert.strictEqual(oTable.getKeyboardMode(), "Edit", "keyboardMode changed since F2 was pressed");
+
+		// trigger F7
+		qutils.triggerKeydown(document.activeElement, KeyCodes.F7);
+		assert.strictEqual(document.activeElement, $TblHeader[0], "focus is set on the table header row");
+		assert.strictEqual(oTable.getKeyboardMode(), "Edit", "keyboardMode did not change since F7 was pressed");
+
+		// trigger F7
+		qutils.triggerKeydown(document.activeElement, KeyCodes.F7);
+		assert.strictEqual(document.activeElement, oFirstColumnActiveHeader, "focus is set on the first active column header");
+		assert.strictEqual(oTable.getKeyboardMode(), "Edit", "keyboardMode did not change since F7 was pressed");
+
+		// set the focus on the 2nd column header
+		var oSecondColumnActiveHeader = $TblHeader.find(".sapMColumnHeader")[1];
+		oSecondColumnActiveHeader.focus();
+
+		// trigger F7 when focus is on second column header
+		qutils.triggerKeydown(document.activeElement, KeyCodes.F7);
+		assert.strictEqual(document.activeElement, $TblHeader[0], "focus is set on the table header row");
+		assert.strictEqual(oTable._iLastFocusPosOfColumnHeader, 1, "last focused column header position is remembered");
+
+		// trigger F7 again to check if focus is restored on the second column header
+		qutils.triggerKeydown(document.activeElement, KeyCodes.F7);
+		assert.strictEqual(document.activeElement, oSecondColumnActiveHeader, "focus is set on the second column header");
+
+		oTable.destroy();
+	});
+
 	QUnit.test("Focusable headers", function(assert) {
 		var sut = createSUT("idFocusableHeaders", true);
 		sut.bFocusableHeaders = true;
