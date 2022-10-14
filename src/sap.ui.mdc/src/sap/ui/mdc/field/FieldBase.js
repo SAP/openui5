@@ -2511,7 +2511,7 @@ sap.ui.define([
 			var oFieldHelp = sap.ui.getCore().byId(sId);
 			if (oFieldHelp) {
 				oFieldHelp.attachEvent("dataUpdate", _handleHelpDataUpdate, this);
-				if (!oFieldHelp.valueHelpEnabled || oFieldHelp.valueHelpEnabled()) { //TODO: remove check for existence of function
+				if (oFieldHelp.getIcon()) { //if there is no icon, the value help is only used as typeahead
 					this.setProperty("_fieldHelpEnabled", true, true);
 				}
 			}

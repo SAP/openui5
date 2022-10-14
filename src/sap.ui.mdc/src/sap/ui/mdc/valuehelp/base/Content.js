@@ -508,7 +508,7 @@ sap.ui.define([
 	 * implementing the <code>sap.ui.mdc.valuehelp.Popover</code> container.
 	 * On dialogs the <code>sap.ui.mdc.valuehelp.Dialog</code> container defines the icon, as it could have multiple contents.
 	 *
-	 * @returns {string} Name of the icon
+	 * @returns {null|string} Name of the icon for this content. If <code>null</code> this content will not be used as value help and could only be used as typeahead.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
