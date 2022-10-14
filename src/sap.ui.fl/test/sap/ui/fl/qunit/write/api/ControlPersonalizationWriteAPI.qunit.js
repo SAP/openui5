@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
@@ -43,6 +44,7 @@ sap.ui.define([
 	FlexControllerFactory,
 	Layer,
 	Utils,
+	FlexState,
 	sinon
 ) {
 	"use strict";
@@ -52,6 +54,8 @@ sap.ui.define([
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach: function(assert) {
 			var done = assert.async();
+			sandbox.stub(FlexState, "initialize").resolves();
+			sandbox.stub(FlexState, "isInitialized").returns(true);
 			sandbox.stub(Settings, "getInstance").resolves({
 				isVariantPersonalizationEnabled: function () {
 					return true;
@@ -389,6 +393,23 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("When save() is called but flex state is not initialized", function(assert) {
+			var sChangesSaved = "changesSaved";
+			var aSuccessfulChanges = ["mockChange1", "mockChange2"];
+			var oSaveStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves(sChangesSaved);
+			var oCheckStub = sandbox.stub(this.oVariantModel, "checkDirtyStateForControlModels");
+			FlexState.isInitialized.restore();
+			var ofnIsInitializedStub = sandbox.stub(FlexState, "isInitialized").returns(false);
+
+			return ControlPersonalizationWriteAPI.save({selector: {appComponent: this.oComp}, changes: aSuccessfulChanges})
+
+				.then(function () {
+					assert.ok(ofnIsInitializedStub.calledOnce, "then the check for state is called once is called");
+					assert.notOk(oSaveStub.calledOnce, "then FlexController.saveSequenceOfDirtyChanges is not called");
+					assert.notOk(oCheckStub.calledOnce, "then VariantModel.checkDirtyStateForControlModels is not called");
+				});
+		});
+
 		QUnit.test("When save() is called with an array of changes and a valid component and an invalid VM control on the page", function(assert) {
 			var sChangesSaved = "changesSaved";
 			var aSuccessfulChanges = ["mockChange1", "mockChange2"];
@@ -482,7 +503,7 @@ sap.ui.define([
 	QUnit.module("Given an instance of VariantModel on a dialog", {
 		beforeEach: function(assert) {
 			var done = assert.async();
-
+			sandbox.stub(FlexState, "initialize").resolves();
 			sandbox.stub(Settings, "getInstance").resolves({
 				isVariantPersonalizationEnabled: function () {
 					return true;
@@ -668,6 +689,7 @@ sap.ui.define([
 				});
 			};
 			sandbox.stub(Log, "error");
+			sandbox.stub(FlexState, "isInitialized").returns(true);
 		},
 		afterEach: function() {
 			this.aControls.forEach(function (vControl) {
@@ -731,6 +753,20 @@ sap.ui.define([
 				}.bind(this));
 		});
 
+		QUnit.test("When reset() is called but FlexState is not initialized", function(assert) {
+			this.oAppComponent = new UIComponent("AppComponent2");
+			var aSelectors = [{id: "controlId3", appComponent: this.oAppComponent}, {id: "controlId4", appComponent: this.oAppComponent}];
+			var fnResetStub = createResetStub(this.oAppComponent);
+			FlexState.isInitialized.restore();
+			var ofnIsInitializedStub = sandbox.stub(FlexState, "isInitialized").returns(false);
+
+			return ControlPersonalizationWriteAPI.reset({selectors: aSelectors})
+				.then(function () {
+					assert.ok(ofnIsInitializedStub.calledOnce, "then the check for state is called once is called");
+					assert.notOk(fnResetStub.calledOnce, "then FlexController.reset is not called");
+				});
+		});
+
 		QUnit.test("When reset() is called with an undefined selector array", function(assert) {
 			assert.throws(
 				ControlPersonalizationWriteAPI.reset({changeTypes: []}),
@@ -759,6 +795,7 @@ sap.ui.define([
 			this.oAppComponent = new UIComponent();
 			this.sControlId = "view--control1";
 			this.oControl = new Control(this.oAppComponent.createId(this.sControlId));
+			sandbox.stub(FlexState, "isInitialized").returns(true);
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -788,6 +825,24 @@ sap.ui.define([
 			})
 				.catch(function (sMessage) {
 					assert.equal(sMessage, "App Component could not be determined", "then a rejection with the correct message was done");
+				});
+		});
+
+		QUnit.test("When FlexState is not initialized", function(assert) {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			var oFlexController = FlexControllerFactory.createForControl(this.oAppComponent);
+			var oRemoveDirtyChangesSpy = sandbox.spy(oFlexController, "removeDirtyChanges");
+			FlexState.isInitialized.restore();
+			var ofnIsInitializedStub = sandbox.stub(FlexState, "isInitialized").returns(false);
+
+			var sGenerator = "Change.createInitialFileContent";
+			return ControlPersonalizationWriteAPI.restore({
+				selector: this.oControl,
+				generator: sGenerator
+			})
+				.then(function () {
+					assert.ok(ofnIsInitializedStub.calledOnce, "then the check for state is called once is called");
+					assert.notOk(oRemoveDirtyChangesSpy.calledOnce, "then FlexController.removeDirtyChanges is not called");
 				});
 		});
 

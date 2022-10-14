@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
@@ -19,6 +20,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	Core,
 	Element,
+	FlexState,
 	VariantUtils,
 	FlexRuntimeInfoAPI,
 	ChangeHandlerStorage,
@@ -185,15 +187,19 @@ sap.ui.define([
 			// Make sure to first create and add all changes so that change handlers
 			// that rely on change batching in the applier can wait for them, e.g.
 			// when adding multiple columns at once to a MDC table
-			return createChanges()
-				.then(applyChanges)
-				.then(function() {
-					(mChangeCreationListeners[sFlexReference] || [])
-						.forEach(function(fnCallback) {
-							fnCallback(aSuccessfulChanges);
-						});
-					return aSuccessfulChanges;
-				});
+			return FlexState.initialize({
+				componentId: oAppComponent.getId()
+			}).then(function() {
+				return createChanges()
+					.then(applyChanges)
+					.then(function() {
+						(mChangeCreationListeners[sFlexReference] || [])
+							.forEach(function(fnCallback) {
+								fnCallback(aSuccessfulChanges);
+							});
+						return aSuccessfulChanges;
+					});
+			});
 		},
 
 		/**
@@ -224,7 +230,10 @@ sap.ui.define([
 				return sLocalId || sControlId;
 			});
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-			return oFlexController.resetChanges(Layer.USER, undefined, oAppComponent, aSelectorIds, mPropertyBag.changeTypes);
+			if (FlexState.isInitialized({control: oAppComponent})) {
+				return oFlexController.resetChanges(Layer.USER, undefined, oAppComponent, aSelectorIds, mPropertyBag.changeTypes);
+			}
+			return Promise.resolve();
 		},
 
 		/**
@@ -253,8 +262,11 @@ sap.ui.define([
 			}
 
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-			// limit the deletion to the passed selector control only
-			return oFlexController.removeDirtyChanges(Layer.USER, oAppComponent, mPropertyBag.selector, mPropertyBag.generator, mPropertyBag.changeTypes);
+			if (FlexState.isInitialized({control: oAppComponent})) {
+				// limit the deletion to the passed selector control only
+				return oFlexController.removeDirtyChanges(Layer.USER, oAppComponent, mPropertyBag.selector, mPropertyBag.generator, mPropertyBag.changeTypes);
+			}
+			return Promise.resolve();
 		},
 
 		/**
@@ -277,11 +289,17 @@ sap.ui.define([
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 			var oVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
 			var aVariantManagementReferences = getAllVariantManagementReferences(oAppComponent);
-			return oFlexController.saveSequenceOfDirtyChanges(mPropertyBag.changes, oAppComponent)
-				.then(function(oResponse) {
-					oVariantModel.checkDirtyStateForControlModels(aVariantManagementReferences);
-					return oResponse;
-				});
+
+			if (FlexState.isInitialized({control: oAppComponent})) {
+				return oFlexController.saveSequenceOfDirtyChanges(mPropertyBag.changes, oAppComponent)
+					.then(function(oResponse) {
+						if (oVariantModel) {
+							oVariantModel.checkDirtyStateForControlModels(aVariantManagementReferences);
+						}
+						return oResponse;
+					});
+			}
+			return Promise.resolve();
 		},
 
 		/**
