@@ -1063,4 +1063,117 @@
 		}.bind(this));
 	});
 
+
+
+	// ========================================================================================
+	// Parallel loading of bundles and dependencies
+	// ========================================================================================
+
+	// helper class - we try to avoid loading UI5 modules in this test
+	class Deferred {
+		constructor() {
+			this.promise = new Promise((resolve, reject) => {
+				this.resolve = resolve;
+				this.reject = reject;
+			});
+		}
+	}
+
+	QUnit.module("Parallel loading of bundles and dependencies", {
+		before: async function() {
+			// load the bundle with the metadata (bundleInfo and depCache) before the test
+			await privateLoaderAPI.loadJSResourceAsync("fixture/bundle-and-depcache/metadata-bundle.js");
+		}
+	});
+
+	/**
+	 * Module dependencies
+	 *    A -> C -> F -> G
+	 *    B -> E
+	 *
+	 * Bundles
+	 *    chunkAB = A,B
+	 *    chunkCD = C,D
+	 *    chunkE  = E
+	 */
+	QUnit.test("", async function(assert) {
+		// setup
+		this.spy(sap.ui.require, "load");
+		const firstRequire = new Deferred();
+
+		// Act
+		sap.ui.require(["fixture/bundle-and-depcache/A"], function(module1) {
+			assert.strictEqual(module1, "A", "sap.ui.require responds with the expected export 'A'");
+			firstRequire.resolve();
+		}, firstRequire.reject);
+
+		// asserts
+
+		// Note: the asserts in this test are sensitive to ui5loader implementation details that are not under test
+		// Only because sap.ui.require immediately (synchronous to the sap.ui.require call) sends out the requests
+		// for the bundle and for the dependencies, we can monitor them immediately after the sap.ui.require call.
+		// If the implementation should change, e.g. if the requests are sent from a microtask, then this testing
+		// approach no longer works.
+		//
+		// The key point is that the requests for 'chunkCD' and 'F' already go out before 'A' or 'C' are processed
+
+		/*
+		 * A request for 'A' should load in parallel:
+		 *  - chunkAB   as it contains 'A'
+		 *  - chunkCD   as it contains 'C', adependency of 'A' (depCache works between bundled modules)
+		 *  - F         as it is a dependency of 'C' (depCache works between bundled module and single file)
+		 *  - G         as it is a dependency of 'F' (depCache works between single files)
+		 */
+		assert.ok(sap.ui.require.load.calledWith(sinon.match.any, "fixture/bundle-and-depcache/chunkAB.js"),
+			"request for 'chunkAB' went out as it contains 'A'");
+		assert.ok(sap.ui.require.load.calledWith(sinon.match.any, "fixture/bundle-and-depcache/chunkCD.js"),
+			"request for 'chunkCD' went out as it contains 'C' which is a dependency of 'A'");
+		assert.ok(sap.ui.require.load.calledWith(sinon.match.any, "fixture/bundle-and-depcache/F.js"),
+			"request for 'F' went out which is a dependency of 'C'");
+		assert.ok(sap.ui.require.load.calledWith(sinon.match.any, "fixture/bundle-and-depcache/G.js"),
+			"request for 'G' went out which is a dependency of 'F'");
+
+		/**
+		 * The request for 'A' must not load:
+		 *  - chunkE    as 'E' is only a dependency of 'B'
+		 *  - A or C    as they are contained in chunks
+		 */
+		assert.notOk(sap.ui.require.load.calledWith(sinon.match.any, "fixture/bundle-and-depcache/chunkE.js"),
+			"no request went out for 'chunkE' which contains 'E', a dependency of 'B' (not required yet)");
+		assert.notOk(sap.ui.require.load.calledWith(sinon.match.any, "fixture/bundle-and-depcache/A.js"),
+			"no individual request for 'A'");
+		assert.notOk(sap.ui.require.load.calledWith(sinon.match.any, "fixture/bundle-and-depcache/C.js"),
+			"no individual request for 'C'");
+
+		// cleanup
+		await firstRequire.promise;
+		sap.ui.require.load.resetHistory();
+
+		const secondRequire = new Deferred();
+
+		// Act
+		sap.ui.require(["fixture/bundle-and-depcache/B"], function(module1) {
+			assert.strictEqual(module1, "B", "sap.ui.require responds with the expected export 'B'");
+			secondRequire.resolve();
+		}, secondRequire.reject);
+
+		/**
+	 	 * After the request for 'A' finished, a request for 'B' should load:
+		 *  - chunkE    as it contains 'E' which is a dependency of 'B'
+		 */
+		assert.ok(sap.ui.require.load.calledWith(sinon.match.any, "fixture/bundle-and-depcache/chunkE.js"),
+			"request for 'chunkE' went out as it contains 'E' which is a dependency of 'B'");
+
+		/**
+		 * The request for 'B' must not load:
+		 *  - B or E    as they are contained in chunks
+		 */
+		assert.notOk(sap.ui.require.load.calledWith(sinon.match.any, "fixture/bundle-and-depcache/B.js"),
+			"no individual request for 'B'");
+		assert.notOk(sap.ui.require.load.calledWith(sinon.match.any, "fixture/bundle-and-depcache/E.js"),
+			"no individual request for 'E'");
+
+		// cleanup
+		await secondRequire.promise;
+	});
 }());
