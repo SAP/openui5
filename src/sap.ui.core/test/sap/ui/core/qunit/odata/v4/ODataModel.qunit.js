@@ -137,9 +137,8 @@ sap.ui.define([
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, sServiceUrl + "$metadata");
 		assert.deepEqual(oMetaModel.aAnnotationUris, ["my/annotations.xml"]);
-		assert.strictEqual(oModel.iDataRequestedCount, 0);
-		assert.ok("oDataReceivedError" in oModel);
-		assert.strictEqual(oModel.oDataReceivedError, undefined);
+		assert.deepEqual(oModel.mPath2DataRequestedCount, {});
+		assert.deepEqual(oModel.mPath2DataReceivedError, {});
 	});
 });
 
@@ -942,45 +941,75 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [undefined, "~oError~"].forEach(function (oError) {
-	QUnit.test("fireDataRequested/fireDataReceived", function (assert) {
+	var sTitle = "fireDataRequested/fireDataReceived" + (oError ? "failed" : "sucess");
+
+	QUnit.test(sTitle, function (assert) {
 		var oModel = this.createModel(),
 			oModelMock = this.mock(oModel);
 
-		oModelMock.expects("fireEvent").withExactArgs("dataRequested");
+		oModelMock.expects("fireEvent").withExactArgs("dataRequested").twice();
 
 		// code under test
-		oModel.fireDataRequested();
+		oModel.fireDataRequested("~sPath1~");
 
-		assert.strictEqual(oModel.iDataRequestedCount, 1);
-
-		// code under test
-		oModel.fireDataRequested();
-
-		assert.strictEqual(oModel.iDataRequestedCount, 2);
+		assert.deepEqual(oModel.mPath2DataRequestedCount, {
+			"~sPath1~" : 1
+		});
 
 		// code under test
-		oModel.fireDataReceived(oError);
+		oModel.fireDataRequested("~sPath2~");
 
-		assert.strictEqual(oModel.iDataRequestedCount, 1);
+		assert.deepEqual(oModel.mPath2DataRequestedCount, {
+			"~sPath1~" : 1,
+			"~sPath2~" : 1
+		});
+
+		// code under test
+		oModel.fireDataRequested("~sPath1~");
+
+		assert.deepEqual(oModel.mPath2DataRequestedCount, {
+			"~sPath1~" : 2,
+			"~sPath2~" : 1
+		});
+
+		// code under test
+		oModel.fireDataReceived(oError, "~sPath1~");
+
+		assert.deepEqual(oModel.mPath2DataRequestedCount, {
+			"~sPath1~" : 1,
+			"~sPath2~" : 1
+		});
 
 		oModelMock.expects("fireEvent")
-			.withExactArgs("dataReceived", oError ? {error : oError} : {data : {}});
+			.withExactArgs("dataReceived", oError
+				? {error : oError, path : "~sPath1~"}
+				: {data : {}});
 
 		// code under test
-		oModel.fireDataReceived();
+		oModel.fireDataReceived(oError && "~anotherError~", "~sPath1~");
 
-		assert.strictEqual(oModel.iDataRequestedCount, 0);
+		assert.deepEqual(oModel.mPath2DataRequestedCount, {
+			"~sPath2~" : 1
+		});
+
+		oModelMock.expects("fireEvent").withExactArgs("dataReceived", {data : {}});
+
+		// code under test
+		oModel.fireDataReceived(undefined, "~sPath2~");
+
+		assert.deepEqual(oModel.mPath2DataRequestedCount, {});
 
 		assert.throws(function () {
-			oModel.fireDataReceived();
+			// code under test
+			oModel.fireDataReceived(undefined, "~sPath1~");
 		}, new Error("Received more data than requested"));
 
 		oModelMock.expects("fireEvent").withExactArgs("dataRequested");
 		oModelMock.expects("fireEvent").withExactArgs("dataReceived", {data : {}});
 
 		// code under test
-		oModel.fireDataRequested();
-		oModel.fireDataReceived();
+		oModel.fireDataRequested("~sPath1~");
+		oModel.fireDataReceived(undefined, "~sPath1~");
 	});
 });
 

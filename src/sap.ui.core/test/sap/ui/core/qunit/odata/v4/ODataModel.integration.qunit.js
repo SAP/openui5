@@ -3504,6 +3504,10 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-958
 	// JIRA: CPOUI5ODATAV4-1671: See that dataRequested/dataReceived events are fired for late
 	//   property requests
+	// JIRA: CPOUI5ODATAV4-1746 See that every GET request for late property requests is causing
+	//   dataRequested/dataReceived events. The additional GET request for late properties
+	//   is achieved by requesting an additional entity with the path
+	//   "TEAMS('1')/TEAM_2_EMPLOYEES('3')".
 	QUnit.test("ODLB: late property", function (assert) {
 		var bChange = false,
 			iDataReceived = 0,
@@ -3567,7 +3571,9 @@ sap.ui.define([
 			}).attachDataReceived(function (oEvent) {
 				iDataReceived += 1;
 				assert.deepEqual(oEvent.getParameter("data"), {});
-				assert.strictEqual(bChange, true, "fired after change event");
+
+				// only interesting for "TEAMS('1')/TEAM_2_EMPLOYEES('2')"
+				assert.strictEqual(bChange, iDataReceived >= 2, "fired after change event");
 			});
 
 			// code under test - count is not requested
@@ -3575,11 +3581,32 @@ sap.ui.define([
 			assert.strictEqual(oTable.getBinding("items").getLength(), 12);
 
 			// two late property requests (one had only a $expand, so EMPLOYEE_2_TEAM is selected)
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?sap-client=123"
-					+ "&$select=AGE,EMPLOYEE_2_TEAM&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
-					+ "$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))", {
+			that.expectRequest({
+					batchNo : 2,
+					url : "TEAMS('1')/TEAM_2_EMPLOYEES('2')?sap-client=123"
+						+ "&$select=AGE,EMPLOYEE_2_TEAM&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
+						+ "$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))"
+				}, {
 					"@odata.etag" : "etag0",
 					AGE : 42,
+					EMPLOYEE_2_TEAM : {
+						"@odata.etag" : "etag1",
+						Team_Id : "1",
+						TEAM_2_MANAGER : {
+							"@odata.etag" : "ETag",
+							ID : "5",
+							TEAM_ID : "1"
+						}
+					}
+				})
+				// the additional late property request
+				.expectRequest({
+					batchNo : 2,
+					url : "TEAMS('1')/TEAM_2_EMPLOYEES('3')?sap-client=123"
+					+ "&$select=EMPLOYEE_2_TEAM&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
+					+ "$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))"
+				}, {
+					"@odata.etag" : "etag0",
 					EMPLOYEE_2_TEAM : {
 						"@odata.etag" : "etag1",
 						Team_Id : "1",
@@ -3598,10 +3625,16 @@ sap.ui.define([
 			that.oView.byId("age1").setBindingContext(oRowContext);
 			that.oView.byId("team").setBindingContext(oRowContext);
 
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// the additional late property request for a *different* row
+				// JIRA: CPOUI5ODATAV4-1746
+				oTable.getItems()[1].getBindingContext()
+					.requestProperty("EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID"),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
-			assert.strictEqual(iDataRequested, 1);
-			assert.strictEqual(iDataReceived, 1);
+			assert.strictEqual(iDataRequested, 2);
+			assert.strictEqual(iDataReceived, 2);
 
 			// BCP 1980517597
 			that.expectChange("age1", "18")
@@ -3650,8 +3683,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			assert.strictEqual(iDataRequested, 1);
-			assert.strictEqual(iDataReceived, 1);
+			assert.strictEqual(iDataRequested, 2);
+			assert.strictEqual(iDataReceived, 2);
 
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_TEAM?sap-client=123"
 					+ "&$select=Budget,Team_Id", {
@@ -3666,8 +3699,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			assert.strictEqual(iDataRequested, 2);
-			assert.strictEqual(iDataReceived, 2);
+			assert.strictEqual(iDataRequested, 3);
+			assert.strictEqual(iDataReceived, 3);
 
 			that.expectChange("age2", "18");
 
@@ -3691,8 +3724,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			assert.strictEqual(iDataRequested, 3, "bubbled up from the binding");
-			assert.strictEqual(iDataReceived, 3, "bubbled up from the binding");
+			assert.strictEqual(iDataRequested, 4, "bubbled up from the binding");
+			assert.strictEqual(iDataReceived, 4, "bubbled up from the binding");
 
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$select=AGE,ID,Name"
 					+ "&$filter=ID eq '2' or ID eq '3' or ID eq '4'&$top=3", {
@@ -3712,8 +3745,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			assert.strictEqual(iDataRequested, 3);
-			assert.strictEqual(iDataReceived, 3);
+			assert.strictEqual(iDataRequested, 4);
+			assert.strictEqual(iDataReceived, 4);
 
 			that.expectChange("age2", "29");
 
@@ -3723,8 +3756,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			assert.strictEqual(iDataRequested, 3);
-			assert.strictEqual(iDataReceived, 3);
+			assert.strictEqual(iDataRequested, 4);
+			assert.strictEqual(iDataReceived, 4);
 
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$select=AGE,ID,Name"
 					+ "&$filter=ID eq '2' or ID eq '3' or ID eq '4'&$top=3", {
@@ -3747,8 +3780,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			assert.strictEqual(iDataRequested, 3);
-			assert.strictEqual(iDataReceived, 3);
+			assert.strictEqual(iDataRequested, 4);
+			assert.strictEqual(iDataReceived, 4);
 
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('3')?sap-client=123&$select=TEAM_ID",
 				{"@odata.etag" : "etag0", TEAM_ID : "1"});
@@ -3760,8 +3793,8 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			assert.strictEqual(iDataRequested, 4);
-			assert.strictEqual(iDataReceived, 4);
+			assert.strictEqual(iDataRequested, 5);
+			assert.strictEqual(iDataReceived, 5);
 		});
 	});
 
@@ -4204,6 +4237,11 @@ sap.ui.define([
 	// Scenario: ODCB, late property at an entity within $expand fails because ETag or key predicate
 	// changed.
 	// JIRA: CPOUI5ODATAV4-23
+	// See that the 'dataReceived' event is containing the context's path in case of error. There
+	// are two late property requests. Every GET request is causing a 'dataReceived' event,
+	// providing the error and the binding path in case of error.
+	// are provided.
+	// JIRA: CPOUI5ODATAV4-1746
 [{
 	error : "ETag changed",
 	lateETag : "changedETag",
@@ -4214,17 +4252,20 @@ sap.ui.define([
 	lateID : "HT-2000"
 }].forEach(function (oFixture) {
 	QUnit.test("ODCB: late property at nested entity fails: " + oFixture.error, function (assert) {
-		var oModel = this.createSalesOrdersModel123({autoExpandSelect : true}),
+		var iDataReceivedCount = 0,
+			oModel = this.createSalesOrdersModel123({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')/SO_2_SOITEM(\'0010\')}">\
 	<Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
 </FlexBox>\
-<Text id="businessPartner" text="{SOITEM_2_PRODUCT/PRODUCT_2_BP/CompanyName}"/>',
+<Text id="businessPartner" text="{SOITEM_2_PRODUCT/PRODUCT_2_BP/CompanyName}"/>\
+<Text id="itemKey" text="{SOITEM_2_SCHDL/ItemKey}"/>',
 			that = this;
 
 		this.expectRequest("SalesOrderList('1')/SO_2_SOITEM('0010')?sap-client=123"
 				+ "&$select=ItemPosition,SalesOrderID"
 				+ "&$expand=SOITEM_2_PRODUCT($select=Name,ProductID)", {
+				"@odata.etag" : "ETag",
 				ItemPosition : "0010",
 				SalesOrderID : "1",
 				SOITEM_2_PRODUCT : {
@@ -4237,17 +4278,45 @@ sap.ui.define([
 			.expectChange("businessPartner");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var sMessage = "GET SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT"
-				+ "?$select=ProductID&$expand=PRODUCT_2_BP($select=BusinessPartnerID,"
-				+ "CompanyName): " + oFixture.error;
+			var oFormContext = that.oView.byId("form").getBindingContext(),
+				sMessage4CompanyName
+					= "GET SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT"
+						+ "?$select=ProductID&$expand=PRODUCT_2_BP($select=BusinessPartnerID,"
+						+ "CompanyName): " + oFixture.error;
+
+			oModel.attachDataReceived(function (oEvent) { // CPOUI5ODATAV4-1746
+				// code under test
+				if (iDataReceivedCount === 0) {
+					assert.strictEqual(
+						oEvent.getParameter("path"),
+						"/SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT");
+					assert.strictEqual(
+						oEvent.getParameter("error").message, sMessage4CompanyName);
+				} else if (iDataReceivedCount === 1) {
+					assert.strictEqual(
+						oEvent.getParameter("path"),
+						"/SalesOrderList('1')/SO_2_SOITEM('0010')");
+					assert.strictEqual(
+						oEvent.getParameter("error").message, "Request intentionally failed");
+				}
+
+				iDataReceivedCount += 1;
+			});
 
 			that.oLogMock.expects("error")
 				.withArgs("Failed to read path /SalesOrderList('1')/SO_2_SOITEM('0010')/"
 					+ "SOITEM_2_PRODUCT/PRODUCT_2_BP/CompanyName");
+			that.oLogMock.expects("error")
+				.withArgs("Failed to read path /SalesOrderList('1')/SO_2_SOITEM('0010')/"
+					+ "SOITEM_2_SCHDL/ItemKey");
 
-			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT"
-					+ "?sap-client=123&$select=ProductID"
-					+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)", {
+			that.expectRequest({
+					batchNo : 2,
+					method : "GET",
+					url : "SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT"
+						+ "?sap-client=123&$select=ProductID"
+						+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)"
+				}, {
 					"@odata.etag" : oFixture.lateEtag,
 					ProductID : oFixture.lateID,
 					PRODUCT_2_BP : {
@@ -4255,22 +4324,34 @@ sap.ui.define([
 						CompanyName : "TECUM"
 					}
 				})
+				.expectRequest({
+					batchNo : 2,
+					method : "GET",
+					url : "SalesOrderList('1')/SO_2_SOITEM('0010')?sap-client=123"
+						+ "&$select=SOITEM_2_SCHDL"
+						+ "&$expand=SOITEM_2_SCHDL($select=ItemKey,ScheduleKey)"
+				}, createErrorInsideBatch())
 				.expectChange("businessPartner", null) // initialization due to #setContext
 				.expectMessages([{
-					code : undefined,
-					descriptionUrl : undefined,
-					message : sMessage,
+					message : sMessage4CompanyName,
 					persistent : true,
-					target : "",
+					technical : true,
+					type : "Error"
+				}, {
+					code : "CODE",
+					message : "Request intentionally failed",
+					persistent : true,
 					technical : true,
 					type : "Error"
 				}]);
 
 			// code under test
-			that.oView.byId("businessPartner").setBindingContext(
-				that.oView.byId("form").getBindingContext());
+			that.oView.byId("businessPartner").setBindingContext(oFormContext);
+			that.oView.byId("itemKey").setBindingContext(oFormContext);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(iDataReceivedCount, 2);
 		});
 	});
 });

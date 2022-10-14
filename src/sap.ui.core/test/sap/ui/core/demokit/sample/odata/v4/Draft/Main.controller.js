@@ -38,8 +38,10 @@ sap.ui.define([
 						// Ignore follow-up errors, take the root cause error
 						oError = oError.cause;
 					}
+
 					if (!oUIModel.getProperty("/sError")) {
-						oUIModel.setProperty("/sError", oError.toString());
+						oUIModel.setProperty("/sError", "Entity: " + oEvent.getParameter("path")
+							 + " " + oError.toString());
 						UIComponent.getRouterFor(that).navTo("error", {}, true);
 					}
 				}

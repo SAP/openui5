@@ -4448,9 +4448,9 @@ sap.ui.define([
 				var fnOnSubmit = arguments[5];
 
 				return Promise.resolve().then(function () {
-					that.oModelInterfaceMock.expects("fireDataRequested").withExactArgs();
+					that.oModelInterfaceMock.expects("fireDataRequested").withExactArgs("/~/");
 					oEventExpectation = that.oModelInterfaceMock.expects("fireDataReceived")
-						.withExactArgs()
+						.withExactArgs(undefined, "/~/")
 						.callsFake(function () {
 							if (bDataReceivedFails) {
 								throw "~oError~";
@@ -4758,7 +4758,7 @@ sap.ui.define([
 			.withExactArgs(oCache.sMetaPath, sinon.match.same(oCache.mQueryOptions), true)
 			.returns("?~");
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns("~groupLock~");
-		this.oModelInterfaceMock.expects("fireDataRequested").withExactArgs();
+		this.oModelInterfaceMock.expects("fireDataRequested").withExactArgs("/Employees('31')");
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "Employees('31')?~",
 				sinon.match.same("~groupLock~"), undefined,
@@ -4782,7 +4782,8 @@ sap.ui.define([
 			.callsFake(function () {
 				oEntity["@odata.etag"] = "etag";
 			});
-		this.oModelInterfaceMock.expects("fireDataReceived").withExactArgs();
+		this.oModelInterfaceMock.expects("fireDataReceived")
+			.withExactArgs(undefined, "/Employees('31')");
 
 		// code under test
 		oPromise1 = oCache.fetchLateProperty(oGroupLock, oEntity, "", "property/foo");
@@ -4836,7 +4837,7 @@ sap.ui.define([
 			});
 		this.mock(_Helper).expects("updateSelected").never();
 		this.oModelInterfaceMock.expects("fireDataReceived").exactly(bSubmit ? 1 : 0)
-			.withExactArgs(sinon.match.same(oError));
+			.withExactArgs(sinon.match.same(oError), "/Employees('31')");
 
 		// Code under test
 		return oCache.fetchLateProperty(oGroupLock, oEntity, "", "property")
@@ -4910,12 +4911,13 @@ sap.ui.define([
 				undefined, oCache.sMetaPath, undefined, false, sinon.match.same(mQueryOptions))
 			.callsArg(5)
 			.resolves(oData);
-		this.oModelInterfaceMock.expects("fireDataRequested").withExactArgs();
+		this.oModelInterfaceMock.expects("fireDataRequested")
+			.withExactArgs("/Employees('31')/EMPLOYEE_2_TEAM");
 		this.mock(_Helper).expects("updateSelected").never();
 		this.oModelInterfaceMock.expects("fireDataReceived")
 			.withExactArgs(sinon.match(function (oError) {
 				return oError.message === oErrorMessage;
-			}));
+			}), "/Employees('31')/EMPLOYEE_2_TEAM");
 
 		// Code under test
 		return oCache.fetchLateProperty(oGroupLock, oCacheData, "", "property")

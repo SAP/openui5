@@ -377,9 +377,11 @@ sap.ui.define([
 		}
 		this.aPrerenderingTasks = null; // @see #addPrerenderingTask
 		this.fnOptimisticBatchEnabler = null;
-		this.oDataReceivedError = undefined; // the error for the next dataReceived event
-		// counts the fireDataRequested calls for which one event was fired
-		this.iDataRequestedCount = 0;
+		// maps the path to the error for the next dataReceived event
+		this.mPath2DataReceivedError = {};
+		// maps a path to the difference between fireDataRequested and fireDataReceived calls, to
+		// ensure the events are respectively fired once for a GET request
+		this.mPath2DataRequestedCount = {};
 	}
 
 	/**
@@ -409,12 +411,16 @@ sap.ui.define([
 
 	/**
 	 * The 'dataReceived' event is fired when the back-end data has been received on the client. It
-	 * is only fired for GET requests and is to be used by applications to process an error.
+	 * is only fired for GET requests and is to be used by applications to process an error. For
+	 * each 'dataRequested' event, a 'dataReceived' event is fired.
 	 *
 	 * If back-end requests are successful, the event has almost no parameters. For compatibility
 	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
 	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
-	 * is not.
+	 * is not. The 'dataReceived' event can be triggered by a binding or by additional property
+	 * requests for an entity that already has been requested. Events triggered by a binding may
+	 * be bubbled up to the model, while events triggered by additional property requests are fired
+	 * directly by the model.
 	 *
 	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
 	 * 'error' event parameter. If multiple requests are processed within a single $batch
@@ -430,6 +436,11 @@ sap.ui.define([
 	 * @param {Error} [oEvent.getParameters().error]
 	 *   The error object if a back-end request failed. If there are multiple failed back-end
 	 *   requests, the error of the first one is provided.
+	 * @param {string} [oEvent.getParameters().path]
+	 *   The absolute path to the entity if a request for an additional property failed. If there
+	 *   are multiple failed requests, the absolute path to the entity of the first one is provided.
+	 *   The path is only provided for additional property requests; for other requests it is
+	 *   <code>undefined</code>.
 	 *
 	 * @event sap.ui.model.odata.v4.ODataModel#dataReceived
 	 * @public
@@ -441,7 +452,13 @@ sap.ui.define([
 
 	/**
 	 * The 'dataRequested' event is fired directly after data has been requested from a back end.
-	 * It is only fired for GET requests. Registered event handlers are called without parameters.
+	 * It is only fired for GET requests. For each 'dataRequested' event, a 'dataReceived' event is
+	 * fired. Registered event handlers are called without parameters.
+	 * The 'dataRequested' event can be triggered by a binding or by additional property requests
+	 * for an entity that already has been requested.
+	 * Events triggered by a binding may be bubbled up to the model, while events triggered by
+	 * additional property requests are fired directly by the model. Every GET request caused by
+	 * additional properties is causing one 'dataRequested' event.
 	 *
 	 * There are two kinds of requests leading to such an event:
 	 * <ul>
@@ -1553,42 +1570,48 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fires the 'dataReceived' event. This function is only called from the property bindings for
-	 * late property requests. Bubbling up from the binding goes directly to fireEvent.
-	 *
-	 * Fire only one event, even when many late properties are requested (and each request calls
-	 * this function). Use the first response error.
+	 * Fires a 'dataReceived' event. This function is only called for additional property requests
+	 * for an entity that already has been requested. Bubbling up from a binding goes directly to
+	 * fireEvent.
 	 *
 	 * @param {Error} [oError]
-	 *   The error if the request failed
+	 *   The error if an additional property request failed
+	 * @param {string} [sPath]
+	 *   The absolute path to the entity if an additional property request failed
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.fireDataReceived = function (oError) {
-		if (this.iDataRequestedCount === 0) {
+	ODataModel.prototype.fireDataReceived = function (oError, sPath) {
+		if (!(sPath in this.mPath2DataRequestedCount)) {
 			throw new Error("Received more data than requested");
 		}
-		this.iDataRequestedCount -= 1;
-		this.oDataReceivedError = this.oDataReceivedError || oError; // first error wins
-		if (this.iDataRequestedCount === 0) {
-			this.fireEvent("dataReceived",
-				this.oDataReceivedError ? {error : this.oDataReceivedError} : {data : {}});
-			this.oDataReceivedError = undefined;
+		this.mPath2DataRequestedCount[sPath] -= 1;
+		// first error wins
+		this.mPath2DataReceivedError[sPath] = this.mPath2DataReceivedError[sPath] || oError;
+		if (this.mPath2DataRequestedCount[sPath] === 0) {
+			this.fireEvent("dataReceived", this.mPath2DataReceivedError[sPath]
+				? {error : this.mPath2DataReceivedError[sPath], path : sPath}
+				: {data : {}});
+			delete this.mPath2DataReceivedError[sPath];
+			delete this.mPath2DataRequestedCount[sPath];
 		}
 	};
 
 	/**
-	 * Fires the 'dataRequested' event. This function is only called from the property bindings for
-	 * late property requests. Bubbling up from the binding goes directly to fireEvent.
+	 * Fires a 'dataRequested' event. This function is only called for additional property requests
+	 * for an entity that already has been requested. Bubbling up from a binding goes directly to
+	 * fireEvent.
 	 *
-	 * Fire only one event, even when many late properties are requested (and each request calls
-	 * this function).
+	 *  @param {string} [sPath]
+	 *   The absolute path to the entity
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.fireDataRequested = function () {
-		this.iDataRequestedCount += 1;
-		if (this.iDataRequestedCount === 1) {
+	ODataModel.prototype.fireDataRequested = function (sPath) {
+		if (sPath in this.mPath2DataRequestedCount) {
+			this.mPath2DataRequestedCount[sPath] += 1;
+		} else {
+			this.mPath2DataRequestedCount[sPath] = 1;
 			this.fireEvent("dataRequested");
 		}
 	};
