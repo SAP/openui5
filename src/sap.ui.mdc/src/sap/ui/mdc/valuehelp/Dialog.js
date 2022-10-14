@@ -436,64 +436,66 @@ sap.ui.define([
 
 	Dialog.prototype._getIconTabBar = function (oDialog) {
 		if (!this._oIconTabBar) {
-			return loadModules([
-				"sap/m/IconTabBar",
-				"sap/m/IconTabFilter"]).then(function(aModules){
-					IconTabBar = aModules[0];
-					IconTabFilter = aModules[1];
-					var IconTabHeaderMode = MLibrary.IconTabHeaderMode;
+			return this._retrievePromise("IconTabBar", function (){
+				return loadModules([
+					"sap/m/IconTabBar",
+					"sap/m/IconTabFilter"]).then(function(aModules){
+						IconTabBar = aModules[0];
+						IconTabFilter = aModules[1];
+						var IconTabHeaderMode = MLibrary.IconTabHeaderMode;
 
-					this._oIconTabBar = new IconTabBar(this.getId() + "-ITB", {
-						expandable: false,
-						upperCase: false,
-						stretchContentHeight: true,
-						headerMode: IconTabHeaderMode.Inline,
-						select: this._onTabBarSelect.bind(this),
-						layoutData: new FlexItemData({growFactor: 1}),
-						selectedKey: "{path: '$help>/_selectedContentKey', mode: 'OneWay'}",
-						visible: {parts : ['$help>/_selectableContents'], formatter:
+						this._oIconTabBar = new IconTabBar(this.getId() + "-ITB", {
+							expandable: false,
+							upperCase: false,
+							stretchContentHeight: true,
+							headerMode: IconTabHeaderMode.Inline,
+							select: this._onTabBarSelect.bind(this),
+							layoutData: new FlexItemData({growFactor: 1}),
+							selectedKey: "{path: '$help>/_selectedContentKey', mode: 'OneWay'}",
+							visible: {parts : ['$help>/_selectableContents'], formatter:
+								function(aContent) {
+									if (aContent && aContent.length == 1) {
+										oDialog.removeStyleClass("sapMdcValueHelpTitleShadow"); // make the Header border visible
+									} else {
+										oDialog.addStyleClass("sapMdcValueHelpTitleShadow"); // make the Header border invisible
+									}
+									return true;
+								}
+							}
+						});
+						// this._oIconTabBar.setModel(this._oManagedObjectModel, "$help");
+						this._oIconTabBar.addStyleClass("sapUiNoContentPadding");
+						var oIconTabHeader = this._oIconTabBar._getIconTabHeader();
+						oIconTabHeader.bindProperty("visible", {parts : ['$help>/_selectableContents'], formatter:
 							function(aContent) {
-								if (aContent && aContent.length == 1) {
-									oDialog.removeStyleClass("sapMdcValueHelpTitleShadow"); // make the Header border visible
+								if (aContent && aContent.length === 1) {
+									return false;
 								} else {
-									oDialog.addStyleClass("sapMdcValueHelpTitleShadow"); // make the Header border invisible
+									return true;
 								}
-								return true;
 							}
-						}
-					});
-					// this._oIconTabBar.setModel(this._oManagedObjectModel, "$help");
-					this._oIconTabBar.addStyleClass("sapUiNoContentPadding");
-					var oIconTabHeader = this._oIconTabBar._getIconTabHeader();
-					oIconTabHeader.bindProperty("visible", {parts : ['$help>/_selectableContents'], formatter:
-						function(aContent) {
-							if (aContent && aContent.length === 1) {
-								return false;
-							} else {
-								return true;
+						});
+
+
+						var oITF = new IconTabFilter(this.getId() + "-ITF", {
+							key: {path: "$help>id"},
+							content: new DialogTab(this.getId() + "-DT", {content: {path: "$help>displayContent"}}),
+							text: {parts: ['$help>', '$valueHelp>/conditions'], formatter:
+								function(oContent, aConditions) {
+									var sTitle = "none";
+									if (oContent) {
+										var sGroup = oContent.getGroup && oContent.getGroup();
+										var iCount = oContent.getCount(aConditions, sGroup);
+										sTitle = sGroup ? this._getFormattedContentGroupLabel(sGroup, iCount) : oContent.getFormattedTitle(iCount);
+									}
+									return sTitle;
+								}.bind(this)
 							}
-						}
-					});
+						});
 
-
-					var oITF = new IconTabFilter(this.getId() + "-ITF", {
-						key: {path: "$help>id"},
-						content: new DialogTab(this.getId() + "-DT", {content: {path: "$help>displayContent"}}),
-						text: {parts: ['$help>', '$valueHelp>/conditions'], formatter:
-							function(oContent, aConditions) {
-								var sTitle = "none";
-								if (oContent) {
-									var sGroup = oContent.getGroup && oContent.getGroup();
-									var iCount = oContent.getCount(aConditions, sGroup);
-									sTitle = sGroup ? this._getFormattedContentGroupLabel(sGroup, iCount) : oContent.getFormattedTitle(iCount);
-								}
-								return sTitle;
-							}.bind(this)
-						}
-					});
-
-					this._oIconTabBar.bindAggregation("items", {path: "/_selectableContents", model: "$help", templateShareable: false, template: oITF});
-					return this._oIconTabBar;
+						this._oIconTabBar.bindAggregation("items", {path: "/_selectableContents", model: "$help", templateShareable: false, template: oITF});
+						return this._oIconTabBar;
+				}.bind(this));
 			}.bind(this));
 		}
 		return this._oIconTabBar;
@@ -512,120 +514,122 @@ sap.ui.define([
 	Dialog.prototype._getTokenizerPanel = function (oDialog) {
 
 		if (!this.oTokenizerPanel) {
-			return loadModules([
-				'sap/m/Panel',
-				'sap/m/HBox',
-				'sap/m/VBox',
-				'sap/ui/mdc/field/FieldMultiInput',
-				'sap/m/Token',
-				'sap/ui/model/Filter',
-				'sap/ui/mdc/field/ConditionType'
-			]).then(function (aModules) {
+			return this._retrievePromise("TokenizerPanel", function (){
+				return loadModules([
+					'sap/m/Panel',
+					'sap/m/HBox',
+					'sap/m/VBox',
+					'sap/ui/mdc/field/FieldMultiInput',
+					'sap/m/Token',
+					'sap/ui/model/Filter',
+					'sap/ui/mdc/field/ConditionType'
+				]).then(function (aModules) {
 
-				Panel = aModules[0];
-				HBox = aModules[1];
-				VBox = aModules[2];
-				MultiInput = aModules[3];
-				Token = aModules[4];
-				Filter = aModules[5];
-				var ConditionType = aModules[6];
-				var BackgroundDesign = MLibrary.BackgroundDesign;
-				var ButtonType = MLibrary.ButtonType;
+					Panel = aModules[0];
+					HBox = aModules[1];
+					VBox = aModules[2];
+					MultiInput = aModules[3];
+					Token = aModules[4];
+					Filter = aModules[5];
+					var ConditionType = aModules[6];
+					var BackgroundDesign = MLibrary.BackgroundDesign;
+					var ButtonType = MLibrary.ButtonType;
 
-				this.oTokenizerPanel = new Panel(this.getId() + "-TokenPanel", {
-					backgroundDesign: BackgroundDesign.Transparent,
-					expanded: true,
-					visible: {parts: ['$valueHelp>/_config/maxConditions', '$help>/content'], formatter: _isTokenizerRequired},
-					headerText: {parts: ['$valueHelp>/conditions', '$help>/_selectableContents'], formatter:
-						function(aConditions, aContent) {
-							var iCount = 0;
-							for (var i = 0; i < aConditions.length; i++) {
-								var oCondition = aConditions[i];
-								if (oCondition.isEmpty !== true) {
-									iCount++;
+					this.oTokenizerPanel = new Panel(this.getId() + "-TokenPanel", {
+						backgroundDesign: BackgroundDesign.Transparent,
+						expanded: true,
+						visible: {parts: ['$valueHelp>/_config/maxConditions', '$help>/content'], formatter: _isTokenizerRequired},
+						headerText: {parts: ['$valueHelp>/conditions', '$help>/_selectableContents'], formatter:
+							function(aConditions, aContent) {
+								var iCount = 0;
+								for (var i = 0; i < aConditions.length; i++) {
+									var oCondition = aConditions[i];
+									if (oCondition.isEmpty !== true) {
+										iCount++;
+									}
 								}
-							}
-							var sTitle;
-							if (aContent && aContent.length == 1) { // in case of single content the title will be provided by the content
-								sTitle = aContent[0].getFormattedTokenizerTitle(iCount);
-								return sTitle;
-							} else {
-								// default title
-								sTitle = this._oResourceBundle.getText("valuehelp.TOKENIZERTITLE");
-								if (iCount === 0) {
-									// in case of no items do not show a number
-									sTitle = this._oResourceBundle.getText("valuehelp.TOKENIZERTITLENONUMBER");
+								var sTitle;
+								if (aContent && aContent.length == 1) { // in case of single content the title will be provided by the content
+									sTitle = aContent[0].getFormattedTokenizerTitle(iCount);
+									return sTitle;
+								} else {
+									// default title
+									sTitle = this._oResourceBundle.getText("valuehelp.TOKENIZERTITLE");
+									if (iCount === 0) {
+										// in case of no items do not show a number
+										sTitle = this._oResourceBundle.getText("valuehelp.TOKENIZERTITLENONUMBER");
+									}
+									return formatMessage(sTitle, iCount);
 								}
-								return formatMessage(sTitle, iCount);
-							}
-						}.bind(this)
-					}
-				});
-				this.oTokenizerPanel.addStyleClass("sapMdcTokenizerPanel");
-
-				var oHBox = new HBox(this.getId() + "-TokenBox", {fitContainer: true, width: "100%"});
-
-				var oFormatOptions = _getConditionFormatOptions.call(this);
-				this._oConditionType = new ConditionType(oFormatOptions);
-				this._oConditionType._bVHTokenizer = true; // just help for debugging
-				this.oTokenizer = new MultiInput(this.getId() + "-Tokenizer", {
-					width: "100%",
-					showValueHelp: false,
-					editable: true,
-					ariaAttributes: { role: "listbox", aria : { readonly: true, roledescription: this._oResourceBundle.getText("valuehelp.TOKENIZER_ARIA_ROLE_DESCRIPTION")}},
-					tokenUpdate: function(oEvent) {
-						if (oEvent.getParameter("removedTokens")) {
-							var aRemovedTokens = oEvent.getParameter("removedTokens");
-							var aConditions = this.getModel("$valueHelp").getObject("/conditions");
-							var aRemovedConditions = [];
-
-							aRemovedTokens.forEach(function(oRemovedToken, i) {
-								var sPath = oRemovedToken.getBindingContext("$valueHelp").sPath;
-								var iIndex = parseInt(sPath.slice(sPath.lastIndexOf("/") + 1));
-								aRemovedConditions.push(aConditions[iIndex]);
-							});
-
-							this.fireSelect({type: SelectType.Remove, conditions: aRemovedConditions});
+							}.bind(this)
 						}
+					});
+					this.oTokenizerPanel.addStyleClass("sapMdcTokenizerPanel");
 
-					}.bind(this),
-					layoutData: new FlexItemData({growFactor: 1, maxWidth: "calc(100% - 2rem)"})
-				});
+					var oHBox = new HBox(this.getId() + "-TokenBox", {fitContainer: true, width: "100%"});
 
-				// Overwrite the setValueVisible to make the input part not visible (transparent).
-				// Problem: you can still enter a value into the $input dom ref and this will be shown when you remove all tokens. this can be solved inside the afterRender handler.
-				// ACC issue: the screenreader is still reading this control as input field and that the user can enter a value - which is not correct.
-				this.oTokenizer._setValueVisible = function (bVisible) {
-					this.$("inner").css("opacity", "0");
-				};
+					var oFormatOptions = _getConditionFormatOptions.call(this);
+					this._oConditionType = new ConditionType(oFormatOptions);
+					this._oConditionType._bVHTokenizer = true; // just help for debugging
+					this.oTokenizer = new MultiInput(this.getId() + "-Tokenizer", {
+						width: "100%",
+						showValueHelp: false,
+						editable: true,
+						ariaAttributes: { role: "listbox", aria : { readonly: true, roledescription: this._oResourceBundle.getText("valuehelp.TOKENIZER_ARIA_ROLE_DESCRIPTION")}},
+						tokenUpdate: function(oEvent) {
+							if (oEvent.getParameter("removedTokens")) {
+								var aRemovedTokens = oEvent.getParameter("removedTokens");
+								var aConditions = this.getModel("$valueHelp").getObject("/conditions");
+								var aRemovedConditions = [];
 
-				var org = this.oTokenizer.onAfterRendering;
-				this.oTokenizer.onAfterRendering = function() {
-					org.apply(this.oTokenizer, arguments);
+								aRemovedTokens.forEach(function(oRemovedToken, i) {
+									var sPath = oRemovedToken.getBindingContext("$valueHelp").sPath;
+									var iIndex = parseInt(sPath.slice(sPath.lastIndexOf("/") + 1));
+									aRemovedConditions.push(aConditions[iIndex]);
+								});
 
-					this.oTokenizer._setValueVisible();  // make the input always invisible
-					this.oTokenizer.setValue(""); // set the value to empty string
-				}.bind(this);
+								this.fireSelect({type: SelectType.Remove, conditions: aRemovedConditions});
+							}
 
-				_bindTokenizer.call(this, true);
+						}.bind(this),
+						layoutData: new FlexItemData({growFactor: 1, maxWidth: "calc(100% - 2rem)"})
+					});
 
-				this.oRemoveAllBtn = new Button(this.getId() + "-TokenRemoveAll", {
-					press: function(oEvent) {
-						this.fireSelect({type: SelectType.Set, conditions: []});
+					// Overwrite the setValueVisible to make the input part not visible (transparent).
+					// Problem: you can still enter a value into the $input dom ref and this will be shown when you remove all tokens. this can be solved inside the afterRender handler.
+					// ACC issue: the screenreader is still reading this control as input field and that the user can enter a value - which is not correct.
+					this.oTokenizer._setValueVisible = function (bVisible) {
+						this.$("inner").css("opacity", "0");
+					};
 
-					}.bind(this),
-					type: ButtonType.Transparent,
-					icon: "sap-icon://decline",
-					tooltip: "{$i18n>valuehelp.REMOVEALLTOKEN}",
-					layoutData: new FlexItemData({growFactor: 0, baseSize: "2rem"})
-				});
-				this.oRemoveAllBtn.addStyleClass("sapUiTinyMarginBegin");
+					var org = this.oTokenizer.onAfterRendering;
+					this.oTokenizer.onAfterRendering = function() {
+						org.apply(this.oTokenizer, arguments);
 
-				oHBox.addItem(this.oTokenizer);
-				oHBox.addItem(this.oRemoveAllBtn);
-				this.oTokenizerPanel.addContent(oHBox);
+						this.oTokenizer._setValueVisible();  // make the input always invisible
+						this.oTokenizer.setValue(""); // set the value to empty string
+					}.bind(this);
 
-				return this.oTokenizerPanel;
+					_bindTokenizer.call(this, true);
+
+					this.oRemoveAllBtn = new Button(this.getId() + "-TokenRemoveAll", {
+						press: function(oEvent) {
+							this.fireSelect({type: SelectType.Set, conditions: []});
+
+						}.bind(this),
+						type: ButtonType.Transparent,
+						icon: "sap-icon://decline",
+						tooltip: "{$i18n>valuehelp.REMOVEALLTOKEN}",
+						layoutData: new FlexItemData({growFactor: 0, baseSize: "2rem"})
+					});
+					this.oRemoveAllBtn.addStyleClass("sapUiTinyMarginBegin");
+
+					oHBox.addItem(this.oTokenizer);
+					oHBox.addItem(this.oRemoveAllBtn);
+					this.oTokenizerPanel.addContent(oHBox);
+
+					return this.oTokenizerPanel;
+				}.bind(this));
 			}.bind(this));
 		} else { // update ConditionType with current formatOptions
 			var oFormatOptions = _getConditionFormatOptions.call(this);
