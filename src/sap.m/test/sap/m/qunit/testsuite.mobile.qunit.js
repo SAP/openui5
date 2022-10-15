@@ -42,6 +42,12 @@ sap.ui.define([
 			ActionSheet: {
 				title: "QUnit Page for sap.m.ActionSheet"
 			},
+			AdditionalTextButton: {
+				title: "QUnit Page for sap.m.AdditionalTextButton",
+				coverage: {
+					only: ["sap/m/AdditionalTextButton"]
+				}
+			},
 			App: {
 				title: "QUnit Page for sap.m.App"
 			},

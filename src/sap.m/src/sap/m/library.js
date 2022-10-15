@@ -232,6 +232,7 @@ sap.ui.define([
 			"sap.m.DraftIndicator",
 			"sap.m.DynamicDateRange",
 			"sap.m.ExpandableText",
+			"sap.m.AdditionalTextButton",
 			"sap.m.FacetFilter",
 			"sap.m.FacetFilterItem",
 			"sap.m.FacetFilterList",
