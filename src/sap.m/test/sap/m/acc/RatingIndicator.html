@@ -1,64 +1,22 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>RatingIndicator - sap.m</title>
-	<script src="../shared-config.js"></script>
-	<script id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-resourceroots='{
-				"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
-			}'>
-	</script>
-	<script>
-
-		var sActiveRI = "activeRating",
-			sInactiveRI = "inactiveRating",
-			oCompactMode = new sap.m.CheckBox("compactMode", {
-					text: "Compact Mode",
-					selected : false,
-					select : function() {
-						$("body").toggleClass("sapUiSizeCompact");
-					}
-			}),
-			oPage = new sap.m.Page("myPage", {
-				title: "RatingIndicator Accessibility Test Page",
-				content: [
-					new sap.m.VBox({
-						items: [
-							new sap.m.Label({text: 'Active rating:', labelFor: sActiveRI}),
-							new sap.m.RatingIndicator(sActiveRI, {
-								iconSize: "1.5rem",
-								value: 2.5,
-								tooltip: "This is a tooltip"
-							}),
-							new sap.m.Label({text: 'Inactive rating:', labelFor: sInactiveRI}),
-							new sap.m.RatingIndicator(sInactiveRI, {
-								iconSize: "1.5rem",
-								enabled: false,
-								value: 2.5,
-								tooltip: "This is a tooltip"
-							})
-						]
-					})
-				],
-				footer: new sap.m.Toolbar({
-								content: [
-									new sap.m.ToolbarSpacer(),
-									oCompactMode
-								]
-						})
-				}).addStyleClass("sapUiContentPadding").placeAt("body"),
-
-			oApp = new sap.m.App("myApp", {
-				initialPage: "myPage"
-			});
-
-		oApp.addPage(oPage);
-		oApp.placeAt("content");
-	</script>
-</head>
-<body id="body" class="sapUiBody">
-<div id="content"></div>
-</body>
+	<head>
+		<meta charset="utf-8">
+		<title>RatingIndicator - sap.m</title>
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-onInit="module:local/RatingIndicator"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
+					"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="content"></div>
+	</body>
 </html>

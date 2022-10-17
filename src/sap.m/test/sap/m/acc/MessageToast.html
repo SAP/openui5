@@ -1,49 +1,22 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>MessageToast - sap.m</title>
-	<script src="../shared-config.js"></script>
-	<script id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-resourceroots='{
-				"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
-			}'>
-	</script>
-	<script>
-		var bCompactMode = new sap.m.CheckBox("compactMode", {
-			text: "Compact Mode",
-			selected : false,
-			select : function() {
-				$("body").toggleClass("sapUiSizeCompact");
-			}
-		}),
-			oPage = new sap.m.Page("myPage", {
-				title: "MessageToast Accessibility Test Page",
-				content: [
-					new sap.m.Button("messageToastButton", {
-						text: "Show",
-						press: function () {
-							sap.m.MessageToast.show("The message to be displayed");
-						}
-					})
-				],
-				footer: new sap.m.Toolbar({
-							content: [
-								new sap.m.ToolbarSpacer(),
-								bCompactMode
-							]
-						})
-			}),
-			oApp = new sap.m.App("myApp", {
-				initialPage: "myPage"
-			});
-
-		oApp.addPage(oPage);
-		oApp.placeAt("content");
-	</script>
-</head>
-<body id="body" class="sapUiBody">
-<div id="content"></div>
-</body>
+	<head>
+		<meta charset="utf-8">
+		<title>MessageToast - sap.m</title>
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-onInit="module:local/MessageToast"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
+					"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="content"></div>
+	</body>
 </html>

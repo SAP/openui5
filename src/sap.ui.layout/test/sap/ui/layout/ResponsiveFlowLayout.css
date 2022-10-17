@@ -1,0 +1,21 @@
+.sampleButtonBox {
+	border: 1px solid blue;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	margin: 0 10px;
+	padding: 5px;
+}
+.sapUiRFLFullLength {
+	background-color: white;
+}
+
+.paddingLeft10px {
+	padding-left: 10px;
+}
+.minWidth150px {
+	min-width: 150px;
+}
+.minWidth250px {
+	min-width: 250px;
+}

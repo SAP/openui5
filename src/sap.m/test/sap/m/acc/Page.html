@@ -1,66 +1,24 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-<head>
-	<title>sap.m.Page - Accessibility</title>
+	<head>
+		<meta charset="utf-8">
+		<title>sap.m.Page - Accessibility</title>
 
-	<script src="../shared-config.js"></script>
-	<script src="../../../../resources/sap-ui-core.js"
-	       
-	        id="sap-ui-bootstrap"
-	        data-sap-ui-libs="sap.m"
-			data-sap-ui-resourceroots='{
-				"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
-			}'>
-	</script>
-	<style type="text/css">
-		.customLabel {
-			margin: 0 0.5rem;
-			vertical-align: middle;
-			vertical-align: -webkit-baseline-middle;
-		}
-	</style>
-
-	<script>
-		var oApp = new sap.m.App("myApp", {
-			initialPage: "page"
-		}),
-
-			bCompactMode = new sap.m.CheckBox("compactMode", {
-				text: "Compact Mode",
-				selected : false,
-				select : function() {
-					$("body").toggleClass("sapUiSizeCompact");
-				}
-			}),
-
-			oInput = new sap.m.Input("input0", {
-				width: "300px"
-			}),
-
-			oLabel = new sap.m.Label({
-				text: "Please enter a value",
-				labelFor: oInput
-			}).addStyleClass("customLabel"),
-
-			oPage = new sap.m.Page("page", {
-				landmarkInfo: new sap.m.PageAccessibleLandmarkInfo(),
-				title: "Page Accessibility Test Page",
-				content: [
-					oLabel,
-					oInput
-				],
-				footer: new sap.m.Toolbar({
-						content: [
-							new sap.m.ToolbarSpacer(),
-							bCompactMode
-						]
-					})
-			});
-
-		oApp.addPage(oPage).placeAt("content");
-	</script>
-</head>
-<body class="sapUiBody">
-	<div id="content"></div>
-</body>
+		<link href="Page.css" rel="stylesheet">
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-onInit="module:local/Page"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
+					"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
+		</script>
+	</head>
+	<body class="sapUiBody">
+		<div id="content"></div>
+	</body>
 </html>

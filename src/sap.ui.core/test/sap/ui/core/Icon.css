@@ -1,0 +1,22 @@
+.sapUiFontIconContainer {
+	text-align: center;
+	margin: 20px 10px 20px 10px;
+	border: 3px solid #999999;
+	border-radius: 5px;
+	padding: 5px 0 5px 0;
+	width: 200px;
+	float: left;
+	height: 110px;
+}
+
+.fontIcon {
+	border-radius: 10px;
+	padding: 5px 0 5px 0;
+}
+
+.sapUiFontName {
+	margin-bottom: 8px;
+	font-weight: bold;
+	color: #666666;
+	font-size: 16px;
+}

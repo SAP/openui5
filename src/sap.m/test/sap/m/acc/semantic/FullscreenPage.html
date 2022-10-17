@@ -1,73 +1,23 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="utf-8">
 
 		<title>Semantic FullscreenPage ACC Test - sap.m</title>
 
+		<link href="FullscreenPage.css" rel="stylesheet">
 		<script src="../../shared-config.js"></script>
-		<script src="../../../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-resourceroots='{
-				"qunit.internal.acc": "../../../../../test-resources/sap/ui/core/qunit/internal/acc"
-			}'>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-onInit="module:local/FullscreenPage"
+				data-sap-ui-resourceRoots='{
+					"local": "./",
+					"qunit.internal.acc": "../../../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
 		</script>
-
-		<script>
-
-			jQuery.sap.require("sap.m.semantic.EditAction");
-			jQuery.sap.require("sap.m.semantic.AddAction");
-			jQuery.sap.require("sap.m.semantic.FlagAction");
-			jQuery.sap.require("sap.m.semantic.FavoriteAction");
-			jQuery.sap.require("sap.m.semantic.SendEmailAction");
-			jQuery.sap.require("sap.m.semantic.SendMessageAction");
-			jQuery.sap.require("sap.m.semantic.DiscussInJamAction");
-			jQuery.sap.require("sap.m.semantic.ShareInJamAction");
-			jQuery.sap.require("sap.m.semantic.PrintAction");
-
-			var app = new sap.m.App("myApp");
-
-			var oPage = new sap.m.semantic.FullscreenPage("testPage", {
-					landmarkInfo: new sap.m.PageAccessibleLandmarkInfo({
-					headerRole: sap.ui.core.AccessibleLandmarkRole.Banner,
-					headerLabel: "Header label from LandmarkInfo",
-					subHeaderRole: sap.ui.core.AccessibleLandmarkRole.Banner,
-					subHeaderLabel: "SubHeader label from LandmarkInfo",
-					rootRole: sap.ui.core.AccessibleLandmarkRole.Region,
-					rootLabel: "Root label from LandmarkInfo",
-					contentRole: sap.ui.core.AccessibleLandmarkRole.Main,
-					contentLabel: "Content label from LandmarkInfo",
-					footerRole: sap.ui.core.AccessibleLandmarkRole.Banner,
-					footerLabel: "Footer label from LandmarkInfo"
-				}),
-				title:"Fullscreen Test page",
-				titleLevel: "H1",
-				showNavButton: true,
-				editAction: new sap.m.semantic.EditAction(),
-				addAction: new sap.m.semantic.AddAction(),
-				flagAction: new sap.m.semantic.FlagAction(),
-				favoriteAction: new sap.m.semantic.FavoriteAction(),
-				sendEmailAction: new sap.m.semantic.SendEmailAction(),
-				sendMessageAction: new sap.m.semantic.SendMessageAction(),
-				discussInJamAction: new sap.m.semantic.DiscussInJamAction(),
-				shareInJamAction: new sap.m.semantic.ShareInJamAction(),
-				printAction: new sap.m.semantic.PrintAction()
-			});
-
-			app.addPage(oPage);
-
-			app.placeAt("body");
-
-	</script>
-	<style>
-		body {
-			margin: 0;
-		}
-		.sapMPageScroll {
-			padding: 1rem;
-		}
-	</style>
-
 	</head>
 	<body id="body" class="sapUiBody">
 	</body>

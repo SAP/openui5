@@ -2,11 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-    "sap/m/p13n/modification/ModificationHandler"
+	"sap/m/p13n/modification/ModificationHandler"
 ], function(ModificationHandler) {
 	"use strict";
 
-    /**
+	/**
 	 *  @class Flex specific modification handler implementation
 	 *
 	 *
@@ -17,9 +17,9 @@ sap.ui.define([
 	 */
 	var TestModificationHandler = ModificationHandler.extend("sap.m.p13n.modification.TestModificationHandler");
 
-    TestModificationHandler.getInstance = function() {
-        return new TestModificationHandler();
-    };
+	TestModificationHandler.getInstance = function() {
+		return new TestModificationHandler();
+	};
 
 	return TestModificationHandler;
 });

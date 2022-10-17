@@ -7,7 +7,7 @@ sap.ui.define([
 	"../model/ExploreNavigationModel",
 	"../model/OverviewNavigationModel",
 	"../model/ExploreSettingsModel",
-    "../model/HomeModel"
+	"../model/HomeModel"
 ], function (
 	mLibrary,
 	BaseController,
@@ -17,7 +17,7 @@ sap.ui.define([
 	ExploreNavigationModel,
 	OverviewNavigationModel,
 	ExploreSettingsModel,
-    HomeModel
+	HomeModel
 ) {
 	"use strict";
 
@@ -38,7 +38,7 @@ sap.ui.define([
 			}, this);
 
 			this.getView().setModel(ExploreSettingsModel, "settings");
-            this.getView().setModel(HomeModel, "home");
+			this.getView().setModel(HomeModel, "home");
 
 			Device.media.attachHandler(this.onDeviceSizeChange, this);
 			this.onDeviceSizeChange();
